@@ -117,18 +117,98 @@ The Interactive Playground provides a hands-on environment for testing post-quan
 
 ### 3.1 Layout
 - **Tabbed Interface**:
-    - **Settings**: Algorithm selection, Mode toggle, Key Generation
-    - **Data**: Input Message, Shared Secret Display
-    - **Operations**: Dynamic tab based on algorithm (KEM/Encrypt or Sign/Verify)
-    - **Key Store**: List of generated keys
-    - **Logs**: Operation history
-- **Four-Section Design**:
-    1.  **Key Generation**: Settings and controls
-    2.  **Message Input**: Data entry and shared secret/signature display
-    3.  **Operations**: Action buttons and key selection
-    4.  **Output**: Logs and results
+    - **Settings**: Execution Mode toggle, Algorithm Configuration (enable/disable algorithms)
+    - **Data**: Input Message, Shared Secret Display, Signature Display
+    - **KEM** (ML-KEM only): Encapsulate/Decapsulate operations
+    - **Encrypt** (ML-KEM only): Encrypt/Decrypt data operations
+    - **Sign** (ML-DSA only): Sign message operation
+    - **Verify** (ML-DSA only): Verify signature operation
+    - **Key Store**: Key generation controls + list of generated keys with details
+    - **Logs**: Operation history with sortable/resizable columns
+    - **ACVP**: Automated validation against NIST test vectors
 - **Responsive**: Stacks vertically on mobile devices
 - **Main Scrollbar**: Entire playground is scrollable
+
+### 3.1.1 Settings Tab
+#### Execution Mode Section
+- Toggle between Mock and WASM modes
+- Visual indicators for current mode
+- Mode descriptions
+
+#### Algorithm Configuration Section (✨ NEW)
+Comprehensive enable/disable controls for all cryptographic algorithms:
+
+**KEM Algorithms:**
+- **Post-Quantum:**
+  - ML-KEM-512 (NIST Level 1) - ✅ Enabled by default
+  - ML-KEM-768 (NIST Level 3) - ✅ Enabled by default
+  - ML-KEM-1024 (NIST Level 5) - ✅ Enabled by default
+- **Classical:**
+  - X25519 (Curve25519 ECDH) - ❌ Disabled (not yet implemented)
+  - P-256 (NIST P-256 ECDH) - ❌ Disabled (not yet implemented)
+
+**Signature Algorithms:**
+- **Post-Quantum:**
+  - ML-DSA-44 (NIST Level 2) - ✅ Enabled by default
+  - ML-DSA-65 (NIST Level 3) - ✅ Enabled by default
+  - ML-DSA-87 (NIST Level 5) - ✅ Enabled by default
+- **Classical:**
+  - RSA-2048 (2048 bits) - ❌ Disabled (not yet implemented)
+  - RSA-3072 (3072 bits) - ❌ Disabled (not yet implemented)
+  - RSA-4096 (4096 bits) - ❌ Disabled (not yet implemented)
+  - ECDSA-P256 (NIST P-256) - ❌ Disabled (not yet implemented)
+  - Ed25519 (Curve25519) - ❌ Disabled (not yet implemented)
+
+**Symmetric Encryption:**
+- AES-128-GCM (FIPS 197) - ❌ Disabled (not yet implemented)
+- AES-256-GCM (FIPS 197) - ❌ Disabled (not yet implemented)
+
+**Hash Algorithms:**
+- SHA-256 (FIPS 180-4) - ❌ Disabled (not yet implemented)
+- SHA-384 (FIPS 180-4) - ❌ Disabled (not yet implemented)
+- SHA3-256 (FIPS 202, Quantum Resistant) - ❌ Disabled (not yet implemented)
+
+**Features:**
+- Visual toggle buttons with checkboxes
+- Color-coded by category (KEM=cyan, Signature=violet, Symmetric=emerald, Hash=cyan)
+- FIPS standard labels
+- Quantum resistance indicators
+- Session storage persistence
+- Only implemented algorithms enabled by default
+
+#### Quick Actions Section
+- "Go to Key Store" button for easy navigation
+
+### 3.1.2 Key Store Tab (✨ UPDATED)
+**Key Generation Section** (moved from Settings):
+- Algorithm selection (ML-KEM / ML-DSA)
+- Security level dropdown (dynamically updates based on algorithm)
+- Generate Keys button with loading state
+- Compact horizontal layout
+
+**Key Table:**
+- Sortable columns: Name, Type, Algorithm, ID, Timestamp
+- Resizable columns with drag handles
+- Row selection for detailed view
+- Clear All Keys button
+
+**Detail View** (when key selected):
+- Raw Value display (Hex/ASCII toggle)
+- PKCS#8 Preview (PEM/Hex toggle)
+- Alignment ruler for column checking
+- Copy to clipboard buttons
+- Fixed-width font (Courier New)
+
+### 3.1.3 Logs Tab
+- **Sortable Columns**: Timestamp, Key Label, Operation, Result, Execution Time
+- **Resizable Columns**: User can drag column borders
+- **Color-Coded Performance**: 
+  - Green (\u003c100ms)
+  - Yellow (100-500ms)
+  - Red (\u003e500ms)
+- **Newest First**: Latest operations at top
+- **Clear Log** button
+- **Persistence**: Logs maintained across tab switches
 
 ### 3.2 Input Controls
 - **Input Text Area**: Multi-line text input for messages/data
@@ -411,3 +491,60 @@ if (!isWasmSupported) {
 - UI responsiveness: No blocking operations
 - Smooth animations: 60fps target
 - Memory management: Proper cleanup of large data structures
+
+---
+
+## 10. Recent Updates (November 2025)
+
+### 10.1 Key Generation Relocation (✅ Complete)
+**Change:** Moved key generation controls from Settings tab to Key Store tab
+
+**Rationale:** 
+- Better workflow - users generate keys where they'll see them
+- Settings tab now focuses on configuration
+- More intuitive user experience
+
+**Implementation:**
+- Added key generation section to `KeyStoreView` component
+- Includes algorithm selection, key size dropdown, and generate button
+- Compact horizontal layout for efficient space usage
+- Settings tab now has "Go to Key Store" quick action button
+
+### 10.2 Algorithm Configuration System (✅ Complete)
+**Change:** Added comprehensive algorithm enable/disable configuration in Settings tab
+
+**Features:**
+- **4 Algorithm Categories:**
+  1. KEM Algorithms (5 options: 3 PQC + 2 Classical)
+  2. Signature Algorithms (8 options: 3 PQC + 5 Classical)
+  3. Symmetric Encryption (2 options: AES-128/256-GCM)
+  4. Hash Algorithms (3 options: SHA-256/384, SHA3-256)
+
+**Visual Design:**
+- Toggle buttons with checkbox icons
+- Color-coded by category
+- FIPS standard labels
+- Quantum resistance indicators (QR)
+- Disabled state for unimplemented algorithms
+
+**Default State:**
+- Only implemented algorithms enabled (ML-KEM and ML-DSA)
+- All classical and additional algorithms disabled until implemented
+- Reflects actual WASM capabilities
+
+**Persistence:**
+- User preferences saved in session storage
+- Maintained across page refreshes
+
+### 10.3 UI/UX Improvements (✅ Complete)
+- **Tabbed Navigation:** Clearer separation of concerns
+- **Resizable Columns:** Both Key Store and Logs tables support column resizing
+- **Sortable Tables:** Click column headers to sort
+- **Visual Feedback:** Improved hover states and transitions
+- **Session Persistence:** Algorithm configuration and execution mode preferences saved
+
+### 10.4 Documentation Updates (✅ Complete)
+- Updated requirements to reflect new tab structure
+- Documented algorithm configuration system
+- Added implementation status for all algorithms
+- Clarified which algorithms are WASM-supported vs. planned
