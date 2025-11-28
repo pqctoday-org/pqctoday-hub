@@ -7,7 +7,6 @@ import { KeyDetails } from './keystore/KeyDetails';
 
 interface KeyStoreViewProps {
     keyStore: Key[];
-    setKeyStore: React.Dispatch<React.SetStateAction<Key[]>>;
     algorithm: 'ML-KEM' | 'ML-DSA';
     keySize: string;
     loading: boolean;
@@ -20,11 +19,11 @@ interface KeyStoreViewProps {
     classicalLoading: boolean;
     onClassicalAlgorithmChange: (algorithm: string) => void;
     onGenerateClassicalKeys: () => void;
+    onClearKeys: () => void;
 }
 
 export const KeyStoreView = ({
     keyStore,
-    setKeyStore,
     algorithm,
     keySize,
     loading,
@@ -35,7 +34,8 @@ export const KeyStoreView = ({
     classicalLoading,
     onClassicalAlgorithmChange,
     onGenerateClassicalKeys,
-    onUnifiedChange
+    onUnifiedChange,
+    onClearKeys
 }: KeyStoreViewProps) => {
     // Selection State
     const [selectedKeyId, setSelectedKeyId] = useState<string | null>(null);
@@ -45,7 +45,7 @@ export const KeyStoreView = ({
 
     const clearKeys = () => {
         if (confirm('Are you sure you want to clear all keys? This cannot be undone.')) {
-            setKeyStore([]);
+            onClearKeys();
             setSelectedKeyId(null);
         }
     };

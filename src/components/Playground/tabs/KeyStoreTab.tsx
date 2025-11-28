@@ -5,7 +5,6 @@ import { usePlaygroundContext, type ClassicalAlgorithm } from '../PlaygroundCont
 export const KeyStoreTab: React.FC = () => {
     const {
         keyStore,
-        setKeyStore,
         algorithm,
         setAlgorithm,
         keySize,
@@ -16,13 +15,13 @@ export const KeyStoreTab: React.FC = () => {
         classicalAlgorithm,
         setClassicalAlgorithm,
         classicalLoading,
-        generateClassicalKeys
+        generateClassicalKeys,
+        clearKeys
     } = usePlaygroundContext();
 
     return (
         <KeyStoreView
             keyStore={keyStore}
-            setKeyStore={setKeyStore}
             algorithm={algorithm}
             keySize={keySize}
             loading={loading}
@@ -37,6 +36,7 @@ export const KeyStoreTab: React.FC = () => {
             classicalLoading={classicalLoading}
             onClassicalAlgorithmChange={(algo) => setClassicalAlgorithm(algo as ClassicalAlgorithm)}
             onGenerateClassicalKeys={generateClassicalKeys}
+            onClearKeys={clearKeys}
         />
     );
 };

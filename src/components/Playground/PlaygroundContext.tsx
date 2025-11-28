@@ -99,6 +99,7 @@ export interface PlaygroundContextType {
     runOperation: (type: 'encapsulate' | 'decapsulate' | 'sign' | 'verify' | 'encrypt' | 'decrypt' | 'symEncrypt' | 'symDecrypt') => Promise<void>;
     addLog: (entry: Omit<LogEntry, 'id' | 'timestamp'>) => void;
     clearLogs: () => void;
+    clearKeys: () => void;
 
     // Active Tab
     activeTab: 'settings' | 'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'acvp' | 'symmetric';
@@ -119,7 +120,7 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     // State definitions
     const [algorithm, setAlgorithm] = useState<'ML-KEM' | 'ML-DSA'>('ML-KEM');
     const [keySize, setKeySize] = useState<string>('768');
-    const [executionMode, setExecutionMode] = useState<ExecutionMode>('mock');
+    const [executionMode, setExecutionMode] = useState<ExecutionMode>('wasm');
     const [wasmLoaded, setWasmLoaded] = useState(false);
     const [keyStore, setKeyStore] = useState<Key[]>([]);
     const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -166,6 +167,23 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setLogs(prev => [newEntry, ...prev]);
     };
     const clearLogs = () => setLogs([]);
+    const clearKeys = () => {
+        setKeyStore([]);
+        setSelectedEncKeyId('');
+        setSelectedDecKeyId('');
+        setSelectedSignKeyId('');
+        setSelectedVerifyKeyId('');
+        setSelectedSymKeyId('');
+        setSharedSecret('');
+        setCiphertext('');
+        setEncryptedData('');
+        setDecryptedData('');
+        setSignature('');
+        setVerificationResult(null);
+        setKemDecapsulationResult(null);
+        setSymOutput('');
+        addLog({ keyLabel: 'System', operation: 'Clear Keys', result: 'All keys and states cleared', executionTime: 0 });
+    };
     const handleSort = (column: SortColumn) => { if (sortColumn === column) { setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); } else { setSortColumn(column); setSortDirection('desc'); } };
     const startResize = (e: React.MouseEvent, column: SortColumn) => { e.preventDefault(); e.stopPropagation(); setResizingColumn(column); resizeStartX.current = e.clientX; resizeStartWidth.current = columnWidths[column]; document.body.style.cursor = 'col-resize'; };
 
@@ -313,7 +331,7 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             selectedSymKeyId, setSelectedSymKeyId, symData, setSymData, symOutput, setSymOutput,
             classicalAlgorithm, setClassicalAlgorithm, classicalLoading,
             enabledAlgorithms, toggleAlgorithm,
-            handleAlgorithmChange, generateKeys, generateClassicalKeys, runOperation, addLog, clearLogs,
+            handleAlgorithmChange, generateKeys, generateClassicalKeys, runOperation, addLog, clearLogs, clearKeys,
             activeTab,
             setActiveTab,
             verificationResult,
