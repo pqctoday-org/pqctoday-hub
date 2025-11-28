@@ -569,3 +569,17 @@ if (!isWasmSupported) {
     - Enabled generation of **ECDSA-P256** signing keys.
     - Confirmed support for **Ed25519** signing keys.
     - Confirmed support for **X25519** and **P-256** (ECDH) for KEM-like operations.
+
+### 10.6 Symmetric Encryption Tab (✅ Complete)
+**Change:** Added a dedicated tab for Symmetric Encryption operations.
+
+**Features:**
+- **Dedicated Tab:** "Sym Encrypt" tab added to the main navigation.
+- **Key Selection:** Dropdown to select generated Symmetric Keys (AES-128-GCM, AES-256-GCM).
+- **Info Display:** Shows Algorithm, Mode (GCM), and IV details (12 bytes, prepended) for the selected key.
+- **Operations:**
+    - **Encrypt:** Encrypts input data (Hex/ASCII) using AES-GCM. Result (IV + Ciphertext) is displayed in the Output box.
+    - **Decrypt:** Decrypts the content of the Output box. Result (Plaintext) is displayed in the Input box.
+- **Data Handling:**
+    - Supports both Hex and ASCII input/output.
+    - "Cross-wired" flow (Encrypt -> Output, Decrypt -> Input) enables easy round-trip testing.

@@ -62,12 +62,17 @@ export const InteractivePlayground = () => {
     const [selectedDecKeyId, setSelectedDecKeyId] = useState<string>('');
     const [selectedSignKeyId, setSelectedSignKeyId] = useState<string>('');
     const [selectedVerifyKeyId, setSelectedVerifyKeyId] = useState<string>('');
-    const [activeTab, setActiveTab] = useState<'settings' | 'data' | 'kem' | 'encrypt' | 'sign' | 'verify' | 'keystore' | 'logs' | 'acvp'>('settings');
+    const [activeTab, setActiveTab] = useState<'settings' | 'data' | 'kem' | 'encrypt' | 'sign' | 'verify' | 'keystore' | 'logs' | 'acvp' | 'symmetric'>('settings');
 
     // Data States
     const [dataToSign, setDataToSign] = useState('Hello Quantum World!');
     const [dataToEncrypt, setDataToEncrypt] = useState('Secret Message');
     const [decryptedData, setDecryptedData] = useState('');
+
+    // Symmetric Tab State
+    const [selectedSymKeyId, setSelectedSymKeyId] = useState<string>('');
+    const [symData, setSymData] = useState('48656c6c6f2053796d6d657472696320576f726c64'); // "Hello Symmetric World" in hex
+    const [symOutput, setSymOutput] = useState('');
 
     // Classical Algorithm Selection (for Web Crypto API)
     type ClassicalAlgorithm = 'RSA-2048' | 'RSA-3072' | 'RSA-4096' | 'ECDSA-P256' | 'Ed25519' | 'X25519' | 'P-256' | 'AES-128' | 'AES-256';
@@ -608,7 +613,7 @@ export const InteractivePlayground = () => {
         }
     };
 
-    const runOperation = async (type: 'encapsulate' | 'decapsulate' | 'sign' | 'verify' | 'encrypt' | 'decrypt') => {
+    const runOperation = async (type: 'encapsulate' | 'decapsulate' | 'sign' | 'verify' | 'encrypt' | 'decrypt' | 'symEncrypt' | 'symDecrypt') => {
         setLoading(true);
         setError(null);
         const start = performance.now();
@@ -618,16 +623,19 @@ export const InteractivePlayground = () => {
             let selectedKey: Key | undefined;
             if (type === 'encapsulate') selectedKey = keyStore.find(k => k.id === selectedEncKeyId);
             else if (type === 'decapsulate') selectedKey = keyStore.find(k => k.id === selectedDecKeyId);
+            else if (type === 'symEncrypt' || type === 'symDecrypt') selectedKey = keyStore.find(k => k.id === selectedSymKeyId);
             else if (type === 'sign') selectedKey = keyStore.find(k => k.id === selectedSignKeyId);
             else if (type === 'verify') selectedKey = keyStore.find(k => k.id === selectedVerifyKeyId);
 
             // 2. Check if Classical Algorithm
             const isClassical = selectedKey && (
-                ['Ed25519', 'X25519', 'P-256'].includes(selectedKey.algorithm) ||
                 selectedKey.algorithm.startsWith('RSA') ||
-                selectedKey.algorithm.startsWith('ECDSA')
+                selectedKey.algorithm.startsWith('ECDSA') ||
+                selectedKey.algorithm === 'Ed25519' ||
+                selectedKey.algorithm === 'X25519' ||
+                selectedKey.algorithm === 'P-256' ||
+                selectedKey.algorithm.startsWith('AES')
             );
-
             if (isClassical && selectedKey) {
                 // --- CLASSICAL OPERATIONS (Web Crypto) ---
                 if (type === 'encapsulate') {
@@ -731,6 +739,55 @@ export const InteractivePlayground = () => {
                         keyLabel: selectedKey.name,
                         operation: `Verify (${selectedKey.algorithm})`,
                         result: isValid ? '✓ VALID' : '✗ INVALID',
+                        executionTime: end - start
+                    });
+                    setLoading(false);
+                    return;
+                }
+                else if (type === 'symEncrypt') {
+                    if (!selectedKey.data || !(selectedKey.data instanceof CryptoKey)) throw new Error("Invalid symmetric key");
+
+                    const iv = WebCrypto.getRandomBytes(12);
+                    const dataBytes = hexToBytes(symData);
+                    const ciphertext = await WebCrypto.encryptAES(selectedKey.data, dataBytes, iv);
+
+                    // Combine IV + Ciphertext
+                    const result = new Uint8Array(iv.length + ciphertext.length);
+                    result.set(iv, 0);
+                    result.set(ciphertext, iv.length);
+
+                    const resultHex = bytesToHex(result);
+                    setSymOutput(resultHex);
+
+                    const end = performance.now();
+                    addLog({
+                        keyLabel: selectedKey.name,
+                        operation: 'Symmetric Encrypt (AES-GCM)',
+                        result: `Ciphertext: ${resultHex.length / 2} bytes (IV included)`,
+                        executionTime: end - start
+                    });
+                    setLoading(false);
+                    return;
+                }
+                else if (type === 'symDecrypt') {
+                    if (!selectedKey.data || !(selectedKey.data instanceof CryptoKey)) throw new Error("Invalid symmetric key");
+
+                    const inputBytes = hexToBytes(symOutput);
+
+                    if (inputBytes.length < 12) throw new Error("Invalid ciphertext (too short for IV)");
+                    const iv = inputBytes.slice(0, 12);
+                    const ciphertext = inputBytes.slice(12);
+
+                    const plaintext = await WebCrypto.decryptAES(selectedKey.data, ciphertext, iv);
+                    const plaintextHex = bytesToHex(plaintext);
+
+                    setSymData(plaintextHex);
+
+                    const end = performance.now();
+                    addLog({
+                        keyLabel: selectedKey.name,
+                        operation: 'Symmetric Decrypt (AES-GCM)',
+                        result: `Plaintext: ${plaintextHex.length / 2} bytes`,
                         executionTime: end - start
                     });
                     setLoading(false);
@@ -1100,6 +1157,15 @@ export const InteractivePlayground = () => {
                     )}
                 >
                     <Lock size={16} /> Encrypt
+                </button>
+                <button
+                    onClick={() => setActiveTab('symmetric')}
+                    className={clsx(
+                        "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
+                        activeTab === 'symmetric' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5"
+                    )}
+                >
+                    <Lock size={16} /> Sym Encrypt
                 </button>
                 <button
                     onClick={() => setActiveTab('sign')}
@@ -1683,6 +1749,99 @@ export const InteractivePlayground = () => {
                                     className="w-full py-3 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
                                 >
                                     Decrypt Message
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Tab: Symmetric Encryption */}
+                {activeTab === 'symmetric' && (
+                    <div className="max-w-4xl mx-auto animate-fade-in">
+                        <h4 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
+                            <Lock size={18} className="text-accent" /> Symmetric Encryption (AES-GCM)
+                        </h4>
+
+                        {/* Key Selection */}
+                        <div className="mb-6 p-6 bg-black/20 rounded-xl border border-white/5">
+                            <h5 className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2 mb-4">
+                                <KeyIcon size={14} /> Select Symmetric Key
+                            </h5>
+                            <select
+                                value={selectedSymKeyId}
+                                onChange={(e) => setSelectedSymKeyId(e.target.value)}
+                                className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-accent"
+                            >
+                                <option value="">Select AES Key...</option>
+                                {keyStore.filter(k => k.type === 'symmetric').map(k => (
+                                    <option key={k.id} value={k.id}>{k.name}</option>
+                                ))}
+                            </select>
+
+                            {selectedSymKeyId && (() => {
+                                const key = keyStore.find(k => k.id === selectedSymKeyId);
+                                if (!key) return null;
+                                return (
+                                    <div className="mt-4 p-3 bg-black/40 rounded border border-white/10 text-xs space-y-1 animate-fade-in">
+                                        <div className="flex justify-between">
+                                            <span className="text-muted">Algorithm:</span>
+                                            <span className="text-accent font-mono font-bold">{key.algorithm}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-muted">Mode:</span>
+                                            <span className="text-white font-mono">GCM (Galois/Counter Mode)</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-muted">IV (Nonce):</span>
+                                            <span className="text-white font-mono">12 bytes (Prepend to Ciphertext)</span>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Encrypt */}
+                            <div className="p-6 bg-black/20 rounded-xl border border-white/5 hover:border-cyan-500/30 transition-colors">
+                                <div className="text-sm text-cyan-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+                                    <Lock size={16} /> Encrypt Data
+                                </div>
+                                <DataInput
+                                    label="Input Data (Hex/ASCII)"
+                                    value={symData}
+                                    onChange={setSymData}
+                                    placeholder="Enter data to encrypt..."
+                                    inputType="binary"
+                                    height="h-32"
+                                />
+                                <button
+                                    onClick={() => runOperation('symEncrypt')}
+                                    disabled={!selectedSymKeyId || loading}
+                                    className="w-full mt-4 py-3 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+                                >
+                                    Encrypt
+                                </button>
+                            </div>
+
+                            {/* Decrypt */}
+                            <div className="p-6 bg-black/20 rounded-xl border border-white/5 hover:border-emerald-500/30 transition-colors">
+                                <div className="text-sm text-emerald-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+                                    <Lock size={16} /> Decrypt Result
+                                </div>
+                                <DataInput
+                                    label="Output / Ciphertext (Hex/ASCII)"
+                                    value={symOutput}
+                                    onChange={setSymOutput}
+                                    placeholder="Result will appear here..."
+                                    inputType="binary"
+                                    height="h-32"
+                                />
+                                <button
+                                    onClick={() => runOperation('symDecrypt')}
+                                    disabled={!selectedSymKeyId || loading}
+                                    className="w-full mt-4 py-3 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+                                >
+                                    Decrypt (Reverse)
                                 </button>
                             </div>
                         </div>
