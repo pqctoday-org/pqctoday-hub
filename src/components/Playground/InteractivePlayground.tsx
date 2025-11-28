@@ -456,7 +456,7 @@ export const InteractivePlayground = () => {
                         name: `${classicalAlgorithm} Public Key (WebCrypto) [${timestamp}]`,
                         type: 'public',
                         algorithm: 'RSA',
-                        value: keyPairResult.publicKeyHex.substring(0, 100) + '...',
+                        value: keyPairResult.publicKeyHex,
                         data: keyPairResult.publicKey,
                         dataType: 'cryptokey',
                         timestamp: Date.now()
@@ -466,7 +466,7 @@ export const InteractivePlayground = () => {
                         name: `${classicalAlgorithm} Private Key (WebCrypto) [${timestamp}]`,
                         type: 'private',
                         algorithm: 'RSA',
-                        value: keyPairResult.privateKeyHex.substring(0, 100) + '...',
+                        value: keyPairResult.privateKeyHex,
                         data: keyPairResult.privateKey,
                         dataType: 'cryptokey',
                         timestamp: Date.now()
@@ -491,7 +491,7 @@ export const InteractivePlayground = () => {
                         name: `ECDSA-P256 Private Key (WebCrypto) [${timestamp}]`,
                         type: 'private',
                         algorithm: 'ECDSA',
-                        value: keyPairResult.privateKeyHex.substring(0, 100) + '...',
+                        value: keyPairResult.privateKeyHex,
                         data: keyPairResult.privateKey,
                         dataType: 'cryptokey',
                         timestamp: Date.now()
@@ -516,7 +516,7 @@ export const InteractivePlayground = () => {
                         name: `Ed25519 Private Key (WebCrypto) [${timestamp}]`,
                         type: 'private',
                         algorithm: 'Ed25519',
-                        value: keyPairResult.privateKeyHex.substring(0, 100) + '...',
+                        value: keyPairResult.privateKeyHex,
                         data: keyPairResult.privateKey,
                         dataType: 'cryptokey',
                         timestamp: Date.now()
@@ -541,7 +541,7 @@ export const InteractivePlayground = () => {
                         name: `X25519 Private Key (WebCrypto) [${timestamp}]`,
                         type: 'private',
                         algorithm: 'X25519',
-                        value: keyPairResult.privateKeyHex.substring(0, 100) + '...',
+                        value: keyPairResult.privateKeyHex,
                         data: keyPairResult.privateKey,
                         dataType: 'cryptokey',
                         timestamp: Date.now()
@@ -566,7 +566,7 @@ export const InteractivePlayground = () => {
                         name: `P-256 ECDH Private Key (WebCrypto) [${timestamp}]`,
                         type: 'private',
                         algorithm: 'P-256',
-                        value: keyPairResult.privateKeyHex.substring(0, 100) + '...',
+                        value: keyPairResult.privateKeyHex,
                         data: keyPairResult.privateKey,
                         dataType: 'cryptokey',
                         timestamp: Date.now()

@@ -44,14 +44,14 @@ export async function generateRSAKeyPair(keySize: RSAKeySize): Promise<KeyPairRe
     ) as CryptoKeyPair;
 
     // Export keys to get hex representation
-    const publicKeyJwk = await crypto.subtle.exportKey('jwk', keyPair.publicKey);
-    const privateKeyJwk = await crypto.subtle.exportKey('jwk', keyPair.privateKey);
+    const publicKeyRaw = await crypto.subtle.exportKey('spki', keyPair.publicKey);
+    const privateKeyRaw = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
 
     return {
         publicKey: keyPair.publicKey,
         privateKey: keyPair.privateKey,
-        publicKeyHex: JSON.stringify(publicKeyJwk),
-        privateKeyHex: JSON.stringify(privateKeyJwk),
+        publicKeyHex: arrayBufferToHex(publicKeyRaw),
+        privateKeyHex: arrayBufferToHex(privateKeyRaw),
     };
 }
 
@@ -117,13 +117,13 @@ export async function generateECDSAKeyPair(): Promise<KeyPairResult> {
 
     // Export keys
     const publicKeyRaw = await crypto.subtle.exportKey('raw', keyPair.publicKey);
-    const privateKeyJwk = await crypto.subtle.exportKey('jwk', keyPair.privateKey);
+    const privateKeyRaw = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
 
     return {
         publicKey: keyPair.publicKey,
         privateKey: keyPair.privateKey,
         publicKeyHex: arrayBufferToHex(publicKeyRaw),
-        privateKeyHex: JSON.stringify(privateKeyJwk),
+        privateKeyHex: arrayBufferToHex(privateKeyRaw),
     };
 }
 
@@ -258,13 +258,13 @@ export async function generateECDHKeyPair(): Promise<KeyPairResult> {
 
     // Export keys
     const publicKeyRaw = await crypto.subtle.exportKey('raw', keyPair.publicKey);
-    const privateKeyJwk = await crypto.subtle.exportKey('jwk', keyPair.privateKey);
+    const privateKeyRaw = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
 
     return {
         publicKey: keyPair.publicKey,
         privateKey: keyPair.privateKey,
         publicKeyHex: arrayBufferToHex(publicKeyRaw),
-        privateKeyHex: JSON.stringify(privateKeyJwk),
+        privateKeyHex: arrayBufferToHex(privateKeyRaw),
     };
 }
 

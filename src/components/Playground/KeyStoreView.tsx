@@ -159,7 +159,21 @@ export const KeyStoreView = ({
 
         // If data is CryptoKey, use the pre-formatted hex value stored in key.value
         if (key.dataType === 'cryptokey' || !(key.data instanceof Uint8Array)) {
-            return key.value;
+            if (mode === 'hex') return key.value;
+
+            // ASCII Mode for CryptoKey (Hex -> ASCII)
+            try {
+                const hex = key.value;
+                const match = hex.match(/.{1,2}/g);
+                if (!match) return 'Invalid Hex';
+
+                return match.map(byteHex => {
+                    const byte = parseInt(byteHex, 16);
+                    return (byte >= 32 && byte <= 126) ? String.fromCharCode(byte) : '.';
+                }).join('');
+            } catch (e) {
+                return 'Error converting to ASCII';
+            }
         }
 
         if (mode === 'hex') {
@@ -179,7 +193,38 @@ export const KeyStoreView = ({
         // If data is CryptoKey, we can't easily convert to PKCS8 synchronously here
         // So we'll return a placeholder or the raw value
         if (key.dataType === 'cryptokey' || !(key.data instanceof Uint8Array)) {
-            return mode === 'hex' ? key.value : 'PEM export requires async operation';
+            if (mode === 'hex') return key.value;
+
+            // Convert Hex to Base64 (PEM body)
+            try {
+                // key.value is Hex string
+                const hex = key.value;
+                // Convert hex to bytes
+                const match = hex.match(/.{1,2}/g);
+                if (!match) return 'Invalid Hex';
+                const bytes = new Uint8Array(match.map(byte => parseInt(byte, 16)));
+
+                // Convert bytes to binary string
+                let binary = '';
+                const len = bytes.byteLength;
+                for (let i = 0; i < len; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+
+                // Convert to Base64
+                const b64 = window.btoa(binary);
+
+                // Wrap in PEM headers
+                const label = key.type === 'private' ? 'PRIVATE KEY' : 'PUBLIC KEY';
+                const header = `-----BEGIN ${label}-----`;
+                const footer = `-----END ${label}-----`;
+
+                // Split into lines of 64 chars
+                const lines = b64.match(/.{1,64}/g) || [];
+                return `${header}\n${lines.join('\n')}\n${footer}`;
+            } catch (e) {
+                return 'Error converting to PEM';
+            }
         }
 
         const label = key.type === 'private' ? 'PRIVATE KEY' : 'PUBLIC KEY';
