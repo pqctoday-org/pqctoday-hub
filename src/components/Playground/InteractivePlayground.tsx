@@ -621,7 +621,33 @@ export const InteractivePlayground = () => {
                 if (type === 'encapsulate') {
                     const key = keyStore.find(k => k.id === selectedEncKeyId);
                     if (!key) throw new Error("Please select a Public Key");
-                    if (!key.data) throw new Error("Selected key has no binary data (was it generated in Mock mode?)");
+
+                    // Classical Logic (X25519, P-256)
+                    if (['X25519', 'P-256'].includes(key.algorithm)) {
+                        if (!key.data || !(key.data instanceof CryptoKey)) throw new Error("Invalid key data for Web Crypto operation");
+
+                        const ephemeralKeyPair = key.algorithm === 'X25519'
+                            ? await WebCrypto.generateX25519KeyPair()
+                            : await WebCrypto.generateECDHKeyPair();
+
+                        const sharedSecretBytes = await WebCrypto.deriveSharedSecret(ephemeralKeyPair.privateKey, key.data);
+                        const ciphertextHex = ephemeralKeyPair.publicKeyHex;
+
+                        setSharedSecret(bytesToHex(sharedSecretBytes));
+                        setCiphertext(ciphertextHex);
+
+                        const end = performance.now();
+                        addLog({
+                            keyLabel: key.name,
+                            operation: `Encapsulate (${key.algorithm})`,
+                            result: `Shared Secret: ${sharedSecretBytes.length}B, Ephemeral PK: ${ciphertextHex.length / 2}B`,
+                            executionTime: end - start
+                        });
+                        setLoading(false);
+                        return;
+                    }
+
+                    if (!key.data || !(key.data instanceof Uint8Array)) throw new Error("Selected key has invalid data format (expected Uint8Array)");
 
                     const { ciphertext, sharedKey } = await MLKEM.encapsulateBits({ name: `ML-KEM-${keySize}` }, key.data);
 
@@ -640,7 +666,42 @@ export const InteractivePlayground = () => {
                 else if (type === 'decapsulate') {
                     const key = keyStore.find(k => k.id === selectedDecKeyId);
                     if (!key) throw new Error("Please select a Private Key");
-                    if (!key.data) throw new Error("Selected key has no binary data");
+
+                    // Classical Logic (X25519, P-256)
+                    if (['X25519', 'P-256'].includes(key.algorithm)) {
+                        if (!key.data || !(key.data instanceof CryptoKey)) throw new Error("Invalid key data for Web Crypto operation");
+                        if (!ciphertext) throw new Error("No ciphertext available. Run Encapsulate first.");
+
+                        const epkBytes = hexToBytes(ciphertext);
+                        const epk = await window.crypto.subtle.importKey(
+                            'raw',
+                            epkBytes as BufferSource,
+                            key.algorithm === 'X25519' ? { name: 'X25519' } : { name: 'ECDH', namedCurve: 'P-256' },
+                            true,
+                            []
+                        );
+
+                        const recoveredSecret = await WebCrypto.deriveSharedSecret(key.data, epk);
+
+                        // Verify match
+                        let matches = false;
+                        if (sharedSecret) {
+                            const originalSecretBytes = hexToBytes(sharedSecret);
+                            matches = recoveredSecret.every((byte: number, i: number) => byte === originalSecretBytes[i]);
+                        }
+
+                        const end = performance.now();
+                        addLog({
+                            keyLabel: key.name,
+                            operation: `Decapsulate (${key.algorithm})`,
+                            result: matches ? '✓ Secret Recovered (Match)' : '✗ Mismatch',
+                            executionTime: end - start
+                        });
+                        setLoading(false);
+                        return;
+                    }
+
+                    if (!key.data || !(key.data instanceof Uint8Array)) throw new Error("Selected key has invalid data format (expected Uint8Array)");
                     if (!ciphertext) throw new Error("No ciphertext available. Run Encapsulate first.");
 
                     const recoveredSecret = await MLKEM.decapsulateBits({ name: `ML-KEM-${keySize}` }, key.data, hexToBytes(ciphertext));
@@ -740,7 +801,35 @@ export const InteractivePlayground = () => {
                 else if (type === 'sign') {
                     const key = keyStore.find(k => k.id === selectedSignKeyId);
                     if (!key) throw new Error("Please select a Private Key");
-                    if (!key.data) throw new Error("Selected key has no binary data");
+
+                    // Classical Logic (RSA, ECDSA, Ed25519)
+                    if (['RSA', 'ECDSA', 'Ed25519'].includes(key.algorithm)) {
+                        if (!key.data || !(key.data instanceof CryptoKey)) throw new Error("Invalid key data for Web Crypto operation");
+
+                        const messageBytes = new TextEncoder().encode(dataToSign);
+                        let signature: Uint8Array;
+
+                        if (key.algorithm === 'RSA') {
+                            signature = await WebCrypto.signRSA(key.data, messageBytes);
+                        } else if (key.algorithm === 'ECDSA') {
+                            signature = await WebCrypto.signECDSA(key.data, messageBytes);
+                        } else {
+                            signature = await WebCrypto.signEd25519(key.data, messageBytes);
+                        }
+
+                        const end = performance.now();
+                        setSignature(bytesToHex(signature));
+                        addLog({
+                            keyLabel: key.name,
+                            operation: `Sign (${key.algorithm})`,
+                            result: `Signature: ${signature.length} bytes`,
+                            executionTime: end - start
+                        });
+                        setLoading(false);
+                        return;
+                    }
+
+                    if (!key.data || !(key.data instanceof Uint8Array)) throw new Error("Selected key has invalid data format (expected Uint8Array)");
 
                     const messageBytes = new TextEncoder().encode(dataToSign);
                     const signature = await MLDSA.sign(messageBytes, key.data);
@@ -759,7 +848,36 @@ export const InteractivePlayground = () => {
                 else if (type === 'verify') {
                     const key = keyStore.find(k => k.id === selectedVerifyKeyId);
                     if (!key) throw new Error("Please select a Public Key");
-                    if (!key.data) throw new Error("Selected key has no binary data");
+
+                    // Classical Logic (RSA, ECDSA, Ed25519)
+                    if (['RSA', 'ECDSA', 'Ed25519'].includes(key.algorithm)) {
+                        if (!key.data || !(key.data instanceof CryptoKey)) throw new Error("Invalid key data for Web Crypto operation");
+                        if (!signature) throw new Error("No signature available. Run Sign first.");
+
+                        const messageBytes = new TextEncoder().encode(dataToSign);
+                        const signatureBytes = hexToBytes(signature);
+                        let isValid: boolean;
+
+                        if (key.algorithm === 'RSA') {
+                            isValid = await WebCrypto.verifyRSA(key.data, signatureBytes, messageBytes);
+                        } else if (key.algorithm === 'ECDSA') {
+                            isValid = await WebCrypto.verifyECDSA(key.data, signatureBytes, messageBytes);
+                        } else {
+                            isValid = await WebCrypto.verifyEd25519(key.data, signatureBytes, messageBytes);
+                        }
+
+                        const end = performance.now();
+                        addLog({
+                            keyLabel: key.name,
+                            operation: `Verify (${key.algorithm})`,
+                            result: isValid ? '✓ VALID' : '✗ INVALID',
+                            executionTime: end - start
+                        });
+                        setLoading(false);
+                        return;
+                    }
+
+                    if (!key.data || !(key.data instanceof Uint8Array)) throw new Error("Selected key has invalid data format (expected Uint8Array)");
                     if (!signature) throw new Error("No signature available. Run Sign first.");
 
                     const messageBytes = new TextEncoder().encode(dataToSign);
@@ -888,8 +1006,16 @@ export const InteractivePlayground = () => {
     };
 
 
-    const publicKeys = keyStore.filter(k => k.algorithm === algorithm && k.type === 'public');
-    const privateKeys = keyStore.filter(k => k.algorithm === algorithm && k.type === 'private');
+    const publicKeys = keyStore.filter(k => k.type === 'public' && (
+        k.algorithm === algorithm ||
+        (algorithm === 'ML-KEM' && ['X25519', 'P-256'].includes(k.algorithm)) ||
+        (algorithm === 'ML-DSA' && ['RSA', 'ECDSA', 'Ed25519'].includes(k.algorithm))
+    ));
+    const privateKeys = keyStore.filter(k => k.type === 'private' && (
+        k.algorithm === algorithm ||
+        (algorithm === 'ML-KEM' && ['X25519', 'P-256'].includes(k.algorithm)) ||
+        (algorithm === 'ML-DSA' && ['RSA', 'ECDSA', 'Ed25519'].includes(k.algorithm))
+    ));
 
     return (
         <div className="glass-panel p-6 h-[85vh] flex flex-col">
@@ -1554,6 +1680,10 @@ export const InteractivePlayground = () => {
                         onAlgorithmChange={handleAlgorithmChange}
                         onKeySizeChange={setKeySize}
                         onGenerateKeys={generateKeys}
+                        classicalAlgorithm={classicalAlgorithm}
+                        classicalLoading={classicalLoading}
+                        onClassicalAlgorithmChange={(algo) => setClassicalAlgorithm(algo as ClassicalAlgorithm)}
+                        onGenerateClassicalKeys={generateClassicalKeys}
                     />
                 )}
 

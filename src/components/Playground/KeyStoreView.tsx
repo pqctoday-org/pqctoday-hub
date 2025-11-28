@@ -14,12 +14,30 @@ interface KeyStoreViewProps {
     onAlgorithmChange: (algorithm: 'ML-KEM' | 'ML-DSA') => void;
     onKeySizeChange: (size: string) => void;
     onGenerateKeys: () => void;
+    // Classical algorithm props
+    classicalAlgorithm: string;
+    classicalLoading: boolean;
+    onClassicalAlgorithmChange: (algorithm: string) => void;
+    onGenerateClassicalKeys: () => void;
 }
 
 type SortColumn = 'name' | 'type' | 'algorithm' | 'id' | 'timestamp';
 type SortDirection = 'asc' | 'desc';
 
-export const KeyStoreView = ({ keyStore, setKeyStore, algorithm, keySize, loading, onAlgorithmChange, onKeySizeChange, onGenerateKeys }: KeyStoreViewProps) => {
+export const KeyStoreView = ({
+    keyStore,
+    setKeyStore,
+    algorithm,
+    keySize,
+    loading,
+    onAlgorithmChange,
+    onKeySizeChange,
+    onGenerateKeys,
+    classicalAlgorithm,
+    classicalLoading,
+    onClassicalAlgorithmChange,
+    onGenerateClassicalKeys
+}: KeyStoreViewProps) => {
     // Selection State
     const [selectedKeyId, setSelectedKeyId] = useState<string | null>(null);
 
@@ -139,6 +157,11 @@ export const KeyStoreView = ({ keyStore, setKeyStore, algorithm, keySize, loadin
     const formatValue = (key: Key, mode: 'hex' | 'ascii') => {
         if (!key.data) return key.value; // Fallback for mock keys
 
+        // If data is CryptoKey, use the pre-formatted hex value stored in key.value
+        if (key.dataType === 'cryptokey' || !(key.data instanceof Uint8Array)) {
+            return key.value;
+        }
+
         if (mode === 'hex') {
             return bytesToHex(key.data);
         } else {
@@ -152,6 +175,12 @@ export const KeyStoreView = ({ keyStore, setKeyStore, algorithm, keySize, loadin
     // Helper to simulate PKCS8 (wrapping in PEM)
     const formatPkcs8 = (key: Key, mode: 'hex' | 'ascii') => {
         if (!key.data) return 'PKCS#8 not available in Mock mode';
+
+        // If data is CryptoKey, we can't easily convert to PKCS8 synchronously here
+        // So we'll return a placeholder or the raw value
+        if (key.dataType === 'cryptokey' || !(key.data instanceof Uint8Array)) {
+            return mode === 'hex' ? key.value : 'PEM export requires async operation';
+        }
 
         const label = key.type === 'private' ? 'PRIVATE KEY' : 'PUBLIC KEY';
         const header = `-----BEGIN ${label}-----`;
@@ -288,6 +317,56 @@ export const KeyStoreView = ({ keyStore, setKeyStore, algorithm, keySize, loadin
                 </div>
             </div>
 
+            {/* Classical Algorithms Key Generation Section */}
+            <div className="bg-black/20 border border-white/10 rounded-xl p-6">
+                <div className="flex items-center gap-2 mb-4 pb-3 border-white/10">
+                    <Lock size={16} className="text-accent" />
+                    <h5 className="text-sm font-bold text-white uppercase tracking-wider">Generate Classical Keys</h5>
+                    <span className="text-xs text-muted ml-auto">(Web Crypto API)</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Algorithm Selection */}
+                    <div className="space-y-2">
+                        <label className="text-xs font-medium text-muted block">Classical Algorithm</label>
+                        <select
+                            value={classicalAlgorithm}
+                            onChange={(e) => onClassicalAlgorithmChange(e.target.value)}
+                            className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                        >
+                            <optgroup label="Signature Algorithms">
+                                <option value="RSA-2048">RSA-2048 (2048 bits)</option>
+                                <option value="RSA-3072">RSA-3072 (3072 bits)</option>
+                                <option value="RSA-4096">RSA-4096 (4096 bits)</option>
+                                <option value="ECDSA-P256">ECDSA P-256 (NIST)</option>
+                                <option value="Ed25519">Ed25519 (Curve25519)</option>
+                            </optgroup>
+                            <optgroup label="Key Exchange">
+                                <option value="X25519">X25519 (Curve25519)</option>
+                                <option value="P-256">P-256 ECDH (NIST)</option>
+                            </optgroup>
+                            <optgroup label="Symmetric Encryption">
+                                <option value="AES-128">AES-128-GCM</option>
+                                <option value="AES-256">AES-256-GCM</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    {/* Generate Button */}
+                    <div className="space-y-2">
+                        <label className="text-xs font-medium text-muted block opacity-0 select-none">Action</label>
+                        <button
+                            onClick={onGenerateClassicalKeys}
+                            disabled={classicalLoading}
+                            className="w-full btn-primary flex items-center justify-center gap-2 h-[42px] text-sm shadow-lg shadow-accent/20"
+                        >
+                            {classicalLoading ? <RefreshCw className="animate-spin" size={16} /> : <Lock size={16} />}
+                            Generate Classical Keys
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             {/* Table */}
             <div className="flex-1 min-h-[300px] overflow-hidden rounded-xl border border-white/10 bg-black/20 flex flex-col">
                 <div className="overflow-auto flex-1 custom-scrollbar">
@@ -342,7 +421,9 @@ export const KeyStoreView = ({ keyStore, setKeyStore, algorithm, keySize, loadin
                                         <td className="p-4">
                                             <span className={clsx(
                                                 "px-2 py-0.5 rounded text-[10px] uppercase font-bold",
-                                                key.type === 'public' ? "bg-primary/20 text-primary" : "bg-secondary/20 text-secondary"
+                                                key.type === 'public' ? "bg-primary/20 text-primary" :
+                                                    key.type === 'private' ? "bg-secondary/20 text-secondary" :
+                                                        "bg-accent/20 text-accent"
                                             )}>
                                                 {key.type}
                                             </span>
@@ -382,7 +463,7 @@ export const KeyStoreView = ({ keyStore, setKeyStore, algorithm, keySize, loadin
                                 <span>•</span>
                                 <span>{selectedKey.algorithm}</span>
                                 <span>•</span>
-                                <span>{selectedKey.data ? `${selectedKey.data.length} bytes` : 'Mock Data'}</span>
+                                <span>{selectedKey.data ? (selectedKey.data instanceof Uint8Array ? `${selectedKey.data.length} bytes` : 'CryptoKey Object') : 'Mock Data'}</span>
                             </div>
                         </div>
                     </div>
