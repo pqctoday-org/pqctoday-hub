@@ -19,12 +19,9 @@ The Interactive Playground provides a hands-on environment for testing post-quan
 - **Default Mode**: Mock mode (faster for initial exploration)
 - **Persistence**: Remember user's mode preference in session storage
 
-### 2.2 Algorithm Selection
-- **Toggle Interface**: Switch between ML-KEM (Encryption/KEM) and ML-DSA (Digital Signatures)
-- **Algorithm-Specific UI**: Operations and controls adapt based on selected algorithm
-- **Visual Indicators**: Active algorithm highlighted with color coding
-    - ML-KEM: Primary color (cyan)
-    - ML-DSA: Secondary color (purple/pink)
+### 2.2 Algorithm Selection (Unified Interface)
+- **Unified Interface**: Seamless access to both KEM and DSA operations without global toggling.
+- **Algorithm-Specific Tabs**: KEM, Encrypt, Sign, and Verify tabs are always visible.
 
 ### 2.3 Key Generation
 
@@ -192,8 +189,7 @@ Comprehensive enable/disable controls for all cryptographic algorithms:
 
 ### 3.1.2 Key Store Tab (✨ UPDATED)
 **Key Generation Section** (moved from Settings):
-- Algorithm selection (ML-KEM / ML-DSA)
-- Security level dropdown (dynamically updates based on algorithm)
+- Unified Algorithm & Security Level dropdown (ML-KEM and ML-DSA options combined)
 - Generate Keys button with loading state
 - Compact horizontal layout
 

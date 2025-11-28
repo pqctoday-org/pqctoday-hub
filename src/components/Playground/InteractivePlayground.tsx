@@ -299,7 +299,7 @@ export const InteractivePlayground = () => {
                             id: `pk-${idBase}`,
                             name: `${algoName} Public Key (WASM) [${timestamp}]`,
                             type: 'public',
-                            algorithm: 'ML-KEM',
+                            algorithm: algoName,
                             value: bytesToHex(keys.publicKey),
                             data: keys.publicKey,
                             dataType: 'binary',
@@ -309,7 +309,7 @@ export const InteractivePlayground = () => {
                             id: `sk-${idBase}`,
                             name: `${algoName} Private Key (WASM) [${timestamp}]`,
                             type: 'private',
-                            algorithm: 'ML-KEM',
+                            algorithm: algoName,
                             value: bytesToHex(keys.secretKey),
                             data: keys.secretKey,
                             dataType: 'binary',
@@ -342,7 +342,7 @@ export const InteractivePlayground = () => {
                             id: `pk-${idBase}`,
                             name: `${algoName} Public Key (WASM) [${timestamp}]`,
                             type: 'public',
-                            algorithm: 'ML-DSA',
+                            algorithm: algoName,
                             value: bytesToHex(keypair.publicKey),
                             data: keypair.publicKey,
                             dataType: 'binary',
@@ -352,7 +352,7 @@ export const InteractivePlayground = () => {
                             id: `sk-${idBase}`,
                             name: `${algoName} Private Key (WASM) [${timestamp}]`,
                             type: 'private',
-                            algorithm: 'ML-DSA',
+                            algorithm: algoName,
                             value: bytesToHex(keypair.secretKey),
                             data: keypair.secretKey,
                             dataType: 'binary',
@@ -614,6 +614,130 @@ export const InteractivePlayground = () => {
         const start = performance.now();
 
         try {
+            // 1. Identify the key involved (if any)
+            let selectedKey: Key | undefined;
+            if (type === 'encapsulate') selectedKey = keyStore.find(k => k.id === selectedEncKeyId);
+            else if (type === 'decapsulate') selectedKey = keyStore.find(k => k.id === selectedDecKeyId);
+            else if (type === 'sign') selectedKey = keyStore.find(k => k.id === selectedSignKeyId);
+            else if (type === 'verify') selectedKey = keyStore.find(k => k.id === selectedVerifyKeyId);
+
+            // 2. Check if Classical Algorithm
+            const isClassical = selectedKey && (
+                ['Ed25519', 'X25519', 'P-256'].includes(selectedKey.algorithm) ||
+                selectedKey.algorithm.startsWith('RSA') ||
+                selectedKey.algorithm.startsWith('ECDSA')
+            );
+
+            if (isClassical && selectedKey) {
+                // --- CLASSICAL OPERATIONS (Web Crypto) ---
+                if (type === 'encapsulate') {
+                    if (!selectedKey.data || !(selectedKey.data instanceof CryptoKey)) throw new Error("Invalid key data for Web Crypto operation");
+
+                    const ephemeralKeyPair = selectedKey.algorithm === 'X25519'
+                        ? await WebCrypto.generateX25519KeyPair()
+                        : await WebCrypto.generateECDHKeyPair();
+
+                    const sharedSecretBytes = await WebCrypto.deriveSharedSecret(ephemeralKeyPair.privateKey, selectedKey.data);
+                    const ciphertextHex = ephemeralKeyPair.publicKeyHex;
+
+                    setSharedSecret(bytesToHex(sharedSecretBytes));
+                    setCiphertext(ciphertextHex);
+
+                    const end = performance.now();
+                    addLog({
+                        keyLabel: selectedKey.name,
+                        operation: `Encapsulate (${selectedKey.algorithm})`,
+                        result: `Shared Secret: ${sharedSecretBytes.length}B, Ephemeral PK: ${ciphertextHex.length / 2}B`,
+                        executionTime: end - start
+                    });
+                    setLoading(false);
+                    return;
+                }
+                else if (type === 'decapsulate') {
+                    if (!selectedKey.data || !(selectedKey.data instanceof CryptoKey)) throw new Error("Invalid key data for Web Crypto operation");
+                    if (!ciphertext) throw new Error("No ciphertext available. Run Encapsulate first.");
+
+                    const epkBytes = hexToBytes(ciphertext);
+                    const epk = await window.crypto.subtle.importKey(
+                        'raw',
+                        epkBytes as BufferSource,
+                        selectedKey.algorithm === 'X25519' ? { name: 'X25519' } : { name: 'ECDH', namedCurve: 'P-256' },
+                        true,
+                        []
+                    );
+
+                    const recoveredSecret = await WebCrypto.deriveSharedSecret(selectedKey.data, epk);
+
+                    // Verify match
+                    let matches = false;
+                    if (sharedSecret) {
+                        const originalSecretBytes = hexToBytes(sharedSecret);
+                        matches = recoveredSecret.every((byte: number, i: number) => byte === originalSecretBytes[i]);
+                    }
+
+                    const end = performance.now();
+                    addLog({
+                        keyLabel: selectedKey.name,
+                        operation: `Decapsulate (${selectedKey.algorithm})`,
+                        result: matches ? '✓ Secret Recovered (Match)' : '✗ Mismatch',
+                        executionTime: end - start
+                    });
+                    setLoading(false);
+                    return;
+                }
+                else if (type === 'sign') {
+                    if (!selectedKey.data || !(selectedKey.data instanceof CryptoKey)) throw new Error("Invalid key data for Web Crypto operation");
+
+                    const messageBytes = new TextEncoder().encode(dataToSign);
+                    let signature: Uint8Array;
+
+                    if (selectedKey.algorithm.startsWith('RSA')) {
+                        signature = await WebCrypto.signRSA(selectedKey.data, messageBytes);
+                    } else if (selectedKey.algorithm.startsWith('ECDSA')) {
+                        signature = await WebCrypto.signECDSA(selectedKey.data, messageBytes);
+                    } else {
+                        signature = await WebCrypto.signEd25519(selectedKey.data, messageBytes);
+                    }
+
+                    const end = performance.now();
+                    setSignature(bytesToHex(signature));
+                    addLog({
+                        keyLabel: selectedKey.name,
+                        operation: `Sign (${selectedKey.algorithm})`,
+                        result: `Signature: ${signature.length} bytes`,
+                        executionTime: end - start
+                    });
+                    setLoading(false);
+                    return;
+                }
+                else if (type === 'verify') {
+                    if (!selectedKey.data || !(selectedKey.data instanceof CryptoKey)) throw new Error("Invalid key data for Web Crypto operation");
+                    if (!signature) throw new Error("No signature available. Run Sign first.");
+
+                    const messageBytes = new TextEncoder().encode(dataToSign);
+                    const signatureBytes = hexToBytes(signature);
+                    let isValid: boolean;
+
+                    if (selectedKey.algorithm.startsWith('RSA')) {
+                        isValid = await WebCrypto.verifyRSA(selectedKey.data, signatureBytes, messageBytes);
+                    } else if (selectedKey.algorithm.startsWith('ECDSA')) {
+                        isValid = await WebCrypto.verifyECDSA(selectedKey.data, signatureBytes, messageBytes);
+                    } else {
+                        isValid = await WebCrypto.verifyEd25519(selectedKey.data, signatureBytes, messageBytes);
+                    }
+
+                    const end = performance.now();
+                    addLog({
+                        keyLabel: selectedKey.name,
+                        operation: `Verify (${selectedKey.algorithm})`,
+                        result: isValid ? '✓ VALID' : '✗ INVALID',
+                        executionTime: end - start
+                    });
+                    setLoading(false);
+                    return;
+                }
+            }
+
             if (executionMode === 'wasm') {
                 // WASM Mode Operations
                 if (!wasmLoaded) throw new Error('WASM libraries not loaded');
@@ -622,34 +746,20 @@ export const InteractivePlayground = () => {
                     const key = keyStore.find(k => k.id === selectedEncKeyId);
                     if (!key) throw new Error("Please select a Public Key");
 
-                    // Classical Logic (X25519, P-256)
-                    if (['X25519', 'P-256'].includes(key.algorithm)) {
-                        if (!key.data || !(key.data instanceof CryptoKey)) throw new Error("Invalid key data for Web Crypto operation");
 
-                        const ephemeralKeyPair = key.algorithm === 'X25519'
-                            ? await WebCrypto.generateX25519KeyPair()
-                            : await WebCrypto.generateECDHKeyPair();
-
-                        const sharedSecretBytes = await WebCrypto.deriveSharedSecret(ephemeralKeyPair.privateKey, key.data);
-                        const ciphertextHex = ephemeralKeyPair.publicKeyHex;
-
-                        setSharedSecret(bytesToHex(sharedSecretBytes));
-                        setCiphertext(ciphertextHex);
-
-                        const end = performance.now();
-                        addLog({
-                            keyLabel: key.name,
-                            operation: `Encapsulate (${key.algorithm})`,
-                            result: `Shared Secret: ${sharedSecretBytes.length}B, Ephemeral PK: ${ciphertextHex.length / 2}B`,
-                            executionTime: end - start
-                        });
-                        setLoading(false);
-                        return;
-                    }
 
                     if (!key.data || !(key.data instanceof Uint8Array)) throw new Error("Selected key has invalid data format (expected Uint8Array)");
 
-                    const { ciphertext, sharedKey } = await MLKEM.encapsulateBits({ name: `ML-KEM-${keySize}` }, key.data);
+                    let algoName = key.algorithm;
+                    if (algoName === 'ML-KEM') {
+                        // Infer from key size for legacy keys
+                        const len = key.data.length;
+                        if (len === 800) algoName = 'ML-KEM-512';
+                        else if (len === 1184) algoName = 'ML-KEM-768';
+                        else if (len === 1568) algoName = 'ML-KEM-1024';
+                        else algoName = `ML-KEM-${keySize}`; // Fallback
+                    }
+                    const { ciphertext, sharedKey } = await MLKEM.encapsulateBits({ name: algoName }, key.data);
 
                     setSharedSecret(bytesToHex(sharedKey));
                     setCiphertext(bytesToHex(ciphertext));
@@ -667,44 +777,21 @@ export const InteractivePlayground = () => {
                     const key = keyStore.find(k => k.id === selectedDecKeyId);
                     if (!key) throw new Error("Please select a Private Key");
 
-                    // Classical Logic (X25519, P-256)
-                    if (['X25519', 'P-256'].includes(key.algorithm)) {
-                        if (!key.data || !(key.data instanceof CryptoKey)) throw new Error("Invalid key data for Web Crypto operation");
-                        if (!ciphertext) throw new Error("No ciphertext available. Run Encapsulate first.");
 
-                        const epkBytes = hexToBytes(ciphertext);
-                        const epk = await window.crypto.subtle.importKey(
-                            'raw',
-                            epkBytes as BufferSource,
-                            key.algorithm === 'X25519' ? { name: 'X25519' } : { name: 'ECDH', namedCurve: 'P-256' },
-                            true,
-                            []
-                        );
-
-                        const recoveredSecret = await WebCrypto.deriveSharedSecret(key.data, epk);
-
-                        // Verify match
-                        let matches = false;
-                        if (sharedSecret) {
-                            const originalSecretBytes = hexToBytes(sharedSecret);
-                            matches = recoveredSecret.every((byte: number, i: number) => byte === originalSecretBytes[i]);
-                        }
-
-                        const end = performance.now();
-                        addLog({
-                            keyLabel: key.name,
-                            operation: `Decapsulate (${key.algorithm})`,
-                            result: matches ? '✓ Secret Recovered (Match)' : '✗ Mismatch',
-                            executionTime: end - start
-                        });
-                        setLoading(false);
-                        return;
-                    }
 
                     if (!key.data || !(key.data instanceof Uint8Array)) throw new Error("Selected key has invalid data format (expected Uint8Array)");
                     if (!ciphertext) throw new Error("No ciphertext available. Run Encapsulate first.");
 
-                    const recoveredSecret = await MLKEM.decapsulateBits({ name: `ML-KEM-${keySize}` }, key.data, hexToBytes(ciphertext));
+                    let algoName = key.algorithm;
+                    if (algoName === 'ML-KEM') {
+                        // Infer from key size for legacy keys
+                        const len = key.data.length;
+                        if (len === 1632) algoName = 'ML-KEM-512';
+                        else if (len === 2400) algoName = 'ML-KEM-768';
+                        else if (len === 3168) algoName = 'ML-KEM-1024';
+                        else algoName = `ML-KEM-${keySize}`; // Fallback
+                    }
+                    const recoveredSecret = await MLKEM.decapsulateBits({ name: algoName }, key.data, hexToBytes(ciphertext));
 
                     // Verify against the shared secret from encapsulation (if available)
                     let matches = false;
@@ -802,32 +889,7 @@ export const InteractivePlayground = () => {
                     const key = keyStore.find(k => k.id === selectedSignKeyId);
                     if (!key) throw new Error("Please select a Private Key");
 
-                    // Classical Logic (RSA, ECDSA, Ed25519)
-                    if (['RSA', 'ECDSA', 'Ed25519'].includes(key.algorithm)) {
-                        if (!key.data || !(key.data instanceof CryptoKey)) throw new Error("Invalid key data for Web Crypto operation");
 
-                        const messageBytes = new TextEncoder().encode(dataToSign);
-                        let signature: Uint8Array;
-
-                        if (key.algorithm === 'RSA') {
-                            signature = await WebCrypto.signRSA(key.data, messageBytes);
-                        } else if (key.algorithm === 'ECDSA') {
-                            signature = await WebCrypto.signECDSA(key.data, messageBytes);
-                        } else {
-                            signature = await WebCrypto.signEd25519(key.data, messageBytes);
-                        }
-
-                        const end = performance.now();
-                        setSignature(bytesToHex(signature));
-                        addLog({
-                            keyLabel: key.name,
-                            operation: `Sign (${key.algorithm})`,
-                            result: `Signature: ${signature.length} bytes`,
-                            executionTime: end - start
-                        });
-                        setLoading(false);
-                        return;
-                    }
 
                     if (!key.data || !(key.data instanceof Uint8Array)) throw new Error("Selected key has invalid data format (expected Uint8Array)");
 
@@ -849,33 +911,7 @@ export const InteractivePlayground = () => {
                     const key = keyStore.find(k => k.id === selectedVerifyKeyId);
                     if (!key) throw new Error("Please select a Public Key");
 
-                    // Classical Logic (RSA, ECDSA, Ed25519)
-                    if (['RSA', 'ECDSA', 'Ed25519'].includes(key.algorithm)) {
-                        if (!key.data || !(key.data instanceof CryptoKey)) throw new Error("Invalid key data for Web Crypto operation");
-                        if (!signature) throw new Error("No signature available. Run Sign first.");
 
-                        const messageBytes = new TextEncoder().encode(dataToSign);
-                        const signatureBytes = hexToBytes(signature);
-                        let isValid: boolean;
-
-                        if (key.algorithm === 'RSA') {
-                            isValid = await WebCrypto.verifyRSA(key.data, signatureBytes, messageBytes);
-                        } else if (key.algorithm === 'ECDSA') {
-                            isValid = await WebCrypto.verifyECDSA(key.data, signatureBytes, messageBytes);
-                        } else {
-                            isValid = await WebCrypto.verifyEd25519(key.data, signatureBytes, messageBytes);
-                        }
-
-                        const end = performance.now();
-                        addLog({
-                            keyLabel: key.name,
-                            operation: `Verify (${key.algorithm})`,
-                            result: isValid ? '✓ VALID' : '✗ INVALID',
-                            executionTime: end - start
-                        });
-                        setLoading(false);
-                        return;
-                    }
 
                     if (!key.data || !(key.data instanceof Uint8Array)) throw new Error("Selected key has invalid data format (expected Uint8Array)");
                     if (!signature) throw new Error("No signature available. Run Sign first.");
@@ -1006,16 +1042,14 @@ export const InteractivePlayground = () => {
     };
 
 
-    const publicKeys = keyStore.filter(k => k.type === 'public' && (
-        k.algorithm === algorithm ||
-        (algorithm === 'ML-KEM' && ['X25519', 'P-256'].includes(k.algorithm)) ||
-        (algorithm === 'ML-DSA' && ['RSA', 'ECDSA', 'Ed25519'].includes(k.algorithm))
-    ));
-    const privateKeys = keyStore.filter(k => k.type === 'private' && (
-        k.algorithm === algorithm ||
-        (algorithm === 'ML-KEM' && ['X25519', 'P-256'].includes(k.algorithm)) ||
-        (algorithm === 'ML-DSA' && ['RSA', 'ECDSA', 'Ed25519'].includes(k.algorithm))
-    ));
+    const isKEM = (algo: string) => algo.startsWith('ML-KEM') || ['X25519', 'P-256'].includes(algo);
+    const isSign = (algo: string) => algo.startsWith('ML-DSA') || algo.startsWith('RSA') || algo.startsWith('ECDSA') || algo === 'Ed25519';
+
+    const kemPublicKeys = keyStore.filter(k => k.type === 'public' && isKEM(k.algorithm));
+    const kemPrivateKeys = keyStore.filter(k => k.type === 'private' && isKEM(k.algorithm));
+
+    const signPublicKeys = keyStore.filter(k => k.type === 'public' && isSign(k.algorithm));
+    const signPrivateKeys = keyStore.filter(k => k.type === 'private' && isSign(k.algorithm));
 
     return (
         <div className="glass-panel p-6 h-[85vh] flex flex-col">
@@ -1048,50 +1082,43 @@ export const InteractivePlayground = () => {
                     <Database size={16} /> Data
                 </button>
 
-                {/* Dynamic Tabs based on Algorithm */}
-                {algorithm === 'ML-KEM' ? (
-                    <>
-                        <button
-                            onClick={() => setActiveTab('kem')}
-                            className={clsx(
-                                "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
-                                activeTab === 'kem' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5"
-                            )}
-                        >
-                            <Activity size={16} /> KEM
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('encrypt')}
-                            className={clsx(
-                                "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
-                                activeTab === 'encrypt' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5"
-                            )}
-                        >
-                            <Lock size={16} /> Encrypt
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <button
-                            onClick={() => setActiveTab('sign')}
-                            className={clsx(
-                                "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
-                                activeTab === 'sign' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5"
-                            )}
-                        >
-                            <FileSignature size={16} /> Sign
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('verify')}
-                            className={clsx(
-                                "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
-                                activeTab === 'verify' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5"
-                            )}
-                        >
-                            <FileSignature size={16} /> Verify
-                        </button>
-                    </>
-                )}
+                {/* PQC Tabs */}
+                <button
+                    onClick={() => setActiveTab('kem')}
+                    className={clsx(
+                        "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
+                        activeTab === 'kem' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5"
+                    )}
+                >
+                    <Activity size={16} /> KEM
+                </button>
+                <button
+                    onClick={() => setActiveTab('encrypt')}
+                    className={clsx(
+                        "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
+                        activeTab === 'encrypt' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5"
+                    )}
+                >
+                    <Lock size={16} /> Encrypt
+                </button>
+                <button
+                    onClick={() => setActiveTab('sign')}
+                    className={clsx(
+                        "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
+                        activeTab === 'sign' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5"
+                    )}
+                >
+                    <FileSignature size={16} /> Sign
+                </button>
+                <button
+                    onClick={() => setActiveTab('verify')}
+                    className={clsx(
+                        "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
+                        activeTab === 'verify' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5"
+                    )}
+                >
+                    <FileSignature size={16} /> Verify
+                </button>
 
                 <button
                     onClick={() => setActiveTab('keystore')}
@@ -1417,73 +1444,67 @@ export const InteractivePlayground = () => {
                         </h4>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Signing Section - Only for ML-DSA */}
-                            {algorithm === 'ML-DSA' && (
-                                <div className="space-y-6">
-                                    <h5 className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
-                                        <FileSignature size={14} /> Signing & Verification
-                                    </h5>
-                                    <DataInput
-                                        label="Data to Sign / Verify"
-                                        value={dataToSign}
-                                        onChange={setDataToSign}
-                                        placeholder="Enter message to sign..."
-                                    />
-                                    <DataInput
-                                        label="Signature"
-                                        value={signature}
-                                        onChange={setSignature}
-                                        placeholder="Signature will appear here..."
-                                        inputType="binary"
-                                    />
-                                </div>
-                            )}
-
-                            {/* Encryption Section - Only for ML-KEM */}
-                            {algorithm === 'ML-KEM' && (
-                                <div className="space-y-6">
-                                    <h5 className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
-                                        <Lock size={14} /> Encryption & Decryption
-                                    </h5>
-                                    <DataInput
-                                        label="Data to Encrypt"
-                                        value={dataToEncrypt}
-                                        onChange={setDataToEncrypt}
-                                        placeholder="Enter message to encrypt..."
-                                    />
-                                    <DataInput
-                                        label="Decrypted Data"
-                                        value={decryptedData}
-                                        onChange={setDecryptedData}
-                                        placeholder="Decrypted message will appear here..."
-                                        readOnly={true}
-                                    />
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Shared Secret (ML-KEM) */}
-                        {algorithm === 'ML-KEM' && (
-                            <div className="mt-8 pt-6 border-t border-white/10">
-                                <h5 className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2 mb-4">
-                                    <KeyIcon size={14} /> Shared Secret (ML-KEM)
+                            {/* Signing Section */}
+                            <div className="space-y-6">
+                                <h5 className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                                    <FileSignature size={14} /> Signing & Verification
                                 </h5>
                                 <DataInput
-                                    label="Established Shared Secret"
-                                    value={sharedSecret}
-                                    onChange={() => { }} // Read-only mostly, or we can allow edit if needed for testing
-                                    readOnly={true}
-                                    placeholder="Shared secret will appear here after encapsulation..."
-                                    height="h-16"
+                                    label="Data to Sign / Verify"
+                                    value={dataToSign}
+                                    onChange={setDataToSign}
+                                    placeholder="Enter message to sign..."
+                                />
+                                <DataInput
+                                    label="Signature"
+                                    value={signature}
+                                    onChange={setSignature}
+                                    placeholder="Signature will appear here..."
                                     inputType="binary"
                                 />
                             </div>
-                        )}
+
+                            {/* Encryption Section */}
+                            <div className="space-y-6">
+                                <h5 className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+                                    <Lock size={14} /> Encryption & Decryption
+                                </h5>
+                                <DataInput
+                                    label="Data to Encrypt"
+                                    value={dataToEncrypt}
+                                    onChange={setDataToEncrypt}
+                                    placeholder="Enter message to encrypt..."
+                                />
+                                <DataInput
+                                    label="Decrypted Data"
+                                    value={decryptedData}
+                                    onChange={setDecryptedData}
+                                    placeholder="Decrypted message will appear here..."
+                                    readOnly={true}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Shared Secret */}
+                        <div className="mt-8 pt-6 border-t border-white/10">
+                            <h5 className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2 mb-4">
+                                <KeyIcon size={14} /> Shared Secret (ML-KEM)
+                            </h5>
+                            <DataInput
+                                label="Established Shared Secret"
+                                value={sharedSecret}
+                                onChange={() => { }} // Read-only mostly, or we can allow edit if needed for testing
+                                readOnly={true}
+                                placeholder="Shared secret will appear here after encapsulation..."
+                                height="h-16"
+                                inputType="binary"
+                            />
+                        </div>
                     </div>
                 )}
 
                 {/* Tab: KEM (ML-KEM Only) */}
-                {activeTab === 'kem' && algorithm === 'ML-KEM' && (
+                {activeTab === 'kem' && (
                     <div className="max-w-4xl mx-auto animate-fade-in">
                         <h4 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
                             <Activity size={18} className="text-accent" /> Key Encapsulation Mechanism
@@ -1503,7 +1524,7 @@ export const InteractivePlayground = () => {
                                     className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-blue-500"
                                 >
                                     <option value="">Select Public Key...</option>
-                                    {publicKeys.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
+                                    {kemPublicKeys.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
                                 </select>
                                 <button
                                     onClick={() => { runOperation('encapsulate'); }}
@@ -1528,7 +1549,7 @@ export const InteractivePlayground = () => {
                                     className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-purple-500"
                                 >
                                     <option value="">Select Private Key...</option>
-                                    {privateKeys.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
+                                    {kemPrivateKeys.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
                                 </select>
                                 <button
                                     onClick={() => { runOperation('decapsulate'); }}
@@ -1543,7 +1564,7 @@ export const InteractivePlayground = () => {
                 )}
 
                 {/* Tab: Encrypt (ML-KEM Only) */}
-                {activeTab === 'encrypt' && algorithm === 'ML-KEM' && (
+                {activeTab === 'encrypt' && (
                     <div className="max-w-4xl mx-auto animate-fade-in">
                         <h4 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
                             <Lock size={18} className="text-accent" /> AES-GCM Encryption (Hybrid)
@@ -1593,7 +1614,7 @@ export const InteractivePlayground = () => {
                 )}
 
                 {/* Tab: Sign (ML-DSA Only) */}
-                {activeTab === 'sign' && algorithm === 'ML-DSA' && (
+                {activeTab === 'sign' && (
                     <div className="max-w-4xl mx-auto animate-fade-in">
                         <h4 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
                             <FileSignature size={18} className="text-accent" /> Sign Message
@@ -1611,7 +1632,7 @@ export const InteractivePlayground = () => {
                                         className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-green-500"
                                     >
                                         <option value="">Select Private Key...</option>
-                                        {privateKeys.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
+                                        {signPrivateKeys.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
                                     </select>
                                 </div>
                                 <button
@@ -1627,7 +1648,7 @@ export const InteractivePlayground = () => {
                 )}
 
                 {/* Tab: Verify (ML-DSA Only) */}
-                {activeTab === 'verify' && algorithm === 'ML-DSA' && (
+                {activeTab === 'verify' && (
                     <div className="max-w-4xl mx-auto animate-fade-in">
                         <h4 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
                             <FileSignature size={18} className="text-accent" /> Verify Signature
@@ -1645,7 +1666,7 @@ export const InteractivePlayground = () => {
                                         className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-amber-500"
                                     >
                                         <option value="">Select Public Key...</option>
-                                        {publicKeys.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
+                                        {signPublicKeys.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
                                     </select>
                                 </div>
                                 <div className="flex flex-col gap-2">
@@ -1680,6 +1701,10 @@ export const InteractivePlayground = () => {
                         onAlgorithmChange={handleAlgorithmChange}
                         onKeySizeChange={setKeySize}
                         onGenerateKeys={generateKeys}
+                        onUnifiedChange={(algo, size) => {
+                            setAlgorithm(algo);
+                            setKeySize(size);
+                        }}
                         classicalAlgorithm={classicalAlgorithm}
                         classicalLoading={classicalLoading}
                         onClassicalAlgorithmChange={(algo) => setClassicalAlgorithm(algo as ClassicalAlgorithm)}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Key as KeyIcon, Trash2, ArrowUpDown, ArrowUp, ArrowDown, FileText, Code, Copy, Check, RefreshCw, Lock, FileSignature, Layers } from 'lucide-react';
+import { Key as KeyIcon, Trash2, ArrowUpDown, ArrowUp, ArrowDown, FileText, Code, Copy, Check, RefreshCw, Lock, Layers } from 'lucide-react';
 import clsx from 'clsx';
 import type { Key } from '../../types';
 import { bytesToHex } from './DataInput';
@@ -14,6 +14,7 @@ interface KeyStoreViewProps {
     onAlgorithmChange: (algorithm: 'ML-KEM' | 'ML-DSA') => void;
     onKeySizeChange: (size: string) => void;
     onGenerateKeys: () => void;
+    onUnifiedChange?: (algorithm: 'ML-KEM' | 'ML-DSA', keySize: string) => void;
     // Classical algorithm props
     classicalAlgorithm: string;
     classicalLoading: boolean;
@@ -36,7 +37,8 @@ export const KeyStoreView = ({
     classicalAlgorithm,
     classicalLoading,
     onClassicalAlgorithmChange,
-    onGenerateClassicalKeys
+    onGenerateClassicalKeys,
+    onUnifiedChange
 }: KeyStoreViewProps) => {
     // Selection State
     const [selectedKeyId, setSelectedKeyId] = useState<string | null>(null);
@@ -292,58 +294,43 @@ export const KeyStoreView = ({
                     <h5 className="text-sm font-bold text-white uppercase tracking-wider">Generate New Keys</h5>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* Algorithm Selection */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Algorithm & Key Size Selection */}
                     <div className="space-y-2">
-                        <label className="text-xs font-medium text-muted block">Algorithm</label>
-                        <div className="grid grid-cols-2 gap-2">
-                            <button
-                                onClick={() => onAlgorithmChange('ML-KEM')}
-                                className={clsx(
-                                    "px-3 py-2 rounded-lg text-xs font-bold transition-all border flex items-center justify-center gap-1.5",
-                                    algorithm === 'ML-KEM'
-                                        ? "bg-primary/20 text-primary border-primary/30"
-                                        : "bg-black/20 text-muted border-transparent hover:text-white hover:bg-white/5"
-                                )}
-                            >
-                                <Lock size={12} /> ML-KEM
-                            </button>
-                            <button
-                                onClick={() => onAlgorithmChange('ML-DSA')}
-                                className={clsx(
-                                    "px-3 py-2 rounded-lg text-xs font-bold transition-all border flex items-center justify-center gap-1.5",
-                                    algorithm === 'ML-DSA'
-                                        ? "bg-secondary/20 text-secondary border-secondary/30"
-                                        : "bg-black/20 text-muted border-transparent hover:text-white hover:bg-white/5"
-                                )}
-                            >
-                                <FileSignature size={12} /> ML-DSA
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Key Size Selection */}
-                    <div className="space-y-2">
-                        <label htmlFor="keystore-key-size" className="text-xs font-medium text-muted block">Security Level</label>
+                        <label htmlFor="keystore-key-size" className="text-xs font-medium text-muted block">Algorithm & Security Level</label>
                         <select
                             id="keystore-key-size"
                             value={keySize}
-                            onChange={(e) => onKeySizeChange(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                if (['512', '768', '1024'].includes(val)) {
+                                    if (onUnifiedChange) {
+                                        onUnifiedChange('ML-KEM', val);
+                                    } else {
+                                        if (algorithm !== 'ML-KEM') onAlgorithmChange('ML-KEM');
+                                        onKeySizeChange(val);
+                                    }
+                                } else {
+                                    if (onUnifiedChange) {
+                                        onUnifiedChange('ML-DSA', val);
+                                    } else {
+                                        if (algorithm !== 'ML-DSA') onAlgorithmChange('ML-DSA');
+                                        onKeySizeChange(val);
+                                    }
+                                }
+                            }}
                             className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary appearance-none transition-colors"
                         >
-                            {algorithm === 'ML-KEM' ? (
-                                <>
-                                    <option value="512">ML-KEM-512 (Level 1)</option>
-                                    <option value="768">ML-KEM-768 (Level 3)</option>
-                                    <option value="1024">ML-KEM-1024 (Level 5)</option>
-                                </>
-                            ) : (
-                                <>
-                                    <option value="44">ML-DSA-44 (Level 2)</option>
-                                    <option value="65">ML-DSA-65 (Level 3)</option>
-                                    <option value="87">ML-DSA-87 (Level 5)</option>
-                                </>
-                            )}
+                            <optgroup label="ML-KEM (Key Encapsulation)">
+                                <option value="512">ML-KEM-512 (NIST Level 1)</option>
+                                <option value="768">ML-KEM-768 (NIST Level 3)</option>
+                                <option value="1024">ML-KEM-1024 (NIST Level 5)</option>
+                            </optgroup>
+                            <optgroup label="ML-DSA (Digital Signatures)">
+                                <option value="44">ML-DSA-44 (NIST Level 2)</option>
+                                <option value="65">ML-DSA-65 (NIST Level 3)</option>
+                                <option value="87">ML-DSA-87 (NIST Level 5)</option>
+                            </optgroup>
                         </select>
                     </div>
 
