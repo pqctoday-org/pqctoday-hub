@@ -108,10 +108,21 @@ The Interactive Playground provides a hands-on environment for testing post-quan
 
 #### 3. Verify Signature (Public Key)
 - Select public key from dropdown
-- Input or edit signature to verify
-- Display verification result:
-    - ✓ VALID (green)
-    - ✗ INVALID (red)
+- Verify the signature against the message
+- Display VALID/INVALID result
+- **Signature Inspection**: Editable text box to view/modify signature before verification
+
+### 2.6 Classical Cryptography Integration
+- **Algorithms**: Support for generating and using classical keys alongside PQC.
+    - **Signature**: RSA (2048/3072/4096), ECDSA (P-256), Ed25519.
+    - **Key Exchange**: X25519, P-256 ECDH.
+    - **Symmetric**: AES-128-GCM, AES-256-GCM.
+- **Implementation**: Uses native browser Web Crypto API (always "Real" mode).
+- **Key Generation**: Dedicated section in Key Store for generating classical keys.
+- **Operations**:
+    - **Sign/Verify**: RSA, ECDSA, Ed25519 keys integrated into Sign/Verify tabs.
+    - **Encapsulate/Decapsulate**: X25519/P-256 keys integrated into KEM tab (using Ephemeral-Static ECDH flow).
+    - **Encrypt/Decrypt**: Uses AES-GCM (via shared secret from KEM).
 
 ## 3. User Interface Requirements
 
