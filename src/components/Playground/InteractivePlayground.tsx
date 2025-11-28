@@ -3,6 +3,7 @@ import { RefreshCw, Lock, Key as KeyIcon, Play, AlertCircle, FileSignature, Cpu,
 import clsx from 'clsx';
 import { DataInput, bytesToHex, hexToBytes } from './DataInput';
 import { ACVPTesting } from '../ACVP/ACVPTesting';
+import * as WebCrypto from '../../utils/webCrypto';
 import { KeyStoreView } from './KeyStoreView';
 
 // WASM wrappers
@@ -68,34 +69,39 @@ export const InteractivePlayground = () => {
     const [dataToEncrypt, setDataToEncrypt] = useState('Secret Message');
     const [decryptedData, setDecryptedData] = useState('');
 
+    // Classical Algorithm Selection (for Web Crypto API)
+    type ClassicalAlgorithm = 'RSA-2048' | 'RSA-3072' | 'RSA-4096' | 'ECDSA-P256' | 'Ed25519' | 'X25519' | 'P-256' | 'AES-128' | 'AES-256';
+    const [classicalAlgorithm, setClassicalAlgorithm] = useState<ClassicalAlgorithm>('RSA-2048');
+    const [classicalLoading, setClassicalLoading] = useState(false);
+
     // Enabled Algorithms Configuration
-    // Only algorithms with actual WASM implementations are enabled by default
+    // Only algorithms with actual implementations are enabled by default
     const [enabledAlgorithms, setEnabledAlgorithms] = useState({
         kem: {
-            'ML-KEM-512': true,   // ✅ Implemented in WASM
-            'ML-KEM-768': true,   // ✅ Implemented in WASM
-            'ML-KEM-1024': true,  // ✅ Implemented in WASM
-            'X25519': false,      // ❌ Not yet implemented
-            'P-256': false,       // ❌ Not yet implemented
+            'ML-KEM-512': true,   // ✅ Implemented in WASM (liboqs)
+            'ML-KEM-768': true,   // ✅ Implemented in WASM (liboqs)
+            'ML-KEM-1024': true,  // ✅ Implemented in WASM (liboqs)
+            'X25519': true,       // ✅ Implemented in Web Crypto API
+            'P-256': true,        // ✅ Implemented in Web Crypto API
         },
         signature: {
-            'ML-DSA-44': true,    // ✅ Implemented in WASM
-            'ML-DSA-65': true,    // ✅ Implemented in WASM
-            'ML-DSA-87': true,    // ✅ Implemented in WASM
-            'RSA-2048': false,    // ❌ Not yet implemented
-            'RSA-3072': false,    // ❌ Not yet implemented
-            'RSA-4096': false,    // ❌ Not yet implemented
-            'ECDSA-P256': false,  // ❌ Not yet implemented
-            'Ed25519': false,     // ❌ Not yet implemented
+            'ML-DSA-44': true,    // ✅ Implemented in WASM (liboqs)
+            'ML-DSA-65': true,    // ✅ Implemented in WASM (liboqs)
+            'ML-DSA-87': true,    // ✅ Implemented in WASM (liboqs)
+            'RSA-2048': true,     // ✅ Implemented in Web Crypto API
+            'RSA-3072': true,     // ✅ Implemented in Web Crypto API
+            'RSA-4096': true,     // ✅ Implemented in Web Crypto API
+            'ECDSA-P256': true,   // ✅ Implemented in Web Crypto API
+            'Ed25519': true,      // ✅ Implemented in Web Crypto API
         },
         symmetric: {
-            'AES-128-GCM': false, // ❌ Not yet implemented (Web Crypto API available but not integrated)
-            'AES-256-GCM': false, // ❌ Not yet implemented (Web Crypto API available but not integrated)
+            'AES-128-GCM': true,  // ✅ Implemented in Web Crypto API
+            'AES-256-GCM': true,  // ✅ Implemented in Web Crypto API
         },
         hash: {
-            'SHA-256': false,     // ❌ Not yet implemented (Web Crypto API available but not integrated)
-            'SHA-384': false,     // ❌ Not yet implemented (Web Crypto API available but not integrated)
-            'SHA3-256': false,    // ❌ Not yet implemented
+            'SHA-256': true,      // ✅ Implemented in Web Crypto API
+            'SHA-384': true,      // ✅ Implemented in Web Crypto API
+            'SHA3-256': false,    // ⏸️ Skipped for now (would need @noble/hashes)
         }
     });
 
@@ -425,6 +431,180 @@ export const InteractivePlayground = () => {
             setError(`Failed to generate keys: ${err.message}`);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const generateClassicalKeys = async () => {
+        setClassicalLoading(true);
+        setError(null);
+        const start = performance.now();
+
+        try {
+            const timestamp = new Date().toLocaleTimeString([], { hour12: false });
+            const idBase = Math.random().toString(36).substring(2, 9);
+            let newKeys: Key[] = [];
+            let keyPairResult;
+
+            // Generate keys based on selected algorithm
+            if (classicalAlgorithm.startsWith('RSA')) {
+                const keySize = parseInt(classicalAlgorithm.split('-')[1]) as WebCrypto.RSAKeySize;
+                keyPairResult = await WebCrypto.generateRSAKeyPair(keySize);
+
+                newKeys = [
+                    {
+                        id: `pk-${idBase}`,
+                        name: `${classicalAlgorithm} Public Key (WebCrypto) [${timestamp}]`,
+                        type: 'public',
+                        algorithm: 'RSA',
+                        value: keyPairResult.publicKeyHex.substring(0, 100) + '...',
+                        data: keyPairResult.publicKey,
+                        dataType: 'cryptokey',
+                        timestamp: Date.now()
+                    },
+                    {
+                        id: `sk-${idBase}`,
+                        name: `${classicalAlgorithm} Private Key (WebCrypto) [${timestamp}]`,
+                        type: 'private',
+                        algorithm: 'RSA',
+                        value: keyPairResult.privateKeyHex.substring(0, 100) + '...',
+                        data: keyPairResult.privateKey,
+                        dataType: 'cryptokey',
+                        timestamp: Date.now()
+                    }
+                ];
+            } else if (classicalAlgorithm === 'ECDSA-P256') {
+                keyPairResult = await WebCrypto.generateECDSAKeyPair();
+
+                newKeys = [
+                    {
+                        id: `pk-${idBase}`,
+                        name: `ECDSA-P256 Public Key (WebCrypto) [${timestamp}]`,
+                        type: 'public',
+                        algorithm: 'ECDSA',
+                        value: keyPairResult.publicKeyHex,
+                        data: keyPairResult.publicKey,
+                        dataType: 'cryptokey',
+                        timestamp: Date.now()
+                    },
+                    {
+                        id: `sk-${idBase}`,
+                        name: `ECDSA-P256 Private Key (WebCrypto) [${timestamp}]`,
+                        type: 'private',
+                        algorithm: 'ECDSA',
+                        value: keyPairResult.privateKeyHex.substring(0, 100) + '...',
+                        data: keyPairResult.privateKey,
+                        dataType: 'cryptokey',
+                        timestamp: Date.now()
+                    }
+                ];
+            } else if (classicalAlgorithm === 'Ed25519') {
+                keyPairResult = await WebCrypto.generateEd25519KeyPair();
+
+                newKeys = [
+                    {
+                        id: `pk-${idBase}`,
+                        name: `Ed25519 Public Key (WebCrypto) [${timestamp}]`,
+                        type: 'public',
+                        algorithm: 'Ed25519',
+                        value: keyPairResult.publicKeyHex,
+                        data: keyPairResult.publicKey,
+                        dataType: 'cryptokey',
+                        timestamp: Date.now()
+                    },
+                    {
+                        id: `sk-${idBase}`,
+                        name: `Ed25519 Private Key (WebCrypto) [${timestamp}]`,
+                        type: 'private',
+                        algorithm: 'Ed25519',
+                        value: keyPairResult.privateKeyHex.substring(0, 100) + '...',
+                        data: keyPairResult.privateKey,
+                        dataType: 'cryptokey',
+                        timestamp: Date.now()
+                    }
+                ];
+            } else if (classicalAlgorithm === 'X25519') {
+                keyPairResult = await WebCrypto.generateX25519KeyPair();
+
+                newKeys = [
+                    {
+                        id: `pk-${idBase}`,
+                        name: `X25519 Public Key (WebCrypto) [${timestamp}]`,
+                        type: 'public',
+                        algorithm: 'X25519',
+                        value: keyPairResult.publicKeyHex,
+                        data: keyPairResult.publicKey,
+                        dataType: 'cryptokey',
+                        timestamp: Date.now()
+                    },
+                    {
+                        id: `sk-${idBase}`,
+                        name: `X25519 Private Key (WebCrypto) [${timestamp}]`,
+                        type: 'private',
+                        algorithm: 'X25519',
+                        value: keyPairResult.privateKeyHex.substring(0, 100) + '...',
+                        data: keyPairResult.privateKey,
+                        dataType: 'cryptokey',
+                        timestamp: Date.now()
+                    }
+                ];
+            } else if (classicalAlgorithm === 'P-256') {
+                keyPairResult = await WebCrypto.generateECDHKeyPair();
+
+                newKeys = [
+                    {
+                        id: `pk-${idBase}`,
+                        name: `P-256 ECDH Public Key (WebCrypto) [${timestamp}]`,
+                        type: 'public',
+                        algorithm: 'P-256',
+                        value: keyPairResult.publicKeyHex,
+                        data: keyPairResult.publicKey,
+                        dataType: 'cryptokey',
+                        timestamp: Date.now()
+                    },
+                    {
+                        id: `sk-${idBase}`,
+                        name: `P-256 ECDH Private Key (WebCrypto) [${timestamp}]`,
+                        type: 'private',
+                        algorithm: 'P-256',
+                        value: keyPairResult.privateKeyHex.substring(0, 100) + '...',
+                        data: keyPairResult.privateKey,
+                        dataType: 'cryptokey',
+                        timestamp: Date.now()
+                    }
+                ];
+            } else if (classicalAlgorithm.startsWith('AES')) {
+                const keySize = parseInt(classicalAlgorithm.split('-')[1]) as WebCrypto.AESKeySize;
+                const aesKey = await WebCrypto.generateAESKey(keySize);
+                const exportedKey = await crypto.subtle.exportKey('raw', aesKey);
+
+                newKeys = [
+                    {
+                        id: `aes-${idBase}`,
+                        name: `${classicalAlgorithm}-GCM Key (WebCrypto) [${timestamp}]`,
+                        type: 'symmetric',
+                        algorithm: 'AES-GCM',
+                        value: WebCrypto.arrayBufferToHex(exportedKey),
+                        data: aesKey,
+                        dataType: 'cryptokey',
+                        timestamp: Date.now()
+                    }
+                ];
+            }
+
+            setKeyStore(prev => [...prev, ...newKeys]);
+
+            const end = performance.now();
+            addLog({
+                keyLabel: `${classicalAlgorithm} ${newKeys.length > 1 ? 'Pair' : 'Key'}`,
+                operation: 'Key Generation (WebCrypto)',
+                result: `Generated ${newKeys.length} key(s)`,
+                executionTime: end - start
+            });
+
+        } catch (err: any) {
+            setError(`Failed to generate classical keys: ${err.message}`);
+        } finally {
+            setClassicalLoading(false);
         }
     };
 
