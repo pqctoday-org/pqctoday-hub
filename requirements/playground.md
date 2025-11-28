@@ -21,7 +21,7 @@ The Interactive Playground provides a hands-on environment for testing post-quan
 
 ### 2.2 Algorithm Selection (Unified Interface)
 - **Unified Interface**: Seamless access to both KEM and DSA operations without global toggling.
-- **Algorithm-Specific Tabs**: KEM, Encrypt, Sign, and Verify tabs are always visible.
+- **Consolidated Tabs**: Operations are grouped into "KEM & Encrypt" and "Sign & Verify" tabs for better workflow.
 
 ### 2.3 Key Generation
 
@@ -58,56 +58,43 @@ The Interactive Playground provides a hands-on environment for testing post-quan
     - Clear all keys button.
 - **Empty State**: Message when no keys exist.
 
-### 2.4 ML-KEM Operations
+### 2.4 ML-KEM & Encryption Operations (Merged Tab)
 
-#### 1. Encapsulate (Public Key)
-- Select public key from dropdown
-- Generate shared secret and ciphertext
-- Display results in output log
-- Store shared secret for encryption operations
+#### 1. Key Encapsulation (KEM)
+- **Encapsulate**:
+    - Select Public Key.
+    - Generates **Shared Secret** and **Ciphertext**.
+    - Outputs are displayed in **editable text boxes** with ASCII/HEX toggles.
+- **Decapsulate**:
+    - Select Private Key.
+    - Input **Ciphertext** (editable, allows tampering).
+    - Recovers Shared Secret.
+    - **Visual Result**: Displays "SECRET RECOVERED" (Green) if matches original, or "DECAPSULATION FAILED" (Red).
 
-#### 2. Decapsulate (Private Key)
-- Select private key from dropdown
-- Input ciphertext
-- Recover shared secret
-- Display matched shared secret
+#### 2. Hybrid Encryption (AES-GCM)
+- **Encrypt Message**:
+    - Input **Message** (editable).
+    - Uses established **Shared Secret** (editable).
+    - Generates **Encrypted Data** (editable).
+- **Decrypt Message**:
+    - Input **Encrypted Data** (editable).
+    - Uses established **Shared Secret**.
+    - Recovers **Decrypted Data**.
+- **Data Handling**: All fields support ASCII/HEX toggles for easy inspection and modification.
 
-#### 3. Shared Secret Display
-- **Editable Text Box**: Shows established shared secret
-- Appears after Encapsulate/Decapsulate operations
-- User can view and modify the shared secret
-- Used for subsequent encryption/decryption
+### 2.5 ML-DSA Operations (Merged Tab)
 
-#### 4. Encrypt Data
-- Uses shared secret to encrypt input message
-- Displays encrypted data in output log
-- Requires prior Encapsulate operation
-- Error handling for missing shared secret
+#### 1. Sign Message
+- Select Private Key.
+- Input **Message** (editable text box).
+- Generates **Signature** (editable text box with ASCII/HEX toggle).
 
-#### 5. Decrypt Data
-- Uses shared secret to decrypt encrypted data
-- Displays decrypted message
-- Requires prior Encrypt operation
-- Validates shared secret match
-
-### 2.5 ML-DSA Operations
-
-#### 1. Sign Message (Private Key)
-- Select private key from dropdown
-- Sign the input message
-- Generate and display signature in output log
-
-#### 2. Signature Display
-- **Editable Text Box**: Shows generated signature
-- User can view and modify signature before verification
-- Allows testing with tampered signatures
-- Demonstrates signature validation
-
-#### 3. Verify Signature (Public Key)
-- Select public key from dropdown
-- Verify the signature against the message
-- Display VALID/INVALID result
-- **Signature Inspection**: Editable text box to view/modify signature before verification
+#### 2. Verify Signature
+- Select Public Key.
+- Input **Message** (editable).
+- Input **Signature** (editable, allows testing tampered signatures).
+- **Visual Result**: Displays "VERIFICATION OK" (Green) or "VERIFICATION FAILED" (Red).
+- **Interactive Testing**: Users can modify the message or signature to instantly see verification fail.
 
 ### 2.6 Classical Cryptography Integration
 - **Algorithms**: Support for generating and using classical keys alongside PQC.
@@ -127,10 +114,8 @@ The Interactive Playground provides a hands-on environment for testing post-quan
 - **Tabbed Interface**:
     - **Settings**: Execution Mode toggle, Algorithm Configuration (enable/disable algorithms)
     - **Data**: Input Message, Shared Secret Display, Signature Display
-    - **KEM** (ML-KEM only): Encapsulate/Decapsulate operations
-    - **Encrypt** (ML-KEM only): Encrypt/Decrypt data operations
-    - **Sign** (ML-DSA only): Sign message operation
-    - **Verify** (ML-DSA only): Verify signature operation
+    - **KEM & Encrypt**: Combined Encapsulate/Decapsulate and Hybrid Encryption operations
+    - **Sign & Verify**: Combined Sign and Verify operations
     - **Key Store**: Key generation controls + list of generated keys with details
     - **Logs**: Operation history with sortable/resizable columns
     - **ACVP**: Automated validation against NIST test vectors
@@ -583,3 +568,18 @@ if (!isWasmSupported) {
 - **Data Handling:**
     - Supports both Hex and ASCII input/output.
     - "Cross-wired" flow (Encrypt -> Output, Decrypt -> Input) enables easy round-trip testing.
+
+### 10.7 Tab Consolidation & Enhanced Interactivity (✅ Complete)
+**Change:** Merged related operations into unified tabs and added comprehensive data editing.
+
+**Features:**
+- **Merged Tabs:**
+    - **KEM & Encrypt:** Combines Key Encapsulation and AES-GCM Encryption in a single view.
+    - **Sign & Verify:** Combines Signing and Verification in a single view.
+- **Editable Data:**
+    - All inputs and outputs (Shared Secret, Ciphertext, Signature, Messages) are now **fully editable**.
+    - **ASCII/HEX Toggles:** Users can view and edit data in either format.
+- **Visual Verification:**
+    - **Decapsulation:** "SECRET RECOVERED" (Green) vs "DECAPSULATION FAILED" (Red) indicator.
+    - **Signature Verification:** "VERIFICATION OK" (Green) vs "VERIFICATION FAILED" (Red) indicator.
+- **Workflow Improvement:** Reduced tab switching and enabled easier "tamper testing" (e.g., modifying a signature to see verification fail).

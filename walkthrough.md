@@ -13,9 +13,10 @@ The **PQC Timeline Application** is a premium, interactive web experience design
 ### 2. Algorithms Transition & Playground
 - **Comparison View**: Clear mapping of Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) algorithms.
 - **Interactive Playground**:
-    - **Unified Interface**: Seamlessly switch between KEM (Encapsulate/Decapsulate) and DSA (Sign/Verify) operations without mode toggling.
+    - **Unified Interface**: Consolidated "KEM & Encrypt" and "Sign & Verify" tabs for streamlined workflows.
+    - **Interactive Testing**: Fully editable inputs/outputs (Shared Secret, Ciphertext, Signature) with ASCII/HEX toggles for tamper testing.
+    - **Visual Verification**: Clear "Success/Fail" indicators for Decapsulation and Signature Verification.
     - **Key Generation**: Generate public/private key pairs for ML-KEM and ML-DSA from a unified selection menu.
-    - **Operations**: Encapsulate/Decapsulate (KEM), Sign/Verify (DSA), and AES-GCM Encryption/Decryption.
     - **WASM Integration**: Real in-browser cryptographic operations using `mlkem-wasm` and `@openforge-sh/liboqs`.
 
 ### 3. Quantum Threat Impacts

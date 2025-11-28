@@ -1,15 +1,13 @@
-import React from 'react';
+
 import { Play, Settings, Database, Activity, Lock, FileSignature, Key as KeyIcon, FileText, ShieldCheck, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
 import { PlaygroundProvider, usePlaygroundContext } from './PlaygroundContext';
 import { ACVPTesting } from '../ACVP/ACVPTesting';
 import { SettingsTab } from './tabs/SettingsTab';
 import { DataTab } from './tabs/DataTab';
-import { KemTab } from './tabs/KemTab';
-import { HybridEncryptTab } from './tabs/HybridEncryptTab';
+import { KemOpsTab } from './tabs/KemOpsTab';
 import { SymmetricTab } from './tabs/SymmetricTab';
-import { SignTab } from './tabs/SignTab';
-import { VerifyTab } from './tabs/VerifyTab';
+import { SignVerifyTab } from './tabs/SignVerifyTab';
 import { KeyStoreTab } from './tabs/KeyStoreTab';
 import { LogsTab } from './tabs/LogsTab';
 
@@ -48,20 +46,14 @@ const PlaygroundContent = () => {
                 <button onClick={() => setActiveTab('data')} className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap", activeTab === 'data' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5")}>
                     <Database size={16} /> Data
                 </button>
-                <button onClick={() => setActiveTab('kem')} className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap", activeTab === 'kem' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5")}>
-                    <Activity size={16} /> KEM
-                </button>
-                <button onClick={() => setActiveTab('encrypt')} className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap", activeTab === 'encrypt' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5")}>
-                    <Lock size={16} /> Encrypt
+                <button onClick={() => setActiveTab('kem_ops')} className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap", activeTab === 'kem_ops' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5")}>
+                    <Activity size={16} /> KEM & Encrypt
                 </button>
                 <button onClick={() => setActiveTab('symmetric')} className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap", activeTab === 'symmetric' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5")}>
                     <Lock size={16} /> Sym Encrypt
                 </button>
-                <button onClick={() => setActiveTab('sign')} className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap", activeTab === 'sign' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5")}>
-                    <FileSignature size={16} /> Sign
-                </button>
-                <button onClick={() => setActiveTab('verify')} className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap", activeTab === 'verify' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5")}>
-                    <FileSignature size={16} /> Verify
+                <button onClick={() => setActiveTab('sign_verify')} className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap", activeTab === 'sign_verify' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5")}>
+                    <FileSignature size={16} /> Sign & Verify
                 </button>
                 <button onClick={() => setActiveTab('keystore')} className={clsx("flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap", activeTab === 'keystore' ? "bg-primary/20 text-primary shadow-sm" : "text-muted hover:text-white hover:bg-white/5")}>
                     <KeyIcon size={16} /> Key Store ({keyStore.length})
@@ -78,11 +70,9 @@ const PlaygroundContent = () => {
             <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-white/5 rounded-xl border border-white/10 p-6 relative">
                 {activeTab === 'settings' && <SettingsTab />}
                 {activeTab === 'data' && <DataTab />}
-                {activeTab === 'kem' && <KemTab />}
-                {activeTab === 'encrypt' && <HybridEncryptTab />}
+                {activeTab === 'kem_ops' && <KemOpsTab />}
                 {activeTab === 'symmetric' && <SymmetricTab />}
-                {activeTab === 'sign' && <SignTab />}
-                {activeTab === 'verify' && <VerifyTab />}
+                {activeTab === 'sign_verify' && <SignVerifyTab />}
                 {activeTab === 'keystore' && <KeyStoreTab />}
                 {activeTab === 'logs' && <LogsTab />}
                 {activeTab === 'acvp' && (

@@ -12,5 +12,16 @@ export default defineConfig({
   ],
   optimizeDeps: {
     exclude: ['mlkem-wasm', '@openforge-sh/liboqs']
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['framer-motion', 'lucide-react', 'clsx'],
+          'vendor-pqc': ['mlkem-wasm', '@openforge-sh/liboqs', 'pqcrypto', '@noble/hashes']
+        }
+      }
+    }
   }
 })
