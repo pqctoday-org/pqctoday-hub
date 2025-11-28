@@ -478,9 +478,9 @@ export const InteractivePlayground = () => {
                 newKeys = [
                     {
                         id: `pk-${idBase}`,
-                        name: `ECDSA-P256 Public Key (WebCrypto) [${timestamp}]`,
+                        name: `ECDSA P-256 Public Key (WebCrypto) [${timestamp}]`,
                         type: 'public',
-                        algorithm: 'ECDSA',
+                        algorithm: 'ECDSA-P256',
                         value: keyPairResult.publicKeyHex,
                         data: keyPairResult.publicKey,
                         dataType: 'cryptokey',
@@ -488,9 +488,9 @@ export const InteractivePlayground = () => {
                     },
                     {
                         id: `sk-${idBase}`,
-                        name: `ECDSA-P256 Private Key (WebCrypto) [${timestamp}]`,
+                        name: `ECDSA P-256 Private Key (WebCrypto) [${timestamp}]`,
                         type: 'private',
-                        algorithm: 'ECDSA',
+                        algorithm: 'ECDSA-P256',
                         value: keyPairResult.privateKeyHex,
                         data: keyPairResult.privateKey,
                         dataType: 'cryptokey',
@@ -1526,6 +1526,44 @@ export const InteractivePlayground = () => {
                                     <option value="">Select Public Key...</option>
                                     {kemPublicKeys.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
                                 </select>
+
+                                {selectedEncKeyId && (() => {
+                                    const key = keyStore.find(k => k.id === selectedEncKeyId);
+                                    if (!key) return null;
+
+                                    let algoDisplay = key.algorithm;
+                                    let scheme = 'Unknown';
+                                    let secretSize = '32 bytes';
+
+                                    if (key.algorithm.startsWith('ML-KEM')) {
+                                        scheme = 'ML-KEM (Kyber)';
+                                    } else if (key.algorithm === 'X25519') {
+                                        scheme = 'Ephemeral-Static ECDH';
+                                    } else if (key.algorithm === 'P-256') {
+                                        scheme = 'Ephemeral-Static ECDH';
+                                    }
+
+                                    return (
+                                        <div className="mb-4 p-3 bg-black/40 rounded border border-white/10 text-xs space-y-1 animate-fade-in">
+                                            <div className="flex justify-between">
+                                                <span className="text-muted">Algorithm:</span>
+                                                <span className="text-blue-400 font-mono font-bold">{algoDisplay}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-muted">Scheme:</span>
+                                                <span className="text-white font-mono">{scheme}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-muted">Shared Secret:</span>
+                                                <span className="text-white font-mono">{secretSize}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-muted">Derivation:</span>
+                                                <span className="text-white font-mono">None (Raw Secret)</span>
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
                                 <button
                                     onClick={() => { runOperation('encapsulate'); }}
                                     disabled={!selectedEncKeyId || loading}
@@ -1551,6 +1589,44 @@ export const InteractivePlayground = () => {
                                     <option value="">Select Private Key...</option>
                                     {kemPrivateKeys.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
                                 </select>
+
+                                {selectedDecKeyId && (() => {
+                                    const key = keyStore.find(k => k.id === selectedDecKeyId);
+                                    if (!key) return null;
+
+                                    let algoDisplay = key.algorithm;
+                                    let scheme = 'Unknown';
+                                    let secretSize = '32 bytes';
+
+                                    if (key.algorithm.startsWith('ML-KEM')) {
+                                        scheme = 'ML-KEM (Kyber)';
+                                    } else if (key.algorithm === 'X25519') {
+                                        scheme = 'Ephemeral-Static ECDH';
+                                    } else if (key.algorithm === 'P-256') {
+                                        scheme = 'Ephemeral-Static ECDH';
+                                    }
+
+                                    return (
+                                        <div className="mb-4 p-3 bg-black/40 rounded border border-white/10 text-xs space-y-1 animate-fade-in">
+                                            <div className="flex justify-between">
+                                                <span className="text-muted">Algorithm:</span>
+                                                <span className="text-purple-400 font-mono font-bold">{algoDisplay}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-muted">Scheme:</span>
+                                                <span className="text-white font-mono">{scheme}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-muted">Shared Secret:</span>
+                                                <span className="text-white font-mono">{secretSize}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-muted">Derivation:</span>
+                                                <span className="text-white font-mono">None (Raw Secret)</span>
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
                                 <button
                                     onClick={() => { runOperation('decapsulate'); }}
                                     disabled={!selectedDecKeyId || loading}
@@ -1634,6 +1710,46 @@ export const InteractivePlayground = () => {
                                         <option value="">Select Private Key...</option>
                                         {signPrivateKeys.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
                                     </select>
+
+                                    {selectedSignKeyId && (() => {
+                                        const key = keyStore.find(k => k.id === selectedSignKeyId);
+                                        if (!key) return null;
+
+                                        let algoDisplay = key.algorithm;
+                                        let scheme = 'Unknown';
+                                        let hash = 'None';
+
+                                        if (key.algorithm.startsWith('ML-DSA')) {
+                                            scheme = 'Pure ML-DSA (Dilithium)';
+                                            hash = 'Internal (SHAKE256)';
+                                        } else if (key.algorithm.startsWith('RSA')) {
+                                            scheme = 'RSA-PSS';
+                                            hash = 'SHA-256';
+                                        } else if (key.algorithm.startsWith('ECDSA')) {
+                                            scheme = 'ECDSA (P-256)';
+                                            hash = 'SHA-256';
+                                        } else if (key.algorithm === 'Ed25519') {
+                                            scheme = 'Pure Ed25519';
+                                            hash = 'Internal (SHA-512)';
+                                        }
+
+                                        return (
+                                            <div className="mt-2 p-3 bg-black/40 rounded border border-white/10 text-xs space-y-1 animate-fade-in">
+                                                <div className="flex justify-between">
+                                                    <span className="text-muted">Algorithm:</span>
+                                                    <span className="text-green-400 font-mono font-bold">{algoDisplay}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-muted">Signature Scheme:</span>
+                                                    <span className="text-white font-mono">{scheme}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-muted">Hash Function:</span>
+                                                    <span className="text-white font-mono">{hash}</span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                                 <button
                                     onClick={() => { runOperation('sign'); }}

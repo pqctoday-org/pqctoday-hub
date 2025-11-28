@@ -152,8 +152,8 @@ Comprehensive enable/disable controls for all cryptographic algorithms:
   - ML-KEM-768 (NIST Level 3) - ✅ Enabled by default
   - ML-KEM-1024 (NIST Level 5) - ✅ Enabled by default
 - **Classical:**
-  - X25519 (Curve25519 ECDH) - ❌ Disabled (not yet implemented)
-  - P-256 (NIST P-256 ECDH) - ❌ Disabled (not yet implemented)
+  - X25519 (Curve25519 ECDH) - ✅ Enabled (Web Crypto)
+  - P-256 (NIST P-256 ECDH) - ✅ Enabled (Web Crypto)
 
 **Signature Algorithms:**
 - **Post-Quantum:**
@@ -161,15 +161,15 @@ Comprehensive enable/disable controls for all cryptographic algorithms:
   - ML-DSA-65 (NIST Level 3) - ✅ Enabled by default
   - ML-DSA-87 (NIST Level 5) - ✅ Enabled by default
 - **Classical:**
-  - RSA-2048 (2048 bits) - ❌ Disabled (not yet implemented)
-  - RSA-3072 (3072 bits) - ❌ Disabled (not yet implemented)
-  - RSA-4096 (4096 bits) - ❌ Disabled (not yet implemented)
-  - ECDSA-P256 (NIST P-256) - ❌ Disabled (not yet implemented)
-  - Ed25519 (Curve25519) - ❌ Disabled (not yet implemented)
+  - RSA-2048 (2048 bits) - ✅ Enabled (Web Crypto)
+  - RSA-3072 (3072 bits) - ✅ Enabled (Web Crypto)
+  - RSA-4096 (4096 bits) - ✅ Enabled (Web Crypto)
+  - ECDSA-P256 (NIST P-256) - ✅ Enabled (Web Crypto)
+  - Ed25519 (Curve25519) - ✅ Enabled (Web Crypto)
 
 **Symmetric Encryption:**
-- AES-128-GCM (FIPS 197) - ❌ Disabled (not yet implemented)
-- AES-256-GCM (FIPS 197) - ❌ Disabled (not yet implemented)
+- AES-128-GCM (FIPS 197) - ✅ Enabled (Web Crypto)
+- AES-256-GCM (FIPS 197) - ✅ Enabled (Web Crypto)
 
 **Hash Algorithms:**
 - SHA-256 (FIPS 180-4) - ❌ Disabled (not yet implemented)
@@ -555,3 +555,17 @@ if (!isWasmSupported) {
 - Documented algorithm configuration system
 - Added implementation status for all algorithms
 - Clarified which algorithms are WASM-supported vs. planned
+
+### 10.5 Key Handling & UI Enhancements (✅ Complete)
+**Change:** Improved key management and operation details.
+
+**Features:**
+- **Robust Key Handling:** Fixed "Invalid public key" errors by storing specific algorithm variants (e.g., 'ML-KEM-768') in key objects.
+- **Legacy Support:** Added fallback logic to infer algorithm variants from key size for existing keys.
+- **Detailed Operation Views:**
+    - **Sign Tab:** Displays Algorithm, Signature Scheme (e.g., Pure ML-DSA, RSA-PSS), and Hash Function for selected keys.
+    - **Encapsulate/Decapsulate Tabs:** Displays Algorithm, Scheme (e.g., ML-KEM, Ephemeral-Static ECDH), Shared Secret Size, and Derivation method (Raw Secret).
+- **Classical Algorithm Support:**
+    - Enabled generation of **ECDSA-P256** signing keys.
+    - Confirmed support for **Ed25519** signing keys.
+    - Confirmed support for **X25519** and **P-256** (ECDH) for KEM-like operations.
