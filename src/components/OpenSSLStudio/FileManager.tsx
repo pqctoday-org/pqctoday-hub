@@ -133,7 +133,7 @@ export const FileManager = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center gap-1">
                                 <button
                                     onClick={() => setEditingFile(file)}
                                     className="p-1.5 hover:bg-white/10 rounded text-muted hover:text-white"
