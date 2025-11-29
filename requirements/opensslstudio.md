@@ -88,6 +88,16 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 - **`FileManager`**: VFS visualization, upload/download/edit actions.
 - **`TerminalOutput`**: Log display.
 
+### Key Challenges & Solutions
+- **RNG Initialization (`BN lib` error)**:
+  - **Issue**: RSA key generation failed with `rsa_multiprime_keygen:BN lib` due to insufficient entropy or uninitialized DRBG.
+  - **Solution**: 
+    1. Inject 4KB of browser-sourced entropy into `/random.seed`.
+    2. Attempt to write to `/dev/urandom` in MEMFS.
+    3. Generate a minimal `openssl.cnf` that explicitly activates the `default` provider.
+    4. Set `OPENSSL_CONF` and `RANDFILE` environment variables.
+    5. Prepend `-rand /random.seed` to all commands.
+
 ## Future Roadmap
 - **PQC Algorithms**: Enable specific PQC providers/algorithms if supported by the build.
 - **File Drag & Drop**: Enhance FileManager with drag-and-drop zone.
