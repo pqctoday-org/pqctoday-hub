@@ -85,7 +85,12 @@ export const FileManager = () => {
     const { executeCommand } = useOpenSSL();
 
     const handleExtractPublicKey = (privateKeyFile: string) => {
-        const publicKeyFile = privateKeyFile.replace('.key', '.pub');
+        // Replace extension or append .pub
+        let publicKeyFile = privateKeyFile.replace(/\.(key|pem)$/, '') + '.pub';
+        if (publicKeyFile === privateKeyFile + '.pub' && !privateKeyFile.includes('.')) {
+            publicKeyFile = privateKeyFile + '.pub';
+        }
+
         const command = `openssl pkey -in ${privateKeyFile} -pubout -out ${publicKeyFile}`;
         executeCommand(command);
     };
@@ -143,7 +148,7 @@ export const FileManager = () => {
                                 >
                                     <Download size={14} />
                                 </button>
-                                {file.name.endsWith('.key') && !file.name.endsWith('.pub') && (
+                                {(file.name.endsWith('.key') || file.name.endsWith('.pem')) && !file.name.endsWith('.pub') && (
                                     <button
                                         onClick={() => handleExtractPublicKey(file.name)}
                                         className="p-1.5 hover:bg-primary/20 rounded text-muted hover:text-primary"
