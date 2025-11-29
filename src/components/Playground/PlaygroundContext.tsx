@@ -2,7 +2,7 @@ import React from 'react';
 import { SettingsProvider, useSettingsContext } from './contexts/SettingsContext';
 import { KeyStoreProvider, useKeyStoreContext } from './contexts/KeyStoreContext';
 import { OperationsProvider, useOperationsContext } from './contexts/OperationsContext';
-import type { ClassicalAlgorithm } from './contexts/SettingsContext';
+
 
 // Re-export types for consumers
 export type { ExecutionMode, SortColumn, SortDirection, ClassicalAlgorithm } from './contexts/SettingsContext';

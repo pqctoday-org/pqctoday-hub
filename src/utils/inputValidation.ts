@@ -62,7 +62,7 @@ export const sanitizeFileName = (input: string, maxLength: number = 255): string
 
     // Remove path separators and null bytes
     const sanitized = input
-        .replace(/[/\\.\x00]/g, '')
+        .replace(/[/\\.\u0000]/g, '')
         .replace(/\.\./g, '')
         .trim()
         .substring(0, maxLength);
