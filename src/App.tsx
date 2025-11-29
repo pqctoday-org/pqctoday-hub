@@ -9,8 +9,9 @@ import { ImpactDashboard } from './components/Impacts/ImpactDashboard';
 import { LeadersGrid } from './components/Leaders/LeadersGrid';
 import { AlgorithmsView } from './components/Algorithms/AlgorithmsView';
 import { PlaygroundView } from './components/Playground/PlaygroundView';
+import { OpenSSLStudioView } from './components/OpenSSLStudio/OpenSSLStudioView';
 
-type View = 'timeline' | 'algorithms' | 'playground' | 'impacts' | 'leaders';
+type View = 'timeline' | 'algorithms' | 'playground' | 'openssl' | 'impacts' | 'leaders';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('timeline');
@@ -29,6 +30,7 @@ function App() {
     { id: 'timeline', label: 'Timeline', icon: Globe },
     { id: 'algorithms', label: 'Algorithms', icon: Shield },
     { id: 'playground', label: 'Playground', icon: FlaskConical },
+    { id: 'openssl', label: 'OpenSSL Studio', icon: Activity },
     { id: 'impacts', label: 'Impacts', icon: Activity },
     { id: 'leaders', label: 'Leaders', icon: Users },
   ];
@@ -77,6 +79,7 @@ function App() {
             {currentView === 'timeline' && <TimelineView />}
             {currentView === 'algorithms' && <AlgorithmsView />}
             {currentView === 'playground' && <PlaygroundView />}
+            {currentView === 'openssl' && <OpenSSLStudioView />}
             {currentView === 'impacts' && <ImpactDashboard />}
             {currentView === 'leaders' && <LeadersGrid />}
           </motion.div>

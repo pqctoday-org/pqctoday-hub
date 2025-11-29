@@ -25,3 +25,7 @@ dist-ssr
 *.resolved
 *.resolved.*
 *.metadata.json
+
+# OpenSSL Build Artifacts
+openssl-build/
+*.tar.gz
