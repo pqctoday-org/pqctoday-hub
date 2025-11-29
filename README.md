@@ -77,8 +77,11 @@ Before submitting a PR, please ensure all tests and lint checks pass:
 # Run Linting
 npm run lint
 
-# Run Tests
+# Run Unit Tests
 npm run test
+
+# Run End-to-End Tests
+npm run test:e2e
 ```
 
 ## Architecture Overview
