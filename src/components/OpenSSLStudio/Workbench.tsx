@@ -42,6 +42,23 @@ export const Workbench = () => {
     const [sortBy, setSortBy] = useState<'timestamp' | 'type' | 'name'>('timestamp');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
+    // Auto-select latest signature file when switching to verify or when files change
+    useEffect(() => {
+        if (category === 'dgst' && signAction === 'verify') {
+            const sigFiles = useOpenSSLStore.getState().files
+                .filter(f => f.name.endsWith('.sig'))
+                .sort((a, b) => b.timestamp - a.timestamp);
+
+            if (sigFiles.length > 0) {
+                // Only auto-select if nothing is selected or the selected file no longer exists
+                const currentFileExists = sigFiles.some(f => f.name === selectedSigFile);
+                if (!selectedSigFile || !currentFileExists) {
+                    setSelectedSigFile(sigFiles[0].name);
+                }
+            }
+        }
+    }, [category, signAction, useOpenSSLStore.getState().files, selectedSigFile]);
+
     // Effect to update command preview
     useEffect(() => {
         let cmd = 'openssl';
@@ -583,24 +600,7 @@ export const Workbench = () => {
                             </div>
                         ) : null}
 
-                        <div className="space-y-3">
-                            <label className="text-xs text-muted block">
-                                {signAction === 'sign' ? 'Private Key File' : 'Public Key File'}
-                            </label>
-                            <select
-                                value={selectedKeyFile}
-                                onChange={(e) => setSelectedKeyFile(e.target.value)}
-                                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
-                            >
-                                <option value="">Select a key file...</option>
-                                {useOpenSSLStore.getState().files
-                                    .filter(f => f.name.endsWith('.key') || f.name.endsWith('.pub'))
-                                    .map(f => (
-                                        <option key={f.name} value={f.name}>{f.name}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
+
 
                         <div className="space-y-3">
                             <label className="text-xs text-muted block">Data File to {signAction === 'sign' ? 'Sign' : 'Verify'}</label>
