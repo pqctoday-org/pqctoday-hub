@@ -1,8 +1,8 @@
-
 import { useState } from 'react';
 import { Workbench } from './Workbench';
 import { CommandPreview } from './CommandPreview';
 import { TerminalOutput } from './TerminalOutput';
+import { FileEditor } from './FileEditor';
 import { Terminal, ChevronDown, ChevronUp } from 'lucide-react';
 
 export const OpenSSLStudioView = () => {
@@ -33,9 +33,13 @@ export const OpenSSLStudioView = () => {
                     </div>
                 </div>
 
-                {/* Right Pane: Terminal Output (Collapsible) */}
+                {/* Right Pane: Command Preview, File Editor, & Terminal Output */}
                 <div className="col-span-12 lg:col-span-8 flex flex-col min-h-0">
                     <CommandPreview />
+
+                    {/* File Editor Section (Only visible when editing) */}
+                    <FileEditor />
+
                     <div className={showTerminal ? "flex-1 min-h-0" : "shrink-0"}>
                         <div className="glass-panel h-full flex flex-col overflow-hidden">
                             <div className="p-4 border-b border-white/10 bg-white/5 flex items-center justify-between">
