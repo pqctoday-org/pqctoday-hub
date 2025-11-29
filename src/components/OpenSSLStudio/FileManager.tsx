@@ -84,7 +84,14 @@ export const FileManager = () => {
 
     const { executeCommand } = useOpenSSL();
 
+    const { addLog } = useOpenSSLStore();
+
     const handleExtractPublicKey = (privateKeyFile: string) => {
+        if (!privateKeyFile.endsWith('.key') && !privateKeyFile.endsWith('.pem')) {
+            addLog('error', `Cannot extract public key: '${privateKeyFile}' does not appear to be a private key file (.key or .pem).`);
+            return;
+        }
+
         // Replace extension or append .pub
         let publicKeyFile = privateKeyFile.replace(/\.(key|pem)$/, '') + '.pub';
         if (publicKeyFile === privateKeyFile + '.pub' && !privateKeyFile.includes('.')) {
@@ -148,15 +155,13 @@ export const FileManager = () => {
                                 >
                                     <Download size={14} />
                                 </button>
-                                {(file.name.endsWith('.key') || file.name.endsWith('.pem')) && !file.name.endsWith('.pub') && (
-                                    <button
-                                        onClick={() => handleExtractPublicKey(file.name)}
-                                        className="p-1.5 hover:bg-primary/20 rounded text-muted hover:text-primary"
-                                        title="Extract Public Key"
-                                    >
-                                        <KeyRound size={14} />
-                                    </button>
-                                )}
+                                <button
+                                    onClick={() => handleExtractPublicKey(file.name)}
+                                    className="p-1.5 hover:bg-primary/20 rounded text-muted hover:text-primary"
+                                    title="Extract Public Key"
+                                >
+                                    <KeyRound size={14} />
+                                </button>
                                 <button
                                     onClick={() => removeFile(file.name)}
                                     className="p-1.5 hover:bg-red-500/20 rounded text-muted hover:text-red-400"
@@ -178,6 +183,18 @@ export const FileManager = () => {
                             <Edit2 size={14} /> {editingFile.name}
                         </span>
                         <div className="flex items-center gap-2">
+                            {(editingFile.type === 'key' || editingFile.name.endsWith('.key') || editingFile.name.endsWith('.pem')) && !editingFile.name.endsWith('.pub') && (
+                                <button
+                                    onClick={() => {
+                                        handleExtractPublicKey(editingFile.name);
+                                        setEditingFile(null); // Close editor after action
+                                    }}
+                                    className="p-1.5 hover:bg-primary/20 text-muted hover:text-primary rounded transition-colors"
+                                    title="Extract Public Key"
+                                >
+                                    <KeyRound size={14} />
+                                </button>
+                            )}
                             <button
                                 onClick={handleSaveEdit}
                                 className="p-1.5 bg-primary/20 text-primary hover:bg-primary/30 rounded transition-colors"
