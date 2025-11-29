@@ -1,6 +1,6 @@
 import type { Key, LogEntry } from '../../../types';
 import * as WebCrypto from '../../../utils/webCrypto';
-import { bytesToHex, hexToBytes } from '../DataInput';
+import { bytesToHex, hexToBytes } from '../../../utils/dataInputUtils';
 import type { ExecutionMode } from '../PlaygroundContext';
 
 interface UseSymmetricOperationsProps {

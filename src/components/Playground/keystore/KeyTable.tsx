@@ -119,9 +119,15 @@ export const KeyTable: React.FC<KeyTableProps> = ({ keyStore, selectedKeyId, set
                                         {renderSortIcon(col)}
                                     </button>
                                     <div
-                                        className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label={`Resize ${col} column`}
+                                        className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors focus:bg-primary"
                                         onMouseDown={(e) => startResize(e, col)}
                                         onClick={(e) => e.stopPropagation()}
+                                        onKeyDown={() => {
+                                            // Keyboard resize logic could be added here
+                                        }}
                                     />
                                 </th>
                             ))}

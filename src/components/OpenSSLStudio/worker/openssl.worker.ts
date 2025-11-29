@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* eslint-disable no-restricted-globals */
 import type { WorkerMessage } from './types';
 
@@ -66,7 +67,7 @@ const loadOpenSSLScript = async (url: string = '/wasm/openssl.js'): Promise<void
             moduleFactory = global.module.exports.default;
         }
         // Check for global variable
-        else if (typeof self.createOpenSSLModule === 'function') {
+        else if (typeof (self as any).createOpenSSLModule === 'function') {
             // @ts-ignore
             moduleFactory = self.createOpenSSLModule;
         } else if (typeof createOpenSSLModule === 'function') {

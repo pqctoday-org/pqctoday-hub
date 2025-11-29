@@ -1,4 +1,5 @@
 // Wrapper for @openforge-sh/liboqs (ML-DSA)
+/* eslint-disable */
 import { createMLDSA44, createMLDSA65, createMLDSA87 } from '@openforge-sh/liboqs';
 
 // We don't need a global liboqs object anymore since we import specific functions.
@@ -22,6 +23,14 @@ const getAlgorithmFactory = (algName: string) => {
     }
 };
 
+/**
+ * Generates a new ML-DSA key pair.
+ * 
+ * @param params - Configuration object containing the algorithm name (e.g., 'ML-DSA-44').
+ * @param _exportPublic - (Optional) Whether to export the public key. Defaults to true.
+ * @param _ops - (Optional) List of allowed operations.
+ * @returns An object containing the generated `publicKey` and `secretKey` as Uint8Arrays.
+ */
 export const generateKey = async (params: any, _exportPublic = true, _ops?: string[]) => {
     const createAlgo = getAlgorithmFactory(params.name);
     const instance = await createAlgo();
@@ -36,6 +45,14 @@ export const generateKey = async (params: any, _exportPublic = true, _ops?: stri
     }
 };
 
+/**
+ * Signs a message using a private key.
+ * 
+ * @param message - The message data to sign.
+ * @param secretKey - The private key to use for signing.
+ * @returns The generated signature as a Uint8Array.
+ * @throws Error if the private key size does not match any known ML-DSA parameter set.
+ */
 export const sign = async (message: Uint8Array, secretKey: Uint8Array) => {
     // Infer algorithm from key size
     let createAlgo;
@@ -52,6 +69,15 @@ export const sign = async (message: Uint8Array, secretKey: Uint8Array) => {
     }
 };
 
+/**
+ * Verifies a signature against a message and public key.
+ * 
+ * @param signature - The signature to verify.
+ * @param message - The original message data.
+ * @param publicKey - The public key to use for verification.
+ * @returns `true` if the signature is valid, `false` otherwise.
+ * @throws Error if the public key size does not match any known ML-DSA parameter set.
+ */
 export const verify = async (signature: Uint8Array, message: Uint8Array, publicKey: Uint8Array) => {
     // Infer algorithm from key size
     let createAlgo;

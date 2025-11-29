@@ -1,7 +1,7 @@
 import type { Key, LogEntry } from '../../../types';
 import * as MLDSA from '../../../wasm/liboqs_dsa';
 import * as WebCrypto from '../../../utils/webCrypto';
-import { bytesToHex, hexToBytes } from '../DataInput';
+import { bytesToHex, hexToBytes } from '../../../utils/dataInputUtils';
 import type { ExecutionMode } from '../PlaygroundContext';
 
 interface UseDsaOperationsProps {

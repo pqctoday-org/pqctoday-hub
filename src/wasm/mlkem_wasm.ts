@@ -1,6 +1,12 @@
 // Wrapper for mlkem-wasm
 let mlkem: any = null;
 
+/**
+ * Loads the `mlkem-wasm` module dynamically.
+ * Ensures the module is loaded only once.
+ * 
+ * @returns The loaded WASM module instance.
+ */
 export const load = async () => {
     if (!mlkem) {
         try {
@@ -19,6 +25,14 @@ export const load = async () => {
     return mlkem;
 };
 
+/**
+ * Generates a key pair using the `mlkem-wasm` library.
+ * 
+ * @param params - Algorithm parameters.
+ * @param exportPublic - Whether to export the public key.
+ * @param ops - Allowed operations.
+ * @returns An object containing `publicKey` and `secretKey` as Uint8Arrays.
+ */
 export const generateKey = async (params: any, exportPublic = true, ops?: string[]) => {
     const mod = await load();
     try {
@@ -35,6 +49,13 @@ export const generateKey = async (params: any, exportPublic = true, ops?: string
     }
 };
 
+/**
+ * Encapsulates a shared secret using a public key.
+ * 
+ * @param params - Algorithm parameters.
+ * @param publicKeyBytes - The public key as a Uint8Array.
+ * @returns An object containing `ciphertext` and `sharedKey` as Uint8Arrays.
+ */
 export const encapsulateBits = async (params: any, publicKeyBytes: Uint8Array) => {
     const mod = await load();
     // Import the key from bytes
@@ -48,6 +69,14 @@ export const encapsulateBits = async (params: any, publicKeyBytes: Uint8Array) =
     };
 };
 
+/**
+ * Decapsulates a shared secret using a private key.
+ * 
+ * @param params - Algorithm parameters.
+ * @param secretKeyBytes - The private key as a Uint8Array.
+ * @param ciphertext - The ciphertext to decapsulate.
+ * @returns The recovered shared secret as a Uint8Array.
+ */
 export const decapsulateBits = async (params: any, secretKeyBytes: Uint8Array, ciphertext: Uint8Array) => {
     const mod = await load();
     // Import the key from bytes

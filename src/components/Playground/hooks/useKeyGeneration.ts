@@ -3,7 +3,7 @@ import type { Key, LogEntry } from '../../../types';
 import * as MLKEM from '../../../wasm/liboqs_kem';
 import * as MLDSA from '../../../wasm/liboqs_dsa';
 import * as WebCrypto from '../../../utils/webCrypto';
-import { bytesToHex } from '../DataInput';
+import { bytesToHex } from '../../../utils/dataInputUtils';
 import type { ExecutionMode, ClassicalAlgorithm } from '../PlaygroundContext';
 
 interface UseKeyGenerationProps {

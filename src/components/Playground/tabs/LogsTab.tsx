@@ -49,8 +49,12 @@ export const LogsTab: React.FC = () => {
                                         {sortColumn !== 'timestamp' && <ArrowUpDown size={14} className="opacity-30 shrink-0" />}
                                     </div>
                                     <div
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="Resize timestamp column"
                                         className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
                                         onMouseDown={(e) => startResize(e, 'timestamp')}
+                                        onKeyDown={() => { /* Add keyboard resize logic if needed */ }}
                                     />
                                 </th>
                                 <th
@@ -66,8 +70,12 @@ export const LogsTab: React.FC = () => {
                                         {sortColumn !== 'keyLabel' && <ArrowUpDown size={14} className="opacity-30 shrink-0" />}
                                     </div>
                                     <div
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="Resize keyLabel column"
                                         className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
                                         onMouseDown={(e) => startResize(e, 'keyLabel')}
+                                        onKeyDown={() => { /* Add keyboard resize logic if needed */ }}
                                     />
                                 </th>
                                 <th
@@ -83,8 +91,12 @@ export const LogsTab: React.FC = () => {
                                         {sortColumn !== 'operation' && <ArrowUpDown size={14} className="opacity-30 shrink-0" />}
                                     </div>
                                     <div
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="Resize operation column"
                                         className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
                                         onMouseDown={(e) => startResize(e, 'operation')}
+                                        onKeyDown={() => { /* Add keyboard resize logic if needed */ }}
                                     />
                                 </th>
                                 <th
@@ -100,8 +112,12 @@ export const LogsTab: React.FC = () => {
                                         {sortColumn !== 'result' && <ArrowUpDown size={14} className="opacity-30 shrink-0" />}
                                     </div>
                                     <div
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="Resize result column"
                                         className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
                                         onMouseDown={(e) => startResize(e, 'result')}
+                                        onKeyDown={() => { /* Add keyboard resize logic if needed */ }}
                                     />
                                 </th>
                                 <th
@@ -117,8 +133,12 @@ export const LogsTab: React.FC = () => {
                                         {sortColumn !== 'executionTime' && <ArrowUpDown size={14} className="opacity-30 shrink-0" />}
                                     </div>
                                     <div
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="Resize executionTime column"
                                         className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
                                         onMouseDown={(e) => startResize(e, 'executionTime')}
+                                        onKeyDown={() => { /* Add keyboard resize logic if needed */ }}
                                     />
                                 </th>
                             </tr>

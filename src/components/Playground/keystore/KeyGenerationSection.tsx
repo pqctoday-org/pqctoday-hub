@@ -79,7 +79,7 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
 
                     {/* Generate Button */}
                     <div className="space-y-2">
-                        <label className="text-xs font-medium text-muted block opacity-0 select-none">Action</label>
+                        <span className="text-xs font-medium text-muted block opacity-0 select-none">Action</span>
                         <button
                             onClick={onGenerateKeys}
                             disabled={loading}
@@ -103,8 +103,9 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Algorithm Selection */}
                     <div className="space-y-2">
-                        <label className="text-xs font-medium text-muted block">Classical Algorithm</label>
+                        <label htmlFor="classical-algo-select" className="text-xs font-medium text-muted block">Classical Algorithm</label>
                         <select
+                            id="classical-algo-select"
                             value={classicalAlgorithm}
                             onChange={(e) => onClassicalAlgorithmChange(e.target.value)}
                             className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
@@ -129,7 +130,7 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
 
                     {/* Generate Button */}
                     <div className="space-y-2">
-                        <label className="text-xs font-medium text-muted block opacity-0 select-none">Action</label>
+                        <span className="text-xs font-medium text-muted block opacity-0 select-none">Action</span>
                         <button
                             onClick={onGenerateClassicalKeys}
                             disabled={classicalLoading}

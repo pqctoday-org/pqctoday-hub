@@ -170,7 +170,7 @@ export const Workbench = () => {
     return (
         <div className="h-full flex flex-col gap-6 p-4">
             <div className="space-y-4">
-                <label className="text-sm font-bold text-muted uppercase tracking-wider block">0. Configuration</label>
+                <span className="text-sm font-bold text-muted uppercase tracking-wider block">0. Configuration</span>
                 <button
                     onClick={() => {
                         const configFile = useOpenSSLStore.getState().files.find(f => f.name === 'openssl.cnf');
@@ -188,7 +188,7 @@ export const Workbench = () => {
             </div>
 
             <div className="space-y-4">
-                <label className="text-sm font-bold text-muted uppercase tracking-wider block">1. Select Operation</label>
+                <span className="text-sm font-bold text-muted uppercase tracking-wider block">1. Select Operation</span>
                 <div className="grid grid-cols-2 gap-2">
                     <button
                         onClick={() => setCategory('genpkey')}
@@ -244,11 +244,12 @@ export const Workbench = () => {
 
             {category === 'rand' && (
                 <div className="space-y-4 animate-fade-in">
-                    <label className="text-sm font-bold text-muted uppercase tracking-wider block">2. Configuration</label>
+                    <span className="text-sm font-bold text-muted uppercase tracking-wider block">2. Configuration</span>
 
                     <div className="space-y-3">
-                        <label className="text-xs text-muted block">Number of Bytes</label>
+                        <label htmlFor="rand-bytes-input" className="text-xs text-muted block">Number of Bytes</label>
                         <input
+                            id="rand-bytes-input"
                             type="number"
                             value={randBytes}
                             onChange={(e) => setRandBytes(e.target.value)}
@@ -275,7 +276,7 @@ export const Workbench = () => {
 
             {category === 'version' && (
                 <div className="space-y-4 animate-fade-in">
-                    <label className="text-sm font-bold text-muted uppercase tracking-wider block">2. Configuration</label>
+                    <span className="text-sm font-bold text-muted uppercase tracking-wider block">2. Configuration</span>
                     <div className="text-sm text-muted">
                         No configuration needed. This command displays detailed version information about the OpenSSL build.
                     </div>
@@ -284,11 +285,12 @@ export const Workbench = () => {
 
             {category === 'genpkey' && (
                 <div className="space-y-4 animate-fade-in">
-                    <label className="text-sm font-bold text-muted uppercase tracking-wider block">2. Configuration</label>
+                    <span className="text-sm font-bold text-muted uppercase tracking-wider block">2. Configuration</span>
 
                     <div className="space-y-3">
-                        <label className="text-xs text-muted block">Algorithm</label>
+                        <label htmlFor="key-algo-select" className="text-xs text-muted block">Algorithm</label>
                         <select
+                            id="key-algo-select"
                             value={keyAlgo}
                             onChange={(e) => setKeyAlgo(e.target.value)}
                             className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
@@ -323,8 +325,9 @@ export const Workbench = () => {
                     {
                         keyAlgo === 'rsa' && (
                             <div className="space-y-3">
-                                <label className="text-xs text-muted block">Key Size (Bits)</label>
+                                <label htmlFor="key-bits-select" className="text-xs text-muted block">Key Size (Bits)</label>
                                 <select
+                                    id="key-bits-select"
                                     value={keyBits}
                                     onChange={(e) => setKeyBits(e.target.value)}
                                     className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
@@ -341,8 +344,9 @@ export const Workbench = () => {
                     {
                         keyAlgo === 'ec' && (
                             <div className="space-y-3">
-                                <label className="text-xs text-muted block">Elliptic Curve</label>
+                                <label htmlFor="curve-select" className="text-xs text-muted block">Elliptic Curve</label>
                                 <select
+                                    id="curve-select"
                                     value={curve}
                                     onChange={(e) => setCurve(e.target.value)}
                                     className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
@@ -357,8 +361,9 @@ export const Workbench = () => {
                     }
 
                     <div className="space-y-3">
-                        <label className="text-xs text-muted block">Encryption (Passphrase)</label>
+                        <label htmlFor="cipher-select" className="text-xs text-muted block">Encryption (Passphrase)</label>
                         <select
+                            id="cipher-select"
                             value={cipher}
                             onChange={(e) => setCipher(e.target.value)}
                             className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
@@ -374,8 +379,9 @@ export const Workbench = () => {
                     {
                         cipher !== 'none' && (
                             <div className="space-y-3 animate-fade-in">
-                                <label className="text-xs text-muted block">Passphrase</label>
+                                <label htmlFor="passphrase-input" className="text-xs text-muted block">Passphrase</label>
                                 <input
+                                    id="passphrase-input"
                                     type="password"
                                     value={passphrase}
                                     onChange={(e) => setPassphrase(e.target.value)}
@@ -391,11 +397,12 @@ export const Workbench = () => {
             {
                 (category === 'req' || category === 'x509') && (
                     <div className="space-y-4 animate-fade-in">
-                        <label className="text-sm font-bold text-muted uppercase tracking-wider block">2. Subject Information</label>
+                        <span className="text-sm font-bold text-muted uppercase tracking-wider block">2. Subject Information</span>
 
                         <div className="space-y-3">
-                            <label className="text-xs text-muted block">Common Name (CN)</label>
+                            <label htmlFor="common-name-input" className="text-xs text-muted block">Common Name (CN)</label>
                             <input
+                                id="common-name-input"
                                 type="text"
                                 value={commonName}
                                 onChange={(e) => setCommonName(e.target.value)}
@@ -406,8 +413,9 @@ export const Workbench = () => {
 
                         <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-3">
-                                <label className="text-xs text-muted block">Organization (O)</label>
+                                <label htmlFor="org-input" className="text-xs text-muted block">Organization (O)</label>
                                 <input
+                                    id="org-input"
                                     type="text"
                                     value={org}
                                     onChange={(e) => setOrg(e.target.value)}
@@ -415,8 +423,9 @@ export const Workbench = () => {
                                 />
                             </div>
                             <div className="space-y-3">
-                                <label className="text-xs text-muted block">Country (C)</label>
+                                <label htmlFor="country-input" className="text-xs text-muted block">Country (C)</label>
                                 <input
+                                    id="country-input"
                                     type="text"
                                     value={country}
                                     onChange={(e) => setCountry(e.target.value)}
@@ -427,8 +436,9 @@ export const Workbench = () => {
                         </div>
 
                         <div className="space-y-3">
-                            <label className="text-xs text-muted block">Digest Algorithm</label>
+                            <label htmlFor="digest-algo-select" className="text-xs text-muted block">Digest Algorithm</label>
                             <select
+                                id="digest-algo-select"
                                 value={digestAlgo}
                                 onChange={(e) => setDigestAlgo(e.target.value)}
                                 className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
@@ -442,8 +452,9 @@ export const Workbench = () => {
                         </div>
 
                         <div className="space-y-3 pt-2 border-t border-white/10">
-                            <label className="text-xs text-muted block">Private Key File</label>
+                            <label htmlFor="csr-key-select" className="text-xs text-muted block">Private Key File</label>
                             <select
+                                id="csr-key-select"
                                 value={selectedCsrKeyFile}
                                 onChange={(e) => setSelectedCsrKeyFile(e.target.value)}
                                 className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
@@ -463,8 +474,9 @@ export const Workbench = () => {
 
                         {category === 'x509' && (
                             <div className="space-y-3 pt-2 border-t border-white/10">
-                                <label className="text-xs text-muted block">Validity (Days)</label>
+                                <label htmlFor="cert-days-input" className="text-xs text-muted block">Validity (Days)</label>
                                 <input
+                                    id="cert-days-input"
                                     type="number"
                                     value={certDays}
                                     onChange={(e) => setCertDays(e.target.value)}
@@ -479,10 +491,10 @@ export const Workbench = () => {
             {
                 category === 'dgst' && (
                     <div className="space-y-4 animate-fade-in">
-                        <label className="text-sm font-bold text-muted uppercase tracking-wider block">2. Configuration</label>
+                        <span className="text-sm font-bold text-muted uppercase tracking-wider block">2. Configuration</span>
 
                         <div className="space-y-3">
-                            <label className="text-xs text-muted block">Action</label>
+                            <span className="text-xs text-muted block">Action</span>
                             <div className="flex bg-black/40 rounded-lg p-1 border border-white/20">
                                 <button
                                     onClick={() => setSignAction('sign')}
@@ -542,8 +554,9 @@ export const Workbench = () => {
                         {/* Show hash algorithm selector only for classical keys */}
                         {selectedKeyFile && !selectedKeyFile.includes('mldsa') && !selectedKeyFile.includes('slhdsa') ? (
                             <div className="space-y-3">
-                                <label className="text-xs text-muted block">Hash Algorithm</label>
+                                <label htmlFor="sig-hash-algo-select" className="text-xs text-muted block">Hash Algorithm</label>
                                 <select
+                                    id="sig-hash-algo-select"
                                     value={sigHashAlgo}
                                     onChange={(e) => setSigHashAlgo(e.target.value)}
                                     className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
@@ -608,8 +621,9 @@ export const Workbench = () => {
 
                         {signAction === 'verify' && (
                             <div className="space-y-3">
-                                <label className="text-xs text-muted block">Signature File</label>
+                                <label htmlFor="sig-file-select" className="text-xs text-muted block">Signature File</label>
                                 <select
+                                    id="sig-file-select"
                                     value={selectedSigFile}
                                     onChange={(e) => setSelectedSigFile(e.target.value)}
                                     className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
@@ -647,7 +661,7 @@ export const Workbench = () => {
             {
                 category === 'files' && (
                     <div className="space-y-4 animate-fade-in">
-                        <label className="text-sm font-bold text-muted uppercase tracking-wider block">File Manager</label>
+                        <span className="text-sm font-bold text-muted uppercase tracking-wider block">File Manager</span>
 
                         {useOpenSSLStore.getState().files.length === 0 ? (
                             <div className="text-center py-12 text-white/20 text-sm">

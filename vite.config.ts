@@ -1,4 +1,5 @@
-import { defineConfig } from 'vite'
+/// <reference types="vitest" />
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import wasm from 'vite-plugin-wasm'
 import topLevelAwait from 'vite-plugin-top-level-await'
@@ -10,6 +11,11 @@ export default defineConfig({
     wasm(),
     topLevelAwait()
   ],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.ts',
+  },
   optimizeDeps: {
     exclude: ['mlkem-wasm', '@openforge-sh/liboqs']
   },

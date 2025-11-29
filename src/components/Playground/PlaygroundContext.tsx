@@ -120,12 +120,19 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     // State definitions
     const [algorithm, setAlgorithm] = useState<'ML-KEM' | 'ML-DSA'>('ML-KEM');
     const [keySize, setKeySize] = useState<string>('768');
-    const [executionMode, setExecutionMode] = useState<ExecutionMode>('wasm');
+    const [executionMode, setExecutionMode] = useState<ExecutionMode>(() => {
+        const isWasmSupported = typeof WebAssembly === 'object';
+        if (!isWasmSupported) return 'mock';
+        const savedMode = sessionStorage.getItem('playground-execution-mode');
+        return (savedMode === 'wasm' || savedMode === 'mock') ? savedMode : 'wasm';
+    });
     const [wasmLoaded, setWasmLoaded] = useState(false);
     const [keyStore, setKeyStore] = useState<Key[]>([]);
     const [logs, setLogs] = useState<LogEntry[]>([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(() => {
+        return (typeof WebAssembly === 'object') ? null : 'WebAssembly not supported in this browser. Using Mock mode.';
+    });
     const [sortColumn, setSortColumn] = useState<SortColumn>('timestamp');
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [columnWidths, setColumnWidths] = useState<{ [key: string]: number }>({ timestamp: 150, keyLabel: 200, operation: 180, result: 300, executionTime: 120 });
@@ -150,17 +157,27 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const [symData, setSymData] = useState('48656c6c6f2053796d6d657472696320576f726c64');
     const [symOutput, setSymOutput] = useState('');
     const [classicalAlgorithm, setClassicalAlgorithm] = useState<ClassicalAlgorithm>('RSA-2048');
-    const [enabledAlgorithms, setEnabledAlgorithms] = useState({
-        kem: { 'ML-KEM-512': true, 'ML-KEM-768': true, 'ML-KEM-1024': true, 'X25519': true, 'P-256': true },
-        signature: { 'ML-DSA-44': true, 'ML-DSA-65': true, 'ML-DSA-87': true, 'RSA-2048': true, 'RSA-3072': true, 'RSA-4096': true, 'ECDSA-P256': true, 'Ed25519': true },
-        symmetric: { 'AES-128-GCM': true, 'AES-256-GCM': true },
-        hash: { 'SHA-256': true, 'SHA-384': true, 'SHA3-256': false }
+    const [enabledAlgorithms, setEnabledAlgorithms] = useState(() => {
+        const saved = sessionStorage.getItem('playground-enabled-algorithms');
+        if (saved) {
+            try {
+                return JSON.parse(saved);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        return {
+            kem: { 'ML-KEM-512': true, 'ML-KEM-768': true, 'ML-KEM-1024': true, 'X25519': true, 'P-256': true },
+            signature: { 'ML-DSA-44': true, 'ML-DSA-65': true, 'ML-DSA-87': true, 'RSA-2048': true, 'RSA-3072': true, 'RSA-4096': true, 'ECDSA-P256': true, 'Ed25519': true },
+            symmetric: { 'AES-128-GCM': true, 'AES-256-GCM': true },
+            hash: { 'SHA-256': true, 'SHA-384': true, 'SHA3-256': false }
+        };
     });
 
     // --- Helpers ---
     const handleAlgorithmChange = (newAlgorithm: 'ML-KEM' | 'ML-DSA') => { setAlgorithm(newAlgorithm); setKeySize(newAlgorithm === 'ML-KEM' ? '768' : '65'); };
     const toggleAlgorithm = (category: 'kem' | 'signature' | 'symmetric' | 'hash', algorithm: string) => {
-        setEnabledAlgorithms(prev => ({ ...prev, [category]: { ...prev[category], [algorithm]: !prev[category][algorithm as keyof typeof prev[typeof category]] } }));
+        setEnabledAlgorithms((prev: Record<string, Record<string, boolean>>) => ({ ...prev, [category]: { ...prev[category], [algorithm]: !prev[category][algorithm as keyof typeof prev[typeof category]] } }));
     };
     const addLog = (entry: Omit<LogEntry, 'id' | 'timestamp'>) => {
         const newEntry: LogEntry = { id: Math.random().toString(36).substring(2, 9), timestamp: new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }), ...entry };
@@ -282,17 +299,7 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         loadWASM();
     }, [executionMode, wasmLoaded]);
 
-    useEffect(() => {
-        const isWasmSupported = typeof WebAssembly === 'object';
-        if (!isWasmSupported && executionMode === 'wasm') { setExecutionMode('mock'); setError('WebAssembly not supported in this browser. Using Mock mode.'); }
-    }, [executionMode]);
 
-    useEffect(() => {
-        const savedMode = sessionStorage.getItem('playground-execution-mode');
-        if (savedMode === 'wasm' || savedMode === 'mock') setExecutionMode(savedMode);
-        const savedAlgorithms = sessionStorage.getItem('playground-enabled-algorithms');
-        if (savedAlgorithms) try { setEnabledAlgorithms(JSON.parse(savedAlgorithms)); } catch (e) { console.error(e); }
-    }, []);
 
     useEffect(() => { sessionStorage.setItem('playground-execution-mode', executionMode); }, [executionMode]);
     useEffect(() => { sessionStorage.setItem('playground-enabled-algorithms', JSON.stringify(enabledAlgorithms)); }, [enabledAlgorithms]);

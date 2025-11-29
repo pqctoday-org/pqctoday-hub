@@ -3,7 +3,7 @@ import { RefreshCw, Lock, Key as KeyIcon, Play, AlertCircle, FileSignature, Tras
 import * as MLKEM from '../../wasm/liboqs_kem';
 import * as MLDSA from '../../wasm/liboqs_dsa';
 import clsx from 'clsx';
-import { bytesToHex } from '../Playground/DataInput';
+import { bytesToHex } from '../../utils/dataInputUtils';
 
 interface Key {
     id: string;
@@ -202,7 +202,7 @@ export const InteractivePlayground = () => {
                     {/* Section 1: Key Gen */}
                     <div className="space-y-4">
                         <div className="flex justify-between items-center">
-                            <label className="text-sm font-bold text-muted uppercase tracking-wider">1. Key Generation</label>
+                            <span className="text-sm font-bold text-muted uppercase tracking-wider">1. Key Generation</span>
                             {keyStore.length > 0 && (
                                 <button onClick={clearKeys} className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1">
                                     <Trash2 size={12} /> Clear Keys
@@ -258,7 +258,7 @@ export const InteractivePlayground = () => {
 
                     {/* Section 3: Operations */}
                     <div className="space-y-4">
-                        <label className="text-sm font-bold text-muted uppercase tracking-wider block mb-2">3. Execute Operation</label>
+                        <span className="text-sm font-bold text-muted uppercase tracking-wider block mb-2">3. Execute Operation</span>
 
                         {algorithm === 'ML-KEM' ? (
                             <div className="grid grid-cols-1 gap-4">
@@ -304,8 +304,9 @@ export const InteractivePlayground = () => {
                                     </button>
                                     {sharedSecret && (
                                         <div className="mt-3">
-                                            <label className="text-xs text-muted block mb-2">Shared Secret:</label>
+                                            <label htmlFor="shared-secret-input" className="text-xs text-muted block mb-2">Shared Secret:</label>
                                             <input
+                                                id="shared-secret-input"
                                                 type="text"
                                                 value={sharedSecret}
                                                 onChange={(e) => setSharedSecret(e.target.value)}
@@ -377,8 +378,9 @@ export const InteractivePlayground = () => {
                                         <option value="">Select Public Key...</option>
                                         {publicKeys.map(k => <option key={k.id} value={k.id}>{k.name}</option>)}
                                     </select>
-                                    <label className="text-xs text-muted block mb-2">Signature to Verify:</label>
+                                    <label htmlFor="signature-verify-input" className="text-xs text-muted block mb-2">Signature to Verify:</label>
                                     <input
+                                        id="signature-verify-input"
                                         type="text"
                                         value={signature}
                                         onChange={(e) => setSignature(e.target.value)}
@@ -442,7 +444,7 @@ export const InteractivePlayground = () => {
                     </div>
 
                     <div className="space-y-4">
-                        <label className="text-sm font-bold text-muted uppercase tracking-wider block">Output Log</label>
+                        <span className="text-sm font-bold text-muted uppercase tracking-wider block">Output Log</span>
                         <div
                             className="bg-white/5 border border-white/10 rounded-lg p-4 h-64 overflow-y-auto font-mono text-sm break-all text-accent whitespace-pre-wrap shadow-inner custom-scrollbar"
                             role="log"

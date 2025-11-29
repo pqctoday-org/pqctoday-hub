@@ -58,7 +58,7 @@ export const KemOpsTab: React.FC = () => {
                             const key = keyStore.find(k => k.id === selectedEncKeyId);
                             if (!key) return null;
                             let scheme = 'Unknown';
-                            let secretSize = '32 bytes'; // Default for ML-KEM and standard ECDH curves
+                            const secretSize = '32 bytes'; // Default for ML-KEM and standard ECDH curves
 
                             if (key.algorithm.startsWith('ML-KEM')) {
                                 scheme = 'ML-KEM (Kyber)';
@@ -135,7 +135,7 @@ export const KemOpsTab: React.FC = () => {
                             const key = keyStore.find(k => k.id === selectedDecKeyId);
                             if (!key) return null;
                             let scheme = 'Unknown';
-                            let secretSize = '32 bytes';
+                            const secretSize = '32 bytes';
 
                             if (key.algorithm.startsWith('ML-KEM')) {
                                 scheme = 'ML-KEM (Kyber)';

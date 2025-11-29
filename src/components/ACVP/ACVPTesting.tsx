@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import type { Key } from '../../types';
 import mlkemTestVectors from '../../data/acvp/mlkem_test.json';
 import mldsaTestVectors from '../../data/acvp/mldsa_test.json';
-import { hexToBytes } from '../Playground/DataInput';
+import { hexToBytes } from '../../utils/dataInputUtils';
 import * as MLKEM_LIBOQS from '../../wasm/liboqs_kem';
 import * as MLDSA from '../../wasm/liboqs_dsa';
 
