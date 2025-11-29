@@ -14,7 +14,7 @@ export const SettingsTab: React.FC = () => {
 
     return (
         <div className="space-y-8 max-w-2xl mx-auto animate-fade-in">
-            <div className="space-y-4">
+            <div className="space-y-4 hidden">
                 <h4 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2">
                     <Cpu size={18} className="text-accent" /> Execution Mode
                 </h4>

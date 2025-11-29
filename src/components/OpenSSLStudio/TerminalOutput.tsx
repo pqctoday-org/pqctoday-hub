@@ -87,25 +87,36 @@ export const TerminalOutput = () => {
             </div>
 
             {/* Logs Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
-                {filteredLogs.length === 0 && (
+            <div className="flex-1 overflow-y-auto custom-scrollbar bg-black/20">
+                {filteredLogs.length === 0 ? (
                     <div className="text-white/20 italic text-center mt-10">
                         {logs.length === 0 ? "Ready to execute commands..." : "No output in this stream."}
                     </div>
+                ) : (
+                    <table className="w-full text-left border-collapse table-fixed">
+                        <colgroup>
+                            <col className="w-24" />
+                            <col className="w-auto" />
+                        </colgroup>
+                        <tbody className="divide-y divide-white/5">
+                            {filteredLogs.map((log) => (
+                                <tr key={log.id} className="hover:bg-white/5 transition-colors">
+                                    <td className="px-3 py-1.5 text-white/30 align-top whitespace-nowrap font-mono text-xs select-none border-r border-white/5">
+                                        [{log.timestamp}]
+                                    </td>
+                                    <td className={clsx(
+                                        "px-3 py-1.5 align-top break-all whitespace-pre-wrap font-mono text-xs",
+                                        log.type === 'error' ? "text-red-400" :
+                                            log.type === 'info' ? "text-blue-300" :
+                                                "text-white/80"
+                                    )}>
+                                        {log.message}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 )}
-                {filteredLogs.map((log) => (
-                    <div key={log.id} className="flex gap-2">
-                        <span className="text-white/30 select-none">[{log.timestamp}]</span>
-                        <span className={clsx(
-                            "break-all whitespace-pre-wrap",
-                            log.type === 'error' ? "text-red-400" :
-                                log.type === 'info' ? "text-blue-300" :
-                                    "text-white/80"
-                        )}>
-                            {log.message}
-                        </span>
-                    </div>
-                ))}
                 <div ref={logsEndRef} />
             </div>
         </div>
