@@ -112,3 +112,9 @@ src/
 ## License
 
 [MIT](LICENSE)
+
+---
+
+<p align="center">
+  Built with <strong>Google Antigravity</strong> 🚀
+</p>

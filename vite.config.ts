@@ -24,7 +24,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-react': ['react', 'react-dom'],
           'vendor-ui': ['framer-motion', 'lucide-react', 'clsx'],
           'vendor-pqc': ['mlkem-wasm', '@openforge-sh/liboqs', 'pqcrypto', '@noble/hashes']
         }
