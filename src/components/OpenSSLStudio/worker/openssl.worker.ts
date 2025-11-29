@@ -190,14 +190,20 @@ activate = 1
         }
 
         // 4. Prepare Arguments
-        // Prepend -rand /random.seed to ensure OpenSSL has entropy
-        // We REMOVE -config and -provider because they are not valid arguments for subcommands like 'rand' or 'genpkey' directly
-        // when invoking via callMain in some builds. The 'openssl' CLI wrapper handles them, but we might be hitting the subcommand directly
-        // or the build doesn't support them as args.
-        // We rely on OPENSSL_CONF env var for config.
-        const fullArgs = [command, '-rand', '/random.seed', ...args];
+        // We revert to passing NO global flags (-config, -provider) in the arguments because callMain seems to treat the first argument as the command.
+        // We rely entirely on OPENSSL_CONF and RANDFILE environment variables which are set above.
 
-        ctx.postMessage({ type: 'LOG', stream: 'stdout', message: `Executing: openssl ${command} ${args.join(' ')}` });
+        const commandsWithRand = ['genpkey', 'req', 'rand', 'dgst', 'enc', 'cms', 'ca'];
+        const fullArgs = [command];
+
+        // Only append -rand for commands that support it
+        if (commandsWithRand.includes(command)) {
+            fullArgs.push('-rand', '/random.seed');
+        }
+
+        fullArgs.push(...args);
+
+        ctx.postMessage({ type: 'LOG', stream: 'stdout', message: `Executing: openssl ${fullArgs.join(' ')}` });
 
         // 5. Execute
         try {
