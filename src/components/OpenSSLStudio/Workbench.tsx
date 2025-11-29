@@ -27,6 +27,12 @@ export const Workbench = () => {
     // Sign/Verify State
     const [signAction, setSignAction] = useState<'sign' | 'verify'>('sign');
     const [sigHashAlgo, setSigHashAlgo] = useState('sha256');
+    const [selectedKeyFile, setSelectedKeyFile] = useState('');
+    const [selectedDataFile, setSelectedDataFile] = useState('');
+    const [selectedSigFile, setSelectedSigFile] = useState('');
+
+    // CSR/Cert State - selected private key
+    const [selectedCsrKeyFile, setSelectedCsrKeyFile] = useState('');
 
     // Random Data State
     const [randBytes, setRandBytes] = useState('32');
@@ -40,30 +46,61 @@ export const Workbench = () => {
         const subj = `/C=${country}/O=${org}/CN=${commonName}`;
 
         if (category === 'genpkey') {
+            // Generate descriptive filename with algorithm, variant, and timestamp
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5); // Format: 2025-11-28T21-23-45
+            let keyName = '';
+
             if (keyAlgo === 'rsa') {
+                keyName = `rsa-${keyBits}-${timestamp}.key`;
                 cmd += ` genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:${keyBits}`;
             } else if (keyAlgo === 'ec') {
+                keyName = `ec-${curve}-${timestamp}.key`;
                 cmd += ` genpkey -algorithm EC -pkeyopt ec_paramgen_curve:${curve}`;
+            } else if (keyAlgo.startsWith('mlkem')) {
+                const kemVariant = keyAlgo.replace('mlkem', '');
+                keyName = `mlkem-${kemVariant}-${timestamp}.key`;
+                cmd += ` genpkey -algorithm ML-KEM-${kemVariant}`;
+            } else if (keyAlgo.startsWith('mldsa')) {
+                const dsaVariant = keyAlgo.replace('mldsa', '');
+                keyName = `mldsa-${dsaVariant}-${timestamp}.key`;
+                cmd += ` genpkey -algorithm ML-DSA-${dsaVariant}`;
+            } else if (keyAlgo.startsWith('slhdsa')) {
+                const slhVariantMap: Record<string, string> = {
+                    'slhdsa128s': 'SLH-DSA-SHA2-128s',
+                    'slhdsa128f': 'SLH-DSA-SHA2-128f',
+                    'slhdsa192s': 'SLH-DSA-SHA2-192s',
+                    'slhdsa192f': 'SLH-DSA-SHA2-192f',
+                    'slhdsa256s': 'SLH-DSA-SHA2-256s',
+                    'slhdsa256f': 'SLH-DSA-SHA2-256f'
+                };
+                keyName = `slhdsa-${keyAlgo.replace('slhdsa', '')}-${timestamp}.key`;
+                cmd += ` genpkey -algorithm ${slhVariantMap[keyAlgo]}`;
             } else {
+                keyName = `${keyAlgo}-${timestamp}.key`;
                 cmd += ` genpkey -algorithm ${keyAlgo.toUpperCase()}`;
             }
 
             if (cipher !== 'none') {
                 cmd += ` -${cipher} -pass pass:${passphrase}`;
             }
-            cmd += ` -out private.key`;
+            cmd += ` -out ${keyName}`;
         } else if (category === 'req') {
-            // If the key is encrypted, we might need -passin, but for now assuming unencrypted or handled by context
-            // In a real app we'd need to track if private.key is encrypted.
-            cmd += ` req -new -key private.key -out request.csr -${digestAlgo} -subj "${subj}"`;
+            const keyFile = selectedCsrKeyFile || 'private.key';
+            cmd += ` req -new -key ${keyFile} -out request.csr -${digestAlgo} -subj "${subj}"`;
         } else if (category === 'x509') {
-            cmd += ` req -x509 -new -key private.key -out certificate.crt -days ${certDays} -${digestAlgo} -subj "${subj}"`;
+            const keyFile = selectedCsrKeyFile || 'private.key';
+            cmd += ` req -x509 -new -key ${keyFile} -out certificate.crt -days ${certDays} -${digestAlgo} -subj "${subj}"`;
         } else if (category === 'dgst') {
             cmd += ` dgst -${sigHashAlgo}`;
             if (signAction === 'sign') {
-                cmd += ` -sign private.key -out data.sig data.txt`;
+                const keyFile = selectedKeyFile || 'private.key';
+                const dataFile = selectedDataFile || 'data.txt';
+                cmd += ` -sign ${keyFile} -out data.sig ${dataFile}`;
             } else {
-                cmd += ` -verify public.key -signature data.sig data.txt`;
+                const keyFile = selectedKeyFile || 'public.key';
+                const dataFile = selectedDataFile || 'data.txt';
+                const sigFile = selectedSigFile || 'data.sig';
+                cmd += ` -verify ${keyFile} -signature ${sigFile} ${dataFile}`;
             }
         } else if (category === 'rand') {
             cmd += ` rand`;
@@ -73,7 +110,7 @@ export const Workbench = () => {
             cmd += ` version -a`;
         }
         setCommand(cmd);
-    }, [category, keyAlgo, keyBits, curve, cipher, passphrase, certDays, commonName, org, country, digestAlgo, signAction, sigHashAlgo, randBytes, randHex, setCommand]);
+    }, [category, keyAlgo, keyBits, curve, cipher, passphrase, certDays, commonName, org, country, digestAlgo, signAction, sigHashAlgo, randBytes, randHex, selectedKeyFile, selectedDataFile, selectedSigFile, selectedCsrKeyFile, setCommand]);
 
     const handleRun = () => {
         executeCommand(useOpenSSLStore.getState().command);
@@ -198,12 +235,30 @@ export const Workbench = () => {
                             onChange={(e) => setKeyAlgo(e.target.value)}
                             className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
                         >
-                            <option value="rsa">RSA (Rivest–Shamir–Adleman)</option>
-                            <option value="ec">EC (Elliptic Curve)</option>
-                            <option value="ed25519">Ed25519 (Edwards-curve DSA)</option>
-                            <option value="x25519">X25519 (Curve25519)</option>
-                            <option value="ed448">Ed448 (Edwards-curve DSA)</option>
-                            <option value="x448">X448 (Curve448)</option>
+                            <optgroup label="Classical Algorithms">
+                                <option value="rsa">RSA (Rivest–Shamir–Adleman)</option>
+                                <option value="ec">EC (Elliptic Curve)</option>
+                                <option value="ed25519">Ed25519 (Edwards-curve DSA)</option>
+                                <option value="x25519">X25519 (Curve25519)</option>
+                                <option value="ed448">Ed448 (Edwards-curve DSA)</option>
+                                <option value="x448">X448 (Curve448)</option>
+                            </optgroup>
+                            <optgroup label="Post-Quantum Algorithms (KEM)">
+                                <option value="mlkem512">ML-KEM-512 (FIPS 203)</option>
+                                <option value="mlkem768">ML-KEM-768 (FIPS 203)</option>
+                                <option value="mlkem1024">ML-KEM-1024 (FIPS 203)</option>
+                            </optgroup>
+                            <optgroup label="Post-Quantum Algorithms (Signature)">
+                                <option value="mldsa44">ML-DSA-44 (FIPS 204)</option>
+                                <option value="mldsa65">ML-DSA-65 (FIPS 204)</option>
+                                <option value="mldsa87">ML-DSA-87 (FIPS 204)</option>
+                                <option value="slhdsa128s">SLH-DSA-SHA2-128s (FIPS 205)</option>
+                                <option value="slhdsa128f">SLH-DSA-SHA2-128f (FIPS 205)</option>
+                                <option value="slhdsa192s">SLH-DSA-SHA2-192s (FIPS 205)</option>
+                                <option value="slhdsa192f">SLH-DSA-SHA2-192f (FIPS 205)</option>
+                                <option value="slhdsa256s">SLH-DSA-SHA2-256s (FIPS 205)</option>
+                                <option value="slhdsa256f">SLH-DSA-SHA2-256f (FIPS 205)</option>
+                            </optgroup>
                         </select>
                     </div>
 
@@ -321,6 +376,26 @@ export const Workbench = () => {
                         </select>
                     </div>
 
+                    <div className="space-y-3 pt-2 border-t border-white/10">
+                        <label className="text-xs text-muted block">Private Key File</label>
+                        <select
+                            value={selectedCsrKeyFile}
+                            onChange={(e) => setSelectedCsrKeyFile(e.target.value)}
+                            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                        >
+                            <option value="">Select a private key...</option>
+                            {useOpenSSLStore.getState().files
+                                .filter(f => f.name.endsWith('.key'))
+                                .map(f => (
+                                    <option key={f.name} value={f.name}>{f.name}</option>
+                                ))
+                            }
+                        </select>
+                        <p className="text-xs text-muted/60">
+                            Generate a key first using "Key Generation" if you don't have one.
+                        </p>
+                    </div>
+
                     {category === 'x509' && (
                         <div className="space-y-3 pt-2 border-t border-white/10">
                             <label className="text-xs text-muted block">Validity (Days)</label>
@@ -376,6 +451,77 @@ export const Workbench = () => {
                             <option value="blake2b512">BLAKE2b-512</option>
                         </select>
                     </div>
+
+                    <div className="space-y-3">
+                        <label className="text-xs text-muted block">
+                            {signAction === 'sign' ? 'Private Key File' : 'Public Key File'}
+                        </label>
+                        <select
+                            value={selectedKeyFile}
+                            onChange={(e) => setSelectedKeyFile(e.target.value)}
+                            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                        >
+                            <option value="">Select a key file...</option>
+                            {useOpenSSLStore.getState().files
+                                .filter(f => f.name.endsWith('.key') || f.name.endsWith('.pub'))
+                                .map(f => (
+                                    <option key={f.name} value={f.name}>{f.name}</option>
+                                ))
+                            }
+                        </select>
+                    </div>
+
+                    <div className="space-y-3">
+                        <label className="text-xs text-muted block">Data File to {signAction === 'sign' ? 'Sign' : 'Verify'}</label>
+                        <select
+                            value={selectedDataFile}
+                            onChange={(e) => setSelectedDataFile(e.target.value)}
+                            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                        >
+                            <option value="">Select a data file...</option>
+                            {useOpenSSLStore.getState().files
+                                .filter(f => f.name.endsWith('.txt') || f.name.endsWith('.bin'))
+                                .map(f => (
+                                    <option key={f.name} value={f.name}>{f.name}</option>
+                                ))
+                            }
+                        </select>
+                    </div>
+
+                    {signAction === 'verify' && (
+                        <div className="space-y-3">
+                            <label className="text-xs text-muted block">Signature File</label>
+                            <select
+                                value={selectedSigFile}
+                                onChange={(e) => setSelectedSigFile(e.target.value)}
+                                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                            >
+                                <option value="">Select a signature file...</option>
+                                {useOpenSSLStore.getState().files
+                                    .filter(f => f.name.endsWith('.sig'))
+                                    .map(f => (
+                                        <option key={f.name} value={f.name}>{f.name}</option>
+                                    ))
+                                }
+                            </select>
+                        </div>
+                    )}
+
+                    <button
+                        onClick={() => {
+                            const testData = new TextEncoder().encode('Hello, Post-Quantum World! This is test data for signing.');
+                            useOpenSSLStore.getState().addFile({
+                                name: 'data.txt',
+                                type: 'text',
+                                content: testData,
+                                size: testData.length,
+                                timestamp: Date.now()
+                            });
+                        }}
+                        className="w-full p-2 rounded-lg border border-primary/30 bg-primary/10 hover:bg-primary/20 text-primary text-sm transition-colors"
+                    >
+                        Create Test Data File (data.txt)
+                    </button>
                 </div>
             )}
 

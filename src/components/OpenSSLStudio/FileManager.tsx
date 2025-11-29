@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useOpenSSLStore } from './store';
-import { File, FileCode, FileKey, Download, Trash2, Upload, Edit2, X, Save } from 'lucide-react';
+import { File, FileCode, FileKey, Download, Trash2, Upload, Edit2, X, Save, KeyRound } from 'lucide-react';
+import { useOpenSSL } from './hooks/useOpenSSL';
 
 
 export const FileManager = () => {
@@ -81,14 +82,31 @@ export const FileManager = () => {
         setEditingFile(null);
     };
 
+    const { executeCommand } = useOpenSSL();
+
+    const handleExtractPublicKey = (privateKeyFile: string) => {
+        const publicKeyFile = privateKeyFile.replace('.key', '.pub');
+        const command = `openssl pkey -in ${privateKeyFile} -pubout -out ${publicKeyFile}`;
+        executeCommand(command);
+    };
+
     return (
         <div className="h-full flex flex-col bg-white/5 rounded-xl border border-white/10 overflow-hidden relative">
             <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-white/5">
                 <span className="text-xs font-bold uppercase tracking-wider text-muted">Virtual File System</span>
-                <label className="cursor-pointer text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-                    <Upload size={12} /> Upload
-                    <input type="file" className="hidden" multiple onChange={handleFileUpload} />
-                </label>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => files.forEach(f => removeFile(f.name))}
+                        className="text-xs text-muted hover:text-red-400 flex items-center gap-1 transition-colors"
+                        title="Clear all files"
+                    >
+                        <Trash2 size={12} /> Clear
+                    </button>
+                    <label className="cursor-pointer text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
+                        <Upload size={12} /> Upload
+                        <input type="file" className="hidden" multiple onChange={handleFileUpload} />
+                    </label>
+                </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
@@ -99,11 +117,15 @@ export const FileManager = () => {
                 ) : (
                     files.map((file) => (
                         <div key={file.name} className="flex items-center justify-between p-2 rounded hover:bg-white/5 group transition-colors">
-                            <div className="flex items-center gap-3 overflow-hidden">
+                            <div className="flex items-center gap-3 overflow-hidden flex-1">
                                 {getIcon(file.type)}
-                                <div className="flex flex-col min-w-0">
-                                    <span className="text-sm text-white truncate font-medium">{file.name}</span>
-                                    <span className="text-[10px] text-muted">{formatSize(file.size)} • {new Date(file.timestamp).toLocaleTimeString()}</span>
+                                <div className="flex flex-col min-w-0 flex-1">
+                                    <span className="text-sm text-white font-medium mb-0.5">{file.name}</span>
+                                    <div className="flex items-center gap-3 text-[10px] text-muted">
+                                        <span className="font-mono">{formatSize(file.size)}</span>
+                                        <span className="opacity-50">•</span>
+                                        <span>{new Date(file.timestamp).toLocaleTimeString()}</span>
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -121,6 +143,15 @@ export const FileManager = () => {
                                 >
                                     <Download size={14} />
                                 </button>
+                                {file.name.endsWith('.key') && !file.name.endsWith('.pub') && (
+                                    <button
+                                        onClick={() => handleExtractPublicKey(file.name)}
+                                        className="p-1.5 hover:bg-primary/20 rounded text-muted hover:text-primary"
+                                        title="Extract Public Key"
+                                    >
+                                        <KeyRound size={14} />
+                                    </button>
+                                )}
                                 <button
                                     onClick={() => removeFile(file.name)}
                                     className="p-1.5 hover:bg-red-500/20 rounded text-muted hover:text-red-400"

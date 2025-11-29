@@ -1,15 +1,22 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useOpenSSLStore } from '../store';
-import type { WorkerMessage, WorkerResponse } from '../worker/openssl.worker';
+import type { WorkerMessage, WorkerResponse } from '../worker/types';
 
 export const useOpenSSL = () => {
     const workerRef = useRef<Worker | null>(null);
-    const { addLog, addFile, setIsProcessing, files } = useOpenSSLStore();
+    const {
+        addLog,
+        clearLogs,
+        setIsProcessing,
+        addFile,
+        files,
+        command: currentCommand
+    } = useOpenSSLStore();
 
     useEffect(() => {
         // Initialize Worker
         const worker = new Worker(new URL('../worker/openssl.worker.ts', import.meta.url), {
-            type: 'module'
+            type: 'classic'
         });
 
         worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
@@ -27,13 +34,13 @@ export const useOpenSSL = () => {
                         size: event.data.data.byteLength,
                         timestamp: Date.now()
                     });
-                    addLog('info', `File created: ${event.data.name}`);
+                    addLog('info', `File created: ${event.data.name} `);
                     break;
                 case 'READY':
                     addLog('info', 'OpenSSL System Ready');
                     break;
                 case 'ERROR':
-                    addLog('error', `System Error: ${event.data.error}`);
+                    addLog('error', `System Error: ${event.data.error} `);
                     setIsProcessing(false);
                     break;
                 case 'DONE':
@@ -52,46 +59,39 @@ export const useOpenSSL = () => {
         };
     }, [addLog, addFile, setIsProcessing]);
 
-    const executeCommand = useCallback((fullCommand: string) => {
-        if (!workerRef.current) return;
+    const executeCommand = useCallback(async (cmdOverride?: string) => {
+        const commandToExecute = cmdOverride || currentCommand;
+        if (!commandToExecute) return;
 
         setIsProcessing(true);
-        addLog('info', `$ ${fullCommand}`);
-
-        // Sync files to worker
-        files.forEach(file => {
-            workerRef.current?.postMessage({
-                type: 'FILE_UPLOAD',
-                name: file.name,
-                data: file.content
-            });
-        });
+        clearLogs(); // Auto-clear logs on new run
+        addLog('info', `$ ${commandToExecute}`);
 
         // Parse command string to args, respecting quotes
         const args: string[] = [];
         let match;
         const regex = /[^\s"]+|"([^"]*)"/g;
 
-        while ((match = regex.exec(fullCommand)) !== null) {
+        // Skip 'openssl' if present
+        const cmdStr = commandToExecute.startsWith('openssl ') ? commandToExecute.slice(8) : commandToExecute;
+
+        while ((match = regex.exec(cmdStr)) !== null) {
             // If it was a quoted string (group 1), use that. Otherwise use the whole match.
             args.push(match[1] ? match[1] : match[0]);
         }
 
-        if (args[0] !== 'openssl') {
-            addLog('error', 'Command must start with "openssl"');
-            setIsProcessing(false);
-            return;
+        const cmd = args.shift() || '';
+
+        if (workerRef.current) {
+            // Send command AND files in one message to ensure they are written to the fresh module
+            workerRef.current.postMessage({
+                type: 'COMMAND',
+                command: cmd,
+                args,
+                files: files.map(f => ({ name: f.name, data: f.content }))
+            } as WorkerMessage);
         }
-
-        const command = args[1];
-        const cmdArgs = args.slice(2);
-
-        workerRef.current.postMessage({
-            type: 'COMMAND',
-            command,
-            args: cmdArgs
-        } as WorkerMessage);
-    }, [addLog, setIsProcessing, files]);
+    }, [currentCommand, setIsProcessing, clearLogs, addLog, files]);
 
     return { executeCommand };
 };

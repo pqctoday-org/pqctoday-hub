@@ -89,14 +89,31 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 - **`TerminalOutput`**: Log display.
 
 ### Key Challenges & Solutions
-- **RNG Initialization (`BN lib` error)**:
-  - **Issue**: RSA key generation failed with `rsa_multiprime_keygen:BN lib` due to insufficient entropy or uninitialized DRBG.
-  - **Solution**: 
-    1. Inject 4KB of browser-sourced entropy into `/random.seed`.
-    2. Attempt to write to `/dev/urandom` in MEMFS.
-    3. Generate a minimal `openssl.cnf` that explicitly activates the `default` provider.
-    4. Set `OPENSSL_CONF` and `RANDFILE` environment variables.
-    5. Prepend `-rand /random.seed` to all commands.
+
+1.  **WASM Entropy Injection**:
+    *   **Challenge**: OpenSSL WASM requires a seeded `/dev/urandom` or `RANDFILE` to function. Without it, commands fail silently or with PRNG errors.
+    *   **Solution**: We use `self.crypto.getRandomValues()` to generate a 4KB seed and write it to `/random.seed` and `/dev/urandom` in the WASM virtual filesystem before every command execution. We also set `RANDFILE=/random.seed` in the environment.
+
+2.  **WASM Module Loading**:
+    *   **Challenge**: Loading the Emscripten-generated `openssl.js` via `fetch` + `eval` caused parsing errors ("Unexpected string literal") due to Vite's transformation. Using standard ES modules failed because `importScripts` is not available in module workers.
+    *   **Solution**: We switched the Web Worker to `type: 'classic'` and used `importScripts` to load the WASM glue code. To support this, we consolidated the worker logic into a single file (bundling internal modules) and added a shim for `module.exports` to robustly capture the OpenSSL factory function.
+
+3.  **Algorithm Support & Limitations**:
+    *   **Fully Supported & Verified**:
+        *   `Ed25519` - Key generation and signing work flawlessly
+        *   `openssl version` and `openssl rand` - Stable
+        *   **ML-DSA (FIPS 204)** - Post-quantum digital signatures (ML-DSA-44, ML-DSA-65, ML-DSA-87) ✅ VERIFIED
+        *   **SLH-DSA (FIPS 205)** - Stateless hash-based signatures (all variants) ✅ VERIFIED
+        *   **ML-KEM (FIPS 203)** - Post-quantum key encapsulation (ML-KEM-512, ML-KEM-768, ML-KEM-1024) ✅ VERIFIED
+    *   **Known Limitations**:
+        *   **RSA**: Key generation (`genpkey -algorithm RSA`) fails with a `BN lib` error, likely due to BigInt/Math issues in the specific WASM build configuration.
+        *   **EC**: Generic Elliptic Curve key generation (`genpkey -algorithm EC`) causes a WASM crash ("Unreachable code"), indicating a build incompatibility or memory issue.
+    *   **Recommendation**: Use `Ed25519` for classical crypto and `ML-DSA` for post-quantum signatures in this environment.
+
+### Future Improvements
+*   Test and verify all ML-KEM and SLH-DSA variants
+*   Investigate a custom OpenSSL build with explicit support for `no-asm` and `no-threads` to potentially resolve RSA/EC stability issues.
+*   Explore migrating to a pure JS implementation (like `forge` or `noble-crypto`) if WASM limitations prove too restrictive for legacy algorithms.
 
 ## Future Roadmap
 - **PQC Algorithms**: Enable specific PQC providers/algorithms if supported by the build.
