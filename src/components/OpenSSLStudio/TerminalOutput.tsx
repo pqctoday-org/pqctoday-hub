@@ -95,18 +95,21 @@ export const TerminalOutput = () => {
                 ) : (
                     <table className="w-full text-left border-collapse table-fixed">
                         <colgroup>
-                            <col className="w-24" />
+                            <col className="w-40" />
                             <col className="w-auto" />
                         </colgroup>
                         <tbody className="divide-y divide-white/5">
                             {filteredLogs.map((log) => (
                                 <tr key={log.id} className="hover:bg-white/5 transition-colors">
-                                    <td className="px-3 py-1.5 text-white/30 align-top whitespace-nowrap font-mono text-xs select-none border-r border-white/5">
+                                    <td
+                                        className="px-3 py-1 text-white/30 align-top whitespace-nowrap font-mono text-[10px] select-none border-r border-white/5"
+                                        style={{ fontSize: '10px', whiteSpace: 'nowrap' }}
+                                    >
                                         [{log.timestamp}]
                                     </td>
                                     <td
                                         className={clsx(
-                                            "px-3 py-1.5 align-top font-mono text-xs",
+                                            "px-3 py-1 align-top font-mono leading-tight",
                                             log.type === 'error' ? "text-red-400" :
                                                 log.type === 'info' ? "text-blue-300" :
                                                     "text-white/80"
@@ -114,7 +117,8 @@ export const TerminalOutput = () => {
                                         style={{
                                             wordBreak: 'break-all',
                                             overflowWrap: 'anywhere',
-                                            whiteSpace: 'pre-wrap'
+                                            whiteSpace: 'pre-wrap',
+                                            fontSize: '11px'
                                         }}
                                     >
                                         {log.message}
