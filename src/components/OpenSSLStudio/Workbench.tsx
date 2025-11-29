@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useOpenSSLStore } from './store';
 import { useOpenSSL } from './hooks/useOpenSSL';
-import { Play, Settings, Key, FileText, Shield, Info, Folder, Download, Trash2, Edit2, ArrowUpDown } from 'lucide-react';
+import { Play, Settings, Key, FileText, Shield, Info, Folder, Download, Trash2, Edit2, ArrowUpDown, FileKey } from 'lucide-react';
 import clsx from 'clsx';
 
 
 export const Workbench = () => {
-    const { setCommand, isProcessing } = useOpenSSLStore();
+    const { setCommand, isProcessing, addLog } = useOpenSSLStore();
     const { executeCommand } = useOpenSSL();
     const [category, setCategory] = useState<'genpkey' | 'req' | 'x509' | 'enc' | 'dgst' | 'rand' | 'version' | 'files'>('genpkey');
 
@@ -149,6 +149,22 @@ export const Workbench = () => {
 
     const handleRun = () => {
         executeCommand(useOpenSSLStore.getState().command);
+    };
+
+    const handleExtractPublicKey = (privateKeyFile: string) => {
+        if (!privateKeyFile.endsWith('.key') && !privateKeyFile.endsWith('.pem')) {
+            addLog('error', `Cannot extract public key: '${privateKeyFile}' does not appear to be a private key file (.key or .pem).`);
+            return;
+        }
+
+        // Replace extension or append .pub
+        let publicKeyFile = privateKeyFile.replace(/\.(key|pem)$/, '') + '.pub';
+        if (publicKeyFile === privateKeyFile + '.pub' && !privateKeyFile.includes('.')) {
+            publicKeyFile = privateKeyFile + '.pub';
+        }
+
+        const command = `openssl pkey -in ${privateKeyFile} -pubout -out ${publicKeyFile}`;
+        executeCommand(command);
     };
 
     return (
@@ -753,6 +769,15 @@ export const Workbench = () => {
                                                             >
                                                                 <Download size={14} />
                                                             </button>
+                                                            {(file.name.endsWith('.key') || file.name.endsWith('.pem')) && (
+                                                                <button
+                                                                    onClick={() => handleExtractPublicKey(file.name)}
+                                                                    className="p-1.5 hover:bg-primary/20 rounded text-muted hover:text-primary transition-colors"
+                                                                    title="Extract Public Key"
+                                                                >
+                                                                    <FileKey size={14} />
+                                                                </button>
+                                                            )}
                                                             <button
                                                                 onClick={() => useOpenSSLStore.getState().removeFile(file.name)}
                                                                 className="p-1.5 hover:bg-red-500/20 rounded text-muted hover:text-red-400 transition-colors"

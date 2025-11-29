@@ -157,10 +157,10 @@ export const FileManager = () => {
                                 </button>
                                 <button
                                     onClick={() => handleExtractPublicKey(file.name)}
-                                    className="p-1.5 hover:bg-primary/20 rounded text-muted hover:text-primary"
+                                    className="p-1.5 hover:bg-primary/20 rounded text-muted hover:text-primary flex items-center gap-1"
                                     title="Extract Public Key"
                                 >
-                                    <KeyRound size={14} />
+                                    <FileKey size={14} />
                                 </button>
                                 <button
                                     onClick={() => removeFile(file.name)}

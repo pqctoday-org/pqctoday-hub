@@ -35,13 +35,12 @@ interface ModuleConfig {
 declare function importScripts(...urls: string[]): void;
 declare var createOpenSSLModule: any;
 
-const ctx: Worker = self as any;
 let moduleFactory: any = null;
 
 const loadOpenSSLScript = async (url: string = '/wasm/openssl.js'): Promise<void> => {
     if (moduleFactory) return;
 
-    ctx.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] loadOpenSSLScript called with url: ${url}` });
+    self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] loadOpenSSLScript called with url: ${url}` });
 
     try {
         // Shim module.exports to capture the factory if the script tries to use CommonJS
@@ -84,36 +83,36 @@ const loadOpenSSLScript = async (url: string = '/wasm/openssl.js'): Promise<void
         if (!originalModule) delete global.module;
         if (!originalExports) delete global.exports;
 
-        ctx.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Script loaded successfully" });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Script loaded successfully" });
     } catch (e: any) {
-        ctx.postMessage({ type: 'LOG', stream: 'stderr', message: `[Debug] importScripts failed: ${e.message}` });
+        self.postMessage({ type: 'LOG', stream: 'stderr', message: `[Debug] importScripts failed: ${e.message}` });
         throw e;
     }
 };
 
-const createOpenSSLInstance = async (ctx: Worker): Promise<EmscriptenModule> => {
+const createOpenSSLInstance = async (): Promise<EmscriptenModule> => {
     if (!moduleFactory) throw new Error("Module factory not loaded. Call loadOpenSSLScript first.");
     const moduleConfig: ModuleConfig = {
         noInitialRun: true,
-        print: (text: string) => ctx.postMessage({ type: 'LOG', stream: 'stdout', message: text }),
-        printErr: (text: string) => ctx.postMessage({ type: 'LOG', stream: 'stderr', message: text }),
+        print: (text: string) => self.postMessage({ type: 'LOG', stream: 'stdout', message: text }),
+        printErr: (text: string) => self.postMessage({ type: 'LOG', stream: 'stderr', message: text }),
         locateFile: (path: string) => path.endsWith('.wasm') ? '/wasm/openssl.wasm' : path
     };
     return await moduleFactory(moduleConfig);
 };
 
-const injectEntropy = (module: EmscriptenModule, ctx: Worker) => {
+const injectEntropy = (module: EmscriptenModule) => {
     try {
         const seedData = new Uint8Array(4096);
         self.crypto.getRandomValues(seedData);
         module.FS.writeFile('/random.seed', seedData);
         try { module.FS.writeFile('/dev/urandom', seedData); } catch (e) { }
     } catch (e) {
-        ctx.postMessage({ type: 'LOG', stream: 'stderr', message: 'Warning: Failed to inject entropy' });
+        self.postMessage({ type: 'LOG', stream: 'stderr', message: 'Warning: Failed to inject entropy' });
     }
 };
 
-const configureEnvironment = (module: EmscriptenModule, ctx: Worker) => {
+const configureEnvironment = (module: EmscriptenModule) => {
     try {
         try { module.FS.mkdir('/ssl'); } catch (e) { }
         const minimalConfig = `
@@ -138,7 +137,7 @@ activate = 1
         module.FS.writeFile('/openssl-wasm/openssl.cnf', cnfBytes);
         module.FS.writeFile('/openssl.cnf', cnfBytes); // Also at root
 
-        ctx.postMessage({ type: 'FILE_CREATED', name: 'openssl.cnf', data: cnfBytes });
+        self.postMessage({ type: 'FILE_CREATED', name: 'openssl.cnf', data: cnfBytes });
         // @ts-ignore
         if (module.ENV) {
             // @ts-ignore
@@ -164,7 +163,7 @@ const writeInputFiles = (module: EmscriptenModule, files: { name: string; data: 
     return writtenFiles;
 };
 
-const scanOutputFiles = (module: EmscriptenModule, ctx: Worker, inputFiles: Set<string>) => {
+const scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>) => {
     try {
         const files = module.FS.readdir('/');
         for (const file of files) {
@@ -175,7 +174,7 @@ const scanOutputFiles = (module: EmscriptenModule, ctx: Worker, inputFiles: Set<
                 if (module.FS.isFile(stat.mode)) {
                     if (file.endsWith('.key') || file.endsWith('.pub') || file.endsWith('.csr') || file.endsWith('.crt') || file.endsWith('.sig') || file.endsWith('.txt') || file.endsWith('.bin')) {
                         const content = module.FS.readFile('/' + file);
-                        ctx.postMessage({ type: 'FILE_CREATED', name: file, data: content });
+                        self.postMessage({ type: 'FILE_CREATED', name: file, data: content });
                     }
                 }
             } catch (e) { }
@@ -188,14 +187,14 @@ const scanOutputFiles = (module: EmscriptenModule, ctx: Worker, inputFiles: Set<
 // ----------------------------------------------------------------------------
 
 interface CommandStrategy {
-    prepare(module: EmscriptenModule, ctx: Worker): void;
+    prepare(module: EmscriptenModule): void;
     getArgs(command: string, args: string[]): string[];
 }
 
 class BaseStrategy implements CommandStrategy {
-    prepare(module: EmscriptenModule, ctx: Worker): void {
+    prepare(module: EmscriptenModule): void {
         // Ensure environment is configured even for base commands
-        configureEnvironment(module, ctx);
+        configureEnvironment(module);
     }
     getArgs(command: string, args: string[]): string[] {
         return [command, ...args];
@@ -203,9 +202,9 @@ class BaseStrategy implements CommandStrategy {
 }
 
 class CryptoStrategy implements CommandStrategy {
-    prepare(module: EmscriptenModule, ctx: Worker): void {
-        injectEntropy(module, ctx);
-        configureEnvironment(module, ctx);
+    prepare(module: EmscriptenModule): void {
+        injectEntropy(module);
+        configureEnvironment(module);
     }
     getArgs(command: string, args: string[]): string[] {
         return [command, '-rand', '/random.seed', ...args];
@@ -228,41 +227,41 @@ const getStrategy = (command: string): CommandStrategy => {
 console.log("[Worker] Worker script loaded (Consolidated)");
 
 const executeCommand = async (command: string, args: string[], inputFiles: { name: string; data: Uint8Array }[] = []) => {
-    ctx.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] executeCommand started: ${command}` });
+    self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] executeCommand started: ${command}` });
     let openSSLModule;
 
     try {
-        ctx.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Loading OpenSSL script..." });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Loading OpenSSL script..." });
         await loadOpenSSLScript();
-        ctx.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Creating OpenSSL instance..." });
-        openSSLModule = await createOpenSSLInstance(ctx);
-        ctx.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] OpenSSL instance created" });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Creating OpenSSL instance..." });
+        openSSLModule = await createOpenSSLInstance();
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] OpenSSL instance created" });
     } catch (e: any) {
-        ctx.postMessage({ type: 'LOG', stream: 'stderr', message: `[Debug] Initialization failed: ${e.message}` });
+        self.postMessage({ type: 'LOG', stream: 'stderr', message: `[Debug] Initialization failed: ${e.message}` });
         throw new Error(`Failed to initialize OpenSSL: ${e.message}`);
     }
 
     try {
-        ctx.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Selecting strategy..." });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Selecting strategy..." });
         const strategy = getStrategy(command);
-        ctx.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] Strategy selected: ${strategy.constructor.name}` });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] Strategy selected: ${strategy.constructor.name}` });
 
-        ctx.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Writing input files..." });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Writing input files..." });
         const writtenFiles = writeInputFiles(openSSLModule, inputFiles);
 
-        ctx.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Preparing strategy..." });
-        strategy.prepare(openSSLModule, ctx);
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Preparing strategy..." });
+        strategy.prepare(openSSLModule);
 
         const fullArgs = strategy.getArgs(command, args);
-        ctx.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] Full args: ${fullArgs.join(' ')}` });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] Full args: ${fullArgs.join(' ')}` });
 
-        ctx.postMessage({ type: 'LOG', stream: 'stdout', message: `Executing: openssl ${fullArgs.join(' ')}` });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: `Executing: openssl ${fullArgs.join(' ')}` });
 
         try {
-            ctx.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Calling callMain..." });
+            self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Calling callMain..." });
             // @ts-ignore
             openSSLModule.callMain(fullArgs);
-            ctx.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] callMain returned" });
+            self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] callMain returned" });
         } catch (e: any) {
             if (e.name === 'ExitStatus') {
                 if (e.status !== 0) {
@@ -278,7 +277,7 @@ const executeCommand = async (command: string, args: string[], inputFiles: { nam
         }
 
         // Scan for output files
-        scanOutputFiles(openSSLModule, ctx, writtenFiles);
+        scanOutputFiles(openSSLModule, writtenFiles);
 
         // Inform user about public key extraction for genpkey
         if (command === 'genpkey') {
@@ -286,7 +285,7 @@ const executeCommand = async (command: string, args: string[], inputFiles: { nam
             const privateKeyFile = files.find((f: string) => f.endsWith('.key') && !writtenFiles.has(f));
             if (privateKeyFile) {
                 const publicKeyFile = privateKeyFile.replace('.key', '.pub');
-                ctx.postMessage({
+                self.postMessage({
                     type: 'LOG',
                     stream: 'stdout',
                     message: `\n💡 To extract the public key, run:\n   openssl pkey -in ${privateKeyFile} -pubout -out ${publicKeyFile}`
@@ -295,23 +294,23 @@ const executeCommand = async (command: string, args: string[], inputFiles: { nam
         }
 
     } catch (error: any) {
-        ctx.postMessage({ type: 'ERROR', error: error.message || 'Execution failed' });
+        self.postMessage({ type: 'ERROR', error: error.message || 'Execution failed' });
     } finally {
-        ctx.postMessage({ type: 'DONE' });
+        self.postMessage({ type: 'DONE' });
     }
 };
 
-ctx.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
+self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
     const { type } = event.data;
     try {
         if (type === 'LOAD') {
             await loadOpenSSLScript(event.data.url);
-            ctx.postMessage({ type: 'READY' });
+            self.postMessage({ type: 'READY' });
         } else if (type === 'COMMAND') {
             const { command, args, files } = event.data as { type: 'COMMAND'; command: string; args: string[]; files?: { name: string; data: Uint8Array }[] };
             await executeCommand(command, args, files);
         }
     } catch (error: any) {
-        ctx.postMessage({ type: 'ERROR', error: error.message });
+        self.postMessage({ type: 'ERROR', error: error.message });
     }
 });
