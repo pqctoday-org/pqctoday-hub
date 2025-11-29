@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Shield, Globe, Users, FlaskConical } from 'lucide-react';
 import clsx from 'clsx';
 import './styles/App.css';
+import pqcLogo from './assetsold/PQCT_Logo_V01.png';
 
 import { TimelineView } from './components/Timeline/TimelineView';
 import { ImpactDashboard } from './components/Impacts/ImpactDashboard';
@@ -37,12 +38,19 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header / Navigation */}
       <header className="glass-panel m-4 p-4 sticky top-4 z-50" role="banner">
-        <div className="container flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-gradient">PQC Timeline</h1>
-            <p className="text-[10px] text-muted uppercase tracking-widest opacity-60">Last Updated: {buildTime}</p>
+        <div className="w-full flex justify-between items-center">
+          <div className="flex flex-row items-baseline gap-4" style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
+            <img
+              src={pqcLogo}
+              alt="PQC Today Logo"
+              className="object-contain mr-4"
+              style={{ height: '32px', width: 'auto' }}
+            />
+            <div>
+              <h1 className="text-2xl font-bold text-gradient">PQC Today</h1>
+              <p className="text-[10px] text-muted uppercase tracking-widest opacity-60">Last Updated: {buildTime}</p>
+            </div>
           </div>
           <nav className="flex gap-4" role="navigation" aria-label="Main navigation">
             {navItems.map((item) => (
@@ -90,7 +98,7 @@ function App() {
       <footer className="p-6 text-center text-muted text-sm" role="contentinfo">
         <p>© 2025 Post-Quantum Cryptography Tracker. Data sourced from global regulatory bodies.</p>
       </footer>
-    </div>
+    </div >
   );
 }
 
