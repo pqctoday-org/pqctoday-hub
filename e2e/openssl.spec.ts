@@ -35,7 +35,7 @@ test.describe('OpenSSL Studio', () => {
 
         // Check if file exists in the table
         // It should be in a cell
-        await expect(page.getByRole('cell', { name: /rsa-2048-/ })).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('td').filter({ hasText: /rsa-2048-/ }).first()).toBeVisible({ timeout: 10000 });
     });
 
     test('generates ML-DSA key', async ({ page }) => {
