@@ -5,8 +5,11 @@ import { TerminalOutput } from './TerminalOutput';
 import { FileEditor } from './FileEditor';
 import { Terminal, ChevronDown, ChevronUp } from 'lucide-react';
 
+import { useOpenSSLStore } from './store';
+
 export const OpenSSLStudioView = () => {
     const [showTerminal, setShowTerminal] = useState(true);
+    const { editingFile } = useOpenSSLStore();
 
     return (
         <div className="h-[calc(100vh-140px)] flex flex-col animate-fade-in">
@@ -38,7 +41,7 @@ export const OpenSSLStudioView = () => {
                     <CommandPreview />
 
                     {/* File Editor Section (Only visible when editing) */}
-                    <FileEditor />
+                    <FileEditor key={editingFile?.name} />
 
                     <div className={showTerminal ? "flex-1 min-h-0" : "shrink-0"}>
                         <div className="glass-panel h-full flex flex-col overflow-hidden">

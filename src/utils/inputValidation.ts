@@ -62,6 +62,7 @@ export const sanitizeFileName = (input: string, maxLength: number = 255): string
 
     // Remove path separators and null bytes
     const sanitized = input
+        // eslint-disable-next-line no-control-regex
         .replace(/[/\\.\u0000]/g, '')
         .replace(/\.\./g, '')
         .trim()

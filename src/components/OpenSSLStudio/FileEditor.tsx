@@ -1,31 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { X, Save, FileText, ArrowRightLeft } from 'lucide-react';
 import { useOpenSSLStore } from './store';
 import clsx from 'clsx';
 
 export const FileEditor = () => {
     const { editingFile, setEditingFile, addFile } = useOpenSSLStore();
-    const [content, setContent] = useState('');
-    const [viewMode, setViewMode] = useState<'ascii' | 'hex'>('ascii');
-    const [error, setError] = useState<string | null>(null);
 
-    // Initialize content when file changes
-    useEffect(() => {
-        if (editingFile) {
-            if (typeof editingFile.content === 'string') {
-                setContent(editingFile.content);
-                setViewMode('ascii');
-            } else {
-                // Binary file - default to hex
-                const hex = Array.from(editingFile.content)
-                    .map(b => b.toString(16).padStart(2, '0'))
-                    .join(' ');
-                setContent(hex);
-                setViewMode('hex');
-            }
-            setError(null);
+    const [content, setContent] = useState(() => {
+        if (!editingFile) return '';
+        if (typeof editingFile.content === 'string') {
+            return editingFile.content;
+        } else {
+            // Binary file - default to hex
+            return Array.from(editingFile.content)
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join(' ');
         }
-    }, [editingFile]);
+    });
+
+    const [viewMode, setViewMode] = useState<'ascii' | 'hex'>(() => {
+        if (!editingFile) return 'ascii';
+        return typeof editingFile.content === 'string' ? 'ascii' : 'hex';
+    });
+
+    const [error, setError] = useState<string | null>(null);
 
     const handleToggleMode = () => {
         setError(null);
