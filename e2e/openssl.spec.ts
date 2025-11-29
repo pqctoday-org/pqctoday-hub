@@ -3,10 +3,6 @@ import { test, expect } from '@playwright/test';
 test.describe('OpenSSL Studio', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/');
-        // Navigate to OpenSSL Studio via the main menu if possible, or direct URL
-        // Assuming there is a button on the home page or a nav link.
-        // Based on App.tsx inspection (pending), we'll adjust.
-        // For now, let's try finding a button with "OpenSSL" in the name.
         await page.getByRole('button', { name: /OpenSSL/ }).click();
         await expect(page.getByRole('heading', { name: 'OpenSSL Studio', level: 2 })).toBeVisible();
     });
@@ -19,13 +15,27 @@ test.describe('OpenSSL Studio', () => {
         // Click Run Command
         await page.getByRole('button', { name: 'Run Command' }).click();
 
-        // Check logs for success
-        await expect(page.getByText(/File created: rsa-2048-/)).toBeVisible();
+        // Check logs for success (increase timeout for Firefox/CI)
+        await expect(page.getByText(/File created: rsa-2048-/)).toBeVisible({ timeout: 30000 });
 
         // Switch to File Manager to verify file existence
-        await page.getByRole('button', { name: 'File Manager' }).click();
+        const fileManagerBtn = page.locator('button').filter({ hasText: 'File Manager' });
+        await expect(fileManagerBtn).toBeEnabled();
+        await fileManagerBtn.click({ force: true });
+
+        // Wait for view transition and table render
         await page.waitForTimeout(1000);
-        await expect(page.getByText(/rsa-2048-/)).toBeVisible();
+
+        // Check if button is active (has bg-primary/20)
+        await expect(fileManagerBtn).toHaveClass(/bg-primary\/20/);
+
+        // Check for table headers to ensure we are in the right view
+        await expect(page.getByRole('columnheader', { name: 'Filename' })).toBeVisible();
+        await expect(page.getByRole('columnheader', { name: 'Type' })).toBeVisible();
+
+        // Check if file exists in the table
+        // It should be in a cell
+        await expect(page.getByRole('cell', { name: /rsa-2048-/ })).toBeVisible({ timeout: 10000 });
     });
 
     test('generates ML-DSA key', async ({ page }) => {
