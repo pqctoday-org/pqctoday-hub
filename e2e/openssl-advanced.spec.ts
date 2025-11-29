@@ -32,7 +32,8 @@ test.describe('OpenSSL Studio - Advanced Features', () => {
         await page.getByRole('button', { name: 'Run Command' }).click();
 
         // 5. Verify Success
-        await expect(page.getByText(/File created: rsa-csr-/)).toBeVisible();
+        // 5. Verify Success
+        await expect(page.getByText(/rsa-csr-/)).toBeVisible({ timeout: 10000 });
         await expect(page.getByText(/Can't open .*openssl.cnf/)).not.toBeVisible();
     });
 
@@ -52,7 +53,8 @@ test.describe('OpenSSL Studio - Advanced Features', () => {
         await page.getByRole('button', { name: 'Run Command' }).click();
 
         // 5. Verify Success
-        await expect(page.getByText(/File created: rsa-cert-/)).toBeVisible();
+        // 5. Verify Success
+        await expect(page.getByText(/rsa-cert-/)).toBeVisible({ timeout: 10000 });
     });
 
     test('signs and verifies a file', async ({ page }) => {

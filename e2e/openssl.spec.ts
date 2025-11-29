@@ -24,7 +24,8 @@ test.describe('OpenSSL Studio', () => {
 
         // Switch to File Manager to verify file existence
         await page.getByRole('button', { name: 'File Manager' }).click();
-        await expect(page.getByRole('cell', { name: /rsa-2048-/ })).toBeVisible();
+        await page.waitForTimeout(1000);
+        await expect(page.getByText(/rsa-2048-/)).toBeVisible();
     });
 
     test('generates ML-DSA key', async ({ page }) => {

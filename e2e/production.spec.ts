@@ -21,7 +21,7 @@ test.describe('Production Smoke Tests', () => {
 
     test('Asset Integrity Check', async ({ page }) => {
         // Verify title to ensure we loaded the app
-        await expect(page).toHaveTitle(/PQC Timeline/);
+        await expect(page).toHaveTitle(/PQC Today/);
 
         // Check for critical bundles in the network (this relies on the page load triggering them)
         // We can't easily assert "all" assets without a manifest, but we can check that no console errors occurred
@@ -49,7 +49,7 @@ test.describe('Production Smoke Tests', () => {
         // Navigate to Playground
         // Try a more robust selector strategy and take a screenshot on failure
         try {
-            const playgroundBtn = page.getByRole('button', { name: 'Interactive Playground' });
+            const playgroundBtn = page.getByRole('button', { name: /Playground/ });
             await expect(playgroundBtn).toBeVisible({ timeout: 30000 });
             await playgroundBtn.click({ force: true });
         } catch (e) {
@@ -89,10 +89,10 @@ test.describe('Production Smoke Tests', () => {
         // Test direct navigation to a "tab" if possible, or just switching tabs
         // Since it's a SPA, we verify the URL updates or UI changes
 
-        await page.getByRole('button', { name: 'Migration Timeline' }).click();
+        await page.getByRole('button', { name: /Timeline/ }).click();
         await expect(page.getByText('Global PQC Migration Timeline')).toBeVisible();
 
-        await page.getByRole('button', { name: 'Quantum Threat Impacts' }).click();
+        await page.getByRole('button', { name: /Impacts/ }).click();
         await expect(page.getByText('Systemic Risk Analysis')).toBeVisible();
     });
 });
