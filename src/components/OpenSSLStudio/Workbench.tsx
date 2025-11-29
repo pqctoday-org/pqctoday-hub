@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useOpenSSLStore } from './store';
 import { useOpenSSL } from './hooks/useOpenSSL';
-import { Play, Settings, Key, FileText, Shield, Info } from 'lucide-react';
+import { Play, Settings, Key, FileText, Shield, Info, Folder, Download, Trash2, Edit2, ArrowUpDown } from 'lucide-react';
 import clsx from 'clsx';
 
 
 export const Workbench = () => {
     const { setCommand, isProcessing } = useOpenSSLStore();
     const { executeCommand } = useOpenSSL();
-    const [category, setCategory] = useState<'genpkey' | 'req' | 'x509' | 'enc' | 'dgst' | 'rand' | 'version'>('genpkey');
+    const [category, setCategory] = useState<'genpkey' | 'req' | 'x509' | 'enc' | 'dgst' | 'rand' | 'version' | 'files'>('genpkey');
 
     // Key Gen State
     const [keyAlgo, setKeyAlgo] = useState('rsa');
@@ -37,6 +37,10 @@ export const Workbench = () => {
     // Random Data State
     const [randBytes, setRandBytes] = useState('32');
     const [randHex, setRandHex] = useState(true);
+
+    // File Manager State
+    const [sortBy, setSortBy] = useState<'timestamp' | 'type' | 'name'>('timestamp');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
     // Effect to update command preview
     useEffect(() => {
@@ -77,7 +81,7 @@ export const Workbench = () => {
                 cmd += ` genpkey -algorithm ${slhVariantMap[keyAlgo]}`;
             } else {
                 keyName = `${keyAlgo}-${timestamp}.key`;
-                cmd += ` genpkey -algorithm ${keyAlgo.toUpperCase()}`;
+                cmd += ` genpkey -algorithm ${keyAlgo}`;
             }
 
             if (cipher !== 'none') {
@@ -86,26 +90,57 @@ export const Workbench = () => {
             cmd += ` -out ${keyName}`;
         } else if (category === 'req') {
             const keyFile = selectedCsrKeyFile || 'private.key';
-            cmd += ` req -new -key ${keyFile} -out request.csr -${digestAlgo} -subj "${subj}"`;
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+            const keyPrefix = keyFile.split('-')[0]; // Extract algorithm prefix
+            const csrFile = `${keyPrefix}-csr-${timestamp}.csr`;
+            cmd += ` req -new -key ${keyFile} -out ${csrFile} -${digestAlgo} -subj "${subj}"`;
         } else if (category === 'x509') {
             const keyFile = selectedCsrKeyFile || 'private.key';
-            cmd += ` req -x509 -new -key ${keyFile} -out certificate.crt -days ${certDays} -${digestAlgo} -subj "${subj}"`;
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+            const keyPrefix = keyFile.split('-')[0]; // Extract algorithm prefix
+            const certFile = `${keyPrefix}-cert-${timestamp}.crt`;
+            cmd += ` req -x509 -new -key ${keyFile} -out ${certFile} -days ${certDays} -${digestAlgo} -subj "${subj}"`;
         } else if (category === 'dgst') {
-            cmd += ` dgst -${sigHashAlgo}`;
-            if (signAction === 'sign') {
-                const keyFile = selectedKeyFile || 'private.key';
-                const dataFile = selectedDataFile || 'data.txt';
-                cmd += ` -sign ${keyFile} -out data.sig ${dataFile}`;
+            const keyFile = selectedKeyFile || (signAction === 'sign' ? 'private.key' : 'public.key');
+            const dataFile = selectedDataFile || 'data.txt';
+
+            // Generate descriptive signature filename based on key and timestamp
+            let sigFile = selectedSigFile;
+            if (!sigFile && signAction === 'sign' && keyFile) {
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                // Extract algorithm prefix from key filename
+                const keyPrefix = keyFile.split('-')[0]; // e.g., "mldsa", "slhdsa", "ed25519"
+                sigFile = `${keyPrefix}-sig-${timestamp}.sig`;
+            } else if (!sigFile) {
+                sigFile = 'data.sig';
+            }
+
+            // Check if this is a PQC key (ML-DSA, SLH-DSA) - they use pkeyutl, not dgst
+            const isPQCKey = keyFile.includes('mldsa') || keyFile.includes('slhdsa');
+
+            if (isPQCKey) {
+                // PQC signatures use pkeyutl (built-in hashing)
+                if (signAction === 'sign') {
+                    cmd += ` pkeyutl -sign -inkey ${keyFile} -in ${dataFile} -out ${sigFile}`;
+                } else {
+                    cmd += ` pkeyutl -verify -pubin -inkey ${keyFile} -in ${dataFile} -sigfile ${sigFile}`;
+                }
             } else {
-                const keyFile = selectedKeyFile || 'public.key';
-                const dataFile = selectedDataFile || 'data.txt';
-                const sigFile = selectedSigFile || 'data.sig';
-                cmd += ` -verify ${keyFile} -signature ${sigFile} ${dataFile}`;
+                // Classical signatures use dgst with explicit hash
+                cmd += ` dgst -${sigHashAlgo}`;
+                if (signAction === 'sign') {
+                    cmd += ` -sign ${keyFile} -out ${sigFile} ${dataFile}`;
+                } else {
+                    cmd += ` -verify ${keyFile} -signature ${sigFile} ${dataFile}`;
+                }
             }
         } else if (category === 'rand') {
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+            const extension = randHex ? 'txt' : 'bin';
+            const randFile = `random-${randBytes}bytes-${timestamp}.${extension}`;
             cmd += ` rand`;
             if (randHex) cmd += ` -hex`;
-            cmd += ` -out random.bin ${randBytes}`;
+            cmd += ` -out ${randFile} ${randBytes}`;
         } else if (category === 'version') {
             cmd += ` version -a`;
         }
@@ -180,6 +215,13 @@ export const Workbench = () => {
                             category === 'version' ? "bg-primary/20 border-primary text-primary" : "bg-white/5 border-white/10 hover:bg-white/10 text-muted")}
                     >
                         <Info size={16} /> Version Info
+                    </button>
+                    <button
+                        onClick={() => setCategory('files')}
+                        className={clsx("p-3 rounded-lg border text-left transition-colors flex items-center gap-2",
+                            category === 'files' ? "bg-primary/20 border-primary text-primary" : "bg-white/5 border-white/10 hover:bg-white/10 text-muted")}
+                    >
+                        <Folder size={16} /> File Manager
                     </button>
                 </div>
             </div>
@@ -262,37 +304,41 @@ export const Workbench = () => {
                         </select>
                     </div>
 
-                    {keyAlgo === 'rsa' && (
-                        <div className="space-y-3">
-                            <label className="text-xs text-muted block">Key Size (Bits)</label>
-                            <select
-                                value={keyBits}
-                                onChange={(e) => setKeyBits(e.target.value)}
-                                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
-                            >
-                                <option value="2048">2048 bits</option>
-                                <option value="3072">3072 bits</option>
-                                <option value="4096">4096 bits</option>
-                                <option value="8192">8192 bits</option>
-                            </select>
-                        </div>
-                    )}
+                    {
+                        keyAlgo === 'rsa' && (
+                            <div className="space-y-3">
+                                <label className="text-xs text-muted block">Key Size (Bits)</label>
+                                <select
+                                    value={keyBits}
+                                    onChange={(e) => setKeyBits(e.target.value)}
+                                    className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                                >
+                                    <option value="2048">2048 bits</option>
+                                    <option value="3072">3072 bits</option>
+                                    <option value="4096">4096 bits</option>
+                                    <option value="8192">8192 bits</option>
+                                </select>
+                            </div>
+                        )
+                    }
 
-                    {keyAlgo === 'ec' && (
-                        <div className="space-y-3">
-                            <label className="text-xs text-muted block">Elliptic Curve</label>
-                            <select
-                                value={curve}
-                                onChange={(e) => setCurve(e.target.value)}
-                                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
-                            >
-                                <option value="P-256">P-256 (prime256v1)</option>
-                                <option value="P-384">P-384 (secp384r1)</option>
-                                <option value="P-521">P-521 (secp521r1)</option>
-                                <option value="secp256k1">secp256k1 (Bitcoin)</option>
-                            </select>
-                        </div>
-                    )}
+                    {
+                        keyAlgo === 'ec' && (
+                            <div className="space-y-3">
+                                <label className="text-xs text-muted block">Elliptic Curve</label>
+                                <select
+                                    value={curve}
+                                    onChange={(e) => setCurve(e.target.value)}
+                                    className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                                >
+                                    <option value="P-256">P-256 (prime256v1)</option>
+                                    <option value="P-384">P-384 (secp384r1)</option>
+                                    <option value="P-521">P-521 (secp521r1)</option>
+                                    <option value="secp256k1">secp256k1 (Bitcoin)</option>
+                                </select>
+                            </div>
+                        )
+                    }
 
                     <div className="space-y-3">
                         <label className="text-xs text-muted block">Encryption (Passphrase)</label>
@@ -309,234 +355,439 @@ export const Workbench = () => {
                         </select>
                     </div>
 
-                    {cipher !== 'none' && (
-                        <div className="space-y-3 animate-fade-in">
-                            <label className="text-xs text-muted block">Passphrase</label>
-                            <input
-                                type="password"
-                                value={passphrase}
-                                onChange={(e) => setPassphrase(e.target.value)}
-                                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
-                                placeholder="Enter passphrase"
-                            />
-                        </div>
-                    )}
-                </div>
+                    {
+                        cipher !== 'none' && (
+                            <div className="space-y-3 animate-fade-in">
+                                <label className="text-xs text-muted block">Passphrase</label>
+                                <input
+                                    type="password"
+                                    value={passphrase}
+                                    onChange={(e) => setPassphrase(e.target.value)}
+                                    className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                                    placeholder="Enter passphrase"
+                                />
+                            </div>
+                        )
+                    }
+                </div >
             )}
 
-            {(category === 'req' || category === 'x509') && (
-                <div className="space-y-4 animate-fade-in">
-                    <label className="text-sm font-bold text-muted uppercase tracking-wider block">2. Subject Information</label>
+            {
+                (category === 'req' || category === 'x509') && (
+                    <div className="space-y-4 animate-fade-in">
+                        <label className="text-sm font-bold text-muted uppercase tracking-wider block">2. Subject Information</label>
 
-                    <div className="space-y-3">
-                        <label className="text-xs text-muted block">Common Name (CN)</label>
-                        <input
-                            type="text"
-                            value={commonName}
-                            onChange={(e) => setCommonName(e.target.value)}
-                            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
-                            placeholder="e.g. example.com"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-3">
-                            <label className="text-xs text-muted block">Organization (O)</label>
+                            <label className="text-xs text-muted block">Common Name (CN)</label>
                             <input
                                 type="text"
-                                value={org}
-                                onChange={(e) => setOrg(e.target.value)}
+                                value={commonName}
+                                onChange={(e) => setCommonName(e.target.value)}
                                 className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                                placeholder="e.g. example.com"
                             />
                         </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-3">
+                                <label className="text-xs text-muted block">Organization (O)</label>
+                                <input
+                                    type="text"
+                                    value={org}
+                                    onChange={(e) => setOrg(e.target.value)}
+                                    className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                                />
+                            </div>
+                            <div className="space-y-3">
+                                <label className="text-xs text-muted block">Country (C)</label>
+                                <input
+                                    type="text"
+                                    value={country}
+                                    onChange={(e) => setCountry(e.target.value)}
+                                    maxLength={2}
+                                    className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                                />
+                            </div>
+                        </div>
+
                         <div className="space-y-3">
-                            <label className="text-xs text-muted block">Country (C)</label>
-                            <input
-                                type="text"
-                                value={country}
-                                onChange={(e) => setCountry(e.target.value)}
-                                maxLength={2}
-                                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-3">
-                        <label className="text-xs text-muted block">Digest Algorithm</label>
-                        <select
-                            value={digestAlgo}
-                            onChange={(e) => setDigestAlgo(e.target.value)}
-                            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
-                        >
-                            <option value="sha256">SHA-256</option>
-                            <option value="sha384">SHA-384</option>
-                            <option value="sha512">SHA-512</option>
-                            <option value="sha3-256">SHA3-256</option>
-                            <option value="sha3-512">SHA3-512</option>
-                        </select>
-                    </div>
-
-                    <div className="space-y-3 pt-2 border-t border-white/10">
-                        <label className="text-xs text-muted block">Private Key File</label>
-                        <select
-                            value={selectedCsrKeyFile}
-                            onChange={(e) => setSelectedCsrKeyFile(e.target.value)}
-                            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
-                        >
-                            <option value="">Select a private key...</option>
-                            {useOpenSSLStore.getState().files
-                                .filter(f => f.name.endsWith('.key'))
-                                .map(f => (
-                                    <option key={f.name} value={f.name}>{f.name}</option>
-                                ))
-                            }
-                        </select>
-                        <p className="text-xs text-muted/60">
-                            Generate a key first using "Key Generation" if you don't have one.
-                        </p>
-                    </div>
-
-                    {category === 'x509' && (
-                        <div className="space-y-3 pt-2 border-t border-white/10">
-                            <label className="text-xs text-muted block">Validity (Days)</label>
-                            <input
-                                type="number"
-                                value={certDays}
-                                onChange={(e) => setCertDays(e.target.value)}
-                                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
-                            />
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {category === 'dgst' && (
-                <div className="space-y-4 animate-fade-in">
-                    <label className="text-sm font-bold text-muted uppercase tracking-wider block">2. Configuration</label>
-
-                    <div className="space-y-3">
-                        <label className="text-xs text-muted block">Action</label>
-                        <div className="flex bg-black/40 rounded-lg p-1 border border-white/20">
-                            <button
-                                onClick={() => setSignAction('sign')}
-                                className={clsx("flex-1 py-1.5 rounded text-sm font-medium transition-colors", signAction === 'sign' ? "bg-primary text-white" : "text-muted hover:text-white")}
-                            >
-                                Sign
-                            </button>
-                            <button
-                                onClick={() => setSignAction('verify')}
-                                className={clsx("flex-1 py-1.5 rounded text-sm font-medium transition-colors", signAction === 'verify' ? "bg-primary text-white" : "text-muted hover:text-white")}
-                            >
-                                Verify
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="space-y-3">
-                        <label className="text-xs text-muted block">Hash Algorithm</label>
-                        <select
-                            value={sigHashAlgo}
-                            onChange={(e) => setSigHashAlgo(e.target.value)}
-                            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
-                        >
-                            <option value="sha256">SHA-256</option>
-                            <option value="sha384">SHA-384</option>
-                            <option value="sha512">SHA-512</option>
-                            <option value="sha3-256">SHA3-256</option>
-                            <option value="sha3-384">SHA3-384</option>
-                            <option value="sha3-512">SHA3-512</option>
-                            <option value="shake128">SHAKE-128</option>
-                            <option value="shake256">SHAKE-256</option>
-                            <option value="blake2s256">BLAKE2s-256</option>
-                            <option value="blake2b512">BLAKE2b-512</option>
-                        </select>
-                    </div>
-
-                    <div className="space-y-3">
-                        <label className="text-xs text-muted block">
-                            {signAction === 'sign' ? 'Private Key File' : 'Public Key File'}
-                        </label>
-                        <select
-                            value={selectedKeyFile}
-                            onChange={(e) => setSelectedKeyFile(e.target.value)}
-                            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
-                        >
-                            <option value="">Select a key file...</option>
-                            {useOpenSSLStore.getState().files
-                                .filter(f => f.name.endsWith('.key') || f.name.endsWith('.pub'))
-                                .map(f => (
-                                    <option key={f.name} value={f.name}>{f.name}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-
-                    <div className="space-y-3">
-                        <label className="text-xs text-muted block">Data File to {signAction === 'sign' ? 'Sign' : 'Verify'}</label>
-                        <select
-                            value={selectedDataFile}
-                            onChange={(e) => setSelectedDataFile(e.target.value)}
-                            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
-                        >
-                            <option value="">Select a data file...</option>
-                            {useOpenSSLStore.getState().files
-                                .filter(f => f.name.endsWith('.txt') || f.name.endsWith('.bin'))
-                                .map(f => (
-                                    <option key={f.name} value={f.name}>{f.name}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-
-                    {signAction === 'verify' && (
-                        <div className="space-y-3">
-                            <label className="text-xs text-muted block">Signature File</label>
+                            <label className="text-xs text-muted block">Digest Algorithm</label>
                             <select
-                                value={selectedSigFile}
-                                onChange={(e) => setSelectedSigFile(e.target.value)}
+                                value={digestAlgo}
+                                onChange={(e) => setDigestAlgo(e.target.value)}
                                 className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
                             >
-                                <option value="">Select a signature file...</option>
+                                <option value="sha256">SHA-256</option>
+                                <option value="sha384">SHA-384</option>
+                                <option value="sha512">SHA-512</option>
+                                <option value="sha3-256">SHA3-256</option>
+                                <option value="sha3-512">SHA3-512</option>
+                            </select>
+                        </div>
+
+                        <div className="space-y-3 pt-2 border-t border-white/10">
+                            <label className="text-xs text-muted block">Private Key File</label>
+                            <select
+                                value={selectedCsrKeyFile}
+                                onChange={(e) => setSelectedCsrKeyFile(e.target.value)}
+                                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                            >
+                                <option value="">Select a private key...</option>
                                 {useOpenSSLStore.getState().files
-                                    .filter(f => f.name.endsWith('.sig'))
+                                    .filter(f => f.name.endsWith('.key'))
+                                    .map(f => (
+                                        <option key={f.name} value={f.name}>{f.name}</option>
+                                    ))
+                                }
+                            </select>
+                            <p className="text-xs text-muted/60">
+                                Generate a key first using "Key Generation" if you don't have one.
+                            </p>
+                        </div>
+
+                        {category === 'x509' && (
+                            <div className="space-y-3 pt-2 border-t border-white/10">
+                                <label className="text-xs text-muted block">Validity (Days)</label>
+                                <input
+                                    type="number"
+                                    value={certDays}
+                                    onChange={(e) => setCertDays(e.target.value)}
+                                    className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                                />
+                            </div>
+                        )}
+                    </div>
+                )
+            }
+
+            {
+                category === 'dgst' && (
+                    <div className="space-y-4 animate-fade-in">
+                        <label className="text-sm font-bold text-muted uppercase tracking-wider block">2. Configuration</label>
+
+                        <div className="space-y-3">
+                            <label className="text-xs text-muted block">Action</label>
+                            <div className="flex bg-black/40 rounded-lg p-1 border border-white/20">
+                                <button
+                                    onClick={() => setSignAction('sign')}
+                                    className={clsx("flex-1 py-1.5 rounded text-sm font-medium transition-colors", signAction === 'sign' ? "bg-primary text-white" : "text-muted hover:text-white")}
+                                >
+                                    Sign
+                                </button>
+                                <button
+                                    onClick={() => setSignAction('verify')}
+                                    className={clsx("flex-1 py-1.5 rounded text-sm font-medium transition-colors", signAction === 'verify' ? "bg-primary text-white" : "text-muted hover:text-white")}
+                                >
+                                    Verify
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <label className="text-xs text-muted block">
+                                {signAction === 'sign' ? 'Private Key File' : 'Public Key File'}
+                            </label>
+                            <select
+                                value={selectedKeyFile}
+                                onChange={(e) => setSelectedKeyFile(e.target.value)}
+                                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                            >
+                                <option value="">Select a key file...</option>
+                                {useOpenSSLStore.getState().files
+                                    .filter(f => {
+                                        // For signing: only private keys (.key, not .pub), exclude KEM keys
+                                        if (signAction === 'sign') {
+                                            return f.name.endsWith('.key') &&
+                                                !f.name.endsWith('.pub') &&
+                                                !f.name.includes('mlkem') &&
+                                                !f.name.includes('x25519') &&
+                                                !f.name.includes('x448.') && // Exclude x448 (KEM)
+                                                !f.name.includes('_x448'); // Exclude x448 (KEM)
+                                        }
+                                        // For verification: only public keys (.pub), exclude KEM keys
+                                        return f.name.endsWith('.pub') &&
+                                            !f.name.includes('mlkem') &&
+                                            !f.name.includes('x25519') &&
+                                            !f.name.includes('x448.') && // Exclude x448 (KEM)
+                                            !f.name.includes('_x448'); // Exclude x448 (KEM)
+                                    })
+                                    .map(f => (
+                                        <option key={f.name} value={f.name}>{f.name}</option>
+                                    ))
+                                }
+                            </select>
+                            {signAction === 'sign' && (
+                                <p className="text-xs text-muted/60">
+                                    Only signature keys shown (ML-DSA, SLH-DSA, Ed25519, Ed448, RSA, EC)
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Show hash algorithm selector only for classical keys */}
+                        {selectedKeyFile && !selectedKeyFile.includes('mldsa') && !selectedKeyFile.includes('slhdsa') ? (
+                            <div className="space-y-3">
+                                <label className="text-xs text-muted block">Hash Algorithm</label>
+                                <select
+                                    value={sigHashAlgo}
+                                    onChange={(e) => setSigHashAlgo(e.target.value)}
+                                    className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                                >
+                                    <option value="sha256">SHA-256</option>
+                                    <option value="sha384">SHA-384</option>
+                                    <option value="sha512">SHA-512</option>
+                                    <option value="sha3-256">SHA3-256</option>
+                                    <option value="sha3-384">SHA3-384</option>
+                                    <option value="sha3-512">SHA3-512</option>
+                                    <option value="shake128">SHAKE-128</option>
+                                    <option value="shake256">SHAKE-256</option>
+                                    <option value="blake2s256">BLAKE2s-256</option>
+                                    <option value="blake2b512">BLAKE2b-512</option>
+                                </select>
+                            </div>
+                        ) : selectedKeyFile && (selectedKeyFile.includes('mldsa') || selectedKeyFile.includes('slhdsa')) ? (
+                            <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                                <p className="text-xs text-blue-200">
+                                    <strong>ℹ️ PQC Signature Algorithm</strong><br />
+                                    {selectedKeyFile.includes('mldsa') ? 'ML-DSA' : 'SLH-DSA'} uses built-in hashing (SHAKE-256).
+                                    No external hash algorithm selection needed.
+                                </p>
+                            </div>
+                        ) : null}
+
+                        <div className="space-y-3">
+                            <label className="text-xs text-muted block">
+                                {signAction === 'sign' ? 'Private Key File' : 'Public Key File'}
+                            </label>
+                            <select
+                                value={selectedKeyFile}
+                                onChange={(e) => setSelectedKeyFile(e.target.value)}
+                                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                            >
+                                <option value="">Select a key file...</option>
+                                {useOpenSSLStore.getState().files
+                                    .filter(f => f.name.endsWith('.key') || f.name.endsWith('.pub'))
                                     .map(f => (
                                         <option key={f.name} value={f.name}>{f.name}</option>
                                     ))
                                 }
                             </select>
                         </div>
-                    )}
 
-                    <button
-                        onClick={() => {
-                            const testData = new TextEncoder().encode('Hello, Post-Quantum World! This is test data for signing.');
-                            useOpenSSLStore.getState().addFile({
-                                name: 'data.txt',
-                                type: 'text',
-                                content: testData,
-                                size: testData.length,
-                                timestamp: Date.now()
-                            });
-                        }}
-                        className="w-full p-2 rounded-lg border border-primary/30 bg-primary/10 hover:bg-primary/20 text-primary text-sm transition-colors"
-                    >
-                        Create Test Data File (data.txt)
-                    </button>
-                </div>
-            )}
+                        <div className="space-y-3">
+                            <label className="text-xs text-muted block">Data File to {signAction === 'sign' ? 'Sign' : 'Verify'}</label>
+                            <select
+                                value={selectedDataFile}
+                                onChange={(e) => setSelectedDataFile(e.target.value)}
+                                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                            >
+                                <option value="">Select a data file...</option>
+                                {useOpenSSLStore.getState().files
+                                    .filter(f => f.name.endsWith('.txt') || f.name.endsWith('.bin'))
+                                    .map(f => (
+                                        <option key={f.name} value={f.name}>{f.name}</option>
+                                    ))
+                                }
+                            </select>
+                        </div>
+
+                        {signAction === 'verify' && (
+                            <div className="space-y-3">
+                                <label className="text-xs text-muted block">Signature File</label>
+                                <select
+                                    value={selectedSigFile}
+                                    onChange={(e) => setSelectedSigFile(e.target.value)}
+                                    className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                                >
+                                    <option value="">Select a signature file...</option>
+                                    {useOpenSSLStore.getState().files
+                                        .filter(f => f.name.endsWith('.sig'))
+                                        .map(f => (
+                                            <option key={f.name} value={f.name}>{f.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                        )}
+
+                        <button
+                            onClick={() => {
+                                const testData = new TextEncoder().encode('Hello, Post-Quantum World! This is test data for signing.');
+                                useOpenSSLStore.getState().addFile({
+                                    name: 'data.txt',
+                                    type: 'text',
+                                    content: testData,
+                                    size: testData.length,
+                                    timestamp: Date.now()
+                                });
+                            }}
+                            className="w-full p-2 rounded-lg border border-primary/30 bg-primary/10 hover:bg-primary/20 text-primary text-sm transition-colors"
+                        >
+                            Create Test Data File (data.txt)
+                        </button>
+                    </div>
+                )
+            }
+
+            {
+                category === 'files' && (
+                    <div className="space-y-4 animate-fade-in">
+                        <label className="text-sm font-bold text-muted uppercase tracking-wider block">File Manager</label>
+
+                        {useOpenSSLStore.getState().files.length === 0 ? (
+                            <div className="text-center py-12 text-white/20 text-sm">
+                                No files generated yet.<br />
+                                Generate keys, CSRs, or certificates to see them here.
+                            </div>
+                        ) : (
+                            <div className="overflow-hidden rounded-lg border border-white/10">
+                                <table className="w-full text-sm">
+                                    <thead className="bg-white/5 border-b border-white/10">
+                                        <tr>
+                                            <th
+                                                className="text-left p-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors"
+                                                onClick={() => {
+                                                    if (sortBy === 'timestamp') {
+                                                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                                                    } else {
+                                                        setSortBy('timestamp');
+                                                        setSortOrder('desc');
+                                                    }
+                                                }}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    Timestamp <ArrowUpDown size={12} />
+                                                </div>
+                                            </th>
+                                            <th
+                                                className="text-left p-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors"
+                                                onClick={() => {
+                                                    if (sortBy === 'type') {
+                                                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                                                    } else {
+                                                        setSortBy('type');
+                                                        setSortOrder('asc');
+                                                    }
+                                                }}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    Type <ArrowUpDown size={12} />
+                                                </div>
+                                            </th>
+                                            <th
+                                                className="text-left p-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors"
+                                                onClick={() => {
+                                                    if (sortBy === 'name') {
+                                                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                                                    } else {
+                                                        setSortBy('name');
+                                                        setSortOrder('asc');
+                                                    }
+                                                }}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    Filename <ArrowUpDown size={12} />
+                                                </div>
+                                            </th>
+                                            <th className="text-right p-3 text-xs font-bold text-muted uppercase tracking-wider">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {useOpenSSLStore.getState().files
+                                            .slice()
+                                            .sort((a, b) => {
+                                                let comparison = 0;
+                                                if (sortBy === 'timestamp') {
+                                                    comparison = a.timestamp - b.timestamp;
+                                                } else if (sortBy === 'type') {
+                                                    comparison = a.type.localeCompare(b.type);
+                                                } else {
+                                                    comparison = a.name.localeCompare(b.name);
+                                                }
+                                                return sortOrder === 'asc' ? comparison : -comparison;
+                                            })
+                                            .map((file) => (
+                                                <tr key={file.name} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                                    <td className="p-3 text-white/70 font-mono text-xs">
+                                                        {new Date(file.timestamp).toLocaleString()}
+                                                    </td>
+                                                    <td className="p-3">
+                                                        <span className={clsx("px-2 py-1 rounded text-xs font-medium",
+                                                            file.type === 'key' ? "bg-amber-500/20 text-amber-200" :
+                                                                file.type === 'cert' ? "bg-blue-500/20 text-blue-200" :
+                                                                    file.type === 'csr' ? "bg-purple-500/20 text-purple-200" :
+                                                                        "bg-gray-500/20 text-gray-200"
+                                                        )}>
+                                                            {file.type.toUpperCase()}
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-3 text-white font-mono text-sm">
+                                                        {file.name}
+                                                    </td>
+                                                    <td className="p-3">
+                                                        <div className="flex items-center justify-end gap-2">
+                                                            <button
+                                                                onClick={() => useOpenSSLStore.getState().setEditingFile(file)}
+                                                                className="p-1.5 hover:bg-white/10 rounded text-muted hover:text-white transition-colors"
+                                                                title="View/Edit"
+                                                            >
+                                                                <Edit2 size={14} />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => {
+                                                                    const content = file.content;
+                                                                    const blobPart = typeof content === 'string' ? content : content as Uint8Array;
+                                                                    const blob = new Blob([blobPart as any], { type: 'application/octet-stream' });
+                                                                    const url = URL.createObjectURL(blob);
+                                                                    const a = document.createElement('a');
+                                                                    a.href = url;
+                                                                    a.download = file.name;
+                                                                    document.body.appendChild(a);
+                                                                    a.click();
+                                                                    document.body.removeChild(a);
+                                                                    URL.revokeObjectURL(url);
+                                                                }}
+                                                                className="p-1.5 hover:bg-white/10 rounded text-muted hover:text-white transition-colors"
+                                                                title="Download"
+                                                            >
+                                                                <Download size={14} />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => useOpenSSLStore.getState().removeFile(file.name)}
+                                                                className="p-1.5 hover:bg-red-500/20 rounded text-muted hover:text-red-400 transition-colors"
+                                                                title="Delete"
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
+                )
+            }
 
 
-
-            <div className="mt-auto pt-6">
-                <button
-                    onClick={handleRun}
-                    disabled={isProcessing}
-                    className="w-full btn-primary flex items-center justify-center gap-2 py-3 text-lg font-bold shadow-lg shadow-primary/20"
-                >
-                    {isProcessing ? <Settings className="animate-spin" /> : <Play fill="currentColor" />}
-                    Run Command
-                </button>
-            </div>
-        </div>
+            {
+                category !== 'files' && (
+                    <div className="mt-auto pt-6">
+                        <button
+                            onClick={handleRun}
+                            disabled={isProcessing}
+                            className="w-full btn-primary flex items-center justify-center gap-2 py-3 text-lg font-bold shadow-lg shadow-primary/20"
+                        >
+                            {isProcessing ? <Settings className="animate-spin" /> : <Play fill="currentColor" />}
+                            Run Command
+                        </button>
+                    </div>
+                )
+            }
+        </div >
     );
 };

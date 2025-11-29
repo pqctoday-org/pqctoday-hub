@@ -129,7 +129,15 @@ activate = 1
 activate = 1
 `;
         const cnfBytes = new TextEncoder().encode(minimalConfig);
+
+        // Create config file at multiple locations to satisfy different OpenSSL commands
+        try { module.FS.mkdir('/ssl'); } catch (e) { }
+        try { module.FS.mkdir('/openssl-wasm'); } catch (e) { }
+
         module.FS.writeFile('/ssl/openssl.cnf', cnfBytes);
+        module.FS.writeFile('/openssl-wasm/openssl.cnf', cnfBytes);
+        module.FS.writeFile('/openssl.cnf', cnfBytes); // Also at root
+
         ctx.postMessage({ type: 'FILE_CREATED', name: 'openssl.cnf', data: cnfBytes });
         // @ts-ignore
         if (module.ENV) {
