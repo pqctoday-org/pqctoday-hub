@@ -87,7 +87,7 @@ export const TerminalOutput = () => {
             </div>
 
             {/* Logs Area */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar bg-black/20">
+            <div className="flex-1 overflow-y-auto custom-scrollbar bg-black/20 min-w-0">
                 {filteredLogs.length === 0 ? (
                     <div className="text-white/20 italic text-center mt-10">
                         {logs.length === 0 ? "Ready to execute commands..." : "No output in this stream."}
@@ -104,12 +104,19 @@ export const TerminalOutput = () => {
                                     <td className="px-3 py-1.5 text-white/30 align-top whitespace-nowrap font-mono text-xs select-none border-r border-white/5">
                                         [{log.timestamp}]
                                     </td>
-                                    <td className={clsx(
-                                        "px-3 py-1.5 align-top break-all whitespace-pre-wrap font-mono text-xs",
-                                        log.type === 'error' ? "text-red-400" :
-                                            log.type === 'info' ? "text-blue-300" :
-                                                "text-white/80"
-                                    )}>
+                                    <td
+                                        className={clsx(
+                                            "px-3 py-1.5 align-top font-mono text-xs",
+                                            log.type === 'error' ? "text-red-400" :
+                                                log.type === 'info' ? "text-blue-300" :
+                                                    "text-white/80"
+                                        )}
+                                        style={{
+                                            wordBreak: 'break-all',
+                                            overflowWrap: 'anywhere',
+                                            whiteSpace: 'pre-wrap'
+                                        }}
+                                    >
                                         {log.message}
                                     </td>
                                 </tr>

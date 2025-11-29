@@ -37,56 +37,67 @@ declare function importScripts(...urls: string[]): void;
 declare var createOpenSSLModule: any;
 
 let moduleFactory: any = null;
+let loadingPromise: Promise<void> | null = null;
 
 const loadOpenSSLScript = async (url: string = '/wasm/openssl.js', requestId?: string): Promise<void> => {
     if (moduleFactory) return;
+    if (loadingPromise) return loadingPromise;
 
-    self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] loadOpenSSLScript called with url: ${url}`, requestId });
+    loadingPromise = (async () => {
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] loadOpenSSLScript called with url: ${url}`, requestId });
 
-    try {
-        // Shim module.exports to capture the factory if the script tries to use CommonJS
-        const global = self as any;
-        // Only shim if not already defined, to avoid breaking things
-        const originalModule = global.module;
-        const originalExports = global.exports;
+        try {
+            // Shim module.exports to capture the factory if the script tries to use CommonJS
+            const global = self as any;
+            // Only shim if not already defined, to avoid breaking things
+            const originalModule = global.module;
+            const originalExports = global.exports;
 
-        if (!global.module) {
-            global.module = { exports: {} };
-        }
-        if (!global.exports) {
-            global.exports = global.module.exports;
-        }
+            if (!global.module) {
+                global.module = { exports: {} };
+            }
+            if (!global.exports) {
+                global.exports = global.module.exports;
+            }
 
-        // Use importScripts for standard worker script loading
-        importScripts(url);
+            // Use importScripts for standard worker script loading
+            importScripts(url);
 
-        // Check for CommonJS export
-        if (global.module.exports && typeof global.module.exports === 'function') {
-            moduleFactory = global.module.exports;
-        } else if (global.module.exports && typeof global.module.exports.default === 'function') {
-            moduleFactory = global.module.exports.default;
-        }
-        // Check for global variable
-        else if (typeof (self as any).createOpenSSLModule === 'function') {
-            // @ts-ignore
-            moduleFactory = self.createOpenSSLModule;
-        } else if (typeof createOpenSSLModule === 'function') {
-            // @ts-ignore
-            moduleFactory = createOpenSSLModule;
-        } else {
-            // Restore originals if we messed them up and didn't find anything
+            // Check for CommonJS export
+            if (global.module.exports && typeof global.module.exports === 'function') {
+                moduleFactory = global.module.exports;
+            } else if (global.module.exports && typeof global.module.exports.default === 'function') {
+                moduleFactory = global.module.exports.default;
+            }
+            // Check for global variable
+            else if (typeof (self as any).createOpenSSLModule === 'function') {
+                // @ts-ignore
+                moduleFactory = self.createOpenSSLModule;
+            } else if (typeof createOpenSSLModule === 'function') {
+                // @ts-ignore
+                moduleFactory = createOpenSSLModule;
+            } else {
+                // Restore originals if we messed them up and didn't find anything
+                if (!originalModule) delete global.module;
+                if (!originalExports) delete global.exports;
+                throw new Error("createOpenSSLModule not found in global scope or module.exports after importScripts");
+            }
+
+            // Cleanup shims if we created them
             if (!originalModule) delete global.module;
             if (!originalExports) delete global.exports;
-            throw new Error("createOpenSSLModule not found in global scope or module.exports after importScripts");
+
+            self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Script loaded successfully", requestId });
+        } catch (e: any) {
+            self.postMessage({ type: 'LOG', stream: 'stderr', message: `[Debug] importScripts failed: ${e.message}`, requestId });
+            throw e;
         }
+    })();
 
-        // Cleanup shims if we created them
-        if (!originalModule) delete global.module;
-        if (!originalExports) delete global.exports;
-
-        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Script loaded successfully", requestId });
-    } catch (e: any) {
-        self.postMessage({ type: 'LOG', stream: 'stderr', message: `[Debug] importScripts failed: ${e.message}`, requestId });
+    try {
+        await loadingPromise;
+    } catch (e) {
+        loadingPromise = null; // Allow retry on failure
         throw e;
     }
 };
