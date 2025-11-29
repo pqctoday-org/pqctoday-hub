@@ -1,23 +1,27 @@
 import React from 'react';
 import { KeyStoreView } from '../KeyStoreView';
-import { usePlaygroundContext, type ClassicalAlgorithm } from '../PlaygroundContext';
+import { useSettingsContext, type ClassicalAlgorithm } from '../contexts/SettingsContext';
+import { useKeyStoreContext } from '../contexts/KeyStoreContext';
 
 export const KeyStoreTab: React.FC = () => {
     const {
-        keyStore,
         algorithm,
         setAlgorithm,
         keySize,
         setKeySize,
         loading,
         handleAlgorithmChange,
-        generateKeys,
         classicalAlgorithm,
         setClassicalAlgorithm,
+    } = useSettingsContext();
+
+    const {
+        keyStore,
+        generateKeys,
         classicalLoading,
         generateClassicalKeys,
         clearKeys
-    } = usePlaygroundContext();
+    } = useKeyStoreContext();
 
     return (
         <KeyStoreView

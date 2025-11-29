@@ -1,20 +1,24 @@
 import React from 'react';
 import { Lock, Key as KeyIcon } from 'lucide-react';
 import { DataInput } from '../DataInput';
-import { usePlaygroundContext } from '../PlaygroundContext';
+import { useSettingsContext } from '../contexts/SettingsContext';
+import { useKeyStoreContext } from '../contexts/KeyStoreContext';
+import { useOperationsContext } from '../contexts/OperationsContext';
 
 export const SymmetricTab: React.FC = () => {
+    const { loading } = useSettingsContext();
     const {
         selectedSymKeyId,
         setSelectedSymKeyId,
         keyStore,
+    } = useKeyStoreContext();
+    const {
         symData,
         setSymData,
         symOutput,
         setSymOutput,
         runOperation,
-        loading
-    } = usePlaygroundContext();
+    } = useOperationsContext();
 
     return (
         <div className="max-w-4xl mx-auto animate-fade-in">

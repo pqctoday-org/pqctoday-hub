@@ -83,12 +83,16 @@ export const useOpenSSL = () => {
         const cmd = args.shift() || '';
 
         if (workerRef.current) {
+            // Generate unique request ID for tracking
+            const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
             // Send command AND files in one message to ensure they are written to the fresh module
             workerRef.current.postMessage({
                 type: 'COMMAND',
                 command: cmd,
                 args,
-                files: files.map(f => ({ name: f.name, data: f.content }))
+                files: files.map(f => ({ name: f.name, data: f.content })),
+                requestId
             } as WorkerMessage);
         }
     }, [currentCommand, setIsProcessing, clearLogs, addLog, files]);

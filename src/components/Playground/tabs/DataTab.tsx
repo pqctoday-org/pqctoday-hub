@@ -1,7 +1,7 @@
 import React from 'react';
 import { Database, FileSignature, Lock, Key as KeyIcon } from 'lucide-react';
 import { DataInput } from '../DataInput';
-import { usePlaygroundContext } from '../PlaygroundContext';
+import { useOperationsContext } from '../contexts/OperationsContext';
 
 export const DataTab: React.FC = () => {
     const {
@@ -14,7 +14,7 @@ export const DataTab: React.FC = () => {
         decryptedData,
         setDecryptedData,
         sharedSecret
-    } = usePlaygroundContext();
+    } = useOperationsContext();
 
     return (
         <div className="max-w-4xl mx-auto animate-fade-in">

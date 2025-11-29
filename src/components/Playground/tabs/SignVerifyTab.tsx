@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FileSignature, CheckCircle, XCircle } from 'lucide-react';
-import { usePlaygroundContext } from '../PlaygroundContext';
+import { useSettingsContext } from '../contexts/SettingsContext';
+import { useKeyStoreContext } from '../contexts/KeyStoreContext';
+import { useOperationsContext } from '../contexts/OperationsContext';
 
 // Helper for Hex/ASCII toggle with editing
 const EditableDataDisplay: React.FC<{
@@ -72,20 +74,22 @@ const EditableDataDisplay: React.FC<{
 };
 
 export const SignVerifyTab: React.FC = () => {
+    const { loading } = useSettingsContext();
     const {
         keyStore,
         selectedSignKeyId,
         setSelectedSignKeyId,
         selectedVerifyKeyId,
         setSelectedVerifyKeyId,
+    } = useKeyStoreContext();
+    const {
         runOperation,
-        loading,
         signature,
         setSignature,
         dataToSign,
         setDataToSign,
         verificationResult
-    } = usePlaygroundContext();
+    } = useOperationsContext();
 
     const isSign = (algo: string) => algo.startsWith('ML-DSA') || algo.startsWith('RSA') || algo.startsWith('ECDSA') || algo === 'Ed25519';
     const signPrivateKeys = keyStore.filter(k => k.type === 'private' && isSign(k.algorithm));

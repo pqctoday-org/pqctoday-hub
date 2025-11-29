@@ -1,7 +1,9 @@
 
 import { Play, Settings, Database, Activity, Lock, FileSignature, Key as KeyIcon, FileText, ShieldCheck, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
-import { PlaygroundProvider, usePlaygroundContext } from './PlaygroundContext';
+import { PlaygroundProvider } from './PlaygroundContext';
+import { useSettingsContext } from './contexts/SettingsContext';
+import { useKeyStoreContext } from './contexts/KeyStoreContext';
 import { ACVPTesting } from '../ACVP/ACVPTesting';
 import { SettingsTab } from './tabs/SettingsTab';
 import { DataTab } from './tabs/DataTab';
@@ -20,13 +22,8 @@ export const InteractivePlayground = () => {
 };
 
 const PlaygroundContent = () => {
-    const {
-        activeTab,
-        setActiveTab,
-        keyStore,
-        setKeyStore,
-        error
-    } = usePlaygroundContext();
+    const { activeTab, setActiveTab, error } = useSettingsContext();
+    const { keyStore, setKeyStore } = useKeyStoreContext();
 
     return (
         <div className="glass-panel p-6 h-[85vh] flex flex-col">

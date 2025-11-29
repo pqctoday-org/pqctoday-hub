@@ -38,10 +38,10 @@ declare var createOpenSSLModule: any;
 
 let moduleFactory: any = null;
 
-const loadOpenSSLScript = async (url: string = '/wasm/openssl.js'): Promise<void> => {
+const loadOpenSSLScript = async (url: string = '/wasm/openssl.js', requestId?: string): Promise<void> => {
     if (moduleFactory) return;
 
-    self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] loadOpenSSLScript called with url: ${url}` });
+    self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] loadOpenSSLScript called with url: ${url}`, requestId });
 
     try {
         // Shim module.exports to capture the factory if the script tries to use CommonJS
@@ -84,36 +84,36 @@ const loadOpenSSLScript = async (url: string = '/wasm/openssl.js'): Promise<void
         if (!originalModule) delete global.module;
         if (!originalExports) delete global.exports;
 
-        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Script loaded successfully" });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Script loaded successfully", requestId });
     } catch (e: any) {
-        self.postMessage({ type: 'LOG', stream: 'stderr', message: `[Debug] importScripts failed: ${e.message}` });
+        self.postMessage({ type: 'LOG', stream: 'stderr', message: `[Debug] importScripts failed: ${e.message}`, requestId });
         throw e;
     }
 };
 
-const createOpenSSLInstance = async (): Promise<EmscriptenModule> => {
+const createOpenSSLInstance = async (requestId?: string): Promise<EmscriptenModule> => {
     if (!moduleFactory) throw new Error("Module factory not loaded. Call loadOpenSSLScript first.");
     const moduleConfig: ModuleConfig = {
         noInitialRun: true,
-        print: (text: string) => self.postMessage({ type: 'LOG', stream: 'stdout', message: text }),
-        printErr: (text: string) => self.postMessage({ type: 'LOG', stream: 'stderr', message: text }),
+        print: (text: string) => self.postMessage({ type: 'LOG', stream: 'stdout', message: text, requestId }),
+        printErr: (text: string) => self.postMessage({ type: 'LOG', stream: 'stderr', message: text, requestId }),
         locateFile: (path: string) => path.endsWith('.wasm') ? '/wasm/openssl.wasm' : path
     };
     return await moduleFactory(moduleConfig);
 };
 
-const injectEntropy = (module: EmscriptenModule) => {
+const injectEntropy = (module: EmscriptenModule, requestId?: string) => {
     try {
         const seedData = new Uint8Array(4096);
         self.crypto.getRandomValues(seedData);
         module.FS.writeFile('/random.seed', seedData);
         try { module.FS.writeFile('/dev/urandom', seedData); } catch (e) { }
     } catch (e) {
-        self.postMessage({ type: 'LOG', stream: 'stderr', message: 'Warning: Failed to inject entropy' });
+        self.postMessage({ type: 'LOG', stream: 'stderr', message: 'Warning: Failed to inject entropy', requestId });
     }
 };
 
-const configureEnvironment = (module: EmscriptenModule) => {
+const configureEnvironment = (module: EmscriptenModule, requestId?: string) => {
     try {
         try { module.FS.mkdir('/ssl'); } catch (e) { }
         const minimalConfig = `
@@ -145,7 +145,7 @@ distinguished_name = req_distinguished_name
         module.FS.writeFile('/openssl-wasm/openssl.cnf', cnfBytes);
         module.FS.writeFile('/openssl.cnf', cnfBytes); // Also at root
 
-        self.postMessage({ type: 'FILE_CREATED', name: 'openssl.cnf', data: cnfBytes });
+        self.postMessage({ type: 'FILE_CREATED', name: 'openssl.cnf', data: cnfBytes, requestId });
         // @ts-ignore
         if (module.ENV) {
             // @ts-ignore
@@ -158,20 +158,21 @@ distinguished_name = req_distinguished_name
     }
 };
 
-const writeInputFiles = (module: EmscriptenModule, files: { name: string; data: Uint8Array }[]) => {
+const writeInputFiles = (module: EmscriptenModule, files: { name: string; data: Uint8Array }[], requestId?: string) => {
     const writtenFiles = new Set<string>();
     for (const file of files) {
         try {
             module.FS.writeFile('/' + file.name, file.data);
             writtenFiles.add(file.name);
         } catch (e) {
-            console.warn(`Failed to write input file ${file.name}:`, e);
+            // Use postMessage instead of console.warn
+            self.postMessage({ type: 'LOG', stream: 'stderr', message: `Failed to write input file ${file.name}: ${e}`, requestId });
         }
     }
     return writtenFiles;
 };
 
-const scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>) => {
+const scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>, requestId?: string) => {
     try {
         const files = module.FS.readdir('/');
         for (const file of files) {
@@ -182,7 +183,7 @@ const scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>) => {
                 if (module.FS.isFile(stat.mode)) {
                     if (file.endsWith('.key') || file.endsWith('.pub') || file.endsWith('.csr') || file.endsWith('.crt') || file.endsWith('.sig') || file.endsWith('.txt') || file.endsWith('.bin')) {
                         const content = module.FS.readFile('/' + file);
-                        self.postMessage({ type: 'FILE_CREATED', name: file, data: content });
+                        self.postMessage({ type: 'FILE_CREATED', name: file, data: content, requestId });
                     }
                 }
             } catch (e) { }
@@ -195,14 +196,14 @@ const scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>) => {
 // ----------------------------------------------------------------------------
 
 interface CommandStrategy {
-    prepare(module: EmscriptenModule): void;
+    prepare(module: EmscriptenModule, requestId?: string): void;
     getArgs(command: string, args: string[]): string[];
 }
 
 class BaseStrategy implements CommandStrategy {
-    prepare(module: EmscriptenModule): void {
+    prepare(module: EmscriptenModule, requestId?: string): void {
         // Ensure environment is configured even for base commands
-        configureEnvironment(module);
+        configureEnvironment(module, requestId);
     }
     getArgs(command: string, args: string[]): string[] {
         return [command, ...args];
@@ -210,9 +211,9 @@ class BaseStrategy implements CommandStrategy {
 }
 
 class CryptoStrategy implements CommandStrategy {
-    prepare(module: EmscriptenModule): void {
-        injectEntropy(module);
-        configureEnvironment(module);
+    prepare(module: EmscriptenModule, requestId?: string): void {
+        injectEntropy(module, requestId);
+        configureEnvironment(module, requestId);
     }
     getArgs(command: string, args: string[]): string[] {
         return [command, '-rand', '/random.seed', ...args];
@@ -232,51 +233,52 @@ const getStrategy = (command: string): CommandStrategy => {
 // Main Execution
 // ----------------------------------------------------------------------------
 
-console.log("[Worker] Worker script loaded (Consolidated)");
+// console.log("[Worker] Worker script loaded (Consolidated)"); // Removed console.log
 
-const executeCommand = async (command: string, args: string[], inputFiles: { name: string; data: Uint8Array }[] = []) => {
-    self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] executeCommand started: ${command}` });
+const executeCommand = async (command: string, args: string[], inputFiles: { name: string; data: Uint8Array }[] = [], requestId?: string) => {
+    self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] executeCommand started: ${command}`, requestId });
     let openSSLModule;
 
     try {
-        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Loading OpenSSL script..." });
-        await loadOpenSSLScript();
-        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Creating OpenSSL instance..." });
-        openSSLModule = await createOpenSSLInstance();
-        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] OpenSSL instance created" });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Loading OpenSSL script...", requestId });
+        await loadOpenSSLScript('/wasm/openssl.js', requestId);
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Creating OpenSSL instance...", requestId });
+        openSSLModule = await createOpenSSLInstance(requestId);
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] OpenSSL instance created", requestId });
     } catch (e: any) {
-        self.postMessage({ type: 'LOG', stream: 'stderr', message: `[Debug] Initialization failed: ${e.message}` });
+        self.postMessage({ type: 'LOG', stream: 'stderr', message: `[Debug] Initialization failed: ${e.message}`, requestId });
         throw new Error(`Failed to initialize OpenSSL: ${e.message}`);
     }
 
     try {
-        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Selecting strategy..." });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Selecting strategy...", requestId });
         const strategy = getStrategy(command);
-        self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] Strategy selected: ${strategy.constructor.name}` });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] Strategy selected: ${strategy.constructor.name}`, requestId });
 
-        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Writing input files..." });
-        const writtenFiles = writeInputFiles(openSSLModule, inputFiles);
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Writing input files...", requestId });
+        const writtenFiles = writeInputFiles(openSSLModule, inputFiles, requestId);
 
-        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Preparing strategy..." });
-        strategy.prepare(openSSLModule);
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Preparing strategy...", requestId });
+        strategy.prepare(openSSLModule, requestId);
 
         const fullArgs = strategy.getArgs(command, args);
-        self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] Full args: ${fullArgs.join(' ')}` });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: `[Debug] Full args: ${fullArgs.join(' ')}`, requestId });
 
-        self.postMessage({ type: 'LOG', stream: 'stdout', message: `Executing: openssl ${fullArgs.join(' ')}` });
+        self.postMessage({ type: 'LOG', stream: 'stdout', message: `Executing: openssl ${fullArgs.join(' ')}`, requestId });
 
         try {
-            self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Calling callMain..." });
+            self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] Calling callMain...", requestId });
             // @ts-ignore
             openSSLModule.callMain(fullArgs);
-            self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] callMain returned" });
+            self.postMessage({ type: 'LOG', stream: 'stdout', message: "[Debug] callMain returned", requestId });
         } catch (e: any) {
             if (e.name === 'ExitStatus') {
                 if (e.status !== 0) {
                     throw new Error(`OpenSSL exited with status ${e.status}`);
                 }
             } else {
-                console.error("OpenSSL Execution Error:", e);
+                // console.error("OpenSSL Execution Error:", e); // Removed console.error
+                self.postMessage({ type: 'LOG', stream: 'stderr', message: `OpenSSL Execution Error: ${e}`, requestId });
                 if (e.message && e.message.includes('Unreachable')) {
                     throw new Error(`WASM Crash: The operation caused a critical error (Unreachable code). This usually indicates a build incompatibility or memory issue with this specific algorithm.`);
                 }
@@ -285,7 +287,7 @@ const executeCommand = async (command: string, args: string[], inputFiles: { nam
         }
 
         // Scan for output files
-        scanOutputFiles(openSSLModule, writtenFiles);
+        scanOutputFiles(openSSLModule, writtenFiles, requestId);
 
         // Inform user about public key extraction for genpkey
         if (command === 'genpkey') {
@@ -296,29 +298,31 @@ const executeCommand = async (command: string, args: string[], inputFiles: { nam
                 self.postMessage({
                     type: 'LOG',
                     stream: 'stdout',
-                    message: `\n💡 To extract the public key, run:\n   openssl pkey -in ${privateKeyFile} -pubout -out ${publicKeyFile}`
+                    message: `\n💡 To extract the public key, run:\n   openssl pkey -in ${privateKeyFile} -pubout -out ${publicKeyFile}`,
+                    requestId
                 });
             }
         }
 
     } catch (error: any) {
-        self.postMessage({ type: 'ERROR', error: error.message || 'Execution failed' });
+        self.postMessage({ type: 'ERROR', error: error.message || 'Execution failed', requestId });
     } finally {
-        self.postMessage({ type: 'DONE' });
+        self.postMessage({ type: 'DONE', requestId });
     }
 };
 
 self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
     const { type } = event.data;
+    const requestId = event.data.requestId;
     try {
         if (type === 'LOAD') {
-            await loadOpenSSLScript(event.data.url);
-            self.postMessage({ type: 'READY' });
+            await loadOpenSSLScript(event.data.url, requestId);
+            self.postMessage({ type: 'READY', requestId });
         } else if (type === 'COMMAND') {
             const { command, args, files } = event.data as { type: 'COMMAND'; command: string; args: string[]; files?: { name: string; data: Uint8Array }[] };
-            await executeCommand(command, args, files);
+            await executeCommand(command, args, files, requestId);
         }
     } catch (error: any) {
-        self.postMessage({ type: 'ERROR', error: error.message });
+        self.postMessage({ type: 'ERROR', error: error.message, requestId });
     }
 });

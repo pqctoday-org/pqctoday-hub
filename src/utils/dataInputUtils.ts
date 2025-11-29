@@ -28,7 +28,7 @@ export const asciiToHex = (str: string): string => {
 export const hexToAscii = (hex: string): string => {
     let str = '';
     for (let i = 0; i < hex.length; i += 2) {
-        const code = parseInt(hex.substr(i, 2), 16);
+        const code = parseInt(hex.substring(i, i + 2), 16);
         str += String.fromCharCode(code);
     }
     return str;

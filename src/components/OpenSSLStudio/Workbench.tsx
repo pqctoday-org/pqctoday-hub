@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useOpenSSLStore } from './store';
 import { useOpenSSL } from './hooks/useOpenSSL';
 import { Play, Settings, Key, FileText, Shield, Info, Folder, Download, Trash2, Edit2, ArrowUpDown, FileKey } from 'lucide-react';
+import { sanitizeCountryCode, sanitizeOrganization, sanitizeCommonName } from '../../utils/inputValidation';
 import clsx from 'clsx';
 
 
@@ -63,8 +64,13 @@ export const Workbench = () => {
     useEffect(() => {
         let cmd = 'openssl';
 
+        // Sanitize inputs to prevent command injection
+        const sanitizedCountry = sanitizeCountryCode(country);
+        const sanitizedOrg = sanitizeOrganization(org);
+        const sanitizedCN = sanitizeCommonName(commonName);
+
         // Helper to build Subject DN string
-        const subj = `/C=${country}/O=${org}/CN=${commonName}`;
+        const subj = `/C=${sanitizedCountry}/O=${sanitizedOrg}/CN=${sanitizedCN}`;
 
         if (category === 'genpkey') {
             // Generate descriptive filename with algorithm, variant, and timestamp

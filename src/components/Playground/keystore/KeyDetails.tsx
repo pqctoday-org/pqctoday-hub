@@ -143,7 +143,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 setTimeout(() => setCopiedPkcs8(false), 2000);
             }
         } catch (err) {
-            console.error('Failed to copy:', err);
+            // Silent failure - clipboard API may not be available
         }
     };
 

@@ -1,4 +1,7 @@
 // Wrapper for mlkem-wasm
+import { createLogger } from '../utils/logger';
+
+const logger = createLogger('mlkem_wasm');
 let mlkem: any = null;
 
 /**
@@ -18,7 +21,7 @@ export const load = async () => {
                 mlkem = mlkem.default;
             }
         } catch (e) {
-            console.error('[mlkem_wasm] Import failed:', e);
+            logger.error('[mlkem_wasm] Import failed:', e);
             throw e;
         }
     }
@@ -44,7 +47,7 @@ export const generateKey = async (params: any, exportPublic = true, ops?: string
 
         return { publicKey, secretKey };
     } catch (e) {
-        console.error('[mlkem_wasm] generateKey failed:', e);
+        logger.error('[mlkem_wasm] generateKey failed:', e);
         throw e;
     }
 };

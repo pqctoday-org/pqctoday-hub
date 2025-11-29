@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileText, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
 import clsx from 'clsx';
-import { usePlaygroundContext } from '../PlaygroundContext';
+import { useSettingsContext } from '../contexts/SettingsContext';
 
 export const LogsTab: React.FC = () => {
     const {
@@ -12,7 +12,7 @@ export const LogsTab: React.FC = () => {
         handleSort,
         startResize,
         sortedLogs
-    } = usePlaygroundContext();
+    } = useSettingsContext();
 
     const getPerformanceColor = (ms: number): string => {
         if (ms < 100) return 'text-green-400';

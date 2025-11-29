@@ -1,17 +1,21 @@
 import React from 'react';
 import { Activity, Lock, Key as KeyIcon, CheckCircle, XCircle } from 'lucide-react';
-import { usePlaygroundContext } from '../PlaygroundContext';
+import { useSettingsContext } from '../contexts/SettingsContext';
+import { useKeyStoreContext } from '../contexts/KeyStoreContext';
+import { useOperationsContext } from '../contexts/OperationsContext';
 import { DataInput } from '../DataInput';
 
 export const KemOpsTab: React.FC = () => {
+    const { loading } = useSettingsContext();
     const {
         keyStore,
         selectedEncKeyId,
         setSelectedEncKeyId,
         selectedDecKeyId,
         setSelectedDecKeyId,
+    } = useKeyStoreContext();
+    const {
         runOperation,
-        loading,
         sharedSecret,
         setSharedSecret,
         ciphertext,
@@ -23,7 +27,7 @@ export const KemOpsTab: React.FC = () => {
         dataToEncrypt,
         setDataToEncrypt,
         kemDecapsulationResult
-    } = usePlaygroundContext();
+    } = useOperationsContext();
 
     const isKEM = (algo: string) => algo.startsWith('ML-KEM') || ['X25519', 'P-256'].includes(algo);
     const kemPublicKeys = keyStore.filter(k => k.type === 'public' && isKEM(k.algorithm));

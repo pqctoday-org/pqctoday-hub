@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createLogger } from '../../../utils/logger';
 import type { Key, LogEntry } from '../../../types';
 import * as MLKEM from '../../../wasm/liboqs_kem';
 import * as MLDSA from '../../../wasm/liboqs_dsa';
@@ -21,6 +22,8 @@ interface UseKeyGenerationProps {
     setLoading: (loading: boolean) => void;
     setError: (error: string | null) => void;
 }
+
+const logger = createLogger('useKeyGeneration');
 
 export const useKeyGeneration = ({
     algorithm,
@@ -59,9 +62,9 @@ export const useKeyGeneration = ({
 
                 if (algorithm === 'ML-KEM') {
                     algoName = `ML-KEM-${keySize}`;
-                    console.log('[Playground] Generating ML-KEM keys...', algoName);
+                    logger.debug('[Playground] Generating ML-KEM keys...', algoName);
                     const keys = await MLKEM.generateKey({ name: algoName });
-                    console.log('[Playground] ML-KEM keys generated:', keys);
+                    logger.debug('[Playground] ML-KEM keys generated:', keys);
 
                     newKeys = [
                         {

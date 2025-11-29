@@ -1,7 +1,7 @@
 import React from 'react';
 import { Cpu, Settings, Lock, FileSignature, Hash, CheckSquare, Square, RefreshCw } from 'lucide-react';
 import clsx from 'clsx';
-import { usePlaygroundContext } from '../PlaygroundContext';
+import { useSettingsContext } from '../contexts/SettingsContext';
 
 export const SettingsTab: React.FC = () => {
     const {
@@ -10,7 +10,7 @@ export const SettingsTab: React.FC = () => {
         wasmLoaded,
         enabledAlgorithms,
         toggleAlgorithm
-    } = usePlaygroundContext();
+    } = useSettingsContext();
 
     return (
         <div className="space-y-8 max-w-2xl mx-auto animate-fade-in">
