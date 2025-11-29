@@ -127,14 +127,21 @@ legacy = legacy_sect
 activate = 1
 [legacy_sect]
 activate = 1
+[req]
+distinguished_name = req_distinguished_name
+[req_distinguished_name]
 `;
         const cnfBytes = new TextEncoder().encode(minimalConfig);
 
         // Create config file at multiple locations to satisfy different OpenSSL commands
         try { module.FS.mkdir('/ssl'); } catch (e) { }
+        try { module.FS.mkdir('/usr'); } catch (e) { }
+        try { module.FS.mkdir('/usr/local'); } catch (e) { }
+        try { module.FS.mkdir('/usr/local/ssl'); } catch (e) { }
         try { module.FS.mkdir('/openssl-wasm'); } catch (e) { }
 
         module.FS.writeFile('/ssl/openssl.cnf', cnfBytes);
+        module.FS.writeFile('/usr/local/ssl/openssl.cnf', cnfBytes);
         module.FS.writeFile('/openssl-wasm/openssl.cnf', cnfBytes);
         module.FS.writeFile('/openssl.cnf', cnfBytes); // Also at root
 

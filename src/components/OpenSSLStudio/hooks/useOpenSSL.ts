@@ -24,7 +24,7 @@ export const useOpenSSL = () => {
 
             switch (type) {
                 case 'LOG':
-                    addLog(event.data.stream === 'stderr' ? 'error' : 'stdout', event.data.message);
+                    addLog(event.data.stream === 'stderr' ? 'error' : 'info', event.data.message);
                     break;
                 case 'FILE_CREATED':
                     addFile({
