@@ -188,8 +188,13 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                             return (
                                 <>
                                     {phases.map((phaseData, index) => {
+                                        const isLastRow = index === totalRows - 1;
                                         return (
-                                            <tr key={`${country.countryName}-${phaseData.phase}-${index}`} className="hover:bg-white/5 transition-colors" style={{ borderBottom: '1px solid #4b5563' }}>
+                                            <tr
+                                                key={`${country.countryName}-${phaseData.phase}-${index}`}
+                                                className="hover:bg-white/5 transition-colors"
+                                                style={isLastRow ? { borderBottom: '1px solid #4b5563' } : undefined}
+                                            >
                                                 {/* Country Cell - Only on first row */}
                                                 {index === 0 && (
                                                     <td rowSpan={totalRows} className="sticky left-0 z-20 bg-[#1a1d2d] p-3 border-r border-white/10 align-top">
