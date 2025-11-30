@@ -12,7 +12,7 @@
 - **Columns**:
     - **Country**: Displays the country name and flag.
     - **Organization**: Displays the organization name (text only, no logos).
-    - **Years**: A horizontal timeline from 2024 to 2035.
+    - **Years**: A horizontal timeline from 2024 to 2035. The first column is labeled **<2024** and groups all events starting before 2025.
 - **Rows**: Each row represents a specific phase or milestone for a country/organization.
 - **Visual Elements**:
     - **Phases**: Rendered as colored bars spanning from `StartYear` to `EndYear`.
@@ -36,7 +36,7 @@
     - **Smart Alignment**: Centers on the clicked element when space allows, aligns to edges when necessary.
 
 ### 1.4 Legend
-- A legend explains the color coding for different phases (Discovery, Testing, POC, Migration, etc.).
+- A legend explains the color coding for different phases (Guidance, Policy, Regulation, Research, Discovery, Testing, POC, Migration, Standardization).
 - **Milestones**: Explicitly described as "Flag markers".
 
 ## 2. Data Structure
@@ -52,7 +52,10 @@ The application parses a CSV file (`timeline_MMDDYYYY.csv`) with the following c
 ### 2.2 Data Logic
 - **Phases**: Grouped by `Category`.
 - **Duration**: Calculated using `StartYear` and `EndYear`.
-- **Sorting**: Events within a phase are sorted by `StartYear`.
+- **Sorting Logic**:
+    1.  **Start Year**: Primary sort key. All events starting **before 2025** are treated as starting in **2024** for sorting purposes.
+    2.  **Type**: Secondary sort key. **Milestones** appear before **Phases** when they share the same effective start year.
+    3.  **Phase Order**: Tertiary sort key based on a predefined sequence (Guidance -> Policy -> Regulation -> Research -> Discovery -> ...).
 - **Overrides**: "Deadline" category is forced to be a "Milestone" type.
 
 ## 3. Supported Countries/Bodies (Data)
