@@ -16,7 +16,7 @@ const PhaseCell = ({ phaseData, duration, colors, onClick }: { phaseData: Timeli
     const isMilestone = phaseData.type === 'Milestone';
 
     return (
-        <td colSpan={duration} className="p-1 border-r border-white/30 relative h-10 align-middle">
+        <td colSpan={duration} className="p-1 border-r border-white/50 relative h-10 align-middle">
             <button
                 className={`w-full h-6 mx-auto relative flex items-center justify-center px-2 overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] border-0 ${isMilestone ? '' : 'rounded shadow-sm'}`}
                 style={!isMilestone ? {
@@ -128,7 +128,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                 currentYear += safeDuration;
             } else {
                 cells.push(
-                    <td key={currentYear} className="p-1 border-r border-white/30 h-10"></td>
+                    <td key={currentYear} className="p-1 border-r border-white/50 h-10"></td>
                 );
                 currentYear++;
             }
@@ -162,17 +162,17 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
 
             {/* Table Container */}
             <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#0b0d17]/50 backdrop-blur-sm">
-                <table className="w-full border-collapse min-w-[1000px]">
+                <table className="w-full min-w-[1000px]" style={{ borderCollapse: 'collapse' }}>
                     <thead>
                         <tr>
-                            <th className="sticky left-0 z-30 bg-[#0b0d17] p-4 text-left border-b border-r border-white/20 w-[180px]">
+                            <th className="sticky left-0 z-30 bg-[#0b0d17] p-4 text-left border-b border-r border-white/50 w-[180px]">
                                 <span className="font-bold text-white">Country</span>
                             </th>
-                            <th className="sticky left-[180px] z-30 bg-[#0b0d17] p-4 text-left border-b border-r border-white/20 w-[200px]">
+                            <th className="sticky left-[180px] z-30 bg-[#0b0d17] p-4 text-left border-b border-r border-white/50 w-[200px]">
                                 <span className="font-bold text-white">Organization</span>
                             </th>
                             {YEARS.map(year => (
-                                <th key={year} className="p-2 border-b border-r border-white/30 text-center min-w-[80px] bg-[#0b0d17]/80">
+                                <th key={year} className="p-2 border-b border-r border-white/50 text-center min-w-[80px] bg-[#0b0d17]/80">
                                     <span className={`font-mono text-sm ${year === new Date().getFullYear() ? 'text-primary font-bold' : 'text-muted'}`}>
                                         {year}
                                     </span>
@@ -189,7 +189,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                                 <>
                                     {phases.map((phaseData, index) => {
                                         return (
-                                            <tr key={`${country.countryName}-${phaseData.phase}-${index}`} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                            <tr key={`${country.countryName}-${phaseData.phase}-${index}`} className="border-b border-white/50 hover:bg-white/5 transition-colors">
                                                 {/* Country Cell - Only on first row */}
                                                 {index === 0 && (
                                                     <td rowSpan={totalRows} className="sticky left-0 z-20 bg-[#1a1d2d] p-3 border-r border-white/10 align-top">
