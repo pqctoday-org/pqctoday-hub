@@ -12,41 +12,6 @@ const START_YEAR = 2024;
 const END_YEAR = 2035;
 const YEARS = Array.from({ length: END_YEAR - START_YEAR + 1 }, (_, i) => START_YEAR + i);
 
-const PhaseCell = ({ phaseData, duration, colors, onClick }: { phaseData: TimelinePhase; duration: number; colors: any; onClick: (phase: TimelinePhase, e: React.MouseEvent) => void }) => {
-    const isMilestone = phaseData.type === 'Milestone';
-
-    return (
-        <td colSpan={duration} className="p-0 relative h-10 align-middle" style={{ borderRight: '1px solid #4b5563' }}>
-            <button
-                className={`w-full h-full relative flex items-center justify-center px-2 overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] border-0 ${isMilestone ? '' : 'shadow-sm'}`}
-                style={!isMilestone ? {
-                    backgroundColor: colors.start,
-                    boxShadow: `0 0 8px ${colors.glow}`,
-                    opacity: 0.9
-                } : { background: 'transparent' }}
-                onClick={(e) => onClick(phaseData, e)}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        onClick(phaseData, e as any);
-                    }
-                }}
-                aria-label={`${phaseData.phase}: ${phaseData.title}`}
-            >
-                {isMilestone ? (
-                    <Flag
-                        className="w-4 h-4"
-                        style={{ color: colors.start, fill: colors.start }}
-                    />
-                ) : (
-                    <span className="text-[10px] font-bold text-white truncate drop-shadow-md select-none">
-                        {phaseData.phase}
-                    </span>
-                )}
-            </button>
-        </td>
-    );
-};
 
 export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
     const [filterText, setFilterText] = useState('');
@@ -88,7 +53,6 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
 
     const renderPhaseCells = (phaseData: TimelinePhase) => {
         const cells = [];
-        let currentYear = START_YEAR;
 
         // Calculate start and end indices relative to our year range
         const startYear = Math.max(START_YEAR, phaseData.startYear);
@@ -96,42 +60,69 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
 
         // If phase is completely out of range, render empty cells
         if (phaseData.endYear < START_YEAR || phaseData.startYear > END_YEAR) {
-            for (let i = START_YEAR; i <= END_YEAR; i++) {
-                cells.push(<td key={i} className="p-1 border-r border-white/5 h-10"></td>);
+            for (let year = START_YEAR; year <= END_YEAR; year++) {
+                cells.push(
+                    <td key={year} className="p-0 h-10" style={{ borderRight: '1px solid #4b5563' }}></td>
+                );
             }
             return cells;
         }
 
-        while (currentYear <= END_YEAR) {
-            if (currentYear === startYear) {
-                // Determine duration
-                // For single year events (start == end), duration is 1
-                // For ranges, duration is end - start + 1
-                const duration = Math.max(1, endYear - startYear + 1);
+        const colors = phaseColors[phaseData.phase] || { start: '#64748b', end: '#94a3b8', glow: 'rgba(100, 116, 139, 0.5)' };
+        const isMilestone = phaseData.type === 'Milestone';
 
-                // Ensure we don't exceed the grid
-                const safeDuration = Math.min(duration, END_YEAR - currentYear + 1);
+        // Calculate middle cell index for displaying the phase name
+        const phaseDuration = endYear - startYear + 1;
+        const middleOffset = Math.floor(phaseDuration / 2);
 
-                const colors = phaseColors[phaseData.phase] || { start: '#64748b', end: '#94a3b8', glow: 'rgba(100, 116, 139, 0.5)' };
+        for (let year = START_YEAR; year <= END_YEAR; year++) {
+            const isInPhase = year >= startYear && year <= endYear;
+            const isLastInPhase = year === endYear;
+            const isMiddle = year === startYear + middleOffset;
 
+            if (isInPhase) {
                 cells.push(
-                    <PhaseCell
-                        key={currentYear}
-                        phaseData={phaseData}
-                        duration={safeDuration}
-                        colors={colors}
-                        onClick={handlePhaseClick}
-                    />
+                    <td
+                        key={year}
+                        className="p-0 h-10"
+                        style={{
+                            borderRight: isLastInPhase ? '1px solid #4b5563' : 'none',
+                            backgroundColor: isMilestone ? 'transparent' : colors.start,
+                            boxShadow: isMilestone ? 'none' : `0 0 8px ${colors.glow}`,
+                            opacity: isMilestone ? 1 : 0.9
+                        }}
+                    >
+                        <button
+                            className="w-full h-full relative flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] border-0 bg-transparent"
+                            onClick={(e) => handlePhaseClick(phaseData, e)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    handlePhaseClick(phaseData, e as any);
+                                }
+                            }}
+                            aria-label={`${phaseData.phase}: ${phaseData.title}`}
+                        >
+                            {isMilestone && isMiddle ? (
+                                <Flag
+                                    className="w-4 h-4"
+                                    style={{ color: colors.start, fill: colors.start }}
+                                />
+                            ) : isMiddle && !isMilestone ? (
+                                <span className="text-[10px] font-bold text-white truncate drop-shadow-md select-none px-2">
+                                    {phaseData.phase}
+                                </span>
+                            ) : null}
+                        </button>
+                    </td>
                 );
-
-                currentYear += safeDuration;
             } else {
                 cells.push(
-                    <td key={currentYear} className="p-0 h-10" style={{ borderRight: '1px solid #4b5563' }}></td>
+                    <td key={year} className="p-0 h-10" style={{ borderRight: '1px solid #4b5563' }}></td>
                 );
-                currentYear++;
             }
         }
+
         return cells;
     };
 
