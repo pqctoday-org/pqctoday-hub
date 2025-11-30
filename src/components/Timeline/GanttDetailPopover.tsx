@@ -13,15 +13,13 @@ interface GanttDetailPopoverProps {
 
 export const GanttDetailPopover = ({ isOpen, onClose, phase, position }: GanttDetailPopoverProps) => {
     const popoverRef = useRef<HTMLDivElement>(null);
-    const [mounted, setMounted] = useState(false);
+
     const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
 
     useEffect(() => {
-        setMounted(true);
         const handleResize = () => setViewportWidth(window.innerWidth);
         window.addEventListener('resize', handleResize);
         return () => {
-            setMounted(false);
             window.removeEventListener('resize', handleResize);
         };
     }, []);
@@ -43,7 +41,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase, position }: GanttDe
         };
     }, [isOpen, onClose]);
 
-    if (!mounted || !isOpen || !phase || !position) return null;
+    if (!isOpen || !phase || !position) return null;
 
     const colors = phaseColors[phase.phase] || { start: '#94a3b8', end: '#cbd5e1', glow: 'rgba(148, 163, 184, 0.5)' };
 
