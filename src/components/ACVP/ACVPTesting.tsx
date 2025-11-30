@@ -141,15 +141,16 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
                     });
                     addLog(`${algo} Decapsulate: ${matches ? 'PASS' : 'FAIL'}`);
 
-                } catch (err: any) {
+                } catch (err: unknown) {
+                    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
                     newResults.push({
                         id: `test-${algo}-err`,
                         algorithm: algo,
                         testCase: 'Validation Error',
                         status: 'fail',
-                        details: err.message
+                        details: errorMessage
                     });
-                    addLog(`${algo} Error: ${err.message}`);
+                    addLog(`${algo} Error: ${errorMessage}`);
                 }
             }
 
@@ -176,20 +177,22 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
                     });
                     addLog(`${algo} Verify: ${isValid ? 'PASS' : 'FAIL'}`);
 
-                } catch (err: any) {
+                } catch (err: unknown) {
+                    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
                     newResults.push({
                         id: `test-${algo}-err`,
                         algorithm: algo,
                         testCase: 'Validation Error',
                         status: 'fail',
-                        details: err.message
+                        details: errorMessage
                     });
-                    addLog(`${algo} Error: ${err.message}`);
+                    addLog(`${algo} Error: ${errorMessage}`);
                 }
             }
 
-        } catch (err: any) {
-            addLog(`Critical Error: ${err.message}`);
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+            addLog(`Critical Error: ${errorMessage}`);
         } finally {
             setResults(newResults);
             setLoading(false);

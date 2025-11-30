@@ -62,10 +62,11 @@ test.describe('Production Smoke Tests', () => {
         await expect(page.getByText('Cryptographic Playground')).toBeVisible();
 
         // Monitor for the specific WASM wrapper file we fixed
-        const wasmRequestPromise = page.waitForResponse(response =>
-            (response.url().includes('ml-kem-768.min.js') || response.url().includes('ml-kem-768.deno.js')) &&
-            response.status() === 200
-            , { timeout: 10000 }).catch(() => null);
+        // Monitor for the specific WASM wrapper file we fixed
+        // const wasmRequestPromise = page.waitForResponse(response =>
+        //     (response.url().includes('ml-kem-768.min.js') || response.url().includes('ml-kem-768.deno.js')) &&
+        //     response.status() === 200
+        //     , { timeout: 10000 }).catch(() => null);
 
         // Trigger Key Generation (ML-KEM-768 is default)
         await page.getByRole('button', { name: 'Generate Keys' }).first().click();

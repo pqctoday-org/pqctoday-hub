@@ -3,7 +3,7 @@ import { impactsData } from '../../data/impactsData';
 import { Activity, Shield, Truck, Landmark, Server, AlertTriangle } from 'lucide-react';
 import clsx from 'clsx';
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, React.ComponentType<{ size?: number | string; className?: string }>> = {
     Activity,
     Shield,
     Truck,

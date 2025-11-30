@@ -56,10 +56,10 @@ export const FileManager = () => {
         return (bytes / 1024).toFixed(1) + ' KB';
     };
 
-    const handleDownload = (file: any) => {
+    const handleDownload = (file: { name: string; content: string | Uint8Array }) => {
         const content = file.content;
         const blobPart = typeof content === 'string' ? content : content as Uint8Array;
-        const blob = new Blob([blobPart as any], { type: 'application/octet-stream' });
+        const blob = new Blob([blobPart], { type: 'application/octet-stream' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;

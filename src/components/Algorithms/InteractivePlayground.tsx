@@ -82,7 +82,7 @@ export const InteractivePlayground = () => {
             }
 
             setOutput(`Generated key pair: ${newKeys[0].name} & ${newKeys[1].name}`);
-        } catch (err) {
+        } catch {
             setError('Failed to generate keys');
         } finally {
             setLoading(false);
@@ -143,8 +143,9 @@ export const InteractivePlayground = () => {
                 const isValid = signature.length > 10; // Simple mock validation
                 setOutput(`[Verify using ${key.name}]\nMessage: "${input}"\nSignature: ${signature}\nVerification: ${isValid ? '✓ VALID' : '✗ INVALID'}`);
             }
-        } catch (err: any) {
-            setError(err.message || 'Operation failed');
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Operation failed';
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }

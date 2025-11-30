@@ -54,7 +54,7 @@ export const FileEditor = () => {
                 const ascii = decoder.decode(bytes);
                 setContent(ascii);
                 setViewMode('ascii');
-            } catch (e) {
+            } catch {
                 setError('Invalid UTF-8 sequence. Cannot switch to ASCII.');
             }
         }
