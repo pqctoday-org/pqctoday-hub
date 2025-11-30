@@ -17,15 +17,22 @@ const PhaseCell = ({ phaseData, duration, colors, onClick }: { phaseData: Timeli
 
     return (
         <td colSpan={duration} className="p-1 border-r border-white/5 relative h-10 align-middle">
-            <div
-                className={`w-full h-6 mx-auto relative flex items-center justify-center px-2 overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] ${isMilestone ? '' : 'rounded shadow-sm'}`}
+            <button
+                className={`w-full h-6 mx-auto relative flex items-center justify-center px-2 overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] border-0 ${isMilestone ? '' : 'rounded shadow-sm'}`}
                 style={!isMilestone ? {
                     backgroundColor: colors.start,
                     borderRadius: '4px',
                     boxShadow: `0 0 8px ${colors.glow}`,
                     opacity: 0.9
-                } : undefined}
+                } : { background: 'transparent' }}
                 onClick={(e) => onClick(phaseData, e)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onClick(phaseData, e as any);
+                    }
+                }}
+                aria-label={`${phaseData.phase}: ${phaseData.title}`}
             >
                 {isMilestone ? (
                     <Flag
@@ -37,7 +44,7 @@ const PhaseCell = ({ phaseData, duration, colors, onClick }: { phaseData: Timeli
                         {phaseData.phase}
                     </span>
                 )}
-            </div>
+            </button>
         </td>
     );
 };
