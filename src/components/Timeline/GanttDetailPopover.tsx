@@ -128,7 +128,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase, position }: GanttDe
                     >
                         {phase.phase}
                     </div>
-                    <h3 className="text-sm font-bold text-white leading-tight truncate w-full">{phase.title}</h3>
+                    <h3 className="text-xs font-bold text-white leading-tight truncate w-full">{phase.title}</h3>
                 </div>
             </div>
 
@@ -147,10 +147,10 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase, position }: GanttDe
                             {/* Row 1: Start and End */}
                             <tr>
                                 <td className="py-1.5 pr-3 text-muted uppercase tracking-wider font-medium text-[10px] whitespace-nowrap w-1">Start</td>
-                                <td className="py-1.5 pr-6 font-mono text-white">{phase.startYear}</td>
+                                <td className="py-1.5 pr-6 font-mono text-white text-[10px]">{phase.startYear}</td>
 
                                 <td className="py-1.5 pr-3 text-muted uppercase tracking-wider font-medium text-[10px] whitespace-nowrap w-1">End</td>
-                                <td className="py-1.5 font-mono text-white">{phase.endYear}</td>
+                                <td className="py-1.5 font-mono text-white text-[10px]">{phase.endYear}</td>
                             </tr>
 
                             {/* Row 2: Source and Date */}
@@ -169,13 +169,13 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase, position }: GanttDe
                                             <span className="truncate">View</span>
                                         </a>
                                     ) : (
-                                        <span className="text-muted">-</span>
+                                        <span className="text-muted text-[10px]">-</span>
                                     )}
                                 </td>
 
                                 <td className="py-1.5 pr-3 text-muted uppercase tracking-wider font-medium text-[10px] whitespace-nowrap">Date</td>
                                 <td className="py-1.5">
-                                    <div className="flex items-center gap-1.5 text-white">
+                                    <div className="flex items-center gap-1.5 text-white text-[10px]">
                                         <Calendar className="w-3 h-3 text-muted shrink-0" />
                                         <span className="truncate">{sourceDate || '-'}</span>
                                     </div>
