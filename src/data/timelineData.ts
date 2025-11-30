@@ -27,7 +27,7 @@ function getLatestTimelineContent(): string | null {
         // Path format: ./timeline_MMDDYYYY.csv
         const match = path.match(/timeline_(\d{2})(\d{2})(\d{4})\.csv$/);
         if (match) {
-            const [_, month, day, year] = match;
+            const [, month, day, year] = match;
             const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
             return { path, date, content: modules[path] as string };
         }
@@ -90,7 +90,7 @@ export function transformToGanttData(countries: CountryData[]): GanttCountryData
 
             // Determine if this row is a "Milestone" row or "Phase" row
             // User request: Treat "Deadline" phase as a Milestone
-            const isMilestoneRow = events.every(e => e.type === 'Milestone') || (phase as any) === 'Deadline';
+            const isMilestoneRow = events.every(e => e.type === 'Milestone');
             const rowType: EventType = isMilestoneRow ? 'Milestone' : 'Phase';
 
             // Calculate phase duration based on events

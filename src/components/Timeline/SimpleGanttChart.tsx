@@ -36,7 +36,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
         return sortedCountries.map(country => ({
             ...country,
             phases: country.phases
-                .filter(p => (p.phase as any) !== 'Deadline')
+                .filter(p => p.phase !== 'Deadline' as any)
                 .sort((a, b) => {
                     // Primary sort: Start Year (grouping < 2025)
                     const startA = a.startYear < 2025 ? 2024 : a.startYear;
@@ -125,7 +125,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter' || e.key === ' ') {
                                     e.preventDefault();
-                                    handlePhaseClick(phaseData, e as any);
+                                    handlePhaseClick(phaseData, e as unknown as React.MouseEvent);
                                 }
                             }}
                             aria-label={`${phaseData.phase}: ${phaseData.title}`}
