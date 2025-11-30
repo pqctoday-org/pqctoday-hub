@@ -52,10 +52,11 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase, position }: GanttDe
     const sourceUrl = primaryEvent?.sourceUrl;
     const sourceDate = primaryEvent?.sourceDate;
 
-    // Popover width in pixels (36rem = 576px)
-    const POPOVER_WIDTH = 576;
+    // Popover width - responsive to viewport
+    const POPOVER_WIDTH = Math.min(576, viewportWidth * 0.9); // Max 36rem (576px) or 90% of viewport
     const HALF_WIDTH = POPOVER_WIDTH / 2;
     const MARGIN = 20; // Safety margin from screen edges
+    const ESTIMATED_POPOVER_HEIGHT = 300; // Approximate height of popover
 
     // Calculate left position with boundary checks
     let left = position.x;
@@ -72,21 +73,34 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase, position }: GanttDe
         transformX = '-100%'; // Align right edge
     }
 
+    // Calculate vertical position with boundary checks
+    let top = position.y;
+    let transformY = '-100%'; // Default: position above the element
+    let translateYOffset = '-10px'; // Small offset above
+
+    // Check if popover would extend above the top of the screen
+    if (position.y - ESTIMATED_POPOVER_HEIGHT < MARGIN) {
+        // Position below the element instead
+        transformY = '0%';
+        translateYOffset = '10px'; // Small offset below
+    }
+
     // Calculate position style to keep it on screen
     const style: React.CSSProperties = {
         position: 'fixed',
         left: left,
-        top: position.y,
-        transform: `translate(${transformX}, -100%) translateY(-10px)`, // Move up and adjust horizontal alignment
+        top: top,
+        transform: `translate(${transformX}, ${transformY}) translateY(${translateYOffset})`,
         zIndex: 9999, // Ensure it's on top of everything
         backgroundColor: '#111827', // Force opaque dark gray (Tailwind gray-900)
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', // Strong shadow
+        maxWidth: `${POPOVER_WIDTH}px`, // Ensure it never exceeds calculated width
     };
 
     const content = (
         <div
             ref={popoverRef}
-            className="w-[36rem] border border-white/20 rounded-xl overflow-hidden animate-in zoom-in-95 duration-200"
+            className="max-w-[36rem] w-[90vw] border border-white/20 rounded-xl overflow-hidden animate-in zoom-in-95 duration-200"
             style={style}
         >
             {/* Header with Phase Color */}
@@ -121,7 +135,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase, position }: GanttDe
             {/* Content */}
             <div className="p-4 space-y-3">
                 <div>
-                    <p className="text-xs text-gray-300 leading-relaxed">
+                    <p className="text-xs text-gray-300 leading-relaxed break-words">
                         {phase.description}
                     </p>
                 </div>
