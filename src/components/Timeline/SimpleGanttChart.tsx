@@ -13,7 +13,7 @@ const END_YEAR = 2035;
 const YEARS = Array.from({ length: END_YEAR - START_YEAR + 1 }, (_, i) => START_YEAR + i);
 
 
-const PHASE_ORDER = ['Discovery', 'Testing', 'POC', 'Migration', 'Standardization'];
+const PHASE_ORDER = ['Research', 'Discovery', 'Testing', 'POC', 'Migration', 'Standardization'];
 
 export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
     const [filterText, setFilterText] = useState('');
