@@ -48,12 +48,20 @@ test.describe('Timeline View', () => {
   })
 
   test('country selector updates view', async ({ page }) => {
+    // Wait for the country selector button to be visible (it contains "All Countries" text)
+    const countryButton = page.locator('button').filter({ hasText: 'All Countries' })
+    await countryButton.waitFor({ state: 'visible', timeout: 10000 })
+
     // Select a specific country
-    await page.getByRole('button', { name: /All Countries/ }).click()
+    await countryButton.click()
+
+    // Wait for dropdown to be visible
+    await page.getByRole('listbox').waitFor({ state: 'visible' })
+
     await page.getByRole('option', { name: 'United Kingdom' }).click()
 
-    // Check that only UK is visible
-    await expect(page.getByText('United Kingdom')).toBeVisible()
-    await expect(page.getByText('United States')).not.toBeVisible()
+    // Check that only UK is visible in the table
+    await expect(page.locator('table').getByText('United Kingdom')).toBeVisible()
+    await expect(page.locator('table').getByText('United States')).not.toBeVisible()
   })
 })

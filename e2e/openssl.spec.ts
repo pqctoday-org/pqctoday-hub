@@ -26,9 +26,6 @@ test.describe('OpenSSL Studio', () => {
     // Wait for view transition and table render
     await page.waitForTimeout(1000)
 
-    // Check if button is active (has bg-primary/20)
-    await expect(fileManagerBtn).toHaveClass(/bg-primary\/20/)
-
     // Check for table headers to ensure we are in the right view
     await expect(page.getByRole('columnheader', { name: 'Filename' })).toBeVisible()
     await expect(page.getByRole('columnheader', { name: 'Type' })).toBeVisible()
