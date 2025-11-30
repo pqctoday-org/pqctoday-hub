@@ -59,7 +59,7 @@ export const FileManager = () => {
     const handleDownload = (file: { name: string; content: string | Uint8Array }) => {
         const content = file.content;
         const blobPart = typeof content === 'string' ? content : content as Uint8Array;
-        const blob = new Blob([blobPart], { type: 'application/octet-stream' });
+        const blob = new Blob([blobPart as BlobPart], { type: 'application/octet-stream' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
