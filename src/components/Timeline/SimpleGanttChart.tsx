@@ -16,12 +16,11 @@ const PhaseCell = ({ phaseData, duration, colors, onClick }: { phaseData: Timeli
     const isMilestone = phaseData.type === 'Milestone';
 
     return (
-        <td colSpan={duration} className="p-1 relative h-10 align-middle" style={{ borderRight: '1px solid #4b5563' }}>
+        <td colSpan={duration} className="p-0 relative h-10 align-middle" style={{ borderRight: '1px solid #4b5563' }}>
             <button
-                className={`w-full h-6 mx-auto relative flex items-center justify-center px-2 overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] border-0 ${isMilestone ? '' : 'rounded shadow-sm'}`}
+                className={`w-full h-full relative flex items-center justify-center px-2 overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] border-0 ${isMilestone ? '' : 'shadow-sm'}`}
                 style={!isMilestone ? {
                     backgroundColor: colors.start,
-                    borderRadius: '4px',
                     boxShadow: `0 0 8px ${colors.glow}`,
                     opacity: 0.9
                 } : { background: 'transparent' }}
