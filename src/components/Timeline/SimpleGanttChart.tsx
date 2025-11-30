@@ -38,9 +38,12 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
             phases: country.phases
                 .filter(p => (p.phase as any) !== 'Deadline')
                 .sort((a, b) => {
-                    // Primary sort: Start Year
-                    if (a.startYear !== b.startYear) {
-                        return a.startYear - b.startYear;
+                    // Primary sort: Start Year (grouping < 2025)
+                    const startA = a.startYear < 2025 ? 2024 : a.startYear;
+                    const startB = b.startYear < 2025 ? 2024 : b.startYear;
+
+                    if (startA !== startB) {
+                        return startA - startB;
                     }
 
                     // Secondary sort: Type (Milestone before Phase)
@@ -188,7 +191,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                             {YEARS.map(year => (
                                 <th key={year} className="p-2 text-center min-w-[80px] bg-[#0b0d17]/80" style={{ borderBottom: '1px solid #4b5563', borderRight: '1px solid #4b5563' }}>
                                     <span className={`font-mono text-sm ${year === new Date().getFullYear() ? 'text-primary font-bold' : 'text-muted'}`}>
-                                        {year}
+                                        {year === 2024 ? '<2024' : year}
                                     </span>
                                 </th>
                             ))}
