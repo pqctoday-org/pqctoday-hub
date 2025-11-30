@@ -10,7 +10,6 @@ export const phaseColors: Record<Phase, { start: string; end: string; glow: stri
     Testing: { start: '#a78bfa', end: '#c4b5fd', glow: 'rgba(167, 139, 250, 0.5)' },
     POC: { start: '#fb923c', end: '#fdba74', glow: 'rgba(251, 146, 60, 0.5)' },
     Migration: { start: '#34d399', end: '#6ee7b7', glow: 'rgba(52, 211, 153, 0.5)' },
-    Deadline: { start: '#fb7185', end: '#fda4af', glow: 'rgba(251, 113, 133, 0.5)' },
     Standardization: { start: '#22d3ee', end: '#67e8f9', glow: 'rgba(34, 211, 238, 0.5)' },
     Guidance: { start: '#facc15', end: '#fde047', glow: 'rgba(250, 204, 21, 0.5)' },
     Policy: { start: '#a8a29e', end: '#d6d3d1', glow: 'rgba(168, 162, 158, 0.5)' },
@@ -91,7 +90,7 @@ export function transformToGanttData(countries: CountryData[]): GanttCountryData
 
             // Determine if this row is a "Milestone" row or "Phase" row
             // User request: Treat "Deadline" phase as a Milestone
-            const isMilestoneRow = events.every(e => e.type === 'Milestone') || phase === 'Deadline';
+            const isMilestoneRow = events.every(e => e.type === 'Milestone') || (phase as any) === 'Deadline';
             const rowType: EventType = isMilestoneRow ? 'Milestone' : 'Phase';
 
             // Calculate phase duration based on events

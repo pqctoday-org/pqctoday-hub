@@ -45,7 +45,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase, position }: GanttDe
 
     if (!mounted || !isOpen || !phase || !position) return null;
 
-    const colors = phaseColors[phase.phase] || { start: '#64748b', end: '#94a3b8', glow: 'rgba(100, 116, 139, 0.5)' };
+    const colors = phaseColors[phase.phase] || { start: '#94a3b8', end: '#cbd5e1', glow: 'rgba(148, 163, 184, 0.5)' };
 
     // Get source details from the first event (assuming main event details are primary)
     const primaryEvent = phase.events[0];

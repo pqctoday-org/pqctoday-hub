@@ -3,7 +3,6 @@ export type Phase =
     | 'Testing'
     | 'POC'
     | 'Migration'
-    | 'Deadline'
     | 'Standardization'
     | 'Guidance'
     | 'Policy'

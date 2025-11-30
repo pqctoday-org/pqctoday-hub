@@ -36,7 +36,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
         return sortedCountries.map(country => ({
             ...country,
             phases: country.phases
-                .filter(p => p.phase !== 'Deadline')
+                .filter(p => (p.phase as any) !== 'Deadline')
                 .sort((a, b) => {
                     const indexA = PHASE_ORDER.indexOf(a.phase);
                     const indexB = PHASE_ORDER.indexOf(b.phase);
@@ -84,7 +84,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
             return cells;
         }
 
-        const colors = phaseColors[phaseData.phase] || { start: '#64748b', end: '#94a3b8', glow: 'rgba(100, 116, 139, 0.5)' };
+        const colors = phaseColors[phaseData.phase] || { start: '#94a3b8', end: '#cbd5e1', glow: 'rgba(148, 163, 184, 0.5)' };
         const isMilestone = phaseData.type === 'Milestone';
 
 
