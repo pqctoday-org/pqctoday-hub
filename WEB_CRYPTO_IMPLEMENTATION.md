@@ -14,24 +14,29 @@ Implement classical cryptographic algorithms (RSA, ECDSA, Ed25519, X25519, P-256
 Created a comprehensive wrapper around the Web Crypto API with support for:
 
 #### **Signature Algorithms:**
+
 - ✅ RSA-PSS (2048, 3072, 4096 bits)
 - ✅ ECDSA P-256
 - ✅ Ed25519
 
 #### **Key Exchange:**
+
 - ✅ X25519 (Curve25519)
 - ✅ P-256 ECDH
 
 #### **Symmetric Encryption:**
+
 - ✅ AES-128-GCM
 - ✅ AES-256-GCM
 
 #### **Hashing:**
+
 - ✅ SHA-256
 - ✅ SHA-384
 - ⏸️ SHA3-256 (skipped - would require @noble/hashes)
 
 **Functions Provided:**
+
 - Key generation for all algorithms
 - Sign/verify for RSA, ECDSA, Ed25519
 - Shared secret derivation for ECDH/X25519
@@ -42,6 +47,7 @@ Created a comprehensive wrapper around the Web Crypto API with support for:
 ### 2. **Updated Type Definitions** (`src/types.ts`)
 
 Extended the `Key` interface to support:
+
 - New algorithm types: `'RSA' | 'ECDSA' | 'Ed25519' | 'X25519' | 'P-256' | 'AES-GCM'`
 - New key type: `'symmetric'` (in addition to public/private)
 - New data type: `'cryptokey'` for Web Crypto API CryptoKey objects
@@ -50,6 +56,7 @@ Extended the `Key` interface to support:
 ### 3. **Classical Key Generation Function** (`InteractivePlayground.tsx`)
 
 Added `generateClassicalKeys()` function that:
+
 - Generates keys for all classical algorithms
 - Stores keys in the existing key store
 - Logs operations with execution time
@@ -59,32 +66,34 @@ Added `generateClassicalKeys()` function that:
 ### 4. **State Management**
 
 Added new state variables:
+
 - `classicalAlgorithm`: Selected classical algorithm
 - `classicalLoading`: Loading state for classical key generation
 
 ### 5. **Algorithm Configuration**
 
 Updated `enabledAlgorithms` state:
+
 - ✅ **17 out of 18 algorithms enabled** (94% coverage)
 - Only SHA3-256 disabled (requires additional dependency)
 - All Web Crypto API algorithms marked as implemented
 
 ## 📊 Algorithm Coverage
 
-| Category | Algorithm | Status | Implementation |
-|----------|-----------|--------|----------------|
-| **KEM** | ML-KEM-512/768/1024 | ✅ Enabled | WASM (liboqs) |
-| | X25519 | ✅ Enabled | Web Crypto API |
-| | P-256 ECDH | ✅ Enabled | Web Crypto API |
-| **Signature** | ML-DSA-44/65/87 | ✅ Enabled | WASM (liboqs) |
-| | RSA-2048/3072/4096 | ✅ Enabled | Web Crypto API |
-| | ECDSA-P256 | ✅ Enabled | Web Crypto API |
-| | Ed25519 | ✅ Enabled | Web Crypto API |
-| **Symmetric** | AES-128-GCM | ✅ Enabled | Web Crypto API |
-| | AES-256-GCM | ✅ Enabled | Web Crypto API |
-| **Hash** | SHA-256 | ✅ Enabled | Web Crypto API |
-| | SHA-384 | ✅ Enabled | Web Crypto API |
-| | SHA3-256 | ❌ Disabled | Not implemented |
+| Category      | Algorithm           | Status      | Implementation  |
+| ------------- | ------------------- | ----------- | --------------- |
+| **KEM**       | ML-KEM-512/768/1024 | ✅ Enabled  | WASM (liboqs)   |
+|               | X25519              | ✅ Enabled  | Web Crypto API  |
+|               | P-256 ECDH          | ✅ Enabled  | Web Crypto API  |
+| **Signature** | ML-DSA-44/65/87     | ✅ Enabled  | WASM (liboqs)   |
+|               | RSA-2048/3072/4096  | ✅ Enabled  | Web Crypto API  |
+|               | ECDSA-P256          | ✅ Enabled  | Web Crypto API  |
+|               | Ed25519             | ✅ Enabled  | Web Crypto API  |
+| **Symmetric** | AES-128-GCM         | ✅ Enabled  | Web Crypto API  |
+|               | AES-256-GCM         | ✅ Enabled  | Web Crypto API  |
+| **Hash**      | SHA-256             | ✅ Enabled  | Web Crypto API  |
+|               | SHA-384             | ✅ Enabled  | Web Crypto API  |
+|               | SHA3-256            | ❌ Disabled | Not implemented |
 
 **Total:** 17/18 algorithms (94%)
 
@@ -103,6 +112,7 @@ We implemented a **separate classical algorithms section** rather than fully int
 ### **Hybrid Approach**
 
 The application now supports:
+
 - **Post-Quantum Cryptography** via WASM (liboqs)
 - **Classical Cryptography** via Web Crypto API
 - **Zero additional bundle size** for classical algorithms (browser-native)
@@ -110,33 +120,39 @@ The application now supports:
 ## 📦 Dependencies
 
 ### **Added:**
+
 - `@noble/hashes@2.0.1` - For SHA3 support (installed but not yet used)
 
 ### **No Additional Bundle Size:**
+
 - Web Crypto API is browser-native
 - All classical algorithms use `window.crypto.subtle`
 
 ## ⏳ What's Remaining (Phase 2)
 
 ### **UI Integration:**
+
 1. Update `KeyStoreView` component to accept classical key generation props
 2. Add UI section for classical algorithm selection
 3. Add "Generate Classical Keys" button
 4. Wire up the `generateClassicalKeys` function
 
 ### **Operations Integration:**
+
 5. Implement sign/verify operations for RSA, ECDSA, Ed25519
 6. Implement key exchange operations for X25519, P-256
 7. Implement encryption/decryption for AES-GCM
 8. Implement hashing operations for SHA-256/384
 
 ### **Testing:**
+
 9. Test all classical key generation
 10. Test all cryptographic operations
 11. Test key storage and retrieval
 12. Test error handling
 
 ### **Optional Enhancements:**
+
 13. Add SHA3-256 support using @noble/hashes
 14. Add hybrid signatures (PQC + Classical)
 15. Add key export/import functionality
@@ -144,21 +160,25 @@ The application now supports:
 ## 🔧 Technical Details
 
 ### **Type Safety:**
+
 - All functions properly typed with TypeScript
 - CryptoKey objects handled separately from Uint8Array
 - Type guards where needed for union types
 
 ### **Error Handling:**
+
 - Try-catch blocks around all async operations
 - User-friendly error messages
 - Graceful fallbacks
 
 ### **Performance:**
+
 - Web Crypto API is hardware-accelerated
 - Faster than JavaScript implementations
 - Execution time logged for all operations
 
 ### **Security:**
+
 - Uses browser's native cryptographic implementations
 - FIPS-compliant where applicable
 - Secure random number generation via `crypto.getRandomValues()`
@@ -166,11 +186,13 @@ The application now supports:
 ## 📝 Code Quality
 
 ### **Lint Status:**
+
 - Some TypeScript warnings for unused variables (will be resolved in Phase 2)
 - No blocking errors
 - Hot module reload working correctly
 
 ### **Documentation:**
+
 - Comprehensive JSDoc comments in webCrypto.ts
 - Clear function signatures
 - Type definitions for all parameters
@@ -194,6 +216,7 @@ The application now supports:
 ## 🎉 Summary
 
 **Phase 1 is complete!** The core infrastructure for classical cryptographic algorithms is in place:
+
 - ✅ Web Crypto API wrapper created
 - ✅ Type system updated
 - ✅ Key generation function implemented

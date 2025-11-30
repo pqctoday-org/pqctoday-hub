@@ -1,6 +1,7 @@
 # OpenSSL Studio Requirements & Implementation Status
 
 ## Overview
+
 OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAssembly. It allows users to perform cryptographic operations (Key Generation, CSR Creation, Certificate Signing, and Verification) directly in the browser without server-side processing.
 
 **Status**: ✅ Fully Functional (RSA, EC, Ed25519, Random Data, Version Info confirmed working).
@@ -8,15 +9,17 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 ## Core Features
 
 ### 1. WebAssembly Integration
+
 - **Version**: OpenSSL v3.5.4 (LTS with PQC support).
 - **Architecture**: Custom Emscripten build with `MODULARIZE=1` and `EXPORTED_RUNTIME_METHODS=['callMain', 'FS']`.
-- **Loading Strategy**: 
+- **Loading Strategy**:
   - Uses `fetch` + `eval` to bypass Module Worker restrictions for UMD scripts.
   - Robust initialization with `waitForRuntime` to ensure `callMain` is available.
 - **Entropy**: Injects browser-sourced entropy (`crypto.getRandomValues`) into `/random.seed` and uses `-rand` to ensure secure key generation.
 - **Configuration**: Automatically loads and configures `openssl.cnf` with `OPENSSL_CONF` and `RANDFILE` environment variables.
 
 ### 2. Virtual File System (VFS)
+
 - **Architecture**: Synchronization bridge between React State (Zustand) and Emscripten MEMFS.
 - **Flow**:
   1. **Upload/Edit**: User modifies files in UI -> Updates Store.
@@ -31,6 +34,7 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
   - Automatic `openssl.cnf` provisioning.
 
 ### 3. Workbench UI
+
 - **Command Builder**: Dynamic form-based generation of OpenSSL CLI commands.
 - **Supported Operations**:
   - **Key Generation (`genpkey`)**:
@@ -55,6 +59,7 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 - **Configuration Editor**: Dedicated button to view/edit `openssl.cnf` directly.
 
 ### 4. Terminal & Logging
+
 - **Output**: Real-time streaming of `stdout` and `stderr` from the WASM process.
 - **Command Preview**: Live preview of the generated OpenSSL command.
 - **Status**: Visual indicators for "Processing", "Ready", and "Error" states.
@@ -62,6 +67,7 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 ## Technical Implementation Details
 
 ### Worker (`openssl.worker.ts`)
+
 - **Initialization**:
   - Fetches `openssl.js` and `openssl.wasm`.
   - Configures Emscripten module with `noInitialRun: true`.
@@ -76,6 +82,7 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
   - Scans for new files (`.key`, `.csr`, `.crt`, `.bin`, etc.) and emits `FILE_CREATED` events.
 
 ### State Management (`store.ts`)
+
 - **Zustand Store**:
   - `files`: Array of virtual files (content, metadata).
   - `logs`: Command execution history.
@@ -83,6 +90,7 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
   - `editingFile`: State for the active file editor.
 
 ### Components
+
 - **`OpenSSLStudioView`**: Main layout container.
 - **`Workbench`**: Command configuration and generation.
 - **`FileManager`**: VFS visualization, upload/download/edit actions.
@@ -91,31 +99,33 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 ### Key Challenges & Solutions
 
 1.  **WASM Entropy Injection**:
-    *   **Challenge**: OpenSSL WASM requires a seeded `/dev/urandom` or `RANDFILE` to function. Without it, commands fail silently or with PRNG errors.
-    *   **Solution**: We use `self.crypto.getRandomValues()` to generate a 4KB seed and write it to `/random.seed` and `/dev/urandom` in the WASM virtual filesystem before every command execution. We also set `RANDFILE=/random.seed` in the environment.
+    - **Challenge**: OpenSSL WASM requires a seeded `/dev/urandom` or `RANDFILE` to function. Without it, commands fail silently or with PRNG errors.
+    - **Solution**: We use `self.crypto.getRandomValues()` to generate a 4KB seed and write it to `/random.seed` and `/dev/urandom` in the WASM virtual filesystem before every command execution. We also set `RANDFILE=/random.seed` in the environment.
 
 2.  **WASM Module Loading**:
-    *   **Challenge**: Loading the Emscripten-generated `openssl.js` via `fetch` + `eval` caused parsing errors ("Unexpected string literal") due to Vite's transformation. Using standard ES modules failed because `importScripts` is not available in module workers.
-    *   **Solution**: We switched the Web Worker to `type: 'classic'` and used `importScripts` to load the WASM glue code. To support this, we consolidated the worker logic into a single file (bundling internal modules) and added a shim for `module.exports` to robustly capture the OpenSSL factory function.
+    - **Challenge**: Loading the Emscripten-generated `openssl.js` via `fetch` + `eval` caused parsing errors ("Unexpected string literal") due to Vite's transformation. Using standard ES modules failed because `importScripts` is not available in module workers.
+    - **Solution**: We switched the Web Worker to `type: 'classic'` and used `importScripts` to load the WASM glue code. To support this, we consolidated the worker logic into a single file (bundling internal modules) and added a shim for `module.exports` to robustly capture the OpenSSL factory function.
 
 3.  **Algorithm Support & Limitations**:
-    *   **Fully Supported & Verified**:
-        *   `Ed25519` - Key generation and signing work flawlessly
-        *   `openssl version` and `openssl rand` - Stable
-        *   **ML-DSA (FIPS 204)** - Post-quantum digital signatures (ML-DSA-44, ML-DSA-65, ML-DSA-87) ✅ VERIFIED
-        *   **SLH-DSA (FIPS 205)** - Stateless hash-based signatures (all variants) ✅ VERIFIED
-        *   **ML-KEM (FIPS 203)** - Post-quantum key encapsulation (ML-KEM-512, ML-KEM-768, ML-KEM-1024) ✅ VERIFIED
-    *   **Known Limitations**:
-        *   **RSA**: Key generation (`genpkey -algorithm RSA`) fails with a `BN lib` error, likely due to BigInt/Math issues in the specific WASM build configuration.
-        *   **EC**: Generic Elliptic Curve key generation (`genpkey -algorithm EC`) causes a WASM crash ("Unreachable code"), indicating a build incompatibility or memory issue.
-    *   **Recommendation**: Use `Ed25519` for classical crypto and `ML-DSA` for post-quantum signatures in this environment.
+    - **Fully Supported & Verified**:
+      - `Ed25519` - Key generation and signing work flawlessly
+      - `openssl version` and `openssl rand` - Stable
+      - **ML-DSA (FIPS 204)** - Post-quantum digital signatures (ML-DSA-44, ML-DSA-65, ML-DSA-87) ✅ VERIFIED
+      - **SLH-DSA (FIPS 205)** - Stateless hash-based signatures (all variants) ✅ VERIFIED
+      - **ML-KEM (FIPS 203)** - Post-quantum key encapsulation (ML-KEM-512, ML-KEM-768, ML-KEM-1024) ✅ VERIFIED
+    - **Known Limitations**:
+      - **RSA**: Key generation (`genpkey -algorithm RSA`) fails with a `BN lib` error, likely due to BigInt/Math issues in the specific WASM build configuration.
+      - **EC**: Generic Elliptic Curve key generation (`genpkey -algorithm EC`) causes a WASM crash ("Unreachable code"), indicating a build incompatibility or memory issue.
+    - **Recommendation**: Use `Ed25519` for classical crypto and `ML-DSA` for post-quantum signatures in this environment.
 
 ### Future Improvements
-*   Test and verify all ML-KEM and SLH-DSA variants
-*   Investigate a custom OpenSSL build with explicit support for `no-asm` and `no-threads` to potentially resolve RSA/EC stability issues.
-*   Explore migrating to a pure JS implementation (like `forge` or `noble-crypto`) if WASM limitations prove too restrictive for legacy algorithms.
+
+- Test and verify all ML-KEM and SLH-DSA variants
+- Investigate a custom OpenSSL build with explicit support for `no-asm` and `no-threads` to potentially resolve RSA/EC stability issues.
+- Explore migrating to a pure JS implementation (like `forge` or `noble-crypto`) if WASM limitations prove too restrictive for legacy algorithms.
 
 ## Future Roadmap
+
 - **PQC Algorithms**: Enable specific PQC providers/algorithms if supported by the build.
 - **File Drag & Drop**: Enhance FileManager with drag-and-drop zone.
 - **Command History**: Allow re-running previous commands.

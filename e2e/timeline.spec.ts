@@ -1,59 +1,59 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
 
 test.describe('Timeline View', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.goto('/');
-        // Timeline is the default view, but let's click the nav to be sure
-        await page.getByRole('button', { name: 'Timeline' }).click();
-    });
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/')
+    // Timeline is the default view, but let's click the nav to be sure
+    await page.getByRole('button', { name: 'Timeline' }).click()
+  })
 
-    test('displays gantt chart table', async ({ page }) => {
-        // Check for table headers
-        await expect(page.getByRole('columnheader', { name: 'Country' })).toBeVisible();
-        await expect(page.getByRole('columnheader', { name: 'Organization' })).toBeVisible();
+  test('displays gantt chart table', async ({ page }) => {
+    // Check for table headers
+    await expect(page.getByRole('columnheader', { name: 'Country' })).toBeVisible()
+    await expect(page.getByRole('columnheader', { name: 'Organization' })).toBeVisible()
 
-        // Check for some country data
-        await expect(page.getByText('United States')).toBeVisible();
-        await expect(page.getByText('NIST/NSA')).toBeVisible();
-    });
+    // Check for some country data
+    await expect(page.getByText('United States')).toBeVisible()
+    await expect(page.getByText('NIST')).toBeVisible()
+  })
 
-    test('displays phase details in popover on click', async ({ page }) => {
-        // Find a phase cell (e.g., Discovery for US) and click it
-        const phaseText = page.getByText('Discovery', { exact: true }).first();
-        await phaseText.click();
+  test('displays phase details in popover on click', async ({ page }) => {
+    // Find a phase cell (e.g., Discovery for US) and click it
+    const phaseText = page.getByText('Discovery', { exact: true }).first()
+    await phaseText.click()
 
-        // Check if popover appears with the correct 4x2 grid labels
-        await expect(page.getByText('Start', { exact: true })).toBeVisible();
-        await expect(page.getByText('End', { exact: true })).toBeVisible();
-        await expect(page.getByText('Source', { exact: true })).toBeVisible();
-        await expect(page.getByText('Date', { exact: true })).toBeVisible();
+    // Check if popover appears with the correct 4x2 grid labels
+    await expect(page.getByText('Start', { exact: true })).toBeVisible()
+    await expect(page.getByText('End', { exact: true })).toBeVisible()
+    await expect(page.getByText('Source', { exact: true })).toBeVisible()
+    await expect(page.getByText('Date', { exact: true })).toBeVisible()
 
-        // Close popover by clicking outside (on the page background)
-        await page.click('body', { position: { x: 10, y: 10 } });
+    // Close popover by clicking outside (on the page background)
+    await page.click('body', { position: { x: 10, y: 10 } })
 
-        // Check popover is closed
-        await expect(page.getByText('Start', { exact: true })).not.toBeVisible();
-    });
+    // Check popover is closed
+    await expect(page.getByText('Start', { exact: true })).not.toBeVisible()
+  })
 
-    test('renders deadlines as milestones (flags)', async ({ page }) => {
-        // Check for the presence of Flag icons, which indicate milestones (including Deadlines)
-        const flags = page.locator('svg.lucide-flag');
-        await expect(flags.first()).toBeVisible();
-    });
+  test('renders deadlines as milestones (flags)', async ({ page }) => {
+    // Check for the presence of Flag icons, which indicate milestones (including Deadlines)
+    const flags = page.locator('svg.lucide-flag')
+    await expect(flags.first()).toBeVisible()
+  })
 
-    test('does not display organization logos', async ({ page }) => {
-        // Ensure no images with alt text ending in "Logo" are visible in the table
-        const logos = page.getByAltText(/Logo$/);
-        await expect(logos).toHaveCount(0);
-    });
+  test('does not display organization logos', async ({ page }) => {
+    // Ensure no images with alt text ending in "Logo" are visible in the table
+    const logos = page.locator('table').getByAltText(/Logo$/)
+    await expect(logos).toHaveCount(0)
+  })
 
-    test('country selector updates view', async ({ page }) => {
-        // Select a specific country
-        await page.getByRole('button', { name: /All Countries/ }).click();
-        await page.getByRole('option', { name: 'United Kingdom' }).click();
+  test('country selector updates view', async ({ page }) => {
+    // Select a specific country
+    await page.getByRole('button', { name: /All Countries/ }).click()
+    await page.getByRole('option', { name: 'United Kingdom' }).click()
 
-        // Check that only UK is visible
-        await expect(page.getByText('United Kingdom')).toBeVisible();
-        await expect(page.getByText('United States')).not.toBeVisible();
-    });
-});
+    // Check that only UK is visible
+    await expect(page.getByText('United Kingdom')).toBeVisible()
+    await expect(page.getByText('United States')).not.toBeVisible()
+  })
+})

@@ -27,12 +27,14 @@ Test your PQC readiness with this interactive web application visualizing the gl
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js (v18 or higher)
 - npm
 
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/pqc-timeline-app.git
    cd pqc-timeline-app
@@ -46,17 +48,21 @@ Test your PQC readiness with this interactive web application visualizing the gl
 ### Running Locally
 
 Start the development server:
+
 ```bash
 npm run dev
 ```
+
 The application will be available at `http://localhost:5173`.
 
 ### Building for Production
 
 Build the application for production:
+
 ```bash
 npm run build
 ```
+
 The output will be in the `dist` directory.
 
 ## Contributing
@@ -88,10 +94,10 @@ npm run test:e2e
 
 The application is structured into several key components:
 
--   **`src/components/Algorithms/InteractivePlayground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
--   **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
--   **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
--   **`src/utils`**: Utility functions for data conversion and common operations.
+- **`src/components/Algorithms/InteractivePlayground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
+- **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
+- **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
+- **`src/utils`**: Utility functions for data conversion and common operations.
 
 ## Project Structure
 

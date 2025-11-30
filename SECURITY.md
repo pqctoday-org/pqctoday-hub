@@ -16,6 +16,7 @@ If you discover a security vulnerability within this project, please **DO NOT** 
 Instead, please report it via email to `security@pqctimeline.app` (placeholder).
 
 Please include:
+
 - A description of the vulnerability.
 - Steps to reproduce.
 - Potential impact.

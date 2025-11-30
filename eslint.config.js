@@ -4,27 +4,59 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import security from 'eslint-plugin-security'
+import eslintConfigPrettier from 'eslint-config-prettier'
+import { defineConfig } from 'eslint/config'
 
 export default defineConfig([
-  { ignores: ['dist', '**/src/wasm/**'] },
-  {
+  { ignores: ['dist', 'public/dist', 'src/wasm', 'public/wasm', '**/*.min.js'] },
+
+  // Base JS rules
+  js.configs.recommended,
+  security.configs.recommended,
+
+  // TypeScript rules - ONLY for TS files
+  ...tseslint.configs.recommended.map((config) => ({
+    ...config,
     files: ['**/*.{ts,tsx}'],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-      jsxA11y.flatConfigs.recommended,
-    ],
+  })),
+
+  // React/Browser config for src
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+      'jsx-a11y': jsxA11y,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      ...jsxA11y.flatConfigs.recommended.rules,
+      'react-refresh/only-export-components': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': 'error',
+    },
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+  },
+
+  // Node config for root files, scripts, and e2e
+  {
+    files: [
+      '*.{js,cjs,mjs,ts}',
+      'scripts/**/*.{js,ts}',
+      'e2e/**/*.{ts,js}',
+      'test-improvements.cjs',
+    ],
+    languageOptions: {
+      globals: globals.node,
+    },
     rules: {
-      'react-refresh/only-export-components': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn',
+      'security/detect-non-literal-fs-filename': 'off',
     },
   },
+
+  eslintConfigPrettier,
 ])

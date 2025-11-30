@@ -19,23 +19,62 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 1.  Open a new issue with the "enhancement" label.
 2.  Describe the feature you would like to see and why it would be useful.
 
+## Development
+
+### Prerequisites
+
+- Node.js 20+
+- npm
+
+### Setup
+
+```bash
+npm install
+```
+
+### Development Server
+
+```bash
+npm run dev
+```
+
+### Linting and Formatting
+
+We use ESLint for linting and Prettier for formatting.
+
+```bash
+# Run linting
+npm run lint
+
+# Run formatting check
+npm run format:check
+
+# Fix formatting issues
+npm run format
+```
+
+### Testing
+
+```bash
+# Run unit tests
+npm run test
+
+# Run e2e tests
+npm run test:e2e
+```
+
 ### Pull Requests
 
 1.  **Fork the repository** and create your branch from `main`.
-2.  **Install dependencies**: `npm install`
-3.  **Make your changes**. Ensure code style is consistent.
-4.  **Run tests**:
-    - Unit tests: `npm run test`
-    - E2E tests: `npm run test:e2e`
-5.  **Ensure linting passes**: `npm run lint`
-6.  **Open a Pull Request** targeting the `main` branch.
-7.  Fill out the Pull Request Template with details about your changes.
+2.  **Make your changes**. Ensure code style is consistent.
+3.  **Open a Pull Request** targeting the `main` branch.
+4.  Fill out the Pull Request Template with details about your changes.
 
 ## Development Guidelines
 
--   **Tech Stack**: React, TypeScript, Vite, Tailwind CSS (via vanilla CSS/utility classes), Vitest, Playwright.
--   **Styling**: We use a custom "Glassmorphism" design system. Please reuse existing CSS variables and utility classes where possible.
--   **Cryptography**: Use the `useOpenSSL` hook or `liboqs` wrappers for cryptographic operations. Do not implement crypto primitives from scratch.
+- **Tech Stack**: React, TypeScript, Vite, Tailwind CSS (via vanilla CSS/utility classes), Vitest, Playwright.
+- **Styling**: We use a custom "Glassmorphism" design system. Please reuse existing CSS variables and utility classes where possible.
+- **Cryptography**: Use the `useOpenSSL` hook or `liboqs` wrappers for cryptographic operations. Do not implement crypto primitives from scratch.
 
 ## License
 
