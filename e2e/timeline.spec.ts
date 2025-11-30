@@ -28,8 +28,8 @@ test.describe('Timeline View', () => {
         await expect(page.getByText('Source', { exact: true })).toBeVisible();
         await expect(page.getByText('Date', { exact: true })).toBeVisible();
 
-        // Close popover
-        await page.locator('button').filter({ has: page.locator('svg.lucide-x') }).click();
+        // Close popover by clicking outside (on the page background)
+        await page.click('body', { position: { x: 10, y: 10 } });
 
         // Check popover is closed
         await expect(page.getByText('Start', { exact: true })).not.toBeVisible();
