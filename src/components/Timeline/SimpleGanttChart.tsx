@@ -13,7 +13,7 @@ const END_YEAR = 2035;
 const YEARS = Array.from({ length: END_YEAR - START_YEAR + 1 }, (_, i) => START_YEAR + i);
 
 
-const PHASE_ORDER = ['Research', 'Discovery', 'Testing', 'POC', 'Migration', 'Standardization'];
+const PHASE_ORDER = ['Guidance', 'Policy', 'Regulation', 'Research', 'Discovery', 'Testing', 'POC', 'Migration', 'Standardization'];
 
 export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
     const [filterText, setFilterText] = useState('');
@@ -38,6 +38,17 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
             phases: country.phases
                 .filter(p => (p.phase as any) !== 'Deadline')
                 .sort((a, b) => {
+                    // Primary sort: Start Year
+                    if (a.startYear !== b.startYear) {
+                        return a.startYear - b.startYear;
+                    }
+
+                    // Secondary sort: Type (Milestone before Phase)
+                    if (a.type !== b.type) {
+                        return a.type === 'Milestone' ? -1 : 1;
+                    }
+
+                    // Tertiary sort: Phase Order
                     const indexA = PHASE_ORDER.indexOf(a.phase);
                     const indexB = PHASE_ORDER.indexOf(b.phase);
                     // Put unknown phases at the end
