@@ -16,7 +16,7 @@ const PhaseCell = ({ phaseData, duration, colors, onClick }: { phaseData: Timeli
     const isMilestone = phaseData.type === 'Milestone';
 
     return (
-        <td colSpan={duration} className="p-1 border-r border-white/5 relative h-10 align-middle">
+        <td colSpan={duration} className="p-1 border-r border-white/30 relative h-10 align-middle">
             <button
                 className={`w-full h-6 mx-auto relative flex items-center justify-center px-2 overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] border-0 ${isMilestone ? '' : 'rounded shadow-sm'}`}
                 style={!isMilestone ? {
@@ -128,7 +128,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                 currentYear += safeDuration;
             } else {
                 cells.push(
-                    <td key={currentYear} className="p-1 border-r border-white/5 h-10"></td>
+                    <td key={currentYear} className="p-1 border-r border-white/30 h-10"></td>
                 );
                 currentYear++;
             }
@@ -172,7 +172,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                                 <span className="font-bold text-white">Organization</span>
                             </th>
                             {YEARS.map(year => (
-                                <th key={year} className="p-2 border-b border-white/10 text-center min-w-[80px] bg-[#0b0d17]/80">
+                                <th key={year} className="p-2 border-b border-r border-white/30 text-center min-w-[80px] bg-[#0b0d17]/80">
                                     <span className={`font-mono text-sm ${year === new Date().getFullYear() ? 'text-primary font-bold' : 'text-muted'}`}>
                                         {year}
                                     </span>
