@@ -13,6 +13,8 @@ const END_YEAR = 2035;
 const YEARS = Array.from({ length: END_YEAR - START_YEAR + 1 }, (_, i) => START_YEAR + i);
 
 
+const PHASE_ORDER = ['Discovery', 'Testing', 'PoC', 'Migration', 'Standardization'];
+
 export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
     const [filterText, setFilterText] = useState('');
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
@@ -25,11 +27,25 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
             d.country.bodies.some(b => b.name.toLowerCase().includes(filterText.toLowerCase()))
         );
 
-        return filtered.sort((a, b) => {
+        const sortedCountries = filtered.sort((a, b) => {
             const nameA = a.country.countryName.toLowerCase();
             const nameB = b.country.countryName.toLowerCase();
             return sortDirection === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
         });
+
+        return sortedCountries.map(country => ({
+            ...country,
+            phases: country.phases
+                .filter(p => p.phase !== 'Deadline')
+                .sort((a, b) => {
+                    const indexA = PHASE_ORDER.indexOf(a.phase);
+                    const indexB = PHASE_ORDER.indexOf(b.phase);
+                    // Put unknown phases at the end
+                    const valA = indexA === -1 ? 999 : indexA;
+                    const valB = indexB === -1 ? 999 : indexB;
+                    return valA - valB;
+                })
+        }));
     }, [data, filterText, sortDirection]);
 
     const toggleSort = () => {
@@ -71,14 +87,11 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
         const colors = phaseColors[phaseData.phase] || { start: '#64748b', end: '#94a3b8', glow: 'rgba(100, 116, 139, 0.5)' };
         const isMilestone = phaseData.type === 'Milestone';
 
-        // Calculate middle cell index for displaying the phase name
-        const phaseDuration = endYear - startYear + 1;
-        const middleOffset = Math.floor(phaseDuration / 2);
 
         for (let year = START_YEAR; year <= END_YEAR; year++) {
             const isInPhase = year >= startYear && year <= endYear;
+            const isFirstInPhase = year === startYear;
             const isLastInPhase = year === endYear;
-            const isMiddle = year === startYear + middleOffset;
 
             if (isInPhase) {
                 cells.push(
@@ -103,13 +116,13 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                             }}
                             aria-label={`${phaseData.phase}: ${phaseData.title}`}
                         >
-                            {isMilestone && isMiddle ? (
+                            {isMilestone && isFirstInPhase ? (
                                 <Flag
                                     className="w-4 h-4"
                                     style={{ color: colors.start, fill: colors.start }}
                                 />
-                            ) : isMiddle && !isMilestone ? (
-                                <span className="text-[10px] font-bold text-white truncate drop-shadow-md select-none px-2">
+                            ) : isFirstInPhase && !isMilestone ? (
+                                <span className="absolute left-2 text-[10px] font-bold text-white whitespace-nowrap drop-shadow-md select-none z-10 pointer-events-none">
                                     {phaseData.phase}
                                 </span>
                             ) : null}
@@ -187,7 +200,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                                             >
                                                 {/* Country Cell - Only on first row */}
                                                 {index === 0 && (
-                                                    <td rowSpan={totalRows} className="sticky left-0 z-20 bg-[#1a1d2d] p-3 border-r border-white/10 align-top">
+                                                    <td rowSpan={totalRows} className="sticky left-0 z-20 bg-[#1a1d2d] p-3 align-top" style={{ borderRight: '1px solid #4b5563' }}>
                                                         <div className="flex items-center gap-2">
                                                             <span className="text-xl" role="img" aria-label={`Flag of ${country.countryName}`}>
                                                                 {country.flagCode === 'US' && '🇺🇸'}
@@ -210,7 +223,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
 
                                                 {/* Organization Cell - Only on first row */}
                                                 {index === 0 && (
-                                                    <td rowSpan={totalRows} className="sticky left-[180px] z-20 bg-[#1a1d2d] p-3 border-r border-white/10 align-top">
+                                                    <td rowSpan={totalRows} className="sticky left-[180px] z-20 bg-[#1a1d2d] p-3 align-top" style={{ borderRight: '1px solid #4b5563' }}>
                                                         <div className="flex items-center gap-2">
                                                             <span className="text-xs text-muted">{country.bodies[0].name}</span>
                                                         </div>
