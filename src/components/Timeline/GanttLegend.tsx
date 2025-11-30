@@ -6,7 +6,7 @@ interface GanttLegendProps {
 }
 
 export const GanttLegend = ({ className = '' }: GanttLegendProps) => {
-    const phases: Phase[] = ['Discovery', 'Testing', 'POC', 'Migration', 'Deadline', 'Standardization'];
+    const phases: Phase[] = ['Discovery', 'Testing', 'POC', 'Migration', 'Standardization'];
 
     return (
         <div className={`glass-panel p-4 ${className}`}>
