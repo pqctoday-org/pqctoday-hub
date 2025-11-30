@@ -199,8 +199,9 @@ export const useKeyGeneration = ({
                     executionTime: end - start
                 });
             }
-        } catch (err: any) {
-            setError(`Failed to generate keys: ${err.message}`);
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+            setError(`Failed to generate keys: ${errorMessage}`);
         } finally {
             setLoading(false);
         }
@@ -373,8 +374,9 @@ export const useKeyGeneration = ({
                 executionTime: end - start
             });
 
-        } catch (err: any) {
-            setError(`Failed to generate classical keys: ${err.message}`);
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+            setError(`Failed to generate classical keys: ${errorMessage}`);
         } finally {
             setClassicalLoading(false);
         }

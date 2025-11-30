@@ -1,7 +1,7 @@
 
 import { Play, Settings, Database, Activity, Lock, FileSignature, Key as KeyIcon, FileText, ShieldCheck, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
-import { PlaygroundProvider } from './PlaygroundContext';
+import { PlaygroundProvider } from './PlaygroundProvider';
 import { useSettingsContext } from './contexts/SettingsContext';
 import { useKeyStoreContext } from './contexts/KeyStoreContext';
 import { ACVPTesting } from '../ACVP/ACVPTesting';

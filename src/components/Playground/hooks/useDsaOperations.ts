@@ -181,8 +181,9 @@ export const useDsaOperations = ({
                     });
                 }
             }
-        } catch (err: any) {
-            setError(err.message || 'Operation failed');
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Operation failed';
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
