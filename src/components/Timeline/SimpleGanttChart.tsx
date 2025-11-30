@@ -127,7 +127,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                 currentYear += safeDuration;
             } else {
                 cells.push(
-                    <td key={currentYear} className="p-1 h-10" style={{ borderRight: '1px solid #4b5563' }}></td>
+                    <td key={currentYear} className="p-0 h-10" style={{ borderRight: '1px solid #4b5563' }}></td>
                 );
                 currentYear++;
             }
@@ -161,7 +161,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
 
             {/* Table Container */}
             <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#0b0d17]/50 backdrop-blur-sm">
-                <table className="w-full min-w-[1000px]" style={{ borderCollapse: 'collapse' }}>
+                <table className="w-full min-w-[1000px]" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                     <thead>
                         <tr>
                             <th className="sticky left-0 z-30 bg-[#0b0d17] p-4 text-left w-[180px]" style={{ borderBottom: '1px solid #4b5563', borderRight: '1px solid #4b5563' }}>
