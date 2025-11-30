@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Shield, Globe, Users, FlaskConical } from 'lucide-react';
 import clsx from 'clsx';
 import './styles/App.css';
-import pqcLogo from './assetsold/PQCT_Logo_V01.png';
+import pqcLogo from './assets/PQCT_Logo_V01.png';
 
 import { TimelineView } from './components/Timeline/TimelineView';
 import { ImpactDashboard } from './components/Impacts/ImpactDashboard';
