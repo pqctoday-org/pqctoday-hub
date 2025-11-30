@@ -23,11 +23,17 @@
 - **Popover**: Clicking a phase bar or milestone flag opens a detail popover.
 - **Popover Layout**:
     - **Header**: Displays the phase title, color-coded badge, and a close button (top-left).
-    - **Body**: Displays the description.
+    - **Body**: Displays the description with automatic text wrapping for long content.
     - **Details Grid**: A 4x2 table displaying:
         - Row 1: **Start** (Year) | **End** (Year)
         - Row 2: **Source** (Link) | **Date** (Source Date)
-- **Positioning**: The popover appears near the clicked element and includes **boundary detection** to prevent it from being truncated by the screen edges.
+- **Popover Sizing**:
+    - **Responsive Width**: Maximum width of 36rem (576px) or 90% of viewport width, whichever is smaller.
+    - **Text Wrapping**: Long descriptions automatically wrap using `break-words` to prevent overflow.
+- **Popover Positioning**: 
+    - **Horizontal Boundary Detection**: Automatically adjusts horizontal position to prevent left/right truncation.
+    - **Vertical Boundary Detection**: Flips to appear below the element when near the top of the screen to prevent top truncation.
+    - **Smart Alignment**: Centers on the clicked element when space allows, aligns to edges when necessary.
 
 ### 1.4 Legend
 - A legend explains the color coding for different phases (Discovery, Testing, POC, Migration, etc.).
