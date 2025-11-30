@@ -36,7 +36,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
         return sortedCountries.map(country => ({
             ...country,
             phases: country.phases
-                .filter(p => p.phase !== 'Deadline' as any)
+                .filter(p => (p.phase as string) !== 'Deadline')
                 .sort((a, b) => {
                     // Primary sort: Start Year (grouping < 2025)
                     const startA = a.startYear < 2025 ? 2024 : a.startYear;
