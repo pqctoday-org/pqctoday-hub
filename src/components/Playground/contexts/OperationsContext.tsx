@@ -5,41 +5,8 @@ import { useKemOperations } from '../hooks/useKemOperations';
 import { useDsaOperations } from '../hooks/useDsaOperations';
 import { useSymmetricOperations } from '../hooks/useSymmetricOperations';
 
-export interface OperationsContextType {
-    // ML-KEM State
-    sharedSecret: string;
-    setSharedSecret: (val: string) => void;
-    ciphertext: string;
-    setCiphertext: (val: string) => void;
-    encryptedData: string;
-    setEncryptedData: (val: string) => void;
-    kemDecapsulationResult: boolean | null;
-    setKemDecapsulationResult: (result: boolean | null) => void;
-
-    // ML-DSA State
-    signature: string;
-    setSignature: (val: string) => void;
-    verificationResult: boolean | null;
-    setVerificationResult: (result: boolean | null) => void;
-
-    // Data State
-    dataToSign: string;
-    setDataToSign: (val: string) => void;
-    dataToEncrypt: string;
-    setDataToEncrypt: (val: string) => void;
-    decryptedData: string;
-    setDecryptedData: (val: string) => void;
-
-    // Symmetric State
-    symData: string;
-    setSymData: (val: string) => void;
-    symOutput: string;
-    setSymOutput: (val: string) => void;
-
-    // Actions
-    runOperation: (type: 'encapsulate' | 'decapsulate' | 'sign' | 'verify' | 'encrypt' | 'decrypt' | 'symEncrypt' | 'symDecrypt') => Promise<void>;
-    clearOperations: () => void;
-}
+import type { OperationsContextType } from './types';
+export type { OperationsContextType };
 
 const OperationsContext = createContext<OperationsContextType | undefined>(undefined);
 

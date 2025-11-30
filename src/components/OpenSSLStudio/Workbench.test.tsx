@@ -19,7 +19,7 @@ describe('Workbench Component', () => {
         vi.clearAllMocks();
 
         // Default store state
-        (useOpenSSLStore as any).mockReturnValue({
+        (useOpenSSLStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             command: 'openssl genpkey -algorithm RSA',
             setCommand: mockSetCommand,
             isProcessing: false,
@@ -32,7 +32,7 @@ describe('Workbench Component', () => {
         });
 
         // Store state for direct access (getState)
-        (useOpenSSLStore as any).getState = vi.fn().mockReturnValue({
+        (useOpenSSLStore as unknown as { getState: ReturnType<typeof vi.fn> }).getState = vi.fn().mockReturnValue({
             command: 'openssl genpkey -algorithm RSA',
             files: [],
             setEditingFile: mockSetEditingFile,
@@ -41,7 +41,7 @@ describe('Workbench Component', () => {
         });
 
         // useOpenSSL hook
-        (useOpenSSL as any).mockReturnValue({
+        (useOpenSSL as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
             executeCommand: mockExecuteCommand,
         });
     });

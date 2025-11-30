@@ -85,7 +85,7 @@ export const DataInput: React.FC<DataInputProps> = ({
                     onChange(asciiToHex(newValue));
                 }
             }
-        } catch (err) {
+        } catch {
             setError("Conversion Error");
         }
     };

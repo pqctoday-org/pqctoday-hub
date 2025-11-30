@@ -3,56 +3,8 @@ import type { LogEntry } from '../../../types';
 import * as MLDSA from '../../../wasm/liboqs_dsa';
 
 // --- Types ---
-export type ExecutionMode = 'mock' | 'wasm';
-export type SortColumn = 'timestamp' | 'keyLabel' | 'operation' | 'result' | 'executionTime';
-export type SortDirection = 'asc' | 'desc';
-export type ClassicalAlgorithm = 'RSA-2048' | 'RSA-3072' | 'RSA-4096' | 'ECDSA-P256' | 'Ed25519' | 'X25519' | 'P-256' | 'AES-128' | 'AES-256';
-
-export interface SettingsContextType {
-    // Algorithm Settings
-    algorithm: 'ML-KEM' | 'ML-DSA';
-    setAlgorithm: (algo: 'ML-KEM' | 'ML-DSA') => void;
-    keySize: string;
-    setKeySize: (size: string) => void;
-    executionMode: ExecutionMode;
-    setExecutionMode: (mode: ExecutionMode) => void;
-    wasmLoaded: boolean;
-
-    // Classical Settings
-    classicalAlgorithm: ClassicalAlgorithm;
-    setClassicalAlgorithm: (algo: ClassicalAlgorithm) => void;
-
-    // Config
-    enabledAlgorithms: any;
-    toggleAlgorithm: (category: 'kem' | 'signature' | 'symmetric' | 'hash', algorithm: string) => void;
-    handleAlgorithmChange: (newAlgorithm: 'ML-KEM' | 'ML-DSA') => void;
-
-    // UI State
-    activeTab: 'settings' | 'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'acvp' | 'symmetric';
-    setActiveTab: (tab: 'settings' | 'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'acvp' | 'symmetric') => void;
-    loading: boolean;
-    setLoading: (loading: boolean) => void;
-    error: string | null;
-    setError: (error: string | null) => void;
-
-    // Logs
-    logs: LogEntry[];
-    addLog: (entry: Omit<LogEntry, 'id' | 'timestamp'>) => void;
-    clearLogs: () => void;
-
-    // Sorting & Columns
-    sortColumn: SortColumn;
-    setSortColumn: (col: SortColumn) => void;
-    sortDirection: SortDirection;
-    setSortDirection: (dir: SortDirection) => void;
-    columnWidths: { [key: string]: number };
-    setColumnWidths: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>;
-    resizingColumn: SortColumn | null;
-    setResizingColumn: (col: SortColumn | null) => void;
-    startResize: (e: React.MouseEvent, column: SortColumn) => void;
-    handleSort: (column: SortColumn) => void;
-    sortedLogs: LogEntry[];
-}
+import type { SettingsContextType, ExecutionMode, SortColumn, SortDirection, ClassicalAlgorithm, EnabledAlgorithms } from './types';
+export type { SettingsContextType, ExecutionMode, SortColumn, SortDirection, ClassicalAlgorithm, EnabledAlgorithms };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
@@ -130,8 +82,9 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                     await MLDSA.load();
                     setWasmLoaded(true);
                     addLog({ keyLabel: 'System', operation: 'Load WASM', result: 'Libraries loaded successfully', executionTime: 0 });
-                } catch (err: any) {
-                    setError(`Failed to load WASM libraries: ${err.message}. Falling back to Mock mode.`);
+                } catch (err: unknown) {
+                    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+                    setError(`Failed to load WASM libraries: ${errorMessage}. Falling back to Mock mode.`);
                     setExecutionMode('mock');
                 }
             }

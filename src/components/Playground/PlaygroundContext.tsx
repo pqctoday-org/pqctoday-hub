@@ -5,7 +5,7 @@ import { OperationsProvider, useOperationsContext } from './contexts/OperationsC
 
 
 // Re-export types for consumers
-export type { ExecutionMode, SortColumn, SortDirection, ClassicalAlgorithm } from './contexts/SettingsContext';
+export type { ExecutionMode, SortColumn, SortDirection, ClassicalAlgorithm } from './contexts/types';
 
 // Legacy hook for backward compatibility
 // This aggregates all contexts into one object matching the old interface

@@ -44,9 +44,11 @@ export const Workbench = () => {
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
     // Auto-select latest signature file when switching to verify or when files change
+    // Auto-select latest signature file when switching to verify or when files change
+    const files = useOpenSSLStore.getState().files;
     useEffect(() => {
         if (category === 'dgst' && signAction === 'verify') {
-            const sigFiles = useOpenSSLStore.getState().files
+            const sigFiles = files
                 .filter(f => f.name.endsWith('.sig'))
                 .sort((a, b) => b.timestamp - a.timestamp);
 
@@ -58,7 +60,7 @@ export const Workbench = () => {
                 }
             }
         }
-    }, [category, signAction, useOpenSSLStore.getState().files, selectedSigFile]);
+    }, [category, signAction, files, selectedSigFile]);
 
     // Effect to update command preview
     useEffect(() => {
@@ -774,7 +776,7 @@ export const Workbench = () => {
                                                                 onClick={() => {
                                                                     const content = file.content;
                                                                     const blobPart = typeof content === 'string' ? content : content as Uint8Array;
-                                                                    const blob = new Blob([blobPart as any], { type: 'application/octet-stream' });
+                                                                    const blob = new Blob([blobPart as unknown as BlobPart], { type: 'application/octet-stream' });
                                                                     const url = URL.createObjectURL(blob);
                                                                     const a = document.createElement('a');
                                                                     a.href = url;
