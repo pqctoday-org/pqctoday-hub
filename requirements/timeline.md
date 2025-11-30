@@ -4,72 +4,67 @@
 
 ### 1.1 Country Selection
 - Users must be able to select a country from a list of available nations.
-- **Supported Countries/Bodies**:
-    - **USA** (NIST, NSA)
-    - **UK** (NCSC)
-    - **Germany** (BSI)
-    - **France** (ANSSI)
-    - **EU** (ENISA/Commission)
-    - **China** (CAC/SCA)
-    - **Australia** (ACSC)
-    - **Singapore** (CSA)
-    - **India** (NQM/IDRBT)
-    - **Middle East** (UAE DESC, Saudi NCA)
-- **Interface**: Selection via a high-quality dropdown or visual map interface.
+- **Interface**: Selection via a dropdown menu with search functionality.
+- **Filtering**: Users can filter the Gantt chart by country name.
 
-### 1.2 Timeline Visualization
-- Upon country selection, a timeline must be generated.
-- **Phases**:
-    - **Crypto Discovery**: Identifying vulnerable assets.
-    - **Testing**: Evaluating PQC algorithms.
-    - **Start POC**: Proof of Concept implementations.
-    - **Full Migration**: Complete transition to PQC.
-- **Event Details**:
-    - **Year/Date**
-    - **Title/Phase**
-    - **Description** (Brief summary of the recommendation)
-    - **Source**: Link to the official document/announcement.
-    - **Source Date**: Date of the information source.
+### 1.2 Timeline Visualization (Gantt Chart)
+- **Layout**: A table-based Gantt chart with sticky columns for "Country" and "Organization".
+- **Columns**:
+    - **Country**: Displays the country name and flag.
+    - **Organization**: Displays the organization name (text only, no logos).
+    - **Years**: A horizontal timeline from 2024 to 2035.
+- **Rows**: Each row represents a specific phase or milestone for a country/organization.
+- **Visual Elements**:
+    - **Phases**: Rendered as colored bars spanning from `StartYear` to `EndYear`.
+    - **Milestones**: Rendered as **Flag icons** (🚩) at the `StartYear`.
+    - **Deadlines**: Events with the category "Deadline" are treated as **Milestones** (Flags), regardless of their original type.
 
-## 2. Data Points (Draft)
+### 1.3 Interaction & Details
+- **Popover**: Clicking a phase bar or milestone flag opens a detail popover.
+- **Popover Layout**:
+    - **Header**: Displays the phase title, color-coded badge, and a close button (top-left).
+    - **Body**: Displays the description.
+    - **Details Grid**: A 4x2 table displaying:
+        - Row 1: **Start** (Year) | **End** (Year)
+        - Row 2: **Source** (Link) | **Date** (Source Date)
+- **Positioning**: The popover appears near the clicked element and includes **boundary detection** to prevent it from being truncated by the screen edges.
 
-### USA (NIST)
-- **2024**: Standardization (FIPS 203, 204, 205 published).
-- **2030**: Deprecation of 112-bit security.
-- **2035**: Full Migration Deadline (NSM-10).
+### 1.4 Legend
+- A legend explains the color coding for different phases (Discovery, Testing, POC, Migration, etc.).
+- **Milestones**: Explicitly described as "Flag markers".
 
-### UK (NCSC)
-- **2028**: Discovery & Initial Plan complete.
-- **2031**: Start Migration of critical systems.
-- **2035**: Full Migration complete.
+## 2. Data Structure
 
-### Germany (BSI)
-- **2030**: Protection of sensitive data (Store Now, Decrypt Later defense).
-- **2035**: Full Migration (EU alignment).
+### 2.1 CSV Format
+The application parses a CSV file (`timeline_MMDDYYYY.csv`) with the following columns:
+- `Country`, `FlagCode`, `OrgName`, `OrgFullName`, `OrgLogoUrl`
+- `Type` (Phase/Milestone), `Category` (Discovery, Migration, Deadline, etc.)
+- `StartYear`, `EndYear` (Defining the duration)
+- `Title`, `Description`
+- `SourceUrl`, `SourceDate`
 
-### France (ANSSI)
-- **Now-2025**: Hybrid Solutions (Phase 1).
-- **2025-2030**: Mandatory Pre-Quantum + Optional PQC (Phase 2).
-- **2030+**: Standalone PQC (Phase 3).
+### 2.2 Data Logic
+- **Phases**: Grouped by `Category`.
+- **Duration**: Calculated using `StartYear` and `EndYear`.
+- **Sorting**: Events within a phase are sorted by `StartYear`.
+- **Overrides**: "Deadline" category is forced to be a "Milestone" type.
 
-### China (CAC/SCA)
-- **2025**: Call for PQC algorithm proposals.
-- **2027**: Migration start in key sectors (Gov, Finance).
-- **2034**: Broad migration completion.
-
-### Australia (ACSC)
-- **2026**: Transition plan developed.
-- **2028**: Start implementation for critical systems.
-- **2030**: Full migration complete (Aggressive target).
-
-### Singapore (CSA)
-- **2025**: Guidelines issuance & Quantum Readiness Index.
-- **2030s**: Full adoption expected (approx. 12-year cycle).
-
-### India (NQM)
-- **2026-2028**: Technology readiness for critical networks.
-- **2030**: Migration of high-risk systems.
-
-### Middle East (UAE/KSA)
-- **2024 (UAE)**: Mandatory PQC for govt/critical sectors.
-- **2029 (KSA)**: Target for "Quantum Readiness".
+## 3. Supported Countries/Bodies (Data)
+- **USA** (NIST, NSA, White House)
+- **UK** (NCSC)
+- **Germany** (BSI)
+- **France** (ANSSI)
+- **EU** (ENISA/Commission)
+- **China** (CAC/SCA)
+- **Australia** (ASD)
+- **Singapore** (CSA/MAS)
+- **Canada** (CCCS)
+- **Netherlands** (AIVD/NCSC)
+- **South Korea** (NIS)
+- **Japan** (CRYPTREC/NISC)
+- **Czech Republic** (NUKIB)
+- **New Zealand** (GCSB)
+- **Israel** (INCD)
+- **Italy** (ACN)
+- **Spain** (CCN)
+- **G7** (Cyber Expert Group)

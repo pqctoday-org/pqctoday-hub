@@ -7,38 +7,53 @@ test.describe('Timeline View', () => {
         await page.getByRole('button', { name: 'Timeline' }).click();
     });
 
-    test('displays default timeline', async ({ page }) => {
-        await expect(page.getByRole('heading', { name: 'Global Migration Timeline' })).toBeVisible();
-        // Check for at least one event
-        await expect(page.locator('article').first()).toBeVisible();
+    test('displays gantt chart table', async ({ page }) => {
+        // Check for table headers
+        await expect(page.getByRole('columnheader', { name: 'Country' })).toBeVisible();
+        await expect(page.getByRole('columnheader', { name: 'Organization' })).toBeVisible();
+
+        // Check for some country data
+        await expect(page.getByText('United States')).toBeVisible();
+        await expect(page.getByText('NIST/NSA')).toBeVisible();
     });
 
-    test('switches country', async ({ page }) => {
-        // Find the country selector
-        // It might be a select or a custom dropdown. 
-        // Based on TimelineView.tsx, it uses <CountrySelector>.
-        // Let's assume it has a combobox role or similar.
+    test('displays phase details in popover on click', async ({ page }) => {
+        // Find a phase cell (e.g., Discovery for US) and click it
+        const phaseText = page.getByText('Discovery', { exact: true }).first();
+        await phaseText.click();
 
-        // Open the dropdown first
-        await page.getByRole('button', { name: 'Select Region:' }).click();
+        // Check if popover appears with the correct 4x2 grid labels
+        await expect(page.getByText('Start', { exact: true })).toBeVisible();
+        await expect(page.getByText('End', { exact: true })).toBeVisible();
+        await expect(page.getByText('Source', { exact: true })).toBeVisible();
+        await expect(page.getByText('Date', { exact: true })).toBeVisible();
 
-        // Wait for dropdown to be visible
-        await expect(page.getByRole('listbox')).toBeVisible();
+        // Close popover
+        await page.locator('button').filter({ has: page.locator('svg.lucide-x') }).click();
 
-        // Select the option
-        await page.getByRole('option', { name: /United Kingdom/ }).click({ force: true });
+        // Check popover is closed
+        await expect(page.getByText('Start', { exact: true })).not.toBeVisible();
+    });
 
-        // Wait for dropdown to close (confirms selection logic ran)
-        await expect(page.getByRole('listbox')).toBeHidden();
+    test('renders deadlines as milestones (flags)', async ({ page }) => {
+        // Check for the presence of Flag icons, which indicate milestones (including Deadlines)
+        const flags = page.locator('svg.lucide-flag');
+        await expect(flags.first()).toBeVisible();
+    });
 
-        // Verify the selector button now shows "United Kingdom"
-        // Note: The button has aria-labelledby="country-selector-label", so its accessible name is "Select Region:".
-        // We need to check the text content inside the button.
-        await expect(page.getByRole('button', { name: 'Select Region:' })).toContainText('United Kingdom');
+    test('does not display organization logos', async ({ page }) => {
+        // Ensure no images with alt text ending in "Logo" are visible in the table
+        const logos = page.getByAltText(/Logo$/);
+        await expect(logos).toHaveCount(0);
+    });
 
-        // Verify content update
-        // Check for a specific event title for UK
-        await expect(page.getByText('Discovery & Initial Plan Complete')).toBeVisible();
+    test('country selector updates view', async ({ page }) => {
+        // Select a specific country
+        await page.getByRole('button', { name: /All Countries/ }).click();
+        await page.getByRole('option', { name: 'United Kingdom' }).click();
+
+        // Check that only UK is visible
+        await expect(page.getByText('United Kingdom')).toBeVisible();
+        await expect(page.getByText('United States')).not.toBeVisible();
     });
 });
-

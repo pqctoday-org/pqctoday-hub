@@ -5,11 +5,12 @@ import { useState, useRef, useEffect } from 'react';
 
 interface CountrySelectorProps {
     countries: CountryData[];
-    selectedCountry: CountryData;
-    onSelect: (country: CountryData) => void;
+    selectedCountry: CountryData | null;
+    onSelect: (country: CountryData | null) => void;
+    showAllCountries: boolean;
 }
 
-export const CountrySelector = ({ countries, selectedCountry, onSelect }: CountrySelectorProps) => {
+export const CountrySelector = ({ countries, selectedCountry, onSelect, showAllCountries }: CountrySelectorProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -41,7 +42,7 @@ export const CountrySelector = ({ countries, selectedCountry, onSelect }: Countr
         }
     };
 
-    const handleOptionKeyDown = (e: React.KeyboardEvent, country: CountryData) => {
+    const handleOptionKeyDown = (e: React.KeyboardEvent, country: CountryData | null) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             onSelect(country);
@@ -49,6 +50,9 @@ export const CountrySelector = ({ countries, selectedCountry, onSelect }: Countr
             buttonRef.current?.focus();
         }
     };
+
+    const displayText = showAllCountries ? 'All Countries' : selectedCountry?.countryName || 'Select Region';
+    const displayFlag = showAllCountries ? '🌍' : selectedCountry?.flagCode || '';
 
     return (
         <div className="relative mb-8 z-10" ref={dropdownRef}>
@@ -65,8 +69,8 @@ export const CountrySelector = ({ countries, selectedCountry, onSelect }: Countr
                         className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors min-w-[200px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     >
                         <span className="flex items-center gap-2">
-                            <span className="font-bold">{selectedCountry.flagCode}</span>
-                            {selectedCountry.countryName}
+                            <span className="font-bold">{displayFlag}</span>
+                            {displayText}
                         </span>
                         <ChevronDown size={16} aria-hidden="true" className={clsx("transition-transform", isOpen && "rotate-180")} />
                     </button>
@@ -78,11 +82,29 @@ export const CountrySelector = ({ countries, selectedCountry, onSelect }: Countr
                             aria-labelledby="country-selector-label"
                             className="absolute top-full left-0 mt-2 w-full glass-panel overflow-hidden transform origin-top"
                         >
+                            {/* All Countries option */}
+                            <button
+                                role="option"
+                                aria-selected={showAllCountries}
+                                onClick={() => {
+                                    onSelect(null);
+                                    setIsOpen(false);
+                                }}
+                                onKeyDown={(e) => handleOptionKeyDown(e, null)}
+                                className={clsx(
+                                    "w-full text-left px-4 py-3 hover:bg-white/10 transition-colors flex items-center gap-2 focus:outline-none focus-visible:bg-white/10 border-b border-white/10",
+                                    showAllCountries ? "text-primary bg-white/5" : "text-muted"
+                                )}
+                            >
+                                <span className="font-mono text-xs opacity-50">🌍</span>
+                                All Countries
+                            </button>
+
                             {countries.map((country) => (
                                 <button
                                     key={country.countryName}
                                     role="option"
-                                    aria-selected={selectedCountry.countryName === country.countryName}
+                                    aria-selected={!showAllCountries && selectedCountry?.countryName === country.countryName}
                                     onClick={() => {
                                         onSelect(country);
                                         setIsOpen(false);
@@ -90,7 +112,7 @@ export const CountrySelector = ({ countries, selectedCountry, onSelect }: Countr
                                     onKeyDown={(e) => handleOptionKeyDown(e, country)}
                                     className={clsx(
                                         "w-full text-left px-4 py-3 hover:bg-white/10 transition-colors flex items-center gap-2 focus:outline-none focus-visible:bg-white/10",
-                                        selectedCountry.countryName === country.countryName ? "text-primary bg-white/5" : "text-muted"
+                                        !showAllCountries && selectedCountry?.countryName === country.countryName ? "text-primary bg-white/5" : "text-muted"
                                     )}
                                 >
                                     <span className="font-mono text-xs opacity-50">{country.flagCode}</span>

@@ -1,0 +1,238 @@
+import { useState, useMemo } from 'react';
+import { ArrowUpDown, ArrowUp, ArrowDown, Search, Flag } from 'lucide-react';
+import type { GanttCountryData, TimelinePhase } from '../../types/timeline';
+import { phaseColors } from '../../data/timelineData';
+import { GanttDetailPopover } from './GanttDetailPopover';
+
+interface SimpleGanttChartProps {
+    data: GanttCountryData[];
+}
+
+const START_YEAR = 2024;
+const END_YEAR = 2035;
+const YEARS = Array.from({ length: END_YEAR - START_YEAR + 1 }, (_, i) => START_YEAR + i);
+
+const PhaseCell = ({ phaseData, duration, colors, onClick }: { phaseData: TimelinePhase; duration: number; colors: any; onClick: (phase: TimelinePhase, e: React.MouseEvent) => void }) => {
+    const isMilestone = phaseData.type === 'Milestone';
+
+    return (
+        <td colSpan={duration} className="p-1 border-r border-white/5 relative h-10 align-middle">
+            <div
+                className={`w-full h-6 mx-auto relative flex items-center justify-center px-2 overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] ${isMilestone ? '' : 'rounded shadow-sm'}`}
+                style={!isMilestone ? {
+                    backgroundColor: colors.start,
+                    borderRadius: '4px',
+                    boxShadow: `0 0 8px ${colors.glow}`,
+                    opacity: 0.9
+                } : undefined}
+                onClick={(e) => onClick(phaseData, e)}
+            >
+                {isMilestone ? (
+                    <Flag
+                        className="w-4 h-4"
+                        style={{ color: colors.start, fill: colors.start }}
+                    />
+                ) : (
+                    <span className="text-[10px] font-bold text-white truncate drop-shadow-md select-none">
+                        {phaseData.phase}
+                    </span>
+                )}
+            </div>
+        </td>
+    );
+};
+
+export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
+    const [filterText, setFilterText] = useState('');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+    const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null);
+    const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number } | null>(null);
+
+    const processedData = useMemo(() => {
+        let filtered = data.filter(d =>
+            d.country.countryName.toLowerCase().includes(filterText.toLowerCase()) ||
+            d.country.bodies.some(b => b.name.toLowerCase().includes(filterText.toLowerCase()))
+        );
+
+        return filtered.sort((a, b) => {
+            const nameA = a.country.countryName.toLowerCase();
+            const nameB = b.country.countryName.toLowerCase();
+            return sortDirection === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+        });
+    }, [data, filterText, sortDirection]);
+
+    const toggleSort = () => {
+        setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    };
+
+    const handlePhaseClick = (phase: TimelinePhase, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const rect = (e.target as HTMLElement).getBoundingClientRect();
+        setPopoverPosition({
+            x: rect.left + (rect.width / 2),
+            y: rect.top
+        });
+        setSelectedPhase(phase);
+    };
+
+    const handleClosePopover = () => {
+        setSelectedPhase(null);
+        setPopoverPosition(null);
+    };
+
+    const renderPhaseCells = (phaseData: TimelinePhase) => {
+        const cells = [];
+        let currentYear = START_YEAR;
+
+        // Calculate start and end indices relative to our year range
+        const startYear = Math.max(START_YEAR, phaseData.startYear);
+        const endYear = Math.min(END_YEAR, phaseData.endYear);
+
+        // If phase is completely out of range, render empty cells
+        if (phaseData.endYear < START_YEAR || phaseData.startYear > END_YEAR) {
+            for (let i = START_YEAR; i <= END_YEAR; i++) {
+                cells.push(<td key={i} className="p-1 border-r border-white/5 h-10"></td>);
+            }
+            return cells;
+        }
+
+        while (currentYear <= END_YEAR) {
+            if (currentYear === startYear) {
+                // Determine duration
+                // For single year events (start == end), duration is 1
+                // For ranges, duration is end - start + 1
+                const duration = Math.max(1, endYear - startYear + 1);
+
+                // Ensure we don't exceed the grid
+                const safeDuration = Math.min(duration, END_YEAR - currentYear + 1);
+
+                const colors = phaseColors[phaseData.phase] || { start: '#64748b', end: '#94a3b8', glow: 'rgba(100, 116, 139, 0.5)' };
+
+                cells.push(
+                    <PhaseCell
+                        key={currentYear}
+                        phaseData={phaseData}
+                        duration={safeDuration}
+                        colors={colors}
+                        onClick={handlePhaseClick}
+                    />
+                );
+
+                currentYear += safeDuration;
+            } else {
+                cells.push(
+                    <td key={currentYear} className="p-1 border-r border-white/5 h-10"></td>
+                );
+                currentYear++;
+            }
+        }
+        return cells;
+    };
+
+    return (
+        <div className="flex flex-col gap-4">
+            {/* Controls Bar */}
+            <div className="flex flex-wrap items-center gap-4 p-4 glass-panel rounded-xl">
+                <div className="relative flex-1 min-w-[200px]">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+                    <input
+                        type="text"
+                        placeholder="Filter by country..."
+                        value={filterText}
+                        onChange={(e) => setFilterText(e.target.value)}
+                        className="w-full bg-black/20 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+                    />
+                </div>
+                <button
+                    onClick={toggleSort}
+                    className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-sm font-medium"
+                >
+                    <ArrowUpDown className="w-4 h-4" />
+                    Sort
+                    {sortDirection === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
+                </button>
+            </div>
+
+            {/* Table Container */}
+            <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#0b0d17]/50 backdrop-blur-sm">
+                <table className="w-full border-collapse min-w-[1000px]">
+                    <thead>
+                        <tr>
+                            <th className="sticky left-0 z-30 bg-[#0b0d17] p-4 text-left border-b border-r border-white/20 w-[180px]">
+                                <span className="font-bold text-white">Country</span>
+                            </th>
+                            <th className="sticky left-[180px] z-30 bg-[#0b0d17] p-4 text-left border-b border-r border-white/20 w-[200px]">
+                                <span className="font-bold text-white">Organization</span>
+                            </th>
+                            {YEARS.map(year => (
+                                <th key={year} className="p-2 border-b border-white/10 text-center min-w-[80px] bg-[#0b0d17]/80">
+                                    <span className={`font-mono text-sm ${year === new Date().getFullYear() ? 'text-primary font-bold' : 'text-muted'}`}>
+                                        {year}
+                                    </span>
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {processedData.map((countryData) => {
+                            const { country, phases } = countryData;
+                            const totalRows = phases.length;
+
+                            return (
+                                <>
+                                    {phases.map((phaseData, index) => {
+                                        return (
+                                            <tr key={`${country.countryName}-${phaseData.phase}-${index}`} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                                {/* Country Cell - Only on first row */}
+                                                {index === 0 && (
+                                                    <td rowSpan={totalRows} className="sticky left-0 z-20 bg-[#1a1d2d] p-3 border-r border-white/10 align-top">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-xl" role="img" aria-label={`Flag of ${country.countryName}`}>
+                                                                {country.flagCode === 'US' && '🇺🇸'}
+                                                                {country.flagCode === 'GB' && '🇬🇧'}
+                                                                {country.flagCode === 'DE' && '🇩🇪'}
+                                                                {country.flagCode === 'FR' && '🇫🇷'}
+                                                                {country.flagCode === 'CN' && '🇨🇳'}
+                                                                {country.flagCode === 'EU' && '🇪🇺'}
+                                                                {country.flagCode === 'AU' && '🇦🇺'}
+                                                                {country.flagCode === 'CA' && '🇨🇦'}
+                                                                {country.flagCode === 'NL' && '🇳🇱'}
+                                                                {country.flagCode === 'KR' && '🇰🇷'}
+                                                                {country.flagCode === 'CZ' && '🇨🇿'}
+                                                                {country.flagCode === 'JP' && '🇯🇵'}
+                                                            </span>
+                                                            <span className="font-bold text-white text-sm">{country.countryName}</span>
+                                                        </div>
+                                                    </td>
+                                                )}
+
+                                                {/* Organization Cell - Only on first row */}
+                                                {index === 0 && (
+                                                    <td rowSpan={totalRows} className="sticky left-[180px] z-20 bg-[#1a1d2d] p-3 border-r border-white/10 align-top">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-xs text-muted">{country.bodies[0].name}</span>
+                                                        </div>
+                                                    </td>
+                                                )}
+
+                                                {/* Phase/Milestone Cells */}
+                                                {renderPhaseCells(phaseData)}
+                                            </tr>
+                                        );
+                                    })}
+                                </>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+
+            <GanttDetailPopover
+                isOpen={!!selectedPhase}
+                onClose={handleClosePopover}
+                phase={selectedPhase}
+                position={popoverPosition}
+            />
+        </div>
+    );
+};

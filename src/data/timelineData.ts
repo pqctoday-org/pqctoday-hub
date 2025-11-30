@@ -1,172 +1,121 @@
-export type Phase = 'Discovery' | 'Testing' | 'POC' | 'Migration' | 'Deadline' | 'Standardization';
+import { parseTimelineCSV } from '../utils/csvParser';
+import type { CountryData, Phase, TimelineEvent, RegulatoryBody, EventType, TimelinePhase, GanttCountryData } from '../types/timeline';
 
-export interface TimelineEvent {
-    year: number;
-    quarter?: string;
-    phase: Phase;
-    title: string;
-    description: string;
-    sourceUrl: string;
-    sourceDate: string;
-}
+// Re-export types for backward compatibility
+export type { CountryData, Phase, TimelineEvent, RegulatoryBody, EventType, TimelinePhase, GanttCountryData };
 
-export interface RegulatoryBody {
-    name: string;
-    fullName: string;
-    countryCode: string;
-    events: TimelineEvent[];
-}
+// Phase color mappings for Gantt chart visualization
+export const phaseColors: Record<Phase, { start: string; end: string; glow: string }> = {
+    Discovery: { start: '#3b82f6', end: '#60a5fa', glow: 'rgba(59, 130, 246, 0.5)' },
+    Testing: { start: '#a78bfa', end: '#c4b5fd', glow: 'rgba(167, 139, 250, 0.5)' },
+    POC: { start: '#fb923c', end: '#fdba74', glow: 'rgba(251, 146, 60, 0.5)' },
+    Migration: { start: '#34d399', end: '#6ee7b7', glow: 'rgba(52, 211, 153, 0.5)' },
+    Deadline: { start: '#fb7185', end: '#fda4af', glow: 'rgba(251, 113, 133, 0.5)' },
+    Standardization: { start: '#22d3ee', end: '#67e8f9', glow: 'rgba(34, 211, 238, 0.5)' },
+    Guidance: { start: '#facc15', end: '#fde047', glow: 'rgba(250, 204, 21, 0.5)' },
+    Policy: { start: '#a8a29e', end: '#d6d3d1', glow: 'rgba(168, 162, 158, 0.5)' },
+    Regulation: { start: '#ef4444', end: '#f87171', glow: 'rgba(239, 68, 68, 0.5)' },
+    Research: { start: '#8b5cf6', end: '#a78bfa', glow: 'rgba(139, 92, 246, 0.5)' },
+};
 
-export interface CountryData {
-    countryName: string;
-    flagCode: string;
-    bodies: RegulatoryBody[];
-}
+// Helper to find the latest timeline CSV file
+function getLatestTimelineContent(): string | null {
+    // Use import.meta.glob to find all timeline CSV files
+    const modules = import.meta.glob('./timeline_*.csv', { as: 'raw', eager: true });
 
-export const timelineData: CountryData[] = [
-    {
-        countryName: "United States",
-        flagCode: "US",
-        bodies: [
-            {
-                name: "NIST",
-                fullName: "National Institute of Standards and Technology",
-                countryCode: "US",
-                events: [
-                    {
-                        year: 2024,
-                        phase: "Standardization",
-                        title: "FIPS 203, 204, 205 Published",
-                        description: "NIST releases the first set of PQC standards for ML-KEM, ML-DSA, and SLH-DSA.",
-                        sourceUrl: "https://csrc.nist.gov/pubs/fips/203/final",
-                        sourceDate: "2024-08-13"
-                    },
-                    {
-                        year: 2030,
-                        phase: "Deadline",
-                        title: "Deprecation of 112-bit Security",
-                        description: "Legacy algorithms offering less than 112-bit security (e.g., RSA-2048) are deprecated.",
-                        sourceUrl: "https://csrc.nist.gov/projects/post-quantum-cryptography",
-                        sourceDate: "2024-01-01"
-                    },
-                    {
-                        year: 2035,
-                        phase: "Migration",
-                        title: "Full Migration Deadline (NSM-10)",
-                        description: "Mandatory migration to quantum-resistant cryptography for all National Security Systems.",
-                        sourceUrl: "https://www.whitehouse.gov/briefing-room/presidential-actions/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-and-mitigating-risks-to-vulnerable-cryptographic-systems/",
-                        sourceDate: "2022-05-04"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        countryName: "United Kingdom",
-        flagCode: "GB",
-        bodies: [
-            {
-                name: "NCSC",
-                fullName: "National Cyber Security Centre",
-                countryCode: "GB",
-                events: [
-                    {
-                        year: 2028,
-                        phase: "Discovery",
-                        title: "Discovery & Initial Plan Complete",
-                        description: "Organizations should have completed discovery of cryptographic assets and initial migration planning.",
-                        sourceUrl: "https://www.ncsc.gov.uk/whitepaper/next-steps-preparing-for-post-quantum-cryptography",
-                        sourceDate: "2023-11-01"
-                    },
-                    {
-                        year: 2035,
-                        phase: "Migration",
-                        title: "Full Migration Complete",
-                        description: "Target for all systems to be fully migrated to PQC.",
-                        sourceUrl: "https://www.ncsc.gov.uk/whitepaper/next-steps-preparing-for-post-quantum-cryptography",
-                        sourceDate: "2023-11-01"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        countryName: "Germany",
-        flagCode: "DE",
-        bodies: [
-            {
-                name: "BSI",
-                fullName: "Federal Office for Information Security",
-                countryCode: "DE",
-                events: [
-                    {
-                        year: 2030,
-                        phase: "Migration",
-                        title: "Protection of Sensitive Data",
-                        description: "Defense against 'Store Now, Decrypt Later' attacks for long-term confidential data.",
-                        sourceUrl: "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/Quantentechnologien-und-Post-Quanten-Kryptografie/Post-Quanten-Kryptografie/post-quanten-kryptografie_node.html",
-                        sourceDate: "2023-01-01"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        countryName: "France",
-        flagCode: "FR",
-        bodies: [
-            {
-                name: "ANSSI",
-                fullName: "National Cybersecurity Agency of France",
-                countryCode: "FR",
-                events: [
-                    {
-                        year: 2025,
-                        phase: "Discovery",
-                        title: "Phase 1: Hybrid Solutions",
-                        description: "Recommendation to use hybrid cryptography (Classical + Pre-standard PQC) for defense-in-depth.",
-                        sourceUrl: "https://cyber.gouv.fr/en/publications/anssi-views-post-quantum-cryptography-transition",
-                        sourceDate: "2022-01-01"
-                    },
-                    {
-                        year: 2030,
-                        phase: "Migration",
-                        title: "Phase 3: Standalone PQC",
-                        description: "Transition to standalone PQC algorithms as confidence in standards matures.",
-                        sourceUrl: "https://cyber.gouv.fr/en/publications/anssi-views-post-quantum-cryptography-transition",
-                        sourceDate: "2022-01-01"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        countryName: "China",
-        flagCode: "CN",
-        bodies: [
-            {
-                name: "CAC/SCA",
-                fullName: "Cyberspace Administration of China / State Cryptography Administration",
-                countryCode: "CN",
-                events: [
-                    {
-                        year: 2025,
-                        phase: "Standardization",
-                        title: "Call for PQC Proposals",
-                        description: "Initiative to establish national PQC standards independent of NIST.",
-                        sourceUrl: "https://www.sca.gov.cn/",
-                        sourceDate: "2024-01-01"
-                    },
-                    {
-                        year: 2027,
-                        phase: "Migration",
-                        title: "Key Sector Migration Start",
-                        description: "Anticipated start of migration for Government and Finance sectors.",
-                        sourceUrl: "https://www.sca.gov.cn/",
-                        sourceDate: "2024-01-01"
-                    }
-                ]
-            }
-        ]
+    // Extract filenames and parse dates
+    const files = Object.keys(modules).map(path => {
+        // Path format: ./timeline_MMDDYYYY.csv
+        const match = path.match(/timeline_(\d{2})(\d{2})(\d{4})\.csv$/);
+        if (match) {
+            const [_, month, day, year] = match;
+            const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            return { path, date, content: modules[path] as string };
+        }
+        return null;
+    }).filter((f): f is { path: string, date: Date, content: string } => f !== null);
+
+    if (files.length === 0) {
+        console.warn("No dated timeline CSV files found.");
+        return null;
     }
-];
+
+    // Sort by date descending (latest first)
+    files.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+    console.log(`Loading latest timeline data from: ${files[0].path}`);
+    return files[0].content;
+}
+
+// Parse the CSV content to get the timeline data
+let parsedData: CountryData[] = [];
+try {
+    const csvContent = getLatestTimelineContent();
+    if (csvContent) {
+        parsedData = parseTimelineCSV(csvContent);
+    } else {
+        parsedData = [];
+    }
+} catch (error) {
+    console.error("Failed to parse timeline CSV:", error);
+    // Fallback to empty array to prevent crash
+    parsedData = [];
+}
+
+export const timelineData: CountryData[] = parsedData;
+
+/**
+ * Converts timeline events into Gantt-compatible data with phases and milestones
+ */
+export function transformToGanttData(countries: CountryData[]): GanttCountryData[] {
+    return countries.map(country => {
+        const allEvents = country.bodies.flatMap(body => body.events);
+
+        // Group events by phase (category)
+        const phaseMap = new Map<Phase, TimelineEvent[]>();
+
+        allEvents.forEach(event => {
+            if (!phaseMap.has(event.phase)) {
+                phaseMap.set(event.phase, []);
+            }
+            phaseMap.get(event.phase)!.push(event);
+        });
+
+        const phases: TimelinePhase[] = [];
+
+        // Create phase rows
+        phaseMap.forEach((events, phase) => {
+            // Sort events by startYear
+            events.sort((a, b) => a.startYear - b.startYear);
+            const firstEvent = events[0];
+
+            // Determine if this row is a "Milestone" row or "Phase" row
+            // User request: Treat "Deadline" phase as a Milestone
+            const isMilestoneRow = events.every(e => e.type === 'Milestone') || phase === 'Deadline';
+            const rowType: EventType = isMilestoneRow ? 'Milestone' : 'Phase';
+
+            // Calculate phase duration based on events
+            // For phases, we want the min start and max end
+            let startYear = Math.min(...events.map(e => e.startYear));
+            let endYear = Math.max(...events.map(e => e.endYear));
+
+            phases.push({
+                startYear,
+                endYear,
+                phase,
+                type: rowType,
+                title: firstEvent.title, // Use the specific event title
+                description: firstEvent.description,
+                events: events
+            });
+        });
+
+        // Sort phases by start year
+        phases.sort((a, b) => a.startYear - b.startYear);
+
+        return {
+            country,
+            phases
+        };
+    });
+}
