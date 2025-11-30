@@ -105,33 +105,35 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase, position }: GanttDe
         >
             {/* Header with Phase Color */}
             <div
-                className="relative p-3 border-b border-white/10"
+                className="p-3 border-b border-white/10"
                 style={{
                     background: `linear-gradient(to bottom, ${colors.glow} 0%, transparent 100%)`
                 }}
             >
-                {/* Close button - top right corner */}
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onClose();
-                    }}
-                    className="absolute top-2 right-2 p-1.5 rounded-lg hover:bg-white/10 transition-colors text-muted hover:text-white"
-                    aria-label="Close details"
-                >
-                    <X className="w-4 h-4" />
-                </button>
-
-                {/* Phase badge and title */}
-                <div className="pr-8 flex flex-col gap-1">
+                <div className="flex items-start justify-between gap-3 mb-2">
+                    {/* Phase badge */}
                     <div
-                        className="self-start inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-white"
+                        className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-white"
                         style={{ backgroundColor: colors.start }}
                     >
                         {phase.phase}
                     </div>
-                    <h3 className="text-xs font-bold text-white leading-tight">{phase.title}</h3>
+
+                    {/* Close button */}
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onClose();
+                        }}
+                        className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-muted hover:text-white flex-shrink-0"
+                        aria-label="Close details"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
                 </div>
+
+                {/* Title */}
+                <h3 className="text-xs font-bold text-white leading-tight">{phase.title}</h3>
             </div>
 
             {/* Content */}
