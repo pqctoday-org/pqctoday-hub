@@ -96,8 +96,8 @@ export function transformToGanttData(countries: CountryData[]): GanttCountryData
 
             // Calculate phase duration based on events
             // For phases, we want the min start and max end
-            let startYear = Math.min(...events.map(e => e.startYear));
-            let endYear = Math.max(...events.map(e => e.endYear));
+            const startYear = Math.min(...events.map(e => e.startYear));
+            const endYear = Math.max(...events.map(e => e.endYear));
 
             phases.push({
                 startYear,

@@ -74,7 +74,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase, position }: GanttDe
     }
 
     // Calculate vertical position with boundary checks
-    let top = position.y;
+    const top = position.y;
     let transformY = '-100%'; // Default: position above the element
     let translateYOffset = '-10px'; // Small offset above
 

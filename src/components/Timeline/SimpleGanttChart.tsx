@@ -49,7 +49,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
     const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number } | null>(null);
 
     const processedData = useMemo(() => {
-        let filtered = data.filter(d =>
+        const filtered = data.filter(d =>
             d.country.countryName.toLowerCase().includes(filterText.toLowerCase()) ||
             d.country.bodies.some(b => b.name.toLowerCase().includes(filterText.toLowerCase()))
         );
