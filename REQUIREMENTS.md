@@ -43,6 +43,8 @@ The application is divided into five main modules. Detailed requirements for eac
 - **Framework**: React (Vite)
 - **Styling**: Vanilla CSS (CSS Variables, Flexbox/Grid) for maximum control and performance.
 - **Deployment**: Static build (ready for Netlify/Vercel).
+- **Analytics**: Google Analytics 4 (GA4) with route tracking.
+- **Build Info**: Static build timestamp injected at compile time.
 
 ### 3.4 User Interface
 

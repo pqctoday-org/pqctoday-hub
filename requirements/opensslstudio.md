@@ -111,12 +111,12 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
       - `Ed25519` - Key generation and signing work flawlessly
       - `openssl version` and `openssl rand` - Stable
       - **ML-DSA (FIPS 204)** - Post-quantum digital signatures (ML-DSA-44, ML-DSA-65, ML-DSA-87) ✅ VERIFIED
-      - **SLH-DSA (FIPS 205)** - Stateless hash-based signatures (all variants) ✅ VERIFIED
+      - **SLH-DSA (FIPS 205)** - Stateless hash-based signatures (all variants: SHA2-128s/f, SHA2-192s/f, SHA2-256s/f) ✅ VERIFIED
       - **ML-KEM (FIPS 203)** - Post-quantum key encapsulation (ML-KEM-512, ML-KEM-768, ML-KEM-1024) ✅ VERIFIED
     - **Known Limitations**:
       - **RSA**: Key generation (`genpkey -algorithm RSA`) fails with a `BN lib` error, likely due to BigInt/Math issues in the specific WASM build configuration.
       - **EC**: Generic Elliptic Curve key generation (`genpkey -algorithm EC`) causes a WASM crash ("Unreachable code"), indicating a build incompatibility or memory issue.
-    - **Recommendation**: Use `Ed25519` for classical crypto and `ML-DSA` for post-quantum signatures in this environment.
+    - **Recommendation**: Use `Ed25519` for classical crypto and `ML-DSA` / `SLH-DSA` for post-quantum signatures in this environment.
 
 4.  **React StrictMode & Worker Re-initialization**:
     - **Challenge**: In development, React StrictMode mounts components twice. This caused the `useOpenSSL` hook to spawn two workers, leading to duplicate log output. Furthermore, the worker script was being re-executed in the same global context, causing "Identifier has already been declared" errors for top-level `const` and `class` definitions.
