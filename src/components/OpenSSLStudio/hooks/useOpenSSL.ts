@@ -61,7 +61,7 @@ export const useOpenSSL = () => {
     workerRef.current = worker
 
     // Signal load
-    worker.postMessage({ type: 'LOAD', url: '' })
+    worker.postMessage({ type: 'LOAD', url: '/wasm/openssl.js' })
 
     return () => {
       active = false
