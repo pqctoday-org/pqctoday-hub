@@ -121,8 +121,8 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 4.  **React StrictMode & Worker Re-initialization**:
     - **Challenge**: In development, React StrictMode mounts components twice. This caused the `useOpenSSL` hook to spawn two workers, leading to duplicate log output. Furthermore, the worker script was being re-executed in the same global context, causing "Identifier has already been declared" errors for top-level `const` and `class` definitions.
     - **Solution**:
-        - **Duplicate Logs**: Added an `active` flag in the `useOpenSSL` cleanup function to ignore messages from the terminated worker instance.
-        - **Initialization Errors**: Converted all top-level `const` and `class` declarations in `openssl.worker.ts` to `var` assignments. This allows the script to be re-evaluated safely without throwing redeclaration errors.
+      - **Duplicate Logs**: Added an `active` flag in the `useOpenSSL` cleanup function to ignore messages from the terminated worker instance.
+      - **Initialization Errors**: Converted all top-level `const` and `class` declarations in `openssl.worker.ts` to `var` assignments. This allows the script to be re-evaluated safely without throwing redeclaration errors.
 
 ### Future Improvements
 
