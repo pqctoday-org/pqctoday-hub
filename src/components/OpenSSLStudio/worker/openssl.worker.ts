@@ -142,7 +142,7 @@ var injectEntropy = (module: EmscriptenModule, requestId?: string) => {
     module.FS.writeFile('/random.seed', seedData)
     try {
       module.FS.writeFile('/dev/urandom', seedData)
-    } catch (e) { }
+    } catch (e) {}
   } catch (e) {
     self.postMessage({
       type: 'LOG',
@@ -157,7 +157,7 @@ var configureEnvironment = (module: EmscriptenModule, requestId?: string) => {
   try {
     try {
       module.FS.mkdir('/ssl')
-    } catch (e) { }
+    } catch (e) {}
     const minimalConfig = `
 openssl_conf = openssl_init
 [openssl_init]
@@ -178,19 +178,19 @@ distinguished_name = req_distinguished_name
     // Create config file at multiple locations to satisfy different OpenSSL commands
     try {
       module.FS.mkdir('/ssl')
-    } catch (e) { }
+    } catch (e) {}
     try {
       module.FS.mkdir('/usr')
-    } catch (e) { }
+    } catch (e) {}
     try {
       module.FS.mkdir('/usr/local')
-    } catch (e) { }
+    } catch (e) {}
     try {
       module.FS.mkdir('/usr/local/ssl')
-    } catch (e) { }
+    } catch (e) {}
     try {
       module.FS.mkdir('/openssl-wasm')
-    } catch (e) { }
+    } catch (e) {}
 
     module.FS.writeFile('/ssl/openssl.cnf', cnfBytes)
     module.FS.writeFile('/usr/local/ssl/openssl.cnf', cnfBytes)
@@ -263,9 +263,9 @@ var scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>, reques
             self.postMessage({ type: 'FILE_CREATED', name: file, data: content, requestId })
           }
         }
-      } catch (e) { }
+      } catch (e) {}
     }
-  } catch (e) { }
+  } catch (e) {}
 }
 
 // ----------------------------------------------------------------------------
