@@ -67,7 +67,7 @@ function App() {
                 className={clsx(
                   'flex items-center gap-2 px-4 py-2 rounded-lg transition-all',
                   currentView === item.id
-                    ? 'bg-white/10 text-primary border border-primary/50'
+                    ? 'bg-white/10 text-primary border border-primary/50 font-bold'
                     : 'hover:bg-white/5 text-white'
                 )}
               >
