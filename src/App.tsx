@@ -68,7 +68,7 @@ function App() {
                   'flex items-center gap-2 px-4 py-2 rounded-lg transition-all',
                   currentView === item.id
                     ? 'bg-white/10 text-primary border border-primary/50'
-                    : 'hover:bg-white/5 text-muted'
+                    : 'hover:bg-white/5 text-white'
                 )}
               >
                 <item.icon size={18} aria-hidden="true" />
