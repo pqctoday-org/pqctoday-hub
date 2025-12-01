@@ -24,6 +24,21 @@ const PHASE_ORDER = [
   'Standardization',
 ]
 
+const getCountryFlag = (code: string) => {
+  // Handle special non-ISO codes
+  if (code === 'NATO') return '🛡️' // NATO
+  if (code === 'G7') return '🌍'   // G7
+
+  // Handle standard ISO codes (2 letters)
+  if (code.length === 2) {
+    return code
+      .toUpperCase()
+      .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397))
+  }
+
+  return code
+}
+
 export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
   const [filterText, setFilterText] = useState('')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
@@ -46,7 +61,6 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
     return sortedCountries.map((country) => ({
       ...country,
       phases: country.phases
-        .filter((p) => (p.phase as string) !== 'Deadline')
         .sort((a, b) => {
           // Primary sort: Start Year (grouping < 2025)
           const startA = a.startYear < 2025 ? 2024 : a.startYear
@@ -254,18 +268,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                                 role="img"
                                 aria-label={`Flag of ${country.countryName}`}
                               >
-                                {country.flagCode === 'US' && '🇺🇸'}
-                                {country.flagCode === 'GB' && '🇬🇧'}
-                                {country.flagCode === 'DE' && '🇩🇪'}
-                                {country.flagCode === 'FR' && '🇫🇷'}
-                                {country.flagCode === 'CN' && '🇨🇳'}
-                                {country.flagCode === 'EU' && '🇪🇺'}
-                                {country.flagCode === 'AU' && '🇦🇺'}
-                                {country.flagCode === 'CA' && '🇨🇦'}
-                                {country.flagCode === 'NL' && '🇳🇱'}
-                                {country.flagCode === 'KR' && '🇰🇷'}
-                                {country.flagCode === 'CZ' && '🇨🇿'}
-                                {country.flagCode === 'JP' && '🇯🇵'}
+                                {getCountryFlag(country.flagCode)}
                               </span>
                               <span className="font-bold text-white text-sm">
                                 {country.countryName}
@@ -305,6 +308,6 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
         phase={selectedPhase}
         position={popoverPosition}
       />
-    </div>
+    </div >
   )
 }

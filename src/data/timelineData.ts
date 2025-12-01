@@ -31,6 +31,7 @@ export const phaseColors: Record<Phase, { start: string; end: string; glow: stri
   Policy: { start: '#a8a29e', end: '#d6d3d1', glow: 'rgba(168, 162, 158, 0.5)' },
   Regulation: { start: '#ef4444', end: '#f87171', glow: 'rgba(239, 68, 68, 0.5)' },
   Research: { start: '#8b5cf6', end: '#a78bfa', glow: 'rgba(139, 92, 246, 0.5)' },
+  Deadline: { start: '#ef4444', end: '#f87171', glow: 'rgba(239, 68, 68, 0.5)' },
 }
 
 import { MOCK_CSV_CONTENT } from './mockTimelineData'
@@ -96,40 +97,55 @@ export function transformToGanttData(countries: CountryData[]): GanttCountryData
   return countries.map((country) => {
     const allEvents = country.bodies.flatMap((body) => body.events)
 
-    // Group events by phase (category)
-    const phaseMap = new Map<Phase, TimelineEvent[]>()
+    // Group events by unique identifier (Phase + Title) to allow multiple phases of same type
+    // This is crucial for CNSA which has multiple "Migration" phases
+    const phaseMap = new Map<string, TimelineEvent[]>()
 
     allEvents.forEach((event) => {
-      if (!phaseMap.has(event.phase)) {
-        phaseMap.set(event.phase, [])
+      // Create a unique key for grouping
+      // For Milestones, we might want to group them if they are the same phase?
+      // Actually, for CNSA, we want distinct rows for distinct migration efforts.
+      // Let's group by Title if it's a Migration phase, otherwise by Phase.
+      let key = event.phase as string
+
+      if (event.phase === 'Migration') {
+        key = `${event.phase}-${event.title}`
+      } else if (event.phase === 'Deadline') {
+        // Keep Deadlines separate too if they have different titles
+        key = `${event.phase}-${event.title}`
       }
-      phaseMap.get(event.phase)!.push(event)
+
+      if (!phaseMap.has(key)) {
+        phaseMap.set(key, [])
+      }
+      phaseMap.get(key)!.push(event)
     })
 
     const phases: TimelinePhase[] = []
 
     // Create phase rows
-    phaseMap.forEach((events, phase) => {
+    phaseMap.forEach((events, key) => {
       // Sort events by startYear
       events.sort((a, b) => a.startYear - b.startYear)
       const firstEvent = events[0]
 
       // Determine if this row is a "Milestone" row or "Phase" row
-      // User request: Treat "Deadline" phase as a Milestone
       const isMilestoneRow = events.every((e) => e.type === 'Milestone')
       const rowType: EventType = isMilestoneRow ? 'Milestone' : 'Phase'
 
       // Calculate phase duration based on events
-      // For phases, we want the min start and max end
       const startYear = Math.min(...events.map((e) => e.startYear))
       const endYear = Math.max(...events.map((e) => e.endYear))
+
+      // Extract the actual phase name from the event, not the key
+      const phaseName = firstEvent.phase
 
       phases.push({
         startYear,
         endYear,
-        phase,
+        phase: phaseName,
         type: rowType,
-        title: firstEvent.title, // Use the specific event title
+        title: firstEvent.title,
         description: firstEvent.description,
         events: events,
       })

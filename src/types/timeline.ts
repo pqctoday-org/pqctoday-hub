@@ -7,7 +7,9 @@ export type Phase =
   | 'Guidance'
   | 'Policy'
   | 'Regulation'
+  | 'Regulation'
   | 'Research'
+  | 'Deadline'
 
 export type EventType = 'Phase' | 'Milestone'
 

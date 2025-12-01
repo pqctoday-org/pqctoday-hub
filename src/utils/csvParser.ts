@@ -48,16 +48,22 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
       sourceDate,
     ] = row
 
+    // Special handling for CNSA (NSA) to create a separate lane
+    let effectiveCountryName = countryName
+    if (countryName === 'United States' && orgName === 'NSA') {
+      effectiveCountryName = 'United States (CNSA)'
+    }
+
     // Ensure country exists
-    if (!countriesMap.has(countryName)) {
-      countriesMap.set(countryName, {
-        countryName,
+    if (!countriesMap.has(effectiveCountryName)) {
+      countriesMap.set(effectiveCountryName, {
+        countryName: effectiveCountryName,
         flagCode,
         bodies: [],
       })
     }
 
-    const country = countriesMap.get(countryName)!
+    const country = countriesMap.get(effectiveCountryName)!
 
     // Ensure body exists
     let body = country.bodies.find((b) => b.name === orgName)
@@ -86,7 +92,7 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
       orgName,
       orgFullName,
       orgLogoUrl,
-      countryName,
+      countryName: effectiveCountryName,
       flagCode,
     }
 

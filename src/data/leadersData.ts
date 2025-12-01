@@ -1,12 +1,17 @@
 export interface Leader {
   name: string
-  role: string
-  organization: string
+  country: string
+  title: string
+  organizations: string[]
   type: 'Public' | 'Private'
-  contribution: string
+  bio: string
   imageUrl?: string
   websiteUrl?: string
   linkedinUrl?: string
+  keyContribution?: {
+    title: string
+    type: string
+  }
 }
 
 // Helper to find the latest leaders CSV file
@@ -45,7 +50,7 @@ export const leadersData: Leader[] = csvContent ? parseLeadersCSV(csvContent) : 
 
 function parseLeadersCSV(csvContent: string): Leader[] {
   const lines = csvContent.trim().split('\n')
-  const headers = lines[0].split(',').map((h) => h.trim())
+  // Headers: Name,Country,Title,Organizations,Type,Bio,ImageUrl,WebsiteUrl,LinkedinUrl,KeyContributionTitle,KeyContributionType
 
   const parseLine = (line: string): string[] => {
     const result = []
@@ -69,18 +74,21 @@ function parseLeadersCSV(csvContent: string): Leader[] {
 
   return lines.slice(1).map((line) => {
     const values = parseLine(line)
-    // Map values to Leader object based on known column order:
-    // Name,Role,Organization,Type,Contribution,ImageUrl,WebsiteUrl,LinkedinUrl
 
     return {
       name: values[0],
-      role: values[1],
-      organization: values[2],
-      type: values[3] as 'Public' | 'Private',
-      contribution: values[4].replace(/^"|"$/g, ''), // Remove quotes if present
-      imageUrl: values[5],
-      websiteUrl: values[6],
-      linkedinUrl: values[7],
+      country: values[1],
+      title: values[2],
+      organizations: values[3].split(';').map(o => o.trim()),
+      type: values[4] as 'Public' | 'Private',
+      bio: values[5].replace(/^"|"$/g, ''), // Remove quotes if present
+      imageUrl: values[6],
+      websiteUrl: values[7],
+      linkedinUrl: values[8],
+      keyContribution: values[9] ? {
+        title: values[9],
+        type: values[10]
+      } : undefined
     }
   })
 }
