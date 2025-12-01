@@ -9,88 +9,78 @@ export interface Leader {
   linkedinUrl?: string
 }
 
-export const leadersData: Leader[] = [
-  {
-    name: 'Dr. Dustin Moody',
-    role: 'PQC Standardization Lead',
-    organization: 'NIST (USA)',
-    type: 'Public',
-    contribution:
-      'Leads the global effort to evaluate and standardize post-quantum cryptographic algorithms (FIPS 203/204/205).',
-    imageUrl:
-      'https://ui-avatars.com/api/?name=Dustin+Moody&background=0b0d17&color=22d3ee&size=128&bold=true',
-    websiteUrl: 'https://csrc.nist.gov/projects/post-quantum-cryptography',
-    linkedinUrl: 'https://www.linkedin.com/in/dustin-moody-9b6b6b1a/',
-  },
-  {
-    name: 'Ollie Whitehouse',
-    role: 'Chief Technical Officer',
-    organization: 'NCSC (UK)',
-    type: 'Public',
-    contribution: "Driving the UK's strategic roadmap for PQC migration and industry preparedness.",
-    imageUrl:
-      'https://ui-avatars.com/api/?name=Ollie+Whitehouse&background=0b0d17&color=22d3ee&size=128&bold=true',
-    websiteUrl: 'https://www.ncsc.gov.uk/whitepaper/next-steps-pqc',
-    linkedinUrl: 'https://www.linkedin.com/in/olliewhitehouse/',
-  },
-  {
-    name: 'Jérôme Plût',
-    role: 'Cryptographer',
-    organization: 'ANSSI (France)',
-    type: 'Public',
-    contribution:
-      "Key figure in defining France's hybrid transition strategy and national security requirements.",
-    imageUrl:
-      'https://ui-avatars.com/api/?name=Jerome+Plut&background=0b0d17&color=22d3ee&size=128&bold=true',
-    websiteUrl: 'https://www.ssi.gouv.fr/en/',
-    linkedinUrl: 'https://www.linkedin.com/',
-  },
-  {
-    name: 'Mark Hughes',
-    role: 'Security Executive',
-    organization: 'IBM',
-    type: 'Private',
-    contribution:
-      "Advocate for Cryptographic Bill of Materials (CBOM) and leader in IBM's quantum-safe initiatives.",
-    imageUrl:
-      'https://ui-avatars.com/api/?name=Mark+Hughes&background=0b0d17&color=a78bfa&size=128&bold=true',
-    websiteUrl: 'https://www.ibm.com/quantum/quantum-safe',
-    linkedinUrl: 'https://www.linkedin.com/in/mark-hughes-ibm/',
-  },
-  {
-    name: 'Jack Hidary',
-    role: 'CEO',
-    organization: 'SandboxAQ',
-    type: 'Private',
-    contribution:
-      'Pioneering the intersection of AI and Quantum security to help enterprises manage the PQC transition.',
-    imageUrl:
-      'https://ui-avatars.com/api/?name=Jack+Hidary&background=0b0d17&color=a78bfa&size=128&bold=true',
-    websiteUrl: 'https://www.sandboxaq.com/',
-    linkedinUrl: 'https://www.linkedin.com/in/jackhidary/',
-  },
-  {
-    name: 'Andersen Cheng',
-    role: 'CEO',
-    organization: 'Post-Quantum',
-    type: 'Private',
-    contribution:
-      "Coined the term 'Harvest Now, Decrypt Later' and advocates for immediate action on data privacy.",
-    imageUrl:
-      'https://ui-avatars.com/api/?name=Andersen+Cheng&background=0b0d17&color=a78bfa&size=128&bold=true',
-    websiteUrl: 'https://www.post-quantum.com/',
-    linkedinUrl: 'https://www.linkedin.com/in/andersencheng/',
-  },
-  {
-    name: 'Dr. Ali El Kaafarani',
-    role: 'CEO',
-    organization: 'PQShield',
-    type: 'Private',
-    contribution:
-      'Leading the development of hardware and software PQC solutions and contributing to NIST standards.',
-    imageUrl:
-      'https://ui-avatars.com/api/?name=Ali+El+Kaafarani&background=0b0d17&color=a78bfa&size=128&bold=true',
-    websiteUrl: 'https://pqshield.com/',
-    linkedinUrl: 'https://www.linkedin.com/in/ali-el-kaafarani/',
-  },
-]
+// Helper to find the latest leaders CSV file
+function getLatestLeadersContent(): string | null {
+  // Use import.meta.glob to find all leaders CSV files
+  const modules = import.meta.glob('./leaders_*.csv', { query: '?raw', import: 'default', eager: true })
+
+  // Extract filenames and parse dates
+  const files = Object.keys(modules)
+    .map((path) => {
+      // Path format: ./leaders_MMDDYYYY.csv
+      const match = path.match(/leaders_(\d{2})(\d{2})(\d{4})\.csv$/)
+      if (match) {
+        const [, month, day, year] = match
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+        return { path, date, content: modules[path] as string }
+      }
+      return null
+    })
+    .filter((f): f is { path: string; date: Date; content: string } => f !== null)
+
+  if (files.length === 0) {
+    console.warn('No dated leaders CSV files found.')
+    return null
+  }
+
+  // Sort by date descending (latest first)
+  files.sort((a, b) => b.date.getTime() - a.date.getTime())
+
+  console.log(`Loading latest leaders data from: ${files[0].path}`)
+  return files[0].content
+}
+
+const csvContent = getLatestLeadersContent()
+export const leadersData: Leader[] = csvContent ? parseLeadersCSV(csvContent) : []
+
+function parseLeadersCSV(csvContent: string): Leader[] {
+  const lines = csvContent.trim().split('\n')
+  const headers = lines[0].split(',').map((h) => h.trim())
+
+  const parseLine = (line: string): string[] => {
+    const result = []
+    let current = ''
+    let inQuotes = false
+
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i]
+      if (char === '"') {
+        inQuotes = !inQuotes
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim())
+        current = ''
+      } else {
+        current += char
+      }
+    }
+    result.push(current.trim())
+    return result
+  }
+
+  return lines.slice(1).map((line) => {
+    const values = parseLine(line)
+    // Map values to Leader object based on known column order:
+    // Name,Role,Organization,Type,Contribution,ImageUrl,WebsiteUrl,LinkedinUrl
+
+    return {
+      name: values[0],
+      role: values[1],
+      organization: values[2],
+      type: values[3] as 'Public' | 'Private',
+      contribution: values[4].replace(/^"|"$/g, ''), // Remove quotes if present
+      imageUrl: values[5],
+      websiteUrl: values[6],
+      linkedinUrl: values[7],
+    }
+  })
+}
