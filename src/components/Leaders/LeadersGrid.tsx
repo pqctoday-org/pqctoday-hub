@@ -95,7 +95,9 @@ export const LeadersGrid = () => {
                     'px-3 py-1 rounded-full text-xs font-bold border',
                     leader.type === 'Public'
                       ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                      : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+                      : leader.type === 'Private'
+                        ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+                        : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                   )}
                 >
                   {leader.type} Sector
@@ -121,20 +123,34 @@ export const LeadersGrid = () => {
                 "{leader.bio}"
               </p>
 
-              {leader.keyContribution && (
+              {leader.keyResourceUrl && (
                 <div className="mb-4 p-3 rounded-lg bg-white/5 border border-white/10">
-                  <p className="text-xs text-muted uppercase tracking-wider font-bold mb-1">
-                    Key Contribution
+                  <p className="text-xs text-muted uppercase tracking-wider font-bold mb-2">
+                    Key Resource
                   </p>
-                  <p
-                    className="text-sm font-medium text-secondary block truncate"
-                    title={leader.keyContribution.title}
+                  <a
+                    href={leader.keyResourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-2 truncate"
+                    title={leader.keyResourceUrl}
                   >
-                    {leader.keyContribution.title}
-                  </p>
-                  <span className="text-xs text-muted/60 mt-1 block">
-                    {leader.keyContribution.type}
-                  </span>
+                    <span className="truncate">View Resource</span>
+                    <svg
+                      width="12"
+                      height="12"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
+                    </svg>
+                  </a>
                 </div>
               )}
 
