@@ -72,6 +72,10 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+.text-muted {
+  color: var(--color-text-muted);
+}
+
 .btn-primary {
   background: linear-gradient(90deg, var(--color-secondary), var(--color-primary));
   border: none;
