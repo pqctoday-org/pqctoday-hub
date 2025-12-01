@@ -118,6 +118,12 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
       - **EC**: Generic Elliptic Curve key generation (`genpkey -algorithm EC`) causes a WASM crash ("Unreachable code"), indicating a build incompatibility or memory issue.
     - **Recommendation**: Use `Ed25519` for classical crypto and `ML-DSA` for post-quantum signatures in this environment.
 
+4.  **React StrictMode & Worker Re-initialization**:
+    - **Challenge**: In development, React StrictMode mounts components twice. This caused the `useOpenSSL` hook to spawn two workers, leading to duplicate log output. Furthermore, the worker script was being re-executed in the same global context, causing "Identifier has already been declared" errors for top-level `const` and `class` definitions.
+    - **Solution**:
+        - **Duplicate Logs**: Added an `active` flag in the `useOpenSSL` cleanup function to ignore messages from the terminated worker instance.
+        - **Initialization Errors**: Converted all top-level `const` and `class` declarations in `openssl.worker.ts` to `var` assignments. This allows the script to be re-evaluated safely without throwing redeclaration errors.
+
 ### Future Improvements
 
 - Test and verify all ML-KEM and SLH-DSA variants

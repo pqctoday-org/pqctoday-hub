@@ -18,7 +18,7 @@
 - **Rows**: Each row represents a specific phase or milestone for a country/organization.
 - **Visual Elements**:
   - **Phases**: Rendered as colored bars spanning from `StartYear` to `EndYear`.
-  - **Milestones**: Rendered as **Flag icons** (🚩) at the `StartYear`.
+  - **Milestones**: Rendered as **Flag markers** (🚩) at the `StartYear`.
   - **Deadlines**: Events with the category "Deadline" are treated as **Milestones** (Flags), regardless of their original type.
 
 ### 1.3 Interaction & Details
@@ -85,3 +85,15 @@ The application parses a CSV file (`timeline_MMDDYYYY.csv`) with the following c
 - **Italy** (ACN)
 - **Spain** (CCN)
 - **G7** (Cyber Expert Group)
+
+## 4. Testing Strategy
+
+### 4.1 E2E Testing with Mock Data
+
+To ensure End-to-End (E2E) tests remain stable and independent of changes to the production CSV data:
+
+- **Mock Data Source**: Tests use `src/data/mockTimelineData.ts`, which contains a fixed set of timeline events (e.g., "Test Country", "Test Org").
+- **Configuration**:
+  - The `VITE_MOCK_DATA` environment variable is set to `true` in `playwright.config.ts`.
+  - `src/data/timelineData.ts` conditionally loads the mock data when this flag is present.
+- **Verification**: Tests assert against the known values in the mock data (e.g., checking for "Test Country" instead of dynamic production data).
