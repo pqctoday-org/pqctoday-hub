@@ -3,8 +3,8 @@
   --color-bg: #0b0d17;
   --color-text: #f8fafc;
   /* Slate 50 */
-  --color-text-muted: #f1f5f9;
-  /* Slate 100 - Maximum WCAG AA contrast */
+  --color-text-muted: #cbd5e1;
+  /* Slate 300 - Original color for proper visual hierarchy */
   --color-primary: #22d3ee;
   /* Cyan 400 - Brighter */
   --color-secondary: #a78bfa;
