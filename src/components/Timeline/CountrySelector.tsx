@@ -1,7 +1,8 @@
 import clsx from 'clsx'
 import type { CountryData } from '../../data/timelineData'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Globe } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
+import { CountryFlag } from '../common/CountryFlag'
 
 interface CountrySelectorProps {
   countries: CountryData[]
@@ -59,7 +60,6 @@ export const CountrySelector = ({
   const displayText = showAllCountries
     ? 'All Countries'
     : selectedCountry?.countryName || 'Select Region'
-  const displayFlag = showAllCountries ? '🌍' : selectedCountry?.flagCode || ''
 
   return (
     <div className="relative mb-8 z-10" ref={dropdownRef}>
@@ -78,7 +78,13 @@ export const CountrySelector = ({
             className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors min-w-[200px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <span className="flex items-center gap-2">
-              <span className="font-bold">{displayFlag}</span>
+              <span className="font-bold flex items-center justify-center w-6">
+                {showAllCountries ? (
+                  <Globe size={16} className="text-primary" />
+                ) : selectedCountry ? (
+                  <CountryFlag code={selectedCountry.flagCode} className="w-5 h-3" />
+                ) : null}
+              </span>
               {displayText}
             </span>
             <ChevronDown
@@ -109,7 +115,7 @@ export const CountrySelector = ({
                   showAllCountries ? 'text-primary bg-white/5' : 'text-muted'
                 )}
               >
-                <span className="font-mono text-xs opacity-50">🌍</span>
+                <Globe size={16} className="opacity-50" />
                 All Countries
               </button>
 
@@ -132,7 +138,7 @@ export const CountrySelector = ({
                       : 'text-muted'
                   )}
                 >
-                  <span className="font-mono text-xs opacity-50">{country.flagCode}</span>
+                  <CountryFlag code={country.flagCode} className="w-5 h-3 opacity-80" />
                   {country.countryName}
                 </button>
               ))}

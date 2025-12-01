@@ -4,6 +4,7 @@ import type { GanttCountryData, TimelinePhase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
 import { GanttDetailPopover } from './GanttDetailPopover'
 import { logEvent } from '../../utils/analytics'
+import { CountryFlag } from '../common/CountryFlag'
 
 interface SimpleGanttChartProps {
   data: GanttCountryData[]
@@ -24,21 +25,6 @@ const PHASE_ORDER = [
   'Migration',
   'Standardization',
 ]
-
-const getCountryFlag = (code: string) => {
-  // Handle special non-ISO codes
-  if (code === 'NATO') return '🛡️' // NATO
-  if (code === 'G7') return '🌍' // G7
-
-  // Handle standard ISO codes (2 letters)
-  if (code.length === 2) {
-    return code
-      .toUpperCase()
-      .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397))
-  }
-
-  return code
-}
 
 export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
   const [filterText, setFilterText] = useState('')
@@ -273,11 +259,10 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                           >
                             <div className="flex items-center gap-2">
                               <span
-                                className="text-xl"
-                                role="img"
+                                className="text-xl flex items-center justify-center w-8"
                                 aria-label={`Flag of ${country.countryName}`}
                               >
-                                {getCountryFlag(country.flagCode)}
+                                <CountryFlag code={country.flagCode} className="w-6 h-4" />
                               </span>
                               <span className="font-bold text-white text-sm">
                                 {country.countryName}

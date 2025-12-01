@@ -99,8 +99,8 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="p-6 text-center text-muted text-sm" role="contentinfo">
-        <p>© 2025 Post-Quantum Cryptography Tracker. Data sourced from global regulatory bodies.</p>
+      <footer className="border-t border-white/10 mt-12 py-8 text-center text-muted text-sm">
+        <p>© 2025 PQC Today. Data sourced from the public internet resources.</p>
       </footer>
     </div>
   )
