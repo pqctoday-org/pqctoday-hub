@@ -3,6 +3,7 @@ import { ArrowUpDown, ArrowUp, ArrowDown, Search, Flag } from 'lucide-react'
 import type { GanttCountryData, TimelinePhase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
 import { GanttDetailPopover } from './GanttDetailPopover'
+import { logEvent } from '../../utils/analytics'
 
 interface SimpleGanttChartProps {
   data: GanttCountryData[]
@@ -87,6 +88,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
 
   const toggleSort = () => {
     setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))
+    logEvent('Timeline', 'Sort Countries', sortDirection === 'asc' ? 'desc' : 'asc')
   }
 
   const handlePhaseClick = (phase: TimelinePhase, e: React.MouseEvent) => {
@@ -97,11 +99,18 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
       y: rect.top,
     })
     setSelectedPhase(phase)
+    logEvent('Timeline', 'View Phase Details', `${phase.phase}: ${phase.title}`)
   }
 
   const handleClosePopover = () => {
     setSelectedPhase(null)
     setPopoverPosition(null)
+  }
+
+  const handleFilterBlur = () => {
+    if (filterText) {
+      logEvent('Timeline', 'Filter Text', filterText)
+    }
   }
 
   const renderPhaseCells = (phaseData: TimelinePhase) => {
@@ -187,6 +196,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
             placeholder="Filter by country..."
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
+            onBlur={handleFilterBlur}
             className="w-full bg-black/20 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 transition-colors"
           />
         </div>

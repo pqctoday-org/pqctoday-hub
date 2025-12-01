@@ -20,6 +20,7 @@ import {
   sanitizeOrganization,
   sanitizeCommonName,
 } from '../../utils/inputValidation'
+import { logEvent } from '../../utils/analytics'
 import clsx from 'clsx'
 
 export const Workbench = () => {
@@ -214,6 +215,7 @@ export const Workbench = () => {
 
   const handleRun = () => {
     executeCommand(useOpenSSLStore.getState().command)
+    logEvent('OpenSSL Studio', 'Run Command', category)
   }
 
   const handleExtractPublicKey = (privateKeyFile: string) => {
@@ -233,6 +235,7 @@ export const Workbench = () => {
 
     const command = `openssl pkey -in ${privateKeyFile} -pubout -out ${publicKeyFile}`
     executeCommand(command)
+    logEvent('OpenSSL Studio', 'Extract Public Key')
   }
 
   return (
@@ -265,7 +268,10 @@ export const Workbench = () => {
         </span>
         <div className="grid grid-cols-2 gap-2">
           <button
-            onClick={() => setCategory('genpkey')}
+            onClick={() => {
+              setCategory('genpkey')
+              logEvent('OpenSSL Studio', 'Select Category', 'Key Generation')
+            }}
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'genpkey'
@@ -276,7 +282,10 @@ export const Workbench = () => {
             <Key size={16} /> Key Generation
           </button>
           <button
-            onClick={() => setCategory('req')}
+            onClick={() => {
+              setCategory('req')
+              logEvent('OpenSSL Studio', 'Select Category', 'CSR')
+            }}
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'req'
@@ -287,7 +296,10 @@ export const Workbench = () => {
             <FileText size={16} /> CSR (Request)
           </button>
           <button
-            onClick={() => setCategory('x509')}
+            onClick={() => {
+              setCategory('x509')
+              logEvent('OpenSSL Studio', 'Select Category', 'Certificate')
+            }}
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'x509'
@@ -298,7 +310,10 @@ export const Workbench = () => {
             <Shield size={16} /> Certificate
           </button>
           <button
-            onClick={() => setCategory('dgst')}
+            onClick={() => {
+              setCategory('dgst')
+              logEvent('OpenSSL Studio', 'Select Category', 'Sign/Verify')
+            }}
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'dgst'
@@ -309,7 +324,10 @@ export const Workbench = () => {
             <Settings size={16} /> Sign / Verify
           </button>
           <button
-            onClick={() => setCategory('rand')}
+            onClick={() => {
+              setCategory('rand')
+              logEvent('OpenSSL Studio', 'Select Category', 'Random Data')
+            }}
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'rand'
@@ -320,7 +338,10 @@ export const Workbench = () => {
             <Shield size={16} /> Random Data
           </button>
           <button
-            onClick={() => setCategory('version')}
+            onClick={() => {
+              setCategory('version')
+              logEvent('OpenSSL Studio', 'Select Category', 'Version Info')
+            }}
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'version'
@@ -331,7 +352,10 @@ export const Workbench = () => {
             <Info size={16} /> Version Info
           </button>
           <button
-            onClick={() => setCategory('files')}
+            onClick={() => {
+              setCategory('files')
+              logEvent('OpenSSL Studio', 'Select Category', 'File Manager')
+            }}
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'files'
@@ -695,8 +719,8 @@ export const Workbench = () => {
 
           {/* Show hash algorithm selector only for classical keys */}
           {selectedKeyFile &&
-          !selectedKeyFile.includes('mldsa') &&
-          !selectedKeyFile.includes('slhdsa') ? (
+            !selectedKeyFile.includes('mldsa') &&
+            !selectedKeyFile.includes('slhdsa') ? (
             <div className="space-y-3">
               <label htmlFor="sig-hash-algo-select" className="text-xs text-muted block">
                 Hash Algorithm
@@ -928,6 +952,7 @@ export const Workbench = () => {
                                 a.click()
                                 document.body.removeChild(a)
                                 URL.revokeObjectURL(url)
+                                logEvent('OpenSSL Studio', 'Download File', file.type)
                               }}
                               className="p-1.5 hover:bg-white/10 rounded text-muted hover:text-white transition-colors"
                               title="Download"
@@ -944,7 +969,10 @@ export const Workbench = () => {
                               </button>
                             )}
                             <button
-                              onClick={() => useOpenSSLStore.getState().removeFile(file.name)}
+                              onClick={() => {
+                                useOpenSSLStore.getState().removeFile(file.name)
+                                logEvent('OpenSSL Studio', 'Delete File', file.type)
+                              }}
                               className="p-1.5 hover:bg-red-500/20 rounded text-muted hover:text-red-400 transition-colors"
                               title="Delete"
                             >

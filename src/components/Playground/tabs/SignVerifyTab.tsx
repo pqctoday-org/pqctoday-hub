@@ -3,6 +3,7 @@ import { FileSignature, CheckCircle, XCircle } from 'lucide-react'
 import { useSettingsContext } from '../contexts/SettingsContext'
 import { useKeyStoreContext } from '../contexts/KeyStoreContext'
 import { useOperationsContext } from '../contexts/OperationsContext'
+import { logEvent } from '../../../utils/analytics'
 
 // Helper for Hex/ASCII toggle with editing
 const EditableDataDisplay: React.FC<{
@@ -201,6 +202,7 @@ export const SignVerifyTab: React.FC = () => {
               <button
                 onClick={() => {
                   runOperation('sign')
+                  logEvent('Playground', 'Sign Message')
                 }}
                 disabled={!selectedSignKeyId || loading}
                 className="w-full py-3 rounded-lg bg-green-500/20 text-green-300 border border-green-500/30 hover:bg-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
@@ -285,11 +287,10 @@ export const SignVerifyTab: React.FC = () => {
             {/* Verification Result Display */}
             {verificationResult !== null && (
               <div
-                className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${
-                  verificationResult
+                className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${verificationResult
                     ? 'bg-green-500/10 border-green-500/30 text-green-400'
                     : 'bg-red-500/10 border-red-500/30 text-red-400'
-                }`}
+                  }`}
               >
                 {verificationResult ? <CheckCircle size={24} /> : <XCircle size={24} />}
                 <div>
@@ -309,6 +310,7 @@ export const SignVerifyTab: React.FC = () => {
               <button
                 onClick={() => {
                   runOperation('verify')
+                  logEvent('Playground', 'Verify Signature')
                 }}
                 disabled={!selectedVerifyKeyId || loading}
                 className="w-full py-3 rounded-lg bg-orange-500/20 text-orange-300 border border-orange-500/30 hover:bg-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"

@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { leadersData } from '../../data/leadersData'
 import { User, Building2, Briefcase } from 'lucide-react'
+import { logEvent } from '../../utils/analytics'
 import clsx from 'clsx'
 
 export const LeadersGrid = () => {
@@ -33,7 +34,10 @@ export const LeadersGrid = () => {
           {countries.map((country) => (
             <button
               key={country}
-              onClick={() => setSelectedCountry(country)}
+              onClick={() => {
+                setSelectedCountry(country)
+                logEvent('Leaders', 'Filter Country', country)
+              }}
               className={clsx(
                 'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border',
                 selectedCountry === country

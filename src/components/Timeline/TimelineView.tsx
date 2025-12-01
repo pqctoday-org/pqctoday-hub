@@ -3,10 +3,16 @@ import { timelineData, transformToGanttData, type CountryData } from '../../data
 import { CountrySelector } from './CountrySelector'
 import { SimpleGanttChart } from './SimpleGanttChart'
 import { GanttLegend } from './GanttLegend'
+import { logEvent } from '../../utils/analytics'
 
 export const TimelineView = () => {
   const [selectedCountry, setSelectedCountry] = useState<CountryData | null>(null)
   const showAllCountries = selectedCountry === null
+
+  const handleCountrySelect = (country: CountryData | null) => {
+    setSelectedCountry(country)
+    logEvent('Timeline', 'Filter Country', country ? country.countryName : 'All')
+  }
 
   // Transform data for Gantt chart
   const ganttData = useMemo(() => {
@@ -34,7 +40,7 @@ export const TimelineView = () => {
         <CountrySelector
           countries={timelineData}
           selectedCountry={selectedCountry}
-          onSelect={setSelectedCountry}
+          onSelect={handleCountrySelect}
           showAllCountries={showAllCountries}
         />
       </div>

@@ -22,6 +22,7 @@ import { SymmetricTab } from './tabs/SymmetricTab'
 import { SignVerifyTab } from './tabs/SignVerifyTab'
 import { KeyStoreTab } from './tabs/KeyStoreTab'
 import { LogsTab } from './tabs/LogsTab'
+import { logEvent } from '../../utils/analytics'
 
 export const InteractivePlayground = () => {
   return (
@@ -34,6 +35,11 @@ export const InteractivePlayground = () => {
 const PlaygroundContent = () => {
   const { activeTab, setActiveTab, error } = useSettingsContext()
   const { keyStore, setKeyStore } = useKeyStoreContext()
+
+  const handleTabChange = (tab: typeof activeTab) => {
+    setActiveTab(tab)
+    logEvent('Playground', 'Switch Tab', tab)
+  }
 
   return (
     <div className="glass-panel p-6 h-[85vh] flex flex-col">
@@ -48,7 +54,7 @@ const PlaygroundContent = () => {
       {/* Tab Navigation */}
       <div className="flex space-x-1 mb-6 bg-white/5 p-1 rounded-xl shrink-0 overflow-x-auto">
         <button
-          onClick={() => setActiveTab('settings')}
+          onClick={() => handleTabChange('settings')}
           className={clsx(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
             activeTab === 'settings'
@@ -59,7 +65,7 @@ const PlaygroundContent = () => {
           <Settings size={16} /> Settings
         </button>
         <button
-          onClick={() => setActiveTab('data')}
+          onClick={() => handleTabChange('data')}
           className={clsx(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
             activeTab === 'data'
@@ -70,7 +76,7 @@ const PlaygroundContent = () => {
           <Database size={16} /> Data
         </button>
         <button
-          onClick={() => setActiveTab('kem_ops')}
+          onClick={() => handleTabChange('kem_ops')}
           className={clsx(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
             activeTab === 'kem_ops'
@@ -81,7 +87,7 @@ const PlaygroundContent = () => {
           <Activity size={16} /> KEM & Encrypt
         </button>
         <button
-          onClick={() => setActiveTab('symmetric')}
+          onClick={() => handleTabChange('symmetric')}
           className={clsx(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
             activeTab === 'symmetric'
@@ -92,7 +98,7 @@ const PlaygroundContent = () => {
           <Lock size={16} /> Sym Encrypt
         </button>
         <button
-          onClick={() => setActiveTab('sign_verify')}
+          onClick={() => handleTabChange('sign_verify')}
           className={clsx(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
             activeTab === 'sign_verify'
@@ -103,7 +109,7 @@ const PlaygroundContent = () => {
           <FileSignature size={16} /> Sign & Verify
         </button>
         <button
-          onClick={() => setActiveTab('keystore')}
+          onClick={() => handleTabChange('keystore')}
           className={clsx(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
             activeTab === 'keystore'
@@ -114,7 +120,7 @@ const PlaygroundContent = () => {
           <KeyIcon size={16} /> Key Store ({keyStore.length})
         </button>
         <button
-          onClick={() => setActiveTab('logs')}
+          onClick={() => handleTabChange('logs')}
           className={clsx(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
             activeTab === 'logs'
@@ -125,7 +131,7 @@ const PlaygroundContent = () => {
           <FileText size={16} /> Logs
         </button>
         <button
-          onClick={() => setActiveTab('acvp')}
+          onClick={() => handleTabChange('acvp')}
           className={clsx(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
             activeTab === 'acvp'

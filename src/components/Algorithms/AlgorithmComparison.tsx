@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useState, useEffect } from 'react'
+import { logEvent } from '../../utils/analytics'
 
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation'
 type SortDirection = 'asc' | 'desc' | null
@@ -71,17 +72,21 @@ export const AlgorithmComparison = () => {
 
   // Handle sort click
   const handleSort = (column: SortColumn) => {
+    let newDirection: SortDirection = 'asc'
     if (sortColumn === column) {
       // Cycle through: asc -> desc -> null
       if (sortDirection === 'asc') {
-        setSortDirection('desc')
+        newDirection = 'desc'
       } else if (sortDirection === 'desc') {
-        setSortDirection(null)
-        setSortColumn(null)
+        newDirection = null
       }
-    } else {
-      setSortColumn(column)
-      setSortDirection('asc')
+    }
+
+    setSortColumn(newDirection ? column : null)
+    setSortDirection(newDirection)
+
+    if (newDirection) {
+      logEvent('Algorithms', 'Sort', `${column} (${newDirection})`)
     }
   }
 

@@ -4,6 +4,7 @@ import { useSettingsContext } from '../contexts/SettingsContext'
 import { useKeyStoreContext } from '../contexts/KeyStoreContext'
 import { useOperationsContext } from '../contexts/OperationsContext'
 import { DataInput } from '../DataInput'
+import { logEvent } from '../../../utils/analytics'
 
 export const KemOpsTab: React.FC = () => {
   const { loading } = useSettingsContext()
@@ -111,6 +112,7 @@ export const KemOpsTab: React.FC = () => {
               <button
                 onClick={() => {
                   runOperation('encapsulate')
+                  logEvent('Playground', 'KEM Encapsulate')
                 }}
                 disabled={!selectedEncKeyId || loading}
                 className="w-full py-3 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30 hover:bg-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
@@ -186,11 +188,10 @@ export const KemOpsTab: React.FC = () => {
             {/* Decapsulation Result Display */}
             {kemDecapsulationResult !== null && (
               <div
-                className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${
-                  kemDecapsulationResult
+                className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${kemDecapsulationResult
                     ? 'bg-green-500/10 border-green-500/30 text-green-400'
                     : 'bg-red-500/10 border-red-500/30 text-red-400'
-                }`}
+                  }`}
               >
                 {kemDecapsulationResult ? <CheckCircle size={24} /> : <XCircle size={24} />}
                 <div>
@@ -210,6 +211,7 @@ export const KemOpsTab: React.FC = () => {
               <button
                 onClick={() => {
                   runOperation('decapsulate')
+                  logEvent('Playground', 'KEM Decapsulate')
                 }}
                 disabled={!selectedDecKeyId || loading}
                 className="w-full py-3 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30 hover:bg-purple-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
@@ -267,6 +269,7 @@ export const KemOpsTab: React.FC = () => {
               <button
                 onClick={() => {
                   runOperation('encrypt')
+                  logEvent('Playground', 'Hybrid Encrypt')
                 }}
                 disabled={!sharedSecret || loading}
                 className="w-full py-3 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
@@ -308,6 +311,7 @@ export const KemOpsTab: React.FC = () => {
               <button
                 onClick={() => {
                   runOperation('decrypt')
+                  logEvent('Playground', 'Hybrid Decrypt')
                 }}
                 disabled={!encryptedData || loading}
                 className="w-full py-3 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
