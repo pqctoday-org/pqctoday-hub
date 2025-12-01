@@ -14,12 +14,17 @@ export const useOpenSSL = () => {
   } = useOpenSSLStore()
 
   useEffect(() => {
+    // Track if this effect instance is active
+    let active = true
+
     // Initialize Worker
     const worker = new Worker(new URL('../worker/openssl.worker.ts', import.meta.url), {
       type: 'classic',
     })
 
     worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
+      if (!active) return
+
       const { type } = event.data
 
       switch (type) {
@@ -59,6 +64,7 @@ export const useOpenSSL = () => {
     worker.postMessage({ type: 'LOAD', url: '' })
 
     return () => {
+      active = false
       worker.terminate()
     }
   }, [addLog, addFile, setIsProcessing])

@@ -36,10 +36,10 @@ interface ModuleConfig {
 declare function importScripts(...urls: string[]): void
 declare var createOpenSSLModule: any
 
-let moduleFactory: any = null
-let loadingPromise: Promise<void> | null = null
+var moduleFactory: any = null
+var loadingPromise: Promise<void> | null = null
 
-const loadOpenSSLScript = async (
+var loadOpenSSLScript = async (
   url: string = '/wasm/openssl.js',
   requestId?: string
 ): Promise<void> => {
@@ -122,7 +122,7 @@ const loadOpenSSLScript = async (
   }
 }
 
-const createOpenSSLInstance = async (requestId?: string): Promise<EmscriptenModule> => {
+var createOpenSSLInstance = async (requestId?: string): Promise<EmscriptenModule> => {
   if (!moduleFactory) throw new Error('Module factory not loaded. Call loadOpenSSLScript first.')
   const moduleConfig: ModuleConfig = {
     noInitialRun: true,
@@ -135,14 +135,14 @@ const createOpenSSLInstance = async (requestId?: string): Promise<EmscriptenModu
   return await moduleFactory(moduleConfig)
 }
 
-const injectEntropy = (module: EmscriptenModule, requestId?: string) => {
+var injectEntropy = (module: EmscriptenModule, requestId?: string) => {
   try {
     const seedData = new Uint8Array(4096)
     self.crypto.getRandomValues(seedData)
     module.FS.writeFile('/random.seed', seedData)
     try {
       module.FS.writeFile('/dev/urandom', seedData)
-    } catch (e) {}
+    } catch (e) { }
   } catch (e) {
     self.postMessage({
       type: 'LOG',
@@ -153,11 +153,11 @@ const injectEntropy = (module: EmscriptenModule, requestId?: string) => {
   }
 }
 
-const configureEnvironment = (module: EmscriptenModule, requestId?: string) => {
+var configureEnvironment = (module: EmscriptenModule, requestId?: string) => {
   try {
     try {
       module.FS.mkdir('/ssl')
-    } catch (e) {}
+    } catch (e) { }
     const minimalConfig = `
 openssl_conf = openssl_init
 [openssl_init]
@@ -178,19 +178,19 @@ distinguished_name = req_distinguished_name
     // Create config file at multiple locations to satisfy different OpenSSL commands
     try {
       module.FS.mkdir('/ssl')
-    } catch (e) {}
+    } catch (e) { }
     try {
       module.FS.mkdir('/usr')
-    } catch (e) {}
+    } catch (e) { }
     try {
       module.FS.mkdir('/usr/local')
-    } catch (e) {}
+    } catch (e) { }
     try {
       module.FS.mkdir('/usr/local/ssl')
-    } catch (e) {}
+    } catch (e) { }
     try {
       module.FS.mkdir('/openssl-wasm')
-    } catch (e) {}
+    } catch (e) { }
 
     module.FS.writeFile('/ssl/openssl.cnf', cnfBytes)
     module.FS.writeFile('/usr/local/ssl/openssl.cnf', cnfBytes)
@@ -210,7 +210,7 @@ distinguished_name = req_distinguished_name
   }
 }
 
-const writeInputFiles = (
+var writeInputFiles = (
   module: EmscriptenModule,
   files: { name: string; data: Uint8Array }[],
   requestId?: string
@@ -233,7 +233,7 @@ const writeInputFiles = (
   return writtenFiles
 }
 
-const scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>, requestId?: string) => {
+var scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>, requestId?: string) => {
   try {
     const files = module.FS.readdir('/')
     for (const file of files) {
@@ -263,9 +263,9 @@ const scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>, requ
             self.postMessage({ type: 'FILE_CREATED', name: file, data: content, requestId })
           }
         }
-      } catch (e) {}
+      } catch (e) { }
     }
-  } catch (e) {}
+  } catch (e) { }
 }
 
 // ----------------------------------------------------------------------------
@@ -277,7 +277,7 @@ interface CommandStrategy {
   getArgs(command: string, args: string[]): string[]
 }
 
-class BaseStrategy implements CommandStrategy {
+var BaseStrategy = class BaseStrategy implements CommandStrategy {
   prepare(module: EmscriptenModule, requestId?: string): void {
     // Ensure environment is configured even for base commands
     configureEnvironment(module, requestId)
@@ -287,7 +287,7 @@ class BaseStrategy implements CommandStrategy {
   }
 }
 
-class CryptoStrategy implements CommandStrategy {
+var CryptoStrategy = class CryptoStrategy implements CommandStrategy {
   prepare(module: EmscriptenModule, requestId?: string): void {
     injectEntropy(module, requestId)
     configureEnvironment(module, requestId)
@@ -297,7 +297,7 @@ class CryptoStrategy implements CommandStrategy {
   }
 }
 
-const CRYPTO_COMMANDS = [
+var CRYPTO_COMMANDS = [
   'genpkey',
   'req',
   'rand',
@@ -311,7 +311,7 @@ const CRYPTO_COMMANDS = [
   'spkac',
 ]
 
-const getStrategy = (command: string): CommandStrategy => {
+var getStrategy = (command: string): CommandStrategy => {
   if (CRYPTO_COMMANDS.includes(command)) {
     return new CryptoStrategy()
   }
@@ -324,7 +324,7 @@ const getStrategy = (command: string): CommandStrategy => {
 
 // console.log("[Worker] Worker script loaded (Consolidated)"); // Removed console.log
 
-const executeCommand = async (
+var executeCommand = async (
   command: string,
   args: string[],
   inputFiles: { name: string; data: Uint8Array }[] = [],
