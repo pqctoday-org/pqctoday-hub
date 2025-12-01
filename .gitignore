@@ -34,3 +34,4 @@ openssl-build/
 playwright-report/
 test-results/
 coverage/
+.env

@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Activity, Shield, Globe, Users, FlaskConical } from 'lucide-react'
 import clsx from 'clsx'
 import './styles/App.css'
 import pqcLogo from './assets/PQCT_Logo_V01.png'
+import { logPageView } from './utils/analytics'
 
 import { TimelineView } from './components/Timeline/TimelineView'
 import { ImpactDashboard } from './components/Impacts/ImpactDashboard'
@@ -16,6 +17,10 @@ type View = 'timeline' | 'algorithms' | 'playground' | 'openssl' | 'impacts' | '
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('timeline')
+
+  useEffect(() => {
+    logPageView(`/${currentView}`)
+  }, [currentView])
 
   // Build timestamp - set at compile time
   const buildTime = new Date().toLocaleString('en-US', {
