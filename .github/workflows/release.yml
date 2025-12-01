@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*"
+      - 'v*'
 
 permissions:
   contents: write
@@ -26,21 +26,21 @@ jobs:
           # ## [1.1.0] - YYYY-MM-DD
           # ... content ...
           # ## [1.0.0] ...
-          
+
           # Get the version from the tag (e.g., v1.1.0 -> 1.1.0)
           VERSION=${GITHUB_REF#refs/tags/v}
-          
+
           # Find the line number of the current version header
           START_LINE=$(grep -n "^## \[$VERSION\]" CHANGELOG.md | cut -d: -f1)
-          
+
           if [ -z "$START_LINE" ]; then
             echo "Could not find release notes for version $VERSION in CHANGELOG.md"
             exit 1
           fi
-          
+
           # Find the line number of the next version header (or end of file)
           NEXT_HEADER_LINE=$(tail -n +$((START_LINE + 1)) CHANGELOG.md | grep -n "^## \[" | head -n 1 | cut -d: -f1)
-          
+
           if [ -z "$NEXT_HEADER_LINE" ]; then
             # If no next header, read until end of file
             tail -n +$((START_LINE + 2)) CHANGELOG.md > release_notes.md
@@ -50,7 +50,7 @@ jobs:
             # Extract content between headers
             sed -n "$((START_LINE + 2)),$((END_LINE - 1))p" CHANGELOG.md > release_notes.md
           fi
-          
+
           echo "Release notes extracted:"
           cat release_notes.md
 

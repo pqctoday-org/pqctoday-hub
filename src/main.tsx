@@ -5,7 +5,7 @@ import App from './App.tsx'
 import { initGA } from './utils/analytics'
 
 // Initialize Google Analytics
-initGA();
+initGA()
 
 import ErrorBoundary from './components/ErrorBoundary'
 
