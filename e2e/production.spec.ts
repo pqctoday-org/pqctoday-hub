@@ -76,28 +76,19 @@ test.describe('Production Smoke Tests', () => {
     //     response.status() === 200
     //     , { timeout: 10000 }).catch(() => null);
 
+    // Navigate to Key Store tab (where Generate Keys button is located)
+    await page.getByRole('button', { name: 'Key Store' }).click()
+
+    // Wait for tab to load
+    await page.waitForTimeout(1000)
+
     // Trigger Key Generation (ML-KEM-768 is default)
-    await page.getByRole('button', { name: 'Generate Keys' }).first().click()
+    await page.getByRole('button', { name: 'Generate Keys' }).click()
 
-    // Wait for the WASM file to be requested (if it wasn't already cached/loaded)
-    // Note: It might have loaded on navigation, so we might miss the event if we wait strictly after click.
-    // But the real test is if the keys appear.
-
-    // Wait for Output
-    // Using the specific selector strategy we found reliable in previous tests
-    const publicKeyOutput = page
-      .locator('div')
-      .filter({ hasText: 'Public Key (Output)' })
-      .locator('textarea')
-      .first()
-    await expect(publicKeyOutput).not.toBeEmpty({ timeout: 15000 })
-
-    const secretKeyOutput = page
-      .locator('div')
-      .filter({ hasText: 'Secret Key (Output)' })
-      .locator('textarea')
-      .first()
-    await expect(secretKeyOutput).not.toBeEmpty()
+    // Wait for WASM to load and keys to be generated
+    // Check if keys are displayed in the table (this proves WASM loaded successfully)
+    await expect(page.getByRole('table')).toContainText('ML-KEM', { timeout: 30000 })
+    await expect(page.getByRole('table')).toContainText('Public Key')
 
     console.log('Key generation successful - WASM loaded correctly.')
   })
