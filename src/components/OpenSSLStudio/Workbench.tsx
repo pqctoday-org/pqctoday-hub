@@ -719,8 +719,8 @@ export const Workbench = () => {
 
           {/* Show hash algorithm selector only for classical keys */}
           {selectedKeyFile &&
-            !selectedKeyFile.includes('mldsa') &&
-            !selectedKeyFile.includes('slhdsa') ? (
+          !selectedKeyFile.includes('mldsa') &&
+          !selectedKeyFile.includes('slhdsa') ? (
             <div className="space-y-3">
               <label htmlFor="sig-hash-algo-select" className="text-xs text-muted block">
                 Hash Algorithm

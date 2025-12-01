@@ -188,10 +188,11 @@ export const KemOpsTab: React.FC = () => {
             {/* Decapsulation Result Display */}
             {kemDecapsulationResult !== null && (
               <div
-                className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${kemDecapsulationResult
+                className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${
+                  kemDecapsulationResult
                     ? 'bg-green-500/10 border-green-500/30 text-green-400'
                     : 'bg-red-500/10 border-red-500/30 text-red-400'
-                  }`}
+                }`}
               >
                 {kemDecapsulationResult ? <CheckCircle size={24} /> : <XCircle size={24} />}
                 <div>
