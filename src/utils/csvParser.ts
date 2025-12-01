@@ -31,7 +31,7 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
   dataRows.forEach((row) => {
     if (row.length < headers.length) return
 
-    // Expected Headers: Country,FlagCode,OrgName,OrgFullName,OrgLogoUrl,Type,Category,StartYear,EndYear,Title,Description,SourceUrl,SourceDate
+    // Expected Headers: Country,FlagCode,OrgName,OrgFullName,OrgLogoUrl,Type,Category,StartYear,EndYear,Title,Description,SourceUrl,SourceDate,Status
     const [
       countryName,
       flagCode,
@@ -46,6 +46,7 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
       description,
       sourceUrl,
       sourceDate,
+      status,
     ] = row
 
     // Special handling for CNSA (NSA) to create a separate lane
@@ -88,6 +89,7 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
       description: description.replace(/^"|"$/g, ''),
       sourceUrl,
       sourceDate,
+      status: status?.trim(),
       // Populate denormalized fields
       orgName,
       orgFullName,

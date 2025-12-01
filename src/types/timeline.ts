@@ -28,6 +28,7 @@ export interface TimelineEvent {
   orgLogoUrl?: string
   countryName?: string
   flagCode?: string
+  status?: string
 }
 
 export interface RegulatoryBody {
