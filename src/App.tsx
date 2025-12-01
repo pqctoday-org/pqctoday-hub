@@ -23,14 +23,8 @@ function App() {
   }, [currentView])
 
   // Build timestamp - set at compile time
-  const buildTime = new Date().toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    timeZoneName: 'short',
-  })
+  // Build timestamp - set at compile time
+  const buildTime = __BUILD_TIMESTAMP__
 
   const navItems = [
     { id: 'timeline', label: 'Timeline', icon: Globe },
