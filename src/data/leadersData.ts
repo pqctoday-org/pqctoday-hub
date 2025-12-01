@@ -17,7 +17,11 @@ export interface Leader {
 // Helper to find the latest leaders CSV file
 function getLatestLeadersContent(): string | null {
   // Use import.meta.glob to find all leaders CSV files
-  const modules = import.meta.glob('./leaders_*.csv', { query: '?raw', import: 'default', eager: true })
+  const modules = import.meta.glob('./leaders_*.csv', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  })
 
   // Extract filenames and parse dates
   const files = Object.keys(modules)
@@ -79,16 +83,18 @@ function parseLeadersCSV(csvContent: string): Leader[] {
       name: values[0],
       country: values[1],
       title: values[2],
-      organizations: values[3].split(';').map(o => o.trim()),
+      organizations: values[3].split(';').map((o) => o.trim()),
       type: values[4] as 'Public' | 'Private',
       bio: values[5].replace(/^"|"$/g, ''), // Remove quotes if present
       imageUrl: values[6],
       websiteUrl: values[7],
       linkedinUrl: values[8],
-      keyContribution: values[9] ? {
-        title: values[9],
-        type: values[10]
-      } : undefined
+      keyContribution: values[9]
+        ? {
+            title: values[9],
+            type: values[10],
+          }
+        : undefined,
     }
   })
 }

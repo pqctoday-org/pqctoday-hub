@@ -27,7 +27,7 @@ const PHASE_ORDER = [
 const getCountryFlag = (code: string) => {
   // Handle special non-ISO codes
   if (code === 'NATO') return '🛡️' // NATO
-  if (code === 'G7') return '🌍'   // G7
+  if (code === 'G7') return '🌍' // G7
 
   // Handle standard ISO codes (2 letters)
   if (code.length === 2) {
@@ -60,29 +60,28 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
 
     return sortedCountries.map((country) => ({
       ...country,
-      phases: country.phases
-        .sort((a, b) => {
-          // Primary sort: Start Year (grouping < 2025)
-          const startA = a.startYear < 2025 ? 2024 : a.startYear
-          const startB = b.startYear < 2025 ? 2024 : b.startYear
+      phases: country.phases.sort((a, b) => {
+        // Primary sort: Start Year (grouping < 2025)
+        const startA = a.startYear < 2025 ? 2024 : a.startYear
+        const startB = b.startYear < 2025 ? 2024 : b.startYear
 
-          if (startA !== startB) {
-            return startA - startB
-          }
+        if (startA !== startB) {
+          return startA - startB
+        }
 
-          // Secondary sort: Type (Milestone before Phase)
-          if (a.type !== b.type) {
-            return a.type === 'Milestone' ? -1 : 1
-          }
+        // Secondary sort: Type (Milestone before Phase)
+        if (a.type !== b.type) {
+          return a.type === 'Milestone' ? -1 : 1
+        }
 
-          // Tertiary sort: Phase Order
-          const indexA = PHASE_ORDER.indexOf(a.phase)
-          const indexB = PHASE_ORDER.indexOf(b.phase)
-          // Put unknown phases at the end
-          const valA = indexA === -1 ? 999 : indexA
-          const valB = indexB === -1 ? 999 : indexB
-          return valA - valB
-        }),
+        // Tertiary sort: Phase Order
+        const indexA = PHASE_ORDER.indexOf(a.phase)
+        const indexB = PHASE_ORDER.indexOf(b.phase)
+        // Put unknown phases at the end
+        const valA = indexA === -1 ? 999 : indexA
+        const valB = indexB === -1 ? 999 : indexB
+        return valA - valB
+      }),
     }))
   }, [data, filterText, sortDirection])
 
@@ -308,6 +307,6 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
         phase={selectedPhase}
         position={popoverPosition}
       />
-    </div >
+    </div>
   )
 }

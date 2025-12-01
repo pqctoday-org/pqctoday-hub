@@ -81,7 +81,9 @@ export const LeadersGrid = () => {
                     {leader.country === 'Switzerland' && '🇨🇭'}
                     {leader.country === 'Canada' && '🇨🇦'}
                     {/* Fallback for others if needed */}
-                    {!['USA', 'UK', 'France', 'Germany', 'Switzerland', 'Canada'].includes(leader.country) && '🌍'}
+                    {!['USA', 'UK', 'France', 'Germany', 'Switzerland', 'Canada'].includes(
+                      leader.country
+                    ) && '🌍'}
                   </div>
                 </div>
                 <span
@@ -117,11 +119,18 @@ export const LeadersGrid = () => {
 
               {leader.keyContribution && (
                 <div className="mb-4 p-3 rounded-lg bg-white/5 border border-white/10">
-                  <p className="text-xs text-muted uppercase tracking-wider font-bold mb-1">Key Contribution</p>
-                  <p className="text-sm font-medium text-secondary block truncate" title={leader.keyContribution.title}>
+                  <p className="text-xs text-muted uppercase tracking-wider font-bold mb-1">
+                    Key Contribution
+                  </p>
+                  <p
+                    className="text-sm font-medium text-secondary block truncate"
+                    title={leader.keyContribution.title}
+                  >
                     {leader.keyContribution.title}
                   </p>
-                  <span className="text-xs text-muted/60 mt-1 block">{leader.keyContribution.type}</span>
+                  <span className="text-xs text-muted/60 mt-1 block">
+                    {leader.keyContribution.type}
+                  </span>
                 </div>
               )}
 
