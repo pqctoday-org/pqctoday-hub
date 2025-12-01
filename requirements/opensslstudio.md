@@ -133,13 +133,13 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 
 ### Future Improvements
 
-- Test and verify all ML-KEM and SLH-DSA variants
+- [x] Test and verify all ML-KEM and SLH-DSA variants (Verified via E2E tests)
 - Investigate a custom OpenSSL build with explicit support for `no-asm` and `no-threads` to potentially resolve RSA/EC stability issues.
 - Explore migrating to a pure JS implementation (like `forge` or `noble-crypto`) if WASM limitations prove too restrictive for legacy algorithms.
 
 ## Future Roadmap
 
-- **PQC Algorithms**: Enable specific PQC providers/algorithms if supported by the build.
+- [x] **PQC Algorithms**: Enable specific PQC providers/algorithms (Completed)
 - **File Drag & Drop**: Enhance FileManager with drag-and-drop zone.
 - **Command History**: Allow re-running previous commands.
 - **Multiple Files**: Support selecting specific input files for operations (currently auto-detects or uses fixed names).

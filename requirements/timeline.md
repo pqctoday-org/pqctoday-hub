@@ -13,6 +13,9 @@
 - **Layout**: A table-based Gantt chart with sticky columns for "Country" and "Organization".
 - **Columns**:
   - **Country**: Displays the country name and SVG flag.
+    - **Flag Rendering**: High-quality SVG images sourced from local `public/flags/` directory.
+    - **Sizing**: Strictly enforced dimensions of **20px width x 14px height** to match the `text-sm` font size.
+    - **Layout**: Must use inline `display: flex` styles to ensure side-by-side alignment with text, bypassing potential CSS framework limitations.
   - **Organization**: Displays the organization name (text only, no logos).
   - **Years**: A horizontal timeline from 2024 to 2035. The first column is labeled **<2024** and groups all events starting before 2025.
 - **Rows**: Each row represents a specific phase or milestone for a country/organization.
