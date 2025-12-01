@@ -14,7 +14,7 @@ test.describe('Timeline View', () => {
 
     // Check for some country data
     await expect(page.getByText('United States')).toBeVisible()
-    await expect(page.getByText('NIST')).toBeVisible()
+    await expect(page.getByText('White House')).toBeVisible()
   })
 
   test('displays phase details in popover on click', async ({ page }) => {
