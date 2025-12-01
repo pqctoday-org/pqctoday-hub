@@ -4,7 +4,7 @@
   --color-text: #f8fafc;
   /* Slate 50 */
   --color-text-muted: #cbd5e1;
-  /* Slate 300 - Original color for proper visual hierarchy */
+  /* Slate 300 - Higher contrast */
   --color-primary: #22d3ee;
   /* Cyan 400 - Brighter */
   --color-secondary: #a78bfa;
@@ -70,10 +70,6 @@ body {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-.text-muted {
-  color: var(--color-text-muted);
 }
 
 .btn-primary {
