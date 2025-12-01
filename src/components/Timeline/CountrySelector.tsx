@@ -77,12 +77,12 @@ export const CountrySelector = ({
             aria-labelledby="country-selector-label"
             className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors min-w-[200px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
-            <span className="flex items-center gap-2">
-              <span className="font-bold flex items-center justify-center w-6">
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', fontWeight: 'bold' }}>
                 {showAllCountries ? (
                   <Globe size={16} className="text-primary" />
                 ) : selectedCountry ? (
-                  <CountryFlag code={selectedCountry.flagCode} className="w-5 h-3" />
+                  <CountryFlag code={selectedCountry.flagCode} width={20} height={12} />
                 ) : null}
               </span>
               {displayText}
@@ -111,9 +111,10 @@ export const CountrySelector = ({
                 }}
                 onKeyDown={(e) => handleOptionKeyDown(e, null)}
                 className={clsx(
-                  'w-full text-left px-4 py-3 hover:bg-white/10 transition-colors flex items-center gap-2 focus:outline-none focus-visible:bg-white/10 border-b border-white/10',
+                  'w-full text-left px-4 py-3 hover:bg-white/10 transition-colors focus:outline-none focus-visible:bg-white/10 border-b border-white/10',
                   showAllCountries ? 'text-primary bg-white/5' : 'text-muted'
                 )}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
               >
                 <Globe size={16} className="opacity-50" />
                 All Countries
@@ -132,13 +133,13 @@ export const CountrySelector = ({
                   }}
                   onKeyDown={(e) => handleOptionKeyDown(e, country)}
                   className={clsx(
-                    'w-full text-left px-4 py-3 hover:bg-white/10 transition-colors flex items-center gap-2 focus:outline-none focus-visible:bg-white/10',
                     !showAllCountries && selectedCountry?.countryName === country.countryName
                       ? 'text-primary bg-white/5'
                       : 'text-muted'
                   )}
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
-                  <CountryFlag code={country.flagCode} className="w-5 h-3 opacity-80" />
+                  <CountryFlag code={country.flagCode} width={20} height={12} style={{ opacity: 0.8 }} />
                   {country.countryName}
                 </button>
               ))}

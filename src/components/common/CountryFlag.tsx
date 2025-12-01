@@ -4,10 +4,13 @@ import { useState } from 'react'
 interface CountryFlagProps {
   code: string
   className?: string
+  style?: React.CSSProperties
   alt?: string
+  width?: number | string
+  height?: number | string
 }
 
-export const CountryFlag = ({ code, className, alt }: CountryFlagProps) => {
+export const CountryFlag = ({ code, className, style, alt, width, height }: CountryFlagProps) => {
   const [error, setError] = useState(false)
 
   // Handle special cases
@@ -19,15 +22,17 @@ export const CountryFlag = ({ code, className, alt }: CountryFlagProps) => {
 
   if (error) {
     // Fallback to text code if image fails
-    return <span className={clsx('font-mono font-bold text-xs', className)}>{code}</span>
+    return <span className={clsx('font-mono font-bold text-xs', className)} style={style}>{code}</span>
   }
 
   return (
     <img
       src={flagPath}
       alt={alt || `${code} flag`}
-      className={clsx('object-cover inline-block', className)}
-      style={{ maxWidth: '100%', maxHeight: '100%' }}
+      className={clsx('inline-block', className)}
+      style={{ ...style }}
+      width={width}
+      height={height}
       onError={() => setError(true)}
     />
   )
