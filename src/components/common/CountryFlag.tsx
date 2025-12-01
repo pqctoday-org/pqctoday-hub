@@ -26,9 +26,8 @@ export const CountryFlag = ({ code, className, alt }: CountryFlagProps) => {
     <img
       src={flagPath}
       alt={alt || `${code} flag`}
-      className={clsx('object-contain inline-block', className)}
+      className={clsx('object-contain inline-block max-w-full max-h-full', className)}
       onError={() => setError(true)}
-      loading="lazy"
     />
   )
 }

@@ -10,7 +10,8 @@
   - **Avatar/Headshot**: Professional initial-based avatars with color-coding
     - Cyan/Primary color for Public Sector
     - Purple color for Private Sector
-  - **Sector Badge**: Visual indicator (Public Sector / Private Sector)
+    - Emerald color for Academic Sector
+  - **Sector Badge**: Visual indicator (Public / Private / Academic)
   - **Name**: Leader's full name with title (Dr., etc.)
   - **Role**: Current position/title
   - **Organization**: Affiliated institution/company
@@ -18,6 +19,7 @@
   - **Social Links**: Clickable buttons for:
     - **Website**: Organization or personal website/blog
     - **LinkedIn**: Professional profile
+    - **Key Resource**: Direct link to a significant contribution or paper
 - **Visual Design**:
   - Glass-morphism effect with hover animations
   - Proper spacing and typography hierarchy
@@ -82,7 +84,7 @@
 - Parameters:
   - Name-based initials
   - Dark background (#0b0d17)
-  - Sector-specific colors (cyan for public, purple for private)
+  - Sector-specific colors (cyan for public, purple for private, emerald for academic)
   - 128px size for high quality
   - Bold text
 

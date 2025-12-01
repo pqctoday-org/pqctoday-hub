@@ -12,7 +12,7 @@
 
 - **Layout**: A table-based Gantt chart with sticky columns for "Country" and "Organization".
 - **Columns**:
-  - **Country**: Displays the country name and flag.
+  - **Country**: Displays the country name and SVG flag.
   - **Organization**: Displays the organization name (text only, no logos).
   - **Years**: A horizontal timeline from 2024 to 2035. The first column is labeled **<2024** and groups all events starting before 2025.
 - **Rows**: Each row represents a specific phase or milestone for a country/organization.
@@ -54,6 +54,7 @@ The application parses a CSV file (`timeline_MMDDYYYY.csv`) with the following c
 - `StartYear`, `EndYear` (Defining the duration)
 - `Title`, `Description`
 - `SourceUrl`, `SourceDate`
+- `Status` (Optional status of the event)
 
 ### 2.2 Data Logic
 

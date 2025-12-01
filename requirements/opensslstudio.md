@@ -64,6 +64,13 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 - **Command Preview**: Live preview of the generated OpenSSL command.
 - **Status**: Visual indicators for "Processing", "Ready", and "Error" states.
 
+### 5. Analytics Tracking
+
+- **Event Tracking**: User interactions are tracked via Google Analytics:
+  - **Command Execution**: Tracks which commands (`genpkey`, `req`, `x509`, etc.) are run.
+  - **File Operations**: Tracks file uploads, downloads, and deletions.
+  - **Category Selection**: Tracks which operation categories users explore.
+
 ## Technical Implementation Details
 
 ### Worker (`openssl.worker.ts`)

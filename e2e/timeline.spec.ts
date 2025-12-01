@@ -41,6 +41,16 @@ test.describe('Timeline View', () => {
     await expect(flags.first()).toBeVisible()
   })
 
+  test('renders country flags as SVGs', async ({ page }) => {
+    // Check for the presence of CountryFlag images (alt text ends with " flag")
+    const countryFlags = page.locator('img[alt$=" flag"]')
+    await expect(countryFlags.first()).toBeVisible()
+
+    // Verify specific flag (e.g., US)
+    const usFlag = page.locator('img[src="/flags/us.svg"]')
+    await expect(usFlag.first()).toBeVisible()
+  })
+
   test('does not display organization logos', async ({ page }) => {
     // Ensure no images with alt text ending in "Logo" are visible in the table
     const logos = page.locator('table').getByAltText(/Logo$/)
