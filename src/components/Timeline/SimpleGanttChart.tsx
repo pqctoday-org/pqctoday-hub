@@ -258,15 +258,15 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                             style={{ borderRight: '1px solid #4b5563' }}
                           >
                             <div className="flex items-center gap-2">
-                              <span
-                                className="flex items-center justify-center w-8 h-6"
+                              <div
+                                className="flex items-center justify-center w-8 h-6 flex-shrink-0 overflow-hidden"
                                 aria-label={`Flag of ${country.countryName}`}
                               >
                                 <CountryFlag
                                   code={country.flagCode}
-                                  className="w-6 h-4 max-w-full max-h-full object-contain"
+                                  className="w-full h-full object-contain"
                                 />
-                              </span>
+                              </div>
                               <span className="font-bold text-white text-sm">
                                 {country.countryName}
                               </span>
