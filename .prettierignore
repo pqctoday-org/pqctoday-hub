@@ -1,0 +1,6 @@
+dist
+node_modules
+.DS_Store
+package-lock.json
+test-results.json
+test-results-clean.json
