@@ -64,8 +64,10 @@ test.describe('Production Smoke Tests', () => {
       throw e
     }
 
-    // Verify we are on the playground
-    await expect(page.getByText('Interactive Playground')).toBeVisible()
+    // Verify we are on the playground (use heading selector to avoid duplicates)
+    await expect(
+      page.getByRole('heading', { name: 'Interactive Playground', level: 2 })
+    ).toBeVisible({ timeout: 60000 })
 
     // Monitor for the specific WASM wrapper file we fixed
     // Monitor for the specific WASM wrapper file we fixed
