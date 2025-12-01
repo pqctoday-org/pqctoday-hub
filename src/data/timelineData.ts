@@ -33,8 +33,16 @@ export const phaseColors: Record<Phase, { start: string; end: string; glow: stri
   Research: { start: '#8b5cf6', end: '#a78bfa', glow: 'rgba(139, 92, 246, 0.5)' },
 }
 
+import { MOCK_CSV_CONTENT } from './mockTimelineData'
+
 // Helper to find the latest timeline CSV file
 function getLatestTimelineContent(): string | null {
+  // Check for mock data environment variable
+  if (import.meta.env.VITE_MOCK_DATA === 'true') {
+    console.log('Using mock timeline data for testing')
+    return MOCK_CSV_CONTENT
+  }
+
   // Use import.meta.glob to find all timeline CSV files
   const modules = import.meta.glob('./timeline_*.csv', { as: 'raw', eager: true })
 

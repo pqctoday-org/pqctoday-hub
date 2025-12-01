@@ -13,8 +13,8 @@ test.describe('Timeline View', () => {
     await expect(page.getByRole('columnheader', { name: 'Organization' })).toBeVisible()
 
     // Check for some country data
-    await expect(page.getByText('United States')).toBeVisible()
-    await expect(page.getByText('White House')).toBeVisible()
+    await expect(page.getByText('Test Country')).toBeVisible()
+    await expect(page.getByText('Test Org')).toBeVisible()
   })
 
   test('displays phase details in popover on click', async ({ page }) => {
@@ -58,10 +58,10 @@ test.describe('Timeline View', () => {
     // Wait for dropdown to be visible
     await page.getByRole('listbox').waitFor({ state: 'visible' })
 
-    await page.getByRole('option', { name: 'United Kingdom' }).click()
+    await page.getByRole('option', { name: 'Another Country' }).click()
 
-    // Check that only UK is visible in the table
-    await expect(page.locator('table').getByText('United Kingdom')).toBeVisible()
-    await expect(page.locator('table').getByText('United States')).not.toBeVisible()
+    // Check that only Another Country is visible in the table
+    await expect(page.locator('table').getByText('Another Country')).toBeVisible()
+    await expect(page.locator('table').getByText('Test Country')).not.toBeVisible()
   })
 })
