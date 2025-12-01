@@ -102,6 +102,7 @@ export const useKemOperations = ({
           if (sharedSecret) {
             const originalSecretBytes = hexToBytes(sharedSecret)
             matches = recoveredSecret.every(
+              // eslint-disable-next-line security/detect-object-injection
               (byte: number, i: number) => byte === originalSecretBytes[i]
             )
           }
@@ -179,6 +180,7 @@ export const useKemOperations = ({
           if (sharedSecret) {
             const originalSecretBytes = hexToBytes(sharedSecret)
             matches = recoveredSecret.every(
+              // eslint-disable-next-line security/detect-object-injection
               (byte: number, i: number) => byte === originalSecretBytes[i]
             )
           }

@@ -91,6 +91,7 @@ export const AlgorithmComparison = () => {
     e.stopPropagation()
     setResizingColumn(column)
     setStartX(e.clientX)
+    // eslint-disable-next-line security/detect-object-injection
     setStartWidth(columnWidths[column])
   }
 

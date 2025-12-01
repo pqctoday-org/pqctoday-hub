@@ -131,6 +131,7 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
           const recoveredSs = await MLKEM_LIBOQS.decapsulateBits({ name: algo }, skBytes, ctBytes)
 
           // Compare
+          // eslint-disable-next-line security/detect-object-injection
           const matches = recoveredSs.every((b: number, i: number) => b === expectedSsBytes[i])
 
           newResults.push({

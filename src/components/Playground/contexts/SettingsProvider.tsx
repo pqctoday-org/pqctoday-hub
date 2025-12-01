@@ -83,6 +83,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       ...prev,
       [category]: {
         ...prev[category],
+        // eslint-disable-next-line security/detect-object-injection
         [algorithm]: !prev[category][algorithm as keyof (typeof prev)[typeof category]],
       },
     }))
@@ -119,6 +120,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     e.stopPropagation()
     setResizingColumn(column)
     resizeStartX.current = e.clientX
+    // eslint-disable-next-line security/detect-object-injection
     resizeStartWidth.current = columnWidths[column]
     document.body.style.cursor = 'col-resize'
   }
@@ -178,7 +180,9 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [resizingColumn])
 
   const sortedLogs = [...logs].sort((a, b) => {
+    // eslint-disable-next-line security/detect-object-injection
     let aValue: string | number = a[sortColumn]
+    // eslint-disable-next-line security/detect-object-injection
     let bValue: string | number = b[sortColumn]
     if (sortColumn === 'executionTime')
       return sortDirection === 'asc'

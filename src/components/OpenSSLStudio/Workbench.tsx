@@ -121,6 +121,7 @@ export const Workbench = () => {
           slhdsa256f: 'SLH-DSA-SHA2-256f',
         }
         keyName = `slhdsa-${keyAlgo.replace('slhdsa', '')}-${timestamp}.key`
+        // eslint-disable-next-line security/detect-object-injection
         cmd += ` genpkey -algorithm ${slhVariantMap[keyAlgo]}`
       } else {
         keyName = `${keyAlgo}-${timestamp}.key`
@@ -694,8 +695,8 @@ export const Workbench = () => {
 
           {/* Show hash algorithm selector only for classical keys */}
           {selectedKeyFile &&
-          !selectedKeyFile.includes('mldsa') &&
-          !selectedKeyFile.includes('slhdsa') ? (
+            !selectedKeyFile.includes('mldsa') &&
+            !selectedKeyFile.includes('slhdsa') ? (
             <div className="space-y-3">
               <label htmlFor="sig-hash-algo-select" className="text-xs text-muted block">
                 Hash Algorithm
