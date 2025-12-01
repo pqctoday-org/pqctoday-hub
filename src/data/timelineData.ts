@@ -124,7 +124,7 @@ export function transformToGanttData(countries: CountryData[]): GanttCountryData
     const phases: TimelinePhase[] = []
 
     // Create phase rows
-    phaseMap.forEach((events, _) => {
+    phaseMap.forEach((events) => {
       // Sort events by startYear
       events.sort((a, b) => a.startYear - b.startYear)
       const firstEvent = events[0]
