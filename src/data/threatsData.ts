@@ -79,7 +79,7 @@ export function parseThreatsCSV(csvContent: string): ThreatData[] {
         industry: industry?.replace(/^"|"$/g, '') || '',
         threatId: threatId?.replace(/^"|"$/g, '') || '',
         description: description?.replace(/^"|"$/g, '') || '',
-        criticality: (criticality?.replace(/^"|"$/g, '') as any) || 'Medium',
+        criticality: (criticality?.replace(/^"|"$/g, '') as ThreatData['criticality']) || 'Medium',
         cryptoAtRisk: cryptoAtRisk?.replace(/^"|"$/g, '') || '',
         pqcReplacement: pqcReplacement?.replace(/^"|"$/g, '') || '',
         source: source?.replace(/^"|"$/g, '') || '',

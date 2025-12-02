@@ -3,15 +3,40 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { leadersData, leadersMetadata } from '../../data/leadersData'
 import { User, Building2, Briefcase } from 'lucide-react'
 import { logEvent } from '../../utils/analytics'
+import { FilterDropdown } from '../common/FilterDropdown'
+import { CountryFlag } from '../common/CountryFlag'
 import clsx from 'clsx'
 
 export const LeadersGrid = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>('All')
 
   // Extract unique countries
-  const countries = useMemo(() => {
+  const countryItems = useMemo(() => {
     const unique = new Set(leadersData.map((l) => l.country))
-    return ['All', ...Array.from(unique).sort()]
+    const sortedCountries = Array.from(unique).sort()
+
+    // Helper to get flag code from country name (simple mapping)
+    const getFlagCode = (country: string) => {
+      const map: Record<string, string> = {
+        'USA': 'us', 'UK': 'gb', 'France': 'fr', 'Germany': 'de',
+        'Switzerland': 'ch', 'Canada': 'ca', 'Singapore': 'sg',
+        'Japan': 'jp', 'South Korea': 'kr', 'Australia': 'au',
+        'Israel': 'il', 'Belgium': 'be', 'Portugal': 'pt',
+        'Estonia/EU': 'eu', 'USA/Switzerland': 'us',
+        'France/Netherlands': 'fr', 'Germany/Netherlands': 'de',
+        'USA/Germany': 'us'
+      }
+      return map[country] || 'un' // default to UN flag or similar if needed
+    }
+
+    return [
+      { id: 'All', label: 'All Countries', icon: null },
+      ...sortedCountries.map(c => ({
+        id: c,
+        label: c,
+        icon: <CountryFlag code={getFlagCode(c)} width={20} height={12} />
+      }))
+    ]
   }, [])
 
   // Filter leaders
@@ -36,25 +61,16 @@ export const LeadersGrid = () => {
         )}
 
         {/* Country Filter */}
-        <div className="flex flex-wrap justify-center gap-2">
-          {countries.map((country) => (
-            <button
-              key={country}
-              onClick={() => {
-                setSelectedCountry(country)
-                logEvent('Leaders', 'Filter Country', country)
-              }}
-              className={clsx(
-                'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border',
-                selectedCountry === country
-                  ? 'bg-primary/20 text-primary border-primary/50 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
-                  : 'bg-white/5 text-muted hover:text-white border-white/10 hover:border-white/20'
-              )}
-            >
-              {country === 'All' ? 'All Countries' : country}
-            </button>
-          ))}
-        </div>
+        <FilterDropdown
+          items={countryItems}
+          selectedId={selectedCountry}
+          onSelect={(id) => {
+            setSelectedCountry(id)
+            logEvent('Leaders', 'Filter Country', id)
+          }}
+          label="Select Region"
+          defaultLabel="All Countries"
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

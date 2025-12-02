@@ -48,6 +48,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
     e.stopPropagation()
     setResizingColumn(column)
     resizeStartX.current = e.clientX
+    // eslint-disable-next-line security/detect-object-injection
     resizeStartWidth.current = columnWidths[column]
     document.body.style.cursor = 'col-resize'
   }
@@ -69,6 +70,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
         const newWidth = Math.max(50, resizeStartWidth.current + diff)
         setColumnWidths((prev) => ({
           ...prev,
+          // eslint-disable-next-line security/detect-object-injection
           [resizingColumn]: newWidth,
         }))
       }
@@ -100,7 +102,9 @@ export const KeyTable: React.FC<KeyTableProps> = ({
       return sortDirection === 'asc' ? aTime - bTime : bTime - aTime
     }
 
+    // eslint-disable-next-line security/detect-object-injection
     const aValue = String(a[sortColumn]).toLowerCase()
+    // eslint-disable-next-line security/detect-object-injection
     const bValue = String(b[sortColumn]).toLowerCase()
 
     const comparison = aValue.localeCompare(bValue)
@@ -120,6 +124,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                 <th
                   key={col}
                   className="p-0 relative select-none group"
+                  // eslint-disable-next-line security/detect-object-injection
                   style={{ width: columnWidths[col] }}
                 >
                   <button

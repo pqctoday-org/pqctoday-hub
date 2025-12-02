@@ -5,7 +5,8 @@ import {
   transformToGanttData,
   type CountryData,
 } from '../../data/timelineData'
-import { CountrySelector } from './CountrySelector'
+import { FilterDropdown } from '../common/FilterDropdown'
+import { CountryFlag } from '../common/CountryFlag'
 import { SimpleGanttChart } from './SimpleGanttChart'
 import { GanttLegend } from './GanttLegend'
 import { logEvent } from '../../utils/analytics'
@@ -31,6 +32,16 @@ export const TimelineView = () => {
     return allGanttData
   }, [selectedCountry, showAllCountries])
 
+  const countryItems = useMemo(() => {
+    const allOption = { id: 'All', label: 'All Countries', icon: null }
+    const countries = timelineData.map((c) => ({
+      id: c.countryName,
+      label: c.countryName,
+      icon: <CountryFlag code={c.flagCode} width={20} height={12} />,
+    }))
+    return [allOption, ...countries]
+  }, [])
+
   return (
     <div className="max-w-7xl mx-auto px-4">
       <div className="text-center mb-12">
@@ -47,14 +58,16 @@ export const TimelineView = () => {
         )}
       </div>
 
-      <div className="flex justify-center">
-        <CountrySelector
-          countries={timelineData}
-          selectedCountry={selectedCountry}
-          onSelect={handleCountrySelect}
-          showAllCountries={showAllCountries}
-        />
-      </div>
+      <FilterDropdown
+        items={countryItems}
+        selectedId={selectedCountry ? selectedCountry.countryName : 'All'}
+        onSelect={(id) => {
+          const country = id === 'All' ? null : timelineData.find((c) => c.countryName === id) || null
+          handleCountrySelect(country)
+        }}
+        label="Select Region"
+        defaultLabel="All Countries"
+      />
 
       <div className="mt-12">
         <SimpleGanttChart data={ganttData} />

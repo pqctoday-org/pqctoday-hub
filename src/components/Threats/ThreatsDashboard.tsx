@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { threatsData } from '../../data/threatsData'
-import { Search, ChevronDown, ChevronUp } from 'lucide-react'
+import { Search, ChevronDown, ChevronUp, Plane, Landmark, Zap, Radio, Stethoscope, Shield, Car, Cpu, Briefcase, AlertOctagon, AlertTriangle, AlertCircle, Info, CheckCircle } from 'lucide-react'
 import { logEvent } from '../../utils/analytics'
+import { FilterDropdown } from '../common/FilterDropdown'
 import clsx from 'clsx'
 
 type SortField = 'industry' | 'threatId' | 'criticality'
@@ -10,14 +11,50 @@ type SortDirection = 'asc' | 'desc'
 
 export const ThreatsDashboard = () => {
   const [selectedIndustry, setSelectedIndustry] = useState<string>('All')
+  const [selectedCriticality, setSelectedCriticality] = useState<string>('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortField, setSortField] = useState<SortField>('industry')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
   // Extract unique industries for filter
-  const industries = useMemo(() => {
+  const industryItems = useMemo(() => {
     const unique = new Set(threatsData.map((d) => d.industry))
-    return ['All', ...Array.from(unique).sort()]
+    const sortedIndustries = Array.from(unique).sort()
+
+    // Helper to get icon for industry
+    const getIndustryIcon = (industry: string) => {
+      const lower = industry.toLowerCase()
+      if (lower.includes('aerospace') || lower.includes('aviation')) return <Plane size={16} />
+      if (lower.includes('finance') || lower.includes('banking')) return <Landmark size={16} />
+      if (lower.includes('energy') || lower.includes('utilities')) return <Zap size={16} />
+      if (lower.includes('telecom')) return <Radio size={16} />
+      if (lower.includes('healthcare') || lower.includes('pharma')) return <Stethoscope size={16} />
+      if (lower.includes('government') || lower.includes('defense')) return <Shield size={16} />
+      if (lower.includes('automotive')) return <Car size={16} />
+      if (lower.includes('technology')) return <Cpu size={16} />
+      return <Briefcase size={16} />
+    }
+
+    return [
+      { id: 'All', label: 'All Industries', icon: null },
+      ...sortedIndustries.map(ind => ({
+        id: ind,
+        label: ind,
+        icon: getIndustryIcon(ind)
+      }))
+    ]
+  }, [])
+
+  // Criticality items
+  const criticalityItems = useMemo(() => {
+    return [
+      { id: 'All', label: 'All Levels', icon: null },
+      { id: 'Critical', label: 'Critical', icon: <AlertOctagon size={16} className="text-red-400" /> },
+      { id: 'High', label: 'High', icon: <AlertTriangle size={16} className="text-orange-400" /> },
+      { id: 'Medium-High', label: 'Medium-High', icon: <AlertCircle size={16} className="text-yellow-400" /> },
+      { id: 'Medium', label: 'Medium', icon: <Info size={16} className="text-blue-400" /> },
+      { id: 'Low', label: 'Low', icon: <CheckCircle size={16} className="text-green-400" /> },
+    ]
   }, [])
 
   const handleSort = (field: SortField) => {
@@ -35,6 +72,11 @@ export const ThreatsDashboard = () => {
     // Filter by Industry
     if (selectedIndustry !== 'All') {
       data = data.filter((item) => item.industry === selectedIndustry)
+    }
+
+    // Filter by Criticality
+    if (selectedCriticality !== 'All') {
+      data = data.filter((item) => item.criticality === selectedCriticality)
     }
 
     // Filter by Search Query
@@ -56,9 +98,8 @@ export const ThreatsDashboard = () => {
       // Actually, let's respect the sortField/sortDirection for the primary sort,
       // but if sortField is 'industry', we add a secondary sort for Criticality.
 
-      const criticalityOrder = { Critical: 3, High: 2, 'Medium-High': 1.5, Medium: 1, Low: 0 }
-      // @ts-ignore
-      const getCriticalityVal = (c) => criticalityOrder[c] || 0
+      const criticalityOrder: Record<string, number> = { Critical: 3, High: 2, 'Medium-High': 1.5, Medium: 1, Low: 0 }
+      const getCriticalityVal = (c: string) => criticalityOrder[c] ?? 0
 
       if (sortField === 'industry') {
         if (a.industry !== b.industry) {
@@ -70,8 +111,8 @@ export const ThreatsDashboard = () => {
         return getCriticalityVal(b.criticality) - getCriticalityVal(a.criticality)
       }
 
-      let valA = a[sortField]
-      let valB = b[sortField]
+      let valA: string | number = a[sortField]
+      let valB: string | number = b[sortField]
 
       // Custom sort for criticality column
       if (sortField === 'criticality') {
@@ -85,7 +126,7 @@ export const ThreatsDashboard = () => {
     })
 
     return data
-  }, [selectedIndustry, searchQuery, sortField, sortDirection])
+  }, [selectedIndustry, selectedCriticality, searchQuery, sortField, sortDirection])
 
   return (
     <div className="max-w-7xl mx-auto px-4">
@@ -96,25 +137,32 @@ export const ThreatsDashboard = () => {
           cryptography, and PQC replacements.
         </p>
 
-        {/* Industry Filter Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {industries.map((ind) => (
-            <button
-              key={ind}
-              onClick={() => {
-                setSelectedIndustry(ind)
-                logEvent('Threats', 'Filter Industry', ind)
-              }}
-              className={clsx(
-                'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border',
-                selectedIndustry === ind
-                  ? 'bg-primary/20 text-primary border-primary/50 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
-                  : 'bg-white/5 text-muted hover:text-white border-white/10 hover:border-white/20'
-              )}
-            >
-              {ind === 'All' ? 'All Industries' : ind}
-            </button>
-          ))}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          {/* Industry Filter Dropdown */}
+          <FilterDropdown
+            items={industryItems}
+            selectedId={selectedIndustry}
+            onSelect={(id) => {
+              setSelectedIndustry(id)
+              logEvent('Threats', 'Filter Industry', id)
+            }}
+            label="Select Industry"
+            defaultLabel="All Industries"
+            defaultIcon={<Briefcase size={16} className="text-primary" />}
+          />
+
+          {/* Criticality Filter Dropdown */}
+          <FilterDropdown
+            items={criticalityItems}
+            selectedId={selectedCriticality}
+            onSelect={(id) => {
+              setSelectedCriticality(id)
+              logEvent('Threats', 'Filter Criticality', id)
+            }}
+            label="Select Criticality"
+            defaultLabel="All Levels"
+            defaultIcon={<AlertCircle size={16} className="text-primary" />}
+          />
         </div>
 
         {/* Search */}

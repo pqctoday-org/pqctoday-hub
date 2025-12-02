@@ -66,13 +66,12 @@ const formatPkcs8 = (key: Key, mode: 'hex' | 'ascii') => {
       let binary = ''
       const len = bytes.byteLength
       for (let i = 0; i < len; i++) {
+        // eslint-disable-next-line security/detect-object-injection
         binary += String.fromCharCode(bytes[i])
       }
 
       // Convert to Base64
       const b64 = window.btoa(binary)
-
-      // Wrap in PEM headers
       const label = key.type === 'private' ? 'PRIVATE KEY' : 'PUBLIC KEY'
       const header = `-----BEGIN ${label}-----`
       const footer = `-----END ${label}-----`
@@ -98,6 +97,7 @@ const formatPkcs8 = (key: Key, mode: 'hex' | 'ascii') => {
     let binary = ''
     const len = key.data.byteLength
     for (let i = 0; i < len; i++) {
+      // eslint-disable-next-line security/detect-object-injection
       binary += String.fromCharCode(key.data[i])
     }
     const b64 = window.btoa(binary)

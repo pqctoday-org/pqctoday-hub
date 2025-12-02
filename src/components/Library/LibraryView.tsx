@@ -2,7 +2,8 @@ import React, { useMemo, useState } from 'react'
 import { libraryData, libraryMetadata } from '../../data/libraryData'
 import type { LibraryItem } from '../../data/libraryData'
 import { LibraryTreeTable } from './LibraryTreeTable'
-import clsx from 'clsx'
+import { FilterDropdown } from '../common/FilterDropdown'
+
 
 export const LibraryView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('All')
@@ -63,21 +64,7 @@ export const LibraryView: React.FC = () => {
 
   const tabs = ['All', ...sections]
 
-  const handleTabKeyDown = (e: React.KeyboardEvent, index: number) => {
-    if (e.key === 'ArrowRight') {
-      setActiveTab(tabs[(index + 1) % tabs.length])
-      document.getElementById(`tab-${tabs[(index + 1) % tabs.length]}`)?.focus()
-    } else if (e.key === 'ArrowLeft') {
-      setActiveTab(tabs[(index - 1 + tabs.length) % tabs.length])
-      document.getElementById(`tab-${tabs[(index - 1 + tabs.length) % tabs.length]}`)?.focus()
-    } else if (e.key === 'Home') {
-      setActiveTab(tabs[0])
-      document.getElementById(`tab-${tabs[0]}`)?.focus()
-    } else if (e.key === 'End') {
-      setActiveTab(tabs[tabs.length - 1])
-      document.getElementById(`tab-${tabs[tabs.length - 1]}`)?.focus()
-    }
-  }
+
 
   return (
     <div className="space-y-8">
@@ -94,33 +81,15 @@ export const LibraryView: React.FC = () => {
         )}
       </div>
 
-      {/* Tabs */}
-      <div
-        role="tablist"
-        className="flex flex-wrap gap-2 border-b border-white/10 pb-1"
-        aria-label="Library Categories"
-      >
-        {tabs.map((tab, index) => (
-          <button
-            key={tab}
-            id={`tab-${tab}`}
-            role="tab"
-            aria-selected={activeTab === tab}
-            aria-controls={`panel-${tab}`}
-            tabIndex={activeTab === tab ? 0 : -1}
-            onClick={() => setActiveTab(tab)}
-            onKeyDown={(e) => handleTabKeyDown(e, index)}
-            className={clsx(
-              'px-4 py-2 text-sm font-medium rounded-t-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary',
-              activeTab === tab
-                ? 'bg-white/10 text-white border-b-2 border-primary'
-                : 'text-muted hover:text-white hover:bg-white/5'
-            )}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+      {/* Dropdown */}
+      <FilterDropdown
+        items={tabs}
+        selectedId={activeTab}
+        onSelect={setActiveTab}
+        label="Select Category"
+        defaultLabel="All"
+        className="mb-8"
+      />
 
       {/* Content */}
       <div className="space-y-8">

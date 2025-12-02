@@ -82,6 +82,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setEnabledAlgorithms((prev: Record<string, Record<string, boolean>>) => ({
       ...prev,
       [category]: {
+        // eslint-disable-next-line security/detect-object-injection
         ...prev[category],
         // eslint-disable-next-line security/detect-object-injection
         [algorithm]: !prev[category][algorithm as keyof (typeof prev)[typeof category]],
