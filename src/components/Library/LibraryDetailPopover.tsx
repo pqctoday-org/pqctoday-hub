@@ -1,7 +1,7 @@
 import { ExternalLink, Calendar, X } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import type { LibraryItem } from '../../data/libraryData'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface LibraryDetailPopoverProps {
   isOpen: boolean
@@ -17,15 +17,7 @@ export const LibraryDetailPopover = ({
   position,
 }: LibraryDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
-  const [viewportWidth, setViewportWidth] = useState(window.innerWidth)
 
-  useEffect(() => {
-    const handleResize = () => setViewportWidth(window.innerWidth)
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
 
   // Close on click outside
   useEffect(() => {
@@ -63,55 +55,24 @@ export const LibraryDetailPopover = ({
 
   if (!isOpen || !item || !position) return null
 
-  // Popover width - responsive to viewport
-  const POPOVER_WIDTH = Math.min(576, viewportWidth * 0.9) // Max 36rem (576px) or 90% of viewport
-  const HALF_WIDTH = POPOVER_WIDTH / 2
-  const MARGIN = 20 // Safety margin from screen edges
-  const ESTIMATED_POPOVER_HEIGHT = 400 // Approximate height of popover
-
-  // Calculate left position with boundary checks
-  let left = position.x
-  let transformX = '-50%'
-
-  // Check left boundary
-  if (left - HALF_WIDTH < MARGIN) {
-    left = MARGIN
-    transformX = '0%' // Align left edge
-  }
-  // Check right boundary
-  else if (left + HALF_WIDTH > viewportWidth - MARGIN) {
-    left = viewportWidth - MARGIN
-    transformX = '-100%' // Align right edge
-  }
-
-  // Calculate vertical position with boundary checks
-  const top = position.y
-  let transformY = '-100%' // Default: position above the element
-  let translateYOffset = '-10px' // Small offset above
-
-  // Check if popover would extend above the top of the screen
-  if (position.y - ESTIMATED_POPOVER_HEIGHT < MARGIN) {
-    // Position below the element instead
-    transformY = '0%'
-    translateYOffset = '10px' // Small offset below
-  }
-
-  // Calculate position style to keep it on screen
+  // Center the popover
   const style: React.CSSProperties = {
     position: 'fixed',
-    left: left,
-    top: top,
-    transform: `translate(${transformX}, ${transformY}) translateY(${translateYOffset})`,
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
     zIndex: 9999, // Ensure it's on top of everything
     backgroundColor: '#111827', // Force opaque dark gray (Tailwind gray-900)
     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', // Strong shadow
-    maxWidth: `${POPOVER_WIDTH}px`, // Ensure it never exceeds calculated width
+    width: '60vw', // 60% of viewport width (20% margins on each side)
+    maxWidth: '1200px', // Optional max width for very large screens
+    maxHeight: '85vh', // Ensure it fits vertically
   }
 
   const content = (
     <div
       ref={popoverRef}
-      className="max-w-[36rem] w-[90vw] border border-white/20 rounded-xl overflow-hidden animate-in zoom-in-95 duration-200"
+      className="border border-white/20 rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col"
       style={style}
       role="dialog"
       aria-modal="true"
@@ -152,7 +113,7 @@ export const LibraryDetailPopover = ({
         </div>
 
         {/* Bottom Section: Metadata Grid (4 Columns) */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
           {/* Column 1: Status & Authors */}
           <div className="space-y-6">
             <div>
