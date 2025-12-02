@@ -62,7 +62,8 @@ export const TimelineView = () => {
         items={countryItems}
         selectedId={selectedCountry ? selectedCountry.countryName : 'All'}
         onSelect={(id) => {
-          const country = id === 'All' ? null : timelineData.find((c) => c.countryName === id) || null
+          const country =
+            id === 'All' ? null : timelineData.find((c) => c.countryName === id) || null
           handleCountrySelect(country)
         }}
         label="Select Region"

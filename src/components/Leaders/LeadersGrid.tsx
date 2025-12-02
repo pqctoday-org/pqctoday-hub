@@ -18,24 +18,35 @@ export const LeadersGrid = () => {
     // Helper to get flag code from country name (simple mapping)
     const getFlagCode = (country: string) => {
       const map: Record<string, string> = {
-        'USA': 'us', 'UK': 'gb', 'France': 'fr', 'Germany': 'de',
-        'Switzerland': 'ch', 'Canada': 'ca', 'Singapore': 'sg',
-        'Japan': 'jp', 'South Korea': 'kr', 'Australia': 'au',
-        'Israel': 'il', 'Belgium': 'be', 'Portugal': 'pt',
-        'Estonia/EU': 'eu', 'USA/Switzerland': 'us',
-        'France/Netherlands': 'fr', 'Germany/Netherlands': 'de',
-        'USA/Germany': 'us'
+        USA: 'us',
+        UK: 'gb',
+        France: 'fr',
+        Germany: 'de',
+        Switzerland: 'ch',
+        Canada: 'ca',
+        Singapore: 'sg',
+        Japan: 'jp',
+        'South Korea': 'kr',
+        Australia: 'au',
+        Israel: 'il',
+        Belgium: 'be',
+        Portugal: 'pt',
+        'Estonia/EU': 'eu',
+        'USA/Switzerland': 'us',
+        'France/Netherlands': 'fr',
+        'Germany/Netherlands': 'de',
+        'USA/Germany': 'us',
       }
       return map[country] || 'un' // default to UN flag or similar if needed
     }
 
     return [
       { id: 'All', label: 'All Countries', icon: null },
-      ...sortedCountries.map(c => ({
+      ...sortedCountries.map((c) => ({
         id: c,
         label: c,
-        icon: <CountryFlag code={getFlagCode(c)} width={20} height={12} />
-      }))
+        icon: <CountryFlag code={getFlagCode(c)} width={20} height={12} />,
+      })),
     ]
   }, [])
 

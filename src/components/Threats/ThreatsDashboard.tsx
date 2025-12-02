@@ -1,7 +1,25 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { threatsData } from '../../data/threatsData'
-import { Search, ChevronDown, ChevronUp, Plane, Landmark, Zap, Radio, Stethoscope, Shield, Car, Cpu, Briefcase, AlertOctagon, AlertTriangle, AlertCircle, Info, CheckCircle } from 'lucide-react'
+import {
+  Search,
+  ChevronDown,
+  ChevronUp,
+  Plane,
+  Landmark,
+  Zap,
+  Radio,
+  Stethoscope,
+  Shield,
+  Car,
+  Cpu,
+  Briefcase,
+  AlertOctagon,
+  AlertTriangle,
+  AlertCircle,
+  Info,
+  CheckCircle,
+} from 'lucide-react'
 import { logEvent } from '../../utils/analytics'
 import { FilterDropdown } from '../common/FilterDropdown'
 import clsx from 'clsx'
@@ -37,11 +55,11 @@ export const ThreatsDashboard = () => {
 
     return [
       { id: 'All', label: 'All Industries', icon: null },
-      ...sortedIndustries.map(ind => ({
+      ...sortedIndustries.map((ind) => ({
         id: ind,
         label: ind,
-        icon: getIndustryIcon(ind)
-      }))
+        icon: getIndustryIcon(ind),
+      })),
     ]
   }, [])
 
@@ -49,9 +67,17 @@ export const ThreatsDashboard = () => {
   const criticalityItems = useMemo(() => {
     return [
       { id: 'All', label: 'All Levels', icon: null },
-      { id: 'Critical', label: 'Critical', icon: <AlertOctagon size={16} className="text-red-400" /> },
+      {
+        id: 'Critical',
+        label: 'Critical',
+        icon: <AlertOctagon size={16} className="text-red-400" />,
+      },
       { id: 'High', label: 'High', icon: <AlertTriangle size={16} className="text-orange-400" /> },
-      { id: 'Medium-High', label: 'Medium-High', icon: <AlertCircle size={16} className="text-yellow-400" /> },
+      {
+        id: 'Medium-High',
+        label: 'Medium-High',
+        icon: <AlertCircle size={16} className="text-yellow-400" />,
+      },
       { id: 'Medium', label: 'Medium', icon: <Info size={16} className="text-blue-400" /> },
       { id: 'Low', label: 'Low', icon: <CheckCircle size={16} className="text-green-400" /> },
     ]
@@ -98,7 +124,13 @@ export const ThreatsDashboard = () => {
       // Actually, let's respect the sortField/sortDirection for the primary sort,
       // but if sortField is 'industry', we add a secondary sort for Criticality.
 
-      const criticalityOrder: Record<string, number> = { Critical: 3, High: 2, 'Medium-High': 1.5, Medium: 1, Low: 0 }
+      const criticalityOrder: Record<string, number> = {
+        Critical: 3,
+        High: 2,
+        'Medium-High': 1.5,
+        Medium: 1,
+        Low: 0,
+      }
       const getCriticalityVal = (c: string) => criticalityOrder[c] ?? 0
 
       if (sortField === 'industry') {

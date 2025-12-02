@@ -4,7 +4,6 @@ import type { LibraryItem } from '../../data/libraryData'
 import { LibraryTreeTable } from './LibraryTreeTable'
 import { FilterDropdown } from '../common/FilterDropdown'
 
-
 export const LibraryView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('All')
 
@@ -63,8 +62,6 @@ export const LibraryView: React.FC = () => {
   ]
 
   const tabs = ['All', ...sections]
-
-
 
   return (
     <div className="space-y-8">
