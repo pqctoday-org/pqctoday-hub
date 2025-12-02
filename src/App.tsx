@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Activity, Shield, Globe, Users, FlaskConical, BookOpen } from 'lucide-react'
+import { Activity, Shield, Globe, Users, FlaskConical, BookOpen, AlertTriangle } from 'lucide-react'
 import clsx from 'clsx'
 import './styles/App.css'
 import pqcLogo from './assets/PQCT_Logo_V01.png'
 import { logPageView } from './utils/analytics'
 
 import { TimelineView } from './components/Timeline/TimelineView'
-import { ImpactDashboard } from './components/Impacts/ImpactDashboard'
+import { ThreatsDashboard } from './components/Threats/ThreatsDashboard'
 import { LeadersGrid } from './components/Leaders/LeadersGrid'
 import { AlgorithmsView } from './components/Algorithms/AlgorithmsView'
 import { PlaygroundView } from './components/Playground/PlaygroundView'
 import { OpenSSLStudioView } from './components/OpenSSLStudio/OpenSSLStudioView'
 import { LibraryView } from './components/Library/LibraryView'
 
-type View = 'timeline' | 'algorithms' | 'playground' | 'openssl' | 'impacts' | 'leaders' | 'library'
+type View = 'timeline' | 'algorithms' | 'playground' | 'openssl' | 'threats' | 'leaders' | 'library'
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('timeline')
@@ -33,7 +33,7 @@ function App() {
     { id: 'library', label: 'Library', icon: BookOpen },
     { id: 'playground', label: 'Playground', icon: FlaskConical },
     { id: 'openssl', label: 'OpenSSL Studio', icon: Activity },
-    { id: 'impacts', label: 'Impacts', icon: Activity },
+    { id: 'threats', label: 'Threats', icon: AlertTriangle },
     { id: 'leaders', label: 'Leaders', icon: Users },
   ]
 
@@ -95,7 +95,7 @@ function App() {
             {currentView === 'library' && <LibraryView />}
             {currentView === 'playground' && <PlaygroundView />}
             {currentView === 'openssl' && <OpenSSLStudioView />}
-            {currentView === 'impacts' && <ImpactDashboard />}
+            {currentView === 'threats' && <ThreatsDashboard />}
             {currentView === 'leaders' && <LeadersGrid />}
           </motion.div>
         </AnimatePresence>

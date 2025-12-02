@@ -46,7 +46,11 @@ function getLatestTimelineFile(): { content: string; filename: string; date: Dat
   }
 
   // Use import.meta.glob to find all timeline CSV files
-  const modules = import.meta.glob('./timeline_*.csv', { as: 'raw', eager: true })
+  const modules = import.meta.glob('./timeline_*.csv', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  })
 
   // Extract filenames and parse dates
   const files = Object.keys(modules)
