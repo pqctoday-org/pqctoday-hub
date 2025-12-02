@@ -114,75 +114,77 @@ export const LibraryDetailPopover = ({
 
         {/* Bottom Section: Metadata Grid (4 Columns) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
-          {/* Column 1: Status & Authors */}
-          <div className="space-y-6">
-            <div>
-              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-1">
-                Status
-              </h4>
-              <p className="text-sm text-white">{item.documentStatus}</p>
-            </div>
-            <div>
-              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-1">
-                Authors/Org
-              </h4>
-              <p className="text-sm text-white">{item.authorsOrOrganization}</p>
+          {/* Status */}
+          <div className="flex flex-row items-baseline gap-2">
+            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+              Status:
+            </h4>
+            <p className="text-sm text-white">{item.documentStatus}</p>
+          </div>
+
+          {/* Authors/Org */}
+          <div className="flex flex-row items-baseline gap-2">
+            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+              Authors:
+            </h4>
+            <p className="text-sm text-white truncate" title={item.authorsOrOrganization}>
+              {item.authorsOrOrganization}
+            </p>
+          </div>
+
+          {/* Initial Pub. Date */}
+          <div className="flex flex-row items-center gap-2">
+            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+              Published:
+            </h4>
+            <div className="flex items-center gap-1.5 text-white text-sm">
+              <Calendar className="w-3 h-3 text-muted shrink-0" />
+              <span>{item.initialPublicationDate}</span>
             </div>
           </div>
 
-          {/* Column 2: Dates */}
-          <div className="space-y-6">
-            <div>
-              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-1">
-                Initial Pub. Date
-              </h4>
-              <div className="flex items-center gap-1.5 text-white text-sm">
-                <Calendar className="w-3 h-3 text-muted shrink-0" />
-                <span>{item.initialPublicationDate}</span>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-1">
-                Last Update
-              </h4>
-              <div className="flex items-center gap-1.5 text-white text-sm">
-                <Calendar className="w-3 h-3 text-muted shrink-0" />
-                <span>{item.lastUpdateDate}</span>
-              </div>
+          {/* Last Update */}
+          <div className="flex flex-row items-center gap-2">
+            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+              Updated:
+            </h4>
+            <div className="flex items-center gap-1.5 text-white text-sm">
+              <Calendar className="w-3 h-3 text-muted shrink-0" />
+              <span>{item.lastUpdateDate}</span>
             </div>
           </div>
 
-          {/* Column 3: Scope & Urgency */}
-          <div className="space-y-6">
-            {item.regionScope && (
-              <div>
-                <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-1">
-                  Region Scope
-                </h4>
-                <p className="text-sm text-gray-300">{item.regionScope}</p>
-              </div>
-            )}
-            {item.migrationUrgency && (
-              <div>
-                <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-1">
-                  Migration Urgency
-                </h4>
-                <p className="text-sm text-gray-300">{item.migrationUrgency}</p>
-              </div>
-            )}
-          </div>
+          {/* Region Scope */}
+          {item.regionScope && (
+            <div className="flex flex-row items-baseline gap-2">
+              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+                Region:
+              </h4>
+              <p className="text-sm text-gray-300">{item.regionScope}</p>
+            </div>
+          )}
 
-          {/* Column 4: Industries */}
-          <div className="space-y-6">
-            {item.applicableIndustries && (
-              <div>
-                <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-1">
-                  Applicable Industries
-                </h4>
-                <p className="text-sm text-gray-300">{item.applicableIndustries}</p>
-              </div>
-            )}
-          </div>
+          {/* Migration Urgency */}
+          {item.migrationUrgency && (
+            <div className="flex flex-row items-baseline gap-2">
+              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+                Urgency:
+              </h4>
+              <p className="text-sm text-gray-300">{item.migrationUrgency}</p>
+            </div>
+          )}
+
+          {/* Applicable Industries */}
+          {item.applicableIndustries && (
+            <div className="flex flex-row items-baseline gap-2">
+              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+                Industries:
+              </h4>
+              <p className="text-sm text-gray-300 truncate" title={Array.isArray(item.applicableIndustries) ? item.applicableIndustries.join(', ') : item.applicableIndustries}>
+                {Array.isArray(item.applicableIndustries) ? item.applicableIndustries.join(', ') : item.applicableIndustries}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Footer: Download Link */}
