@@ -8,36 +8,36 @@ export const LibraryView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('All')
 
   const groupedData = useMemo(() => {
-    const groups: Record<string, LibraryItem[]> = {
-      'Digital Signature': [],
-      KEM: [],
-      'PKI Certificate Management': [],
-      Protocols: [],
-      'General Recommendations': [],
-    }
+    const groups = new Map<string, LibraryItem[]>([
+      ['Digital Signature', []],
+      ['KEM', []],
+      ['PKI Certificate Management', []],
+      ['Protocols', []],
+      ['General Recommendations', []],
+    ])
 
     libraryData.forEach((item) => {
       const category = item.category || 'General Recommendations'
-      if (groups[category]) {
-        groups[category].push(item)
+      if (groups.has(category)) {
+        groups.get(category)!.push(item)
       } else {
         // Fallback for unexpected categories
-        groups['General Recommendations'].push(item)
+        groups.get('General Recommendations')!.push(item)
       }
     })
 
-    const categoryRoots: Record<string, LibraryItem[]> = {
-      'Digital Signature': [],
-      KEM: [],
-      'PKI Certificate Management': [],
-      Protocols: [],
-      'General Recommendations': [],
-    }
+    const categoryRoots = new Map<string, LibraryItem[]>([
+      ['Digital Signature', []],
+      ['KEM', []],
+      ['PKI Certificate Management', []],
+      ['Protocols', []],
+      ['General Recommendations', []],
+    ])
 
-    Object.keys(groups).forEach((key) => {
-      const itemsInGroup = groups[key]
+    Array.from(groups.keys()).forEach((key) => {
+      const itemsInGroup = groups.get(key)!
 
-      categoryRoots[key] = itemsInGroup.filter((item) => {
+      const roots = itemsInGroup.filter((item) => {
         // Check if any of its "parents" (based on dependencies) are in this group.
         // Since we don't have parent pointers, we can check if this item appears in the 'children' list of any OTHER item in this group.
 
@@ -47,6 +47,7 @@ export const LibraryView: React.FC = () => {
 
         return !isChildOfSomeoneInGroup
       })
+      categoryRoots.set(key, roots)
     })
 
     return categoryRoots
@@ -130,9 +131,9 @@ export const LibraryView: React.FC = () => {
                 <h3 className="text-xl font-semibold text-white border-b border-white/10 pb-2">
                   {section}
                 </h3>
-                {groupedData[section]?.length > 0 ? (
+                {(groupedData.get(section)?.length ?? 0) > 0 ? (
                   <LibraryTreeTable
-                    data={groupedData[section]}
+                    data={groupedData.get(section)!}
                     defaultSort={{ key: 'lastUpdateDate', direction: 'desc' }}
                   />
                 ) : (
@@ -151,9 +152,9 @@ export const LibraryView: React.FC = () => {
             <h3 className="text-xl font-semibold text-white border-b border-white/10 pb-2">
               {activeTab}
             </h3>
-            {groupedData[activeTab]?.length > 0 ? (
+            {(groupedData.get(activeTab)?.length ?? 0) > 0 ? (
               <LibraryTreeTable
-                data={groupedData[activeTab]}
+                data={groupedData.get(activeTab)!}
                 defaultSort={{ key: 'lastUpdateDate', direction: 'desc' }}
               />
             ) : (

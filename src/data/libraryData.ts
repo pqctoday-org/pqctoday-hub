@@ -153,7 +153,7 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
       .filter((d) => d)
 
     deps.forEach((depId) => {
-      let parent = itemMap.get(depId)
+      const parent = itemMap.get(depId)
       if (parent) {
         parent.children = parent.children || []
         if (!parent.children.includes(item)) {
