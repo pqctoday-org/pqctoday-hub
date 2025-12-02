@@ -1,4 +1,4 @@
-import { ExternalLink, Calendar, X } from 'lucide-react'
+import { ExternalLink, Calendar } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import type { LibraryItem } from '../../data/libraryData'
 import { useEffect, useRef } from 'react'
@@ -83,32 +83,25 @@ export const LibraryDetailPopover = ({
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">
-              {item.documentType}
+              {item.documentType?.trim()}
             </span>
-            <span className="text-xs text-muted">{item.referenceId}</span>
+            <span className="text-xs text-muted">{item.referenceId?.trim()}</span>
           </div>
           <h3 id="popover-title" className="text-lg font-bold text-white leading-tight">
-            {item.documentTitle}
+            {item.documentTitle?.trim()}
           </h3>
         </div>
-        <button
-          onClick={onClose}
-          className="text-muted hover:text-white transition-colors p-1 rounded hover:bg-white/10"
-          aria-label="Close details"
-        >
-          <X size={16} />
-        </button>
       </div>
 
       {/* Content */}
-      <div className="p-4 max-h-[70vh] overflow-y-auto space-y-4">
+      <div className="p-4 max-h-[70vh] overflow-y-auto space-y-2">
         {/* Top Section: Description (Full Width) */}
         <div>
-          <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-1">
+          <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-0">
             Description
           </h4>
           <p className="text-sm text-gray-300 leading-relaxed">
-            {item.shortDescription || 'No description available.'}
+            {item.shortDescription?.trim() || 'No description available.'}
           </p>
         </div>
 
@@ -119,7 +112,7 @@ export const LibraryDetailPopover = ({
             <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
               Status:
             </h4>
-            <p className="text-sm text-white">{item.documentStatus}</p>
+            <p className="text-sm text-white">{item.documentStatus?.trim()}</p>
           </div>
 
           {/* Authors/Org */}
@@ -127,8 +120,8 @@ export const LibraryDetailPopover = ({
             <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
               Authors:
             </h4>
-            <p className="text-sm text-white truncate" title={item.authorsOrOrganization}>
-              {item.authorsOrOrganization}
+            <p className="text-sm text-white truncate" title={item.authorsOrOrganization?.trim()}>
+              {item.authorsOrOrganization?.trim()}
             </p>
           </div>
 
@@ -139,7 +132,7 @@ export const LibraryDetailPopover = ({
             </h4>
             <div className="flex items-center gap-1.5 text-white text-sm">
               <Calendar className="w-3 h-3 text-muted shrink-0" />
-              <span>{item.initialPublicationDate}</span>
+              <span>{item.initialPublicationDate?.trim()}</span>
             </div>
           </div>
 
@@ -150,7 +143,7 @@ export const LibraryDetailPopover = ({
             </h4>
             <div className="flex items-center gap-1.5 text-white text-sm">
               <Calendar className="w-3 h-3 text-muted shrink-0" />
-              <span>{item.lastUpdateDate}</span>
+              <span>{item.lastUpdateDate?.trim()}</span>
             </div>
           </div>
 
@@ -160,7 +153,7 @@ export const LibraryDetailPopover = ({
               <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
                 Region:
               </h4>
-              <p className="text-sm text-gray-300">{item.regionScope}</p>
+              <p className="text-sm text-gray-300">{item.regionScope?.trim()}</p>
             </div>
           )}
 
@@ -170,7 +163,7 @@ export const LibraryDetailPopover = ({
               <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
                 Urgency:
               </h4>
-              <p className="text-sm text-gray-300">{item.migrationUrgency}</p>
+              <p className="text-sm text-gray-300">{item.migrationUrgency?.trim()}</p>
             </div>
           )}
 
@@ -180,8 +173,8 @@ export const LibraryDetailPopover = ({
               <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
                 Industries:
               </h4>
-              <p className="text-sm text-gray-300 truncate" title={Array.isArray(item.applicableIndustries) ? item.applicableIndustries.join(', ') : item.applicableIndustries}>
-                {Array.isArray(item.applicableIndustries) ? item.applicableIndustries.join(', ') : item.applicableIndustries}
+              <p className="text-sm text-gray-300 truncate" title={Array.isArray(item.applicableIndustries) ? item.applicableIndustries.join(', ') : (item.applicableIndustries as string)?.trim()}>
+                {Array.isArray(item.applicableIndustries) ? item.applicableIndustries.join(', ') : (item.applicableIndustries as string)?.trim()}
               </p>
             </div>
           )}
