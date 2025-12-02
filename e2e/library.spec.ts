@@ -68,10 +68,10 @@ test.describe('Library Feature', () => {
 
         // Verify popup content
         await expect(popup.getByText('Description')).toBeVisible()
-        await expect(popup.getByText('Status')).toBeVisible()
-        await expect(popup.getByText('Authors/Org')).toBeVisible()
-        await expect(popup.getByText('Initial Pub. Date')).toBeVisible()
-        await expect(popup.getByText('Last Update')).toBeVisible()
+        await expect(popup.getByText('Status:')).toBeVisible()
+        await expect(popup.getByText('Authors:')).toBeVisible()
+        await expect(popup.getByText('Published:')).toBeVisible()
+        await expect(popup.getByText('Updated:')).toBeVisible()
 
         // Verify 2-column grid layout for metadata
         await expect(popup.locator('.grid.grid-cols-2')).toBeVisible()

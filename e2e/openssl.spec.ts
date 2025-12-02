@@ -18,8 +18,8 @@ test.describe('OpenSSL Studio', () => {
     // Check logs for success (increase timeout for Firefox/CI)
     await expect(page.getByText(/File created: rsa-2048-/)).toBeVisible({ timeout: 30000 })
 
-    // Switch to File Manager to verify file existence
-    const fileManagerBtn = page.locator('button').filter({ hasText: 'File Manager' })
+    // Switch to Key Files to verify file existence
+    const fileManagerBtn = page.locator('button').filter({ hasText: 'Key Files' })
     await expect(fileManagerBtn).toBeEnabled()
     await fileManagerBtn.click({ force: true })
 
