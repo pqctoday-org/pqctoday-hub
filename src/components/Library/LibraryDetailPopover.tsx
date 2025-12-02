@@ -101,10 +101,10 @@ export const LibraryDetailPopover = ({
       </div>
 
       {/* Content */}
-      <div className="p-6 max-h-[70vh] overflow-y-auto space-y-6">
+      <div className="p-4 max-h-[70vh] overflow-y-auto space-y-4">
         {/* Top Section: Description (Full Width) */}
         <div>
-          <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">
+          <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-1">
             Description
           </h4>
           <p className="text-sm text-gray-300 leading-relaxed">
@@ -112,10 +112,10 @@ export const LibraryDetailPopover = ({
           </p>
         </div>
 
-        {/* Bottom Section: Metadata Grid (4 Columns) */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
+        {/* Bottom Section: Metadata Grid (2 Columns) */}
+        <div className="grid grid-cols-2 gap-1 w-full" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.25rem', width: '100%' }}>
           {/* Status */}
-          <div className="flex flex-row items-baseline gap-2">
+          <div className="flex flex-row items-baseline gap-2" style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: '0.5rem' }}>
             <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
               Status:
             </h4>
@@ -123,7 +123,7 @@ export const LibraryDetailPopover = ({
           </div>
 
           {/* Authors/Org */}
-          <div className="flex flex-row items-baseline gap-2">
+          <div className="flex flex-row items-baseline gap-2" style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: '0.5rem' }}>
             <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
               Authors:
             </h4>
@@ -133,7 +133,7 @@ export const LibraryDetailPopover = ({
           </div>
 
           {/* Initial Pub. Date */}
-          <div className="flex flex-row items-center gap-2">
+          <div className="flex flex-row items-center gap-2" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}>
             <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
               Published:
             </h4>
@@ -144,7 +144,7 @@ export const LibraryDetailPopover = ({
           </div>
 
           {/* Last Update */}
-          <div className="flex flex-row items-center gap-2">
+          <div className="flex flex-row items-center gap-2" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}>
             <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
               Updated:
             </h4>
@@ -156,7 +156,7 @@ export const LibraryDetailPopover = ({
 
           {/* Region Scope */}
           {item.regionScope && (
-            <div className="flex flex-row items-baseline gap-2">
+            <div className="flex flex-row items-baseline gap-2" style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: '0.5rem' }}>
               <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
                 Region:
               </h4>
@@ -166,7 +166,7 @@ export const LibraryDetailPopover = ({
 
           {/* Migration Urgency */}
           {item.migrationUrgency && (
-            <div className="flex flex-row items-baseline gap-2">
+            <div className="flex flex-row items-baseline gap-2" style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: '0.5rem' }}>
               <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
                 Urgency:
               </h4>
@@ -176,7 +176,7 @@ export const LibraryDetailPopover = ({
 
           {/* Applicable Industries */}
           {item.applicableIndustries && (
-            <div className="flex flex-row items-baseline gap-2">
+            <div className="flex flex-row items-baseline gap-2" style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: '0.5rem' }}>
               <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
                 Industries:
               </h4>
