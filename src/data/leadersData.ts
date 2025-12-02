@@ -13,7 +13,7 @@ export interface Leader {
 }
 
 // Helper to find the latest leaders CSV file
-function getLatestLeadersContent(): string | null {
+function getLatestLeadersFile(): { content: string; filename: string; date: Date } | null {
   // Use import.meta.glob to find all leaders CSV files
   const modules = import.meta.glob('./leaders_*.csv', {
     query: '?raw',
@@ -24,8 +24,8 @@ function getLatestLeadersContent(): string | null {
   // Extract filenames and parse dates
   const files = Object.keys(modules)
     .map((path) => {
-      // Path format: ./leaders_MMDDYYYY.csv
-      const match = path.match(/leaders_(\d{2})(\d{2})(\d{4})\.csv$/)
+      // Path format: ./leaders_MMDDYYYY.csv or ./leaders_MMDDYYYY_suffix.csv
+      const match = path.match(/leaders_(\d{2})(\d{2})(\d{4})(?:_.*)?\.csv$/)
       if (match) {
         const [, month, day, year] = match
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
@@ -44,11 +44,14 @@ function getLatestLeadersContent(): string | null {
   files.sort((a, b) => b.date.getTime() - a.date.getTime())
 
   console.log(`Loading latest leaders data from: ${files[0].path}`)
-  return files[0].content
+  // Extract just the filename from the path
+  const filename = files[0].path.split('/').pop() || files[0].path
+  return { content: files[0].content, filename, date: files[0].date }
 }
 
-const csvContent = getLatestLeadersContent()
-export const leadersData: Leader[] = csvContent ? parseLeadersCSV(csvContent) : []
+const latestFile = getLatestLeadersFile()
+export const leadersData: Leader[] = latestFile ? parseLeadersCSV(latestFile.content) : []
+export const leadersMetadata = latestFile ? { filename: latestFile.filename, lastUpdate: latestFile.date } : null
 
 function parseLeadersCSV(csvContent: string): Leader[] {
   const lines = csvContent.trim().split('\n')

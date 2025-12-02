@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { libraryData } from '../../data/libraryData'
+import { libraryData, libraryMetadata } from '../../data/libraryData'
 import type { LibraryItem } from '../../data/libraryData'
 import { LibraryTreeTable } from './LibraryTreeTable'
 import clsx from 'clsx'
@@ -85,6 +85,11 @@ export const LibraryView: React.FC = () => {
                 <p className="text-muted">
                     Explore the latest Post-Quantum Cryptography standards, drafts, and related documents.
                 </p>
+                {libraryMetadata && (
+                    <p className="text-xs text-muted/60 font-mono">
+                        Data Source: {libraryMetadata.filename} • Updated: {libraryMetadata.lastUpdate.toLocaleDateString()}
+                    </p>
+                )}
             </div>
 
             {/* Tabs */}
@@ -143,6 +148,6 @@ export const LibraryView: React.FC = () => {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     )
 }

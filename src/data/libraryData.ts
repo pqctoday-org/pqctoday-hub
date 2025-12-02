@@ -21,7 +21,7 @@ export interface LibraryItem {
 }
 
 // Helper to find the latest library CSV file
-function getLatestLibraryContent(): string | null {
+function getLatestLibraryFile(): { content: string; filename: string; date: Date } | null {
     // Use import.meta.glob to find all library CSV files
     const modules = import.meta.glob('./library_*.csv', {
         query: '?raw',
@@ -32,8 +32,8 @@ function getLatestLibraryContent(): string | null {
     // Extract filenames and parse dates
     const files = Object.keys(modules)
         .map((path) => {
-            // Path format: ./library_MMDDYYYY.csv
-            const match = path.match(/library_(\d{2})(\d{2})(\d{4})\.csv$/)
+            // Path format: ./library_MMDDYYYY.csv or ./library_MMDDYYYY_suffix.csv
+            const match = path.match(/library_(\d{2})(\d{2})(\d{4})(?:_.*)?\.csv$/)
             if (match) {
                 const [, month, day, year] = match
                 const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
@@ -52,11 +52,13 @@ function getLatestLibraryContent(): string | null {
     files.sort((a, b) => b.date.getTime() - a.date.getTime())
 
     console.log(`Loading latest library data from: ${files[0].path}`)
-    return files[0].content
+    const filename = files[0].path.split('/').pop() || files[0].path
+    return { content: files[0].content, filename, date: files[0].date }
 }
 
-const csvContent = getLatestLibraryContent()
-export const libraryData: LibraryItem[] = csvContent ? parseLibraryCSV(csvContent) : []
+const latestFile = getLatestLibraryFile()
+export const libraryData: LibraryItem[] = latestFile ? parseLibraryCSV(latestFile.content) : []
+export const libraryMetadata = latestFile ? { filename: latestFile.filename, lastUpdate: latestFile.date } : null
 
 function parseLibraryCSV(csvContent: string): LibraryItem[] {
     const lines = csvContent.trim().split('\n')

@@ -37,11 +37,12 @@ export const phaseColors: Record<Phase, { start: string; end: string; glow: stri
 import { MOCK_CSV_CONTENT } from './mockTimelineData'
 
 // Helper to find the latest timeline CSV file
-function getLatestTimelineContent(): string | null {
+// Helper to find the latest timeline CSV file
+function getLatestTimelineFile(): { content: string; filename: string; date: Date } | null {
   // Check for mock data environment variable
   if (import.meta.env.VITE_MOCK_DATA === 'true') {
     console.log('Using mock timeline data for testing')
-    return MOCK_CSV_CONTENT
+    return { content: MOCK_CSV_CONTENT, filename: 'MOCK_DATA', date: new Date() }
   }
 
   // Use import.meta.glob to find all timeline CSV files
@@ -50,8 +51,8 @@ function getLatestTimelineContent(): string | null {
   // Extract filenames and parse dates
   const files = Object.keys(modules)
     .map((path) => {
-      // Path format: ./timeline_MMDDYYYY.csv
-      const match = path.match(/timeline_(\d{2})(\d{2})(\d{4})\.csv$/)
+      // Path format: ./timeline_MMDDYYYY.csv or ./timeline_MMDDYYYY_suffix.csv
+      const match = path.match(/timeline_(\d{2})(\d{2})(\d{4})(?:_.*)?\.csv$/)
       if (match) {
         const [, month, day, year] = match
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
@@ -70,15 +71,19 @@ function getLatestTimelineContent(): string | null {
   files.sort((a, b) => b.date.getTime() - a.date.getTime())
 
   console.log(`Loading latest timeline data from: ${files[0].path}`)
-  return files[0].content
+  const filename = files[0].path.split('/').pop() || files[0].path
+  return { content: files[0].content, filename, date: files[0].date }
 }
 
 // Parse the CSV content to get the timeline data
 let parsedData: CountryData[] = []
+let metadata: { filename: string; lastUpdate: Date } | null = null
+
 try {
-  const csvContent = getLatestTimelineContent()
-  if (csvContent) {
-    parsedData = parseTimelineCSV(csvContent)
+  const latestFile = getLatestTimelineFile()
+  if (latestFile) {
+    parsedData = parseTimelineCSV(latestFile.content)
+    metadata = { filename: latestFile.filename, lastUpdate: latestFile.date }
   } else {
     parsedData = []
   }
@@ -89,6 +94,7 @@ try {
 }
 
 export const timelineData: CountryData[] = parsedData
+export const timelineMetadata = metadata
 
 /**
  * Converts timeline events into Gantt-compatible data with phases and milestones

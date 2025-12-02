@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { leadersData } from '../../data/leadersData'
+import { leadersData, leadersMetadata } from '../../data/leadersData'
 import { User, Building2, Briefcase } from 'lucide-react'
 import { logEvent } from '../../utils/analytics'
 import clsx from 'clsx'
@@ -24,10 +24,15 @@ export const LeadersGrid = () => {
     <div className="max-w-6xl mx-auto">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold mb-4 text-gradient">Transformation Leaders</h2>
-        <p className="text-muted max-w-2xl mx-auto mb-8">
+        <p className="text-muted max-w-2xl mx-auto mb-4">
           Meet the visionaries and organizations driving the global transition to Post-Quantum
           Cryptography.
         </p>
+        {leadersMetadata && (
+          <p className="text-xs text-muted/60 mb-8 font-mono">
+            Data Source: {leadersMetadata.filename} • Updated: {leadersMetadata.lastUpdate.toLocaleDateString()}
+          </p>
+        )}
 
         {/* Country Filter */}
         <div className="flex flex-wrap justify-center gap-2">
