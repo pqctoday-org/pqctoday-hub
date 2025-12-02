@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Activity, Shield, Globe, Users, FlaskConical } from 'lucide-react'
+import { Activity, Shield, Globe, Users, FlaskConical, BookOpen } from 'lucide-react'
 import clsx from 'clsx'
 import './styles/App.css'
 import pqcLogo from './assets/PQCT_Logo_V01.png'
@@ -12,8 +12,9 @@ import { LeadersGrid } from './components/Leaders/LeadersGrid'
 import { AlgorithmsView } from './components/Algorithms/AlgorithmsView'
 import { PlaygroundView } from './components/Playground/PlaygroundView'
 import { OpenSSLStudioView } from './components/OpenSSLStudio/OpenSSLStudioView'
+import { LibraryView } from './components/Library/LibraryView'
 
-type View = 'timeline' | 'algorithms' | 'playground' | 'openssl' | 'impacts' | 'leaders'
+type View = 'timeline' | 'algorithms' | 'playground' | 'openssl' | 'impacts' | 'leaders' | 'library'
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('timeline')
@@ -29,6 +30,7 @@ function App() {
   const navItems = [
     { id: 'timeline', label: 'Timeline', icon: Globe },
     { id: 'algorithms', label: 'Algorithms', icon: Shield },
+    { id: 'library', label: 'Library', icon: BookOpen },
     { id: 'playground', label: 'Playground', icon: FlaskConical },
     { id: 'openssl', label: 'OpenSSL Studio', icon: Activity },
     { id: 'impacts', label: 'Impacts', icon: Activity },
@@ -90,6 +92,7 @@ function App() {
           >
             {currentView === 'timeline' && <TimelineView />}
             {currentView === 'algorithms' && <AlgorithmsView />}
+            {currentView === 'library' && <LibraryView />}
             {currentView === 'playground' && <PlaygroundView />}
             {currentView === 'openssl' && <OpenSSLStudioView />}
             {currentView === 'impacts' && <ImpactDashboard />}
