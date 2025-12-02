@@ -54,15 +54,15 @@ const PlaygroundContent = () => {
       {/* Tab Navigation */}
       <div className="flex space-x-1 mb-6 bg-white/5 p-1 rounded-xl shrink-0 overflow-x-auto">
         <button
-          onClick={() => handleTabChange('settings')}
+          onClick={() => handleTabChange('keystore')}
           className={clsx(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
-            activeTab === 'settings'
+            activeTab === 'keystore'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted hover:text-white hover:bg-white/5'
           )}
         >
-          <Settings size={16} /> Settings
+          <KeyIcon size={16} /> Key Store ({keyStore.length})
         </button>
         <button
           onClick={() => handleTabChange('data')}
@@ -109,15 +109,26 @@ const PlaygroundContent = () => {
           <FileSignature size={16} /> Sign & Verify
         </button>
         <button
-          onClick={() => handleTabChange('keystore')}
+          onClick={() => handleTabChange('acvp')}
           className={clsx(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
-            activeTab === 'keystore'
+            activeTab === 'acvp'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted hover:text-white hover:bg-white/5'
           )}
         >
-          <KeyIcon size={16} /> Key Store ({keyStore.length})
+          <ShieldCheck size={16} /> ACVP
+        </button>
+        <button
+          onClick={() => handleTabChange('settings')}
+          className={clsx(
+            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
+            activeTab === 'settings'
+              ? 'bg-primary/20 text-primary shadow-sm'
+              : 'text-muted hover:text-white hover:bg-white/5'
+          )}
+        >
+          <Settings size={16} /> Settings
         </button>
         <button
           onClick={() => handleTabChange('logs')}
@@ -129,17 +140,6 @@ const PlaygroundContent = () => {
           )}
         >
           <FileText size={16} /> Logs
-        </button>
-        <button
-          onClick={() => handleTabChange('acvp')}
-          className={clsx(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
-            activeTab === 'acvp'
-              ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted hover:text-white hover:bg-white/5'
-          )}
-        >
-          <ShieldCheck size={16} /> ACVP
         </button>
       </div>
 

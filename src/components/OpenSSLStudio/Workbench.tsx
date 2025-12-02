@@ -8,7 +8,6 @@ import {
   FileText,
   Shield,
   Info,
-  Folder,
   Download,
   Trash2,
   Edit2,
@@ -283,6 +282,20 @@ export const Workbench = () => {
           </button>
           <button
             onClick={() => {
+              setCategory('files')
+              logEvent('OpenSSL Studio', 'Select Category', 'Key Files')
+            }}
+            className={clsx(
+              'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
+              category === 'files'
+                ? 'bg-primary/20 border-primary text-primary'
+                : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
+            )}
+          >
+            <FileKey size={16} /> Key Files
+          </button>
+          <button
+            onClick={() => {
               setCategory('req')
               logEvent('OpenSSL Studio', 'Select Category', 'CSR')
             }}
@@ -350,20 +363,6 @@ export const Workbench = () => {
             )}
           >
             <Info size={16} /> Version Info
-          </button>
-          <button
-            onClick={() => {
-              setCategory('files')
-              logEvent('OpenSSL Studio', 'Select Category', 'File Manager')
-            }}
-            className={clsx(
-              'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
-              category === 'files'
-                ? 'bg-primary/20 border-primary text-primary'
-                : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
-            )}
-          >
-            <Folder size={16} /> File Manager
           </button>
         </div>
       </div>
@@ -719,8 +718,8 @@ export const Workbench = () => {
 
           {/* Show hash algorithm selector only for classical keys */}
           {selectedKeyFile &&
-          !selectedKeyFile.includes('mldsa') &&
-          !selectedKeyFile.includes('slhdsa') ? (
+            !selectedKeyFile.includes('mldsa') &&
+            !selectedKeyFile.includes('slhdsa') ? (
             <div className="space-y-3">
               <label htmlFor="sig-hash-algo-select" className="text-xs text-muted block">
                 Hash Algorithm
