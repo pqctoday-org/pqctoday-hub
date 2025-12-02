@@ -78,7 +78,15 @@ export const CountrySelector = ({
             className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors min-w-[200px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', fontWeight: 'bold' }}>
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '24px',
+                  fontWeight: 'bold',
+                }}
+              >
                 {showAllCountries ? (
                   <Globe size={16} className="text-primary" />
                 ) : selectedCountry ? (
@@ -139,7 +147,12 @@ export const CountrySelector = ({
                   )}
                   style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
-                  <CountryFlag code={country.flagCode} width={20} height={12} style={{ opacity: 0.8 }} />
+                  <CountryFlag
+                    code={country.flagCode}
+                    width={20}
+                    height={12}
+                    style={{ opacity: 0.8 }}
+                  />
                   {country.countryName}
                 </button>
               ))}

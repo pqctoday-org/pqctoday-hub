@@ -51,7 +51,9 @@ function getLatestLeadersFile(): { content: string; filename: string; date: Date
 
 const latestFile = getLatestLeadersFile()
 export const leadersData: Leader[] = latestFile ? parseLeadersCSV(latestFile.content) : []
-export const leadersMetadata = latestFile ? { filename: latestFile.filename, lastUpdate: latestFile.date } : null
+export const leadersMetadata = latestFile
+  ? { filename: latestFile.filename, lastUpdate: latestFile.date }
+  : null
 
 function parseLeadersCSV(csvContent: string): Leader[] {
   const lines = csvContent.trim().split('\n')

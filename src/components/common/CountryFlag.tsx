@@ -22,7 +22,11 @@ export const CountryFlag = ({ code, className, style, alt, width, height }: Coun
 
   if (error) {
     // Fallback to text code if image fails
-    return <span className={clsx('font-mono font-bold text-xs', className)} style={style}>{code}</span>
+    return (
+      <span className={clsx('font-mono font-bold text-xs', className)} style={style}>
+        {code}
+      </span>
+    )
   }
 
   return (

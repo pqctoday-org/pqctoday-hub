@@ -30,7 +30,8 @@ export const LeadersGrid = () => {
         </p>
         {leadersMetadata && (
           <p className="text-xs text-muted/60 mb-8 font-mono">
-            Data Source: {leadersMetadata.filename} • Updated: {leadersMetadata.lastUpdate.toLocaleDateString()}
+            Data Source: {leadersMetadata.filename} • Updated:{' '}
+            {leadersMetadata.lastUpdate.toLocaleDateString()}
           </p>
         )}
 

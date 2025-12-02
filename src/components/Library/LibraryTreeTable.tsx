@@ -1,6 +1,14 @@
 import React, { useState } from 'react'
 import type { LibraryItem } from '../../data/libraryData'
-import { ChevronRight, ChevronDown, ExternalLink, ArrowUpDown, ArrowUp, ArrowDown, Info } from 'lucide-react'
+import {
+  ChevronRight,
+  ChevronDown,
+  ExternalLink,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Info,
+} from 'lucide-react'
 import { LibraryDetailPopover } from './LibraryDetailPopover'
 
 interface LibraryTreeTableProps {
@@ -76,16 +84,25 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
 
       const rows = [
         <tr key={item.referenceId} className="hover:bg-gray-50 border-b border-gray-100">
-          <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900" style={{ paddingLeft: `${level * 20 + 16}px` }}>
+          <td
+            className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900"
+            style={{ paddingLeft: `${level * 20 + 16}px` }}
+          >
             <div className="flex items-center gap-2">
               {hasChildren ? (
                 <button
                   onClick={() => toggleExpand(item.referenceId)}
                   className="p-1 hover:bg-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-primary"
                   aria-expanded={isExpanded}
-                  aria-label={isExpanded ? `Collapse ${item.documentTitle}` : `Expand ${item.documentTitle}`}
+                  aria-label={
+                    isExpanded ? `Collapse ${item.documentTitle}` : `Expand ${item.documentTitle}`
+                  }
                 >
-                  {isExpanded ? <ChevronDown size={16} aria-hidden="true" /> : <ChevronRight size={16} aria-hidden="true" />}
+                  {isExpanded ? (
+                    <ChevronDown size={16} aria-hidden="true" />
+                  ) : (
+                    <ChevronRight size={16} aria-hidden="true" />
+                  )}
                 </button>
               ) : (
                 <span className="w-6" /> // Spacer
@@ -123,7 +140,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
               </button>
             </div>
           </td>
-        </tr>
+        </tr>,
       ]
 
       if (isExpanded && hasChildren) {
@@ -152,7 +169,13 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
                 <th
                   key={header.key as string}
                   scope="col"
-                  aria-sort={sortConfig.key === header.key ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
+                  aria-sort={
+                    sortConfig.key === header.key
+                      ? sortConfig.direction === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                  }
                   className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
                   {header.key !== 'actions' ? (
@@ -162,9 +185,17 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
                     >
                       {header.label}
                       {sortConfig.key === header.key ? (
-                        sortConfig.direction === 'asc' ? <ArrowUp size={14} aria-hidden="true" /> : <ArrowDown size={14} aria-hidden="true" />
+                        sortConfig.direction === 'asc' ? (
+                          <ArrowUp size={14} aria-hidden="true" />
+                        ) : (
+                          <ArrowDown size={14} aria-hidden="true" />
+                        )
                       ) : (
-                        <ArrowUpDown size={14} className="text-gray-300 group-hover:text-gray-500" aria-hidden="true" />
+                        <ArrowUpDown
+                          size={14}
+                          className="text-gray-300 group-hover:text-gray-500"
+                          aria-hidden="true"
+                        />
                       )}
                     </button>
                   ) : (
@@ -174,9 +205,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
-            {renderRows(data)}
-          </tbody>
+          <tbody className="divide-y divide-gray-200 bg-white">{renderRows(data)}</tbody>
         </table>
       </div>
 

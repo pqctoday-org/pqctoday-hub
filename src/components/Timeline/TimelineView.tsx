@@ -1,5 +1,10 @@
 import { useState, useMemo } from 'react'
-import { timelineData, timelineMetadata, transformToGanttData, type CountryData } from '../../data/timelineData'
+import {
+  timelineData,
+  timelineMetadata,
+  transformToGanttData,
+  type CountryData,
+} from '../../data/timelineData'
 import { CountrySelector } from './CountrySelector'
 import { SimpleGanttChart } from './SimpleGanttChart'
 import { GanttLegend } from './GanttLegend'
@@ -36,7 +41,8 @@ export const TimelineView = () => {
         </p>
         {timelineMetadata && (
           <p className="text-xs text-muted/60 font-mono">
-            Data Source: {timelineMetadata.filename} • Updated: {timelineMetadata.lastUpdate.toLocaleDateString()}
+            Data Source: {timelineMetadata.filename} • Updated:{' '}
+            {timelineMetadata.lastUpdate.toLocaleDateString()}
           </p>
         )}
       </div>
@@ -57,6 +63,6 @@ export const TimelineView = () => {
       <div className="mt-8">
         <GanttLegend />
       </div>
-    </div >
+    </div>
   )
 }
