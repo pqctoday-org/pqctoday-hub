@@ -71,7 +71,10 @@ test.describe('OpenSSL Studio - New Features (Enc, KEM, PKCS12)', () => {
 
     // Select Ciphertext
     await page.waitForTimeout(500)
-    const ctOption = page.locator('#kem-infile-select option').filter({ hasText: 'ciphertext.bin' }).first()
+    const ctOption = page
+      .locator('#kem-infile-select option')
+      .filter({ hasText: 'ciphertext.bin' })
+      .first()
     const ctVal = await ctOption.getAttribute('value')
     if (ctVal) await page.selectOption('#kem-infile-select', ctVal)
 
