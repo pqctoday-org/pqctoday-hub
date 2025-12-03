@@ -48,11 +48,13 @@
 ## 3. Data Requirements
 
 ### 3.1 Data Source
+
 - **File**: `src/data/quantum_threats_hsm_industries_YYYYMMDD.csv`
 - **Format**: CSV (Comma Separated Values)
 - **Update Frequency**: Ad-hoc updates based on new research.
 
 ### 3.2 Fields
+
 - **Industry**: Target sector (e.g., "Financial Services / Banking").
 - **Threat ID**: Unique identifier (e.g., "FIN-001").
 - **Description**: Detailed description of the quantum threat.
@@ -67,6 +69,7 @@
 ## 4. Test Plan
 
 ### 4.1 Automated Testing
+
 - **Unit Tests**:
   - Verify CSV parsing logic handles commas within quotes.
   - Verify correct mapping of CSV columns to `ThreatData` objects.
@@ -77,7 +80,7 @@
   - Verify that the "Ref" column/link is **not** present in the UI.
 
 ### 4.2 Manual Verification
+
 - **Visual Inspection**:
   - Check for layout issues in the Threats table.
   - Verify filtering by Industry and Criticality works as expected.
-

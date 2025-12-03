@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Activity, Shield, Globe, Users, FlaskConical, BookOpen, AlertTriangle, Info } from 'lucide-react'
+import {
+  Activity,
+  Shield,
+  Globe,
+  Users,
+  FlaskConical,
+  BookOpen,
+  AlertTriangle,
+  Info,
+} from 'lucide-react'
 import clsx from 'clsx'
 import './styles/App.css'
 import pqcLogo from './assets/PQCT_Logo_V01.png'
@@ -15,7 +24,15 @@ import { OpenSSLStudioView } from './components/OpenSSLStudio/OpenSSLStudioView'
 import { LibraryView } from './components/Library/LibraryView'
 import { AboutView } from './components/About/AboutView'
 
-type View = 'timeline' | 'algorithms' | 'playground' | 'openssl' | 'threats' | 'leaders' | 'library' | 'about'
+type View =
+  | 'timeline'
+  | 'algorithms'
+  | 'playground'
+  | 'openssl'
+  | 'threats'
+  | 'leaders'
+  | 'library'
+  | 'about'
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('timeline')
