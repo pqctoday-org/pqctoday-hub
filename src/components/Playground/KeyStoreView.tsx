@@ -79,20 +79,19 @@ export const KeyStoreView = ({
               </button>
             </>
           )}
-          <label
+          <button
             className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted hover:text-white cursor-pointer transition-colors flex items-center gap-2"
-            tabIndex={0}
-            role="button"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                e.currentTarget.click()
-              }
-            }}
+            onClick={() => document.getElementById('restore-keys-input')?.click()}
           >
             <Upload size={14} /> Import ZIP
-            <input type="file" accept=".zip" onChange={onRestoreKeys} className="hidden" />
-          </label>
+            <input
+              id="restore-keys-input"
+              type="file"
+              accept=".zip"
+              onChange={onRestoreKeys}
+              className="hidden"
+            />
+          </button>
         </div>
       </div>
 

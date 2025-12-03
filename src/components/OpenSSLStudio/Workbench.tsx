@@ -270,7 +270,7 @@ export const Workbench = () => {
     selectedDataFile,
     selectedSigFile,
     selectedCsrKeyFile,
-    selectedCsrKeyFile,
+
     encAction,
     encCipher,
     encInFile,
@@ -1282,8 +1282,8 @@ export const Workbench = () => {
 
           {/* Show hash algorithm selector only for classical keys */}
           {selectedKeyFile &&
-          !selectedKeyFile.includes('mldsa') &&
-          !selectedKeyFile.includes('slhdsa') ? (
+            !selectedKeyFile.includes('mldsa') &&
+            !selectedKeyFile.includes('slhdsa') ? (
             <div className="space-y-3">
               <label htmlFor="sig-hash-algo-select" className="text-xs text-muted block">
                 Hash Algorithm
@@ -1391,19 +1391,13 @@ export const Workbench = () => {
               File Manager
             </span>
             <div className="flex gap-2">
-              <label
+              <button
                 className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted hover:text-white cursor-pointer transition-colors flex items-center gap-2"
-                tabIndex={0}
-                role="button"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    e.currentTarget.click()
-                  }
-                }}
+                onClick={() => document.getElementById('add-file-input')?.click()}
               >
                 <Plus size={14} /> Add File
                 <input
+                  id="add-file-input"
                   type="file"
                   onChange={async (e) => {
                     const file = e.target.files?.[0]
@@ -1438,7 +1432,7 @@ export const Workbench = () => {
                   }}
                   className="hidden"
                 />
-              </label>
+              </button>
               <button
                 onClick={handleBackupAllFiles}
                 disabled={useOpenSSLStore.getState().files.length === 0}
@@ -1447,20 +1441,19 @@ export const Workbench = () => {
               >
                 <Archive size={14} /> Backup All
               </button>
-              <label
+              <button
                 className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted hover:text-white cursor-pointer transition-colors flex items-center gap-2"
-                tabIndex={0}
-                role="button"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    e.currentTarget.click()
-                  }
-                }}
+                onClick={() => document.getElementById('import-zip-input')?.click()}
               >
                 <Upload size={14} /> Import ZIP
-                <input type="file" accept=".zip" onChange={handleImportFiles} className="hidden" />
-              </label>
+                <input
+                  id="import-zip-input"
+                  type="file"
+                  accept=".zip"
+                  onChange={handleImportFiles}
+                  className="hidden"
+                />
+              </button>
             </div>
           </div>
 
