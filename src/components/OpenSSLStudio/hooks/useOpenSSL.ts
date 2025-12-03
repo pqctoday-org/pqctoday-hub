@@ -43,7 +43,9 @@ export const useOpenSSL = () => {
               ? 'key'
               : event.data.name.endsWith('.csr')
                 ? 'csr'
-                : 'text',
+                : event.data.name.endsWith('.enc')
+                  ? 'binary'
+                  : 'text',
             content: event.data.data,
             size: event.data.data.byteLength,
             timestamp: Date.now(),

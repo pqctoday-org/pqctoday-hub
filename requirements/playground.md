@@ -63,6 +63,10 @@ The Interactive Playground provides a hands-on environment for testing post-quan
   - **Font**: Fixed-width (`Courier New`) for precise alignment.
 - **Management Options**:
   - Clear all keys button.
+  - **Backup & Restore (✨ NEW)**:
+    - **Backup All**: Export all keys to a ZIP archive (`playground-keys-backup-YYYY-MM-DD.zip`).
+    - **Import ZIP**: Restore keys from a previously created backup.
+    - **Logging**: Operations are logged to the activity log.
 - **Empty State**: Message when no keys exist.
 
 ### 2.4 ML-KEM & Encryption Operations (Merged Tab)
@@ -172,8 +176,8 @@ Comprehensive enable/disable controls for all cryptographic algorithms:
 
 **Symmetric Encryption:**
 
-- AES-128-GCM (FIPS 197) - ✅ Enabled (Web Crypto)
-- AES-256-GCM (FIPS 197) - ✅ Enabled (Web Crypto)
+- **AES-128-GCM (FIPS 197)** - ✅ Enabled (Web Crypto)
+- **AES-256-GCM (FIPS 197)** - ✅ Enabled (Web Crypto)
 
 **Hash Algorithms:**
 
@@ -208,6 +212,7 @@ Comprehensive enable/disable controls for all cryptographic algorithms:
 - Resizable columns with drag handles
 - Row selection for detailed view
 - Clear All Keys button
+- **Backup Controls**: "Backup All" and "Import ZIP" buttons
 
 **Detail View** (when key selected):
 
@@ -222,9 +227,9 @@ Comprehensive enable/disable controls for all cryptographic algorithms:
 - **Sortable Columns**: Timestamp, Key Label, Operation, Result, Execution Time
 - **Resizable Columns**: User can drag column borders
 - **Color-Coded Performance**:
-  - Green (\u003c100ms)
+  - Green (<100ms)
   - Yellow (100-500ms)
-  - Red (\u003e500ms)
+  - Red (>500ms)
 - **Newest First**: Latest operations at top
 - **Clear Log** button
 - **Persistence**: Logs maintained across tab switches
@@ -683,3 +688,21 @@ if (!isWasmSupported) {
 
 - **Explicit Sizes:** Keys now show their full size/curve (e.g., "RSA-2048", "ECC-P256") instead of generic names.
 - **Consistency:** Matches the naming convention used for PQC keys (e.g., "ML-KEM-768").
+
+### 10.10 Backup & Restore (✅ Complete)
+
+**Change:** Added functionality to backup and restore keys in the Key Store.
+
+**Features:**
+
+- **Backup All Keys:**
+  - Exports all generated keys (PQC and Classical) to a ZIP archive.
+  - Filename format: `playground-keys-backup-YYYY-MM-DD.zip`.
+  - Includes full key data and metadata.
+- **Import ZIP:**
+  - Restores keys from a previously created backup ZIP.
+  - Preserves key names, types, and values.
+  - Logs import success and count to the activity log.
+- **UI Integration:**
+  - "Backup All" button in Key Store header (disabled if empty).
+  - "Import ZIP" button always visible.

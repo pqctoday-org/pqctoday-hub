@@ -15,7 +15,7 @@ export const KeyStoreTab: React.FC = () => {
     setClassicalAlgorithm,
   } = useSettingsContext()
 
-  const { keyStore, generateKeys, classicalLoading, generateClassicalKeys, clearKeys } =
+  const { keyStore, generateKeys, classicalLoading, generateClassicalKeys, clearKeys, backupAllKeys, restoreKeys } =
     useKeyStoreContext()
 
   return (
@@ -36,6 +36,8 @@ export const KeyStoreTab: React.FC = () => {
       onClassicalAlgorithmChange={(algo) => setClassicalAlgorithm(algo as ClassicalAlgorithm)}
       onGenerateClassicalKeys={generateClassicalKeys}
       onClearKeys={clearKeys}
+      onBackupAllKeys={backupAllKeys}
+      onRestoreKeys={restoreKeys}
     />
   )
 }

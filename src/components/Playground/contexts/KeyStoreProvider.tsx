@@ -3,6 +3,7 @@ import type { Key } from '../../../types'
 import { KeyStoreContext } from './KeyStoreContext'
 import { useSettingsContext } from './SettingsContext'
 import { useKeyGeneration } from '../hooks/useKeyGeneration'
+import JSZip from 'jszip'
 
 export const KeyStoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {
@@ -90,6 +91,109 @@ export const KeyStoreProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     })
   }
 
+  const backupAllKeys = async () => {
+    if (keyStore.length === 0) {
+      addLog({
+        keyLabel: 'System',
+        operation: 'Backup Keys',
+        result: 'No keys to backup',
+        executionTime: 0,
+      })
+      return
+    }
+
+    try {
+      const zip = new JSZip()
+
+      // Add all keys to the zip
+      keyStore.forEach((key) => {
+        const filename = `${key.name.replace(/\s+/g, '_')}.txt`
+        zip.file(filename, key.value)
+      })
+
+      // Generate the zip file
+      const blob = await zip.generateAsync({ type: 'blob' })
+
+      // Create download link
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `playground-keys-backup-${new Date().toISOString().slice(0, 10)}.zip`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+
+      addLog({
+        keyLabel: 'System',
+        operation: 'Backup Keys',
+        result: `Backed up ${keyStore.length} key(s) to ${a.download}`,
+        executionTime: 0,
+      })
+    } catch (error) {
+      addLog({
+        keyLabel: 'System',
+        operation: 'Backup Keys',
+        result: `Failed to create backup: ${error}`,
+        executionTime: 0,
+      })
+    }
+  }
+
+  const restoreKeys = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    try {
+      const zip = new JSZip()
+      const contents = await zip.loadAsync(file)
+
+      let importedCount = 0
+      const promises: Promise<void>[] = []
+      const newKeys: Key[] = []
+
+      contents.forEach((relativePath, zipEntry) => {
+        if (!zipEntry.dir && relativePath.endsWith('.txt')) {
+          promises.push(
+            zipEntry.async('string').then((content) => {
+              const keyName = relativePath.replace('.txt', '').replace(/_/g, ' ')
+              const newKey: Key = {
+                id: `imported-${Date.now()}-${importedCount}`,
+                name: keyName,
+                type: 'private', // Default to private for imported keys
+                value: content,
+                algorithm: 'Imported',
+                timestamp: Date.now(),
+              }
+              newKeys.push(newKey)
+              importedCount++
+            })
+          )
+        }
+      })
+
+      await Promise.all(promises)
+      setKeyStore((prev) => [...prev, ...newKeys])
+
+      addLog({
+        keyLabel: 'System',
+        operation: 'Restore Keys',
+        result: `Imported ${importedCount} key(s) from ${file.name}`,
+        executionTime: 0,
+      })
+
+      // Reset the input
+      event.target.value = ''
+    } catch (error) {
+      addLog({
+        keyLabel: 'System',
+        operation: 'Restore Keys',
+        result: `Failed to import keys: ${error}`,
+        executionTime: 0,
+      })
+    }
+  }
+
   return (
     <KeyStoreContext.Provider
       value={{
@@ -112,6 +216,8 @@ export const KeyStoreProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         importKey,
         deleteKey,
         downloadKey,
+        backupAllKeys,
+        restoreKeys,
       }}
     >
       {children}

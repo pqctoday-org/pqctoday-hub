@@ -43,14 +43,14 @@ export interface SettingsContextType {
 
   // UI State
   activeTab:
-    | 'settings'
-    | 'data'
-    | 'kem_ops'
-    | 'sign_verify'
-    | 'keystore'
-    | 'logs'
-    | 'acvp'
-    | 'symmetric'
+  | 'settings'
+  | 'data'
+  | 'kem_ops'
+  | 'sign_verify'
+  | 'keystore'
+  | 'logs'
+  | 'acvp'
+  | 'symmetric'
   setActiveTab: (
     tab:
       | 'settings'
@@ -155,4 +155,6 @@ export interface KeyStoreContextType {
   importKey: (key: Key) => void
   deleteKey: (id: string) => void
   downloadKey: (id: string) => void
+  backupAllKeys: () => Promise<void>
+  restoreKeys: (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>
 }

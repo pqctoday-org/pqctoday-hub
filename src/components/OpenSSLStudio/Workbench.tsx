@@ -13,6 +13,12 @@ import {
   Edit2,
   ArrowUpDown,
   FileKey,
+  Lock,
+  FileArchive,
+  Database,
+  Archive,
+  Upload,
+  Plus,
 } from 'lucide-react'
 import {
   sanitizeCountryCode,
@@ -21,12 +27,13 @@ import {
 } from '../../utils/inputValidation'
 import { logEvent } from '../../utils/analytics'
 import clsx from 'clsx'
+import JSZip from 'jszip'
 
 export const Workbench = () => {
   const { setCommand, isProcessing, addLog } = useOpenSSLStore()
   const { executeCommand } = useOpenSSL()
   const [category, setCategory] = useState<
-    'genpkey' | 'req' | 'x509' | 'enc' | 'dgst' | 'rand' | 'version' | 'files'
+    'genpkey' | 'req' | 'x509' | 'enc' | 'dgst' | 'rand' | 'version' | 'files' | 'kem' | 'pkcs12'
   >('genpkey')
 
   // Key Gen State
@@ -61,6 +68,27 @@ export const Workbench = () => {
   const [sortBy, setSortBy] = useState<'timestamp' | 'type' | 'name'>('timestamp')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
+  // Encryption State
+  const [encAction, setEncAction] = useState<'encrypt' | 'decrypt'>('encrypt')
+  const [encCipher, setEncCipher] = useState('aes-256-cbc')
+  const [encInFile, setEncInFile] = useState('')
+  const [encOutFile, setEncOutFile] = useState('')
+  const [encShowIV, setEncShowIV] = useState(false)
+  const [encCustomIV, setEncCustomIV] = useState('')
+
+  // KEM State
+  const [kemAction, setKemAction] = useState<'encap' | 'decap'>('encap')
+  const [kemKeyFile, setKemKeyFile] = useState('')
+  const [kemInFile, setKemInFile] = useState('') // For decap (ciphertext)
+  const [kemOutFile, setKemOutFile] = useState('') // For encap (ciphertext) or decap (secret)
+
+  // PKCS#12 State
+  const [p12Action, setP12Action] = useState<'export' | 'import'>('export')
+  const [p12CertFile, setP12CertFile] = useState('')
+  const [p12KeyFile, setP12KeyFile] = useState('')
+  const [p12File, setP12File] = useState('')
+  const [p12Pass, setP12Pass] = useState('')
+
   // Auto-select latest signature file when switching to verify or when files change
   // Auto-select latest signature file when switching to verify or when files change
   const files = useOpenSSLStore.getState().files
@@ -90,7 +118,7 @@ export const Workbench = () => {
     const sanitizedCN = sanitizeCommonName(commonName)
 
     // Helper to build Subject DN string
-    const subj = `/C=${sanitizedCountry}/O=${sanitizedOrg}/CN=${sanitizedCN}`
+    const subj = `/ C=${sanitizedCountry} /O=${sanitizedOrg}/CN = ${sanitizedCN} `
 
     if (category === 'genpkey') {
       // Generate descriptive filename with algorithm, variant, and timestamp
@@ -98,40 +126,35 @@ export const Workbench = () => {
       let keyName = ''
 
       if (keyAlgo === 'rsa') {
-        keyName = `rsa-${keyBits}-${timestamp}.key`
-        cmd += ` genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:${keyBits}`
+        keyName = `rsa - ${keyBits} -${timestamp}.key`
+        cmd += ` genpkey - algorithm RSA - pkeyopt rsa_keygen_bits:${keyBits} `
       } else if (keyAlgo === 'ec') {
-        keyName = `ec-${curve}-${timestamp}.key`
-        cmd += ` genpkey -algorithm EC -pkeyopt ec_paramgen_curve:${curve}`
+        keyName = `ec - ${curve} -${timestamp}.key`
+        cmd += ` genpkey - algorithm EC - pkeyopt ec_paramgen_curve:${curve} `
       } else if (keyAlgo.startsWith('mlkem')) {
         const kemVariant = keyAlgo.replace('mlkem', '')
-        keyName = `mlkem-${kemVariant}-${timestamp}.key`
-        cmd += ` genpkey -algorithm ML-KEM-${kemVariant}`
+        keyName = `mlkem - ${kemVariant} -${timestamp}.key`
+        cmd += ` genpkey - algorithm ML - KEM - ${kemVariant} `
       } else if (keyAlgo.startsWith('mldsa')) {
         const dsaVariant = keyAlgo.replace('mldsa', '')
-        keyName = `mldsa-${dsaVariant}-${timestamp}.key`
-        cmd += ` genpkey -algorithm ML-DSA-${dsaVariant}`
+        keyName = `mldsa - ${dsaVariant} -${timestamp}.key`
+        cmd += ` genpkey - algorithm ML - DSA - ${dsaVariant} `
       } else if (keyAlgo.startsWith('slhdsa')) {
         const slhVariantMap: Record<string, string> = {
-          slhdsa128s: 'SLH-DSA-SHA2-128s',
-          slhdsa128f: 'SLH-DSA-SHA2-128f',
-          slhdsa192s: 'SLH-DSA-SHA2-192s',
-          slhdsa192f: 'SLH-DSA-SHA2-192f',
-          slhdsa256s: 'SLH-DSA-SHA2-256s',
           slhdsa256f: 'SLH-DSA-SHA2-256f',
         }
         keyName = `slhdsa-${keyAlgo.replace('slhdsa', '')}-${timestamp}.key`
         // eslint-disable-next-line security/detect-object-injection
-        cmd += ` genpkey -algorithm ${slhVariantMap[keyAlgo]}`
+        cmd += ` genpkey -algorithm ${slhVariantMap[keyAlgo]} `
       } else {
         keyName = `${keyAlgo}-${timestamp}.key`
-        cmd += ` genpkey -algorithm ${keyAlgo}`
+        cmd += ` genpkey -algorithm ${keyAlgo} `
       }
 
       if (cipher !== 'none') {
-        cmd += ` -${cipher} -pass pass:${passphrase}`
+        cmd += ` -${cipher} -pass pass:${passphrase} `
       }
-      cmd += ` -out ${keyName}`
+      cmd += ` -out ${keyName} `
     } else if (category === 'req') {
       const keyFile = selectedCsrKeyFile || 'private.key'
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)
@@ -154,7 +177,7 @@ export const Workbench = () => {
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)
         // Extract algorithm prefix from key filename
         const keyPrefix = keyFile.split('-')[0] // e.g., "mldsa", "slhdsa", "ed25519"
-        sigFile = `${keyPrefix}-sig-${timestamp}.sig`
+        sigFile = `${keyPrefix} -sig - ${timestamp}.sig`
       } else if (!sigFile) {
         sigFile = 'data.sig'
       }
@@ -165,29 +188,65 @@ export const Workbench = () => {
       if (isPQCKey) {
         // PQC signatures use pkeyutl (built-in hashing)
         if (signAction === 'sign') {
-          cmd += ` pkeyutl -sign -inkey ${keyFile} -in ${dataFile} -out ${sigFile}`
+          cmd += ` pkeyutl - sign - inkey ${keyFile} -in ${dataFile} -out ${sigFile} `
+          cmd += ` pkeyutl -sign -inkey ${keyFile} -in ${dataFile} -out ${sigFile} `
         } else {
-          cmd += ` pkeyutl -verify -pubin -inkey ${keyFile} -in ${dataFile} -sigfile ${sigFile}`
+          cmd += ` pkeyutl -verify -pubin -inkey ${keyFile} -in ${dataFile} -sigfile ${sigFile} `
         }
       } else {
         // Classical signatures use dgst with explicit hash
-        cmd += ` dgst -${sigHashAlgo}`
+        cmd += ` dgst -${sigHashAlgo} `
         if (signAction === 'sign') {
-          cmd += ` -sign ${keyFile} -out ${sigFile} ${dataFile}`
+          cmd += ` -sign ${keyFile} -out ${sigFile} ${dataFile} `
         } else {
-          cmd += ` -verify ${keyFile} -signature ${sigFile} ${dataFile}`
+          cmd += ` -verify ${keyFile} -signature ${sigFile} ${dataFile} `
         }
       }
     } else if (category === 'rand') {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)
       const extension = randHex ? 'txt' : 'bin'
-      const randFile = `random-${randBytes}bytes-${timestamp}.${extension}`
+      const randFile = `random - ${randBytes} bytes - ${timestamp}.${extension} `
       cmd += ` rand`
       if (randHex) cmd += ` -hex`
-      cmd += ` -out ${randFile} ${randBytes}`
+      cmd += ` -out ${randFile} ${randBytes} `
     } else if (category === 'version') {
       cmd += ` version -a`
+    } else if (category === 'enc') {
+      const inFile = encInFile || 'data.txt'
+      const defaultOutFile = encAction === 'encrypt'
+        ? `${inFile}.enc`
+        : (inFile.endsWith('.enc') ? inFile.slice(0, -4) : `${inFile}.dec`)
+      const outFile = encOutFile || defaultOutFile
+
+      cmd += ` enc -${encCipher} `
+      if (encAction === 'decrypt') cmd += ` -d`
+      if (encShowIV) cmd += ` -p`
+      if (encCustomIV) cmd += ` -iv ${encCustomIV} `
+      cmd += ` -in ${inFile} -out ${outFile} -pass pass:${passphrase} `
+    } else if (category === 'kem') {
+      const key = kemKeyFile || (kemAction === 'encap' ? 'public.key' : 'private.key')
+
+      if (kemAction === 'encap') {
+        const ctFile = kemOutFile || 'ciphertext.bin'
+        cmd += ` pkeyutl - encap - inkey ${key} -pubin - out ${ctFile} -secret secret.bin`
+      } else {
+        const inFile = kemInFile || 'ciphertext.bin'
+        const outFile = kemOutFile || 'secret.bin'
+        cmd += ` pkeyutl - decap - inkey ${key} -in ${inFile} -out ${outFile} `
+      }
+    } else if (category === 'pkcs12') {
+      if (p12Action === 'export') {
+        const cert = p12CertFile || 'cert.crt'
+        const key = p12KeyFile || 'private.key'
+        const out = p12File || 'bundle.p12'
+        cmd += ` pkcs12 -export -in ${cert} -inkey ${key} -out ${out} -passout pass:${p12Pass} `
+      } else {
+        const inP12 = p12File || 'bundle.p12'
+        const outPem = 'restored.pem'
+        cmd += ` pkcs12 -in ${inP12} -out ${outPem} -passin pass:${p12Pass} -nodes`
+      }
     }
+
     setCommand(cmd)
   }, [
     category,
@@ -209,6 +268,22 @@ export const Workbench = () => {
     selectedDataFile,
     selectedSigFile,
     selectedCsrKeyFile,
+    selectedCsrKeyFile,
+    encAction,
+    encCipher,
+    encInFile,
+    encOutFile,
+    encShowIV,
+    encCustomIV,
+    kemAction,
+    kemKeyFile,
+    kemInFile,
+    kemOutFile,
+    p12Action,
+    p12CertFile,
+    p12KeyFile,
+    p12File,
+    p12Pass,
     setCommand,
   ])
 
@@ -221,7 +296,7 @@ export const Workbench = () => {
     if (!privateKeyFile.endsWith('.key') && !privateKeyFile.endsWith('.pem')) {
       addLog(
         'error',
-        `Cannot extract public key: '${privateKeyFile}' does not appear to be a private key file (.key or .pem).`
+        `Cannot extract public key: '${privateKeyFile}' does not appear to be a private key file(.key or.pem).`
       )
       return
     }
@@ -232,9 +307,85 @@ export const Workbench = () => {
       publicKeyFile = privateKeyFile + '.pub'
     }
 
-    const command = `openssl pkey -in ${privateKeyFile} -pubout -out ${publicKeyFile}`
+    const command = `openssl pkey -in ${privateKeyFile} -pubout - out ${publicKeyFile} `
     executeCommand(command)
     logEvent('OpenSSL Studio', 'Extract Public Key')
+  }
+
+  const handleBackupAllFiles = async () => {
+    const files = useOpenSSLStore.getState().files
+    if (files.length === 0) {
+      addLog('error', 'No files to backup.')
+      return
+    }
+
+    try {
+      const zip = new JSZip()
+
+      // Add all files to the zip
+      files.forEach((file) => {
+        zip.file(file.name, file.content)
+      })
+
+      // Generate the zip file
+      const blob = await zip.generateAsync({ type: 'blob' })
+
+      // Create download link
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `openssl - studio - backup - ${new Date().toISOString().slice(0, 10)}.zip`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+
+      addLog('info', `Backed up ${files.length} file(s) to ${a.download} `)
+      logEvent('OpenSSL Studio', 'Backup All Files', files.length.toString())
+    } catch (error) {
+      addLog('error', `Failed to create backup: ${error} `)
+    }
+  }
+
+  const handleImportFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    try {
+      const zip = new JSZip()
+      const contents = await zip.loadAsync(file)
+
+      let importedCount = 0
+      const promises: Promise<void>[] = []
+
+      contents.forEach((relativePath, zipEntry) => {
+        if (!zipEntry.dir) {
+          promises.push(
+            zipEntry.async('uint8array').then((content) => {
+              useOpenSSLStore.getState().addFile({
+                name: relativePath,
+                type: relativePath.endsWith('.key') || relativePath.endsWith('.pem') ? 'key' :
+                  relativePath.endsWith('.crt') || relativePath.endsWith('.cert') ? 'cert' :
+                    relativePath.endsWith('.csr') ? 'csr' : 'binary',
+                content,
+                size: content.length,
+                timestamp: Date.now(),
+              })
+              importedCount++
+            })
+          )
+        }
+      })
+
+      await Promise.all(promises)
+      addLog('info', `Imported ${importedCount} file(s) from ${file.name} `)
+      logEvent('OpenSSL Studio', 'Import Files', importedCount.toString())
+
+      // Reset the input so the same file can be imported again if needed
+      event.target.value = ''
+    } catch (error) {
+      addLog('error', `Failed to import files: ${error} `)
+    }
   }
 
   return (
@@ -358,6 +509,51 @@ export const Workbench = () => {
           </button>
           <button
             onClick={() => {
+              setCategory('enc')
+              useOpenSSLStore.getState().setActiveTab('terminal')
+              logEvent('OpenSSL Studio', 'Select Category', 'Encryption')
+            }}
+            className={clsx(
+              'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
+              category === 'enc'
+                ? 'bg-primary/20 border-primary text-primary'
+                : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
+            )}
+          >
+            <Lock size={16} /> Encryption
+          </button>
+          <button
+            onClick={() => {
+              setCategory('kem')
+              useOpenSSLStore.getState().setActiveTab('terminal')
+              logEvent('OpenSSL Studio', 'Select Category', 'KEM')
+            }}
+            className={clsx(
+              'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
+              category === 'kem'
+                ? 'bg-primary/20 border-primary text-primary'
+                : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
+            )}
+          >
+            <Database size={16} /> Key Encap (KEM)
+          </button>
+          <button
+            onClick={() => {
+              setCategory('pkcs12')
+              useOpenSSLStore.getState().setActiveTab('terminal')
+              logEvent('OpenSSL Studio', 'Select Category', 'PKCS#12')
+            }}
+            className={clsx(
+              'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
+              category === 'pkcs12'
+                ? 'bg-primary/20 border-primary text-primary'
+                : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
+            )}
+          >
+            <FileArchive size={16} /> PKCS#12 Bundle
+          </button>
+          <button
+            onClick={() => {
               setCategory('version')
               useOpenSSLStore.getState().setActiveTab('terminal')
               logEvent('OpenSSL Studio', 'Select Category', 'Version Info')
@@ -432,6 +628,341 @@ export const Workbench = () => {
           <div className="text-sm text-muted">
             No configuration needed. This command displays detailed version information about the
             OpenSSL build.
+          </div>
+        </div>
+      )}
+
+      {category === 'enc' && (
+        <div className="space-y-4 animate-fade-in">
+          <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+            2. Configuration
+          </span>
+
+          <div className="space-y-3">
+            <span className="text-xs text-muted block">Action</span>
+            <div className="flex bg-black/40 rounded-lg p-1 border border-white/20">
+              <button
+                onClick={() => setEncAction('encrypt')}
+                className={clsx(
+                  'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
+                  encAction === 'encrypt' ? 'bg-primary text-white' : 'text-muted hover:text-white'
+                )}
+              >
+                Encrypt
+              </button>
+              <button
+                onClick={() => setEncAction('decrypt')}
+                className={clsx(
+                  'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
+                  encAction === 'decrypt' ? 'bg-primary text-white' : 'text-muted hover:text-white'
+                )}
+              >
+                Decrypt
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label htmlFor="enc-cipher-select" className="text-xs text-muted block">
+              Cipher
+            </label>
+            <select
+              id="enc-cipher-select"
+              value={encCipher}
+              onChange={(e) => setEncCipher(e.target.value)}
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+            >
+              <option value="aes-128-cbc">AES-128-CBC</option>
+              <option value="aes-192-cbc">AES-192-CBC</option>
+              <option value="aes-256-cbc">AES-256-CBC</option>
+              <option value="aes-128-ctr">AES-128-CTR</option>
+              <option value="aes-192-ctr">AES-192-CTR</option>
+              <option value="aes-256-ctr">AES-256-CTR</option>
+            </select>
+          </div>
+
+          <div className="space-y-3">
+            <label htmlFor="enc-infile-select" className="text-xs text-muted block">
+              Input File
+            </label>
+            <select
+              id="enc-infile-select"
+              value={encInFile}
+              onChange={(e) => setEncInFile(e.target.value)}
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+            >
+              <option value="">Select a file...</option>
+              {useOpenSSLStore
+                .getState()
+                .files.map((f) => (
+                  <option key={f.name} value={f.name}>
+                    {f.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <div className="space-y-3">
+            <label htmlFor="enc-pass-input" className="text-xs text-muted block">
+              Passphrase
+            </label>
+            <input
+              id="enc-pass-input"
+              type="password"
+              value={passphrase}
+              onChange={(e) => setPassphrase(e.target.value)}
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+              placeholder="Enter encryption password"
+            />
+          </div>
+
+          <div className="space-y-3">
+            <label htmlFor="enc-outfile-input" className="text-xs text-muted block">
+              Output File (Optional)
+            </label>
+            <input
+              id="enc-outfile-input"
+              type="text"
+              value={encOutFile}
+              onChange={(e) => setEncOutFile(e.target.value)}
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+              placeholder={encAction === 'encrypt' ? 'data.enc' : 'data.dec.txt'}
+            />
+          </div>
+
+          <div className="space-y-3 pt-2 border-t border-white/10">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={encShowIV}
+                onChange={(e) => setEncShowIV(e.target.checked)}
+                className="w-4 h-4 rounded border-white/20 bg-black/40 text-primary focus:ring-0 focus:ring-offset-0"
+              />
+              <span className="text-sm text-white">Show Derived Key & IV (-p)</span>
+            </label>
+          </div>
+
+          <div className="space-y-3">
+            <label htmlFor="enc-iv-input" className="text-xs text-muted block">
+              Custom IV (Hex, Optional)
+            </label>
+            <input
+              id="enc-iv-input"
+              type="text"
+              value={encCustomIV}
+              onChange={(e) => setEncCustomIV(e.target.value)}
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+              placeholder="e.g. 0102030405060708..."
+            />
+          </div>
+        </div>
+      )}
+
+      {category === 'kem' && (
+        <div className="space-y-4 animate-fade-in">
+          <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+            2. Configuration
+          </span>
+
+          <div className="space-y-3">
+            <span className="text-xs text-muted block">Action</span>
+            <div className="flex bg-black/40 rounded-lg p-1 border border-white/20">
+              <button
+                onClick={() => setKemAction('encap')}
+                className={clsx(
+                  'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
+                  kemAction === 'encap' ? 'bg-primary text-white' : 'text-muted hover:text-white'
+                )}
+              >
+                Encapsulate
+              </button>
+              <button
+                onClick={() => setKemAction('decap')}
+                className={clsx(
+                  'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
+                  kemAction === 'decap' ? 'bg-primary text-white' : 'text-muted hover:text-white'
+                )}
+              >
+                Decapsulate
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label htmlFor="kem-key-select" className="text-xs text-muted block">
+              {kemAction === 'encap' ? 'Public Key (Recipient)' : 'Private Key (Recipient)'}
+            </label>
+            <select
+              id="kem-key-select"
+              value={kemKeyFile}
+              onChange={(e) => setKemKeyFile(e.target.value)}
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+            >
+              <option value="">Select a key...</option>
+              {useOpenSSLStore
+                .getState()
+                .files.filter((f) => {
+                  if (kemAction === 'encap') return f.name.endsWith('.pub') || f.name.endsWith('.pem') || f.name.endsWith('.crt')
+                  return f.name.endsWith('.key') || f.name.endsWith('.pem')
+                })
+                .map((f) => (
+                  <option key={f.name} value={f.name}>
+                    {f.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          {kemAction === 'decap' && (
+            <div className="space-y-3">
+              <label htmlFor="kem-infile-select" className="text-xs text-muted block">
+                Ciphertext File
+              </label>
+              <select
+                id="kem-infile-select"
+                value={kemInFile}
+                onChange={(e) => setKemInFile(e.target.value)}
+                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+              >
+                <option value="">Select ciphertext file...</option>
+                {useOpenSSLStore
+                  .getState()
+                  .files.map((f) => (
+                    <option key={f.name} value={f.name}>
+                      {f.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <label htmlFor="kem-outfile-input" className="text-xs text-muted block">
+              Output File (Optional)
+            </label>
+            <input
+              id="kem-outfile-input"
+              type="text"
+              value={kemOutFile}
+              onChange={(e) => setKemOutFile(e.target.value)}
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+              placeholder={kemAction === 'encap' ? 'ciphertext.bin' : 'secret.bin'}
+            />
+          </div>
+        </div>
+      )}
+
+      {category === 'pkcs12' && (
+        <div className="space-y-4 animate-fade-in">
+          <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+            2. Configuration
+          </span>
+
+          <div className="space-y-3">
+            <span className="text-xs text-muted block">Action</span>
+            <div className="flex bg-black/40 rounded-lg p-1 border border-white/20">
+              <button
+                onClick={() => setP12Action('export')}
+                className={clsx(
+                  'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
+                  p12Action === 'export' ? 'bg-primary text-white' : 'text-muted hover:text-white'
+                )}
+              >
+                Export (.p12)
+              </button>
+              <button
+                onClick={() => setP12Action('import')}
+                className={clsx(
+                  'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
+                  p12Action === 'import' ? 'bg-primary text-white' : 'text-muted hover:text-white'
+                )}
+              >
+                Import (to .pem)
+              </button>
+            </div>
+          </div>
+
+          {p12Action === 'export' ? (
+            <>
+              <div className="space-y-3">
+                <label htmlFor="p12-cert-select" className="text-xs text-muted block">
+                  Certificate File
+                </label>
+                <select
+                  id="p12-cert-select"
+                  value={p12CertFile}
+                  onChange={(e) => setP12CertFile(e.target.value)}
+                  className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                >
+                  <option value="">Select certificate...</option>
+                  {useOpenSSLStore
+                    .getState()
+                    .files.filter((f) => f.name.endsWith('.crt'))
+                    .map((f) => (
+                      <option key={f.name} value={f.name}>
+                        {f.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              <div className="space-y-3">
+                <label htmlFor="p12-key-select" className="text-xs text-muted block">
+                  Private Key File
+                </label>
+                <select
+                  id="p12-key-select"
+                  value={p12KeyFile}
+                  onChange={(e) => setP12KeyFile(e.target.value)}
+                  className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+                >
+                  <option value="">Select private key...</option>
+                  {useOpenSSLStore
+                    .getState()
+                    .files.filter((f) => f.name.endsWith('.key') || f.name.endsWith('.pem'))
+                    .map((f) => (
+                      <option key={f.name} value={f.name}>
+                        {f.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </>
+          ) : (
+            <div className="space-y-3">
+              <label htmlFor="p12-file-select" className="text-xs text-muted block">
+                PKCS#12 File (.p12)
+              </label>
+              <select
+                id="p12-file-select"
+                value={p12File}
+                onChange={(e) => setP12File(e.target.value)}
+                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+              >
+                <option value="">Select .p12 file...</option>
+                {useOpenSSLStore
+                  .getState()
+                  .files.filter((f) => f.name.endsWith('.p12'))
+                  .map((f) => (
+                    <option key={f.name} value={f.name}>
+                      {f.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <label htmlFor="p12-pass-input" className="text-xs text-muted block">
+              Password
+            </label>
+            <input
+              id="p12-pass-input"
+              type="password"
+              value={p12Pass}
+              onChange={(e) => setP12Pass(e.target.value)}
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+              placeholder="Enter export/import password"
+            />
           </div>
         </div>
       )}
@@ -707,7 +1238,7 @@ export const Workbench = () => {
                   // For signing: only private keys (.key, not .pub), exclude KEM keys
                   if (signAction === 'sign') {
                     return (
-                      f.name.endsWith('.key') &&
+                      (f.name.endsWith('.key') || f.name.endsWith('.pem')) &&
                       !f.name.endsWith('.pub') &&
                       !f.name.includes('mlkem') &&
                       !f.name.includes('x25519') &&
@@ -717,7 +1248,7 @@ export const Workbench = () => {
                   }
                   // For verification: only public keys (.pub), exclude KEM keys
                   return (
-                    f.name.endsWith('.pub') &&
+                    (f.name.endsWith('.pub') || f.name.endsWith('.pem') || f.name.endsWith('.crt')) &&
                     !f.name.includes('mlkem') &&
                     !f.name.includes('x25519') &&
                     !f.name.includes('x448.') && // Exclude x448 (KEM)
@@ -739,8 +1270,8 @@ export const Workbench = () => {
 
           {/* Show hash algorithm selector only for classical keys */}
           {selectedKeyFile &&
-          !selectedKeyFile.includes('mldsa') &&
-          !selectedKeyFile.includes('slhdsa') ? (
+            !selectedKeyFile.includes('mldsa') &&
+            !selectedKeyFile.includes('slhdsa') ? (
             <div className="space-y-3">
               <label htmlFor="sig-hash-algo-select" className="text-xs text-muted block">
                 Hash Algorithm
@@ -832,6 +1363,7 @@ export const Workbench = () => {
                 size: testData.length,
                 timestamp: Date.now(),
               })
+              useOpenSSLStore.getState().addLog('info', 'File created: data.txt')
             }}
             className="w-full p-2 rounded-lg border border-primary/30 bg-primary/10 hover:bg-primary/20 text-primary text-sm transition-colors"
           >
@@ -842,9 +1374,66 @@ export const Workbench = () => {
 
       {category === 'files' && (
         <div className="space-y-4 animate-fade-in">
-          <span className="text-sm font-bold text-muted uppercase tracking-wider block">
-            File Manager
-          </span>
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+              File Manager
+            </span>
+            <div className="flex gap-2">
+              <label className="px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded text-xs font-medium text-white cursor-pointer transition-colors flex items-center gap-2">
+                <Plus size={14} /> Add File
+                <input
+                  type="file"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+
+                    try {
+                      const content = new Uint8Array(await file.arrayBuffer())
+                      useOpenSSLStore.getState().addFile({
+                        name: file.name,
+                        type: 'binary',
+                        content,
+                        size: content.length,
+                        timestamp: Date.now(),
+                      })
+                      useOpenSSLStore.getState().addLog('info', `File uploaded: ${file.name} `)
+                      useOpenSSLStore.getState().addStructuredLog({
+                        command: 'upload',
+                        operationType: 'Other',
+                        details: `Uploaded file: ${file.name}`,
+                        fileName: file.name,
+                        fileSize: content.length,
+                        executionTime: 0,
+                      })
+                      // Reset input
+                      e.target.value = ''
+                    } catch (error) {
+                      console.error('Failed to upload file:', error)
+                      useOpenSSLStore.getState().addLog('error', `Failed to upload file: ${file.name} `)
+                    }
+                  }}
+                  className="hidden"
+                />
+              </label>
+              <button
+                onClick={handleBackupAllFiles}
+                disabled={useOpenSSLStore.getState().files.length === 0}
+                className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 disabled:bg-white/5 disabled:text-white/20 border border-primary/40 disabled:border-white/10 rounded text-xs font-medium text-primary disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                title="Backup all files to ZIP"
+              >
+                <Archive size={14} /> Backup All
+              </button>
+              <label className="px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded text-xs font-medium text-white cursor-pointer transition-colors flex items-center gap-2">
+                <Upload size={14} /> Import ZIP
+                <input
+                  type="file"
+                  accept=".zip"
+                  onChange={handleImportFiles}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          </div>
 
           {useOpenSSLStore.getState().files.length === 0 ? (
             <div className="text-center py-12 text-white/20 text-sm">

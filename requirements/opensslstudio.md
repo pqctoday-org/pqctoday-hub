@@ -27,7 +27,7 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
   3. **Execute**: OpenSSL reads/writes to MEMFS.
   4. **Feedback**: Worker scans MEMFS for new files and sends them back to Store -> UI Updates.
 - **Features**:
-  - File Upload (Drag & Drop / Select).
+  - File Upload (Drag & Drop / Select / "Add File" button).
   - File Download.
   - Text File Editing (in-browser editor).
   - File Deletion.
@@ -38,8 +38,11 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 - **Command Builder**: Dynamic form-based generation of OpenSSL CLI commands.
 - **Supported Operations**:
   - **Key Generation (`genpkey`)**:
-    - Algorithms: RSA, EC, Ed25519, X25519, Ed448, X448.
+    - **Classical Algorithms**: RSA, EC, Ed25519, X25519, Ed448, X448.
+    - **Post-Quantum KEM**: ML-KEM-512, ML-KEM-768, ML-KEM-1024.
+    - **Post-Quantum Signatures**: ML-DSA-44/65/87, SLH-DSA (all SHA2 variants).
     - Options: Key Size (RSA), Curve Name (EC), Cipher (AES/ARIA/Camellia), Passphrase.
+    - **Public Key Extraction**: Built-in button to extract `.pub` files from private keys (required for KEM encapsulation).
   - **CSR Request (`req`)**:
     - Fields: Common Name, Organization, Country.
     - Options: Digest Algorithm (SHA2/SHA3/BLAKE2).
@@ -56,6 +59,20 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
     - Used for verifying RNG functionality.
   - **Version Info (`version`)**:
     - Display detailed OpenSSL build information (`-a`).
+    - **Location**: Moved to the top of the sidebar (before Operation Logs) for better visibility.
+  - **Encryption (`enc`)**:
+    - Symmetric encryption and decryption using passphrase-based key derivation.
+    - Algorithms: AES-128/192/256 (CBC, CTR).
+    - Options: Input/Output files, Passphrase, Show Derived Key & IV (`-p`), Custom IV support.
+    - **Automation**: Automatically sets output filename to `<input>.enc` (encrypt) or original name (decrypt) and adds it to VFS.
+    - **Note**: AES key generation via `genpkey` has been removed as it is not supported by the current OpenSSL build. Use passphrase-based encryption or the Playground for AES keys.
+  - **Key Encapsulation (`pkeyutl`)**:
+    - KEM Encapsulate (Public Key) and Decapsulate (Private Key).
+    - Supports ML-KEM and other KEM-capable algorithms.
+    - **Workflow**: Generate key → Extract public key (`.pub`) → Use `.pub` for encapsulation, `.key` for decapsulation.
+  - **PKCS#12 (`pkcs12`)**:
+    - Export: Bundle Certificate and Private Key into `.p12` file.
+    - Import: Extract Certificate and Private Key from `.p12` file to `.pem`.
 - **Configuration Editor**: Dedicated button to view/edit `openssl.cnf` directly.
 
 ### 4. Terminal & Logging
@@ -79,7 +96,7 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 
 - **Event Tracking**: User interactions are tracked via Google Analytics:
   - **Command Execution**: Tracks which commands (`genpkey`, `req`, `x509`, etc.) are run.
-  - **File Operations**: Tracks file uploads, downloads, and deletions.
+  - **File Operations**: Tracks file uploads, downloads, deletions, backups, and imports.
   - **Category Selection**: Tracks which operation categories users explore.
 
 ## Technical Implementation Details
@@ -134,6 +151,7 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
     - **Known Limitations**:
       - **RSA**: Key generation (`genpkey -algorithm RSA`) fails with a `BN lib` error, likely due to BigInt/Math issues in the specific WASM build configuration.
       - **EC**: Generic Elliptic Curve key generation (`genpkey -algorithm EC`) causes a WASM crash ("Unreachable code"), indicating a build incompatibility or memory issue.
+      - **AES**: Key generation (`genpkey -algorithm AES`) is not supported. Use passphrase-based encryption (`enc`) or the Playground for AES operations.
     - **Recommendation**: Use `Ed25519` for classical crypto and `ML-DSA` / `SLH-DSA` for post-quantum signatures in this environment.
 
 4.  **React StrictMode & Worker Re-initialization**:
@@ -151,6 +169,7 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 ## Future Roadmap
 
 - [x] **PQC Algorithms**: Enable specific PQC providers/algorithms (Completed)
+- [x] **File Backup/Restore**: Backup all files to ZIP and import from ZIP (Completed)
 - **File Drag & Drop**: Enhance FileManager with drag-and-drop zone.
 - **Command History**: Allow re-running previous commands.
 - **Multiple Files**: Support selecting specific input files for operations (currently auto-detects or uses fixed names).
