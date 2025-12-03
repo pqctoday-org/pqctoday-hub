@@ -157,8 +157,11 @@ ${kudos.message}
           </div>
           <form onSubmit={handleChangeRequestSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-muted mb-1">I am a...</label>
+              <label htmlFor="user-type" className="block text-sm font-medium text-muted mb-1">
+                I am a...
+              </label>
               <select
+                id="user-type"
                 value={changeRequest.userType}
                 onChange={(e) => setChangeRequest({ ...changeRequest, userType: e.target.value })}
                 className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 focus:border-primary outline-none"
@@ -172,8 +175,11 @@ ${kudos.message}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-muted mb-1">Feature</label>
+                <label htmlFor="feature" className="block text-sm font-medium text-muted mb-1">
+                  Feature
+                </label>
                 <select
+                  id="feature"
                   value={changeRequest.feature}
                   onChange={(e) =>
                     setChangeRequest({
@@ -194,8 +200,11 @@ ${kudos.message}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-muted mb-1">Subfeature</label>
+                <label htmlFor="subfeature" className="block text-sm font-medium text-muted mb-1">
+                  Subfeature
+                </label>
                 <select
+                  id="subfeature"
                   value={changeRequest.subfeature}
                   onChange={(e) =>
                     setChangeRequest({ ...changeRequest, subfeature: e.target.value })
@@ -215,8 +224,11 @@ ${kudos.message}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-muted mb-1">Category</label>
+              <label htmlFor="category" className="block text-sm font-medium text-muted mb-1">
+                Category
+              </label>
               <select
+                id="category"
                 value={changeRequest.category}
                 onChange={(e) => setChangeRequest({ ...changeRequest, category: e.target.value })}
                 className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 focus:border-primary outline-none"
@@ -229,8 +241,11 @@ ${kudos.message}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-muted mb-1">Description</label>
+              <label htmlFor="description" className="block text-sm font-medium text-muted mb-1">
+                Description
+              </label>
               <textarea
+                id="description"
                 value={changeRequest.description}
                 onChange={(e) =>
                   setChangeRequest({ ...changeRequest, description: e.target.value })
@@ -264,7 +279,7 @@ ${kudos.message}
           </div>
           <form onSubmit={handleKudosSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-muted mb-2">What do you like?</label>
+              <span className="block text-sm font-medium text-muted mb-2">What do you like?</span>
               <div className="grid grid-cols-2 gap-2">
                 {features.map((feature) => (
                   <label
@@ -289,9 +304,9 @@ ${kudos.message}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-muted mb-2">
+              <span className="block text-sm font-medium text-muted mb-2">
                 What can we improve?
-              </label>
+              </span>
               <div className="grid grid-cols-2 gap-2">
                 {features.map((feature) => (
                   <label
@@ -316,7 +331,7 @@ ${kudos.message}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-muted mb-2">Get rid of it!</label>
+              <span className="block text-sm font-medium text-muted mb-2">Get rid of it!</span>
               <div className="grid grid-cols-2 gap-2">
                 {features.map((feature) => (
                   <label
@@ -341,8 +356,11 @@ ${kudos.message}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-muted mb-1">Message</label>
+              <label htmlFor="kudos-message" className="block text-sm font-medium text-muted mb-1">
+                Message
+              </label>
               <textarea
+                id="kudos-message"
                 value={kudos.message}
                 onChange={(e) => setKudos({ ...kudos, message: e.target.value })}
                 className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 focus:border-primary outline-none min-h-[100px]"

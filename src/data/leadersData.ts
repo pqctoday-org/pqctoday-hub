@@ -25,7 +25,7 @@ function getLatestLeadersFile(): { content: string; filename: string; date: Date
   const files = Object.keys(modules)
     .map((path) => {
       // Path format: ./leaders_MMDDYYYY.csv or ./leaders_MMDDYYYY_suffix.csv
-      const match = path.match(/leaders_(\d{2})(\d{2})(\d{4})(?:_.*)?\.csv$/)
+      const match = path.match(/leaders_(\d{2})(\d{2})(\d{4})(?:_[^.]*)?\.csv$/)
       if (match) {
         const [, month, day, year] = match
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
