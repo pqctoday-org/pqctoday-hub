@@ -141,7 +141,18 @@ export const Workbench = () => {
         cmd += ` genpkey -algorithm ML-DSA-${dsaVariant} `
       } else if (keyAlgo.startsWith('slhdsa')) {
         const slhVariantMap: Record<string, string> = {
+          slhdsa128s: 'SLH-DSA-SHA2-128s',
+          slhdsa128f: 'SLH-DSA-SHA2-128f',
+          slhdsa192s: 'SLH-DSA-SHA2-192s',
+          slhdsa192f: 'SLH-DSA-SHA2-192f',
+          slhdsa256s: 'SLH-DSA-SHA2-256s',
           slhdsa256f: 'SLH-DSA-SHA2-256f',
+          slhdsashake128s: 'SLH-DSA-SHAKE-128s',
+          slhdsashake128f: 'SLH-DSA-SHAKE-128f',
+          slhdsashake192s: 'SLH-DSA-SHAKE-192s',
+          slhdsashake192f: 'SLH-DSA-SHAKE-192f',
+          slhdsashake256s: 'SLH-DSA-SHAKE-256s',
+          slhdsashake256f: 'SLH-DSA-SHAKE-256f',
         }
         keyName = `slhdsa-${keyAlgo.replace('slhdsa', '')}-${timestamp}.key`
         // eslint-disable-next-line security/detect-object-injection
@@ -1016,6 +1027,12 @@ export const Workbench = () => {
                 <option value="slhdsa192f">SLH-DSA-SHA2-192f (FIPS 205)</option>
                 <option value="slhdsa256s">SLH-DSA-SHA2-256s (FIPS 205)</option>
                 <option value="slhdsa256f">SLH-DSA-SHA2-256f (FIPS 205)</option>
+                <option value="slhdsashake128s">SLH-DSA-SHAKE-128s (FIPS 205)</option>
+                <option value="slhdsashake128f">SLH-DSA-SHAKE-128f (FIPS 205)</option>
+                <option value="slhdsashake192s">SLH-DSA-SHAKE-192s (FIPS 205)</option>
+                <option value="slhdsashake192f">SLH-DSA-SHAKE-192f (FIPS 205)</option>
+                <option value="slhdsashake256s">SLH-DSA-SHAKE-256s (FIPS 205)</option>
+                <option value="slhdsashake256f">SLH-DSA-SHAKE-256f (FIPS 205)</option>
               </optgroup>
             </select>
           </div>
@@ -1282,8 +1299,8 @@ export const Workbench = () => {
 
           {/* Show hash algorithm selector only for classical keys */}
           {selectedKeyFile &&
-          !selectedKeyFile.includes('mldsa') &&
-          !selectedKeyFile.includes('slhdsa') ? (
+            !selectedKeyFile.includes('mldsa') &&
+            !selectedKeyFile.includes('slhdsa') ? (
             <div className="space-y-3">
               <label htmlFor="sig-hash-algo-select" className="text-xs text-muted block">
                 Hash Algorithm

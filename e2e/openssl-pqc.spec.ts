@@ -52,12 +52,24 @@ test.describe('OpenSSL Studio - PQC Algorithms', () => {
     await expect(page.getByText(/File created: .*\.sig/)).toBeVisible()
   })
 
-  test('generates SLH-DSA-SHA2-128s key', async ({ page }) => {
-    await page.getByRole('button', { name: 'Key Generation' }).click()
-    await page.selectOption('#key-algo-select', 'slhdsa128s')
-    await page.getByRole('button', { name: 'Run Command' }).click()
-    await expect(page.getByText(/File created: slhdsa-128s-/)).toBeVisible()
-  })
+  const slhVariants = [
+    'slhdsa128s', 'slhdsa128f',
+    'slhdsa192s', 'slhdsa192f',
+    'slhdsa256s', 'slhdsa256f',
+    'slhdsashake128s', 'slhdsashake128f',
+    'slhdsashake192s', 'slhdsashake192f',
+    'slhdsashake256s', 'slhdsashake256f'
+  ];
+
+  for (const variant of slhVariants) {
+    test(`generates ${variant} key`, async ({ page }) => {
+      await page.getByRole('button', { name: 'Key Generation' }).click()
+      await page.selectOption('#key-algo-select', variant)
+      await page.getByRole('button', { name: 'Run Command' }).click()
+      // Match filename loosely as it contains the variant name
+      await expect(page.getByText(new RegExp(`File created: .*${variant.replace('slhdsa', '').replace('shake', '')}.*\\.key`, 'i'))).toBeVisible()
+    })
+  }
 
   test('generates ML-KEM-768 key', async ({ page }) => {
     await page.getByRole('button', { name: 'Key Generation' }).click()
