@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2025-12-02
+
+### Changed
+
+- **Threats Dashboard**: Reverted URL display feature due to data quality concerns.
+- **Documentation**: Updated requirements and test plans.
+
+### Added
+
+- **Security**: Added comprehensive Security Audit Report (`src/data/security_audit_report_12022025.md`).
+- **Maintenance**: Applied formatting fixes across the codebase.
+
 ## [1.1.0] - 2025-11-30
 
 ### Added
