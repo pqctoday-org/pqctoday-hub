@@ -100,7 +100,7 @@ test.describe('Production Smoke Tests', () => {
     await page.getByRole('button', { name: /Timeline/ }).click()
     await expect(page.getByText('Global Migration Timeline')).toBeVisible()
 
-    await page.getByRole('button', { name: /Impacts/ }).click()
-    await expect(page.getByText('Quantum Threat Impacts')).toBeVisible()
+    await page.getByRole('button', { name: /Threats/ }).click()
+    await expect(page.getByRole('heading', { name: 'Quantum Threats' })).toBeVisible()
   })
 })

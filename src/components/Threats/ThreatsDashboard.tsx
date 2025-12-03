@@ -320,6 +320,6 @@ export const ThreatsDashboard = () => {
           <div className="p-8 text-center text-muted">No threats found matching your filters.</div>
         )}
       </div>
-    </div>
+    </div >
   )
 }

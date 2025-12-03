@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Activity, Shield, Globe, Users, FlaskConical, BookOpen, AlertTriangle } from 'lucide-react'
+import { Activity, Shield, Globe, Users, FlaskConical, BookOpen, AlertTriangle, Info } from 'lucide-react'
 import clsx from 'clsx'
 import './styles/App.css'
 import pqcLogo from './assets/PQCT_Logo_V01.png'
@@ -13,8 +13,9 @@ import { AlgorithmsView } from './components/Algorithms/AlgorithmsView'
 import { PlaygroundView } from './components/Playground/PlaygroundView'
 import { OpenSSLStudioView } from './components/OpenSSLStudio/OpenSSLStudioView'
 import { LibraryView } from './components/Library/LibraryView'
+import { AboutView } from './components/About/AboutView'
 
-type View = 'timeline' | 'algorithms' | 'playground' | 'openssl' | 'threats' | 'leaders' | 'library'
+type View = 'timeline' | 'algorithms' | 'playground' | 'openssl' | 'threats' | 'leaders' | 'library' | 'about'
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('timeline')
@@ -35,6 +36,7 @@ function App() {
     { id: 'openssl', label: 'OpenSSL Studio', icon: Activity },
     { id: 'threats', label: 'Threats', icon: AlertTriangle },
     { id: 'leaders', label: 'Leaders', icon: Users },
+    { id: 'about', label: 'About', icon: Info },
   ]
 
   return (
@@ -97,6 +99,7 @@ function App() {
             {currentView === 'openssl' && <OpenSSLStudioView />}
             {currentView === 'threats' && <ThreatsDashboard />}
             {currentView === 'leaders' && <LeadersGrid />}
+            {currentView === 'about' && <AboutView />}
           </motion.div>
         </AnimatePresence>
       </main>
