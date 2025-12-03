@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { useOpenSSLStore } from './store'
-import { Terminal, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import clsx from 'clsx'
 
 export const TerminalOutput = () => {
-  const { logs, clearLogs } = useOpenSSLStore()
+  const { logs, clearTerminalLogs } = useOpenSSLStore()
   const logsEndRef = useRef<HTMLDivElement>(null)
   const [showStdout, setShowStdout] = useState(true)
   const [showStderr, setShowStderr] = useState(true)
@@ -27,65 +27,58 @@ export const TerminalOutput = () => {
 
   return (
     <div className="h-full flex flex-col bg-[#0d1117] rounded-xl border border-white/10 overflow-hidden font-mono text-sm">
-      {/* Header */}
+      {/* Toolbar */}
       <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/10 shrink-0">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-muted">
-            <Terminal size={14} />
-            <span className="text-xs font-bold uppercase tracking-wider">Terminal Output</span>
-          </div>
+        {/* Toggles */}
+        <div className="flex items-center gap-2 bg-black/20 p-1 rounded-lg">
+          <label
+            className={clsx(
+              'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
+              showStdout ? 'bg-white/10 text-green-400' : 'text-muted hover:text-white'
+            )}
+          >
+            <input
+              type="checkbox"
+              checked={showStdout}
+              onChange={(e) => setShowStdout(e.target.checked)}
+              className="w-3 h-3 rounded border-white/20 bg-black/40 text-green-500 focus:ring-0 focus:ring-offset-0"
+            />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Stdout</span>
+          </label>
 
-          {/* Toggles */}
-          <div className="flex items-center gap-2 bg-black/20 p-1 rounded-lg">
-            <label
-              className={clsx(
-                'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
-                showStdout ? 'bg-white/10 text-green-400' : 'text-muted hover:text-white'
-              )}
-            >
-              <input
-                type="checkbox"
-                checked={showStdout}
-                onChange={(e) => setShowStdout(e.target.checked)}
-                className="w-3 h-3 rounded border-white/20 bg-black/40 text-green-500 focus:ring-0 focus:ring-offset-0"
-              />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Stdout</span>
-            </label>
+          <label
+            className={clsx(
+              'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
+              showStderr ? 'bg-white/10 text-red-400' : 'text-muted hover:text-white'
+            )}
+          >
+            <input
+              type="checkbox"
+              checked={showStderr}
+              onChange={(e) => setShowStderr(e.target.checked)}
+              className="w-3 h-3 rounded border-white/20 bg-black/40 text-red-500 focus:ring-0 focus:ring-offset-0"
+            />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Stderr</span>
+          </label>
 
-            <label
-              className={clsx(
-                'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
-                showStderr ? 'bg-white/10 text-red-400' : 'text-muted hover:text-white'
-              )}
-            >
-              <input
-                type="checkbox"
-                checked={showStderr}
-                onChange={(e) => setShowStderr(e.target.checked)}
-                className="w-3 h-3 rounded border-white/20 bg-black/40 text-red-500 focus:ring-0 focus:ring-offset-0"
-              />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Stderr</span>
-            </label>
-
-            <label
-              className={clsx(
-                'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
-                showDebug ? 'bg-white/10 text-blue-400' : 'text-muted hover:text-white'
-              )}
-            >
-              <input
-                type="checkbox"
-                checked={showDebug}
-                onChange={(e) => setShowDebug(e.target.checked)}
-                className="w-3 h-3 rounded border-white/20 bg-black/40 text-blue-500 focus:ring-0 focus:ring-offset-0"
-              />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Debug</span>
-            </label>
-          </div>
+          <label
+            className={clsx(
+              'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
+              showDebug ? 'bg-white/10 text-blue-400' : 'text-muted hover:text-white'
+            )}
+          >
+            <input
+              type="checkbox"
+              checked={showDebug}
+              onChange={(e) => setShowDebug(e.target.checked)}
+              className="w-3 h-3 rounded border-white/20 bg-black/40 text-blue-500 focus:ring-0 focus:ring-offset-0"
+            />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Debug</span>
+          </label>
         </div>
 
         <button
-          onClick={clearLogs}
+          onClick={clearTerminalLogs}
           className="text-xs text-muted hover:text-white flex items-center gap-1 transition-colors"
         >
           <Trash2 size={12} /> Clear

@@ -664,3 +664,21 @@ if (!isWasmSupported) {
   - **Decapsulation:** "SECRET RECOVERED" (Green) vs "DECAPSULATION FAILED" (Red) indicator.
   - **Signature Verification:** "VERIFICATION OK" (Green) vs "VERIFICATION FAILED" (Red) indicator.
 - **Workflow Improvement:** Reduced tab switching and enabled easier "tamper testing" (e.g., modifying a signature to see verification fail).
+### 10.8 Status Bar & Metrics (✅ Complete)
+
+**Change:** Added a global status bar for immediate feedback.
+
+**Features:**
+
+- **Location:** Fixed at the bottom of the screen.
+- **Metrics:** Displays the last operation's execution time (e.g., "Last Op: 45ms") and key details.
+- **Visuals:** Color-coded performance indicators (Green/Yellow/Red).
+
+### 10.9 Classical Key Size Display (✅ Complete)
+
+**Change:** Fixed the display of classical key sizes in the Key Store.
+
+**Features:**
+
+- **Explicit Sizes:** Keys now show their full size/curve (e.g., "RSA-2048", "ECC-P256") instead of generic names.
+- **Consistency:** Matches the naming convention used for PQC keys (e.g., "ML-KEM-768").

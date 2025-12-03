@@ -33,7 +33,7 @@ export const InteractivePlayground = () => {
 }
 
 const PlaygroundContent = () => {
-  const { activeTab, setActiveTab, error } = useSettingsContext()
+  const { activeTab, setActiveTab, error, lastLogEntry } = useSettingsContext()
   const { keyStore, setKeyStore } = useKeyStoreContext()
 
   const handleTabChange = (tab: typeof activeTab) => {
@@ -49,6 +49,28 @@ const PlaygroundContent = () => {
           <Play className="text-secondary" aria-hidden="true" />
           Interactive Playground
         </h3>
+        {lastLogEntry && (
+          <div className="flex items-center gap-4 text-xs font-mono bg-black/20 px-3 py-1.5 rounded-lg border border-white/5 animate-fade-in">
+            <span className="text-muted">{lastLogEntry.operation}</span>
+            <span className="text-white/50">|</span>
+            <span className="text-accent max-w-[200px] truncate" title={lastLogEntry.result}>
+              {lastLogEntry.result}
+            </span>
+            <span className="text-white/50">|</span>
+            <span
+              className={clsx(
+                'font-bold',
+                lastLogEntry.executionTime < 100
+                  ? 'text-green-400'
+                  : lastLogEntry.executionTime < 500
+                    ? 'text-yellow-400'
+                    : 'text-red-400'
+              )}
+            >
+              {lastLogEntry.executionTime.toFixed(2)} ms
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Tab Navigation */}

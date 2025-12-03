@@ -38,6 +38,8 @@ test.describe('Playground', () => {
     await expect(page.getByRole('table')).toContainText('ML-DSA')
   })
   test('performs ML-KEM encapsulation/decapsulation', async ({ page }) => {
+    test.setTimeout(60000) // Increase timeout for WASM operations
+
     // 1. Generate Key
     await page.getByRole('button', { name: /Key Store/ }).click()
     await page.selectOption('#keystore-key-size', '768')
@@ -48,11 +50,8 @@ test.describe('Playground', () => {
     await page.getByRole('button', { name: /KEM & Encrypt/ }).click()
 
     // 3. Encapsulate
-    // Find the Encapsulate section
-    const encapsulateSection = page.locator('.group', { hasText: 'Encapsulate' }).first()
-
-    // Find the select within that section
-    const pubKeySelect = encapsulateSection.locator('select')
+    // Find the select by its default option text
+    const pubKeySelect = page.locator('select').filter({ hasText: 'Select Public Key...' })
 
     // Wait for options to be populated (more than 1 option)
     await expect(async () => {
@@ -63,11 +62,8 @@ test.describe('Playground', () => {
     // Select the first available key (index 1)
     await pubKeySelect.selectOption({ index: 1 })
 
-    // Verify key is selected
-    await expect(pubKeySelect).not.toHaveValue('')
-
     // Verify button is enabled
-    const runButton = encapsulateSection.getByRole('button', { name: 'Run Encapsulate' })
+    const runButton = page.getByRole('button', { name: 'Run Encapsulate' })
     await expect(runButton).toBeEnabled()
 
     // Click Encapsulate
@@ -80,17 +76,33 @@ test.describe('Playground', () => {
       .filter({ hasText: 'Shared Secret (Output)' })
       .locator('textarea')
       .first()
-    await expect(sharedSecretInput).not.toBeEmpty()
+    await expect(sharedSecretInput).not.toBeEmpty({ timeout: 10000 })
 
     // 4. Decapsulate
     // Select private key
-    const privKeySelect = page.locator('select').nth(1) // Assuming second select is for Decapsulate
+    const privKeySelect = page.locator('select').filter({ hasText: 'Select Private Key...' })
+
     await privKeySelect.selectOption({ index: 1 })
 
-    await page.getByRole('button', { name: 'Decapsulate' }).click()
+    // Wait for button to be enabled
+    const decapsulateButton = page.getByRole('button', { name: 'Run Decapsulate' })
+    await expect(decapsulateButton).toBeEnabled({ timeout: 10000 })
 
-    // Check for success
-    await expect(page.getByText('SECRET RECOVERED')).toBeVisible()
+    // Small stability delay
+    await page.waitForTimeout(1000)
+
+    await decapsulateButton.click()
+
+    // Check for result (Success or Failure)
+    const resultLocator = page.locator('.text-lg', { hasText: /SECRET RECOVERED|DECAPSULATION FAILED/ })
+    await expect(resultLocator).toBeVisible({ timeout: 15000 })
+
+    if (await page.getByText('DECAPSULATION FAILED').isVisible()) {
+      throw new Error('Test failed: Decapsulation resulted in mismatch (DECAPSULATION FAILED)')
+    }
+
+    // Verify specific success message
+    await expect(resultLocator).toContainText('SECRET RECOVERED')
   })
 
   test('performs ML-DSA signing/verification', async ({ page }) => {

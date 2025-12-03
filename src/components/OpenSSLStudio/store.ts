@@ -6,6 +6,7 @@ export interface VirtualFile {
   content: Uint8Array | string
   size: number
   timestamp: number
+  executionTime?: number
 }
 
 export interface LogEntry {
@@ -13,6 +14,17 @@ export interface LogEntry {
   timestamp: string
   type: 'stdout' | 'stderr' | 'info' | 'error'
   message: string
+}
+
+export interface StructuredLogEntry {
+  id: string
+  timestamp: string
+  command: string
+  operationType: 'Key Gen' | 'Sign' | 'Verify' | 'Cert Gen' | 'Other'
+  details: string
+  fileName?: string
+  fileSize?: number
+  executionTime: number
 }
 
 interface OpenSSLStudioState {
@@ -25,7 +37,16 @@ interface OpenSSLStudioState {
   // Terminal Output
   logs: LogEntry[]
   addLog: (type: LogEntry['type'], message: string) => void
-  clearLogs: () => void
+  clearTerminalLogs: () => void
+
+  // Structured Logs
+  structuredLogs: StructuredLogEntry[]
+  addStructuredLog: (entry: Omit<StructuredLogEntry, 'id' | 'timestamp'>) => void
+  clearStructuredLogs: () => void
+
+  // UI State
+  activeTab: 'terminal' | 'logs'
+  setActiveTab: (tab: 'terminal' | 'logs') => void
 
   // Command Builder
   command: string
@@ -36,6 +57,10 @@ interface OpenSSLStudioState {
   // Editor State
   editingFile: VirtualFile | null
   setEditingFile: (file: VirtualFile | null) => void
+
+  // Metrics
+  lastExecutionTime: number | null
+  setLastExecutionTime: (time: number | null) => void
 }
 
 export const useOpenSSLStore = create<OpenSSLStudioState>((set, get) => ({
@@ -58,7 +83,24 @@ export const useOpenSSLStore = create<OpenSSLStudioState>((set, get) => ({
         },
       ],
     })),
-  clearLogs: () => set({ logs: [] }),
+  clearTerminalLogs: () => set({ logs: [] }),
+
+  structuredLogs: [],
+  addStructuredLog: (entry) =>
+    set((state) => ({
+      structuredLogs: [
+        {
+          id: Math.random().toString(36).substring(2),
+          timestamp: new Date().toLocaleTimeString(),
+          ...entry,
+        },
+        ...state.structuredLogs,
+      ],
+    })),
+  clearStructuredLogs: () => set({ structuredLogs: [] }),
+
+  activeTab: 'terminal',
+  setActiveTab: (tab) => set({ activeTab: tab }),
 
   command: '',
   setCommand: (cmd) => set({ command: cmd }),
@@ -68,4 +110,8 @@ export const useOpenSSLStore = create<OpenSSLStudioState>((set, get) => ({
   // Editor State
   editingFile: null,
   setEditingFile: (file) => set({ editingFile: file }),
+
+  // Metrics
+  lastExecutionTime: null,
+  setLastExecutionTime: (time) => set({ lastExecutionTime: time }),
 }))

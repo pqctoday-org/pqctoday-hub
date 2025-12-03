@@ -365,10 +365,26 @@ export const useKeyGeneration = ({
       setKeyStore((prev) => [...prev, ...newKeys])
 
       const end = performance.now()
+
+      // Calculate sizes for display
+      let resultStr = ''
+      if (newKeys.length === 2) {
+        // Asymmetric
+        const pkSize = newKeys[0].value.length / 2 // hex to bytes
+        const skSize = newKeys[1].value.length / 2
+        resultStr = `PK: ${pkSize}B, SK: ${skSize}B`
+      } else if (newKeys.length === 1) {
+        // Symmetric
+        const keySize = newKeys[0].value.length / 2
+        resultStr = `Key: ${keySize}B`
+      } else {
+        resultStr = `Generated ${newKeys.length} key(s)`
+      }
+
       addLog({
         keyLabel: `${classicalAlgorithm} ${newKeys.length > 1 ? 'Pair' : 'Key'}`,
         operation: 'Key Generation (WebCrypto)',
-        result: `Generated ${newKeys.length} key(s)`,
+        result: resultStr,
         executionTime: end - start,
       })
     } catch (err: unknown) {

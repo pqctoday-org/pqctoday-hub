@@ -158,6 +158,14 @@ export const FileManager = () => {
                   <span className="text-sm text-white font-medium mb-0.5">{file.name}</span>
                   <div className="flex items-center gap-3 text-[10px] text-muted">
                     <span className="font-mono">{formatSize(file.size)}</span>
+                    {file.executionTime && (
+                      <>
+                        <span className="opacity-50">•</span>
+                        <span className="font-mono text-xs text-green-400">
+                          {file.executionTime.toFixed(1)} ms
+                        </span>
+                      </>
+                    )}
                     <span className="opacity-50">•</span>
                     <span>{new Date(file.timestamp).toLocaleTimeString()}</span>
                   </div>

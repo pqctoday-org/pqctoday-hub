@@ -6,12 +6,17 @@ export const useOpenSSL = () => {
   const workerRef = useRef<Worker | null>(null)
   const {
     addLog,
-    clearLogs,
+    clearTerminalLogs,
     setIsProcessing,
     addFile,
     files,
     command: currentCommand,
+    setLastExecutionTime,
+    addStructuredLog,
   } = useOpenSSLStore()
+
+  const startTimeRef = useRef<number | null>(null)
+  const commandRef = useRef<string>('')
 
   useEffect(() => {
     // Track if this effect instance is active
@@ -42,6 +47,9 @@ export const useOpenSSL = () => {
             content: event.data.data,
             size: event.data.data.byteLength,
             timestamp: Date.now(),
+            executionTime: startTimeRef.current
+              ? performance.now() - startTimeRef.current
+              : undefined,
           })
           addLog('info', `File created: ${event.data.name} `)
           break
@@ -54,6 +62,67 @@ export const useOpenSSL = () => {
           break
         case 'DONE':
           setIsProcessing(false)
+          if (startTimeRef.current) {
+            const duration = performance.now() - startTimeRef.current
+            setLastExecutionTime(duration)
+
+            // --- Structured Logging Logic ---
+            const cmd = commandRef.current.trim()
+            let opType: 'Key Gen' | 'Sign' | 'Verify' | 'Cert Gen' | 'Other' = 'Other'
+            let details = ''
+            let fileName: string | undefined
+            let fileSize: number | undefined
+
+            // Attempt to extract output filename
+            const outMatch = cmd.match(/-out\s+([^\s]+)/)
+            if (outMatch) {
+              fileName = outMatch[1]
+              // Access latest files state directly to avoid stale closures or dependency loops
+              const file = useOpenSSLStore.getState().files.find((f) => f.name === fileName)
+              if (file) {
+                fileSize = file.size
+              }
+            }
+
+            if (cmd.includes('genpkey') || cmd.includes('genrsa') || cmd.includes('ecparam')) {
+              opType = 'Key Gen'
+              if (cmd.includes('RSA')) details = 'Algorithm: RSA'
+              else if (cmd.includes('EC')) details = 'Algorithm: EC'
+              else if (cmd.includes('ED25519')) details = 'Algorithm: Ed25519'
+              else if (cmd.includes('ML-KEM')) details = 'Algorithm: ML-KEM (PQC)'
+              else if (cmd.includes('ML-DSA')) details = 'Algorithm: ML-DSA (PQC)'
+              else if (cmd.includes('SLH-DSA')) details = 'Algorithm: SLH-DSA (PQC)'
+              else details = 'Algorithm: Unknown'
+            } else if (cmd.includes('req') && cmd.includes('-x509')) {
+              opType = 'Cert Gen'
+              details = 'Self-signed Certificate'
+            } else if (cmd.includes('dgst') && cmd.includes('-sign')) {
+              opType = 'Sign'
+              details = 'Digital Signature'
+            } else if (cmd.includes('dgst') && cmd.includes('-verify')) {
+              opType = 'Verify'
+              details = 'Signature Verification'
+            } else if (cmd.includes('pkeyutl')) {
+              if (cmd.includes('-sign')) {
+                opType = 'Sign'
+                details = 'PQC Signature'
+              } else if (cmd.includes('-verify')) {
+                opType = 'Verify'
+                details = 'PQC Verification'
+              }
+            }
+
+            addStructuredLog({
+              command: cmd,
+              operationType: opType,
+              details,
+              fileName,
+              fileSize,
+              executionTime: duration,
+            })
+
+            startTimeRef.current = null
+          }
           break
       }
     }
@@ -67,15 +136,18 @@ export const useOpenSSL = () => {
       active = false
       worker.terminate()
     }
-  }, [addLog, addFile, setIsProcessing])
+  }, [addLog, addFile, setIsProcessing, addStructuredLog, setLastExecutionTime])
 
   const executeCommand = useCallback(
     async (cmdOverride?: string) => {
       const commandToExecute = cmdOverride || currentCommand
       if (!commandToExecute) return
 
+      commandRef.current = commandToExecute
       setIsProcessing(true)
-      clearLogs() // Auto-clear logs on new run
+      setLastExecutionTime(null)
+      startTimeRef.current = performance.now()
+      clearTerminalLogs() // Auto-clear logs on new run
       addLog('info', `$ ${commandToExecute}`)
 
       // Parse command string to args, respecting quotes
@@ -109,7 +181,14 @@ export const useOpenSSL = () => {
         } as WorkerMessage)
       }
     },
-    [currentCommand, setIsProcessing, clearLogs, addLog, files]
+    [
+      currentCommand,
+      setIsProcessing,
+      clearTerminalLogs,
+      addLog,
+      files,
+      setLastExecutionTime,
+    ]
   )
 
   return { executeCommand }

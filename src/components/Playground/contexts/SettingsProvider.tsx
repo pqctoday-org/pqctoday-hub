@@ -16,6 +16,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   })
   const [wasmLoaded, setWasmLoaded] = useState(false)
   const [logs, setLogs] = useState<LogEntry[]>([])
+  const [lastLogEntry, setLastLogEntry] = useState<LogEntry | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(() => {
     return typeof WebAssembly === 'object'
@@ -105,8 +106,12 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const updated = [newEntry, ...prev]
       return updated.length > 1000 ? updated.slice(0, 1000) : updated
     })
+    setLastLogEntry(newEntry)
   }
-  const clearLogs = () => setLogs([])
+  const clearLogs = () => {
+    setLogs([])
+    setLastLogEntry(null)
+  }
 
   const handleSort = (column: SortColumn) => {
     if (sortColumn === column) {
@@ -207,6 +212,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setExecutionMode,
         wasmLoaded,
         logs,
+        lastLogEntry,
         loading,
         setLoading,
         error,

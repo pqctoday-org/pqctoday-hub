@@ -3,13 +3,14 @@ import { Workbench } from './Workbench'
 import { CommandPreview } from './CommandPreview'
 import { TerminalOutput } from './TerminalOutput'
 import { FileEditor } from './FileEditor'
-import { Terminal, ChevronDown, ChevronUp } from 'lucide-react'
+import { Terminal, ChevronDown, ChevronUp, FileText } from 'lucide-react'
+import { LogsTab } from './LogsTab'
 
 import { useOpenSSLStore } from './store'
 
 export const OpenSSLStudioView = () => {
   const [showTerminal, setShowTerminal] = useState(true)
-  const { editingFile } = useOpenSSLStore()
+  const { editingFile, activeTab } = useOpenSSLStore()
 
   return (
     <div className="h-[calc(100vh-140px)] flex flex-col animate-fade-in">
@@ -45,20 +46,29 @@ export const OpenSSLStudioView = () => {
             <div className="glass-panel h-full flex flex-col overflow-hidden">
               <div className="p-4 border-b border-white/10 bg-white/5 flex items-center justify-between">
                 <h3 className="font-bold text-white flex items-center gap-2">
-                  <Terminal size={16} />
-                  Terminal Output
+                  {activeTab === 'terminal' ? (
+                    <>
+                      <Terminal size={16} />
+                      Terminal Output
+                    </>
+                  ) : (
+                    <>
+                      <FileText size={16} />
+                      Operation Log
+                    </>
+                  )}
                 </h3>
                 <button
                   onClick={() => setShowTerminal(!showTerminal)}
                   className="p-1.5 hover:bg-white/10 rounded text-muted hover:text-white transition-colors"
-                  title={showTerminal ? 'Hide Terminal' : 'Show Terminal'}
+                  title={showTerminal ? 'Hide Panel' : 'Show Panel'}
                 >
                   {showTerminal ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
                 </button>
               </div>
               {showTerminal && (
                 <div className="flex-1 overflow-hidden">
-                  <TerminalOutput />
+                  {activeTab === 'terminal' ? <TerminalOutput /> : <LogsTab />}
                 </div>
               )}
             </div>

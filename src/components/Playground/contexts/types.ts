@@ -43,14 +43,14 @@ export interface SettingsContextType {
 
   // UI State
   activeTab:
-    | 'settings'
-    | 'data'
-    | 'kem_ops'
-    | 'sign_verify'
-    | 'keystore'
-    | 'logs'
-    | 'acvp'
-    | 'symmetric'
+  | 'settings'
+  | 'data'
+  | 'kem_ops'
+  | 'sign_verify'
+  | 'keystore'
+  | 'logs'
+  | 'acvp'
+  | 'symmetric'
   setActiveTab: (
     tab:
       | 'settings'
@@ -69,6 +69,7 @@ export interface SettingsContextType {
 
   // Logs
   logs: LogEntry[]
+  lastLogEntry: LogEntry | null
   addLog: (entry: Omit<LogEntry, 'id' | 'timestamp'>) => void
   clearLogs: () => void
 

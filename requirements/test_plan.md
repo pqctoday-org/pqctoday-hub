@@ -11,9 +11,12 @@ This document outlines the testing strategy for the PQC Timeline Application, en
 - **Framework**: Vitest
 - **Scope**: Individual functions, data parsing logic, and isolated components.
 - **Location**: `src/**/*.test.ts`
-- **Key Areas**:
+  - **Key Areas**:
   - CSV Data Parsing (Threats, Timeline, Leaders).
   - Cryptographic operations (WASM integration).
+  - **OpenSSL Studio UI**:
+    - `OpenSSLStudioTabs.test.tsx`: Verifies tab switching and header logic.
+    - `LogsTab.test.tsx`: Verifies log table rendering, columns, and data formatting.
   - Utility functions.
 
 ### 2.2 End-to-End (E2E) Testing
