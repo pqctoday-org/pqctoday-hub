@@ -94,7 +94,9 @@ test.describe('Playground', () => {
     await decapsulateButton.click()
 
     // Check for result (Success or Failure)
-    const resultLocator = page.locator('.text-lg', { hasText: /SECRET RECOVERED|DECAPSULATION FAILED/ })
+    const resultLocator = page.locator('.text-lg', {
+      hasText: /SECRET RECOVERED|DECAPSULATION FAILED/,
+    })
     await expect(resultLocator).toBeVisible({ timeout: 15000 })
 
     if (await page.getByText('DECAPSULATION FAILED').isVisible()) {

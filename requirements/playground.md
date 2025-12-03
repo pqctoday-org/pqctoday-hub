@@ -664,6 +664,7 @@ if (!isWasmSupported) {
   - **Decapsulation:** "SECRET RECOVERED" (Green) vs "DECAPSULATION FAILED" (Red) indicator.
   - **Signature Verification:** "VERIFICATION OK" (Green) vs "VERIFICATION FAILED" (Red) indicator.
 - **Workflow Improvement:** Reduced tab switching and enabled easier "tamper testing" (e.g., modifying a signature to see verification fail).
+
 ### 10.8 Status Bar & Metrics (✅ Complete)
 
 **Change:** Added a global status bar for immediate feedback.

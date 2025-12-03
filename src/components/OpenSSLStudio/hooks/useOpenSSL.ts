@@ -181,14 +181,7 @@ export const useOpenSSL = () => {
         } as WorkerMessage)
       }
     },
-    [
-      currentCommand,
-      setIsProcessing,
-      clearTerminalLogs,
-      addLog,
-      files,
-      setLastExecutionTime,
-    ]
+    [currentCommand, setIsProcessing, clearTerminalLogs, addLog, files, setLastExecutionTime]
   )
 
   return { executeCommand }

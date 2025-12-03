@@ -59,21 +59,21 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 - **Configuration Editor**: Dedicated button to view/edit `openssl.cnf` directly.
 
 ### 4. Terminal & Logging
- 
- - **Terminal Output**: Real-time streaming of `stdout` and `stderr` from the WASM process.
- - **Operation Log**:
-   - **Persistence**: Logs persist across command runs (unlike terminal output which clears).
-   - **Detailed Columns**: Displays Timestamp, Operation Type, Full Command, File Name, File Size, and Execution Duration.
-   - **Visuals**: Color-coded duration (Green <100ms, Yellow <500ms, Red >500ms).
- - **Command Preview**: Live preview of the generated OpenSSL command.
- - **Status**: Visual indicators for "Processing", "Ready", and "Error" states.
- 
- ### 5. Navigation & Layout
- 
- - **Sidebar-Driven**: Primary navigation via the Workbench sidebar.
- - **Auto-Switching**: Selecting an operation (e.g., Key Gen) automatically switches the view to "Terminal Output".
- - **Dedicated Logs Access**: "Operation Logs" button in the sidebar for quick access to history.
- - **Clean Headers**: Simplified panel headers with static titles.
+
+- **Terminal Output**: Real-time streaming of `stdout` and `stderr` from the WASM process.
+- **Operation Log**:
+  - **Persistence**: Logs persist across command runs (unlike terminal output which clears).
+  - **Detailed Columns**: Displays Timestamp, Operation Type, Full Command, File Name, File Size, and Execution Duration.
+  - **Visuals**: Color-coded duration (Green <100ms, Yellow <500ms, Red >500ms).
+- **Command Preview**: Live preview of the generated OpenSSL command.
+- **Status**: Visual indicators for "Processing", "Ready", and "Error" states.
+
+### 5. Navigation & Layout
+
+- **Sidebar-Driven**: Primary navigation via the Workbench sidebar.
+- **Auto-Switching**: Selecting an operation (e.g., Key Gen) automatically switches the view to "Terminal Output".
+- **Dedicated Logs Access**: "Operation Logs" button in the sidebar for quick access to history.
+- **Clean Headers**: Simplified panel headers with static titles.
 
 ### 6. Analytics Tracking
 

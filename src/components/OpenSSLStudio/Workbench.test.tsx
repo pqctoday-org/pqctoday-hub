@@ -18,38 +18,38 @@ describe('Workbench Component', () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
-      // Default store state
-      ; (useOpenSSLStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+    // Default store state
+    ;(useOpenSSLStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      command: 'openssl genpkey -algorithm RSA',
+      setCommand: mockSetCommand,
+      isProcessing: false,
+      files: [],
+      addFile: mockAddFile,
+      removeFile: mockRemoveFile,
+      setEditingFile: mockSetEditingFile,
+      logs: [],
+      addLog: vi.fn(),
+      activeTab: 'terminal',
+      setActiveTab: vi.fn(),
+    })
+
+    // Store state for direct access (getState)
+    ;(useOpenSSLStore as unknown as { getState: ReturnType<typeof vi.fn> }).getState = vi
+      .fn()
+      .mockReturnValue({
         command: 'openssl genpkey -algorithm RSA',
-        setCommand: mockSetCommand,
-        isProcessing: false,
         files: [],
-        addFile: mockAddFile,
-        removeFile: mockRemoveFile,
         setEditingFile: mockSetEditingFile,
-        logs: [],
-        addLog: vi.fn(),
+        removeFile: mockRemoveFile,
+        addFile: mockAddFile,
         activeTab: 'terminal',
         setActiveTab: vi.fn(),
       })
 
-      // Store state for direct access (getState)
-      ; (useOpenSSLStore as unknown as { getState: ReturnType<typeof vi.fn> }).getState = vi
-        .fn()
-        .mockReturnValue({
-          command: 'openssl genpkey -algorithm RSA',
-          files: [],
-          setEditingFile: mockSetEditingFile,
-          removeFile: mockRemoveFile,
-          addFile: mockAddFile,
-          activeTab: 'terminal',
-          setActiveTab: vi.fn(),
-        })
-
-      // useOpenSSL hook
-      ; (useOpenSSL as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-        executeCommand: mockExecuteCommand,
-      })
+    // useOpenSSL hook
+    ;(useOpenSSL as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      executeCommand: mockExecuteCommand,
+    })
   })
 
   it('renders the configuration section by default', () => {
