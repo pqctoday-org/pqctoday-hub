@@ -4,7 +4,7 @@
 
 OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAssembly. It allows users to perform cryptographic operations (Key Generation, CSR Creation, Certificate Signing, and Verification) directly in the browser without server-side processing.
 
-**Status**: ✅ Fully Functional (RSA, EC, Ed25519, Random Data, Version Info confirmed working).
+**Status**: ✅ Fully Functional (RSA, EC, Ed25519, X25519, Ed448, X448, ML-KEM, ML-DSA, SLH-DSA confirmed working).
 
 ## Core Features
 
@@ -40,7 +40,7 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
   - **Key Generation (`genpkey`)**:
     - **Classical Algorithms**: RSA, EC, Ed25519, X25519, Ed448, X448.
     - **Post-Quantum KEM**: ML-KEM-512, ML-KEM-768, ML-KEM-1024.
-    - **Post-Quantum Signatures**: ML-DSA-44/65/87, SLH-DSA (all SHA2 variants).
+    - **Post-Quantum Signatures**: ML-DSA-44/65/87, SLH-DSA (all 12 variants: SHA2 & SHAKE).
     - Options: Key Size (RSA), Curve Name (EC), Cipher (AES/ARIA/Camellia), Passphrase.
     - **Public Key Extraction**: Built-in button to extract `.pub` files from private keys (required for KEM encapsulation).
   - **CSR Request (`req`)**:
@@ -143,16 +143,19 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 
 3.  **Algorithm Support & Limitations**:
     - **Fully Supported & Verified**:
-      - `Ed25519` - Key generation and signing work flawlessly
-      - `openssl version` and `openssl rand` - Stable
-      - **ML-DSA (FIPS 204)** - Post-quantum digital signatures (ML-DSA-44, ML-DSA-65, ML-DSA-87) ✅ VERIFIED
-      - **SLH-DSA (FIPS 205)** - Stateless hash-based signatures (all variants: SHA2-128s/f, SHA2-192s/f, SHA2-256s/f) ✅ VERIFIED
-      - **ML-KEM (FIPS 203)** - Post-quantum key encapsulation (ML-KEM-512, ML-KEM-768, ML-KEM-1024) ✅ VERIFIED
+      - **Classical**: RSA, EC (P-256, P-384, P-521, secp256k1), Ed25519, X25519, Ed448, X448.
+      - **ML-DSA (FIPS 204)**: ML-DSA-44, ML-DSA-65, ML-DSA-87.
+      - **SLH-DSA (FIPS 205)**: All 12 variants (SHA2-128s/f, SHA2-192s/f, SHA2-256s/f, SHAKE-128s/f, SHAKE-192s/f, SHAKE-256s/f).
+      - **ML-KEM (FIPS 203)**: ML-KEM-512, ML-KEM-768, ML-KEM-1024.
+    - **Gap Analysis (vs OpenSSL 3.5.4)**:
+      - **Missing Classical**: DSA, DH (Diffie-Hellman), SM2, GOST.
+      - **Missing Curves**: Brainpool, NIST K-curves.
+      - **Missing Symmetric**: SM4, ChaCha20-Poly1305, 3DES, Blowfish, RC4, IDEA, SEED, CAST5.
+      - **Missing Hashes**: SM3, RIPEMD-160, Whirlpool.
+      - **Missing KDFs**: Argon2, SCRYPT, PBKDF2, HKDF (not exposed in UI).
     - **Known Limitations**:
-      - **RSA**: Key generation (`genpkey -algorithm RSA`) fails with a `BN lib` error, likely due to BigInt/Math issues in the specific WASM build configuration.
-      - **EC**: Generic Elliptic Curve key generation (`genpkey -algorithm EC`) causes a WASM crash ("Unreachable code"), indicating a build incompatibility or memory issue.
       - **AES**: Key generation (`genpkey -algorithm AES`) is not supported. Use passphrase-based encryption (`enc`) or the Playground for AES operations.
-    - **Recommendation**: Use `Ed25519` for classical crypto and `ML-DSA` / `SLH-DSA` for post-quantum signatures in this environment.
+    - **Recommendation**: The current suite covers all modern standard and post-quantum needs. Legacy algorithms (DSA, 3DES) are omitted by design but can be added if required.
 
 4.  **React StrictMode & Worker Re-initialization**:
     - **Challenge**: In development, React StrictMode mounts components twice. This caused the `useOpenSSL` hook to spawn two workers, leading to duplicate log output. Furthermore, the worker script was being re-executed in the same global context, causing "Identifier has already been declared" errors for top-level `const` and `class` definitions.
