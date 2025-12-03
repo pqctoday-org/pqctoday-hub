@@ -652,7 +652,9 @@ export const Workbench = () => {
                 onClick={() => setEncAction('encrypt')}
                 className={clsx(
                   'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
-                  encAction === 'encrypt' ? 'bg-primary/20 text-primary' : 'text-muted hover:text-white'
+                  encAction === 'encrypt'
+                    ? 'bg-primary/20 text-primary'
+                    : 'text-muted hover:text-white'
                 )}
               >
                 Encrypt
@@ -661,7 +663,9 @@ export const Workbench = () => {
                 onClick={() => setEncAction('decrypt')}
                 className={clsx(
                   'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
-                  encAction === 'decrypt' ? 'bg-primary/20 text-primary' : 'text-muted hover:text-white'
+                  encAction === 'decrypt'
+                    ? 'bg-primary/20 text-primary'
+                    : 'text-muted hover:text-white'
                 )}
               >
                 Decrypt
@@ -1278,8 +1282,8 @@ export const Workbench = () => {
 
           {/* Show hash algorithm selector only for classical keys */}
           {selectedKeyFile &&
-            !selectedKeyFile.includes('mldsa') &&
-            !selectedKeyFile.includes('slhdsa') ? (
+          !selectedKeyFile.includes('mldsa') &&
+          !selectedKeyFile.includes('slhdsa') ? (
             <div className="space-y-3">
               <label htmlFor="sig-hash-algo-select" className="text-xs text-muted block">
                 Hash Algorithm
