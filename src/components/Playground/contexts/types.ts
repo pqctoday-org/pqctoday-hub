@@ -43,14 +43,14 @@ export interface SettingsContextType {
 
   // UI State
   activeTab:
-  | 'settings'
-  | 'data'
-  | 'kem_ops'
-  | 'sign_verify'
-  | 'keystore'
-  | 'logs'
-  | 'acvp'
-  | 'symmetric'
+    | 'settings'
+    | 'data'
+    | 'kem_ops'
+    | 'sign_verify'
+    | 'keystore'
+    | 'logs'
+    | 'acvp'
+    | 'symmetric'
   setActiveTab: (
     tab:
       | 'settings'

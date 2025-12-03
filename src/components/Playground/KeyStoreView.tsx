@@ -81,12 +81,7 @@ export const KeyStoreView = ({
           )}
           <label className="px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded text-xs font-medium text-white cursor-pointer transition-colors flex items-center gap-2">
             <Upload size={14} /> Import ZIP
-            <input
-              type="file"
-              accept=".zip"
-              onChange={onRestoreKeys}
-              className="hidden"
-            />
+            <input type="file" accept=".zip" onChange={onRestoreKeys} className="hidden" />
           </label>
         </div>
       </div>

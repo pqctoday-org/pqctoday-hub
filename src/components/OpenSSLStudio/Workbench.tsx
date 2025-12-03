@@ -213,9 +213,12 @@ export const Workbench = () => {
       cmd += ` version -a`
     } else if (category === 'enc') {
       const inFile = encInFile || 'data.txt'
-      const defaultOutFile = encAction === 'encrypt'
-        ? `${inFile}.enc`
-        : (inFile.endsWith('.enc') ? inFile.slice(0, -4) : `${inFile}.dec`)
+      const defaultOutFile =
+        encAction === 'encrypt'
+          ? `${inFile}.enc`
+          : inFile.endsWith('.enc')
+            ? inFile.slice(0, -4)
+            : `${inFile}.dec`
       const outFile = encOutFile || defaultOutFile
 
       cmd += ` enc -${encCipher} `
@@ -364,9 +367,14 @@ export const Workbench = () => {
             zipEntry.async('uint8array').then((content) => {
               useOpenSSLStore.getState().addFile({
                 name: relativePath,
-                type: relativePath.endsWith('.key') || relativePath.endsWith('.pem') ? 'key' :
-                  relativePath.endsWith('.crt') || relativePath.endsWith('.cert') ? 'cert' :
-                    relativePath.endsWith('.csr') ? 'csr' : 'binary',
+                type:
+                  relativePath.endsWith('.key') || relativePath.endsWith('.pem')
+                    ? 'key'
+                    : relativePath.endsWith('.crt') || relativePath.endsWith('.cert')
+                      ? 'cert'
+                      : relativePath.endsWith('.csr')
+                        ? 'csr'
+                        : 'binary',
                 content,
                 size: content.length,
                 timestamp: Date.now(),
@@ -692,13 +700,11 @@ export const Workbench = () => {
               className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
             >
               <option value="">Select a file...</option>
-              {useOpenSSLStore
-                .getState()
-                .files.map((f) => (
-                  <option key={f.name} value={f.name}>
-                    {f.name}
-                  </option>
-                ))}
+              {useOpenSSLStore.getState().files.map((f) => (
+                <option key={f.name} value={f.name}>
+                  {f.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -802,7 +808,10 @@ export const Workbench = () => {
               {useOpenSSLStore
                 .getState()
                 .files.filter((f) => {
-                  if (kemAction === 'encap') return f.name.endsWith('.pub') || f.name.endsWith('.pem') || f.name.endsWith('.crt')
+                  if (kemAction === 'encap')
+                    return (
+                      f.name.endsWith('.pub') || f.name.endsWith('.pem') || f.name.endsWith('.crt')
+                    )
                   return f.name.endsWith('.key') || f.name.endsWith('.pem')
                 })
                 .map((f) => (
@@ -825,13 +834,11 @@ export const Workbench = () => {
                 className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
               >
                 <option value="">Select ciphertext file...</option>
-                {useOpenSSLStore
-                  .getState()
-                  .files.map((f) => (
-                    <option key={f.name} value={f.name}>
-                      {f.name}
-                    </option>
-                  ))}
+                {useOpenSSLStore.getState().files.map((f) => (
+                  <option key={f.name} value={f.name}>
+                    {f.name}
+                  </option>
+                ))}
               </select>
             </div>
           )}
@@ -1248,7 +1255,9 @@ export const Workbench = () => {
                   }
                   // For verification: only public keys (.pub), exclude KEM keys
                   return (
-                    (f.name.endsWith('.pub') || f.name.endsWith('.pem') || f.name.endsWith('.crt')) &&
+                    (f.name.endsWith('.pub') ||
+                      f.name.endsWith('.pem') ||
+                      f.name.endsWith('.crt')) &&
                     !f.name.includes('mlkem') &&
                     !f.name.includes('x25519') &&
                     !f.name.includes('x448.') && // Exclude x448 (KEM)
@@ -1270,8 +1279,8 @@ export const Workbench = () => {
 
           {/* Show hash algorithm selector only for classical keys */}
           {selectedKeyFile &&
-            !selectedKeyFile.includes('mldsa') &&
-            !selectedKeyFile.includes('slhdsa') ? (
+          !selectedKeyFile.includes('mldsa') &&
+          !selectedKeyFile.includes('slhdsa') ? (
             <div className="space-y-3">
               <label htmlFor="sig-hash-algo-select" className="text-xs text-muted block">
                 Hash Algorithm
@@ -1409,7 +1418,9 @@ export const Workbench = () => {
                       e.target.value = ''
                     } catch (error) {
                       console.error('Failed to upload file:', error)
-                      useOpenSSLStore.getState().addLog('error', `Failed to upload file: ${file.name} `)
+                      useOpenSSLStore
+                        .getState()
+                        .addLog('error', `Failed to upload file: ${file.name} `)
                     }
                   }}
                   className="hidden"
@@ -1425,12 +1436,7 @@ export const Workbench = () => {
               </button>
               <label className="px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded text-xs font-medium text-white cursor-pointer transition-colors flex items-center gap-2">
                 <Upload size={14} /> Import ZIP
-                <input
-                  type="file"
-                  accept=".zip"
-                  onChange={handleImportFiles}
-                  className="hidden"
-                />
+                <input type="file" accept=".zip" onChange={handleImportFiles} className="hidden" />
               </label>
             </div>
           </div>
