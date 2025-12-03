@@ -32,13 +32,13 @@ test.describe('OpenSSL Studio - New Features (Enc, KEM, PKCS12)', () => {
     // Passphrase: test
     await page.fill('#enc-pass-input', 'test')
     await page.getByRole('button', { name: 'Run Command' }).click()
-    await expect(page.getByText(/File created: data.enc/)).toBeVisible()
+    await expect(page.getByText(/File created: data.txt.enc/)).toBeVisible()
 
     // 3. Decrypt
     await page.getByRole('button', { name: 'Decrypt' }).click()
     // Input File: data.enc (might need to select it)
     await page.waitForTimeout(500)
-    await page.selectOption('#enc-infile-select', 'data.enc')
+    await page.selectOption('#enc-infile-select', 'data.txt.enc')
     await page.fill('#enc-pass-input', 'test')
     await page.getByRole('button', { name: 'Run Command' }).click()
     await expect(page.getByText(/File created: data.dec.txt/)).toBeVisible()
@@ -60,8 +60,8 @@ test.describe('OpenSSL Studio - New Features (Enc, KEM, PKCS12)', () => {
     // We need to make sure the key is selected.
     // For simplicity, we assume the first available key is selected or we just run it.
     await page.getByRole('button', { name: 'Run Command' }).click()
-    await expect(page.getByText(/File created: mlkem-768-.*\.ss/)).toBeVisible()
-    await expect(page.getByText(/File created: mlkem-768-.*\.ct/)).toBeVisible()
+    await expect(page.getByText(/File created: secret.bin/)).toBeVisible()
+    await expect(page.getByText(/File created: ciphertext.bin/)).toBeVisible()
 
     // 3. Decapsulate (using private key)
     await page.getByRole('button', { name: 'Decapsulate' }).click()
@@ -71,12 +71,15 @@ test.describe('OpenSSL Studio - New Features (Enc, KEM, PKCS12)', () => {
 
     // Select Ciphertext
     await page.waitForTimeout(500)
-    const ctOption = page.locator('#kem-infile-select option').filter({ hasText: '.ct' }).first()
+    const ctOption = page.locator('#kem-infile-select option').filter({ hasText: 'ciphertext.bin' }).first()
     const ctVal = await ctOption.getAttribute('value')
     if (ctVal) await page.selectOption('#kem-infile-select', ctVal)
 
+    // Change output file to avoid overwrite warning or confusion
+    await page.fill('#kem-outfile-input', 'secret_dec.bin')
+
     await page.getByRole('button', { name: 'Run Command' }).click()
-    await expect(page.getByText(/File created: mlkem-768-.*\.ss/)).toBeVisible()
+    await expect(page.getByText(/File created: secret_dec.bin/)).toBeVisible()
   })
 
   test('PKCS#12 Export and Import', async ({ page }) => {

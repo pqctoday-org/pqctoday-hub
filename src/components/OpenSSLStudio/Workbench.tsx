@@ -126,19 +126,19 @@ export const Workbench = () => {
       let keyName = ''
 
       if (keyAlgo === 'rsa') {
-        keyName = `rsa - ${keyBits} -${timestamp}.key`
-        cmd += ` genpkey - algorithm RSA - pkeyopt rsa_keygen_bits:${keyBits} `
+        keyName = `rsa-${keyBits}-${timestamp}.key`
+        cmd += ` genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:${keyBits} `
       } else if (keyAlgo === 'ec') {
-        keyName = `ec - ${curve} -${timestamp}.key`
-        cmd += ` genpkey - algorithm EC - pkeyopt ec_paramgen_curve:${curve} `
+        keyName = `ec-${curve}-${timestamp}.key`
+        cmd += ` genpkey -algorithm EC -pkeyopt ec_paramgen_curve:${curve} `
       } else if (keyAlgo.startsWith('mlkem')) {
         const kemVariant = keyAlgo.replace('mlkem', '')
-        keyName = `mlkem - ${kemVariant} -${timestamp}.key`
-        cmd += ` genpkey - algorithm ML - KEM - ${kemVariant} `
+        keyName = `mlkem-${kemVariant}-${timestamp}.key`
+        cmd += ` genpkey -algorithm ML-KEM-${kemVariant} `
       } else if (keyAlgo.startsWith('mldsa')) {
         const dsaVariant = keyAlgo.replace('mldsa', '')
-        keyName = `mldsa - ${dsaVariant} -${timestamp}.key`
-        cmd += ` genpkey - algorithm ML - DSA - ${dsaVariant} `
+        keyName = `mldsa-${dsaVariant}-${timestamp}.key`
+        cmd += ` genpkey -algorithm ML-DSA-${dsaVariant} `
       } else if (keyAlgo.startsWith('slhdsa')) {
         const slhVariantMap: Record<string, string> = {
           slhdsa256f: 'SLH-DSA-SHA2-256f',
@@ -177,7 +177,7 @@ export const Workbench = () => {
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)
         // Extract algorithm prefix from key filename
         const keyPrefix = keyFile.split('-')[0] // e.g., "mldsa", "slhdsa", "ed25519"
-        sigFile = `${keyPrefix} -sig - ${timestamp}.sig`
+        sigFile = `${keyPrefix}-sig-${timestamp}.sig`
       } else if (!sigFile) {
         sigFile = 'data.sig'
       }
@@ -188,7 +188,6 @@ export const Workbench = () => {
       if (isPQCKey) {
         // PQC signatures use pkeyutl (built-in hashing)
         if (signAction === 'sign') {
-          cmd += ` pkeyutl - sign - inkey ${keyFile} -in ${dataFile} -out ${sigFile} `
           cmd += ` pkeyutl -sign -inkey ${keyFile} -in ${dataFile} -out ${sigFile} `
         } else {
           cmd += ` pkeyutl -verify -pubin -inkey ${keyFile} -in ${dataFile} -sigfile ${sigFile} `
@@ -231,11 +230,11 @@ export const Workbench = () => {
 
       if (kemAction === 'encap') {
         const ctFile = kemOutFile || 'ciphertext.bin'
-        cmd += ` pkeyutl - encap - inkey ${key} -pubin - out ${ctFile} -secret secret.bin`
+        cmd += ` pkeyutl -encap -inkey ${key} -pubin -out ${ctFile} -secret secret.bin`
       } else {
         const inFile = kemInFile || 'ciphertext.bin'
         const outFile = kemOutFile || 'secret.bin'
-        cmd += ` pkeyutl - decap - inkey ${key} -in ${inFile} -out ${outFile} `
+        cmd += ` pkeyutl -decap -inkey ${key} -in ${inFile} -out ${outFile} `
       }
     } else if (category === 'pkcs12') {
       if (p12Action === 'export') {
@@ -1279,8 +1278,8 @@ export const Workbench = () => {
 
           {/* Show hash algorithm selector only for classical keys */}
           {selectedKeyFile &&
-          !selectedKeyFile.includes('mldsa') &&
-          !selectedKeyFile.includes('slhdsa') ? (
+            !selectedKeyFile.includes('mldsa') &&
+            !selectedKeyFile.includes('slhdsa') ? (
             <div className="space-y-3">
               <label htmlFor="sig-hash-algo-select" className="text-xs text-muted block">
                 Hash Algorithm
