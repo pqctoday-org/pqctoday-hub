@@ -170,6 +170,14 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                       ? 'bg-primary/10 border-primary'
                       : 'hover:bg-white/5 border-transparent'
                   )}
+                  tabIndex={0}
+                  role="button"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setSelectedKeyId(key.id)
+                    }
+                  }}
                 >
                   <td className="p-4 font-medium text-white truncate">{key.name}</td>
                   <td className="p-4">

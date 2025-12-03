@@ -433,7 +433,7 @@ export const Workbench = () => {
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'genpkey'
-                ? 'bg-primary/20 border-primary text-primary'
+                ? 'bg-primary/20 border-primary/40 text-primary'
                 : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
             )}
           >
@@ -448,7 +448,7 @@ export const Workbench = () => {
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'files'
-                ? 'bg-primary/20 border-primary text-primary'
+                ? 'bg-primary/20 border-primary/40 text-primary'
                 : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
             )}
           >
@@ -463,7 +463,7 @@ export const Workbench = () => {
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'req'
-                ? 'bg-primary/20 border-primary text-primary'
+                ? 'bg-primary/20 border-primary/40 text-primary'
                 : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
             )}
           >
@@ -478,7 +478,7 @@ export const Workbench = () => {
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'x509'
-                ? 'bg-primary/20 border-primary text-primary'
+                ? 'bg-primary/20 border-primary/40 text-primary'
                 : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
             )}
           >
@@ -493,7 +493,7 @@ export const Workbench = () => {
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'dgst'
-                ? 'bg-primary/20 border-primary text-primary'
+                ? 'bg-primary/20 border-primary/40 text-primary'
                 : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
             )}
           >
@@ -508,7 +508,7 @@ export const Workbench = () => {
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'rand'
-                ? 'bg-primary/20 border-primary text-primary'
+                ? 'bg-primary/20 border-primary/40 text-primary'
                 : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
             )}
           >
@@ -523,7 +523,7 @@ export const Workbench = () => {
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'enc'
-                ? 'bg-primary/20 border-primary text-primary'
+                ? 'bg-primary/20 border-primary/40 text-primary'
                 : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
             )}
           >
@@ -538,7 +538,7 @@ export const Workbench = () => {
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'kem'
-                ? 'bg-primary/20 border-primary text-primary'
+                ? 'bg-primary/20 border-primary/40 text-primary'
                 : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
             )}
           >
@@ -553,7 +553,7 @@ export const Workbench = () => {
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'pkcs12'
-                ? 'bg-primary/20 border-primary text-primary'
+                ? 'bg-primary/20 border-primary/40 text-primary'
                 : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
             )}
           >
@@ -568,7 +568,7 @@ export const Workbench = () => {
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               category === 'version'
-                ? 'bg-primary/20 border-primary text-primary'
+                ? 'bg-primary/20 border-primary/40 text-primary'
                 : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
             )}
           >
@@ -582,7 +582,7 @@ export const Workbench = () => {
             className={clsx(
               'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
               useOpenSSLStore.getState().activeTab === 'logs'
-                ? 'bg-primary/20 border-primary text-primary'
+                ? 'bg-primary/20 border-primary/40 text-primary'
                 : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted'
             )}
           >
@@ -652,7 +652,7 @@ export const Workbench = () => {
                 onClick={() => setEncAction('encrypt')}
                 className={clsx(
                   'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
-                  encAction === 'encrypt' ? 'bg-primary text-white' : 'text-muted hover:text-white'
+                  encAction === 'encrypt' ? 'bg-primary/20 text-primary' : 'text-muted hover:text-white'
                 )}
               >
                 Encrypt
@@ -661,7 +661,7 @@ export const Workbench = () => {
                 onClick={() => setEncAction('decrypt')}
                 className={clsx(
                   'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
-                  encAction === 'decrypt' ? 'bg-primary text-white' : 'text-muted hover:text-white'
+                  encAction === 'decrypt' ? 'bg-primary/20 text-primary' : 'text-muted hover:text-white'
                 )}
               >
                 Decrypt
@@ -1278,8 +1278,8 @@ export const Workbench = () => {
 
           {/* Show hash algorithm selector only for classical keys */}
           {selectedKeyFile &&
-          !selectedKeyFile.includes('mldsa') &&
-          !selectedKeyFile.includes('slhdsa') ? (
+            !selectedKeyFile.includes('mldsa') &&
+            !selectedKeyFile.includes('slhdsa') ? (
             <div className="space-y-3">
               <label htmlFor="sig-hash-algo-select" className="text-xs text-muted block">
                 Hash Algorithm
@@ -1373,7 +1373,7 @@ export const Workbench = () => {
               })
               useOpenSSLStore.getState().addLog('info', 'File created: data.txt')
             }}
-            className="w-full p-2 rounded-lg border border-primary/30 bg-primary/10 hover:bg-primary/20 text-primary text-sm transition-colors"
+            className="w-full p-2 rounded-lg border border-primary/40 bg-primary/20 hover:bg-primary/30 text-primary text-sm transition-colors"
           >
             Create Test Data File (data.txt)
           </button>
@@ -1387,7 +1387,17 @@ export const Workbench = () => {
               File Manager
             </span>
             <div className="flex gap-2">
-              <label className="px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded text-xs font-medium text-white cursor-pointer transition-colors flex items-center gap-2">
+              <label
+                className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+                tabIndex={0}
+                role="button"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    e.currentTarget.click()
+                  }
+                }}
+              >
                 <Plus size={14} /> Add File
                 <input
                   type="file"
@@ -1433,7 +1443,17 @@ export const Workbench = () => {
               >
                 <Archive size={14} /> Backup All
               </button>
-              <label className="px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded text-xs font-medium text-white cursor-pointer transition-colors flex items-center gap-2">
+              <label
+                className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+                tabIndex={0}
+                role="button"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    e.currentTarget.click()
+                  }
+                }}
+              >
                 <Upload size={14} /> Import ZIP
                 <input type="file" accept=".zip" onChange={handleImportFiles} className="hidden" />
               </label>
@@ -1451,50 +1471,50 @@ export const Workbench = () => {
               <table className="w-full text-sm">
                 <thead className="bg-white/5 border-b border-white/10">
                   <tr>
-                    <th
-                      className="text-left p-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors"
-                      onClick={() => {
-                        if (sortBy === 'timestamp') {
-                          setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
-                        } else {
-                          setSortBy('timestamp')
-                          setSortOrder('desc')
-                        }
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
+                    <th className="p-0">
+                      <button
+                        className="w-full text-left p-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
+                        onClick={() => {
+                          if (sortBy === 'timestamp') {
+                            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+                          } else {
+                            setSortBy('timestamp')
+                            setSortOrder('desc')
+                          }
+                        }}
+                      >
                         Timestamp <ArrowUpDown size={12} />
-                      </div>
+                      </button>
                     </th>
-                    <th
-                      className="text-left p-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors"
-                      onClick={() => {
-                        if (sortBy === 'type') {
-                          setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
-                        } else {
-                          setSortBy('type')
-                          setSortOrder('asc')
-                        }
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
+                    <th className="p-0">
+                      <button
+                        className="w-full text-left p-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
+                        onClick={() => {
+                          if (sortBy === 'type') {
+                            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+                          } else {
+                            setSortBy('type')
+                            setSortOrder('asc')
+                          }
+                        }}
+                      >
                         Type <ArrowUpDown size={12} />
-                      </div>
+                      </button>
                     </th>
-                    <th
-                      className="text-left p-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors"
-                      onClick={() => {
-                        if (sortBy === 'name') {
-                          setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
-                        } else {
-                          setSortBy('name')
-                          setSortOrder('asc')
-                        }
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
+                    <th className="p-0">
+                      <button
+                        className="w-full text-left p-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
+                        onClick={() => {
+                          if (sortBy === 'name') {
+                            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+                          } else {
+                            setSortBy('name')
+                            setSortOrder('asc')
+                          }
+                        }}
+                      >
                         Filename <ArrowUpDown size={12} />
-                      </div>
+                      </button>
                     </th>
                     <th className="text-right p-3 text-xs font-bold text-muted uppercase tracking-wider">
                       Actions
