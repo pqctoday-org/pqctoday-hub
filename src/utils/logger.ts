@@ -34,6 +34,7 @@ export const configureLogger = (newConfig: Partial<LoggerConfig>) => {
  */
 const shouldLog = (level: LogLevel): boolean => {
   if (!config.enabled) return false
+  // eslint-disable-next-line security/detect-object-injection
   return LOG_LEVELS[level] >= LOG_LEVELS[config.level]
 }
 

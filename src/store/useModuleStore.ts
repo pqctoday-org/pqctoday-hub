@@ -52,6 +52,7 @@ export const useModuleStore = create<ModuleState>()(
 
       updateModuleProgress: (moduleId, updates) =>
         set((state) => {
+          // eslint-disable-next-line security/detect-object-injection
           const currentModule = state.modules[moduleId] || {
             status: 'in-progress',
             lastVisited: Date.now(),
@@ -74,6 +75,7 @@ export const useModuleStore = create<ModuleState>()(
 
       markStepComplete: (moduleId, stepId) =>
         set((state) => {
+          // eslint-disable-next-line security/detect-object-injection
           const module = state.modules[moduleId]
           if (module && !module.completedSteps.includes(stepId)) {
             return {

@@ -11,6 +11,7 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
     let inQuotes = false
 
     for (let i = 0; i < line.length; i++) {
+      // eslint-disable-next-line security/detect-object-injection
       const char = line[i]
       if (char === '"') {
         inQuotes = !inQuotes
