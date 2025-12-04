@@ -1,5 +1,4 @@
 /* eslint-disable */
-/* eslint-disable no-restricted-globals */
 import type { WorkerMessage } from './types'
 
 // ----------------------------------------------------------------------------

@@ -181,7 +181,6 @@ export const useCertProfile = ({ initialAttributes, filterProfileName }: UseCert
     setAttributes((prev) =>
       prev.map((attr) => {
         if (attr.id === id) {
-          // eslint-disable-next-line security/detect-object-injection
           return { ...attr, [field]: value }
         }
         return attr

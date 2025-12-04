@@ -81,7 +81,8 @@ export const Workbench = () => {
         }
       }
     }
-  }, [category, signAction, files, selectedSigFile])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, signAction, files])
 
   // Effect to update command preview
   useEffect(() => {

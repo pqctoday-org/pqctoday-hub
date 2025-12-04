@@ -70,7 +70,6 @@ export const KeyTable: React.FC<KeyTableProps> = ({
         const newWidth = Math.max(50, resizeStartWidth.current + diff)
         setColumnWidths((prev) => ({
           ...prev,
-          // eslint-disable-next-line security/detect-object-injection
           [resizingColumn]: newWidth,
         }))
       }

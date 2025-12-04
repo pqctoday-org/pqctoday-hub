@@ -14,9 +14,21 @@ import clsx from 'clsx'
 import { useOpenSSLStore } from '../store'
 import { logEvent } from '../../../utils/analytics'
 
+export type WorkbenchCategory =
+  | 'genpkey'
+  | 'req'
+  | 'x509'
+  | 'enc'
+  | 'dgst'
+  | 'rand'
+  | 'version'
+  | 'files'
+  | 'kem'
+  | 'pkcs12'
+
 interface WorkbenchToolbarProps {
   category: string
-  setCategory: (category: any) => void
+  setCategory: (category: WorkbenchCategory) => void
 }
 
 export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, setCategory }) => {
