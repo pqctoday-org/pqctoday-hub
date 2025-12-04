@@ -2,7 +2,7 @@
 
 **Date:** December 3, 2025  
 **Standards Validated:** CA/B Forum TLS BR 2.1.x, ETSI EN 319 412-2, 3GPP TS 33.310, RFC 9310  
-**OpenSSL Target:** v3.5.4  
+**OpenSSL Target:** v3.5.4
 
 ---
 
@@ -10,11 +10,11 @@
 
 I reviewed 11 X.509 certificate and CSR profile CSV files against their respective standards and OpenSSL 3.5.4 compatibility. **Multiple issues were identified and corrected.**
 
-| Status | Count |
-|--------|-------|
-| ✅ Profiles with no issues | 6 |
-| 🔧 Profiles corrected | 5 |
-| **Total files** | **11** |
+| Status                     | Count  |
+| -------------------------- | ------ |
+| ✅ Profiles with no issues | 6      |
+| 🔧 Profiles corrected      | 5      |
+| **Total files**            | **11** |
 
 ---
 
@@ -24,12 +24,12 @@ I reviewed 11 X.509 certificate and CSR profile CSV files against their respecti
 
 **Issue:** Missing mandatory extensions for CA/B Forum TLS Baseline Requirements
 
-| Missing Extension | OID | Requirement |
-|------------------|-----|-------------|
-| extendedKeyUsage | 2.5.29.37 | **MUST** include `serverAuth` for TLS server certificates |
-| subjectKeyIdentifier | 2.5.29.14 | **SHOULD** be included per RFC 5280 |
-| certificatePolicies | 2.5.29.32 | **MUST** include at least one policy OID per TLS BR |
-| authorityKeyIdentifier | 2.5.29.35 | **MUST** be included for non-self-signed certificates |
+| Missing Extension      | OID       | Requirement                                               |
+| ---------------------- | --------- | --------------------------------------------------------- |
+| extendedKeyUsage       | 2.5.29.37 | **MUST** include `serverAuth` for TLS server certificates |
+| subjectKeyIdentifier   | 2.5.29.14 | **SHOULD** be included per RFC 5280                       |
+| certificatePolicies    | 2.5.29.32 | **MUST** include at least one policy OID per TLS BR       |
+| authorityKeyIdentifier | 2.5.29.35 | **MUST** be included for non-self-signed certificates     |
 
 **Correction:** Added all four missing extensions with proper OIDs and validation rules.
 
@@ -39,10 +39,10 @@ I reviewed 11 X.509 certificate and CSR profile CSV files against their respecti
 
 **Issue:** Incorrect OID for `nftypes` extension
 
-| Field | Before (Incorrect) | After (Correct) |
-|-------|-------------------|-----------------|
-| OID | 1.3.6.1.5.5.7.1.26 | 1.3.6.1.5.5.7.1.34 |
-| Standard | Draft/Pre-RFC | **RFC 9310** (January 2023) |
+| Field    | Before (Incorrect) | After (Correct)             |
+| -------- | ------------------ | --------------------------- |
+| OID      | 1.3.6.1.5.5.7.1.26 | 1.3.6.1.5.5.7.1.34          |
+| Standard | Draft/Pre-RFC      | **RFC 9310** (January 2023) |
 
 **Correction:** Updated to RFC 9310 standardized OID `1.3.6.1.5.5.7.1.34` (id-pe-nftype).
 
@@ -52,15 +52,16 @@ I reviewed 11 X.509 certificate and CSR profile CSV files against their respecti
 
 **Issues:** Multiple OpenSSL 3.5.4 compatibility problems
 
-| Issue | Before (Incorrect) | After (Correct) |
-|-------|-------------------|-----------------|
-| basicConstraints | Critical=TRUE for EE | Critical=FALSE |
-| keyUsage | contentCommitment | nonRepudiation |
-| qcStatements example | id-etsi-qcs-QcCompliance | ASN1:SEQUENCE:qcs |
-| Missing extensions | - | SKI, AKI, AIA, CDP added |
-| Algorithm examples | - | OpenSSL command syntax |
+| Issue                | Before (Incorrect)       | After (Correct)          |
+| -------------------- | ------------------------ | ------------------------ |
+| basicConstraints     | Critical=TRUE for EE     | Critical=FALSE           |
+| keyUsage             | contentCommitment        | nonRepudiation           |
+| qcStatements example | id-etsi-qcs-QcCompliance | ASN1:SEQUENCE:qcs        |
+| Missing extensions   | -                        | SKI, AKI, AIA, CDP added |
+| Algorithm examples   | -                        | OpenSSL command syntax   |
 
 **Corrections:**
+
 - `basicConstraints` set to non-critical for end-entity certs
 - `keyUsage` uses `nonRepudiation` (OpenSSL doesn't recognize `contentCommitment`)
 - `qcStatements` example shows proper ASN.1 sequence syntax for OpenSSL config
@@ -74,6 +75,7 @@ I reviewed 11 X.509 certificate and CSR profile CSV files against their respecti
 **Issue:** Algorithm parameters and missing OpenSSL syntax hints
 
 **Corrections:**
+
 - Added explicit OpenSSL command syntax in examples
 - Proper algorithm parameter specifications (NULL vs absent)
 - Added ML-DSA-87 option for highest security level
@@ -84,8 +86,8 @@ I reviewed 11 X.509 certificate and CSR profile CSV files against their respecti
 
 **Issue:** keyUsage used incorrect terminology
 
-| Issue | Before | After |
-|-------|--------|-------|
+| Issue    | Before            | After          |
+| -------- | ----------------- | -------------- |
 | keyUsage | contentCommitment | nonRepudiation |
 
 **Correction:** Changed to OpenSSL-compatible `nonRepudiation` keyword.
@@ -98,19 +100,19 @@ All Post-Quantum Cryptography OIDs are correct per NIST FIPS 203/204/205:
 
 ### ML-DSA (FIPS 204) - Digital Signatures
 
-| Algorithm | OID | Security Level | Status |
-|-----------|-----|----------------|--------|
+| Algorithm | OID                     | Security Level    | Status     |
+| --------- | ----------------------- | ----------------- | ---------- |
 | ML-DSA-44 | 2.16.840.1.101.3.4.3.17 | Level 2 (128-bit) | ✅ Correct |
 | ML-DSA-65 | 2.16.840.1.101.3.4.3.18 | Level 3 (192-bit) | ✅ Correct |
 | ML-DSA-87 | 2.16.840.1.101.3.4.3.19 | Level 5 (256-bit) | ✅ Correct |
 
 ### ML-KEM (FIPS 203) - Key Encapsulation
 
-| Algorithm | OID | Security Level | Status |
-|-----------|-----|----------------|--------|
-| ML-KEM-512 | 2.16.840.1.101.3.4.4.1 | Level 1 | ✅ Correct |
-| ML-KEM-768 | 2.16.840.1.101.3.4.4.2 | Level 3 | ✅ Correct |
-| ML-KEM-1024 | 2.16.840.1.101.3.4.4.3 | Level 5 | ✅ Correct |
+| Algorithm   | OID                    | Security Level | Status     |
+| ----------- | ---------------------- | -------------- | ---------- |
+| ML-KEM-512  | 2.16.840.1.101.3.4.4.1 | Level 1        | ✅ Correct |
+| ML-KEM-768  | 2.16.840.1.101.3.4.4.2 | Level 3        | ✅ Correct |
+| ML-KEM-1024 | 2.16.840.1.101.3.4.4.3 | Level 5        | ✅ Correct |
 
 ---
 
@@ -118,14 +120,14 @@ All Post-Quantum Cryptography OIDs are correct per NIST FIPS 203/204/205:
 
 All profiles are fully compatible with OpenSSL 3.5.4:
 
-| Feature | Support Status |
-|---------|---------------|
-| ML-DSA (FIPS 204) | ✅ Native support since v3.5.0 |
-| ML-KEM (FIPS 203) | ✅ Native support since v3.5.0 |
-| SLH-DSA (FIPS 205) | ✅ Native support since v3.5.0 |
-| Classical algorithms (ECDSA, RSA) | ✅ Full support |
-| All X.509 extension OIDs | ✅ Full support |
-| RFC 9310 NFTypes extension | ✅ Supported via custom extension |
+| Feature                           | Support Status                    |
+| --------------------------------- | --------------------------------- |
+| ML-DSA (FIPS 204)                 | ✅ Native support since v3.5.0    |
+| ML-KEM (FIPS 203)                 | ✅ Native support since v3.5.0    |
+| SLH-DSA (FIPS 205)                | ✅ Native support since v3.5.0    |
+| Classical algorithms (ECDSA, RSA) | ✅ Full support                   |
+| All X.509 extension OIDs          | ✅ Full support                   |
+| RFC 9310 NFTypes extension        | ✅ Supported via custom extension |
 
 **OpenSSL 3.5 Command Examples:**
 
@@ -139,7 +141,7 @@ openssl genpkey -algorithm ML-KEM-768 -out ml-kem-768.key
 # List available signature algorithms
 openssl list -signature-algorithms
 
-# List available KEM algorithms  
+# List available KEM algorithms
 openssl list -kem-algorithms
 ```
 
@@ -149,29 +151,29 @@ openssl list -kem-algorithms
 
 ### CA/B Forum TLS Baseline Requirements (General IT)
 
-| File | Scope | Status |
-|------|-------|--------|
-| Cert-GeneralIT_CABF_TLSBR_2025.csv | End-Entity | 🔧 Corrected |
-| Cert-GeneralIT_CABF_TLSBR_2025_PQC.csv | End-Entity PQC | ✅ Valid |
-| Cert-RootCA-GeneralIT_CABF_TLSBR_2025.csv | Root CA | ✅ Valid |
-| CSR-GeneralIT_CABF_TLSBR_2025.csv | CSR | ✅ Valid |
+| File                                      | Scope          | Status       |
+| ----------------------------------------- | -------------- | ------------ |
+| Cert-GeneralIT_CABF_TLSBR_2025.csv        | End-Entity     | 🔧 Corrected |
+| Cert-GeneralIT_CABF_TLSBR_2025_PQC.csv    | End-Entity PQC | ✅ Valid     |
+| Cert-RootCA-GeneralIT_CABF_TLSBR_2025.csv | Root CA        | ✅ Valid     |
+| CSR-GeneralIT_CABF_TLSBR_2025.csv         | CSR            | ✅ Valid     |
 
 ### ETSI EN 319 412-2 (Financial)
 
-| File | Scope | Status |
-|------|-------|--------|
-| Cert-Financial_ETSI_EN319412-2_2025.csv | End-Entity | 🔧 Corrected |
-| Cert-RootCA-Financial_ETSI_EN319412-2_2025.csv | Root CA | 🔧 Corrected |
-| CSR-Financial_ETSI_EN319412-2_2025.csv | CSR | 🔧 Corrected |
+| File                                           | Scope      | Status       |
+| ---------------------------------------------- | ---------- | ------------ |
+| Cert-Financial_ETSI_EN319412-2_2025.csv        | End-Entity | 🔧 Corrected |
+| Cert-RootCA-Financial_ETSI_EN319412-2_2025.csv | Root CA    | 🔧 Corrected |
+| CSR-Financial_ETSI_EN319412-2_2025.csv         | CSR        | 🔧 Corrected |
 
 ### 3GPP TS 33.310 (Telecom/5G)
 
-| File | Scope | Status |
-|------|-------|--------|
-| Cert-Telecom_3GPP_TS33310_2025.csv | NF End-Entity | 🔧 Corrected |
-| Cert-Telecom_3GPP_TS33310_2025_PQC.csv | NF End-Entity PQC | ✅ Valid |
-| Cert-RootCA-Telecom_3GPP_TS33310_2025.csv | Root CA | ✅ Valid |
-| CSR-Telecom_3GPP_TS33310_2025.csv | CSR | ✅ Valid |
+| File                                      | Scope             | Status       |
+| ----------------------------------------- | ----------------- | ------------ |
+| Cert-Telecom_3GPP_TS33310_2025.csv        | NF End-Entity     | 🔧 Corrected |
+| Cert-Telecom_3GPP_TS33310_2025_PQC.csv    | NF End-Entity PQC | ✅ Valid     |
+| Cert-RootCA-Telecom_3GPP_TS33310_2025.csv | Root CA           | ✅ Valid     |
+| CSR-Telecom_3GPP_TS33310_2025.csv         | CSR               | ✅ Valid     |
 
 ---
 

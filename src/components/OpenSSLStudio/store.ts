@@ -119,15 +119,16 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
       lastExecutionTime: null,
       setLastExecutionTime: (time) => set({ lastExecutionTime: time }),
 
-      resetStore: () => set({
-        files: [],
-        logs: [],
-        structuredLogs: [],
-        command: '',
-        isProcessing: false,
-        editingFile: null,
-        lastExecutionTime: null
-      }),
+      resetStore: () =>
+        set({
+          files: [],
+          logs: [],
+          structuredLogs: [],
+          command: '',
+          isProcessing: false,
+          editingFile: null,
+          lastExecutionTime: null,
+        }),
     }),
     {
       name: 'openssl-studio-storage',
