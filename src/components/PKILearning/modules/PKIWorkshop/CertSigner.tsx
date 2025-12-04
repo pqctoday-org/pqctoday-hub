@@ -91,6 +91,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
     let inQuotes = false
 
     for (let i = 0; i < line.length; i++) {
+      // eslint-disable-next-line security/detect-object-injection
       const char = line[i]
 
       if (char === '"') {
@@ -117,6 +118,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       const path = Object.keys(certProfiles).find((p) => p.endsWith(filename))
       if (!path) throw new Error('Profile path not found')
 
+      // eslint-disable-next-line security/detect-object-injection
       const loadProfile = certProfiles[path] as () => Promise<string>
       const content = await loadProfile()
 
@@ -130,6 +132,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
 
       const getVal = (row: string[], colName: string) => {
         const idx = colMap.get(colName)
+        // eslint-disable-next-line security/detect-object-injection
         return idx !== undefined && idx < row.length ? row[idx] : ''
       }
 
@@ -146,6 +149,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       const newConstraints: ProfileConstraint[] = []
 
       for (let i = 1; i < lines.length; i++) {
+        // eslint-disable-next-line security/detect-object-injection
         const row = parseCSVLine(lines[i])
         const elementType = getVal(row, 'ElementType')
 

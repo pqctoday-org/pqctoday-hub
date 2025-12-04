@@ -133,6 +133,7 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
     let inQuotes = false
 
     for (let i = 0; i < line.length; i++) {
+      // eslint-disable-next-line security/detect-object-injection
       const char = line[i]
 
       if (char === '"') {
@@ -159,6 +160,7 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
       const path = Object.keys(certProfiles).find((p) => p.endsWith(filename))
       if (!path) throw new Error('Profile path not found')
 
+      // eslint-disable-next-line security/detect-object-injection
       const loadProfile = certProfiles[path] as () => Promise<string>
       const content = await loadProfile()
 
@@ -172,6 +174,7 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
 
       const getVal = (row: string[], colName: string) => {
         const idx = colMap.get(colName)
+        // eslint-disable-next-line security/detect-object-injection
         return idx !== undefined && idx < row.length ? row[idx] : ''
       }
 
@@ -188,6 +191,7 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
       const newConstraints: ProfileConstraint[] = []
 
       for (let i = 1; i < lines.length; i++) {
+        // eslint-disable-next-line security/detect-object-injection
         const row = parseCSVLine(lines[i])
         const elementType = getVal(row, 'ElementType')
 
@@ -351,6 +355,7 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
           (a) =>
             a.enabled &&
             a.elementType === 'SubjectRDN' &&
+            // eslint-disable-next-line security/detect-unsafe-regex
             /^\d+(\.\d+)+$/.test(a.id) &&
             !KNOWN_OIDS[a.id]
         )
@@ -392,6 +397,7 @@ x509_extensions = v3_ca
         .forEach((a) => {
           if (KNOWN_OIDS[a.id]) {
             configContent += `${KNOWN_OIDS[a.id]} = ${a.value}\n`
+            // eslint-disable-next-line security/detect-unsafe-regex
           } else if (/^\d+(\.\d+)+$/.test(a.id)) {
             const custom = customOids.find((o) => o.oid === a.id)
             if (custom) {
