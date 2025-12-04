@@ -34,7 +34,7 @@ interface WorkbenchToolbarProps {
 export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, setCategory }) => {
   const { activeTab, setActiveTab } = useOpenSSLStore()
 
-  const handleCategoryChange = (newCategory: string, label: string) => {
+  const handleCategoryChange = (newCategory: WorkbenchCategory, label: string) => {
     setCategory(newCategory)
     setActiveTab('terminal')
     logEvent('OpenSSL Studio', 'Select Category', label)

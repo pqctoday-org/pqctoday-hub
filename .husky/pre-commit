@@ -1,1 +1,5 @@
+# Check types
+npx tsc --noEmit
+
+# Run lint-staged
 npx lint-staged
