@@ -205,8 +205,11 @@ AL9... (truncated for brevity) ...
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm text-muted">Select a Certificate or CSR to inspect:</label>
+            <label htmlFor="artifact-select" className="text-sm text-muted">
+              Select a Certificate or CSR to inspect:
+            </label>
             <select
+              id="artifact-select"
               value={selectedArtifactId}
               onChange={(e) => handleArtifactSelect(e.target.value)}
               className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"

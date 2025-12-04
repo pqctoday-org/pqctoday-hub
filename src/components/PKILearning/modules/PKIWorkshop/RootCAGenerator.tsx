@@ -249,12 +249,17 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
       setAttributes(newAttributes)
       setProfileConstraints(newConstraints)
       setOutput((prev) => prev + `Profile loaded: ${industry} - ${standard} (${date})\n`)
-    } catch (error: any) {
-      setOutput((prev) => prev + `Error loading profile: ${error.message}\n`)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setOutput((prev) => prev + `Error loading profile: ${errorMessage}\n`)
     }
   }
 
-  const handleAttributeChange = (id: string, field: keyof X509Attribute, value: any) => {
+  const handleAttributeChange = (
+    id: string,
+    field: keyof X509Attribute,
+    value: string | boolean
+  ) => {
     setAttributes((prev) =>
       prev.map((attr) => {
         if (attr.id === id) {

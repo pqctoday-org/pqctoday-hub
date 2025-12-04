@@ -213,8 +213,9 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       if (selectedCsrId) {
         await importCsrValues(selectedCsrId, newAttributes)
       }
-    } catch (error: any) {
-      setOutput((prev) => prev + `Error loading profile: ${error.message}\n`)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setOutput((prev) => prev + `Error loading profile: ${errorMessage}\n`)
     }
   }
 
@@ -267,8 +268,9 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         setAttributes(newAttributes)
         setOutput((prev) => prev + `Imported Subject DN values.\n`)
       }
-    } catch (error: any) {
-      setOutput((prev) => prev + `Warning: Failed to import CSR values: ${error.message}\n`)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setOutput((prev) => prev + `Warning: Failed to import CSR values: ${errorMessage}\n`)
     }
   }
 
@@ -279,7 +281,11 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
     }
   }
 
-  const handleAttributeChange = (id: string, field: keyof X509Attribute, value: any) => {
+  const handleAttributeChange = (
+    id: string,
+    field: keyof X509Attribute,
+    value: string | boolean
+  ) => {
     setAttributes((prev) =>
       prev.map((attr) => {
         if (attr.id === id) {
@@ -433,8 +439,9 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
 
       setOutput((prev) => prev + 'Certificate signed successfully!\n')
       onComplete()
-    } catch (error: any) {
-      setOutput((prev) => prev + `Error: ${error.message}\n`)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setOutput((prev) => prev + `Error: ${errorMessage}\n`)
     } finally {
       setIsSigning(false)
     }
@@ -458,8 +465,11 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-muted">Certificate Signing Request</label>
+            <label htmlFor="csr-select" className="text-sm text-muted">
+              Certificate Signing Request
+            </label>
             <select
+              id="csr-select"
               value={selectedCsrId}
               onChange={(e) => handleCsrSelect(e.target.value)}
               className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
@@ -492,8 +502,11 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm text-muted">Certificate Profile</label>
+              <label htmlFor="profile-select" className="text-sm text-muted">
+                Certificate Profile
+              </label>
               <select
+                id="profile-select"
                 value={selectedProfile}
                 onChange={(e) => handleProfileSelect(e.target.value)}
                 className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
@@ -638,8 +651,11 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm text-muted">Signing CA Key</label>
+              <label htmlFor="ca-key-select" className="text-sm text-muted">
+                Signing CA Key
+              </label>
               <select
+                id="ca-key-select"
                 value={selectedKeyId}
                 onChange={(e) => setSelectedKeyId(e.target.value)}
                 className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
@@ -653,8 +669,11 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-muted">Validity (Days)</label>
+              <label htmlFor="validity-input" className="text-sm text-muted">
+                Validity (Days)
+              </label>
               <input
+                id="validity-input"
                 type="number"
                 value={validityDays}
                 onChange={(e) => setValidityDays(e.target.value)}

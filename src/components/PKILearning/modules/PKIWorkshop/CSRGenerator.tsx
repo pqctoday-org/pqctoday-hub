@@ -397,6 +397,7 @@ distinguished_name = dn
           if (KNOWN_OIDS[a.id]) {
             // Known OID: use the standard name (e.g. organizationIdentifier)
             configContent += `${KNOWN_OIDS[a.id]} = ${a.value}\n`
+            // eslint-disable-next-line security/detect-unsafe-regex
           } else if (/^\d+(\.\d+)+$/.test(a.id)) {
             // Custom numeric OID: use the alias defined in new_oids
             const custom = customOids.find((o) => o.oid === a.id)
@@ -504,7 +505,7 @@ distinguished_name = dn
     if (selectedKeyId === 'new') {
       setSelectedKeyId(`new-${ALGORITHMS[0].id}`)
     }
-  }, [])
+  }, [selectedKeyId])
 
   return (
     <div className="space-y-6">
