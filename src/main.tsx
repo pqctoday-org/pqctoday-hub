@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import './styles/index.css'
-import { Root } from './Root.tsx'
+import AppRoot from './AppRoot'
 import { initGA } from './utils/analytics'
 
 // Initialize Google Analytics
@@ -32,4 +32,4 @@ window.onerror = function (message, source, lineno, colno, error) {
 const rootElement = document.getElementById('root')
 if (!rootElement) throw new Error('Failed to find the root element')
 
-createRoot(rootElement).render(<Root />)
+createRoot(rootElement).render(<AppRoot />)
