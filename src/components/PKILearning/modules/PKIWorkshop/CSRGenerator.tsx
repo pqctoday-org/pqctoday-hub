@@ -255,12 +255,17 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
       setAttributes(newAttributes)
       setProfileConstraints(newConstraints)
       setOutput((prev) => prev + `Profile loaded: ${industry} - ${standard} (${date})\n`)
-    } catch (error: any) {
-      setOutput((prev) => prev + `Error loading profile: ${error.message}\n`)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setOutput((prev) => prev + `Error loading profile: ${errorMessage}\n`)
     }
   }
 
-  const handleAttributeChange = (id: string, field: keyof X509Attribute, value: any) => {
+  const handleAttributeChange = (
+    id: string,
+    field: keyof X509Attribute,
+    value: string | boolean
+  ) => {
     setAttributes((prev) =>
       prev.map((attr) => {
         if (attr.id === id) {
@@ -342,14 +347,13 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
       // 2. Generate CSR using Config File
       // We need to construct an OpenSSL config file to properly handle extensions and RDNs
 
-      // ... (inside handleGenerate)
-
       // Identify custom OIDs (numeric OIDs that are NOT in the known list)
       const customOids = attributes
         .filter(
           (a) =>
             a.enabled &&
             a.elementType === 'SubjectRDN' &&
+            // eslint-disable-next-line security/detect-unsafe-regex
             /^\d+(\.\d+)+$/.test(a.id) &&
             !KNOWN_OIDS[a.id]
         )
@@ -487,8 +491,9 @@ distinguished_name = dn
         setOutput((prev) => prev + 'CSR generated and saved successfully!\n')
         onComplete()
       }
-    } catch (error: any) {
-      setOutput((prev) => prev + `Error: ${error.message}\n`)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setOutput((prev) => prev + `Error: ${errorMessage}\n`)
     } finally {
       setIsGenerating(false)
     }

@@ -75,6 +75,7 @@ test.describe('OpenSSL Studio - PQC Algorithms', () => {
       // Match filename loosely as it contains the variant name
       await expect(
         page.getByText(
+          // eslint-disable-next-line security/detect-non-literal-regexp
           new RegExp(
             `File created: .*${variant.replace('slhdsa', '').replace('shake', '')}.*\\.key`,
             'i'

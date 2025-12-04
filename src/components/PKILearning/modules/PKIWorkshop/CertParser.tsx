@@ -100,8 +100,9 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
         setParsedOutput(result.stdout)
         onComplete()
       }
-    } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred'
+      setError(errorMessage)
     } finally {
       setIsParsing(false)
     }
@@ -149,7 +150,9 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
       } else {
         const outFile = result.files.find((f) => f.name === outputName)
         if (outFile) {
-          const blob = new Blob([outFile.data as any], { type: 'application/octet-stream' })
+          const blob = new Blob([outFile.data as unknown as BlobPart], {
+            type: 'application/octet-stream',
+          })
           const url = URL.createObjectURL(blob)
           setConversionResult({ name: outputName, url, format })
 
@@ -169,8 +172,9 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
           )
         }
       }
-    } catch (err: any) {
-      setError(err.message || 'Conversion failed')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Conversion failed'
+      setError(errorMessage)
     } finally {
       setIsConverting(false)
     }

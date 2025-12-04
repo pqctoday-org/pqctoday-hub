@@ -40,12 +40,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
             {moduleList.map((module) => {
               const status = modules[module.id]?.status || 'not-started'
               return (
-                <div
+                <button
                   key={module.id}
-                  className={`p-4 rounded-lg border border-white/10 bg-white/5 transition-all
+                  className={`w-full text-left p-4 rounded-lg border border-white/10 bg-white/5 transition-all
                     ${module.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10 cursor-pointer'}
                   `}
                   onClick={() => !module.disabled && onSelectModule(module.id)}
+                  disabled={module.disabled}
                 >
                   <div className="flex justify-between items-start">
                     <div>
@@ -82,7 +83,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
                       )}
                     </div>
                   </div>
-                </div>
+                </button>
               )
             })}
           </div>

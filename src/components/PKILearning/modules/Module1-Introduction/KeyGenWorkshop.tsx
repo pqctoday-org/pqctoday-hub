@@ -60,8 +60,9 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
 
         onComplete()
       }
-    } catch (error: any) {
-      setOutput((prev) => prev + `System Error: ${error.message}\n`)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setOutput((prev) => prev + `System Error: ${errorMessage}\n`)
     } finally {
       setIsGenerating(false)
     }
@@ -74,8 +75,11 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
           <h3 className="text-lg font-semibold text-white">Configuration</h3>
 
           <div>
-            <label className="block text-sm text-muted mb-1">Algorithm</label>
+            <label htmlFor="algo-select" className="block text-sm text-muted mb-1">
+              Algorithm
+            </label>
             <select
+              id="algo-select"
               value={algorithm}
               onChange={(e) => {
                 setAlgorithm(e.target.value)
@@ -92,10 +96,11 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
 
           {algorithm !== 'ED25519' && (
             <div>
-              <label className="block text-sm text-muted mb-1">
+              <label htmlFor="size-select" className="block text-sm text-muted mb-1">
                 {algorithm === 'RSA' ? 'Key Size (bits)' : 'Curve'}
               </label>
               <select
+                id="size-select"
                 value={keySize}
                 onChange={(e) => setKeySize(e.target.value)}
                 className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white"
