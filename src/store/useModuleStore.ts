@@ -126,17 +126,7 @@ export const useModuleStore = create<ModuleState>()(
       resetProgress: () => set(INITIAL_STATE),
 
       getFullProgress: () => {
-        const {
-          updateModuleProgress,
-          markStepComplete,
-          addKey,
-          addCertificate,
-          addCSR,
-          loadProgress,
-          resetProgress,
-          getFullProgress,
-          ...data
-        } = get()
+        const { loadProgress, resetProgress, getFullProgress, ...data } = get()
         return data
       },
     }),

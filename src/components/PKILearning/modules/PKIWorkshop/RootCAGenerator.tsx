@@ -504,8 +504,9 @@ x509_extensions = v3_ca
         setOutput((prev) => prev + 'Root CA certificate generated and saved successfully!\n')
         onComplete()
       }
-    } catch (error: any) {
-      setOutput((prev) => prev + `Error: ${error.message}\n`)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setOutput((prev) => prev + `Error: ${errorMessage}\n`)
     } finally {
       setIsGenerating(false)
     }

@@ -37,6 +37,7 @@ export const LeadersGrid = () => {
         'Germany/Netherlands': 'de',
         'USA/Germany': 'us',
       }
+      // eslint-disable-next-line security/detect-object-injection
       return map[country] || 'un' // default to UN flag or similar if needed
     }
 

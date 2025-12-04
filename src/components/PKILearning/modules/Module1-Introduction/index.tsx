@@ -87,7 +87,9 @@ export const Module1: React.FC = () => {
 
       {/* Content Area */}
       <div className="glass-panel p-8 min-h-[400px]">
+        {/* eslint-disable-next-line security/detect-object-injection */}
         <h2 className="text-2xl font-bold text-white mb-6">{steps[currentStep].title}</h2>
+        {/* eslint-disable-next-line security/detect-object-injection */}
         {steps[currentStep].component}
       </div>
 

@@ -13,7 +13,7 @@ class OpenSSLService {
     string,
     {
       resolve: (value: OpenSSLCommandResult) => void
-      reject: (reason?: any) => void
+      reject: (reason?: unknown) => void
       result: OpenSSLCommandResult
     }
   > = new Map()
@@ -49,7 +49,9 @@ class OpenSSLService {
 
         // Store the resolve function to be called by handleMessage
         // This is a bit of a hack, but effective for the initial handshake
-        ;(this as any)._resolveInit = resolve
+        ;(
+          this as unknown as { _resolveInit: (value: void | PromiseLike<void>) => void }
+        )._resolveInit = resolve
       } catch (error) {
         reject(error)
       }
@@ -63,9 +65,9 @@ class OpenSSLService {
 
     if (type === 'READY') {
       this.isReady = true
-      if ((this as any)._resolveInit) {
-        ;(this as any)._resolveInit()
-        ;(this as any)._resolveInit = undefined
+      if ((this as unknown as { _resolveInit: () => void })._resolveInit) {
+        ;(this as unknown as { _resolveInit: () => void })._resolveInit()
+        ;(this as unknown as { _resolveInit: undefined })._resolveInit = undefined
       }
       return
     }

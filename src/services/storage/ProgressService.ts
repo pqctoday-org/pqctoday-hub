@@ -84,12 +84,14 @@ export class ProgressService {
   /**
    * Validate progress file format
    */
-  private static validateProgressFormat(progress: any): boolean {
+  private static validateProgressFormat(progress: unknown): boolean {
+    const p = progress as any
     return (
-      typeof progress === 'object' &&
-      typeof progress.version === 'string' &&
-      typeof progress.timestamp === 'number' &&
-      typeof progress.modules === 'object'
+      typeof p === 'object' &&
+      p !== null &&
+      typeof p.version === 'string' &&
+      typeof p.timestamp === 'number' &&
+      typeof p.modules === 'object'
     )
   }
 

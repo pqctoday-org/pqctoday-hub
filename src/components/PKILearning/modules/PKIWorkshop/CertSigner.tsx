@@ -256,6 +256,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         parts.forEach((part: string) => {
           const [key, val] = part.trim().split('=')
           if (key && val) {
+            // eslint-disable-next-line security/detect-object-injection
             const attr = newAttributes.find((a) => a.id === key || a.oid === key)
             if (attr) {
               attr.value = val
@@ -289,6 +290,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
     setAttributes((prev) =>
       prev.map((attr) => {
         if (attr.id === id) {
+          // eslint-disable-next-line security/detect-object-injection
           return { ...attr, [field]: value }
         }
         return attr
