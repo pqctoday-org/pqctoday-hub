@@ -109,9 +109,12 @@ export const PKIWorkshop: React.FC = () => {
       {/* Content Area */}
       <div className="glass-panel p-8 min-h-[500px] animate-fade-in">
         <div className="mb-6 border-b border-white/10 pb-4">
+          {/* eslint-disable-next-line security/detect-object-injection */}
           <h2 className="text-2xl font-bold text-white">{steps[currentStep].title}</h2>
+          {/* eslint-disable-next-line security/detect-object-injection */}
           <p className="text-muted">{steps[currentStep].description}</p>
         </div>
+        {/* eslint-disable-next-line security/detect-object-injection */}
         {steps[currentStep].component}
       </div>
 

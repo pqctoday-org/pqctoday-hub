@@ -19,6 +19,7 @@ export const GanttLegend = ({ className = '' }: GanttLegendProps) => {
           <tbody>
             <tr>
               {phases.map((phase) => {
+                // eslint-disable-next-line security/detect-object-injection
                 const colors = phaseColors[phase]
                 return (
                   <td

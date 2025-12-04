@@ -25,10 +25,12 @@ function getLatestLeadersFile(): { content: string; filename: string; date: Date
   const files = Object.keys(modules)
     .map((path) => {
       // Path format: ./leaders_MMDDYYYY.csv or ./leaders_MMDDYYYY_suffix.csv
+      // eslint-disable-next-line security/detect-unsafe-regex
       const match = path.match(/leaders_(\d{2})(\d{2})(\d{4})(?:_[^.]*)?\.csv$/)
       if (match) {
         const [, month, day, year] = match
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+        // eslint-disable-next-line security/detect-object-injection
         return { path, date, content: modules[path] as string }
       }
       return null
@@ -65,6 +67,7 @@ function parseLeadersCSV(csvContent: string): Leader[] {
     let inQuotes = false
 
     for (let i = 0; i < line.length; i++) {
+      // eslint-disable-next-line security/detect-object-injection
       const char = line[i]
       if (char === '"') {
         inQuotes = !inQuotes

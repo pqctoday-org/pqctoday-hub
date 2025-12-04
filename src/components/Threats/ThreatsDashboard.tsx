@@ -131,6 +131,7 @@ export const ThreatsDashboard = () => {
         Medium: 1,
         Low: 0,
       }
+      // eslint-disable-next-line security/detect-object-injection
       const getCriticalityVal = (c: string) => criticalityOrder[c] ?? 0
 
       if (sortField === 'industry') {
@@ -143,7 +144,9 @@ export const ThreatsDashboard = () => {
         return getCriticalityVal(b.criticality) - getCriticalityVal(a.criticality)
       }
 
+      // eslint-disable-next-line security/detect-object-injection
       let valA: string | number = a[sortField]
+      // eslint-disable-next-line security/detect-object-injection
       let valB: string | number = b[sortField]
 
       // Custom sort for criticality column

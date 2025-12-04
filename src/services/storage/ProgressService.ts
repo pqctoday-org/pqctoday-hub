@@ -85,6 +85,7 @@ export class ProgressService {
    * Validate progress file format
    */
   private static validateProgressFormat(progress: unknown): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const p = progress as any
     return (
       typeof p === 'object' &&

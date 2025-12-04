@@ -126,7 +126,12 @@ export const useModuleStore = create<ModuleState>()(
       resetProgress: () => set(INITIAL_STATE),
 
       getFullProgress: () => {
-        const { loadProgress, resetProgress, getFullProgress, ...data } = get()
+        const {
+          loadProgress: _loadProgress,
+          resetProgress: _resetProgress,
+          getFullProgress: _getFullProgress,
+          ...data
+        } = get()
         return data
       },
     }),
