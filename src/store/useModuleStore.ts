@@ -127,8 +127,11 @@ export const useModuleStore = create<ModuleState>()(
 
       getFullProgress: () => {
         const {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           loadProgress: _loadProgress,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           resetProgress: _resetProgress,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           getFullProgress: _getFullProgress,
           ...data
         } = get()

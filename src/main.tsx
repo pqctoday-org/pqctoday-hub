@@ -1,4 +1,3 @@
-import { StrictMode, Suspense, lazy } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles/index.css'
 import { initGA } from './utils/analytics'
@@ -29,31 +28,7 @@ window.onerror = function (message, source, lineno, colno, error) {
   if (!document.body.contains(errorDiv)) document.body.appendChild(errorDiv)
 }
 
-// Lazy load App to catch evaluation errors
-const App = lazy(() => import('./App.tsx'))
-
-import ErrorBoundary from './components/ErrorBoundary'
-
-function Root() {
-  return (
-    <StrictMode>
-      <ErrorBoundary>
-        <Suspense
-          fallback={
-            <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-              <div className="text-center">
-                <h2 className="text-xl font-bold mb-2">System Loading...</h2>
-                <p className="text-gray-400">Initializing application modules.</p>
-              </div>
-            </div>
-          }
-        >
-          <App />
-        </Suspense>
-      </ErrorBoundary>
-    </StrictMode>
-  )
-}
+import { Root } from './Root'
 
 const rootElement = document.getElementById('root')
 if (!rootElement) throw new Error('Failed to find the root element')

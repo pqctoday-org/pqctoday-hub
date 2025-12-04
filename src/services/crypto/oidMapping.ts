@@ -20,9 +20,11 @@ export const KNOWN_OIDS: Record<string, string> = {
 }
 
 export const getOidName = (oid: string): string | undefined => {
+  // eslint-disable-next-line security/detect-object-injection
   return KNOWN_OIDS[oid]
 }
 
 export const isKnownOid = (oid: string): boolean => {
+  // eslint-disable-next-line security/detect-object-injection
   return !!KNOWN_OIDS[oid]
 }

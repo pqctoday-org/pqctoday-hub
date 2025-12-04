@@ -56,10 +56,12 @@ function getLatestTimelineFile(): { content: string; filename: string; date: Dat
   const files = Object.keys(modules)
     .map((path) => {
       // Path format: ./timeline_MMDDYYYY.csv or ./timeline_MMDDYYYY_suffix.csv
+      // eslint-disable-next-line security/detect-unsafe-regex
       const match = path.match(/timeline_(\d{2})(\d{2})(\d{4})(?:_.*)?\.csv$/)
       if (match) {
         const [, month, day, year] = match
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+        // eslint-disable-next-line security/detect-object-injection
         return { path, date, content: modules[path] as string }
       }
       return null

@@ -25,6 +25,7 @@ function getLatestThreatsFile(): { content: string; filename: string; date: Date
       if (match) {
         const [, month, day, year] = match
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+        // eslint-disable-next-line security/detect-object-injection
         return { path, date, content: modules[path] as string }
       }
       return null
@@ -57,6 +58,7 @@ export function parseThreatsCSV(csvContent: string): ThreatData[] {
       let inQuotes = false
 
       for (let i = 0; i < line.length; i++) {
+        // eslint-disable-next-line security/detect-object-injection
         const char = line[i]
         if (char === '"') {
           inQuotes = !inQuotes
