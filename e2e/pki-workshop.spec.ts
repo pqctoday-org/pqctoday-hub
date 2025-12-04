@@ -27,7 +27,9 @@ test.describe('PKI Workshop Module', () => {
     await step1.getByRole('button', { name: 'Generate CSR' }).click()
 
     // Verify Success
-    await expect(page.getByText(/CSR generated and saved successfully/i)).toBeVisible({ timeout: 60000 })
+    await expect(page.getByText(/CSR generated and saved successfully/i)).toBeVisible({
+      timeout: 60000,
+    })
     await expect(page.getByText(/pkiworkshop_.*\.csr/)).toBeVisible()
     await page.getByRole('button', { name: 'Next Step' }).click()
 
@@ -43,7 +45,9 @@ test.describe('PKI Workshop Module', () => {
     await step2.getByRole('button', { name: 'Generate Root CA' }).click()
 
     // Verify Success
-    await expect(page.getByText(/Root CA certificate generated and saved successfully/i)).toBeVisible({ timeout: 60000 })
+    await expect(
+      page.getByText(/Root CA certificate generated and saved successfully/i)
+    ).toBeVisible({ timeout: 60000 })
     await expect(page.getByText(/pkiworkshop_ca_.*\.crt/)).toBeVisible()
     await page.getByRole('button', { name: 'Next Step' }).click()
 

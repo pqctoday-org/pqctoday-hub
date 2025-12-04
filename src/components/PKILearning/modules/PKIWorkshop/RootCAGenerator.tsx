@@ -21,8 +21,6 @@ interface AlgorithmOption {
   keySizeLabel: string
 }
 
-
-
 const ALGORITHMS: AlgorithmOption[] = [
   {
     id: 'rsa',

@@ -13,8 +13,6 @@ interface CertSignerProps {
   onComplete: () => void
 }
 
-
-
 const INITIAL_ATTRIBUTES: X509Attribute[] = [
   {
     id: 'CN',
