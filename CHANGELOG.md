@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2025-12-04
+
+### Added
+
+- **PKI Learning Module Enhancements**:
+  - **File Naming**: Standardized naming for artifacts (e.g., `pkiworkshop_<timestamp>.csr`, `pkiworkshop_ca_<timestamp>.key`).
+  - **OpenSSL Studio Sync**: Automatically syncs generated keys, CSRs, and certificates to the OpenSSL Studio file store.
+  - **State Persistence**: Workshop progress and OpenSSL Studio files are now persisted to `localStorage`.
+  - **UI Improvements**:
+    - **CertSigner**: Refactored to a 4-step flow (CSR -> Profile -> Content -> Sign) with an educational process diagram.
+    - **Attribute Source**: Added visual indicators for attributes from CSR vs. CA Profile.
+    - **Constraints**: Moved constraints to a dedicated display row.
+  - **Reset Functionality**: Added a "Reset Workshop" button to clear all state.
+  - **CertParser**: Added artifact selection dropdown and format conversion (DER/P7B).
+
+### Fixed
+
+- **Code Quality & Stability**:
+  - **Linting**: Resolved all lint warnings (unused variables, `any` types, security alerts).
+  - **Build**: Fixed module resolution error by renaming `Root.tsx` to `AppRoot.tsx` and ensuring git tracking.
+  - **Formatting**: Enforced consistent code style.
+
 ## [1.2.0] - 2025-12-02
 
 ### Changed
