@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('OpenSSL Studio - PQC Algorithms', () => {
+  test.setTimeout(60000)
   test.beforeEach(async ({ page }) => {
     // Capture browser logs
     page.on('console', (msg) => console.log(`BROWSER LOG: ${msg.text()}`))

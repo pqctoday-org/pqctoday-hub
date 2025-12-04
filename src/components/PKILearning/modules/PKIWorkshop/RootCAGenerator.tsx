@@ -5,11 +5,9 @@ import { useModuleStore } from '../../../../store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { KNOWN_OIDS } from '../../../../services/crypto/oidMapping'
 
-// Import Cert profiles using Vite's glob import
-const certProfiles = import.meta.glob('../../../../data/x509_profiles/Cert*.csv', {
-  query: '?raw',
-  import: 'default',
-})
+import { useCertProfile } from '../../../../hooks/useCertProfile'
+import { AttributeTable } from '../../common/AttributeTable'
+import type { X509Attribute } from '../../common/types'
 
 interface RootCAGeneratorProps {
   onComplete: () => void
@@ -23,29 +21,7 @@ interface AlgorithmOption {
   keySizeLabel: string
 }
 
-interface X509Attribute {
-  id: string // e.g., 'CN', 'O'
-  label: string
-  oid: string // OpenSSL config name, e.g., 'commonName'
-  status: 'mandatory' | 'recommended' | 'optional'
-  value: string
-  enabled: boolean
-  placeholder: string
-  description: string
-  elementType: string
-}
 
-interface ProfileMetadata {
-  industry: string
-  standard: string
-  date: string
-}
-
-interface ProfileConstraint {
-  name: string
-  value: string
-  description: string
-}
 
 const ALGORITHMS: AlgorithmOption[] = [
   {
@@ -101,14 +77,34 @@ const INITIAL_ATTRIBUTES: X509Attribute[] = [
 
 export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) => {
   const [selectedKeyId, setSelectedKeyId] = useState<string>(`new-${ALGORITHMS[0].id}`)
-  const [selectedProfile, setSelectedProfile] = useState<string>('')
-  const [availableProfiles, setAvailableProfiles] = useState<string[]>([])
   const [isGenerating, setIsGenerating] = useState(false)
   const [output, setOutput] = useState('')
   const [caCert, setCaCert] = useState<string | null>(null)
-  const [attributes, setAttributes] = useState<X509Attribute[]>(INITIAL_ATTRIBUTES)
-  const [profileMetadata, setProfileMetadata] = useState<ProfileMetadata | null>(null)
-  const [profileConstraints, setProfileConstraints] = useState<ProfileConstraint[]>([])
+
+  const filterProfileName = React.useCallback((name: string) => name.startsWith('Cert-RootCA'), [])
+
+  const {
+    selectedProfile,
+    availableProfiles,
+    attributes,
+    profileMetadata,
+    profileConstraints,
+    handleProfileSelect,
+    handleAttributeChange,
+    log: profileLog,
+    setLog: setProfileLog,
+  } = useCertProfile({
+    initialAttributes: INITIAL_ATTRIBUTES,
+    filterProfileName,
+  })
+
+  // Sync profile log to main output
+  useEffect(() => {
+    if (profileLog) {
+      setOutput((prev) => prev + profileLog)
+      setProfileLog('') // Clear after syncing
+    }
+  }, [profileLog, setProfileLog])
 
   const { artifacts, addKey, addCertificate } = useModuleStore()
   const { addFile } = useOpenSSLStore()
@@ -116,163 +112,9 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
   // Filter for existing private keys
   const availableKeys = artifacts.keys.filter((k) => k.privateKey)
 
-  useEffect(() => {
-    // Extract filenames from the glob import
-    const profiles = Object.keys(certProfiles)
-      .map((path) => {
-        // Extract filename from path
-        return path.split('/').pop() || ''
-      })
-      .filter((name) => name.startsWith('Cert-RootCA') && name.endsWith('.csv'))
-    setAvailableProfiles(profiles)
-  }, [])
+  // Profile handling is now managed by useCertProfile hook
 
-  const parseCSVLine = (line: string): string[] => {
-    const result: string[] = []
-    let current = ''
-    let inQuotes = false
-
-    for (let i = 0; i < line.length; i++) {
-      // eslint-disable-next-line security/detect-object-injection
-      const char = line[i]
-
-      if (char === '"') {
-        inQuotes = !inQuotes
-      } else if (char === ',' && !inQuotes) {
-        result.push(current.trim())
-        current = ''
-      } else {
-        current += char
-      }
-    }
-    result.push(current.trim())
-    return result
-  }
-
-  const handleProfileSelect = async (filename: string) => {
-    setSelectedProfile(filename)
-    setProfileMetadata(null)
-    if (!filename) return
-
-    try {
-      setOutput(`Loading profile: ${filename}...\n`)
-
-      const path = Object.keys(certProfiles).find((p) => p.endsWith(filename))
-      if (!path) throw new Error('Profile path not found')
-
-      // eslint-disable-next-line security/detect-object-injection
-      const loadProfile = certProfiles[path] as () => Promise<string>
-      const content = await loadProfile()
-
-      const lines = content.split('\n').filter((line) => line.trim() !== '')
-      if (lines.length < 2) throw new Error('Invalid CSV format')
-
-      // Parse Header
-      const headers = parseCSVLine(lines[0])
-      const colMap = new Map<string, number>()
-      headers.forEach((h, i) => colMap.set(h.trim(), i))
-
-      const getVal = (row: string[], colName: string) => {
-        const idx = colMap.get(colName)
-        // eslint-disable-next-line security/detect-object-injection
-        return idx !== undefined && idx < row.length ? row[idx] : ''
-      }
-
-      // Parse Metadata
-      const firstRow = parseCSVLine(lines[1])
-      const industry = getVal(firstRow, 'Industry')
-      const standard = getVal(firstRow, 'Standard')
-      const date = getVal(firstRow, 'StandardDate')
-
-      setProfileMetadata({ industry, standard, date })
-
-      // Parse Attributes
-      const newAttributes: X509Attribute[] = []
-      const newConstraints: ProfileConstraint[] = []
-
-      for (let i = 1; i < lines.length; i++) {
-        // eslint-disable-next-line security/detect-object-injection
-        const row = parseCSVLine(lines[i])
-        const elementType = getVal(row, 'ElementType')
-
-        if (elementType === 'SubjectRDN' || elementType === 'Extension') {
-          const name = getVal(row, 'Name')
-          const example = getVal(row, 'ExampleValue')
-          const description = getVal(row, 'AllowedValuesOrUsage')
-
-          // Separate constraint fields to display them in profile section
-          if (name.toLowerCase().includes('constraints')) {
-            newConstraints.push({
-              name: name,
-              value: example,
-              description: description,
-            })
-            continue
-          }
-
-          const oid = getVal(row, 'OID')
-
-          const id =
-            name === 'commonName'
-              ? 'CN'
-              : name === 'countryName'
-                ? 'C'
-                : name === 'organizationName'
-                  ? 'O'
-                  : name === 'organizationalUnitName'
-                    ? 'OU'
-                    : name === 'stateOrProvinceName'
-                      ? 'ST'
-                      : name === 'localityName'
-                        ? 'L'
-                        : name === 'emailAddress'
-                          ? 'emailAddress'
-                          : oid
-
-          const label = name
-          const criticalVal = getVal(row, 'Critical').toUpperCase()
-          const critical =
-            elementType === 'SubjectRDN'
-              ? criticalVal === '' || criticalVal === 'TRUE'
-              : criticalVal === 'TRUE'
-
-          newAttributes.push({
-            id: id,
-            label: label,
-            oid: oid,
-            status: critical ? 'mandatory' : 'optional',
-            value: example,
-            enabled: critical,
-            placeholder: `e.g., ${example}`,
-            description: description,
-            elementType: elementType,
-          })
-        }
-      }
-
-      setAttributes(newAttributes)
-      setProfileConstraints(newConstraints)
-      setOutput((prev) => prev + `Profile loaded: ${industry} - ${standard} (${date})\n`)
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      setOutput((prev) => prev + `Error loading profile: ${errorMessage}\n`)
-    }
-  }
-
-  const handleAttributeChange = (
-    id: string,
-    field: keyof X509Attribute,
-    value: string | boolean
-  ) => {
-    setAttributes((prev) =>
-      prev.map((attr) => {
-        if (attr.id === id) {
-          return { ...attr, [field]: value }
-        }
-        return attr
-      })
-    )
-  }
+  // Attribute change handling is now managed by useCertProfile hook
 
   const handleGenerate = async () => {
     setIsGenerating(true)
@@ -639,63 +481,11 @@ x509_extensions = v3_ca
               X.509 Attributes
             </h3>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-white/10 text-muted text-xs uppercase tracking-wider">
-                    <th className="p-3 w-10 text-center">Use</th>
-                    <th className="p-3">Type</th>
-                    <th className="p-3">Name</th>
-                    <th className="p-3 w-1/3">Value</th>
-                    <th className="p-3">Rec. / Desc.</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {attributes.map((attr) => (
-                    <tr
-                      key={attr.id}
-                      className={`border-b border-white/5 hover:bg-white/5 transition-colors ${!attr.enabled ? 'opacity-50' : ''}`}
-                    >
-                      <td className="p-3 text-center">
-                        <input
-                          type="checkbox"
-                          checked={attr.enabled}
-                          disabled={attr.status === 'mandatory'}
-                          onChange={(e) =>
-                            handleAttributeChange(attr.id, 'enabled', e.target.checked)
-                          }
-                          className="rounded border-white/20 bg-black/40 text-primary focus:ring-primary cursor-pointer w-4 h-4"
-                        />
-                      </td>
-                      <td className="p-3 text-muted text-xs">{attr.elementType}</td>
-                      <td className="p-3 text-white font-medium text-sm">
-                        <div className="flex flex-col">
-                          <span>{attr.label}</span>
-                          <div className="flex gap-1 mt-1">
-                            {attr.status === 'mandatory' && (
-                              <span className="text-[10px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded w-fit">
-                                Mandatory
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-3">
-                        <input
-                          type="text"
-                          value={attr.value}
-                          onChange={(e) => handleAttributeChange(attr.id, 'value', e.target.value)}
-                          placeholder={attr.placeholder}
-                          disabled={!attr.enabled}
-                          className="w-full bg-black/40 border border-white/10 rounded px-2 py-1.5 text-sm text-white focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        />
-                      </td>
-                      <td className="p-3 text-muted text-xs max-w-[200px]">{attr.description}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <AttributeTable
+              attributes={attributes}
+              onAttributeChange={handleAttributeChange}
+              showSource={false}
+            />
           </div>
 
           <button

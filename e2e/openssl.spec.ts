@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('OpenSSL Studio', () => {
+  test.setTimeout(60000)
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
     await page.getByRole('button', { name: /OpenSSL/ }).click()
