@@ -1,0 +1,15 @@
+Scope,Industry,Standard,StandardDate,ElementType,Name,OID,X509Location,Critical,AllowedValuesOrUsage,ExampleValue,ValidationRules,PQCRelevance
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,SubjectRDN,countryName,2.5.4.6,subject,,ISO 3166-1 alpha-2,US,Root CA legal jurisdiction,Neutral
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,SubjectRDN,organizationName,2.5.4.10,subject,,CA operator,Example Public CA,Matches audited CA entity name,Neutral
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,SubjectRDN,commonName,2.5.4.3,subject,,Root CA name,Example Public Root CA X1,Human-readable; not used as DNS name,Neutral
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,Extension,basicConstraints,2.5.29.19,extensions,TRUE,"cA=TRUE, optional pathLenConstraint","cA=TRUE, pathLenConstraint=3",MUST be present and critical for WebPKI root,Neutral
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,Extension,keyUsage,2.5.29.15,extensions,TRUE,"keyCertSign,cRLSign only","keyCertSign,cRLSign",DigitalSignature and keyEncipherment SHOULD be unset for offline root,Neutral
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,Extension,subjectKeyIdentifier,2.5.29.14,extensions,FALSE,Key identifier,hash of SPKI,MUST be present to support path building,Neutral
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,Extension,authorityKeyIdentifier,2.5.29.35,extensions,FALSE,KeyIdentifier matching SKI,same as SKI,Self-signed: AKI.keyIdentifier equals SKI,Neutral
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,Extension,certificatePolicies,2.5.29.32,extensions,FALSE,Root CA policy OIDs,2.23.140.1.2.1,Describes allowed BR certificate types (DV/OV/EV),Neutral
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,Extension,nameConstraints,2.5.29.30,extensions,TRUE,Optional namespace restrictions,Permitted: dNSName=.example.com,Critical if present; strongly recommended for technically constrained sub-CAs only,Neutral
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,Algorithm,id-ecPublicKey,1.2.840.10045.2.1,subjectPublicKeyInfo.algorithm,,ECC root key,P-384 public key,Curve per BR and root program requirements,ClassicalOnly
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,Algorithm,rsaEncryption,1.2.840.113549.1.1.1,subjectPublicKeyInfo.algorithm,,RSA >=4096 bits,RSA 4096,Classical-only; long-term PQC risk,ClassicalOnly
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,Algorithm,ecdsa-with-SHA384,1.2.840.10045.4.3.3,signatureAlgorithm,,Classical root signature,ECDSA P-384 with SHA-384,Mainstream WebPKI root choice today,ClassicalOnly
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,Algorithm,id-ml-dsa-65,2.16.840.1.101.3.4.3.18,subjectPublicKeyInfo.algorithm,,ML-DSA-65 root key (future),ML-DSA-65,For PQC-capable future WebPKI roots,PQCOnly
+Cert-RootCA,GeneralIT,CA/B Forum TLS BR,2025,Algorithm,id-ml-dsa-65,2.16.840.1.101.3.4.3.18,signatureAlgorithm,,Self-signed PQC signature,ML-DSA-65,Likely introduced via cross-signed classical intermediate,PQCOnly

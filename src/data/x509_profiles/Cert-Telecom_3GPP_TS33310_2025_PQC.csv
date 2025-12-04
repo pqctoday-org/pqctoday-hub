@@ -1,0 +1,4 @@
+Scope,Industry,Standard,StandardDate,ElementType,Name,OID,X509Location,Critical,AllowedValuesOrUsage,ExampleValue,ValidationRules,PQCRelevance
+Cert,Telecom,3GPP TS 33.310 + PQC,2025,Algorithm,id-alg-ml-kem-768,2.16.840.1.101.3.4.4.2,subjectPublicKeyInfo.algorithm,,ML-KEM-768 key for key establishment,ML-KEM-768,KeyUsage MUST be keyEncipherment only,PQCOnly
+Cert,Telecom,3GPP TS 33.310 + PQC,2025,Extension,keyUsage,2.5.29.15,extensions,TRUE,keyEncipherment only,keyEncipherment,No digitalSignature bit with ML-KEM SPKI,PQCOnly
+Cert,Telecom,3GPP TS 33.310 + PQC,2025,Algorithm,id-ml-dsa-65,2.16.840.1.101.3.4.3.18,signatureAlgorithm,,Higher-strength PQC signature,ML-DSA-65,Used for long-lived CA or NF certs,PQCOnly

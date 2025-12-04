@@ -1,0 +1,27 @@
+
+> pqc-timeline-app@1.2.0 build
+> mkdir -p public/dist && cp -r node_modules/@openforge-sh/liboqs/dist/* public/dist/ && tsc -b && vite build
+
+vite v7.2.4 building client environment for production...
+transforming...
+✓ 2284 modules transformed.
+✗ Build failed in 726ms
+error during build:
+node_modules/zustand/esm/middleware/immer.mjs (1:9): "produce" is not exported by "__vite-optional-peer-dep:immer:zustand:false", imported by "node_modules/zustand/esm/middleware/immer.mjs".
+file: /Users/ericamador/antigravity/pqc-timeline-app/node_modules/zustand/esm/middleware/immer.mjs:1:9
+
+1: import { produce } from 'immer';
+            ^
+2: 
+3: const immerImpl = (initializer) => (set, get, store) => {
+
+    at getRollupError (file:///Users/ericamador/antigravity/pqc-timeline-app/node_modules/rollup/dist/es/shared/parseAst.js:401:41)
+    at error (file:///Users/ericamador/antigravity/pqc-timeline-app/node_modules/rollup/dist/es/shared/parseAst.js:397:42)
+    at Module.error (file:///Users/ericamador/antigravity/pqc-timeline-app/node_modules/rollup/dist/es/shared/node-entry.js:16956:16)
+    at Module.traceVariable (file:///Users/ericamador/antigravity/pqc-timeline-app/node_modules/rollup/dist/es/shared/node-entry.js:17412:29)
+    at ModuleScope.findVariable (file:///Users/ericamador/antigravity/pqc-timeline-app/node_modules/rollup/dist/es/shared/node-entry.js:15076:39)
+    at ReturnValueScope.findVariable (file:///Users/ericamador/antigravity/pqc-timeline-app/node_modules/rollup/dist/es/shared/node-entry.js:5649:38)
+    at FunctionBodyScope.findVariable (file:///Users/ericamador/antigravity/pqc-timeline-app/node_modules/rollup/dist/es/shared/node-entry.js:5649:38)
+    at ReturnValueScope.findVariable (file:///Users/ericamador/antigravity/pqc-timeline-app/node_modules/rollup/dist/es/shared/node-entry.js:5649:38)
+    at FunctionBodyScope.findVariable (file:///Users/ericamador/antigravity/pqc-timeline-app/node_modules/rollup/dist/es/shared/node-entry.js:5649:38)
+    at ReturnValueScope.findVariable (file:///Users/ericamador/antigravity/pqc-timeline-app/node_modules/rollup/dist/es/shared/node-entry.js:5649:38)

@@ -1,0 +1,8 @@
+Scope,Industry,Standard,StandardDate,ElementType,Name,OID,X509Location,Critical,AllowedValuesOrUsage,ExampleValue,ValidationRules,PQCRelevance
+Cert,Telecom,3GPP TS 33.310 + RFC 9310,2025,Extension,basicConstraints,2.5.29.19,extensions,False,cA=FALSE,cA=FALSE,NF certs are EE only,Neutral
+Cert,Telecom,3GPP TS 33.310 + RFC 9310,2025,Extension,keyUsage,2.5.29.15,extensions,True,"digitalSignature,keyEncipherment","digitalSignature,keyEncipherment",Supports TLS/IPsec; critical,Neutral
+Cert,Telecom,3GPP TS 33.310 + RFC 9310,2025,Extension,extendedKeyUsage,2.5.29.37,extensions,False,"serverAuth,clientAuth","1.3.6.1.5.5.7.3.1,1.3.6.1.5.5.7.3.2",Required for NF mTLS,Neutral
+Cert,Telecom,3GPP TS 33.310 + RFC 9310,2025,Extension,subjectAltName,2.5.29.17,extensions,False,"dNSName,URI","dNSName=amf1.5gc...,URI=spiffe://operator/nf/amf",Identity and auth rely on SAN,Neutral
+Cert,Telecom,3GPP TS 33.310 + RFC 9310,2025,Extension,nftypes,1.3.6.1.5.5.7.1.34,extensions,False,NF type list,"AMF,SMF",RFC 9310 compliant; used for role-based access control,Neutral
+Cert,Telecom,3GPP TS 33.310 + RFC 9310,2025,Algorithm,ecdsa-with-SHA256,1.2.840.10045.4.3.2,signatureAlgorithm,,Classical signature,ECDSA P-256 with SHA-256,Current default in many 5G PKIs,ClassicalOnly
+Cert,Telecom,3GPP TS 33.310 + RFC 9310,2025,Algorithm,id-ml-dsa-44,2.16.840.1.101.3.4.3.17,signatureAlgorithm,,PQC signature,ML-DSA-44,For PQ-capable NF PKI,PQCOnly

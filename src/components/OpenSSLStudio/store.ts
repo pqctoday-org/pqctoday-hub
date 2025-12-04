@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 export interface VirtualFile {
   name: string
@@ -61,57 +62,80 @@ interface OpenSSLStudioState {
   // Metrics
   lastExecutionTime: number | null
   setLastExecutionTime: (time: number | null) => void
+  resetStore: () => void
 }
 
-export const useOpenSSLStore = create<OpenSSLStudioState>((set, get) => ({
-  files: [],
-  addFile: (file) =>
-    set((state) => ({ files: [...state.files.filter((f) => f.name !== file.name), file] })),
-  removeFile: (name) => set((state) => ({ files: state.files.filter((f) => f.name !== name) })),
-  getFile: (name) => get().files.find((f) => f.name === name),
+export const useOpenSSLStore = create<OpenSSLStudioState>()(
+  persist(
+    (set, get) => ({
+      files: [],
+      addFile: (file) =>
+        set((state) => ({ files: [...state.files.filter((f) => f.name !== file.name), file] })),
+      removeFile: (name) => set((state) => ({ files: state.files.filter((f) => f.name !== name) })),
+      getFile: (name) => get().files.find((f) => f.name === name),
 
-  logs: [],
-  addLog: (type, message) =>
-    set((state) => ({
-      logs: [
-        ...state.logs,
-        {
-          id: Math.random().toString(36).substring(2),
-          timestamp: new Date().toLocaleTimeString(),
-          type,
-          message,
-        },
-      ],
-    })),
-  clearTerminalLogs: () => set({ logs: [] }),
+      logs: [],
+      addLog: (type, message) =>
+        set((state) => ({
+          logs: [
+            ...state.logs,
+            {
+              id: Math.random().toString(36).substring(2),
+              timestamp: new Date().toLocaleTimeString(),
+              type,
+              message,
+            },
+          ],
+        })),
+      clearTerminalLogs: () => set({ logs: [] }),
 
-  structuredLogs: [],
-  addStructuredLog: (entry) =>
-    set((state) => ({
-      structuredLogs: [
-        {
-          id: Math.random().toString(36).substring(2),
-          timestamp: new Date().toLocaleTimeString(),
-          ...entry,
-        },
-        ...state.structuredLogs,
-      ],
-    })),
-  clearStructuredLogs: () => set({ structuredLogs: [] }),
+      structuredLogs: [],
+      addStructuredLog: (entry) =>
+        set((state) => ({
+          structuredLogs: [
+            {
+              id: Math.random().toString(36).substring(2),
+              timestamp: new Date().toLocaleTimeString(),
+              ...entry,
+            },
+            ...state.structuredLogs,
+          ],
+        })),
+      clearStructuredLogs: () => set({ structuredLogs: [] }),
 
-  activeTab: 'terminal',
-  setActiveTab: (tab) => set({ activeTab: tab }),
+      activeTab: 'terminal',
+      setActiveTab: (tab) => set({ activeTab: tab }),
 
-  command: '',
-  setCommand: (cmd) => set({ command: cmd }),
-  isProcessing: false,
-  setIsProcessing: (isProcessing) => set({ isProcessing }),
+      command: '',
+      setCommand: (cmd) => set({ command: cmd }),
+      isProcessing: false,
+      setIsProcessing: (isProcessing) => set({ isProcessing }),
 
-  // Editor State
-  editingFile: null,
-  setEditingFile: (file) => set({ editingFile: file }),
+      // Editor State
+      editingFile: null,
+      setEditingFile: (file) => set({ editingFile: file }),
 
-  // Metrics
-  lastExecutionTime: null,
-  setLastExecutionTime: (time) => set({ lastExecutionTime: time }),
-}))
+      // Metrics
+      lastExecutionTime: null,
+      setLastExecutionTime: (time) => set({ lastExecutionTime: time }),
+
+      resetStore: () => set({
+        files: [],
+        logs: [],
+        structuredLogs: [],
+        command: '',
+        isProcessing: false,
+        editingFile: null,
+        lastExecutionTime: null
+      }),
+    }),
+    {
+      name: 'openssl-studio-storage',
+      partialize: (state) => ({
+        files: state.files,
+        structuredLogs: state.structuredLogs,
+        // Don't persist active tab, processing state, or editor state
+      }),
+    }
+  )
+)

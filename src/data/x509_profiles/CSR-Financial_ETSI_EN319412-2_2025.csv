@@ -1,0 +1,13 @@
+Scope,Industry,Standard,StandardDate,ElementType,Name,OID,X509Location,Critical,AllowedValuesOrUsage,ExampleValue,ValidationRules,PQCRelevance
+CSR,Financial,ETSI EN 319 412-2,2025,SubjectRDN,countryName,2.5.4.6,subject,,ISO3166-1 alpha-2,FR,PrintableString; length=2,Neutral
+CSR,Financial,ETSI EN 319 412-2,2025,SubjectRDN,organizationName,2.5.4.10,subject,,Legal org name,Example Bank SA,UTF8String; max 64 chars,Neutral
+CSR,Financial,ETSI EN 319 412-2,2025,SubjectRDN,organizationIdentifier,2.5.4.97,subject,,NTR/LEI format,NTRFR-123456789,OpenSSL 3.x native; no oid_section needed,Neutral
+CSR,Financial,ETSI EN 319 412-2,2025,SubjectRDN,commonName,2.5.4.3,subject,,Display name,Jane Doe,UTF8String; consistent with givenName/surname,Neutral
+CSR,Financial,ETSI EN 319 412-2,2025,CSRAttribute,extensionRequest,1.2.840.113549.1.9.14,attributes,,Requested extensions,"subjectAltName,keyUsage",CA validates and may override,Neutral
+CSR,Financial,ETSI EN 319 412-2,2025,CSRAttribute,challengePassword,1.2.840.113549.1.9.7,attributes,,Optional revocation secret,password123,Only in controlled RA workflows,Neutral
+CSR,Financial,ETSI EN 319 412-2,2025,Extension,subjectAltName,2.5.29.17,extensions,FALSE,email:user@domain,email:jane.doe@examplebank.fr,OpenSSL: subjectAltName = email:...,Neutral
+CSR,Financial,ETSI EN 319 412-2,2025,Extension,keyUsage,2.5.29.15,extensions,TRUE,"digitalSignature,nonRepudiation","digitalSignature,nonRepudiation",Use nonRepudiation (not contentCommitment),Neutral
+CSR,Financial,ETSI EN 319 412-2,2025,Extension,extendedKeyUsage,2.5.29.37,extensions,FALSE,emailProtection,emailProtection,id-kp-emailProtection,Neutral
+CSR,Financial,ETSI EN 319 412-2,2025,Algorithm,ecdsa-with-SHA256,1.2.840.10045.4.3.2,signatureAlgorithm,,CSR self-signature,ecdsa-with-SHA256,PoP verified by CA,ClassicalOnly
+CSR,Financial,ETSI EN 319 412-2,2025,Algorithm,sha256WithRSAEncryption,1.2.840.113549.1.1.11,signatureAlgorithm,,RSA CSR signature,sha256WithRSAEncryption,PoP verified by CA,ClassicalOnly
+CSR,Financial,ETSI EN 319 412-2,2025,Algorithm,id-ml-dsa-44,2.16.840.1.101.3.4.3.17,signatureAlgorithm,,ML-DSA-44 CSR signature,ML-DSA-44,OpenSSL 3.5+ native; PoP verified,PQCOnly

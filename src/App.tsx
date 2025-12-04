@@ -9,6 +9,7 @@ import {
   BookOpen,
   AlertTriangle,
   Info,
+  GraduationCap,
 } from 'lucide-react'
 import clsx from 'clsx'
 import './styles/App.css'
@@ -23,15 +24,17 @@ import { PlaygroundView } from './components/Playground/PlaygroundView'
 import { OpenSSLStudioView } from './components/OpenSSLStudio/OpenSSLStudioView'
 import { LibraryView } from './components/Library/LibraryView'
 import { AboutView } from './components/About/AboutView'
+import { PKILearningView } from './components/PKILearning/PKILearningView'
 
 type View =
   | 'timeline'
   | 'algorithms'
+  | 'library'
+  | 'learn'
   | 'playground'
   | 'openssl'
   | 'threats'
   | 'leaders'
-  | 'library'
   | 'about'
 
 function App() {
@@ -49,6 +52,7 @@ function App() {
     { id: 'timeline', label: 'Timeline', icon: Globe },
     { id: 'algorithms', label: 'Algorithms', icon: Shield },
     { id: 'library', label: 'Library', icon: BookOpen },
+    { id: 'learn', label: 'Learn', icon: GraduationCap },
     { id: 'playground', label: 'Playground', icon: FlaskConical },
     { id: 'openssl', label: 'OpenSSL Studio', icon: Activity },
     { id: 'threats', label: 'Threats', icon: AlertTriangle },
@@ -112,6 +116,7 @@ function App() {
             {currentView === 'timeline' && <TimelineView />}
             {currentView === 'algorithms' && <AlgorithmsView />}
             {currentView === 'library' && <LibraryView />}
+            {currentView === 'learn' && <PKILearningView />}
             {currentView === 'playground' && <PlaygroundView />}
             {currentView === 'openssl' && <OpenSSLStudioView />}
             {currentView === 'threats' && <ThreatsDashboard />}

@@ -1,0 +1,21 @@
+Scope,Industry,Standard,StandardDate,ElementType,Name,OID,X509Location,Critical,AllowedValuesOrUsage,ExampleValue,ValidationRules,PQCRelevance
+Cert,Financial,ETSI EN 319 412-2,2025,SubjectRDN,countryName,2.5.4.6,subject,,ISO3166-1 alpha-2,FR,PrintableString; length=2,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,SubjectRDN,organizationName,2.5.4.10,subject,,Legal name,Example Bank SA,UTF8String; registry-verified,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,SubjectRDN,organizationIdentifier,2.5.4.97,subject,,NTR/LEI identifier,NTRFR-123456789,OpenSSL 3.x native; format per ETSI EN 319 412-1,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,SubjectRDN,commonName,2.5.4.3,subject,,Subject display name,Jane Doe,UTF8String; consistent with givenName/surname,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,Extension,basicConstraints,2.5.29.19,extensions,FALSE,cA=FALSE,CA:FALSE,Non-critical for EE certs; pathLen omitted,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,Extension,keyUsage,2.5.29.15,extensions,TRUE,"digitalSignature,nonRepudiation","digitalSignature,nonRepudiation",Critical; use nonRepudiation (not contentCommitment) for OpenSSL,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,Extension,extendedKeyUsage,2.5.29.37,extensions,FALSE,emailProtection,emailProtection,id-kp-emailProtection (1.3.6.1.5.5.7.3.4),Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,Extension,subjectKeyIdentifier,2.5.29.14,extensions,FALSE,hash,hash,OpenSSL: subjectKeyIdentifier = hash,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,Extension,authorityKeyIdentifier,2.5.29.35,extensions,FALSE,keyid:always,keyid:always,OpenSSL: authorityKeyIdentifier = keyid:always,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,Extension,qcStatements,1.3.6.1.5.5.7.1.3,extensions,FALSE,ASN1:SEQUENCE:qcStatements_section,ASN1:SEQUENCE:qcs,Requires custom ASN.1 config section; see OpenSSL x509v3_config,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,Extension,subjectAltName,2.5.29.17,extensions,FALSE,email:copy or email:user@domain,email:jane.doe@examplebank.fr,OpenSSL: subjectAltName = email:copy,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,Extension,certificatePolicies,2.5.29.32,extensions,FALSE,Policy OID with optional CPS,0.4.0.194112.1.1,ETSI QCP-l OID; OpenSSL: certificatePolicies = 0.4.0.194112.1.1,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,Extension,authorityInfoAccess,1.3.6.1.5.5.7.1.1,extensions,FALSE,OCSP;URI and caIssuers;URI,OCSP;URI:http://ocsp.example.com,OpenSSL: authorityInfoAccess = OCSP;URI:http://...,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,Extension,cRLDistributionPoints,2.5.29.31,extensions,FALSE,URI:http://...,URI:http://crl.example.com/ca.crl,OpenSSL: crlDistributionPoints = URI:http://...,Neutral
+Cert,Financial,ETSI EN 319 412-2,2025,Algorithm,id-ecPublicKey,1.2.840.10045.2.1,subjectPublicKeyInfo.algorithm,,ECDSA P-256 or P-384,prime256v1,OpenSSL: -newkey ec -pkeyopt ec_paramgen_curve:prime256v1,ClassicalOnly
+Cert,Financial,ETSI EN 319 412-2,2025,Algorithm,ecdsa-with-SHA256,1.2.840.10045.4.3.2,signatureAlgorithm,,ECDSA with SHA-256,ecdsa-with-SHA256,Parameters absent,ClassicalOnly
+Cert,Financial,ETSI EN 319 412-2,2025,Algorithm,rsaEncryption,1.2.840.113549.1.1.1,subjectPublicKeyInfo.algorithm,,RSA >=2048 bits,rsa:3072,OpenSSL: -newkey rsa:3072,ClassicalOnly
+Cert,Financial,ETSI EN 319 412-2,2025,Algorithm,sha256WithRSAEncryption,1.2.840.113549.1.1.11,signatureAlgorithm,,RSA with SHA-256,sha256WithRSAEncryption,Parameters NULL,ClassicalOnly
+Cert,Financial,ETSI EN 319 412-2,2025,Algorithm,id-ml-dsa-44,2.16.840.1.101.3.4.3.17,subjectPublicKeyInfo.algorithm,,ML-DSA-44 key,ML-DSA-44,OpenSSL 3.5+: -newkey ML-DSA-44,PQCOnly
+Cert,Financial,ETSI EN 319 412-2,2025,Algorithm,id-ml-dsa-44,2.16.840.1.101.3.4.3.17,signatureAlgorithm,,ML-DSA-44 signature,ML-DSA-44,Parameters absent per FIPS 204,PQCOnly

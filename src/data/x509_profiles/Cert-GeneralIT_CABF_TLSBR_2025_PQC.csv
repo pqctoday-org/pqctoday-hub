@@ -1,0 +1,2 @@
+Scope,Industry,Standard,StandardDate,ElementType,Name,OID,X509Location,Critical,AllowedValuesOrUsage,ExampleValue,ValidationRules,PQCRelevance
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Algorithm,id-ml-dsa-44,2.16.840.1.101.3.4.3.17,signatureAlgorithm,,PQC signature; classical SPKI,ML-DSA-44,Hybrid deployment; clients must support ML-DSA,Hybrid

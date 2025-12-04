@@ -1,0 +1,9 @@
+Scope,Industry,Standard,StandardDate,ElementType,Name,OID,X509Location,Critical,AllowedValuesOrUsage,ExampleValue,ValidationRules,PQCRelevance
+CSR,Telecom,3GPP TS 33.310,2025,SubjectRDN,commonName,2.5.4.3,subject,,NF FQDN,amf1.5gc.mnc001.mcc001.3gppnetwork.org,Unique NF identity; aligns with SAN,Neutral
+CSR,Telecom,3GPP TS 33.310,2025,SubjectRDN,organizationName,2.5.4.10,subject,,Operator name,Example Mobile Operator,Matches operator registry,Neutral
+CSR,Telecom,3GPP TS 33.310,2025,SubjectRDN,countryName,2.5.4.6,subject,,ISO3166-1 alpha-2,FR,Operator country,Neutral
+CSR,Telecom,3GPP TS 33.310,2025,CSRAttribute,extensionRequest,1.2.840.113549.1.9.14,csr.attributes,,Requested NF extensions,"subjectAltName,keyUsage,extendedKeyUsage",Operator PKI defines final set,Neutral
+CSR,Telecom,3GPP TS 33.310,2025,Extension,subjectAltName,2.5.29.17,extensions,FALSE,"dNSName,URI","dNSName=amf1.5gc...,URI=spiffe://operator/nf/amf",All NF identities appear here; no wildcards,Neutral
+CSR,Telecom,3GPP TS 33.310,2025,Extension,keyUsage,2.5.29.15,extensions,TRUE,"digitalSignature,keyEncipherment","digitalSignature,keyEncipherment",Supports TLS mTLS/IPsec,Neutral
+CSR,Telecom,3GPP TS 33.310,2025,Extension,extendedKeyUsage,2.5.29.37,extensions,FALSE,"serverAuth,clientAuth","1.3.6.1.5.5.7.3.1,1.3.6.1.5.5.7.3.2",Needed for NF mutual TLS,Neutral
+CSR,Telecom,3GPP TS 33.310,2025,Algorithm,id-ml-dsa-44,2.16.840.1.101.3.4.3.17,signatureAlgorithm,,CSR signature,ML-DSA-44,PQC PoP; PKI must support verification,PQCOnly

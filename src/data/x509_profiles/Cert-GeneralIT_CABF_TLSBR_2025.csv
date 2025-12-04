@@ -1,0 +1,13 @@
+Scope,Industry,Standard,StandardDate,ElementType,Name,OID,X509Location,Critical,AllowedValuesOrUsage,ExampleValue,ValidationRules,PQCRelevance
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Extension,basicConstraints,2.5.29.19,extensions,False,cA=FALSE,cA=FALSE,Present for all BR-compliant EE certs,Neutral
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Extension,keyUsage,2.5.29.15,extensions,True,digitalSignature(+keyEncipherment for RSA),"digitalSignature,keyEncipherment",Critical; no unused bits set,Neutral
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Extension,subjectAltName,2.5.29.17,extensions,False,dNSName and/or iPAddress,dNSName=www.example.com,Name validation uses SAN only,Neutral
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Extension,authorityInfoAccess,1.3.6.1.5.5.7.1.1,extensions,False,OCSP + CA Issuer URLs,OCSP http://ocsp.exampleca.com/,URLs reachable; used for revocation,Neutral
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Extension,cRLDistributionPoints,2.5.29.31,extensions,False,CRL HTTP/HTTPS URLs,http://crl.exampleca.com/root.crl,CRLs published and updated per CPS,Neutral
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Algorithm,id-ecPublicKey,1.2.840.10045.2.1,subjectPublicKeyInfo.algorithm,,ECDSA key,P-256 public key,Curve must be allowed by BRs,ClassicalOnly
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Algorithm,rsaEncryption,1.2.840.113549.1.1.1,subjectPublicKeyInfo.algorithm,,RSA key,RSA 3072,Key >= 2048 bits; exponent sane,ClassicalOnly
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Algorithm,ecdsa-with-SHA256,1.2.840.10045.4.3.2,signatureAlgorithm,,Cert signature,ECDSA P-256 with SHA-256,Signature verifies with issuer key,ClassicalOnly
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Extension,extendedKeyUsage,2.5.29.37,extensions,FALSE,serverAuth required; clientAuth optional,1.3.6.1.5.5.7.3.1,id-kp-serverAuth MUST be present for TLS server certs,Neutral
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Extension,subjectKeyIdentifier,2.5.29.14,extensions,FALSE,Key identifier,hash of SPKI,SHOULD be included per RFC 5280,Neutral
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Extension,certificatePolicies,2.5.29.32,extensions,FALSE,BR policy OIDs (DV/OV/EV),2.23.140.1.2.1,MUST include at least one policy OID per TLS BR,Neutral
+Cert,GeneralIT,CA/B Forum TLS BR,2025,Extension,authorityKeyIdentifier,2.5.29.35,extensions,FALSE,keyIdentifier from issuer,keyIdentifier from issuer SKI,MUST be included per RFC 5280 for non-self-signed certs,Neutral
