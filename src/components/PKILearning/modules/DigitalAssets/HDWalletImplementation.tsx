@@ -21,7 +21,7 @@ export const HDWalletImplementation: React.FC<HDWalletImplementationProps> = ({ 
       <section>
         <h3 className="text-xl font-semibold mb-3">6.1 Hierarchical Deterministic (HD) Overview</h3>
         <div className="bg-black/30 p-4 rounded-lg font-mono text-sm overflow-x-auto mb-6">
-          <pre>{`
+          <pre className="whitespace-pre-wrap break-all">{`
 BIP32 / BIP39 / BIP44 Standard:
 
    ┌──────────────┐

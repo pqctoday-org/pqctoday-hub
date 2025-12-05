@@ -8,7 +8,7 @@ export const BitcoinImplementation: React.FC = () => {
       <section>
         <h3 className="text-xl font-semibold mb-3">3.1 Flow Diagram</h3>
         <div className="bg-black/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-          <pre>{`
+          <pre className="whitespace-pre-wrap break-all">{`
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                         BITCOIN KEY & TRANSACTION FLOW                       │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -57,7 +57,7 @@ export const BitcoinImplementation: React.FC = () => {
 
         <h4 className="text-lg font-medium mb-2 mt-4">Step 1: Generate Private Key (OpenSSL)</h4>
         <div className="bg-black/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-          <pre>{`
+          <pre className="whitespace-pre-wrap break-all">{`
 # Generate secp256k1 private key for User A
 openssl ecparam -name secp256k1 -genkey -noout -out userA_btc_private.pem
 
@@ -72,7 +72,7 @@ openssl ec -in userA_btc_private.pem -text -noout 2>/dev/null | \\
 
         <h4 className="text-lg font-medium mb-2 mt-4">Step 2: Derive Public Key (OpenSSL)</h4>
         <div className="bg-black/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-          <pre>{`
+          <pre className="whitespace-pre-wrap break-all">{`
 # Extract public key
 openssl ec -in userA_btc_private.pem -pubout -out userA_btc_public.pem
 
@@ -86,7 +86,7 @@ xxd -p userA_btc_public.der
 
         <h4 className="text-lg font-medium mb-2 mt-4">Step 3: Hash Public Key (OpenSSL)</h4>
         <div className="bg-black/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-          <pre>{`
+          <pre className="whitespace-pre-wrap break-all">{`
 # SHA256 of public key
 openssl dgst -sha256 -binary userA_btc_public.der > userA_sha256.bin
 
@@ -102,7 +102,7 @@ xxd -p userA_hash160.bin
           Step 4: Encode Address (JavaScript Required)
         </h4>
         <div className="bg-black/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-          <pre>{`
+          <pre className="whitespace-pre-wrap break-all">{`
 // bitcoin_address.js
 import { sha256 } from '@noble/hashes/sha256';
 import { createBase58check, bech32 } from '@scure/base';
@@ -128,7 +128,7 @@ console.log('SegWit Address:', segwitAddress);
 
         <h4 className="text-lg font-medium mb-2 mt-4">Step 5: Sign Transaction (OpenSSL)</h4>
         <div className="bg-black/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-          <pre>{`
+          <pre className="whitespace-pre-wrap break-all">{`
 # Create transaction data
 cat > btc_transaction.txt << 'EOF'
 Bitcoin Transaction
@@ -155,7 +155,7 @@ xxd -p btc_signature.der
 
         <h4 className="text-lg font-medium mb-2 mt-4">Step 6: Verify Signature (OpenSSL)</h4>
         <div className="bg-black/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-          <pre>{`
+          <pre className="whitespace-pre-wrap break-all">{`
 # Verify signature
 openssl pkeyutl -verify \\
   -pubin -inkey userA_btc_public.pem \\
@@ -170,7 +170,7 @@ openssl pkeyutl -verify \\
       <section>
         <h3 className="text-xl font-semibold mb-3">3.3 Complete Bitcoin Script (Hybrid)</h3>
         <div className="bg-black/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-          <pre>{`
+          <pre className="whitespace-pre-wrap break-all">{`
 // bitcoin_flow.js
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';

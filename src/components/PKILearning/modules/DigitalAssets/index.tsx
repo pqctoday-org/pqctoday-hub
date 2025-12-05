@@ -1,97 +1,155 @@
-import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import { CircleDollarSign, Hexagon, Zap, Wallet } from 'lucide-react'
+import React, { useState, useMemo, useEffect } from 'react'
+import { Trash2 } from 'lucide-react'
+import { useModuleStore } from '../../../../store/useModuleStore'
+import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { BitcoinFlow } from './flows/BitcoinFlow'
 import { EthereumFlow } from './flows/EthereumFlow'
 import { SolanaFlow } from './flows/SolanaFlow'
 import { HDWalletImplementation } from './HDWalletImplementation'
 
-type FlowType = 'bitcoin' | 'ethereum' | 'solana' | 'hd-wallet' | null
-
 export const DigitalAssetsModule: React.FC = () => {
-  const [activeFlow, setActiveFlow] = useState<FlowType>(null)
+  const markStepComplete = useModuleStore((state) => state.markStepComplete)
+  const resetProgress = useModuleStore((state) => state.resetProgress)
+  const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
+  const { resetStore } = useOpenSSLStore()
+  const [currentStep, setCurrentStep] = useState(0)
 
-  if (activeFlow === 'bitcoin') {
-    return <BitcoinFlow onBack={() => setActiveFlow(null)} />
+  // Track time spent
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const currentSpent = useModuleStore.getState().modules['digital-assets']?.timeSpent || 0
+      updateModuleProgress('digital-assets', {
+        timeSpent: currentSpent + 1,
+      })
+    }, 60000) // Update every minute
+
+    return () => clearInterval(timer)
+  }, [updateModuleProgress])
+
+  const handleReset = () => {
+    if (
+      confirm(
+        'Are you sure you want to reset the module? This will clear all generated keys and transactions.'
+      )
+    ) {
+      resetProgress()
+      resetStore()
+      setCurrentStep(0)
+    }
   }
 
-  if (activeFlow === 'ethereum') {
-    return <EthereumFlow onBack={() => setActiveFlow(null)} />
-  }
-
-  if (activeFlow === 'solana') {
-    return <SolanaFlow onBack={() => setActiveFlow(null)} />
-  }
-
-  if (activeFlow === 'hd-wallet') {
-    return <HDWalletImplementation onBack={() => setActiveFlow(null)} />
-  }
+  // Define steps with their components
+  // We pass a dummy onBack to flows because navigation is now handled by the outer stepper
+  // or we could wire it to go to previous step if we wanted.
+  const steps = useMemo(
+    () => [
+      {
+        id: 'bitcoin',
+        title: 'Step 1: Bitcoin',
+        description: 'Generate keys and sign transactions using secp256k1 and SHA-256.',
+        component: <BitcoinFlow onBack={() => { }} />,
+      },
+      {
+        id: 'ethereum',
+        title: 'Step 2: Ethereum',
+        description: 'Create Ethereum accounts and format RLP transactions.',
+        component: <EthereumFlow onBack={() => setCurrentStep(0)} />,
+      },
+      {
+        id: 'solana',
+        title: 'Step 3: Solana',
+        description: 'Work with Ed25519 keys and Solana Message structures.',
+        component: <SolanaFlow onBack={() => setCurrentStep(1)} />,
+      },
+      {
+        id: 'hd-wallet',
+        title: 'Step 4: HD Wallet',
+        description: 'Generate a Hierarchical Deterministic wallet for all chains.',
+        component: <HDWalletImplementation onBack={() => setCurrentStep(2)} />,
+      },
+    ],
+    []
+  )
 
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-          Digital Assets Cryptography
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Explore the cryptographic primitives behind the world's leading blockchains. Execute real
-          commands in your browser to generate keys, addresses, and signatures.
-        </p>
+    <div className="max-w-7xl mx-auto">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gradient mb-2">Digital Assets Program</h1>
+          <p className="text-muted">Master the cryptographic primitives of major blockchains.</p>
+        </div>
+        <button
+          onClick={handleReset}
+          className="flex items-center gap-2 px-3 py-2 bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 transition-colors text-sm border border-red-500/20"
+        >
+          <Trash2 size={16} />
+          Reset Module
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-        <FlowCard
-          title="Bitcoin"
-          description="secp256k1, SHA-256, RIPEMD-160, Base58Check"
-          icon={<CircleDollarSign size={40} className="text-orange-500" />}
-          onClick={() => setActiveFlow('bitcoin')}
-          color="hover:border-orange-500/50"
-        />
-        <FlowCard
-          title="Ethereum"
-          description="secp256k1, Keccak-256, RLP, EIP-55"
-          icon={<Hexagon size={40} className="text-blue-500" />}
-          onClick={() => setActiveFlow('ethereum')}
-          color="hover:border-blue-500/50"
-        />
-        <FlowCard
-          title="Solana"
-          description="Ed25519, EdDSA, Base58"
-          icon={<Zap size={40} className="text-purple-500" />}
-          onClick={() => setActiveFlow('solana')}
-          color="hover:border-purple-500/50"
-        />
-        <FlowCard
-          title="HD Wallet"
-          description="BIP39, BIP32, SLIP-0010, Multi-chain"
-          icon={<Wallet size={40} className="text-green-500" />}
-          onClick={() => setActiveFlow('hd-wallet')}
-          color="hover:border-green-500/50"
-        />
+      {/* Progress Steps */}
+      <div className="mb-8">
+        <div className="flex justify-between relative">
+          {/* Connecting Line */}
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/10 -z-10" />
+
+          {steps.map((step, idx) => (
+            <button
+              key={step.id}
+              onClick={() => setCurrentStep(idx)}
+              className={`flex flex-col items-center gap-2 group ${idx === currentStep ? 'text-primary' : 'text-muted'}`}
+            >
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                ${idx === currentStep
+                    ? 'border-primary text-primary shadow-[0_0_15px_rgba(0,255,157,0.3)]'
+                    : idx < currentStep
+                      ? 'border-green-500 text-green-500'
+                      : 'border-white/20 text-muted'
+                  }
+              `}
+              >
+                {idx + 1}
+              </div>
+              <span className="text-sm font-medium hidden md:block">
+                {step.title.split(':')[1]}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content Area */}
+      <div className="glass-panel p-8 min-h-[600px] animate-fade-in">
+        <div className="mb-6 border-b border-white/10 pb-4">
+          <h2 className="text-2xl font-bold text-white">{steps[currentStep].title}</h2>
+          <p className="text-muted">{steps[currentStep].description}</p>
+        </div>
+        {steps[currentStep].component}
+      </div>
+
+      {/* Navigation */}
+      <div className="flex justify-between mt-6">
+        <button
+          onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+          disabled={currentStep === 0}
+          className="px-6 py-2 rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 transition-colors text-white"
+        >
+          ← Previous Step
+        </button>
+
+        <button
+          onClick={() => {
+            // Mark current step as complete when moving next
+            markStepComplete('digital-assets', steps[currentStep].id)
+            setCurrentStep(Math.min(steps.length - 1, currentStep + 1))
+          }}
+          disabled={currentStep === steps.length - 1}
+          className="px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
+        >
+          Next Step →
+        </button>
       </div>
     </div>
   )
 }
-
-interface FlowCardProps {
-  title: string
-  description: string
-  icon: React.ReactNode
-  onClick: () => void
-  color: string
-}
-
-const FlowCard: React.FC<FlowCardProps> = ({ title, description, icon, onClick, color }) => (
-  <motion.button
-    whileHover={{ scale: 1.02 }}
-    whileTap={{ scale: 0.98 }}
-    onClick={onClick}
-    className={`bg-surface-800/50 border border-white/10 rounded-xl p-8 text-left transition-all ${color} group`}
-  >
-    <div className="mb-6 bg-white/5 w-16 h-16 rounded-full flex items-center justify-center group-hover:bg-white/10 transition-colors">
-      {icon}
-    </div>
-    <h3 className="text-2xl font-bold text-white mb-2">{title}</h3>
-    <p className="text-muted-foreground">{description}</p>
-  </motion.button>
-)

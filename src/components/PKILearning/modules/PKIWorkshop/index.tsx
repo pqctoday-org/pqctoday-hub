@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Trash2 } from 'lucide-react'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
@@ -10,8 +10,21 @@ import { CertParser } from './CertParser'
 export const PKIWorkshop: React.FC = () => {
   const markStepComplete = useModuleStore((state) => state.markStepComplete)
   const resetProgress = useModuleStore((state) => state.resetProgress)
+  const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
   const { resetStore } = useOpenSSLStore()
   const [currentStep, setCurrentStep] = useState(0)
+
+  // Track time spent
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const currentSpent = useModuleStore.getState().modules['pki-workshop']?.timeSpent || 0
+      updateModuleProgress('pki-workshop', {
+        timeSpent: currentSpent + 1,
+      })
+    }, 60000) // Update every minute
+
+    return () => clearInterval(timer)
+  }, [updateModuleProgress])
 
   const handleReset = () => {
     if (
@@ -87,13 +100,12 @@ export const PKIWorkshop: React.FC = () => {
             >
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
-                ${
-                  idx === currentStep
+                ${idx === currentStep
                     ? 'border-primary text-primary shadow-[0_0_15px_rgba(0,255,157,0.3)]'
                     : idx < currentStep
                       ? 'border-green-500 text-green-500'
                       : 'border-white/20 text-muted'
-                }
+                  }
               `}
               >
                 {idx + 1}
