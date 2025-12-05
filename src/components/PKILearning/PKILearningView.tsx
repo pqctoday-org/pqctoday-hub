@@ -3,6 +3,7 @@ import { Dashboard } from './Dashboard'
 import { ArrowLeft } from 'lucide-react'
 
 import { PKIWorkshop } from './modules/PKIWorkshop'
+import { DigitalAssetsModule } from './modules/DigitalAssets'
 
 export const PKILearningView: React.FC = () => {
   const [activeModule, setActiveModule] = useState<string | null>(null)
@@ -21,6 +22,7 @@ export const PKILearningView: React.FC = () => {
 
           {/* Render active module here */}
           {activeModule === 'pki-workshop' && <PKIWorkshop />}
+          {activeModule === 'digital-assets' && <DigitalAssetsModule />}
         </div>
       ) : (
         <Dashboard onSelectModule={setActiveModule} />

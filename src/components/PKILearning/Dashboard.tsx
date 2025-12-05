@@ -25,6 +25,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
       description: 'Complete hands-on workshop: CSRs, Root CAs, Signing, and Parsing.',
       duration: '45 min',
     },
+    {
+      id: 'digital-assets',
+      title: 'Digital Assets Program',
+      description:
+        'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana using OpenSSL.',
+      duration: '60 min',
+    },
   ]
 
   return (
@@ -96,7 +103,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
             Upcoming Tracks
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {['5G Security', 'Digital Assets', 'Digital ID', 'TLS', 'VPN'].map((topic) => (
+            {['5G Security', 'Digital ID', 'TLS', 'VPN'].map((topic) => (
               <div
                 key={topic}
                 className="p-4 rounded-lg border border-white/10 bg-white/5 flex items-center justify-between"

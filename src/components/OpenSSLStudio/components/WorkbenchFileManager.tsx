@@ -7,7 +7,8 @@ import { useOpenSSL } from '../hooks/useOpenSSL'
 import { logEvent } from '../../../utils/analytics'
 
 export const WorkbenchFileManager: React.FC = () => {
-  const { addLog, addFile, files, setEditingFile, removeFile, addStructuredLog } = useOpenSSLStore()
+  const { addLog, addFile, files, setEditingFile, removeFile, clearFiles, addStructuredLog } =
+    useOpenSSLStore()
   const { executeCommand } = useOpenSSL()
   const [sortBy, setSortBy] = useState<'timestamp' | 'type' | 'name'>('timestamp')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
@@ -158,6 +159,41 @@ export const WorkbenchFileManager: React.FC = () => {
               }}
               className="hidden"
             />
+          </button>
+          <button
+            onClick={() => {
+              const btn = document.activeElement as HTMLButtonElement
+              if (btn.dataset.confirm === 'true') {
+                clearFiles()
+                logEvent('OpenSSL Studio', 'Clear All Files', files.length.toString())
+                btn.dataset.confirm = 'false'
+                btn.innerHTML =
+                  '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg> Clear All'
+                btn.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-600')
+                btn.classList.add('bg-red-500/10', 'text-red-400', 'hover:bg-red-500/20')
+              } else {
+                btn.dataset.confirm = 'true'
+                btn.innerHTML = 'Confirm Clear?'
+                btn.classList.remove('bg-red-500/10', 'text-red-400', 'hover:bg-red-500/20')
+                btn.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600')
+
+                // Reset after 3 seconds
+                setTimeout(() => {
+                  if (btn.dataset.confirm === 'true') {
+                    btn.dataset.confirm = 'false'
+                    btn.innerHTML =
+                      '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg> Clear All'
+                    btn.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-600')
+                    btn.classList.add('bg-red-500/10', 'text-red-400', 'hover:bg-red-500/20')
+                  }
+                }, 3000)
+              }
+            }}
+            disabled={files.length === 0}
+            className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 disabled:bg-white/5 disabled:text-white/20 border border-red-500/20 disabled:border-white/10 rounded text-xs font-medium text-red-400 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+            title="Delete all files"
+          >
+            <Trash2 size={14} /> Clear All
           </button>
           <button
             onClick={handleBackupAllFiles}

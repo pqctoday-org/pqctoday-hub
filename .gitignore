@@ -35,3 +35,7 @@ playwright-report/
 test-results/
 coverage/
 .env
+
+# Temporary Keys
+*.pem
+*.der

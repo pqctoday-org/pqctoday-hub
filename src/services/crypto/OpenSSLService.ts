@@ -83,7 +83,11 @@ class OpenSSLService {
     switch (type) {
       case 'LOG':
         if (event.data.stream === 'stdout') {
-          request.result.stdout += event.data.message + '\n'
+          // Filter out debug messages and execution logs
+          const msg = event.data.message.trim()
+          if (!msg.startsWith('[Debug]') && !msg.startsWith('Executing:')) {
+            request.result.stdout += event.data.message + '\n'
+          }
         } else {
           request.result.stderr += event.data.message + '\n'
         }

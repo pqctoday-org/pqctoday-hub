@@ -33,6 +33,7 @@ interface OpenSSLStudioState {
   files: VirtualFile[]
   addFile: (file: VirtualFile) => void
   removeFile: (name: string) => void
+  clearFiles: () => void
   getFile: (name: string) => VirtualFile | undefined
 
   // Terminal Output
@@ -72,6 +73,7 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
       addFile: (file) =>
         set((state) => ({ files: [...state.files.filter((f) => f.name !== file.name), file] })),
       removeFile: (name) => set((state) => ({ files: state.files.filter((f) => f.name !== name) })),
+      clearFiles: () => set(() => ({ files: [] })),
       getFile: (name) => get().files.find((f) => f.name === name),
 
       logs: [],
@@ -130,13 +132,35 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
           lastExecutionTime: null,
         }),
     }),
+
     {
       name: 'openssl-studio-storage',
       partialize: (state) => ({
         files: state.files,
         structuredLogs: state.structuredLogs,
-        // Don't persist active tab, processing state, or editor state
       }),
+      storage: {
+        getItem: (name) => {
+          const str = localStorage.getItem(name)
+          if (!str) return null
+          return JSON.parse(str, (_key, value) => {
+            if (value && value.type === 'Buffer' && Array.isArray(value.data)) {
+              return new Uint8Array(value.data)
+            }
+            return value
+          })
+        },
+        setItem: (name, value) => {
+          const str = JSON.stringify(value, (_key, val) => {
+            if (val instanceof Uint8Array) {
+              return { type: 'Buffer', data: Array.from(val) }
+            }
+            return val
+          })
+          localStorage.setItem(name, str)
+        },
+        removeItem: (name) => localStorage.removeItem(name),
+      },
     }
   )
 )

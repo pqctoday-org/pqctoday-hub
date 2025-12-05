@@ -1,0 +1,7 @@
+# Crypto Operations Guidelines
+
+1. **OpenSSL First**: All standard cryptographic operations and parsing that are supported by OpenSSL MUST be performed using OpenSSL commands (e.g., `openssl genpkey`, `openssl pkey -text`).
+2. **Fallback to JS**: Operations NOT supported by the local OpenSSL version (e.g., Ed25519 on older LibreSSL) MUST be implemented using the new JavaScript imports (e.g., `@noble/curves`, `@scure/bip39`).
+3. **Modern Commands**: Use modern OpenSSL commands (`genpkey`, `pkey`) and avoid deprecated ones (`ec`, `ecparam`) where possible.
+. **Centralize key and files management**: All key files have to be retained in Openssl Studio KEy files modules
+
