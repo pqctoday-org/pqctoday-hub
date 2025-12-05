@@ -13,6 +13,7 @@ export const useOpenSSL = () => {
     command: currentCommand,
     setLastExecutionTime,
     addStructuredLog,
+    setIsReady,
   } = useOpenSSLStore()
 
   const startTimeRef = useRef<number | null>(null)
@@ -57,10 +58,12 @@ export const useOpenSSL = () => {
           break
         case 'READY':
           addLog('info', 'OpenSSL System Ready')
+          setIsReady(true)
           break
         case 'ERROR':
           addLog('error', `System Error: ${event.data.error} `)
           setIsProcessing(false)
+          setIsReady(false)
           break
         case 'DONE':
           setIsProcessing(false)
@@ -137,8 +140,9 @@ export const useOpenSSL = () => {
     return () => {
       active = false
       worker.terminate()
+      setIsReady(false)
     }
-  }, [addLog, addFile, setIsProcessing, addStructuredLog, setLastExecutionTime])
+  }, [addLog, addFile, setIsProcessing, addStructuredLog, setLastExecutionTime, setIsReady])
 
   const executeCommand = useCallback(
     async (cmdOverride?: string) => {

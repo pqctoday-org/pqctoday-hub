@@ -163,6 +163,12 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
       - **Duplicate Logs**: Added an `active` flag in the `useOpenSSL` cleanup function to ignore messages from the terminated worker instance.
       - **Initialization Errors**: Converted all top-level `const` and `class` declarations in `openssl.worker.ts` to `var` assignments. This allows the script to be re-evaluated safely without throwing redeclaration errors.
 
+5.  **Regression Test Timeouts (PQC Algorithms)**:
+    - **Challenge**: End-to-end tests for `ML-KEM-768` keys were consistently timing out (>60s) in the automated environment, despite working manually (<1s).
+    - **Investigation**: Resource monitoring showed low usage. Visual debugging revealed the test runner was waiting indefinitely for UI elements.
+    - **Root Cause**: The Playwright tests were using an invalid CSS selector (`#key-algo-select`) instead of the correct ID (`#algo-select`).
+    - **Solution**: Updated the test selectors in `e2e/openssl-pqc.spec.ts`. All regression tests now pass in <4s per case.
+
 ### Future Improvements
 
 - [x] Test and verify all ML-KEM and SLH-DSA variants (Verified via E2E tests)

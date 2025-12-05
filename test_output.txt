@@ -1,118 +1,31 @@
 
-Running 12 tests using 7 workers
+[1m[46m RUN [49m[22m [36mv4.0.14 [39m[90m/Users/ericamador/antigravity/pqc-timeline-app[39m
 
-[1A[2K[1/12] [chromium] › e2e/playground.spec.ts:122:3 › Playground › performs ML-DSA signing/verification
-[1A[2K[2/12] [firefox] › e2e/playground.spec.ts:27:3 › Playground › generates ML-DSA keys
-[1A[2K[3/12] [firefox] › e2e/playground.spec.ts:40:3 › Playground › performs ML-KEM encapsulation/decapsulation
-[1A[2K[4/12] [chromium] › e2e/playground.spec.ts:12:3 › Playground › generates ML-KEM keys
-[1A[2K[5/12] [chromium] › e2e/playground.spec.ts:27:3 › Playground › generates ML-DSA keys
-[1A[2K[6/12] [chromium] › e2e/playground.spec.ts:40:3 › Playground › performs ML-KEM encapsulation/decapsulation
-[1A[2K[7/12] [firefox] › e2e/playground.spec.ts:12:3 › Playground › generates ML-KEM keys
-[1A[2K[8/12] [webkit] › e2e/playground.spec.ts:12:3 › Playground › generates ML-KEM keys
-[1A[2K[9/12] [firefox] › e2e/playground.spec.ts:122:3 › Playground › performs ML-DSA signing/verification
-[1A[2K[chromium] › e2e/playground.spec.ts:40:3 › Playground › performs ML-KEM encapsulation/decapsulation
-Private Key Options: 2
+ [31m❯[39m src/services/crypto/OpenSSLService.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m1 failed[39m[2m | [22m[33m4 skipped[39m[2m)[22m[33m 5008[2mms[22m[39m
+     [2m[90m↓[39m[22m init() should timeout if worker does not respond
+     [2m[90m↓[39m[22m init() should reject if worker reports ERROR
+     [2m[90m↓[39m[22m init() should reject if worker throws onerror
+[31m     [31m×[31m execute() should timeout if command hangs[39m[33m 5008[2mms[22m[39m
+     [2m[90m↓[39m[22m should recover from failed init
 
-[1A[2K[10/12] [webkit] › e2e/playground.spec.ts:27:3 › Playground › generates ML-DSA keys
-[1A[2KResult Text: SECRET RECOVERED
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
 
-[1A[2K  1) [chromium] › e2e/playground.spec.ts:40:3 › Playground › performs ML-KEM encapsulation/decapsulation 
+[41m[1m FAIL [22m[49m src/services/crypto/OpenSSLService.test.ts[2m > [22mOpenSSLService Stability[2m > [22mexecute() should timeout if command hangs
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m src/services/crypto/OpenSSLService.test.ts:[2m80:5[22m[39m
+    [90m 78| [39m    })
+    [90m 79| [39m
+    [90m 80| [39m    [34mit[39m([32m'execute() should timeout if command hangs'[39m[33m,[39m [35masync[39m () [33m=>[39m {
+    [90m   | [39m    [31m^[39m
+    [90m 81| [39m        [90m// Mock successful init[39m
+    [90m 82| [39m        [35mconst[39m initPromise [33m=[39m openSSLService[33m.[39m[34minit[39m()
 
-    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
-
-    Locator: getByText('SECRET RECOVERED')
-    Expected: visible
-    Error: strict mode violation: getByText('SECRET RECOVERED') resolved to 2 elements:
-        1) <span title="✓ Secret Recovered (Match)" class="text-accent max-w-[200px] truncate">✓ Secret Recovered (Match)</span> aka getByText('✓ Secret Recovered (Match)')
-        2) <div class="font-bold text-lg">SECRET RECOVERED</div> aka getByText('SECRET RECOVERED', { exact: true })
-
-    Call log:
-    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
-    [2m  - waiting for getByText('SECRET RECOVERED')[22m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
 
 
-      117 |     }
-      118 |
-    > 119 |     await expect(page.getByText('SECRET RECOVERED')).toBeVisible()
-          |                                                      ^
-      120 |   })
-      121 |
-      122 |   test('performs ML-DSA signing/verification', async ({ page }) => {
-        at /Users/ericamador/antigravity/pqc-timeline-app/e2e/playground.spec.ts:119:54
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[33m4 skipped[39m[90m (5)[39m
+[2m   Start at [22m 15:03:07
+[2m   Duration [22m 5.24s[2m (transform 22ms, setup 26ms, import 16ms, tests 5.01s, environment 141ms)[22m
 
-    Error Context: test-results/playground-Playground-perf-81f75-encapsulation-decapsulation-chromium/error-context.md
-
-
-[1A[2K[firefox] › e2e/playground.spec.ts:40:3 › Playground › performs ML-KEM encapsulation/decapsulation
-Private Key Options: 2
-
-[1A[2K[11/12] [webkit] › e2e/playground.spec.ts:40:3 › Playground › performs ML-KEM encapsulation/decapsulation
-[1A[2K[12/12] [webkit] › e2e/playground.spec.ts:122:3 › Playground › performs ML-DSA signing/verification
-[1A[2KResult Text: SECRET RECOVERED
-
-[1A[2K  2) [firefox] › e2e/playground.spec.ts:40:3 › Playground › performs ML-KEM encapsulation/decapsulation 
-
-    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
-
-    Locator: getByText('SECRET RECOVERED')
-    Expected: visible
-    Error: strict mode violation: getByText('SECRET RECOVERED') resolved to 2 elements:
-        1) <span title="✓ Secret Recovered (Match)" class="text-accent max-w-[200px] truncate">✓ Secret Recovered (Match)</span> aka getByText('✓ Secret Recovered (Match)')
-        2) <div class="font-bold text-lg">SECRET RECOVERED</div> aka getByText('SECRET RECOVERED', { exact: true })
-
-    Call log:
-    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
-    [2m  - waiting for getByText('SECRET RECOVERED')[22m
-
-
-      117 |     }
-      118 |
-    > 119 |     await expect(page.getByText('SECRET RECOVERED')).toBeVisible()
-          |                                                      ^
-      120 |   })
-      121 |
-      122 |   test('performs ML-DSA signing/verification', async ({ page }) => {
-        at /Users/ericamador/antigravity/pqc-timeline-app/e2e/playground.spec.ts:119:54
-
-    Error Context: test-results/playground-Playground-perf-81f75-encapsulation-decapsulation-firefox/error-context.md
-
-
-[1A[2K[webkit] › e2e/playground.spec.ts:40:3 › Playground › performs ML-KEM encapsulation/decapsulation
-Private Key Options: 2
-
-[1A[2KResult Text: SECRET RECOVERED
-
-[1A[2K  3) [webkit] › e2e/playground.spec.ts:40:3 › Playground › performs ML-KEM encapsulation/decapsulation 
-
-    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
-
-    Locator: getByText('SECRET RECOVERED')
-    Expected: visible
-    Error: strict mode violation: getByText('SECRET RECOVERED') resolved to 2 elements:
-        1) <span title="✓ Secret Recovered (Match)" class="text-accent max-w-[200px] truncate">✓ Secret Recovered (Match)</span> aka getByText('✓ Secret Recovered (Match)')
-        2) <div class="font-bold text-lg">SECRET RECOVERED</div> aka getByText('SECRET RECOVERED', { exact: true })
-
-    Call log:
-    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
-    [2m  - waiting for getByText('SECRET RECOVERED')[22m
-
-
-      117 |     }
-      118 |
-    > 119 |     await expect(page.getByText('SECRET RECOVERED')).toBeVisible()
-          |                                                      ^
-      120 |   })
-      121 |
-      122 |   test('performs ML-DSA signing/verification', async ({ page }) => {
-        at /Users/ericamador/antigravity/pqc-timeline-app/e2e/playground.spec.ts:119:54
-
-    Error Context: test-results/playground-Playground-perf-81f75-encapsulation-decapsulation-webkit/error-context.md
-
-
-[1A[2K  3 failed
-    [chromium] › e2e/playground.spec.ts:40:3 › Playground › performs ML-KEM encapsulation/decapsulation 
-    [firefox] › e2e/playground.spec.ts:40:3 › Playground › performs ML-KEM encapsulation/decapsulation 
-    [webkit] › e2e/playground.spec.ts:40:3 › Playground › performs ML-KEM encapsulation/decapsulation 
-  9 passed (9.0s)
-
-[36m  Serving HTML report at http://localhost:49710. Press Ctrl+C to quit.[39m

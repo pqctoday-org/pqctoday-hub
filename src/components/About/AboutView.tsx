@@ -414,6 +414,23 @@ ${kudos.message}
             </ul>
           </div>
           <div>
+            <h3 className="text-lg font-semibold text-primary mb-3">Utilities</h3>
+            <ul className="space-y-2">
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted">localforage</span>
+                <span className="text-xs text-muted/60">v1.10.0 • 2024-05-01</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted">jszip</span>
+                <span className="text-xs text-muted/60">v3.10.1 • 2023-02-12</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted">file-saver</span>
+                <span className="text-xs text-muted/60">v2.0.5 • 2021-01-20</span>
+              </li>
+            </ul>
+          </div>
+          <div>
             <h3 className="text-lg font-semibold text-primary mb-3">Cryptography & PQC</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
@@ -440,6 +457,22 @@ ${kudos.message}
                 <span className="text-muted">noble-hashes</span>
                 <span className="text-xs text-muted/60">v2.0.1 • 2025-09-22</span>
               </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted">noble-curves</span>
+                <span className="text-xs text-muted/60">v2.0.1 • 2025-02-15</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted">scure-bip32/39</span>
+                <span className="text-xs text-muted/60">v2.0.1 • 2025-03-01</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted">micro-eth-signer</span>
+                <span className="text-xs text-muted/60">v0.18.1 • 2025-01-10</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted">ed25519-hd-key</span>
+                <span className="text-xs text-muted/60">v1.3.0 • 2022-08-01</span>
+              </li>
             </ul>
           </div>
           <div>
@@ -448,6 +481,10 @@ ${kudos.message}
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted">Zustand</span>
                 <span className="text-xs text-muted/60">v5.0.8 • 2025-08-19</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted">Immer</span>
+                <span className="text-xs text-muted/60">v11.0.1 • 2025-09-05</span>
               </li>
             </ul>
           </div>

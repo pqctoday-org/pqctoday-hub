@@ -14,6 +14,8 @@ The application is divided into five main modules. Detailed requirements for eac
     - Includes **[ACVP Testing](requirements/acvp_testing.md)**: Automated validation against NIST test vectors.
 4.  **[Quantum Threat Impacts](requirements/impacts.md)**: Dashboard showing specific risks to industries like Finance, IoT, and Government.
 5.  **[Transformation Leaders](requirements/leaders.md)**: Profiles of key public and private figures driving the transition.
+6.  **[PKI Learning Platform](requirements/learn.md)**: Educational modules for PKI lifecycle and Digital Assets cryptography.
+7.  **[About & Feedback](requirements/about.md)**: Project information, feedback mechanisms, and Software Bill of Materials (SBOM).
 
 ## 3. Non-Functional Requirements
 

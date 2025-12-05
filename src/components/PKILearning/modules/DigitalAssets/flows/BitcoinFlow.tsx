@@ -9,6 +9,7 @@ import { createBase58check } from '@scure/base'
 import { bytesToHex } from '@noble/hashes/utils.js'
 import { useStepWizard } from '../hooks/useStepWizard'
 import { DIGITAL_ASSETS_CONSTANTS } from '../constants'
+import { extractKeyFromOpenSSLOutput } from '../../../../../utils/cryptoUtils'
 
 interface BitcoinFlowProps {
   onBack: () => void
@@ -161,54 +162,6 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     },
   ]
 
-  // Helper to extract key from OpenSSL text output
-  const extractKeyFromText = async (
-    pemFile: string,
-    type: 'private' | 'public',
-    files: { name: string; data: Uint8Array }[] = []
-  ): Promise<Uint8Array> => {
-    // Ensure the file is in the list to pass to worker
-    const filesToPass = [...files]
-    if (!filesToPass.find((f) => f.name === pemFile)) {
-      const storedFile = useOpenSSLStore.getState().getFile(pemFile)
-      if (storedFile) {
-        filesToPass.push({ name: storedFile.name, data: storedFile.content as Uint8Array })
-      }
-    }
-
-    // Use -text to let OpenSSL parse the key structure
-    const pubIn = type === 'public' ? '-pubin' : ''
-    const cmd = `openssl pkey -in ${pemFile} ${pubIn} -text -noout`
-    const res = await openSSLService.execute(cmd, filesToPass)
-    if (res.error) throw new Error(res.error)
-
-    const output = res.stdout
-    let hexBlock = ''
-
-    if (type === 'private') {
-      // Extract content between "priv:" and "pub:" (or end)
-      const match = output.match(/priv:([\s\S]*?)(?:pub:|ASN1|$)/)
-      if (!match) throw new Error('Could not find private key in OpenSSL output')
-      hexBlock = match[1]
-    } else {
-      // Extract content between "pub:" and "ASN1" (or end)
-      const match = output.match(/pub:([\s\S]*?)(?:ASN1|$)/)
-      if (!match) throw new Error('Could not find public key in OpenSSL output')
-      hexBlock = match[1]
-    }
-
-    // Clean up hex string (remove newlines, spaces, colons)
-    const cleanHex = hexBlock.replace(/[\s:]/g, '')
-
-    // Convert to bytes
-    const bytes = new Uint8Array(cleanHex.length / 2)
-    for (let i = 0; i < cleanHex.length; i += 2) {
-      bytes[i / 2] = parseInt(cleanHex.substring(i, i + 2), 16)
-    }
-
-    return bytes
-  }
-
   const executeStep = async () => {
     if (!filenames) throw new Error('Filenames not initialized')
     const step = steps[wizard.currentStep]
@@ -232,7 +185,11 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
       })
 
       // 2. Extract Raw Key using OpenSSL text output
-      const rawKeyBytes = await extractKeyFromText(filenames.SRC_PRIVATE_KEY, 'private', res.files)
+      const rawKeyBytes = await extractKeyFromOpenSSLOutput(
+        filenames.SRC_PRIVATE_KEY,
+        'private',
+        res.files
+      )
       const cleanPrivHex = bytesToHex(rawKeyBytes)
 
       // Read the key file for PEM display
@@ -272,7 +229,11 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
 
       // 2. Extract Raw Key using OpenSSL text output
       // Note: For Public Key, we use the PUBLIC_KEY file
-      const rawKeyBytes = await extractKeyFromText(filenames.SRC_PUBLIC_KEY, 'public', res.files)
+      const rawKeyBytes = await extractKeyFromOpenSSLOutput(
+        filenames.SRC_PUBLIC_KEY,
+        'public',
+        res.files
+      )
       const cleanPubHex = bytesToHex(rawKeyBytes)
 
       setPublicKeyBytes(rawKeyBytes)
@@ -331,7 +292,11 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
       })
 
       // Extract public key bytes for next step
-      const rawKeyBytes = await extractKeyFromText(filenames.DST_PUBLIC_KEY, 'public', allFiles)
+      const rawKeyBytes = await extractKeyFromOpenSSLOutput(
+        filenames.DST_PUBLIC_KEY,
+        'public',
+        allFiles
+      )
       setRecipientPublicKeyBytes(rawKeyBytes)
 
       result = `Generated Recipient Keys:\n${filenames.DST_PRIVATE_KEY}\n${filenames.DST_PUBLIC_KEY}\n\nRecipient Public Key (Hex):\n${bytesToHex(rawKeyBytes)}`

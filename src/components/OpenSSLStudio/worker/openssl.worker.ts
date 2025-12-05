@@ -109,6 +109,12 @@ var loadOpenSSLScript = async (
         message: `[Debug] importScripts failed: ${e.message}`,
         requestId,
       })
+      // Critical error: notify main thread
+      self.postMessage({
+        type: 'ERROR',
+        error: `Failed to load OpenSSL script: ${e.message}`,
+        requestId,
+      })
       throw e
     }
   })()

@@ -14,7 +14,7 @@ test.describe('OpenSSL Studio - PQC Algorithms', () => {
   test('generates ML-DSA-44 key and signs data', async ({ page }) => {
     // 1. Generate Key
     await page.getByRole('button', { name: 'Key Generation' }).click()
-    await page.selectOption('#key-algo-select', 'mldsa44')
+    await page.selectOption('#algo-select', 'mldsa44')
     await page.getByRole('button', { name: 'Run Command' }).click()
     await expect(page.getByText(/File created: mldsa-44-/)).toBeVisible()
 
@@ -71,7 +71,7 @@ test.describe('OpenSSL Studio - PQC Algorithms', () => {
   for (const variant of slhVariants) {
     test(`generates ${variant} key`, async ({ page }) => {
       await page.getByRole('button', { name: 'Key Generation' }).click()
-      await page.selectOption('#key-algo-select', variant)
+      await page.selectOption('#algo-select', variant)
       await page.getByRole('button', { name: 'Run Command' }).click()
       // Match filename loosely as it contains the variant name
       await expect(
@@ -88,7 +88,7 @@ test.describe('OpenSSL Studio - PQC Algorithms', () => {
 
   test('generates ML-KEM-768 key', async ({ page }) => {
     await page.getByRole('button', { name: 'Key Generation' }).click()
-    await page.selectOption('#key-algo-select', 'mlkem768')
+    await page.selectOption('#algo-select', 'mlkem768')
     await page.getByRole('button', { name: 'Run Command' }).click()
     await expect(page.getByText(/File created: mlkem-768-/)).toBeVisible()
   })

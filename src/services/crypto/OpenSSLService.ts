@@ -19,6 +19,8 @@ class OpenSSLService {
   > = new Map()
   private isReady: boolean = false
   private readyPromise: Promise<void> | null = null
+  private readonly INIT_TIMEOUT = 30000 // 30 seconds
+  private readonly EXEC_TIMEOUT = 60000 // 60 seconds
 
   constructor() {
     // Lazy initialization in init()
@@ -29,6 +31,11 @@ class OpenSSLService {
     if (this.readyPromise) return this.readyPromise
 
     this.readyPromise = new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        this.resetState()
+        reject(new Error('OpenSSL initialization timed out'))
+      }, this.INIT_TIMEOUT)
+
       try {
         // We need to use the same worker path as the Studio
         this.worker = new Worker(
@@ -38,26 +45,55 @@ class OpenSSLService {
           }
         )
 
-        this.worker.onmessage = this.handleMessage.bind(this)
+        this.worker.onmessage = (event) => {
+          // If we get an error during init (before ready), reject
+          if (event.data.type === 'ERROR' && !this.isReady && !event.data.requestId) {
+            clearTimeout(timeoutId)
+            this.resetState()
+            reject(new Error(event.data.error || 'Initialization failed'))
+            return
+          }
+          this.handleMessage(event)
+        }
+
+        this.worker.onerror = (error) => {
+          clearTimeout(timeoutId)
+          this.resetState()
+          reject(error)
+        }
 
         // Initialize the worker
         this.worker.postMessage({ type: 'LOAD', url: '/wasm/openssl.js' })
 
-        // We'll resolve this promise when we get the READY message
-        // But we also need to handle the case where it fails immediately
-        // For now, we'll let the handleMessage resolve it.
-
         // Store the resolve function to be called by handleMessage
-        // This is a bit of a hack, but effective for the initial handshake
         ;(
           this as unknown as { _resolveInit: (value: void | PromiseLike<void>) => void }
-        )._resolveInit = resolve
+        )._resolveInit = () => {
+          clearTimeout(timeoutId)
+          resolve()
+        }
       } catch (error) {
+        clearTimeout(timeoutId)
+        this.resetState()
         reject(error)
       }
     })
 
     return this.readyPromise
+  }
+
+  private resetState() {
+    this.isReady = false
+    this.readyPromise = null
+    if (this.worker) {
+      this.worker.terminate()
+      this.worker = null
+    }
+    // Clean up any pending requests
+    for (const request of this.pendingRequests.values()) {
+      request.reject(new Error('OpenSSL service reset'))
+    }
+    this.pendingRequests.clear()
   }
 
   private handleMessage(event: MessageEvent<WorkerResponse>) {
@@ -73,8 +109,6 @@ class OpenSSLService {
     }
 
     if (!requestId || !this.pendingRequests.has(requestId)) {
-      // Log or ignore messages without a request ID (unless it's global logs)
-      // console.log('Received message without request ID:', event.data);
       return
     }
 
@@ -100,7 +134,6 @@ class OpenSSLService {
         break
       case 'ERROR':
         request.result.error = event.data.error
-        // We don't reject immediately, we wait for DONE to return the full context
         break
       case 'DONE':
         this.pendingRequests.delete(requestId)
@@ -117,19 +150,24 @@ class OpenSSLService {
     command: string,
     files: { name: string; data: Uint8Array }[] = []
   ): Promise<OpenSSLCommandResult> {
-    await this.init()
+    try {
+      await this.init()
+    } catch (error) {
+      console.error('OpenSSL Init Error:', error)
+      throw new Error(
+        `OpenSSL Service not available: ${error instanceof Error ? error.message : String(error)}`
+      )
+    }
 
     if (!this.worker) throw new Error('Worker not initialized')
 
     const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
 
     // Parse command string to args
-    // Simple parser: split by spaces but respect quotes
     const args: string[] = []
     let match
     const regex = /[^\s"]+|"([^"]*)"/g
 
-    // Remove 'openssl' prefix if present
     const cmdStr = command.trim().startsWith('openssl ') ? command.trim().slice(8) : command.trim()
 
     while ((match = regex.exec(cmdStr)) !== null) {
@@ -139,9 +177,20 @@ class OpenSSLService {
     const cmd = args.shift() || ''
 
     return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        this.pendingRequests.delete(requestId)
+        reject(new Error(`Command timed out after ${this.EXEC_TIMEOUT}ms`))
+      }, this.EXEC_TIMEOUT)
+
       this.pendingRequests.set(requestId, {
-        resolve,
-        reject,
+        resolve: (val) => {
+          clearTimeout(timeoutId)
+          resolve(val)
+        },
+        reject: (err) => {
+          clearTimeout(timeoutId)
+          reject(err)
+        },
         result: { stdout: '', stderr: '', files: [] },
       })
 
@@ -156,12 +205,7 @@ class OpenSSLService {
   }
 
   public terminate() {
-    if (this.worker) {
-      this.worker.terminate()
-      this.worker = null
-      this.isReady = false
-      this.readyPromise = null
-    }
+    this.resetState()
   }
 }
 

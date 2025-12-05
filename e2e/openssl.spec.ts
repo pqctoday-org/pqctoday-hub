@@ -46,7 +46,7 @@ test.describe('OpenSSL Studio', () => {
     await page.getByRole('button', { name: 'Key Generation' }).click()
 
     // Select ML-DSA-44
-    await page.selectOption('#key-algo-select', 'mldsa44')
+    await page.selectOption('#algo-select', 'mldsa44')
 
     // Click Run Command
     await page.getByRole('button', { name: 'Run Command' }).click()

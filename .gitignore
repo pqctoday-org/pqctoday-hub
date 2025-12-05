@@ -39,3 +39,4 @@ coverage/
 # Temporary Keys
 *.pem
 *.der
+test_output.txt

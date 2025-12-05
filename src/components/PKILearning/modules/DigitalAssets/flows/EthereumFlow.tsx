@@ -8,6 +8,7 @@ import { keccak_256 } from '@noble/hashes/sha3.js'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import { useStepWizard } from '../hooks/useStepWizard'
 import { DIGITAL_ASSETS_CONSTANTS } from '../constants'
+import { extractKeyFromOpenSSLOutput } from '../../../../../utils/cryptoUtils'
 
 interface EthereumFlowProps {
   onBack: () => void
@@ -188,48 +189,6 @@ export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack }) => {
     return result
   }
 
-  // Helper to extract key from OpenSSL text output
-  const extractKeyFromText = async (
-    pemFile: string,
-    type: 'private' | 'public',
-    files: { name: string; data: Uint8Array }[] = []
-  ): Promise<Uint8Array> => {
-    // Ensure the file is in the list to pass to worker
-    const filesToPass = [...files]
-    if (!filesToPass.find((f) => f.name === pemFile)) {
-      const storedFile = useOpenSSLStore.getState().getFile(pemFile)
-      if (storedFile) {
-        filesToPass.push({ name: storedFile.name, data: storedFile.content as Uint8Array })
-      }
-    }
-
-    const pubIn = type === 'public' ? '-pubin' : ''
-    const cmd = `openssl pkey -in ${pemFile} ${pubIn} -text -noout`
-    const res = await openSSLService.execute(cmd, filesToPass)
-    if (res.error) throw new Error(res.error)
-
-    const output = res.stdout
-    let hexBlock = ''
-
-    if (type === 'private') {
-      const match = output.match(/priv:([\s\S]*?)(?:pub:|ASN1|$)/)
-      if (!match) throw new Error('Could not find private key in OpenSSL output')
-      hexBlock = match[1]
-    } else {
-      const match = output.match(/pub:([\s\S]*?)(?:ASN1|$)/)
-      if (!match) throw new Error('Could not find public key in OpenSSL output')
-      hexBlock = match[1]
-    }
-
-    const cleanHex = hexBlock.replace(/[\s:]/g, '')
-    const bytes = new Uint8Array(cleanHex.length / 2)
-    for (let i = 0; i < cleanHex.length; i += 2) {
-      bytes[i / 2] = parseInt(cleanHex.substring(i, i + 2), 16)
-    }
-
-    return bytes
-  }
-
   const executeStep = async () => {
     if (!filenames) throw new Error('Filenames not initialized')
     const step = steps[wizard.currentStep]
@@ -253,7 +212,11 @@ export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack }) => {
       })
 
       // 2. Extract Raw Key using OpenSSL text output
-      const rawKeyBytes = await extractKeyFromText(filenames.SRC_PRIVATE_KEY, 'private', res1.files)
+      const rawKeyBytes = await extractKeyFromOpenSSLOutput(
+        filenames.SRC_PRIVATE_KEY,
+        'private',
+        res1.files
+      )
       const cleanPrivHex = bytesToHex(rawKeyBytes)
 
       // Read the key file
@@ -297,7 +260,11 @@ export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack }) => {
       })
 
       // 2. Extract Raw Key using OpenSSL text output
-      const rawKeyBytes = await extractKeyFromText(filenames.SRC_PUBLIC_KEY, 'public', res1.files)
+      const rawKeyBytes = await extractKeyFromOpenSSLOutput(
+        filenames.SRC_PUBLIC_KEY,
+        'public',
+        res1.files
+      )
       const cleanPubHex = bytesToHex(rawKeyBytes)
 
       const readRes = await openSSLService.execute(
@@ -352,7 +319,11 @@ export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack }) => {
       })
 
       // Extract public key bytes for next step
-      const rawKeyBytes = await extractKeyFromText(filenames.DST_PUBLIC_KEY, 'public', allFiles)
+      const rawKeyBytes = await extractKeyFromOpenSSLOutput(
+        filenames.DST_PUBLIC_KEY,
+        'public',
+        allFiles
+      )
       const cleanPubHex = bytesToHex(rawKeyBytes)
 
       // Remove 0x04 prefix

@@ -55,6 +55,8 @@ interface OpenSSLStudioState {
   setCommand: (cmd: string) => void
   isProcessing: boolean
   setIsProcessing: (isProcessing: boolean) => void
+  isReady: boolean
+  setIsReady: (isReady: boolean) => void
 
   // Editor State
   editingFile: VirtualFile | null
@@ -112,6 +114,8 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
       setCommand: (cmd) => set({ command: cmd }),
       isProcessing: false,
       setIsProcessing: (isProcessing) => set({ isProcessing }),
+      isReady: false,
+      setIsReady: (isReady) => set({ isReady }),
 
       // Editor State
       editingFile: null,
@@ -128,6 +132,7 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
           structuredLogs: [],
           command: '',
           isProcessing: false,
+          isReady: false,
           editingFile: null,
           lastExecutionTime: null,
         }),

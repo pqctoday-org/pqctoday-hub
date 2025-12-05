@@ -88,7 +88,6 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
             onKeyDown={handleKeyDown}
             aria-haspopup="listbox"
             aria-expanded={isOpen}
-            aria-labelledby="filter-dropdown-label"
             className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors min-w-[200px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -100,6 +99,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                   width: '24px',
                   fontWeight: 'bold',
                 }}
+                aria-hidden="true"
               >
                 {isDefaultSelected ? defaultIcon : selectedItem?.icon}
               </span>
@@ -134,7 +134,10 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                 )}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
               >
-                <span className="opacity-50 flex items-center justify-center w-6">
+                <span
+                  className="opacity-50 flex items-center justify-center w-6"
+                  aria-hidden="true"
+                >
                   {defaultIcon}
                 </span>
                 {defaultLabel}
@@ -158,7 +161,10 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                     )}
                     style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                   >
-                    <span className="opacity-80 flex items-center justify-center w-6">
+                    <span
+                      className="opacity-80 flex items-center justify-center w-6"
+                      aria-hidden="true"
+                    >
                       {item.icon}
                     </span>
                     {item.label}
