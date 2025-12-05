@@ -62,8 +62,9 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                 {steps.map((_, idx) => (
                   <div
                     key={idx}
-                    className={`h-1.5 w-6 rounded-full transition-colors ${idx <= currentStepIndex ? 'bg-primary-500' : 'bg-white/10'
-                      }`}
+                    className={`h-1.5 w-6 rounded-full transition-colors ${
+                      idx <= currentStepIndex ? 'bg-primary-500' : 'bg-white/10'
+                    }`}
                   />
                 ))}
               </div>
@@ -86,7 +87,9 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                     {step.explanationTable.map((row, i) => (
                       <tr key={i} className="hover:bg-white/5 transition-colors">
                         <td className="p-3 font-mono text-primary-300 break-words">{row.label}</td>
-                        <td className="p-3 font-mono text-white/80 break-all break-words max-w-full whitespace-pre-wrap">{row.value}</td>
+                        <td className="p-3 font-mono text-white/80 break-all break-words max-w-full whitespace-pre-wrap">
+                          {row.value}
+                        </td>
                         <td className="p-3 text-muted-foreground break-words">{row.description}</td>
                       </tr>
                     ))}
@@ -98,7 +101,9 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                 <div className="flex items-center justify-between mb-2 border-b border-white/10 pb-2">
                   <span className="text-xs text-muted-foreground uppercase">{step.language}</span>
                 </div>
-                <pre className="text-primary-300 whitespace-pre-wrap break-all break-words max-w-full">{step.code}</pre>
+                <pre className="text-primary-300 whitespace-pre-wrap break-all break-words max-w-full">
+                  {step.code}
+                </pre>
               </div>
             )}
 
@@ -154,7 +159,9 @@ export const StepWizard: React.FC<StepWizardProps> = ({
 
             <div className="mt-8 flex-1 overflow-y-auto min-h-[300px]" ref={outputRef}>
               {output ? (
-                <pre className="text-green-400 whitespace-pre-wrap break-all break-words max-w-full">{output}</pre>
+                <pre className="text-green-400 whitespace-pre-wrap break-all break-words max-w-full">
+                  {output}
+                </pre>
               ) : (
                 <div className="h-full flex items-center justify-center text-white/20">
                   Waiting for execution...
@@ -164,7 +171,9 @@ export const StepWizard: React.FC<StepWizardProps> = ({
               {error && (
                 <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded text-red-400 flex items-start gap-2">
                   <AlertCircle size={16} className="mt-0.5 shrink-0" />
-                  <pre className="whitespace-pre-wrap break-all break-words max-w-full">{error}</pre>
+                  <pre className="whitespace-pre-wrap break-all break-words max-w-full">
+                    {error}
+                  </pre>
                 </div>
               )}
             </div>

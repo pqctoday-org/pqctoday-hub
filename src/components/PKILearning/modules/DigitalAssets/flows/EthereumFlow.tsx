@@ -61,8 +61,7 @@ export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack }) => {
     {
       id: 'keygen',
       title: '1. Generate Source Keypair',
-      description:
-        'Generate a secp256k1 private key for the sender using OpenSSL.',
+      description: 'Generate a secp256k1 private key for the sender using OpenSSL.',
       code: `// OpenSSL Command\nopenssl ecparam -name secp256k1 -genkey -noout -out ${filenames?.SRC_PRIVATE_KEY || 'src_key.pem'}`,
       language: 'bash',
       actionLabel: 'Generate Source Key',
@@ -95,7 +94,7 @@ export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack }) => {
     {
       id: 'recipient_address',
       title: '5. Derive Recipient Address',
-      description: 'Derive the recipient\'s address from their public key.',
+      description: "Derive the recipient's address from their public key.",
       code: `// JavaScript Execution\nconst recipientAddress = deriveAddress(recipientPubKey);`,
       language: 'javascript',
       actionLabel: 'Derive Recipient Address',
@@ -161,8 +160,7 @@ export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack }) => {
     {
       id: 'sign',
       title: '8. Sign Transaction',
-      description:
-        'Create a transaction, hash it with Keccak-256, and sign with ECDSA.',
+      description: 'Create a transaction, hash it with Keccak-256, and sign with ECDSA.',
       code: `// JavaScript Execution\nconst txHash = keccak_256(rlpEncodedTx);\nconst sig = secp256k1.sign(txHash, privKey, { lowS: true });`,
       language: 'javascript',
       actionLabel: 'Sign Transaction',

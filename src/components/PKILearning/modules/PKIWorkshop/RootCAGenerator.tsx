@@ -500,11 +500,15 @@ x509_extensions = v3_ca
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-white">Console Output</h3>
           <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[600px] overflow-y-auto custom-scrollbar border border-white/10">
-            <pre className="text-green-400 whitespace-pre-wrap break-all break-words max-w-full">{output}</pre>
+            <pre className="text-green-400 whitespace-pre-wrap break-all break-words max-w-full">
+              {output}
+            </pre>
             {caCert && (
               <div className="mt-4 pt-4 border-t border-white/10">
                 <p className="text-muted mb-2">Generated Root Certificate:</p>
-                <pre className="text-blue-300 whitespace-pre-wrap break-all break-words max-w-full">{caCert}</pre>
+                <pre className="text-blue-300 whitespace-pre-wrap break-all break-words max-w-full">
+                  {caCert}
+                </pre>
               </div>
             )}
           </div>

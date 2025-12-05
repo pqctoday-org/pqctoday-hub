@@ -348,7 +348,9 @@ AL9... (truncated for brevity) ...
           <h3 className="text-lg font-semibold text-white">Parsed Output</h3>
           <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[400px] overflow-y-auto custom-scrollbar border border-white/10">
             {parsedOutput ? (
-              <pre className="text-blue-300 whitespace-pre-wrap break-all break-words max-w-full">{parsedOutput}</pre>
+              <pre className="text-blue-300 whitespace-pre-wrap break-all break-words max-w-full">
+                {parsedOutput}
+              </pre>
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-muted">
                 <FileText size={48} className="mb-4 opacity-20" />

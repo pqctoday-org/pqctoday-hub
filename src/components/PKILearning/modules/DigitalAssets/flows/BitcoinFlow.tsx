@@ -23,7 +23,9 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     DST_PRIVATE_KEY: string
     DST_PUBLIC_KEY: string
   } | null>(null)
-  const [recipientPublicKeyBytes, setRecipientPublicKeyBytes] = React.useState<Uint8Array | null>(null)
+  const [recipientPublicKeyBytes, setRecipientPublicKeyBytes] = React.useState<Uint8Array | null>(
+    null
+  )
   const [sourceAddress, setSourceAddress] = React.useState<string | null>(null)
   const [recipientAddress, setRecipientAddress] = React.useState<string | null>(null)
   const [transactionData, setTransactionData] = React.useState<{
@@ -60,7 +62,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     {
       id: 'pub_key',
       title: 'Derive Source Public Key',
-      description: 'Derive the sender\'s public key from the private key.',
+      description: "Derive the sender's public key from the private key.",
       code: `// Derive sender's public key\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.EXTRACT_PUB(filenames?.SRC_PRIVATE_KEY || 'src_key.pem', filenames?.SRC_PUBLIC_KEY || 'src_pub.pem')}`,
       language: 'bash',
       actionLabel: 'Derive Public Key',
@@ -69,7 +71,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
       id: 'address',
       title: 'Create Source Address',
       description:
-        'Hash the sender\'s public key (SHA256 + RIPEMD160) and encode with Base58Check to create a P2PKH address.',
+        "Hash the sender's public key (SHA256 + RIPEMD160) and encode with Base58Check to create a P2PKH address.",
       code: `// 1. SHA256\nconst sha = sha256(pubKeyBytes);\n\n// 2. RIPEMD160\nconst ripemd = ripemd160(sha);\n\n// 3. Base58Check Encode\nconst address = base58check(ripemd);`,
       language: 'javascript',
       actionLabel: 'Create Source Address',
@@ -85,7 +87,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     {
       id: 'recipient_address',
       title: 'Create Recipient Address',
-      description: 'Derive the recipient\'s address from their public key.',
+      description: "Derive the recipient's address from their public key.",
       code: `// Derive recipient address\nconst recipientAddress = createAddress(recipientPubKeyBytes);`,
       language: 'javascript',
       actionLabel: 'Create Recipient Address',
@@ -93,7 +95,8 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     {
       id: 'format_tx',
       title: 'Format Transaction',
-      description: 'Define the transaction details including amount, fee, and addresses. Verify the recipient address carefully!',
+      description:
+        'Define the transaction details including amount, fee, and addresses. Verify the recipient address carefully!',
       code: `const transaction = {\n  amount: 0.5,\n  fee: 0.0001,\n  sourceAddress: "${sourceAddress || '...'}",\n  recipientAddress: "${editableRecipientAddress || recipientAddress || '...'}"\n};`,
       language: 'javascript',
       actionLabel: 'Format Transaction',
@@ -129,19 +132,21 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
         {
           label: 'Outputs',
           value: `1. ${editableRecipientAddress || recipientAddress || '...'} (0.5 BTC)\n2. ${sourceAddress || '...'} (Change)`,
-          description: 'List of destinations and amounts. Includes the recipient and change back to sender.',
+          description:
+            'List of destinations and amounts. Includes the recipient and change back to sender.',
         },
         {
           label: 'Locktime',
           value: '0',
-          description: 'The block number or timestamp at which this transaction is locked (0 = immediate).',
+          description:
+            'The block number or timestamp at which this transaction is locked (0 = immediate).',
         },
       ],
     },
     {
       id: 'sign',
       title: 'Sign Transaction',
-      description: 'Sign the transaction hash (Double SHA256) using the sender\'s private key.',
+      description: "Sign the transaction hash (Double SHA256) using the sender's private key.",
       code: `// 1. Double SHA256 of message\nconst sighash = sha256(sha256(rawTxBytes));\n\n// 2. Sign with OpenSSL\nopenssl pkeyutl -sign -inkey ${filenames?.SRC_PRIVATE_KEY || 'src_key.pem'} -in sighash.bin -out sig.der`,
       language: 'bash',
       actionLabel: 'Sign Transaction',
@@ -149,7 +154,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     {
       id: 'verify',
       title: 'Verify Signature',
-      description: 'Verify the transaction signature using the sender\'s public key.',
+      description: "Verify the transaction signature using the sender's public key.",
       code: `// Verify with OpenSSL\nopenssl pkeyutl -verify -pubin -inkey ${filenames?.SRC_PUBLIC_KEY || 'src_pub.pem'} -in sighash.bin -sigfile sig.der`,
       language: 'bash',
       actionLabel: 'Verify Signature',

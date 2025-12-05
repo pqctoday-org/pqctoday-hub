@@ -47,7 +47,7 @@ export const DigitalAssetsModule: React.FC = () => {
         id: 'bitcoin',
         title: 'Step 1: Bitcoin',
         description: 'Generate keys and sign transactions using secp256k1 and SHA-256.',
-        component: <BitcoinFlow onBack={() => { }} />,
+        component: <BitcoinFlow onBack={() => {}} />,
       },
       {
         id: 'ethereum',
@@ -101,12 +101,13 @@ export const DigitalAssetsModule: React.FC = () => {
             >
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
-                ${idx === currentStep
+                ${
+                  idx === currentStep
                     ? 'border-primary text-primary shadow-[0_0_15px_rgba(0,255,157,0.3)]'
                     : idx < currentStep
                       ? 'border-green-500 text-green-500'
                       : 'border-white/20 text-muted'
-                  }
+                }
               `}
               >
                 {idx + 1}

@@ -87,7 +87,7 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
     {
       id: 'recipient_address',
       title: '5. Generate Recipient Address',
-      description: 'Derive the recipient\'s address from their public key.',
+      description: "Derive the recipient's address from their public key.",
       code: `// JavaScript Execution\nconst recipientAddress = base58.encode(recipientPubKeyBytes);`,
       language: 'javascript',
       actionLabel: 'Generate Recipient Address',
@@ -121,12 +121,14 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
         {
           label: 'Recent Blockhash',
           value: transactionData?.recentBlockhash || '...',
-          description: 'A recent blockhash (max 150 blocks old) to prevent replay and ensure liveness.',
+          description:
+            'A recent blockhash (max 150 blocks old) to prevent replay and ensure liveness.',
         },
         {
           label: 'Instructions',
           value: '[{ programIdIndex: 2, accounts: [0, 1], data: ... }]',
-          description: 'List of instructions to be executed atomically. Here: System Program Transfer.',
+          description:
+            'List of instructions to be executed atomically. Here: System Program Transfer.',
         },
       ],
     },
@@ -477,9 +479,8 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
           `openssl enc -base64 -in ${signatureName}`,
           res.files
         )
-        const sigBytes = Uint8Array.from(
-          atob(res2.stdout.replace(/\n/g, '')),
-          (c) => c.charCodeAt(0)
+        const sigBytes = Uint8Array.from(atob(res2.stdout.replace(/\n/g, '')), (c) =>
+          c.charCodeAt(0)
         )
         sigHex = bytesToHex(sigBytes)
         sigBase58 = base58.encode(sigBytes)
