@@ -11,10 +11,11 @@ import {
   Info,
   GraduationCap,
 } from 'lucide-react'
-import clsx from 'clsx'
 import './styles/App.css'
 import pqcLogo from './assets/PQCT_Logo_V01.png'
 import { logPageView } from './utils/analytics'
+import { Button } from './components/ui/button'
+import { ModeToggle } from './components/mode-toggle'
 
 import { TimelineView } from './components/Timeline/TimelineView'
 import { ThreatsDashboard } from './components/Threats/ThreatsDashboard'
@@ -45,7 +46,6 @@ function App() {
   }, [currentView])
 
   // Build timestamp - set at compile time
-  // Build timestamp - set at compile time
   const buildTime = __BUILD_TIMESTAMP__
 
   const navItems = [
@@ -61,19 +61,11 @@ function App() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="glass-panel m-4 p-4 sticky top-4 z-50" role="banner">
-        <div className="w-full flex justify-between items-center">
-          <div
-            className="flex flex-row items-baseline gap-4"
-            style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}
-          >
-            <img
-              src={pqcLogo}
-              alt="PQC Today Logo"
-              className="object-contain mr-4"
-              style={{ height: '32px', width: 'auto' }}
-            />
+    <div className="min-h-screen flex flex-col bg-background text-slate-50">
+      <header className="m-4 sticky top-4 z-50 transition-all duration-300" role="banner">
+        <div className="glass-panel p-4 flex w-full justify-between items-center">
+          <div className="flex flex-row items-baseline gap-4">
+            <img src={pqcLogo} alt="PQC Today Logo" className="object-contain mr-4 h-8 w-auto" />
             <div>
               <h1 className="text-2xl font-bold text-gradient">PQC Today</h1>
               <p className="text-[10px] text-muted uppercase tracking-widest opacity-60">
@@ -81,24 +73,28 @@ function App() {
               </p>
             </div>
           </div>
-          <nav className="flex gap-4" role="navigation" aria-label="Main navigation">
+          <nav className="flex gap-2" role="navigation" aria-label="Main navigation">
             {navItems.map((item) => (
-              <button
+              <Button
                 key={item.id}
                 onClick={() => setCurrentView(item.id as View)}
+                variant="ghost"
+                size="sm"
                 aria-label={`${item.label} view`}
                 aria-current={currentView === item.id ? 'page' : undefined}
-                className={clsx(
-                  'flex items-center gap-2 px-4 py-2 rounded-lg transition-all',
+                className={
                   currentView === item.id
-                    ? 'bg-white/10 text-primary border border-primary/50'
-                    : 'hover:bg-white/5 text-muted'
-                )}
+                    ? 'bg-white/10 text-primary border border-white/10'
+                    : 'text-muted hover:text-white'
+                }
               >
-                <item.icon size={18} aria-hidden="true" />
+                <item.icon size={18} aria-hidden="true" className="mr-2" />
                 <span className="hidden md:inline">{item.label}</span>
-              </button>
+              </Button>
             ))}
+            <div className="ml-2 border-l border-white/10 pl-2">
+              <ModeToggle />
+            </div>
           </nav>
         </div>
       </header>

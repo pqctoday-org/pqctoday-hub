@@ -23,6 +23,8 @@ import { SignVerifyTab } from './tabs/SignVerifyTab'
 import { KeyStoreTab } from './tabs/KeyStoreTab'
 import { LogsTab } from './tabs/LogsTab'
 import { logEvent } from '../../utils/analytics'
+import { Button } from '../ui/button'
+import { Card } from '../ui/card'
 
 export const InteractivePlayground = () => {
   return (
@@ -42,7 +44,7 @@ const PlaygroundContent = () => {
   }
 
   return (
-    <div className="glass-panel p-6 h-[85vh] flex flex-col">
+    <Card className="p-6 h-[85vh] flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 shrink-0">
         <h3 className="text-2xl font-bold flex items-center gap-2">
@@ -75,94 +77,102 @@ const PlaygroundContent = () => {
 
       {/* Tab Navigation */}
       <div className="flex space-x-1 mb-6 bg-white/5 p-1 rounded-xl shrink-0 overflow-x-auto">
-        <button
+        <Button
           onClick={() => handleTabChange('keystore')}
-          className={clsx(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
+          variant="ghost"
+          size="sm"
+          className={
             activeTab === 'keystore'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted hover:text-white hover:bg-white/5'
-          )}
+          }
         >
-          <KeyIcon size={16} /> Key Store ({keyStore.length})
-        </button>
-        <button
+          <KeyIcon size={16} className="mr-2" /> Key Store ({keyStore.length})
+        </Button>
+        <Button
           onClick={() => handleTabChange('data')}
-          className={clsx(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
+          variant="ghost"
+          size="sm"
+          className={
             activeTab === 'data'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted hover:text-white hover:bg-white/5'
-          )}
+          }
         >
-          <Database size={16} /> Data
-        </button>
-        <button
+          <Database size={16} className="mr-2" /> Data
+        </Button>
+        <Button
           onClick={() => handleTabChange('kem_ops')}
-          className={clsx(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
+          variant="ghost"
+          size="sm"
+          className={
             activeTab === 'kem_ops'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted hover:text-white hover:bg-white/5'
-          )}
+          }
         >
-          <Activity size={16} /> KEM & Encrypt
-        </button>
-        <button
+          <Activity size={16} className="mr-2" /> KEM & Encrypt
+        </Button>
+        <Button
           onClick={() => handleTabChange('symmetric')}
-          className={clsx(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
+          variant="ghost"
+          size="sm"
+          className={
             activeTab === 'symmetric'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted hover:text-white hover:bg-white/5'
-          )}
+          }
         >
-          <Lock size={16} /> Sym Encrypt
-        </button>
-        <button
+          <Lock size={16} className="mr-2" /> Sym Encrypt
+        </Button>
+        <Button
           onClick={() => handleTabChange('sign_verify')}
-          className={clsx(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
+          variant="ghost"
+          size="sm"
+          className={
             activeTab === 'sign_verify'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted hover:text-white hover:bg-white/5'
-          )}
+          }
         >
-          <FileSignature size={16} /> Sign & Verify
-        </button>
-        <button
+          <FileSignature size={16} className="mr-2" /> Sign & Verify
+        </Button>
+        <Button
           onClick={() => handleTabChange('acvp')}
-          className={clsx(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
+          variant="ghost"
+          size="sm"
+          className={
             activeTab === 'acvp'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted hover:text-white hover:bg-white/5'
-          )}
+          }
         >
-          <ShieldCheck size={16} /> ACVP
-        </button>
-        <button
+          <ShieldCheck size={16} className="mr-2" /> ACVP
+        </Button>
+        <Button
           onClick={() => handleTabChange('settings')}
-          className={clsx(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
+          variant="ghost"
+          size="sm"
+          className={
             activeTab === 'settings'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted hover:text-white hover:bg-white/5'
-          )}
+          }
         >
-          <Settings size={16} /> Settings
-        </button>
-        <button
+          <Settings size={16} className="mr-2" /> Settings
+        </Button>
+        <Button
           onClick={() => handleTabChange('logs')}
-          className={clsx(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap',
+          variant="ghost"
+          size="sm"
+          className={
             activeTab === 'logs'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted hover:text-white hover:bg-white/5'
-          )}
+          }
         >
-          <FileText size={16} /> Logs
-        </button>
+          <FileText size={16} className="mr-2" /> Logs
+        </Button>
       </div>
 
       {/* Content Area */}
@@ -191,6 +201,6 @@ const PlaygroundContent = () => {
           <span className="font-medium">{error}</span>
         </div>
       )}
-    </div>
+    </Card>
   )
 }
