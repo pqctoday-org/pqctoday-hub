@@ -84,14 +84,14 @@ export const MainLayout = () => {
 
       {/* Main Content Area */}
       <main className="flex-grow container py-4 px-2 md:py-8 md:px-8" role="main">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="sync">
           {/* We use location.pathname as the key to trigger animations on route change */}
           <motion.div
             key={location.pathname}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
           >
             <Outlet />
           </motion.div>
