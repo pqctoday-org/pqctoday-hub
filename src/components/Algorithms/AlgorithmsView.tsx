@@ -1,19 +1,64 @@
+import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
-import { Binary } from 'lucide-react'
+import { AlgorithmDetailedComparison } from './AlgorithmDetailedComparison'
+import { ArrowRight, BarChart3 } from 'lucide-react'
+import clsx from 'clsx'
 
-export const AlgorithmsView = () => {
+type ViewType = 'transition' | 'detailed'
+
+export function AlgorithmsView() {
+  const [activeView, setActiveView] = useState<ViewType>('transition')
+
   return (
-    <div>
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gradient mb-2 flex items-center gap-3">
-          <Binary className="text-primary" aria-hidden="true" />
-          Algorithm Transition
-        </h2>
-        <p className="text-muted-foreground">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          Post-Quantum Cryptography Algorithms
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-3xl">
           Migration from classical to post-quantum cryptographic algorithms
         </p>
+      </motion.div>
+
+      {/* View Tabs */}
+      <div className="flex gap-2 mb-6 border-b border-white/10">
+        <button
+          onClick={() => setActiveView('transition')}
+          className={clsx(
+            'flex items-center gap-2 px-6 py-3 border-b-2 transition-colors font-semibold',
+            activeView === 'transition'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          )}
+        >
+          <ArrowRight size={20} />
+          Transition Guide
+        </button>
+        <button
+          onClick={() => setActiveView('detailed')}
+          className={clsx(
+            'flex items-center gap-2 px-6 py-3 border-b-2 transition-colors font-semibold',
+            activeView === 'detailed'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          )}
+        >
+          <BarChart3 size={20} />
+          Detailed Comparison
+        </button>
       </div>
-      <AlgorithmComparison />
+
+      {/* View Content */}
+      <motion.div
+        key={activeView}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        {activeView === 'transition' && <AlgorithmComparison />}
+        {activeView === 'detailed' && <AlgorithmDetailedComparison />}
+      </motion.div>
     </div>
   )
 }
