@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2025-12-06
+
+### Added
+
+- **Theme Toggle**:
+  - Implemented persistent theme selection (Light/Dark/System modes)
+  - Global state management using Zustand with localStorage persistence
+  - Theme toggle UI added to About page (desktop and mobile)
+  - Synchronized state between mobile and desktop views
+  - Refactored CSS to support manual `.dark` class overrides
+
+- **Mobile Timeline Swipeable Phase Navigation**:
+  - Swipe gestures for browsing through all phases per country
+  - Interactive phase indicator dots showing current position
+  - Direct navigation by clicking phase indicators
+  - Visual distinction: Flag icon for milestones, colored dot for phases
+  - Smooth Framer Motion animations (200ms transitions)
+  - 50px drag threshold for phase transitions
+
+### Fixed
+
+- **Accessibility**: Fixed label-control associations in ThreatsDashboard
+- **Theme Consistency**: Removed hardcoded colors across multiple components
+
+### Documentation
+
+- Updated `requirements/timeline.md` with comprehensive mobile timeline specifications
+- Updated `REQUIREMENTS.md` with responsive design breakpoint details
+- Added mobile swipeable navigation requirements and UX specifications
+
 ## [1.4.0] - 2025-12-06
 
 ### Changed
