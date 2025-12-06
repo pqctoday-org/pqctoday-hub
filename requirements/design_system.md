@@ -11,8 +11,94 @@ The PQC Timeline App adopts a **Modern, Technical, and Futuristic** aesthetic, s
 - **Glassmorphism**: Extensive use of semi-transparent backgrounds (`glass-panel`), blurs, and subtle borders to create depth and a modern feel.
 - **Deep Dark Mode**: The default theme uses deep blues/blacks (`hsl(230 35% 7%)`) representing a secure, technical environment, contrasted with bright accents.
 - **Vibrant Accents**: Cyan (`primary`) and Purple (`secondary`) gradients provide a high-tech, cryptographic feel.
-- **Accessibility**: High contrast text, clear focus states, and semantic HTML structure.
-- **Theme Adaptability**: Design MUST work seamlessly in both **Dark** (default) and **Light** modes by strictly using semantic tokens (e.g., `bg-card`, `border-border`) instead of hardcoded dark values.
+- **Accessibility**: All interactive elements must have proper ARIA labels and keyboard navigation support.
+- **Theme Adaptability**: Design MUST work seamlessly in both **Dark** (default) and Light modes by strictly using semantic tokens (e.g., `bg-card`, `border-border`) instead of hardcoded dark values.
+
+---
+
+## 8. Mobile Design Patterns
+
+### 8.1 Responsive Breakpoints
+
+- **Mobile**: `< 768px` (uses mobile-specific layouts)
+- **Desktop**: `>= 768px` (uses full desktop layouts)
+- **Breakpoint Prefix**: `md:` in Tailwind CSS
+
+### 8.2 Mobile Timeline
+
+**Card-Based Layout**:
+
+- Each country displayed as a separate card
+- Country flag (32px x 24px) and name in header
+- Organization name as subtitle
+
+**Swipeable Phase Navigation**:
+
+- Horizontal drag gestures using Framer Motion
+- 50px drag threshold for phase transitions
+- Smooth 200ms animations between phases
+- `cursor: grab` and `cursor: grabbing` feedback
+
+**Phase Indicators**:
+
+- Horizontal row of dots below phase card
+- Active indicator: 24px wide x 6px tall pill, colored with phase color
+- Inactive indicators: 6px x 6px dots, 30% opacity
+- Clickable for direct navigation
+- ARIA labels for accessibility
+
+**Icon Distinction**:
+
+- Milestones: Flag icon (14px) with phase color and glow
+- Phases: Colored dot (8px diameter) with glow
+- Consistent with desktop Gantt chart visual language
+
+### 8.3 Theme Toggle
+
+**Modes**:
+
+- Light Mode
+- Dark Mode
+- System (follows OS preference)
+
+**Implementation**:
+
+- Global Zustand store with localStorage persistence
+- Manual `.dark` class on root element
+- CSS variables adapt automatically
+- Toggle UI in About page (desktop and mobile)
+
+**Theme-Aware Colors**:
+
+- Use CSS variables: `bg-muted`, `text-foreground`, `border-border`
+- Avoid hardcoded colors like `bg-black/30`, `text-green-400`
+- Opacity modifiers: `bg-muted/30`, `bg-muted/40` for subtle backgrounds
+
+### 8.4 Mobile Navigation
+
+**Compact Design**:
+
+- Bottom navigation bar on mobile
+- Icon-only buttons with labels
+- Active state indicators
+
+**Touch Targets**:
+
+- Minimum 44px x 44px for all interactive elements
+- Adequate spacing between touch targets (8px minimum)
+
+### 8.5 Mobile Forms & Inputs
+
+**Layout**:
+
+- Full-width inputs on mobile
+- Stacked form fields (no side-by-side)
+- Larger touch-friendly buttons (min 44px height)
+
+**Keyboards**:
+
+- Appropriate input types (`type="email"`, `type="tel"`, etc.)
+- Prevent zoom on input focus (font-size >= 16px)
 
 ---
 
