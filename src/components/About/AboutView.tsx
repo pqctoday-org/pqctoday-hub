@@ -419,19 +419,31 @@ ${kudos.message}
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">React</span>
-                <span className="text-xs text-muted-foreground/60">v19.2.0 • 2025-10-01</span>
+                <span className="text-xs text-muted-foreground/60">v19.2.0</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">Framer Motion</span>
-                <span className="text-xs text-muted-foreground/60">v12.23.24 • 2025-10-10</span>
+                <span className="text-xs text-muted-foreground/60">v12.23.24</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">Lucide React</span>
-                <span className="text-xs text-muted-foreground/60">v0.554.0 • 2025-11-17</span>
+                <span className="text-xs text-muted-foreground/60">v0.554.0</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted-foreground">Tailwind CSS</span>
+                <span className="text-xs text-muted-foreground/60">v4.1.17</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">clsx</span>
-                <span className="text-xs text-muted-foreground/60">v2.1.1 • 2024-04-23</span>
+                <span className="text-xs text-muted-foreground/60">v2.1.1</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted-foreground">tailwind-merge</span>
+                <span className="text-xs text-muted-foreground/60">v3.4.0</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted-foreground">class-variance-authority</span>
+                <span className="text-xs text-muted-foreground/60">v0.7.1</span>
               </li>
             </ul>
           </div>
@@ -440,15 +452,15 @@ ${kudos.message}
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">localforage</span>
-                <span className="text-xs text-muted-foreground/60">v1.10.0 • 2024-05-01</span>
+                <span className="text-xs text-muted-foreground/60">v1.10.0</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">jszip</span>
-                <span className="text-xs text-muted-foreground/60">v3.10.1 • 2023-02-12</span>
+                <span className="text-xs text-muted-foreground/60">v3.10.1</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">file-saver</span>
-                <span className="text-xs text-muted-foreground/60">v2.0.5 • 2021-01-20</span>
+                <span className="text-xs text-muted-foreground/60">v2.0.5</span>
               </li>
             </ul>
           </div>
@@ -456,44 +468,48 @@ ${kudos.message}
             <h3 className="text-lg font-semibold text-primary mb-3">Cryptography & PQC</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted-foreground">OpenSSL</span>
-                <span className="text-xs text-muted-foreground/60">v3.5.4 • 2025-11-20</span>
+                <span className="text-muted-foreground">OpenSSL WASM</span>
+                <span className="text-xs text-muted-foreground/60">v3.1.0</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">liboqs (ML-DSA, ML-KEM)</span>
-                <span className="text-xs text-muted-foreground/60">v0.14.3 • 2025-10-14</span>
+                <span className="text-xs text-muted-foreground/60">v0.14.3</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">mlkem-wasm</span>
-                <span className="text-xs text-muted-foreground/60">v0.0.7 • 2025-09-17</span>
-              </li>
-              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted-foreground">openssl-wasm</span>
-                <span className="text-xs text-muted-foreground/60">v3.1.0 • 2023-03-24</span>
+                <span className="text-xs text-muted-foreground/60">v0.0.7</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">pqcrypto</span>
-                <span className="text-xs text-muted-foreground/60">v1.0.1 • 2022-04-11</span>
+                <span className="text-xs text-muted-foreground/60">v1.0.1</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted-foreground">noble-hashes</span>
-                <span className="text-xs text-muted-foreground/60">v2.0.1 • 2025-09-22</span>
+                <span className="text-muted-foreground">@noble/hashes</span>
+                <span className="text-xs text-muted-foreground/60">v2.0.1</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted-foreground">noble-curves</span>
-                <span className="text-xs text-muted-foreground/60">v2.0.1 • 2025-02-15</span>
+                <span className="text-muted-foreground">@noble/curves</span>
+                <span className="text-xs text-muted-foreground/60">v2.0.1</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted-foreground">scure-bip32/39</span>
-                <span className="text-xs text-muted-foreground/60">v2.0.1 • 2025-03-01</span>
+                <span className="text-muted-foreground">@scure/bip32</span>
+                <span className="text-xs text-muted-foreground/60">v2.0.1</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted-foreground">@scure/bip39</span>
+                <span className="text-xs text-muted-foreground/60">v2.0.1</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted-foreground">@scure/base</span>
+                <span className="text-xs text-muted-foreground/60">v2.0.0</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">micro-eth-signer</span>
-                <span className="text-xs text-muted-foreground/60">v0.18.1 • 2025-01-10</span>
+                <span className="text-xs text-muted-foreground/60">v0.18.1</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">ed25519-hd-key</span>
-                <span className="text-xs text-muted-foreground/60">v1.3.0 • 2022-08-01</span>
+                <span className="text-xs text-muted-foreground/60">v1.3.0</span>
               </li>
             </ul>
           </div>
@@ -502,11 +518,11 @@ ${kudos.message}
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">Zustand</span>
-                <span className="text-xs text-muted-foreground/60">v5.0.8 • 2025-08-19</span>
+                <span className="text-xs text-muted-foreground/60">v5.0.8</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">Immer</span>
-                <span className="text-xs text-muted-foreground/60">v11.0.1 • 2025-09-05</span>
+                <span className="text-xs text-muted-foreground/60">v11.0.1</span>
               </li>
             </ul>
           </div>
@@ -515,7 +531,7 @@ ${kudos.message}
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">React GA4</span>
-                <span className="text-xs text-muted-foreground/60">v2.1.0 • 2023-03-06</span>
+                <span className="text-xs text-muted-foreground/60">v2.1.0</span>
               </li>
             </ul>
           </div>
@@ -524,19 +540,23 @@ ${kudos.message}
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">Vite</span>
-                <span className="text-xs text-muted-foreground/60">v7.2.4 • 2025-11-20</span>
+                <span className="text-xs text-muted-foreground/60">v7.2.4</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">TypeScript</span>
-                <span className="text-xs text-muted-foreground/60">v5.9.3 • 2025-09-30</span>
+                <span className="text-xs text-muted-foreground/60">v5.9.3</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">ESLint</span>
-                <span className="text-xs text-muted-foreground/60">v9.39.1 • 2025-11-03</span>
+                <span className="text-xs text-muted-foreground/60">v9.39.1</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">Prettier</span>
-                <span className="text-xs text-muted-foreground/60">v3.7.3 • 2025-11-29</span>
+                <span className="text-xs text-muted-foreground/60">v3.7.3</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted-foreground">Husky</span>
+                <span className="text-xs text-muted-foreground/60">v9.1.7</span>
               </li>
             </ul>
           </div>
@@ -545,15 +565,19 @@ ${kudos.message}
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">Vitest</span>
-                <span className="text-xs text-muted-foreground/60">v4.0.14 • 2025-11-25</span>
+                <span className="text-xs text-muted-foreground/60">v4.0.14</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
                 <span className="text-muted-foreground">Playwright</span>
-                <span className="text-xs text-muted-foreground/60">v1.57.0 • 2025-11-25</span>
+                <span className="text-xs text-muted-foreground/60">v1.57.0</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted-foreground">Testing Library</span>
-                <span className="text-xs text-muted-foreground/60">v16.3.0 • 2025-04-02</span>
+                <span className="text-muted-foreground">Testing Library (React)</span>
+                <span className="text-xs text-muted-foreground/60">v16.3.0</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <span className="text-muted-foreground">axe-playwright (Accessibility)</span>
+                <span className="text-xs text-muted-foreground/60">v2.2.2</span>
               </li>
             </ul>
           </div>
