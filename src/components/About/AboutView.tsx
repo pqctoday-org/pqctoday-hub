@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Send, ThumbsUp, MessageSquare, Info } from 'lucide-react'
+import { Send, ThumbsUp, MessageSquare, Info, Shield } from 'lucide-react'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 
@@ -580,6 +580,41 @@ ${kudos.message}
                 <span className="text-xs text-muted-foreground/60">v2.2.2</span>
               </li>
             </ul>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* License Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35 }}
+        className="glass-panel p-6"
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <Shield className="text-secondary" size={24} />
+          <h2 className="text-xl font-bold">Open Source License</h2>
+        </div>
+        <div className="prose prose-invert max-w-none">
+          <p className="text-muted-foreground">
+            PQC Today is open source software released under the{' '}
+            <strong>GNU General Public License v3.0 (GPLv3)</strong>.
+          </p>
+          <p className="text-muted-foreground mt-2">
+            You are free to copy, distribute, and modify this software, provided that any
+            modifications are also released under the same license terms. This ensures that the
+            project remains free and accessible to the PQC community.
+          </p>
+          <div className="mt-4">
+            <a
+              href="https://github.com/pqctoday/pqc-timeline-app/blob/main/LICENSE"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-primary hover:underline hover:text-primary/80 transition-colors"
+            >
+              <Info size={16} />
+              View Full License
+            </a>
           </div>
         </div>
       </motion.div>
