@@ -122,6 +122,12 @@
   }
 
   .btn-secondary {
-    @apply bg-transparent border border-primary text-primary font-bold py-3 px-6 rounded-lg transition-all duration-200 hover:bg-primary/10 hover:-translate-y-0.5;
+    @apply bg-transparent border border-primary text-primary font-bold py-3 px-6 rounded-lg transition-all duration-200 hover:bg-primary/10 hover:translate-y-0.5;
+  }
+
+  /* Make all select dropdown options opaque for readability */
+  select option {
+    background-color: rgb(15 23 42);
+    color: rgb(248 250 252);
   }
 }
