@@ -77,7 +77,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
   return (
     <div className={clsx('relative mb-8 z-10', className)} ref={dropdownRef}>
-      <div className="glass-panel p-2 inline-flex items-center gap-2">
+      <div className="bg-slate-900/95 backdrop-blur-md border border-white/20 rounded-lg shadow-lg p-2 inline-flex items-center gap-2">
         <span className="text-muted-foreground px-2" id="filter-dropdown-label">
           {label}:
         </span>
