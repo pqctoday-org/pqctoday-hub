@@ -178,11 +178,22 @@ export const useOpenSSL = () => {
         const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
 
         // Send command AND files in one message to ensure they are written to the fresh module
+        // Convert all file content to Uint8Array to prevent "Unsupported data type" errors
+        const filesAsUint8Array = files.map((f) => ({
+          name: f.name,
+          data:
+            f.content instanceof Uint8Array
+              ? f.content
+              : new TextEncoder().encode(
+                  typeof f.content === 'string' ? f.content : JSON.stringify(f.content)
+                ),
+        }))
+
         workerRef.current.postMessage({
           type: 'COMMAND',
           command: cmd,
           args,
-          files: files.map((f) => ({ name: f.name, data: f.content })),
+          files: filesAsUint8Array,
           requestId,
         } as WorkerMessage)
       }

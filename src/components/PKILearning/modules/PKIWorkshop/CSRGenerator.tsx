@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { FileSignature, Loader2, Key, Shield, FileText } from 'lucide-react'
+import { FileSignature, Loader2 } from 'lucide-react'
 import { openSSLService } from '../../../../services/crypto/OpenSSLService'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
@@ -512,192 +512,202 @@ distinguished_name = dn
   }, [selectedKeyId])
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="space-y-6">
-          {/* Key Selection Section */}
-          <div className="glass-panel p-5 border border-white/10">
-            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Key className="text-primary" size={20} />
-              Key Configuration
+    <div className="space-y-8">
+      {/* Row 1: Step 1 & Step 2 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Step 1: Key Configuration */}
+        <div className="glass-panel p-5 border border-white/10">
+          <div className="mb-4 border-b border-white/10 pb-3">
+            <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
+              <span className="text-primary font-mono text-xl">01</span>
+              <span className="text-foreground/80">|</span>
+              KEY CONFIGURATION
             </h3>
-
-            <div className="space-y-4">
-              <table className="w-full text-sm border-collapse">
-                <tbody>
-                  <tr>
-                    <td className="pt-0 pb-3 text-muted-foreground w-[180px] align-middle">
-                      Private Key Source
-                    </td>
-                    <td className="pt-0 pb-3 align-middle">
-                      <select
-                        value={selectedKeyId}
-                        onChange={(e) => setSelectedKeyId(e.target.value)}
-                        className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
-                      >
-                        <optgroup label="Generate New Key">
-                          {ALGORITHMS.map((algo) => (
-                            <option key={`new-${algo.id}`} value={`new-${algo.id}`}>
-                              Generate New {algo.name}
-                            </option>
-                          ))}
-                        </optgroup>
-                        {availableKeys.length > 0 && (
-                          <optgroup label="Existing Keys">
-                            {availableKeys.map((k) => (
-                              <option key={k.id} value={k.id}>
-                                {k.name} ({k.algorithm})
-                              </option>
-                            ))}
-                          </optgroup>
-                        )}
-                      </select>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <p className="text-xs text-muted-foreground mt-1 ml-11">
+              Generate new keypair • Select algorithm • Choose key size
+            </p>
           </div>
 
-          {/* Profile Selection Section */}
-          <div className="glass-panel p-5 border border-white/10">
-            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-              <FileText className="text-primary" size={20} />
-              Load Profile
-            </h3>
-
-            <div className="space-y-4">
-              <table className="w-full text-sm border-collapse">
-                <tbody>
-                  {/* Row 1: Profile Name */}
-                  <tr className="border-b border-white/5">
-                    <td className="pt-0 pb-3 text-muted-foreground w-[180px] align-middle">
-                      Profile Name
-                    </td>
-                    <td className="pt-0 pb-3 align-middle">
-                      <select
-                        value={selectedProfile}
-                        onChange={(e) => handleProfileSelect(e.target.value)}
-                        className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
-                      >
-                        <option value="">Select...</option>
-                        {availableProfiles.map((profile) => (
-                          <option key={profile} value={profile}>
-                            {profile.replace('CSR-', '').replace('.csv', '')}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                  </tr>
-
-                  {/* Row 2: Industry */}
-                  <tr className="border-b border-white/5">
-                    <td className="py-3 text-muted-foreground align-middle">Industry</td>
-                    <td className="py-3 text-foreground font-medium align-middle">
-                      {profileMetadata?.industry || '-'}
-                    </td>
-                  </tr>
-
-                  {/* Row 3: Standard */}
-                  <tr className="border-b border-white/5">
-                    <td className="py-3 text-muted-foreground align-middle">Standard</td>
-                    <td className="py-3 text-foreground font-medium align-middle">
-                      {profileMetadata?.standard || '-'}
-                    </td>
-                  </tr>
-
-                  {/* Row 4: Standard Date */}
-                  <tr>
-                    <td className="py-3 text-muted-foreground align-middle">Standard Date</td>
-                    <td className="py-3 text-foreground font-medium align-middle">
-                      {profileMetadata?.date || '-'}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 text-muted-foreground align-middle">Constraints</td>
-                    <td className="py-3 text-foreground font-medium align-middle text-xs leading-relaxed">
-                      {profileConstraints.length > 0
-                        ? profileConstraints.map((c) => `${c.name}=${c.value}`).join(' | ')
-                        : '-'}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* X.509 Attributes Section */}
-          <div className="glass-panel p-5 border border-white/10">
-            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Shield className="text-primary" size={20} />
-              X.509 Attributes
-            </h3>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-white/10 text-muted-foreground text-xs uppercase tracking-wider">
-                    <th className="p-3 w-10 text-center">Use</th>
-                    <th className="p-3">Type</th>
-                    <th className="p-3">Name</th>
-                    <th className="p-3 w-1/3">Value</th>
-                    <th className="p-3">Rec. / Desc.</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {attributes.map((attr) => (
-                    <tr
-                      key={attr.id}
-                      className={`border-b border-white/5 hover:bg-white/5 transition-colors ${!attr.enabled ? 'opacity-50' : ''}`}
-                    >
-                      <td className="p-3 text-center">
-                        <input
-                          type="checkbox"
-                          checked={attr.enabled}
-                          disabled={attr.status === 'mandatory'}
-                          onChange={(e) =>
-                            handleAttributeChange(attr.id, 'enabled', e.target.checked)
-                          }
-                          className="rounded border-white/20 bg-black/40 text-primary focus:ring-primary cursor-pointer w-4 h-4"
-                        />
-                      </td>
-                      <td className="p-3 text-muted-foreground text-xs">{attr.elementType}</td>
-                      <td className="p-3 text-foreground font-medium text-sm">
-                        <div className="flex flex-col">
-                          <span>{attr.label}</span>
-                          <div className="flex gap-1 mt-1">
-                            {attr.status === 'mandatory' && (
-                              <span className="text-[10px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded w-fit">
-                                Mandatory
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-3">
-                        <input
-                          type="text"
-                          value={attr.value}
-                          onChange={(e) => handleAttributeChange(attr.id, 'value', e.target.value)}
-                          placeholder={attr.placeholder}
-                          disabled={!attr.enabled}
-                          className="w-full bg-black/40 border border-white/10 rounded px-2 py-1.5 text-sm text-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        />
-                      </td>
-                      <td className="p-3 text-muted-foreground text-xs max-w-[200px]">
-                        {attr.description}
-                      </td>
-                    </tr>
+          <div className="space-y-2">
+            <label htmlFor="key-select" className="text-sm text-muted-foreground">
+              Private Key Source
+            </label>
+            <select
+              id="key-select"
+              value={selectedKeyId}
+              onChange={(e) => setSelectedKeyId(e.target.value)}
+              className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
+            >
+              <optgroup label="Generate New Key">
+                {ALGORITHMS.map((algo) => (
+                  <option key={`new-${algo.id}`} value={`new-${algo.id}`}>
+                    Generate New {algo.name}
+                  </option>
+                ))}
+              </optgroup>
+              {availableKeys.length > 0 && (
+                <optgroup label="Existing Keys">
+                  {availableKeys.map((k) => (
+                    <option key={k.id} value={k.id}>
+                      {k.name} ({k.algorithm})
+                    </option>
                   ))}
-                </tbody>
-              </table>
+                </optgroup>
+              )}
+            </select>
+          </div>
+        </div>
+
+        {/* Step 2: Profile Selection */}
+        <div className="glass-panel p-5 border border-white/10">
+          <div className="mb-4 border-b border-white/10 pb-3">
+            <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
+              <span className="text-primary font-mono text-xl">02</span>
+              <span className="text-foreground/80">|</span>
+              SELECT PROFILE
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1 ml-11">
+              Load industry template • Apply standards • Set constraints
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="profile-select" className="text-sm text-muted-foreground">
+                CSR Profile
+              </label>
+              <select
+                id="profile-select"
+                value={selectedProfile}
+                onChange={(e) => handleProfileSelect(e.target.value)}
+                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
+              >
+                <option value="">-- Select a Profile --</option>
+                {availableProfiles.map((profile) => (
+                  <option key={profile} value={profile}>
+                    {profile.replace('CSR-', '').replace('.csv', '')}
+                  </option>
+                ))}
+              </select>
             </div>
+
+            {profileMetadata && (
+              <div className="text-xs space-y-2 p-3 bg-black/20 rounded border border-white/5">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Industry:</span>
+                  <span className="text-foreground">{profileMetadata.industry}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Standard:</span>
+                  <span className="text-foreground">{profileMetadata.standard}</span>
+                </div>
+                <div className="pt-2 border-t border-white/5">
+                  <span className="text-muted-foreground block mb-1">Constraints:</span>
+                  <span className="text-foreground block leading-relaxed">
+                    {profileConstraints.length > 0
+                      ? profileConstraints.map((c) => `${c.name}=${c.value}`).join(' | ')
+                      : '-'}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Row 2: Step 3 (Attributes) */}
+      <div className="glass-panel p-5 border border-white/10">
+        <div className="mb-4 border-b border-white/10 pb-3">
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold">
+              3
+            </span>
+            BUILD CSR ATTRIBUTES
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1 ml-8">
+            Define Subject DN • Add Extensions • Configure Request
+          </p>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-white/10 text-muted-foreground text-xs uppercase tracking-wider">
+                <th className="p-3 w-10 text-center">Use</th>
+                <th className="p-3">Type</th>
+                <th className="p-3">Name</th>
+                <th className="p-3 w-1/3">Value</th>
+                <th className="p-3">Rec. / Desc.</th>
+              </tr>
+            </thead>
+            <tbody>
+              {attributes.map((attr) => (
+                <tr
+                  key={attr.id}
+                  className={`border-b border-white/5 hover:bg-white/5 transition-colors ${!attr.enabled ? 'opacity-50' : ''}`}
+                >
+                  <td className="p-3 text-center">
+                    <input
+                      type="checkbox"
+                      checked={attr.enabled}
+                      disabled={attr.status === 'mandatory'}
+                      onChange={(e) => handleAttributeChange(attr.id, 'enabled', e.target.checked)}
+                      className="rounded border-white/20 bg-black/40 text-primary focus:ring-primary cursor-pointer w-4 h-4"
+                    />
+                  </td>
+                  <td className="p-3 text-muted-foreground text-xs">{attr.elementType}</td>
+                  <td className="p-3 text-foreground font-medium text-sm">
+                    <div className="flex flex-col">
+                      <span>{attr.label}</span>
+                      <div className="flex gap-1 mt-1">
+                        {attr.status === 'mandatory' && (
+                          <span className="text-[10px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded w-fit">
+                            Mandatory
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-3">
+                    <input
+                      type="text"
+                      value={attr.value}
+                      onChange={(e) => handleAttributeChange(attr.id, 'value', e.target.value)}
+                      placeholder={attr.placeholder}
+                      disabled={!attr.enabled}
+                      className="w-full bg-black/40 border border-white/10 rounded px-2 py-1.5 text-sm text-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </td>
+                  <td className="p-3 text-muted-foreground text-xs max-w-[200px]">
+                    {attr.description}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Row 3: Step 4 & Output */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Step 4: Generate */}
+        <div className="glass-panel p-5 border border-white/10 h-fit">
+          <div className="mb-4 border-b border-white/10 pb-3">
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold">
+                4
+              </span>
+              SIGN & CREATE CSR
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1 ml-8">
+              Hash request data • Sign with private key • Encode to PEM
+            </p>
           </div>
 
           <button
             onClick={handleGenerate}
             disabled={isGenerating}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50 text-lg"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
           >
             {isGenerating ? <Loader2 className="animate-spin" /> : <FileSignature />}
             Generate CSR
@@ -707,7 +717,7 @@ distinguished_name = dn
         {/* Output Section */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-foreground">Console Output</h3>
-          <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[600px] overflow-y-auto custom-scrollbar border border-white/10">
+          <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[300px] overflow-y-auto custom-scrollbar border border-white/10">
             <pre className="text-green-400 whitespace-pre-wrap break-all break-words max-w-full">
               {output}
             </pre>
