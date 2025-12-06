@@ -7,7 +7,7 @@ export const EnvironmentSetup: React.FC = () => {
 
       <section>
         <h3 className="text-xl font-semibold mb-3">2.1 OpenSSL Verification</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 # Verify OpenSSL version
 openssl version
@@ -27,7 +27,7 @@ mkdir -p ~/crypto_education && cd ~/crypto_education
 
       <section>
         <h3 className="text-xl font-semibold mb-3">2.2 Node.js Environment Setup</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 # Initialize Node.js project
 npm init -y
@@ -46,7 +46,7 @@ npm install hash-wasm
 
       <section>
         <h3 className="text-xl font-semibold mb-3">2.3 Package.json Configuration</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 {
   "name": "crypto-education",

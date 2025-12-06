@@ -7,7 +7,7 @@ export const CrossChainComparison: React.FC = () => {
 
       <section>
         <h3 className="text-xl font-semibold mb-3">7.1 Implementation Complexity</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    IMPLEMENTATION COMPLEXITY COMPARISON                       ║
@@ -39,7 +39,7 @@ Legend: ✅ = Fully supported by OpenSSL
         <h3 className="text-xl font-semibold mb-3">7.2 Quick Reference Commands</h3>
 
         <h4 className="text-lg font-medium mb-2 mt-4">Bitcoin Quick Reference</h4>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 # OpenSSL Commands
 openssl ecparam -name secp256k1 -genkey -noout -out btc.pem  # Generate key
@@ -57,7 +57,7 @@ openssl pkeyutl -sign -inkey btc.pem -in hash -out sig       # Sign
         </div>
 
         <h4 className="text-lg font-medium mb-2 mt-4">Ethereum Quick Reference</h4>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 # OpenSSL Commands
 openssl ecparam -name secp256k1 -genkey -noout -out eth.pem  # Generate key
@@ -73,7 +73,7 @@ openssl ecparam -name secp256k1 -genkey -noout -out eth.pem  # Generate key
         </div>
 
         <h4 className="text-lg font-medium mb-2 mt-4">Solana Quick Reference</h4>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 # OpenSSL Commands (Best Supported!)
 openssl genpkey -algorithm Ed25519 -out sol.pem              # Generate key

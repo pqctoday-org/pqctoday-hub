@@ -7,7 +7,7 @@ export const EthereumImplementation: React.FC = () => {
 
       <section>
         <h3 className="text-xl font-semibold mb-3">4.1 Flow Diagram</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                        ETHEREUM KEY & TRANSACTION FLOW                       │
@@ -61,7 +61,7 @@ export const EthereumImplementation: React.FC = () => {
         <h3 className="text-xl font-semibold mb-3">
           4.2 Critical Limitation: Keccak-256 ≠ SHA3-256
         </h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    ⚠️  CRITICAL: OpenSSL SHA3 vs Keccak                      ║
@@ -88,7 +88,7 @@ export const EthereumImplementation: React.FC = () => {
         <h3 className="text-xl font-semibold mb-3">4.3 Step-by-Step: Direct Key Generation</h3>
 
         <h4 className="text-lg font-medium mb-2 mt-4">Step 1: Generate Private Key (OpenSSL)</h4>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 # Generate secp256k1 private key
 openssl ecparam -name secp256k1 -genkey -noout -out userA_eth_private.pem
@@ -102,7 +102,7 @@ openssl ec -in userA_eth_private.pem -text -noout 2>/dev/null | \\
         <h4 className="text-lg font-medium mb-2 mt-4">
           Step 2: Extract Uncompressed Public Key (OpenSSL)
         </h4>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 # Export public key as DER
 openssl ec -in userA_eth_private.pem -pubout -outform DER -out userA_eth_pub.der 2>/dev/null
@@ -118,7 +118,7 @@ xxd -p userA_eth_pubkey_raw.bin | tr -d '\\n'
         <h4 className="text-lg font-medium mb-2 mt-4">
           Step 3: Derive Address (JavaScript Required)
         </h4>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 // ethereum_address.js
 import { keccak_256 } from '@noble/hashes/sha3';
@@ -153,7 +153,7 @@ console.log('Ethereum Address:', checksumAddress);
         <h4 className="text-lg font-medium mb-2 mt-4">
           Step 4: Sign Transaction (JavaScript Required)
         </h4>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 // ethereum_sign.js
 import { secp256k1 } from '@noble/curves/secp256k1';
@@ -208,7 +208,7 @@ console.log('Recovery v:', signature.recovery);
         <h3 className="text-xl font-semibold mb-3">
           4.4 Complete Ethereum Script (JavaScript-Heavy)
         </h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 // ethereum_flow.js
 import { execSync } from 'child_process';

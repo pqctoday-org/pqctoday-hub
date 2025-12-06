@@ -7,7 +7,7 @@ export const CompleteScripts: React.FC = () => {
 
       <section>
         <h3 className="text-xl font-semibold mb-3">8.1 Bitcoin (bitcoin_flow.js)</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';
@@ -22,7 +22,7 @@ import { createBase58check, bech32 } from '@scure/base';
 
       <section>
         <h3 className="text-xl font-semibold mb-3">8.2 Ethereum (ethereum_flow.js)</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 import { execSync } from 'child_process';
 import { readFileSync } from 'fs';
@@ -38,7 +38,7 @@ import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 
       <section>
         <h3 className="text-xl font-semibold mb-3">8.3 Solana (solana_flow.js)</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';
@@ -52,7 +52,7 @@ import { base58 } from '@scure/base';
 
       <section>
         <h3 className="text-xl font-semibold mb-3">8.4 HD Wallet (hd_wallet_flow.js)</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 import { execSync } from 'child_process';
 import * as bip39 from '@scure/bip39';

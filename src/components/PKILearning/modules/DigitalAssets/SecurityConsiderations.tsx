@@ -7,7 +7,7 @@ export const SecurityConsiderations: React.FC = () => {
 
       <section>
         <h3 className="text-xl font-semibold mb-3">9.1 Private Key Handling</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                        SECURITY BEST PRACTICES                               ║
@@ -36,7 +36,7 @@ export const SecurityConsiderations: React.FC = () => {
 
       <section>
         <h3 className="text-xl font-semibold mb-3">9.2 Secure Key Wiping</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 // Example: Wipe sensitive data
 import { HDKey } from '@scure/bip32';

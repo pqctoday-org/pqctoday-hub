@@ -7,7 +7,7 @@ export const SolanaImplementation: React.FC = () => {
 
       <section>
         <h3 className="text-xl font-semibold mb-3">5.1 Flow Diagram</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                         SOLANA KEY & TRANSACTION FLOW                        │
@@ -56,7 +56,7 @@ export const SolanaImplementation: React.FC = () => {
         <h3 className="text-xl font-semibold mb-3">5.2 Step-by-Step: Direct Key Generation</h3>
 
         <h4 className="text-lg font-medium mb-2 mt-4">Step 1: Generate Ed25519 Key (OpenSSL)</h4>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 # Generate Ed25519 private key
 openssl genpkey -algorithm Ed25519 -out userA_sol_private.pem
@@ -67,7 +67,7 @@ openssl pkey -in userA_sol_private.pem -text -noout
         </div>
 
         <h4 className="text-lg font-medium mb-2 mt-4">Step 2: Extract Public Key (OpenSSL)</h4>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 # Extract public key
 openssl pkey -in userA_sol_private.pem -pubout -out userA_sol_public.pem
@@ -83,7 +83,7 @@ xxd -p userA_sol_pubkey.bin
         <h4 className="text-lg font-medium mb-2 mt-4">
           Step 3: Generate Address (JavaScript Required)
         </h4>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 // solana_address.js
 import { base58 } from '@scure/base';
@@ -102,7 +102,7 @@ console.log('Solana Address:', solanaAddress);
         <h4 className="text-lg font-medium mb-2 mt-4">
           Step 4: Sign Message (OpenSSL - Fully Supported!)
         </h4>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 # Create message
 echo -n "Transfer 2 SOL from UserA to UserB" > sol_message.txt
@@ -120,7 +120,7 @@ xxd -p sol_signature.bin
         </div>
 
         <h4 className="text-lg font-medium mb-2 mt-4">Step 5: Verify Signature (OpenSSL)</h4>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 # Verify signature
 openssl pkeyutl -verify \\
@@ -136,7 +136,7 @@ openssl pkeyutl -verify \\
 
       <section>
         <h3 className="text-xl font-semibold mb-3">5.3 Complete Solana Script (Hybrid)</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 // solana_flow.js
 import { execSync } from 'child_process';

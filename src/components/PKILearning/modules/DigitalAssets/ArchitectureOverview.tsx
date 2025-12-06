@@ -7,7 +7,7 @@ export const ArchitectureOverview: React.FC = () => {
 
       <section>
         <h3 className="text-xl font-semibold mb-3">1.1 Blockchain Cryptographic Requirements</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    BLOCKCHAIN CRYPTOGRAPHIC REQUIREMENTS                      ║
@@ -238,7 +238,7 @@ export const ArchitectureOverview: React.FC = () => {
 
       <section>
         <h3 className="text-xl font-semibold mb-3">1.3 Implementation Strategy</h3>
-        <div className="bg-muted/50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                      HYBRID IMPLEMENTATION STRATEGY                          │
