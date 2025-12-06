@@ -53,13 +53,14 @@ describe('Workbench Component', () => {
   })
 
   it('renders the configuration section by default', () => {
-    render(<Workbench />)
+    render(<Workbench category="genpkey" setCategory={vi.fn()} />)
     expect(screen.getByText('0. Configuration')).toBeDefined()
     expect(screen.getByText('1. Select Operation')).toBeDefined()
   })
 
   it('changes category when clicking operation buttons', () => {
-    render(<Workbench />)
+    const mockSetCategory = vi.fn()
+    render(<Workbench category="genpkey" setCategory={mockSetCategory} />)
 
     // Default is Key Generation
     expect(screen.getByText('Key Generation').closest('button')).toHaveClass('bg-primary/20')
@@ -67,12 +68,12 @@ describe('Workbench Component', () => {
     // Click CSR
     fireEvent.click(screen.getByText('CSR (Request)'))
 
-    // Check if CSR specific elements appear (Subject Information)
-    expect(screen.getByText('2. Configuration')).toBeDefined()
+    // Check if setCategory was called
+    expect(mockSetCategory).toHaveBeenCalledWith('req')
   })
 
   it('updates command when configuration changes', () => {
-    render(<Workbench />)
+    render(<Workbench category="genpkey" setCategory={vi.fn()} />)
 
     // We can't easily test the internal useEffect that calls setCommand without rendering the real component state.
     // However, since we mocked the store, the component will call the mocked setCommand.
