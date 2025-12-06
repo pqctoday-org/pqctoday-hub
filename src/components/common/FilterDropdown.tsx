@@ -130,7 +130,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                 onKeyDown={(e) => handleOptionKeyDown(e, 'All')}
                 className={clsx(
                   'w-full text-left px-4 py-3 hover:bg-white/10 transition-colors focus:outline-none focus-visible:bg-white/10 border-b border-white/10',
-                  isDefaultSelected ? 'text-primary bg-white/5' : 'text-muted-foreground'
+                  isDefaultSelected ? 'text-primary bg-slate-800' : 'text-muted-foreground'
                 )}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
               >
@@ -157,7 +157,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                     onKeyDown={(e) => handleOptionKeyDown(e, item.id)}
                     className={clsx(
                       'w-full text-left px-4 py-3 hover:bg-white/10 transition-colors focus:outline-none focus-visible:bg-white/10 border-b border-white/10 last:border-0',
-                      selectedId === item.id ? 'text-primary bg-white/5' : 'text-muted-foreground'
+                      selectedId === item.id ? 'text-primary bg-slate-800' : 'text-muted-foreground'
                     )}
                     style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                   >
