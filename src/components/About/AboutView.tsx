@@ -413,8 +413,8 @@ ${kudos.message}
           <Info className="text-blue-400" size={24} />
           <h2 className="text-xl font-bold">Software Bill of Materials (SBOM)</h2>
         </div>
-        <div className="grid md:grid-cols-2 gap-8">
-          <div>
+        <div className="columns-1 md:columns-3 gap-6 space-y-6">
+          <div className="break-inside-avoid">
             <h3 className="text-lg font-semibold text-primary mb-3">UI Frameworks & Libraries</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
@@ -447,7 +447,7 @@ ${kudos.message}
               </li>
             </ul>
           </div>
-          <div>
+          <div className="break-inside-avoid">
             <h3 className="text-lg font-semibold text-primary mb-3">Utilities</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
@@ -464,7 +464,7 @@ ${kudos.message}
               </li>
             </ul>
           </div>
-          <div>
+          <div className="break-inside-avoid">
             <h3 className="text-lg font-semibold text-primary mb-3">Cryptography & PQC</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
@@ -513,7 +513,7 @@ ${kudos.message}
               </li>
             </ul>
           </div>
-          <div>
+          <div className="break-inside-avoid">
             <h3 className="text-lg font-semibold text-primary mb-3">State Management</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
@@ -526,7 +526,7 @@ ${kudos.message}
               </li>
             </ul>
           </div>
-          <div>
+          <div className="break-inside-avoid">
             <h3 className="text-lg font-semibold text-primary mb-3">Analytics</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
@@ -535,7 +535,7 @@ ${kudos.message}
               </li>
             </ul>
           </div>
-          <div>
+          <div className="break-inside-avoid">
             <h3 className="text-lg font-semibold text-primary mb-3">Build & Development</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
@@ -560,7 +560,7 @@ ${kudos.message}
               </li>
             </ul>
           </div>
-          <div>
+          <div className="break-inside-avoid">
             <h3 className="text-lg font-semibold text-primary mb-3">Testing</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
