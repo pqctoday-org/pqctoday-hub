@@ -18,14 +18,14 @@ export const DataTab: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
-      <h4 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
+      <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
         <Database size={18} className="text-accent" /> Data Management
       </h4>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Signing Section */}
         <div className="space-y-6">
-          <h5 className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+          <h5 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
             <FileSignature size={14} /> Signing & Verification
           </h5>
           <DataInput
@@ -45,7 +45,7 @@ export const DataTab: React.FC = () => {
 
         {/* Encryption Section */}
         <div className="space-y-6">
-          <h5 className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2">
+          <h5 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
             <Lock size={14} /> Encryption & Decryption
           </h5>
           <DataInput
@@ -66,7 +66,7 @@ export const DataTab: React.FC = () => {
 
       {/* Shared Secret */}
       <div className="mt-8 pt-6 border-t border-white/10">
-        <h5 className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2 mb-4">
+        <h5 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
           <KeyIcon size={14} /> Shared Secret (ML-KEM)
         </h5>
         <DataInput

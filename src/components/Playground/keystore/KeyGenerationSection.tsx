@@ -34,7 +34,7 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
       <div className="bg-black/20 border border-white/10 rounded-xl p-6">
         <div className="flex items-center gap-2 mb-4 pb-3 border-b border-white/10">
           <Layers size={16} className="text-secondary" />
-          <h5 className="text-sm font-bold text-white uppercase tracking-wider">
+          <h5 className="text-sm font-bold text-foreground uppercase tracking-wider">
             Generate New Keys
           </h5>
         </div>
@@ -42,7 +42,10 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Algorithm & Key Size Selection */}
           <div className="space-y-2">
-            <label htmlFor="keystore-key-size" className="text-xs font-medium text-muted block">
+            <label
+              htmlFor="keystore-key-size"
+              className="text-xs font-medium text-muted-foreground block"
+            >
               Algorithm & Security Level
             </label>
             <select
@@ -66,7 +69,7 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                   }
                 }
               }}
-              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary appearance-none transition-colors"
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary appearance-none transition-colors"
             >
               <optgroup label="ML-KEM (Key Encapsulation)">
                 <option value="512">ML-KEM-512 (NIST Level 1)</option>
@@ -83,7 +86,7 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
 
           {/* Generate Button */}
           <div className="space-y-2">
-            <span className="text-xs font-medium text-muted block opacity-0 select-none">
+            <span className="text-xs font-medium text-muted-foreground block opacity-0 select-none">
               Action
             </span>
             <button
@@ -102,23 +105,26 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
       <div className="bg-black/20 border border-white/10 rounded-xl p-6">
         <div className="flex items-center gap-2 mb-4 pb-3 border-white/10">
           <Lock size={16} className="text-accent" />
-          <h5 className="text-sm font-bold text-white uppercase tracking-wider">
+          <h5 className="text-sm font-bold text-foreground uppercase tracking-wider">
             Generate Classical Keys
           </h5>
-          <span className="text-xs text-muted ml-auto">(Web Crypto API)</span>
+          <span className="text-xs text-muted-foreground ml-auto">(Web Crypto API)</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Algorithm Selection */}
           <div className="space-y-2">
-            <label htmlFor="classical-algo-select" className="text-xs font-medium text-muted block">
+            <label
+              htmlFor="classical-algo-select"
+              className="text-xs font-medium text-muted-foreground block"
+            >
               Classical Algorithm
             </label>
             <select
               id="classical-algo-select"
               value={classicalAlgorithm}
               onChange={(e) => onClassicalAlgorithmChange(e.target.value)}
-              className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+              className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
             >
               <optgroup label="Signature Algorithms">
                 <option value="RSA-2048">RSA-2048 (2048 bits)</option>
@@ -140,7 +146,7 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
 
           {/* Generate Button */}
           <div className="space-y-2">
-            <span className="text-xs font-medium text-muted block opacity-0 select-none">
+            <span className="text-xs font-medium text-muted-foreground block opacity-0 select-none">
               Action
             </span>
             <button

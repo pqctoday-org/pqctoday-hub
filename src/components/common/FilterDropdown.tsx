@@ -78,7 +78,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   return (
     <div className={clsx('relative mb-8 z-10', className)} ref={dropdownRef}>
       <div className="glass-panel p-2 inline-flex items-center gap-2">
-        <span className="text-muted px-2" id="filter-dropdown-label">
+        <span className="text-muted-foreground px-2" id="filter-dropdown-label">
           {label}:
         </span>
         <div className="relative">
@@ -130,7 +130,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                 onKeyDown={(e) => handleOptionKeyDown(e, 'All')}
                 className={clsx(
                   'w-full text-left px-4 py-3 hover:bg-white/10 transition-colors focus:outline-none focus-visible:bg-white/10 border-b border-white/10',
-                  isDefaultSelected ? 'text-primary bg-white/5' : 'text-muted'
+                  isDefaultSelected ? 'text-primary bg-white/5' : 'text-muted-foreground'
                 )}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
               >
@@ -157,7 +157,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                     onKeyDown={(e) => handleOptionKeyDown(e, item.id)}
                     className={clsx(
                       'w-full text-left px-4 py-3 hover:bg-white/10 transition-colors focus:outline-none focus-visible:bg-white/10 border-b border-white/10 last:border-0',
-                      selectedId === item.id ? 'text-primary bg-white/5' : 'text-muted'
+                      selectedId === item.id ? 'text-primary bg-white/5' : 'text-muted-foreground'
                     )}
                     style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                   >

@@ -63,7 +63,7 @@ export const Module1: React.FC = () => {
               key={step.id}
               onClick={() => setCurrentStep(idx)}
               className={`flex flex-col items-center gap-2 group ${
-                idx === currentStep ? 'text-primary' : 'text-muted'
+                idx === currentStep ? 'text-primary' : 'text-muted-foreground'
               }`}
             >
               <div
@@ -73,7 +73,7 @@ export const Module1: React.FC = () => {
                     ? 'border-primary text-primary'
                     : idx < currentStep
                       ? 'border-green-500 text-green-500'
-                      : 'border-white/20 text-muted'
+                      : 'border-white/20 text-muted-foreground'
                 }
               `}
               >
@@ -88,7 +88,7 @@ export const Module1: React.FC = () => {
       {/* Content Area */}
       <div className="glass-panel p-8 min-h-[400px]">
         {/* eslint-disable-next-line security/detect-object-injection */}
-        <h2 className="text-2xl font-bold text-white mb-6">{steps[currentStep].title}</h2>
+        <h2 className="text-2xl font-bold text-foreground mb-6">{steps[currentStep].title}</h2>
         {/* eslint-disable-next-line security/detect-object-injection */}
         {steps[currentStep].component}
       </div>
@@ -98,7 +98,7 @@ export const Module1: React.FC = () => {
         <button
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
-          className="px-6 py-2 rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 transition-colors text-white"
+          className="px-6 py-2 rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 transition-colors text-foreground"
         >
           ← Previous
         </button>

@@ -231,10 +231,10 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0">
         {/* Results Column */}
         <div className="space-y-4 flex flex-col min-h-0">
-          <h4 className="font-bold text-muted uppercase tracking-wider">Test Results</h4>
+          <h4 className="font-bold text-muted-foreground uppercase tracking-wider">Test Results</h4>
           <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden flex-1 overflow-y-auto custom-scrollbar">
             <table className="w-full text-left text-sm">
-              <thead className="bg-white/5 text-muted uppercase text-xs sticky top-0 backdrop-blur-md">
+              <thead className="bg-white/5 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md">
                 <tr>
                   <th className="p-3 font-bold">Algorithm</th>
                   <th className="p-3 font-bold">Test Case</th>
@@ -245,15 +245,15 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
               <tbody className="divide-y divide-white/5">
                 {results.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="p-8 text-center text-white/30 italic">
+                    <td colSpan={4} className="p-8 text-center text-foreground/30 italic">
                       No results yet. Run the validation suite.
                     </td>
                   </tr>
                 ) : (
                   results.map((res) => (
                     <tr key={res.id} className="hover:bg-white/5 transition-colors">
-                      <td className="p-3 font-medium text-white">{res.algorithm}</td>
-                      <td className="p-3 text-muted">{res.testCase}</td>
+                      <td className="p-3 font-medium text-foreground">{res.algorithm}</td>
+                      <td className="p-3 text-muted-foreground">{res.testCase}</td>
                       <td className="p-3">
                         <span
                           className={clsx(
@@ -271,7 +271,10 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
                           {res.status}
                         </span>
                       </td>
-                      <td className="p-3 text-muted truncate max-w-[200px]" title={res.details}>
+                      <td
+                        className="p-3 text-muted-foreground truncate max-w-[200px]"
+                        title={res.details}
+                      >
                         {res.details}
                       </td>
                     </tr>
@@ -284,10 +287,12 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
 
         {/* Logs Column */}
         <div className="space-y-4 flex flex-col min-h-0">
-          <h4 className="font-bold text-muted uppercase tracking-wider">Execution Log</h4>
+          <h4 className="font-bold text-muted-foreground uppercase tracking-wider">
+            Execution Log
+          </h4>
           <div className="bg-black/40 border border-white/10 rounded-lg p-4 font-mono text-xs text-green-400/80 overflow-y-auto custom-scrollbar flex-1">
             {logs.length === 0 ? (
-              <span className="text-white/20 italic">Ready to start...</span>
+              <span className="text-foreground/20 italic">Ready to start...</span>
             ) : (
               logs.map((log, i) => (
                 <div key={i} className="mb-1">

@@ -49,7 +49,7 @@ const EditableDataDisplay: React.FC<{
   return (
     <div className="mb-4 p-3 bg-black/40 rounded border border-white/10 text-xs space-y-1 animate-fade-in focus-within:border-blue-500/50 transition-colors">
       <div className="flex justify-between items-center mb-2">
-        <span className="text-muted font-bold uppercase tracking-wider">{label}</span>
+        <span className="text-muted-foreground font-bold uppercase tracking-wider">{label}</span>
         <button
           onClick={() => setViewMode((prev) => (prev === 'hex' ? 'ascii' : 'hex'))}
           className="text-[10px] flex items-center gap-1 bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition-colors text-blue-300"
@@ -58,7 +58,7 @@ const EditableDataDisplay: React.FC<{
         </button>
       </div>
       {readOnly ? (
-        <div className="font-mono text-white break-all max-h-24 overflow-y-auto custom-scrollbar whitespace-pre-wrap">
+        <div className="font-mono text-foreground break-all max-h-24 overflow-y-auto custom-scrollbar whitespace-pre-wrap">
           {getDisplayValue() || placeholder || 'None'}
         </div>
       ) : (
@@ -66,7 +66,7 @@ const EditableDataDisplay: React.FC<{
           value={getDisplayValue()}
           onChange={handleChange}
           placeholder={placeholder}
-          className="w-full bg-transparent border-none text-white font-mono text-xs resize-y min-h-[80px] focus:ring-0 p-0 placeholder:text-white/20 outline-none"
+          className="w-full bg-transparent border-none text-foreground font-mono text-xs resize-y min-h-[80px] focus:ring-0 p-0 placeholder:text-foreground/20 outline-none"
           spellCheck={false}
         />
       )}
@@ -122,7 +122,7 @@ export const SignVerifyTab: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto animate-fade-in space-y-8">
       <div>
-        <h4 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
+        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
           <FileSignature size={18} className="text-accent" /> Digital Signatures
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -135,7 +135,7 @@ export const SignVerifyTab: React.FC = () => {
             <select
               value={selectedSignKeyId}
               onChange={(e) => setSelectedSignKeyId(e.target.value)}
-              className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-green-500"
+              className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-green-500"
             >
               <option value="">Select Private Key...</option>
               {signPrivateKeys.map((k) => (
@@ -167,18 +167,18 @@ export const SignVerifyTab: React.FC = () => {
                 }
 
                 return (
-                  <div className="mb-4 p-3 bg-white/5 rounded border border-white/10 text-xs text-muted space-y-1">
+                  <div className="mb-4 p-3 bg-white/5 rounded border border-white/10 text-xs text-muted-foreground space-y-1">
                     <div className="flex justify-between">
                       <span>Algorithm:</span>
-                      <span className="text-white font-mono">{key.algorithm}</span>
+                      <span className="text-foreground font-mono">{key.algorithm}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Scheme:</span>
-                      <span className="text-white font-mono">{scheme}</span>
+                      <span className="text-foreground font-mono">{scheme}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Hash Function:</span>
-                      <span className="text-white font-mono">{hash}</span>
+                      <span className="text-foreground font-mono">{hash}</span>
                     </div>
                   </div>
                 )
@@ -221,7 +221,7 @@ export const SignVerifyTab: React.FC = () => {
             <select
               value={selectedVerifyKeyId}
               onChange={(e) => setSelectedVerifyKeyId(e.target.value)}
-              className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-orange-500"
+              className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-orange-500"
             >
               <option value="">Select Public Key...</option>
               {signPublicKeys.map((k) => (
@@ -253,18 +253,18 @@ export const SignVerifyTab: React.FC = () => {
                 }
 
                 return (
-                  <div className="mb-4 p-3 bg-white/5 rounded border border-white/10 text-xs text-muted space-y-1">
+                  <div className="mb-4 p-3 bg-white/5 rounded border border-white/10 text-xs text-muted-foreground space-y-1">
                     <div className="flex justify-between">
                       <span>Algorithm:</span>
-                      <span className="text-white font-mono">{key.algorithm}</span>
+                      <span className="text-foreground font-mono">{key.algorithm}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Scheme:</span>
-                      <span className="text-white font-mono">{scheme}</span>
+                      <span className="text-foreground font-mono">{scheme}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Hash Function:</span>
-                      <span className="text-white font-mono">{hash}</span>
+                      <span className="text-foreground font-mono">{hash}</span>
                     </div>
                   </div>
                 )

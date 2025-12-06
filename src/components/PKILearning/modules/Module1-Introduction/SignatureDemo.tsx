@@ -52,11 +52,11 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">1. Create Message</h3>
+          <h3 className="text-lg font-semibold text-foreground">1. Create Message</h3>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="w-full h-32 bg-black/20 border border-white/10 rounded p-3 text-white resize-none"
+            className="w-full h-32 bg-black/20 border border-white/10 rounded p-3 text-foreground resize-none"
             placeholder="Enter a message to sign..."
           />
 
@@ -71,17 +71,17 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">2. Digital Signature</h3>
+          <h3 className="text-lg font-semibold text-foreground">2. Digital Signature</h3>
           <div className="bg-black/40 rounded-lg p-4 border border-white/10 h-32 overflow-y-auto custom-scrollbar">
             {signature ? (
               <code className="text-xs text-blue-300 break-all">{signature}</code>
             ) : (
-              <p className="text-muted text-sm italic">Signature will appear here...</p>
+              <p className="text-muted-foreground text-sm italic">Signature will appear here...</p>
             )}
           </div>
 
           {signature && (
-            <div className="text-sm text-muted">
+            <div className="text-sm text-muted-foreground">
               <p>This unique signature proves that:</p>
               <ul className="list-disc list-inside mt-1 space-y-1">
                 <li>The message came from you (Authentication)</li>

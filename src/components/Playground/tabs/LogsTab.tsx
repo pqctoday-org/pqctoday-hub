@@ -23,12 +23,12 @@ export const LogsTab: React.FC = () => {
   return (
     <div className="h-full flex flex-col animate-fade-in">
       <div className="flex justify-between items-center mb-4">
-        <h4 className="text-lg font-bold text-white flex items-center gap-2">
-          <FileText size={18} className="text-muted" /> Operation Log
+        <h4 className="text-lg font-bold text-foreground flex items-center gap-2">
+          <FileText size={18} className="text-muted-foreground" /> Operation Log
         </h4>
         <button
           onClick={clearLogs}
-          className="text-xs text-muted hover:text-white transition-colors"
+          className="text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           Clear Log
         </button>
@@ -37,7 +37,7 @@ export const LogsTab: React.FC = () => {
       <div className="flex-1 overflow-hidden rounded-xl border border-white/10 bg-black/20 flex flex-col">
         <div className="overflow-y-auto flex-1 custom-scrollbar">
           <table className="w-full text-left text-sm" style={{ tableLayout: 'fixed' }}>
-            <thead className="bg-white/5 text-muted uppercase text-xs sticky top-0 backdrop-blur-md select-none">
+            <thead className="bg-white/5 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md select-none">
               <tr>
                 <th
                   className="p-4 font-bold cursor-pointer hover:bg-white/5 transition-colors relative group"
@@ -184,24 +184,24 @@ export const LogsTab: React.FC = () => {
             <tbody className="divide-y divide-white/5">
               {sortedLogs.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-12 text-center text-white/30 italic">
+                  <td colSpan={5} className="p-12 text-center text-foreground/30 italic">
                     No operations performed yet.
                   </td>
                 </tr>
               ) : (
                 sortedLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-white/5 transition-colors">
-                    <td className="p-4 font-mono text-xs text-muted whitespace-nowrap overflow-hidden text-ellipsis">
+                    <td className="p-4 font-mono text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
                       {log.timestamp}
                     </td>
-                    <td className="p-4 font-medium text-white overflow-hidden text-ellipsis">
+                    <td className="p-4 font-medium text-foreground overflow-hidden text-ellipsis">
                       {log.keyLabel}
                     </td>
                     <td className="p-4 text-accent overflow-hidden text-ellipsis">
                       {log.operation}
                     </td>
                     <td
-                      className="p-4 text-sm text-muted overflow-hidden text-ellipsis"
+                      className="p-4 text-sm text-muted-foreground overflow-hidden text-ellipsis"
                       title={log.result}
                     >
                       {log.result}

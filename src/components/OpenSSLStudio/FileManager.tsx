@@ -60,7 +60,7 @@ export const FileManager = () => {
       case 'cert':
         return <FileCode size={16} className="text-blue-400" />
       default:
-        return <File size={16} className="text-muted" />
+        return <File size={16} className="text-muted-foreground" />
     }
   }
 
@@ -121,13 +121,13 @@ export const FileManager = () => {
   return (
     <div className="h-full flex flex-col bg-white/5 rounded-xl border border-white/10 overflow-hidden relative">
       <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-white/5">
-        <span className="text-xs font-bold uppercase tracking-wider text-muted">
+        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
           Virtual File System
         </span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => files.forEach((f) => removeFile(f.name))}
-            className="text-xs text-muted hover:text-red-400 flex items-center gap-1 transition-colors"
+            className="text-xs text-muted-foreground hover:text-red-400 flex items-center gap-1 transition-colors"
             title="Clear all files"
           >
             <Trash2 size={12} /> Clear
@@ -141,7 +141,7 @@ export const FileManager = () => {
 
       <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
         {files.length === 0 ? (
-          <div className="text-center py-8 text-white/20 text-xs">
+          <div className="text-center py-8 text-foreground/20 text-xs">
             No files in memory.
             <br />
             Generated keys will appear here.
@@ -155,8 +155,8 @@ export const FileManager = () => {
               <div className="flex items-center gap-3 overflow-hidden flex-1">
                 {getIcon(file.type)}
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-sm text-white font-medium mb-0.5">{file.name}</span>
-                  <div className="flex items-center gap-3 text-[10px] text-muted">
+                  <span className="text-sm text-foreground font-medium mb-0.5">{file.name}</span>
+                  <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
                     <span className="font-mono">{formatSize(file.size)}</span>
                     {file.executionTime && (
                       <>
@@ -174,28 +174,28 @@ export const FileManager = () => {
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setEditingFile(file)}
-                  className="p-1.5 hover:bg-white/10 rounded text-muted hover:text-white"
+                  className="p-1.5 hover:bg-white/10 rounded text-muted-foreground hover:text-foreground"
                   title="Edit / View"
                 >
                   <Edit2 size={14} />
                 </button>
                 <button
                   onClick={() => handleDownload(file)}
-                  className="p-1.5 hover:bg-white/10 rounded text-muted hover:text-white"
+                  className="p-1.5 hover:bg-white/10 rounded text-muted-foreground hover:text-foreground"
                   title="Download"
                 >
                   <Download size={14} />
                 </button>
                 <button
                   onClick={() => handleExtractPublicKey(file.name)}
-                  className="p-1.5 hover:bg-primary/20 rounded text-muted hover:text-primary flex items-center gap-1"
+                  className="p-1.5 hover:bg-primary/20 rounded text-muted-foreground hover:text-primary flex items-center gap-1"
                   title="Extract Public Key"
                 >
                   <FileKey size={14} />
                 </button>
                 <button
                   onClick={() => removeFile(file.name)}
-                  className="p-1.5 hover:bg-red-500/20 rounded text-muted hover:text-red-400"
+                  className="p-1.5 hover:bg-red-500/20 rounded text-muted-foreground hover:text-red-400"
                   title="Delete"
                 >
                   <Trash2 size={14} />
@@ -210,7 +210,7 @@ export const FileManager = () => {
       {editingFile && (
         <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-10 flex flex-col animate-fade-in">
           <div className="flex items-center justify-between p-3 border-b border-white/10 bg-white/5">
-            <span className="text-sm font-bold text-white flex items-center gap-2">
+            <span className="text-sm font-bold text-foreground flex items-center gap-2">
               <Edit2 size={14} /> {editingFile.name}
             </span>
             <div className="flex items-center gap-2">
@@ -223,7 +223,7 @@ export const FileManager = () => {
                       handleExtractPublicKey(editingFile.name)
                       setEditingFile(null) // Close editor after action
                     }}
-                    className="p-1.5 hover:bg-primary/20 text-muted hover:text-primary rounded transition-colors"
+                    className="p-1.5 hover:bg-primary/20 text-muted-foreground hover:text-primary rounded transition-colors"
                     title="Extract Public Key"
                   >
                     <KeyRound size={14} />
@@ -238,7 +238,7 @@ export const FileManager = () => {
               </button>
               <button
                 onClick={() => setEditingFile(null)}
-                className="p-1.5 hover:bg-white/10 text-muted hover:text-white rounded transition-colors"
+                className="p-1.5 hover:bg-white/10 text-muted-foreground hover:text-foreground rounded transition-colors"
                 title="Close"
               >
                 <X size={14} />
@@ -249,7 +249,7 @@ export const FileManager = () => {
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              className="w-full h-full bg-transparent text-xs font-mono p-4 text-white/90 outline-none resize-none"
+              className="w-full h-full bg-transparent text-xs font-mono p-4 text-foreground/90 outline-none resize-none"
               spellCheck={false}
             />
           </div>

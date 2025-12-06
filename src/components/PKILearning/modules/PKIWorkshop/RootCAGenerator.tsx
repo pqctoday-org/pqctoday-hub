@@ -364,7 +364,7 @@ x509_extensions = v3_ca
         <div className="space-y-6">
           {/* Key Configuration */}
           <div className="glass-panel p-5 border border-white/10">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
               <Key className="text-primary" size={20} />
               Root CA Key
             </h3>
@@ -373,12 +373,14 @@ x509_extensions = v3_ca
               <table className="w-full text-sm border-collapse">
                 <tbody>
                   <tr>
-                    <td className="pt-0 pb-3 text-muted w-[180px] align-middle">Key Type</td>
+                    <td className="pt-0 pb-3 text-muted-foreground w-[180px] align-middle">
+                      Key Type
+                    </td>
                     <td className="pt-0 pb-3 align-middle">
                       <select
                         value={selectedKeyId}
                         onChange={(e) => setSelectedKeyId(e.target.value)}
-                        className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
+                        className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
                       >
                         <optgroup label="Generate New Key">
                           {ALGORITHMS.map((algo) => (
@@ -401,7 +403,7 @@ x509_extensions = v3_ca
                   </tr>
                 </tbody>
               </table>
-              <p className="text-xs text-muted">
+              <p className="text-xs text-muted-foreground">
                 Root CAs typically use larger key sizes for long-term security.
               </p>
             </div>
@@ -409,7 +411,7 @@ x509_extensions = v3_ca
 
           {/* Profile Selection */}
           <div className="glass-panel p-5 border border-white/10">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
               <FileText className="text-primary" size={20} />
               Certificate Profile
             </h3>
@@ -419,12 +421,14 @@ x509_extensions = v3_ca
                 <tbody>
                   {/* Row 1: Profile Name */}
                   <tr className="border-b border-white/5">
-                    <td className="pt-0 pb-3 text-muted w-[180px] align-middle">Profile Name</td>
+                    <td className="pt-0 pb-3 text-muted-foreground w-[180px] align-middle">
+                      Profile Name
+                    </td>
                     <td className="pt-0 pb-3 align-middle">
                       <select
                         value={selectedProfile}
                         onChange={(e) => handleProfileSelect(e.target.value)}
-                        className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
+                        className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
                       >
                         <option value="">-- Select a Profile --</option>
                         {availableProfiles.map((profile) => (
@@ -438,30 +442,30 @@ x509_extensions = v3_ca
 
                   {/* Row 2: Industry */}
                   <tr className="border-b border-white/5">
-                    <td className="py-3 text-muted align-middle">Industry</td>
-                    <td className="py-3 text-white font-medium align-middle">
+                    <td className="py-3 text-muted-foreground align-middle">Industry</td>
+                    <td className="py-3 text-foreground font-medium align-middle">
                       {profileMetadata?.industry || '-'}
                     </td>
                   </tr>
 
                   {/* Row 3: Standard */}
                   <tr className="border-b border-white/5">
-                    <td className="py-3 text-muted align-middle">Standard</td>
-                    <td className="py-3 text-white font-medium align-middle">
+                    <td className="py-3 text-muted-foreground align-middle">Standard</td>
+                    <td className="py-3 text-foreground font-medium align-middle">
                       {profileMetadata?.standard || '-'}
                     </td>
                   </tr>
 
                   {/* Row 4: Standard Date */}
                   <tr>
-                    <td className="py-3 text-muted align-middle">Standard Date</td>
-                    <td className="py-3 text-white font-medium align-middle">
+                    <td className="py-3 text-muted-foreground align-middle">Standard Date</td>
+                    <td className="py-3 text-foreground font-medium align-middle">
                       {profileMetadata?.date || '-'}
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-3 text-muted align-middle">Constraints</td>
-                    <td className="py-3 text-white font-medium align-middle text-xs leading-relaxed">
+                    <td className="py-3 text-muted-foreground align-middle">Constraints</td>
+                    <td className="py-3 text-foreground font-medium align-middle text-xs leading-relaxed">
                       {profileConstraints.length > 0
                         ? profileConstraints.map((c) => `${c.name}=${c.value}`).join(' | ')
                         : '-'}
@@ -474,7 +478,7 @@ x509_extensions = v3_ca
 
           {/* X.509 Attributes Section */}
           <div className="glass-panel p-5 border border-white/10">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
               <Shield className="text-primary" size={20} />
               X.509 Attributes
             </h3>
@@ -498,14 +502,14 @@ x509_extensions = v3_ca
 
         {/* Output Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Console Output</h3>
+          <h3 className="text-lg font-semibold text-foreground">Console Output</h3>
           <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[600px] overflow-y-auto custom-scrollbar border border-white/10">
             <pre className="text-green-400 whitespace-pre-wrap break-all break-words max-w-full">
               {output}
             </pre>
             {caCert && (
               <div className="mt-4 pt-4 border-t border-white/10">
-                <p className="text-muted mb-2">Generated Root Certificate:</p>
+                <p className="text-muted-foreground mb-2">Generated Root Certificate:</p>
                 <pre className="text-blue-300 whitespace-pre-wrap break-all break-words max-w-full">
                   {caCert}
                 </pre>

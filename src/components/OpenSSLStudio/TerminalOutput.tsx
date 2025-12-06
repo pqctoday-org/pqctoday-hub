@@ -34,7 +34,9 @@ export const TerminalOutput = () => {
           <label
             className={clsx(
               'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
-              showStdout ? 'bg-white/10 text-green-400' : 'text-muted hover:text-white'
+              showStdout
+                ? 'bg-white/10 text-green-400'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <input
@@ -49,7 +51,9 @@ export const TerminalOutput = () => {
           <label
             className={clsx(
               'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
-              showStderr ? 'bg-white/10 text-red-400' : 'text-muted hover:text-white'
+              showStderr
+                ? 'bg-white/10 text-red-400'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <input
@@ -64,7 +68,9 @@ export const TerminalOutput = () => {
           <label
             className={clsx(
               'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
-              showDebug ? 'bg-white/10 text-blue-400' : 'text-muted hover:text-white'
+              showDebug
+                ? 'bg-white/10 text-blue-400'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <input
@@ -79,7 +85,7 @@ export const TerminalOutput = () => {
 
         <button
           onClick={clearTerminalLogs}
-          className="text-xs text-muted hover:text-white flex items-center gap-1 transition-colors"
+          className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
         >
           <Trash2 size={12} /> Clear
         </button>
@@ -88,7 +94,7 @@ export const TerminalOutput = () => {
       {/* Logs Area */}
       <div className="flex-1 overflow-y-auto custom-scrollbar bg-black/20 min-w-0">
         {filteredLogs.length === 0 ? (
-          <div className="text-white/20 italic text-center mt-10">
+          <div className="text-foreground/20 italic text-center mt-10">
             {logs.length === 0 ? 'Ready to execute commands...' : 'No output in this stream.'}
           </div>
         ) : (
@@ -101,7 +107,7 @@ export const TerminalOutput = () => {
               {filteredLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-white/5 transition-colors">
                   <td
-                    className="px-3 py-1 text-white/30 align-top whitespace-nowrap font-mono text-[10px] select-none border-r border-white/5"
+                    className="px-3 py-1 text-foreground/30 align-top whitespace-nowrap font-mono text-[10px] select-none border-r border-white/5"
                     style={{ fontSize: '10px', whiteSpace: 'nowrap' }}
                   >
                     [{log.timestamp}]
@@ -113,7 +119,7 @@ export const TerminalOutput = () => {
                         ? 'text-red-400'
                         : log.type === 'info'
                           ? 'text-blue-300'
-                          : 'text-white/80'
+                          : 'text-foreground/80'
                     )}
                     style={{
                       wordBreak: 'break-all',

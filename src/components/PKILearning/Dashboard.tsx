@@ -53,7 +53,7 @@ const ModuleCardContent = ({
       disabled={module.disabled}
     >
       <div className="flex justify-between items-start w-full mb-4">
-        <h3 className="text-xl font-bold text-white break-words">{module.title}</h3>
+        <h3 className="text-xl font-bold text-foreground break-words">{module.title}</h3>
         <div>
           {module.comingSoon ? (
             <span className="text-xs text-primary bg-primary/10 px-2 py-1 rounded whitespace-nowrap">
@@ -62,13 +62,13 @@ const ModuleCardContent = ({
           ) : status === 'completed' ? (
             <CheckCircle className="text-green-400 shrink-0" size={20} />
           ) : (
-            <Circle className="text-muted shrink-0" size={20} />
+            <Circle className="text-muted-foreground shrink-0" size={20} />
           )}
         </div>
       </div>
 
       <p
-        className="text-muted mb-6 flex-grow text-sm break-words line-clamp-3 min-h-[4.5em]"
+        className="text-muted-foreground mb-6 flex-grow text-sm break-words line-clamp-3 min-h-[4.5em]"
         style={{ paddingLeft: '1rem', paddingRight: '1rem' }}
       >
         {module.description}
@@ -76,7 +76,7 @@ const ModuleCardContent = ({
 
       {!module.comingSoon && (
         <div className="flex items-center justify-between mt-auto w-full pt-4 border-t border-white/5">
-          <div className="flex items-center gap-2 text-sm text-muted">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Clock size={14} />
             {durationDisplay}
           </div>
@@ -115,7 +115,7 @@ const ModuleTable = ({
   return (
     <div className="glass-panel overflow-hidden">
       <div className="p-6 border-b border-white/10">
-        <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+        <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <Icon className={title === 'Learning Workshops' ? 'text-primary' : 'text-secondary'} />
           {title}
         </h2>
@@ -217,7 +217,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
                     If it crashes, we will fix it in the next step.
                 */}
         {/* <SaveRestorePanel /> */}
-        <div className="text-white">Save/Restore Placeholder</div>
+        <div className="text-foreground">Save/Restore Placeholder</div>
       </div>
     </div>
   )

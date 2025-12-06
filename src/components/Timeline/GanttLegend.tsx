@@ -10,7 +10,7 @@ export const GanttLegend = ({ className = '' }: GanttLegendProps) => {
 
   return (
     <div className={`glass-panel p-4 ${className}`}>
-      <h3 className="text-sm font-bold text-white mb-4 border-b border-white/10 pb-2">
+      <h3 className="text-sm font-bold text-foreground mb-4 border-b border-white/10 pb-2">
         Phase Color Code
       </h3>
 
@@ -30,7 +30,9 @@ export const GanttLegend = ({ className = '' }: GanttLegendProps) => {
                       boxShadow: `inset 0 0 10px ${colors.glow}`,
                     }}
                   >
-                    <span className="text-xs font-bold text-white drop-shadow-md">{phase}</span>
+                    <span className="text-xs font-bold text-foreground drop-shadow-md">
+                      {phase}
+                    </span>
                   </td>
                 )
               })}
@@ -45,7 +47,7 @@ export const GanttLegend = ({ className = '' }: GanttLegendProps) => {
             <Flag className="w-4 h-4 text-blue-500 fill-blue-500" />
             <Flag className="w-4 h-4 text-purple-500 fill-purple-500" />
           </div>
-          <span className="text-xs text-muted">
+          <span className="text-xs text-muted-foreground">
             <strong>Milestones:</strong> Flag markers indicate key events, colored according to
             their phase.
           </span>

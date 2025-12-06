@@ -31,18 +31,20 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
 
   return (
     <div className="space-y-4 animate-fade-in">
-      <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+      <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
         2. Configuration
       </span>
 
       <div className="space-y-3">
-        <span className="text-xs text-muted block">Action</span>
+        <span className="text-xs text-muted-foreground block">Action</span>
         <div className="flex bg-black/40 rounded-lg p-1 border border-white/20">
           <button
             onClick={() => setP12Action('export')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
-              p12Action === 'export' ? 'bg-primary text-white' : 'text-muted hover:text-white'
+              p12Action === 'export'
+                ? 'bg-primary text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             Export (Create P12)
@@ -51,7 +53,9 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
             onClick={() => setP12Action('import')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
-              p12Action === 'import' ? 'bg-primary text-white' : 'text-muted hover:text-white'
+              p12Action === 'import'
+                ? 'bg-primary text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             Import (Read P12)
@@ -62,14 +66,14 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
       {p12Action === 'export' ? (
         <>
           <div className="space-y-3">
-            <label htmlFor="p12-cert-select" className="text-xs text-muted block">
+            <label htmlFor="p12-cert-select" className="text-xs text-muted-foreground block">
               Certificate File
             </label>
             <select
               id="p12-cert-select"
               value={p12CertFile}
               onChange={(e) => setP12CertFile(e.target.value)}
-              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
             >
               <option value="">Select Certificate...</option>
               {files
@@ -83,14 +87,14 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
           </div>
 
           <div className="space-y-3">
-            <label htmlFor="p12-key-select" className="text-xs text-muted block">
+            <label htmlFor="p12-key-select" className="text-xs text-muted-foreground block">
               Private Key File
             </label>
             <select
               id="p12-key-select"
               value={p12KeyFile}
               onChange={(e) => setP12KeyFile(e.target.value)}
-              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
             >
               <option value="">Select Private Key...</option>
               {files
@@ -104,7 +108,7 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
           </div>
 
           <div className="space-y-3">
-            <label htmlFor="p12-file-input" className="text-xs text-muted block">
+            <label htmlFor="p12-file-input" className="text-xs text-muted-foreground block">
               Output Filename (Optional)
             </label>
             <input
@@ -112,21 +116,21 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
               type="text"
               value={p12File}
               onChange={(e) => setP12File(e.target.value)}
-              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
               placeholder="bundle.p12"
             />
           </div>
         </>
       ) : (
         <div className="space-y-3">
-          <label htmlFor="p12-infile-select" className="text-xs text-muted block">
+          <label htmlFor="p12-infile-select" className="text-xs text-muted-foreground block">
             PKCS#12 File
           </label>
           <select
             id="p12-infile-select"
             value={p12File}
             onChange={(e) => setP12File(e.target.value)}
-            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           >
             <option value="">Select .p12 or .pfx file...</option>
             {files
@@ -141,7 +145,7 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
       )}
 
       <div className="space-y-3">
-        <label htmlFor="p12-pass-input" className="text-xs text-muted block">
+        <label htmlFor="p12-pass-input" className="text-xs text-muted-foreground block">
           Password
         </label>
         <input
@@ -149,7 +153,7 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
           type="password"
           value={p12Pass}
           onChange={(e) => setP12Pass(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="Export/Import Password"
         />
       </div>

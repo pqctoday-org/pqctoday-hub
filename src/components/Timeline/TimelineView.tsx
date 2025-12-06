@@ -46,12 +46,12 @@ export const TimelineView = () => {
     <div className="max-w-7xl mx-auto px-4">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold mb-4 text-gradient">Global Migration Timeline</h2>
-        <p className="text-muted max-w-2xl mx-auto mb-4">
+        <p className="text-muted-foreground max-w-2xl mx-auto mb-4">
           Compare Post-Quantum Cryptography migration roadmaps across nations. Track phases from
           discovery to full migration and key regulatory milestones.
         </p>
         {timelineMetadata && (
-          <p className="text-xs text-muted/60 font-mono">
+          <p className="text-xs text-muted-foreground/60 font-mono">
             Data Source: {timelineMetadata.filename} • Updated:{' '}
             {timelineMetadata.lastUpdate.toLocaleDateString()}
           </p>

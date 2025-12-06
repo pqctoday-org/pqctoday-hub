@@ -2,7 +2,7 @@ import React from 'react'
 
 export const EthereumImplementation: React.FC = () => {
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6 text-foreground">
       <h2 className="text-2xl font-bold mb-4">Part 4: Ethereum Implementation</h2>
 
       <section>

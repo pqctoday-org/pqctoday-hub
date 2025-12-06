@@ -61,12 +61,12 @@ export const LeadersGrid = () => {
     <div className="max-w-6xl mx-auto">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold mb-4 text-gradient">Transformation Leaders</h2>
-        <p className="text-muted max-w-2xl mx-auto mb-4">
+        <p className="text-muted-foreground max-w-2xl mx-auto mb-4">
           Meet the visionaries and organizations driving the global transition to Post-Quantum
           Cryptography.
         </p>
         {leadersMetadata && (
-          <p className="text-xs text-muted/60 mb-8 font-mono">
+          <p className="text-xs text-muted-foreground/60 mb-8 font-mono">
             Data Source: {leadersMetadata.filename} • Updated:{' '}
             {leadersMetadata.lastUpdate.toLocaleDateString()}
           </p>
@@ -139,7 +139,7 @@ export const LeadersGrid = () => {
               </div>
 
               <h3 className="text-xl font-bold mb-1">{leader.name}</h3>
-              <div className="flex items-center gap-2 text-sm text-muted mb-4">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
                 <Briefcase size={14} aria-hidden="true" />
                 <span>{leader.title}</span>
               </div>
@@ -153,13 +153,13 @@ export const LeadersGrid = () => {
                 ))}
               </div>
 
-              <p className="text-sm text-muted leading-relaxed border-t border-white/5 pt-4 mb-4">
+              <p className="text-sm text-muted-foreground leading-relaxed border-t border-white/5 pt-4 mb-4">
                 "{leader.bio}"
               </p>
 
               {leader.keyResourceUrl && (
                 <div className="mb-4 p-3 rounded-lg bg-white/5 border border-white/10">
-                  <p className="text-xs text-muted uppercase tracking-wider font-bold mb-2">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-2">
                     Key Resource
                   </p>
                   <a

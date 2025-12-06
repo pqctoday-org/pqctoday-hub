@@ -119,17 +119,17 @@ ${kudos.message}
           <h2 className="text-2xl font-bold">About PQC Today</h2>
         </div>
         <div className="prose prose-invert max-w-none">
-          <p className="text-lg text-muted">
+          <p className="text-lg text-muted-foreground">
             PQC Today is your comprehensive resource for tracking the transition to Post-Quantum
             Cryptography. We provide real-time updates on standardization efforts, detailed
             algorithm analysis, and interactive tools to help organizations prepare for the quantum
             future.
           </p>
-          <p className="text-muted mt-4">
+          <p className="text-muted-foreground mt-4">
             Our mission is to demystify quantum threats and make PQC adoption accessible to
             everyone, from security researchers to business leaders.
           </p>
-          <p className="text-muted mt-4">
+          <p className="text-muted-foreground mt-4">
             Connect with me on LinkedIn:{' '}
             <a
               href="https://www.linkedin.com/in/eric-amador-971850a"
@@ -157,7 +157,10 @@ ${kudos.message}
           </div>
           <form onSubmit={handleChangeRequestSubmit} className="space-y-4">
             <div>
-              <label htmlFor="user-type" className="block text-sm font-medium text-muted mb-1">
+              <label
+                htmlFor="user-type"
+                className="block text-sm font-medium text-muted-foreground mb-1"
+              >
                 I am a...
               </label>
               <select
@@ -175,7 +178,10 @@ ${kudos.message}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="feature" className="block text-sm font-medium text-muted mb-1">
+                <label
+                  htmlFor="feature"
+                  className="block text-sm font-medium text-muted-foreground mb-1"
+                >
                   Feature
                 </label>
                 <select
@@ -200,7 +206,10 @@ ${kudos.message}
                 </select>
               </div>
               <div>
-                <label htmlFor="subfeature" className="block text-sm font-medium text-muted mb-1">
+                <label
+                  htmlFor="subfeature"
+                  className="block text-sm font-medium text-muted-foreground mb-1"
+                >
                   Subfeature
                 </label>
                 <select
@@ -224,7 +233,10 @@ ${kudos.message}
             </div>
 
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-muted mb-1">
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-muted-foreground mb-1"
+              >
                 Category
               </label>
               <select
@@ -241,7 +253,10 @@ ${kudos.message}
             </div>
 
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-muted mb-1">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-muted-foreground mb-1"
+              >
                 Description
               </label>
               <textarea
@@ -279,7 +294,9 @@ ${kudos.message}
           </div>
           <form onSubmit={handleKudosSubmit} className="space-y-6">
             <div>
-              <span className="block text-sm font-medium text-muted mb-2">What do you like?</span>
+              <span className="block text-sm font-medium text-muted-foreground mb-2">
+                What do you like?
+              </span>
               <div className="grid grid-cols-2 gap-2">
                 {features.map((feature) => (
                   <label
@@ -304,7 +321,7 @@ ${kudos.message}
             </div>
 
             <div>
-              <span className="block text-sm font-medium text-muted mb-2">
+              <span className="block text-sm font-medium text-muted-foreground mb-2">
                 What can we improve?
               </span>
               <div className="grid grid-cols-2 gap-2">
@@ -331,7 +348,9 @@ ${kudos.message}
             </div>
 
             <div>
-              <span className="block text-sm font-medium text-muted mb-2">Get rid of it!</span>
+              <span className="block text-sm font-medium text-muted-foreground mb-2">
+                Get rid of it!
+              </span>
               <div className="grid grid-cols-2 gap-2">
                 {features.map((feature) => (
                   <label
@@ -356,7 +375,10 @@ ${kudos.message}
             </div>
 
             <div>
-              <label htmlFor="kudos-message" className="block text-sm font-medium text-muted mb-1">
+              <label
+                htmlFor="kudos-message"
+                className="block text-sm font-medium text-muted-foreground mb-1"
+              >
                 Message
               </label>
               <textarea
@@ -396,20 +418,20 @@ ${kudos.message}
             <h3 className="text-lg font-semibold text-primary mb-3">UI Frameworks & Libraries</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">React</span>
-                <span className="text-xs text-muted/60">v19.2.0 • 2025-10-01</span>
+                <span className="text-muted-foreground">React</span>
+                <span className="text-xs text-muted-foreground/60">v19.2.0 • 2025-10-01</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">Framer Motion</span>
-                <span className="text-xs text-muted/60">v12.23.24 • 2025-10-10</span>
+                <span className="text-muted-foreground">Framer Motion</span>
+                <span className="text-xs text-muted-foreground/60">v12.23.24 • 2025-10-10</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">Lucide React</span>
-                <span className="text-xs text-muted/60">v0.554.0 • 2025-11-17</span>
+                <span className="text-muted-foreground">Lucide React</span>
+                <span className="text-xs text-muted-foreground/60">v0.554.0 • 2025-11-17</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">clsx</span>
-                <span className="text-xs text-muted/60">v2.1.1 • 2024-04-23</span>
+                <span className="text-muted-foreground">clsx</span>
+                <span className="text-xs text-muted-foreground/60">v2.1.1 • 2024-04-23</span>
               </li>
             </ul>
           </div>
@@ -417,16 +439,16 @@ ${kudos.message}
             <h3 className="text-lg font-semibold text-primary mb-3">Utilities</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">localforage</span>
-                <span className="text-xs text-muted/60">v1.10.0 • 2024-05-01</span>
+                <span className="text-muted-foreground">localforage</span>
+                <span className="text-xs text-muted-foreground/60">v1.10.0 • 2024-05-01</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">jszip</span>
-                <span className="text-xs text-muted/60">v3.10.1 • 2023-02-12</span>
+                <span className="text-muted-foreground">jszip</span>
+                <span className="text-xs text-muted-foreground/60">v3.10.1 • 2023-02-12</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">file-saver</span>
-                <span className="text-xs text-muted/60">v2.0.5 • 2021-01-20</span>
+                <span className="text-muted-foreground">file-saver</span>
+                <span className="text-xs text-muted-foreground/60">v2.0.5 • 2021-01-20</span>
               </li>
             </ul>
           </div>
@@ -434,44 +456,44 @@ ${kudos.message}
             <h3 className="text-lg font-semibold text-primary mb-3">Cryptography & PQC</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">OpenSSL</span>
-                <span className="text-xs text-muted/60">v3.5.4 • 2025-11-20</span>
+                <span className="text-muted-foreground">OpenSSL</span>
+                <span className="text-xs text-muted-foreground/60">v3.5.4 • 2025-11-20</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">liboqs (ML-DSA, ML-KEM)</span>
-                <span className="text-xs text-muted/60">v0.14.3 • 2025-10-14</span>
+                <span className="text-muted-foreground">liboqs (ML-DSA, ML-KEM)</span>
+                <span className="text-xs text-muted-foreground/60">v0.14.3 • 2025-10-14</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">mlkem-wasm</span>
-                <span className="text-xs text-muted/60">v0.0.7 • 2025-09-17</span>
+                <span className="text-muted-foreground">mlkem-wasm</span>
+                <span className="text-xs text-muted-foreground/60">v0.0.7 • 2025-09-17</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">openssl-wasm</span>
-                <span className="text-xs text-muted/60">v3.1.0 • 2023-03-24</span>
+                <span className="text-muted-foreground">openssl-wasm</span>
+                <span className="text-xs text-muted-foreground/60">v3.1.0 • 2023-03-24</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">pqcrypto</span>
-                <span className="text-xs text-muted/60">v1.0.1 • 2022-04-11</span>
+                <span className="text-muted-foreground">pqcrypto</span>
+                <span className="text-xs text-muted-foreground/60">v1.0.1 • 2022-04-11</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">noble-hashes</span>
-                <span className="text-xs text-muted/60">v2.0.1 • 2025-09-22</span>
+                <span className="text-muted-foreground">noble-hashes</span>
+                <span className="text-xs text-muted-foreground/60">v2.0.1 • 2025-09-22</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">noble-curves</span>
-                <span className="text-xs text-muted/60">v2.0.1 • 2025-02-15</span>
+                <span className="text-muted-foreground">noble-curves</span>
+                <span className="text-xs text-muted-foreground/60">v2.0.1 • 2025-02-15</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">scure-bip32/39</span>
-                <span className="text-xs text-muted/60">v2.0.1 • 2025-03-01</span>
+                <span className="text-muted-foreground">scure-bip32/39</span>
+                <span className="text-xs text-muted-foreground/60">v2.0.1 • 2025-03-01</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">micro-eth-signer</span>
-                <span className="text-xs text-muted/60">v0.18.1 • 2025-01-10</span>
+                <span className="text-muted-foreground">micro-eth-signer</span>
+                <span className="text-xs text-muted-foreground/60">v0.18.1 • 2025-01-10</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">ed25519-hd-key</span>
-                <span className="text-xs text-muted/60">v1.3.0 • 2022-08-01</span>
+                <span className="text-muted-foreground">ed25519-hd-key</span>
+                <span className="text-xs text-muted-foreground/60">v1.3.0 • 2022-08-01</span>
               </li>
             </ul>
           </div>
@@ -479,12 +501,12 @@ ${kudos.message}
             <h3 className="text-lg font-semibold text-primary mb-3">State Management</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">Zustand</span>
-                <span className="text-xs text-muted/60">v5.0.8 • 2025-08-19</span>
+                <span className="text-muted-foreground">Zustand</span>
+                <span className="text-xs text-muted-foreground/60">v5.0.8 • 2025-08-19</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">Immer</span>
-                <span className="text-xs text-muted/60">v11.0.1 • 2025-09-05</span>
+                <span className="text-muted-foreground">Immer</span>
+                <span className="text-xs text-muted-foreground/60">v11.0.1 • 2025-09-05</span>
               </li>
             </ul>
           </div>
@@ -492,8 +514,8 @@ ${kudos.message}
             <h3 className="text-lg font-semibold text-primary mb-3">Analytics</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">React GA4</span>
-                <span className="text-xs text-muted/60">v2.1.0 • 2023-03-06</span>
+                <span className="text-muted-foreground">React GA4</span>
+                <span className="text-xs text-muted-foreground/60">v2.1.0 • 2023-03-06</span>
               </li>
             </ul>
           </div>
@@ -501,20 +523,20 @@ ${kudos.message}
             <h3 className="text-lg font-semibold text-primary mb-3">Build & Development</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">Vite</span>
-                <span className="text-xs text-muted/60">v7.2.4 • 2025-11-20</span>
+                <span className="text-muted-foreground">Vite</span>
+                <span className="text-xs text-muted-foreground/60">v7.2.4 • 2025-11-20</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">TypeScript</span>
-                <span className="text-xs text-muted/60">v5.9.3 • 2025-09-30</span>
+                <span className="text-muted-foreground">TypeScript</span>
+                <span className="text-xs text-muted-foreground/60">v5.9.3 • 2025-09-30</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">ESLint</span>
-                <span className="text-xs text-muted/60">v9.39.1 • 2025-11-03</span>
+                <span className="text-muted-foreground">ESLint</span>
+                <span className="text-xs text-muted-foreground/60">v9.39.1 • 2025-11-03</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">Prettier</span>
-                <span className="text-xs text-muted/60">v3.7.3 • 2025-11-29</span>
+                <span className="text-muted-foreground">Prettier</span>
+                <span className="text-xs text-muted-foreground/60">v3.7.3 • 2025-11-29</span>
               </li>
             </ul>
           </div>
@@ -522,16 +544,16 @@ ${kudos.message}
             <h3 className="text-lg font-semibold text-primary mb-3">Testing</h3>
             <ul className="space-y-2">
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">Vitest</span>
-                <span className="text-xs text-muted/60">v4.0.14 • 2025-11-25</span>
+                <span className="text-muted-foreground">Vitest</span>
+                <span className="text-xs text-muted-foreground/60">v4.0.14 • 2025-11-25</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">Playwright</span>
-                <span className="text-xs text-muted/60">v1.57.0 • 2025-11-25</span>
+                <span className="text-muted-foreground">Playwright</span>
+                <span className="text-xs text-muted-foreground/60">v1.57.0 • 2025-11-25</span>
               </li>
               <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
-                <span className="text-muted">Testing Library</span>
-                <span className="text-xs text-muted/60">v16.3.0 • 2025-04-02</span>
+                <span className="text-muted-foreground">Testing Library</span>
+                <span className="text-xs text-muted-foreground/60">v16.3.0 • 2025-04-02</span>
               </li>
             </ul>
           </div>
@@ -546,7 +568,7 @@ ${kudos.message}
         className="glass-panel p-6 text-center"
       >
         <h3 className="text-lg font-bold mb-2">AI Technology Acknowledgment</h3>
-        <p className="text-muted text-sm max-w-2xl mx-auto">
+        <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
           This site is developed, documented, validated and deployed using advanced AI technologies
           including Google Antigravity, ChatGPT, Claude AI, Perplexity, and Gemini Pro. While the
           presented information has been manually curated, it may still contain errors.

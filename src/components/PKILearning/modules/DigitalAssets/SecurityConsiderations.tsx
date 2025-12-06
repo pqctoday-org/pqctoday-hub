@@ -2,7 +2,7 @@ import React from 'react'
 
 export const SecurityConsiderations: React.FC = () => {
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6 text-foreground">
       <h2 className="text-2xl font-bold mb-4">Part 9: Security Considerations</h2>
 
       <section>
@@ -110,7 +110,7 @@ secureWipe(privateKey);
         <div className="space-y-4">
           <div>
             <h4 className="font-semibold text-lg">Standards Documents</h4>
-            <ul className="list-disc pl-5 space-y-1 text-muted">
+            <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
               <li>
                 <a
                   href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki"
@@ -165,7 +165,7 @@ secureWipe(privateKey);
           </div>
           <div>
             <h4 className="font-semibold text-lg">Library Documentation</h4>
-            <ul className="list-disc pl-5 space-y-1 text-muted">
+            <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
               <li>
                 <a
                   href="https://paulmillr.com/noble/"

@@ -117,7 +117,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
           className="w-full text-left text-sm border-collapse"
           style={{ tableLayout: 'fixed' }}
         >
-          <thead className="bg-white/5 text-muted uppercase text-xs sticky top-0 backdrop-blur-md z-10">
+          <thead className="bg-white/5 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md z-10">
             <tr>
               {(['name', 'type', 'algorithm', 'id', 'timestamp'] as SortColumn[]).map((col) => (
                 <th
@@ -151,7 +151,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
           <tbody className="divide-y divide-white/5">
             {sortedKeys.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-12 text-center text-white/30 italic">
+                <td colSpan={5} className="p-12 text-center text-foreground/30 italic">
                   <div className="flex flex-col items-center gap-3">
                     <KeyIcon size={32} className="opacity-20" />
                     No keys generated yet. Go to Settings to generate keys.
@@ -178,7 +178,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                     }
                   }}
                 >
-                  <td className="p-4 font-medium text-white truncate">{key.name}</td>
+                  <td className="p-4 font-medium text-foreground truncate">{key.name}</td>
                   <td className="p-4">
                     <span
                       className={clsx(
@@ -193,9 +193,9 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                       {key.type}
                     </span>
                   </td>
-                  <td className="p-4 text-muted truncate">{key.algorithm}</td>
-                  <td className="p-4 font-mono text-xs text-muted truncate">{key.id}</td>
-                  <td className="p-4 text-xs text-muted truncate font-mono">
+                  <td className="p-4 text-muted-foreground truncate">{key.algorithm}</td>
+                  <td className="p-4 font-mono text-xs text-muted-foreground truncate">{key.id}</td>
+                  <td className="p-4 text-xs text-muted-foreground truncate font-mono">
                     {key.timestamp ? new Date(key.timestamp).toLocaleString() : '-'}
                   </td>
                 </tr>

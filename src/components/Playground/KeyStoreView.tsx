@@ -58,7 +58,7 @@ export const KeyStoreView = ({
     <div className="h-full flex flex-col animate-fade-in gap-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h4 className="text-lg font-bold text-white flex items-center gap-2">
+        <h4 className="text-lg font-bold text-foreground flex items-center gap-2">
           <KeyIcon size={18} className="text-primary" /> Key Store
         </h4>
         <div className="flex gap-2">
@@ -80,7 +80,7 @@ export const KeyStoreView = ({
             </>
           )}
           <button
-            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('restore-keys-input')?.click()}
           >
             <Upload size={14} /> Import ZIP

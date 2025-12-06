@@ -2,7 +2,7 @@ import React from 'react'
 
 export const CompleteScripts: React.FC = () => {
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6 text-foreground">
       <h2 className="text-2xl font-bold mb-4">Part 8: Complete Working Scripts</h2>
 
       <section>

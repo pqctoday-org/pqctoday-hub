@@ -39,18 +39,20 @@ export const EncConfig: React.FC<EncConfigProps> = ({
 
   return (
     <div className="space-y-4 animate-fade-in">
-      <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+      <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
         2. Configuration
       </span>
 
       <div className="space-y-3">
-        <span className="text-xs text-muted block">Action</span>
+        <span className="text-xs text-muted-foreground block">Action</span>
         <div className="flex bg-black/40 rounded-lg p-1 border border-white/20">
           <button
             onClick={() => setEncAction('encrypt')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
-              encAction === 'encrypt' ? 'bg-primary/20 text-primary' : 'text-muted hover:text-white'
+              encAction === 'encrypt'
+                ? 'bg-primary/20 text-primary'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             Encrypt
@@ -59,7 +61,9 @@ export const EncConfig: React.FC<EncConfigProps> = ({
             onClick={() => setEncAction('decrypt')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
-              encAction === 'decrypt' ? 'bg-primary/20 text-primary' : 'text-muted hover:text-white'
+              encAction === 'decrypt'
+                ? 'bg-primary/20 text-primary'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             Decrypt
@@ -68,14 +72,14 @@ export const EncConfig: React.FC<EncConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="enc-cipher-select" className="text-xs text-muted block">
+        <label htmlFor="enc-cipher-select" className="text-xs text-muted-foreground block">
           Cipher
         </label>
         <select
           id="enc-cipher-select"
           value={encCipher}
           onChange={(e) => setEncCipher(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="aes-128-cbc">AES-128-CBC</option>
           <option value="aes-192-cbc">AES-192-CBC</option>
@@ -87,14 +91,14 @@ export const EncConfig: React.FC<EncConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="enc-infile-select" className="text-xs text-muted block">
+        <label htmlFor="enc-infile-select" className="text-xs text-muted-foreground block">
           Input File
         </label>
         <select
           id="enc-infile-select"
           value={encInFile}
           onChange={(e) => setEncInFile(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="">Select a file...</option>
           {files.map((f) => (
@@ -106,7 +110,7 @@ export const EncConfig: React.FC<EncConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="enc-pass-input" className="text-xs text-muted block">
+        <label htmlFor="enc-pass-input" className="text-xs text-muted-foreground block">
           Passphrase
         </label>
         <input
@@ -114,13 +118,13 @@ export const EncConfig: React.FC<EncConfigProps> = ({
           type="password"
           value={passphrase}
           onChange={(e) => setPassphrase(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="Enter encryption password"
         />
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="enc-outfile-input" className="text-xs text-muted block">
+        <label htmlFor="enc-outfile-input" className="text-xs text-muted-foreground block">
           Output File (Optional)
         </label>
         <input
@@ -128,7 +132,7 @@ export const EncConfig: React.FC<EncConfigProps> = ({
           type="text"
           value={encOutFile}
           onChange={(e) => setEncOutFile(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder={encAction === 'encrypt' ? 'data.enc' : 'data.dec.txt'}
         />
       </div>
@@ -141,12 +145,12 @@ export const EncConfig: React.FC<EncConfigProps> = ({
             onChange={(e) => setEncShowIV(e.target.checked)}
             className="w-4 h-4 rounded border-white/20 bg-black/40 text-primary focus:ring-0 focus:ring-offset-0"
           />
-          <span className="text-sm text-white">Show Derived Key & IV (-p)</span>
+          <span className="text-sm text-foreground">Show Derived Key & IV (-p)</span>
         </label>
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="enc-iv-input" className="text-xs text-muted block">
+        <label htmlFor="enc-iv-input" className="text-xs text-muted-foreground block">
           Custom IV (Hex, Optional)
         </label>
         <input
@@ -154,7 +158,7 @@ export const EncConfig: React.FC<EncConfigProps> = ({
           type="text"
           value={encCustomIV}
           onChange={(e) => setEncCustomIV(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="e.g. 0102030405060708..."
         />
       </div>

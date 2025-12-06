@@ -95,9 +95,9 @@ export const FileEditor = () => {
             <FileText size={16} />
           </div>
           <div>
-            <h3 className="font-bold text-white text-sm flex items-center gap-2">
+            <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
               {editingFile.name}
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-white/10 text-muted uppercase">
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-white/10 text-muted-foreground uppercase">
                 {editingFile.type}
               </span>
             </h3>
@@ -107,7 +107,7 @@ export const FileEditor = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleToggleMode}
-            className="px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 bg-white/5 hover:bg-white/10 text-muted hover:text-white transition-colors border border-white/5"
+            className="px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 bg-white/5 hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors border border-white/5"
             title={`Switch to ${viewMode === 'ascii' ? 'Hex' : 'ASCII'} mode`}
           >
             <ArrowRightLeft size={12} />
@@ -116,7 +116,7 @@ export const FileEditor = () => {
           <div className="w-px h-4 bg-white/10 mx-1" />
           <button
             onClick={() => setEditingFile(null)}
-            className="p-1.5 hover:bg-white/10 rounded text-muted hover:text-white transition-colors"
+            className="p-1.5 hover:bg-white/10 rounded text-muted-foreground hover:text-foreground transition-colors"
             title="Close Editor"
           >
             <X size={16} />
@@ -133,7 +133,7 @@ export const FileEditor = () => {
             setError(null)
           }}
           className={clsx(
-            'flex-1 w-full bg-black/40 p-4 font-mono text-sm text-white/90 resize-none outline-none focus:bg-black/60 transition-colors custom-scrollbar',
+            'flex-1 w-full bg-black/40 p-4 font-mono text-sm text-foreground/90 resize-none outline-none focus:bg-black/60 transition-colors custom-scrollbar',
             viewMode === 'hex' && 'tracking-wider'
           )}
           spellCheck={false}
@@ -150,13 +150,13 @@ export const FileEditor = () => {
       <div className="p-3 border-t border-white/10 bg-white/5 flex justify-end gap-2">
         <button
           onClick={() => setEditingFile(null)}
-          className="px-3 py-1.5 rounded hover:bg-white/10 text-white transition-colors text-xs font-medium"
+          className="px-3 py-1.5 rounded hover:bg-white/10 text-foreground transition-colors text-xs font-medium"
         >
           Cancel
         </button>
         <button
           onClick={handleSave}
-          className="px-3 py-1.5 rounded bg-primary hover:bg-primary/90 text-white transition-colors flex items-center gap-2 text-xs font-medium shadow-lg shadow-primary/20"
+          className="px-3 py-1.5 rounded bg-primary hover:bg-primary/90 text-foreground transition-colors flex items-center gap-2 text-xs font-medium shadow-lg shadow-primary/20"
         >
           <Save size={14} />
           Save Changes

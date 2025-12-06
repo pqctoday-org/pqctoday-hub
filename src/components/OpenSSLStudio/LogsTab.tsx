@@ -26,7 +26,7 @@ export const LogsTab = () => {
       <div className="flex items-center justify-end px-4 py-2 bg-white/5 border-b border-white/10 shrink-0">
         <button
           onClick={clearStructuredLogs}
-          className="text-xs text-muted hover:text-white flex items-center gap-1 transition-colors"
+          className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
         >
           <Trash2 size={12} /> Clear
         </button>
@@ -35,7 +35,7 @@ export const LogsTab = () => {
       {/* Logs Table */}
       <div className="flex-1 overflow-y-auto custom-scrollbar bg-black/20 min-w-0">
         <table className="w-full text-left border-collapse">
-          <thead className="bg-white/5 text-muted uppercase text-[10px] sticky top-0 backdrop-blur-md z-10">
+          <thead className="bg-white/5 text-muted-foreground uppercase text-[10px] sticky top-0 backdrop-blur-md z-10">
             <tr>
               <th className="p-3 font-bold w-20">Time</th>
               <th className="p-3 font-bold w-24">Type</th>
@@ -47,37 +47,37 @@ export const LogsTab = () => {
           <tbody className="divide-y divide-white/5">
             {structuredLogs.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-8 text-center text-white/20 italic">
+                <td colSpan={5} className="p-8 text-center text-foreground/20 italic">
                   No operations recorded yet.
                 </td>
               </tr>
             ) : (
               structuredLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-white/5 transition-colors group">
-                  <td className="p-3 text-white/30 text-[10px] whitespace-nowrap align-top">
+                  <td className="p-3 text-foreground/30 text-[10px] whitespace-nowrap align-top">
                     {log.timestamp}
                   </td>
-                  <td className="p-3 text-xs font-medium text-white align-top">
+                  <td className="p-3 text-xs font-medium text-foreground align-top">
                     {log.operationType}
                   </td>
-                  <td className="p-3 text-xs text-muted break-all align-top font-mono">
-                    <div className="text-white/80">{log.command}</div>
+                  <td className="p-3 text-xs text-muted-foreground break-all align-top font-mono">
+                    <div className="text-foreground/80">{log.command}</div>
                     {log.details && (
-                      <div className="text-[10px] text-white/40 mt-1">{log.details}</div>
+                      <div className="text-[10px] text-foreground/40 mt-1">{log.details}</div>
                     )}
                   </td>
-                  <td className="p-3 text-xs text-muted align-top">
+                  <td className="p-3 text-xs text-muted-foreground align-top">
                     {log.fileName ? (
                       <div>
                         <div className="text-green-400 font-medium">{log.fileName}</div>
                         {log.fileSize !== undefined && (
-                          <div className="text-[10px] text-white/40">
+                          <div className="text-[10px] text-foreground/40">
                             {formatSize(log.fileSize)}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <span className="text-white/20">-</span>
+                      <span className="text-foreground/20">-</span>
                     )}
                   </td>
                   <td

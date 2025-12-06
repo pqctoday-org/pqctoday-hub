@@ -120,12 +120,12 @@ export const GanttDetailPopover = ({
         {/* Badge and Title */}
         <div className="flex items-center gap-2">
           <div
-            className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-white flex-shrink-0"
+            className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-foreground flex-shrink-0"
             style={{ backgroundColor: colors.start }}
           >
             {phase.phase}
           </div>
-          <h3 className="text-xs font-bold text-white leading-tight">{phase.title}</h3>
+          <h3 className="text-xs font-bold text-foreground leading-tight">{phase.title}</h3>
         </div>
       </div>
 
@@ -141,20 +141,22 @@ export const GanttDetailPopover = ({
             <tbody>
               {/* Row 1: Start and End */}
               <tr>
-                <td className="py-1.5 pr-3 text-muted uppercase tracking-wider font-medium text-[10px] whitespace-nowrap w-1">
+                <td className="py-1.5 pr-3 text-muted-foreground uppercase tracking-wider font-medium text-[10px] whitespace-nowrap w-1">
                   Start
                 </td>
-                <td className="py-1.5 pr-6 font-mono text-white text-[10px]">{phase.startYear}</td>
+                <td className="py-1.5 pr-6 font-mono text-foreground text-[10px]">
+                  {phase.startYear}
+                </td>
 
-                <td className="py-1.5 pr-3 text-muted uppercase tracking-wider font-medium text-[10px] whitespace-nowrap w-1">
+                <td className="py-1.5 pr-3 text-muted-foreground uppercase tracking-wider font-medium text-[10px] whitespace-nowrap w-1">
                   End
                 </td>
-                <td className="py-1.5 font-mono text-white text-[10px]">{phase.endYear}</td>
+                <td className="py-1.5 font-mono text-foreground text-[10px]">{phase.endYear}</td>
               </tr>
 
               {/* Row 2: Source and Date */}
               <tr>
-                <td className="py-1.5 pr-3 text-muted uppercase tracking-wider font-medium text-[10px] whitespace-nowrap">
+                <td className="py-1.5 pr-3 text-muted-foreground uppercase tracking-wider font-medium text-[10px] whitespace-nowrap">
                   Source
                 </td>
                 <td className="py-1.5 pr-6">
@@ -170,16 +172,16 @@ export const GanttDetailPopover = ({
                       <span className="truncate">View</span>
                     </a>
                   ) : (
-                    <span className="text-muted text-[10px]">-</span>
+                    <span className="text-muted-foreground text-[10px]">-</span>
                   )}
                 </td>
 
-                <td className="py-1.5 pr-3 text-muted uppercase tracking-wider font-medium text-[10px] whitespace-nowrap">
+                <td className="py-1.5 pr-3 text-muted-foreground uppercase tracking-wider font-medium text-[10px] whitespace-nowrap">
                   Date
                 </td>
                 <td className="py-1.5">
-                  <div className="flex items-center gap-1.5 text-white text-[10px]">
-                    <Calendar className="w-3 h-3 text-muted shrink-0" />
+                  <div className="flex items-center gap-1.5 text-foreground text-[10px]">
+                    <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
                     <span className="truncate">{sourceDate || '-'}</span>
                   </div>
                 </td>

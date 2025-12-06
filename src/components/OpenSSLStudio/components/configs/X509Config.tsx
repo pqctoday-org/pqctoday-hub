@@ -34,19 +34,19 @@ export const X509Config: React.FC<X509ConfigProps> = ({
 
   return (
     <div className="space-y-4 animate-fade-in">
-      <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+      <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
         2. Configuration
       </span>
 
       <div className="space-y-3">
-        <label htmlFor="x509-key-select" className="text-xs text-muted block">
+        <label htmlFor="x509-key-select" className="text-xs text-muted-foreground block">
           Private Key
         </label>
         <select
           id="x509-key-select"
           value={selectedCsrKeyFile}
           onChange={(e) => setSelectedCsrKeyFile(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="">Select Private Key...</option>
           {files
@@ -60,7 +60,7 @@ export const X509Config: React.FC<X509ConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="x509-days-input" className="text-xs text-muted block">
+        <label htmlFor="x509-days-input" className="text-xs text-muted-foreground block">
           Validity (Days)
         </label>
         <input
@@ -68,20 +68,20 @@ export const X509Config: React.FC<X509ConfigProps> = ({
           type="number"
           value={certDays}
           onChange={(e) => setCertDays(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           min="1"
         />
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="x509-digest-select" className="text-xs text-muted block">
+        <label htmlFor="x509-digest-select" className="text-xs text-muted-foreground block">
           Digest Algorithm
         </label>
         <select
           id="x509-digest-select"
           value={digestAlgo}
           onChange={(e) => setDigestAlgo(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="sha256">SHA-256</option>
           <option value="sha384">SHA-384</option>
@@ -90,7 +90,7 @@ export const X509Config: React.FC<X509ConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="x509-cn-input" className="text-xs text-muted block">
+        <label htmlFor="x509-cn-input" className="text-xs text-muted-foreground block">
           Common Name (CN)
         </label>
         <input
@@ -98,13 +98,13 @@ export const X509Config: React.FC<X509ConfigProps> = ({
           type="text"
           value={commonName}
           onChange={(e) => setCommonName(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="example.com"
         />
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="x509-org-input" className="text-xs text-muted block">
+        <label htmlFor="x509-org-input" className="text-xs text-muted-foreground block">
           Organization (O)
         </label>
         <input
@@ -112,13 +112,13 @@ export const X509Config: React.FC<X509ConfigProps> = ({
           type="text"
           value={org}
           onChange={(e) => setOrg(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="My Organization"
         />
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="x509-country-input" className="text-xs text-muted block">
+        <label htmlFor="x509-country-input" className="text-xs text-muted-foreground block">
           Country (C)
         </label>
         <input
@@ -126,7 +126,7 @@ export const X509Config: React.FC<X509ConfigProps> = ({
           type="text"
           value={country}
           onChange={(e) => setCountry(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="US"
           maxLength={2}
         />

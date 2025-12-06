@@ -84,9 +84,9 @@ export const LibraryDetailPopover = ({
             <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">
               {item.documentType?.trim()}
             </span>
-            <span className="text-xs text-muted">{item.referenceId?.trim()}</span>
+            <span className="text-xs text-muted-foreground">{item.referenceId?.trim()}</span>
           </div>
-          <h3 id="popover-title" className="text-lg font-bold text-white leading-tight">
+          <h3 id="popover-title" className="text-lg font-bold text-foreground leading-tight">
             {item.documentTitle?.trim()}
           </h3>
         </div>
@@ -96,7 +96,7 @@ export const LibraryDetailPopover = ({
       <div className="p-4 max-h-[70vh] overflow-y-auto space-y-2">
         {/* Top Section: Description (Full Width) */}
         <div>
-          <h4 className="text-xs font-semibold text-muted uppercase tracking-wider mb-0">
+          <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-0">
             Description
           </h4>
           <p className="text-sm text-gray-300 leading-relaxed">
@@ -114,10 +114,10 @@ export const LibraryDetailPopover = ({
             className="flex flex-row items-baseline gap-2"
             style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: '0.5rem' }}
           >
-            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
               Status:
             </h4>
-            <p className="text-sm text-white">{item.documentStatus?.trim()}</p>
+            <p className="text-sm text-foreground">{item.documentStatus?.trim()}</p>
           </div>
 
           {/* Authors/Org */}
@@ -125,10 +125,13 @@ export const LibraryDetailPopover = ({
             className="flex flex-row items-baseline gap-2"
             style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: '0.5rem' }}
           >
-            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
               Authors:
             </h4>
-            <p className="text-sm text-white truncate" title={item.authorsOrOrganization?.trim()}>
+            <p
+              className="text-sm text-foreground truncate"
+              title={item.authorsOrOrganization?.trim()}
+            >
               {item.authorsOrOrganization?.trim()}
             </p>
           </div>
@@ -138,11 +141,11 @@ export const LibraryDetailPopover = ({
             className="flex flex-row items-center gap-2"
             style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}
           >
-            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
               Published:
             </h4>
-            <div className="flex items-center gap-1.5 text-white text-sm">
-              <Calendar className="w-3 h-3 text-muted shrink-0" />
+            <div className="flex items-center gap-1.5 text-foreground text-sm">
+              <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
               <span>{item.initialPublicationDate?.trim()}</span>
             </div>
           </div>
@@ -152,11 +155,11 @@ export const LibraryDetailPopover = ({
             className="flex flex-row items-center gap-2"
             style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}
           >
-            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
               Updated:
             </h4>
-            <div className="flex items-center gap-1.5 text-white text-sm">
-              <Calendar className="w-3 h-3 text-muted shrink-0" />
+            <div className="flex items-center gap-1.5 text-foreground text-sm">
+              <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
               <span>{item.lastUpdateDate?.trim()}</span>
             </div>
           </div>
@@ -172,7 +175,7 @@ export const LibraryDetailPopover = ({
                 gap: '0.5rem',
               }}
             >
-              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Region:
               </h4>
               <p className="text-sm text-gray-300">{item.regionScope?.trim()}</p>
@@ -190,7 +193,7 @@ export const LibraryDetailPopover = ({
                 gap: '0.5rem',
               }}
             >
-              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Urgency:
               </h4>
               <p className="text-sm text-gray-300">{item.migrationUrgency?.trim()}</p>
@@ -208,7 +211,7 @@ export const LibraryDetailPopover = ({
                 gap: '0.5rem',
               }}
             >
-              <h4 className="text-xs font-semibold text-muted uppercase tracking-wider shrink-0">
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Industries:
               </h4>
               <p

@@ -93,15 +93,15 @@ export const DataInput: React.FC<DataInputProps> = ({
   return (
     <div className="bg-black/20 rounded-xl border border-white/5 p-4 transition-colors hover:border-white/10">
       <div className="flex justify-between items-center mb-3">
-        <label className="text-sm font-bold text-white flex items-center gap-2">{label}</label>
+        <label className="text-sm font-bold text-foreground flex items-center gap-2">{label}</label>
         <div className="flex bg-black/40 rounded-lg p-1 border border-white/10">
           <button
             onClick={() => setViewMode('ascii')}
             className={clsx(
               'px-3 py-1 rounded-md text-xs font-bold flex items-center gap-1 transition-all',
               viewMode === 'ascii'
-                ? 'bg-white/10 text-white shadow-sm'
-                : 'text-muted hover:text-white'
+                ? 'bg-white/10 text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <FileText size={12} /> ASCII
@@ -111,8 +111,8 @@ export const DataInput: React.FC<DataInputProps> = ({
             className={clsx(
               'px-3 py-1 rounded-md text-xs font-bold flex items-center gap-1 transition-all',
               viewMode === 'hex'
-                ? 'bg-white/10 text-white shadow-sm'
-                : 'text-muted hover:text-white'
+                ? 'bg-white/10 text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <Binary size={12} /> HEX
@@ -126,7 +126,7 @@ export const DataInput: React.FC<DataInputProps> = ({
         readOnly={readOnly}
         placeholder={placeholder}
         className={clsx(
-          'w-full bg-black/40 border rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-primary font-mono resize-none transition-colors',
+          'w-full bg-black/40 border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary font-mono resize-none transition-colors',
           height,
           error ? 'border-red-500/50 focus:border-red-500' : 'border-white/10',
           readOnly ? 'opacity-70 cursor-not-allowed' : ''

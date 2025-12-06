@@ -167,7 +167,7 @@ export const ThreatsDashboard = () => {
     <div className="max-w-7xl mx-auto px-4">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold mb-4 text-gradient">Quantum Threats</h2>
-        <p className="text-muted max-w-2xl mx-auto mb-8">
+        <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
           Detailed analysis of quantum threats across industries, including criticality, at-risk
           cryptography, and PQC replacements.
         </p>
@@ -203,7 +203,10 @@ export const ThreatsDashboard = () => {
         {/* Search */}
         <div className="flex justify-end mb-4">
           <div className="relative w-full md:w-64">
-            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+            <Search
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
             <input
               type="text"
               placeholder="Search threats..."
@@ -279,13 +282,13 @@ export const ThreatsDashboard = () => {
                     exit={{ opacity: 0 }}
                     className="border-b border-white/5 hover:bg-white/5 transition-colors group"
                   >
-                    <td className="p-4 text-sm text-muted group-hover:text-white transition-colors">
+                    <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
                       {item.industry}
                     </td>
                     <td className="p-4 text-sm font-mono text-primary/80">{item.threatId}</td>
-                    <td className="p-4 text-sm text-muted group-hover:text-white transition-colors">
+                    <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
                       {item.description}
-                      <div className="text-[10px] text-muted/50 mt-1 uppercase tracking-wider">
+                      <div className="text-[10px] text-muted-foreground/50 mt-1 uppercase tracking-wider">
                         Source: {item.source}
                       </div>
                     </td>
@@ -303,7 +306,7 @@ export const ThreatsDashboard = () => {
                         {item.criticality}
                       </span>
                     </td>
-                    <td className="p-4 text-xs text-muted font-mono">
+                    <td className="p-4 text-xs text-muted-foreground font-mono">
                       {item.cryptoAtRisk.split(',').map((c, i) => (
                         <div key={i}>{c.trim()}</div>
                       ))}
@@ -320,7 +323,9 @@ export const ThreatsDashboard = () => {
           </table>
         </div>
         {filteredAndSortedData.length === 0 && (
-          <div className="p-8 text-center text-muted">No threats found matching your filters.</div>
+          <div className="p-8 text-center text-muted-foreground">
+            No threats found matching your filters.
+          </div>
         )}
       </div>
     </div>

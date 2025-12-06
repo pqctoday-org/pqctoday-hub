@@ -204,10 +204,10 @@ export const WorkbenchConfig: React.FC<WorkbenchConfigProps> = (props) => {
     case 'version':
       return (
         <div className="space-y-4 animate-fade-in">
-          <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+          <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
             2. Configuration
           </span>
-          <div className="text-sm text-muted">
+          <div className="text-sm text-muted-foreground">
             No configuration needed. This command displays detailed version information about the
             OpenSSL build.
           </div>

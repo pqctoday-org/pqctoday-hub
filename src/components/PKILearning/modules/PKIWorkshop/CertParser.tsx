@@ -199,20 +199,20 @@ AL9... (truncated for brevity) ...
     <div className="space-y-6">
       {/* Artifact Selection */}
       <div className="glass-panel p-5 border border-white/10">
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
           <Search className="text-primary" size={20} />
           Inspect Generated Artifacts
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label htmlFor="artifact-select" className="text-sm text-muted">
+            <label htmlFor="artifact-select" className="text-sm text-muted-foreground">
               Select a Certificate or CSR to inspect:
             </label>
             <select
               id="artifact-select"
               value={selectedArtifactId}
               onChange={(e) => handleArtifactSelect(e.target.value)}
-              className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
+              className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
             >
               <option value="">-- Select from Workshop --</option>
 
@@ -262,7 +262,7 @@ AL9... (truncated for brevity) ...
         {/* Input Section */}
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-white">Input Content (PEM)</h3>
+            <h3 className="text-lg font-semibold text-foreground">Input Content (PEM)</h3>
           </div>
 
           <textarea
@@ -272,7 +272,7 @@ AL9... (truncated for brevity) ...
               setSelectedArtifactId('') // Clear selection on manual edit
               setSelectedArtifactName('')
             }}
-            className="w-full h-64 bg-black/20 border border-white/10 rounded p-3 text-white font-mono text-xs resize-none focus:border-primary/50 outline-none"
+            className="w-full h-64 bg-black/20 border border-white/10 rounded p-3 text-foreground font-mono text-xs resize-none focus:border-primary/50 outline-none"
             placeholder="Paste PEM content here..."
           />
 
@@ -290,7 +290,7 @@ AL9... (truncated for brevity) ...
               <button
                 onClick={() => handleConvert('DER')}
                 disabled={isConverting || !certInput}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white/10 text-white font-medium rounded hover:bg-white/20 transition-colors disabled:opacity-50 text-xs"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white/10 text-foreground font-medium rounded hover:bg-white/20 transition-colors disabled:opacity-50 text-xs"
               >
                 {isConverting ? (
                   <Loader2 className="animate-spin" size={14} />
@@ -302,7 +302,7 @@ AL9... (truncated for brevity) ...
               <button
                 onClick={() => handleConvert('P7B')}
                 disabled={isConverting || !certInput || certInput.includes('REQUEST')}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white/10 text-white font-medium rounded hover:bg-white/20 transition-colors disabled:opacity-50 text-xs"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white/10 text-foreground font-medium rounded hover:bg-white/20 transition-colors disabled:opacity-50 text-xs"
                 title="CSRs cannot be converted to P7B"
               >
                 {isConverting ? (
@@ -345,14 +345,14 @@ AL9... (truncated for brevity) ...
 
         {/* Output Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Parsed Output</h3>
+          <h3 className="text-lg font-semibold text-foreground">Parsed Output</h3>
           <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[400px] overflow-y-auto custom-scrollbar border border-white/10">
             {parsedOutput ? (
               <pre className="text-blue-300 whitespace-pre-wrap break-all break-words max-w-full">
                 {parsedOutput}
               </pre>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-muted">
+              <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
                 <FileText size={48} className="mb-4 opacity-20" />
                 <p>Parsed details will appear here</p>
               </div>

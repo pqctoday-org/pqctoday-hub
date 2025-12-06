@@ -2,7 +2,7 @@ import React from 'react'
 
 export const BitcoinImplementation: React.FC = () => {
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6 text-foreground">
       <h2 className="text-2xl font-bold mb-4">Part 3: Bitcoin Implementation</h2>
 
       <section>

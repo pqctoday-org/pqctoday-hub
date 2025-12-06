@@ -61,14 +61,14 @@ function App() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-slate-50">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="m-4 sticky top-4 z-50 transition-all duration-300" role="banner">
         <div className="glass-panel p-4 flex w-full justify-between items-center">
           <div className="flex flex-row items-baseline gap-4">
             <img src={pqcLogo} alt="PQC Today Logo" className="object-contain mr-4 h-8 w-auto" />
             <div>
               <h1 className="text-2xl font-bold text-gradient">PQC Today</h1>
-              <p className="text-[10px] text-muted uppercase tracking-widest opacity-60">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest opacity-60">
                 Last Updated: {buildTime}
               </p>
             </div>
@@ -84,15 +84,15 @@ function App() {
                 aria-current={currentView === item.id ? 'page' : undefined}
                 className={
                   currentView === item.id
-                    ? 'bg-white/10 text-primary border border-white/10'
-                    : 'text-muted hover:text-white'
+                    ? 'bg-primary/10 text-primary border border-primary/20'
+                    : 'text-muted-foreground hover:text-foreground'
                 }
               >
                 <item.icon size={18} aria-hidden="true" className="mr-2" />
                 <span className="hidden md:inline">{item.label}</span>
               </Button>
             ))}
-            <div className="ml-2 border-l border-white/10 pl-2">
+            <div className="ml-2 border-l border-border pl-2">
               <ModeToggle />
             </div>
           </nav>
@@ -123,7 +123,7 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 mt-12 py-8 text-center text-muted text-sm">
+      <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm">
         <p>© 2025 PQC Today. Data sourced from the public internet resources.</p>
       </footer>
     </div>

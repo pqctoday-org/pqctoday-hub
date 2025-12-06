@@ -30,19 +30,19 @@ export const ReqConfig: React.FC<ReqConfigProps> = ({
 
   return (
     <div className="space-y-4 animate-fade-in">
-      <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+      <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
         2. Configuration
       </span>
 
       <div className="space-y-3">
-        <label htmlFor="csr-key-select" className="text-xs text-muted block">
+        <label htmlFor="csr-key-select" className="text-xs text-muted-foreground block">
           Private Key
         </label>
         <select
           id="csr-key-select"
           value={selectedCsrKeyFile}
           onChange={(e) => setSelectedCsrKeyFile(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="">Select Private Key...</option>
           {files
@@ -56,14 +56,14 @@ export const ReqConfig: React.FC<ReqConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="csr-digest-select" className="text-xs text-muted block">
+        <label htmlFor="csr-digest-select" className="text-xs text-muted-foreground block">
           Digest Algorithm
         </label>
         <select
           id="csr-digest-select"
           value={digestAlgo}
           onChange={(e) => setDigestAlgo(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="sha256">SHA-256</option>
           <option value="sha384">SHA-384</option>
@@ -72,7 +72,7 @@ export const ReqConfig: React.FC<ReqConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="csr-cn-input" className="text-xs text-muted block">
+        <label htmlFor="csr-cn-input" className="text-xs text-muted-foreground block">
           Common Name (CN)
         </label>
         <input
@@ -80,13 +80,13 @@ export const ReqConfig: React.FC<ReqConfigProps> = ({
           type="text"
           value={commonName}
           onChange={(e) => setCommonName(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="example.com"
         />
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="csr-org-input" className="text-xs text-muted block">
+        <label htmlFor="csr-org-input" className="text-xs text-muted-foreground block">
           Organization (O)
         </label>
         <input
@@ -94,13 +94,13 @@ export const ReqConfig: React.FC<ReqConfigProps> = ({
           type="text"
           value={org}
           onChange={(e) => setOrg(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="My Organization"
         />
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="csr-country-input" className="text-xs text-muted block">
+        <label htmlFor="csr-country-input" className="text-xs text-muted-foreground block">
           Country (C)
         </label>
         <input
@@ -108,7 +108,7 @@ export const ReqConfig: React.FC<ReqConfigProps> = ({
           type="text"
           value={country}
           onChange={(e) => setCountry(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="US"
           maxLength={2}
         />

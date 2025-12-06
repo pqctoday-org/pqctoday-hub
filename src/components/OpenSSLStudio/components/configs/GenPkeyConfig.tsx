@@ -27,19 +27,19 @@ export const GenPkeyConfig: React.FC<GenPkeyConfigProps> = ({
 }) => {
   return (
     <div className="space-y-4 animate-fade-in">
-      <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+      <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
         2. Configuration
       </span>
 
       <div className="space-y-3">
-        <label htmlFor="algo-select" className="text-xs text-muted block">
+        <label htmlFor="algo-select" className="text-xs text-muted-foreground block">
           Algorithm
         </label>
         <select
           id="algo-select"
           value={keyAlgo}
           onChange={(e) => setKeyAlgo(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <optgroup label="Classic">
             <option value="rsa">RSA</option>
@@ -78,14 +78,14 @@ export const GenPkeyConfig: React.FC<GenPkeyConfigProps> = ({
 
       {keyAlgo === 'rsa' && (
         <div className="space-y-3">
-          <label htmlFor="bits-select" className="text-xs text-muted block">
+          <label htmlFor="bits-select" className="text-xs text-muted-foreground block">
             Key Size (Bits)
           </label>
           <select
             id="bits-select"
             value={keyBits}
             onChange={(e) => setKeyBits(e.target.value)}
-            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           >
             <option value="2048">2048</option>
             <option value="3072">3072</option>
@@ -96,14 +96,14 @@ export const GenPkeyConfig: React.FC<GenPkeyConfigProps> = ({
 
       {keyAlgo === 'ec' && (
         <div className="space-y-3">
-          <label htmlFor="curve-select" className="text-xs text-muted block">
+          <label htmlFor="curve-select" className="text-xs text-muted-foreground block">
             Curve
           </label>
           <select
             id="curve-select"
             value={curve}
             onChange={(e) => setCurve(e.target.value)}
-            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           >
             <option value="P-256">P-256</option>
             <option value="P-384">P-384</option>
@@ -114,14 +114,14 @@ export const GenPkeyConfig: React.FC<GenPkeyConfigProps> = ({
       )}
 
       <div className="space-y-3">
-        <label htmlFor="cipher-select" className="text-xs text-muted block">
+        <label htmlFor="cipher-select" className="text-xs text-muted-foreground block">
           Encryption (Optional)
         </label>
         <select
           id="cipher-select"
           value={cipher}
           onChange={(e) => setCipher(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="none">None (Unencrypted)</option>
           <option value="aes-128-cbc">AES-128-CBC</option>
@@ -132,7 +132,7 @@ export const GenPkeyConfig: React.FC<GenPkeyConfigProps> = ({
 
       {cipher !== 'none' && (
         <div className="space-y-3">
-          <label htmlFor="passphrase-input" className="text-xs text-muted block">
+          <label htmlFor="passphrase-input" className="text-xs text-muted-foreground block">
             Passphrase
           </label>
           <input
@@ -140,7 +140,7 @@ export const GenPkeyConfig: React.FC<GenPkeyConfigProps> = ({
             type="password"
             value={passphrase}
             onChange={(e) => setPassphrase(e.target.value)}
-            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           />
         </div>
       )}

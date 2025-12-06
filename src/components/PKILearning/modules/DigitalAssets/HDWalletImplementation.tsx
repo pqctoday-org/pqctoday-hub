@@ -8,10 +8,10 @@ interface HDWalletImplementationProps {
 
 export const HDWalletImplementation: React.FC<HDWalletImplementationProps> = ({ onBack }) => {
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6 text-foreground">
       <button
         onClick={onBack}
-        className="flex items-center gap-2 text-muted hover:text-white mb-6 transition-colors"
+        className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
       >
         <ArrowLeft size={20} />
         Back to Modules
@@ -49,7 +49,7 @@ BIP32 / BIP39 / BIP44 Standard:
 
       <section>
         <h3 className="text-xl font-semibold mb-3">6.2 Interactive HD Wallet Generator</h3>
-        <p className="text-muted mb-4">
+        <p className="text-muted-foreground mb-4">
           This interactive tool uses a hybrid approach: <strong>OpenSSL</strong> generates the
           entropy, and <strong>JavaScript</strong> libraries (Scure/Noble) handle the BIP39/BIP32
           derivation which OpenSSL does not support natively.

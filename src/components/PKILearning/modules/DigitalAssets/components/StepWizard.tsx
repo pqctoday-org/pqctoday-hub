@@ -70,13 +70,13 @@ export const StepWizard: React.FC<StepWizardProps> = ({
               </div>
             </div>
 
-            <h2 className="text-2xl font-bold text-white mb-2">{step.title}</h2>
-            <p className="text-muted-foreground mb-6">{step.description}</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">{step.title}</h2>
+            <p className="text-muted-foreground-foreground mb-6">{step.description}</p>
 
             {step.explanationTable ? (
               <div className="mb-6 overflow-hidden rounded-lg border border-white/10">
                 <table className="w-full text-left text-sm table-fixed">
-                  <thead className="bg-white/5 text-muted-foreground">
+                  <thead className="bg-white/5 text-muted-foreground-foreground">
                     <tr>
                       <th className="p-3 font-medium w-[20%]">Field</th>
                       <th className="p-3 font-medium w-[50%]">Value</th>
@@ -87,10 +87,12 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                     {step.explanationTable.map((row, i) => (
                       <tr key={i} className="hover:bg-white/5 transition-colors">
                         <td className="p-3 font-mono text-primary-300 break-words">{row.label}</td>
-                        <td className="p-3 font-mono text-white/80 break-all break-words max-w-full whitespace-pre-wrap">
+                        <td className="p-3 font-mono text-foreground/80 break-all break-words max-w-full whitespace-pre-wrap">
                           {row.value}
                         </td>
-                        <td className="p-3 text-muted-foreground break-words">{row.description}</td>
+                        <td className="p-3 text-muted-foreground-foreground break-words">
+                          {row.description}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -99,7 +101,9 @@ export const StepWizard: React.FC<StepWizardProps> = ({
             ) : (
               <div className="bg-black/40 rounded-lg p-4 font-mono text-sm border border-white/5 mb-6 overflow-x-auto">
                 <div className="flex items-center justify-between mb-2 border-b border-white/10 pb-2">
-                  <span className="text-xs text-muted-foreground uppercase">{step.language}</span>
+                  <span className="text-xs text-muted-foreground-foreground uppercase">
+                    {step.language}
+                  </span>
                 </div>
                 <pre className="text-primary-300 whitespace-pre-wrap break-all break-words max-w-full">
                   {step.code}
@@ -111,7 +115,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
               <button
                 onClick={onBack}
                 disabled={isExecuting}
-                className="px-4 py-2 rounded-lg border border-white/10 text-white hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-4 py-2 rounded-lg border border-white/10 text-foreground hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 <ChevronLeft size={16} />
                 Back
@@ -121,7 +125,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                 <button
                   onClick={onExecute}
                   disabled={isExecuting}
-                  className="flex-1 px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-500 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-500 text-foreground font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isExecuting ? (
                     <>
@@ -139,7 +143,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                 <button
                   onClick={onNext}
                   disabled={currentStepIndex === steps.length - 1}
-                  className="flex-1 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 text-foreground font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   Next Step
                   <ChevronRight size={16} />
@@ -153,7 +157,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
         <div className="flex flex-col space-y-6 min-w-0">
           <div className="bg-black/80 border border-white/10 rounded-xl p-4 flex-1 flex flex-col font-mono text-sm relative overflow-hidden max-h-[600px] min-w-0">
             <div className="absolute top-0 left-0 right-0 bg-white/5 p-2 flex items-center justify-between border-b border-white/10">
-              <span className="text-xs text-muted-foreground">TERMINAL OUTPUT</span>
+              <span className="text-xs text-muted-foreground-foreground">TERMINAL OUTPUT</span>
               {isStepComplete && <CheckCircle size={14} className="text-green-500" />}
             </div>
 
@@ -163,7 +167,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                   {output}
                 </pre>
               ) : (
-                <div className="h-full flex items-center justify-center text-white/20">
+                <div className="h-full flex items-center justify-center text-foreground/20">
                   Waiting for execution...
                 </div>
               )}

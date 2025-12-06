@@ -170,8 +170,8 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
           <KeyIcon size={20} />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-white">{selectedKey.name}</h3>
-          <div className="flex gap-4 text-xs text-muted font-mono mt-1">
+          <h3 className="text-lg font-bold text-foreground">{selectedKey.name}</h3>
+          <div className="flex gap-4 text-xs text-muted-foreground font-mono mt-1">
             <span>ID: {selectedKey.id}</span>
             <span>•</span>
             <span>{selectedKey.algorithm}</span>
@@ -193,7 +193,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
           <div className="flex justify-between items-center">
             <label
               htmlFor="raw-value-input"
-              className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2"
+              className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2"
             >
               <FileText size={14} /> Raw Value
             </label>
@@ -204,8 +204,8 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
                     rawValueMode === 'hex'
-                      ? 'bg-white/10 text-white'
-                      : 'text-muted hover:text-white'
+                      ? 'bg-white/10 text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
                   HEX
@@ -215,8 +215,8 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
                     rawValueMode === 'ascii'
-                      ? 'bg-white/10 text-white'
-                      : 'text-muted hover:text-white'
+                      ? 'bg-white/10 text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
                   ASCII
@@ -224,7 +224,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
               </div>
               <button
                 onClick={() => copyToClipboard(displayRaw, 'raw')}
-                className="p-1.5 text-muted hover:text-white transition-colors"
+                className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                 title="Copy to clipboard"
               >
                 {copiedRaw ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
@@ -237,7 +237,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 readOnly
                 rows={1}
                 value={ruler}
-                className="w-full bg-black/30 border-x border-t border-white/10 rounded-t-lg p-3 text-[11px] text-muted/50 resize-none focus:outline-none overflow-hidden whitespace-pre select-none block"
+                className="w-full bg-black/30 border-x border-t border-white/10 rounded-t-lg p-3 text-[11px] text-muted-foreground/50 resize-none focus:outline-none overflow-hidden whitespace-pre select-none block"
                 style={{ fontFamily: '"Courier New", Courier, monospace', lineHeight: '1.5' }}
               />
             </div>
@@ -247,7 +247,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 rows={8}
                 value={displayRaw}
                 onChange={(e) => setRawOverride(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded-b-lg p-3 text-[11px] text-muted resize-none focus:outline-none focus:border-primary/50 break-all -mt-[1px] block"
+                className="w-full bg-black/20 border border-white/10 rounded-b-lg p-3 text-[11px] text-muted-foreground resize-none focus:outline-none focus:border-primary/50 break-all -mt-[1px] block"
                 style={{ fontFamily: '"Courier New", Courier, monospace', lineHeight: '1.5' }}
               />
             </div>
@@ -259,7 +259,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
           <div className="flex justify-between items-center">
             <label
               htmlFor="pkcs8-preview-input"
-              className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2"
+              className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2"
             >
               <Code size={14} /> PKCS#8 Preview
             </label>
@@ -270,8 +270,8 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
                     pkcs8ValueMode === 'hex'
-                      ? 'bg-white/10 text-white'
-                      : 'text-muted hover:text-white'
+                      ? 'bg-white/10 text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
                   HEX
@@ -281,8 +281,8 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
                     pkcs8ValueMode === 'ascii'
-                      ? 'bg-white/10 text-white'
-                      : 'text-muted hover:text-white'
+                      ? 'bg-white/10 text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
                   PEM
@@ -290,7 +290,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
               </div>
               <button
                 onClick={() => copyToClipboard(displayPkcs8, 'pkcs8')}
-                className="p-1.5 text-muted hover:text-white transition-colors"
+                className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                 title="Copy to clipboard"
               >
                 {' '}
@@ -304,7 +304,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 readOnly
                 rows={1}
                 value={ruler}
-                className="w-full bg-black/30 border-x border-t border-white/10 rounded-t-lg p-3 text-[11px] text-muted/50 resize-none focus:outline-none overflow-hidden whitespace-pre select-none block"
+                className="w-full bg-black/30 border-x border-t border-white/10 rounded-t-lg p-3 text-[11px] text-muted-foreground/50 resize-none focus:outline-none overflow-hidden whitespace-pre select-none block"
                 style={{ fontFamily: '"Courier New", Courier, monospace', lineHeight: '1.5' }}
               />
             </div>
@@ -314,7 +314,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 rows={8}
                 value={displayPkcs8}
                 onChange={(e) => setPkcs8Override(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded-b-lg p-3 text-[11px] text-muted resize-none focus:outline-none focus:border-primary/50 break-all -mt-[1px] block"
+                className="w-full bg-black/20 border border-white/10 rounded-b-lg p-3 text-[11px] text-muted-foreground resize-none focus:outline-none focus:border-primary/50 break-all -mt-[1px] block"
                 style={{ fontFamily: '"Courier New", Courier, monospace', lineHeight: '1.5' }}
               />
             </div>

@@ -12,19 +12,19 @@ export const SymmetricTab: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
-      <h4 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
+      <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
         <Lock size={18} className="text-accent" /> Symmetric Encryption (AES-GCM)
       </h4>
 
       {/* Key Selection */}
       <div className="mb-6 p-6 bg-black/20 rounded-xl border border-white/5">
-        <h5 className="text-sm font-bold text-muted uppercase tracking-wider flex items-center gap-2 mb-4">
+        <h5 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
           <KeyIcon size={14} /> Select Symmetric Key
         </h5>
         <select
           value={selectedSymKeyId}
           onChange={(e) => setSelectedSymKeyId(e.target.value)}
-          className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-accent"
+          className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent"
         >
           <option value="">Select AES Key...</option>
           {keyStore
@@ -43,16 +43,18 @@ export const SymmetricTab: React.FC = () => {
             return (
               <div className="mt-4 p-3 bg-black/40 rounded border border-white/10 text-xs space-y-1 animate-fade-in">
                 <div className="flex justify-between">
-                  <span className="text-muted">Algorithm:</span>
+                  <span className="text-muted-foreground">Algorithm:</span>
                   <span className="text-accent font-mono font-bold">{key.algorithm}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted">Mode:</span>
-                  <span className="text-white font-mono">GCM (Galois/Counter Mode)</span>
+                  <span className="text-muted-foreground">Mode:</span>
+                  <span className="text-foreground font-mono">GCM (Galois/Counter Mode)</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted">IV (Nonce):</span>
-                  <span className="text-white font-mono">12 bytes (Prepend to Ciphertext)</span>
+                  <span className="text-muted-foreground">IV (Nonce):</span>
+                  <span className="text-foreground font-mono">
+                    12 bytes (Prepend to Ciphertext)
+                  </span>
                 </div>
               </div>
             )

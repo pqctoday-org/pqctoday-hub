@@ -9,7 +9,7 @@ export const AlgorithmsView = () => {
           <Binary className="text-primary" aria-hidden="true" />
           Algorithm Transition
         </h2>
-        <p className="text-muted">
+        <p className="text-muted-foreground">
           Migration from classical to post-quantum cryptographic algorithms
         </p>
       </div>

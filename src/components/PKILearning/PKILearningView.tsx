@@ -14,7 +14,7 @@ export const PKILearningView: React.FC = () => {
         <div>
           <button
             onClick={() => setActiveModule(null)}
-            className="flex items-center gap-2 text-muted hover:text-white mb-6 transition-colors"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
           >
             <ArrowLeft size={20} />
             Back to Dashboard

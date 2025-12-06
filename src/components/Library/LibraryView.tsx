@@ -67,11 +67,11 @@ export const LibraryView: React.FC = () => {
     <div className="space-y-8">
       <div className="flex flex-col gap-2">
         <h2 className="text-3xl font-bold text-gradient">PQC Standards Library</h2>
-        <p className="text-muted">
+        <p className="text-muted-foreground">
           Explore the latest Post-Quantum Cryptography standards, drafts, and related documents.
         </p>
         {libraryMetadata && (
-          <p className="text-xs text-muted/60 font-mono">
+          <p className="text-xs text-muted-foreground/60 font-mono">
             Data Source: {libraryMetadata.filename} • Updated:{' '}
             {libraryMetadata.lastUpdate.toLocaleDateString()}
           </p>
@@ -94,7 +94,7 @@ export const LibraryView: React.FC = () => {
           <div role="tabpanel" id="panel-All" aria-labelledby="tab-All">
             {sections.map((section) => (
               <div key={section} className="space-y-4 mb-8">
-                <h3 className="text-xl font-semibold text-white border-b border-white/10 pb-2">
+                <h3 className="text-xl font-semibold text-foreground border-b border-white/10 pb-2">
                   {section}
                 </h3>
                 {(groupedData.get(section)?.length ?? 0) > 0 ? (
@@ -103,7 +103,9 @@ export const LibraryView: React.FC = () => {
                     defaultSort={{ key: 'lastUpdateDate', direction: 'desc' }}
                   />
                 ) : (
-                  <p className="text-sm text-muted italic">No documents found in this section.</p>
+                  <p className="text-sm text-muted-foreground italic">
+                    No documents found in this section.
+                  </p>
                 )}
               </div>
             ))}
@@ -115,7 +117,7 @@ export const LibraryView: React.FC = () => {
             aria-labelledby={`tab-${activeTab}`}
             className="space-y-4"
           >
-            <h3 className="text-xl font-semibold text-white border-b border-white/10 pb-2">
+            <h3 className="text-xl font-semibold text-foreground border-b border-white/10 pb-2">
               {activeTab}
             </h3>
             {(groupedData.get(activeTab)?.length ?? 0) > 0 ? (
@@ -124,7 +126,9 @@ export const LibraryView: React.FC = () => {
                 defaultSort={{ key: 'lastUpdateDate', direction: 'desc' }}
               />
             ) : (
-              <p className="text-sm text-muted italic">No documents found in this section.</p>
+              <p className="text-sm text-muted-foreground italic">
+                No documents found in this section.
+              </p>
             )}
           </div>
         )}

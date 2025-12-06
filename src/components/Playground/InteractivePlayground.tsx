@@ -53,12 +53,12 @@ const PlaygroundContent = () => {
         </h3>
         {lastLogEntry && (
           <div className="flex items-center gap-4 text-xs font-mono bg-black/20 px-3 py-1.5 rounded-lg border border-white/5 animate-fade-in">
-            <span className="text-muted">{lastLogEntry.operation}</span>
-            <span className="text-white/50">|</span>
+            <span className="text-muted-foreground">{lastLogEntry.operation}</span>
+            <span className="text-foreground/50">|</span>
             <span className="text-accent max-w-[200px] truncate" title={lastLogEntry.result}>
               {lastLogEntry.result}
             </span>
-            <span className="text-white/50">|</span>
+            <span className="text-foreground/50">|</span>
             <span
               className={clsx(
                 'font-bold',
@@ -84,7 +84,7 @@ const PlaygroundContent = () => {
           className={
             activeTab === 'keystore'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted hover:text-white hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
           }
         >
           <KeyIcon size={16} className="mr-2" /> Key Store ({keyStore.length})
@@ -96,7 +96,7 @@ const PlaygroundContent = () => {
           className={
             activeTab === 'data'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted hover:text-white hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
           }
         >
           <Database size={16} className="mr-2" /> Data
@@ -108,7 +108,7 @@ const PlaygroundContent = () => {
           className={
             activeTab === 'kem_ops'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted hover:text-white hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
           }
         >
           <Activity size={16} className="mr-2" /> KEM & Encrypt
@@ -120,7 +120,7 @@ const PlaygroundContent = () => {
           className={
             activeTab === 'symmetric'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted hover:text-white hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
           }
         >
           <Lock size={16} className="mr-2" /> Sym Encrypt
@@ -132,7 +132,7 @@ const PlaygroundContent = () => {
           className={
             activeTab === 'sign_verify'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted hover:text-white hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
           }
         >
           <FileSignature size={16} className="mr-2" /> Sign & Verify
@@ -144,7 +144,7 @@ const PlaygroundContent = () => {
           className={
             activeTab === 'acvp'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted hover:text-white hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
           }
         >
           <ShieldCheck size={16} className="mr-2" /> ACVP
@@ -156,7 +156,7 @@ const PlaygroundContent = () => {
           className={
             activeTab === 'settings'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted hover:text-white hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
           }
         >
           <Settings size={16} className="mr-2" /> Settings
@@ -168,7 +168,7 @@ const PlaygroundContent = () => {
           className={
             activeTab === 'logs'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted hover:text-white hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
           }
         >
           <FileText size={16} className="mr-2" /> Logs

@@ -517,7 +517,7 @@ distinguished_name = dn
         <div className="space-y-6">
           {/* Key Selection Section */}
           <div className="glass-panel p-5 border border-white/10">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
               <Key className="text-primary" size={20} />
               Key Configuration
             </h3>
@@ -526,14 +526,14 @@ distinguished_name = dn
               <table className="w-full text-sm border-collapse">
                 <tbody>
                   <tr>
-                    <td className="pt-0 pb-3 text-muted w-[180px] align-middle">
+                    <td className="pt-0 pb-3 text-muted-foreground w-[180px] align-middle">
                       Private Key Source
                     </td>
                     <td className="pt-0 pb-3 align-middle">
                       <select
                         value={selectedKeyId}
                         onChange={(e) => setSelectedKeyId(e.target.value)}
-                        className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
+                        className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
                       >
                         <optgroup label="Generate New Key">
                           {ALGORITHMS.map((algo) => (
@@ -561,7 +561,7 @@ distinguished_name = dn
 
           {/* Profile Selection Section */}
           <div className="glass-panel p-5 border border-white/10">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
               <FileText className="text-primary" size={20} />
               Load Profile
             </h3>
@@ -571,12 +571,14 @@ distinguished_name = dn
                 <tbody>
                   {/* Row 1: Profile Name */}
                   <tr className="border-b border-white/5">
-                    <td className="pt-0 pb-3 text-muted w-[180px] align-middle">Profile Name</td>
+                    <td className="pt-0 pb-3 text-muted-foreground w-[180px] align-middle">
+                      Profile Name
+                    </td>
                     <td className="pt-0 pb-3 align-middle">
                       <select
                         value={selectedProfile}
                         onChange={(e) => handleProfileSelect(e.target.value)}
-                        className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
+                        className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
                       >
                         <option value="">Select...</option>
                         {availableProfiles.map((profile) => (
@@ -590,30 +592,30 @@ distinguished_name = dn
 
                   {/* Row 2: Industry */}
                   <tr className="border-b border-white/5">
-                    <td className="py-3 text-muted align-middle">Industry</td>
-                    <td className="py-3 text-white font-medium align-middle">
+                    <td className="py-3 text-muted-foreground align-middle">Industry</td>
+                    <td className="py-3 text-foreground font-medium align-middle">
                       {profileMetadata?.industry || '-'}
                     </td>
                   </tr>
 
                   {/* Row 3: Standard */}
                   <tr className="border-b border-white/5">
-                    <td className="py-3 text-muted align-middle">Standard</td>
-                    <td className="py-3 text-white font-medium align-middle">
+                    <td className="py-3 text-muted-foreground align-middle">Standard</td>
+                    <td className="py-3 text-foreground font-medium align-middle">
                       {profileMetadata?.standard || '-'}
                     </td>
                   </tr>
 
                   {/* Row 4: Standard Date */}
                   <tr>
-                    <td className="py-3 text-muted align-middle">Standard Date</td>
-                    <td className="py-3 text-white font-medium align-middle">
+                    <td className="py-3 text-muted-foreground align-middle">Standard Date</td>
+                    <td className="py-3 text-foreground font-medium align-middle">
                       {profileMetadata?.date || '-'}
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-3 text-muted align-middle">Constraints</td>
-                    <td className="py-3 text-white font-medium align-middle text-xs leading-relaxed">
+                    <td className="py-3 text-muted-foreground align-middle">Constraints</td>
+                    <td className="py-3 text-foreground font-medium align-middle text-xs leading-relaxed">
                       {profileConstraints.length > 0
                         ? profileConstraints.map((c) => `${c.name}=${c.value}`).join(' | ')
                         : '-'}
@@ -626,7 +628,7 @@ distinguished_name = dn
 
           {/* X.509 Attributes Section */}
           <div className="glass-panel p-5 border border-white/10">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
               <Shield className="text-primary" size={20} />
               X.509 Attributes
             </h3>
@@ -634,7 +636,7 @@ distinguished_name = dn
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-white/10 text-muted text-xs uppercase tracking-wider">
+                  <tr className="border-b border-white/10 text-muted-foreground text-xs uppercase tracking-wider">
                     <th className="p-3 w-10 text-center">Use</th>
                     <th className="p-3">Type</th>
                     <th className="p-3">Name</th>
@@ -659,8 +661,8 @@ distinguished_name = dn
                           className="rounded border-white/20 bg-black/40 text-primary focus:ring-primary cursor-pointer w-4 h-4"
                         />
                       </td>
-                      <td className="p-3 text-muted text-xs">{attr.elementType}</td>
-                      <td className="p-3 text-white font-medium text-sm">
+                      <td className="p-3 text-muted-foreground text-xs">{attr.elementType}</td>
+                      <td className="p-3 text-foreground font-medium text-sm">
                         <div className="flex flex-col">
                           <span>{attr.label}</span>
                           <div className="flex gap-1 mt-1">
@@ -679,10 +681,12 @@ distinguished_name = dn
                           onChange={(e) => handleAttributeChange(attr.id, 'value', e.target.value)}
                           placeholder={attr.placeholder}
                           disabled={!attr.enabled}
-                          className="w-full bg-black/40 border border-white/10 rounded px-2 py-1.5 text-sm text-white focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full bg-black/40 border border-white/10 rounded px-2 py-1.5 text-sm text-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                       </td>
-                      <td className="p-3 text-muted text-xs max-w-[200px]">{attr.description}</td>
+                      <td className="p-3 text-muted-foreground text-xs max-w-[200px]">
+                        {attr.description}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -702,14 +706,14 @@ distinguished_name = dn
 
         {/* Output Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Console Output</h3>
+          <h3 className="text-lg font-semibold text-foreground">Console Output</h3>
           <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[600px] overflow-y-auto custom-scrollbar border border-white/10">
             <pre className="text-green-400 whitespace-pre-wrap break-all break-words max-w-full">
               {output}
             </pre>
             {csr && (
               <div className="mt-4 pt-4 border-t border-white/10">
-                <p className="text-muted mb-2">Generated CSR:</p>
+                <p className="text-muted-foreground mb-2">Generated CSR:</p>
                 <pre className="text-blue-300 whitespace-pre-wrap break-all break-words max-w-full">
                   {csr}
                 </pre>

@@ -291,25 +291,25 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         {/* Step 1: CSR Selection */}
         <div className="glass-panel p-5 border border-white/10">
           <div className="mb-4 border-b border-white/10 pb-3">
-            <h3 className="text-lg font-bold text-white flex items-center gap-3">
+            <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
               <span className="text-primary font-mono text-xl">01</span>
-              <span className="text-white/80">|</span>
+              <span className="text-foreground/80">|</span>
               RECEIVE & VALIDATE
             </h3>
-            <p className="text-xs text-muted mt-1 ml-11">
+            <p className="text-xs text-muted-foreground mt-1 ml-11">
               Verify CSR signature • Validate subject identity • Extract public key
             </p>
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="csr-select" className="text-sm text-muted">
+            <label htmlFor="csr-select" className="text-sm text-muted-foreground">
               Certificate Signing Request
             </label>
             <select
               id="csr-select"
               value={selectedCsrId}
               onChange={(e) => handleCsrSelect(e.target.value)}
-              className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
+              className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
             >
               <option value="">-- Select CSR --</option>
               {csrs.map((csr) => (
@@ -327,26 +327,26 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         {/* Step 2: Profile Selection */}
         <div className="glass-panel p-5 border border-white/10">
           <div className="mb-4 border-b border-white/10 pb-3">
-            <h3 className="text-lg font-bold text-white flex items-center gap-3">
+            <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
               <span className="text-primary font-mono text-xl">02</span>
-              <span className="text-white/80">|</span>
+              <span className="text-foreground/80">|</span>
               SELECT PROFILE
             </h3>
-            <p className="text-xs text-muted mt-1 ml-11">
+            <p className="text-xs text-muted-foreground mt-1 ml-11">
               Match certificate type • Check validation level • Apply policies
             </p>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="profile-select" className="text-sm text-muted">
+              <label htmlFor="profile-select" className="text-sm text-muted-foreground">
                 Certificate Profile
               </label>
               <select
                 id="profile-select"
                 value={selectedProfile}
                 onChange={(e) => handleProfileSelect(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
+                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
               >
                 <option value="">-- Select a Profile --</option>
                 {availableProfiles.map((profile) => (
@@ -360,16 +360,16 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
             {profileMetadata && (
               <div className="text-xs space-y-2 p-3 bg-black/20 rounded border border-white/5">
                 <div className="flex justify-between">
-                  <span className="text-muted">Industry:</span>
-                  <span className="text-white">{profileMetadata.industry}</span>
+                  <span className="text-muted-foreground">Industry:</span>
+                  <span className="text-foreground">{profileMetadata.industry}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted">Standard:</span>
-                  <span className="text-white">{profileMetadata.standard}</span>
+                  <span className="text-muted-foreground">Standard:</span>
+                  <span className="text-foreground">{profileMetadata.standard}</span>
                 </div>
                 <div className="pt-2 border-t border-white/5">
-                  <span className="text-muted block mb-1">Constraints:</span>
-                  <span className="text-white block leading-relaxed">
+                  <span className="text-muted-foreground block mb-1">Constraints:</span>
+                  <span className="text-foreground block leading-relaxed">
                     {profileConstraints.length > 0
                       ? profileConstraints.map((c) => `${c.name}=${c.value}`).join(' | ')
                       : '-'}
@@ -384,13 +384,13 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       {/* Row 2: Step 3 (Attributes) */}
       <div className="glass-panel p-5 border border-white/10">
         <div className="mb-4 border-b border-white/10 pb-3">
-          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
             <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold">
               3
             </span>
             BUILD CERTIFICATE
           </h3>
-          <p className="text-xs text-muted mt-1 ml-8">
+          <p className="text-xs text-muted-foreground mt-1 ml-8">
             Combine Key & Subject • Generate Serial & Validity • Prepare TBSCertificate
           </p>
         </div>
@@ -407,27 +407,27 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         {/* Step 4: Signing */}
         <div className="glass-panel p-5 border border-white/10 h-fit">
           <div className="mb-4 border-b border-white/10 pb-3">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
               <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold">
                 4
               </span>
               SIGN WITH CA KEY
             </h3>
-            <p className="text-xs text-muted mt-1 ml-8">
+            <p className="text-xs text-muted-foreground mt-1 ml-8">
               Hash TBSCertificate • Sign with CA Private Key • Append Signature
             </p>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="ca-key-select" className="text-sm text-muted">
+              <label htmlFor="ca-key-select" className="text-sm text-muted-foreground">
                 Signing CA Key
               </label>
               <select
                 id="ca-key-select"
                 value={selectedKeyId}
                 onChange={(e) => setSelectedKeyId(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
+                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
               >
                 <option value="">-- Select CA Key --</option>
                 {rootKeys.map((key) => (
@@ -438,7 +438,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
               </select>
             </div>
             <div className="space-y-2">
-              <label htmlFor="validity-input" className="text-sm text-muted">
+              <label htmlFor="validity-input" className="text-sm text-muted-foreground">
                 Validity (Days)
               </label>
               <input
@@ -446,7 +446,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
                 type="number"
                 value={validityDays}
                 onChange={(e) => setValidityDays(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
+                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
               />
             </div>
             <button
@@ -462,14 +462,14 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
 
         {/* Output Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Console Output</h3>
+          <h3 className="text-lg font-semibold text-foreground">Console Output</h3>
           <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[300px] overflow-y-auto custom-scrollbar border border-white/10">
             <pre className="text-green-400 whitespace-pre-wrap break-all break-words max-w-full">
               {output}
             </pre>
             {signedCert && (
               <div className="mt-4 pt-4 border-t border-white/10">
-                <p className="text-muted mb-2">Signed Certificate:</p>
+                <p className="text-muted-foreground mb-2">Signed Certificate:</p>
                 <pre className="text-blue-300 whitespace-pre-wrap break-all break-words max-w-full">
                   {signedCert}
                 </pre>

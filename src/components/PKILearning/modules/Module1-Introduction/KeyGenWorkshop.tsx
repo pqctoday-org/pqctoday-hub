@@ -72,10 +72,10 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Configuration</h3>
+          <h3 className="text-lg font-semibold text-foreground">Configuration</h3>
 
           <div>
-            <label htmlFor="algo-select" className="block text-sm text-muted mb-1">
+            <label htmlFor="algo-select" className="block text-sm text-muted-foreground mb-1">
               Algorithm
             </label>
             <select
@@ -86,7 +86,7 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
                 if (e.target.value === 'EC') setKeySize('P-256')
                 else if (e.target.value === 'RSA') setKeySize('2048')
               }}
-              className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white"
+              className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground"
             >
               <option value="RSA">RSA (Classic)</option>
               <option value="EC">Elliptic Curve (Modern)</option>
@@ -96,14 +96,14 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
 
           {algorithm !== 'ED25519' && (
             <div>
-              <label htmlFor="size-select" className="block text-sm text-muted mb-1">
+              <label htmlFor="size-select" className="block text-sm text-muted-foreground mb-1">
                 {algorithm === 'RSA' ? 'Key Size (bits)' : 'Curve'}
               </label>
               <select
                 id="size-select"
                 value={keySize}
                 onChange={(e) => setKeySize(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-white"
+                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground"
               >
                 {algorithm === 'RSA' ? (
                   <>
@@ -131,7 +131,7 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Output</h3>
+          <h3 className="text-lg font-semibold text-foreground">Output</h3>
           <div className="bg-black/40 rounded-lg p-4 font-mono text-sm h-[300px] overflow-y-auto custom-scrollbar border border-white/10">
             <pre className="text-green-400 whitespace-pre-wrap">{output}</pre>
           </div>

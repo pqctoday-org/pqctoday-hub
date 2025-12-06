@@ -76,7 +76,9 @@ export const DigitalAssetsModule: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gradient mb-2">Digital Assets Program</h1>
-          <p className="text-muted">Master the cryptographic primitives of major blockchains.</p>
+          <p className="text-muted-foreground">
+            Master the cryptographic primitives of major blockchains.
+          </p>
         </div>
         <button
           onClick={handleReset}
@@ -97,7 +99,7 @@ export const DigitalAssetsModule: React.FC = () => {
             <button
               key={step.id}
               onClick={() => setCurrentStep(idx)}
-              className={`flex flex-col items-center gap-2 group ${idx === currentStep ? 'text-primary' : 'text-muted'}`}
+              className={`flex flex-col items-center gap-2 group ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
             >
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
@@ -106,7 +108,7 @@ export const DigitalAssetsModule: React.FC = () => {
                     ? 'border-primary text-primary shadow-[0_0_15px_rgba(0,255,157,0.3)]'
                     : idx < currentStep
                       ? 'border-green-500 text-green-500'
-                      : 'border-white/20 text-muted'
+                      : 'border-white/20 text-muted-foreground'
                 }
               `}
               >
@@ -123,8 +125,8 @@ export const DigitalAssetsModule: React.FC = () => {
       {/* Content Area */}
       <div className="glass-panel p-8 min-h-[600px] animate-fade-in">
         <div className="mb-6 border-b border-white/10 pb-4">
-          <h2 className="text-2xl font-bold text-white">{steps[currentStep].title}</h2>
-          <p className="text-muted">{steps[currentStep].description}</p>
+          <h2 className="text-2xl font-bold text-foreground">{steps[currentStep].title}</h2>
+          <p className="text-muted-foreground">{steps[currentStep].description}</p>
         </div>
         {steps[currentStep].component}
       </div>
@@ -134,7 +136,7 @@ export const DigitalAssetsModule: React.FC = () => {
         <button
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
-          className="px-6 py-2 rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 transition-colors text-white"
+          className="px-6 py-2 rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 transition-colors text-foreground"
         >
           ← Previous Step
         </button>

@@ -16,12 +16,12 @@ export const WorkbenchHeader: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+      <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
         0. Configuration
       </span>
       <button
         onClick={handleEditConfig}
-        className="w-full p-3 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-muted hover:text-white transition-colors flex items-center gap-2 text-sm"
+        className="w-full p-3 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 text-sm"
       >
         <Settings size={16} /> Edit OpenSSL Config (openssl.cnf)
       </button>

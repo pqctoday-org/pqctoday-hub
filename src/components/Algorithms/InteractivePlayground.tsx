@@ -228,7 +228,9 @@ export const InteractivePlayground = () => {
             aria-pressed={algorithm === 'ML-KEM'}
             className={clsx(
               'px-4 py-2 rounded-md text-sm font-bold transition-colors',
-              algorithm === 'ML-KEM' ? 'bg-primary/20 text-primary' : 'text-muted hover:text-white'
+              algorithm === 'ML-KEM'
+                ? 'bg-primary/20 text-primary'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             ML-KEM (Encryption)
@@ -244,7 +246,7 @@ export const InteractivePlayground = () => {
               'px-4 py-2 rounded-md text-sm font-bold transition-colors',
               algorithm === 'ML-DSA'
                 ? 'bg-secondary/20 text-secondary'
-                : 'text-muted hover:text-white'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             ML-DSA (Signing)
@@ -259,7 +261,7 @@ export const InteractivePlayground = () => {
           {/* Section 1: Key Gen */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-bold text-muted uppercase tracking-wider">
+              <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
                 1. Key Generation
               </span>
               {keyStore.length > 0 && (
@@ -274,7 +276,7 @@ export const InteractivePlayground = () => {
             <div className="space-y-3">
               <label
                 htmlFor="key-size-select"
-                className="text-xs text-muted uppercase tracking-wider block"
+                className="text-xs text-muted-foreground uppercase tracking-wider block"
               >
                 Key Size / Security Level
               </label>
@@ -282,7 +284,7 @@ export const InteractivePlayground = () => {
                 id="key-size-select"
                 value={keySize}
                 onChange={(e) => setKeySize(e.target.value)}
-                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-primary appearance-none"
+                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary appearance-none"
               >
                 {algorithm === 'ML-KEM' ? (
                   <>
@@ -313,7 +315,7 @@ export const InteractivePlayground = () => {
           <div className="space-y-4">
             <label
               htmlFor="message-input"
-              className="text-sm font-bold text-muted uppercase tracking-wider block mb-2"
+              className="text-sm font-bold text-muted-foreground uppercase tracking-wider block mb-2"
             >
               2. {algorithm === 'ML-KEM' ? 'Input Data' : 'Message to Sign'}
             </label>
@@ -322,13 +324,13 @@ export const InteractivePlayground = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               aria-describedby={error ? 'playground-error' : undefined}
-              className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm text-white focus:border-primary outline-none transition-colors h-32 resize-none placeholder:text-white/20 leading-relaxed"
+              className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm text-foreground focus:border-primary outline-none transition-colors h-32 resize-none placeholder:text-foreground/20 leading-relaxed"
             />
           </div>
 
           {/* Section 3: Operations */}
           <div className="space-y-4">
-            <span className="text-sm font-bold text-muted uppercase tracking-wider block mb-2">
+            <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block mb-2">
               3. Execute Operation
             </span>
 
@@ -343,7 +345,7 @@ export const InteractivePlayground = () => {
                     value={selectedEncKeyId}
                     onChange={(e) => setSelectedEncKeyId(e.target.value)}
                     aria-label="Select Public Key for Encapsulation"
-                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-primary appearance-none"
+                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary appearance-none"
                   >
                     <option value="">Select Public Key...</option>
                     {publicKeys.map((k) => (
@@ -370,7 +372,7 @@ export const InteractivePlayground = () => {
                     value={selectedDecKeyId}
                     onChange={(e) => setSelectedDecKeyId(e.target.value)}
                     aria-label="Select Private Key for Decapsulation"
-                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-secondary appearance-none"
+                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-secondary appearance-none"
                   >
                     <option value="">Select Private Key...</option>
                     {privateKeys.map((k) => (
@@ -390,7 +392,7 @@ export const InteractivePlayground = () => {
                     <div className="mt-3">
                       <label
                         htmlFor="shared-secret-input"
-                        className="text-xs text-muted block mb-2"
+                        className="text-xs text-muted-foreground block mb-2"
                       >
                         Shared Secret:
                       </label>
@@ -399,7 +401,7 @@ export const InteractivePlayground = () => {
                         type="text"
                         value={sharedSecret}
                         onChange={(e) => setSharedSecret(e.target.value)}
-                        className="w-full bg-black/40 border border-purple-500/30 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-purple-500 font-mono"
+                        className="w-full bg-black/40 border border-purple-500/30 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-purple-500 font-mono"
                         placeholder="Shared secret will appear here..."
                       />
                     </div>
@@ -419,7 +421,7 @@ export const InteractivePlayground = () => {
                     <Lock size={16} /> Encrypt Message
                   </button>
                   {!sharedSecret && (
-                    <p className="text-xs text-muted mt-2">
+                    <p className="text-xs text-muted-foreground mt-2">
                       Run Encapsulate first to get shared secret
                     </p>
                   )}
@@ -438,7 +440,7 @@ export const InteractivePlayground = () => {
                     <KeyIcon size={16} /> Decrypt Message
                   </button>
                   {!encryptedData && (
-                    <p className="text-xs text-muted mt-2">
+                    <p className="text-xs text-muted-foreground mt-2">
                       Run Encrypt first to get encrypted data
                     </p>
                   )}
@@ -455,7 +457,7 @@ export const InteractivePlayground = () => {
                     value={selectedSignKeyId}
                     onChange={(e) => setSelectedSignKeyId(e.target.value)}
                     aria-label="Select Private Key for Signing"
-                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-accent appearance-none"
+                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent appearance-none"
                   >
                     <option value="">Select Private Key...</option>
                     {privateKeys.map((k) => (
@@ -482,7 +484,7 @@ export const InteractivePlayground = () => {
                     value={selectedVerifyKeyId}
                     onChange={(e) => setSelectedVerifyKeyId(e.target.value)}
                     aria-label="Select Public Key for Verification"
-                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-accent appearance-none"
+                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent appearance-none"
                   >
                     <option value="">Select Public Key...</option>
                     {publicKeys.map((k) => (
@@ -491,7 +493,10 @@ export const InteractivePlayground = () => {
                       </option>
                     ))}
                   </select>
-                  <label htmlFor="signature-verify-input" className="text-xs text-muted block mb-2">
+                  <label
+                    htmlFor="signature-verify-input"
+                    className="text-xs text-muted-foreground block mb-2"
+                  >
                     Signature to Verify:
                   </label>
                   <input
@@ -500,7 +505,7 @@ export const InteractivePlayground = () => {
                     value={signature}
                     onChange={(e) => setSignature(e.target.value)}
                     placeholder="Paste or edit signature here..."
-                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-accent font-mono"
+                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent font-mono"
                   />
                   <button
                     onClick={() => runOperation('verify')}
@@ -518,13 +523,13 @@ export const InteractivePlayground = () => {
         {/* Right Column: Key Store & Results */}
         <div className="space-y-6">
           <div className="space-y-4">
-            <label className="text-sm font-bold text-muted uppercase tracking-wider">
+            <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
               Key Store ({keyStore.length})
             </label>
             <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden h-64 flex flex-col">
               <div className="overflow-y-auto flex-1 custom-scrollbar">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-white/5 text-muted uppercase text-xs sticky top-0 backdrop-blur-md">
+                  <thead className="bg-white/5 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md">
                     <tr>
                       <th className="p-3 font-bold">Name</th>
                       <th className="p-3 font-bold">Type</th>
@@ -534,14 +539,14 @@ export const InteractivePlayground = () => {
                   <tbody className="divide-y divide-white/5">
                     {keyStore.length === 0 ? (
                       <tr>
-                        <td colSpan={3} className="p-8 text-center text-white/30 italic">
+                        <td colSpan={3} className="p-8 text-center text-foreground/30 italic">
                           No keys generated yet...
                         </td>
                       </tr>
                     ) : (
                       keyStore.map((key) => (
                         <tr key={key.id} className="hover:bg-white/5 transition-colors">
-                          <td className="p-3 font-medium text-white">{key.name}</td>
+                          <td className="p-3 font-medium text-foreground">{key.name}</td>
                           <td className="p-3">
                             <span
                               className={clsx(
@@ -554,7 +559,7 @@ export const InteractivePlayground = () => {
                               {key.type}
                             </span>
                           </td>
-                          <td className="p-3 text-muted">{key.algorithm}</td>
+                          <td className="p-3 text-muted-foreground">{key.algorithm}</td>
                         </tr>
                       ))
                     )}
@@ -565,7 +570,7 @@ export const InteractivePlayground = () => {
           </div>
 
           <div className="space-y-4">
-            <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+            <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
               Output Log
             </span>
             <div
@@ -574,7 +579,9 @@ export const InteractivePlayground = () => {
               aria-live="polite"
               aria-atomic="false"
             >
-              {output || <span className="text-white/30 italic">Waiting for operation...</span>}
+              {output || (
+                <span className="text-foreground/30 italic">Waiting for operation...</span>
+              )}
             </div>
           </div>
         </div>

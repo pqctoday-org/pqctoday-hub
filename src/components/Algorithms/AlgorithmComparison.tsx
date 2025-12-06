@@ -154,7 +154,7 @@ export const AlgorithmComparison = () => {
               type, classical algorithm, PQC alternative, and transition timeline
             </caption>
             <thead>
-              <tr className="bg-white/10 text-muted text-sm uppercase tracking-wider border-b border-white/10">
+              <tr className="bg-white/10 text-muted-foreground text-sm uppercase tracking-wider border-b border-white/10">
                 <th
                   scope="col"
                   aria-sort={
@@ -294,11 +294,11 @@ export const AlgorithmComparison = () => {
                   </td>
                   <td className="px-4 py-8" style={{ width: `${columnWidths.classical}px` }}>
                     <div className="flex flex-col items-center gap-2 overflow-hidden">
-                      <span className="text-white font-bold text-xl truncate w-full text-center">
+                      <span className="text-foreground font-bold text-xl truncate w-full text-center">
                         {algo.classical}
                       </span>
                       {algo.keySize && (
-                        <span className="text-sm text-muted font-mono px-3 py-1 rounded-full bg-white/5 border border-white/10 whitespace-nowrap">
+                        <span className="text-sm text-muted-foreground font-mono px-3 py-1 rounded-full bg-white/5 border border-white/10 whitespace-nowrap">
                           {algo.keySize}
                         </span>
                       )}
@@ -321,8 +321,11 @@ export const AlgorithmComparison = () => {
                       >
                         {algo.deprecationDate}
                       </span>
-                      <ArrowRight size={20} className="text-muted opacity-30 flex-shrink-0" />
-                      <span className="text-base text-muted font-mono whitespace-nowrap flex-shrink-0">
+                      <ArrowRight
+                        size={20}
+                        className="text-muted-foreground opacity-30 flex-shrink-0"
+                      />
+                      <span className="text-base text-muted-foreground font-mono whitespace-nowrap flex-shrink-0">
                         Std: {algo.standardizationDate}
                       </span>
                     </div>

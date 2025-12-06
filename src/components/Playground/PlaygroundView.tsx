@@ -9,7 +9,7 @@ export const PlaygroundView = () => {
           <FlaskConical className="text-secondary" aria-hidden="true" />
           Interactive Playground
         </h2>
-        <p className="text-muted">
+        <p className="text-muted-foreground">
           Test ML-KEM and ML-DSA post-quantum cryptographic algorithms in real-time using
           WebAssembly
         </p>

@@ -27,18 +27,20 @@ export const KemConfig: React.FC<KemConfigProps> = ({
 
   return (
     <div className="space-y-4 animate-fade-in">
-      <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+      <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
         2. Configuration
       </span>
 
       <div className="space-y-3">
-        <span className="text-xs text-muted block">Action</span>
+        <span className="text-xs text-muted-foreground block">Action</span>
         <div className="flex bg-black/40 rounded-lg p-1 border border-white/20">
           <button
             onClick={() => setKemAction('encap')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
-              kemAction === 'encap' ? 'bg-primary text-white' : 'text-muted hover:text-white'
+              kemAction === 'encap'
+                ? 'bg-primary text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             Encapsulate
@@ -47,7 +49,9 @@ export const KemConfig: React.FC<KemConfigProps> = ({
             onClick={() => setKemAction('decap')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
-              kemAction === 'decap' ? 'bg-primary text-white' : 'text-muted hover:text-white'
+              kemAction === 'decap'
+                ? 'bg-primary text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             Decapsulate
@@ -56,14 +60,14 @@ export const KemConfig: React.FC<KemConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="kem-key-select" className="text-xs text-muted block">
+        <label htmlFor="kem-key-select" className="text-xs text-muted-foreground block">
           Key File
         </label>
         <select
           id="kem-key-select"
           value={kemKeyFile}
           onChange={(e) => setKemKeyFile(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="">
             {kemAction === 'encap' ? 'Select Public Key...' : 'Select Private Key...'}
@@ -80,14 +84,14 @@ export const KemConfig: React.FC<KemConfigProps> = ({
 
       {kemAction === 'decap' && (
         <div className="space-y-3">
-          <label htmlFor="kem-infile-select" className="text-xs text-muted block">
+          <label htmlFor="kem-infile-select" className="text-xs text-muted-foreground block">
             Ciphertext File (Input)
           </label>
           <select
             id="kem-infile-select"
             value={kemInFile}
             onChange={(e) => setKemInFile(e.target.value)}
-            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           >
             <option value="">Select Ciphertext...</option>
             {files.map((f) => (
@@ -100,7 +104,7 @@ export const KemConfig: React.FC<KemConfigProps> = ({
       )}
 
       <div className="space-y-3">
-        <label htmlFor="kem-outfile-input" className="text-xs text-muted block">
+        <label htmlFor="kem-outfile-input" className="text-xs text-muted-foreground block">
           Output File (Optional)
         </label>
         <input
@@ -108,7 +112,7 @@ export const KemConfig: React.FC<KemConfigProps> = ({
           type="text"
           value={kemOutFile}
           onChange={(e) => setKemOutFile(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder={kemAction === 'encap' ? 'ciphertext.bin' : 'secret.bin'}
         />
       </div>

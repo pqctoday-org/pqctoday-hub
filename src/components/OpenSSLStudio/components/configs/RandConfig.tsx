@@ -15,12 +15,12 @@ export const RandConfig: React.FC<RandConfigProps> = ({
 }) => {
   return (
     <div className="space-y-4 animate-fade-in">
-      <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+      <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
         2. Configuration
       </span>
 
       <div className="space-y-3">
-        <label htmlFor="rand-bytes-input" className="text-xs text-muted block">
+        <label htmlFor="rand-bytes-input" className="text-xs text-muted-foreground block">
           Number of Bytes
         </label>
         <input
@@ -28,7 +28,7 @@ export const RandConfig: React.FC<RandConfigProps> = ({
           type="number"
           value={randBytes}
           onChange={(e) => setRandBytes(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-primary"
+          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           min="1"
           max="4096"
         />
@@ -42,7 +42,7 @@ export const RandConfig: React.FC<RandConfigProps> = ({
           onChange={(e) => setRandHex(e.target.checked)}
           className="rounded border-white/20 bg-black/40 text-primary focus:ring-primary"
         />
-        <label htmlFor="randHex" className="text-sm text-white cursor-pointer select-none">
+        <label htmlFor="randHex" className="text-sm text-foreground cursor-pointer select-none">
           Output as Hex String
         </label>
       </div>

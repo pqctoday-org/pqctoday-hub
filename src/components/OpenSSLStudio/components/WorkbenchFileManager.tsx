@@ -116,12 +116,12 @@ export const WorkbenchFileManager: React.FC = () => {
   return (
     <div className="space-y-4 animate-fade-in">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-bold text-muted uppercase tracking-wider block">
+        <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
           File Manager
         </span>
         <div className="flex gap-2">
           <button
-            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('add-file-input')?.click()}
           >
             <Plus size={14} /> Add File
@@ -169,13 +169,13 @@ export const WorkbenchFileManager: React.FC = () => {
                 btn.dataset.confirm = 'false'
                 btn.innerHTML =
                   '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg> Clear All'
-                btn.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-600')
+                btn.classList.remove('bg-red-500', 'text-foreground', 'hover:bg-red-600')
                 btn.classList.add('bg-red-500/10', 'text-red-400', 'hover:bg-red-500/20')
               } else {
                 btn.dataset.confirm = 'true'
                 btn.innerHTML = 'Confirm Clear?'
                 btn.classList.remove('bg-red-500/10', 'text-red-400', 'hover:bg-red-500/20')
-                btn.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600')
+                btn.classList.add('bg-red-500', 'text-foreground', 'hover:bg-red-600')
 
                 // Reset after 3 seconds
                 setTimeout(() => {
@@ -183,14 +183,14 @@ export const WorkbenchFileManager: React.FC = () => {
                     btn.dataset.confirm = 'false'
                     btn.innerHTML =
                       '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg> Clear All'
-                    btn.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-600')
+                    btn.classList.remove('bg-red-500', 'text-foreground', 'hover:bg-red-600')
                     btn.classList.add('bg-red-500/10', 'text-red-400', 'hover:bg-red-500/20')
                   }
                 }, 3000)
               }
             }}
             disabled={files.length === 0}
-            className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 disabled:bg-white/5 disabled:text-white/20 border border-red-500/20 disabled:border-white/10 rounded text-xs font-medium text-red-400 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+            className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 disabled:bg-white/5 disabled:text-foreground/20 border border-red-500/20 disabled:border-white/10 rounded text-xs font-medium text-red-400 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             title="Delete all files"
           >
             <Trash2 size={14} /> Clear All
@@ -198,13 +198,13 @@ export const WorkbenchFileManager: React.FC = () => {
           <button
             onClick={handleBackupAllFiles}
             disabled={files.length === 0}
-            className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 disabled:bg-white/5 disabled:text-white/20 border border-primary/40 disabled:border-white/10 rounded text-xs font-medium text-primary disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+            className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 disabled:bg-white/5 disabled:text-foreground/20 border border-primary/40 disabled:border-white/10 rounded text-xs font-medium text-primary disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             title="Backup all files to ZIP"
           >
             <Archive size={14} /> Backup All
           </button>
           <button
-            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('import-zip-input')?.click()}
           >
             <Upload size={14} /> Import ZIP
@@ -220,7 +220,7 @@ export const WorkbenchFileManager: React.FC = () => {
       </div>
 
       {files.length === 0 ? (
-        <div className="text-center py-12 text-white/20 text-sm">
+        <div className="text-center py-12 text-foreground/20 text-sm">
           No files generated yet.
           <br />
           Generate keys, CSRs, or certificates to see them here.
@@ -232,7 +232,7 @@ export const WorkbenchFileManager: React.FC = () => {
               <tr>
                 <th className="p-0">
                   <button
-                    className="w-full text-left p-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
+                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
                     onClick={() => {
                       if (sortBy === 'timestamp') {
                         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
@@ -247,7 +247,7 @@ export const WorkbenchFileManager: React.FC = () => {
                 </th>
                 <th className="p-0">
                   <button
-                    className="w-full text-left p-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
+                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
                     onClick={() => {
                       if (sortBy === 'type') {
                         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
@@ -262,7 +262,7 @@ export const WorkbenchFileManager: React.FC = () => {
                 </th>
                 <th className="p-0">
                   <button
-                    className="w-full text-left p-3 text-xs font-bold text-muted uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
+                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
                     onClick={() => {
                       if (sortBy === 'name') {
                         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
@@ -275,7 +275,7 @@ export const WorkbenchFileManager: React.FC = () => {
                     Filename <ArrowUpDown size={12} />
                   </button>
                 </th>
-                <th className="text-right p-3 text-xs font-bold text-muted uppercase tracking-wider">
+                <th className="text-right p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -299,7 +299,7 @@ export const WorkbenchFileManager: React.FC = () => {
                     key={file.name}
                     className="border-b border-white/5 hover:bg-white/5 transition-colors"
                   >
-                    <td className="p-3 text-white/70 font-mono text-xs">
+                    <td className="p-3 text-foreground/70 font-mono text-xs">
                       {new Date(file.timestamp).toLocaleString()}
                     </td>
                     <td className="p-3">
@@ -318,12 +318,12 @@ export const WorkbenchFileManager: React.FC = () => {
                         {file.type.toUpperCase()}
                       </span>
                     </td>
-                    <td className="p-3 text-white font-mono text-sm">{file.name}</td>
+                    <td className="p-3 text-foreground font-mono text-sm">{file.name}</td>
                     <td className="p-3">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => setEditingFile(file)}
-                          className="p-1.5 hover:bg-white/10 rounded text-muted hover:text-white transition-colors"
+                          className="p-1.5 hover:bg-white/10 rounded text-muted-foreground hover:text-foreground transition-colors"
                           title="View/Edit"
                         >
                           <Edit2 size={14} />
@@ -346,7 +346,7 @@ export const WorkbenchFileManager: React.FC = () => {
                             URL.revokeObjectURL(url)
                             logEvent('OpenSSL Studio', 'Download File', file.type)
                           }}
-                          className="p-1.5 hover:bg-white/10 rounded text-muted hover:text-white transition-colors"
+                          className="p-1.5 hover:bg-white/10 rounded text-muted-foreground hover:text-foreground transition-colors"
                           title="Download"
                         >
                           <Download size={14} />
@@ -354,7 +354,7 @@ export const WorkbenchFileManager: React.FC = () => {
                         {(file.name.endsWith('.key') || file.name.endsWith('.pem')) && (
                           <button
                             onClick={() => handleExtractPublicKey(file.name)}
-                            className="p-1.5 hover:bg-primary/20 rounded text-muted hover:text-primary transition-colors"
+                            className="p-1.5 hover:bg-primary/20 rounded text-muted-foreground hover:text-primary transition-colors"
                             title="Extract Public Key"
                           >
                             <FileKey size={14} />
@@ -365,7 +365,7 @@ export const WorkbenchFileManager: React.FC = () => {
                             removeFile(file.name)
                             logEvent('OpenSSL Studio', 'Delete File', file.type)
                           }}
-                          className="p-1.5 hover:bg-red-500/20 rounded text-muted hover:text-red-400 transition-colors"
+                          className="p-1.5 hover:bg-red-500/20 rounded text-muted-foreground hover:text-red-400 transition-colors"
                           title="Delete"
                         >
                           <Trash2 size={14} />

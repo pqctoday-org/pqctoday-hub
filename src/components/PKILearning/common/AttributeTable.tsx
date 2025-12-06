@@ -16,7 +16,7 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="border-b border-white/10 text-muted text-xs uppercase tracking-wider">
+          <tr className="border-b border-white/10 text-muted-foreground text-xs uppercase tracking-wider">
             <th className="p-3 w-10 text-center">Use</th>
             {showSource && <th className="p-3">Source</th>}
             <th className="p-3">Type</th>
@@ -53,14 +53,14 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
                     </span>
                   )}
                   {(!attr.source || attr.source === 'Manual') && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-white/10 text-muted border border-white/10">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-white/10 text-muted-foreground border border-white/10">
                       Manual
                     </span>
                   )}
                 </td>
               )}
-              <td className="p-3 text-muted text-xs">{attr.elementType}</td>
-              <td className="p-3 text-white font-medium text-sm">
+              <td className="p-3 text-muted-foreground text-xs">{attr.elementType}</td>
+              <td className="p-3 text-foreground font-medium text-sm">
                 <div className="flex flex-col">
                   <span>{attr.label}</span>
                   <div className="flex gap-1 mt-1">
@@ -79,10 +79,12 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
                   onChange={(e) => onAttributeChange(attr.id, 'value', e.target.value)}
                   placeholder={attr.placeholder}
                   disabled={!attr.enabled || (showSource && attr.source === 'CSR')}
-                  className="w-full bg-black/40 border border-white/10 rounded px-2 py-1.5 text-sm text-white focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-black/40 border border-white/10 rounded px-2 py-1.5 text-sm text-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </td>
-              <td className="p-3 text-muted text-xs max-w-[200px]">{attr.description}</td>
+              <td className="p-3 text-muted-foreground text-xs max-w-[200px]">
+                {attr.description}
+              </td>
             </tr>
           ))}
         </tbody>

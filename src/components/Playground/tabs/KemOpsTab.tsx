@@ -33,7 +33,7 @@ export const KemOpsTab: React.FC = () => {
     <div className="max-w-6xl mx-auto animate-fade-in space-y-8">
       {/* Section 1: Key Encapsulation */}
       <div>
-        <h4 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
+        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
           <Activity size={18} className="text-accent" /> Key Encapsulation Mechanism (KEM)
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -42,13 +42,13 @@ export const KemOpsTab: React.FC = () => {
             <div className="text-sm text-blue-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <Lock size={16} /> Encapsulate
             </div>
-            <p className="text-xs text-muted mb-4 h-10">
+            <p className="text-xs text-muted-foreground mb-4 h-10">
               Generate a shared secret and encapsulate it for a public key.
             </p>
             <select
               value={selectedEncKeyId}
               onChange={(e) => setSelectedEncKeyId(e.target.value)}
-              className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-blue-500"
+              className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-blue-500"
             >
               <option value="">Select Public Key...</option>
               {kemPublicKeys.map((k) => (
@@ -72,18 +72,18 @@ export const KemOpsTab: React.FC = () => {
                 }
 
                 return (
-                  <div className="mb-4 p-3 bg-white/5 rounded border border-white/10 text-xs text-muted space-y-1">
+                  <div className="mb-4 p-3 bg-white/5 rounded border border-white/10 text-xs text-muted-foreground space-y-1">
                     <div className="flex justify-between">
                       <span>Algorithm:</span>
-                      <span className="text-white font-mono">{key.algorithm}</span>
+                      <span className="text-foreground font-mono">{key.algorithm}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Scheme:</span>
-                      <span className="text-white font-mono">{scheme}</span>
+                      <span className="text-foreground font-mono">{scheme}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Shared Secret Size:</span>
-                      <span className="text-white font-mono">{secretSize}</span>
+                      <span className="text-foreground font-mono">{secretSize}</span>
                     </div>
                   </div>
                 )
@@ -127,13 +127,13 @@ export const KemOpsTab: React.FC = () => {
             <div className="text-sm text-purple-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <KeyIcon size={16} /> Decapsulate
             </div>
-            <p className="text-xs text-muted mb-4 h-10">
+            <p className="text-xs text-muted-foreground mb-4 h-10">
               Decapsulate a shared secret using a private key.
             </p>
             <select
               value={selectedDecKeyId}
               onChange={(e) => setSelectedDecKeyId(e.target.value)}
-              className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white outline-none focus:border-purple-500"
+              className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-purple-500"
             >
               <option value="">Select Private Key...</option>
               {kemPrivateKeys.map((k) => (
@@ -157,18 +157,18 @@ export const KemOpsTab: React.FC = () => {
                 }
 
                 return (
-                  <div className="mb-4 p-3 bg-white/5 rounded border border-white/10 text-xs text-muted space-y-1">
+                  <div className="mb-4 p-3 bg-white/5 rounded border border-white/10 text-xs text-muted-foreground space-y-1">
                     <div className="flex justify-between">
                       <span>Algorithm:</span>
-                      <span className="text-white font-mono">{key.algorithm}</span>
+                      <span className="text-foreground font-mono">{key.algorithm}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Scheme:</span>
-                      <span className="text-white font-mono">{scheme}</span>
+                      <span className="text-foreground font-mono">{scheme}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Shared Secret Size:</span>
-                      <span className="text-white font-mono">{secretSize}</span>
+                      <span className="text-foreground font-mono">{secretSize}</span>
                     </div>
                   </div>
                 )
@@ -226,7 +226,7 @@ export const KemOpsTab: React.FC = () => {
 
       {/* Section 2: Hybrid Encryption */}
       <div>
-        <h4 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
+        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
           <Lock size={18} className="text-accent" /> Hybrid Encryption (AES-GCM)
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -235,7 +235,7 @@ export const KemOpsTab: React.FC = () => {
             <div className="text-sm text-cyan-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <Lock size={16} /> Encrypt Message
             </div>
-            <p className="text-xs text-muted mb-4 h-10">
+            <p className="text-xs text-muted-foreground mb-4 h-10">
               Encrypt the input message using the established shared secret.
             </p>
 
@@ -285,7 +285,7 @@ export const KemOpsTab: React.FC = () => {
             <div className="text-sm text-emerald-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <KeyIcon size={16} /> Decrypt Message
             </div>
-            <p className="text-xs text-muted mb-4 h-10">
+            <p className="text-xs text-muted-foreground mb-4 h-10">
               Decrypt the ciphertext using the established shared secret.
             </p>
 

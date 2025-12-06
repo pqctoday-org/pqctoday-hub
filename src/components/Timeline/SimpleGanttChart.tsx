@@ -154,7 +154,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
               {isMilestone && isFirstInPhase ? (
                 <Flag className="w-4 h-4" style={{ color: colors.start, fill: colors.start }} />
               ) : isFirstInPhase && !isMilestone ? (
-                <span className="absolute left-2 text-[10px] font-bold text-white whitespace-nowrap drop-shadow-md select-none z-10 pointer-events-none">
+                <span className="absolute left-2 text-[10px] font-bold text-foreground whitespace-nowrap drop-shadow-md select-none z-10 pointer-events-none">
                   {phaseData.phase}
                 </span>
               ) : null}
@@ -176,7 +176,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
       {/* Controls Bar */}
       <div className="flex flex-wrap items-center gap-4 p-4 glass-panel rounded-xl">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
             placeholder="Filter by country..."
@@ -212,13 +212,13 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                 className="sticky left-0 z-30 bg-[#0b0d17] p-4 text-left w-[180px]"
                 style={{ borderBottom: '1px solid #4b5563', borderRight: '1px solid #4b5563' }}
               >
-                <span className="font-bold text-white">Country</span>
+                <span className="font-bold text-foreground">Country</span>
               </th>
               <th
                 className="sticky left-[180px] z-30 bg-[#0b0d17] p-4 text-left w-[200px]"
                 style={{ borderBottom: '1px solid #4b5563', borderRight: '1px solid #4b5563' }}
               >
-                <span className="font-bold text-white">Organization</span>
+                <span className="font-bold text-foreground">Organization</span>
               </th>
               {YEARS.map((year) => (
                 <th
@@ -227,7 +227,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                   style={{ borderBottom: '1px solid #4b5563', borderRight: '1px solid #4b5563' }}
                 >
                   <span
-                    className={`font-mono text-sm ${year === new Date().getFullYear() ? 'text-primary font-bold' : 'text-muted'}`}
+                    className={`font-mono text-sm ${year === new Date().getFullYear() ? 'text-primary font-bold' : 'text-muted-foreground'}`}
                   >
                     {year === 2024 ? '<2024' : year}
                   </span>
@@ -278,7 +278,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                                   style={{ objectFit: 'cover' }}
                                 />
                               </div>
-                              <span className="font-bold text-white text-sm">
+                              <span className="font-bold text-foreground text-sm">
                                 {country.countryName}
                               </span>
                             </div>
@@ -293,7 +293,9 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                             style={{ borderRight: '1px solid #4b5563' }}
                           >
                             <div className="flex items-center gap-2">
-                              <span className="text-xs text-muted">{country.bodies[0].name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {country.bodies[0].name}
+                              </span>
                             </div>
                           </td>
                         )}
