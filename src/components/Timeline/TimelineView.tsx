@@ -5,7 +5,6 @@ import {
   transformToGanttData,
   type CountryData,
 } from '../../data/timelineData'
-import { FilterDropdown } from '../common/FilterDropdown'
 import { CountryFlag } from '../common/CountryFlag'
 import { SimpleGanttChart } from './SimpleGanttChart'
 import { GanttLegend } from './GanttLegend'
@@ -58,21 +57,17 @@ export const TimelineView = () => {
         )}
       </div>
 
-      <FilterDropdown
-        items={countryItems}
-        selectedId={selectedCountry ? selectedCountry.countryName : 'All'}
-        onSelect={(id) => {
-          const country =
-            id === 'All' ? null : timelineData.find((c) => c.countryName === id) || null
-          handleCountrySelect(country)
-        }}
-        label="Select Region"
-        defaultLabel="All Countries"
-        opaque
-      />
-
       <div className="mt-12">
-        <SimpleGanttChart data={ganttData} />
+        <SimpleGanttChart
+          data={ganttData}
+          selectedCountry={selectedCountry ? selectedCountry.countryName : 'All'}
+          onCountrySelect={(id) => {
+            const country =
+              id === 'All' ? null : timelineData.find((c) => c.countryName === id) || null
+            handleCountrySelect(country)
+          }}
+          countryItems={countryItems}
+        />
       </div>
 
       <div className="mt-8">

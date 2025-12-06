@@ -5,9 +5,13 @@ import { phaseColors } from '../../data/timelineData'
 import { GanttDetailPopover } from './GanttDetailPopover'
 import { logEvent } from '../../utils/analytics'
 import { CountryFlag } from '../common/CountryFlag'
+import { FilterDropdown } from '../common/FilterDropdown'
 
 interface SimpleGanttChartProps {
   data: GanttCountryData[]
+  selectedCountry: string
+  onCountrySelect: (id: string) => void
+  countryItems: Array<{ id: string; label: string; icon: React.ReactNode | null }>
 }
 
 const START_YEAR = 2024
@@ -26,8 +30,14 @@ const PHASE_ORDER = [
   'Standardization',
 ]
 
-export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
+export const SimpleGanttChart = ({
+  data,
+  selectedCountry,
+  onCountrySelect,
+  countryItems,
+}: SimpleGanttChartProps) => {
   const [filterText, setFilterText] = useState('')
+  const [sortField, setSortField] = useState<'country' | 'organization'>('country')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
   const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number } | null>(null)
@@ -40,9 +50,19 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
     )
 
     const sortedCountries = filtered.sort((a, b) => {
-      const nameA = a.country.countryName.toLowerCase()
-      const nameB = b.country.countryName.toLowerCase()
-      return sortDirection === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+      let compareValue = 0
+
+      if (sortField === 'country') {
+        const nameA = a.country.countryName.toLowerCase()
+        const nameB = b.country.countryName.toLowerCase()
+        compareValue = nameA.localeCompare(nameB)
+      } else if (sortField === 'organization') {
+        const orgA = a.country.bodies[0]?.name.toLowerCase() || ''
+        const orgB = b.country.bodies[0]?.name.toLowerCase() || ''
+        compareValue = orgA.localeCompare(orgB)
+      }
+
+      return sortDirection === 'asc' ? compareValue : -compareValue
     })
 
     return sortedCountries.map((country) => ({
@@ -70,11 +90,16 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
         return valA - valB
       }),
     }))
-  }, [data, filterText, sortDirection])
+  }, [data, filterText, sortField, sortDirection])
 
-  const toggleSort = () => {
-    setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))
-    logEvent('Timeline', 'Sort Countries', sortDirection === 'asc' ? 'desc' : 'asc')
+  const handleSort = (field: 'country' | 'organization') => {
+    if (sortField === field) {
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+    }
+    logEvent('Timeline', `Sort ${field}`, sortDirection === 'asc' ? 'desc' : 'asc')
   }
 
   const handlePhaseClick = (phase: TimelinePhase, e: React.MouseEvent) => {
@@ -173,8 +198,20 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Controls Bar */}
-      <div className="flex flex-wrap items-center gap-4 p-4 glass-panel rounded-xl">
+      {/* Grouped Filter Container */}
+      <div className="bg-slate-900/100 border border-white/20 rounded-lg shadow-lg p-2 flex flex-wrap items-center gap-4">
+        <FilterDropdown
+          items={countryItems}
+          selectedId={selectedCountry}
+          onSelect={onCountrySelect}
+          label="Select Region"
+          defaultLabel="All Countries"
+          opaque
+          noContainer
+          className="mb-0"
+        />
+
+        <span className="text-muted-foreground px-2">Search:</span>
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
@@ -183,21 +220,9 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             onBlur={handleFilterBlur}
-            className="w-full bg-black/20 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+            className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors"
           />
         </div>
-        <button
-          onClick={toggleSort}
-          className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-sm font-medium"
-        >
-          <ArrowUpDown className="w-4 h-4" />
-          Sort
-          {sortDirection === 'asc' ? (
-            <ArrowUp className="w-3 h-3" />
-          ) : (
-            <ArrowDown className="w-3 h-3" />
-          )}
-        </button>
       </div>
 
       {/* Table Container */}
@@ -209,16 +234,40 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
           <thead>
             <tr>
               <th
-                className="sticky left-0 z-30 bg-[#0b0d17] p-4 text-left w-[180px]"
+                className="sticky left-0 z-30 bg-[#0b0d17] p-4 text-left w-[180px] cursor-pointer hover:bg-white/5 transition-colors"
                 style={{ borderBottom: '1px solid #4b5563', borderRight: '1px solid #4b5563' }}
+                onClick={() => handleSort('country')}
               >
-                <span className="font-bold text-foreground">Country</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-foreground">Country</span>
+                  {sortField === 'country' &&
+                    (sortDirection === 'asc' ? (
+                      <ArrowUp className="w-4 h-4 text-primary" />
+                    ) : (
+                      <ArrowDown className="w-4 h-4 text-primary" />
+                    ))}
+                  {sortField !== 'country' && (
+                    <ArrowUpDown className="w-4 h-4 text-muted-foreground opacity-50" />
+                  )}
+                </div>
               </th>
               <th
-                className="sticky left-[180px] z-30 bg-[#0b0d17] p-4 text-left w-[200px]"
+                className="sticky left-[180px] z-30 bg-[#0b0d17] p-4 text-left w-[200px] cursor-pointer hover:bg-white/5 transition-colors"
                 style={{ borderBottom: '1px solid #4b5563', borderRight: '1px solid #4b5563' }}
+                onClick={() => handleSort('organization')}
               >
-                <span className="font-bold text-foreground">Organization</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-foreground">Organization</span>
+                  {sortField === 'organization' &&
+                    (sortDirection === 'asc' ? (
+                      <ArrowUp className="w-4 h-4 text-primary" />
+                    ) : (
+                      <ArrowDown className="w-4 h-4 text-primary" />
+                    ))}
+                  {sortField !== 'organization' && (
+                    <ArrowUpDown className="w-4 h-4 text-muted-foreground opacity-50" />
+                  )}
+                </div>
               </th>
               {YEARS.map((year) => (
                 <th
