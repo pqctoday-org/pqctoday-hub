@@ -52,6 +52,9 @@ The application is divided into five main modules. Detailed requirements for eac
 
 - **No Login Required**: Publicly accessible.
 - **Responsive Design**: Must work seamlessly on desktop and mobile devices.
+  - **Desktop**: Full Gantt chart with sortable columns and filters
+  - **Mobile** (<768px): Card-based layout with swipeable phase navigation
+  - **Breakpoint**: `md:` prefix (768px) used to toggle between desktop and mobile views
 
 ## 4. Global Data Model
 

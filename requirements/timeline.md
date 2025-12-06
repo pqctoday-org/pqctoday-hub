@@ -46,6 +46,53 @@
 - A legend explains the color coding for different phases (Guidance, Policy, Regulation, Research, Discovery, Testing, POC, Migration, Standardization).
 - **Milestones**: Explicitly described as "Flag markers".
 
+### 1.5 Mobile Timeline View
+
+#### 1.5.1 Layout
+
+- **Card-Based Design**: Each country is displayed as a separate card containing:
+  - Country flag (32px x 24px) and name
+  - Organization name
+  - Swipeable phase carousel
+  - Phase indicator dots
+
+#### 1.5.2 Swipeable Phase Navigation
+
+- **Gesture Support**: Users can swipe left/right to browse through all phases for each country
+- **Drag Threshold**: 50px horizontal drag distance triggers phase transition
+- **Animation**: Smooth Framer Motion transitions (200ms duration) between phases
+- **Cursor Feedback**:
+  - `cursor: grab` when hovering over phase card
+  - `cursor: grabbing` when actively dragging
+
+#### 1.5.3 Phase Indicators
+
+- **Visual Design**: Horizontal row of dots below each phase card
+- **States**:
+  - Active indicator: 24px wide x 6px tall pill shape, colored with phase color
+  - Inactive indicators: 6px x 6px dots, semi-transparent white (30% opacity)
+- **Interaction**: Clicking any indicator jumps directly to that phase
+- **Accessibility**: Each indicator has `aria-label` describing the phase
+
+#### 1.5.4 Icon Distinction
+
+- **Milestones**: Display Flag icon (14px) colored with phase color and glow effect
+- **Phases**: Display colored dot (8px diameter) with glow effect
+- **Consistency**: Matches desktop Gantt chart visual language
+
+#### 1.5.5 Phase Card Content
+
+- **Phase Name**: Bold, small text (12px)
+- **Year Range**: Monospace font (10px), format: "YYYY - YYYY" or "YYYY - 2035+"
+- **Click Action**: Opens detail popover (same as desktop)
+- **Visual Feedback**: Hover state with background color change
+
+#### 1.5.6 State Management
+
+- **Per-Country Tracking**: Each country maintains its own current phase index
+- **Default State**: Shows first phase (index 0) on initial render
+- **Persistence**: Phase selection resets on page reload (no localStorage for mobile view state)
+
 ## 2. Data Structure
 
 ### 2.1 CSV Format
