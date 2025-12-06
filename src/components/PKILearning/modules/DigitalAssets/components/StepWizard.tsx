@@ -99,7 +99,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                 </table>
               </div>
             ) : (
-              <div className="bg-black/40 rounded-lg p-4 font-mono text-sm border border-white/5 mb-6 overflow-x-auto">
+              <div className="bg-muted/60 rounded-lg p-4 font-mono text-sm border border-white/5 mb-6 overflow-x-auto">
                 <div className="flex items-center justify-between mb-2 border-b border-white/10 pb-2">
                   <span className="text-xs text-muted-foreground-foreground uppercase">
                     {step.language}
@@ -155,7 +155,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
 
         {/* Right Column: Output & Visualization */}
         <div className="flex flex-col space-y-6 min-w-0">
-          <div className="bg-black/80 border border-white/10 rounded-xl p-4 flex-1 flex flex-col font-mono text-sm relative overflow-hidden max-h-[600px] min-w-0">
+          <div className="bg-muted border border-white/10 rounded-xl p-4 flex-1 flex flex-col font-mono text-sm relative overflow-hidden max-h-[600px] min-w-0">
             <div className="absolute top-0 left-0 right-0 bg-white/5 p-2 flex items-center justify-between border-b border-white/10">
               <span className="text-xs text-muted-foreground-foreground">TERMINAL OUTPUT</span>
               {isStepComplete && <CheckCircle size={14} className="text-green-500" />}
@@ -163,7 +163,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
 
             <div className="mt-8 flex-1 overflow-y-auto min-h-[300px]" ref={outputRef}>
               {output ? (
-                <pre className="text-green-400 whitespace-pre-wrap break-all break-words max-w-full">
+                <pre className="text-foreground whitespace-pre-wrap break-all break-words max-w-full">
                   {output}
                 </pre>
               ) : (
