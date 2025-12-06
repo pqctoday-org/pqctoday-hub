@@ -74,6 +74,13 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
     - Export: Bundle Certificate and Private Key into `.p12` file.
     - Import: Extract Certificate and Private Key from `.p12` file to `.pem`.
 - **Configuration Editor**: Dedicated button to view/edit `openssl.cnf` directly.
+- **File Manager (Enhanced)**:
+  - **Location**: Right Pane (Permanent visibility).
+  - **Features**:
+    - **Size Column**: Displays human-readable file sizes.
+    - **Sorting**: Sort by Name, Type, Size, or Date.
+    - **Timestamps**: Compact formatting for better readability.
+    - **Actions**: Preview, Download, Delete, Extract Public Key (from `.key`), Create ZIP backup.
 
 ### 4. Terminal & Logging
 
@@ -82,14 +89,20 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
   - **Persistence**: Logs persist across command runs (unlike terminal output which clears).
   - **Detailed Columns**: Displays Timestamp, Operation Type, Full Command, File Name, File Size, and Execution Duration.
   - **Visuals**: Color-coded duration (Green <100ms, Yellow <500ms, Red >500ms).
-- **Command Preview**: Live preview of the generated OpenSSL command.
+- **Command Preview**:
+  - **Location**: Left Pane (Vertically Centered).
+  - **Design**: Large, high-contrast code block (`min-height: 160px`) for visibility.
+  - **Controls**: "Run Command" button embedded in the header to save space.
+  - **Features**: One-click copy to clipboard.
 - **Status**: Visual indicators for "Processing", "Ready", and "Error" states.
 
 ### 5. Navigation & Layout
 
-- **Sidebar-Driven**: Primary navigation via the Workbench sidebar.
-- **Auto-Switching**: Selecting an operation (e.g., Key Gen) automatically switches the view to "Terminal Output".
-- **Dedicated Logs Access**: "Operation Logs" button in the sidebar for quick access to history.
+- **Split-Pane Layout**:
+  - **Left Pane**: Workbench Configuration & Command Preview.
+  - **Right Pane**: File Manager & Terminal Output / Logs.
+- **Sidebar-Driven**: Configuration capability via the Workbench sidebar.
+- **Unified Workflow**: Command generation and execution are now visually contiguous in the left pane.
 - **Clean Headers**: Simplified panel headers with static titles.
 
 ### 6. Analytics Tracking
