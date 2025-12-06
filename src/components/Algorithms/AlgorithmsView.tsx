@@ -19,6 +19,10 @@ export function AlgorithmsView() {
         <p className="text-lg text-muted-foreground max-w-3xl">
           Migration from classical to post-quantum cryptographic algorithms
         </p>
+        <p className="text-xs text-muted-foreground/60 font-mono mt-2">
+          Data Sources: algorithms_transitions_12052025.csv, pqc_complete_algorithm_reference.csv •
+          Updated: {new Date('2025-12-05').toLocaleDateString()}
+        </p>
       </motion.div>
 
       {/* View Tabs */}
