@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2025-12-06
+
+### Changed
+
+- **OpenSSL Studio Redesign**:
+  - **Layout**: Implemented a split-pane design with dedicated areas for Configuration (Left) and File Management (Right).
+  - **Command Preview**: Moved to the top of the left pane, vertically centered, with an embedded "Run Command" button for a streamlined workflow.
+  - **File Manager**:
+    - Now permanently visible in the right pane.
+    - Added "Size" column and compact timestamp formatting.
+    - Implemented column sorting (Name, Type, Size, Date).
+  - **Toolbar**: Simplified navigation by removing the redundant "Key Files" button.
+
+### Documentation
+
+- Updated `requirements/opensslstudio.md` with the new layout specifications and feature set.
+
 ## [1.3.0] - 2025-12-04
 
 ### Added
