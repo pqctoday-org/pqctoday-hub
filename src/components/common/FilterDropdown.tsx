@@ -117,7 +117,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
             <div
               role="listbox"
               aria-labelledby="filter-dropdown-label"
-              className="absolute top-full left-0 mt-2 w-full glass-panel overflow-hidden transform origin-top max-h-60 overflow-y-auto"
+              className="absolute top-full left-0 mt-2 w-full bg-slate-900 border border-white/20 rounded-lg shadow-xl overflow-hidden transform origin-top max-h-60 overflow-y-auto z-50"
             >
               {/* All Option */}
               <button
