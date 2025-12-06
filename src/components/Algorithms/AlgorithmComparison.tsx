@@ -148,7 +148,7 @@ export const AlgorithmComparison = () => {
 
       <div className="glass-panel overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-center border-collapse" style={{ tableLayout: 'fixed' }}>
+          <table className="w-full text-left border-collapse" style={{ tableLayout: 'fixed' }}>
             <caption className="sr-only">
               Algorithm transition from classical to post-quantum cryptography, showing function
               type, classical algorithm, PQC alternative, and transition timeline
@@ -282,8 +282,8 @@ export const AlgorithmComparison = () => {
                     'hover:bg-primary/10'
                   )}
                 >
-                  <td className="px-4 py-8" style={{ width: `${columnWidths.function}px` }}>
-                    <div className="flex items-center justify-center gap-4 text-primary font-medium text-xl overflow-hidden">
+                  <td className="px-4 py-4" style={{ width: `${columnWidths.function}px` }}>
+                    <div className="flex items-center gap-2 text-primary font-medium text-sm">
                       {algo.function.includes('Signature') ? (
                         <FileSignature size={24} className="flex-shrink-0" />
                       ) : (
@@ -292,42 +292,39 @@ export const AlgorithmComparison = () => {
                       <span className="truncate">{algo.function}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-8" style={{ width: `${columnWidths.classical}px` }}>
-                    <div className="flex flex-col items-center gap-2 overflow-hidden">
-                      <span className="text-foreground font-bold text-xl truncate w-full text-center">
+                  <td className="px-4 py-4" style={{ width: `${columnWidths.classical}px` }}>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-foreground font-semibold text-sm truncate">
                         {algo.classical}
                       </span>
                       {algo.keySize && (
-                        <span className="text-sm text-muted-foreground font-mono px-3 py-1 rounded-full bg-white/5 border border-white/10 whitespace-nowrap">
+                        <span className="text-xs text-muted-foreground font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 w-fit">
                           {algo.keySize}
                         </span>
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-8" style={{ width: `${columnWidths.pqc}px` }}>
-                    <div className="flex items-center justify-center gap-2 text-green-400 font-bold text-xl overflow-hidden">
+                  <td className="px-4 py-4" style={{ width: `${columnWidths.pqc}px` }}>
+                    <div className="flex items-center gap-2 text-green-400 font-semibold text-sm">
                       <span className="truncate">{algo.pqc}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-8" style={{ width: `${columnWidths.deprecation}px` }}>
-                    <div className="flex items-center justify-center gap-6 overflow-hidden">
+                  <td className="px-4 py-4" style={{ width: `${columnWidths.deprecation}px` }}>
+                    <div className="flex flex-wrap items-center gap-3">
                       <span
                         className={clsx(
-                          'text-base px-4 py-2 rounded-full border font-bold shadow-lg whitespace-nowrap flex-shrink-0',
+                          'text-xs px-2 py-1 rounded border font-medium shadow-sm whitespace-normal text-center',
                           algo.deprecationDate.includes('Disallowed')
-                            ? 'bg-red-500/20 border-red-500/40 text-red-300 shadow-red-900/20'
-                            : 'bg-amber-500/20 border-amber-500/40 text-amber-300 shadow-amber-900/20'
+                            ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                            : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
                         )}
                       >
                         {algo.deprecationDate}
                       </span>
-                      <ArrowRight
-                        size={20}
-                        className="text-muted-foreground opacity-30 flex-shrink-0"
-                      />
-                      <span className="text-base text-muted-foreground font-mono whitespace-nowrap flex-shrink-0">
-                        Std: {algo.standardizationDate}
-                      </span>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <ArrowRight size={14} className="opacity-50" />
+                        <span className="font-mono">Std: {algo.standardizationDate}</span>
+                      </div>
                     </div>
                   </td>
                 </motion.tr>
