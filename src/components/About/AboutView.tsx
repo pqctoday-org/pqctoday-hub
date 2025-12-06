@@ -27,6 +27,7 @@ export function AboutView() {
     'OpenSSL Studio',
     'Threats',
     'Leaders',
+    'Learn',
   ]
 
   const featureSubfeatures: Record<string, string[]> = {
@@ -37,6 +38,7 @@ export function AboutView() {
     'OpenSSL Studio': ['Builder', 'Configurator', 'Output'],
     Threats: ['Quantum Threat Timeline', 'Industry Impact', 'Risk Assessment'],
     Leaders: ['Academic', 'Industry', 'Government', 'Profiles'],
+    Learn: ['PKI Workshop', 'Digital Assets'],
   }
 
   const handleChangeRequestSubmit = (e: React.FormEvent) => {
