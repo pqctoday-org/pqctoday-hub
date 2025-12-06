@@ -61,8 +61,6 @@ export const LibraryDetailPopover = ({
     top: '50%',
     transform: 'translate(-50%, -50%)',
     zIndex: 9999, // Ensure it's on top of everything
-    backgroundColor: '#111827', // Force opaque dark gray (Tailwind gray-900)
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', // Strong shadow
     width: '60vw', // 60% of viewport width (20% margins on each side)
     maxWidth: '1200px', // Optional max width for very large screens
     maxHeight: '85vh', // Ensure it fits vertically
@@ -71,14 +69,14 @@ export const LibraryDetailPopover = ({
   const content = (
     <div
       ref={popoverRef}
-      className="border border-white/20 rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col"
+      className="border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
       style={style}
       role="dialog"
       aria-modal="true"
       aria-labelledby="popover-title"
     >
       {/* Header */}
-      <div className="p-4 border-b border-white/10 bg-white/5 flex justify-between items-start gap-4">
+      <div className="p-4 border-b border-border bg-muted/20 flex justify-between items-start gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">
@@ -99,7 +97,7 @@ export const LibraryDetailPopover = ({
           <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-0">
             Description
           </h4>
-          <p className="text-sm text-gray-300 leading-relaxed">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             {item.shortDescription?.trim() || 'No description available.'}
           </p>
         </div>
@@ -178,7 +176,7 @@ export const LibraryDetailPopover = ({
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Region:
               </h4>
-              <p className="text-sm text-gray-300">{item.regionScope?.trim()}</p>
+              <p className="text-sm text-muted-foreground">{item.regionScope?.trim()}</p>
             </div>
           )}
 
@@ -196,7 +194,7 @@ export const LibraryDetailPopover = ({
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Urgency:
               </h4>
-              <p className="text-sm text-gray-300">{item.migrationUrgency?.trim()}</p>
+              <p className="text-sm text-muted-foreground">{item.migrationUrgency?.trim()}</p>
             </div>
           )}
 
@@ -215,7 +213,7 @@ export const LibraryDetailPopover = ({
                 Industries:
               </h4>
               <p
-                className="text-sm text-gray-300 truncate"
+                className="text-sm text-muted-foreground truncate"
                 title={
                   Array.isArray(item.applicableIndustries)
                     ? item.applicableIndustries.join(', ')
@@ -232,7 +230,7 @@ export const LibraryDetailPopover = ({
 
         {/* Footer: Download Link */}
         {item.downloadUrl && (
-          <div className="pt-2 border-t border-white/10 mt-2">
+          <div className="pt-2 border-t border-border mt-2">
             <a
               href={item.downloadUrl}
               target="_blank"

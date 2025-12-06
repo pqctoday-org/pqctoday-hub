@@ -165,13 +165,15 @@ export const ThreatsDashboard = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4">
-      <div className="text-center mb-8">
-        <h2 className="text-4xl font-bold mb-4 text-gradient">Quantum Threats</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto mb-2">
+      <div className="text-center mb-2 md:mb-12">
+        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
+          Quantum Threats
+        </h2>
+        <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
           Detailed analysis of quantum threats across industries, including criticality, at-risk
           cryptography, and PQC replacements.
         </p>
-        <p className="text-xs text-muted-foreground/60 font-mono">
+        <p className="hidden lg:block text-[10px] md:text-xs text-muted-foreground/60 font-mono">
           Data Source: quantum_threats_hsm_industries_12032025.csv • Updated:{' '}
           {new Date('2025-12-03').toLocaleDateString()}
         </p>

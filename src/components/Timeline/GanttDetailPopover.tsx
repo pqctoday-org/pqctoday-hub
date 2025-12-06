@@ -93,26 +93,25 @@ export const GanttDetailPopover = ({
   }
 
   // Calculate position style to keep it on screen
+  // Calculate position style to keep it on screen
   const style: React.CSSProperties = {
     position: 'fixed',
     left: left,
     top: top,
     transform: `translate(${transformX}, ${transformY}) translateY(${translateYOffset})`,
     zIndex: 9999, // Ensure it's on top of everything
-    backgroundColor: '#111827', // Force opaque dark gray (Tailwind gray-900)
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', // Strong shadow
     maxWidth: `${POPOVER_WIDTH}px`, // Ensure it never exceeds calculated width
   }
 
   const content = (
     <div
       ref={popoverRef}
-      className="max-w-[36rem] w-[90vw] border border-white/20 rounded-xl overflow-hidden animate-in zoom-in-95 duration-200"
+      className="max-w-[36rem] w-[90vw] bg-popover text-popover-foreground shadow-2xl border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200"
       style={style}
     >
       {/* Header with Phase Color */}
       <div
-        className="p-3 border-b border-white/10"
+        className="p-3 border-b border-border"
         style={{
           background: `linear-gradient(to bottom, ${colors.glow} 0%, transparent 100%)`,
         }}
@@ -132,11 +131,13 @@ export const GanttDetailPopover = ({
       {/* Content */}
       <div className="p-4 space-y-3">
         <div>
-          <p className="text-xs text-gray-300 leading-relaxed break-words">{phase.description}</p>
+          <p className="text-xs text-muted-foreground leading-relaxed break-words">
+            {phase.description}
+          </p>
         </div>
 
         {/* Table Layout for Details: 4 columns (Label Value Label Value) */}
-        <div className="pt-3 border-t border-white/5">
+        <div className="pt-3 border-t border-border">
           <table className="w-full text-xs border-collapse">
             <tbody>
               {/* Row 1: Start and End */}

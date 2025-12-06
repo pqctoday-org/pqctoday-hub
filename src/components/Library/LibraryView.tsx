@@ -65,13 +65,15 @@ export const LibraryView: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-bold text-gradient">PQC Standards Library</h2>
-        <p className="text-muted-foreground">
+      <div className="text-center mb-2 md:mb-12">
+        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
+          PQC Standards Library
+        </h2>
+        <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
           Explore the latest Post-Quantum Cryptography standards, drafts, and related documents.
         </p>
         {libraryMetadata && (
-          <p className="text-xs text-muted-foreground/60 font-mono">
+          <p className="hidden lg:block text-[10px] md:text-xs text-muted-foreground/60 font-mono">
             Data Source: {libraryMetadata.filename} • Updated:{' '}
             {libraryMetadata.lastUpdate.toLocaleDateString()}
           </p>

@@ -11,9 +11,7 @@ import {
   Info,
   GraduationCap,
 } from 'lucide-react'
-import pqcLogo from '../../assets/PQCT_Logo_V01.png'
 import { Button } from '../ui/button'
-import { ModeToggle } from '../mode-toggle'
 
 export const MainLayout = () => {
   const location = useLocation()
@@ -26,8 +24,8 @@ export const MainLayout = () => {
     { path: '/algorithms', label: 'Algorithms', icon: Shield },
     { path: '/library', label: 'Library', icon: BookOpen },
     { path: '/learn', label: 'Learn', icon: GraduationCap },
-    { path: '/playground', label: 'Playground', icon: FlaskConical },
-    { path: '/openssl', label: 'OpenSSL Studio', icon: Activity },
+    { path: '/playground', label: 'Playground', icon: FlaskConical, hiddenOnMobile: true },
+    { path: '/openssl', label: 'OpenSSL Studio', icon: Activity, hiddenOnMobile: true },
     { path: '/threats', label: 'Threats', icon: AlertTriangle },
     { path: '/leaders', label: 'Leaders', icon: Users },
     { path: '/about', label: 'About', icon: Info },
@@ -36,19 +34,32 @@ export const MainLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="m-4 sticky top-4 z-50 transition-all duration-300" role="banner">
-        <div className="glass-panel p-4 flex w-full justify-between items-center">
+        <div className="glass-panel p-2 lg:p-4 flex w-full justify-center lg:justify-between items-center relative">
           <div className="flex flex-row items-baseline gap-4">
-            <img src={pqcLogo} alt="PQC Today Logo" className="object-contain mr-4 h-8 w-auto" />
-            <div>
+            <div className="hidden lg:block">
               <h1 className="text-2xl font-bold text-gradient">PQC Today</h1>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest hidden sm:block">
                 Last Updated: {buildTime}
               </p>
             </div>
           </div>
-          <nav className="flex gap-2" role="navigation" aria-label="Main navigation">
+
+          {/* Universal Navigation: Row of Icons on Mobile, Full Nav on Desktop */}
+          <nav
+            className="flex flex-row flex-nowrap items-center justify-between w-full lg:w-auto gap-1 lg:gap-2 overflow-x-auto no-scrollbar"
+            role="navigation"
+            aria-label="Main navigation"
+          >
             {navItems.map((item) => (
-              <NavLink key={item.path} to={item.path}>
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={
+                  item.hiddenOnMobile
+                    ? 'hidden lg:block'
+                    : 'flex-1 lg:flex-none flex justify-center'
+                }
+              >
                 {({ isActive }) => (
                   <Button
                     variant="ghost"
@@ -57,25 +68,22 @@ export const MainLayout = () => {
                     aria-current={isActive ? 'page' : undefined}
                     className={
                       isActive
-                        ? 'bg-primary/10 text-primary border border-primary/20'
-                        : 'text-muted-foreground hover:text-foreground'
+                        ? 'bg-primary/10 text-primary border border-primary/20 px-2 lg:px-4'
+                        : 'text-muted-foreground hover:text-foreground px-2 lg:px-4'
                     }
                   >
-                    <item.icon size={18} aria-hidden="true" className="mr-2" />
-                    <span className="hidden md:inline">{item.label}</span>
+                    <item.icon size={20} aria-hidden="true" className="lg:mr-2" />
+                    <span className="hidden lg:inline">{item.label}</span>
                   </Button>
                 )}
               </NavLink>
             ))}
-            <div className="ml-2 border-l border-border pl-2">
-              <ModeToggle />
-            </div>
           </nav>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-grow container py-8" role="main">
+      <main className="flex-grow container py-4 px-2 md:py-8 md:px-8" role="main">
         <AnimatePresence mode="wait">
           {/* We use location.pathname as the key to trigger animations on route change */}
           <motion.div
@@ -91,7 +99,7 @@ export const MainLayout = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm">
+      <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4">
         <p>© 2025 PQC Today. Data sourced from the public internet resources.</p>
       </footer>
     </div>

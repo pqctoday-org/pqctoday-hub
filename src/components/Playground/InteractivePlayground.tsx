@@ -25,12 +25,20 @@ import { LogsTab } from './tabs/LogsTab'
 import { logEvent } from '../../utils/analytics'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
+import { MobilePlaygroundView } from './MobilePlaygroundView'
 
 export const InteractivePlayground = () => {
   return (
-    <PlaygroundProvider>
-      <PlaygroundContent />
-    </PlaygroundProvider>
+    <>
+      <div className="md:hidden px-4 py-4">
+        <MobilePlaygroundView />
+      </div>
+      <div className="hidden md:block">
+        <PlaygroundProvider>
+          <PlaygroundContent />
+        </PlaygroundProvider>
+      </div>
+    </>
   )
 }
 
@@ -76,16 +84,17 @@ const PlaygroundContent = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex space-x-1 mb-6 bg-white/5 p-1 rounded-xl shrink-0 overflow-x-auto">
+      <div className="flex space-x-1 mb-6 bg-white/5 p-1 rounded-xl shrink-0 overflow-x-auto scrollbar-hide -mx-2 px-2 sm:mx-0 sm:px-1">
         <Button
           onClick={() => handleTabChange('keystore')}
           variant="ghost"
           size="sm"
-          className={
+          className={clsx(
+            'whitespace-nowrap',
             activeTab === 'keystore'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
-          }
+          )}
         >
           <KeyIcon size={16} className="mr-2" /> Key Store ({keyStore.length})
         </Button>
@@ -93,11 +102,12 @@ const PlaygroundContent = () => {
           onClick={() => handleTabChange('data')}
           variant="ghost"
           size="sm"
-          className={
+          className={clsx(
+            'whitespace-nowrap',
             activeTab === 'data'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
-          }
+          )}
         >
           <Database size={16} className="mr-2" /> Data
         </Button>
@@ -105,11 +115,12 @@ const PlaygroundContent = () => {
           onClick={() => handleTabChange('kem_ops')}
           variant="ghost"
           size="sm"
-          className={
+          className={clsx(
+            'whitespace-nowrap',
             activeTab === 'kem_ops'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
-          }
+          )}
         >
           <Activity size={16} className="mr-2" /> KEM & Encrypt
         </Button>
@@ -117,11 +128,12 @@ const PlaygroundContent = () => {
           onClick={() => handleTabChange('symmetric')}
           variant="ghost"
           size="sm"
-          className={
+          className={clsx(
+            'whitespace-nowrap',
             activeTab === 'symmetric'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
-          }
+          )}
         >
           <Lock size={16} className="mr-2" /> Sym Encrypt
         </Button>
@@ -129,11 +141,12 @@ const PlaygroundContent = () => {
           onClick={() => handleTabChange('sign_verify')}
           variant="ghost"
           size="sm"
-          className={
+          className={clsx(
+            'whitespace-nowrap',
             activeTab === 'sign_verify'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
-          }
+          )}
         >
           <FileSignature size={16} className="mr-2" /> Sign & Verify
         </Button>
@@ -141,11 +154,12 @@ const PlaygroundContent = () => {
           onClick={() => handleTabChange('acvp')}
           variant="ghost"
           size="sm"
-          className={
+          className={clsx(
+            'whitespace-nowrap',
             activeTab === 'acvp'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
-          }
+          )}
         >
           <ShieldCheck size={16} className="mr-2" /> ACVP
         </Button>
@@ -153,11 +167,12 @@ const PlaygroundContent = () => {
           onClick={() => handleTabChange('settings')}
           variant="ghost"
           size="sm"
-          className={
+          className={clsx(
+            'whitespace-nowrap',
             activeTab === 'settings'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
-          }
+          )}
         >
           <Settings size={16} className="mr-2" /> Settings
         </Button>
@@ -165,11 +180,12 @@ const PlaygroundContent = () => {
           onClick={() => handleTabChange('logs')}
           variant="ghost"
           size="sm"
-          className={
+          className={clsx(
+            'whitespace-nowrap',
             activeTab === 'logs'
               ? 'bg-primary/20 text-primary shadow-sm'
               : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
-          }
+          )}
         >
           <FileText size={16} className="mr-2" /> Logs
         </Button>

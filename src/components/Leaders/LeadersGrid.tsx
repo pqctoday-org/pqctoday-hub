@@ -59,14 +59,16 @@ export const LeadersGrid = () => {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold mb-4 text-gradient">Transformation Leaders</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto mb-4">
+      <div className="text-center mb-2 md:mb-12">
+        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
+          Transformation Leaders
+        </h2>
+        <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
           Meet the visionaries and organizations driving the global transition to Post-Quantum
           Cryptography.
         </p>
         {leadersMetadata && (
-          <p className="text-xs text-muted-foreground/60 mb-8 font-mono">
+          <p className="hidden lg:block text-[10px] md:text-xs text-muted-foreground/60 mb-4 md:mb-8 font-mono">
             Data Source: {leadersMetadata.filename} • Updated:{' '}
             {leadersMetadata.lastUpdate.toLocaleDateString()}
           </p>
@@ -106,7 +108,7 @@ export const LeadersGrid = () => {
                       className="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
                     />
                   ) : (
-                    <div className="p-3 rounded-full bg-muted/30 text-secondary" aria-hidden="true">
+                    <div className="p-3 rounded-full bg-primary/10 text-primary" aria-hidden="true">
                       <User size={24} />
                     </div>
                   )}

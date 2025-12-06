@@ -72,16 +72,16 @@ export const PKIWorkshop: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-4 md:mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gradient mb-2">PKI Workshop</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl md:text-3xl font-bold text-gradient mb-2">PKI Workshop</h1>
+          <p className="text-muted-foreground text-sm md:text-base">
             Master the certificate lifecycle in 4 practical steps.
           </p>
         </div>
         <button
           onClick={handleReset}
-          className="flex items-center gap-2 px-3 py-2 bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 transition-colors text-sm border border-red-500/20"
+          className="hidden md:flex items-center gap-2 px-3 py-2 bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 transition-colors text-sm border border-red-500/20"
         >
           <Trash2 size={16} />
           Reset Workshop
@@ -101,7 +101,7 @@ export const PKIWorkshop: React.FC = () => {
               className={`flex flex-col items-center gap-2 group ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
             >
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold text-sm md:text-base
                 ${
                   idx === currentStep
                     ? 'border-primary text-primary shadow-[0_0_15px_rgba(0,255,157,0.3)]'
@@ -122,15 +122,26 @@ export const PKIWorkshop: React.FC = () => {
       </div>
 
       {/* Content Area */}
-      <div className="glass-panel p-8 min-h-[500px] animate-fade-in">
+      <div className="glass-panel p-4 md:p-8 min-h-[300px] md:min-h-[500px] animate-fade-in">
         <div className="mb-6 border-b border-white/10 pb-4">
           {/* eslint-disable-next-line security/detect-object-injection */}
-          <h2 className="text-2xl font-bold text-foreground">{steps[currentStep].title}</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-foreground">
+            {steps[currentStep].title}
+          </h2>
           {/* eslint-disable-next-line security/detect-object-injection */}
-          <p className="text-muted-foreground">{steps[currentStep].description}</p>
+          <p className="text-muted-foreground mt-2">{steps[currentStep].description}</p>
         </div>
-        {/* eslint-disable-next-line security/detect-object-injection */}
-        {steps[currentStep].component}
+
+        {/* Desktop: Interactive Component */}
+        <div className="hidden md:block">
+          {/* eslint-disable-next-line security/detect-object-injection */}
+          {steps[currentStep].component}
+        </div>
+
+        {/* Mobile: Static / Light Node */}
+        <div className="md:hidden text-center py-8 text-muted-foreground/50 text-sm italic">
+          (Interactive simulation optimized for desktop view)
+        </div>
       </div>
 
       {/* Navigation */}

@@ -139,12 +139,12 @@ const SaveRestorePanel = () => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h2 className="text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
-          <Save className="text-secondary" size={32} />
+      <div className="mb-4 md:mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
+          <Save className="text-secondary w-8 h-8 md:w-8 md:h-8" size={32} />
           Progress Management
         </h2>
-        <p className="text-muted-foreground">
+        <p className="hidden md:block text-muted-foreground">
           Save your learning progress to continue later or transfer between devices.
         </p>
       </div>
@@ -251,16 +251,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
     <div className="space-y-8">
       {/* Active Modules Section */}
       <div>
-        <div className="mb-6">
-          <h2 className="text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
-            <BookOpen className="text-primary" size={32} />
+        <div className="mb-4 md:mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
+            <BookOpen className="text-primary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
             Learning Workshops
           </h2>
-          <p className="text-muted-foreground">
+          <p className="hidden lg:block text-muted-foreground">
             Interactive hands-on workshops to master cryptographic concepts.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <AnimatePresence mode="popLayout">
             {activeModules.map((module) => (
               <ModuleCard key={module.id} module={module} onSelectModule={onSelectModule} />
@@ -271,12 +271,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
 
       {/* Upcoming Modules Section */}
       <div>
-        <div className="mb-6">
-          <h2 className="text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
-            <Layers className="text-secondary" size={32} />
+        <div className="mb-4 md:mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
+            <Layers className="text-secondary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
             Upcoming Tracks
           </h2>
-          <p className="text-muted-foreground">
+          <p className="hidden md:block text-muted-foreground">
             More learning modules coming soon to expand your knowledge.
           </p>
         </div>

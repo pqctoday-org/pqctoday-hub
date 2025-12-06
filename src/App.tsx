@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import './styles/App.css'
+
 import { logPageView } from './utils/analytics'
 import { useEffect } from 'react'
 import { MainLayout } from './components/Layout/MainLayout'

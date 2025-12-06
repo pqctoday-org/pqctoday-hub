@@ -85,7 +85,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
       const rows = [
         <tr
           key={item.referenceId}
-          className="border-b border-white/5 hover:bg-white/5 transition-colors group"
+          className="border-b border-border hover:bg-muted/50 transition-colors group"
         >
           <td
             className="p-4 whitespace-nowrap text-sm font-medium text-foreground"
@@ -95,7 +95,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
               {hasChildren ? (
                 <button
                   onClick={() => toggleExpand(item.referenceId)}
-                  className="p-1 hover:bg-white/10 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="p-1 hover:bg-muted rounded focus:outline-none focus:ring-2 focus:ring-primary"
                   aria-expanded={isExpanded}
                   aria-label={
                     isExpanded ? `Collapse ${item.documentTitle}` : `Expand ${item.documentTitle}`
@@ -172,7 +172,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/10 bg-white/5">
+              <tr className="border-b border-border bg-muted/20">
                 {headers.map((header) => (
                   <th
                     key={header.key as string}

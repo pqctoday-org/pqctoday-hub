@@ -12,14 +12,18 @@ export function AlgorithmsView() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center mb-2 md:mb-12"
+      >
+        <h1 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
           Post-Quantum Cryptography Algorithms
         </h1>
-        <p className="text-lg text-muted-foreground max-w-3xl">
+        <p className="hidden lg:block text-lg text-muted-foreground max-w-3xl mx-auto">
           Migration from classical to post-quantum cryptographic algorithms
         </p>
-        <p className="text-xs text-muted-foreground/60 font-mono mt-2">
+        <p className="hidden lg:block text-[10px] md:text-xs text-muted-foreground/60 font-mono mt-1 md:mt-2">
           Data Sources: algorithms_transitions_12052025.csv, pqc_complete_algorithm_reference.csv •
           Updated: {new Date('2025-12-05').toLocaleDateString()}
         </p>
