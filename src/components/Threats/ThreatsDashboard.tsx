@@ -165,7 +165,7 @@ export const ThreatsDashboard = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4">
-      <div className="text-center mb-12">
+      <div className="text-center mb-8">
         <h2 className="text-4xl font-bold mb-4 text-gradient">Quantum Threats</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto mb-2">
           Detailed analysis of quantum threats across industries, including criticality, at-risk
@@ -175,49 +175,58 @@ export const ThreatsDashboard = () => {
           Data Source: quantum_threats_hsm_industries_12032025.csv • Updated:{' '}
           {new Date('2025-12-03').toLocaleDateString()}
         </p>
+      </div>
 
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
-          {/* Industry Filter Dropdown */}
-          <FilterDropdown
-            items={industryItems}
-            selectedId={selectedIndustry}
-            onSelect={(id) => {
-              setSelectedIndustry(id)
-              logEvent('Threats', 'Filter Industry', id)
-            }}
-            label="Select Industry"
-            defaultLabel="All Industries"
-            defaultIcon={<Briefcase size={16} className="text-primary" />}
-          />
+      {/* Filters Section */}
+      <div className="glass-panel p-6 mb-8">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Industry Filter Dropdown */}
+            <div className="flex-1 min-w-[200px]">
+              <FilterDropdown
+                items={industryItems}
+                selectedId={selectedIndustry}
+                onSelect={(id) => {
+                  setSelectedIndustry(id)
+                  logEvent('Threats', 'Filter Industry', id)
+                }}
+                label="Select Industry"
+                defaultLabel="All Industries"
+                defaultIcon={<Briefcase size={16} className="text-primary" />}
+              />
+            </div>
 
-          {/* Criticality Filter Dropdown */}
-          <FilterDropdown
-            items={criticalityItems}
-            selectedId={selectedCriticality}
-            onSelect={(id) => {
-              setSelectedCriticality(id)
-              logEvent('Threats', 'Filter Criticality', id)
-            }}
-            label="Select Criticality"
-            defaultLabel="All Levels"
-            defaultIcon={<AlertCircle size={16} className="text-primary" />}
-          />
-        </div>
+            {/* Criticality Filter Dropdown */}
+            <div className="flex-1 min-w-[200px]">
+              <FilterDropdown
+                items={criticalityItems}
+                selectedId={selectedCriticality}
+                onSelect={(id) => {
+                  setSelectedCriticality(id)
+                  logEvent('Threats', 'Filter Criticality', id)
+                }}
+                label="Select Criticality"
+                defaultLabel="All Levels"
+                defaultIcon={<AlertCircle size={16} className="text-primary" />}
+              />
+            </div>
 
-        {/* Search */}
-        <div className="flex justify-end mb-4">
-          <div className="relative w-full md:w-64">
-            <Search
-              size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <input
-              type="text"
-              placeholder="Search threats..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-black/20 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full"
-            />
+            {/* Search */}
+            <div className="flex-1 min-w-[200px]">
+              <div className="relative">
+                <Search
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  type="text"
+                  placeholder="Search threats..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="bg-black/20 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
