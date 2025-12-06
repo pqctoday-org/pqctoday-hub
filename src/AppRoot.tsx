@@ -12,12 +12,15 @@ export default function AppRoot() {
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <Suspense
             fallback={
-              <div className="min-h-screen flex items-center justify-center bg-gray-900 text-foreground">
-                <div className="text-center">
-                  <h2 className="text-xl font-bold mb-2">System Loading...</h2>
-                  <p className="text-gray-400">Initializing application modules.</p>
+              <main
+                role="main"
+                className="min-h-screen flex items-center justify-center bg-background text-foreground"
+              >
+                <div className="text-center" role="status" aria-label="Loading application">
+                  <h1 className="text-xl font-bold mb-2">PQC Today</h1>
+                  <p className="text-muted-foreground">Initializing application modules...</p>
                 </div>
-              </div>
+              </main>
             }
           >
             <App />

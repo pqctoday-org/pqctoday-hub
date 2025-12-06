@@ -50,7 +50,7 @@ export const TimelineView = () => {
           discovery to full migration and key regulatory milestones.
         </p>
         {timelineMetadata && (
-          <p className="text-xs text-muted-foreground/60 font-mono">
+          <p className="text-xs text-muted-foreground font-mono">
             Data Source: {timelineMetadata.filename} • Updated:{' '}
             {timelineMetadata.lastUpdate.toLocaleDateString()}
           </p>

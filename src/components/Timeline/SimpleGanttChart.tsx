@@ -179,7 +179,7 @@ export const SimpleGanttChart = ({
               {isMilestone && isFirstInPhase ? (
                 <Flag className="w-4 h-4" style={{ color: colors.start, fill: colors.start }} />
               ) : isFirstInPhase && !isMilestone ? (
-                <span className="absolute left-2 text-[10px] font-bold text-foreground whitespace-nowrap drop-shadow-md select-none z-10 pointer-events-none">
+                <span className="absolute left-2 text-[10px] font-bold text-white bg-black/40 px-1 rounded whitespace-nowrap drop-shadow-md select-none z-10 pointer-events-none">
                   {phaseData.phase}
                 </span>
               ) : null}

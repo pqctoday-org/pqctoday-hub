@@ -1,7 +1,62 @@
+# Tech Stack
+- **Framework**: React + Vite
+- **Language**: TypeScript (Strict mode)
+- **Styling**: Tailwind CSS v4
+- **State Management**: Zustand
+- **Testing**: Vitest (Unit), Playwright (E2E)
+- **Icons**: Lucide React
+- **Package Manager**: npm
+
+# Design & UI Guidelines
+1. **Visual Style**: "Glassmorphism" with deep dark mode (`hsl(230 35% 7%)`) and cyan/purple accents.
+2. **Components**:
+   - ALWAYS prefer reusable components from `src/components/ui` (e.g., `Button`, `Card`, `Input`) over raw HTML or ad-hoc styling.
+   - Use `<Button variant="gradient">` for primary CTAs (Cyan-Purple gradient).
+   - Use `<Button variant="outline">` or `<Button variant="ghost">` for secondary actions.
+3. **Styling Patterns**:
+   - **Containers**: Use `.glass-panel` utility class for cards and content blocks (`bg-white/[0.08] backdrop-blur-md`).
+   - **Headings**: Use `.text-gradient` for major section titles.
+   - **Colors**: Use css variables `hsl(var(--param))` (e.g., `bg-primary`, `text-muted-foreground`). NEVER hardcode hex colors.
+4. **Layout**:
+   - Wrap main page content in `.container` (`max-w-7xl mx-auto`).
+
+# coding Standards
+
+## TypeScript
+- Use `interface` for object definitions and `type` for unions/primitives.
+- Avoid `any`. Explicitly define types for props, state, and API responses.
+- Use `unknown` instead of `any` for uncertain types, then narrow checks.
+
+## Component Structure
+- Use **PascalCase** for component filenames (e.g., `MyComponent.tsx`).
+- Colocate unit tests with components (e.g., `MyComponent.test.tsx`).
+- Use named exports for components: `export function MyComponent() {...}`.
+
+## State Management (Zustand)
+- Store files should be located in `src/store`.
+- Use the `create<State>()(...)` syntax.
+- Keep stores modular; avoid a single monolithic store unless necessary.
+
+## Testing
+- **Unit Tests**: Use `vitest` + `@testing-library/react`. Focus on user interactions and accessibility (a11y).
+- **E2E Tests**: Use `Playwright` in the `e2e/` directory for critical user flows.
+- **Accessibility**: Ensure all interactive elements have valid `aria-label` or visible text. Run `npm run test` to catch regressions.
+
+## Imports
+- Use relative paths for imports (e.g., `../../components/ui/button`) as no alias is configured.
+- Group imports: standard lib -> 3rd party -> local components -> styles/types.
+
 # Crypto Operations Guidelines
 
+## **STRICTLY ALLOWED LIBRARIES ONLY**
+**Do NOT install or use any other crypto libraries without explicit user permission.**
+Use ONLY the following currently installed libraries:
+- **Core PQC/Crypto**: `@openforge-sh/liboqs`, `openssl-wasm`, `mlkem-wasm`, `pqcrypto`
+- **Primitives**: `@noble/curves`, `@noble/hashes`, `@scure/base`
+- **Wallets/Keys**: `@scure/bip32`, `@scure/bip39`, `ed25519-hd-key`, `micro-eth-signer`
+
+## Implementation Rules
 1. **OpenSSL First**: All standard cryptographic operations and parsing that are supported by OpenSSL MUST be performed using OpenSSL commands (e.g., `openssl genpkey`, `openssl pkey -text`).
 2. **Fallback to JS**: Operations NOT supported by the local OpenSSL version (e.g., Ed25519 on older LibreSSL) MUST be implemented using the new JavaScript imports (e.g., `@noble/curves`, `@scure/bip39`).
 3. **Modern Commands**: Use modern OpenSSL commands (`genpkey`, `pkey`) and avoid deprecated ones (`ec`, `ecparam`) where possible.
-. **Centralize key and files management**: All key files have to be retained in Openssl Studio KEy files modules
-
+4. **Centralize key and files management**: All key files have to be retained in Openssl Studio Key files modules.
