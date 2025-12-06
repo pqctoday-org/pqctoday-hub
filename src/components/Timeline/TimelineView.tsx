@@ -68,6 +68,7 @@ export const TimelineView = () => {
         }}
         label="Select Region"
         defaultLabel="All Countries"
+        opaque
       />
 
       <div className="mt-12">
