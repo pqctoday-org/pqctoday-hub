@@ -163,7 +163,28 @@ export const useCertProfile = ({ initialAttributes, filterProfileName }: UseCert
         }
       }
 
-      setAttributes(newAttributes)
+      // Merge with existing attributes, preserving CSR source and values
+      setAttributes((prevAttributes) => {
+        return newAttributes.map((newAttr) => {
+          // Find if this attribute already exists (from CSR import)
+          const existingAttr = prevAttributes.find(
+            (prev) => prev.id === newAttr.id || prev.oid === newAttr.oid
+          )
+
+          // If it exists and has CSR source, preserve the CSR value and source
+          if (existingAttr && existingAttr.source === 'CSR') {
+            return {
+              ...newAttr,
+              value: existingAttr.value, // Keep CSR value
+              source: 'CSR', // Keep CSR source
+              enabled: true, // Ensure it's enabled since it came from CSR
+            }
+          }
+
+          // Otherwise use the new profile attribute
+          return newAttr
+        })
+      })
       setProfileConstraints(newConstraints)
       setLog((prev) => prev + `Profile loaded: ${industry} - ${standard} (${date})\n`)
     } catch (error) {
