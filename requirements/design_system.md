@@ -11,7 +11,8 @@ The PQC Timeline App adopts a **Modern, Technical, and Futuristic** aesthetic, s
 - **Glassmorphism**: Extensive use of semi-transparent backgrounds (`glass-panel`), blurs, and subtle borders to create depth and a modern feel.
 - **Deep Dark Mode**: The default theme uses deep blues/blacks (`hsl(230 35% 7%)`) representing a secure, technical environment, contrasted with bright accents.
 - **Vibrant Accents**: Cyan (`primary`) and Purple (`secondary`) gradients provide a high-tech, cryptographic feel.
-- **Accessibility**: High contrast text, clear focus states, and semantic HTML structure (WIP).
+- **Accessibility**: High contrast text, clear focus states, and semantic HTML structure.
+- **Theme Adaptability**: Design MUST work seamlessly in both **Dark** (default) and **Light** modes by strictly using semantic tokens (e.g., `bg-card`, `border-border`) instead of hardcoded dark values.
 
 ---
 
@@ -140,7 +141,10 @@ Located in: `src/components/ui/input.tsx`
 ### Variable Usage
 
 - Styles should reference CSS variables (e.g., `bg-primary`, `text-muted-foreground`) rather than hardcoded hex values to maintain theme compatibility.
-- Use `hsl(var(--param))` format defined in `@theme` block in `src/styles/index.css`.
+- **Light Mode Compatibility**:
+  - NEVER use hardcoded dark backgrounds (e.g., `bg-slate-900`, `bg-[#0d1117]`).
+  - ALWAYS use `bg-card`, `bg-muted`, or `bg-background` to ensure the component adapts to Light Mode (where these values invert to white/gray).
+- Use `hsl(var(--param))` format defined in `@theme` block in `src/styles/index.css` via Tailwind v4.
 
 ### Usage Guide
 
