@@ -178,7 +178,7 @@ export const ThreatsDashboard = () => {
       </div>
 
       {/* Filters Section */}
-      <div className="bg-slate-900/100 border border-white/20 rounded-lg shadow-lg p-2 mb-8 flex flex-wrap items-center gap-4">
+      <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-8 flex flex-wrap items-center gap-4">
         <FilterDropdown
           items={industryItems}
           selectedId={selectedIndustry}
@@ -220,7 +220,7 @@ export const ThreatsDashboard = () => {
             placeholder="Search threats..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors"
+            className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
           />
         </div>
       </div>
@@ -230,7 +230,7 @@ export const ThreatsDashboard = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/10 bg-white/5">
+              <tr className="border-b border-border bg-muted/20">
                 <th
                   className="p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort('industry')}
@@ -287,7 +287,7 @@ export const ThreatsDashboard = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="border-b border-white/5 hover:bg-white/5 transition-colors group"
+                    className="border-b border-border hover:bg-muted/30 transition-colors group"
                   >
                     <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
                       {item.industry}

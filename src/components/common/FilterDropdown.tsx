@@ -93,7 +93,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               onKeyDown={handleKeyDown}
               aria-haspopup="listbox"
               aria-expanded={isOpen}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors min-w-[200px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="flex items-center gap-2 px-4 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors min-w-[200px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span
@@ -122,7 +122,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               <div
                 role="listbox"
                 aria-labelledby="filter-dropdown-label"
-                className="absolute top-full left-0 mt-2 w-full bg-slate-900 border border-white/20 rounded-lg shadow-xl overflow-hidden transform origin-top max-h-60 overflow-y-auto z-50"
+                className="absolute top-full left-0 mt-2 w-full bg-popover border border-border rounded-lg shadow-xl overflow-hidden transform origin-top max-h-60 overflow-y-auto z-50"
               >
                 {/* All Option */}
                 <button
@@ -134,8 +134,8 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                   }}
                   onKeyDown={(e) => handleOptionKeyDown(e, 'All')}
                   className={clsx(
-                    'w-full text-left px-4 py-3 hover:bg-white/10 transition-colors focus:outline-none focus-visible:bg-white/10 border-b border-white/10',
-                    isDefaultSelected ? 'text-primary bg-slate-800' : 'text-muted-foreground'
+                    'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border',
+                    isDefaultSelected ? 'text-primary bg-muted/30' : 'text-muted-foreground'
                   )}
                   style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
@@ -161,9 +161,9 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                       }}
                       onKeyDown={(e) => handleOptionKeyDown(e, item.id)}
                       className={clsx(
-                        'w-full text-left px-4 py-3 hover:bg-white/10 transition-colors focus:outline-none focus-visible:bg-white/10 border-b border-white/10 last:border-0',
+                        'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border last:border-0',
                         selectedId === item.id
-                          ? 'text-primary bg-slate-800'
+                          ? 'text-primary bg-muted/30'
                           : 'text-muted-foreground'
                       )}
                       style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
@@ -184,8 +184,8 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       ) : (
         <div
           className={clsx(
-            'border border-white/20 rounded-lg shadow-lg p-2 inline-flex items-center gap-2',
-            opaque ? 'bg-slate-900/100' : 'bg-slate-900/95 backdrop-blur-md'
+            'border border-border rounded-lg shadow-lg p-2 inline-flex items-center gap-2',
+            opaque ? 'bg-card' : 'bg-card/95 backdrop-blur-md'
           )}
         >
           <span className="text-muted-foreground px-2" id="filter-dropdown-label">
@@ -198,7 +198,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               onKeyDown={handleKeyDown}
               aria-haspopup="listbox"
               aria-expanded={isOpen}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors min-w-[200px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="flex items-center gap-2 px-4 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors min-w-[200px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span
@@ -227,7 +227,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               <div
                 role="listbox"
                 aria-labelledby="filter-dropdown-label"
-                className="absolute top-full left-0 mt-2 w-full bg-slate-900 border border-white/20 rounded-lg shadow-xl overflow-hidden transform origin-top max-h-60 overflow-y-auto z-50"
+                className="absolute top-full left-0 mt-2 w-full bg-popover border border-border rounded-lg shadow-xl overflow-hidden transform origin-top max-h-60 overflow-y-auto z-50"
               >
                 {/* All Option */}
                 <button
@@ -239,8 +239,8 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                   }}
                   onKeyDown={(e) => handleOptionKeyDown(e, 'All')}
                   className={clsx(
-                    'w-full text-left px-4 py-3 hover:bg-white/10 transition-colors focus:outline-none focus-visible:bg-white/10 border-b border-white/10',
-                    isDefaultSelected ? 'text-primary bg-slate-800' : 'text-muted-foreground'
+                    'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border',
+                    isDefaultSelected ? 'text-primary bg-muted/30' : 'text-muted-foreground'
                   )}
                   style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
@@ -266,9 +266,9 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                       }}
                       onKeyDown={(e) => handleOptionKeyDown(e, item.id)}
                       className={clsx(
-                        'w-full text-left px-4 py-3 hover:bg-white/10 transition-colors focus:outline-none focus-visible:bg-white/10 border-b border-white/10 last:border-0',
+                        'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border last:border-0',
                         selectedId === item.id
-                          ? 'text-primary bg-slate-800'
+                          ? 'text-primary bg-muted/30'
                           : 'text-muted-foreground'
                       )}
                       style={{ display: 'flex', alignItems: 'center', gap: '8px' }}

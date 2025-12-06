@@ -95,7 +95,7 @@ export const LeadersGrid = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2 }}
-              className="glass-panel p-6 flex flex-col h-full hover:border-secondary/50 transition-colors"
+              className="glass-panel p-6 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="relative">
@@ -106,11 +106,11 @@ export const LeadersGrid = () => {
                       className="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
                     />
                   ) : (
-                    <div className="p-3 rounded-full bg-white/5 text-secondary" aria-hidden="true">
+                    <div className="p-3 rounded-full bg-muted/30 text-secondary" aria-hidden="true">
                       <User size={24} />
                     </div>
                   )}
-                  <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 border border-white/10 text-xs font-bold shadow-sm">
+                  <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 border border-border text-xs font-bold shadow-sm">
                     {/* Simple flag mapping based on country name */}
                     {leader.country === 'USA' && '🇺🇸'}
                     {leader.country === 'UK' && '🇬🇧'}
@@ -153,12 +153,12 @@ export const LeadersGrid = () => {
                 ))}
               </div>
 
-              <p className="text-sm text-muted-foreground leading-relaxed border-t border-white/5 pt-4 mb-4">
+              <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-4 mb-4">
                 "{leader.bio}"
               </p>
 
               {leader.keyResourceUrl && (
-                <div className="mb-4 p-3 rounded-lg bg-white/5 border border-white/10">
+                <div className="mb-4 p-3 rounded-lg bg-muted/20 border border-border">
                   <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-2">
                     Key Resource
                   </p>
@@ -189,7 +189,7 @@ export const LeadersGrid = () => {
               )}
 
               {(leader.websiteUrl || leader.linkedinUrl) && (
-                <div className="flex gap-3 mt-auto pt-4 border-t border-white/5">
+                <div className="flex gap-3 mt-auto pt-4 border-t border-border">
                   {leader.websiteUrl && (
                     <a
                       href={leader.websiteUrl}
