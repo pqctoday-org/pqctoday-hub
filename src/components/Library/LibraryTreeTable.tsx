@@ -83,34 +83,37 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
       const hasChildren = item.children && item.children.length > 0
 
       const rows = [
-        <tr key={item.referenceId} className="hover:bg-gray-50 border-b border-gray-100">
+        <tr
+          key={item.referenceId}
+          className="border-b border-white/5 hover:bg-white/5 transition-colors group"
+        >
           <td
-            className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900"
+            className="p-4 whitespace-nowrap text-sm font-medium text-foreground"
             style={{ paddingLeft: `${level * 20 + 16}px` }}
           >
             <div className="flex items-center gap-2">
               {hasChildren ? (
                 <button
                   onClick={() => toggleExpand(item.referenceId)}
-                  className="p-1 hover:bg-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="p-1 hover:bg-white/10 rounded focus:outline-none focus:ring-2 focus:ring-primary"
                   aria-expanded={isExpanded}
                   aria-label={
                     isExpanded ? `Collapse ${item.documentTitle}` : `Expand ${item.documentTitle}`
                   }
                 >
                   {isExpanded ? (
-                    <ChevronDown size={16} aria-hidden="true" />
+                    <ChevronDown size={16} aria-hidden="true" className="text-muted-foreground" />
                   ) : (
-                    <ChevronRight size={16} aria-hidden="true" />
+                    <ChevronRight size={16} aria-hidden="true" className="text-muted-foreground" />
                   )}
                 </button>
               ) : (
                 <span className="w-6" /> // Spacer
               )}
-              {item.referenceId}
+              <span className="font-mono text-primary/80">{item.referenceId}</span>
             </div>
           </td>
-          <td className="px-4 py-3 text-sm text-gray-900">
+          <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
             <div className="flex items-center gap-2">
               {item.documentTitle}
               {item.downloadUrl && (
@@ -118,7 +121,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
                   href={item.downloadUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-primary rounded"
+                  className="text-primary/80 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded"
                   aria-label={`Open ${item.documentTitle} in new tab`}
                 >
                   <ExternalLink size={14} aria-hidden="true" />
@@ -126,13 +129,17 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
               )}
             </div>
           </td>
-          <td className="px-4 py-3 text-sm text-gray-500">{item.documentStatus}</td>
-          <td className="px-4 py-3 text-sm text-gray-500">{item.lastUpdateDate}</td>
-          <td className="px-4 py-3 text-sm text-gray-500">
+          <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+            {item.documentStatus}
+          </td>
+          <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+            {item.lastUpdateDate}
+          </td>
+          <td className="p-4 text-sm">
             <div className="flex items-center gap-1">
               <button
                 onClick={(e) => handleDetailsClick(item, e)}
-                className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
                 title="View Details"
                 aria-label={`View details for ${item.documentTitle}`}
               >
@@ -161,52 +168,54 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
 
   return (
     <>
-      <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-        <table className="min-w-full divide-y divide-gray-200 bg-white">
-          <thead className="bg-gray-50">
-            <tr>
-              {headers.map((header) => (
-                <th
-                  key={header.key as string}
-                  scope="col"
-                  aria-sort={
-                    sortConfig.key === header.key
-                      ? sortConfig.direction === 'asc'
-                        ? 'ascending'
-                        : 'descending'
-                      : 'none'
-                  }
-                  className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  {header.key !== 'actions' ? (
-                    <button
-                      className="flex items-center gap-1 group focus:outline-none focus:ring-2 focus:ring-primary rounded px-1 -ml-1"
-                      onClick={() => handleSort(header.key as SortKey)}
-                    >
-                      {header.label}
-                      {sortConfig.key === header.key ? (
-                        sortConfig.direction === 'asc' ? (
-                          <ArrowUp size={14} aria-hidden="true" />
+      <div className="glass-panel overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-white/10 bg-white/5">
+                {headers.map((header) => (
+                  <th
+                    key={header.key as string}
+                    scope="col"
+                    aria-sort={
+                      sortConfig.key === header.key
+                        ? sortConfig.direction === 'asc'
+                          ? 'ascending'
+                          : 'descending'
+                        : 'none'
+                    }
+                    className="p-4 font-semibold text-sm"
+                  >
+                    {header.key !== 'actions' ? (
+                      <button
+                        className="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded px-1 -ml-1"
+                        onClick={() => handleSort(header.key as SortKey)}
+                      >
+                        {header.label}
+                        {sortConfig.key === header.key ? (
+                          sortConfig.direction === 'asc' ? (
+                            <ArrowUp size={14} aria-hidden="true" />
+                          ) : (
+                            <ArrowDown size={14} aria-hidden="true" />
+                          )
                         ) : (
-                          <ArrowDown size={14} aria-hidden="true" />
-                        )
-                      ) : (
-                        <ArrowUpDown
-                          size={14}
-                          className="text-gray-300 group-hover:text-gray-500"
-                          aria-hidden="true"
-                        />
-                      )}
-                    </button>
-                  ) : (
-                    header.label
-                  )}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">{renderRows(data)}</tbody>
-        </table>
+                          <ArrowUpDown
+                            size={14}
+                            className="text-muted-foreground/50 group-hover:text-muted-foreground"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </button>
+                    ) : (
+                      header.label
+                    )}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>{renderRows(data)}</tbody>
+          </table>
+        </div>
       </div>
 
       <LibraryDetailPopover

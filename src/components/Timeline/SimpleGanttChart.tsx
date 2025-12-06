@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, Fragment } from 'react'
 import { ArrowUpDown, ArrowUp, ArrowDown, Search, Flag } from 'lucide-react'
 import type { GanttCountryData, TimelinePhase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
@@ -241,7 +241,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
               const totalRows = phases.length
 
               return (
-                <>
+                <Fragment key={country.countryName}>
                   {phases.map((phaseData, index) => {
                     const isLastRow = index === totalRows - 1
                     return (
@@ -305,7 +305,7 @@ export const SimpleGanttChart = ({ data }: SimpleGanttChartProps) => {
                       </tr>
                     )
                   })}
-                </>
+                </Fragment>
               )
             })}
           </tbody>

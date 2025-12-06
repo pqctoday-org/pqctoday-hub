@@ -1,7 +1,8 @@
 import React from 'react'
-import { BookOpen, CheckCircle, Circle, Clock, Layers } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { BookOpen, CheckCircle, Circle, Clock, Layers, Save, Upload } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
-// import { SaveRestorePanel } from './SaveRestorePanel';
+import clsx from 'clsx'
 
 interface ModuleItem {
   id: string
@@ -16,14 +17,7 @@ interface DashboardProps {
   onSelectModule: (moduleId: string) => void
 }
 
-// Helper to chunk array into pairs
-const chunkArray = <T,>(arr: T[], size: number): T[][] => {
-  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
-    arr.slice(i * size, i * size + size)
-  )
-}
-
-const ModuleCardContent = ({
+const ModuleCard = ({
   module,
   onSelectModule,
 }: {
@@ -34,7 +28,7 @@ const ModuleCardContent = ({
   const status = modules[module.id]?.status || 'not-started'
   const timeSpent = modules[module.id]?.timeSpent || 0
 
-  // Format duration string - REMOVED redundant "Not started" text
+  // Format duration string
   let durationDisplay = module.duration
   if (!module.comingSoon) {
     if (status === 'not-started') {
@@ -45,99 +39,157 @@ const ModuleCardContent = ({
   }
 
   return (
-    <button
-      className={`w-full text-left p-6 rounded-xl border border-white/10 bg-white/5 transition-all flex flex-col h-full
-        ${module.disabled ? 'opacity-60 cursor-not-allowed' : 'hover:bg-white/10 cursor-pointer'}
-      `}
+    <motion.article
+      layout
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.2 }}
+      className={clsx(
+        'glass-panel p-6 flex flex-col h-full transition-colors',
+        !module.disabled && 'hover:border-secondary/50 cursor-pointer',
+        module.disabled && 'opacity-60 cursor-not-allowed'
+      )}
       onClick={() => !module.disabled && onSelectModule(module.id)}
-      disabled={module.disabled}
     >
-      <div className="flex justify-between items-start w-full mb-4">
-        <h3 className="text-xl font-bold text-foreground break-words">{module.title}</h3>
-        <div>
-          {module.comingSoon ? (
-            <span className="text-xs text-primary bg-primary/10 px-2 py-1 rounded whitespace-nowrap">
-              Coming Soon
-            </span>
-          ) : status === 'completed' ? (
-            <CheckCircle className="text-green-400 shrink-0" size={20} />
-          ) : (
-            <Circle className="text-muted-foreground shrink-0" size={20} />
-          )}
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-full bg-white/5 text-primary" aria-hidden="true">
+            <BookOpen size={24} />
+          </div>
         </div>
+        {module.comingSoon ? (
+          <span className="px-3 py-1 rounded-full text-xs font-bold border bg-primary/10 text-primary border-primary/20">
+            Coming Soon
+          </span>
+        ) : (
+          <span
+            className={clsx(
+              'px-3 py-1 rounded-full text-xs font-bold border',
+              status === 'completed'
+                ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                : status === 'in-progress'
+                  ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                  : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+            )}
+          >
+            {status === 'completed'
+              ? 'Completed'
+              : status === 'in-progress'
+                ? 'In Progress'
+                : 'Not Started'}
+          </span>
+        )}
       </div>
 
-      <p
-        className="text-muted-foreground mb-6 flex-grow text-sm break-words line-clamp-3 min-h-[4.5em]"
-        style={{ paddingLeft: '1rem', paddingRight: '1rem' }}
-      >
+      <h3 className="text-xl font-bold mb-2">{module.title}</h3>
+
+      <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-grow">
         {module.description}
       </p>
 
       {!module.comingSoon && (
-        <div className="flex items-center justify-between mt-auto w-full pt-4 border-t border-white/5">
+        <div className="flex items-center justify-between pt-4 border-t border-white/5">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Clock size={14} />
             {durationDisplay}
           </div>
-          <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all
-              ${
-                status === 'completed'
-                  ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                  : status === 'in-progress'
-                    ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                    : 'bg-primary/10 text-primary border border-primary/20'
-              }
-            `}
-          >
-            {status === 'completed' ? 'Done' : status === 'in-progress' ? 'Resume' : 'Start'}
-          </span>
+          {status === 'completed' ? (
+            <CheckCircle className="text-green-400" size={20} />
+          ) : (
+            <Circle className="text-muted-foreground" size={20} />
+          )}
         </div>
       )}
-    </button>
+    </motion.article>
   )
 }
 
-const ModuleTable = ({
-  items,
-  title,
-  icon: Icon,
-  onSelectModule,
-}: {
-  items: ModuleItem[]
-  title: string
-  icon: React.ElementType
-  onSelectModule: (moduleId: string) => void
-}) => {
-  const rows = chunkArray(items, 2)
+const SaveRestorePanel = () => {
+  const { saveProgress, loadProgress } = useModuleStore()
+
+  const handleSave = () => {
+    saveProgress()
+    // Could add toast notification here
+  }
+
+  const handleRestore = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.json'
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (file) {
+        const reader = new FileReader()
+        reader.onload = (event) => {
+          try {
+            const data = JSON.parse(event.target?.result as string)
+            loadProgress(data)
+            // Could add toast notification here
+          } catch (error) {
+            console.error('Failed to load progress:', error)
+            // Could add error toast here
+          }
+        }
+        reader.readAsText(file)
+      }
+    }
+    input.click()
+  }
 
   return (
-    <div className="glass-panel overflow-hidden">
-      <div className="p-6 border-b border-white/10">
-        <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <Icon className={title === 'Learning Workshops' ? 'text-primary' : 'text-secondary'} />
-          {title}
+    <div>
+      <div className="mb-6">
+        <h2 className="text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
+          <Save className="text-secondary" size={32} />
+          Progress Management
         </h2>
+        <p className="text-muted-foreground">
+          Save your learning progress to continue later or transfer between devices.
+        </p>
       </div>
-      <div className="p-6 overflow-x-auto">
-        <table className="border-collapse" style={{ tableLayout: 'fixed', width: '80vw' }}>
-          <tbody>
-            {rows.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {row.map((module) => (
-                  <td key={module.id} className="p-3 align-top h-full" style={{ width: '40vw' }}>
-                    <div className="h-full">
-                      <ModuleCardContent module={module} onSelectModule={onSelectModule} />
-                    </div>
-                  </td>
-                ))}
-                {/* If row has only 1 item, add empty cell to maintain layout */}
-                {row.length === 1 && <td className="p-3" style={{ width: '40vw' }}></td>}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.2 }}
+          className="glass-panel p-6 flex flex-col h-full hover:border-primary/50 transition-colors cursor-pointer"
+          onClick={handleSave}
+        >
+          <div className="flex items-center justify-center mb-4">
+            <div className="p-4 rounded-full bg-primary/10 text-primary">
+              <Save size={32} />
+            </div>
+          </div>
+          <h3 className="text-xl font-bold mb-2 text-center">Save Progress</h3>
+          <p className="text-sm text-muted-foreground text-center mb-4 flex-grow">
+            Download your current learning progress as a JSON file for backup or transfer.
+          </p>
+          <div className="pt-4 border-t border-white/5 text-center">
+            <span className="text-xs text-muted-foreground">Click to download</span>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.2, delay: 0.1 }}
+          className="glass-panel p-6 flex flex-col h-full hover:border-secondary/50 transition-colors cursor-pointer"
+          onClick={handleRestore}
+        >
+          <div className="flex items-center justify-center mb-4">
+            <div className="p-4 rounded-full bg-secondary/10 text-secondary">
+              <Upload size={32} />
+            </div>
+          </div>
+          <h3 className="text-xl font-bold mb-2 text-center">Restore Progress</h3>
+          <p className="text-sm text-muted-foreground text-center mb-4 flex-grow">
+            Upload a previously saved progress file to continue your learning journey.
+          </p>
+          <div className="pt-4 border-t border-white/5 text-center">
+            <span className="text-xs text-muted-foreground">Click to upload</span>
+          </div>
+        </motion.div>
       </div>
     </div>
   )
@@ -196,29 +248,49 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
   ]
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 space-y-8">
-        <ModuleTable
-          items={activeModules}
-          title="Learning Workshops"
-          icon={BookOpen}
-          onSelectModule={onSelectModule}
-        />
-        <ModuleTable
-          items={upcomingModules}
-          title="Upcoming Tracks"
-          icon={Layers}
-          onSelectModule={onSelectModule}
-        />
+    <div className="space-y-8">
+      {/* Active Modules Section */}
+      <div>
+        <div className="mb-6">
+          <h2 className="text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
+            <BookOpen className="text-primary" size={32} />
+            Learning Workshops
+          </h2>
+          <p className="text-muted-foreground">
+            Interactive hands-on workshops to master cryptographic concepts.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <AnimatePresence mode="popLayout">
+            {activeModules.map((module) => (
+              <ModuleCard key={module.id} module={module} onSelectModule={onSelectModule} />
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
 
-      <div className="lg:col-span-1">
-        {/* SaveRestorePanel is temporarily commented out in previous steps, re-enabling it now to test if it still crashes. 
-                    If it crashes, we will fix it in the next step.
-                */}
-        {/* <SaveRestorePanel /> */}
-        <div className="text-foreground">Save/Restore Placeholder</div>
+      {/* Upcoming Modules Section */}
+      <div>
+        <div className="mb-6">
+          <h2 className="text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
+            <Layers className="text-secondary" size={32} />
+            Upcoming Tracks
+          </h2>
+          <p className="text-muted-foreground">
+            More learning modules coming soon to expand your knowledge.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <AnimatePresence mode="popLayout">
+            {upcomingModules.map((module) => (
+              <ModuleCard key={module.id} module={module} onSelectModule={onSelectModule} />
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
+
+      {/* Progress Management Section */}
+      <SaveRestorePanel />
     </div>
   )
 }

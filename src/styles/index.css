@@ -1,77 +1,93 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-border: #1e293b;
+  --color-input: #1e293b;
+  --color-ring: #22d3ee;
+  --color-background: #0b0d17;
+  --color-foreground: #f8fafc;
+
+  --color-primary: #22d3ee;
+  --color-primary-foreground: #1e293b;
+
+  --color-secondary: #a78bfa;
+  --color-secondary-foreground: #f8fafc;
+
+  --color-destructive: #fb7185;
+  --color-destructive-foreground: #f8fafc;
+
+  --color-muted: #1e293b;
+  --color-muted-foreground: #94a3b8;
+
+  --color-accent: #34d399;
+  --color-accent-foreground: #f8fafc;
+
+  --color-popover: #0b0d17;
+  --color-popover-foreground: #f8fafc;
+
+  --color-card: #0b0d17;
+  --color-card-foreground: #f8fafc;
+
+  --radius-lg: 0.5rem;
+  --radius-md: 0.375rem;
+  --radius-sm: 0.25rem;
+
+  --font-family-sans: Inter, system-ui, sans-serif;
+}
 
 @layer base {
-  :root {
-    /* Default to Dark Mode aesthetics as per original design, but customizable */
-    --background: 230 35% 7%;
-    /* #0b0d17 converted to HSL roughly */
-    --foreground: 210 40% 98%;
-    /* slate-50 */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
 
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  :root {
+    --background: 230 35% 7%;
+    --foreground: 210 40% 98%;
     --card: 230 35% 7%;
     --card-foreground: 210 40% 98%;
-
     --popover: 230 35% 7%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 189 83% 53%;
-    /* #22d3ee cyan-400 */
     --primary-foreground: 222.2 47.4% 11.2%;
-
     --secondary: 255 91% 76%;
-    /* #a78bfa violet-400 */
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 153 66% 51%;
-    /* #34d399 emerald-400 */
     --accent-foreground: 210 40% 98%;
-
     --destructive: 343 93% 71%;
-    /* #fb7185 rose-400 */
     --destructive-foreground: 210 40% 98%;
-
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 189 83% 53%;
-
     --radius: 0.5rem;
   }
 
   .light {
     --background: 210 40% 98%;
-    /* slate-50 */
     --foreground: 222.2 84% 4.9%;
-    /* slate-950 */
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-
     --primary: 189 90% 40%;
-    /* cyan-600 darker for light mode contrast */
     --primary-foreground: 210 40% 98%;
-
     --secondary: 255 85% 60%;
-    /* violet-500 darker */
     --secondary-foreground: 222.2 47.4% 11.2%;
-
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
     --accent: 153 60% 45%;
-    /* emerald-600 */
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 189 90% 40%;
@@ -89,12 +105,10 @@
 }
 
 @layer components {
-  /* Utility Classes Reconstruction */
   .container {
     @apply max-w-7xl mx-auto px-8;
   }
 
-  /* Glassmorphism now uses variables to adapt */
   .glass-panel {
     @apply bg-white/[0.08] backdrop-blur-md border border-white/[0.15] rounded-2xl shadow-2xl;
   }
@@ -103,7 +117,6 @@
     @apply bg-gradient-to-br from-primary to-secondary bg-clip-text text-transparent;
   }
 
-  /* Retaining legacy classes for compatibility during refactor */
   .btn-primary {
     @apply bg-gradient-to-r from-secondary to-primary text-black font-bold py-3 px-6 rounded-lg transition-all duration-200 hover:opacity-90 hover:-translate-y-0.5;
   }
