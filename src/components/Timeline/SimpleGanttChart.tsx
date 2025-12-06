@@ -199,7 +199,7 @@ export const SimpleGanttChart = ({
   return (
     <div className="flex flex-col gap-4">
       {/* Grouped Filter Container */}
-      <div className="bg-slate-900/100 border border-white/20 rounded-lg shadow-lg p-2 flex flex-wrap items-center gap-4">
+      <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-wrap items-center gap-4">
         <FilterDropdown
           items={countryItems}
           selectedId={selectedCountry}
@@ -220,13 +220,13 @@ export const SimpleGanttChart = ({
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             onBlur={handleFilterBlur}
-            className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors"
+            className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
           />
         </div>
       </div>
 
       {/* Table Container */}
-      <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#0b0d17]/50 backdrop-blur-sm">
+      <div className="overflow-x-auto rounded-xl border border-border bg-card/50 backdrop-blur-sm">
         <table
           className="w-full min-w-[1000px]"
           style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}
@@ -234,8 +234,11 @@ export const SimpleGanttChart = ({
           <thead>
             <tr>
               <th
-                className="sticky left-0 z-30 bg-[#0b0d17] p-4 text-left w-[180px] cursor-pointer hover:bg-white/5 transition-colors"
-                style={{ borderBottom: '1px solid #4b5563', borderRight: '1px solid #4b5563' }}
+                className="sticky left-0 z-30 bg-background p-4 text-left w-[180px] cursor-pointer hover:bg-muted/50 transition-colors"
+                style={{
+                  borderBottom: '1px solid var(--color-border)',
+                  borderRight: '1px solid var(--color-border)',
+                }}
                 onClick={() => handleSort('country')}
               >
                 <div className="flex items-center gap-2">
@@ -252,8 +255,11 @@ export const SimpleGanttChart = ({
                 </div>
               </th>
               <th
-                className="sticky left-[180px] z-30 bg-[#0b0d17] p-4 text-left w-[200px] cursor-pointer hover:bg-white/5 transition-colors"
-                style={{ borderBottom: '1px solid #4b5563', borderRight: '1px solid #4b5563' }}
+                className="sticky left-[180px] z-30 bg-background p-4 text-left w-[200px] cursor-pointer hover:bg-muted/50 transition-colors"
+                style={{
+                  borderBottom: '1px solid var(--color-border)',
+                  borderRight: '1px solid var(--color-border)',
+                }}
                 onClick={() => handleSort('organization')}
               >
                 <div className="flex items-center gap-2">
@@ -272,8 +278,11 @@ export const SimpleGanttChart = ({
               {YEARS.map((year) => (
                 <th
                   key={year}
-                  className="p-2 text-center min-w-[80px] bg-[#0b0d17]/80"
-                  style={{ borderBottom: '1px solid #4b5563', borderRight: '1px solid #4b5563' }}
+                  className="p-2 text-center min-w-[80px] bg-background/80"
+                  style={{
+                    borderBottom: '1px solid var(--color-border)',
+                    borderRight: '1px solid var(--color-border)',
+                  }}
                 >
                   <span
                     className={`font-mono text-sm ${year === new Date().getFullYear() ? 'text-primary font-bold' : 'text-muted-foreground'}`}
@@ -296,15 +305,15 @@ export const SimpleGanttChart = ({
                     return (
                       <tr
                         key={`${country.countryName}-${phaseData.phase}-${index}`}
-                        className="hover:bg-white/5 transition-colors"
+                        className="hover:bg-muted/50 transition-colors"
                         style={isLastRow ? { borderBottom: '1px solid #4b5563' } : undefined}
                       >
                         {/* Country Cell - Only on first row */}
                         {index === 0 && (
                           <td
                             rowSpan={totalRows}
-                            className="sticky left-0 z-20 bg-[#1a1d2d] p-3 align-top"
-                            style={{ borderRight: '1px solid #4b5563' }}
+                            className="sticky left-0 z-20 bg-background p-3 align-top"
+                            style={{ borderRight: '1px solid var(--color-border)' }}
                           >
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                               <div
@@ -338,8 +347,8 @@ export const SimpleGanttChart = ({
                         {index === 0 && (
                           <td
                             rowSpan={totalRows}
-                            className="sticky left-[180px] z-20 bg-[#1a1d2d] p-3 align-top"
-                            style={{ borderRight: '1px solid #4b5563' }}
+                            className="sticky left-[180px] z-20 bg-background p-3 align-top"
+                            style={{ borderRight: '1px solid var(--color-border)' }}
                           >
                             <div className="flex items-center gap-2">
                               <span className="text-xs text-muted-foreground">

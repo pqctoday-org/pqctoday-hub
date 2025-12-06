@@ -110,7 +110,7 @@
   }
 
   .glass-panel {
-    @apply bg-white/[0.08] backdrop-blur-md border border-white/[0.15] rounded-2xl shadow-2xl;
+    @apply bg-card/80 backdrop-blur-md border border-border rounded-2xl shadow-2xl;
   }
 
   .text-gradient {
@@ -127,13 +127,13 @@
 
   /* Make all select dropdown options opaque for readability */
   select option {
-    background-color: rgb(15 23 42) !important;
-    color: rgb(248 250 252) !important;
+    background-color: hsl(var(--card)) !important;
+    color: hsl(var(--card-foreground)) !important;
   }
 
   /* Make dropdown menu items opaque */
   [role='listbox'] {
-    background-color: rgb(15 23 42) !important;
+    background-color: hsl(var(--card)) !important;
   }
 
   [role='listbox'] button[role='option'] {

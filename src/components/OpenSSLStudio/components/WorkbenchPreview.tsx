@@ -23,7 +23,7 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category }) 
     <div className="my-auto flex flex-col gap-4">
       {/* Command Preview */}
       <div className="glass-panel overflow-hidden shrink-0 flex flex-col">
-        <div className="p-2 pl-3 border-b border-white/10 bg-white/5 flex items-center justify-between gap-4">
+        <div className="p-2 pl-3 border-b border-border bg-muted/20 flex items-center justify-between gap-4">
           <h4 className="font-bold text-foreground flex items-center gap-2 text-sm whitespace-nowrap">
             <Terminal size={14} />
             Command Preview
@@ -45,13 +45,13 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category }) 
           </button>
         </div>
 
-        <div className="p-4 bg-black/40 flex gap-3 group min-h-[160px] relative">
-          <code className="text-green-400 flex-1 break-all font-mono text-sm leading-relaxed whitespace-pre-wrap">
+        <div className="p-4 bg-muted/40 flex gap-3 group min-h-[160px] relative">
+          <code className="text-primary flex-1 break-all font-mono text-sm leading-relaxed whitespace-pre-wrap">
             $ {command}
           </code>
           <button
             onClick={() => navigator.clipboard.writeText(command)}
-            className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground absolute top-3 right-3 p-1.5 hover:bg-white/10 rounded"
+            className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground absolute top-3 right-3 p-1.5 hover:bg-muted rounded"
             title="Copy to clipboard"
           >
             <Copy size={14} />

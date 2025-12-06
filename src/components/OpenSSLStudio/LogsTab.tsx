@@ -21,9 +21,9 @@ export const LogsTab = () => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[#0d1117] rounded-xl border border-white/10 overflow-hidden font-mono text-sm">
+    <div className="h-full flex flex-col bg-card rounded-xl border border-border overflow-hidden font-mono text-sm">
       {/* Toolbar */}
-      <div className="flex items-center justify-end px-4 py-2 bg-white/5 border-b border-white/10 shrink-0">
+      <div className="flex items-center justify-end px-4 py-2 bg-muted/30 border-b border-border shrink-0">
         <button
           onClick={clearStructuredLogs}
           className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
@@ -33,9 +33,9 @@ export const LogsTab = () => {
       </div>
 
       {/* Logs Table */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar bg-black/20 min-w-0">
+      <div className="flex-1 overflow-y-auto custom-scrollbar bg-background/50 min-w-0">
         <table className="w-full text-left border-collapse">
-          <thead className="bg-white/5 text-muted-foreground uppercase text-[10px] sticky top-0 backdrop-blur-md z-10">
+          <thead className="bg-muted/50 text-muted-foreground uppercase text-[10px] sticky top-0 backdrop-blur-md z-10">
             <tr>
               <th className="p-3 font-bold w-20">Time</th>
               <th className="p-3 font-bold w-24">Type</th>
@@ -44,7 +44,7 @@ export const LogsTab = () => {
               <th className="p-3 font-bold w-20 text-right">Duration</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-border">
             {structuredLogs.length === 0 ? (
               <tr>
                 <td colSpan={5} className="p-8 text-center text-foreground/20 italic">
@@ -53,7 +53,7 @@ export const LogsTab = () => {
               </tr>
             ) : (
               structuredLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-white/5 transition-colors group">
+                <tr key={log.id} className="hover:bg-muted/50 transition-colors group">
                   <td className="p-3 text-foreground/30 text-[10px] whitespace-nowrap align-top">
                     {log.timestamp}
                   </td>
@@ -69,7 +69,7 @@ export const LogsTab = () => {
                   <td className="p-3 text-xs text-muted-foreground align-top">
                     {log.fileName ? (
                       <div>
-                        <div className="text-green-400 font-medium">{log.fileName}</div>
+                        <div className="text-secondary font-medium">{log.fileName}</div>
                         {log.fileSize !== undefined && (
                           <div className="text-[10px] text-foreground/40">
                             {formatSize(log.fileSize)}
