@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Workbench } from './Workbench'
-import { CommandPreview } from './CommandPreview'
+import { WorkbenchFileManager } from './components/WorkbenchFileManager'
 import { TerminalOutput } from './TerminalOutput'
 import { FileEditor } from './FileEditor'
 import { Terminal, ChevronDown, ChevronUp, FileText } from 'lucide-react'
@@ -10,6 +10,9 @@ import { useOpenSSLStore } from './store'
 
 export const OpenSSLStudioView = () => {
   const [showTerminal, setShowTerminal] = useState(true)
+  const [category, setCategory] = useState<
+    'genpkey' | 'req' | 'x509' | 'enc' | 'dgst' | 'rand' | 'version' | 'files' | 'kem' | 'pkcs12'
+  >('genpkey')
   const { editingFile, activeTab } = useOpenSSLStore()
 
   return (
@@ -25,19 +28,22 @@ export const OpenSSLStudioView = () => {
       </div>
 
       <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
-        {/* Left Pane: Workbench (Command Builder) */}
+        {/* Left Pane: Workbench (Command Builder & Preview) */}
         <div className="col-span-12 lg:col-span-4 glass-panel flex flex-col overflow-hidden">
           <div className="p-4 border-b border-white/10 bg-white/5">
             <h3 className="font-bold text-foreground flex items-center gap-2">Workbench</h3>
           </div>
           <div className="flex-1 overflow-y-auto custom-scrollbar">
-            <Workbench />
+            <Workbench category={category} setCategory={setCategory} />
           </div>
         </div>
 
-        {/* Right Pane: Command Preview, File Editor, & Terminal Output */}
+        {/* Right Pane: File Manager, File Editor, & Terminal Output */}
         <div className="col-span-12 lg:col-span-8 flex flex-col min-h-0">
-          <CommandPreview />
+          {/* File Manager (Always Visible) */}
+          <div className="glass-panel p-4 mb-6 shrink-0 max-h-[300px] overflow-y-auto custom-scrollbar">
+            <WorkbenchFileManager />
+          </div>
 
           {/* File Editor Section (Only visible when editing) */}
           <FileEditor key={editingFile?.name} />

@@ -4,7 +4,9 @@ import { OpenSSLStudioView } from './OpenSSLStudioView'
 
 // Mock the sub-components to isolate the view logic
 vi.mock('./Workbench', () => ({ Workbench: () => <div>Workbench</div> }))
-vi.mock('./CommandPreview', () => ({ CommandPreview: () => <div>CommandPreview</div> }))
+vi.mock('./components/WorkbenchFileManager', () => ({
+  WorkbenchFileManager: () => <div>WorkbenchFileManager</div>,
+}))
 vi.mock('./TerminalOutput', () => ({ TerminalOutput: () => <div>TerminalOutput Component</div> }))
 vi.mock('./LogsTab', () => ({ LogsTab: () => <div>LogsTab Component</div> }))
 vi.mock('./FileEditor', () => ({ FileEditor: () => <div>FileEditor</div> }))

@@ -10,8 +10,27 @@ export const WorkbenchFileManager: React.FC = () => {
   const { addLog, addFile, files, setEditingFile, removeFile, clearFiles, addStructuredLog } =
     useOpenSSLStore()
   const { executeCommand } = useOpenSSL()
-  const [sortBy, setSortBy] = useState<'timestamp' | 'type' | 'name'>('timestamp')
+  const [sortBy, setSortBy] = useState<'timestamp' | 'type' | 'name' | 'size'>('timestamp')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+
+  const formatBytes = (bytes: number) => {
+    if (bytes === 0) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
+  }
+
+  const formatCompactDate = (timestamp: number) => {
+    const date = new Date(timestamp)
+    return date.toLocaleString('en-US', {
+      month: 'numeric',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    })
+  }
 
   const handleExtractPublicKey = (privateKeyFile: string) => {
     if (!privateKeyFile.endsWith('.key') && !privateKeyFile.endsWith('.pem')) {
@@ -275,6 +294,21 @@ export const WorkbenchFileManager: React.FC = () => {
                     Filename <ArrowUpDown size={12} />
                   </button>
                 </th>
+                <th className="p-0">
+                  <button
+                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
+                    onClick={() => {
+                      if (sortBy === 'size') {
+                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+                      } else {
+                        setSortBy('size')
+                        setSortOrder('desc')
+                      }
+                    }}
+                  >
+                    Size <ArrowUpDown size={12} />
+                  </button>
+                </th>
                 <th className="text-right p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider">
                   Actions
                 </th>
@@ -289,6 +323,8 @@ export const WorkbenchFileManager: React.FC = () => {
                     comparison = a.timestamp - b.timestamp
                   } else if (sortBy === 'type') {
                     comparison = a.type.localeCompare(b.type)
+                  } else if (sortBy === 'size') {
+                    comparison = a.size - b.size
                   } else {
                     comparison = a.name.localeCompare(b.name)
                   }
@@ -299,8 +335,8 @@ export const WorkbenchFileManager: React.FC = () => {
                     key={file.name}
                     className="border-b border-white/5 hover:bg-white/5 transition-colors"
                   >
-                    <td className="p-3 text-foreground/70 font-mono text-xs">
-                      {new Date(file.timestamp).toLocaleString()}
+                    <td className="p-3 text-foreground/70 font-mono text-xs whitespace-nowrap">
+                      {formatCompactDate(file.timestamp)}
                     </td>
                     <td className="p-3">
                       <span
@@ -319,6 +355,9 @@ export const WorkbenchFileManager: React.FC = () => {
                       </span>
                     </td>
                     <td className="p-3 text-foreground font-mono text-sm">{file.name}</td>
+                    <td className="p-3 text-foreground/70 font-mono text-xs">
+                      {formatBytes(file.size)}
+                    </td>
                     <td className="p-3">
                       <div className="flex items-center justify-end gap-2">
                         <button

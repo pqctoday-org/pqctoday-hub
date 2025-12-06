@@ -3,7 +3,7 @@ import { useOpenSSLStore } from './store'
 import { WorkbenchToolbar } from './components/WorkbenchToolbar'
 import { WorkbenchHeader } from './components/WorkbenchHeader'
 import { WorkbenchConfig } from './components/WorkbenchConfig'
-import { WorkbenchFileManager } from './components/WorkbenchFileManager'
+
 import { WorkbenchPreview } from './components/WorkbenchPreview'
 import {
   sanitizeCountryCode,
@@ -11,11 +11,35 @@ import {
   sanitizeCommonName,
 } from '../../utils/inputValidation'
 
-export const Workbench = () => {
+interface WorkbenchProps {
+  category:
+    | 'genpkey'
+    | 'req'
+    | 'x509'
+    | 'enc'
+    | 'dgst'
+    | 'rand'
+    | 'version'
+    | 'files'
+    | 'kem'
+    | 'pkcs12'
+  setCategory: (
+    category:
+      | 'genpkey'
+      | 'req'
+      | 'x509'
+      | 'enc'
+      | 'dgst'
+      | 'rand'
+      | 'version'
+      | 'files'
+      | 'kem'
+      | 'pkcs12'
+  ) => void
+}
+
+export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
   const { setCommand, files } = useOpenSSLStore()
-  const [category, setCategory] = useState<
-    'genpkey' | 'req' | 'x509' | 'enc' | 'dgst' | 'rand' | 'version' | 'files' | 'kem' | 'pkcs12'
-  >('genpkey')
 
   // Key Gen State
   const [keyAlgo, setKeyAlgo] = useState('rsa')
@@ -281,9 +305,8 @@ export const Workbench = () => {
       <WorkbenchHeader />
       <WorkbenchToolbar category={category} setCategory={setCategory} />
 
-      {category === 'files' ? (
-        <WorkbenchFileManager />
-      ) : (
+      {/* Content Area */}
+      {category !== 'files' && (
         <>
           <WorkbenchConfig
             category={category}

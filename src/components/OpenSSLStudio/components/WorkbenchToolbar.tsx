@@ -1,15 +1,5 @@
 import React from 'react'
-import {
-  Key,
-  FileKey,
-  FileText,
-  Shield,
-  Settings,
-  Lock,
-  Database,
-  FileArchive,
-  Info,
-} from 'lucide-react'
+import { Key, FileText, Shield, Settings, Lock, Database, FileArchive, Info } from 'lucide-react'
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../store'
 import { logEvent } from '../../../utils/analytics'
@@ -57,17 +47,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
         >
           <Key size={16} /> Key Generation
         </button>
-        <button
-          onClick={() => handleCategoryChange('files', 'Key Files')}
-          className={clsx(
-            'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
-            category === 'files'
-              ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground'
-          )}
-        >
-          <FileKey size={16} /> Key Files
-        </button>
+
         <button
           onClick={() => handleCategoryChange('req', 'CSR')}
           className={clsx(
