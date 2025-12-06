@@ -134,17 +134,15 @@ export const SimpleGanttChart = ({
     // If phase is completely out of range, render empty cells
     if (phaseData.endYear < START_YEAR || phaseData.startYear > END_YEAR) {
       for (let year = START_YEAR; year <= END_YEAR; year++) {
-        cells.push(
-          <td key={year} className="p-0 h-10" style={{ borderRight: '1px solid #4b5563' }}></td>
-        )
+        cells.push(<td key={year} className="p-0 h-10 border-r border-border"></td>)
       }
       return cells
     }
 
     const colors = phaseColors[phaseData.phase] || {
-      start: '#94a3b8',
-      end: '#cbd5e1',
-      glow: 'rgba(148, 163, 184, 0.5)',
+      start: 'hsl(var(--muted-foreground))',
+      end: 'hsl(var(--muted))',
+      glow: 'hsl(var(--ring))',
     }
     const isMilestone = phaseData.type === 'Milestone'
 
@@ -159,7 +157,7 @@ export const SimpleGanttChart = ({
             key={year}
             className="p-0 h-10"
             style={{
-              borderRight: isLastInPhase ? '1px solid #4b5563' : 'none',
+              borderRight: isLastInPhase ? '1px solid var(--color-border)' : 'none',
               backgroundColor: isMilestone ? 'transparent' : colors.start,
               boxShadow: isMilestone ? 'none' : `0 0 8px ${colors.glow}`,
               opacity: isMilestone ? 1 : 0.9,
@@ -187,9 +185,7 @@ export const SimpleGanttChart = ({
           </td>
         )
       } else {
-        cells.push(
-          <td key={year} className="p-0 h-10" style={{ borderRight: '1px solid #4b5563' }}></td>
-        )
+        cells.push(<td key={year} className="p-0 h-10 border-r border-border"></td>)
       }
     }
 
@@ -306,7 +302,9 @@ export const SimpleGanttChart = ({
                       <tr
                         key={`${country.countryName}-${phaseData.phase}-${index}`}
                         className="hover:bg-muted/50 transition-colors"
-                        style={isLastRow ? { borderBottom: '1px solid #4b5563' } : undefined}
+                        style={
+                          isLastRow ? { borderBottom: '1px solid var(--color-border)' } : undefined
+                        }
                       >
                         {/* Country Cell - Only on first row */}
                         {index === 0 && (

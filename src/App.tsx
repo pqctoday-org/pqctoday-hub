@@ -34,7 +34,7 @@ function App() {
           <Route path="/" element={<TimelineView />} />
           <Route path="/algorithms" element={<AlgorithmsView />} />
           <Route path="/library" element={<LibraryView />} />
-          <Route path="/learn" element={<PKILearningView />} />
+          <Route path="/learn/*" element={<PKILearningView />} />
           <Route path="/playground" element={<PlaygroundView />} />
           <Route path="/openssl" element={<OpenSSLStudioView />} />
           <Route path="/threats" element={<ThreatsDashboard />} />

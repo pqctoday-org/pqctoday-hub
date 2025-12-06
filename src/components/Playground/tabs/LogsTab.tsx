@@ -15,9 +15,9 @@ export const LogsTab: React.FC = () => {
   } = useSettingsContext()
 
   const getPerformanceColor = (ms: number): string => {
-    if (ms < 100) return 'text-green-400'
-    if (ms < 500) return 'text-yellow-400'
-    return 'text-red-400'
+    if (ms < 100) return 'text-success'
+    if (ms < 500) return 'text-warning'
+    return 'text-destructive'
   }
 
   return (
@@ -34,7 +34,7 @@ export const LogsTab: React.FC = () => {
         </button>
       </div>
 
-      <div className="flex-1 overflow-hidden rounded-xl border border-white/10 bg-black/20 flex flex-col">
+      <div className="flex-1 overflow-hidden rounded-xl border border-white/10 bg-muted/20 flex flex-col">
         <div className="overflow-y-auto flex-1 custom-scrollbar">
           <table className="w-full text-left text-sm" style={{ tableLayout: 'fixed' }}>
             <thead className="bg-white/5 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md select-none">

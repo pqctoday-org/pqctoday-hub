@@ -3,8 +3,10 @@ import { Send, ThumbsUp, MessageSquare, Info, Shield } from 'lucide-react'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 import { MobileAboutView } from './MobileAboutView'
+import { useTheme } from '../../hooks/useTheme'
 
 export function AboutView() {
+  const { theme, setTheme } = useTheme()
   const [changeRequest, setChangeRequest] = useState({
     userType: 'Technical',
     feature: '',
@@ -124,9 +126,11 @@ ${kudos.message}
           animate={{ opacity: 1, y: 0 }}
           className="glass-panel p-6"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <Info className="text-primary" size={24} />
-            <h2 className="text-2xl font-bold">About PQC Today</h2>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <Info className="text-primary" size={24} />
+              <h2 className="text-2xl font-bold">About PQC Today</h2>
+            </div>
           </div>
           <div className="prose prose-invert max-w-none">
             <p className="text-lg text-muted-foreground">
@@ -641,8 +645,36 @@ ${kudos.message}
             This site is developed, documented, validated and deployed using advanced AI
             technologies including Google Antigravity, ChatGPT, Claude AI, Perplexity, and Gemini
             Pro. While the presented information has been manually curated, it may still contain
-            errors.
           </p>
+        </motion.div>
+
+        {/* Appearance Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+          className="glass-panel p-6 flex flex-col items-center justify-center gap-4"
+        >
+          <h3 className="text-lg font-bold">Appearance</h3>
+          <div className="flex items-center gap-2 bg-black/20 p-1 rounded-lg border border-white/5">
+            {(['light', 'system', 'dark'] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setTheme(t)}
+                className={clsx(
+                  'px-4 py-2 rounded-md text-sm font-medium transition-colors capitalize flex items-center gap-2',
+                  theme === t
+                    ? 'bg-primary/20 text-primary border border-primary/20'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                )}
+              >
+                {t === 'light' && '☀️'}
+                {t === 'dark' && '🌙'}
+                {t === 'system' && '💻'}
+                {t}
+              </button>
+            ))}
+          </div>
         </motion.div>
       </div>
     </div>

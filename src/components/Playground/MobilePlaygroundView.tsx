@@ -37,11 +37,11 @@ export const MobilePlaygroundView = () => {
           in your browser.
         </p>
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 bg-muted/20 rounded-lg border border-white/5">
+          <div className="p-3 bg-muted/20 rounded-lg border border-border/10">
             <div className="text-xs font-bold text-foreground mb-1">ML-KEM</div>
             <div className="text-[10px] text-muted-foreground">Key Encapsulation (Kyber)</div>
           </div>
-          <div className="p-3 bg-muted/20 rounded-lg border border-white/5">
+          <div className="p-3 bg-muted/20 rounded-lg border border-border/10">
             <div className="text-xs font-bold text-foreground mb-1">ML-DSA</div>
             <div className="text-[10px] text-muted-foreground">Digital Signatures (Dilithium)</div>
           </div>

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookOpen, CheckCircle, Circle, Clock, Layers, Save, Upload } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
@@ -11,10 +12,6 @@ interface ModuleItem {
   duration: string
   disabled?: boolean
   comingSoon?: boolean
-}
-
-interface DashboardProps {
-  onSelectModule: (moduleId: string) => void
 }
 
 const ModuleCard = ({
@@ -195,7 +192,8 @@ const SaveRestorePanel = () => {
   )
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
+export const Dashboard: React.FC = () => {
+  const navigate = useNavigate()
   const activeModules: ModuleItem[] = [
     {
       id: 'pki-workshop',
@@ -263,7 +261,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <AnimatePresence mode="popLayout">
             {activeModules.map((module) => (
-              <ModuleCard key={module.id} module={module} onSelectModule={onSelectModule} />
+              <ModuleCard key={module.id} module={module} onSelectModule={(id) => navigate(id)} />
             ))}
           </AnimatePresence>
         </div>
@@ -283,7 +281,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectModule }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <AnimatePresence mode="popLayout">
             {upcomingModules.map((module) => (
-              <ModuleCard key={module.id} module={module} onSelectModule={onSelectModule} />
+              <ModuleCard key={module.id} module={module} onSelectModule={(id) => navigate(id)} />
             ))}
           </AnimatePresence>
         </div>

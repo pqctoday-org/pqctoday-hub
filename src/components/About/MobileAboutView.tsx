@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion'
 import { Users, Globe } from 'lucide-react'
+import clsx from 'clsx'
+import { useTheme } from '../../hooks/useTheme'
 
 export const MobileAboutView = () => {
+  const { theme, setTheme } = useTheme()
   return (
     <div className="flex flex-col gap-6 pb-8">
       {/* Header */}
@@ -60,6 +63,56 @@ export const MobileAboutView = () => {
           <p className="text-xs text-muted-foreground text-center italic">
             Input forms for Kudos and Change Requests are available on the desktop version.
           </p>
+        </div>
+      </motion.div>
+
+      {/* Connect Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.22 }}
+        className="glass-panel p-4 text-center"
+      >
+        <p className="text-sm text-muted-foreground">
+          Created by <span className="font-bold text-foreground">Eric Amador</span>
+        </p>
+        <a
+          href="https://www.linkedin.com/in/eric-amador-971850a"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 mt-2 text-primary hover:underline text-sm"
+        >
+          <Users size={16} />
+          Connect on LinkedIn
+        </a>
+      </motion.div>
+
+      {/* Appearance Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        className="glass-panel p-4 flex flex-col items-center justify-center gap-3"
+      >
+        <h3 className="text-sm font-bold">Appearance</h3>
+        <div className="flex items-center gap-2 bg-black/20 p-1 rounded-lg border border-white/5">
+          {(['light', 'system', 'dark'] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTheme(t)}
+              className={clsx(
+                'px-3 py-1.5 rounded-md text-xs font-medium transition-colors capitalize flex items-center gap-1.5',
+                theme === t
+                  ? 'bg-primary/20 text-primary border border-primary/20'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+              )}
+            >
+              {t === 'light' && '☀️'}
+              {t === 'dark' && '🌙'}
+              {t === 'system' && '💻'}
+              {t}
+            </button>
+          ))}
         </div>
       </motion.div>
 

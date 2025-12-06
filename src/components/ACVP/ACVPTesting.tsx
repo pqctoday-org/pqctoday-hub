@@ -207,7 +207,7 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
     <div className="glass-panel p-6 h-[85vh] flex flex-col">
       <div className="flex items-center justify-between mb-6 shrink-0">
         <h3 className="text-2xl font-bold flex items-center gap-2">
-          <CheckCircle className="text-green-400" aria-hidden="true" />
+          <CheckCircle className="text-success" aria-hidden="true" />
           ACVP Automated Testing
         </h3>
         <div className="flex gap-3">
@@ -259,8 +259,8 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
                           className={clsx(
                             'px-2 py-0.5 rounded text-[10px] uppercase font-bold flex items-center gap-1 w-fit',
                             res.status === 'pass'
-                              ? 'bg-green-500/20 text-green-400'
-                              : 'bg-red-500/20 text-red-400'
+                              ? 'bg-success/20 text-success'
+                              : 'bg-destructive/20 text-destructive'
                           )}
                         >
                           {res.status === 'pass' ? (
@@ -290,7 +290,7 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
           <h4 className="font-bold text-muted-foreground uppercase tracking-wider">
             Execution Log
           </h4>
-          <div className="bg-black/40 border border-white/10 rounded-lg p-4 font-mono text-xs text-green-400/80 overflow-y-auto custom-scrollbar flex-1">
+          <div className="bg-muted/50 border border-white/10 rounded-lg p-4 font-mono text-xs text-success/80 overflow-y-auto custom-scrollbar flex-1">
             {logs.length === 0 ? (
               <span className="text-foreground/20 italic">Ready to start...</span>
             ) : (

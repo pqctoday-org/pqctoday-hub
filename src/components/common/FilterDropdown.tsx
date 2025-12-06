@@ -12,7 +12,7 @@ interface FilterDropdownProps {
   items: (string | FilterDropdownItem)[]
   selectedId: string
   onSelect: (id: string) => void
-  label: string
+  label?: string
   defaultLabel?: string
   defaultIcon?: React.ReactNode
   className?: string
@@ -83,9 +83,11 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
     <div className={clsx('relative z-10', className)} ref={dropdownRef}>
       {noContainer ? (
         <>
-          <span className="text-muted-foreground px-2" id="filter-dropdown-label">
-            {label}:
-          </span>
+          {label && (
+            <span className="text-muted-foreground px-2" id="filter-dropdown-label">
+              {label}:
+            </span>
+          )}
           <div className="relative">
             <button
               ref={buttonRef}
@@ -93,7 +95,8 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               onKeyDown={handleKeyDown}
               aria-haspopup="listbox"
               aria-expanded={isOpen}
-              className="flex items-center gap-2 px-4 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors min-w-[200px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
+              aria-labelledby={label ? 'filter-dropdown-label' : undefined}
+              className="flex items-center gap-2 px-4 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors min-w-[120px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span
@@ -121,7 +124,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
             {isOpen && (
               <div
                 role="listbox"
-                aria-labelledby="filter-dropdown-label"
+                aria-labelledby={label ? 'filter-dropdown-label' : undefined}
                 className="absolute top-full left-0 mt-2 w-full bg-popover border border-border rounded-lg shadow-xl overflow-hidden transform origin-top max-h-60 overflow-y-auto z-50"
               >
                 {/* All Option */}
@@ -188,9 +191,11 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
             opaque ? 'bg-card' : 'bg-card/95 backdrop-blur-md'
           )}
         >
-          <span className="text-muted-foreground px-2" id="filter-dropdown-label">
-            {label}:
-          </span>
+          {label && (
+            <span className="text-muted-foreground px-2" id="filter-dropdown-label">
+              {label}:
+            </span>
+          )}
           <div className="relative">
             <button
               ref={buttonRef}
@@ -198,7 +203,8 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               onKeyDown={handleKeyDown}
               aria-haspopup="listbox"
               aria-expanded={isOpen}
-              className="flex items-center gap-2 px-4 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors min-w-[200px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
+              aria-labelledby={label ? 'filter-dropdown-label' : undefined}
+              className="flex items-center gap-2 px-4 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors min-w-[120px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span
@@ -226,7 +232,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
             {isOpen && (
               <div
                 role="listbox"
-                aria-labelledby="filter-dropdown-label"
+                aria-labelledby={label ? 'filter-dropdown-label' : undefined}
                 className="absolute top-full left-0 mt-2 w-full bg-popover border border-border rounded-lg shadow-xl overflow-hidden transform origin-top max-h-60 overflow-y-auto z-50"
               >
                 {/* All Option */}

@@ -47,12 +47,12 @@ const EditableDataDisplay: React.FC<{
   }
 
   return (
-    <div className="mb-4 p-3 bg-black/40 rounded border border-white/10 text-xs space-y-1 animate-fade-in focus-within:border-blue-500/50 transition-colors">
+    <div className="mb-4 p-3 bg-muted/40 rounded border border-white/10 text-xs space-y-1 animate-fade-in focus-within:border-primary/50 transition-colors">
       <div className="flex justify-between items-center mb-2">
         <span className="text-muted-foreground font-bold uppercase tracking-wider">{label}</span>
         <button
           onClick={() => setViewMode((prev) => (prev === 'hex' ? 'ascii' : 'hex'))}
-          className="text-[10px] flex items-center gap-1 bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition-colors text-blue-300"
+          className="text-[10px] flex items-center gap-1 bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition-colors text-primary"
         >
           {viewMode === 'hex' ? 'HEX' : 'ASCII'}
         </button>
@@ -127,15 +127,15 @@ export const SignVerifyTab: React.FC = () => {
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Sign */}
-          <div className="p-6 bg-black/20 rounded-xl border border-white/5 hover:border-green-500/30 transition-colors group flex flex-col">
-            <div className="text-sm text-green-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+          <div className="p-6 bg-card rounded-xl border border-white/5 hover:border-success/30 transition-colors group flex flex-col">
+            <div className="text-sm text-success mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <FileSignature size={16} /> Sign Message
             </div>
 
             <select
               value={selectedSignKeyId}
               onChange={(e) => setSelectedSignKeyId(e.target.value)}
-              className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-green-500"
+              className="w-full mb-4 bg-muted/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-success"
             >
               <option value="">Select Private Key...</option>
               {signPrivateKeys.map((k) => (
@@ -205,7 +205,7 @@ export const SignVerifyTab: React.FC = () => {
                   logEvent('Playground', 'Sign Message')
                 }}
                 disabled={!selectedSignKeyId || loading}
-                className="w-full py-3 rounded-lg bg-green-500/20 text-green-300 border border-green-500/30 hover:bg-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+                className="w-full py-3 rounded-lg bg-success/20 text-success border border-success/30 hover:bg-success/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Sign Message
               </button>
@@ -213,15 +213,15 @@ export const SignVerifyTab: React.FC = () => {
           </div>
 
           {/* Verify */}
-          <div className="p-6 bg-black/20 rounded-xl border border-white/5 hover:border-orange-500/30 transition-colors group flex flex-col">
-            <div className="text-sm text-orange-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+          <div className="p-6 bg-card rounded-xl border border-white/5 hover:border-warning/30 transition-colors group flex flex-col">
+            <div className="text-sm text-warning mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <FileSignature size={16} /> Verify Signature
             </div>
 
             <select
               value={selectedVerifyKeyId}
               onChange={(e) => setSelectedVerifyKeyId(e.target.value)}
-              className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-orange-500"
+              className="w-full mb-4 bg-muted/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-warning"
             >
               <option value="">Select Public Key...</option>
               {signPublicKeys.map((k) => (
@@ -289,8 +289,8 @@ export const SignVerifyTab: React.FC = () => {
               <div
                 className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${
                   verificationResult
-                    ? 'bg-green-500/10 border-green-500/30 text-green-400'
-                    : 'bg-red-500/10 border-red-500/30 text-red-400'
+                    ? 'bg-success/10 border-success/30 text-success'
+                    : 'bg-destructive/10 border-destructive/30 text-destructive'
                 }`}
               >
                 {verificationResult ? <CheckCircle size={24} /> : <XCircle size={24} />}
@@ -314,7 +314,7 @@ export const SignVerifyTab: React.FC = () => {
                   logEvent('Playground', 'Verify Signature')
                 }}
                 disabled={!selectedVerifyKeyId || loading}
-                className="w-full py-3 rounded-lg bg-orange-500/20 text-orange-300 border border-orange-500/30 hover:bg-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+                className="w-full py-3 rounded-lg bg-warning/20 text-warning border border-warning/30 hover:bg-warning/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Verify Signature
               </button>

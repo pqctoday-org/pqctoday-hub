@@ -38,8 +38,8 @@ export const KemOpsTab: React.FC = () => {
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Encapsulate */}
-          <div className="p-6 bg-black/20 rounded-xl border border-white/5 hover:border-blue-500/30 transition-colors group flex flex-col">
-            <div className="text-sm text-blue-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+          <div className="p-6 bg-card rounded-xl border border-white/5 hover:border-primary/30 transition-colors group flex flex-col">
+            <div className="text-sm text-primary mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <Lock size={16} /> Encapsulate
             </div>
             <p className="text-xs text-muted-foreground mb-4 h-10">
@@ -48,7 +48,7 @@ export const KemOpsTab: React.FC = () => {
             <select
               value={selectedEncKeyId}
               onChange={(e) => setSelectedEncKeyId(e.target.value)}
-              className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-blue-500"
+              className="w-full mb-4 bg-muted/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
             >
               <option value="">Select Public Key...</option>
               {kemPublicKeys.map((k) => (
@@ -115,7 +115,7 @@ export const KemOpsTab: React.FC = () => {
                   logEvent('Playground', 'KEM Encapsulate')
                 }}
                 disabled={!selectedEncKeyId || loading}
-                className="w-full py-3 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30 hover:bg-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+                className="w-full py-3 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Run Encapsulate
               </button>
@@ -123,8 +123,8 @@ export const KemOpsTab: React.FC = () => {
           </div>
 
           {/* Decapsulate */}
-          <div className="p-6 bg-black/20 rounded-xl border border-white/5 hover:border-purple-500/30 transition-colors group flex flex-col">
-            <div className="text-sm text-purple-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+          <div className="p-6 bg-card rounded-xl border border-white/5 hover:border-accent/30 transition-colors group flex flex-col">
+            <div className="text-sm text-accent mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <KeyIcon size={16} /> Decapsulate
             </div>
             <p className="text-xs text-muted-foreground mb-4 h-10">
@@ -133,7 +133,7 @@ export const KemOpsTab: React.FC = () => {
             <select
               value={selectedDecKeyId}
               onChange={(e) => setSelectedDecKeyId(e.target.value)}
-              className="w-full mb-4 bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-purple-500"
+              className="w-full mb-4 bg-muted/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent"
             >
               <option value="">Select Private Key...</option>
               {kemPrivateKeys.map((k) => (
@@ -190,8 +190,8 @@ export const KemOpsTab: React.FC = () => {
               <div
                 className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${
                   kemDecapsulationResult
-                    ? 'bg-green-500/10 border-green-500/30 text-green-400'
-                    : 'bg-red-500/10 border-red-500/30 text-red-400'
+                    ? 'bg-success/10 border-success/30 text-success'
+                    : 'bg-destructive/10 border-destructive/30 text-destructive'
                 }`}
               >
                 {kemDecapsulationResult ? <CheckCircle size={24} /> : <XCircle size={24} />}
@@ -215,7 +215,7 @@ export const KemOpsTab: React.FC = () => {
                   logEvent('Playground', 'KEM Decapsulate')
                 }}
                 disabled={!selectedDecKeyId || loading}
-                className="w-full py-3 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30 hover:bg-purple-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+                className="w-full py-3 rounded-lg bg-accent/20 text-accent border border-accent/30 hover:bg-accent/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Run Decapsulate
               </button>
@@ -231,8 +231,8 @@ export const KemOpsTab: React.FC = () => {
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Encrypt Data */}
-          <div className="p-6 bg-black/20 rounded-xl border border-white/5 hover:border-cyan-500/30 transition-colors group flex flex-col">
-            <div className="text-sm text-cyan-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+          <div className="p-6 bg-card rounded-xl border border-white/5 hover:border-blue-700/30 transition-colors group flex flex-col">
+            <div className="text-sm text-blue-700 dark:text-blue-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <Lock size={16} /> Encrypt Message
             </div>
             <p className="text-xs text-muted-foreground mb-4 h-10">
@@ -273,7 +273,7 @@ export const KemOpsTab: React.FC = () => {
                   logEvent('Playground', 'Hybrid Encrypt')
                 }}
                 disabled={!sharedSecret || loading}
-                className="w-full py-3 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+                className="w-full py-3 rounded-lg bg-blue-700/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-700/30 dark:border-blue-500/30 hover:bg-blue-700/20 dark:hover:bg-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Encrypt Message
               </button>
@@ -281,8 +281,8 @@ export const KemOpsTab: React.FC = () => {
           </div>
 
           {/* Decrypt Data */}
-          <div className="p-6 bg-black/20 rounded-xl border border-white/5 hover:border-emerald-500/30 transition-colors group flex flex-col">
-            <div className="text-sm text-emerald-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+          <div className="p-6 bg-card rounded-xl border border-white/5 hover:border-emerald-700/30 transition-colors group flex flex-col">
+            <div className="text-sm text-emerald-700 dark:text-emerald-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <KeyIcon size={16} /> Decrypt Message
             </div>
             <p className="text-xs text-muted-foreground mb-4 h-10">
@@ -315,7 +315,7 @@ export const KemOpsTab: React.FC = () => {
                   logEvent('Playground', 'Hybrid Decrypt')
                 }}
                 disabled={!encryptedData || loading}
-                className="w-full py-3 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+                className="w-full py-3 rounded-lg bg-emerald-700/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-700/30 dark:border-emerald-500/30 hover:bg-emerald-700/20 dark:hover:bg-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Decrypt Message
               </button>

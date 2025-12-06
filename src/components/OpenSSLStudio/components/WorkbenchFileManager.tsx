@@ -343,12 +343,12 @@ export const WorkbenchFileManager: React.FC = () => {
                         className={clsx(
                           'px-2 py-1 rounded text-xs font-medium',
                           file.type === 'key'
-                            ? 'bg-amber-500/20 text-amber-200'
+                            ? 'bg-amber-500/20 text-amber-700 dark:text-amber-200'
                             : file.type === 'cert'
-                              ? 'bg-blue-500/20 text-blue-200'
+                              ? 'bg-blue-500/20 text-blue-700 dark:text-blue-200'
                               : file.type === 'csr'
-                                ? 'bg-purple-500/20 text-purple-200'
-                                : 'bg-gray-500/20 text-gray-200'
+                                ? 'bg-purple-500/20 text-purple-700 dark:text-purple-200'
+                                : 'bg-muted text-muted-foreground'
                         )}
                       >
                         {file.type.toUpperCase()}
