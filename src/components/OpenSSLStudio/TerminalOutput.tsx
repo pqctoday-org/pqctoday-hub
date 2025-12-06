@@ -26,24 +26,22 @@ export const TerminalOutput = () => {
   })
 
   return (
-    <div className="h-full flex flex-col bg-[#0d1117] rounded-xl border border-white/10 overflow-hidden font-mono text-sm">
+    <div className="h-full flex flex-col bg-card rounded-xl border border-border overflow-hidden font-mono text-sm">
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/10 shrink-0">
+      <div className="flex items-center justify-between px-4 py-2 bg-muted/30 border-b border-border shrink-0">
         {/* Toggles */}
-        <div className="flex items-center gap-2 bg-black/20 p-1 rounded-lg">
+        <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-lg">
           <label
             className={clsx(
               'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
-              showStdout
-                ? 'bg-white/10 text-green-400'
-                : 'text-muted-foreground hover:text-foreground'
+              showStdout ? 'bg-muted text-green-500' : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <input
               type="checkbox"
               checked={showStdout}
               onChange={(e) => setShowStdout(e.target.checked)}
-              className="w-3 h-3 rounded border-white/20 bg-black/40 text-green-500 focus:ring-0 focus:ring-offset-0"
+              className="w-3 h-3 rounded border-border bg-muted/50 text-green-500 focus:ring-0 focus:ring-offset-0"
             />
             <span className="text-[10px] font-bold uppercase tracking-wider">Stdout</span>
           </label>
@@ -51,16 +49,14 @@ export const TerminalOutput = () => {
           <label
             className={clsx(
               'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
-              showStderr
-                ? 'bg-white/10 text-red-400'
-                : 'text-muted-foreground hover:text-foreground'
+              showStderr ? 'bg-muted text-red-500' : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <input
               type="checkbox"
               checked={showStderr}
               onChange={(e) => setShowStderr(e.target.checked)}
-              className="w-3 h-3 rounded border-white/20 bg-black/40 text-red-500 focus:ring-0 focus:ring-offset-0"
+              className="w-3 h-3 rounded border-border bg-muted/50 text-red-500 focus:ring-0 focus:ring-offset-0"
             />
             <span className="text-[10px] font-bold uppercase tracking-wider">Stderr</span>
           </label>
@@ -68,16 +64,14 @@ export const TerminalOutput = () => {
           <label
             className={clsx(
               'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
-              showDebug
-                ? 'bg-white/10 text-blue-400'
-                : 'text-muted-foreground hover:text-foreground'
+              showDebug ? 'bg-muted text-blue-500' : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <input
               type="checkbox"
               checked={showDebug}
               onChange={(e) => setShowDebug(e.target.checked)}
-              className="w-3 h-3 rounded border-white/20 bg-black/40 text-blue-500 focus:ring-0 focus:ring-offset-0"
+              className="w-3 h-3 rounded border-border bg-muted/50 text-blue-500 focus:ring-0 focus:ring-offset-0"
             />
             <span className="text-[10px] font-bold uppercase tracking-wider">Debug</span>
           </label>
@@ -92,7 +86,7 @@ export const TerminalOutput = () => {
       </div>
 
       {/* Logs Area */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar bg-black/20 min-w-0">
+      <div className="flex-1 overflow-y-auto custom-scrollbar bg-background/50 min-w-0">
         {filteredLogs.length === 0 ? (
           <div className="text-foreground/20 italic text-center mt-10">
             {logs.length === 0 ? 'Ready to execute commands...' : 'No output in this stream.'}
@@ -103,11 +97,11 @@ export const TerminalOutput = () => {
               <col className="w-40" />
               <col className="w-auto" />
             </colgroup>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-border">
               {filteredLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-white/5 transition-colors">
+                <tr key={log.id} className="hover:bg-muted/30 transition-colors">
                   <td
-                    className="px-3 py-1 text-foreground/30 align-top whitespace-nowrap font-mono text-[10px] select-none border-r border-white/5"
+                    className="px-3 py-1 text-foreground/30 align-top whitespace-nowrap font-mono text-[10px] select-none border-r border-border"
                     style={{ fontSize: '10px', whiteSpace: 'nowrap' }}
                   >
                     [{log.timestamp}]
@@ -116,9 +110,9 @@ export const TerminalOutput = () => {
                     className={clsx(
                       'px-3 py-1 align-top font-mono leading-tight',
                       log.type === 'error'
-                        ? 'text-red-400'
+                        ? 'text-red-500'
                         : log.type === 'info'
-                          ? 'text-blue-300'
+                          ? 'text-blue-500'
                           : 'text-foreground/80'
                     )}
                     style={{
