@@ -12,19 +12,19 @@ export const SymmetricTab: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
-      <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
+      <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
         <Lock size={18} className="text-accent" /> Symmetric Encryption (AES-GCM)
       </h4>
 
       {/* Key Selection */}
-      <div className="mb-6 p-6 bg-black/20 rounded-xl border border-white/5">
+      <div className="mb-6 p-6 bg-muted/20 rounded-xl border border-border">
         <h5 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
           <KeyIcon size={14} /> Select Symmetric Key
         </h5>
         <select
           value={selectedSymKeyId}
           onChange={(e) => setSelectedSymKeyId(e.target.value)}
-          className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent"
+          className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent"
         >
           <option value="">Select AES Key...</option>
           {keyStore
@@ -41,7 +41,7 @@ export const SymmetricTab: React.FC = () => {
             const key = keyStore.find((k) => k.id === selectedSymKeyId)
             if (!key) return null
             return (
-              <div className="mt-4 p-3 bg-black/40 rounded border border-white/10 text-xs space-y-1 animate-fade-in">
+              <div className="mt-4 p-3 bg-muted/40 rounded border border-border text-xs space-y-1 animate-fade-in">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Algorithm:</span>
                   <span className="text-accent font-mono font-bold">{key.algorithm}</span>
@@ -63,8 +63,8 @@ export const SymmetricTab: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Encrypt */}
-        <div className="p-6 bg-black/20 rounded-xl border border-white/5 hover:border-cyan-500/30 transition-colors">
-          <div className="text-sm text-cyan-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+        <div className="p-6 bg-muted/20 rounded-xl border border-border hover:border-cyan-500/30 transition-colors">
+          <div className="text-sm text-cyan-500 dark:text-cyan-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
             <Lock size={16} /> Encrypt Data
           </div>
           <DataInput
@@ -78,14 +78,14 @@ export const SymmetricTab: React.FC = () => {
           <button
             onClick={() => runOperation('symEncrypt')}
             disabled={!selectedSymKeyId || loading}
-            className="w-full mt-4 py-3 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+            className="w-full mt-4 py-3 rounded-lg bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
           >
             Encrypt
           </button>
         </div>
 
         {/* Decrypt */}
-        <div className="p-6 bg-black/20 rounded-xl border border-white/5 hover:border-emerald-500/30 transition-colors">
+        <div className="p-6 bg-muted/20 rounded-xl border border-border hover:border-emerald-500/30 transition-colors">
           <div className="text-sm text-emerald-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
             <Lock size={16} /> Decrypt Result
           </div>

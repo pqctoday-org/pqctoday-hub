@@ -73,7 +73,9 @@ export const KemConfig: React.FC<KemConfigProps> = ({
             {kemAction === 'encap' ? 'Select Public Key...' : 'Select Private Key...'}
           </option>
           {files
-            .filter((f) => f.name.endsWith('.key') || f.name.endsWith('.pem'))
+            .filter(
+              (f) => f.name.endsWith('.key') || f.name.endsWith('.pem') || f.name.endsWith('.pub')
+            )
             .map((f) => (
               <option key={f.name} value={f.name}>
                 {f.name}

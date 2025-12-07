@@ -43,11 +43,13 @@ export const SimpleGanttChart = ({
   const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number } | null>(null)
 
   const processedData = useMemo(() => {
-    const filtered = data.filter(
-      (d) =>
+    const filtered = data.filter((d) => {
+      const matchesSearch =
         d.country.countryName.toLowerCase().includes(filterText.toLowerCase()) ||
         d.country.bodies.some((b) => b.name.toLowerCase().includes(filterText.toLowerCase()))
-    )
+      const matchesRegion = selectedCountry === 'All' || d.country.countryName === selectedCountry
+      return matchesSearch && matchesRegion
+    })
 
     const sortedCountries = filtered.sort((a, b) => {
       let compareValue = 0
@@ -90,7 +92,7 @@ export const SimpleGanttChart = ({
         return valA - valB
       }),
     }))
-  }, [data, filterText, sortField, sortDirection])
+  }, [data, filterText, sortField, sortDirection, selectedCountry])
 
   const handleSort = (field: 'country' | 'organization') => {
     if (sortField === field) {

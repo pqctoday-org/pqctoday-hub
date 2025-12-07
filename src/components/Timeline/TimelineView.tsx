@@ -6,9 +6,10 @@ import {
   type TimelinePhase,
 } from '../../data/timelineData'
 import { SimpleGanttChart } from './SimpleGanttChart'
-import { Globe } from 'lucide-react'
+
 import { GanttLegend } from './GanttLegend'
 import { MobileTimelineList } from './MobileTimelineList'
+import { CountryFlag } from '../common/CountryFlag'
 
 export const TimelineView = () => {
   const [selectedCountry, setSelectedCountry] = useState<TimelinePhase | null>(null)
@@ -24,11 +25,21 @@ export const TimelineView = () => {
     if (!timelineData || timelineData.length === 0) return []
     // Get unique country names
     const countries = Array.from(new Set(timelineData.map((d) => d.countryName))).sort()
-    return countries.map((c) => ({
-      id: c,
-      label: c,
-      icon: <Globe size={16} className="text-muted-foreground" />, // Added icon to satisfy type requirement
-    }))
+    return countries.map((c) => {
+      const countryData = timelineData.find((d) => d.countryName === c)
+      return {
+        id: c,
+        label: c,
+        icon: (
+          <CountryFlag
+            code={countryData?.flagCode || ''}
+            width={16}
+            height={12}
+            className="rounded-[1px]"
+          />
+        ),
+      }
+    })
   }, [])
 
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */

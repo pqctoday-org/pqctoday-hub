@@ -33,12 +33,12 @@ export const KemOpsTab: React.FC = () => {
     <div className="max-w-6xl mx-auto animate-fade-in space-y-8">
       {/* Section 1: Key Encapsulation */}
       <div>
-        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
+        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
           <Activity size={18} className="text-accent" /> Key Encapsulation Mechanism (KEM)
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Encapsulate */}
-          <div className="p-6 bg-card rounded-xl border border-white/5 hover:border-primary/30 transition-colors group flex flex-col">
+          <div className="p-6 bg-card rounded-xl border border-border hover:border-primary/30 transition-colors group flex flex-col">
             <div className="text-sm text-primary mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <Lock size={16} /> Encapsulate
             </div>
@@ -48,7 +48,7 @@ export const KemOpsTab: React.FC = () => {
             <select
               value={selectedEncKeyId}
               onChange={(e) => setSelectedEncKeyId(e.target.value)}
-              className="w-full mb-4 bg-muted/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+              className="w-full mb-4 bg-muted/40 border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
             >
               <option value="">Select Public Key...</option>
               {kemPublicKeys.map((k) => (
@@ -72,7 +72,7 @@ export const KemOpsTab: React.FC = () => {
                 }
 
                 return (
-                  <div className="mb-4 p-3 bg-white/5 rounded border border-white/10 text-xs text-muted-foreground space-y-1">
+                  <div className="mb-4 p-3 bg-muted/40 rounded border border-border text-xs text-muted-foreground space-y-1">
                     <div className="flex justify-between">
                       <span>Algorithm:</span>
                       <span className="text-foreground font-mono">{key.algorithm}</span>
@@ -123,7 +123,7 @@ export const KemOpsTab: React.FC = () => {
           </div>
 
           {/* Decapsulate */}
-          <div className="p-6 bg-card rounded-xl border border-white/5 hover:border-accent/30 transition-colors group flex flex-col">
+          <div className="p-6 bg-card rounded-xl border border-border hover:border-accent/30 transition-colors group flex flex-col">
             <div className="text-sm text-accent mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <KeyIcon size={16} /> Decapsulate
             </div>
@@ -133,7 +133,7 @@ export const KemOpsTab: React.FC = () => {
             <select
               value={selectedDecKeyId}
               onChange={(e) => setSelectedDecKeyId(e.target.value)}
-              className="w-full mb-4 bg-muted/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent"
+              className="w-full mb-4 bg-muted/40 border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent"
             >
               <option value="">Select Private Key...</option>
               {kemPrivateKeys.map((k) => (
@@ -157,7 +157,7 @@ export const KemOpsTab: React.FC = () => {
                 }
 
                 return (
-                  <div className="mb-4 p-3 bg-white/5 rounded border border-white/10 text-xs text-muted-foreground space-y-1">
+                  <div className="mb-4 p-3 bg-muted/40 rounded border border-border text-xs text-muted-foreground space-y-1">
                     <div className="flex justify-between">
                       <span>Algorithm:</span>
                       <span className="text-foreground font-mono">{key.algorithm}</span>
@@ -226,12 +226,12 @@ export const KemOpsTab: React.FC = () => {
 
       {/* Section 2: Hybrid Encryption */}
       <div>
-        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
+        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
           <Lock size={18} className="text-accent" /> Hybrid Encryption (AES-GCM)
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Encrypt Data */}
-          <div className="p-6 bg-card rounded-xl border border-white/5 hover:border-blue-700/30 transition-colors group flex flex-col">
+          <div className="p-6 bg-card rounded-xl border border-border hover:border-blue-700/30 transition-colors group flex flex-col">
             <div className="text-sm text-blue-700 dark:text-blue-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <Lock size={16} /> Encrypt Message
             </div>
@@ -281,7 +281,7 @@ export const KemOpsTab: React.FC = () => {
           </div>
 
           {/* Decrypt Data */}
-          <div className="p-6 bg-card rounded-xl border border-white/5 hover:border-emerald-700/30 transition-colors group flex flex-col">
+          <div className="p-6 bg-card rounded-xl border border-border hover:border-emerald-700/30 transition-colors group flex flex-col">
             <div className="text-sm text-emerald-700 dark:text-emerald-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <KeyIcon size={16} /> Decrypt Message
             </div>

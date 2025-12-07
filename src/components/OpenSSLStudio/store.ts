@@ -75,7 +75,7 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
       addFile: (file) =>
         set((state) => ({ files: [...state.files.filter((f) => f.name !== file.name), file] })),
       removeFile: (name) => set((state) => ({ files: state.files.filter((f) => f.name !== name) })),
-      clearFiles: () => set(() => ({ files: [] })),
+      clearFiles: () => set(() => ({ files: [], editingFile: null })),
       getFile: (name) => get().files.find((f) => f.name === name),
 
       logs: [],
