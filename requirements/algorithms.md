@@ -1,5 +1,8 @@
 # PQC Algorithms Transition Requirements
 
+**Status:** ✅ Implemented  
+**Last Updated:** 2025-12-06
+
 ## 1. Overview
 
 The Algorithms Transition view provides a comprehensive comparison table showing the migration from classical cryptographic algorithms (RSA, ECC) to post-quantum cryptographic (PQC) algorithms standardized by NIST.

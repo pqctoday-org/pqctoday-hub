@@ -1,5 +1,26 @@
 # ACVP Testing Requirements
 
+**Status:** ⚠️ DEPRECATED - Merged into [playground.md](playground.md#11-acvp-testing-automated-cryptographic-validation)  
+**Last Updated:** 2025-12-06
+
+---
+
+## Notice
+
+This document has been **deprecated** and merged into the Interactive Playground requirements.
+
+**New Location**: See [playground.md - Section 11: ACVP Testing](playground.md#11-acvp-testing-automated-cryptographic-validation)
+
+**Reason**: ACVP Testing is a sub-feature of the Interactive Playground, not a standalone module. Consolidating the documentation reduces duplication and improves maintainability.
+
+---
+
+## Historical Content
+
+For historical reference, the original content of this document has been preserved below:
+
+---
+
 ## 1. Objective
 
 Integrate Automated Cryptographic Validation Protocol (ACVP) testing capabilities into the Interactive Playground to validate the correctness of the WebAssembly (WASM) implementations of ML-KEM and ML-DSA. This will allow users to verify that the cryptographic operations performed in the browser match the expected results defined by NIST standards (FIPS 203 and FIPS 204).

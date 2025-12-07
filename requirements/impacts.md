@@ -1,5 +1,8 @@
 # Quantum Threat Impacts Requirements
 
+**Status:** ✅ Implemented  
+**Last Updated:** 2025-12-06
+
 ## 1. Functional Requirements
 
 ### 1.1 Dashboard View

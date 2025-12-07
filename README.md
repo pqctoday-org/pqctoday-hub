@@ -4,18 +4,33 @@ Test your PQC readiness with this interactive web application visualizing the gl
 
 ## Features
 
-- **Migration Timeline**: Visualization of global regulatory recommendations and migration phases
-- **Algorithm Comparison**: Comparison table showing the shift from Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) standards
-- **Interactive Playground**: Hands-on testing environment for ML-KEM and ML-DSA cryptographic operations
-  - WASM-powered real cryptography using `@openforge-sh/liboqs`
-  - Key Store with sortable/resizable columns and detailed inspection
-  - ACVP Testing: Automated validation against NIST test vectors
-- **OpenSSL Studio**: A fully simulated OpenSSL workbench in the browser
-  - Generate keys, CSRs, and certificates using a familiar CLI-like interface
-  - Support for both Classical (RSA, EC) and Post-Quantum (ML-KEM, ML-DSA) algorithms
-  - File manager for handling generated artifacts
-- **Quantum Threat Impacts**: Dashboard showing specific risks to industries
-- **Transformation Leaders**: Profiles of key figures driving the transition
+- **Migration Timeline**: Global regulatory recommendations and migration phases visualization
+- **Algorithm Comparison**: Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) transition table
+- **Interactive Playground**: Hands-on cryptographic testing environment
+  - Real WASM-powered cryptography (`@openforge-sh/liboqs`)
+  - Key Store with sortable/resizable columns
+  - ACVP Testing against NIST test vectors
+- **OpenSSL Studio**: Browser-based OpenSSL workbench
+  - CLI-like interface for keys, CSRs, and certificates
+  - Classical (RSA, EC) and Post-Quantum (ML-KEM, ML-DSA, SLH-DSA) support
+  - Virtual file system and artifact management
+- **PKI Learning Platform**: Interactive PKI lifecycle education
+  - 4-step PKI Workshop (CSR → Root CA → Certificate Issuance → Parsing)
+  - X.509 profile-based certificate generation
+  - Support for both classical and post-quantum algorithms
+- **Digital Assets Program**: Blockchain cryptography deep-dive
+  - Bitcoin (BTC): secp256k1, P2PKH/SegWit addresses, ECDSA signing
+  - Ethereum (ETH): Keccak-256, EIP-55 addresses, EIP-1559 transactions
+  - Solana (SOL): Ed25519, Base58 addresses, EdDSA signing
+  - HD Wallet: BIP32/39/44 multi-chain derivation
+- **Standards Library**: Comprehensive PQC standards repository
+  - NIST FIPS documents (203, 204, 205)
+  - Protocol specifications (TLS, SSH, IKEv2)
+  - Categorized by algorithm type and use case
+- **Quantum Threat Impacts**: Industry-specific quantum threat analysis
+- **Transformation Leaders**: Profiles of key PQC transition figures
+
+> 📋 See [REQUIREMENTS.md](REQUIREMENTS.md) for detailed specifications of each feature.
 
 ## Tech Stack
 
@@ -103,16 +118,29 @@ The application is structured into several key components:
 
 ```
 src/
-├── components/       # React components
-│   ├── ACVP/         # Automated Cryptographic Validation Protocol testing
-│   ├── Algorithms/   # Interactive Playground and Algorithm details
-│   ├── Impacts/      # Impact Dashboard
-│   ├── OpenSSLStudio/# OpenSSL Workbench simulation
-│   └── Playground/   # Shared Playground components (KeyStore, DataInput)
-├── data/             # Static data (timelines, test vectors)
-├── wasm/             # WASM integration and wrappers
-├── utils/            # Helper functions
-└── types.ts          # Global TypeScript definitions
+├── components/          # React components
+│   ├── About/           # About page and feedback forms
+│   ├── ACVP/            # Automated Cryptographic Validation Protocol testing
+│   ├── Algorithms/      # Algorithm comparison table
+│   ├── DigitalAssets/   # Blockchain cryptography (BTC, ETH, SOL, HD Wallet)
+│   ├── Impacts/         # Quantum threat impacts dashboard (now Threats/)
+│   ├── Layout/          # Main layout and navigation components
+│   ├── Leaders/         # PQC transformation leaders profiles
+│   ├── Library/         # PQC standards library
+│   ├── OpenSSLStudio/   # OpenSSL workbench simulation
+│   ├── PKILearning/     # PKI Workshop educational module
+│   ├── Playground/      # Interactive cryptography playground
+│   ├── Threats/         # Industry-specific threat analysis
+│   ├── Timeline/        # Migration timeline visualization
+│   └── ui/              # Reusable UI components (Button, Card, etc.)
+├── data/                # Static data (timelines, test vectors, profiles)
+├── hooks/               # Custom React hooks
+├── lib/                 # Utility libraries and helpers
+├── services/            # OpenSSL service and WASM integration
+├── store/               # Zustand state management stores
+├── styles/              # Global CSS and design system
+├── utils/               # Helper functions
+└── types.ts             # Global TypeScript definitions
 ```
 
 ## License

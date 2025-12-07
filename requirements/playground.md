@@ -1,5 +1,8 @@
 # Interactive Playground Requirements
 
+**Status:** ✅ Implemented  
+**Last Updated:** 2025-12-06
+
 ## 1. Overview
 
 The Interactive Playground provides a hands-on environment for testing post-quantum cryptographic algorithms (ML-KEM and ML-DSA) in real-time within the browser. Users can generate keys, perform cryptographic operations, and see immediate results.
@@ -706,3 +709,90 @@ if (!isWasmSupported) {
 - **UI Integration:**
   - "Backup All" button in Key Store header (disabled if empty).
   - "Import ZIP" button always visible.
+
+---
+
+## 11. ACVP Testing (Automated Cryptographic Validation)
+
+> **Note**: This section was previously in `acvp_testing.md` and has been merged here as ACVP is a sub-feature of the Interactive Playground.
+
+### 11.1 Objective
+
+Integrate Automated Cryptographic Validation Protocol (ACVP) testing capabilities to validate the correctness of the WebAssembly (WASM) implementations of ML-KEM and ML-DSA against NIST standards (FIPS 203 and FIPS 204).
+
+### 11.2 Scope
+
+- **Algorithms**: ML-KEM (Key Encapsulation Mechanism) and ML-DSA (Digital Signature Algorithm)
+- **Key Sizes**:
+  - ML-KEM: 512, 768, 1024
+  - ML-DSA: 44, 65, 87
+- **Operations**:
+  - ML-KEM: Encapsulate and Decapsulate
+  - ML-DSA: Signature Generation and Verification
+- **Test Type**: Algorithm Functional Tests (AFT) using Known Answer Tests (KATs)
+
+### 11.3 ACVP Test Data Import
+
+- **Mechanism**: Import ACVP test vectors from NIST standard sources
+- **Source**: Test vectors derived from `usnistgov/ACVP-Server` repository
+- **Constraint**: Import limited to **one** test key pair per algorithm and key size combination
+  - Total imported keys: 6 pairs (3 for ML-KEM, 3 for ML-DSA)
+- **Naming Convention**: `ACVP [Algorithm]-[Size] [Type]`
+  - Example: `ACVP ML-KEM-768 Public Key`, `ACVP ML-DSA-44 Private Key`
+
+### 11.4 Key Store Integration
+
+- Imported ACVP keys stored in existing Key Store
+- Selectable in Interactive Playground for manual operations
+- Primary use: Automated ACVP validation tests
+
+### 11.5 Automated Validation
+
+**ML-KEM Validation:**
+
+- For each key size:
+  1. Use ACVP public key to **Encapsulate** shared secret
+  2. Compare resulting ciphertext and shared secret against expected results
+  3. Use ACVP private key and ciphertext to **Decapsulate**
+  4. Verify recovered shared secret matches expected value
+
+**ML-DSA Validation:**
+
+- For each key size:
+  1. Use ACVP private key to **Sign** a message
+  2. **Verify** generated signature using corresponding public key
+  3. Use ACVP public key, message, and signature to **Verify** (Known Answer Test)
+
+> **Note**: ML-DSA signatures are probabilistic. Validation relies on verification step rather than exact binary match unless deterministic signing is enforced.
+
+### 11.6 User Interface
+
+**ACVP Tab:**
+
+- New tab in main navigation: "ACVP"
+- **Import Button**: "Import ACVP Test Keys"
+  - Triggers loading/parsing of internal JSON test vector files
+  - Populates Key Store with test keys
+  - Provides feedback on imported keys
+- **Run Tests Button**: Executes validation suite
+- **Results Display**:
+  - Summary table showing pass/fail status per algorithm and key size
+  - Detailed logs in Output Log showing inputs and outputs
+
+### 11.7 Data Sources
+
+- **Repository**: `https://github.com/usnistgov/ACVP-Server`
+- **Path**: `gen-val/json-files`
+- **File Types**: `internalProjection.json` (contains inputs and expected outputs)
+- **JSON Properties**:
+  - `testGroups`: Test cases grouped by configuration
+  - `tests`: Individual test cases with `pt`, `ct`, `ss`, `msg`, `sig`, `pk`, `sk`
+
+### 11.8 Implementation Status
+
+- ✅ **Completed**: 2025-11-27
+- ✅ ACVP Testing tab integrated into Interactive Playground
+- ✅ Real ACVP test vectors (ML-DSA FIPS 204, ML-KEM FIPS 203) imported
+- ✅ ML-KEM: Uses `@openforge-sh/liboqs` for all variants (512, 768, 1024)
+- ✅ ML-DSA: Uses `@openforge-sh/liboqs` for all variants (44, 65, 87)
+- ✅ Automated validation suite implemented and verified (all tests pass)
