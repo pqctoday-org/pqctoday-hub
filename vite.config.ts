@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
-import { defineConfig, configDefaults, Plugin } from 'vitest/config'
+import { defineConfig, configDefaults } from 'vitest/config'
+import type { Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import wasm from 'vite-plugin-wasm'
 import topLevelAwait from 'vite-plugin-top-level-await'
