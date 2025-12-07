@@ -16,7 +16,10 @@
 3. **Styling Patterns**:
    - **Containers**: Use `.glass-panel` utility class for cards and content blocks (`bg-white/[0.08] backdrop-blur-md`).
    - **Headings**: Use `.text-gradient` for major section titles.
-   - **Colors**: Use css variables `hsl(var(--param))` (e.g., `bg-primary`, `text-muted-foreground`). NEVER hardcode hex colors.
+   - **Colors**: 
+     * **ALWAYS** use Tailwind semantic tokens: `text-primary`, `text-foreground`, `text-muted-foreground`, `bg-background`, `bg-card`, `border-border`, etc.
+     * **NEVER** use hardcoded color values like `text-cyan-400`, `text-green-300`, `bg-gray-900`, etc.
+     * Use CSS variables `hsl(var(--param))` for custom colors defined in theme.
    - **Theme Compatibility**: PREFER semantic tokens (`bg-card`, `bg-muted`, `border-border`) over generic named colors (`bg-slate-900`, `border-gray-500`) to ensure correct rendering in both Light and Dark modes.
 4. **Layout**:
    - Wrap main page content in `.container` (`max-w-7xl mx-auto`).

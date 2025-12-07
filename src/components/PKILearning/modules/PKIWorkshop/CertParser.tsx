@@ -82,53 +82,104 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
   }
 
   // Parse OpenSSL text output into structured data
+  type TreeNodeData =
+    | { type: 'text'; content: string }
+    | { type: 'leaf'; label: string; value: string }
+    | { type: 'node'; label: string; value?: string; children: TreeNodeData[] }
+
   const ParsedCertView: React.FC<{ output: string }> = ({ output }) => {
     const lines = output.split('\n')
 
-    // Simple parser to group sections
-    const sections: { title: string; content: string[] }[] = []
-    let currentSection: { title: string; content: string[] } | null = null
+    // Enhanced parser to create deeper tree structure
+    const parseLines = (
+      lines: string[],
+      startIdx: number = 0,
+      baseIndent: number = 0
+    ): { nodes: TreeNodeData[]; endIdx: number } => {
+      const nodes: TreeNodeData[] = []
+      let i = startIdx
 
-    lines.forEach((line) => {
-      // Detect section headers (lines that don't start with whitespace and end with :)
-      if (line.match(/^[A-Z][^:]+:$/) || line.match(/^Certificate Request:/)) {
-        if (currentSection) sections.push(currentSection)
-        currentSection = { title: line.replace(':', ''), content: [] }
-      } else if (currentSection && line.trim()) {
-        currentSection.content.push(line)
-      } else if (!currentSection && line.trim()) {
-        // Lines before first section
-        if (!sections.length || sections[0].title !== 'Header') {
-          sections.unshift({ title: 'Header', content: [] })
+      while (i < lines.length) {
+        // eslint-disable-next-line security/detect-object-injection
+        const line = lines[i]
+        if (!line.trim()) {
+          i++
+          continue
         }
-        sections[0].content.push(line)
+
+        // Calculate indentation
+        const indent = line.search(/\S/)
+
+        // If less indented than base, we're done with this level
+        if (indent < baseIndent && i > startIdx) {
+          break
+        }
+
+        const trimmed = line.trim()
+
+        // Check for key: value format
+        const match = trimmed.match(/^([^:]+):\s*(.*)$/)
+
+        if (match) {
+          const key = match[1].trim()
+          const value = match[2].trim()
+
+          // Look ahead to see if there are nested items
+          let hasNested = false
+          if (i + 1 < lines.length) {
+            const nextLine = lines[i + 1]
+            const nextIndent = nextLine.search(/\S/)
+            hasNested = nextIndent > indent && !!nextLine.trim()
+          }
+
+          if (hasNested) {
+            // Parse nested content
+            const { nodes: children, endIdx } = parseLines(lines, i + 1, indent + 1)
+            nodes.push({ type: 'node', label: key, value: value || undefined, children })
+            i = endIdx
+          } else {
+            // Simple key-value pair
+            nodes.push({ type: 'leaf', label: key, value: value || '(empty)' })
+            i++
+          }
+        } else {
+          // Plain text line
+          nodes.push({ type: 'text', content: trimmed })
+          i++
+        }
       }
-    })
-    if (currentSection) sections.push(currentSection)
 
-    return (
-      <div className="space-y-1">
-        {sections.map((section, idx) => (
-          <TreeNode key={idx} label={section.title} defaultOpen={idx < 3}>
-            {section.content.map((line, lineIdx) => {
-              const trimmed = line.trim()
-              // Check if line has key: value format
-              const match = trimmed.match(/^([^:]+):\s*(.*)$/)
-              if (match) {
-                return <TreeNode key={lineIdx} label={match[1].trim()} value={match[2].trim()} />
-              }
-              return (
-                <div key={lineIdx} className="text-muted-foreground py-0.5 ml-4">
-                  {trimmed}
-                </div>
-              )
-            })}
+      return { nodes, endIdx: i }
+    }
+
+    const { nodes } = parseLines(lines)
+
+    const renderNode = (node: TreeNodeData, idx: number, depth: number = 0): React.ReactNode => {
+      if (node.type === 'text') {
+        return (
+          <div key={idx} className="text-muted-foreground py-0.5 ml-4">
+            {node.content}
+          </div>
+        )
+      }
+
+      if (node.type === 'leaf') {
+        return <TreeNode key={idx} label={node.label} value={node.value} />
+      }
+
+      if (node.type === 'node') {
+        return (
+          <TreeNode key={idx} label={node.label} value={node.value} defaultOpen={depth < 2}>
+            {node.children.map((child, childIdx) => renderNode(child, childIdx, depth + 1))}
           </TreeNode>
-        ))}
-      </div>
-    )
-  }
+        )
+      }
 
+      return null
+    }
+
+    return <div className="space-y-1">{nodes.map((node, idx) => renderNode(node, idx, 0))}</div>
+  }
   const handleArtifactSelect = (id: string) => {
     setSelectedArtifactId(id)
     setParsedOutput(null)
