@@ -92,7 +92,11 @@ vi.mock('framer-motion', () => ({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    img: ({ children, alt, ...props }: any) => <img alt={alt || 'mock image'} {...props}>{children}</img>,
+    img: ({ children, alt, ...props }: any) => (
+      <img alt={alt || 'mock image'} {...props}>
+        {children}
+      </img>
+    ),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     article: ({ children, ...props }: any) => <article {...props}>{children}</article>,
   },
