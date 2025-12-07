@@ -123,3 +123,124 @@ describe('OpenSSLService Stability', () => {
     await expect(initPromise2).resolves.toBeUndefined()
   })
 })
+
+describe('OpenSSLService Functionality', () => {
+  beforeEach(async () => {
+    vi.useRealTimers()
+    vi.clearAllMocks()
+    ;(openSSLService as any).resetState()
+
+    // Auto-resolve init for these tests
+    const initPromise = openSSLService.init()
+    const worker = (openSSLService as any).worker
+    if (worker && worker.onmessage) {
+      worker.onmessage({ data: { type: 'READY' } } as MessageEvent)
+    }
+    await initPromise
+  })
+
+  // No afterEach needed for real timers
+
+  it('execute() sends correct command structure to worker', async () => {
+    const worker = (openSSLService as any).worker
+    const postMessageMock = vi.fn((data: any) => {
+      const { requestId } = data
+      // Simulate immediate response
+      worker.onmessage({
+        data: { type: 'DONE', requestId, result: {} },
+      } as MessageEvent)
+    })
+    worker.postMessage = postMessageMock
+
+    await openSSLService.execute('openssl req -new -key key.pem')
+
+    expect(postMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'COMMAND',
+        command: 'req',
+        args: ['-new', '-key', 'key.pem'],
+      })
+    )
+  })
+
+  it('execute() handles quoted arguments correctly', async () => {
+    const worker = (openSSLService as any).worker
+    const postMessageMock = vi.fn((data: any) => {
+      const { requestId } = data
+      worker.onmessage({
+        data: { type: 'DONE', requestId, result: {} },
+      } as MessageEvent)
+    })
+    worker.postMessage = postMessageMock
+
+    await openSSLService.execute('openssl req -subj "/C=US/O=Test Org"')
+
+    expect(postMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        args: ['-subj', '/C=US/O=Test Org'],
+      })
+    )
+  })
+
+  it('execute() captures stdout and stderr correctly', async () => {
+    const worker = (openSSLService as any).worker
+    const postMessageMock = vi.fn((data: any) => {
+      const { requestId } = data
+      worker.onmessage({
+        data: { type: 'LOG', stream: 'stdout', message: 'OpenSSL 3.0', requestId },
+      } as MessageEvent)
+      worker.onmessage({
+        data: { type: 'LOG', stream: 'stderr', message: 'Warning', requestId },
+      } as MessageEvent)
+      worker.onmessage({
+        data: { type: 'LOG', stream: 'stdout', message: '[Debug] ignored', requestId },
+      } as MessageEvent)
+      worker.onmessage({ data: { type: 'DONE', requestId } } as MessageEvent)
+    })
+    worker.postMessage = postMessageMock
+
+    const result = await openSSLService.execute('version')
+
+    expect(result.stdout).toContain('OpenSSL 3.0')
+    expect(result.stderr).toContain('Warning')
+    expect(result.stdout).not.toContain('[Debug] ignored')
+  })
+
+  it('execute() collects created files', async () => {
+    const worker = (openSSLService as any).worker
+    const fileData = new Uint8Array([1, 2, 3])
+
+    const postMessageMock = vi.fn((data: any) => {
+      const { requestId } = data
+      worker.onmessage({
+        data: {
+          type: 'FILE_CREATED',
+          name: 'key.pem',
+          data: fileData,
+          requestId,
+        },
+      } as MessageEvent)
+      worker.onmessage({ data: { type: 'DONE', requestId } } as MessageEvent)
+    })
+    worker.postMessage = postMessageMock
+
+    const result = await openSSLService.execute('genrsa')
+    expect(result.files).toHaveLength(1)
+    expect(result.files[0]).toEqual({ name: 'key.pem', data: fileData })
+  })
+
+  it('execute() handles worker execution errors', async () => {
+    const worker = (openSSLService as any).worker
+    const postMessageMock = vi.fn((data: any) => {
+      const { requestId } = data
+      worker.onmessage({
+        data: { type: 'ERROR', error: 'Unknown command', requestId },
+      } as MessageEvent)
+      worker.onmessage({ data: { type: 'DONE', requestId } } as MessageEvent)
+    })
+    worker.postMessage = postMessageMock
+
+    const execPromise = openSSLService.execute('badcmd')
+    await expect(execPromise).rejects.toThrow('Unknown command')
+  })
+})
