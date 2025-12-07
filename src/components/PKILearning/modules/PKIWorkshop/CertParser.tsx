@@ -168,8 +168,24 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
       }
 
       if (node.type === 'node') {
+        // Top level (depth 0) should always be expanded and non-collapsible
+        if (depth === 0) {
+          return (
+            <div key={idx} className="mb-2">
+              <div className="text-xs py-0.5">
+                <span className="text-primary font-bold">{node.label}:</span>
+                {node.value && <span className="text-foreground ml-1">{node.value}</span>}
+              </div>
+              <div className="ml-4 border-l border-white/10 pl-2">
+                {node.children.map((child, childIdx) => renderNode(child, childIdx, depth + 1))}
+              </div>
+            </div>
+          )
+        }
+
+        // Deeper levels are collapsible
         return (
-          <TreeNode key={idx} label={node.label} value={node.value} defaultOpen={depth < 2}>
+          <TreeNode key={idx} label={node.label} value={node.value} defaultOpen={depth < 3}>
             {node.children.map((child, childIdx) => renderNode(child, childIdx, depth + 1))}
           </TreeNode>
         )
