@@ -1,18 +1,18 @@
 import ReactGA from 'react-ga4'
 
-const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID
-
 export const initGA = () => {
-  if (GA_MEASUREMENT_ID) {
-    console.log(`[Analytics] Initializing with ID: ${GA_MEASUREMENT_ID}`)
-    ReactGA.initialize(GA_MEASUREMENT_ID)
+  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID
+  if (measurementId) {
+    console.log(`[Analytics] Initializing with ID: ${measurementId}`)
+    ReactGA.initialize(measurementId)
   } else {
     console.warn('[Analytics] Google Analytics Measurement ID is missing.')
   }
 }
 
 export const logPageView = (path?: string) => {
-  if (GA_MEASUREMENT_ID) {
+  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID
+  if (measurementId) {
     const page = path || window.location.pathname + window.location.search
     console.log(`[Analytics] Logging page view: ${page}`)
     ReactGA.send({
@@ -23,7 +23,8 @@ export const logPageView = (path?: string) => {
 }
 
 export const logEvent = (category: string, action: string, label?: string) => {
-  if (GA_MEASUREMENT_ID) {
+  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID
+  if (measurementId) {
     console.log(`[Analytics] Logging event: ${category} - ${action} ${label ? `(${label})` : ''}`)
     ReactGA.event({
       category,

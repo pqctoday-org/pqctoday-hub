@@ -18,6 +18,7 @@ const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 describe('analytics', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.stubEnv('VITE_GA_MEASUREMENT_ID', 'test-measurement-id')
   })
 
   describe('initGA', () => {
