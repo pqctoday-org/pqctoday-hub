@@ -817,7 +817,7 @@ distinguished_name = dn
                 <X size={20} />
               </button>
             </div>
-            <div className="prose prose-invert prose-xs max-w-none flex-1 overflow-y-auto">
+            <div className="text-sm max-w-none flex-1 overflow-y-auto">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{profileDocContent}</ReactMarkdown>
             </div>
           </div>
