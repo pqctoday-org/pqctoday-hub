@@ -509,7 +509,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-foreground">Console Output</h3>
           <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[300px] overflow-y-auto custom-scrollbar border border-white/10">
-            <pre className="text-primary whitespace-pre-wrap break-all break-words max-w-full">
+            <pre className="text-accent-foreground whitespace-pre-wrap break-all break-words max-w-full">
               {output}
             </pre>
             {signedCert && (
