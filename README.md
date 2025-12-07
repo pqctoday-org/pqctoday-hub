@@ -36,8 +36,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
 
 - **Frontend**: React + TypeScript + Vite
 - **Cryptography**: WebAssembly (liboqs) for real cryptographic operations
-- **Styling**: Vanilla CSS with a custom "Glassmorphism" design system
-- **Testing**: Vitest + React Testing Library
+- **Styling**: Tailwind CSS 4 with custom design system
+- **Testing**: Vitest + React Testing Library + Playwright
 
 ## Getting Started
 
@@ -51,7 +51,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/pqc-timeline-app.git
+   git clone https://github.com/pqctoday/pqc-timeline-app.git
    cd pqc-timeline-app
    ```
 
@@ -122,8 +122,7 @@ src/
 │   ├── About/           # About page and feedback forms
 │   ├── ACVP/            # Automated Cryptographic Validation Protocol testing
 │   ├── Algorithms/      # Algorithm comparison table
-│   ├── DigitalAssets/   # Blockchain cryptography (BTC, ETH, SOL, HD Wallet)
-│   ├── Impacts/         # Quantum threat impacts dashboard (now Threats/)
+│   ├── Leaders/         # PQC transformation leaders profiles
 │   ├── Layout/          # Main layout and navigation components
 │   ├── Leaders/         # PQC transformation leaders profiles
 │   ├── Library/         # PQC standards library
@@ -145,7 +144,7 @@ src/
 
 ## License
 
-[MIT](LICENSE)
+[GPL-3.0](LICENSE)
 
 ---
 
