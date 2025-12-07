@@ -144,9 +144,10 @@ export const PKIWorkshop: React.FC = () => {
           {steps[currentStep].component}
         </div>
 
-        {/* Mobile: Static / Light Node */}
-        <div className="md:hidden text-center py-8 text-muted-foreground/50 text-sm italic">
-          (Interactive simulation optimized for desktop view)
+        {/* Mobile: Simplified Interactive Component */}
+        <div className="md:hidden">
+          {/* eslint-disable-next-line security/detect-object-injection */}
+          {steps[currentStep].component}
         </div>
       </div>
 
