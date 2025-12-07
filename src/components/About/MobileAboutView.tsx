@@ -59,7 +59,7 @@ export const MobileAboutView = () => {
           collaboration to solve the PQC challenge.
         </p>
 
-        <div className="p-3 rounded-lg bg-muted/20 border border-white/5">
+        <div className="p-3 rounded-lg bg-muted/20 border border-border">
           <p className="text-xs text-muted-foreground text-center italic">
             Input forms for Kudos and Change Requests are available on the desktop version.
           </p>
@@ -95,7 +95,7 @@ export const MobileAboutView = () => {
         className="glass-panel p-4 flex flex-col items-center justify-center gap-3"
       >
         <h3 className="text-sm font-bold">Appearance</h3>
-        <div className="flex items-center gap-2 bg-black/20 p-1 rounded-lg border border-white/5">
+        <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-lg border border-border">
           {(['light', 'system', 'dark'] as const).map((t) => (
             <button
               key={t}
@@ -104,7 +104,7 @@ export const MobileAboutView = () => {
                 'px-3 py-1.5 rounded-md text-xs font-medium transition-colors capitalize flex items-center gap-1.5',
                 theme === t
                   ? 'bg-primary/20 text-primary border border-primary/20'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/10'
               )}
             >
               {t === 'light' && '☀️'}

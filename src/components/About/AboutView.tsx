@@ -181,7 +181,7 @@ ${kudos.message}
                   id="user-type"
                   value={changeRequest.userType}
                   onChange={(e) => setChangeRequest({ ...changeRequest, userType: e.target.value })}
-                  className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 focus:border-primary outline-none text-base md:text-sm"
+                  className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2 focus:border-primary outline-none text-base md:text-sm"
                 >
                   <option value="Technical">Technical User</option>
                   <option value="Sales">Sales Professional</option>
@@ -208,7 +208,7 @@ ${kudos.message}
                         subfeature: '',
                       })
                     }
-                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 focus:border-primary outline-none text-base md:text-sm"
+                    className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2 focus:border-primary outline-none text-base md:text-sm"
                     required
                   >
                     <option value="">Select Feature</option>
@@ -232,7 +232,7 @@ ${kudos.message}
                     onChange={(e) =>
                       setChangeRequest({ ...changeRequest, subfeature: e.target.value })
                     }
-                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 focus:border-primary outline-none text-base md:text-sm"
+                    className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2 focus:border-primary outline-none text-base md:text-sm"
                     disabled={!changeRequest.feature}
                   >
                     <option value="">Select Subfeature</option>
@@ -257,7 +257,7 @@ ${kudos.message}
                   id="category"
                   value={changeRequest.category}
                   onChange={(e) => setChangeRequest({ ...changeRequest, category: e.target.value })}
-                  className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 focus:border-primary outline-none text-base md:text-sm"
+                  className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2 focus:border-primary outline-none text-base md:text-sm"
                 >
                   <option value="Feature Request">Feature Request</option>
                   <option value="Bug Report">Bug Report</option>
@@ -279,7 +279,7 @@ ${kudos.message}
                   onChange={(e) =>
                     setChangeRequest({ ...changeRequest, description: e.target.value })
                   }
-                  className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 focus:border-primary outline-none min-h-[100px] text-base md:text-sm"
+                  className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2 focus:border-primary outline-none min-h-[100px] text-base md:text-sm"
                   placeholder="Describe the change you'd like to see..."
                   required
                 />
@@ -303,7 +303,7 @@ ${kudos.message}
             className="glass-panel p-6"
           >
             <div className="flex items-center gap-3 mb-6">
-              <ThumbsUp className="text-green-400" size={24} />
+              <ThumbsUp className="text-success" size={24} />
               <h2 className="text-xl font-bold">Give Kudos</h2>
             </div>
             <form onSubmit={handleKudosSubmit} className="space-y-6">
@@ -318,8 +318,8 @@ ${kudos.message}
                       className={clsx(
                         'flex items-center gap-2 p-2 rounded cursor-pointer transition-colors border',
                         kudos.likes.includes(feature)
-                          ? 'bg-green-500/20 border-green-500/50 text-green-200'
-                          : 'bg-black/20 border-transparent hover:bg-white/5'
+                          ? 'bg-success/20 border-success/50 text-success'
+                          : 'bg-muted/30 border-transparent hover:bg-muted/50'
                       )}
                     >
                       <input
@@ -345,8 +345,8 @@ ${kudos.message}
                       className={clsx(
                         'flex items-center gap-2 p-2 rounded cursor-pointer transition-colors border',
                         kudos.dislikes.includes(feature)
-                          ? 'bg-red-500/20 border-red-500/50 text-red-200'
-                          : 'bg-black/20 border-transparent hover:bg-white/5'
+                          ? 'bg-destructive/20 border-destructive/50 text-destructive'
+                          : 'bg-muted/30 border-transparent hover:bg-muted/50'
                       )}
                     >
                       <input
@@ -372,8 +372,8 @@ ${kudos.message}
                       className={clsx(
                         'flex items-center gap-2 p-2 rounded cursor-pointer transition-colors border',
                         kudos.getRidOf.includes(feature)
-                          ? 'bg-orange-500/20 border-orange-500/50 text-orange-200'
-                          : 'bg-black/20 border-transparent hover:bg-white/5'
+                          ? 'bg-warning/20 border-warning/50 text-warning'
+                          : 'bg-muted/30 border-transparent hover:bg-muted/50'
                       )}
                     >
                       <input
@@ -399,7 +399,7 @@ ${kudos.message}
                   id="kudos-message"
                   value={kudos.message}
                   onChange={(e) => setKudos({ ...kudos, message: e.target.value })}
-                  className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 focus:border-primary outline-none min-h-[100px] text-base md:text-sm"
+                  className="w-full bg-muted/50 border border-border rounded-lg px-4 py-2 focus:border-primary outline-none min-h-[100px] text-base md:text-sm"
                   placeholder="Tell us what you think..."
                   required
                 />
@@ -407,7 +407,7 @@ ${kudos.message}
 
               <button
                 type="submit"
-                className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-400 border border-green-500/50 rounded-lg px-4 py-2 flex items-center justify-center gap-2 transition-colors"
+                className="w-full bg-success/20 hover:bg-success/30 text-success-foreground border border-success/50 rounded-lg px-4 py-2 flex items-center justify-center gap-2 transition-colors"
               >
                 <Send size={18} />
                 Send Kudos
@@ -431,31 +431,31 @@ ${kudos.message}
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">UI Frameworks & Libraries</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React</span>
                   <span className="text-xs text-muted-foreground/60">v19.2.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Framer Motion</span>
                   <span className="text-xs text-muted-foreground/60">v12.23.24</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Lucide React</span>
                   <span className="text-xs text-muted-foreground/60">v0.554.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Tailwind CSS</span>
                   <span className="text-xs text-muted-foreground/60">v4.1.17</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">clsx</span>
                   <span className="text-xs text-muted-foreground/60">v2.1.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">tailwind-merge</span>
                   <span className="text-xs text-muted-foreground/60">v3.4.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">class-variance-authority</span>
                   <span className="text-xs text-muted-foreground/60">v0.7.1</span>
                 </li>
@@ -464,15 +464,15 @@ ${kudos.message}
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">Utilities</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">localforage</span>
                   <span className="text-xs text-muted-foreground/60">v1.10.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">jszip</span>
                   <span className="text-xs text-muted-foreground/60">v3.10.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">file-saver</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.5</span>
                 </li>
@@ -481,47 +481,47 @@ ${kudos.message}
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">Cryptography & PQC</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">OpenSSL WASM</span>
                   <span className="text-xs text-muted-foreground/60">v3.1.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">liboqs (ML-DSA, ML-KEM)</span>
                   <span className="text-xs text-muted-foreground/60">v0.14.3</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">mlkem-wasm</span>
                   <span className="text-xs text-muted-foreground/60">v0.0.7</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">pqcrypto</span>
                   <span className="text-xs text-muted-foreground/60">v1.0.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@noble/hashes</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@noble/curves</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@scure/bip32</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@scure/bip39</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@scure/base</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">micro-eth-signer</span>
                   <span className="text-xs text-muted-foreground/60">v0.18.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">ed25519-hd-key</span>
                   <span className="text-xs text-muted-foreground/60">v1.3.0</span>
                 </li>
@@ -530,11 +530,11 @@ ${kudos.message}
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">State Management</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Zustand</span>
                   <span className="text-xs text-muted-foreground/60">v5.0.8</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Immer</span>
                   <span className="text-xs text-muted-foreground/60">v11.0.1</span>
                 </li>
@@ -543,7 +543,7 @@ ${kudos.message}
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">Analytics</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React GA4</span>
                   <span className="text-xs text-muted-foreground/60">v2.1.0</span>
                 </li>
@@ -552,23 +552,23 @@ ${kudos.message}
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">Build & Development</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Vite</span>
                   <span className="text-xs text-muted-foreground/60">v7.2.4</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">TypeScript</span>
                   <span className="text-xs text-muted-foreground/60">v5.9.3</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">ESLint</span>
                   <span className="text-xs text-muted-foreground/60">v9.39.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Prettier</span>
                   <span className="text-xs text-muted-foreground/60">v3.7.3</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Husky</span>
                   <span className="text-xs text-muted-foreground/60">v9.1.7</span>
                 </li>
@@ -577,19 +577,19 @@ ${kudos.message}
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">Testing</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Vitest</span>
                   <span className="text-xs text-muted-foreground/60">v4.0.14</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Playwright</span>
                   <span className="text-xs text-muted-foreground/60">v1.57.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Testing Library (React)</span>
                   <span className="text-xs text-muted-foreground/60">v16.3.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-white/5 pb-1">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">axe-playwright (Accessibility)</span>
                   <span className="text-xs text-muted-foreground/60">v2.2.2</span>
                 </li>
@@ -656,7 +656,7 @@ ${kudos.message}
           className="glass-panel p-6 flex flex-col items-center justify-center gap-4"
         >
           <h3 className="text-lg font-bold">Appearance</h3>
-          <div className="flex items-center gap-2 bg-black/20 p-1 rounded-lg border border-white/5">
+          <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-lg border border-border">
             {(['light', 'system', 'dark'] as const).map((t) => (
               <button
                 key={t}
@@ -665,7 +665,7 @@ ${kudos.message}
                   'px-4 py-2 rounded-md text-sm font-medium transition-colors capitalize flex items-center gap-2',
                   theme === t
                     ? 'bg-primary/20 text-primary border border-primary/20'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/10'
                 )}
               >
                 {t === 'light' && '☀️'}
