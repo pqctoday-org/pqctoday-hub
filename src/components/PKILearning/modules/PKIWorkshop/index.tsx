@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Check } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { CSRGenerator } from './CSRGenerator'
@@ -8,6 +9,7 @@ import { CertSigner } from './CertSigner'
 import { CertParser } from './CertParser'
 
 export const PKIWorkshop: React.FC = () => {
+  const navigate = useNavigate()
   const markStepComplete = useModuleStore((state) => state.markStepComplete)
   const resetProgress = useModuleStore((state) => state.resetProgress)
   const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
@@ -36,6 +38,10 @@ export const PKIWorkshop: React.FC = () => {
       resetStore()
       setCurrentStep(0)
     }
+  }
+
+  const handleComplete = () => {
+    navigate('/learn')
   }
 
   const steps = React.useMemo(
@@ -124,7 +130,7 @@ export const PKIWorkshop: React.FC = () => {
       {/* Content Area */}
       <div className="glass-panel p-4 md:p-8 min-h-[300px] md:min-h-[500px] animate-fade-in">
         <div className="mb-6 border-b border-white/10 pb-4">
-          {/* eslint-disable-next-line security/detect-object-injection */}
+          {}
           <h2 className="text-xl md:text-2xl font-bold text-foreground">
             {steps[currentStep].title}
           </h2>
@@ -154,13 +160,22 @@ export const PKIWorkshop: React.FC = () => {
           ← Previous Step
         </button>
 
-        <button
-          onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
-          disabled={currentStep === steps.length - 1}
-          className="px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
-        >
-          Next Step →
-        </button>
+        {currentStep === steps.length - 1 ? (
+          <button
+            onClick={handleComplete}
+            className="px-6 py-2 bg-green-500 text-black font-bold rounded-lg hover:bg-green-400 transition-colors flex items-center gap-2"
+          >
+            <Check size={20} />
+            Completed
+          </button>
+        ) : (
+          <button
+            onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
+            className="px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            Next Step →
+          </button>
+        )}
       </div>
     </div>
   )
