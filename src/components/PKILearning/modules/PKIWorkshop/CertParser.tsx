@@ -7,6 +7,10 @@ import {
   Download,
   ArrowRightLeft,
   Check,
+  ChevronDown,
+  ChevronRight,
+  Eye,
+  Code,
 } from 'lucide-react'
 import { openSSLService } from '../../../../services/crypto/OpenSSLService'
 import { useModuleStore } from '../../../../store/useModuleStore'
@@ -35,6 +39,95 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     url: string
     format: string
   } | null>(null)
+  const [viewMode, setViewMode] = useState<'tree' | 'raw'>('tree')
+
+  // Collapsible tree node component
+  const TreeNode: React.FC<{
+    label: string
+    value?: string
+    children?: React.ReactNode
+    defaultOpen?: boolean
+  }> = ({ label, value, children, defaultOpen = false }) => {
+    const [isOpen, setIsOpen] = useState(defaultOpen)
+    const hasChildren = !!children
+
+    return (
+      <div className="text-xs">
+        <div
+          role={hasChildren ? 'button' : undefined}
+          tabIndex={hasChildren ? 0 : undefined}
+          className={`flex items-start gap-1 py-0.5 ${hasChildren ? 'cursor-pointer hover:bg-white/5' : ''}`}
+          onClick={() => hasChildren && setIsOpen(!isOpen)}
+          onKeyDown={(e) => {
+            if (hasChildren && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault()
+              setIsOpen(!isOpen)
+            }
+          }}
+        >
+          {hasChildren && (
+            <span className="text-muted-foreground mt-0.5">
+              {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </span>
+          )}
+          {!hasChildren && <span className="w-[14px]" />}
+          <span className="text-primary font-medium">{label}:</span>
+          {value && <span className="text-foreground">{value}</span>}
+        </div>
+        {hasChildren && isOpen && (
+          <div className="ml-4 border-l border-white/10 pl-2">{children}</div>
+        )}
+      </div>
+    )
+  }
+
+  // Parse OpenSSL text output into structured data
+  const ParsedCertView: React.FC<{ output: string }> = ({ output }) => {
+    const lines = output.split('\n')
+
+    // Simple parser to group sections
+    const sections: { title: string; content: string[] }[] = []
+    let currentSection: { title: string; content: string[] } | null = null
+
+    lines.forEach((line) => {
+      // Detect section headers (lines that don't start with whitespace and end with :)
+      if (line.match(/^[A-Z][^:]+:$/) || line.match(/^Certificate Request:/)) {
+        if (currentSection) sections.push(currentSection)
+        currentSection = { title: line.replace(':', ''), content: [] }
+      } else if (currentSection && line.trim()) {
+        currentSection.content.push(line)
+      } else if (!currentSection && line.trim()) {
+        // Lines before first section
+        if (!sections.length || sections[0].title !== 'Header') {
+          sections.unshift({ title: 'Header', content: [] })
+        }
+        sections[0].content.push(line)
+      }
+    })
+    if (currentSection) sections.push(currentSection)
+
+    return (
+      <div className="space-y-1">
+        {sections.map((section, idx) => (
+          <TreeNode key={idx} label={section.title} defaultOpen={idx < 3}>
+            {section.content.map((line, lineIdx) => {
+              const trimmed = line.trim()
+              // Check if line has key: value format
+              const match = trimmed.match(/^([^:]+):\s*(.*)$/)
+              if (match) {
+                return <TreeNode key={lineIdx} label={match[1].trim()} value={match[2].trim()} />
+              }
+              return (
+                <div key={lineIdx} className="text-muted-foreground py-0.5 ml-4">
+                  {trimmed}
+                </div>
+              )
+            })}
+          </TreeNode>
+        ))}
+      </div>
+    )
+  }
 
   const handleArtifactSelect = (id: string) => {
     setSelectedArtifactId(id)
@@ -345,12 +438,44 @@ AL9... (truncated for brevity) ...
 
         {/* Output Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">Parsed Output</h3>
-          <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[400px] overflow-y-auto custom-scrollbar border border-white/10">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-foreground">Parsed Output</h3>
+            {parsedOutput && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setViewMode('tree')}
+                  className={`flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors ${
+                    viewMode === 'tree'
+                      ? 'bg-primary text-black'
+                      : 'bg-white/10 text-foreground hover:bg-white/20'
+                  }`}
+                >
+                  <Eye size={14} />
+                  Tree View
+                </button>
+                <button
+                  onClick={() => setViewMode('raw')}
+                  className={`flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors ${
+                    viewMode === 'raw'
+                      ? 'bg-primary text-black'
+                      : 'bg-white/10 text-foreground hover:bg-white/20'
+                  }`}
+                >
+                  <Code size={14} />
+                  Raw Text
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="bg-black/20 rounded-lg p-4 font-mono text-xs h-[400px] overflow-y-auto custom-scrollbar border border-white/10">
             {parsedOutput ? (
-              <pre className="text-blue-300 whitespace-pre-wrap break-all break-words max-w-full">
-                {parsedOutput}
-              </pre>
+              viewMode === 'tree' ? (
+                <ParsedCertView output={parsedOutput} />
+              ) : (
+                <pre className="text-muted-foreground whitespace-pre-wrap break-all break-words max-w-full">
+                  {parsedOutput}
+                </pre>
+              )
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
                 <FileText size={48} className="mb-4 opacity-20" />
