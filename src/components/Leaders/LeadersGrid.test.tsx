@@ -143,6 +143,7 @@ describe('LeadersGrid', () => {
 
     // Alice has image. Since alt is empty, getByRole('img') might skip it.
     // Use checking for src attribute on the article.
+    // eslint-disable-next-line testing-library/no-node-access
     const aliceArticle = screen.getByText('Alice Quant').closest('article')
     // eslint-disable-next-line testing-library/no-node-access
     const img = aliceArticle?.querySelector('img')

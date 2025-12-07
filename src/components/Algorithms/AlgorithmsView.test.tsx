@@ -60,6 +60,7 @@ describe('AlgorithmsView', () => {
 
     it('highlights active tab', () => {
       render(<AlgorithmsView />)
+      // eslint-disable-next-line testing-library/no-node-access
       const transitionTab = screen.getByText('Transition Guide').closest('button')
       expect(transitionTab).toHaveClass('border-primary')
     })
@@ -107,6 +108,7 @@ describe('AlgorithmsView', () => {
   describe('Layout structure', () => {
     it('renders with proper container classes', () => {
       const { container } = render(<AlgorithmsView />)
+      // eslint-disable-next-line testing-library/no-node-access
       const mainDiv = container.firstChild as HTMLElement
       expect(mainDiv).toHaveClass('container', 'mx-auto')
     })

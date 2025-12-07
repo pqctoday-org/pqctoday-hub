@@ -103,6 +103,7 @@ describe('LibraryView', () => {
   describe('Layout structure', () => {
     it('renders with proper spacing classes', () => {
       const { container } = render(<LibraryView />)
+      // eslint-disable-next-line testing-library/no-node-access
       const mainDiv = container.firstChild as HTMLElement
       expect(mainDiv).toHaveClass('space-y-8')
     })

@@ -63,6 +63,7 @@ describe('Workbench Component', () => {
     render(<Workbench category="genpkey" setCategory={mockSetCategory} />)
 
     // Default is Key Generation
+    // eslint-disable-next-line testing-library/no-node-access
     expect(screen.getByText('Key Generation').closest('button')).toHaveClass('bg-primary/20')
 
     // Click CSR

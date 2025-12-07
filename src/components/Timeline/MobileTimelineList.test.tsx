@@ -186,6 +186,7 @@ describe('MobileTimelineList', () => {
 
   it('renders glass-panel cards for each country', () => {
     const { container } = render(<MobileTimelineList data={mockData} />)
+    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
     const glassPanels = container.querySelectorAll('.glass-panel')
     expect(glassPanels).toHaveLength(2) // One for each country
   })
