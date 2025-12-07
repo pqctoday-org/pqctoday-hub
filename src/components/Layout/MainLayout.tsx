@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
   Activity,
   Shield,
@@ -84,18 +84,15 @@ export const MainLayout = () => {
 
       {/* Main Content Area */}
       <main className="flex-grow container py-4 px-2 md:py-8 md:px-8" role="main">
-        <AnimatePresence mode="sync">
-          {/* We use location.pathname as the key to trigger animations on route change */}
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Outlet />
-          </motion.div>
-        </AnimatePresence>
+        {/* Removed AnimatePresence to fix blank screen navigation bug */}
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Outlet />
+        </motion.div>
       </main>
 
       {/* Footer */}
