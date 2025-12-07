@@ -14,9 +14,14 @@ export const TimelineView = () => {
   const [selectedCountry, setSelectedCountry] = useState<TimelinePhase | null>(null)
   // Removed unused viewMode state as we now use CSS media queries for view switching
 
-  const ganttData = useMemo(() => transformToGanttData(timelineData), [])
+  // Always call hooks first (React rules)
+  const ganttData = useMemo(() => {
+    if (!timelineData || timelineData.length === 0) return []
+    return transformToGanttData(timelineData)
+  }, [])
 
   const countryItems = useMemo(() => {
+    if (!timelineData || timelineData.length === 0) return []
     // Get unique country names
     const countries = Array.from(new Set(timelineData.map((d) => d.countryName))).sort()
     return countries.map((c) => ({
@@ -30,6 +35,18 @@ export const TimelineView = () => {
   const handleCountrySelect = (phase: any) => {
     // Loosened type to allow CountryData from timelineData
     setSelectedCountry(phase)
+  }
+
+  // Early return if data isn't loaded yet to prevent blank screen
+  if (!timelineData || timelineData.length === 0 || ganttData.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Loading Timeline Data...</h2>
+          <p className="text-muted-foreground">Please wait while we load the migration timeline.</p>
+        </div>
+      </div>
+    )
   }
 
   return (
