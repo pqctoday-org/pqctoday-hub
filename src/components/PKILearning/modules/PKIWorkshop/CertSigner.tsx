@@ -491,7 +491,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
                 type="number"
                 value={validityDays}
                 onChange={(e) => setValidityDays(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-accent-foreground text-sm focus:outline-none focus:border-primary/50"
               />
             </div>
             <button
