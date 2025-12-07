@@ -13,7 +13,12 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
     for (let i = 0; i < line.length; i++) {
       // eslint-disable-next-line security/detect-object-injection
       const char = line[i]
-      if (char === '"') {
+
+      // Handle escaped quotes ("")
+      if (char === '"' && line[i + 1] === '"') {
+        current += '"'
+        i++ // Skip next quote
+      } else if (char === '"') {
         inQuotes = !inQuotes
       } else if (char === ',' && !inQuotes) {
         result.push(current.trim())
