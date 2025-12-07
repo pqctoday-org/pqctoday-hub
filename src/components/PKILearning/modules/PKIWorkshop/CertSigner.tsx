@@ -359,7 +359,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
               ))}
             </select>
             {csrs.length === 0 && (
-              <p className="text-xs text-red-400">No CSRs found. Generate one in Step 1.</p>
+              <p className="text-xs text-destructive">No CSRs found. Generate one in Step 1.</p>
             )}
           </div>
         </div>
@@ -509,13 +509,13 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-foreground">Console Output</h3>
           <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[300px] overflow-y-auto custom-scrollbar border border-white/10">
-            <pre className="text-green-400 whitespace-pre-wrap break-all break-words max-w-full">
+            <pre className="text-primary whitespace-pre-wrap break-all break-words max-w-full">
               {output}
             </pre>
             {signedCert && (
               <div className="mt-4 pt-4 border-t border-white/10">
                 <p className="text-muted-foreground mb-2">Signed Certificate:</p>
-                <pre className="text-blue-300 whitespace-pre-wrap break-all break-words max-w-full">
+                <pre className="text-foreground whitespace-pre-wrap break-all break-words max-w-full">
                   {signedCert}
                 </pre>
               </div>
