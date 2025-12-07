@@ -20,7 +20,14 @@ const mockData: GanttCountryData[] = [
     country: {
       countryName: 'United States',
       flagCode: 'US',
-      bodies: [{ name: 'NIST' }],
+      bodies: [
+        {
+          name: 'NIST',
+          fullName: 'National Institute of Standards and Technology',
+          countryCode: 'US',
+          events: [],
+        },
+      ],
     },
     phases: [
       {
@@ -47,7 +54,14 @@ const mockData: GanttCountryData[] = [
     country: {
       countryName: 'Canada',
       flagCode: 'CA',
-      bodies: [{ name: 'CSE' }],
+      bodies: [
+        {
+          name: 'CSE',
+          fullName: 'Communications Security Establishment',
+          countryCode: 'CA',
+          events: [],
+        },
+      ],
     },
     phases: [
       {
@@ -146,7 +160,14 @@ describe('MobileTimelineList', () => {
         country: {
           countryName: 'Test Country',
           flagCode: 'TC',
-          bodies: [{ name: 'Test Org' }],
+          bodies: [
+            {
+              name: 'Test Org',
+              fullName: 'Test Organization',
+              countryCode: 'TC',
+              events: [],
+            },
+          ],
         },
         phases: [],
       },
