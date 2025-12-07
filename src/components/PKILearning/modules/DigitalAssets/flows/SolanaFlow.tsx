@@ -201,7 +201,7 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
         openSSLOutput = res2.stdout
       } catch (err) {
         // Fallback to JS Generation
-        console.log('Falling back to JS for Ed25519 key generation:', err)
+        console.warn('Falling back to JS for Ed25519 key generation:', err)
         const privKey = ed25519.utils.randomSecretKey()
         generatedPrivateKeyBytes = privKey
         privHex = bytesToHex(privKey)
@@ -265,7 +265,7 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
         openSSLOutput = res2.stdout
       } catch (err) {
         // Fallback to JS Extraction
-        console.log('Falling back to JS for Ed25519 public key extraction:', err)
+        console.warn('Falling back to JS for Ed25519 public key extraction:', err)
         if (!privateKeyBytes) {
           throw new Error(
             'Private key not available for JS public key derivation. Please generate key first.'
@@ -329,7 +329,7 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
         pubHex = bytesToHex(extractedPublicKeyBytes)
       } catch (err) {
         // Fallback to JS Generation
-        console.log('Falling back to JS for Ed25519 recipient key generation:', err)
+        console.warn('Falling back to JS for Ed25519 recipient key generation:', err)
         const privKey = ed25519.utils.randomSecretKey()
         extractedPublicKeyBytes = ed25519.getPublicKey(privKey)
         pubHex = bytesToHex(extractedPublicKeyBytes)
@@ -420,7 +420,7 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
         sigHex = bytesToHex(sigBytes)
         sigBase58 = base58.encode(sigBytes)
       } catch (err) {
-        console.log('Falling back to JS for Ed25519 signing:', err)
+        console.warn('Falling back to JS for Ed25519 signing:', err)
         if (!privateKeyBytes) throw new Error('Private key bytes not found for JS signing')
         const sigBytes = ed25519.sign(msgData, privateKeyBytes)
         sigHex = bytesToHex(sigBytes)
@@ -448,7 +448,7 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
         if (res.error) throw new Error(res.error)
         verifyResult = res.stdout || 'Signature Verified Successfully'
       } catch (err) {
-        console.log('Falling back to JS for Ed25519 verification:', err)
+        console.warn('Falling back to JS for Ed25519 verification:', err)
         if (!publicKeyBytes) throw new Error('Public key bytes not found for JS verification')
         // We need the signature bytes. In a real app we'd pass them.
         // Here we can re-sign to get them or assume they are valid if we just signed.

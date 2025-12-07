@@ -78,4 +78,4 @@ npm run test:e2e
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
+By contributing, you agree that your contributions will be licensed under the GPL-3.0 License.

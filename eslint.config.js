@@ -36,6 +36,7 @@ export default defineConfig([
       'react-refresh/only-export-components': 'warn',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': 'error',
+      'no-console': ['error', { allow: ['warn', 'error'] }],
     },
     languageOptions: {
       ecmaVersion: 2020,
@@ -68,6 +69,30 @@ export default defineConfig([
     rules: {
       ...testingLibrary.configs.react.rules,
       'testing-library/no-node-access': 'warn', // Downgrade to warn or keep error but allow suppression
+    },
+  },
+
+  // Educational components - allow console.log for teaching cryptographic flows
+  {
+    files: ['src/components/PKILearning/**/*.{ts,tsx}'],
+    rules: {
+      'no-console': 'off', // Educational components demonstrate crypto flows via console
+    },
+  },
+
+  // Analytics and data loading - allow console for debugging
+  {
+    files: ['src/utils/analytics.ts', 'src/data/*.ts', 'src/services/storage/*.ts'],
+    rules: {
+      'no-console': ['warn', { allow: ['warn', 'error', 'log'] }], // Downgrade to warning
+    },
+  },
+
+  // Debug scripts - allow console.log
+  {
+    files: ['src/scripts/**/*.ts'],
+    rules: {
+      'no-console': 'off', // Debug scripts can use console
     },
   },
 

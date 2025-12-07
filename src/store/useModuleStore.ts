@@ -44,8 +44,6 @@ const INITIAL_STATE: LearningProgress = {
   notes: {},
 }
 
-console.log('Initializing useModuleStore...')
-
 export const useModuleStore = create<ModuleState>()(
   persist(
     (set, get) => ({

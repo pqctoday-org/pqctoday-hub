@@ -451,11 +451,9 @@ distinguished_name = dn
         openSSLService.execute(csrCmd, [keyFile, configFile]),
         timeoutPromise,
       ])
-      console.log('CSRGenerator: OpenSSL Result:', csrResult)
       if (csrResult.error) throw new Error(csrResult.error)
 
       const csrFile = csrResult.files.find((f) => f.name === csrName)
-      console.log('CSRGenerator: Found CSR File:', csrFile ? 'Yes' : 'No', csrName)
 
       if (!csrFile) {
         throw new Error(

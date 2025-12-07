@@ -58,13 +58,13 @@ class Logger {
 
   debug(message: string, ...args: unknown[]): void {
     if (shouldLog('debug')) {
-      console.debug(formatMessage(this.context, message), ...args)
+      console.warn(formatMessage(this.context, message), ...args)
     }
   }
 
   info(message: string, ...args: unknown[]): void {
     if (shouldLog('info')) {
-      console.info(formatMessage(this.context, message), ...args)
+      console.warn(formatMessage(this.context, message), ...args)
     }
   }
 

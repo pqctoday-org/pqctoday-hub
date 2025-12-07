@@ -36,7 +36,19 @@ test-results/
 coverage/
 .env
 
-# Temporary Keys
+# Temporary Files & Test Artifacts
 *.pem
 *.der
-test_output.txt
+*.crt
+*.csr
+temp_*
+test_output*.txt
+test_debug_*.log
+build_log.txt
+*.tar.gz
+!node_modules/**/*.tar.gz
+
+# Screenshots and Debug Images
+*-fail.png
+*-debug.png
+screenshot-*.png

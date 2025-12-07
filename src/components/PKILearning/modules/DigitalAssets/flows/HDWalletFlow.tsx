@@ -167,12 +167,7 @@ export const HDWalletFlow: React.FC = () => {
     onBack: () => {
       // HDWalletFlow doesn't have an onBack prop in its current usage,
       // but useStepWizard requires it.
-      // It seems HDWalletFlow is used directly in a route or component where back might not be passed?
-      // Checking usage... it's likely used inside the module index.
-      // But the component definition `export const HDWalletFlow: React.FC = () => {` has no props.
-      // We'll pass a no-op or handle it if we need to add props.
-      // For now, let's just log or do nothing.
-      console.log('Back requested')
+      // No-op for now as this component is used directly without a parent onBack handler
     },
   })
 
