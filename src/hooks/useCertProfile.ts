@@ -106,6 +106,11 @@ export const useCertProfile = ({ initialAttributes, filterProfileName }: UseCert
           const example = getVal(row, 'ExampleValue')
           const description = getVal(row, 'AllowedValuesOrUsage')
 
+          // Skip constraint fields (like basicConstraints) as they're handled separately in the generation logic
+          if (name.toLowerCase().includes('constraints')) {
+            continue
+          }
+
           const oid = getVal(row, 'OID')
 
           const id =
