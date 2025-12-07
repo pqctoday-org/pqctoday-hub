@@ -16,7 +16,7 @@ export const OpenSSLStudioView = () => {
   const { editingFile, activeTab } = useOpenSSLStore()
 
   return (
-    <div className="h-[calc(100vh-140px)] flex flex-col animate-fade-in">
+    <div className="h-full flex flex-col animate-fade-in">
       <div className="mb-6 shrink-0">
         <h2 className="text-3xl font-bold text-gradient mb-2 flex items-center gap-3">
           <Terminal className="text-primary" aria-hidden="true" />

@@ -43,17 +43,17 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
               {showSource && (
                 <td className="p-3">
                   {attr.source === 'CSR' && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-status-info text-status-info border-status-info/50">
                       CSR
                     </span>
                   )}
                   {attr.source === 'CA' && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-secondary/10 text-secondary border-secondary/20">
                       CA
                     </span>
                   )}
                   {(!attr.source || attr.source === 'Manual') && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-white/10 text-muted-foreground border border-white/10">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground border-border">
                       Manual
                     </span>
                   )}
@@ -65,7 +65,7 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
                   <span>{attr.label}</span>
                   <div className="flex gap-1 mt-1">
                     {attr.status === 'mandatory' && (
-                      <span className="text-[10px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded w-fit">
+                      <span className="text-[10px] bg-status-error text-status-error px-1.5 py-0.5 rounded w-fit">
                         Mandatory
                       </span>
                     )}

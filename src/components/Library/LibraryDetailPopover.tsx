@@ -7,15 +7,9 @@ interface LibraryDetailPopoverProps {
   isOpen: boolean
   onClose: () => void
   item: LibraryItem | null
-  position: { x: number; y: number } | null
 }
 
-export const LibraryDetailPopover = ({
-  isOpen,
-  onClose,
-  item,
-  position,
-}: LibraryDetailPopoverProps) => {
+export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
 
   // Close on click outside
@@ -52,24 +46,17 @@ export const LibraryDetailPopover = ({
     }
   }, [isOpen, onClose])
 
-  if (!isOpen || !item || !position) return null
+  if (!isOpen || !item) return null
 
   // Center the popover
   const style: React.CSSProperties = {
-    position: 'fixed',
-    left: '50%',
-    top: '50%',
-    transform: 'translate(-50%, -50%)',
     zIndex: 9999, // Ensure it's on top of everything
-    width: '60vw', // 60% of viewport width (20% margins on each side)
-    maxWidth: '1200px', // Optional max width for very large screens
-    maxHeight: '85vh', // Ensure it fits vertically
   }
 
   const content = (
     <div
       ref={popoverRef}
-      className="border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+      className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] max-w-[1200px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
       style={style}
       role="dialog"
       aria-modal="true"
@@ -79,7 +66,7 @@ export const LibraryDetailPopover = ({
       <div className="p-4 border-b border-border bg-muted/20 flex justify-between items-start gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-status-info text-status-info border-status-info/50">
               {item.documentType?.trim()}
             </span>
             <span className="text-xs text-muted-foreground">{item.referenceId?.trim()}</span>
@@ -103,15 +90,9 @@ export const LibraryDetailPopover = ({
         </div>
 
         {/* Bottom Section: Metadata Grid (2 Columns) */}
-        <div
-          className="grid grid-cols-2 gap-1 w-full"
-          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.25rem', width: '100%' }}
-        >
+        <div className="grid grid-cols-2 gap-1 w-full">
           {/* Status */}
-          <div
-            className="flex flex-row items-baseline gap-2"
-            style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: '0.5rem' }}
-          >
+          <div className="flex flex-row items-baseline gap-2">
             <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
               Status:
             </h4>
@@ -119,10 +100,7 @@ export const LibraryDetailPopover = ({
           </div>
 
           {/* Authors/Org */}
-          <div
-            className="flex flex-row items-baseline gap-2"
-            style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: '0.5rem' }}
-          >
+          <div className="flex flex-row items-baseline gap-2">
             <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
               Authors:
             </h4>
@@ -135,10 +113,7 @@ export const LibraryDetailPopover = ({
           </div>
 
           {/* Initial Pub. Date */}
-          <div
-            className="flex flex-row items-center gap-2"
-            style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}
-          >
+          <div className="flex flex-row items-center gap-2">
             <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
               Published:
             </h4>
@@ -149,10 +124,7 @@ export const LibraryDetailPopover = ({
           </div>
 
           {/* Last Update */}
-          <div
-            className="flex flex-row items-center gap-2"
-            style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}
-          >
+          <div className="flex flex-row items-center gap-2">
             <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
               Updated:
             </h4>
@@ -164,15 +136,7 @@ export const LibraryDetailPopover = ({
 
           {/* Region Scope */}
           {item.regionScope && (
-            <div
-              className="flex flex-row items-baseline gap-2"
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'baseline',
-                gap: '0.5rem',
-              }}
-            >
+            <div className="flex flex-row items-baseline gap-2">
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Region:
               </h4>
@@ -182,15 +146,7 @@ export const LibraryDetailPopover = ({
 
           {/* Migration Urgency */}
           {item.migrationUrgency && (
-            <div
-              className="flex flex-row items-baseline gap-2"
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'baseline',
-                gap: '0.5rem',
-              }}
-            >
+            <div className="flex flex-row items-baseline gap-2">
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Urgency:
               </h4>
@@ -200,15 +156,7 @@ export const LibraryDetailPopover = ({
 
           {/* Applicable Industries */}
           {item.applicableIndustries && (
-            <div
-              className="flex flex-row items-baseline gap-2"
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'baseline',
-                gap: '0.5rem',
-              }}
-            >
+            <div className="flex flex-row items-baseline gap-2">
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Industries:
               </h4>

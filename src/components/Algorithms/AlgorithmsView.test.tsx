@@ -110,7 +110,7 @@ describe('AlgorithmsView', () => {
       const { container } = render(<AlgorithmsView />)
       // eslint-disable-next-line testing-library/no-node-access
       const mainDiv = container.firstChild as HTMLElement
-      expect(mainDiv).toHaveClass('container', 'mx-auto')
+      expect(mainDiv).toHaveClass('max-w-7xl', 'mx-auto', 'px-4')
     })
   })
 })

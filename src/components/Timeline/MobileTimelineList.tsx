@@ -13,22 +13,15 @@ interface MobileTimelineListProps {
 
 export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
-  const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number } | null>(null)
   // Track current phase index for each country
   const [phaseIndices, setPhaseIndices] = useState<Record<string, number>>({})
 
-  const handleCardClick = (phase: TimelinePhase, e: React.MouseEvent) => {
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-    setPopoverPosition({
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2,
-    })
+  const handleCardClick = (phase: TimelinePhase) => {
     setSelectedPhase(phase)
   }
 
   const handleClosePopover = () => {
     setSelectedPhase(null)
-    setPopoverPosition(null)
   }
 
   const getCurrentPhaseIndex = (countryName: string) => {
@@ -68,7 +61,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                     code={country.flagCode}
                     width={32}
                     height={24}
-                    style={{ objectFit: 'cover' }}
+                    className="object-cover"
                   />
                 </div>
                 <div>
@@ -103,7 +96,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                   <button
                     type="button"
                     className="w-full text-left p-3 rounded-lg bg-muted/20 border border-border flex items-center justify-between hover:bg-muted/30 transition-colors"
-                    onClick={(e) => handleCardClick(currentPhase, e)}
+                    onClick={() => handleCardClick(currentPhase)}
                   >
                     <div className="flex items-center gap-3">
                       {currentPhase.type === 'Milestone' ? (
@@ -179,7 +172,6 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
         isOpen={!!selectedPhase}
         onClose={handleClosePopover}
         phase={selectedPhase}
-        position={popoverPosition}
       />
     </div>
   )

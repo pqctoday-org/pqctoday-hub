@@ -105,7 +105,7 @@ export const LeadersGrid = () => {
                     <img
                       src={leader.imageUrl}
                       alt=""
-                      className="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shadow-glow"
                     />
                   ) : (
                     <div className="p-3 rounded-full bg-primary/10 text-primary" aria-hidden="true">
@@ -130,10 +130,10 @@ export const LeadersGrid = () => {
                   className={clsx(
                     'px-3 py-1 rounded-full text-xs font-bold border',
                     leader.type === 'Public'
-                      ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                      ? 'bg-status-info text-status-info border-status-info'
                       : leader.type === 'Private'
-                        ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-                        : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                        ? 'bg-secondary/10 text-secondary border-secondary/20'
+                        : 'bg-status-success text-status-success border-status-success'
                   )}
                 >
                   {leader.type} Sector
@@ -226,7 +226,7 @@ export const LeadersGrid = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Visit ${leader.name}'s LinkedIn profile (opens in new window)`}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 hover:border-blue-500/40 text-blue-400 text-xs font-medium transition-all group"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-info hover:bg-blue-500/20 border-status-info/50 hover:border-blue-500/40 text-status-info text-xs font-medium transition-all group"
                     >
                       <svg
                         width="14"

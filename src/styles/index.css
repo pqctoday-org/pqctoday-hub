@@ -115,8 +115,14 @@
     @apply border-border;
   }
 
+  html,
   body {
     @apply bg-background text-foreground antialiased;
+    height: auto;
+    width: 100%;
+    overflow-x: hidden;
+    scroll-padding-top: 100px;
+    /* Offset for sticky header */
   }
 }
 
@@ -158,5 +164,49 @@
 
   [role='listbox'] button[role='option']:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Semantic Status Colors */
+  .text-status-error {
+    @apply text-destructive;
+  }
+
+  .bg-status-error {
+    @apply bg-destructive/10 border-destructive/20;
+  }
+
+  .text-status-warning {
+    @apply text-warning;
+  }
+
+  .bg-status-warning {
+    @apply bg-warning/10 border-warning/20;
+  }
+
+  .text-status-success {
+    @apply text-success;
+  }
+
+  .bg-status-success {
+    @apply bg-success/10 border-success/20;
+  }
+
+  .text-status-info {
+    @apply text-blue-400;
+    /* Fallback/Custom for now until var is reliable */
+  }
+
+  .bg-status-info {
+    @apply bg-blue-500/10 border-blue-500/20;
+  }
+
+  /* Global Glow Shadow */
+  .shadow-glow {
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
+    /* Ideally this color comes from a variable too, but keeping consistent for now */
+  }
+
+  .dark .shadow-glow {
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
   }
 }

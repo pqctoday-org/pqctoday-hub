@@ -656,6 +656,10 @@ ${kudos.message}
           className="glass-panel p-6 flex flex-col items-center justify-center gap-4"
         >
           <h3 className="text-lg font-bold">Appearance</h3>
+          <p className="text-sm text-muted-foreground text-center max-w-md">
+            Choose your preferred color scheme. System will automatically match your device
+            settings.
+          </p>
           <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-lg border border-border">
             {(['light', 'system', 'dark'] as const).map((t) => (
               <button

@@ -25,7 +25,6 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
     defaultSort || { key: 'referenceId', direction: 'asc' }
   )
   const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(null)
-  const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number } | null>(null)
 
   const toggleExpand = (id: string) => {
     const newExpanded = new Set(expandedIds)
@@ -47,11 +46,6 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
 
   const handleDetailsClick = (item: LibraryItem, e: React.MouseEvent) => {
     e.stopPropagation()
-    const rect = (e.target as HTMLElement).getBoundingClientRect()
-    setPopoverPosition({
-      x: rect.left + rect.width / 2,
-      y: rect.top,
-    })
     setSelectedItem(item)
   }
 
@@ -222,7 +216,6 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
         isOpen={!!selectedItem}
         onClose={() => setSelectedItem(null)}
         item={selectedItem}
-        position={popoverPosition}
       />
     </>
   )

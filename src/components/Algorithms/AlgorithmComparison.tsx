@@ -181,7 +181,7 @@ export const AlgorithmComparison = () => {
           {/* Desktop View */}
           <div className="hidden md:block glass-panel overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse" style={{ tableLayout: 'fixed' }}>
+              <table className="w-full text-left border-collapse table-fixed">
                 <caption className="sr-only">
                   Algorithm transition from classical to post-quantum cryptography, showing function
                   type, classical algorithm, PQC alternative, and transition timeline
@@ -311,7 +311,7 @@ export const AlgorithmComparison = () => {
                       transition={{ delay: index * 0.05 }}
                       className={clsx(
                         'transition-colors group',
-                        index % 2 === 0 ? 'bg-slate-900/50' : 'bg-slate-700/50',
+                        index % 2 === 0 ? 'bg-card/50' : 'bg-muted/20',
                         'hover:bg-primary/10'
                       )}
                     >
@@ -338,7 +338,7 @@ export const AlgorithmComparison = () => {
                         </div>
                       </td>
                       <td className="px-4 py-4" style={{ width: `${columnWidths.pqc}px` }}>
-                        <div className="flex items-center gap-2 text-green-400 font-semibold text-sm">
+                        <div className="flex items-center gap-2 text-status-success font-semibold text-sm">
                           <span className="truncate">{algo.pqc}</span>
                         </div>
                       </td>
@@ -347,9 +347,10 @@ export const AlgorithmComparison = () => {
                           <span
                             className={clsx(
                               'text-xs px-2 py-1 rounded border font-medium shadow-sm whitespace-normal text-center',
+                              'text-xs px-2 py-1 rounded border font-medium shadow-sm whitespace-normal text-center',
                               algo.deprecationDate.includes('Disallowed')
-                                ? 'bg-red-500/10 border-red-500/30 text-red-400'
-                                : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                                ? 'bg-status-error border-status-error text-status-error'
+                                : 'bg-status-warning border-status-warning text-status-warning'
                             )}
                           >
                             {algo.deprecationDate}

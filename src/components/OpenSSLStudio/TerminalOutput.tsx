@@ -5,14 +5,16 @@ import clsx from 'clsx'
 
 export const TerminalOutput = () => {
   const { logs, clearTerminalLogs } = useOpenSSLStore()
-  const logsEndRef = useRef<HTMLDivElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const [showStdout, setShowStdout] = useState(true)
   const [showStderr, setShowStderr] = useState(true)
   const [showDebug, setShowDebug] = useState(false)
 
   // Auto-scroll to bottom
   useEffect(() => {
-    logsEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
   }, [logs, showStdout, showStderr, showDebug])
 
   const filteredLogs = logs.filter((log) => {
@@ -34,14 +36,16 @@ export const TerminalOutput = () => {
           <label
             className={clsx(
               'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
-              showStdout ? 'bg-muted text-green-500' : 'text-muted-foreground hover:text-foreground'
+              showStdout
+                ? 'bg-muted text-status-success'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <input
               type="checkbox"
               checked={showStdout}
               onChange={(e) => setShowStdout(e.target.checked)}
-              className="w-3 h-3 rounded border-border bg-muted/50 text-green-500 focus:ring-0 focus:ring-offset-0"
+              className="w-3 h-3 rounded border-border bg-muted/50 text-status-success focus:ring-0 focus:ring-offset-0"
             />
             <span className="text-[10px] font-bold uppercase tracking-wider">Stdout</span>
           </label>
@@ -49,14 +53,16 @@ export const TerminalOutput = () => {
           <label
             className={clsx(
               'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
-              showStderr ? 'bg-muted text-red-500' : 'text-muted-foreground hover:text-foreground'
+              showStderr
+                ? 'bg-muted text-status-error'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <input
               type="checkbox"
               checked={showStderr}
               onChange={(e) => setShowStderr(e.target.checked)}
-              className="w-3 h-3 rounded border-border bg-muted/50 text-red-500 focus:ring-0 focus:ring-offset-0"
+              className="w-3 h-3 rounded border-border bg-muted/50 text-status-error focus:ring-0 focus:ring-offset-0"
             />
             <span className="text-[10px] font-bold uppercase tracking-wider">Stderr</span>
           </label>
@@ -64,14 +70,16 @@ export const TerminalOutput = () => {
           <label
             className={clsx(
               'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
-              showDebug ? 'bg-muted text-blue-500' : 'text-muted-foreground hover:text-foreground'
+              showDebug
+                ? 'bg-muted text-status-info'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <input
               type="checkbox"
               checked={showDebug}
               onChange={(e) => setShowDebug(e.target.checked)}
-              className="w-3 h-3 rounded border-border bg-muted/50 text-blue-500 focus:ring-0 focus:ring-offset-0"
+              className="w-3 h-3 rounded border-border bg-muted/50 text-status-info focus:ring-0 focus:ring-offset-0"
             />
             <span className="text-[10px] font-bold uppercase tracking-wider">Debug</span>
           </label>
@@ -86,7 +94,10 @@ export const TerminalOutput = () => {
       </div>
 
       {/* Logs Area */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar bg-background/50 min-w-0">
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto custom-scrollbar bg-background/50 min-w-0"
+      >
         {filteredLogs.length === 0 ? (
           <div className="text-foreground/20 italic text-center mt-10">
             {logs.length === 0 ? 'Ready to execute commands...' : 'No output in this stream.'}
@@ -100,27 +111,18 @@ export const TerminalOutput = () => {
             <tbody className="divide-y divide-border">
               {filteredLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-muted/30 transition-colors">
-                  <td
-                    className="px-3 py-1 text-foreground/30 align-top whitespace-nowrap font-mono text-[10px] select-none border-r border-border"
-                    style={{ fontSize: '10px', whiteSpace: 'nowrap' }}
-                  >
+                  <td className="px-3 py-1 text-foreground/30 align-top whitespace-nowrap font-mono text-[10px] select-none border-r border-border">
                     [{log.timestamp}]
                   </td>
                   <td
                     className={clsx(
-                      'px-3 py-1 align-top font-mono leading-tight',
+                      'px-3 py-1 align-top font-mono leading-tight break-all whitespace-pre-wrap text-[11px]',
                       log.type === 'error'
-                        ? 'text-red-500'
+                        ? 'text-status-error'
                         : log.type === 'info'
-                          ? 'text-blue-500'
+                          ? 'text-status-info'
                           : 'text-foreground/80'
                     )}
-                    style={{
-                      wordBreak: 'break-all',
-                      overflowWrap: 'anywhere',
-                      whiteSpace: 'pre-wrap',
-                      fontSize: '11px',
-                    }}
                   >
                     {log.message}
                   </td>
@@ -129,7 +131,6 @@ export const TerminalOutput = () => {
             </tbody>
           </table>
         )}
-        <div ref={logsEndRef} />
       </div>
     </div>
   )

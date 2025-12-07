@@ -40,7 +40,6 @@ export const SimpleGanttChart = ({
   const [sortField, setSortField] = useState<'country' | 'organization'>('country')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
-  const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number } | null>(null)
 
   const processedData = useMemo(() => {
     const filtered = data.filter((d) => {
@@ -106,18 +105,12 @@ export const SimpleGanttChart = ({
 
   const handlePhaseClick = (phase: TimelinePhase, e: React.MouseEvent) => {
     e.stopPropagation()
-    const rect = (e.target as HTMLElement).getBoundingClientRect()
-    setPopoverPosition({
-      x: rect.left + rect.width / 2,
-      y: rect.top,
-    })
     setSelectedPhase(phase)
     logEvent('Timeline', 'View Phase Details', `${phase.phase}: ${phase.title}`)
   }
 
   const handleClosePopover = () => {
     setSelectedPhase(null)
-    setPopoverPosition(null)
   }
 
   const handleFilterBlur = () => {
@@ -225,18 +218,11 @@ export const SimpleGanttChart = ({
 
       {/* Table Container */}
       <div className="overflow-x-auto rounded-xl border border-border bg-card/50 backdrop-blur-sm">
-        <table
-          className="w-full min-w-[1000px]"
-          style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}
-        >
+        <table className="w-full min-w-[1000px] border-collapse table-fixed">
           <thead>
             <tr>
               <th
-                className="sticky left-0 z-30 bg-background p-4 text-left w-[180px] cursor-pointer hover:bg-muted/50 transition-colors"
-                style={{
-                  borderBottom: '1px solid var(--color-border)',
-                  borderRight: '1px solid var(--color-border)',
-                }}
+                className="sticky left-0 z-30 bg-background p-4 text-left w-[180px] cursor-pointer hover:bg-muted/50 transition-colors border-b border-r border-border"
                 onClick={() => handleSort('country')}
               >
                 <div className="flex items-center gap-2">
@@ -253,11 +239,7 @@ export const SimpleGanttChart = ({
                 </div>
               </th>
               <th
-                className="sticky left-[180px] z-30 bg-background p-4 text-left w-[200px] cursor-pointer hover:bg-muted/50 transition-colors"
-                style={{
-                  borderBottom: '1px solid var(--color-border)',
-                  borderRight: '1px solid var(--color-border)',
-                }}
+                className="sticky left-[180px] z-30 bg-background p-4 text-left w-[200px] cursor-pointer hover:bg-muted/50 transition-colors border-b border-r border-border"
                 onClick={() => handleSort('organization')}
               >
                 <div className="flex items-center gap-2">
@@ -276,11 +258,7 @@ export const SimpleGanttChart = ({
               {YEARS.map((year) => (
                 <th
                   key={year}
-                  className="p-2 text-center min-w-[80px] bg-background/80"
-                  style={{
-                    borderBottom: '1px solid var(--color-border)',
-                    borderRight: '1px solid var(--color-border)',
-                  }}
+                  className="p-2 text-center min-w-[80px] bg-background/80 border-b border-r border-border"
                 >
                   <span
                     className={`font-mono text-sm ${year === new Date().getFullYear() ? 'text-primary font-bold' : 'text-muted-foreground'}`}
@@ -312,28 +290,18 @@ export const SimpleGanttChart = ({
                         {index === 0 && (
                           <td
                             rowSpan={totalRows}
-                            className="sticky left-0 z-20 bg-background p-3 align-top"
-                            style={{ borderRight: '1px solid var(--color-border)' }}
+                            className="sticky left-0 z-20 bg-background p-3 align-top border-r border-border"
                           >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div className="flex items-center gap-2">
                               <div
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  width: '20px',
-                                  height: '14px',
-                                  flexShrink: 0,
-                                  overflow: 'hidden',
-                                  borderRadius: '2px',
-                                }}
+                                className="flex items-center justify-center w-5 h-3.5 flex-shrink-0 overflow-hidden rounded-sm"
                                 aria-label={`Flag of ${country.countryName}`}
                               >
                                 <CountryFlag
                                   code={country.flagCode}
                                   width={20}
                                   height={14}
-                                  style={{ objectFit: 'cover' }}
+                                  className="object-cover"
                                 />
                               </div>
                               <span className="font-bold text-foreground text-sm">
@@ -347,8 +315,7 @@ export const SimpleGanttChart = ({
                         {index === 0 && (
                           <td
                             rowSpan={totalRows}
-                            className="sticky left-[180px] z-20 bg-background p-3 align-top"
-                            style={{ borderRight: '1px solid var(--color-border)' }}
+                            className="sticky left-[180px] z-20 bg-background p-3 align-top border-r border-border"
                           >
                             <div className="flex items-center gap-2">
                               <span className="text-xs text-muted-foreground">
@@ -374,7 +341,6 @@ export const SimpleGanttChart = ({
         isOpen={!!selectedPhase}
         onClose={handleClosePopover}
         phase={selectedPhase}
-        position={popoverPosition}
       />
     </div>
   )

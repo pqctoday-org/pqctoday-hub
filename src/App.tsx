@@ -25,13 +25,30 @@ function AnalyticsTracker() {
   return null
 }
 
+import { ScrollToTop } from './components/Router/ScrollToTop'
+import { useThemeStore } from './store/useThemeStore'
+
+// Component to redirect first-time users to About page
+function WelcomeRedirect() {
+  const hasSetPreference = useThemeStore((state) => state.hasSetPreference)
+
+  // If no theme preference has been set, redirect to About page for onboarding
+  if (!hasSetPreference) {
+    return <Navigate to="/about" replace />
+  }
+
+  // Otherwise, show the Timeline as normal
+  return <TimelineView />
+}
+
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AnalyticsTracker />
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/" element={<TimelineView />} />
+          <Route path="/" element={<WelcomeRedirect />} />
           <Route path="/algorithms" element={<AlgorithmsView />} />
           <Route path="/library" element={<LibraryView />} />
           <Route path="/learn/*" element={<PKILearningView />} />

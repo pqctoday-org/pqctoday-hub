@@ -11,15 +11,15 @@ export function AlgorithmsView() {
   const [activeView, setActiveView] = useState<ViewType>('transition')
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="max-w-7xl mx-auto px-4">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-2 md:mb-12"
       >
-        <h1 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
+        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
           Post-Quantum Cryptography Algorithms
-        </h1>
+        </h2>
         <p className="hidden lg:block text-lg text-muted-foreground max-w-3xl mx-auto">
           Migration from classical to post-quantum cryptographic algorithms
         </p>

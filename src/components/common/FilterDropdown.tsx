@@ -98,17 +98,8 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               aria-labelledby={label ? 'filter-dropdown-label' : undefined}
               className="flex items-center gap-2 px-4 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors min-w-[120px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
             >
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '24px',
-                    fontWeight: 'bold',
-                  }}
-                  aria-hidden="true"
-                >
+              <span className="flex items-center gap-2">
+                <span className="flex items-center justify-center w-6 font-bold" aria-hidden="true">
                   {isDefaultSelected ? defaultIcon : selectedItem?.icon}
                 </span>
                 {isDefaultSelected ? defaultLabel : selectedItem?.label}
@@ -137,10 +128,9 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                   }}
                   onKeyDown={(e) => handleOptionKeyDown(e, 'All')}
                   className={clsx(
-                    'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border',
+                    'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border flex items-center gap-2',
                     isDefaultSelected ? 'text-primary bg-muted/30' : 'text-muted-foreground'
                   )}
-                  style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
                   <span
                     className="opacity-50 flex items-center justify-center w-6"
@@ -164,12 +154,11 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                       }}
                       onKeyDown={(e) => handleOptionKeyDown(e, item.id)}
                       className={clsx(
-                        'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border last:border-0',
+                        'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border last:border-0 flex items-center gap-2',
                         selectedId === item.id
                           ? 'text-primary bg-muted/30'
                           : 'text-muted-foreground'
                       )}
-                      style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                     >
                       <span
                         className="opacity-80 flex items-center justify-center w-6"
@@ -206,17 +195,8 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               aria-labelledby={label ? 'filter-dropdown-label' : undefined}
               className="flex items-center gap-2 px-4 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors min-w-[120px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
             >
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '24px',
-                    fontWeight: 'bold',
-                  }}
-                  aria-hidden="true"
-                >
+              <span className="flex items-center gap-2">
+                <span className="flex items-center justify-center w-6 font-bold" aria-hidden="true">
                   {isDefaultSelected ? defaultIcon : selectedItem?.icon}
                 </span>
                 {isDefaultSelected ? defaultLabel : selectedItem?.label}
@@ -245,10 +225,9 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                   }}
                   onKeyDown={(e) => handleOptionKeyDown(e, 'All')}
                   className={clsx(
-                    'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border',
+                    'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border flex items-center gap-2',
                     isDefaultSelected ? 'text-primary bg-muted/30' : 'text-muted-foreground'
                   )}
-                  style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
                   <span
                     className="opacity-50 flex items-center justify-center w-6"
@@ -272,12 +251,11 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                       }}
                       onKeyDown={(e) => handleOptionKeyDown(e, item.id)}
                       className={clsx(
-                        'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border last:border-0',
+                        'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border last:border-0 flex items-center gap-2',
                         selectedId === item.id
                           ? 'text-primary bg-muted/30'
                           : 'text-muted-foreground'
                       )}
-                      style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                     >
                       <span
                         className="opacity-80 flex items-center justify-center w-6"

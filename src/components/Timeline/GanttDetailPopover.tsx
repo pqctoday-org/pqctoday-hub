@@ -2,32 +2,16 @@ import { ExternalLink, Calendar } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import type { TimelinePhase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface GanttDetailPopoverProps {
   isOpen: boolean
   onClose: () => void
   phase: TimelinePhase | null
-  position: { x: number; y: number } | null
 }
 
-export const GanttDetailPopover = ({
-  isOpen,
-  onClose,
-  phase,
-  position,
-}: GanttDetailPopoverProps) => {
+export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
-
-  const [viewportWidth, setViewportWidth] = useState(window.innerWidth)
-
-  useEffect(() => {
-    const handleResize = () => setViewportWidth(window.innerWidth)
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
 
   // Close on click outside
   useEffect(() => {
@@ -46,7 +30,24 @@ export const GanttDetailPopover = ({
     }
   }, [isOpen, onClose])
 
-  if (!isOpen || !phase || !position) return null
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown)
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isOpen, onClose])
+
+  if (!isOpen || !phase) return null
 
   const colors = phaseColors[phase.phase] || {
     start: 'hsl(var(--muted-foreground))',
@@ -59,54 +60,15 @@ export const GanttDetailPopover = ({
   const sourceUrl = primaryEvent?.sourceUrl
   const sourceDate = primaryEvent?.sourceDate
 
-  // Popover width - responsive to viewport
-  const POPOVER_WIDTH = Math.min(576, viewportWidth * 0.9) // Max 36rem (576px) or 90% of viewport
-  const HALF_WIDTH = POPOVER_WIDTH / 2
-  const MARGIN = 20 // Safety margin from screen edges
-  const ESTIMATED_POPOVER_HEIGHT = 300 // Approximate height of popover
-
-  // Calculate left position with boundary checks
-  let left = position.x
-  let transformX = '-50%'
-
-  // Check left boundary
-  if (left - HALF_WIDTH < MARGIN) {
-    left = MARGIN
-    transformX = '0%' // Align left edge
-  }
-  // Check right boundary
-  else if (left + HALF_WIDTH > viewportWidth - MARGIN) {
-    left = viewportWidth - MARGIN
-    transformX = '-100%' // Align right edge
-  }
-
-  // Calculate vertical position with boundary checks
-  const top = position.y
-  let transformY = '-100%' // Default: position above the element
-  let translateYOffset = '-10px' // Small offset above
-
-  // Check if popover would extend above the top of the screen
-  if (position.y - ESTIMATED_POPOVER_HEIGHT < MARGIN) {
-    // Position below the element instead
-    transformY = '0%'
-    translateYOffset = '10px' // Small offset below
-  }
-
-  // Calculate position style to keep it on screen
-  // Calculate position style to keep it on screen
+  // Center the popover
   const style: React.CSSProperties = {
-    position: 'fixed',
-    left: left,
-    top: top,
-    transform: `translate(${transformX}, ${transformY}) translateY(${translateYOffset})`,
     zIndex: 9999, // Ensure it's on top of everything
-    maxWidth: `${POPOVER_WIDTH}px`, // Ensure it never exceeds calculated width
   }
 
   const content = (
     <div
       ref={popoverRef}
-      className="max-w-[36rem] w-[90vw] bg-popover text-popover-foreground shadow-2xl border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200"
+      className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[36rem] bg-popover text-popover-foreground shadow-2xl border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200"
       style={style}
     >
       {/* Header with Phase Color */}
@@ -119,7 +81,7 @@ export const GanttDetailPopover = ({
         {/* Badge and Title */}
         <div className="flex items-center gap-2">
           <div
-            className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-foreground flex-shrink-0"
+            className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-black flex-shrink-0"
             style={{ backgroundColor: colors.start }}
           >
             {phase.phase}

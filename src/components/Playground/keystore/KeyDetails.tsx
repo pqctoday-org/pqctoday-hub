@@ -156,9 +156,9 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       key={selectedKey.id}
-      className="bg-black/40 border border-white/10 rounded-xl p-6 space-y-6"
+      className="bg-card border border-border rounded-xl p-6 space-y-6"
     >
-      <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+      <div className="flex items-center gap-3 border-b border-border pb-4">
         <div
           className={clsx(
             'p-2 rounded-lg',
@@ -204,7 +204,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
                     rawValueMode === 'hex'
-                      ? 'bg-white/10 text-foreground'
+                      ? 'bg-muted text-foreground'
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
@@ -215,7 +215,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
                     rawValueMode === 'ascii'
-                      ? 'bg-white/10 text-foreground'
+                      ? 'bg-muted text-foreground'
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
@@ -237,8 +237,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 readOnly
                 rows={1}
                 value={ruler}
-                className="w-full bg-black/30 border-x border-t border-white/10 rounded-t-lg p-3 text-[11px] text-muted-foreground/50 resize-none focus:outline-none overflow-hidden whitespace-pre select-none block"
-                style={{ fontFamily: '"Courier New", Courier, monospace', lineHeight: '1.5' }}
+                className="w-full bg-muted/30 border-x border-t border-border rounded-t-lg p-3 text-[11px] text-muted-foreground/50 resize-none focus:outline-none overflow-hidden whitespace-pre select-none block font-mono leading-relaxed"
               />
             </div>
             <div className="w-full">
@@ -247,8 +246,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 rows={8}
                 value={displayRaw}
                 onChange={(e) => setRawOverride(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded-b-lg p-3 text-[11px] text-muted-foreground resize-none focus:outline-none focus:border-primary/50 break-all -mt-[1px] block"
-                style={{ fontFamily: '"Courier New", Courier, monospace', lineHeight: '1.5' }}
+                className="w-full bg-muted/20 border border-border rounded-b-lg p-3 text-[11px] text-muted-foreground resize-none focus:outline-none focus:border-primary/50 break-all -mt-[1px] block font-mono leading-relaxed"
               />
             </div>
           </div>
@@ -270,7 +268,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
                     pkcs8ValueMode === 'hex'
-                      ? 'bg-white/10 text-foreground'
+                      ? 'bg-muted text-foreground'
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
@@ -281,7 +279,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
                     pkcs8ValueMode === 'ascii'
-                      ? 'bg-white/10 text-foreground'
+                      ? 'bg-muted text-foreground'
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
@@ -304,8 +302,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 readOnly
                 rows={1}
                 value={ruler}
-                className="w-full bg-black/30 border-x border-t border-white/10 rounded-t-lg p-3 text-[11px] text-muted-foreground/50 resize-none focus:outline-none overflow-hidden whitespace-pre select-none block"
-                style={{ fontFamily: '"Courier New", Courier, monospace', lineHeight: '1.5' }}
+                className="w-full bg-muted/30 border-x border-t border-border rounded-t-lg p-3 text-[11px] text-muted-foreground/50 resize-none focus:outline-none overflow-hidden whitespace-pre select-none block font-mono leading-relaxed"
               />
             </div>
             <div className="w-full">
@@ -314,8 +311,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 rows={8}
                 value={displayPkcs8}
                 onChange={(e) => setPkcs8Override(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded-b-lg p-3 text-[11px] text-muted-foreground resize-none focus:outline-none focus:border-primary/50 break-all -mt-[1px] block"
-                style={{ fontFamily: '"Courier New", Courier, monospace', lineHeight: '1.5' }}
+                className="w-full bg-muted/20 border border-border rounded-b-lg p-3 text-[11px] text-muted-foreground resize-none focus:outline-none focus:border-primary/50 break-all -mt-[1px] block font-mono leading-relaxed"
               />
             </div>
           </div>

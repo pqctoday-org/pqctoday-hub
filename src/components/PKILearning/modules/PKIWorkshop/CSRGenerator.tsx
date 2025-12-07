@@ -661,7 +661,7 @@ distinguished_name = dn
                       <span>{attr.label}</span>
                       <div className="flex gap-1 mt-1">
                         {attr.status === 'mandatory' && (
-                          <span className="text-[10px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded w-fit">
+                          <span className="text-[10px] bg-status-error text-status-error px-1.5 py-0.5 rounded w-fit">
                             Mandatory
                           </span>
                         )}

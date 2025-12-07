@@ -36,7 +36,7 @@ export const LogsTab: React.FC = () => {
 
       <div className="flex-1 overflow-hidden rounded-xl border border-white/10 bg-muted/20 flex flex-col">
         <div className="overflow-y-auto flex-1 custom-scrollbar">
-          <table className="w-full text-left text-sm" style={{ tableLayout: 'fixed' }}>
+          <table className="w-full text-left text-sm table-fixed">
             <thead className="bg-white/5 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md select-none">
               <tr>
                 <th
