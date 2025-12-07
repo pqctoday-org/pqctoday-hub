@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { FileSignature, Loader2 } from 'lucide-react'
+import { FileSignature, Loader2, Info, X } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { openSSLService } from '../../../../services/crypto/OpenSSLService'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
@@ -10,6 +12,22 @@ const csrProfiles = import.meta.glob('../../../../data/x509_profiles/CSR*.csv', 
   query: '?raw',
   import: 'default',
 })
+
+// Import profile documentation
+const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.md', {
+  query: '?raw',
+  import: 'default',
+})
+
+// Profile to markdown mapping
+const PROFILE_DOC_MAP: Record<string, string> = {
+  'CSR-Financial_ETSI_EN319412-2_2025.csv':
+    '../../../../data/x509_profiles/ETSI_EN_319_412-2_Certificate_Overview.md',
+  'CSR-GeneralIT_CABF_TLSBR_2025.csv':
+    '../../../../data/x509_profiles/CAB_Forum_TLS_Baseline_Requirements_Overview.md',
+  'CSR-Telecom_3GPP_TS33310_2025.csv':
+    '../../../../data/x509_profiles/3GPP_TS_33.310_NDS_AF_Certificate_Overview.md',
+}
 
 interface CSRGeneratorProps {
   onComplete: () => void
@@ -113,6 +131,8 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
   const [availableProfiles, setAvailableProfiles] = useState<string[]>([])
   const [profileMetadata, setProfileMetadata] = useState<ProfileMetadata | null>(null)
   const [profileConstraints, setProfileConstraints] = useState<ProfileConstraint[]>([])
+  const [showProfileInfo, setShowProfileInfo] = useState(false)
+  const [profileDocContent, setProfileDocContent] = useState<string>('')
 
   // Filter keys based on selected algorithm if not 'new'
   const availableKeys = artifacts.keys
@@ -278,6 +298,27 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
         return attr
       })
     )
+  }
+
+  const handleShowProfileInfo = async () => {
+    if (!selectedProfile) return
+
+    const docPath = PROFILE_DOC_MAP[selectedProfile]
+    if (!docPath) {
+      setProfileDocContent('No documentation available for this profile.')
+      setShowProfileInfo(true)
+      return
+    }
+
+    try {
+      const loadDoc = profileDocs[docPath] as () => Promise<string>
+      const content = await loadDoc()
+      setProfileDocContent(content)
+      setShowProfileInfo(true)
+    } catch {
+      setProfileDocContent('Error loading documentation.')
+      setShowProfileInfo(true)
+    }
   }
 
   const handleGenerate = async () => {
@@ -571,9 +612,22 @@ distinguished_name = dn
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="profile-select" className="text-sm text-muted-foreground">
-                CSR Profile
-              </label>
+              <div className="flex items-center justify-between">
+                <label htmlFor="profile-select" className="text-sm text-muted-foreground">
+                  CSR Profile
+                </label>
+                {selectedProfile && (
+                  <button
+                    type="button"
+                    onClick={handleShowProfileInfo}
+                    className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+                    title="View profile documentation"
+                  >
+                    <Info size={16} />
+                    Info
+                  </button>
+                )}
+              </div>
               <select
                 id="profile-select"
                 value={selectedProfile}
@@ -730,6 +784,45 @@ distinguished_name = dn
           </div>
         </div>
       </div>
+
+      {/* Profile Info Modal */}
+      {showProfileInfo && (
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="profile-doc-title"
+          className="fixed inset-0 bg-black/80 flex items-start justify-center z-50 pt-8"
+          onClick={() => setShowProfileInfo(false)}
+          onKeyDown={(e) => e.key === 'Escape' && setShowProfileInfo(false)}
+        >
+          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+          <div
+            role="document"
+            tabIndex={-1}
+            className="glass-panel p-4 max-w-4xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.key === 'Escape' && setShowProfileInfo(false)}
+          >
+            <div className="flex items-center justify-between mb-3 flex-shrink-0">
+              <h3 id="profile-doc-title" className="text-lg font-bold flex items-center gap-2">
+                <Info className="text-primary" size={20} />
+                Profile Documentation
+              </h3>
+              <button
+                onClick={() => setShowProfileInfo(false)}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                title="Close"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="prose prose-invert prose-sm max-w-none flex-1 overflow-y-auto">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{profileDocContent}</ReactMarkdown>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
