@@ -122,15 +122,17 @@ src/
 │   ├── About/           # About page and feedback forms
 │   ├── ACVP/            # Automated Cryptographic Validation Protocol testing
 │   ├── Algorithms/      # Algorithm comparison table
+│   ├── ErrorBoundary.tsx # Global error boundary component
 │   ├── Leaders/         # PQC transformation leaders profiles
 │   ├── Layout/          # Main layout and navigation components
-│   ├── Leaders/         # PQC transformation leaders profiles
 │   ├── Library/         # PQC standards library
 │   ├── OpenSSLStudio/   # OpenSSL workbench simulation
 │   ├── PKILearning/     # PKI Workshop educational module
 │   ├── Playground/      # Interactive cryptography playground
+│   ├── Router/          # Routing utilities (ScrollToTop)
 │   ├── Threats/         # Industry-specific threat analysis
 │   ├── Timeline/        # Migration timeline visualization
+│   ├── common/          # Shared components and utilities
 │   └── ui/              # Reusable UI components (Button, Card, etc.)
 ├── data/                # Static data (timelines, test vectors, profiles)
 ├── hooks/               # Custom React hooks
@@ -139,6 +141,7 @@ src/
 ├── store/               # Zustand state management stores
 ├── styles/              # Global CSS and design system
 ├── utils/               # Helper functions
+├── wasm/                # WebAssembly cryptography wrappers (liboqs, mlkem)
 └── types.ts             # Global TypeScript definitions
 ```
 
