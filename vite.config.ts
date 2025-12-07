@@ -1,27 +1,38 @@
 /// <reference types="vitest" />
-import { defineConfig, configDefaults } from 'vitest/config'
+import { defineConfig, configDefaults, Plugin } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import wasm from 'vite-plugin-wasm'
 import topLevelAwait from 'vite-plugin-top-level-await'
 
 import tailwindcss from '@tailwindcss/vite'
 
+// Plugin to update build timestamp on every build
+function buildTimestampPlugin(): Plugin {
+  return {
+    name: 'build-timestamp',
+    config() {
+      return {
+        define: {
+          __BUILD_TIMESTAMP__: JSON.stringify(
+            new Date().toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+              timeZone: 'America/Chicago',
+              timeZoneName: 'short',
+            })
+          ),
+        },
+      }
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  define: {
-    __BUILD_TIMESTAMP__: JSON.stringify(
-      new Date().toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZone: 'America/Chicago',
-        timeZoneName: 'short',
-      })
-    ),
-  },
-  plugins: [react(), tailwindcss(), wasm(), topLevelAwait()],
+  plugins: [buildTimestampPlugin(), react(), tailwindcss(), wasm(), topLevelAwait()],
   test: {
     globals: true,
     environment: 'jsdom',
