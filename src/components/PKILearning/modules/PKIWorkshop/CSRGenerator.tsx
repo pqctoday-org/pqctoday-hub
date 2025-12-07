@@ -59,12 +59,6 @@ interface ProfileMetadata {
   date: string
 }
 
-interface ProfileConstraint {
-  name: string
-  value: string
-  description: string
-}
-
 const ALGORITHMS: AlgorithmOption[] = [
   {
     id: 'rsa',
@@ -130,7 +124,6 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
   const [selectedProfile, setSelectedProfile] = useState<string>('')
   const [availableProfiles, setAvailableProfiles] = useState<string[]>([])
   const [profileMetadata, setProfileMetadata] = useState<ProfileMetadata | null>(null)
-  const [profileConstraints, setProfileConstraints] = useState<ProfileConstraint[]>([])
   const [showProfileInfo, setShowProfileInfo] = useState(false)
   const [profileDocContent, setProfileDocContent] = useState<string>('')
 
@@ -202,17 +195,14 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
         return idx !== undefined && idx < row.length ? row[idx] : ''
       }
 
-      // Parse first data row for metadata
-      const firstRow = parseCSVLine(lines[1])
-      const industry = getVal(firstRow, 'Industry')
-      const standard = getVal(firstRow, 'Standard')
-      const date = getVal(firstRow, 'StandardDate')
-
+      // Parse metadata
+      const industry = getVal(parseCSVLine(lines[1]), 'Industry') || 'Unknown'
+      const standard = getVal(parseCSVLine(lines[1]), 'Standard') || 'Unknown'
+      const date = getVal(parseCSVLine(lines[1]), 'StandardDate') || 'Unknown'
       setProfileMetadata({ industry, standard, date })
 
       // Parse Attributes
       const newAttributes: X509Attribute[] = []
-      const newConstraints: ProfileConstraint[] = []
 
       // Skip header
       for (let i = 1; i < lines.length; i++) {
@@ -225,16 +215,6 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
           const name = getVal(row, 'Name')
           const example = getVal(row, 'ExampleValue')
           const description = getVal(row, 'AllowedValuesOrUsage')
-
-          // Separate constraint fields to display them in profile section
-          if (name.toLowerCase().includes('constraints')) {
-            newConstraints.push({
-              name: name,
-              value: example,
-              description: description,
-            })
-            continue
-          }
 
           const oid = getVal(row, 'OID') // Using OID column for ID/OID mapping
           // Some rows might use 'name' as the OID alias (e.g. commonName)
@@ -277,7 +257,6 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
       }
 
       setAttributes(newAttributes)
-      setProfileConstraints(newConstraints)
       setOutput((prev) => prev + `Profile loaded: ${industry} - ${standard} (${date})\n`)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
@@ -652,14 +631,6 @@ distinguished_name = dn
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Standard:</span>
                   <span className="text-foreground">{profileMetadata.standard}</span>
-                </div>
-                <div className="pt-2 border-t border-white/5">
-                  <span className="text-muted-foreground block mb-1">Constraints:</span>
-                  <span className="text-foreground block leading-relaxed">
-                    {profileConstraints.length > 0
-                      ? profileConstraints.map((c) => `${c.name}=${c.value}`).join(' | ')
-                      : '-'}
-                  </span>
                 </div>
               </div>
             )}
