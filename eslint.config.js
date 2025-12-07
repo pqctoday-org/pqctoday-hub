@@ -6,6 +6,7 @@ import tseslint from 'typescript-eslint'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
 import security from 'eslint-plugin-security'
 import eslintConfigPrettier from 'eslint-config-prettier'
+import testingLibrary from 'eslint-plugin-testing-library'
 import { defineConfig } from 'eslint/config'
 
 export default defineConfig([
@@ -55,6 +56,18 @@ export default defineConfig([
     },
     rules: {
       'security/detect-non-literal-fs-filename': 'off',
+    },
+  },
+
+  // Test files config
+  {
+    files: ['**/*.test.{ts,tsx}'],
+    plugins: {
+      'testing-library': testingLibrary,
+    },
+    rules: {
+      ...testingLibrary.configs.react.rules,
+      'testing-library/no-node-access': 'warn', // Downgrade to warn or keep error but allow suppression
     },
   },
 
