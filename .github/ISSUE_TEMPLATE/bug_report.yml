@@ -1,7 +1,7 @@
 name: 🐛 Bug Report
 description: Report a bug or unexpected behavior
-title: "[Bug]: "
-labels: ["bug", "needs-triage"]
+title: '[Bug]: '
+labels: ['bug', 'needs-triage']
 body:
   - type: markdown
     attributes:
@@ -71,7 +71,7 @@ body:
     attributes:
       label: App Version
       description: What version of the app are you using? (Check footer or About page)
-      placeholder: "e.g., 1.5.0"
+      placeholder: 'e.g., 1.5.0'
 
   - type: textarea
     id: additional
