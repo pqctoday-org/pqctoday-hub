@@ -140,7 +140,7 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
         keyName = `mldsa-${dsaVariant}-${timestamp}.key`
         cmd += ` genpkey -algorithm ML-DSA-${dsaVariant}`
       } else if (keyAlgo.startsWith('slhdsa')) {
-        const slhVariantMap: Record<string, string> = {
+        const slhVariantMap: Partial<Record<string, string>> = {
           slhdsa128s: 'SLH-DSA-SHA2-128s',
           slhdsa128f: 'SLH-DSA-SHA2-128f',
           slhdsa192s: 'SLH-DSA-SHA2-192s',
@@ -156,7 +156,8 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
         }
         keyName = `slhdsa-${keyAlgo.replace('slhdsa', '')}-${timestamp}.key`
         // eslint-disable-next-line security/detect-object-injection
-        cmd += ` genpkey -algorithm ${slhVariantMap[keyAlgo]}`
+        const variant = slhVariantMap[keyAlgo] || keyAlgo
+        cmd += ` genpkey -algorithm ${variant}`
       } else {
         keyName = `${keyAlgo}-${timestamp}.key`
         cmd += ` genpkey -algorithm ${keyAlgo}`

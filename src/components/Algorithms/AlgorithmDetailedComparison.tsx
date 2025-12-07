@@ -269,7 +269,12 @@ const SecurityView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
   const groupedByLevel = algorithms.reduce(
     (acc, algo) => {
       const level = algo.securityLevel?.toString() || 'Classical'
+      // Security hardening: prevent object injection
+      if (level === '__proto__' || level === 'constructor' || level === 'prototype') return acc
+
+      // eslint-disable-next-line security/detect-object-injection
       if (!acc[level]) acc[level] = []
+      // eslint-disable-next-line security/detect-object-injection
       acc[level].push(algo)
       return acc
     },
