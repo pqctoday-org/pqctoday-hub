@@ -43,7 +43,6 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
     attributes,
     setAttributes,
     profileMetadata,
-    profileConstraints,
     handleProfileSelect,
     handleAttributeChange,
     log: profileLog,
@@ -366,14 +365,6 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Standard:</span>
                   <span className="text-foreground">{profileMetadata.standard}</span>
-                </div>
-                <div className="pt-2 border-t border-white/5">
-                  <span className="text-muted-foreground block mb-1">Constraints:</span>
-                  <span className="text-foreground block leading-relaxed">
-                    {profileConstraints.length > 0
-                      ? profileConstraints.map((c) => `${c.name}=${c.value}`).join(' | ')
-                      : '-'}
-                  </span>
                 </div>
               </div>
             )}

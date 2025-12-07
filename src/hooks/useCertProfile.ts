@@ -1,9 +1,5 @@
 import { useState, useEffect } from 'react'
-import type {
-  X509Attribute,
-  ProfileMetadata,
-  ProfileConstraint,
-} from '../components/PKILearning/common/types'
+import type { X509Attribute, ProfileMetadata } from '../components/PKILearning/common/types'
 
 // Import Cert profiles
 const certProfiles = import.meta.glob('../data/x509_profiles/Cert*.csv', {
@@ -21,7 +17,6 @@ export const useCertProfile = ({ initialAttributes, filterProfileName }: UseCert
   const [availableProfiles, setAvailableProfiles] = useState<string[]>([])
   const [attributes, setAttributes] = useState<X509Attribute[]>(initialAttributes)
   const [profileMetadata, setProfileMetadata] = useState<ProfileMetadata | null>(null)
-  const [profileConstraints, setProfileConstraints] = useState<ProfileConstraint[]>([])
   const [loadingError, setLoadingError] = useState<string | null>(null)
   const [log, setLog] = useState<string>('')
 
@@ -100,7 +95,6 @@ export const useCertProfile = ({ initialAttributes, filterProfileName }: UseCert
 
       // Parse Attributes
       const newAttributes: X509Attribute[] = []
-      const newConstraints: ProfileConstraint[] = []
 
       for (let i = 1; i < lines.length; i++) {
         // eslint-disable-next-line security/detect-object-injection
@@ -111,16 +105,6 @@ export const useCertProfile = ({ initialAttributes, filterProfileName }: UseCert
           const name = getVal(row, 'Name')
           const example = getVal(row, 'ExampleValue')
           const description = getVal(row, 'AllowedValuesOrUsage')
-
-          // Separate constraint fields to display them in profile section
-          if (name.toLowerCase().includes('constraints')) {
-            newConstraints.push({
-              name: name,
-              value: example,
-              description: description,
-            })
-            continue
-          }
 
           const oid = getVal(row, 'OID')
 
@@ -185,7 +169,6 @@ export const useCertProfile = ({ initialAttributes, filterProfileName }: UseCert
           return newAttr
         })
       })
-      setProfileConstraints(newConstraints)
       setLog((prev) => prev + `Profile loaded: ${industry} - ${standard} (${date})\n`)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
@@ -215,7 +198,6 @@ export const useCertProfile = ({ initialAttributes, filterProfileName }: UseCert
     attributes,
     setAttributes,
     profileMetadata,
-    profileConstraints,
     handleProfileSelect,
     handleAttributeChange,
     log,
