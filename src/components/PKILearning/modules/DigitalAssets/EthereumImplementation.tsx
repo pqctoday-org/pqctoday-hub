@@ -202,6 +202,27 @@ console.log('Signature s:', signature.s.toString(16).padStart(64, '0'));
 console.log('Recovery v:', signature.recovery);
           `}</pre>
         </div>
+
+        <h4 className="text-lg font-medium mb-2 mt-4">
+          Deep Dive: Extracting R, S, and V
+        </h4>
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+          <pre className="whitespace-pre-wrap break-all">{`
+# Ethereum signatures are 65 bytes: R (32) || S (32) || V (1)
+
+# Extract R (Bytes 0-32)
+head -c 32 eth_signature.bin > eth_r.bin
+xxd -p eth_r.bin
+
+# Extract S (Bytes 32-64)
+head -c 64 eth_signature.bin | tail -c 32 > eth_s.bin
+xxd -p eth_s.bin
+
+# Extract V (Last 1 byte)
+tail -c 1 eth_signature.bin > eth_v.bin
+xxd -p eth_v.bin
+          `}</pre>
+        </div>
       </section>
 
       <section>

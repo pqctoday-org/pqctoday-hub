@@ -1,13 +1,16 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import { Trash2 } from 'lucide-react'
+import { Trash2, CheckCircle } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { BitcoinFlow } from './flows/BitcoinFlow'
 import { EthereumFlow } from './flows/EthereumFlow'
 import { SolanaFlow } from './flows/SolanaFlow'
 import { HDWalletImplementation } from './HDWalletImplementation'
+import { ProgressIndicator } from './components/ProgressIndicator'
 
 export const DigitalAssetsModule: React.FC = () => {
+  const navigate = useNavigate()
   const markStepComplete = useModuleStore((state) => state.markStepComplete)
   const resetProgress = useModuleStore((state) => state.resetProgress)
   const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
@@ -45,25 +48,25 @@ export const DigitalAssetsModule: React.FC = () => {
     () => [
       {
         id: 'bitcoin',
-        title: 'Step 1: Bitcoin',
+        title: 'Module 1: Bitcoin',
         description: 'Generate keys and sign transactions using secp256k1 and SHA-256.',
-        component: <BitcoinFlow onBack={() => {}} />,
+        component: <BitcoinFlow onBack={() => { }} />,
       },
       {
         id: 'ethereum',
-        title: 'Step 2: Ethereum',
+        title: 'Module 2: Ethereum',
         description: 'Create Ethereum accounts and format RLP transactions.',
         component: <EthereumFlow onBack={() => setCurrentStep(0)} />,
       },
       {
         id: 'solana',
-        title: 'Step 3: Solana',
+        title: 'Module 3: Solana',
         description: 'Work with Ed25519 keys and Solana Message structures.',
         component: <SolanaFlow onBack={() => setCurrentStep(1)} />,
       },
       {
         id: 'hd-wallet',
-        title: 'Step 4: HD Wallet',
+        title: 'Module 4: HD Wallet',
         description: 'Generate a Hierarchical Deterministic wallet for all chains.',
         component: <HDWalletImplementation onBack={() => setCurrentStep(2)} />,
       },
@@ -71,8 +74,22 @@ export const DigitalAssetsModule: React.FC = () => {
     []
   )
 
+  // Keyboard navigation (after steps definition)
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight' && currentStep < steps.length - 1) {
+        markStepComplete('digital-assets', steps[currentStep].id)
+        setCurrentStep(currentStep + 1)
+      } else if (e.key === 'ArrowLeft' && currentStep > 0) {
+        setCurrentStep(currentStep - 1)
+      }
+    }
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [currentStep, markStepComplete, steps])
+
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto overflow-x-hidden">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gradient mb-2">Digital Assets Program</h1>
@@ -89,27 +106,29 @@ export const DigitalAssetsModule: React.FC = () => {
         </button>
       </div>
 
+      {/* Progress Indicator */}
+      <ProgressIndicator currentStep={currentStep} totalSteps={steps.length} className="mb-6" />
+
       {/* Progress Steps */}
-      <div className="mb-8">
-        <div className="flex justify-between relative">
-          {/* Connecting Line */}
-          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/10 -z-10" />
+      <div className="mb-8 overflow-x-auto px-2 sm:px-0">
+        <div className="flex justify-between relative min-w-max sm:min-w-0">
+          {/* Connecting Line - hidden on mobile due to scrolling */}
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/10 -z-10 hidden sm:block" />
 
           {steps.map((step, idx) => (
             <button
               key={step.id}
               onClick={() => setCurrentStep(idx)}
-              className={`flex flex-col items-center gap-2 group ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
+              className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
             >
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
-                ${
-                  idx === currentStep
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold text-xs sm:text-base
+                ${idx === currentStep
                     ? 'border-primary text-primary shadow-[0_0_15px_rgba(0,255,157,0.3)]'
                     : idx < currentStep
                       ? 'border-green-500 text-green-500'
                       : 'border-white/20 text-muted-foreground'
-                }
+                  }
               `}
               >
                 {idx + 1}
@@ -132,26 +151,38 @@ export const DigitalAssetsModule: React.FC = () => {
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between mt-6">
+      <div className="flex flex-col sm:flex-row justify-between gap-3 mt-6">
         <button
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
-          className="px-6 py-2 rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 transition-colors text-foreground"
+          className="px-6 py-3 min-h-[44px] rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 transition-colors text-foreground"
         >
           ← Previous Step
         </button>
 
-        <button
-          onClick={() => {
-            // Mark current step as complete when moving next
-            markStepComplete('digital-assets', steps[currentStep].id)
-            setCurrentStep(Math.min(steps.length - 1, currentStep + 1))
-          }}
-          disabled={currentStep === steps.length - 1}
-          className="px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
-        >
-          Next Step →
-        </button>
+        {currentStep === steps.length - 1 ? (
+          <button
+            onClick={() => {
+              markStepComplete('digital-assets', steps[currentStep].id)
+              navigate('/learn')
+            }}
+            className="px-6 py-3 min-h-[44px] bg-success text-success-foreground font-bold rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
+          >
+            <CheckCircle size={16} />
+            Completed - Return to Learn
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              // Mark current step as complete when moving next
+              markStepComplete('digital-assets', steps[currentStep].id)
+              setCurrentStep(Math.min(steps.length - 1, currentStep + 1))
+            }}
+            className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            Next Step →
+          </button>
+        )}
       </div>
     </div>
   )

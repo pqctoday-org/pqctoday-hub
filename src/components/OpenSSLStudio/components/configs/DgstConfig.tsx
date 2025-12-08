@@ -13,6 +13,11 @@ interface DgstConfigProps {
   setSelectedDataFile: (value: string) => void
   selectedSigFile: string
   setSelectedSigFile: (value: string) => void
+  // Advanced
+  manualHashHex: string
+  setManualHashHex: (value: string) => void
+  useRawIn: boolean
+  setUseRawIn: (value: boolean) => void
 }
 
 export const DgstConfig: React.FC<DgstConfigProps> = ({
@@ -26,6 +31,10 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
   setSelectedDataFile,
   selectedSigFile,
   setSelectedSigFile,
+  manualHashHex,
+  setManualHashHex,
+  useRawIn,
+  setUseRawIn
 }) => {
   const { files } = useOpenSSLStore()
 
@@ -79,8 +88,54 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
           <option value="sha3-256">SHA3-256</option>
           <option value="sha3-384">SHA3-384</option>
           <option value="sha3-512">SHA3-512</option>
+          <option value="raw">RAW (Pre-hashed Input)</option>
         </select>
       </div>
+
+      {sigHashAlgo === 'raw' && (
+        <div className="space-y-3 animate-fade-in border-l-2 border-primary/50 pl-3">
+          <span className="text-xs font-bold text-primary block">Raw Input Options</span>
+
+          <div className="space-y-1">
+            <label htmlFor="manual-hash" className="text-xs text-muted-foreground block">
+              Manual Hash Hex (32 bytes)
+            </label>
+            <textarea
+              id="manual-hash"
+              value={manualHashHex}
+              onChange={(e) => setManualHashHex(e.target.value)}
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm font-mono text-foreground outline-none focus:border-primary resize-none h-20"
+              placeholder="e.g. 0x1234..."
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              id="use-rawin"
+              type="checkbox"
+              checked={useRawIn}
+              onChange={(e) => setUseRawIn(e.target.checked)}
+              className="rounded border-white/20 bg-black/40 text-primary focus:ring-primary"
+            />
+            <label htmlFor="use-rawin" className="text-sm text-muted-foreground cursor-pointer select-none">
+              Use <code className="text-primary">-rawin</code> flag (OpenSSL v3+)
+            </label>
+          </div>
+
+          <div className="text-[10px] text-muted-foreground pl-1">
+            {(() => {
+              let hex = manualHashHex.trim()
+              if (hex.startsWith('0x') || hex.startsWith('0X')) hex = hex.slice(2)
+              const clean = hex.replace(/[^0-9a-fA-F]/g, '')
+              const bytes = clean.length / 2
+              if (clean.length === 0) return <span>Empty input</span>
+              if (clean.length % 2 !== 0) return <span className="text-amber-500">Invalid odd-length hex string</span>
+              return <span>Binary Size: <span className="text-primary font-mono">{bytes} bytes</span> (fed as manual_input.bin)</span>
+            })()}
+          </div>
+        </div>
+      )
+      }
 
       <div className="space-y-3">
         <label htmlFor="key-select" className="text-xs text-muted-foreground block">
@@ -107,24 +162,28 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
         </select>
       </div>
 
-      <div className="space-y-3">
-        <label htmlFor="data-select" className="text-xs text-muted-foreground block">
-          Data File (to sign/verify)
-        </label>
-        <select
-          id="data-select"
-          value={selectedDataFile}
-          onChange={(e) => setSelectedDataFile(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="">Select Data File...</option>
-          {files.map((f) => (
-            <option key={f.name} value={f.name}>
-              {f.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      {
+        sigHashAlgo !== 'raw' && (
+          <div className="space-y-3">
+            <label htmlFor="data-select" className="text-xs text-muted-foreground block">
+              Data File (to sign/verify)
+            </label>
+            <select
+              id="data-select"
+              value={selectedDataFile}
+              onChange={(e) => setSelectedDataFile(e.target.value)}
+              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+            >
+              <option value="">Select Data File...</option>
+              {files.map((f) => (
+                <option key={f.name} value={f.name}>
+                  {f.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )
+      }
 
       <div className="space-y-3">
         <label htmlFor="sig-file-input" className="text-xs text-muted-foreground block">
@@ -157,6 +216,6 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
           </select>
         )}
       </div>
-    </div>
+    </div >
   )
 }

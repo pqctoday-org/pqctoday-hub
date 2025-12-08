@@ -13,16 +13,16 @@ import {
 
 interface WorkbenchProps {
   category:
-    | 'genpkey'
-    | 'req'
-    | 'x509'
-    | 'enc'
-    | 'dgst'
-    | 'rand'
-    | 'version'
-    | 'files'
-    | 'kem'
-    | 'pkcs12'
+  | 'genpkey'
+  | 'req'
+  | 'x509'
+  | 'enc'
+  | 'dgst'
+  | 'rand'
+  | 'version'
+  | 'files'
+  | 'kem'
+  | 'pkcs12'
   setCategory: (
     category:
       | 'genpkey'
@@ -108,6 +108,40 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, signAction, files])
 
+  // Dgst Advanced State
+  const [manualHashHex, setManualHashHex] = useState('')
+  const [useRawIn, setUseRawIn] = useState(false)
+
+  // Effect to handle manual hash file creation
+  useEffect(() => {
+    if (category === 'dgst' && sigHashAlgo === 'raw' && manualHashHex) {
+      try {
+        // Handle 0x prefix
+        let hex = manualHashHex.trim()
+        if (hex.startsWith('0x') || hex.startsWith('0X')) {
+          hex = hex.slice(2)
+        }
+
+        // Simple hex cleaning
+        const cleanHex = hex.replace(/[^0-9a-fA-F]/g, '')
+
+        if (cleanHex.length > 0 && cleanHex.length % 2 === 0) {
+          const bytes = new Uint8Array(cleanHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)))
+          const file = {
+            name: 'manual_input.bin',
+            type: 'binary' as const,
+            content: bytes,
+            size: bytes.length,
+            timestamp: Date.now(),
+          }
+          useOpenSSLStore.getState().addFile(file)
+        }
+      } catch (e) {
+        console.error('Failed to parse hex input', e)
+      }
+    }
+  }, [category, sigHashAlgo, manualHashHex])
+
   // Effect to update command preview
   useEffect(() => {
     let cmd = 'openssl'
@@ -181,7 +215,6 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
       cmd += ` req -x509 -new -key ${keyFile} -out ${certFile} -days ${certDays} -${digestAlgo} -subj "${subj}"`
     } else if (category === 'dgst') {
       const keyFile = selectedKeyFile || (signAction === 'sign' ? 'private.key' : 'public.key')
-      const dataFile = selectedDataFile || 'data.txt'
 
       // Generate descriptive signature filename based on key and timestamp
       let sigFile = selectedSigFile
@@ -199,18 +232,36 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
 
       if (isPQCKey) {
         // PQC signatures use pkeyutl (built-in hashing)
+        const dataFile = selectedDataFile || 'data.txt'
         if (signAction === 'sign') {
           cmd += ` pkeyutl -sign -inkey ${keyFile} -in ${dataFile} -out ${sigFile}`
         } else {
           cmd += ` pkeyutl -verify -pubin -inkey ${keyFile} -in ${dataFile} -sigfile ${sigFile}`
         }
       } else {
-        // Classical signatures use dgst with explicit hash
-        cmd += ` dgst -${sigHashAlgo}`
+        // Classical signatures
         if (signAction === 'sign') {
-          cmd += ` -sign ${keyFile} -out ${sigFile} ${dataFile}`
+          if (sigHashAlgo === 'raw') {
+            // Raw Hash Signing
+            cmd += ` pkeyutl -sign -inkey ${keyFile} -in manual_input.bin -out ${sigFile}`
+            if (useRawIn) cmd += ` -rawin`
+            // If not using -rawin, pkeyutl might expect data to be hashed again or struct depending on algo.
+            // But for Ethereum testing, -rawin is the goal.
+          } else {
+            // Standard File Signing
+            const dataFile = selectedDataFile || 'data.txt'
+            cmd += ` dgst -${sigHashAlgo} -sign ${keyFile} -out ${sigFile} ${dataFile}`
+          }
         } else {
-          cmd += ` -verify ${keyFile} -signature ${sigFile} ${dataFile}`
+          // Verify
+          if (sigHashAlgo === 'raw') {
+            // Raw Hash Verify
+            cmd += ` pkeyutl -verify -pubin -inkey ${keyFile} -in manual_input.bin -sigfile ${sigFile}`
+            if (useRawIn) cmd += ` -rawin`
+          } else {
+            const dataFile = selectedDataFile || 'data.txt'
+            cmd += ` dgst -${sigHashAlgo} -verify ${keyFile} -signature ${sigFile} ${dataFile}`
+          }
         }
       }
     } else if (category === 'rand') {
@@ -299,6 +350,9 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
     p12File,
     p12Pass,
     setCommand,
+    manualHashHex,
+    useRawIn,
+    files
   ])
 
   return (
@@ -377,6 +431,11 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
             setSelectedDataFile={setSelectedDataFile}
             selectedSigFile={selectedSigFile}
             setSelectedSigFile={setSelectedSigFile}
+
+            manualHashHex={manualHashHex}
+            setManualHashHex={setManualHashHex}
+            useRawIn={useRawIn}
+            setUseRawIn={setUseRawIn}
           />
           <WorkbenchPreview category={category} />
         </>

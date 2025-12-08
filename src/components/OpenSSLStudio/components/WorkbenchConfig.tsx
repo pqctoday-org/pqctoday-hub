@@ -77,6 +77,11 @@ interface WorkbenchConfigProps {
   setSelectedDataFile: (value: string) => void
   selectedSigFile: string
   setSelectedSigFile: (value: string) => void
+  // Advanced Signing Options
+  manualHashHex: string
+  setManualHashHex: (value: string) => void
+  useRawIn: boolean
+  setUseRawIn: (value: boolean) => void
 }
 
 export const WorkbenchConfig: React.FC<WorkbenchConfigProps> = (props) => {
@@ -199,6 +204,10 @@ export const WorkbenchConfig: React.FC<WorkbenchConfigProps> = (props) => {
           setSelectedDataFile={props.setSelectedDataFile}
           selectedSigFile={props.selectedSigFile}
           setSelectedSigFile={props.setSelectedSigFile}
+          manualHashHex={props.manualHashHex}
+          setManualHashHex={props.setManualHashHex}
+          useRawIn={props.useRawIn}
+          setUseRawIn={props.setUseRawIn}
         />
       )
     case 'version':

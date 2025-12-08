@@ -79,7 +79,11 @@ const steps: Step[] = [
   },
 ]
 
-export const HDWalletFlow: React.FC = () => {
+interface HDWalletFlowProps {
+  onBack: () => void
+}
+
+export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
   // State for flow data
   const [mnemonic, setMnemonic] = useState<string>('')
   const [seed, setSeed] = useState<Uint8Array | null>(null)
@@ -164,11 +168,7 @@ export const HDWalletFlow: React.FC = () => {
 
   const wizard = useStepWizard({
     steps,
-    onBack: () => {
-      // HDWalletFlow doesn't have an onBack prop in its current usage,
-      // but useStepWizard requires it.
-      // No-op for now as this component is used directly without a parent onBack handler
-    },
+    onBack,
   })
 
   return (
@@ -182,6 +182,7 @@ export const HDWalletFlow: React.FC = () => {
       isStepComplete={wizard.isStepComplete}
       onNext={wizard.handleNext}
       onBack={wizard.handleBack}
+      onComplete={onBack}
     />
   )
 }

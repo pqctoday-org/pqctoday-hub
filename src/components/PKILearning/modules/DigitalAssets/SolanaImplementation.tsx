@@ -132,6 +132,23 @@ openssl pkeyutl -verify \\
 # Expected: "Signature Verified Successfully"
           `}</pre>
         </div>
+
+        <h4 className="text-lg font-medium mb-2 mt-4">
+          Deep Dive: Extracting R and S (Signature Structure)
+        </h4>
+        <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+          <pre className="whitespace-pre-wrap break-all">{`
+# Ed25519 signatures are 64 bytes: R (32 bytes) || S (32 bytes)
+
+# Extract R (First 32 bytes)
+head -c 32 sol_signature.bin > sol_r.bin
+xxd -p sol_r.bin
+
+# Extract S (Last 32 bytes)
+tail -c 32 sol_signature.bin > sol_s.bin
+xxd -p sol_s.bin
+          `}</pre>
+        </div>
       </section>
 
       <section>
