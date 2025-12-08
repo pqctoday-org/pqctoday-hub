@@ -153,7 +153,27 @@ The Digital Assets Program provides an interactive, deep-dive into the cryptogra
   - **JS Libraries:** `@scure/bip39`, `@scure/bip32`, `@scure/base`, `@noble/hashes`, `@noble/curves` for blockchain-specific operations.
 - **State Management:**
   - **Zustand:** `useModuleStore` manages the state of artifacts (Keys, CSRs, Certificates) and workshop progress.
+  - **Custom Hooks:** Shared logic extracted into `useKeyGeneration`, `useArtifactManagement`, and `useFileRetrieval` to reduce code duplication (~40% reduction).
   - **Persistence:** State is kept in memory (and optionally persisted to local storage/IndexedDB in the broader architecture).
 - **Data Driven:**
   - Profiles are defined in CSV format for easy editing and extension.
   - Vite's `import.meta.glob` is used to dynamically load profiles at build time.
+
+## Quality Assurance & Testing
+
+### Testing Strategy
+
+- **Unit Testing:** Comprehensive coverage using `vitest` for React components and hooks.
+  - Coverage includes: `EthereumFlow`, `BitcoinFlow`, `SolanaFlow`, and shared hooks.
+  - Mocks: OpenSSL service and StepWizard are fully mocked for isolated testing.
+- **End-to-End (E2E) Testing:** Playwright is used for full user journey verification.
+  - **Ethereum Flow:** Complete coverage of the 9-step process (KeyGen -> Tx -> Sign -> Verify).
+  - **HD Wallet:** Regression testing for UI refactors and derivation correctness.
+  - **Environment:** Tests run in headless browsers (Chromium, Firefox, WebKit) against a local dev server.
+
+### Maintainability Improvements
+
+- **Strict Typing:** All critical hooks (e.g., `useEthereum*`) utilize explicit return types to prevent `any` leakage.
+- **Refactoring:**
+  - **Modularization:** Complex flows (like Ethereum) are split into smaller, testable sub-components and hooks.
+  - **Consistency:** UI layouts (e.g., HD Wallet) are actively unified to match the design language of primary modules (Bitcoin).

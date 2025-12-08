@@ -6,7 +6,7 @@ import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { BitcoinFlow } from './flows/BitcoinFlow'
 import { EthereumFlow } from './flows/EthereumFlow'
 import { SolanaFlow } from './flows/SolanaFlow'
-import { HDWalletImplementation } from './HDWalletImplementation'
+import { HDWalletFlow } from './flows/HDWalletFlow'
 import { ProgressIndicator } from './components/ProgressIndicator'
 
 export const DigitalAssetsModule: React.FC = () => {
@@ -50,7 +50,7 @@ export const DigitalAssetsModule: React.FC = () => {
         id: 'bitcoin',
         title: 'Module 1: Bitcoin',
         description: 'Generate keys and sign transactions using secp256k1 and SHA-256.',
-        component: <BitcoinFlow onBack={() => { }} />,
+        component: <BitcoinFlow onBack={() => {}} />,
       },
       {
         id: 'ethereum',
@@ -68,7 +68,7 @@ export const DigitalAssetsModule: React.FC = () => {
         id: 'hd-wallet',
         title: 'Module 4: HD Wallet',
         description: 'Generate a Hierarchical Deterministic wallet for all chains.',
-        component: <HDWalletImplementation onBack={() => setCurrentStep(2)} />,
+        component: <HDWalletFlow onBack={() => setCurrentStep(2)} />,
       },
     ],
     []
@@ -78,6 +78,7 @@ export const DigitalAssetsModule: React.FC = () => {
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' && currentStep < steps.length - 1) {
+        /* eslint-disable-next-line security/detect-object-injection */
         markStepComplete('digital-assets', steps[currentStep].id)
         setCurrentStep(currentStep + 1)
       } else if (e.key === 'ArrowLeft' && currentStep > 0) {
@@ -123,12 +124,13 @@ export const DigitalAssetsModule: React.FC = () => {
             >
               <div
                 className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold text-xs sm:text-base
-                ${idx === currentStep
+                ${
+                  idx === currentStep
                     ? 'border-primary text-primary shadow-[0_0_15px_rgba(0,255,157,0.3)]'
                     : idx < currentStep
                       ? 'border-green-500 text-green-500'
                       : 'border-white/20 text-muted-foreground'
-                  }
+                }
               `}
               >
                 {idx + 1}
@@ -144,9 +146,12 @@ export const DigitalAssetsModule: React.FC = () => {
       {/* Content Area */}
       <div className="glass-panel p-8 min-h-[600px] animate-fade-in">
         <div className="mb-6 border-b border-white/10 pb-4">
+          {/* eslint-disable-next-line security/detect-object-injection */}
           <h2 className="text-2xl font-bold text-foreground">{steps[currentStep].title}</h2>
+          {/* eslint-disable-next-line security/detect-object-injection */}
           <p className="text-muted-foreground">{steps[currentStep].description}</p>
         </div>
+        {/* eslint-disable-next-line security/detect-object-injection */}
         {steps[currentStep].component}
       </div>
 
@@ -163,6 +168,7 @@ export const DigitalAssetsModule: React.FC = () => {
         {currentStep === steps.length - 1 ? (
           <button
             onClick={() => {
+              /* eslint-disable-next-line security/detect-object-injection */
               markStepComplete('digital-assets', steps[currentStep].id)
               navigate('/learn')
             }}
@@ -175,6 +181,7 @@ export const DigitalAssetsModule: React.FC = () => {
           <button
             onClick={() => {
               // Mark current step as complete when moving next
+              /* eslint-disable-next-line security/detect-object-injection */
               markStepComplete('digital-assets', steps[currentStep].id)
               setCurrentStep(Math.min(steps.length - 1, currentStep + 1))
             }}

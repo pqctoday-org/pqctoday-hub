@@ -1,5 +1,5 @@
 import { StrictMode, Suspense, lazy } from 'react'
-import ErrorBoundary from './components/ErrorBoundary'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 // Lazy load App to catch evaluation errors
 const App = lazy(() => import('./App.tsx'))

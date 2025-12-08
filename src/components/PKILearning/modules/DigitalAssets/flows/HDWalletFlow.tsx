@@ -15,6 +15,7 @@ import { createBase58check, base58 } from '@scure/base'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import { useStepWizard } from '../hooks/useStepWizard'
 import { DIGITAL_ASSETS_CONSTANTS } from '../constants'
+import { HDWalletFlowDiagram } from '../components/CryptoFlowDiagram'
 
 // SLIP-0010 Ed25519 Derivation (Hardened only)
 // https://github.com/satoshilabs/slips/blob/master/slip-0010.md
@@ -60,6 +61,7 @@ const steps: Step[] = [
     code: `// 1. Generate Entropy (OpenSSL)\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.COMMON.GEN_ENTROPY}\n\n// 2. Convert to Mnemonic (JS)\nconst mnemonic = bip39.entropyToMnemonic(entropy, wordlist);\nconsole.log(mnemonic);`,
     language: 'javascript',
     actionLabel: 'Generate Mnemonic',
+    diagram: <HDWalletFlowDiagram />,
   },
   {
     id: 'seed',
@@ -76,6 +78,7 @@ const steps: Step[] = [
     code: `// Bitcoin (BIP32)\nconst btcKey = HDKey.fromMasterSeed(seed).derive("${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.BITCOIN}");\n\n// Ethereum (BIP32)\nconst ethKey = HDKey.fromMasterSeed(seed).derive("${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.ETHEREUM}");\n\n// Solana (SLIP-0010)\nconst solKey = deriveSLIP0010(seed, "${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.SOLANA}");`,
     language: 'javascript',
     actionLabel: 'Derive Accounts',
+    diagram: <HDWalletFlowDiagram />,
   },
 ]
 
@@ -104,14 +107,14 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
       const newMnemonic = entropyToMnemonic(entropy, wordlist)
       setMnemonic(newMnemonic)
 
-      result = `Entropy (OpenSSL):\n${entropyHex}\n\nBIP39 Mnemonic (24 words):\n${newMnemonic}`
+      result = `Entropy (OpenSSL):\n${entropyHex}\n\nBIP39 Mnemonic (24 words): ${newMnemonic}`
     } else if (step.id === 'seed') {
       if (!mnemonic) throw new Error('Mnemonic not found')
 
       const newSeed = mnemonicToSeedSync(mnemonic)
       setSeed(newSeed)
 
-      result = `Seed (512-bit hex):\n${bytesToHex(newSeed)}\n\nLength: ${newSeed.length} bytes`
+      result = `Seed (512-bit hex): ${bytesToHex(newSeed)}\n\nLength: ${newSeed.length} bytes`
     } else if (step.id === 'derive') {
       if (!seed) throw new Error('Seed not found')
 
