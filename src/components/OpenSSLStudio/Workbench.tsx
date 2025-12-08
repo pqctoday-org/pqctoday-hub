@@ -13,16 +13,16 @@ import {
 
 interface WorkbenchProps {
   category:
-  | 'genpkey'
-  | 'req'
-  | 'x509'
-  | 'enc'
-  | 'dgst'
-  | 'rand'
-  | 'version'
-  | 'files'
-  | 'kem'
-  | 'pkcs12'
+    | 'genpkey'
+    | 'req'
+    | 'x509'
+    | 'enc'
+    | 'dgst'
+    | 'rand'
+    | 'version'
+    | 'files'
+    | 'kem'
+    | 'pkcs12'
   setCategory: (
     category:
       | 'genpkey'
@@ -352,7 +352,7 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
     setCommand,
     manualHashHex,
     useRawIn,
-    files
+    files,
   ])
 
   return (
@@ -431,7 +431,6 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
             setSelectedDataFile={setSelectedDataFile}
             selectedSigFile={selectedSigFile}
             setSelectedSigFile={setSelectedSigFile}
-
             manualHashHex={manualHashHex}
             setManualHashHex={setManualHashHex}
             useRawIn={useRawIn}

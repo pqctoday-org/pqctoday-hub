@@ -34,7 +34,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
   manualHashHex,
   setManualHashHex,
   useRawIn,
-  setUseRawIn
+  setUseRawIn,
 }) => {
   const { files } = useOpenSSLStore()
 
@@ -117,7 +117,10 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
               onChange={(e) => setUseRawIn(e.target.checked)}
               className="rounded border-white/20 bg-black/40 text-primary focus:ring-primary"
             />
-            <label htmlFor="use-rawin" className="text-sm text-muted-foreground cursor-pointer select-none">
+            <label
+              htmlFor="use-rawin"
+              className="text-sm text-muted-foreground cursor-pointer select-none"
+            >
               Use <code className="text-primary">-rawin</code> flag (OpenSSL v3+)
             </label>
           </div>
@@ -129,13 +132,18 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
               const clean = hex.replace(/[^0-9a-fA-F]/g, '')
               const bytes = clean.length / 2
               if (clean.length === 0) return <span>Empty input</span>
-              if (clean.length % 2 !== 0) return <span className="text-amber-500">Invalid odd-length hex string</span>
-              return <span>Binary Size: <span className="text-primary font-mono">{bytes} bytes</span> (fed as manual_input.bin)</span>
+              if (clean.length % 2 !== 0)
+                return <span className="text-amber-500">Invalid odd-length hex string</span>
+              return (
+                <span>
+                  Binary Size: <span className="text-primary font-mono">{bytes} bytes</span> (fed as
+                  manual_input.bin)
+                </span>
+              )
             })()}
           </div>
         </div>
-      )
-      }
+      )}
 
       <div className="space-y-3">
         <label htmlFor="key-select" className="text-xs text-muted-foreground block">
@@ -162,28 +170,26 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
         </select>
       </div>
 
-      {
-        sigHashAlgo !== 'raw' && (
-          <div className="space-y-3">
-            <label htmlFor="data-select" className="text-xs text-muted-foreground block">
-              Data File (to sign/verify)
-            </label>
-            <select
-              id="data-select"
-              value={selectedDataFile}
-              onChange={(e) => setSelectedDataFile(e.target.value)}
-              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-            >
-              <option value="">Select Data File...</option>
-              {files.map((f) => (
-                <option key={f.name} value={f.name}>
-                  {f.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )
-      }
+      {sigHashAlgo !== 'raw' && (
+        <div className="space-y-3">
+          <label htmlFor="data-select" className="text-xs text-muted-foreground block">
+            Data File (to sign/verify)
+          </label>
+          <select
+            id="data-select"
+            value={selectedDataFile}
+            onChange={(e) => setSelectedDataFile(e.target.value)}
+            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          >
+            <option value="">Select Data File...</option>
+            {files.map((f) => (
+              <option key={f.name} value={f.name}>
+                {f.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className="space-y-3">
         <label htmlFor="sig-file-input" className="text-xs text-muted-foreground block">
@@ -216,6 +222,6 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
           </select>
         )}
       </div>
-    </div >
+    </div>
   )
 }

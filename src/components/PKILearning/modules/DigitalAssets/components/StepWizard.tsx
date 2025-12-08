@@ -65,8 +65,9 @@ export const StepWizard: React.FC<StepWizardProps> = ({
             {steps.map((_, idx) => (
               <div
                 key={idx}
-                className={`h-1.5 w-6 rounded-full transition-colors ${idx <= currentStepIndex ? 'bg-primary' : 'bg-muted'
-                  }`}
+                className={`h-1.5 w-6 rounded-full transition-colors ${
+                  idx <= currentStepIndex ? 'bg-primary' : 'bg-muted'
+                }`}
               />
             ))}
           </div>
@@ -158,24 +159,22 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                 <ChevronRight size={16} />
               </button>
             </>
+          ) : currentStepIndex === steps.length - 1 ? (
+            <button
+              onClick={onComplete || onBack}
+              className="flex-1 px-4 py-3 min-h-[44px] rounded-lg bg-success hover:bg-success/90 text-success-foreground font-medium transition-colors flex items-center justify-center gap-2"
+            >
+              <CheckCircle size={16} />
+              Completed
+            </button>
           ) : (
-            currentStepIndex === steps.length - 1 ? (
-              <button
-                onClick={onComplete || onBack}
-                className="flex-1 px-4 py-3 min-h-[44px] rounded-lg bg-success hover:bg-success/90 text-success-foreground font-medium transition-colors flex items-center justify-center gap-2"
-              >
-                <CheckCircle size={16} />
-                Completed
-              </button>
-            ) : (
-              <button
-                onClick={onNext}
-                className="flex-1 px-4 py-3 min-h-[44px] rounded-lg bg-success hover:bg-success/90 text-success-foreground font-medium transition-colors flex items-center justify-center gap-2"
-              >
-                Next Step
-                <ChevronRight size={16} />
-              </button>
-            )
+            <button
+              onClick={onNext}
+              className="flex-1 px-4 py-3 min-h-[44px] rounded-lg bg-success hover:bg-success/90 text-success-foreground font-medium transition-colors flex items-center justify-center gap-2"
+            >
+              Next Step
+              <ChevronRight size={16} />
+            </button>
           )}
         </div>
       </div>
@@ -190,7 +189,10 @@ export const StepWizard: React.FC<StepWizardProps> = ({
           </div>
         </div>
 
-        <div className="p-4 overflow-x-auto overflow-y-auto min-h-[150px] max-h-[250px] font-mono text-sm" ref={outputRef}>
+        <div
+          className="p-4 overflow-x-auto overflow-y-auto min-h-[150px] max-h-[250px] font-mono text-sm"
+          ref={outputRef}
+        >
           {output ? (
             <OutputFormatter output={output} />
           ) : (

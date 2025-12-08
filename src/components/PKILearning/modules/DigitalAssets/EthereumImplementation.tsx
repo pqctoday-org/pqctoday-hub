@@ -203,9 +203,7 @@ console.log('Recovery v:', signature.recovery);
           `}</pre>
         </div>
 
-        <h4 className="text-lg font-medium mb-2 mt-4">
-          Deep Dive: Extracting R, S, and V
-        </h4>
+        <h4 className="text-lg font-medium mb-2 mt-4">Deep Dive: Extracting R, S, and V</h4>
         <div className="bg-muted/30 p-4 rounded-lg font-mono text-sm overflow-x-auto">
           <pre className="whitespace-pre-wrap break-all">{`
 # Ethereum signatures are 65 bytes: R (32) || S (32) || V (1)
