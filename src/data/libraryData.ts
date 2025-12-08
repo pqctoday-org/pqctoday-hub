@@ -20,8 +20,16 @@ export interface LibraryItem {
   category?: string
 }
 
+import { MOCK_LIBRARY_CSV_CONTENT } from './mockTimelineData'
+
 // Helper to find the latest library CSV file
 function getLatestLibraryFile(): { content: string; filename: string; date: Date } | null {
+  // Check for mock data environment variable
+  if (import.meta.env.VITE_MOCK_DATA === 'true') {
+    console.log('Using mock library data for testing')
+    return { content: MOCK_LIBRARY_CSV_CONTENT, filename: 'MOCK_LIBRARY_DATA', date: new Date() }
+  }
+
   // Use import.meta.glob to find all library CSV files
   const modules = import.meta.glob('./library_*.csv', {
     query: '?raw',

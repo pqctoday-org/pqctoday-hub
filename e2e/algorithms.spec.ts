@@ -8,13 +8,13 @@ test.describe('Algorithms View', () => {
     await algoBtn.click({ force: true })
     // Wait for content to load by checking for the view's heading
     await expect(
-      page.getByRole('heading', { name: 'Algorithm Transition', level: 2 })
+      page.getByRole('heading', { name: 'Algorithm Transition', level: 3 }).first()
     ).toBeVisible()
   })
 
   test('displays algorithm comparison table', async ({ page }) => {
     await expect(
-      page.getByRole('heading', { name: 'Algorithm Transition', level: 2 })
+      page.getByRole('heading', { name: 'Algorithm Transition', level: 3 }).first()
     ).toBeVisible()
 
     // Check for table headers
@@ -47,7 +47,8 @@ test.describe('Algorithms View', () => {
     // We can check if the table is still visible by using a more specific locator or ensuring at least one table is visible
     // Given the error, there are 2 tables. We want the one related to algorithms.
     // Based on the headers check earlier, we can chain it.
-    await expect(page.locator('table').filter({ hasText: 'Classical Algorithm' })).toBeVisible()
+    // On mobile, table is hidden, check for list items
+    await expect(page.getByText('ML-KEM-768').first()).toBeVisible()
 
     // Restore viewport
     await page.setViewportSize({ width: 1280, height: 720 })

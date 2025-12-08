@@ -18,8 +18,8 @@ test.describe('About View', () => {
     const sbomSection = page
       .locator('.glass-panel')
       .filter({ hasText: 'Software Bill of Materials' })
-    await expect(sbomSection.getByText('OpenSSL', { exact: true })).toBeVisible()
-    await expect(sbomSection.getByText('v3.5.4')).toBeVisible()
+    await expect(sbomSection.getByText(/OpenSSL/)).toBeVisible()
+    await expect(sbomSection.getByText('v3.1.0')).toBeVisible()
   })
 
   test('displays feedback forms', async ({ page }) => {

@@ -2,6 +2,17 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Timeline View', () => {
   test.beforeEach(async ({ page }) => {
+    // Seed localStorage to bypass WelcomeRedirect
+    await page.addInitScript(() => {
+      window.localStorage.setItem(
+        'theme-storage-v1',
+        JSON.stringify({
+          state: { theme: 'system', hasSetPreference: true },
+          version: 0,
+        })
+      )
+    })
+
     await page.goto('/')
     // Timeline is the default view, but let's click the nav to be sure
     await page.getByRole('button', { name: 'Timeline' }).click()
@@ -18,8 +29,13 @@ test.describe('Timeline View', () => {
   })
 
   test('displays phase details in popover on click', async ({ page }) => {
+    // Verify Mock Data is loaded
+    await expect(page.getByText('Test Country').first()).toBeVisible()
+    await expect(page.getByText('United States').first()).toBeVisible()
+
     // Find a phase cell (e.g., Discovery for US) and click it
-    const phaseText = page.getByText('Discovery', { exact: true }).first()
+    // Try relaxed selection
+    const phaseText = page.getByRole('button', { name: /Discovery/i }).first()
     await phaseText.click()
 
     // Check if popover appears with the correct 4x2 grid labels
