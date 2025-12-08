@@ -75,6 +75,7 @@ describe('BitcoinFlow Integration', () => {
     ;(useKeyGeneration as unknown as ReturnType<typeof vi.fn>).mockImplementation(() => ({
       generateKeyPair: mockGenerateKeyPair,
       privateKey: new Uint8Array([1, 2, 3]),
+      publicKey: new Uint8Array([4, 5, 6]),
       publicKeyHex: '02040506',
       privateKeyHex: '010203',
     }))
