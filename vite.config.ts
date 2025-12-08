@@ -34,6 +34,18 @@ function buildTimestampPlugin(): Plugin {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [buildTimestampPlugin(), react(), tailwindcss(), wasm(), topLevelAwait()],
+  server: {
+    headers: {
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+    },
+  },
+  preview: {
+    headers: {
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',

@@ -11,8 +11,8 @@ test.describe('OpenSSL Studio - Encryption Filename', () => {
     const fileName = 'encrypt-test.txt'
     const fileBuffer = Buffer.from(fileContent)
 
-    // Navigate to File Manager (Key Files tab)
-    await page.getByRole('button', { name: 'Key Files', exact: true }).click()
+    // Navigate to File Manager (File Manager is always visible)
+    // await page.getByRole('button', { name: 'Key Files', exact: true }).click()
 
     // Trigger file upload
     const fileInput = page.locator('input[type="file"]').first()
@@ -45,7 +45,7 @@ test.describe('OpenSSL Studio - Encryption Filename', () => {
     // await expect(page.locator('.text-blue-300').getByText(new RegExp(`File created:.*${expectedOutFile}`))).toBeVisible()
 
     // 7. Verify .enc file is in Key Files list
-    await page.getByRole('button', { name: 'Key Files' }).click()
+    // await page.getByRole('button', { name: 'Key Files' }).click()
     await expect(page.getByRole('cell', { name: expectedOutFile, exact: true })).toBeVisible()
 
     // 8. Go back to Encryption and select Decrypt

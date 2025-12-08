@@ -10,6 +10,7 @@ import { keccak_256 } from '@noble/hashes/sha3.js'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import type { EthereumFlowState, EthereumFlowActions } from './types'
 import { toChecksumAddress } from './utils'
+import { extractKeyFromOpenSSLOutput } from '../../../../../../utils/cryptoUtils'
 
 interface UseEthereumSigningProps {
   keyGen: ReturnType<typeof useKeyGeneration>
@@ -48,7 +49,7 @@ export function useEthereumSigning({
           test recovery IDs (0 and 1) to find the correct one, then encode it.
         </>
       ),
-      code: `// 1. OpenSSL Command (Sign Raw Hash) -> Outputs r, s\nopenssl pkeyutl -sign -inkey ${filenames.SRC_PRIVATE_KEY} -in ethereum_hashdata_[ts].dat -out ethereum_signdata_[ts].sig -rawin\n\n// 2. Compute v (Post-processing)`,
+      code: `// 1. OpenSSL Command (Sign Raw Hash) -> Outputs r, s\nopenssl pkeyutl -sign -inkey ${filenames.SRC_PRIVATE_KEY} -in ethereum_hashdata_[ts].dat -out ethereum_signdata_[ts].sig\n\n// 2. Compute v (Post-processing)`,
       language: 'javascript',
       actionLabel: 'Sign Transaction',
     },
@@ -78,7 +79,6 @@ export function useEthereumSigning({
       let openSSL_r: bigint = BigInt(0)
       let openSSL_s: bigint = BigInt(0)
       let openSSL_error: string | null = null
-      let derHexDisplay: string = '(Generation failed)'
 
       try {
         // Retrieve private key from store
@@ -86,7 +86,7 @@ export function useEthereumSigning({
         // Need hash file
         filesToPass.push({ name: hashFileName, data: hash })
 
-        const signCmd = `openssl pkeyutl -sign -inkey ${filenames.SRC_PRIVATE_KEY} -in ${hashFileName} -out ${sigFileName} -rawin`
+        const signCmd = `openssl pkeyutl -sign -inkey ${filenames.SRC_PRIVATE_KEY} -in ${hashFileName} -out ${sigFileName}`
 
         const res = await openSSLService.execute(signCmd, filesToPass)
         if (res.error && (res.error.includes('error') || res.error.includes('failure'))) {
@@ -100,7 +100,6 @@ export function useEthereumSigning({
         }
 
         const derSig = sigFile.data
-        derHexDisplay = bytesToHex(derSig)
 
         // Save Signature Artifact
         artifacts.saveSignature('ethereum', derSig)
@@ -144,29 +143,83 @@ export function useEthereumSigning({
       const jsSigObj = secp256k1.Signature.fromBytes(jsSig)
 
       // Use JS values if OpenSSL failed
+      // Use JS values if OpenSSL failed
       const final_r = openSSL_error ? jsSigObj.r : openSSL_r
-      const final_s = openSSL_error ? jsSigObj.s : openSSL_s
+      let final_s = openSSL_error ? jsSigObj.s : openSSL_s
+
+      // Normalize to Low-S (EIP-2)
+      // Ethereum requires s <= n/2. OpenSSL might produce s > n/2 (valid in ECDSA but not Eth)
+      const n = BigInt('0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141')
+      const halfN = n / BigInt(2)
+      if (final_s > halfN) {
+        final_s = n - final_s
+      }
 
       // 3. Compute Recovery Parameter (v)
       let recovery = 0
       let recoveryFound = false
 
-      let expectedAddress: string | null = state.sourceAddress // Fallback
-      if (keyGen.privateKeyHex) {
-        const pubKey = secp256k1.getPublicKey(hexToBytes(keyGen.privateKeyHex), false)
+      // Always derive expected address from the private key FILE to ensure v is correct for the SIGNER
+      // Ignoring state.sourceAddress AND keyGen state to ensure consistency with OpenSSL file usage
+      let expectedAddress: string | null = null
+      try {
+        const filesForExtraction = fileRetrieval.prepareFilesForExecution([
+          filenames.SRC_PRIVATE_KEY,
+        ])
+        const rawPrivBytes = await extractKeyFromOpenSSLOutput(
+          filenames.SRC_PRIVATE_KEY,
+          'private',
+          filesForExtraction
+        )
+        const pubKey = secp256k1.getPublicKey(rawPrivBytes, false)
         const pubKeyNoPrefix = pubKey.slice(1)
         const addrHash = keccak_256(pubKeyNoPrefix)
         expectedAddress = toChecksumAddress(bytesToHex(addrHash.slice(-20)))
+        console.log(`[Sign] Derived Target Address from File: ${expectedAddress}`)
+      } catch (err) {
+        console.warn('Could not derive address from private key file:', err)
+      }
+
+      // Helper for Modular Inverse
+      const modInverse = (a: bigint, m: bigint) => {
+        let [x, y] = [0n, 1n]
+        let [a_val, b_val] = [BigInt(m), BigInt(a)]
+        while (b_val > 0n) {
+          const q = a_val / b_val
+          ;[x, y] = [y, x - q * y]
+          ;[a_val, b_val] = [b_val, a_val - q * b_val]
+        }
+        if (x < 0n) x += m
+        return x
       }
 
       for (let i = 0; i < 2; i++) {
         try {
-          const recoveredPub = new secp256k1.Signature(final_r, final_s, i).recoverPublicKey(hash)
-          const recoveredRaw = recoveredPub.toBytes(false).slice(1)
+          // Manual Recovery to bypass noble-curves double-hashing
+          // 1. Reconstruct R from (r, i)
+          const prefix = (2 + i).toString(16).padStart(2, '0')
+          const rHex = final_r.toString(16).padStart(64, '0')
+          const compressedHex = prefix + rHex
+
+          const R_point = secp256k1.Point.fromHex(compressedHex)
+
+          // 2. Recover Q = rInv * (sR - zG)
+          const z = BigInt('0x' + bytesToHex(hash))
+          const rInv = modInverse(final_r, n)
+          const u1 = (final_s * rInv) % n
+          const u2 = (z * rInv) % n
+          const u2_neg = (n - u2) % n
+
+          const G_point = secp256k1.Point.BASE
+          const Q_point = R_point.multiply(u1).add(G_point.multiply(u2_neg))
+
+          // 3. Derive Address
+          const recoveredRaw = Q_point.toBytes(false).slice(1) // Uncompressed, remove 04
           const recoveredHash = keccak_256(recoveredRaw)
           const recoveredAddr = toChecksumAddress(bytesToHex(recoveredHash.slice(-20)))
 
           if (expectedAddress && recoveredAddr.toLowerCase() === expectedAddress.toLowerCase()) {
+            console.log(`[Sign] Found Recovery ID v=${i} for address ${expectedAddress}`)
             recovery = i
             recoveryFound = true
             break
@@ -178,10 +231,15 @@ export function useEthereumSigning({
 
       if (!recoveryFound) recovery = 0
 
-      actions.setSignature({ r: final_r, s: final_s, recovery })
+      // EIP-155: v = recovery + 35 + 2 * chainId (chainId = 1)
+      const chainId = 1
+      const v = recovery + 35 + 2 * chainId
+
+      actions.setSignature({ r: final_r, s: final_s, recovery: v })
 
       const rHex = final_r.toString(16).padStart(64, '0')
       const sHex = final_s.toString(16).padStart(64, '0')
+      const vHex = v.toString(16)
 
       result = `SUCCESS: Transaction Signed & Processed!
 
@@ -194,13 +252,17 @@ Keccak-256 Hash to Sign:
 📂 Artifact Saved: ${hashFileName}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2. SIGN (OpenSSL)
+2. SIGN (OpenSSL + Computation)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-result: 0x${derHexDisplay}
+Message Hash (from Step 7): 0x${hashHex}
 
+Generated Signature Values:
 r: 0x${rHex}
 s: 0x${sHex}
-recovery_id: ${recovery}
+v: 0x${vHex} (EIP-155 Computed: ${recovery} + 35 + 2*${chainId})
+
+Full RLP Signature Component:
+0x${rHex}${sHex}${vHex}
 
 Status: ${openSSL_error ? `FAILED: ${openSSL_error}` : 'SUCCESS ✅'}
 

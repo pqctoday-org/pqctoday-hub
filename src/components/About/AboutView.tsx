@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Send, ThumbsUp, MessageSquare, Info, Shield } from 'lucide-react'
+import { Send, ThumbsUp, MessageSquare, Info, Shield, TriangleAlert } from 'lucide-react'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 import { MobileAboutView } from './MobileAboutView'
@@ -415,6 +415,25 @@ ${kudos.message}
             </form>
           </motion.div>
         </div>
+
+        {/* Browser Recommendation (Full Width) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="glass-panel p-4 border-l-4 border-l-warning"
+        >
+          <div className="flex items-center gap-3">
+            <TriangleAlert className="text-warning shrink-0" size={20} />
+            <div>
+              <h3 className="font-bold text-sm inline mr-2">Browser Recommendation:</h3>
+              <span className="text-sm text-muted-foreground">
+                For heavy OpenSSL operations, <strong>Chromium-based browsers</strong> are
+                recommended for optimal performance.
+              </span>
+            </div>
+          </div>
+        </motion.div>
 
         {/* SBOM Section */}
         <motion.div

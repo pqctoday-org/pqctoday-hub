@@ -20,9 +20,10 @@ test.describe('OpenSSL Studio', () => {
     await expect(page.getByText(/File created: rsa-2048-/)).toBeVisible({ timeout: 30000 })
 
     // Switch to Key Files to verify file existence
-    const fileManagerBtn = page.locator('button').filter({ hasText: 'Key Files' })
-    await expect(fileManagerBtn).toBeEnabled()
-    await fileManagerBtn.click({ force: true })
+    // The File Manager is always visible, so we just wait for the file to appear
+
+    // Wait for file entry to propagate to the table (via Zustand state update)
+    await page.waitForTimeout(1000)
 
     // Wait for view transition and table render
     await page.waitForTimeout(1000)

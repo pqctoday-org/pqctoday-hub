@@ -186,7 +186,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
       id: 'sign',
       title: 'Sign Transaction',
       description: "Sign the transaction hash (Double SHA256) using the sender's private key.",
-      code: `// 1. Double SHA256 of message\nconst sighash = sha256(sha256(rawTxBytes));\n\n// 2. Sign with OpenSSL\n// Using dynamic filenames for consistency\nopenssl pkeyutl -sign -inkey ${filenames.SRC_PRIVATE_KEY} -in bitcoin_hashdata_[ts].dat -out bitcoin_signdata_[ts].sig`,
+      code: `// 1. Double SHA256 of message\nconst sighash = sha256(sha256(rawTxBytes));\n\n// 2. Sign with OpenSSL\n// Using dynamic filenames for consistency\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.SIGN(filenames.SRC_PRIVATE_KEY, 'bitcoin_hashdata_[ts].dat', 'bitcoin_signdata_[ts].sig')}`,
       language: 'bash',
       actionLabel: 'Sign Transaction',
     },
@@ -195,7 +195,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
       title: 'Verify Signature',
       description:
         "Verify the transaction signature using the sender's public key with standard ECDSA verification. This is the same process used in all ECC-based systems (TLS, SSH, etc.). The verifier uses the public key, signature (r, s), and message hash to mathematically confirm the signature was created by the corresponding private key. Bitcoin's verification is identical to classical ECC verification - there's nothing blockchain-specific about this cryptographic operation. The verification equation checks: r ≡ x₁ (mod n), where x₁ is derived from s⁻¹ × (H(m) × G + r × PublicKey).",
-      code: `// Verify with OpenSSL\nopenssl pkeyutl -verify -pubin -inkey ${filenames.SRC_PUBLIC_KEY} -in bitcoin_hashdata_[ts].dat -sigfile bitcoin_signdata_[ts].sig\n\n// Standard ECDSA Verification Process:\n// 1. Parse signature (r, s) from DER format\n// 2. Compute hash H(m) of the message\n// 3. Calculate u₁ = H(m) × s⁻¹ mod n\n// 4. Calculate u₂ = r × s⁻¹ mod n\n// 5. Compute point (x₁, y₁) = u₁ × G + u₂ × PublicKey\n// 6. Verify: r ≡ x₁ (mod n)\n// If true, signature is valid`,
+      code: `// Verify with OpenSSL\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.VERIFY(filenames.SRC_PUBLIC_KEY, 'bitcoin_hashdata_[ts].dat', 'bitcoin_signdata_[ts].sig')}\n\n// Standard ECDSA Verification Process:\n// 1. Parse signature (r, s) from DER format\n// 2. Compute hash H(m) of the message\n// 3. Calculate u₁ = H(m) × s⁻¹ mod n\n// 4. Calculate u₂ = r × s⁻¹ mod n\n// 5. Compute point (x₁, y₁) = u₁ × G + u₂ × PublicKey\n// 6. Verify: r ≡ x₁ (mod n)\n// If true, signature is valid`,
       language: 'bash',
       actionLabel: 'Verify Signature',
     },

@@ -4,6 +4,7 @@ import { InfoTooltip } from '../../components/InfoTooltip'
 import { useKeyGeneration } from '../../hooks/useKeyGeneration'
 import { useFileRetrieval } from '../../hooks/useFileRetrieval'
 import { openSSLService } from '../../../../../../services/crypto/OpenSSLService'
+import { DIGITAL_ASSETS_CONSTANTS } from '../../constants'
 import { keccak_256 } from '@noble/hashes/sha3.js'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import type { EthereumFlowActions } from './types'
@@ -43,7 +44,7 @@ export function useEthereumKeyGeneration({
           and performance. It's battle-tested across Bitcoin and Ethereum ecosystems.
         </>
       ),
-      code: `// OpenSSL Command\nopenssl ecparam -name secp256k1 -genkey -noout -out ${filenames.SRC_PRIVATE_KEY}`,
+      code: `// OpenSSL Command\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.GEN_KEY(filenames.SRC_PRIVATE_KEY)}`,
       language: 'bash',
       actionLabel: 'Generate Source Key',
       diagram: <EthereumFlowDiagram />,
@@ -61,7 +62,7 @@ export function useEthereumKeyGeneration({
           curve. Uncompressed format: 0x04 || x || y (65 bytes total).
         </>
       ),
-      code: `// OpenSSL Command\nopenssl ec -in ${filenames.SRC_PRIVATE_KEY} -pubout -out ${filenames.SRC_PUBLIC_KEY}`,
+      code: `// OpenSSL Command\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.EXTRACT_PUB(filenames.SRC_PRIVATE_KEY, filenames.SRC_PUBLIC_KEY)}`,
       language: 'bash',
       actionLabel: 'Extract Public Key',
     },
@@ -97,7 +98,7 @@ export function useEthereumKeyGeneration({
           only shares the address. Never share private keys!
         </>
       ),
-      code: `// OpenSSL Command\nopenssl ecparam -name secp256k1 -genkey -noout -out ${filenames.DST_PRIVATE_KEY}\n\n// Extract Public Key\nopenssl ec -in ${filenames.DST_PRIVATE_KEY} -pubout -out ${filenames.DST_PUBLIC_KEY}`,
+      code: `// OpenSSL Command\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.GEN_KEY(filenames.DST_PRIVATE_KEY)}\n\n// Extract Public Key\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.EXTRACT_PUB(filenames.DST_PRIVATE_KEY, filenames.DST_PUBLIC_KEY)}`,
       language: 'bash',
       actionLabel: 'Generate Recipient Key',
     },
@@ -139,7 +140,7 @@ export function useEthereumKeyGeneration({
 
       result = `SUCCESS: Key Generated!
       
-Command: openssl ecparam -name secp256k1 -genkey -noout -out ${filenames.SRC_PRIVATE_KEY}
+Command: ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.GEN_KEY(filenames.SRC_PRIVATE_KEY)}
 
 Generated File: ${filenames.SRC_PRIVATE_KEY}
 

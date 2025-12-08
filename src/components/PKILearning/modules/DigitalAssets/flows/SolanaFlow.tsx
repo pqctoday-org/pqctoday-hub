@@ -69,7 +69,7 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
           and produces deterministic signatures (no random k value needed).
         </>
       ),
-      code: `// OpenSSL Command\nopenssl genpkey -algorithm Ed25519 -out ${filenames.SRC_PRIVATE_KEY}`,
+      code: `// OpenSSL Command\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.SOLANA.GEN_KEY(filenames.SRC_PRIVATE_KEY)}`,
       language: 'bash',
       actionLabel: 'Generate Source Key',
       diagram: <SolanaFlowDiagram />,
@@ -89,7 +89,7 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
           computation. The public key is exactly 32 bytes (256 bits).
         </>
       ),
-      code: `// OpenSSL Command\nopenssl pkey -in ${filenames.SRC_PRIVATE_KEY} -pubout -out ${filenames.SRC_PUBLIC_KEY}`,
+      code: `// OpenSSL Command\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.SOLANA.EXTRACT_PUB(filenames.SRC_PRIVATE_KEY, filenames.SRC_PUBLIC_KEY)}`,
       language: 'bash',
       actionLabel: 'Extract Public Key',
     },
@@ -125,7 +125,7 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
           and only share the public key/address. Never share private keys!
         </>
       ),
-      code: `// OpenSSL Command\nopenssl genpkey -algorithm Ed25519 -out ${filenames.DST_PRIVATE_KEY}\n\n// Extract Public Key\nopenssl pkey -in ${filenames.DST_PRIVATE_KEY} -pubout -out ${filenames.DST_PUBLIC_KEY}`,
+      code: `// OpenSSL Command\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.SOLANA.GEN_KEY(filenames.DST_PRIVATE_KEY)}\n\n// Extract Public Key\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.SOLANA.EXTRACT_PUB(filenames.DST_PRIVATE_KEY, filenames.DST_PUBLIC_KEY)}`,
       language: 'bash',
       actionLabel: 'Generate Recipient Key',
     },
@@ -217,7 +217,7 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
           2. Generate deterministic signature (R || S format, 64 bytes total)
         </>
       ),
-      code: `// OpenSSL Command\nopenssl pkeyutl -sign -inkey ${filenames.SRC_PRIVATE_KEY} -in sol_msg.bin -out sol_sig.bin -rawin`,
+      code: `// OpenSSL Command\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.SOLANA.SIGN(filenames.SRC_PRIVATE_KEY, 'sol_msg.bin', 'sol_sig.bin')}`,
       language: 'bash',
       actionLabel: 'Sign Message',
     },
@@ -234,7 +234,7 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
           protection against signature malleability attacks.
         </>
       ),
-      code: `// OpenSSL Command\nopenssl pkeyutl -verify -pubin -inkey ${filenames.SRC_PUBLIC_KEY} -in sol_msg.bin -sigfile sol_sig.bin -rawin`,
+      code: `// OpenSSL Command\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.SOLANA.VERIFY(filenames.SRC_PUBLIC_KEY, 'sol_msg.bin', 'sol_sig.bin')}`,
       language: 'bash',
       actionLabel: 'Verify Signature',
       customControls: (

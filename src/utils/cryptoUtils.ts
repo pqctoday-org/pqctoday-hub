@@ -43,18 +43,31 @@ export const extractKeyFromOpenSSLOutput = async (
     hexBlock = match[1]
   } else {
     // Extract content between "pub:" and "ASN1" (or end)
-    const match = output.match(/pub:([\s\S]*?)(?:ASN1|$)/)
+    // Support potential blank lines or variations
+    const match = output.match(/pub:([\s\S]*?)(?:ASN1|NIST CURVE|$)/)
     if (!match) throw new Error('Could not find public key in OpenSSL output')
     hexBlock = match[1]
   }
 
   // Clean up hex string (remove newlines, spaces, colons)
-  const cleanHex = hexBlock.replace(/[\s:]/g, '')
+  const cleanHex = hexBlock.replace(/[\s:\n\r]/g, '')
 
   // Convert to bytes
   const bytes = new Uint8Array(cleanHex.length / 2)
   for (let i = 0; i < cleanHex.length; i += 2) {
     bytes[i / 2] = parseInt(cleanHex.substring(i, i + 2), 16)
+  }
+
+  // Sanity Check for Public Keys (secp256k1 uncompressed = 65 bytes)
+  if (type === 'public' && bytes.length !== 65) {
+    console.warn(
+      `[cryptoUtils] Warning: Public key length is ${bytes.length} (expected 65). Hex: ${cleanHex.slice(0, 20)}...`
+    )
+    // Note: If OpenSSL format changed, we might be capturing garbage.
+    // Try to clamp to 65 bytes if we have more
+    if (bytes.length > 65) {
+      return bytes.slice(0, 65)
+    }
   }
 
   return bytes

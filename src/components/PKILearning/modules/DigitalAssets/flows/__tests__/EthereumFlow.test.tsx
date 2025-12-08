@@ -52,24 +52,97 @@ vi.mock('../../components/InfoTooltip', () => ({ InfoTooltip: () => null }))
 vi.mock('../../components/CryptoFlowDiagram', () => ({ EthereumFlowDiagram: () => null }))
 
 // Mock OpenSSL Service
-vi.mock('../../../../../../services/crypto/OpenSSLService', () => ({
-  openSSLService: {
-    execute: vi.fn().mockResolvedValue({
-      stdout: 'MjAyNS0xMi0wOFQxMjo0MTowOC4xMjNa',
-      stderr: '',
-      error: null,
-      // Return a dummy signature file to pass validation
-      files: [
-        {
-          name: 'ethereum_signdata_20250101.sig',
-          // DER signature structure (simplified, just needs to parse somewhat or pass length check)
-          // Sequence (0x30), Length 6, Integers... minimal
-          data: new Uint8Array([0x30, 0x06, 0x02, 0x01, 0x01, 0x02, 0x01, 0x01]),
-        },
-      ],
-    }),
-  },
-}))
+vi.mock('../../../../../../services/crypto/OpenSSLService', () => {
+  return {
+    openSSLService: {
+      execute: vi.fn().mockImplementation(async (cmd, files) => {
+        if (cmd.includes('sign')) {
+          // Dynamic import for ESM package
+          const { secp256k1 } = await import('@noble/curves/secp256k1.js')
+
+          // Find the hash file
+          const hashFile = files.find(
+            (f: { name: string; data: Uint8Array }) =>
+              f.name.includes('hash') || f.name.endsWith('.dat')
+          )
+          if (!hashFile) return { error: 'Hash file not found' }
+
+          // Private key is mocked globally in the test setup (32 bytes of 0x01)
+          const privKey = new Uint8Array(32).fill(1)
+
+          const hash = hashFile.data
+          const sig = secp256k1.sign(hash, privKey)
+          const sigObj = secp256k1.Signature.fromBytes(sig)
+
+          // Manual DER construction to be robust
+          const r = sigObj.r
+          let s = sigObj.s
+
+          // Force High-S for testing normalization logic
+          // Normalize s to be > N/2 if it isn't already
+          const n = BigInt('0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141')
+          const halfN = n / BigInt(2)
+          if (s <= halfN) {
+            s = n - s
+          }
+
+          const toDERInt = (n: bigint) => {
+            let hex = n.toString(16)
+            if (hex.length % 2) hex = '0' + hex
+            const bytes = new Uint8Array(hex.length / 2)
+            for (let i = 0; i < bytes.length; i++)
+              bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)
+
+            // If high bit is set, prepend 0x00 to make it positive in two's complement
+            if (bytes[0] & 0x80) {
+              const newBytes = new Uint8Array(bytes.length + 1)
+              newBytes[0] = 0x00
+              newBytes.set(bytes, 1)
+              return newBytes
+            }
+            return bytes
+          }
+
+          // Use the High-S value for the DER output returned from "OpenSSL"
+          // This simulates OpenSSL returning a High-S signature
+          const rBytes = toDERInt(r)
+          const sBytes = toDERInt(s)
+
+          // DER Sequence: 0x30 + len + (0x02 + rLen + r) + (0x02 + sLen + s)
+          const totalLen = 1 + 1 + rBytes.length + 1 + 1 + sBytes.length
+          const der = new Uint8Array(2 + totalLen)
+          let pos = 0
+          der[pos++] = 0x30
+          der[pos++] = totalLen
+
+          // R
+          der[pos++] = 0x02
+          der[pos++] = rBytes.length
+          der.set(rBytes, pos)
+          pos += rBytes.length
+
+          // S
+          der[pos++] = 0x02
+          der[pos++] = sBytes.length
+          der.set(sBytes, pos)
+
+          return {
+            stdout: 'Signature Generated',
+            stderr: '',
+            error: null,
+            files: [
+              {
+                name: 'ethereum_signdata_20250101.sig',
+                data: der,
+              },
+            ],
+          }
+        }
+        return { stdout: '', stderr: '', error: null, files: [] }
+      }),
+    },
+  }
+})
 
 describe('EthereumFlow Integration', () => {
   // Setup Mock Implementations

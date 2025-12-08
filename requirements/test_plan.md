@@ -1,7 +1,7 @@
 # PQC Timeline App - Test Plan
 
 **Status:** ✅ Implemented  
-**Last Updated:** 2025-12-06
+**Last Updated:** 2025-12-08
 
 > **Note**: This document provides a high-level testing strategy. Comprehensive E2E tests are located in `/e2e` directory with detailed test scenarios for each feature.
 
@@ -94,7 +94,14 @@ This document outlines the testing strategy for the PQC Timeline Application, en
   - Create Root CA certificates
   - Issue end-entity certificates
   - Parse and verify certificates
-  - Test Digital Assets flows (BTC, ETH, SOL, HD Wallet)
+  - **Digital Assets Flows**:
+    - **Bitcoin**: Verify KeyGen (P2PKH address), Transaction signing, and OpenSSL verification.
+    - **Ethereum**:
+      - Verify KeyGen and Address derivation (Keccak-256 + EIP-55 checksum).
+      - **Critical**: Verify Signature Recovery (ensure `v` parameter is calculated specifically for the source address).
+      - **Critical**: Verify OpenSSL Signature matches JS recovery (ensure no "double hashing" artifacts).
+    - **Solana**: Verify Ed25519 KeyGen and raw message signing (ensure correct `-rawin` usage).
+  - **UI Consistency**: Verify that displayed OpenSSL commands in UI match the actual execution logic (using `DIGITAL_ASSETS_CONSTANTS`).
 
 ### 3.7 Accessibility
 
