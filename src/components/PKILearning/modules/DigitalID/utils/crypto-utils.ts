@@ -46,13 +46,20 @@ export const generateKeyPair = async (alg: KeyAlgorithm, curve: KeyCurve): Promi
     throw new Error(`Unsupported curve: ${curve}`)
   }
 
+  // Map KeyCurve to CryptoKey.type (which is essentially the same union)
+  // Casting or direct assignment works since the strings overlap
+  const keyType = curve as 'P-256' | 'P-384' | 'Ed25519'
+
   return {
     id,
+    type: keyType,
     algorithm: alg,
     curve: curve,
     privateKey: toBase64Url(privKeyBytes),
     publicKey: toBase64Url(pubKeyBytes),
     created: timestamp,
+    usage: 'SIGN',
+    status: 'ACTIVE',
   }
 }
 
