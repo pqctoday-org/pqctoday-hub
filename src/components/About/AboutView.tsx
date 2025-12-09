@@ -1,5 +1,14 @@
 import React, { useState } from 'react'
-import { Send, ThumbsUp, MessageSquare, Info, Shield, TriangleAlert } from 'lucide-react'
+import {
+  Send,
+  ThumbsUp,
+  MessageSquare,
+  Info,
+  Shield,
+  TriangleAlert,
+  GithubIcon,
+} from 'lucide-react'
+
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 import { MobileAboutView } from './MobileAboutView'
@@ -638,7 +647,7 @@ ${kudos.message}
               modifications are also released under the same license terms. This ensures that the
               project remains free and accessible to the PQC community.
             </p>
-            <div className="mt-4">
+            <div className="mt-4 flex flex-col gap-2">
               <a
                 href="https://github.com/pqctoday/pqc-timeline-app/blob/main/LICENSE"
                 target="_blank"
@@ -647,6 +656,15 @@ ${kudos.message}
               >
                 <Info size={16} />
                 View Full License
+              </a>
+              <a
+                href="https://github.com/pqctoday/pqc-timeline-app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-primary hover:underline hover:text-primary/80 transition-colors"
+              >
+                <GithubIcon size={16} />
+                View GitHub Repository
               </a>
             </div>
           </div>

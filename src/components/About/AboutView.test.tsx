@@ -109,5 +109,8 @@ describe('AboutView', () => {
       'href',
       'https://github.com/pqctoday/pqc-timeline-app/blob/main/LICENSE'
     )
+
+    const repoLink = screen.getByRole('link', { name: /View GitHub Repository/i })
+    expect(repoLink).toHaveAttribute('href', 'https://github.com/pqctoday/pqc-timeline-app')
   })
 })
