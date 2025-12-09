@@ -118,7 +118,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
       type: ['VerifiableCredential', 'PersonIdentificationData'],
       issuer: 'Motor Vehicle Authority',
       issuanceDate: new Date().toISOString(),
-      expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+      expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
       credentialSubject: attributes.reduce(
         (acc, curr) => ({ ...acc, [curr.name]: curr.value }),
         {}

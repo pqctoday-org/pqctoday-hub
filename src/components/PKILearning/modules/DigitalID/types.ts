@@ -41,6 +41,8 @@ export interface VerifiableCredential {
     proofPurpose: string
     jws: string
   }
+  format?: 'mso_mdoc' | 'vc+sd-jwt' | 'jwt_vc'
+  raw?: string
 }
 
 export interface WalletInstance {
