@@ -87,7 +87,7 @@ export const FileEditor = () => {
   if (!editingFile) return null
 
   return (
-    <div className="glass-panel flex flex-col overflow-hidden mb-6 animate-fade-in shrink-0 h-96 border border-primary/30 shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]">
+    <div className="glass-panel flex flex-col overflow-hidden mb-6 animate-fade-in shrink-0 h-96 border border-primary/30 shadow-glow-sm">
       {/* Header */}
       <div className="p-3 border-b border-border bg-muted flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -140,7 +140,7 @@ export const FileEditor = () => {
           placeholder={viewMode === 'hex' ? '00 01 02 03...' : 'Type content here...'}
         />
         {error && (
-          <div className="absolute bottom-4 left-4 right-4 bg-red-500/20 border border-red-500/50 text-red-200 text-xs p-2 rounded backdrop-blur-md">
+          <div className="absolute bottom-4 left-4 right-4 bg-destructive/20 border border-destructive/50 text-destructive-foreground text-xs p-2 rounded backdrop-blur-md">
             {error}
           </div>
         )}

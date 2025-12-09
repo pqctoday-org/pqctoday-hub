@@ -80,6 +80,18 @@
     --success-foreground: 355.7 100% 97.3%;
     --warning: 38 92% 50%;
     --warning-foreground: 48 96% 89%;
+
+    /* Timeline Phases (HSL channels) */
+    --phase-discovery: 217 91% 60%;
+    --phase-testing: 263 90% 76%;
+    --phase-poc: 28 96% 61%;
+    --phase-migration: 149 67% 52%;
+    --phase-standardization: 186 85% 53%;
+    --phase-guidance: 48 96% 53%;
+    --phase-policy: 24 6% 65%;
+    --phase-regulation: 0 84% 60%;
+    --phase-research: 258 90% 66%;
+    --phase-deadline: 0 84% 60%;
   }
 
   /* Dark Mode Overrides */
@@ -107,6 +119,18 @@
     --success-foreground: 144.9 80.4% 10%;
     --warning: 47.9 95.8% 53.1%;
     --warning-foreground: 26 83.3% 14.1%;
+
+    /* Timeline Phases (Dark Mode - Slightly Brighter/Saturated) */
+    --phase-discovery: 217 91% 65%;
+    --phase-testing: 263 90% 80%;
+    --phase-poc: 28 96% 65%;
+    --phase-migration: 149 67% 55%;
+    --phase-standardization: 186 85% 58%;
+    --phase-guidance: 48 96% 58%;
+    --phase-policy: 24 6% 70%;
+    --phase-regulation: 0 84% 65%;
+    --phase-research: 258 90% 70%;
+    --phase-deadline: 0 84% 65%;
   }
 }
 
@@ -202,11 +226,18 @@
 
   /* Global Glow Shadow */
   .shadow-glow {
-    box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
-    /* Ideally this color comes from a variable too, but keeping consistent for now */
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.2);
+  }
+
+  .shadow-glow-sm {
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.15);
   }
 
   .dark .shadow-glow {
-    box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.15);
+  }
+
+  .dark .shadow-glow-sm {
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.1);
   }
 }

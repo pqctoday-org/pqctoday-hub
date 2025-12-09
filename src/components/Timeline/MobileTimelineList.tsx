@@ -104,16 +104,17 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                           size={14}
                           className="flex-shrink-0"
                           style={{
-                            color: phaseColors[currentPhase.phase]?.start || '#fff',
-                            filter: `drop-shadow(0 0 4px ${phaseColors[currentPhase.phase]?.glow || 'transparent'})`,
+                            color: phaseColors[currentPhase.phase]?.start || 'hsl(var(--primary))',
+                            filter: `drop-shadow(0 0 4px ${phaseColors[currentPhase.phase]?.glow || 'hsl(var(--primary) / 0.5)'})`,
                           }}
                         />
                       ) : (
                         <div
                           className="w-2 h-2 rounded-full flex-shrink-0"
                           style={{
-                            backgroundColor: phaseColors[currentPhase.phase]?.start || '#fff',
-                            boxShadow: `0 0 8px ${phaseColors[currentPhase.phase]?.glow || 'transparent'}`,
+                            backgroundColor:
+                              phaseColors[currentPhase.phase]?.start || 'hsl(var(--primary))',
+                            boxShadow: `0 0 8px ${phaseColors[currentPhase.phase]?.glow || 'hsl(var(--primary) / 0.5)'}`,
                           }}
                         />
                       )}
@@ -153,8 +154,8 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                         style={{
                           backgroundColor:
                             i === currentIndex
-                              ? phaseColors[p.phase]?.start || '#fff'
-                              : 'rgba(255, 255, 255, 0.3)',
+                              ? phaseColors[p.phase]?.start || 'hsl(var(--primary))'
+                              : 'hsl(var(--muted-foreground) / 0.3)',
                         }}
                       />
                     </button>

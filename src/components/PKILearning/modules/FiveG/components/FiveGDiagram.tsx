@@ -7,12 +7,12 @@ interface FiveGDiagramProps {
 
 export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => {
   return (
-    <div className="relative w-full h-[300px] bg-black/20 rounded-lg p-4 flex items-center justify-between overflow-hidden">
+    <div className="relative w-full h-[300px] bg-muted/50 rounded-lg p-4 flex items-center justify-between overflow-hidden">
       {/* USIM Node */}
       <div
         className={`
         relative z-10 w-32 h-32 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step >= 0 ? 'border-primary bg-primary/10 shadow-[0_0_20px_rgba(0,255,157,0.2)]' : 'border-white/10 bg-black/40'}
+        ${step >= 0 ? 'border-primary bg-primary/10 shadow-glow' : 'border-border/10 bg-card/40'}
       `}
       >
         <div className="text-4xl mb-2">📱</div>
@@ -23,7 +23,7 @@ export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => 
       {/* Connection Lines & Data Flow */}
       <div className="flex-1 relative h-full flex flex-col items-center justify-center mx-4">
         {/* Connection Line */}
-        <div className="absolute top-1/2 left-0 w-full h-1 bg-white/10 -translate-y-1/2"></div>
+        <div className="absolute top-1/2 left-0 w-full h-1 bg-border/20 -translate-y-1/2"></div>
 
         {/* Animated Data Packet */}
         {step >= 3 && step < 6 && (
@@ -47,7 +47,7 @@ export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => 
             <span className="text-xs text-secondary animate-pulse">Key Derivation</span>
           )}
           {step === 4 && (
-            <span className="text-xs text-red-400 animate-pulse">
+            <span className="text-xs text-destructive animate-pulse">
               Encryption {profile === 'C' ? '(AES-256)' : '(AES-128)'}
             </span>
           )}
@@ -59,7 +59,7 @@ export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => 
       <div
         className={`
         relative z-10 w-32 h-32 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step >= 2 ? 'border-secondary bg-secondary/10 shadow-[0_0_20px_rgba(255,0,255,0.2)]' : 'border-white/10 bg-black/40'}
+        ${step >= 2 ? 'border-secondary bg-secondary/10 shadow-[0_0_20px_hsl(var(--secondary)/0.3)]' : 'border-border/10 bg-card/40'}
       `}
       >
         <div className="text-4xl mb-2">☁️</div>
@@ -71,7 +71,8 @@ export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => 
       <div
         className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
-          backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+          backgroundImage:
+            'radial-gradient(circle at 2px 2px, hsl(var(--foreground)) 1px, transparent 0)',
           backgroundSize: '24px 24px',
         }}
       ></div>

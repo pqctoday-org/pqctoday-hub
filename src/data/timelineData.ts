@@ -22,16 +22,56 @@ export type {
 
 // Phase color mappings for Gantt chart visualization
 export const phaseColors: Record<Phase, { start: string; end: string; glow: string }> = {
-  Discovery: { start: '#3b82f6', end: '#60a5fa', glow: 'rgba(59, 130, 246, 0.5)' },
-  Testing: { start: '#a78bfa', end: '#c4b5fd', glow: 'rgba(167, 139, 250, 0.5)' },
-  POC: { start: '#fb923c', end: '#fdba74', glow: 'rgba(251, 146, 60, 0.5)' },
-  Migration: { start: '#34d399', end: '#6ee7b7', glow: 'rgba(52, 211, 153, 0.5)' },
-  Standardization: { start: '#22d3ee', end: '#67e8f9', glow: 'rgba(34, 211, 238, 0.5)' },
-  Guidance: { start: '#facc15', end: '#fde047', glow: 'rgba(250, 204, 21, 0.5)' },
-  Policy: { start: '#a8a29e', end: '#d6d3d1', glow: 'rgba(168, 162, 158, 0.5)' },
-  Regulation: { start: '#ef4444', end: '#f87171', glow: 'rgba(239, 68, 68, 0.5)' },
-  Research: { start: '#8b5cf6', end: '#a78bfa', glow: 'rgba(139, 92, 246, 0.5)' },
-  Deadline: { start: '#ef4444', end: '#f87171', glow: 'rgba(239, 68, 68, 0.5)' },
+  Discovery: {
+    start: 'hsl(var(--phase-discovery))',
+    end: 'hsl(var(--phase-discovery))',
+    glow: 'hsl(var(--phase-discovery) / 0.5)',
+  },
+  Testing: {
+    start: 'hsl(var(--phase-testing))',
+    end: 'hsl(var(--phase-testing))',
+    glow: 'hsl(var(--phase-testing) / 0.5)',
+  },
+  POC: {
+    start: 'hsl(var(--phase-poc))',
+    end: 'hsl(var(--phase-poc))',
+    glow: 'hsl(var(--phase-poc) / 0.5)',
+  },
+  Migration: {
+    start: 'hsl(var(--phase-migration))',
+    end: 'hsl(var(--phase-migration))',
+    glow: 'hsl(var(--phase-migration) / 0.5)',
+  },
+  Standardization: {
+    start: 'hsl(var(--phase-standardization))',
+    end: 'hsl(var(--phase-standardization))',
+    glow: 'hsl(var(--phase-standardization) / 0.5)',
+  },
+  Guidance: {
+    start: 'hsl(var(--phase-guidance))',
+    end: 'hsl(var(--phase-guidance))',
+    glow: 'hsl(var(--phase-guidance) / 0.5)',
+  },
+  Policy: {
+    start: 'hsl(var(--phase-policy))',
+    end: 'hsl(var(--phase-policy))',
+    glow: 'hsl(var(--phase-policy) / 0.5)',
+  },
+  Regulation: {
+    start: 'hsl(var(--phase-regulation))',
+    end: 'hsl(var(--phase-regulation))',
+    glow: 'hsl(var(--phase-regulation) / 0.5)',
+  },
+  Research: {
+    start: 'hsl(var(--phase-research))',
+    end: 'hsl(var(--phase-research))',
+    glow: 'hsl(var(--phase-research) / 0.5)',
+  },
+  Deadline: {
+    start: 'hsl(var(--phase-deadline))',
+    end: 'hsl(var(--phase-deadline))',
+    glow: 'hsl(var(--phase-deadline) / 0.5)',
+  },
 }
 
 import { MOCK_CSV_CONTENT } from './mockTimelineData'
