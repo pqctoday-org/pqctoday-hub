@@ -1,0 +1,13 @@
+# This file defines who owns the code in this repository.
+# GitHub uses this file to automatically request reviews from these owners
+# when a Pull Request is opened against a protected branch.
+
+# Syntax:
+# pattern owner1 [owner2 ...]
+
+# Match all files
+*       @ericamador
+
+# You can also define owners for specific directories or file types:
+# src/components/PKILearning/  @ericamador @security-team
+# *.md                         @ericamador @docs-team
