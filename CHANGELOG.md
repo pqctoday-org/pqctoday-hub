@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.6.0] - 2025-12-09
+
+### Added
+
+- **Appearance Settings Refactor**:
+  - Removed "System" theme option to simplify user experience.
+  - Set default theme to **Light**.
+  - Updated `About` page and Mobile About view to reflect theme changes.
+
+- **Semantic Color Tokens**:
+  - Global refactor of all Learning Modules (5G, DigitalAssets, DigitalID, PKIWorkshop) to use semantic color tokens (e.g., `primary`, `success`, `destructive`, `tertiary`) instead of hardcoded values.
+  - Introduced `--color-tertiary` (Purple) for Profile C support.
+
+- **5G Module Improvements**:
+  - Enhanced E2E validation tests for 5G flows.
+
+### Fixed
+
+- **Navigation Loop**: Resolved a critical bug where new users were forced into a redirect loop to the About page (`WelcomeRedirect` removed).
+- **Test Stability**: Fixed stale `useTheme` tests that referenced the deprecated "system" theme.
+- **Linting**: Addressed various security (`detect-object-injection`) and React Hook warnings.
+
 ## [1.5.0] - 2025-12-06
 
 ### Added
