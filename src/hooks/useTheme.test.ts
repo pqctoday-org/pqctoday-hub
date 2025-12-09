@@ -4,20 +4,12 @@ import { useTheme } from '../hooks/useTheme'
 import { useThemeStore } from '../store/useThemeStore'
 
 // Mock matchMedia
-const matchMediaMock = vi.fn()
+// matchMedia mock is no longer needed since we removed system theme support
 
 describe('useTheme', () => {
   beforeEach(() => {
-    // Reset store
-    useThemeStore.setState({ theme: 'system' })
-
-    // Setup matchMedia mock
-    matchMediaMock.mockReturnValue({
-      matches: false, // Default light
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    })
-    window.matchMedia = matchMediaMock
+    // Reset store - default to light
+    useThemeStore.setState({ theme: 'light' })
 
     // Clear classList
     document.documentElement.className = ''
@@ -27,21 +19,10 @@ describe('useTheme', () => {
     vi.clearAllMocks()
   })
 
-  it('initializes with system theme (light default)', () => {
+  it('initializes with default light theme', () => {
     renderHook(() => useTheme())
     expect(document.documentElement.classList.contains('light')).toBe(true)
     expect(document.documentElement.classList.contains('dark')).toBe(false)
-  })
-
-  it('initializes with system theme (dark preference)', () => {
-    matchMediaMock.mockReturnValue({
-      matches: true,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    })
-
-    renderHook(() => useTheme())
-    expect(document.documentElement.classList.contains('dark')).toBe(true)
   })
 
   it('switches to explicit dark mode', async () => {
