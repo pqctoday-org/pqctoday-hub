@@ -10,9 +10,9 @@ The "Learn" feature is a comprehensive educational platform designed to teach va
 ### Planned Modules
 
 - **PKI** (Implemented)
-- **5G Security**
-- **Digital Assets**
-- **Digital ID**
+- **Digital Assets** (Implemented)
+- **5G Security** (Implemented)
+- **Digital ID / EUDI** (Implemented)
 - **TLS**
 - **VPN**
 
@@ -177,3 +177,27 @@ The Digital Assets Program provides an interactive, deep-dive into the cryptogra
 - **Refactoring:**
   - **Modularization:** Complex flows (like Ethereum) are split into smaller, testable sub-components and hooks.
   - **Consistency:** UI layouts (e.g., HD Wallet) are actively unified to match the design language of primary modules (Bitcoin).
+
+## Module 3: 5G Security (Implemented)
+
+The 5G Security module provides an interactive simulation of 5G subscriber authentication and privacy protection mechanisms.
+
+**Key Features:**
+
+- **SUCI Deconcealment:** Simulate the decryption of Subscription Concealed Identifiers (SUCI) using:
+  - **Profile A:** Curve25519 (ECIES)
+  - **Profile B:** secp256r1 (ECIES)
+  - **Profile C:** ML-KEM-768 (Post-Quantum)
+- **5G-AKA Authentication:** Step-by-step execution of the Authentication and Key Agreement protocol using the MILENAGE algorithm set.
+- **Reference:** [Detailed 5G Requirements](5G_Security_Educational_Module_Requirements.md)
+
+## Module 4: EU Digital Identity Wallet (Implemented)
+
+This module simulates the ecosystem of the European Digital Identity (EUDI) Wallet, focusing on the Remote HSM architecture.
+
+**Key Features:**
+
+- **PID Issuance:** Mobile Driving License (mDL) issuance flow.
+- **Remote HSM:** Centralized cryptographic operations (Key Generation, Signing) via simulated Hardware Security Modules.
+- **Attestations:** Verifiable credential presentation for various use cases (e.g., Bank Account Opening).
+- **Reference:** [Detailed EUDI Wallet Requirements](EUDI_Wallet_Educational_Module_Requirements.md)

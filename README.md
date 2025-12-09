@@ -23,6 +23,12 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Ethereum (ETH): Keccak-256, EIP-55 addresses, EIP-1559 transactions
   - Solana (SOL): Ed25519, Base58 addresses, EdDSA signing
   - HD Wallet: BIP32/39/44 multi-chain derivation
+- **5G Security Education**: Interactive 5G authentication modules
+  - SUCI Deconcealment (Profile A, B, and PQC Profile C)
+  - 5G-AKA Authentication with MILENAGE
+- **EU Digital Identity Wallet**: EUDI Wallet ecosystem simulation
+  - PID Issuance (mDL) & Lifecycle
+  - Remote HSM-based crypto operations
 - **Standards Library**: Comprehensive PQC standards repository
   - NIST FIPS documents (203, 204, 205)
   - Protocol specifications (TLS, SSH, IKEv2)

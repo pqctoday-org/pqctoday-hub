@@ -16,7 +16,9 @@ The application is divided into five main modules. Detailed requirements for eac
 5.  **[Transformation Leaders](requirements/leaders.md)**: Profiles of key public and private figures driving the transition.
 6.  **[PKI Learning Platform](requirements/learn.md)**: Educational modules for PKI lifecycle and Digital Assets cryptography.
     - Includes **[Digital Assets Program](requirements/digital_assets.md)**: Blockchain cryptography for Bitcoin, Ethereum, and Solana.
-7.  **[About & Feedback](requirements/about.md)**: Project information, feedback mechanisms, and Software Bill of Materials (SBOM).
+7.  **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment and 5G-AKA authentication flows.
+8.  **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: Architecture and flows for the EUDI Wallet ecosystem (Remote HSM).
+9.  **[About & Feedback](requirements/about.md)**: Project information, feedback mechanisms, and Software Bill of Materials (SBOM).
 
 ## 3. Non-Functional Requirements
 
@@ -43,7 +45,7 @@ The application meets WCAG 2.1 Level AA accessibility standards. For comprehensi
 ### 3.3 Tech Stack
 
 - **Framework**: React (Vite)
-- **Styling**: Vanilla CSS (CSS Variables, Flexbox/Grid) for maximum control and performance.
+- **Styling**: Tailwind CSS 4 (using CSS Variables for theming).
 - **Deployment**: Static build (ready for Netlify/Vercel).
 - **Analytics**: Google Analytics 4 (GA4) with route tracking.
 - **Build Info**: Static build timestamp injected at compile time.
