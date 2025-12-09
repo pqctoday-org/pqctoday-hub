@@ -66,9 +66,10 @@ npm run test:e2e
 ### Pull Requests
 
 1.  **Fork the repository** and create your branch from `main`.
-2.  **Make your changes**. Ensure code style is consistent.
-3.  **Open a Pull Request** targeting the `main` branch.
-4.  Fill out the Pull Request Template with details about your changes.
+2.  **Create a feature branch**: use `feat/your-feature-name` for new features or `fix/your-fix-name` for bug fixes.
+3.  **Make your changes**. Ensure code style is consistent.
+4.  **Open a Pull Request** targeting the `main` branch.
+5.  Fill out the Pull Request Template with details about your changes.
 
 ## Development Guidelines
 
