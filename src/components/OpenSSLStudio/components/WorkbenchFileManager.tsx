@@ -359,11 +359,11 @@ export const WorkbenchFileManager: React.FC = () => {
                         className={clsx(
                           'px-2 py-0.5 rounded text-[10px] font-medium',
                           file.type === 'key'
-                            ? 'bg-red-500/20 text-red-700 dark:text-red-200'
+                            ? 'bg-file-key/20 text-file-key-foreground'
                             : file.type === 'cert'
-                              ? 'bg-blue-500/20 text-blue-700 dark:text-blue-200'
+                              ? 'bg-file-cert/20 text-file-cert-foreground'
                               : file.type === 'csr'
-                                ? 'bg-purple-500/20 text-purple-700 dark:text-purple-200'
+                                ? 'bg-file-csr/20 text-file-csr-foreground'
                                 : 'bg-muted text-muted-foreground'
                         )}
                       >

@@ -37,6 +37,16 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --color-file-key: hsl(var(--file-key));
+  --color-file-key-foreground: hsl(var(--file-key-foreground));
+
+  --color-file-cert: hsl(var(--file-cert));
+  --color-file-cert-foreground: hsl(var(--file-cert-foreground));
+
+  --color-file-csr: hsl(var(--file-csr));
+  --color-file-csr-foreground: hsl(var(--file-csr-foreground));
 
   --font-family-sans: Inter, system-ui, sans-serif;
 }
@@ -81,6 +91,16 @@
     --warning: 38 92% 50%;
     --warning-foreground: 48 96% 89%;
 
+    /* File Types (Light Mode - High Contrast) */
+    --file-key: 0 84% 60%;
+    --file-key-foreground: 0 75% 15%;
+
+    --file-cert: 221 83% 53%;
+    --file-cert-foreground: 221 83% 15%;
+
+    --file-csr: 262 83% 58%;
+    --file-csr-foreground: 262 83% 15%;
+
     /* Timeline Phases (HSL channels) */
     --phase-discovery: 217 91% 60%;
     --phase-testing: 263 90% 76%;
@@ -115,10 +135,18 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 189 83% 53%;
-    --success: 142.1 70.6% 45.3%;
-    --success-foreground: 144.9 80.4% 10%;
     --warning: 47.9 95.8% 53.1%;
     --warning-foreground: 26 83.3% 14.1%;
+
+    /* File Types (Dark Mode) */
+    --file-key: 0 84% 70%;
+    --file-key-foreground: 0 84% 95%;
+
+    --file-cert: 217 91% 75%;
+    --file-cert-foreground: 217 91% 95%;
+
+    --file-csr: 270 85% 75%;
+    --file-csr-foreground: 270 85% 95%;
 
     /* Timeline Phases (Dark Mode - Slightly Brighter/Saturated) */
     --phase-discovery: 217 91% 65%;
