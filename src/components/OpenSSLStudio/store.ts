@@ -62,6 +62,10 @@ interface OpenSSLStudioState {
   editingFile: VirtualFile | null
   setEditingFile: (file: VirtualFile | null) => void
 
+  // Viewer State
+  viewingFile: VirtualFile | null
+  setViewingFile: (file: VirtualFile | null) => void
+
   // Metrics
   lastExecutionTime: number | null
   setLastExecutionTime: (time: number | null) => void
@@ -75,7 +79,7 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
       addFile: (file) =>
         set((state) => ({ files: [...state.files.filter((f) => f.name !== file.name), file] })),
       removeFile: (name) => set((state) => ({ files: state.files.filter((f) => f.name !== name) })),
-      clearFiles: () => set(() => ({ files: [], editingFile: null })),
+      clearFiles: () => set(() => ({ files: [], editingFile: null, viewingFile: null })),
       getFile: (name) => get().files.find((f) => f.name === name),
 
       logs: [],
@@ -121,6 +125,10 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
       editingFile: null,
       setEditingFile: (file) => set({ editingFile: file }),
 
+      // Viewer State
+      viewingFile: null,
+      setViewingFile: (file) => set({ viewingFile: file }),
+
       // Metrics
       lastExecutionTime: null,
       setLastExecutionTime: (time) => set({ lastExecutionTime: time }),
@@ -134,6 +142,7 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
           isProcessing: false,
           isReady: false,
           editingFile: null,
+          viewingFile: null,
           lastExecutionTime: null,
         }),
     }),

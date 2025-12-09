@@ -119,8 +119,8 @@ export const FileManager = () => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-white/5 rounded-xl border border-white/10 overflow-hidden relative">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-white/5">
+    <div className="h-full flex flex-col bg-card rounded-xl border border-border overflow-hidden relative">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted">
         <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
           Virtual File System
         </span>
@@ -150,7 +150,7 @@ export const FileManager = () => {
           files.map((file) => (
             <div
               key={file.name}
-              className="flex items-center justify-between p-2 rounded hover:bg-white/5 group transition-colors"
+              className="flex items-center justify-between p-2 rounded hover:bg-accent group transition-colors"
             >
               <div className="flex items-center gap-3 overflow-hidden flex-1">
                 {getIcon(file.type)}
@@ -174,14 +174,14 @@ export const FileManager = () => {
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setEditingFile(file)}
-                  className="p-1.5 hover:bg-white/10 rounded text-muted-foreground hover:text-foreground"
+                  className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground"
                   title="Edit / View"
                 >
                   <Edit2 size={14} />
                 </button>
                 <button
                   onClick={() => handleDownload(file)}
-                  className="p-1.5 hover:bg-white/10 rounded text-muted-foreground hover:text-foreground"
+                  className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground"
                   title="Download"
                 >
                   <Download size={14} />
@@ -208,8 +208,8 @@ export const FileManager = () => {
 
       {/* Editor Overlay */}
       {editingFile && (
-        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-10 flex flex-col animate-fade-in">
-          <div className="flex items-center justify-between p-3 border-b border-white/10 bg-white/5">
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex flex-col animate-fade-in">
+          <div className="flex items-center justify-between p-3 border-b border-border bg-muted">
             <span className="text-sm font-bold text-foreground flex items-center gap-2">
               <Edit2 size={14} /> {editingFile.name}
             </span>
@@ -238,7 +238,7 @@ export const FileManager = () => {
               </button>
               <button
                 onClick={() => setEditingFile(null)}
-                className="p-1.5 hover:bg-white/10 text-muted-foreground hover:text-foreground rounded transition-colors"
+                className="p-1.5 hover:bg-accent text-muted-foreground hover:text-foreground rounded transition-colors"
                 title="Close"
               >
                 <X size={14} />

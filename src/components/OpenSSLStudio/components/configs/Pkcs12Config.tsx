@@ -37,7 +37,7 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
 
       <div className="space-y-3">
         <span className="text-xs text-muted-foreground block">Action</span>
-        <div className="flex bg-black/40 rounded-lg p-1 border border-white/20">
+        <div className="flex bg-background rounded-lg p-1 border border-input">
           <button
             onClick={() => setP12Action('export')}
             className={clsx(
@@ -73,7 +73,7 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
               id="p12-cert-select"
               value={p12CertFile}
               onChange={(e) => setP12CertFile(e.target.value)}
-              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
             >
               <option value="">Select Certificate...</option>
               {files
@@ -94,7 +94,7 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
               id="p12-key-select"
               value={p12KeyFile}
               onChange={(e) => setP12KeyFile(e.target.value)}
-              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
             >
               <option value="">Select Private Key...</option>
               {files
@@ -116,7 +116,7 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
               type="text"
               value={p12File}
               onChange={(e) => setP12File(e.target.value)}
-              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
               placeholder="bundle.p12"
             />
           </div>
@@ -130,7 +130,7 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
             id="p12-infile-select"
             value={p12File}
             onChange={(e) => setP12File(e.target.value)}
-            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           >
             <option value="">Select .p12 or .pfx file...</option>
             {files
@@ -153,7 +153,7 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
           type="password"
           value={p12Pass}
           onChange={(e) => setP12Pass(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="Export/Import Password"
         />
       </div>

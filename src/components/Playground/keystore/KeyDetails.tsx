@@ -198,7 +198,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
               <FileText size={14} /> Raw Value
             </label>
             <div className="flex gap-2">
-              <div className="flex bg-black/40 rounded-lg p-0.5 border border-white/10">
+              <div className="flex bg-muted rounded-lg p-0.5 border border-border">
                 <button
                   onClick={() => setRawValueMode('hex')}
                   className={clsx(
@@ -262,7 +262,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
               <Code size={14} /> PKCS#8 Preview
             </label>
             <div className="flex gap-2">
-              <div className="flex bg-black/40 rounded-lg p-0.5 border border-white/10">
+              <div className="flex bg-muted rounded-lg p-0.5 border border-border">
                 <button
                   onClick={() => setPkcs8ValueMode('hex')}
                   className={clsx(

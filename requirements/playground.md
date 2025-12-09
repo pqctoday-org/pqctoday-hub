@@ -1,7 +1,7 @@
 # Interactive Playground Requirements
 
 **Status:** ✅ Implemented  
-**Last Updated:** 2025-12-06
+**Last Updated:** 2025-12-08
 
 ## 1. Overview
 
@@ -135,6 +135,8 @@ The Interactive Playground provides a hands-on environment for testing post-quan
   - **Settings**: Execution Mode toggle, Algorithm Configuration (enable/disable algorithms)
   - **Data**: Input Message, Shared Secret Display, Signature Display
   - **KEM & Encrypt**: Combined Encapsulate/Decapsulate and Hybrid Encryption operations
+  - **Sym Encrypt**: Symmetric Encryption (AES-GCM)
+  - **Hashing**: Cryptographic hash computation with 8 algorithms
   - **Sign & Verify**: Combined Sign and Verify operations
   - **Key Store**: Key generation controls + list of generated keys with details
   - **Logs**: Operation history with sortable/resizable columns
@@ -184,9 +186,14 @@ Comprehensive enable/disable controls for all cryptographic algorithms:
 
 **Hash Algorithms:**
 
-- SHA-256 (FIPS 180-4) - ❌ Disabled (not yet implemented)
-- SHA-384 (FIPS 180-4) - ❌ Disabled (not yet implemented)
-- SHA3-256 (FIPS 202, Quantum Resistant) - ❌ Disabled (not yet implemented)
+- SHA-256 (FIPS 180-4) - ✅ Enabled (Implemented)
+- SHA-384 (FIPS 180-4) - ✅ Enabled (Implemented)
+- SHA-512 (FIPS 180-4) - ✅ Enabled (Implemented)
+- SHA3-256 (FIPS 202, Quantum Resistant) - ✅ Enabled (Implemented)
+- Keccak-256 (Ethereum) - ✅ Enabled (Implemented)
+- RIPEMD-160 (ISO/IEC 10118-3) - ✅ Enabled (Implemented)
+- BLAKE2b-256 (RFC 7693) - ✅ Enabled (Implemented)
+- BLAKE2b-512 (RFC 7693) - ✅ Enabled (Implemented)
 
 **Features:**
 
@@ -195,7 +202,7 @@ Comprehensive enable/disable controls for all cryptographic algorithms:
 - FIPS standard labels
 - Quantum resistance indicators
 - Session storage persistence
-- Only implemented algorithms enabled by default
+- All implemented algorithms enabled by default
 
 #### Quick Actions Section
 
@@ -651,12 +658,41 @@ if (!isWasmSupported) {
 - **Info Display:** Shows Algorithm, Mode (GCM), and IV details (12 bytes, prepended) for the selected key.
 - **Operations:**
   - **Encrypt:** Encrypts input data (Hex/ASCII) using AES-GCM. Result (IV + Ciphertext) is displayed in the Output box.
-  - **Decrypt:** Decrypts the content of the Output box. Result (Plaintext) is displayed in the Input box.
+- **Decrypt:** Decrypts the content of the Output box. Result (Plaintext) is displayed in the Input box.
 - **Data Handling:**
   - Supports both Hex and ASCII input/output.
   - "Cross-wired" flow (Encrypt -> Output, Decrypt -> Input) enables easy round-trip testing.
 
-### 10.7 Tab Consolidation & Enhanced Interactivity (✅ Complete)
+### 10.7 Hashing Tab (✅ Complete)
+
+**Change:** Added a dedicated tab for cryptographic hashing operations.
+
+**Features:**
+
+- **Dedicated Tab:** "Hashing" tab added to the main navigation (positioned between "Sym Encrypt" and "Sign & Verify").
+- **Hash Algorithm Selection:** Dropdown to select from 8 hash algorithms:
+  - **SHA-2 Family (FIPS 180-4):**
+    - SHA-256 (32 bytes) - Bitcoin, Ethereum, General Purpose
+    - SHA-384 (48 bytes) - High Security Applications
+    - SHA-512 (64 bytes) - Solana, HD Wallets
+  - **SHA-3 Family (FIPS 202):**
+    - SHA3-256 (32 bytes) - NIST Standard
+    - Keccak-256 (32 bytes) - Ethereum (pre-NIST version)
+  - **Legacy:**
+    - RIPEMD-160 (20 bytes) - Bitcoin Hash160
+  - **Modern (RFC 7693):**
+    - BLAKE2b-256 (32 bytes) - High Performance
+    - BLAKE2b-512 (64 bytes) - High Performance
+- **Input/Output:**
+  - Input data field with ASCII/Hex toggle (default: "Hello Hashing World!")
+  - Hash output field (hex-encoded)
+  - Copy to clipboard functionality
+- **Algorithm Information:** Displays output size and use cases for selected algorithm
+- **Implementation:** Uses `@noble/hashes` library (synchronous, browser-native)
+- **Test Vectors:** Comprehensive test vectors from official standards (FIPS 180-4, FIPS 202, RFC 7693, ISO/IEC 10118-3)
+- **Validation:** All 8 algorithms validated against official test vectors (16/16 tests passed)
+
+### 10.8 Tab Consolidation & Enhanced Interactivity (✅ Complete)
 
 **Change:** Merged related operations into unified tabs and added comprehensive data editing.
 

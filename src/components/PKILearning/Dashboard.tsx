@@ -12,6 +12,7 @@ interface ModuleItem {
   duration: string
   disabled?: boolean
   comingSoon?: boolean
+  workInProgress?: boolean
 }
 
 const ModuleCard = ({
@@ -55,28 +56,35 @@ const ModuleCard = ({
             <BookOpen size={24} />
           </div>
         </div>
-        {module.comingSoon ? (
-          <span className="px-3 py-1 rounded-full text-xs font-bold border bg-primary/10 text-primary border-primary/20">
-            Coming Soon
-          </span>
-        ) : (
-          <span
-            className={clsx(
-              'px-3 py-1 rounded-full text-xs font-bold border',
-              status === 'completed'
-                ? 'bg-green-500/10 text-green-400 border-green-500/20'
+        <div className="flex items-center gap-2">
+          {module.workInProgress && (
+            <span className="px-3 py-1 rounded-full text-xs font-bold border bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
+              WIP
+            </span>
+          )}
+          {module.comingSoon ? (
+            <span className="px-3 py-1 rounded-full text-xs font-bold border bg-primary/10 text-primary border-primary/20">
+              Coming Soon
+            </span>
+          ) : (
+            <span
+              className={clsx(
+                'px-3 py-1 rounded-full text-xs font-bold border',
+                status === 'completed'
+                  ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                  : status === 'in-progress'
+                    ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                    : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+              )}
+            >
+              {status === 'completed'
+                ? 'Completed'
                 : status === 'in-progress'
-                  ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                  : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-            )}
-          >
-            {status === 'completed'
-              ? 'Completed'
-              : status === 'in-progress'
-                ? 'In Progress'
-                : 'Not Started'}
-          </span>
-        )}
+                  ? 'In Progress'
+                  : 'Not Started'}
+            </span>
+          )}
+        </div>
       </div>
 
       <h3 className="text-xl font-bold mb-2">{module.title}</h3>
@@ -208,25 +216,25 @@ export const Dashboard: React.FC = () => {
         'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana using OpenSSL.',
       duration: '60 min',
     },
-  ]
-
-  const upcomingModules: ModuleItem[] = [
     {
       id: '5g-security',
       title: '5G Security',
-      description: 'Explore the security architecture of 5G networks and SIM authentication.',
-      duration: 'Coming Soon',
-      comingSoon: true,
-      disabled: true,
+      description:
+        'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
+      duration: '90 min',
+      workInProgress: true,
     },
     {
       id: 'digital-id',
       title: 'Digital ID',
-      description: 'Understand decentralized identity, verifiable credentials, and mDL.',
-      duration: 'Coming Soon',
-      comingSoon: true,
-      disabled: true,
+      description:
+        'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
+      duration: '120 min',
+      workInProgress: true,
     },
+  ]
+
+  const upcomingModules: ModuleItem[] = [
     {
       id: 'tls',
       title: 'TLS',

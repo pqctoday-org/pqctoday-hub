@@ -34,13 +34,13 @@ export const LogsTab: React.FC = () => {
         </button>
       </div>
 
-      <div className="flex-1 overflow-hidden rounded-xl border border-white/10 bg-muted/20 flex flex-col">
+      <div className="flex-1 overflow-hidden rounded-xl border border-border bg-card flex flex-col">
         <div className="overflow-y-auto flex-1 custom-scrollbar">
           <table className="w-full text-left text-sm table-fixed">
-            <thead className="bg-white/5 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md select-none">
+            <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md select-none">
               <tr>
                 <th
-                  className="p-4 font-bold cursor-pointer hover:bg-white/5 transition-colors relative group"
+                  className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
                   style={{ width: columnWidths.timestamp }}
                   onClick={() => handleSort('timestamp')}
                 >
@@ -68,7 +68,7 @@ export const LogsTab: React.FC = () => {
                   />
                 </th>
                 <th
-                  className="p-4 font-bold cursor-pointer hover:bg-white/5 transition-colors relative group"
+                  className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
                   style={{ width: columnWidths.keyLabel }}
                   onClick={() => handleSort('keyLabel')}
                 >
@@ -96,7 +96,7 @@ export const LogsTab: React.FC = () => {
                   />
                 </th>
                 <th
-                  className="p-4 font-bold cursor-pointer hover:bg-white/5 transition-colors relative group"
+                  className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
                   style={{ width: columnWidths.operation }}
                   onClick={() => handleSort('operation')}
                 >
@@ -124,7 +124,7 @@ export const LogsTab: React.FC = () => {
                   />
                 </th>
                 <th
-                  className="p-4 font-bold cursor-pointer hover:bg-white/5 transition-colors relative group"
+                  className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
                   style={{ width: columnWidths.result }}
                   onClick={() => handleSort('result')}
                 >
@@ -152,7 +152,7 @@ export const LogsTab: React.FC = () => {
                   />
                 </th>
                 <th
-                  className="p-4 font-bold cursor-pointer hover:bg-white/5 transition-colors text-right relative group"
+                  className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors text-right relative group"
                   style={{ width: columnWidths.executionTime }}
                   onClick={() => handleSort('executionTime')}
                 >
@@ -190,7 +190,7 @@ export const LogsTab: React.FC = () => {
                 </tr>
               ) : (
                 sortedLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-white/5 transition-colors">
+                  <tr key={log.id} className="hover:bg-accent transition-colors">
                     <td className="p-4 font-mono text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
                       {log.timestamp}
                     </td>

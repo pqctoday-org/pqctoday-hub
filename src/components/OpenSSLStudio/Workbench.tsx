@@ -18,6 +18,7 @@ interface WorkbenchProps {
     | 'x509'
     | 'enc'
     | 'dgst'
+    | 'hash'
     | 'rand'
     | 'version'
     | 'files'
@@ -30,6 +31,7 @@ interface WorkbenchProps {
       | 'x509'
       | 'enc'
       | 'dgst'
+      | 'hash'
       | 'rand'
       | 'version'
       | 'files'
@@ -89,6 +91,12 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
   const [p12KeyFile, setP12KeyFile] = useState('')
   const [p12File, setP12File] = useState('')
   const [p12Pass, setP12Pass] = useState('')
+
+  // Hashing State
+  const [hashAlgo, setHashAlgo] = useState('sha256')
+  const [hashInFile, setHashInFile] = useState('')
+  const [hashOutFile, setHashOutFile] = useState('')
+  const [hashBinary, setHashBinary] = useState(false)
 
   // Auto-select latest signature file when switching to verify or when files change
   useEffect(() => {
@@ -288,6 +296,15 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
       if (encShowIV) cmd += ` -p`
       if (encCustomIV) cmd += ` -iv ${encCustomIV}`
       cmd += ` -in ${inFile} -out ${outFile} -pass pass:${passphrase}`
+    } else if (category === 'hash') {
+      const inFile = hashInFile || 'data.txt'
+      const extension = hashBinary ? 'bin' : 'txt'
+      const defaultOutFile = `${inFile}.${hashAlgo}.${extension}`
+      const outFile = hashOutFile || defaultOutFile
+
+      cmd += ` dgst -${hashAlgo}`
+      if (hashBinary) cmd += ` -binary`
+      cmd += ` -out ${outFile} ${inFile}`
     } else if (category === 'kem') {
       const key = kemKeyFile || (kemAction === 'encap' ? 'public.key' : 'private.key')
 
@@ -349,6 +366,10 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
     p12KeyFile,
     p12File,
     p12Pass,
+    hashAlgo,
+    hashInFile,
+    hashOutFile,
+    hashBinary,
     setCommand,
     manualHashHex,
     useRawIn,
@@ -435,6 +456,14 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
             setManualHashHex={setManualHashHex}
             useRawIn={useRawIn}
             setUseRawIn={setUseRawIn}
+            hashAlgo={hashAlgo}
+            setHashAlgo={setHashAlgo}
+            hashInFile={hashInFile}
+            setHashInFile={setHashInFile}
+            hashOutFile={hashOutFile}
+            setHashOutFile={setHashOutFile}
+            hashBinary={hashBinary}
+            setHashBinary={setHashBinary}
           />
           <WorkbenchPreview category={category} />
         </>

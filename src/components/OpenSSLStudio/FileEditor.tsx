@@ -89,7 +89,7 @@ export const FileEditor = () => {
   return (
     <div className="glass-panel flex flex-col overflow-hidden mb-6 animate-fade-in shrink-0 h-96 border border-primary/30 shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]">
       {/* Header */}
-      <div className="p-3 border-b border-white/10 bg-white/5 flex items-center justify-between">
+      <div className="p-3 border-b border-border bg-muted flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-1.5 rounded bg-primary/20 text-primary">
             <FileText size={16} />
@@ -97,7 +97,7 @@ export const FileEditor = () => {
           <div>
             <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
               {editingFile.name}
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-white/10 text-muted-foreground uppercase">
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground uppercase">
                 {editingFile.type}
               </span>
             </h3>
@@ -107,16 +107,16 @@ export const FileEditor = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleToggleMode}
-            className="px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 bg-white/5 hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors border border-white/5"
+            className="px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 bg-background hover:bg-accent text-muted-foreground hover:text-foreground transition-colors border border-input"
             title={`Switch to ${viewMode === 'ascii' ? 'Hex' : 'ASCII'} mode`}
           >
             <ArrowRightLeft size={12} />
             {viewMode === 'ascii' ? 'ASCII' : 'HEX'}
           </button>
-          <div className="w-px h-4 bg-white/10 mx-1" />
+          <div className="w-px h-4 bg-border mx-1" />
           <button
             onClick={() => setEditingFile(null)}
-            className="p-1.5 hover:bg-white/10 rounded text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground transition-colors"
             title="Close Editor"
           >
             <X size={16} />
@@ -133,7 +133,7 @@ export const FileEditor = () => {
             setError(null)
           }}
           className={clsx(
-            'flex-1 w-full bg-black/40 p-4 font-mono text-sm text-foreground/90 resize-none outline-none focus:bg-black/60 transition-colors custom-scrollbar',
+            'flex-1 w-full bg-background p-4 font-mono text-sm text-foreground/90 resize-none outline-none focus:bg-accent/10 transition-colors custom-scrollbar',
             viewMode === 'hex' && 'tracking-wider'
           )}
           spellCheck={false}
@@ -147,10 +147,10 @@ export const FileEditor = () => {
       </div>
 
       {/* Footer */}
-      <div className="p-3 border-t border-white/10 bg-white/5 flex justify-end gap-2">
+      <div className="p-3 border-t border-border bg-muted flex justify-end gap-2">
         <button
           onClick={() => setEditingFile(null)}
-          className="px-3 py-1.5 rounded hover:bg-white/10 text-foreground transition-colors text-xs font-medium"
+          className="px-3 py-1.5 rounded hover:bg-accent text-foreground transition-colors text-xs font-medium"
         >
           Cancel
         </button>

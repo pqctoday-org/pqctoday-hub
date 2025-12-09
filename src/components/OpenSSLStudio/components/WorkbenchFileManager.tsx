@@ -1,5 +1,15 @@
 import React, { useState } from 'react'
-import { Download, Trash2, Edit2, ArrowUpDown, FileKey, Archive, Upload, Plus } from 'lucide-react'
+import {
+  Download,
+  Trash2,
+  Edit2,
+  ArrowUpDown,
+  FileKey,
+  Archive,
+  Upload,
+  Plus,
+  Eye,
+} from 'lucide-react'
 import clsx from 'clsx'
 import JSZip from 'jszip'
 import { useOpenSSLStore } from '../store'
@@ -7,8 +17,16 @@ import { useOpenSSL } from '../hooks/useOpenSSL'
 import { logEvent } from '../../../utils/analytics'
 
 export const WorkbenchFileManager: React.FC = () => {
-  const { addLog, addFile, files, setEditingFile, removeFile, clearFiles, addStructuredLog } =
-    useOpenSSLStore()
+  const {
+    addLog,
+    addFile,
+    files,
+    setEditingFile,
+    removeFile,
+    clearFiles,
+    addStructuredLog,
+    setViewingFile,
+  } = useOpenSSLStore()
   const { executeCommand } = useOpenSSL()
   const [sortBy, setSortBy] = useState<'timestamp' | 'type' | 'name' | 'size'>('timestamp')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
@@ -142,7 +160,7 @@ export const WorkbenchFileManager: React.FC = () => {
         </span>
         <div className="flex gap-2">
           <button
-            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
+            className="px-3 py-1.5 bg-background hover:bg-accent border border-input rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('add-file-input')?.click()}
           >
             <Plus size={14} /> Add File
@@ -202,7 +220,7 @@ export const WorkbenchFileManager: React.FC = () => {
                 ? 'bg-red-500 text-foreground hover:bg-red-600 border border-red-500'
                 : 'bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20',
               files.length === 0 &&
-                'opacity-50 cursor-not-allowed bg-white/5 border-white/10 text-foreground/20'
+                'opacity-50 cursor-not-allowed bg-muted border-border text-muted-foreground'
             )}
             title="Delete all files"
           >
@@ -217,13 +235,13 @@ export const WorkbenchFileManager: React.FC = () => {
           <button
             onClick={handleBackupAllFiles}
             disabled={files.length === 0}
-            className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 disabled:bg-white/5 disabled:text-foreground/20 border border-primary/40 disabled:border-white/10 rounded text-xs font-medium text-primary disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+            className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 disabled:bg-muted disabled:text-muted-foreground border border-primary/40 disabled:border-border rounded text-xs font-medium text-primary disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             title="Backup all files to ZIP"
           >
             <Archive size={14} /> Backup All
           </button>
           <button
-            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
+            className="px-3 py-1.5 bg-background hover:bg-accent border border-input rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('import-zip-input')?.click()}
           >
             <Upload size={14} /> Import ZIP
@@ -239,19 +257,17 @@ export const WorkbenchFileManager: React.FC = () => {
       </div>
 
       {files.length === 0 ? (
-        <div className="text-center py-12 text-foreground/20 text-sm">
-          No files generated yet.
-          <br />
-          Generate keys, CSRs, or certificates to see them here.
+        <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-lg">
+          <p>No files yet. Generate or import files to get started.</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-white/10">
-          <table className="w-full text-sm">
-            <thead className="bg-white/5 border-b border-white/10">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-muted border-b border-border">
               <tr>
                 <th className="p-0">
                   <button
-                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
+                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-accent transition-colors flex items-center gap-2"
                     onClick={() => {
                       if (sortBy === 'timestamp') {
                         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
@@ -266,7 +282,7 @@ export const WorkbenchFileManager: React.FC = () => {
                 </th>
                 <th className="p-0">
                   <button
-                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
+                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-accent transition-colors flex items-center gap-2"
                     onClick={() => {
                       if (sortBy === 'type') {
                         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
@@ -281,7 +297,7 @@ export const WorkbenchFileManager: React.FC = () => {
                 </th>
                 <th className="p-0">
                   <button
-                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
+                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-accent transition-colors flex items-center gap-2"
                     onClick={() => {
                       if (sortBy === 'name') {
                         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
@@ -296,7 +312,7 @@ export const WorkbenchFileManager: React.FC = () => {
                 </th>
                 <th className="p-0">
                   <button
-                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-white/5 transition-colors flex items-center gap-2"
+                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-accent transition-colors flex items-center gap-2"
                     onClick={() => {
                       if (sortBy === 'size') {
                         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
@@ -333,17 +349,17 @@ export const WorkbenchFileManager: React.FC = () => {
                 .map((file) => (
                   <tr
                     key={file.name}
-                    className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                    className="border-b border-border hover:bg-accent/50 transition-colors"
                   >
                     <td className="p-3 text-foreground/70 font-mono text-xs whitespace-nowrap">
                       {formatCompactDate(file.timestamp)}
                     </td>
-                    <td className="p-3">
+                    <td className="p-2">
                       <span
                         className={clsx(
-                          'px-2 py-1 rounded text-xs font-medium',
+                          'px-2 py-0.5 rounded text-[10px] font-medium',
                           file.type === 'key'
-                            ? 'bg-amber-500/20 text-amber-700 dark:text-amber-200'
+                            ? 'bg-red-500/20 text-red-700 dark:text-red-200'
                             : file.type === 'cert'
                               ? 'bg-blue-500/20 text-blue-700 dark:text-blue-200'
                               : file.type === 'csr'
@@ -354,16 +370,45 @@ export const WorkbenchFileManager: React.FC = () => {
                         {file.type.toUpperCase()}
                       </span>
                     </td>
-                    <td className="p-3 text-foreground font-mono text-sm">{file.name}</td>
-                    <td className="p-3 text-foreground/70 font-mono text-xs">
+                    <td className="p-2 text-foreground font-mono text-sm truncate max-w-[200px]">
+                      {file.name}
+                    </td>
+                    <td className="p-2 text-foreground/70 font-mono text-xs whitespace-nowrap">
                       {formatBytes(file.size)}
                     </td>
-                    <td className="p-3">
+                    <td className="p-2 whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
+                        {(file.name.endsWith('.key') || file.name.endsWith('.pem')) && (
+                          <button
+                            onClick={() => handleExtractPublicKey(file.name)}
+                            className="p-1.5 hover:bg-primary/20 rounded text-muted-foreground hover:text-primary transition-colors"
+                            title="Extract Public Key"
+                          >
+                            <FileKey size={14} />
+                          </button>
+                        )}
                         <button
-                          onClick={() => setEditingFile(file)}
-                          className="p-1.5 hover:bg-white/10 rounded text-muted-foreground hover:text-foreground transition-colors"
-                          title="View/Edit"
+                          onClick={() => {
+                            const content =
+                              typeof file.content === 'string'
+                                ? new TextEncoder().encode(file.content)
+                                : file.content
+                            // console.log('View button clicked:', file.name, 'Setting viewingFile state')
+                            setViewingFile({ ...file, content })
+                            setEditingFile(null) // Close editor if open
+                          }}
+                          className="p-1.5 hover:bg-primary/20 rounded text-muted-foreground hover:text-primary transition-colors"
+                          title="View"
+                        >
+                          <Eye size={14} />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setEditingFile(file)
+                            setViewingFile(null) // Close viewer if open
+                          }}
+                          className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground transition-colors"
+                          title="Edit"
                         >
                           <Edit2 size={14} />
                         </button>
@@ -385,20 +430,11 @@ export const WorkbenchFileManager: React.FC = () => {
                             URL.revokeObjectURL(url)
                             logEvent('OpenSSL Studio', 'Download File', file.type)
                           }}
-                          className="p-1.5 hover:bg-white/10 rounded text-muted-foreground hover:text-foreground transition-colors"
+                          className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground transition-colors"
                           title="Download"
                         >
                           <Download size={14} />
                         </button>
-                        {(file.name.endsWith('.key') || file.name.endsWith('.pem')) && (
-                          <button
-                            onClick={() => handleExtractPublicKey(file.name)}
-                            className="p-1.5 hover:bg-primary/20 rounded text-muted-foreground hover:text-primary transition-colors"
-                            title="Extract Public Key"
-                          >
-                            <FileKey size={14} />
-                          </button>
-                        )}
                         <button
                           onClick={() => {
                             removeFile(file.name)

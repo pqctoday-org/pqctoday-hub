@@ -9,6 +9,7 @@ import {
   FileText,
   ShieldCheck,
   AlertCircle,
+  Hash,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { PlaygroundProvider } from './PlaygroundProvider'
@@ -19,6 +20,7 @@ import { SettingsTab } from './tabs/SettingsTab'
 import { DataTab } from './tabs/DataTab'
 import { KemOpsTab } from './tabs/KemOpsTab'
 import { SymmetricTab } from './tabs/SymmetricTab'
+import { HashingTab } from './tabs/HashingTab'
 import { SignVerifyTab } from './tabs/SignVerifyTab'
 import { KeyStoreTab } from './tabs/KeyStoreTab'
 import { LogsTab } from './tabs/LogsTab'
@@ -60,7 +62,7 @@ const PlaygroundContent = () => {
           Interactive Playground
         </h3>
         {lastLogEntry && (
-          <div className="flex items-center gap-4 text-xs font-mono bg-black/20 px-3 py-1.5 rounded-lg border border-white/5 animate-fade-in">
+          <div className="flex items-center gap-4 text-xs font-mono bg-muted px-3 py-1.5 rounded-lg border border-border animate-fade-in">
             <span className="text-muted-foreground">{lastLogEntry.operation}</span>
             <span className="text-foreground/50">|</span>
             <span className="text-accent max-w-[200px] truncate" title={lastLogEntry.result}>
@@ -84,7 +86,7 @@ const PlaygroundContent = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex space-x-1 mb-6 bg-white/5 p-1 rounded-xl shrink-0 overflow-x-auto scrollbar-hide -mx-2 px-2 sm:mx-0 sm:px-1">
+      <div className="flex space-x-1 mb-6 bg-muted p-1 rounded-xl shrink-0 overflow-x-auto scrollbar-hide -mx-2 px-2 sm:mx-0 sm:px-1">
         <Button
           onClick={() => handleTabChange('keystore')}
           variant="ghost"
@@ -93,7 +95,7 @@ const PlaygroundContent = () => {
             'whitespace-nowrap',
             activeTab === 'keystore'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
           <KeyIcon size={16} className="mr-2" /> Key Store ({keyStore.length})
@@ -106,7 +108,7 @@ const PlaygroundContent = () => {
             'whitespace-nowrap',
             activeTab === 'data'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
           <Database size={16} className="mr-2" /> Data
@@ -119,7 +121,7 @@ const PlaygroundContent = () => {
             'whitespace-nowrap',
             activeTab === 'kem_ops'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
           <Activity size={16} className="mr-2" /> KEM & Encrypt
@@ -132,10 +134,23 @@ const PlaygroundContent = () => {
             'whitespace-nowrap',
             activeTab === 'symmetric'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
           <Lock size={16} className="mr-2" /> Sym Encrypt
+        </Button>
+        <Button
+          onClick={() => handleTabChange('hashing')}
+          variant="ghost"
+          size="sm"
+          className={clsx(
+            'whitespace-nowrap',
+            activeTab === 'hashing'
+              ? 'bg-primary/20 text-primary shadow-sm'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+          )}
+        >
+          <Hash size={16} className="mr-2" /> Hashing
         </Button>
         <Button
           onClick={() => handleTabChange('sign_verify')}
@@ -145,7 +160,7 @@ const PlaygroundContent = () => {
             'whitespace-nowrap',
             activeTab === 'sign_verify'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
           <FileSignature size={16} className="mr-2" /> Sign & Verify
@@ -158,7 +173,7 @@ const PlaygroundContent = () => {
             'whitespace-nowrap',
             activeTab === 'acvp'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
           <ShieldCheck size={16} className="mr-2" /> ACVP
@@ -171,7 +186,7 @@ const PlaygroundContent = () => {
             'whitespace-nowrap',
             activeTab === 'settings'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
           <Settings size={16} className="mr-2" /> Settings
@@ -184,7 +199,7 @@ const PlaygroundContent = () => {
             'whitespace-nowrap',
             activeTab === 'logs'
               ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
           <FileText size={16} className="mr-2" /> Logs
@@ -192,11 +207,12 @@ const PlaygroundContent = () => {
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-white/5 rounded-xl border border-white/10 p-6 relative">
+      <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-6 relative">
         {activeTab === 'settings' && <SettingsTab />}
         {activeTab === 'data' && <DataTab />}
         {activeTab === 'kem_ops' && <KemOpsTab />}
         {activeTab === 'symmetric' && <SymmetricTab />}
+        {activeTab === 'hashing' && <HashingTab />}
         {activeTab === 'sign_verify' && <SignVerifyTab />}
         {activeTab === 'keystore' && <KeyStoreTab />}
         {activeTab === 'logs' && <LogsTab />}

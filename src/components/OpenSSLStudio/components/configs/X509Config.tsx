@@ -46,7 +46,7 @@ export const X509Config: React.FC<X509ConfigProps> = ({
           id="x509-key-select"
           value={selectedCsrKeyFile}
           onChange={(e) => setSelectedCsrKeyFile(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="">Select Private Key...</option>
           {files
@@ -68,7 +68,7 @@ export const X509Config: React.FC<X509ConfigProps> = ({
           type="number"
           value={certDays}
           onChange={(e) => setCertDays(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           min="1"
         />
       </div>
@@ -81,7 +81,7 @@ export const X509Config: React.FC<X509ConfigProps> = ({
           id="x509-digest-select"
           value={digestAlgo}
           onChange={(e) => setDigestAlgo(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="sha256">SHA-256</option>
           <option value="sha384">SHA-384</option>
@@ -98,7 +98,7 @@ export const X509Config: React.FC<X509ConfigProps> = ({
           type="text"
           value={commonName}
           onChange={(e) => setCommonName(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="example.com"
         />
       </div>
@@ -112,7 +112,7 @@ export const X509Config: React.FC<X509ConfigProps> = ({
           type="text"
           value={org}
           onChange={(e) => setOrg(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="My Organization"
         />
       </div>
@@ -126,7 +126,7 @@ export const X509Config: React.FC<X509ConfigProps> = ({
           type="text"
           value={country}
           onChange={(e) => setCountry(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="US"
           maxLength={2}
         />

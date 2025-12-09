@@ -46,7 +46,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
 
       <div className="space-y-3">
         <span className="text-xs text-muted-foreground block">Action</span>
-        <div className="flex bg-black/40 rounded-lg p-1 border border-white/20">
+        <div className="flex bg-background rounded-lg p-1 border border-input">
           <button
             onClick={() => setSignAction('sign')}
             className={clsx(
@@ -80,7 +80,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
           id="hash-select"
           value={sigHashAlgo}
           onChange={(e) => setSigHashAlgo(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="sha256">SHA-256</option>
           <option value="sha384">SHA-384</option>
@@ -93,7 +93,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
       </div>
 
       {sigHashAlgo === 'raw' && (
-        <div className="space-y-3 animate-fade-in border-l-2 border-primary/50 pl-3">
+        <div className="space-y-3 pt-2 border-t border-border">
           <span className="text-xs font-bold text-primary block">Raw Input Options</span>
 
           <div className="space-y-1">
@@ -104,7 +104,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
               id="manual-hash"
               value={manualHashHex}
               onChange={(e) => setManualHashHex(e.target.value)}
-              className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm font-mono text-foreground outline-none focus:border-primary resize-none h-20"
+              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm font-mono text-foreground outline-none focus:border-primary resize-none h-20"
               placeholder="e.g. 0x1234..."
             />
           </div>
@@ -115,7 +115,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
               type="checkbox"
               checked={useRawIn}
               onChange={(e) => setUseRawIn(e.target.checked)}
-              className="rounded border-white/20 bg-black/40 text-primary focus:ring-primary"
+              className="w-4 h-4 rounded border-input bg-background text-primary focus:ring-0 focus:ring-offset-0"
             />
             <label
               htmlFor="use-rawin"
@@ -153,7 +153,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
           id="key-select"
           value={selectedKeyFile}
           onChange={(e) => setSelectedKeyFile(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="">
             {signAction === 'sign' ? 'Select Private Key...' : 'Select Public/Private Key...'}
@@ -179,7 +179,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
             id="data-select"
             value={selectedDataFile}
             onChange={(e) => setSelectedDataFile(e.target.value)}
-            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           >
             <option value="">Select Data File...</option>
             {files.map((f) => (
@@ -201,7 +201,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
             type="text"
             value={selectedSigFile}
             onChange={(e) => setSelectedSigFile(e.target.value)}
-            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
             placeholder="signature.sig"
           />
         ) : (
@@ -209,7 +209,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
             id="sig-file-input"
             value={selectedSigFile}
             onChange={(e) => setSelectedSigFile(e.target.value)}
-            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           >
             <option value="">Select Signature File...</option>
             {files

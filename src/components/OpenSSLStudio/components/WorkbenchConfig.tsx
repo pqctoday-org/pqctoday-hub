@@ -2,6 +2,7 @@ import React from 'react'
 import { GenPkeyConfig } from './configs/GenPkeyConfig'
 import { RandConfig } from './configs/RandConfig'
 import { EncConfig } from './configs/EncConfig'
+import { HashConfig } from './configs/HashConfig'
 import { KemConfig } from './configs/KemConfig'
 import { Pkcs12Config } from './configs/Pkcs12Config'
 import { ReqConfig } from './configs/ReqConfig'
@@ -82,6 +83,15 @@ interface WorkbenchConfigProps {
   setManualHashHex: (value: string) => void
   useRawIn: boolean
   setUseRawIn: (value: boolean) => void
+  // Hashing Options
+  hashAlgo: string
+  setHashAlgo: (value: string) => void
+  hashInFile: string
+  setHashInFile: (value: string) => void
+  hashOutFile: string
+  setHashOutFile: (value: string) => void
+  hashBinary: boolean
+  setHashBinary: (value: boolean) => void
 }
 
 export const WorkbenchConfig: React.FC<WorkbenchConfigProps> = (props) => {
@@ -208,6 +218,19 @@ export const WorkbenchConfig: React.FC<WorkbenchConfigProps> = (props) => {
           setManualHashHex={props.setManualHashHex}
           useRawIn={props.useRawIn}
           setUseRawIn={props.setUseRawIn}
+        />
+      )
+    case 'hash':
+      return (
+        <HashConfig
+          hashAlgo={props.hashAlgo}
+          setHashAlgo={props.setHashAlgo}
+          hashInFile={props.hashInFile}
+          setHashInFile={props.setHashInFile}
+          hashOutFile={props.hashOutFile}
+          setHashOutFile={props.setHashOutFile}
+          hashBinary={props.hashBinary}
+          setHashBinary={props.setHashBinary}
         />
       )
     case 'version':

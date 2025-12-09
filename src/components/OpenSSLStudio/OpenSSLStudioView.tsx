@@ -3,6 +3,7 @@ import { Workbench } from './Workbench'
 import { WorkbenchFileManager } from './components/WorkbenchFileManager'
 import { TerminalOutput } from './TerminalOutput'
 import { FileEditor } from './FileEditor'
+import { FileViewer } from './components/FileViewer'
 import { Terminal, ChevronDown, ChevronUp, FileText } from 'lucide-react'
 import { LogsTab } from './LogsTab'
 
@@ -11,7 +12,17 @@ import { useOpenSSLStore } from './store'
 export const OpenSSLStudioView = () => {
   const [showTerminal, setShowTerminal] = useState(true)
   const [category, setCategory] = useState<
-    'genpkey' | 'req' | 'x509' | 'enc' | 'dgst' | 'rand' | 'version' | 'files' | 'kem' | 'pkcs12'
+    | 'genpkey'
+    | 'req'
+    | 'x509'
+    | 'enc'
+    | 'dgst'
+    | 'hash'
+    | 'rand'
+    | 'version'
+    | 'files'
+    | 'kem'
+    | 'pkcs12'
   >('genpkey')
   const { editingFile, activeTab } = useOpenSSLStore()
 
@@ -30,7 +41,7 @@ export const OpenSSLStudioView = () => {
       <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
         {/* Left Pane: Workbench (Command Builder & Preview) */}
         <div className="col-span-12 lg:col-span-4 glass-panel flex flex-col overflow-hidden">
-          <div className="p-4 border-b border-white/10 bg-white/5">
+          <div className="p-4 border-b border-border bg-muted">
             <h3 className="font-bold text-foreground flex items-center gap-2">Workbench</h3>
           </div>
           <div className="flex-1 overflow-y-auto custom-scrollbar">
@@ -48,9 +59,12 @@ export const OpenSSLStudioView = () => {
           {/* File Editor Section (Only visible when editing) */}
           <FileEditor key={editingFile?.name} />
 
+          {/* File Viewer Section (Only visible when viewing) */}
+          <FileViewer />
+
           <div className={showTerminal ? 'flex-1 min-h-0' : 'shrink-0'}>
             <div className="glass-panel h-full flex flex-col overflow-hidden">
-              <div className="p-4 border-b border-white/10 bg-white/5 flex items-center justify-between">
+              <div className="p-4 border-b border-border bg-muted flex items-center justify-between">
                 <h3 className="font-bold text-foreground flex items-center gap-2">
                   {activeTab === 'terminal' ? (
                     <>
@@ -66,7 +80,7 @@ export const OpenSSLStudioView = () => {
                 </h3>
                 <button
                   onClick={() => setShowTerminal(!showTerminal)}
-                  className="p-1.5 hover:bg-white/10 rounded text-muted-foreground hover:text-foreground transition-colors"
+                  className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground transition-colors"
                   title={showTerminal ? 'Hide Panel' : 'Show Panel'}
                 >
                   {showTerminal ? <ChevronDown size={16} /> : <ChevronUp size={16} />}

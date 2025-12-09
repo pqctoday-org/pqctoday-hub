@@ -42,7 +42,7 @@ export const ReqConfig: React.FC<ReqConfigProps> = ({
           id="csr-key-select"
           value={selectedCsrKeyFile}
           onChange={(e) => setSelectedCsrKeyFile(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="">Select Private Key...</option>
           {files
@@ -63,7 +63,7 @@ export const ReqConfig: React.FC<ReqConfigProps> = ({
           id="csr-digest-select"
           value={digestAlgo}
           onChange={(e) => setDigestAlgo(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="sha256">SHA-256</option>
           <option value="sha384">SHA-384</option>
@@ -80,7 +80,7 @@ export const ReqConfig: React.FC<ReqConfigProps> = ({
           type="text"
           value={commonName}
           onChange={(e) => setCommonName(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="example.com"
         />
       </div>
@@ -94,7 +94,7 @@ export const ReqConfig: React.FC<ReqConfigProps> = ({
           type="text"
           value={org}
           onChange={(e) => setOrg(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="My Organization"
         />
       </div>
@@ -108,7 +108,7 @@ export const ReqConfig: React.FC<ReqConfigProps> = ({
           type="text"
           value={country}
           onChange={(e) => setCountry(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder="US"
           maxLength={2}
         />

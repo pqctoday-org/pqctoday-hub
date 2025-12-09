@@ -19,7 +19,7 @@ export const SettingsTab: React.FC = () => {
   return (
     <div className="space-y-8 max-w-2xl mx-auto animate-fade-in">
       <div className="space-y-4 hidden">
-        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-white/10 pb-2">
+        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2">
           <Cpu size={18} className="text-accent" /> Execution Mode
         </h4>
         <div className="grid grid-cols-2 gap-4">
@@ -28,8 +28,8 @@ export const SettingsTab: React.FC = () => {
             className={clsx(
               'p-4 rounded-xl border transition-all text-left group',
               executionMode === 'mock'
-                ? 'bg-white/10 border-primary/50 ring-1 ring-primary/50'
-                : 'bg-black/20 border-white/10 hover:border-white/30'
+                ? 'bg-accent border-primary/50 ring-1 ring-primary/50'
+                : 'bg-card border-border hover:border-foreground/20'
             )}
           >
             <div className="font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
@@ -45,7 +45,7 @@ export const SettingsTab: React.FC = () => {
               'p-4 rounded-xl border transition-all text-left group relative overflow-hidden',
               executionMode === 'wasm'
                 ? 'bg-primary/10 border-primary/50 ring-1 ring-primary/50'
-                : 'bg-black/20 border-white/10 hover:border-white/30'
+                : 'bg-card border-border hover:border-foreground/20'
             )}
           >
             <div className="font-bold text-foreground mb-1 group-hover:text-primary transition-colors flex items-center gap-2">
@@ -63,13 +63,13 @@ export const SettingsTab: React.FC = () => {
 
       {/* Algorithm Configuration */}
       <div className="space-y-4">
-        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-white/10 pb-2">
+        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2">
           <Settings size={18} className="text-primary" /> Algorithm Configuration
         </h4>
 
         <div className="space-y-6">
           {/* KEM Algorithms */}
-          <div className="bg-black/20 rounded-xl border border-white/10 p-4">
+          <div className="bg-card rounded-xl border border-border p-4">
             <h5 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               <Lock size={14} className="text-primary" />
               KEM Algorithms
@@ -89,7 +89,7 @@ export const SettingsTab: React.FC = () => {
                         'flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all border text-left',
                         enabledAlgorithms.kem[algo as keyof typeof enabledAlgorithms.kem]
                           ? 'bg-primary/10 border-primary/30 text-foreground'
-                          : 'bg-black/20 border-white/10 text-muted-foreground hover:bg-white/5'
+                          : 'bg-muted border-border text-muted-foreground hover:bg-accent'
                       )}
                     >
                       {enabledAlgorithms.kem[algo as keyof typeof enabledAlgorithms.kem] ? (
@@ -109,7 +109,7 @@ export const SettingsTab: React.FC = () => {
               </div>
 
               {/* Classical KEM */}
-              <div className="space-y-1.5 pt-3 border-t border-white/5">
+              <div className="space-y-1.5 pt-3 border-t border-border">
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Classical
                 </div>
@@ -125,7 +125,7 @@ export const SettingsTab: React.FC = () => {
                         'flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all border text-left',
                         enabledAlgorithms.kem[algo.name as keyof typeof enabledAlgorithms.kem]
                           ? 'bg-primary/10 border-primary/30 text-foreground'
-                          : 'bg-black/20 border-white/10 text-muted-foreground hover:bg-white/5'
+                          : 'bg-muted border-border text-muted-foreground hover:bg-accent'
                       )}
                     >
                       {enabledAlgorithms.kem[algo.name as keyof typeof enabledAlgorithms.kem] ? (
@@ -143,7 +143,7 @@ export const SettingsTab: React.FC = () => {
           </div>
 
           {/* Signature Algorithms */}
-          <div className="bg-black/20 rounded-xl border border-white/10 p-4">
+          <div className="bg-card rounded-xl border border-border p-4">
             <h5 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               <FileSignature size={14} className="text-secondary" />
               Signature Algorithms
@@ -165,7 +165,7 @@ export const SettingsTab: React.FC = () => {
                           algo as keyof typeof enabledAlgorithms.signature
                         ]
                           ? 'bg-secondary/10 border-secondary/30 text-foreground'
-                          : 'bg-black/20 border-white/10 text-muted-foreground hover:bg-white/5'
+                          : 'bg-muted border-border text-muted-foreground hover:bg-accent'
                       )}
                     >
                       {enabledAlgorithms.signature[
@@ -187,7 +187,7 @@ export const SettingsTab: React.FC = () => {
               </div>
 
               {/* Classical Signatures */}
-              <div className="space-y-1.5 pt-3 border-t border-white/5">
+              <div className="space-y-1.5 pt-3 border-t border-border">
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Classical
                 </div>
@@ -208,7 +208,7 @@ export const SettingsTab: React.FC = () => {
                           algo.name as keyof typeof enabledAlgorithms.signature
                         ]
                           ? 'bg-secondary/10 border-secondary/30 text-foreground'
-                          : 'bg-black/20 border-white/10 text-muted-foreground hover:bg-white/5'
+                          : 'bg-muted border-border text-muted-foreground hover:bg-accent'
                       )}
                     >
                       {enabledAlgorithms.signature[
@@ -228,7 +228,7 @@ export const SettingsTab: React.FC = () => {
           </div>
 
           {/* Symmetric Encryption */}
-          <div className="bg-black/20 rounded-xl border border-white/10 p-4">
+          <div className="bg-card rounded-xl border border-border p-4">
             <h5 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               <Lock size={14} className="text-accent" />
               Symmetric Encryption
@@ -247,7 +247,7 @@ export const SettingsTab: React.FC = () => {
                       algo.name as keyof typeof enabledAlgorithms.symmetric
                     ]
                       ? 'bg-accent/10 border-accent/30 text-foreground'
-                      : 'bg-black/20 border-white/10 text-muted-foreground hover:bg-white/5'
+                      : 'bg-muted border-border text-muted-foreground hover:bg-accent'
                   )}
                 >
                   {enabledAlgorithms.symmetric[
@@ -265,7 +265,7 @@ export const SettingsTab: React.FC = () => {
           </div>
 
           {/* Hash Algorithms */}
-          <div className="bg-black/20 rounded-xl border border-white/10 p-4">
+          <div className="bg-card rounded-xl border border-border p-4">
             <h5 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               <Hash size={14} className="text-primary" />
               Hash Algorithms
@@ -283,7 +283,7 @@ export const SettingsTab: React.FC = () => {
                     'flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all border text-left',
                     enabledAlgorithms.hash[algo.name as keyof typeof enabledAlgorithms.hash]
                       ? 'bg-primary/10 border-primary/30 text-foreground'
-                      : 'bg-black/20 border-white/10 text-muted-foreground hover:bg-white/5'
+                      : 'bg-muted border-border text-muted-foreground hover:bg-accent'
                   )}
                 >
                   {enabledAlgorithms.hash[algo.name as keyof typeof enabledAlgorithms.hash] ? (

@@ -51,6 +51,7 @@ export interface SettingsContextType {
     | 'logs'
     | 'acvp'
     | 'symmetric'
+    | 'hashing'
   setActiveTab: (
     tab:
       | 'settings'
@@ -61,6 +62,7 @@ export interface SettingsContextType {
       | 'logs'
       | 'acvp'
       | 'symmetric'
+      | 'hashing'
   ) => void
   loading: boolean
   setLoading: (loading: boolean) => void
@@ -119,6 +121,14 @@ export interface OperationsContextType {
   symOutput: string
   setSymOutput: (val: string) => void
 
+  // Hashing State
+  selectedHashMethod: string
+  setSelectedHashMethod: (method: string) => void
+  hashInput: string
+  setHashInput: (val: string) => void
+  hashOutput: string
+  setHashOutput: (val: string) => void
+
   // Actions
   runOperation: (
     type:
@@ -130,6 +140,7 @@ export interface OperationsContextType {
       | 'decrypt'
       | 'symEncrypt'
       | 'symDecrypt'
+      | 'hash'
   ) => Promise<void>
   clearOperations: () => void
 }

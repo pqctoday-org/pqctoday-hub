@@ -36,7 +36,15 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const resizeStartX = useRef<number>(0)
   const resizeStartWidth = useRef<number>(0)
   const [activeTab, setActiveTab] = useState<
-    'settings' | 'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'acvp' | 'symmetric'
+    | 'settings'
+    | 'data'
+    | 'kem_ops'
+    | 'sign_verify'
+    | 'keystore'
+    | 'logs'
+    | 'acvp'
+    | 'symmetric'
+    | 'hashing'
   >('keystore')
   const [classicalAlgorithm, setClassicalAlgorithm] = useState<ClassicalAlgorithm>('RSA-2048')
   const [enabledAlgorithms, setEnabledAlgorithms] = useState(() => {

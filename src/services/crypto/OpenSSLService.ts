@@ -37,13 +37,9 @@ class OpenSSLService {
       }, this.INIT_TIMEOUT)
 
       try {
-        // We need to use the same worker path as the Studio
-        this.worker = new Worker(
-          new URL('../../components/OpenSSLStudio/worker/openssl.worker.ts', import.meta.url),
-          {
-            type: 'classic',
-          }
-        )
+        // Use absolute path to the static worker file in public/wasm/
+        // This bypasses path resolution issues and works on all routes
+        this.worker = new Worker('/wasm/openssl-worker.js')
 
         this.worker.onmessage = (event) => {
           // If we get an error during init (before ready), reject
@@ -56,10 +52,13 @@ class OpenSSLService {
           this.handleMessage(event)
         }
 
-        this.worker.onerror = (error) => {
+        this.worker.onerror = (error: unknown) => {
           clearTimeout(timeoutId)
           this.resetState()
-          reject(error)
+          // Extract meaningful message
+          const msg = (error as Error)?.message || String(error)
+          console.error('OpenSSL Worker Error:', msg, error)
+          reject(new Error(msg))
         }
 
         // Initialize the worker

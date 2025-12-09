@@ -5,6 +5,8 @@ import { ArrowLeft } from 'lucide-react'
 
 import { PKIWorkshop } from './modules/PKIWorkshop'
 import { DigitalAssetsModule } from './modules/DigitalAssets'
+import { FiveGModule } from './modules/FiveG'
+import { DigitalIDModule } from './modules/DigitalID'
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -27,6 +29,8 @@ export const PKILearningView: React.FC = () => {
         <Route index element={<Dashboard />} />
         <Route path="pki-workshop" element={<PKIWorkshop />} />
         <Route path="digital-assets" element={<DigitalAssetsModule />} />
+        <Route path="5g-security" element={<FiveGModule />} />
+        <Route path="digital-id" element={<DigitalIDModule />} />
       </Routes>
     </div>
   )

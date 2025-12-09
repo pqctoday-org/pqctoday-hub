@@ -18,7 +18,7 @@ export const DataTab: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
-      <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
+      <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
         <Database size={18} className="text-accent" /> Data Management
       </h4>
 
@@ -65,7 +65,7 @@ export const DataTab: React.FC = () => {
       </div>
 
       {/* Shared Secret */}
-      <div className="mt-8 pt-6 border-t border-white/10">
+      <div className="mt-8 pt-6 border-t border-border">
         <h5 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
           <KeyIcon size={14} /> Shared Secret (ML-KEM)
         </h5>

@@ -33,7 +33,7 @@ export const KemConfig: React.FC<KemConfigProps> = ({
 
       <div className="space-y-3">
         <span className="text-xs text-muted-foreground block">Action</span>
-        <div className="flex bg-black/40 rounded-lg p-1 border border-white/20">
+        <div className="flex bg-background rounded-lg p-1 border border-input">
           <button
             onClick={() => setKemAction('encap')}
             className={clsx(
@@ -67,7 +67,7 @@ export const KemConfig: React.FC<KemConfigProps> = ({
           id="kem-key-select"
           value={kemKeyFile}
           onChange={(e) => setKemKeyFile(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="">
             {kemAction === 'encap' ? 'Select Public Key...' : 'Select Private Key...'}
@@ -93,7 +93,7 @@ export const KemConfig: React.FC<KemConfigProps> = ({
             id="kem-infile-select"
             value={kemInFile}
             onChange={(e) => setKemInFile(e.target.value)}
-            className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           >
             <option value="">Select Ciphertext...</option>
             {files.map((f) => (
@@ -114,7 +114,7 @@ export const KemConfig: React.FC<KemConfigProps> = ({
           type="text"
           value={kemOutFile}
           onChange={(e) => setKemOutFile(e.target.value)}
-          className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           placeholder={kemAction === 'encap' ? 'ciphertext.bin' : 'secret.bin'}
         />
       </div>

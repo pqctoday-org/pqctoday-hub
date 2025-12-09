@@ -1,5 +1,15 @@
 import React from 'react'
-import { Key, FileText, Shield, Settings, Lock, Database, FileArchive, Info } from 'lucide-react'
+import {
+  Key,
+  FileText,
+  Shield,
+  Settings,
+  Lock,
+  Database,
+  FileArchive,
+  Info,
+  Hash,
+} from 'lucide-react'
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../store'
 import { logEvent } from '../../../utils/analytics'
@@ -10,6 +20,7 @@ export type WorkbenchCategory =
   | 'x509'
   | 'enc'
   | 'dgst'
+  | 'hash'
   | 'rand'
   | 'version'
   | 'files'
@@ -42,7 +53,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
             category === 'genpkey'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
           )}
         >
           <Key size={16} /> Key Generation
@@ -54,7 +65,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
             category === 'req'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
           )}
         >
           <FileText size={16} /> CSR (Request)
@@ -65,7 +76,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
             category === 'x509'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
           )}
         >
           <Shield size={16} /> Certificate
@@ -76,7 +87,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
             category === 'dgst'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
           )}
         >
           <Settings size={16} /> Sign / Verify
@@ -87,7 +98,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
             category === 'rand'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
           )}
         >
           <Shield size={16} /> Random Data
@@ -98,10 +109,21 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
             category === 'enc'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
           )}
         >
           <Lock size={16} /> Encryption
+        </button>
+        <button
+          onClick={() => handleCategoryChange('hash', 'Hashing')}
+          className={clsx(
+            'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
+            category === 'hash'
+              ? 'bg-primary/20 border-primary/40 text-primary'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+          )}
+        >
+          <Hash size={16} /> Hashing
         </button>
         <button
           onClick={() => handleCategoryChange('kem', 'KEM')}
@@ -109,7 +131,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
             category === 'kem'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
           )}
         >
           <Database size={16} /> Key Encap (KEM)
@@ -120,7 +142,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
             category === 'pkcs12'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
           )}
         >
           <FileArchive size={16} /> PKCS#12 Bundle
@@ -131,7 +153,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
             category === 'version'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
           )}
         >
           <Info size={16} /> Version Info
@@ -145,7 +167,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
             activeTab === 'logs'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-white/5 border-white/10 hover:bg-white/10 text-muted-foreground'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
           )}
         >
           <FileText size={16} /> Operation Logs

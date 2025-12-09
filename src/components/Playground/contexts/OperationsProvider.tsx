@@ -5,6 +5,7 @@ import { useKeyStoreContext } from './KeyStoreContext'
 import { useKemOperations } from '../hooks/useKemOperations'
 import { useDsaOperations } from '../hooks/useDsaOperations'
 import { useSymmetricOperations } from '../hooks/useSymmetricOperations'
+import { useHashingOperations } from '../hooks/useHashingOperations'
 
 export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { executionMode, wasmLoaded, keySize, addLog, setLoading, setError } = useSettingsContext()
@@ -30,6 +31,9 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [decryptedData, setDecryptedData] = useState('')
   const [symData, setSymData] = useState('48656c6c6f2053796d6d657472696320576f726c64')
   const [symOutput, setSymOutput] = useState('')
+  const [selectedHashMethod, setSelectedHashMethod] = useState('SHA-256')
+  const [hashInput, setHashInput] = useState('Hello Hashing World!')
+  const [hashOutput, setHashOutput] = useState('')
 
   const { runKemOperation } = useKemOperations({
     keyStore,
@@ -81,6 +85,8 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setError,
   })
 
+  const { hashData } = useHashingOperations()
+
   const runOperation = async (
     type:
       | 'encapsulate'
@@ -91,11 +97,40 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       | 'decrypt'
       | 'symEncrypt'
       | 'symDecrypt'
+      | 'hash'
   ) => {
     if (type === 'encapsulate' || type === 'decapsulate') {
       await runKemOperation(type)
     } else if (type === 'sign' || type === 'verify') {
       await runDsaOperation(type)
+    } else if (type === 'hash') {
+      // Run hashing operation
+      const startTime = performance.now()
+      setLoading(true)
+      setError(null)
+
+      try {
+        const result = hashData(selectedHashMethod, hashInput, 'ascii')
+        setHashOutput(result)
+        const executionTime = performance.now() - startTime
+        addLog({
+          keyLabel: selectedHashMethod,
+          operation: 'Hash',
+          result: `${result.slice(0, 32)}...`,
+          executionTime,
+        })
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : 'Hashing failed'
+        setError(errorMsg)
+        addLog({
+          keyLabel: selectedHashMethod,
+          operation: 'Hash',
+          result: `Error: ${errorMsg}`,
+          executionTime: performance.now() - startTime,
+        })
+      } finally {
+        setLoading(false)
+      }
     } else {
       await runSymmetricOperation(type)
     }
@@ -110,6 +145,7 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setVerificationResult(null)
     setKemDecapsulationResult(null)
     setSymOutput('')
+    setHashOutput('')
     addLog({
       keyLabel: 'System',
       operation: 'Clear Operations',
@@ -143,6 +179,12 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setSymData,
         symOutput,
         setSymOutput,
+        selectedHashMethod,
+        setSelectedHashMethod,
+        hashInput,
+        setHashInput,
+        hashOutput,
+        setHashOutput,
         runOperation,
         clearOperations,
       }}

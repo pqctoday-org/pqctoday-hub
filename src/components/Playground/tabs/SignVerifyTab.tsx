@@ -47,12 +47,12 @@ const EditableDataDisplay: React.FC<{
   }
 
   return (
-    <div className="mb-4 p-3 bg-muted/40 rounded border border-white/10 text-xs space-y-1 animate-fade-in focus-within:border-primary/50 transition-colors">
+    <div className="mb-4 p-3 bg-muted/40 rounded border border-border text-xs space-y-1 animate-fade-in focus-within:border-primary/50 transition-colors">
       <div className="flex justify-between items-center mb-2">
         <span className="text-muted-foreground font-bold uppercase tracking-wider">{label}</span>
         <button
           onClick={() => setViewMode((prev) => (prev === 'hex' ? 'ascii' : 'hex'))}
-          className="text-[10px] flex items-center gap-1 bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition-colors text-primary"
+          className="text-[10px] flex items-center gap-1 bg-muted hover:bg-accent px-2 py-1 rounded transition-colors text-primary"
         >
           {viewMode === 'hex' ? 'HEX' : 'ASCII'}
         </button>
@@ -122,12 +122,12 @@ export const SignVerifyTab: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto animate-fade-in space-y-8">
       <div>
-        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-white/10 pb-2 mb-6">
+        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
           <FileSignature size={18} className="text-accent" /> Digital Signatures
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Sign */}
-          <div className="p-6 bg-card rounded-xl border border-white/5 hover:border-success/30 transition-colors group flex flex-col">
+          <div className="p-6 bg-card rounded-xl border border-border hover:border-success/30 transition-colors group flex flex-col">
             <div className="text-sm text-success mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <FileSignature size={16} /> Sign Message
             </div>
@@ -135,7 +135,7 @@ export const SignVerifyTab: React.FC = () => {
             <select
               value={selectedSignKeyId}
               onChange={(e) => setSelectedSignKeyId(e.target.value)}
-              className="w-full mb-4 bg-muted/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-success"
+              className="w-full mb-4 bg-background border border-input rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-success"
             >
               <option value="">Select Private Key...</option>
               {signPrivateKeys.map((k) => (
@@ -167,7 +167,7 @@ export const SignVerifyTab: React.FC = () => {
                 }
 
                 return (
-                  <div className="mb-4 p-3 bg-white/5 rounded border border-white/10 text-xs text-muted-foreground space-y-1">
+                  <div className="mb-4 p-3 bg-muted rounded border border-border text-xs text-muted-foreground space-y-1">
                     <div className="flex justify-between">
                       <span>Algorithm:</span>
                       <span className="text-foreground font-mono">{key.algorithm}</span>
@@ -213,7 +213,7 @@ export const SignVerifyTab: React.FC = () => {
           </div>
 
           {/* Verify */}
-          <div className="p-6 bg-card rounded-xl border border-white/5 hover:border-warning/30 transition-colors group flex flex-col">
+          <div className="p-6 bg-card rounded-xl border border-border hover:border-warning/30 transition-colors group flex flex-col">
             <div className="text-sm text-warning mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <FileSignature size={16} /> Verify Signature
             </div>
@@ -221,7 +221,7 @@ export const SignVerifyTab: React.FC = () => {
             <select
               value={selectedVerifyKeyId}
               onChange={(e) => setSelectedVerifyKeyId(e.target.value)}
-              className="w-full mb-4 bg-muted/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-warning"
+              className="w-full mb-4 bg-background border border-input rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-warning"
             >
               <option value="">Select Public Key...</option>
               {signPublicKeys.map((k) => (
@@ -253,7 +253,7 @@ export const SignVerifyTab: React.FC = () => {
                 }
 
                 return (
-                  <div className="mb-4 p-3 bg-white/5 rounded border border-white/10 text-xs text-muted-foreground space-y-1">
+                  <div className="mb-4 p-3 bg-muted rounded border border-border text-xs text-muted-foreground space-y-1">
                     <div className="flex justify-between">
                       <span>Algorithm:</span>
                       <span className="text-foreground font-mono">{key.algorithm}</span>

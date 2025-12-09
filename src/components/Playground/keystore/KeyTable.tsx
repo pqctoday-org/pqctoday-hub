@@ -111,10 +111,10 @@ export const KeyTable: React.FC<KeyTableProps> = ({
   })
 
   return (
-    <div className="flex-1 min-h-[300px] overflow-hidden rounded-xl border border-white/10 bg-black/20 flex flex-col">
+    <div className="flex-1 min-h-[300px] overflow-hidden rounded-xl border border-border bg-card flex flex-col">
       <div className="overflow-auto flex-1 custom-scrollbar">
         <table className="w-full text-left text-sm border-collapse table-fixed">
-          <thead className="bg-white/5 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md z-10">
+          <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md z-10">
             <tr>
               {(['name', 'type', 'algorithm', 'id', 'timestamp'] as SortColumn[]).map((col) => (
                 <th
@@ -125,7 +125,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                 >
                   <button
                     onClick={() => handleSort(col)}
-                    className="w-full h-full p-4 flex items-center gap-2 hover:bg-white/5 transition-colors text-left font-bold"
+                    className="w-full h-full p-4 flex items-center gap-2 hover:bg-accent transition-colors text-left font-bold"
                   >
                     {col.charAt(0).toUpperCase() + col.slice(1)}
                     {renderSortIcon(col)}
@@ -164,7 +164,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                     'cursor-pointer transition-colors border-l-2',
                     selectedKeyId === key.id
                       ? 'bg-primary/10 border-primary'
-                      : 'hover:bg-white/5 border-transparent'
+                      : 'hover:bg-accent/50 border-transparent'
                   )}
                   tabIndex={0}
                   role="button"

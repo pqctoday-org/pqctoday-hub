@@ -66,6 +66,14 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
     - Options: Input/Output files, Passphrase, Show Derived Key & IV (`-p`), Custom IV support.
     - **Automation**: Automatically sets output filename to `<input>.enc` (encrypt) or original name (decrypt) and adds it to VFS.
     - **Note**: AES key generation via `genpkey` has been removed as it is not supported by the current OpenSSL build. Use passphrase-based encryption or the Playground for AES keys.
+    - **UI Improvement**: Action buttons now use solid primary background (`bg-primary text-foreground`) for better readability, matching Sign/Verify styling.
+  - **Hashing (`dgst`)**:
+    - Compute cryptographic hashes of files using OpenSSL digest algorithms.
+    - **Algorithms**: SHA-256, SHA-384, SHA-512, SHA3-256, RIPEMD-160 (5 OpenSSL WASM-supported algorithms).
+    - **Options**: Input file selection, Output file (auto-named: `<input>.<algo>.txt`), Binary output toggle (`-binary` flag).
+    - **Output Formats**: Hex-encoded (default, human-readable) or Binary (raw bytes for piping).
+    - **Command**: `openssl dgst -<algo> [-binary] -out <output> <input>`
+    - **Use Cases**: File integrity verification, Bitcoin/Ethereum hashing, general-purpose cryptographic hashing.
   - **Key Encapsulation (`pkeyutl`)**:
     - KEM Encapsulate (Public Key) and Decapsulate (Private Key).
     - Supports ML-KEM and other KEM-capable algorithms.

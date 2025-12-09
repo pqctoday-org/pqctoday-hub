@@ -1,5 +1,18 @@
 /* eslint-disable */
-import type { WorkerMessage } from './types'
+console.log('[Debug] OpenSSL Worker file executing...')
+// import type { WorkerMessage } from './types' // REMOVED to avoid Module syntax
+
+// Inline Types to keep this a "Script" (not a Module)
+type WorkerMessage =
+  | {
+      type: 'COMMAND'
+      command: string
+      args: string[]
+      files?: { name: string; data: Uint8Array }[]
+      requestId?: string
+    }
+  | { type: 'LOAD'; url: string; requestId?: string }
+  | { type: 'FILE_UPLOAD'; name: string; data: Uint8Array; requestId?: string }
 
 // ----------------------------------------------------------------------------
 // Types
