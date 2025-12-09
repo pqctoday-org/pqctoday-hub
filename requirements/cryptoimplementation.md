@@ -138,13 +138,28 @@ This section maps the libraries currently validated in the web application to th
 4.  **Worker Path Resolution & ImportScripts**
     - **Issue**: Vite's `?worker` imports compile files as Modules, which breaks `importScripts()` (required for OpenSSL). Relative paths in `new Worker()` break on nested routes.
     - **Trap**: "Cannot use import statement outside a module" or 404s on nested routes.
-    - **Fix**: Use the **Static Asset Pattern**.
-      1. Place the worker file in `public/wasm/openssl-worker.js`.
-      2. Instantiate with an **absolute string path**.
-      ```typescript
-      // Correct Instantiation
-      this.worker = new Worker('/wasm/openssl-worker.js')
-      ```
+    - **Fix**: Use the **Static Asset Pattern** (see below).
+
+#### ⚠️ Testing Pitfalls (JSDOM & Web Workers)
+
+1.  **JSDOM lacks Web Worker Support**
+    - **Issue**: Integration tests running in JSDOM (Vitest/Jest) cannot spawn real Web Workers. `OpenSSLService` will fail with "Worker is not defined" or hang.
+    - **Trap**: Attempting to test full crypto flows that rely on `openssl.worker.ts` without mocking.
+    - **Fix**: **Always mock `OpenSSLService`** in integration tests. Do not try to run the WASM binary in JSDOM.
+
+    ```typescript
+    // Recommended Mock for integration.test.tsx
+    vi.mock('src/services/crypto/OpenSSLService', () => ({
+      openSSLService: {
+        execute: vi.fn().mockResolvedValue({
+          stdout: 'mock output',
+          files: [],
+          error: null,
+        }),
+        isReady: () => true,
+      },
+    }))
+    ```
 
 #### ⚠️ @noble & @scure Traps
 

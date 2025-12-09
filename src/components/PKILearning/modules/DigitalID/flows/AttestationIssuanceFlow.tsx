@@ -13,7 +13,7 @@ interface AttestationIssuanceFlowProps {
 
 export const AttestationIssuanceFlow: React.FC<AttestationIssuanceFlowProps> = ({ onBack }) => {
   // Hooks
-  const keyGen = useKeyGeneration('bitcoin')
+  const keyGen = useKeyGeneration('EUDI_P384')
   // const artifacts = useArtifactManagement()
   // const fileRetrieval = useFileRetrieval()
 

@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 // Milenage algorithm implementation using Web Crypto API (AES-128)
 // Reference: 3GPP TS 35.206
 

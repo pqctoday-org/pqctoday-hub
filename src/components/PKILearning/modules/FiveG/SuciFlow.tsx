@@ -16,6 +16,7 @@ type Profile = 'A' | 'B' | 'C'
 
 export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
   const [profile, setProfile] = useState<Profile>('A')
+  const [pqcMode, setPqcMode] = useState<'hybrid' | 'pure'>('hybrid')
 
   // Select steps based on profile
   const rawSteps =
@@ -52,7 +53,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
 
     try {
       if (stepData.id === 'init_network_key') {
-        const res = await fiveGService.generateNetworkKey(profile)
+        const res = await fiveGService.generateNetworkKey(profile, pqcMode)
         // Store the dynamic filenames for later steps
         setArtifacts((prev) => ({
           ...prev,
@@ -68,7 +69,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
         const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
         result = await fiveGService.retrieveKey(targetFile, profile)
       } else if (stepData.id === 'gen_ephemeral_key') {
-        const res = await fiveGService.generateEphemeralKey(profile)
+        const res = await fiveGService.generateEphemeralKey(profile, pqcMode)
         setArtifacts((prev) => ({
           ...prev,
           ephPrivKey: res.privKey,
@@ -78,7 +79,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
       } else if (stepData.id === 'compute_shared_secret') {
         const ephPriv = artifacts.ephPrivKey || 'sim_eph_priv.key'
         const hnPub = artifacts.hnPubFile || 'sim_hn_pub.key'
-        result = await fiveGService.computeSharedSecret(profile, ephPriv, hnPub)
+        result = await fiveGService.computeSharedSecret(profile, ephPriv, hnPub, pqcMode)
       } else if (stepData.id === 'derive_keys') {
         // Call the new KDF visualization method
         result = await fiveGService.deriveKeys(profile)
@@ -182,8 +183,44 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
         </div>
       </div>
 
+      {/* Profile C Mode Selector */}
+      {profile === 'C' && (
+        <div className="bg-purple-500/5 p-4 rounded-lg border border-purple-500/20 animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center gap-2 mb-3 text-sm text-purple-300 uppercase tracking-wider font-bold">
+            <Shield size={14} />
+            PQC Mode Configuration
+          </div>
+          <div className="flex gap-4">
+            <button
+              onClick={() => setPqcMode('hybrid')}
+              className={clsx(
+                'flex-1 p-3 rounded border text-left transition-all',
+                pqcMode === 'hybrid'
+                  ? 'border-purple-400 bg-purple-500/20 text-purple-200'
+                  : 'border-white/5 text-muted-foreground hover:bg-white/5'
+              )}
+            >
+              <div className="font-bold">Hybrid (Transition)</div>
+              <div className="text-xs opacity-70">X25519 + ML-KEM-768</div>
+            </button>
+            <button
+              onClick={() => setPqcMode('pure')}
+              className={clsx(
+                'flex-1 p-3 rounded border text-left transition-all',
+                pqcMode === 'pure'
+                  ? 'border-purple-400 bg-purple-500/20 text-purple-200'
+                  : 'border-white/5 text-muted-foreground hover:bg-white/5'
+              )}
+            >
+              <div className="font-bold">Pure PQC (Target)</div>
+              <div className="text-xs opacity-70">ML-KEM-768 Only</div>
+            </button>
+          </div>
+        </div>
+      )}
+
       <StepWizard
-        key={profile} // Force re-mount on profile change to reset wizard state
+        key={`${profile}-${pqcMode}`} // Force re-mount on profile or mode change
         steps={steps}
         currentStepIndex={wizard.currentStep}
         onExecute={() => wizard.execute(executeStep)}

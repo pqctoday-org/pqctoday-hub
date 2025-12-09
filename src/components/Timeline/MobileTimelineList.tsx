@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import type { GanttCountryData } from '../../types/timeline'
 import { CountryFlag } from '../common/CountryFlag'
 import { phaseColors } from '../../data/timelineData'
@@ -45,14 +46,18 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
   }
 
   return (
-    <div className="flex flex-col gap-4 pb-8">
+    <div className="flex flex-col gap-4 pb-8" data-testid="mobile-timeline-list">
       {data.map((countryData) => {
         const { country, phases } = countryData
         const currentIndex = getCurrentPhaseIndex(country.countryName)
         const currentPhase = phases[currentIndex]
 
         return (
-          <div key={country.countryName} className="glass-panel p-4 flex flex-col gap-3">
+          <div
+            key={country.countryName}
+            className="glass-panel p-4 flex flex-col gap-3"
+            data-testid={`country-card-${country.countryName}`}
+          >
             {/* Header: Flag + Name + Org */}
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">

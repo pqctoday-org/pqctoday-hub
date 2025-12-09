@@ -4,6 +4,7 @@ import { openSSLService } from '../../../../../services/crypto/OpenSSLService'
 import { extractKeyFromOpenSSLOutput } from '../../../../../utils/cryptoUtils'
 import { bytesToHex } from '@noble/hashes/utils.js'
 import { DIGITAL_ASSETS_CONSTANTS } from '../../DigitalAssets/constants'
+import { EUDI_COMMANDS } from '../constants'
 import { ed25519 } from '@noble/curves/ed25519.js'
 
 export interface KeyPair {
@@ -18,6 +19,8 @@ export interface KeyGenerationResult {
   files: Array<{ name: string; data: Uint8Array }>
 }
 
+export type KeyType = 'bitcoin' | 'ethereum' | 'solana' | 'EUDI_P256' | 'EUDI_P384'
+
 /**
  * Shared hook for key generation across all Digital Assets flows
  * Eliminates code duplication by centralizing the common pattern:
@@ -26,7 +29,7 @@ export interface KeyGenerationResult {
  * 3. Extract raw key bytes
  * 4. Store files in OpenSSL store
  */
-export function useKeyGeneration(chain: 'bitcoin' | 'ethereum' | 'solana') {
+export function useKeyGeneration(chain: KeyType) {
   const { addFile } = useOpenSSLStore()
   const [privateKey, setPrivateKey] = useState<Uint8Array | null>(null)
   const [publicKey, setPublicKey] = useState<Uint8Array | null>(null)
@@ -42,12 +45,25 @@ export function useKeyGeneration(chain: 'bitcoin' | 'ethereum' | 'solana') {
     publicKeyFilename: string
   ): Promise<KeyGenerationResult> => {
     // Step 1: Generate private key
-    const genKeyCmd =
-      chain === 'solana'
-        ? DIGITAL_ASSETS_CONSTANTS.COMMANDS.SOLANA.GEN_KEY(privateKeyFilename)
-        : chain === 'bitcoin'
-          ? DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.GEN_KEY(privateKeyFilename)
-          : DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.GEN_KEY(privateKeyFilename)
+    let genKeyCmd = ''
+
+    switch (chain) {
+      case 'solana':
+        genKeyCmd = DIGITAL_ASSETS_CONSTANTS.COMMANDS.SOLANA.GEN_KEY(privateKeyFilename)
+        break
+      case 'bitcoin':
+        genKeyCmd = DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.GEN_KEY(privateKeyFilename)
+        break
+      case 'ethereum':
+        genKeyCmd = DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.GEN_KEY(privateKeyFilename)
+        break
+      case 'EUDI_P256':
+        genKeyCmd = EUDI_COMMANDS.GEN_PID_KEY(privateKeyFilename) // Uses P-256
+        break
+      case 'EUDI_P384':
+        genKeyCmd = EUDI_COMMANDS.GEN_DIPLOMA_KEY(privateKeyFilename) // Uses P-384
+        break
+    }
 
     let res1
     let files: Array<{ name: string; data: Uint8Array }> = []
@@ -112,17 +128,32 @@ export function useKeyGeneration(chain: 'bitcoin' | 'ethereum' | 'solana') {
     let pubHex: string | null = null
 
     if (!usingFallback && chain !== 'solana') {
-      // Standard OpenSSL flow (Bitcoin/Ethereum)
-      const extractPubCmd =
-        chain === 'bitcoin'
-          ? DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.EXTRACT_PUB(
-              privateKeyFilename,
-              publicKeyFilename
-            )
-          : DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.EXTRACT_PUB(
-              privateKeyFilename,
-              publicKeyFilename
-            )
+      // Standard OpenSSL flow (Bitcoin/Ethereum/EUDI)
+      let extractPubCmd = ''
+
+      switch (chain) {
+        case 'bitcoin':
+          extractPubCmd = DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.EXTRACT_PUB(
+            privateKeyFilename,
+            publicKeyFilename
+          )
+          break
+        case 'ethereum':
+          extractPubCmd = DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.EXTRACT_PUB(
+            privateKeyFilename,
+            publicKeyFilename
+          )
+          break
+        case 'EUDI_P256':
+        case 'EUDI_P384':
+          extractPubCmd = EUDI_COMMANDS.EXTRACT_PUB(privateKeyFilename, publicKeyFilename)
+          break
+      }
+
+      // If we miss a case (e.g. solana shouldn't be here)
+      if (!extractPubCmd) {
+        throw new Error(`Public key extraction not implemented for ${chain}`)
+      }
 
       res2 = await openSSLService.execute(extractPubCmd, files)
       if (res2.error) throw new Error(res2.error)

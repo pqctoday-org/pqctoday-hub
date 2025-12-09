@@ -71,10 +71,10 @@ class OpenSSLService {
           clearTimeout(timeoutId)
           resolve()
         }
-      } catch (error) {
+      } catch (_error) {
         clearTimeout(timeoutId)
         this.resetState()
-        reject(error)
+        reject(_error)
       }
     })
 
@@ -200,6 +200,47 @@ class OpenSSLService {
         files,
         requestId,
       } as WorkerMessage)
+    })
+  }
+
+  public async deleteFile(filename: string): Promise<void> {
+    try {
+      await this.init()
+    } catch {
+      // If init fails, we can't delete, which is fine
+      return
+    }
+
+    if (!this.worker) return
+
+    const requestId = `req_del_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+
+    return new Promise((resolve) => {
+      // Short timeout for deletion
+      const timeoutId = setTimeout(() => {
+        this.pendingRequests.delete(requestId)
+        // Resolve anyway, cleanup shouldn't block or crash app
+        resolve()
+      }, 5000)
+
+      this.pendingRequests.set(requestId, {
+        resolve: () => {
+          clearTimeout(timeoutId)
+          resolve()
+        },
+        reject: (err) => {
+          clearTimeout(timeoutId)
+          console.warn('[OpenSSLService] Delete failed:', err)
+          resolve() // Resolve anyway
+        },
+        result: { stdout: '', stderr: '', files: [] },
+      })
+
+      this.worker!.postMessage({
+        type: 'DELETE_FILE',
+        name: filename,
+        requestId,
+      } as any) // eslint-disable-line @typescript-eslint/no-explicit-any
     })
   }
 

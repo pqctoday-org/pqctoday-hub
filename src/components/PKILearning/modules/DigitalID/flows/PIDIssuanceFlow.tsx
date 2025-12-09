@@ -17,7 +17,7 @@ interface PIDIssuanceFlowProps {
 
 export const PIDIssuanceFlow: React.FC<PIDIssuanceFlowProps> = ({ onBack }) => {
   // Hooks
-  const keyGen = useKeyGeneration('bitcoin')
+  const keyGen = useKeyGeneration('EUDI_P256')
   const artifacts = useArtifactManagement()
   const fileRetrieval = useFileRetrieval()
 

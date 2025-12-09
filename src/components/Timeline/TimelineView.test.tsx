@@ -158,37 +158,35 @@ describe('TimelineView', () => {
       global.innerWidth = 1024
       render(<TimelineView />)
 
-      const ganttContainer = screen.getByTestId('simple-gantt-chart').parentElement
-      expect(ganttContainer).toHaveClass('hidden', 'md:block')
+      const desktopContainer = screen.getByTestId('desktop-view-container')
+      expect(desktopContainer).toHaveClass('hidden', 'md:block')
     })
 
     it('shows mobile view elements with proper classes', () => {
       global.innerWidth = 375
       render(<TimelineView />)
 
-      const mobileContainer = screen.getByTestId('mobile-timeline-list').parentElement
+      const mobileContainer = screen.getByTestId('mobile-view-container')
       expect(mobileContainer).toHaveClass('md:hidden')
     })
   })
 
   describe('Layout structure', () => {
     it('renders with proper container classes', () => {
-      const { container } = render(<TimelineView />)
-      const mainDiv = container.firstChild as HTMLElement
+      render(<TimelineView />)
+      const mainDiv = screen.getByTestId('timeline-view-root')
       expect(mainDiv).toHaveClass('max-w-7xl', 'mx-auto', 'px-4')
     })
 
     it('renders header section with proper spacing', () => {
       render(<TimelineView />)
-      const heading = screen.getByText('Global Migration Timeline')
-      const headerSection = heading.parentElement
+      const headerSection = screen.getByTestId('timeline-header')
       expect(headerSection).toHaveClass('text-center')
     })
 
     it('renders legend in separate section', () => {
       render(<TimelineView />)
-      const legend = screen.getByTestId('gantt-legend')
-      const legendContainer = legend.parentElement
+      const legendContainer = screen.getByTestId('timeline-legend-container')
       expect(legendContainer).toHaveClass('mt-8')
     })
   })

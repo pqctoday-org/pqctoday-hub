@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import React, { useState, useMemo } from 'react'
 import { Trash2, CheckCircle, Shield, Lock, Server } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'

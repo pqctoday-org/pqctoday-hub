@@ -13,6 +13,7 @@ type WorkerMessage =
     }
   | { type: 'LOAD'; url: string; requestId?: string }
   | { type: 'FILE_UPLOAD'; name: string; data: Uint8Array; requestId?: string }
+  | { type: 'DELETE_FILE'; name: string; requestId?: string }
 
 // ----------------------------------------------------------------------------
 // Types
@@ -515,6 +516,36 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
         files?: { name: string; data: Uint8Array }[]
       }
       await executeCommand(command, args, files, requestId)
+    } else if (type === 'DELETE_FILE') {
+      const { name } = event.data as { type: 'DELETE_FILE'; name: string }
+      if (!moduleFactory) {
+        throw new Error('Module not loaded')
+      }
+      try {
+        // Attempt to get the module instance to access FS
+        const module = await createOpenSSLInstance(requestId)
+        try {
+          module.FS.unlink('/' + name)
+          self.postMessage({
+            type: 'LOG',
+            stream: 'stdout',
+            message: `[Worker] Deleted file: ${name}`,
+            requestId,
+          })
+        } catch (e) {
+          // File might not exist, which is fine during cleanup
+          self.postMessage({
+            type: 'LOG',
+            stream: 'stdout',
+            message: `[Worker] Delete failed (non-fatal): ${name} - ${(e as Error).message}`,
+            requestId,
+          })
+        }
+      } catch (e) {
+        throw new Error(`Failed to access OpenSSL instance for deletion: ${(e as Error).message}`)
+      }
+
+      self.postMessage({ type: 'DONE', requestId })
     }
   } catch (error: any) {
     self.postMessage({ type: 'ERROR', error: error.message, requestId })

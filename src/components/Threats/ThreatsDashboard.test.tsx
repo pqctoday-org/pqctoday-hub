@@ -161,8 +161,8 @@ describe('ThreatsDashboard', () => {
   it('sorts by Industry', () => {
     render(<ThreatsDashboard />)
 
-    const industryHeader = screen.getByText('Industry').closest('th')
-    fireEvent.click(industryHeader!)
+    const industryHeader = screen.getByRole('columnheader', { name: /Industry/i })
+    fireEvent.click(industryHeader)
 
     // Checking logic is hard without checking order of elements.
     // But we can verify no crash and interaction works.
@@ -173,7 +173,7 @@ describe('ThreatsDashboard', () => {
     // Sorted Ascending by default.
 
     // Let's click again to sort descending
-    fireEvent.click(industryHeader!)
+    fireEvent.click(industryHeader)
 
     // Now should be H -> F -> A
     // We trust JS sort, just verifying interaction doesn't crash
@@ -181,8 +181,8 @@ describe('ThreatsDashboard', () => {
 
   it('sorts by Criticality', () => {
     render(<ThreatsDashboard />)
-    const critHeader = screen.getByText('Criticality').closest('th')
-    fireEvent.click(critHeader!)
+    const critHeader = screen.getByRole('columnheader', { name: /Criticality/i })
+    fireEvent.click(critHeader)
     // Should behave without error
     expect(critHeader).toBeInTheDocument()
   })

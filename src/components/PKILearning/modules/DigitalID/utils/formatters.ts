@@ -1,6 +1,7 @@
 // EUDI Wallet Crypto Formatters
 // Following cryptoimplementation.md requirements
 
+/* eslint-disable security/detect-unsafe-regex */
 import { sha256, sha384, sha512 } from '@noble/hashes/sha2.js'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import { openSSLService } from '../../../../../services/crypto/OpenSSLService'

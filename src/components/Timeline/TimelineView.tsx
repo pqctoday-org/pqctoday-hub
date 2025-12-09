@@ -61,8 +61,8 @@ export const TimelineView = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4">
-      <div className="text-center mb-2 md:mb-12">
+    <div className="max-w-7xl mx-auto px-4" data-testid="timeline-view-root">
+      <div className="text-center mb-2 md:mb-12" data-testid="timeline-header">
         <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
           Global Migration Timeline
         </h2>
@@ -80,7 +80,7 @@ export const TimelineView = () => {
 
       <div className="mt-2 md:mt-12">
         {/* Desktop View: Full Gantt Chart */}
-        <div className="hidden md:block">
+        <div className="hidden md:block" data-testid="desktop-view-container">
           <SimpleGanttChart
             data={ganttData}
             // @ts-expect-error - known type mismatch between legacy CountryData and TimelinePhase
@@ -95,12 +95,12 @@ export const TimelineView = () => {
         </div>
 
         {/* Mobile View: Simplified List */}
-        <div className="md:hidden">
+        <div className="md:hidden" data-testid="mobile-view-container">
           <MobileTimelineList data={ganttData} />
         </div>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-8" data-testid="timeline-legend-container">
         <GanttLegend />
       </div>
     </div>

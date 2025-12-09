@@ -104,8 +104,8 @@ describe('AboutView', () => {
 
   it('verifies License section link', () => {
     render(<AboutView />)
-    const licenseLink = screen.getByText('View Full License')
-    expect(licenseLink.closest('a')).toHaveAttribute(
+    const licenseLink = screen.getByRole('link', { name: /View Full License/i })
+    expect(licenseLink).toHaveAttribute(
       'href',
       'https://github.com/pqctoday/pqc-timeline-app/blob/main/LICENSE'
     )

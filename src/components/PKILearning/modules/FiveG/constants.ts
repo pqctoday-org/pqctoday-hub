@@ -377,19 +377,33 @@ USIM.write('EF_SUCI_Calc_Info', {
     },
     {
       id: 'gen_ephemeral_key',
-      title: '4. Encapsulate Secret (ML-KEM)',
+      title: '4. Generate Ephemeral Key (Hybrid)',
       description:
-        'Instead of ECDH, the USIM performs Key Encapsulation (Encap) against the network public key. This produces a Shared Secret (K) and a Ciphertext (C) to send to the network.',
-      code: `# Generate Shared Secret & Ciphertext
-openssl pkeyutl -encap \\
-  -inkey hn_pqc.pub \\
-  -out ciphertext.bin \\
-  -secret shared_secret.bin`,
-      output: `[USIM] Executing ML-KEM Encapsulation...\n[USIM] Shared Secret generated.\n[USIM] Ciphertext: 0x... (1088 bytes)`,
+        'In Hybrid Mode, the USIM generates an X25519 ephemeral key pair. In Pure PQC mode, this step is skipped (or prepares for Encapsulation).',
+      code: `# Hybrid: Generate X25519 Ephemeral Key
+openssl genpkey -algorithm X25519 -out eph_priv.key
+
+# Pure PQC:
+# No classic ephemeral key needed.`,
+      output: `[USIM] Generating Ephemeral Key...`,
+    },
+    {
+      id: 'compute_shared_secret',
+      title: '5. Compute Shared Secret (Hybrid / Encap)',
+      description:
+        'Hybrid: Compute ECDH shared secret (Z_ecdh) AND Encapsulate PQC shared secret (Z_kem). Derive final Z = SHA256(Z_ecdh || Z_kem). Pure: Encapsulate only.',
+      code: `# Hybrid:
+openssl pkeyutl -derive ... # Z_ecdh
+openssl pkeyutl -encap ...  # Z_kem (Ciphertext)
+SHA256(Z_ecdh || Z_kem)
+
+# Pure:
+openssl pkeyutl -encap ...`,
+      output: `[USIM] Computing Hybrid Shared Secret...`,
     },
     {
       id: 'derive_keys',
-      title: '5. Derive Keys (KDF w/ SHA3)',
+      title: '6. Derive Keys (KDF w/ SHA3)',
       description:
         'Derive AES-256 encryption key and HMAC-SHA3-256 integrity key. Note the use of SHA3 for higher security assurance.',
       code: `# Derive Keys using SHA3-256
@@ -400,7 +414,7 @@ mac_key = key_block[32:64]  # 256-bit HMAC`,
     },
     {
       id: 'encrypt_msin',
-      title: '6. Encrypt MSIN (Encryption Point)',
+      title: '7. Encrypt MSIN (Encryption Point)',
       description: 'This is the Encryption Point (AES-256-CTR).',
       code: `openssl enc -aes-256-ctr \\
   -K <K_enc_hex> -iv 0 \\
@@ -409,7 +423,7 @@ mac_key = key_block[32:64]  # 256-bit HMAC`,
     },
     {
       id: 'compute_mac',
-      title: '7. Compute MAC Tag (HMAC-SHA3)',
+      title: '8. Compute MAC Tag (HMAC-SHA3)',
       description: 'Compute HMAC-SHA3-256 tag.',
       code: `openssl dgst -sha3-256 -mac HMAC \\
   -macopt hexkey:<K_mac_hex> \\
@@ -418,7 +432,7 @@ mac_key = key_block[32:64]  # 256-bit HMAC`,
     },
     {
       id: 'visualize_suci',
-      title: '8. Visual Inspection: SUPI vs SUCI (PQC)',
+      title: '9. Visual Inspection: SUPI vs SUCI (PQC)',
       description:
         'Compare the SUPI with the much larger PQC SUCI structure. Notice the ciphertext size (ML-KEM Encapsulation is 1088 bytes).',
       code: '# Visual Verification',
@@ -458,14 +472,14 @@ mac_key = key_block[32:64]  # 256-bit HMAC`,
     },
     {
       id: 'assemble_suci',
-      title: '9. Assemble SUCI (Profile C)',
+      title: '10. Assemble SUCI (Profile C)',
       description: 'Combine parameters. Note significantly larger SUCI size.',
       code: `const suci = {\n  scheme: 3,\n  ciphertext: ciphertext,\n  encMSIN: encryptedMSIN,\n  macTag: macTag\n};`,
       output: `[USIM] SUCI-0-310-260-3-1-0x...(1KB+)-0x...`,
     },
     {
       id: 'sidf_decryption',
-      title: '10. Network SIDF: Decrypt SUCI (Decryption Point)',
+      title: '11. Network SIDF: Decrypt SUCI (Decryption Point)',
       description:
         'For Post-Quantum Profile C, the SIDF Decapsulates the shared secret using the ML-KEM Private Key and decrypts the MSIN.',
       code: `# Network Side Decaptulation (ML-KEM)

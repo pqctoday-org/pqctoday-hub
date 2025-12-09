@@ -31,9 +31,16 @@ function buildTimestampPlugin(): Plugin {
   }
 }
 
+import path from 'path'
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [buildTimestampPlugin(), react(), tailwindcss(), wasm(), topLevelAwait()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   server: {
     headers: {
       'Cross-Origin-Embedder-Policy': 'require-corp',

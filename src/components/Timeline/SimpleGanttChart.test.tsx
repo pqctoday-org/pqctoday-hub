@@ -171,7 +171,7 @@ describe('SimpleGanttChart', () => {
     expect(milestones.length).toBeGreaterThan(0)
 
     // Check the first one for the SVG icon
-    expect(milestones[0].querySelector('svg')).toBeInTheDocument()
+    expect(within(milestones[0]).getByTestId('milestone-flag')).toBeInTheDocument()
   })
 
   it('filters data by search text', () => {
@@ -188,11 +188,11 @@ describe('SimpleGanttChart', () => {
   it('sorts data when clicking headers', () => {
     render(<SimpleGanttChart {...defaultProps} />)
 
-    const countryHeader = screen.getByText('Country').closest('th')
+    const countryHeader = screen.getByRole('columnheader', { name: /Country/i })
     expect(countryHeader).toBeInTheDocument()
 
     // Click to sort descending
-    fireEvent.click(countryHeader!)
+    fireEvent.click(countryHeader)
 
     expect(vi.mocked(logEvent)).toHaveBeenCalledWith('Timeline', 'Sort country', 'desc')
   })

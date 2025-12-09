@@ -180,6 +180,9 @@ test.describe('5G SUCI Validation', () => {
     await page.waitForTimeout(2000)
 
     const termRaw = await page.locator('.p-4.overflow-x-auto.overflow-y-auto').textContent()
+    const stepTitle = await page.locator('h3.text-lg.font-bold').first().textContent()
+    console.log('DEBUG: Step Title:', stepTitle)
+    console.log('DEBUG: Term Raw:', termRaw)
     expect(termRaw).toContain(TEST_VECTORS.profileC.zEcdh)
     expect(termRaw).toContain(TEST_VECTORS.profileC.zKem)
   })

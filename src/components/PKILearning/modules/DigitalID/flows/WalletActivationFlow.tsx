@@ -22,7 +22,7 @@ interface WalletActivationFlowProps {
 
 export const WalletActivationFlow: React.FC<WalletActivationFlowProps> = ({ onBack }) => {
   // Hooks
-  const keyGen = useKeyGeneration('bitcoin') // Use bitcoin as the chain type since it supports P-256
+  const keyGen = useKeyGeneration('EUDI_P256') // Use P-256 (EUDI requirement)
   const artifacts = useArtifactManagement()
   const fileRetrieval = useFileRetrieval()
 
