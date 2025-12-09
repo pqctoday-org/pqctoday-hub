@@ -3,11 +3,25 @@ import { libraryData, libraryMetadata } from '../../data/libraryData'
 import type { LibraryItem } from '../../data/libraryData'
 import { LibraryTreeTable } from './LibraryTreeTable'
 import { FilterDropdown } from '../common/FilterDropdown'
+import { Search } from 'lucide-react'
 
 export const LibraryView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('All')
+  const [filterText, setFilterText] = useState('')
 
   const groupedData = useMemo(() => {
+    // First filter the data based on search text
+    const filteredData = libraryData.filter((item) => {
+      if (!filterText) return true
+      const searchLower = filterText.toLowerCase()
+      return (
+        item.documentTitle.toLowerCase().includes(searchLower) ||
+        item.referenceId.toLowerCase().includes(searchLower) ||
+        item.shortDescription?.toLowerCase().includes(searchLower) ||
+        item.category?.toLowerCase().includes(searchLower)
+      )
+    })
+
     const groups = new Map<string, LibraryItem[]>([
       ['Digital Signature', []],
       ['KEM', []],
@@ -16,7 +30,7 @@ export const LibraryView: React.FC = () => {
       ['General Recommendations', []],
     ])
 
-    libraryData.forEach((item) => {
+    filteredData.forEach((item) => {
       const category = item.category || 'General Recommendations'
       if (groups.has(category)) {
         groups.get(category)!.push(item)
@@ -51,7 +65,7 @@ export const LibraryView: React.FC = () => {
     })
 
     return categoryRoots
-  }, [])
+  }, [filterText])
 
   const sections = [
     'Digital Signature',
@@ -80,15 +94,31 @@ export const LibraryView: React.FC = () => {
         )}
       </div>
 
-      {/* Dropdown */}
-      <FilterDropdown
-        items={tabs}
-        selectedId={activeTab}
-        onSelect={setActiveTab}
-        label="Select Category"
-        defaultLabel="All"
-        className="mb-8"
-      />
+      {/* Controls Container */}
+      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between mb-8 bg-card border border-border rounded-lg shadow-lg p-2">
+        {/* Dropdown */}
+        <FilterDropdown
+          items={tabs}
+          selectedId={activeTab}
+          onSelect={setActiveTab}
+          label="Select Category"
+          defaultLabel="All"
+          noContainer
+          className="mb-0"
+        />
+
+        {/* Search Input */}
+        <div className="relative flex-1 min-w-[200px] w-full md:w-auto">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search standards..."
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+          />
+        </div>
+      </div>
 
       {/* Content */}
       <div className="space-y-8">

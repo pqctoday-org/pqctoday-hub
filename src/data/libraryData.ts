@@ -16,6 +16,7 @@ export interface LibraryItem {
   protocolOrToolImpact: string
   toolchainSupport: string
   migrationUrgency: string
+  manualCategory?: string
   children?: LibraryItem[]
   category?: string
 }
@@ -118,35 +119,40 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
       protocolOrToolImpact: values[14].replace(/^"|"$/g, ''),
       toolchainSupport: values[15],
       migrationUrgency: values[16],
+      manualCategory: values[18] || undefined,
       children: [],
     }
 
     // Categorization Logic
-    const title = item.documentTitle.toLowerCase()
-    const type = item.documentType.toLowerCase()
-
-    if (type.includes('pki') || type.includes('certificate') || title.includes('x.509')) {
-      item.category = 'PKI Certificate Management'
-    } else if (
-      type === 'protocol' ||
-      title.includes('tls') ||
-      title.includes('ssh') ||
-      title.includes('ikev2') ||
-      title.includes('cms')
-    ) {
-      item.category = 'Protocols'
-    } else if (
-      (title.includes('key-encapsulation') || title.includes('kem')) &&
-      type === 'algorithm'
-    ) {
-      item.category = 'KEM'
-    } else if (
-      (title.includes('signature') || title.includes('dsa') || title.includes('sign')) &&
-      type === 'algorithm'
-    ) {
-      item.category = 'Digital Signature'
+    if (item.manualCategory) {
+      item.category = item.manualCategory
     } else {
-      item.category = 'General Recommendations'
+      const title = item.documentTitle.toLowerCase()
+      const type = item.documentType.toLowerCase()
+
+      if (type.includes('pki') || type.includes('certificate') || title.includes('x.509')) {
+        item.category = 'PKI Certificate Management'
+      } else if (
+        type === 'protocol' ||
+        title.includes('tls') ||
+        title.includes('ssh') ||
+        title.includes('ikev2') ||
+        title.includes('cms')
+      ) {
+        item.category = 'Protocols'
+      } else if (
+        (title.includes('key-encapsulation') || title.includes('kem')) &&
+        type === 'algorithm'
+      ) {
+        item.category = 'KEM'
+      } else if (
+        (title.includes('signature') || title.includes('dsa') || title.includes('sign')) &&
+        type === 'algorithm'
+      ) {
+        item.category = 'Digital Signature'
+      } else {
+        item.category = 'General Recommendations'
+      }
     }
 
     return item

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { LibraryView } from './LibraryView'
 import '@testing-library/jest-dom'
 
@@ -8,6 +8,30 @@ vi.mock('./LibraryTreeTable', () => ({
   LibraryTreeTable: ({ data }: { data: unknown[] }) => (
     <div data-testid="library-tree-table">Tree Table ({data.length} items)</div>
   ),
+}))
+
+// Mock library data
+vi.mock('../../data/libraryData', () => ({
+  libraryData: [
+    {
+      referenceId: 'NIST-001',
+      documentTitle: 'NIST PQC Standard',
+      category: 'Digital Signature',
+      shortDescription: 'Standard for PQC',
+      children: [],
+    },
+    {
+      referenceId: 'RFC-1234',
+      documentTitle: 'TLS Extensions',
+      category: 'Protocols',
+      shortDescription: 'IETF RFC',
+      children: [],
+    },
+  ],
+  libraryMetadata: {
+    filename: 'test_data.csv',
+    lastUpdate: new Date('2024-01-01'),
+  },
 }))
 
 describe('LibraryView', () => {
@@ -48,7 +72,7 @@ describe('LibraryView', () => {
     it('shows all categories by default', () => {
       render(<LibraryView />)
       expect(screen.getByText('Digital Signature')).toBeInTheDocument()
-      expect(screen.getByText('KEM')).toBeInTheDocument()
+      expect(screen.getByText('Protocols')).toBeInTheDocument()
     })
 
     it('displays library tree tables', () => {
@@ -80,7 +104,7 @@ describe('LibraryView', () => {
     it('shows all categories when "All" is selected', () => {
       render(<LibraryView />)
       expect(screen.getByText('Digital Signature')).toBeInTheDocument()
-      expect(screen.getByText('KEM')).toBeInTheDocument()
+      expect(screen.getByText('Protocols')).toBeInTheDocument()
       expect(screen.getByText('PKI Certificate Management')).toBeInTheDocument()
     })
 
@@ -97,6 +121,35 @@ describe('LibraryView', () => {
       sections.forEach((section) => {
         expect(screen.getByText(section)).toBeInTheDocument()
       })
+    })
+  })
+
+  describe('Search Functionality', () => {
+    it('renders search input', () => {
+      render(<LibraryView />)
+      expect(screen.getByPlaceholderText('Search standards...')).toBeInTheDocument()
+    })
+
+    it('filters items by title', () => {
+      render(<LibraryView />)
+      const searchInput = screen.getByPlaceholderText('Search standards...')
+      fireEvent.change(searchInput, { target: { value: 'NIST' } })
+
+      // Should show Digital Signature section (where NIST item is)
+      // The tree table mock shows item count.
+      // We expect 'Digital Signature' to have 1 item, and 'Protocols' to have 0 (or not rendered if 0 items)
+      // Based on implementation, sections with 0 items show "No documents found".
+
+      expect(screen.getByText('Tree Table (1 items)')).toBeInTheDocument()
+    })
+
+    it('shows no results message when search matches nothing', () => {
+      render(<LibraryView />)
+      const searchInput = screen.getByPlaceholderText('Search standards...')
+      fireEvent.change(searchInput, { target: { value: 'XYZ123' } })
+
+      const noResultsMsgs = screen.getAllByText('No documents found in this section.')
+      expect(noResultsMsgs.length).toBeGreaterThan(0)
     })
   })
 
