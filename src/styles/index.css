@@ -93,13 +93,16 @@
 
     /* File Types (Light Mode - High Contrast) */
     --file-key: 0 84% 60%;
-    --file-key-foreground: 0 75% 15%;
+    --file-key-foreground: 215.4 16.3% 46.9%;
+    /* Matches --muted-foreground */
 
     --file-cert: 221 83% 53%;
-    --file-cert-foreground: 221 83% 15%;
+    --file-cert-foreground: 215.4 16.3% 46.9%;
+    /* Matches --muted-foreground */
 
     --file-csr: 262 83% 58%;
-    --file-csr-foreground: 262 83% 15%;
+    --file-csr-foreground: 215.4 16.3% 46.9%;
+    /* Matches --muted-foreground */
 
     /* Timeline Phases (HSL channels) */
     --phase-discovery: 217 91% 60%;
