@@ -96,7 +96,7 @@ export const MobileAboutView = () => {
       >
         <h3 className="text-sm font-bold">Appearance</h3>
         <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-lg border border-border">
-          {(['light', 'system', 'dark'] as const).map((t) => (
+          {(['light', 'dark'] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTheme(t)}
@@ -109,7 +109,6 @@ export const MobileAboutView = () => {
             >
               {t === 'light' && '☀️'}
               {t === 'dark' && '🌙'}
-              {t === 'system' && '💻'}
               {t}
             </button>
           ))}

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-type Theme = 'dark' | 'light' | 'system'
+type Theme = 'dark' | 'light'
 
 interface ThemeState {
   theme: Theme
@@ -12,27 +12,37 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: 'system',
+      theme: 'light', // Default to light
       hasSetPreference: false,
       setTheme: (theme) => set({ theme, hasSetPreference: true }),
     }),
     {
       name: 'theme-storage-v1',
       storage: createJSONStorage(() => localStorage),
-      // Migration: if user has old data without hasSetPreference, assume they've set it
+      // Migration: if user has 'system' or old data, default/migrate to light
       migrate: (persistedState: unknown) => {
-        if (
-          persistedState &&
-          typeof persistedState === 'object' &&
-          'theme' in persistedState &&
-          !('hasSetPreference' in persistedState)
-        ) {
-          // User has old localStorage format, mark as having set preference
+        // Safe check for object type
+        const state =
+          typeof persistedState === 'object' && persistedState !== null
+            ? (persistedState as Record<string, unknown>)
+            : {}
+
+        // If theme was 'system', force it to 'light'
+        if (state.theme === 'system') {
           return {
-            ...persistedState,
+            ...state,
+            theme: 'light',
             hasSetPreference: true,
           } as ThemeState
         }
+        // If user has old localStorage format without hasSetPreference
+        if ('theme' in state && !('hasSetPreference' in state)) {
+          return {
+            ...state,
+            hasSetPreference: true,
+          } as ThemeState
+        }
+
         return persistedState as ThemeState
       },
     }
