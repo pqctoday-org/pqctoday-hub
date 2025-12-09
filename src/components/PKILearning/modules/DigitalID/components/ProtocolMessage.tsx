@@ -28,9 +28,9 @@ export const ProtocolMessage: React.FC<ProtocolMessageProps> = ({
   }
 
   return (
-    <div className="border border-white/10 rounded-lg overflow-hidden bg-black/20">
+    <div className="border border-border rounded-lg overflow-hidden bg-muted/20">
       {/* Header */}
-      <div className="flex items-center justify-between p-3 bg-white/5 border-b border-white/10">
+      <div className="flex items-center justify-between p-3 bg-muted/10 border-b border-border">
         <button
           type="button"
           className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
@@ -50,8 +50,8 @@ export const ProtocolMessage: React.FC<ProtocolMessageProps> = ({
         >
           {copied ? (
             <>
-              <Check size={14} className="text-green-400" />
-              <span className="text-green-400">Copied!</span>
+              <Check size={14} className="text-success" />
+              <span className="text-success">Copied!</span>
             </>
           ) : (
             <>
@@ -71,7 +71,7 @@ export const ProtocolMessage: React.FC<ProtocolMessageProps> = ({
               <div className="break-all">{formattedMessage}</div>
             </div>
           ) : (
-            <pre className="p-4 text-sm text-muted-foreground overflow-x-auto bg-black/30 rounded-b">
+            <pre className="p-4 text-sm text-muted-foreground overflow-x-auto bg-muted/30 rounded-b">
               <code className="language-json">{formattedMessage}</code>
             </pre>
           )}

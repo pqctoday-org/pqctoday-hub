@@ -170,12 +170,12 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
             className={clsx(
               'flex-1 p-3 rounded border text-left transition-all hover:bg-white/5',
               profile === 'C'
-                ? 'border-purple-400 bg-purple-500/10 text-purple-400'
+                ? 'border-tertiary bg-tertiary/10 text-tertiary'
                 : 'border-white/10 text-muted-foreground'
             )}
           >
             <div className="font-bold flex items-center gap-2">
-              <Radio size={16} className={profile === 'C' ? 'fill-purple-400' : ''} />
+              <Radio size={16} className={profile === 'C' ? 'fill-tertiary' : ''} />
               Profile C (PQC)
             </div>
             <div className="text-xs opacity-70 mt-1">ML-KEM (Kyber) + AES-256</div>
@@ -185,8 +185,8 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
 
       {/* Profile C Mode Selector */}
       {profile === 'C' && (
-        <div className="bg-purple-500/5 p-4 rounded-lg border border-purple-500/20 animate-in fade-in slide-in-from-top-2">
-          <div className="flex items-center gap-2 mb-3 text-sm text-purple-300 uppercase tracking-wider font-bold">
+        <div className="bg-tertiary/5 p-4 rounded-lg border border-tertiary/20 animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center gap-2 mb-3 text-sm text-tertiary uppercase tracking-wider font-bold">
             <Shield size={14} />
             PQC Mode Configuration
           </div>
@@ -196,7 +196,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
               className={clsx(
                 'flex-1 p-3 rounded border text-left transition-all',
                 pqcMode === 'hybrid'
-                  ? 'border-purple-400 bg-purple-500/20 text-purple-200'
+                  ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground'
                   : 'border-white/5 text-muted-foreground hover:bg-white/5'
               )}
             >
@@ -208,7 +208,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
               className={clsx(
                 'flex-1 p-3 rounded border text-left transition-all',
                 pqcMode === 'pure'
-                  ? 'border-purple-400 bg-purple-500/20 text-purple-200'
+                  ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground'
                   : 'border-white/5 text-muted-foreground hover:bg-white/5'
               )}
             >

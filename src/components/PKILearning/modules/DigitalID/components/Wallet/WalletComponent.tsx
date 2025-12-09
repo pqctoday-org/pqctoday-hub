@@ -16,7 +16,7 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Smartphone className="w-6 h-6 text-blue-500" />
+            <Smartphone className="w-6 h-6 text-status-info" />
             EUDI Wallet
           </h2>
           <p className="text-muted-foreground">Managed by: {wallet.owner.legalName}</p>

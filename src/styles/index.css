@@ -13,6 +13,9 @@
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
 
+  --color-tertiary: hsl(var(--tertiary));
+  --color-tertiary-foreground: hsl(var(--tertiary-foreground));
+
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
 
@@ -76,6 +79,8 @@
     --primary-foreground: 210 40% 98%;
     --secondary: 255 85% 60%;
     --secondary-foreground: 222.2 47.4% 11.2%;
+    --tertiary: 270 95% 65%;
+    --tertiary-foreground: 210 40% 98%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 153 60% 45%;
@@ -129,6 +134,8 @@
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 255 91% 76%;
     --secondary-foreground: 210 40% 98%;
+    --tertiary: 270 91% 65%;
+    --tertiary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
     --accent: 153 66% 51%;

@@ -152,7 +152,7 @@ export const DigitalIDModule: React.FC = () => {
         </div>
         <button
           onClick={handleReset}
-          className="flex items-center gap-2 px-3 py-2 bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 transition-colors text-sm border border-red-500/20"
+          className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
         >
           <Trash2 size={16} />
           Reset Module
@@ -173,7 +173,7 @@ export const DigitalIDModule: React.FC = () => {
                 className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${
                   isActive
                     ? 'bg-primary/20 border-primary text-primary shadow-lg shadow-primary/10'
-                    : 'bg-transparent border-white/10 text-muted-foreground hover:bg-white/5'
+                    : 'bg-transparent border-border text-muted-foreground hover:bg-muted/10'
                 }`}
               >
                 <Icon size={16} />

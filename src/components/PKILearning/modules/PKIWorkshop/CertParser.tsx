@@ -56,7 +56,7 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
         <div
           role={hasChildren ? 'button' : undefined}
           tabIndex={hasChildren ? 0 : undefined}
-          className={`flex items-start gap-1 py-0.5 ${hasChildren ? 'cursor-pointer hover:bg-white/5' : ''}`}
+          className={`flex items-start gap-1 py-0.5 ${hasChildren ? 'cursor-pointer hover:bg-muted/10' : ''}`}
           onClick={() => hasChildren && setIsOpen(!isOpen)}
           onKeyDown={(e) => {
             if (hasChildren && (e.key === 'Enter' || e.key === ' ')) {
@@ -75,7 +75,7 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
           {value && <span className="text-foreground">{value}</span>}
         </div>
         {hasChildren && isOpen && (
-          <div className="ml-4 border-l border-white/10 pl-2">{children}</div>
+          <div className="ml-4 border-l border-border pl-2">{children}</div>
         )}
       </div>
     )
@@ -176,7 +176,7 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
                 <span className="text-primary font-bold">{node.label}:</span>
                 {node.value && <span className="text-foreground ml-1">{node.value}</span>}
               </div>
-              <div className="ml-4 border-l border-white/10 pl-2">
+              <div className="ml-4 border-l border-border pl-2">
                 {node.children.map((child, childIdx) => renderNode(child, childIdx, depth + 1))}
               </div>
             </div>
@@ -358,7 +358,7 @@ AL9... (truncated for brevity) ...
   return (
     <div className="space-y-6">
       {/* Artifact Selection */}
-      <div className="glass-panel p-5 border border-white/10">
+      <div className="glass-panel p-5 border border-border">
         <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
           <Search className="text-primary" size={20} />
           Inspect Generated Artifacts
@@ -372,7 +372,7 @@ AL9... (truncated for brevity) ...
               id="artifact-select"
               value={selectedArtifactId}
               onChange={(e) => handleArtifactSelect(e.target.value)}
-              className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
+              className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
             >
               <option value="">-- Select from Workshop --</option>
 
@@ -432,7 +432,7 @@ AL9... (truncated for brevity) ...
               setSelectedArtifactId('') // Clear selection on manual edit
               setSelectedArtifactName('')
             }}
-            className="w-full h-64 bg-black/20 border border-white/10 rounded p-3 text-foreground font-mono text-xs resize-none focus:border-primary/50 outline-none"
+            className="w-full h-64 bg-muted/30 border border-border rounded p-3 text-foreground font-mono text-xs resize-none focus:border-primary/50 outline-none"
             placeholder="Paste PEM content here..."
           />
 
@@ -450,7 +450,7 @@ AL9... (truncated for brevity) ...
               <button
                 onClick={() => handleConvert('DER')}
                 disabled={isConverting || !certInput}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white/10 text-foreground font-medium rounded hover:bg-white/20 transition-colors disabled:opacity-50 text-xs"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
               >
                 {isConverting ? (
                   <Loader2 className="animate-spin" size={14} />
@@ -462,7 +462,7 @@ AL9... (truncated for brevity) ...
               <button
                 onClick={() => handleConvert('P7B')}
                 disabled={isConverting || !certInput || certInput.includes('REQUEST')}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white/10 text-foreground font-medium rounded hover:bg-white/20 transition-colors disabled:opacity-50 text-xs"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
                 title="CSRs cannot be converted to P7B"
               >
                 {isConverting ? (
@@ -476,14 +476,14 @@ AL9... (truncated for brevity) ...
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded p-3 flex items-start gap-2 text-red-400 text-sm">
+            <div className="bg-destructive/10 border border-destructive/30 rounded p-3 flex items-start gap-2 text-destructive text-sm">
               <AlertTriangle size={16} className="shrink-0 mt-0.5" />
               <pre className="whitespace-pre-wrap font-mono">{error}</pre>
             </div>
           )}
 
           {conversionResult && (
-            <div className="bg-green-500/10 border border-green-500/30 rounded p-3 flex items-center justify-between text-green-400 text-sm">
+            <div className="bg-success/10 border border-success/30 rounded p-3 flex items-center justify-between text-success text-sm">
               <div className="flex items-center gap-2">
                 <Check size={16} />
                 <span>
@@ -513,8 +513,8 @@ AL9... (truncated for brevity) ...
                   onClick={() => setViewMode('tree')}
                   className={`flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors ${
                     viewMode === 'tree'
-                      ? 'bg-primary text-black'
-                      : 'bg-white/10 text-foreground hover:bg-white/20'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                   }`}
                 >
                   <Eye size={14} />
@@ -524,8 +524,8 @@ AL9... (truncated for brevity) ...
                   onClick={() => setViewMode('raw')}
                   className={`flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors ${
                     viewMode === 'raw'
-                      ? 'bg-primary text-black'
-                      : 'bg-white/10 text-foreground hover:bg-white/20'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                   }`}
                 >
                   <Code size={14} />
@@ -534,7 +534,7 @@ AL9... (truncated for brevity) ...
               </div>
             )}
           </div>
-          <div className="bg-black/20 rounded-lg p-4 font-mono text-xs h-[400px] overflow-y-auto custom-scrollbar border border-white/10">
+          <div className="bg-muted/30 rounded-lg p-4 font-mono text-xs h-[400px] overflow-y-auto custom-scrollbar border border-border">
             {parsedOutput ? (
               viewMode === 'tree' ? (
                 <ParsedCertView output={parsedOutput} />

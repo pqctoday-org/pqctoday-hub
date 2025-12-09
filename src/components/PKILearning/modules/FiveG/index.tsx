@@ -58,7 +58,7 @@ export const FiveGModule: React.FC = () => {
         </div>
         <button
           onClick={handleReset}
-          className="flex items-center gap-2 px-3 py-2 bg-red-500/10 text-red-400 rounded hover:bg-red-500/20 transition-colors text-sm border border-red-500/20"
+          className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
         >
           <Trash2 size={16} />
           Reset
@@ -82,9 +82,9 @@ export const FiveGModule: React.FC = () => {
                   className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
                                         ${
                                           idx === currentStep
-                                            ? 'border-primary text-primary shadow-[0_0_15px_rgba(0,255,157,0.3)]'
+                                            ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
                                             : idx < currentStep
-                                              ? 'border-green-500 text-green-500'
+                                              ? 'border-success text-success'
                                               : 'border-white/20 text-muted-foreground'
                                         }`}
                 >

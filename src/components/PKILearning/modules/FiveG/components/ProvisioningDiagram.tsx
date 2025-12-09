@@ -7,12 +7,12 @@ interface ProvisioningDiagramProps {
 
 export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }) => {
   return (
-    <div className="relative w-full h-[300px] bg-black/20 rounded-lg p-4 flex items-center justify-between overflow-hidden">
+    <div className="relative w-full h-[300px] bg-card/40 rounded-lg p-4 flex items-center justify-between overflow-hidden">
       {/* Node 1: IDEMIA / Thales (SIM Factory) */}
       <div
         className={`
         relative z-10 w-24 h-24 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step <= 3 ? 'border-primary bg-primary/10 shadow-[0_0_20px_rgba(0,255,157,0.2)]' : 'border-white/10 bg-black/40'}
+        ${step <= 3 ? 'border-primary bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.2)]' : 'border-white/10 bg-card/40'}
       `}
       >
         <Factory className="w-8 h-8 mb-2" />
@@ -35,7 +35,7 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
 
         {/* Step 3: Encrypt for Transport (Lock Icon appears on line) */}
         {step === 3 && (
-          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 bg-black/80 p-2 rounded-full border border-secondary animate-bounce">
+          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 bg-background/80 p-2 rounded-full border border-secondary animate-bounce">
             <Lock size={16} className="text-secondary" />
           </div>
         )}
@@ -46,7 +46,7 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
             className="absolute top-1/2 left-0 w-8 h-8 -translate-y-1/2 transition-all duration-[2000ms]"
             style={{ left: step === 4 ? '100%' : '20%', opacity: step === 4 ? 0 : 1 }}
           >
-            <Truck className="text-white w-6 h-6" />
+            <Truck className="text-foreground w-6 h-6" />
           </div>
         )}
 
@@ -61,7 +61,9 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
           {step === 2 && (
             <span className="text-xs text-primary font-bold">Personalizing USIM...</span>
           )}
-          {step === 3 && <span className="text-xs text-white">Encrypting for Transport (eKi)</span>}
+          {step === 3 && (
+            <span className="text-xs text-foreground">Encrypting for Transport (eKi)</span>
+          )}
           {step === 4 && (
             <span className="text-xs text-success animate-pulse">Importing to UDM/HSM...</span>
           )}
@@ -72,7 +74,7 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
       <div
         className={`
         relative z-10 w-24 h-24 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step === 4 ? 'border-success bg-green-500/10 shadow-[0_0_20px_rgba(0,255,0,0.2)]' : 'border-white/10 bg-black/40'}
+        ${step === 4 ? 'border-success bg-success/10 shadow-[0_0_20px_hsl(var(--success)/0.2)]' : 'border-white/10 bg-card/40'}
       `}
       >
         <Server className="w-8 h-8 mb-2" />
@@ -84,7 +86,7 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
       <div
         className={`
         absolute bottom-4 left-1/2 -translate-x-1/2 z-10 w-20 h-20 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step === 2 ? 'border-primary bg-primary/10 shadow-[0_0_20px_rgba(0,255,157,0.2)]' : 'border-white/10 bg-black/40'}
+        ${step === 2 ? 'border-primary bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.2)]' : 'border-white/10 bg-card/40'}
       `}
       >
         <CreditCard className="w-6 h-6 mb-2 rotate-90" />

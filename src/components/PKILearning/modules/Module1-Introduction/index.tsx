@@ -56,7 +56,7 @@ export const Module1: React.FC = () => {
       <div className="mb-8">
         <div className="flex justify-between relative">
           {/* Connecting Line */}
-          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/10 -z-10" />
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10" />
 
           {steps.map((step, idx) => (
             <button
@@ -72,8 +72,8 @@ export const Module1: React.FC = () => {
                   idx === currentStep
                     ? 'border-primary text-primary'
                     : idx < currentStep
-                      ? 'border-green-500 text-green-500'
-                      : 'border-white/20 text-muted-foreground'
+                      ? 'border-success text-success'
+                      : 'border-border text-muted-foreground'
                 }
               `}
               >
@@ -98,7 +98,7 @@ export const Module1: React.FC = () => {
         <button
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
-          className="px-6 py-2 rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 transition-colors text-foreground"
+          className="px-6 py-2 rounded-lg border border-border hover:bg-muted/10 disabled:opacity-50 transition-colors text-foreground"
         >
           ← Previous
         </button>

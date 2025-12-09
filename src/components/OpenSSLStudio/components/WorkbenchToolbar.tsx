@@ -134,7 +134,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
               : 'bg-muted border-border hover:bg-accent text-muted-foreground'
           )}
         >
-          <Database size={16} /> Key Encap (KEM)
+          <Database size={16} /> Key Encap
         </button>
         <button
           onClick={() => handleCategoryChange('pkcs12', 'PKCS#12')}

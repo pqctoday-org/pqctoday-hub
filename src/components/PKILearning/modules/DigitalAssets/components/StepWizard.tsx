@@ -202,7 +202,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
           )}
 
           {error && (
-            <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded text-red-400 flex items-start gap-2">
+            <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded text-destructive flex items-start gap-2">
               <AlertCircle size={16} className="mt-0.5 shrink-0" />
               <pre className="whitespace-pre-wrap break-all break-words max-w-full text-xs sm:text-sm">
                 {error}

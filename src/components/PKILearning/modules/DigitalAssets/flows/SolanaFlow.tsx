@@ -238,13 +238,13 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
       language: 'bash',
       actionLabel: 'Verify Signature',
       customControls: (
-        <div className="flex items-center gap-2 mb-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+        <div className="flex items-center gap-2 mb-4 p-3 bg-warning/10 border border-warning/20 rounded-lg">
           <input
             type="checkbox"
             id="simulate-error"
             checked={simulateError}
             onChange={(e) => setSimulateError(e.target.checked)}
-            className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+            className="w-4 h-4 rounded border-input text-primary focus:ring-primary"
           />
           <label
             htmlFor="simulate-error"

@@ -7,17 +7,17 @@ interface AuthDiagramProps {
 
 export const AuthDiagram: React.FC<AuthDiagramProps> = ({ step }) => {
   return (
-    <div className="relative w-full h-[300px] bg-black/20 rounded-lg p-4 flex items-center justify-between overflow-hidden">
+    <div className="relative w-full h-[300px] bg-card/40 rounded-lg p-4 flex items-center justify-between overflow-hidden">
       {/* Home Network (UDM) Node - Left side for flow start (vector gen) */}
       <div
         className={`
         relative z-10 w-28 h-28 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
         ${
           step <= 1
-            ? 'border-primary bg-primary/10 shadow-[0_0_20px_rgba(0,255,157,0.2)]'
+            ? 'border-primary bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.2)]'
             : step === 4
               ? 'border-primary bg-primary/10'
-              : 'border-white/10 bg-black/40'
+              : 'border-white/10 bg-card/40'
         }
       `}
       >
@@ -58,7 +58,7 @@ export const AuthDiagram: React.FC<AuthDiagramProps> = ({ step }) => {
               Computing MILENAGE (f1-f5)
             </span>
           )}
-          {step === 3 && <span className="text-xs text-white">Sending RAND + AUTN</span>}
+          {step === 3 && <span className="text-xs text-foreground">Sending RAND + AUTN</span>}
           {step === 4 && (
             <span className="text-xs text-success animate-pulse">Deriving 5G Keys (KAUSF)</span>
           )}
@@ -69,7 +69,7 @@ export const AuthDiagram: React.FC<AuthDiagramProps> = ({ step }) => {
       <div
         className={`
         relative z-10 w-28 h-28 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step >= 3 ? 'border-secondary bg-secondary/10 shadow-[0_0_20px_rgba(255,0,255,0.2)]' : 'border-white/10 bg-black/40'}
+        ${step >= 3 ? 'border-secondary bg-secondary/10 shadow-[0_0_20px_hsl(var(--secondary)/0.2)]' : 'border-white/10 bg-card/40'}
       `}
       >
         <Smartphone className="w-8 h-8 mb-2" />
