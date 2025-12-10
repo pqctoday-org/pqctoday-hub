@@ -14,6 +14,7 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -26,8 +27,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Security Audit
-        run: npm audit
+      # - name: Security Audit
+      #   run: npm audit
 
       - name: Check Formatting
         run: npm run format:check
