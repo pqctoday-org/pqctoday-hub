@@ -211,7 +211,8 @@ export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
             classicalAlgorithms,
             productName: productName,
             productCategory: productCategory,
-            vendor: lab ? `${vendor} (Lab: ${lab})` : vendor,
+            vendor: vendor,
+            lab: lab || undefined,
             certificationLevel: level
               ? `${level}${augmentation ? ' ' + augmentation : ''}`.trim()
               : undefined,

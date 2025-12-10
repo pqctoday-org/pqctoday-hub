@@ -20,5 +20,6 @@ export interface ComplianceRecord {
   productName: string
   productCategory: string
   vendor: string
+  lab?: string // Evaluation lab/facility for CC records
   certificationLevel?: string // FIPS: "FIPS 140-3 L3", CC: "EAL4+ ALC_DVS.2, ALC_FLR.1"
 }

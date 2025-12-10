@@ -10,5 +10,6 @@ export interface ComplianceRecord {
   productName: string
   productCategory: string
   vendor: string
+  lab?: string
   certificationLevel?: string
 }

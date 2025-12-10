@@ -117,7 +117,8 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
           classicalAlgorithms,
           productName: name,
           productCategory: categoryRaw,
-          vendor: lab ? `${vendor} (Lab: ${lab})` : vendor,
+          vendor: vendor,
+          lab: lab || undefined,
           certificationLevel: assuranceLevel || undefined,
         }
       })

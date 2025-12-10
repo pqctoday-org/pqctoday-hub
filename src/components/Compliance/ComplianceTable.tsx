@@ -137,6 +137,11 @@ const ComplianceRow = ({
           {record.vendor}
         </div>
       </td>
+      <td className="px-4 py-3 w-48">
+        <div className="truncate" title={record.lab || ''}>
+          {record.lab || '-'}
+        </div>
+      </td>
       <td className="px-4 py-3">
         <StatusBadge status={record.status} />
       </td>
@@ -459,7 +464,7 @@ export const ComplianceTable: React.FC<
 
   return (
     <div className="space-y-4">
-      {/* Header Actions */}
+      {/* Header: Search + Actions */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-end md:items-center">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -470,372 +475,373 @@ export const ComplianceTable: React.FC<
             className="pl-8"
           />
         </div>
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          {/* PQC Filter Dropdown */}
-          <div className="relative">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowFilterMenu(!showFilterMenu)}
-              className={clsx(
-                'gap-2 border-dashed',
-                pqcFilters.length > 0 && 'border-tertiary text-tertiary bg-tertiary/10'
-              )}
-            >
-              <Filter size={14} />
-              Filter PQC
-              {pqcFilters.length > 0 && (
-                <span className="ml-1 rounded-full bg-tertiary w-4 h-4 text-[10px] text-tertiary-foreground flex items-center justify-center font-bold">
-                  {pqcFilters.length}
-                </span>
-              )}
-            </Button>
-
-            {showFilterMenu && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setShowFilterMenu(false)} />
-                <div className="absolute right-0 top-full mt-2 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
-                  <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                    Select Algorithms
-                  </div>
-                  {PQC_ALGOS.map((algo) => (
-                    <div
-                      key={algo}
-                      onClick={() => handleTogglePqcFilter(algo)}
-                      className={clsx(
-                        'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
-                        pqcFilters.includes(algo) ? 'text-tertiary' : 'text-muted-foreground'
-                      )}
-                    >
-                      <div
-                        className={clsx(
-                          'w-3 h-3 rounded-[3px] border flex items-center justify-center',
-                          pqcFilters.includes(algo)
-                            ? 'border-tertiary bg-tertiary'
-                            : 'border-border'
-                        )}
-                      >
-                        {pqcFilters.includes(algo) && (
-                          <Check size={10} className="text-tertiary-foreground" />
-                        )}
-                      </div>
-                      {algo}
-                    </div>
-                  ))}
-                  {pqcFilters.length > 0 && (
-                    <div
-                      onClick={() => setPqcFilters([])}
-                      className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
-                    >
-                      Clear Filters
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Type Filter Dropdown */}
-          <div className="relative">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowTypeMenu(!showTypeMenu)}
-              className={clsx(
-                'gap-2 border-dashed',
-                typeFilters.length > 0 && 'border-primary text-primary bg-primary/10'
-              )}
-            >
-              <FileCheck size={14} />
-              Filter Type
-              {typeFilters.length > 0 && (
-                <span className="ml-1 rounded-full bg-primary w-4 h-4 text-[10px] text-primary-foreground flex items-center justify-center font-bold">
-                  {typeFilters.length}
-                </span>
-              )}
-            </Button>
-
-            {showTypeMenu && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setShowTypeMenu(false)} />
-                <div className="absolute right-0 top-full mt-2 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
-                  <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                    Select Certification Types
-                  </div>
-                  {uniqueTypes.map((type) => (
-                    <div
-                      key={type}
-                      onClick={() => handleToggleTypeFilter(type)}
-                      className={clsx(
-                        'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
-                        typeFilters.includes(type) ? 'text-primary' : 'text-muted-foreground'
-                      )}
-                    >
-                      <div
-                        className={clsx(
-                          'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
-                          typeFilters.includes(type) ? 'border-primary bg-primary' : 'border-border'
-                        )}
-                      >
-                        {typeFilters.includes(type) && (
-                          <Check size={10} className="text-primary-foreground" />
-                        )}
-                      </div>
-                      <span className="truncate">{type}</span>
-                    </div>
-                  ))}
-                  {typeFilters.length > 0 && (
-                    <div
-                      onClick={() => setTypeFilters([])}
-                      className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
-                    >
-                      Clear Filters
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Category Filter Dropdown */}
-          <div className="relative">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowCategoryMenu(!showCategoryMenu)}
-              className={clsx(
-                'gap-2 border-dashed',
-                categoryFilters.length > 0 && 'border-primary text-primary bg-primary/10'
-              )}
-            >
-              <Layers size={14} />
-              Filter Product
-              {categoryFilters.length > 0 && (
-                <span className="ml-1 rounded-full bg-primary w-4 h-4 text-[10px] text-primary-foreground flex items-center justify-center font-bold">
-                  {categoryFilters.length}
-                </span>
-              )}
-            </Button>
-
-            {showCategoryMenu && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setShowCategoryMenu(false)} />
-                <div className="absolute right-0 top-full mt-2 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
-                  <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                    Select Product Categories
-                  </div>
-                  {uniqueCategories.map((cat) => (
-                    <div
-                      key={cat}
-                      onClick={() => handleToggleCategoryFilter(cat)}
-                      className={clsx(
-                        'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
-                        categoryFilters.includes(cat) ? 'text-primary' : 'text-muted-foreground'
-                      )}
-                    >
-                      <div
-                        className={clsx(
-                          'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
-                          categoryFilters.includes(cat)
-                            ? 'border-primary bg-primary'
-                            : 'border-border'
-                        )}
-                      >
-                        {categoryFilters.includes(cat) && (
-                          <Check size={10} className="text-primary-foreground" />
-                        )}
-                      </div>
-                      <span className="truncate">{cat}</span>
-                    </div>
-                  ))}
-                  {categoryFilters.length > 0 && (
-                    <div
-                      onClick={() => setCategoryFilters([])}
-                      className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
-                    >
-                      Clear Filters
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Source Filter Dropdown */}
-          <div className="relative">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowSourceMenu(!showSourceMenu)}
-              className={clsx(
-                'gap-2 border-dashed',
-                sourceFilters.length > 0 && 'border-accent text-accent bg-accent/10'
-              )}
-            >
-              <Database size={14} />
-              Source
-              {sourceFilters.length > 0 && (
-                <span className="ml-1 rounded-full bg-accent w-4 h-4 text-[10px] text-accent-foreground flex items-center justify-center font-bold">
-                  {sourceFilters.length}
-                </span>
-              )}
-            </Button>
-
-            {showSourceMenu && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setShowSourceMenu(false)} />
-                <div className="absolute right-0 top-full mt-2 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
-                  <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                    Select Source
-                  </div>
-                  {uniqueSources.map((src) => (
-                    <div
-                      key={src}
-                      onClick={() => handleToggleSourceFilter(src)}
-                      className={clsx(
-                        'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
-                        sourceFilters.includes(src) ? 'text-accent' : 'text-muted-foreground'
-                      )}
-                    >
-                      <div
-                        className={clsx(
-                          'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
-                          sourceFilters.includes(src) ? 'border-accent bg-accent' : 'border-border'
-                        )}
-                      >
-                        {sourceFilters.includes(src) && (
-                          <Check size={10} className="text-accent-foreground" />
-                        )}
-                      </div>
-                      <span className="truncate">{src}</span>
-                    </div>
-                  ))}
-                  {sourceFilters.length > 0 && (
-                    <div
-                      onClick={() => setSourceFilters([])}
-                      className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
-                    >
-                      Clear Filters
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Vendor Filter Dropdown */}
-          <div className="relative">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowVendorMenu(!showVendorMenu)}
-              className={clsx(
-                'gap-2 border-dashed',
-                vendorFilters.length > 0 && 'border-warning text-warning bg-warning/10'
-              )}
-            >
-              <Building size={14} />
-              Vendor
-              {vendorFilters.length > 0 && (
-                <span className="ml-1 rounded-full bg-warning w-4 h-4 text-[10px] text-warning-foreground flex items-center justify-center font-bold">
-                  {vendorFilters.length}
-                </span>
-              )}
-            </Button>
-
-            {showVendorMenu && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setShowVendorMenu(false)} />
-                <div className="absolute right-0 top-full mt-2 w-72 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-96 flex flex-col">
-                  <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                    Select Vendor
-                  </div>
-                  <div className="px-2 pb-2">
-                    <Input
-                      placeholder="Search vendors..."
-                      value={vendorSearch}
-                      onChange={(e) => setVendorSearch(e.target.value)}
-                      className="h-8 text-xs"
-                      autoFocus
-                    />
-                  </div>
-                  <div className="overflow-y-auto max-h-64 space-y-1">
-                    {filteredVendors.map((v) => (
-                      <div
-                        key={v}
-                        onClick={() => handleToggleVendorFilter(v)}
-                        className={clsx(
-                          'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
-                          vendorFilters.includes(v) ? 'text-warning' : 'text-muted-foreground'
-                        )}
-                      >
-                        <div
-                          className={clsx(
-                            'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
-                            vendorFilters.includes(v)
-                              ? 'border-warning bg-warning'
-                              : 'border-border'
-                          )}
-                        >
-                          {vendorFilters.includes(v) && (
-                            <Check size={10} className="text-warning-foreground" />
-                          )}
-                        </div>
-                        <span className="truncate">{v}</span>
-                      </div>
-                    ))}
-                    {filteredVendors.length === 0 && (
-                      <div className="px-2 py-4 text-center text-xs text-muted-foreground">
-                        No vendors found.
-                      </div>
-                    )}
-                  </div>
-                  {vendorFilters.length > 0 && (
-                    <div
-                      onClick={() => {
-                        setVendorFilters([])
-                        setVendorSearch('')
-                      }}
-                      className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2 shrink-0"
-                    >
-                      Clear Filters
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-
+        <div className="flex items-center gap-2">
           {lastUpdated && (
-            <span className="hidden md:flex items-center gap-1">
+            <span className="hidden md:flex items-center gap-1 text-sm text-muted-foreground">
               <Calendar size={14} />
               Last Updated: {lastUpdated.toLocaleDateString()} {lastUpdated.toLocaleTimeString()}
             </span>
           )}
-          <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            disabled={filteredAndSortedData.length === 0}
+            className="gap-2"
+          >
+            <Download size={14} />
+            Export CSV
+          </Button>
+          {onRefresh && (
             <Button
               variant="outline"
               size="sm"
-              onClick={handleExport}
-              disabled={filteredAndSortedData.length === 0}
+              onClick={onRefresh}
+              disabled={isRefreshing}
               className="gap-2"
             >
-              <Download size={14} />
-              Export CSV
+              <RefreshCw size={14} className={clsx(isRefreshing && 'animate-spin')} />
+              Refresh Data
             </Button>
-            {onRefresh && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onRefresh}
-                disabled={isRefreshing}
-                className="gap-2"
-              >
-                <RefreshCw size={14} className={clsx(isRefreshing && 'animate-spin')} />
-                Refresh Data
-              </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Filters Row */}
+      <div className="flex flex-wrap items-center gap-2">
+        {/* PQC Filter Dropdown */}
+        <div className="relative">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowFilterMenu(!showFilterMenu)}
+            className={clsx(
+              'gap-2 border-dashed',
+              pqcFilters.length > 0 && 'border-tertiary text-tertiary bg-tertiary/10'
             )}
-          </div>
+          >
+            <Filter size={14} />
+            Filter PQC
+            {pqcFilters.length > 0 && (
+              <span className="ml-1 rounded-full bg-tertiary w-4 h-4 text-[10px] text-tertiary-foreground flex items-center justify-center font-bold">
+                {pqcFilters.length}
+              </span>
+            )}
+          </Button>
+
+          {showFilterMenu && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setShowFilterMenu(false)} />
+              <div className="absolute right-0 top-full mt-2 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
+                <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                  Select Algorithms
+                </div>
+                {PQC_ALGOS.map((algo) => (
+                  <div
+                    key={algo}
+                    onClick={() => handleTogglePqcFilter(algo)}
+                    className={clsx(
+                      'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
+                      pqcFilters.includes(algo) ? 'text-tertiary' : 'text-muted-foreground'
+                    )}
+                  >
+                    <div
+                      className={clsx(
+                        'w-3 h-3 rounded-[3px] border flex items-center justify-center',
+                        pqcFilters.includes(algo)
+                          ? 'border-tertiary bg-tertiary'
+                          : 'border-border'
+                      )}
+                    >
+                      {pqcFilters.includes(algo) && (
+                        <Check size={10} className="text-tertiary-foreground" />
+                      )}
+                    </div>
+                    {algo}
+                  </div>
+                ))}
+                {pqcFilters.length > 0 && (
+                  <div
+                    onClick={() => setPqcFilters([])}
+                    className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
+                  >
+                    Clear Filters
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Type Filter Dropdown */}
+        <div className="relative">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowTypeMenu(!showTypeMenu)}
+            className={clsx(
+              'gap-2 border-dashed',
+              typeFilters.length > 0 && 'border-primary text-primary bg-primary/10'
+            )}
+          >
+            <FileCheck size={14} />
+            Filter Type
+            {typeFilters.length > 0 && (
+              <span className="ml-1 rounded-full bg-primary w-4 h-4 text-[10px] text-primary-foreground flex items-center justify-center font-bold">
+                {typeFilters.length}
+              </span>
+            )}
+          </Button>
+
+          {showTypeMenu && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setShowTypeMenu(false)} />
+              <div className="absolute right-0 top-full mt-2 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                  Select Certification Types
+                </div>
+                {uniqueTypes.map((type) => (
+                  <div
+                    key={type}
+                    onClick={() => handleToggleTypeFilter(type)}
+                    className={clsx(
+                      'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
+                      typeFilters.includes(type) ? 'text-primary' : 'text-muted-foreground'
+                    )}
+                  >
+                    <div
+                      className={clsx(
+                        'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
+                        typeFilters.includes(type) ? 'border-primary bg-primary' : 'border-border'
+                      )}
+                    >
+                      {typeFilters.includes(type) && (
+                        <Check size={10} className="text-primary-foreground" />
+                      )}
+                    </div>
+                    <span className="truncate">{type}</span>
+                  </div>
+                ))}
+                {typeFilters.length > 0 && (
+                  <div
+                    onClick={() => setTypeFilters([])}
+                    className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
+                  >
+                    Clear Filters
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Category Filter Dropdown */}
+        <div className="relative">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowCategoryMenu(!showCategoryMenu)}
+            className={clsx(
+              'gap-2 border-dashed',
+              categoryFilters.length > 0 && 'border-primary text-primary bg-primary/10'
+            )}
+          >
+            <Layers size={14} />
+            Filter Product
+            {categoryFilters.length > 0 && (
+              <span className="ml-1 rounded-full bg-primary w-4 h-4 text-[10px] text-primary-foreground flex items-center justify-center font-bold">
+                {categoryFilters.length}
+              </span>
+            )}
+          </Button>
+
+          {showCategoryMenu && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setShowCategoryMenu(false)} />
+              <div className="absolute right-0 top-full mt-2 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                  Select Product Categories
+                </div>
+                {uniqueCategories.map((cat) => (
+                  <div
+                    key={cat}
+                    onClick={() => handleToggleCategoryFilter(cat)}
+                    className={clsx(
+                      'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
+                      categoryFilters.includes(cat) ? 'text-primary' : 'text-muted-foreground'
+                    )}
+                  >
+                    <div
+                      className={clsx(
+                        'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
+                        categoryFilters.includes(cat)
+                          ? 'border-primary bg-primary'
+                          : 'border-border'
+                      )}
+                    >
+                      {categoryFilters.includes(cat) && (
+                        <Check size={10} className="text-primary-foreground" />
+                      )}
+                    </div>
+                    <span className="truncate">{cat}</span>
+                  </div>
+                ))}
+                {categoryFilters.length > 0 && (
+                  <div
+                    onClick={() => setCategoryFilters([])}
+                    className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
+                  >
+                    Clear Filters
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Source Filter Dropdown */}
+        <div className="relative">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowSourceMenu(!showSourceMenu)}
+            className={clsx(
+              'gap-2 border-dashed',
+              sourceFilters.length > 0 && 'border-accent text-accent bg-accent/10'
+            )}
+          >
+            <Database size={14} />
+            Source
+            {sourceFilters.length > 0 && (
+              <span className="ml-1 rounded-full bg-accent w-4 h-4 text-[10px] text-accent-foreground flex items-center justify-center font-bold">
+                {sourceFilters.length}
+              </span>
+            )}
+          </Button>
+
+          {showSourceMenu && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setShowSourceMenu(false)} />
+              <div className="absolute right-0 top-full mt-2 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
+                <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                  Select Source
+                </div>
+                {uniqueSources.map((src) => (
+                  <div
+                    key={src}
+                    onClick={() => handleToggleSourceFilter(src)}
+                    className={clsx(
+                      'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
+                      sourceFilters.includes(src) ? 'text-accent' : 'text-muted-foreground'
+                    )}
+                  >
+                    <div
+                      className={clsx(
+                        'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
+                        sourceFilters.includes(src) ? 'border-accent bg-accent' : 'border-border'
+                      )}
+                    >
+                      {sourceFilters.includes(src) && (
+                        <Check size={10} className="text-accent-foreground" />
+                      )}
+                    </div>
+                    <span className="truncate">{src}</span>
+                  </div>
+                ))}
+                {sourceFilters.length > 0 && (
+                  <div
+                    onClick={() => setSourceFilters([])}
+                    className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
+                  >
+                    Clear Filters
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Vendor Filter Dropdown */}
+        <div className="relative">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowVendorMenu(!showVendorMenu)}
+            className={clsx(
+              'gap-2 border-dashed',
+              vendorFilters.length > 0 && 'border-warning text-warning bg-warning/10'
+            )}
+          >
+            <Building size={14} />
+            Vendor
+            {vendorFilters.length > 0 && (
+              <span className="ml-1 rounded-full bg-warning w-4 h-4 text-[10px] text-warning-foreground flex items-center justify-center font-bold">
+                {vendorFilters.length}
+              </span>
+            )}
+          </Button>
+
+          {showVendorMenu && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setShowVendorMenu(false)} />
+              <div className="absolute right-0 top-full mt-2 w-72 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-96 flex flex-col">
+                <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                  Select Vendor
+                </div>
+                <div className="px-2 pb-2">
+                  <Input
+                    placeholder="Search vendors..."
+                    value={vendorSearch}
+                    onChange={(e) => setVendorSearch(e.target.value)}
+                    className="h-8 text-xs"
+                    autoFocus
+                  />
+                </div>
+                <div className="overflow-y-auto max-h-64 space-y-1">
+                  {filteredVendors.map((v) => (
+                    <div
+                      key={v}
+                      onClick={() => handleToggleVendorFilter(v)}
+                      className={clsx(
+                        'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
+                        vendorFilters.includes(v) ? 'text-warning' : 'text-muted-foreground'
+                      )}
+                    >
+                      <div
+                        className={clsx(
+                          'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
+                          vendorFilters.includes(v)
+                            ? 'border-warning bg-warning'
+                            : 'border-border'
+                        )}
+                      >
+                        {vendorFilters.includes(v) && (
+                          <Check size={10} className="text-warning-foreground" />
+                        )}
+                      </div>
+                      <span className="truncate">{v}</span>
+                    </div>
+                  ))}
+                  {filteredVendors.length === 0 && (
+                    <div className="px-2 py-4 text-center text-xs text-muted-foreground">
+                      No vendors found.
+                    </div>
+                  )}
+                </div>
+                {vendorFilters.length > 0 && (
+                  <div
+                    onClick={() => {
+                      setVendorFilters([])
+                      setVendorSearch('')
+                    }}
+                    className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2 shrink-0"
+                  >
+                    Clear Filters
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -864,6 +870,7 @@ export const ComplianceTable: React.FC<
                   { key: 'type', label: 'Type', width: 'w-48' },
                   { key: 'productName', label: 'Product Name', width: 'w-80' },
                   { key: 'vendor', label: 'Vendor', width: 'w-48' },
+                  { key: 'lab', label: 'Lab', width: 'w-48' },
                   { key: 'status', label: 'Status', width: 'w-32' },
                   { key: 'pqcCoverage', label: 'PQC', width: 'w-20' },
                   { key: 'classicalAlgorithms', label: 'CC', width: 'w-20' },
@@ -894,7 +901,7 @@ export const ComplianceTable: React.FC<
               ))}
               {filteredAndSortedData.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">
+                  <td colSpan={11} className="px-4 py-8 text-center text-muted-foreground">
                     No compliance records found matching your filters.
                   </td>
                 </tr>
@@ -904,41 +911,43 @@ export const ComplianceTable: React.FC<
         </div>
       </div>
       {/* Pagination Controls */}
-      {filteredAndSortedData.length > 0 && (
-        <div className="flex items-center justify-between px-2">
-          <div className="text-xs text-muted-foreground">
-            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
-            {Math.min(currentPage * ITEMS_PER_PAGE, filteredAndSortedData.length)} of{' '}
-            {filteredAndSortedData.length} records
-            {filteredAndSortedData.length !== data.length && (
-              <span className="ml-1 text-primary-foreground/50">(filtered from {data.length})</span>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="bg-card/50 border-input"
-            >
-              Previous
-            </Button>
-            <div className="flex items-center gap-1 text-xs font-mono bg-card/50 px-3 rounded border border-border">
-              Page {currentPage} of {totalPages}
+      {
+        filteredAndSortedData.length > 0 && (
+          <div className="flex items-center justify-between px-2">
+            <div className="text-xs text-muted-foreground">
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
+              {Math.min(currentPage * ITEMS_PER_PAGE, filteredAndSortedData.length)} of{' '}
+              {filteredAndSortedData.length} records
+              {filteredAndSortedData.length !== data.length && (
+                <span className="ml-1 text-primary-foreground/50">(filtered from {data.length})</span>
+              )}
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="bg-card/50 border-input"
-            >
-              Next
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="bg-card/50 border-input"
+              >
+                Previous
+              </Button>
+              <div className="flex items-center gap-1 text-xs font-mono bg-card/50 px-3 rounded border border-border">
+                Page {currentPage} of {totalPages}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="bg-card/50 border-input"
+              >
+                Next
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   )
 }
