@@ -49,7 +49,7 @@ test.describe.skip('5G SUCI Validation', () => {
     page.on('pageerror', (err) => console.log(`PAGE ERROR: ${err.message}`))
 
     // 1. Navigate
-    await page.goto('http://localhost:5173/learn/5g-security')
+    await page.goto('/learn/5g-security')
 
     // 2. Inject Test Vectors via Console
     await page.evaluate((vectors) => {

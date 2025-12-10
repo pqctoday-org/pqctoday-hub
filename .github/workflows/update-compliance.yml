@@ -34,5 +34,5 @@ jobs:
       - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore(data): update compliance-data.json [skip ci]"
-          file_pattern: "public/data/compliance-data.json"
+          commit_message: 'chore(data): update compliance-data.json [skip ci]'
+          file_pattern: 'public/data/compliance-data.json'

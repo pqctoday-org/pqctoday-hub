@@ -2,7 +2,7 @@
 import { test, expect } from '@playwright/test'
 
 test('inspect DOM structure', async ({ page }) => {
-  await page.goto('http://localhost:5173/learn/5g-security')
+  await page.goto('/learn/5g-security')
   await page.waitForLoadState('networkidle')
 
   // Enable test mode

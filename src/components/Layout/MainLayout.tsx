@@ -10,6 +10,7 @@ import {
   AlertTriangle,
   Info,
   GraduationCap,
+  ShieldCheck,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 
@@ -27,6 +28,7 @@ export const MainLayout = () => {
     { path: '/playground', label: 'Playground', icon: FlaskConical, hiddenOnMobile: true },
     { path: '/openssl', label: 'OpenSSL Studio', icon: Activity, hiddenOnMobile: true },
     { path: '/threats', label: 'Threats', icon: AlertTriangle },
+    { path: '/compliance', label: 'Compliance', icon: ShieldCheck },
     { path: '/leaders', label: 'Leaders', icon: Users },
     { path: '/about', label: 'About', icon: Info },
   ]

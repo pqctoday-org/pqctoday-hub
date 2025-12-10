@@ -1,4 +1,10 @@
-export type ComplianceSource = 'NIST' | 'Common Criteria' | 'NIAP' | 'BSI Germany' | 'ANSSI' | 'Other'
+export type ComplianceSource =
+  | 'NIST'
+  | 'Common Criteria'
+  | 'NIAP'
+  | 'BSI Germany'
+  | 'ANSSI'
+  | 'Other'
 export type ComplianceType = 'FIPS 140-3' | 'ACVP' | 'Common Criteria'
 export type ComplianceStatus = 'Active' | 'Historical' | 'Pending' | 'In Process' | 'Revoked'
 

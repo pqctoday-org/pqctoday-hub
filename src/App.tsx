@@ -13,6 +13,7 @@ import { OpenSSLStudioView } from './components/OpenSSLStudio/OpenSSLStudioView'
 import { LibraryView } from './components/Library/LibraryView'
 import { AboutView } from './components/About/AboutView'
 import { PKILearningView } from './components/PKILearning/PKILearningView'
+import { ComplianceView } from './components/Compliance/ComplianceView'
 
 // Helper component to log page views on route change
 function AnalyticsTracker() {
@@ -42,6 +43,7 @@ function App() {
           <Route path="/openssl" element={<OpenSSLStudioView />} />
           <Route path="/threats" element={<ThreatsDashboard />} />
           <Route path="/leaders" element={<LeadersGrid />} />
+          <Route path="/compliance" element={<ComplianceView />} />
           <Route path="/about" element={<AboutView />} />
           {/* Fallback route */}
           <Route path="*" element={<Navigate to="/" replace />} />

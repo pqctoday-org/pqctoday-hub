@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:5175',
     trace: 'on-first-retry',
   },
   projects: [
@@ -26,8 +26,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: process.env.CI ? 'npm run preview -- --port 5173' : 'VITE_MOCK_DATA=true npm run dev',
-    url: 'http://localhost:5173',
+    command: process.env.CI ? 'npm run preview -- --port 5175' : 'VITE_MOCK_DATA=true npm run dev',
+    url: 'http://localhost:5175',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },

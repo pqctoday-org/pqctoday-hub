@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test('verify hd wallet flow', async ({ page }) => {
   // 1. Navigate to Digital Assets directly
-  await page.goto('http://localhost:5173/learn/digital-assets')
+  await page.goto('/learn/digital-assets')
   await page.waitForLoadState('networkidle')
 
   // 2. Select HD Wallet Module (Step 4)

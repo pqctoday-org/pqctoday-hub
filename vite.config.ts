@@ -42,6 +42,78 @@ export default defineConfig({
     },
   },
   server: {
+    port: 5175,
+    strictPort: false,
+    proxy: {
+      '/api/nist-search': {
+        target: 'https://csrc.nist.gov',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/nist-search/, '/projects/cryptographic-module-validation-program/validated-modules/search/all'),
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      },
+      '/api/nist-cert': {
+        target: 'https://csrc.nist.gov',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/nist-cert/, '/projects/cryptographic-module-validation-program/certificate'),
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      },
+      '/api/acvp-search': {
+        target: 'https://csrc.nist.gov',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/acvp-search/, '/projects/cryptographic-algorithm-validation-program/validation-search'),
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      },
+      '/api/acvp-details': {
+        target: 'https://csrc.nist.gov',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/acvp-details/, '/projects/cryptographic-algorithm-validation-program/details'),
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      },
+      '/api/niap-search': {
+        target: 'https://www.niap-ccevs.org',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/niap-search/, '/Product/'),
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      },
+      '/api/bsi-search': {
+        target: 'https://www.bsi.bund.de',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/bsi-search/, '/SharedDocs/Downloads/EN/BSI/Zertifizierung/Report_eIDAS_Table.html'),
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      },
+      '/api/anssi-search': {
+        target: 'https://cyber.gouv.fr',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/anssi-search/, '/en/products-and-services-certified-anssi'),
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      },
+      '/api/cc-data': {
+        target: 'https://www.commoncriteriaportal.org',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/cc-data/, '/products/certified_products.csv'),
+      },
+    },
     headers: {
       'Cross-Origin-Embedder-Policy': 'require-corp',
       'Cross-Origin-Opener-Policy': 'same-origin',
