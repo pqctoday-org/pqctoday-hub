@@ -10,6 +10,7 @@ interface InfoTooltipProps {
 export const InfoTooltip: React.FC<InfoTooltipProps> = ({ term, className = '' }) => {
   const [isVisible, setIsVisible] = useState(false)
 
+  // eslint-disable-next-line security/detect-object-injection
   const definition = EUDI_GLOSSARY[term]
 
   return (

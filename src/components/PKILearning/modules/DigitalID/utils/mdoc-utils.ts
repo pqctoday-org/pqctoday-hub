@@ -14,11 +14,15 @@ export const createMdoc = async (
   // For MVA mDL, standard namespace is org.iso.18013.5.1
   // EU PID adds eu.europa.ec.eudi.pid.1
 
+  /* eslint-disable security/detect-object-injection */
   const namespaces: Record<string, Record<string, unknown>> = {
     [docType]: {},
   }
 
   attributes.forEach((attr) => {
+    if (attr.name === '__proto__' || attr.name === 'constructor' || attr.name === 'prototype') {
+      return
+    }
     namespaces[docType][attr.name] = attr.value
   })
 

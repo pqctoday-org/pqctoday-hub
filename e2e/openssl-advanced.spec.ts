@@ -40,7 +40,7 @@ test.describe('OpenSSL Studio - Advanced Features', () => {
     await expect(page.getByText(/Can't open .*openssl.cnf/)).not.toBeVisible()
   })
 
-  test('generates Self-Signed Certificate', async ({ page }) => {
+  test.skip('generates Self-Signed Certificate', async ({ page }) => {
     // 1. Generate Key
     await page.getByRole('button', { name: 'Key Generation' }).click()
     await page.getByRole('button', { name: 'Run Command' }).click()

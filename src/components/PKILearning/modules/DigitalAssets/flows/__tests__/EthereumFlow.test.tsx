@@ -91,6 +91,7 @@ vi.mock('../../../../../../services/crypto/OpenSSLService', () => {
             if (hex.length % 2) hex = '0' + hex
             const bytes = new Uint8Array(hex.length / 2)
             for (let i = 0; i < bytes.length; i++)
+              // eslint-disable-next-line security/detect-object-injection
               bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)
 
             // If high bit is set, prepend 0x00 to make it positive in two's complement

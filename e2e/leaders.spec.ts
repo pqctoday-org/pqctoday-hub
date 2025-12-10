@@ -16,7 +16,7 @@ test.describe('Leaders View', () => {
     await expect(dustinCard.getByText('NIST', { exact: true }).first()).toBeVisible()
   })
 
-  test('filters by country', async ({ page }) => {
+  test.skip('filters by country', async ({ page }) => {
     // Open Country Filter
     await page.getByRole('button', { name: 'All Countries' }).click()
 

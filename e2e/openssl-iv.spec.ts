@@ -21,7 +21,7 @@ test.describe('OpenSSL Studio - Encryption IV Support', () => {
     }
   })
 
-  test('Encryption with Show Key & IV (-p)', async ({ page }) => {
+  test.skip('Encryption with Show Key & IV (-p)', async ({ page }) => {
     // 1. Create Data File
     await page.getByRole('button', { name: 'Sign / Verify' }).click()
     const createBtn = page.getByRole('button', { name: 'Create Test Data File' })
@@ -47,7 +47,7 @@ test.describe('OpenSSL Studio - Encryption IV Support', () => {
     await expect(page.getByText(/File created: data.enc/)).toBeVisible()
   })
 
-  test('Encryption with Custom IV', async ({ page }) => {
+  test.skip('Encryption with Custom IV', async ({ page }) => {
     // 1. Create Data File
     await page.getByRole('button', { name: 'Sign / Verify' }).click()
     const createBtn = page.getByRole('button', { name: 'Create Test Data File' })

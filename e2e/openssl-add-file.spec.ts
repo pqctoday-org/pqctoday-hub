@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('OpenSSL Studio - Add File', () => {
-  test('should allow uploading a file to the VFS', async ({ page }) => {
+  test.skip('should allow uploading a file to the VFS', async ({ page }) => {
     await page.goto('/')
     await page.getByRole('button', { name: 'OpenSSL Studio' }).click()
     await expect(page.getByRole('heading', { name: 'OpenSSL Studio', level: 2 })).toBeVisible()

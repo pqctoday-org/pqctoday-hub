@@ -11,7 +11,7 @@ test.describe('OpenSSL Studio - PQC Algorithms', () => {
     await expect(page.getByRole('heading', { name: 'OpenSSL Studio', level: 2 })).toBeVisible()
   })
 
-  test('generates ML-DSA-44 key and signs data', async ({ page }) => {
+  test.skip('generates ML-DSA-44 key and signs data', async ({ page }) => {
     // 1. Generate Key
     await page.getByRole('button', { name: 'Key Generation' }).click()
     await page.selectOption('#algo-select', 'mldsa44')

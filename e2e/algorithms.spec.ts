@@ -24,7 +24,8 @@ test.describe('Algorithms View', () => {
     await expect(page.getByText('Transition / Deprecation', { exact: true })).toBeVisible()
 
     // Check for specific data presence
-    await expect(page.getByText('ML-KEM-768').first()).toBeVisible()
+    // Use cell role to target the desktop table (visible) instead of mobile view (hidden)
+    await expect(page.getByRole('cell', { name: 'ML-KEM-768' }).first()).toBeVisible()
   })
 
   test('sorts table by function', async ({ page }) => {

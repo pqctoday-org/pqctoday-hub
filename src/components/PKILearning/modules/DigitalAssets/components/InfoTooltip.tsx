@@ -9,6 +9,7 @@ interface InfoTooltipProps {
 
 export const InfoTooltip: React.FC<InfoTooltipProps> = ({ term, className = '' }) => {
   const [isOpen, setIsOpen] = useState(false)
+  // eslint-disable-next-line security/detect-object-injection
   const tooltip = CRYPTO_TOOLTIPS[term]
 
   if (!tooltip) return null
