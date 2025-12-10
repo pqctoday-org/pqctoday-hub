@@ -682,6 +682,7 @@ ${kudos.message}
             This site is developed, documented, validated and deployed using advanced AI
             technologies including Google Antigravity, ChatGPT, Claude AI, Perplexity, and Gemini
             Pro. While the presented information has been manually curated, it may still contain
+            inaccuracies.
           </p>
         </motion.div>
 
