@@ -26,8 +26,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'VITE_MOCK_DATA=true npm run dev',
+    command: process.env.CI ? 'npm run preview -- --port 5173' : 'VITE_MOCK_DATA=true npm run dev',
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
   },
 })
