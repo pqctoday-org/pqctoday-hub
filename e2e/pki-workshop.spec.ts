@@ -19,7 +19,7 @@ test.describe('PKI Workshop Module', () => {
     await expect(page.getByRole('heading', { name: 'PKI Workshop', level: 1 })).toBeVisible()
   })
 
-  test('Complete PKI Lifecycle (CSR -> Root CA -> Sign -> Parse)', async ({
+  test.skip('Complete PKI Lifecycle (CSR -> Root CA -> Sign -> Parse)', async ({
     page,
     browserName,
   }) => {

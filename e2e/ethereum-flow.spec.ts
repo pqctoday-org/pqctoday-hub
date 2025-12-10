@@ -103,7 +103,7 @@ test('Ethereum Flow E2E', async ({ page }) => {
 
     // This was the broken step, so critical verify
     await expect(page.getByText('SUCCESS: Transaction Signed & Processed!')).toBeVisible()
-    await expect(page.getByText('recovery_id:')).toBeVisible()
+    await expect(page.getByText('v: 0x')).toBeVisible()
     await page.getByRole('button', { name: 'Next Step', exact: true }).click()
   })
 

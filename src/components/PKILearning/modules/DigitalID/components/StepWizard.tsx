@@ -44,6 +44,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
   error,
   isStepComplete,
 }) => {
+  /* eslint-disable-next-line security/detect-object-injection */
   const step = steps[currentStepIndex]
   const outputRef = useRef<HTMLDivElement>(null)
 
@@ -52,6 +53,8 @@ export const StepWizard: React.FC<StepWizardProps> = ({
       outputRef.current.scrollTop = outputRef.current.scrollHeight
     }
   }, [output])
+
+  if (!step) return null
 
   return (
     <div className="max-w-7xl mx-auto h-full">

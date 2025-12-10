@@ -106,14 +106,18 @@ export const DigitalIDModule: React.FC = () => {
     },
   ]
 
-  const navigateTo = (stepId: string) => {
+  const navigateTo = React.useCallback((stepId: string) => {
     const idx = STEPS_INFO.findIndex((s) => s.id === stepId)
     if (idx !== -1) setCurrentStep(idx)
-  }
+  }, [])
 
   // Components mapping
   const currentStepComponent = useMemo(() => {
-    switch (STEPS_INFO[currentStep].id) {
+    /* eslint-disable-next-line security/detect-object-injection */
+    const step = STEPS_INFO[currentStep]
+    if (!step) return null
+
+    switch (step.id) {
       case 'wallet':
         return <WalletComponent wallet={wallet} onAddCredential={() => navigateTo('pid-issuer')} />
       case 'pid-issuer':
@@ -139,7 +143,7 @@ export const DigitalIDModule: React.FC = () => {
       default:
         return null
     }
-  }, [currentStep, wallet])
+  }, [currentStep, wallet, navigateTo])
 
   return (
     <div className="max-w-7xl mx-auto overflow-x-hidden">
