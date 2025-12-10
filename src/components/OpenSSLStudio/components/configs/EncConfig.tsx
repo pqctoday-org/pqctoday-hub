@@ -166,7 +166,7 @@ export const EncConfig: React.FC<EncConfigProps> = ({
         />
         {encCustomIV.length > 0 && encCustomIV.length !== 32 && (
           <p className="text-[10px] text-yellow-500">
-            Warning: AES-128/192/256 typically uses a 16-byte IV (32 hex chars). Current:{' '}
+            Warning: AES (128/192/256) requires a 16-byte IV (32 hex characters). Current length:{' '}
             {encCustomIV.length} chars.
           </p>
         )}
