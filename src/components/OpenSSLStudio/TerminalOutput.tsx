@@ -108,7 +108,7 @@ export const TerminalOutput = () => {
               <col className="w-40" />
               <col className="w-auto" />
             </colgroup>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-border" data-testid="terminal-logs">
               {filteredLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-muted/30 transition-colors">
                   <td className="px-3 py-1 text-foreground/30 align-top whitespace-nowrap font-mono text-[10px] select-none border-r border-border">

@@ -157,10 +157,19 @@ export const EncConfig: React.FC<EncConfigProps> = ({
           id="enc-iv-input"
           type="text"
           value={encCustomIV}
-          onChange={(e) => setEncCustomIV(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+          onChange={(e) => {
+            const val = e.target.value.replace(/[^0-9a-fA-F]/g, '')
+            setEncCustomIV(val)
+          }}
+          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary font-mono"
           placeholder="e.g. 0102030405060708..."
         />
+        {encCustomIV.length > 0 && encCustomIV.length !== 32 && (
+          <p className="text-[10px] text-yellow-500">
+            Warning: AES-128/192/256 typically uses a 16-byte IV (32 hex chars). Current:{' '}
+            {encCustomIV.length} chars.
+          </p>
+        )}
       </div>
     </div>
   )

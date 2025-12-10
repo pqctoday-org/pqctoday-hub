@@ -16,9 +16,10 @@ test.describe('Leaders View', () => {
     await expect(dustinCard.getByText('NIST', { exact: true }).first()).toBeVisible()
   })
 
-  test.skip('filters by country', async ({ page }) => {
+  test('filters by country', async ({ page }) => {
     // Open Country Filter
-    await page.getByRole('button', { name: 'All Countries' }).click()
+    // Note: The button has aria-labelledby set to "Select Region", so we target by text content
+    await page.getByRole('button').filter({ hasText: 'All Countries' }).click()
 
     // Select USA
     const dropdown = page.getByRole('listbox')
@@ -28,15 +29,16 @@ test.describe('Leaders View', () => {
     // Verify USA leader is visible
     await expect(page.getByText('Dr. Dustin Moody')).toBeVisible()
 
-    // Verify non-USA leader is NOT visible (e.g., Ollie Whitehouse from UK)
-    // Note: Depends on data, but assuming Ollie is in the data.
-    // Let's verify text that would appear for a UK leader's card if visible
     // Verify non-USA leader is NOT visible
     await expect(page.getByText('Ollie Whitehouse')).toHaveCount(0)
     await expect(page.getByText('NCSC').first()).toHaveCount(0)
 
     // Reset to All
-    await page.getByRole('button', { name: 'USA' }).click()
+    // The trigger button now shows "USA", so we click it again to open
+    await page.getByRole('button').filter({ hasText: 'USA' }).first().click()
+
+    // Select All Countries option
+    // Note: The option is "All Countries"
     await page.getByRole('option', { name: 'All Countries' }).click()
 
     // Verify UK leader is visible again
