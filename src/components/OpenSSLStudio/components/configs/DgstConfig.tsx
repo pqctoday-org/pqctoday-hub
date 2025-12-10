@@ -44,6 +44,26 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
         2. Configuration
       </span>
 
+      {/* Test Helper */}
+      <div className="flex justify-end">
+        <button
+          onClick={() =>
+            files.find((f) => f.name === 'data.txt')
+              ? null
+              : useOpenSSLStore.getState().addFile({
+                  name: 'data.txt',
+                  type: 'text',
+                  content: 'This is a test file for OpenSSL operations.',
+                  size: 43,
+                  timestamp: Date.now(),
+                })
+          }
+          className="text-[10px] text-primary hover:underline"
+        >
+          Create Test Data File
+        </button>
+      </div>
+
       <div className="space-y-3">
         <span className="text-xs text-muted-foreground block">Action</span>
         <div className="flex bg-background rounded-lg p-1 border border-input">

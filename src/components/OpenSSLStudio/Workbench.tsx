@@ -295,7 +295,7 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
       if (encAction === 'decrypt') cmd += ` -d`
       if (encShowIV) cmd += ` -p`
       if (encCustomIV) cmd += ` -iv ${encCustomIV}`
-      cmd += ` -in ${inFile} -out ${outFile} -pass pass:${passphrase}`
+      cmd += ` -in ${inFile} -out ${outFile} -pass pass:${passphrase} -pbkdf2`
     } else if (category === 'hash') {
       const inFile = hashInFile || 'data.txt'
       const extension = hashBinary ? 'bin' : 'txt'

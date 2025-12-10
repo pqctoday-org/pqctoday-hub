@@ -2,7 +2,7 @@ import React from 'react'
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../../store'
 import { InlineTooltip } from '../../../PKILearning/modules/DigitalAssets/components/InfoTooltip'
-import { Info } from 'lucide-react'
+import { CRYPTO_TOOLTIPS } from '../../../PKILearning/modules/DigitalAssets/utils/cryptoConstants'
 
 interface EncConfigProps {
   encAction: 'encrypt' | 'decrypt'
@@ -112,8 +112,15 @@ export const EncConfig: React.FC<EncConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="enc-pass-input" className="text-xs text-muted-foreground block">
-          Passphrase
+        <label
+          htmlFor="enc-pass-input"
+          className="text-xs text-muted-foreground flex items-center gap-1"
+        >
+          Passphrase (
+          <InlineTooltip content={CRYPTO_TOOLTIPS.pbkdf2.description} align="left">
+            <span className="text-primary hover:underline cursor-help">PBKDF2</span>
+          </InlineTooltip>
+          Seed)
         </label>
         <input
           id="enc-pass-input"
@@ -149,9 +156,6 @@ export const EncConfig: React.FC<EncConfigProps> = ({
           />
           <span className="text-sm text-foreground flex items-center gap-2">
             Show Derived Key & IV (-p)
-            <InlineTooltip content="Displays the Key and IV derived from your passphrase using PBKDF2. Necessary for decryption if you don't use the same salt.">
-              <Info size={14} className="text-muted-foreground cursor-help" />
-            </InlineTooltip>
           </span>
         </label>
       </div>
@@ -164,6 +168,7 @@ export const EncConfig: React.FC<EncConfigProps> = ({
           id="enc-iv-input"
           type="text"
           value={encCustomIV}
+          maxLength={32}
           onChange={(e) => {
             const val = e.target.value.replace(/[^0-9a-fA-F]/g, '')
             setEncCustomIV(val)

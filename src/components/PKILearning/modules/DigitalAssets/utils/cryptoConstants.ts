@@ -21,6 +21,11 @@ export const CRYPTO_TOOLTIPS = {
     description:
       'Cryptographic hash function producing 256-bit output. Used extensively in Bitcoin for hashing blocks, transactions, and addresses.',
   },
+  pbkdf2: {
+    title: 'PBKDF2 (Password-Based Key Derivation Function 2)',
+    description:
+      'Derives a secure cryptographic key from a password (seed) and salt. It applies a hash function (like HMAC-SHA256) many times to slow down brute-force attacks.',
+  },
   ripemd160: {
     title: 'RIPEMD-160',
     description:

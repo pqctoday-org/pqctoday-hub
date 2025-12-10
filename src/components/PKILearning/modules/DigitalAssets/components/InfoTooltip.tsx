@@ -48,14 +48,28 @@ interface InlineTooltipProps {
   children: React.ReactNode
   content: string
   className?: string
+  align?: 'left' | 'center' | 'right'
 }
 
 export const InlineTooltip: React.FC<InlineTooltipProps> = ({
   children,
   content,
   className = '',
+  align = 'center',
 }) => {
   const [isOpen, setIsOpen] = useState(false)
+
+  const alignClasses = {
+    left: 'left-0',
+    center: 'left-1/2 -translate-x-1/2',
+    right: 'right-0',
+  }
+
+  const arrowClasses = {
+    left: 'left-4',
+    center: 'left-1/2 -translate-x-1/2',
+    right: 'right-4',
+  }
 
   return (
     <div className={`relative inline-block ${className}`}>
@@ -78,13 +92,13 @@ export const InlineTooltip: React.FC<InlineTooltipProps> = ({
 
       {isOpen && (
         <div
-          className="absolute z-50 w-48 sm:w-64 p-2 mt-2 bg-background border border-border rounded-lg shadow-lg text-xs text-foreground left-1/2 -translate-x-1/2"
+          className={`absolute z-50 w-48 sm:w-64 p-2 mt-2 bg-background border border-border rounded-lg shadow-lg text-xs text-foreground ${alignClasses[align]}`}
           role="tooltip"
         >
           {content}
           {/* Arrow */}
           <div
-            className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-background border-l border-t border-border rotate-45"
+            className={`absolute -top-2 w-4 h-4 bg-background border-l border-t border-border rotate-45 ${arrowClasses[align]}`}
             aria-hidden="true"
           />
         </div>

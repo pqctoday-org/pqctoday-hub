@@ -27,10 +27,12 @@ test.describe('OpenSSL Studio - Encryption IV Support', () => {
     const createBtn = page.getByRole('button', { name: 'Create Test Data File' })
     await expect(createBtn).toBeVisible({ timeout: 15000 })
     await createBtn.click()
-    await expect(page.getByText(/File created: data.txt/)).toBeVisible()
+    // Verify file exists in dropdown instead of toast, as addFile might not trigger toast
+    await page.getByRole('button', { name: 'Encryption' }).click()
+    const inFileSelect = page.locator('#enc-infile-select')
+    await expect(inFileSelect).toContainText('data.txt')
 
     // 2. Encrypt with -p
-    await page.getByRole('button', { name: 'Encryption' }).click()
     await page.fill('#enc-pass-input', 'test')
 
     // Check "Show Derived Key & IV"
@@ -44,7 +46,7 @@ test.describe('OpenSSL Studio - Encryption IV Support', () => {
     await expect(terminal).toContainText('salt=')
     await expect(terminal).toContainText('key=')
     await expect(terminal).toContainText('iv =')
-    await expect(page.getByText(/File created: data.enc/)).toBeVisible()
+    await expect(page.getByText(/File created: data.txt.enc/)).toBeVisible()
   })
 
   test('Encryption with Custom IV', async ({ page }) => {
@@ -70,6 +72,6 @@ test.describe('OpenSSL Studio - Encryption IV Support', () => {
     const terminal = page.getByTestId('terminal-logs')
     await expect(terminal).toBeVisible({ timeout: 15000 })
     await expect(terminal).toContainText(`iv =${customIV.toUpperCase()}`, { ignoreCase: true })
-    await expect(page.getByText(/File created: data.enc/)).toBeVisible()
+    await expect(page.getByText(/File created: data.txt.enc/)).toBeVisible()
   })
 })
