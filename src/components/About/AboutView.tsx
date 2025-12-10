@@ -504,6 +504,14 @@ ${kudos.message}
                   <span className="text-muted-foreground">file-saver</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.5</span>
                 </li>
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">papaparse</span>
+                  <span className="text-xs text-muted-foreground/60">v5.5.3</span>
+                </li>
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">pdf-parse</span>
+                  <span className="text-xs text-muted-foreground/60">v2.4.5</span>
+                </li>
               </ul>
             </div>
             <div className="break-inside-avoid">
@@ -587,6 +595,10 @@ ${kudos.message}
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">TypeScript</span>
                   <span className="text-xs text-muted-foreground/60">v5.9.3</span>
+                </li>
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">tsx</span>
+                  <span className="text-xs text-muted-foreground/60">v4.21.0</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">ESLint</span>

@@ -1,0 +1,38 @@
+name: Update Compliance Data
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # Run daily at 8:00 AM UTC
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  scrape-and-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Install Scraper Dependencies
+        run: npm install -D tsx jsdom @types/jsdom papaparse @types/papaparse
+
+      - name: Run Scraper
+        run: npm run scrape
+
+      - name: Commit and Push Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(data): update compliance-data.json [skip ci]"
+          file_pattern: "public/data/compliance-data.json"
