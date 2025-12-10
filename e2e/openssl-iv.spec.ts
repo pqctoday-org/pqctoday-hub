@@ -21,7 +21,7 @@ test.describe('OpenSSL Studio - Encryption IV Support', () => {
     }
   })
 
-  test.skip('Encryption with Show Key & IV (-p)', async ({ page }) => {
+  test('Encryption with Show Key & IV (-p)', async ({ page }) => {
     // 1. Create Data File
     await page.getByRole('button', { name: 'Sign / Verify' }).click()
     const createBtn = page.getByRole('button', { name: 'Create Test Data File' })
@@ -39,15 +39,15 @@ test.describe('OpenSSL Studio - Encryption IV Support', () => {
     await page.getByRole('button', { name: 'Run Command' }).click()
 
     // Verify output contains salt, key, and iv
-    const logs = await page.locator('table tbody tr td:nth-child(2)').allInnerTexts()
-    const logText = logs.join('\n')
-    expect(logText).toContain('salt=')
-    expect(logText).toContain('key=')
-    expect(logText).toContain('iv =')
+    const terminal = page.getByTestId('terminal-logs')
+    await expect(terminal).toBeVisible({ timeout: 15000 })
+    await expect(terminal).toContainText('salt=')
+    await expect(terminal).toContainText('key=')
+    await expect(terminal).toContainText('iv =')
     await expect(page.getByText(/File created: data.enc/)).toBeVisible()
   })
 
-  test.skip('Encryption with Custom IV', async ({ page }) => {
+  test('Encryption with Custom IV', async ({ page }) => {
     // 1. Create Data File
     await page.getByRole('button', { name: 'Sign / Verify' }).click()
     const createBtn = page.getByRole('button', { name: 'Create Test Data File' })
@@ -67,9 +67,9 @@ test.describe('OpenSSL Studio - Encryption IV Support', () => {
     await page.getByRole('button', { name: 'Run Command' }).click()
 
     // Verify output shows the custom IV
-    const logs = await page.locator('table tbody tr td:nth-child(2)').allInnerTexts()
-    const logText = logs.join('\n')
-    expect(logText.toLowerCase()).toContain(`iv =${customIV}`)
+    const terminal = page.getByTestId('terminal-logs')
+    await expect(terminal).toBeVisible({ timeout: 15000 })
+    await expect(terminal).toContainText(`iv =${customIV.toUpperCase()}`, { ignoreCase: true })
     await expect(page.getByText(/File created: data.enc/)).toBeVisible()
   })
 })
