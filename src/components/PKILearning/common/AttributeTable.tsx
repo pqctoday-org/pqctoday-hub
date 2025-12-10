@@ -79,8 +79,8 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
                   onChange={(e) => onAttributeChange(attr.id, 'value', e.target.value)}
                   placeholder={attr.placeholder}
                   disabled={!attr.enabled || (showSource && attr.source === 'CSR')}
-                  className="w-full bg-black/40 border border-white/10 rounded px-2 py-1.5 text-sm text-accent-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed md:cursor-text cursor-not-allowed md:pointer-events-auto pointer-events-none"
-                  readOnly={true}
+                  aria-label={attr.label}
+                  className="w-full bg-black/40 border border-white/10 rounded px-2 py-1.5 text-sm text-accent-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </td>
               <td className="p-3 text-muted-foreground text-xs max-w-[200px]">

@@ -37,10 +37,6 @@ The following E2E tests have been skipped to prevent CI hangs and timeouts. Thes
 
 ## Leaders (Timeouts)
 
-- **File**: `e2e/leaders.spec.ts`
-- **Test**: "filters by country"
-- **Reason**: Timeout waiting for country filter dropdown.
-
 ## PKI Workshop (Timeouts)
 
 - **File**: `e2e/pki-workshop.spec.ts`

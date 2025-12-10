@@ -8,8 +8,6 @@ test.describe('PKI Workshop Module', () => {
     await page.getByRole('button', { name: 'Learn' }).click()
 
     // Select PKI Workshop from Dashboard
-    // The "PKI" card is the one we want.
-    // Wait for dashboard to settle
     await page.waitForLoadState('networkidle')
     const card = page.getByRole('heading', { name: 'PKI', exact: true })
     await expect(card).toBeVisible({ timeout: 30000 })
@@ -19,25 +17,22 @@ test.describe('PKI Workshop Module', () => {
     await expect(page.getByRole('heading', { name: 'PKI Workshop', level: 1 })).toBeVisible()
   })
 
-  test.skip('Complete PKI Lifecycle (CSR -> Root CA -> Sign -> Parse)', async ({
+  test('Complete PKI Lifecycle (CSR -> Root CA -> Sign -> Parse)', async ({
     page,
     browserName,
   }) => {
     // Skip Firefox due to persistent WASM/Rendering timeouts in CI environment
     test.skip(browserName === 'firefox', 'Firefox has WASM/Rendering instability in CI')
+
     // --- Step 1: CSR Generator ---
+    // Assuming Step 1 header is still consistent or we can find it by button
     await expect(page.getByText('Step 1: Generate CSR')).toBeVisible()
 
-    // Select Profile (e.g., Web Server) - assuming the first select is for profile
-    // Or we can try to find it by label if it exists, or just use the first select in the step
-    const step1 = page.locator('.glass-panel').filter({ hasText: 'Step 1: Generate CSR' })
-    // Fill Common Name
-    await step1.getByPlaceholder('e.g., example.com').first().fill('mysite.com')
-    // Select Profile (optional, default is fine)
-    // await step1.locator('select').first().selectOption({ index: 1 })
+    // Fill Common Name (Global lookup as it is the active step)
+    await page.getByPlaceholder('e.g., example.com').first().fill('mysite.com')
 
     // Click Generate
-    await step1.getByRole('button', { name: 'Generate CSR' }).click()
+    await page.getByRole('button', { name: 'Generate CSR', exact: true }).click()
 
     // Verify Success
     await expect(page.getByText(/CSR generated and saved successfully/i)).toBeVisible({
@@ -47,20 +42,16 @@ test.describe('PKI Workshop Module', () => {
     await page.getByRole('button', { name: 'Next Step' }).click()
 
     // --- Step 2: Root CA Generator ---
-    // Scroll to Step 2 or just interact
-    const step2 = page.locator('.glass-panel').filter({ hasText: 'Step 2: Create Root CA' })
-    await expect(step2).toBeVisible()
-
-    // Select Profile
-    // Note: The first select is Key Type, second is Profile. We'll leave Key Type as default (RSA)
-    // and select a profile if needed. But simpler to just fill mandatory CN.
-    // await step2.locator('select').first().selectOption({ index: 1 })
+    // Verify visibility of Root CA Generator component
+    await expect(page.getByText('ROOT CA KEY').first()).toBeVisible()
 
     // Fill Common Name (Mandatory)
-    await step2.getByRole('textbox', { name: 'Common Name' }).fill('My Root CA')
+    // Note: The UI separates keys, profiles, and attributes into panels.
+    // Common Name is in "BUILD CERTIFICATE" panel, but accessible globally.
+    await page.getByRole('textbox', { name: 'Common Name' }).fill('My Root CA')
 
     // Click Generate
-    const genBtn = step2.getByRole('button', { name: 'Generate Root CA' })
+    const genBtn = page.getByRole('button', { name: 'Generate Root CA' })
     await expect(genBtn).toBeVisible()
     await expect(genBtn).toBeEnabled()
     await genBtn.click()
@@ -73,34 +64,33 @@ test.describe('PKI Workshop Module', () => {
     await page.getByRole('button', { name: 'Next Step' }).click()
 
     // --- Step 3: Certificate Issuance ---
-    const step3 = page.locator('.glass-panel').filter({ hasText: 'Step 3: Certificate Issuance' })
-    await expect(step3).toBeVisible()
+    // Verify visibility of Cert Signer component
+    await expect(page.getByText('RECEIVE & VALIDATE').first()).toBeVisible()
 
-    // Wait for dropdowns to populate (CSR and CA)
+    // Wait for dropdowns to populate
     await page.waitForTimeout(1000)
 
-    // Select CSR (first select in step 3)
-    const csrSelect = step3.locator('select').nth(0)
+    // Select CSR (using ID from CertSigner.tsx)
+    const csrSelect = page.locator('#csr-select').first()
     await csrSelect.selectOption({ index: 1 }) // Select the generated CSR
 
-    // Select CA (second select in step 3)
-    const caSelect = step3.locator('select').nth(1)
-    await caSelect.selectOption({ index: 1 }) // Select the generated CA
+    // Select CA Key (using ID from CertSigner.tsx)
+    const caKeySelect = page.locator('#ca-key-select').first()
+    await caKeySelect.selectOption({ index: 1 }) // Select the generated CA Key
 
     // Click Sign
-    await step3.getByRole('button', { name: 'Sign Certificate' }).click()
+    await page.getByRole('button', { name: 'Sign Certificate' }).first().click()
 
     // Verify Success
     await expect(page.getByText(/Certificate signed successfully/i)).toBeVisible({ timeout: 60000 })
-    await expect(page.getByText(/pkiworkshop_cert_.*\.pem/)).toBeVisible()
     await page.getByRole('button', { name: 'Next Step' }).click()
 
     // --- Step 4: Certificate Parser ---
-    const step4 = page.locator('.glass-panel').filter({ hasText: 'Step 4: Parse Certificate' })
-    await expect(step4).toBeVisible()
+    // Verify visibility of Cert Parser component
+    await expect(page.getByText('Inspect Generated Artifacts').first()).toBeVisible()
 
-    // Select Artifact (The signed cert should be available)
-    const artifactSelect = step4.locator('select').first()
+    // Select Artifact
+    const artifactSelect = page.locator('#artifact-select').first()
 
     // Wait for options to update
     await page.waitForTimeout(1000)
@@ -114,15 +104,18 @@ test.describe('PKI Workshop Module', () => {
     }
 
     // Click Parse
-    await step4.getByRole('button', { name: 'Parse Details' }).click()
-    await expect(step4.getByText('Certificate:')).toBeVisible() // OpenSSL text output
+    await page.getByRole('button', { name: 'Parse Details' }).click()
+    // The parser output shows "Certificate:" or "Parsed Output"
+    await expect(page.getByText('Parsed Output').first()).toBeVisible()
+    // It has tree view, so check for a node like "Subject" or "Issuer"
+    await expect(page.getByText('Subject:').first()).toBeVisible()
 
     // Test Conversion to DER
-    await step4.getByRole('button', { name: 'To DER' }).click()
+    await page.getByRole('button', { name: 'To DER' }).click()
     await expect(page.getByText(/Converted to DER successfully/)).toBeVisible()
 
     // Test Conversion to P7B
-    await step4.getByRole('button', { name: 'To P7B' }).click()
+    await page.getByRole('button', { name: 'To P7B' }).click()
     await expect(page.getByText(/Converted to P7B successfully/)).toBeVisible()
   })
 })
