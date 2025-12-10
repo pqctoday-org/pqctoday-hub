@@ -1,6 +1,8 @@
 import React from 'react'
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../../store'
+import { InlineTooltip } from '../../../PKILearning/modules/DigitalAssets/components/InfoTooltip'
+import { Info } from 'lucide-react'
 
 interface EncConfigProps {
   encAction: 'encrypt' | 'decrypt'
@@ -145,7 +147,12 @@ export const EncConfig: React.FC<EncConfigProps> = ({
             onChange={(e) => setEncShowIV(e.target.checked)}
             className="w-4 h-4 rounded border-input bg-background text-primary focus:ring-0 focus:ring-offset-0"
           />
-          <span className="text-sm text-foreground">Show Derived Key & IV (-p)</span>
+          <span className="text-sm text-foreground flex items-center gap-2">
+            Show Derived Key & IV (-p)
+            <InlineTooltip content="Displays the Key and IV derived from your passphrase using PBKDF2. Necessary for decryption if you don't use the same salt.">
+              <Info size={14} className="text-muted-foreground cursor-help" />
+            </InlineTooltip>
+          </span>
         </label>
       </div>
 
