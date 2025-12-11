@@ -13,6 +13,8 @@ import {
   Filter,
   Check,
   LockKeyhole,
+  FileText,
+  ChevronDown,
 } from 'lucide-react'
 import type { ComplianceRecord, ComplianceStatus } from './types'
 import { Button } from '../ui/button'
@@ -216,15 +218,106 @@ const ComplianceRow = ({
         )}
       </td>
       <td className="px-4 py-3">
-        <a
-          href={record.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary hover:text-primary/80 transition-colors"
-          title="View Official Record"
-        >
-          <ExternalLink size={16} />
-        </a>
+        {record.certificationReportUrls || record.securityTargetUrls || record.additionalDocuments ? (
+          <div className="relative group">
+            <button
+              className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
+              title="View Documents"
+            >
+              <FileText size={16} />
+              <ChevronDown size={12} />
+            </button>
+            <div className="absolute left-0 top-full mt-1 hidden group-hover:block z-50 bg-card border border-border rounded-md shadow-lg min-w-[250px] py-1">
+              <div className="px-3 py-2 text-xs font-semibold text-muted-foreground border-b border-border">
+                Available Documents
+              </div>
+              {record.certificationReportUrls && record.certificationReportUrls.length > 0 && (
+                <div className="py-1">
+                  <div className="px-3 py-1 text-xs font-medium text-foreground">Certification Reports</div>
+                  {record.certificationReportUrls.map((url, idx) => (
+                    <a
+                      key={idx}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-3 py-1.5 text-xs text-primary hover:bg-accent transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <FileText size={12} />
+                        <span className="truncate">Report {idx + 1}</span>
+                        <ExternalLink size={10} className="ml-auto" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )}
+              {record.securityTargetUrls && record.securityTargetUrls.length > 0 && (
+                <div className="py-1">
+                  <div className="px-3 py-1 text-xs font-medium text-foreground">Security Targets</div>
+                  {record.securityTargetUrls.map((url, idx) => (
+                    <a
+                      key={idx}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-3 py-1.5 text-xs text-primary hover:bg-accent transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <FileText size={12} />
+                        <span className="truncate">Security Target {idx + 1}</span>
+                        <ExternalLink size={10} className="ml-auto" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )}
+              {record.additionalDocuments && record.additionalDocuments.length > 0 && (
+                <div className="py-1">
+                  <div className="px-3 py-1 text-xs font-medium text-foreground">Other Documents</div>
+                  {record.additionalDocuments.map((doc, idx) => (
+                    <a
+                      key={idx}
+                      href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-3 py-1.5 text-xs text-primary hover:bg-accent transition-colors"
+                      title={doc.name}
+                    >
+                      <div className="flex items-center gap-2">
+                        <FileText size={12} />
+                        <span className="truncate max-w-[180px]">{doc.name}</span>
+                        <ExternalLink size={10} className="ml-auto" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )}
+              <div className="border-t border-border mt-1 pt-1">
+                <a
+                  href={record.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <ExternalLink size={12} />
+                    <span>View Product Page</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <a
+            href={record.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:text-primary/80 transition-colors"
+            title="View Official Record"
+          >
+            <ExternalLink size={16} />
+          </a>
+        )}
       </td>
     </tr>
   )
