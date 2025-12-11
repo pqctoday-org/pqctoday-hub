@@ -183,25 +183,33 @@ export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
             }
           })
 
-          // Try to fetch one PDF for algorithm extraction (prioritize security target)
+          // Try to fetch one PDF for algorithm extraction (Order: Cert Report > Security Target)
           let pdfLink = allPdfLinks.find((a) => {
             const href = a.getAttribute('href')?.toLowerCase() || ''
             const text = a.textContent?.toLowerCase() || ''
             return (
-              href.includes('cible') ||
-              href.includes('security_target') ||
-              href.includes('st') ||
-              text.includes('cible') ||
-              text.includes('security target')
+              href.includes('rapport') ||
+              href.includes('certification') ||
+              href.includes('report') ||
+              href.includes('certificat') ||
+              text.includes('rapport') ||
+              text.includes('certification') ||
+              text.includes('certificat')
             )
           })
 
           if (!pdfLink) {
-            pdfLink = allPdfLinks.find(
-              (a) =>
-                a.textContent?.toLowerCase().includes('rapport') ||
-                a.getAttribute('href')?.includes('ANSSI')
-            )
+            pdfLink = allPdfLinks.find((a) => {
+              const href = a.getAttribute('href')?.toLowerCase() || ''
+              const text = a.textContent?.toLowerCase() || ''
+              return (
+                href.includes('cible') ||
+                href.includes('security_target') ||
+                href.includes('st') ||
+                text.includes('cible') ||
+                text.includes('security target')
+              )
+            })
           }
           if (!pdfLink && allPdfLinks.length > 0) pdfLink = allPdfLinks[0]
 

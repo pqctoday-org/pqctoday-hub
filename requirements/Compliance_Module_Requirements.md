@@ -116,9 +116,15 @@ The scraper also collects standard algorithms to support backward compatibility 
         *   **Filtered List:** Fetches only "Produit certifié CC" sorted by date.
         *   **Date Filter:** Dynamic **2-Year Rolling Window** (e.g., Records from Today - 2 Years). Stops pagination when older records found.
         *   **Product Name:** Extracted from URL slug (e.g., `/multiapp-52` -> "multiapp 52") for cleanliness.
-        *   **Vendor Extraction:** Regex extracts "Commanditaire" (Sponsor) or "Développeur", handling multiline text.
-        *   **PDF Parsing:** Prioritizes "Security Target" PDFs; scans full text for PQC/Classical algorithms.
-        *   **Data Enrichment:** Extracts `Level` (Niveau), `Augmentations`, and `Lab` (Centre d'évaluation) to map to Category/Vendor columns.
+        *   **Vendor Extraction:** Regex extracts "Commanditaire" (Sponsor) or "Développeur" from **HTML Body**.
+        *   **Data Enrichment:** Extracts `Level` (Niveau), `Augmentations`, and `Lab` from **HTML Body**.
+        *   **PDF Parsing (PQC & Lab Fallback):**
+            *   **Lab:** If missing from HTML, checks PDF (`Centre d'évaluation`).
+            *   **Crypto:** Scans PDF texts for PQC/Classical algorithms.
+            *   **Prioritization:** Certification Report (`Report` / `Certificat`) > Security Target (`ST` / `Cible`).
+        *   **Date Normalization:** Parses French date formats (DD/MM/YYYY) to ISO 8601.
+        *   **Link Recovery:** Parses all PDF links (`href*=".pdf"`) to ensure access even with query parameters.
+        *   **Data Enrichment:** Extracts `Level` (Niveau), `Augmentations`, and `Lab`.
 
 ### 7. Global Data Policy
 
@@ -232,7 +238,15 @@ The application must strictly filter for the following criteria:
 - **Display:** Shown in TYPE column below the certification type badge.
 - **Storage:** Stored in `certificationLevel` field, separate from `productCategory`.
 
-### 7. Product Category
+### 7. Lab / Evaluation Facility
+
+- **Definition:** The accredited laboratory that performed the evaluation.
+- **Source:**
+  - **CC (Global):** Primary: `Lab` or `ITSEF` CSV column. Secondary: Extracted from **Certification Report** or **Security Target** PDF.
+  - **ANSSI:** Primary: Extracted from **Detail Page HTML**. Secondary: Extracted from **Certification Report** or **Security Target** PDF.
+- **Storage:** Stored in `lab` field. Used for detailed compliance reporting.
+
+### 8. Product Category
 
 - **FIPS:** "Cryptographic Module" (static).
 - **ACVP:** "Algorithm Implementation" (static).
@@ -319,6 +333,18 @@ _Legend:_
 
 - **✅ Extracted:** Data is directly parsed from the source (or authoritative Global CSV).
 - **Deep Details:** System fetches individual Detail/Report pages for richer context (e.g., specific algorithm OIDs).
+
+### 4. Link Management Policy (Strict Mode)
+
+- **Objective:** Prevent "dead" or misleading links to generic search pages.
+- **Rules:**
+  1.  **Prioritization:**
+      - **Primary:** Security Target PDF (Technical Specs).
+      - **Secondary:** Certification Report PDF (Validation Results).
+      - **Tertiary:** Other PDF documents.
+  2.  **Strict Validation:** The `link` field (Official Record Source) is **ONLY** populated if a valid PDF URL is found.
+  3.  **No Fallback:** If no PDF is found, the link is set to an empty string, disabling the "Official Record Source" button in the UI.
+  4.  **Multi-Document Support:** All found valid PDFs are stored in `certificationReportUrls` and `securityTargetUrls` arrays for display in the Details Popover.
 
 ---
 

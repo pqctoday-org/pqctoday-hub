@@ -1,6 +1,7 @@
 # ANSSI (French Common Criteria) Scraper Requirements
 
 ## Data Source
+
 - **URL**: `https://cyber.gouv.fr/produits-certifies`
 - **Type**: HTML Web Page
 - **Update Frequency**: Daily (automated via GitHub Actions)
@@ -8,34 +9,38 @@
 ## Scraping Method
 
 ### Primary Data Extraction
+
 1. **Target**: ANSSI certified products (French Common Criteria scheme)
-2. **Extraction Method**: DOM parsing using JSDOM
-3. **Secondary**: PDF parsing for detailed information
+2. **Extraction Method**: DOM parsing (JSDOM) of Product Detail Pages (Body Text Regex)
+3. **Secondary**: PDF parsing (Cert Report > ST) for Algorithms (PQC/Classical) and Lab fallback
 
 ### HTML Structure
 
 The ANSSI website lists certified products with links to detail pages. Each detail page contains:
+
 - Product information
 - Certification metadata
-- Link to certification report PDF
+- Links to certification documents (Certificat, Rapport, Cible de sécurité)
 
 ### Data Fields Extracted
 
-| Field | Source | Format | Example | Notes |
-|-------|--------|--------|---------|-------|
-| `id` | Generated | `anssi-{name}-{random}` | `anssi-acme-firewall-a1b2` | Unique identifier |
-| `source` | Static | `"ANSSI"` | `"ANSSI"` | Always "ANSSI" |
-| `date` | HTML/PDF: Certification date | ISO 8601 (YYYY-MM-DD) | `"2024-03-15"` | Extracted from metadata |
-| `link` | HTML: Detail page URL | Full URL | `https://cyber.gouv.fr/...` | Product detail page |
-| `type` | Static | `"Common Criteria"` | `"Common Criteria"` | ANSSI uses CC |
-| `status` | Static | `"Active"` | `"Active"` | All scraped records are active |
-| `pqcCoverage` | PDF extraction | boolean \| string | `"ML-KEM, ML-DSA"` | Extracted from PDF |
-| `classicalAlgorithms` | PDF extraction | string | `"AES-256, SHA-256"` | Comma-separated list |
-| `productName` | HTML: Product name | string | `"Acme Firewall v3.0"` | Product name |
-| `productCategory` | PDF: `Catégorie` metadata | string | `"Firewall"` | Product category |
-| `vendor` | PDF: `Développeur` metadata | string | `"Acme Corporation"` | Vendor/developer |
-| `lab` | PDF: `Centre d'évaluation` | string | `"LETI"` | Evaluation center |
-| `certificationLevel` | PDF: Level + Augmentation | string | `"EAL4+ AVA_VAN.5"` | CC level with augmentations |
+| Field                     | Source                          | Format                  | Example                                   | Notes                          |
+| ------------------------- | ------------------------------- | ----------------------- | ----------------------------------------- | ------------------------------ |
+| `id`                      | Generated                       | `anssi-{name}-{random}` | `anssi-acme-firewall-a1b2`                | Unique identifier              |
+| `source`                  | Static                          | `"ANSSI"`               | `"ANSSI"`                                 | Always "ANSSI"                 |
+| `date`                    | HTML/PDF: Certification date    | ISO 8601 (YYYY-MM-DD)   | `"2024-03-15"`                            | Extracted from metadata        |
+| `link`                    | HTML: Detail page URL           | Full URL                | `https://cyber.gouv.fr/...`               | Product detail page            |
+| `type`                    | Static                          | `"Common Criteria"`     | `"Common Criteria"`                       | ANSSI uses CC                  |
+| `status`                  | Static                          | `"Active"`              | `"Active"`                                | All scraped records are active |
+| `pqcCoverage`             | PDF extraction                  | boolean \| string       | `"ML-KEM, ML-DSA"`                        | Extracted from PDF             |
+| `classicalAlgorithms`     | PDF extraction                  | string                  | `"AES-256, SHA-256"`                      | Comma-separated list           |
+| `productName`             | HTML: Product name              | string                  | `"Acme Firewall v3.0"`                    | Product name                   |
+| `productCategory`         | HTML: `Catégorie` regex         | string                  | `"Firewall"`                              | Product category               |
+| `vendor`                  | HTML: `Développeur` regex       | string                  | `"Acme Corporation"`                      | Vendor/developer               |
+| `lab`                     | HTML (Primary) / PDF (Fallback) | string                  | `"LETI"`                                  | Evaluation center              |
+| `certificationLevel`      | HTML: `Niveau` regex            | string                  | `"EAL4+ AVA_VAN.5"`                       | CC level with augmentations    |
+| `certificationReportUrls` | PDF Links                       | array                   | `["...Certificat.pdf", "...Rapport.pdf"]` | Validation docs                |
+| `securityTargetUrls`      | PDF Links                       | array                   | `["...Cible.pdf"]`                        | Technical specs                |
 
 ## PDF Metadata Extraction
 
@@ -66,7 +71,7 @@ const metadata = {
   lab: extractField(pdfText, /Centre d'évaluation\s*:?\s*([^\n]+)/i),
   level: extractField(pdfText, /Niveau d'évaluation\s*:?\s*([^\n]+)/i),
   augmentation: extractField(pdfText, /Augmentations?\s*:?\s*([^\n]+)/i),
-  category: extractField(pdfText, /Catégorie\s*:?\s*([^\n]+)/i)
+  category: extractField(pdfText, /Catégorie\s*:?\s*([^\n]+)/i),
 }
 
 // Combine level and augmentation
@@ -84,18 +89,32 @@ The lab (evaluation center) is extracted from the PDF metadata:
 
 ```typescript
 // French field name: "Centre d'évaluation"
-const labMatch = pdfText.match(/Centre d'évaluation\s*:?\s*([^\n\r,]+)/i)
+// Priority: Extracted from Certification Report (best source) -> Security Target -> Other
+const labMatch = pdfText.match(
+  /(?:Centre d'évaluation|Evaluation Facility|ITSEF)\s*:?\s*([^\n\r,]+)/i
+)
 if (labMatch) {
   lab = labMatch[1].trim()
 }
 
 // Common ANSSI evaluation centers:
-// - LETI
+// - CEA - LETI
 // - Thales CESTI
 // - Oppida
 // - Amossys
 // - Serma Safety & Security
 ```
+
+## PDF Link Categorization
+
+The scraper recovers all PDF links using a relaxed selector `a[href*=".pdf"]` to handle query parameters. Links are then categorized based on keywords in the URL or link text:
+
+1.  **Security Targets (`securityTargetUrls`)**:
+    - Keywords: `cible`, `security target`, `st`
+2.  **Certification Reports (`certificationReportUrls`)**:
+    - Keywords: `rapport`, `certification`, `report`, `certificat`
+3.  **Other Documents (`additionalDocuments`)**:
+    - Anything not matching the above.
 
 ## Product Category Extraction
 
@@ -128,9 +147,7 @@ const augMatch = pdfText.match(/Augmentations?\s*:?\s*([^\n]+)/i)
 const augmentation = augMatch ? augMatch[1].trim() : ''
 
 // Combine
-certificationLevel = level
-  ? `${level}${augmentation ? ' ' + augmentation : ''}`.trim()
-  : undefined
+certificationLevel = level ? `${level}${augmentation ? ' ' + augmentation : ''}`.trim() : undefined
 
 // Example output: "EAL4+ AVA_VAN.5, ALC_FLR.3"
 ```
@@ -140,7 +157,7 @@ certificationLevel = level
 ```typescript
 // Name-based heuristic
 if (productName.match(/quantum|pqc|post-quantique/i)) {
-  pqcCoverage = "Potentially PQC (Name Match)"
+  pqcCoverage = 'Potentially PQC (Name Match)'
 }
 
 // PDF extraction
@@ -149,8 +166,8 @@ const pqcMatches = pdfText.match(pqcPatterns)
 
 if (pqcMatches) {
   pqcCoverage = Array.from(new Set(pqcMatches)).join(', ')
-} else if (pqcCoverage === "Potentially PQC") {
-  pqcCoverage = "No PQC Mechanisms Detected"
+} else if (pqcCoverage === 'Potentially PQC') {
+  pqcCoverage = 'No PQC Mechanisms Detected'
 }
 ```
 
@@ -206,11 +223,11 @@ if (pqcMatches) {
 
 All metadata extraction must handle French field names:
 
-| English | French | Field Name |
-|---------|--------|------------|
-| Product Name | Nom du produit | `productName` |
-| Developer | Développeur | `vendor` |
-| Evaluation Center | Centre d'évaluation | `lab` |
-| Evaluation Level | Niveau d'évaluation | `certificationLevel` |
-| Augmentations | Augmentations | Part of `certificationLevel` |
-| Category | Catégorie | `productCategory` |
+| English           | French              | Field Name                   |
+| ----------------- | ------------------- | ---------------------------- |
+| Product Name      | Nom du produit      | `productName`                |
+| Developer         | Développeur         | `vendor`                     |
+| Evaluation Center | Centre d'évaluation | `lab`                        |
+| Evaluation Level  | Niveau d'évaluation | `certificationLevel`         |
+| Augmentations     | Augmentations       | Part of `certificationLevel` |
+| Category          | Catégorie           | `productCategory`            |
