@@ -78,7 +78,9 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
             lowerFilename.includes('certification') ||
             lowerFilename.includes('report') ||
             lowerFilename.includes('cert') ||
-            lowerFilename.includes('rapport')
+            lowerFilename.includes('rapport') ||
+            lowerFilename.includes('-cr') ||
+            lowerFilename.includes('cr[')
           ) {
             certReports.push(fullUrl)
           } else if (
@@ -138,16 +140,6 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
 
         // Determine best PDF for text extraction
         // Priority: Security Target (Required for precise PQC algorithm detection) > Certification Report
-        let targetPdfUrl = ''
-        if (parsedSecurityTargets.securityTargets.length > 0) {
-          targetPdfUrl = parsedSecurityTargets.securityTargets[0]
-        } else if (parsedCertReports.certReports.length > 0) {
-          targetPdfUrl = parsedCertReports.certReports[0]
-        } else if (parsedCertReports.other.length > 0) {
-          targetPdfUrl = parsedCertReports.other[0].url
-        }
-
-        // Fetch PDF if available
         // Helper to extract Lab info with expert patterns
         const extractLabFromText = (text: string): string | null => {
           // Priority 1: Explicit ITSEF/Lab fields
@@ -190,49 +182,61 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
           return null
         }
 
-        // Fetch Logic: Priority ST (PQC) -> Report (Lab Fallback)
-        if (targetPdfUrl) {
+        // Fetch Logic: Split Strategy
+        // 1. Fetch Security Target (ST) for PQC (Strict Source)
+        // 2. Fetch Certification Report (CR) for Lab (Strict Source)
+
+        // PQC Extraction (from ST)
+        if (parsedSecurityTargets.securityTargets.length > 0) {
           try {
-            const pdfDataBuffer = await fetch(targetPdfUrl).then((res) => res.arrayBuffer())
+            const stUrl = parsedSecurityTargets.securityTargets[0]
+            const pdfDataBuffer = await fetch(stUrl).then((res) => res.arrayBuffer())
             const parser = new PDFParse({ data: Buffer.from(pdfDataBuffer) })
             const pdfText = await parser.getText()
 
-            // Extract PQC (Strictly from ST)
+            // Extract PQC
             const pqcStr = extractAlgorithms(pdfText.text, PQC_PATTERNS)
             if (pqcStr) pqcCoverage = pqcStr
             else if (pqcCoverage === 'Potentially PQC') pqcCoverage = 'No PQC Mechanisms Detected'
 
-            // Extract Classical
-            classicalAlgorithms = extractAlgorithms(pdfText.text, CLASSICAL_PATTERNS)
-
-            // Extract Lab from ST
-            const labMatch = extractLabFromText(pdfText.text)
-            if (labMatch) labFromPDF = labMatch.substring(0, 50)
-          } catch {
-            // console.warn(`Failed CC ST fetch for ${name}`);
-          }
-        }
-
-        // If Lab not found in ST (or ST failed), try Certification Report
-        // This satisfies: "If Security Target doesn't list lab: Check the Certification Report - it ALWAYS contains lab information"
-        if (!labFromPDF && parsedCertReports.certReports.length > 0) {
-          try {
-            const reportUrl = parsedCertReports.certReports[0]
-            // Don't refetch if it's the same URL we just tried (rare but possible if logic changes)
-            if (reportUrl !== targetPdfUrl) {
-              const pdfDataBuffer = await fetch(reportUrl).then((res) => res.arrayBuffer())
-              const parser = new PDFParse({ data: Buffer.from(pdfDataBuffer) })
-              const pdfText = await parser.getText()
-
-              const labMatch = extractLabFromText(pdfText.text)
-              if (labMatch) labFromPDF = labMatch.substring(0, 50)
+            // Extract Classical (ST is usually good for this too)
+            if (!classicalAlgorithms) {
+              classicalAlgorithms = extractAlgorithms(pdfText.text, CLASSICAL_PATTERNS)
             }
           } catch {
-            // console.warn(`Failed CC Report fetch for ${name}`);
+            // console.warn(`Failed CC ST fetch for ${name}`, e);
           }
         }
 
-        // Refined Link Logic (Sync with frontend services.ts)
+        // Lab Extraction (from Certification Report)
+        // Always try to fetch the Cert Report for Lab info, as it is authoritative.
+        if (parsedCertReports.certReports.length > 0) {
+          try {
+            const reportUrl = parsedCertReports.certReports[0]
+            const pdfDataBuffer = await fetch(reportUrl).then((res) => res.arrayBuffer())
+            const parser = new PDFParse({ data: Buffer.from(pdfDataBuffer) })
+            const pdfText = await parser.getText()
+
+            // Extract Lab
+            const labMatch = extractLabFromText(pdfText.text)
+            if (labMatch) labFromPDF = labMatch.substring(0, 50)
+
+            // Fallback: If Classical algorithms weren't found in ST (or ST missing), check Report
+            if (!classicalAlgorithms) {
+              classicalAlgorithms = extractAlgorithms(pdfText.text, CLASSICAL_PATTERNS)
+            }
+          } catch (e) {
+            console.error(`Failed CC Report fetch for ${name}`, e)
+          }
+        } else if (!labFromPDF && parsedSecurityTargets.securityTargets.length > 0) {
+          // Fallback: If NO Report exists, try extracting Lab from ST (already fetched ideally, but simplified here)
+          // For efficiency, we could cache the ST text from above, but re-fetching/parsing is rare edge case here.
+          // Actually, let's just leave it empty if Report is missing to be strict?
+          // User said "obviously the right one" is the Cert Report.
+          // But if only ST exists, better than nothing?
+          // Let's implement ST fallback only if we haven't processed it yet?
+          // For now, let's assume Report is primary.
+        } // Refined Link Logic (Sync with frontend services.ts)
         let finalMainLink = ''
 
         // 1. Try to find a valid PDF link for the main "Official Record"
