@@ -58,13 +58,6 @@ export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
 
           // Date
           let dateStr = ''
-          const dateEl =
-            Array.from(pageDoc.querySelectorAll('.field__label')).find((el) =>
-              el.textContent?.includes('Date de fin de validité')
-            )?.nextElementSibling ||
-            Array.from(pageDoc.querySelectorAll('.field__label')).find((el) =>
-              el.textContent?.includes('Publié le')
-            )?.nextElementSibling // Fallback
 
           // Actually, "Publié le" is usually in metadata block
           // Let's look for time tag or specific field
@@ -153,7 +146,7 @@ export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
           let pqcCoverage = 'No PQC Mechanisms Detected'
           let classicalAlgorithms = ''
 
-          const allPdfLinks = Array.from(pageDoc.querySelectorAll('a[href$=".pdf"]'))
+          const allPdfLinks = Array.from(pageDoc.querySelectorAll('a[href*=".pdf"]'))
 
           // Categorize PDFs
           const certReports: string[] = []
@@ -167,11 +160,21 @@ export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
             const absolutePdfUrl = pdfUrl.startsWith('http') ? pdfUrl : `${baseUrl}${pdfUrl}`
 
             // Categorize by filename and link text
-            if (href.includes('cible') || href.includes('security_target') || href.includes('st') ||
-              text.includes('cible') || text.includes('security target')) {
+            if (
+              href.includes('cible') ||
+              href.includes('security_target') ||
+              href.includes('st') ||
+              text.includes('cible') ||
+              text.includes('security target')
+            ) {
               securityTargets.push(absolutePdfUrl)
-            } else if (href.includes('rapport') || href.includes('certification') || href.includes('report') ||
-              text.includes('rapport') || text.includes('certification')) {
+            } else if (
+              href.includes('rapport') ||
+              href.includes('certification') ||
+              href.includes('report') ||
+              text.includes('rapport') ||
+              text.includes('certification')
+            ) {
               certReports.push(absolutePdfUrl)
             } else {
               otherDocs.push({ name: text || 'Document', url: absolutePdfUrl })
@@ -213,6 +216,16 @@ export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
               const pqcStr = extractAlgorithms(text, PQC_PATTERNS)
               if (pqcStr) pqcCoverage = pqcStr
               classicalAlgorithms = extractAlgorithms(text, CLASSICAL_PATTERNS)
+
+              // Extract Lab / ITSEF from PDF if missing
+              if (!lab) {
+                const labMatch = text.match(
+                  /(?:Centre\s+d['’]\s*évaluation|Evaluation\s+Facility|ITSEF)\s*[:.]?\s*([^\n\r,]+)/i
+                )
+                if (labMatch) {
+                  lab = labMatch[1].trim().substring(0, 50)
+                }
+              }
             } catch (e) {
               console.warn('PDF Error', e)
             }

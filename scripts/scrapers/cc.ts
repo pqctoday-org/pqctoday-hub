@@ -125,22 +125,27 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
         // const mainLink = `https://www.commoncriteriaportal.org/products/?expand#${name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '+')}`
 
         // Try to get PDF URL for algorithm extraction, but don't use it as main link
-        let pdfUrl = row['Security Target URL'] || row['Certification Report URL'] || ''
-        if (pdfUrl && !pdfUrl.startsWith('http')) pdfUrl = ''
+        // Parse concatenated PDF URLs from CSV FIRST to get the best PDF for text extraction
+        const certReportUrl = row['Certification Report URL'] || ''
+        const securityTargetUrl = row['Security Target URL'] || ''
 
-        let pqcCoverage: boolean | string = 'No PQC Mechanisms Detected'
-        let classicalAlgorithms = ''
-        let labFromPDF = ''
+        const parsedCertReports = parseDocumentURLs(certReportUrl)
+        const parsedSecurityTargets = parseDocumentURLs(securityTargetUrl)
 
-        // PQC Heuristic on Name
-        if (name.toLowerCase().includes('quantum') || name.toLowerCase().includes('pqc')) {
-          pqcCoverage = 'Potentially PQC (Name Match)'
+        // Determine best PDF for extraction (Priority: ST > Report)
+        let targetPdfUrl = ''
+        if (parsedSecurityTargets.securityTargets.length > 0) {
+          targetPdfUrl = parsedSecurityTargets.securityTargets[0]
+        } else if (parsedCertReports.certReports.length > 0) {
+          targetPdfUrl = parsedCertReports.certReports[0]
+        } else if (parsedSecurityTargets.other.length > 0) {
+          targetPdfUrl = parsedSecurityTargets.other[0].url
         }
 
         // Fetch PDF if available
-        if (pdfUrl) {
+        if (targetPdfUrl) {
           try {
-            const pdfDataBuffer = await fetch(pdfUrl).then((res) => res.arrayBuffer())
+            const pdfDataBuffer = await fetch(targetPdfUrl).then((res) => res.arrayBuffer())
             const parser = new PDFParse({ data: Buffer.from(pdfDataBuffer) })
             const pdfText = await parser.getText()
 
@@ -155,8 +160,9 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
             // Extract Lab / ITSEF (Heuristic)
             // Look for "Evaluation Facility:" or "ITSEF:"
             // Common patterns: "Developer: ... ITSEF: ... "
+            // Added support for multi-line and "Sponsor" context if needed, but keeping it simple for now
             const labMatch = pdfText.text.match(
-              /(?:Evaluation Facility|ITSEF|Evaluation Body)\s*:?\s*([^\n\r,]+)/i
+              /(?:Evaluation\s+Facility|ITSEF|Evaluation\s+Body|Commercial\s+Facility)\s*[:.]?\s*([^\n\r,]+)/i
             )
             if (labMatch) {
               labFromPDF = labMatch[1].trim().substring(0, 50) // Cap length
@@ -165,13 +171,6 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
             // console.warn(`Failed CC PDF fetch for ${name}`);
           }
         }
-
-        // Parse concatenated PDF URLs from CSV BEFORE determining filtered link
-        const certReportUrl = row['Certification Report URL'] || ''
-        const securityTargetUrl = row['Security Target URL'] || ''
-
-        const parsedCertReports = parseDocumentURLs(certReportUrl)
-        const parsedSecurityTargets = parseDocumentURLs(securityTargetUrl)
 
         // Refined Link Logic (Sync with frontend services.ts)
         let finalMainLink = ''
