@@ -158,7 +158,9 @@ export const ComplianceDetailPopover = ({
                 <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Certification Level
                 </h4>
-                <p className="text-sm text-foreground">{record.certificationLevel}</p>
+                <p className="text-sm text-foreground whitespace-normal break-words">
+                  {record.certificationLevel}
+                </p>
               </div>
             )}
 

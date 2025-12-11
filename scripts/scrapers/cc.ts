@@ -116,6 +116,10 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
         // Extract lab from CSV if available
         const lab = row['Lab'] || row['ITSEF'] || row['Evaluation Facility'] || ''
 
+        let pqcCoverage = ''
+        let classicalAlgorithms = ''
+        let labFromPDF = ''
+
         // Generate ID from product name
         const certId = `cc-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Math.random().toString(36).substr(2, 4)}`
 
@@ -140,7 +144,7 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
         } else if (parsedCertReports.certReports.length > 0) {
           targetPdfUrl = parsedCertReports.certReports[0]
         } else if (parsedCertReports.other.length > 0) {
-          targetPdfUrl = parsedSecurityTargets.other[0].url
+          targetPdfUrl = parsedCertReports.other[0].url
         }
 
         // Fetch PDF if available
@@ -291,8 +295,8 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
     }
 
     return records
-  } catch {
-    // console.warn('CC Scrape Failed:', _e)
+  } catch (e) {
+    console.error('CC Scrape Failed:', e)
     return []
   }
 }
