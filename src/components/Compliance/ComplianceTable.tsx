@@ -12,10 +12,7 @@ import {
   Download,
   Filter,
   Check,
-  Layers,
   LockKeyhole,
-  Building,
-  FileCheck,
 } from 'lucide-react'
 import type { ComplianceRecord, ComplianceStatus } from './types'
 import { Button } from '../ui/button'
@@ -507,344 +504,6 @@ export const ComplianceTable: React.FC<
         </div>
       </div>
 
-      {/* Filters Row */}
-      <div className="flex flex-wrap items-center gap-2">
-        {/* PQC Filter Dropdown */}
-        <div className="relative">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowFilterMenu(!showFilterMenu)}
-            className={clsx(
-              'gap-2 border-dashed',
-              pqcFilters.length > 0 && 'border-tertiary text-tertiary bg-tertiary/10'
-            )}
-          >
-            <Filter size={14} />
-            Filter PQC
-            {pqcFilters.length > 0 && (
-              <span className="ml-1 rounded-full bg-tertiary w-4 h-4 text-[10px] text-tertiary-foreground flex items-center justify-center font-bold">
-                {pqcFilters.length}
-              </span>
-            )}
-          </Button>
-
-          {showFilterMenu && (
-            <>
-              <div className="fixed inset-0 z-40" onClick={() => setShowFilterMenu(false)} />
-              <div className="absolute right-0 top-full mt-2 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
-                <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                  Select Algorithms
-                </div>
-                {PQC_ALGOS.map((algo) => (
-                  <div
-                    key={algo}
-                    onClick={() => handleTogglePqcFilter(algo)}
-                    className={clsx(
-                      'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
-                      pqcFilters.includes(algo) ? 'text-tertiary' : 'text-muted-foreground'
-                    )}
-                  >
-                    <div
-                      className={clsx(
-                        'w-3 h-3 rounded-[3px] border flex items-center justify-center',
-                        pqcFilters.includes(algo)
-                          ? 'border-tertiary bg-tertiary'
-                          : 'border-border'
-                      )}
-                    >
-                      {pqcFilters.includes(algo) && (
-                        <Check size={10} className="text-tertiary-foreground" />
-                      )}
-                    </div>
-                    {algo}
-                  </div>
-                ))}
-                {pqcFilters.length > 0 && (
-                  <div
-                    onClick={() => setPqcFilters([])}
-                    className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
-                  >
-                    Clear Filters
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Type Filter Dropdown */}
-        <div className="relative">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowTypeMenu(!showTypeMenu)}
-            className={clsx(
-              'gap-2 border-dashed',
-              typeFilters.length > 0 && 'border-primary text-primary bg-primary/10'
-            )}
-          >
-            <FileCheck size={14} />
-            Filter Type
-            {typeFilters.length > 0 && (
-              <span className="ml-1 rounded-full bg-primary w-4 h-4 text-[10px] text-primary-foreground flex items-center justify-center font-bold">
-                {typeFilters.length}
-              </span>
-            )}
-          </Button>
-
-          {showTypeMenu && (
-            <>
-              <div className="fixed inset-0 z-40" onClick={() => setShowTypeMenu(false)} />
-              <div className="absolute right-0 top-full mt-2 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
-                <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                  Select Certification Types
-                </div>
-                {uniqueTypes.map((type) => (
-                  <div
-                    key={type}
-                    onClick={() => handleToggleTypeFilter(type)}
-                    className={clsx(
-                      'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
-                      typeFilters.includes(type) ? 'text-primary' : 'text-muted-foreground'
-                    )}
-                  >
-                    <div
-                      className={clsx(
-                        'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
-                        typeFilters.includes(type) ? 'border-primary bg-primary' : 'border-border'
-                      )}
-                    >
-                      {typeFilters.includes(type) && (
-                        <Check size={10} className="text-primary-foreground" />
-                      )}
-                    </div>
-                    <span className="truncate">{type}</span>
-                  </div>
-                ))}
-                {typeFilters.length > 0 && (
-                  <div
-                    onClick={() => setTypeFilters([])}
-                    className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
-                  >
-                    Clear Filters
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Category Filter Dropdown */}
-        <div className="relative">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowCategoryMenu(!showCategoryMenu)}
-            className={clsx(
-              'gap-2 border-dashed',
-              categoryFilters.length > 0 && 'border-primary text-primary bg-primary/10'
-            )}
-          >
-            <Layers size={14} />
-            Filter Product
-            {categoryFilters.length > 0 && (
-              <span className="ml-1 rounded-full bg-primary w-4 h-4 text-[10px] text-primary-foreground flex items-center justify-center font-bold">
-                {categoryFilters.length}
-              </span>
-            )}
-          </Button>
-
-          {showCategoryMenu && (
-            <>
-              <div className="fixed inset-0 z-40" onClick={() => setShowCategoryMenu(false)} />
-              <div className="absolute right-0 top-full mt-2 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
-                <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                  Select Product Categories
-                </div>
-                {uniqueCategories.map((cat) => (
-                  <div
-                    key={cat}
-                    onClick={() => handleToggleCategoryFilter(cat)}
-                    className={clsx(
-                      'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
-                      categoryFilters.includes(cat) ? 'text-primary' : 'text-muted-foreground'
-                    )}
-                  >
-                    <div
-                      className={clsx(
-                        'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
-                        categoryFilters.includes(cat)
-                          ? 'border-primary bg-primary'
-                          : 'border-border'
-                      )}
-                    >
-                      {categoryFilters.includes(cat) && (
-                        <Check size={10} className="text-primary-foreground" />
-                      )}
-                    </div>
-                    <span className="truncate">{cat}</span>
-                  </div>
-                ))}
-                {categoryFilters.length > 0 && (
-                  <div
-                    onClick={() => setCategoryFilters([])}
-                    className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
-                  >
-                    Clear Filters
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Source Filter Dropdown */}
-        <div className="relative">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowSourceMenu(!showSourceMenu)}
-            className={clsx(
-              'gap-2 border-dashed',
-              sourceFilters.length > 0 && 'border-accent text-accent bg-accent/10'
-            )}
-          >
-            <Database size={14} />
-            Source
-            {sourceFilters.length > 0 && (
-              <span className="ml-1 rounded-full bg-accent w-4 h-4 text-[10px] text-accent-foreground flex items-center justify-center font-bold">
-                {sourceFilters.length}
-              </span>
-            )}
-          </Button>
-
-          {showSourceMenu && (
-            <>
-              <div className="fixed inset-0 z-40" onClick={() => setShowSourceMenu(false)} />
-              <div className="absolute right-0 top-full mt-2 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
-                <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                  Select Source
-                </div>
-                {uniqueSources.map((src) => (
-                  <div
-                    key={src}
-                    onClick={() => handleToggleSourceFilter(src)}
-                    className={clsx(
-                      'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
-                      sourceFilters.includes(src) ? 'text-accent' : 'text-muted-foreground'
-                    )}
-                  >
-                    <div
-                      className={clsx(
-                        'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
-                        sourceFilters.includes(src) ? 'border-accent bg-accent' : 'border-border'
-                      )}
-                    >
-                      {sourceFilters.includes(src) && (
-                        <Check size={10} className="text-accent-foreground" />
-                      )}
-                    </div>
-                    <span className="truncate">{src}</span>
-                  </div>
-                ))}
-                {sourceFilters.length > 0 && (
-                  <div
-                    onClick={() => setSourceFilters([])}
-                    className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
-                  >
-                    Clear Filters
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Vendor Filter Dropdown */}
-        <div className="relative">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowVendorMenu(!showVendorMenu)}
-            className={clsx(
-              'gap-2 border-dashed',
-              vendorFilters.length > 0 && 'border-warning text-warning bg-warning/10'
-            )}
-          >
-            <Building size={14} />
-            Vendor
-            {vendorFilters.length > 0 && (
-              <span className="ml-1 rounded-full bg-warning w-4 h-4 text-[10px] text-warning-foreground flex items-center justify-center font-bold">
-                {vendorFilters.length}
-              </span>
-            )}
-          </Button>
-
-          {showVendorMenu && (
-            <>
-              <div className="fixed inset-0 z-40" onClick={() => setShowVendorMenu(false)} />
-              <div className="absolute right-0 top-full mt-2 w-72 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-96 flex flex-col">
-                <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                  Select Vendor
-                </div>
-                <div className="px-2 pb-2">
-                  <Input
-                    placeholder="Search vendors..."
-                    value={vendorSearch}
-                    onChange={(e) => setVendorSearch(e.target.value)}
-                    className="h-8 text-xs"
-                    autoFocus
-                  />
-                </div>
-                <div className="overflow-y-auto max-h-64 space-y-1">
-                  {filteredVendors.map((v) => (
-                    <div
-                      key={v}
-                      onClick={() => handleToggleVendorFilter(v)}
-                      className={clsx(
-                        'flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors',
-                        vendorFilters.includes(v) ? 'text-warning' : 'text-muted-foreground'
-                      )}
-                    >
-                      <div
-                        className={clsx(
-                          'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
-                          vendorFilters.includes(v)
-                            ? 'border-warning bg-warning'
-                            : 'border-border'
-                        )}
-                      >
-                        {vendorFilters.includes(v) && (
-                          <Check size={10} className="text-warning-foreground" />
-                        )}
-                      </div>
-                      <span className="truncate">{v}</span>
-                    </div>
-                  ))}
-                  {filteredVendors.length === 0 && (
-                    <div className="px-2 py-4 text-center text-xs text-muted-foreground">
-                      No vendors found.
-                    </div>
-                  )}
-                </div>
-                {vendorFilters.length > 0 && (
-                  <div
-                    onClick={() => {
-                      setVendorFilters([])
-                      setVendorSearch('')
-                    }}
-                    className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2 shrink-0"
-                  >
-                    Clear Filters
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
       {/* Data Table */}
       <div className="rounded-md border border-border overflow-hidden bg-card/50 relative min-h-[400px]">
         {/* Loading Overlay */}
@@ -863,36 +522,297 @@ export const ComplianceTable: React.FC<
           <table className="w-full text-sm text-left table-fixed">
             <thead className="text-xs uppercase bg-muted/50 text-muted-foreground">
               <tr>
-                {[
-                  { key: 'source', label: 'Source', width: 'w-24' },
-                  { key: 'id', label: 'Certification #', width: 'w-32' },
-                  { key: 'date', label: 'Date', width: 'w-32' },
-                  { key: 'type', label: 'Type', width: 'w-48' },
-                  { key: 'productName', label: 'Product Name', width: 'w-80' },
-                  { key: 'vendor', label: 'Vendor', width: 'w-48' },
-                  { key: 'lab', label: 'Lab', width: 'w-48' },
-                  { key: 'status', label: 'Status', width: 'w-32' },
-                  { key: 'pqcCoverage', label: 'PQC', width: 'w-20' },
-                  { key: 'classicalAlgorithms', label: 'CC', width: 'w-20' },
-                  { key: 'link', label: 'Link', width: 'w-20' },
-                ].map((col) => (
-                  <th
-                    key={col.key}
-                    scope="col"
-                    className={`px-4 py-3 cursor-pointer hover:text-foreground transition-colors ${col.width}`}
-                    onClick={() => col.key !== 'link' && handleSort(col.key as SortColumn)}
-                  >
-                    <div className="flex items-center gap-1">
-                      {col.label}
-                      {col.key !== 'link' && (
-                        <ArrowUpDown
-                          size={12}
-                          className={clsx(sortColumn === col.key ? 'text-primary' : 'opacity-30')}
-                        />
+                {/* Source Column with Filter */}
+                <th scope="col" className="px-4 py-3 w-24 relative">
+                  <div className="flex items-center justify-between gap-1">
+                    <div className="flex items-center gap-1 cursor-pointer hover:text-foreground" onClick={() => handleSort('source')}>
+                      <span>Source</span>
+                      <ArrowUpDown size={12} className={clsx(sortColumn === 'source' ? 'text-primary' : 'opacity-30')} />
+                    </div>
+                    <div className="relative">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setShowSourceMenu(!showSourceMenu); }}
+                        className={clsx("p-0.5 rounded hover:bg-muted", sourceFilters.length > 0 && "text-accent")}
+                      >
+                        <Filter size={12} />
+                        {sourceFilters.length > 0 && (
+                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full text-[8px] flex items-center justify-center text-accent-foreground font-bold">
+                            {sourceFilters.length}
+                          </span>
+                        )}
+                      </button>
+                      {showSourceMenu && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowSourceMenu(false)} />
+                          <div className="absolute left-0 top-full mt-1 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
+                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">Select Source</div>
+                            {uniqueSources.map((src) => (
+                              <div
+                                key={src}
+                                onClick={() => handleToggleSourceFilter(src)}
+                                className={clsx('flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors', sourceFilters.includes(src) ? 'text-accent' : 'text-muted-foreground')}
+                              >
+                                <div className={clsx('w-3 h-3 rounded-[3px] border flex items-center justify-center', sourceFilters.includes(src) ? 'border-accent bg-accent' : 'border-border')}>
+                                  {sourceFilters.includes(src) && <Check size={10} className="text-accent-foreground" />}
+                                </div>
+                                <span className="truncate">{src}</span>
+                              </div>
+                            ))}
+                            {sourceFilters.length > 0 && (
+                              <div onClick={() => setSourceFilters([])} className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2">
+                                Clear
+                              </div>
+                            )}
+                          </div>
+                        </>
                       )}
                     </div>
-                  </th>
-                ))}
+                  </div>
+                </th>
+
+                {/* Certification # Column */}
+                <th scope="col" className="px-4 py-3 w-32 cursor-pointer hover:text-foreground" onClick={() => handleSort('id')}>
+                  <div className="flex items-center gap-1">
+                    <span>Certification #</span>
+                    <ArrowUpDown size={12} className={clsx(sortColumn === 'id' ? 'text-primary' : 'opacity-30')} />
+                  </div>
+                </th>
+
+                {/* Date Column */}
+                <th scope="col" className="px-4 py-3 w-32 cursor-pointer hover:text-foreground" onClick={() => handleSort('date')}>
+                  <div className="flex items-center gap-1">
+                    <span>Date</span>
+                    <ArrowUpDown size={12} className={clsx(sortColumn === 'date' ? 'text-primary' : 'opacity-30')} />
+                  </div>
+                </th>
+
+                {/* Type Column with Filter */}
+                <th scope="col" className="px-4 py-3 w-48 relative">
+                  <div className="flex items-center justify-between gap-1">
+                    <div className="flex items-center gap-1 cursor-pointer hover:text-foreground" onClick={() => handleSort('type')}>
+                      <span>Type</span>
+                      <ArrowUpDown size={12} className={clsx(sortColumn === 'type' ? 'text-primary' : 'opacity-30')} />
+                    </div>
+                    <div className="relative">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setShowTypeMenu(!showTypeMenu); }}
+                        className={clsx("p-0.5 rounded hover:bg-muted", typeFilters.length > 0 && "text-primary")}
+                      >
+                        <Filter size={12} />
+                        {typeFilters.length > 0 && (
+                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
+                            {typeFilters.length}
+                          </span>
+                        )}
+                      </button>
+                      {showTypeMenu && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowTypeMenu(false)} />
+                          <div className="absolute left-0 top-full mt-1 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">Select Types</div>
+                            {uniqueTypes.map((type) => (
+                              <div
+                                key={type}
+                                onClick={() => handleToggleTypeFilter(type)}
+                                className={clsx('flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors', typeFilters.includes(type) ? 'text-primary' : 'text-muted-foreground')}
+                              >
+                                <div className={clsx('w-3 h-3 rounded-[3px] border flex items-center justify-center', typeFilters.includes(type) ? 'border-primary bg-primary' : 'border-border')}>
+                                  {typeFilters.includes(type) && <Check size={10} className="text-primary-foreground" />}
+                                </div>
+                                <span className="truncate">{type}</span>
+                              </div>
+                            ))}
+                            {typeFilters.length > 0 && (
+                              <div onClick={() => setTypeFilters([])} className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2">
+                                Clear
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </th>
+
+                {/* Product Name Column with Category Filter */}
+                <th scope="col" className="px-4 py-3 w-80 relative">
+                  <div className="flex items-center justify-between gap-1">
+                    <div className="flex items-center gap-1 cursor-pointer hover:text-foreground" onClick={() => handleSort('productName')}>
+                      <span>Product Name</span>
+                      <ArrowUpDown size={12} className={clsx(sortColumn === 'productName' ? 'text-primary' : 'opacity-30')} />
+                    </div>
+                    <div className="relative">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setShowCategoryMenu(!showCategoryMenu); }}
+                        className={clsx("p-0.5 rounded hover:bg-muted", categoryFilters.length > 0 && "text-secondary")}
+                        title="Filter by Product Category"
+                      >
+                        <Filter size={12} />
+                        {categoryFilters.length > 0 && (
+                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full text-[8px] flex items-center justify-center text-secondary-foreground font-bold">
+                            {categoryFilters.length}
+                          </span>
+                        )}
+                      </button>
+                      {showCategoryMenu && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowCategoryMenu(false)} />
+                          <div className="absolute left-0 top-full mt-1 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">Product Categories</div>
+                            {uniqueCategories.map((cat) => (
+                              <div
+                                key={cat}
+                                onClick={() => handleToggleCategoryFilter(cat)}
+                                className={clsx('flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors', categoryFilters.includes(cat) ? 'text-secondary' : 'text-muted-foreground')}
+                              >
+                                <div className={clsx('w-3 h-3 rounded-[3px] border flex items-center justify-center', categoryFilters.includes(cat) ? 'border-secondary bg-secondary' : 'border-border')}>
+                                  {categoryFilters.includes(cat) && <Check size={10} className="text-secondary-foreground" />}
+                                </div>
+                                <span className="truncate">{cat}</span>
+                              </div>
+                            ))}
+                            {categoryFilters.length > 0 && (
+                              <div onClick={() => setCategoryFilters([])} className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2">
+                                Clear
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </th>
+
+                {/* Vendor Column with Filter */}
+                <th scope="col" className="px-4 py-3 w-48 relative">
+                  <div className="flex items-center justify-between gap-1">
+                    <div className="flex items-center gap-1 cursor-pointer hover:text-foreground" onClick={() => handleSort('vendor')}>
+                      <span>Vendor</span>
+                      <ArrowUpDown size={12} className={clsx(sortColumn === 'vendor' ? 'text-primary' : 'opacity-30')} />
+                    </div>
+                    <div className="relative">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setShowVendorMenu(!showVendorMenu); }}
+                        className={clsx("p-0.5 rounded hover:bg-muted", vendorFilters.length > 0 && "text-warning")}
+                      >
+                        <Filter size={12} />
+                        {vendorFilters.length > 0 && (
+                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-warning rounded-full text-[8px] flex items-center justify-center text-warning-foreground font-bold">
+                            {vendorFilters.length}
+                          </span>
+                        )}
+                      </button>
+                      {showVendorMenu && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowVendorMenu(false)} />
+                          <div className="absolute left-0 top-full mt-1 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto flex flex-col">
+                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">Select Vendor</div>
+                            <Input
+                              placeholder="Search vendors..."
+                              value={vendorSearch}
+                              onChange={(e) => setVendorSearch(e.target.value)}
+                              className="h-8 text-xs mb-1"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                            <div className="flex-1 overflow-y-auto space-y-1">
+                              {filteredVendors.map((v) => (
+                                <div
+                                  key={v}
+                                  onClick={() => handleToggleVendorFilter(v)}
+                                  className={clsx('flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors', vendorFilters.includes(v) ? 'text-warning' : 'text-muted-foreground')}
+                                >
+                                  <div className={clsx('w-3 h-3 rounded-[3px] border flex items-center justify-center', vendorFilters.includes(v) ? 'border-warning bg-warning' : 'border-border')}>
+                                    {vendorFilters.includes(v) && <Check size={10} className="text-warning-foreground" />}
+                                  </div>
+                                  <span className="truncate">{v}</span>
+                                </div>
+                              ))}
+                              {filteredVendors.length === 0 && (
+                                <div className="px-2 py-4 text-center text-xs text-muted-foreground">No vendors found.</div>
+                              )}
+                            </div>
+                            {vendorFilters.length > 0 && (
+                              <div onClick={() => { setVendorFilters([]); setVendorSearch(''); }} className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2">
+                                Clear
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </th>
+
+                {/* Lab Column */}
+                <th scope="col" className="px-4 py-3 w-48 cursor-pointer hover:text-foreground" onClick={() => handleSort('vendor')}>
+                  <div className="flex items-center gap-1">
+                    <span>Lab</span>
+                    <ArrowUpDown size={12} className={clsx(sortColumn === 'vendor' ? 'text-primary' : 'opacity-30')} />
+                  </div>
+                </th>
+
+                {/* Status Column */}
+                <th scope="col" className="px-4 py-3 w-32 cursor-pointer hover:text-foreground" onClick={() => handleSort('status')}>
+                  <div className="flex items-center gap-1">
+                    <span>Status</span>
+                    <ArrowUpDown size={12} className={clsx(sortColumn === 'status' ? 'text-primary' : 'opacity-30')} />
+                  </div>
+                </th>
+
+                {/* PQC Column with Filter */}
+                <th scope="col" className="px-4 py-3 w-20 relative">
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span>PQC</span>
+                    <div className="relative">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setShowFilterMenu(!showFilterMenu); }}
+                        className={clsx("p-0.5 rounded hover:bg-muted", pqcFilters.length > 0 && "text-tertiary")}
+                      >
+                        <Filter size={12} />
+                        {pqcFilters.length > 0 && (
+                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-tertiary rounded-full text-[8px] flex items-center justify-center text-tertiary-foreground font-bold">
+                            {pqcFilters.length}
+                          </span>
+                        )}
+                      </button>
+                      {showFilterMenu && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setShowFilterMenu(false)} />
+                          <div className="absolute right-0 top-full mt-1 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
+                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">PQC Algorithms</div>
+                            {PQC_ALGOS.map((algo) => (
+                              <div
+                                key={algo}
+                                onClick={() => handleTogglePqcFilter(algo)}
+                                className={clsx('flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors', pqcFilters.includes(algo) ? 'text-tertiary' : 'text-muted-foreground')}
+                              >
+                                <div className={clsx('w-3 h-3 rounded-[3px] border flex items-center justify-center', pqcFilters.includes(algo) ? 'border-tertiary bg-tertiary' : 'border-border')}>
+                                  {pqcFilters.includes(algo) && <Check size={10} className="text-tertiary-foreground" />}
+                                </div>
+                                <span className="truncate">{algo}</span>
+                              </div>
+                            ))}
+                            {pqcFilters.length > 0 && (
+                              <div onClick={() => setPqcFilters([])} className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2">
+                                Clear
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </th>
+
+                {/* CC Column */}
+                <th scope="col" className="px-4 py-3 w-20">
+                  <span>CC</span>
+                </th>
+
+                {/* Link Column */}
+                <th scope="col" className="px-4 py-3 w-20">
+                  <span>Link</span>
+                </th>
               </tr>
             </thead>
             <tbody>
