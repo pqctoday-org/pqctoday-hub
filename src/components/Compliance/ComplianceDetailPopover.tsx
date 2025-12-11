@@ -185,30 +185,38 @@ export const ComplianceDetailPopover = ({
             </div>
           </div>
 
-          {/* PQC Section */}
-          {record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' && (
-            <div className="space-y-2 p-3 bg-tertiary/5 rounded border border-tertiary/10">
-              <h4 className="text-xs font-semibold text-tertiary uppercase tracking-wider flex items-center gap-1">
-                <ShieldCheck size={12} />
-                PQC Mechanisms Detected
-              </h4>
-              <p className="text-sm text-foreground">
-                {typeof record.pqcCoverage === 'boolean'
-                  ? 'Detailed analysis confirmed PQC support.'
-                  : record.pqcCoverage}
-              </p>
-            </div>
-          )}
+          {/* Algorithms Grid */}
+          <div className="grid grid-cols-2 gap-4 w-full">
+            {/* PQC Section */}
+            {record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
+              <div className="space-y-1">
+                <h4 className="text-xs font-semibold text-tertiary uppercase tracking-wider">
+                  PQC Mechanisms Detected
+                </h4>
+                <p className="text-sm text-foreground">
+                  {typeof record.pqcCoverage === 'boolean'
+                    ? 'Detailed analysis confirmed PQC support.'
+                    : record.pqcCoverage}
+                </p>
+              </div>
+            ) : // Empty div to maintain grid structure if PQC is missing but Classical exists?
+            // Actually, if PQC is missing, we might want Classical to just be there.
+            // But if we want strictly "PQC Left, Classical Right" if both exist...
+            // If we just render conditionally, Classical moves left if PQC is missing.
+            // Let's keep it simple: If PQC matches condition, render it.
+            // If not, render null.
+            null}
 
-          {/* Classical Algorithms Section */}
-          {record.classicalAlgorithms && (
-            <div className="space-y-1">
-              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Classical Algorithms
-              </h4>
-              <p className="text-sm text-muted-foreground">{record.classicalAlgorithms}</p>
-            </div>
-          )}
+            {/* Classical Algorithms Section */}
+            {record.classicalAlgorithms && (
+              <div className="space-y-1">
+                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Classical Algorithms
+                </h4>
+                <p className="text-sm text-muted-foreground">{record.classicalAlgorithms}</p>
+              </div>
+            )}
+          </div>
 
           {/* Documents Section */}
           {(record.certificationReportUrls ||

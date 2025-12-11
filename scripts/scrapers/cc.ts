@@ -144,13 +144,56 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
         }
 
         // Fetch PDF if available
+        // Helper to extract Lab info with expert patterns
+        const extractLabFromText = (text: string): string | null => {
+          // Priority 1: Explicit ITSEF/Lab fields
+          const primaryMatch = text.match(
+            /(?:ITSEF|Evaluation\s+Facility|Evaluation\s+Laboratory|Testing\s+Laboratory|Evaluation\s+Body|Commercial\s+Facility|Evaluated\s+by)\s*[:.]?\s*([A-Z][a-zA-Z\s&]+(?:GmbH|Ltd|Inc|SAS|BV|AB|Corporation|AG)?)/i
+          )
+          if (primaryMatch) return primaryMatch[1].trim()
+
+          // Priority 2: "Testing was completed by" / "conducted by"
+          const secondaryMatch = text.match(
+            /(?:Testing\s+was\s+completed\s+by|evaluation\s+has\s+been\s+conducted\s+by|evaluation\s+conducted\s+by)\s*[:.]?\s*([A-Z][a-zA-Z\s&]+(?:GmbH|Ltd|Inc|SAS|BV|AB|Corporation|AG)?)/i
+          )
+          if (secondaryMatch) return secondaryMatch[1].trim()
+
+          // Priority 3: Known Labs (Fallback)
+          const knownLabs = [
+            'atsec information security',
+            'Brightsight',
+            'TÜV Informationstechnik',
+            'TÜViT',
+            'Trusted Labs',
+            'Applus',
+            'SGS',
+            'SERMA',
+            'Riscure',
+            'Acumen Security',
+            'Leidos',
+            'Gossamer',
+            'CygnaCom',
+            'secunet',
+            'Thales',
+            'CEA-LETI',
+            'Oppida',
+            'Amossys',
+          ]
+          for (const lab of knownLabs) {
+            if (text.includes(lab)) return lab
+          }
+
+          return null
+        }
+
+        // Fetch Logic: Priority ST (PQC) -> Report (Lab Fallback)
         if (targetPdfUrl) {
           try {
             const pdfDataBuffer = await fetch(targetPdfUrl).then((res) => res.arrayBuffer())
             const parser = new PDFParse({ data: Buffer.from(pdfDataBuffer) })
             const pdfText = await parser.getText()
 
-            // Extract PQC
+            // Extract PQC (Strictly from ST)
             const pqcStr = extractAlgorithms(pdfText.text, PQC_PATTERNS)
             if (pqcStr) pqcCoverage = pqcStr
             else if (pqcCoverage === 'Potentially PQC') pqcCoverage = 'No PQC Mechanisms Detected'
@@ -158,18 +201,30 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
             // Extract Classical
             classicalAlgorithms = extractAlgorithms(pdfText.text, CLASSICAL_PATTERNS)
 
-            // Extract Lab / ITSEF (Heuristic)
-            // Look for "Evaluation Facility:" or "ITSEF:"
-            // Common patterns: "Developer: ... ITSEF: ... "
-            // Added support for multi-line and "Sponsor" context if needed, but keeping it simple for now
-            const labMatch = pdfText.text.match(
-              /(?:Evaluation\s+Facility|ITSEF|Evaluation\s+Body|Commercial\s+Facility)\s*[:.]?\s*([^\n\r,]+)/i
-            )
-            if (labMatch) {
-              labFromPDF = labMatch[1].trim().substring(0, 50) // Cap length
+            // Extract Lab from ST
+            const labMatch = extractLabFromText(pdfText.text)
+            if (labMatch) labFromPDF = labMatch.substring(0, 50)
+          } catch {
+            // console.warn(`Failed CC ST fetch for ${name}`);
+          }
+        }
+
+        // If Lab not found in ST (or ST failed), try Certification Report
+        // This satisfies: "If Security Target doesn't list lab: Check the Certification Report - it ALWAYS contains lab information"
+        if (!labFromPDF && parsedCertReports.certReports.length > 0) {
+          try {
+            const reportUrl = parsedCertReports.certReports[0]
+            // Don't refetch if it's the same URL we just tried (rare but possible if logic changes)
+            if (reportUrl !== targetPdfUrl) {
+              const pdfDataBuffer = await fetch(reportUrl).then((res) => res.arrayBuffer())
+              const parser = new PDFParse({ data: Buffer.from(pdfDataBuffer) })
+              const pdfText = await parser.getText()
+
+              const labMatch = extractLabFromText(pdfText.text)
+              if (labMatch) labFromPDF = labMatch.substring(0, 50)
             }
           } catch {
-            // console.warn(`Failed CC PDF fetch for ${name}`);
+            // console.warn(`Failed CC Report fetch for ${name}`);
           }
         }
 

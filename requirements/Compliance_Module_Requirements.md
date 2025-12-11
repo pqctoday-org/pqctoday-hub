@@ -119,9 +119,12 @@ The scraper also collects standard algorithms to support backward compatibility 
         *   **Vendor Extraction:** Regex extracts "Commanditaire" (Sponsor) or "Développeur" from **HTML Body**.
         *   **Data Enrichment:** Extracts `Level` (Niveau), `Augmentations`, and `Lab` from **HTML Body**.
         *   **PDF Parsing (PQC & Lab Fallback):**
-            *   **Lab:** If missing from HTML, checks Security Target PDF (`Centre d'évaluation`).
-            *   **Crypto:** Scans PDF texts for PQC/Classical algorithms.
-            *   **Prioritization:** Security Target (`ST` / `Cible`) > Certification Report (`Report` / `Certificat`) (Strict requirement: PQC valid only from ST).
+            *   **Dual-Fetch Strategy:**
+                1.  **Security Target:** Fetched FIRST to strictly extract PQC info (`pqcCoverage` only valid from ST). Also scans for Lab info.
+                2.  **Certification Report:** Fetched SECOND if Lab info is missing in ST. Contains the most reliable Lab/ITSEF details.
+            *   **Crypto:** Scans ST text for PQC/Classical algorithms.
+            *   **Lab Extraction:** Uses expert regex patterns (`ITSEF`, `Evaluated by`) and a known lab whitelist (e.g., `atsec`, `TÜViT`).
+            *   **Prioritization:** ST (PQC) + ST/Report Hybrid (Lab).
         *   **Date Normalization:** Parses French date formats (DD/MM/YYYY) to ISO 8601.
         *   **Link Recovery:** Parses all PDF links (`href*=".pdf"`) to ensure access even with query parameters.
         *   **Data Enrichment:** Extracts `Level` (Niveau), `Augmentations`, and `Lab`.
