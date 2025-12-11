@@ -132,12 +132,13 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
         const parsedCertReports = parseDocumentURLs(certReportUrl)
         const parsedSecurityTargets = parseDocumentURLs(securityTargetUrl)
 
-        // Determine best PDF for extraction (Priority: Report > ST)
+        // Determine best PDF for text extraction
+        // Priority: Security Target (Required for precise PQC algorithm detection) > Certification Report
         let targetPdfUrl = ''
-        if (parsedCertReports.certReports.length > 0) {
-          targetPdfUrl = parsedCertReports.certReports[0]
-        } else if (parsedSecurityTargets.securityTargets.length > 0) {
+        if (parsedSecurityTargets.securityTargets.length > 0) {
           targetPdfUrl = parsedSecurityTargets.securityTargets[0]
+        } else if (parsedCertReports.certReports.length > 0) {
+          targetPdfUrl = parsedCertReports.certReports[0]
         } else if (parsedCertReports.other.length > 0) {
           targetPdfUrl = parsedSecurityTargets.other[0].url
         }

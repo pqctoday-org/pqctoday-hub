@@ -119,9 +119,9 @@ The scraper also collects standard algorithms to support backward compatibility 
         *   **Vendor Extraction:** Regex extracts "Commanditaire" (Sponsor) or "Développeur" from **HTML Body**.
         *   **Data Enrichment:** Extracts `Level` (Niveau), `Augmentations`, and `Lab` from **HTML Body**.
         *   **PDF Parsing (PQC & Lab Fallback):**
-            *   **Lab:** If missing from HTML, checks PDF (`Centre d'évaluation`).
+            *   **Lab:** If missing from HTML, checks Security Target PDF (`Centre d'évaluation`).
             *   **Crypto:** Scans PDF texts for PQC/Classical algorithms.
-            *   **Prioritization:** Certification Report (`Report` / `Certificat`) > Security Target (`ST` / `Cible`).
+            *   **Prioritization:** Security Target (`ST` / `Cible`) > Certification Report (`Report` / `Certificat`) (Strict requirement: PQC valid only from ST).
         *   **Date Normalization:** Parses French date formats (DD/MM/YYYY) to ISO 8601.
         *   **Link Recovery:** Parses all PDF links (`href*=".pdf"`) to ensure access even with query parameters.
         *   **Data Enrichment:** Extracts `Level` (Niveau), `Augmentations`, and `Lab`.
@@ -242,8 +242,9 @@ The application must strictly filter for the following criteria:
 
 - **Definition:** The accredited laboratory that performed the evaluation.
 - **Source:**
-  - **CC (Global):** Primary: `Lab` or `ITSEF` CSV column. Secondary: Extracted from **Certification Report** or **Security Target** PDF.
-  - **ANSSI:** Primary: Extracted from **Detail Page HTML**. Secondary: Extracted from **Certification Report** or **Security Target** PDF.
+- **Source:**
+  - **CC (Global):** Primary: `Lab` or `ITSEF` CSV column. Secondary: Extracted from **Security Target** PDF.
+  - **ANSSI:** Primary: Extracted from **Detail Page HTML**. Secondary: Extracted from **Security Target** PDF.
 - **Storage:** Stored in `lab` field. Used for detailed compliance reporting.
 
 ### 8. Product Category

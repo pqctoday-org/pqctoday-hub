@@ -12,7 +12,7 @@
 
 1. **Target**: ANSSI certified products (French Common Criteria scheme)
 2. **Extraction Method**: DOM parsing (JSDOM) of Product Detail Pages (Body Text Regex)
-3. **Secondary**: PDF parsing (Cert Report > ST) for Algorithms (PQC/Classical) and Lab fallback
+3. **Prioritization**: PDF parsing (Security Target > Cert Report) for PQC Algorithms; Lab fallback
 
 ### HTML Structure
 
@@ -24,23 +24,23 @@ The ANSSI website lists certified products with links to detail pages. Each deta
 
 ### Data Fields Extracted
 
-| Field                     | Source                          | Format                  | Example                                   | Notes                          |
-| ------------------------- | ------------------------------- | ----------------------- | ----------------------------------------- | ------------------------------ |
-| `id`                      | Generated                       | `anssi-{name}-{random}` | `anssi-acme-firewall-a1b2`                | Unique identifier              |
-| `source`                  | Static                          | `"ANSSI"`               | `"ANSSI"`                                 | Always "ANSSI"                 |
-| `date`                    | HTML/PDF: Certification date    | ISO 8601 (YYYY-MM-DD)   | `"2024-03-15"`                            | Extracted from metadata        |
-| `link`                    | HTML: Detail page URL           | Full URL                | `https://cyber.gouv.fr/...`               | Product detail page            |
-| `type`                    | Static                          | `"Common Criteria"`     | `"Common Criteria"`                       | ANSSI uses CC                  |
-| `status`                  | Static                          | `"Active"`              | `"Active"`                                | All scraped records are active |
-| `pqcCoverage`             | PDF extraction                  | boolean \| string       | `"ML-KEM, ML-DSA"`                        | Extracted from PDF             |
-| `classicalAlgorithms`     | PDF extraction                  | string                  | `"AES-256, SHA-256"`                      | Comma-separated list           |
-| `productName`             | HTML: Product name              | string                  | `"Acme Firewall v3.0"`                    | Product name                   |
-| `productCategory`         | HTML: `Catégorie` regex         | string                  | `"Firewall"`                              | Product category               |
-| `vendor`                  | HTML: `Développeur` regex       | string                  | `"Acme Corporation"`                      | Vendor/developer               |
-| `lab`                     | HTML (Primary) / PDF (Fallback) | string                  | `"LETI"`                                  | Evaluation center              |
-| `certificationLevel`      | HTML: `Niveau` regex            | string                  | `"EAL4+ AVA_VAN.5"`                       | CC level with augmentations    |
-| `certificationReportUrls` | PDF Links                       | array                   | `["...Certificat.pdf", "...Rapport.pdf"]` | Validation docs                |
-| `securityTargetUrls`      | PDF Links                       | array                   | `["...Cible.pdf"]`                        | Technical specs                |
+| Field                     | Source                             | Format                  | Example                                   | Notes                          |
+| ------------------------- | ---------------------------------- | ----------------------- | ----------------------------------------- | ------------------------------ |
+| `id`                      | Generated                          | `anssi-{name}-{random}` | `anssi-acme-firewall-a1b2`                | Unique identifier              |
+| `source`                  | Static                             | `"ANSSI"`               | `"ANSSI"`                                 | Always "ANSSI"                 |
+| `date`                    | HTML/PDF: Certification date       | ISO 8601 (YYYY-MM-DD)   | `"2024-03-15"`                            | Extracted from metadata        |
+| `link`                    | HTML: Detail page URL              | Full URL                | `https://cyber.gouv.fr/...`               | Product detail page            |
+| `type`                    | Static                             | `"Common Criteria"`     | `"Common Criteria"`                       | ANSSI uses CC                  |
+| `status`                  | Static                             | `"Active"`              | `"Active"`                                | All scraped records are active |
+| `pqcCoverage`             | PDF extraction                     | boolean \| string       | `"ML-KEM, ML-DSA"`                        | Extracted from PDF             |
+| `classicalAlgorithms`     | PDF extraction                     | string                  | `"AES-256, SHA-256"`                      | Comma-separated list           |
+| `productName`             | HTML: Product name                 | string                  | `"Acme Firewall v3.0"`                    | Product name                   |
+| `productCategory`         | HTML: `Catégorie` regex            | string                  | `"Firewall"`                              | Product category               |
+| `vendor`                  | HTML: `Développeur` regex          | string                  | `"Acme Corporation"`                      | Vendor/developer               |
+| `lab`                     | HTML (Primary) / ST PDF (Fallback) | string                  | `"LETI"`                                  | Evaluation center              |
+| `certificationLevel`      | HTML: `Niveau` regex               | string                  | `"EAL4+ AVA_VAN.5"`                       | CC level with augmentations    |
+| `certificationReportUrls` | PDF Links                          | array                   | `["...Certificat.pdf", "...Rapport.pdf"]` | Validation docs                |
+| `securityTargetUrls`      | PDF Links                          | array                   | `["...Cible.pdf"]`                        | Technical specs                |
 
 ## PDF Metadata Extraction
 
@@ -89,7 +89,7 @@ The lab (evaluation center) is extracted from the PDF metadata:
 
 ```typescript
 // French field name: "Centre d'évaluation"
-// Priority: Extracted from Certification Report (best source) -> Security Target -> Other
+// Priority: Extracted from Security Target PDF (best source) -> Certification Report -> Other
 const labMatch = pdfText.match(
   /(?:Centre d'évaluation|Evaluation Facility|ITSEF)\s*:?\s*([^\n\r,]+)/i
 )

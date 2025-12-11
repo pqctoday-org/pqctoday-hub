@@ -183,18 +183,16 @@ export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
             }
           })
 
-          // Try to fetch one PDF for algorithm extraction (Order: Cert Report > Security Target)
+          // Try to fetch one PDF for algorithm extraction (Prioritize Security Target for PQC validity)
           let pdfLink = allPdfLinks.find((a) => {
             const href = a.getAttribute('href')?.toLowerCase() || ''
             const text = a.textContent?.toLowerCase() || ''
             return (
-              href.includes('rapport') ||
-              href.includes('certification') ||
-              href.includes('report') ||
-              href.includes('certificat') ||
-              text.includes('rapport') ||
-              text.includes('certification') ||
-              text.includes('certificat')
+              href.includes('cible') ||
+              href.includes('security_target') ||
+              href.includes('st') ||
+              text.includes('cible') ||
+              text.includes('security target')
             )
           })
 
@@ -203,11 +201,13 @@ export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
               const href = a.getAttribute('href')?.toLowerCase() || ''
               const text = a.textContent?.toLowerCase() || ''
               return (
-                href.includes('cible') ||
-                href.includes('security_target') ||
-                href.includes('st') ||
-                text.includes('cible') ||
-                text.includes('security target')
+                href.includes('rapport') ||
+                href.includes('certification') ||
+                href.includes('report') ||
+                href.includes('certificat') ||
+                text.includes('rapport') ||
+                text.includes('certification') ||
+                text.includes('certificat')
               )
             })
           }
