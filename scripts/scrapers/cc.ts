@@ -58,32 +58,18 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
         // Extract lab from CSV if available
         const lab = row['Lab'] || row['ITSEF'] || row['Evaluation Facility'] || ''
 
-        // Generate ID
+        // Generate ID from product name
         const certId = `cc-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Math.random().toString(36).substr(2, 4)}`
 
-        // Prioritize Security Target URL
+        // The CSV PDF URLs are often corrupted/concatenated
+        // Instead, use the CC Portal product search/detail page
+        // Format: https://www.commoncriteriaportal.org/products/?expand#PRODUCT_NAME
+        const productSlug = name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '+')
+        const mainLink = `https://www.commoncriteriaportal.org/products/?expand#${productSlug}`
+
+        // Try to get PDF URL for algorithm extraction, but don't use it as main link
         let pdfUrl = row['Security Target URL'] || row['Certification Report URL'] || ''
         if (pdfUrl && !pdfUrl.startsWith('http')) pdfUrl = ''
-
-        // Fix: Properly encode the URL to handle spaces and special characters
-        const encodeURL = (url: string) => {
-          if (!url || !url.startsWith('http')) return url
-          try {
-            const urlObj = new URL(url)
-            // Encode only the pathname, keeping the protocol and host intact
-            urlObj.pathname = urlObj.pathname.split('/').map(encodeURIComponent).join('/')
-            return urlObj.toString()
-          } catch {
-            return url
-          }
-        }
-
-        // Also keep a main link for the details button
-        const mainLink = encodeURL(
-          row['Certification Report URL'] ||
-          pdfUrl ||
-          'https://www.commoncriteriaportal.org/products/'
-        )
 
         let pqcCoverage: boolean | string = 'No PQC Mechanisms Detected'
         let classicalAlgorithms = ''
