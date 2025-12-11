@@ -55,6 +55,9 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
         const manufacturer = row['Manufacturer'] || 'Unknown Vendor'
         const vendor = scheme ? `${manufacturer} (Scheme: ${scheme})` : manufacturer
 
+        // Extract lab from CSV if available
+        const lab = row['Lab'] || row['ITSEF'] || row['Evaluation Facility'] || ''
+
         // Generate ID
         const certId = `cc-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Math.random().toString(36).substr(2, 4)}`
 
@@ -62,15 +65,29 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
         let pdfUrl = row['Security Target URL'] || row['Certification Report URL'] || ''
         if (pdfUrl && !pdfUrl.startsWith('http')) pdfUrl = ''
 
+        // Fix: Properly encode the URL to handle spaces and special characters
+        const encodeURL = (url: string) => {
+          if (!url || !url.startsWith('http')) return url
+          try {
+            const urlObj = new URL(url)
+            // Encode only the pathname, keeping the protocol and host intact
+            urlObj.pathname = urlObj.pathname.split('/').map(encodeURIComponent).join('/')
+            return urlObj.toString()
+          } catch {
+            return url
+          }
+        }
+
         // Also keep a main link for the details button
-        const mainLink =
+        const mainLink = encodeURL(
           row['Certification Report URL'] ||
           pdfUrl ||
           'https://www.commoncriteriaportal.org/products/'
+        )
 
         let pqcCoverage: boolean | string = 'No PQC Mechanisms Detected'
         let classicalAlgorithms = ''
-        let lab = ''
+        let labFromPDF = ''
 
         // PQC Heuristic on Name
         if (name.toLowerCase().includes('quantum') || name.toLowerCase().includes('pqc')) {
@@ -99,7 +116,7 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
               /(?:Evaluation Facility|ITSEF|Evaluation Body)\s*:?\s*([^\n\r,]+)/i
             )
             if (labMatch) {
-              lab = labMatch[1].trim().substring(0, 50) // Cap length
+              labFromPDF = labMatch[1].trim().substring(0, 50) // Cap length
             }
           } catch (e: any) {
             // console.warn(`Failed CC PDF fetch for ${name}:`, e.message);
@@ -118,7 +135,7 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
           productName: name,
           productCategory: categoryRaw,
           vendor: vendor,
-          lab: lab || undefined,
+          lab: lab || labFromPDF || undefined,
           certificationLevel: assuranceLevel || undefined,
         }
       })
