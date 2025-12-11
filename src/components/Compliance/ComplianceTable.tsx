@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react'
 import {
   ArrowUpDown,
   Search,
-  ExternalLink,
   Shield,
   ShieldAlert,
   ShieldCheck,
@@ -13,14 +12,14 @@ import {
   Filter,
   Check,
   LockKeyhole,
-  FileText,
-  ChevronDown,
+  Info,
 } from 'lucide-react'
 import type { ComplianceRecord, ComplianceStatus } from './types'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import clsx from 'clsx'
 import Papa from 'papaparse'
+import { ComplianceDetailPopover } from './ComplianceDetailPopover'
 
 interface ComplianceTableProps {
   data: ComplianceRecord[]
@@ -93,8 +92,11 @@ const ComplianceRow = ({
     return () => observer.disconnect()
   }, [record, onEnrich])
 
+  const [showDetailsPopup, setShowDetailsPopup] = useState(false)
+
   return (
     <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+      {/* 1. Source Column */}
       <td
         className="px-4 py-3 font-medium flex items-center gap-2 w-24 truncate"
         title={record.source}
@@ -102,27 +104,18 @@ const ComplianceRow = ({
         <Database size={12} className="text-muted-foreground shrink-0" />
         <span className="truncate">{record.source}</span>
       </td>
+
+      {/* 2. Certification # Column */}
       <td className="px-4 py-3 font-mono text-xs w-32 truncate" title={record.id}>
         {record.id.length > 20 ? record.id.substring(0, 20) + '...' : record.id}
       </td>
+
+      {/* 3. Date Column */}
       <td className="px-4 py-3 text-muted-foreground font-mono text-xs whitespace-nowrap w-32">
         {record.date}
       </td>
-      <td className="px-4 py-3 w-48">
-        <div className="flex flex-col gap-0.5">
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 w-fit">
-            {record.type}
-          </span>
-          {record.certificationLevel && (
-            <span
-              className="text-[10px] text-muted-foreground truncate"
-              title={record.certificationLevel}
-            >
-              {record.certificationLevel}
-            </span>
-          )}
-        </div>
-      </td>
+
+      {/* 5. Product Name Column */}
       <td className="px-4 py-3 font-medium text-foreground whitespace-normal break-words w-80">
         <div className="line-clamp-2" title={record.productName}>
           {record.productName}
@@ -131,23 +124,23 @@ const ComplianceRow = ({
           {record.productCategory}
         </div>
       </td>
+
+      {/* 6. Vendor Column */}
       <td className="px-4 py-3 w-48">
         <div className="truncate" title={record.vendor}>
           {record.vendor}
         </div>
       </td>
-      <td className="px-4 py-3 w-48">
-        <div className="truncate" title={record.lab || ''}>
-          {record.lab || '-'}
-        </div>
-      </td>
+
+      {/* 7. Status Column */}
       <td className="px-4 py-3">
         <StatusBadge status={record.status} />
       </td>
+
+      {/* 8. PQC Coverage Column */}
       <td className="px-4 py-3 relative group">
         {record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
           <div className="flex items-center">
-            {/* Icon Trigger */}
             <div
               className={clsx(
                 'cursor-help p-1 rounded-full transition-colors',
@@ -163,7 +156,6 @@ const ComplianceRow = ({
               )}
             </div>
 
-            {/* Custom Tooltip */}
             <div
               className={clsx(
                 'absolute left-1/2 -translate-x-1/2 w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-[100] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-normal',
@@ -176,7 +168,6 @@ const ComplianceRow = ({
                   ? 'PQC Support Detected'
                   : record.pqcCoverage}
               </div>
-              {/* Arrow */}
               <div
                 className={clsx(
                   'absolute left-1/2 -translate-x-1/2 border-4 border-transparent',
@@ -189,13 +180,14 @@ const ComplianceRow = ({
           <span className="text-xs text-muted-foreground">-</span>
         )}
       </td>
+
+      {/* 9. Classical Algos Column */}
       <td className="px-4 py-3 relative group">
         {record.classicalAlgorithms ? (
           <div className="flex items-center justify-center">
             <div className="cursor-help p-1 rounded-full bg-muted text-muted-foreground hover:bg-muted/80 transition-colors">
               <LockKeyhole size={14} />
             </div>
-            {/* Custom Tooltip */}
             <div
               className={clsx(
                 'absolute left-1/2 -translate-x-1/2 w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-[100] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-normal',
@@ -204,7 +196,6 @@ const ComplianceRow = ({
             >
               <div className="font-semibold text-muted-foreground mb-1">Classical Algorithms</div>
               <div className="text-popover-foreground">{record.classicalAlgorithms}</div>
-              {/* Arrow */}
               <div
                 className={clsx(
                   'absolute left-1/2 -translate-x-1/2 border-4 border-transparent',
@@ -217,107 +208,21 @@ const ComplianceRow = ({
           <span className="text-xs text-muted-foreground">-</span>
         )}
       </td>
+
+      {/* 10. Info Column (Moved to End) */}
       <td className="px-4 py-3">
-        {record.certificationReportUrls || record.securityTargetUrls || record.additionalDocuments ? (
-          <div className="relative group">
-            <button
-              className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
-              title="View Documents"
-            >
-              <FileText size={16} />
-              <ChevronDown size={12} />
-            </button>
-            <div className="absolute left-0 top-full mt-1 hidden group-hover:block z-50 bg-card border border-border rounded-md shadow-lg min-w-[250px] py-1">
-              <div className="px-3 py-2 text-xs font-semibold text-muted-foreground border-b border-border">
-                Available Documents
-              </div>
-              {record.certificationReportUrls && record.certificationReportUrls.length > 0 && (
-                <div className="py-1">
-                  <div className="px-3 py-1 text-xs font-medium text-foreground">Certification Reports</div>
-                  {record.certificationReportUrls.map((url, idx) => (
-                    <a
-                      key={idx}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block px-3 py-1.5 text-xs text-primary hover:bg-accent transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <FileText size={12} />
-                        <span className="truncate">Report {idx + 1}</span>
-                        <ExternalLink size={10} className="ml-auto" />
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              )}
-              {record.securityTargetUrls && record.securityTargetUrls.length > 0 && (
-                <div className="py-1">
-                  <div className="px-3 py-1 text-xs font-medium text-foreground">Security Targets</div>
-                  {record.securityTargetUrls.map((url, idx) => (
-                    <a
-                      key={idx}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block px-3 py-1.5 text-xs text-primary hover:bg-accent transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <FileText size={12} />
-                        <span className="truncate">Security Target {idx + 1}</span>
-                        <ExternalLink size={10} className="ml-auto" />
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              )}
-              {record.additionalDocuments && record.additionalDocuments.length > 0 && (
-                <div className="py-1">
-                  <div className="px-3 py-1 text-xs font-medium text-foreground">Other Documents</div>
-                  {record.additionalDocuments.map((doc, idx) => (
-                    <a
-                      key={idx}
-                      href={doc.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block px-3 py-1.5 text-xs text-primary hover:bg-accent transition-colors"
-                      title={doc.name}
-                    >
-                      <div className="flex items-center gap-2">
-                        <FileText size={12} />
-                        <span className="truncate max-w-[180px]">{doc.name}</span>
-                        <ExternalLink size={10} className="ml-auto" />
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              )}
-              <div className="border-t border-border mt-1 pt-1">
-                <a
-                  href={record.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <ExternalLink size={12} />
-                    <span>View Product Page</span>
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <a
-            href={record.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary hover:text-primary/80 transition-colors"
-            title="View Official Record"
-          >
-            <ExternalLink size={16} />
-          </a>
-        )}
+        <button
+          onClick={() => setShowDetailsPopup(true)}
+          className="text-muted-foreground hover:text-foreground transition-colors p-1"
+          title="View Details"
+        >
+          <Info size={16} />
+        </button>
+        <ComplianceDetailPopover
+          isOpen={showDetailsPopup}
+          onClose={() => setShowDetailsPopup(false)}
+          record={record}
+        />
       </td>
     </tr>
   )
@@ -328,13 +233,11 @@ export const ComplianceTable: React.FC<
 > = ({ data, onRefresh, isRefreshing, lastUpdated, onEnrich }) => {
   const [filterText, setFilterText] = useState('')
   const [pqcFilters, setPqcFilters] = useState<string[]>([])
-  const [typeFilters, setTypeFilters] = useState<string[]>([])
   const [categoryFilters, setCategoryFilters] = useState<string[]>([])
   const [sourceFilters, setSourceFilters] = useState<string[]>([])
   const [vendorFilters, setVendorFilters] = useState<string[]>([])
 
   const [showFilterMenu, setShowFilterMenu] = useState(false)
-  const [showTypeMenu, setShowTypeMenu] = useState(false)
   const [showCategoryMenu, setShowCategoryMenu] = useState(false)
   const [showSourceMenu, setShowSourceMenu] = useState(false)
   const [showVendorMenu, setShowVendorMenu] = useState(false)
@@ -358,7 +261,6 @@ export const ComplianceTable: React.FC<
   const [activeFilters, setActiveFilters] = useState({
     text: '',
     pqc: [] as string[],
-    type: [] as string[],
     category: [] as string[],
     source: [] as string[],
     vendor: [] as string[],
@@ -372,7 +274,6 @@ export const ComplianceTable: React.FC<
       setActiveFilters({
         text: filterText,
         pqc: pqcFilters,
-        type: typeFilters,
         category: categoryFilters,
         source: sourceFilters,
         vendor: vendorFilters,
@@ -382,26 +283,11 @@ export const ComplianceTable: React.FC<
       setIsFiltering(false)
     }, 400) // 400ms delay for visual feedback
     return () => clearTimeout(timer)
-  }, [
-    filterText,
-    pqcFilters,
-    typeFilters,
-    categoryFilters,
-    sourceFilters,
-    vendorFilters,
-    vendorSearch,
-  ])
+  }, [filterText, pqcFilters, categoryFilters, sourceFilters, vendorFilters, vendorSearch])
 
   const handleTogglePqcFilter = (filter: string) => {
     setPqcFilters((prev) =>
       prev.includes(filter) ? prev.filter((f) => f !== filter) : [...prev, filter]
-    )
-    setCurrentPage(1)
-  }
-
-  const handleToggleTypeFilter = (type: string) => {
-    setTypeFilters((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     )
     setCurrentPage(1)
   }
@@ -427,11 +313,6 @@ export const ComplianceTable: React.FC<
     setCurrentPage(1)
   }
 
-  const uniqueTypes = useMemo(() => {
-    const types = new Set(data.map((d) => d.type).filter(Boolean))
-    return Array.from(types).sort()
-  }, [data])
-
   const uniqueCategories = useMemo(() => {
     const cats = new Set(data.map((d) => d.productCategory).filter(Boolean))
     return Array.from(cats).sort()
@@ -454,13 +335,12 @@ export const ComplianceTable: React.FC<
 
   const filteredAndSortedData = useMemo(() => {
     // Filter
-    let processed = data.filter((record) => {
+    const processed = data.filter((record) => {
       const searchStr = activeFilters.text.toLowerCase()
       const matchesText =
         record.productName.toLowerCase().includes(searchStr) ||
         record.vendor.toLowerCase().includes(searchStr) ||
         record.source.toLowerCase().includes(searchStr) ||
-        record.type.toLowerCase().includes(searchStr) ||
         record.id.toLowerCase().includes(searchStr)
 
       // PQC Filter Logic
@@ -468,10 +348,6 @@ export const ComplianceTable: React.FC<
         activeFilters.pqc.length === 0 ||
         (typeof record.pqcCoverage === 'string' &&
           activeFilters.pqc.some((filter) => record.pqcCoverage.toString().includes(filter)))
-
-      // Type Filter Logic
-      const matchesType =
-        activeFilters.type.length === 0 || activeFilters.type.includes(record.type)
 
       // Category Filter Logic
       const matchesCategory =
@@ -494,7 +370,6 @@ export const ComplianceTable: React.FC<
       return (
         matchesText &&
         matchesPQC &&
-        matchesType &&
         matchesCategory &&
         matchesSource &&
         matchesVendor &&
@@ -615,17 +490,32 @@ export const ComplianceTable: React.FC<
           <table className="w-full text-sm text-left table-fixed">
             <thead className="text-xs uppercase bg-muted/50 text-muted-foreground">
               <tr>
+                {/* Info Column Header Removed from Start */}
+
                 {/* Source Column with Filter */}
                 <th scope="col" className="px-4 py-3 w-24 relative">
                   <div className="flex items-center justify-between gap-1">
-                    <div className="flex items-center gap-1 cursor-pointer hover:text-foreground" onClick={() => handleSort('source')}>
+                    <button
+                      type="button"
+                      className="flex items-center gap-1 cursor-pointer hover:text-foreground"
+                      onClick={() => handleSort('source')}
+                    >
                       <span>Source</span>
-                      <ArrowUpDown size={12} className={clsx(sortColumn === 'source' ? 'text-primary' : 'opacity-30')} />
-                    </div>
+                      <ArrowUpDown
+                        size={12}
+                        className={clsx(sortColumn === 'source' ? 'text-primary' : 'opacity-30')}
+                      />
+                    </button>
                     <div className="relative">
                       <button
-                        onClick={(e) => { e.stopPropagation(); setShowSourceMenu(!showSourceMenu); }}
-                        className={clsx("p-0.5 rounded hover:bg-muted", sourceFilters.length > 0 && "text-accent")}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setShowSourceMenu(!showSourceMenu)
+                        }}
+                        className={clsx(
+                          'p-0.5 rounded hover:bg-muted',
+                          sourceFilters.length > 0 && 'text-accent'
+                        )}
                       >
                         <Filter size={12} />
                         {sourceFilters.length > 0 && (
@@ -636,25 +526,53 @@ export const ComplianceTable: React.FC<
                       </button>
                       {showSourceMenu && (
                         <>
-                          <div className="fixed inset-0 z-40" onClick={() => setShowSourceMenu(false)} />
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setShowSourceMenu(false)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => e.key === 'Escape' && setShowSourceMenu(false)}
+                            aria-label="Close menu"
+                          />
                           <div className="absolute left-0 top-full mt-1 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
-                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">Select Source</div>
+                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                              Select Source
+                            </div>
                             {uniqueSources.map((src) => (
-                              <div
+                              <button
+                                type="button"
                                 key={src}
                                 onClick={() => handleToggleSourceFilter(src)}
-                                className={clsx('flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors', sourceFilters.includes(src) ? 'text-accent' : 'text-muted-foreground')}
+                                className={clsx(
+                                  'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
+                                  sourceFilters.includes(src)
+                                    ? 'text-accent'
+                                    : 'text-muted-foreground'
+                                )}
                               >
-                                <div className={clsx('w-3 h-3 rounded-[3px] border flex items-center justify-center', sourceFilters.includes(src) ? 'border-accent bg-accent' : 'border-border')}>
-                                  {sourceFilters.includes(src) && <Check size={10} className="text-accent-foreground" />}
+                                <div
+                                  className={clsx(
+                                    'w-3 h-3 rounded-[3px] border flex items-center justify-center',
+                                    sourceFilters.includes(src)
+                                      ? 'border-accent bg-accent'
+                                      : 'border-border'
+                                  )}
+                                >
+                                  {sourceFilters.includes(src) && (
+                                    <Check size={10} className="text-accent-foreground" />
+                                  )}
                                 </div>
                                 <span className="truncate">{src}</span>
-                              </div>
+                              </button>
                             ))}
                             {sourceFilters.length > 0 && (
-                              <div onClick={() => setSourceFilters([])} className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2">
+                              <button
+                                type="button"
+                                onClick={() => setSourceFilters([])}
+                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
+                              >
                                 Clear
-                              </div>
+                              </button>
                             )}
                           </div>
                         </>
@@ -664,80 +582,61 @@ export const ComplianceTable: React.FC<
                 </th>
 
                 {/* Certification # Column */}
-                <th scope="col" className="px-4 py-3 w-32 cursor-pointer hover:text-foreground" onClick={() => handleSort('id')}>
+                <th
+                  scope="col"
+                  className="px-4 py-3 w-32 cursor-pointer hover:text-foreground"
+                  onClick={() => handleSort('id')}
+                >
                   <div className="flex items-center gap-1">
                     <span>Certification #</span>
-                    <ArrowUpDown size={12} className={clsx(sortColumn === 'id' ? 'text-primary' : 'opacity-30')} />
+                    <ArrowUpDown
+                      size={12}
+                      className={clsx(sortColumn === 'id' ? 'text-primary' : 'opacity-30')}
+                    />
                   </div>
                 </th>
 
                 {/* Date Column */}
-                <th scope="col" className="px-4 py-3 w-32 cursor-pointer hover:text-foreground" onClick={() => handleSort('date')}>
+                <th
+                  scope="col"
+                  className="px-4 py-3 w-32 cursor-pointer hover:text-foreground"
+                  onClick={() => handleSort('date')}
+                >
                   <div className="flex items-center gap-1">
                     <span>Date</span>
-                    <ArrowUpDown size={12} className={clsx(sortColumn === 'date' ? 'text-primary' : 'opacity-30')} />
-                  </div>
-                </th>
-
-                {/* Type Column with Filter */}
-                <th scope="col" className="px-4 py-3 w-48 relative">
-                  <div className="flex items-center justify-between gap-1">
-                    <div className="flex items-center gap-1 cursor-pointer hover:text-foreground" onClick={() => handleSort('type')}>
-                      <span>Type</span>
-                      <ArrowUpDown size={12} className={clsx(sortColumn === 'type' ? 'text-primary' : 'opacity-30')} />
-                    </div>
-                    <div className="relative">
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setShowTypeMenu(!showTypeMenu); }}
-                        className={clsx("p-0.5 rounded hover:bg-muted", typeFilters.length > 0 && "text-primary")}
-                      >
-                        <Filter size={12} />
-                        {typeFilters.length > 0 && (
-                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
-                            {typeFilters.length}
-                          </span>
-                        )}
-                      </button>
-                      {showTypeMenu && (
-                        <>
-                          <div className="fixed inset-0 z-40" onClick={() => setShowTypeMenu(false)} />
-                          <div className="absolute left-0 top-full mt-1 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
-                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">Select Types</div>
-                            {uniqueTypes.map((type) => (
-                              <div
-                                key={type}
-                                onClick={() => handleToggleTypeFilter(type)}
-                                className={clsx('flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors', typeFilters.includes(type) ? 'text-primary' : 'text-muted-foreground')}
-                              >
-                                <div className={clsx('w-3 h-3 rounded-[3px] border flex items-center justify-center', typeFilters.includes(type) ? 'border-primary bg-primary' : 'border-border')}>
-                                  {typeFilters.includes(type) && <Check size={10} className="text-primary-foreground" />}
-                                </div>
-                                <span className="truncate">{type}</span>
-                              </div>
-                            ))}
-                            {typeFilters.length > 0 && (
-                              <div onClick={() => setTypeFilters([])} className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2">
-                                Clear
-                              </div>
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </div>
+                    <ArrowUpDown
+                      size={12}
+                      className={clsx(sortColumn === 'date' ? 'text-primary' : 'opacity-30')}
+                    />
                   </div>
                 </th>
 
                 {/* Product Name Column with Category Filter */}
                 <th scope="col" className="px-4 py-3 w-80 relative">
                   <div className="flex items-center justify-between gap-1">
-                    <div className="flex items-center gap-1 cursor-pointer hover:text-foreground" onClick={() => handleSort('productName')}>
+                    <button
+                      type="button"
+                      className="flex items-center gap-1 cursor-pointer hover:text-foreground"
+                      onClick={() => handleSort('productName')}
+                    >
                       <span>Product Name</span>
-                      <ArrowUpDown size={12} className={clsx(sortColumn === 'productName' ? 'text-primary' : 'opacity-30')} />
-                    </div>
+                      <ArrowUpDown
+                        size={12}
+                        className={clsx(
+                          sortColumn === 'productName' ? 'text-primary' : 'opacity-30'
+                        )}
+                      />
+                    </button>
                     <div className="relative">
                       <button
-                        onClick={(e) => { e.stopPropagation(); setShowCategoryMenu(!showCategoryMenu); }}
-                        className={clsx("p-0.5 rounded hover:bg-muted", categoryFilters.length > 0 && "text-secondary")}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setShowCategoryMenu(!showCategoryMenu)
+                        }}
+                        className={clsx(
+                          'p-0.5 rounded hover:bg-muted',
+                          categoryFilters.length > 0 && 'text-secondary'
+                        )}
                         title="Filter by Product Category"
                       >
                         <Filter size={12} />
@@ -749,25 +648,53 @@ export const ComplianceTable: React.FC<
                       </button>
                       {showCategoryMenu && (
                         <>
-                          <div className="fixed inset-0 z-40" onClick={() => setShowCategoryMenu(false)} />
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setShowCategoryMenu(false)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => e.key === 'Escape' && setShowCategoryMenu(false)}
+                            aria-label="Close menu"
+                          />
                           <div className="absolute left-0 top-full mt-1 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
-                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">Product Categories</div>
+                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                              Product Categories
+                            </div>
                             {uniqueCategories.map((cat) => (
-                              <div
+                              <button
+                                type="button"
                                 key={cat}
                                 onClick={() => handleToggleCategoryFilter(cat)}
-                                className={clsx('flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors', categoryFilters.includes(cat) ? 'text-secondary' : 'text-muted-foreground')}
+                                className={clsx(
+                                  'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
+                                  categoryFilters.includes(cat)
+                                    ? 'text-secondary'
+                                    : 'text-muted-foreground'
+                                )}
                               >
-                                <div className={clsx('w-3 h-3 rounded-[3px] border flex items-center justify-center', categoryFilters.includes(cat) ? 'border-secondary bg-secondary' : 'border-border')}>
-                                  {categoryFilters.includes(cat) && <Check size={10} className="text-secondary-foreground" />}
+                                <div
+                                  className={clsx(
+                                    'w-3 h-3 rounded-[3px] border flex items-center justify-center',
+                                    categoryFilters.includes(cat)
+                                      ? 'border-secondary bg-secondary'
+                                      : 'border-border'
+                                  )}
+                                >
+                                  {categoryFilters.includes(cat) && (
+                                    <Check size={10} className="text-secondary-foreground" />
+                                  )}
                                 </div>
                                 <span className="truncate">{cat}</span>
-                              </div>
+                              </button>
                             ))}
                             {categoryFilters.length > 0 && (
-                              <div onClick={() => setCategoryFilters([])} className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2">
+                              <button
+                                type="button"
+                                onClick={() => setCategoryFilters([])}
+                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
+                              >
                                 Clear
-                              </div>
+                              </button>
                             )}
                           </div>
                         </>
@@ -779,14 +706,27 @@ export const ComplianceTable: React.FC<
                 {/* Vendor Column with Filter */}
                 <th scope="col" className="px-4 py-3 w-48 relative">
                   <div className="flex items-center justify-between gap-1">
-                    <div className="flex items-center gap-1 cursor-pointer hover:text-foreground" onClick={() => handleSort('vendor')}>
+                    <button
+                      type="button"
+                      className="flex items-center gap-1 cursor-pointer hover:text-foreground"
+                      onClick={() => handleSort('vendor')}
+                    >
                       <span>Vendor</span>
-                      <ArrowUpDown size={12} className={clsx(sortColumn === 'vendor' ? 'text-primary' : 'opacity-30')} />
-                    </div>
+                      <ArrowUpDown
+                        size={12}
+                        className={clsx(sortColumn === 'vendor' ? 'text-primary' : 'opacity-30')}
+                      />
+                    </button>
                     <div className="relative">
                       <button
-                        onClick={(e) => { e.stopPropagation(); setShowVendorMenu(!showVendorMenu); }}
-                        className={clsx("p-0.5 rounded hover:bg-muted", vendorFilters.length > 0 && "text-warning")}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setShowVendorMenu(!showVendorMenu)
+                        }}
+                        className={clsx(
+                          'p-0.5 rounded hover:bg-muted',
+                          vendorFilters.length > 0 && 'text-warning'
+                        )}
                       >
                         <Filter size={12} />
                         {vendorFilters.length > 0 && (
@@ -797,9 +737,18 @@ export const ComplianceTable: React.FC<
                       </button>
                       {showVendorMenu && (
                         <>
-                          <div className="fixed inset-0 z-40" onClick={() => setShowVendorMenu(false)} />
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setShowVendorMenu(false)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => e.key === 'Escape' && setShowVendorMenu(false)}
+                            aria-label="Close menu"
+                          />
                           <div className="absolute left-0 top-full mt-1 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto flex flex-col">
-                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">Select Vendor</div>
+                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                              Select Vendor
+                            </div>
                             <Input
                               placeholder="Search vendors..."
                               value={vendorSearch}
@@ -809,25 +758,49 @@ export const ComplianceTable: React.FC<
                             />
                             <div className="flex-1 overflow-y-auto space-y-1">
                               {filteredVendors.map((v) => (
-                                <div
+                                <button
+                                  type="button"
                                   key={v}
                                   onClick={() => handleToggleVendorFilter(v)}
-                                  className={clsx('flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors', vendorFilters.includes(v) ? 'text-warning' : 'text-muted-foreground')}
+                                  className={clsx(
+                                    'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
+                                    vendorFilters.includes(v)
+                                      ? 'text-warning'
+                                      : 'text-muted-foreground'
+                                  )}
                                 >
-                                  <div className={clsx('w-3 h-3 rounded-[3px] border flex items-center justify-center', vendorFilters.includes(v) ? 'border-warning bg-warning' : 'border-border')}>
-                                    {vendorFilters.includes(v) && <Check size={10} className="text-warning-foreground" />}
+                                  <div
+                                    className={clsx(
+                                      'w-3 h-3 rounded-[3px] border flex items-center justify-center',
+                                      vendorFilters.includes(v)
+                                        ? 'border-warning bg-warning'
+                                        : 'border-border'
+                                    )}
+                                  >
+                                    {vendorFilters.includes(v) && (
+                                      <Check size={10} className="text-warning-foreground" />
+                                    )}
                                   </div>
                                   <span className="truncate">{v}</span>
-                                </div>
+                                </button>
                               ))}
                               {filteredVendors.length === 0 && (
-                                <div className="px-2 py-4 text-center text-xs text-muted-foreground">No vendors found.</div>
+                                <div className="px-2 py-4 text-center text-xs text-muted-foreground">
+                                  No vendors found.
+                                </div>
                               )}
                             </div>
                             {vendorFilters.length > 0 && (
-                              <div onClick={() => { setVendorFilters([]); setVendorSearch(''); }} className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setVendorFilters([])
+                                  setVendorSearch('')
+                                }}
+                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
+                              >
                                 Clear
-                              </div>
+                              </button>
                             )}
                           </div>
                         </>
@@ -836,19 +809,18 @@ export const ComplianceTable: React.FC<
                   </div>
                 </th>
 
-                {/* Lab Column */}
-                <th scope="col" className="px-4 py-3 w-48 cursor-pointer hover:text-foreground" onClick={() => handleSort('vendor')}>
-                  <div className="flex items-center gap-1">
-                    <span>Lab</span>
-                    <ArrowUpDown size={12} className={clsx(sortColumn === 'vendor' ? 'text-primary' : 'opacity-30')} />
-                  </div>
-                </th>
-
                 {/* Status Column */}
-                <th scope="col" className="px-4 py-3 w-32 cursor-pointer hover:text-foreground" onClick={() => handleSort('status')}>
+                <th
+                  scope="col"
+                  className="px-4 py-3 w-32 cursor-pointer hover:text-foreground"
+                  onClick={() => handleSort('status')}
+                >
                   <div className="flex items-center gap-1">
                     <span>Status</span>
-                    <ArrowUpDown size={12} className={clsx(sortColumn === 'status' ? 'text-primary' : 'opacity-30')} />
+                    <ArrowUpDown
+                      size={12}
+                      className={clsx(sortColumn === 'status' ? 'text-primary' : 'opacity-30')}
+                    />
                   </div>
                 </th>
 
@@ -858,8 +830,14 @@ export const ComplianceTable: React.FC<
                     <span>PQC</span>
                     <div className="relative">
                       <button
-                        onClick={(e) => { e.stopPropagation(); setShowFilterMenu(!showFilterMenu); }}
-                        className={clsx("p-0.5 rounded hover:bg-muted", pqcFilters.length > 0 && "text-tertiary")}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setShowFilterMenu(!showFilterMenu)
+                        }}
+                        className={clsx(
+                          'p-0.5 rounded hover:bg-muted',
+                          pqcFilters.length > 0 && 'text-tertiary'
+                        )}
                       >
                         <Filter size={12} />
                         {pqcFilters.length > 0 && (
@@ -870,25 +848,53 @@ export const ComplianceTable: React.FC<
                       </button>
                       {showFilterMenu && (
                         <>
-                          <div className="fixed inset-0 z-40" onClick={() => setShowFilterMenu(false)} />
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setShowFilterMenu(false)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => e.key === 'Escape' && setShowFilterMenu(false)}
+                            aria-label="Close menu"
+                          />
                           <div className="absolute right-0 top-full mt-1 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
-                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">PQC Algorithms</div>
+                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                              PQC Algorithms
+                            </div>
                             {PQC_ALGOS.map((algo) => (
-                              <div
+                              <button
+                                type="button"
                                 key={algo}
                                 onClick={() => handleTogglePqcFilter(algo)}
-                                className={clsx('flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors', pqcFilters.includes(algo) ? 'text-tertiary' : 'text-muted-foreground')}
+                                className={clsx(
+                                  'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
+                                  pqcFilters.includes(algo)
+                                    ? 'text-tertiary'
+                                    : 'text-muted-foreground'
+                                )}
                               >
-                                <div className={clsx('w-3 h-3 rounded-[3px] border flex items-center justify-center', pqcFilters.includes(algo) ? 'border-tertiary bg-tertiary' : 'border-border')}>
-                                  {pqcFilters.includes(algo) && <Check size={10} className="text-tertiary-foreground" />}
+                                <div
+                                  className={clsx(
+                                    'w-3 h-3 rounded-[3px] border flex items-center justify-center',
+                                    pqcFilters.includes(algo)
+                                      ? 'border-tertiary bg-tertiary'
+                                      : 'border-border'
+                                  )}
+                                >
+                                  {pqcFilters.includes(algo) && (
+                                    <Check size={10} className="text-tertiary-foreground" />
+                                  )}
                                 </div>
                                 <span className="truncate">{algo}</span>
-                              </div>
+                              </button>
                             ))}
                             {pqcFilters.length > 0 && (
-                              <div onClick={() => setPqcFilters([])} className="text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2">
+                              <button
+                                type="button"
+                                onClick={() => setPqcFilters([])}
+                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
+                              >
                                 Clear
-                              </div>
+                              </button>
                             )}
                           </div>
                         </>
@@ -902,9 +908,9 @@ export const ComplianceTable: React.FC<
                   <span>CC</span>
                 </th>
 
-                {/* Link Column */}
-                <th scope="col" className="px-4 py-3 w-20">
-                  <span>Link</span>
+                {/* Info Column (Added to End) */}
+                <th scope="col" className="px-4 py-3 w-10">
+                  <span className="sr-only">Details</span>
                 </th>
               </tr>
             </thead>
@@ -914,7 +920,7 @@ export const ComplianceTable: React.FC<
               ))}
               {filteredAndSortedData.length === 0 && (
                 <tr>
-                  <td colSpan={11} className="px-4 py-8 text-center text-muted-foreground">
+                  <td colSpan={10} className="px-4 py-8 text-center text-muted-foreground">
                     No compliance records found matching your filters.
                   </td>
                 </tr>
@@ -924,43 +930,41 @@ export const ComplianceTable: React.FC<
         </div>
       </div>
       {/* Pagination Controls */}
-      {
-        filteredAndSortedData.length > 0 && (
-          <div className="flex items-center justify-between px-2">
-            <div className="text-xs text-muted-foreground">
-              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
-              {Math.min(currentPage * ITEMS_PER_PAGE, filteredAndSortedData.length)} of{' '}
-              {filteredAndSortedData.length} records
-              {filteredAndSortedData.length !== data.length && (
-                <span className="ml-1 text-primary-foreground/50">(filtered from {data.length})</span>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="bg-card/50 border-input"
-              >
-                Previous
-              </Button>
-              <div className="flex items-center gap-1 text-xs font-mono bg-card/50 px-3 rounded border border-border">
-                Page {currentPage} of {totalPages}
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="bg-card/50 border-input"
-              >
-                Next
-              </Button>
-            </div>
+      {filteredAndSortedData.length > 0 && (
+        <div className="flex items-center justify-between px-2">
+          <div className="text-xs text-muted-foreground">
+            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
+            {Math.min(currentPage * ITEMS_PER_PAGE, filteredAndSortedData.length)} of{' '}
+            {filteredAndSortedData.length} records
+            {filteredAndSortedData.length !== data.length && (
+              <span className="ml-1 text-primary-foreground/50">(filtered from {data.length})</span>
+            )}
           </div>
-        )
-      }
-    </div >
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="bg-card/50 border-input"
+            >
+              Previous
+            </Button>
+            <div className="flex items-center gap-1 text-xs font-mono bg-card/50 px-3 rounded border border-border">
+              Page {currentPage} of {totalPages}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="bg-card/50 border-input"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }

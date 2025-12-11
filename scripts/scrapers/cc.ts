@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Papa from 'papaparse'
 import { createRequire } from 'module'
 import { ComplianceRecord } from './types.js'
@@ -42,7 +43,10 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
     )
 
     // Helper function to parse concatenated PDF URLs from CSV
-    const parseDocumentURLs = (csvUrl: string, baseUrl: string = 'http://www.commoncriteriaportal.org') => {
+    const parseDocumentURLs = (
+      csvUrl: string,
+      baseUrl: string = 'https://www.commoncriteriaportal.org'
+    ) => {
       if (!csvUrl || csvUrl.trim() === '') {
         return { certReports: [], securityTargets: [], other: [] }
       }
@@ -53,29 +57,42 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
 
       try {
         // Split on .pdf followed by ( or space or end of string
-        // This handles concatenated URLs like "file1.pdf(123) file2.pdf(456)"
-        const pdfMatches = csvUrl.match(/[^()]+\.pdf/gi) || []
+        // FIX: Regex must exclude spaces to prevent merging multiple URLs
+        const pdfMatches = csvUrl.match(/[^()\s]+\.pdf/gi) || []
 
         pdfMatches.forEach((match) => {
           const filename = match.trim()
           if (!filename) return
 
           // Construct full URL
-          const fullUrl = filename.startsWith('http')
+          let fullUrl = filename.startsWith('http')
             ? filename
             : `${baseUrl}/files/epfiles/${encodeURIComponent(filename)}`
 
+          // Enforce HTTPS and clean ports
+          fullUrl = fullUrl.replace(':443', '').replace(':80', '').replace('http:', 'https:')
+
           // Categorize by filename patterns
           const lowerFilename = filename.toLowerCase()
-          if (lowerFilename.includes('certification') || lowerFilename.includes('report') || lowerFilename.includes('cert')) {
+          if (
+            lowerFilename.includes('certification') ||
+            lowerFilename.includes('report') ||
+            lowerFilename.includes('cert') ||
+            lowerFilename.includes('rapport')
+          ) {
             certReports.push(fullUrl)
-          } else if (lowerFilename.includes('st') || lowerFilename.includes('security') || lowerFilename.includes('target')) {
+          } else if (
+            lowerFilename.includes('st') ||
+            lowerFilename.includes('security') ||
+            lowerFilename.includes('target') ||
+            lowerFilename.includes('cible')
+          ) {
             securityTargets.push(fullUrl)
           } else {
             other.push({ name: filename, url: fullUrl })
           }
         })
-      } catch (error) {
+      } catch {
         console.warn(`[CC] Failed to parse PDF URLs from: ${csvUrl.substring(0, 100)}...`)
       }
 
@@ -105,8 +122,7 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
         // The CSV PDF URLs are often corrupted/concatenated
         // Instead, use the CC Portal product search/detail page
         // Format: https://www.commoncriteriaportal.org/products/?expand#PRODUCT_NAME
-        const productSlug = name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '+')
-        const mainLink = `https://www.commoncriteriaportal.org/products/?expand#${productSlug}`
+        // const mainLink = `https://www.commoncriteriaportal.org/products/?expand#${name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '+')}`
 
         // Try to get PDF URL for algorithm extraction, but don't use it as main link
         let pdfUrl = row['Security Target URL'] || row['Certification Report URL'] || ''
@@ -145,23 +161,50 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
             if (labMatch) {
               labFromPDF = labMatch[1].trim().substring(0, 50) // Cap length
             }
-          } catch (e: any) {
-            // console.warn(`Failed CC PDF fetch for ${name}:`, e.message);
+          } catch {
+            // console.warn(`Failed CC PDF fetch for ${name}`);
           }
         }
 
-        // Parse concatenated PDF URLs from CSV
+        // Parse concatenated PDF URLs from CSV BEFORE determining filtered link
         const certReportUrl = row['Certification Report URL'] || ''
         const securityTargetUrl = row['Security Target URL'] || ''
 
         const parsedCertReports = parseDocumentURLs(certReportUrl)
         const parsedSecurityTargets = parseDocumentURLs(securityTargetUrl)
 
+        // Refined Link Logic (Sync with frontend services.ts)
+        let finalMainLink = ''
+
+        // 1. Try to find a valid PDF link for the main "Official Record"
+        // Priority: Security Target > Certification Report (if not generic/search)
+
+        // Check parsed STs first
+        if (parsedSecurityTargets.securityTargets.length > 0) {
+          finalMainLink = parsedSecurityTargets.securityTargets[0]
+        }
+        // Fallback to Cert Reports
+        else if (parsedCertReports.certReports.length > 0) {
+          finalMainLink = parsedCertReports.certReports[0]
+        }
+        // Fallback to Other PDFs (e.g. uncategorized files like French naming conventions)
+        else if (parsedCertReports.other.length > 0) {
+          finalMainLink = parsedCertReports.other[0].url
+        } else if (parsedSecurityTargets.other.length > 0) {
+          finalMainLink = parsedSecurityTargets.other[0].url
+        }
+
+        // 2. If no valid PDF found, DO NOT revert to Portal Search Link.
+        // User requested to disable the link rather than showing an inconsistent search page.
+        if (!finalMainLink || finalMainLink.includes('?expand#')) {
+          finalMainLink = ''
+        }
+
         return {
           id: certId,
           source: 'Common Criteria',
           date: new Date(certDate).toISOString().split('T')[0],
-          link: mainLink,
+          link: finalMainLink,
           type: 'Common Criteria',
           status: 'Active',
           pqcCoverage,
@@ -172,11 +215,16 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
           lab: lab || labFromPDF || undefined,
           certificationLevel: assuranceLevel || undefined,
           // Multi-URL support
-          certificationReportUrls: parsedCertReports.certReports.length > 0 ? parsedCertReports.certReports : undefined,
-          securityTargetUrls: parsedSecurityTargets.securityTargets.length > 0 ? parsedSecurityTargets.securityTargets : undefined,
-          additionalDocuments: [...parsedCertReports.other, ...parsedSecurityTargets.other].length > 0
-            ? [...parsedCertReports.other, ...parsedSecurityTargets.other]
-            : undefined,
+          certificationReportUrls:
+            parsedCertReports.certReports.length > 0 ? parsedCertReports.certReports : undefined,
+          securityTargetUrls:
+            parsedSecurityTargets.securityTargets.length > 0
+              ? parsedSecurityTargets.securityTargets
+              : undefined,
+          additionalDocuments:
+            [...parsedCertReports.other, ...parsedSecurityTargets.other].length > 0
+              ? [...parsedCertReports.other, ...parsedSecurityTargets.other]
+              : undefined,
         }
       })
 
@@ -188,8 +236,8 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
     }
 
     return records
-  } catch (e: any) {
-    console.warn('CC Scrape Failed:', e)
+  } catch {
+    // console.warn('CC Scrape Failed:', _e)
     return []
   }
 }

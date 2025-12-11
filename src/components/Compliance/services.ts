@@ -50,6 +50,63 @@ interface CCRecordRaw {
   [key: string]: string
 }
 
+// Helper to parse concatenated PDF URLs (synced with scraper logic)
+const parseDocumentURLs = (
+  csvUrl: string,
+  baseUrl: string = 'https://www.commoncriteriaportal.org'
+) => {
+  if (!csvUrl || csvUrl.trim() === '') {
+    return { certReports: [], securityTargets: [], other: [] }
+  }
+
+  const certReports: string[] = []
+  const securityTargets: string[] = []
+  const other: Array<{ name: string; url: string }> = []
+
+  try {
+    // Split on .pdf followed by ( or space or end of string
+    // FIX: Regex must exclude spaces to prevent merging multiple URLs
+    const pdfMatches = csvUrl.match(/[^()\s]+\.pdf/gi) || []
+
+    pdfMatches.forEach((match) => {
+      const filename = match.trim()
+      if (!filename) return
+
+      // Construct full URL
+      let fullUrl = filename.startsWith('http')
+        ? filename
+        : `${baseUrl}/files/epfiles/${encodeURIComponent(filename)}`
+
+      // Enforce HTTPS and clean ports
+      fullUrl = fullUrl.replace(':443', '').replace(':80', '').replace('http:', 'https:')
+
+      // Categorize by keywords (Sync with cc.ts)
+      const lowerFilename = filename.toLowerCase()
+      if (
+        lowerFilename.includes('certification') ||
+        lowerFilename.includes('report') ||
+        lowerFilename.includes('cert') ||
+        lowerFilename.includes('rapport')
+      ) {
+        certReports.push(fullUrl)
+      } else if (
+        lowerFilename.includes('st') ||
+        lowerFilename.includes('security') ||
+        lowerFilename.includes('target') ||
+        lowerFilename.includes('cible')
+      ) {
+        securityTargets.push(fullUrl)
+      } else {
+        other.push({ name: filename, url: fullUrl })
+      }
+    })
+  } catch {
+    // console.warn(`[CC-Service] Failed to parse PDF URLs from: ${csvUrl.substring(0, 100)}...`)
+  }
+
+  return { certReports, securityTargets, other }
+}
+
 const fetchCommonCriteriaData = async (): Promise<ComplianceRecord[]> => {
   try {
     // Fetch from proxy configured in vite.config.ts
@@ -63,13 +120,6 @@ const fetchCommonCriteriaData = async (): Promise<ComplianceRecord[]> => {
         header: true,
         skipEmptyLines: true,
         complete: (results) => {
-          if (results.data && results.data.length > 0) {
-            // Debug: check keys again to ensure 'Certification Report URL' matches exactly
-            console.log(
-              'CC CSV First Row Keys/Values:',
-              JSON.stringify((results.data as any)[0], null, 2)
-            )
-          }
           const records = (results.data as CCRecordRaw[]).map((row, index) => {
             // Basic PQC heuristic detection in name or category
             const isPQC =
@@ -84,7 +134,7 @@ const fetchCommonCriteriaData = async (): Promise<ComplianceRecord[]> => {
 
             // Fix malformed URLs often found in CC CSV for the clickable link
             if (cleanReportUrl) {
-              cleanReportUrl = cleanReportUrl.replace(':443', '')
+              cleanReportUrl = cleanReportUrl.replace(':443', '').replace(':80', '')
               cleanReportUrl = cleanReportUrl.replace('http:', 'https:')
               cleanReportUrl = cleanReportUrl.replace(/ /g, '%20')
             }
@@ -102,7 +152,7 @@ const fetchCommonCriteriaData = async (): Promise<ComplianceRecord[]> => {
               const underscoreMatch = rawReportUrl.match(/_([A-Za-z0-9-]+)\.pdf$/)
 
               // Strategy 2: Look for filename part if no underscore pattern
-              const filenameMatch = rawReportUrl.match(/\/([^\/]+)\.pdf$/)
+              const filenameMatch = rawReportUrl.match(/\/([^/]+)\.pdf$/)
 
               if (underscoreMatch && underscoreMatch[1]) {
                 certId = underscoreMatch[1]
@@ -122,17 +172,64 @@ const fetchCommonCriteriaData = async (): Promise<ComplianceRecord[]> => {
               }
             }
 
+            // Parse concatenated PDF URLs (New Logic)
+            const certReportUrlRaw = row['Certification Report URL'] || ''
+            const securityTargetUrlRaw = row['Security Target URL'] || ''
+
+            const parsedCertReports = parseDocumentURLs(certReportUrlRaw)
+            const parsedSecurityTargets = parseDocumentURLs(securityTargetUrlRaw)
+
+            // Determine Main Link (Sync with cc.ts)
+            let finalLink = ''
+
+            // 1. Try to find a valid PDF link
+            if (parsedSecurityTargets.securityTargets.length > 0) {
+              finalLink = parsedSecurityTargets.securityTargets[0]
+            } else if (parsedCertReports.certReports.length > 0) {
+              finalLink = parsedCertReports.certReports[0]
+            } else if (parsedCertReports.other.length > 0) {
+              finalLink = parsedCertReports.other[0].url
+            } else if (parsedSecurityTargets.other.length > 0) {
+              finalLink = parsedSecurityTargets.other[0].url
+            }
+
+            // 2. If no valid PDF, clean fallback or empty (User requested disable)
+            // Use the product search page only to calculate ID/slug?
+            // Actually ID calculation was done above.
+            // Just ensure finalLink is empty if generic.
+
+            // Clean legacy single-url logic just in case we need Product Slug
+            // ... (keep ID logic? ID logic was above and independent)
+
+            // Original ID logic relied on row['Certification Report URL'].
+            // We should keep the ID generation block above essentially as is.
+
+            const additionalDocsCombined = [
+              ...parsedCertReports.other,
+              ...parsedSecurityTargets.other,
+            ]
+
             return {
               id: certId,
               source: row.Scheme ? `Common Criteria (${row.Scheme})` : 'Common Criteria',
               date: row['Certification Date'] || new Date().toISOString().split('T')[0],
-              link: cleanReportUrl || AUTHORITATIVE_SOURCES.CC,
+              link: finalLink, // Will be empty string if no PDF found
               type: 'Common Criteria',
-              status: 'Active', // CSV lists certified products, so mostly active
+              status: 'Active',
               pqcCoverage: isPQC ? 'Potentially PQC' : false,
               productName: row.Name || 'Unknown Product',
               productCategory: row.Category || 'Uncategorized',
               vendor: row.Manufacturer || 'Unknown Vendor',
+              certificationReportUrls:
+                parsedCertReports.certReports.length > 0
+                  ? parsedCertReports.certReports
+                  : undefined,
+              securityTargetUrls:
+                parsedSecurityTargets.securityTargets.length > 0
+                  ? parsedSecurityTargets.securityTargets
+                  : undefined,
+              additionalDocuments:
+                additionalDocsCombined.length > 0 ? additionalDocsCombined : undefined,
             } as ComplianceRecord
           })
           resolve(records)
@@ -144,8 +241,8 @@ const fetchCommonCriteriaData = async (): Promise<ComplianceRecord[]> => {
         },
       })
     })
-  } catch (err) {
-    console.error('CC Fetch Error:', err)
+  } catch {
+    // console.error('CC Fetch Error:', err)
     return []
   }
 }
@@ -444,8 +541,8 @@ const fetchACVPDetail = async (relativeUrl: string): Promise<string | boolean> =
     }
 
     return false
-  } catch (e) {
-    console.warn('ACVP Detail fetch failed', e)
+  } catch {
+    // console.warn('ACVP Detail fetch failed', e)
     return false
   }
 }
@@ -466,14 +563,14 @@ const fetchLiveACVPData = async (): Promise<ComplianceRecord[]> => {
     const htmlText = await response.text()
 
     // Debug logging
-    console.log('ACVP Fetch Success, Content Length:', htmlText.length)
+    // console.log('ACVP Fetch Success, Content Length:', htmlText.length)
 
     const parser = new DOMParser()
     const doc = parser.parseFromString(htmlText, 'text/html')
 
     // Select rows using the specific class found in debug
     const rows = Array.from(doc.querySelectorAll('.publications-table tr'))
-    console.log('ACVP Scraper: Found rows:', rows.length)
+    // console.log('ACVP Scraper: Found rows:', rows.length)
 
     // Limit to 1000 as requested
     const candidateRows = rows.slice(1, 1001) // Skip header
@@ -536,8 +633,8 @@ const fetchLiveACVPData = async (): Promise<ComplianceRecord[]> => {
     }
 
     return records
-  } catch (err) {
-    console.warn('ACVP Scrape Error:', err)
+  } catch {
+    // console.warn('ACVP Scrape Error', err)
     return []
   }
 }
@@ -572,8 +669,8 @@ const fetchStaticComplianceData = async (): Promise<ComplianceRecord[]> => {
     const response = await fetch('/data/compliance-data.json')
     if (!response.ok) throw new Error('Failed to load static compliance data')
     return await response.json()
-  } catch (err) {
-    console.error('Static Data Fetch Error:', err)
+  } catch {
+    // console.error('Static Data Fetch Error', err)
     return []
   }
 }
@@ -585,9 +682,9 @@ export const fetchComplianceData = async (forceRefresh = false): Promise<Complia
     let staticData: ComplianceRecord[] = []
     try {
       staticData = await fetchStaticComplianceData()
-      console.log(`Loaded ${staticData.length} records from static compliance-data.json`)
-    } catch (e) {
-      console.warn('Could not load static compliance data', e)
+      // console.log(`Loaded ${staticData.length} records from static compliance-data.json`)
+    } catch {
+      // console.warn('Could not load static compliance data', e)
     }
 
     // PRODUCTION: Use Static Data Only (or mostly)
@@ -601,13 +698,13 @@ export const fetchComplianceData = async (forceRefresh = false): Promise<Complia
     // DEVELOPMENT: Use Static Data as Base, but allow Live Refresh for NIST/ACVP
     // If we have static data and NOT forcing refresh, return it to save time/requests
     if (!forceRefresh && staticData.length > 0) {
-      console.log(
-        'Returning static compliance data (Dev Mode). Use "Refresh" button to force live scrape of NIST/ACVP.'
-      )
+      // console.log(
+      //   'Returning static compliance data (Dev Mode). Use "Refresh" button to force live scrape of NIST/ACVP.'
+      // )
       return staticData
     }
 
-    console.log('Fetching Live Data for NIST/ACVP...')
+    // console.log('Fetching Live Data for NIST/ACVP...')
 
     const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000
     const now = Date.now()
@@ -643,7 +740,7 @@ export const fetchComplianceData = async (forceRefresh = false): Promise<Complia
       // NIST
       (async () => {
         if (fetchNist) {
-          console.log('Fetching Fresh NIST Data...')
+          // console.log('Fetching Fresh NIST Data...')
           const data = await withTimeout(fetchLiveNISTData(), 20000, [])
           if (data.length > 0) {
             await localforage.setItem(CACHE_KEYS.NIST, data)
@@ -651,7 +748,7 @@ export const fetchComplianceData = async (forceRefresh = false): Promise<Complia
           }
           return data
         } else {
-          console.log('Loading Cached NIST Data')
+          // console.log('Loading Cached NIST Data')
           return (await localforage.getItem<ComplianceRecord[]>(CACHE_KEYS.NIST)) || []
         }
       })(),
@@ -659,7 +756,7 @@ export const fetchComplianceData = async (forceRefresh = false): Promise<Complia
       // ACVP
       (async () => {
         if (fetchAcvp) {
-          console.log('Fetching Fresh ACVP Data...')
+          // console.log('Fetching Fresh ACVP Data...')
           const data = await withTimeout(fetchLiveACVPData(), 20000, [])
           if (data.length > 0) {
             await localforage.setItem(CACHE_KEYS.ACVP, data)
@@ -667,7 +764,7 @@ export const fetchComplianceData = async (forceRefresh = false): Promise<Complia
           }
           return data
         } else {
-          console.log('Loading Cached ACVP Data')
+          // console.log('Loading Cached ACVP Data')
           return (await localforage.getItem<ComplianceRecord[]>(CACHE_KEYS.ACVP)) || []
         }
       })(),
@@ -706,9 +803,38 @@ export const fetchComplianceData = async (forceRefresh = false): Promise<Complia
 
     // Ensure ANSSI specific logic didn't get lost (it's in staticData)
 
+    // Ensure ANSSI specific logic didn't get lost (it's in staticData)
+
+    // FINAL PATCH: If we have a generic search link but have valid additionalDocs, promote one to main link.
+    // Otherwise, if it remains a search link, CLEAR IT (User request: disable link rather than inconsistent fallback).
+    mergedData = mergedData.map((r) => {
+      const isGeneric = r.link && r.link.includes('?expand#')
+
+      if (isGeneric) {
+        // Try to rescue with additional docs
+        if (r.additionalDocuments && r.additionalDocuments.length > 0) {
+          // Prefer ST/Target/Cible
+          const st = r.additionalDocuments.find(
+            (d) =>
+              d.name.toLowerCase().includes('target') ||
+              d.name.toLowerCase().includes('security') ||
+              d.name.toLowerCase().includes('st') ||
+              d.name.toLowerCase().includes('cible')
+          )
+          if (st) return { ...r, link: st.url }
+          return { ...r, link: r.additionalDocuments[0].url }
+        }
+        // If rescue failed, only disable if we are SURE.
+        // But be careful: if the user sees "disappeared links", maybe it's because we cleared it here.
+        // Let's strictly return '' only if we have NO alternative.
+        return { ...r, link: '' }
+      }
+      return r
+    })
+
     return mergedData
-  } catch (criticalError) {
-    console.error('Critical Error in fetchComplianceData:', criticalError)
+  } catch {
+    // console.error('Critical Error in fetchComplianceData', criticalError)
     // Fallback
     try {
       return await fetchStaticComplianceData()
@@ -726,7 +852,7 @@ const debouncedSaveACVP = (records: ComplianceRecord[]) => {
     // Filter out only ACVP records to save
     const acvpOnly = records.filter((r) => r.type === 'ACVP')
     localforage.setItem(CACHE_KEYS.ACVP, acvpOnly)
-    console.log('Persisted Updated ACVP Data to Cache')
+    // console.log('Persisted Updated ACVP Data to Cache')
   }, 1000)
 }
 
