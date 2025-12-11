@@ -149,11 +149,36 @@ export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
               .substring(0, 30)}-${Math.random().toString(36).substr(2, 4)}`
           }
 
-          // PDF Extraction (Prioritizing Security Target)
+          // PDF Extraction and Multi-URL Collection
           let pqcCoverage = 'No PQC Mechanisms Detected'
           let classicalAlgorithms = ''
 
           const allPdfLinks = Array.from(pageDoc.querySelectorAll('a[href$=".pdf"]'))
+
+          // Categorize PDFs
+          const certReports: string[] = []
+          const securityTargets: string[] = []
+          const otherDocs: Array<{ name: string; url: string }> = []
+
+          allPdfLinks.forEach((a) => {
+            const href = a.getAttribute('href')?.toLowerCase() || ''
+            const text = a.textContent?.toLowerCase() || ''
+            const pdfUrl = a.getAttribute('href') || ''
+            const absolutePdfUrl = pdfUrl.startsWith('http') ? pdfUrl : `${baseUrl}${pdfUrl}`
+
+            // Categorize by filename and link text
+            if (href.includes('cible') || href.includes('security_target') || href.includes('st') ||
+              text.includes('cible') || text.includes('security target')) {
+              securityTargets.push(absolutePdfUrl)
+            } else if (href.includes('rapport') || href.includes('certification') || href.includes('report') ||
+              text.includes('rapport') || text.includes('certification')) {
+              certReports.push(absolutePdfUrl)
+            } else {
+              otherDocs.push({ name: text || 'Document', url: absolutePdfUrl })
+            }
+          })
+
+          // Try to fetch one PDF for algorithm extraction (prioritize security target)
           let pdfLink = allPdfLinks.find((a) => {
             const href = a.getAttribute('href')?.toLowerCase() || ''
             const text = a.textContent?.toLowerCase() || ''
@@ -216,6 +241,10 @@ export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
             certificationLevel: level
               ? `${level}${augmentation ? ' ' + augmentation : ''}`.trim()
               : undefined,
+            // Multi-URL support
+            certificationReportUrls: certReports.length > 0 ? certReports : undefined,
+            securityTargetUrls: securityTargets.length > 0 ? securityTargets : undefined,
+            additionalDocuments: otherDocs.length > 0 ? otherDocs : undefined,
           })
         }
       } catch (e) {
