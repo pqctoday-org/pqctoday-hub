@@ -48,7 +48,11 @@ export default defineConfig({
       '/api/nist-search': {
         target: 'https://csrc.nist.gov',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/nist-search/, '/projects/cryptographic-module-validation-program/validated-modules/search/all'),
+        rewrite: (path) =>
+          path.replace(
+            /^\/api\/nist-search/,
+            '/projects/cryptographic-module-validation-program/validated-modules/search/all'
+          ),
         headers: {
           'User-Agent':
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -57,7 +61,11 @@ export default defineConfig({
       '/api/nist-cert': {
         target: 'https://csrc.nist.gov',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/nist-cert/, '/projects/cryptographic-module-validation-program/certificate'),
+        rewrite: (path) =>
+          path.replace(
+            /^\/api\/nist-cert/,
+            '/projects/cryptographic-module-validation-program/certificate'
+          ),
         headers: {
           'User-Agent':
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -66,7 +74,11 @@ export default defineConfig({
       '/api/acvp-search': {
         target: 'https://csrc.nist.gov',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/acvp-search/, '/projects/cryptographic-algorithm-validation-program/validation-search'),
+        rewrite: (path) =>
+          path.replace(
+            /^\/api\/acvp-search/,
+            '/projects/cryptographic-algorithm-validation-program/validation-search'
+          ),
         headers: {
           'User-Agent':
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -75,7 +87,11 @@ export default defineConfig({
       '/api/acvp-details': {
         target: 'https://csrc.nist.gov',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/acvp-details/, '/projects/cryptographic-algorithm-validation-program/details'),
+        rewrite: (path) =>
+          path.replace(
+            /^\/api\/acvp-details/,
+            '/projects/cryptographic-algorithm-validation-program/details'
+          ),
         headers: {
           'User-Agent':
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -93,7 +109,11 @@ export default defineConfig({
       '/api/bsi-search': {
         target: 'https://www.bsi.bund.de',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/bsi-search/, '/SharedDocs/Downloads/EN/BSI/Zertifizierung/Report_eIDAS_Table.html'),
+        rewrite: (path) =>
+          path.replace(
+            /^\/api\/bsi-search/,
+            '/SharedDocs/Downloads/EN/BSI/Zertifizierung/Report_eIDAS_Table.html'
+          ),
         headers: {
           'User-Agent':
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -102,7 +122,8 @@ export default defineConfig({
       '/api/anssi-search': {
         target: 'https://cyber.gouv.fr',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/anssi-search/, '/en/products-and-services-certified-anssi'),
+        rewrite: (path) =>
+          path.replace(/^\/api\/anssi-search/, '/en/products-and-services-certified-anssi'),
         headers: {
           'User-Agent':
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',

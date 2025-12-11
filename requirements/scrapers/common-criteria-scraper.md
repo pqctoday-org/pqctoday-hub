@@ -1,6 +1,7 @@
 # Common Criteria Scraper Requirements
 
 ## Data Source
+
 - **URL**: `https://www.commoncriteriaportal.org/products/index.cfm?archived=0&pg=1&ipp=25&orderby=DESC&sortby=CERTIFICATION_DATE&download=1`
 - **Type**: CSV Download
 - **Update Frequency**: Daily (automated via GitHub Actions)
@@ -8,6 +9,7 @@
 ## Scraping Method
 
 ### Primary Data Extraction
+
 1. **Target**: All active Common Criteria certified products
 2. **Filter**: Recent certifications (>= 2 years ago)
 3. **Extraction Method**: CSV parsing using PapaParse
@@ -15,37 +17,37 @@
 
 ### CSV Fields Available
 
-| CSV Column | Maps To | Format | Example | Notes |
-|------------|---------|--------|---------|-------|
-| `Name` | `productName` | string | `"Acme Secure OS v2.0"` | Product name |
-| `Certification Date` | `date` | Date string | `"2024-03-15"` | Certification date |
-| `Category` | `productCategory` | string | `"Operating Systems"` | Product category |
-| `Assurance Level` | `certificationLevel` | string | `"EAL4+ ALC_FLR.3"` | CC assurance level |
-| `Scheme` | Appended to `vendor` | string | `"US"`, `"DE"`, `"FR"` | Certification scheme |
-| `Manufacturer` | `vendor` | string | `"Acme Corporation"` | Vendor name |
-| `Lab` | `lab` | string | `"Acme Test Lab"` | Evaluation facility (if available) |
-| `ITSEF` | `lab` (fallback) | string | `"IT Security Evaluation Facility"` | Alternative lab field |
-| `Evaluation Facility` | `lab` (fallback) | string | `"Evaluation Lab Inc."` | Another lab field variant |
-| `Security Target URL` | Used for PDF fetch | URL | `http://...ST.pdf` | Security Target document |
-| `Certification Report URL` | `link` | URL | `http://...Report.pdf` | Certification report |
+| CSV Column                 | Maps To              | Format      | Example                             | Notes                              |
+| -------------------------- | -------------------- | ----------- | ----------------------------------- | ---------------------------------- |
+| `Name`                     | `productName`        | string      | `"Acme Secure OS v2.0"`             | Product name                       |
+| `Certification Date`       | `date`               | Date string | `"2024-03-15"`                      | Certification date                 |
+| `Category`                 | `productCategory`    | string      | `"Operating Systems"`               | Product category                   |
+| `Assurance Level`          | `certificationLevel` | string      | `"EAL4+ ALC_FLR.3"`                 | CC assurance level                 |
+| `Scheme`                   | Appended to `vendor` | string      | `"US"`, `"DE"`, `"FR"`              | Certification scheme               |
+| `Manufacturer`             | `vendor`             | string      | `"Acme Corporation"`                | Vendor name                        |
+| `Lab`                      | `lab`                | string      | `"Acme Test Lab"`                   | Evaluation facility (if available) |
+| `ITSEF`                    | `lab` (fallback)     | string      | `"IT Security Evaluation Facility"` | Alternative lab field              |
+| `Evaluation Facility`      | `lab` (fallback)     | string      | `"Evaluation Lab Inc."`             | Another lab field variant          |
+| `Security Target URL`      | Used for PDF fetch   | URL         | `http://...ST.pdf`                  | Security Target document           |
+| `Certification Report URL` | `link`               | URL         | `http://...Report.pdf`              | Certification report               |
 
 ### Data Fields Extracted
 
-| Field | Source | Format | Example | Notes |
-|-------|--------|--------|---------|-------|
-| `id` | Generated | `cc-{name}-{random}` | `cc-acme-secure-os-v2-0-a1b2` | Unique identifier |
-| `source` | Static | `"Common Criteria"` | `"Common Criteria"` | Always "Common Criteria" |
-| `date` | CSV: `Certification Date` | ISO 8601 (YYYY-MM-DD) | `"2024-03-15"` | Normalized date |
-| `link` | CSV: `Certification Report URL` | Full URL (encoded) | `https://...Report.pdf` | URL-encoded link |
-| `type` | Static | `"Common Criteria"` | `"Common Criteria"` | Certification type |
-| `status` | Static | `"Active"` | `"Active"` | All scraped records are active |
-| `pqcCoverage` | PDF + Heuristic | boolean \| string | `"ML-KEM, ML-DSA"` | Extracted from PDF or name |
-| `classicalAlgorithms` | PDF extraction | string | `"AES-256, RSA-2048"` | Comma-separated list |
-| `productName` | CSV: `Name` | string | `"Acme Secure OS v2.0"` | Product name |
-| `productCategory` | CSV: `Category` | string | `"Operating Systems"` | Product category |
-| `vendor` | CSV: `Manufacturer` + `Scheme` | string | `"Acme Corp (Scheme: US)"` | Vendor with scheme |
-| `lab` | CSV: `Lab` \| `ITSEF` \| PDF | string | `"Acme Test Lab"` | Evaluation facility |
-| `certificationLevel` | CSV: `Assurance Level` | string | `"EAL4+ ALC_FLR.3"` | CC assurance level |
+| Field                 | Source                          | Format                | Example                       | Notes                          |
+| --------------------- | ------------------------------- | --------------------- | ----------------------------- | ------------------------------ |
+| `id`                  | Generated                       | `cc-{name}-{random}`  | `cc-acme-secure-os-v2-0-a1b2` | Unique identifier              |
+| `source`              | Static                          | `"Common Criteria"`   | `"Common Criteria"`           | Always "Common Criteria"       |
+| `date`                | CSV: `Certification Date`       | ISO 8601 (YYYY-MM-DD) | `"2024-03-15"`                | Normalized date                |
+| `link`                | CSV: `Certification Report URL` | Full URL (encoded)    | `https://...Report.pdf`       | URL-encoded link               |
+| `type`                | Static                          | `"Common Criteria"`   | `"Common Criteria"`           | Certification type             |
+| `status`              | Static                          | `"Active"`            | `"Active"`                    | All scraped records are active |
+| `pqcCoverage`         | PDF + Heuristic                 | boolean \| string     | `"ML-KEM, ML-DSA"`            | Extracted from PDF or name     |
+| `classicalAlgorithms` | PDF extraction                  | string                | `"AES-256, RSA-2048"`         | Comma-separated list           |
+| `productName`         | CSV: `Name`                     | string                | `"Acme Secure OS v2.0"`       | Product name                   |
+| `productCategory`     | CSV: `Category`                 | string                | `"Operating Systems"`         | Product category               |
+| `vendor`              | CSV: `Manufacturer` + `Scheme`  | string                | `"Acme Corp (Scheme: US)"`    | Vendor with scheme             |
+| `lab`                 | CSV: `Lab` \| `ITSEF` \| PDF    | string                | `"Acme Test Lab"`             | Evaluation facility            |
+| `certificationLevel`  | CSV: `Assurance Level`          | string                | `"EAL4+ ALC_FLR.3"`           | CC assurance level             |
 
 ## URL Encoding Logic
 
@@ -57,10 +59,7 @@ const encodeURL = (url: string) => {
   try {
     const urlObj = new URL(url)
     // Encode only the pathname, keeping protocol and host intact
-    urlObj.pathname = urlObj.pathname
-      .split('/')
-      .map(encodeURIComponent)
-      .join('/')
+    urlObj.pathname = urlObj.pathname.split('/').map(encodeURIComponent).join('/')
     return urlObj.toString()
   } catch {
     return url // Return original if parsing fails
@@ -83,9 +82,7 @@ const encodeURL = (url: string) => {
 
 ```typescript
 // Extract from Security Target or Certification Report PDF
-const labMatch = pdfText.match(
-  /(?:Evaluation Facility|ITSEF|Evaluation Body)\s*:?\s*([^\n\r,]+)/i
-)
+const labMatch = pdfText.match(/(?:Evaluation Facility|ITSEF|Evaluation Body)\s*:?\s*([^\n\r,]+)/i)
 if (labMatch) {
   labFromPDF = labMatch[1].trim().substring(0, 50) // Cap at 50 chars
 }
@@ -97,13 +94,15 @@ lab = csvLab || csvITSEF || csvEvalFacility || labFromPDF || undefined
 ## PQC Detection Strategy
 
 ### 1. Name-Based Heuristic
+
 ```typescript
 if (productName.match(/quantum|pqc/i)) {
-  pqcCoverage = "Potentially PQC (Name Match)"
+  pqcCoverage = 'Potentially PQC (Name Match)'
 }
 ```
 
 ### 2. PDF Extraction
+
 ```typescript
 // Fetch Security Target or Certification Report PDF
 const pdfText = await parsePDF(pdfUrl)
@@ -114,12 +113,13 @@ const pqcMatches = pdfText.match(pqcPatterns)
 
 if (pqcMatches) {
   pqcCoverage = Array.from(new Set(pqcMatches)).join(', ')
-} else if (pqcCoverage === "Potentially PQC") {
-  pqcCoverage = "No PQC Mechanisms Detected"
+} else if (pqcCoverage === 'Potentially PQC') {
+  pqcCoverage = 'No PQC Mechanisms Detected'
 }
 ```
 
 ### 3. Classical Algorithm Extraction
+
 ```typescript
 const classicalPatterns = /AES-(?:128|192|256)|RSA-(?:2048|3072|4096)|SHA-(?:256|384|512)|ECDSA/gi
 const classicalMatches = pdfText.match(classicalPatterns)
@@ -136,11 +136,9 @@ const records = []
 
 for (let i = 0; i < candidateRecords.length; i += BATCH_SIZE) {
   const batch = candidateRecords.slice(i, i + BATCH_SIZE)
-  const batchResults = await Promise.all(
-    batch.map(record => processRecord(record))
-  )
-  records.push(...batchResults.filter(r => r !== null))
-  
+  const batchResults = await Promise.all(batch.map((record) => processRecord(record)))
+  records.push(...batchResults.filter((r) => r !== null))
+
   // Progress logging
   if (i % 20 === 0) {
     console.log(`[CC] Processed ${i} / ${total} records...`)

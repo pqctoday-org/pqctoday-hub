@@ -1,6 +1,7 @@
 # NIST FIPS 140-3 Scraper Requirements
 
 ## Data Source
+
 - **URL**: `https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search`
 - **Type**: HTML Web Page
 - **Update Frequency**: Daily (automated via GitHub Actions)
@@ -8,27 +9,28 @@
 ## Scraping Method
 
 ### Primary Data Extraction
+
 1. **Target**: FIPS 140-3 Level 3 validated modules
 2. **Filter**: `validationLevel=140-3-L3`
 3. **Extraction Method**: DOM parsing using JSDOM
 
 ### Data Fields Extracted
 
-| Field | Source | Format | Example | Notes |
-|-------|--------|--------|---------|-------|
-| `id` | Generated | `fips-{cert#}` | `fips-4853` | Unique identifier |
-| `source` | Static | `"NIST"` | `"NIST"` | Always "NIST" |
-| `date` | HTML: `.validation-date` | ISO 8601 (YYYY-MM-DD) | `"2024-03-15"` | Normalized from various formats |
-| `link` | HTML: Certificate detail URL | Full URL | `https://csrc.nist.gov/...` | Direct link to certificate |
-| `type` | Static | `"FIPS 140-3"` | `"FIPS 140-3"` | Certification type |
-| `status` | HTML: Status badge | `"Active"` \| `"Historical"` | `"Active"` | Validation status |
-| `pqcCoverage` | Heuristic | boolean \| string | `"ML-KEM, ML-DSA"` | Extracted from module name/description |
-| `classicalAlgorithms` | Heuristic | string | `"AES, SHA-256"` | Comma-separated list |
-| `productName` | HTML: Module name | string | `"Acme Crypto Module v2.0"` | Product/module name |
-| `productCategory` | Static | `"Cryptographic Module"` | `"Cryptographic Module"` | Always same for FIPS |
-| `vendor` | HTML: Vendor name | string | `"Acme Corporation"` | Manufacturer/vendor |
-| `lab` | Not available | `undefined` | - | FIPS data doesn't include lab info |
-| `certificationLevel` | Static | `"FIPS 140-3 L3"` | `"FIPS 140-3 L3"` | Always Level 3 |
+| Field                 | Source                       | Format                       | Example                     | Notes                                  |
+| --------------------- | ---------------------------- | ---------------------------- | --------------------------- | -------------------------------------- |
+| `id`                  | Generated                    | `fips-{cert#}`               | `fips-4853`                 | Unique identifier                      |
+| `source`              | Static                       | `"NIST"`                     | `"NIST"`                    | Always "NIST"                          |
+| `date`                | HTML: `.validation-date`     | ISO 8601 (YYYY-MM-DD)        | `"2024-03-15"`              | Normalized from various formats        |
+| `link`                | HTML: Certificate detail URL | Full URL                     | `https://csrc.nist.gov/...` | Direct link to certificate             |
+| `type`                | Static                       | `"FIPS 140-3"`               | `"FIPS 140-3"`              | Certification type                     |
+| `status`              | HTML: Status badge           | `"Active"` \| `"Historical"` | `"Active"`                  | Validation status                      |
+| `pqcCoverage`         | Heuristic                    | boolean \| string            | `"ML-KEM, ML-DSA"`          | Extracted from module name/description |
+| `classicalAlgorithms` | Heuristic                    | string                       | `"AES, SHA-256"`            | Comma-separated list                   |
+| `productName`         | HTML: Module name            | string                       | `"Acme Crypto Module v2.0"` | Product/module name                    |
+| `productCategory`     | Static                       | `"Cryptographic Module"`     | `"Cryptographic Module"`    | Always same for FIPS                   |
+| `vendor`              | HTML: Vendor name            | string                       | `"Acme Corporation"`        | Manufacturer/vendor                    |
+| `lab`                 | Not available                | `undefined`                  | -                           | FIPS data doesn't include lab info     |
+| `certificationLevel`  | Static                       | `"FIPS 140-3 L3"`            | `"FIPS 140-3 L3"`           | Always Level 3                         |
 
 ## Date Normalization Logic
 
@@ -56,7 +58,7 @@ if (moduleName.match(/ML-KEM|ML-DSA|CRYSTALS|Kyber|Dilithium|SPHINCS|LMS|XMSS/i)
 }
 
 // If no match:
-pqcCoverage = "No PQC Mechanisms Detected"
+pqcCoverage = 'No PQC Mechanisms Detected'
 ```
 
 ## Error Handling
