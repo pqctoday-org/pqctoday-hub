@@ -172,8 +172,10 @@ export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
               href.includes('rapport') ||
               href.includes('certification') ||
               href.includes('report') ||
+              href.includes('certificat') ||
               text.includes('rapport') ||
-              text.includes('certification')
+              text.includes('certification') ||
+              text.includes('certificat')
             ) {
               certReports.push(absolutePdfUrl)
             } else {
