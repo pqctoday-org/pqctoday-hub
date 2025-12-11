@@ -1,6 +1,4 @@
 // Shared utilities and patterns
-import fs from 'fs'
-import path from 'path'
 
 // Helper: Fetch Text with User Agent
 export const fetchText = async (url: string) => {
@@ -43,6 +41,7 @@ export const CLASSICAL_PATTERNS = [
   { name: 'ECDH', regex: /\bECDH\b/gi },
 ]
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const extractAlgorithms = (text: string, patterns: any[]): string => {
   const findings: Record<string, Set<string>> = {}
 
@@ -58,10 +57,8 @@ export const extractAlgorithms = (text: string, patterns: any[]): string => {
 
   // Detailed Classical Object Array
   patterns.forEach((p) => {
-    let match
     // Reset lastIndex for global regex if needed, though matchAll/exec handles it
     // We use matchAll or exec loop
-    const regex = new RegExp(p.regex) // Clone to be safe or use sticky
 
     const plainMatches = text.match(p.regex)
     if (plainMatches) {
@@ -114,7 +111,7 @@ export const standardizeDate = (dateStr: string): string => {
   // US Format (MM/DD/YYYY)
   let match = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
   if (match) {
-    const [_, month, day, year] = match
+    const [, month, day, year] = match
     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
   }
 
@@ -186,4 +183,46 @@ export const normalizeAlgorithmList = (input: string | boolean | undefined): str
   const finalUnique = Array.from(new Set(normalized))
 
   return finalUnique.join(', ')
+}
+
+// Helper: Extract Lab/ITSEF from Text (Robust Expert Patterns)
+export const extractLabFromText = (text: string): string | null => {
+  // Priority 1: Explicit ITSEF/Lab fields
+  const primaryMatch = text.match(
+    /(?:ITSEF|Evaluation\s+Facility|Evaluation\s+Laboratory|Testing\s+Laboratory|Evaluation\s+Body|Commercial\s+Facility|Evaluated\s+by)\s*[:.]?\s*([A-Z][a-zA-Z\s&]+(?:GmbH|Ltd|Inc|SAS|BV|AB|Corporation|AG)?)/i
+  )
+  if (primaryMatch) return primaryMatch[1].trim()
+
+  // Priority 2: "Testing was completed by" / "conducted by"
+  const secondaryMatch = text.match(
+    /(?:Testing\s+was\s+completed\s+by|evaluation\s+has\s+been\s+conducted\s+by|evaluation\s+conducted\s+by)\s*[:.]?\s*([A-Z][a-zA-Z\s&]+(?:GmbH|Ltd|Inc|SAS|BV|AB|Corporation|AG)?)/i
+  )
+  if (secondaryMatch) return secondaryMatch[1].trim()
+
+  // Priority 3: Known Labs (Fallback)
+  const knownLabs = [
+    'atsec information security',
+    'Brightsight',
+    'TÜV Informationstechnik',
+    'TÜViT',
+    'Trusted Labs',
+    'Applus',
+    'SGS',
+    'SERMA',
+    'Riscure',
+    'Acumen Security',
+    'Leidos',
+    'Gossamer',
+    'CygnaCom',
+    'secunet',
+    'Thales',
+    'CEA-LETI',
+    'Oppida',
+    'Amossys',
+  ]
+  for (const lab of knownLabs) {
+    if (text.includes(lab)) return lab
+  }
+
+  return null
 }

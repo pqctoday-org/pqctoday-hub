@@ -2,7 +2,13 @@
 import Papa from 'papaparse'
 import { createRequire } from 'module'
 import { ComplianceRecord } from './types.js'
-import { fetchText, extractAlgorithms, PQC_PATTERNS, CLASSICAL_PATTERNS } from './utils.js'
+import {
+  fetchText,
+  extractAlgorithms,
+  extractLabFromText,
+  PQC_PATTERNS,
+  CLASSICAL_PATTERNS,
+} from './utils.js'
 
 const require = createRequire(import.meta.url)
 const { PDFParse } = require('pdf-parse')
@@ -140,47 +146,7 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
 
         // Determine best PDF for text extraction
         // Priority: Security Target (Required for precise PQC algorithm detection) > Certification Report
-        // Helper to extract Lab info with expert patterns
-        const extractLabFromText = (text: string): string | null => {
-          // Priority 1: Explicit ITSEF/Lab fields
-          const primaryMatch = text.match(
-            /(?:ITSEF|Evaluation\s+Facility|Evaluation\s+Laboratory|Testing\s+Laboratory|Evaluation\s+Body|Commercial\s+Facility|Evaluated\s+by)\s*[:.]?\s*([A-Z][a-zA-Z\s&]+(?:GmbH|Ltd|Inc|SAS|BV|AB|Corporation|AG)?)/i
-          )
-          if (primaryMatch) return primaryMatch[1].trim()
-
-          // Priority 2: "Testing was completed by" / "conducted by"
-          const secondaryMatch = text.match(
-            /(?:Testing\s+was\s+completed\s+by|evaluation\s+has\s+been\s+conducted\s+by|evaluation\s+conducted\s+by)\s*[:.]?\s*([A-Z][a-zA-Z\s&]+(?:GmbH|Ltd|Inc|SAS|BV|AB|Corporation|AG)?)/i
-          )
-          if (secondaryMatch) return secondaryMatch[1].trim()
-
-          // Priority 3: Known Labs (Fallback)
-          const knownLabs = [
-            'atsec information security',
-            'Brightsight',
-            'TÜV Informationstechnik',
-            'TÜViT',
-            'Trusted Labs',
-            'Applus',
-            'SGS',
-            'SERMA',
-            'Riscure',
-            'Acumen Security',
-            'Leidos',
-            'Gossamer',
-            'CygnaCom',
-            'secunet',
-            'Thales',
-            'CEA-LETI',
-            'Oppida',
-            'Amossys',
-          ]
-          for (const lab of knownLabs) {
-            if (text.includes(lab)) return lab
-          }
-
-          return null
-        }
+        // Helper to extract Lab info with expert patterns - MOVED TO utils.ts
 
         // Fetch Logic: Split Strategy
         // 1. Fetch Security Target (ST) for PQC (Strict Source)
