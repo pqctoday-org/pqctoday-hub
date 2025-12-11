@@ -2,8 +2,6 @@ import React, { useState, useMemo } from 'react'
 import {
   ArrowUpDown,
   Search,
-  Shield,
-  ShieldAlert,
   ShieldCheck,
   RefreshCw,
   Calendar,
@@ -14,7 +12,7 @@ import {
   LockKeyhole,
   Info,
 } from 'lucide-react'
-import type { ComplianceRecord, ComplianceStatus } from './types'
+import type { ComplianceRecord } from './types'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import clsx from 'clsx'
@@ -32,30 +30,6 @@ type SortDirection = 'asc' | 'desc'
 type SortColumn = keyof ComplianceRecord
 
 const PQC_ALGOS = ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS', 'XMSS', 'HSS']
-
-const StatusBadge = ({ status }: { status: ComplianceStatus }) => {
-  const styles = {
-    Active: 'bg-status-success text-status-success border-success/20',
-    Historical: 'bg-muted text-muted-foreground border-border',
-    Pending: 'bg-status-warning text-status-warning border-warning/20',
-    'In Process': 'bg-status-info text-status-info border-blue-500/20',
-    Revoked: 'bg-status-error text-status-error border-destructive/20',
-  }
-
-  return (
-    <span
-      className={clsx(
-        'px-2 py-0.5 rounded-full text-xs font-medium border flex items-center gap-1 w-fit',
-        styles[status] || styles.Historical
-      )}
-    >
-      {status === 'Active' && <ShieldCheck size={12} />}
-      {status === 'Revoked' && <ShieldAlert size={12} />}
-      {status === 'Pending' && <Shield size={12} />}
-      {status}
-    </span>
-  )
-}
 
 const ComplianceRow = ({
   record,
@@ -132,12 +106,7 @@ const ComplianceRow = ({
         </div>
       </td>
 
-      {/* 7. Status Column */}
-      <td className="px-4 py-3">
-        <StatusBadge status={record.status} />
-      </td>
-
-      {/* 8. PQC Coverage Column */}
+      {/* 7. PQC Coverage Column */}
       <td className="px-4 py-3 relative group">
         {record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
           <div className="flex items-center">
@@ -806,21 +775,6 @@ export const ComplianceTable: React.FC<
                         </>
                       )}
                     </div>
-                  </div>
-                </th>
-
-                {/* Status Column */}
-                <th
-                  scope="col"
-                  className="px-4 py-3 w-32 cursor-pointer hover:text-foreground"
-                  onClick={() => handleSort('status')}
-                >
-                  <div className="flex items-center gap-1">
-                    <span>Status</span>
-                    <ArrowUpDown
-                      size={12}
-                      className={clsx(sortColumn === 'status' ? 'text-primary' : 'opacity-30')}
-                    />
                   </div>
                 </th>
 
