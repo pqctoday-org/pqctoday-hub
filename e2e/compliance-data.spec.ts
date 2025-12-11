@@ -32,11 +32,16 @@ test.describe('Compliance Data View', () => {
 
     // Switch to FIPS (Index 1)
     await page.getByRole('button', { name: 'FIPS 140-3' }).first().click({ force: true })
-    await expect(page.locator('tbody tr').first()).toContainText('FIPS 140-3')
+    // Verify by opening first row details
+    await page.locator('tbody tr').first().getByRole('button').last().click()
+    // Type is now displayed as a paragraph, not a heading
+    await expect(page.locator('p', { hasText: /^FIPS 140-3$/ })).toBeVisible()
+    // Close popover (click outside or escape)
+    await page.keyboard.press('Escape')
 
     // Verify pagination (50 items per page max)
     await page.waitForTimeout(1000)
-    let fipsCount = await page.locator('tbody tr').count()
+    const fipsCount = await page.locator('tbody tr').count()
 
     // If >50 records exist, we should see exactly 50 rows
     if (fipsCount === 50) {
@@ -48,11 +53,17 @@ test.describe('Compliance Data View', () => {
 
     // Switch to ACVP
     await page.getByRole('button', { name: 'ACVP' }).first().click({ force: true })
-    await expect(page.locator('tbody tr').first()).toContainText('ACVP')
+    await page.waitForTimeout(500) // Ensure switch
+    await page.locator('tbody tr').first().getByRole('button').last().click()
+    await expect(page.locator('p', { hasText: /^ACVP$/ })).toBeVisible()
+    await page.keyboard.press('Escape')
 
     // Switch to Common Criteria
     await page.getByRole('button', { name: 'Common Criteria' }).first().click({ force: true })
-    await expect(page.locator('tbody tr').first()).toContainText('Common Criteria')
+    await page.waitForTimeout(500) // Ensure switch
+    await page.locator('tbody tr').first().getByRole('button').last().click()
+    await expect(page.locator('p', { hasText: /^Common Criteria$/ })).toBeVisible()
+    await page.keyboard.press('Escape')
   })
 
   test('should search and filter results including pagination feedback', async ({ page }) => {
