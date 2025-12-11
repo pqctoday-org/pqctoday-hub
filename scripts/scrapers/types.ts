@@ -6,10 +6,14 @@ export interface ComplianceRecord {
   type: string
   status: string
   pqcCoverage: boolean | string
-  classicalAlgorithms?: string
+  classicalAlgorithms: string
   productName: string
-  productCategory: string
+  productCategory?: string
   vendor: string
   lab?: string
   certificationLevel?: string
+  // Multi-URL support for CC certificates
+  certificationReportUrls?: string[]
+  securityTargetUrls?: string[]
+  additionalDocuments?: Array<{ name: string; url: string }>
 }
