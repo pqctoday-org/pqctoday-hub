@@ -86,8 +86,8 @@ export const scrapeACVP = async (): Promise<ComplianceRecord[]> => {
             else if (pqcCoverage === 'Potentially PQC') pqcCoverage = 'No PQC Mechanisms Detected'
 
             classicalAlgorithms = extractAlgorithms(detailText, CLASSICAL_PATTERNS)
-          } catch (e: any) {
-            console.warn(`Failed to fetch details for ${certId}:`, e.message)
+          } catch (e) {
+            console.warn(`Failed to fetch details for ${certId}:`, (e as Error).message)
           }
         }
 

@@ -43,7 +43,7 @@ const main = async () => {
   const STALE_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000 // 7 Days
 
   // Load existing data to preserve other sources
-  let currentData = loadExistingData()
+  const currentData = loadExistingData()
 
   // Check staleness if not forcing and we have data
   if (currentData.length > 0 && !force) {

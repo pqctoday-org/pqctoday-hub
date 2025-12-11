@@ -44,7 +44,7 @@ export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
             if (!isNaN(parsedDate.getTime())) {
               date = parsedDate.toISOString().split('T')[0]
             }
-          } catch (e) {
+          } catch {
             // Use default
           }
         }
@@ -77,7 +77,7 @@ export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
 
             // Extract Classical
             classicalAlgorithms = extractAlgorithms(detailText, CLASSICAL_PATTERNS)
-          } catch (e: any) {
+          } catch {
             // Ignore
           }
         }

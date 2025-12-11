@@ -27,11 +27,14 @@ const StatusBadge = ({ status }: { status: ComplianceStatus }) => {
     Revoked: 'bg-status-error text-status-error border-status-error/50',
   }
 
+  // Accessing property by dynamic key is flagged, but status is strictly typed
+  const badgeStyle = styles[status] || styles.Historical
+
   return (
     <span
       className={clsx(
         'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border gap-1',
-        styles[status] || styles.Historical
+        badgeStyle
       )}
     >
       {status === 'Active' && <ShieldCheck size={10} />}
