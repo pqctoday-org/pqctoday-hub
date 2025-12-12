@@ -27,7 +27,8 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
 }) => {
   const [step, setStep] = useState<FlowStep>('START')
   const [loading, setLoading] = useState(false)
-  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } = useDigitalIDLogs()
+  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
+    useDigitalIDLogs()
 
   // Check for PID availability
   const pidCredential = wallet.credentials.find((c) => c.type.includes('PersonIdentificationData'))
@@ -64,12 +65,12 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
     addLog('Generating VP with Key Binding...')
 
     // Create authentic presentation log by performing the crypto
-    // We need the pidCredential to "present" but for this Attestation flow step, 
+    // We need the pidCredential to "present" but for this Attestation flow step,
     // we are simulating the "Identity Verification" so we act as if we are presenting the PID.
     // However, the helper 'createPresentation' is for SD-JWT. PID is mDoc.
-    // So for this specific "PID Presentation" step, we might need to mock the log 
+    // So for this specific "PID Presentation" step, we might need to mock the log
     // OR allow the AttestationIssuer to actually verify an SD-JWT if we had one.
-    // BUT the PID is mDoc. 
+    // BUT the PID is mDoc.
     // If we want logs, we should sign a mock payload with the PID key to show a signature happened.
 
     // 1. Create a dummy challenge
@@ -243,19 +244,21 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
             <div className="flex items-center border-b border-slate-800 bg-slate-900">
               <button
                 onClick={() => setActiveLogTab('protocol')}
-                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'protocol'
-                  ? 'text-purple-400 bg-slate-800 border-b-2 border-purple-500'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                  }`}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
+                  activeLogTab === 'protocol'
+                    ? 'text-purple-400 bg-slate-800 border-b-2 border-purple-500'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                }`}
               >
                 PROTOCOL LOG
               </button>
               <button
                 onClick={() => setActiveLogTab('openssl')}
-                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'openssl'
-                  ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                  }`}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
+                  activeLogTab === 'openssl'
+                    ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                }`}
               >
                 OPENSSL LOG
               </button>

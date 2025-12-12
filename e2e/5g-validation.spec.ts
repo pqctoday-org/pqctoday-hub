@@ -26,7 +26,7 @@ MC4CAQAwBQYDK2VuBCIEILR8vjM1ijkP7f+d9g9g9g9g9g9g9g9g9g9g9g9g9g9g
     ephPriv: `-----BEGIN PRIVATE KEY-----
 MC4CAQAwBQYDK2VuBCIEIKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
 -----END PRIVATE KEY-----`,
-    zEcdh: '0101010101010101010101010101010101010101010101010101010101010101'
+    zEcdh: '0101010101010101010101010101010101010101010101010101010101010101',
   },
   profileB: {
     // P-256 Private Key (PEM) - Valid ASN.1 Structure
@@ -44,8 +44,8 @@ c/wVjXjqJ9F7v7+0S9/Pc/wVjXmhRANCAATe+8+1abcde1234567890123456789
   milenage: {
     k: '00112233445566778899aabbccddeeff',
     op: 'ffeeddccbbaa99887766554433221100',
-    rand: '1234567890abcdef1234567890abcdef'
-  }
+    rand: '1234567890abcdef1234567890abcdef',
+  },
 }
 
 test.describe('5G SUCI Validation', () => {

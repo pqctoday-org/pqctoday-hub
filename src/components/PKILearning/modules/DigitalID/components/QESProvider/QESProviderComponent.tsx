@@ -16,7 +16,8 @@ interface QESProviderComponentProps {
 export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ onBack }) => {
   const [step, setStep] = useState<'UPLOAD' | 'AUTH' | 'SIGN' | 'COMPLETE'>('UPLOAD')
   const [loading, setLoading] = useState(false)
-  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } = useDigitalIDLogs()
+  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
+    useDigitalIDLogs()
   const [docName, setDocName] = useState('Contract.pdf')
   const [docHash, setDocHash] = useState('')
 
@@ -160,19 +161,21 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ onBa
             <div className="flex items-center border-b border-slate-800 bg-slate-900">
               <button
                 onClick={() => setActiveLogTab('protocol')}
-                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'protocol'
-                  ? 'text-orange-400 bg-slate-800 border-b-2 border-orange-500' // Orange theme for QES
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                  }`}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
+                  activeLogTab === 'protocol'
+                    ? 'text-orange-400 bg-slate-800 border-b-2 border-orange-500' // Orange theme for QES
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                }`}
               >
                 PROTOCOL LOG
               </button>
               <button
                 onClick={() => setActiveLogTab('openssl')}
-                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'openssl'
-                  ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                  }`}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
+                  activeLogTab === 'openssl'
+                    ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                }`}
               >
                 OPENSSL LOG
               </button>

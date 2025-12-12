@@ -50,10 +50,9 @@ export const generateKeyPair = async (
 
     // Derive public key
     const privKeyFile = `priv_${id}.pem`
-    const pubKeyResult = await openSSLService.execute(
-      `openssl pkey -in ${privKeyFile} -pubout`,
-      [{ name: privKeyFile, data: new TextEncoder().encode(privKeyPem) }]
-    )
+    const pubKeyResult = await openSSLService.execute(`openssl pkey -in ${privKeyFile} -pubout`, [
+      { name: privKeyFile, data: new TextEncoder().encode(privKeyPem) },
+    ])
     if (onLog) onLog(`[OpenSSL: Derive Public Key]\n${pubKeyResult.stdout}\n${pubKeyResult.stderr}`)
 
     if (pubKeyResult.error) throw new Error(pubKeyResult.error)
@@ -65,7 +64,9 @@ export const generateKeyPair = async (
     // Generate EC Param and Key
     const result = await openSSLService.execute(`openssl ecparam -name ${opensslCurve} -genkey`)
     if (onLog) {
-      onLog(`[OpenSSL: Generate ${curve} Key]\n> openssl ecparam -name ${opensslCurve} -genkey\n${result.stdout}\n${result.stderr}`)
+      onLog(
+        `[OpenSSL: Generate ${curve} Key]\n> openssl ecparam -name ${opensslCurve} -genkey\n${result.stdout}\n${result.stderr}`
+      )
     }
 
     if (result.error) throw new Error(result.error)
@@ -73,12 +74,13 @@ export const generateKeyPair = async (
 
     // Derive public key
     const privKeyFile = `priv_${id}.pem`
-    const pubKeyResult = await openSSLService.execute(
-      `openssl ec -in ${privKeyFile} -pubout`,
-      [{ name: privKeyFile, data: new TextEncoder().encode(privKeyPem) }]
-    )
+    const pubKeyResult = await openSSLService.execute(`openssl ec -in ${privKeyFile} -pubout`, [
+      { name: privKeyFile, data: new TextEncoder().encode(privKeyPem) },
+    ])
     if (onLog) {
-      onLog(`[OpenSSL: Derive Public Key]\n> openssl ec -in ${privKeyFile} -pubout\n${pubKeyResult.stdout}\n${pubKeyResult.stderr}`)
+      onLog(
+        `[OpenSSL: Derive Public Key]\n> openssl ec -in ${privKeyFile} -pubout\n${pubKeyResult.stdout}\n${pubKeyResult.stderr}`
+      )
     }
 
     if (pubKeyResult.error) throw new Error(pubKeyResult.error)
@@ -130,23 +132,25 @@ export const signData = async (
       `openssl dgst -sha256 -sign ${keyFileName} -out ${outFileName} ${dataFileName}`,
       [
         { name: keyFileName, data: new TextEncoder().encode(privKeyPem) },
-        { name: dataFileName, data: dataBytes }
+        { name: dataFileName, data: dataBytes },
       ]
     )
 
     if (onLog) {
-      onLog(`[OpenSSL: Sign Data]\n> openssl dgst -sha256 -sign key.pem -out sig.bin data.dat\n${result.stdout}\n${result.stderr}`)
+      onLog(
+        `[OpenSSL: Sign Data]\n> openssl dgst -sha256 -sign key.pem -out sig.bin data.dat\n${result.stdout}\n${result.stderr}`
+      )
     }
 
     if (result.error) throw new Error(result.error)
 
     // Read the output signature file
-    const sigFile = result.files.find(f => f.name === outFileName)
+    const sigFile = result.files.find((f) => f.name === outFileName)
     if (!sigFile) throw new Error('Signature file was not generated')
 
     return toBase64Url(sigFile.data)
   } finally {
-    // Cleanup is good practice but OpenSSLService cleans up files on init/reset usually. 
+    // Cleanup is good practice but OpenSSLService cleans up files on init/reset usually.
     // We'll manual delete to be nice.
     await openSSLService.deleteFile(keyFileName)
     await openSSLService.deleteFile(dataFileName)
@@ -176,18 +180,19 @@ export const verifySignature = async (
       [
         { name: keyFileName, data: new TextEncoder().encode(pubKeyPem) },
         { name: dataFileName, data: dataBytes },
-        { name: sigFileName, data: sigBytes }
+        { name: sigFileName, data: sigBytes },
       ]
     )
 
     if (onLog) {
-      onLog(`[OpenSSL: Verify Signature]\n> openssl dgst -sha256 -verify key.pem -signature sig.bin data.dat\n${result.stdout}\n${result.stderr}`)
+      onLog(
+        `[OpenSSL: Verify Signature]\n> openssl dgst -sha256 -verify key.pem -signature sig.bin data.dat\n${result.stdout}\n${result.stderr}`
+      )
     }
 
     // OpenSSL dgst -verify prints "Verified OK" to stdout on success, or "Verification Failure"
     return result.stdout.includes('Verified OK')
   } catch (e) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     if (onLog && e instanceof Error) {
       onLog(`[OpenSSL: Verification Error] ${e.message}`)
     }
@@ -209,13 +214,14 @@ export const sha256Hash = async (
   try {
     // Using sha256 sum
     // Output format: "SHA2-256(filename)= <hex>"
-    const result = await openSSLService.execute(
-      `openssl dgst -sha256 ${dataFileName}`,
-      [{ name: dataFileName, data: dataBytes }]
-    )
+    const result = await openSSLService.execute(`openssl dgst -sha256 ${dataFileName}`, [
+      { name: dataFileName, data: dataBytes },
+    ])
 
     if (onLog) {
-      onLog(`[OpenSSL: SHA-256 Hash]\n> openssl dgst -sha256 data.dat\n${result.stdout}\n${result.stderr}`)
+      onLog(
+        `[OpenSSL: SHA-256 Hash]\n> openssl dgst -sha256 data.dat\n${result.stdout}\n${result.stderr}`
+      )
     }
 
     if (result.error) throw new Error(result.error)
@@ -231,4 +237,3 @@ export const sha256Hash = async (
     await openSSLService.deleteFile(dataFileName)
   }
 }
-

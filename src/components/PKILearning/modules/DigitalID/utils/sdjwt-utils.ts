@@ -1,7 +1,6 @@
 import type { CryptoKey, CredentialAttribute } from '../types'
 import { signData, sha256Hash, bytesToBase64 } from './crypto-utils'
 
-
 interface Disclosure {
   raw: string // The full JSON array [salt, key, value] stringified
   encoded: string // Base64URL encoded raw
@@ -23,7 +22,11 @@ const toBase64Url = (input: string | Uint8Array): string => {
 }
 
 // Create a single disclosure
-const createDisclosure = async (key: string, value: unknown, onLog?: (log: string) => void): Promise<Disclosure> => {
+const createDisclosure = async (
+  key: string,
+  value: unknown,
+  onLog?: (log: string) => void
+): Promise<Disclosure> => {
   const salt = toBase64Url(new TextEncoder().encode(window.crypto.randomUUID())) // Simple salt
   const rawArray = [salt, key, value]
   const raw = JSON.stringify(rawArray)
