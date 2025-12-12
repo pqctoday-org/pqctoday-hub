@@ -13,7 +13,7 @@ We take the security of our cryptographic implementations seriously.
 
 If you discover a security vulnerability within this project, please **DO NOT** open a public issue.
 
-Instead, please report it via email to `security@pqctimeline.app` (placeholder).
+Instead, please report it via email to `security@pqctimeline.app`.
 
 Please include:
 

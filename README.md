@@ -147,8 +147,13 @@ The application is structured into several key components:
 ## Project Structure
 
 ```
-├── e2e/                 # End-to-end tests
-├── requirements/        # Requirements documentation
+├── docs/                # Documentation and audit reports
+├── e2e/                 # Playwright end-to-end tests
+├── public/              # Static assets served at root
+│   ├── data/            # JSON data files
+│   ├── flags/           # Country flag icons
+│   └── wasm/            # WebAssembly binaries
+├── requirements/        # Requirements specifications
 ├── scripts/             # Compliance data scrapers (NIST, ANSSI, Common Criteria)
 ├── src/
 │   ├── components/          # React components
@@ -181,6 +186,7 @@ The application is structured into several key components:
 │   ├── services/            # OpenSSL service and WASM integration
 │   ├── store/               # Zustand state management stores
 │   ├── styles/              # Global CSS and design system
+│   ├── test/                # Test setup and utilities
 │   ├── types/               # Module-specific type definitions
 │   ├── utils/               # Helper functions
 │   ├── wasm/                # WebAssembly cryptography wrappers (liboqs, mlkem)
