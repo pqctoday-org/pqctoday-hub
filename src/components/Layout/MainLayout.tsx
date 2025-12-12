@@ -1,3 +1,4 @@
+import React from 'react'
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -87,14 +88,26 @@ export const MainLayout = () => {
       {/* Main Content Area */}
       <main className="flex-grow container py-4 px-2 md:py-8 md:px-8" role="main">
         {/* Removed AnimatePresence to fix blank screen navigation bug */}
-        <motion.div
-          key={location.pathname}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+        {/* Suspense boundary for route-level code splitting */}
+        <React.Suspense
+          fallback={
+            <div className="flex h-[50vh] w-full items-center justify-center">
+              <div className="flex flex-col items-center gap-4">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                <p className="text-muted-foreground animate-pulse">Loading...</p>
+              </div>
+            </div>
+          }
         >
-          <Outlet />
-        </motion.div>
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Outlet />
+          </motion.div>
+        </React.Suspense>
       </main>
 
       {/* Footer */}

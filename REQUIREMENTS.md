@@ -62,9 +62,23 @@ The application meets WCAG 2.1 Level AA accessibility standards. For comprehensi
 - **State Management**: Zustand
 - **Deployment**: Static build (ready for Netlify/Vercel)
 - **Analytics**: Google Analytics 4 (GA4) with route tracking
-- **Build Info**: Static build timestamp injected at compile time
+- Build Info: Static build timestamp injected at compile time
 
-### 3.4 User Interface
+### 3.4 Development Standards (React Best Practices)
+
+- **Code Splitting**:
+  - All top-level route components must be lazy-loaded using `React.lazy`.
+  - Heavy sub-modules (e.g., Learning Modules) must use nested lazy loading.
+  - `React.Suspense` boundaries must be used with appropriate fallback loaders (global spinner for routes, scoped spinner for modules).
+- **State Management**:
+  - **Global & Persisted**: Use `Zustand` with `persist` middleware for long-lived data (e.g., `useOpenSSLStore` for keys/certs).
+  - **Decoupling**: Business logic and data storage must remain independent of View components to ensure data persists across lazy-loaded chunks.
+- **Quality Assurance**:
+  - **Linting**: Strict adherence to `eslint-plugin-security` and `react-hooks/exhaustive-deps`.
+  - **False Positives**: Must be explicitly suppressed with `eslint-disable-next-line` and a justification if the pattern is safe.
+  - **Performance**: Avoid synchronous imports of large libraries (like `framer-motion` or `lucide-react` full sets) where possible.
+
+### 3.5 User Interface
 
 - **No Login Required**: Publicly accessible.
 - **Responsive Design**: Must work seamlessly on desktop and mobile devices.
