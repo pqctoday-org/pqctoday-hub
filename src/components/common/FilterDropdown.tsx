@@ -43,6 +43,11 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   const selectedItem = normalizedItems.find((item) => item.id === selectedId)
   const isDefaultSelected = selectedId === 'All' || !selectedItem
 
+  // Generate unique ID for label
+  const labelId = label
+    ? `filter-dropdown-label-${label.replace(/\s+/g, '-').toLowerCase()}`
+    : undefined
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -84,7 +89,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       {noContainer ? (
         <>
           {label && (
-            <span className="text-muted-foreground px-2" id="filter-dropdown-label">
+            <span className="text-muted-foreground px-2" id={labelId}>
               {label}:
             </span>
           )}
@@ -95,7 +100,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               onKeyDown={handleKeyDown}
               aria-haspopup="listbox"
               aria-expanded={isOpen}
-              aria-labelledby={label ? 'filter-dropdown-label' : undefined}
+              aria-labelledby={labelId}
               className="flex items-center gap-2 px-4 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors min-w-[120px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
             >
               <span className="flex items-center gap-2">
@@ -115,7 +120,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
             {isOpen && (
               <div
                 role="listbox"
-                aria-labelledby={label ? 'filter-dropdown-label' : undefined}
+                aria-labelledby={labelId}
                 className="absolute top-full left-0 mt-2 w-full bg-popover border border-border rounded-lg shadow-xl overflow-hidden transform origin-top max-h-60 overflow-y-auto z-50"
               >
                 {/* All Option */}
@@ -181,7 +186,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
           )}
         >
           {label && (
-            <span className="text-muted-foreground px-2" id="filter-dropdown-label">
+            <span className="text-muted-foreground px-2" id={labelId}>
               {label}:
             </span>
           )}
@@ -192,7 +197,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               onKeyDown={handleKeyDown}
               aria-haspopup="listbox"
               aria-expanded={isOpen}
-              aria-labelledby={label ? 'filter-dropdown-label' : undefined}
+              aria-labelledby={labelId}
               className="flex items-center gap-2 px-4 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors min-w-[120px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
             >
               <span className="flex items-center gap-2">
@@ -212,7 +217,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
             {isOpen && (
               <div
                 role="listbox"
-                aria-labelledby={label ? 'filter-dropdown-label' : undefined}
+                aria-labelledby={labelId}
                 className="absolute top-full left-0 mt-2 w-full bg-popover border border-border rounded-lg shadow-xl overflow-hidden transform origin-top max-h-60 overflow-y-auto z-50"
               >
                 {/* All Option */}

@@ -1,14 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
 import { AlgorithmDetailedComparison } from './AlgorithmDetailedComparison'
 import { ArrowRight, BarChart3 } from 'lucide-react'
 import clsx from 'clsx'
+import { loadPQCAlgorithmsData, loadedFileMetadata } from '../../data/pqcAlgorithmsData'
+import { loadAlgorithmsData, loadedTransitionMetadata } from '../../data/algorithmsData'
 
 type ViewType = 'transition' | 'detailed'
 
 export function AlgorithmsView() {
   const [activeView, setActiveView] = useState<ViewType>('transition')
+  const [metadata, setMetadata] = useState<{ filename: string; date: Date | null } | null>(null)
+  const [transitionMetadata, setTransitionMetadata] = useState<{
+    filename: string
+    date: Date | null
+  } | null>(null)
+
+  useEffect(() => {
+    // Ensure data is loaded to get metadata
+    loadPQCAlgorithmsData().then(() => {
+      setMetadata(loadedFileMetadata)
+    })
+    loadAlgorithmsData().then(() => {
+      setTransitionMetadata(loadedTransitionMetadata)
+    })
+  }, [])
 
   return (
     <div className="max-w-7xl mx-auto px-4">
@@ -24,8 +41,13 @@ export function AlgorithmsView() {
           Migration from classical to post-quantum cryptographic algorithms
         </p>
         <p className="hidden lg:block text-[10px] md:text-xs text-muted-foreground/60 font-mono mt-1 md:mt-2">
-          Data Sources: algorithms_transitions_12052025.csv, pqc_complete_algorithm_reference.csv •
-          Updated: {new Date('2025-12-05').toLocaleDateString()}
+          Data Sources: {transitionMetadata?.filename || 'algorithms_transitions.csv'},{' '}
+          {metadata?.filename || 'pqc_complete_algorithm_reference.csv'} • Updated:{' '}
+          {metadata?.date
+            ? metadata.date.toLocaleDateString()
+            : transitionMetadata?.date
+              ? transitionMetadata.date.toLocaleDateString()
+              : new Date().toLocaleDateString()}
         </p>
       </motion.div>
 

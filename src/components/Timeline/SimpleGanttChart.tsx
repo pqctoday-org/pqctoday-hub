@@ -1,11 +1,12 @@
 import { useState, useMemo, Fragment } from 'react'
 import { ArrowUpDown, ArrowUp, ArrowDown, Search, Flag } from 'lucide-react'
-import type { GanttCountryData, TimelinePhase } from '../../types/timeline'
+import type { GanttCountryData, TimelinePhase, Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
 import { GanttDetailPopover } from './GanttDetailPopover'
 import { logEvent } from '../../utils/analytics'
 import { CountryFlag } from '../common/CountryFlag'
 import { FilterDropdown } from '../common/FilterDropdown'
+import { StatusBadge } from '../common/StatusBadge'
 
 interface SimpleGanttChartProps {
   data: GanttCountryData[]
@@ -134,7 +135,7 @@ export const SimpleGanttChart = ({
       return cells
     }
 
-    const colors = phaseColors[phaseData.phase] || {
+    const colors = phaseColors[phaseData.phase as Phase] || {
       start: 'hsl(var(--muted-foreground))',
       end: 'hsl(var(--muted))',
       glow: 'hsl(var(--ring))',
@@ -170,15 +171,29 @@ export const SimpleGanttChart = ({
               aria-label={`${phaseData.phase}: ${phaseData.title}`}
             >
               {isMilestone && isFirstInPhase ? (
-                <Flag
-                  data-testid="milestone-flag"
-                  className="w-4 h-4"
-                  style={{ color: colors.start, fill: colors.start }}
-                />
+                <div className="relative flex items-center justify-center">
+                  <Flag
+                    data-testid="milestone-flag"
+                    className="w-4 h-4"
+                    style={{ color: colors.start, fill: colors.start }}
+                  />
+                  {phaseData.status && (
+                    <div className="absolute -top-3 -right-3 z-20 scale-75 origin-bottom-left">
+                      <StatusBadge status={phaseData.status} size="sm" />
+                    </div>
+                  )}
+                </div>
               ) : isFirstInPhase && !isMilestone ? (
-                <span className="absolute left-2 text-[10px] font-bold text-white bg-black/40 px-1 rounded whitespace-nowrap drop-shadow-md select-none z-10 pointer-events-none">
-                  {phaseData.phase}
-                </span>
+                <div className="relative flex items-center">
+                  <span className="absolute left-2 text-[10px] font-bold text-white bg-black/40 px-1 rounded whitespace-nowrap drop-shadow-md select-none z-10 pointer-events-none">
+                    {phaseData.phase}
+                  </span>
+                  {phaseData.status && (
+                    <div className="absolute -top-2 -right-3 z-20 scale-75 origin-top-left">
+                      <StatusBadge status={phaseData.status} size="sm" />
+                    </div>
+                  )}
+                </div>
               ) : null}
             </button>
           </td>

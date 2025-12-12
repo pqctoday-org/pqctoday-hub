@@ -1,15 +1,13 @@
-// Shared utilities and patterns
-
 // Helper: Fetch Text with User Agent
+// Note: For SSL certificate issues with government sites (like ANSSI),
+// run the scraper with: NODE_TLS_REJECT_UNAUTHORIZED=0 npm run scrape
 export const fetchText = async (url: string) => {
-  // Basic retry logic could be added here
   const res = await fetch(url, {
     headers: {
       'User-Agent':
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     },
   })
-  // Handle 404/etc gracefully in caller or throw?
   if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`)
   return res.text()
 }
@@ -196,22 +194,47 @@ export const normalizeAlgorithmList = (input: string | boolean | undefined): str
 
 // Helper: Extract Lab/ITSEF from Text (Robust Expert Patterns)
 export const extractLabFromText = (text: string): string | null => {
-  // Priority 1: Explicit ITSEF/Lab fields
+  // Priority 1: Explicit ITSEF/Lab fields (English and French)
+  // Updated regex to capture full company names with suffixes
+  // French: Handle various apostrophe encodings and whitespace variations
+  // IMPORTANT: Handle multi-line matches where lab name is on next line
   const primaryMatch = text.match(
-    /(?:ITSEF|Evaluation\s+Facility|Evaluation\s+Laboratory|Testing\s+Laboratory|Evaluation\s+Body|Commercial\s+Facility|Evaluated\s+by)\s*[:.]?\s*([A-Z][a-zA-Z\s&]+(?:GmbH|Ltd|Inc|SAS|BV|AB|Corporation|AG)?)/i
+    /(?:ITSEF|Evaluation\s+Facility|Evaluation\s+Laboratory|Testing\s+Laboratory|Evaluation\s+Body|Commercial\s+Facility|Evaluated\s+by|Centre\s+d[\s''´`]?évaluation|Laboratoire\s+d[\s''´`]?évaluation)[\s:\n\r]+([A-Z][a-zA-Z0-9\s&.,()-]+?(?:GmbH|B\.V\.|Ltd\.?|Inc\.?|SAS|BV|AB|Corporation|AG|S\.A\.|Pty|LLC|Co\.|Limited|LETI)?)/i
   )
-  if (primaryMatch) return primaryMatch[1].trim()
+  if (primaryMatch) {
+    let lab = primaryMatch[1].trim()
+    // Clean up: remove trailing punctuation except for abbreviations
+    lab = lab.replace(/[,;]+$/, '').trim()
+    // Remove newlines and extra whitespace
+    lab = lab
+      .replace(/[\n\r]+/g, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim()
+    // Limit to reasonable length
+    if (lab.length > 100) lab = lab.substring(0, 100)
+    return lab
+  }
 
-  // Priority 2: "Testing was completed by" / "conducted by"
+  // Priority 2: "Testing was completed by" / "conducted by" (English and French)
   const secondaryMatch = text.match(
-    /(?:Testing\s+was\s+completed\s+by|evaluation\s+has\s+been\s+conducted\s+by|evaluation\s+conducted\s+by)\s*[:.]?\s*([A-Z][a-zA-Z\s&]+(?:GmbH|Ltd|Inc|SAS|BV|AB|Corporation|AG)?)/i
+    /(?:Testing\s+was\s+completed\s+by|conducted\s+by|performed\s+by|évalué\s+par|réalisé\s+par)[\s:\n\r]+([A-Z][a-zA-Z0-9\s&.,()-]+?(?:GmbH|B\.V\.|Ltd\.?|Inc\.?|SAS|BV|AB|Corporation|AG|S\.A\.|Pty|LLC|Co\.|Limited)?)/i
   )
-  if (secondaryMatch) return secondaryMatch[1].trim()
+  if (secondaryMatch) {
+    let lab = secondaryMatch[1].trim()
+    lab = lab.replace(/[,;]+$/, '').trim()
+    lab = lab
+      .replace(/[\n\r]+/g, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim()
+    if (lab.length > 100) lab = lab.substring(0, 100)
+    return lab
+  }
 
   // Priority 3: Known Labs (Fallback)
   const knownLabs = [
     'atsec information security',
     'Brightsight',
+    'SGS Brightsight',
     'TÜV Informationstechnik',
     'TÜViT',
     'Trusted Labs',
@@ -226,6 +249,7 @@ export const extractLabFromText = (text: string): string | null => {
     'secunet',
     'Thales',
     'CEA-LETI',
+    'CEA - LETI',
     'Oppida',
     'Amossys',
   ]

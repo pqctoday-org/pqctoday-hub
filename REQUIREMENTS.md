@@ -6,19 +6,31 @@ The goal is to build a high-end, visually stunning web application that visualiz
 
 ## 2. Functional Modules
 
-The application is divided into five main modules. Detailed requirements for each are linked below:
+The application is divided into ten main modules. Detailed requirements for each are linked below:
 
 1.  **[Migration Timeline](requirements/timeline.md)**: Visualization of global regulatory recommendations and migration phases.
 2.  **[Algorithms Transition](requirements/algorithms.md)**: Comparison table showing the shift from Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) standards.
 3.  **[Interactive Playground](requirements/playground.md)**: Hands-on testing environment for ML-KEM and ML-DSA cryptographic operations.
     - Includes **[ACVP Testing](requirements/playground.md#11-acvp-testing-automated-cryptographic-validation)**: Automated validation against NIST test vectors (now part of playground.md).
-4.  **[Quantum Threat Impacts](requirements/impacts.md)**: Dashboard showing specific risks to industries like Finance, IoT, and Government.
-5.  **[Transformation Leaders](requirements/leaders.md)**: Profiles of key public and private figures driving the transition.
-6.  **[PKI Learning Platform](requirements/learn.md)**: Educational modules for PKI lifecycle and Digital Assets cryptography.
-    - Includes **[Digital Assets Program](requirements/digital_assets.md)**: Blockchain cryptography for Bitcoin, Ethereum, and Solana.
-7.  **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment and 5G-AKA authentication flows.
-8.  **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: Architecture and flows for the EUDI Wallet ecosystem (Remote HSM).
-9.  **[About & Feedback](requirements/about.md)**: Project information, feedback mechanisms, and Software Bill of Materials (SBOM).
+4.  **[OpenSSL Studio](requirements/opensslstudio.md)**: Browser-based OpenSSL v3.5.4 workbench with WebAssembly.
+    - Full PQC algorithm support (ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA all 12 variants)
+    - 12 operation types: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12
+    - Virtual file system with backup/restore capabilities
+5.  **[Quantum Threat Impacts](requirements/impacts.md)**: Dashboard showing specific risks to industries like Finance, IoT, and Government.
+6.  **[Transformation Leaders](requirements/leaders.md)**: Profiles of key public and private figures driving the transition.
+7.  **[Learning Platform](requirements/learn.md)**: Comprehensive educational platform with multiple modules:
+    - **[PKI Workshop](requirements/learn.md#module-1-pki-workshop-implemented)**: 4-step certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing)
+    - **[Digital Assets Program](requirements/digital_assets.md)**: Blockchain cryptography for Bitcoin, Ethereum, Solana, and HD Wallet (BIP32/39/44)
+    - **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment (Profiles A/B/C) and 5G-AKA authentication with MILENAGE
+    - **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: EUDI Wallet ecosystem with Remote HSM architecture, PID issuance, and QES
+    - **Introduction Module**: Overview and getting started guide
+8.  **[Compliance Module](requirements/Compliance_Module_Requirements.md)**: Real-time compliance tracking and standards monitoring.
+    - NIST FIPS document tracking (203, 204, 205)
+    - ANSSI recommendations
+    - Common Criteria certifications
+    - Automated data scraping and visualization
+9.  **[Standards Library](requirements/library.md)**: Comprehensive PQC standards repository with categorized documents.
+10. **[About & Feedback](requirements/about.md)**: Project information, feedback mechanisms, and Software Bill of Materials (SBOM).
 
 ## 3. Non-Functional Requirements
 
@@ -44,11 +56,13 @@ The application meets WCAG 2.1 Level AA accessibility standards. For comprehensi
 
 ### 3.3 Tech Stack
 
-- **Framework**: React (Vite)
-- **Styling**: Tailwind CSS 4 (using CSS Variables for theming).
-- **Deployment**: Static build (ready for Netlify/Vercel).
-- **Analytics**: Google Analytics 4 (GA4) with route tracking.
-- **Build Info**: Static build timestamp injected at compile time.
+- **Framework**: React 19 (Vite 7)
+- **Styling**: Tailwind CSS 4 (using CSS Variables for theming)
+- **Cryptography**: OpenSSL WASM v3.5.4 with PQC support, @noble/curves, @noble/hashes, @scure ecosystem (bip32/bip39/base)
+- **State Management**: Zustand
+- **Deployment**: Static build (ready for Netlify/Vercel)
+- **Analytics**: Google Analytics 4 (GA4) with route tracking
+- **Build Info**: Static build timestamp injected at compile time
 
 ### 3.4 User Interface
 

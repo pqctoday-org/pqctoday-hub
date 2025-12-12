@@ -18,19 +18,61 @@ export interface AlgorithmDetail {
 }
 
 // Import CSV data dynamically
-const csvModule = import.meta.glob('./pqc_complete_algorithm_reference.csv', {
+const csvModule = import.meta.glob('./pqc_complete_algorithm_reference_*.csv', {
   query: '?raw',
   import: 'default',
 })
 
 let cachedData: AlgorithmDetail[] | null = null
+export let loadedFileMetadata: { filename: string; date: Date | null } | null = null
+
+// Helper to extract date from filename (format: MMDDYYYY)
+export function getDateFromFilename(path: string): Date | null {
+  const match = path.match(/_(\d{8})\.csv$/)
+  if (!match) return null
+
+  const dateStr = match[1]
+  const month = parseInt(dateStr.substring(0, 2)) - 1 // JS months are 0-indexed
+  const day = parseInt(dateStr.substring(2, 4))
+  const year = parseInt(dateStr.substring(4, 8))
+
+  const date = new Date(year, month, day)
+  // Validate date (e.g. avoid invalid dates like 13/32/2025)
+  if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
+    return null
+  }
+
+  return date
+}
 
 export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
   if (cachedData) return cachedData
 
-  const csvPath = Object.keys(csvModule)[0]
-  if (!csvPath) {
-    throw new Error('PQC Algorithms CSV file not found')
+  const paths = Object.keys(csvModule)
+  if (paths.length === 0) {
+    throw new Error('No PQC Algorithms CSV files found')
+  }
+
+  // Sort paths by date in descending order (newest first)
+  const sortedPaths = paths.sort((a, b) => {
+    const dateA = getDateFromFilename(a)
+    const dateB = getDateFromFilename(b)
+
+    // If we can't parse a date, treat it as very old so valid dates come first
+    if (!dateA) return 1
+    if (!dateB) return -1
+
+    return dateB.getTime() - dateA.getTime()
+  })
+
+  // Pick the most recent file
+  const csvPath = sortedPaths[0]
+  console.log(`Loading PQC algorithms from: ${csvPath}`)
+
+  const date = getDateFromFilename(csvPath)
+  loadedFileMetadata = {
+    filename: csvPath.split('/').pop() || csvPath,
+    date: date,
   }
 
   const loadCsv = csvModule[csvPath] as () => Promise<string>

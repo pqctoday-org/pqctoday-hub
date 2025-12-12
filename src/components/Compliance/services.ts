@@ -35,10 +35,10 @@ export const AUTHORITATIVE_SOURCES = {
   FIPS: 'https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search/all',
   ACVP: 'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/validation-search',
   CC: 'https://www.commoncriteriaportal.org/',
-  NIAP: 'https://www.niap-ccevs.org/Product/PCL/',
   BSI: 'https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Zertifizierung-und-Anerkennung/Zertifizierung-von-Produkten/Zertifizierung-nach-CC/zertifizierung-nach-cc_node.html',
   ANSSI:
     'https://cyber.gouv.fr/produits-certifies?sort_bef_combine=field_date_de_certification_value_DESC&type_1%5Bproduit_certifie_cc%5D=produit_certifie_cc',
+  ENISA: 'https://certification.enisa.europa.eu/certificates_en',
 }
 
 interface CCRecordRaw {
@@ -652,7 +652,6 @@ const fetchSchemeData = async (schemeCode: string): Promise<ComplianceRecord[]> 
   return globalData.filter((r) => r.source.includes(`(${schemeCode})`))
 }
 
-export const fetchNIAPData = () => fetchSchemeData('US')
 export const fetchBSIData = () => fetchSchemeData('DE')
 export const fetchANSSIData = () => fetchSchemeData('FR')
 

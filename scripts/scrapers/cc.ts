@@ -49,10 +49,7 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
     )
 
     // Helper function to parse concatenated PDF URLs from CSV
-    const parseDocumentURLs = (
-      csvUrl: string,
-      baseUrl: string = 'https://www.commoncriteriaportal.org'
-    ) => {
+    const parseDocumentURLs = (csvUrl: string) => {
       if (!csvUrl || csvUrl.trim() === '') {
         return { certReports: [], securityTargets: [], other: [] }
       }
@@ -62,21 +59,20 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
       const other: Array<{ name: string; url: string }> = []
 
       try {
-        // Split on .pdf followed by ( or space or end of string
-        // FIX: Regex must exclude spaces to prevent merging multiple URLs
-        const pdfMatches = csvUrl.match(/[^()\s]+\.pdf/gi) || []
+        // Parse URLs from CSV - handle both full URLs and bare filenames
+        // CSV can contain: "http://...file.pdf" or "file.pdf" or "http://...file with spaces.pdf"
 
-        pdfMatches.forEach((match) => {
-          const filename = match.trim()
-          if (!filename) return
+        // Strategy: Match complete http URLs using lazy matching to capture spaces but stop at .pdf
+        // This handles: "http://.../File Name.pdf" and "http://.../File1.pdf http://.../File2.pdf"
+        const httpMatches = csvUrl.match(/https?:\/\/[\s\S]+?\.pdf/gi) || []
 
-          // Construct full URL
-          let fullUrl = filename.startsWith('http')
-            ? filename
-            : `${baseUrl}/files/epfiles/${encodeURIComponent(filename)}`
+        httpMatches.forEach((fullUrl) => {
+          // Extract filename from URL
+          const urlParts = fullUrl.split('/')
+          const filename = urlParts[urlParts.length - 1]
 
-          // Enforce HTTPS and clean ports
-          fullUrl = fullUrl.replace(':443', '').replace(':80', '').replace('http:', 'https:')
+          // Clean URL
+          const cleanUrl = fullUrl.replace(':443', '').replace(':80', '').replace('http:', 'https:')
 
           // Categorize by filename patterns
           const lowerFilename = filename.toLowerCase()
@@ -86,18 +82,21 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
             lowerFilename.includes('cert') ||
             lowerFilename.includes('rapport') ||
             lowerFilename.includes('-cr') ||
-            lowerFilename.includes('cr[')
+            lowerFilename.includes('cr[') ||
+            lowerFilename.includes(' cr') || // "File CR.pdf"
+            lowerFilename.includes('_cr') || // "File_CR.pdf"
+            lowerFilename.match(/\Wcr\W/) // Word boundary CR: "-CR-", " CR "
           ) {
-            certReports.push(fullUrl)
+            certReports.push(cleanUrl)
           } else if (
             lowerFilename.includes('st') ||
             lowerFilename.includes('security') ||
             lowerFilename.includes('target') ||
             lowerFilename.includes('cible')
           ) {
-            securityTargets.push(fullUrl)
+            securityTargets.push(cleanUrl)
           } else {
-            other.push({ name: filename, url: fullUrl })
+            other.push({ name: filename, url: cleanUrl })
           }
         })
       } catch {

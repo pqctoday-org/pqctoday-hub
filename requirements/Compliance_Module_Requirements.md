@@ -100,9 +100,8 @@ The scraper also collects standard algorithms to support backward compatibility 
 
 ### 4. NIAP (United States CC)
 
-- **Source:** Derived from **Global Common Criteria CSV**.
-- **Method:** Filter Global CSV where `Scheme` contains `(US)`.
-- **Rationale:** Ensures consistency with the authoritative international list.
+- **Source:** Deprecated / Removed.
+- **Rationale:** NIAP data is fully covered by the Global Common Criteria CSV (Scheme: US). Direct scraping was fragile and redundant.
 
 ### 5. BSI (Germany CC)
 
@@ -111,27 +110,26 @@ The scraper also collects standard algorithms to support backward compatibility 
 
 ### 6. ANSSI (France CC)
 
-    *   Source URL: `https://cyber.gouv.fr/produits-certifies` (Filtered for Common Criteria).
-    *   **Direct Scraper Logic:**
-        *   **Filtered List:** Fetches only "Produit certifié CC" sorted by date.
-        *   **Date Filter:** Dynamic **2-Year Rolling Window** (e.g., Records from Today - 2 Years). Stops pagination when older records found.
-        *   **Product Name:** Extracted from URL slug (e.g., `/multiapp-52` -> "multiapp 52") for cleanliness.
-        *   **Vendor Extraction:** Regex extracts "Commanditaire" (Sponsor) or "Développeur" from **HTML Body**.
-        *   **Data Enrichment:** Extracts `Level` (Niveau), `Augmentations`, and `Lab` from **HTML Body**.
+    *   Source URL: `https://cyber.gouv.fr/produits-certifies` (PDF Catalog).
+    *   **PDF Catalog Scraper Logic:**
+        *   **Catalog Source:** Downloads the official "Liste des produits certifiés" PDF.
+        *   **Parsing:** Uses `pdf-parse` to extracting tabular data (Vendor, Product, Lab, Dates).
+        *   **Date Filter:** Dynamic **2-Year Rolling Window** (e.g., Records from Today - 2 Years).
+        *   **Product Name:** Extracted directly from PDF table columns.
+        *   **Vendor Extraction:** Extracted directly from PDF table columns.
+        *   **Data Enrichment:** Extracts `Level` (Niveau) and `Lab` from the PDF context.
         *   **PDF Parsing (PQC & Lab Fallback):**
             *   **Dual-Fetch Strategy:**
-                1.  **Security Target:** Fetched FIRST to strictly extract PQC info (`pqcCoverage` only valid from ST). Also scans for Lab info.
-                2.  **Certification Report:** Fetched SECOND if Lab info is missing in ST. Contains the most reliable Lab/ITSEF details.
+                1.  **Security Target:** Fetched strictly to extract PQC info (`pqcCoverage`).
+                2.  **Certification Report:** Fetched if Lab info is missing in catalog.
             *   **Crypto:** Scans ST text for PQC/Classical algorithms.
-            *   **Lab Extraction:** Uses expert regex patterns (`ITSEF`, `Evaluated by`) and a known lab whitelist (e.g., `atsec`, `TÜViT`).
-            *   **Prioritization:** ST (PQC) + ST/Report Hybrid (Lab).
+            *   **Lab Extraction:** Primary source is the Catalog PDF column. Secondary is the Report PDF using improved regex (`Centre d'évaluation`).
         *   **Date Normalization:** Parses French date formats (DD/MM/YYYY) to ISO 8601.
-        *   **Link Recovery:** Parses all PDF links (`href*=".pdf"`) to ensure access even with query parameters.
-        *   **Data Enrichment:** Extracts `Level` (Niveau), `Augmentations`, and `Lab`.
+        *   **Link Recovery:** Constructs URLs based on certificate ID pattern `messervices.cyber.gouv.fr/visas/ANSSI-CC-{Yield}-{Num}...`.
 
 ### 7. Global Data Policy
 
-- **Rolling Window:** All scrapers (NIST, CC, ANSSI) must strictly retain records from the **last 2 years only**. Older records are discarded to maintain relevance.
+- **Rolling Window:** All scrapers (NIST, CC, ANSSI) must strictly retain records from the **last 2 years only**.
 
 ---
 
@@ -166,7 +164,7 @@ The application must strictly filter for the following criteria:
   - Shows unique certification types (e.g., "FIPS 140-3", "Common Criteria")
   - For CC records, also allows filtering by specific augmentations (e.g., "EAL4+", "EAL5+ ALC_DVS.2")
 - **Filter Product**: Dropdown to filter by product category (e.g., "Cryptographic Module", "Access Control Devices").
-- **Source Filter**: Dropdown to filter by specific data source (NIST, ANSSI, Common Criteria).
+- **Source Filter**: Dropdown to filter by specific data source (NIST, ANSSI, Common Criteria, ENISA).
 - **Vendor Filter**: Dropdown with **search support** to filter by Manufacturer.
 - **Scalable UI**:
   - **Pagination**: Client-side pagination (limit 50 items/page) to ensure performance with 2000+ records.
@@ -184,16 +182,17 @@ The application must strictly filter for the following criteria:
   - **NIST FIPS / ACVP:** "NIST"
   - **Common Criteria (Global List):** "Common Criteria ({Scheme})"
     - _Logic:_ Extracts the 'Scheme' column from the CSV (e.g., "Common Criteria (FR)", "Common Criteria (US)").
-  - **NIAP (US-Specific Scraper):** "NIAP"
+  - **NIAP (US-Specific Scraper):** REMOVED.
   - **BSI (DE-Specific Scraper):** "BSI Germany"
   - **ANSSI (FR-Specific Scraper):** "ANSSI"
+  - **ENISA:** "ENISA"
 
 ### 1. Certificate ID
 
 - **FIPS:** Extract text from the **1st Column** (`<td>`) anchor tag (`<a>`).
   - _Example:_ "4282"
 - **CC:** Extract from `Certification Report URL` filename.
-  - _Logic:_ Parse filename ending in `.pdf`. Look for pattern `_ID.pdf` or check split segments for alphanumeric strings containing digits.
+  - _Logic:_ Parse filename ending in `.pdf`. Improved regex handles spaces and special characters.
   - _Example:_ `..._23FMV2873-35.pdf` -> `23FMV2873-35`.
 
 ### 2. Vendor Name
@@ -234,10 +233,7 @@ The application must strictly filter for the following criteria:
 
 - **FIPS:** Always "FIPS 140-3 L3" (enforced by query parameters).
 - **CC (Global):** Extract from `Assurance Level` CSV column (e.g., "EAL4+", "EAL2+,ALC_FLR.3").
-- **ANSSI:** Extracted from page metadata:
-  - **Level (Niveau):** Regex pattern `Niveau\s*:\s*([^\n\r]+)`
-  - **Augmentations:** Regex pattern `Augmentations\s*:\s*([^\n\r]+)`
-  - **Combined Format:** `{Level} {Augmentations}` (e.g., "EAL5+ ADV_IMP.2, ALC_DVS.2")
+- **ANSSI:** Extracted from PDF Catalog columns.
 - **Display:** Shown in TYPE column below the certification type badge.
 - **Storage:** Stored in `certificationLevel` field, separate from `productCategory`.
 
@@ -245,9 +241,8 @@ The application must strictly filter for the following criteria:
 
 - **Definition:** The accredited laboratory that performed the evaluation.
 - **Source:**
-- **Source:**
-  - **CC (Global):** Primary: `Lab` or `ITSEF` CSV column. Secondary: Extracted from **Security Target** PDF.
-  - **ANSSI:** Primary: Extracted from **Detail Page HTML**. Secondary: Extracted from **Security Target** PDF.
+  - **CC (Global):** Primary: `Lab` or `ITSEF` CSV column. Secondary: Extracted from **Certification Report** PDF.
+  - **ANSSI:** Primary: Extracted from **PDF Catalog**. Secondary: Extracted from **Certification Report** PDF.
 - **Storage:** Stored in `lab` field. Used for detailed compliance reporting.
 
 ### 8. Product Category
@@ -255,22 +250,22 @@ The application must strictly filter for the following criteria:
 - **FIPS:** "Cryptographic Module" (static).
 - **ACVP:** "Algorithm Implementation" (static).
 - **CC (Global):** Extract from `Category` CSV column (e.g., "Access Control Devices and Systems").
-- **ANSSI:** Extracted from page metadata using regex pattern `Catégorie\s*:\s*([^\n\r]+)` (e.g., "Cartes à puce").
+- **ANSSI:** Extracted from PDF Catalog columns or inferred.
 - **Display:** Shown as gray subtitle text under product name.
 - **Separation:** Must NOT contain certification level or augmentation details.
 
-### 8. Status
+### 9. Status
 
 - **FIPS:** Extract from **6th Column** (or implied "Active" by search filter).
 - **CC:** Implied "Active" if in current list.
 
-### 7. Expiry Date
+### 10. Expiry Date
 
 - **FIPS:** Requires **Deep Fetch** of certificate detail page.
   - _Field:_ "Sunset Date" in the module info table.
 - **CC:** Extract value from `Archived Date` string if present, or calculate based on scheme rules (typically 5 years from issuance).
 
-### 8. PQC Algorithm Support Identification
+### 11. PQC Algorithm Support Identification
 
 How to identify if a certificate supports Post-Quantum Cryptography (e.g., ML-KEM, crystals-kyber):
 
@@ -289,7 +284,7 @@ How to identify if a certificate supports Post-Quantum Cryptography (e.g., ML-KE
         - `XMSS` / `LMS` (Stateful Hash-Based Signatures)
   - Check `Name` and `Category` columns for keywords: "Quantum", "PQC".
   - **Deep Check (PDF Parsing):**
-    - Downloads the Certification Report PDF.
+    - Downloads the **Security Target** PDF (preferred) or Certification Report.
     - Scans text for PQC keywords (`ML-KEM`, etc.) and Classical keywords (`AES`, `RSA`, etc.).
 
 ---
@@ -324,14 +319,14 @@ How to identify if a certificate supports Post-Quantum Cryptography (e.g., ML-KE
 
 The following table summarizes the data fields available and extracted for each source:
 
-| Source              | Cert ID                 | Vendor               | Product      | Date                 | PQC Detection                    | Deep Details?        |
-| :------------------ | :---------------------- | :------------------- | :----------- | :------------------- | :------------------------------- | :------------------- |
-| **NIST FIPS 140-3** | ✅ Extracted            | ✅ Extracted         | ✅ Extracted | ✅ Real (Validation) | ✅ High (Deep Scrape + Keywords) | ✅ Yes (API)         |
-| **NIST ACVP**       | ✅ Extracted            | ✅ Extracted         | ✅ Extracted | ✅ Real (Validation) | ✅ Medium (Detail Check)         | ✅ Yes (Detail Page) |
-| **Common Criteria** | ✅ Extracted (Filename) | ✅ Extracted         | ✅ Extracted | ✅ Real (Cert Date)  | ✅ High (PDF Text Extraction)    | ✅ Yes (PDF Parsing) |
-| **NIAP (US)**       | ✅ Extracted (CC CSV)   | ✅ Extracted         | ✅ Extracted | ✅ Real (Cert Date)  | ✅ High (PDF Text Extraction)    | ✅ Yes (PDF Parsing) |
-| **BSI (DE)**        | ✅ Extracted (CC CSV)   | ✅ Extracted         | ✅ Extracted | ✅ Real (Cert Date)  | ✅ High (PDF Text Extraction)    | ✅ Yes (PDF Parsing) |
-| **ANSSI (FR)**      | ✅ Extracted (Direct)   | ✅ Extracted (Regex) | ✅ Extracted | ✅ Real (Cert Date)  | ✅ High (PDF Text Truncation)    | ✅ Yes (PDF Parsing) |
+| Source              | Cert ID                 | Vendor              | Product      | Date                 | PQC Detection                    | Deep Details?        |
+| :------------------ | :---------------------- | :------------------ | :----------- | :------------------- | :------------------------------- | :------------------- |
+| **NIST FIPS 140-3** | ✅ Extracted            | ✅ Extracted        | ✅ Extracted | ✅ Real (Validation) | ✅ High (Deep Scrape + Keywords) | ✅ Yes (API)         |
+| **NIST ACVP**       | ✅ Extracted            | ✅ Extracted        | ✅ Extracted | ✅ Real (Validation) | ✅ Medium (Detail Check)         | ✅ Yes (Detail Page) |
+| **Common Criteria** | ✅ Extracted (Filename) | ✅ Extracted        | ✅ Extracted | ✅ Real (Cert Date)  | ✅ High (PDF Text Extraction)    | ✅ Yes (PDF Parsing) |
+| **BSI (DE)**        | ✅ Extracted (CC CSV)   | ✅ Extracted        | ✅ Extracted | ✅ Real (Cert Date)  | ✅ High (PDF Text Extraction)    | ✅ Yes (PDF Parsing) |
+| **ANSSI (FR)**      | ✅ Extracted (Direct)   | ✅ Extracted (PDF)  | ✅ Extracted | ✅ Real (Cert Date)  | ✅ High (PDF Text Extraction)    | ✅ Yes (PDF Parsing) |
+| **ENISA (EUCC)**    | ✅ Extracted (HTML)     | ✅ Extracted (HTML) | ✅ Extracted | ✅ Real (Cert Date)  | ✅ High (PDF Text Extraction)    | ✅ Yes (PDF Parsing) |
 
 _Legend:_
 
@@ -378,19 +373,18 @@ These sources respond reliably to standard HTTP requests and are suitable for li
 
 These sources exhibit active bot protection (Cloudflare/Incapsula) or frequent structural changes that block simple scrape proxies.
 
-- **NIAP (US)**: ⚠️ **Fragile**. (Blocks simple HTTP requests, requires JS evaluation).
 - **BSI (DE)**: ⚠️ **Fragile**. (Dynamic redirects, unstable selectors).
-- **ANSSI (FR)**: ⚠️ **Fragile**. (404s on deep links, requires precise user-agent spoofing).
+- **ANSSI (FR)**: ⚠️ **Fragile**. (Requires PDF parsing infrastructure).
+- **ENISA (EUCC)**: ⚠️ **Moderate**. (Requires PDF parsing infrastructure).
 
-### Recommendation: Scheme-Based Derivation
+### Recommendation: Scheme-Based Derivation + Prebuild
 
 **Unified Strategy:**
 
-- **Tier 1 (NIST FIPS / ACVP):** Continue using **Live Fetching** via proxy.
-- **Tier 2 (NIAP / BSI / ANSSI):** **DO NOT SCRAPE**.
-  - _Implementation:_ Inspect the **Global Common Criteria CSV** (`fetchCommonCriteriaData`) and filter by the `Scheme` column:
-    - **NIAP (US):** Filter for `Scheme` containing `(US)`.
-    - **BSI (DE):** Filter for `Scheme` containing `(DE)`.
-  - **Exception (ANSSI):** Due to specific user requirements for filtering and metadata (Vendor as Commanditaire), ANSSI is **Directly Scraped** using a robust Node.js script with PDF parsing.
+- **Tier 1 (NIST FIPS / ACVP):** Live Fetching via proxy.
+- **Tier 2 (CC / ANSSI / ENISA):** **Prebuild Scrape Only**.
+  - **Global CC:** Scraped via CSV + PDF Parsing.
+  - **ANSSI:** Scraped via PDF Catalog + PDF Parsing.
+  - **ENISA:** Scraped via HTML List + PDF Parsing.
 
 ---

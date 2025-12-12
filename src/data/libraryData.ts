@@ -19,16 +19,28 @@ export interface LibraryItem {
   manualCategory?: string
   children?: LibraryItem[]
   category?: string
+  status?: 'New' | 'Updated'
 }
 
 import { MOCK_LIBRARY_CSV_CONTENT } from './mockTimelineData'
+import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 
-// Helper to find the latest library CSV file
-function getLatestLibraryFile(): { content: string; filename: string; date: Date } | null {
+// Helper to find the latest library CSV files (Current and Previous)
+function getLatestLibraryFiles(): {
+  current: { content: string; filename: string; date: Date } | null
+  previous: { content: string; filename: string; date: Date } | null
+} {
   // Check for mock data environment variable
   if (import.meta.env.VITE_MOCK_DATA === 'true') {
     console.log('Using mock library data for testing')
-    return { content: MOCK_LIBRARY_CSV_CONTENT, filename: 'MOCK_LIBRARY_DATA', date: new Date() }
+    return {
+      current: {
+        content: MOCK_LIBRARY_CSV_CONTENT,
+        filename: 'MOCK_LIBRARY_DATA',
+        date: new Date(),
+      },
+      previous: null,
+    }
   }
 
   // Use import.meta.glob to find all library CSV files
@@ -56,21 +68,53 @@ function getLatestLibraryFile(): { content: string; filename: string; date: Date
 
   if (files.length === 0) {
     console.warn('No dated library CSV files found.')
-    return null
+    return { current: null, previous: null }
   }
 
   // Sort by date descending (latest first)
   files.sort((a, b) => b.date.getTime() - a.date.getTime())
 
   console.log(`Loading latest library data from: ${files[0].path}`)
-  const filename = files[0].path.split('/').pop() || files[0].path
-  return { content: files[0].content, filename, date: files[0].date }
+  if (files.length > 1) {
+    console.log(`Comparison data loaded from: ${files[1].path}`)
+  }
+
+  return {
+    current: {
+      content: files[0].content,
+      filename: files[0].path.split('/').pop() || files[0].path,
+      date: files[0].date,
+    },
+    previous:
+      files.length > 1
+        ? {
+            content: files[1].content,
+            filename: files[1].path.split('/').pop() || files[1].path,
+            date: files[1].date,
+          }
+        : null,
+  }
 }
 
-const latestFile = getLatestLibraryFile()
-export const libraryData: LibraryItem[] = latestFile ? parseLibraryCSV(latestFile.content) : []
-export const libraryMetadata = latestFile
-  ? { filename: latestFile.filename, lastUpdate: latestFile.date }
+const { current, previous } = getLatestLibraryFiles()
+
+// Parse current and previous data
+const currentItems = current ? parseLibraryCSV(current.content) : []
+const previousItems = previous ? parseLibraryCSV(previous.content) : []
+
+// Compute status map if previous data exists
+const statusMap = previous
+  ? compareDatasets(currentItems, previousItems, 'referenceId')
+  : new Map<string, ItemStatus>()
+
+// Inject status into current items and export
+export const libraryData: LibraryItem[] = currentItems.map((item) => ({
+  ...item,
+  status: statusMap.get(item.referenceId),
+}))
+
+export const libraryMetadata = current
+  ? { filename: current.filename, lastUpdate: current.date }
   : null
 
 function parseLibraryCSV(csvContent: string): LibraryItem[] {

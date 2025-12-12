@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { User, Building2, Briefcase } from 'lucide-react'
 import type { Leader } from '../../data/leadersData'
 import clsx from 'clsx'
+import { StatusBadge } from '../common/StatusBadge'
 
 interface LeaderCardProps {
   leader: Leader
@@ -48,18 +49,21 @@ export const LeaderCard = ({ leader }: LeaderCardProps) => {
             ) && '🌍'}
           </div>
         </div>
-        <span
-          className={clsx(
-            'px-3 py-1 rounded-full text-xs font-bold border',
-            leader.type === 'Public'
-              ? 'bg-status-info text-status-info border-status-info'
-              : leader.type === 'Private'
-                ? 'bg-secondary/10 text-secondary border-secondary/20'
-                : 'bg-status-success text-status-success border-status-success'
-          )}
-        >
-          {leader.type} Sector
-        </span>
+        <div className="flex flex-col items-end gap-2">
+          <span
+            className={clsx(
+              'px-3 py-1 rounded-full text-xs font-bold border',
+              leader.type === 'Public'
+                ? 'bg-status-info text-status-info border-status-info'
+                : leader.type === 'Private'
+                  ? 'bg-secondary/10 text-secondary border-secondary/20'
+                  : 'bg-status-success text-status-success border-status-success'
+            )}
+          >
+            {leader.type} Sector
+          </span>
+          <StatusBadge status={leader.status} size="sm" />
+        </div>
       </div>
 
       <h3 className="text-xl font-bold mb-1">{leader.name}</h3>

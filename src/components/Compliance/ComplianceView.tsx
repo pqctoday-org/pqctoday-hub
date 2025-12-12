@@ -56,19 +56,7 @@ export const ComplianceView = () => {
           <FileCheck size={16} className="text-accent" />
           <div className="flex flex-col">
             <span className="font-semibold text-foreground">CC Portal</span>
-            <span className="text-muted-foreground">Global Products</span>
-          </div>
-        </a>
-        <a
-          href={AUTHORITATIVE_SOURCES.NIAP}
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-2 p-3 rounded bg-card hover:bg-muted/50 transition-colors border border-border"
-        >
-          <ShieldCheck size={16} className="text-warning" />
-          <div className="flex flex-col">
-            <span className="font-semibold text-foreground">NIAP (US)</span>
-            <span className="text-muted-foreground">CC Evaluations</span>
+            <span className="text-muted-foreground">Global CC & EUCC</span>
           </div>
         </a>
         <a
@@ -125,7 +113,13 @@ export const ComplianceView = () => {
 
         <TabsContent value="cc" className="mt-0">
           <ComplianceTable
-            data={data.filter((r) => r.type === 'Common Criteria')}
+            data={data.filter(
+              (r) =>
+                r.type === 'Common Criteria' ||
+                r.type === 'EUCC' ||
+                r.source === 'ANSSI' ||
+                r.source === 'ENISA'
+            )}
             onRefresh={refresh}
             isRefreshing={loading}
             lastUpdated={lastUpdated}

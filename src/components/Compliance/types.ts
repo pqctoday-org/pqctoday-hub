@@ -1,11 +1,11 @@
 export type ComplianceSource =
   | 'NIST'
   | 'Common Criteria'
-  | 'NIAP'
   | 'BSI Germany'
   | 'ANSSI'
+  | 'ENISA'
   | 'Other'
-export type ComplianceType = 'FIPS 140-3' | 'ACVP' | 'Common Criteria'
+export type ComplianceType = 'FIPS 140-3' | 'ACVP' | 'Common Criteria' | 'EUCC'
 export type ComplianceStatus = 'Active' | 'Historical' | 'Pending' | 'In Process' | 'Revoked'
 
 export interface ComplianceRecord {
@@ -26,4 +26,14 @@ export interface ComplianceRecord {
   certificationReportUrls?: string[]
   securityTargetUrls?: string[]
   additionalDocuments?: Array<{ name: string; url: string }>
+  // EUCC-specific additional metadata
+  productType?: string // Type of product (e.g., "smart card and similar device")
+  productVersion?: string // Version of the product
+  certificationBody?: string // Name of the certification body that issued the certificate
+  scheme?: string // Certification scheme (e.g., "(UE) 2024/482 - EUCC")
+  protectionProfile?: string // Protection profile used
+  ccVersion?: string // Common Criteria version (e.g., "ISO/IEC 15408:2022")
+  cemVersion?: string // CEM version (e.g., "ISO/IEC 18045:2022")
+  avaVanLevel?: string // AVA_VAN level
+  packageInfo?: string // Full package/augmentation details
 }

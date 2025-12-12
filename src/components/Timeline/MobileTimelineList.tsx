@@ -1,5 +1,5 @@
 /* eslint-disable security/detect-object-injection */
-import type { GanttCountryData } from '../../types/timeline'
+import type { GanttCountryData, Phase } from '../../types/timeline'
 import { CountryFlag } from '../common/CountryFlag'
 import { phaseColors } from '../../data/timelineData'
 import { ChevronRight, Flag } from 'lucide-react'
@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { GanttDetailPopover } from './GanttDetailPopover'
 import type { TimelinePhase } from '../../types/timeline'
 import { motion } from 'framer-motion'
+import { StatusBadge } from '../common/StatusBadge'
 
 interface MobileTimelineListProps {
   data: GanttCountryData[]
@@ -109,8 +110,10 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                           size={14}
                           className="flex-shrink-0"
                           style={{
-                            color: phaseColors[currentPhase.phase]?.start || 'hsl(var(--primary))',
-                            filter: `drop-shadow(0 0 4px ${phaseColors[currentPhase.phase]?.glow || 'hsl(var(--primary) / 0.5)'})`,
+                            color:
+                              phaseColors[currentPhase.phase as Phase]?.start ||
+                              'hsl(var(--primary))',
+                            filter: `drop-shadow(0 0 4px ${phaseColors[currentPhase.phase as Phase]?.glow || 'hsl(var(--primary) / 0.5)'})`,
                           }}
                         />
                       ) : (
@@ -118,15 +121,19 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                           className="w-2 h-2 rounded-full flex-shrink-0"
                           style={{
                             backgroundColor:
-                              phaseColors[currentPhase.phase]?.start || 'hsl(var(--primary))',
-                            boxShadow: `0 0 8px ${phaseColors[currentPhase.phase]?.glow || 'hsl(var(--primary) / 0.5)'}`,
+                              phaseColors[currentPhase.phase as Phase]?.start ||
+                              'hsl(var(--primary))',
+                            boxShadow: `0 0 8px ${phaseColors[currentPhase.phase as Phase]?.glow || 'hsl(var(--primary) / 0.5)'}`,
                           }}
                         />
                       )}
                       <div>
-                        <span className="text-xs font-bold text-foreground block">
-                          {currentPhase.phase}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-foreground block">
+                            {currentPhase.phase}
+                          </span>
+                          <StatusBadge status={currentPhase.status} size="sm" />
+                        </div>
                         <span className="text-[10px] text-muted-foreground font-mono">
                           {currentPhase.startYear} -{' '}
                           {currentPhase.endYear === 2035 ? '2035+' : currentPhase.endYear}
@@ -159,7 +166,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                         style={{
                           backgroundColor:
                             i === currentIndex
-                              ? phaseColors[p.phase]?.start || 'hsl(var(--primary))'
+                              ? phaseColors[p.phase as Phase]?.start || 'hsl(var(--primary))'
                               : 'hsl(var(--muted-foreground) / 0.3)',
                         }}
                       />

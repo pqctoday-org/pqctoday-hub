@@ -13,7 +13,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "scrape": "npx tsx scripts/scrape-compliance.ts",
+    "scrape": "NODE_TLS_REJECT_UNAUTHORIZED=0 npx tsx scripts/scrape-compliance.ts",
     "prebuild": "npm run scrape",
     "build": "mkdir -p public/dist && cp -r node_modules/@openforge-sh/liboqs/dist/* public/dist/ && tsc -b && vite build && cp dist/index.html dist/404.html",
     "lint": "eslint src scripts e2e *.ts *.js *.cjs",

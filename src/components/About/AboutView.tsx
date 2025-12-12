@@ -37,6 +37,7 @@ export function AboutView() {
     'Library',
     'Playground',
     'OpenSSL Studio',
+    'Compliance',
     'Threats',
     'Leaders',
     'Learn',
@@ -48,9 +49,10 @@ export function AboutView() {
     Library: ['Research Papers', 'Whitepapers', 'Standards', 'Search'],
     Playground: ['KEM', 'Signature', 'Hybrid', 'Performance'],
     'OpenSSL Studio': ['Builder', 'Configurator', 'Output'],
+    Compliance: ['NIST FIPS', 'ANSSI', 'Common Criteria', 'Visualization'],
     Threats: ['Quantum Threat Timeline', 'Industry Impact', 'Risk Assessment'],
     Leaders: ['Academic', 'Industry', 'Government', 'Profiles'],
-    Learn: ['PKI Workshop', 'Digital Assets'],
+    Learn: ['PKI Workshop', 'Digital Assets', '5G Security', 'EUDI Wallet'],
   }
 
   const handleChangeRequestSubmit = (e: React.FormEvent) => {
