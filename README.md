@@ -147,41 +147,44 @@ The application is structured into several key components:
 ## Project Structure
 
 ```
-src/
-├── components/          # React components
-│   ├── About/           # About page and feedback forms
-│   ├── ACVP/            # Automated Cryptographic Validation Protocol testing
-│   ├── Algorithms/      # Algorithm comparison table
-│   ├── Compliance/      # Compliance tracking and visualization
-│   ├── ErrorBoundary.tsx # Global error boundary component
-│   ├── Leaders/         # PQC transformation leaders profiles
-│   ├── Layout/          # Main layout and navigation components
-│   ├── Library/         # PQC standards library
-│   ├── OpenSSLStudio/   # OpenSSL v3.5.4 workbench (WASM)
-│   ├── PKILearning/     # Learning platform with 5 modules
-│   │   ├── modules/
-│   │   │   ├── Module1-Introduction/  # Getting started guide
-│   │   │   ├── PKIWorkshop/          # 4-step PKI lifecycle
-│   │   │   ├── DigitalAssets/        # Bitcoin, Ethereum, Solana, HD Wallet
-│   │   │   ├── FiveG/                # SUCI + 5G-AKA flows
-│   │   │   └── DigitalID/            # EUDI Wallet ecosystem
-│   ├── Playground/      # Interactive cryptography playground
-│   ├── Router/          # Routing utilities (ScrollToTop)
-│   ├── Threats/         # Industry-specific threat analysis
-│   ├── Timeline/        # Migration timeline visualization
-│   ├── common/          # Shared components and utilities
-│   └── ui/              # Reusable UI components (Button, Card, etc.)
-├── data/                # Static data (timelines, test vectors, profiles)
-│   └── x509_profiles/   # CSV-based certificate profiles
-├── hooks/               # Custom React hooks
-├── lib/                 # Utility libraries and helpers
+├── e2e/                 # End-to-end tests
+├── requirements/        # Requirements documentation
 ├── scripts/             # Compliance data scrapers (NIST, ANSSI, Common Criteria)
-├── services/            # OpenSSL service and WASM integration
-├── store/               # Zustand state management stores
-├── styles/              # Global CSS and design system
-├── utils/               # Helper functions
-├── wasm/                # WebAssembly cryptography wrappers (liboqs, mlkem)
-└── types.ts             # Global TypeScript definitions
+├── src/
+│   ├── components/          # React components
+│   │   ├── About/           # About page and feedback forms
+│   │   ├── ACVP/            # Automated Cryptographic Validation Protocol testing
+│   │   ├── Algorithms/      # Algorithm comparison table
+│   │   ├── Compliance/      # Compliance tracking and visualization
+│   │   ├── ErrorBoundary.tsx # Global error boundary component
+│   │   ├── Leaders/         # PQC transformation leaders profiles
+│   │   ├── Layout/          # Main layout and navigation components
+│   │   ├── Library/         # PQC standards library
+│   │   ├── OpenSSLStudio/   # OpenSSL v3.5.4 workbench (WASM)
+│   │   ├── PKILearning/     # Learning platform with 5 modules
+│   │   │   ├── modules/
+│   │   │   │   ├── Module1-Introduction/  # Getting started guide
+│   │   │   │   ├── PKIWorkshop/          # 4-step PKI lifecycle
+│   │   │   │   ├── DigitalAssets/        # Bitcoin, Ethereum, Solana, HD Wallet
+│   │   │   │   ├── FiveG/                # SUCI + 5G-AKA flows
+│   │   │   │   └── DigitalID/            # EUDI Wallet ecosystem
+│   │   ├── Playground/      # Interactive cryptography playground
+│   │   ├── Router/          # Routing utilities (ScrollToTop)
+│   │   ├── Threats/         # Industry-specific threat analysis
+│   │   ├── Timeline/        # Migration timeline visualization
+│   │   ├── common/          # Shared components and utilities
+│   │   └── ui/              # Reusable UI components (Button, Card, etc.)
+│   ├── data/                # Static data (timelines, test vectors, profiles)
+│   │   └── x509_profiles/   # CSV-based certificate profiles
+│   ├── hooks/               # Custom React hooks
+│   ├── lib/                 # Utility libraries and helpers
+│   ├── services/            # OpenSSL service and WASM integration
+│   ├── store/               # Zustand state management stores
+│   ├── styles/              # Global CSS and design system
+│   ├── types/               # Module-specific type definitions
+│   ├── utils/               # Helper functions
+│   ├── wasm/                # WebAssembly cryptography wrappers (liboqs, mlkem)
+│   └── types.ts             # Global TypeScript definitions
 ```
 
 ## License
