@@ -35,7 +35,7 @@ describe('PKILearning', () => {
     expect(screen.getByText('PKI')).toBeInTheDocument() // "PKI" is the title in Dashboard.tsx
   })
 
-  it('navigates to Digital Assets module on click', () => {
+  it('navigates to Digital Assets module on click', async () => {
     renderWithRouter()
 
     // Find button/link for Digital Assets
@@ -43,24 +43,24 @@ describe('PKILearning', () => {
     fireEvent.click(title)
 
     // Expect DigitalAssets component to render
-    expect(screen.getByTestId('module-digital-assets')).toBeInTheDocument()
+    expect(await screen.findByTestId('module-digital-assets')).toBeInTheDocument()
   })
 
-  it('navigates to PKI Workshop module on click', () => {
+  it('navigates to PKI Workshop module on click', async () => {
     renderWithRouter()
 
     const title = screen.getByText('PKI') // Title is "PKI"
     fireEvent.click(title)
 
-    expect(screen.getByTestId('module-pki-workshop')).toBeInTheDocument()
+    expect(await screen.findByTestId('module-pki-workshop')).toBeInTheDocument()
   })
 
-  it('allows navigating back from a module', () => {
+  it('allows navigating back from a module', async () => {
     renderWithRouter()
 
     // Enter module
     fireEvent.click(screen.getByText('Digital Assets'))
-    expect(screen.getByTestId('module-digital-assets')).toBeInTheDocument()
+    expect(await screen.findByTestId('module-digital-assets')).toBeInTheDocument()
 
     // Click Back
     const backButton = screen.getByText('Back to Dashboard')

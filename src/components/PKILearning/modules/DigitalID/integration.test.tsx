@@ -54,7 +54,6 @@ vi.mock('../../../../services/crypto/OpenSSLService', () => ({
 
 // vi.mock('src/utils/cryptoUtils', ...) removed as it referenced wrong path/file
 
-
 // Stateful mock for OpenSSL Store
 const mockFiles = [
   { name: 'mock_key.pem', content: new Uint8Array(32) },
@@ -69,7 +68,8 @@ vi.mock('../../../OpenSSLStudio/store', () => ({
     files: mockFiles,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     addFile: (file: any) => mockFiles.push(file),
-    getFile: (name: string) => mockFiles.find((f) => f.name === name) || { name, content: new Uint8Array(32) },
+    getFile: (name: string) =>
+      mockFiles.find((f) => f.name === name) || { name, content: new Uint8Array(32) },
     getFiles: () => mockFiles,
     removeFile: vi.fn(),
     refreshFiles: vi.fn(),
@@ -113,11 +113,11 @@ describe('EUDI Digital ID Integration', () => {
     fireEvent.click(rpTab)
     await waitFor(() => {
       // RelyingPartyComponent header
-      expect(screen.getByText(/EuroBank/i)).toBeDefined()
+      expect(screen.getByText(/Bank \(Relying Party\)/i)).toBeDefined()
     })
   })
 
-  it('completes the PID Issuance flow', async () => {
+  it('completes the PID Issuance and Relying Party flow', async () => {
     render(<DigitalID />)
 
     // 1. Navigate to PID Issuer
@@ -145,61 +145,36 @@ describe('EUDI Digital ID Integration', () => {
       },
       { timeout: 6000 }
     )
-  })
-
-  it('completes the Relying Party flow', async () => {
-    render(<DigitalID />)
-
-    // 1. Navigate to Relying Party
-    fireEvent.click(screen.getByText('Bank (RP)'))
+    // 5. Navigate to Relying Party (Now that we have keys)
+    const rpTab = screen.getByText('Bank (RP)')
+    fireEvent.click(rpTab)
     await waitFor(() => {
-      expect(screen.getByText(/EuroBank/i)).toBeDefined()
+      expect(screen.getByText(/Bank \(Relying Party\)/i)).toBeDefined()
     })
 
-    // Helper to click action and then next
-    const executeAndNext = async (actionName: RegExp) => {
-      // Find and click action button
-      // Use findByRole to wait for button to appear (async transition)
-      const actionBtn = await screen.findByRole('button', { name: actionName })
-      fireEvent.click(actionBtn)
+    // Step 1: Login
+    const loginBtn = await screen.findByRole('button', { name: /Login with Wallet/i })
+    fireEvent.click(loginBtn)
 
-      // Wait for execution to complete and "Next Step" to appear
-      // Note: The button might change from "Execute" to "Next Step"
-      // We need to wait for the button WITH the name "Next Step" to appear.
-      const nextBtn = await screen.findByRole('button', { name: /Next Step|Completed/i })
-      if (nextBtn.textContent?.includes('Next Step')) {
-        fireEvent.click(nextBtn)
-      }
-    }
+    // Step 2: Consent (Disclosure)
+    const consentBtn = await screen.findByRole('button', { name: /Consent & Share/i })
+    fireEvent.click(consentBtn)
 
-    // Step 1: Request Credential Presentation
-    await executeAndNext(/Request Presentation/i)
-
-    // Step 2: Select Credentials
-    await executeAndNext(/Select Credentials/i)
-
-    // Step 3: Create Proofs
-    await executeAndNext(/Create Proofs/i)
-
-    // Step 4: Apply Selective Disclosure
-    await executeAndNext(/Apply Disclosure/i)
-
-    // Step 5: Submit Presentation
-    await executeAndNext(/Submit Presentation/i)
-
-    // Step 6: Verify Presentation (Final Step - completes flow)
-    // console.log('Verifying Presentation...')
-    const verifyBtn = await screen.findByRole('button', { name: /Verify Presentation/i })
-    fireEvent.click(verifyBtn)
-
-    // Check for Completion message
-    // console.log('Waiting for completion...')
-    await waitFor(
-      () => {
-        expect(screen.getByText(/Verification Complete!/i)).toBeDefined()
-        expect(screen.getByText(/Account opening approved/i)).toBeDefined()
-      },
+    // Step 3: Wait for Presentation/Verification (Automated step with spinner)
+    const checkBtn = await screen.findByRole(
+      'button',
+      { name: /Check Verification Result/i },
       { timeout: 10000 }
     )
-  }, 20000)
+    fireEvent.click(checkBtn)
+
+    // Step 4: Complete
+    await waitFor(
+      () => {
+        expect(screen.getByText(/Account Opened!/i)).toBeDefined()
+        expect(screen.getByText(/identity has been verified/i)).toBeDefined()
+      },
+      { timeout: 5000 }
+    )
+  }, 30000)
 })

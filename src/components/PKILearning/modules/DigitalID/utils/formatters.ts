@@ -1,8 +1,8 @@
 // EUDI Wallet Crypto Formatters
 // Following cryptoimplementation.md requirements
 
-/* eslint-disable security/detect-unsafe-regex */
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
+import { sha256 } from '@noble/hashes/sha2.js'
 import { openSSLService } from '../../../../../services/crypto/OpenSSLService'
 
 /**
@@ -46,6 +46,7 @@ export const formatPublicKeyAsJWK = async (
 
   // Parse the public key coordinates from OpenSSL output
   // Format: pub: \n    04:xx:xx:... (uncompressed format with 04 prefix)
+  // eslint-disable-next-line security/detect-unsafe-regex
   const pubMatch = result.stdout.match(/pub:\s*\n\s*((?:[0-9a-f]{2}:?)+)/i)
   if (!pubMatch) {
     throw new Error('Failed to parse public key from OpenSSL output')
@@ -92,10 +93,9 @@ export const formatPublicKeyAsJWK = async (
 export const createSHA256Hash = async (data: Uint8Array): Promise<Uint8Array> => {
   const filename = `hash_${Math.random().toString(36).substring(7)}.bin`
   try {
-    const result = await openSSLService.execute(
-      `openssl dgst -sha256 -binary ${filename}`,
-      [{ name: filename, data }]
-    )
+    await openSSLService.execute(`openssl dgst -sha256 -binary ${filename}`, [
+      { name: filename, data },
+    ])
     // OpenSSL dgst -binary sends output to stdout? No.
     // openssl dgst -sha256 -binary file
     // Output: binary bytes to stdout.
@@ -111,7 +111,7 @@ export const createSHA256Hash = async (data: Uint8Array): Promise<Uint8Array> =>
 
     if (res.error) throw new Error(res.error)
 
-    const outData = res.files.find(f => f.name === outFile)?.data
+    const outData = res.files.find((f) => f.name === outFile)?.data
     if (!outData) throw new Error('Hash output not found')
 
     // Cleanup handled by OpenSSLService generally? We should attempt to delete.
@@ -134,7 +134,7 @@ export const createSHA384Hash = async (data: Uint8Array): Promise<Uint8Array> =>
       [{ name: filename, data }]
     )
     if (res.error) throw new Error(res.error)
-    const outData = res.files.find(f => f.name === outFile)?.data
+    const outData = res.files.find((f) => f.name === outFile)?.data
     if (!outData) throw new Error('Hash output not found')
     return outData
   } finally {
@@ -154,7 +154,7 @@ export const createSHA512Hash = async (data: Uint8Array): Promise<Uint8Array> =>
       [{ name: filename, data }]
     )
     if (res.error) throw new Error(res.error)
-    const outData = res.files.find(f => f.name === outFile)?.data
+    const outData = res.files.find((f) => f.name === outFile)?.data
     if (!outData) throw new Error('Hash output not found')
     return outData
   } finally {
@@ -245,6 +245,7 @@ export const formatJWTPayload = (payload: object): string => {
  */
 export const extractPrivateKeyHex = (opensslTextOutput: string): string => {
   // Try to match private key section
+  // eslint-disable-next-line security/detect-unsafe-regex
   const privMatch = opensslTextOutput.match(/priv:\s*\n\s*((?:[0-9a-f]{2}:?)+)/i)
   if (!privMatch) {
     throw new Error('Failed to parse private key from OpenSSL output')
