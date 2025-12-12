@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 
 import { logPageView } from './utils/analytics'
 import { useEffect } from 'react'
-import { lazy } from 'react'
+import { lazy, Suspense } from 'react'
 import { MainLayout } from './components/Layout/MainLayout'
 
 // Lazy load route components for code splitting
@@ -67,22 +67,30 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <AnalyticsTracker />
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<TimelineView />} />
-          <Route path="/algorithms" element={<AlgorithmsView />} />
-          <Route path="/library" element={<LibraryView />} />
-          <Route path="/learn/*" element={<PKILearningView />} />
-          <Route path="/playground" element={<PlaygroundView />} />
-          <Route path="/openssl" element={<OpenSSLStudioView />} />
-          <Route path="/threats" element={<ThreatsDashboard />} />
-          <Route path="/leaders" element={<LeadersGrid />} />
-          <Route path="/compliance" element={<ComplianceView />} />
-          <Route path="/about" element={<AboutView />} />
-          {/* Fallback route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
-      </Routes>
+      <Suspense
+        fallback={
+          <div className="flex h-screen w-full items-center justify-center bg-black">
+            <div className="text-xl font-bold text-gradient">Initializing Secure Environment...</div>
+          </div>
+        }
+      >
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<TimelineView />} />
+            <Route path="/algorithms" element={<AlgorithmsView />} />
+            <Route path="/library" element={<LibraryView />} />
+            <Route path="/learn/*" element={<PKILearningView />} />
+            <Route path="/playground" element={<PlaygroundView />} />
+            <Route path="/openssl" element={<OpenSSLStudioView />} />
+            <Route path="/threats" element={<ThreatsDashboard />} />
+            <Route path="/leaders" element={<LeadersGrid />} />
+            <Route path="/compliance" element={<ComplianceView />} />
+            <Route path="/about" element={<AboutView />} />
+            {/* Fallback route */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }

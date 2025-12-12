@@ -3,7 +3,7 @@ import {
   timelineData,
   timelineMetadata,
   transformToGanttData,
-  type TimelinePhase,
+  type CountryData,
 } from '../../data/timelineData'
 import { SimpleGanttChart } from './SimpleGanttChart'
 
@@ -12,7 +12,7 @@ import { MobileTimelineList } from './MobileTimelineList'
 import { CountryFlag } from '../common/CountryFlag'
 
 export const TimelineView = () => {
-  const [selectedCountry, setSelectedCountry] = useState<TimelinePhase | null>(null)
+  const [selectedCountry, setSelectedCountry] = useState<CountryData | null>(null)
   // Removed unused viewMode state as we now use CSS media queries for view switching
 
   // Always call hooks first (React rules)
@@ -42,10 +42,8 @@ export const TimelineView = () => {
     })
   }, [])
 
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  const handleCountrySelect = (phase: any) => {
-    // Loosened type to allow CountryData from timelineData
-    setSelectedCountry(phase)
+  const handleCountrySelect = (country: CountryData | null) => {
+    setSelectedCountry(country)
   }
 
   // Early return if data isn't loaded yet to prevent blank screen
@@ -83,7 +81,6 @@ export const TimelineView = () => {
         <div className="hidden md:block" data-testid="desktop-view-container">
           <SimpleGanttChart
             data={ganttData}
-            // @ts-expect-error - known type mismatch between legacy CountryData and TimelinePhase
             selectedCountry={selectedCountry ? selectedCountry.countryName : 'All'}
             onCountrySelect={(id) => {
               const country =

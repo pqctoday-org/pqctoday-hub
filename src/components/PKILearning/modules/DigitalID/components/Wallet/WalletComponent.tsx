@@ -63,8 +63,8 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       {cred.type.includes('PersonIdentificationData') || cred.format === 'mso_mdoc'
-                        ? 'ðŸ‡ªðŸ‡º'
-                        : 'ðŸŽ“'}
+                        ? '🇪🇺'
+                        : '🎓'}
                       {cred.type.includes('PersonIdentificationData')
                         ? 'Person Identification Data'
                         : 'University Diploma'}

@@ -8,7 +8,8 @@ export const createMdoc = async (
   attributes: CredentialAttribute[],
   issuerKey: CryptoKey,
   deviceKey: CryptoKey,
-  docType: string = 'org.iso.18013.5.1.mDL'
+  docType: string = 'org.iso.18013.5.1.mDL',
+  onLog?: (log: string) => void
 ): Promise<MsoMdoc> => {
   // 1. Organize attributes by namespace
   // For MVA mDL, standard namespace is org.iso.18013.5.1
@@ -49,20 +50,21 @@ export const createMdoc = async (
     // In real mdoc, this contains digests of all data items
     // We simulate it here
     valueDigests: {
-      [docType]: Object.keys(namespaces[docType]).reduce(
-        (acc, key) => {
-          acc[key] = sha256Hash(JSON.stringify(namespaces[docType][key]))
-          return acc
-        },
-        {} as Record<string, string>
-      ),
+      [docType]: await (async () => {
+        const keys = Object.keys(namespaces[docType])
+        const digests: Record<string, string> = {}
+        for (const key of keys) {
+          digests[key] = await sha256Hash(JSON.stringify(namespaces[docType][key]), onLog)
+        }
+        return digests
+      })(),
     },
   }
 
   // 3. Sign the MSO
   // We sign the JSON string of MSO for this simulation
   const msoString = JSON.stringify(mso)
-  const signature = await signData(issuerKey, msoString)
+  const signature = await signData(issuerKey, msoString, onLog)
 
   return {
     docType,

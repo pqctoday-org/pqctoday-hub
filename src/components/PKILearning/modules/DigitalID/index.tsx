@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { Trash2, Shield, FileText, PenTool, Building2, CheckSquare } from 'lucide-react'
 import { useModuleStore } from '../../../../store/useModuleStore'
+import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { WalletComponent } from './components/Wallet/WalletComponent'
 import { PIDIssuerComponent } from './components/PIDIssuer/PIDIssuerComponent'
 import { AttestationIssuerComponent } from './components/AttestationIssuer/AttestationIssuerComponent'
@@ -80,7 +81,14 @@ export const DigitalIDModule: React.FC = () => {
         'Are you sure you want to reset the module? This will clear all generated keys and credentials.'
       )
     ) {
+      // Reset Zustand module state
       resetProgress()
+
+      // Reset OpenSSL WASM file store
+      const { resetStore } = useOpenSSLStore.getState()
+      resetStore()
+
+      // Reset local component state
       setWallet(INITIAL_WALLET)
       setCurrentStep(0)
     }
@@ -146,7 +154,7 @@ export const DigitalIDModule: React.FC = () => {
   }, [currentStep, wallet, navigateTo])
 
   return (
-    <div className="max-w-7xl mx-auto overflow-x-hidden">
+    <div className="max-w-screen-2xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gradient mb-2">EUDI Digital Identity Wallet</h1>
@@ -174,11 +182,10 @@ export const DigitalIDModule: React.FC = () => {
               <button
                 key={step.id}
                 onClick={() => setCurrentStep(idx)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${
-                  isActive
-                    ? 'bg-primary/20 border-primary text-primary shadow-lg shadow-primary/10'
-                    : 'bg-transparent border-border text-muted-foreground hover:bg-muted/10'
-                }`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${isActive
+                  ? 'bg-primary/20 border-primary text-primary shadow-lg shadow-primary/10'
+                  : 'bg-transparent border-border text-muted-foreground hover:bg-muted/10'
+                  }`}
               >
                 <Icon size={16} />
                 <span className="font-medium">{step.title}</span>
@@ -189,9 +196,7 @@ export const DigitalIDModule: React.FC = () => {
       </div>
 
       {/* Content Area */}
-      <div className="glass-panel p-1 animate-fade-in min-h-[600px]">
-        {/* Note: glass-panel likely has styles. Passing p-1 just in case, components have their own cards */}
-        {}
+      <div className="glass-panel p-1 animate-fade-in min-h-0 overflow-y-auto">
         {currentStepComponent}
       </div>
 

@@ -1,15 +1,12 @@
-import { p256, p384 } from '@noble/curves/nist.js'
-import { ed25519 } from '@noble/curves/ed25519.js'
-import { sha256 } from '@noble/hashes/sha2.js'
-import { utf8ToBytes } from '@noble/hashes/utils.js'
+import { openSSLService } from '../../../../../services/crypto/OpenSSLService'
 import type { CryptoKey, KeyAlgorithm, KeyCurve } from '../types'
 
-export function bytesToBase64(bytes: Uint8Array): string {
+export const bytesToBase64 = (bytes: Uint8Array): string => {
   const binString = Array.from(bytes, (x) => String.fromCodePoint(x)).join('')
   return btoa(binString)
 }
 
-export function base64ToBytes(base64: string): Uint8Array {
+export const base64ToBytes = (base64: string): Uint8Array => {
   const binString = atob(base64)
   return Uint8Array.from(binString, (m) => m.codePointAt(0)!)
 }
@@ -19,97 +16,219 @@ const toBase64Url = (bytes: Uint8Array): string => {
   return bytesToBase64(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
 }
 
-const fromBase64Url = (base64url: string): Uint8Array => {
-  const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/')
-  const pad = base64.length % 4
-  const padded = pad ? base64 + '='.repeat(4 - pad) : base64
-  return base64ToBytes(padded)
+// Helper to convert hex string to Uint8Array
+const hexToBytes = (hex: string): Uint8Array => {
+  const bytes = new Uint8Array(hex.length / 2)
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16)
+  }
+  return bytes
 }
 
-export const generateKeyPair = async (alg: KeyAlgorithm, curve: KeyCurve): Promise<CryptoKey> => {
+export const generateKeyPair = async (
+  alg: KeyAlgorithm,
+  curve: KeyCurve,
+  onLog?: (log: string) => void
+): Promise<CryptoKey> => {
   const timestamp = new Date().toISOString()
-  const id = `key_${timestamp}_${Math.random().toString(36).substring(2, 8)}` // Simple simulation ID
+  const id = `key_${timestamp}_${Math.random().toString(36).substring(2, 8)}`
 
-  let privKeyBytes: Uint8Array
-  let pubKeyBytes: Uint8Array
+  let opensslCurve = 'prime256v1'
+  if (curve === 'P-256') opensslCurve = 'prime256v1'
+  else if (curve === 'P-384') opensslCurve = 'secp384r1'
+  // Ed25519 requires specific genpkey command, simpler to handle via ecparam for EC curves
 
-  if (curve === 'P-256') {
-    privKeyBytes = p256.utils.randomSecretKey()
-    pubKeyBytes = p256.getPublicKey(privKeyBytes)
-  } else if (curve === 'P-384') {
-    privKeyBytes = p384.utils.randomSecretKey()
-    pubKeyBytes = p384.getPublicKey(privKeyBytes)
-  } else if (curve === 'Ed25519') {
-    privKeyBytes = ed25519.utils.randomSecretKey()
-    pubKeyBytes = ed25519.getPublicKey(privKeyBytes)
+  let privKeyPem = ''
+  let pubKeyPem = ''
+
+  if (curve === 'Ed25519') {
+    const result = await openSSLService.execute('openssl genpkey -algorithm ED25519')
+    if (onLog) onLog(`[OpenSSL: Generate ED25519 Key]\n${result.stdout}\n${result.stderr}`)
+
+    if (result.error) throw new Error(result.error)
+    privKeyPem = result.stdout
+
+    // Derive public key
+    const privKeyFile = `priv_${id}.pem`
+    const pubKeyResult = await openSSLService.execute(
+      `openssl pkey -in ${privKeyFile} -pubout`,
+      [{ name: privKeyFile, data: new TextEncoder().encode(privKeyPem) }]
+    )
+    if (onLog) onLog(`[OpenSSL: Derive Public Key]\n${pubKeyResult.stdout}\n${pubKeyResult.stderr}`)
+
+    if (pubKeyResult.error) throw new Error(pubKeyResult.error)
+    pubKeyPem = pubKeyResult.stdout
+
+    // Cleanup
+    await openSSLService.deleteFile(privKeyFile)
   } else {
-    throw new Error(`Unsupported curve: ${curve}`)
+    // Generate EC Param and Key
+    const result = await openSSLService.execute(`openssl ecparam -name ${opensslCurve} -genkey`)
+    if (onLog) {
+      onLog(`[OpenSSL: Generate ${curve} Key]\n> openssl ecparam -name ${opensslCurve} -genkey\n${result.stdout}\n${result.stderr}`)
+    }
+
+    if (result.error) throw new Error(result.error)
+    privKeyPem = result.stdout
+
+    // Derive public key
+    const privKeyFile = `priv_${id}.pem`
+    const pubKeyResult = await openSSLService.execute(
+      `openssl ec -in ${privKeyFile} -pubout`,
+      [{ name: privKeyFile, data: new TextEncoder().encode(privKeyPem) }]
+    )
+    if (onLog) {
+      onLog(`[OpenSSL: Derive Public Key]\n> openssl ec -in ${privKeyFile} -pubout\n${pubKeyResult.stdout}\n${pubKeyResult.stderr}`)
+    }
+
+    if (pubKeyResult.error) throw new Error(pubKeyResult.error)
+    pubKeyPem = pubKeyResult.stdout
+
+    // Cleanup
+    await openSSLService.deleteFile(privKeyFile)
   }
 
-  // Map KeyCurve to CryptoKey.type (which is essentially the same union)
-  // Casting or direct assignment works since the strings overlap
-  const keyType = curve as 'P-256' | 'P-384' | 'Ed25519'
+  // We store PEMs directly in the fields that used to be Base64URL.
+  // This is a format change, but internal to the DigitalID module if we update usage.
+  // Actually, to minimize breakage with existing UI code that might decode it,
+  // we could Base64 encode the PEM string.
+  // But standard usage in this module seems to be for signing/verifying which we are replacing.
+  // Let's store PEM string but Base64 encoded to keep the type check happy and "opaque"
 
   return {
     id,
-    type: keyType,
+    type: curve as 'P-256' | 'P-384' | 'Ed25519',
     algorithm: alg,
     curve: curve,
-    privateKey: toBase64Url(privKeyBytes),
-    publicKey: toBase64Url(pubKeyBytes),
+    privateKey: btoa(privKeyPem), // Storing PEM as Base64 to avoid issues
+    publicKey: btoa(pubKeyPem),
     created: timestamp,
     usage: 'SIGN',
     status: 'ACTIVE',
   }
 }
 
-export const signData = async (key: CryptoKey, data: string | Uint8Array): Promise<string> => {
+export const signData = async (
+  key: CryptoKey,
+  data: string | Uint8Array,
+  onLog?: (log: string) => void
+): Promise<string> => {
   if (!key.privateKey) {
     throw new Error('Private key missing for signing')
   }
 
-  const dataBytes = typeof data === 'string' ? utf8ToBytes(data) : data
-  const privBytes = fromBase64Url(key.privateKey)
-  const hash = sha256(dataBytes)
+  const privKeyPem = atob(key.privateKey)
+  const dataBytes = typeof data === 'string' ? new TextEncoder().encode(data) : data
 
-  let signature: Uint8Array
+  const keyFileName = `key_sign_${Math.random().toString(36).substring(7)}.pem`
+  const dataFileName = `data_sign_${Math.random().toString(36).substring(7)}.dat`
+  const outFileName = `sig_${Math.random().toString(36).substring(7)}.bin`
 
-  if (key.curve === 'P-256') {
-    // noble p256.sign v2 returns Uint8Array (compact r|s) synchronously
-    signature = p256.sign(hash, privBytes)
-  } else if (key.curve === 'P-384') {
-    signature = p384.sign(hash, privBytes)
-  } else if (key.curve === 'Ed25519') {
-    signature = ed25519.sign(dataBytes, privBytes) // Ed25519 signs message directly, usually.
-  } else {
-    throw new Error(`Unsupported curve: ${key.curve}`)
+  try {
+    // Write key and data to files
+    const result = await openSSLService.execute(
+      `openssl dgst -sha256 -sign ${keyFileName} -out ${outFileName} ${dataFileName}`,
+      [
+        { name: keyFileName, data: new TextEncoder().encode(privKeyPem) },
+        { name: dataFileName, data: dataBytes }
+      ]
+    )
+
+    if (onLog) {
+      onLog(`[OpenSSL: Sign Data]\n> openssl dgst -sha256 -sign key.pem -out sig.bin data.dat\n${result.stdout}\n${result.stderr}`)
+    }
+
+    if (result.error) throw new Error(result.error)
+
+    // Read the output signature file
+    const sigFile = result.files.find(f => f.name === outFileName)
+    if (!sigFile) throw new Error('Signature file was not generated')
+
+    return toBase64Url(sigFile.data)
+  } finally {
+    // Cleanup is good practice but OpenSSLService cleans up files on init/reset usually. 
+    // We'll manual delete to be nice.
+    await openSSLService.deleteFile(keyFileName)
+    await openSSLService.deleteFile(dataFileName)
+    // await openSSLService.deleteFile(outFileName) // handled by logic or left for GC
   }
-
-  return toBase64Url(signature)
 }
 
 export const verifySignature = async (
   key: CryptoKey,
   signature: string,
-  data: string | Uint8Array
+  data: string | Uint8Array,
+  onLog?: (log: string) => void
 ): Promise<boolean> => {
-  const sigBytes = fromBase64Url(signature)
-  const pubBytes = fromBase64Url(key.publicKey)
-  const dataBytes = typeof data === 'string' ? utf8ToBytes(data) : data
-  const hash = sha256(dataBytes)
+  const pubKeyPem = atob(key.publicKey)
+  const dataBytes = typeof data === 'string' ? new TextEncoder().encode(data) : data
 
-  if (key.curve === 'P-256') {
-    return p256.verify(sigBytes, hash, pubBytes)
-  } else if (key.curve === 'P-384') {
-    return p384.verify(sigBytes, hash, pubBytes)
-  } else if (key.curve === 'Ed25519') {
-    return ed25519.verify(sigBytes, dataBytes, pubBytes)
-  } else {
-    throw new Error(`Unsupported curve: ${key.curve}`)
+  // Convert Base64URL signature back to binary
+  const sigBytes = base64ToBytes(signature.replace(/-/g, '+').replace(/_/g, '/'))
+
+  const keyFileName = `key_verify_${Math.random().toString(36).substring(7)}.pem`
+  const dataFileName = `data_verify_${Math.random().toString(36).substring(7)}.dat`
+  const sigFileName = `sig_verify_${Math.random().toString(36).substring(7)}.bin`
+
+  try {
+    const result = await openSSLService.execute(
+      `openssl dgst -sha256 -verify ${keyFileName} -signature ${sigFileName} ${dataFileName}`,
+      [
+        { name: keyFileName, data: new TextEncoder().encode(pubKeyPem) },
+        { name: dataFileName, data: dataBytes },
+        { name: sigFileName, data: sigBytes }
+      ]
+    )
+
+    if (onLog) {
+      onLog(`[OpenSSL: Verify Signature]\n> openssl dgst -sha256 -verify key.pem -signature sig.bin data.dat\n${result.stdout}\n${result.stderr}`)
+    }
+
+    // OpenSSL dgst -verify prints "Verified OK" to stdout on success, or "Verification Failure"
+    return result.stdout.includes('Verified OK')
+  } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    if (onLog && e instanceof Error) {
+      onLog(`[OpenSSL: Verification Error] ${e.message}`)
+    }
+    return false
+  } finally {
+    await openSSLService.deleteFile(keyFileName)
+    await openSSLService.deleteFile(dataFileName)
+    await openSSLService.deleteFile(sigFileName)
   }
 }
 
-export const sha256Hash = (data: string | Uint8Array): string => {
-  const dataBytes = typeof data === 'string' ? utf8ToBytes(data) : data
-  return toBase64Url(sha256(dataBytes))
+export const sha256Hash = async (
+  data: string | Uint8Array,
+  onLog?: (log: string) => void
+): Promise<string> => {
+  const dataBytes = typeof data === 'string' ? new TextEncoder().encode(data) : data
+  const dataFileName = `data_hash_${Math.random().toString(36).substring(7)}.dat`
+
+  try {
+    // Using sha256 sum
+    // Output format: "SHA2-256(filename)= <hex>"
+    const result = await openSSLService.execute(
+      `openssl dgst -sha256 ${dataFileName}`,
+      [{ name: dataFileName, data: dataBytes }]
+    )
+
+    if (onLog) {
+      onLog(`[OpenSSL: SHA-256 Hash]\n> openssl dgst -sha256 data.dat\n${result.stdout}\n${result.stderr}`)
+    }
+
+    if (result.error) throw new Error(result.error)
+
+    const output = result.stdout.trim()
+    const parts = output.split('= ')
+    if (parts.length < 2) throw new Error('Unexpected OpenSSL output format')
+
+    const hex = parts[1].trim()
+    const bytes = hexToBytes(hex)
+    return toBase64Url(bytes)
+  } finally {
+    await openSSLService.deleteFile(dataFileName)
+  }
 }
+

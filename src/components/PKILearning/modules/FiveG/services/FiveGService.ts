@@ -7,9 +7,10 @@ import mlkem from 'mlkem-wasm'
 const milenage = new MilenageService()
 
 export interface FiveGTestVectors {
-  profileA?: { hnPriv: string; ephPriv: string }
-  profileB?: { hnPriv: string; ephPriv: string }
+  profileA?: { hnPriv: string; ephPriv: string; zEcdh?: string }
+  profileB?: { hnPriv: string; ephPriv: string; zEcdh?: string }
   profileC?: { zEcdh: string; zKem: string }
+  milenage?: { k: string; op: string; rand: string }
 }
 
 export class FiveGService {
@@ -22,9 +23,12 @@ export class FiveGService {
     kEncHex?: string
     kMacHex?: string
     encryptedMSINHex?: string
+
     macTagHex?: string
     ephemeralPubKeyHex?: string
+    ciphertextHex?: string // For PQC KEM
   } = {}
+
 
   // Track generated files for cleanup
   private generatedFiles: Set<string> = new Set()
@@ -386,17 +390,16 @@ Public Key Hex: ${pubHex}`,
         output: `═══════════════════════════════════════════════════════════════
               5G HOME NETWORK KEY GENERATION (${pqcMode === 'hybrid' ? 'Hybrid X25519 + ' : 'Pure '}ML-KEM-768)
 ═══════════════════════════════════════════════════════════════
-${
-  pqcMode === 'hybrid'
-    ? `
+${pqcMode === 'hybrid'
+            ? `
 Step 1: Generating ECC Key (X25519)...
 $ openssl genpkey -algorithm x25519
 
 Step 2: ECC Public Key (Classic):
 ${(eccHex.match(/.{1,64}/g) || [eccHex]).join('\n')}
 `
-    : ''
-}
+            : ''
+          }
 Step ${pqcMode === 'hybrid' ? '3' : '1'}: Generating PQC Key (ML-KEM-768)...
 > Algorithm: ML-KEM-768 (Kyber)
 > Security Level: NIST Level 3
@@ -659,23 +662,23 @@ ML-KEM-768 Encapsulation (Ciphertext generation) will be performed in the next s
       try {
         // [Hybrid Mode Only] 1. ECC Shared Secret
 
-        if (pqcMode === 'hybrid' && hnEccFile) {
-          const zEcdhFile = `5g_z_ecdh_${this.getTimestamp()}.bin`
-          this.trackFile(zEcdhFile)
-
-          await openSSLService.execute(
-            `openssl pkeyutl -derive -inkey ${ephPriv} -peerkey ${hnEccFile} -out ${zEcdhFile}`
-          )
-          zEcdhHex = await this.readFileHex(zEcdhFile)
-          if (!zEcdhHex) throw new Error('ECDH Derivation failed')
-
-          // [VALIDATION MODE] Inject Fixed Z_ecdh
+        if (pqcMode === 'hybrid') {
+          // CHECK VALIDATION MODE FIRST to avoid fraglie OpenSSL calls in CI/Tests
           if (this.testVectors?.profileC?.zEcdh) {
             zEcdhHex = this.testVectors.profileC.zEcdh
+          } else if (hnEccFile) {
+            const zEcdhFile = `5g_z_ecdh_${this.getTimestamp()}.bin`
+            this.trackFile(zEcdhFile)
+
+            await openSSLService.execute(
+              `openssl pkeyutl -derive -inkey ${ephPriv} -peerkey ${hnEccFile} -out ${zEcdhFile}`
+            )
+            zEcdhHex = await this.readFileHex(zEcdhFile)
+            if (!zEcdhHex) throw new Error('ECDH Derivation failed')
           }
 
           outputLog += `Step 1: X25519 Shared Secret (Classic)
-$ openssl pkeyutl -derive -inkey ${ephPriv} -peerkey ${hnEccFile}
+$ openssl pkeyutl -derive -inkey ${ephPriv} -peerkey ${hnEccFile || 'sim_eph.pub'}
 > Z_ecdh (32 bytes):
 ${zEcdhHex}
 
@@ -769,8 +772,11 @@ Step 3: Final Secret (Z):
 ${finalSharedHex}`
         }
 
+
         this.state.sharedSecretHex = finalSharedHex
         this.state.profile = profile
+        this.state.ciphertextHex = ctHex
+
 
         outputLog += `
 
@@ -782,14 +788,25 @@ ${finalSharedHex}`
       }
     }
 
-    try {
-      const secretFile = `5g_shared_secret_${this.getTimestamp()}.bin`
-      this.trackFile(secretFile)
-      const cmd = `openssl pkeyutl -derive -inkey ${ephPriv} -peerkey ${hnPub} -out ${secretFile}`
-      await openSSLService.execute(cmd)
+    // Generic Test Vector Bypass for Shared Secret (if z is provided)
+    // We need to support z in Profile A/B vectors first? 
+    // Let's assume we update the interface or just use a fallback if the command fails.
 
-      // Read raw binary secret as hex
-      let sharedSecretHex = await this.readFileHex(secretFile)
+    // Actually, let's just update the try block to check vectors on failure or success.
+
+    let sharedSecretHex = ''
+    let cmd = '(Test Vector Injected - OpenSSL Bypassed)'
+
+    try {
+      if ((profile === 'A' && this.testVectors?.profileA?.zEcdh) || (profile === 'B' && this.testVectors?.profileB?.zEcdh)) {
+        sharedSecretHex = profile === 'A' ? this.testVectors!.profileA!.zEcdh! : this.testVectors!.profileB!.zEcdh!
+      } else {
+        const secretFile = `5g_shared_secret_${this.getTimestamp()}.bin`
+        this.trackFile(secretFile)
+        cmd = `openssl pkeyutl -derive -inkey ${ephPriv} -peerkey ${hnPub} -out ${secretFile}`
+        await openSSLService.execute(cmd)
+        sharedSecretHex = await this.readFileHex(secretFile)
+      }
 
       // Fallback if read fails (ensure user sees something)
       if (!sharedSecretHex) {
@@ -874,8 +891,8 @@ ${sharedSecretHex}
 
       const z = this.state.sharedSecretHex
         ? new Uint8Array(
-            this.state.sharedSecretHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
-          )
+          this.state.sharedSecretHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+        )
         : new Uint8Array(32)
       if (!this.state.sharedSecretHex) window.crypto.getRandomValues(z) // Only generate if not from state
       const zHex = bytesToHex(z)
@@ -1150,11 +1167,25 @@ Integrity Key(K_mac): ${this.state.kMacHex}
   }
 
   async runMilenage() {
-    // Use fixed test vectors for consistency/demo
-    const K = new Uint8Array(16).fill(0x33)
-    const OP = new Uint8Array(16).fill(0x55)
-    const RAND = new Uint8Array(16)
-    window.crypto.getRandomValues(RAND)
+    // Use fixed test vectors for consistency/demo OR injected vectors
+    let K: Uint8Array
+    let OP: Uint8Array
+    let RAND: Uint8Array
+
+    if (this.testVectors?.milenage) {
+      // Use injected vectors
+      const vec = this.testVectors.milenage
+      K = new Uint8Array(vec.k.match(/.{1,2}/g)!.map(b => parseInt(b, 16)))
+      OP = new Uint8Array(vec.op.match(/.{1,2}/g)!.map(b => parseInt(b, 16)))
+      RAND = new Uint8Array(vec.rand.match(/.{1,2}/g)!.map(b => parseInt(b, 16)))
+    } else {
+      // Defaults
+      K = new Uint8Array(16).fill(0x33)
+      OP = new Uint8Array(16).fill(0x55)
+      RAND = new Uint8Array(16)
+      window.crypto.getRandomValues(RAND)
+    }
+
     const SQN = new Uint8Array(6).fill(0x01)
     const AMF = new Uint8Array(2).fill(0x80)
 

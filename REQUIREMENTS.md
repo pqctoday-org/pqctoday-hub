@@ -22,7 +22,7 @@ The application is divided into ten main modules. Detailed requirements for each
     - **[PKI Workshop](requirements/learn.md#module-1-pki-workshop-implemented)**: 4-step certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing)
     - **[Digital Assets Program](requirements/digital_assets.md)**: Blockchain cryptography for Bitcoin, Ethereum, Solana, and HD Wallet (BIP32/39/44)
     - **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment (Profiles A/B/C) and 5G-AKA authentication with MILENAGE
-    - **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: EUDI Wallet ecosystem with Remote HSM architecture, PID issuance, and QES
+    - **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: EUDI Wallet ecosystem with Remote HSM architecture. Features 7-step interactive flows for PID Issuance (OpenID4VCI) and Relying Party verification (OpenID4VP), plus QEAA Attestation and Remote QES.
     - **Introduction Module**: Overview and getting started guide
 8.  **[Compliance Module](requirements/Compliance_Module_Requirements.md)**: Real-time compliance tracking and standards monitoring.
     - NIST FIPS document tracking (203, 204, 205)
@@ -58,7 +58,7 @@ The application meets WCAG 2.1 Level AA accessibility standards. For comprehensi
 
 - **Framework**: React 19 (Vite 7)
 - **Styling**: Tailwind CSS 4 (using CSS Variables for theming)
-- **Cryptography**: OpenSSL WASM v3.5.4 with PQC support, @noble/curves, @noble/hashes, @scure ecosystem (bip32/bip39/base)
+- **Cryptography**: OpenSSL WASM v3.5.4 (exclusively used for Digital ID & OpenSSL Studio), @noble/curves, @noble/hashes, @scure ecosystem (bip32/bip39/base)
 - **State Management**: Zustand
 - **Deployment**: Static build (ready for Netlify/Vercel)
 - **Analytics**: Google Analytics 4 (GA4) with route tracking

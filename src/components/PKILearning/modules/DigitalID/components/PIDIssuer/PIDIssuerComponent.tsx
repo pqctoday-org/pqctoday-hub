@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Button } from '../../../../../ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../../../ui/card'
 import type { WalletInstance, CryptoKey, VerifiableCredential } from '../../types'
+import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { generateKeyPair, signData } from '../../utils/crypto-utils'
 import { createMdoc } from '../../utils/mdoc-utils'
 import { Loader2, CheckCircle, Smartphone, Lock, UserCheck, CreditCard } from 'lucide-react'
@@ -13,11 +14,6 @@ interface PIDIssuerComponentProps {
 }
 
 type IssuanceStep = 'DISCOVERY' | 'AUTH' | 'KEY_GEN' | 'ISSUANCE' | 'COMPLETE'
-
-// KeyIcon moved to top or imported
-// Actually, let's just use Lucide Key icon if available, or define it before usage.
-// Assuming CheckCircle, Smartphone, Lock, UserCheck, CreditCard are from lucide-react.
-// KeyIcon was custom. Let's move it up.
 
 const KeyIcon = (props: React.ComponentProps<'svg'>) => (
   <svg
@@ -43,10 +39,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
 }) => {
   const [step, setStep] = useState<IssuanceStep>('DISCOVERY')
   const [loading, setLoading] = useState(false)
-  const [logs, setLogs] = useState<string[]>([])
-
-  const addLog = (msg: string) =>
-    setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`])
+  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } = useDigitalIDLogs()
 
   const handleStart = async () => {
     setStep('AUTH')
@@ -70,7 +63,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
     addLog('Generating secure key pair in Wallet HSM...')
 
     // 1. Generate Key in "HSM"
-    const key = await generateKeyPair('ES256', 'P-256')
+    const key = await generateKeyPair('ES256', 'P-256', addOpenSSLLog)
     addLog(`Key Generated: ${key.id} (P-256/ES256)`)
 
     // 2. Proof of Possession
@@ -83,7 +76,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
       nonce: nonce,
       cnonce: 'generated-cnonce',
     })
-    const popSig = await signData(key, popPayload)
+    const popSig = await signData(key, popPayload, addOpenSSLLog)
     addLog(`PoP Signed: ${popSig.substring(0, 20)}...`)
 
     setLoading(false)
@@ -107,11 +100,11 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
     ]
 
     // Mock Issuer Key
-    const issuerKey = await generateKeyPair('ES256', 'P-256')
+    const issuerKey = await generateKeyPair('ES256', 'P-256', addOpenSSLLog)
 
     // Create mDoc
     addLog('Issuer generating mdoc...')
-    const mDoc = await createMdoc(attributes, issuerKey, key)
+    const mDoc = await createMdoc(attributes, issuerKey, key, undefined, addOpenSSLLog)
 
     const credential: VerifiableCredential = {
       id: `pid-${Date.now()}`,
@@ -140,7 +133,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
   }
 
   return (
-    <Card className="max-w-4xl mx-auto border-blue-200 shadow-xl">
+    <Card className="max-w-7xl mx-auto border-blue-200 shadow-xl">
       <CardHeader className="bg-blue-50/50">
         <CardTitle className="text-blue-700 flex items-center gap-2">
           <UserCheck className="w-6 h-6" />
@@ -151,9 +144,9 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* status visualization */}
-          <div className="space-y-6">
+          <div className="space-y-6 lg:col-span-2">
             <div className="flex flex-col gap-4">
               <StepIndicator current={step} step="DISCOVERY" label="Discovery" icon={Smartphone} />
               <StepIndicator current={step} step="AUTH" label="Authorization" icon={Lock} />
@@ -187,14 +180,55 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
           </div>
 
           {/* Logs */}
-          <div className="bg-slate-950 text-slate-50 p-4 rounded-lg font-mono text-xs h-[400px] overflow-y-auto">
-            <div className="mb-2 text-slate-400 border-b border-slate-800 pb-2">Protocol Log</div>
-            {logs.map((log: string, i: number) => (
-              <div key={i} className="mb-1">
-                {log}
-              </div>
-            ))}
-            {logs.length === 0 && <span className="opacity-50">Waiting to start...</span>}
+          <div className="flex flex-col h-[400px] border rounded-lg bg-slate-950 overflow-hidden lg:col-span-3">
+            {/* Tabs */}
+            <div className="flex items-center border-b border-slate-800 bg-slate-900">
+              <button
+                onClick={() => setActiveLogTab('protocol')}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'protocol'
+                  ? 'text-blue-400 bg-slate-800 border-b-2 border-blue-500'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  }`}
+              >
+                PROTOCOL LOG
+              </button>
+              <button
+                onClick={() => setActiveLogTab('openssl')}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'openssl'
+                  ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  }`}
+              >
+                OPENSSL LOG
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-4 font-mono text-xs text-slate-50">
+              {activeLogTab === 'protocol' ? (
+                <>
+                  {logs.map((log: string, i: number) => (
+                    <div key={i} className="mb-1">
+                      {log}
+                    </div>
+                  ))}
+                  {logs.length === 0 && <span className="opacity-50">Waiting to start...</span>}
+                </>
+              ) : (
+                <>
+                  {opensslLogs.map((log: string, i: number) => (
+                    <div key={i} className="mb-2 whitespace-pre-wrap break-all text-green-200/90">
+                      {log}
+                    </div>
+                  ))}
+                  {opensslLogs.length === 0 && (
+                    <span className="opacity-50">
+                      No cryptographic operations logged yet. Run the flow to see OpenSSL commands.
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>

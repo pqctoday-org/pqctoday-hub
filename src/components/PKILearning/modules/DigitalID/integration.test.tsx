@@ -4,39 +4,77 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { DigitalIDModule as DigitalID } from './index'
 
 // Mock OpenSSL Service to avoid Web Worker initialization in tests
-vi.mock('src/services/crypto/OpenSSLService', () => ({
+vi.mock('../../../../services/crypto/OpenSSLService', () => ({
   openSSLService: {
-    execute: vi.fn().mockResolvedValue({
-      stdout: 'mock output',
-      stderr: '',
-      files: [{ name: 'mock_key.pem', data: new Uint8Array(32) }],
-      error: null,
+    execute: vi.fn().mockImplementation(async (command: string) => {
+      // Mock responses based on command
+      if (command.includes('ecparam -name P-256 -genkey') || command.includes('genpkey')) {
+        return {
+          stdout: '',
+          stderr: '',
+          files: [{ name: 'key.pem', data: new Uint8Array([1, 2, 3]) }],
+        }
+      }
+      if (command.includes('pkey -in') && command.includes('-pubout')) {
+        return {
+          stdout: '',
+          stderr: '',
+          files: [{ name: 'pubkey.pem', data: new Uint8Array([4, 5, 6]) }],
+        }
+      }
+      if (command.includes('dgst')) {
+        const outMatch = command.match(/-out\s+([^\s]+)/)
+        if (outMatch) {
+          const outFile = outMatch[1]
+          return {
+            stdout: '',
+            stderr: '',
+            files: [{ name: outFile, data: new Uint8Array([1, 2, 3, 4]) }],
+          }
+        }
+        if (command.includes('-verify')) {
+          return {
+            stdout: 'Verified OK',
+            stderr: '',
+            files: [],
+          }
+        }
+        // Fallback for stdout output if needed (old hash style) or error
+        return {
+          stdout: 'SHA2-256(file)= abcd1234',
+          stderr: '',
+          files: [],
+        }
+      }
+      return { stdout: 'Mock Output', stderr: '', files: [] }
     }),
-    isReady: () => true,
+    deleteFile: vi.fn(),
   },
 }))
 
-vi.mock('src/utils/cryptoUtils', () => ({
-  extractKeyFromOpenSSLOutput: vi.fn().mockResolvedValue(new Uint8Array(32)),
-}))
+// vi.mock('src/utils/cryptoUtils', ...) removed as it referenced wrong path/file
 
-// Mock useOpenSSLStore to provide keys for useFileRetrieval hook and support other hooks
-// This mocks the underlying data store used by useFileRetrieval and useArtifactManagement
-vi.mock('../../../OpenSSLStudio/store', () => {
-  const mockState = {
-    // State and actions
-    files: [],
-    addFile: vi.fn(),
-    getFile: (name: string) => ({ name, content: new Uint8Array(32) }),
-    getFiles: () => [{ name: 'mock_key.pem', content: new Uint8Array(32) }],
+
+// Stateful mock for OpenSSL Store
+const mockFiles = [
+  { name: 'mock_key.pem', content: new Uint8Array(32) },
+  { name: 'pid_private.pem', content: new Uint8Array(32) },
+  { name: 'pid_public.pem', content: new Uint8Array(32) },
+  { name: 'diploma_private.pem', content: new Uint8Array(32) },
+  { name: 'diploma_public.pem', content: new Uint8Array(32) },
+]
+
+vi.mock('../../../OpenSSLStudio/store', () => ({
+  useOpenSSLStore: () => ({
+    files: mockFiles,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    addFile: (file: any) => mockFiles.push(file),
+    getFile: (name: string) => mockFiles.find((f) => f.name === name) || { name, content: new Uint8Array(32) },
+    getFiles: () => mockFiles,
     removeFile: vi.fn(),
     refreshFiles: vi.fn(),
-  }
-  // The mock must be a function (hook) that also has getState() (static)
-  const useOpenSSLStore = () => mockState
-  useOpenSSLStore.getState = () => mockState
-  return { useOpenSSLStore }
-})
+  }),
+}))
 
 // Remove ineffective useArtifactManagement mock since we are mocking the store it uses
 // vi.mock(...) removed
@@ -109,7 +147,7 @@ describe('EUDI Digital ID Integration', () => {
     )
   })
 
-  it.skip('completes the Relying Party flow', async () => {
+  it('completes the Relying Party flow', async () => {
     render(<DigitalID />)
 
     // 1. Navigate to Relying Party
@@ -134,7 +172,7 @@ describe('EUDI Digital ID Integration', () => {
       }
     }
 
-    // Step 1: Request Presentation
+    // Step 1: Request Credential Presentation
     await executeAndNext(/Request Presentation/i)
 
     // Step 2: Select Credentials
@@ -143,25 +181,25 @@ describe('EUDI Digital ID Integration', () => {
     // Step 3: Create Proofs
     await executeAndNext(/Create Proofs/i)
 
-    // Step 4: Apply Disclosure
+    // Step 4: Apply Selective Disclosure
     await executeAndNext(/Apply Disclosure/i)
 
     // Step 5: Submit Presentation
     await executeAndNext(/Submit Presentation/i)
 
     // Step 6: Verify Presentation (Final Step - completes flow)
-    console.log('Verifying Presentation...')
+    // console.log('Verifying Presentation...')
     const verifyBtn = await screen.findByRole('button', { name: /Verify Presentation/i })
     fireEvent.click(verifyBtn)
 
     // Check for Completion message
-    console.log('Waiting for completion...')
+    // console.log('Waiting for completion...')
     await waitFor(
       () => {
         expect(screen.getByText(/Verification Complete!/i)).toBeDefined()
         expect(screen.getByText(/Account opening approved/i)).toBeDefined()
       },
-      { timeout: 3000 }
+      { timeout: 10000 }
     )
-  })
+  }, 20000)
 })

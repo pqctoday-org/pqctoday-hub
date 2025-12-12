@@ -2,7 +2,6 @@
 // Following cryptoimplementation.md requirements
 
 /* eslint-disable security/detect-unsafe-regex */
-import { sha256, sha384, sha512 } from '@noble/hashes/sha2.js'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import { openSSLService } from '../../../../../services/crypto/OpenSSLService'
 
@@ -86,22 +85,81 @@ export const formatPublicKeyAsJWK = async (
  * Create SHA-256 hash for signing
  * Using @noble/hashes per cryptoimplementation.md
  */
-export const createSHA256Hash = (data: Uint8Array): Uint8Array => {
-  return sha256(data)
+/**
+ * Create SHA-256 hash for signing
+ * Using OpenSSL Service
+ */
+export const createSHA256Hash = async (data: Uint8Array): Promise<Uint8Array> => {
+  const filename = `hash_${Math.random().toString(36).substring(7)}.bin`
+  try {
+    const result = await openSSLService.execute(
+      `openssl dgst -sha256 -binary ${filename}`,
+      [{ name: filename, data }]
+    )
+    // OpenSSL dgst -binary sends output to stdout? No.
+    // openssl dgst -sha256 -binary file
+    // Output: binary bytes to stdout.
+    // OpenSSLService logs stdout as string. This is BAD for binary.
+    // We must use -out to a file.
+
+    // Command: openssl dgst -sha256 -binary -out output.bin input.bin
+    const outFile = `hash_out_${Math.random().toString(36).substring(7)}.bin`
+    const res = await openSSLService.execute(
+      `openssl dgst -sha256 -binary -out ${outFile} ${filename}`,
+      [{ name: filename, data }]
+    )
+
+    if (res.error) throw new Error(res.error)
+
+    const outData = res.files.find(f => f.name === outFile)?.data
+    if (!outData) throw new Error('Hash output not found')
+
+    // Cleanup handled by OpenSSLService generally? We should attempt to delete.
+    // But returning first is priority.
+    return outData
+  } finally {
+    await openSSLService.deleteFile(filename)
+  }
 }
 
 /**
  * Create SHA-384 hash
  */
-export const createSHA384Hash = (data: Uint8Array): Uint8Array => {
-  return sha384(data)
+export const createSHA384Hash = async (data: Uint8Array): Promise<Uint8Array> => {
+  const filename = `hash_${Math.random().toString(36).substring(7)}.bin`
+  const outFile = `hash_out_${Math.random().toString(36).substring(7)}.bin`
+  try {
+    const res = await openSSLService.execute(
+      `openssl dgst -sha384 -binary -out ${outFile} ${filename}`,
+      [{ name: filename, data }]
+    )
+    if (res.error) throw new Error(res.error)
+    const outData = res.files.find(f => f.name === outFile)?.data
+    if (!outData) throw new Error('Hash output not found')
+    return outData
+  } finally {
+    await openSSLService.deleteFile(filename)
+  }
 }
 
 /**
  * Create SHA-512 hash
  */
-export const createSHA512Hash = (data: Uint8Array): Uint8Array => {
-  return sha512(data)
+export const createSHA512Hash = async (data: Uint8Array): Promise<Uint8Array> => {
+  const filename = `hash_${Math.random().toString(36).substring(7)}.bin`
+  const outFile = `hash_out_${Math.random().toString(36).substring(7)}.bin`
+  try {
+    const res = await openSSLService.execute(
+      `openssl dgst -sha512 -binary -out ${outFile} ${filename}`,
+      [{ name: filename, data }]
+    )
+    if (res.error) throw new Error(res.error)
+    const outData = res.files.find(f => f.name === outFile)?.data
+    if (!outData) throw new Error('Hash output not found')
+    return outData
+  } finally {
+    await openSSLService.deleteFile(filename)
+  }
 }
 
 /**

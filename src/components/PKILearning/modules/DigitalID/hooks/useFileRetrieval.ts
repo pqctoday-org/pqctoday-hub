@@ -70,10 +70,18 @@ export function useFileRetrieval() {
     return useOpenSSLStore.getState().getFile(filename) !== undefined
   }
 
+  /**
+   * Get all files from the store
+   */
+  const getAllFiles = () => {
+    return useOpenSSLStore.getState().files
+  }
+
   return {
     getFile,
     getFiles,
     prepareFilesForExecution,
     fileExists,
+    getAllFiles,
   }
 }

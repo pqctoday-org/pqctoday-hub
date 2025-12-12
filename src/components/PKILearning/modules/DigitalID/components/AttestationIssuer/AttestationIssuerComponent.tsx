@@ -7,8 +7,9 @@ import type {
   VerifiableCredential,
   CredentialAttribute,
 } from '../../types'
-import { generateKeyPair } from '../../utils/crypto-utils'
+import { generateKeyPair, signData } from '../../utils/crypto-utils'
 import { createSDJWT } from '../../utils/sdjwt-utils'
+import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { Loader2, CheckCircle, GraduationCap, ShieldCheck, AlertTriangle } from 'lucide-react'
 
 interface AttestationIssuerComponentProps {
@@ -26,10 +27,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
 }) => {
   const [step, setStep] = useState<FlowStep>('START')
   const [loading, setLoading] = useState(false)
-  const [logs, setLogs] = useState<string[]>([])
-
-  const addLog = (msg: string) =>
-    setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`])
+  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } = useDigitalIDLogs()
 
   // Check for PID availability
   const pidCredential = wallet.credentials.find((c) => c.type.includes('PersonIdentificationData'))
@@ -64,10 +62,25 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
     // In simulation, we just proceed. In real UI, user would confirm checkboxes.
 
     addLog('Generating VP with Key Binding...')
-    // Note: For mDoc PID, this would be DeviceSigned mDoc. For SD-JWT PID, it's VP.
-    // We simplified PID to mdoc format, so purely simulation log here if we used mdoc utils for PID.
-    // But let's assume standard flow just for the logs.
-    await new Promise((r) => setTimeout(r, 800))
+
+    // Create authentic presentation log by performing the crypto
+    // We need the pidCredential to "present" but for this Attestation flow step, 
+    // we are simulating the "Identity Verification" so we act as if we are presenting the PID.
+    // However, the helper 'createPresentation' is for SD-JWT. PID is mDoc.
+    // So for this specific "PID Presentation" step, we might need to mock the log 
+    // OR allow the AttestationIssuer to actually verify an SD-JWT if we had one.
+    // BUT the PID is mDoc. 
+    // If we want logs, we should sign a mock payload with the PID key to show a signature happened.
+
+    // 1. Create a dummy challenge
+    const nonce = crypto.randomUUID()
+
+    // 2. Sign it with PID key (which we found as pidKey)
+    const challengePayload = JSON.stringify({ nonce, aud: 'university' })
+    await signData(pidKey, challengePayload, addOpenSSLLog) // This generates the log!
+
+    addLog('Device binding signature verified.')
+    await new Promise((r) => setTimeout(r, 500))
 
     addLog('VP Sent to University Verifier.')
     setLoading(false)
@@ -79,11 +92,11 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
     addLog('Issuing Bachelor of Science Diploma...')
 
     // 1. Generate Holder Key for Diploma Binding
-    const holderKey = await generateKeyPair('ES256', 'P-256')
+    const holderKey = await generateKeyPair('ES256', 'P-256', addOpenSSLLog)
     addLog(`Generated Holder Key for Binding: ${holderKey.id}`)
 
     // 2. University (Issuer) generates SD-JWT
-    const issuerKey = await generateKeyPair('ES256', 'P-256') // Mock issuer key
+    const issuerKey = await generateKeyPair('ES256', 'P-256', addOpenSSLLog) // Mock issuer key
 
     const claims: CredentialAttribute[] = [
       { name: 'given_name', value: 'Maria Elena', type: 'sd' },
@@ -98,7 +111,8 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
       issuerKey,
       holderKey,
       'https://university.edu',
-      'eu.europa.ec.eudi.diploma.1'
+      'eu.europa.ec.eudi.diploma.1',
+      addOpenSSLLog
     )
 
     const credential: VerifiableCredential = {
@@ -118,7 +132,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
   }
 
   return (
-    <Card className="max-w-4xl mx-auto border-purple-200 shadow-xl">
+    <Card className="max-w-7xl mx-auto border-purple-200 shadow-xl">
       <CardHeader className="bg-purple-50/50">
         <CardTitle className="text-purple-700 flex items-center gap-2">
           <GraduationCap className="w-6 h-6" />
@@ -129,8 +143,8 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          <div className="space-y-6 lg:col-span-2">
             {/* Steps */}
             <div className="space-y-4">
               <div
@@ -224,15 +238,55 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
             )}
           </div>
           {/* Logs */}
-          <div className="bg-slate-950 text-slate-50 p-4 rounded-lg font-mono text-xs h-[400px] overflow-y-auto">
-            <div className="mb-2 text-slate-400 border-b border-slate-800 pb-2">
-              Transaction Log
+          <div className="flex flex-col h-[400px] border rounded-lg bg-slate-950 overflow-hidden lg:col-span-3">
+            {/* Tabs */}
+            <div className="flex items-center border-b border-slate-800 bg-slate-900">
+              <button
+                onClick={() => setActiveLogTab('protocol')}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'protocol'
+                  ? 'text-purple-400 bg-slate-800 border-b-2 border-purple-500'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  }`}
+              >
+                PROTOCOL LOG
+              </button>
+              <button
+                onClick={() => setActiveLogTab('openssl')}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'openssl'
+                  ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  }`}
+              >
+                OPENSSL LOG
+              </button>
             </div>
-            {logs.map((log: string, i: number) => (
-              <div key={i} className="mb-1">
-                {log}
-              </div>
-            ))}
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-4 font-mono text-xs text-slate-50">
+              {activeLogTab === 'protocol' ? (
+                <>
+                  {logs.map((log: string, i: number) => (
+                    <div key={i} className="mb-1">
+                      {log}
+                    </div>
+                  ))}
+                  {logs.length === 0 && <span className="opacity-50">Waiting to start...</span>}
+                </>
+              ) : (
+                <>
+                  {opensslLogs.map((log: string, i: number) => (
+                    <div key={i} className="mb-2 whitespace-pre-wrap break-all text-green-200/90">
+                      {log}
+                    </div>
+                  ))}
+                  {opensslLogs.length === 0 && (
+                    <span className="opacity-50">
+                      No cryptographic operations logged yet. Run the flow to see OpenSSL commands.
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>

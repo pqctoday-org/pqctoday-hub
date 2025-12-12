@@ -64,13 +64,13 @@ class OpenSSLService {
         // Initialize the worker
         this.worker.postMessage({ type: 'LOAD', url: '/wasm/openssl.js' })
 
-        // Store the resolve function to be called by handleMessage
-        ;(
-          this as unknown as { _resolveInit: (value: void | PromiseLike<void>) => void }
-        )._resolveInit = () => {
-          clearTimeout(timeoutId)
-          resolve()
-        }
+          // Store the resolve function to be called by handleMessage
+          ; (
+            this as unknown as { _resolveInit: (value: void | PromiseLike<void>) => void }
+          )._resolveInit = () => {
+            clearTimeout(timeoutId)
+            resolve()
+          }
       } catch (_error) {
         clearTimeout(timeoutId)
         this.resetState()
@@ -101,8 +101,8 @@ class OpenSSLService {
     if (type === 'READY') {
       this.isReady = true
       if ((this as unknown as { _resolveInit: () => void })._resolveInit) {
-        ;(this as unknown as { _resolveInit: () => void })._resolveInit()
-        ;(this as unknown as { _resolveInit: undefined })._resolveInit = undefined
+        ; (this as unknown as { _resolveInit: () => void })._resolveInit()
+          ; (this as unknown as { _resolveInit: undefined })._resolveInit = undefined
       }
       return
     }
@@ -152,6 +152,7 @@ class OpenSSLService {
     try {
       await this.init()
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('OpenSSL Init Error:', error)
       throw new Error(
         `OpenSSL Service not available: ${error instanceof Error ? error.message : String(error)}`
@@ -178,20 +179,30 @@ class OpenSSLService {
     return new Promise((resolve, reject) => {
       const timeoutId = setTimeout(() => {
         this.pendingRequests.delete(requestId)
-        reject(new Error(`Command timed out after ${this.EXEC_TIMEOUT}ms`))
+        reject(new Error(`OpenSSL command timed out after ${this.EXEC_TIMEOUT}ms: ${command}`))
       }, this.EXEC_TIMEOUT)
 
       this.pendingRequests.set(requestId, {
-        resolve: (val) => {
+        resolve: (result) => {
           clearTimeout(timeoutId)
-          resolve(val)
+          // Log successful crypto operations
+          // eslint-disable-next-line no-console
+          console.log(`[OpenSSL] ✓ ${cmd} ${args.slice(0, 3).join(' ')}${args.length > 3 ? '...' : ''}`)
+          resolve(result)
         },
-        reject: (err) => {
+        reject: (error) => {
           clearTimeout(timeoutId)
-          reject(err)
+          const errorMsg = error instanceof Error ? error.message : String(error)
+          // eslint-disable-next-line no-console
+          console.error(`[OpenSSL] ✗ ${cmd} - ${errorMsg}`)
+          reject(error)
         },
-        result: { stdout: '', stderr: '', files: [] },
+        result: { stdout: '', stderr: '', error: '', files: [] },
       })
+
+      // Log the command being executed
+      // eslint-disable-next-line no-console
+      console.log(`[OpenSSL] → ${cmd} ${args.slice(0, 3).join(' ')}${args.length > 3 ? '...' : ''}`)
 
       this.worker!.postMessage({
         type: 'COMMAND',

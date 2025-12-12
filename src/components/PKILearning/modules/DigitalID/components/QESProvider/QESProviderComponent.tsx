@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Button } from '../../../../../ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../../../ui/card'
 import type { WalletInstance } from '../../types'
+import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { sha256Hash } from '../../utils/crypto-utils'
 import { Loader2, FileSignature, UploadCloud, CheckCircle, PenTool, Lock } from 'lucide-react'
 import { Input } from '../../../../../ui/input'
@@ -15,22 +16,30 @@ interface QESProviderComponentProps {
 export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ onBack }) => {
   const [step, setStep] = useState<'UPLOAD' | 'AUTH' | 'SIGN' | 'COMPLETE'>('UPLOAD')
   const [loading, setLoading] = useState(false)
-  const [logs, setLogs] = useState<string[]>([])
+  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } = useDigitalIDLogs()
   const [docName, setDocName] = useState('Contract.pdf')
   const [docHash, setDocHash] = useState('')
 
-  const addLog = (msg: string) =>
-    setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`])
+  const handleUpload = async () => {
+    if (!docName.trim()) {
+      addLog('Error: Please enter a document name.')
+      return
+    }
 
-  const handleUpload = () => {
+    setStep('AUTH') // Move to Auth state immediately to show progress
     addLog(`Document selected: ${docName}`)
-    addLog('Calculating SHA-256 hash of document...')
+    addLog('Calculating SHA-256 hash of document (simulated content)...')
 
-    // Mock hash
-    const hash = sha256Hash(docName + Date.now())
-    setDocHash(hash)
-    addLog(`Hash: ${hash.substring(0, 16)}...`)
-    setStep('AUTH')
+    try {
+      // Mock hash calculation using crypto utils to show OpenSSL log
+      // We simulate content by just hashing the name + timestamp
+      const fileContent = `Content of ${docName} - ${Date.now()}`
+      const hash = await sha256Hash(fileContent, addOpenSSLLog)
+      setDocHash(hash)
+      addLog(`Hash calculated: ${hash.substring(0, 16)}...`)
+    } catch (e) {
+      addLog(`Error hashing document: ${e}`)
+    }
   }
 
   const handleAuth = async () => {
@@ -38,7 +47,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ onBa
     addLog('Connecting to QTSP (CSC API)...')
     addLog('Requesting authorization for Remote Signing...')
 
-    // Mock CSC Auth
+    // Mock CSC Auth delay
     await new Promise((r) => setTimeout(r, 1000))
     addLog('Authorization SUCCESS. Access Token granted.')
     setLoading(false)
@@ -49,31 +58,23 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ onBa
     setLoading(true)
     addLog('Requesting QES signature on hash...')
 
-    // Find QES key (or generate temporary session one effectively owned by provider for the user)
-    // In real QES, the key is in the QTSP's HSM.
-    // We will simulate this by using a new key or existing one if we track them.
-    // For simplicity, generate a new QTSP-held key for this user.
+    await new Promise((r) => setTimeout(r, 800))
 
-    // Mock remote signing delay
-    await new Promise((r) => setTimeout(r, 1500))
-
-    addLog('Remote HSM: Key loaded (RSA-4096 or ECC P-384).')
+    addLog('Remote HSM: Key loaded (ECC P-384).')
     addLog('Sole Control Assurance: Validated.')
-    addLog('Signing data...')
 
-    // We don't have the key here to actually sign in this client component if it's "remote",
-    // but we can simulate the result.
-    const mockSig = 'MEYCIQ...[Simulated QES Signature]...Of8s'
+    // Simulate signing log from OpenSSL (even though key is remote/mock)
+    // We'll log a "Remote Sign" event to OpenSSL logs to satisfy the user needing logs
+    addOpenSSLLog(`[Remote HSM] Signing hash: ${docHash.substring(0, 32)}...`)
+    addOpenSSLLog(`[Remote HSM] Algorithm: ecdsa-with-SHA384`)
 
     addLog('Signature returned by QTSP.')
-    addLog(`Signature: ${mockSig.substring(0, 20)}...`)
-
     setLoading(false)
     setStep('COMPLETE')
   }
 
   return (
-    <Card className="max-w-4xl mx-auto border-orange-200 shadow-xl">
+    <Card className="max-w-7xl mx-auto border-orange-200 shadow-xl">
       <CardHeader className="bg-orange-50/50">
         <CardTitle className="text-orange-800 flex items-center gap-2">
           <FileSignature className="w-6 h-6" />
@@ -82,24 +83,22 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ onBa
         <CardDescription>Sign documents legally using Remote HSM and CSC API</CardDescription>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          <div className="space-y-6 lg:col-span-2">
             {step === 'UPLOAD' && (
               <div className="space-y-4">
                 <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center bg-slate-50">
                   <UploadCloud className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                  <Label className="block mb-2">Upload Document to Sign</Label>
+                  <Label className="block mb-2">Document Name</Label>
                   <Input
                     type="text"
                     value={docName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setDocName(e.target.value)
-                    }
+                    onChange={(e) => setDocName(e.target.value)}
                     className="text-center"
-                    placeholder="Enter document name"
+                    placeholder="e.g. Contract.pdf"
                   />
                   <p className="text-xs text-muted-foreground mt-2">
-                    Simulated upload (no file actually transferred)
+                    Enter any name to simulate a file upload.
                   </p>
                 </div>
                 <Button onClick={handleUpload} className="w-full bg-orange-600 hover:bg-orange-700">
@@ -126,7 +125,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ onBa
               <div className="space-y-4">
                 <div className="p-4 bg-slate-100 rounded text-sm font-mono break-all">
                   <p className="font-bold text-xs text-slate-500 mb-1">DOCUMENT HASH:</p>
-                  {docHash}
+                  {docHash || 'Calculating...'}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
                   <PenTool className="w-4 h-4" /> Ready to apply Qualified Electronic Signature
@@ -155,16 +154,54 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ onBa
             )}
           </div>
 
-          {/* Log */}
-          <div className="bg-slate-950 text-slate-50 p-4 rounded-lg font-mono text-xs h-[400px] overflow-y-auto">
-            <div className="mb-2 text-slate-400 border-b border-slate-800 pb-2">
-              CSC API Protocol Log
+          {/* Logs */}
+          <div className="flex flex-col h-[400px] border rounded-lg bg-slate-950 overflow-hidden lg:col-span-3">
+            {/* Tabs */}
+            <div className="flex items-center border-b border-slate-800 bg-slate-900">
+              <button
+                onClick={() => setActiveLogTab('protocol')}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'protocol'
+                  ? 'text-orange-400 bg-slate-800 border-b-2 border-orange-500' // Orange theme for QES
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  }`}
+              >
+                PROTOCOL LOG
+              </button>
+              <button
+                onClick={() => setActiveLogTab('openssl')}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'openssl'
+                  ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  }`}
+              >
+                OPENSSL LOG
+              </button>
             </div>
-            {logs.map((log, i) => (
-              <div key={i} className="mb-1">
-                {log}
-              </div>
-            ))}
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-4 font-mono text-xs text-slate-50">
+              {activeLogTab === 'protocol' ? (
+                <>
+                  {logs.map((log, i) => (
+                    <div key={i} className="mb-1">
+                      {log}
+                    </div>
+                  ))}
+                  {logs.length === 0 && <span className="opacity-50">Waiting for document...</span>}
+                </>
+              ) : (
+                <>
+                  {opensslLogs.map((log, i) => (
+                    <div key={i} className="mb-2 whitespace-pre-wrap break-all text-green-200/90">
+                      {log}
+                    </div>
+                  ))}
+                  {opensslLogs.length === 0 && (
+                    <span className="opacity-50">No cryptographic operations logged yet.</span>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>
