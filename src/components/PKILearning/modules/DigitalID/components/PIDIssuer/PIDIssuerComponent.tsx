@@ -39,7 +39,8 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
 }) => {
   const [step, setStep] = useState<IssuanceStep>('DISCOVERY')
   const [loading, setLoading] = useState(false)
-  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } = useDigitalIDLogs()
+  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
+    useDigitalIDLogs()
 
   const handleStart = async () => {
     setStep('AUTH')
@@ -185,19 +186,21 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
             <div className="flex items-center border-b border-slate-800 bg-slate-900">
               <button
                 onClick={() => setActiveLogTab('protocol')}
-                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'protocol'
-                  ? 'text-blue-400 bg-slate-800 border-b-2 border-blue-500'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                  }`}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
+                  activeLogTab === 'protocol'
+                    ? 'text-blue-400 bg-slate-800 border-b-2 border-blue-500'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                }`}
               >
                 PROTOCOL LOG
               </button>
               <button
                 onClick={() => setActiveLogTab('openssl')}
-                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'openssl'
-                  ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                  }`}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
+                  activeLogTab === 'openssl'
+                    ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                }`}
               >
                 OPENSSL LOG
               </button>

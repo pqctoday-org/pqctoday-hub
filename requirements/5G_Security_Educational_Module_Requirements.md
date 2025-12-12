@@ -156,18 +156,16 @@ SUCI Structure (per TS 23.003):
 
 **Reference:** Proposed for 3GPP Release 19/20, based on NIST FIPS 203
 
-
-| Parameter           | Value                                   | Standard Reference |
-| ------------------- | --------------------------------------- | ------------------ |
-| **KEM Algorithm**   | ML-KEM-768 (Kyber-768)                  | FIPS 203           |
-| **Hybrid Scheme**   | X25519 + ML-KEM-768                     | Custom / Release 19|
-| **KDF**             | SHA3-256 or SHAKE256                    | FIPS 202           |
-| **Encryption**      | AES-256-CTR                             | NIST SP 800-38A    |
-| **MAC**             | HMAC-SHA3-256                           | FIPS 202           |
-| **Public Key Size** | 1,184 bytes (Pure)                      | FIPS 203           |
-| **Ciphertext Size** | 1,088 bytes (Pure)                      | FIPS 203           |
-| **Shared Secret**   | 256 bits (SHA-256(Z_ecdh \|\| Z_kem))   | -                  |
-
+| Parameter           | Value                                 | Standard Reference  |
+| ------------------- | ------------------------------------- | ------------------- |
+| **KEM Algorithm**   | ML-KEM-768 (Kyber-768)                | FIPS 203            |
+| **Hybrid Scheme**   | X25519 + ML-KEM-768                   | Custom / Release 19 |
+| **KDF**             | SHA3-256 or SHAKE256                  | FIPS 202            |
+| **Encryption**      | AES-256-CTR                           | NIST SP 800-38A     |
+| **MAC**             | HMAC-SHA3-256                         | FIPS 202            |
+| **Public Key Size** | 1,184 bytes (Pure)                    | FIPS 203            |
+| **Ciphertext Size** | 1,088 bytes (Pure)                    | FIPS 203            |
+| **Shared Secret**   | 256 bits (SHA-256(Z_ecdh \|\| Z_kem)) | -                   |
 
 ---
 
@@ -1276,22 +1274,24 @@ Expected SUCI Protection Scheme Output:
 
 ---
 
-
 ## Part 10: Technical Implementation & Validation Service
 
 ### 10.1 Core Cryptographic Identity
+
 The module ensures educational accuracy by using **real cryptographic libraries**, not simulations.
 
-| Component | Implementation | Version | Purpose |
-| :--- | :--- | :--- | :--- |
-| **Network Side** | **OpenSSL WASM** | **3.5.4** | Validation Authority (SIDF/HSM) |
-| **USIM Side** | **Web Crypto API** | Native | Profile A/B Operations |
-| **PQC USIM** | **mlkem-wasm** | Latest | Profile C (Kyber) Operations |
+| Component        | Implementation     | Version   | Purpose                         |
+| :--------------- | :----------------- | :-------- | :------------------------------ |
+| **Network Side** | **OpenSSL WASM**   | **3.5.4** | Validation Authority (SIDF/HSM) |
+| **USIM Side**    | **Web Crypto API** | Native    | Profile A/B Operations          |
+| **PQC USIM**     | **mlkem-wasm**     | Latest    | Profile C (Kyber) Operations    |
 
 ### 10.2 Automated Audit & Verification
+
 To guarantee that the USIM logic (JavaScript/Wasm) produces standard-compliant outputs, an automated audit suite runs validation against the OpenSSL 3.5.4 binary.
 
 **Audit Validations (`audit_suci.test.ts`):**
+
 1. **Profile A (Curve25519)**: Verifies USIM ECDH shared secret matches OpenSSL `pkeyutl -derive`.
 2. **Profile B (P-256)**: Verifies USIM ECDH shared secret matches OpenSSL `pkeyutl -derive`.
 3. **Profile C (Hybrid)**: Verifies that the `mlkem-wasm` ciphertext can be decapsulated by OpenSSL 3.5.4 and that the Hybrid Combiner (SHA256(ECC||PQC)) is correct.
@@ -1300,7 +1300,6 @@ To guarantee that the USIM logic (JavaScript/Wasm) produces standard-compliant o
 ---
 
 ## Part 11: Glossary
-
 
 | Term         | Definition                                                   |
 | ------------ | ------------------------------------------------------------ |
@@ -1339,11 +1338,10 @@ To guarantee that the USIM logic (JavaScript/Wasm) produces standard-compliant o
 
 ## Document Control
 
-| Version | Date     | Author    | Changes         |
-| ------- | -------- | --------- | --------------- |
-| 1.0     | Dec 2025 | PQC Today | Initial release |
+| Version | Date     | Author    | Changes                                |
+| ------- | -------- | --------- | -------------------------------------- |
+| 1.0     | Dec 2025 | PQC Today | Initial release                        |
 | 1.1     | Dec 2025 | PQC Today | Update for Profiles B/C Implementation |
-
 
 ---
 

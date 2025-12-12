@@ -70,7 +70,9 @@ function App() {
       <Suspense
         fallback={
           <div className="flex h-screen w-full items-center justify-center bg-black">
-            <div className="text-xl font-bold text-gradient">Initializing Secure Environment...</div>
+            <div className="text-xl font-bold text-gradient">
+              Initializing Secure Environment...
+            </div>
           </div>
         }
       >

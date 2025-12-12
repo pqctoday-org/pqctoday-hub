@@ -16,7 +16,8 @@ type RPStep = 'START' | 'DISCLOSURE' | 'PRESENTATION' | 'VERIFICATION' | 'COMPLE
 export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wallet, onBack }) => {
   const [step, setStep] = useState<RPStep>('START')
   const [loading, setLoading] = useState(false)
-  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } = useDigitalIDLogs()
+  const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
+    useDigitalIDLogs()
 
   // Heuristic: Ensure we have at least one valid key to sign with
   const availableKey = wallet.keys.find((k) => k.usage === 'SIGN')
@@ -50,7 +51,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
         iss: 'did:wallet:123',
         aud: 'https://bank.example.com',
         nonce: challenge,
-        iat: Date.now()
+        iat: Date.now(),
       }
 
       const payloadStr = JSON.stringify(payload, null, 2)
@@ -63,7 +64,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
       addLog(`Signature generated: ${signature.substring(0, 20)}...`)
       addLog('Presentation with Proof sent to Bank.')
 
-      await new Promise(r => setTimeout(r, 800)) // UI pacing
+      await new Promise((r) => setTimeout(r, 800)) // UI pacing
 
       setStep('VERIFICATION')
       setLoading(false)
@@ -78,7 +79,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
   const handleVerification = async () => {
     setLoading(true)
     addLog('Bank Verifying Proof...')
-    await new Promise(r => setTimeout(r, 1000))
+    await new Promise((r) => setTimeout(r, 1000))
     addLog('✅ Signature Valid.')
     addLog('✅ Trust Chain Valid (eIDAS Bridge).')
     addLog('✅ Selective Disclosure Checked.')
@@ -93,26 +94,35 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
           <Landmark className="w-6 h-6" />
           Bank (Relying Party)
         </CardTitle>
-        <CardDescription>
-          Verify your identity to open a premium bank account
-        </CardDescription>
+        <CardDescription>Verify your identity to open a premium bank account</CardDescription>
       </CardHeader>
       <CardContent className="p-6">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="space-y-6 lg:col-span-2">
-
             {/* Steps Visualization */}
             <div className="space-y-4">
-              <div className={`p-3 rounded border flex items-center gap-3 ${step === 'START' ? 'bg-blue-50 border-blue-400' : 'bg-slate-50'}`}>
-                <div className="bg-blue-100 p-1.5 rounded-full text-blue-600 font-bold text-xs">1</div>
+              <div
+                className={`p-3 rounded border flex items-center gap-3 ${step === 'START' ? 'bg-blue-50 border-blue-400' : 'bg-slate-50'}`}
+              >
+                <div className="bg-blue-100 p-1.5 rounded-full text-blue-600 font-bold text-xs">
+                  1
+                </div>
                 <span className="text-sm">Request</span>
               </div>
-              <div className={`p-3 rounded border flex items-center gap-3 ${step === 'DISCLOSURE' ? 'bg-blue-50 border-blue-400' : 'bg-slate-50'}`}>
-                <div className="bg-blue-100 p-1.5 rounded-full text-blue-600 font-bold text-xs">2</div>
+              <div
+                className={`p-3 rounded border flex items-center gap-3 ${step === 'DISCLOSURE' ? 'bg-blue-50 border-blue-400' : 'bg-slate-50'}`}
+              >
+                <div className="bg-blue-100 p-1.5 rounded-full text-blue-600 font-bold text-xs">
+                  2
+                </div>
                 <span className="text-sm">Disclosure</span>
               </div>
-              <div className={`p-3 rounded border flex items-center gap-3 ${['PRESENTATION', 'VERIFICATION'].includes(step) ? 'bg-blue-50 border-blue-400' : 'bg-slate-50'}`}>
-                <div className="bg-blue-100 p-1.5 rounded-full text-blue-600 font-bold text-xs">3</div>
+              <div
+                className={`p-3 rounded border flex items-center gap-3 ${['PRESENTATION', 'VERIFICATION'].includes(step) ? 'bg-blue-50 border-blue-400' : 'bg-slate-50'}`}
+              >
+                <div className="bg-blue-100 p-1.5 rounded-full text-blue-600 font-bold text-xs">
+                  3
+                </div>
                 <span className="text-sm">Proof & Verify</span>
               </div>
             </div>
@@ -128,7 +138,9 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
               {step === 'DISCLOSURE' && (
                 <div className="space-y-4">
                   <div className="bg-slate-100 p-3 rounded text-sm">
-                    <p className="font-semibold mb-2 flex items-center gap-2"><Eye className="w-4 h-4" /> Requested Data:</p>
+                    <p className="font-semibold mb-2 flex items-center gap-2">
+                      <Eye className="w-4 h-4" /> Requested Data:
+                    </p>
                     <ul className="list-disc pl-5 space-y-1 text-xs">
                       <li>Personal ID (Required)</li>
                       <li>University Degree (Required)</li>
@@ -143,12 +155,17 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
               {step === 'PRESENTATION' && (
                 <div className="text-center py-4">
                   <Loader2 className="animate-spin w-8 h-8 text-blue-500 mx-auto" />
-                  <p className="text-sm mt-2 text-muted-foreground">Generating Zero-Knowledge Proof...</p>
+                  <p className="text-sm mt-2 text-muted-foreground">
+                    Generating Zero-Knowledge Proof...
+                  </p>
                 </div>
               )}
 
               {step === 'VERIFICATION' && (
-                <Button onClick={handleVerification} className="w-full bg-green-600 hover:bg-green-700">
+                <Button
+                  onClick={handleVerification}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
                   Check Verification Result
                 </Button>
               )}
@@ -174,19 +191,21 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
             <div className="flex items-center border-b border-slate-800 bg-slate-900">
               <button
                 onClick={() => setActiveLogTab('protocol')}
-                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'protocol'
-                  ? 'text-blue-400 bg-slate-800 border-b-2 border-blue-500'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                  }`}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
+                  activeLogTab === 'protocol'
+                    ? 'text-blue-400 bg-slate-800 border-b-2 border-blue-500'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                }`}
               >
                 PROTOCOL LOG
               </button>
               <button
                 onClick={() => setActiveLogTab('openssl')}
-                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${activeLogTab === 'openssl'
-                  ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                  }`}
+                className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
+                  activeLogTab === 'openssl'
+                    ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                }`}
               >
                 OPENSSL LOG
               </button>
@@ -201,7 +220,9 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
                       {log}
                     </div>
                   ))}
-                  {logs.length === 0 && <span className="opacity-50">Waiting for connection...</span>}
+                  {logs.length === 0 && (
+                    <span className="opacity-50">Waiting for connection...</span>
+                  )}
                 </>
               ) : (
                 <>

@@ -44,7 +44,9 @@ This document specifies the educational content structure for a comprehensive EU
 The module is designed for security professionals, identity architects, and developers implementing or integrating with the EUDI Wallet ecosystem using Remote HSM infrastructure.
 
 ### Educational Availability (OpenSSL Log Transparency)
+
 To support the educational goals of this module, the implementation MUST provide **OpenSSL Log Transparency**:
+
 - **Split View Logging**: All flows must display a real-time log panel with two tabs: "Protocol Log" (high-level steps) and "OpenSSL Log" (raw cryptographic commands).
 - **Authentic Commands**: The "OpenSSL Log" must display the actual `openssl` commands (e.g., `dgst`, `ecparam`, `pkeyutl`) executed by the underlying WebAssembly engine.
 - **Visual Validation**: Users must be able to correlate UI actions (e.g., "Issue PID") with specific OpenSSL operations (e.g., `openssl dgst -sign`).

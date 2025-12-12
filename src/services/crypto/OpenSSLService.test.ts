@@ -98,7 +98,7 @@ describe('OpenSSLService Stability', () => {
     // Fast-forward time
     vi.runAllTimers()
 
-    await expect(execPromise).rejects.toThrow('Command timed out')
+    await expect(execPromise).rejects.toThrow('OpenSSL command timed out')
   }, 10000)
 
   it('should recover from failed init', async () => {

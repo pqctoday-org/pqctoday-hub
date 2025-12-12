@@ -182,10 +182,11 @@ export const DigitalIDModule: React.FC = () => {
               <button
                 key={step.id}
                 onClick={() => setCurrentStep(idx)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${isActive
-                  ? 'bg-primary/20 border-primary text-primary shadow-lg shadow-primary/10'
-                  : 'bg-transparent border-border text-muted-foreground hover:bg-muted/10'
-                  }`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${
+                  isActive
+                    ? 'bg-primary/20 border-primary text-primary shadow-lg shadow-primary/10'
+                    : 'bg-transparent border-border text-muted-foreground hover:bg-muted/10'
+                }`}
               >
                 <Icon size={16} />
                 <span className="font-medium">{step.title}</span>

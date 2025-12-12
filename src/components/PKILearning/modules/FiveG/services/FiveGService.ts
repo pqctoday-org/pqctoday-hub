@@ -29,7 +29,6 @@ export class FiveGService {
     ciphertextHex?: string // For PQC KEM
   } = {}
 
-
   // Track generated files for cleanup
   private generatedFiles: Set<string> = new Set()
 
@@ -390,16 +389,17 @@ Public Key Hex: ${pubHex}`,
         output: `═══════════════════════════════════════════════════════════════
               5G HOME NETWORK KEY GENERATION (${pqcMode === 'hybrid' ? 'Hybrid X25519 + ' : 'Pure '}ML-KEM-768)
 ═══════════════════════════════════════════════════════════════
-${pqcMode === 'hybrid'
-            ? `
+${
+  pqcMode === 'hybrid'
+    ? `
 Step 1: Generating ECC Key (X25519)...
 $ openssl genpkey -algorithm x25519
 
 Step 2: ECC Public Key (Classic):
 ${(eccHex.match(/.{1,64}/g) || [eccHex]).join('\n')}
 `
-            : ''
-          }
+    : ''
+}
 Step ${pqcMode === 'hybrid' ? '3' : '1'}: Generating PQC Key (ML-KEM-768)...
 > Algorithm: ML-KEM-768 (Kyber)
 > Security Level: NIST Level 3
@@ -772,11 +772,9 @@ Step 3: Final Secret (Z):
 ${finalSharedHex}`
         }
 
-
         this.state.sharedSecretHex = finalSharedHex
         this.state.profile = profile
         this.state.ciphertextHex = ctHex
-
 
         outputLog += `
 
@@ -789,7 +787,7 @@ ${finalSharedHex}`
     }
 
     // Generic Test Vector Bypass for Shared Secret (if z is provided)
-    // We need to support z in Profile A/B vectors first? 
+    // We need to support z in Profile A/B vectors first?
     // Let's assume we update the interface or just use a fallback if the command fails.
 
     // Actually, let's just update the try block to check vectors on failure or success.
@@ -798,8 +796,12 @@ ${finalSharedHex}`
     let cmd = '(Test Vector Injected - OpenSSL Bypassed)'
 
     try {
-      if ((profile === 'A' && this.testVectors?.profileA?.zEcdh) || (profile === 'B' && this.testVectors?.profileB?.zEcdh)) {
-        sharedSecretHex = profile === 'A' ? this.testVectors!.profileA!.zEcdh! : this.testVectors!.profileB!.zEcdh!
+      if (
+        (profile === 'A' && this.testVectors?.profileA?.zEcdh) ||
+        (profile === 'B' && this.testVectors?.profileB?.zEcdh)
+      ) {
+        sharedSecretHex =
+          profile === 'A' ? this.testVectors!.profileA!.zEcdh! : this.testVectors!.profileB!.zEcdh!
       } else {
         const secretFile = `5g_shared_secret_${this.getTimestamp()}.bin`
         this.trackFile(secretFile)
@@ -891,8 +893,8 @@ ${sharedSecretHex}
 
       const z = this.state.sharedSecretHex
         ? new Uint8Array(
-          this.state.sharedSecretHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
-        )
+            this.state.sharedSecretHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+          )
         : new Uint8Array(32)
       if (!this.state.sharedSecretHex) window.crypto.getRandomValues(z) // Only generate if not from state
       const zHex = bytesToHex(z)
@@ -1175,9 +1177,9 @@ Integrity Key(K_mac): ${this.state.kMacHex}
     if (this.testVectors?.milenage) {
       // Use injected vectors
       const vec = this.testVectors.milenage
-      K = new Uint8Array(vec.k.match(/.{1,2}/g)!.map(b => parseInt(b, 16)))
-      OP = new Uint8Array(vec.op.match(/.{1,2}/g)!.map(b => parseInt(b, 16)))
-      RAND = new Uint8Array(vec.rand.match(/.{1,2}/g)!.map(b => parseInt(b, 16)))
+      K = new Uint8Array(vec.k.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
+      OP = new Uint8Array(vec.op.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
+      RAND = new Uint8Array(vec.rand.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
     } else {
       // Defaults
       K = new Uint8Array(16).fill(0x33)
