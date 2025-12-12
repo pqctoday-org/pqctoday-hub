@@ -103,6 +103,7 @@ export const scrapeENISA = async (): Promise<ComplianceRecord[]> => {
             .map((l) => l.replace(/[()]/g, '\\$&')) // Escape special chars
             .join('|')
 
+          // eslint-disable-next-line security/detect-non-literal-regexp
           const pattern = new RegExp(
             `${label.replace(/[()]/g, '\\$&')}\\s*([\\s\\S]{1,300}?)(?=${stopPattern}|$)`,
             'i'

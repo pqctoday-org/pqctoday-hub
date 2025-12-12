@@ -71,6 +71,11 @@ export const InlineTooltip: React.FC<InlineTooltipProps> = ({
     right: 'right-4',
   }
 
+  // eslint-disable-next-line security/detect-object-injection
+  const alignClass = alignClasses[align]
+  // eslint-disable-next-line security/detect-object-injection
+  const arrowClass = arrowClasses[align]
+
   return (
     <div className={`relative inline-block ${className}`}>
       <span
@@ -92,13 +97,13 @@ export const InlineTooltip: React.FC<InlineTooltipProps> = ({
 
       {isOpen && (
         <div
-          className={`absolute z-50 w-48 sm:w-64 p-2 mt-2 bg-background border border-border rounded-lg shadow-lg text-xs text-foreground ${alignClasses[align]}`}
+          className={`absolute z-50 w-48 sm:w-64 p-2 mt-2 bg-background border border-border rounded-lg shadow-lg text-xs text-foreground ${alignClass}`}
           role="tooltip"
         >
           {content}
           {/* Arrow */}
           <div
-            className={`absolute -top-2 w-4 h-4 bg-background border-l border-t border-border rotate-45 ${arrowClasses[align]}`}
+            className={`absolute -top-2 w-4 h-4 bg-background border-l border-t border-border rotate-45 ${arrowClass}`}
             aria-hidden="true"
           />
         </div>

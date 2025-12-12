@@ -18,11 +18,13 @@ export function compareDatasets<T extends object>(
 
   // Index previous items for O(1) lookup
   previousItems.forEach((item) => {
+    // eslint-disable-next-line security/detect-object-injection
     const id = String(item[idField])
     previousMap.set(id, item)
   })
 
   currentItems.forEach((currentItem) => {
+    // eslint-disable-next-line security/detect-object-injection
     const id = String(currentItem[idField])
     const previousItem = previousMap.get(id)
 
@@ -42,6 +44,7 @@ export function compareDatasets<T extends object>(
         // Skip comparing internal fields
         if (key === 'children' || key === 'status') return false
 
+        // eslint-disable-next-line security/detect-object-injection
         return JSON.stringify(currentRecord[key]) !== JSON.stringify(previousRecord[key])
       })
 

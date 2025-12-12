@@ -5,9 +5,9 @@ const { injectAxe, getViolations } = require('axe-playwright')
   const browser = await chromium.launch()
   const page = await browser.newPage()
 
-  console.log('Running accessibility audit on http://localhost:5173\n')
+  console.log('Running accessibility audit on http://localhost:4174\n')
 
-  await page.goto('http://localhost:5173')
+  await page.goto('http://localhost:4174')
   // Wait for the main application to load (bypassing Suspense fallback)
   await page.waitForSelector('main[role="main"]', { state: 'visible', timeout: 10000 })
   // Wait a bit more for animations to settle

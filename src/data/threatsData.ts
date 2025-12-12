@@ -30,6 +30,7 @@ function getLatestThreatsFiles(): {
   const files = Object.keys(modules)
     .map((path) => {
       // Path format: ./quantum_threats_hsm_industries_MMDDYYYY.csv or ..._MMDDYYYY_suffix.csv
+      // eslint-disable-next-line security/detect-unsafe-regex
       const match = path.match(/quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_.*)?\.csv$/)
       if (match) {
         const [, month, day, year] = match

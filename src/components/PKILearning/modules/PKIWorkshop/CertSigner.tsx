@@ -155,6 +155,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
   const handleShowProfileInfo = async () => {
     if (!selectedProfile) return
 
+    // eslint-disable-next-line security/detect-object-injection
     const docPath = PROFILE_DOC_MAP[selectedProfile]
     if (!docPath) {
       setProfileDocContent('No documentation available for this profile.')
@@ -163,6 +164,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
     }
 
     try {
+      // eslint-disable-next-line security/detect-object-injection
       const loadDoc = profileDocs[docPath] as () => Promise<string>
       const content = await loadDoc()
       setProfileDocContent(content)

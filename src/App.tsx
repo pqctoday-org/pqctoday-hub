@@ -2,18 +2,52 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 
 import { logPageView } from './utils/analytics'
 import { useEffect } from 'react'
+import { lazy } from 'react'
 import { MainLayout } from './components/Layout/MainLayout'
 
-import { TimelineView } from './components/Timeline/TimelineView'
-import { ThreatsDashboard } from './components/Threats/ThreatsDashboard'
-import { LeadersGrid } from './components/Leaders/LeadersGrid'
-import { AlgorithmsView } from './components/Algorithms/AlgorithmsView'
-import { PlaygroundView } from './components/Playground/PlaygroundView'
-import { OpenSSLStudioView } from './components/OpenSSLStudio/OpenSSLStudioView'
-import { LibraryView } from './components/Library/LibraryView'
-import { AboutView } from './components/About/AboutView'
-import { PKILearningView } from './components/PKILearning/PKILearningView'
-import { ComplianceView } from './components/Compliance/ComplianceView'
+// Lazy load route components for code splitting
+const TimelineView = lazy(() =>
+  import('./components/Timeline/TimelineView').then((module) => ({ default: module.TimelineView }))
+)
+const ThreatsDashboard = lazy(() =>
+  import('./components/Threats/ThreatsDashboard').then((module) => ({
+    default: module.ThreatsDashboard,
+  }))
+)
+const LeadersGrid = lazy(() =>
+  import('./components/Leaders/LeadersGrid').then((module) => ({ default: module.LeadersGrid }))
+)
+const AlgorithmsView = lazy(() =>
+  import('./components/Algorithms/AlgorithmsView').then((module) => ({
+    default: module.AlgorithmsView,
+  }))
+)
+const PlaygroundView = lazy(() =>
+  import('./components/Playground/PlaygroundView').then((module) => ({
+    default: module.PlaygroundView,
+  }))
+)
+const OpenSSLStudioView = lazy(() =>
+  import('./components/OpenSSLStudio/OpenSSLStudioView').then((module) => ({
+    default: module.OpenSSLStudioView,
+  }))
+)
+const LibraryView = lazy(() =>
+  import('./components/Library/LibraryView').then((module) => ({ default: module.LibraryView }))
+)
+const AboutView = lazy(() =>
+  import('./components/About/AboutView').then((module) => ({ default: module.AboutView }))
+)
+const PKILearningView = lazy(() =>
+  import('./components/PKILearning/PKILearningView').then((module) => ({
+    default: module.PKILearningView,
+  }))
+)
+const ComplianceView = lazy(() =>
+  import('./components/Compliance/ComplianceView').then((module) => ({
+    default: module.ComplianceView,
+  }))
+)
 
 // Helper component to log page views on route change
 function AnalyticsTracker() {

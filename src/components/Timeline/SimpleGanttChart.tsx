@@ -280,7 +280,7 @@ export const SimpleGanttChart = ({
                   className="p-2 text-center min-w-[80px] bg-background/80 border-b border-r border-border"
                 >
                   <span
-                    className={`font-mono text-sm ${year === new Date().getFullYear() ? 'text-primary font-bold' : 'text-muted-foreground'}`}
+                    className={`font-mono text-sm ${year === new Date().getFullYear() ? 'text-foreground font-bold' : 'text-muted-foreground'}`}
                   >
                     {year === 2024 ? '<2024' : year}
                   </span>

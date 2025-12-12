@@ -1,12 +1,20 @@
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Dashboard } from './Dashboard'
 import { ArrowLeft } from 'lucide-react'
 
-import { PKIWorkshop } from './modules/PKIWorkshop'
-import { DigitalAssetsModule } from './modules/DigitalAssets'
-import { FiveGModule } from './modules/FiveG'
-import { DigitalIDModule } from './modules/DigitalID'
+const PKIWorkshop = lazy(() =>
+  import('./modules/PKIWorkshop').then((module) => ({ default: module.PKIWorkshop }))
+)
+const DigitalAssetsModule = lazy(() =>
+  import('./modules/DigitalAssets').then((module) => ({ default: module.DigitalAssetsModule }))
+)
+const FiveGModule = lazy(() =>
+  import('./modules/FiveG').then((module) => ({ default: module.FiveGModule }))
+)
+const DigitalIDModule = lazy(() =>
+  import('./modules/DigitalID').then((module) => ({ default: module.DigitalIDModule }))
+)
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -25,13 +33,24 @@ export const PKILearningView: React.FC = () => {
         </button>
       )}
 
-      <Routes>
-        <Route index element={<Dashboard />} />
-        <Route path="pki-workshop" element={<PKIWorkshop />} />
-        <Route path="digital-assets" element={<DigitalAssetsModule />} />
-        <Route path="5g-security" element={<FiveGModule />} />
-        <Route path="digital-id" element={<DigitalIDModule />} />
-      </Routes>
+      <Suspense
+        fallback={
+          <div className="flex h-64 w-full items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+              <p className="text-muted-foreground animate-pulse">Loading Module...</p>
+            </div>
+          </div>
+        }
+      >
+        <Routes>
+          <Route index element={<Dashboard />} />
+          <Route path="pki-workshop" element={<PKIWorkshop />} />
+          <Route path="digital-assets" element={<DigitalAssetsModule />} />
+          <Route path="5g-security" element={<FiveGModule />} />
+          <Route path="digital-id" element={<DigitalIDModule />} />
+        </Routes>
+      </Suspense>
     </div>
   )
 }
