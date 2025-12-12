@@ -348,7 +348,9 @@ export const ComplianceTable: React.FC<
 
     // Sort
     processed.sort((a, b) => {
+      // eslint-disable-next-line security/detect-object-injection
       const aVal = a[sortColumn]
+      // eslint-disable-next-line security/detect-object-injection
       const bVal = b[sortColumn]
 
       if (aVal === bVal) return 0

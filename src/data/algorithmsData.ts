@@ -48,6 +48,7 @@ export async function loadAlgorithmsData(): Promise<AlgorithmTransition[]> {
     date: date,
   }
 
+  // eslint-disable-next-line security/detect-object-injection
   const loadCsv = csvModule[csvPath] as () => Promise<string>
   const csvContent = await loadCsv()
 
@@ -56,6 +57,7 @@ export async function loadAlgorithmsData(): Promise<AlgorithmTransition[]> {
 
   // Skip header row
   for (let i = 1; i < lines.length; i++) {
+    // eslint-disable-next-line security/detect-object-injection
     const line = lines[i]
     const values = parseCSVLine(line)
 
@@ -81,6 +83,7 @@ function parseCSVLine(line: string): string[] {
   let inQuotes = false
 
   for (let i = 0; i < line.length; i++) {
+    // eslint-disable-next-line security/detect-object-injection
     const char = line[i]
 
     if (char === '"') {

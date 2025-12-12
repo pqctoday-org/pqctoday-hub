@@ -231,6 +231,7 @@ export const ThreatsDashboard: React.FC = () => {
         Medium: 1,
         Low: 0,
       }
+      // eslint-disable-next-line security/detect-object-injection
       const getCriticalityVal = (c: string) => criticalityOrder[c] ?? 0
 
       if (sortField === 'industry') {

@@ -28,6 +28,7 @@ const StatusBadge = ({ status }: { status: ComplianceStatus }) => {
   }
 
   // Accessing property by dynamic key is flagged, but status is strictly typed
+  // eslint-disable-next-line security/detect-object-injection
   const badgeStyle = styles[status] || styles.Historical
 
   return (

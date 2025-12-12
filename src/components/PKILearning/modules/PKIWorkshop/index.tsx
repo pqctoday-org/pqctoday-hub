@@ -132,6 +132,7 @@ export const PKIWorkshop: React.FC = () => {
         <div className="mb-6 border-b border-white/10 pb-4">
           {}
           <h2 className="text-xl md:text-2xl font-bold text-foreground">
+            {/* eslint-disable-next-line security/detect-object-injection */}
             {steps[currentStep].title}
           </h2>
           {/* eslint-disable-next-line security/detect-object-injection */}

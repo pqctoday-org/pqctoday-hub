@@ -59,6 +59,7 @@ export function decodeBase64Output(stdout: string): Uint8Array {
     const binStr = atob(b64)
     const bytes = new Uint8Array(binStr.length)
     for (let i = 0; i < binStr.length; i++) {
+      // eslint-disable-next-line security/detect-object-injection
       bytes[i] = binStr.charCodeAt(i)
     }
     return bytes

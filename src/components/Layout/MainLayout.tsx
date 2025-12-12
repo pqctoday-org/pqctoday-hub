@@ -70,7 +70,7 @@ export const MainLayout = () => {
                     aria-current={isActive ? 'page' : undefined}
                     className={
                       isActive
-                        ? 'bg-primary/10 text-primary border border-primary/20 px-2 lg:px-4'
+                        ? 'bg-primary/10 text-foreground border border-primary/20 px-2 lg:px-4'
                         : 'text-muted-foreground hover:text-foreground px-2 lg:px-4'
                     }
                   >

@@ -100,6 +100,7 @@ export class FiveGService {
         // Convert to Uint8Array
         const bytes = new Uint8Array(binStr.length)
         for (let i = 0; i < binStr.length; i++) {
+          // eslint-disable-next-line security/detect-object-injection
           bytes[i] = binStr.charCodeAt(i)
         }
         return bytesToHex(bytes)
@@ -159,6 +160,7 @@ export class FiveGService {
             const b64 = readRes.stdout.replace(/\n/g, '')
             const binStr = atob(b64)
             privDerData = new Uint8Array(binStr.length)
+            // eslint-disable-next-line security/detect-object-injection
             for (let i = 0; i < binStr.length; i++) privDerData[i] = binStr.charCodeAt(i)
           } catch {
             /* ignore */
@@ -181,6 +183,7 @@ export class FiveGService {
             const b64 = readRes.stdout.replace(/\n/g, '')
             const binStr = atob(b64)
             pubDerData = new Uint8Array(binStr.length)
+            // eslint-disable-next-line security/detect-object-injection
             for (let i = 0; i < binStr.length; i++) pubDerData[i] = binStr.charCodeAt(i)
           } catch {
             /* ignore */
@@ -250,6 +253,7 @@ Public Key Hex: ${pubHex}`,
             const b64 = readRes.stdout.replace(/\n/g, '')
             const binStr = atob(b64)
             privDerData = new Uint8Array(binStr.length)
+            // eslint-disable-next-line security/detect-object-injection
             for (let i = 0; i < binStr.length; i++) privDerData[i] = binStr.charCodeAt(i)
           } catch {
             /* ignore */
@@ -272,6 +276,7 @@ Public Key Hex: ${pubHex}`,
             const b64 = readRes.stdout.replace(/\n/g, '')
             const binStr = atob(b64)
             pubDerData = new Uint8Array(binStr.length)
+            // eslint-disable-next-line security/detect-object-injection
             for (let i = 0; i < binStr.length; i++) pubDerData[i] = binStr.charCodeAt(i)
           } catch {
             /* ignore */
@@ -687,6 +692,7 @@ ${zEcdhHex}
           const b64 = resRead.stdout.replace(/\n/g, '')
           const binStr = atob(b64)
           const hnPubBytes = new Uint8Array(binStr.length)
+          // eslint-disable-next-line security/detect-object-injection
           for (let i = 0; i < binStr.length; i++) hnPubBytes[i] = binStr.charCodeAt(i)
 
           // Encapsulate

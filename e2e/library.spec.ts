@@ -119,6 +119,7 @@ test.describe('Library Feature', () => {
     // Wait for dropdown to update - activeRegion change causes re-render
     // We re-query the button. Playwright auto-waits for it to be actionable/visible.
     const updatedDropdown = page.getByRole('button', { name: /Region/i })
+    // eslint-disable-next-line security/detect-non-literal-regexp
     await expect(updatedDropdown).toHaveText(new RegExp(optionText?.trim() || ''), {
       timeout: 10000,
     })

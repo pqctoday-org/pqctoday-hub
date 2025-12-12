@@ -283,6 +283,7 @@ const normalizeClientSideAlgo = (input: string | boolean | undefined): string | 
     // Check if the part starts with a known algo (e.g. "ML-KEM EncapDecap")
     const lower = p.toLowerCase()
     for (const key in CANONICAL_MAP) {
+      // eslint-disable-next-line security/detect-object-injection
       if (lower.includes(key)) return CANONICAL_MAP[key]
     }
     return p
@@ -713,6 +714,7 @@ export const fetchComplianceData = async (forceRefresh = false): Promise<Complia
       (await localforage.getItem<Record<string, string>>(CACHE_TIMESTAMP_KEY)) || {}
 
     const getAge = (key: string) => {
+      // eslint-disable-next-line security/detect-object-injection
       const ts = timestampMap[key]
       return ts ? now - new Date(ts).getTime() : Infinity
     }

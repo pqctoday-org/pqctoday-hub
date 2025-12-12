@@ -22,6 +22,40 @@ const INITIAL_WALLET: WalletInstance = {
   history: [],
 }
 
+// Metadata for navigation
+const STEPS_INFO = [
+  {
+    id: 'wallet',
+    title: 'EUDI Wallet',
+    description: 'View your credentials and secure keys.',
+    icon: Shield,
+  },
+  {
+    id: 'pid-issuer',
+    title: 'PID Issuer',
+    description: 'Issue your National Digital ID (PID).',
+    icon: FileText,
+  },
+  {
+    id: 'attestation',
+    title: 'University',
+    description: 'Issue Diploma (requires PID).',
+    icon: CheckSquare,
+  },
+  {
+    id: 'relying-party',
+    title: 'Bank (RP)',
+    description: 'Verify your ID to open an account.',
+    icon: Building2,
+  },
+  {
+    id: 'qes',
+    title: 'QTSP (QES)',
+    description: 'Sign documents digitally.',
+    icon: PenTool,
+  },
+]
+
 export const DigitalIDModule: React.FC = () => {
   const resetProgress = useModuleStore((state) => state.resetProgress)
   const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
@@ -71,40 +105,6 @@ export const DigitalIDModule: React.FC = () => {
       ],
     }))
   }
-
-  // Metadata for navigation
-  const STEPS_INFO = [
-    {
-      id: 'wallet',
-      title: 'EUDI Wallet',
-      description: 'View your credentials and secure keys.',
-      icon: Shield,
-    },
-    {
-      id: 'pid-issuer',
-      title: 'PID Issuer',
-      description: 'Issue your National Digital ID (PID).',
-      icon: FileText,
-    },
-    {
-      id: 'attestation',
-      title: 'University',
-      description: 'Issue Diploma (requires PID).',
-      icon: CheckSquare,
-    },
-    {
-      id: 'relying-party',
-      title: 'Bank (RP)',
-      description: 'Verify your ID to open an account.',
-      icon: Building2,
-    },
-    {
-      id: 'qes',
-      title: 'QTSP (QES)',
-      description: 'Sign documents digitally.',
-      icon: PenTool,
-    },
-  ]
 
   const navigateTo = React.useCallback((stepId: string) => {
     const idx = STEPS_INFO.findIndex((s) => s.id === stepId)

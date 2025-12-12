@@ -199,6 +199,7 @@ export const extractLabFromText = (text: string): string | null => {
   // French: Handle various apostrophe encodings and whitespace variations
   // IMPORTANT: Handle multi-line matches where lab name is on next line
   const primaryMatch = text.match(
+    // eslint-disable-next-line security/detect-unsafe-regex
     /(?:ITSEF|Evaluation\s+Facility|Evaluation\s+Laboratory|Testing\s+Laboratory|Evaluation\s+Body|Commercial\s+Facility|Evaluated\s+by|Centre\s+d[\s''´`]?évaluation|Laboratoire\s+d[\s''´`]?évaluation)[\s:\n\r]+([A-Z][a-zA-Z0-9\s&.,()-]+?(?:GmbH|B\.V\.|Ltd\.?|Inc\.?|SAS|BV|AB|Corporation|AG|S\.A\.|Pty|LLC|Co\.|Limited|LETI)?)/i
   )
   if (primaryMatch) {
@@ -217,6 +218,7 @@ export const extractLabFromText = (text: string): string | null => {
 
   // Priority 2: "Testing was completed by" / "conducted by" (English and French)
   const secondaryMatch = text.match(
+    // eslint-disable-next-line security/detect-unsafe-regex
     /(?:Testing\s+was\s+completed\s+by|conducted\s+by|performed\s+by|évalué\s+par|réalisé\s+par)[\s:\n\r]+([A-Z][a-zA-Z0-9\s&.,()-]+?(?:GmbH|B\.V\.|Ltd\.?|Inc\.?|SAS|BV|AB|Corporation|AG|S\.A\.|Pty|LLC|Co\.|Limited)?)/i
   )
   if (secondaryMatch) {
