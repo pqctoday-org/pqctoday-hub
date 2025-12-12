@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.7.0] - 2025-12-12
+
+### Added
+
+- **Dynamic Data Loading**:
+  - Implemented dynamic selection of the latest CSV data files for algorithms and transitions.
+  - Added "New" and "Updated" status badges to Library, Threats, Leaders, and Timeline modules.
+- **Compliance**:
+  - Added ENISA EUCC scraper (`scripts/scrapers/enisa.ts`) and requirements.
+
+### Changed
+
+- **Documentation**:
+  - Updated `README.md` to accurately reflect the current project structure (including `scripts` at root).
+- **Code Quality**:
+  - Resolved `eslint` errors in scraper scripts (`anssi.ts`, `cc.ts`) and various components.
+  - Fixed security warnings related to object injection and unsafe regex.
+
 ## [1.6.0] - 2025-12-09
 
 ### Added
