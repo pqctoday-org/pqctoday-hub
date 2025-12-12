@@ -7,20 +7,45 @@ export interface AlgorithmTransition {
   standardizationDate: string
 }
 
+import { getDateFromFilename } from './pqcAlgorithmsData'
+
 // Import CSV data dynamically
-const csvModule = import.meta.glob('./algorithms_transitions_12052025.csv', {
+const csvModule = import.meta.glob('./algorithms_transitions_*.csv', {
   query: '?raw',
   import: 'default',
 })
 
 let cachedData: AlgorithmTransition[] | null = null
+export let loadedTransitionMetadata: { filename: string; date: Date | null } | null = null
 
 export async function loadAlgorithmsData(): Promise<AlgorithmTransition[]> {
   if (cachedData) return cachedData
 
-  const csvPath = Object.keys(csvModule)[0]
-  if (!csvPath) {
+  const paths = Object.keys(csvModule)
+  if (paths.length === 0) {
     throw new Error('Algorithms CSV file not found')
+  }
+
+  // Sort paths by date in descending order (newest first)
+  const sortedPaths = paths.sort((a, b) => {
+    const dateA = getDateFromFilename(a)
+    const dateB = getDateFromFilename(b)
+
+    // If we can't parse a date, treat it as very old so valid dates come first
+    if (!dateA) return 1
+    if (!dateB) return -1
+
+    return dateB.getTime() - dateA.getTime()
+  })
+
+  // Pick the most recent file
+  const csvPath = sortedPaths[0]
+  console.log(`Loading Transition algorithms from: ${csvPath}`)
+
+  const date = getDateFromFilename(csvPath)
+  loadedTransitionMetadata = {
+    filename: csvPath.split('/').pop() || csvPath,
+    date: date,
   }
 
   const loadCsv = csvModule[csvPath] as () => Promise<string>

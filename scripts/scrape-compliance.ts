@@ -5,6 +5,7 @@ import { scrapeNIST } from './scrapers/nist.js'
 import { scrapeACVP } from './scrapers/acvp.js'
 import { scrapeCC } from './scrapers/cc.js'
 import { scrapeANSSI } from './scrapers/anssi.js'
+import { scrapeENISA } from './scrapers/enisa.js'
 import { standardizeDate, normalizeAlgorithmList } from './scrapers/utils.js'
 
 const OUTPUT_DIR = path.join(process.cwd(), 'public', 'data')
@@ -35,7 +36,8 @@ const main = async () => {
     (!args.includes('--nist') &&
       !args.includes('--acvp') &&
       !args.includes('--cc') &&
-      !args.includes('--anssi'))
+      !args.includes('--anssi') &&
+      !args.includes('--enisa'))
   const force = args.includes('--force')
 
   console.log(`[Master Scraper] Mode: ${runAll ? 'ALL' : 'ISOLATED'} (Force: ${force})`)
@@ -90,6 +92,11 @@ const main = async () => {
     activeSources.add('ANSSI')
     tasks.push(scrapeANSSI())
   }
+  if (runAll || args.includes('--enisa')) {
+    console.log('[Master Scraper] Queueing ENISA Scraper...')
+    activeSources.add('ENISA')
+    tasks.push(scrapeENISA())
+  }
 
   if (tasks.length === 0) {
     console.log('No scrapers selected.')
@@ -135,6 +142,9 @@ const main = async () => {
   }
   if (activeSources.has('ANSSI')) {
     keptData = keptData.filter((r) => r.source !== 'ANSSI')
+  }
+  if (activeSources.has('ENISA')) {
+    keptData = keptData.filter((r) => r.source !== 'ENISA')
   }
 
   // Normalize Data (Dates & Algos)

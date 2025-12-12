@@ -14,7 +14,7 @@ vi.mock('../../data/threatsData', () => ({
       criticality: 'Critical',
       cryptoAtRisk: 'RSA-2048',
       pqcReplacement: 'ML-KEM',
-      source: 'NIST Report',
+      mainSource: 'NIST Report',
     },
     {
       industry: 'Healthcare',
@@ -23,7 +23,7 @@ vi.mock('../../data/threatsData', () => ({
       criticality: 'High',
       cryptoAtRisk: 'ECC',
       pqcReplacement: 'ML-DSA',
-      source: 'HIPAA Guidance',
+      mainSource: 'HIPAA Guidance',
     },
     {
       industry: 'Automotive',
@@ -32,7 +32,7 @@ vi.mock('../../data/threatsData', () => ({
       criticality: 'Medium',
       cryptoAtRisk: 'ECDSA',
       pqcReplacement: 'ML-DSA',
-      source: 'Auto-ISAC',
+      mainSource: 'Auto-ISAC',
     },
   ] as ThreatData[],
   threatsMetadata: {

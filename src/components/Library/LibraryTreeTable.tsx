@@ -10,17 +10,65 @@ import {
   Info,
 } from 'lucide-react'
 import { LibraryDetailPopover } from './LibraryDetailPopover'
+import { StatusBadge } from '../common/StatusBadge'
 
 interface LibraryTreeTableProps {
   data: LibraryItem[]
   defaultSort?: { key: SortKey; direction: SortDirection }
+  defaultExpandAll?: boolean
 }
 
 type SortDirection = 'asc' | 'desc' | null
 type SortKey = keyof LibraryItem
 
-export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaultSort }) => {
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
+const getAllExpandedIds = (items: LibraryItem[]): Set<string> => {
+  const ids = new Set<string>()
+  const visited = new Set<string>()
+
+  const traverse = (nodes: LibraryItem[]) => {
+    nodes.forEach((node) => {
+      if (visited.has(node.referenceId)) return
+      visited.add(node.referenceId)
+
+      if (node.children && node.children.length > 0) {
+        ids.add(node.referenceId)
+        traverse(node.children)
+      }
+    })
+  }
+
+  traverse(items)
+  return ids
+}
+
+export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
+  data,
+  defaultSort,
+  defaultExpandAll = false,
+}) => {
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => {
+    if (defaultExpandAll) {
+      return getAllExpandedIds(data)
+    }
+    return new Set()
+  })
+
+  // Update expansion when defaultExpandAll or data changes
+  React.useEffect(() => {
+    if (defaultExpandAll) {
+      setExpandedIds((prev) => {
+        // Merge with existing expanded state to not lose user interactions if any,
+        // or just replace? The prompt implied "default" ensures full expansion.
+        // But if data updates, we likely want to re-expand everything.
+        // To be safe and respect "defaultExpandAll" intent (force open), we replace or union.
+        // Replacing ensures verification of "Expand All" behavior.
+        const allIds = getAllExpandedIds(data)
+        const next = new Set([...prev, ...allIds])
+        return next
+      })
+    }
+  }, [defaultExpandAll, data])
+
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>(
     defaultSort || { key: 'referenceId', direction: 'asc' }
   )
@@ -69,16 +117,22 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
   }
 
   // Recursive render function
-  const renderRows = (items: LibraryItem[], level = 0) => {
+  const renderRows = (items: LibraryItem[], level = 0, visited = new Set<string>()) => {
     const sortedItems = sortItems(items)
 
     return sortedItems.flatMap((item) => {
+      // Basic cycle detection for rendering
+      if (visited.has(item.referenceId)) return []
+
+      const newVisited = new Set(visited)
+      newVisited.add(item.referenceId)
+
       const isExpanded = expandedIds.has(item.referenceId)
       const hasChildren = item.children && item.children.length > 0
 
       const rows = [
         <tr
-          key={item.referenceId}
+          key={`${item.referenceId}-${level}`} // Unique key for duplicates in tree
           className="border-b border-border hover:bg-muted/50 transition-colors group"
         >
           <td
@@ -121,6 +175,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
                   <ExternalLink size={14} aria-hidden="true" />
                 </a>
               )}
+              <StatusBadge status={item.status} size="sm" />
             </div>
           </td>
           <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
@@ -145,7 +200,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
       ]
 
       if (isExpanded && hasChildren) {
-        rows.push(...renderRows(item.children!, level + 1))
+        rows.push(...renderRows(item.children!, level + 1, newVisited))
       }
 
       return rows
@@ -163,6 +218,23 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({ data, defaul
   return (
     <>
       <div className="glass-panel overflow-hidden">
+        <div className="p-2 border-b border-border flex justify-end gap-2 bg-muted/10">
+          <button
+            onClick={() => {
+              const ids = getAllExpandedIds(data)
+              setExpandedIds(ids)
+            }}
+            className="text-xs flex items-center gap-1 text-primary hover:text-primary/80 px-2 py-1 rounded hover:bg-primary/10 transition-colors"
+          >
+            <ChevronDown size={14} /> Expand All
+          </button>
+          <button
+            onClick={() => setExpandedIds(new Set())}
+            className="text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground px-2 py-1 rounded hover:bg-muted transition-colors"
+          >
+            <ChevronRight size={14} /> Collapse All
+          </button>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>

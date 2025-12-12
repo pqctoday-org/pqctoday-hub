@@ -1,7 +1,7 @@
 # Quantum Threat Impacts Requirements
 
 **Status:** ✅ Implemented  
-**Last Updated:** 2025-12-06
+**Last Updated:** 2025-12-11
 
 ## 1. Functional Requirements
 
@@ -64,26 +64,46 @@
 - **Criticality**: Risk level (Critical, High, Medium, Low).
 - **Crypto at Risk**: Current cryptographic algorithms vulnerable to the threat.
 - **PQC Replacement**: Recommended Post-Quantum Cryptography algorithms.
-- **Source**: Citation or reference for the threat.
+- **Source**: Citation or reference for the threat (mapped from `main_source`).
+- **Source URL**: Direct link to the reference source (mapped from `source_url`).
 
-> [!NOTE]
-> **URL Field Exclusion**: A `url` field was considered for direct links to sources but was explicitly **excluded** due to concerns about data quality and maintenance of external links.
+## 3.3 User Interface
+
+### Threats Dashboard
+
+- **Layout**: Table view with sortable columns.
+- **Columns**: Industry, ID, Description, Criticality, Crypto at Risk, PQC Replacement, Info.
+- **Interactivity**:
+  - Filter by Industry and Criticality.
+  - Search by keyword.
+  - **Info Button**: Opens a detailed popup for the selected threat.
+
+### Threat Details Popup
+
+- **Trigger**: Click "Info" icon in the table row.
+- **Content**:
+  - Full Threat Description.
+  - Detailed "At-Risk Cryptography" and "PQC Mitigation" sections.
+  - **Reference Source**: Displayed as a clickable external link (using `sourceUrl`).
 
 ## 4. Test Plan
 
 ### 4.1 Automated Testing
 
 - **Unit Tests**:
-  - Verify CSV parsing logic handles commas within quotes.
-  - Verify correct mapping of CSV columns to `ThreatData` objects.
-  - Ensure `url` field is **not** present in the parsed data.
-- **E2E Tests**:
-  - Verify the "Impacts" dashboard loads without errors.
-  - Verify that threat cards are displayed for each industry.
-  - Verify that the "Ref" column/link is **not** present in the UI.
+  - Verify CSV parsing logic handles `main_source` and `source_url`.
+  - Verify `ThreatData` interface includes `sourceUrl`.
+- **E2E Tests** (`e2e/impacts-popup.spec.ts`):
+  - Verify the "Impacts" dashboard loads correctly.
+  - Verify "Info" buttons are visible.
+  - **Popup Verification**:
+    - Click "Info" button.
+    - Verify popup displays correct details (Description, Crypto, PQC).
+    - **Link Verification**: Verify "Reference Source" link exists and has a valid `href`.
 
 ### 4.2 Manual Verification
 
 - **Visual Inspection**:
-  - Check for layout issues in the Threats table.
-  - Verify filtering by Industry and Criticality works as expected.
+  - Check layout issues in the Threats table.
+  - Check popup styling (glass-morphism, responsiveness).
+  - Verify "View Source" link opens in a new tab (`target="_blank"`).

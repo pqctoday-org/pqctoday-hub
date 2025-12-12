@@ -17,7 +17,8 @@ Government,GOV-001,Simple description,High,RSA,ML-DSA,Source 2`
       criticality: 'Critical',
       cryptoAtRisk: 'RSA, ECDSA',
       pqcReplacement: 'ML-KEM',
-      source: 'Source 1',
+      mainSource: 'Source 1',
+      sourceUrl: '',
     })
     expect(result[1]).toEqual({
       industry: 'Government',
@@ -26,7 +27,8 @@ Government,GOV-001,Simple description,High,RSA,ML-DSA,Source 2`
       criticality: 'High',
       cryptoAtRisk: 'RSA',
       pqcReplacement: 'ML-DSA',
-      source: 'Source 2',
+      mainSource: 'Source 2',
+      sourceUrl: '',
     })
   })
 

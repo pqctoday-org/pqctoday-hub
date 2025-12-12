@@ -10,10 +10,16 @@ export interface Leader {
   websiteUrl?: string
   linkedinUrl?: string
   keyResourceUrl?: string
+  status?: 'New' | 'Updated'
 }
 
-// Helper to find the latest leaders CSV file
-function getLatestLeadersFile(): { content: string; filename: string; date: Date } | null {
+import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
+
+// Helper to find the latest two leaders CSV files
+function getLatestLeadersFiles(): {
+  current: { content: string; filename: string; date: Date } | null
+  previous: { content: string; filename: string; date: Date } | null
+} {
   // Use import.meta.glob to find all leaders CSV files
   const modules = import.meta.glob('./leaders_*.csv', {
     query: '?raw',
@@ -39,23 +45,33 @@ function getLatestLeadersFile(): { content: string; filename: string; date: Date
 
   if (files.length === 0) {
     console.warn('No dated leaders CSV files found.')
-    return null
+    return { current: null, previous: null }
   }
 
   // Sort by date descending (latest first)
   files.sort((a, b) => b.date.getTime() - a.date.getTime())
 
   console.log(`Loading latest leaders data from: ${files[0].path}`)
-  // Extract just the filename from the path
-  const filename = files[0].path.split('/').pop() || files[0].path
-  return { content: files[0].content, filename, date: files[0].date }
-}
+  if (files.length > 1) {
+    console.log(`Comparison data loaded from: ${files[1].path}`)
+  }
 
-const latestFile = getLatestLeadersFile()
-export const leadersData: Leader[] = latestFile ? parseLeadersCSV(latestFile.content) : []
-export const leadersMetadata = latestFile
-  ? { filename: latestFile.filename, lastUpdate: latestFile.date }
-  : null
+  return {
+    current: {
+      content: files[0].content,
+      filename: files[0].path.split('/').pop() || files[0].path,
+      date: files[0].date,
+    },
+    previous:
+      files.length > 1
+        ? {
+            content: files[1].content,
+            filename: files[1].path.split('/').pop() || files[1].path,
+            date: files[1].date,
+          }
+        : null,
+  }
+}
 
 function parseLeadersCSV(csvContent: string): Leader[] {
   const lines = csvContent.trim().split('\n')
@@ -100,3 +116,23 @@ function parseLeadersCSV(csvContent: string): Leader[] {
     }
   })
 }
+
+const { current, previous } = getLatestLeadersFiles()
+
+const currentItems = current ? parseLeadersCSV(current.content) : []
+const previousItems = previous ? parseLeadersCSV(previous.content) : []
+
+// Compute status map if previous data exists
+const statusMap = previous
+  ? compareDatasets(currentItems, previousItems, 'name')
+  : new Map<string, ItemStatus>()
+
+// Inject status into current items and export
+export const leadersData: Leader[] = currentItems.map((item) => ({
+  ...item,
+  status: statusMap.get(item.name),
+}))
+
+export const leadersMetadata = current
+  ? { filename: current.filename, lastUpdate: current.date }
+  : null

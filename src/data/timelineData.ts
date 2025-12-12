@@ -75,14 +75,20 @@ export const phaseColors: Record<Phase, { start: string; end: string; glow: stri
 }
 
 import { MOCK_CSV_CONTENT } from './mockTimelineData'
+import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 
-// Helper to find the latest timeline CSV file
-// Helper to find the latest timeline CSV file
-function getLatestTimelineFile(): { content: string; filename: string; date: Date } | null {
+// Helper to find the latest two timeline CSV files
+function getLatestTimelineFiles(): {
+  current: { content: string; filename: string; date: Date } | null
+  previous: { content: string; filename: string; date: Date } | null
+} {
   // Check for mock data environment variable
   if (import.meta.env.VITE_MOCK_DATA === 'true') {
     console.log('Using mock timeline data for testing')
-    return { content: MOCK_CSV_CONTENT, filename: 'MOCK_DATA', date: new Date() }
+    return {
+      current: { content: MOCK_CSV_CONTENT, filename: 'MOCK_DATA', date: new Date() },
+      previous: null,
+    }
   }
 
   // Use import.meta.glob to find all timeline CSV files
@@ -110,15 +116,32 @@ function getLatestTimelineFile(): { content: string; filename: string; date: Dat
 
   if (files.length === 0) {
     console.warn('No dated timeline CSV files found.')
-    return null
+    return { current: null, previous: null }
   }
 
   // Sort by date descending (latest first)
   files.sort((a, b) => b.date.getTime() - a.date.getTime())
 
   console.log(`Loading latest timeline data from: ${files[0].path}`)
-  const filename = files[0].path.split('/').pop() || files[0].path
-  return { content: files[0].content, filename, date: files[0].date }
+  if (files.length > 1) {
+    console.log(`Comparison data loaded from: ${files[1].path}`)
+  }
+
+  return {
+    current: {
+      content: files[0].content,
+      filename: files[0].path.split('/').pop() || files[0].path,
+      date: files[0].date,
+    },
+    previous:
+      files.length > 1
+        ? {
+            content: files[1].content,
+            filename: files[1].path.split('/').pop() || files[1].path,
+            date: files[1].date,
+          }
+        : null,
+  }
 }
 
 // Parse the CSV content to get the timeline data
@@ -126,10 +149,49 @@ let parsedData: CountryData[] = []
 let metadata: { filename: string; lastUpdate: Date } | null = null
 
 try {
-  const latestFile = getLatestTimelineFile()
-  if (latestFile) {
-    parsedData = parseTimelineCSV(latestFile.content)
-    metadata = { filename: latestFile.filename, lastUpdate: latestFile.date }
+  const { current, previous } = getLatestTimelineFiles()
+
+  if (current) {
+    const currentCountries = parseTimelineCSV(current.content)
+    const previousCountries = previous ? parseTimelineCSV(previous.content) : []
+
+    // Flatten events to compare them
+    // Unique ID for event: Country + Org + Phase + Title
+    const flattenEvents = (countries: CountryData[]) => {
+      return countries.flatMap((c) =>
+        c.bodies.flatMap((b) =>
+          b.events.map((e) => ({
+            ...e,
+            id: `${c.countryName}:${b.name}:${e.phase}:${e.title}`,
+          }))
+        )
+      )
+    }
+
+    const currentEvents = flattenEvents(currentCountries)
+    const previousEvents = flattenEvents(previousCountries)
+
+    // Compute status map
+    const statusMap = previous
+      ? compareDatasets(currentEvents, previousEvents, 'id')
+      : new Map<string, ItemStatus>()
+
+    // Inject status into the nested structure
+    parsedData = currentCountries.map((c) => ({
+      ...c,
+      bodies: c.bodies.map((b) => ({
+        ...b,
+        events: b.events.map((e) => {
+          const id = `${c.countryName}:${b.name}:${e.phase}:${e.title}`
+          return {
+            ...e,
+            status: statusMap.get(id),
+          }
+        }),
+      })),
+    }))
+
+    metadata = { filename: current.filename, lastUpdate: current.date }
   } else {
     parsedData = []
   }
@@ -192,6 +254,14 @@ export function transformToGanttData(countries: CountryData[]): GanttCountryData
       // Extract the actual phase name from the event, not the key
       const phaseName = firstEvent.phase
 
+      // Determine aggregated status for the phase row
+      // If ANY event in the group is New/Updated, mark the phase as modified
+      const aggregatedStatus = events.some((e) => e.status === 'New')
+        ? 'New'
+        : events.some((e) => e.status === 'Updated')
+          ? 'Updated'
+          : undefined
+
       phases.push({
         startYear,
         endYear,
@@ -200,6 +270,7 @@ export function transformToGanttData(countries: CountryData[]): GanttCountryData
         title: firstEvent.title,
         description: firstEvent.description,
         events: events,
+        status: aggregatedStatus, // Propagate status to UI model
       })
     })
 

@@ -79,16 +79,9 @@ test.describe('Compliance Source Validation', () => {
 
   // -------------------------------------------------------------------------
 
-  // NIAP, BSI, and ANSSI are no longer primary scrape targets.
+  // BSI and ANSSI are no longer primary scrape targets.
   // They are derived from the Global Common Criteria CSV.
   // These tests now simply validate that the "External Links" we might point to are up.
-
-  test('NIAP - Link Availability (Browser)', async ({ page }) => {
-    const response = await page.goto('https://www.niap-ccevs.org/Product/', {
-      waitUntil: 'domcontentloaded',
-    })
-    expect(response?.status()).toBe(200)
-  })
 
   test('BSI Germany - Link Availability (Browser)', async ({ page }) => {
     const response = await page.goto(
@@ -100,6 +93,13 @@ test.describe('Compliance Source Validation', () => {
 
   test('ANSSI France - Link Availability (Browser)', async ({ page }) => {
     const response = await page.goto('https://cyber.gouv.fr/en/certified-products', {
+      waitUntil: 'domcontentloaded',
+    })
+    expect(response?.status()).toBe(200)
+  })
+
+  test('ENISA EUCC - Link Availability (Browser)', async ({ page }) => {
+    const response = await page.goto('https://certification.enisa.europa.eu/certificates_en', {
       waitUntil: 'domcontentloaded',
     })
     expect(response?.status()).toBe(200)

@@ -1,8 +1,9 @@
 import { ExternalLink, Calendar } from 'lucide-react'
 import { createPortal } from 'react-dom'
-import type { TimelinePhase } from '../../types/timeline'
+import type { TimelinePhase, Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
 import { useEffect, useRef } from 'react'
+import { StatusBadge } from '../common/StatusBadge'
 
 interface GanttDetailPopoverProps {
   isOpen: boolean
@@ -49,7 +50,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
 
   if (!isOpen || !phase) return null
 
-  const colors = phaseColors[phase.phase] || {
+  const colors = phaseColors[phase.phase as Phase] || {
     start: 'hsl(var(--muted-foreground))',
     end: 'hsl(var(--muted))',
     glow: 'hsl(var(--ring))',
@@ -87,6 +88,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
             {phase.phase}
           </div>
           <h3 className="text-xs font-bold text-foreground leading-tight">{phase.title}</h3>
+          <StatusBadge status={phase.status} size="sm" />
         </div>
       </div>
 

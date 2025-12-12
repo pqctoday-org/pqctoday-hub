@@ -25,7 +25,8 @@ test.describe('Timeline View', () => {
 
     // Check for some country data
     await expect(page.getByText('United States').first()).toBeVisible()
-    await expect(page.getByText('NIST').first()).toBeVisible()
+    // In the latest data, 'White House' or 'OMB' comes first for US, not 'NIST'
+    await expect(page.getByText('White House').first()).toBeVisible()
   })
 
   test.skip('displays phase details in popover on click', async ({ page, browserName }) => {
@@ -72,6 +73,7 @@ test.describe('Timeline View', () => {
 
   test('does not display organization logos', async ({ page }) => {
     // Ensure no images with alt text ending in "Logo" are visible in the table
+    // Logo URLs might still be in the data, but the component shouldn't render them
     const logos = page.locator('table').getByAltText(/Logo$/)
     await expect(logos).toHaveCount(0)
   })

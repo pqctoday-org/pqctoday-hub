@@ -7,11 +7,27 @@ import { Search } from 'lucide-react'
 
 export const LibraryView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('All')
+  const [activeRegion, setActiveRegion] = useState<string>('All')
   const [filterText, setFilterText] = useState('')
 
+  const regions = useMemo(() => {
+    const r = new Set<string>()
+    libraryData.forEach((item) => {
+      if (item.regionScope) {
+        item.regionScope.split(',').forEach((s) => r.add(s.trim()))
+      }
+    })
+    return ['All', ...Array.from(r).sort()]
+  }, [])
+
   const groupedData = useMemo(() => {
-    // First filter the data based on search text
+    // First filter the data based on search text and region
     const filteredData = libraryData.filter((item) => {
+      // Region Filter
+      if (activeRegion !== 'All') {
+        if (!item.regionScope || !item.regionScope.includes(activeRegion)) return false
+      }
+
       if (!filterText) return true
       const searchLower = filterText.toLowerCase()
       return (
@@ -35,7 +51,6 @@ export const LibraryView: React.FC = () => {
       if (groups.has(category)) {
         groups.get(category)!.push(item)
       } else {
-        // Fallback for unexpected categories
         groups.get('General Recommendations')!.push(item)
       }
     })
@@ -52,20 +67,16 @@ export const LibraryView: React.FC = () => {
       const itemsInGroup = groups.get(key)!
 
       const roots = itemsInGroup.filter((item) => {
-        // Check if any of its "parents" (based on dependencies) are in this group.
-        // Since we don't have parent pointers, we can check if this item appears in the 'children' list of any OTHER item in this group.
-
         const isChildOfSomeoneInGroup = itemsInGroup.some((potentialParent) =>
           potentialParent.children?.some((child) => child.referenceId === item.referenceId)
         )
-
         return !isChildOfSomeoneInGroup
       })
       categoryRoots.set(key, roots)
     })
 
     return categoryRoots
-  }, [filterText])
+  }, [filterText, activeRegion])
 
   const sections = [
     'Digital Signature',
@@ -96,16 +107,29 @@ export const LibraryView: React.FC = () => {
 
       {/* Controls Container */}
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between mb-8 bg-card border border-border rounded-lg shadow-lg p-2">
-        {/* Dropdown */}
-        <FilterDropdown
-          items={tabs}
-          selectedId={activeTab}
-          onSelect={setActiveTab}
-          label="Select Category"
-          defaultLabel="All"
-          noContainer
-          className="mb-0"
-        />
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+          {/* Category Dropdown */}
+          <FilterDropdown
+            items={tabs}
+            selectedId={activeTab}
+            onSelect={setActiveTab}
+            label="Category"
+            defaultLabel="All"
+            noContainer
+            className="mb-0 w-full sm:w-[200px]"
+          />
+
+          {/* Region Dropdown */}
+          <FilterDropdown
+            items={regions}
+            selectedId={activeRegion}
+            onSelect={setActiveRegion}
+            label="Region"
+            defaultLabel="All"
+            noContainer
+            className="mb-0 w-full sm:w-[150px]"
+          />
+        </div>
 
         {/* Search Input */}
         <div className="relative flex-1 min-w-[200px] w-full md:w-auto">
@@ -133,6 +157,7 @@ export const LibraryView: React.FC = () => {
                   <LibraryTreeTable
                     data={groupedData.get(section)!}
                     defaultSort={{ key: 'lastUpdateDate', direction: 'desc' }}
+                    defaultExpandAll={true}
                   />
                 ) : (
                   <p className="text-sm text-muted-foreground italic">
@@ -156,6 +181,7 @@ export const LibraryView: React.FC = () => {
               <LibraryTreeTable
                 data={groupedData.get(activeTab)!}
                 defaultSort={{ key: 'lastUpdateDate', direction: 'desc' }}
+                defaultExpandAll={true}
               />
             ) : (
               <p className="text-sm text-muted-foreground italic">

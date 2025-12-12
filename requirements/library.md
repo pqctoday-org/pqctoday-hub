@@ -1,7 +1,7 @@
 # PQC Standards Library Requirements
 
 **Status:** ✅ Implemented  
-**Last Updated:** 2025-12-06
+**Last Updated:** 2025-12-11
 
 ## Overview
 
@@ -35,13 +35,18 @@ Documents are automatically categorized into the following sections based on the
 
 ### 3. User Interface (UI)
 
-#### 3.1 Tabbed Navigation
+#### 3.1 Navigation & Filtering
 
-- Users can filter the view using tabs:
+- **Category Filter**:
+  - Users can filter the view using tabs or a dropdown:
   - **All**: Displays all documents (grouped by section).
   - **[Category Name]**: Displays only documents within that specific category.
-- **Active Tab Indicator**: Visual highlight showing current selection
-- **Responsive Design**: Tabs stack vertically on mobile devices
+- **Region Filter**:
+  - A dropdown filter allows users to filter documents by `regionScope` (e.g., Global, US, EU, APAC).
+  - **Logic**: Filters for items where the `regionScope` field contains the selected region string.
+  - **Default**: "All" (shows documents from all regions).
+- **Active Selection**: Visual highlight showing current selection in dropdowns.
+- **Responsive Design**: Controls stack vertically on mobile devices, side-by-side on desktop.
 
 #### 3.2 Library Table
 
@@ -62,6 +67,22 @@ Documents are automatically categorized into the following sections based on the
   - Supports keyboard navigation (Tab, Enter, Escape)
   - Proper ARIA roles and labels
   - Screen reader friendly table structure
+
+#### 3.3 Tree Hierarchy & Navigation
+
+- **Dependency-Based Hierarchy**:
+  - The tree structure is dynamically built based on the `dependencies` column in the source data.
+  - **Logic**: If **Document A** lists **Document B** in its `dependencies` field, then **Document B** is the **Parent** and **Document A** is the **Child**.
+  - This allows for multi-level nesting reflecting the standards ecosystem (e.g., Base Standard -> Profile -> Guideline).
+
+- **Root Node Determination**:
+  - Items are primarily grouped by **Category**.
+  - An item is displayed as a **Root Node** (top-level item) if it is **not a child** of any other item _within that same category_.
+
+- **Programmatic Expansion**:
+  - **Default State**: The tree view initializes in a **Fully Expanded** state (`defaultExpandAll={true}`).
+  - **Toggle Controls**: "Expand All" and "Collapse All" buttons are provided in the table header.
+  - **Safety**: The expansion logic includes robust **Cycle Detection** (`visited` set) to prevent infinite recursion if circular dependencies exist in the data.
 
 ### 4. Technical Requirements
 

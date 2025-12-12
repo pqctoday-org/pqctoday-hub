@@ -1,7 +1,7 @@
 # PQC Timeline App - Test Plan
 
 **Status:** ✅ Implemented  
-**Last Updated:** 2025-12-08
+**Last Updated:** 2025-12-11
 
 > **Note**: This document provides a high-level testing strategy. Comprehensive E2E tests are located in `/e2e` directory with detailed test scenarios for each feature.
 
@@ -32,6 +32,8 @@ This document outlines the testing strategy for the PQC Timeline Application, en
   - Dashboard rendering and filtering.
   - Interactive Playground functionality.
   - OpenSSL Studio file operations.
+  - **Library View**: Region filter, Expand/Collapse (`library.spec.ts`).
+  - **Threats Dashboard**: Popup details and URL verification (`impacts-popup.spec.ts`).
 
 ## 3. Feature-Specific Test Plans
 
@@ -50,10 +52,11 @@ This document outlines the testing strategy for the PQC Timeline Application, en
 - **Objective**: Verify correct parsing and display of threat data.
 - **Details**: See [Impacts Requirements - Test Plan](impacts.md#4-test-plan).
 - **Test Scenarios**:
-  - Load and parse CSV threat data
+  - Load and parse CSV threat data (including `sourceUrl`)
   - Display threats grouped by industry
   - Filter by criticality level
-  - Verify all required fields are present
+  - **Detailed Popup**: Verify clicking "Info" opens details popup
+  - **Source Link**: Verify reference link in popup is valid
 
 ### 3.3 OpenSSL Studio
 

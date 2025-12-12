@@ -97,15 +97,6 @@ export default defineConfig({
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         },
       },
-      '/api/niap-search': {
-        target: 'https://www.niap-ccevs.org',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/niap-search/, '/Product/'),
-        headers: {
-          'User-Agent':
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        },
-      },
       '/api/bsi-search': {
         target: 'https://www.bsi.bund.de',
         changeOrigin: true,

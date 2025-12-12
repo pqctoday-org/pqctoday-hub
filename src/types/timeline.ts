@@ -7,7 +7,6 @@ export type Phase =
   | 'Guidance'
   | 'Policy'
   | 'Regulation'
-  | 'Regulation'
   | 'Research'
   | 'Deadline'
 
@@ -22,13 +21,25 @@ export interface TimelineEvent {
   description: string
   sourceUrl?: string
   sourceDate?: string
-  // Denormalized fields for easier access
-  orgName?: string
-  orgFullName?: string
+  status?: string // e.g. "Completed", "In Progress", "New", "Updated"
+
+  // Denormalized fields for convenient access
+  orgName: string
+  orgFullName: string
   orgLogoUrl?: string
-  countryName?: string
-  flagCode?: string
-  status?: string
+  countryName: string
+  flagCode: string
+}
+
+export interface TimelinePhase {
+  startYear: number
+  endYear: number
+  phase: string
+  type: EventType
+  title: string
+  description: string
+  events: TimelineEvent[]
+  status?: 'New' | 'Updated'
 }
 
 export interface RegulatoryBody {
@@ -37,22 +48,14 @@ export interface RegulatoryBody {
   logoUrl?: string
   countryCode: string
   events: TimelineEvent[]
+  status?: 'New' | 'Updated'
 }
 
 export interface CountryData {
   countryName: string
   flagCode: string
   bodies: RegulatoryBody[]
-}
-
-export interface TimelinePhase {
-  startYear: number
-  endYear: number
-  phase: Phase
-  type: EventType
-  title: string
-  description: string
-  events: TimelineEvent[]
+  status?: 'New' | 'Updated'
 }
 
 export interface GanttCountryData {

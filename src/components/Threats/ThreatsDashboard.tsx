@@ -1,11 +1,14 @@
-import { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { threatsData } from '../../data/threatsData'
-import { createPortal } from 'react-dom'
+import React, { useMemo, useState } from 'react'
 import {
+  ShieldAlert,
   Search,
-  ChevronDown,
-  ChevronUp,
+  AlertTriangle,
+  Lock,
+  Cpu,
+  Info,
+  X,
+  ExternalLink,
+  Briefcase,
   Plane,
   Landmark,
   Zap,
@@ -13,149 +16,140 @@ import {
   Stethoscope,
   Shield,
   Car,
-  Cpu,
-  Briefcase,
   AlertOctagon,
-  AlertTriangle,
   AlertCircle,
-  Info,
   CheckCircle,
-  X,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react'
-import { logEvent } from '../../utils/analytics'
+import { threatsData } from '../../data/threatsData'
+import type { ThreatItem } from '../../data/threatsData'
+import { motion, AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
+import { logEvent } from '../../utils/analytics'
 import clsx from 'clsx'
-import type { ThreatData } from '../../data/threatsData'
+import { StatusBadge } from '../common/StatusBadge'
 
 type SortField = 'industry' | 'threatId' | 'criticality'
 type SortDirection = 'asc' | 'desc'
 
-const ThreatDetailsModal = ({
-  threat,
-  onClose,
-}: {
-  threat: ThreatData | null
-  onClose: () => void
-}) => {
+// Helper to get icon for industry
+const getIndustryIcon = (industry: string) => {
+  const lower = industry.toLowerCase()
+  if (lower.includes('aerospace') || lower.includes('aviation')) return <Plane size={16} />
+  if (lower.includes('finance') || lower.includes('banking')) return <Landmark size={16} />
+  if (lower.includes('energy') || lower.includes('utilities')) return <Zap size={16} />
+  if (lower.includes('telecom')) return <Radio size={16} />
+  if (lower.includes('healthcare') || lower.includes('pharma')) return <Stethoscope size={16} />
+  if (lower.includes('government') || lower.includes('defense')) return <Shield size={16} />
+  if (lower.includes('automotive')) return <Car size={16} />
+  if (lower.includes('technology')) return <Cpu size={16} />
+  return <Briefcase size={16} />
+}
+
+// Threat Detail Dialog Component - Moved outside
+const ThreatDetailDialog = ({ threat, onClose }: { threat: ThreatItem; onClose: () => void }) => {
   if (!threat) return null
 
-  return createPortal(
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-      >
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          onClick={(e) => e.stopPropagation()}
-          className="bg-card border border-border rounded-xl shadow-2xl max-w-md w-full overflow-hidden"
-        >
-          <div className="p-4 border-b border-border flex items-center justify-between bg-muted/20">
-            <h3 className="font-bold text-lg flex items-center gap-2">
-              <span className="text-primary">
-                {/* We can re-use the icon if we had access to the helper, but text is fine or passed in */}
-                {threat.industry}
-              </span>
-              <span className="text-muted-foreground text-sm font-normal">Details</span>
-            </h3>
-            <button
-              onClick={onClose}
-              className="p-1 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-foreground"
-            >
-              <X size={20} />
-            </button>
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="bg-card border border-border rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col">
+        <div className="p-6 border-b border-border flex justify-between items-start sticky top-0 bg-card z-10">
+          <div>
+            <h2 className="text-xl font-bold text-gradient flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-primary" />
+              {threat.threatId}
+              <StatusBadge status={threat.status} size="sm" />
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">{threat.industry}</p>
           </div>
-          <div className="p-6 space-y-4">
-            <div>
-              <label
-                htmlFor="threat-id"
-                className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1 block"
-              >
-                Threat ID
-              </label>
-              <div id="threat-id" className="font-mono text-sm bg-muted/30 p-2 rounded">
-                {threat.threatId}
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="threat-description"
-                className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1 block"
-              >
-                Description
-              </label>
-              <p id="threat-description" className="text-sm leading-relaxed text-foreground">
-                {threat.description}
+          <button
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Close details"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          <div>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+              Description
+            </h3>
+            <p className="text-foreground leading-relaxed">{threat.description}</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-muted/30 p-4 rounded-lg border border-border/50">
+              <h3 className="text-sm font-semibold text-red-400 mb-2 flex items-center gap-2">
+                <Lock size={14} /> At-Risk Cryptography
+              </h3>
+              <p className="text-sm font-mono text-foreground/80 break-words">
+                {threat.cryptoAtRisk}
               </p>
             </div>
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <label
-                  htmlFor="threat-criticality"
-                  className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1 block"
-                >
-                  Criticality
-                </label>
-                <div
-                  id="threat-criticality"
-                  className={clsx(
-                    'inline-block px-2 py-1 rounded text-xs font-bold border',
-                    threat.criticality === 'Critical'
-                      ? 'bg-red-500/10 text-red-400 border-red-500/20'
-                      : threat.criticality === 'High'
-                        ? 'bg-orange-500/10 text-orange-400 border-orange-500/20'
-                        : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                  )}
-                >
-                  {threat.criticality}
-                </div>
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="threat-source"
-                className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1 block"
-              >
-                Source
-              </label>
-              <div id="threat-source" className="text-xs text-muted-foreground italic">
-                {threat.source}
-              </div>
+
+            <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
+              <h3 className="text-sm font-semibold text-primary mb-2 flex items-center gap-2">
+                <Cpu size={14} /> PQC Mitigation
+              </h3>
+              <p className="text-sm font-mono text-foreground/80 break-words">
+                {threat.pqcReplacement}
+              </p>
             </div>
           </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>,
-    document.body
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                Criticality
+              </h3>
+              <span
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  threat.criticality.toLowerCase() === 'critical'
+                    ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                    : threat.criticality.toLowerCase() === 'high'
+                      ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
+                      : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                }`}
+              >
+                {threat.criticality}
+              </span>
+            </div>
+          </div>
+
+          {threat.sourceUrl && (
+            <div className="pt-4 border-t border-border mt-4">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                Reference Source
+              </h3>
+              <a
+                href={threat.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-primary hover:underline text-sm truncate"
+              >
+                <ExternalLink size={14} />
+                {threat.mainSource || 'View Source'}
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+      {/* Click outside to close */}
+      <div className="absolute inset-0 -z-10" onClick={onClose} aria-hidden="true" />
+    </div>
   )
 }
 
-export const ThreatsDashboard = () => {
+export const ThreatsDashboard: React.FC = () => {
   const [selectedIndustry, setSelectedIndustry] = useState<string>('All')
   const [selectedCriticality, setSelectedCriticality] = useState<string>('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortField, setSortField] = useState<SortField>('industry')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
-  const [selectedThreat, setSelectedThreat] = useState<ThreatData | null>(null)
-
-  // Helper to get icon for industry
-  const getIndustryIcon = (industry: string) => {
-    const lower = industry.toLowerCase()
-    if (lower.includes('aerospace') || lower.includes('aviation')) return <Plane size={16} />
-    if (lower.includes('finance') || lower.includes('banking')) return <Landmark size={16} />
-    if (lower.includes('energy') || lower.includes('utilities')) return <Zap size={16} />
-    if (lower.includes('telecom')) return <Radio size={16} />
-    if (lower.includes('healthcare') || lower.includes('pharma')) return <Stethoscope size={16} />
-    if (lower.includes('government') || lower.includes('defense')) return <Shield size={16} />
-    if (lower.includes('automotive')) return <Car size={16} />
-    if (lower.includes('technology')) return <Cpu size={16} />
-    return <Briefcase size={16} />
-  }
+  const [selectedThreat, setSelectedThreat] = useState<ThreatItem | null>(null)
 
   // Extract unique industries for filter
   const industryItems = useMemo(() => {
@@ -229,10 +223,7 @@ export const ThreatsDashboard = () => {
 
     // Sort
     data.sort((a, b) => {
-      // Primary Sort: Industry (Always Ascending unless overridden by user interaction logic, but here we default to industry asc)
-      // Actually, let's respect the sortField/sortDirection for the primary sort,
-      // but if sortField is 'industry', we add a secondary sort for Criticality.
-
+      // Helper for criticality value
       const criticalityOrder: Record<string, number> = {
         Critical: 3,
         High: 2,
@@ -240,7 +231,6 @@ export const ThreatsDashboard = () => {
         Medium: 1,
         Low: 0,
       }
-      // eslint-disable-next-line security/detect-object-injection
       const getCriticalityVal = (c: string) => criticalityOrder[c] ?? 0
 
       if (sortField === 'industry') {
@@ -253,13 +243,13 @@ export const ThreatsDashboard = () => {
         return getCriticalityVal(b.criticality) - getCriticalityVal(a.criticality)
       }
 
-      // eslint-disable-next-line security/detect-object-injection
-      let valA: string | number = a[sortField]
-      // eslint-disable-next-line security/detect-object-injection
-      let valB: string | number = b[sortField]
+      let valA: string | number = ''
+      let valB: string | number = ''
 
-      // Custom sort for criticality column
-      if (sortField === 'criticality') {
+      if (sortField === 'threatId') {
+        valA = a.threatId
+        valB = b.threatId
+      } else if (sortField === 'criticality') {
         valA = getCriticalityVal(a.criticality)
         valB = getCriticalityVal(b.criticality)
       }
@@ -396,7 +386,7 @@ export const ThreatsDashboard = () => {
                 </th>
                 <th className="p-4 font-semibold text-sm">Crypto</th>
                 <th className="p-4 font-semibold text-sm">PQC Repl.</th>
-                <th className="md:hidden p-4 font-semibold text-sm text-center">Info</th>
+                <th className="p-4 font-semibold text-sm text-center">Info</th>
               </tr>
             </thead>
             <tbody>
@@ -420,13 +410,18 @@ export const ThreatsDashboard = () => {
                       <span className="hidden md:inline">{item.industry}</span>
                     </td>
                     <td className="hidden md:table-cell p-4 text-sm font-mono text-primary/80">
-                      {item.threatId}
+                      <div className="flex items-center gap-2">
+                        {item.threatId}
+                        <StatusBadge status={item.status} size="sm" />
+                      </div>
                     </td>
                     {/* Desktop Description */}
                     <td className="hidden md:table-cell p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                      {item.description}
+                      {item.description.length > 120
+                        ? `${item.description.substring(0, 120)}...`
+                        : item.description}
                       <div className="text-[10px] text-muted-foreground/50 mt-1 uppercase tracking-wider">
-                        Source: {item.source}
+                        Source: {item.mainSource}
                       </div>
                     </td>
                     <td className="p-4 text-center md:text-left">
@@ -440,9 +435,9 @@ export const ThreatsDashboard = () => {
                       <span
                         className={clsx(
                           'hidden md:inline-block px-2 py-1 rounded text-xs font-bold border',
-                          item.criticality === 'Critical'
+                          item.criticality.toLowerCase() === 'critical'
                             ? 'bg-red-500/10 text-red-400 border-red-500/20'
-                            : item.criticality === 'High'
+                            : item.criticality.toLowerCase() === 'high'
                               ? 'bg-orange-500/10 text-orange-400 border-orange-500/20'
                               : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
                         )}
@@ -460,8 +455,8 @@ export const ThreatsDashboard = () => {
                         <div key={i}>{c.trim()}</div>
                       ))}
                     </td>
-                    {/* Mobile Info Button Column */}
-                    <td className="md:hidden p-4 text-center">
+                    {/* Info Button Column */}
+                    <td className="p-4 text-center">
                       <button
                         onClick={() => setSelectedThreat(item)}
                         className="p-1.5 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-colors"
@@ -482,7 +477,11 @@ export const ThreatsDashboard = () => {
           </div>
         )}
       </div>
-      <ThreatDetailsModal threat={selectedThreat} onClose={() => setSelectedThreat(null)} />
+      <AnimatePresence>
+        {selectedThreat && (
+          <ThreatDetailDialog threat={selectedThreat} onClose={() => setSelectedThreat(null)} />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

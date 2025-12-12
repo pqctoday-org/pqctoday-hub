@@ -19,7 +19,7 @@ export const useThemeStore = create<ThemeState>()(
     {
       name: 'theme-storage-v1',
       storage: createJSONStorage(() => localStorage),
-      // Migration: if user has 'system' or old data, default/migrate to light
+      // Migration: handle old data formats
       migrate: (persistedState: unknown) => {
         // Safe check for object type
         const state =
@@ -27,14 +27,6 @@ export const useThemeStore = create<ThemeState>()(
             ? (persistedState as Record<string, unknown>)
             : {}
 
-        // If theme was 'system', force it to 'light'
-        if (state.theme === 'system') {
-          return {
-            ...state,
-            theme: 'light',
-            hasSetPreference: true,
-          } as ThemeState
-        }
         // If user has old localStorage format without hasSetPreference
         if ('theme' in state && !('hasSetPreference' in state)) {
           return {

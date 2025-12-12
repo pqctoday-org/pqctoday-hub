@@ -1,287 +1,236 @@
-import { JSDOM } from 'jsdom'
 import { createRequire } from 'module'
 import { ComplianceRecord } from './types.js'
-import { fetchText, extractAlgorithms, PQC_PATTERNS, CLASSICAL_PATTERNS } from './utils.js'
 
 const require = createRequire(import.meta.url)
 const { PDFParse } = require('pdf-parse')
 
 export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
   try {
-    const baseUrl = 'https://cyber.gouv.fr'
-    // User-provided filtered URL for Common Criteria products
-    const listUrl = `${baseUrl}/produits-certifies?sort_bef_combine=field_date_de_certification_value_DESC&type_1%5Bproduit_certifie_cc%5D=produit_certifie_cc&field_categorie_target_id%5B533%5D=533&field_categorie_target_id%5B532%5D=532&field_categorie_target_id%5B541%5D=541&field_categorie_target_id%5B545%5D=545&field_niveau_target_id%5B562%5D=562&field_niveau_target_id%5B564%5D=564&field_niveau_target_id%5B565%5D=565&field_niveau_target_id%5B566%5D=566&field_niveau_target_id%5B567%5D=567`
+    // The catalog is hosted on S3 and accessed via the ANSSI website
+    // Note: This URL may change as it uses signed S3 credentials
+    // If it fails, visit https://cyber.gouv.fr/offre-de-service/solutions-certifiees-et-qualifiees/services-de-securite-evalue/decouvrir-les-solutions-certifiees-qualifiees to get the latest link
+    const catalogUrl =
+      'https://cyber.gouv.fr/documents/57/catalogue-produits-services-profils-de-protection-sites-certifies-qualifies-ag_U1zj9tZ.pdf'
 
-    console.log('[ANSSI] Parsing filtered list page...')
+    console.log('[ANSSI] Downloading PDF catalog...')
 
     const records: ComplianceRecord[] = []
-    let page = 0
-    let stopScraping = false
 
-    while (!stopScraping) {
-      const pageUrl = `${listUrl}&page=${page}`
-      console.log(`[ANSSI] Fetching list page ${page}...`)
+    try {
+      // Download PDF catalog with local cache fallback
+      // NOTE: The S3 URL expires after 1 hour. To get a fresh URL:
+      // Visit https://cyber.gouv.fr/offre-de-service/solutions-certifiees-et-qualifiees/services-de-securite-evalue/decouvrir-les-solutions-certifiees-qualifiees/
+      // and click "Catalogue des produits et services qualifiés, agréés et certifiés"
+
+      const fs = await import('fs')
+      const path = await import('path')
+      const crypto = await import('crypto')
+      const cacheDir = path.join(process.cwd(), '.cache')
+      const cachePath = path.join(cacheDir, 'anssi-catalog.pdf')
+      const hashPath = path.join(cacheDir, 'anssi-catalog.hash')
+
+      let pdfBuffer: Buffer
 
       try {
-        const html = await fetchText(pageUrl)
-        const dom = new JSDOM(html)
-        const doc = dom.window.document
+        // Try to download from URL
+        console.log('[ANSSI] Attempting to download PDF from URL...')
+        const arrayBuffer = await fetch(catalogUrl).then((res) => res.arrayBuffer())
+        pdfBuffer = Buffer.from(arrayBuffer)
 
-        // Select product items (adjust selector if needed based on DOM)
-        const items = Array.from(doc.querySelectorAll('.view-content .views-row'))
-        if (items.length === 0) {
-          console.log('[ANSSI] No more items found. Stopping.')
-          break
+        // Calculate hash of downloaded PDF
+        const newHash = crypto.createHash('sha256').update(pdfBuffer).digest('hex')
+
+        // Check if catalog has changed
+        let cachedHash = ''
+        if (fs.existsSync(hashPath)) {
+          cachedHash = fs.readFileSync(hashPath, 'utf-8').trim()
         }
 
-        for (const item of items) {
-          const link = item.querySelector('a')
-          const relativeUrl = link?.getAttribute('href')
-          if (!relativeUrl) continue
-
-          // Title (from H1 on detail page is cleaner)
-          // We will extract it properly after fetching the detail page
-          let listTitle = link?.textContent?.trim() || 'Unknown Product'
-          listTitle = listTitle.replace(/\s+/g, ' ').substring(0, 150)
-
-          // Date Extraction from Line (e.g. "Publié le 01/01/2025")
-          // We need to fetch detail page to get accurate date usually, but list might have it.
-          // Assuming list has some data. If not, detail fetch matches previous logic.
-          // Previous logic fetched detail for EVERYTHING.
-
-          // Let's replicate strict logic:
-          // 1. Fetch Detail
-          const detailUrl = `${baseUrl}${relativeUrl}`
-          const detailHtml = await fetchText(detailUrl)
-          const detailDom = new JSDOM(detailHtml)
-          const pageDoc = detailDom.window.document
-
-          // Date
-          let dateStr = ''
-
-          // Actually, "Publié le" is usually in metadata block
-          // Let's look for time tag or specific field
-          const dateNode =
-            pageDoc.querySelector('time') ||
-            pageDoc.querySelector('.field--name-field-date-de-certification .field__item')
-          if (dateNode) dateStr = dateNode.textContent?.trim() || ''
-
-          let date = new Date().toISOString().split('T')[0]
-          if (dateStr) {
-            // Parse French Date (DD/MM/YYYY)
-            const [day, month, year] = dateStr.split('/')
-            if (year && month && day) date = `${year}-${month}-${day}`
-          }
-
-          // Strict Filter (Scanning 2-year window)
-          const cutoffDate = new Date()
-          cutoffDate.setFullYear(cutoffDate.getFullYear() - 2)
-
-          if (new Date(date) < cutoffDate) {
-            console.log(`[ANSSI] Encountered old record (${date}). Stopping scraper.`)
-            stopScraping = true
-            break
-          }
-
-          // --- Improved Metadata Extraction Strategy (REGEX on Body Text) ---
-          // This matches the user's screenshot labels exactly.
-          const fullText = pageDoc.body.textContent || ''
-
-          // 1. Product Name (User preference: Extract from URL slug)
-          // e.g. /produits-certifies/multiapp-52 -> "multiapp 52"
-          const urlSlug = relativeUrl.split('/').pop() || ''
-          const h1Title = pageDoc.querySelector('h1')?.textContent?.trim() // Define fallback
-          const productName = urlSlug
-            ? decodeURIComponent(urlSlug).replace(/-/g, ' ')
-            : h1Title
-              ? h1Title.replace(/\s+/g, ' ')
-              : listTitle
-
-          // 2. Vendor: "Développeur(s) :" or "Commanditaire(s) :"
-          let vendor = 'Unknown Vendor'
-          // Match "Développeur(s) : <Content>" just like the screenshot
-          const devMatch = fullText.match(/Développeur\(s\)\s*:\s*([^\n\r]+)/i)
-          if (devMatch) {
-            vendor = devMatch[1].trim()
-          } else {
-            const commMatch = fullText.match(/Commanditaire\(s\)\s*:\s*([^\n\r]+)/i)
-            if (commMatch) vendor = commMatch[1].trim()
-          }
-
-          // 3. ID / Ref: "Référence du certificat :"
-          let certRef = ''
-          const refMatch = fullText.match(/Référence du certificat\s*:\s*([^\n\r]+)/i)
-          if (refMatch) {
-            certRef = refMatch[1].trim()
-          }
-
-          // 4. Level (Niveau)
-          let level = ''
-          const levelMatch = fullText.match(/Niveau\s*:\s*([^\n\r]+)/i)
-          if (levelMatch) level = levelMatch[1].trim()
-
-          // 5. Augmentations
-          let augmentation = ''
-          const augMatch = fullText.match(/Augmentations\s*:\s*([^\n\r]+)/i)
-          if (augMatch) augmentation = augMatch[1].trim()
-
-          // 6. Lab (Centre d'évaluation)
-          let lab = ''
-          const labMatch = fullText.match(/Centre d'évaluation\s*:\s*([^\n\r]+)/i)
-          if (labMatch) lab = labMatch[1].trim()
-
-          // Sanitize Ref for ID (e.g. "ANSSI-CC-2025/30" -> "anssi-cc-2025-30")
-          let certId = ''
-          if (certRef) {
-            certId = certRef.toLowerCase().replace(/[^a-z0-9]/g, '-')
-          } else {
-            // Fallback ID
-            certId = `anssi-${productName
-              .toLowerCase()
-              .replace(/[^a-z0-9]/g, '-')
-              .substring(0, 30)}-${Math.random().toString(36).substr(2, 4)}`
-          }
-
-          // PDF Extraction and Multi-URL Collection
-          let pqcCoverage = 'No PQC Mechanisms Detected'
-          let classicalAlgorithms = ''
-
-          const allPdfLinks = Array.from(pageDoc.querySelectorAll('a[href*=".pdf"]'))
-
-          // Categorize PDFs
-          const certReports: string[] = []
-          const securityTargets: string[] = []
-          const otherDocs: Array<{ name: string; url: string }> = []
-
-          allPdfLinks.forEach((a) => {
-            const href = a.getAttribute('href')?.toLowerCase() || ''
-            const text = a.textContent?.toLowerCase() || ''
-            const pdfUrl = a.getAttribute('href') || ''
-            const absolutePdfUrl = pdfUrl.startsWith('http') ? pdfUrl : `${baseUrl}${pdfUrl}`
-
-            // Categorize by filename and link text
-            if (
-              href.includes('cible') ||
-              href.includes('security_target') ||
-              href.includes('st') ||
-              text.includes('cible') ||
-              text.includes('security target')
-            ) {
-              securityTargets.push(absolutePdfUrl)
-            } else if (
-              href.includes('rapport') ||
-              href.includes('certification') ||
-              href.includes('report') ||
-              href.includes('certificat') ||
-              text.includes('rapport') ||
-              text.includes('certification') ||
-              text.includes('certificat')
-            ) {
-              certReports.push(absolutePdfUrl)
-            } else {
-              otherDocs.push({ name: text || 'Document', url: absolutePdfUrl })
-            }
-          })
-
-          // Try to fetch one PDF for algorithm extraction (Prioritize Security Target for PQC validity)
-          let pdfLink = allPdfLinks.find((a) => {
-            const href = a.getAttribute('href')?.toLowerCase() || ''
-            const text = a.textContent?.toLowerCase() || ''
-            return (
-              href.includes('cible') ||
-              href.includes('security_target') ||
-              href.includes('st') ||
-              text.includes('cible') ||
-              text.includes('security target')
-            )
-          })
-
-          if (!pdfLink) {
-            pdfLink = allPdfLinks.find((a) => {
-              const href = a.getAttribute('href')?.toLowerCase() || ''
-              const text = a.textContent?.toLowerCase() || ''
-              return (
-                href.includes('rapport') ||
-                href.includes('certification') ||
-                href.includes('report') ||
-                href.includes('certificat') ||
-                text.includes('rapport') ||
-                text.includes('certification') ||
-                text.includes('certificat')
-              )
-            })
-          }
-          if (!pdfLink && allPdfLinks.length > 0) pdfLink = allPdfLinks[0]
-
-          if (pdfLink) {
-            const pdfUrl = pdfLink.getAttribute('href') || ''
-            const absolutePdfUrl = pdfUrl.startsWith('http') ? pdfUrl : `${baseUrl}${pdfUrl}`
-            try {
-              const pdfBuffer = await fetch(absolutePdfUrl).then((res) => res.arrayBuffer())
-              const parser = new PDFParse({ data: Buffer.from(pdfBuffer) })
-              const pdfData = await parser.getText()
-              const text = pdfData.text
-
-              // Algos
-              const pqcStr = extractAlgorithms(text, PQC_PATTERNS)
-              if (pqcStr) pqcCoverage = pqcStr
-              classicalAlgorithms = extractAlgorithms(text, CLASSICAL_PATTERNS)
-
-              // Extract Lab / ITSEF from PDF if missing
-              if (!lab) {
-                const labMatch = text.match(
-                  /(?:Centre\s+d['’]\s*évaluation|Evaluation\s+Facility|ITSEF)\s*[:.]?\s*([^\n\r,]+)/i
-                )
-                if (labMatch) {
-                  lab = labMatch[1].trim().substring(0, 50)
-                }
-              }
-            } catch (e) {
-              console.warn('PDF Error', e)
-            }
-          }
-
-          // Extract product category from metadata (Catégorie)
-          let productCategory = 'Certified Product'
-          const categoryMatch = fullText.match(/Catégorie\s*:\s*([^\n\r]+)/i)
-          if (categoryMatch) {
-            productCategory = categoryMatch[1].trim()
-          }
-
-          records.push({
-            id: certId,
-            source: 'ANSSI',
-            date,
-            link: detailUrl,
-            type: 'Common Criteria',
-            status: 'Active',
-            pqcCoverage,
-            classicalAlgorithms,
-            productName: productName,
-            productCategory: productCategory,
-            vendor: vendor,
-            lab: lab || undefined,
-            certificationLevel: level
-              ? `${level}${augmentation ? ' ' + augmentation : ''}`.trim()
-              : undefined,
-            // Multi-URL support
-            certificationReportUrls: certReports.length > 0 ? certReports : undefined,
-            securityTargetUrls: securityTargets.length > 0 ? securityTargets : undefined,
-            additionalDocuments: otherDocs.length > 0 ? otherDocs : undefined,
-          })
+        if (newHash === cachedHash) {
+          console.log('[ANSSI] Catalog unchanged, skipping re-scrape')
+          return []
         }
-      } catch (e) {
-        console.warn(`[ANSSI] Error on page ${page}:`, e)
+
+        // Cache successful download
+        if (!fs.existsSync(cacheDir)) {
+          fs.mkdirSync(cacheDir, { recursive: true })
+        }
+        fs.writeFileSync(cachePath, pdfBuffer)
+        fs.writeFileSync(hashPath, newHash)
+        console.log('[ANSSI] PDF downloaded and cached successfully (new version detected)')
+      } catch {
+        // Fall back to cached copy
+        console.warn('[ANSSI] Download failed, attempting to use cached copy...')
+        if (fs.existsSync(cachePath)) {
+          pdfBuffer = fs.readFileSync(cachePath)
+          console.log('[ANSSI] Using cached PDF catalog')
+        } else {
+          throw new Error('Download failed and no cached copy available')
+        }
       }
 
-      page++
-      if (page > 20) stopScraping = true // Safety
-      await new Promise((r) => setTimeout(r, 500))
-    }
+      const parser = new PDFParse({ data: pdfBuffer })
+      const pdfData = await parser.getText()
+      const text = pdfData.text
 
-    return records
+      console.log('[ANSSI] PDF catalog downloaded. Parsing certificates...')
+
+      // The PDF text has certificate references split across lines like:
+      // "ANSSI-CC-\n2023-19" which becomes "ANSSI-CC- 2023-19" after replacing \n with space
+      // So we need to handle optional whitespace in the pattern
+      const cleanText = text.replace(/\n/g, ' ')
+
+      // Use cleanText for pattern matching with optional whitespace
+      const certRefMatches = Array.from(
+        cleanText.matchAll(/ANSSI-(CC|CSPN)-\s*(\d{4})-\s*(\d+)/gi)
+      ) as RegExpMatchArray[]
+
+      for (const certRefMatch of certRefMatches) {
+        const certType = certRefMatch[1].toUpperCase()
+        const year = certRefMatch[2]
+        const num = certRefMatch[3]
+        const certRef = `ANSSI-${certType}-${year}-${num}`
+        const certId = certRef.toLowerCase()
+
+        // Find the context around this certificate in the original text
+        const certIndex = certRefMatch.index || 0
+        const contextStart = Math.max(0, certIndex - 500)
+        const contextEnd = Math.min(cleanText.length, certIndex + 200)
+        const context = cleanText.substring(contextStart, contextEnd)
+
+        // Extract product name (appears before the certificate reference)
+        // The product name is between vendor and EAL level in the table
+        let productName = 'Unknown Product'
+
+        // Try to find product name between vendor and EAL
+        // Pattern: VENDOR ProductName EAL
+        const productMatch = context.match(
+          /(?:APPLE|THALES|GEMALTO|IDEMIA|SAMSUNG|GOOGLE|MICROSOFT|ORACLE|IBM|ATOS|BULL|OBERTHUR|MORPHO|SAFRAN|AIRBUS)\s+([A-Za-z0-9][^]+?)\s+EAL\d/i
+        )
+        if (productMatch) {
+          productName = productMatch[1]
+            .trim()
+            // Remove common table headers and noise
+            .replace(
+              /^(Nom du produit|Type de produit|Date de|Lien vers|certificat|rapport|cible|sécurité)\s*/gi,
+              ''
+            )
+            // Clean up multiple spaces
+            .replace(/\s+/g, ' ')
+            .trim()
+        }
+
+        // Fallback: try simpler pattern if vendor-based match failed
+        if (productName === 'Unknown Product' || productName.length < 5) {
+          const simpleMatch = context.match(/([A-Z][A-Za-z0-9\s]{10,150}?)\s+EAL\d/i)
+          if (simpleMatch) {
+            productName = simpleMatch[1]
+              .trim()
+              .replace(
+                /^(Nom du produit|Type de produit|Date de|Lien vers|certificat|rapport|cible|sécurité)\s*/gi,
+                ''
+              )
+              .replace(/\s+/g, ' ')
+              .trim()
+          }
+        }
+
+        // Extract vendor/developer (appears before product name, often repeated)
+        // Common vendors: APPLE, THALES, GEMALTO, IDEMIA, etc.
+        let vendor = 'Unknown Vendor'
+        const vendorMatch = context.match(
+          /\b(APPLE|THALES|GEMALTO|IDEMIA|SAMSUNG|GOOGLE|MICROSOFT|ORACLE|IBM|ATOS|BULL|OBERTHUR|MORPHO|SAFRAN|AIRBUS)\b/i
+        )
+        if (vendorMatch) {
+          vendor = vendorMatch[1]
+        }
+
+        // Extract lab/CESTI (appears in table between product and cert ref)
+        // Common labs: THALES, OPPIDA, SERMA, LETI, CEA, etc.
+        let lab: string | undefined
+        const labMatch = context.match(
+          /\b(THALES|OPPIDA|SERMA|LETI|CEA|AMOSSYS|APAVE|CESTI|OPPIDA\+SERMA)\b(?!\s*Autres)/i
+        )
+        if (labMatch) {
+          lab = labMatch[1]
+        }
+
+        // Extract product category (appears between lab and date)
+        // Common categories: "Autres", "Equipements matériels avec boitiers sécurisés", "Logiciels", etc.
+        let productCategory = 'Certified Product'
+        const categoryMatch = context.match(
+          /(?:THALES|OPPIDA|SERMA|LETI|CEA|AMOSSYS|APAVE|CESTI|OPPIDA\+SERMA)\s+([A-Za-zÀ-ÿ\s]{5,80}?)\s+\d{2}\/\d{2}\/\d{4}/i
+        )
+        if (categoryMatch) {
+          productCategory = categoryMatch[1]
+            .trim()
+            .replace(/\s+/g, ' ')
+            // Clean up if it's just "Autres" or similar generic terms
+            .replace(/^Autres$/i, 'Other')
+        }
+
+        // Extract date (appears before certificate reference)
+        const dateMatch = context.match(/(\d{2})\/(\d{2})\/(\d{4})\s+\d{2}\/\d{2}\/\d{4}\s+ANSSI/)
+        let certDate = new Date().toISOString().split('T')[0]
+        if (dateMatch) {
+          const [, day, month, year] = dateMatch
+          certDate = `${year}-${month}-${day}`
+        }
+
+        // Construct document URLs
+        // Actual format from ANSSI catalog:
+        // https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2024-41-Certificat.pdf
+        // https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2024-41-Rapport.pdf
+        // https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2024-41-Cible.pdf
+        const visasBaseUrl = 'https://messervices.cyber.gouv.fr/visas'
+        const certCertificate = `${visasBaseUrl}/ANSSI-${certType}-${year}-${num}-Certificat.pdf`
+        const certReport = `${visasBaseUrl}/ANSSI-${certType}-${year}-${num}-Rapport.pdf`
+        const securityTarget = `${visasBaseUrl}/ANSSI-${certType}-${year}-${num}-Cible.pdf`
+
+        // Extract EAL level from context
+        const ealMatch = context.match(/EAL\s*(\d+\+?)/i)
+        let certificationLevel: string | undefined
+        if (ealMatch) {
+          certificationLevel = `EAL${ealMatch[1]}`
+        }
+
+        // Create record
+        records.push({
+          id: certId,
+          source: 'ANSSI',
+          type: 'Common Criteria',
+          status: 'Active',
+          pqcCoverage: 'No PQC Mechanisms Detected',
+          productName: productName.substring(0, 150),
+          productCategory,
+          vendor,
+          date: certDate,
+          link: certReport,
+          certificationReportUrls: [certReport],
+          securityTargetUrls: [securityTarget],
+          certificationLevel,
+          lab,
+          additionalDocuments: [{ name: 'Certificate', url: certCertificate }],
+        })
+      }
+
+      // Filter for last 2 years
+      const cutoffDate = new Date()
+      cutoffDate.setFullYear(cutoffDate.getFullYear() - 2)
+
+      const recentRecords = records.filter((r) => new Date(r.date) >= cutoffDate)
+
+      console.log(`[ANSSI] Parsed ${records.length} certificates from PDF catalog`)
+      console.log(`[ANSSI] Filtered to ${recentRecords.length} certificates from last 2 years`)
+
+      return recentRecords
+    } catch (pdfError) {
+      console.warn('[ANSSI] PDF catalog parsing error:', pdfError)
+      console.log('[ANSSI] Falling back to empty results')
+      return []
+    }
   } catch (e) {
-    console.warn('ANSSI Scrape Failed:', e)
+    console.warn('[ANSSI] Scrape Failed:', e)
     return []
   }
 }
