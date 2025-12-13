@@ -1,9 +1,31 @@
 # PQC Timeline App Design System
 
 **Status:** ✅ Implemented  
-**Last Updated:** 2025-12-06
+**Last Updated:** 2025-12-13
 
 This document outlines the design principles, visual language, and technical implementation of the user interface for the PQC Timeline App. It serves as a reference for maintaining consistency and scalability across the application.
+
+## 0. Global Audit & Compliance Standards (Dec 2025)
+
+The following strict compliance rules have been established following a global design audit. All new code MUST adhere to these standards, and existing code is being progressively refactored.
+
+### 0.1 Prohibited Patterns
+
+- **Hardcoded Color Scales**: Usage of specific Tailwind shades (e.g., `text-red-400`, `bg-slate-900`, `border-gray-700`) is **STRICTLY PROHIBITED** in component logic.
+  - _Correction_: Use semantic tokens: `text-destructive`, `bg-card`, `border-border`.
+- **Raw HTML Interactive Elements**: Direct use of `<button>` and `<input>` tags styling is **PROHIBITED** for standard UI actions.
+  - _Correction_: Use `<Button />` and `<Input />` components from `src/components/ui`.
+  - _Exception_: Complex custom interactions (e.g., Canvas controls, interactive charts like `SimpleGanttChart`) may use raw elements if wrapped in semantic containers, but should still use standard focus ring classes.
+- **Hardcoded Dark Overlays**: Usage of `bg-black/xx` for overlays or badges is **PROHIBITED** as it breaks Light Mode.
+  - _Correction_: Use `bg-background/xx` or `bg-card/xx`.
+
+### 0.2 Required Patterns
+
+- **Status Mapping**: All status indicators (Critical, High, Medium, Low) MUST map to the semantic palette or defined status variables:
+  - Critical/Error -> `destructive` (Red)
+  - Warning/High -> `warning` (Yellow/Orange)
+  - Success/Safe -> `success` (Green)
+  - Info/Neutral -> `primary` (Blue/Cyan) or `muted` (Gray)
 
 ## 1. Design Philosophy
 
@@ -206,6 +228,30 @@ Located in: `src/components/ui/input.tsx`
 - **Primary Buttons/Cards**: `translate-y` lift effect (`-translate-y-0.5`) on hover to imply elevation.
 - **Glass Elements**: Often increase background opacity or border brightness on hover.
 
+### Domain-Specific Patterns (Poly-Theming)
+
+For educational modules involving distinct entities (e.g., Client vs Server), use distinct semantic color mapping:
+
+- **Client Entity**:
+  - Theme: **Blue/Cyan** (Primary)
+  - Border: `border-primary`
+  - Text: `text-primary`
+  - Badge: `border-primary/30 text-primary`
+  - Background: `bg-primary/5` (subtle) to `bg-primary/20` (active)
+
+- **Server Entity**:
+  - Theme: **Purple** (Tertiary/Secondary)
+  - Border: `border-tertiary` (or `border-purple-500` mapped to semantic)
+  - Text: `text-tertiary`
+  - Badge: `border-tertiary/30 text-tertiary`
+  - Background: `bg-tertiary/5` (subtle) to `bg-tertiary/20` (active)
+
+- **Security/Crypto Status**:
+  - **Key/Secret**: `text-warning` (Yellow/Orange)
+  - **Secure/Encrypted**: `text-success` (Green)
+  - **Insecure/Error**: `text-destructive` (Red)
+  - **Metadata/Log**: `text-muted-foreground`
+
 ### Animation
 
 - **Transitions**: `transition-all duration-200` is the standard for interactive elements.
@@ -231,8 +277,11 @@ Located in: `src/components/ui/input.tsx`
 
 - Styles should reference CSS variables (e.g., `bg-primary`, `text-muted-foreground`) rather than hardcoded hex values to maintain theme compatibility.
 - **Light Mode Compatibility**:
-  - NEVER use hardcoded dark backgrounds (e.g., `bg-slate-900`, `bg-[#0d1117]`).
+  - NEVER use hardcoded dark backgrounds (e.g., `bg-slate-900`, `bg-[#0d1117]`, `bg-black/40`).
+  - **Audit Flag**: Any instance of `bg-black` or `bg-gray-` in `src/` is considered a legacy violation and must be refactored.
   - ALWAYS use `bg-card`, `bg-muted`, or `bg-background` to ensure the component adapts to Light Mode (where these values invert to white/gray).
+  - For semi-transparent overlays, use `bg-background/80` or `bg-card/80`.
+  - For semi-transparent overlays, use `bg-background/80` or `bg-black/20` _only_ if guaranteed to be on a dark surface, otherwise prefer `bg-muted/50`.
 - Use `hsl(var(--param))` format defined in `@theme` block in `src/styles/index.css` via Tailwind v4.
 
 ### Usage Guide

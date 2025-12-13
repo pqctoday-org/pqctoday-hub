@@ -15,6 +15,9 @@ const FiveGModule = lazy(() =>
 const DigitalIDModule = lazy(() =>
   import('./modules/DigitalID').then((module) => ({ default: module.DigitalIDModule }))
 )
+const TLSBasicsModule = lazy(() =>
+  import('./modules/TLSBasics').then((module) => ({ default: module.TLSBasicsModule }))
+)
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -49,6 +52,7 @@ export const PKILearningView: React.FC = () => {
           <Route path="digital-assets" element={<DigitalAssetsModule />} />
           <Route path="5g-security" element={<FiveGModule />} />
           <Route path="digital-id" element={<DigitalIDModule />} />
+          <Route path="tls-basics" element={<TLSBasicsModule />} />
         </Routes>
       </Suspense>
     </div>
