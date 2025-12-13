@@ -8,6 +8,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
 - **Algorithm Comparison**: Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) transition table
 - **Interactive Playground**: Hands-on cryptographic testing environment
   - Real WASM-powered cryptography (`@openforge-sh/liboqs`)
+  - **KEM Operations**: Classical (X25519, P-256), PQC (ML-KEM), and Hybrid modes
+    - Separate encapsulation/decapsulation flows with state isolation
+    - HKDF-Extract normalization for variable-sized secrets
+    - Visual comparison of generated vs recovered secrets
   - Key Store with sortable/resizable columns
   - ACVP Testing against NIST test vectors
 - **OpenSSL Studio**: Browser-based OpenSSL v3.5.4 workbench powered by WebAssembly
@@ -57,6 +61,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
 - **Cryptography**:
   - OpenSSL WASM v3.5.4 (with PQC support)
   - `@openforge-sh/liboqs` for NIST PQC algorithms
+  - Web Crypto API for classical algorithms (X25519, P-256, ECDH)
   - `@noble/curves` and `@noble/hashes` for blockchain operations
   - `@scure/bip32`, `@scure/bip39`, `@scure/base` for HD wallet
   - `mlkem-wasm` for ML-KEM operations

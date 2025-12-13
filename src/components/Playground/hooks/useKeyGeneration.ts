@@ -8,7 +8,7 @@ import { bytesToHex } from '../../../utils/dataInputUtils'
 import type { ExecutionMode, ClassicalAlgorithm } from '../PlaygroundContext'
 
 interface UseKeyGenerationProps {
-  algorithm: 'ML-KEM' | 'ML-DSA'
+  algorithm: string
   keySize: string
   executionMode: ExecutionMode
   wasmLoaded: boolean
@@ -60,11 +60,17 @@ export const useKeyGeneration = ({
         let newKeys: Key[] = []
         let algoName = ''
 
-        if (algorithm === 'ML-KEM') {
-          algoName = `ML-KEM-${keySize}`
-          logger.debug('[Playground] Generating ML-KEM keys...', algoName)
+        if (
+          algorithm === 'ML-KEM' ||
+          algorithm.startsWith('HQC') ||
+          algorithm.startsWith('FrodoKEM') ||
+          algorithm.startsWith('Classic-McEliece')
+        ) {
+          // KEM Algorithms (ML-KEM, HQC, FrodoKEM, McEliece)
+          algoName = algorithm === 'ML-KEM' ? `ML-KEM-${keySize}` : algorithm
+          logger.debug('[Playground] Generating KEM keys...', algoName)
           const keys = await MLKEM.generateKey({ name: algoName })
-          logger.debug('[Playground] ML-KEM keys generated:', keys)
+          logger.debug('[Playground] KEM keys generated:', keys)
 
           newKeys = [
             {

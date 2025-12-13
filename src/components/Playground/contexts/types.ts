@@ -24,8 +24,8 @@ export interface EnabledAlgorithms {
 
 export interface SettingsContextType {
   // Algorithm Settings
-  algorithm: 'ML-KEM' | 'ML-DSA'
-  setAlgorithm: (algo: 'ML-KEM' | 'ML-DSA') => void
+  algorithm: string
+  setAlgorithm: (algo: string) => void
   keySize: string
   setKeySize: (size: string) => void
   executionMode: ExecutionMode
@@ -39,7 +39,7 @@ export interface SettingsContextType {
   // Config
   enabledAlgorithms: EnabledAlgorithms
   toggleAlgorithm: (category: 'kem' | 'signature' | 'symmetric' | 'hash', algorithm: string) => void
-  handleAlgorithmChange: (newAlgorithm: 'ML-KEM' | 'ML-DSA') => void
+  handleAlgorithmChange: (newAlgorithm: string) => void
 
   // UI State
   activeTab:
@@ -100,6 +100,26 @@ export interface OperationsContextType {
   setEncryptedData: (val: string) => void
   kemDecapsulationResult: boolean | null
   setKemDecapsulationResult: (result: boolean | null) => void
+  decapsulatedSecret: string
+  setDecapsulatedSecret: (secret: string) => void
+  isHybridMode: boolean
+  setIsHybridMode: (enabled: boolean) => void
+  secondaryEncKeyId: string
+  setSecondaryEncKeyId: (id: string) => void
+  secondaryDecKeyId: string
+  setSecondaryDecKeyId: (id: string) => void
+
+  pqcSharedSecret: string
+  setPqcSharedSecret: (secret: string) => void
+  classicalSharedSecret: string
+  setClassicalSharedSecret: (secret: string) => void
+  pqcRecoveredSecret: string
+  setPqcRecoveredSecret: (val: string) => void
+  classicalRecoveredSecret: string
+  setClassicalRecoveredSecret: (val: string) => void
+
+  hybridMethod: 'concat-hkdf' | 'concat'
+  setHybridMethod: (method: 'concat-hkdf' | 'concat') => void
 
   // ML-DSA State
   signature: string

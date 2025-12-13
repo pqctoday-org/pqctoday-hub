@@ -140,4 +140,73 @@ test.describe('Playground', () => {
     // Check result
     await expect(page.getByText('VERIFICATION OK')).toBeVisible()
   })
+
+  const newAlgorithms = [
+    { name: 'HQC-128', label: 'HQC-128' },
+    { name: 'FrodoKEM-640-AES', label: 'FrodoKEM-640-AES' },
+    // Classic McEliece key gen can be slow, but let's test the smallest variant
+    { name: 'Classic-McEliece-348864', label: 'Classic McEliece 348864' },
+  ]
+
+  for (const algo of newAlgorithms) {
+    test(`generates and uses ${algo.name} keys`, async ({ page }) => {
+      test.setTimeout(120000) // 2 minutes, safe for McEliece
+
+      // 1. Generate Key
+      await page.getByRole('button', { name: /Key Store/ }).click()
+      await page.selectOption('#keystore-key-size', algo.name)
+      await page.getByRole('button', { name: 'Generate Keys' }).click()
+
+      // Verify table
+      await expect(page.getByRole('table')).toContainText(algo.name)
+
+      // 2. Go to KEM Ops
+      await page.getByRole('button', { name: /KEM & Encrypt/ }).click()
+
+      // 3. Encapsulate
+      // Find the select by its default option text
+      const pubKeySelect = page.locator('select').filter({ hasText: 'Select Public Key...' })
+
+      // Wait for options to be populated
+      await expect(async () => {
+        const count = await pubKeySelect.locator('option').count()
+        expect(count).toBeGreaterThan(1)
+      }).toPass()
+
+      // Select the key
+      await pubKeySelect.selectOption({ index: 1 })
+
+      // Click Encapsulate
+      const runButton = page.getByRole('button', { name: 'Run Encapsulate' })
+      await expect(runButton).toBeEnabled()
+      await runButton.click()
+
+      // Check for Shared Secret
+      const sharedSecretInput = page
+        .locator('div')
+        .filter({ hasText: 'Shared Secret (Output)' })
+        .locator('textarea')
+        .first()
+      await expect(sharedSecretInput).not.toBeEmpty({ timeout: 15000 })
+
+      // 4. Decapsulate
+      const privKeySelect = page.locator('select').filter({ hasText: 'Select Private Key...' })
+      await privKeySelect.selectOption({ index: 1 })
+
+      const decapsulateButton = page.getByRole('button', { name: 'Run Decapsulate' })
+      await expect(decapsulateButton).toBeEnabled()
+
+      // Small delay for state stability
+      await page.waitForTimeout(500)
+
+      await decapsulateButton.click()
+
+      // Check result
+      const resultLocator = page.locator('.text-lg', {
+        hasText: /SECRET RECOVERED|DECAPSULATION FAILED/,
+      })
+      await expect(resultLocator).toBeVisible({ timeout: 15000 })
+      await expect(resultLocator).toContainText('SECRET RECOVERED')
+    })
+  }
 })

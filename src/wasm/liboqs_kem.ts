@@ -1,6 +1,21 @@
 // Wrapper for @openforge-sh/liboqs (ML-KEM)
 /* eslint-disable */
-import { createMLKEM512, createMLKEM768, createMLKEM1024 } from '@openforge-sh/liboqs'
+import {
+  createMLKEM512,
+  createMLKEM768,
+  createMLKEM1024,
+  createHQC128,
+  createHQC192,
+  createHQC256,
+  createFrodoKEM640AES,
+  createFrodoKEM976AES,
+  createFrodoKEM1344AES,
+  createClassicMcEliece348864,
+  createClassicMcEliece460896,
+  createClassicMcEliece6688128,
+  createClassicMcEliece6960119,
+  createClassicMcEliece8192128,
+} from '@openforge-sh/liboqs'
 import { createLogger } from '../utils/logger'
 
 const logger = createLogger('liboqs_kem')
@@ -32,6 +47,42 @@ const getInstance = async (algorithmName: string): Promise<MLKEMInstance> => {
         break
       case 'ML-KEM-1024':
         createAlgo = createMLKEM1024
+        break
+      // HQC
+      case 'HQC-128':
+        createAlgo = createHQC128
+        break
+      case 'HQC-192':
+        createAlgo = createHQC192
+        break
+      case 'HQC-256':
+        createAlgo = createHQC256
+        break
+      // FrodoKEM
+      case 'FrodoKEM-640-AES':
+        createAlgo = createFrodoKEM640AES
+        break
+      case 'FrodoKEM-976-AES':
+        createAlgo = createFrodoKEM976AES
+        break
+      case 'FrodoKEM-1344-AES':
+        createAlgo = createFrodoKEM1344AES
+        break
+      // Classic McEliece
+      case 'Classic-McEliece-348864':
+        createAlgo = createClassicMcEliece348864
+        break
+      case 'Classic-McEliece-460896':
+        createAlgo = createClassicMcEliece460896
+        break
+      case 'Classic-McEliece-6688128':
+        createAlgo = createClassicMcEliece6688128
+        break
+      case 'Classic-McEliece-6960119':
+        createAlgo = createClassicMcEliece6960119
+        break
+      case 'Classic-McEliece-8192128':
+        createAlgo = createClassicMcEliece8192128
         break
       default:
         throw new Error(`Unknown algorithm: ${algorithmName}`)

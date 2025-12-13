@@ -6,7 +6,7 @@ import type { ExecutionMode, SortColumn, SortDirection, ClassicalAlgorithm } fro
 
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // State definitions
-  const [algorithm, setAlgorithm] = useState<'ML-KEM' | 'ML-DSA'>('ML-KEM')
+  const [algorithm, setAlgorithm] = useState<string>('ML-KEM')
   const [keySize, setKeySize] = useState<string>('768')
   const [executionMode, setExecutionMode] = useState<ExecutionMode>(() => {
     const isWasmSupported = typeof WebAssembly === 'object'
@@ -80,7 +80,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   })
 
   // --- Helpers ---
-  const handleAlgorithmChange = (newAlgorithm: 'ML-KEM' | 'ML-DSA') => {
+  const handleAlgorithmChange = (newAlgorithm: string) => {
     setAlgorithm(newAlgorithm)
     setKeySize(newAlgorithm === 'ML-KEM' ? '768' : '65')
   }

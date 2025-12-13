@@ -7,13 +7,13 @@ import { KeyDetails } from './keystore/KeyDetails'
 
 interface KeyStoreViewProps {
   keyStore: Key[]
-  algorithm: 'ML-KEM' | 'ML-DSA'
+  algorithm: string
   keySize: string
   loading: boolean
-  onAlgorithmChange: (algorithm: 'ML-KEM' | 'ML-DSA') => void
+  onAlgorithmChange: (algorithm: string) => void
   onKeySizeChange: (size: string) => void
   onGenerateKeys: () => void
-  onUnifiedChange?: (algorithm: 'ML-KEM' | 'ML-DSA', keySize: string) => void
+  onUnifiedChange?: (algorithm: string, keySize: string) => void
   // Classical algorithm props
   classicalAlgorithm: string
   classicalLoading: boolean

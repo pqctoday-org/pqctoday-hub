@@ -3,11 +3,15 @@ import * as MLKEM from '../../../wasm/liboqs_kem'
 import * as WebCrypto from '../../../utils/webCrypto'
 import { bytesToHex, hexToBytes } from '../../../utils/dataInputUtils'
 import type { ExecutionMode } from '../PlaygroundContext'
+import { hkdfExtract } from '../../../utils/webCrypto'
 
 interface UseKemOperationsProps {
   keyStore: Key[]
   selectedEncKeyId: string
   selectedDecKeyId: string
+  isHybridMode: boolean
+  secondaryEncKeyId: string
+  secondaryDecKeyId: string
   executionMode: ExecutionMode
   wasmLoaded: boolean
   keySize: string
@@ -16,15 +20,24 @@ interface UseKemOperationsProps {
   setSharedSecret: (val: string) => void
   setCiphertext: (val: string) => void
   setKemDecapsulationResult: (val: boolean | null) => void
+  setDecapsulatedSecret: (val: string) => void
   addLog: (entry: Omit<LogEntry, 'id' | 'timestamp'>) => void
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
+  hybridMethod: 'concat-hkdf' | 'concat'
+  setPqcSharedSecret: (val: string) => void
+  setClassicalSharedSecret: (val: string) => void
+  setPqcRecoveredSecret: (val: string) => void
+  setClassicalRecoveredSecret: (val: string) => void
 }
 
 export const useKemOperations = ({
   keyStore,
   selectedEncKeyId,
   selectedDecKeyId,
+  isHybridMode,
+  secondaryEncKeyId,
+  secondaryDecKeyId,
   executionMode,
   wasmLoaded,
   keySize,
@@ -33,9 +46,15 @@ export const useKemOperations = ({
   setSharedSecret,
   setCiphertext,
   setKemDecapsulationResult,
+  setDecapsulatedSecret,
   addLog,
   setLoading,
   setError,
+  hybridMethod,
+  setPqcSharedSecret,
+  setClassicalSharedSecret,
+  setPqcRecoveredSecret,
+  setClassicalRecoveredSecret,
 }: UseKemOperationsProps) => {
   const runKemOperation = async (type: 'encapsulate' | 'decapsulate') => {
     setLoading(true)
@@ -55,6 +74,12 @@ export const useKemOperations = ({
       if (isClassical && selectedKey) {
         // --- CLASSICAL OPERATIONS (Web Crypto) ---
         if (type === 'encapsulate') {
+          // Clear previous decapsulation results
+          setDecapsulatedSecret('')
+          setKemDecapsulationResult(null)
+          setPqcRecoveredSecret('')
+          setClassicalRecoveredSecret('')
+
           if (!selectedKey.data || !(selectedKey.data instanceof CryptoKey))
             throw new Error('Invalid key data for Web Crypto operation')
 
@@ -69,14 +94,20 @@ export const useKemOperations = ({
           )
           const ciphertextHex = ephemeralKeyPair.publicKeyHex
 
-          setSharedSecret(bytesToHex(sharedSecretBytes))
+          // Apply HKDF normalization if selected
+          let finalSecret: Uint8Array = sharedSecretBytes
+          if (hybridMethod === 'concat-hkdf') {
+            finalSecret = await hkdfExtract(new Uint8Array(0), sharedSecretBytes, 'SHA-256')
+          }
+
+          setSharedSecret(bytesToHex(finalSecret))
           setCiphertext(ciphertextHex)
 
           const end = performance.now()
           addLog({
             keyLabel: selectedKey.name,
             operation: `Encapsulate (${selectedKey.algorithm})`,
-            result: `Shared Secret: ${sharedSecretBytes.length}B, Ephemeral PK: ${ciphertextHex.length / 2}B`,
+            result: `Shared Secret: ${finalSecret.length}B, Ephemeral PK: ${ciphertextHex.length / 2}B`,
             executionTime: end - start,
           })
         } else if (type === 'decapsulate') {
@@ -97,25 +128,187 @@ export const useKemOperations = ({
 
           const recoveredSecret = await WebCrypto.deriveSharedSecret(selectedKey.data, epk)
 
+          // Apply HKDF normalization if selected
+          let finalSecret: Uint8Array = recoveredSecret
+          if (hybridMethod === 'concat-hkdf') {
+            finalSecret = await hkdfExtract(new Uint8Array(0), recoveredSecret, 'SHA-256')
+          }
+
           // Verify match
           let matches = false
           if (sharedSecret) {
             const originalSecretBytes = hexToBytes(sharedSecret)
-            matches = recoveredSecret.every(
+            matches = finalSecret.every(
               // eslint-disable-next-line security/detect-object-injection
-              (byte: number, i: number) => byte === originalSecretBytes[i]
+              (byte, i) => byte === originalSecretBytes[i]
             )
           }
 
-          const end = performance.now()
+          setDecapsulatedSecret(bytesToHex(finalSecret))
           setKemDecapsulationResult(matches)
+
+          const end = performance.now()
           addLog({
             keyLabel: selectedKey.name,
             operation: `Decapsulate (${selectedKey.algorithm})`,
-            result: matches ? '✓ Secret Recovered (Match)' : '✗ Mismatch',
+            result: `Recovered Secret: ${finalSecret.length}B, Match: ${matches}`,
             executionTime: end - start,
           })
         }
+      } else if (isHybridMode && type === 'encapsulate') {
+        // Clear previous decapsulation results
+        setDecapsulatedSecret('')
+        setKemDecapsulationResult(null)
+        setPqcRecoveredSecret('')
+        setClassicalRecoveredSecret('')
+
+        // --- HYBRID ENCAPSULATION ---
+        const pqcKey = keyStore.find((k) => k.id === selectedEncKeyId)
+        const classicalKey = keyStore.find((k) => k.id === secondaryEncKeyId)
+
+        if (!pqcKey) throw new Error('Please select a PQC Public Key')
+        if (!classicalKey) throw new Error('Please select a Classical Public Key')
+        if (!wasmLoaded) throw new Error('WASM libraries not loaded for PQC component')
+
+        // 1. Classical Encapsulation (ECDH/X25519)
+        if (!classicalKey.data || !(classicalKey.data instanceof CryptoKey))
+          throw new Error('Invalid classical key data')
+
+        const ephemeralKeyPair =
+          classicalKey.algorithm === 'X25519'
+            ? await WebCrypto.generateX25519KeyPair()
+            : await WebCrypto.generateECDHKeyPair()
+
+        const classicalSecret = await WebCrypto.deriveSharedSecret(
+          ephemeralKeyPair.privateKey,
+          classicalKey.data
+        )
+        const classicalCiphertext = ephemeralKeyPair.publicKeyHex
+
+        // 2. PQC Encapsulation (WASM)
+        if (!pqcKey.data || !(pqcKey.data instanceof Uint8Array))
+          throw new Error('Invalid PQC key data')
+
+        // Determine algo name (same logic as pure WASM)
+        let algoName = pqcKey.algorithm
+        if (algoName === 'ML-KEM' || algoName.startsWith('ML-KEM')) {
+          if (pqcKey.data.length === 800) algoName = 'ML-KEM-512'
+          else if (pqcKey.data.length === 1184) algoName = 'ML-KEM-768'
+          else if (pqcKey.data.length === 1568) algoName = 'ML-KEM-1024'
+          else algoName = `ML-KEM-${keySize}`
+        }
+
+        const { ciphertext: pqcCiphertext, sharedKey: pqcSecret } = await MLKEM.encapsulateBits(
+          { name: algoName },
+          pqcKey.data
+        )
+
+        // 3. Combine Secrets
+        const combinedSecret = new Uint8Array(classicalSecret.length + pqcSecret.length)
+        combinedSecret.set(classicalSecret)
+        combinedSecret.set(pqcSecret, classicalSecret.length)
+
+        // 3. Update Raw Secret State for UI (left side)
+        setPqcSharedSecret(bytesToHex(pqcSecret))
+        setClassicalSharedSecret(bytesToHex(classicalSecret))
+
+        let finalSecret: Uint8Array = combinedSecret
+        if (hybridMethod === 'concat-hkdf') {
+          // 4. Normalize with HKDF-Extract
+          finalSecret = await hkdfExtract(new Uint8Array(0), combinedSecret, 'SHA-256')
+        }
+
+        // 5. Update State
+        setSharedSecret(bytesToHex(finalSecret))
+        // Combine ciphertexts: PQC_CT_HEX|CLASSICAL_CT_HEX (arbitrary format for playground)
+        setCiphertext(`${bytesToHex(pqcCiphertext)}|${classicalCiphertext}`)
+
+        const end = performance.now()
+        addLog({
+          keyLabel: `${pqcKey.name} + ${classicalKey.name}`,
+          operation: 'Encapsulate (Hybrid)',
+          result: `Hybrid Secret: ${finalSecret.length}B${hybridMethod === 'concat-hkdf' ? ' (HKDF)' : ' (Raw)'}`,
+          executionTime: end - start,
+        })
+      } else if (isHybridMode && type === 'decapsulate') {
+        // --- HYBRID DECAPSULATION ---
+        const pqcKey = keyStore.find((k) => k.id === selectedDecKeyId)
+        const classicalKey = keyStore.find((k) => k.id === secondaryDecKeyId)
+
+        if (!pqcKey) throw new Error('Please select a PQC Private Key')
+        if (!classicalKey) throw new Error('Please select a Classical Private Key')
+        if (!ciphertext || !ciphertext.includes('|'))
+          throw new Error('Invalid hybrid ciphertext format')
+
+        const [pqcCtHex, classicalCtHex] = ciphertext.split('|')
+
+        // 1. Classical Decapsulation
+        if (!classicalKey.data || !(classicalKey.data instanceof CryptoKey))
+          throw new Error('Invalid classical key data')
+
+        const epkBytes = hexToBytes(classicalCtHex)
+        const epk = await window.crypto.subtle.importKey(
+          'raw',
+          epkBytes as BufferSource,
+          classicalKey.algorithm === 'X25519'
+            ? { name: 'X25519' }
+            : { name: 'ECDH', namedCurve: 'P-256' },
+          true,
+          []
+        )
+        const classicalSecret = await WebCrypto.deriveSharedSecret(classicalKey.data, epk)
+
+        // 2. PQC Decapsulation
+        if (!pqcKey.data || !(pqcKey.data instanceof Uint8Array))
+          throw new Error('Invalid PQC key data')
+
+        // Determine algo name
+        let algoName = pqcKey.algorithm
+        if (algoName === 'ML-KEM') {
+          if (pqcKey.data.length === 1632) algoName = 'ML-KEM-512'
+          else if (pqcKey.data.length === 2400) algoName = 'ML-KEM-768'
+          else if (pqcKey.data.length === 3168) algoName = 'ML-KEM-1024'
+          else algoName = `ML-KEM-${keySize}`
+        }
+
+        const pqcSecret = await MLKEM.decapsulateBits(
+          { name: algoName },
+          pqcKey.data,
+          hexToBytes(pqcCtHex)
+        )
+
+        // 3. Combine & Normalize
+        const combinedSecret = new Uint8Array(classicalSecret.length + pqcSecret.length)
+        combinedSecret.set(classicalSecret)
+        combinedSecret.set(pqcSecret, classicalSecret.length)
+
+        // Update Raw Recovered Secret State for UI (right side)
+        setPqcRecoveredSecret(bytesToHex(pqcSecret))
+        setClassicalRecoveredSecret(bytesToHex(classicalSecret))
+
+        let finalSecret: Uint8Array = combinedSecret
+        if (hybridMethod === 'concat-hkdf') {
+          finalSecret = await hkdfExtract(new Uint8Array(0), combinedSecret, 'SHA-256')
+        }
+
+        // 4. Verify
+        let matches = false
+        if (sharedSecret) {
+          const originalSecretBytes = hexToBytes(sharedSecret)
+          if (finalSecret.length === originalSecretBytes.length) {
+            matches = finalSecret.every((byte, i) => byte === originalSecretBytes[i])
+          }
+        }
+
+        const end = performance.now()
+        setKemDecapsulationResult(matches)
+        setDecapsulatedSecret(bytesToHex(finalSecret))
+        addLog({
+          keyLabel: `${pqcKey.name} + ${classicalKey.name}`,
+          operation: `Decapsulate (Hybrid)`,
+          result: matches ? '✓ Secret Recovered (Match)' : '✗ Mismatch',
+          executionTime: end - start,
+        })
       } else if (executionMode === 'wasm') {
         // WASM Mode Operations
         if (!wasmLoaded) throw new Error('WASM libraries not loaded')
@@ -128,20 +321,31 @@ export const useKemOperations = ({
             throw new Error('Selected key has invalid data format (expected Uint8Array)')
 
           let algoName = key.algorithm
-          if (algoName === 'ML-KEM') {
-            // Infer from key size for legacy keys
+          // ML-KEM inference for legacy keys (if size matches)
+          if (algoName === 'ML-KEM' || algoName.startsWith('ML-KEM')) {
             const len = key.data.length
-            if (len === 800) algoName = 'ML-KEM-512'
-            else if (len === 1184) algoName = 'ML-KEM-768'
-            else if (len === 1568) algoName = 'ML-KEM-1024'
-            else algoName = `ML-KEM-${keySize}` // Fallback
+            // Check legacy pure 'ML-KEM' cases or confirm size match
+            if (algoName === 'ML-KEM') {
+              if (len === 800) algoName = 'ML-KEM-512'
+              else if (len === 1184) algoName = 'ML-KEM-768'
+              else if (len === 1568) algoName = 'ML-KEM-1024'
+              else algoName = `ML-KEM-${keySize}` // Fallback
+            }
           }
+          // For other algorithms (HQC, Frodo, McEliece), key.algorithm IS the full name (e.g. 'HQC-128')
+          // So we can pass key.algorithm directly to the WASM wrapper.
           const { ciphertext, sharedKey } = await MLKEM.encapsulateBits(
             { name: algoName },
             key.data
           )
 
-          setSharedSecret(bytesToHex(sharedKey))
+          // Apply HKDF normalization if selected
+          let finalSecret: Uint8Array = sharedKey
+          if (hybridMethod === 'concat-hkdf') {
+            finalSecret = await hkdfExtract(new Uint8Array(0), sharedKey, 'SHA-256')
+          }
+
+          setSharedSecret(bytesToHex(finalSecret))
           setCiphertext(bytesToHex(ciphertext))
 
           const end = performance.now()
@@ -149,7 +353,7 @@ export const useKemOperations = ({
           addLog({
             keyLabel: key.name,
             operation: 'Encapsulate (WASM)',
-            result: `Shared Secret: ${sharedKey.length}B, Ciphertext: ${ciphertext.length}B`,
+            result: `Shared Secret: ${finalSecret.length}B, Ciphertext: ${ciphertext.length}B`,
             executionTime: end - start,
           })
         } else if (type === 'decapsulate') {
@@ -175,18 +379,28 @@ export const useKemOperations = ({
             hexToBytes(ciphertext)
           )
 
+          // Apply HKDF normalization if selected
+          let finalSecret: Uint8Array = recoveredSecret
+          if (hybridMethod === 'concat-hkdf') {
+            finalSecret = await hkdfExtract(new Uint8Array(0), recoveredSecret, 'SHA-256')
+          }
+
           // Verify against the shared secret from encapsulation (if available)
           let matches = false
           if (sharedSecret) {
             const originalSecretBytes = hexToBytes(sharedSecret)
-            matches = recoveredSecret.every(
-              // eslint-disable-next-line security/detect-object-injection
-              (byte: number, i: number) => byte === originalSecretBytes[i]
-            )
+            if (finalSecret.length === originalSecretBytes.length) {
+              matches = finalSecret.every(
+                // eslint-disable-next-line security/detect-object-injection
+                (byte: number, i: number) => byte === originalSecretBytes[i]
+              )
+            }
           }
 
-          const end = performance.now()
+          setDecapsulatedSecret(bytesToHex(finalSecret))
           setKemDecapsulationResult(matches)
+
+          const end = performance.now()
 
           addLog({
             keyLabel: key.name,
@@ -201,6 +415,12 @@ export const useKemOperations = ({
         const end = performance.now()
 
         if (type === 'encapsulate') {
+          // Clear previous decapsulation results
+          setDecapsulatedSecret('')
+          setKemDecapsulationResult(null)
+          setPqcRecoveredSecret('')
+          setClassicalRecoveredSecret('')
+
           const key = keyStore.find((k) => k.id === selectedEncKeyId)
           if (!key) throw new Error('Please select a Public Key')
 
@@ -221,6 +441,12 @@ export const useKemOperations = ({
           if (!key) throw new Error('Please select a Private Key')
           if (!ciphertext) throw new Error('No ciphertext available. Run Encapsulate first.')
 
+          // In Mock mode, we just pretend we recovered the shared secret
+          if (sharedSecret) {
+            setDecapsulatedSecret(sharedSecret)
+          } else {
+            setDecapsulatedSecret('MOCK_RECOVERED_SECRET_INVALID')
+          }
           setKemDecapsulationResult(true)
 
           addLog({
