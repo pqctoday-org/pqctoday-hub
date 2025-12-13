@@ -161,22 +161,22 @@ export class FiveGService {
 
         // Write files to worker
         // This is a "batch" execute to write files + run command, ensuring context exists.
+        // We MUST inject files in the same call for robust stateless execution (e.g. CI/Tests)
         cmd = `openssl pkeyutl -derive -keyform DER -inkey ${ephKeyFile} -peerform DER -peerkey ${hnKeyFile} -out ${zFile}`
 
-        await openSSLService.execute(cmd, [
+        const execResult = await openSSLService.execute(cmd, [
           { name: ephKeyFile, data: ephDerBytes },
           { name: hnKeyFile, data: hnDerBytes },
         ])
 
-        // Read Result
-        const res2 = await openSSLService.execute(`openssl enc -base64 -in ${zFile}`)
-        if (res2.stdout && res2.stdout.trim().length > 0) {
-          const b64 = res2.stdout.replace(/\n/g, '')
-          const binStr = atob(b64)
-          const bytes = new Uint8Array(binStr.length)
-          // eslint-disable-next-line security/detect-object-injection
-          for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i)
-          sharedSecretHex = bytesToHex(bytes)
+        const zFileObj = execResult.files.find((f) => f.name === zFile)
+        if (zFileObj) {
+          sharedSecretHex = bytesToHex(zFileObj.data)
+        } else {
+          // Fallback: Try reading if not in return (but in stateless this fails)
+          // If missing here, it means command failed to produce output.
+          // We can check stderr
+          if (execResult.stderr) console.error('Pkeyutl error:', execResult.stderr)
         }
       }
 
