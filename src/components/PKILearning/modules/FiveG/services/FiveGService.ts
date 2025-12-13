@@ -565,6 +565,35 @@ Components:
       }
     }
   }
+
+  // Provisioning Flow Methods
+  async generateSubKey() {
+    const k = window.crypto.getRandomValues(new Uint8Array(16))
+    return bytesToHex(k)
+  }
+
+  async computeOPc(kiHex: string) {
+    // Default Operator Key (OP) - mocked
+    const opHex = '00000000000000000000000000000000'
+    const ki = new Uint8Array(kiHex.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
+    const op = new Uint8Array(opHex.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
+
+    try {
+      const opc = await this.milenageService.computeOPc(ki, op)
+      return bytesToHex(opc)
+    } catch (e) {
+      console.error('OPc computation failed', e)
+      return 'ERROR_OPC'
+    }
+  }
+
+  async encryptTransport(ki: string, opc: string) {
+    // Simulating Transport Key derivation and encryption
+    return `[SUCCESS] Transport Session Established.
+Encrypted Payload (Ki + OPc):
+Ki: ****************
+OPc: ${opc.substring(0, 8)}...`
+  }
 }
 
 // Singleton for easy access
