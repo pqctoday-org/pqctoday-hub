@@ -190,7 +190,6 @@ export const SimpleGanttChart = ({
               opaque
               className="mb-0 w-full"
               noContainer
-              variant="ghost"
             />
           </div>
         </div>
