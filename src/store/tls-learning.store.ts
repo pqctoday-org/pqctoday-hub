@@ -20,7 +20,7 @@ export interface TLSConfig {
 
 export interface SimulationResult {
   trace: {
-    side: 'client' | 'server' | 'connection'
+    side: 'client' | 'server' | 'connection' | 'system'
     event: string
     details: string
   }[]
