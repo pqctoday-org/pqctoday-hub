@@ -587,7 +587,7 @@ Components:
     }
   }
 
-  async encryptTransport(ki: string, opc: string) {
+  async encryptTransport(_ki: string, opc: string) {
     // Simulating Transport Key derivation and encryption
     return `[SUCCESS] Transport Session Established.
 Encrypted Payload (Ki + OPc):
