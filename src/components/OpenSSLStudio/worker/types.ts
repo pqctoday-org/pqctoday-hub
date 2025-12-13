@@ -8,6 +8,14 @@ export type WorkerMessage =
     }
   | { type: 'LOAD'; url: string; requestId?: string }
   | { type: 'FILE_UPLOAD'; name: string; data: Uint8Array; requestId?: string }
+  | { type: 'DELETE_FILE'; name: string; requestId?: string }
+  | {
+      type: 'TLS_SIMULATE'
+      clientConfig: string
+      serverConfig: string
+      files?: { name: string; data: Uint8Array }[]
+      requestId?: string
+    }
 
 export type WorkerResponse =
   | { type: 'LOG'; stream: 'stdout' | 'stderr'; message: string; requestId?: string }

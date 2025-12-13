@@ -39,7 +39,11 @@ class OpenSSLService {
       try {
         // Use absolute path to the static worker file in public/wasm/
         // This bypasses path resolution issues and works on all routes
-        this.worker = new Worker('/wasm/openssl-worker.js')
+        // Use Vite's worker import to load the TypeScript source directly
+        this.worker = new Worker(
+          new URL('../../components/OpenSSLStudio/worker/openssl.worker.ts', import.meta.url),
+          { type: 'module' }
+        )
 
         this.worker.onmessage = (event) => {
           // If we get an error during init (before ready), reject
@@ -253,6 +257,66 @@ class OpenSSLService {
         name: filename,
         requestId,
       } as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+    })
+  }
+
+  public async simulateTLS(
+    clientConfig: string,
+    serverConfig: string,
+    files: { name: string; data: Uint8Array }[] = [],
+    commands: string[] = []
+  ): Promise<string> {
+    try {
+      await this.init()
+    } catch (error) {
+      throw new Error(`OpenSSL Service not available: ${error}`)
+    }
+
+    if (!this.worker) throw new Error('Worker not initialized')
+
+    const requestId = `req_tls_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+
+    return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        this.pendingRequests.delete(requestId)
+        reject(new Error(`TLS Simulation timed out after ${this.EXEC_TIMEOUT}ms`))
+      }, this.EXEC_TIMEOUT)
+
+      this.pendingRequests.set(requestId, {
+        resolve: (result) => {
+          clearTimeout(timeoutId)
+          // Parse stdout to find the result JSON
+          const lines = result.stdout.split('\n')
+          const resultLine = lines.find((line) => line.startsWith('SIMULATION_RESULT:'))
+
+          if (resultLine) {
+            resolve(resultLine.replace('SIMULATION_RESULT:', ''))
+          } else {
+            // Fallback: If no structured result, return full stdout (might be an error log)
+            // But check stderr too
+            if (result.stderr && result.stderr.length > 0) {
+              reject(new Error(result.stderr))
+            } else {
+              resolve(result.stdout)
+            }
+          }
+        },
+        reject: (error) => {
+          clearTimeout(timeoutId)
+          reject(error)
+        },
+        result: { stdout: '', stderr: '', error: '', files: [] },
+      })
+
+      this.worker!.postMessage({
+        type: 'TLS_SIMULATE',
+        clientConfig,
+        serverConfig,
+        files,
+        commands,
+        requestId,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)
     })
   }
 

@@ -232,17 +232,16 @@ export const Dashboard: React.FC = () => {
       duration: '120 min',
       workInProgress: true,
     },
+    {
+      id: 'tls-basics',
+      title: 'TLS Basics',
+      description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',
+      duration: '60 min',
+      workInProgress: true,
+    },
   ]
 
   const upcomingModules: ModuleItem[] = [
-    {
-      id: 'tls',
-      title: 'TLS',
-      description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',
-      duration: 'Coming Soon',
-      comingSoon: true,
-      disabled: true,
-    },
     {
       id: 'vpn',
       title: 'VPN',

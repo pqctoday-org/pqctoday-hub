@@ -14,6 +14,18 @@ type WorkerMessage =
   | { type: 'LOAD'; url: string; requestId?: string }
   | { type: 'FILE_UPLOAD'; name: string; data: Uint8Array; requestId?: string }
   | { type: 'DELETE_FILE'; name: string; requestId?: string }
+  | {
+      type: 'TLS_SIMULATE'
+      clientConfig: string
+      serverConfig: string
+      files?: { name: string; data: Uint8Array }[]
+      commands?: string[]
+      requestId?: string
+    }
+  | { type: 'READY'; requestId?: string }
+  | { type: 'LOG'; stream: 'stdout' | 'stderr'; message: string; requestId?: string }
+  | { type: 'ERROR'; error: string; requestId?: string }
+  | { type: 'DONE'; requestId?: string }
 
 // ----------------------------------------------------------------------------
 // Types
@@ -33,6 +45,7 @@ interface EmscriptenModule {
     mkdir: (path: string) => void
   }
   ENV?: { [key: string]: string }
+  cwrap: (ident: string, returnType: string | null, argTypes: string[]) => any
 }
 
 interface ModuleConfig {
@@ -81,8 +94,40 @@ var loadOpenSSLScript = async (
         global.exports = global.module.exports
       }
 
-      // Use importScripts for standard worker script loading
-      importScripts(url)
+      let loaded = false
+
+      // Try importScripts (Classic Worker or Polyfilled)
+      // Try dynamic import (for Module Workers)
+      // Dynamic import removed to avoid Vite trying to bundle public assets
+      // Falls back to importScripts or fetch+eval below
+
+      if (!loaded && typeof importScripts === 'function') {
+        try {
+          importScripts(url)
+          loaded = true
+        } catch (e: any) {
+          // In Module Workers, importScripts throws. This is expected.
+          // We only warn if it's a different error.
+          if (!e.message?.includes('Module scripts')) {
+            console.warn('importScripts failed, falling back to fetch+eval:', e)
+          } else {
+            // Debug log only
+            self.postMessage({
+              type: 'LOG',
+              stream: 'stdout',
+              message: `[Debug] Skipped importScripts (Module Worker detected)`,
+            })
+          }
+        }
+      }
+
+      // Fallback: Fetch + Eval
+      if (!loaded) {
+        const resp = await fetch(url)
+        if (!resp.ok) throw new Error(`Failed to fetch ${url}: ${resp.statusText}`)
+        const script = await resp.text()
+        ;(0, eval)(script)
+      }
 
       // Check for CommonJS export
       if (global.module.exports && typeof global.module.exports === 'function') {
@@ -102,7 +147,7 @@ var loadOpenSSLScript = async (
         if (!originalModule) delete global.module
         if (!originalExports) delete global.exports
         throw new Error(
-          'createOpenSSLModule not found in global scope or module.exports after importScripts'
+          'createOpenSSLModule not found in global scope or module.exports after load'
         )
       }
 
@@ -224,8 +269,8 @@ distinguished_name = req_distinguished_name
       // @ts-ignore
       module.ENV['RANDFILE'] = '/random.seed'
     }
-  } catch (e) {
-    throw new Error('Failed to configure OpenSSL environment')
+  } catch (e: any) {
+    throw new Error('Failed to configure OpenSSL environment: ' + (e.message || String(e)))
   }
 }
 
@@ -501,6 +546,83 @@ var executeCommand = async (
   }
 }
 
+var executeSimulation = async (
+  clientConfig: string,
+  serverConfig: string,
+  files: { name: string; data: Uint8Array }[] = [],
+  commands: string[] = [],
+  requestId?: string
+) => {
+  self.postMessage({
+    type: 'LOG',
+    stream: 'stdout',
+    message: `[Debug] executeSimulation started`,
+    requestId,
+  })
+
+  try {
+    // 1. Load and Instantiate
+    await loadOpenSSLScript('/wasm/openssl.js', requestId)
+    const openSSLModule = await createOpenSSLInstance(requestId)
+
+    // 2. Prepare Environment (Files)
+    injectEntropy(openSSLModule, requestId)
+    configureEnvironment(openSSLModule, requestId)
+    if (files.length > 0) {
+      writeInputFiles(openSSLModule, files, requestId)
+    }
+
+    // Write Config Files to FS
+    const enc = new TextEncoder()
+    const clientPath = '/ssl/client.cnf'
+    const serverPath = '/ssl/server.cnf'
+    openSSLModule.FS.writeFile(clientPath, enc.encode(clientConfig))
+    openSSLModule.FS.writeFile(serverPath, enc.encode(serverConfig))
+
+    // Write Command Script
+    let scriptPath = ''
+    if (commands && commands.length > 0) {
+      scriptPath = '/ssl/commands.txt'
+      const scriptContent = commands.join('\n')
+      openSSLModule.FS.writeFile(scriptPath, enc.encode(scriptContent))
+    }
+
+    // 3. Bind C Function
+    // char* execute_tls_simulation(const char* client_conf_path, const char* server_conf_path, const char* script_path)
+    const simulateC = openSSLModule.cwrap('execute_tls_simulation', 'string', [
+      'string',
+      'string',
+      'string',
+    ])
+
+    if (!simulateC) {
+      throw new Error('execute_tls_simulation function not found in WASM module')
+    }
+
+    // 4. Execute
+    self.postMessage({
+      type: 'LOG',
+      stream: 'stdout',
+      message: '[Debug] Running TLS Simulation (C-Wrapper)...',
+      requestId,
+    })
+
+    const resultJson = simulateC(clientPath, serverPath, scriptPath)
+
+    // 5. Return Result
+    self.postMessage({
+      type: 'LOG',
+      stream: 'stdout',
+      message: 'SIMULATION_RESULT:' + resultJson,
+      requestId,
+    })
+  } catch (error: any) {
+    self.postMessage({ type: 'ERROR', error: error.message || 'Simulation failed', requestId })
+  } finally {
+    self.postMessage({ type: 'DONE', requestId })
+  }
+}
+
 self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
   const { type } = event.data
   const requestId = event.data.requestId
@@ -516,6 +638,16 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
         files?: { name: string; data: Uint8Array }[]
       }
       await executeCommand(command, args, files, requestId)
+    } else if (type === 'TLS_SIMULATE') {
+      const { clientConfig, serverConfig, files, commands } = event.data as {
+        type: 'TLS_SIMULATE'
+        clientConfig: string
+        serverConfig: string
+        files?: { name: string; data: Uint8Array }[]
+        commands?: string[]
+        requestId?: string
+      }
+      await executeSimulation(clientConfig, serverConfig, files, commands || [], requestId)
     } else if (type === 'DELETE_FILE') {
       const { name } = event.data as { type: 'DELETE_FILE'; name: string }
       if (!moduleFactory) {
