@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import { useState } from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { EthereumFlow } from '../EthereumFlow'
@@ -209,48 +209,82 @@ describe('EthereumFlow Integration', () => {
   })
 
   it('should complete full flow up to signing', async () => {
-    render(<EthereumFlow onBack={vi.fn()} />)
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      render(<EthereumFlow onBack={vi.fn()} />)
+    })
+
     const execBtn = screen.getByTestId('execute-btn')
     const nextBtn = screen.getByTestId('next-btn')
 
     // 1. Keygen
     expect(screen.getByTestId('current-step')).toHaveTextContent('keygen')
-    await execBtn.click()
-    await nextBtn.click()
+    await act(async () => {
+      await execBtn.click()
+    })
+    await act(async () => {
+      await nextBtn.click()
+    })
 
     // 2. PubKey
     expect(screen.getByTestId('current-step')).toHaveTextContent('pubkey')
-    await execBtn.click()
-    await nextBtn.click()
+    await act(async () => {
+      await execBtn.click()
+    })
+    await act(async () => {
+      await nextBtn.click()
+    })
 
     // 3. Address
     expect(screen.getByTestId('current-step')).toHaveTextContent('address')
-    await execBtn.click()
-    await nextBtn.click()
+    await act(async () => {
+      await execBtn.click()
+    })
+    await act(async () => {
+      await nextBtn.click()
+    })
 
     // 4. Recipient Keygen
     expect(screen.getByTestId('current-step')).toHaveTextContent('gen_recipient_key')
-    await execBtn.click()
-    await nextBtn.click()
+    await act(async () => {
+      await execBtn.click()
+    })
+    await act(async () => {
+      await nextBtn.click()
+    })
 
     // 5. Recipient Address
     expect(screen.getByTestId('current-step')).toHaveTextContent('recipient_address')
-    await execBtn.click()
-    await nextBtn.click()
+    await act(async () => {
+      await execBtn.click()
+    })
+    await act(async () => {
+      await nextBtn.click()
+    })
 
     // 6. Format Transaction
     expect(screen.getByTestId('current-step')).toHaveTextContent('format_tx')
-    await execBtn.click()
-    await nextBtn.click()
+    await act(async () => {
+      await execBtn.click()
+    })
+    await act(async () => {
+      await nextBtn.click()
+    })
 
     // 7. Visualize RLP (Generates Hash)
     expect(screen.getByTestId('current-step')).toHaveTextContent('visualize_msg')
-    await execBtn.click()
-    await nextBtn.click()
+    await act(async () => {
+      await execBtn.click()
+    })
+    await act(async () => {
+      await nextBtn.click()
+    })
 
     // 8. Sign Transaction (The Broken Step)
     expect(screen.getByTestId('current-step')).toHaveTextContent('sign')
-    await execBtn.click()
+    await act(async () => {
+      await execBtn.click()
+    })
 
     // Check for success output or error
     // const output = screen.getByTestId('output')

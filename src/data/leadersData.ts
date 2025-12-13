@@ -1,4 +1,5 @@
 export interface Leader {
+  id: string
   name: string
   country: string
   title: string
@@ -73,7 +74,7 @@ function getLatestLeadersFiles(): {
   }
 }
 
-function parseLeadersCSV(csvContent: string): Leader[] {
+function parseLeadersCSV(csvContent: string): Omit<Leader, 'id' | 'status'>[] {
   const lines = csvContent.trim().split('\n')
   // New Headers: Name,Country,Role,Organization,Type,Category,Contribution,ImageUrl,WebsiteUrl,LinkedinUrl,KeyResourceUrl
 
@@ -128,8 +129,9 @@ const statusMap = previous
   : new Map<string, ItemStatus>()
 
 // Inject status into current items and export
-export const leadersData: Leader[] = currentItems.map((item) => ({
+export const leadersData: Leader[] = currentItems.map((item, index) => ({
   ...item,
+  id: `${item.name}-${index}`,
   status: statusMap.get(item.name),
 }))
 

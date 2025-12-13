@@ -33,10 +33,9 @@ However, opportunities exist to improve **initial load performance** via code sp
 
 - **Memoization**: ✅ Heavy data transformations in `TimelineView` correctly use `useMemo` (`ganttData`, `countryItems`), preventing expensive recalculations on render.
 - **Animations**: `framer-motion` is used effectively for page transitions and micro-interactions without blocking the main thread.
-- **Code Splitting**: ⚠️ **Missed Opportunity**.
-  - While `App.tsx` is lazy-loaded in `AppRoot`, the individual routes inside `App.tsx` (`TimelineView`, `ThreatsDashboard`, etc.) are imported synchronously.
-  - **Impact**: The user downloads the code for _all_ analysis tools and the 3D playground just to view the home page.
-  - **Recommendation**: Implement `React.lazy` for all top-level route components to reduce the initial bundle size.
+- **Code Splitting**: ✅ **Implemented**.
+  - Route-level code splitting is implemented using `React.lazy` and `Suspense` in `App.tsx`.
+  - Major views (Timeline, Threats, PKI Learning, etc.) are lazy loaded.
 
 ## 4. Hooks & Code Patterns
 
@@ -61,7 +60,7 @@ However, opportunities exist to improve **initial load performance** via code sp
 
 ### High Priority (Performance)
 
-1.  **Route-Level Code Splitting**: Refactor `App.tsx` to use `React.lazy` for all view components (`TimelineView`, `ThreatsDashboard`, etc.) and wrap routes in `Suspense`.
+1.  **Route-Level Code Splitting**: ✅ Done. Implemented in `App.tsx`.
 
 ### Medium Priority (Maintainability)
 

@@ -8,6 +8,7 @@ import '@testing-library/jest-dom'
 vi.mock('../../data/leadersData', () => ({
   leadersData: [
     {
+      id: 'alice-1',
       name: 'Alice Quant',
       country: 'USA',
       title: 'Chief Scientist',
@@ -20,6 +21,7 @@ vi.mock('../../data/leadersData', () => ({
       linkedinUrl: 'https://linkedin.com/alice',
     },
     {
+      id: 'bob-2',
       name: 'Bob Cyber',
       country: 'UK',
       title: 'Director',
@@ -30,6 +32,7 @@ vi.mock('../../data/leadersData', () => ({
       imageUrl: '', // Test fallback icon
     },
     {
+      id: 'charlie-3',
       name: 'Charlie Prof',
       country: 'Canada',
       title: 'Professor',
@@ -169,7 +172,7 @@ describe('LeadersGrid', () => {
     expect(screen.getAllByRole('article')).toHaveLength(3)
 
     // Filter to USA
-    const dropdown = screen.getByTestId('filter-Select Region') // label="Select Region"
+    const dropdown = screen.getByTestId('filter-Region') // label="Region"
     fireEvent.click(within(dropdown).getByText('USA'))
 
     // Should behave like filter
@@ -177,5 +180,93 @@ describe('LeadersGrid', () => {
     expect(articles).toHaveLength(1)
     expect(screen.getByText('Alice Quant')).toBeInTheDocument()
     expect(screen.queryByText('Bob Cyber')).not.toBeInTheDocument()
+  })
+
+  it('filters by search query', () => {
+    render(<LeadersGrid />)
+
+    // Initial: 3 leaders
+    expect(screen.getAllByRole('article')).toHaveLength(3)
+
+    // Search for "Scientist" (matches Alice)
+    const searchInput = screen.getByPlaceholderText('Search leaders...')
+    fireEvent.change(searchInput, { target: { value: 'Scientist' } })
+
+    expect(screen.getAllByRole('article')).toHaveLength(1)
+    expect(screen.getByText('Alice Quant')).toBeInTheDocument()
+    expect(screen.queryByText('Bob Cyber')).not.toBeInTheDocument()
+  })
+
+  it('filters by search query (case insensitive)', () => {
+    render(<LeadersGrid />)
+
+    // Search for "ncsc" (matches Bob's org)
+    const searchInput = screen.getByPlaceholderText('Search leaders...')
+    fireEvent.change(searchInput, { target: { value: 'ncsc' } })
+
+    expect(screen.getAllByRole('article')).toHaveLength(1)
+    expect(screen.getByText('Bob Cyber')).toBeInTheDocument()
+  })
+
+  it('combines country filter and search', () => {
+    render(<LeadersGrid />)
+
+    // All countries
+    expect(screen.getAllByRole('article')).toHaveLength(3)
+
+    // Filter to USA
+    const dropdown = screen.getByTestId('filter-Region') // label="Region"
+    fireEvent.click(within(dropdown).getByText('USA'))
+    expect(screen.getAllByRole('article')).toHaveLength(1)
+
+    // Search for something that matches Alice
+    const searchInput = screen.getByPlaceholderText('Search leaders...')
+    fireEvent.change(searchInput, { target: { value: 'Quant' } })
+    expect(screen.getAllByRole('article')).toHaveLength(1)
+    expect(screen.getByText('Alice Quant')).toBeInTheDocument()
+
+    // Search for something that does NOT match Alice
+    fireEvent.change(searchInput, { target: { value: 'Waterloo' } })
+    expect(screen.queryByRole('article')).not.toBeInTheDocument() // No results
+  })
+
+  it('filters by Sector', () => {
+    render(<LeadersGrid />)
+
+    // Initial: 3 leaders
+    expect(screen.getAllByRole('article')).toHaveLength(3)
+
+    // Filter to Private (Alice only)
+    const dropdown = screen.getByTestId('filter-Sector')
+    fireEvent.click(within(dropdown).getByText('Private'))
+
+    expect(screen.getAllByRole('article')).toHaveLength(1)
+    expect(screen.getByText('Alice Quant')).toBeInTheDocument()
+    expect(screen.queryByText('Bob Cyber')).not.toBeInTheDocument()
+  })
+
+  it('combines Sector, Country and Search', () => {
+    render(<LeadersGrid />)
+
+    // Filter to Public (Bob)
+    const sectorDropdown = screen.getByTestId('filter-Sector')
+    fireEvent.click(within(sectorDropdown).getByText('Public'))
+    expect(screen.getAllByRole('article')).toHaveLength(1)
+    expect(screen.getByText('Bob Cyber')).toBeInTheDocument()
+
+    // Filter to UK (Bob matches)
+    const regionDropdown = screen.getByTestId('filter-Region')
+    fireEvent.click(within(regionDropdown).getByText('UK'))
+    expect(screen.getAllByRole('article')).toHaveLength(1)
+
+    // Search for "Securing" (matches Bob's bio)
+    const searchInput = screen.getByPlaceholderText('Search leaders...')
+    fireEvent.change(searchInput, { target: { value: 'Securing' } })
+    expect(screen.getAllByRole('article')).toHaveLength(1)
+    expect(screen.getByText('Bob Cyber')).toBeInTheDocument()
+
+    // Search for "Quantum" (Alice, but filtered out by Sector/Region)
+    fireEvent.change(searchInput, { target: { value: 'Quantum' } })
+    expect(screen.queryByRole('article')).not.toBeInTheDocument()
   })
 })

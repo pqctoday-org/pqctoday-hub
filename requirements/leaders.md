@@ -35,6 +35,21 @@
 - **LinkedIn Links**: LinkedIn icon, blue-themed styling
 - **Icon Sizing**: 14px × 14px for optimal readability
 - **Link Behavior**: Opens in new tab with proper security attributes
+- **Icon Sizing**: 14px × 14px for optimal readability
+
+### 1.3 Search and Filtering
+
+- **Unified Control Bar**:
+  - Horizontal layout matching the "Threats" module design.
+  - Controls housed in a unified, glass-morphic container.
+- **Filtering Capabilities**:
+  - **Sector Filter**: Dropdown to filter by Public, Private, or Academic sectors.
+  - **Region Filter**: Dropdown to filter by Country/Region.
+  - **Free Text Search**: Input field filtering by Name, Title, Organization, Bio, and Category.
+  - **Logic**: All filters operate securely (AND logic) - e.g., "Public" sector AND "USA" region AND "Quantum" search term.
+- **Visuals**:
+  - "Ghost" style dropdown buttons for a cleaner look.
+  - Integrated search icon and standardized placeholders.
 
 ## 2. Leaders Data Points
 
