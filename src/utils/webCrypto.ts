@@ -401,6 +401,102 @@ export async function hash(algorithm: HashAlgorithm, data: Uint8Array): Promise<
 }
 
 // ============================================================================
+// HKDF (Key Derivation)
+// ============================================================================
+
+/**
+ * HKDF-Extract: Extract a fixed-length pseudorandom key (PRK) from input key material (IKM).
+ * Ref: RFC 5869 Section 2.2
+ *
+ * @param salt - Optional salt value (a non-secret random value)
+ * @param ikm - Input keying material (the shared secret)
+ * @param hashAlgorithm - Hash algorithm to use (SHA-256, SHA-384, etc.)
+ * @returns PRK (Pseudorandom Key) as Uint8Array
+ */
+export async function hkdfExtract(
+  salt: Uint8Array,
+  ikm: Uint8Array,
+  hashAlgorithm: HashAlgorithm
+): Promise<Uint8Array> {
+  // If salt is not provided, it should be a string of zeros equal to the hash length
+  // However, importKey 'raw' handles this implicitly if we treat salt as the key for HMAC.
+  // Ideally, we import salt as the key, and IKM as the data to sign.
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    (salt.length > 0 ? salt : new Uint8Array(GetHashLength(hashAlgorithm))) as BufferSource,
+    { name: 'HMAC', hash: hashAlgorithm },
+    false,
+    ['sign']
+  )
+
+  const prk = await crypto.subtle.sign('HMAC', key, ikm as BufferSource)
+  return new Uint8Array(prk)
+}
+
+/**
+ * HKDF-Expand: Expand a PRK into a key of desired length.
+ * Ref: RFC 5869 Section 2.3
+ *
+ * @param prk - Pseudorandom Key from HKDF-Extract
+ * @param info - Context-specific info (can be empty)
+ * @param length - Desired output length in bytes
+ * @param hashAlgorithm - Hash algorithm to use
+ * @returns Output keying material (OKM) as Uint8Array
+ */
+export async function hkdfExpand(
+  prk: Uint8Array,
+  info: Uint8Array,
+  length: number,
+  hashAlgorithm: HashAlgorithm
+): Promise<Uint8Array> {
+  const hashLen = GetHashLength(hashAlgorithm)
+  const n = Math.ceil(length / hashLen)
+  if (n > 255) {
+    throw new Error('HKDF-Expand: Derived key too long')
+  }
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    prk as BufferSource,
+    { name: 'HMAC', hash: hashAlgorithm },
+    false,
+    ['sign']
+  )
+
+  let t = new Uint8Array(0)
+  let okm = new Uint8Array(0)
+
+  for (let i = 1; i <= n; i++) {
+    const dataToSign = new Uint8Array(t.length + info.length + 1)
+    dataToSign.set(t)
+    dataToSign.set(info, t.length)
+    dataToSign[t.length + info.length] = i
+
+    const signature = await crypto.subtle.sign('HMAC', key, dataToSign as BufferSource)
+    t = new Uint8Array(signature)
+
+    const newOkm = new Uint8Array(okm.length + t.length)
+    newOkm.set(okm)
+    newOkm.set(t, okm.length)
+    okm = newOkm
+  }
+
+  return okm.slice(0, length)
+}
+
+function GetHashLength(alg: HashAlgorithm): number {
+  switch (alg) {
+    case 'SHA-256':
+      return 32
+    case 'SHA-384':
+      return 48
+    default:
+      return 32
+  }
+}
+
+// ============================================================================
 // Utility Functions
 // ============================================================================
 

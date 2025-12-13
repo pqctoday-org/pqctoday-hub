@@ -26,6 +26,10 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [signature, setSignature] = useState<string>('')
   const [verificationResult, setVerificationResult] = useState<boolean | null>(null)
   const [kemDecapsulationResult, setKemDecapsulationResult] = useState<boolean | null>(null)
+  const [decapsulatedSecret, setDecapsulatedSecret] = useState<string>('')
+  const [isHybridMode, setIsHybridMode] = useState<boolean>(false)
+  const [secondaryEncKeyId, setSecondaryEncKeyId] = useState<string>('')
+  const [secondaryDecKeyId, setSecondaryDecKeyId] = useState<string>('')
   const [dataToSign, setDataToSign] = useState('Hello Quantum World!')
   const [dataToEncrypt, setDataToEncrypt] = useState('Secret Message')
   const [decryptedData, setDecryptedData] = useState('')
@@ -34,11 +38,19 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [selectedHashMethod, setSelectedHashMethod] = useState('SHA-256')
   const [hashInput, setHashInput] = useState('Hello Hashing World!')
   const [hashOutput, setHashOutput] = useState('')
+  const [hybridMethod, setHybridMethod] = useState<'concat-hkdf' | 'concat'>('concat-hkdf')
+  const [pqcSharedSecret, setPqcSharedSecret] = useState('')
+  const [classicalSharedSecret, setClassicalSharedSecret] = useState('')
+  const [pqcRecoveredSecret, setPqcRecoveredSecret] = useState<string>('')
+  const [classicalRecoveredSecret, setClassicalRecoveredSecret] = useState<string>('')
 
   const { runKemOperation } = useKemOperations({
     keyStore,
     selectedEncKeyId,
     selectedDecKeyId,
+    isHybridMode,
+    secondaryEncKeyId,
+    secondaryDecKeyId,
     executionMode,
     wasmLoaded,
     keySize,
@@ -47,9 +59,15 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setSharedSecret,
     setCiphertext,
     setKemDecapsulationResult,
+    setDecapsulatedSecret,
     addLog,
     setLoading,
     setError,
+    hybridMethod,
+    setPqcSharedSecret,
+    setClassicalSharedSecret,
+    setPqcRecoveredSecret,
+    setClassicalRecoveredSecret,
   })
 
   const { runDsaOperation } = useDsaOperations({
@@ -143,7 +161,9 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setDecryptedData('')
     setSignature('')
     setVerificationResult(null)
+    setVerificationResult(null)
     setKemDecapsulationResult(null)
+    setDecapsulatedSecret('')
     setSymOutput('')
     setHashOutput('')
     addLog({
@@ -165,6 +185,14 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setEncryptedData,
         kemDecapsulationResult,
         setKemDecapsulationResult,
+        decapsulatedSecret,
+        setDecapsulatedSecret,
+        isHybridMode,
+        setIsHybridMode,
+        secondaryEncKeyId,
+        setSecondaryEncKeyId,
+        secondaryDecKeyId,
+        setSecondaryDecKeyId,
         signature,
         setSignature,
         verificationResult,
@@ -187,6 +215,16 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setHashOutput,
         runOperation,
         clearOperations,
+        hybridMethod,
+        setHybridMethod,
+        pqcSharedSecret,
+        setPqcSharedSecret,
+        classicalSharedSecret,
+        setClassicalSharedSecret,
+        pqcRecoveredSecret,
+        setPqcRecoveredSecret,
+        classicalRecoveredSecret,
+        setClassicalRecoveredSecret,
       }}
     >
       {children}

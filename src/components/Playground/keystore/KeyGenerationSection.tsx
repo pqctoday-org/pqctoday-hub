@@ -2,13 +2,13 @@ import React from 'react'
 import { Key as KeyIcon, RefreshCw, Layers, Lock } from 'lucide-react'
 
 interface KeyGenerationSectionProps {
-  algorithm: 'ML-KEM' | 'ML-DSA'
+  algorithm: string
   keySize: string
   loading: boolean
-  onAlgorithmChange: (algorithm: 'ML-KEM' | 'ML-DSA') => void
+  onAlgorithmChange: (algorithm: string) => void
   onKeySizeChange: (size: string) => void
   onGenerateKeys: () => void
-  onUnifiedChange?: (algorithm: 'ML-KEM' | 'ML-DSA', keySize: string) => void
+  onUnifiedChange?: (algorithm: string, keySize: string) => void
   classicalAlgorithm: string
   classicalLoading: boolean
   onClassicalAlgorithmChange: (algorithm: string) => void
@@ -54,13 +54,27 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
               onChange={(e) => {
                 const val = e.target.value
                 if (['512', '768', '1024'].includes(val)) {
+                  // ML-KEM
                   if (onUnifiedChange) {
                     onUnifiedChange('ML-KEM', val)
                   } else {
                     if (algorithm !== 'ML-KEM') onAlgorithmChange('ML-KEM')
                     onKeySizeChange(val)
                   }
+                } else if (
+                  val.startsWith('HQC') ||
+                  val.startsWith('FrodoKEM') ||
+                  val.startsWith('Classic-McEliece')
+                ) {
+                  // New KEM Algorithms: Set the full name as the algorithm, KeySize can be ignored or duplicate
+                  if (onUnifiedChange) {
+                    onUnifiedChange(val, val)
+                  } else {
+                    onAlgorithmChange(val)
+                    onKeySizeChange(val)
+                  }
                 } else {
+                  // ML-DSA
                   if (onUnifiedChange) {
                     onUnifiedChange('ML-DSA', val)
                   } else {
@@ -75,6 +89,23 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                 <option value="512">ML-KEM-512 (NIST Level 1)</option>
                 <option value="768">ML-KEM-768 (NIST Level 3)</option>
                 <option value="1024">ML-KEM-1024 (NIST Level 5)</option>
+              </optgroup>
+              <optgroup label="HQC (Code-Based KEM)">
+                <option value="HQC-128">HQC-128 (NIST Level 1)</option>
+                <option value="HQC-192">HQC-192 (NIST Level 3)</option>
+                <option value="HQC-256">HQC-256 (NIST Level 5)</option>
+              </optgroup>
+              <optgroup label="FrodoKEM (Lattice-Based KEM)">
+                <option value="FrodoKEM-640-AES">FrodoKEM-640-AES (Level 1)</option>
+                <option value="FrodoKEM-976-AES">FrodoKEM-976-AES (Level 3)</option>
+                <option value="FrodoKEM-1344-AES">FrodoKEM-1344-AES (Level 5)</option>
+              </optgroup>
+              <optgroup label="Classic McEliece (Code-Based KEM)">
+                <option value="Classic-McEliece-348864">Classic McEliece 348864</option>
+                <option value="Classic-McEliece-460896">Classic McEliece 460896</option>
+                <option value="Classic-McEliece-6688128">Classic McEliece 6688128</option>
+                <option value="Classic-McEliece-6960119">Classic McEliece 6960119</option>
+                <option value="Classic-McEliece-8192128">Classic McEliece 8192128</option>
               </optgroup>
               <optgroup label="ML-DSA (Digital Signatures)">
                 <option value="44">ML-DSA-44 (NIST Level 2)</option>
