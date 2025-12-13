@@ -100,6 +100,7 @@ export class FiveGProfileService {
         try {
           const binStr = atob(b64)
           const bytes = new Uint8Array(binStr.length)
+          // eslint-disable-next-line security/detect-object-injection
           for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i)
           privHex = bytesToHex(bytes)
         } catch {
@@ -182,6 +183,7 @@ Public Key Hex: ${pubHex}`,
         try {
           const binStr = atob(b64)
           const bytes = new Uint8Array(binStr.length)
+          // eslint-disable-next-line security/detect-object-injection
           for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i)
           privHex = bytesToHex(bytes)
         } catch {
@@ -276,6 +278,7 @@ Public Key Hex: ${pubHex}`,
         try {
           const binStr = atob(b64)
           const bytes = new Uint8Array(binStr.length)
+          // eslint-disable-next-line security/detect-object-injection
           for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i)
           privHex = bytesToHex(bytes)
         } catch {
