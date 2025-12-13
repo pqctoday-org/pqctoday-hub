@@ -18,7 +18,6 @@ interface SimpleGanttChartProps {
 const START_YEAR = 2024
 const END_YEAR = 2035
 const YEARS = Array.from({ length: END_YEAR - START_YEAR + 1 }, (_, i) => START_YEAR + i)
-
 const PHASE_ORDER = [
   'Guidance',
   'Policy',
@@ -42,6 +41,30 @@ export const SimpleGanttChart = ({
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
 
+  const handleSort = (field: 'country' | 'organization') => {
+    if (sortField === field) {
+      const newDirection = sortDirection === 'asc' ? 'desc' : 'asc'
+      setSortDirection(newDirection)
+      logEvent('Timeline', `Sort ${field}`, newDirection)
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+      logEvent('Timeline', `Sort ${field}`, 'asc')
+    }
+  }
+
+  const handlePhaseClick = (phase: TimelinePhase, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setSelectedPhase(phase)
+    logEvent('Timeline', 'View Phase Details', `${phase.phase}: ${phase.title}`)
+  }
+
+  const handleClosePopover = () => setSelectedPhase(null)
+
+  const handleFilterBlur = () => {
+    if (filterText) logEvent('Timeline', 'Filter Text', filterText)
+  }
+
   const processedData = useMemo(() => {
     const filtered = data.filter((d) => {
       const matchesSearch =
@@ -51,90 +74,38 @@ export const SimpleGanttChart = ({
       return matchesSearch && matchesRegion
     })
 
-    const sortedCountries = filtered.sort((a, b) => {
-      let compareValue = 0
-
+    const sorted = filtered.sort((a, b) => {
+      let compare = 0
       if (sortField === 'country') {
-        const nameA = a.country.countryName.toLowerCase()
-        const nameB = b.country.countryName.toLowerCase()
-        compareValue = nameA.localeCompare(nameB)
-      } else if (sortField === 'organization') {
-        const orgA = a.country.bodies[0]?.name.toLowerCase() || ''
-        const orgB = b.country.bodies[0]?.name.toLowerCase() || ''
-        compareValue = orgA.localeCompare(orgB)
+        compare = a.country.countryName.localeCompare(b.country.countryName)
+      } else {
+        const aOrg = a.country.bodies[0]?.name || ''
+        const bOrg = b.country.bodies[0]?.name || ''
+        compare = aOrg.localeCompare(bOrg)
       }
-
-      return sortDirection === 'asc' ? compareValue : -compareValue
+      return sortDirection === 'asc' ? compare : -compare
     })
 
-    return sortedCountries.map((country) => ({
-      ...country,
-      phases: country.phases.sort((a, b) => {
-        // Primary sort: Start Year (grouping < 2025)
-        const startA = a.startYear < 2025 ? 2024 : a.startYear
-        const startB = b.startYear < 2025 ? 2024 : b.startYear
-
-        if (startA !== startB) {
-          return startA - startB
-        }
-
-        // Secondary sort: Type (Milestone before Phase)
-        if (a.type !== b.type) {
-          return a.type === 'Milestone' ? -1 : 1
-        }
-
-        // Tertiary sort: Phase Order
-        const indexA = PHASE_ORDER.indexOf(a.phase)
-        const indexB = PHASE_ORDER.indexOf(b.phase)
-        // Put unknown phases at the end
-        const valA = indexA === -1 ? 999 : indexA
-        const valB = indexB === -1 ? 999 : indexB
-        return valA - valB
+    return sorted.map((c) => ({
+      ...c,
+      phases: c.phases.sort((a, b) => {
+        const aStart = a.startYear < 2025 ? 2024 : a.startYear
+        const bStart = b.startYear < 2025 ? 2024 : b.startYear
+        if (aStart !== bStart) return aStart - bStart
+        if (a.type !== b.type) return a.type === 'Milestone' ? -1 : 1
+        const aIdx = PHASE_ORDER.indexOf(a.phase)
+        const bIdx = PHASE_ORDER.indexOf(b.phase)
+        const aVal = aIdx === -1 ? 999 : aIdx
+        const bVal = bIdx === -1 ? 999 : bIdx
+        return aVal - bVal
       }),
     }))
   }, [data, filterText, sortField, sortDirection, selectedCountry])
 
-  const handleSort = (field: 'country' | 'organization') => {
-    if (sortField === field) {
-      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))
-    } else {
-      setSortField(field)
-      setSortDirection('asc')
-    }
-    logEvent('Timeline', `Sort ${field}`, sortDirection === 'asc' ? 'desc' : 'asc')
-  }
-
-  const handlePhaseClick = (phase: TimelinePhase, e: React.MouseEvent) => {
-    e.stopPropagation()
-    setSelectedPhase(phase)
-    logEvent('Timeline', 'View Phase Details', `${phase.phase}: ${phase.title}`)
-  }
-
-  const handleClosePopover = () => {
-    setSelectedPhase(null)
-  }
-
-  const handleFilterBlur = () => {
-    if (filterText) {
-      logEvent('Timeline', 'Filter Text', filterText)
-    }
-  }
-
   const renderPhaseCells = (phaseData: TimelinePhase) => {
-    const cells = []
-
-    // Calculate start and end indices relative to our year range
+    const cells: React.ReactNode[] = []
     const startYear = Math.max(START_YEAR, phaseData.startYear)
     const endYear = Math.min(END_YEAR, phaseData.endYear)
-
-    // If phase is completely out of range, render empty cells
-    if (phaseData.endYear < START_YEAR || phaseData.startYear > END_YEAR) {
-      for (let year = START_YEAR; year <= END_YEAR; year++) {
-        cells.push(<td key={year} className="p-0 h-10 border-r border-border"></td>)
-      }
-      return cells
-    }
-
     const colors = phaseColors[phaseData.phase as Phase] || {
       start: 'hsl(var(--muted-foreground))',
       end: 'hsl(var(--muted))',
@@ -144,23 +115,23 @@ export const SimpleGanttChart = ({
 
     for (let year = START_YEAR; year <= END_YEAR; year++) {
       const isInPhase = year >= startYear && year <= endYear
-      const isFirstInPhase = year === startYear
-      const isLastInPhase = year === endYear
-
+      const isFirst = year === startYear
+      const isLast = year === endYear
       if (isInPhase) {
         cells.push(
           <td
             key={year}
-            className="p-0 h-10"
+            className="p-0 h-10 overflow-visible relative"
             style={{
-              borderRight: isLastInPhase ? '1px solid var(--color-border)' : 'none',
+              borderRight: isLast ? '1px solid var(--color-border)' : 'none',
               backgroundColor: isMilestone ? 'transparent' : colors.start,
               boxShadow: isMilestone ? 'none' : `0 0 8px ${colors.glow}`,
               opacity: isMilestone ? 1 : 0.9,
+              zIndex: isFirst || isMilestone ? 20 : 0,
             }}
           >
             <button
-              className="w-full h-full relative flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] border-0 bg-transparent"
+              className={`w-full h-full relative flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] border-0 bg-transparent ${isFirst || isMilestone ? 'z-20' : 'z-0'}`}
               onClick={(e) => handlePhaseClick(phaseData, e)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -170,7 +141,7 @@ export const SimpleGanttChart = ({
               }}
               aria-label={`${phaseData.phase}: ${phaseData.title}`}
             >
-              {isMilestone && isFirstInPhase ? (
+              {isMilestone && isFirst ? (
                 <div className="relative flex items-center justify-center">
                   <Flag
                     data-testid="milestone-flag"
@@ -183,9 +154,9 @@ export const SimpleGanttChart = ({
                     </div>
                   )}
                 </div>
-              ) : isFirstInPhase && !isMilestone ? (
+              ) : isFirst && !isMilestone ? (
                 <div className="relative flex items-center">
-                  <span className="absolute left-2 text-[10px] font-bold text-white bg-black/40 px-1 rounded whitespace-nowrap drop-shadow-md select-none z-10 pointer-events-none">
+                  <span className="absolute left-2 text-[10px] font-bold text-white bg-black/40 px-1 rounded whitespace-nowrap drop-shadow-md select-none z-20 pointer-events-none">
                     {phaseData.phase}
                   </span>
                   {phaseData.status && (
@@ -202,40 +173,45 @@ export const SimpleGanttChart = ({
         cells.push(<td key={year} className="p-0 h-10 border-r border-border"></td>)
       }
     }
-
     return cells
   }
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Grouped Filter Container */}
-      <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-wrap items-center gap-4">
-        <FilterDropdown
-          items={countryItems}
-          selectedId={selectedCountry}
-          onSelect={onCountrySelect}
-          label="Select Region"
-          defaultLabel="All Countries"
-          opaque
-          noContainer
-          className="mb-0"
-        />
-
-        <span className="text-muted-foreground px-2">Search:</span>
-        <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+      {/* Controls */}
+      <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-2 flex flex-col md:flex-row items-center gap-4">
+        <div className="flex items-center gap-2 w-full md:w-auto text-xs">
+          <div className="flex-1 min-w-[150px]">
+            <FilterDropdown
+              items={countryItems}
+              selectedId={selectedCountry}
+              onSelect={onCountrySelect}
+              defaultLabel="Region"
+              opaque
+              className="mb-0 w-full"
+              noContainer
+              variant="ghost"
+            />
+          </div>
+        </div>
+        <span className="hidden md:inline text-muted-foreground px-2">Search:</span>
+        <div className="relative flex-1 min-w-[200px] w-full">
+          <Search
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
           <input
             type="text"
             placeholder="Filter by country..."
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             onBlur={handleFilterBlur}
-            className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+            className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
           />
         </div>
       </div>
 
-      {/* Table Container */}
+      {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-border bg-card/50 backdrop-blur-sm">
         <table className="w-full min-w-[1000px] border-collapse table-fixed">
           <thead>
@@ -292,21 +268,19 @@ export const SimpleGanttChart = ({
             {processedData.map((countryData) => {
               const { country, phases } = countryData
               const totalRows = phases.length
-
               return (
                 <Fragment key={country.countryName}>
-                  {phases.map((phaseData, index) => {
-                    const isLastRow = index === totalRows - 1
+                  {phases.map((phaseData, idx) => {
+                    const isLastRow = idx === totalRows - 1
                     return (
                       <tr
-                        key={`${country.countryName}-${phaseData.phase}-${index}`}
+                        key={`${country.countryName}-${phaseData.phase}-${idx}`}
                         className="hover:bg-muted/50 transition-colors"
                         style={
                           isLastRow ? { borderBottom: '1px solid var(--color-border)' } : undefined
                         }
                       >
-                        {/* Country Cell - Only on first row */}
-                        {index === 0 && (
+                        {idx === 0 && (
                           <td
                             rowSpan={totalRows}
                             className="sticky left-0 z-20 bg-background p-3 align-top border-r border-border"
@@ -329,9 +303,7 @@ export const SimpleGanttChart = ({
                             </div>
                           </td>
                         )}
-
-                        {/* Organization Cell - Only on first row */}
-                        {index === 0 && (
+                        {idx === 0 && (
                           <td
                             rowSpan={totalRows}
                             className="sticky left-[180px] z-20 bg-background p-3 align-top border-r border-border"
@@ -343,8 +315,6 @@ export const SimpleGanttChart = ({
                             </div>
                           </td>
                         )}
-
-                        {/* Phase/Milestone Cells */}
                         {renderPhaseCells(phaseData)}
                       </tr>
                     )
