@@ -8,8 +8,10 @@
 ### 1.1 Country Selection
 
 - Users must be able to select a country from a list of available nations.
-- **Interface**: Selection via a dropdown menu with search functionality.
-- **Filtering**: Users can filter the Gantt chart by country name.
+- **Unified Layout**: Top control bar featuring a unified one-row design on desktop:
+  - **Region Filter**: "Ghost"-style dropdown for country selection.
+  - **Search**: Integrated search input for filtering country names and organizations.
+- **Filtering**: Real-time filtering by country name or organization.
 
 ### 1.2 Timeline Visualization (Gantt Chart)
 

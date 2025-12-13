@@ -18,6 +18,7 @@ interface FilterDropdownProps {
   className?: string
   opaque?: boolean
   noContainer?: boolean
+  variant?: 'default' | 'ghost'
 }
 
 export const FilterDropdown: React.FC<FilterDropdownProps> = ({
@@ -30,6 +31,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   className,
   opaque = false,
   noContainer = false,
+  variant = 'default',
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -101,7 +103,10 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               aria-haspopup="listbox"
               aria-expanded={isOpen}
               aria-labelledby={labelId}
-              className="flex items-center gap-2 px-4 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors min-w-[120px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
+              className={clsx(
+                'flex items-center gap-2 px-4 py-2 rounded-lg transition-colors min-w-[120px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground',
+                variant === 'default' ? 'bg-muted/30 hover:bg-muted/50' : 'hover:bg-muted/50'
+              )}
             >
               <span className="flex items-center gap-2">
                 <span className="flex items-center justify-center w-6 font-bold" aria-hidden="true">
@@ -198,7 +203,10 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               aria-haspopup="listbox"
               aria-expanded={isOpen}
               aria-labelledby={labelId}
-              className="flex items-center gap-2 px-4 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors min-w-[120px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground"
+              className={clsx(
+                'flex items-center gap-2 px-4 py-2 rounded-lg transition-colors min-w-[120px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground',
+                variant === 'default' ? 'bg-muted/30 hover:bg-muted/50' : 'hover:bg-muted/50'
+              )}
             >
               <span className="flex items-center gap-2">
                 <span className="flex items-center justify-center w-6 font-bold" aria-hidden="true">

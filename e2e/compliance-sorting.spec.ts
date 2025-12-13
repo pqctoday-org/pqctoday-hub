@@ -9,22 +9,22 @@ test.describe('Compliance Table Sorting', () => {
     await page.waitForSelector('table tbody tr')
 
     // Click "Product Name" header to sort ASC
-    await page.getByRole('columnheader', { name: 'Product Name' }).click()
+    await page.getByRole('button', { name: 'Product Name' }).click()
 
     // Get all product names
     const namesAsc = await page
-      .locator('tbody tr td:nth-child(5) > div:first-child')
+      .locator('tbody tr td:nth-child(4) > div:first-child')
       .allInnerTexts()
     // Verify sorted
     const sortedAsc = [...namesAsc].sort((a, b) => a.localeCompare(b))
     expect(namesAsc).toEqual(sortedAsc)
 
     // Click again to sort DESC
-    await page.getByRole('columnheader', { name: 'Product Name' }).click()
+    await page.getByRole('button', { name: 'Product Name' }).click()
 
     // Get all product names
     const namesDesc = await page
-      .locator('tbody tr td:nth-child(5) > div:first-child')
+      .locator('tbody tr td:nth-child(4) > div:first-child')
       .allInnerTexts()
     // Verify sorted desc
     const sortedDesc = [...namesDesc].sort((a, b) => b.localeCompare(a))
@@ -36,7 +36,7 @@ test.describe('Compliance Table Sorting', () => {
     await page.waitForSelector('table tbody tr')
 
     // Default might be desc, click to toggle
-    await page.getByRole('columnheader', { name: 'Date' }).click()
+    await page.getByRole('button', { name: 'Date' }).click()
     // Check direction
     // ...
   })

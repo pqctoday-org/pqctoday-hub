@@ -37,16 +37,13 @@ Documents are automatically categorized into the following sections based on the
 
 #### 3.1 Navigation & Filtering
 
-- **Category Filter**:
-  - Users can filter the view using tabs or a dropdown:
-  - **All**: Displays all documents (grouped by section).
-  - **[Category Name]**: Displays only documents within that specific category.
-- **Region Filter**:
-  - A dropdown filter allows users to filter documents by `regionScope` (e.g., Global, US, EU, APAC).
-  - **Logic**: Filters for items where the `regionScope` field contains the selected region string.
-  - **Default**: "All" (shows documents from all regions).
-- **Active Selection**: Visual highlight showing current selection in dropdowns.
-- **Responsive Design**: Controls stack vertically on mobile devices, side-by-side on desktop.
+- **Unified Control Bar**:
+  - Implements a single-row layout consistent with the Threats dashboard.
+  - **Filters**: "Ghost"-style dropdowns for **Category** and **Region**.
+  - **Search**: Integrated search input for real-time document filtering.
+- **Responsive Design**:
+  - **Desktop**: Single row [Category] [Region] [Search].
+  - **Mobile**: Stacked layout with filters on one row and search below.
 
 #### 3.2 Library Table
 

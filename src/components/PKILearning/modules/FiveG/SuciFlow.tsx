@@ -88,13 +88,9 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
       } else if (stepData.id === 'compute_mac') {
         result = await fiveGService.computeMAC()
       } else if (stepData.id === 'sidf_decryption') {
-        result = await fiveGService.sidfDecrypt()
+        result = await fiveGService.sidfDecrypt(profile)
       } else if (stepData.id === 'visualize_suci') {
         result = await fiveGService.visualizeStructure()
-      } else if (stepData.id === 'assemble_suci') {
-        // Default SUPI for simulation
-        const supi = '310260123456789'
-        result = await fiveGService.generateSUCI(profile, supi)
       } else {
         // Fallback for steps not yet fully dynamic
         await new Promise((resolve) => setTimeout(resolve, 600))
