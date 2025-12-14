@@ -89,11 +89,39 @@ const ALGORITHMS: AlgorithmOption[] = [
     keySizeLabel: 'Level 2',
   },
   {
-    id: 'slhdsa',
+    id: 'mldsa65',
+    name: 'ML-DSA-65 (Dilithium)',
+    group: 'Quantum-Safe',
+    genCommand: 'openssl genpkey -algorithm ml-dsa-65',
+    keySizeLabel: 'Level 3',
+  },
+  {
+    id: 'slhdsa128s',
     name: 'SLH-DSA-SHA2-128s (SPHINCS+)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-128s',
-    keySizeLabel: 'Level 1',
+    keySizeLabel: 'Level 1 (small sig)',
+  },
+  {
+    id: 'slhdsa128f',
+    name: 'SLH-DSA-SHA2-128f (SPHINCS+)',
+    group: 'Quantum-Safe',
+    genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-128f',
+    keySizeLabel: 'Level 1 (fast sign)',
+  },
+  {
+    id: 'slhdsa192s',
+    name: 'SLH-DSA-SHA2-192s (SPHINCS+)',
+    group: 'Quantum-Safe',
+    genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-192s',
+    keySizeLabel: 'Level 3 (small sig)',
+  },
+  {
+    id: 'slhdsa192f',
+    name: 'SLH-DSA-SHA2-192f (SPHINCS+)',
+    group: 'Quantum-Safe',
+    genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-192f',
+    keySizeLabel: 'Level 3 (fast sign)',
   },
 ]
 

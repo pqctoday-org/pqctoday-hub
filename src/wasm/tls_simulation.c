@@ -1,7 +1,9 @@
 #include <openssl/conf.h>
 #include <openssl/err.h>
+#include <openssl/objects.h> // For OBJ_nid2sn
 #include <openssl/ssl.h>
-#include <openssl/trace.h> // Added for OSSL_trace calls
+#include <openssl/trace.h> // For OSSL_trace calls
+#include <openssl/x509.h>  // For X509_get_signature_nid
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,6 +23,58 @@ char log_buffer[LOG_BUFFER_SIZE];
 int log_offset = 0;
 static const char *current_side = "system"; // Global context for callbacks
 
+// Ex data index to store SSL side identifier
+static int ssl_side_ex_data_idx = -1;
+
+// Helper to translate X509 verification errors to clear educational messages
+const char *get_cert_verify_explanation(int verify_err) {
+  switch (verify_err) {
+  // Chain of Trust failures
+  case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
+  case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY:
+    return "Chain of Trust: Unable to find issuer certificate. The CA that "
+           "signed this certificate is not in the trusted store.";
+  case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
+    return "Chain of Trust: Self-signed certificate not in trusted store. Add "
+           "the CA certificate to verify this chain.";
+  case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
+    return "Chain of Trust: Self-signed certificate in chain but not trusted. "
+           "Import the Root CA.";
+  case X509_V_ERR_CERT_UNTRUSTED:
+    return "Chain of Trust: Certificate is not trusted. Verify the CA is "
+           "correctly configured.";
+  case X509_V_ERR_CERT_SIGNATURE_FAILURE:
+    return "Chain of Trust: Certificate signature verification failed. The "
+           "certificate may be corrupt or signed with an unsupported "
+           "algorithm.";
+
+  // Validity Period failures
+  case X509_V_ERR_CERT_NOT_YET_VALID:
+    return "Validity Period: Certificate is not yet valid. The 'Not Before' "
+           "date is in the future.";
+  case X509_V_ERR_CERT_HAS_EXPIRED:
+    return "Validity Period: Certificate has expired. The 'Not After' date has "
+           "passed.";
+  case X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD:
+    return "Validity Period: Invalid 'Not Before' date format in certificate.";
+  case X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD:
+    return "Validity Period: Invalid 'Not After' date format in certificate.";
+
+  // Key Usage failures
+  case X509_V_ERR_INVALID_PURPOSE:
+    return "Key Usage: Certificate cannot be used for this purpose. Check if "
+           "'clientAuth' or 'serverAuth' Extended Key Usage is set correctly.";
+
+  // Other common errors
+  case X509_V_ERR_CERT_REVOKED:
+    return "Revocation: Certificate has been revoked by the issuing CA.";
+  case X509_V_ERR_NO_EXPLICIT_POLICY:
+    return "Policy: No explicit certificate policy found.";
+
+  default:
+    return NULL; // Return NULL for unknown errors to use default message
+  }
+}
 void reset_log() {
   log_offset = 0;
   strcpy(log_buffer, "{\"trace\":[");
@@ -204,11 +258,16 @@ int process_reads(SSL *ssl, const char *side) {
 }
 
 // Helper: Flush BIOs (move data between memory buffers)
-// KEYLOG CALLBACK
+// KEYLOG CALLBACK - logs secrets with proper side attribution
 void keylog_callback(const SSL *ssl, const char *line) {
-  // We log generic keylogs. To distinguish, we'd need ex_data, but for now
-  // the content (CLIENT_RANDOM) is enough to identify common secrets.
-  log_event("system", "keylog", line);
+  // Retrieve the side from ex_data
+  const char *side = "system";
+  if (ssl_side_ex_data_idx >= 0) {
+    side = (const char *)SSL_get_ex_data(ssl, ssl_side_ex_data_idx);
+    if (!side)
+      side = "system";
+  }
+  log_event(side, "keylog", line);
 }
 
 // TRACE CALLBACK
@@ -281,8 +340,9 @@ char *execute_tls_simulation(const char *client_conf_path,
     if (access("/ssl/client.key", F_OK) == 0)
       SSL_CTX_use_PrivateKey_file(c_ctx, "/ssl/client.key", SSL_FILETYPE_PEM);
   }
-  if (access("/ssl/ca.crt", F_OK) == 0) {
-    if (SSL_CTX_load_verify_locations(c_ctx, "/ssl/ca.crt", NULL) > 0)
+  // Load CA to verify server certificate
+  if (access("/ssl/client-ca.crt", F_OK) == 0) {
+    if (SSL_CTX_load_verify_locations(c_ctx, "/ssl/client-ca.crt", NULL) > 0)
       SSL_CTX_set_verify(c_ctx, SSL_VERIFY_PEER, NULL);
   }
   log_event("client", "init", "Created TLS 1.3 Client Context");
@@ -300,9 +360,10 @@ char *execute_tls_simulation(const char *client_conf_path,
   if (access("/ssl/server.key", F_OK) == 0) {
     SSL_CTX_use_PrivateKey_file(s_ctx, "/ssl/server.key", SSL_FILETYPE_PEM);
   }
-  if (access("/ssl/ca.crt", F_OK) == 0) {
-    SSL_CTX_load_verify_locations(s_ctx, "/ssl/ca.crt", NULL);
-    STACK_OF(X509_NAME) *list = SSL_load_client_CA_file("/ssl/ca.crt");
+  // Load CA to verify client certificate (mTLS)
+  if (access("/ssl/server-ca.crt", F_OK) == 0) {
+    SSL_CTX_load_verify_locations(s_ctx, "/ssl/server-ca.crt", NULL);
+    STACK_OF(X509_NAME) *list = SSL_load_client_CA_file("/ssl/server-ca.crt");
     if (list)
       SSL_CTX_set_client_CA_list(s_ctx, list);
   }
@@ -311,6 +372,16 @@ char *execute_tls_simulation(const char *client_conf_path,
   // 4. Connect BIOs
   c_ssl = SSL_new(c_ctx);
   s_ssl = SSL_new(s_ctx);
+
+  // Initialize ex_data index if not done
+  if (ssl_side_ex_data_idx < 0) {
+    ssl_side_ex_data_idx = SSL_get_ex_new_index(0, NULL, NULL, NULL, NULL);
+  }
+
+  // Set side identifier on each SSL object
+  SSL_set_ex_data(c_ssl, ssl_side_ex_data_idx, (void *)"client");
+  SSL_set_ex_data(s_ssl, ssl_side_ex_data_idx, (void *)"server");
+
   BIO_new_bio_pair(&c_bio, 0, &s_bio, 0);
   SSL_set_bio(c_ssl, c_bio, c_bio); // Up ref
   SSL_set_bio(s_ssl, s_bio, s_bio); // Up ref
@@ -349,6 +420,22 @@ char *execute_tls_simulation(const char *client_conf_path,
           snprintf(msg, sizeof(msg), "Client handshake error: %d - %s", err,
                    ssl_err);
           log_event("client", "error", msg);
+
+          // Check for certificate verification error and log explanation
+          long verify_err = SSL_get_verify_result(c_ssl);
+          if (verify_err != X509_V_OK) {
+            const char *explanation = get_cert_verify_explanation(verify_err);
+            if (explanation) {
+              log_event("client", "cert_verify_error", explanation);
+            } else {
+              char verify_msg[256];
+              snprintf(verify_msg, sizeof(verify_msg),
+                       "Certificate verification failed: %s",
+                       X509_verify_cert_error_string(verify_err));
+              log_event("client", "cert_verify_error", verify_msg);
+            }
+          }
+
           close_log("failed", "Client handshake failed");
           goto cleanup;
         }
@@ -366,6 +453,23 @@ char *execute_tls_simulation(const char *client_conf_path,
           snprintf(msg, sizeof(msg), "Server handshake error: %d - %s", err,
                    ssl_err);
           log_event("server", "error", msg);
+
+          // Check for certificate verification error (mTLS client cert
+          // validation)
+          long verify_err = SSL_get_verify_result(s_ssl);
+          if (verify_err != X509_V_OK) {
+            const char *explanation = get_cert_verify_explanation(verify_err);
+            if (explanation) {
+              log_event("server", "cert_verify_error", explanation);
+            } else {
+              char verify_msg[256];
+              snprintf(verify_msg, sizeof(verify_msg),
+                       "Client certificate verification failed: %s",
+                       X509_verify_cert_error_string(verify_err));
+              log_event("server", "cert_verify_error", verify_msg);
+            }
+          }
+
           close_log("failed", "Server handshake failed");
           goto cleanup;
         }
@@ -377,6 +481,78 @@ char *execute_tls_simulation(const char *client_conf_path,
       char msg[128];
       snprintf(msg, sizeof(msg), "Negotiated: %s", SSL_get_cipher_name(c_ssl));
       log_event("connection", "established", msg);
+
+      // Log the negotiated key exchange group (X25519, P-256, ML-KEM, Hybrid,
+      // etc.)
+      int group_nid = SSL_get_negotiated_group(c_ssl);
+
+      char group_debug[128];
+      snprintf(group_debug, sizeof(group_debug), "Debug: Group NID=%d",
+               group_nid);
+      log_event("connection", "debug", group_debug);
+
+      if (group_nid > 0) {
+        // Use SSL_group_to_name (OpenSSL 3.x API) - works for PQC/Hybrid groups
+        const char *group_name = SSL_group_to_name(c_ssl, group_nid);
+        char group_msg[128];
+        if (group_name && strlen(group_name) > 0) {
+          snprintf(group_msg, sizeof(group_msg), "Key Exchange: %s",
+                   group_name);
+        } else {
+          // Final fallback: raw NID (should rarely happen with
+          // SSL_group_to_name)
+          snprintf(group_msg, sizeof(group_msg), "Key Exchange: NID-%d",
+                   group_nid);
+        }
+        log_event("connection", "key_exchange", group_msg);
+      } else {
+        log_event("connection", "debug", "Debug: No negotiated group (NID<=0)");
+      }
+
+      // Log the negotiated signature algorithm with fallback for PQC
+      int sig_nid = 0;
+      int get_sig_ret = SSL_get_peer_signature_nid(c_ssl, &sig_nid);
+      const char *sig_source = "peer";
+
+      // Fallback 1: Use server's own signature if peer lookup fails (for
+      // PQC/ML-DSA)
+      if (get_sig_ret != 1 || sig_nid == 0) {
+        get_sig_ret = SSL_get_signature_nid(s_ssl, &sig_nid);
+        sig_source = "server";
+      }
+
+      // Fallback 2: Parse from Server Certificate if still no result
+      if (get_sig_ret != 1 || sig_nid == 0) {
+        X509 *cert = SSL_get_certificate(s_ssl);
+        if (cert) {
+          sig_nid = X509_get_signature_nid(cert);
+          get_sig_ret = (sig_nid != NID_undef && sig_nid != 0) ? 1 : 0;
+          sig_source = "cert";
+        }
+      }
+
+      char debug_msg[128];
+      snprintf(debug_msg, sizeof(debug_msg),
+               "Debug: Sig NID=%d Ret=%d Source=%s", sig_nid, get_sig_ret,
+               sig_source);
+      log_event("connection", "debug", debug_msg);
+
+      if (get_sig_ret == 1 && sig_nid != 0) {
+        const char *sig_name = OBJ_nid2sn(sig_nid);
+        if (sig_name) {
+          char sig_msg[128];
+          snprintf(sig_msg, sizeof(sig_msg), "Peer Signature Algorithm: %s",
+                   sig_name);
+          log_event("connection", "signature_algorithm", sig_msg);
+        } else {
+          char fallback_msg[64];
+          snprintf(fallback_msg, sizeof(fallback_msg),
+                   "Peer Signature Algorithm: NID-%d", sig_nid);
+          log_event("connection", "signature_algorithm", fallback_msg);
+        }
+      } else {
+        log_event("connection", "debug", "Debug: All signature lookups failed");
+      }
     }
   }
 

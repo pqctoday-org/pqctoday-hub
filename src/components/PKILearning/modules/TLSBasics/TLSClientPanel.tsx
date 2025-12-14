@@ -3,7 +3,14 @@ import { Settings, FileText, Check, Shield, Key, Import, Copy } from 'lucide-rea
 import { clsx } from 'clsx'
 import { useTLSStore } from '../../../../store/tls-learning.store'
 import { FileSelectionModal } from './components/FileSelectionModal'
-import { DEFAULT_CLIENT_CERT, DEFAULT_CLIENT_KEY } from './utils/defaultCertificates'
+import {
+  DEFAULT_CLIENT_CERT,
+  DEFAULT_CLIENT_KEY,
+  DEFAULT_MLDSA_CLIENT_CERT,
+  DEFAULT_MLDSA_CLIENT_KEY,
+  DEFAULT_SERVER_CERT,
+  DEFAULT_MLDSA87_SERVER_CERT,
+} from './utils/defaultCertificates'
 
 const CIPHER_SUITES = [
   'TLS_AES_256_GCM_SHA384',
@@ -11,13 +18,31 @@ const CIPHER_SUITES = [
   'TLS_CHACHA20_POLY1305_SHA256',
 ]
 
-const GROUPS = ['X25519', 'P-256', 'P-384', 'P-521']
+// Key Exchange Groups organized by type
+const CLASSICAL_GROUPS = ['X25519', 'P-256', 'P-384', 'P-521']
+const PQC_GROUPS = ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024']
+const HYBRID_GROUPS = ['X25519MLKEM768', 'SecP256r1MLKEM768']
 
-const SIG_ALGS = ['ecdsa_secp256r1_sha256', 'rsa_pss_rsae_sha256', 'rsa_pss_pss_sha256', 'ed25519']
+const SIG_ALGS = [
+  // PQC - ML-DSA (Dilithium)
+  'mldsa44',
+  'mldsa65',
+  'mldsa87',
+  // PQC - SLH-DSA (SPHINCS+)
+  'slhdsa-sha2-128s',
+  'slhdsa-sha2-128f',
+  // Classical
+  'ecdsa_secp256r1_sha256',
+  'rsa_pss_rsae_sha256',
+  'rsa_pss_pss_sha256',
+  'ed25519',
+]
 
 const CERTS = [
   { id: 'default', label: 'Default (RSA 2048)' },
+  { id: 'mldsa', label: 'Default (ML-DSA-44)' },
   { id: 'none', label: 'None' },
+  { id: 'custom', label: 'Custom from OpenSSL Studio' },
 ]
 
 export const TLSClientPanel: React.FC = () => {
@@ -32,7 +57,7 @@ export const TLSClientPanel: React.FC = () => {
   } = useTLSStore()
   const [activeTab, setActiveTab] = useState<'ui' | 'raw'>('ui')
   const [certSelection, setCertSelection] = useState<string>('default')
-  const [showImport, setShowImport] = useState<{ isOpen: boolean; type: 'cert' | 'key' }>({
+  const [showImport, setShowImport] = useState<{ isOpen: boolean; type: 'cert' | 'key' | 'ca' }>({
     isOpen: false,
     type: 'cert',
   })
@@ -41,6 +66,7 @@ export const TLSClientPanel: React.FC = () => {
   const isConnected = sessionStatus === 'connected'
 
   // Handle Cert Selection
+  // Handle Cert Selection
   useEffect(() => {
     if (certSelection === 'none') {
       // Clear certificates
@@ -48,24 +74,31 @@ export const TLSClientPanel: React.FC = () => {
         setClientConfig({
           certificates: {
             ...clientConfig.certificates,
-            certPem: '',
-            keyPem: '',
+            certPem: undefined,
+            keyPem: undefined,
           },
         })
       }
     } else if (certSelection === 'default') {
-      // Restore default certificates if missing
-      if (!clientConfig.certificates.certPem || !clientConfig.certificates.keyPem) {
-        setClientConfig({
-          certificates: {
-            ...clientConfig.certificates,
-            certPem: DEFAULT_CLIENT_CERT,
-            keyPem: DEFAULT_CLIENT_KEY,
-          },
-        })
-      }
+      setClientConfig({
+        certificates: {
+          ...clientConfig.certificates,
+          certPem: DEFAULT_CLIENT_CERT,
+          keyPem: DEFAULT_CLIENT_KEY,
+          caPem: DEFAULT_SERVER_CERT, // Trust RSA server cert
+        },
+      })
+    } else if (certSelection === 'mldsa') {
+      setClientConfig({
+        certificates: {
+          ...clientConfig.certificates,
+          certPem: DEFAULT_MLDSA_CLIENT_CERT,
+          keyPem: DEFAULT_MLDSA_CLIENT_KEY,
+          caPem: DEFAULT_MLDSA87_SERVER_CERT, // Trust ML-DSA87 server cert (matches what server uses)
+        },
+      })
     }
-  }, [certSelection, clientConfig.certificates, setClientConfig])
+  }, [certSelection, setClientConfig])
 
   const toggleCipher = (cipher: string) => {
     if (isConnected) return
@@ -257,7 +290,6 @@ export const TLSClientPanel: React.FC = () => {
                     {c.label}
                   </option>
                 ))}
-                <option value="custom">Custom (Paste PEM)</option>
               </select>
 
               {certSelection === 'custom' && (
@@ -316,6 +348,50 @@ export const TLSClientPanel: React.FC = () => {
               <p className="text-xs text-muted-foreground mt-2">
                 Needed if the Server requests a client certificate (mTLS).
               </p>
+
+              {/* Verify Server Certificate Checkbox - matches Server panel's mTLS checkbox position */}
+              <div className="flex items-center gap-2 mt-3">
+                <input
+                  type="checkbox"
+                  id="verifyServer"
+                  className="checkbox checkbox-sm checkbox-primary"
+                  checked={true}
+                  disabled
+                  title="Server certificate verification is always required for secure TLS"
+                />
+                <label htmlFor="verifyServer" className="text-sm font-medium text-muted-foreground">
+                  Verify Server Certificate <span className="text-success">(Always On)</span>
+                </label>
+              </div>
+
+              {/* Trusted Root CA for verifying server certificate - matches Server panel layout */}
+              <div className="mt-3 p-3 rounded-lg bg-muted/50 border border-border">
+                <div className="text-xs text-muted-foreground flex items-center justify-between mb-1">
+                  <label htmlFor="client-ca-pem" className="flex items-center gap-1">
+                    <Shield size={12} className="text-warning" /> Trusted Root CA
+                  </label>
+                  <button
+                    onClick={() => setShowImport({ isOpen: true, type: 'ca' })}
+                    className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
+                  >
+                    <Import size={10} /> Import from Studio
+                  </button>
+                </div>
+                <textarea
+                  id="client-ca-pem"
+                  className="w-full h-16 bg-card border border-border rounded p-2 text-xs font-mono"
+                  placeholder="-----BEGIN CERTIFICATE-----... (CA that signed server cert)"
+                  value={clientConfig.certificates.caPem || ''}
+                  onChange={(e) =>
+                    setClientConfig({
+                      certificates: { ...clientConfig.certificates, caPem: e.target.value },
+                    })
+                  }
+                />
+                <p className="text-[10px] text-muted-foreground mt-1">
+                  Import the Root CA that signed the server's certificate.
+                </p>
+              </div>
             </div>
 
             <hr className="border-border" />
@@ -361,21 +437,70 @@ export const TLSClientPanel: React.FC = () => {
               <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 block">
                 Key Exchange Groups
               </span>
-              <div className="flex flex-wrap gap-2">
-                {GROUPS.map((group) => (
-                  <button
-                    key={group}
-                    onClick={() => toggleGroup(group)}
-                    className={clsx(
-                      'px-3 py-1.5 rounded-md text-sm font-mono border transition-all',
-                      clientConfig.groups.includes(group)
-                        ? 'bg-primary/10 border-primary/50 text-foreground'
-                        : 'bg-muted border-border text-muted-foreground hover:border-border/80'
-                    )}
-                  >
-                    {group}
-                  </button>
-                ))}
+
+              {/* Classical */}
+              <div className="mb-3">
+                <span className="text-xs text-muted-foreground mb-2 block">Classical (ECDH)</span>
+                <div className="flex flex-wrap gap-2">
+                  {CLASSICAL_GROUPS.map((group) => (
+                    <button
+                      key={group}
+                      onClick={() => toggleGroup(group)}
+                      className={clsx(
+                        'px-3 py-1.5 rounded-md text-sm font-mono border transition-all',
+                        clientConfig.groups.includes(group)
+                          ? 'bg-primary/10 border-primary/50 text-foreground'
+                          : 'bg-muted border-border text-muted-foreground hover:border-border/80'
+                      )}
+                    >
+                      {group}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* PQC */}
+              <div className="mb-3">
+                <span className="text-xs text-muted-foreground mb-2 block">PQC (ML-KEM)</span>
+                <div className="flex flex-wrap gap-2">
+                  {PQC_GROUPS.map((group) => (
+                    <button
+                      key={group}
+                      onClick={() => toggleGroup(group)}
+                      className={clsx(
+                        'px-3 py-1.5 rounded-md text-sm font-mono border transition-all',
+                        clientConfig.groups.includes(group)
+                          ? 'bg-success/20 border-success/50 text-foreground'
+                          : 'bg-muted border-border text-muted-foreground hover:border-border/80'
+                      )}
+                    >
+                      {group}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Hybrid */}
+              <div>
+                <span className="text-xs text-muted-foreground mb-2 block">
+                  Hybrid (Classical + PQC)
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {HYBRID_GROUPS.map((group) => (
+                    <button
+                      key={group}
+                      onClick={() => toggleGroup(group)}
+                      className={clsx(
+                        'px-3 py-1.5 rounded-md text-sm font-mono border transition-all',
+                        clientConfig.groups.includes(group)
+                          ? 'bg-warning/20 border-warning/50 text-foreground'
+                          : 'bg-muted border-border text-muted-foreground hover:border-border/80'
+                      )}
+                    >
+                      {group}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -428,15 +553,20 @@ export const TLSClientPanel: React.FC = () => {
       <FileSelectionModal
         isOpen={showImport.isOpen}
         onClose={() => setShowImport({ ...showImport, isOpen: false })}
-        title={`Import Client ${showImport.type === 'cert' ? 'Certificate' : 'Private Key'}`}
+        title={`Import ${showImport.type === 'cert' ? 'Certificate' : showImport.type === 'key' ? 'Private Key' : 'Root CA Certificate'}`}
         onSelect={(content) => {
           if (showImport.type === 'cert') {
             setClientConfig({
               certificates: { ...clientConfig.certificates, certPem: content },
             })
-          } else {
+          } else if (showImport.type === 'key') {
             setClientConfig({
               certificates: { ...clientConfig.certificates, keyPem: content },
+            })
+          } else {
+            // 'ca' type - Root CA for verifying server cert
+            setClientConfig({
+              certificates: { ...clientConfig.certificates, caPem: content },
             })
           }
         }}

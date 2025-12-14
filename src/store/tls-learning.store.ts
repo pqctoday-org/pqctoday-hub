@@ -68,7 +68,7 @@ MinProtocol = TLSv1.3
 MaxProtocol = TLSv1.3
 Ciphersuites = TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256
 Groups = X25519:P-256:P-384
-SignatureAlgorithms = ecdsa_secp256r1_sha256:rsa_pss_rsae_sha256
+SignatureAlgorithms = mldsa44:mldsa65:mldsa87:ecdsa_secp256r1_sha256:rsa_pss_rsae_sha256
 `
 
 const DEFAULT_CONFIG: TLSConfig = {
@@ -78,7 +78,13 @@ const DEFAULT_CONFIG: TLSConfig = {
     'TLS_CHACHA20_POLY1305_SHA256',
   ],
   groups: ['X25519', 'P-256', 'P-384'],
-  signatureAlgorithms: ['ecdsa_secp256r1_sha256', 'rsa_pss_rsae_sha256'],
+  signatureAlgorithms: [
+    'mldsa44',
+    'mldsa65',
+    'mldsa87',
+    'ecdsa_secp256r1_sha256',
+    'rsa_pss_rsae_sha256',
+  ],
   certificates: {},
   rawConfig: DEFAULT_RAW_CONFIG,
   mode: 'ui',

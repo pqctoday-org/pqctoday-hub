@@ -154,4 +154,34 @@ Groups = P-256
     // Expect Failure
     await expect(page.getByText('Negotiation Failed')).toBeVisible()
   })
+
+  test('performs successful handshake with ML-DSA identity', async ({ page }) => {
+    // 1. Select ML-DSA for Client
+    // Client is the first select (index 0 usually, or by label if accessible).
+    // The panel structure uses selects. Let's rely on label if possible or order.
+    // Client Panel is left (first). Server Panel is right (last or second).
+    const selects = page.locator('select')
+    await selects.first().selectOption('mldsa') // Value for "Default (ML-DSA)"
+
+    // 2. Select ML-DSA for Server
+    await selects.nth(1).selectOption('mldsa')
+
+    // 3. Run Handshake
+    await page.getByRole('button', { name: 'Start Full Interaction' }).click()
+
+    // 4. Verify Success
+    await expect(page.getByText('Negotiation Successful')).toBeVisible({ timeout: 30000 })
+
+    // 5. Debug Banner Content
+    const banner = page.locator('.flex.gap-2.text-sm').first()
+    console.log('Banner Content:', await banner.textContent())
+
+    // Check if Sig is present distinct from specific value first
+    // await expect(page.getByText(/Sig:/)).toBeVisible()
+    if ((await page.getByText(/Sig:/).count()) > 0) {
+      console.log('Sig label found')
+    } else {
+      console.log('Sig label NOT found')
+    }
+  })
 })

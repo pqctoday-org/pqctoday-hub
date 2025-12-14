@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FileText, Lock } from 'lucide-react'
+import { FileText, Lock, Copy, Check } from 'lucide-react'
 import { useTLSStore } from '../../../../../store/tls-learning.store'
 import { CryptoLogDisplay } from './CryptoLogDisplay'
 import type { TraceEvent } from './CryptoLogDisplay'
@@ -26,6 +26,16 @@ export const TLSNegotiationResults: React.FC = () => {
     (e) => e.event === 'established' || (e.side === 'connection' && e.event !== 'error')
   )
   const errorEvent = events.find((e) => e.event === 'error')
+
+  // Certificate verification events
+  const clientCertVerifyError = events.find(
+    (e) => e.side === 'client' && e.event === 'cert_verify_error'
+  )
+  const serverCertVerifyError = events.find(
+    (e) => e.side === 'server' && e.event === 'cert_verify_error'
+  )
+  const hasCertError = clientCertVerifyError || serverCertVerifyError
+
   // Success requires: explicit success status OR connection established AND no errors
   const isSuccess =
     (results.status === 'success' || connectionEvent) && !errorEvent && results.status !== 'failed'
@@ -36,29 +46,101 @@ export const TLSNegotiationResults: React.FC = () => {
       {/* Status Banner */}
       <div
         className={clsx(
-          'p-4 rounded-xl border flex items-center justify-between',
+          'p-4 rounded-xl border flex flex-col gap-2',
           isSuccess
-            ? 'bg-green-500/10 border-green-500/30 text-green-400'
+            ? 'bg-success/10 border-success/30 text-success'
             : 'bg-destructive/10 border-destructive/30 text-destructive'
         )}
       >
-        <div className="flex items-center gap-3">
-          <div
-            className={clsx(
-              'w-3 h-3 rounded-full animate-pulse',
-              isSuccess ? 'bg-green-500' : 'bg-destructive'
-            )}
-          />
-          <span className="font-bold text-lg">
-            {isSuccess ? 'Negotiation Successful' : 'Negotiation Failed'}
-          </span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              className={clsx(
+                'w-3 h-3 rounded-full animate-pulse',
+                isSuccess ? 'bg-success' : 'bg-destructive'
+              )}
+            />
+            <span className="font-bold text-lg">
+              {isSuccess ? 'Negotiation Successful' : 'Negotiation Failed'}
+            </span>
+          </div>
+          {negotiatedCipher && (
+            <div className="flex gap-2 text-sm">
+              <span className="font-mono bg-background/50 px-3 py-1 rounded border border-border/50">
+                Cipher: {negotiatedCipher}
+              </span>
+              {events
+                .find((e) => e.details.includes('Key Exchange:'))
+                ?.details.match(/Key Exchange: (.+)/)?.[1] && (
+                <span className="font-mono bg-background/50 px-3 py-1 rounded border border-border/50">
+                  Group:{' '}
+                  {
+                    events
+                      .find((e) => e.details.includes('Key Exchange:'))
+                      ?.details.match(/Key Exchange: (.+)/)?.[1]
+                  }
+                </span>
+              )}
+              {events
+                .find((e) => e.details.includes('Peer Signature Algorithm:'))
+                ?.details.match(/Peer Signature Algorithm: (.+)/)?.[1] && (
+                <span className="font-mono bg-background/50 px-3 py-1 rounded border border-border/50">
+                  Sig:{' '}
+                  {(() => {
+                    const raw =
+                      events
+                        .find((e) => e.details.includes('Peer Signature Algorithm:'))
+                        ?.details.match(/Peer Signature Algorithm: (.+)/)?.[1] || ''
+                    // OpenSSL often returns just the hash NID name for RSA-PSS in some contexts/versions
+                    if (raw === 'SHA256') return 'RSA-PSS (SHA256)'
+                    if (raw === 'SHA384') return 'RSA-PSS (SHA384)'
+                    if (raw === 'SHA512') return 'RSA-PSS (SHA512)'
+                    return raw
+                  })()}
+                </span>
+              )}
+            </div>
+          )}
         </div>
-        {negotiatedCipher && (
-          <span className="font-mono text-sm bg-background/50 px-3 py-1 rounded">
-            {negotiatedCipher}
-          </span>
+
+        {/* Certificate Verification Status */}
+        {(hasCertError || isSuccess) && (
+          <div className="flex gap-4 text-sm pt-2 border-t border-current/20">
+            {/* Server Cert Verification (by Client) */}
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground text-xs">Server Cert:</span>
+              {clientCertVerifyError ? (
+                <span className="text-destructive font-medium text-xs">❌ Failed</span>
+              ) : (
+                <span className="text-success font-medium text-xs">✓ Verified</span>
+              )}
+            </div>
+
+            {/* Client Cert Verification (by Server - mTLS) */}
+            {(serverCertVerifyError || serverConfig.verifyClient) && (
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground text-xs">Client Cert:</span>
+                {serverCertVerifyError ? (
+                  <span className="text-destructive font-medium text-xs">❌ Failed</span>
+                ) : isSuccess ? (
+                  <span className="text-success font-medium text-xs">✓ Verified</span>
+                ) : (
+                  <span className="text-warning font-medium text-xs">⚠ Not verified</span>
+                )}
+              </div>
+            )}
+          </div>
         )}
-        {errorEvent && !isSuccess && (
+
+        {/* Certificate Error Details */}
+        {hasCertError && (
+          <div className="mt-1 text-xs font-mono bg-black/30 rounded p-2 text-destructive">
+            {clientCertVerifyError && <div>Client: {clientCertVerifyError.details}</div>}
+            {serverCertVerifyError && <div>Server: {serverCertVerifyError.details}</div>}
+          </div>
+        )}
+
+        {errorEvent && !isSuccess && !hasCertError && (
           <span className="font-mono text-sm text-destructive">
             {errorEvent.details.substring(0, 100)}
           </span>
@@ -119,8 +201,10 @@ const LogColumn = ({
 }) => {
   const [view, setView] = useState<'protocol' | 'crypto'>('protocol')
 
-  // Filter events for this side
-  const myEvents = events.filter((e) => e.side === side)
+  // Filter events for this side (include shared connection/system events)
+  const myEvents = events.filter(
+    (e) => e.side === side || e.side === 'connection' || e.side === 'system'
+  )
 
   const borderColor = theme === 'blue' ? 'border-primary/30' : 'border-tertiary/30'
   const bgColor = theme === 'blue' ? 'bg-primary/10' : 'bg-tertiary/10'
@@ -133,6 +217,27 @@ const LogColumn = ({
   const cryptoEvents = myEvents.filter(
     (e) => e.event.startsWith('crypto_trace_') || e.event === 'keylog'
   )
+
+  const [copied, setCopied] = useState(false)
+
+  const handleCopyProtocol = () => {
+    const text = protocolEvents
+      .map(
+        (e) =>
+          '[' +
+          (e.timestamp || '') +
+          '] [' +
+          e.side.toUpperCase() +
+          '] ' +
+          e.event +
+          ': ' +
+          e.details
+      )
+      .join('\n')
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <div
@@ -166,6 +271,19 @@ const LogColumn = ({
         >
           <Lock size={14} /> Crypto Log
         </button>
+
+        {view === 'protocol' && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              handleCopyProtocol()
+            }}
+            className="px-3 py-3 hover:bg-muted/50 border-l transition-colors text-muted-foreground hover:text-foreground flex items-center justify-center"
+            title="Copy Protocol Log"
+          >
+            {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
+          </button>
+        )}
       </div>
 
       <div className="flex-grow overflow-auto relative">
@@ -230,7 +348,7 @@ const LogColumn = ({
             </AnimatePresence>
           </div>
         ) : (
-          <CryptoLogDisplay events={cryptoEvents} title="" />
+          <CryptoLogDisplay events={cryptoEvents} title="Crypto Operations" />
         )}
       </div>
     </div>
