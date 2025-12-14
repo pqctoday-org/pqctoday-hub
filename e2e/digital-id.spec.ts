@@ -115,7 +115,7 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
     // Flow 3: Remote QES Provider
     // -------------------------------------------------------------
     await test.step('QES Provider Flow', async () => {
-      await page.getByRole('button', { name: 'QES Provider' }).click()
+      await page.getByRole('button', { name: 'QTSP (QES)' }).click()
       await expect(page.getByText('Qualified Trust Service Provider')).toBeVisible()
 
       // Start UPLOAD Flow (simulated)
@@ -141,7 +141,7 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
       await expect(page.getByText('[Remote HSM] Signing hash:')).toBeVisible()
 
       // Return
-      await page.getByRole('button', { name: 'Return to Wallet' }).click()
+      await page.getByRole('button', { name: 'Done' }).click()
     })
 
     // -------------------------------------------------------------

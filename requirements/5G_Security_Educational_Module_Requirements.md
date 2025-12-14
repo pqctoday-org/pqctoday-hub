@@ -1280,15 +1280,15 @@ Expected SUCI Protection Scheme Output:
 
 The module ensures educational accuracy by using **real cryptographic libraries**, not simulations.
 
-| Component        | Implementation     | Version   | Purpose                         |
-| :--------------- | :----------------- | :-------- | :------------------------------ |
-| **Network Side** | **OpenSSL WASM**   | **3.5.4** | Validation Authority (SIDF/HSM) |
-| **USIM Side**    | **Web Crypto API** | Native    | Profile A/B Operations          |
-| **PQC USIM**     | **mlkem-wasm**     | Latest    | Profile C (Kyber) Operations    |
+| Component        | Implementation   | Version   | Purpose                         |
+| :--------------- | :--------------- | :-------- | :------------------------------ |
+| **Network Side** | **OpenSSL WASM** | **3.5.4** | Validation Authority (SIDF/HSM) |
+| **USIM Side**    | **OpenSSL WASM** | **3.5.4** | Profile A/B Operations          |
+| **PQC USIM**     | **mlkem-wasm**   | Latest    | Profile C (Kyber) Operations    |
 
 ### 10.2 Automated Audit & Verification
 
-To guarantee that the USIM logic (JavaScript/Wasm) produces standard-compliant outputs, an automated audit suite runs validation against the OpenSSL 3.5.4 binary.
+To guarantee that the USIM logic produces standard-compliant outputs, an automated audit suite runs validation against the OpenSSL 3.5.4 binary.
 
 **Audit Validations (`audit_suci.test.ts`):**
 
@@ -1342,6 +1342,7 @@ To guarantee that the USIM logic (JavaScript/Wasm) produces standard-compliant o
 | ------- | -------- | --------- | -------------------------------------- |
 | 1.0     | Dec 2025 | PQC Today | Initial release                        |
 | 1.1     | Dec 2025 | PQC Today | Update for Profiles B/C Implementation |
+| 1.2     | Dec 2025 | PQC Today | Refactor USIM to OpenSSL WASM          |
 
 ---
 

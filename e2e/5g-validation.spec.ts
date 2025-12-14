@@ -170,7 +170,7 @@ test.describe('5G SUCI Validation', () => {
     // Verify Decryption
     const decryptOutput = await page.locator('.p-4.overflow-x-auto.overflow-y-auto').textContent()
     expect(decryptOutput).toContain('SUPI')
-    expect(decryptOutput).toContain('310 - 260')
+    expect(decryptOutput).toContain('310-260')
     expect(decryptOutput).not.toContain('[Decryption Failed]')
   })
 
@@ -215,7 +215,7 @@ test.describe('5G SUCI Validation', () => {
     // Verify Decryption
     const decryptOutput = await page.locator('.p-4.overflow-x-auto.overflow-y-auto').textContent()
     expect(decryptOutput).toContain('SUPI')
-    expect(decryptOutput).toContain('310 - 260')
+    expect(decryptOutput).toContain('310-260')
     expect(decryptOutput).not.toContain('[Decryption Failed]')
   })
 

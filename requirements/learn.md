@@ -123,22 +123,23 @@ The Digital Assets Program provides an interactive, deep-dive into the cryptogra
 #### 1. Bitcoin (BTC)
 
 - **Key Generation:** ECDSA secp256k1 via OpenSSL.
-- **Hashing:** SHA256 and RIPEMD160 via OpenSSL.
-- **Address Generation:** Legacy (P2PKH) and SegWit (Bech32) using `@scure/base`.
-- **Signing:** ECDSA transaction signing and verification.
+- **Hashing:** SHA256 and RIPEMD160 via `@noble/hashes` JavaScript library.
+- **Address Generation:** Legacy (P2PKH) using `@scure/base` Base58Check encoding.
+  - Note: SegWit (Bech32) addresses are not currently implemented.
+- **Signing:** ECDSA transaction signing and verification via OpenSSL.
 
 #### 2. Ethereum (ETH)
 
 - **Key Generation:** ECDSA secp256k1 via OpenSSL.
-- **Hashing:** Keccak-256 via `@noble/hashes` (OpenSSL SHA3 is incompatible).
-- **Address Generation:** EIP-55 Checksum address.
-- **Signing:** EIP-1559 style transaction signing.
+- **Hashing:** Keccak-256 via `@noble/hashes` (OpenSSL SHA3 is incompatible with Ethereum's Keccak).
+- **Address Generation:** EIP-55 Checksum address via JavaScript.
+- **Signing:** ECDSA transaction signing via OpenSSL with Low-S normalization (EIP-2) and recovery ID computation via `@noble/curves`.
 
 #### 3. Solana (SOL)
 
-- **Key Generation:** Ed25519 via OpenSSL.
-- **Address Generation:** Base58 encoding of the public key.
-- **Signing:** EdDSA message signing and verification.
+- **Key Generation:** Ed25519 via OpenSSL (with JavaScript fallback via `@noble/curves`).
+- **Address Generation:** Base58 encoding of the public key via `@scure/base`.
+- **Signing:** EdDSA message signing and verification via OpenSSL (with JavaScript fallback).
 
 #### 4. HD Wallet (BIP32/39/44)
 
