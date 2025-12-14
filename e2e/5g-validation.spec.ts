@@ -142,7 +142,7 @@ test.describe('5G SUCI Validation', () => {
   test('validate Profile B (P-256) Full Flow', async ({ page }) => {
     // 1. Navigate
     await page.goto('/learn/5g-security')
-    await page.waitForLoadState('networkidle')
+    await expect(page.getByRole('heading', { name: '5G Security' })).toBeVisible({ timeout: 30000 })
 
     // 2. Inject Test Vectors
     await page.evaluate((vectors) => {
@@ -178,7 +178,8 @@ test.describe('5G SUCI Validation', () => {
     await page.goto('/learn/5g-security')
 
     // Wait for app to be interactive
-    await page.waitForLoadState('networkidle')
+    // Wait for app to be interactive
+    await expect(page.getByRole('heading', { name: '5G Security' })).toBeVisible({ timeout: 30000 })
 
     // Inject
     await page.evaluate((vectors) => {
@@ -221,7 +222,7 @@ test.describe('5G SUCI Validation', () => {
 
   test('validate Subscriber Authentication (MILENAGE)', async ({ page }) => {
     await page.goto('/learn/5g-security')
-    await page.waitForLoadState('networkidle')
+    await expect(page.getByRole('heading', { name: '5G Security' })).toBeVisible({ timeout: 30000 })
 
     // Inject
     await page.evaluate((vectors) => {

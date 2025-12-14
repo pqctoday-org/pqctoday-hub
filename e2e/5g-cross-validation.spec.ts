@@ -264,7 +264,7 @@ test.describe('SUCI Flow: Java vs OpenSSL Validation', () => {
 
   test.skip('Validate OpenSSL implementation in app', async ({ page }) => {
     await page.goto('/learn/5g-security')
-    await page.waitForLoadState('networkidle')
+    await expect(page.getByRole('heading', { name: '5G Security' })).toBeVisible({ timeout: 30000 })
 
     // Enable test mode with deterministic vectors
     await page.evaluate(() => {

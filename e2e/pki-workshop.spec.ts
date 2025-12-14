@@ -8,7 +8,6 @@ test.describe('PKI Workshop Module', () => {
     await page.getByRole('button', { name: 'Learn' }).click()
 
     // Select PKI Workshop from Dashboard
-    await page.waitForLoadState('networkidle')
     const card = page.getByRole('heading', { name: 'PKI', exact: true })
     await expect(card).toBeVisible({ timeout: 30000 })
     await card.click()
