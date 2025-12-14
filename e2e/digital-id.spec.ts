@@ -20,8 +20,7 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
     await page.goto('/')
     await page.getByRole('button', { name: 'Learn' }).click()
 
-    // Wait for modules to load
-    await page.waitForLoadState('networkidle')
+    // Wait for modules to load - avoiding networkidle as it causes hangs in CI
     const digitalIdCard = page.getByRole('heading', { name: 'Digital ID', exact: true })
     await expect(digitalIdCard).toBeVisible({ timeout: 30000 })
     await digitalIdCard.click()
@@ -35,15 +34,20 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
     // -------------------------------------------------------------
     await test.step('PID Issuance Flow', async () => {
       // Select PID Issuer
-      await page.getByRole('button', { name: 'PID Issuer' }).click()
+      const pidIssuerBtn = page.getByRole('button', { name: 'PID Issuer' })
+      await expect(pidIssuerBtn).toBeVisible()
+      await pidIssuerBtn.click()
+
       await expect(page.getByText('Motor Vehicle Authority')).toBeVisible()
 
       // Step 1: Start Flow
-      await page.getByRole('button', { name: 'Start Issuance Flow' }).click()
+      const startBtn = page.getByRole('button', { name: 'Start Issuance Flow' })
+      await expect(startBtn).toBeVisible()
+      await startBtn.click()
 
       // Step 2: Authenticate
       const authBtn = page.getByRole('button', { name: 'Proceed with Authentication' })
-      await expect(authBtn).toBeVisible({ timeout: 5000 })
+      await expect(authBtn).toBeVisible({ timeout: 10000 })
       await authBtn.click()
 
       // Step 3: Wait for Completion (includes delays for logs)

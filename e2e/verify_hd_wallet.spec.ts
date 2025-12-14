@@ -17,7 +17,7 @@ test('verify hd wallet flow', async ({ page }) => {
 
   // 1. Navigate to Digital Assets directly
   await page.goto('/learn/digital-assets')
-  await page.waitForLoadState('networkidle')
+  await expect(page.getByRole('button', { name: '4 HD Wallet' })).toBeVisible({ timeout: 30000 })
 
   // 2. Select HD Wallet Module (Step 4)
   await page.getByRole('button', { name: '4 HD Wallet' }).click()

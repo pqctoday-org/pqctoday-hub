@@ -22,7 +22,7 @@ test('Ethereum Flow E2E', async ({ page }) => {
   // 1. Navigate to Digital Assets Module
   await test.step('Navigate to Digital Assets', async () => {
     await page.goto('/learn')
-    await page.waitForLoadState('networkidle')
+    // await page.waitForLoadState('networkidle') - Causes hacks
     await page.getByText('Digital Assets', { exact: true }).click()
     await expect(page.getByText('Module 1: Bitcoin')).toBeVisible({ timeout: 15000 })
   })

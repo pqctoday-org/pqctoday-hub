@@ -19,7 +19,8 @@ test.describe('Production Smoke Tests', () => {
 
     await page.goto(PROD_URL)
     // Wait for the app to be ready (hydration)
-    await page.waitForLoadState('networkidle')
+    // await page.waitForLoadState('networkidle') - Causes hang
+    await expect(page).toHaveTitle(/PQC Today/, { timeout: 30000 })
   })
 
   test('Asset Integrity Check', async ({ page }) => {

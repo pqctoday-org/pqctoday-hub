@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 
 test('inspect DOM structure', async ({ page }) => {
   await page.goto('/learn/5g-security')
-  await page.waitForLoadState('networkidle')
+  await expect(page.getByRole('heading', { name: '5G Security' })).toBeVisible()
 
   // Enable test mode
   await page.evaluate(() => {
