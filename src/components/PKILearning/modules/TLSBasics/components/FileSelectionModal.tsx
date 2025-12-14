@@ -50,20 +50,20 @@ export const FileSelectionModal: React.FC<Props> = ({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-[#1e1e1e] border border-white/10 rounded-xl shadow-2xl w-full max-w-md flex flex-col max-h-[80vh]"
+        className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-md flex flex-col max-h-[80vh]"
       >
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
+        <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-bold text-lg">{title}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-white/5 rounded-full transition-colors">
+          <button onClick={onClose} className="p-1 hover:bg-muted rounded-full transition-colors">
             <X size={20} />
           </button>
         </div>
 
-        <div className="p-4 border-b border-white/10">
+        <div className="p-4 border-b border-border">
           <input
             type="text"
             placeholder="Search files..."
-            className="w-full bg-black/30 border border-white/10 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500/50"
+            className="w-full bg-muted border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-primary/50"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -79,14 +79,14 @@ export const FileSelectionModal: React.FC<Props> = ({
               <button
                 key={file.name}
                 onClick={() => handleSelect(file)}
-                className="w-full flex items-center gap-3 p-3 rounded hover:bg-white/5 transition-colors text-left group"
+                className="w-full flex items-center gap-3 p-3 rounded hover:bg-muted transition-colors text-left group"
               >
-                <div className="w-8 h-8 rounded bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:bg-blue-500/20 group-hover:text-blue-300">
+                <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary/20 group-hover:text-primary">
                   <FileText size={16} />
                 </div>
                 <div className="flex-grow min-w-0">
                   <div className="font-medium text-sm truncate">{file.name}</div>
-                  <div className="text-xs text-gray-500 flex items-center gap-2">
+                  <div className="text-xs text-muted-foreground flex items-center gap-2">
                     <span>{file.type}</span>
                     <span>•</span>
                     <span>{file.size} bytes</span>
@@ -97,7 +97,7 @@ export const FileSelectionModal: React.FC<Props> = ({
           )}
         </div>
 
-        <div className="p-4 border-t border-white/10 bg-black/20 text-xs text-gray-500">
+        <div className="p-4 border-t border-border bg-muted/50 text-xs text-muted-foreground">
           Files are loaded from the OpenSSL Studio Workbench.
         </div>
       </motion.div>

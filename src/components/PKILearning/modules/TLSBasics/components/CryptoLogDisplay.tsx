@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Key, FileKey, Shield, Hash, Search } from 'lucide-react'
+import { Settings, FileText, Check, Shield, Lock, Copy } from 'lucide-react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -17,6 +17,7 @@ interface Props {
 
 export const CryptoLogDisplay: React.FC<Props> = ({ events, title }) => {
   const [searchTerm, setSearchTerm] = useState('')
+  const [copied, setCopied] = useState(false)
 
   // Filter events
   const filteredEvents = events.filter((evt) => {
@@ -95,11 +96,27 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title }) => {
   }
 
   const getIcon = (type: string) => {
-    if (type === 'keylog') return <Key size={14} className="text-warning" />
-    if (type.includes('data')) return <FileKey size={14} className="text-primary" />
+    if (type === 'keylog') return <Lock size={14} className="text-warning" />
+    if (type.includes('data')) return <FileText size={14} className="text-primary" />
     if (type.includes('state')) return <Shield size={14} className="text-success" />
-    return <Hash size={14} className="text-muted-foreground" />
+    return <Settings size={14} className="text-muted-foreground" />
   }
+
+  const handleCopy = () => {
+    const text = filteredEvents
+      .map((e) => '[' + e.side.toUpperCase() + '] ' + e.event + ': ' + e.details)
+      .join('\n')
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  // This part of the diff seems to belong to a parent component or a different context.
+  // I'm integrating the button changes into the existing CryptoLogDisplay header.
+  // The `view` state and `handleCopyProtocol` are not defined in this component,
+  // so I'm assuming the user wants to replace the existing copy button with the new structure.
+  // Given the context, I'll assume the `Lock` icon is for the main crypto log copy,
+  // and the `view === 'protocol'` part is a separate feature not directly in this component.
 
   return (
     <div className="flex flex-col h-full">
@@ -113,7 +130,7 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title }) => {
             {/* Search Input - Integrated in Header */}
             <div className="relative group flex-grow max-w-[200px]">
               <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                <Search
+                <Settings
                   size={12}
                   className="text-muted-foreground group-focus-within:text-primary transition-colors"
                 />
@@ -126,6 +143,14 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title }) => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+
+            <button
+              onClick={handleCopy}
+              className="p-1.5 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors ml-1"
+              title="Copy Log"
+            >
+              {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
+            </button>
           </div>
         </div>
       )}

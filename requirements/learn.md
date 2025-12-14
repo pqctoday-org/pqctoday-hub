@@ -34,8 +34,12 @@ The workshop consists of a linear 4-step process:
       - ECDSA (P-256)
       - EdDSA (Ed25519)
     - **Quantum-Safe (PQC):**
-      - ML-DSA (Dilithium) - Level 2
-      - SLH-DSA (SPHINCS+) - Level 1
+      - ML-DSA-44 (Dilithium) - Level 2
+      - ML-DSA-65 (Dilithium) - Level 3
+      - SLH-DSA-SHA2-128s (SPHINCS+) - Level 1 (small sig)
+      - SLH-DSA-SHA2-128f (SPHINCS+) - Level 1 (fast sign)
+      - SLH-DSA-SHA2-192s (SPHINCS+) - Level 3 (small sig)
+      - SLH-DSA-SHA2-192f (SPHINCS+) - Level 3 (fast sign)
 - **Profile Selection:**
   - Users select a **CSR Profile** from a dropdown.
   - **Source:** CSV files located in `src/data/x509_profiles/`.
@@ -61,8 +65,9 @@ The workshop consists of a linear 4-step process:
     - RSA (4096 bits)
     - ECDSA (P-521)
     - EdDSA (Ed448)
-    - ML-DSA (Dilithium) - Level 5
-    - SLH-DSA (SPHINCS+) - Level 5
+    - ML-DSA-87 (Dilithium) - Level 5
+    - SLH-DSA-SHA2-256s (SPHINCS+) - Level 5 (small sig)
+    - SLH-DSA-SHA2-256f (SPHINCS+) - Level 5 (fast sign)
 - **Profile Selection:**
   - Users select a **Certificate Profile** from a dropdown.
   - **Source:** CSV files located in `src/data/x509_profiles/`.

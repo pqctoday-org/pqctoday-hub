@@ -45,8 +45,8 @@ export const TLSBasicsModule: React.FC = () => {
   // Initialize Default Certificates if missing
   useEffect(() => {
     const initDefaults = () => {
-      // If we already have certificates, don't regenerate (persists navigation)
-      if (serverConfig.certificates.certPem) return
+      // If we already have certificates AND caPem, don't regenerate (persists navigation)
+      if (serverConfig.certificates.certPem && serverConfig.certificates.caPem) return
 
       console.log('Loading default certificates...')
 
@@ -97,10 +97,22 @@ export const TLSBasicsModule: React.FC = () => {
       const simFiles = [
         { name: 'ssl/server.crt', data: encoder.encode(serverCertPem) },
         { name: 'ssl/server.key', data: encoder.encode(serverConfig.certificates.keyPem || '') },
-        // For client to verify server: CA = server's cert (self-signed)
-        // This allows the client to trust the server's self-signed cert
-        { name: 'ssl/ca.crt', data: encoder.encode(serverCertPem) },
       ]
+
+      // Client CA: Used by CLIENT to verify SERVER's certificate
+      // If clientConfig.certificates.caPem is set, use it; otherwise fallback to server's cert (for self-signed)
+      const clientCaPem = clientConfig.certificates.caPem || serverCertPem
+      if (clientCaPem) {
+        simFiles.push({ name: 'ssl/client-ca.crt', data: encoder.encode(clientCaPem) })
+      }
+
+      // Server CA: Used by SERVER to verify CLIENT's certificate (mTLS)
+      // If serverConfig.certificates.caPem is set, use it; otherwise fallback to client's cert (for self-signed)
+      const serverCaPem = serverConfig.certificates.caPem || clientCertPem
+      if (serverCaPem && serverConfig.verifyClient) {
+        simFiles.push({ name: 'ssl/server-ca.crt', data: encoder.encode(serverCaPem) })
+      }
+
       if (clientCertPem) {
         // Add client cert and key for mTLS scenarios
         simFiles.push(

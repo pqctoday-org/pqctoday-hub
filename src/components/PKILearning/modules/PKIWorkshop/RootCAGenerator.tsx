@@ -69,11 +69,18 @@ const ALGORITHMS: AlgorithmOption[] = [
     keySizeLabel: 'Level 5',
   },
   {
-    id: 'slhdsa',
+    id: 'slhdsa256s',
     name: 'SLH-DSA-SHA2-256s (SPHINCS+)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-256s',
-    keySizeLabel: 'Level 5',
+    keySizeLabel: 'Level 5 (small sig)',
+  },
+  {
+    id: 'slhdsa256f',
+    name: 'SLH-DSA-SHA2-256f (SPHINCS+)',
+    group: 'Quantum-Safe',
+    genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-256f',
+    keySizeLabel: 'Level 5 (fast sign)',
   },
 ]
 

@@ -42,16 +42,23 @@ system_default = system_default_sect
   conf += `MinProtocol = TLSv1.3\n`
   conf += `MaxProtocol = TLSv1.3\n`
 
+  // Server-side: Verify Client Certificate (mTLS)
   if (side === 'server' && config.verifyClient) {
     // Request and Require Client Certificate
     conf += `VerifyMode = Peer,Request\n`
-    conf += `VerifyCAFile = /ssl/ca.crt\n` // Ensure it checks the CA
+    // Only add VerifyCAFile if CA is configured
+    if (config.certificates.caPem) {
+      conf += `VerifyCAFile = /ssl/server-ca.crt\n` // CA to verify client certs
+    }
   }
 
-  if (side === 'client' && config.clientAuthEnabled) {
-    // Should automatic if certs are loaded, but good to be explicit if possible
-    // Client doesn't usually set VerifyMode like this for its own cert sending?
-    // It sends if requested.
+  // Client-side: Verify Server Certificate
+  if (side === 'client') {
+    // Client always verifies server by default (SSL_VERIFY_PEER in WASM)
+    // Add explicit CA if configured
+    if (config.certificates.caPem) {
+      conf += `VerifyCAFile = /ssl/client-ca.crt\n` // CA to verify server cert
+    }
   }
 
   return conf
