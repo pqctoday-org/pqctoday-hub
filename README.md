@@ -37,6 +37,11 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Attestations**: QEAA, PuB-EAA, and EAA issuance flows
     - **Remote QES**: Qualified Electronic Signature via CSC API
     - **Protocols**: OpenID4VCI, OpenID4VP for credential exchange
+  - **TLS 1.3 Basics**: Interactive TLS 1.3 handshake simulation and cryptographic logging
+    - **Dual Configuration**: GUI controls and raw OpenSSL config file editing
+    - **Identity Options**: RSA, ML-DSA (Post-Quantum), and custom certificates
+    - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
+    - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
 - **Compliance Module**: Real-time compliance tracking and standards monitoring
   - NIST FIPS document tracking (203, 204, 205)
   - ANSSI recommendations
@@ -77,7 +82,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v20 or higher)
 - npm
 
 ### Installation
@@ -146,7 +151,7 @@ The application is structured into several key components:
 - **`src/components/Algorithms/InteractivePlayground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
 - **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
-- **`src/components/PKILearning`**: Educational platform with 5 modules (PKI Workshop, Digital Assets, 5G Security, EUDI Wallet, Introduction).
+- **`src/components/PKILearning`**: Educational platform with 6 modules (PKI Workshop, Digital Assets, 5G Security, EUDI Wallet, TLS 1.3 Basics, Introduction).
 - **`src/utils`**: Utility functions for data conversion and common operations.
 
 ## Project Structure
@@ -171,13 +176,14 @@ The application is structured into several key components:
 │   │   ├── Layout/          # Main layout and navigation components
 │   │   ├── Library/         # PQC standards library
 │   │   ├── OpenSSLStudio/   # OpenSSL v3.5.4 workbench (WASM)
-│   │   ├── PKILearning/     # Learning platform with 5 modules
+│   │   ├── PKILearning/     # Learning platform with 6 modules
 │   │   │   ├── modules/
 │   │   │   │   ├── Module1-Introduction/  # Getting started guide
 │   │   │   │   ├── PKIWorkshop/          # 4-step PKI lifecycle
 │   │   │   │   ├── DigitalAssets/        # Bitcoin, Ethereum, Solana, HD Wallet
 │   │   │   │   ├── FiveG/                # SUCI + 5G-AKA flows
-│   │   │   │   └── DigitalID/            # EUDI Wallet ecosystem
+│   │   │   │   ├── DigitalID/            # EUDI Wallet ecosystem
+│   │   │   │   └── TLSBasics/            # TLS 1.3 handshake simulation
 │   │   ├── Playground/      # Interactive cryptography playground
 │   │   ├── Router/          # Routing utilities (ScrollToTop)
 │   │   ├── Threats/         # Industry-specific threat analysis

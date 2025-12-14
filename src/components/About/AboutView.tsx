@@ -467,11 +467,11 @@ ${kudos.message}
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Framer Motion</span>
-                  <span className="text-xs text-muted-foreground/60">v12.23.24</span>
+                  <span className="text-xs text-muted-foreground/60">v12.23.25</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Lucide React</span>
-                  <span className="text-xs text-muted-foreground/60">v0.554.0</span>
+                  <span className="text-xs text-muted-foreground/60">v0.556.0</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Tailwind CSS</span>
@@ -574,7 +574,7 @@ ${kudos.message}
               <ul className="space-y-2">
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Zustand</span>
-                  <span className="text-xs text-muted-foreground/60">v5.0.8</span>
+                  <span className="text-xs text-muted-foreground/60">v5.0.9</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Immer</span>
@@ -596,7 +596,7 @@ ${kudos.message}
               <ul className="space-y-2">
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Vite</span>
-                  <span className="text-xs text-muted-foreground/60">v7.2.4</span>
+                  <span className="text-xs text-muted-foreground/60">v7.2.7</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">TypeScript</span>
@@ -612,7 +612,7 @@ ${kudos.message}
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Prettier</span>
-                  <span className="text-xs text-muted-foreground/60">v3.7.3</span>
+                  <span className="text-xs text-muted-foreground/60">v3.7.4</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Husky</span>
