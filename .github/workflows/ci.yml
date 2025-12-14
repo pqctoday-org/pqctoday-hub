@@ -13,6 +13,10 @@ concurrency:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
 
     timeout-minutes: 30
     steps:
@@ -45,15 +49,15 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install chromium --with-deps
 
-      - name: Run E2E Tests (Chromium only)
-        run: npx playwright test --project=chromium
+      - name: Run E2E Tests (Sharded)
+        run: npx playwright test --project=chromium --shard=${{ matrix.shard }}/${{ strategy.job-total }}
         continue-on-error: true
 
       - name: Upload Playwright Report
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 30
         continue-on-error: true
