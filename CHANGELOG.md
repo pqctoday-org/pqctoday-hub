@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.0] - 2025-12-14
+
+### Added
+
+- **TLS 1.3 Basics Learning Module**:
+  - Interactive TLS 1.3 handshake simulation with dual configuration modes (GUI + Raw OpenSSL config)
+  - Support for RSA and ML-DSA (Post-Quantum) identity certificates
+  - Detailed cryptographic logging showing key derivation, HKDF, signatures, and encryption
+  - PQC algorithm support: ML-KEM (Kyber) key exchange, ML-DSA and SLH-DSA signatures
+  - Custom certificate import from OpenSSL Studio
+  - Separate CA trust configuration for client and server
+  - Full interaction flow with customizable messages
+  - Comprehensive requirements documentation (`learn_openssltls13_requirement.md`)
+
+- **CI/CD Optimizations**:
+  - Implemented Playwright test sharding (2 shards) to parallelize E2E test execution
+  - Reduced CI execution time from >30 minutes (timeout) to ~4.5 minutes
+  - Configured `workers: 1` in CI to prevent resource deadlocks on GitHub Actions runners
+  - Added `ignoreHTTPSErrors: true` to handle SSL issues with external compliance sites
+
+### Fixed
+
+- **E2E Test Regressions**:
+  - Fixed `timeline.spec.ts` country selector locator (changed from "All Countries" to "Region")
+  - Fixed `compliance-sources.spec.ts` SSL errors in Firefox by enabling HTTPS error ignoring
+  - Fixed `playground-kem-updated.spec.ts` race condition in HKDF key derivation switching
+  - Fixed `playground-kem-additional.spec.ts` race conditions in HKDF normalization tests
+  - Added proper waits for WASM operation completion and hybrid mode key selection
+  - Fixed `useKemOperations.ts` to clear decapsulated secrets during WASM encapsulation
+
+### Changed
+
+- **Documentation**:
+  - Updated SBOM in About page to match current package.json versions (Framer Motion, Lucide, Zustand, Vite, Prettier)
+  - Updated Node.js requirement from v18 to v20 in README
+  - Added TLS 1.3 Basics module to README feature list
+  - Updated module count from 5 to 6 across documentation
+  - Added TLSBasics directory to project structure documentation
+
 ## [1.7.0] - 2025-12-12
 
 ### Added
