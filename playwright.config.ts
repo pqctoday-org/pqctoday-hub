@@ -12,6 +12,7 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:5175',
     trace: 'on-first-retry',
+    ignoreHTTPSErrors: true,
   },
   // Default timeout for expect assertions - increased for WASM operations
   expect: {

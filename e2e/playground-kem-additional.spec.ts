@@ -245,21 +245,31 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
       timeout: 10000,
     })
 
+    // Generate Classical Key (X25519) for Hybrid Mode coverage
+    await page.selectOption('select#classical-algo-select', 'X25519')
+    await page.click('button:has-text("Generate Classical Keys")')
+    await expect(page.getByRole('table').getByText('X25519').first()).toBeVisible({
+      timeout: 10000,
+    })
+
     // Navigate to KEM tab
     await page.getByRole('button', { name: 'KEM & Encrypt' }).click()
 
-    // Test with HKDF enabled
+    // Enable Hybrid Mode explicitly
+    await page.check('input#hybrid-mode-check-enc')
     await page.selectOption('select#hybrid-kombiner-select', 'concat-hkdf')
 
-    // Select key and run
-    await page.selectOption('select#enc-primary-key-select', { index: 1 })
+    // Select keys and run
+    await page.selectOption('select#enc-primary-key-select', { index: 1 }) // FrodoKEM-640
+    await page.selectOption('select#enc-secondary-key-select', { index: 1 }) // X25519
     await page.click('button:has-text("Run Encapsulate")')
 
+    // Wait for the secret to matches the expected length (64 hex chars = 32 bytes)
+    const secretInput640 = page.locator('textarea[placeholder*="Key Material"]').first()
+    await expect(secretInput640).toHaveValue(/^[0-9a-fA-F]{64}$/, { timeout: 10000 })
+
     // Get the secret length (should be normalized to 32 bytes = 64 hex chars)
-    const secret640 = await page
-      .locator('textarea[placeholder*="Key Material"]')
-      .first()
-      .inputValue()
+    const secret640 = await secretInput640.inputValue()
 
     // Go back to Key Store
     await page.getByRole('button', { name: /Key Store/i }).click()
@@ -274,15 +284,29 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
     // Back to KEM tab
     await page.getByRole('button', { name: 'KEM & Encrypt' }).click()
 
-    // Select new key and run
-    await page.selectOption('select#enc-primary-key-select', { index: 1 })
+    // Re-enable HKDF to ensure consistent behavior
+    await page.check('input#hybrid-mode-check-enc')
+    await page.selectOption('select#hybrid-kombiner-select', 'concat-hkdf')
+
+    // Select new key (FrodoKEM-1344)
+    const options = await page.locator('select#enc-primary-key-select option').allInnerTexts()
+    const targetIndex = options.findIndex((text) => text.includes('FrodoKEM-1344'))
+    if (targetIndex === -1) throw new Error('FrodoKEM-1344 key option not found')
+
+    await page.selectOption('select#enc-primary-key-select', { index: targetIndex })
+    await page.selectOption('select#enc-secondary-key-select', { index: 1 }) // X25519
     await page.click('button:has-text("Run Encapsulate")')
 
+    // Wait for Ciphertext first to confirm operation completed
+    const ciphertext = page.locator('textarea[placeholder*="PQC Ciphertext"]').first()
+    await expect(ciphertext).not.toHaveValue('', { timeout: 10000 })
+
+    // Wait for the secret to matches the expected length (64 hex chars = 32 bytes)
+    const secretInput = page.locator('textarea[placeholder*="Key Material"]').first()
+    await expect(secretInput).toHaveValue(/^[0-9a-fA-F]{64}$/, { timeout: 10000 })
+
     // Get the secret length
-    const secret1344 = await page
-      .locator('textarea[placeholder*="Key Material"]')
-      .first()
-      .inputValue()
+    const secret1344 = await secretInput.inputValue()
 
     // Both should be same length (64 hex chars = 32 bytes) due to HKDF normalization
     expect(secret640.length).toBe(secret1344.length)

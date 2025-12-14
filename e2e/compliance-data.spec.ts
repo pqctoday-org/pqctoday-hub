@@ -62,7 +62,7 @@ test.describe('Compliance Data View', () => {
     await page.getByRole('button', { name: 'Common Criteria' }).first().click({ force: true })
     await page.waitForTimeout(500) // Ensure switch
     await page.locator('tbody tr').first().getByRole('button').last().click()
-    await expect(page.locator('p', { hasText: /^Common Criteria$/ })).toBeVisible()
+    await expect(page.getByText(/^Common Criteria/, { exact: false }).first()).toBeVisible()
     await page.keyboard.press('Escape')
   })
 

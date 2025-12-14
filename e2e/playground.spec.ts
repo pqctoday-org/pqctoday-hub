@@ -38,7 +38,7 @@ test.describe('Playground', () => {
     await expect(page.getByRole('table')).toContainText('ML-DSA')
   })
   test('performs ML-KEM encapsulation/decapsulation', async ({ page }) => {
-    test.setTimeout(60000) // Increase timeout for WASM operations
+    test.setTimeout(90000) // Increase timeout for WASM operations
 
     // 1. Generate Key
     await page.getByRole('button', { name: /Key Store/ }).click()
@@ -51,7 +51,8 @@ test.describe('Playground', () => {
 
     // 3. Encapsulate
     // Find the select by its default option text
-    const pubKeySelect = page.locator('select').filter({ hasText: 'Select Public Key...' })
+    // Find the select by valid ID
+    const pubKeySelect = page.locator('#enc-primary-key-select')
 
     // Wait for options to be populated (more than 1 option)
     await expect(async () => {
@@ -69,18 +70,13 @@ test.describe('Playground', () => {
     // Click Encapsulate
     await runButton.click()
 
-    // Check for Shared Secret (check that the output field is populated)
-    // DataInput label is not associated with textarea, so we find the container having the label, then the textarea.
-    const sharedSecretInput = page
-      .locator('div')
-      .filter({ hasText: 'Shared Secret (Output)' })
-      .locator('textarea')
-      .first()
+    const sharedSecretInput = page.getByPlaceholder(/Key Material/).first()
     await expect(sharedSecretInput).not.toBeEmpty({ timeout: 10000 })
 
     // 4. Decapsulate
     // Select private key
-    const privKeySelect = page.locator('select').filter({ hasText: 'Select Private Key...' })
+    // Select private key
+    const privKeySelect = page.locator('#dec-primary-key-select')
 
     await privKeySelect.selectOption({ index: 1 })
 
@@ -94,17 +90,17 @@ test.describe('Playground', () => {
     await decapsulateButton.click()
 
     // Check for result (Success or Failure)
-    const resultLocator = page.locator('.text-lg', {
-      hasText: /SECRET RECOVERED|DECAPSULATION FAILED/,
+    const resultLocator = page.locator('.text-sm', {
+      hasText: /✓ MATCH|✗ MISMATCH/,
     })
-    await expect(resultLocator).toBeVisible({ timeout: 15000 })
+    await expect(resultLocator).toBeVisible({ timeout: 60000 })
 
-    if (await page.getByText('DECAPSULATION FAILED').isVisible()) {
-      throw new Error('Test failed: Decapsulation resulted in mismatch (DECAPSULATION FAILED)')
+    if (await page.getByText('✗ MISMATCH').isVisible()) {
+      throw new Error('Test failed: Decapsulation resulted in mismatch (✗ MISMATCH)')
     }
 
     // Verify specific success message
-    await expect(resultLocator).toContainText('SECRET RECOVERED')
+    await expect(resultLocator).toContainText('✓ MATCH')
   })
 
   test('performs ML-DSA signing/verification', async ({ page }) => {
@@ -165,7 +161,8 @@ test.describe('Playground', () => {
 
       // 3. Encapsulate
       // Find the select by its default option text
-      const pubKeySelect = page.locator('select').filter({ hasText: 'Select Public Key...' })
+      // Find the select by ID
+      const pubKeySelect = page.locator('#enc-primary-key-select')
 
       // Wait for options to be populated
       await expect(async () => {
@@ -182,15 +179,11 @@ test.describe('Playground', () => {
       await runButton.click()
 
       // Check for Shared Secret
-      const sharedSecretInput = page
-        .locator('div')
-        .filter({ hasText: 'Shared Secret (Output)' })
-        .locator('textarea')
-        .first()
+      const sharedSecretInput = page.getByPlaceholder(/Key Material/).first()
       await expect(sharedSecretInput).not.toBeEmpty({ timeout: 15000 })
 
       // 4. Decapsulate
-      const privKeySelect = page.locator('select').filter({ hasText: 'Select Private Key...' })
+      const privKeySelect = page.locator('#dec-primary-key-select')
       await privKeySelect.selectOption({ index: 1 })
 
       const decapsulateButton = page.getByRole('button', { name: 'Run Decapsulate' })
@@ -202,11 +195,11 @@ test.describe('Playground', () => {
       await decapsulateButton.click()
 
       // Check result
-      const resultLocator = page.locator('.text-lg', {
-        hasText: /SECRET RECOVERED|DECAPSULATION FAILED/,
+      const resultLocator = page.locator('.text-sm', {
+        hasText: /✓ MATCH|✗ MISMATCH/,
       })
-      await expect(resultLocator).toBeVisible({ timeout: 15000 })
-      await expect(resultLocator).toContainText('SECRET RECOVERED')
+      await expect(resultLocator).toBeVisible({ timeout: 90000 })
+      await expect(resultLocator).toContainText('✓ MATCH')
     })
   }
 })

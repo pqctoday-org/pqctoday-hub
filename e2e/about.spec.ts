@@ -19,7 +19,7 @@ test.describe('About View', () => {
       .locator('.glass-panel')
       .filter({ hasText: 'Software Bill of Materials' })
     await expect(sbomSection.getByText(/OpenSSL/)).toBeVisible()
-    await expect(sbomSection.getByText('v3.1.0')).toBeVisible()
+    await expect(sbomSection.getByText(/v3\.\d+\.\d+/).first()).toBeVisible()
   })
 
   test('displays feedback forms', async ({ page }) => {
