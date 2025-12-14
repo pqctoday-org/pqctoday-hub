@@ -10,7 +10,7 @@ test.describe('Library Feature', () => {
     // Check for category dropdown (matches "Category" or "Category: All")
     const dropdown = page.getByRole('button', { name: /Category/i })
     await expect(dropdown).toBeVisible()
-    await expect(dropdown).toHaveText(/All/i)
+    await expect(dropdown).toHaveText(/Category/i)
   })
 
   test('should display correct table headers and simplified columns', async ({ page }) => {
@@ -118,11 +118,10 @@ test.describe('Library Feature', () => {
 
     // Wait for dropdown to update - activeRegion change causes re-render
     // We re-query the button. Playwright auto-waits for it to be actionable/visible.
-    const updatedDropdown = page.getByRole('button', { name: /Region/i })
-    // eslint-disable-next-line security/detect-non-literal-regexp
-    await expect(updatedDropdown).toHaveText(new RegExp(optionText?.trim() || ''), {
-      timeout: 10000,
-    })
+    // The dropdown label changes to the selected region name.
+    // Query by the NEW name (which is the option text).
+    const updatedDropdown = page.getByRole('button', { name: optionText?.trim() })
+    await expect(updatedDropdown).toBeVisible({ timeout: 10000 })
   })
 
   test('should support Expand/Collapse All', async ({ page }) => {

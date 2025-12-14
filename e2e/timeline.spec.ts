@@ -81,8 +81,8 @@ test.describe('Timeline View', () => {
   })
 
   test('country selector updates view', async ({ page }) => {
-    // Wait for the country selector button to be visible (it contains "All Countries" text)
-    const countryButton = page.getByRole('button').filter({ hasText: 'All Countries' })
+    // Wait for the country selector button to be visible (it contains "Region" text by default)
+    const countryButton = page.getByRole('button').filter({ hasText: 'Region' })
     await countryButton.waitFor({ state: 'visible', timeout: 10000 })
 
     // Select a specific country

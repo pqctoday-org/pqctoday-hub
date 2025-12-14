@@ -5,13 +5,14 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   // Increase test timeout for WASM operations
   timeout: 60000,
   use: {
     baseURL: 'http://localhost:5175',
     trace: 'on-first-retry',
+    ignoreHTTPSErrors: true,
   },
   // Default timeout for expect assertions - increased for WASM operations
   expect: {

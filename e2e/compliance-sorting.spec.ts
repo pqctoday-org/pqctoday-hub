@@ -36,7 +36,8 @@ test.describe('Compliance Table Sorting', () => {
     await page.waitForSelector('table tbody tr')
 
     // Default might be desc, click to toggle
-    await page.getByRole('button', { name: 'Date' }).click()
+    // Use locator for th since it's not a button
+    await page.locator('th').filter({ hasText: 'Date' }).click()
     // Check direction
     // ...
   })

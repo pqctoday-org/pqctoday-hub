@@ -296,7 +296,10 @@ export const useKemOperations = ({
         if (sharedSecret) {
           const originalSecretBytes = hexToBytes(sharedSecret)
           if (finalSecret.length === originalSecretBytes.length) {
-            matches = finalSecret.every((byte, i) => byte === originalSecretBytes[i])
+            matches = finalSecret.every(
+              // eslint-disable-next-line security/detect-object-injection
+              (byte, i) => byte === originalSecretBytes[i]
+            )
           }
         }
 
@@ -314,6 +317,11 @@ export const useKemOperations = ({
         if (!wasmLoaded) throw new Error('WASM libraries not loaded')
 
         if (type === 'encapsulate') {
+          // Clear previous decapsulation results
+          setDecapsulatedSecret('')
+          setKemDecapsulationResult(null)
+          setPqcRecoveredSecret('')
+          setClassicalRecoveredSecret('')
           const key = keyStore.find((k) => k.id === selectedEncKeyId)
           if (!key) throw new Error('Please select a Public Key')
 

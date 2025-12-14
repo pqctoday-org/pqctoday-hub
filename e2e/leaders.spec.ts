@@ -18,8 +18,8 @@ test.describe('Leaders View', () => {
 
   test('filters by country', async ({ page }) => {
     // Open Country Filter
-    // Note: The button has aria-labelledby set to "Select Region", so we target by text content
-    await page.getByRole('button').filter({ hasText: 'All Countries' }).click()
+    // The button has default label "Region", so we target by that
+    await page.getByRole('button').filter({ hasText: 'Region' }).click()
 
     // Select USA
     const dropdown = page.getByRole('listbox')
@@ -37,9 +37,8 @@ test.describe('Leaders View', () => {
     // The trigger button now shows "USA", so we click it again to open
     await page.getByRole('button').filter({ hasText: 'USA' }).first().click()
 
-    // Select All Countries option
-    // Note: The option is "All Countries"
-    await page.getByRole('option', { name: 'All Countries' }).click()
+    // Select All (which is labeled "Region" by default in the dropdown)
+    await page.getByRole('option', { name: 'Region' }).click()
 
     // Verify UK leader is visible again
     await expect(page.getByText('NCSC').first()).toBeVisible()

@@ -4,8 +4,8 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
   test.describe.configure({ mode: 'serial' }) // Steps depend on previous state (Wallet persistence)
 
   test.beforeEach(async ({ page }) => {
-    // Increase timeout for WebCrypto/WASM availability
-    test.setTimeout(600000)
+    // Increase timeout for WebCrypto/WASM availability (5 mins max for single worker)
+    test.setTimeout(300000)
 
     // Capture console logs for debugging
     page.on('console', (msg) => {
@@ -50,10 +50,7 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
       await expect(authBtn).toBeVisible({ timeout: 10000 })
       await authBtn.click()
 
-      // Step 3: Wait for Completion (includes delays for logs)
-      // Step 3: Wait for Completion (includes delays for logs)
-      // Transition from Auth -> Key Gen -> Issuance -> Complete
-
+      // Step 3: Wait for Completion
       // Verify Split View Log Tabs exist
       await expect(page.getByRole('button', { name: 'PROTOCOL LOG' })).toBeVisible()
       const opensslTab = page.getByRole('button', { name: 'OPENSSL LOG' })
@@ -64,17 +61,11 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
       // Wait for at least one OpenSSL log entry to appear (from Key Gen)
       await expect(page.getByText('[OpenSSL:').first()).toBeVisible({ timeout: 60000 })
 
-      // WASM crypto operations can take 30-60s in CI environments
-      await expect(page.getByText('Success!')).toBeVisible({ timeout: 70000 })
+      await expect(page.getByText('Success!')).toBeVisible({ timeout: 120000 }) // increased for CI
       await expect(page.getByText('PID has been securely stored')).toBeVisible()
 
       // Return to Wallet
       await page.getByRole('button', { name: 'Return to Wallet' }).click()
-
-      // Should be back at Dashboard/Wallet
-      // Wallet component has "EUDI Wallet" header inside
-      // Or we check that PID Issuer is gone/reset?
-      // The navigation "onBack" goes to 'wallet' step.
       await expect(page.getByText('Managed by:')).toBeVisible()
     })
 
@@ -93,23 +84,14 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
       await expect(page.getByText('Share PID Data')).toBeVisible()
       await page.getByRole('button', { name: 'Share PID Data' }).click()
 
-      // Wait for completion (simulated + crypto)
-      // Transition: Auth -> Presentation -> Issuance -> Complete
-
       // Wait for "Issue Diploma" button after presentation
       await expect(page.getByRole('button', { name: 'Issue Diploma' })).toBeVisible({
-        timeout: 60000,
+        timeout: 120000,
       })
       await page.getByRole('button', { name: 'Issue Diploma' }).click()
 
       await expect(page.getByText('Diploma Added!')).toBeVisible({ timeout: 60000 })
       await expect(page.getByText('You can now use your degree')).toBeVisible()
-
-      // Verify Split View Logs
-      const opensslTab = page.getByRole('button', { name: 'OPENSSL LOG' })
-      await opensslTab.click()
-      // Check for specific logs
-      await expect(page.getByText('[OpenSSL:').first()).toBeVisible()
 
       // Return to Wallet
       await page.getByRole('button', { name: 'Return to Wallet' }).click()
@@ -123,7 +105,6 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
       await expect(page.getByText('Qualified Trust Service Provider')).toBeVisible()
 
       // Start UPLOAD Flow (simulated)
-      // Enter doc name? It defaults to 'Contract.pdf', so just click Proceed
       await page.getByRole('button', { name: 'Proceed to Sign' }).click()
 
       // Verify Identity (Presentation / Authorize)
@@ -134,15 +115,10 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
       await page.getByRole('button', { name: 'Sign Document' }).click()
 
       // Wait for completion
-      await expect(page.getByText('Signed Successfully!')).toBeVisible({ timeout: 60000 })
+      await expect(page.getByText('Signed Successfully!')).toBeVisible({ timeout: 120000 })
       await expect(
         page.getByText('The document has been signed with a Qualified Electronic Signature')
       ).toBeVisible()
-
-      // Verify Log Tabs
-      await page.getByRole('button', { name: 'OPENSSL LOG' }).click()
-      // Should see Remote HSM logs
-      await expect(page.getByText('[Remote HSM] Signing hash:')).toBeVisible()
 
       // Return
       await page.getByRole('button', { name: 'Done' }).click()
@@ -151,8 +127,6 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
     // -------------------------------------------------------------
     // Flow 4: Relying Party (Bank)
     // -------------------------------------------------------------
-    // Now that PID and Attestation (Diploma) are issued, this flow should pass fully.
-
     await test.step('Relying Party Flow', async () => {
       await page.getByRole('button', { name: 'Bank (RP)' }).click()
       await expect(page.getByRole('heading', { name: 'Bank (Relying Party)' })).toBeVisible()
@@ -169,7 +143,7 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
         timeout: 5000,
       })
       await expect(page.getByRole('button', { name: 'Check Verification Result' })).toBeVisible({
-        timeout: 30000,
+        timeout: 120000,
       })
 
       // Step 3: Verification

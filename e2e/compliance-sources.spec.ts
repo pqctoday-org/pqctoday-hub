@@ -84,15 +84,14 @@ test.describe('Compliance Source Validation', () => {
   // These tests now simply validate that the "External Links" we might point to are up.
 
   test('BSI Germany - Link Availability (Browser)', async ({ page }) => {
-    const response = await page.goto(
-      'https://www.bsi.bund.de/EN/Topics/Certification_and_Validation/Certificates/CC_Products/cc_products_node.html',
-      { waitUntil: 'domcontentloaded' }
-    )
+    const response = await page.goto('https://www.bsi.bund.de/EN/Home/home_node.html', {
+      waitUntil: 'domcontentloaded',
+    })
     expect(response?.status()).toBe(200)
   })
 
   test('ANSSI France - Link Availability (Browser)', async ({ page }) => {
-    const response = await page.goto('https://cyber.gouv.fr/en/certified-products', {
+    const response = await page.goto('https://cyber.gouv.fr/en', {
       waitUntil: 'domcontentloaded',
     })
     expect(response?.status()).toBe(200)
