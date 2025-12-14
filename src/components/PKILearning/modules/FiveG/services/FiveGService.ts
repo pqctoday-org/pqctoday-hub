@@ -28,6 +28,9 @@ export class FiveGService {
     ephemeralPubKeyHex?: string
     ciphertextHex?: string // For PQC KEM
 
+    // File continuity for OpenSSL operations
+    cipherFile?: string // Cipher output from encryptMSIN
+
     // keys for JIT injection (stateless CI fix)
     hnPrivHex?: string
     hnPubHex?: string
@@ -953,46 +956,8 @@ ${sharedSecretHex}
 ═══════════════════════════════════════════════════════════════`
     }
 
-    // 'ts' variable removed
-
-    if (profile === 'C') {
-      // For Profile C (PQC), we already have the SHA-256 Derived Secret Z from Step 3.
-      // We need to derive K_enc and K_mac.
-      // ECIES uses X9.63 KDF, which essentially hashes Z || Counter.
-      // We can reuse the logic below nicely.
-      // Just ensure 'this.state.sharedSecretHex' is populated (it is from computeSharedSecret).
-      // We just fall through to the standard logic!
-      // But PQC Profile C KDF spec might differ?
-      // Standard 5G: K_enc = KDF(K_ASME...)?
-      // Simplified Educational Model: We use ANSI X9.63 KDF for all profiles for consistency.
-      // So we can remove this block and let it use the unified logic below,
-      // which reads 'this.state.sharedSecretHex'.
-      // Let's verify 'this.state.sharedSecretHex' is set. Yes.
-      // So no special block needed except maybe header text?
-      // The below logic attempts to "Read Shared Secret (Z)" from file OR state.
-      // It handles state fallback.
-    }
-
     try {
-      // 1. Read Shared Secret (Z)
-      // We need to find the latest shared secret file.
-      // In a real app we'd track the filename in state, here we'll try to find one or fallback
-      // But we can just generate a dummy one if needed for the pure service demo,
-      // OR we can assume the flow passed the correct file.
-      // Let's rely on the Flow component passing it or just read a 'latest' convention if we had one.
-      // Actually, best is to just simulate the KDF *operation* on the Z we derived in Step 4.
-      // Since we don't have the Z here in memory easily without re-reading...
-
-      // Let's simulates the KDF process mathematically for education
-      // We will re-read the file '5g_shared_secret_...' if we could,
-      // but the filename had a timestamp we don't know here.
-      // OPTION: We'll generate a fresh Z for display if we can't find it,
-      // OR we accept that this function is called with the exact Z hex?
-      // The method signature doesn't take Z. We should probably update the signature to take zHex or file.
-
-      // UPDATE: I will use a placeholder Z for the educational output since the user
-      // wants to see the *process*.
-
+      // 1. Get Shared Secret (Z) from state or generate placeholder
       const z = this.state.sharedSecretHex
         ? new Uint8Array(
             this.state.sharedSecretHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
@@ -1001,26 +966,45 @@ ${sharedSecretHex}
       if (!this.state.sharedSecretHex) window.crypto.getRandomValues(z) // Only generate if not from state
       const zHex = bytesToHex(z)
 
-      // ANSI X9.63 KDF: Hash(Z || Counter)
-      // Counter = 0x00000001 (big endian 32-bit typically, or just 1 byte 01)
-      // 5G standard actually uses specific strings but X9.63 is the core ECIES KDF.
-      // Let's show: SHA256( Z || 00000001 )
-
+      // 2. Build KDF input: Z || Counter (0x00000001)
+      // ANSI X9.63 KDF uses big-endian 32-bit counter
       const counter = new Uint8Array([0, 0, 0, 1])
-      const input = new Uint8Array(36)
-      input.set(z, 0)
-      input.set(counter, 32)
+      const kdfInput = new Uint8Array(36)
+      kdfInput.set(z, 0)
+      kdfInput.set(counter, 32)
 
-      const hash = await window.crypto.subtle.digest('SHA-256', input)
-      const keyBlock = new Uint8Array(hash) // 32 bytes
+      // 3. Run OpenSSL SHA-256 digest
+      // Pass input file in same execute() call - files don't persist between calls in WASM worker
+      const kdfInputFile = `kdf_input_${this.getTimestamp()}.bin`
+      this.trackFile(kdfInputFile)
 
-      // Split into K_enc (16 bytes) and K_mac (16 bytes)
-      const kEnc = keyBlock.slice(0, 16)
-      const kMac = keyBlock.slice(16, 32)
+      const cmd = `openssl dgst -sha256 ${kdfInputFile}`
+      const res = await openSSLService.execute(cmd, [{ name: kdfInputFile, data: kdfInput }])
 
-      // Store state
-      this.state.kEncHex = bytesToHex(kEnc)
-      this.state.kMacHex = bytesToHex(kMac)
+      // 4. Parse the hex output from stdout
+      // OpenSSL dgst output format: "SHA2-256(filename)= <hex>"
+      let keyBlockHex = ''
+      if (res.stdout) {
+        // Try multiple patterns for different OpenSSL versions
+        const match =
+          res.stdout.match(/=\s*([a-fA-F0-9]{64})/) || res.stdout.match(/([a-fA-F0-9]{64})/)
+        if (match) {
+          keyBlockHex = match[1].toLowerCase()
+        }
+      }
+
+      // Debug: log if parsing failed
+      if (!keyBlockHex || keyBlockHex.length < 64) {
+        console.error('[FiveGService] dgst stdout:', res.stdout)
+        console.error('[FiveGService] dgst stderr:', res.stderr)
+        throw new Error(
+          `Failed to derive key block via OpenSSL - stdout: ${res.stdout?.substring(0, 100)}`
+        )
+      }
+
+      // 5. Split into K_enc (16 bytes) and K_mac (16 bytes)
+      this.state.kEncHex = keyBlockHex.substring(0, 32) // 16 bytes = 32 hex chars
+      this.state.kMacHex = keyBlockHex.substring(32, 64) // 16 bytes = 32 hex chars
 
       return `${header}
 
@@ -1028,21 +1012,20 @@ Step 1: Input Shared Secret(Z)
   (Reading from ECDH output...)
 Z: ${zHex}...
 
-Step 2: KDF Operation
-Algorithm: ANSI X9.63 KDF(using SHA - 256)
+Step 2: KDF Operation via OpenSSL
+Algorithm: ANSI X9.63 KDF(SHA-256)
 Input: Z || Counter(0x00000001)
 
-[Hashing]
-$ openssl dgst - sha256 kdf_input.bin
+$ ${cmd}
 
 Step 3: Key Block Derivation(32 bytes)
-Block: ${bytesToHex(keyBlock)}
+Block: ${keyBlockHex}
 
 Step 4: Splitting Keys
-  > K_enc(128 - bit AES):  ${this.state.kEncHex}
-> K_mac(128 - bit HMAC): ${this.state.kMacHex}
+  > K_enc(128-bit AES):  ${this.state.kEncHex}
+  > K_mac(128-bit HMAC): ${this.state.kMacHex}
 
-[SUCCESS] Protection Keys Derived.`
+[SUCCESS] Protection Keys Derived via OpenSSL.`
     } catch (e) {
       return `[Error] KDF Failed: ${e} `
     }
@@ -1051,79 +1034,108 @@ Step 4: Splitting Keys
   async encryptMSIN() {
     if (!this.state.kEncHex) return '[Error] No Key Derived'
     const msin = '310260123456789' // Plaintext MSIN
-
-    // Convert Hex Key to CryptoKey
-    const keyBytes = new Uint8Array(
-      this.state.kEncHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
-    )
     const msinBytes = new TextEncoder().encode(msin)
     const msinHex = bytesToHex(msinBytes)
 
-    // Encrypt using AES-CTR (128 or 256 depending on profile, but using 128 for A/B, 256 for C)
-    // For simplicity in this demo, we use the key length to determine algo.
-    // 16 bytes = AES-128, 32 bytes = AES-256.
-    const algo = keyBytes.length === 32 ? 'AES-CTR-256' : 'AES-CTR'
-    const counter = new Uint8Array(16) // IV zero for demo
+    // Determine algorithm based on key length (16 bytes = AES-128, 32 bytes = AES-256)
+    const keyLen = this.state.kEncHex.length / 2
+    const algo = keyLen === 32 ? 'aes-256-ctr' : 'aes-128-ctr'
+    const iv = '00000000000000000000000000000000' // Zero IV for demo
 
-    const key = await window.crypto.subtle.importKey('raw', keyBytes, { name: 'AES-CTR' }, false, [
-      'encrypt',
-    ])
+    // File names
+    const msinFile = `msin_${this.getTimestamp()}.bin`
+    const cipherFile = `cipher_${this.getTimestamp()}.bin`
+    this.trackFile(msinFile)
+    this.trackFile(cipherFile)
 
-    const encrypted = await window.crypto.subtle.encrypt(
-      { name: 'AES-CTR', counter: counter, length: 64 },
-      key,
-      msinBytes
-    )
+    try {
+      // Run OpenSSL AES-CTR encryption
+      // Pass input file in same execute() call - files don't persist between calls
+      const cmd = `openssl enc -${algo} -K ${this.state.kEncHex} -iv ${iv} -in ${msinFile} -out ${cipherFile}`
+      const res = await openSSLService.execute(cmd, [{ name: msinFile, data: msinBytes }])
 
-    this.state.encryptedMSINHex = bytesToHex(new Uint8Array(encrypted))
+      // Read encrypted output
+      let cipherHex = ''
+      const cipherData = res.files.find((f) => f.name === cipherFile)?.data
+      if (cipherData) {
+        cipherHex = bytesToHex(cipherData)
+      } else {
+        cipherHex = await this.readFileHex(cipherFile)
+      }
 
-    return `[USIM] Encrypting MSIN...
-Algorithm: ${algo}
+      if (!cipherHex) {
+        throw new Error('Encryption failed - no output')
+      }
+
+      this.state.encryptedMSINHex = cipherHex
+      this.state.cipherFile = cipherFile // Store for computeMAC continuity
+
+      return `[USIM] Encrypting MSIN via OpenSSL...
+Algorithm: ${algo.toUpperCase()}
 Input: ${msin}
 Input(Hex): ${msinHex}
 Key: ${this.state.kEncHex}
-IV: 00...00(Counter Mode)
+IV: ${iv}
 
-[SUCCESS] Ciphertext: ${this.state.encryptedMSINHex} `
+$ ${cmd}
+
+[SUCCESS] Ciphertext: ${this.state.encryptedMSINHex}`
+    } catch (e) {
+      return `[Error] Encryption failed: ${e}`
+    }
   }
 
   async computeMAC() {
     if (!this.state.kMacHex || !this.state.encryptedMSINHex)
       return '[Error] Missing Ciphertext or Key'
 
-    // HMAC over Ciphertext (and other params in real life)
-    const macKeyBytes = new Uint8Array(
-      this.state.kMacHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
-    )
-    const dataBytes = new Uint8Array(
-      this.state.encryptedMSINHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
-    )
+    try {
+      // Prepare cipher data from state (always available as hex after encryptMSIN)
+      const cipherFile = `cipher_mac_${this.getTimestamp()}.bin`
+      this.trackFile(cipherFile)
+      const cipherBytes = new Uint8Array(
+        this.state.encryptedMSINHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+      )
 
-    const key = await window.crypto.subtle.importKey(
-      'raw',
-      macKeyBytes,
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign']
-    )
+      // Run OpenSSL HMAC-SHA256 (use stdout hex output for reliability)
+      const cmd = `openssl dgst -sha256 -mac HMAC -macopt hexkey:${this.state.kMacHex} ${cipherFile}`
+      const res = await openSSLService.execute(cmd, [{ name: cipherFile, data: cipherBytes }])
 
-    const signature = await window.crypto.subtle.sign('HMAC', key, dataBytes)
+      // Parse hex output from stdout
+      let fullMacHex = ''
+      if (res.stdout) {
+        const match =
+          res.stdout.match(/=\s*([a-fA-F0-9]{64})/) || res.stdout.match(/([a-fA-F0-9]{64})/)
+        if (match) {
+          fullMacHex = match[1].toLowerCase()
+        }
+      }
 
-    // Truncate to 8 bytes (64 bits) as per 5G spec usually
-    const fullMac = bytesToHex(new Uint8Array(signature))
-    this.state.macTagHex = fullMac.substring(0, 16) // 8 bytes hex
+      if (!fullMacHex) {
+        console.error('[FiveGService] MAC dgst stdout:', res.stdout)
+        console.error('[FiveGService] MAC dgst stderr:', res.stderr)
+        throw new Error(`MAC computation failed - stdout: ${res.stdout?.substring(0, 100)}`)
+      }
 
-    return `[USIM] Computing MAC Tag...
-Algorithm: HMAC - SHA - 256(via Web Crypto API)
-Data to Hash(Ciphertext): ${this.state.encryptedMSINHex}
+      // Truncate to 8 bytes (64 bits) as per 5G spec
+      this.state.macTagHex = fullMacHex.substring(0, 16) // 8 bytes = 16 hex chars
+
+      return `[USIM] Computing MAC Tag via OpenSSL...
+Algorithm: HMAC-SHA-256
+Data(Ciphertext): ${this.state.encryptedMSINHex}
 Integrity Key(K_mac): ${this.state.kMacHex}
 
+$ ${cmd}
+
 [Intermediate Result]
-            Full HMAC - SHA256 Hash(32 bytes):
-            ${fullMac}
+Full HMAC-SHA256 Hash(32 bytes):
+${fullMacHex}
 
 [SUCCESS] Final MAC Tag(Truncated to 8 bytes):
-            ${this.state.macTagHex} `
+${this.state.macTagHex}`
+    } catch (e) {
+      return `[Error] MAC computation failed: ${e}`
+    }
   }
 
   async visualizeStructure() {
@@ -1179,36 +1191,41 @@ suci - ${mcc} -${mnc} -${routing} -${scheme} -${keyId} -${ephPub.substring(0, 8)
       profile === 'C' ? '0x...' : this.state.ephemeralPubKeyHex || '0x[EphemeralPubKey]'
 
     let recoveredSupi = '[Decryption Failed]'
+    let decryptCmd = ''
 
-    // Attempt Dynamic Decryption
+    // Attempt Dynamic Decryption via OpenSSL
     try {
       if (this.state.kEncHex && this.state.encryptedMSINHex) {
-        const keyBytes = new Uint8Array(
-          this.state.kEncHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
-        )
+        const keyLen = this.state.kEncHex.length / 2
+        const algo = keyLen === 32 ? 'aes-256-ctr' : 'aes-128-ctr'
+        const iv = '00000000000000000000000000000000'
+
+        // File names
+        const cipherFile = `dec_cipher_${this.getTimestamp()}.bin`
+        const decMsinFile = `dec_msin_${this.getTimestamp()}.bin`
+        this.trackFile(cipherFile)
+        this.trackFile(decMsinFile)
+
+        // Prepare cipher data from state
         const cipherBytes = new Uint8Array(
           this.state.encryptedMSINHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
         )
-        const counter = new Uint8Array(16) // Must match encryption IV (00...00)
 
-        const key = await window.crypto.subtle.importKey(
-          'raw',
-          keyBytes,
-          { name: 'AES-CTR' },
-          false,
-          ['decrypt']
-        )
+        // Run OpenSSL AES-CTR decryption (pass input in same call)
+        decryptCmd = `openssl enc -d -${algo} -K ${this.state.kEncHex} -iv ${iv} -in ${cipherFile} -out ${decMsinFile}`
+        const res = await openSSLService.execute(decryptCmd, [
+          { name: cipherFile, data: cipherBytes },
+        ])
 
-        const decrypted = await window.crypto.subtle.decrypt(
-          { name: 'AES-CTR', counter: counter, length: 64 },
-          key,
-          cipherBytes
-        )
-
-        // Reconstruct SUPI: MCC-MNC-MSIN
-        // Our encrypted part is ONLY the MSIN.
-        const msin = new TextDecoder().decode(decrypted)
-        recoveredSupi = `310 - 260 - ${msin} `
+        // Read decrypted output
+        const decData = res.files.find((f) => f.name === decMsinFile)?.data
+        if (decData) {
+          const msin = new TextDecoder().decode(decData)
+          recoveredSupi = `310-260-${msin}`
+        } else {
+          console.error('[FiveGService] Decrypt failed - no output file')
+          console.error('[FiveGService] Decrypt stderr:', res.stderr)
+        }
       }
     } catch (e) {
       recoveredSupi = `[Error: ${e}]`
@@ -1219,26 +1236,26 @@ suci - ${mcc} -${mnc} -${routing} -${scheme} -${keyId} -${ephPub.substring(0, 8)
 
 [Network Side - PQC]
 1. Receiving SUCI Transmission...
-   > Scheme: 3(ML - KEM - 768)
-  > Ciphertext: [1088 bytes]
-    > Encrypted MSIN: ${usedCiphertext}
+   > Scheme: 3(ML-KEM-768)
+   > Ciphertext: [1088 bytes]
+   > Encrypted MSIN: ${usedCiphertext}
 
 2. Decapsulating Shared Secret...
    Checking HN_PQC_PrivKey...OK
-   $ openssl pkeyutl - decap - inkey hn_pqc.key ...
+   $ openssl pkeyutl -decap -inkey hn_pqc.key ...
    > Shared Secret Recovered(32 bytes):
    ${usedSharedSecret}
 
-3. Deriving Session Keys(SHA3 - 256)...
+3. Deriving Session Keys(SHA3-256)...
    > K_enc: ${usedKenc}
    > K_mac: ${usedKmac}
 
 4. Verifying MAC...[OK]
 
-5. Decrypting MSIN...
-   $ openssl enc - d - aes - 256 - ctr ...
+5. Decrypting MSIN via OpenSSL...
+   $ ${decryptCmd || 'openssl enc -d -aes-256-ctr ...'}
 
-[SUCCESS] SUPI Recovered: ${recoveredSupi} `
+[SUCCESS] SUPI Recovered: ${recoveredSupi}`
     }
 
     // Profile A or B
@@ -1253,8 +1270,8 @@ suci - ${mcc} -${mnc} -${routing} -${scheme} -${keyId} -${ephPub.substring(0, 8)
    > Encrypted MSIN: ${usedCiphertext}
 
 2. Deriving Shared Secret(ECDH)...
-Using: HN_PrivKey + Eph_PubKey
-   $ openssl pkeyutl - derive - inkey hn_priv.key - peerkey eph_pub.key ...
+   Using: HN_PrivKey + Eph_PubKey
+   $ openssl pkeyutl -derive -inkey hn_priv.key -peerkey eph_pub.key ...
    > Shared Secret(Z) Recovered:
    ${usedSharedSecret}
 
@@ -1264,10 +1281,10 @@ Using: HN_PrivKey + Eph_PubKey
 
 4. Verifying MAC...[OK]
 
-5. Decrypting MSIN...
-   $ openssl enc - d - aes - 128 - ctr ...
+5. Decrypting MSIN via OpenSSL...
+   $ ${decryptCmd || 'openssl enc -d -aes-128-ctr ...'}
 
-[SUCCESS] SUPI Recovered: ${recoveredSupi} `
+[SUCCESS] SUPI Recovered: ${recoveredSupi}`
   }
 
   async runMilenage() {

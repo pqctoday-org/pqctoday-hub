@@ -66,7 +66,7 @@ var moduleFactory: any = null
 var loadingPromise: Promise<void> | null = null
 
 var loadOpenSSLScript = async (
-  url: string = '/wasm/openssl.v3.js',
+  url: string = '/wasm/openssl.js',
   requestId?: string
 ): Promise<void> => {
   if (moduleFactory) return
@@ -194,7 +194,7 @@ var createOpenSSLInstance = async (requestId?: string): Promise<EmscriptenModule
       self.postMessage({ type: 'LOG', stream: 'stdout', message: text, requestId }),
     printErr: (text: string) =>
       self.postMessage({ type: 'LOG', stream: 'stderr', message: text, requestId }),
-    locateFile: (path: string) => (path.endsWith('.wasm') ? '/wasm/openssl.v3.wasm' : path),
+    locateFile: (path: string) => (path.endsWith('.wasm') ? '/wasm/openssl.wasm' : path),
   }
   return await moduleFactory(moduleConfig)
 }

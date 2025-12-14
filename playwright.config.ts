@@ -7,9 +7,15 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 2 : undefined,
   reporter: 'html',
+  // Increase test timeout for WASM operations
+  timeout: 60000,
   use: {
     baseURL: 'http://localhost:5175',
     trace: 'on-first-retry',
+  },
+  // Default timeout for expect assertions - increased for WASM operations
+  expect: {
+    timeout: 30000,
   },
   projects: [
     {
@@ -26,9 +32,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: process.env.CI ? 'npm run preview -- --port 5175' : 'VITE_MOCK_DATA=true npm run dev',
+    command: 'npm run dev -- --port 5175',
     url: 'http://localhost:5175',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
     timeout: 120 * 1000,
   },
 })
