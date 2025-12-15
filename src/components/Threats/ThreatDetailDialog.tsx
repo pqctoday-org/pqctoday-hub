@@ -13,10 +13,18 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-card border border-border rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="threat-dialog-title"
+        className="bg-card border border-border rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col"
+      >
         <div className="p-6 border-b border-border flex justify-between items-start sticky top-0 bg-card z-10">
           <div>
-            <h2 className="text-xl font-bold text-gradient flex items-center gap-2">
+            <h2
+              id="threat-dialog-title"
+              className="text-xl font-bold text-gradient flex items-center gap-2"
+            >
               <ShieldAlert className="w-5 h-5 text-primary" />
               {threat.threatId}
               <StatusBadge status={threat.status} size="sm" />

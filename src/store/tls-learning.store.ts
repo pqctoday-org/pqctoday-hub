@@ -112,10 +112,67 @@ export const useTLSStore = create<TLSStore>((set) => ({
   sessionStatus: 'idle',
 
   setClientConfig: (config) =>
-    set((state) => ({ clientConfig: { ...state.clientConfig, ...config } })),
+    set((state) => {
+      const newConfig = { ...state.clientConfig, ...config }
+      // If in UI mode and not explicitly setting rawConfig, regenerate it
+      if (newConfig.mode === 'ui' && !config.rawConfig) {
+        const cipherSuites = newConfig.cipherSuites.join(':')
+        const groups = newConfig.groups.join(':')
+        const sigAlgs = newConfig.signatureAlgorithms.join(':')
+        let rawConfig = `openssl_conf = default_conf
+
+[ default_conf ]
+ssl_conf = ssl_sect
+
+[ ssl_sect ]
+system_default = system_default_sect
+
+[ system_default_sect ]
+`
+        if (cipherSuites) rawConfig += `Ciphersuites = ${cipherSuites}\n`
+        if (groups) rawConfig += `Groups = ${groups}\n`
+        if (sigAlgs) rawConfig += `SignatureAlgorithms = ${sigAlgs}\n`
+        rawConfig += `MinProtocol = TLSv1.3\nMaxProtocol = TLSv1.3\n`
+        if (newConfig.certificates.caPem) {
+          rawConfig += `VerifyCAFile = /ssl/client-ca.crt\n`
+        }
+        newConfig.rawConfig = rawConfig
+      }
+      return { clientConfig: newConfig }
+    }),
 
   setServerConfig: (config) =>
-    set((state) => ({ serverConfig: { ...state.serverConfig, ...config } })),
+    set((state) => {
+      const newConfig = { ...state.serverConfig, ...config }
+      // If in UI mode and not explicitly setting rawConfig, regenerate it
+      if (newConfig.mode === 'ui' && !config.rawConfig) {
+        const cipherSuites = newConfig.cipherSuites.join(':')
+        const groups = newConfig.groups.join(':')
+        const sigAlgs = newConfig.signatureAlgorithms.join(':')
+        let rawConfig = `openssl_conf = default_conf
+
+[ default_conf ]
+ssl_conf = ssl_sect
+
+[ ssl_sect ]
+system_default = system_default_sect
+
+[ system_default_sect ]
+`
+        if (cipherSuites) rawConfig += `Ciphersuites = ${cipherSuites}\n`
+        if (groups) rawConfig += `Groups = ${groups}\n`
+        if (sigAlgs) rawConfig += `SignatureAlgorithms = ${sigAlgs}\n`
+        rawConfig += `MinProtocol = TLSv1.3\nMaxProtocol = TLSv1.3\n`
+        if (newConfig.verifyClient) {
+          rawConfig += `VerifyMode = Peer,Request\n`
+          if (newConfig.certificates.caPem) {
+            rawConfig += `VerifyCAFile = /ssl/server-ca.crt\n`
+          }
+        }
+        newConfig.rawConfig = rawConfig
+      }
+      return { serverConfig: newConfig }
+    }),
 
   setMode: (side, mode) =>
     set((state) => ({

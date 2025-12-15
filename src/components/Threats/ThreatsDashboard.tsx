@@ -18,7 +18,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react'
-import { threatsData } from '../../data/threatsData'
+import { threatsData, threatsMetadata } from '../../data/threatsData'
 import type { ThreatItem } from '../../data/threatsData'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
@@ -178,8 +178,8 @@ export const ThreatsDashboard: React.FC = () => {
           cryptography, and PQC replacements.
         </p>
         <p className="hidden lg:block text-[10px] md:text-xs text-muted-foreground/60 font-mono">
-          Data Source: quantum_threats_hsm_industries_12032025.csv • Updated:{' '}
-          {new Date('2025-12-03').toLocaleDateString()}
+          Data Source: {threatsMetadata?.filename || 'quantum_threats_hsm_industries.csv'} •
+          Updated: {threatsMetadata?.lastUpdate?.toLocaleDateString() || 'Unknown'}
         </p>
       </div>
 

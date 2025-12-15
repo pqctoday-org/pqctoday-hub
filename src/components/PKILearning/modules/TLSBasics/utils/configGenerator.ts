@@ -3,8 +3,11 @@ import type { TLSConfig } from '../../../../../store/tls-learning.store'
 export const generateOpenSSLConfig = (config: TLSConfig, side: 'client' | 'server'): string => {
   // If user is in raw mode, use their custom config directly
   if (config.mode === 'raw' && config.rawConfig) {
+    console.log(`[TLS Config Generator] Using raw config for ${side}`)
     return config.rawConfig
   }
+
+  console.log(`[TLS Config Generator] Generating config from UI settings for ${side}`)
 
   // Otherwise, generate from UI settings
   const cipherSuites = config.cipherSuites.join(':')
