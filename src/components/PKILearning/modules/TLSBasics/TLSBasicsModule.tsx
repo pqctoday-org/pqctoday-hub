@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import { Play } from 'lucide-react'
 import { useTLSStore } from '../../../../store/tls-learning.store'
 import { TLSClientPanel } from './TLSClientPanel'
@@ -30,17 +30,10 @@ export const TLSBasicsModule: React.FC = () => {
     serverMessage,
   } = useTLSStore()
 
-  // Trigger simulation when commands change (Replay)
-  useEffect(() => {
-    if (commands.length > 0) {
-      triggerSimulation()
-    }
-  }, [commands])
-
   // Cleanup on unmount
   useEffect(() => {
     return () => clearSession()
-  }, [])
+  }, [clearSession])
 
   // Initialize Default Certificates if missing
   useEffect(() => {
@@ -69,9 +62,10 @@ export const TLSBasicsModule: React.FC = () => {
     }
 
     initDefaults()
-  }, []) // Run once on mount (store persistence handles re-entry check)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Intentionally run once on mount; store persistence handles re-entry
 
-  const triggerSimulation = async () => {
+  const triggerSimulation = useCallback(async () => {
     setIsSimulating(true)
     setResults(null)
 
@@ -162,7 +156,14 @@ export const TLSBasicsModule: React.FC = () => {
     } finally {
       setIsSimulating(false)
     }
-  }
+  }, [clientConfig, serverConfig, setIsSimulating, setResults, clientMessage, serverMessage])
+
+  // Trigger simulation when commands change (Replay)
+  useEffect(() => {
+    if (commands.length > 0) {
+      triggerSimulation()
+    }
+  }, [commands, triggerSimulation])
 
   return (
     <div className="space-y-6">

@@ -64,7 +64,7 @@ export const TLSServerPanel: React.FC = () => {
 
   const isConnected = sessionStatus === 'connected'
 
-  // Load certificates based on selection
+  // Handle Cert Selection
   useEffect(() => {
     if (certSelection === 'default') {
       setServerConfig({
@@ -86,6 +86,7 @@ export const TLSServerPanel: React.FC = () => {
       })
     }
     // 'custom' - user will paste/import their own
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Controlled update: adding serverConfig.certificates would cause infinite loop
   }, [certSelection, setServerConfig])
 
   const toggleCipher = (cipher: string) => {

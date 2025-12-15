@@ -98,6 +98,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
           <div className="relative">
             <button
               ref={buttonRef}
+              data-testid="filter-dropdown"
               onClick={() => setIsOpen(!isOpen)}
               onKeyDown={handleKeyDown}
               aria-haspopup="listbox"
@@ -198,6 +199,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
           <div className="relative">
             <button
               ref={buttonRef}
+              data-testid="filter-dropdown"
               onClick={() => setIsOpen(!isOpen)}
               onKeyDown={handleKeyDown}
               aria-haspopup="listbox"

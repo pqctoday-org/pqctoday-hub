@@ -52,7 +52,9 @@ const KeyExchangeBadge: React.FC<{ algorithm: string }> = ({ algorithm }) => {
 
   return (
     <div className="flex items-center gap-2">
+      {/* eslint-disable-next-line security/detect-object-injection -- type is a fixed union from getKeyExchangeType() */}
       <span className={clsx('text-xs px-2 py-0.5 rounded border font-bold', colors[type])}>
+        {/* eslint-disable-next-line security/detect-object-injection -- type is a fixed union from getKeyExchangeType() */}
         {labels[type]}
       </span>
       <span className="font-mono text-xs text-foreground">{algorithm}</span>

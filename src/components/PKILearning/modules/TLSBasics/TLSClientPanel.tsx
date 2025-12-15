@@ -66,7 +66,6 @@ export const TLSClientPanel: React.FC = () => {
   const isConnected = sessionStatus === 'connected'
 
   // Handle Cert Selection
-  // Handle Cert Selection
   useEffect(() => {
     if (certSelection === 'none') {
       // Clear certificates
@@ -98,6 +97,7 @@ export const TLSClientPanel: React.FC = () => {
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Controlled update: adding clientConfig.certificates would cause infinite loop
   }, [certSelection, setClientConfig])
 
   const toggleCipher = (cipher: string) => {

@@ -25,6 +25,9 @@ interface UseKeyGenerationProps {
 
 const logger = createLogger('useKeyGeneration')
 
+// Limit keystore to prevent unbounded growth
+const MAX_KEYS = 100
+
 export const useKeyGeneration = ({
   algorithm,
   keySize,
@@ -95,7 +98,11 @@ export const useKeyGeneration = ({
             },
           ]
 
-          setKeyStore((prev) => [...prev, ...newKeys])
+          setKeyStore((prev) => {
+            const newStore = [...prev, ...newKeys]
+            // Keep only the most recent MAX_KEYS keys
+            return newStore.length > MAX_KEYS ? newStore.slice(-MAX_KEYS) : newStore
+          })
           setSelectedEncKeyId(newKeys[0].id)
           setSelectedDecKeyId(newKeys[1].id)
 
@@ -134,7 +141,10 @@ export const useKeyGeneration = ({
             },
           ]
 
-          setKeyStore((prev) => [...prev, ...newKeys])
+          setKeyStore((prev) => {
+            const newStore = [...prev, ...newKeys]
+            return newStore.length > MAX_KEYS ? newStore.slice(-MAX_KEYS) : newStore
+          })
           setSelectedSignKeyId(newKeys[1].id)
           setSelectedVerifyKeyId(newKeys[0].id)
 
@@ -184,7 +194,10 @@ export const useKeyGeneration = ({
           },
         ]
 
-        setKeyStore((prev) => [...prev, ...newKeys])
+        setKeyStore((prev) => {
+          const newStore = [...prev, ...newKeys]
+          return newStore.length > MAX_KEYS ? newStore.slice(-MAX_KEYS) : newStore
+        })
 
         if (algorithm === 'ML-KEM') {
           setSelectedEncKeyId(newKeys[0].id)
@@ -368,7 +381,10 @@ export const useKeyGeneration = ({
         ]
       }
 
-      setKeyStore((prev) => [...prev, ...newKeys])
+      setKeyStore((prev) => {
+        const newStore = [...prev, ...newKeys]
+        return newStore.length > MAX_KEYS ? newStore.slice(-MAX_KEYS) : newStore
+      })
 
       const end = performance.now()
 
