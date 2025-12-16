@@ -9,26 +9,6 @@ export const load = async () => {
   return true
 }
 
-const _readFileBytes = async (filename: string): Promise<Uint8Array> => {
-  try {
-    const readRes = await openSSLService.execute(`openssl base64 -in ${filename}`)
-    if (readRes.stdout) {
-      // Remove newlines and decode
-      const b64 = readRes.stdout.replace(/\n/g, '')
-      const binaryString = atob(b64)
-      const bytes = new Uint8Array(binaryString.length)
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i)
-      }
-      return bytes
-    }
-    throw new Error(`Failed to read file ${filename}`)
-  } catch (e) {
-    logger.error(`Failed to read ${filename}`, e)
-    throw e
-  }
-}
-
 /**
  * Generates a new ML-DSA key pair.
  */
