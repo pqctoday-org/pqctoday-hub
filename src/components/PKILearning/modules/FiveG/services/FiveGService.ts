@@ -771,7 +771,7 @@ ${zEcdhHex}
         }
 
         // 2. PQC Encapsulation (ML-KEM-768)
-        let ss: Uint8Array
+        let ss: Uint8Array = new Uint8Array(32) // Initialize with default
 
         try {
           let hnPubBytes: Uint8Array
