@@ -28,6 +28,7 @@ dist-ssr
 
 # OpenSSL Build Artifacts
 openssl-build/
+openssl-3.6.0-build/
 *.tar.gz
 
 # Testing
@@ -74,3 +75,7 @@ all_certs.txt
 generated_certs.txt
 pqc_certs_output.txt
 regen_*.sh
+
+# Certificate directory (but allow README)
+certs/
+!certs/README.md

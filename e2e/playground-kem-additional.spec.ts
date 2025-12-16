@@ -2,7 +2,13 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/playground')
+    await page.goto('/')
+    await page.getByRole('button', { name: 'Playground' }).click()
+    // Wait for Playground to load
+    await expect(
+      page.getByRole('heading', { name: /Interactive Playground/i, level: 2 })
+    ).toBeVisible()
+
     // Navigate to Key Store to generate keys
     await page.getByRole('button', { name: /Key Store/i }).click()
   })

@@ -111,6 +111,11 @@ export const clearInstanceCache = () => {
   instanceCache.clear()
 }
 
+export const load = async () => {
+  // Factories handle init - no explicit load needed
+  return true
+}
+
 /**
  * Generates a new ML-KEM key pair.
  *

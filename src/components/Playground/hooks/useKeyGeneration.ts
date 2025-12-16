@@ -113,9 +113,12 @@ export const useKeyGeneration = ({
             result: `PK: ${keys.publicKey.length}B, SK: ${keys.secretKey.length}B`,
             executionTime: end - start,
           })
-        } else {
+        } else if (algorithm === 'ML-DSA' || algorithm.startsWith('ML-DSA-')) {
           // ML-DSA
-          algoName = `ML-DSA-${keySize}`
+          // Validate keySize is a valid DSA level (44, 65, 87), not a KEM algorithm name
+          const validDSALevels = ['44', '65', '87']
+          const dsaLevel = validDSALevels.includes(keySize) ? keySize : '65'
+          algoName = algorithm.startsWith('ML-DSA-') ? algorithm : `ML-DSA-${dsaLevel}`
           const keypair = await MLDSA.generateKey({ name: algoName }, true, ['sign', 'verify'])
 
           newKeys = [

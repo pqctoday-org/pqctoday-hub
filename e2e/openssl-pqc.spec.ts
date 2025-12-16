@@ -11,7 +11,7 @@ test.describe('OpenSSL Studio - PQC Algorithms', () => {
     await expect(page.getByRole('heading', { name: 'OpenSSL Studio', level: 2 })).toBeVisible()
   })
 
-  test.skip('generates ML-DSA-44 key and signs data', async ({ page }) => {
+  test('generates ML-DSA-44 key and signs data', async ({ page }) => {
     // 1. Generate Key
     await page.getByRole('button', { name: 'Key Generation' }).click()
     await page.selectOption('#algo-select', 'mldsa44')
@@ -23,26 +23,23 @@ test.describe('OpenSSL Studio - PQC Algorithms', () => {
 
     // Ensure the key is selected (wait for populate)
     await page.waitForTimeout(1000)
-    const keyOption = await page
-      .locator('select')
-      .filter({ hasText: 'Select a key file...' })
-      .locator('option')
+    // Ensure the key is selected (wait for populate)
+    await page.waitForTimeout(1000)
+
+    // Wait for the key option to populate in the dropdown
+    // The dropdown has ID 'key-select'
+    const keyWithAttribute = page
+      .locator('#key-select option')
       .filter({ hasText: /mldsa-44-/ })
       .first()
+    await expect(keyWithAttribute).toBeAttached({ timeout: 10000 })
 
-    const keyValue = await keyOption.getAttribute('value')
-    if (keyValue) {
-      // Find the select element that contains this option
-      const selectId = await keyOption.evaluate((el) => el.parentElement?.id)
-      if (selectId) {
-        await page.selectOption(`#${selectId}`, keyValue)
-      } else {
-        // Fallback if no ID
-        await page
-          .locator('select')
-          .filter({ hasText: 'Select a key file...' })
-          .selectOption(keyValue)
-      }
+    // Get the value and select it
+    const val = await keyWithAttribute.getAttribute('value')
+    if (val) {
+      await page.selectOption('#key-select', val)
+    } else {
+      throw new Error('Could not find ML-DSA-44 key in dropdown')
     }
 
     // Create test data if needed (the UI has a button for it)

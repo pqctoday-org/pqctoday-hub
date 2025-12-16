@@ -10,7 +10,7 @@ The Interactive Playground provides a hands-on environment for testing post-quan
 **Execution Modes:**
 
 - **Mock Mode**: Simulated operations with instant results (for demonstration/testing)
-- **WebAssembly Mode**: Real cryptographic operations using WASM libraries (`mlkem-wasm` and `@openforge-sh/liboqs`)
+- **WebAssembly Mode**: Real cryptographic operations using WASM library (**OpenSSL 3.5.4**).
 
 ## 2. Functional Requirements
 
@@ -328,7 +328,7 @@ Comprehensive enable/disable controls for all cryptographic algorithms:
 ### 5.1 Current Implementation
 
 - **Mock Operations**: Simulated cryptographic operations for demonstration
-- **WASM Operations**: Real operations using `mlkem-wasm` and `@openforge-sh/liboqs`
+- **WASM Operations**: Real operations using **OpenSSL 3.5.4** custom build.
 - **State Management**: React hooks (useState, useEffect)
 - **Key Storage**: In-memory array of key objects
 - **Operation Simulation**: Timeout-based async operations with random data (Mock mode)
@@ -357,12 +357,12 @@ Comprehensive enable/disable controls for all cryptographic algorithms:
 
 > [!NOTE]
 > **Status: Completed**
-> The WebAssembly integration has been fully implemented using `mlkem-wasm` and `@openforge-sh/liboqs`, with a toggle to switch between Mock and WASM modes.
+> The WebAssembly integration has been fully implemented using **OpenSSL 3.5.4**, with a toggle to switch between Mock and WASM modes.
 
 ### 6.1 Library Dependencies
 
-- **ML-KEM**: `@openforge-sh/liboqs` (npm package) - Replaced `mlkem-wasm` for better compatibility.
-- **ML-DSA**: `@openforge-sh/liboqs` (npm package)
+- **ML-KEM**: **OpenSSL 3.5.4 WASM** - Integrated via `liboqs_kem.ts` adapter.
+- **ML-DSA**: **OpenSSL 3.5.4 WASM** - Integrated via `liboqs_dsa.ts` adapter.
 - **Loading Strategy**: Dynamic import (lazy loading) only when WASM mode is activated.
 
 ### 6.2 WASM Integration Architecture
@@ -373,9 +373,9 @@ Comprehensive enable/disable controls for all cryptographic algorithms:
 
 ### 6.3 ML-KEM Operations (WASM)
 
-- **Key Generation**: `liboqs.KeyEncapsulation.generate_keypair()`
-- **Encapsulation**: `liboqs.KeyEncapsulation.encapsulate()`
-- **Decapsulation**: `liboqs.KeyEncapsulation.decapsulate()`
+- **Key Generation**: `OpenSSLService.execute('openssl genpkey ...')`
+- **Encapsulation**: `OpenSSLService.execute('openssl pkeyutl -encap ...')`
+- **Decapsulation**: `OpenSSLService.execute('openssl pkeyutl -decap ...')`
 - **Encryption/Decryption**: Uses Web Crypto API (AES-GCM) with the shared secret derived from ML-KEM.
 
 ### 6.4 ML-DSA Operations (WASM)
@@ -524,7 +524,7 @@ if (!isWasmSupported) {
 
 ### Phase 2: WASM Integration (✅ Complete)
 
-1. Install npm packages (`mlkem-wasm`, `@openforge-sh/liboqs`)
+1. Initialize OpenSSL WASM Worker
 2. Add mode toggle UI
 3. Implement WASM key generation
 4. Implement WASM ML-KEM operations
@@ -829,6 +829,6 @@ Integrate Automated Cryptographic Validation Protocol (ACVP) testing capabilitie
 - ✅ **Completed**: 2025-11-27
 - ✅ ACVP Testing tab integrated into Interactive Playground
 - ✅ Real ACVP test vectors (ML-DSA FIPS 204, ML-KEM FIPS 203) imported
-- ✅ ML-KEM: Uses `@openforge-sh/liboqs` for all variants (512, 768, 1024)
-- ✅ ML-DSA: Uses `@openforge-sh/liboqs` for all variants (44, 65, 87)
+- ✅ ML-KEM: Uses **OpenSSL 3.5.4** for all variants (512, 768, 1024)
+- ✅ ML-DSA: Uses **OpenSSL 3.5.4** for all variants (44, 65, 87)
 - ✅ Automated validation suite implemented and verified (all tests pass)

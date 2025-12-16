@@ -15,7 +15,7 @@ test.describe('Timeline View', () => {
 
     await page.goto('/')
     // Timeline is the default view, but let's click the nav to be sure
-    await page.getByRole('button', { name: 'Timeline' }).click()
+    await page.getByRole('button', { name: 'Timeline view' }).click()
   })
 
   test('displays gantt chart table', async ({ page }) => {

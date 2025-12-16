@@ -48,8 +48,9 @@ The **About** section serves as a central hub for user interaction, transparency
   - **UI Frameworks & Libraries**: React, Framer Motion, Lucide React, clsx.
   - **Cryptography & PQC**:
     - **OpenSSL**: v3.5.4 (Custom Emscripten build).
-    - **liboqs**: v0.14.3 (Clarified usage: ML-DSA, ML-KEM).
+
     - **mlkem-wasm**, **openssl-wasm**, **pqcrypto**, **noble-hashes**.
+
   - **State Management**: Zustand.
   - **Analytics**: React GA4.
   - **Build & Development**: Vite, TypeScript, ESLint, Prettier.

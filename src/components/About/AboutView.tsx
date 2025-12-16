@@ -527,15 +527,7 @@ ${kudos.message}
               <ul className="space-y-2">
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">OpenSSL WASM</span>
-                  <span className="text-xs text-muted-foreground/60">v3.5.4</span>
-                </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
-                  <span className="text-muted-foreground">liboqs (ML-DSA, ML-KEM)</span>
-                  <span className="text-xs text-muted-foreground/60">v0.14.3</span>
-                </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
-                  <span className="text-muted-foreground">mlkem-wasm</span>
-                  <span className="text-xs text-muted-foreground/60">v0.0.7</span>
+                  <span className="text-xs text-muted-foreground/60">v3.6.0</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Web Crypto API (X25519, P-256)</span>

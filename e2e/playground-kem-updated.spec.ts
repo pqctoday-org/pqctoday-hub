@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-test.describe('Playground KEM Operations - Updated Flow', () => {
+test.describe('ML-KEM Playground', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/playground')
     // Navigate to KEM tab

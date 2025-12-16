@@ -5,3 +5,5 @@ package-lock.json
 test-results.json
 test-results-clean.json
 public/wasm/openssl.js
+openssl-3.6.0-build
+public/wasm-new

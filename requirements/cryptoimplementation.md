@@ -106,7 +106,7 @@ This section maps the libraries currently validated in the web application to th
 | **Solana / HD Wallet** | **@scure/bip39**   | Mnemonic Generation             | N/A (Entropy -> Phrase)         |
 |                        | **@scure/bip32**   | HD Key Derivation               | Hierarchical Deterministic      |
 |                        | **@noble/curves**  | Key Gen, Sign                   | Ed25519 (Solana), secp256k1     |
-| **PQC Playground**     | **mlkem-wasm**     | Key Encapsulation (KEM)         | ML-KEM-768, ML-KEM-1024 (Kyber) |
+| **PQC Playground**     | **OpenSSL WASM**   | Key Encapsulation (KEM)         | ML-KEM-768, ML-KEM-1024 (Kyber) |
 | **PQC Playground**     | **OpenSSL WASM**   | Symmetric Encryption            | AES-256-CBC                     |
 
 #### Library Selection Guide
@@ -114,7 +114,7 @@ This section maps the libraries currently validated in the web application to th
 1.  **Core PKI & Legacy Support**: Use **OpenSSL WASM**. It mimics the CLI environment, making it perfect for educational flows showing "real" commands.
 2.  **Modern Elliptic Curves (JS-native)**: Use **@noble/curves**. It is lightweight, tree-shakeable, and faster for pure JS implementations of Ed25519 or secp256k1 when CLI demonstration isn't needed.
 3.  **Hashing**: Use **@noble/hashes**. Supports all standard algorithms (SHA2, SHA3, RIPEMD, BLAKE) with a consistent API.
-4.  **Post-Quantum**: Use **mlkem-wasm** (or `liboqs` wrapper if available). Implementation **MUST** align with FIPS 203 standards.
+4.  **Post-Quantum**: Use **OpenSSL WASM**. Implementation aligns with FIPS 203 standards via the OQS provider.
 5.  **Wallets / Mnemonics**: Use **@scure/bip39** and **@scure/bip32** for standard compliant wallet creation.
 
 ### 7. Common Pitfalls, Known Issues & Traps

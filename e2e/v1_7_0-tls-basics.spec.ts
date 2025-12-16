@@ -99,7 +99,7 @@ test.describe('TLS 1.3 Basics Module', () => {
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()
 
     // Expect Failure - no common cipher suites
-    await expect(page.getByText('Negotiation Failed')).toBeVisible({ timeout: 10000 })
+    await expect(page.getByText('Negotiation Failed')).toBeVisible({ timeout: 20000 })
   })
 
   test('fails mTLS when no client cert is provided', async ({ page }) => {

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { initGA, logPageView, logEvent } from './analytics'
 import ReactGA from 'react-ga4'
 
@@ -16,13 +16,35 @@ const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
 describe('analytics', () => {
+  const originalLocation = window.location
+
   beforeEach(() => {
     vi.clearAllMocks()
     vi.stubEnv('VITE_GA_MEASUREMENT_ID', 'test-measurement-id')
+
+    // Default to production-like environment for existing tests
+    Object.defineProperty(window, 'location', {
+      value: {
+        ...originalLocation,
+        hostname: 'example.com',
+        pathname: '/test',
+        search: '',
+      },
+      writable: true,
+      configurable: true,
+    })
+  })
+
+  afterEach(() => {
+    Object.defineProperty(window, 'location', {
+      value: originalLocation,
+      writable: true,
+      configurable: true,
+    })
   })
 
   describe('initGA', () => {
-    it('initializes Google Analytics when called', () => {
+    it('initializes Google Analytics when NOT on localhost', () => {
       initGA()
 
       // Should either initialize or warn depending on environment
@@ -31,6 +53,33 @@ describe('analytics', () => {
       const wasWarned = consoleWarnSpy.mock.calls.length > 0
 
       expect(wasInitialized || wasWarned).toBe(true)
+    })
+
+    it('does NOT initialize Google Analytics when on localhost', () => {
+      Object.defineProperty(window, 'location', {
+        value: {
+          ...window.location,
+          hostname: 'localhost',
+        },
+      })
+
+      initGA()
+
+      expect(ReactGA.initialize).not.toHaveBeenCalled()
+      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Localhost detected'))
+    })
+
+    it('does NOT initialize Google Analytics when on 127.0.0.1', () => {
+      Object.defineProperty(window, 'location', {
+        value: {
+          ...window.location,
+          hostname: '127.0.0.1',
+        },
+      })
+
+      initGA()
+
+      expect(ReactGA.initialize).not.toHaveBeenCalled()
     })
 
     it('logs appropriate message when initializing', () => {
@@ -59,10 +108,23 @@ describe('analytics', () => {
       }
     })
 
+    it('does NOT log page view when on localhost', () => {
+      Object.defineProperty(window, 'location', {
+        value: {
+          ...window.location,
+          hostname: 'localhost',
+        },
+      })
+
+      logPageView('/test-page')
+      expect(ReactGA.send).not.toHaveBeenCalled()
+    })
+
     it('logs page view with current window location when no path provided', () => {
       // Mock window.location
       Object.defineProperty(window, 'location', {
         value: {
+          hostname: 'example.com',
           pathname: '/current-page',
           search: '?query=test',
         },
@@ -117,6 +179,18 @@ describe('analytics', () => {
           label: 'Submit Form',
         })
       }
+    })
+
+    it('does NOT log event when on localhost', () => {
+      Object.defineProperty(window, 'location', {
+        value: {
+          ...window.location,
+          hostname: 'localhost',
+        },
+      })
+
+      logEvent('Button', 'Click')
+      expect(ReactGA.event).not.toHaveBeenCalled()
     })
 
     it('logs event without label', () => {

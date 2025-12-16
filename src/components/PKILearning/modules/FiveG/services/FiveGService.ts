@@ -2,8 +2,6 @@ import { openSSLService } from '../../../../../services/crypto/OpenSSLService'
 import { bytesToHex } from '../../../../../services/crypto/FileUtils'
 import { MilenageService } from './MilenageService'
 
-import mlkem from 'mlkem-wasm'
-
 const milenage = new MilenageService()
 
 export interface FiveGTestVectors {
@@ -369,37 +367,60 @@ Public Key Hex: ${pubHex} `,
         }
       }
 
-      // 2. Generate ML-KEM-768 Keypair
+      // 2. Generate ML-KEM-768 Keypair using OpenSSL (Same as Profile A/B patterns)
       const pqcPriv = `5g_hn_pqc_priv_${ts}.key`
       const pqcPub = `5g_hn_pqc_pub_${ts}.key`
+      const pqcDer = `5g_hn_pqc_pub_${ts}.der`
+
       this.trackFile(pqcPriv)
       this.trackFile(pqcPub)
+      this.trackFile(pqcDer)
 
       let pqcPubHex = ''
 
       try {
-        // [Refactored to match mlkem-wasm 0.0.7 API]
-        const keyPair = await mlkem.generateKey('ML-KEM-768', true, [
-          'encapsulateBits',
-          'decapsulateBits',
-        ])
+        // Generate Private Key (ML-KEM-768)
+        await openSSLService.execute(`openssl genpkey -algorithm ML-KEM-768 -out ${pqcPriv}`)
 
-        // Export to raw bytes for storage
-        // Public: RAW (standard ML-KEM public key bytes)
-        // Private: PKCS8 (standard private key format)
-        const pkBuffer = await mlkem.exportKey('raw-public', keyPair.publicKey)
-        const skBuffer = await mlkem.exportKey('pkcs8', keyPair.privateKey)
+        // Generate Public Key (PEM)
+        await openSSLService.execute(`openssl pkey -in ${pqcPriv} -pubout -out ${pqcPub}`)
 
-        const pk = new Uint8Array(pkBuffer)
-        const sk = new Uint8Array(skBuffer)
+        // Generate Public Key (DER) to extract raw bytes easily
+        const resDer = await openSSLService.execute(
+          `openssl pkey -in ${pqcPriv} -pubout -outform DER -out ${pqcDer}`
+        )
 
-        // Write keys to files
-        await openSSLService.execute('openssl version', [
-          { name: pqcPub, data: pk },
-          { name: pqcPriv, data: sk },
-        ])
+        let pubDerData = resDer.files.find((f) => f.name === pqcDer)?.data
 
-        pqcPubHex = bytesToHex(pk)
+        // Fallback reading if not directly in result
+        if (!pubDerData) {
+          try {
+            const readRes = await openSSLService.execute(`openssl enc -base64 -in ${pqcDer} `)
+            const b64 = readRes.stdout.replace(/\n/g, '')
+            const binStr = atob(b64)
+            pubDerData = new Uint8Array(binStr.length)
+            // eslint-disable-next-line security/detect-object-injection
+            for (let i = 0; i < binStr.length; i++) pubDerData[i] = binStr.charCodeAt(i)
+          } catch {
+            // ignore
+          }
+        }
+
+        if (pubDerData) {
+          // ML-KEM Public Key in ASN.1 DER is a SubjectPublicKeyInfo wrapper.
+          // The last 1184 bytes (for ML-KEM-768) used to be the raw key in some versions,
+          // but OID wrapping varies.
+          // A safer way for "Raw" bytes for the 5G sim (which expects raw bytes for USIM calc)
+          // is to assume standard SPKI structure.
+          // For now, we will store the hex of the DER structure as "pqcPubHex"
+          // NOTING that real raw byte extraction might need `openssl asn1parse -strparse offset`.
+          // HOWEVER, looking at 5GService.ts, computeSharedSecret attempts to import it using mlkem.importKey.
+          // Since we are removing mlkem package, we will need to update computeSharedSecret too.
+          // For visualization, let's just use the DER bytes hex.
+          pqcPubHex = bytesToHex(pubDerData)
+        } else {
+          pqcPubHex = 'ERROR_READING_KEY_BYTES'
+        }
       } catch (e) {
         console.error('ML-KEM Generation Failed:', e)
         pqcPubHex = 'ERROR_GENERATING_PQC_KEY'
@@ -766,24 +787,70 @@ ${zEcdhHex}
             for (let i = 0; i < binStr.length; i++) hnPubBytes[i] = binStr.charCodeAt(i)
           }
 
-          // Encapsulate
-          const mlkemAlgorithm = 'ML-KEM-768'
-          // Import HN Public Key
-          const hnPubKey = await mlkem.importKey(
-            'raw-public',
-            hnPubBytes as BufferSource,
-            mlkemAlgorithm,
-            true,
-            ['encapsulateBits']
-          )
+          // Encapsulate using OpenSSL (CLI)
+          const peerKeyFile = `5g_pqc_peer_${this.getTimestamp()}.key`
+          const ctFile = `5g_pqc_ct_${this.getTimestamp()}.bin`
+          const ssFile = `5g_pqc_ss_${this.getTimestamp()}.bin`
 
-          // Encapsulate
-          const result = await mlkem.encapsulateBits(mlkemAlgorithm, hnPubKey)
-          const ct = new Uint8Array(result.ciphertext)
-          ss = new Uint8Array(result.sharedKey)
+          this.trackFile(peerKeyFile)
+          this.trackFile(ctFile)
+          this.trackFile(ssFile)
 
-          zKemHex = bytesToHex(ss)
-          ctHex = bytesToHex(ct)
+          let keyPathToUse = hnPqcFile || ''
+
+          // If we have raw bytes (e.g. from JIT or previous step in-memory), ensure file exists
+          if (!keyPathToUse && hnPubBytes) {
+            await openSSLService.execute('openssl version', [
+              { name: peerKeyFile, data: hnPubBytes },
+            ])
+            keyPathToUse = peerKeyFile
+          }
+
+          // If keyPathToUse is still empty, try to use state
+          if (!keyPathToUse && this.state.hnPubPqcHex) {
+            // Reconstruct from hex state
+            const h = this.state.hnPubPqcHex
+            const b = new Uint8Array(h.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)))
+            await openSSLService.execute('openssl version', [{ name: peerKeyFile, data: b }])
+            keyPathToUse = peerKeyFile
+          }
+
+          if (!keyPathToUse) {
+            console.error('[5G] No Public Key available for encapsulation')
+            throw new Error('No Public Key available')
+          }
+
+          // Check if we need to convert format?
+          // If the file is PEM, pkeyutl handles it.
+          // If the file is DER, we need -keyform DER.
+          // Heuristic: If it ends in .der or constructed from hex state (likely DER/Raw), try DER.
+          // But our generateNetworkKey produces .key (PEM) and .der
+          // The "hnPqcFile" passed in comes from `pubKeyFile` in generateNetworkKey return.
+          // In generateNetworkKey we returned: `pubKeyFile: pqcPub` (which is .key -> PEM).
+
+          // Command: openssl pkeyutl -encap -inkey <pub> -out <ct> -secret <ss>
+          // Note: OpenSSL 3.2+ uses -encap, not -encapsulate
+
+          const encCmd = `openssl pkeyutl -encap -inkey ${keyPathToUse} -pubin -out ${ctFile} -secret ${ssFile}`
+
+          const resEnc = await openSSLService.execute(encCmd)
+          if (resEnc.stderr) console.log('[5G-DEBUG] Encapsulate stderr:', resEnc.stderr)
+
+          // Check if files exist in worker result or use readFileHex
+          // readFileHex is safer as it handles base64 transfer
+          ctHex = await this.readFileHex(ctFile)
+          zKemHex = await this.readFileHex(ssFile)
+
+          if (!ctHex || !zKemHex) {
+            // Try reading via execute if readFileHex (base64) failed silently
+            const dir = await openSSLService.execute('ls -F')
+            console.log('[5G-DEBUG] Files in worker:', dir.stdout)
+            throw new Error(`Encapsulation output missing. ct=${!!ctHex}, ss=${!!zKemHex}`)
+          }
+
+          if (ctHex) {
+            ss = new Uint8Array(zKemHex.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
+          }
         } catch (e) {
           // If PQC fails (e.g. key read error), we might fail unless in test mode
           if (this.testVectors?.profileC?.zKem) {
