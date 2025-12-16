@@ -3,12 +3,12 @@ import { test, expect } from '@playwright/test'
 test.describe('Library Feature', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('button', { name: 'Library' }).click()
+    await page.getByRole('button', { name: 'Library' }).first().click()
   })
 
   test('should navigate to library page and show category dropdown', async ({ page }) => {
     // Check for category dropdown (matches "Category" or "Category: All")
-    const dropdown = page.getByRole('button', { name: /Category/i })
+    const dropdown = page.getByRole('button', { name: /Category/i }).first()
     await expect(dropdown).toBeVisible()
     await expect(dropdown).toHaveText(/Category/i)
   })

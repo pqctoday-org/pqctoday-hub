@@ -48,6 +48,11 @@ const ComplianceView = lazy(() =>
     default: module.ComplianceView,
   }))
 )
+const ChangelogView = lazy(() =>
+  import('./components/Changelog/ChangelogView').then((module) => ({
+    default: module.ChangelogView,
+  }))
+)
 
 // Helper component to log page views on route change
 function AnalyticsTracker() {
@@ -87,6 +92,7 @@ function App() {
             <Route path="/threats" element={<ThreatsDashboard />} />
             <Route path="/leaders" element={<LeadersGrid />} />
             <Route path="/compliance" element={<ComplianceView />} />
+            <Route path="/changelog" element={<ChangelogView />} />
             <Route path="/about" element={<AboutView />} />
             {/* Fallback route */}
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Algorithms View', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
-    const algoBtn = page.getByRole('button', { name: 'Algorithms' })
+    const algoBtn = page.getByRole('button', { name: 'Algorithms' }).first()
     await expect(algoBtn).toBeVisible()
     await algoBtn.click({ force: true })
     // Wait for content to load by checking for the view's heading

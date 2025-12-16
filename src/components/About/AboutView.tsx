@@ -52,7 +52,7 @@ export function AboutView() {
     Compliance: ['NIST FIPS', 'ANSSI', 'Common Criteria', 'Visualization'],
     Threats: ['Quantum Threat Timeline', 'Industry Impact', 'Risk Assessment'],
     Leaders: ['Academic', 'Industry', 'Government', 'Profiles'],
-    Learn: ['PKI Workshop', 'Digital Assets', '5G Security', 'EUDI Wallet'],
+    Learn: ['PKI Workshop', 'Digital Assets', '5G Security', 'EUDI Wallet', 'TLS Basics'],
   }
 
   const handleChangeRequestSubmit = (e: React.FormEvent) => {
@@ -163,6 +163,12 @@ ${kudos.message}
                 className="text-primary hover:underline"
               >
                 Eric Amador
+              </a>
+            </p>
+            <p className="text-muted-foreground mt-4">
+              See the latest updates:{' '}
+              <a href="/changelog" className="text-primary hover:underline">
+                View Changelog
               </a>
             </p>
           </div>
@@ -463,7 +469,7 @@ ${kudos.message}
               <ul className="space-y-2">
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React</span>
-                  <span className="text-xs text-muted-foreground/60">v19.2.0</span>
+                  <span className="text-xs text-muted-foreground/60">v19.2.1</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Framer Motion</span>

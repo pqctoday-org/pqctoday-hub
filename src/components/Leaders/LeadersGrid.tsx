@@ -6,6 +6,7 @@ import { logEvent } from '../../utils/analytics'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { CountryFlag } from '../common/CountryFlag'
 import { LeaderCard } from './LeaderCard'
+import { SourcesButton } from '../ui/SourcesButton'
 
 export const LeadersGrid = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>('All')
@@ -113,10 +114,13 @@ export const LeadersGrid = () => {
           Cryptography.
         </p>
         {leadersMetadata && (
-          <p className="hidden lg:block text-[10px] md:text-xs text-muted-foreground/60 mb-4 md:mb-8 font-mono">
-            Data Source: {leadersMetadata.filename} • Updated:{' '}
-            {leadersMetadata.lastUpdate.toLocaleDateString()}
-          </p>
+          <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 mb-4 md:mb-8 font-mono">
+            <p>
+              Data Source: {leadersMetadata.filename} • Updated:{' '}
+              {leadersMetadata.lastUpdate.toLocaleDateString()}
+            </p>
+            <SourcesButton viewType="Leaders" />
+          </div>
         )}
 
         {/* Filters Section */}

@@ -4,6 +4,7 @@ import type { LibraryItem } from '../../data/libraryData'
 import { LibraryTreeTable } from './LibraryTreeTable'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Search } from 'lucide-react'
+import { SourcesButton } from '../ui/SourcesButton'
 
 export const LibraryView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('All')
@@ -98,10 +99,13 @@ export const LibraryView: React.FC = () => {
           Explore the latest Post-Quantum Cryptography standards, drafts, and related documents.
         </p>
         {libraryMetadata && (
-          <p className="hidden lg:block text-[10px] md:text-xs text-muted-foreground/60 font-mono">
-            Data Source: {libraryMetadata.filename} • Updated:{' '}
-            {libraryMetadata.lastUpdate.toLocaleDateString()}
-          </p>
+          <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
+            <p>
+              Data Source: {libraryMetadata.filename} • Updated:{' '}
+              {libraryMetadata.lastUpdate.toLocaleDateString()}
+            </p>
+            <SourcesButton viewType="Library" />
+          </div>
         )}
       </div>
 
