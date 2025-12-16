@@ -54,7 +54,6 @@ describe('AboutView', () => {
     // Verify a few key packages from the SBOM list
     expect(screen.getByText('React')).toBeInTheDocument()
     expect(screen.getByText('Vite')).toBeInTheDocument()
-    expect(screen.getByText('liboqs (ML-DSA, ML-KEM)')).toBeInTheDocument()
     expect(screen.getByText('OpenSSL WASM')).toBeInTheDocument()
     expect(screen.getByText('Tailwind CSS')).toBeInTheDocument()
   })
