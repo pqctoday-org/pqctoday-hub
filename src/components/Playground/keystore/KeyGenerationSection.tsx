@@ -62,19 +62,19 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                     onKeySizeChange(val)
                   }
                 } else if (
-                  val.startsWith('HQC') ||
-                  val.startsWith('FrodoKEM') ||
-                  val.startsWith('Classic-McEliece')
+                  val.startsWith('HQC-') ||
+                  val.startsWith('FrodoKEM-') ||
+                  val.startsWith('Classic-McEliece-')
                 ) {
-                  // New KEM Algorithms: Set the full name as the algorithm, KeySize can be ignored or duplicate
+                  // HQC, FrodoKEM, or Classic McEliece - pass the full algorithm name
                   if (onUnifiedChange) {
-                    onUnifiedChange(val, val)
+                    onUnifiedChange(val, val) // algorithm IS the keySize for these
                   } else {
                     onAlgorithmChange(val)
                     onKeySizeChange(val)
                   }
                 } else {
-                  // ML-DSA
+                  // ML-DSA (44, 65, 87)
                   if (onUnifiedChange) {
                     onUnifiedChange('ML-DSA', val)
                   } else {

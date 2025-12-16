@@ -687,7 +687,7 @@ Test OpenSSL implementation against other TLS 1.3 + PQC libraries:
 ### 9.3 Implementation References
 
 - **OQS-OpenSSL:** https://github.com/open-quantum-safe/openssl
-- **liboqs:** https://github.com/open-quantum-safe/liboqs
+
 - **Cloudflare PQC Blog:** Post-Quantum TLS implementation experiences
 
 ---
@@ -892,10 +892,10 @@ The parallel column layout enables users to:
 - Algorithms: X25519, P-256
 - Uses `crypto.subtle.generateKey()` and `crypto.subtle.deriveBits()`
 
-**PQC KEM (WASM via liboqs):**
+**PQC KEM (WASM via OpenSSL OQS Provider):**
 
 - Algorithms: ML-KEM-512, ML-KEM-768, ML-KEM-1024
-- Uses `MLKEM.encapsulateBits()` and `MLKEM.decapsulateBits()`
+- Uses `MLKEM.encapsulateBits()` and `MLKEM.decapsulateBits()` (Adapter pattern wrapping OpenSSL)
 
 **Hybrid KEM:**
 

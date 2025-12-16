@@ -14,7 +14,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - Visual comparison of generated vs recovered secrets
   - Key Store with sortable/resizable columns
   - ACVP Testing against NIST test vectors
-- **OpenSSL Studio**: Browser-based OpenSSL v3.5.4 workbench powered by WebAssembly
+- **OpenSSL Studio**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly
   - **12 Operation Types**: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12
   - **Full PQC Support**: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 variants)
   - **Classical Algorithms**: RSA, EC (P-256/384/521, secp256k1), Ed25519, X25519, Ed448, X448
@@ -64,7 +64,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
 
 - **Frontend**: React 19 + TypeScript + Vite 7
 - **Cryptography**:
-  - OpenSSL WASM v3.5.4 (with PQC support)
+  - OpenSSL WASM v3.6.0 (with PQC support)
   - `@openforge-sh/liboqs` for NIST PQC algorithms
   - Web Crypto API for classical algorithms (X25519, P-256, ECDH)
   - `@noble/curves` and `@noble/hashes` for blockchain operations
@@ -175,7 +175,7 @@ The application is structured into several key components:
 │   │   ├── Leaders/         # PQC transformation leaders profiles
 │   │   ├── Layout/          # Main layout and navigation components
 │   │   ├── Library/         # PQC standards library
-│   │   ├── OpenSSLStudio/   # OpenSSL v3.5.4 workbench (WASM)
+│   │   ├── OpenSSL Studio/   # OpenSSL v3.6.0 workbench (WASM)
 │   │   ├── PKILearning/     # Learning platform with 6 modules
 │   │   │   ├── modules/
 │   │   │   │   ├── Module1-Introduction/  # Getting started guide

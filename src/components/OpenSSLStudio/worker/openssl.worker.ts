@@ -108,7 +108,10 @@ var loadOpenSSLScript = async (
         } catch (e: any) {
           // In Module Workers, importScripts throws. This is expected.
           // We only warn if it's a different error.
-          if (!e.message?.includes('Module scripts')) {
+          if (
+            !e.message?.includes('Module scripts') &&
+            !e.message?.includes('cannot be used if worker type is "module"')
+          ) {
             console.warn('importScripts failed, falling back to fetch+eval:', e)
           } else {
             // Debug log only

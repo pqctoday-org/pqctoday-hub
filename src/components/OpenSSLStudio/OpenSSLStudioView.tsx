@@ -34,7 +34,7 @@ export const OpenSSLStudioView = () => {
           OpenSSL Studio
         </h2>
         <p className="text-muted-foreground">
-          Interactive OpenSSL v3.5.4 environment running entirely in your browser via WebAssembly.
+          Interactive OpenSSL v3.6.0 environment running entirely in your browser via WebAssembly.
         </p>
       </div>
 

@@ -331,6 +331,11 @@ size_t trace_callback(const char *buffer, size_t count, int category, int cmd,
       event_type = "crypto_trace_state";
     } else if (category == OSSL_TRACE_CATEGORY_INIT) {
       event_type = "crypto_trace_init";
+    } else if (category == OSSL_TRACE_CATEGORY_PROVIDER) {
+      event_type = "crypto_trace_provider";
+    } else if (category == OSSL_TRACE_CATEGORY_QUERY ||
+               category == OSSL_TRACE_CATEGORY_STORE) {
+      event_type = "crypto_trace_evp";
     } else if (category == OSSL_TRACE_CATEGORY_DECODER ||
                category == OSSL_TRACE_CATEGORY_ENCODER) {
       event_type = "crypto_trace_coder";
@@ -519,6 +524,9 @@ char *execute_tls_simulation(const char *client_conf_path,
   // Too verbose
   OSSL_trace_set_callback(OSSL_TRACE_CATEGORY_DECODER, trace_callback, NULL);
   OSSL_trace_set_callback(OSSL_TRACE_CATEGORY_ENCODER, trace_callback, NULL);
+  OSSL_trace_set_callback(OSSL_TRACE_CATEGORY_PROVIDER, trace_callback, NULL);
+  OSSL_trace_set_callback(OSSL_TRACE_CATEGORY_QUERY, trace_callback, NULL);
+  OSSL_trace_set_callback(OSSL_TRACE_CATEGORY_STORE, trace_callback, NULL);
   OSSL_trace_set_callback(OSSL_TRACE_CATEGORY_X509V3_POLICY, trace_callback,
                           NULL);
 

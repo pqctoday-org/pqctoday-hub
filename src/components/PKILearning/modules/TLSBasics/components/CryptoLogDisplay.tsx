@@ -288,6 +288,8 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
     if (type === 'handshake_state' || type === 'handshake_start' || type === 'handshake_done')
       return <Zap size={14} className="text-primary" />
     if (type === 'alert') return <AlertTriangle size={14} className="text-destructive" />
+    if (type.includes('provider')) return <Settings size={14} className="text-cyan-400" />
+    if (type.includes('evp')) return <Zap size={14} className="text-indigo-400" />
     if (type.includes('data')) return <FileText size={14} className="text-primary" />
     if (type.includes('state')) return <Shield size={14} className="text-success" />
     return <Settings size={14} className="text-muted-foreground" />
@@ -341,10 +343,22 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
           SECRET
         </span>
       )
+    if (type.includes('crypto_trace_provider'))
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-bold">
+          PROVIDER CONF
+        </span>
+      )
+    if (type.includes('crypto_trace_evp'))
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-bold">
+          EVP OP
+        </span>
+      )
     if (type.includes('crypto_trace_coder'))
       return (
         <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 font-bold">
-          PROVIDER
+          CODEC
         </span>
       )
     if (type.includes('crypto_trace_init'))

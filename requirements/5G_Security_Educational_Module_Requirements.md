@@ -1284,7 +1284,7 @@ The module ensures educational accuracy by using **real cryptographic libraries*
 | :--------------- | :--------------- | :-------- | :------------------------------ |
 | **Network Side** | **OpenSSL WASM** | **3.5.4** | Validation Authority (SIDF/HSM) |
 | **USIM Side**    | **OpenSSL WASM** | **3.5.4** | Profile A/B Operations          |
-| **PQC USIM**     | **mlkem-wasm**   | Latest    | Profile C (Kyber) Operations    |
+| **PQC USIM**     | **OpenSSL WASM** | **3.5.4** | Profile C (Kyber) Operations    |
 
 ### 10.2 Automated Audit & Verification
 
@@ -1294,8 +1294,8 @@ To guarantee that the USIM logic produces standard-compliant outputs, an automat
 
 1. **Profile A (Curve25519)**: Verifies USIM ECDH shared secret matches OpenSSL `pkeyutl -derive`.
 2. **Profile B (P-256)**: Verifies USIM ECDH shared secret matches OpenSSL `pkeyutl -derive`.
-3. **Profile C (Hybrid)**: Verifies that the `mlkem-wasm` ciphertext can be decapsulated by OpenSSL 3.5.4 and that the Hybrid Combiner (SHA256(ECC||PQC)) is correct.
-4. **Profile C (Pure)**: Verifies raw ML-KEM encapsulation/decapsulation interoperability.
+3. **Profile C (Hybrid)**: Verifies that the PQC ciphertext can be decapsulated by OpenSSL 3.5.4 and that the Hybrid Combiner (SHA256(ECC||PQC)) is correct.
+4. **Profile C (Pure)**: Verifies raw ML-KEM encapsulation/decapsulation interoperability using OpenSSL WASM.
 
 ---
 

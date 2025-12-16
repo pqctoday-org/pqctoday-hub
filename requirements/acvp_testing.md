@@ -104,7 +104,7 @@ Integrate Automated Cryptographic Validation Protocol (ACVP) testing capabilitie
 - **Implementation**:
   - ACVP Testing tab integrated into Interactive Playground.
   - Real ACVP test vectors (ML-DSA FIPS 204, ML-KEM FIPS 203) imported.
-  - **ML-KEM**: Switched to `@openforge-sh/liboqs` to support all variants (512, 768, 1024) and standard key formats.
-  - **ML-DSA**: Uses `@openforge-sh/liboqs` for all variants (44, 65, 87).
+  - **ML-KEM**: Uses **OpenSSL 3.5.4 WASM** (Adapter Pattern) to support all variants (512, 768, 1024).
+  - **ML-DSA**: Uses **OpenSSL 3.5.4 WASM** (Adapter Pattern) for all variants (44, 65, 87).
   - Automated validation suite implemented and **Verified** (All tests pass).
   - Interactive Playground updated to support ML-KEM-512 and ML-KEM-1024.

@@ -95,18 +95,23 @@ test.describe('Production Smoke Tests', () => {
   })
 
   test('Routing Check', async ({ page, browserName }) => {
-    // Test direct navigation to a "tab" if possible, or just switching tabs
-    // Since it's a SPA, we verify the URL updates or UI changes
+    // Test navigation between tabs in the SPA
+    // Nav buttons have aria-label pattern: "{label} view" (e.g., "Timeline view")
 
-    await page.getByRole('button', { name: /Timeline/ }).click()
-    // Wait for transition
-    // WebKit in CI struggles with this specific render (Timeline text), skipping if WebKit
+    // Navigate to Timeline
+    await page.getByRole('button', { name: /Timeline view/i }).click()
+
+    // WebKit in CI struggles with this specific render, skipping if WebKit
     if (browserName === 'webkit') return
 
     await page.waitForTimeout(1000)
     await expect(page.getByText('Global Migration Timeline')).toBeVisible({ timeout: 30000 })
 
-    await page.getByRole('button', { name: /Threats/ }).click()
-    await expect(page.getByRole('heading', { name: 'Quantum Threats' })).toBeVisible()
+    // Navigate to Threats
+    await page.getByRole('button', { name: /Threats view/i }).click()
+    await page.waitForTimeout(1000)
+    await expect(page.getByRole('heading', { name: 'Quantum Threats' })).toBeVisible({
+      timeout: 30000,
+    })
   })
 })

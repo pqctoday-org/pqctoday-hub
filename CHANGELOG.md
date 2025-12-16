@@ -2,7 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.8.2] - 2025-12-15
+## [1.8.3] - 2025-12-16
+
+### Added
+
+- **OpenSSL 3.6.0 Upgrade**:
+  - Updated WASM binaries to OpenSSL 3.6.0 (4.12MB)
+  - Native ML-KEM and ML-DSA support in OpenSSL
+  - Enhanced PQC algorithm compatibility
+  - OpenSSL documentation links in Studio command preview
+
+- **Project Organization**:
+  - Created `certs/` directory structure for TLS certificates
+  - Added `certs/README.md` documentation
+  - Organized certificates into `pqc/` and `rsa/` subdirectories
+
+### Changed
+
+- **Analytics**:
+  - Improved localhost detection to prevent E2E test data from skewing production analytics
+  - Enhanced analytics filtering logic
+
+- **TLS Module**:
+  - Regenerated all default certificates using OpenSSL 3.6.0
+  - Updated ML-DSA certificate chains
+  - Enhanced crypto operation logging
+
+- **Playground**:
+  - Improved WASM instance management
+  - Better error handling for key generation
+  - Refactored ML-DSA and ML-KEM WASM integration
+
+- **5G Module**:
+  - Fixed state propagation issues
+  - Improved file data handling between steps
+
+### Fixed
+
+- Race conditions in KEM playground E2E tests
+- WASM caching issues in liboqs modules
+- TypeScript errors in 5G service
+- E2E test stability improvements across multiple modules
 
 ### Added
 

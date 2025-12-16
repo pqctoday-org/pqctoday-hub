@@ -7,8 +7,11 @@ import * as MLKEM from '../../wasm/liboqs_kem'
 import * as MLDSA from '../../wasm/liboqs_dsa'
 
 export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Cleanup WASM instances and worker on unmount
+  // Pre-load OpenSSL and Cleanup on unmount
   useEffect(() => {
+    // Start initialization immediately
+    openSSLService.init().catch(console.error)
+
     return () => {
       // Terminate OpenSSL worker to free resources
       openSSLService.terminate()
