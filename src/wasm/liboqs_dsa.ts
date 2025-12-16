@@ -9,7 +9,7 @@ export const load = async () => {
   return true
 }
 
-const readFileBytes = async (filename: string): Promise<Uint8Array> => {
+const _readFileBytes = async (filename: string): Promise<Uint8Array> => {
   try {
     const readRes = await openSSLService.execute(`openssl base64 -in ${filename}`)
     if (readRes.stdout) {
@@ -42,8 +42,6 @@ export const generateKey = async (
     const id = Date.now().toString()
     const privName = `mldsa_priv_${id}.key`
     const pubName = `mldsa_pub_${id}.key`
-    const privDer = `mldsa_priv_${id}.der`
-    const pubDer = `mldsa_pub_${id}.der`
 
     // Generate keys
     const genRes = await openSSLService.execute(
@@ -95,7 +93,7 @@ export const generateKey = async (
 export const sign = async (
   message: Uint8Array,
   privateKey: Uint8Array,
-  algorithm?: string
+  _algorithm?: string
 ): Promise<Uint8Array> => {
   try {
     const id = Date.now().toString()
@@ -132,7 +130,7 @@ export const verify = async (
   signature: Uint8Array,
   message: Uint8Array,
   publicKey: Uint8Array,
-  algorithm?: string
+  _algorithm?: string
 ): Promise<boolean> => {
   try {
     const id = Date.now().toString()

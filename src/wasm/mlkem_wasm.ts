@@ -29,9 +29,7 @@ export const generateKey = async (params: any, _exportPublic = true, _ops?: stri
     const pubDer = `adapter_pub_${id}.der`
 
     // Generate Private Key
-    const genRes = await openSSLService.execute(
-      `openssl genpkey -algorithm ${algo} -out ${privFile}`
-    )
+    await openSSLService.execute(`openssl genpkey -algorithm ${algo} -out ${privFile}`)
 
     // Extract Public Key
     await openSSLService.execute(`openssl pkey -in ${privFile} -pubout -out ${pubFile}`)
