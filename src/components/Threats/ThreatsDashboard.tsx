@@ -25,6 +25,7 @@ import { FilterDropdown } from '../common/FilterDropdown'
 import { logEvent } from '../../utils/analytics'
 import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
+import { SourcesButton } from '../ui/SourcesButton'
 
 type SortField = 'industry' | 'threatId' | 'criticality'
 type SortDirection = 'asc' | 'desc'
@@ -177,10 +178,13 @@ export const ThreatsDashboard: React.FC = () => {
           Detailed analysis of quantum threats across industries, including criticality, at-risk
           cryptography, and PQC replacements.
         </p>
-        <p className="hidden lg:block text-[10px] md:text-xs text-muted-foreground/60 font-mono">
-          Data Source: {threatsMetadata?.filename || 'quantum_threats_hsm_industries.csv'} •
-          Updated: {threatsMetadata?.lastUpdate?.toLocaleDateString() || 'Unknown'}
-        </p>
+        <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
+          <p>
+            Data Source: {threatsMetadata?.filename || 'quantum_threats_hsm_industries.csv'} •
+            Updated: {threatsMetadata?.lastUpdate?.toLocaleDateString() || 'Unknown'}
+          </p>
+          <SourcesButton viewType="Threats" />
+        </div>
       </div>
 
       {/* Filters Section */}

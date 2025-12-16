@@ -52,3 +52,13 @@ build_log.txt
 *-fail.png
 *-debug.png
 screenshot-*.png
+
+# Media Assets
+*.mov
+*.mp4
+
+# Audit Reports
+docs/audits/
+
+# Temp HTML
+pqc_today_clean_icons.html

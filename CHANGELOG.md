@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.1] - 2025-12-15
+
+### Added
+
+- **What's New Feature**:
+  - Dismissible toast notification on app load after version updates
+  - Dedicated `/changelog` route displaying `CHANGELOG.md` with styled markdown
+  - Interactive filter buttons for "New Features", "Enhancements", and "Bug Fixes"
+  - Version tracking using Zustand store persisted to `localStorage`
+  - "View Changelog" link added to About page
+  - Comprehensive E2E tests for changelog functionality
+
+- **Authoritative Sources Feature**:
+  - "Sources" button added to 5 data views: Timeline, Library, Threats, Leaders, Algorithms
+  - Modal displaying filtered authoritative sources grouped by type (Government, Academic, Industry Workgroup)
+  - 52 curated sources from `pqc_authoritative_sources_reference_12152025.csv`
+  - Timestamp-based CSV file selection for automatic latest version loading
+  - Region badges with color coding (Americas, EMEA, APAC, Global)
+  - Clickable source names linking to primary URLs
+  - View-specific filtering using CSV columns
+
+### Fixed
+
+- E2E test strict mode violations in `algorithms.spec.ts` and `library.spec.ts`
+- Changelog linting warnings (removed unnecessary eslint-disable comments)
+
 ## [1.8.0] - 2025-12-14
 
 ### Added

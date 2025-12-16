@@ -10,6 +10,7 @@ import { SimpleGanttChart } from './SimpleGanttChart'
 import { GanttLegend } from './GanttLegend'
 import { MobileTimelineList } from './MobileTimelineList'
 import { CountryFlag } from '../common/CountryFlag'
+import { SourcesButton } from '../ui/SourcesButton'
 
 export const TimelineView = () => {
   const [selectedCountry, setSelectedCountry] = useState<CountryData | null>(null)
@@ -69,10 +70,13 @@ export const TimelineView = () => {
           discovery to full migration and key regulatory milestones.
         </p>
         {timelineMetadata && (
-          <p className="hidden lg:flex justify-center text-[10px] md:text-xs text-muted-foreground font-mono">
-            Data Source: {timelineMetadata.filename} • Updated:{' '}
-            {timelineMetadata.lastUpdate.toLocaleDateString()}
-          </p>
+          <div className="hidden lg:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground font-mono">
+            <p>
+              Data Source: {timelineMetadata.filename} • Updated:{' '}
+              {timelineMetadata.lastUpdate.toLocaleDateString()}
+            </p>
+            <SourcesButton viewType="Timeline" />
+          </div>
         )}
       </div>
 

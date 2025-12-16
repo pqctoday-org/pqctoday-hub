@@ -14,6 +14,7 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { Button } from '../ui/button'
+import { WhatsNewToast } from '../ui/WhatsNewToast'
 
 export const MainLayout = () => {
   const location = useLocation()
@@ -114,6 +115,9 @@ export const MainLayout = () => {
       <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4">
         <p>© 2025 PQC Today. Data sourced from the public internet resources.</p>
       </footer>
+
+      {/* What's New Toast Notification */}
+      <WhatsNewToast />
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { ArrowRight, BarChart3 } from 'lucide-react'
 import clsx from 'clsx'
 import { loadPQCAlgorithmsData, loadedFileMetadata } from '../../data/pqcAlgorithmsData'
 import { loadAlgorithmsData, loadedTransitionMetadata } from '../../data/algorithmsData'
+import { SourcesButton } from '../ui/SourcesButton'
 
 type ViewType = 'transition' | 'detailed'
 
@@ -40,15 +41,18 @@ export function AlgorithmsView() {
         <p className="hidden lg:block text-lg text-muted-foreground max-w-3xl mx-auto">
           Migration from classical to post-quantum cryptographic algorithms
         </p>
-        <p className="hidden lg:block text-[10px] md:text-xs text-muted-foreground/60 font-mono mt-1 md:mt-2">
-          Data Sources: {transitionMetadata?.filename || 'algorithms_transitions.csv'},{' '}
-          {metadata?.filename || 'pqc_complete_algorithm_reference.csv'} • Updated:{' '}
-          {metadata?.date
-            ? metadata.date.toLocaleDateString()
-            : transitionMetadata?.date
-              ? transitionMetadata.date.toLocaleDateString()
-              : new Date().toLocaleDateString()}
-        </p>
+        <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono mt-1 md:mt-2">
+          <p>
+            Data Sources: {transitionMetadata?.filename || 'algorithms_transitions.csv'},{' '}
+            {metadata?.filename || 'pqc_complete_algorithm_reference.csv'} • Updated:{' '}
+            {metadata?.date
+              ? metadata.date.toLocaleDateString()
+              : transitionMetadata?.date
+                ? transitionMetadata.date.toLocaleDateString()
+                : new Date().toLocaleDateString()}
+          </p>
+          <SourcesButton viewType="Algorithms" />
+        </div>
       </motion.div>
 
       {/* View Tabs */}
