@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Settings, FileText, Check, Shield, Key, Import, Copy } from 'lucide-react'
+import { Settings, FileText, Check, Shield, Key, Import, Copy, Eye } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useTLSStore } from '../../../../store/tls-learning.store'
 import { FileSelectionModal } from './components/FileSelectionModal'
+import { CertificateInspector } from './components/CertificateInspector'
 import {
   DEFAULT_SERVER_CERT,
   DEFAULT_SERVER_KEY,
@@ -11,6 +12,7 @@ import {
   DEFAULT_CLIENT_CERT,
   DEFAULT_MLDSA_CLIENT_CERT,
 } from './utils/defaultCertificates'
+
 const CIPHER_SUITES = [
   'TLS_AES_256_GCM_SHA384',
   'TLS_AES_128_GCM_SHA256',
@@ -61,6 +63,7 @@ export const TLSServerPanel: React.FC = () => {
     type: 'cert',
   })
   const [messageView, setMessageView] = useState<'text' | 'hex'>('text')
+  const [inspectCert, setInspectCert] = useState<{ pem: string; title: string } | null>(null)
 
   const isConnected = sessionStatus === 'connected'
 
@@ -268,18 +271,34 @@ export const TLSServerPanel: React.FC = () => {
               <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 block flex items-center gap-2">
                 <Shield size={14} /> Server Identity
               </span>
-              <select
-                aria-label="Server Identity"
-                className="w-full bg-muted border border-border rounded-lg p-3 text-sm focus:outline-none focus:border-tertiary mb-2"
-                value={certSelection}
-                onChange={(e) => setCertSelection(e.target.value)}
-              >
-                {CERTS.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
+              <div className="flex gap-2">
+                <select
+                  aria-label="Server Identity"
+                  className="flex-grow bg-muted border border-border rounded-lg p-3 text-sm focus:outline-none focus:border-tertiary"
+                  value={certSelection}
+                  onChange={(e) => setCertSelection(e.target.value)}
+                >
+                  {CERTS.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+                {serverConfig.certificates.certPem && (
+                  <button
+                    onClick={() =>
+                      setInspectCert({
+                        pem: serverConfig.certificates.certPem!,
+                        title: 'Server Identity Certificate',
+                      })
+                    }
+                    className="p-3 bg-muted hover:bg-muted/80 rounded-lg border border-border text-tertiary transition-colors"
+                    title="Inspect Identity Certificate"
+                  >
+                    <Eye size={18} />
+                  </button>
+                )}
+              </div>
 
               {certSelection === 'custom' && (
                 <div className="space-y-3 mt-3 p-4 rounded-lg bg-muted border border-border">
@@ -358,12 +377,28 @@ export const TLSServerPanel: React.FC = () => {
                     <label htmlFor="server-ca-pem" className="flex items-center gap-1">
                       <Shield size={12} className="text-warning" /> Root CA (to verify client certs)
                     </label>
-                    <button
-                      onClick={() => setShowImport({ isOpen: true, type: 'ca' })}
-                      className="text-[10px] text-tertiary hover:text-tertiary/80 flex items-center gap-1 uppercase font-bold"
-                    >
-                      <Import size={10} /> Import from Studio
-                    </button>
+                    <div className="flex gap-2">
+                      {serverConfig.certificates.caPem && (
+                        <button
+                          onClick={() =>
+                            setInspectCert({
+                              pem: serverConfig.certificates.caPem!,
+                              title: 'Trusted Root CA (mTLS)',
+                            })
+                          }
+                          className="text-[10px] text-tertiary hover:text-tertiary/80 flex items-center gap-1 uppercase font-bold"
+                          title="Inspect Root CA"
+                        >
+                          <Eye size={10} className="mr-1" /> Inspect
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setShowImport({ isOpen: true, type: 'ca' })}
+                        className="text-[10px] text-tertiary hover:text-tertiary/80 flex items-center gap-1 uppercase font-bold"
+                      >
+                        <Import size={10} /> Import from Studio
+                      </button>
+                    </div>
                   </div>
                   <textarea
                     id="server-ca-pem"
@@ -475,9 +510,21 @@ export const TLSServerPanel: React.FC = () => {
           </div>
         ) : (
           <div className="h-full flex flex-col">
-            <div className="text-xs text-muted-foreground mb-2 flex justify-between">
+            <div className="text-xs text-muted-foreground mb-2 flex justify-between items-center">
               <label htmlFor="server-raw-config">/ssl/server.cnf</label>
-              <span className="text-warning">Experimental Editor</span>
+              <div className="flex items-center gap-2">
+                <span className="text-warning">Experimental Editor</span>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(serverConfig.rawConfig || '')
+                  }}
+                  className="px-2 py-0.5 text-[10px] bg-muted hover:bg-muted/80 border border-border rounded flex items-center gap-1 text-tertiary hover:text-tertiary/80 transition-colors"
+                  title="Copy Config"
+                >
+                  <Copy size={10} />
+                  Copy
+                </button>
+              </div>
             </div>
             <textarea
               id="server-raw-config"
@@ -510,6 +557,13 @@ export const TLSServerPanel: React.FC = () => {
             })
           }
         }}
+      />
+      {/* Inspector Modal */}
+      <CertificateInspector
+        isOpen={!!inspectCert}
+        onClose={() => setInspectCert(null)}
+        pem={inspectCert?.pem || ''}
+        title={inspectCert?.title || ''}
       />
     </div>
   )

@@ -32,8 +32,30 @@ test.describe('TLS 1.3 Basics Module', () => {
     // Verify the negotiated cipher is displayed (in banner) - look for the AES-256 cipher
     await expect(page.getByText('TLS_AES_256_GCM_SHA384').first()).toBeVisible()
 
-    // Verify logs show activity - just check for init events
+    // Verify protocol log shows init events
     await expect(page.getByText('init').first()).toBeVisible()
+
+    // Verify message_sent event is logged (new feature)
+    await expect(page.getByText('message_sent').first()).toBeVisible({ timeout: 15000 })
+
+    // Verify message_received event is logged (in Protocol Log by default)
+    await expect(page.getByText('Received:').first()).toBeVisible()
+
+    // Verify close_notify termination is logged
+    await expect(page.getByText('close_notify').first()).toBeVisible()
+
+    // 6. Verify Wire Data Tab (New Feature)
+    await page.getByRole('button', { name: 'Wire Data' }).first().click()
+    // Should see Raw Packets
+    await expect(page.getByText('RAW PACKET').first()).toBeVisible()
+    await expect(page.getByText('Handshake Record').first()).toBeVisible()
+    // Should see Encrypted Data
+    await expect(page.getByText('ENCRYPTED').first()).toBeVisible()
+
+    // 7. Verify Crypto Ops Tab
+    await page.getByRole('button', { name: 'Crypto Ops' }).first().click()
+    // Crypto Ops tab shows internal crypto operations - look for STATE badge or any crypto trace
+    await expect(page.getByText('STATE').first()).toBeVisible({ timeout: 10000 })
   })
 
   test('fails handshake on cipher suite mismatch', async ({ page }) => {
@@ -80,29 +102,33 @@ test.describe('TLS 1.3 Basics Module', () => {
     await expect(page.getByText('Negotiation Failed')).toBeVisible({ timeout: 10000 })
   })
 
-  test('fails and succeeds mTLS flow', async ({ page }) => {
+  test('fails mTLS when no client cert is provided', async ({ page }) => {
     // 1. Enable mTLS on Server
-    // Find "Request Client Certificate (mTLS)" checkbox
     await page.getByLabel('Request Client Certificate (mTLS)').check()
 
     // 2. Set Client Identity to "None"
-    // Select "None" from dropdown (assuming it exists based on implementation)
     const clientCertSelect = page.locator('select').first() // Client Panel is first
     await clientCertSelect.selectOption('none')
 
     // 3. Run Handshake -> Should Fail
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()
     await expect(page.getByText('Negotiation Failed')).toBeVisible({ timeout: 10000 })
-    // Error message might vary ("certificate required", "alert bad certificate", etc.)
-    // Just checking failure is enough for now, or check typical OpenSSL error
+  })
 
-    // 4. Set Client Identity to "Default" - Skipped due to self-signed CA constraints in strict auth mode
-    // await clientCertSelect.selectOption('default')
+  test('performs successful RSA mTLS handshake', async ({ page }) => {
+    // 1. Enable mTLS on Server
+    await page.getByLabel('Request Client Certificate (mTLS)').check()
 
-    // 5. Run Handshake -> Should Success
-    // await page.waitForTimeout(1000)
-    // await page.getByRole('button', { name: 'Start Handshake' }).click()
-    // await expect(page.getByText('Negotiation Successful')).toBeVisible({ timeout: 10000 })
+    // 2. Set Client Identity to "Default" (RSA)
+    const clientCertSelect = page.locator('select').first()
+    await clientCertSelect.selectOption('default')
+
+    // 3. Run Handshake -> Should Succeed
+    await page.getByRole('button', { name: 'Start Full Interaction' }).click()
+    await expect(page.getByText('Negotiation Successful')).toBeVisible({ timeout: 30000 })
+
+    // 4. Verify RSA CA in Comparison Table
+    await expect(page.getByRole('cell', { name: 'RSA' }).first()).toBeVisible()
   })
 
   test('fails handshake on group mismatch', async ({ page }) => {
@@ -149,5 +175,103 @@ test.describe('TLS 1.3 Basics Module', () => {
     } else {
       console.log('Sig label NOT found')
     }
+  })
+
+  test('performs successful ML-DSA mTLS handshake', async ({ page }) => {
+    // 1. Enable mTLS on Server
+    await page.getByLabel('Request Client Certificate (mTLS)').check()
+
+    // 2. Select ML-DSA for Client and Server
+    const selects = page.locator('select')
+    await selects.first().selectOption('mldsa') // Client
+    await selects.nth(1).selectOption('mldsa') // Server
+
+    // 3. Run Handshake
+    await page.getByRole('button', { name: 'Start Full Interaction' }).click()
+
+    // 4. Verify Success
+    await expect(page.getByText('Negotiation Successful')).toBeVisible({ timeout: 30000 })
+
+    // 5. Verify ML-DSA CA in Comparison Table
+    // We expect both Client CA and Server CA columns to show ML-DSA-44
+    // Just verifying that "ML-DSA-44" appears in the table cells is sufficient proof
+    // that the CA type logic and cert chaining is working.
+    await expect(page.getByRole('cell', { name: 'ML-DSA-44' }).first()).toBeVisible()
+  })
+  test('verifies certificate inspection', async ({ page }) => {
+    // 1. Click Inspect for Client Identity (Default RSA)
+    // The button is inside the "Client Identity (mTLS)" section.
+    // We can find it by the title "Inspect Identity Certificate" or the eye icon.
+    await page.getByTitle('Inspect Identity Certificate').first().click()
+
+    // 2. Expect Modal to Open
+    await expect(page.getByText('Client Identity Certificate')).toBeVisible()
+
+    // 3. Expect Certificate Content to be visible (not error)
+    // We check for "rsaEncryption" which confirms the certificate was parsed and displayed.
+    // The label "Public Key Algorithm" might vary in formatting or parsing structure, so we rely on the value.
+    await expect(page.getByText('rsaEncryption').first()).toBeVisible({ timeout: 10000 })
+
+    // 4. Ensure no error
+    await expect(page.getByText('Parsing Failed')).not.toBeVisible()
+
+    // Close modal
+    await page.getByRole('button').filter({ hasText: '' }).first().click() // Close button might be tricky, try locating by X icon or just escape
+    await page.keyboard.press('Escape')
+  })
+
+  test('syncs UI changes to raw config file', async ({ page }) => {
+    // 1. Toggle off a cipher suite in UI mode
+    const chachaBtn = page.getByRole('button', { name: 'TLS_CHACHA20_POLY1305_SHA256' }).first()
+    await chachaBtn.click()
+
+    // 2. Switch to Config File tab
+    await page.getByRole('button', { name: 'Config File' }).first().click()
+
+    // 3. Verify the raw config does NOT contain the disabled cipher
+    const textarea = page.locator('#client-raw-config')
+    const configText = await textarea.inputValue()
+    expect(configText).not.toContain('TLS_CHACHA20_POLY1305_SHA256')
+
+    // 4. Verify it still contains enabled ciphers
+    expect(configText).toContain('TLS_AES_256_GCM_SHA384')
+  })
+
+  test('syncs raw config edits back to UI', async ({ page }) => {
+    // 1. Switch to Config File tab
+    await page.getByRole('button', { name: 'Config File' }).first().click()
+
+    // 2. Edit the raw config to remove P-384 from Groups
+    const textarea = page.locator('#client-raw-config')
+    const currentValue = await textarea.inputValue()
+    const newValue = currentValue.replace(':P-384', '')
+    await textarea.fill(newValue)
+
+    // 3. Switch back to UI mode
+    await page.getByRole('button', { name: 'UI' }).first().click()
+
+    // 4. Verify P-384 is now unchecked (has bg-muted class, not active)
+    const p384Btn = page.getByRole('button', { name: 'P-384', exact: true }).first()
+    await expect(p384Btn).toHaveClass(/bg-muted/)
+  })
+
+  // Note: Clipboard test only runs on Chromium (Firefox/WebKit don't support grantPermissions for clipboard)
+  test('copy config button copies to clipboard', async ({ page, context, browserName }) => {
+    // Skip on browsers that don't support clipboard permissions
+    test.skip(browserName !== 'chromium', 'Clipboard permissions only supported in Chromium')
+
+    // Grant clipboard permissions
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+
+    // 1. Switch to Config File tab
+    await page.getByRole('button', { name: 'Config File' }).first().click()
+
+    // 2. Click Copy button
+    await page.getByRole('button', { name: 'Copy' }).first().click()
+
+    // 3. Verify clipboard contains config text
+    const clipboardText = await page.evaluate(() => navigator.clipboard.readText())
+    expect(clipboardText).toContain('Ciphersuites')
+    expect(clipboardText).toContain('TLS_AES_256_GCM_SHA384')
   })
 })

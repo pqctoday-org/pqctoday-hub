@@ -4,6 +4,7 @@ import { useTLSStore } from '../../../../store/tls-learning.store'
 import { TLSClientPanel } from './TLSClientPanel'
 import { TLSServerPanel } from './TLSServerPanel'
 import { TLSNegotiationResults } from './components/TLSNegotiationResults'
+import { TLSComparisonTable } from './components/TLSComparisonTable'
 import { openSSLService } from '../../../../services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from './utils/configGenerator'
 
@@ -12,6 +13,10 @@ import {
   DEFAULT_CLIENT_KEY,
   DEFAULT_SERVER_CERT,
   DEFAULT_SERVER_KEY,
+  DEFAULT_ROOT_CA,
+  DEFAULT_MLDSA_ROOT_CA,
+  DEFAULT_MLDSA_SERVER_CERT,
+  DEFAULT_MLDSA_CLIENT_CERT,
 } from './utils/defaultCertificates'
 
 export const TLSBasicsModule: React.FC = () => {
@@ -48,14 +53,14 @@ export const TLSBasicsModule: React.FC = () => {
         certificates: {
           keyPem: DEFAULT_SERVER_KEY,
           certPem: DEFAULT_SERVER_CERT,
-          caPem: DEFAULT_CLIENT_CERT, // Trust the client cert (for mTLS if enabled)
+          caPem: DEFAULT_ROOT_CA, // Trust certs signed by Root CA (starts with RSA)
         },
       })
       setClientConfig({
         certificates: {
           keyPem: DEFAULT_CLIENT_KEY,
           certPem: DEFAULT_CLIENT_CERT,
-          caPem: DEFAULT_SERVER_CERT, // Trust the server cert
+          caPem: DEFAULT_ROOT_CA, // Trust certs signed by Root CA
         },
       })
       console.log('Default certificates loaded.')
@@ -65,12 +70,54 @@ export const TLSBasicsModule: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // Intentionally run once on mount; store persistence handles re-entry
 
+  // Dynamic Trust Store Management
+  // Automatically switches the trusted Root CA based on the peer's certificate type
+  // This bypasses WASM limitations with concatenated PEM files
+  useEffect(() => {
+    // Ensure certificates are loaded before applying logic
+    // This prevents overwriting the store with stale/empty state during initialization
+    if (!serverConfig.certificates.certPem || !clientConfig.certificates.certPem) return
+
+    // 1. Client Trust -> Server
+    const isServerMldsa = serverConfig.certificates.certPem === DEFAULT_MLDSA_SERVER_CERT
+    const requiredClientCa = isServerMldsa ? DEFAULT_MLDSA_ROOT_CA : DEFAULT_ROOT_CA
+
+    if (clientConfig.certificates.caPem !== requiredClientCa) {
+      setClientConfig({
+        certificates: {
+          ...clientConfig.certificates,
+          caPem: requiredClientCa,
+        },
+      })
+    }
+
+    // 2. Server Trust -> Client (mTLS)
+    const isClientMldsa = clientConfig.certificates.certPem === DEFAULT_MLDSA_CLIENT_CERT
+    const requiredServerCa = isClientMldsa ? DEFAULT_MLDSA_ROOT_CA : DEFAULT_ROOT_CA
+
+    if (serverConfig.certificates.caPem !== requiredServerCa) {
+      setServerConfig({
+        certificates: {
+          ...serverConfig.certificates,
+          caPem: requiredServerCa,
+        },
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    serverConfig.certificates.certPem,
+    clientConfig.certificates.certPem,
+    serverConfig.certificates.caPem,
+    clientConfig.certificates.caPem,
+    setClientConfig,
+    setServerConfig,
+  ])
+
   const triggerSimulation = useCallback(async () => {
     setIsSimulating(true)
     setResults(null)
 
     // Define Standard Flow with current input messages
-    // Always reconstruct standard flow for the "Run Full Interaction" button
     const currentCommands = [
       `CLIENT_SEND: ${clientMessage}`,
       `SERVER_SEND: ${serverMessage}`,
@@ -80,11 +127,7 @@ export const TLSBasicsModule: React.FC = () => {
 
     try {
       // 1. Prepare Certificates from Store
-      // We encode them back to Uint8Array to pass to Worker
       const encoder = new TextEncoder()
-
-      // For self-signed certificates, the CA is the certificate itself
-      // For CA-signed certificates, caPem would be the actual CA cert
       const serverCertPem = serverConfig.certificates.certPem || ''
       const clientCertPem = clientConfig.certificates.certPem || ''
 
@@ -94,21 +137,18 @@ export const TLSBasicsModule: React.FC = () => {
       ]
 
       // Client CA: Used by CLIENT to verify SERVER's certificate
-      // If clientConfig.certificates.caPem is set, use it; otherwise fallback to server's cert (for self-signed)
       const clientCaPem = clientConfig.certificates.caPem || serverCertPem
       if (clientCaPem) {
         simFiles.push({ name: 'ssl/client-ca.crt', data: encoder.encode(clientCaPem) })
       }
 
       // Server CA: Used by SERVER to verify CLIENT's certificate (mTLS)
-      // If serverConfig.certificates.caPem is set, use it; otherwise fallback to client's cert (for self-signed)
       const serverCaPem = serverConfig.certificates.caPem || clientCertPem
       if (serverCaPem && serverConfig.verifyClient) {
         simFiles.push({ name: 'ssl/server-ca.crt', data: encoder.encode(serverCaPem) })
       }
 
       if (clientCertPem) {
-        // Add client cert and key for mTLS scenarios
         simFiles.push(
           { name: 'ssl/client.crt', data: encoder.encode(clientCertPem) },
           { name: 'ssl/client.key', data: encoder.encode(clientConfig.certificates.keyPem || '') }
@@ -118,6 +158,14 @@ export const TLSBasicsModule: React.FC = () => {
       // 2. Prepare Configs
       const clientCfg = generateOpenSSLConfig(clientConfig, 'client')
       const serverCfg = generateOpenSSLConfig(serverConfig, 'server')
+
+      // Debug: Log configurations
+      console.log('[TLS Debug] Client Config:', clientCfg)
+      console.log('[TLS Debug] Server Config:', serverCfg)
+      console.log(
+        '[TLS Debug] Server CA PEM:',
+        serverCaPem ? serverCaPem.substring(0, 50) + '...' : 'None'
+      )
 
       // 3. Run Simulation
       const resultStr = await openSSLService.simulateTLS(
@@ -129,34 +177,39 @@ export const TLSBasicsModule: React.FC = () => {
 
       try {
         const parsed = JSON.parse(resultStr)
-        setResults({
+        const simulationResult = {
           trace: parsed.trace || [],
-          status: parsed.status || 'success', // Fallback to success if not present in older runs? No, C provides it.
+          status: parsed.status || 'success',
           error: parsed.error,
-        })
-      } catch {
-        console.error('JSON Parse Error on result:', resultStr)
-        // Fallback: If output is not JSON (e.g. worker crash/timeout text), display it as a log entry
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setResults(simulationResult as any)
+
+        if (simulationResult.status !== 'success') {
+          console.error('[TLS Debug] Simulation Failed:', simulationResult.error)
+        }
+      } catch (parseError) {
+        console.error('JSON Parse Error:', parseError)
         setResults({
-          trace: [
-            {
-              side: 'system',
-              event: 'error',
-              details: 'RAW OUTPUT: ' + resultStr.substring(0, 1000), // Truncate for safety
-            },
-          ],
+          trace: [],
           status: 'error',
-          error: 'Simulation returned invalid data (likely worker crash or timeout).',
-        })
+          error: resultStr.substring(0, 200) || 'Unknown WASM error',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any)
       }
-    } catch (e: unknown) {
-      const errMsg = e instanceof Error ? e.message : 'Unknown error'
-      console.error('Simulation failed:', e)
-      setResults({ trace: [], status: 'error', error: errMsg })
+    } catch (error) {
+      console.error('Simulation execution failed:', error)
+      setResults({
+        trace: [],
+        status: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)
     } finally {
       setIsSimulating(false)
     }
-  }, [clientConfig, serverConfig, setIsSimulating, setResults, clientMessage, serverMessage])
+  }, [clientConfig, serverConfig, clientMessage, serverMessage, setIsSimulating, setResults])
 
   // Trigger simulation when commands change (Replay)
   useEffect(() => {
@@ -208,6 +261,11 @@ export const TLSBasicsModule: React.FC = () => {
       </div>
 
       <TLSNegotiationResults />
+
+      {/* Comparison Table Section */}
+      <div className="mt-6">
+        <TLSComparisonTable />
+      </div>
     </div>
   )
 }

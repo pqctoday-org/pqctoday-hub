@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.2] - 2025-12-15
+
+### Added
+
+- **TLS Module Enhancements**:
+  - Certificate Inspector component with tree/raw view modes
+  - TLS Comparison Table for side-by-side algorithm analysis
+  - Improved client/server panel UI with better certificate management
+  - Certificate generation scripts for development
+  - Updated WASM binaries (OpenSSL 3.6.0)
+
+### Changed
+
+- Updated data files to 12/15/2025 versions (Timeline, Library, Leaders, Threats)
+- Enhanced E2E tests for TLS module
+- Updated requirements documentation
+
+### Fixed
+
+- Linting errors in TLS module (accessibility, TypeScript)
+- Added .gitignore rules for certificate files
+
 ## [1.8.1] - 2025-12-15
 
 ### Added

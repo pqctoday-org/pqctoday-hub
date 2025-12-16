@@ -62,3 +62,15 @@ docs/audits/
 
 # Temp HTML
 pqc_today_clean_icons.html
+
+# Certificate files (generated locally, should not be committed)
+*.key
+*.srl
+*.pem
+*.crt
+*.csr
+*_certs.txt
+all_certs.txt
+generated_certs.txt
+pqc_certs_output.txt
+regen_*.sh

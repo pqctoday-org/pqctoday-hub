@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Settings, FileText, Check, Shield, Key, Import, Copy } from 'lucide-react'
+import { Settings, FileText, Check, Shield, Key, Import, Copy, Eye } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useTLSStore } from '../../../../store/tls-learning.store'
 import { FileSelectionModal } from './components/FileSelectionModal'
+import { CertificateInspector } from './components/CertificateInspector'
 import {
   DEFAULT_CLIENT_CERT,
   DEFAULT_CLIENT_KEY,
@@ -11,6 +12,9 @@ import {
   DEFAULT_SERVER_CERT,
   DEFAULT_MLDSA87_SERVER_CERT,
 } from './utils/defaultCertificates'
+
+// ... (existing constants) ...
+// Note: We are relying on the previous content for constants between imports and component definition
 
 const CIPHER_SUITES = [
   'TLS_AES_256_GCM_SHA384',
@@ -62,6 +66,7 @@ export const TLSClientPanel: React.FC = () => {
     type: 'cert',
   })
   const [messageView, setMessageView] = useState<'text' | 'hex'>('text')
+  const [inspectCert, setInspectCert] = useState<{ pem: string; title: string } | null>(null)
 
   const isConnected = sessionStatus === 'connected'
 
@@ -179,11 +184,11 @@ export const TLSClientPanel: React.FC = () => {
         </div>
       </div>
 
-      <div className="p-6 flex-grow overflow-auto min-h-[400px]">
+      <div className="flex-grow overflow-y-auto p-4 space-y-6">
         {activeTab === 'ui' ? (
-          <div className="space-y-6">
-            {/* Messages Section */}
-            <div className="bg-primary/10 rounded-lg p-4 border border-primary/20 space-y-4">
+          <>
+            {/* Messages Section - Moved to Top for Alignment */}
+            <div className="bg-primary/10 rounded-lg p-4 border border-primary/20 space-y-4 mb-6">
               <h3 className="text-xs uppercase tracking-wider text-primary font-semibold flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-primary"></span>
                 Application Data (Messaging)
@@ -272,85 +277,103 @@ export const TLSClientPanel: React.FC = () => {
               </div>
             </div>
 
-            <hr className="border-border" />
-
-            {/* Client Identity */}
-            <div>
-              <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 block flex items-center gap-2">
-                <Shield size={14} /> Client Identity (mTLS)
-              </span>
-              <select
-                aria-label="Client Identity"
-                className="w-full bg-muted border border-border rounded-lg p-3 text-sm focus:outline-none focus:border-primary mb-2"
-                value={certSelection}
-                onChange={(e) => setCertSelection(e.target.value)}
-              >
-                {CERTS.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-
-              {certSelection === 'custom' && (
-                <div className="space-y-3 mt-3 p-4 rounded-lg bg-muted border border-border">
-                  <div>
-                    <div className="text-xs text-muted-foreground flex items-center justify-between mb-1">
-                      <label htmlFor="client-cert-pem" className="flex items-center gap-1">
-                        <FileText size={12} /> Certificate (PEM)
-                      </label>
-                      <button
-                        onClick={() => setShowImport({ isOpen: true, type: 'cert' })}
-                        className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
-                      >
-                        <Import size={10} /> Import
-                      </button>
-                    </div>
-                    <textarea
-                      id="client-cert-pem"
-                      className="w-full h-24 bg-card border border-border rounded p-2 text-xs font-mono"
-                      placeholder="-----BEGIN CERTIFICATE-----..."
-                      value={clientConfig.certificates.certPem || ''}
-                      onChange={(e) =>
-                        setClientConfig({
-                          certificates: { ...clientConfig.certificates, certPem: e.target.value },
+            {/* Client Identity & Trust */}
+            <div className="space-y-6">
+              {/* Identity Selection */}
+              <div>
+                <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 block flex items-center gap-2">
+                  <Shield size={14} /> Client Identity (mTLS)
+                </span>
+                <div className="flex gap-2">
+                  <select
+                    aria-label="Client Identity"
+                    className="flex-grow bg-muted border border-border rounded-lg p-3 text-sm focus:outline-none focus:border-primary"
+                    value={certSelection}
+                    onChange={(e) => setCertSelection(e.target.value)}
+                    disabled={isConnected}
+                  >
+                    {CERTS.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                  {clientConfig.certificates.certPem && (
+                    <button
+                      onClick={() =>
+                        setInspectCert({
+                          pem: clientConfig.certificates.certPem!,
+                          title: 'Client Identity Certificate',
                         })
                       }
-                    />
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground flex items-center justify-between mb-1">
-                      <label htmlFor="client-key-pem" className="flex items-center gap-1">
-                        <Key size={12} /> Private Key (PEM)
-                      </label>
-                      <button
-                        onClick={() => setShowImport({ isOpen: true, type: 'key' })}
-                        className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
-                      >
-                        <Import size={10} /> Import
-                      </button>
-                    </div>
-                    <textarea
-                      id="client-key-pem"
-                      className="w-full h-24 bg-card border border-border rounded p-2 text-xs font-mono"
-                      placeholder="-----BEGIN PRIVATE KEY-----..."
-                      value={clientConfig.certificates.keyPem || ''}
-                      onChange={(e) =>
-                        setClientConfig({
-                          certificates: { ...clientConfig.certificates, keyPem: e.target.value },
-                        })
-                      }
-                    />
-                  </div>
+                      className="p-3 bg-muted hover:bg-muted/80 rounded-lg border border-border text-primary transition-colors"
+                      title="Inspect Identity Certificate"
+                    >
+                      <Eye size={18} />
+                    </button>
+                  )}
                 </div>
-              )}
 
-              <p className="text-xs text-muted-foreground mt-2">
-                Needed if the Server requests a client certificate (mTLS).
-              </p>
+                {certSelection === 'custom' && (
+                  <div className="space-y-3 mt-3 p-4 rounded-lg bg-muted border border-border">
+                    {/* ... (Keep custom import logic if needed, but for now assuming it's handled by modal or simplified) */}
+                    <div>
+                      <div className="text-xs text-muted-foreground flex items-center justify-between mb-1">
+                        <label htmlFor="client-cert-pem" className="flex items-center gap-1">
+                          <FileText size={12} /> Certificate (PEM)
+                        </label>
+                        <button
+                          onClick={() => setShowImport({ isOpen: true, type: 'cert' })}
+                          className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
+                        >
+                          <Import size={10} /> Import
+                        </button>
+                      </div>
+                      <textarea
+                        id="client-cert-pem"
+                        className="w-full h-24 bg-card border border-border rounded p-2 text-xs font-mono"
+                        placeholder="-----BEGIN CERTIFICATE-----..."
+                        value={clientConfig.certificates.certPem || ''}
+                        onChange={(e) =>
+                          setClientConfig({
+                            certificates: { ...clientConfig.certificates, certPem: e.target.value },
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground flex items-center justify-between mb-1">
+                        <label htmlFor="client-key-pem" className="flex items-center gap-1">
+                          <Key size={12} /> Private Key (PEM)
+                        </label>
+                        <button
+                          onClick={() => setShowImport({ isOpen: true, type: 'key' })}
+                          className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
+                        >
+                          <Import size={10} /> Import
+                        </button>
+                      </div>
+                      <textarea
+                        id="client-key-pem"
+                        className="w-full h-24 bg-card border border-border rounded p-2 text-xs font-mono"
+                        placeholder="-----BEGIN PRIVATE KEY-----..."
+                        value={clientConfig.certificates.keyPem || ''}
+                        onChange={(e) =>
+                          setClientConfig({
+                            certificates: { ...clientConfig.certificates, keyPem: e.target.value },
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+                <p className="text-xs text-muted-foreground mt-2">
+                  Needed if the Server requests a client certificate (mTLS).
+                </p>
+              </div>
 
-              {/* Verify Server Certificate Checkbox - matches Server panel's mTLS checkbox position */}
-              <div className="flex items-center gap-2 mt-3">
+              {/* Verify Server Certificate Checkbox */}
+              <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   id="verifyServer"
@@ -364,30 +387,48 @@ export const TLSClientPanel: React.FC = () => {
                 </label>
               </div>
 
-              {/* Trusted Root CA for verifying server certificate - matches Server panel layout */}
-              <div className="mt-3 p-3 rounded-lg bg-muted/50 border border-border">
+              {/* Trusted Root CA */}
+              <div className="p-3 rounded-lg bg-muted/50 border border-border">
                 <div className="text-xs text-muted-foreground flex items-center justify-between mb-1">
                   <label htmlFor="client-ca-pem" className="flex items-center gap-1">
                     <Shield size={12} className="text-warning" /> Trusted Root CA
                   </label>
-                  <button
-                    onClick={() => setShowImport({ isOpen: true, type: 'ca' })}
-                    className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
-                  >
-                    <Import size={10} /> Import from Studio
-                  </button>
+                  <div className="flex gap-2">
+                    {clientConfig.certificates.caPem && (
+                      <button
+                        onClick={() =>
+                          setInspectCert({
+                            pem: clientConfig.certificates.caPem!,
+                            title: 'Trusted Root CA',
+                          })
+                        }
+                        className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
+                        title="Inspect Root CA"
+                      >
+                        <Eye size={10} className="mr-1" /> Inspect
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setShowImport({ isOpen: true, type: 'ca' })}
+                      className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
+                    >
+                      <Import size={10} /> Import from Studio
+                    </button>
+                  </div>
                 </div>
-                <textarea
-                  id="client-ca-pem"
-                  className="w-full h-16 bg-card border border-border rounded p-2 text-xs font-mono"
-                  placeholder="-----BEGIN CERTIFICATE-----... (CA that signed server cert)"
-                  value={clientConfig.certificates.caPem || ''}
-                  onChange={(e) =>
-                    setClientConfig({
-                      certificates: { ...clientConfig.certificates, caPem: e.target.value },
-                    })
-                  }
-                />
+                <div className="relative">
+                  <textarea
+                    id="client-ca-pem"
+                    className="w-full h-16 bg-card border border-border rounded p-2 text-xs font-mono pr-8"
+                    placeholder="-----BEGIN CERTIFICATE-----... (CA that signed server cert)"
+                    value={clientConfig.certificates.caPem || ''}
+                    onChange={(e) =>
+                      setClientConfig({
+                        certificates: { ...clientConfig.certificates, caPem: e.target.value },
+                      })
+                    }
+                  />
+                </div>
                 <p className="text-[10px] text-muted-foreground mt-1">
                   Import the Root CA that signed the server's certificate.
                 </p>
@@ -532,12 +573,25 @@ export const TLSClientPanel: React.FC = () => {
             <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 text-sm text-foreground/80">
               <p>Configuration will be generated automatically based on selection.</p>
             </div>
-          </div>
+          </>
         ) : (
           <div className="h-full flex flex-col">
-            <div className="text-xs text-muted-foreground mb-2 flex justify-between">
+            <div className="text-xs text-muted-foreground mb-2 flex justify-between items-center">
               <label htmlFor="client-raw-config">/ssl/client.cnf</label>
-              <span className="text-warning">Experimental Editor</span>
+              <div className="flex items-center gap-2">
+                <span className="text-warning">Experimental Editor</span>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(clientConfig.rawConfig || '')
+                    // Visual feedback via button text change handled inline
+                  }}
+                  className="px-2 py-0.5 text-[10px] bg-muted hover:bg-muted/80 border border-border rounded flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
+                  title="Copy Config"
+                >
+                  <Copy size={10} />
+                  Copy
+                </button>
+              </div>
             </div>
             <textarea
               id="client-raw-config"
@@ -570,6 +624,13 @@ export const TLSClientPanel: React.FC = () => {
             })
           }
         }}
+      />
+      {/* Inspector Modal */}
+      <CertificateInspector
+        isOpen={!!inspectCert}
+        onClose={() => setInspectCert(null)}
+        pem={inspectCert?.pem || ''}
+        title={inspectCert?.title || ''}
       />
     </div>
   )

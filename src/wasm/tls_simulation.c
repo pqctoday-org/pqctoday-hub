@@ -1,6 +1,8 @@
+#include <openssl/bio.h> // For BIO operations
 #include <openssl/conf.h>
 #include <openssl/err.h>
 #include <openssl/objects.h> // For OBJ_nid2sn
+#include <openssl/pem.h>     // For PEM_read_bio_X509
 #include <openssl/ssl.h>
 #include <openssl/trace.h> // For OSSL_trace calls
 #include <openssl/x509.h>  // For X509_get_signature_nid
@@ -158,6 +160,32 @@ void close_log(const char *status, const char *error) {
            "],\"status\":\"%s\",\"error\":\"%s\"}", status, error ? error : "");
 }
 
+// Helper: Inspect CA file and log its key type
+void log_ca_details(const char *side, const char *caFile) {
+  BIO *b = BIO_new_file(caFile, "r");
+  if (!b)
+    return;
+
+  X509 *cert = PEM_read_bio_X509(b, NULL, NULL, NULL);
+  if (cert) {
+    EVP_PKEY *pkey = X509_get_pubkey(cert);
+    if (pkey) {
+      int id = EVP_PKEY_base_id(pkey);
+      const char *name = OBJ_nid2sn(id);
+
+      // Map NIDs to human friendly names for PQC if needed, or use default
+      char details[256];
+      snprintf(details, sizeof(details), "CA Key Type: %s",
+               name ? name : "Unknown");
+      log_event(side, "config_ca_details", details);
+
+      EVP_PKEY_free(pkey);
+    }
+    X509_free(cert);
+  }
+  BIO_free(b);
+}
+
 // CONFIGURATION PARSER
 void apply_config(SSL_CTX *ctx, const char *path, const char *side) {
   if (!path || access(path, F_OK) != 0)
@@ -224,6 +252,10 @@ void apply_config(SSL_CTX *ctx, const char *path, const char *side) {
   if (caFile) {
     if (SSL_CTX_load_verify_locations(ctx, caFile, NULL) == 1) {
       log_event(side, "config_ca", "Loaded CA File");
+
+      // INSPECT CA CERTIFICATE TYPE
+      log_ca_details(side, caFile);
+
       // Set Client CA List for server to request correct certs
       STACK_OF(X509_NAME) *list = SSL_load_client_CA_file(caFile);
       if (list)
@@ -297,11 +329,83 @@ size_t trace_callback(const char *buffer, size_t count, int category, int cmd,
       event_type = "crypto_trace_data";
     } else if (category == OSSL_TRACE_CATEGORY_TLS) {
       event_type = "crypto_trace_state";
+    } else if (category == OSSL_TRACE_CATEGORY_INIT) {
+      event_type = "crypto_trace_init";
+    } else if (category == OSSL_TRACE_CATEGORY_DECODER ||
+               category == OSSL_TRACE_CATEGORY_ENCODER) {
+      event_type = "crypto_trace_coder";
     }
 
     log_event(side, event_type, msg);
   }
   return count;
+}
+
+// INFO CALLBACK - logs TLS handshake state transitions
+void info_callback(const SSL *ssl, int where, int ret) {
+  const char *side = "system";
+  if (ssl_side_ex_data_idx >= 0) {
+    side = (const char *)SSL_get_ex_data(ssl, ssl_side_ex_data_idx);
+    if (!side)
+      side = "system";
+  }
+
+  // Log handshake lifecycle events
+  if (where & SSL_CB_HANDSHAKE_START) {
+    log_event(side, "handshake_start", "TLS handshake initiated");
+  }
+  if (where & SSL_CB_HANDSHAKE_DONE) {
+    log_event(side, "handshake_done", "TLS handshake completed");
+  }
+
+  // Log specific TLS 1.3 state transitions
+  if (where & SSL_CB_LOOP) {
+    const char *state = SSL_state_string_long(ssl);
+    if (state && strlen(state) > 0) {
+      log_event(side, "handshake_state", state);
+    }
+  }
+
+  // Log alerts
+  if (where & SSL_CB_ALERT) {
+    char msg[256];
+    const char *alert_type = (where & SSL_CB_READ) ? "received" : "sending";
+    snprintf(msg, sizeof(msg), "Alert %s: %s %s", alert_type,
+             SSL_alert_type_string_long(ret), SSL_alert_desc_string_long(ret));
+    log_event(side, "alert", msg);
+  }
+}
+
+// Helper to pump data between BIOs and log wire format
+int pump_flash_drive(BIO *from, BIO *to, const char *sender) {
+  char buf[16384];
+  int total = 0;
+  int pending = BIO_pending(from);
+
+  while (pending > 0) {
+    int read = BIO_read(from, buf, sizeof(buf));
+    if (read <= 0)
+      break;
+
+    // Log Wire Data
+    char msg[4096]; // Sufficient for 1024 bytes hex (3 chars/byte + overhead)
+    char *p = msg;
+    int limit = read > 1024 ? 1024 : read; // Cap log size
+
+    for (int i = 0; i < limit; i++) {
+      p += sprintf(p, "%02X ", (unsigned char)buf[i]);
+    }
+    if (read > limit)
+      sprintf(p, "... (%d bytes)", read);
+
+    // Use new event type
+    log_event(sender, "wire_data", msg);
+
+    BIO_write(to, buf, read);
+    total += read;
+    pending = BIO_pending(from);
+  }
+  return total;
 }
 
 // Main execution function exposed to JS
@@ -374,6 +478,19 @@ char *execute_tls_simulation(const char *client_conf_path,
   s_ssl = SSL_new(s_ctx);
 
   // Initialize ex_data index if not done
+  // 4. Connect BIOs using Memory BIOs (Manual Pump to capture wire data)
+  BIO *c_wbio = BIO_new(BIO_s_mem()); // Client Writes -> Server Reads
+  BIO *c_rbio = BIO_new(BIO_s_mem()); // Client Reads <- Server Writes
+  BIO *s_wbio = BIO_new(BIO_s_mem()); // Server Writes -> Client Reads
+  BIO *s_rbio = BIO_new(BIO_s_mem()); // Server Reads <- Client Writes
+
+  SSL_set_bio(c_ssl, c_rbio, c_wbio);
+  SSL_set_bio(s_ssl, s_rbio, s_wbio);
+
+  // Initialize ex_data index if not done
+  BIO_set_mem_eof_return(c_rbio, -1);
+  BIO_set_mem_eof_return(s_rbio, -1);
+
   if (ssl_side_ex_data_idx < 0) {
     ssl_side_ex_data_idx = SSL_get_ex_new_index(0, NULL, NULL, NULL, NULL);
   }
@@ -382,13 +499,13 @@ char *execute_tls_simulation(const char *client_conf_path,
   SSL_set_ex_data(c_ssl, ssl_side_ex_data_idx, (void *)"client");
   SSL_set_ex_data(s_ssl, ssl_side_ex_data_idx, (void *)"server");
 
-  BIO_new_bio_pair(&c_bio, 0, &s_bio, 0);
-  SSL_set_bio(c_ssl, c_bio, c_bio); // Up ref
-  SSL_set_bio(s_ssl, s_bio, s_bio); // Up ref
-
   // 5. Handshake
   SSL_set_connect_state(c_ssl);
   SSL_set_accept_state(s_ssl);
+
+  // Setup Info Callbacks for handshake state logging
+  SSL_set_info_callback(c_ssl, info_callback);
+  SSL_set_info_callback(s_ssl, info_callback);
 
   // Setup Keylogging
   SSL_CTX_set_keylog_callback(c_ctx, keylog_callback);
@@ -398,6 +515,10 @@ char *execute_tls_simulation(const char *client_conf_path,
   // We use a trick: trace_callback uses 'current_side' global variable
   OSSL_trace_set_callback(OSSL_TRACE_CATEGORY_TLS, trace_callback, NULL);
   OSSL_trace_set_callback(OSSL_TRACE_CATEGORY_TLS_CIPHER, trace_callback, NULL);
+  // OSSL_trace_set_callback(OSSL_TRACE_CATEGORY_INIT, trace_callback, NULL); //
+  // Too verbose
+  OSSL_trace_set_callback(OSSL_TRACE_CATEGORY_DECODER, trace_callback, NULL);
+  OSSL_trace_set_callback(OSSL_TRACE_CATEGORY_ENCODER, trace_callback, NULL);
   OSSL_trace_set_callback(OSSL_TRACE_CATEGORY_X509V3_POLICY, trace_callback,
                           NULL);
 
@@ -405,6 +526,10 @@ char *execute_tls_simulation(const char *client_conf_path,
   int handshake_done = 0;
   while (steps < 20 && !handshake_done) {
     steps++;
+    // Pump data between BIOs
+    pump_flash_drive(c_wbio, s_rbio, "client");
+    pump_flash_drive(s_wbio, c_rbio, "server");
+
     int c_done = SSL_is_init_finished(c_ssl);
     int s_done = SSL_is_init_finished(s_ssl);
 
@@ -576,13 +701,29 @@ char *execute_tls_simulation(const char *client_conf_path,
         if (strncmp(line, "CLIENT_SEND:", 12) == 0) {
           const char *msg = line + 12;
           current_side = "client";
+          // Log the message being sent (before encryption)
+          char send_msg[4200];
+          snprintf(send_msg, sizeof(send_msg), "Sending: %s", msg);
+          log_event("client", "message_sent", send_msg);
           SSL_write(c_ssl, msg, strlen(msg));
+
+          // Move data from Client Write BIO to Server Read BIO
+          pump_flash_drive(c_wbio, s_rbio, "client");
+
           // Server needs to read it
           process_reads(s_ssl, "server");
         } else if (strncmp(line, "SERVER_SEND:", 12) == 0) {
           const char *msg = line + 12;
           current_side = "server";
+          // Log the message being sent (before encryption)
+          char send_msg[4200];
+          snprintf(send_msg, sizeof(send_msg), "Sending: %s", msg);
+          log_event("server", "message_sent", send_msg);
           SSL_write(s_ssl, msg, strlen(msg));
+
+          // Move data from Server Write BIO to Client Read BIO
+          pump_flash_drive(s_wbio, c_rbio, "server");
+
           // Client needs to read it
           process_reads(c_ssl, "client");
         } else if (strcmp(line, "CLIENT_DISCONNECT") == 0) {
@@ -619,10 +760,13 @@ cleanup:
   return log_buffer;
 }
 
-// Dummy symbols for CMP (excluded from build due to test dependencies)
-#include <stdio.h>
-int cmp_main(int argc, char **argv) {
-  printf("CMP command not supported in WASM build\n");
-  return 1;
-}
-void *cmp_options = NULL;
+// Dummy CMP functions to satisfy linker
+typedef struct options_st {
+  const char *name;
+  int retval;
+  int valType;
+} OPTIONS;
+
+int cmp_main(int argc, char **argv) { return 0; }
+
+const OPTIONS cmp_options[] = {{NULL}};

@@ -13,7 +13,7 @@ The "Learn" feature is a comprehensive educational platform designed to teach va
 - **Digital Assets** (Implemented)
 - **5G Security** (Implemented)
 - **Digital ID / EUDI** (Implemented)
-- **TLS**
+- **TLS 1.3 Basics** (Implemented)
 - **VPN**
 
 ## Module 1: PKI Workshop (Implemented)
@@ -207,3 +207,16 @@ This module simulates the ecosystem of the European Digital Identity (EUDI) Wall
 - **Remote HSM:** Centralized cryptographic operations (Key Generation, Signing) via simulated Hardware Security Modules.
 - **Attestations:** Verifiable credential presentation for various use cases (e.g., Bank Account Opening).
 - **Reference:** [Detailed EUDI Wallet Requirements](EUDI_Wallet_Educational_Module_Requirements.md)
+
+## Module 5: TLS 1.3 Basics (Implemented)
+
+This module provides an interactive educational environment for understanding TLS 1.3 handshakes and cryptographic operations.
+
+**Key Features:**
+
+- **Interactive Simulation:** Full Client-Server TLS 1.3 handshake simulation in-browser.
+- **Dual Configuration:** GUI controls and raw OpenSSL config file editing.
+- **Identity Options:** RSA, ML-DSA (Post-Quantum), and custom certificates from OpenSSL Studio.
+- **Cryptographic Logging:** Detailed key derivation, HKDF, signatures, and encryption operations.
+- **PQC Support:** ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA authentication.
+- **Reference:** [Detailed TLS Requirements](learn_openssltls13_requirement.md)

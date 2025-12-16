@@ -28,6 +28,23 @@ export interface SimulationResult {
   error?: string
 }
 
+// Run history for comparison table
+export interface TLSRunRecord {
+  id: number
+  timestamp: Date
+  cipher: string
+  keyExchange: string
+  signature: string
+  clientIdentity: string
+  serverIdentity: string
+  clientCaKeyType: string // CA signature algorithm for client cert
+  serverCaKeyType: string // CA signature algorithm for server cert
+  totalBytes: number
+  handshakeBytes: number
+  appDataBytes: number
+  success: boolean
+}
+
 interface TLSStore {
   clientConfig: TLSConfig
   serverConfig: TLSConfig
@@ -37,6 +54,9 @@ interface TLSStore {
   // Session State
   commands: string[]
   sessionStatus: 'connected' | 'disconnected' | 'idle'
+
+  // Run History for Comparison
+  runHistory: TLSRunRecord[]
 
   setClientConfig: (config: Partial<TLSConfig>) => void
   setServerConfig: (config: Partial<TLSConfig>) => void
@@ -53,6 +73,10 @@ interface TLSStore {
   addCommand: (cmd: string) => void
   clearSession: () => void
   reset: () => void
+
+  // Comparison Actions
+  addRunToHistory: (record: Omit<TLSRunRecord, 'id' | 'timestamp'>) => void
+  clearRunHistory: () => void
 }
 
 const DEFAULT_RAW_CONFIG = `openssl_conf = default_conf
@@ -92,6 +116,55 @@ const DEFAULT_CONFIG: TLSConfig = {
   clientAuthEnabled: true,
 }
 
+/**
+ * Parse raw OpenSSL config text to extract UI-relevant settings.
+ * Used when switching from Raw mode back to UI mode to sync the UI state.
+ */
+function parseRawConfig(raw: string): Partial<TLSConfig> {
+  const result: Partial<TLSConfig> = {}
+
+  // Parse Ciphersuites line (e.g., "Ciphersuites = TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256")
+  const cipherMatch = raw.match(/Ciphersuites\s*=\s*(.+)/i)
+  if (cipherMatch) {
+    const ciphers = cipherMatch[1]
+      .trim()
+      .split(':')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    if (ciphers.length > 0) {
+      result.cipherSuites = ciphers
+    }
+  }
+
+  // Parse Groups line (e.g., "Groups = X25519:P-256:P-384")
+  const groupsMatch = raw.match(/Groups\s*=\s*(.+)/i)
+  if (groupsMatch) {
+    const groups = groupsMatch[1]
+      .trim()
+      .split(':')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    if (groups.length > 0) {
+      result.groups = groups
+    }
+  }
+
+  // Parse SignatureAlgorithms line (e.g., "SignatureAlgorithms = mldsa44:ecdsa_secp256r1_sha256")
+  const sigMatch = raw.match(/SignatureAlgorithms\s*=\s*(.+)/i)
+  if (sigMatch) {
+    const sigs = sigMatch[1]
+      .trim()
+      .split(':')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    if (sigs.length > 0) {
+      result.signatureAlgorithms = sigs
+    }
+  }
+
+  return result
+}
+
 export const useTLSStore = create<TLSStore>((set) => ({
   clientConfig: {
     ...DEFAULT_CONFIG,
@@ -110,6 +183,7 @@ export const useTLSStore = create<TLSStore>((set) => ({
   isSimulating: false,
   commands: [],
   sessionStatus: 'idle',
+  runHistory: [],
 
   setClientConfig: (config) =>
     set((state) => {
@@ -175,12 +249,33 @@ system_default = system_default_sect
     }),
 
   setMode: (side, mode) =>
-    set((state) => ({
-      [side === 'client' ? 'clientConfig' : 'serverConfig']: {
-        ...(side === 'client' ? state.clientConfig : state.serverConfig),
-        mode,
-      },
-    })),
+    set((state) => {
+      const configKey = side === 'client' ? 'clientConfig' : 'serverConfig'
+      const currentConfig = state[configKey]
+
+      // If switching from 'raw' to 'ui', parse the raw config to sync UI state
+      if (currentConfig.mode === 'raw' && mode === 'ui') {
+        const parsed = parseRawConfig(currentConfig.rawConfig)
+        return {
+          [configKey]: {
+            ...currentConfig,
+            mode,
+            // Only update arrays if parsing found values
+            ...(parsed.cipherSuites && { cipherSuites: parsed.cipherSuites }),
+            ...(parsed.groups && { groups: parsed.groups }),
+            ...(parsed.signatureAlgorithms && { signatureAlgorithms: parsed.signatureAlgorithms }),
+          },
+        }
+      }
+
+      // Otherwise just update mode
+      return {
+        [configKey]: {
+          ...currentConfig,
+          mode,
+        },
+      }
+    }),
 
   setResults: (results) => {
     // Full Interaction runs complete lifecycle (handshake + messages + disconnect)
@@ -201,4 +296,18 @@ system_default = system_default_sect
       commands: [],
       sessionStatus: 'idle',
     }),
+
+  // Comparison Actions
+  addRunToHistory: (record) =>
+    set((state) => ({
+      runHistory: [
+        ...state.runHistory,
+        {
+          ...record,
+          id: state.runHistory.length + 1,
+          timestamp: new Date(),
+        },
+      ],
+    })),
+  clearRunHistory: () => set({ runHistory: [] }),
 }))

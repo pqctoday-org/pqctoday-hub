@@ -23,6 +23,7 @@ The application is divided into ten main modules. Detailed requirements for each
     - **[Digital Assets Program](requirements/digital_assets.md)**: Blockchain cryptography for Bitcoin, Ethereum, Solana, and HD Wallet (BIP32/39/44)
     - **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment (Profiles A/B/C) and 5G-AKA authentication with MILENAGE
     - **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: EUDI Wallet ecosystem with Remote HSM architecture. Features 7-step interactive flows for PID Issuance (OpenID4VCI) and Relying Party verification (OpenID4VP), plus QEAA Attestation and Remote QES.
+    - **[TLS 1.3 Basics](requirements/learn_openssltls13_requirement.md)**: Interactive TLS 1.3 handshake simulation with PQC algorithm support (ML-KEM, ML-DSA)
     - **Introduction Module**: Overview and getting started guide
 8.  **[Compliance Module](requirements/Compliance_Module_Requirements.md)**: Real-time compliance tracking and standards monitoring.
     - NIST FIPS document tracking (203, 204, 205)

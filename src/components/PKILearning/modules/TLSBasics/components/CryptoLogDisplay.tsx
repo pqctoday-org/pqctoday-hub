@@ -1,5 +1,17 @@
 import React, { useState } from 'react'
-import { Settings, FileText, Check, Shield, Lock, Copy } from 'lucide-react'
+import {
+  Settings,
+  FileText,
+  Check,
+  Shield,
+  Lock,
+  Copy,
+  ArrowRight,
+  ArrowLeft,
+  Zap,
+  AlertTriangle,
+  Activity,
+} from 'lucide-react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -15,7 +27,7 @@ interface Props {
   title?: string
 }
 
-export const CryptoLogDisplay: React.FC<Props> = ({ events, title }) => {
+export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [copied, setCopied] = useState(false)
 
@@ -27,6 +39,70 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title }) => {
     const type = evt.event.toLowerCase()
     return content.includes(search) || type.includes(search)
   })
+
+  // TLS 1.3 Record Parser for Wire Data
+  const getWireDetails = (
+    hexData: string
+  ): { type: string; badge: string; color: string; isEncrypted: boolean } | null => {
+    // Expected Format: "16 03 01 ..." (Hex Dump)
+    const clean = hexData.replace(/\s/g, '').slice(0, 20)
+    const typeByte = parseInt(clean.substring(0, 2), 16)
+    // const version = clean.substring(2, 6) // Record Layer Version (usually 0303 in TLS 1.3 compat)
+
+    // RFC 8446 Record Types
+    if (typeByte === 0x17)
+      return {
+        type: 'Application Data (TLV 1.3)',
+        badge: 'ENCRYPTED',
+        color: 'text-purple-400',
+        isEncrypted: true,
+      }
+    if (typeByte === 0x16)
+      return {
+        type: 'Handshake Record',
+        badge: 'CLEARTEXT',
+        color: 'text-blue-400',
+        isEncrypted: false,
+      }
+    if (typeByte === 0x15)
+      return { type: 'Alert Record', badge: 'ALERT', color: 'text-red-400', isEncrypted: false }
+    if (typeByte === 0x14)
+      return {
+        type: 'ChangeCipherSpec',
+        badge: 'COMPAT',
+        color: 'text-yellow-400',
+        isEncrypted: false,
+      }
+
+    return null
+  }
+
+  // TLS 1.3 Handshake Message Type detection for App/Decrypted Logs
+  const getTLSMessageType = (
+    hexData: string
+  ): { type: string; color: string; isEncrypted?: boolean } | null => {
+    if (hexData.includes('Hello Server') || hexData.includes('Hello Client')) {
+      return { type: '🔐 Encrypted App Data', color: 'text-success', isEncrypted: true }
+    }
+    if (hexData.includes('0000 - 01 00') && hexData.length < 100) {
+      return { type: 'close_notify Alert', color: 'text-warning' }
+    }
+    const match = hexData.match(/0000\s*-\s*([0-9a-fA-F]{2})/)
+    if (!match) return null
+    const firstByte = parseInt(match[1], 16)
+    const messageTypes: Record<number, { type: string; color: string; isEncrypted?: boolean }> = {
+      0x01: { type: 'ClientHello', color: 'text-primary' },
+      0x02: { type: 'ServerHello', color: 'text-tertiary' },
+      0x04: { type: 'NewSessionTicket', color: 'text-muted-foreground', isEncrypted: true },
+      0x08: { type: 'EncryptedExtensions', color: 'text-tertiary', isEncrypted: true },
+      0x0b: { type: 'Certificate', color: 'text-success' },
+      0x0d: { type: 'CertificateRequest', color: 'text-warning' },
+      0x0f: { type: 'CertificateVerify', color: 'text-success' },
+      0x14: { type: 'Finished', color: 'text-primary', isEncrypted: true },
+    }
+    if (firstByte === 0x20) return { type: '🔐 App Data', color: 'text-success', isEncrypted: true }
+    return messageTypes[firstByte] || null
+  }
 
   const formatDetails = (details: string, type: string) => {
     // Simple hex dump formatting or key-value highlighting
@@ -88,6 +164,115 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title }) => {
       )
     }
 
+    // For crypto_trace_state with hex dumps, try to detect TLS message type
+    if (type === 'crypto_trace_state' && details.includes('0000 -')) {
+      const msgType = getTLSMessageType(details)
+      return (
+        <div>
+          {msgType && (
+            <span
+              className={`text-[9px] px-1.5 py-0.5 rounded border mb-1 inline-block font-bold ${
+                msgType.isEncrypted
+                  ? 'bg-success/20 border-success/50 text-success'
+                  : `bg-muted border-border ${msgType.color}`
+              }`}
+            >
+              {msgType.type}
+            </span>
+          )}
+          <pre className="font-mono text-[10px] whitespace-pre-wrap break-all text-muted-foreground bg-slate-900/40 p-2 rounded">
+            {details}
+          </pre>
+        </div>
+      )
+    }
+
+    // New format for Internal Buffers (Init/Coder/Key/Data)
+    // Distinguish from Wire Data
+    const isInternalDump = type.includes('crypto_trace') || type === 'keylog'
+
+    if (isHex && isInternalDump) {
+      // Clean spaces if any
+      const cleanHex = details.replace(/\s/g, '')
+      const rows = []
+      for (let i = 0; i < cleanHex.length; i += 32) {
+        const chunk = cleanHex.slice(i, i + 32)
+        const bytes = []
+        const ascii = []
+
+        for (let j = 0; j < chunk.length; j += 2) {
+          const byteHex = chunk.slice(j, j + 2)
+          const byteVal = parseInt(byteHex, 16)
+          bytes.push(byteHex)
+          ascii.push(byteVal >= 32 && byteVal <= 126 ? String.fromCharCode(byteVal) : '.')
+        }
+
+        // Pad last row
+        const hexPart = bytes.join(' ').padEnd(47, ' ')
+        const asciiPart = ascii.join('')
+
+        rows.push(
+          <div key={i} className="flex gap-4">
+            <span className="text-muted-foreground select-none opacity-50">
+              {i.toString(16).padStart(4, '0')}
+            </span>
+            <span className="text-orange-400/80">{hexPart}</span>
+            <span className="text-muted-foreground opacity-50 border-l border-border pl-2 border-orange-500/20">
+              {asciiPart}
+            </span>
+          </div>
+        )
+      }
+
+      return (
+        <div className="font-mono text-[10px] whitespace-pre bg-orange-950/20 p-2 rounded border border-orange-500/20">
+          <div className="text-[9px] text-orange-400 font-bold mb-1 uppercase opacity-70">
+            Internal OpenSSL Buffer
+          </div>
+          {rows}
+        </div>
+      )
+    }
+
+    if (isHex || type.includes('data')) {
+      // Clean spaces if any
+      const cleanHex = details.replace(/\s/g, '')
+      const rows = []
+      for (let i = 0; i < cleanHex.length; i += 32) {
+        const chunk = cleanHex.slice(i, i + 32)
+        const bytes = []
+        const ascii = []
+
+        for (let j = 0; j < chunk.length; j += 2) {
+          const byteHex = chunk.slice(j, j + 2)
+          const byteVal = parseInt(byteHex, 16)
+          bytes.push(byteHex)
+          ascii.push(byteVal >= 32 && byteVal <= 126 ? String.fromCharCode(byteVal) : '.')
+        }
+
+        // Pad last row
+        const hexPart = bytes.join(' ').padEnd(47, ' ')
+        const asciiPart = ascii.join('')
+
+        rows.push(
+          <div key={i} className="flex gap-4">
+            <span className="text-muted-foreground select-none opacity-50">
+              {i.toString(16).padStart(4, '0')}
+            </span>
+            <span className="text-primary">{hexPart}</span>
+            <span className="text-warning opacity-70 border-l border-border pl-2">{asciiPart}</span>
+          </div>
+        )
+      }
+
+      return (
+        <div className="font-mono text-[10px] whitespace-pre bg-muted/50 p-2 rounded border border-border">
+          {rows}
+        </div>
+      )
+    }
+
+    // Default Fallback
     return (
       <pre className="font-mono text-[10px] whitespace-pre-wrap break-all text-muted-foreground">
         {details}
@@ -97,9 +282,84 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title }) => {
 
   const getIcon = (type: string) => {
     if (type === 'keylog') return <Lock size={14} className="text-warning" />
+    if (type === 'wire_data') return <Activity size={14} className="text-purple-400" />
+    if (type === 'message_sent') return <ArrowRight size={14} className="text-success" />
+    if (type === 'message_received') return <ArrowLeft size={14} className="text-tertiary" />
+    if (type === 'handshake_state' || type === 'handshake_start' || type === 'handshake_done')
+      return <Zap size={14} className="text-primary" />
+    if (type === 'alert') return <AlertTriangle size={14} className="text-destructive" />
     if (type.includes('data')) return <FileText size={14} className="text-primary" />
     if (type.includes('state')) return <Shield size={14} className="text-success" />
     return <Settings size={14} className="text-muted-foreground" />
+  }
+
+  // Get semantic badge for event type
+  const getEventBadge = (type: string) => {
+    if (type === 'wire_data')
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 font-bold">
+          WIRE
+        </span>
+      )
+    if (type === 'handshake_start')
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-bold">
+          START
+        </span>
+      )
+    if (type === 'handshake_done')
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-success/20 text-success font-bold">
+          DONE
+        </span>
+      )
+    if (type === 'handshake_state')
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">STATE</span>
+      )
+    if (type === 'message_sent')
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-success/20 text-success font-bold">
+          TX
+        </span>
+      )
+    if (type === 'message_received')
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-tertiary/20 text-tertiary font-bold">
+          RX
+        </span>
+      )
+    if (type === 'alert')
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-destructive/20 text-destructive font-bold">
+          ALERT
+        </span>
+      )
+    if (type === 'keylog')
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-warning/20 text-warning font-bold">
+          SECRET
+        </span>
+      )
+    if (type.includes('crypto_trace_coder'))
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 font-bold">
+          PROVIDER
+        </span>
+      )
+    if (type.includes('crypto_trace_init'))
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-500/20 text-slate-400 font-bold">
+          INIT
+        </span>
+      )
+    if (type.includes('crypto_trace'))
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-400/70 font-bold">
+          INTERNAL
+        </span>
+      )
+    return null
   }
 
   const handleCopy = () => {
@@ -179,9 +439,36 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title }) => {
               </div>
               <div className="flex-grow min-w-0">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-xs uppercase text-muted-foreground">
-                    {evt.event.replace('crypto_trace_', '').replace(/_/g, ' ')}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-xs uppercase text-muted-foreground">
+                      {evt.event === 'wire_data'
+                        ? 'RAW PACKET'
+                        : evt.event.replace('crypto_trace_', '').replace(/_/g, ' ')}
+                    </span>
+                    {(evt.event === 'wire_data' &&
+                      (() => {
+                        const info = getWireDetails(evt.details)
+                        if (info) {
+                          return (
+                            <>
+                              <span
+                                className={clsx(
+                                  'text-[9px] px-1.5 py-0.5 rounded font-bold uppercase',
+                                  info.isEncrypted
+                                    ? 'bg-purple-500/20 text-purple-400'
+                                    : 'bg-blue-500/20 text-blue-400'
+                                )}
+                              >
+                                {info.badge}
+                              </span>
+                              <span className="text-[10px] text-muted-foreground">{info.type}</span>
+                            </>
+                          )
+                        }
+                        return getEventBadge(evt.event)
+                      })()) ||
+                      getEventBadge(evt.event)}
+                  </div>
                   <span
                     className={clsx(
                       'text-[10px] px-1.5 py-0.5 rounded border',
