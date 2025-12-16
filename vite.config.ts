@@ -162,7 +162,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    exclude: ['mlkem-wasm', '@openforge-sh/liboqs'],
+    exclude: ['@openforge-sh/liboqs'],
   },
   build: {
     rollupOptions: {
@@ -170,7 +170,7 @@ export default defineConfig({
         manualChunks: {
           'vendor-react': ['react', 'react-dom'],
           'vendor-ui': ['framer-motion', 'lucide-react', 'clsx'],
-          'vendor-pqc': ['mlkem-wasm', '@openforge-sh/liboqs', 'pqcrypto', '@noble/hashes'],
+          'vendor-pqc': ['@openforge-sh/liboqs', 'pqcrypto', '@noble/hashes'],
         },
       },
     },
