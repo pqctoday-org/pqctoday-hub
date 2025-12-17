@@ -12,9 +12,9 @@ The application is divided into ten main modules. Detailed requirements for each
 2.  **[Algorithms Transition](requirements/algorithms.md)**: Comparison table showing the shift from Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) standards.
 3.  **[Interactive Playground](requirements/playground.md)**: Hands-on testing environment for ML-KEM and ML-DSA cryptographic operations.
     - Includes **[ACVP Testing](requirements/playground.md#11-acvp-testing-automated-cryptographic-validation)**: Automated validation against NIST test vectors (now part of playground.md).
-4.  **[OpenSSL Studio](requirements/opensslstudio.md)**: Browser-based OpenSSL v3.5.4 workbench with WebAssembly.
-    - Full PQC algorithm support (ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA all 12 variants)
-    - 12 operation types: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12
+4.  **[OpenSSL Studio](requirements/opensslstudio.md)**: Browser-based OpenSSL v3.6.0 workbench with WebAssembly.
+    - Full PQC algorithm support (ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA all 12 variants, LMS/HSS)
+    - 13 operation types: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
     - Virtual file system with backup/restore capabilities
 5.  **[Quantum Threat Impacts](requirements/impacts.md)**: Dashboard showing specific risks to industries like Finance, IoT, and Government.
 6.  **[Transformation Leaders](requirements/leaders.md)**: Profiles of key public and private figures driving the transition.
@@ -59,7 +59,7 @@ The application meets WCAG 2.1 Level AA accessibility standards. For comprehensi
 
 - **Framework**: React 19 (Vite 7)
 - **Styling**: Tailwind CSS 4 (using CSS Variables for theming)
-- **Cryptography**: OpenSSL WASM v3.5.4 (exclusively used for Digital ID & OpenSSL Studio), @noble/curves, @noble/hashes, @scure ecosystem (bip32/bip39/base)
+- **Cryptography**: OpenSSL WASM v3.6.0 (with native ML-KEM, ML-DSA, LMS/HSS support), @openforge-sh/liboqs (FrodoKEM, HQC, Classic McEliece), @noble/curves, @noble/hashes, @scure ecosystem (bip32/bip39/base)
 - **State Management**: Zustand
 - **Deployment**: Static build (ready for Netlify/Vercel)
 - **Analytics**: Google Analytics 4 (GA4) with route tracking

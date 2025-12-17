@@ -15,8 +15,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Key Store with sortable/resizable columns
   - ACVP Testing against NIST test vectors
 - **OpenSSL Studio**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly
-  - **13 Operation Types**: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS (HSS)
-  - **Full PQC Support**: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 variants)
+  - **13 Operation Types**: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
+  - **Full PQC Support**: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 variants), LMS/HSS (stateful signatures)
   - **Classical Algorithms**: RSA, EC (P-256/384/521, secp256k1), Ed25519, X25519, Ed448, X448
   - **Virtual File System**: Upload, edit, download, backup/restore with ZIP
   - **File Manager**: Sortable columns, timestamps, size tracking, public key extraction
@@ -64,12 +64,11 @@ Test your PQC readiness with this interactive web application visualizing the gl
 
 - **Frontend**: React 19 + TypeScript + Vite 7
 - **Cryptography**:
-  - OpenSSL WASM v3.6.0 (with PQC support)
-  - `@openforge-sh/liboqs` for NIST PQC algorithms
+  - OpenSSL WASM v3.6.0 (with native ML-KEM, ML-DSA, and LMS/HSS support)
+  - `@openforge-sh/liboqs` for additional PQC algorithms (FrodoKEM, HQC, Classic McEliece)
   - Web Crypto API for classical algorithms (X25519, P-256, ECDH)
   - `@noble/curves` and `@noble/hashes` for blockchain operations
   - `@scure/bip32`, `@scure/bip39`, `@scure/base` for HD wallet
-  - `mlkem-wasm` for ML-KEM operations
   - `micro-eth-signer` for Ethereum transactions
   - `ed25519-hd-key` for Solana key derivation
 - **Styling**: Tailwind CSS 4 with custom design system and CSS variables

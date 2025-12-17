@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **LMS / HSS (Hash-Based Signatures)**:
+- **LMS/HSS (Hash-Based Signatures)**:
   - Unified "LMS (HSS)" button with Generate / Sign / Verify mode tabs
   - WASM-based key generation, signing, and verification
   - Parameters: LMS height (H5-H25), LM-OTS width (W1-W8)
@@ -18,7 +18,6 @@ All notable changes to this project will be documented in this file.
 - **OpenSSL Studio**:
   - Now shows 13 operation types (added LMS/HSS)
   - "Run Command" button hidden for LMS (uses WASM buttons instead)
-  - Updated documentation to reflect OpenSSL 3.6.0
 
 ### Fixed
 
@@ -26,6 +25,9 @@ All notable changes to this project will be documented in this file.
   - Fixed signature size issue (trimmed trailing zeros from 5KB buffer)
   - Fixed verify mode key selection to prefer `.pub` over `.key` files
   - Filtered verify dropdown to only show public keys (`.pub`, `.pem`)
+- **Code Quality**:
+  - Resolved all remaining lint errors (any types, label, useEffect deps)
+  - Fixed prettier formatting across multiple components
 
 ### Removed
 
@@ -56,6 +58,9 @@ All notable changes to this project will be documented in this file.
   - Regenerated all default certificates using OpenSSL 3.6.0
   - Updated ML-DSA certificate chains
   - Enhanced crypto operation logging
+  - Certificate Inspector component with tree/raw view modes
+  - TLS Comparison Table for side-by-side algorithm analysis
+  - Improved client/server panel UI with better certificate management
 
 - **Playground**:
   - Improved WASM instance management
@@ -66,12 +71,23 @@ All notable changes to this project will be documented in this file.
   - Fixed state propagation issues
   - Improved file data handling between steps
 
+- **Documentation**:
+  - Updated data files to 12/15/2025 versions (Timeline, Library, Leaders, Threats)
+  - Enhanced E2E tests for TLS module
+  - Updated requirements documentation
+
 ### Fixed
 
 - Race conditions in KEM playground E2E tests
 - WASM caching issues in liboqs modules
 - TypeScript errors in 5G service
 - E2E test stability improvements across multiple modules
+- Linting errors in TLS module (accessibility, TypeScript)
+- AboutView test to match current SBOM content
+- WASM library files added to repository for production deployment
+- Removed mlkem-wasm references from vite config
+
+## [1.8.2] - 2025-12-16
 
 ### Added
 
@@ -80,7 +96,6 @@ All notable changes to this project will be documented in this file.
   - TLS Comparison Table for side-by-side algorithm analysis
   - Improved client/server panel UI with better certificate management
   - Certificate generation scripts for development
-  - Updated WASM binaries (OpenSSL 3.6.0)
 
 ### Changed
 
@@ -92,6 +107,7 @@ All notable changes to this project will be documented in this file.
 
 - Linting errors in TLS module (accessibility, TypeScript)
 - Added .gitignore rules for certificate files
+- Excluded generated WASM file from Prettier checks
 
 ## [1.8.1] - 2025-12-15
 
@@ -139,6 +155,22 @@ All notable changes to this project will be documented in this file.
   - Configured `workers: 1` in CI to prevent resource deadlocks on GitHub Actions runners
   - Added `ignoreHTTPSErrors: true` to handle SSL issues with external compliance sites
 
+### Changed
+
+- **5G Module**:
+  - Refactored to use OpenSSL WASM instead of WebCrypto
+  - Improved hybrid crypto implementation
+
+- **Digital ID Module**:
+  - Implemented OpenSSL log transparency and cleanup
+
+- **Documentation**:
+  - Updated SBOM in About page to match current package.json versions (Framer Motion, Lucide, Zustand, Vite, Prettier)
+  - Updated Node.js requirement from v18 to v20 in README
+  - Added TLS 1.3 Basics module to README feature list
+  - Updated module count from 5 to 6 across documentation
+  - Added TLSBasics directory to project structure documentation
+
 ### Fixed
 
 - **E2E Test Regressions**:
@@ -148,55 +180,205 @@ All notable changes to this project will be documented in this file.
   - Fixed `playground-kem-additional.spec.ts` race conditions in HKDF normalization tests
   - Added proper waits for WASM operation completion and hybrid mode key selection
   - Fixed `useKemOperations.ts` to clear decapsulated secrets during WASM encapsulation
+  - Removed networkidle to resolve hanging CI tests
+  - Stabilized CI with sharding and resolved all E2E test failures
 
-### Changed
+- **5G Module**:
+  - Restored 5G module, fixed E2E tests and linting
+  - Made shared secret derivation stateless-safe for CI
+  - Resolved unused variable build error
+  - Restored missing public API methods and suppressed lint warnings
+  - Restored robust hybrid crypto (WebCrypto + OpenSSL) to fix E2E failures
 
-- **Documentation**:
-  - Updated SBOM in About page to match current package.json versions (Framer Motion, Lucide, Zustand, Vite, Prettier)
-  - Updated Node.js requirement from v18 to v20 in README
-  - Added TLS 1.3 Basics module to README feature list
-  - Updated module count from 5 to 6 across documentation
-  - Added TLSBasics directory to project structure documentation
+- **Build Issues**:
+  - Removed invalid 'variant' prop from FilterDropdown usage
+  - Resolved JSX.Element type error in SimpleGanttChart
+  - Resolved wasm adapter lint errors
 
 ## [1.7.0] - 2025-12-12
 
 ### Added
 
 - **Dynamic Data Loading**:
-  - Implemented dynamic selection of the latest CSV data files for algorithms and transitions.
-  - Added "New" and "Updated" status badges to Library, Threats, Leaders, and Timeline modules.
-- **Compliance**:
-  - Added ENISA EUCC scraper (`scripts/scrapers/enisa.ts`) and requirements.
+  - Implemented dynamic selection of the latest CSV data files for algorithms and transitions
+  - Added "New" and "Updated" status badges to Library, Threats, Leaders, and Timeline modules
+  - Timestamp-based CSV file selection for automatic latest version loading
+
+- **Compliance Module Enhancements**:
+  - Added ENISA EUCC scraper (`scripts/scrapers/enisa.ts`) and requirements
+  - Multi-URL support for CC certificates and ANSSI scraper
+  - Multi-URL dropdown display in compliance table
+  - Lab column and expert lab extraction for CC
+  - Comprehensive data improvements with filters embedded in column headers
+  - Prioritized Cert Report over ST for extraction
+  - Improved ANSSI link detection with 'certificat' keyword
+
+- **Library Module**:
+  - Library search functionality
+  - Updated data classification
 
 ### Changed
 
 - **Documentation**:
-  - Updated `README.md` to accurately reflect the current project structure (including `scripts` at root).
-- **Code Quality**:
-  - Resolved `eslint` errors in scraper scripts (`anssi.ts`, `cc.ts`) and various components.
-  - Fixed security warnings related to object injection and unsafe regex.
+  - Updated `README.md` to accurately reflect the current project structure (including `scripts` at root)
+  - Added comprehensive scraper requirements for all data sources
+  - Updated contributing guidelines and added submit_feature workflow
+  - Added CODEOWNERS file for branch protection
 
-## [1.6.0] - 2025-12-09
-
-### Added
-
-- **Appearance Settings Refactor**:
-  - Removed "System" theme option to simplify user experience.
-  - Set default theme to **Light**.
-  - Updated `About` page and Mobile About view to reflect theme changes.
-
-- **Semantic Color Tokens**:
-  - Global refactor of all Learning Modules (5G, DigitalAssets, DigitalID, PKIWorkshop) to use semantic color tokens (e.g., `primary`, `success`, `destructive`, `tertiary`) instead of hardcoded values.
-  - Introduced `--color-tertiary` (Purple) for Profile C support.
-
-- **5G Module Improvements**:
-  - Enhanced E2E validation tests for 5G flows.
+- **Compliance Module**:
+  - Removed Status column from table
+  - Centralized lab extraction logic in utils
+  - Disabled generic CC links and fixed doc parsing regex
+  - Used CC Portal product page URLs instead of corrupted PDF URLs
+  - Properly encoded CC certificate URLs and extracted lab field
 
 ### Fixed
 
-- **Navigation Loop**: Resolved a critical bug where new users were forced into a redirect loop to the About page (`WelcomeRedirect` removed).
-- **Test Stability**: Fixed stale `useTheme` tests that referenced the deprecated "system" theme.
-- **Linting**: Addressed various security (`detect-object-injection`) and React Hook warnings.
+- **Code Quality**:
+  - Resolved `eslint` errors in scraper scripts (`anssi.ts`, `cc.ts`) and various components
+  - Fixed security warnings related to object injection and unsafe regex
+  - Resolved build failures and security warnings
+  - Fixed lint errors in debug scripts
+
+- **E2E Tests**:
+  - Fixed e2e regression for removed columns in compliance tests
+  - Stabilized CI by skipping flaky tests and optimizing config
+  - Used preview server in CI for stability
+  - Added timeouts and disabled audit to prevent hangs
+  - Disabled vitest watch mode in test script
+
+- **Scraper Issues**:
+  - Resolved unused variables and refined CC fetch logic
+  - Resolved runtime errors in CC lab extraction
+  - Fixed ANSSI links and extracted lab info from ST
+
+- **UI Issues**:
+  - Restored E2E fixes and IV management improvements
+  - Resolved E2E test failures in PKI and Leaders modules
+  - Fixed AttributeTable accessibility
+  - Completed truncated AI acknowledgment text
+
+## [1.6.0] - 2025-12-06
+
+### Added
+
+- **Theme Toggle**:
+  - Implemented persistent theme selection (Light/Dark modes)
+  - Global state management using Zustand with localStorage persistence
+  - Theme toggle UI added to About page (desktop and mobile)
+  - Synchronized state between mobile and desktop views
+  - Refactored CSS to support manual `.dark` class overrides
+
+- **Mobile Timeline Swipeable Phase Navigation**:
+  - Swipe gestures for browsing through all phases per country
+  - Interactive phase indicator dots showing current position
+  - Direct navigation by clicking phase indicators
+  - Visual distinction: Flag icon for milestones, colored dot for phases
+  - Smooth Framer Motion animations (200ms transitions)
+  - 50px drag threshold for phase transitions
+
+- **5G Module Improvements**:
+  - Implemented 5G Profile C PQC Dual Mode and EUDI Wallet Crypto alignment
+  - Enhanced E2E validation tests for 5G flows
+
+- **Digital Assets Module**:
+  - Complete refactor with strict typing, E2E tests, and HD Wallet UI unification
+  - Enhanced flows with improved components and utilities
+  - Shared hooks to reduce code duplication
+
+- **PKI Workshop Enhancements**:
+  - Enhanced certificate parser with deep tree structure and semantic colors
+  - Profile info buttons with optimized markdown modal
+  - Completed button to PKI Workshop final step
+  - Interactive PKI Workshop on mobile with read-only inputs
+  - Top-level certificate sections always visible
+
+- **Testing**:
+  - Comprehensive unit tests for core utilities
+  - Tests for OpenSSLService and PKILearning
+  - Tests for ThreatsDashboard and LeadersGrid
+  - SimpleGanttChart tests and fixed analytics testing
+  - AlgorithmsView and LibraryView tests
+  - Comprehensive test coverage for core components
+
+### Changed
+
+- **Appearance Settings**:
+  - Removed "System" theme option to simplify user experience
+  - Set default theme to **Light**
+  - Updated `About` page and Mobile About view to reflect theme changes
+
+- **Semantic Color Tokens**:
+  - Global refactor of all Learning Modules (5G, DigitalAssets, DigitalID, PKIWorkshop) to use semantic color tokens
+  - Introduced `--color-tertiary` (Purple) for Profile C support
+  - Refactored hardcoded colors to semantic tokens across app
+  - Replaced hardcoded dark styles with theme-aware variables in About page
+
+- **UI Improvements**:
+  - GitHub link added to about section
+  - Unified file manager badge text color to muted-foreground style
+  - Darkened file manager badge text for better light mode contrast
+  - Fixed broken leader icons by adding resilient LeaderCard component
+  - Improved console output readability with better semantic tokens
+  - Improved attribute value input readability
+  - Consistent readable input colors across all PKI Workshop steps
+  - Lightened code block backgrounds for better light mode visibility
+  - Theme consistency overhaul for Digital Assets module
+
+- **Documentation**:
+  - Updated `requirements/timeline.md` with comprehensive mobile timeline specifications
+  - Updated `REQUIREMENTS.md` with responsive design breakpoint details
+  - Added mobile swipeable navigation requirements and UX specifications
+  - Updated project structure in README
+  - Fixed README inconsistencies
+  - Added maintainability audit report for Learn/Digital Assets modules
+  - Added mobile design patterns to design system requirements
+
+- **Build & Deployment**:
+  - Display build timestamp in CST (Austin, TX timezone)
+  - Made build timestamp update on every build/HMR
+  - Added 404.html generation for GitHub Pages SPA routing
+  - Updated license info in package.json and About page
+
+### Fixed
+
+- **Navigation Issues**:
+  - Resolved critical bug where new users were forced into a redirect loop to the About page (WelcomeRedirect removed)
+  - Resolved Timeline blank screen navigation bug
+  - Removed AnimatePresence to resolve blank screen navigation bug
+
+- **Test Stability**:
+  - Fixed stale `useTheme` tests that referenced the deprecated "system" theme
+  - Fixed e2e tests: seed localStorage to bypass welcome, update selectors and mock data
+  - Fixed BitcoinFlow unit test crash
+  - Updated MobileTimelineList.test.tsx mock data to match interface
+
+- **Linting & Code Quality**:
+  - Addressed various security (`detect-object-injection`) and React Hook warnings
+  - Resolved build errors in DigitalID and Tabs
+  - Resolved Ethereum signature verification issues
+  - Suppressed testing-library and security warnings to unblock build
+  - Resolved remaining lint errors and bypassed strict checks
+  - Corrected TypeScript import for Plugin type
+
+- **Accessibility**:
+  - Fixed label-control associations in ThreatsDashboard
+
+- **Theme Consistency**:
+  - Removed hardcoded colors across multiple components
+  - Ensured openssl terminal supports light mode
+  - Ensured light mode consistency for Threats and Leaders pages
+  - Ensured consistent light mode by using theme variables
+
+- **PKI Workshop**:
+  - Skipped basicConstraints from profile attributes
+  - Removed constraints from PKI Workshop components
+  - Completed constraints removal from CSRGenerator
+  - Preserved CSR source attribution when loading CA profile
+
+- **Dependabot**:
+  - Resolved dependabot validation errors by reformatting
+  - Enabled dependabot grouping and added AboutView tests
 
 ## [1.5.0] - 2025-12-06
 
@@ -217,84 +399,287 @@ All notable changes to this project will be documented in this file.
   - Smooth Framer Motion animations (200ms transitions)
   - 50px drag threshold for phase transitions
 
+### Changed
+
+- **UI Improvements**:
+  - Learn module added to Kudos and Change Request forms
+  - Updated About page SBOM layout to compact 3-column view
+
+- **Documentation**:
+  - Updated mobile timeline requirements
+  - Created Design System, updated cursor rules with crypto/tech guidelines
+
 ### Fixed
 
-- **Accessibility**: Fixed label-control associations in ThreatsDashboard
-- **Theme Consistency**: Removed hardcoded colors across multiple components
+- **Theme Consistency**:
+  - Ensured openssl terminal supports light mode
+  - Ensured light mode consistency for Threats and Leaders pages
+  - Ensured consistent light mode by using theme variables
 
-### Documentation
+- **Build Issues**:
+  - Added 404.html generation for GitHub Pages SPA routing
 
-- Updated `requirements/timeline.md` with comprehensive mobile timeline specifications
-- Updated `REQUIREMENTS.md` with responsive design breakpoint details
-- Added mobile swipeable navigation requirements and UX specifications
+## [1.4.0] - 2025-12-04
 
-## [1.4.0] - 2025-12-06
+### Added
+
+- **Algorithm Comparison**:
+  - Comprehensive algorithm comparison with multi-tab interface
+  - Data source attribution to Algorithms and Threats pages
+
+- **Digital Assets Module**:
+  - Implemented digital assets module with full cryptocurrency support
+  - Complete digital assets flows with improved components and utilities
+
+- **PKI Workshop**:
+  - Profile info button with optimized markdown modal
 
 ### Changed
 
 - **OpenSSL Studio Redesign**:
-  - **Layout**: Implemented a split-pane design with dedicated areas for Configuration (Left) and File Management (Right).
-  - **Command Preview**: Moved to the top of the left pane, vertically centered, with an embedded "Run Command" button for a streamlined workflow.
+  - **Layout**: Implemented a split-pane design with dedicated areas for Configuration (Left) and File Management (Right)
+  - **Command Preview**: Moved to the top of the left pane, vertically centered, with an embedded "Run Command" button for a streamlined workflow
   - **File Manager**:
-    - Now permanently visible in the right pane.
-    - Added "Size" column and compact timestamp formatting.
-    - Implemented column sorting (Name, Type, Size, Date).
-  - **Toolbar**: Simplified navigation by removing the redundant "Key Files" button.
+    - Now permanently visible in the right pane
+    - Added "Size" column and compact timestamp formatting
+    - Implemented column sorting (Name, Type, Size, Date)
+  - **Toolbar**: Simplified navigation by removing the redundant "Key Files" button
+
+- **Tailwind v4 Migration**:
+  - Migrated to Tailwind v4 with UX improvements
+  - Refined algorithms table layout and typography
+  - Improved contrast by using proper semantic tokens
+
+- **Data Format**:
+  - Converted algorithms data from TypeScript to CSV
+
+- **Filter UI**:
+  - Applied grouped filter layout to Timeline page
+  - Added opaque styling to filter dropdowns
+  - Replaced glass-panel with opaque background in FilterDropdown wrapper
+  - Replaced semi-transparent backgrounds in FilterDropdown options
+  - Made all select dropdown options opaque globally
+  - Made dropdown menus opaque for better readability
+  - Improved Threats page filter layout and spacing
+
+### Fixed
+
+- **OpenSSL Studio**:
+  - Resolved file writing error and standardized PKI Workshop layout
+
+- **Build & Linting**:
+  - Stabilized e2e tests, updated SBOM, and fixed accessibility issues
+  - Fixed formatting and lint errors
+  - Resolved type error in WorkbenchToolbar and added type check to pre-commit
+  - Resolved lint errors and updated lint-staged config
+  - Setup husky and lint-staged for automatic formatting
+  - Fixed code formatting
+
+- **Component Issues**:
+  - Workbench component refactor and fixed regression tests
+  - Updated Workbench tests with required props
 
 ### Documentation
 
-- Updated `requirements/opensslstudio.md` with the new layout specifications and feature set.
+- Updated `requirements/opensslstudio.md` with the new layout specifications and feature set
+- Updated SBOM section with accurate dependency versions
+- Updated package-lock.json to sync with package.json
+- Updated project structure in README
 
-## [1.3.0] - 2025-12-04
+## [1.3.0] - 2025-12-02
 
 ### Added
 
 - **PKI Learning Module Enhancements**:
-  - **File Naming**: Standardized naming for artifacts (e.g., `pkiworkshop_<timestamp>.csr`, `pkiworkshop_ca_<timestamp>.key`).
-  - **OpenSSL Studio Sync**: Automatically syncs generated keys, CSRs, and certificates to the OpenSSL Studio file store.
-  - **State Persistence**: Workshop progress and OpenSSL Studio files are now persisted to `localStorage`.
+  - **File Naming**: Standardized naming for artifacts (e.g., `pkiworkshop_<timestamp>.csr`, `pkiworkshop_ca_<timestamp>.key`)
+  - **OpenSSL Studio Sync**: Automatically syncs generated keys, CSRs, and certificates to the OpenSSL Studio file store
+  - **State Persistence**: Workshop progress and OpenSSL Studio files are now persisted to `localStorage`
   - **UI Improvements**:
-    - **CertSigner**: Refactored to a 4-step flow (CSR -> Profile -> Content -> Sign) with an educational process diagram.
-    - **Attribute Source**: Added visual indicators for attributes from CSR vs. CA Profile.
-    - **Constraints**: Moved constraints to a dedicated display row.
-  - **Reset Functionality**: Added a "Reset Workshop" button to clear all state.
-  - **CertParser**: Added artifact selection dropdown and format conversion (DER/P7B).
+    - **CertSigner**: Refactored to a 4-step flow (CSR -> Profile -> Content -> Sign) with an educational process diagram
+    - **Attribute Source**: Added visual indicators for attributes from CSR vs. CA Profile
+    - **Constraints**: Moved constraints to a dedicated display row
+  - **Reset Functionality**: Added a "Reset Workshop" button to clear all state
+  - **CertParser**: Added artifact selection dropdown and format conversion (DER/P7B)
+
+- **OpenSSL Studio Enhancements**:
+  - File upload support
+  - Auto-encryption filename
+  - Playground backup functionality
+  - Enhanced logs and UI navigation
+
+### Changed
+
+- **OpenSSL Studio**:
+  - Updated requirements with verified algorithms and gap analysis
+  - Improved command generation syntax for keys, signatures, and KEM
 
 ### Fixed
 
 - **Code Quality & Stability**:
-  - **Linting**: Resolved all lint warnings (unused variables, `any` types, security alerts).
-  - **Build**: Fixed module resolution error by renaming `Root.tsx` to `AppRoot.tsx` and ensuring git tracking.
-  - **Formatting**: Enforced consistent code style.
+  - **Linting**: Resolved all lint warnings (unused variables, `any` types, security alerts)
+  - **Build**: Fixed module resolution error by renaming `Root.tsx` to `AppRoot.tsx` and ensuring git tracking
+  - **Formatting**: Enforced consistent code style
+  - Resolved remaining lint warnings and build error
+  - Resolved remaining lint warnings and Fast Refresh issue
+  - Resolved remaining lint warnings and security alerts
+  - Resolved linting, build, and accessibility errors
+  - Applied code formatting fixes
+
+- **OpenSSL Studio**:
+  - Fixed SLH-DSA key generation: Added missing variants to Workbench.tsx and updated E2E tests
+  - Resolved lint errors
+
+- **Accessibility**:
+  - ADA accessibility and UI consistency improvements
 
 ## [1.2.0] - 2025-12-02
 
-### Changed
-
-- **Threats Dashboard**: Reverted URL display feature due to data quality concerns.
-- **Documentation**: Updated requirements and test plans.
-
 ### Added
 
-- **Security**: Added comprehensive Security Audit Report (`src/data/security_audit_report_12022025.md`).
-- **Maintenance**: Applied formatting fixes across the codebase.
+- **About Page**:
+  - About page with SBOM and AI acknowledgment
+  - Comprehensive Security Audit Report (`src/data/security_audit_report_12022025.md`)
+
+- **Threats Dashboard**:
+  - Implemented Threats dashboard with tabs and sorting
+  - Standardized filtering UI and added criticality filter
+
+- **Analytics**:
+  - Implemented granular analytics tracking
+  - Integrated Google Analytics
+
+- **Data Updates**:
+  - Display data source metadata and updated data files
+  - Updated timeline data and schema
+  - Updated leaders data and schema
+  - Implemented versioned CSV loading for leaders data
+  - Added detailed CNSA 2.0 migration phases and milestones
+  - Augmented leaders list with new details
+
+- **Algorithms**:
+  - Updated algorithms list with full OpenSSL Studio support
+
+- **Build Improvements**:
+  - Used static build timestamp
+  - Added automated release workflow
+
+### Changed
+
+- **UI Improvements**:
+  - Reordered tabs in playground and openssl studio
+  - Removed close button and compacted library detail popover
+  - Optimized library detail popover metadata layout
+  - Refined library popover layout and table actions
+  - Used SVG flags and updated footer text
+  - Enforced strict sizing for country flags
+
+### Fixed
+
+- **Accessibility & Security**:
+  - Accessibility and security issues, added about requirements
+  - Resolved lint and security warnings
+
+- **Build Issues**:
+  - Fixed formatting issues
+  - Fixed lint error: unused variable in timelineData.ts
+  - Fixed build error: unused variable in timelineData.ts
+
+- **E2E Tests**:
+  - Updated e2e tests for UI changes
+  - Added E2E tests for PQC algorithms (ML-DSA, SLH-DSA, ML-KEM)
+
+### Documentation
+
+- Updated `requirements/timeline.md` and `opensslstudio.md`
+- Updated requirements with GA, timestamp, and algorithm details
+- Updated formatting and added security audit report
 
 ## [1.1.0] - 2025-11-30
 
 ### Added
 
 - **Revised Timeline Design**:
-  - New Gantt chart visualization with sticky columns for Country and Organization.
-  - Improved popover details for timeline phases and milestones.
-  - Country selection and filtering.
-  - Mock data support for stable E2E testing.
+  - New Gantt chart visualization with sticky columns for Country and Organization
+  - Improved popover details for timeline phases and milestones
+  - Country selection and filtering
+  - Mock data support for stable E2E testing
+  - Prioritized milestones in timeline sorting
+  - Rendered phases as individual cells for continuous bars
+  - Added visible grid lines to timeline
+  - Horizontal borders only between countries
+
+- **Timeline Features**:
+  - Grouped pre-2025 events and added <2024 header
+  - Updated timeline to group pre-2025 events
+  - Refined timeline visualization, support new CSV structure
+
+### Changed
+
+- **Popover Improvements**:
+  - Removed close button from popover, rely on click-outside
+  - Optimized popover header layout to save space
+  - Made popover fonts smaller and consistent with timeline
+  - Improved popover positioning and text wrapping
+
+- **Phase Handling**:
+  - Added 'Research' to phase order for correct sorting
+  - Reordered phases for better visualization
+  - Used fixed table layout to make phase bars span correctly
+  - Made phase bars fill full width of spanned columns
 
 ### Fixed
 
 - **OpenSSL Studio**:
-  - Resolved duplicate terminal log issues.
-  - Fixed worker initialization errors (`importScripts` and redeclaration issues).
+  - Resolved duplicate terminal log issues
+  - Fixed worker initialization errors (`importScripts` and redeclaration issues)
+  - Resolved importScripts error by providing correct URL
+
 - **Accessibility**:
-  - Restored high-contrast colors for better visibility.
+  - Restored high-contrast colors for better visibility
+  - Improved color contrast for WCAG AA compliance
+  - Added keyboard accessibility to phase cells
+
 - **CI/CD**:
-  - Fixed linting and formatting issues for a clean build pipeline.
+  - Fixed linting and formatting issues for a clean build pipeline
+  - Resolved lint errors and security warnings
+  - Fixed formatting issues in openssl worker
+  - Triggered CI
+
+- **Navigation**:
+  - Resolved runtime error in Legend and correct phase sorting
+  - Resolved runtime error and type issues with Deadline phase
+
+- **E2E Tests**:
+  - Decoupled E2E tests from production CSV data using mock data
+  - Updated E2E test expectation to match current data
+  - Fixed production test to match current UI
+  - Fixed production test strict mode violation
+  - Updated E2E tests to match current UI implementation
+  - Updated E2E test to close popover by clicking outside
+
+- **Linting**:
+  - Resolved ESLint errors - changed let to const for immutable variables
+  - Resolved remaining lint errors
+  - Resolved type error in FileManager.tsx by casting blob content to BlobPart
+  - Resolved persistent lint errors and Fast Refresh warnings
+  - Resolved build lint errors and unused variables
+  - Resolved 'any' type lint error in SimpleGanttChart.tsx
+  - Resolved lint error in GanttDetailPopover.tsx by removing unnecessary mounted state
+
+- **Styling**:
+  - Fixed formatting issues
+  - Removed .text-muted utility class to restore original styling
+  - Restored original text-muted color for better visual hierarchy
+  - Added bold styling to active navigation button
+  - Improved navigation button readability
+
+### Documentation
+
+- Updated timeline requirements with recent sorting and visualization changes
+- Updated timeline requirements with popover improvements
+- Updated requirements with recent fixes and testing strategy
+- Fixed formatting in requirements docs
+
+## [1.0.0] - Initial Release
+
+Initial release of PQC Timeline Application.
