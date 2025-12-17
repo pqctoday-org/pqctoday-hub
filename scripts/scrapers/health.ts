@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import { ComplianceRecord } from './types.js'
 
 export interface HealthCheckResult {
