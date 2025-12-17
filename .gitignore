@@ -8,8 +8,16 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+# Build artifacts
+dist
 dist-ssr
 *.local
+
+# WASM build artifacts and source code
+openssl-3.6.0-src/
+lms-wasm/
+*.o
+*.wasm.map
 
 # Editor directories and files
 .vscode/*
