@@ -1,0 +1,32 @@
+software_name,category_name,pqc_support,license_type,fips_validated,pqc_maturity
+Bouncy Castle C# .NET,Cryptographic Libraries,Yes (HQC ML-KEM),Open Source,Yes,NIST Primary
+Bouncy Castle Java,Cryptographic Libraries,Yes (ML-KEM ML-DSA SLH-DSA HQC),Open Source,Yes,Full NIST Suite
+Bouncy Castle Java LTS,Cryptographic Libraries,Yes (ML-DSA composite signatures),Mixed/Dual,Yes,NIST Primary
+OpenSSL,Cryptographic Libraries,Yes (ML-KEM ML-DSA SLH-DSA in v3.5),Open Source,Yes,Full NIST Suite
+Azure Dedicated HSM,Hardware Security Module (HSM) Software,Yes (via Thales),Commercial,Yes,PQC Enabled
+Entrust nShield,Hardware Security Module (HSM) Software,Yes (Hybrid PQC),Commercial,Yes,PQC Enabled
+Thales Luna HSM,Hardware Security Module (HSM) Software,Yes (PQC ready),Commercial,Yes,PQC Enabled
+Utimaco SecurityServer,Hardware Security Module (HSM) Software,Yes (PQC roadmap),Commercial,Yes,PQC Enabled
+AWS KMS,Key Management Systems (KMS),Limited (Hybrid),Commercial,Yes,PQC Enabled
+HashiCorp Vault,Key Management Systems (KMS),Yes (SLH-DSA in Transit experimental),Commercial,Yes,Experimental
+EJBCA,Public Key Infrastructure (PKI) Software,Yes (via Bouncy Castle),Open Source,Yes,PQC Enabled
+Keyfactor EJBCA,Public Key Infrastructure (PKI) Software,Yes,Commercial,Yes,PQC Enabled
+Venafi Trust Protection Platform,Public Key Infrastructure (PKI) Software,Yes (Crypto agility),Commercial,Yes,Assessment/Planning
+AWS s2n-tls,TLS/SSL Implementation Software,Yes (Kyber hybrid),Open Source,No,NIST Primary
+BoringSSL,TLS/SSL Implementation Software,Yes (ML-KEM),Open Source,Yes,NIST Primary
+GnuTLS,TLS/SSL Implementation Software,Yes (ML-KEM X25519MLKEM768 ML-DSA via liboqs/leancrypto),Open Source,No,NIST Primary
+LibreSSL,TLS/SSL Implementation Software,Yes (ML-KEM 768/1024 imported from BoringSSL - not yet public API),Open Source,No,NIST Primary
+rustls,TLS/SSL Implementation Software,Yes (via aws-lc-rs),Open Source,No,PQC Enabled
+wolfSSL,TLS/SSL Implementation Software,Yes (ML-DSA ML-KEM Kyber),Commercial,Yes,NIST Primary
+SignServer,Digital Signature Software,Yes (via modules),Mixed/Dual,Yes,PQC Enabled
+strongSwan,VPN and IPsec Software,Yes (ML-KEM experimental),Open Source,Yes,NIST Primary
+Signal Protocol,Secure Messaging and Communication,Yes (PQXDH experimental),Open Source,No,Experimental
+OpenSSH,SSH Implementation Software,Yes (mlkem768x25519-sha256 default),Open Source,No,PQC Enabled
+wolfSSH,SSH Implementation Software,Yes (Kyber Ed25519),Commercial,No,NIST Primary
+liboqs,Post-Quantum Cryptography Libraries,Yes (ML-KEM ML-DSA SLH-DSA BIKE HQC FrodoKEM Classic McEliece),Open Source,No,Full NIST Suite
+oqs-provider,Post-Quantum Cryptography Libraries,Yes (All liboqs algorithms),Open Source,No,PQC Enabled
+SSLyze,Cryptographic Protocol Analyzers,Yes (detection),Open Source,No,Detection Only
+testssl.sh,Cryptographic Protocol Analyzers,Yes (detection),Open Source,No,Detection Only
+Cryptosense Analyzer,Cryptographic Agility Frameworks,Yes (PQC readiness),Commercial,No,Assessment/Planning
+ISARA Radiate,Cryptographic Agility Frameworks,Yes (Core focus),Commercial,Yes,PQC Enabled
+wolfBoot,Secure Boot and Firmware Security,Yes (ML-DSA),Commercial,Yes,NIST Primary

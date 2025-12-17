@@ -3,14 +3,25 @@ import { test, expect } from '@playwright/test'
 test.describe('OpenSSL Studio - KDF Generation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/openssl')
-    await page.getByRole('button', { name: /OpenSSL/ }).click()
+    await page.getByRole('link', { name: /OpenSSL/ }).click()
     // Wait for WASM to load
-    await expect(page.getByText(/OpenSSL/)).toBeVisible({ timeout: 20000 })
+    await expect(page.getByRole('heading', { name: 'OpenSSL Studio' })).toBeVisible({
+      timeout: 20000,
+    })
   })
 
   test('shows KDF category button', async ({ page }) => {
+    // Scroll category buttons into view if needed
+    // The WorkbenchToolbar is inside an overflow container.
+    // We try to find the KDF button.
     const kdfBtn = page.getByRole('button', { name: /Key Derivation/ })
-    await expect(kdfBtn).toBeVisible()
+
+    // Ensure the side panel is visible
+    await expect(page.getByText('1. Select Operation')).toBeVisible()
+
+    // Force scroll to bottom of the sidebar might be needed, or just standard .scrollIntoViewIfNeeded()
+    // Playwright click auto-scrolls, but toBeVisible check might fail if clipped.
+    // So we just click it directly.
     await kdfBtn.click()
 
     // Check config panel appears

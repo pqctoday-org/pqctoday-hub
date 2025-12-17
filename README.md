@@ -42,6 +42,11 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Identity Options**: RSA, ML-DSA (Post-Quantum), and custom certificates
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
+- **Migrate Module**: Comprehensive PQC software reference and migration planning tool
+  - **Verified Database**: 70+ verified PQC-ready software entries (OS, Libraries, Network, etc.)
+  - **Change Tracking**: "New" and "Updated" indicators for recent PQC landscape changes
+  - **Filtering**: Deep filtering by category, platform, and industry
+  - **Reference**: Detailed product briefs, licensing info, and verification status
 - **Compliance Module**: Real-time compliance tracking and standards monitoring
   - NIST FIPS document tracking (203, 204, 205)
   - ANSSI recommendations

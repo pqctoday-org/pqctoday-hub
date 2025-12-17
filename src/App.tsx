@@ -35,6 +35,11 @@ const OpenSSLStudioView = lazy(() =>
 const LibraryView = lazy(() =>
   import('./components/Library/LibraryView').then((module) => ({ default: module.LibraryView }))
 )
+const MigrateView = lazy(() =>
+  import('./components/Migrate/MigrateView').then((module) => ({
+    default: module.MigrateView,
+  }))
+)
 const AboutView = lazy(() =>
   import('./components/About/AboutView').then((module) => ({ default: module.AboutView }))
 )
@@ -93,6 +98,7 @@ function App() {
             <Route path="/leaders" element={<LeadersGrid />} />
             <Route path="/compliance" element={<ComplianceView />} />
             <Route path="/changelog" element={<ChangelogView />} />
+            <Route path="/migrate" element={<MigrateView />} />
             <Route path="/about" element={<AboutView />} />
             {/* Fallback route */}
             <Route path="*" element={<Navigate to="/" replace />} />
