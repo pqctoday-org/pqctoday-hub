@@ -13,20 +13,20 @@ import {
 
 interface WorkbenchProps {
   category:
-  | 'genpkey'
-  | 'req'
-  | 'x509'
-  | 'enc'
-  | 'dgst'
-  | 'hash'
-  | 'rand'
-  | 'version'
-  | 'files'
-  | 'kem'
-  | 'pkcs12'
-  | 'lms'
-  | 'configutl'
-  | 'kdf'
+    | 'genpkey'
+    | 'req'
+    | 'x509'
+    | 'enc'
+    | 'dgst'
+    | 'hash'
+    | 'rand'
+    | 'version'
+    | 'files'
+    | 'kem'
+    | 'pkcs12'
+    | 'lms'
+    | 'configutl'
+    | 'kdf'
 
   setCategory: (
     category:
