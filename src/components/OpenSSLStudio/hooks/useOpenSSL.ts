@@ -185,8 +185,8 @@ export const useOpenSSL = () => {
             f.content instanceof Uint8Array
               ? f.content
               : new TextEncoder().encode(
-                  typeof f.content === 'string' ? f.content : JSON.stringify(f.content)
-                ),
+                typeof f.content === 'string' ? f.content : JSON.stringify(f.content)
+              ),
         }))
 
         workerRef.current.postMessage({
@@ -201,5 +201,28 @@ export const useOpenSSL = () => {
     [currentCommand, setIsProcessing, clearTerminalLogs, addLog, files, setLastExecutionTime]
   )
 
-  return { executeCommand }
+  const executeSkey = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (opType: 'create' | 'derive', params: Record<string, any>) => {
+      if (!workerRef.current) return
+
+      setIsProcessing(true)
+      setLastExecutionTime(null)
+      startTimeRef.current = performance.now()
+      clearTerminalLogs()
+      addLog('info', `Executing SKEY ${opType.toUpperCase()}...`)
+
+      const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+
+      workerRef.current.postMessage({
+        type: 'SKEY_OPERATION',
+        opType,
+        params,
+        requestId,
+      } as WorkerMessage)
+    },
+    [setIsProcessing, clearTerminalLogs, addLog, setLastExecutionTime]
+  )
+
+  return { executeCommand, executeSkey }
 }

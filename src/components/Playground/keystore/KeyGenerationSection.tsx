@@ -64,9 +64,11 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                 } else if (
                   val.startsWith('HQC-') ||
                   val.startsWith('FrodoKEM-') ||
-                  val.startsWith('Classic-McEliece-')
+                  val.startsWith('Classic-McEliece-') ||
+                  val.startsWith('SLH-DSA-') ||
+                  val.startsWith('FN-DSA-')
                 ) {
-                  // HQC, FrodoKEM, or Classic McEliece - pass the full algorithm name
+                  // HQC, FrodoKEM, Classic McEliece, SLH-DSA, or FN-DSA - pass the full algorithm name
                   if (onUnifiedChange) {
                     onUnifiedChange(val, val) // algorithm IS the keySize for these
                   } else {
@@ -111,6 +113,15 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                 <option value="44">ML-DSA-44 (NIST Level 2)</option>
                 <option value="65">ML-DSA-65 (NIST Level 3)</option>
                 <option value="87">ML-DSA-87 (NIST Level 5)</option>
+              </optgroup>
+              <optgroup label="SLH-DSA (Hash-Based Signatures)">
+                <option value="SLH-DSA-SHA2-128f">SLH-DSA-SHA2-128f (Level 1, Fast)</option>
+                <option value="SLH-DSA-SHA2-128s">SLH-DSA-SHA2-128s (Level 1, Small)</option>
+                <option value="SLH-DSA-SHAKE-128f">SLH-DSA-SHAKE-128f (Level 1, Fast)</option>
+              </optgroup>
+              <optgroup label="FN-DSA / Falcon (Signatures)">
+                <option value="FN-DSA-512">FN-DSA-512 / Falcon-512 (Level 1)</option>
+                <option value="FN-DSA-1024">FN-DSA-1024 / Falcon-1024 (Level 5)</option>
               </optgroup>
             </select>
           </div>

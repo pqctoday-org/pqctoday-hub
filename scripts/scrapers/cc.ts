@@ -3,7 +3,8 @@ import Papa from 'papaparse'
 import { createRequire } from 'module'
 import { ComplianceRecord } from './types.js'
 import {
-  fetchText,
+  fetchWithRetry,
+  getDataCutoffDate,
   extractAlgorithms,
   extractLabFromText,
   PQC_PATTERNS,
@@ -16,7 +17,7 @@ const { PDFParse } = require('pdf-parse')
 export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
   try {
     const url = 'https://www.commoncriteriaportal.org/products/certified_products.csv'
-    const csvText = await fetchText(url)
+    const csvText = await fetchWithRetry(url)
 
     const records: ComplianceRecord[] = []
 
@@ -32,9 +33,8 @@ export const scrapeCC = async (): Promise<ComplianceRecord[]> => {
 
     console.log(`[CC] CSV: Found ${parsedData.length} records. Filtering and fetching PDFs...`)
 
-    // Calculate 2-year window cutoff
-    const cutoffDate = new Date()
-    cutoffDate.setFullYear(cutoffDate.getFullYear() - 2)
+    // Calculate 2-year window cutoff using centralized utility
+    const cutoffDate = getDataCutoffDate()
 
     const candidateRecords: any[] = parsedData.filter((row: any) => {
       const dateStr = row['Certification Date'] || ''

@@ -16,14 +16,14 @@ vi.mock('../../data/libraryData', () => ({
     {
       referenceId: 'NIST-001',
       documentTitle: 'NIST PQC Standard',
-      category: 'Digital Signature',
+      categories: ['Digital Signature'],
       shortDescription: 'Standard for PQC',
       children: [],
     },
     {
       referenceId: 'RFC-1234',
       documentTitle: 'TLS Extensions',
-      category: 'Protocols',
+      categories: ['Protocols'],
       shortDescription: 'IETF RFC',
       children: [],
     },
@@ -32,6 +32,14 @@ vi.mock('../../data/libraryData', () => ({
     filename: 'test_data.csv',
     lastUpdate: new Date('2024-01-01'),
   },
+  libraryError: null,
+  LIBRARY_CATEGORIES: [
+    'Digital Signature',
+    'KEM',
+    'PKI Certificate Management',
+    'Protocols',
+    'General Recommendations',
+  ],
 }))
 
 describe('LibraryView', () => {
@@ -130,17 +138,23 @@ describe('LibraryView', () => {
       expect(screen.getByPlaceholderText('Search standards...')).toBeInTheDocument()
     })
 
-    it('filters items by title', () => {
+    it('filters items by title', async () => {
+      vi.useFakeTimers()
       render(<LibraryView />)
       const searchInput = screen.getByPlaceholderText('Search standards...')
       fireEvent.change(searchInput, { target: { value: 'NIST' } })
 
+      // Wait for debounce (200ms)
+      await vi.advanceTimersByTimeAsync(250)
+
       // Should show Digital Signature section (where NIST item is)
       // The tree table mock shows item count.
-      // We expect 'Digital Signature' to have 1 item, and 'Protocols' to have 0 (or not rendered if 0 items)
+      // We expect 'Digital Signature' to have 1 item
       // Based on implementation, sections with 0 items show "No documents found".
 
-      expect(screen.getByText('Tree Table (1 items)')).toBeInTheDocument()
+      const tables = screen.getAllByText(/Tree Table \(1 items\)/)
+      expect(tables.length).toBeGreaterThanOrEqual(1)
+      vi.useRealTimers()
     })
 
     it('shows no results message when search matches nothing', () => {

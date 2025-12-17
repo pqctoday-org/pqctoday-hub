@@ -26,6 +26,9 @@ export type WorkbenchCategory =
   | 'files'
   | 'kem'
   | 'pkcs12'
+  | 'lms'
+  | 'configutl'
+  | 'kdf'
 
 interface WorkbenchToolbarProps {
   category: string
@@ -146,6 +149,39 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <FileArchive size={16} /> PKCS#12 Bundle
+        </button>
+        <button
+          onClick={() => handleCategoryChange('lms', 'LMS (HSS)')}
+          className={clsx(
+            'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
+            category === 'lms'
+              ? 'bg-primary/20 border-primary/40 text-primary'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+          )}
+        >
+          <Shield size={16} /> LMS (HSS)
+        </button>
+        <button
+          onClick={() => handleCategoryChange('configutl', 'Config Audit')}
+          className={clsx(
+            'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
+            category === 'configutl'
+              ? 'bg-primary/20 border-primary/40 text-primary'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+          )}
+        >
+          <Settings size={16} /> Config Audit
+        </button>
+        <button
+          onClick={() => handleCategoryChange('kdf', 'Key Derivation')}
+          className={clsx(
+            'p-3 rounded-lg border text-left transition-colors flex items-center gap-2',
+            category === 'kdf'
+              ? 'bg-primary/20 border-primary/40 text-primary'
+              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+          )}
+        >
+          <Key size={16} /> Key Derivation
         </button>
         <button
           onClick={() => handleCategoryChange('version', 'Version Info')}

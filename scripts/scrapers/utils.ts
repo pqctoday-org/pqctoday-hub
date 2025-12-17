@@ -1,3 +1,7 @@
+import fs from 'fs'
+import path from 'path'
+import crypto from 'crypto'
+
 // Helper: Fetch Text with User Agent
 // Note: For SSL certificate issues with government sites (like ANSSI),
 // run the scraper with: NODE_TLS_REJECT_UNAUTHORIZED=0 npm run scrape
@@ -10,6 +14,80 @@ export const fetchText = async (url: string) => {
   })
   if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`)
   return res.text()
+}
+
+// Retry Configuration
+export interface RetryConfig {
+  maxRetries?: number
+  baseDelayMs?: number
+  maxDelayMs?: number
+}
+
+// Helper: Fetch with Retry and Exponential Backoff
+export const fetchWithRetry = async (url: string, config: RetryConfig = {}): Promise<string> => {
+  const { maxRetries = 3, baseDelayMs = 1000, maxDelayMs = 30000 } = config
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fetchText(url)
+    } catch (error) {
+      if (attempt === maxRetries) {
+        console.error(`[Retry] Failed after ${maxRetries} attempts: ${url}`)
+        throw error
+      }
+      const delay = Math.min(baseDelayMs * Math.pow(2, attempt - 1), maxDelayMs)
+      console.warn(`[Retry ${attempt}/${maxRetries}] ${url.substring(0, 80)}... - waiting ${delay}ms`)
+      await new Promise((r) => setTimeout(r, delay))
+    }
+  }
+  throw new Error('Unreachable')
+}
+
+// Rolling Window Date Cutoff
+export const getDataCutoffDate = (years = 2): Date => {
+  const cutoff = new Date()
+  cutoff.setFullYear(cutoff.getFullYear() - years)
+  return cutoff
+}
+
+// PDF Cache Directory
+const PDF_CACHE_DIR = path.join(process.cwd(), '.cache', 'pdfs')
+
+// Helper: Fetch PDF with Caching
+export const fetchPDFWithCache = async (url: string, maxAgeDays = 7): Promise<Buffer> => {
+  // Create cache dir if needed
+  if (!fs.existsSync(PDF_CACHE_DIR)) {
+    fs.mkdirSync(PDF_CACHE_DIR, { recursive: true })
+  }
+
+  // Generate cache key from URL
+  const cacheKey = crypto.createHash('md5').update(url).digest('hex')
+  const cachePath = path.join(PDF_CACHE_DIR, `${cacheKey}.pdf`)
+
+  // Check cache
+  if (fs.existsSync(cachePath)) {
+    const stats = fs.statSync(cachePath)
+    const ageMs = Date.now() - stats.mtimeMs
+    const maxAgeMs = maxAgeDays * 24 * 60 * 60 * 1000
+
+    if (ageMs < maxAgeMs) {
+      console.log(`[Cache] Using cached PDF: ${url.substring(0, 60)}...`)
+      return fs.readFileSync(cachePath)
+    }
+  }
+
+  // Fetch and cache
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    },
+  })
+  if (!response.ok) throw new Error(`Failed to fetch PDF: ${response.status}`)
+  const buffer = Buffer.from(await response.arrayBuffer())
+  fs.writeFileSync(cachePath, buffer)
+  console.log(`[Cache] Cached PDF: ${url.substring(0, 60)}...`)
+  return buffer
 }
 
 export const PQC_PATTERNS = [

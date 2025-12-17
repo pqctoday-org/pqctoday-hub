@@ -3,7 +3,7 @@ set -e
 
 echo "Starting OpenSSL WASM Build (Retry)..."
 
-cd openssl-build
+cd openssl-3.6.0-src
 
 # Clean previous build
 echo "Cleaning..."
@@ -43,7 +43,7 @@ echo "Linking Custom OpenSSL..."
 # Link CLI parts + Custom Wrapper
 # We redefine EM_FLAGS to include our new export
 LINK_FLAGS="-sMODULARIZE=1 -sEXPORT_NAME=createOpenSSLModule -sINVOKE_RUN=0 -sEXIT_RUNTIME=1 -sALLOW_MEMORY_GROWTH=1 -sWASM_BIGINT=1"
-EXPORTS="-sEXPORTED_FUNCTIONS=['_main','_execute_tls_simulation'] -sEXPORTED_RUNTIME_METHODS=['FS','callMain','cwrap','stringToUTF8','UTF8ToString','ENV']"
+EXPORTS="-sEXPORTED_FUNCTIONS=['_main','_execute_tls_simulation','_malloc','_free'] -sEXPORTED_RUNTIME_METHODS=['FS','callMain','cwrap','stringToUTF8','UTF8ToString','ENV','HEAPU8']"
 
 # Filter out problematic object files (like cmp which requires test mocks)
 APPS_OBJS=$(ls apps/openssl-bin-*.o | grep -v "cmp")

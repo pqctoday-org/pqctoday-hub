@@ -1,0 +1,30 @@
+{
+    "PQC_ALGORITHM_IDS": {
+        "ML-KEM": [
+            179,
+            180
+        ],
+        "ML-DSA": [
+            176,
+            177,
+            178
+        ],
+        "LMS": [
+            173,
+            174,
+            175
+        ],
+        "SLH-DSA": []
+    },
+    "ROLLING_WINDOW_YEARS": 2,
+    "STALE_THRESHOLD_DAYS": 7,
+    "PDF_CACHE_ENABLED": true,
+    "PDF_CACHE_MAX_AGE_DAYS": 7,
+    "EXPECTED_MINIMUMS": {
+        "NIST": 100,
+        "ACVP": 50,
+        "Common Criteria": 200,
+        "ANSSI": 20,
+        "ENISA": 5
+    }
+}

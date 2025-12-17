@@ -18,12 +18,81 @@ export interface LibraryItem {
   migrationUrgency: string
   manualCategory?: string
   children?: LibraryItem[]
-  category?: string
+  categories: string[] // Multi-category support
   status?: 'New' | 'Updated'
 }
 
 import { MOCK_LIBRARY_CSV_CONTENT } from './mockTimelineData'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
+
+// C-001: Single source of truth for categories
+export const LIBRARY_CATEGORIES = [
+  'Digital Signature',
+  'KEM',
+  'PKI Certificate Management',
+  'Protocols',
+  'General Recommendations',
+] as const
+
+export type LibraryCategory = (typeof LIBRARY_CATEGORIES)[number]
+
+// C-002/C-003: Map CSV manual_category values to UI categories
+const CATEGORY_ALIASES: Record<string, LibraryCategory> = {
+  'General PQC Migration': 'General Recommendations',
+  'Government Guidance': 'General Recommendations',
+  'PQC Protocol Specification': 'Protocols',
+  'PQC Certificate Standard': 'PKI Certificate Management',
+}
+
+// Helper to detect all applicable categories for an item
+function detectCategories(title: string, type: string): LibraryCategory[] {
+  const categories: LibraryCategory[] = []
+  const lowerTitle = title.toLowerCase()
+  const lowerType = type.toLowerCase()
+
+  // PKI/Certificate detection
+  if (lowerType.includes('pki') || lowerType.includes('certificate') || lowerTitle.includes('x.509') || lowerTitle.includes('x509')) {
+    categories.push('PKI Certificate Management')
+  }
+
+  // Protocol detection
+  if (
+    lowerType === 'protocol' ||
+    lowerTitle.includes('tls') ||
+    lowerTitle.includes('ssh') ||
+    lowerTitle.includes('ikev2') ||
+    lowerTitle.includes('cms') ||
+    lowerTitle.includes('ipsec')
+  ) {
+    categories.push('Protocols')
+  }
+
+  // KEM detection
+  if (
+    (lowerTitle.includes('key-encapsulation') || lowerTitle.includes('kem') || lowerTitle.includes('kyber')) &&
+    (lowerType === 'algorithm' || lowerType.includes('pki'))
+  ) {
+    categories.push('KEM')
+  }
+
+  // Digital Signature detection
+  if (
+    (lowerTitle.includes('signature') || lowerTitle.includes('dsa') || lowerTitle.includes('sign') || lowerTitle.includes('dilithium') || lowerTitle.includes('sphincs')) &&
+    (lowerType === 'algorithm' || lowerType.includes('pki'))
+  ) {
+    categories.push('Digital Signature')
+  }
+
+  // Fallback to General Recommendations if no specific category detected
+  if (categories.length === 0) {
+    categories.push('General Recommendations')
+  }
+
+  return categories
+}
+
+// R-002: Export error state for UI consumption
+export let libraryError: string | null = null
 
 // Helper to find the latest library CSV files (Current and Previous)
 function getLatestLibraryFiles(): {
@@ -68,6 +137,7 @@ function getLatestLibraryFiles(): {
 
   if (files.length === 0) {
     console.warn('No dated library CSV files found.')
+    libraryError = 'No library data files found. Please check data directory.'
     return { current: null, previous: null }
   }
 
@@ -88,10 +158,10 @@ function getLatestLibraryFiles(): {
     previous:
       files.length > 1
         ? {
-            content: files[1].content,
-            filename: files[1].path.split('/').pop() || files[1].path,
-            date: files[1].date,
-          }
+          content: files[1].content,
+          filename: files[1].path.split('/').pop() || files[1].path,
+          date: files[1].date,
+        }
         : null,
   }
 }
@@ -165,38 +235,31 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
       migrationUrgency: values[16],
       manualCategory: values[18] || undefined,
       children: [],
+      categories: [], // Will be populated below
     }
 
-    // Categorization Logic
-    if (item.manualCategory) {
-      item.category = item.manualCategory
-    } else {
-      const title = item.documentTitle.toLowerCase()
-      const type = item.documentType.toLowerCase()
+    // Multi-category Logic: Combine manual_category WITH auto-detected categories
+    const autoCategories = detectCategories(item.documentTitle, item.documentType)
 
-      if (type.includes('pki') || type.includes('certificate') || title.includes('x.509')) {
-        item.category = 'PKI Certificate Management'
-      } else if (
-        type === 'protocol' ||
-        title.includes('tls') ||
-        title.includes('ssh') ||
-        title.includes('ikev2') ||
-        title.includes('cms')
-      ) {
-        item.category = 'Protocols'
-      } else if (
-        (title.includes('key-encapsulation') || title.includes('kem')) &&
-        type === 'algorithm'
-      ) {
-        item.category = 'KEM'
-      } else if (
-        (title.includes('signature') || title.includes('dsa') || title.includes('sign')) &&
-        type === 'algorithm'
-      ) {
-        item.category = 'Digital Signature'
+    if (item.manualCategory) {
+      // Manual category from CSV - map through aliases
+      const mappedCategory = CATEGORY_ALIASES[item.manualCategory] ?? item.manualCategory
+      // Check if it's a valid category
+      if (LIBRARY_CATEGORIES.includes(mappedCategory as LibraryCategory)) {
+        // Start with manual category, then add any auto-detected ones that aren't already included
+        const allCategories = new Set<string>([mappedCategory])
+        autoCategories.forEach((cat) => allCategories.add(cat))
+        // Remove 'General Recommendations' if we have other specific categories
+        if (allCategories.size > 1 && allCategories.has('General Recommendations')) {
+          allCategories.delete('General Recommendations')
+        }
+        item.categories = Array.from(allCategories)
       } else {
-        item.category = 'General Recommendations'
+        item.categories = autoCategories
       }
+    } else {
+      // Auto-detect multiple categories based on title and type
+      item.categories = autoCategories
     }
 
     return item

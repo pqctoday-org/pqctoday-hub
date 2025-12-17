@@ -8,6 +8,9 @@ import { Pkcs12Config } from './configs/Pkcs12Config'
 import { ReqConfig } from './configs/ReqConfig'
 import { X509Config } from './configs/X509Config'
 import { DgstConfig } from './configs/DgstConfig'
+import { LmsConfig } from './configs/LmsConfig'
+import { ConfigUtlConfig } from './configs/ConfigUtlConfig'
+import { KdfConfig } from './configs/KdfConfig'
 
 interface WorkbenchConfigProps {
   category: string
@@ -92,6 +95,48 @@ interface WorkbenchConfigProps {
   setHashOutFile: (value: string) => void
   hashBinary: boolean
   setHashBinary: (value: boolean) => void
+  // LMS Options
+  lmsKeyFile: string
+  setLmsKeyFile: (value: string) => void
+  lmsSigFile: string
+  setLmsSigFile: (value: string) => void
+  lmsDataFile: string
+  setLmsDataFile: (value: string) => void
+  lmsMode: 'generate' | 'sign' | 'verify'
+  setLmsMode: (value: 'generate' | 'sign' | 'verify') => void
+  // ConfigUtl Options
+  configUtlInFile: string
+  setConfigUtlInFile: (value: string) => void
+  configUtlOutFile: string
+  setConfigUtlOutFile: (value: string) => void
+  // KDF Options
+  kdfAlgo: string
+  setKdfAlgo: (value: string) => void
+  kdfKeyLen: string
+  setKdfKeyLen: (value: string) => void
+  kdfOutFile: string
+  setKdfOutFile: (value: string) => void
+  kdfBinary: boolean
+  setKdfBinary: (value: boolean) => void
+  kdfDigest: string
+  setKdfDigest: (value: string) => void
+  kdfPass: string
+  setKdfPass: (value: string) => void
+  kdfSalt: string
+  setKdfSalt: (value: string) => void
+  kdfIter: string
+  setKdfIter: (value: string) => void
+  kdfInfo: string
+  setKdfInfo: (value: string) => void
+  kdfSecret: string
+  setKdfSecret: (value: string) => void
+  kdfScryptN: string
+  setKdfScryptN: (value: string) => void
+  kdfScryptR: string
+  setKdfScryptR: (value: string) => void
+  kdfScryptP: string
+  setKdfScryptP: (value: string) => void
+
 }
 
 export const WorkbenchConfig: React.FC<WorkbenchConfigProps> = (props) => {
@@ -231,6 +276,59 @@ export const WorkbenchConfig: React.FC<WorkbenchConfigProps> = (props) => {
           setHashOutFile={props.setHashOutFile}
           hashBinary={props.hashBinary}
           setHashBinary={props.setHashBinary}
+        />
+      )
+    case 'lms':
+      return (
+        <LmsConfig
+          mode={props.lmsMode}
+          setMode={props.setLmsMode}
+          lmsKeyFile={props.lmsKeyFile}
+          setLmsKeyFile={props.setLmsKeyFile}
+          lmsSigFile={props.lmsSigFile}
+          setLmsSigFile={props.setLmsSigFile}
+          lmsDataFile={props.lmsDataFile}
+          setLmsDataFile={props.setLmsDataFile}
+        />
+      )
+    case 'configutl':
+      return (
+        <ConfigUtlConfig
+          configUtlInFile={props.configUtlInFile}
+          setConfigUtlInFile={props.setConfigUtlInFile}
+          configUtlOutFile={props.configUtlOutFile}
+          setConfigUtlOutFile={props.setConfigUtlOutFile}
+        />
+      )
+    case 'kdf':
+      return (
+        <KdfConfig
+          kdfAlgo={props.kdfAlgo}
+          setKdfAlgo={props.setKdfAlgo}
+          kdfKeyLen={props.kdfKeyLen}
+          setKdfKeyLen={props.setKdfKeyLen}
+          kdfOutFile={props.kdfOutFile}
+          setKdfOutFile={props.setKdfOutFile}
+          kdfBinary={props.kdfBinary}
+          setKdfBinary={props.setKdfBinary}
+          kdfDigest={props.kdfDigest}
+          setKdfDigest={props.setKdfDigest}
+          kdfPass={props.kdfPass}
+          setKdfPass={props.setKdfPass}
+          kdfSalt={props.kdfSalt}
+          setKdfSalt={props.setKdfSalt}
+          kdfIter={props.kdfIter}
+          setKdfIter={props.setKdfIter}
+          kdfInfo={props.kdfInfo}
+          setKdfInfo={props.setKdfInfo}
+          kdfSecret={props.kdfSecret}
+          setKdfSecret={props.setKdfSecret}
+          kdfScryptN={props.kdfScryptN}
+          setKdfScryptN={props.setKdfScryptN}
+          kdfScryptR={props.kdfScryptR}
+          setKdfScryptR={props.setKdfScryptR}
+          kdfScryptP={props.kdfScryptP}
+          setKdfScryptP={props.setKdfScryptP}
         />
       )
     case 'version':

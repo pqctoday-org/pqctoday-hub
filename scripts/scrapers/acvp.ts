@@ -1,6 +1,12 @@
 import { JSDOM } from 'jsdom'
 import { ComplianceRecord } from './types.js'
-import { fetchText, extractAlgorithms, PQC_PATTERNS, CLASSICAL_PATTERNS } from './utils.js'
+import {
+  fetchWithRetry,
+  getDataCutoffDate,
+  extractAlgorithms,
+  PQC_PATTERNS,
+  CLASSICAL_PATTERNS,
+} from './utils.js'
 
 export const scrapeACVP = async (): Promise<ComplianceRecord[]> => {
   try {
@@ -20,7 +26,7 @@ export const scrapeACVP = async (): Promise<ComplianceRecord[]> => {
       const algoParams = group.ids.map((id) => `algorithm=${id}`).join('&')
       const url = `https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/validation-search?searchMode=implementation&productType=-1&${algoParams}&ipp=10000`
 
-      const html = await fetchText(url)
+      const html = await fetchWithRetry(url)
       const dom = new JSDOM(html)
       const doc = dom.window.document
 
@@ -53,8 +59,8 @@ export const scrapeACVP = async (): Promise<ComplianceRecord[]> => {
           ? new Date(dateStr).toISOString().split('T')[0]
           : new Date().toISOString().split('T')[0]
 
-        // Apply 2-year filter
-        if (new Date(date) < new Date('2022-01-01')) continue
+        // Apply rolling 2-year filter
+        if (new Date(date) < getDataCutoffDate()) continue
 
         let pqcCoverage: boolean | string = 'No PQC Mechanisms Detected'
         let classicalAlgorithms = ''
@@ -77,7 +83,7 @@ export const scrapeACVP = async (): Promise<ComplianceRecord[]> => {
         if (relativeLink) {
           try {
             const detailUrl = `https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/${relativeLink}`
-            const detailHtml = await fetchText(detailUrl)
+            const detailHtml = await fetchWithRetry(detailUrl)
             const detailDom = new JSDOM(detailHtml)
             const detailText = detailDom.window.document.body.textContent || ''
 

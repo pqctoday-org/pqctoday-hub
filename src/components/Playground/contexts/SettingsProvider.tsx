@@ -68,6 +68,14 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         'ML-DSA-44': true,
         'ML-DSA-65': true,
         'ML-DSA-87': true,
+        // SLH-DSA (FIPS 205)
+        'SLH-DSA-SHA2-128f': true,
+        'SLH-DSA-SHA2-128s': true,
+        'SLH-DSA-SHAKE-128f': true,
+        // FN-DSA (Falcon) - Draft FIPS 206
+        'FN-DSA-512': true,
+        'FN-DSA-1024': true,
+        // Classical
         'RSA-2048': true,
         'RSA-3072': true,
         'RSA-4096': true,

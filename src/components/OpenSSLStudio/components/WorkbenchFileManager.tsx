@@ -15,6 +15,7 @@ import JSZip from 'jszip'
 import { useOpenSSLStore } from '../store'
 import { useOpenSSL } from '../hooks/useOpenSSL'
 import { logEvent } from '../../../utils/analytics'
+import { getSecurityLevel } from '../../../utils/security'
 
 export const WorkbenchFileManager: React.FC = () => {
   const {
@@ -220,7 +221,7 @@ export const WorkbenchFileManager: React.FC = () => {
                 ? 'bg-red-500 text-foreground hover:bg-red-600 border border-red-500'
                 : 'bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20',
               files.length === 0 &&
-                'opacity-50 cursor-not-allowed bg-muted border-border text-muted-foreground'
+              'opacity-50 cursor-not-allowed bg-muted border-border text-muted-foreground'
             )}
             title="Delete all files"
           >
@@ -369,6 +370,15 @@ export const WorkbenchFileManager: React.FC = () => {
                       >
                         {file.type.toUpperCase()}
                       </span>
+                      {(() => {
+                        const level = getSecurityLevel(file.name)
+                        if (!level) return null
+                        return (
+                          <span className="ml-2 px-1.5 py-0.5 rounded text-[9px] font-bold border border-primary/30 bg-primary/10 text-primary uppercase tracking-tight">
+                            L{level}
+                          </span>
+                        )
+                      })()}
                     </td>
                     <td className="p-2 text-foreground font-mono text-sm truncate max-w-[200px]">
                       {file.name}

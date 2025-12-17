@@ -7,14 +7,20 @@ import { getOpenSSLDocUrl } from '../../../utils/opensslDocsData'
 
 interface WorkbenchPreviewProps {
   category: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  skeyParams?: Record<string, any>
 }
 
-export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category }) => {
+export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, skeyParams }) => {
   const { isProcessing, command, isReady } = useOpenSSLStore()
-  const { executeCommand } = useOpenSSL()
+  const { executeCommand, executeSkey } = useOpenSSL()
 
   const handleRun = () => {
-    executeCommand(command)
+    if (category === 'skey' && skeyParams) {
+      executeSkey(skeyParams.opType, skeyParams)
+    } else {
+      executeCommand(command)
+    }
     logEvent('OpenSSL Studio', 'Run Command', category)
   }
 
@@ -42,20 +48,26 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category }) 
               <span className="hidden sm:inline">Docs</span>
             </a>
 
-            <button
-              onClick={handleRun}
-              disabled={isProcessing || !isReady}
-              className="btn-primary flex items-center gap-2 px-4 py-1.5 text-xs font-bold shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-            >
-              {isProcessing ? (
-                <Settings className="animate-spin w-3 h-3" />
-              ) : !isReady ? (
-                <Settings className="animate-spin w-3 h-3" />
-              ) : (
-                <Play fill="currentColor" className="w-3 h-3" />
-              )}
-              {!isReady ? 'Initializing...' : 'Run Command'}
-            </button>
+            {category === 'lms' ? (
+              <span className="text-xs text-amber-500 px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded">
+                Use WASM buttons in config panel ↑
+              </span>
+            ) : (
+              <button
+                onClick={handleRun}
+                disabled={isProcessing || !isReady}
+                className="btn-primary flex items-center gap-2 px-4 py-1.5 text-xs font-bold shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+              >
+                {isProcessing ? (
+                  <Settings className="animate-spin w-3 h-3" />
+                ) : !isReady ? (
+                  <Settings className="animate-spin w-3 h-3" />
+                ) : (
+                  <Play fill="currentColor" className="w-3 h-3" />
+                )}
+                {!isReady ? 'Initializing...' : 'Run Command'}
+              </button>
+            )}
           </div>
         </div>
 

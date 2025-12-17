@@ -3,6 +3,7 @@ import { createLogger } from '../../../utils/logger'
 import type { Key, LogEntry } from '../../../types'
 import * as MLKEM from '../../../wasm/liboqs_kem'
 import * as MLDSA from '../../../wasm/liboqs_dsa'
+import * as LIBOQS_SIG from '../../../wasm/liboqs_sig'
 import * as WebCrypto from '../../../utils/webCrypto'
 import { bytesToHex } from '../../../utils/dataInputUtils'
 import type { ExecutionMode, ClassicalAlgorithm } from '../PlaygroundContext'
@@ -155,6 +156,49 @@ export const useKeyGeneration = ({
           addLog({
             keyLabel: `${algoName} Pair`,
             operation: 'Key Generation (WASM)',
+            result: `PK: ${keypair.publicKey.length}B, SK: ${keypair.secretKey.length}B`,
+            executionTime: end - start,
+          })
+        } else if (algorithm.startsWith('SLH-DSA') || algorithm.startsWith('FN-DSA')) {
+          // SLH-DSA and FN-DSA (Falcon) via liboqs
+          algoName = algorithm
+          logger.debug('[Playground] Generating SLH-DSA/FN-DSA keys...', algoName)
+          const keypair = await LIBOQS_SIG.generateKey({ name: algoName })
+
+          newKeys = [
+            {
+              id: `pk-${idBase}`,
+              name: `${algoName} Public Key (WASM) [${timestamp}]`,
+              type: 'public',
+              algorithm: algoName,
+              value: bytesToHex(keypair.publicKey),
+              data: keypair.publicKey,
+              dataType: 'binary',
+              timestamp: Date.now(),
+            },
+            {
+              id: `sk-${idBase}`,
+              name: `${algoName} Private Key (WASM) [${timestamp}]`,
+              type: 'private',
+              algorithm: algoName,
+              value: bytesToHex(keypair.secretKey),
+              data: keypair.secretKey,
+              dataType: 'binary',
+              timestamp: Date.now(),
+            },
+          ]
+
+          setKeyStore((prev) => {
+            const newStore = [...prev, ...newKeys]
+            return newStore.length > MAX_KEYS ? newStore.slice(-MAX_KEYS) : newStore
+          })
+          setSelectedSignKeyId(newKeys[1].id)
+          setSelectedVerifyKeyId(newKeys[0].id)
+
+          const end = performance.now()
+          addLog({
+            keyLabel: `${algoName} Pair`,
+            operation: 'Key Generation (liboqs)',
             result: `PK: ${keypair.publicKey.length}B, SK: ${keypair.secretKey.length}B`,
             executionTime: end - start,
           })

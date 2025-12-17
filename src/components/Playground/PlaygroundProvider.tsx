@@ -5,6 +5,7 @@ import { OperationsProvider } from './contexts/OperationsProvider'
 import { openSSLService } from '../../services/crypto/OpenSSLService'
 import * as MLKEM from '../../wasm/liboqs_kem'
 import * as MLDSA from '../../wasm/liboqs_dsa'
+import * as LIBOQS_SIG from '../../wasm/liboqs_sig'
 
 export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Pre-load OpenSSL and Cleanup on unmount
@@ -19,6 +20,7 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       // Clear WASM instance caches to free ~2-3MB
       MLKEM.clearInstanceCache()
       MLDSA.clearInstanceCache()
+      LIBOQS_SIG.clearInstanceCache()
     }
   }, [])
 

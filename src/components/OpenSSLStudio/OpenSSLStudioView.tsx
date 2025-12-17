@@ -23,6 +23,9 @@ export const OpenSSLStudioView = () => {
     | 'files'
     | 'kem'
     | 'pkcs12'
+    | 'lms'
+    | 'configutl'
+    | 'kdf'
   >('genpkey')
   const { editingFile, activeTab } = useOpenSSLStore()
 

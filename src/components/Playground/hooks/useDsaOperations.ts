@@ -1,8 +1,13 @@
 import type { Key, LogEntry } from '../../../types'
 import * as MLDSA from '../../../wasm/liboqs_dsa'
+import * as LIBOQS_SIG from '../../../wasm/liboqs_sig'
 import * as WebCrypto from '../../../utils/webCrypto'
 import { bytesToHex, hexToBytes } from '../../../utils/dataInputUtils'
 import type { ExecutionMode } from '../PlaygroundContext'
+
+// Helper to detect which signing module to use
+const isLiboqsSigAlgorithm = (algo: string): boolean =>
+  algo.startsWith('SLH-DSA') || algo.startsWith('FN-DSA') || algo.startsWith('Falcon')
 
 interface UseDsaOperationsProps {
   keyStore: Key[]
@@ -114,16 +119,23 @@ export const useDsaOperations = ({
             throw new Error('Selected key has invalid data format (expected Uint8Array)')
 
           const messageBytes = new TextEncoder().encode(dataToSign)
-          const signature = await MLDSA.sign(messageBytes, key.data)
+          let signatureBytes: Uint8Array
 
-          setSignature(bytesToHex(signature))
+          // Use liboqs_sig for SLH-DSA and FN-DSA, MLDSA for ML-DSA
+          if (isLiboqsSigAlgorithm(key.algorithm)) {
+            signatureBytes = await LIBOQS_SIG.sign(messageBytes, key.data, key.algorithm)
+          } else {
+            signatureBytes = await MLDSA.sign(messageBytes, key.data)
+          }
+
+          setSignature(bytesToHex(signatureBytes))
 
           const end = performance.now()
 
           addLog({
             keyLabel: key.name,
-            operation: 'Sign (WASM)',
-            result: `Signature: ${signature.length} bytes`,
+            operation: `Sign (${isLiboqsSigAlgorithm(key.algorithm) ? 'liboqs' : 'WASM'})`,
+            result: `Signature: ${signatureBytes.length} bytes`,
             executionTime: end - start,
           })
         } else if (type === 'verify') {
@@ -135,14 +147,21 @@ export const useDsaOperations = ({
           if (!signature) throw new Error('No signature available. Run Sign first.')
 
           const messageBytes = new TextEncoder().encode(dataToSign)
-          const isValid = await MLDSA.verify(hexToBytes(signature), messageBytes, key.data)
+          let isValid: boolean
+
+          // Use liboqs_sig for SLH-DSA and FN-DSA, MLDSA for ML-DSA
+          if (isLiboqsSigAlgorithm(key.algorithm)) {
+            isValid = await LIBOQS_SIG.verify(hexToBytes(signature), messageBytes, key.data, key.algorithm)
+          } else {
+            isValid = await MLDSA.verify(hexToBytes(signature), messageBytes, key.data)
+          }
 
           const end = performance.now()
           setVerificationResult(isValid)
 
           addLog({
             keyLabel: key.name,
-            operation: 'Verify (WASM)',
+            operation: `Verify (${isLiboqsSigAlgorithm(key.algorithm) ? 'liboqs' : 'WASM'})`,
             result: isValid ? '✓ VALID' : '✗ INVALID',
             executionTime: end - start,
           })

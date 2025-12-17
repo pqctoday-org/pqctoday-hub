@@ -13,17 +13,21 @@ import {
 
 interface WorkbenchProps {
   category:
-    | 'genpkey'
-    | 'req'
-    | 'x509'
-    | 'enc'
-    | 'dgst'
-    | 'hash'
-    | 'rand'
-    | 'version'
-    | 'files'
-    | 'kem'
-    | 'pkcs12'
+  | 'genpkey'
+  | 'req'
+  | 'x509'
+  | 'enc'
+  | 'dgst'
+  | 'hash'
+  | 'rand'
+  | 'version'
+  | 'files'
+  | 'kem'
+  | 'pkcs12'
+  | 'lms'
+  | 'configutl'
+  | 'kdf'
+
   setCategory: (
     category:
       | 'genpkey'
@@ -37,6 +41,10 @@ interface WorkbenchProps {
       | 'files'
       | 'kem'
       | 'pkcs12'
+      | 'lms'
+      | 'configutl'
+      | 'kdf'
+
   ) => void
 }
 
@@ -98,6 +106,33 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
   const [hashOutFile, setHashOutFile] = useState('')
   const [hashBinary, setHashBinary] = useState(false)
 
+  // LMS State
+  const [lmsKeyFile, setLmsKeyFile] = useState('')
+  const [lmsSigFile, setLmsSigFile] = useState('')
+  const [lmsDataFile, setLmsDataFile] = useState('')
+  const [lmsMode, setLmsMode] = useState<'generate' | 'sign' | 'verify'>('generate')
+
+  // ConfigUtl State
+  const [configUtlInFile, setConfigUtlInFile] = useState('')
+  const [configUtlOutFile, setConfigUtlOutFile] = useState('')
+
+  // KDF State
+  const [kdfAlgo, setKdfAlgo] = useState('HKDF')
+  const [kdfKeyLen, setKdfKeyLen] = useState('32')
+  const [kdfOutFile, setKdfOutFile] = useState('')
+  const [kdfBinary, setKdfBinary] = useState(false)
+  const [kdfDigest, setKdfDigest] = useState('SHA256')
+  const [kdfPass, setKdfPass] = useState('')
+  const [kdfSalt, setKdfSalt] = useState('')
+  const [kdfIter, setKdfIter] = useState('1000')
+  const [kdfInfo, setKdfInfo] = useState('')
+  const [kdfSecret, setKdfSecret] = useState('')
+  const [kdfScryptN, setKdfScryptN] = useState('1024')
+  const [kdfScryptR, setKdfScryptR] = useState('8')
+  const [kdfScryptP, setKdfScryptP] = useState('1')
+
+
+
   // Auto-select latest signature file when switching to verify or when files change
   useEffect(() => {
     if (category === 'dgst' && signAction === 'verify') {
@@ -158,6 +193,9 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
     const sanitizedCountry = sanitizeCountryCode(country)
     const sanitizedOrg = sanitizeOrganization(org)
     const sanitizedCN = sanitizeCommonName(commonName)
+
+    // Debug
+    // console.log('[Workbench] Effect triggered', { category, lmsKeyFile, currentCmd: cmd })
 
     // Helper to build Subject DN string
     const subj = `/C=${sanitizedCountry}/O=${sanitizedOrg}/CN=${sanitizedCN}`
@@ -326,7 +364,57 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
         const inP12 = p12File || 'bundle.p12'
         const outPem = 'restored.pem'
         cmd += ` pkcs12 -in ${inP12} -out ${outPem} -passin pass:${p12Pass} -nodes`
+        cmd += ` pkcs12 -in ${inP12} -out ${outPem} -passin pass:${p12Pass} -nodes`
       }
+    } else if (category === 'lms') {
+      // LMS operations are now handled by WASM in LmsConfig, not CLI
+      // This command preview is just for reference (verify only works via CLI)
+      const dbData = lmsDataFile || 'data.txt'
+      const dbKey = lmsKeyFile || 'lms_pub.key'
+      if (lmsMode === 'verify') {
+        cmd += ` pkeyutl -verify -in ${dbData}`
+        if (lmsSigFile) cmd += ` -sigfile ${lmsSigFile}`
+        cmd += ` -inkey ${dbKey} -pubin`
+      } else if (lmsMode === 'sign') {
+        cmd += ` pkeyutl -sign -inkey ${lmsKeyFile || 'lms.key'} -in ${dbData} -out lms_sig.bin`
+      } else {
+        cmd = `[LMS] Generate keypair (WASM-only operation)`
+      }
+    } else if (category === 'configutl') {
+      const inFile = configUtlInFile || 'openssl.cnf'
+      cmd += ` configutl -config ${inFile}`
+      if (configUtlOutFile) {
+        cmd += ` -dump -out ${configUtlOutFile}`
+      }
+    } else if (category === 'kdf') {
+      cmd += ` kdf -keylen ${kdfKeyLen}`
+      if (kdfOutFile) cmd += ` -out ${kdfOutFile}`
+      if (kdfBinary) cmd += ` -binary`
+
+      // Common Options
+      if (['HKDF', 'PBKDF2', 'SSKDF'].includes(kdfAlgo)) {
+        cmd += ` -kdfopt digest:${kdfDigest}`
+      }
+      if (kdfSalt) cmd += ` -kdfopt salt:${kdfSalt}`
+
+      // Algorithm Specific
+      if (kdfAlgo === 'HKDF') {
+        if (kdfSecret) cmd += ` -kdfopt key:${kdfSecret}`
+        if (kdfInfo) cmd += ` -kdfopt info:${kdfInfo}`
+      } else if (kdfAlgo === 'PBKDF2') {
+        if (kdfPass) cmd += ` -kdfopt pass:${kdfPass}`
+        if (kdfIter) cmd += ` -kdfopt iter:${kdfIter}`
+      } else if (kdfAlgo === 'SCRYPT') {
+        if (kdfPass) cmd += ` -kdfopt pass:${kdfPass}`
+        if (kdfScryptN) cmd += ` -kdfopt N:${kdfScryptN}`
+        if (kdfScryptR) cmd += ` -kdfopt r:${kdfScryptR}`
+        if (kdfScryptP) cmd += ` -kdfopt p:${kdfScryptP}`
+      } else if (kdfAlgo === 'SSKDF') {
+        if (kdfSecret) cmd += ` -kdfopt key:${kdfSecret}`
+        if (kdfInfo) cmd += ` -kdfopt info:${kdfInfo}`
+      }
+
+      cmd += ` ${kdfAlgo}`
     }
 
     setCommand(cmd)
@@ -374,6 +462,25 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
     manualHashHex,
     useRawIn,
     files,
+    lmsKeyFile,
+    lmsSigFile,
+    lmsDataFile,
+    configUtlInFile,
+    configUtlOutFile,
+    kdfAlgo,
+    kdfKeyLen,
+    kdfOutFile,
+    kdfBinary,
+    kdfDigest,
+    kdfPass,
+    kdfSalt,
+    kdfIter,
+    kdfInfo,
+    kdfSecret,
+    kdfScryptN,
+    kdfScryptR,
+    kdfScryptP,
+
   ])
 
   return (
@@ -464,8 +571,48 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
             setHashOutFile={setHashOutFile}
             hashBinary={hashBinary}
             setHashBinary={setHashBinary}
+            lmsKeyFile={lmsKeyFile}
+            setLmsKeyFile={setLmsKeyFile}
+            lmsSigFile={lmsSigFile}
+            setLmsSigFile={setLmsSigFile}
+            lmsDataFile={lmsDataFile}
+            setLmsDataFile={setLmsDataFile}
+            lmsMode={lmsMode}
+            setLmsMode={setLmsMode}
+            configUtlInFile={configUtlInFile}
+            setConfigUtlInFile={setConfigUtlInFile}
+            configUtlOutFile={configUtlOutFile}
+            setConfigUtlOutFile={setConfigUtlOutFile}
+            kdfAlgo={kdfAlgo}
+            setKdfAlgo={setKdfAlgo}
+            kdfKeyLen={kdfKeyLen}
+            setKdfKeyLen={setKdfKeyLen}
+            kdfOutFile={kdfOutFile}
+            setKdfOutFile={setKdfOutFile}
+            kdfBinary={kdfBinary}
+            setKdfBinary={setKdfBinary}
+            kdfDigest={kdfDigest}
+            setKdfDigest={setKdfDigest}
+            kdfPass={kdfPass}
+            setKdfPass={setKdfPass}
+            kdfSalt={kdfSalt}
+            setKdfSalt={setKdfSalt}
+            kdfIter={kdfIter}
+            setKdfIter={setKdfIter}
+            kdfInfo={kdfInfo}
+            setKdfInfo={setKdfInfo}
+            kdfSecret={kdfSecret}
+            setKdfSecret={setKdfSecret}
+            kdfScryptN={kdfScryptN}
+            setKdfScryptN={setKdfScryptN}
+            kdfScryptR={kdfScryptR}
+            setKdfScryptR={setKdfScryptR}
+            kdfScryptP={kdfScryptP}
+            setKdfScryptP={setKdfScryptP}
           />
-          <WorkbenchPreview category={category} />
+          <WorkbenchPreview
+            category={category}
+          />
         </>
       )}
     </div>

@@ -1,5 +1,8 @@
 # Compliance & Certification Data Requirements
 
+**Status:** ✅ Implemented  
+**Last Updated:** 2025-12-16
+
 ## Overview
 
 This document defines the technical requirements for the **Compliance & Certification** module, specifically focusing on fetching, parsing, and displaying cryptographic compliance data from authoritative government sources (NIST and Common Criteria).
@@ -15,6 +18,44 @@ To support deployment on **GitHub Pages** (which cannot run backend proxies) and
 1.  **Offline Scraper (`scripts/scrape-compliance.ts`)**: A Node.js script that runs in a CI environment. checking the real government sites using `jsdom`.
 2.  **GitHub Action (`.github/workflows/update-compliance.yml`)**: A scheduled workflow (daily) that runs the scraper and commits the resulting `public/data/compliance-data.json` file back to the repository.
 3.  **Frontend Consumption**: In Production mode (`import.meta.env.PROD`), the application fetches the pre-generated JSON file instead of attempting live scrapes. In Development mode, it retains the ability to proxy/scrape live for testing.
+
+### Scraper Reliability Features
+
+The scraper infrastructure includes several optimizations for reliability and data quality:
+
+#### 1. Fetch with Retry & Exponential Backoff (`scripts/scrapers/utils.ts`)
+- **Max Retries**: 3 attempts per request
+- **Base Delay**: 1 second, doubling after each failure
+- **Max Delay Cap**: 30 seconds
+- **Use Case**: All HTTP fetches to government sites use this pattern to handle transient failures
+
+#### 2. PDF Caching (`scripts/scrapers/utils.ts`)
+- **Cache Location**: `.cache/pdfs/` directory
+- **Cache Key**: MD5 hash of URL
+- **Default TTL**: 7 days before re-download
+- **Benefit**: Reduces redundant downloads during development and re-runs
+
+#### 3. Health Checks & Validation (`scripts/scrapers/health.ts`)
+- **Record Count Validation**: Compares new vs previous record counts per source
+- **Expected Minimums**: NIST (100), ACVP (50), Common Criteria (200), ANSSI (20), ENISA (5)
+- **Critical Alert**: Triggers on 50%+ drop in record count
+- **Warning Alert**: Triggers when below expected minimum
+- **Missing Source Alert**: Detects when a previously-present source returns 0 records
+- **Behavior**: Build fails on critical health check unless `--force` flag is used
+
+#### 4. Data Normalization (`scripts/scrapers/utils.ts`)
+- **Date Standardization**: Converts US (MM/DD/YYYY), EU (DD/MM/YYYY), and other formats to ISO 8601 (YYYY-MM-DD)
+- **Algorithm Normalization**: Maps legacy names to canonical form (e.g., `kyber` → `ML-KEM`, `dilithium` → `ML-DSA`, `sphincs` → `SPHINCS+`)
+- **Deduplication**: Removes duplicate records by ID
+- **Canonical PQC Names**: `ML-KEM`, `ML-DSA`, `SLH-DSA`, `LMS`, `XMSS`, `HSS`, `SPHINCS+`, `Falcon`
+
+#### 5. Lab/ITSEF Extraction (`scripts/scrapers/utils.ts`)
+- **Multi-language Support**: Parses English and French patterns for evaluation lab extraction
+- **Pattern Priority**: 
+  1. Explicit ITSEF/Lab fields
+  2. "Testing was completed by" phrases  
+  3. Known lab name matching (30+ labs)
+- **Name Normalization**: Handles company suffixes (GmbH, Ltd, Inc, SAS, etc.)
 
 ### Build Lifecycle & Caching
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAssembly. It allows users to perform cryptographic operations (Key Generation, CSR Creation, Certificate Signing, and Verification) directly in the browser without server-side processing.
+OpenSSL Studio is a browser-based interface for OpenSSL v3.6.0, powered by WebAssembly. It allows users to perform cryptographic operations (Key Generation, CSR Creation, Certificate Signing, and Verification) directly in the browser without server-side processing.
 
 **Status**: ✅ Fully Functional (RSA, EC, Ed25519, X25519, Ed448, X448, ML-KEM, ML-DSA, SLH-DSA confirmed working).
 
@@ -10,7 +10,7 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
 
 ### 1. WebAssembly Integration
 
-- **Version**: OpenSSL v3.5.4 (LTS with PQC support).
+- **Version**: OpenSSL v3.6.0 (with PQC support).
 - **Architecture**: Custom Emscripten build with `MODULARIZE=1` and `EXPORTED_RUNTIME_METHODS=['callMain', 'FS']`.
 - **Loading Strategy**:
   - Uses `fetch` + `eval` to bypass Module Worker restrictions for UMD scripts.
@@ -81,6 +81,13 @@ OpenSSL Studio is a browser-based interface for OpenSSL v3.5.4, powered by WebAs
   - **PKCS#12 (`pkcs12`)**:
     - Export: Bundle Certificate and Private Key into `.p12` file.
     - Import: Extract Certificate and Private Key from `.p12` file to `.pem`.
+  - **LMS / HSS (Stateful Hash-Based Signatures)**:
+    - **Key Generation**: Generate LMS keypair via WASM (not OpenSSL CLI).
+    - **Signing**: Sign data with LMS private key via WASM.
+    - **Verification**: Verify signatures via WASM or OpenSSL CLI (`pkeyutl -verify`).
+    - **Parameters**: LMS height (H5-H25), LM-OTS width (W1-W8).
+    - **Stateful Warning**: Private key state updates after each signature (key cannot be reused after signing).
+    - **Mode Tabs**: Unified UI with Generate / Sign / Verify tabs.
 - **Configuration Editor**: Dedicated button to view/edit `openssl.cnf` directly.
 - **File Manager (Enhanced)**:
   - **Location**: Right Pane (Permanent visibility).

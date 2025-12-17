@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.4] - 2025-12-16
+
+### Added
+
+- **LMS / HSS (Hash-Based Signatures)**:
+  - Unified "LMS (HSS)" button with Generate / Sign / Verify mode tabs
+  - WASM-based key generation, signing, and verification
+  - Parameters: LMS height (H5-H25), LM-OTS width (W1-W8)
+  - Stateful signature warning for private key updates
+  - Added `data-testid` attributes for E2E test reliability
+
+### Changed
+
+- **OpenSSL Studio**:
+  - Now shows 13 operation types (added LMS/HSS)
+  - "Run Command" button hidden for LMS (uses WASM buttons instead)
+  - Updated documentation to reflect OpenSSL 3.6.0
+
+### Fixed
+
+- **LMS Signature Verification**:
+  - Fixed signature size issue (trimmed trailing zeros from 5KB buffer)
+  - Fixed verify mode key selection to prefer `.pub` over `.key` files
+  - Filtered verify dropdown to only show public keys (`.pub`, `.pem`)
+
+### Removed
+
+- **SKEY (Symmetric Key)**: Removed experimental EVP_SKEY feature due to WASM handle persistence limitations
+
 ## [1.8.3] - 2025-12-16
 
 ### Added

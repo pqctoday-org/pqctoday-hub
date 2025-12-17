@@ -152,7 +152,7 @@ export const SettingsTab: React.FC = () => {
               {/* ML-DSA */}
               <div className="space-y-1.5">
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  ML-DSA (Post-Quantum)
+                  ML-DSA (FIPS 204)
                 </div>
                 <div className="grid grid-cols-1 gap-2">
                   {['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'].map((algo) => (
@@ -181,6 +181,79 @@ export const SettingsTab: React.FC = () => {
                         {algo === 'ML-DSA-65' && 'NIST Level 3'}
                         {algo === 'ML-DSA-87' && 'NIST Level 5'}
                       </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* SLH-DSA */}
+              <div className="space-y-1.5 pt-3 border-t border-border">
+                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  SLH-DSA (FIPS 205 - Hash-Based)
+                </div>
+                <div className="grid grid-cols-1 gap-2">
+                  {[
+                    { name: 'SLH-DSA-SHA2-128f', desc: 'Level 1, Fast' },
+                    { name: 'SLH-DSA-SHA2-128s', desc: 'Level 1, Small' },
+                    { name: 'SLH-DSA-SHAKE-128f', desc: 'Level 1, Fast' },
+                  ].map((algo) => (
+                    <button
+                      key={algo.name}
+                      onClick={() => toggleAlgorithm('signature', algo.name)}
+                      className={clsx(
+                        'flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all border text-left',
+                        enabledAlgorithms.signature[
+                          algo.name as keyof typeof enabledAlgorithms.signature
+                        ]
+                          ? 'bg-secondary/10 border-secondary/30 text-foreground'
+                          : 'bg-muted border-border text-muted-foreground hover:bg-accent'
+                      )}
+                    >
+                      {enabledAlgorithms.signature[
+                        algo.name as keyof typeof enabledAlgorithms.signature
+                      ] ? (
+                        <CheckSquare size={16} className="text-secondary shrink-0" />
+                      ) : (
+                        <Square size={16} className="shrink-0" />
+                      )}
+                      <span className="font-medium">{algo.name}</span>
+                      <span className="text-xs ml-auto">{algo.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* FN-DSA (Falcon) */}
+              <div className="space-y-1.5 pt-3 border-t border-border">
+                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  FN-DSA / Falcon (Draft FIPS 206)
+                </div>
+                <div className="grid grid-cols-1 gap-2">
+                  {[
+                    { name: 'FN-DSA-512', desc: 'Level 1 (Falcon-512)' },
+                    { name: 'FN-DSA-1024', desc: 'Level 5 (Falcon-1024)' },
+                  ].map((algo) => (
+                    <button
+                      key={algo.name}
+                      onClick={() => toggleAlgorithm('signature', algo.name)}
+                      className={clsx(
+                        'flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all border text-left',
+                        enabledAlgorithms.signature[
+                          algo.name as keyof typeof enabledAlgorithms.signature
+                        ]
+                          ? 'bg-secondary/10 border-secondary/30 text-foreground'
+                          : 'bg-muted border-border text-muted-foreground hover:bg-accent'
+                      )}
+                    >
+                      {enabledAlgorithms.signature[
+                        algo.name as keyof typeof enabledAlgorithms.signature
+                      ] ? (
+                        <CheckSquare size={16} className="text-secondary shrink-0" />
+                      ) : (
+                        <Square size={16} className="shrink-0" />
+                      )}
+                      <span className="font-medium">{algo.name}</span>
+                      <span className="text-xs ml-auto">{algo.desc}</span>
                     </button>
                   ))}
                 </div>

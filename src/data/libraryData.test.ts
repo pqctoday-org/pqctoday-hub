@@ -34,24 +34,24 @@ describe('libraryData', () => {
   it('should categorize items', () => {
     // FIPS 203 -> KEM (Title based)
     const fips203 = libraryData.find((i) => i.referenceId === 'FIPS 203')
-    expect(fips203?.category).toBe('KEM')
+    expect(fips203?.categories).toContain('KEM')
 
     // FIPS 204 -> Digital Signature (Title based)
     const fips204 = libraryData.find((i) => i.referenceId === 'FIPS 204')
-    expect(fips204?.category).toBe('Digital Signature')
+    expect(fips204?.categories).toContain('Digital Signature')
   })
 
   it('should prioritize manual_category', () => {
     // NIST SP 800-227 has manual_category 'KEM'
     // Without it, Title "Recommendations for..." might not hit KEM or hit Guidance logic (if it existed)
     const sp800227 = libraryData.find((i) => i.referenceId === 'NIST SP 800-227')
-    expect(sp800227?.category).toBe('KEM')
+    expect(sp800227?.categories).toContain('KEM')
 
     // RFC 9858 has manual_category 'Digital Signature'
     // Without it, Title "LMS Algorithm Identifiers..." and Type "Algorithm"
     // (Logic: title.includes('signature') || ...) "LMS..." does not include signature
     // So it might have failed auto-detection.
     const rfc9858 = libraryData.find((i) => i.referenceId === 'RFC 9858')
-    expect(rfc9858?.category).toBe('Digital Signature')
+    expect(rfc9858?.categories).toContain('Digital Signature')
   })
 })

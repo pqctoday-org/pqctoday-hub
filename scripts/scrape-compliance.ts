@@ -7,6 +7,7 @@ import { scrapeCC } from './scrapers/cc.js'
 import { scrapeANSSI } from './scrapers/anssi.js'
 import { scrapeENISA } from './scrapers/enisa.js'
 import { standardizeDate, normalizeAlgorithmList } from './scrapers/utils.js'
+import { validateRecordCounts, logHealthChecks } from './scrapers/health.js'
 
 const OUTPUT_DIR = path.join(process.cwd(), 'public', 'data')
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'compliance-data.json')
@@ -161,9 +162,20 @@ const main = async () => {
   // Deduplicate by ID just in case
   const uniqueData = Array.from(new Map(normalizedData.map((item) => [item.id, item])).values())
 
+  // Health Check Validation
+  console.log('\n[Master Scraper] Running health checks...')
+  const healthResults = validateRecordCounts(uniqueData, currentData)
+  const hasFailures = logHealthChecks(healthResults)
+
+  if (hasFailures && !force) {
+    console.error('\n[Master Scraper] CRITICAL: Health check failed!')
+    console.error('[Master Scraper] Use --force to override and save anyway.')
+    process.exit(1)
+  }
+
   // Save
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(uniqueData, null, 2))
-  console.log(`[Master Scraper] Saved ${uniqueData.length} records to ${OUTPUT_FILE}`)
+  console.log(`\n[Master Scraper] Saved ${uniqueData.length} records to ${OUTPUT_FILE}`)
 }
 
 main()

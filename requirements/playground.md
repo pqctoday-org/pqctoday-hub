@@ -1,7 +1,7 @@
 # Interactive Playground Requirements
 
 **Status:** ✅ Implemented  
-**Last Updated:** 2025-12-08
+**Last Updated:** 2025-12-16
 
 ## 1. Overview
 
@@ -42,6 +42,13 @@ The Interactive Playground provides a hands-on environment for testing post-quan
   - ML-DSA-44 (NIST Level 2)
   - ML-DSA-65 (NIST Level 3)
   - ML-DSA-87 (NIST Level 5)
+- **SLH-DSA Options** (FIPS 205 - Hash-Based):
+  - SLH-DSA-SHA2-128f (NIST Level 1, Fast)
+  - SLH-DSA-SHA2-128s (NIST Level 1, Small)
+  - SLH-DSA-SHAKE-128f (NIST Level 1, Fast)
+- **FN-DSA / Falcon Options** (Draft FIPS 206):
+  - FN-DSA-512 / Falcon-512 (NIST Level 1)
+  - FN-DSA-1024 / Falcon-1024 (NIST Level 5)
 
 #### Key Labeling
 

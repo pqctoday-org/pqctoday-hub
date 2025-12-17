@@ -1,0 +1,31 @@
+category_id,category_name,pqc_priority,total_software_products,pqc_ready_products,readiness_percentage,related_threats,timeline_pressure,urgency_score,recommended_action_timeline,industries_affected
+CSC-025,Cryptographic Agility Frameworks,Critical,3,0,0.0,15,12,100.0,2025-Q4,All industries
+CSC-002,Hardware Security Module (HSM) Software,Critical,0,0,0.0,17,23,95.0,2025-Q4,"Finance, Government, Healthcare, Defense"
+CSC-004,Public Key Infrastructure (PKI) Software,Critical,0,0,0.0,14,16,95.0,2025-Q4,All industries
+CSC-003,Key Management Systems (KMS),Critical,4,1,25.0,31,23,95.0,2025-Q4,All industries
+CSC-029,Payment Cryptography Systems,Critical,0,0,0.0,29,36,95.0,2025-Q4,"Finance, Retail"
+CSC-016,Post-Quantum Cryptography Libraries,Critical,0,0,0.0,7,20,89.0,2025-Q4,All industries
+CSC-001,Cryptographic Libraries,Critical,9,4,44.4,10,12,88.5,2025-Q4,All industries
+CSC-015,API Security and JWT Libraries,High,0,0,0.0,16,20,85.0,2025-Q4,All industries
+CSC-026,Secure Boot and Firmware Security,High,0,0,0.0,23,25,85.0,2025-Q4,All industries
+CSC-005,TLS/SSL Implementation Software,Critical,0,0,0.0,4,15,83.0,2025-Q4,All industries
+CSC-006,Disk and File Encryption Software,High,0,0,0.0,12,6,81.0,2025-Q4,All industries
+CSC-007,Database Encryption Software,High,0,0,0.0,12,5,80.0,2025-Q4,"Finance, Healthcare, Retail, Government"
+CSC-009,Digital Signature Software,High,0,0,0.0,22,5,80.0,2025-Q4,"Finance, Legal, Government, Healthcare"
+CSC-008,Email Encryption Software,High,0,0,0.0,12,5,80.0,2025-Q4,All industries
+CSC-017,Code Signing and Software Integrity,High,0,0,0.0,10,5,80.0,2025-Q4,All industries
+CSC-028,Cloud Encryption Gateways,High,0,0,0.0,15,4,79.0,2026-Q1,All industries
+CSC-027,Data Loss Prevention with Encryption,Medium,0,0,0.0,48,21,75.0,2026-Q1,All industries
+CSC-018,Cryptographic Protocol Analyzers,Medium,0,0,0.0,14,13,75.0,2026-Q1,All industries
+CSC-021,Random Number Generation Software,High,0,0,0.0,5,5,70.0,2026-Q1,All industries
+CSC-010,VPN and IPsec Software,High,0,0,0.0,3,5,66.0,2026-Q1,All industries
+CSC-023,Certificate Transparency and Monitoring,Medium,0,0,0.0,10,1,66.0,2026-Q1,All industries
+CSC-012,Password and Credential Management,Medium,0,0,0.0,17,1,66.0,2026-Q1,All industries
+CSC-030,Quantum Key Distribution Software,Low,0,0,0.0,36,44,65.0,2026-Q1,"Defense, Government, Finance"
+CSC-020,Blockchain and DLT Cryptography,Medium,0,0,0.0,5,17,65.0,2026-Q1,"Finance, Supply Chain, Government"
+CSC-019,Secure Enclave and TEE Software,Medium,0,0,0.0,5,6,61.0,2026-Q1,"Finance, Healthcare, Cloud, Government"
+CSC-024,Identity-Based Encryption Software,Low,0,0,0.0,12,5,60.0,2026-Q1,"Enterprise, Government"
+CSC-013,Tokenization Software,Medium,0,0,0.0,4,4,57.0,2026-Q2,"Finance, Healthcare, Retail"
+CSC-022,Homomorphic Encryption Libraries,Low,0,0,0.0,11,2,57.0,2026-Q2,"Healthcare, Finance, Government"
+CSC-011,Secure Messaging and Communication,High,1,1,100.0,11,2,52.0,2026-Q2,"Defense, Government, Finance, Healthcare"
+CSC-014,SSH Implementation Software,High,2,2,100.0,4,15,48.0,2026-Q2,All industries

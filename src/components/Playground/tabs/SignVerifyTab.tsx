@@ -88,6 +88,8 @@ export const SignVerifyTab: React.FC = () => {
 
   const isSign = (algo: string) =>
     algo.startsWith('ML-DSA') ||
+    algo.startsWith('SLH-DSA') ||
+    algo.startsWith('FN-DSA') ||
     algo.startsWith('RSA') ||
     algo.startsWith('ECDSA') ||
     algo === 'Ed25519'
@@ -154,6 +156,12 @@ export const SignVerifyTab: React.FC = () => {
 
                 if (key.algorithm.startsWith('ML-DSA')) {
                   scheme = 'Pure ML-DSA'
+                  hash = 'SHAKE-256'
+                } else if (key.algorithm.startsWith('SLH-DSA')) {
+                  scheme = 'SLH-DSA (Hash-Based)'
+                  hash = key.algorithm.includes('SHA2') ? 'SHA2' : 'SHAKE'
+                } else if (key.algorithm.startsWith('FN-DSA')) {
+                  scheme = 'FN-DSA / Falcon'
                   hash = 'SHAKE-256'
                 } else if (key.algorithm.startsWith('RSA')) {
                   scheme = 'RSA-PSS'
@@ -241,6 +249,12 @@ export const SignVerifyTab: React.FC = () => {
                 if (key.algorithm.startsWith('ML-DSA')) {
                   scheme = 'Pure ML-DSA'
                   hash = 'SHAKE-256'
+                } else if (key.algorithm.startsWith('SLH-DSA')) {
+                  scheme = 'SLH-DSA (Hash-Based)'
+                  hash = key.algorithm.includes('SHA2') ? 'SHA2' : 'SHAKE'
+                } else if (key.algorithm.startsWith('FN-DSA')) {
+                  scheme = 'FN-DSA / Falcon'
+                  hash = 'SHAKE-256'
                 } else if (key.algorithm.startsWith('RSA')) {
                   scheme = 'RSA-PSS'
                   hash = 'SHA-256'
@@ -287,11 +301,10 @@ export const SignVerifyTab: React.FC = () => {
             {/* Verification Result Display */}
             {verificationResult !== null && (
               <div
-                className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${
-                  verificationResult
-                    ? 'bg-success/10 border-success/30 text-success'
-                    : 'bg-destructive/10 border-destructive/30 text-destructive'
-                }`}
+                className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${verificationResult
+                  ? 'bg-success/10 border-success/30 text-success'
+                  : 'bg-destructive/10 border-destructive/30 text-destructive'
+                  }`}
               >
                 {verificationResult ? <CheckCircle size={24} /> : <XCircle size={24} />}
                 <div>

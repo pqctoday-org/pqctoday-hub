@@ -68,13 +68,13 @@ class OpenSSLService {
         // Initialize the worker
         this.worker.postMessage({ type: 'LOAD', url: '/wasm/openssl.js' })
 
-        // Store the resolve function to be called by handleMessage
-        ;(
-          this as unknown as { _resolveInit: (value: void | PromiseLike<void>) => void }
-        )._resolveInit = () => {
-          clearTimeout(timeoutId)
-          resolve()
-        }
+          // Store the resolve function to be called by handleMessage
+          ; (
+            this as unknown as { _resolveInit: (value: void | PromiseLike<void>) => void }
+          )._resolveInit = () => {
+            clearTimeout(timeoutId)
+            resolve()
+          }
       } catch (_error) {
         clearTimeout(timeoutId)
         this.resetState()
@@ -105,8 +105,8 @@ class OpenSSLService {
     if (type === 'READY') {
       this.isReady = true
       if ((this as unknown as { _resolveInit: () => void })._resolveInit) {
-        ;(this as unknown as { _resolveInit: () => void })._resolveInit()
-        ;(this as unknown as { _resolveInit: undefined })._resolveInit = undefined
+        ; (this as unknown as { _resolveInit: () => void })._resolveInit()
+          ; (this as unknown as { _resolveInit: undefined })._resolveInit = undefined
       }
       return
     }
@@ -316,6 +316,47 @@ class OpenSSLService {
         commands,
         requestId,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)
+    })
+  }
+
+  public async executeSkey(
+    opType: 'create' | 'derive',
+    params: any
+  ): Promise<void> {
+    try {
+      await this.init()
+    } catch (error) {
+      throw new Error(`OpenSSL Service not available: ${error}`)
+    }
+
+    if (!this.worker) throw new Error('Worker not initialized')
+
+    const requestId = `req_skey_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+
+    return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        this.pendingRequests.delete(requestId)
+        reject(new Error(`SKEY Operation timed out`))
+      }, this.EXEC_TIMEOUT)
+
+      this.pendingRequests.set(requestId, {
+        resolve: () => {
+          clearTimeout(timeoutId)
+          resolve()
+        },
+        reject: (error) => {
+          clearTimeout(timeoutId)
+          reject(error)
+        },
+        result: { stdout: '', stderr: '', error: '', files: [] },
+      })
+
+      this.worker!.postMessage({
+        type: 'SKEY_OPERATION',
+        opType,
+        params,
+        requestId,
       } as any)
     })
   }

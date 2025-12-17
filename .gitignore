@@ -78,3 +78,5 @@ regen_*.sh
 # Certificate directory (but allow README)
 certs/
 !certs/README.md
+dist
+!public/lms-sample/*

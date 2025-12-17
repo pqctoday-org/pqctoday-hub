@@ -1,12 +1,12 @@
 import { JSDOM } from 'jsdom'
 import { ComplianceRecord } from './types.js'
-import { fetchText, extractAlgorithms, PQC_PATTERNS, CLASSICAL_PATTERNS } from './utils.js'
+import { fetchWithRetry, extractAlgorithms, PQC_PATTERNS, CLASSICAL_PATTERNS } from './utils.js'
 
 export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
   try {
     const url =
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search/all?searchMode=Advanced&Standard=FIPS+140-3&ValidationStatus=Active&SecurityLevel=3'
-    const html = await fetchText(url)
+    const html = await fetchWithRetry(url)
     const dom = new JSDOM(html)
     const doc = dom.window.document
 
@@ -61,7 +61,7 @@ export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
             const detailUrl = relativeLink.startsWith('http')
               ? relativeLink
               : `https://csrc.nist.gov${relativeLink}`
-            const detailHtml = await fetchText(detailUrl)
+            const detailHtml = await fetchWithRetry(detailUrl)
             const detailDom = new JSDOM(detailHtml)
             const detailText = detailDom.window.document.body.textContent || ''
 

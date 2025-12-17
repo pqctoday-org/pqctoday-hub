@@ -116,11 +116,15 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
     return sortConfig.direction === 'asc' ? sorted : sorted.reverse()
   }
 
-  // Recursive render function
-  const renderRows = (items: LibraryItem[], level = 0, visited = new Set<string>()) => {
-    const sortedItems = sortItems(items)
+  // R-003: Memoize sorted data to prevent unnecessary re-renders
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const sortedData = React.useMemo(() => sortItems(data), [data, sortConfig])
 
-    return sortedItems.flatMap((item) => {
+  // Recursive render function - uses sortedData at root level
+  const renderRows = (items: LibraryItem[], level = 0, visited = new Set<string>(), isRoot = false) => {
+    const itemsToRender = isRoot ? sortedData : sortItems(items)
+
+    return itemsToRender.flatMap((item) => {
       // Basic cycle detection for rendering
       if (visited.has(item.referenceId)) return []
 
@@ -218,25 +222,28 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
   return (
     <>
       <div className="glass-panel overflow-hidden">
+        {/* A-003: Added aria-controls for expand/collapse buttons */}
         <div className="p-2 border-b border-border flex justify-end gap-2 bg-muted/10">
           <button
             onClick={() => {
               const ids = getAllExpandedIds(data)
               setExpandedIds(ids)
             }}
+            aria-controls="library-table"
             className="text-xs flex items-center gap-1 text-primary hover:text-primary/80 px-2 py-1 rounded hover:bg-primary/10 transition-colors"
           >
-            <ChevronDown size={14} /> Expand All
+            <ChevronDown size={14} aria-hidden="true" /> Expand All
           </button>
           <button
             onClick={() => setExpandedIds(new Set())}
+            aria-controls="library-table"
             className="text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground px-2 py-1 rounded hover:bg-muted transition-colors"
           >
-            <ChevronRight size={14} /> Collapse All
+            <ChevronRight size={14} aria-hidden="true" /> Collapse All
           </button>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table id="library-table" className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-border bg-muted/20">
                 {headers.map((header) => (
@@ -279,7 +286,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                 ))}
               </tr>
             </thead>
-            <tbody>{renderRows(data)}</tbody>
+            <tbody>{renderRows(data, 0, new Set(), true)}</tbody>
           </table>
         </div>
       </div>

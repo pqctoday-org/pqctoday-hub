@@ -1,6 +1,6 @@
 import { JSDOM } from 'jsdom'
 import { ComplianceRecord } from './types.js'
-import { fetchText, extractAlgorithms, PQC_PATTERNS, CLASSICAL_PATTERNS } from './utils.js'
+import { fetchWithRetry, extractAlgorithms, PQC_PATTERNS, CLASSICAL_PATTERNS } from './utils.js'
 
 /**
  * ENISA EUCC Scraper
@@ -25,7 +25,7 @@ export const scrapeENISA = async (): Promise<ComplianceRecord[]> => {
     const records: ComplianceRecord[] = []
 
     try {
-      const html = await fetchText(listUrl)
+      const html = await fetchWithRetry(listUrl)
       const dom = new JSDOM(html)
       const doc = dom.window.document
 
@@ -48,7 +48,7 @@ export const scrapeENISA = async (): Promise<ComplianceRecord[]> => {
         const detailUrl = relativeUrl.startsWith('http') ? relativeUrl : `${baseUrl}${relativeUrl}`
 
         // Fetch detail page
-        const detailHtml = await fetchText(detailUrl)
+        const detailHtml = await fetchWithRetry(detailUrl)
         const detailDom = new JSDOM(detailHtml)
         const pageDoc = detailDom.window.document
         const fullText = pageDoc.body.textContent || ''

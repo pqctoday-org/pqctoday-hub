@@ -1,15 +1,29 @@
-import React, { useMemo, useState } from 'react'
-import { libraryData, libraryMetadata } from '../../data/libraryData'
+import React, { useCallback, useMemo, useState } from 'react'
+import { libraryData, libraryMetadata, libraryError, LIBRARY_CATEGORIES } from '../../data/libraryData'
 import type { LibraryItem } from '../../data/libraryData'
 import { LibraryTreeTable } from './LibraryTreeTable'
 import { FilterDropdown } from '../common/FilterDropdown'
-import { Search } from 'lucide-react'
+import { Search, AlertTriangle } from 'lucide-react'
 import { SourcesButton } from '../ui/SourcesButton'
+import debounce from 'lodash/debounce'
 
 export const LibraryView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('All')
   const [activeRegion, setActiveRegion] = useState<string>('All')
   const [filterText, setFilterText] = useState('')
+  const [inputValue, setInputValue] = useState('')
+
+  // UX-002: Debounced search filter
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSetFilter = useCallback(
+    debounce((value: string) => setFilterText(value), 200),
+    []
+  )
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value)
+    debouncedSetFilter(e.target.value)
+  }
 
   const regions = useMemo(() => {
     const r = new Set<string>()
@@ -35,7 +49,7 @@ export const LibraryView: React.FC = () => {
         item.documentTitle.toLowerCase().includes(searchLower) ||
         item.referenceId.toLowerCase().includes(searchLower) ||
         item.shortDescription?.toLowerCase().includes(searchLower) ||
-        item.category?.toLowerCase().includes(searchLower)
+        item.categories?.some((cat) => cat.toLowerCase().includes(searchLower))
       )
     })
 
@@ -47,13 +61,16 @@ export const LibraryView: React.FC = () => {
       ['General Recommendations', []],
     ])
 
+    // Multi-category: Add item to ALL its categories
     filteredData.forEach((item) => {
-      const category = item.category || 'General Recommendations'
-      if (groups.has(category)) {
-        groups.get(category)!.push(item)
-      } else {
-        groups.get('General Recommendations')!.push(item)
-      }
+      const itemCategories = item.categories?.length > 0 ? item.categories : ['General Recommendations']
+      itemCategories.forEach((category) => {
+        if (groups.has(category)) {
+          groups.get(category)!.push(item)
+        } else {
+          groups.get('General Recommendations')!.push(item)
+        }
+      })
     })
 
     const categoryRoots = new Map<string, LibraryItem[]>([
@@ -79,15 +96,21 @@ export const LibraryView: React.FC = () => {
     return categoryRoots
   }, [filterText, activeRegion])
 
-  const sections = [
-    'Digital Signature',
-    'KEM',
-    'PKI Certificate Management',
-    'Protocols',
-    'General Recommendations',
-  ]
+  // C-004: Use shared categories constant
+  const sections = [...LIBRARY_CATEGORIES]
 
   const tabs = ['All', ...sections]
+
+  // R-002: Show error state if data loading failed
+  if (libraryError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <AlertTriangle className="w-12 h-12 text-destructive mb-4" />
+        <h2 className="text-xl font-semibold text-foreground mb-2">Unable to Load Library</h2>
+        <p className="text-muted-foreground max-w-md">{libraryError}</p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
@@ -141,17 +164,20 @@ export const LibraryView: React.FC = () => {
         </div>
 
         <span className="hidden md:inline text-muted-foreground px-2">Search:</span>
-        {/* Search Input */}
+        {/* Search Input - A-001: Added aria-label */}
         <div className="relative flex-1 min-w-[200px] w-full">
           <Search
             size={16}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
           />
           <input
             type="text"
+            id="library-search"
             placeholder="Search standards..."
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
+            aria-label="Search PQC standards library"
+            value={inputValue}
+            onChange={handleSearchChange}
             className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
           />
         </div>
