@@ -107,9 +107,7 @@ export const KdfConfig: React.FC<KdfConfigProps> = ({
           />
         </div>
         <div className="space-y-3">
-          <label htmlFor="kdf-binary" className="text-xs text-muted-foreground block">
-            &nbsp;
-          </label>
+          <div className="h-[22px]" /> {/* Spacer to align with label above */}
           <div className="flex items-center gap-2 h-[38px]">
             <input
               type="checkbox"

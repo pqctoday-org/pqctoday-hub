@@ -68,13 +68,13 @@ class OpenSSLService {
         // Initialize the worker
         this.worker.postMessage({ type: 'LOAD', url: '/wasm/openssl.js' })
 
-        // Store the resolve function to be called by handleMessage
-        ;(
-          this as unknown as { _resolveInit: (value: void | PromiseLike<void>) => void }
-        )._resolveInit = () => {
-          clearTimeout(timeoutId)
-          resolve()
-        }
+          // Store the resolve function to be called by handleMessage
+          ; (
+            this as unknown as { _resolveInit: (value: void | PromiseLike<void>) => void }
+          )._resolveInit = () => {
+            clearTimeout(timeoutId)
+            resolve()
+          }
       } catch (_error) {
         clearTimeout(timeoutId)
         this.resetState()
@@ -105,8 +105,8 @@ class OpenSSLService {
     if (type === 'READY') {
       this.isReady = true
       if ((this as unknown as { _resolveInit: () => void })._resolveInit) {
-        ;(this as unknown as { _resolveInit: () => void })._resolveInit()
-        ;(this as unknown as { _resolveInit: undefined })._resolveInit = undefined
+        ; (this as unknown as { _resolveInit: () => void })._resolveInit()
+          ; (this as unknown as { _resolveInit: undefined })._resolveInit = undefined
       }
       return
     }
@@ -320,7 +320,10 @@ class OpenSSLService {
     })
   }
 
-  public async executeSkey(opType: 'create' | 'derive', params: any): Promise<void> {
+  public async executeSkey(
+    opType: 'create' | 'derive',
+    params: Record<string, unknown>
+  ): Promise<void> {
     try {
       await this.init()
     } catch (error) {
@@ -354,7 +357,7 @@ class OpenSSLService {
         opType,
         params,
         requestId,
-      } as any)
+      } as WorkerMessage)
     })
   }
 
