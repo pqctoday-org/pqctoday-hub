@@ -305,7 +305,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
 
         addFile({
           name: sample.name,
-          type: sample.type as any,
+          type: sample.type as 'text' | 'binary',
           content,
           size: content.length,
           timestamp: Date.now(),
@@ -397,7 +397,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           {/* Custom Parameters */}
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-xs text-muted-foreground block mb-1">
+              <label htmlFor="lms-height-select" className="text-xs text-muted-foreground block mb-1">
                 LMS Algorithm (Height)
               </label>
               <select
@@ -413,7 +413,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
               </select>
             </div>
             <div>
-              <label className="text-xs text-muted-foreground block mb-1">
+              <label htmlFor="lms-width-select" className="text-xs text-muted-foreground block mb-1">
                 LM-OTS Algorithm (Width)
               </label>
               <select
