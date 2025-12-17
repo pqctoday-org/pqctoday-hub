@@ -13,20 +13,20 @@ import {
 
 interface WorkbenchProps {
   category:
-  | 'genpkey'
-  | 'req'
-  | 'x509'
-  | 'enc'
-  | 'dgst'
-  | 'hash'
-  | 'rand'
-  | 'version'
-  | 'files'
-  | 'kem'
-  | 'pkcs12'
-  | 'lms'
-  | 'configutl'
-  | 'kdf'
+    | 'genpkey'
+    | 'req'
+    | 'x509'
+    | 'enc'
+    | 'dgst'
+    | 'hash'
+    | 'rand'
+    | 'version'
+    | 'files'
+    | 'kem'
+    | 'pkcs12'
+    | 'lms'
+    | 'configutl'
+    | 'kdf'
 
   setCategory: (
     category:
@@ -44,7 +44,6 @@ interface WorkbenchProps {
       | 'lms'
       | 'configutl'
       | 'kdf'
-
   ) => void
 }
 
@@ -130,8 +129,6 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
   const [kdfScryptN, setKdfScryptN] = useState('1024')
   const [kdfScryptR, setKdfScryptR] = useState('8')
   const [kdfScryptP, setKdfScryptP] = useState('1')
-
-
 
   // Auto-select latest signature file when switching to verify or when files change
   useEffect(() => {
@@ -480,7 +477,6 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
     kdfScryptN,
     kdfScryptR,
     kdfScryptP,
-
   ])
 
   return (
@@ -610,9 +606,7 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
             kdfScryptP={kdfScryptP}
             setKdfScryptP={setKdfScryptP}
           />
-          <WorkbenchPreview
-            category={category}
-          />
+          <WorkbenchPreview category={category} />
         </>
       )}
     </div>

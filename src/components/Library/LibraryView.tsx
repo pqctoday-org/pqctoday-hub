@@ -1,5 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { libraryData, libraryMetadata, libraryError, LIBRARY_CATEGORIES } from '../../data/libraryData'
+import {
+  libraryData,
+  libraryMetadata,
+  libraryError,
+  LIBRARY_CATEGORIES,
+} from '../../data/libraryData'
 import type { LibraryItem } from '../../data/libraryData'
 import { LibraryTreeTable } from './LibraryTreeTable'
 import { FilterDropdown } from '../common/FilterDropdown'
@@ -63,7 +68,8 @@ export const LibraryView: React.FC = () => {
 
     // Multi-category: Add item to ALL its categories
     filteredData.forEach((item) => {
-      const itemCategories = item.categories?.length > 0 ? item.categories : ['General Recommendations']
+      const itemCategories =
+        item.categories?.length > 0 ? item.categories : ['General Recommendations']
       itemCategories.forEach((category) => {
         if (groups.has(category)) {
           groups.get(category)!.push(item)

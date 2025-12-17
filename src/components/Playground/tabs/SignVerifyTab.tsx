@@ -301,10 +301,11 @@ export const SignVerifyTab: React.FC = () => {
             {/* Verification Result Display */}
             {verificationResult !== null && (
               <div
-                className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${verificationResult
-                  ? 'bg-success/10 border-success/30 text-success'
-                  : 'bg-destructive/10 border-destructive/30 text-destructive'
-                  }`}
+                className={`mb-4 p-4 rounded-lg border flex items-center gap-3 ${
+                  verificationResult
+                    ? 'bg-success/10 border-success/30 text-success'
+                    : 'bg-destructive/10 border-destructive/30 text-destructive'
+                }`}
               >
                 {verificationResult ? <CheckCircle size={24} /> : <XCircle size={24} />}
                 <div>

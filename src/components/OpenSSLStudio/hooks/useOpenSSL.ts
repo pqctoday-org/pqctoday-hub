@@ -185,8 +185,8 @@ export const useOpenSSL = () => {
             f.content instanceof Uint8Array
               ? f.content
               : new TextEncoder().encode(
-                typeof f.content === 'string' ? f.content : JSON.stringify(f.content)
-              ),
+                  typeof f.content === 'string' ? f.content : JSON.stringify(f.content)
+                ),
         }))
 
         workerRef.current.postMessage({

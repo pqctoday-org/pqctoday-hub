@@ -133,26 +133,26 @@ const ComplianceRow = ({
             >
               <div className="font-semibold text-tertiary mb-1">PQC Mechanisms</div>
               <div className="text-popover-foreground flex flex-wrap gap-1">
-                {typeof record.pqcCoverage === 'boolean' ? (
-                  'PQC Support Detected'
-                ) : (
-                  (record.pqcCoverage as string).split(', ').map((algo, i) => (
-                    <span key={i} className="inline-flex items-center gap-1">
-                      {algo}
-                      {algo.includes('LMS') && (
-                        <span className="text-[9px] bg-warning/20 text-warning px-1 rounded border border-warning/30">
-                          Stateful
-                        </span>
-                      )}
-                      {(algo.includes('XMSS') || algo.includes('HSS')) && (
-                        <span className="text-[9px] bg-muted text-muted-foreground px-1 rounded border border-border">
-                          Legacy
-                        </span>
-                      )}
-                      {i < (record.pqcCoverage as string).split(', ').length - 1 && <span>, </span>}
-                    </span>
-                  ))
-                )}
+                {typeof record.pqcCoverage === 'boolean'
+                  ? 'PQC Support Detected'
+                  : (record.pqcCoverage as string).split(', ').map((algo, i) => (
+                      <span key={i} className="inline-flex items-center gap-1">
+                        {algo}
+                        {algo.includes('LMS') && (
+                          <span className="text-[9px] bg-warning/20 text-warning px-1 rounded border border-warning/30">
+                            Stateful
+                          </span>
+                        )}
+                        {(algo.includes('XMSS') || algo.includes('HSS')) && (
+                          <span className="text-[9px] bg-muted text-muted-foreground px-1 rounded border border-border">
+                            Legacy
+                          </span>
+                        )}
+                        {i < (record.pqcCoverage as string).split(', ').length - 1 && (
+                          <span>, </span>
+                        )}
+                      </span>
+                    ))}
               </div>
               <div
                 className={clsx(

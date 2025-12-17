@@ -36,21 +36,23 @@ Documents are categorized into the following sections based on their metadata (T
 
 **Auto-Detection Rules**: Categories are detected using `documentTitle` and `documentType` fields:
 
-| Category | Detection Keywords |
-|----------|-------------------|
-| **PKI Certificate Management** | Type contains "pki" or "certificate", OR title contains "x.509" |
-| **Protocols** | Type is "protocol", OR title contains "tls", "ssh", "ikev2", "cms", "ipsec" |
-| **KEM** | Title contains "kem", "kyber", "key-encapsulation" AND type is "algorithm" or "pki" |
-| **Digital Signature** | Title contains "signature", "dsa", "dilithium", "sphincs" AND type is "algorithm" or "pki" |
-| **General Recommendations** | Fallback when no other category matches |
+| Category                       | Detection Keywords                                                                         |
+| ------------------------------ | ------------------------------------------------------------------------------------------ |
+| **PKI Certificate Management** | Type contains "pki" or "certificate", OR title contains "x.509"                            |
+| **Protocols**                  | Type is "protocol", OR title contains "tls", "ssh", "ikev2", "cms", "ipsec"                |
+| **KEM**                        | Title contains "kem", "kyber", "key-encapsulation" AND type is "algorithm" or "pki"        |
+| **Digital Signature**          | Title contains "signature", "dsa", "dilithium", "sphincs" AND type is "algorithm" or "pki" |
+| **General Recommendations**    | Fallback when no other category matches                                                    |
 
 **Multi-Category Support**: Documents can belong to multiple categories when they match multiple rules. For example:
+
 - `Algorithm Identifiers for ML-KEM in X.509 PKI` → **PKI Certificate Management + KEM**
 - `Composite ML-DSA for Use in X.509 PKI and CMS` → **PKI Certificate Management + Protocols + Digital Signature**
 
 Items appear in ALL applicable category sections in the UI.
 
 **Category Alias Mapping**: CSV `manual_category` values are mapped to UI categories:
+
 - `General PQC Migration` → `General Recommendations`
 - `Government Guidance` → `General Recommendations`
 - `PQC Protocol Specification` → `Protocols`
@@ -118,7 +120,7 @@ Items appear in ALL applicable category sections in the UI.
 ### 4. Technical Requirements
 
 - **Route**: The feature is accessible at `/library`.
-- **Performance**: 
+- **Performance**:
   - Memoized sorting for efficient re-renders
   - Debounced search to prevent lag during typing
   - Tree structure handles 100+ documents efficiently

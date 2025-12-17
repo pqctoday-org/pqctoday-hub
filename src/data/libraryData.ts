@@ -51,7 +51,12 @@ function detectCategories(title: string, type: string): LibraryCategory[] {
   const lowerType = type.toLowerCase()
 
   // PKI/Certificate detection
-  if (lowerType.includes('pki') || lowerType.includes('certificate') || lowerTitle.includes('x.509') || lowerTitle.includes('x509')) {
+  if (
+    lowerType.includes('pki') ||
+    lowerType.includes('certificate') ||
+    lowerTitle.includes('x.509') ||
+    lowerTitle.includes('x509')
+  ) {
     categories.push('PKI Certificate Management')
   }
 
@@ -69,7 +74,9 @@ function detectCategories(title: string, type: string): LibraryCategory[] {
 
   // KEM detection
   if (
-    (lowerTitle.includes('key-encapsulation') || lowerTitle.includes('kem') || lowerTitle.includes('kyber')) &&
+    (lowerTitle.includes('key-encapsulation') ||
+      lowerTitle.includes('kem') ||
+      lowerTitle.includes('kyber')) &&
     (lowerType === 'algorithm' || lowerType.includes('pki'))
   ) {
     categories.push('KEM')
@@ -77,7 +84,11 @@ function detectCategories(title: string, type: string): LibraryCategory[] {
 
   // Digital Signature detection
   if (
-    (lowerTitle.includes('signature') || lowerTitle.includes('dsa') || lowerTitle.includes('sign') || lowerTitle.includes('dilithium') || lowerTitle.includes('sphincs')) &&
+    (lowerTitle.includes('signature') ||
+      lowerTitle.includes('dsa') ||
+      lowerTitle.includes('sign') ||
+      lowerTitle.includes('dilithium') ||
+      lowerTitle.includes('sphincs')) &&
     (lowerType === 'algorithm' || lowerType.includes('pki'))
   ) {
     categories.push('Digital Signature')
@@ -158,10 +169,10 @@ function getLatestLibraryFiles(): {
     previous:
       files.length > 1
         ? {
-          content: files[1].content,
-          filename: files[1].path.split('/').pop() || files[1].path,
-          date: files[1].date,
-        }
+            content: files[1].content,
+            filename: files[1].path.split('/').pop() || files[1].path,
+            date: files[1].date,
+          }
         : null,
   }
 }

@@ -36,7 +36,9 @@ export const fetchWithRetry = async (url: string, config: RetryConfig = {}): Pro
         throw error
       }
       const delay = Math.min(baseDelayMs * Math.pow(2, attempt - 1), maxDelayMs)
-      console.warn(`[Retry ${attempt}/${maxRetries}] ${url.substring(0, 80)}... - waiting ${delay}ms`)
+      console.warn(
+        `[Retry ${attempt}/${maxRetries}] ${url.substring(0, 80)}... - waiting ${delay}ms`
+      )
       await new Promise((r) => setTimeout(r, delay))
     }
   }

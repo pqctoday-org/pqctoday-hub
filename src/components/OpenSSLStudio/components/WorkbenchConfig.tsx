@@ -136,7 +136,6 @@ interface WorkbenchConfigProps {
   setKdfScryptR: (value: string) => void
   kdfScryptP: string
   setKdfScryptP: (value: string) => void
-
 }
 
 export const WorkbenchConfig: React.FC<WorkbenchConfigProps> = (props) => {

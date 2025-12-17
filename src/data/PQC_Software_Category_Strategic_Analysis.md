@@ -1,4 +1,5 @@
 # PQC Software Category Cross-Reference & Augmentation Analysis
+
 **Analysis Date:** December 16, 2025
 **Data Sources:** PQC CSV Database + Cryptographic Software Categories
 
@@ -23,52 +24,52 @@ This analysis cross-references 30 cryptographic software categories against the 
 
 **Immediate Action Required (2025-Q4)**
 
-| Category ID | Category Name | Urgency Score | PQC Readiness | Action Timeline |
-|------------|---------------|---------------|---------------|-----------------|
-| CSC-025 | Cryptographic Agility Frameworks | 100.0 | 0% | 2025-Q4 |
-| CSC-002 | Hardware Security Module (HSM) Software | 95.0 | N/A | 2025-Q4 |
-| CSC-004 | Public Key Infrastructure (PKI) Software | 95.0 | N/A | 2025-Q4 |
-| CSC-003 | Key Management Systems (KMS) | 95.0 | 25% | 2025-Q4 |
-| CSC-029 | Payment Cryptography Systems | 95.0 | N/A | 2025-Q4 |
-| CSC-016 | Post-Quantum Cryptography Libraries | 89.0 | N/A | 2025-Q4 |
-| CSC-001 | Cryptographic Libraries | 88.5 | 44% | 2025-Q4 |
-| CSC-015 | API Security and JWT Libraries | 85.0 | N/A | 2025-Q4 |
-| CSC-026 | Secure Boot and Firmware Security | 85.0 | N/A | 2025-Q4 |
-| CSC-005 | TLS/SSL Implementation Software | 83.0 | N/A | 2025-Q4 |
-| CSC-006 | Disk and File Encryption Software | 81.0 | N/A | 2025-Q4 |
-| CSC-007 | Database Encryption Software | 80.0 | N/A | 2025-Q4 |
-| CSC-009 | Digital Signature Software | 80.0 | N/A | 2025-Q4 |
-| CSC-008 | Email Encryption Software | 80.0 | N/A | 2025-Q4 |
-| CSC-017 | Code Signing and Software Integrity | 80.0 | N/A | 2025-Q4 |
+| Category ID | Category Name                            | Urgency Score | PQC Readiness | Action Timeline |
+| ----------- | ---------------------------------------- | ------------- | ------------- | --------------- |
+| CSC-025     | Cryptographic Agility Frameworks         | 100.0         | 0%            | 2025-Q4         |
+| CSC-002     | Hardware Security Module (HSM) Software  | 95.0          | N/A           | 2025-Q4         |
+| CSC-004     | Public Key Infrastructure (PKI) Software | 95.0          | N/A           | 2025-Q4         |
+| CSC-003     | Key Management Systems (KMS)             | 95.0          | 25%           | 2025-Q4         |
+| CSC-029     | Payment Cryptography Systems             | 95.0          | N/A           | 2025-Q4         |
+| CSC-016     | Post-Quantum Cryptography Libraries      | 89.0          | N/A           | 2025-Q4         |
+| CSC-001     | Cryptographic Libraries                  | 88.5          | 44%           | 2025-Q4         |
+| CSC-015     | API Security and JWT Libraries           | 85.0          | N/A           | 2025-Q4         |
+| CSC-026     | Secure Boot and Firmware Security        | 85.0          | N/A           | 2025-Q4         |
+| CSC-005     | TLS/SSL Implementation Software          | 83.0          | N/A           | 2025-Q4         |
+| CSC-006     | Disk and File Encryption Software        | 81.0          | N/A           | 2025-Q4         |
+| CSC-007     | Database Encryption Software             | 80.0          | N/A           | 2025-Q4         |
+| CSC-009     | Digital Signature Software               | 80.0          | N/A           | 2025-Q4         |
+| CSC-008     | Email Encryption Software                | 80.0          | N/A           | 2025-Q4         |
+| CSC-017     | Code Signing and Software Integrity      | 80.0          | N/A           | 2025-Q4         |
 
 ### Tier 2 - HIGH URGENCY (Urgency Score 60-79) - 11 Categories
 
 **Action Required (2026-Q1)**
 
-| Category ID | Category Name | Urgency Score | Timeline |
-|------------|---------------|---------------|----------|
-| CSC-014 | SSH Implementation Software | 79.0 | 2026-Q1 |
-| CSC-010 | VPN and IPsec Software | 78.0 | 2026-Q1 |
-| CSC-011 | Secure Messaging and Communication | 77.0 | 2026-Q1 |
-| CSC-021 | Random Number Generation Software | 75.0 | 2026-Q1 |
-| CSC-028 | Cloud Encryption Gateways | 74.0 | 2026-Q1 |
-| CSC-013 | Tokenization Software | 69.0 | 2026-Q1 |
-| CSC-012 | Password and Credential Management | 67.0 | 2026-Q1 |
-| CSC-019 | Secure Enclave and TEE Software | 65.0 | 2026-Q1 |
-| CSC-020 | Blockchain and DLT Cryptography | 65.0 | 2026-Q1 |
-| CSC-027 | Data Loss Prevention with Encryption | 63.0 | 2026-Q1 |
-| CSC-023 | Certificate Transparency and Monitoring | 62.0 | 2026-Q1 |
+| Category ID | Category Name                           | Urgency Score | Timeline |
+| ----------- | --------------------------------------- | ------------- | -------- |
+| CSC-014     | SSH Implementation Software             | 79.0          | 2026-Q1  |
+| CSC-010     | VPN and IPsec Software                  | 78.0          | 2026-Q1  |
+| CSC-011     | Secure Messaging and Communication      | 77.0          | 2026-Q1  |
+| CSC-021     | Random Number Generation Software       | 75.0          | 2026-Q1  |
+| CSC-028     | Cloud Encryption Gateways               | 74.0          | 2026-Q1  |
+| CSC-013     | Tokenization Software                   | 69.0          | 2026-Q1  |
+| CSC-012     | Password and Credential Management      | 67.0          | 2026-Q1  |
+| CSC-019     | Secure Enclave and TEE Software         | 65.0          | 2026-Q1  |
+| CSC-020     | Blockchain and DLT Cryptography         | 65.0          | 2026-Q1  |
+| CSC-027     | Data Loss Prevention with Encryption    | 63.0          | 2026-Q1  |
+| CSC-023     | Certificate Transparency and Monitoring | 62.0          | 2026-Q1  |
 
 ### Tier 3 - MEDIUM URGENCY (Urgency Score 40-59) - 4 Categories
 
 **Planning Phase (2026-Q2)**
 
-| Category ID | Category Name | Urgency Score |
-|------------|---------------|---------------|
-| CSC-018 | Cryptographic Protocol Analyzers | 55.0 |
-| CSC-022 | Homomorphic Encryption Libraries | 48.0 |
-| CSC-024 | Identity-Based Encryption Software | 43.0 |
-| CSC-030 | Quantum Key Distribution Software | 41.0 |
+| Category ID | Category Name                      | Urgency Score |
+| ----------- | ---------------------------------- | ------------- |
+| CSC-018     | Cryptographic Protocol Analyzers   | 55.0          |
+| CSC-022     | Homomorphic Encryption Libraries   | 48.0          |
+| CSC-024     | Identity-Based Encryption Software | 43.0          |
+| CSC-030     | Quantum Key Distribution Software  | 41.0          |
 
 ---
 
@@ -76,18 +77,18 @@ This analysis cross-references 30 cryptographic software categories against the 
 
 ### Top 10 PQC-Ready Software Products
 
-| Software | Category | Readiness Score | Status | Deployment Timeline |
-|----------|----------|-----------------|--------|---------------------|
-| OpenSSL 3.5.4 | Cryptographic Library | 90/100 | ML-KEM, ML-DSA, SLH-DSA | Ready Now (2025) |
-| Bouncy Castle Java 1.83 | Cryptographic Library | 90/100 | ML-KEM, ML-DSA, SLH-DSA, HQC | Ready Now (2025) |
-| liboqs 0.15.0 | PQC Library | 80/100 | All NIST algorithms | Ready Now (2025) |
-| wolfSSL 5.8.2 | TLS/SSL Library | 70/100 | ML-DSA, ML-KEM, Kyber | Ready Now (2025) |
-| GnuTLS 3.8.11 | TLS/SSL Library | 60/100 | ML-KEM (hybrid) | Ready Now (2025) |
-| Bouncy Castle Java LTS | Cryptographic Library | 45/100 | ML-DSA composite | Ready Now (2025) |
-| OpenSSL (LTS) 3.0.18 | Cryptographic Library | 40/100 | Limited | Early 2026 |
-| Bouncy Castle C# .NET 2.6.1 | Cryptographic Library | 40/100 | HQC, ML-KEM | Ready Now (2025) |
-| wolfBoot 2.4.0 | Secure Boot | 40/100 | ML-DSA | Ready Now (2025) |
-| AWS s2n-tls 1.5.x | TLS Library | 40/100 | Kyber hybrid | Early 2026 |
+| Software                    | Category              | Readiness Score | Status                       | Deployment Timeline |
+| --------------------------- | --------------------- | --------------- | ---------------------------- | ------------------- |
+| OpenSSL 3.5.4               | Cryptographic Library | 90/100          | ML-KEM, ML-DSA, SLH-DSA      | Ready Now (2025)    |
+| Bouncy Castle Java 1.83     | Cryptographic Library | 90/100          | ML-KEM, ML-DSA, SLH-DSA, HQC | Ready Now (2025)    |
+| liboqs 0.15.0               | PQC Library           | 80/100          | All NIST algorithms          | Ready Now (2025)    |
+| wolfSSL 5.8.2               | TLS/SSL Library       | 70/100          | ML-DSA, ML-KEM, Kyber        | Ready Now (2025)    |
+| GnuTLS 3.8.11               | TLS/SSL Library       | 60/100          | ML-KEM (hybrid)              | Ready Now (2025)    |
+| Bouncy Castle Java LTS      | Cryptographic Library | 45/100          | ML-DSA composite             | Ready Now (2025)    |
+| OpenSSL (LTS) 3.0.18        | Cryptographic Library | 40/100          | Limited                      | Early 2026          |
+| Bouncy Castle C# .NET 2.6.1 | Cryptographic Library | 40/100          | HQC, ML-KEM                  | Ready Now (2025)    |
+| wolfBoot 2.4.0              | Secure Boot           | 40/100          | ML-DSA                       | Ready Now (2025)    |
+| AWS s2n-tls 1.5.x           | TLS Library           | 40/100          | Kyber hybrid                 | Early 2026          |
 
 ### Readiness Distribution
 
@@ -111,36 +112,40 @@ This analysis cross-references 30 cryptographic software categories against the 
 
 ### High-Impact Threat Categories
 
-| Threat Domain | Affected Software Categories | Critical Products at Risk |
-|---------------|------------------------------|---------------------------|
+| Threat Domain               | Affected Software Categories       | Critical Products at Risk          |
+| --------------------------- | ---------------------------------- | ---------------------------------- |
 | **Financial Services HNDL** | CSC-001, CSC-005, CSC-004, CSC-029 | OpenSSL, payment HSMs, banking PKI |
-| **Government/Defense** | CSC-004, CSC-026, CSC-014 | AD CS, OpenSSH, secure boot |
-| **Healthcare EHR** | CSC-007, CSC-008, CSC-006 | Database TDE, email encryption |
+| **Government/Defense**      | CSC-004, CSC-026, CSC-014          | AD CS, OpenSSH, secure boot        |
+| **Healthcare EHR**          | CSC-007, CSC-008, CSC-006          | Database TDE, email encryption     |
 | **Critical Infrastructure** | CSC-005, CSC-014, CSC-010, CSC-026 | SCADA TLS, industrial SSH, OT VPNs |
-| **Cloud Services** | CSC-003, CSC-028, CSC-002 | Cloud KMS, CASBs, cloud HSMs |
-| **IoT/Embedded** | CSC-001, CSC-026, CSC-014 | wolfSSL, mbed TLS, embedded SSH |
+| **Cloud Services**          | CSC-003, CSC-028, CSC-002          | Cloud KMS, CASBs, cloud HSMs       |
+| **IoT/Embedded**            | CSC-001, CSC-026, CSC-014          | wolfSSL, mbed TLS, embedded SSH    |
 
 ### Industry-Specific Urgency
 
 **Finance & Banking** (CRITICAL)
+
 - Affected Categories: 8 critical, 5 high
 - Key Software: OpenSSL, Thales Luna HSM, Oracle TDE, payment terminals
 - Timeline: Immediate (2025-Q4)
 - Primary Threats: HNDL attacks, payment fraud, long-term data exposure
 
 **Government & Defense** (CRITICAL)
+
 - Affected Categories: 6 critical, 4 high
 - Key Software: Microsoft AD CS, OpenSSH, secure boot, classified messaging
 - Timeline: CNSA 2.0 compliance by 2026-Q1
 - Primary Threats: Nation-state attacks, classified data exposure
 
 **Healthcare** (HIGH)
+
 - Affected Categories: 5 critical, 6 high
 - Key Software: EHR database encryption, HIPAA email, endpoint encryption
 - Timeline: 2026-Q1
 - Primary Threats: Patient data HNDL, long-term health record exposure
 
 **Critical Infrastructure** (CRITICAL)
+
 - Affected Categories: 7 critical, 5 high
 - Key Software: SCADA TLS, industrial SSH, OT VPNs, grid controllers
 - Timeline: 2026-Q1
@@ -153,16 +158,19 @@ This analysis cross-references 30 cryptographic software categories against the 
 ### FIPS 203 (ML-KEM) Implementation Status
 
 **Software with Full Support:**
+
 - OpenSSL 3.5.4, Bouncy Castle Java 1.83, liboqs, GnuTLS (hybrid)
 - wolfSSL 5.8.2, Bouncy Castle C# .NET
 
 **Affected Categories:**
+
 - CSC-005 (TLS/SSL) - Critical for secure communications
 - CSC-003 (Key Management) - Essential for key encapsulation
 - CSC-010 (VPN/IPsec) - Required for VPN modernization
 - CSC-014 (SSH) - Deployed in OpenSSH 10.2 by default
 
 **Industry Documents Requiring ML-KEM:**
+
 - IETF TLS 1.3 Hybrid KEM (draft-03)
 - IETF LAMPS Composite KEM (draft-11)
 - CISA PQC Product Category List
@@ -170,16 +178,19 @@ This analysis cross-references 30 cryptographic software categories against the 
 ### FIPS 204 (ML-DSA) Implementation Status
 
 **Software with Full Support:**
+
 - OpenSSL 3.5.4, Bouncy Castle Java 1.83, liboqs
 - wolfSSL 5.8.2, wolfBoot 2.4.0
 
 **Affected Categories:**
+
 - CSC-004 (PKI) - Certificate signing
 - CSC-017 (Code Signing) - Software supply chain
 - CSC-026 (Secure Boot) - Firmware integrity
 - CSC-009 (Digital Signatures) - Document authentication
 
 **Industry Documents Requiring ML-DSA:**
+
 - IETF LAMPS Composite Signatures
 - X.509 Certificate Standards
 - Authenticode/Code Signing Standards
@@ -187,15 +198,18 @@ This analysis cross-references 30 cryptographic software categories against the 
 ### FIPS 205 (SLH-DSA) Implementation Status
 
 **Software with Full Support:**
+
 - OpenSSL 3.5.4, Bouncy Castle Java 1.83, liboqs
 - HashiCorp Vault (experimental)
 
 **Affected Categories:**
+
 - CSC-004 (PKI) - Long-term trust
 - CSC-017 (Code Signing) - Stateless signatures
 - CSC-026 (Secure Boot) - Backup signature scheme
 
 **Use Cases:**
+
 - Long-term archival signatures
 - Backup to ML-DSA
 - Stateless signature requirements
@@ -207,26 +221,31 @@ This analysis cross-references 30 cryptographic software categories against the 
 ### Regulatory Deadlines Impacting Software Categories
 
 **2025-12-31: CNSA 1.0 Compliance (NSA)**
+
 - Affected: CSC-004 (PKI), CSC-002 (HSM), CSC-001 (Crypto Libraries)
 - Impact: All National Security Systems
 - Status: In Progress
 
 **2025-Q4: CISA PQC Product Category List**
+
 - Affected: Multiple categories across data management, networking, endpoints
 - Impact: Federal procurement requirements
 - Status: List published, approved products pending
 
 **2026-06-30: CNSA 2.0 Compliance Window**
+
 - Affected: All cryptographic software categories
 - Impact: 6-month window for systems not CNSA 1.0 compliant
 - Status: Planning phase
 
 **2026: EU/Germany PQC Initiatives**
+
 - Germany quantum-secure ID cards (BSI)
 - PKI Consortium global coordination
 - Impact: International standards pressure
 
 **2026-2027: HSM PQC Architecture Availability**
+
 - Current Gap: No full PQC HSM architectures
 - FIPS 140-3 certification lag: 2+ years
 - Impact: Root of trust vulnerability window
@@ -325,6 +344,7 @@ This analysis cross-references 30 cryptographic software categories against the 
 **Issue:** Concentration of PQC support in few vendors (OpenSSL, Bouncy Castle)
 
 **Mitigation:**
+
 1. Support multiple cryptographic library options
 2. Implement crypto abstraction layers (CSC-025)
 3. Maintain fallback to alternative implementations
@@ -335,6 +355,7 @@ This analysis cross-references 30 cryptographic software categories against the 
 **Issue:** PQC algorithms have larger keys and slower operations
 
 **Mitigation:**
+
 1. Deploy hybrid mode initially (classical + PQC)
 2. Conduct thorough performance testing
 3. Plan infrastructure scaling (network, compute)
@@ -345,6 +366,7 @@ This analysis cross-references 30 cryptographic software categories against the 
 **Issue:** Mixed PQC deployment creates compatibility issues
 
 **Mitigation:**
+
 1. Maintain backward compatibility during transition
 2. Deploy hybrid algorithms (X25519MLKEM768)
 3. Implement graceful fallback mechanisms
@@ -355,6 +377,7 @@ This analysis cross-references 30 cryptographic software categories against the 
 **Issue:** 2+ year gap until PQC-ready HSMs widely available
 
 **Mitigation:**
+
 1. Plan HSM replacement cycles now for 2026-2027
 2. Consider software-based key protection as interim
 3. Deploy HSM pooling/clustering for flexibility
@@ -365,6 +388,7 @@ This analysis cross-references 30 cryptographic software categories against the 
 **Issue:** Regulatory deadlines compressing migration timeline
 
 **Mitigation:**
+
 1. Prioritize systems with regulatory requirements
 2. Establish executive sponsorship for PQC program
 3. Allocate dedicated resources and budget
@@ -377,6 +401,7 @@ This analysis cross-references 30 cryptographic software categories against the 
 ### Budget Allocation Recommendations
 
 **High-Priority Investments (60% of budget):**
+
 1. Cryptographic library upgrades and licensing
 2. HSM replacement planning and procurement
 3. TLS/SSL infrastructure modernization
@@ -384,6 +409,7 @@ This analysis cross-references 30 cryptographic software categories against the 
 5. Professional services for migration planning
 
 **Medium-Priority Investments (30% of budget):**
+
 1. Performance testing and optimization
 2. Monitoring and discovery tools
 3. Training and enablement
@@ -391,6 +417,7 @@ This analysis cross-references 30 cryptographic software categories against the 
 5. Third-party assessments
 
 **Strategic Investments (10% of budget):**
+
 1. Cryptographic agility frameworks
 2. Research and development
 3. Industry collaboration
@@ -400,18 +427,21 @@ This analysis cross-references 30 cryptographic software categories against the 
 ### ROI Considerations
 
 **Cost Avoidance:**
+
 - Prevent harvest-now-decrypt-later exposure
 - Avoid regulatory non-compliance penalties
 - Reduce incident response costs
 - Minimize emergency migration expenses
 
 **Business Enablement:**
+
 - Support long-term digital trust
 - Enable quantum-safe product offerings
 - Maintain customer confidence
 - Ensure business continuity
 
 **Competitive Advantage:**
+
 - Early mover advantage in quantum-safe services
 - Differentiation in regulated industries
 - Enhanced security posture
@@ -424,6 +454,7 @@ This analysis cross-references 30 cryptographic software categories against the 
 ### Database Integration Statistics
 
 **Datasets Cross-Referenced:**
+
 - Leaders: 100 PQC thought leaders and contributors
 - Library: 76 authoritative documents and standards
 - Threats: 125 industry-specific quantum threats
@@ -433,6 +464,7 @@ This analysis cross-references 30 cryptographic software categories against the 
 - Software Products: 49 specific implementations
 
 **Mapping Coverage:**
+
 - 15 software categories mapped to specific threats
 - 76 library documents mapped to software categories
 - 49 software products assessed for PQC readiness
@@ -440,6 +472,7 @@ This analysis cross-references 30 cryptographic software categories against the 
 - 25 products with some level of PQC support
 
 **Gap Analysis:**
+
 - 14 software products with zero PQC support (29%)
 - 12 high-priority categories with <50% readiness
 - 8 critical categories requiring immediate action
@@ -452,12 +485,14 @@ This analysis cross-references 30 cryptographic software categories against the 
 ### Phase 1: Assessment (2025-Q4)
 
 **Week 1-2:**
+
 - [ ] Complete cryptographic inventory
 - [ ] Identify all software dependencies
 - [ ] Map current state to software categories
 - [ ] Prioritize systems by business impact
 
 **Week 3-4:**
+
 - [ ] Assess PQC readiness of current software
 - [ ] Identify vendor PQC roadmaps
 - [ ] Evaluate hybrid deployment options
@@ -466,18 +501,21 @@ This analysis cross-references 30 cryptographic software categories against the 
 ### Phase 2: Pilot Deployment (2026-Q1)
 
 **Month 1:**
+
 - [ ] Deploy PQC in non-production environments
 - [ ] Conduct performance testing
 - [ ] Validate interoperability
 - [ ] Train operations teams
 
 **Month 2:**
+
 - [ ] Pilot production deployment (low-risk systems)
 - [ ] Monitor and measure performance
 - [ ] Collect feedback and refine approach
 - [ ] Document lessons learned
 
 **Month 3:**
+
 - [ ] Expand to medium-risk production systems
 - [ ] Establish operational procedures
 - [ ] Update runbooks and documentation
@@ -486,6 +524,7 @@ This analysis cross-references 30 cryptographic software categories against the 
 ### Phase 3: Production Rollout (2026-Q2+)
 
 **Continuous Activities:**
+
 - [ ] Phased migration by priority
 - [ ] Regular assessment and monitoring
 - [ ] Vendor engagement and coordination
@@ -523,16 +562,19 @@ This analysis cross-references 30 cryptographic software categories against the 
 ### Appendix B: Key Resources
 
 **Standards Organizations:**
+
 - NIST: https://csrc.nist.gov/projects/post-quantum-cryptography
 - IETF: https://datatracker.ietf.org/
 - CISA: https://www.cisa.gov/quantum
 
 **Open Source Projects:**
+
 - Open Quantum Safe: https://openquantumsafe.org/
 - liboqs: https://github.com/open-quantum-safe/liboqs
 - oqs-provider: https://github.com/open-quantum-safe/oqs-provider
 
 **Industry Consortia:**
+
 - PQCA (Linux Foundation): https://pqca.org/
 - PKI Consortium: https://pkic.org/
 

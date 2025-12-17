@@ -121,7 +121,12 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
   const sortedData = React.useMemo(() => sortItems(data), [data, sortConfig])
 
   // Recursive render function - uses sortedData at root level
-  const renderRows = (items: LibraryItem[], level = 0, visited = new Set<string>(), isRoot = false) => {
+  const renderRows = (
+    items: LibraryItem[],
+    level = 0,
+    visited = new Set<string>(),
+    isRoot = false
+  ) => {
     const itemsToRender = isRoot ? sortedData : sortItems(items)
 
     return itemsToRender.flatMap((item) => {

@@ -5,33 +5,33 @@ console.log('[Debug] OpenSSL Worker file executing...')
 // Inline Types to keep this a "Script" (not a Module)
 type WorkerMessage =
   | {
-    type: 'COMMAND'
-    command: string
-    args: string[]
-    files?: { name: string; data: Uint8Array }[]
-    requestId?: string
-  }
+      type: 'COMMAND'
+      command: string
+      args: string[]
+      files?: { name: string; data: Uint8Array }[]
+      requestId?: string
+    }
   | { type: 'LOAD'; url: string; requestId?: string }
   | { type: 'FILE_UPLOAD'; name: string; data: Uint8Array; requestId?: string }
   | { type: 'DELETE_FILE'; name: string; requestId?: string }
   | {
-    type: 'TLS_SIMULATE'
-    clientConfig: string
-    serverConfig: string
-    files?: { name: string; data: Uint8Array }[]
-    commands?: string[]
-    requestId?: string
-  }
+      type: 'TLS_SIMULATE'
+      clientConfig: string
+      serverConfig: string
+      files?: { name: string; data: Uint8Array }[]
+      commands?: string[]
+      requestId?: string
+    }
   | { type: 'READY'; requestId?: string }
   | { type: 'LOG'; stream: 'stdout' | 'stderr'; message: string; requestId?: string }
   | { type: 'ERROR'; error: string; requestId?: string }
   | { type: 'DONE'; requestId?: string }
   | {
-    type: 'SKEY_OPERATION'
-    opType: 'create' | 'derive'
-    params: any // Simplified for now
-    requestId?: string
-  }
+      type: 'SKEY_OPERATION'
+      opType: 'create' | 'derive'
+      params: any // Simplified for now
+      requestId?: string
+    }
 
 // ----------------------------------------------------------------------------
 // Types
@@ -138,7 +138,7 @@ var loadOpenSSLScript = async (
         const resp = await fetch(url)
         if (!resp.ok) throw new Error(`Failed to fetch ${url}: ${resp.statusText}`)
         const script = await resp.text()
-          ; (0, eval)(script)
+        ;(0, eval)(script)
       }
 
       // Check for CommonJS export
@@ -218,7 +218,7 @@ var injectEntropy = (module: EmscriptenModule, requestId?: string) => {
     module.FS.writeFile('/random.seed', seedData)
     try {
       module.FS.writeFile('/dev/urandom', seedData)
-    } catch (e) { }
+    } catch (e) {}
   } catch (e) {
     self.postMessage({
       type: 'LOG',
@@ -233,7 +233,7 @@ var configureEnvironment = (module: EmscriptenModule, requestId?: string) => {
   try {
     try {
       module.FS.mkdir('/ssl')
-    } catch (e) { }
+    } catch (e) {}
     const minimalConfig = `
 openssl_conf = openssl_init
 [openssl_init]
@@ -254,19 +254,19 @@ distinguished_name = req_distinguished_name
     // Create config file at multiple locations to satisfy different OpenSSL commands
     try {
       module.FS.mkdir('/ssl')
-    } catch (e) { }
+    } catch (e) {}
     try {
       module.FS.mkdir('/usr')
-    } catch (e) { }
+    } catch (e) {}
     try {
       module.FS.mkdir('/usr/local')
-    } catch (e) { }
+    } catch (e) {}
     try {
       module.FS.mkdir('/usr/local/ssl')
-    } catch (e) { }
+    } catch (e) {}
     try {
       module.FS.mkdir('/openssl-wasm')
-    } catch (e) { }
+    } catch (e) {}
 
     module.FS.writeFile('/ssl/openssl.cnf', cnfBytes)
     module.FS.writeFile('/usr/local/ssl/openssl.cnf', cnfBytes)
@@ -345,9 +345,9 @@ var scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>, reques
             self.postMessage({ type: 'FILE_CREATED', name: file, data: content, requestId })
           }
         }
-      } catch (e) { }
+      } catch (e) {}
     }
-  } catch (e) { }
+  } catch (e) {}
 }
 
 // ----------------------------------------------------------------------------
@@ -636,11 +636,7 @@ var executeSimulation = async (
   }
 }
 
-var executeSkeyOperation = async (
-  opType: 'create' | 'derive',
-  params: any,
-  requestId?: string
-) => {
+var executeSkeyOperation = async (opType: 'create' | 'derive', params: any, requestId?: string) => {
   try {
     // 1. Load/Init
     await loadOpenSSLScript('/wasm/openssl.js', requestId)
@@ -649,60 +645,74 @@ var executeSkeyOperation = async (
 
     // 2. Bind Functions
     // int create_skey_from_bytes(const unsigned char *key_bytes, size_t key_len, const char *alg_name)
-    const createSkeyC = module.cwrap('create_skey_from_bytes', 'number', ['number', 'number', 'string'])
+    const createSkeyC = module.cwrap('create_skey_from_bytes', 'number', [
+      'number',
+      'number',
+      'string',
+    ])
     // int derive_skey(const char *kdf_name, const unsigned char *secret, size_t secret_len, const char *out_alg)
-    const deriveSkeyC = module.cwrap('derive_skey', 'number', ['string', 'number', 'number', 'string'])
+    const deriveSkeyC = module.cwrap('derive_skey', 'number', [
+      'string',
+      'number',
+      'number',
+      'string',
+    ])
 
     // Check if functions exist (experimental check)
     if (!createSkeyC || !deriveSkeyC) {
-      throw new Error("EVP_SKEY functions not found in WASM build")
+      throw new Error('EVP_SKEY functions not found in WASM build')
     }
 
-    let result = 0;
+    let result = 0
 
     if (opType === 'create') {
-      const { keyBytes, alg } = params;
-      const len = keyBytes.length;
+      const { keyBytes, alg } = params
+      const len = keyBytes.length
       // Allocate memory for keyBytes
-      const ptr = module._malloc(len);
-      module.HEAPU8.set(keyBytes, ptr);
+      const ptr = module._malloc(len)
+      module.HEAPU8.set(keyBytes, ptr)
 
-      result = createSkeyC(ptr, len, alg);
+      result = createSkeyC(ptr, len, alg)
 
-      module._free(ptr);
+      module._free(ptr)
     } else if (opType === 'derive') {
-      const { kdf, sourceHandleId, outAlg } = params;
+      const { kdf, sourceHandleId, outAlg } = params
 
       // Validate handle selection
       if (!sourceHandleId || sourceHandleId === 0) {
-        throw new Error("Please select a source SKEY handle for derivation");
+        throw new Error('Please select a source SKEY handle for derivation')
       }
 
       // Call new handle-based derive function
       // int derive_skey_from_handle(int source_handle_id, const char *kdf_name, const char *out_alg)
-      const deriveFromHandleC = module.cwrap('derive_skey_from_handle', 'number', ['number', 'string', 'string']);
+      const deriveFromHandleC = module.cwrap('derive_skey_from_handle', 'number', [
+        'number',
+        'string',
+        'string',
+      ])
 
       if (!deriveFromHandleC) {
-        throw new Error("derive_skey_from_handle function not found in WASM build. Please rebuild WASM with updated C code.");
+        throw new Error(
+          'derive_skey_from_handle function not found in WASM build. Please rebuild WASM with updated C code.'
+        )
       }
 
-      result = deriveFromHandleC(sourceHandleId, kdf, outAlg);
+      result = deriveFromHandleC(sourceHandleId, kdf, outAlg)
     }
 
     self.postMessage({
       type: 'LOG',
       stream: 'stdout',
       message: `SKEY OPERATION ${opType.toUpperCase()} RESULT: ${result === 1 ? 'SUCCESS' : 'FAILURE'}`,
-      requestId
-    });
+      requestId,
+    })
 
     if (result !== 1) {
-      throw new Error("SKEY Operation returned failure code");
+      throw new Error('SKEY Operation returned failure code')
     }
 
     // 3. Scan for output files (SKEY files created by C code)
-    scanOutputFiles(module, new Set<string>(), requestId);
-
+    scanOutputFiles(module, new Set<string>(), requestId)
   } catch (error: any) {
     self.postMessage({ type: 'ERROR', error: error.message || 'SKEY op failed', requestId })
   } finally {

@@ -151,7 +151,12 @@ export const useDsaOperations = ({
 
           // Use liboqs_sig for SLH-DSA and FN-DSA, MLDSA for ML-DSA
           if (isLiboqsSigAlgorithm(key.algorithm)) {
-            isValid = await LIBOQS_SIG.verify(hexToBytes(signature), messageBytes, key.data, key.algorithm)
+            isValid = await LIBOQS_SIG.verify(
+              hexToBytes(signature),
+              messageBytes,
+              key.data,
+              key.algorithm
+            )
           } else {
             isValid = await MLDSA.verify(hexToBytes(signature), messageBytes, key.data)
           }

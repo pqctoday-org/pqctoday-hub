@@ -221,7 +221,7 @@ export const WorkbenchFileManager: React.FC = () => {
                 ? 'bg-red-500 text-foreground hover:bg-red-600 border border-red-500'
                 : 'bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20',
               files.length === 0 &&
-              'opacity-50 cursor-not-allowed bg-muted border-border text-muted-foreground'
+                'opacity-50 cursor-not-allowed bg-muted border-border text-muted-foreground'
             )}
             title="Delete all files"
           >
