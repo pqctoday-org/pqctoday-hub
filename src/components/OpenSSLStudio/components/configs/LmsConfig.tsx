@@ -86,7 +86,7 @@ const fromPEM = (pem: string | Uint8Array): Uint8Array => {
   if (bytes[offset++] !== 0x30) throw new Error('Invalid ASN.1: Not a Sequence')
 
   // Skip Length
-  let len = bytes[offset++]
+  const len = bytes[offset++]
   if (len & 0x80) {
     const nBytes = len & 0x7f
     offset += nBytes
@@ -339,30 +339,33 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
         <button
           data-testid="lms-mode-generate"
           onClick={() => setMode('generate')}
-          className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${mode === 'generate'
+          className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
+            mode === 'generate'
               ? 'bg-green-500/20 text-green-400 border border-green-500/30'
               : 'text-muted-foreground hover:text-foreground'
-            }`}
+          }`}
         >
           Generate
         </button>
         <button
           data-testid="lms-mode-sign"
           onClick={() => setMode('sign')}
-          className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${mode === 'sign'
+          className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
+            mode === 'sign'
               ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
               : 'text-muted-foreground hover:text-foreground'
-            }`}
+          }`}
         >
           Sign
         </button>
         <button
           data-testid="lms-mode-verify"
           onClick={() => setMode('verify')}
-          className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${mode === 'verify'
+          className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
+            mode === 'verify'
               ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
               : 'text-muted-foreground hover:text-foreground'
-            }`}
+          }`}
         >
           Verify
         </button>
@@ -397,7 +400,10 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           {/* Custom Parameters */}
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label htmlFor="lms-height-select" className="text-xs text-muted-foreground block mb-1">
+              <label
+                htmlFor="lms-height-select"
+                className="text-xs text-muted-foreground block mb-1"
+              >
                 LMS Algorithm (Height)
               </label>
               <select
@@ -413,7 +419,10 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
               </select>
             </div>
             <div>
-              <label htmlFor="lms-width-select" className="text-xs text-muted-foreground block mb-1">
+              <label
+                htmlFor="lms-width-select"
+                className="text-xs text-muted-foreground block mb-1"
+              >
                 LM-OTS Algorithm (Width)
               </label>
               <select
@@ -594,10 +603,11 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
                 )
               }
             }}
-            className={`w-full py-2 text-xs font-bold rounded border transition-colors uppercase tracking-wider ${lmsDataFile && lmsKeyFile
+            className={`w-full py-2 text-xs font-bold rounded border transition-colors uppercase tracking-wider ${
+              lmsDataFile && lmsKeyFile
                 ? 'bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border-blue-500/30'
                 : 'bg-gray-500/10 text-gray-500 border-gray-500/20 cursor-not-allowed'
-              }`}
+            }`}
           >
             Sign Selected Data File
           </button>
@@ -657,10 +667,11 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
                 )
               }
             }}
-            className={`w-full py-2 text-xs font-bold rounded border transition-colors uppercase tracking-wider ${lmsKeyFile && lmsSigFile && lmsDataFile
+            className={`w-full py-2 text-xs font-bold rounded border transition-colors uppercase tracking-wider ${
+              lmsKeyFile && lmsSigFile && lmsDataFile
                 ? 'bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 border-purple-500/30'
                 : 'bg-gray-500/10 text-gray-500 border-gray-500/20 cursor-not-allowed'
-              }`}
+            }`}
           >
             Verify (WASM)
           </button>
