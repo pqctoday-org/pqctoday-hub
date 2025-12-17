@@ -12,6 +12,7 @@ import {
   Info,
   GraduationCap,
   ShieldCheck,
+  ArrowRightLeft,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
@@ -24,12 +25,13 @@ export const MainLayout = () => {
 
   const navItems = [
     { path: '/', label: 'Timeline', icon: Globe },
+    { path: '/threats', label: 'Threats', icon: AlertTriangle },
     { path: '/algorithms', label: 'Algorithms', icon: Shield },
     { path: '/library', label: 'Library', icon: BookOpen },
     { path: '/learn', label: 'Learn', icon: GraduationCap },
+    { path: '/migrate', label: 'Migrate', icon: ArrowRightLeft },
     { path: '/playground', label: 'Playground', icon: FlaskConical, hiddenOnMobile: true },
     { path: '/openssl', label: 'OpenSSL Studio', icon: Activity, hiddenOnMobile: true },
-    { path: '/threats', label: 'Threats', icon: AlertTriangle },
     { path: '/compliance', label: 'Compliance', icon: ShieldCheck },
     { path: '/leaders', label: 'Leaders', icon: Users },
     { path: '/about', label: 'About', icon: Info },

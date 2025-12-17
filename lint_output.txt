@@ -1,0 +1,47 @@
+
+> pqc-timeline-app@1.8.5 lint
+> eslint src scripts e2e *.ts *.js *.cjs
+
+
+/Users/ericamador/antigravity/pqc-timeline-app/e2e/navigation.spec.ts
+   9:15  error  'navItems' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  28:15  error  'buttons' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+/Users/ericamador/antigravity/pqc-timeline-app/scripts/scrapers/health.ts
+  30:7   warning  Generic Object Injection Sink  security/detect-object-injection
+  30:19  warning  Generic Object Injection Sink  security/detect-object-injection
+  39:7   warning  Generic Object Injection Sink  security/detect-object-injection
+  39:19  warning  Generic Object Injection Sink  security/detect-object-injection
+  47:23  warning  Generic Object Injection Sink  security/detect-object-injection
+  48:22  warning  Generic Object Injection Sink  security/detect-object-injection
+  74:10  warning  Generic Object Injection Sink  security/detect-object-injection
+  74:30  warning  Generic Object Injection Sink  security/detect-object-injection
+  79:24  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/ericamador/antigravity/pqc-timeline-app/src/components/OpenSSLStudio/components/configs/LmsConfig.tsx
+   74:43  warning  Generic Object Injection Sink               security/detect-object-injection
+   97:16  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  106:9   warning  Generic Object Injection Sink               security/detect-object-injection
+  110:9   warning  Generic Object Injection Sink               security/detect-object-injection
+  119:9   warning  Generic Object Injection Sink               security/detect-object-injection
+
+/Users/ericamador/antigravity/pqc-timeline-app/src/components/PKILearning/modules/TLSBasics/components/CryptoLogDisplay.tsx
+  104:12  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/ericamador/antigravity/pqc-timeline-app/src/data/authoritativeSourcesData.ts
+   49:18  warning  Generic Object Injection Sink               security/detect-object-injection
+   98:30  warning  Function Call Object Injection Sink         security/detect-object-injection
+  140:21  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  142:50  warning  Generic Object Injection Sink               security/detect-object-injection
+
+/Users/ericamador/antigravity/pqc-timeline-app/src/data/migrateData.ts
+  24:47  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/ericamador/antigravity/pqc-timeline-app/src/store/tls-learning.store.ts
+  254:29  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+
+/Users/ericamador/antigravity/pqc-timeline-app/src/utils/opensslDocsData.ts
+  15:18  warning  Generic Object Injection Sink  security/detect-object-injection
+
+✖ 24 problems (2 errors, 22 warnings)
+

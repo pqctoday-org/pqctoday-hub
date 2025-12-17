@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.5] - 2025-12-16
+
+### Added
+
+- **Migrate Module (New Feature)**:
+  - Added new "Migrate" view for PQC readiness planning
+  - Verified PQC Software Reference Database with 70+ entries
+  - "New" and "Updated" status indicators for change tracking
+  - Filtering by Category, Platform, and Support status
+
+- **Data Updates**:
+  - Added 39 new PQC software entries (OS, Libraries, Network, Apps)
+  - Updated PQC Software CSV to `12162025` version
+  - Added comprehensive details for Windows Server 2025, Android 16, iOS 19, and major firewalls
+
+### Changed
+
+- **Navigation**:
+  - Reordered main menu to: Timeline -> Threats -> Algorithms -> Library -> Learn -> Migrate -> Playground -> OpenSSL Studio -> Compliance -> Leaders -> About
+  - Better alignment with "Awareness -> Plan -> Act" user journey
+
+- **Documentation**:
+  - Updated `README.md` and `REQUIREMENTS.md` with Migrate module details
+  - Added dedicated `requirements/Migrate_Module_Requirements.md`
+
 ## [1.8.4] - 2025-12-16
 
 ### Added

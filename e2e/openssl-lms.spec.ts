@@ -49,26 +49,32 @@ test.describe('OpenSSL Studio - LMS (HSS) Operations', () => {
 
     // Generate a keypair (default is Generate mode)
     await page.getByRole('button', { name: 'Generate New LMS Keypair' }).click()
-    // Wait for generation log
-    await expect(page.getByText('LMS Keypair generated')).toBeVisible({ timeout: 30000 })
+
+    // Wait for file to appear in table (more specific than toast)
+    const filesTable = page.locator('table').filter({ hasText: 'Filename' })
+    const keyFileRow = filesTable
+      .getByRole('row')
+      .filter({ hasText: 'lms_h10_w8_' })
+      .filter({ hasText: '.key' })
+    await expect(keyFileRow).toBeVisible({ timeout: 40000 })
+
+    // Capture filename
+    const keyFileName = await keyFileRow.locator('td').nth(2).innerText()
 
     // Load sample data for signing
     await page.getByRole('button', { name: 'Load Sample Data' }).click()
+
+    // Wait for sample file to appear
+    await expect(filesTable.getByRole('row').filter({ hasText: 'lms-message.txt' })).toBeVisible()
 
     // Switch to Sign mode via data-testid
     await page.getByTestId('lms-mode-sign').click()
 
     // Select the generated private key
+    // Using dynamic filename captured from table
     const keySelect = page.getByLabel('Signing Key (Private Key)')
-    await expect(keySelect.locator('option').filter({ hasText: 'lms_h10_w8_' })).toHaveCount(1, {
-      timeout: 10000,
-    })
-    const optionValue = await keySelect
-      .locator('option')
-      .filter({ hasText: 'lms_h10_w8_' })
-      .first()
-      .getAttribute('value')
-    await keySelect.selectOption(optionValue!)
+    await expect(keySelect).toBeVisible()
+    await keySelect.selectOption(keyFileName)
 
     // Select data file
     const dataSelect = page.locator('#lms-data-select')

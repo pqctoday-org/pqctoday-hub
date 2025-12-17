@@ -9,29 +9,33 @@ The goal is to build a high-end, visually stunning web application that visualiz
 The application is divided into ten main modules. Detailed requirements for each are linked below:
 
 1.  **[Migration Timeline](requirements/timeline.md)**: Visualization of global regulatory recommendations and migration phases.
-2.  **[Algorithms Transition](requirements/algorithms.md)**: Comparison table showing the shift from Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) standards.
-3.  **[Interactive Playground](requirements/playground.md)**: Hands-on testing environment for ML-KEM and ML-DSA cryptographic operations.
-    - Includes **[ACVP Testing](requirements/playground.md#11-acvp-testing-automated-cryptographic-validation)**: Automated validation against NIST test vectors (now part of playground.md).
-4.  **[OpenSSL Studio](requirements/opensslstudio.md)**: Browser-based OpenSSL v3.6.0 workbench with WebAssembly.
-    - Full PQC algorithm support (ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA all 12 variants, LMS/HSS)
-    - 13 operation types: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
-    - Virtual file system with backup/restore capabilities
-5.  **[Quantum Threat Impacts](requirements/impacts.md)**: Dashboard showing specific risks to industries like Finance, IoT, and Government.
-6.  **[Transformation Leaders](requirements/leaders.md)**: Profiles of key public and private figures driving the transition.
-7.  **[Learning Platform](requirements/learn.md)**: Comprehensive educational platform with multiple modules:
+2.  **[Quantum Threat Impacts](requirements/impacts.md)**: Dashboard showing specific risks to industries like Finance, IoT, and Government.
+3.  **[Algorithms Transition](requirements/algorithms.md)**: Comparison table showing the shift from Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) standards.
+4.  **[Standards Library](requirements/library.md)**: Comprehensive PQC standards repository with categorized documents.
+5.  **[Learning Platform](requirements/learn.md)**: Comprehensive educational platform with multiple modules:
     - **[PKI Workshop](requirements/learn.md#module-1-pki-workshop-implemented)**: 4-step certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing)
     - **[Digital Assets Program](requirements/digital_assets.md)**: Blockchain cryptography for Bitcoin, Ethereum, Solana, and HD Wallet (BIP32/39/44)
     - **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment (Profiles A/B/C) and 5G-AKA authentication with MILENAGE
     - **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: EUDI Wallet ecosystem with Remote HSM architecture. Features 7-step interactive flows for PID Issuance (OpenID4VCI) and Relying Party verification (OpenID4VP), plus QEAA Attestation and Remote QES.
     - **[TLS 1.3 Basics](requirements/learn_openssltls13_requirement.md)**: Interactive TLS 1.3 handshake simulation with PQC algorithm support (ML-KEM, ML-DSA)
     - **Introduction Module**: Overview and getting started guide
-8.  **[Compliance Module](requirements/Compliance_Module_Requirements.md)**: Real-time compliance tracking and standards monitoring.
+6.  **[Migrate Module](requirements/Migrate_Module_Requirements.md)**: Comprehensive reference database of PQC-ready software and infrastructure.
+    - Software Reference Database (OS, Libraries, Network, etc.)
+    - Change tracking with "New" and "Updated" indicators
+    - Filterable dashboard for migration planning
+7.  **[Interactive Playground](requirements/playground.md)**: Hands-on testing environment for ML-KEM and ML-DSA cryptographic operations.
+    - Includes **[ACVP Testing](requirements/playground.md#11-acvp-testing-automated-cryptographic-validation)**: Automated validation against NIST test vectors (now part of playground.md).
+8.  **[OpenSSL Studio](requirements/opensslstudio.md)**: Browser-based OpenSSL v3.6.0 workbench with WebAssembly.
+    - Full PQC algorithm support (ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA all 12 variants, LMS/HSS)
+    - 13 operation types: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
+    - Virtual file system with backup/restore capabilities
+9.  **[Compliance Module](requirements/Compliance_Module_Requirements.md)**: Real-time compliance tracking and standards monitoring.
     - NIST FIPS document tracking (203, 204, 205)
     - ANSSI recommendations
     - Common Criteria certifications
     - Automated data scraping and visualization
-9.  **[Standards Library](requirements/library.md)**: Comprehensive PQC standards repository with categorized documents.
-10. **[About & Feedback](requirements/about.md)**: Project information, feedback mechanisms, and Software Bill of Materials (SBOM).
+10. **[Transformation Leaders](requirements/leaders.md)**: Profiles of key public and private figures driving the transition.
+11. **[About & Feedback](requirements/about.md)**: Project information, feedback mechanisms, and Software Bill of Materials (SBOM).
 
 ## 3. Non-Functional Requirements
 
