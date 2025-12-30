@@ -46,7 +46,7 @@ The **Migrate** module provides a comprehensive, verified reference database of 
 
 The module organizes software into clear, actionable categories:
 
-- **Operating Systems**: Windows Server 2025, Android 16, iOS 19, etc.
+- **Operating Systems**: Windows Server 2025, Android 16, iOS 26, etc.
 - **Cryptographic Libraries**: OpenSSL, Bouncy Castle, liboqs, commercial SDKs.
 - **Network Infrastructure**: Firewalls (Palo Alto, Fortinet), Routers (Cisco), VPNs.
 - **Secure Communications**: Messaging apps (Signal), Email (Tuta), Browsers.
