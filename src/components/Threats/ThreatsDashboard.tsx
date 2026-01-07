@@ -27,7 +27,7 @@ import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
 import { SourcesButton } from '../ui/SourcesButton'
 
-type SortField = 'industry' | 'threatId' | 'criticality'
+type SortField = 'industry' | 'threatId' | 'criticality' | 'accuracyPct'
 type SortDirection = 'asc' | 'desc'
 
 // Helper to get icon for industry
@@ -158,6 +158,9 @@ export const ThreatsDashboard: React.FC = () => {
       } else if (sortField === 'criticality') {
         valA = getCriticalityVal(a.criticality)
         valB = getCriticalityVal(b.criticality)
+      } else if (sortField === 'accuracyPct') {
+        valA = a.accuracyPct ?? 0
+        valB = b.accuracyPct ?? 0
       }
 
       if (valA < valB) return sortDirection === 'asc' ? -1 : 1
@@ -293,6 +296,20 @@ export const ThreatsDashboard: React.FC = () => {
                       ))}
                   </div>
                 </th>
+                <th
+                  className="p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors text-center"
+                  onClick={() => handleSort('accuracyPct')}
+                >
+                  <div className="flex items-center gap-1 justify-center">
+                    Accuracy
+                    {sortField === 'accuracyPct' &&
+                      (sortDirection === 'asc' ? (
+                        <ChevronUp size={14} />
+                      ) : (
+                        <ChevronDown size={14} />
+                      ))}
+                  </div>
+                </th>
                 <th className="p-4 font-semibold text-sm">Crypto</th>
                 <th className="p-4 font-semibold text-sm">PQC Repl.</th>
                 <th className="p-4 font-semibold text-sm text-center">Info</th>
@@ -353,6 +370,27 @@ export const ThreatsDashboard: React.FC = () => {
                       >
                         {item.criticality}
                       </span>
+                    </td>
+                    <td className="p-4 text-center">
+                      <div className="flex flex-col items-center">
+                        <span
+                          className={clsx(
+                            'text-xs font-mono font-bold',
+                            item.accuracyPct === 100
+                              ? 'text-red-400'
+                              : item.accuracyPct && item.accuracyPct >= 50
+                                ? 'text-orange-400'
+                                : 'text-blue-400'
+                          )}
+                        >
+                          {item.accuracyPct !== undefined ? `${item.accuracyPct}%` : 'N/A'}
+                        </span>
+                        {item.accuracyPct === 100 && (
+                          <span className="text-[8px] uppercase tracking-tighter text-red-500/80 font-bold">
+                            Active (HNDL)
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="p-4 text-xs text-muted-foreground font-mono">
                       {item.cryptoAtRisk.split(',').map((c, i) => (

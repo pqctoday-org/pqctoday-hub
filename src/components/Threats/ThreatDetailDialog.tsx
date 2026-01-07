@@ -68,7 +68,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-1">
                 Criticality
