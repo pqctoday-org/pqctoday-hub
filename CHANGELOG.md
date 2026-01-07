@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.8.5] - 2025-12-16
+## [1.8.5] - 2026-01-06
 
 ### Added
 
@@ -13,11 +13,19 @@ All notable changes to this project will be documented in this file.
   - Filtering by Category, Platform, and Support status
 
 - **Data Updates**:
+  - Added Jan 6, 2026 data files for Leaders, Threats, and Library (`01062026`)
   - Added 39 new PQC software entries (OS, Libraries, Network, Apps)
   - Updated PQC Software CSV to `12162025` version
   - Added comprehensive details for Windows Server 2025, Android 16, iOS 19, and major firewalls
 
 ### Changed
+
+- **Threats Module**:
+  - Updated AERO-001 reference to RTCA Security page (`https://www.rtca.org/security/`)
+  - Removed "Accuracy / Probability" field from Threat Detail UI for cleaner presentation
+
+- **Library Module**:
+  - Corrected OpenPGP reference ID to `draft-ietf-openpgp-pqc-16`
 
 - **Navigation**:
   - Reordered main menu to: Timeline -> Threats -> Algorithms -> Library -> Learn -> Migrate -> Playground -> OpenSSL Studio -> Compliance -> Leaders -> About
