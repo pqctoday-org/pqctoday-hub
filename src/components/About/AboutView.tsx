@@ -469,7 +469,7 @@ ${kudos.message}
               <ul className="space-y-2">
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React</span>
-                  <span className="text-xs text-muted-foreground/60">v19.2.1</span>
+                  <span className="text-xs text-muted-foreground/60">v19.2.3</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Framer Motion</span>
@@ -481,7 +481,7 @@ ${kudos.message}
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Tailwind CSS</span>
-                  <span className="text-xs text-muted-foreground/60">v4.1.17</span>
+                  <span className="text-xs text-muted-foreground/60">v4.1.18</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">clsx</span>
