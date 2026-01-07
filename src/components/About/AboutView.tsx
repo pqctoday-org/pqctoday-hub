@@ -473,11 +473,11 @@ ${kudos.message}
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Framer Motion</span>
-                  <span className="text-xs text-muted-foreground/60">v12.23.25</span>
+                  <span className="text-xs text-muted-foreground/60">v12.24.7</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Lucide React</span>
-                  <span className="text-xs text-muted-foreground/60">v0.556.0</span>
+                  <span className="text-xs text-muted-foreground/60">v0.562.0</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Tailwind CSS</span>
@@ -576,7 +576,7 @@ ${kudos.message}
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Immer</span>
-                  <span className="text-xs text-muted-foreground/60">v11.0.1</span>
+                  <span className="text-xs text-muted-foreground/60">v11.1.3</span>
                 </li>
               </ul>
             </div>
@@ -594,7 +594,7 @@ ${kudos.message}
               <ul className="space-y-2">
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Vite</span>
-                  <span className="text-xs text-muted-foreground/60">v7.2.7</span>
+                  <span className="text-xs text-muted-foreground/60">v7.3.0</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">TypeScript</span>
@@ -606,7 +606,7 @@ ${kudos.message}
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">ESLint</span>
-                  <span className="text-xs text-muted-foreground/60">v9.39.1</span>
+                  <span className="text-xs text-muted-foreground/60">v9.39.2</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Prettier</span>
@@ -623,7 +623,7 @@ ${kudos.message}
               <ul className="space-y-2">
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Vitest</span>
-                  <span className="text-xs text-muted-foreground/60">v4.0.14</span>
+                  <span className="text-xs text-muted-foreground/60">v4.0.16</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Playwright</span>
@@ -631,7 +631,7 @@ ${kudos.message}
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Testing Library (React)</span>
-                  <span className="text-xs text-muted-foreground/60">v16.3.0</span>
+                  <span className="text-xs text-muted-foreground/60">v16.3.1</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">axe-playwright (Accessibility)</span>
