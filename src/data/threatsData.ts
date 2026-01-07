@@ -7,6 +7,7 @@ export interface ThreatData {
   pqcReplacement: string
   mainSource: string
   sourceUrl: string
+  accuracyPct?: number
   status?: 'New' | 'Updated'
 }
 
@@ -101,7 +102,7 @@ export function parseThreatsCSV(csvContent: string): ThreatData[] {
     }
 
     return dataLines.map((line) => {
-      // Columns: industry,threat_id,threat_description,criticality,crypto_at_risk,pqc_replacement,main_source,source_url
+      // Columns: industry,threat_id,threat_description,criticality,crypto_at_risk,pqc_replacement,main_source,source_url,accuracy_pct
       const [
         industry,
         threatId,
@@ -111,6 +112,7 @@ export function parseThreatsCSV(csvContent: string): ThreatData[] {
         pqcReplacement,
         mainSource,
         sourceUrl,
+        accuracyPct,
       ] = parseLine(line)
 
       return {
@@ -122,6 +124,7 @@ export function parseThreatsCSV(csvContent: string): ThreatData[] {
         pqcReplacement: pqcReplacement?.replace(/^"|"$/g, '') || '',
         mainSource: mainSource?.replace(/^"|"$/g, '') || '',
         sourceUrl: sourceUrl?.replace(/^"|"$/g, '') || '',
+        accuracyPct: accuracyPct ? parseInt(accuracyPct.replace(/^"|"$/g, '')) : undefined,
       }
     })
   } catch (error) {
