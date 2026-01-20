@@ -43,7 +43,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
 - **Migrate Module**: Comprehensive PQC software reference and migration planning tool
-  - **Verified Database**: 70+ verified PQC-ready software entries (OS, Libraries, Network, etc.)
+  - **Verified Database**: 76+ verified PQC-ready software entries (OS, Libraries, Network, etc.)
   - **Change Tracking**: "New" and "Updated" indicators for recent PQC landscape changes
   - **Filtering**: Deep filtering by category, platform, and industry
   - **Reference**: Detailed product briefs, licensing info, and verification status
@@ -61,13 +61,13 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Interactive dashboard with criticality ratings
   - **Detailed Threat Insights**: Popups with specific "Harvest Now, Decrypt Later" risks and PQC mitigations
   - Direct access to primary source references for each threat
-- **Transformation Leaders**: Profiles of key PQC transition figures
+- **Transformation Leaders**: 115+ comprehensive profiles of key PQC transition figures
 
 > 📋 See [REQUIREMENTS.md](REQUIREMENTS.md) for detailed specifications of each feature.
 
 ## Tech Stack
 
-- **Frontend**: React 19 + TypeScript + Vite 7
+- **Frontend**: React 19 + TypeScript + Vite 7.3.1
 - **Cryptography**:
   - OpenSSL WASM v3.6.0 (with native ML-KEM, ML-DSA, and LMS/HSS support)
   - `@openforge-sh/liboqs` for additional PQC algorithms (FrodoKEM, HQC, Classic McEliece)
@@ -76,7 +76,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - `@scure/bip32`, `@scure/bip39`, `@scure/base` for HD wallet
   - `micro-eth-signer` for Ethereum transactions
   - `ed25519-hd-key` for Solana key derivation
-- **Styling**: Tailwind CSS 4 with custom design system and CSS variables
+- **Styling**: Tailwind CSS 4.1.17 with custom design system and CSS variables
 - **State Management**: Zustand for module state and persistence
 - **Data Processing**: Papa Parse (CSV), JSZip (file backup), LocalForage (storage)
 - **UI/UX**: Framer Motion (animations), React Markdown (documentation)
