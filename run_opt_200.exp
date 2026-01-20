@@ -1,0 +1,18 @@
+#!/usr/bin/expect -f
+log_user 1
+set timeout 300
+
+spawn scp -P 2222 -o StrictHostKeyChecking=no ml_dsa_benchmark_optimized_ppc32 root@localhost:~/optimized
+expect "password:"
+send "root\r"
+expect "100%"
+
+spawn ssh -p 2222 -o StrictHostKeyChecking=no root@localhost
+expect "password:"
+send "root\r"
+expect "# "
+send "./optimized\r"
+expect "Benchmark Complete"
+expect "# "
+send "exit\r"
+expect eof
