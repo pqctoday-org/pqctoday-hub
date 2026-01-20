@@ -49,6 +49,7 @@
     "jszip": "^3.10.1",
     "localforage": "^1.10.0",
     "lucide-react": "^0.562.0",
+    "md-to-pdf": "^5.2.5",
     "micro-eth-signer": "^0.18.1",
     "papaparse": "^5.5.3",
     "pdf-parse": "^2.4.5",
