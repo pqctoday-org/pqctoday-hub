@@ -67,6 +67,18 @@ test.describe('Threats Dashboard', () => {
     }
   })
 
+  test('finds new threat from 01/19/2026 update', async ({ page }) => {
+    const searchInput = page.getByPlaceholder('Search threats...')
+    if (await searchInput.isVisible()) {
+      // Search for a specific new threat ID
+      await searchInput.fill('CROSS-001')
+      await page.waitForTimeout(300)
+
+      // Verify correct threat is displayed
+      await expect(page.locator('table')).toContainText('Quantum-safe readiness gap')
+    }
+  })
+
   test('displays empty state when no results', async ({ page }) => {
     const searchInput = page.getByPlaceholder('Search threats...')
 

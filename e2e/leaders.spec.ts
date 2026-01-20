@@ -14,6 +14,10 @@ test.describe('Leaders View', () => {
     const dustinCard = page.locator('div').filter({ hasText: 'Dr. Dustin Moody' }).first()
     await expect(dustinCard).toBeVisible()
     await expect(dustinCard.getByText('NIST', { exact: true }).first()).toBeVisible()
+
+    // Verify a NEW leader from the 01/19/2026 update is present
+    const newLeaderCard = page.locator('div').filter({ hasText: 'Dr. Jérôme Notin' }).first()
+    await expect(newLeaderCard).toBeVisible()
   })
 
   test('filters by country', async ({ page }) => {
