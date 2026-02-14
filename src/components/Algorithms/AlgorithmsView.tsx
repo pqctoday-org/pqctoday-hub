@@ -7,6 +7,7 @@ import clsx from 'clsx'
 import { loadPQCAlgorithmsData, loadedFileMetadata } from '../../data/pqcAlgorithmsData'
 import { loadAlgorithmsData, loadedTransitionMetadata } from '../../data/algorithmsData'
 import { SourcesButton } from '../ui/SourcesButton'
+import { ShareButton } from '../ui/ShareButton'
 
 type ViewType = 'transition' | 'detailed'
 
@@ -52,6 +53,10 @@ export function AlgorithmsView() {
                 : new Date().toLocaleDateString()}
           </p>
           <SourcesButton viewType="Algorithms" />
+          <ShareButton
+            title="PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More"
+            text="Compare 42 post-quantum cryptographic algorithms side-by-side — security levels, key sizes, and performance."
+          />
         </div>
       </motion.div>
 

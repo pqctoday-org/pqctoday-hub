@@ -269,8 +269,8 @@ describe('MainLayout', () => {
         </MemoryRouter>
       )
 
-      const timelineButton = screen.getByRole('button', { name: /timeline view/i })
-      expect(timelineButton).toHaveAttribute('aria-current', 'page')
+      const homeButton = screen.getByRole('button', { name: /home view/i })
+      expect(homeButton).toHaveAttribute('aria-current', 'page')
     })
 
     it('has proper role for header', () => {

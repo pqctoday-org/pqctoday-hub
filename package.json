@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "1.8.5",
+  "version": "1.8.6",
   "license": "GPL-3.0",
   "type": "module",
   "engines": {
@@ -18,7 +18,7 @@
     "dev": "vite",
     "scrape": "NODE_TLS_REJECT_UNAUTHORIZED=0 npx tsx scripts/scrape-compliance.ts",
     "prebuild": "npm run scrape",
-    "build": "mkdir -p public/dist && tsc -b && vite build && cp dist/index.html dist/404.html",
+    "build": "tsc -b && vite build && cp dist/index.html dist/404.html",
     "lint": "eslint src scripts e2e *.ts *.js *.cjs",
     "preview": "vite preview",
     "test": "vitest run",

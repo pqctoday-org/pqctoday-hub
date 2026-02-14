@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Shield body -->
+  <path d="M16 2L4 7v9c0 7.73 5.12 14.96 12 17 6.88-2.04 12-9.27 12-17V7L16 2z" fill="#0EA5C8"/>
+  <!-- Quantum orbital rings -->
+  <ellipse cx="16" cy="16" rx="6" ry="3" stroke="white" stroke-width="1.2" fill="none" transform="rotate(0 16 16)"/>
+  <ellipse cx="16" cy="16" rx="6" ry="3" stroke="white" stroke-width="1.2" fill="none" transform="rotate(60 16 16)"/>
+  <ellipse cx="16" cy="16" rx="6" ry="3" stroke="white" stroke-width="1.2" fill="none" transform="rotate(120 16 16)"/>
+  <!-- Center nucleus -->
+  <circle cx="16" cy="16" r="2" fill="white"/>
+</svg>

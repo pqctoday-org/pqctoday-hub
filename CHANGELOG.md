@@ -2,6 +2,83 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.6] - 2026-02-14
+
+### Added
+
+- **SEO & Discoverability**:
+  - Comprehensive meta tags (title, description, keywords)
+  - Open Graph protocol tags for Facebook/LinkedIn link previews
+  - Twitter Card tags for rich social media sharing
+  - JSON-LD structured data (WebApplication + EducationalOrganization schema)
+  - `robots.txt` to allow search engine crawling
+  - `sitemap.xml` with 13 routes, priorities, and change frequencies
+  - Branded `favicon.svg` with quantum-shield icon
+  - `og-image.png` (1200x630) for social media preview images
+  - Theme color and canonical URL meta tags
+
+- **Landing Page Experience**:
+  - New hero landing page at `/` route with value proposition
+  - Stats bar displaying: 42 Algorithms, 165+ Events, 92 Standards, 6 Modules
+  - Feature cards grid highlighting platform capabilities
+  - Clear CTAs: "Explore Timeline", "Try Playground", "Start Learning"
+  - Professional hero messaging: "The quantum threat is not theoretical"
+
+- **Social Sharing**:
+  - New `ShareButton` component with native Web Share API
+  - Fallback share menu with Copy Link, Twitter/X, LinkedIn options
+  - Keyboard accessibility (Escape to close)
+  - Share buttons added to 4 key views: Timeline, Algorithms, Playground, Compliance
+  - Pre-filled share text optimized for each view
+
+- **Analytics & Engagement**:
+  - 11 new analytics event helpers in `utils/analytics.ts`:
+    - `logModuleStart()` - Track learning module starts
+    - `logModuleComplete()` - Track completions with duration
+    - `logStepComplete()` - Track individual step progress
+    - `logArtifactGenerated()` - Track downloads (keys, certs, configs)
+    - `logLibrarySearch()` / `logLibraryFilter()` - Standards library tracking
+    - `logMigrateSearch()` / `logMigrateFilter()` - Software tool tracking
+    - `logComplianceFilter()` - Compliance view tracking
+    - `logDownload()` - File download tracking
+    - `logExternalLink()` - Outbound link tracking
+  - Analytics integration in `useModuleStore` for automatic progress tracking
+  - Instrumented Library and Migrate views for search/filter analytics
+
+- **Developer Tools**:
+  - `scripts/validate-seo.sh` - Automated SEO validation script
+  - Validates meta tags, static files, sitemap routes, HTTP status codes
+
+### Changed
+
+- **Routing**:
+  - Timeline moved from `/` to `/timeline` route
+  - Updated navigation with new "Home" button (with `end` prop)
+  - Updated sitemap to include `/timeline` route
+  - Updated tests to reflect new routing structure
+
+- **Performance Optimization**:
+  - **Removed 196 duplicate WASM files** from `public/dist/` directory
+  - **Bundle size reduced from 66MB to 11MB (83% reduction)**
+  - Enhanced vendor code splitting in `vite.config.ts`:
+    - `vendor-react`: React core libraries
+    - `vendor-ui`: Framer Motion, Lucide icons
+    - `vendor-pqc`: Cryptography libraries
+    - `vendor-zip`, `vendor-csv`, `vendor-markdown`, `vendor-pdf`: Specialized chunks
+  - Simplified Framer Motion animation variants to reduce type complexity
+  - Removed `mkdir -p public/dist` from build script (no longer needed)
+
+- **Code Quality**:
+  - Fixed ESLint accessibility warnings in ShareButton (proper keyboard event handling)
+  - Updated MainLayout tests for new Home button behavior
+  - All 226 unit and E2E tests passing
+
+### Fixed
+
+- ESLint `jsx-a11y/click-events-have-key-events` error on ShareButton backdrop
+- ESLint `jsx-a11y/no-static-element-interactions` warning with proper event handlers
+- MainLayout test expecting Timeline to be active at `/` (now expects Home)
+
 ## [1.8.5] - 2026-01-06
 
 ### Added

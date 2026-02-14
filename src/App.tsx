@@ -58,6 +58,11 @@ const ChangelogView = lazy(() =>
     default: module.ChangelogView,
   }))
 )
+const LandingView = lazy(() =>
+  import('./components/Landing/LandingView').then((module) => ({
+    default: module.LandingView,
+  }))
+)
 
 // Helper component to log page views on route change
 function AnalyticsTracker() {
@@ -88,7 +93,8 @@ function App() {
       >
         <Routes>
           <Route element={<MainLayout />}>
-            <Route path="/" element={<TimelineView />} />
+            <Route path="/" element={<LandingView />} />
+            <Route path="/timeline" element={<TimelineView />} />
             <Route path="/algorithms" element={<AlgorithmsView />} />
             <Route path="/library" element={<LibraryView />} />
             <Route path="/learn/*" element={<PKILearningView />} />

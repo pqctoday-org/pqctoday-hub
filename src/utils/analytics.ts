@@ -49,3 +49,49 @@ export const logEvent = (category: string, action: string, label?: string) => {
     })
   }
 }
+
+// Engagement event helpers for key user journeys
+
+export const logModuleStart = (moduleId: string) => {
+  logEvent('Learning', 'Module Start', moduleId)
+}
+
+export const logModuleComplete = (moduleId: string) => {
+  logEvent('Learning', 'Module Complete', moduleId)
+}
+
+export const logStepComplete = (moduleId: string, stepIndex: number) => {
+  logEvent('Learning', 'Step Complete', `${moduleId}:step-${stepIndex}`)
+}
+
+export const logArtifactGenerated = (moduleId: string, artifactType: string) => {
+  logEvent('Learning', 'Artifact Generated', `${moduleId}:${artifactType}`)
+}
+
+export const logAlgorithmView = (algorithmName: string) => {
+  logEvent('Algorithms', 'View Detail', algorithmName)
+}
+
+export const logComplianceSearch = (query: string) => {
+  logEvent('Compliance', 'Search', query)
+}
+
+export const logComplianceFilter = (filterType: string, value: string) => {
+  logEvent('Compliance', 'Filter', `${filterType}:${value}`)
+}
+
+export const logMigrateAction = (action: string, label?: string) => {
+  logEvent('Migrate', action, label)
+}
+
+export const logLibrarySearch = (query: string) => {
+  logEvent('Library', 'Search', query)
+}
+
+export const logLibraryDownload = (fileName: string) => {
+  logEvent('Library', 'Download', fileName)
+}
+
+export const logExternalLink = (category: string, url: string) => {
+  logEvent(category, 'External Link', url)
+}

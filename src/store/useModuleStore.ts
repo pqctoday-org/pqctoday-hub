@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { LearningProgress } from '../services/storage/types'
+import { logModuleStart, logStepComplete, logArtifactGenerated } from '../utils/analytics'
 
 interface ModuleState extends LearningProgress {
   // Actions
@@ -60,6 +61,10 @@ export const useModuleStore = create<ModuleState>()(
             quizScores: {},
           }
 
+          if (!state.modules[moduleId] || currentModule.status === 'not-started') {
+            logModuleStart(moduleId)
+          }
+
           return {
             modules: {
               ...state.modules,
@@ -77,6 +82,7 @@ export const useModuleStore = create<ModuleState>()(
           // eslint-disable-next-line security/detect-object-injection
           const module = state.modules[moduleId]
           if (module && !module.completedSteps.includes(stepId)) {
+            logStepComplete(moduleId, module.completedSteps.length)
             return {
               modules: {
                 ...state.modules,
@@ -91,32 +97,38 @@ export const useModuleStore = create<ModuleState>()(
           return state
         }),
 
-      addKey: (key) =>
+      addKey: (key) => {
+        logArtifactGenerated('learning', 'key')
         set((state) => ({
           artifacts: {
             ...state.artifacts,
             keys: [...state.artifacts.keys, key],
           },
           timestamp: Date.now(),
-        })),
+        }))
+      },
 
-      addCertificate: (cert) =>
+      addCertificate: (cert) => {
+        logArtifactGenerated('learning', 'certificate')
         set((state) => ({
           artifacts: {
             ...state.artifacts,
             certificates: [...state.artifacts.certificates, cert],
           },
           timestamp: Date.now(),
-        })),
+        }))
+      },
 
-      addCSR: (csr) =>
+      addCSR: (csr) => {
+        logArtifactGenerated('learning', 'csr')
         set((state) => ({
           artifacts: {
             ...state.artifacts,
             csrs: [...state.artifacts.csrs, csr],
           },
           timestamp: Date.now(),
-        })),
+        }))
+      },
 
       saveProgress: () => {
         const progress = get().getFullProgress()

@@ -5,6 +5,7 @@ import { SoftwareTable } from './SoftwareTable'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Search, AlertTriangle } from 'lucide-react'
 import debounce from 'lodash/debounce'
+import { logMigrateAction } from '../../utils/analytics'
 
 export const MigrateView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('All')
@@ -15,7 +16,10 @@ export const MigrateView: React.FC = () => {
   // Debounced search
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSetFilter = useCallback(
-    debounce((value: string) => setFilterText(value), 200),
+    debounce((value: string) => {
+      setFilterText(value)
+      if (value) logMigrateAction('Search', value)
+    }, 200),
     []
   )
 
@@ -120,7 +124,10 @@ export const MigrateView: React.FC = () => {
             <FilterDropdown
               items={tabs}
               selectedId={activeTab}
-              onSelect={setActiveTab}
+              onSelect={(tab) => {
+                setActiveTab(tab)
+                logMigrateAction('Filter Category', tab)
+              }}
               defaultLabel="Category"
               noContainer
               opaque
@@ -133,7 +140,10 @@ export const MigrateView: React.FC = () => {
             <FilterDropdown
               items={platforms}
               selectedId={activePlatform}
-              onSelect={setActivePlatform}
+              onSelect={(platform) => {
+                setActivePlatform(platform)
+                logMigrateAction('Filter Platform', platform)
+              }}
               defaultLabel="Platform"
               noContainer
               opaque

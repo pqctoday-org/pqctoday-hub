@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0e1a"/>
+      <stop offset="100%" stop-color="#0d1520"/>
+    </linearGradient>
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0EA5C8"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="card-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.06)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.02)"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle grid pattern -->
+  <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+    <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Accent glow -->
+  <circle cx="200" cy="315" r="300" fill="#0EA5C8" opacity="0.04"/>
+  <circle cx="1000" cy="315" r="250" fill="#7C3AED" opacity="0.04"/>
+
+  <!-- Shield icon -->
+  <g transform="translate(80, 180)">
+    <path d="M50 0L0 25v45c0 38.65 21.35 74.8 50 85 28.65-10.2 50-46.35 50-85V25L50 0z" fill="url(#grad)" opacity="0.9"/>
+    <ellipse cx="50" cy="65" rx="22" ry="11" stroke="white" stroke-width="2.5" fill="none"/>
+    <ellipse cx="50" cy="65" rx="22" ry="11" stroke="white" stroke-width="2.5" fill="none" transform="rotate(60 50 65)"/>
+    <ellipse cx="50" cy="65" rx="22" ry="11" stroke="white" stroke-width="2.5" fill="none" transform="rotate(120 50 65)"/>
+    <circle cx="50" cy="65" r="5" fill="white"/>
+  </g>
+
+  <!-- Title -->
+  <text x="200" y="240" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="700" fill="white">PQC Today</text>
+
+  <!-- Subtitle -->
+  <text x="200" y="300" font-family="system-ui, -apple-system, sans-serif" font-size="28" fill="#94a3b8">Post-Quantum Cryptography Migration Hub</text>
+
+  <!-- Divider -->
+  <rect x="200" y="330" width="120" height="3" rx="1.5" fill="url(#grad)"/>
+
+  <!-- Feature cards row -->
+  <g transform="translate(200, 370)">
+    <!-- Card 1 -->
+    <rect x="0" y="0" width="230" height="90" rx="12" fill="url(#card-bg)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <text x="20" y="35" font-family="system-ui, sans-serif" font-size="28" font-weight="600" fill="#0EA5C8">165+</text>
+    <text x="20" y="65" font-family="system-ui, sans-serif" font-size="16" fill="#64748b">Timeline Events</text>
+
+    <!-- Card 2 -->
+    <rect x="250" y="0" width="230" height="90" rx="12" fill="url(#card-bg)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <text x="270" y="35" font-family="system-ui, sans-serif" font-size="28" font-weight="600" fill="#7C3AED">42</text>
+    <text x="270" y="65" font-family="system-ui, sans-serif" font-size="16" fill="#64748b">Algorithms Compared</text>
+
+    <!-- Card 3 -->
+    <rect x="500" y="0" width="230" height="90" rx="12" fill="url(#card-bg)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <text x="520" y="35" font-family="system-ui, sans-serif" font-size="28" font-weight="600" fill="#22c55e">6</text>
+    <text x="520" y="65" font-family="system-ui, sans-serif" font-size="16" fill="#64748b">Hands-on Modules</text>
+  </g>
+
+  <!-- Tagline -->
+  <text x="200" y="530" font-family="system-ui, sans-serif" font-size="20" fill="#64748b">Real WASM-powered crypto demos</text>
+  <text x="540" y="530" font-family="system-ui, sans-serif" font-size="20" fill="#475569">|</text>
+  <text x="560" y="530" font-family="system-ui, sans-serif" font-size="20" fill="#64748b">Free &amp; open source</text>
+
+  <!-- URL -->
+  <text x="200" y="580" font-family="system-ui, monospace" font-size="18" fill="#0EA5C8" opacity="0.7">pqctoday.com</text>
+</svg>

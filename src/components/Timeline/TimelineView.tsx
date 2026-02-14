@@ -11,6 +11,7 @@ import { GanttLegend } from './GanttLegend'
 import { MobileTimelineList } from './MobileTimelineList'
 import { CountryFlag } from '../common/CountryFlag'
 import { SourcesButton } from '../ui/SourcesButton'
+import { ShareButton } from '../ui/ShareButton'
 
 export const TimelineView = () => {
   const [selectedCountry, setSelectedCountry] = useState<CountryData | null>(null)
@@ -76,6 +77,10 @@ export const TimelineView = () => {
               {timelineMetadata.lastUpdate.toLocaleDateString()}
             </p>
             <SourcesButton viewType="Timeline" />
+            <ShareButton
+              title="PQC Migration Timeline — Global Post-Quantum Cryptography Roadmap"
+              text="Compare PQC migration timelines across nations — track phases from discovery to full migration."
+            />
           </div>
         )}
       </div>

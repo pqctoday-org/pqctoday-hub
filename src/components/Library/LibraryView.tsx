@@ -11,6 +11,7 @@ import { FilterDropdown } from '../common/FilterDropdown'
 import { Search, AlertTriangle } from 'lucide-react'
 import { SourcesButton } from '../ui/SourcesButton'
 import debounce from 'lodash/debounce'
+import { logLibrarySearch, logEvent } from '../../utils/analytics'
 
 export const LibraryView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('All')
@@ -21,7 +22,10 @@ export const LibraryView: React.FC = () => {
   // UX-002: Debounced search filter
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSetFilter = useCallback(
-    debounce((value: string) => setFilterText(value), 200),
+    debounce((value: string) => {
+      setFilterText(value)
+      if (value) logLibrarySearch(value)
+    }, 200),
     []
   )
 
@@ -147,7 +151,10 @@ export const LibraryView: React.FC = () => {
             <FilterDropdown
               items={tabs}
               selectedId={activeTab}
-              onSelect={setActiveTab}
+              onSelect={(tab) => {
+                setActiveTab(tab)
+                logEvent('Library', 'Filter Category', tab)
+              }}
               defaultLabel="Category"
               noContainer
               opaque
@@ -160,7 +167,10 @@ export const LibraryView: React.FC = () => {
             <FilterDropdown
               items={regions}
               selectedId={activeRegion}
-              onSelect={setActiveRegion}
+              onSelect={(region) => {
+                setActiveRegion(region)
+                logEvent('Library', 'Filter Region', region)
+              }}
               defaultLabel="Region"
               noContainer
               opaque

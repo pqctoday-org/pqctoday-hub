@@ -13,6 +13,7 @@ import {
   GraduationCap,
   ShieldCheck,
   ArrowRightLeft,
+  Home,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
@@ -24,7 +25,8 @@ export const MainLayout = () => {
   const buildTime = __BUILD_TIMESTAMP__
 
   const navItems = [
-    { path: '/', label: 'Timeline', icon: Globe },
+    { path: '/', label: 'Home', icon: Home, end: true },
+    { path: '/timeline', label: 'Timeline', icon: Globe },
     { path: '/threats', label: 'Threats', icon: AlertTriangle },
     { path: '/algorithms', label: 'Algorithms', icon: Shield },
     { path: '/library', label: 'Library', icon: BookOpen },
@@ -60,6 +62,7 @@ export const MainLayout = () => {
               <NavLink
                 key={item.path}
                 to={item.path}
+                end={item.end}
                 className={
                   item.hiddenOnMobile
                     ? 'hidden lg:block'

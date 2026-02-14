@@ -168,9 +168,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-ui': ['framer-motion', 'lucide-react', 'clsx'],
           'vendor-pqc': ['@openforge-sh/liboqs', 'pqcrypto', '@noble/hashes'],
+          'vendor-zip': ['jszip'],
+          'vendor-csv': ['papaparse'],
+          'vendor-markdown': ['react-markdown', 'remark-gfm'],
+          'vendor-pdf': ['md-to-pdf', 'pdf-parse'],
         },
       },
     },

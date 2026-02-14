@@ -2,6 +2,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable } from './ComplianceTable'
 import { useComplianceRefresh, AUTHORITATIVE_SOURCES } from './services'
 import { ShieldCheck, FileCheck, Server, GlobeLock } from 'lucide-react'
+import { logComplianceFilter } from '../../utils/analytics'
+import { ShareButton } from '../ui/ShareButton'
 
 export const ComplianceView = () => {
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
@@ -10,10 +12,16 @@ export const ComplianceView = () => {
     <div className="space-y-6 max-w-[1400px] mx-auto animate-fade-in">
       {/* Header Section */}
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold text-gradient flex items-center gap-3">
-          <ShieldCheck className="w-8 h-8 text-primary" />
-          Compliance & Certification
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-gradient flex items-center gap-3">
+            <ShieldCheck className="w-8 h-8 text-primary" />
+            Compliance & Certification
+          </h1>
+          <ShareButton
+            title="PQC Compliance Tracker — FIPS 140-3, ACVP, Common Criteria"
+            text="Track PQC compliance certifications: FIPS 140-3, ACVP algorithm validation, and Common Criteria with PQC readiness status."
+          />
+        </div>
         <p className="text-muted-foreground max-w-3xl">
           Streamlined access to cryptographic module validations (FIPS 140-3), algorithm validations
           (ACVP), and Common Criteria certifications, with a focus on Post-Quantum Cryptography
@@ -74,7 +82,11 @@ export const ComplianceView = () => {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="all" className="w-full">
+      <Tabs
+        defaultValue="all"
+        className="w-full"
+        onValueChange={(tab) => logComplianceFilter('Tab', tab)}
+      >
         <TabsList className="mb-4 bg-muted/50 border border-border">
           <TabsTrigger value="all">All Records</TabsTrigger>
           <TabsTrigger value="fips">FIPS 140-3</TabsTrigger>
