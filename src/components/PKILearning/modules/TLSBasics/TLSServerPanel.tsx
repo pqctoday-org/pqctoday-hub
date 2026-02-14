@@ -7,10 +7,10 @@ import { CertificateInspector } from './components/CertificateInspector'
 import {
   DEFAULT_SERVER_CERT,
   DEFAULT_SERVER_KEY,
+  DEFAULT_MLDSA_SERVER_CERT,
+  DEFAULT_MLDSA_SERVER_KEY,
   DEFAULT_MLDSA87_SERVER_CERT,
   DEFAULT_MLDSA87_SERVER_KEY,
-  DEFAULT_CLIENT_CERT,
-  DEFAULT_MLDSA_CLIENT_CERT,
 } from './utils/defaultCertificates'
 
 const CIPHER_SUITES = [
@@ -42,7 +42,8 @@ const SIG_ALGS = [
 
 const CERTS = [
   { id: 'default', label: 'Default (RSA 2048)' },
-  { id: 'mldsa', label: 'Default (ML-DSA-87)' },
+  { id: 'mldsa44', label: 'Default (ML-DSA-44)' },
+  { id: 'mldsa87', label: 'Default (ML-DSA-87)' },
   { id: 'custom', label: 'Custom from OpenSSL Studio' },
 ]
 
@@ -75,16 +76,22 @@ export const TLSServerPanel: React.FC = () => {
           ...serverConfig.certificates,
           certPem: DEFAULT_SERVER_CERT,
           keyPem: DEFAULT_SERVER_KEY,
-          caPem: DEFAULT_CLIENT_CERT, // Trust RSA client cert for mTLS
         },
       })
-    } else if (certSelection === 'mldsa') {
+    } else if (certSelection === 'mldsa44') {
+      setServerConfig({
+        certificates: {
+          ...serverConfig.certificates,
+          certPem: DEFAULT_MLDSA_SERVER_CERT,
+          keyPem: DEFAULT_MLDSA_SERVER_KEY,
+        },
+      })
+    } else if (certSelection === 'mldsa87') {
       setServerConfig({
         certificates: {
           ...serverConfig.certificates,
           certPem: DEFAULT_MLDSA87_SERVER_CERT,
           keyPem: DEFAULT_MLDSA87_SERVER_KEY,
-          caPem: DEFAULT_MLDSA_CLIENT_CERT, // Trust ML-DSA client cert for mTLS
         },
       })
     }

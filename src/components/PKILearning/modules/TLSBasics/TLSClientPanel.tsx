@@ -9,8 +9,8 @@ import {
   DEFAULT_CLIENT_KEY,
   DEFAULT_MLDSA_CLIENT_CERT,
   DEFAULT_MLDSA_CLIENT_KEY,
-  DEFAULT_SERVER_CERT,
-  DEFAULT_MLDSA87_SERVER_CERT,
+  DEFAULT_MLDSA87_CLIENT_CERT,
+  DEFAULT_MLDSA87_CLIENT_KEY,
 } from './utils/defaultCertificates'
 
 // ... (existing constants) ...
@@ -44,7 +44,8 @@ const SIG_ALGS = [
 
 const CERTS = [
   { id: 'default', label: 'Default (RSA 2048)' },
-  { id: 'mldsa', label: 'Default (ML-DSA-44)' },
+  { id: 'mldsa44', label: 'Default (ML-DSA-44)' },
+  { id: 'mldsa87', label: 'Default (ML-DSA-87)' },
   { id: 'none', label: 'None' },
   { id: 'custom', label: 'Custom from OpenSSL Studio' },
 ]
@@ -89,16 +90,22 @@ export const TLSClientPanel: React.FC = () => {
           ...clientConfig.certificates,
           certPem: DEFAULT_CLIENT_CERT,
           keyPem: DEFAULT_CLIENT_KEY,
-          caPem: DEFAULT_SERVER_CERT, // Trust RSA server cert
         },
       })
-    } else if (certSelection === 'mldsa') {
+    } else if (certSelection === 'mldsa44') {
       setClientConfig({
         certificates: {
           ...clientConfig.certificates,
           certPem: DEFAULT_MLDSA_CLIENT_CERT,
           keyPem: DEFAULT_MLDSA_CLIENT_KEY,
-          caPem: DEFAULT_MLDSA87_SERVER_CERT, // Trust ML-DSA87 server cert (matches what server uses)
+        },
+      })
+    } else if (certSelection === 'mldsa87') {
+      setClientConfig({
+        certificates: {
+          ...clientConfig.certificates,
+          certPem: DEFAULT_MLDSA87_CLIENT_CERT,
+          keyPem: DEFAULT_MLDSA87_CLIENT_KEY,
         },
       })
     }

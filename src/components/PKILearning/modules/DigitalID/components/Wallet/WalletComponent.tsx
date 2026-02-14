@@ -26,6 +26,15 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
         </Button>
       </div>
 
+      <div className="bg-primary/5 p-3 rounded-lg border border-primary/20 text-xs text-muted-foreground">
+        <p className="font-medium text-foreground mb-1">PQC Readiness</p>
+        <p>
+          Current EUDI credentials use classical algorithms (P-256, P-384). Future ARF versions are
+          expected to mandate PQC-safe algorithms (ML-DSA, SLH-DSA) for long-lived credentials to
+          protect against quantum threats.
+        </p>
+      </div>
+
       <Tabs defaultValue="credentials" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="credentials" className="gap-2">

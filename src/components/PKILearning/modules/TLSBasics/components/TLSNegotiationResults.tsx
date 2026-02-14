@@ -229,10 +229,6 @@ export const TLSNegotiationResults: React.FC = () => {
                       events
                         .find((e) => e.details.includes('Peer Signature Algorithm:'))
                         ?.details.match(/Peer Signature Algorithm: (.+)/)?.[1] || ''
-                    // OpenSSL often returns just the hash NID name for RSA-PSS in some contexts/versions
-                    if (raw === 'SHA256') return 'RSA-PSS (SHA256)'
-                    if (raw === 'SHA384') return 'RSA-PSS (SHA384)'
-                    if (raw === 'SHA512') return 'RSA-PSS (SHA512)'
                     return raw
                   })()}
                 </span>

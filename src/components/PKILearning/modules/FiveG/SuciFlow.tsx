@@ -179,6 +179,9 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
               Profile C (PQC)
             </div>
             <div className="text-xs opacity-70 mt-1">ML-KEM (Kyber) + AES-256</div>
+            <div className="text-xs italic text-muted-foreground mt-1">
+              Proposed for 3GPP Rel-19 — Not yet standardized
+            </div>
           </button>
         </div>
       </div>
@@ -186,10 +189,13 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
       {/* Profile C Mode Selector */}
       {profile === 'C' && (
         <div className="bg-tertiary/5 p-4 rounded-lg border border-tertiary/20 animate-in fade-in slide-in-from-top-2">
-          <div className="flex items-center gap-2 mb-3 text-sm text-tertiary uppercase tracking-wider font-bold">
+          <div className="flex items-center gap-2 mb-1 text-sm text-tertiary uppercase tracking-wider font-bold">
             <Shield size={14} />
             PQC Mode Configuration
           </div>
+          <p className="text-xs italic text-muted-foreground mb-3">
+            Educational preview of proposed Profile C
+          </p>
           <div className="flex gap-4">
             <button
               onClick={() => setPqcMode('hybrid')}

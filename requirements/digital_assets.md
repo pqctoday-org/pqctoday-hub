@@ -1,11 +1,11 @@
 # Digital Assets Cryptographic Implementation Plan
 
 **Status:** ✅ Implemented  
-**Last Updated:** 2025-12-06
+**Last Updated:** 2026-02-13
 
 ## Educational Guide: Bitcoin, Ethereum, and Solana
 
-### OpenSSL 3.5.4 + JavaScript/WebAssembly Hybrid Approach
+### OpenSSL 3.6.0 + JavaScript/WebAssembly Hybrid Approach
 
 ---
 
@@ -13,7 +13,7 @@
 
 This consolidated implementation plan provides a complete hands-on educational guide for understanding digital asset cryptographic operations. It combines:
 
-1. **OpenSSL 3.5.4 commands** for operations natively supported
+1. **OpenSSL 3.6.0 commands** for operations natively supported
 2. **JavaScript/WebAssembly libraries** for operations not supported by OpenSSL
 3. **Complete working examples** for Bitcoin, Ethereum, and Solana
 
@@ -51,7 +51,7 @@ This consolidated implementation plan provides a complete hands-on educational g
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
-### 1.2 OpenSSL 3.5.4 Support Matrix
+### 1.2 OpenSSL 3.6.0 Support Matrix
 
 | Operation              | Bitcoin | Ethereum | Solana | OpenSSL Support | Alternative        |
 | ---------------------- | ------- | -------- | ------ | --------------- | ------------------ |
@@ -81,7 +81,7 @@ This consolidated implementation plan provides a complete hands-on educational g
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
 │   ┌─────────────────────────────────────────────────────────────────────┐   │
-│   │                        OpenSSL 3.5.4 Layer                          │   │
+│   │                        OpenSSL 3.6.0 Layer                          │   │
 │   │  ✅ Key Generation (secp256k1, Ed25519)                             │   │
 │   │  ✅ Basic Hashing (SHA-256, SHA-512, RIPEMD-160)                    │   │
 │   │  ✅ HMAC Operations                                                 │   │
@@ -113,7 +113,7 @@ This consolidated implementation plan provides a complete hands-on educational g
 ```bash
 # Verify OpenSSL version
 openssl version
-# Expected: OpenSSL 3.5.4 or higher
+# Expected: OpenSSL 3.6.0 or higher
 
 # Verify secp256k1 support
 openssl ecparam -list_curves | grep secp256k1
@@ -221,13 +221,13 @@ npm install hash-wasm
 
 ```bash
 # Generate secp256k1 private key for User A
-openssl ecparam -name secp256k1 -genkey -noout -out userA_btc_private.pem
+openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out userA_btc_private.pem
 
 # View private key details
-openssl ec -in userA_btc_private.pem -text -noout
+openssl pkey -in userA_btc_private.pem -text -noout
 
 # Extract raw private key (32 bytes hex)
-openssl ec -in userA_btc_private.pem -text -noout 2>/dev/null | \
+openssl pkey -in userA_btc_private.pem -text -noout 2>/dev/null | \
   grep -A 3 "priv:" | tail -3 | tr -d ' :\n'
 ```
 
@@ -235,10 +235,10 @@ openssl ec -in userA_btc_private.pem -text -noout 2>/dev/null | \
 
 ```bash
 # Extract public key
-openssl ec -in userA_btc_private.pem -pubout -out userA_btc_public.pem
+openssl pkey -in userA_btc_private.pem -pubout -out userA_btc_public.pem
 
 # Export as DER for processing
-openssl ec -in userA_btc_private.pem -pubout -outform DER -out userA_btc_public.der
+openssl pkey -in userA_btc_private.pem -pubout -outform DER -out userA_btc_public.der
 
 # View raw public key bytes
 xxd -p userA_btc_public.der
@@ -338,11 +338,13 @@ console.log('>>> USER A (Sender) <<<\n')
 
 // Step 1: Generate private key (OpenSSL)
 console.log('Step 1: Generating secp256k1 private key...')
-execSync('openssl ecparam -name secp256k1 -genkey -noout -out userA_btc.pem')
+execSync(
+  'openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out userA_btc.pem'
+)
 
 // Step 2: Extract public key (OpenSSL)
 console.log('Step 2: Deriving public key...')
-execSync('openssl ec -in userA_btc.pem -pubout -outform DER -out userA_btc_pub.der 2>/dev/null')
+execSync('openssl pkey -in userA_btc.pem -pubout -outform DER -out userA_btc_pub.der 2>/dev/null')
 
 // Step 3: Hash public key (OpenSSL)
 console.log('Step 3: Computing Hash160 (SHA256 → RIPEMD160)...')
@@ -365,8 +367,10 @@ console.log(`   SegWit Address:  ${segwitA}\n`)
 // ========== USER B (RECEIVER) ==========
 console.log('>>> USER B (Receiver) <<<\n')
 
-execSync('openssl ecparam -name secp256k1 -genkey -noout -out userB_btc.pem')
-execSync('openssl ec -in userB_btc.pem -pubout -outform DER -out userB_btc_pub.der 2>/dev/null')
+execSync(
+  'openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out userB_btc.pem'
+)
+execSync('openssl pkey -in userB_btc.pem -pubout -outform DER -out userB_btc_pub.der 2>/dev/null')
 execSync(
   'openssl dgst -sha256 -binary userB_btc_pub.der | openssl dgst -ripemd160 -binary > userB_hash160.bin'
 )
@@ -393,7 +397,7 @@ execSync('openssl pkeyutl -sign -inkey userA_btc.pem -in btc_sighash.bin -out bt
 
 // Verify (OpenSSL)
 console.log('Step 8: Verifying signature...')
-execSync('openssl ec -in userA_btc.pem -pubout -out userA_btc_pub.pem 2>/dev/null')
+execSync('openssl pkey -in userA_btc.pem -pubout -out userA_btc_pub.pem 2>/dev/null')
 const verifyResult = execSync(
   'openssl pkeyutl -verify -pubin -inkey userA_btc_pub.pem -in btc_sighash.bin -sigfile btc_sig.der 2>&1'
 ).toString()
@@ -485,10 +489,10 @@ console.log('══════════════════════�
 
 ```bash
 # Generate secp256k1 private key
-openssl ecparam -name secp256k1 -genkey -noout -out userA_eth_private.pem
+openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out userA_eth_private.pem
 
 # Extract raw 32-byte private key
-openssl ec -in userA_eth_private.pem -text -noout 2>/dev/null | \
+openssl pkey -in userA_eth_private.pem -text -noout 2>/dev/null | \
   grep -A 3 "priv:" | tail -3 | tr -d ' :\n' | cut -c1-64
 ```
 
@@ -496,7 +500,7 @@ openssl ec -in userA_eth_private.pem -text -noout 2>/dev/null | \
 
 ```bash
 # Export public key as DER
-openssl ec -in userA_eth_private.pem -pubout -outform DER -out userA_eth_pub.der 2>/dev/null
+openssl pkey -in userA_eth_private.pem -pubout -outform DER -out userA_eth_pub.der 2>/dev/null
 
 # Extract 64-byte uncompressed public key (remove DER header and 0x04 prefix)
 # The last 65 bytes are: 04 || X (32 bytes) || Y (32 bytes)
@@ -550,7 +554,7 @@ import { execSync } from 'child_process'
 // Extract private key from PEM
 const pemContent = readFileSync('userA_eth_private.pem', 'utf8')
 const privateKeyHex = execSync(
-  "openssl ec -in userA_eth_private.pem -text -noout 2>/dev/null | grep -A 3 'priv:' | tail -3 | tr -d ' :\\n'"
+  "openssl pkey -in userA_eth_private.pem -text -noout 2>/dev/null | grep -A 3 'priv:' | tail -3 | tr -d ' :\\n'"
 )
   .toString()
   .trim()
@@ -625,7 +629,7 @@ function toChecksumAddress(address) {
 // Helper: Extract private key from OpenSSL PEM
 function extractPrivateKey(pemFile) {
   const output = execSync(
-    `openssl ec -in ${pemFile} -text -noout 2>/dev/null | grep -A 3 'priv:' | tail -3 | tr -d ' :\\n'`
+    `openssl pkey -in ${pemFile} -text -noout 2>/dev/null | grep -A 3 'priv:' | tail -3 | tr -d ' :\\n'`
   )
     .toString()
     .trim()
@@ -637,7 +641,9 @@ console.log('>>> USER A (Sender) <<<\n')
 
 // Step 1: Generate private key (OpenSSL)
 console.log('Step 1: Generating secp256k1 private key (OpenSSL)...')
-execSync('openssl ecparam -name secp256k1 -genkey -noout -out userA_eth.pem')
+execSync(
+  'openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out userA_eth.pem'
+)
 
 // Step 2: Extract private key and derive public key (JS for uncompressed)
 console.log('Step 2: Deriving uncompressed public key...')
@@ -653,7 +659,9 @@ console.log(`   Address: ${addressA}\n`)
 // ========== USER B (RECEIVER) ==========
 console.log('>>> USER B (Receiver) <<<\n')
 
-execSync('openssl ecparam -name secp256k1 -genkey -noout -out userB_eth.pem')
+execSync(
+  'openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out userB_eth.pem'
+)
 const privKeyB = extractPrivateKey('userB_eth.pem')
 const pubKeyB = secp256k1.getPublicKey(privKeyB, false).slice(1)
 const hashB = keccak_256(pubKeyB)
@@ -1162,8 +1170,8 @@ Legend: ✅ = Fully supported by OpenSSL
 
 ```bash
 # OpenSSL Commands
-openssl ecparam -name secp256k1 -genkey -noout -out btc.pem  # Generate key
-openssl ec -in btc.pem -pubout -out btc_pub.pem              # Extract pubkey
+openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out btc.pem  # Generate key
+openssl pkey -in btc.pem -pubout -out btc_pub.pem              # Extract pubkey
 openssl dgst -sha256 -binary file | openssl dgst -sha256 -binary  # Double SHA256
 openssl dgst -ripemd160 -binary file                         # RIPEMD160
 openssl pkeyutl -sign -inkey btc.pem -in hash -out sig       # Sign
@@ -1179,7 +1187,7 @@ openssl pkeyutl -sign -inkey btc.pem -in hash -out sig       # Sign
 
 ```bash
 # OpenSSL Commands
-openssl ecparam -name secp256k1 -genkey -noout -out eth.pem  # Generate key
+openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out eth.pem  # Generate key
 
 # JavaScript Required For (most operations)
 - Keccak-256 hashing (address derivation)
@@ -1238,7 +1246,7 @@ console.log(`
 ║          DIGITAL ASSETS CRYPTOGRAPHIC EDUCATION DEMO                         ║
 ║          Bitcoin • Ethereum • Solana                                         ║
 ║                                                                              ║
-║          OpenSSL 3.5.4 + JavaScript Hybrid Implementation                    ║
+║          OpenSSL 3.6.0 + JavaScript Hybrid Implementation                    ║
 ║                                                                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 `)
@@ -1255,15 +1263,19 @@ console.log('└─────────────────────�
 console.log('━━━ BITCOIN (secp256k1 + ECDSA) ━━━\n')
 
 // Generate keys (OpenSSL)
-execSync('openssl ecparam -name secp256k1 -genkey -noout -out alice_btc.pem')
-execSync('openssl ecparam -name secp256k1 -genkey -noout -out bob_btc.pem')
+execSync(
+  'openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out alice_btc.pem'
+)
+execSync(
+  'openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out bob_btc.pem'
+)
 
 // Get public keys and compute addresses (Hybrid)
 execSync(
-  'openssl ec -in alice_btc.pem -pubout -outform DER 2>/dev/null | tail -c 33 > alice_btc_pub.bin'
+  'openssl pkey -in alice_btc.pem -pubout -outform DER 2>/dev/null | tail -c 33 > alice_btc_pub.bin'
 )
 execSync(
-  'openssl ec -in bob_btc.pem -pubout -outform DER 2>/dev/null | tail -c 33 > bob_btc_pub.bin'
+  'openssl pkey -in bob_btc.pem -pubout -outform DER 2>/dev/null | tail -c 33 > bob_btc_pub.bin'
 )
 
 const aliceBtcPub = readFileSync('alice_btc_pub.bin')
@@ -1287,7 +1299,7 @@ execSync('openssl dgst -sha256 -binary btc_tx.txt | openssl dgst -sha256 -binary
 execSync('openssl pkeyutl -sign -inkey alice_btc.pem -in btc_hash.bin -out btc_sig.der')
 
 // Verify (OpenSSL)
-execSync('openssl ec -in alice_btc.pem -pubout -out alice_btc_pub.pem 2>/dev/null')
+execSync('openssl pkey -in alice_btc.pem -pubout -out alice_btc_pub.pem 2>/dev/null')
 const btcVerify = execSync(
   'openssl pkeyutl -verify -pubin -inkey alice_btc_pub.pem -in btc_hash.bin -sigfile btc_sig.der 2>&1'
 )
@@ -1300,18 +1312,22 @@ console.log(`Signature valid:  ${btcVerify.includes('Verified Successfully')}\n`
 console.log('━━━ ETHEREUM (secp256k1 + Keccak-256) ━━━\n')
 
 // Generate keys (OpenSSL)
-execSync('openssl ecparam -name secp256k1 -genkey -noout -out alice_eth.pem')
-execSync('openssl ecparam -name secp256k1 -genkey -noout -out bob_eth.pem')
+execSync(
+  'openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out alice_eth.pem'
+)
+execSync(
+  'openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out bob_eth.pem'
+)
 
 // Extract private keys and derive addresses (JavaScript - Keccak required)
 const aliceEthPrivHex = execSync(
-  "openssl ec -in alice_eth.pem -text -noout 2>/dev/null | grep -A 3 'priv:' | tail -3 | tr -d ' :\\n'"
+  "openssl pkey -in alice_eth.pem -text -noout 2>/dev/null | grep -A 3 'priv:' | tail -3 | tr -d ' :\\n'"
 )
   .toString()
   .trim()
   .slice(0, 64)
 const bobEthPrivHex = execSync(
-  "openssl ec -in bob_eth.pem -text -noout 2>/dev/null | grep -A 3 'priv:' | tail -3 | tr -d ' :\\n'"
+  "openssl pkey -in bob_eth.pem -text -noout 2>/dev/null | grep -A 3 'priv:' | tail -3 | tr -d ' :\\n'"
 )
   .toString()
   .trim()
@@ -1437,7 +1453,7 @@ console.log(`
 ╠══════════════════════════════════════════════════════════════════════════════╣
 ║                                                                              ║
 ║   ┌─────────────────────────────────────────────────────────────────────┐   ║
-║   │                    OpenSSL 3.5.4 Handled:                           │   ║
+║   │                    OpenSSL 3.6.0 Handled:                           │   ║
 ║   │    ✅ secp256k1 key generation and ECDSA signing (BTC, ETH)        │   ║
 ║   │    ✅ Ed25519 key generation and EdDSA signing (SOL)               │   ║
 ║   │    ✅ SHA-256, SHA-512, RIPEMD-160 hashing                         │   ║
@@ -1580,14 +1596,14 @@ secureWipe(privateKey)
 │                                                                             │
 │  KEY GENERATION                                                             │
 │  ─────────────────────────────────────────────────────────────────────────  │
-│  secp256k1:  openssl ecparam -name secp256k1 -genkey -noout -out key.pem   │
+│  secp256k1:  openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp256k1 -pkeyopt ec_param_enc:named_curve -out key.pem   │
 │  Ed25519:    openssl genpkey -algorithm Ed25519 -out key.pem                │
 │                                                                             │
 │  PUBLIC KEY EXTRACTION                                                      │
 │  ─────────────────────────────────────────────────────────────────────────  │
-│  secp256k1:  openssl ec -in key.pem -pubout -out pub.pem                   │
+│  secp256k1:  openssl pkey -in key.pem -pubout -out pub.pem                   │
 │  Ed25519:    openssl pkey -in key.pem -pubout -out pub.pem                 │
-│  Raw DER:    openssl [ec|pkey] -in key.pem -pubout -outform DER            │
+│  Raw DER:    openssl pkey -in key.pem -pubout -outform DER                 │
 │                                                                             │
 │  HASHING                                                                    │
 │  ─────────────────────────────────────────────────────────────────────────  │
@@ -1637,5 +1653,5 @@ secureWipe(privateKey)
 ---
 
 _Document Version: 1.0_  
-_Last Updated: December 2025_  
-_Compatible with: OpenSSL 3.5.4, Node.js 20+_
+_Last Updated: February 2026_
+_Compatible with: OpenSSL 3.6.0, Node.js 20+_

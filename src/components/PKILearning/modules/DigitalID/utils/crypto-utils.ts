@@ -61,11 +61,13 @@ export const generateKeyPair = async (
     // Cleanup
     await openSSLService.deleteFile(privKeyFile)
   } else {
-    // Generate EC Param and Key
-    const result = await openSSLService.execute(`openssl ecparam -name ${opensslCurve} -genkey`)
+    // Generate EC Key using modern genpkey command
+    const result = await openSSLService.execute(
+      `openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:${opensslCurve}`
+    )
     if (onLog) {
       onLog(
-        `[OpenSSL: Generate ${curve} Key]\n> openssl ecparam -name ${opensslCurve} -genkey\n${result.stdout}\n${result.stderr}`
+        `[OpenSSL: Generate ${curve} Key]\n> openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:${opensslCurve}\n${result.stdout}\n${result.stderr}`
       )
     }
 
@@ -74,12 +76,12 @@ export const generateKeyPair = async (
 
     // Derive public key
     const privKeyFile = `priv_${id}.pem`
-    const pubKeyResult = await openSSLService.execute(`openssl ec -in ${privKeyFile} -pubout`, [
+    const pubKeyResult = await openSSLService.execute(`openssl pkey -in ${privKeyFile} -pubout`, [
       { name: privKeyFile, data: new TextEncoder().encode(privKeyPem) },
     ])
     if (onLog) {
       onLog(
-        `[OpenSSL: Derive Public Key]\n> openssl ec -in ${privKeyFile} -pubout\n${pubKeyResult.stdout}\n${pubKeyResult.stderr}`
+        `[OpenSSL: Derive Public Key]\n> openssl pkey -in ${privKeyFile} -pubout\n${pubKeyResult.stdout}\n${pubKeyResult.stderr}`
       )
     }
 

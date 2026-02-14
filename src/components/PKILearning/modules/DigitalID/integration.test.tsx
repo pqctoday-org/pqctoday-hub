@@ -8,18 +8,18 @@ vi.mock('../../../../services/crypto/OpenSSLService', () => ({
   openSSLService: {
     execute: vi.fn().mockImplementation(async (command: string) => {
       // Mock responses based on command
-      if (command.includes('ecparam -name P-256 -genkey') || command.includes('genpkey')) {
+      if (command.includes('genpkey')) {
         return {
-          stdout: '',
+          stdout: '-----BEGIN PRIVATE KEY-----\nMOCKPRIVATEKEYDATA\n-----END PRIVATE KEY-----',
           stderr: '',
-          files: [{ name: 'key.pem', data: new Uint8Array([1, 2, 3]) }],
+          files: [],
         }
       }
       if (command.includes('pkey -in') && command.includes('-pubout')) {
         return {
-          stdout: '',
+          stdout: '-----BEGIN PUBLIC KEY-----\nMOCKPUBLICKEYDATA\n-----END PUBLIC KEY-----',
           stderr: '',
-          files: [{ name: 'pubkey.pem', data: new Uint8Array([4, 5, 6]) }],
+          files: [],
         }
       }
       if (command.includes('dgst')) {
@@ -98,7 +98,7 @@ describe('EUDI Digital ID Integration', () => {
     // Initial state should be Wallet
     // The header in WalletComponent is "EUDI Wallet"
     // But there is also the main header "EUDI Digital Identity Wallet" in index.tsx
-    // Let's look for "Managed by: Garcia Rossi" which is unique to the Wallet view
+    // Let's look for "Managed by: María Elena García" which is unique to the Wallet view
     expect(screen.getByText(/Managed by:/i)).toBeDefined()
 
     // Navigate to PID Issuer

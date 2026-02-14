@@ -45,7 +45,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
   const handleStart = async () => {
     setStep('AUTH')
     addLog('Starting PID Issuance Flow...')
-    addLog('Discovered Issuer: https://pid-provider.motorizzazione.gov.it')
+    addLog('Discovered Issuer: https://mva.gov.es')
   }
 
   const handleAuth = async () => {
@@ -94,7 +94,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
     // Create attributes from user profile
     const attributes = [
       { name: 'family_name', value: wallet.owner.legalName },
-      { name: 'given_name', value: 'Maria Elena' }, // Hardcoded partial for realism per reqs
+      { name: 'given_name', value: 'María Elena' },
       { name: 'birth_date', value: wallet.owner.birthDate },
       { name: 'age_over_18', value: true },
       { name: 'issuing_country', value: 'ES' },
@@ -134,9 +134,9 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
   }
 
   return (
-    <Card className="max-w-7xl mx-auto border-blue-200 shadow-xl">
-      <CardHeader className="bg-blue-50/50">
-        <CardTitle className="text-blue-700 flex items-center gap-2">
+    <Card className="max-w-7xl mx-auto border-primary/30 shadow-xl">
+      <CardHeader className="bg-primary/5">
+        <CardTitle className="text-primary flex items-center gap-2">
           <UserCheck className="w-6 h-6" />
           Motor Vehicle Authority (PID Issuer)
         </CardTitle>
@@ -156,9 +156,22 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
             </div>
 
             {step === 'DISCOVERY' && (
-              <Button onClick={handleStart} className="w-full">
-                Start Issuance Flow
-              </Button>
+              <div className="space-y-4">
+                <div className="bg-primary/5 p-3 rounded-lg border border-primary/20 text-sm text-muted-foreground">
+                  <p className="font-medium text-foreground mb-1">
+                    Note: Wallet Unit Attestation (WUA)
+                  </p>
+                  <p>
+                    In a production EUDI Wallet, activation begins with WUA provisioning — the
+                    Wallet Provider generates a WUA key in the Remote HSM and issues a Wallet Unit
+                    Attestation binding the wallet instance to the user&apos;s device. This
+                    simulation starts from PID issuance.
+                  </p>
+                </div>
+                <Button onClick={handleStart} className="w-full">
+                  Start Issuance Flow
+                </Button>
+              </div>
             )}
             {step === 'AUTH' && (
               <Button onClick={runFlow} disabled={loading} className="w-full">
@@ -167,12 +180,10 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
               </Button>
             )}
             {step === 'COMPLETE' && (
-              <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-                <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-2" />
-                <h3 className="text-lg font-bold text-green-700">Success!</h3>
-                <p className="text-sm text-green-600">
-                  PID has been securely stored in your Wallet.
-                </p>
+              <div className="text-center p-4 bg-success/5 rounded-lg border border-success/30">
+                <CheckCircle className="w-12 h-12 text-success mx-auto mb-2" />
+                <h3 className="text-lg font-bold text-success">Success!</h3>
+                <p className="text-sm text-success">PID has been securely stored in your Wallet.</p>
                 <Button onClick={onBack} variant="outline" className="mt-4">
                   Return to Wallet
                 </Button>
@@ -181,15 +192,15 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
           </div>
 
           {/* Logs */}
-          <div className="flex flex-col h-[400px] border rounded-lg bg-slate-950 overflow-hidden lg:col-span-3">
+          <div className="flex flex-col h-[400px] border rounded-lg bg-card overflow-hidden lg:col-span-3">
             {/* Tabs */}
-            <div className="flex items-center border-b border-slate-800 bg-slate-900">
+            <div className="flex items-center border-b border-border bg-muted/30">
               <button
                 onClick={() => setActiveLogTab('protocol')}
                 className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                   activeLogTab === 'protocol'
-                    ? 'text-blue-400 bg-slate-800 border-b-2 border-blue-500'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    ? 'text-primary bg-muted/50 border-b-2 border-primary'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
                 }`}
               >
                 PROTOCOL LOG
@@ -198,8 +209,8 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
                 onClick={() => setActiveLogTab('openssl')}
                 className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                   activeLogTab === 'openssl'
-                    ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    ? 'text-success bg-muted/50 border-b-2 border-success'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
                 }`}
               >
                 OPENSSL LOG
@@ -207,7 +218,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-4 font-mono text-xs text-slate-50">
+            <div className="flex-1 overflow-y-auto p-4 font-mono text-xs text-foreground">
               {activeLogTab === 'protocol' ? (
                 <>
                   {logs.map((log: string, i: number) => (
@@ -220,7 +231,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
               ) : (
                 <>
                   {opensslLogs.map((log: string, i: number) => (
-                    <div key={i} className="mb-2 whitespace-pre-wrap break-all text-green-200/90">
+                    <div key={i} className="mb-2 whitespace-pre-wrap break-all text-success/80">
                       {log}
                     </div>
                   ))}
@@ -256,9 +267,9 @@ const StepIndicator = ({ current, step, label, icon: Icon }: StepIndicatorProps)
   if (currentIdx === idx) status = 'active'
 
   const colors = {
-    pending: 'text-slate-400 bg-slate-100',
-    active: 'text-blue-600 bg-blue-100 border-blue-500',
-    completed: 'text-green-600 bg-green-100',
+    pending: 'text-muted-foreground bg-muted/20',
+    active: 'text-primary bg-primary/20 border-primary',
+    completed: 'text-success bg-success/20',
   }
 
   return (
@@ -274,11 +285,9 @@ const StepIndicator = ({ current, step, label, icon: Icon }: StepIndicatorProps)
         >
           {label}
         </p>
-        {status === 'active' && (
-          <p className="text-xs text-blue-600 animate-pulse">Processing...</p>
-        )}
+        {status === 'active' && <p className="text-xs text-primary animate-pulse">Processing...</p>}
       </div>
-      {status === 'completed' && <CheckCircle className="w-5 h-5 text-green-500 ml-auto" />}
+      {status === 'completed' && <CheckCircle className="w-5 h-5 text-success ml-auto" />}
     </div>
   )
 }

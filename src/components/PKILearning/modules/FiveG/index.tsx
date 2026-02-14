@@ -1,22 +1,72 @@
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { Trash2, CheckCircle, Shield, Lock, Server } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { SuciFlow } from './SuciFlow'
 import { AuthFlow } from './AuthFlow'
 import { ProvisioningFlow } from './ProvisioningFlow'
+import { useModuleStore } from '../../../../store/useModuleStore'
 
-// Since there is no store for 5G yet, we mock the store interactions for now or add them later.
-// For now, we will just manage local state.
+const MODULE_ID = '5g-security'
 
 export const FiveGModule: React.FC = () => {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
+  const startTimeRef = useRef(0)
+  const { updateModuleProgress, markStepComplete } = useModuleStore()
 
-  // Reset handler (local only for now)
+  // Track module as in-progress on mount
+  useEffect(() => {
+    startTimeRef.current = Date.now()
+    updateModuleProgress(MODULE_ID, {
+      status: 'in-progress',
+      lastVisited: Date.now(),
+    })
+
+    // Accumulate time on unmount
+    return () => {
+      const elapsed = Date.now() - startTimeRef.current
+      const current = useModuleStore.getState().modules[MODULE_ID]
+      updateModuleProgress(MODULE_ID, {
+        timeSpent: (current?.timeSpent || 0) + elapsed,
+      })
+    }
+  }, [updateModuleProgress])
+
+  const handleStepChange = useCallback(
+    (newStep: number) => {
+      // Mark the part we're leaving as complete
+      const partIds = ['suci', 'auth', 'provisioning']
+      if (newStep > currentStep) {
+        markStepComplete(MODULE_ID, partIds[currentStep])
+      }
+      setCurrentStep(newStep)
+    },
+    [currentStep, markStepComplete]
+  )
+
+  const handleComplete = useCallback(() => {
+    markStepComplete(MODULE_ID, 'provisioning')
+    const elapsed = Date.now() - startTimeRef.current
+    const current = useModuleStore.getState().modules[MODULE_ID]
+    updateModuleProgress(MODULE_ID, {
+      status: 'completed',
+      timeSpent: (current?.timeSpent || 0) + elapsed,
+    })
+    startTimeRef.current = Date.now() // Reset so unmount doesn't double-count
+    navigate('/learn')
+  }, [markStepComplete, updateModuleProgress, navigate])
+
+  // Reset handler
   const handleReset = () => {
     if (confirm('Restart 5G Security Module?')) {
       setCurrentStep(0)
+      startTimeRef.current = Date.now()
+      updateModuleProgress(MODULE_ID, {
+        status: 'in-progress',
+        completedSteps: [],
+        timeSpent: 0,
+      })
     }
   }
 
@@ -75,7 +125,7 @@ export const FiveGModule: React.FC = () => {
             return (
               <button
                 key={step.id}
-                onClick={() => setCurrentStep(idx)}
+                onClick={() => handleStepChange(idx)}
                 className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
               >
                 <div
@@ -111,7 +161,7 @@ export const FiveGModule: React.FC = () => {
       {/* Navigation */}
       <div className="flex flex-col sm:flex-row justify-between gap-3 mt-6">
         <button
-          onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+          onClick={() => handleStepChange(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
           className="px-6 py-3 min-h-[44px] rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 transition-colors text-foreground"
         >
@@ -120,7 +170,7 @@ export const FiveGModule: React.FC = () => {
 
         {currentStep === steps.length - 1 ? (
           <button
-            onClick={() => navigate('/learn')}
+            onClick={handleComplete}
             className="px-6 py-3 min-h-[44px] bg-success text-success-foreground font-bold rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
           >
             <CheckCircle size={16} />
@@ -128,7 +178,7 @@ export const FiveGModule: React.FC = () => {
           </button>
         ) : (
           <button
-            onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
+            onClick={() => handleStepChange(Math.min(steps.length - 1, currentStep + 1))}
             className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
           >
             Next Part →

@@ -142,15 +142,15 @@ SUCI Structure (per TS 23.003):
 
 **Reference:** 3GPP TS 33.501, Annex C.3.4.2
 
-| Parameter           | Value                               | Standard Reference |
-| ------------------- | ----------------------------------- | ------------------ |
-| **Elliptic Curve**  | secp256r1 (P-256)                   | SEC 2, FIPS 186-4  |
-| **Key Agreement**   | ECDH                                | SP 800-56A         |
-| **KDF**             | ANSI-X9.63-KDF with SHA-256         | SEC 1              |
-| **Encryption**      | AES-128-CTR                         | NIST SP 800-38A    |
-| **MAC**             | HMAC-SHA-256 (truncated to 64 bits) | RFC 2104           |
-| **Public Key Size** | 512 bits (64 bytes, uncompressed)   | -                  |
-| **MAC Tag Size**    | 64 bits (8 bytes)                   | -                  |
+| Parameter           | Value                                              | Standard Reference |
+| ------------------- | -------------------------------------------------- | ------------------ |
+| **Elliptic Curve**  | secp256r1 (P-256)                                  | SEC 2, FIPS 186-4  |
+| **Key Agreement**   | ECDH                                               | SP 800-56A         |
+| **KDF**             | ANSI-X9.63-KDF with SHA-256                        | SEC 1              |
+| **Encryption**      | AES-128-CTR                                        | NIST SP 800-38A    |
+| **MAC**             | HMAC-SHA-256 (truncated to 64 bits)                | RFC 2104           |
+| **Public Key Size** | 520 bits (65 bytes, uncompressed with 0x04 prefix) | -                  |
+| **MAC Tag Size**    | 64 bits (8 bytes)                                  | -                  |
 
 #### 3.2.3 Profile C - Post-Quantum (ML-KEM/Kyber)
 
@@ -679,7 +679,7 @@ Algorithm:
 3. OUT1 = AES_K(TEMP ⊕ rotate(OPc, r1) ⊕ c1 ⊕ IN1) ⊕ OPc
 4. MAC-A = OUT1[0:63]
 
-Constants: r1 = 64, c1 = 0x00...01
+Constants: r1 = 64, c1 = 0x00...00
 ```
 
 ##### 3.3 Compute f2 (Expected Response - XRES)
@@ -1233,8 +1233,8 @@ Note: Actual Ki never stored in UDM database
 Test Set 1:
 ───────────
 K     = 465B5CE8 B199B49F AA5F0A2E E238A6BC
-OP    = CDC20200 9666D0C5 0C3B3AA8 8CCA9FD3
-RAND  = 23553CBE 9662D8C6 6DFA2E26 B01CF7B6
+OP    = CDC202D5 123E20F6 2B6D676A C72CB318
+RAND  = 23553CBE 9637A89D 218AE64D AE47BF35
 SQN   = FF9BB4D0 B607
 AMF   = B9B9
 
@@ -1282,19 +1282,19 @@ The module ensures educational accuracy by using **real cryptographic libraries*
 
 | Component        | Implementation   | Version   | Purpose                         |
 | :--------------- | :--------------- | :-------- | :------------------------------ |
-| **Network Side** | **OpenSSL WASM** | **3.5.4** | Validation Authority (SIDF/HSM) |
-| **USIM Side**    | **OpenSSL WASM** | **3.5.4** | Profile A/B Operations          |
-| **PQC USIM**     | **OpenSSL WASM** | **3.5.4** | Profile C (Kyber) Operations    |
+| **Network Side** | **OpenSSL WASM** | **3.6.0** | Validation Authority (SIDF/HSM) |
+| **USIM Side**    | **OpenSSL WASM** | **3.6.0** | Profile A/B Operations          |
+| **PQC USIM**     | **OpenSSL WASM** | **3.6.0** | Profile C (Kyber) Operations    |
 
 ### 10.2 Automated Audit & Verification
 
-To guarantee that the USIM logic produces standard-compliant outputs, an automated audit suite runs validation against the OpenSSL 3.5.4 binary.
+To guarantee that the USIM logic produces standard-compliant outputs, an automated audit suite runs validation against the OpenSSL 3.6.0 binary.
 
 **Audit Validations (`audit_suci.test.ts`):**
 
 1. **Profile A (Curve25519)**: Verifies USIM ECDH shared secret matches OpenSSL `pkeyutl -derive`.
 2. **Profile B (P-256)**: Verifies USIM ECDH shared secret matches OpenSSL `pkeyutl -derive`.
-3. **Profile C (Hybrid)**: Verifies that the PQC ciphertext can be decapsulated by OpenSSL 3.5.4 and that the Hybrid Combiner (SHA256(ECC||PQC)) is correct.
+3. **Profile C (Hybrid)**: Verifies that the PQC ciphertext can be decapsulated by OpenSSL 3.6.0 and that the Hybrid Combiner (SHA256(ECC||PQC)) is correct.
 4. **Profile C (Pure)**: Verifies raw ML-KEM encapsulation/decapsulation interoperability using OpenSSL WASM.
 
 ---

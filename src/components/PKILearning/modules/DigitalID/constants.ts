@@ -67,7 +67,7 @@ export const OPENID4VCI_METADATA = {
   authorization_endpoint: 'https://mva.gov.es/authorize',
   token_endpoint: 'https://mva.gov.es/token',
   pushed_authorization_request_endpoint: 'https://mva.gov.es/par',
-  credentials_supported: [
+  credential_configurations_supported: [
     {
       format: 'mso_mdoc',
       doctype: 'org.iso.18013.5.1.mDL',

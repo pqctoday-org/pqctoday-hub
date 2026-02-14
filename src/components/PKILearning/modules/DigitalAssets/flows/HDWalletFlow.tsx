@@ -13,6 +13,7 @@ import { ripemd160 } from '@noble/hashes/legacy.js'
 import { keccak_256 } from '@noble/hashes/sha3.js'
 import { createBase58check, base58 } from '@scure/base'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
+import { toChecksumAddress } from './ethereum/utils'
 import { useStepWizard } from '../hooks/useStepWizard'
 import { DIGITAL_ASSETS_CONSTANTS } from '../constants'
 import { HDWalletFlowDiagram } from '../components/CryptoFlowDiagram'
@@ -141,13 +142,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
       const ethHash = keccak_256(ethPubKey)
       const ethAddrBytes = ethHash.slice(-20)
       const ethAddrHex = bytesToHex(ethAddrBytes)
-      // Checksum
-      const ethAddrHash = bytesToHex(keccak_256(hexToBytes(ethAddrHex)))
-      let ethAddr = '0x'
-      for (let i = 0; i < 40; i++) {
-        // eslint-disable-next-line security/detect-object-injection
-        ethAddr += parseInt(ethAddrHash[i], 16) >= 8 ? ethAddrHex[i].toUpperCase() : ethAddrHex[i]
-      }
+      const ethAddr = toChecksumAddress(ethAddrHex)
 
       output += `Ethereum\n`
       output += `Path: ${ethPath}\n`

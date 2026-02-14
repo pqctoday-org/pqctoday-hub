@@ -70,16 +70,18 @@ export const createSDJWT = async (
     exp: now + 365 * 24 * 60 * 60,
     vct: vct,
     _sd: sdHashes,
+    _sd_alg: 'sha-256',
     ...plainClaims,
   }
 
   if (holderKey) {
+    const pubKeyHash = holderKey.publicKey.substring(0, 32)
     payload.cnf = {
       jwk: {
         kty: 'EC',
         crv: holderKey.curve,
-        x: '...', // Simplified
-        y: '...',
+        x: pubKeyHash + '(truncated)',
+        y: pubKeyHash + '(truncated)',
       },
     }
   }

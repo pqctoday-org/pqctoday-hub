@@ -17,6 +17,9 @@ import {
   DEFAULT_MLDSA_ROOT_CA,
   DEFAULT_MLDSA_SERVER_CERT,
   DEFAULT_MLDSA_CLIENT_CERT,
+  DEFAULT_MLDSA87_ROOT_CA,
+  DEFAULT_MLDSA87_SERVER_CERT,
+  DEFAULT_MLDSA87_CLIENT_CERT,
 } from './utils/defaultCertificates'
 
 export const TLSBasicsModule: React.FC = () => {
@@ -78,10 +81,17 @@ export const TLSBasicsModule: React.FC = () => {
     // This prevents overwriting the store with stale/empty state during initialization
     if (!serverConfig.certificates.certPem || !clientConfig.certificates.certPem) return
 
-    // 1. Client Trust -> Server
-    const isServerMldsa = serverConfig.certificates.certPem === DEFAULT_MLDSA_SERVER_CERT
-    const requiredClientCa = isServerMldsa ? DEFAULT_MLDSA_ROOT_CA : DEFAULT_ROOT_CA
+    // Helper to resolve the correct Root CA for a given certificate
+    const getRootCa = (certPem: string | undefined) => {
+      if (certPem === DEFAULT_MLDSA_SERVER_CERT || certPem === DEFAULT_MLDSA_CLIENT_CERT)
+        return DEFAULT_MLDSA_ROOT_CA
+      if (certPem === DEFAULT_MLDSA87_SERVER_CERT || certPem === DEFAULT_MLDSA87_CLIENT_CERT)
+        return DEFAULT_MLDSA87_ROOT_CA
+      return DEFAULT_ROOT_CA
+    }
 
+    // 1. Client Trust -> Server
+    const requiredClientCa = getRootCa(serverConfig.certificates.certPem)
     if (clientConfig.certificates.caPem !== requiredClientCa) {
       setClientConfig({
         certificates: {
@@ -92,9 +102,7 @@ export const TLSBasicsModule: React.FC = () => {
     }
 
     // 2. Server Trust -> Client (mTLS)
-    const isClientMldsa = clientConfig.certificates.certPem === DEFAULT_MLDSA_CLIENT_CERT
-    const requiredServerCa = isClientMldsa ? DEFAULT_MLDSA_ROOT_CA : DEFAULT_ROOT_CA
-
+    const requiredServerCa = getRootCa(clientConfig.certificates.certPem)
     if (serverConfig.certificates.caPem !== requiredServerCa) {
       setServerConfig({
         certificates: {

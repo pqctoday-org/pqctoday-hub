@@ -6,13 +6,18 @@ interface FiveGDiagramProps {
 }
 
 export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => {
+  // USIM is active during steps 2-9 (UE-side operations)
+  const usimActive = step >= 2 && step <= 9
+  // Home Network is active during steps 0-1 (key gen/provisioning) and step 10 (decryption)
+  const hnActive = step <= 1 || step >= 10
+
   return (
     <div className="relative w-full h-[300px] bg-muted/50 rounded-lg p-4 flex items-center justify-between overflow-hidden">
       {/* USIM Node */}
       <div
         className={`
         relative z-10 w-32 h-32 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step >= 0 ? 'border-primary bg-primary/10 shadow-glow' : 'border-border/10 bg-card/40'}
+        ${usimActive ? 'border-primary bg-primary/10 shadow-glow' : 'border-border/10 bg-card/40'}
       `}
       >
         <div className="text-4xl mb-2">📱</div>
@@ -25,33 +30,52 @@ export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => 
         {/* Connection Line */}
         <div className="absolute top-1/2 left-0 w-full h-1 bg-border/20 -translate-y-1/2"></div>
 
-        {/* Animated Data Packet */}
-        {step >= 3 && step < 6 && (
+        {/* Animated Data Packet — active during crypto operations (ECDH, KDF, encrypt, MAC) */}
+        {step >= 4 && step < 8 && (
           <div className="absolute top-1/2 left-1/4 w-3 h-3 bg-secondary rounded-full animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] -translate-y-1/2"></div>
         )}
 
-        {/* Labels based on Step */}
+        {/* Labels based on Step — aligned with 11-step SUCI flow */}
         <div className="absolute top-1/3 w-full text-center">
           {step === 0 && (
-            <span className="text-xs text-primary animate-pulse">Reading EF File...</span>
+            <span className="text-xs text-secondary animate-pulse">Generating HN Key Pair...</span>
           )}
           {step === 1 && (
-            <span className="text-xs text-primary animate-pulse">Generating Keys...</span>
+            <span className="text-xs text-secondary animate-pulse">Provisioning USIM...</span>
           )}
           {step === 2 && (
-            <span className="text-xs text-secondary animate-pulse">
-              Key Agreement (diffie-hellman)
-            </span>
+            <span className="text-xs text-primary animate-pulse">Retrieving HN Public Key...</span>
           )}
           {step === 3 && (
-            <span className="text-xs text-secondary animate-pulse">Key Derivation</span>
+            <span className="text-xs text-primary animate-pulse">Generating Ephemeral Keys...</span>
           )}
           {step === 4 && (
-            <span className="text-xs text-destructive animate-pulse">
-              Encryption {profile === 'C' ? '(AES-256)' : '(AES-128)'}
+            <span className="text-xs text-secondary animate-pulse">
+              Computing Shared Secret{profile === 'C' ? ' (Hybrid/KEM)' : ' (ECDH)'}
             </span>
           )}
-          {step >= 6 && <span className="text-xs text-primary font-bold">SUCI TRANSMISSION</span>}
+          {step === 5 && (
+            <span className="text-xs text-secondary animate-pulse">
+              Deriving Encryption Keys...
+            </span>
+          )}
+          {step === 6 && (
+            <span className="text-xs text-destructive animate-pulse">
+              Encrypting MSIN {profile === 'C' ? '(AES-256)' : '(AES-128)'}
+            </span>
+          )}
+          {step === 7 && (
+            <span className="text-xs text-destructive animate-pulse">Computing MAC Tag...</span>
+          )}
+          {step === 8 && (
+            <span className="text-xs text-primary animate-pulse">Inspecting SUPI vs SUCI...</span>
+          )}
+          {step === 9 && (
+            <span className="text-xs text-primary animate-pulse">Assembling SUCI...</span>
+          )}
+          {step === 10 && (
+            <span className="text-xs text-primary font-bold">NETWORK DECRYPTION</span>
+          )}
         </div>
       </div>
 
@@ -59,7 +83,7 @@ export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => 
       <div
         className={`
         relative z-10 w-32 h-32 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step >= 2 ? 'border-secondary bg-secondary/10 shadow-[0_0_20px_hsl(var(--secondary)/0.3)]' : 'border-border/10 bg-card/40'}
+        ${hnActive ? 'border-secondary bg-secondary/10 shadow-[0_0_20px_hsl(var(--secondary)/0.3)]' : 'border-border/10 bg-card/40'}
       `}
       >
         <div className="text-4xl mb-2">☁️</div>

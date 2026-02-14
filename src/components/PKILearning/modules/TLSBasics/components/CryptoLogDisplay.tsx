@@ -52,25 +52,25 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
     // RFC 8446 Record Types
     if (typeByte === 0x17)
       return {
-        type: 'Application Data (TLV 1.3)',
+        type: 'Application Data (TLS 1.3)',
         badge: 'ENCRYPTED',
-        color: 'text-purple-400',
+        color: 'text-primary',
         isEncrypted: true,
       }
     if (typeByte === 0x16)
       return {
         type: 'Handshake Record',
         badge: 'CLEARTEXT',
-        color: 'text-blue-400',
+        color: 'text-tertiary',
         isEncrypted: false,
       }
     if (typeByte === 0x15)
-      return { type: 'Alert Record', badge: 'ALERT', color: 'text-red-400', isEncrypted: false }
+      return { type: 'Alert Record', badge: 'ALERT', color: 'text-destructive', isEncrypted: false }
     if (typeByte === 0x14)
       return {
         type: 'ChangeCipherSpec',
         badge: 'COMPAT',
-        color: 'text-yellow-400',
+        color: 'text-warning',
         isEncrypted: false,
       }
 
@@ -100,7 +100,7 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
       0x0f: { type: 'CertificateVerify', color: 'text-success' },
       0x14: { type: 'Finished', color: 'text-primary', isEncrypted: true },
     }
-    if (firstByte === 0x20) return { type: '🔐 App Data', color: 'text-success', isEncrypted: true }
+    if (firstByte === 0x18) return { type: 'KeyUpdate', color: 'text-muted-foreground' }
     return messageTypes[firstByte] || null
   }
 

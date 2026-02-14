@@ -54,16 +54,10 @@ export const MobileAboutView = () => {
           </div>
           <h2 className="text-lg font-bold">Community Driven</h2>
         </div>
-        <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+        <p className="text-sm text-muted-foreground leading-relaxed">
           This project is open source and community maintained. We believe in transparency and
           collaboration to solve the PQC challenge.
         </p>
-
-        <div className="p-3 rounded-lg bg-muted/20 border border-border">
-          <p className="text-xs text-muted-foreground text-center italic">
-            Input forms for Kudos and Change Requests are available on the desktop version.
-          </p>
-        </div>
       </motion.div>
 
       {/* Connect Section */}

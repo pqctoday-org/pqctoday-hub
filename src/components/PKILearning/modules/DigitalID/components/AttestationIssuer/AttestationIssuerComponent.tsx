@@ -90,7 +90,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
 
   const handleIssuance = async () => {
     setLoading(true)
-    addLog('Issuing Bachelor of Science Diploma...')
+    addLog('Issuing Master of Science Diploma...')
 
     // 1. Generate Holder Key for Diploma Binding
     const holderKey = await generateKeyPair('ES256', 'P-256', addOpenSSLLog)
@@ -102,7 +102,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
     const claims: CredentialAttribute[] = [
       { name: 'given_name', value: 'Maria Elena', type: 'sd' },
       { name: 'family_name', value: wallet.owner.legalName, type: 'sd' },
-      { name: 'degree', value: 'Bachelor of Science (Computer Science)', type: 'sd' }, // Simplified value for type Safety
+      { name: 'degree', value: 'Master of Science (Computer Science)', type: 'sd' },
       { name: 'gpa', value: 3.8, type: 'sd' },
       { name: 'honors', value: true, type: 'sd' },
     ]
@@ -133,9 +133,9 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
   }
 
   return (
-    <Card className="max-w-7xl mx-auto border-purple-200 shadow-xl">
-      <CardHeader className="bg-purple-50/50">
-        <CardTitle className="text-purple-700 flex items-center gap-2">
+    <Card className="max-w-7xl mx-auto border-secondary/30 shadow-xl">
+      <CardHeader className="bg-secondary/5">
+        <CardTitle className="text-secondary flex items-center gap-2">
           <GraduationCap className="w-6 h-6" />
           Technical University (Attestation Issuer)
         </CardTitle>
@@ -149,35 +149,35 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
             {/* Steps */}
             <div className="space-y-4">
               <div
-                className={`p-4 rounded-lg border flex items-center gap-3 ${step === 'START' ? 'bg-purple-50 border-purple-500' : 'bg-slate-50'}`}
+                className={`p-4 rounded-lg border flex items-center gap-3 ${step === 'START' ? 'bg-secondary/10 border-secondary' : 'bg-muted/5'}`}
               >
-                <div className="bg-purple-100 p-2 rounded-full text-purple-600 font-bold">1</div>
+                <div className="bg-secondary/20 p-2 rounded-full text-secondary font-bold">1</div>
                 <div>Log in with European Digital Identity</div>
               </div>
               <div
-                className={`p-4 rounded-lg border flex items-center gap-3 ${['PRESENTATION', 'VERIFICATION'].includes(step) ? 'bg-purple-50 border-purple-500' : 'bg-slate-50'}`}
+                className={`p-4 rounded-lg border flex items-center gap-3 ${['PRESENTATION', 'VERIFICATION'].includes(step) ? 'bg-secondary/10 border-secondary' : 'bg-muted/5'}`}
               >
-                <div className="bg-purple-100 p-2 rounded-full text-purple-600 font-bold">2</div>
+                <div className="bg-secondary/20 p-2 rounded-full text-secondary font-bold">2</div>
                 <div>Verify Identity Attributes</div>
               </div>
               <div
-                className={`p-4 rounded-lg border flex items-center gap-3 ${step === 'ISSUANCE' ? 'bg-purple-50 border-purple-500' : 'bg-slate-50'}`}
+                className={`p-4 rounded-lg border flex items-center gap-3 ${step === 'ISSUANCE' ? 'bg-secondary/10 border-secondary' : 'bg-muted/5'}`}
               >
-                <div className="bg-purple-100 p-2 rounded-full text-purple-600 font-bold">3</div>
+                <div className="bg-secondary/20 p-2 rounded-full text-secondary font-bold">3</div>
                 <div>Issue Diploma (SD-JWT)</div>
               </div>
             </div>
 
             {/* Actions */}
             {step === 'START' && (
-              <Button onClick={handleStart} className="w-full bg-purple-600 hover:bg-purple-700">
+              <Button onClick={handleStart} className="w-full">
                 Login to Student Portal
               </Button>
             )}
 
             {step === 'PID_CHECK' &&
               (!pidCredential ? (
-                <div className="bg-yellow-50 p-4 rounded border border-yellow-200 text-yellow-800">
+                <div className="bg-warning/5 p-4 rounded border border-warning/30 text-warning">
                   <h4 className="font-bold flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4" /> Identity Required
                   </h4>
@@ -203,7 +203,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
 
             {step === 'PRESENTATION' && (
               <div className="text-center py-4">
-                <Loader2 className="animate-spin w-8 h-8 text-purple-500 mx-auto" />
+                <Loader2 className="animate-spin w-8 h-8 text-secondary mx-auto" />
                 <p className="text-sm mt-2 text-muted-foreground">
                   Sending Verifiable Presentation...
                 </p>
@@ -212,24 +212,20 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
 
             {step === 'VERIFICATION' && (
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-green-600 justify-center">
+                <div className="flex items-center gap-2 text-success justify-center">
                   <ShieldCheck className="w-6 h-6" /> Identity Verified
                 </div>
-                <Button
-                  onClick={handleIssuance}
-                  disabled={loading}
-                  className="w-full bg-purple-600"
-                >
+                <Button onClick={handleIssuance} disabled={loading} className="w-full">
                   {loading && <Loader2 className="animate-spin mr-2" />} Issue Diploma
                 </Button>
               </div>
             )}
 
             {step === 'COMPLETE' && (
-              <div className="bg-green-50 p-4 rounded border border-green-200 text-center">
-                <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-2" />
-                <h3 className="font-bold text-green-800">Diploma Added!</h3>
-                <p className="text-sm text-green-700 mb-4">
+              <div className="bg-success/5 p-4 rounded border border-success/30 text-center">
+                <CheckCircle className="w-12 h-12 text-success mx-auto mb-2" />
+                <h3 className="font-bold text-success">Diploma Added!</h3>
+                <p className="text-sm text-success mb-4">
                   You can now use your degree to prove your qualifications.
                 </p>
                 <Button onClick={onBack} variant="outline">
@@ -239,15 +235,15 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
             )}
           </div>
           {/* Logs */}
-          <div className="flex flex-col h-[400px] border rounded-lg bg-slate-950 overflow-hidden lg:col-span-3">
+          <div className="flex flex-col h-[400px] border rounded-lg bg-card overflow-hidden lg:col-span-3">
             {/* Tabs */}
-            <div className="flex items-center border-b border-slate-800 bg-slate-900">
+            <div className="flex items-center border-b border-border bg-muted/30">
               <button
                 onClick={() => setActiveLogTab('protocol')}
                 className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                   activeLogTab === 'protocol'
-                    ? 'text-purple-400 bg-slate-800 border-b-2 border-purple-500'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    ? 'text-secondary bg-muted/50 border-b-2 border-secondary'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
                 }`}
               >
                 PROTOCOL LOG
@@ -256,8 +252,8 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
                 onClick={() => setActiveLogTab('openssl')}
                 className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                   activeLogTab === 'openssl'
-                    ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    ? 'text-success bg-muted/50 border-b-2 border-success'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
                 }`}
               >
                 OPENSSL LOG
@@ -265,7 +261,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-4 font-mono text-xs text-slate-50">
+            <div className="flex-1 overflow-y-auto p-4 font-mono text-xs text-foreground">
               {activeLogTab === 'protocol' ? (
                 <>
                   {logs.map((log: string, i: number) => (
@@ -278,7 +274,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
               ) : (
                 <>
                   {opensslLogs.map((log: string, i: number) => (
-                    <div key={i} className="mb-2 whitespace-pre-wrap break-all text-green-200/90">
+                    <div key={i} className="mb-2 whitespace-pre-wrap break-all text-success/80">
                       {log}
                     </div>
                   ))}

@@ -13,10 +13,10 @@ import type { WalletInstance, CryptoKey, VerifiableCredential } from './types'
 const INITIAL_WALLET: WalletInstance = {
   id: 'wallet-001',
   owner: {
-    legalName: 'Garcia Rossi',
-    birthDate: '1985-05-12',
+    legalName: 'María Elena García',
+    birthDate: '1990-03-15',
     nationality: 'ES',
-    address: 'Calle Mayor 5, Madrid',
+    address: 'Calle Mayor 42, 28013 Madrid',
   },
   keys: [],
   credentials: [],

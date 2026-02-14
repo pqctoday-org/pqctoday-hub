@@ -17,7 +17,7 @@ const SECRET_DESCRIPTIONS: Record<string, string> = {
   SERVER_HANDSHAKE_TRAFFIC_SECRET: 'Encrypts handshake messages sent by the server',
   CLIENT_TRAFFIC_SECRET_0: 'Encrypts application data sent by the client',
   SERVER_TRAFFIC_SECRET_0: 'Encrypts application data sent by the server',
-  EXPORTER_SECRET: 'Derived master secret for exporting key material (RFC 5705)',
+  EXPORTER_SECRET: 'Derived master secret for exporting key material (RFC 8446 Section 7.5)',
 }
 
 // Helper to categorize key exchange algorithm

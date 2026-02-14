@@ -12,7 +12,7 @@ interface ProvisioningFlowProps {
 }
 
 export const ProvisioningFlow: React.FC<ProvisioningFlowProps> = ({ onBack }) => {
-  const [keys, setKeys] = useState<{ ki?: string; opc?: string }>({})
+  const [keys, setKeys] = useState<{ ki?: string; opc?: string; eKi?: string }>({})
 
   const steps: Step[] = FIVE_G_CONSTANTS.PROVISIONING_STEPS.map((step, index) => ({
     id: step.id,
@@ -40,12 +40,22 @@ ${ki}
       return `[Factory] Computed OPc (Operator Key variant):
 ${opc}
 (Bound to Ki and Operator OP)`
+    } else if (stepId === 'personalize_sim') {
+      if (!keys.ki || !keys.opc) throw new Error('Keys missing')
+      return await fiveGService.personalizeUSIM(keys.ki, keys.opc)
     } else if (stepId === 'encrypt_transport') {
       if (!keys.ki || !keys.opc) throw new Error('Keys missing')
-      return await fiveGService.encryptTransport(keys.ki, keys.opc)
+      const result = await fiveGService.encryptTransport(keys.ki, keys.opc)
+      // Extract eKi from the result for the import step
+      const eKiMatch = result.match(/Encrypted Output\(Hex\):\n([a-fA-F0-9]+)/)
+      if (eKiMatch) setKeys((p) => ({ ...p, eKi: eKiMatch[1] }))
+      return result
+    } else if (stepId === 'import_udm') {
+      if (!keys.opc) throw new Error('Keys missing')
+      return await fiveGService.importAtUDM(keys.eKi || keys.ki || '', keys.opc)
     }
 
-    // Fallback static
+    // Fallback static (should not reach here)
     const stepData = FIVE_G_CONSTANTS.PROVISIONING_STEPS[wizard.currentStep]
     await new Promise((resolve) => setTimeout(resolve, 600))
     return stepData.output

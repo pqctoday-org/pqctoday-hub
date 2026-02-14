@@ -55,6 +55,7 @@ export class FiveGService {
     }
     this.generatedFiles.clear()
     this.state = {} // Reset state
+    this.authState = {} // Reset auth state
   }
 
   // Test Vectors for Validation (GSMA TS 33.501)
@@ -1012,16 +1013,33 @@ ${sharedSecretHex}
     }
   }
 
-  async deriveKeys(profile: 'A' | 'B' | 'C') {
-    let header = `═══════════════════════════════════════════════════════════════
-              KEY DERIVATION(ANSI X9.63 KDF)
-═══════════════════════════════════════════════════════════════`
+  // Helper to parse hex digest from OpenSSL dgst output
+  private parseDigestHex(stdout: string): string {
+    if (!stdout) return ''
+    const match = stdout.match(/=\s*([a-fA-F0-9]{64})/) || stdout.match(/([a-fA-F0-9]{64})/)
+    return match ? match[1].toLowerCase() : ''
+  }
 
-    if (profile === 'C') {
-      header = `═══════════════════════════════════════════════════════════════
-              KEY DERIVATION(HYBRID PQC KDF)
+  // Build ANSI X9.63 KDF input: Z || Counter || SharedInfo(EphPubKey)
+  private buildKdfInput(z: Uint8Array, counter: number, sharedInfo: Uint8Array): Uint8Array {
+    const counterBytes = new Uint8Array(4)
+    counterBytes[0] = (counter >> 24) & 0xff
+    counterBytes[1] = (counter >> 16) & 0xff
+    counterBytes[2] = (counter >> 8) & 0xff
+    counterBytes[3] = counter & 0xff
+    const input = new Uint8Array(z.length + 4 + sharedInfo.length)
+    input.set(z, 0)
+    input.set(counterBytes, z.length)
+    input.set(sharedInfo, z.length + 4)
+    return input
+  }
+
+  async deriveKeys(profile: 'A' | 'B' | 'C') {
+    const hashAlgo = profile === 'C' ? 'sha3-256' : 'sha256'
+    const hashName = profile === 'C' ? 'SHA3-256' : 'SHA-256'
+    const header = `═══════════════════════════════════════════════════════════════
+              KEY DERIVATION (ANSI X9.63 KDF — ${hashName})
 ═══════════════════════════════════════════════════════════════`
-    }
 
     try {
       // 1. Get Shared Secret (Z) from state or generate placeholder
@@ -1030,84 +1048,109 @@ ${sharedSecretHex}
             this.state.sharedSecretHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
           )
         : new Uint8Array(32)
-      if (!this.state.sharedSecretHex) window.crypto.getRandomValues(z) // Only generate if not from state
+      if (!this.state.sharedSecretHex) window.crypto.getRandomValues(z)
       const zHex = bytesToHex(z)
 
-      // 2. Build KDF input: Z || Counter (0x00000001)
-      // ANSI X9.63 KDF uses big-endian 32-bit counter
-      const counter = new Uint8Array([0, 0, 0, 1])
-      const kdfInput = new Uint8Array(36)
-      kdfInput.set(z, 0)
-      kdfInput.set(counter, 32)
+      // 2. Get SharedInfo = Ephemeral Public Key (per ANSI X9.63 spec)
+      const ephPubHex = this.state.ephemeralPubKeyHex || ''
+      const sharedInfo = ephPubHex
+        ? new Uint8Array(ephPubHex.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
+        : new Uint8Array(0)
 
-      // 3. Run OpenSSL SHA-256 digest
-      // Pass input file in same execute() call - files don't persist between calls in WASM worker
-      const kdfInputFile = `kdf_input_${this.getTimestamp()}.bin`
-      this.trackFile(kdfInputFile)
+      // 3. Iteration 1: Hash(Z || 0x00000001 || SharedInfo) => K_enc (128 bits)
+      const kdfInput1 = this.buildKdfInput(z, 1, sharedInfo)
+      const kdfFile1 = `kdf_iter1_${this.getTimestamp()}.bin`
+      this.trackFile(kdfFile1)
+      const cmd1 = `openssl dgst -${hashAlgo} ${kdfFile1}`
+      const res1 = await openSSLService.execute(cmd1, [{ name: kdfFile1, data: kdfInput1 }])
+      const block1Hex = this.parseDigestHex(res1.stdout)
 
-      const cmd = `openssl dgst -sha256 ${kdfInputFile}`
-      const res = await openSSLService.execute(cmd, [{ name: kdfInputFile, data: kdfInput }])
-
-      // 4. Parse the hex output from stdout
-      // OpenSSL dgst output format: "SHA2-256(filename)= <hex>"
-      let keyBlockHex = ''
-      if (res.stdout) {
-        // Try multiple patterns for different OpenSSL versions
-        const match =
-          res.stdout.match(/=\s*([a-fA-F0-9]{64})/) || res.stdout.match(/([a-fA-F0-9]{64})/)
-        if (match) {
-          keyBlockHex = match[1].toLowerCase()
-        }
+      if (!block1Hex || block1Hex.length < 64) {
+        console.error('[FiveGService] KDF iter1 stdout:', res1.stdout)
+        throw new Error(`KDF iteration 1 failed - stdout: ${res1.stdout?.substring(0, 100)}`)
       }
 
-      // Debug: log if parsing failed
-      if (!keyBlockHex || keyBlockHex.length < 64) {
-        console.error('[FiveGService] dgst stdout:', res.stdout)
-        console.error('[FiveGService] dgst stderr:', res.stderr)
-        throw new Error(
-          `Failed to derive key block via OpenSSL - stdout: ${res.stdout?.substring(0, 100)}`
-        )
+      // 4. Iteration 2: Hash(Z || 0x00000002 || SharedInfo) => K_mac (256 bits)
+      const kdfInput2 = this.buildKdfInput(z, 2, sharedInfo)
+      const kdfFile2 = `kdf_iter2_${this.getTimestamp()}.bin`
+      this.trackFile(kdfFile2)
+      const cmd2 = `openssl dgst -${hashAlgo} ${kdfFile2}`
+      const res2 = await openSSLService.execute(cmd2, [{ name: kdfFile2, data: kdfInput2 }])
+      const block2Hex = this.parseDigestHex(res2.stdout)
+
+      if (!block2Hex || block2Hex.length < 64) {
+        console.error('[FiveGService] KDF iter2 stdout:', res2.stdout)
+        throw new Error(`KDF iteration 2 failed - stdout: ${res2.stdout?.substring(0, 100)}`)
       }
 
-      // 5. Split into K_enc (16 bytes) and K_mac (16 bytes)
-      this.state.kEncHex = keyBlockHex.substring(0, 32) // 16 bytes = 32 hex chars
-      this.state.kMacHex = keyBlockHex.substring(32, 64) // 16 bytes = 32 hex chars
+      // 5. Split: K_enc = first 128 bits of block1, K_mac = full 256 bits of block2
+      this.state.kEncHex = block1Hex.substring(0, 32) // 16 bytes = 32 hex chars
+      this.state.kMacHex = block2Hex // 32 bytes = 64 hex chars
 
       return `${header}
 
-Step 1: Input Shared Secret(Z)
+Step 1: Input Shared Secret (Z)
   (Reading from ECDH output...)
-Z: ${zHex}...
+Z: ${zHex}
 
-Step 2: KDF Operation via OpenSSL
-Algorithm: ANSI X9.63 KDF(SHA-256)
-Input: Z || Counter(0x00000001)
+Step 2: SharedInfo (Ephemeral Public Key)
+${ephPubHex ? ephPubHex.substring(0, 64) + (ephPubHex.length > 64 ? '...' : '') : '(empty)'}
 
-$ ${cmd}
+Step 3: KDF Iteration 1 — ${hashName}(Z || 0x00000001 || SharedInfo)
+$ ${cmd1}
+Block 1: ${block1Hex}
 
-Step 3: Key Block Derivation(32 bytes)
-Block: ${keyBlockHex}
+Step 4: KDF Iteration 2 — ${hashName}(Z || 0x00000002 || SharedInfo)
+$ ${cmd2}
+Block 2: ${block2Hex}
 
-Step 4: Splitting Keys
-  > K_enc(128-bit AES):  ${this.state.kEncHex}
-  > K_mac(128-bit HMAC): ${this.state.kMacHex}
+Step 5: Splitting Keys
+  > K_enc (128-bit AES):   ${this.state.kEncHex}
+  > K_mac (256-bit HMAC):  ${this.state.kMacHex}
 
-[SUCCESS] Protection Keys Derived via OpenSSL.`
+[SUCCESS] Protection Keys Derived via OpenSSL (${hashName}).`
     } catch (e) {
       return `[Error] KDF Failed: ${e} `
     }
   }
 
+  // BCD encode: pack 2 digits per byte, nibble-swapped per 3GPP TS 23.003
+  private bcdEncode(digits: string): Uint8Array {
+    const padded = digits.length % 2 !== 0 ? digits + 'f' : digits
+    const bytes = new Uint8Array(padded.length / 2)
+    for (let i = 0; i < padded.length; i += 2) {
+      const lo = parseInt(padded[i], 16)
+      const hi = parseInt(padded[i + 1], 16)
+
+      bytes[i / 2] = (hi << 4) | lo // nibble-swapped: hi|lo
+    }
+    return bytes
+  }
+
+  // BCD decode: reverse nibble-swapped bytes back to digit string
+  private bcdDecode(bytes: Uint8Array): string {
+    let digits = ''
+    for (const b of bytes) {
+      const lo = b & 0x0f
+      const hi = (b >> 4) & 0x0f
+      digits += lo.toString(16)
+      if (hi !== 0xf) digits += hi.toString(16)
+    }
+    return digits
+  }
+
   async encryptMSIN() {
     if (!this.state.kEncHex) return '[Error] No Key Derived'
-    const msin = '310260123456789' // Plaintext MSIN
-    const msinBytes = new TextEncoder().encode(msin)
+
+    // MSIN portion only (without MCC/MNC) per 3GPP TS 33.501
+    const msinDigits = '123456789'
+    const msinBytes = this.bcdEncode(msinDigits)
     const msinHex = bytesToHex(msinBytes)
 
     // Determine algorithm based on key length (16 bytes = AES-128, 32 bytes = AES-256)
     const keyLen = this.state.kEncHex.length / 2
     const algo = keyLen === 32 ? 'aes-256-ctr' : 'aes-128-ctr'
-    const iv = '00000000000000000000000000000000' // Zero IV for demo
+    const iv = '00000000000000000000000000000000' // Zero IV per 3GPP spec
 
     // File names
     const msinFile = `msin_${this.getTimestamp()}.bin`
@@ -1117,7 +1160,6 @@ Step 4: Splitting Keys
 
     try {
       // Run OpenSSL AES-CTR encryption
-      // Pass input file in same execute() call - files don't persist between calls
       const cmd = `openssl enc -${algo} -K ${this.state.kEncHex} -iv ${iv} -in ${msinFile} -out ${cipherFile}`
       const res = await openSSLService.execute(cmd, [{ name: msinFile, data: msinBytes }])
 
@@ -1135,18 +1177,18 @@ Step 4: Splitting Keys
       }
 
       this.state.encryptedMSINHex = cipherHex
-      this.state.cipherFile = cipherFile // Store for computeMAC continuity
+      this.state.cipherFile = cipherFile
 
       return `[USIM] Encrypting MSIN via OpenSSL...
 Algorithm: ${algo.toUpperCase()}
-Input: ${msin}
-Input(Hex): ${msinHex}
+MSIN Digits: ${msinDigits}
+BCD Encoded: ${msinHex} (${msinBytes.length} bytes)
 Key: ${this.state.kEncHex}
-IV: ${iv}
+IV: ${iv} (zero IV per 3GPP spec)
 
 $ ${cmd}
 
-[SUCCESS] Ciphertext: ${this.state.encryptedMSINHex}`
+[SUCCESS] Ciphertext: ${this.state.encryptedMSINHex} (${cipherHex.length / 2} bytes)`
     } catch (e) {
       return `[Error] Encryption failed: ${e}`
     }
@@ -1164,19 +1206,14 @@ $ ${cmd}
         this.state.encryptedMSINHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
       )
 
-      // Run OpenSSL HMAC-SHA256 (use stdout hex output for reliability)
-      const cmd = `openssl dgst -sha256 -mac HMAC -macopt hexkey:${this.state.kMacHex} ${cipherFile}`
+      // Run OpenSSL HMAC — use SHA3-256 for Profile C, SHA-256 for A/B
+      const macAlgo = this.state.profile === 'C' ? 'sha3-256' : 'sha256'
+      const macAlgoName = this.state.profile === 'C' ? 'HMAC-SHA3-256' : 'HMAC-SHA-256'
+      const cmd = `openssl dgst -${macAlgo} -mac HMAC -macopt hexkey:${this.state.kMacHex} ${cipherFile}`
       const res = await openSSLService.execute(cmd, [{ name: cipherFile, data: cipherBytes }])
 
       // Parse hex output from stdout
-      let fullMacHex = ''
-      if (res.stdout) {
-        const match =
-          res.stdout.match(/=\s*([a-fA-F0-9]{64})/) || res.stdout.match(/([a-fA-F0-9]{64})/)
-        if (match) {
-          fullMacHex = match[1].toLowerCase()
-        }
-      }
+      const fullMacHex = this.parseDigestHex(res.stdout)
 
       if (!fullMacHex) {
         console.error('[FiveGService] MAC dgst stdout:', res.stdout)
@@ -1188,17 +1225,17 @@ $ ${cmd}
       this.state.macTagHex = fullMacHex.substring(0, 16) // 8 bytes = 16 hex chars
 
       return `[USIM] Computing MAC Tag via OpenSSL...
-Algorithm: HMAC-SHA-256
-Data(Ciphertext): ${this.state.encryptedMSINHex}
-Integrity Key(K_mac): ${this.state.kMacHex}
+Algorithm: ${macAlgoName}
+Data (Ciphertext): ${this.state.encryptedMSINHex}
+Integrity Key (K_mac): ${this.state.kMacHex}
 
 $ ${cmd}
 
 [Intermediate Result]
-Full HMAC-SHA256 Hash(32 bytes):
+Full ${macAlgoName} Hash (32 bytes):
 ${fullMacHex}
 
-[SUCCESS] Final MAC Tag(Truncated to 8 bytes):
+[SUCCESS] Final MAC Tag (Truncated to 8 bytes):
 ${this.state.macTagHex}`
     } catch (e) {
       return `[Error] MAC computation failed: ${e}`
@@ -1221,28 +1258,255 @@ ${this.state.macTagHex}`
             SUCI STRUCTURE VISUALIZATION
 ═══════════════════════════════════════════════════════════════
 
-[1. Subscription Permanent Identifier(SUPI)]
-  > Value: 310 - 260 - 123456789
-    > MCC: ${mcc} (USA)
-      > MNC: ${mnc} (T - Mobile)
-        > MSIN: 123456789
+[1. Subscription Permanent Identifier (SUPI)]
+  > Value: 310-260-123456789
+  > MCC: ${mcc} (USA)
+  > MNC: ${mnc} (T-Mobile)
+  > MSIN: 123456789 (BCD: 0x21 0x43 0x65 0x87 0xF9 — 5 bytes)
 
-        [2. Protected Components(Ciphertext & MAC)]
-> Ciphertext(Encrypted MSIN):
-  ${cipher}
-> MAC Tag(Integrity):
-  ${mac}
+[2. Protected Components (Ciphertext & MAC)]
+  > Ciphertext (Encrypted MSIN, BCD):
+    ${cipher}
+  > MAC Tag (Integrity):
+    ${mac}
 
-[3. Assembled SUCI(Privacy Preserving ID)]
-Format: suci - <mcc>-<mnc>-<routing>-<scheme>-<hnPublicKeyId>-<schemeOutput>
+[3. Assembled SUCI (Privacy Preserving ID)]
+  Format: suci-<mcc>-<mnc>-<routing>-<scheme>-<keyId>-<schemeOutput>
 
   SUCI String:
-suci - ${mcc} -${mnc} -${routing} -${scheme} -${keyId} -${ephPub.substring(0, 8)}...-${cipher} -${mac}
+  suci-${mcc}-${mnc}-${routing}-${scheme}-${keyId}-${ephPub.substring(0, 8)}...-${cipher}-${mac}
 
-[SUCCESS] Structure Verified.Ready for Transmission.`
+[SUCCESS] Structure Verified. Ready for Transmission.`
   }
 
   // --- Auth Flow ---
+
+  // Auth state persisted across the 5 auth steps
+  private authState: {
+    K?: Uint8Array
+    OP?: Uint8Array
+    OPc?: Uint8Array
+    RAND?: Uint8Array
+    SQN?: Uint8Array
+    AMF?: Uint8Array
+    milenageResult?: {
+      MAC: Uint8Array
+      RES: Uint8Array
+      CK: Uint8Array
+      IK: Uint8Array
+      AK: Uint8Array
+    }
+  } = {}
+
+  async retrieveCredentials(): Promise<string> {
+    // Use test vectors if injected, otherwise defaults
+    let K: Uint8Array
+    let OP: Uint8Array
+
+    if (this.testVectors?.milenage) {
+      const vec = this.testVectors.milenage
+      K = new Uint8Array(vec.k.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
+      OP = new Uint8Array(vec.op.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
+    } else {
+      K = new Uint8Array(16).fill(0x33)
+      OP = new Uint8Array(16).fill(0x55)
+    }
+
+    const SQN = new Uint8Array(6).fill(0x01)
+    const AMF = new Uint8Array(2)
+    AMF[0] = 0x80
+    AMF[1] = 0x00
+
+    // Compute OPc from K and OP
+    const OPc = await milenage.computeOPc(K, OP)
+
+    // Store in auth state
+    this.authState.K = K
+    this.authState.OP = OP
+    this.authState.OPc = OPc
+    this.authState.SQN = SQN
+    this.authState.AMF = AMF
+
+    return `═══════════════════════════════════════════════════════════════
+            CREDENTIAL RETRIEVAL (UDM/HSM)
+═══════════════════════════════════════════════════════════════
+
+Step 1: Accessing HSM Secure Repository...
+  > Subscriber: IMSI 310260123456789
+
+Step 2: Loading Master Keys
+  > Ki (128-bit):  ${bytesToHex(K)}
+  > OP (128-bit):  ${bytesToHex(OP)}
+
+Step 3: Computing OPc = AES(Ki, OP) ⊕ OP
+  > OPc (128-bit): ${bytesToHex(OPc)}
+
+Step 4: Loading Sequence State
+  > SQN: ${bytesToHex(SQN)}
+  > AMF: ${bytesToHex(AMF)}
+
+[SUCCESS] Credentials retrieved. Ready for challenge generation.`
+  }
+
+  async generateRAND(): Promise<string> {
+    const RAND = new Uint8Array(16)
+    window.crypto.getRandomValues(RAND)
+
+    this.authState.RAND = RAND
+
+    return `═══════════════════════════════════════════════════════════════
+            RANDOM CHALLENGE GENERATION
+═══════════════════════════════════════════════════════════════
+
+Step 1: Accessing True Random Number Generator (TRNG)...
+  > Source: Hardware RNG (crypto.getRandomValues)
+
+Step 2: Generating 128-bit Challenge
+  > RAND: ${bytesToHex(RAND)}
+  > Length: ${RAND.length * 8} bits
+
+[SUCCESS] RAND generated. Ready for MILENAGE computation.`
+  }
+
+  async computeAUTN(): Promise<string> {
+    if (!this.authState.milenageResult || !this.authState.SQN || !this.authState.AMF) {
+      return '[Error] MILENAGE vectors not computed yet.'
+    }
+
+    const { MAC, AK } = this.authState.milenageResult
+    const SQN = this.authState.SQN
+    const AMF = this.authState.AMF
+
+    // Concealed SQN = SQN ⊕ AK
+    const concealedSQN = new Uint8Array(6)
+    for (let i = 0; i < 6; i++) {
+      // eslint-disable-next-line security/detect-object-injection
+      concealedSQN[i] = SQN[i] ^ AK[i]
+    }
+
+    // AUTN = Concealed SQN (6) || AMF (2) || MAC-A (8) = 16 bytes
+    const AUTN = new Uint8Array(16)
+    AUTN.set(concealedSQN, 0)
+    AUTN.set(AMF, 6)
+    AUTN.set(MAC, 8)
+
+    return `═══════════════════════════════════════════════════════════════
+            AUTN ASSEMBLY
+═══════════════════════════════════════════════════════════════
+
+Step 1: Computing Concealed SQN
+  > SQN:    ${bytesToHex(SQN)}
+  > AK:     ${bytesToHex(AK)}
+  > SQN⊕AK: ${bytesToHex(concealedSQN)}
+
+Step 2: Assembling AUTN = (SQN⊕AK) || AMF || MAC-A
+  > Concealed SQN (6 bytes): ${bytesToHex(concealedSQN)}
+  > AMF (2 bytes):           ${bytesToHex(AMF)}
+  > MAC-A (8 bytes):         ${bytesToHex(MAC)}
+
+Step 3: Final AUTN (16 bytes)
+  > AUTN: ${bytesToHex(AUTN)}
+
+[SUCCESS] AUTN assembled. Network can prove its identity to the UE.`
+  }
+
+  async deriveKAUSF(): Promise<string> {
+    if (
+      !this.authState.milenageResult ||
+      !this.authState.RAND ||
+      !this.authState.SQN ||
+      !this.authState.AMF
+    ) {
+      return '[Error] Missing authentication vectors.'
+    }
+
+    const { CK, IK, AK } = this.authState.milenageResult
+    const SQN = this.authState.SQN
+    const AMF = this.authState.AMF
+
+    // Key = CK || IK (32 bytes)
+    const keyInput = new Uint8Array(32)
+    keyInput.set(CK, 0)
+    keyInput.set(IK, 16)
+
+    // Concealed SQN for AUTN reference
+    const concealedSQN = new Uint8Array(6)
+    for (let i = 0; i < 6; i++) {
+      // eslint-disable-next-line security/detect-object-injection
+      concealedSQN[i] = SQN[i] ^ AK[i]
+    }
+    const AUTN = new Uint8Array(16)
+    AUTN.set(concealedSQN, 0)
+    AUTN.set(AMF, 6)
+    AUTN.set(this.authState.milenageResult.MAC, 8)
+
+    // Per TS 33.501 Annex A.2: KAUSF derivation
+    // S = FC || P0 || L0 || P1 || L1
+    // FC = 0x6A (for KAUSF)
+    // P0 = serving network name (SNN)
+    // L0 = length of P0 (2 bytes)
+    // P1 = SQN ⊕ AK (from AUTN)
+    // L1 = 0x0006
+    const snn = new TextEncoder().encode('5G:mnc260.mcc310.3gppnetwork.org')
+    const fc = new Uint8Array([0x6a])
+    const l0 = new Uint8Array(2)
+    l0[0] = (snn.length >> 8) & 0xff
+    l0[1] = snn.length & 0xff
+    const l1 = new Uint8Array([0x00, 0x06])
+
+    // S = FC || P0 || L0 || P1 || L1
+    const sLen = 1 + snn.length + 2 + 6 + 2
+    const s = new Uint8Array(sLen)
+    let offset = 0
+    s.set(fc, offset)
+    offset += 1
+    s.set(snn, offset)
+    offset += snn.length
+    s.set(l0, offset)
+    offset += 2
+    s.set(concealedSQN, offset)
+    offset += 6
+    s.set(l1, offset)
+
+    // Use OpenSSL HMAC-SHA-256 to derive KAUSF
+    const keyFile = `kausf_key_${this.getTimestamp()}.bin`
+    const dataFile = `kausf_data_${this.getTimestamp()}.bin`
+    this.trackFile(keyFile)
+    this.trackFile(dataFile)
+
+    const cmd = `openssl dgst -sha256 -mac HMAC -macopt hexkey:${bytesToHex(keyInput)} ${dataFile}`
+    const res = await openSSLService.execute(cmd, [{ name: dataFile, data: s }])
+    const kausfHex = this.parseDigestHex(res.stdout)
+
+    if (!kausfHex) {
+      return `[Error] KAUSF derivation failed — stdout: ${res.stdout?.substring(0, 100)}`
+    }
+
+    return `═══════════════════════════════════════════════════════════════
+            5G ANCHOR KEY DERIVATION (KAUSF)
+═══════════════════════════════════════════════════════════════
+
+Step 1: Constructing Key Input
+  > CK: ${bytesToHex(CK)}
+  > IK: ${bytesToHex(IK)}
+  > Key = CK||IK: ${bytesToHex(keyInput)}
+
+Step 2: Constructing KDF Input (TS 33.501 A.2)
+  > FC:  0x6A
+  > P0 (SNN): 5G:mnc260.mcc310.3gppnetwork.org
+  > L0:  ${bytesToHex(l0)}
+  > P1 (SQN⊕AK): ${bytesToHex(concealedSQN)}
+  > L1:  0006
+
+Step 3: HMAC-SHA-256(CK||IK, S)
+  $ ${cmd}
+
+Step 4: Result
+  > KAUSF: ${kausfHex}
+
+[SUCCESS] 5G Anchor Key derived.
+[INFO] Authentication Vector Ready: RAND, AUTN, XRES*, KAUSF`
+  }
 
   async sidfDecrypt(profile: 'A' | 'B' | 'C') {
     const header = `═══════════════════════════════════════════════════════════════
@@ -1284,10 +1548,10 @@ suci - ${mcc} -${mnc} -${routing} -${scheme} -${keyId} -${ephPub.substring(0, 8)
           { name: cipherFile, data: cipherBytes },
         ])
 
-        // Read decrypted output
+        // Read decrypted output and BCD-decode back to digits
         const decData = res.files.find((f) => f.name === decMsinFile)?.data
         if (decData) {
-          const msin = new TextDecoder().decode(decData)
+          const msin = this.bcdDecode(new Uint8Array(decData))
           recoveredSupi = `310-260-${msin}`
         } else {
           console.error('[FiveGService] Decrypt failed - no output file')
@@ -1355,34 +1619,45 @@ suci - ${mcc} -${mnc} -${routing} -${scheme} -${keyId} -${ephPub.substring(0, 8)
   }
 
   async runMilenage() {
-    // Use fixed test vectors for consistency/demo OR injected vectors
+    // Read from authState (populated by retrieveCredentials + generateRAND) or fall back
     let K: Uint8Array
-    let OP: Uint8Array
+    let OPc: Uint8Array
     let RAND: Uint8Array
+    let SQN: Uint8Array
+    let AMF: Uint8Array
 
-    if (this.testVectors?.milenage) {
-      // Use injected vectors
+    if (this.authState.K && this.authState.OPc && this.authState.RAND) {
+      K = this.authState.K
+      OPc = this.authState.OPc
+      RAND = this.authState.RAND
+      SQN = this.authState.SQN || new Uint8Array(6).fill(0x01)
+      AMF = this.authState.AMF || new Uint8Array([0x80, 0x00])
+    } else if (this.testVectors?.milenage) {
       const vec = this.testVectors.milenage
       K = new Uint8Array(vec.k.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
-      OP = new Uint8Array(vec.op.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
+      const OP = new Uint8Array(vec.op.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
       RAND = new Uint8Array(vec.rand.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
+      OPc = await milenage.computeOPc(K, OP)
+      SQN = new Uint8Array(6).fill(0x01)
+      AMF = new Uint8Array([0x80, 0x00])
     } else {
-      // Defaults
       K = new Uint8Array(16).fill(0x33)
-      OP = new Uint8Array(16).fill(0x55)
+      const OP = new Uint8Array(16).fill(0x55)
       RAND = new Uint8Array(16)
       window.crypto.getRandomValues(RAND)
+      OPc = await milenage.computeOPc(K, OP)
+      SQN = new Uint8Array(6).fill(0x01)
+      AMF = new Uint8Array([0x80, 0x00])
     }
 
-    const SQN = new Uint8Array(6).fill(0x01)
-    const AMF = new Uint8Array(2).fill(0x80)
+    const vectors = await milenage.compute(K, OPc, RAND, SQN, AMF)
 
-    const opc = await milenage.computeOPc(K, OP)
-    const vectors = await milenage.compute(K, opc, RAND, SQN, AMF)
+    // Store in authState for downstream steps (computeAUTN, deriveKAUSF)
+    this.authState.milenageResult = vectors
 
     return {
       rand: bytesToHex(RAND),
-      autn: '...', // Construct actual AUTN string
+      autn: '...', // Constructed in computeAUTN step
       res: bytesToHex(vectors.RES),
       ck: bytesToHex(vectors.CK),
       ik: bytesToHex(vectors.IK),
@@ -1405,6 +1680,66 @@ suci - ${mcc} -${mnc} -${routing} -${scheme} -${keyId} -${ephPub.substring(0, 8)
 
     const opc = await milenage.computeOPc(Ki, OP)
     return bytesToHex(opc)
+  }
+
+  async personalizeUSIM(kiHex: string, opcHex: string): Promise<string> {
+    const imsi = '310260123456789'
+
+    return `═══════════════════════════════════════════════════════════════
+            USIM PERSONALIZATION (Factory)
+═══════════════════════════════════════════════════════════════
+
+Step 1: Writing Master Key to Secure Element
+  > EF_Ki:   ${kiHex}
+  > Status:  Written to tamper-resistant memory
+
+Step 2: Writing Derived Operator Key
+  > EF_OPc:  ${opcHex}
+  > Status:  Written (OP never stored on SIM)
+
+Step 3: Writing Subscriber Identity
+  > EF_IMSI: ${imsi}
+  > MCC: 310 (USA)
+  > MNC: 260 (T-Mobile)
+  > MSIN: 123456789
+
+Step 4: Security Configuration
+  > Transport lock: ENABLED
+  > PIN retry counter: 3
+  > PUK retry counter: 10
+
+[SUCCESS] USIM personalization complete.
+[INFO] Card ready for secure transport to MNO.`
+  }
+
+  async importAtUDM(eKiHex: string, opcHex: string): Promise<string> {
+    // Simulate UDM/HSM import — decrypt transport-encrypted Ki
+    const imsi = '310260123456789'
+
+    return `═══════════════════════════════════════════════════════════════
+            UDM/HSM KEY IMPORT
+═══════════════════════════════════════════════════════════════
+
+Step 1: Receiving Encrypted Key Batch
+  > File: out_batch_2026.enc
+  > Records: 1
+
+Step 2: Decrypting eKi with Transport Key
+  > eKi (encrypted): ${eKiHex.substring(0, 32)}...
+  > Transport Key:   [PROTECTED — pre-shared]
+  > Decrypted Ki:    [PROTECTED — inside HSM]
+
+Step 3: Storing in HSM Secure Repository
+  > IMSI: ${imsi}
+  > Ki:   [stored securely]
+  > OPc:  ${opcHex}
+
+Step 4: Verifying Import Integrity
+  > MAC verification: PASS
+  > Key validation:   PASS
+
+[SUCCESS] Subscriber provisioning complete.
+[INFO] ${imsi} ready for 5G-AKA authentication.`
   }
 
   async encryptTransport(kiHex: string, opcHex: string) {

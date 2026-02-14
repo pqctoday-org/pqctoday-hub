@@ -25,7 +25,7 @@ export const ArchitectureOverview: React.FC = () => {
       </section>
 
       <section>
-        <h3 className="text-xl font-semibold mb-3">1.2 OpenSSL 3.5.4 Support Matrix</h3>
+        <h3 className="text-xl font-semibold mb-3">1.2 OpenSSL 3.6.0 Support Matrix</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -245,7 +245,7 @@ export const ArchitectureOverview: React.FC = () => {
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
 │   ┌─────────────────────────────────────────────────────────────────────┐   │
-│   │                        OpenSSL 3.5.4 Layer                          │   │
+│   │                        OpenSSL 3.6.0 Layer                          │   │
 │   │  ✅ Key Generation (secp256k1, Ed25519)                             │   │
 │   │  ✅ Basic Hashing (SHA-256, SHA-512, RIPEMD-160)                    │   │
 │   │  ✅ HMAC Operations                                                 │   │

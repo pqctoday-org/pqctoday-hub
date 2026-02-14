@@ -80,17 +80,20 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
     setLoading(true)
     addLog('Bank Verifying Proof...')
     await new Promise((r) => setTimeout(r, 1000))
-    addLog('✅ Signature Valid.')
-    addLog('✅ Trust Chain Valid (eIDAS Bridge).')
-    addLog('✅ Selective Disclosure Checked.')
+    addLog('Checking credential revocation status (StatusList)...')
+    await new Promise((r) => setTimeout(r, 500))
+    addLog('StatusList checked. No revocations found.')
+    addLog('Signature Valid.')
+    addLog('Trust Chain Valid (eIDAS Bridge).')
+    addLog('Selective Disclosure Checked.')
     setLoading(false)
     setStep('COMPLETE')
   }
 
   return (
-    <Card className="max-w-7xl mx-auto border-blue-200 shadow-xl">
-      <CardHeader className="bg-blue-50/50">
-        <CardTitle className="text-blue-800 flex items-center gap-2">
+    <Card className="max-w-7xl mx-auto border-tertiary/30 shadow-xl">
+      <CardHeader className="bg-tertiary/5">
+        <CardTitle className="text-tertiary flex items-center gap-2">
           <Landmark className="w-6 h-6" />
           Bank (Relying Party)
         </CardTitle>
@@ -102,25 +105,25 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
             {/* Steps Visualization */}
             <div className="space-y-4">
               <div
-                className={`p-3 rounded border flex items-center gap-3 ${step === 'START' ? 'bg-blue-50 border-blue-400' : 'bg-slate-50'}`}
+                className={`p-3 rounded border flex items-center gap-3 ${step === 'START' ? 'bg-tertiary/10 border-tertiary' : 'bg-muted/5'}`}
               >
-                <div className="bg-blue-100 p-1.5 rounded-full text-blue-600 font-bold text-xs">
+                <div className="bg-tertiary/20 p-1.5 rounded-full text-tertiary font-bold text-xs">
                   1
                 </div>
                 <span className="text-sm">Request</span>
               </div>
               <div
-                className={`p-3 rounded border flex items-center gap-3 ${step === 'DISCLOSURE' ? 'bg-blue-50 border-blue-400' : 'bg-slate-50'}`}
+                className={`p-3 rounded border flex items-center gap-3 ${step === 'DISCLOSURE' ? 'bg-tertiary/10 border-tertiary' : 'bg-muted/5'}`}
               >
-                <div className="bg-blue-100 p-1.5 rounded-full text-blue-600 font-bold text-xs">
+                <div className="bg-tertiary/20 p-1.5 rounded-full text-tertiary font-bold text-xs">
                   2
                 </div>
                 <span className="text-sm">Disclosure</span>
               </div>
               <div
-                className={`p-3 rounded border flex items-center gap-3 ${['PRESENTATION', 'VERIFICATION'].includes(step) ? 'bg-blue-50 border-blue-400' : 'bg-slate-50'}`}
+                className={`p-3 rounded border flex items-center gap-3 ${['PRESENTATION', 'VERIFICATION'].includes(step) ? 'bg-tertiary/10 border-tertiary' : 'bg-muted/5'}`}
               >
-                <div className="bg-blue-100 p-1.5 rounded-full text-blue-600 font-bold text-xs">
+                <div className="bg-tertiary/20 p-1.5 rounded-full text-tertiary font-bold text-xs">
                   3
                 </div>
                 <span className="text-sm">Proof & Verify</span>
@@ -130,14 +133,14 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
             {/* Actions */}
             <div className="mt-6 border-t pt-6">
               {step === 'START' && (
-                <Button onClick={handleStart} className="w-full bg-blue-600 hover:bg-blue-700">
+                <Button onClick={handleStart} className="w-full">
                   Login with Wallet
                 </Button>
               )}
 
               {step === 'DISCLOSURE' && (
                 <div className="space-y-4">
-                  <div className="bg-slate-100 p-3 rounded text-sm">
+                  <div className="bg-muted/10 p-3 rounded text-sm">
                     <p className="font-semibold mb-2 flex items-center gap-2">
                       <Eye className="w-4 h-4" /> Requested Data:
                     </p>
@@ -154,27 +157,24 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
 
               {step === 'PRESENTATION' && (
                 <div className="text-center py-4">
-                  <Loader2 className="animate-spin w-8 h-8 text-blue-500 mx-auto" />
+                  <Loader2 className="animate-spin w-8 h-8 text-tertiary mx-auto" />
                   <p className="text-sm mt-2 text-muted-foreground">
-                    Generating Zero-Knowledge Proof...
+                    Generating Device Binding Proof...
                   </p>
                 </div>
               )}
 
               {step === 'VERIFICATION' && (
-                <Button
-                  onClick={handleVerification}
-                  className="w-full bg-green-600 hover:bg-green-700"
-                >
+                <Button onClick={handleVerification} className="w-full">
                   Check Verification Result
                 </Button>
               )}
 
               {step === 'COMPLETE' && (
-                <div className="bg-green-50 p-4 rounded border border-green-200 text-center">
-                  <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-2" />
-                  <h3 className="font-bold text-green-800">Account Opened!</h3>
-                  <p className="text-sm text-green-700 mb-4">
+                <div className="bg-success/5 p-4 rounded border border-success/30 text-center">
+                  <CheckCircle className="w-12 h-12 text-success mx-auto mb-2" />
+                  <h3 className="font-bold text-success">Account Opened!</h3>
+                  <p className="text-sm text-success mb-4">
                     Your identity has been verified successfully.
                   </p>
                   <Button onClick={onBack} variant="outline" size="sm">
@@ -186,15 +186,15 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
           </div>
 
           {/* Logs */}
-          <div className="flex flex-col h-[400px] border rounded-lg bg-slate-950 overflow-hidden lg:col-span-3">
+          <div className="flex flex-col h-[400px] border rounded-lg bg-card overflow-hidden lg:col-span-3">
             {/* Tabs */}
-            <div className="flex items-center border-b border-slate-800 bg-slate-900">
+            <div className="flex items-center border-b border-border bg-muted/30">
               <button
                 onClick={() => setActiveLogTab('protocol')}
                 className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                   activeLogTab === 'protocol'
-                    ? 'text-blue-400 bg-slate-800 border-b-2 border-blue-500'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    ? 'text-tertiary bg-muted/50 border-b-2 border-tertiary'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
                 }`}
               >
                 PROTOCOL LOG
@@ -203,8 +203,8 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
                 onClick={() => setActiveLogTab('openssl')}
                 className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                   activeLogTab === 'openssl'
-                    ? 'text-green-400 bg-slate-800 border-b-2 border-green-500'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    ? 'text-success bg-muted/50 border-b-2 border-success'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
                 }`}
               >
                 OPENSSL LOG
@@ -212,7 +212,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-4 font-mono text-xs text-slate-50">
+            <div className="flex-1 overflow-y-auto p-4 font-mono text-xs text-foreground">
               {activeLogTab === 'protocol' ? (
                 <>
                   {logs.map((log, i) => (
@@ -227,7 +227,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
               ) : (
                 <>
                   {opensslLogs.map((log, i) => (
-                    <div key={i} className="mb-2 whitespace-pre-wrap break-all text-green-200/90">
+                    <div key={i} className="mb-2 whitespace-pre-wrap break-all text-success/80">
                       {log}
                     </div>
                   ))}

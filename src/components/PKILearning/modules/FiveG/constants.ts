@@ -72,13 +72,13 @@ xxd -p shared_secret.bin`,
       id: 'derive_keys',
       title: '6. Derive Keys (ANSI-X9.63-KDF)',
       description:
-        'The shared secret (Z) is not used directly. Instead, it is passed through a Key Derivation Function (KDF) along with the ephemeral public key to generate two distinct keys: one for encryption (AES) and one for integrity (HMAC).',
-      code: `// ANSI X9.63 KDF Logic (Conceptual)
-const input = SharedSecret || EphemeralPubKey;
-const keyBlock = SHA256(input + Counter=1);
+        'The shared secret (Z) is not used directly. Instead, it is passed through a Key Derivation Function (KDF) along with the ephemeral public key (SharedInfo) to generate two distinct keys: K_enc for encryption (AES-128, 128 bits) and K_mac for integrity (HMAC-SHA-256, 256 bits). The KDF runs two iterations of SHA-256.',
+      code: `// ANSI X9.63 KDF (2 iterations, SharedInfo = EphPubKey)
+const block1 = SHA256(Z || 0x00000001 || EphPubKey);
+const block2 = SHA256(Z || 0x00000002 || EphPubKey);
 
-const K_enc = keyBlock.slice(0, 16); // 128-bit AES Key
-const K_mac = keyBlock.slice(16, 32); // 128-bit HMAC Key (truncated from 256)`,
+const K_enc = block1.slice(0, 16);  // 128-bit AES Key
+const K_mac = block2;               // 256-bit HMAC Key`,
       output: `[USIM] Deriving Keys...\n[USIM] K_enc: 128-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
     },
     {
@@ -250,13 +250,13 @@ openssl pkeyutl -derive \\
       id: 'derive_keys',
       title: '6. Derive Keys (ANSI-X9.63-KDF)',
       description:
-        'Derive AES-128 encryption key and HMAC-SHA-256 integrity key using the shared secret.',
-      code: `// ANSI X9.63 KDF Logic
-const input = SharedSecret || EphemeralPubKey;
-const keyBlock = SHA256(input + Counter=1);
+        'The shared secret (Z) is passed through ANSI X9.63 KDF with the ephemeral public key as SharedInfo. Two SHA-256 iterations produce K_enc (128-bit AES) and K_mac (256-bit HMAC).',
+      code: `// ANSI X9.63 KDF (2 iterations, SharedInfo = EphPubKey)
+const block1 = SHA256(Z || 0x00000001 || EphPubKey);
+const block2 = SHA256(Z || 0x00000002 || EphPubKey);
 
-const K_enc = keyBlock.slice(0, 16); // 128-bit
-const K_mac = keyBlock.slice(16, 32); // 128-bit`,
+const K_enc = block1.slice(0, 16);  // 128-bit AES Key
+const K_mac = block2;               // 256-bit HMAC Key`,
       output: `[USIM] Deriving Keys...\n[USIM] K_enc: 128-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
     },
     {
@@ -405,12 +405,14 @@ openssl pkeyutl -encap ...`,
       id: 'derive_keys',
       title: '6. Derive Keys (KDF w/ SHA3)',
       description:
-        'Derive AES-256 encryption key and HMAC-SHA3-256 integrity key. Note the use of SHA3 for higher security assurance.',
-      code: `# Derive Keys using SHA3-256
-key_block = SHA3_256(shared_secret + "Counter")
-enc_key = key_block[0:32]   # 256-bit AES
-mac_key = key_block[32:64]  # 256-bit HMAC`,
-      output: `[USIM] Deriving Keys w/ SHA3...\n[USIM] K_enc: 256-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
+        'The shared secret is passed through ANSI X9.63 KDF using SHA3-256 (higher security assurance for PQC). Two iterations produce K_enc (128-bit AES-256 from block1) and K_mac (256-bit HMAC-SHA3-256 from block2).',
+      code: `# ANSI X9.63 KDF with SHA3-256 (2 iterations)
+block1 = SHA3_256(Z || 0x00000001 || SharedInfo)
+block2 = SHA3_256(Z || 0x00000002 || SharedInfo)
+
+enc_key = block1[0:16]   # 128-bit AES Key
+mac_key = block2          # 256-bit HMAC Key`,
+      output: `[USIM] Deriving Keys w/ SHA3...\n[USIM] K_enc: 128-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
     },
     {
       id: 'encrypt_msin',
