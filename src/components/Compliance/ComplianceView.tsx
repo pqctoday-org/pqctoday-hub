@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable } from './ComplianceTable'
 import { useComplianceRefresh, AUTHORITATIVE_SOURCES } from './services'
-import { ShieldCheck, FileCheck, Server, GlobeLock } from 'lucide-react'
+import { ShieldCheck, FileCheck, Server, GlobeLock, Building2 } from 'lucide-react'
 import { logComplianceFilter } from '../../utils/analytics'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
@@ -24,7 +24,7 @@ export const ComplianceView = () => {
           (ACVP), and Common Criteria certifications, with a focus on Post-Quantum Cryptography
           (PQC) readiness.
         </p>
-        <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
+        <div className="hidden md:flex items-center justify-center gap-3 text-xs text-muted-foreground/60 font-mono">
           <ShareButton
             title="PQC Compliance Tracker — FIPS 140-3, ACVP, Common Criteria"
             text="Track PQC compliance certifications: FIPS 140-3, ACVP algorithm validation, and Common Criteria with PQC readiness status."
@@ -80,6 +80,18 @@ export const ComplianceView = () => {
           <FileCheck size={16} className="text-tertiary" />
           <div className="flex flex-col">
             <span className="font-semibold text-foreground">ANSSI (FR)</span>
+            <span className="text-muted-foreground">CC Certifications</span>
+          </div>
+        </a>
+        <a
+          href={AUTHORITATIVE_SOURCES.BSI}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-2 p-3 rounded bg-card hover:bg-muted/50 transition-colors border border-border"
+        >
+          <Building2 size={16} className="text-primary" />
+          <div className="flex flex-col">
+            <span className="font-semibold text-foreground">BSI (DE)</span>
             <span className="text-muted-foreground">CC Certifications</span>
           </div>
         </a>

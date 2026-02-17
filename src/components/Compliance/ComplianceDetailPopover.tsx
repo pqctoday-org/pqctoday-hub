@@ -8,6 +8,7 @@ import {
   Shield,
   ShieldCheck,
   ShieldAlert,
+  X,
 } from 'lucide-react'
 import type { ComplianceRecord, ComplianceStatus } from './types'
 import clsx from 'clsx'
@@ -52,6 +53,7 @@ export const ComplianceDetailPopover = ({
   record,
 }: ComplianceDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   // Close on click outside
   useEffect(() => {
@@ -87,19 +89,20 @@ export const ComplianceDetailPopover = ({
     }
   }, [isOpen, onClose])
 
-  if (!isOpen || !record) return null
+  // Move focus into modal when it opens
+  useEffect(() => {
+    if (isOpen) {
+      closeButtonRef.current?.focus()
+    }
+  }, [isOpen])
 
-  // Center the popover
-  const style: React.CSSProperties = {
-    zIndex: 9999, // Ensure it's on top of everything
-  }
+  if (!isOpen || !record) return null
 
   const content = (
     <div className="fixed inset-0 z-[9999] bg-background/80 backdrop-blur-sm" aria-hidden="true">
       <div
         ref={popoverRef}
         className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] max-w-[800px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
-        style={style}
         role="dialog"
         aria-modal="true"
         aria-labelledby="popover-title"
@@ -113,10 +116,12 @@ export const ComplianceDetailPopover = ({
                 <span className="text-xs text-muted-foreground font-mono">{record.id}</span>
               </div>
               <button
+                ref={closeButtonRef}
                 onClick={onClose}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded"
+                aria-label="Close"
               >
-                ×
+                <X size={16} />
               </button>
             </div>
             <h3 id="popover-title" className="text-lg font-bold text-foreground leading-tight pr-8">

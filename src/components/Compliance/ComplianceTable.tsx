@@ -24,6 +24,7 @@ interface ComplianceTableProps {
   onRefresh?: () => void
   isRefreshing?: boolean
   lastUpdated?: Date | null
+  onEnrich?: (r: ComplianceRecord) => void
 }
 
 type SortDirection = 'asc' | 'desc'
@@ -70,7 +71,7 @@ const ComplianceRow = ({
 
   return (
     <tr className="border-b border-border hover:bg-muted/50 transition-colors">
-      {/* 1. Source Column */}
+      {/* Source Column */}
       <td
         className="px-4 py-3 font-medium flex items-center gap-2 w-24 truncate"
         title={record.source}
@@ -79,17 +80,17 @@ const ComplianceRow = ({
         <span className="truncate">{record.source}</span>
       </td>
 
-      {/* 2. Certification # Column */}
+      {/* Certification # Column */}
       <td className="px-4 py-3 font-mono text-xs w-32 truncate" title={record.id}>
         {record.id.length > 20 ? record.id.substring(0, 20) + '...' : record.id}
       </td>
 
-      {/* 3. Date Column */}
+      {/* Date Column */}
       <td className="px-4 py-3 text-muted-foreground font-mono text-xs whitespace-nowrap w-32">
         {record.date}
       </td>
 
-      {/* 5. Product Name Column */}
+      {/* Product Name Column */}
       <td className="px-4 py-3 font-medium text-foreground whitespace-normal break-words w-80">
         <div className="line-clamp-2" title={record.productName}>
           {record.productName}
@@ -99,14 +100,14 @@ const ComplianceRow = ({
         </div>
       </td>
 
-      {/* 6. Vendor Column */}
+      {/* Vendor Column */}
       <td className="px-4 py-3 w-48">
         <div className="truncate" title={record.vendor}>
           {record.vendor}
         </div>
       </td>
 
-      {/* 7. PQC Coverage Column */}
+      {/* PQC Coverage Column */}
       <td className="px-4 py-3 relative group">
         {record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
           <div className="flex items-center">
@@ -167,7 +168,7 @@ const ComplianceRow = ({
         )}
       </td>
 
-      {/* 9. Classical Algos Column */}
+      {/* Classical Algorithms Column */}
       <td className="px-4 py-3 relative group">
         {record.classicalAlgorithms ? (
           <div className="flex items-center justify-center">
@@ -195,7 +196,7 @@ const ComplianceRow = ({
         )}
       </td>
 
-      {/* 10. Info Column (Moved to End) */}
+      {/* Details Column */}
       <td className="px-4 py-3">
         <button
           onClick={() => setShowDetailsPopup(true)}
@@ -214,9 +215,13 @@ const ComplianceRow = ({
   )
 }
 
-export const ComplianceTable: React.FC<
-  ComplianceTableProps & { onEnrich?: (r: ComplianceRecord) => void }
-> = ({ data, onRefresh, isRefreshing, lastUpdated, onEnrich }) => {
+export const ComplianceTable: React.FC<ComplianceTableProps> = ({
+  data,
+  onRefresh,
+  isRefreshing,
+  lastUpdated,
+  onEnrich,
+}) => {
   const [filterText, setFilterText] = useState('')
   const [pqcFilters, setPqcFilters] = useState<string[]>([])
   const [categoryFilters, setCategoryFilters] = useState<string[]>([])
@@ -467,7 +472,9 @@ export const ComplianceTable: React.FC<
           <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-[1px] flex items-center justify-center flex-col gap-3">
             <RefreshCw size={32} className="animate-spin text-primary" />
             <div className="flex flex-col items-center gap-1">
-              <span className="text-sm font-medium text-white">Filtering Records...</span>
+              <span className="text-sm font-medium text-white">
+                {isRefreshing ? 'Refreshing Data...' : 'Filtering Records...'}
+              </span>
               <span className="text-xs text-muted-foreground">
                 {data.length.toLocaleString()} total verified
               </span>
@@ -478,8 +485,6 @@ export const ComplianceTable: React.FC<
           <table className="w-full text-sm text-left table-fixed">
             <thead className="text-xs uppercase bg-muted/50 text-muted-foreground">
               <tr>
-                {/* Info Column Header Removed from Start */}
-
                 {/* Source Column with Filter */}
                 <th scope="col" className="px-4 py-3 w-24 relative">
                   <div className="flex items-center justify-between gap-1">
@@ -502,12 +507,12 @@ export const ComplianceTable: React.FC<
                         }}
                         className={clsx(
                           'p-0.5 rounded hover:bg-muted',
-                          sourceFilters.length > 0 && 'text-accent'
+                          sourceFilters.length > 0 && 'text-primary'
                         )}
                       >
                         <Filter size={12} />
                         {sourceFilters.length > 0 && (
-                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full text-[8px] flex items-center justify-center text-accent-foreground font-bold">
+                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
                             {sourceFilters.length}
                           </span>
                         )}
@@ -517,10 +522,7 @@ export const ComplianceTable: React.FC<
                           <div
                             className="fixed inset-0 z-40"
                             onClick={() => setShowSourceMenu(false)}
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => e.key === 'Escape' && setShowSourceMenu(false)}
-                            aria-label="Close menu"
+                            aria-hidden="true"
                           />
                           <div className="absolute left-0 top-full mt-1 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
                             <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
@@ -534,7 +536,7 @@ export const ComplianceTable: React.FC<
                                 className={clsx(
                                   'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
                                   sourceFilters.includes(src)
-                                    ? 'text-accent'
+                                    ? 'text-primary'
                                     : 'text-muted-foreground'
                                 )}
                               >
@@ -542,12 +544,12 @@ export const ComplianceTable: React.FC<
                                   className={clsx(
                                     'w-3 h-3 rounded-[3px] border flex items-center justify-center',
                                     sourceFilters.includes(src)
-                                      ? 'border-accent bg-accent'
+                                      ? 'border-primary bg-primary'
                                       : 'border-border'
                                   )}
                                 >
                                   {sourceFilters.includes(src) && (
-                                    <Check size={10} className="text-accent-foreground" />
+                                    <Check size={10} className="text-primary-foreground" />
                                   )}
                                 </div>
                                 <span className="truncate">{src}</span>
@@ -623,13 +625,13 @@ export const ComplianceTable: React.FC<
                         }}
                         className={clsx(
                           'p-0.5 rounded hover:bg-muted',
-                          categoryFilters.length > 0 && 'text-secondary'
+                          categoryFilters.length > 0 && 'text-primary'
                         )}
                         title="Filter by Product Category"
                       >
                         <Filter size={12} />
                         {categoryFilters.length > 0 && (
-                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full text-[8px] flex items-center justify-center text-secondary-foreground font-bold">
+                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
                             {categoryFilters.length}
                           </span>
                         )}
@@ -639,10 +641,7 @@ export const ComplianceTable: React.FC<
                           <div
                             className="fixed inset-0 z-40"
                             onClick={() => setShowCategoryMenu(false)}
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => e.key === 'Escape' && setShowCategoryMenu(false)}
-                            aria-label="Close menu"
+                            aria-hidden="true"
                           />
                           <div className="absolute left-0 top-full mt-1 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
                             <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
@@ -656,7 +655,7 @@ export const ComplianceTable: React.FC<
                                 className={clsx(
                                   'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
                                   categoryFilters.includes(cat)
-                                    ? 'text-secondary'
+                                    ? 'text-primary'
                                     : 'text-muted-foreground'
                                 )}
                               >
@@ -664,12 +663,12 @@ export const ComplianceTable: React.FC<
                                   className={clsx(
                                     'w-3 h-3 rounded-[3px] border flex items-center justify-center',
                                     categoryFilters.includes(cat)
-                                      ? 'border-secondary bg-secondary'
+                                      ? 'border-primary bg-primary'
                                       : 'border-border'
                                   )}
                                 >
                                   {categoryFilters.includes(cat) && (
-                                    <Check size={10} className="text-secondary-foreground" />
+                                    <Check size={10} className="text-primary-foreground" />
                                   )}
                                 </div>
                                 <span className="truncate">{cat}</span>
@@ -713,12 +712,12 @@ export const ComplianceTable: React.FC<
                         }}
                         className={clsx(
                           'p-0.5 rounded hover:bg-muted',
-                          vendorFilters.length > 0 && 'text-warning'
+                          vendorFilters.length > 0 && 'text-primary'
                         )}
                       >
                         <Filter size={12} />
                         {vendorFilters.length > 0 && (
-                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-warning rounded-full text-[8px] flex items-center justify-center text-warning-foreground font-bold">
+                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
                             {vendorFilters.length}
                           </span>
                         )}
@@ -728,10 +727,7 @@ export const ComplianceTable: React.FC<
                           <div
                             className="fixed inset-0 z-40"
                             onClick={() => setShowVendorMenu(false)}
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => e.key === 'Escape' && setShowVendorMenu(false)}
-                            aria-label="Close menu"
+                            aria-hidden="true"
                           />
                           <div className="absolute left-0 top-full mt-1 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto flex flex-col">
                             <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
@@ -753,7 +749,7 @@ export const ComplianceTable: React.FC<
                                   className={clsx(
                                     'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
                                     vendorFilters.includes(v)
-                                      ? 'text-warning'
+                                      ? 'text-primary'
                                       : 'text-muted-foreground'
                                   )}
                                 >
@@ -761,12 +757,12 @@ export const ComplianceTable: React.FC<
                                     className={clsx(
                                       'w-3 h-3 rounded-[3px] border flex items-center justify-center',
                                       vendorFilters.includes(v)
-                                        ? 'border-warning bg-warning'
+                                        ? 'border-primary bg-primary'
                                         : 'border-border'
                                     )}
                                   >
                                     {vendorFilters.includes(v) && (
-                                      <Check size={10} className="text-warning-foreground" />
+                                      <Check size={10} className="text-primary-foreground" />
                                     )}
                                   </div>
                                   <span className="truncate">{v}</span>
@@ -809,12 +805,12 @@ export const ComplianceTable: React.FC<
                         }}
                         className={clsx(
                           'p-0.5 rounded hover:bg-muted',
-                          pqcFilters.length > 0 && 'text-tertiary'
+                          pqcFilters.length > 0 && 'text-primary'
                         )}
                       >
                         <Filter size={12} />
                         {pqcFilters.length > 0 && (
-                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-tertiary rounded-full text-[8px] flex items-center justify-center text-tertiary-foreground font-bold">
+                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
                             {pqcFilters.length}
                           </span>
                         )}
@@ -824,10 +820,7 @@ export const ComplianceTable: React.FC<
                           <div
                             className="fixed inset-0 z-40"
                             onClick={() => setShowFilterMenu(false)}
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => e.key === 'Escape' && setShowFilterMenu(false)}
-                            aria-label="Close menu"
+                            aria-hidden="true"
                           />
                           <div className="absolute right-0 top-full mt-1 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
                             <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
@@ -841,7 +834,7 @@ export const ComplianceTable: React.FC<
                                 className={clsx(
                                   'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
                                   pqcFilters.includes(algo)
-                                    ? 'text-tertiary'
+                                    ? 'text-primary'
                                     : 'text-muted-foreground'
                                 )}
                               >
@@ -849,12 +842,12 @@ export const ComplianceTable: React.FC<
                                   className={clsx(
                                     'w-3 h-3 rounded-[3px] border flex items-center justify-center',
                                     pqcFilters.includes(algo)
-                                      ? 'border-tertiary bg-tertiary'
+                                      ? 'border-primary bg-primary'
                                       : 'border-border'
                                   )}
                                 >
                                   {pqcFilters.includes(algo) && (
-                                    <Check size={10} className="text-tertiary-foreground" />
+                                    <Check size={10} className="text-primary-foreground" />
                                   )}
                                 </div>
                                 <span className="truncate">{algo}</span>
@@ -876,12 +869,12 @@ export const ComplianceTable: React.FC<
                   </div>
                 </th>
 
-                {/* CC Column */}
+                {/* Classical Algorithms Column */}
                 <th scope="col" className="px-4 py-3 w-20">
-                  <span>CC</span>
+                  <span>Classic</span>
                 </th>
 
-                {/* Info Column (Added to End) */}
+                {/* Details Column */}
                 <th scope="col" className="px-4 py-3 w-10">
                   <span className="sr-only">Details</span>
                 </th>
@@ -893,7 +886,7 @@ export const ComplianceTable: React.FC<
               ))}
               {filteredAndSortedData.length === 0 && (
                 <tr>
-                  <td colSpan={10} className="px-4 py-8 text-center text-muted-foreground">
+                  <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
                     No compliance records found matching your filters.
                   </td>
                 </tr>
@@ -910,7 +903,7 @@ export const ComplianceTable: React.FC<
             {Math.min(currentPage * ITEMS_PER_PAGE, filteredAndSortedData.length)} of{' '}
             {filteredAndSortedData.length} records
             {filteredAndSortedData.length !== data.length && (
-              <span className="ml-1 text-primary-foreground/50">(filtered from {data.length})</span>
+              <span className="ml-1 text-muted-foreground">(filtered from {data.length})</span>
             )}
           </div>
           <div className="flex gap-2">
