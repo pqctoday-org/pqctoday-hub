@@ -23,6 +23,9 @@ const PQC101Module = lazy(() =>
     default: module.PQC101Module,
   }))
 )
+const QuizModule = lazy(() =>
+  import('./modules/Quiz').then((module) => ({ default: module.QuizModule }))
+)
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -59,6 +62,7 @@ export const PKILearningView: React.FC = () => {
           <Route path="digital-id" element={<DigitalIDModule />} />
           <Route path="tls-basics" element={<TLSBasicsModule />} />
           <Route path="pqc-101" element={<PQC101Module />} />
+          <Route path="quiz" element={<QuizModule />} />
         </Routes>
       </Suspense>
     </div>

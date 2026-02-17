@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { BookOpen, CheckCircle, Circle, Clock, Save, Upload, PlayCircle } from 'lucide-react'
+import { BookOpen, Brain, CheckCircle, Circle, Clock, Save, Upload, PlayCircle } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import { Button } from '../ui/button'
 import clsx from 'clsx'
@@ -295,6 +295,31 @@ export const Dashboard: React.FC = () => {
               <ModuleCard key={module.id} module={module} onSelectModule={(id) => navigate(id)} />
             ))}
           </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Knowledge Check Section */}
+      <div>
+        <div className="mb-4 md:mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
+            <Brain className="text-secondary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
+            Knowledge Check
+          </h2>
+          <p className="hidden lg:block text-muted-foreground">
+            Test your understanding of post-quantum cryptography concepts.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <ModuleCard
+            module={{
+              id: 'quiz',
+              title: 'PQC Quiz',
+              description:
+                'Test your knowledge across all PQC topics — algorithms, standards, compliance, migration, and more.',
+              duration: '15 min',
+            }}
+            onSelectModule={() => navigate('quiz')}
+          />
         </div>
       </div>
 
