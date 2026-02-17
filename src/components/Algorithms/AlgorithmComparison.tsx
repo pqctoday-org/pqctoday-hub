@@ -73,14 +73,12 @@ export const AlgorithmComparison = () => {
         bValue = b.pqc
         break
       case 'deprecation':
-        // Extract year for sorting
-        aValue = a.deprecationDate.match(/\d{4}/)?.[0] || '0'
-        bValue = b.deprecationDate.match(/\d{4}/)?.[0] || '0'
-        // Handle special cases like "2030+" and "2030 (Disallowed)"
-        if (a.deprecationDate.includes('Disallowed')) aValue = '2030.1'
-        if (b.deprecationDate.includes('Disallowed')) bValue = '2030.1'
-        if (a.deprecationDate.includes('+')) aValue = '2030.2'
-        if (b.deprecationDate.includes('+')) bValue = '2030.2'
+        // Extract first year for sorting
+        aValue = a.deprecationDate.match(/\d{4}/)?.[0] || '9999'
+        bValue = b.deprecationDate.match(/\d{4}/)?.[0] || '9999'
+        // Entries with "Deprecated" phase sort before "Disallowed"-only (more urgent)
+        if (a.deprecationDate.includes('Deprecated')) aValue = (parseInt(aValue) - 0.5).toString()
+        if (b.deprecationDate.includes('Deprecated')) bValue = (parseInt(bValue) - 0.5).toString()
         break
     }
 
@@ -347,10 +345,11 @@ export const AlgorithmComparison = () => {
                           <span
                             className={clsx(
                               'text-xs px-2 py-1 rounded border font-medium shadow-sm whitespace-normal text-center',
-                              'text-xs px-2 py-1 rounded border font-medium shadow-sm whitespace-normal text-center',
-                              algo.deprecationDate.includes('Disallowed')
-                                ? 'bg-status-error border-status-error text-status-error'
-                                : 'bg-status-warning border-status-warning text-status-warning'
+                              algo.deprecationDate.includes('Deprecated')
+                                ? 'bg-status-warning border-status-warning text-status-warning'
+                                : algo.deprecationDate.includes('Disallowed')
+                                  ? 'bg-status-error border-status-error text-status-error'
+                                  : 'bg-muted border-border text-muted-foreground'
                             )}
                           >
                             {algo.deprecationDate}

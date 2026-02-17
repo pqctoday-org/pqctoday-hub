@@ -51,9 +51,11 @@ export const MobileAlgorithmList = ({ data }: MobileAlgorithmListProps) => {
             <span
               className={clsx(
                 'text-xs px-2 py-1 rounded border font-medium whitespace-nowrap',
-                algo.deprecationDate.includes('Disallowed')
-                  ? 'bg-red-500/10 border-red-500/30 text-red-400'
-                  : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                algo.deprecationDate.includes('Deprecated')
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                  : algo.deprecationDate.includes('Disallowed')
+                    ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                    : 'bg-muted/10 border-border text-muted-foreground'
               )}
             >
               {algo.deprecationDate.split(' ')[0]} {/* simplified date */}
