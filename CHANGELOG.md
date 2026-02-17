@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.11.0] - 2026-02-17
+
+### Added
+
+- **PQC Quiz Module** (`/learn`): New interactive quiz in the Learning dashboard covering
+  post-quantum cryptography fundamentals, algorithm families, and migration concepts.
+
+### Fixed
+
+- **Compliance page UI/UX** (`/compliance`):
+  - Renamed ambiguous "CC" column header to "Classic" (was misread as Common Criteria)
+  - Added missing BSI (DE) source card so the authoritative-sources grid is complete
+  - Unified all four filter active states to `primary` color (was: accent, secondary, warning, tertiary)
+  - Loading overlay now correctly reads "Refreshing Data…" during a refresh vs. "Filtering Records…" during filtering
+  - Close button in detail modal replaced with `<X>` icon + `aria-label`; focus moves into modal on open
+  - Filter backdrop `role="button"` replaced with `aria-hidden="true"`
+  - Empty-state `colSpan` corrected from 10 to 8
+  - ShareButton/GlossaryButton now visible at `md` breakpoint (was `lg`-only)
+
+- **Guided Tour** (`/`): Fixed mobile portrait layout blocking tour from completing;
+  fixed tooltip position jumping on step transitions.
+
 ## [1.10.0] - 2026-02-17
 
 ### Added

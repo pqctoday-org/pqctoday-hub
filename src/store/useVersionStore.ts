@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 // Get version from package.json at build time
-const APP_VERSION = '1.10.0'
+const APP_VERSION = '1.11.0'
 
 interface VersionState {
   currentVersion: string

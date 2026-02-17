@@ -72,29 +72,29 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Risk Assessment Upgrade</strong> &mdash;
-                    12-step wizard with compound scoring and HNDL risk analysis
+                    <strong className="text-foreground">PQC Quiz</strong> &mdash; New interactive
+                    quiz in the Learning dashboard
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Migration Effort Estimation</strong> &mdash;
-                    Per-algorithm complexity ratings and executive summary
+                    <strong className="text-foreground">Compliance Polish</strong> &mdash; Unified
+                    filters, correct column labels, BSI source card
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Algorithm Comparison</strong> &mdash; New
-                    filters, search, and sortable columns
+                    <strong className="text-foreground">Accessibility</strong> &mdash; Focus
+                    management, ARIA fixes, and modal close icon in Compliance
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Software Data</strong> &mdash; 6 new
-                    categories and updated product references
+                    <strong className="text-foreground">Tour Fix</strong> &mdash; Mobile portrait no
+                    longer blocks tour completion
                   </span>
                 </li>
               </ul>
