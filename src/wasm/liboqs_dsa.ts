@@ -27,7 +27,7 @@ export const generateKey = async (
     const genRes = await openSSLService.execute(
       `openssl genpkey -algorithm ${algoName} -out ${privName}`
     )
-    if (genRes.stderr) {
+    if (genRes.stderr && genRes.stderr.toLowerCase().includes('error')) {
       throw new Error(`OpenSSL genpkey failed for ${algoName}: ${genRes.stderr}`)
     }
 
@@ -42,7 +42,8 @@ export const generateKey = async (
       `openssl pkey -in ${privName} -pubout -out ${pubName}`,
       [privKeyFile]
     )
-    if (pubRes.stderr) throw new Error(`Pubout failed: ${pubRes.stderr}`)
+    if (pubRes.stderr && pubRes.stderr.toLowerCase().includes('error'))
+      throw new Error(`Pubout failed: ${pubRes.stderr}`)
 
     const pubKeyFile = pubRes.files.find((f) => f.name === pubName)
     if (!pubKeyFile) {

@@ -4,9 +4,11 @@ import { motion } from 'framer-motion'
 import clsx from 'clsx'
 import { MobileAboutView } from './MobileAboutView'
 import { useTheme } from '../../hooks/useTheme'
+import { getCurrentVersion } from '../../store/useVersionStore'
 
 export function AboutView() {
   const { theme, setTheme } = useTheme()
+  const version = getCurrentVersion()
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -26,7 +28,10 @@ export function AboutView() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <Info className="text-primary" size={24} />
-              <h2 className="text-2xl font-bold">About PQC Today</h2>
+              <div>
+                <h2 className="text-2xl font-bold">About PQC Today</h2>
+                <p className="text-xs text-muted-foreground font-mono">v{version}</p>
+              </div>
             </div>
           </div>
           <div className="prose prose-invert max-w-none">

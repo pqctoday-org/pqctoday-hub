@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "1.8.6",
+  "version": "1.8.7",
   "license": "GPL-3.0",
   "type": "module",
   "engines": {
@@ -15,10 +15,11 @@
     "**/*.{json,md,css,html}": "prettier --write"
   },
   "scripts": {
+    "predev": "cp -r node_modules/@openforge-sh/liboqs/dist public/dist",
     "dev": "vite",
     "scrape": "NODE_TLS_REJECT_UNAUTHORIZED=0 npx tsx scripts/scrape-compliance.ts",
     "prebuild": "npm run scrape",
-    "build": "tsc -b && vite build && cp dist/index.html dist/404.html",
+    "build": "cp -r node_modules/@openforge-sh/liboqs/dist public/dist && tsc -b && vite build && cp dist/index.html dist/404.html",
     "lint": "eslint src scripts e2e *.ts *.js *.cjs",
     "preview": "vite preview",
     "test": "vitest run",

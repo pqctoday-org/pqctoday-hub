@@ -2,9 +2,11 @@ import { motion } from 'framer-motion'
 import { Users, Globe } from 'lucide-react'
 import clsx from 'clsx'
 import { useTheme } from '../../hooks/useTheme'
+import { getCurrentVersion } from '../../store/useVersionStore'
 
 export const MobileAboutView = () => {
   const { theme, setTheme } = useTheme()
+  const version = getCurrentVersion()
   return (
     <div className="flex flex-col gap-6 pb-8">
       {/* Header */}
@@ -19,6 +21,7 @@ export const MobileAboutView = () => {
         <p className="text-sm text-muted-foreground">
           Tracking the global transition to Post-Quantum Cryptography.
         </p>
+        <p className="text-xs text-muted-foreground/60 font-mono mt-1">v{version}</p>
       </motion.div>
 
       {/* Mission Card */}

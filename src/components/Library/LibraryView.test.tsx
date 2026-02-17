@@ -3,11 +3,54 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { LibraryView } from './LibraryView'
 import '@testing-library/jest-dom'
 
+// Mock framer-motion to avoid animation issues in tests
+vi.mock('framer-motion', () => {
+  type MotionProps = React.PropsWithChildren<Record<string, unknown>>
+  const stripMotionProps = (props: MotionProps) => {
+    const { children, initial, animate, transition, whileHover, ...rest } = props
+    void [initial, animate, transition, whileHover]
+    return { children, rest }
+  }
+  return {
+    motion: {
+      article: (props: MotionProps) => {
+        const { children, rest } = stripMotionProps(props)
+        return <article {...rest}>{children}</article>
+      },
+      button: (props: MotionProps) => {
+        const { children, rest } = stripMotionProps(props)
+        return <button {...rest}>{children}</button>
+      },
+      div: (props: MotionProps) => {
+        const { children, rest } = stripMotionProps(props)
+        return <div {...rest}>{children}</div>
+      },
+    },
+    AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
+  }
+})
+
 // Mock child components
 vi.mock('./LibraryTreeTable', () => ({
   LibraryTreeTable: ({ data }: { data: unknown[] }) => (
     <div data-testid="library-tree-table">Tree Table ({data.length} items)</div>
   ),
+}))
+
+vi.mock('./LibraryDetailPopover', () => ({
+  LibraryDetailPopover: ({
+    isOpen,
+    onClose,
+  }: {
+    isOpen: boolean
+    onClose: () => void
+    item: unknown
+  }) =>
+    isOpen ? (
+      <button data-testid="detail-popover" onClick={onClose}>
+        Popover
+      </button>
+    ) : null,
 }))
 
 // Mock library data
@@ -18,6 +61,12 @@ vi.mock('../../data/libraryData', () => ({
       documentTitle: 'NIST PQC Standard',
       categories: ['Digital Signature'],
       shortDescription: 'Standard for PQC',
+      documentStatus: 'Final',
+      lastUpdateDate: '2026-01-15',
+      migrationUrgency: 'High',
+      regionScope: 'Global',
+      downloadUrl: 'https://example.com/nist-001',
+      status: 'New',
       children: [],
     },
     {
@@ -25,6 +74,24 @@ vi.mock('../../data/libraryData', () => ({
       documentTitle: 'TLS Extensions',
       categories: ['Protocols'],
       shortDescription: 'IETF RFC',
+      documentStatus: 'Draft',
+      lastUpdateDate: '2026-01-10',
+      migrationUrgency: '',
+      regionScope: 'Global',
+      downloadUrl: 'https://example.com/rfc-1234',
+      status: 'Updated',
+      children: [],
+    },
+    {
+      referenceId: 'FIPS-203',
+      documentTitle: 'ML-KEM Standard',
+      categories: ['KEM'],
+      shortDescription: 'Key Encapsulation',
+      documentStatus: 'Final',
+      lastUpdateDate: '2025-12-01',
+      migrationUrgency: 'Critical',
+      regionScope: 'USA',
+      downloadUrl: '',
       children: [],
     },
   ],
@@ -47,12 +114,7 @@ describe('LibraryView', () => {
     vi.clearAllMocks()
   })
 
-  describe('Desktop viewport', () => {
-    beforeEach(() => {
-      global.innerWidth = 1024
-      global.innerHeight = 768
-    })
-
+  describe('Page header', () => {
     it('renders the main heading', () => {
       render(<LibraryView />)
       expect(screen.getByText(/PQC Standards Library/i)).toBeInTheDocument()
@@ -69,66 +131,71 @@ describe('LibraryView', () => {
       render(<LibraryView />)
       expect(screen.getByText(/Data Source:/i)).toBeInTheDocument()
     })
+  })
 
-    it('renders category filter', () => {
+  describe('Activity Feed', () => {
+    it('renders the activity feed with recent updates', () => {
       render(<LibraryView />)
-      // FilterDropdown should be present
-      const buttons = screen.getAllByRole('button')
-      expect(buttons.length).toBeGreaterThan(0)
+      expect(screen.getByText('Recent Updates')).toBeInTheDocument()
     })
 
-    it('shows all categories by default', () => {
+    it('shows items with New or Updated status', () => {
       render(<LibraryView />)
-      expect(screen.getByText('Digital Signature')).toBeInTheDocument()
-      expect(screen.getByText('Protocols')).toBeInTheDocument()
-    })
-
-    it('displays library tree tables', () => {
-      render(<LibraryView />)
-      const tables = screen.getAllByTestId('library-tree-table')
-      expect(tables.length).toBeGreaterThan(0)
+      // The activity feed should show NIST-001 (New) and RFC-1234 (Updated)
+      expect(screen.getAllByText('NIST-001').length).toBeGreaterThan(0)
+      expect(screen.getAllByText('RFC-1234').length).toBeGreaterThan(0)
     })
   })
 
-  describe('Mobile viewport', () => {
-    beforeEach(() => {
-      global.innerWidth = 375
-      global.innerHeight = 667
+  describe('Category Sidebar', () => {
+    it('renders category sidebar with all categories', () => {
+      render(<LibraryView />)
+      const nav = screen.getByRole('navigation', { name: /Library categories/i })
+      expect(nav).toBeInTheDocument()
     })
 
-    it('renders on mobile', () => {
+    it('shows All button in sidebar', () => {
       render(<LibraryView />)
-      expect(screen.getByText(/PQC Standards Library/i)).toBeInTheDocument()
-    })
-
-    it('renders filter on mobile', () => {
-      render(<LibraryView />)
-      const buttons = screen.getAllByRole('button')
-      expect(buttons.length).toBeGreaterThan(0)
+      // Sidebar has an "All" button
+      const allButtons = screen.getAllByRole('button', { name: /^All/i })
+      expect(allButtons.length).toBeGreaterThan(0)
     })
   })
 
-  describe('Category filtering', () => {
-    it('shows all categories when "All" is selected', () => {
+  describe('View Toggle', () => {
+    it('renders view toggle with Cards and Table options', () => {
       render(<LibraryView />)
-      expect(screen.getByText('Digital Signature')).toBeInTheDocument()
-      expect(screen.getByText('Protocols')).toBeInTheDocument()
-      expect(screen.getByText('PKI Certificate Management')).toBeInTheDocument()
+      const radiogroup = screen.getByRole('radiogroup', { name: /View mode/i })
+      expect(radiogroup).toBeInTheDocument()
     })
 
-    it('displays library data in sections', () => {
+    it('defaults to Cards view', () => {
       render(<LibraryView />)
-      const sections = [
-        'Digital Signature',
-        'KEM',
-        'PKI Certificate Management',
-        'Protocols',
-        'General Recommendations',
-      ]
+      const cardsRadio = screen.getByRole('radio', { name: /Cards/i })
+      expect(cardsRadio).toHaveAttribute('aria-checked', 'true')
+    })
 
-      sections.forEach((section) => {
-        expect(screen.getByText(section)).toBeInTheDocument()
-      })
+    it('switches to Table view when clicked', () => {
+      render(<LibraryView />)
+      const tableRadio = screen.getByRole('radio', { name: /Table/i })
+      fireEvent.click(tableRadio)
+      expect(tableRadio).toHaveAttribute('aria-checked', 'true')
+
+      // Table view should show tree tables
+      expect(screen.getAllByTestId('library-tree-table').length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('Card View', () => {
+    it('displays document cards by default', () => {
+      render(<LibraryView />)
+      // Cards show reference IDs
+      expect(screen.getAllByText('NIST-001').length).toBeGreaterThan(0)
+    })
+
+    it('shows document count', () => {
+      render(<LibraryView />)
+      expect(screen.getByText(/3 documents/)).toBeInTheDocument()
     })
   })
 
@@ -142,28 +209,49 @@ describe('LibraryView', () => {
       vi.useFakeTimers()
       render(<LibraryView />)
       const searchInput = screen.getByPlaceholderText('Search standards...')
-      fireEvent.change(searchInput, { target: { value: 'NIST' } })
 
-      // Wait for debounce (200ms)
+      fireEvent.change(searchInput, { target: { value: 'NIST' } })
       await vi.advanceTimersByTimeAsync(250)
 
-      // Should show Digital Signature section (where NIST item is)
-      // The tree table mock shows item count.
-      // We expect 'Digital Signature' to have 1 item
-      // Based on implementation, sections with 0 items show "No documents found".
-
-      const tables = screen.getAllByText(/Tree Table \(1 items\)/)
-      expect(tables.length).toBeGreaterThanOrEqual(1)
+      // Should show 1 document matching
+      expect(screen.getByText(/1 document(?!s)/)).toBeInTheDocument()
       vi.useRealTimers()
     })
 
-    it('shows no results message when search matches nothing', () => {
+    it('shows no results message when search matches nothing', async () => {
+      vi.useFakeTimers()
       render(<LibraryView />)
       const searchInput = screen.getByPlaceholderText('Search standards...')
-      fireEvent.change(searchInput, { target: { value: 'XYZ123' } })
 
-      const noResultsMsgs = screen.getAllByText('No documents found in this section.')
-      expect(noResultsMsgs.length).toBeGreaterThan(0)
+      fireEvent.change(searchInput, { target: { value: 'XYZ123' } })
+      await vi.advanceTimersByTimeAsync(250)
+
+      expect(screen.getByText(/No documents found matching your filters/)).toBeInTheDocument()
+      vi.useRealTimers()
+    })
+  })
+
+  describe('Table View', () => {
+    it('renders tree tables in table mode', () => {
+      render(<LibraryView />)
+      // Switch to table view
+      const tableRadio = screen.getByRole('radio', { name: /Table/i })
+      fireEvent.click(tableRadio)
+
+      const tables = screen.getAllByTestId('library-tree-table')
+      expect(tables.length).toBeGreaterThan(0)
+    })
+
+    it('shows category section headings in table mode', () => {
+      render(<LibraryView />)
+      const tableRadio = screen.getByRole('radio', { name: /Table/i })
+      fireEvent.click(tableRadio)
+
+      // In table mode, category headings appear as h3 elements
+      const headings = screen.getAllByRole('heading', { level: 3 })
+      const headingTexts = headings.map((h) => h.textContent)
+      expect(headingTexts).toContain('Digital Signature')
+      expect(headingTexts).toContain('Protocols')
     })
   })
 
@@ -172,14 +260,7 @@ describe('LibraryView', () => {
       const { container } = render(<LibraryView />)
       // eslint-disable-next-line testing-library/no-node-access
       const mainDiv = container.firstChild as HTMLElement
-      expect(mainDiv).toHaveClass('space-y-8')
-    })
-
-    it('displays tabpanel with proper ARIA attributes', () => {
-      render(<LibraryView />)
-      const tabpanel = screen.getByRole('tabpanel')
-      expect(tabpanel).toBeInTheDocument()
-      expect(tabpanel).toHaveAttribute('id', 'panel-All')
+      expect(mainDiv).toHaveClass('space-y-6')
     })
   })
 })

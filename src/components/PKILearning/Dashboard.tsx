@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { BookOpen, CheckCircle, Circle, Clock, Layers, Save, Upload } from 'lucide-react'
+import { BookOpen, CheckCircle, Circle, Clock, Save, Upload } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import clsx from 'clsx'
 
@@ -10,8 +10,6 @@ interface ModuleItem {
   title: string
   description: string
   duration: string
-  disabled?: boolean
-  comingSoon?: boolean
   workInProgress?: boolean
 }
 
@@ -26,15 +24,8 @@ const ModuleCard = ({
   const status = modules[module.id]?.status || 'not-started'
   const timeSpent = modules[module.id]?.timeSpent || 0
 
-  // Format duration string
-  let durationDisplay = module.duration
-  if (!module.comingSoon) {
-    if (status === 'not-started') {
-      durationDisplay = `${module.duration}`
-    } else {
-      durationDisplay = `${module.duration} / ${timeSpent} min`
-    }
-  }
+  const durationDisplay =
+    status === 'not-started' ? module.duration : `${module.duration} / ${timeSpent} min`
 
   return (
     <motion.article
@@ -43,12 +34,8 @@ const ModuleCard = ({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.2 }}
-      className={clsx(
-        'glass-panel p-6 flex flex-col h-full transition-colors',
-        !module.disabled && 'hover:border-secondary/50 cursor-pointer',
-        module.disabled && 'opacity-60 cursor-not-allowed'
-      )}
-      onClick={() => !module.disabled && onSelectModule(module.id)}
+      className="glass-panel p-6 flex flex-col h-full transition-colors hover:border-secondary/50 cursor-pointer"
+      onClick={() => onSelectModule(module.id)}
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -62,28 +49,22 @@ const ModuleCard = ({
               WIP
             </span>
           )}
-          {module.comingSoon ? (
-            <span className="px-3 py-1 rounded-full text-xs font-bold border bg-primary/10 text-primary border-primary/20">
-              Coming Soon
-            </span>
-          ) : (
-            <span
-              className={clsx(
-                'px-3 py-1 rounded-full text-xs font-bold border',
-                status === 'completed'
-                  ? 'bg-green-500/10 text-green-400 border-green-500/20'
-                  : status === 'in-progress'
-                    ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                    : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-              )}
-            >
-              {status === 'completed'
-                ? 'Completed'
+          <span
+            className={clsx(
+              'px-3 py-1 rounded-full text-xs font-bold border',
+              status === 'completed'
+                ? 'bg-green-500/10 text-green-400 border-green-500/20'
                 : status === 'in-progress'
-                  ? 'In Progress'
-                  : 'Not Started'}
-            </span>
-          )}
+                  ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                  : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+            )}
+          >
+            {status === 'completed'
+              ? 'Completed'
+              : status === 'in-progress'
+                ? 'In Progress'
+                : 'Not Started'}
+          </span>
         </div>
       </div>
 
@@ -93,19 +74,17 @@ const ModuleCard = ({
         {module.description}
       </p>
 
-      {!module.comingSoon && (
-        <div className="flex items-center justify-between pt-4 border-t border-white/5">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Clock size={14} />
-            {durationDisplay}
-          </div>
-          {status === 'completed' ? (
-            <CheckCircle className="text-green-400" size={20} />
-          ) : (
-            <Circle className="text-muted-foreground" size={20} />
-          )}
+      <div className="flex items-center justify-between pt-4 border-t border-white/5">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Clock size={14} />
+          {durationDisplay}
         </div>
-      )}
+        {status === 'completed' ? (
+          <CheckCircle className="text-green-400" size={20} />
+        ) : (
+          <Circle className="text-muted-foreground" size={20} />
+        )}
+      </div>
     </motion.article>
   )
 }
@@ -241,17 +220,6 @@ export const Dashboard: React.FC = () => {
     },
   ]
 
-  const upcomingModules: ModuleItem[] = [
-    {
-      id: 'vpn',
-      title: 'VPN',
-      description: 'Configure and secure VPN tunnels using WireGuard and OpenVPN protocols.',
-      duration: 'Coming Soon',
-      comingSoon: true,
-      disabled: true,
-    },
-  ]
-
   return (
     <div className="space-y-8">
       {/* Active Modules Section */}
@@ -268,26 +236,6 @@ export const Dashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <AnimatePresence mode="popLayout">
             {activeModules.map((module) => (
-              <ModuleCard key={module.id} module={module} onSelectModule={(id) => navigate(id)} />
-            ))}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* Upcoming Modules Section */}
-      <div>
-        <div className="mb-4 md:mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
-            <Layers className="text-secondary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
-            Upcoming Tracks
-          </h2>
-          <p className="hidden md:block text-muted-foreground">
-            More learning modules coming soon to expand your knowledge.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <AnimatePresence mode="popLayout">
-            {upcomingModules.map((module) => (
               <ModuleCard key={module.id} module={module} onSelectModule={(id) => navigate(id)} />
             ))}
           </AnimatePresence>

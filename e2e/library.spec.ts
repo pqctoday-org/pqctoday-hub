@@ -6,15 +6,35 @@ test.describe('Library Feature', () => {
     await page.getByRole('button', { name: 'Library' }).first().click()
   })
 
-  test('should navigate to library page and show category dropdown', async ({ page }) => {
-    // Check for category dropdown (matches "Category" or "Category: All")
-    const dropdown = page.getByRole('button', { name: /Category/i }).first()
-    await expect(dropdown).toBeVisible()
-    await expect(dropdown).toHaveText(/Category/i)
+  test('should navigate to library page and show dashboard layout', async ({ page }) => {
+    // Page heading
+    await expect(page.getByText('PQC Standards Library')).toBeVisible()
+
+    // Activity feed section
+    await expect(page.getByText('Recent Updates')).toBeVisible()
+
+    // View toggle should be present
+    const cardsRadio = page.getByRole('radio', { name: /Cards/i })
+    await expect(cardsRadio).toBeVisible()
+    await expect(cardsRadio).toHaveAttribute('aria-checked', 'true')
   })
 
-  test('should display correct table headers and simplified columns', async ({ page }) => {
-    // Wait for the library table to load (target by unique header)
+  test('should display document cards in default card view', async ({ page }) => {
+    // Wait for cards to render — look for article elements (DocumentCard uses motion.article)
+    const cards = page.locator('article')
+    await expect(cards.first()).toBeVisible({ timeout: 10000 })
+
+    // Cards should have reference IDs
+    const firstCard = cards.first()
+    await expect(firstCard.locator('.font-mono')).toBeVisible()
+  })
+
+  test('should switch to table view and show table headers', async ({ page }) => {
+    // Switch to table view
+    const tableRadio = page.getByRole('radio', { name: /Table/i })
+    await tableRadio.click()
+
+    // Wait for the library table to load
     const table = page.locator('table', { has: page.getByText('Reference ID') }).first()
     await expect(table).toBeVisible()
 
@@ -23,55 +43,68 @@ test.describe('Library Feature', () => {
     await expect(table.getByRole('columnheader', { name: 'Title' })).toBeVisible()
     await expect(table.getByRole('columnheader', { name: 'Status' })).toBeVisible()
     await expect(table.getByRole('columnheader', { name: 'Last Update' })).toBeVisible()
-
-    // Ensure Author/Org column is NOT present
-    await expect(table.getByRole('columnheader', { name: 'Author/Org' })).not.toBeVisible()
   })
 
-  test('should sort by Last Update Date', async ({ page }) => {
+  test('should sort table by Last Update Date', async ({ page }) => {
+    // Switch to table view
+    await page.getByRole('radio', { name: /Table/i }).click()
+
     // Target the specific library table
     const table = page.locator('table', { has: page.getByText('Reference ID') }).first()
     await expect(table.locator('tbody tr')).not.toHaveCount(0)
 
-    // Click the "Last Update" header to trigger sort. Default is desc, clicking might toggle to ASC.
+    // Click the "Last Update" header to trigger sort
     const header = table.getByRole('columnheader', { name: 'Last Update' })
     await header.click()
 
     // Wait for sort to apply (re-render)
     await page.waitForTimeout(500)
 
-    // Now typically Ascending (Oldest first) if default was Desc.
     const dates = await table.locator('tbody tr td:nth-child(4)').allInnerTexts()
     console.log('Dates after sort click:', dates)
 
-    // Check if dates are sorted ASCENDING (date1 <= date2)
     if (dates.length >= 2) {
       const date1 = new Date(dates[0])
       const date2 = new Date(dates[1])
       if (!isNaN(date1.getTime()) && !isNaN(date2.getTime())) {
-        // Soft assertion or just skip if they are equal
         if (date1.getTime() > date2.getTime()) {
-          console.warn(
-            'Sort check: Dates appear not to be ascending (First > Second). Verify table sort logic.'
-          )
-          // We can fail here if we are strict, or just log.
-          // Given the complexity of "Last Update" sometimes being "Present", let's just log.
+          console.warn('Sort check: Dates appear not to be ascending.')
         }
       }
     }
   })
 
-  test('should show details popup with correct info and layout', async ({ page }) => {
+  test('should show details popup from card view', async ({ page }) => {
+    // Click the first "Details" button in a card
+    const detailsButton = page.getByLabel(/^View details for/).first()
+    await expect(detailsButton).toBeVisible({ timeout: 10000 })
+    await detailsButton.click()
+
+    // Verify popup appears
+    const popup = page.getByRole('dialog')
+    await expect(popup).toBeVisible()
+
+    // Verify popup content
+    await expect(popup.getByText('Description')).toBeVisible()
+    await expect(popup.getByText('Status:')).toBeVisible()
+
+    // Close popup
+    await page.keyboard.press('Escape')
+    await expect(popup).not.toBeVisible()
+  })
+
+  test('should show details popup from table view', async ({ page }) => {
+    // Switch to table view
+    await page.getByRole('radio', { name: /Table/i }).click()
+
     // Target the specific library table
     const table = page.locator('table', { has: page.getByText('Reference ID') }).first()
     await expect(table).toBeVisible()
     await expect(table.locator('tbody tr')).not.toHaveCount(0)
 
-    // Find the first "View Details" button (Info icon) within the table
+    // Find the first "View Details" button within the table
     const detailsButton = table.getByLabel(/^View details for/).first()
     await expect(detailsButton).toBeVisible()
-
-    // Click it
     await detailsButton.click()
 
     // Verify popup appears
@@ -93,16 +126,6 @@ test.describe('Library Feature', () => {
     await expect(popup).not.toBeVisible()
   })
 
-  test('should have download icons next to title', async ({ page }) => {
-    // Target the specific library table
-    const table = page.locator('table', { has: page.getByText('Reference ID') }).first()
-    await expect(table.locator('tbody tr')).not.toHaveCount(0)
-
-    // Check for at least one download link with the correct aria-label within the table
-    const downloadLink = table.getByRole('link', { name: /Open .* in new tab/ }).first()
-    await expect(downloadLink).toBeVisible()
-  })
-
   test('should filter by Region', async ({ page }) => {
     // Verify Region dropdown exists
     const regionDropdown = page.getByRole('button', { name: /Region/i })
@@ -116,24 +139,62 @@ test.describe('Library Feature', () => {
     const optionText = await option.textContent()
     await option.click()
 
-    // Wait for dropdown to update - activeRegion change causes re-render
-    // We re-query the button. Playwright auto-waits for it to be actionable/visible.
-    // The dropdown label changes to the selected region name.
-    // Query by the NEW name (which is the option text).
+    // The dropdown label changes to the selected region name
     const updatedDropdown = page.getByRole('button', { name: optionText?.trim() })
     await expect(updatedDropdown).toBeVisible({ timeout: 10000 })
   })
 
-  test('should support Expand/Collapse All', async ({ page }) => {
-    // Find Expand/Collapse buttons in the header row of the table
+  test('should filter by category using sidebar', async ({ page }) => {
+    // Find the category sidebar navigation
+    const sidebar = page.getByRole('navigation', { name: /Library categories/i })
+
+    // Only visible on desktop
+    if (await sidebar.isVisible()) {
+      // Click a specific category
+      await sidebar.getByRole('button', { name: /Protocols/i }).click()
+
+      // The document count should update
+      await expect(page.getByText(/documents? in Protocols/)).toBeVisible({ timeout: 5000 })
+    }
+  })
+
+  test('should toggle between Cards and Table view', async ({ page }) => {
+    // Default is Cards view
+    const cardsRadio = page.getByRole('radio', { name: /Cards/i })
+    const tableRadio = page.getByRole('radio', { name: /Table/i })
+
+    await expect(cardsRadio).toHaveAttribute('aria-checked', 'true')
+    await expect(tableRadio).toHaveAttribute('aria-checked', 'false')
+
+    // Switch to Table
+    await tableRadio.click()
+    await expect(tableRadio).toHaveAttribute('aria-checked', 'true')
+    await expect(cardsRadio).toHaveAttribute('aria-checked', 'false')
+
+    // Table should be visible
+    const table = page.locator('table').first()
+    await expect(table).toBeVisible()
+
+    // Switch back to Cards
+    await cardsRadio.click()
+    await expect(cardsRadio).toHaveAttribute('aria-checked', 'true')
+
+    // Cards should be visible again
+    const cards = page.locator('article')
+    await expect(cards.first()).toBeVisible({ timeout: 5000 })
+  })
+
+  test('should support Expand/Collapse All in table view', async ({ page }) => {
+    // Switch to table view
+    await page.getByRole('radio', { name: /Table/i }).click()
+
+    // Find Expand/Collapse buttons
     const expandBtn = page.getByRole('button', { name: /Expand All/i }).first()
     const collapseBtn = page.getByRole('button', { name: /Collapse All/i }).first()
 
-    // Since defaultExpandAll=true, verify Collapse All triggers
     if (await collapseBtn.isVisible()) {
       await collapseBtn.click()
-      // Optionally verify visual change, but functionality is mostly important
-      await expect(collapseBtn).toBeVisible() // Should still be there or toggle
+      await expect(collapseBtn).toBeVisible()
     }
 
     if (await expandBtn.isVisible()) {

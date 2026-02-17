@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8.7] - 2026-02-16
+
+### Added
+
+- **Library Module Redesign**:
+  - New card grid view with `DocumentCard` and `DocumentCardGrid` components
+  - `CategorySidebar` for quick category navigation with update indicators
+  - `ActivityFeed` showing recent new and updated standards
+  - `ViewToggle` to switch between card grid and tree table views
+  - `SortControl` with options: Newest, Oldest, Name A-Z, Name Z-A, Urgency
+  - Detail popover integration in card view
+
+### Changed
+
+- **Library Module**:
+  - Refactored monolithic `LibraryView` into modular sub-components
+  - Improved category filtering with sidebar navigation
+  - Enhanced sorting with urgency-based ordering
+
+- **Learn Dashboard**:
+  - Simplified module card system — removed unused `disabled` and `comingSoon` properties
+  - Cleaner duration display logic
+
+- **Build System**:
+  - Added `predev` script to copy liboqs WASM files before dev server starts
+  - Updated build script to include liboqs dist copy step
+
+- **liboqs DSA Integration**:
+  - Updated WASM wrapper for improved compatibility
+
+### Fixed
+
+- **Algorithm Deprecation Dates**:
+  - Corrected deprecation timelines per NIST IR 8547 and SP 800-131A Rev 3
+  - Only 112-bit security algorithms (RSA-2048) deprecated in 2030; 128-bit+ algorithms (RSA-3072, P-256, P-384, etc.) correctly show 2035 (Disallowed) only
+  - P-256 reclassified from 112-bit to 128-bit security tier
+  - Updated sorting logic and color coding to distinguish deprecated (amber) from disallowed (red)
+
 ## [1.8.6] - 2026-02-14
 
 ### Added
