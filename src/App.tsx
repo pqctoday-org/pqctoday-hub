@@ -64,7 +64,9 @@ const LandingView = lazy(() =>
     default: module.LandingView,
   }))
 )
-const AssessView = lazy(() => import('./components/Assess/AssessView'))
+const AssessView = lazy(() =>
+  import('./components/Assess/AssessView').then((module) => ({ default: module.AssessView }))
+)
 
 // Helper component to log page views on route change
 function AnalyticsTracker() {
@@ -129,7 +131,14 @@ function App() {
             <Route path="/changelog" element={<ChangelogView />} />
             <Route path="/migrate" element={<MigrateView />} />
             <Route path="/about" element={<AboutView />} />
-            <Route path="/assess" element={<AssessView />} />
+            <Route
+              path="/assess"
+              element={
+                <ErrorBoundary>
+                  <AssessView />
+                </ErrorBoundary>
+              }
+            />
             {/* Fallback route */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

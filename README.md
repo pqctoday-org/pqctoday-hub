@@ -48,7 +48,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations
     - **Score Tracking**: Per-category highest scores persisted across sessions
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
-  - **Verified Database**: 76+ verified PQC-ready software entries (OS, Libraries, Network, etc.)
+  - **Verified Database**: 140+ verified PQC-ready software entries (OS, Libraries, Network, etc.)
   - **7-Step Migration Workflow**: Assess, Plan, Pilot, Implement, Test, Optimize, Measure
   - **Framework Mappings**: NIST, ETSI, and CISA guideline alignment
   - **Gap Analysis**: Software category coverage assessment with priority matrix
@@ -173,13 +173,17 @@ npm run test:e2e
 
 The application is structured into several key components:
 
-- **`src/components/Algorithms/InteractivePlayground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
+- **`src/components/Playground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
 - **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
 - **`src/components/PKILearning`**: Educational platform with 7 modules (PKI Workshop, Digital Assets, 5G Security, EUDI Wallet, TLS 1.3 Basics, PQC 101 Introduction, PQC Quiz).
 - **`src/components/Assess`**: 12-step risk assessment wizard with compound scoring engine and HNDL risk analysis.
+- **`src/components/Migrate`**: Comprehensive PQC migration planning module with verified software database and workflow guidance.
 - **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.
 - **`src/components/common/GuidedTour.tsx`**: Interactive first-visit onboarding tour.
+- **`src/services/crypto/OpenSSLService.ts`**: Primary cryptographic service wrapping OpenSSL WASM operations.
+- **`src/store`**: Zustand state stores for theme, learning progress, assessment wizard, TLS simulation, and version tracking (all persisted to localStorage).
+- **`src/data`**: Static data layer — TypeScript data files, versioned CSV files (timelines, leaders, library, software references), X.509 certificate profiles, and ACVP test vectors.
 - **`src/utils`**: Utility functions for data conversion and common operations.
 
 ## Project Structure
@@ -188,9 +192,11 @@ The application is structured into several key components:
 ├── docs/                # Documentation and audit reports
 ├── e2e/                 # Playwright end-to-end tests
 ├── public/              # Static assets served at root
-│   ├── data/            # JSON data files
+│   ├── data/            # Scraped compliance JSON (compliance-data.json)
+│   ├── dist/            # liboqs WASM binaries (copied at build time)
 │   ├── flags/           # Country flag icons
-│   └── wasm/            # WebAssembly binaries
+│   ├── lms-sample/      # LMS/HSS sample files
+│   └── wasm/            # LMS and OpenSSL WASM binaries
 ├── requirements/        # Requirements specifications
 ├── scripts/             # Compliance data scrapers (NIST, ANSSI, Common Criteria)
 ├── src/
@@ -199,15 +205,19 @@ The application is structured into several key components:
 │   │   ├── ACVP/            # Automated Cryptographic Validation Protocol testing
 │   │   ├── Algorithms/      # Algorithm comparison table
 │   │   ├── Assess/          # 12-step PQC risk assessment with compound scoring
+│   │   ├── Changelog/       # Changelog view
 │   │   ├── Compliance/      # Compliance tracking and visualization
 │   │   ├── ErrorBoundary.tsx # Global error boundary component
+│   │   ├── Executive/       # Executive summary components
+│   │   ├── Landing/         # Landing/home page
 │   │   ├── Leaders/         # PQC transformation leaders profiles
 │   │   ├── Layout/          # Main layout and navigation components
 │   │   ├── Library/         # PQC standards library
-│   │   ├── OpenSSL Studio/   # OpenSSL v3.6.0 workbench (WASM)
+│   │   ├── Migrate/         # PQC migration planning with verified software database
+│   │   ├── OpenSSLStudio/   # OpenSSL v3.6.0 workbench (WASM)
 │   │   ├── PKILearning/     # Learning platform with 7 modules
 │   │   │   ├── modules/
-│   │   │   │   ├── Module1-Introduction/  # Getting started guide
+│   │   │   │   ├── Introduction/         # PQC 101 Introduction module
 │   │   │   │   ├── PKIWorkshop/          # 4-step PKI lifecycle
 │   │   │   │   ├── DigitalAssets/        # Bitcoin, Ethereum, Solana, HD Wallet
 │   │   │   │   ├── FiveG/                # SUCI + 5G-AKA flows
@@ -221,16 +231,17 @@ The application is structured into several key components:
 │   │   ├── common/          # Shared components and utilities
 │   │   └── ui/              # Reusable UI components (Button, Card, etc.)
 │   ├── data/                # Static data (timelines, test vectors, profiles)
-│   │   └── x509_profiles/   # CSV-based certificate profiles
+│   │   ├── acvp/            # NIST ACVP test vectors (ML-KEM, ML-DSA)
+│   │   └── x509_profiles/   # CSV-based certificate profiles (3GPP, CAB Forum, ETSI)
 │   ├── hooks/               # Custom React hooks
 │   ├── lib/                 # Utility libraries and helpers
 │   ├── services/            # OpenSSL service and WASM integration
-│   ├── store/               # Zustand state management stores
+│   ├── store/               # Zustand state management stores (5 persisted stores)
 │   ├── styles/              # Global CSS and design system
 │   ├── test/                # Test setup and utilities
 │   ├── types/               # Module-specific type definitions
 │   ├── utils/               # Helper functions
-│   ├── wasm/                # WebAssembly cryptography wrappers (liboqs, mlkem)
+│   ├── wasm/                # WebAssembly cryptography wrappers (liboqs, mlkem, LMS)
 │   └── types.ts             # Global TypeScript definitions
 ```
 
