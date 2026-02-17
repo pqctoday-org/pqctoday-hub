@@ -10,9 +10,19 @@ import {
   Link2,
   ArrowRight,
   BarChart3,
+  Activity,
 } from 'lucide-react'
 import { useExecutiveData } from '../../hooks/useExecutiveData'
+import { useComplianceRefresh } from '../Compliance/services'
+import { useAssessmentStore } from '../../store/useAssessmentStore'
 import clsx from 'clsx'
+
+const RISK_LEVEL_STYLES: Record<string, string> = {
+  critical: 'text-destructive bg-destructive/10 border-destructive/20',
+  high: 'text-warning bg-warning/10 border-warning/20',
+  medium: 'text-status-info bg-status-info',
+  low: 'text-success bg-success/10 border-success/20',
+}
 
 // KPI Card Component
 const KPICard = ({
@@ -33,10 +43,10 @@ const KPICard = ({
   delay: number
 }) => {
   const colorMap = {
-    red: 'text-red-400 bg-red-500/10 border-red-500/20',
-    amber: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
-    green: 'text-green-400 bg-green-500/10 border-green-500/20',
-    blue: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+    red: 'text-destructive bg-destructive/10 border-destructive/20',
+    amber: 'text-warning bg-warning/10 border-warning/20',
+    green: 'text-success bg-success/10 border-success/20',
+    blue: 'text-status-info bg-status-info',
   }
 
   return (
@@ -65,7 +75,9 @@ const KPICard = ({
 }
 
 export const ExecutiveView: React.FC = () => {
-  const metrics = useExecutiveData()
+  const { data: complianceData } = useComplianceRefresh()
+  const lastResult = useAssessmentStore((s) => s.lastResult)
+  const metrics = useExecutiveData(complianceData, lastResult)
 
   const handlePrint = () => window.print()
 
@@ -102,6 +114,72 @@ export const ExecutiveView: React.FC = () => {
         </p>
       </motion.div>
 
+      {/* Org Risk Score — shown when assessment is completed */}
+      {metrics.orgRiskScore !== null && metrics.orgRiskLevel && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="glass-panel p-6 mb-8 print:border print:border-gray-300 print:mb-4"
+        >
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-4">
+              <div
+                className={clsx('p-3 rounded-full border', RISK_LEVEL_STYLES[metrics.orgRiskLevel])}
+              >
+                <Activity size={24} />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-foreground">Your Organization</h2>
+                <p className="text-sm text-muted-foreground">
+                  Based on your PQC Readiness Assessment
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-foreground">{metrics.orgRiskScore}</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider">
+                  Risk Score
+                </div>
+              </div>
+              <div
+                className={clsx(
+                  'px-3 py-1 rounded-full text-sm font-medium border capitalize',
+                  RISK_LEVEL_STYLES[metrics.orgRiskLevel]
+                )}
+              >
+                {metrics.orgRiskLevel}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Assessment CTA — shown when no assessment exists */}
+      {metrics.orgRiskScore === null && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="mb-8 print:hidden"
+        >
+          <Link
+            to="/assess"
+            className="glass-panel p-4 flex items-center justify-between hover:border-primary/30 transition-colors block"
+          >
+            <div className="flex items-center gap-3">
+              <Activity className="text-primary" size={20} />
+              <span className="text-sm text-muted-foreground">
+                Take the PQC Readiness Assessment to get personalized risk scores and
+                recommendations
+              </span>
+            </div>
+            <ArrowRight className="text-primary" size={16} />
+          </Link>
+        </motion.div>
+      )}
+
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 print:gap-2 print:mb-4">
         <KPICard
@@ -133,7 +211,7 @@ export const ExecutiveView: React.FC = () => {
         <KPICard
           icon={ShieldCheck}
           label="Active Standards"
-          value={3}
+          value={metrics.activeStandards}
           color="blue"
           link="/compliance"
           delay={0.25}
@@ -145,10 +223,10 @@ export const ExecutiveView: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="glass-panel p-6 mb-8 border-l-4 border-l-amber-500 print:border print:border-gray-300 print:mb-4"
+        className="glass-panel p-6 mb-8 border-l-4 border-l-warning print:border print:border-gray-300 print:mb-4"
       >
         <h2 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
-          <AlertTriangle className="text-amber-400" size={20} />
+          <AlertTriangle className="text-warning" size={20} />
           Risk Summary
         </h2>
         <p className="text-sm text-muted-foreground leading-relaxed print:text-gray-600">
@@ -163,7 +241,9 @@ export const ExecutiveView: React.FC = () => {
         transition={{ delay: 0.4 }}
         className="glass-panel p-6 mb-8 print:border print:border-gray-300 print:mb-4"
       >
-        <h2 className="text-lg font-bold text-foreground mb-4">Top Priority Actions</h2>
+        <h2 className="text-lg font-bold text-foreground mb-4">
+          {lastResult ? 'Recommended Actions' : 'Top Priority Actions'}
+        </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -185,9 +265,9 @@ export const ExecutiveView: React.FC = () => {
                       className={clsx(
                         'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold',
                         action.priority <= 2
-                          ? 'bg-red-500/10 text-red-400'
+                          ? 'bg-destructive/10 text-destructive'
                           : action.priority <= 4
-                            ? 'bg-amber-500/10 text-amber-400'
+                            ? 'bg-warning/10 text-warning'
                             : 'bg-muted text-muted-foreground'
                       )}
                     >

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import { LibraryView } from './LibraryView'
 import '@testing-library/jest-dom'
 
@@ -211,7 +211,9 @@ describe('LibraryView', () => {
       const searchInput = screen.getByPlaceholderText('Search standards...')
 
       fireEvent.change(searchInput, { target: { value: 'NIST' } })
-      await vi.advanceTimersByTimeAsync(250)
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(250)
+      })
 
       // Should show 1 document matching
       expect(screen.getByText(/1 document(?!s)/)).toBeInTheDocument()
@@ -224,7 +226,9 @@ describe('LibraryView', () => {
       const searchInput = screen.getByPlaceholderText('Search standards...')
 
       fireEvent.change(searchInput, { target: { value: 'XYZ123' } })
-      await vi.advanceTimersByTimeAsync(250)
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(250)
+      })
 
       expect(screen.getByText(/No documents found matching your filters/)).toBeInTheDocument()
       vi.useRealTimers()
