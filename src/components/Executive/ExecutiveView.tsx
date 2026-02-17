@@ -162,21 +162,27 @@ export const ExecutiveView: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="mb-8 print:hidden"
+          className="glass-panel p-6 mb-8 border-l-4 border-l-primary print:hidden"
         >
-          <Link
-            to="/assess"
-            className="glass-panel p-4 flex items-center justify-between hover:border-primary/30 transition-colors block"
-          >
-            <div className="flex items-center gap-3">
-              <Activity className="text-primary" size={20} />
-              <span className="text-sm text-muted-foreground">
-                Take the PQC Readiness Assessment to get personalized risk scores and
-                recommendations
-              </span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="p-3 rounded-full bg-primary/10 self-start sm:self-auto shrink-0">
+              <Activity className="text-primary" size={24} />
             </div>
-            <ArrowRight className="text-primary" size={16} />
-          </Link>
+            <div className="flex-1">
+              <h2 className="text-base font-bold text-foreground mb-1">No assessment on file</h2>
+              <p className="text-sm text-muted-foreground">
+                The data below reflects industry-wide baselines. Complete the 5-minute PQC Readiness
+                Assessment to replace these with metrics specific to your organization.
+              </p>
+            </div>
+            <Link
+              to="/assess"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary text-sm font-medium hover:bg-primary/20 transition-colors shrink-0"
+            >
+              Start Assessment
+              <ArrowRight size={14} />
+            </Link>
+          </div>
         </motion.div>
       )}
 

@@ -133,7 +133,8 @@ describe('ExecutiveView', () => {
   it('shows assessment CTA when no assessment exists', () => {
     renderView()
 
-    expect(screen.getByText(/Take the PQC Readiness Assessment/)).toBeInTheDocument()
+    expect(screen.getByText('No assessment on file')).toBeInTheDocument()
+    expect(screen.getByText('Start Assessment')).toBeInTheDocument()
   })
 
   it('shows org risk section when assessment result exists', () => {
