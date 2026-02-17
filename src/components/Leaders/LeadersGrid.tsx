@@ -7,6 +7,8 @@ import { FilterDropdown } from '../common/FilterDropdown'
 import { CountryFlag } from '../common/CountryFlag'
 import { LeaderCard } from './LeaderCard'
 import { SourcesButton } from '../ui/SourcesButton'
+import { ShareButton } from '../ui/ShareButton'
+import { GlossaryButton } from '../ui/GlossaryButton'
 
 export const LeadersGrid = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>('All')
@@ -120,6 +122,11 @@ export const LeadersGrid = () => {
               {leadersMetadata.lastUpdate.toLocaleDateString()}
             </p>
             <SourcesButton viewType="Leaders" />
+            <ShareButton
+              title="PQC Industry Leaders — Organizations Driving Post-Quantum Adoption"
+              text="Meet the visionaries and organizations driving the global transition to post-quantum cryptography."
+            />
+            <GlossaryButton />
           </div>
         )}
 

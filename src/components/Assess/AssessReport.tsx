@@ -5,44 +5,73 @@ import {
   Printer,
   Share2,
   RotateCcw,
+  Download,
+  Pencil,
   AlertTriangle,
   CheckCircle,
   ArrowRight,
   ShieldAlert,
+  BarChart3,
+  Clock,
+  Briefcase,
 } from 'lucide-react'
-import type { AssessmentResult } from '../../hooks/useAssessmentEngine'
+import type {
+  AssessmentResult,
+  CategoryScores,
+  HNDLRiskWindow,
+} from '../../hooks/useAssessmentEngine'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import clsx from 'clsx'
 
 const riskConfig = {
   low: {
-    color: 'text-green-400',
-    bg: 'bg-green-500/10',
-    border: 'border-green-500',
+    color: 'text-success',
+    bg: 'bg-success/10',
+    border: 'border-success',
     label: 'Low Risk',
     emoji: '🟢',
   },
   medium: {
-    color: 'text-amber-400',
-    bg: 'bg-amber-500/10',
-    border: 'border-amber-500',
+    color: 'text-warning',
+    bg: 'bg-warning/10',
+    border: 'border-warning',
     label: 'Medium Risk',
     emoji: '🟡',
   },
   high: {
-    color: 'text-red-400',
-    bg: 'bg-red-500/10',
-    border: 'border-red-500',
+    color: 'text-destructive',
+    bg: 'bg-destructive/10',
+    border: 'border-destructive',
     label: 'High Risk',
     emoji: '🔴',
   },
   critical: {
-    color: 'text-red-300',
-    bg: 'bg-red-500/20',
-    border: 'border-red-500',
+    color: 'text-destructive',
+    bg: 'bg-destructive/20',
+    border: 'border-destructive',
     label: 'Critical Risk',
     emoji: '⚫',
   },
+}
+
+const effortConfig = {
+  low: { color: 'text-success', bg: 'bg-success/10', label: 'Low' },
+  medium: { color: 'text-primary', bg: 'bg-primary/10', label: 'Medium' },
+  high: { color: 'text-warning', bg: 'bg-warning/10', label: 'High' },
+}
+
+const complexityConfig = {
+  low: { color: 'text-success', bg: 'bg-success/10', label: 'Low' },
+  medium: { color: 'text-primary', bg: 'bg-primary/10', label: 'Medium' },
+  high: { color: 'text-warning', bg: 'bg-warning/10', label: 'High' },
+  critical: { color: 'text-destructive', bg: 'bg-destructive/10', label: 'Critical' },
+}
+
+const scopeConfig = {
+  'quick-win': { color: 'text-success', bg: 'bg-success/10', label: 'Quick Win' },
+  moderate: { color: 'text-primary', bg: 'bg-primary/10', label: 'Moderate' },
+  'major-project': { color: 'text-warning', bg: 'bg-warning/10', label: 'Major Project' },
+  'multi-year': { color: 'text-destructive', bg: 'bg-destructive/10', label: 'Multi-Year' },
 }
 
 const RiskGauge = ({ score, level }: { score: number; level: AssessmentResult['riskLevel'] }) => {
@@ -52,7 +81,13 @@ const RiskGauge = ({ score, level }: { score: number; level: AssessmentResult['r
 
   return (
     <div className="flex flex-col items-center">
-      <svg viewBox="0 0 200 120" className="w-48 h-28">
+      <svg
+        viewBox="0 0 200 120"
+        className="w-48 h-28"
+        role="img"
+        aria-label={`Risk score: ${score} out of 100, rated ${config.label}`}
+      >
+        <title>{`Risk gauge showing score of ${score}/100`}</title>
         {/* Background arc */}
         <path
           d="M 20 100 A 80 80 0 0 1 180 100"
@@ -104,19 +139,211 @@ const RiskGauge = ({ score, level }: { score: number; level: AssessmentResult['r
   )
 }
 
+const CategoryBreakdown = ({ scores }: { scores: CategoryScores }) => {
+  const categories = [
+    { label: 'Quantum Exposure', key: 'quantumExposure' as const },
+    { label: 'Migration Complexity', key: 'migrationComplexity' as const },
+    { label: 'Regulatory Pressure', key: 'regulatoryPressure' as const },
+    { label: 'Organizational Readiness', key: 'organizationalReadiness' as const },
+  ]
+
+  const getBarColor = (score: number) => {
+    if (score <= 30) return 'bg-success'
+    if (score <= 60) return 'bg-warning'
+    return 'bg-destructive'
+  }
+
+  const getScoreColor = (score: number) => {
+    if (score <= 30) return 'text-success'
+    if (score <= 60) return 'text-warning'
+    return 'text-destructive'
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.15 }}
+      className="glass-panel p-6 print:border print:border-gray-300"
+    >
+      <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+        <BarChart3 className="text-primary" size={20} />
+        Risk Breakdown
+      </h3>
+      <div className="space-y-4">
+        {categories.map(({ label, key }) => {
+          // eslint-disable-next-line security/detect-object-injection
+          const score = scores[key]
+          return (
+            <div key={key}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm text-muted-foreground">{label}</span>
+                <span className={clsx('text-sm font-bold', getScoreColor(score))}>{score}/100</span>
+              </div>
+              <div className="w-full h-2.5 rounded-full bg-border overflow-hidden">
+                <div
+                  className={clsx(
+                    'h-full rounded-full transition-all duration-500',
+                    getBarColor(score)
+                  )}
+                  style={{ width: `${score}%` }}
+                  role="progressbar"
+                  aria-valuenow={score}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`${label}: ${score} out of 100`}
+                />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </motion.div>
+  )
+}
+
+const HNDLTimeline = ({ hndl }: { hndl: HNDLRiskWindow }) => {
+  const totalSpan = Math.max(
+    hndl.dataRetentionYears + 5,
+    hndl.estimatedQuantumThreatYear - hndl.currentYear + 10
+  )
+  const threatOffset = ((hndl.estimatedQuantumThreatYear - hndl.currentYear) / totalSpan) * 100
+  const dataEndOffset = (hndl.dataRetentionYears / totalSpan) * 100
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2 }}
+      className="glass-panel p-6 print:border print:border-gray-300"
+    >
+      <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+        <Clock className="text-primary" size={20} />
+        HNDL Risk Window
+      </h3>
+
+      <div
+        className="relative h-12 mb-6"
+        role="img"
+        aria-label={
+          hndl.isAtRisk
+            ? `Your data persists ${hndl.riskWindowYears} years beyond the quantum threat horizon. HNDL attacks are an active concern.`
+            : 'Your data retention period does not extend beyond the estimated quantum threat year.'
+        }
+      >
+        {/* Base timeline bar */}
+        <div className="absolute top-5 left-0 right-0 h-2 rounded-full bg-border" />
+
+        {/* Safe zone (green) */}
+        <div
+          className="absolute top-5 left-0 h-2 rounded-l-full bg-success/40"
+          style={{ width: `${Math.min(threatOffset, 100)}%` }}
+        />
+
+        {/* Risk zone (red) — data extends beyond threat */}
+        {hndl.isAtRisk && (
+          <div
+            className="absolute top-5 h-2 rounded-r-full bg-destructive/40"
+            style={{
+              left: `${Math.min(threatOffset, 100)}%`,
+              width: `${Math.min(dataEndOffset - threatOffset, 100 - threatOffset)}%`,
+            }}
+          />
+        )}
+
+        {/* Current year marker */}
+        <div className="absolute top-0 left-0 flex flex-col items-center">
+          <div className="w-0.5 h-4 bg-foreground" />
+          <span className="text-[10px] text-muted-foreground mt-3">{hndl.currentYear}</span>
+        </div>
+
+        {/* Quantum threat marker */}
+        <div
+          className="absolute top-0 flex flex-col items-center"
+          style={{ left: `${Math.min(threatOffset, 95)}%` }}
+        >
+          <div className="w-0.5 h-4 bg-warning" />
+          <span className="text-[10px] text-warning font-bold mt-3">
+            ~{hndl.estimatedQuantumThreatYear}
+          </span>
+        </div>
+
+        {/* Data expiration marker */}
+        <div
+          className="absolute top-0 flex flex-col items-center"
+          style={{ left: `${Math.min(dataEndOffset, 95)}%` }}
+        >
+          <div className={clsx('w-0.5 h-4', hndl.isAtRisk ? 'bg-destructive' : 'bg-success')} />
+          <span
+            className={clsx(
+              'text-[10px] font-bold mt-3',
+              hndl.isAtRisk ? 'text-destructive' : 'text-success'
+            )}
+          >
+            {hndl.currentYear + hndl.dataRetentionYears}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1">
+          <span className="w-3 h-2 rounded-sm bg-success/40" /> Safe zone
+        </span>
+        {hndl.isAtRisk && (
+          <span className="flex items-center gap-1">
+            <span className="w-3 h-2 rounded-sm bg-destructive/40" /> At risk
+          </span>
+        )}
+      </div>
+
+      {hndl.isAtRisk ? (
+        <p className="text-sm text-destructive mt-3 font-medium">
+          Your data persists {hndl.riskWindowYears} year{hndl.riskWindowYears !== 1 ? 's' : ''}{' '}
+          beyond the estimated quantum threat horizon. HNDL attacks are an active concern.
+        </p>
+      ) : (
+        <p className="text-sm text-success mt-3 font-medium">
+          Your data retention period does not extend beyond the estimated quantum threat year.
+        </p>
+      )}
+    </motion.div>
+  )
+}
+
 interface AssessReportProps {
   result: AssessmentResult
 }
 
 export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
-  const { reset } = useAssessmentStore()
+  const { reset, editFromStep } = useAssessmentStore()
 
   const config = riskConfig[result.riskLevel]
 
   const handlePrint = () => window.print()
 
   const handleShare = async () => {
-    const url = window.location.href
+    const input = useAssessmentStore.getState().getInput()
+    const params = new URLSearchParams()
+    if (input) {
+      params.set('i', input.industry)
+      params.set('c', input.currentCrypto.join(','))
+      params.set('d', input.dataSensitivity)
+      if (input.complianceRequirements.length > 0) {
+        params.set('f', input.complianceRequirements.join(','))
+      }
+      params.set('m', input.migrationStatus)
+      // Extended params
+      if (input.cryptoUseCases?.length) params.set('u', input.cryptoUseCases.join(','))
+      if (input.dataRetention) params.set('r', input.dataRetention)
+      if (input.systemCount) params.set('s', input.systemCount)
+      if (input.teamSize) params.set('t', input.teamSize)
+      if (input.cryptoAgility) params.set('a', input.cryptoAgility)
+      if (input.infrastructure?.length) params.set('n', input.infrastructure.join(','))
+      if (input.vendorDependency) params.set('v', input.vendorDependency)
+      if (input.timelinePressure) params.set('p', input.timelinePressure)
+    }
+    const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`
+
     if (navigator.share) {
       try {
         await navigator.share({
@@ -132,6 +359,52 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
     }
   }
 
+  const handleCSVExport = () => {
+    const hasEffort = result.migrationEffort && result.migrationEffort.length > 0
+    const effortMap = new Map(result.migrationEffort?.map((e) => [e.algorithm, e]))
+
+    const headers = hasEffort
+      ? [
+          'Algorithm',
+          'Quantum Vulnerable',
+          'PQC Replacement',
+          'Urgency',
+          'Migration Effort',
+          'Estimated Scope',
+          'Rationale',
+          'Notes',
+        ]
+      : ['Algorithm', 'Quantum Vulnerable', 'PQC Replacement', 'Urgency', 'Notes']
+
+    const rows = result.algorithmMigrations.map((algo) => {
+      const effort = effortMap.get(algo.classical)
+      const baseRow = [
+        algo.classical,
+        algo.quantumVulnerable ? 'Yes' : 'No',
+        algo.replacement,
+        algo.urgency,
+      ]
+      if (hasEffort) {
+        baseRow.push(
+          effort?.complexity ?? 'N/A',
+          effort?.estimatedScope ?? 'N/A',
+          `"${(effort?.rationale ?? '').replace(/"/g, '""')}"`
+        )
+      }
+      baseRow.push(`"${algo.notes.replace(/"/g, '""')}"`)
+      return baseRow
+    })
+
+    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `pqc-risk-assessment-${new Date(result.generatedAt).toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="max-w-3xl mx-auto space-y-6 print:space-y-4">
       {/* Header */}
@@ -145,7 +418,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
         </h2>
         <p className="text-sm text-muted-foreground print:text-gray-600">
           Generated on{' '}
-          {new Date().toLocaleDateString('en-US', {
+          {new Date(result.generatedAt).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -170,12 +443,34 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
         </p>
       </motion.div>
 
+      {/* Category Score Breakdown */}
+      {result.categoryScores && <CategoryBreakdown scores={result.categoryScores} />}
+
+      {/* Executive Summary */}
+      {result.executiveSummary && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18 }}
+          className="glass-panel p-6 border-l-4 border-l-primary print:border print:border-gray-300"
+        >
+          <h3 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
+            <Briefcase className="text-primary" size={20} />
+            Executive Summary
+          </h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">{result.executiveSummary}</p>
+        </motion.div>
+      )}
+
+      {/* HNDL Risk Window */}
+      {result.hndlRiskWindow && <HNDLTimeline hndl={result.hndlRiskWindow} />}
+
       {/* Algorithm Migration Matrix */}
       {result.algorithmMigrations.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.25 }}
           className="glass-panel p-6 print:border print:border-gray-300"
         >
           <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
@@ -189,28 +484,78 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                   <th className="py-2 pr-3 text-muted-foreground font-medium">Current</th>
                   <th className="py-2 pr-3 text-muted-foreground font-medium">Vulnerable?</th>
                   <th className="py-2 pr-3 text-muted-foreground font-medium">PQC Replacement</th>
+                  {result.migrationEffort && (
+                    <>
+                      <th className="py-2 pr-3 text-muted-foreground font-medium">Effort</th>
+                      <th className="py-2 pr-3 text-muted-foreground font-medium">Scope</th>
+                    </>
+                  )}
                   <th className="py-2 text-muted-foreground font-medium">Notes</th>
                 </tr>
               </thead>
               <tbody>
-                {result.algorithmMigrations.map((algo) => (
-                  <tr key={algo.classical} className="border-b border-border/50">
-                    <td className="py-2.5 pr-3 font-medium text-foreground">{algo.classical}</td>
-                    <td className="py-2.5 pr-3">
-                      {algo.quantumVulnerable ? (
-                        <span className="flex items-center gap-1 text-destructive">
-                          <AlertTriangle size={14} /> Yes
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1 text-green-400">
-                          <CheckCircle size={14} /> No
-                        </span>
+                {result.algorithmMigrations.map((algo) => {
+                  const effort = result.migrationEffort?.find((e) => e.algorithm === algo.classical)
+                  return (
+                    <tr key={algo.classical} className="border-b border-border/50">
+                      <td className="py-2.5 pr-3 font-medium text-foreground">{algo.classical}</td>
+                      <td className="py-2.5 pr-3">
+                        {algo.quantumVulnerable ? (
+                          <span className="flex items-center gap-1 text-destructive">
+                            <AlertTriangle size={14} /> Yes
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-success">
+                            <CheckCircle size={14} /> No
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-2.5 pr-3 text-primary">{algo.replacement}</td>
+                      {result.migrationEffort && (
+                        <>
+                          <td className="py-2.5 pr-3">
+                            {effort ? (
+                              <span
+                                className={clsx(
+                                  'text-xs font-bold px-2 py-0.5 rounded-full',
+
+                                  complexityConfig[effort.complexity]?.bg ?? 'bg-muted',
+
+                                  complexityConfig[effort.complexity]?.color ??
+                                    'text-muted-foreground'
+                                )}
+                              >
+                                {effort.complexity}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td className="py-2.5 pr-3">
+                            {effort ? (
+                              <span
+                                className={clsx(
+                                  'text-xs font-bold px-2 py-0.5 rounded-full',
+
+                                  scopeConfig[effort.estimatedScope]?.bg ?? 'bg-muted',
+
+                                  scopeConfig[effort.estimatedScope]?.color ??
+                                    'text-muted-foreground'
+                                )}
+                              >
+                                {}
+                                {scopeConfig[effort.estimatedScope]?.label ?? effort.estimatedScope}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
+                            )}
+                          </td>
+                        </>
                       )}
-                    </td>
-                    <td className="py-2.5 pr-3 text-primary">{algo.replacement}</td>
-                    <td className="py-2.5 text-muted-foreground text-xs">{algo.notes}</td>
-                  </tr>
-                ))}
+                      <td className="py-2.5 text-muted-foreground text-xs">{algo.notes}</td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
@@ -232,7 +577,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                 key={c.framework}
                 className={clsx(
                   'p-3 rounded-lg border text-sm',
-                  c.requiresPQC ? 'border-amber-500/30 bg-amber-500/5' : 'border-border'
+                  c.requiresPQC ? 'border-warning/30 bg-warning/5' : 'border-border'
                 )}
               >
                 <div className="flex items-center justify-between mb-1">
@@ -241,7 +586,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                     className={clsx(
                       'text-xs font-bold px-2 py-0.5 rounded-full',
                       c.requiresPQC
-                        ? 'bg-amber-500/10 text-amber-400'
+                        ? 'bg-warning/10 text-warning'
                         : 'bg-muted text-muted-foreground'
                     )}
                   >
@@ -278,7 +623,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                   action.category === 'immediate'
                     ? 'border-destructive text-destructive'
                     : action.category === 'short-term'
-                      ? 'border-amber-500 text-amber-400'
+                      ? 'border-warning text-warning'
                       : 'border-border text-muted-foreground'
                 )}
               >
@@ -293,12 +638,26 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                       action.category === 'immediate'
                         ? 'text-destructive'
                         : action.category === 'short-term'
-                          ? 'text-amber-400'
+                          ? 'text-warning'
                           : 'text-muted-foreground'
                     )}
                   >
                     {action.category}
                   </span>
+                  {action.effort && (
+                    <span
+                      className={clsx(
+                        'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded',
+
+                        effortConfig[action.effort]?.bg ?? 'bg-muted',
+
+                        effortConfig[action.effort]?.color ?? 'text-muted-foreground'
+                      )}
+                    >
+                      {}
+                      {effortConfig[action.effort]?.label ?? action.effort} effort
+                    </span>
+                  )}
                   <Link
                     to={action.relatedModule}
                     className="text-xs text-primary hover:underline flex items-center gap-1"
@@ -314,7 +673,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
       </motion.div>
 
       {/* Actions Bar */}
-      <div className="flex items-center justify-center gap-3 print:hidden">
+      <div className="flex flex-wrap items-center justify-center gap-3 print:hidden">
         <button
           onClick={handlePrint}
           className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
@@ -323,11 +682,25 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
           Download PDF
         </button>
         <button
+          onClick={handleCSVExport}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+        >
+          <Download size={16} />
+          Export CSV
+        </button>
+        <button
           onClick={handleShare}
           className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
         >
           <Share2 size={16} />
           Share
+        </button>
+        <button
+          onClick={() => editFromStep(0)}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+        >
+          <Pencil size={16} />
+          Edit Answers
         </button>
         <button
           onClick={reset}

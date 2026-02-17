@@ -2,6 +2,69 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.10.0] - 2026-02-17
+
+### Added
+
+- **PQC Risk Assessment — Comprehensive Upgrade** (`/assess`):
+  - Expanded from 5-step to **12-step wizard** with 7 new dimensions:
+    - Cryptographic use cases (TLS, data-at-rest, digital signatures, key exchange, etc.)
+    - Data retention and HNDL risk window analysis
+    - Organizational scale (system count + team size)
+    - Crypto agility assessment (abstracted, partially-abstracted, hardcoded)
+    - Infrastructure dependencies (Cloud KMS, HSMs, IoT, legacy systems)
+    - Vendor dependency profiling (heavy-vendor, open-source, mixed, in-house)
+    - Timeline pressure and compliance deadlines
+  - **Compound scoring engine** replacing simple additive model:
+    - 4 category sub-scores (Quantum Exposure, Migration Complexity, Regulatory Pressure, Organizational Readiness)
+    - Weighted composite with interaction multipliers (HNDL, compliance urgency, migration difficulty)
+    - Full backward compatibility — old 5-field assessments produce identical scores
+  - **HNDL Risk Window visualization**: SVG timeline showing data retention vs. estimated quantum threat horizon (2035)
+  - **Migration effort estimation**: Per-algorithm complexity rating (quick-win, moderate, major-project, multi-year)
+  - **Executive summary**: One-paragraph C-suite synthesis with risk level, top priorities, and quick-win count
+  - **Category score breakdown**: Horizontal progress bars for each risk dimension
+  - **Enhanced CSV export**: Includes migration effort, estimated scope, and rationale columns
+  - **URL-shareable assessments**: All 12 inputs encoded in URL parameters for team sharing
+  - Responsive step indicator: Compact progress bar on mobile, full step circles on desktop
+
+- **Glossary Expansion**:
+  - 20+ new PQC terms: Diffie-Hellman, FN-DSA, XMSS, X25519, X448, Ed448, and more
+  - Inline `GlossaryButton` component for contextual access from Algorithms, Threats, and other views
+
+- **Algorithm Comparison Overhaul** (`/algorithms`):
+  - New filter controls: Type (All/PQC/Classical), Security Level, and search
+  - Sortable columns across all fields
+  - Performance-optimized with `useMemo`
+
+- **Landing Page Dynamic Counts**:
+  - Stats bar now loads actual data counts (timeline events, standards, software, leaders, algorithms)
+  - New "Risk Assessment" feature card linking to `/assess`
+
+- **Migration Step-to-Software Linking** (`/migrate`):
+  - Clicking a workflow step filters the software database to relevant categories
+  - Step filter banner with category context and clear button
+  - Updated category mappings for steps 2, 4, and 5
+
+- **Software Reference Data**:
+  - 6 new software categories: Operating Systems, Network Operating Systems, Network Security, Hardware Security, Blockchain, Remote Access/VDI
+  - Updated product category assignments (CSC-031 through CSC-036)
+  - Enhanced SLH-DSA variant descriptions with specific use-case guidance
+
+### Changed
+
+- **Color System Standardization**:
+  - Migrated all remaining hardcoded Tailwind colors to semantic tokens across Algorithms, Landing, and data files
+  - `blue-500` → `primary`, `green-500` → `success`, `yellow-500` → `warning`, `red-500` → `destructive`
+
+- **Navigation**:
+  - Reordered nav items with Assess prominently placed
+  - Glossary button moved from global floating overlay to per-view inline placement
+
+- **Test Coverage**:
+  - New test suites: AssessReport (31 tests), AssessWizard (32 tests), useAssessmentEngine (39 tests)
+  - Updated Executive data and Timeline tests for expanded schemas
+  - All 402 unit tests passing
+
 ## [1.9.0] - 2026-02-16
 
 ### Added
@@ -11,12 +74,6 @@ All notable changes to this project will be documented in this file.
   - Algorithm migration recommendations based on assessment results
   - Compliance analysis with actionable remediation steps
   - Printable risk assessment report generation
-
-- **Executive Dashboard** (`/executive`):
-  - KPI dashboard for leadership and decision-makers
-  - Threat metrics, algorithms at risk, migration tools count, compliance status
-  - Priority actions table with severity indicators
-  - Print-to-PDF export for board presentations
 
 - **Enhanced Migration Workflow** (`/migrate`):
   - 7-step structured migration process: Assess, Plan, Pilot, Implement, Test, Optimize, Measure
@@ -60,7 +117,7 @@ All notable changes to this project will be documented in this file.
   - QuotaExceededError handling with user-friendly feedback via `react-hot-toast`
 
 - **Navigation**:
-  - Added Assess and Executive to main navigation bar with ClipboardCheck and BarChart3 icons
+  - Added Assess to main navigation bar with ClipboardCheck icon
 
 ### Fixed
 

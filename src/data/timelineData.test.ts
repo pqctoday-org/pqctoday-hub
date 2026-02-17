@@ -11,6 +11,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Test Agency',
+            fullName: 'Test Agency',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2024,
@@ -20,6 +22,7 @@ describe('transformToGanttData', () => {
                 title: 'Quantum-Safe Discovery',
                 description: 'Initial assessment',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -31,6 +34,7 @@ describe('transformToGanttData', () => {
                 title: 'Algorithm Testing',
                 description: 'Testing algorithms',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -54,6 +58,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'NSA/CNSA',
+            fullName: 'National Security Agency / CNSA',
+            countryCode: 'us',
             events: [
               {
                 startYear: 2025,
@@ -63,6 +69,7 @@ describe('transformToGanttData', () => {
                 title: 'National Security Systems (NSS) Migration',
                 description: 'NSS migration',
                 orgName: 'NSA/CNSA',
+                orgFullName: 'National Security Agency / CNSA',
                 countryName: 'United States (CNSA)',
                 flagCode: 'us',
               },
@@ -74,6 +81,7 @@ describe('transformToGanttData', () => {
                 title: 'Federal Systems Migration',
                 description: 'Federal migration',
                 orgName: 'NSA/CNSA',
+                orgFullName: 'National Security Agency / CNSA',
                 countryName: 'United States (CNSA)',
                 flagCode: 'us',
               },
@@ -99,6 +107,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Test Agency',
+            fullName: 'Test Agency',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2030,
@@ -108,6 +118,7 @@ describe('transformToGanttData', () => {
                 title: 'RSA 2048 Deprecated',
                 description: 'RSA deadline',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -119,6 +130,7 @@ describe('transformToGanttData', () => {
                 title: 'ECC Deprecated',
                 description: 'ECC deadline',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -144,6 +156,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Test Agency',
+            fullName: 'Test Agency',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2024,
@@ -153,6 +167,7 @@ describe('transformToGanttData', () => {
                 title: 'Discovery Phase 1',
                 description: 'First discovery',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -164,6 +179,7 @@ describe('transformToGanttData', () => {
                 title: 'Discovery Phase 2',
                 description: 'Second discovery',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -190,6 +206,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Test Agency',
+            fullName: 'Test Agency',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2024,
@@ -199,6 +217,7 @@ describe('transformToGanttData', () => {
                 title: 'Discovery',
                 description: 'Discovery',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
                 status: 'New',
@@ -211,6 +230,7 @@ describe('transformToGanttData', () => {
                 title: 'Discovery',
                 description: 'Discovery',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
                 status: 'Updated',
@@ -232,6 +252,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Test Agency',
+            fullName: 'Test Agency',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2024,
@@ -241,6 +263,7 @@ describe('transformToGanttData', () => {
                 title: 'Discovery',
                 description: 'Discovery',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
                 status: 'Updated',
@@ -253,6 +276,7 @@ describe('transformToGanttData', () => {
                 title: 'Discovery',
                 description: 'Discovery',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -273,6 +297,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Test Agency',
+            fullName: 'Test Agency',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2024,
@@ -282,6 +308,7 @@ describe('transformToGanttData', () => {
                 title: 'Discovery',
                 description: 'Discovery',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -304,6 +331,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Test Agency',
+            fullName: 'Test Agency',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2024,
@@ -313,6 +342,7 @@ describe('transformToGanttData', () => {
                 title: 'Discovery',
                 description: 'Discovery',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -324,6 +354,7 @@ describe('transformToGanttData', () => {
                 title: 'Discovery',
                 description: 'Discovery',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -345,6 +376,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Test Agency',
+            fullName: 'Test Agency',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2028,
@@ -354,6 +387,7 @@ describe('transformToGanttData', () => {
                 title: 'Testing',
                 description: 'Testing',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -365,6 +399,7 @@ describe('transformToGanttData', () => {
                 title: 'Discovery',
                 description: 'Discovery',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -388,6 +423,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Test Agency',
+            fullName: 'Test Agency',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2030,
@@ -397,6 +434,7 @@ describe('transformToGanttData', () => {
                 title: 'New Regulation',
                 description: 'Regulation',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -417,6 +455,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Test Agency',
+            fullName: 'Test Agency',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2024,
@@ -426,6 +466,7 @@ describe('transformToGanttData', () => {
                 title: 'Discovery',
                 description: 'Discovery',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -437,6 +478,7 @@ describe('transformToGanttData', () => {
                 title: 'Milestone',
                 description: 'Milestone',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -465,6 +507,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Test Agency',
+            fullName: 'Test Agency',
+            countryCode: 'tc',
             events: [],
           },
         ],
@@ -483,6 +527,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Agency 1',
+            fullName: 'Agency 1',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2024,
@@ -492,6 +538,7 @@ describe('transformToGanttData', () => {
                 title: 'Discovery 1',
                 description: 'Discovery 1',
                 orgName: 'Agency 1',
+                orgFullName: 'Agency 1',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -499,6 +546,8 @@ describe('transformToGanttData', () => {
           },
           {
             name: 'Agency 2',
+            fullName: 'Agency 2',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2026,
@@ -508,6 +557,7 @@ describe('transformToGanttData', () => {
                 title: 'Testing 2',
                 description: 'Testing 2',
                 orgName: 'Agency 2',
+                orgFullName: 'Agency 2',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },
@@ -531,6 +581,8 @@ describe('transformToGanttData', () => {
         bodies: [
           {
             name: 'Test Agency',
+            fullName: 'Test Agency',
+            countryCode: 'tc',
             events: [
               {
                 startYear: 2024,
@@ -540,6 +592,7 @@ describe('transformToGanttData', () => {
                 title: 'Long Migration',
                 description: 'Very long migration',
                 orgName: 'Test Agency',
+                orgFullName: 'Test Agency',
                 countryName: 'Test Country',
                 flagCode: 'tc',
               },

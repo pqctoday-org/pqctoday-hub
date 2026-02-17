@@ -8,9 +8,10 @@ import {
   MIGRATION_REFERENCES,
   computeGapAnalysis,
 } from '../../data/migrationWorkflowData'
+import type { MigrationStep } from '../../types/MigrateTypes'
 
 interface MigrationWorkflowProps {
-  onViewSoftware: (categoryIds: string[]) => void
+  onViewSoftware: (step: MigrationStep) => void
 }
 
 export const MigrationWorkflow: React.FC<MigrationWorkflowProps> = ({ onViewSoftware }) => {

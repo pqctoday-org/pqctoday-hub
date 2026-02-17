@@ -2,6 +2,7 @@ import { InteractivePlayground } from './InteractivePlayground'
 import { MobilePlaygroundView } from './MobilePlaygroundView'
 import { FlaskConical } from 'lucide-react'
 import { ShareButton } from '../ui/ShareButton'
+import { GlossaryButton } from '../ui/GlossaryButton'
 
 export const PlaygroundView = () => {
   return (
@@ -27,6 +28,7 @@ export const PlaygroundView = () => {
               title="PQC Playground — Test ML-KEM & ML-DSA in Your Browser"
               text="Run real post-quantum cryptographic operations in your browser — key generation, encapsulation, signing with ML-KEM and ML-DSA via WASM."
             />
+            <GlossaryButton />
           </div>
         </div>
         <InteractivePlayground />

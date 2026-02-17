@@ -18,6 +18,8 @@ import type { SortOption } from './SortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Search, AlertTriangle } from 'lucide-react'
 import { SourcesButton } from '../ui/SourcesButton'
+import { ShareButton } from '../ui/ShareButton'
+import { GlossaryButton } from '../ui/GlossaryButton'
 import debounce from 'lodash/debounce'
 import { logLibrarySearch, logEvent } from '../../utils/analytics'
 
@@ -230,6 +232,11 @@ export const LibraryView: React.FC = () => {
               {libraryMetadata.lastUpdate.toLocaleDateString()}
             </p>
             <SourcesButton viewType="Library" />
+            <ShareButton
+              title="PQC Standards Library — NIST, IETF, ETSI & More"
+              text="Explore post-quantum cryptography standards, drafts, and key documents from NIST, IETF, ETSI, and other organizations."
+            />
+            <GlossaryButton />
           </div>
         )}
       </div>

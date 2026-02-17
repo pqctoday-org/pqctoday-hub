@@ -12,6 +12,7 @@ import { MobileTimelineList } from './MobileTimelineList'
 import { CountryFlag } from '../common/CountryFlag'
 import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
+import { GlossaryButton } from '../ui/GlossaryButton'
 
 export const TimelineView = () => {
   const [selectedCountry, setSelectedCountry] = useState<CountryData | null>(null)
@@ -81,6 +82,7 @@ export const TimelineView = () => {
               title="PQC Migration Timeline — Global Post-Quantum Cryptography Roadmap"
               text="Compare PQC migration timelines across nations — track phases from discovery to full migration."
             />
+            <GlossaryButton />
           </div>
         )}
       </div>

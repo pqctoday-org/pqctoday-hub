@@ -62,7 +62,7 @@ describe('AlgorithmsView', () => {
       render(<AlgorithmsView />)
       // eslint-disable-next-line testing-library/no-node-access
       const transitionTab = screen.getByText('Transition Guide').closest('button')
-      expect(transitionTab).toHaveClass('border-primary')
+      expect(transitionTab).toHaveAttribute('data-state', 'active')
     })
   })
 

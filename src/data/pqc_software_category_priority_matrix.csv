@@ -29,3 +29,9 @@ CSC-013,Tokenization Software,Medium,0,0,0.0,4,4,57.0,2026-Q2,"Finance, Healthca
 CSC-022,Homomorphic Encryption Libraries,Low,0,0,0.0,11,2,57.0,2026-Q2,"Healthcare, Finance, Government"
 CSC-011,Secure Messaging and Communication,High,1,1,100.0,11,2,52.0,2026-Q2,"Defense, Government, Finance, Healthcare"
 CSC-014,SSH Implementation Software,High,2,2,100.0,4,15,48.0,2026-Q2,All industries
+CSC-031,Operating Systems,High,3,3,100.0,18,22,78.0,2026-Q1,All industries
+CSC-032,Network Operating Systems,High,1,1,100.0,14,18,77.0,2026-Q1,"Enterprise, Telecom, Government"
+CSC-033,Network Security Software,High,5,5,100.0,16,16,74.0,2026-Q1,All industries
+CSC-034,Hardware Security and Semiconductors,High,2,2,100.0,12,14,72.0,2026-Q1,"Government, Defense, Finance, IoT"
+CSC-035,Blockchain and Cryptocurrency Software,Medium,2,2,100.0,8,10,62.0,2026-Q1,"Cryptocurrency, DeFi, Web3, Finance"
+CSC-036,Remote Access and VDI Software,High,1,1,100.0,6,12,68.0,2026-Q1,"Enterprise, Finance, Government"

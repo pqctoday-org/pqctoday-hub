@@ -26,6 +26,8 @@ import { logEvent } from '../../utils/analytics'
 import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
 import { SourcesButton } from '../ui/SourcesButton'
+import { ShareButton } from '../ui/ShareButton'
+import { GlossaryButton } from '../ui/GlossaryButton'
 
 type SortField = 'industry' | 'threatId' | 'criticality'
 type SortDirection = 'asc' | 'desc'
@@ -184,6 +186,11 @@ export const ThreatsDashboard: React.FC = () => {
             Updated: {threatsMetadata?.lastUpdate?.toLocaleDateString() || 'Unknown'}
           </p>
           <SourcesButton viewType="Threats" />
+          <ShareButton
+            title="Quantum Threats Dashboard — Industry Risk Analysis"
+            text="Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements."
+          />
+          <GlossaryButton />
         </div>
       </div>
 

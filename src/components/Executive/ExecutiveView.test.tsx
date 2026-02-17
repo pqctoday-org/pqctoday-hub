@@ -72,6 +72,7 @@ vi.mock('localforage', () => ({
 
 const mockAssessmentStore = {
   lastResult: null as unknown,
+  industry: '' as string,
 }
 
 vi.mock('../../store/useAssessmentStore', () => ({
@@ -89,6 +90,7 @@ const renderView = () =>
 describe('ExecutiveView', () => {
   beforeEach(() => {
     mockAssessmentStore.lastResult = null
+    mockAssessmentStore.industry = ''
   })
 
   it('renders the page title', () => {
@@ -141,13 +143,35 @@ describe('ExecutiveView', () => {
     mockAssessmentStore.lastResult = {
       riskScore: 65,
       riskLevel: 'high',
-      algorithmMigrations: [],
+      algorithmMigrations: [
+        {
+          classical: 'RSA-2048',
+          quantumVulnerable: true,
+          replacement: 'ML-KEM-768',
+          urgency: 'immediate',
+          notes: '',
+        },
+        {
+          classical: 'AES-256',
+          quantumVulnerable: false,
+          replacement: 'AES-256',
+          urgency: 'long-term',
+          notes: '',
+        },
+      ],
       complianceImpacts: [],
       recommendedActions: [
-        { priority: 1, action: 'Migrate RSA', category: 'immediate', relatedModule: 'PKI' },
+        {
+          priority: 1,
+          action: 'Migrate RSA',
+          category: 'immediate',
+          relatedModule: '/algorithms',
+        },
       ],
       narrative: 'Custom narrative.',
+      generatedAt: '2026-02-16T00:00:00.000Z',
     }
+    mockAssessmentStore.industry = 'Finance & Banking'
 
     renderView()
 
@@ -155,7 +179,9 @@ describe('ExecutiveView', () => {
     expect(screen.getByText('65')).toBeInTheDocument()
     expect(screen.getByText('high')).toBeInTheDocument()
     expect(screen.getByText('Recommended Actions')).toBeInTheDocument()
-    expect(screen.queryByText(/Take the PQC Readiness Assessment/)).not.toBeInTheDocument()
+    expect(screen.getByText('Update Assessment')).toBeInTheDocument()
+    expect(screen.getByText(/Finance & Banking sector/)).toBeInTheDocument()
+    expect(screen.queryByText('No assessment on file')).not.toBeInTheDocument()
   })
 
   it('renders export buttons', () => {

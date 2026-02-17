@@ -3,7 +3,7 @@ import { threatsData } from '../data/threatsData'
 import { algorithmsData } from '../data/algorithmsData'
 import { softwareData } from '../data/migrateData'
 import type { ComplianceRecord } from '../components/Compliance/types'
-import type { AssessmentResult } from './useAssessmentEngine'
+import type { AssessmentResult, CategoryScores } from './useAssessmentEngine'
 
 export interface PriorityAction {
   priority: number
@@ -24,6 +24,12 @@ export interface ExecutiveMetrics {
   riskNarrative: string
   orgRiskScore: number | null
   orgRiskLevel: AssessmentResult['riskLevel'] | null
+  assessedAt: string | null
+  assessedVulnerableCount: number | null
+  assessedTotalCount: number | null
+  categoryScores: CategoryScores | null
+  hndlAtRisk: boolean | null
+  migrationQuickWins: number | null
 }
 
 export function useExecutiveData(
@@ -72,7 +78,7 @@ export function useExecutiveData(
               : rec.category === 'short-term'
                 ? 'Q2 2026'
                 : 'Ongoing',
-          link: linkMap[rec.category] || '/assess',
+          link: rec.relatedModule || linkMap[rec.category] || '/assess',
         })
       })
     } else {
@@ -125,10 +131,13 @@ export function useExecutiveData(
 
     // Generate narrative
     const industryCount = new Set(threatsData.map((t) => t.industry)).size
-    let riskNarrative = `Your organization faces ${criticalThreats} critical or high-severity quantum threats across ${industryCount} industries. ${algorithmsAtRisk} cryptographic algorithms in common use require migration to post-quantum alternatives before NIST's 2030 deprecation target. ${migrationToolsAvailable} PQC-ready software tools are available to support your transition.`
+    const landscapeContext = `Across the broader landscape, ${criticalThreats} critical or high-severity quantum threats span ${industryCount} industries, and ${algorithmsAtRisk} algorithms in common use require migration to post-quantum alternatives before NIST's 2030 deprecation target. ${migrationToolsAvailable} PQC-ready software tools are available to support your transition.`
 
+    let riskNarrative: string
     if (assessmentResult) {
-      riskNarrative += ` ${assessmentResult.narrative}`
+      riskNarrative = `${assessmentResult.narrative} ${landscapeContext}`
+    } else {
+      riskNarrative = `Your organization faces ${criticalThreats} critical or high-severity quantum threats across ${industryCount} industries. ${algorithmsAtRisk} cryptographic algorithms in common use require migration to post-quantum alternatives before NIST's 2030 deprecation target. ${migrationToolsAvailable} PQC-ready software tools are available to support your transition.`
     }
 
     return {
@@ -142,6 +151,16 @@ export function useExecutiveData(
       riskNarrative,
       orgRiskScore: assessmentResult?.riskScore ?? null,
       orgRiskLevel: assessmentResult?.riskLevel ?? null,
+      assessedAt: assessmentResult?.generatedAt ?? null,
+      assessedVulnerableCount: assessmentResult
+        ? assessmentResult.algorithmMigrations.filter((a) => a.quantumVulnerable).length
+        : null,
+      assessedTotalCount: assessmentResult ? assessmentResult.algorithmMigrations.length : null,
+      categoryScores: assessmentResult?.categoryScores ?? null,
+      hndlAtRisk: assessmentResult?.hndlRiskWindow?.isAtRisk ?? null,
+      migrationQuickWins: assessmentResult?.migrationEffort
+        ? assessmentResult.migrationEffort.filter((m) => m.estimatedScope === 'quick-win').length
+        : null,
     }
   }, [complianceData, assessmentResult])
 }

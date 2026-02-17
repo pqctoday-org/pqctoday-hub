@@ -47,7 +47,7 @@ export const MigrationStepIndicator: React.FC<MigrationStepIndicatorProps> = ({
                       ? {
                           backgroundColor: `hsl(var(--${phaseColor}))`,
                           boxShadow: `0 0 20px hsl(var(--${phaseColor}) / 0.4)`,
-                          ringColor: `hsl(var(--${phaseColor}))`,
+                          outlineColor: `hsl(var(--${phaseColor}))`,
                         }
                       : undefined
                   }

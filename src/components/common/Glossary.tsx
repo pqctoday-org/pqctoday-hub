@@ -60,8 +60,10 @@ const TermCard = ({ term }: { term: GlossaryTerm }) => (
   </div>
 )
 
-export const Glossary: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false)
+export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
+  isOpen,
+  onClose,
+}) => {
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [activeLetter, setActiveLetter] = useState<string | null>(null)
@@ -77,11 +79,11 @@ export const Glossary: React.FC = () => {
   // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsOpen(false)
+      if (e.key === 'Escape') onClose()
     }
     if (isOpen) window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [isOpen])
+  }, [isOpen, onClose])
 
   const categories = ['all', 'algorithm', 'protocol', 'standard', 'concept', 'organization']
 
@@ -108,16 +110,6 @@ export const Glossary: React.FC = () => {
 
   return (
     <>
-      {/* Floating Button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-40 p-3 rounded-full bg-primary text-black shadow-lg hover:bg-primary/90 transition-all hover:scale-110"
-        aria-label="Open glossary"
-        title="PQC Glossary"
-      >
-        <BookOpenText size={22} />
-      </button>
-
       {/* Modal */}
       <AnimatePresence>
         {isOpen && (
@@ -128,7 +120,7 @@ export const Glossary: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-              onClick={() => setIsOpen(false)}
+              onClick={onClose}
             />
 
             {/* Panel */}
@@ -150,7 +142,7 @@ export const Glossary: React.FC = () => {
                     PQC Glossary
                   </h2>
                   <button
-                    onClick={() => setIsOpen(false)}
+                    onClick={onClose}
                     className="p-1.5 rounded-lg hover:bg-muted/50 transition-colors text-muted-foreground"
                     aria-label="Close glossary"
                   >

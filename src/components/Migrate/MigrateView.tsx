@@ -4,15 +4,21 @@ import { softwareData, softwareMetadata } from '../../data/migrateData'
 import { SoftwareTable } from './SoftwareTable'
 import { MigrationWorkflow } from './MigrationWorkflow'
 import { FilterDropdown } from '../common/FilterDropdown'
-import { Search, AlertTriangle } from 'lucide-react'
+import { Search, AlertTriangle, X } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
+import type { MigrationStep } from '../../types/MigrateTypes'
 
 export const MigrateView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('All')
   const [activePlatform, setActivePlatform] = useState<string>('All')
   const [filterText, setFilterText] = useState('')
   const [inputValue, setInputValue] = useState('')
+  const [stepFilter, setStepFilter] = useState<{
+    stepNumber: number
+    stepTitle: string
+    categoryIds: string[]
+  } | null>(null)
   const softwareTableRef = useRef<HTMLDivElement>(null)
 
   // Debounced search
@@ -65,37 +71,24 @@ export const MigrateView: React.FC = () => {
     return ['All', ...clean]
   }, [])
 
-  // Map category IDs to category names for step-to-table filtering
-  const categoryIdToName = useMemo(() => {
-    const map = new Map<string, string>()
-    softwareData.forEach((item) => {
-      if (item.categoryId && item.categoryName) {
-        map.set(item.categoryId, item.categoryName)
-      }
+  const handleViewSoftware = useCallback((step: MigrationStep) => {
+    setStepFilter({
+      stepNumber: step.stepNumber,
+      stepTitle: step.title,
+      categoryIds: step.relevantSoftwareCategories,
     })
-    return map
+    setActiveTab('All')
+    logMigrateAction('View Related Software', step.title)
+    softwareTableRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [])
-
-  const handleViewSoftware = useCallback(
-    (categoryIds: string[]) => {
-      // Find the first matching category name
-      for (const id of categoryIds) {
-        const name = categoryIdToName.get(id)
-        if (name && categories.includes(name)) {
-          setActiveTab(name)
-          logMigrateAction('View Related Software', name)
-          break
-        }
-      }
-      softwareTableRef.current?.scrollIntoView({ behavior: 'smooth' })
-    },
-    [categoryIdToName, categories]
-  )
 
   const filteredData = useMemo(() => {
     return softwareData.filter((item) => {
-      // Tab Filter (Category)
-      if (activeTab !== 'All' && item.categoryName !== activeTab) {
+      // Step filter (multi-category, from "View Related Software")
+      if (stepFilter) {
+        if (!stepFilter.categoryIds.includes(item.categoryId)) return false
+      } else if (activeTab !== 'All' && item.categoryName !== activeTab) {
+        // Manual single-category tab filter
         return false
       }
 
@@ -113,7 +106,7 @@ export const MigrateView: React.FC = () => {
         item.license?.toLowerCase().includes(searchLower)
       )
     })
-  }, [activeTab, activePlatform, filterText])
+  }, [activeTab, stepFilter, activePlatform, filterText])
 
   if (!softwareData || softwareData.length === 0) {
     return (
@@ -154,6 +147,28 @@ export const MigrateView: React.FC = () => {
         </h3>
       </div>
 
+      {/* Step filter banner */}
+      {stepFilter && (
+        <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2 mb-2">
+          <span>
+            Showing software for{' '}
+            <strong>
+              Step {stepFilter.stepNumber}: {stepFilter.stepTitle}
+            </strong>{' '}
+            &middot; {stepFilter.categoryIds.length}{' '}
+            {stepFilter.categoryIds.length === 1 ? 'category' : 'categories'}
+          </span>
+          <button
+            onClick={() => setStepFilter(null)}
+            className="ml-auto flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Clear step filter"
+          >
+            <X size={12} />
+            Clear
+          </button>
+        </div>
+      )}
+
       {/* Controls Container */}
       <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-8 flex flex-col md:flex-row items-center gap-4">
         {/* Mobile: Filters on one row */}
@@ -165,6 +180,7 @@ export const MigrateView: React.FC = () => {
               selectedId={activeTab}
               onSelect={(tab) => {
                 setActiveTab(tab)
+                setStepFilter(null)
                 logMigrateAction('Filter Category', tab)
               }}
               defaultLabel="Category"

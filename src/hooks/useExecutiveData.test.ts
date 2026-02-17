@@ -108,7 +108,7 @@ describe('useExecutiveData', () => {
     expect(result.current.topActions[1].action).toContain('2 classical algorithms')
   })
 
-  it('generates risk narrative', () => {
+  it('generates risk narrative without assessment', () => {
     const { result } = renderHook(() => useExecutiveData())
 
     expect(result.current.riskNarrative).toContain('2 critical')
@@ -121,20 +121,44 @@ describe('useExecutiveData', () => {
 
     expect(result.current.orgRiskScore).toBeNull()
     expect(result.current.orgRiskLevel).toBeNull()
+    expect(result.current.assessedAt).toBeNull()
+    expect(result.current.assessedVulnerableCount).toBeNull()
+    expect(result.current.assessedTotalCount).toBeNull()
   })
 
   it('overlays assessment data when provided', () => {
     const assessment: AssessmentResult = {
       riskScore: 72,
       riskLevel: 'high',
-      algorithmMigrations: [],
+      algorithmMigrations: [
+        {
+          classical: 'RSA-2048',
+          quantumVulnerable: true,
+          replacement: 'ML-KEM-768',
+          urgency: 'immediate',
+          notes: '',
+        },
+        {
+          classical: 'AES-256',
+          quantumVulnerable: false,
+          replacement: 'AES-256',
+          urgency: 'long-term',
+          notes: '',
+        },
+      ],
       complianceImpacts: [],
       recommendedActions: [
-        { priority: 1, action: 'Migrate RSA', category: 'immediate', relatedModule: 'PKI' },
+        {
+          priority: 1,
+          action: 'Migrate RSA',
+          category: 'immediate',
+          relatedModule: '/algorithms',
+        },
         { priority: 2, action: 'Review compliance', category: 'short-term', relatedModule: '' },
         { priority: 3, action: 'Train team', category: 'long-term', relatedModule: '' },
       ],
       narrative: 'Your org risk is high.',
+      generatedAt: '2026-02-16T00:00:00.000Z',
     }
 
     const { result } = renderHook(() => useExecutiveData(undefined, assessment))
@@ -144,5 +168,82 @@ describe('useExecutiveData', () => {
     expect(result.current.topActions).toHaveLength(3)
     expect(result.current.topActions[0].action).toBe('Migrate RSA')
     expect(result.current.riskNarrative).toContain('Your org risk is high.')
+    // Assessment narrative leads, followed by industry-wide context
+    expect(result.current.riskNarrative).toContain('Across the broader landscape')
+  })
+
+  it('uses relatedModule for action links when available', () => {
+    const assessment: AssessmentResult = {
+      riskScore: 50,
+      riskLevel: 'medium',
+      algorithmMigrations: [],
+      complianceImpacts: [],
+      recommendedActions: [
+        {
+          priority: 1,
+          action: 'Fix threats',
+          category: 'immediate',
+          relatedModule: '/threats',
+        },
+        {
+          priority: 2,
+          action: 'Review compliance',
+          category: 'short-term',
+          relatedModule: '',
+        },
+      ],
+      narrative: 'Test.',
+      generatedAt: '2026-02-16T00:00:00.000Z',
+    }
+
+    const { result } = renderHook(() => useExecutiveData(undefined, assessment))
+
+    // First action uses its relatedModule
+    expect(result.current.topActions[0].link).toBe('/threats')
+    // Second action falls back to category-based link
+    expect(result.current.topActions[1].link).toBe('/migrate')
+  })
+
+  it('personalizes algorithm KPIs from assessment data', () => {
+    const assessment: AssessmentResult = {
+      riskScore: 60,
+      riskLevel: 'medium',
+      algorithmMigrations: [
+        {
+          classical: 'RSA-2048',
+          quantumVulnerable: true,
+          replacement: 'ML-KEM-768',
+          urgency: 'immediate',
+          notes: '',
+        },
+        {
+          classical: 'AES-256',
+          quantumVulnerable: false,
+          replacement: 'AES-256',
+          urgency: 'long-term',
+          notes: '',
+        },
+        {
+          classical: 'ECDSA',
+          quantumVulnerable: true,
+          replacement: 'ML-DSA-65',
+          urgency: 'immediate',
+          notes: '',
+        },
+      ],
+      complianceImpacts: [],
+      recommendedActions: [],
+      narrative: 'Test.',
+      generatedAt: '2026-02-16T00:00:00.000Z',
+    }
+
+    const { result } = renderHook(() => useExecutiveData(undefined, assessment))
+
+    // Shows assessed counts instead of global static counts
+    expect(result.current.algorithmsAtRisk).toBe(2)
+    expect(result.current.totalAlgorithms).toBe(3)
+    expect(result.current.assessedVulnerableCount).toBe(2)
+    expect(result.current.assessedTotalCount).toBe(3)
+    expect(result.current.assessedAt).toBe('2026-02-16T00:00:00.000Z')
   })
 })

@@ -72,36 +72,29 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Risk Assessment</strong> &mdash; Interactive
-                    5-step quantum risk wizard
+                    <strong className="text-foreground">Risk Assessment Upgrade</strong> &mdash;
+                    12-step wizard with compound scoring and HNDL risk analysis
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Executive Dashboard</strong> &mdash; KPI
-                    metrics and priority actions for leadership
+                    <strong className="text-foreground">Migration Effort Estimation</strong> &mdash;
+                    Per-algorithm complexity ratings and executive summary
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Migration Workflow</strong> &mdash; 7-step
-                    structured migration with framework mappings
+                    <strong className="text-foreground">Algorithm Comparison</strong> &mdash; New
+                    filters, search, and sortable columns
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC Glossary</strong> &mdash; 100+ terms
-                    with search, filters, and complexity badges
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
-                    <strong className="text-foreground">Guided Tour</strong> &mdash; Interactive
-                    onboarding for first-time visitors
+                    <strong className="text-foreground">Software Data</strong> &mdash; 6 new
+                    categories and updated product references
                   </span>
                 </li>
               </ul>

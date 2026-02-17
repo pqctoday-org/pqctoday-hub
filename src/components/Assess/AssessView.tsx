@@ -1,16 +1,130 @@
 import React, { useEffect, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ShieldCheck } from 'lucide-react'
 import { AssessWizard } from './AssessWizard'
 import { AssessReport } from './AssessReport'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { useAssessmentEngine } from '../../hooks/useAssessmentEngine'
+import type { AssessmentInput } from '../../hooks/useAssessmentEngine'
+
+const VALID_SENSITIVITIES = new Set(['low', 'medium', 'high', 'critical'])
+const VALID_MIGRATIONS = new Set(['started', 'planning', 'not-started', 'unknown'])
+const VALID_RETENTION = new Set(['under-1y', '1-5y', '5-10y', '10-25y', '25-plus', 'indefinite'])
+const VALID_SYSTEM_COUNT = new Set(['1-10', '11-50', '51-200', '200-plus'])
+const VALID_TEAM_SIZE = new Set(['1-10', '11-50', '51-200', '200-plus'])
+const VALID_AGILITY = new Set(['fully-abstracted', 'partially-abstracted', 'hardcoded', 'unknown'])
+const VALID_VENDOR = new Set(['heavy-vendor', 'open-source', 'mixed', 'in-house'])
+const VALID_PRESSURE = new Set([
+  'within-1y',
+  'within-2-3y',
+  'internal-deadline',
+  'no-deadline',
+  'unknown',
+])
 
 export const AssessView: React.FC = () => {
   const { isComplete, getInput, markComplete, setResult } = useAssessmentStore()
   const input = getInput()
   const result = useAssessmentEngine(isComplete ? input : null)
   const persistedRef = useRef(false)
+  const [searchParams] = useSearchParams()
+  const hydratedRef = useRef(false)
+
+  // Hydrate store from shared URL params on first mount
+  useEffect(() => {
+    if (hydratedRef.current || isComplete) return
+    const industry = searchParams.get('i')
+    if (!industry) return
+    hydratedRef.current = true
+
+    const store = useAssessmentStore.getState()
+    store.setIndustry(industry)
+
+    const crypto = searchParams.get('c')
+    if (crypto) {
+      crypto
+        .split(',')
+        .filter(Boolean)
+        .forEach((a) => {
+          if (!store.currentCrypto.includes(a)) store.toggleCrypto(a)
+        })
+    }
+
+    const sensitivity = searchParams.get('d')
+    if (sensitivity && VALID_SENSITIVITIES.has(sensitivity)) {
+      store.setDataSensitivity(sensitivity as AssessmentInput['dataSensitivity'])
+    }
+
+    const frameworks = searchParams.get('f')
+    if (frameworks) {
+      frameworks
+        .split(',')
+        .filter(Boolean)
+        .forEach((f) => {
+          if (!store.complianceRequirements.includes(f)) store.toggleCompliance(f)
+        })
+    }
+
+    const migration = searchParams.get('m')
+    if (migration && VALID_MIGRATIONS.has(migration)) {
+      store.setMigrationStatus(migration as AssessmentInput['migrationStatus'])
+    }
+
+    // Extended params
+    const useCases = searchParams.get('u')
+    if (useCases) {
+      useCases
+        .split(',')
+        .filter(Boolean)
+        .forEach((uc) => {
+          if (!store.cryptoUseCases.includes(uc)) store.toggleCryptoUseCase(uc)
+        })
+    }
+
+    const retention = searchParams.get('r')
+    if (retention && VALID_RETENTION.has(retention)) {
+      store.setDataRetention(retention as NonNullable<AssessmentInput['dataRetention']>)
+    }
+
+    const sysCount = searchParams.get('s')
+    if (sysCount && VALID_SYSTEM_COUNT.has(sysCount)) {
+      store.setSystemCount(sysCount as NonNullable<AssessmentInput['systemCount']>)
+    }
+
+    const tSize = searchParams.get('t')
+    if (tSize && VALID_TEAM_SIZE.has(tSize)) {
+      store.setTeamSize(tSize as NonNullable<AssessmentInput['teamSize']>)
+    }
+
+    const agility = searchParams.get('a')
+    if (agility && VALID_AGILITY.has(agility)) {
+      store.setCryptoAgility(agility as NonNullable<AssessmentInput['cryptoAgility']>)
+    }
+
+    const infra = searchParams.get('n')
+    if (infra) {
+      infra
+        .split(',')
+        .filter(Boolean)
+        .forEach((item) => {
+          if (!store.infrastructure.includes(item)) store.toggleInfrastructure(item)
+        })
+    }
+
+    const vendor = searchParams.get('v')
+    if (vendor && VALID_VENDOR.has(vendor)) {
+      store.setVendorDependency(vendor as NonNullable<AssessmentInput['vendorDependency']>)
+    }
+
+    const pressure = searchParams.get('p')
+    if (pressure && VALID_PRESSURE.has(pressure)) {
+      store.setTimelinePressure(pressure as NonNullable<AssessmentInput['timelinePressure']>)
+    }
+
+    store.markComplete()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (!isComplete) {
@@ -41,8 +155,8 @@ export const AssessView: React.FC = () => {
               PQC Risk Assessment
             </h1>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Answer 5 quick questions to get a personalized quantum risk score, migration
-              priorities, and actionable recommendations for your organization.
+              Answer a few questions to get a personalized quantum risk score, migration priorities,
+              and actionable recommendations for your organization.
             </p>
           </motion.div>
           <AssessWizard onComplete={markComplete} />

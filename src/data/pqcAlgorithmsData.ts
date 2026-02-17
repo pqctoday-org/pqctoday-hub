@@ -160,16 +160,16 @@ export function getPerformanceCategory(cycles: string): 'Fast' | 'Moderate' | 'S
 }
 
 export function getSecurityLevelColor(level: number | null): string {
-  if (level === null) return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
-  if (level === 1) return 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-  if (level === 2) return 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30'
-  if (level === 3) return 'bg-green-500/20 text-green-400 border-green-500/30'
-  if (level === 4) return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-  return 'bg-red-500/20 text-red-400 border-red-500/30' // Level 5
+  if (level === null) return 'bg-muted/50 text-muted-foreground border-border'
+  if (level === 1) return 'bg-primary/10 text-primary border-primary/30'
+  if (level === 2) return 'bg-accent/10 text-accent border-accent/30'
+  if (level === 3) return 'bg-success/10 text-success border-success/30'
+  if (level === 4) return 'bg-warning/10 text-warning border-warning/30'
+  return 'bg-destructive/10 text-destructive border-destructive/30' // Level 5
 }
 
 export function getPerformanceColor(category: 'Fast' | 'Moderate' | 'Slow'): string {
-  if (category === 'Fast') return 'bg-green-500/20 text-green-400 border-green-500/30'
-  if (category === 'Moderate') return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-  return 'bg-red-500/20 text-red-400 border-red-500/30'
+  if (category === 'Fast') return 'bg-success/10 text-success border-success/30'
+  if (category === 'Moderate') return 'bg-warning/10 text-warning border-warning/30'
+  return 'bg-destructive/10 text-destructive border-destructive/30'
 }

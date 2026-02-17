@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { GanttDetailPopover } from './GanttDetailPopover'
 import type { TimelinePhase } from '../../types/timeline'
@@ -29,6 +29,7 @@ describe('GanttDetailPopover', () => {
         title: 'Quantum-Safe Discovery',
         description: 'Initial assessment',
         orgName: 'Test Agency',
+        orgFullName: 'Test Agency',
         countryName: 'Test Country',
         flagCode: 'tc',
         sourceUrl: 'https://example.com/source',

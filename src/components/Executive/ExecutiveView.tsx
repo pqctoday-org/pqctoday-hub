@@ -11,6 +11,7 @@ import {
   ArrowRight,
   BarChart3,
   Activity,
+  Pencil,
 } from 'lucide-react'
 import { useExecutiveData } from '../../hooks/useExecutiveData'
 import { useComplianceRefresh } from '../Compliance/services'
@@ -77,6 +78,7 @@ const KPICard = ({
 export const ExecutiveView: React.FC = () => {
   const { data: complianceData } = useComplianceRefresh()
   const lastResult = useAssessmentStore((s) => s.lastResult)
+  const industry = useAssessmentStore((s) => s.industry)
   const metrics = useExecutiveData(complianceData, lastResult)
 
   const handlePrint = () => window.print()
@@ -111,6 +113,16 @@ export const ExecutiveView: React.FC = () => {
             month: 'long',
             day: 'numeric',
           })}
+          {metrics.assessedAt && (
+            <span className="ml-1">
+              &middot; Assessment from{' '}
+              {new Date(metrics.assessedAt).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+            </span>
+          )}
         </p>
       </motion.div>
 
@@ -132,11 +144,34 @@ export const ExecutiveView: React.FC = () => {
               <div>
                 <h2 className="text-lg font-bold text-foreground">Your Organization</h2>
                 <p className="text-sm text-muted-foreground">
-                  Based on your PQC Readiness Assessment
+                  {industry ? `${industry} sector` : 'Based on your PQC Readiness Assessment'}
+                  {metrics.assessedAt && (
+                    <>
+                      {' \u00b7 Assessed '}
+                      {new Date(metrics.assessedAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </>
+                  )}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-6">
+              {metrics.assessedVulnerableCount !== null && (
+                <div className="text-center">
+                  <div className="text-xl font-bold text-foreground">
+                    {metrics.assessedVulnerableCount}
+                    <span className="text-sm text-muted-foreground font-normal">
+                      /{metrics.assessedTotalCount}
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                    Vulnerable
+                  </div>
+                </div>
+              )}
               <div className="text-center">
                 <div className="text-3xl font-bold text-foreground">{metrics.orgRiskScore}</div>
                 <div className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -152,6 +187,15 @@ export const ExecutiveView: React.FC = () => {
                 {metrics.orgRiskLevel}
               </div>
             </div>
+          </div>
+          <div className="mt-3 pt-3 border-t border-border flex justify-end print:hidden">
+            <Link
+              to="/assess"
+              className="text-xs text-primary hover:underline flex items-center gap-1"
+            >
+              <Pencil size={12} />
+              Update Assessment
+            </Link>
           </div>
         </motion.div>
       )}

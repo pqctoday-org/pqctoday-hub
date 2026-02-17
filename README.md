@@ -51,14 +51,12 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Reference Panel**: Curated authoritative migration resources
   - **Change Tracking**: "New" and "Updated" indicators for recent PQC landscape changes
   - **Filtering**: Deep filtering by category, platform, and industry
-- **PQC Risk Assessment** (`/assess`): Interactive 5-step quantum risk evaluation wizard
-  - Personalized risk scoring based on organization profile
-  - Algorithm migration recommendations with compliance analysis
-  - Printable risk assessment reports with remediation steps
-- **Executive Dashboard** (`/executive`): Leadership-focused KPI dashboard
-  - Threat metrics, algorithms at risk, migration tools count, compliance status
-  - Priority actions table with severity indicators
-  - Print-to-PDF export for board presentations
+- **PQC Risk Assessment** (`/assess`): Comprehensive 12-step quantum risk evaluation wizard
+  - Compound scoring engine with 4 risk dimensions: Quantum Exposure, Migration Complexity, Regulatory Pressure, Organizational Readiness
+  - HNDL Risk Window visualization: data retention vs. quantum threat timeline
+  - Per-algorithm migration effort estimation (quick-win to multi-year)
+  - Executive summary, category breakdowns, and URL-shareable assessments
+  - Enhanced CSV export with effort ratings and rationale
 - **PQC Glossary**: Global floating glossary with 100+ PQC terms
   - Category filters, A-Z index, full-text search
   - Complexity badges (Beginner, Intermediate, Advanced)
@@ -175,8 +173,7 @@ The application is structured into several key components:
 - **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
 - **`src/components/PKILearning`**: Educational platform with 7 modules (PKI Workshop, Digital Assets, 5G Security, EUDI Wallet, TLS 1.3 Basics, Introduction, PQC 101).
-- **`src/components/Assess`**: Risk assessment wizard generating personalized quantum risk reports.
-- **`src/components/Executive`**: Executive KPI dashboard for leadership decision-making.
+- **`src/components/Assess`**: 12-step risk assessment wizard with compound scoring engine and HNDL risk analysis.
 - **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.
 - **`src/components/common/GuidedTour.tsx`**: Interactive first-visit onboarding tour.
 - **`src/utils`**: Utility functions for data conversion and common operations.
@@ -197,8 +194,7 @@ The application is structured into several key components:
 │   │   ├── About/           # About page and feedback forms
 │   │   ├── ACVP/            # Automated Cryptographic Validation Protocol testing
 │   │   ├── Algorithms/      # Algorithm comparison table
-│   │   ├── Assess/          # PQC risk assessment wizard
-│   │   ├── Executive/       # Executive KPI dashboard
+│   │   ├── Assess/          # 12-step PQC risk assessment with compound scoring
 │   │   ├── Compliance/      # Compliance tracking and visualization
 │   │   ├── ErrorBoundary.tsx # Global error boundary component
 │   │   ├── Leaders/         # PQC transformation leaders profiles

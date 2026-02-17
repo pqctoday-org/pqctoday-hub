@@ -354,7 +354,7 @@ describe('SimpleGanttChart', () => {
           country: {
             countryName: 'Test Country',
             flagCode: 'TC',
-            bodies: [{ name: 'Agency', countryCode: 'TC', events: [] }],
+            bodies: [{ name: 'Agency', fullName: 'Agency', countryCode: 'TC', events: [] }],
           },
           phases: [
             {
@@ -413,7 +413,7 @@ describe('SimpleGanttChart', () => {
           country: {
             countryName: 'Early Adopter',
             flagCode: 'EA',
-            bodies: [{ name: 'Agency', countryCode: 'EA', events: [] }],
+            bodies: [{ name: 'Agency', fullName: 'Agency', countryCode: 'EA', events: [] }],
           },
           phases: [
             {
@@ -451,7 +451,7 @@ describe('SimpleGanttChart', () => {
           country: {
             countryName: 'Overlap Country',
             flagCode: 'OC',
-            bodies: [{ name: 'Agency', countryCode: 'OC', events: [] }],
+            bodies: [{ name: 'Agency', fullName: 'Agency', countryCode: 'OC', events: [] }],
           },
           phases: [
             {

@@ -4,6 +4,7 @@ import { useComplianceRefresh, AUTHORITATIVE_SOURCES } from './services'
 import { ShieldCheck, FileCheck, Server, GlobeLock } from 'lucide-react'
 import { logComplianceFilter } from '../../utils/analytics'
 import { ShareButton } from '../ui/ShareButton'
+import { GlossaryButton } from '../ui/GlossaryButton'
 
 export const ComplianceView = () => {
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
@@ -17,16 +18,19 @@ export const ComplianceView = () => {
             <ShieldCheck className="w-8 h-8 text-primary" />
             Compliance & Certification
           </h1>
-          <ShareButton
-            title="PQC Compliance Tracker — FIPS 140-3, ACVP, Common Criteria"
-            text="Track PQC compliance certifications: FIPS 140-3, ACVP algorithm validation, and Common Criteria with PQC readiness status."
-          />
         </div>
         <p className="text-muted-foreground max-w-3xl">
           Streamlined access to cryptographic module validations (FIPS 140-3), algorithm validations
           (ACVP), and Common Criteria certifications, with a focus on Post-Quantum Cryptography
           (PQC) readiness.
         </p>
+        <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
+          <ShareButton
+            title="PQC Compliance Tracker — FIPS 140-3, ACVP, Common Criteria"
+            text="Track PQC compliance certifications: FIPS 140-3, ACVP algorithm validation, and Common Criteria with PQC readiness status."
+          />
+          <GlossaryButton />
+        </div>
       </div>
 
       {/* External Links Reference (User Request: Show authoritative sources) */}

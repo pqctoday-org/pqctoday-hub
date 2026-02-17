@@ -25,7 +25,7 @@ const ICON_MAP: Record<string, React.FC<{ size?: number; className?: string }>> 
 
 interface MigrationStepCardProps {
   step: MigrationStep
-  onViewSoftware: (categoryIds: string[]) => void
+  onViewSoftware: (step: MigrationStep) => void
 }
 
 export const MigrationStepCard: React.FC<MigrationStepCardProps> = ({ step, onViewSoftware }) => {
@@ -109,7 +109,7 @@ export const MigrationStepCard: React.FC<MigrationStepCardProps> = ({ step, onVi
 
           {step.relevantSoftwareCategories.length > 0 && (
             <button
-              onClick={() => onViewSoftware(step.relevantSoftwareCategories)}
+              onClick={() => onViewSoftware(step)}
               className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors mt-2 cursor-pointer"
             >
               <ArrowDown size={14} />

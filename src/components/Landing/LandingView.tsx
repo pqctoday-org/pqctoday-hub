@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -12,8 +13,14 @@ import {
   Users,
   ArrowRightLeft,
   ArrowRight,
+  ClipboardCheck,
 } from 'lucide-react'
 import { Button } from '../ui/button'
+import { timelineData } from '@/data/timelineData'
+import { libraryData } from '@/data/libraryData'
+import { softwareData } from '@/data/migrateData'
+import { leadersData } from '@/data/leadersData'
+import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -24,18 +31,24 @@ const fadeUp = {
   },
 }
 
+// Compute counts once at module level (sync data — stable, never changes)
+const timelineEventCount = timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events)).length
+const libraryCount = libraryData.length
+const softwareCount = softwareData.length
+const leadersCount = leadersData.length
+
 const features = [
   {
     icon: Globe,
     title: 'Migration Timeline',
-    description: '165+ events tracking global PQC standardization from NIST, ETSI, IETF, and more',
+    description: `${timelineEventCount}+ events tracking global PQC standardization from NIST, ETSI, IETF, and more`,
     path: '/timeline',
     color: 'text-primary',
   },
   {
     icon: Shield,
     title: 'Algorithm Explorer',
-    description: '42 algorithms compared — ML-KEM, ML-DSA, SLH-DSA, FrodoKEM, and beyond',
+    description: '40+ algorithms compared — ML-KEM, ML-DSA, SLH-DSA, FrodoKEM, and beyond',
     path: '/algorithms',
     color: 'text-secondary',
   },
@@ -68,6 +81,13 @@ const features = [
     path: '/compliance',
     color: 'text-accent',
   },
+  {
+    icon: ClipboardCheck,
+    title: 'Risk Assessment',
+    description: '5-question wizard for personalized quantum risk score and migration roadmap',
+    path: '/assess',
+    color: 'text-primary',
+  },
 ]
 
 const secondaryFeatures = [
@@ -80,24 +100,30 @@ const secondaryFeatures = [
   {
     icon: BookOpen,
     title: 'Standards Library',
-    description: '92 PQC standards & drafts',
+    description: `${libraryCount} PQC standards & drafts`,
     path: '/library',
   },
   {
     icon: ArrowRightLeft,
     title: 'Migration Guide',
-    description: '79 verified PQC software tools',
+    description: `${softwareCount} verified PQC software tools`,
     path: '/migrate',
   },
   {
     icon: Users,
     title: 'Industry Leaders',
-    description: '116 organizations tracked',
+    description: `${leadersCount} organizations tracked`,
     path: '/leaders',
   },
 ]
 
 export const LandingView = () => {
+  const [algorithmCount, setAlgorithmCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    loadPQCAlgorithmsData().then((data) => setAlgorithmCount(data.length))
+  }, [])
+
   return (
     <div className="max-w-6xl mx-auto space-y-16 md:space-y-24">
       {/* Hero Section */}
@@ -162,9 +188,12 @@ export const LandingView = () => {
           className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
         >
           {[
-            { value: '42', label: 'Algorithms' },
-            { value: '165+', label: 'Timeline Events' },
-            { value: '92', label: 'Standards Tracked' },
+            {
+              value: algorithmCount !== null ? String(algorithmCount) : '...',
+              label: 'Algorithms',
+            },
+            { value: String(timelineEventCount), label: 'Timeline Events' },
+            { value: String(libraryCount), label: 'Standards Tracked' },
             { value: '6', label: 'Learning Modules' },
           ].map((stat) => (
             <div key={stat.label} className="glass-panel p-4">
@@ -179,28 +208,26 @@ export const LandingView = () => {
       <section>
         <motion.div
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
+          animate="visible"
           className="text-center mb-10"
+          variants={{ visible: { transition: { delayChildren: 0.3, staggerChildren: 0.1 } } }}
         >
-          <motion.h2 variants={fadeUp} custom={0} className="text-2xl md:text-3xl font-bold mb-3">
+          <motion.h2 variants={fadeUp} className="text-2xl md:text-3xl font-bold mb-3">
             Everything you need for <span className="text-gradient">PQC readiness</span>
           </motion.h2>
-          <motion.p variants={fadeUp} custom={1} className="text-muted-foreground max-w-xl mx-auto">
+          <motion.p variants={fadeUp} className="text-muted-foreground max-w-xl mx-auto">
             Real cryptographic operations powered by OpenSSL WASM and liboqs — not simulations.
           </motion.p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {features.map((feature, i) => (
-            <motion.div
-              key={feature.path}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-30px' }}
-              variants={fadeUp}
-              custom={i}
-            >
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+          initial="hidden"
+          animate="visible"
+          variants={{ visible: { transition: { delayChildren: 0.5, staggerChildren: 0.08 } } }}
+        >
+          {features.map((feature) => (
+            <motion.div key={feature.path} variants={fadeUp}>
               <Link to={feature.path} className="block h-full">
                 <div className="glass-panel p-6 h-full hover:border-primary/30 transition-colors group">
                   <feature.icon className={`${feature.color} mb-3`} size={28} />
@@ -212,21 +239,19 @@ export const LandingView = () => {
               </Link>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* Secondary Features */}
       <section>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {secondaryFeatures.map((feature, i) => (
-            <motion.div
-              key={feature.path}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-30px' }}
-              variants={fadeUp}
-              custom={i}
-            >
+        <motion.div
+          className="grid grid-cols-2 md:grid-cols-4 gap-3"
+          initial="hidden"
+          animate="visible"
+          variants={{ visible: { transition: { delayChildren: 0.7, staggerChildren: 0.08 } } }}
+        >
+          {secondaryFeatures.map((feature) => (
+            <motion.div key={feature.path} variants={fadeUp}>
               <Link to={feature.path} className="block">
                 <div className="glass-panel p-4 hover:border-primary/30 transition-colors text-center group">
                   <feature.icon
@@ -241,16 +266,16 @@ export const LandingView = () => {
               </Link>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* CTA */}
       <section className="text-center pb-8">
         <motion.div
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+          animate="visible"
           className="glass-panel p-8 md:p-12"
+          variants={{ visible: { transition: { delayChildren: 0.9, staggerChildren: 0.1 } } }}
         >
           <motion.h2 variants={fadeUp} custom={0} className="text-2xl md:text-3xl font-bold mb-4">
             Open source. <span className="text-gradient">Free forever.</span>
