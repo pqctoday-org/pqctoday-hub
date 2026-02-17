@@ -79,16 +79,10 @@ vi.mock('../../utils/analytics', () => ({
 }))
 
 // Mock Framer Motion to avoid animation issues in tests
-vi.mock('framer-motion', () => ({
-  motion: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    tr: ({ children, ...props }: any) => <tr {...props}>{children}</tr>,
-  },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  AnimatePresence: ({ children }: any) => <>{children}</>,
-}))
+vi.mock(
+  'framer-motion',
+  async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
+)
 
 describe('ThreatsDashboard', () => {
   beforeEach(() => {

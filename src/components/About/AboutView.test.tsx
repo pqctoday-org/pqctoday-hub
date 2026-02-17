@@ -12,12 +12,10 @@ vi.mock('../../hooks/useTheme', () => ({
 }))
 
 // Mock Framer Motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  },
-}))
+vi.mock(
+  'framer-motion',
+  async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
+)
 
 describe('AboutView', () => {
   it('renders the main sections', () => {

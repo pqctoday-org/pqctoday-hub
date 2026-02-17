@@ -89,23 +89,10 @@ vi.mock('../../utils/analytics', () => ({
 }))
 
 // Mock Framer Motion
-// Mock Framer Motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    img: ({ children, alt, ...props }: any) => (
-      <img alt={alt || 'mock image'} {...props}>
-        {children}
-      </img>
-    ),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    article: ({ children, ...props }: any) => <article {...props}>{children}</article>,
-  },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  AnimatePresence: ({ children }: any) => <>{children}</>,
-}))
+vi.mock(
+  'framer-motion',
+  async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
+)
 
 describe('LeadersGrid', () => {
   beforeEach(() => {

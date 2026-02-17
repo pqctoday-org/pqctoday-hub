@@ -4,23 +4,10 @@ import { AssessWizard } from './AssessWizard'
 import '@testing-library/jest-dom'
 
 // Mock framer-motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: Record<string, unknown>) => {
-      const { initial, animate, transition, whileHover, whileTap, exit, ...rest } = props
-      void initial
-      void animate
-      void transition
-      void whileHover
-      void whileTap
-      void exit
-      return (
-        <div {...(rest as React.HTMLAttributes<HTMLDivElement>)}>{children as React.ReactNode}</div>
-      )
-    },
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}))
+vi.mock(
+  'framer-motion',
+  async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
+)
 
 const mockStore = {
   currentStep: 0,

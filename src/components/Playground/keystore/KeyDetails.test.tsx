@@ -5,15 +5,10 @@ import type { Key } from '../../../types'
 import React from 'react'
 
 // Mock framer-motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, className, ...props }: React.ComponentProps<'div'>) => (
-      <div className={className} {...props}>
-        {children}
-      </div>
-    ),
-  },
-}))
+vi.mock(
+  'framer-motion',
+  async () => (await import('../../../test/mocks/framer-motion')).framerMotionMock
+)
 
 describe('KeyDetails Component', () => {
   const mockKey: Key = {

@@ -78,7 +78,7 @@ export const SaveRestorePanel: React.FC = () => {
     e.target.value = ''
   }
 
-  const handleReset = async () => {
+  const handleReset = () => {
     if (
       !confirm(
         'Are you sure? This will delete ALL local progress including modules, artifacts, and preferences!'
@@ -89,7 +89,6 @@ export const SaveRestorePanel: React.FC = () => {
 
     try {
       resetProgress()
-      await ProgressService.clearLocal()
       toast.success('All progress has been reset')
     } catch (error) {
       toast.error(

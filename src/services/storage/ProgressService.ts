@@ -1,60 +1,11 @@
 import { saveAs } from 'file-saver'
-import localforage from 'localforage'
 import type { LearningProgress } from './types'
 
-// Configure localforage for consistent storage behavior
-localforage.config({
-  name: 'PQCTimelineApp',
-  storeName: 'learning_progress',
-  driver: [localforage.INDEXEDDB, localforage.LOCALSTORAGE],
-  description: 'PQC Timeline learning progress and artifacts',
-})
-
+/**
+ * Service for importing/exporting learning progress files and checking storage health.
+ * Persistence is handled by Zustand persist middleware in useModuleStore.
+ */
 export class ProgressService {
-  private static STORAGE_KEY = 'pki-learning-progress'
-
-  /**
-   * Save current progress to browser storage (auto-save)
-   * Returns error information if save fails
-   */
-  static async saveToLocal(
-    progress: LearningProgress
-  ): Promise<{ success: boolean; error?: string; quotaExceeded?: boolean }> {
-    try {
-      await localforage.setItem(this.STORAGE_KEY, progress)
-      return { success: true }
-    } catch (error) {
-      console.error('Failed to save progress locally:', error)
-
-      // Handle QuotaExceededError specifically
-      if (error instanceof Error && error.name === 'QuotaExceededError') {
-        return {
-          success: false,
-          error: 'Storage quota exceeded. Please export your progress to free up space.',
-          quotaExceeded: true,
-        }
-      }
-
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown storage error',
-      }
-    }
-  }
-
-  /**
-   * Load progress from browser storage
-   */
-  static async loadFromLocal(): Promise<LearningProgress | null> {
-    try {
-      const progress = await localforage.getItem<LearningProgress>(this.STORAGE_KEY)
-      return progress
-    } catch (error) {
-      console.error('Failed to load progress from local storage:', error)
-      return null
-    }
-  }
-
   /**
    * Export progress to downloadable JSON file
    */
@@ -106,38 +57,29 @@ export class ProgressService {
   }
 
   /**
-   * Clear all local progress (reset)
-   */
-  static async clearLocal(): Promise<void> {
-    await localforage.removeItem(this.STORAGE_KEY)
-  }
-
-  /**
    * Check storage health and availability
    */
   static async checkStorageHealth(): Promise<{
     available: boolean
-    driver: 'indexeddb' | 'localstorage' | 'none'
     quotaUsed: number
     quotaTotal: number
     warnings: string[]
   }> {
     const warnings: string[] = []
     let available = false
-    let driver: 'indexeddb' | 'localstorage' | 'none' = 'none'
     let quotaUsed = 0
     let quotaTotal = 0
 
     try {
-      // Check which driver is being used
-      const currentDriver = localforage.driver()
-      if (currentDriver === localforage.INDEXEDDB) {
-        driver = 'indexeddb'
+      // Check if localStorage is available and writable
+      const testKey = '__storage-health-check__'
+      try {
+        localStorage.setItem(testKey, '1')
+        localStorage.removeItem(testKey)
         available = true
-      } else if (currentDriver === localforage.LOCALSTORAGE) {
-        driver = 'localstorage'
-        available = true
-        warnings.push('Using localStorage fallback. IndexedDB not available.')
+      } catch {
+        available = false
+        warnings.push('Storage is not writable. You may be in private browsing mode.')
       }
 
       // Check storage quota if available
@@ -152,22 +94,12 @@ export class ProgressService {
           warnings.push(`Storage is ${percentUsed}% full. Consider exporting your progress.`)
         }
       }
-
-      // Test if storage is actually writable
-      const testKey = 'storage-health-check'
-      try {
-        await localforage.setItem(testKey, { test: true })
-        await localforage.removeItem(testKey)
-      } catch {
-        available = false
-        warnings.push('Storage is not writable. You may be in private browsing mode.')
-      }
     } catch {
       available = false
       warnings.push('Failed to check storage availability')
     }
 
-    return { available, driver, quotaUsed, quotaTotal, warnings }
+    return { available, quotaUsed, quotaTotal, warnings }
   }
 
   /**

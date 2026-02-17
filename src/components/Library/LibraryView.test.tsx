@@ -4,31 +4,10 @@ import { LibraryView } from './LibraryView'
 import '@testing-library/jest-dom'
 
 // Mock framer-motion to avoid animation issues in tests
-vi.mock('framer-motion', () => {
-  type MotionProps = React.PropsWithChildren<Record<string, unknown>>
-  const stripMotionProps = (props: MotionProps) => {
-    const { children, initial, animate, transition, whileHover, ...rest } = props
-    void [initial, animate, transition, whileHover]
-    return { children, rest }
-  }
-  return {
-    motion: {
-      article: (props: MotionProps) => {
-        const { children, rest } = stripMotionProps(props)
-        return <article {...rest}>{children}</article>
-      },
-      button: (props: MotionProps) => {
-        const { children, rest } = stripMotionProps(props)
-        return <button {...rest}>{children}</button>
-      },
-      div: (props: MotionProps) => {
-        const { children, rest } = stripMotionProps(props)
-        return <div {...rest}>{children}</div>
-      },
-    },
-    AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
-  }
-})
+vi.mock(
+  'framer-motion',
+  async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
+)
 
 // Mock child components
 vi.mock('./LibraryTreeTable', () => ({

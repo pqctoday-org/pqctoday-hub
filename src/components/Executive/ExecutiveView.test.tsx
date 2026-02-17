@@ -42,24 +42,10 @@ vi.mock('../../data/migrateData', () => ({
 }))
 
 // Mock framer-motion to avoid animation issues in tests
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: Record<string, unknown>) => {
-      const { initial, animate, transition, whileHover, whileTap, ...validProps } = props
-      void initial
-      void animate
-      void transition
-      void whileHover
-      void whileTap
-      return (
-        <div {...(validProps as React.HTMLAttributes<HTMLDivElement>)}>
-          {children as React.ReactNode}
-        </div>
-      )
-    },
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}))
+vi.mock(
+  'framer-motion',
+  async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
+)
 
 // Mock localforage (used by compliance services)
 vi.mock('localforage', () => ({
