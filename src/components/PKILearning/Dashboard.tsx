@@ -1,8 +1,9 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { BookOpen, CheckCircle, Circle, Clock, Save, Upload } from 'lucide-react'
+import { BookOpen, CheckCircle, Circle, Clock, Save, Upload, PlayCircle } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
+import { Button } from '../ui/button'
 import clsx from 'clsx'
 
 interface ModuleItem {
@@ -181,7 +182,15 @@ const SaveRestorePanel = () => {
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate()
+  const { modules } = useModuleStore()
   const activeModules: ModuleItem[] = [
+    {
+      id: 'pqc-101',
+      title: 'PQC 101',
+      description:
+        'Start here! A beginner-friendly introduction to the quantum threat and post-quantum cryptography.',
+      duration: '15 min',
+    },
     {
       id: 'pki-workshop',
       title: 'PKI',
@@ -201,7 +210,6 @@ export const Dashboard: React.FC = () => {
       description:
         'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
       duration: '90 min',
-      workInProgress: true,
     },
     {
       id: 'digital-id',
@@ -209,19 +217,67 @@ export const Dashboard: React.FC = () => {
       description:
         'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
       duration: '120 min',
-      workInProgress: true,
     },
     {
       id: 'tls-basics',
       title: 'TLS Basics',
       description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',
       duration: '60 min',
-      workInProgress: true,
     },
   ]
 
+  // Find most recently visited in-progress module
+  const inProgressModules = activeModules
+    .filter((m) => modules[m.id]?.status === 'in-progress')
+    .sort((a, b) => (modules[b.id]?.lastVisited || 0) - (modules[a.id]?.lastVisited || 0))
+
+  const resumeModule = inProgressModules[0]
+
+  // Calculate progress percentage for resume module
+  const getProgressPercentage = (moduleId: string): number => {
+    const module = modules[moduleId]
+    if (!module) return 0
+    // Estimate based on completed steps (this could be more sophisticated)
+    const totalSteps = 4 // Most modules have ~4 steps
+    return Math.round((module.completedSteps.length / totalSteps) * 100)
+  }
+
   return (
     <div className="space-y-8">
+      {/* Continue Learning Section */}
+      {resumeModule && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="glass-panel p-6 border-primary/30"
+        >
+          <div className="flex items-start justify-between gap-4 flex-col md:flex-row">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <PlayCircle className="text-primary" size={24} />
+                <h3 className="text-xl font-bold">Continue Learning</h3>
+              </div>
+              <p className="text-lg text-foreground font-semibold mb-1">{resumeModule.title}</p>
+              <p className="text-sm text-muted-foreground mb-3">{resumeModule.description}</p>
+              <div className="flex items-center gap-4 text-sm">
+                <span className="text-muted-foreground">
+                  Progress: {getProgressPercentage(resumeModule.id)}%
+                </span>
+                <span className="text-muted-foreground">
+                  Time spent: {modules[resumeModule.id]?.timeSpent || 0} min
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="gradient" onClick={() => navigate(resumeModule.id)}>
+                Resume Module
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Active Modules Section */}
       <div>
         <div className="mb-4 md:mb-6">

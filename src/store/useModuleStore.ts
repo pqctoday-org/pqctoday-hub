@@ -71,6 +71,7 @@ export const useModuleStore = create<ModuleState>()(
               [moduleId]: {
                 ...currentModule,
                 ...updates,
+                lastVisited: Date.now(),
               },
             },
             timestamp: Date.now(),
@@ -167,6 +168,69 @@ export const useModuleStore = create<ModuleState>()(
     }),
     {
       name: 'pki-module-storage',
+      version: 1,
+      // Migration function for handling state version upgrades
+      migrate: (persistedState: unknown, version: number) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const state = persistedState as any
+
+        // Version 0 → Version 1: Ensure all required fields exist
+        if (version === 0) {
+          return {
+            ...state,
+            // Ensure artifacts structure exists (added in v1.0.0)
+            artifacts: state.artifacts || {
+              keys: [],
+              certificates: [],
+              csrs: [],
+            },
+            // Ensure preferences exist
+            preferences: state.preferences || {
+              theme: 'dark',
+              defaultKeyType: 'RSA',
+              autoSave: true,
+            },
+            // Ensure notes exist
+            notes: state.notes || {},
+            // Ensure ejbcaConnections exist
+            ejbcaConnections: state.ejbcaConnections || {},
+            // Add version field
+            version: '1.0.0',
+            // Update timestamp
+            timestamp: state.timestamp || Date.now(),
+          }
+        }
+
+        // Future migrations can be added here
+        // Example for v2:
+        // if (version === 1) {
+        //   return { ...state, newField: defaultValue }
+        // }
+
+        return state
+      },
     }
   )
 )
+
+// Add beforeunload/pagehide handlers to ensure progress is saved before navigation
+if (typeof window !== 'undefined') {
+  const handleBeforeUnload = () => {
+    try {
+      const state = useModuleStore.getState()
+      const progress = state.getFullProgress()
+      const persistData = { state: progress, version: 1 }
+      localStorage.setItem('pki-module-storage', JSON.stringify(persistData))
+    } catch (error) {
+      // Handle QuotaExceededError and other storage errors
+      if (error instanceof Error && error.name === 'QuotaExceededError') {
+        console.error('Storage quota exceeded. Progress may not be saved.')
+      } else {
+        console.error('Failed to save progress on unload:', error)
+      }
+    }
+  }
+
+  window.addEventListener('beforeunload', handleBeforeUnload)
+  window.addEventListener('pagehide', handleBeforeUnload) // iOS Safari support
+}

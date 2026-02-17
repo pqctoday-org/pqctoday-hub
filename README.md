@@ -42,11 +42,30 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Identity Options**: RSA, ML-DSA (Post-Quantum), and custom certificates
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
-- **Migrate Module**: Comprehensive PQC software reference and migration planning tool
+  - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, and HNDL attacks
+- **Migrate Module**: Comprehensive PQC migration planning with structured workflow
   - **Verified Database**: 76+ verified PQC-ready software entries (OS, Libraries, Network, etc.)
+  - **7-Step Migration Workflow**: Assess, Plan, Pilot, Implement, Test, Optimize, Measure
+  - **Framework Mappings**: NIST, ETSI, and CISA guideline alignment
+  - **Gap Analysis**: Software category coverage assessment with priority matrix
+  - **Reference Panel**: Curated authoritative migration resources
   - **Change Tracking**: "New" and "Updated" indicators for recent PQC landscape changes
   - **Filtering**: Deep filtering by category, platform, and industry
-  - **Reference**: Detailed product briefs, licensing info, and verification status
+- **PQC Risk Assessment** (`/assess`): Interactive 5-step quantum risk evaluation wizard
+  - Personalized risk scoring based on organization profile
+  - Algorithm migration recommendations with compliance analysis
+  - Printable risk assessment reports with remediation steps
+- **Executive Dashboard** (`/executive`): Leadership-focused KPI dashboard
+  - Threat metrics, algorithms at risk, migration tools count, compliance status
+  - Priority actions table with severity indicators
+  - Print-to-PDF export for board presentations
+- **PQC Glossary**: Global floating glossary with 100+ PQC terms
+  - Category filters, A-Z index, full-text search
+  - Complexity badges (Beginner, Intermediate, Advanced)
+  - Cross-references to learning modules
+- **Guided Tour**: Interactive first-visit onboarding overlay
+  - Highlights key platform features and navigation
+  - Remembers completion status
 - **Compliance Module**: Real-time compliance tracking and standards monitoring
   - NIST FIPS document tracking (203, 204, 205)
   - ANSSI recommendations
@@ -155,7 +174,11 @@ The application is structured into several key components:
 - **`src/components/Algorithms/InteractivePlayground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
 - **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
-- **`src/components/PKILearning`**: Educational platform with 6 modules (PKI Workshop, Digital Assets, 5G Security, EUDI Wallet, TLS 1.3 Basics, Introduction).
+- **`src/components/PKILearning`**: Educational platform with 7 modules (PKI Workshop, Digital Assets, 5G Security, EUDI Wallet, TLS 1.3 Basics, Introduction, PQC 101).
+- **`src/components/Assess`**: Risk assessment wizard generating personalized quantum risk reports.
+- **`src/components/Executive`**: Executive KPI dashboard for leadership decision-making.
+- **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.
+- **`src/components/common/GuidedTour.tsx`**: Interactive first-visit onboarding tour.
 - **`src/utils`**: Utility functions for data conversion and common operations.
 
 ## Project Structure
@@ -174,13 +197,15 @@ The application is structured into several key components:
 │   │   ├── About/           # About page and feedback forms
 │   │   ├── ACVP/            # Automated Cryptographic Validation Protocol testing
 │   │   ├── Algorithms/      # Algorithm comparison table
+│   │   ├── Assess/          # PQC risk assessment wizard
+│   │   ├── Executive/       # Executive KPI dashboard
 │   │   ├── Compliance/      # Compliance tracking and visualization
 │   │   ├── ErrorBoundary.tsx # Global error boundary component
 │   │   ├── Leaders/         # PQC transformation leaders profiles
 │   │   ├── Layout/          # Main layout and navigation components
 │   │   ├── Library/         # PQC standards library
 │   │   ├── OpenSSL Studio/   # OpenSSL v3.6.0 workbench (WASM)
-│   │   ├── PKILearning/     # Learning platform with 6 modules
+│   │   ├── PKILearning/     # Learning platform with 7 modules
 │   │   │   ├── modules/
 │   │   │   │   ├── Module1-Introduction/  # Getting started guide
 │   │   │   │   ├── PKIWorkshop/          # 4-step PKI lifecycle

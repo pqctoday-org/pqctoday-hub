@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.0] - 2026-02-16
+
+### Added
+
+- **PQC Risk Assessment Module** (`/assess`):
+  - Interactive 5-step wizard for personalized quantum risk evaluation
+  - Algorithm migration recommendations based on assessment results
+  - Compliance analysis with actionable remediation steps
+  - Printable risk assessment report generation
+
+- **Executive Dashboard** (`/executive`):
+  - KPI dashboard for leadership and decision-makers
+  - Threat metrics, algorithms at risk, migration tools count, compliance status
+  - Priority actions table with severity indicators
+  - Print-to-PDF export for board presentations
+
+- **Enhanced Migration Workflow** (`/migrate`):
+  - 7-step structured migration process: Assess, Plan, Pilot, Implement, Test, Optimize, Measure
+  - Framework mappings for NIST, ETSI, and CISA guidelines
+  - Gap analysis with software category coverage assessment
+  - Authoritative reference panel with curated migration resources
+
+- **Global PQC Glossary**:
+  - Floating access button available on every page
+  - 100+ post-quantum cryptography terms with definitions
+  - Category filters (Algorithm, Protocol, Standard, Concept, Organization)
+  - A-Z index, full-text search, and complexity badges (Beginner, Intermediate, Advanced)
+  - Cross-references to relevant learning modules
+
+- **Guided First-Visit Tour**:
+  - Interactive onboarding overlay highlighting key platform features
+  - Auto-triggers on first visit, remembers completion in localStorage
+  - Step-by-step walkthrough with skip and navigation controls
+
+- **PQC 101 Learning Module** (`/learn/pqc-101`):
+  - Beginner-friendly introduction to post-quantum cryptography
+  - Covers quantum threat landscape and Shor's algorithm impact
+  - At-risk sectors and Harvest Now, Decrypt Later (HNDL) attack explanation
+
+- **Enhanced Gantt Timeline**:
+  - Phase type filter dropdown (Discovery, Testing, POC, Migration, etc.)
+  - Event type filter dropdown (Phase, Milestone)
+  - CSV export of filtered timeline data
+  - Milestone phase labels displayed on flag markers
+
+- **New Software Reference Data**:
+  - Added `quantum_safe_cryptographic_software_reference_02162026.csv`
+  - Updated PQC software category priority matrix
+
+### Changed
+
+- **Learning Progress System**:
+  - Module store versioning and migration support for schema evolution
+  - Added `beforeunload` and `pagehide` persistence handlers for reliable auto-save
+  - iOS Safari compatibility fixes for storage persistence
+  - QuotaExceededError handling with user-friendly feedback via `react-hot-toast`
+
+- **Navigation**:
+  - Added Assess and Executive to main navigation bar with ClipboardCheck and BarChart3 icons
+
+### Fixed
+
+- **Storage Reliability**:
+  - Resolved iOS Safari storage persistence issues on page close
+  - Added fallback handling for QuotaExceededError during progress save
+
 ## [1.8.7] - 2026-02-16
 
 ### Added

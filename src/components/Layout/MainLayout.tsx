@@ -14,9 +14,13 @@ import {
   ShieldCheck,
   ArrowRightLeft,
   Home,
+  ClipboardCheck,
+  BarChart3,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
+import { Glossary } from '../common/Glossary'
+import { GuidedTour } from '../common/GuidedTour'
 
 export const MainLayout = () => {
   const location = useLocation()
@@ -35,6 +39,8 @@ export const MainLayout = () => {
     { path: '/playground', label: 'Playground', icon: FlaskConical, hiddenOnMobile: true },
     { path: '/openssl', label: 'OpenSSL Studio', icon: Activity, hiddenOnMobile: true },
     { path: '/compliance', label: 'Compliance', icon: ShieldCheck },
+    { path: '/assess', label: 'Assess', icon: ClipboardCheck },
+    { path: '/executive', label: 'Executive', icon: BarChart3 },
     { path: '/leaders', label: 'Leaders', icon: Users },
     { path: '/about', label: 'About', icon: Info },
   ]
@@ -123,6 +129,12 @@ export const MainLayout = () => {
 
       {/* What's New Toast Notification */}
       <WhatsNewToast />
+
+      {/* Global Glossary */}
+      <Glossary />
+
+      {/* First-visit Guided Tour */}
+      <GuidedTour />
     </div>
   )
 }

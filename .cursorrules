@@ -47,7 +47,7 @@
 - **Accessibility**: Ensure all interactive elements have valid `aria-label` or visible text. Run `npm run test` to catch regressions.
 
 ## Imports
-- Use relative paths for imports (e.g., `../../components/ui/button`) as no alias is configured.
+- Use `@/` path alias for imports (e.g., `@/components/ui/button`), which maps to `src/`.
 - Group imports: standard lib -> 3rd party -> local components -> styles/types.
 
 # Crypto Operations Guidelines

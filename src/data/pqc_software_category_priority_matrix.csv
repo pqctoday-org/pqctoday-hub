@@ -2,7 +2,7 @@ category_id,category_name,pqc_priority,total_software_products,pqc_ready_product
 CSC-025,Cryptographic Agility Frameworks,Critical,3,0,0.0,15,12,100.0,2025-Q4,All industries
 CSC-002,Hardware Security Module (HSM) Software,Critical,0,0,0.0,17,23,95.0,2025-Q4,"Finance, Government, Healthcare, Defense"
 CSC-004,Public Key Infrastructure (PKI) Software,Critical,0,0,0.0,14,16,95.0,2025-Q4,All industries
-CSC-003,Key Management Systems (KMS),Critical,4,1,25.0,31,23,95.0,2025-Q4,All industries
+CSC-003,Key Management Systems (KMS),Critical,9,4,44.4,31,23,95.0,2025-Q4,All industries
 CSC-029,Payment Cryptography Systems,Critical,0,0,0.0,29,36,95.0,2025-Q4,"Finance, Retail"
 CSC-016,Post-Quantum Cryptography Libraries,Critical,0,0,0.0,7,20,89.0,2025-Q4,All industries
 CSC-001,Cryptographic Libraries,Critical,9,4,44.4,10,12,88.5,2025-Q4,All industries

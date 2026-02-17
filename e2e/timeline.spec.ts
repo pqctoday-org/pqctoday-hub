@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import AxeBuilder from 'axe-playwright'
 
 test.describe('Timeline View', () => {
   test.beforeEach(async ({ page }) => {
@@ -31,9 +32,9 @@ test.describe('Timeline View', () => {
     // Checking for Country confirms the view loaded successfully
   })
 
-  test.skip('displays phase details in popover on click', async ({ page, browserName }) => {
-    // Skip WebKit due to persistent mock data rendering timeouts
-    test.skip(browserName === 'webkit', 'WebKit has rendering instability with large tables in CI')
+  test('displays phase details in popover on click', async ({ page }) => {
+    // Note: WebKit rendering optimizations applied (CSS containment, will-change, removed backdrop-blur)
+    // If this test fails on WebKit, check docs/webkit-rendering-investigation.md for Phase 2 fixes
 
     // Verify Mock Data is loaded
     await expect(page.getByText('Test Country').first()).toBeVisible({ timeout: 15000 })
@@ -96,5 +97,62 @@ test.describe('Timeline View', () => {
     // Check that only Canada is visible in the table
     await expect(page.locator('table').getByText('Canada').first()).toBeVisible()
     await expect(page.locator('table').getByText('United States').first()).not.toBeVisible()
+  })
+
+  test('passes accessibility audit (desktop)', async ({ page }) => {
+    // Wait for timeline to fully load
+    await expect(page.getByRole('columnheader', { name: 'Country' })).toBeVisible()
+    await expect(page.getByText('Loading...')).not.toBeVisible({ timeout: 10000 })
+
+    // Run axe accessibility audit
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+      .exclude('.lucide') // Exclude icon library decorative elements
+      .analyze()
+
+    // Assert no violations
+    expect(results.violations).toEqual([])
+  })
+
+  test('passes accessibility audit with popover open', async ({ page }) => {
+    // Wait for timeline to load
+    await expect(page.getByText('United States').first()).toBeVisible({ timeout: 15000 })
+
+    // Open a phase popover
+    const phaseButton = page.getByRole('button', { name: /Discovery/i }).first()
+    await phaseButton.click()
+
+    // Wait for popover to be visible
+    await expect(page.getByText('Start', { exact: true })).toBeVisible()
+
+    // Run accessibility audit with popover open
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+      .exclude('.lucide')
+      .analyze()
+
+    // Assert no violations
+    expect(results.violations).toEqual([])
+  })
+
+  test('passes accessibility audit (mobile viewport)', async ({ page }) => {
+    // Set mobile viewport
+    await page.setViewportSize({ width: 375, height: 667 })
+
+    // Navigate to timeline
+    await page.goto('/')
+    await page.getByRole('button', { name: 'Timeline view' }).click()
+
+    // Wait for mobile view to load
+    await expect(page.getByText('Loading...')).not.toBeVisible({ timeout: 10000 })
+
+    // Run accessibility audit on mobile
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+      .exclude('.lucide')
+      .analyze()
+
+    // Assert no violations
+    expect(results.violations).toEqual([])
   })
 })

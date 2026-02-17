@@ -64,9 +64,48 @@ export const WhatsNewToast = () => {
             </div>
 
             {/* Content */}
-            <p id="whats-new-description" className="text-sm text-muted-foreground mb-4">
-              See what's new in <span className="font-mono text-primary font-bold">v{version}</span>
-            </p>
+            <div id="whats-new-description" className="space-y-2 mb-4">
+              <p className="text-sm text-muted-foreground">
+                Highlights in <span className="font-mono text-primary font-bold">v{version}</span>:
+              </p>
+              <ul className="text-xs text-muted-foreground space-y-1.5 pl-1">
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">Risk Assessment</strong> &mdash; Interactive
+                    5-step quantum risk wizard
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">Executive Dashboard</strong> &mdash; KPI
+                    metrics and priority actions for leadership
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">Migration Workflow</strong> &mdash; 7-step
+                    structured migration with framework mappings
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">PQC Glossary</strong> &mdash; 100+ terms
+                    with search, filters, and complexity badges
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">Guided Tour</strong> &mdash; Interactive
+                    onboarding for first-time visitors
+                  </span>
+                </li>
+              </ul>
+            </div>
 
             {/* Actions */}
             <div className="flex items-center gap-2">

@@ -73,7 +73,7 @@ export function AboutView() {
           className="glass-panel p-6"
         >
           <div className="flex items-center gap-3 mb-6">
-            <Info className="text-blue-400" size={24} />
+            <Info className="text-primary" size={24} />
             <h2 className="text-xl font-bold">Software Bill of Materials (SBOM)</h2>
           </div>
           <div className="columns-1 md:columns-3 gap-6 space-y-6">
@@ -107,6 +107,22 @@ export function AboutView() {
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">class-variance-authority</span>
                   <span className="text-xs text-muted-foreground/60">v0.7.1</span>
+                </li>
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">React Router</span>
+                  <span className="text-xs text-muted-foreground/60">v7.12.0</span>
+                </li>
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">React Markdown</span>
+                  <span className="text-xs text-muted-foreground/60">v10.1.0</span>
+                </li>
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">remark-gfm</span>
+                  <span className="text-xs text-muted-foreground/60">v4.0.1</span>
+                </li>
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">React Focus Lock</span>
+                  <span className="text-xs text-muted-foreground/60">v2.13.7</span>
                 </li>
               </ul>
             </div>
@@ -199,6 +215,15 @@ export function AboutView() {
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React GA4</span>
                   <span className="text-xs text-muted-foreground/60">v2.1.0</span>
+                </li>
+              </ul>
+            </div>
+            <div className="break-inside-avoid">
+              <h3 className="text-lg font-semibold text-primary mb-3">Notifications</h3>
+              <ul className="space-y-2">
+                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">React Hot Toast</span>
+                  <span className="text-xs text-muted-foreground/60">v2.6.0</span>
                 </li>
               </ul>
             </div>

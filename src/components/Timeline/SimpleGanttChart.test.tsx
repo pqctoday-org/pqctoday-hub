@@ -211,10 +211,275 @@ describe('SimpleGanttChart', () => {
   it('updates parent filter when region dropdown is used', () => {
     render(<SimpleGanttChart {...defaultProps} />)
 
-    const dropdown = screen.getByTestId('filter-dropdown')
-    const button = within(dropdown).getByText('Canada')
+    const dropdowns = screen.getAllByTestId('filter-dropdown')
+    const regionDropdown = dropdowns[0] // First dropdown is the region filter
+    const button = within(regionDropdown).getByText('Canada')
 
     fireEvent.click(button)
     expect(defaultProps.onCountrySelect).toHaveBeenCalledWith('Canada')
+  })
+
+  describe('Advanced Filtering', () => {
+    it('renders phase type and event type filter dropdowns', () => {
+      render(<SimpleGanttChart {...defaultProps} />)
+      const dropdowns = screen.getAllByTestId('filter-dropdown')
+      // 3 dropdowns: region, phase type, event type
+      expect(dropdowns).toHaveLength(3)
+    })
+
+    it('filters by phase type when phase dropdown is used', () => {
+      render(<SimpleGanttChart {...defaultProps} />)
+
+      const dropdowns = screen.getAllByTestId('filter-dropdown')
+      const phaseDropdown = dropdowns[1]
+
+      // Click "Research" to filter only Research phases
+      fireEvent.click(within(phaseDropdown).getByText('Research'))
+
+      const table = screen.getByRole('table')
+      // US has Research phase, should be visible
+      expect(within(table).getByText('United States')).toBeInTheDocument()
+      // Canada only has Testing, should be filtered out
+      expect(within(table).queryByText('Canada')).not.toBeInTheDocument()
+    })
+
+    it('filters by event type (Milestones only)', () => {
+      render(<SimpleGanttChart {...defaultProps} />)
+
+      const dropdowns = screen.getAllByTestId('filter-dropdown')
+      const eventDropdown = dropdowns[2]
+
+      // Click "Milestones" to filter only milestones
+      fireEvent.click(within(eventDropdown).getByText('Milestones'))
+
+      // US has a Policy Milestone, should appear
+      const table = screen.getByRole('table')
+      expect(within(table).getByText('United States')).toBeInTheDocument()
+      // Canada has no milestones, should be filtered out
+      expect(within(table).queryByText('Canada')).not.toBeInTheDocument()
+    })
+
+    it('filters by event type (Phases only)', () => {
+      render(<SimpleGanttChart {...defaultProps} />)
+
+      const dropdowns = screen.getAllByTestId('filter-dropdown')
+      const eventDropdown = dropdowns[2]
+
+      // Click "Phases" to filter only phase-type events
+      fireEvent.click(within(eventDropdown).getByText('Phases'))
+
+      const table = screen.getByRole('table')
+      // Both countries have Phase-type events
+      expect(within(table).getByText('United States')).toBeInTheDocument()
+      expect(within(table).getByText('Canada')).toBeInTheDocument()
+      // US Policy Milestone should be gone, only Research Phase remains
+      expect(screen.queryAllByLabelText(/Policy: US Policy Milestone/i)).toHaveLength(0)
+    })
+
+    it('renders export CSV button', () => {
+      render(<SimpleGanttChart {...defaultProps} />)
+      const exportBtn = screen.getByLabelText('Export filtered timeline as CSV')
+      expect(exportBtn).toBeInTheDocument()
+      expect(exportBtn).not.toBeDisabled()
+    })
+
+    it('disables export button when no data matches filters', () => {
+      render(<SimpleGanttChart {...defaultProps} data={[]} />)
+      const exportBtn = screen.getByLabelText('Export filtered timeline as CSV')
+      expect(exportBtn).toBeDisabled()
+    })
+
+    it('combines phase type and region filters', () => {
+      render(<SimpleGanttChart {...defaultProps} />)
+
+      const dropdowns = screen.getAllByTestId('filter-dropdown')
+
+      // Filter by Research phase type
+      fireEvent.click(within(dropdowns[1]).getByText('Research'))
+
+      // Also filter by region (search for US)
+      const searchInput = screen.getByPlaceholderText(/Filter by country.../i)
+      fireEvent.change(searchInput, { target: { value: 'United States' } })
+
+      const table = screen.getByRole('table')
+      expect(within(table).getByText('United States')).toBeInTheDocument()
+      expect(within(table).queryByText('Canada')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('Keyboard Navigation', () => {
+    it('supports ArrowDown to navigate between phase rows', () => {
+      render(<SimpleGanttChart {...defaultProps} />)
+
+      // Canada sorts first alphabetically, so Canada Testing is row 0
+      // US Research is row 1, US Policy is row 2
+      const testingPhases = screen.getAllByLabelText(/Testing: Canada Testing/i)
+      testingPhases[0].focus()
+      expect(document.activeElement).toBe(testingPhases[0])
+
+      // Press ArrowDown to navigate to next row (US Research)
+      fireEvent.keyDown(testingPhases[0], { key: 'ArrowDown' })
+
+      const focusedEl = document.activeElement as HTMLElement
+      expect(focusedEl.getAttribute('data-phase-row')).toBe('1')
+    })
+
+    it('phase buttons have data-phase attributes for navigation', () => {
+      render(<SimpleGanttChart {...defaultProps} />)
+
+      // Canada sorts first (row 0), US Research is row 1
+      const testingPhases = screen.getAllByLabelText(/Testing: Canada Testing/i)
+      expect(testingPhases[0].getAttribute('data-phase-row')).toBe('0')
+      expect(testingPhases[0].getAttribute('data-phase-col')).toBe('0')
+
+      const researchPhases = screen.getAllByLabelText(/Research: PQC Research/i)
+      expect(researchPhases[0].getAttribute('data-phase-row')).toBe('1')
+      expect(researchPhases[0].getAttribute('data-phase-col')).toBe('0')
+    })
+  })
+
+  describe('Edge Cases', () => {
+    it('renders empty table when data is empty', () => {
+      render(<SimpleGanttChart {...defaultProps} data={[]} />)
+      const table = screen.getByRole('table')
+      expect(table).toBeInTheDocument()
+      // Headers present but no data rows
+      expect(screen.getByText('Country')).toBeInTheDocument()
+      expect(within(table).queryByText('United States')).not.toBeInTheDocument()
+    })
+
+    it('renders single country with many phases', () => {
+      const manyPhasesData: GanttCountryData[] = [
+        {
+          country: {
+            countryName: 'Test Country',
+            flagCode: 'TC',
+            bodies: [{ name: 'Agency', countryCode: 'TC', events: [] }],
+          },
+          phases: [
+            {
+              phase: 'Discovery',
+              type: 'Phase',
+              title: 'Discovery',
+              startYear: 2024,
+              endYear: 2025,
+              description: 'Discovery',
+              events: [],
+            },
+            {
+              phase: 'Testing',
+              type: 'Phase',
+              title: 'Testing',
+              startYear: 2025,
+              endYear: 2026,
+              description: 'Testing',
+              events: [],
+            },
+            {
+              phase: 'Migration',
+              type: 'Phase',
+              title: 'Migration',
+              startYear: 2026,
+              endYear: 2030,
+              description: 'Migration',
+              events: [],
+            },
+            {
+              phase: 'Deadline',
+              type: 'Milestone',
+              title: 'Final Deadline',
+              startYear: 2035,
+              endYear: 2035,
+              description: 'Deadline',
+              events: [],
+            },
+          ],
+        },
+      ]
+
+      render(<SimpleGanttChart {...defaultProps} data={manyPhasesData} countryItems={[]} />)
+      const table = screen.getByRole('table')
+      expect(within(table).getByText('Test Country')).toBeInTheDocument()
+      // All phase labels should appear
+      expect(screen.getAllByLabelText(/Discovery: Discovery/i).length).toBeGreaterThan(0)
+      expect(screen.getAllByLabelText(/Testing: Testing/i).length).toBeGreaterThan(0)
+      expect(screen.getAllByLabelText(/Migration: Migration/i).length).toBeGreaterThan(0)
+      expect(screen.getAllByLabelText(/Deadline: Final Deadline/i).length).toBeGreaterThan(0)
+    })
+
+    it('handles phase starting before timeline range', () => {
+      const preRangeData: GanttCountryData[] = [
+        {
+          country: {
+            countryName: 'Early Adopter',
+            flagCode: 'EA',
+            bodies: [{ name: 'Agency', countryCode: 'EA', events: [] }],
+          },
+          phases: [
+            {
+              phase: 'Research',
+              type: 'Phase',
+              title: 'Early Research',
+              startYear: 2020,
+              endYear: 2026,
+              description: 'Started before timeline',
+              events: [],
+            },
+          ],
+        },
+      ]
+
+      render(<SimpleGanttChart {...defaultProps} data={preRangeData} countryItems={[]} />)
+      // Should render without crashing, phase clamped to 2024
+      expect(screen.getAllByLabelText(/Research: Early Research/i).length).toBeGreaterThan(0)
+    })
+
+    it('renders no results when filter matches nothing', () => {
+      render(<SimpleGanttChart {...defaultProps} />)
+
+      const searchInput = screen.getByPlaceholderText(/Filter by country.../i)
+      fireEvent.change(searchInput, { target: { value: 'NonexistentCountry' } })
+
+      const table = screen.getByRole('table')
+      expect(within(table).queryByText('United States')).not.toBeInTheDocument()
+      expect(within(table).queryByText('Canada')).not.toBeInTheDocument()
+    })
+
+    it('handles overlapping phases from same country', () => {
+      const overlappingData: GanttCountryData[] = [
+        {
+          country: {
+            countryName: 'Overlap Country',
+            flagCode: 'OC',
+            bodies: [{ name: 'Agency', countryCode: 'OC', events: [] }],
+          },
+          phases: [
+            {
+              phase: 'Migration',
+              type: 'Phase',
+              title: 'System A Migration',
+              startYear: 2025,
+              endYear: 2030,
+              description: 'First migration',
+              events: [],
+            },
+            {
+              phase: 'Migration',
+              type: 'Phase',
+              title: 'System B Migration',
+              startYear: 2027,
+              endYear: 2033,
+              description: 'Overlapping migration',
+              events: [],
+            },
+          ],
+        },
+      ]
+
+      render(<SimpleGanttChart {...defaultProps} data={overlappingData} countryItems={[]} />)
+      // Both phases should render as separate rows
+      expect(screen.getAllByLabelText(/Migration: System A Migration/i).length).toBeGreaterThan(0)
+      expect(screen.getAllByLabelText(/Migration: System B Migration/i).length).toBeGreaterThan(0)
+    })
   })
 })

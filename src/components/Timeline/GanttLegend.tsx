@@ -6,7 +6,18 @@ interface GanttLegendProps {
 }
 
 export const GanttLegend = ({ className = '' }: GanttLegendProps) => {
-  const phases: Phase[] = ['Discovery', 'Testing', 'POC', 'Migration', 'Standardization']
+  const phases: Phase[] = [
+    'Discovery',
+    'Testing',
+    'POC',
+    'Migration',
+    'Standardization',
+    'Guidance',
+    'Policy',
+    'Regulation',
+    'Research',
+    'Deadline',
+  ]
 
   return (
     <div className={`glass-panel p-4 ${className}`}>
@@ -44,8 +55,8 @@ export const GanttLegend = ({ className = '' }: GanttLegendProps) => {
       <div className="mt-4 pt-4 border-t border-border">
         <div className="flex items-center gap-3">
           <div className="flex gap-1">
-            <Flag className="w-4 h-4 text-blue-500 fill-blue-500" />
-            <Flag className="w-4 h-4 text-purple-500 fill-purple-500" />
+            <Flag className="w-4 h-4 text-primary fill-primary" />
+            <Flag className="w-4 h-4 text-secondary fill-secondary" />
           </div>
           <span className="text-xs text-muted-foreground">
             <strong>Milestones:</strong> Flag markers indicate key events, colored according to

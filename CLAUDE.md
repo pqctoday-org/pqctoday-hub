@@ -25,9 +25,9 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 
 ## Architecture
 
-**Routing & Code Splitting**: All top-level views are lazy-loaded via `React.lazy()` in `src/App.tsx`. Routes nest under `MainLayout` which provides the navigation shell. Routes: `/` (Timeline), `/algorithms`, `/library`, `/learn/*`, `/playground`, `/openssl`, `/threats`, `/leaders`, `/compliance`, `/changelog`, `/migrate`, `/about`.
+**Routing & Code Splitting**: All top-level views are lazy-loaded via `React.lazy()` in `src/App.tsx`. Routes nest under `MainLayout` which provides the navigation shell. `AppRoot.tsx` wraps everything in `ErrorBoundary` → `Suspense` → `App`. Routes: `/` (Landing), `/timeline`, `/algorithms`, `/library`, `/learn/*`, `/playground`, `/openssl`, `/threats`, `/leaders`, `/compliance`, `/changelog`, `/migrate`, `/assess`, `/executive`, `/about`.
 
-**State Management**: Zustand stores in `src/store/` with `persist` middleware for localStorage. Stores are modular — `useModuleStore` (learning progress/artifacts), `useThemeStore` (dark/light), `useVersionStore`, `tls-learning.store.ts`.
+**State Management**: Zustand stores in `src/store/` with `persist` middleware for localStorage. Stores are modular — `useModuleStore` (learning progress/artifacts), `useThemeStore` (dark/light), `useVersionStore` (what's-new tracking), `tls-learning.store.ts` (TLS simulation), `useAssessmentStore` (assessment wizard, non-persisted).
 
 **Crypto Stack** (layered, strict priority):
 
@@ -37,9 +37,13 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 4. **@noble/\*, @scure/\*** — blockchain crypto (secp256k1, Ed25519, BIP32/39/44, Ethereum)
 5. **Web Crypto API** (`src/utils/webCrypto.ts`) — X25519, P-256, ECDH
 
-**Data Sources**: Static JSON/CSV files in `src/data/`. Compliance data scraped at build time via `npm run scrape` from NIST, ANSSI, and Common Criteria. CSV files use versioned naming (e.g., `leaders_01192026.csv`).
+**Data Sources**: Static JSON/CSV files in `src/data/`. Compliance data scraped at build time via `npm run scrape` from NIST, ANSSI, and Common Criteria. CSV files use versioned naming (e.g., `leaders_01192026.csv`). Dev server proxies requests to NIST, BSI, ANSSI, and Common Criteria APIs (configured in `vite.config.ts`).
 
-**WASM Requirements**: Dev server sets `Cross-Origin-Embedder-Policy: require-corp` and `Cross-Origin-Opener-Policy: same-origin` headers for SharedArrayBuffer support.
+**WASM Requirements**: Dev and preview servers set `Cross-Origin-Embedder-Policy: require-corp` and `Cross-Origin-Opener-Policy: same-origin` headers for SharedArrayBuffer support. The `predev` and `build` scripts copy liboqs WASM dist into `public/dist`.
+
+**Tailwind v4 Theme**: No separate `tailwind.config` file. Theme is defined inline in `src/styles/index.css` using the `@theme` block with CSS custom properties. Light and dark mode color systems, phase colors, file type colors, and utility classes (`.glass-panel`, `.text-gradient`, `.shadow-glow`, status colors) are all defined there.
+
+**Vitest Config**: Embedded in `vite.config.ts` (not a separate file). Uses `jsdom` environment, globals enabled, setup file at `./src/test/setup.ts`.
 
 ## Coding Standards
 
@@ -64,9 +68,11 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 - **E2E**: Playwright in `e2e/`. 60s test timeout (WASM loading). Runs against Chromium, Firefox, WebKit. Accessibility tested with axe-playwright.
 - **Mocking**: WASM modules and external dependencies should be mocked in unit tests. `VITE_USE_MOCK_DATA` env var enables mock data.
 
+**ESLint**: Flat config (v9) in `eslint.config.js`. `@typescript-eslint/no-explicit-any: error`. `no-console: error` (only `warn`/`error` allowed) except PKILearning components and data-loading services where `console.log` is permitted. Includes `eslint-plugin-security`, `jsx-a11y`, and `testing-library` plugins.
+
 ## CI Pipeline
 
-Push to main or PR triggers: npm ci → security audit → format:check → lint → build → unit tests → E2E tests (sharded, Chromium). Node 20 required.
+Push to main or PR triggers: npm ci → security audit → format:check → lint → build → unit tests → E2E tests (sharded across 2 workers, Chromium only). Node 20 required. Separate workflows handle GitHub Pages deploy (`deploy.yml`), release creation from tags (`release.yml`), and daily compliance data scraping (`update-compliance.yml`).
 
 ## Formatting
 

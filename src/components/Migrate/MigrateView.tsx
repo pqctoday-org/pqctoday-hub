@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { softwareData, softwareMetadata } from '../../data/migrateData'
 
 import { SoftwareTable } from './SoftwareTable'
+import { MigrationWorkflow } from './MigrationWorkflow'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Search, AlertTriangle } from 'lucide-react'
 import debounce from 'lodash/debounce'
@@ -12,6 +13,7 @@ export const MigrateView: React.FC = () => {
   const [activePlatform, setActivePlatform] = useState<string>('All')
   const [filterText, setFilterText] = useState('')
   const [inputValue, setInputValue] = useState('')
+  const softwareTableRef = useRef<HTMLDivElement>(null)
 
   // Debounced search
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,6 +65,33 @@ export const MigrateView: React.FC = () => {
     return ['All', ...clean]
   }, [])
 
+  // Map category IDs to category names for step-to-table filtering
+  const categoryIdToName = useMemo(() => {
+    const map = new Map<string, string>()
+    softwareData.forEach((item) => {
+      if (item.categoryId && item.categoryName) {
+        map.set(item.categoryId, item.categoryName)
+      }
+    })
+    return map
+  }, [])
+
+  const handleViewSoftware = useCallback(
+    (categoryIds: string[]) => {
+      // Find the first matching category name
+      for (const id of categoryIds) {
+        const name = categoryIdToName.get(id)
+        if (name && categories.includes(name)) {
+          setActiveTab(name)
+          logMigrateAction('View Related Software', name)
+          break
+        }
+      }
+      softwareTableRef.current?.scrollIntoView({ behavior: 'smooth' })
+    },
+    [categoryIdToName, categories]
+  )
+
   const filteredData = useMemo(() => {
     return softwareData.filter((item) => {
       // Tab Filter (Category)
@@ -103,7 +132,7 @@ export const MigrateView: React.FC = () => {
           PQC Software Migration Guide
         </h2>
         <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
-          Reference list of software with quantum-safe capabilities to assist in migration planning.
+          A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance.
         </p>
         {softwareMetadata && (
           <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
@@ -113,6 +142,16 @@ export const MigrateView: React.FC = () => {
             </p>
           </div>
         )}
+      </div>
+
+      {/* Migration Workflow Hero */}
+      <MigrationWorkflow onViewSoftware={handleViewSoftware} />
+
+      {/* Software Catalog */}
+      <div ref={softwareTableRef} className="pt-4">
+        <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4">
+          Software Reference Catalog
+        </h3>
       </div>
 
       {/* Controls Container */}

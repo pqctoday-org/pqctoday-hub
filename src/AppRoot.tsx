@@ -1,4 +1,5 @@
 import { StrictMode, Suspense, lazy } from 'react'
+import { Toaster } from 'react-hot-toast'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
 // Lazy load App to catch evaluation errors
@@ -23,6 +24,29 @@ export default function AppRoot() {
         >
           <App />
         </Suspense>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            className: 'glass-panel',
+            style: {
+              background: 'var(--color-card)',
+              color: 'var(--color-foreground)',
+              border: '1px solid var(--color-border)',
+            },
+            success: {
+              iconTheme: {
+                primary: 'var(--color-primary)',
+                secondary: 'var(--color-card)',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: 'var(--color-card)',
+              },
+            },
+          }}
+        />
       </ErrorBoundary>
     </StrictMode>
   )
