@@ -25,9 +25,9 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 
 ## Architecture
 
-**Routing & Code Splitting**: All top-level views are lazy-loaded via `React.lazy()` in `src/App.tsx`. Routes nest under `MainLayout` which provides the navigation shell. `AppRoot.tsx` wraps everything in `ErrorBoundary` → `Suspense` → `App`. Routes: `/` (Landing), `/timeline`, `/algorithms`, `/library`, `/learn/*`, `/playground`, `/openssl`, `/threats`, `/leaders`, `/compliance`, `/changelog`, `/migrate`, `/assess`, `/executive`, `/about`.
+**Routing & Code Splitting**: All top-level views are lazy-loaded via `React.lazy()` in `src/App.tsx`. Routes nest under `MainLayout` which provides the navigation shell. `AppRoot.tsx` wraps everything in `ErrorBoundary` → `Suspense` → `App`. Routes: `/` (Landing), `/timeline`, `/algorithms`, `/library`, `/learn/*` (includes `/learn/quiz`), `/playground`, `/openssl`, `/threats`, `/leaders`, `/compliance`, `/changelog`, `/migrate`, `/assess`, `/about`.
 
-**State Management**: Zustand stores in `src/store/` with `persist` middleware for localStorage. Stores are modular — `useModuleStore` (learning progress/artifacts), `useThemeStore` (dark/light), `useVersionStore` (what's-new tracking), `tls-learning.store.ts` (TLS simulation), `useAssessmentStore` (assessment wizard, non-persisted).
+**State Management**: Zustand stores in `src/store/` with `persist` middleware for localStorage. Stores are modular — `useModuleStore` (learning progress/artifacts), `useThemeStore` (dark/light), `useVersionStore` (what's-new tracking), `tls-learning.store.ts` (TLS simulation), `useAssessmentStore` (assessment wizard, persisted to localStorage).
 
 **Crypto Stack** (layered, strict priority):
 

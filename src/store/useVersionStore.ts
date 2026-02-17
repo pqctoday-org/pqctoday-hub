@@ -1,8 +1,9 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-// Get version from package.json at build time
-const APP_VERSION = '1.11.0'
+// Injected by Vite at build time from package.json version
+declare const __APP_VERSION__: string
+const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
 
 interface VersionState {
   currentVersion: string

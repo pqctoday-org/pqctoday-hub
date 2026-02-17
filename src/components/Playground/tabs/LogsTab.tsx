@@ -57,14 +57,9 @@ export const LogsTab: React.FC = () => {
                     )}
                   </div>
                   <div
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Resize timestamp column"
+                    role="none"
                     className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
                     onMouseDown={(e) => startResize(e, 'timestamp')}
-                    onKeyDown={() => {
-                      /* Add keyboard resize logic if needed */
-                    }}
                   />
                 </th>
                 <th
@@ -85,14 +80,9 @@ export const LogsTab: React.FC = () => {
                     )}
                   </div>
                   <div
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Resize keyLabel column"
+                    role="none"
                     className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
                     onMouseDown={(e) => startResize(e, 'keyLabel')}
-                    onKeyDown={() => {
-                      /* Add keyboard resize logic if needed */
-                    }}
                   />
                 </th>
                 <th
@@ -113,14 +103,9 @@ export const LogsTab: React.FC = () => {
                     )}
                   </div>
                   <div
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Resize operation column"
+                    role="none"
                     className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
                     onMouseDown={(e) => startResize(e, 'operation')}
-                    onKeyDown={() => {
-                      /* Add keyboard resize logic if needed */
-                    }}
                   />
                 </th>
                 <th
@@ -141,14 +126,9 @@ export const LogsTab: React.FC = () => {
                     )}
                   </div>
                   <div
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Resize result column"
+                    role="none"
                     className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
                     onMouseDown={(e) => startResize(e, 'result')}
-                    onKeyDown={() => {
-                      /* Add keyboard resize logic if needed */
-                    }}
                   />
                 </th>
                 <th
@@ -169,14 +149,9 @@ export const LogsTab: React.FC = () => {
                     )}
                   </div>
                   <div
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Resize executionTime column"
+                    role="none"
                     className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
                     onMouseDown={(e) => startResize(e, 'executionTime')}
-                    onKeyDown={() => {
-                      /* Add keyboard resize logic if needed */
-                    }}
                   />
                 </th>
               </tr>

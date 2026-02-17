@@ -1,5 +1,5 @@
 import React from 'react'
-import { CopyButton } from './CopyButton'
+import { CopyButton } from '@/components/ui/CopyButton'
 import {
   detectCryptoType,
   getCryptoColorClass,

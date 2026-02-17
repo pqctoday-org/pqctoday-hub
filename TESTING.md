@@ -10,12 +10,13 @@ The project uses a comprehensive testing approach with three layers:
 
 **Location**: `src/**/*.test.{ts,tsx}`
 
-**Coverage**: 24 test files covering:
+**Coverage**: 40+ test files covering:
 
-- React components
-- Utility functions
+- React components (Playground, PKI Learning, Compliance, Assessment, Migrate, Timeline, Leaders)
+- Utility functions (crypto, CSV parsing, analytics, input validation)
 - Services (OpenSSL, storage)
-- Data loading and parsing
+- Custom hooks (useAssessmentEngine, useTheme, useCertProfile)
+- Data loading and parsing (algorithms, timeline, library, threats)
 
 **Running Unit Tests**:
 
@@ -44,15 +45,18 @@ npm run coverage
 
 **Location**: `e2e/*.spec.ts`
 
-**Coverage**: 20 E2E test files covering:
+**Coverage**: 46 E2E test files covering:
 
 - Timeline visualization
 - Algorithm comparison
-- Interactive playground
-- OpenSSL Studio
-- PKI Learning module
-- Digital Assets flows
+- Interactive playground (basic, hybrid, ML-DSA, KEM)
+- OpenSSL Studio (basic, PQC, advanced, encryption, KDF, LMS, security badges)
+- PKI Learning module and Digital Assets flows (Ethereum, HD Wallet)
+- 5G Security (baseline, validation, cross-validation)
+- Compliance (data, sources, sorting)
+- Migration workflow
 - Library and threats dashboards
+- Navigation and accessibility
 
 **Running E2E Tests**:
 
@@ -137,34 +141,16 @@ test('should navigate to playground', async ({ page }) => {
 
 ## CI/CD Integration
 
-### Current CI Pipeline
+### CI Pipeline
 
 The `.github/workflows/ci.yml` runs:
 
-- ✅ Linting
-- ✅ Formatting checks
-- ✅ Unit tests
-- ✅ Build verification
 - ✅ Security audit
-
-### Recommended: Add E2E Tests to CI
-
-Add to `.github/workflows/ci.yml`:
-
-```yaml
-- name: Install Playwright Browsers
-  run: npx playwright install --with-deps
-
-- name: Run E2E Tests
-  run: npm run test:e2e
-
-- name: Upload Playwright Report
-  if: always()
-  uses: actions/upload-artifact@v3
-  with:
-    name: playwright-report
-    path: playwright-report/
-```
+- ✅ Formatting checks
+- ✅ Linting
+- ✅ Build verification
+- ✅ Unit tests
+- ✅ E2E tests (Playwright, sharded across 2 workers, Chromium only)
 
 ## Test File Naming Conventions
 

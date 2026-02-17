@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Copy, Check } from 'lucide-react'
 
 interface CopyButtonProps {
@@ -7,7 +7,7 @@ interface CopyButtonProps {
   className?: string
 }
 
-export const CopyButton: React.FC<CopyButtonProps> = ({ text, label = 'Copy', className = '' }) => {
+export const CopyButton = ({ text, label = 'Copy', className = '' }: CopyButtonProps) => {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {

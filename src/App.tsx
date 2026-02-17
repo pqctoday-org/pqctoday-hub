@@ -4,6 +4,7 @@ import { logPageView } from './utils/analytics'
 import { useEffect } from 'react'
 import { lazy, Suspense } from 'react'
 import { MainLayout } from './components/Layout/MainLayout'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 // Lazy load route components for code splitting
 const TimelineView = lazy(() =>
@@ -64,7 +65,6 @@ const LandingView = lazy(() =>
   }))
 )
 const AssessView = lazy(() => import('./components/Assess/AssessView'))
-// const ExecutiveView = lazy(() => import('./components/Executive/ExecutiveView'))
 
 // Helper component to log page views on route change
 function AnalyticsTracker() {
@@ -99,9 +99,30 @@ function App() {
             <Route path="/timeline" element={<TimelineView />} />
             <Route path="/algorithms" element={<AlgorithmsView />} />
             <Route path="/library" element={<LibraryView />} />
-            <Route path="/learn/*" element={<PKILearningView />} />
-            <Route path="/playground" element={<PlaygroundView />} />
-            <Route path="/openssl" element={<OpenSSLStudioView />} />
+            <Route
+              path="/learn/*"
+              element={
+                <ErrorBoundary>
+                  <PKILearningView />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/playground"
+              element={
+                <ErrorBoundary>
+                  <PlaygroundView />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/openssl"
+              element={
+                <ErrorBoundary>
+                  <OpenSSLStudioView />
+                </ErrorBoundary>
+              }
+            />
             <Route path="/threats" element={<ThreatsDashboard />} />
             <Route path="/leaders" element={<LeadersGrid />} />
             <Route path="/compliance" element={<ComplianceView />} />
@@ -109,8 +130,6 @@ function App() {
             <Route path="/migrate" element={<MigrateView />} />
             <Route path="/about" element={<AboutView />} />
             <Route path="/assess" element={<AssessView />} />
-            {/* Executive route hidden pending redesign */}
-            {/* <Route path="/executive" element={<ExecutiveView />} /> */}
             {/* Fallback route */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

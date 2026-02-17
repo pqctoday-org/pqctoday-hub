@@ -43,7 +43,15 @@ openssl-3.6.0-build/
 playwright-report/
 test-results/
 coverage/
+test-results*.json
+lint_output.txt
+build_debug*.log
+
+# Environment
 .env
+
+# Scraped data cache
+.cache/
 
 # Temporary Files & Test Artifacts
 *.pem

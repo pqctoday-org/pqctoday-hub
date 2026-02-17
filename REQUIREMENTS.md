@@ -18,7 +18,8 @@ The application is divided into ten main modules. Detailed requirements for each
     - **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment (Profiles A/B/C) and 5G-AKA authentication with MILENAGE
     - **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: EUDI Wallet ecosystem with Remote HSM architecture. Features 7-step interactive flows for PID Issuance (OpenID4VCI) and Relying Party verification (OpenID4VP), plus QEAA Attestation and Remote QES.
     - **[TLS 1.3 Basics](requirements/learn_openssltls13_requirement.md)**: Interactive TLS 1.3 handshake simulation with PQC algorithm support (ML-KEM, ML-DSA)
-    - **Introduction Module**: Overview and getting started guide
+    - **PQC 101 Introduction**: Beginner-friendly overview of quantum threats, Shor's algorithm, at-risk sectors, and HNDL attacks
+    - **[PQC Quiz](requirements/learn.md#module-7-pqc-quiz-implemented)**: Interactive knowledge assessment with 70+ questions across 8 categories, 3 quiz modes, and per-category score tracking
 6.  **[Migrate Module](requirements/Migrate_Module_Requirements.md)**: Comprehensive reference database of PQC-ready software and infrastructure.
     - Software Reference Database (OS, Libraries, Network, etc.)
     - Change tracking with "New" and "Updated" indicators
@@ -36,6 +37,7 @@ The application is divided into ten main modules. Detailed requirements for each
     - Automated data scraping and visualization
 10. **[Transformation Leaders](requirements/leaders.md)**: Profiles of key public and private figures driving the transition.
 11. **[About & Feedback](requirements/about.md)**: Project information, feedback mechanisms, and Software Bill of Materials (SBOM).
+12. **PQC Risk Assessment** (`/assess`): 12-step quantum risk evaluation wizard with compound scoring engine, 4 risk dimensions (Quantum Exposure, Migration Complexity, Regulatory Pressure, Organizational Readiness), HNDL risk window visualization, and URL-shareable assessments.
 
 ## 3. Non-Functional Requirements
 
@@ -97,16 +99,32 @@ The application will use a static JSON configuration. Below are the shared inter
 
 ```typescript
 // --- Timeline Types ---
-type Phase = 'Discovery' | 'Testing' | 'POC' | 'Migration' | 'Deadline' | 'Standardization'
+type Phase =
+  | 'Discovery'
+  | 'Testing'
+  | 'POC'
+  | 'Migration'
+  | 'Standardization'
+  | 'Guidance'
+  | 'Policy'
+  | 'Regulation'
+  | 'Research'
+  | 'Deadline'
 
 interface TimelineEvent {
-  year: number
-  quarter?: string
+  startYear: number
+  endYear: number
   phase: Phase
+  type: EventType
   title: string
   description: string
-  sourceUrl: string
-  sourceDate: string
+  sourceUrl?: string
+  sourceDate?: string
+  status?: string
+  orgName: string
+  orgFullName: string
+  countryName: string
+  flagCode: string
 }
 
 interface RegulatoryBody {

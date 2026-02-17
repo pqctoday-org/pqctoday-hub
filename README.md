@@ -43,6 +43,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
   - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, and HNDL attacks
+  - **PQC Quiz**: Interactive knowledge assessment with 70+ questions across 8 categories
+    - **3 Modes**: Quick (20 random), Full (all questions), Custom (by topic)
+    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations
+    - **Score Tracking**: Per-category highest scores persisted across sessions
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
   - **Verified Database**: 76+ verified PQC-ready software entries (OS, Libraries, Network, etc.)
   - **7-Step Migration Workflow**: Assess, Plan, Pilot, Implement, Test, Optimize, Measure
@@ -128,7 +132,7 @@ Start the development server:
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`.
+The application will be available at `http://localhost:5175`.
 
 ### Building for Production
 
@@ -172,7 +176,7 @@ The application is structured into several key components:
 - **`src/components/Algorithms/InteractivePlayground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
 - **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
-- **`src/components/PKILearning`**: Educational platform with 7 modules (PKI Workshop, Digital Assets, 5G Security, EUDI Wallet, TLS 1.3 Basics, Introduction, PQC 101).
+- **`src/components/PKILearning`**: Educational platform with 7 modules (PKI Workshop, Digital Assets, 5G Security, EUDI Wallet, TLS 1.3 Basics, PQC 101 Introduction, PQC Quiz).
 - **`src/components/Assess`**: 12-step risk assessment wizard with compound scoring engine and HNDL risk analysis.
 - **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.
 - **`src/components/common/GuidedTour.tsx`**: Interactive first-visit onboarding tour.
@@ -208,7 +212,8 @@ The application is structured into several key components:
 │   │   │   │   ├── DigitalAssets/        # Bitcoin, Ethereum, Solana, HD Wallet
 │   │   │   │   ├── FiveG/                # SUCI + 5G-AKA flows
 │   │   │   │   ├── DigitalID/            # EUDI Wallet ecosystem
-│   │   │   │   └── TLSBasics/            # TLS 1.3 handshake simulation
+│   │   │   │   ├── TLSBasics/            # TLS 1.3 handshake simulation
+│   │   │   │   └── Quiz/                 # PQC knowledge assessment quiz
 │   │   ├── Playground/      # Interactive cryptography playground
 │   │   ├── Router/          # Routing utilities (ScrollToTop)
 │   │   ├── Threats/         # Industry-specific threat analysis

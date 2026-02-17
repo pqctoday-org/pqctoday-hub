@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { ChevronRight, ChevronLeft, Play, CheckCircle, AlertCircle } from 'lucide-react'
 import { OutputFormatter } from './OutputFormatter'
-import { CopyButton } from './CopyButton'
+import { CopyButton } from '@/components/ui/CopyButton'
 
 export interface Step {
   id: string

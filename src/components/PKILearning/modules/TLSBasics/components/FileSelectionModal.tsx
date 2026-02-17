@@ -54,7 +54,11 @@ export const FileSelectionModal: React.FC<Props> = ({
       >
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-bold text-lg">{title}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-muted rounded-full transition-colors">
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="p-1 hover:bg-muted rounded-full transition-colors"
+          >
             <X size={20} />
           </button>
         </div>

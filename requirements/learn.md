@@ -7,14 +7,15 @@
 
 The "Learn" feature is a comprehensive educational platform designed to teach various aspects of cybersecurity and cryptography. While the current implementation focuses on the **PKI Workshop**, the platform is architected to support multiple modules covering different domains.
 
-### Planned Modules
+### Implemented Modules
 
-- **PKI** (Implemented)
+- **PKI Workshop** (Implemented)
 - **Digital Assets** (Implemented)
 - **5G Security** (Implemented)
 - **Digital ID / EUDI** (Implemented)
 - **TLS 1.3 Basics** (Implemented)
-- **VPN**
+- **PQC 101 Introduction** (Implemented)
+- **PQC Quiz** (Implemented)
 
 ## Module 1: PKI Workshop (Implemented)
 
@@ -152,9 +153,9 @@ The Digital Assets Program provides an interactive, deep-dive into the cryptogra
 
 ## Technical Implementation
 
-- **Frontend Framework:** React 18 + TypeScript + Vite.
+- **Frontend Framework:** React 19 + TypeScript + Vite.
 - **Cryptography:**
-  - **OpenSSL WASM:** Custom build of OpenSSL 3.5.4 running in a Web Worker.
+  - **OpenSSL WASM:** Custom build of OpenSSL 3.6.0 running in a Web Worker.
   - **Service:** `OpenSSLService` handles asynchronous command execution and file I/O.
   - **JS Libraries:** `@scure/bip39`, `@scure/bip32`, `@scure/base`, `@noble/hashes`, `@noble/curves` for blockchain-specific operations.
 - **State Management:**
@@ -220,3 +221,33 @@ This module provides an interactive educational environment for understanding TL
 - **Cryptographic Logging:** Detailed key derivation, HKDF, signatures, and encryption operations.
 - **PQC Support:** ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA authentication.
 - **Reference:** [Detailed TLS Requirements](learn_openssltls13_requirement.md)
+
+## Module 6: PQC 101 Introduction (Implemented)
+
+A beginner-friendly module providing an overview of post-quantum cryptography concepts and hands-on demonstrations.
+
+**Key Features:**
+
+- **Theory:** What is PKI, why quantum computers threaten current cryptography, Shor's algorithm, at-risk sectors, HNDL attacks.
+- **Key Generation Workshop:** Interactive key generation comparing classical and PQC algorithms side-by-side.
+- **Signature Demo:** Real-time digital signature creation and verification using OpenSSL WASM.
+- **Components:** `PQC101Module`, `KeyGenWorkshop`, `SignatureDemo`.
+
+## Module 7: PQC Quiz (Implemented)
+
+An interactive knowledge assessment module with adaptive question selection and persistent score tracking.
+
+**Key Features:**
+
+- **3 Quiz Modes:**
+  - **Quick:** 20 proportionally sampled questions across all categories.
+  - **Full:** All questions in the question bank.
+  - **Category:** User-selected topic categories.
+- **8 Question Categories:** PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance & Regulations, Protocol Integration, Industry Threats, Crypto Operations.
+- **Question Types:** Multiple-choice, true/false, multi-select.
+- **Difficulty Levels:** Beginner, Intermediate, Advanced.
+- **Score Tracking:** Per-category highest scores persisted via `useModuleStore`. Scores displayed on the intro screen for repeat attempts.
+- **Educational Feedback:** Each question includes an explanation and optional "Learn More" link to relevant app pages.
+- **Data Source:** `src/data/quizData.ts` (70+ questions).
+- **Components:** `QuizModule` (orchestrator), `QuizIntro`, `QuizWizard`, `QuizResults`, `QuestionCard`, `QuizProgress`, `TopicSelector`, `FeedbackPanel`, `ScoreBreakdown`.
+- **Custom Hook:** `useQuizState` for quiz session state management.

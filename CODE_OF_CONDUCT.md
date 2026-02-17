@@ -32,6 +32,12 @@ Community leaders are responsible for clarifying and enforcing our standards of 
 
 This Code of Conduct applies within all community spaces, and also applies when an individual is officially representing the community in public spaces.
 
+## Enforcement
+
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project maintainer at **conduct@pqctimeline.app**. All complaints will be reviewed and investigated promptly and fairly.
+
+The project maintainer is obligated to maintain confidentiality with regard to the reporter of an incident. Further details of specific enforcement policies may be posted separately.
+
 ## Attribution
 
 This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 2.1, available at https://www.contributor-covenant.org/version/2/1/code_of_conduct.html.

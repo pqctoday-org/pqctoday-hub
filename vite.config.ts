@@ -7,7 +7,7 @@ import topLevelAwait from 'vite-plugin-top-level-await'
 
 import tailwindcss from '@tailwindcss/vite'
 
-// Plugin to update build timestamp on every build
+// Plugin to inject build-time constants
 function buildTimestampPlugin(): Plugin {
   return {
     name: 'build-timestamp',
@@ -25,6 +25,7 @@ function buildTimestampPlugin(): Plugin {
               timeZoneName: 'short',
             })
           ),
+          __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
         },
       }
     },
@@ -170,11 +171,10 @@ export default defineConfig({
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-ui': ['framer-motion', 'lucide-react', 'clsx'],
-          'vendor-pqc': ['@openforge-sh/liboqs', 'pqcrypto', '@noble/hashes'],
+          'vendor-pqc': ['@openforge-sh/liboqs', '@noble/hashes'],
           'vendor-zip': ['jszip'],
           'vendor-csv': ['papaparse'],
           'vendor-markdown': ['react-markdown', 'remark-gfm'],
-          'vendor-pdf': ['md-to-pdf', 'pdf-parse'],
         },
       },
     },

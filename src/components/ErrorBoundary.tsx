@@ -28,11 +28,13 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         this.props.fallback || (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-            <h2 className="text-red-800 text-lg font-semibold">Something went wrong</h2>
-            <p className="text-red-600 mt-2">{this.state.error?.message || 'Unknown error'}</p>
+          <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-md">
+            <h2 className="text-destructive text-lg font-semibold">Something went wrong</h2>
+            <p className="text-destructive/80 mt-2">
+              {this.state.error?.message || 'Unknown error'}
+            </p>
             <button
-              className="mt-4 px-4 py-2 bg-red-100 text-red-800 rounded hover:bg-red-200"
+              className="mt-4 px-4 py-2 bg-destructive/20 text-destructive rounded hover:bg-destructive/30"
               onClick={() => this.setState({ hasError: false, error: null })}
             >
               Try again

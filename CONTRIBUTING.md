@@ -74,8 +74,8 @@ npm run test:e2e
 ## Development Guidelines
 
 - **Tech Stack**: React, TypeScript, Vite, Tailwind CSS (via vanilla CSS/utility classes), Vitest, Playwright.
-- **Styling**: We use a custom "Glassmorphism" design system. Please reuse existing CSS variables and utility classes where possible.
-- **Cryptography**: Use the `useOpenSSL` hook or `liboqs` wrappers for cryptographic operations. Do not implement crypto primitives from scratch.
+- **Styling**: We use Tailwind CSS v4 with semantic tokens (`text-primary`, `text-foreground`, `bg-background`, `bg-card`, `border-border`). Use `.glass-panel` for card containers and `.text-gradient` for headings. Never use hardcoded colors (e.g., `text-cyan-400`). See `CLAUDE.md` for the full coding standards.
+- **Cryptography**: Use `OpenSSLService` (primary) or `liboqs` wrappers for cryptographic operations. Follow the crypto stack priority defined in `CLAUDE.md`. Do not install new crypto libraries without explicit permission.
 
 ## License
 

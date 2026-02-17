@@ -20,10 +20,10 @@ jobs:
 
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Use Node.js 20
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
@@ -33,7 +33,6 @@ jobs:
 
       - name: Security Audit
         run: npm audit --audit-level=high
-        continue-on-error: true
 
       - name: Check Formatting
         run: npm run format:check
@@ -52,11 +51,10 @@ jobs:
 
       - name: Run E2E Tests (Sharded)
         run: npx playwright test --project=chromium --shard=${{ matrix.shard }}/${{ strategy.job-total }}
-        continue-on-error: true
 
       - name: Upload Playwright Report
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-report-${{ matrix.shard }}
           path: playwright-report/
