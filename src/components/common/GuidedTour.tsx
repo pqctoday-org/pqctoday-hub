@@ -49,6 +49,8 @@ const tourSteps: TourStep[] = [
   },
 ]
 
+const TOOLTIP_WIDTH = 320
+
 const getTooltipPosition = (rect: DOMRect, position: TourStep['position']) => {
   const gap = 12
   switch (position) {
@@ -85,15 +87,39 @@ export const GuidedTour: React.FC = () => {
     // eslint-disable-next-line security/detect-object-injection
     const step = tourSteps[currentStep]
     if (!step) return
+
+    // On narrow viewports, skip anchor-to-element positioning entirely.
+    // Use a centered card so the tooltip never overlaps nav or jumps with address-bar resize.
+    const vw = window.visualViewport?.width ?? window.innerWidth
+    if (vw < 640) {
+      setTooltipStyle({
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 60,
+        width: 'calc(100vw - 2rem)',
+        maxWidth: '340px',
+      })
+      return
+    }
+
     const el = document.querySelector(step.target)
     if (el) {
       const rect = el.getBoundingClientRect()
       const pos = getTooltipPosition(rect, step.position)
+      // Use visualViewport dimensions so the address-bar doesn't affect measurements
+      const vh = window.visualViewport?.height ?? window.innerHeight
+      // Clamp left so the tooltip stays within viewport bounds
+      const clampedLeft = Math.max(
+        TOOLTIP_WIDTH / 2 + 8,
+        Math.min(pos.left, vw - TOOLTIP_WIDTH / 2 - 8)
+      )
       setTooltipStyle({
         position: 'fixed',
         top: step.position === 'top' ? undefined : pos.top,
-        bottom: step.position === 'top' ? `${window.innerHeight - rect.top + 12}px` : undefined,
-        left: pos.left,
+        bottom: step.position === 'top' ? `${vh - rect.top + 12}px` : undefined,
+        left: clampedLeft,
         transform:
           step.position === 'bottom' || step.position === 'top'
             ? 'translateX(-50%)'
@@ -106,14 +132,16 @@ export const GuidedTour: React.FC = () => {
   }, [isActive, currentStep])
 
   useEffect(() => {
-    // Initialize position on mount/step change without triggering cascading renders
+    // Initialize position on mount/step change without triggering cascading renders.
+    // No scroll listener — targets live in a sticky header and don't move on scroll.
+    // orientationchange is added separately as resize doesn't always fire reliably on rotation.
     const frame = requestAnimationFrame(() => updatePosition())
     window.addEventListener('resize', updatePosition)
-    window.addEventListener('scroll', updatePosition, true)
+    window.addEventListener('orientationchange', updatePosition)
     return () => {
       cancelAnimationFrame(frame)
       window.removeEventListener('resize', updatePosition)
-      window.removeEventListener('scroll', updatePosition, true)
+      window.removeEventListener('orientationchange', updatePosition)
     }
   }, [updatePosition])
 
