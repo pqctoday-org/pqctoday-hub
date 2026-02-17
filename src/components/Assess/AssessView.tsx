@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { ShieldCheck } from 'lucide-react'
 import { AssessWizard } from './AssessWizard'
@@ -10,12 +10,18 @@ export const AssessView: React.FC = () => {
   const { isComplete, getInput, markComplete, setResult } = useAssessmentStore()
   const input = getInput()
   const result = useAssessmentEngine(isComplete ? input : null)
+  const persistedRef = useRef(false)
 
   useEffect(() => {
-    if (result) {
+    if (!isComplete) {
+      persistedRef.current = false
+      return
+    }
+    if (result && !persistedRef.current) {
+      persistedRef.current = true
       setResult(result)
     }
-  }, [result, setResult])
+  }, [isComplete, result, setResult])
 
   return (
     <div className="container mx-auto p-4 animate-fade-in">
