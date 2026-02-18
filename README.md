@@ -58,7 +58,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Reference Panel**: Curated authoritative migration resources
   - **Change Tracking**: "New" and "Updated" indicators for recent PQC landscape changes
   - **Filtering**: Deep filtering by category, platform, and industry
-- **PQC Risk Assessment** (`/assess`): Comprehensive 12-step quantum risk evaluation wizard
+- **PQC Risk Assessment** (`/assess`): Comprehensive 13-step quantum risk evaluation wizard
+  - **Country/Jurisdiction Picker**: select your regulatory jurisdiction to align deadlines with the PQC timeline
+  - **Multi-select Sensitivity & Retention**: pick all applicable levels; scoring uses worst-case HNDL risk
+  - **Country-aligned Deadlines**: Timeline step surfaces real regulatory deadline phases from the Gantt data
   - Compound scoring engine with 4 risk dimensions: Quantum Exposure, Migration Complexity, Regulatory Pressure, Organizational Readiness
   - HNDL Risk Window visualization: data retention vs. quantum threat timeline
   - Per-algorithm migration effort estimation (quick-win to multi-year)

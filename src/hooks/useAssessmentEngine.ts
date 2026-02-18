@@ -3,12 +3,15 @@ import { useMemo } from 'react'
 export interface AssessmentInput {
   industry: string
   currentCrypto: string[]
-  dataSensitivity: 'low' | 'medium' | 'high' | 'critical'
+  /** One or more sensitivity levels — risk scored against the highest selected. */
+  dataSensitivity: string[]
   complianceRequirements: string[]
   migrationStatus: 'started' | 'planning' | 'not-started' | 'unknown'
   // Extended inputs (optional for backward compat)
+  country?: string
   cryptoUseCases?: string[]
-  dataRetention?: 'under-1y' | '1-5y' | '5-10y' | '10-25y' | '25-plus' | 'indefinite'
+  /** One or more retention periods — HNDL risk uses the longest selected. */
+  dataRetention?: string[]
   systemCount?: '1-10' | '11-50' | '51-200' | '200-plus'
   teamSize?: '1-10' | '11-50' | '51-200' | '200-plus'
   cryptoAgility?: 'fully-abstracted' | 'partially-abstracted' | 'hardcoded' | 'unknown'
@@ -328,6 +331,22 @@ const TIMELINE_URGENCY: Record<string, number> = {
 
 const ESTIMATED_QUANTUM_THREAT_YEAR = 2035
 
+// ── Multi-select helpers ──
+
+/** Returns the highest sensitivity level present in the array. */
+function getMaxSensitivity(arr: string[]): string {
+  for (const level of ['critical', 'high', 'medium', 'low']) {
+    if (arr.includes(level)) return level
+  }
+  return 'low'
+}
+
+/** Returns the maximum retention years across all selected retention periods. */
+function getMaxRetentionYears(arr: string[]): number {
+  if (!arr.length) return 0
+  return Math.max(...arr.map((r) => DATA_RETENTION_YEARS[r] ?? 0)) // eslint-disable-line security/detect-object-injection
+}
+
 // ── Category score functions (each 0-100) ──
 
 function computeQuantumExposure(input: AssessmentInput, vulnerableCount: number): number {
@@ -358,24 +377,20 @@ function computeQuantumExposure(input: AssessmentInput, vulnerableCount: number)
 
   // Data retention amplifier (0-20)
   let retentionScore = 0
-  if (input.dataRetention) {
-    const years = DATA_RETENTION_YEARS[input.dataRetention] ?? 10
+  if (input.dataRetention?.length) {
+    const years = getMaxRetentionYears(input.dataRetention)
     retentionScore = Math.min(20, years * 0.8)
   } else {
     // Estimate from sensitivity for legacy inputs
-    retentionScore =
-      input.dataSensitivity === 'critical'
-        ? 16
-        : input.dataSensitivity === 'high'
-          ? 10
-          : input.dataSensitivity === 'medium'
-            ? 4
-            : 0
+    const ms = getMaxSensitivity(input.dataSensitivity)
+    retentionScore = ms === 'critical' ? 16 : ms === 'high' ? 10 : ms === 'medium' ? 4 : 0
   }
 
   // Data sensitivity multiplier (0-15)
-
-  const sensitivityScore = Math.min(15, (DATA_SENSITIVITY_SCORES[input.dataSensitivity] ?? 0) * 0.6)
+  const sensitivityScore = Math.min(
+    15,
+    (DATA_SENSITIVITY_SCORES[getMaxSensitivity(input.dataSensitivity)] ?? 0) * 0.6
+  )
 
   return Math.max(
     0,
@@ -487,9 +502,9 @@ function computeCompositeScore(categoryScores: CategoryScores, input: Assessment
 
   // HNDL multiplier: critical data + long retention + migration not started
   if (
-    input.dataSensitivity === 'critical' &&
-    input.dataRetention &&
-    (DATA_RETENTION_YEARS[input.dataRetention] ?? 0) > 10 &&
+    input.dataSensitivity.includes('critical') &&
+    input.dataRetention?.length &&
+    getMaxRetentionYears(input.dataRetention) > 10 &&
     input.migrationStatus !== 'started'
   ) {
     composite *= 1.15
@@ -516,11 +531,11 @@ function computeCompositeScore(categoryScores: CategoryScores, input: Assessment
 }
 
 function computeHNDLRiskWindow(input: AssessmentInput): HNDLRiskWindow | undefined {
-  if (!input.dataRetention) return undefined
+  if (!input.dataRetention?.length) return undefined
 
   const currentYear = new Date().getFullYear()
 
-  const retentionYears = DATA_RETENTION_YEARS[input.dataRetention] ?? 10
+  const retentionYears = getMaxRetentionYears(input.dataRetention)
   const dataExpirationYear = currentYear + retentionYears
   const riskWindowYears = dataExpirationYear - ESTIMATED_QUANTUM_THREAT_YEAR
 
@@ -642,10 +657,12 @@ function generateExtendedActions(
   }
 
   // HNDL action for high sensitivity + long retention
+  const hasHighSensitivity =
+    input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')
   if (
-    (input.dataSensitivity === 'critical' || input.dataSensitivity === 'high') &&
-    input.dataRetention &&
-    (DATA_RETENTION_YEARS[input.dataRetention] ?? 0) > 5
+    hasHighSensitivity &&
+    input.dataRetention?.length &&
+    getMaxRetentionYears(input.dataRetention) > 5
   ) {
     actions.push({
       priority: priority++,
@@ -654,7 +671,7 @@ function generateExtendedActions(
       relatedModule: '/threats',
       effort: 'high',
     })
-  } else if (input.dataSensitivity === 'critical' || input.dataSensitivity === 'high') {
+  } else if (hasHighSensitivity) {
     actions.push({
       priority: priority++,
       action: 'Implement hybrid PQC encryption for data-at-rest to guard against HNDL attacks.',
@@ -841,7 +858,7 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
   // Determine if this is an extended assessment
   const hasExtendedInput = !!(
     input.cryptoUseCases?.length ||
-    input.dataRetention ||
+    input.dataRetention?.length ||
     input.cryptoAgility ||
     input.infrastructure?.length ||
     input.systemCount ||
@@ -890,7 +907,7 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
       score += i < 3 ? weight : Math.round(weight * 0.5)
     })
 
-    score += DATA_SENSITIVITY_SCORES[input.dataSensitivity] ?? 0
+    score += DATA_SENSITIVITY_SCORES[getMaxSensitivity(input.dataSensitivity)] ?? 0
 
     complianceImpacts.forEach((ci) => {
       if (ci.requiresPQC) score += 8
@@ -913,7 +930,7 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
       })
     }
 
-    if (input.dataSensitivity === 'critical' || input.dataSensitivity === 'high') {
+    if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
       recommendedActions.push({
         priority: priority++,
         action: 'Implement hybrid PQC encryption for data-at-rest to guard against HNDL attacks.',
@@ -1017,7 +1034,7 @@ function generateNarrative(
     )
   }
 
-  if (input.dataSensitivity === 'critical' || input.dataSensitivity === 'high') {
+  if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
     parts.push(
       'Given your high data sensitivity, "Harvest Now, Decrypt Later" attacks represent an immediate threat to long-lived data.'
     )
@@ -1040,8 +1057,8 @@ function generateNarrative(
   parts.push(statusMsg[input.migrationStatus] || '')
 
   // Extended narrative additions
-  if (input.dataRetention) {
-    const years = DATA_RETENTION_YEARS[input.dataRetention] ?? 10
+  if (input.dataRetention?.length) {
+    const years = getMaxRetentionYears(input.dataRetention)
     if (years > 10) {
       parts.push(
         `With a data retention period of ${years}+ years, your data may remain encrypted beyond the expected quantum computing timeline.`
@@ -1074,7 +1091,7 @@ export const AVAILABLE_ALGORITHMS = Object.keys(ALGORITHM_DB)
 export const AVAILABLE_COMPLIANCE = Object.keys(COMPLIANCE_DB)
 export const AVAILABLE_USE_CASES = Object.keys(USE_CASE_WEIGHTS)
 export const AVAILABLE_INFRASTRUCTURE = Object.keys(INFRA_COMPLEXITY)
-export const AVAILABLE_DATA_RETENTION: AssessmentInput['dataRetention'][] = [
+export const AVAILABLE_DATA_RETENTION: string[] = [
   'under-1y',
   '1-5y',
   '5-10y',

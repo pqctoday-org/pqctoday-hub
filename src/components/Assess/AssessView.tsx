@@ -41,6 +41,11 @@ export const AssessView: React.FC = () => {
     const store = useAssessmentStore.getState()
     store.setIndustry(industry)
 
+    const countryParam = searchParams.get('cy')
+    if (countryParam) {
+      store.setCountry(decodeURIComponent(countryParam))
+    }
+
     const crypto = searchParams.get('c')
     if (crypto) {
       crypto
@@ -51,9 +56,15 @@ export const AssessView: React.FC = () => {
         })
     }
 
+    // dataSensitivity is now multi-value (comma-separated)
     const sensitivity = searchParams.get('d')
-    if (sensitivity && VALID_SENSITIVITIES.has(sensitivity)) {
-      store.setDataSensitivity(sensitivity as AssessmentInput['dataSensitivity'])
+    if (sensitivity) {
+      sensitivity
+        .split(',')
+        .filter((s) => VALID_SENSITIVITIES.has(s))
+        .forEach((s) => {
+          if (!store.dataSensitivity.includes(s)) store.toggleDataSensitivity(s)
+        })
     }
 
     const frameworks = searchParams.get('f')
@@ -82,9 +93,15 @@ export const AssessView: React.FC = () => {
         })
     }
 
+    // dataRetention is now multi-value (comma-separated)
     const retention = searchParams.get('r')
-    if (retention && VALID_RETENTION.has(retention)) {
-      store.setDataRetention(retention as NonNullable<AssessmentInput['dataRetention']>)
+    if (retention) {
+      retention
+        .split(',')
+        .filter((v) => VALID_RETENTION.has(v))
+        .forEach((v) => {
+          if (!store.dataRetention.includes(v)) store.toggleDataRetention(v)
+        })
     }
 
     const sysCount = searchParams.get('s')

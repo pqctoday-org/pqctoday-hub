@@ -9,15 +9,25 @@ vi.mock(
   async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
 )
 
+// Mock timelineData so country step renders without CSV loading issues
+vi.mock('../../data/timelineData', () => ({
+  timelineData: [
+    { countryName: 'United States', flagCode: 'us', bodies: [] },
+    { countryName: 'Germany', flagCode: 'de', bodies: [] },
+  ],
+  transformToGanttData: () => [],
+}))
+
 const mockStore = {
   currentStep: 0,
   industry: '',
+  country: '',
   currentCrypto: [] as string[],
-  dataSensitivity: '' as string,
+  dataSensitivity: [] as string[],
   complianceRequirements: [] as string[],
   migrationStatus: '' as string,
   cryptoUseCases: [] as string[],
-  dataRetention: '' as string,
+  dataRetention: [] as string[],
   systemCount: '' as string,
   teamSize: '' as string,
   cryptoAgility: '' as string,
@@ -29,12 +39,13 @@ const mockStore = {
   lastWizardUpdate: null,
   setStep: vi.fn(),
   setIndustry: vi.fn(),
+  setCountry: vi.fn(),
   toggleCrypto: vi.fn(),
-  setDataSensitivity: vi.fn(),
+  toggleDataSensitivity: vi.fn(),
   toggleCompliance: vi.fn(),
   setMigrationStatus: vi.fn(),
   toggleCryptoUseCase: vi.fn(),
-  setDataRetention: vi.fn(),
+  toggleDataRetention: vi.fn(),
   setSystemCount: vi.fn(),
   setTeamSize: vi.fn(),
   setCryptoAgility: vi.fn(),
@@ -60,12 +71,13 @@ describe('AssessWizard', () => {
     vi.clearAllMocks()
     mockStore.currentStep = 0
     mockStore.industry = ''
+    mockStore.country = ''
     mockStore.currentCrypto = []
-    mockStore.dataSensitivity = ''
+    mockStore.dataSensitivity = []
     mockStore.complianceRequirements = []
     mockStore.migrationStatus = ''
     mockStore.cryptoUseCases = []
-    mockStore.dataRetention = ''
+    mockStore.dataRetention = []
     mockStore.systemCount = ''
     mockStore.teamSize = ''
     mockStore.cryptoAgility = ''
@@ -79,10 +91,11 @@ describe('AssessWizard', () => {
   })
 
   describe('step indicator', () => {
-    it('renders progress group with 12 step labels', () => {
+    it('renders progress group with 13 step labels', () => {
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByRole('group', { name: 'Assessment progress' })).toBeInTheDocument()
       expect(screen.getByText('Industry')).toBeInTheDocument()
+      expect(screen.getByText('Country')).toBeInTheDocument()
       expect(screen.getByText('Crypto')).toBeInTheDocument()
       expect(screen.getByText('Sensitivity')).toBeInTheDocument()
       expect(screen.getByText('Compliance')).toBeInTheDocument()
@@ -142,9 +155,46 @@ describe('AssessWizard', () => {
     })
   })
 
-  describe('step 2: Crypto', () => {
+  describe('step 2: Country', () => {
     beforeEach(() => {
       mockStore.currentStep = 1
+    })
+
+    it('renders country selection', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(
+        screen.getByText(/Which jurisdiction applies to your organization/)
+      ).toBeInTheDocument()
+      expect(screen.getByRole('radiogroup', { name: 'Country selection' })).toBeInTheDocument()
+    })
+
+    it('renders country options from timeline data', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('radio', { name: /Germany/ })).toBeInTheDocument()
+      expect(screen.getByRole('radio', { name: /United States/ })).toBeInTheDocument()
+    })
+
+    it('calls setCountry when a country is clicked', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      fireEvent.click(screen.getByRole('radio', { name: /Germany/ }))
+      expect(mockStore.setCountry).toHaveBeenCalledWith('Germany')
+    })
+
+    it('disables Next when no country selected', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('button', { name: /Next/ })).toBeDisabled()
+    })
+
+    it('enables Next when country is selected', () => {
+      mockStore.country = 'Germany'
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('button', { name: /Next/ })).toBeEnabled()
+    })
+  })
+
+  describe('step 3: Crypto', () => {
+    beforeEach(() => {
+      mockStore.currentStep = 2
     })
 
     it('renders algorithm selection', () => {
@@ -176,34 +226,40 @@ describe('AssessWizard', () => {
     })
   })
 
-  describe('step 3: Sensitivity', () => {
+  describe('step 4: Sensitivity', () => {
     beforeEach(() => {
-      mockStore.currentStep = 2
+      mockStore.currentStep = 3
     })
 
     it('renders sensitivity options', () => {
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByText('How sensitive is your data?')).toBeInTheDocument()
-      expect(screen.getByRole('radiogroup', { name: 'Data sensitivity level' })).toBeInTheDocument()
+      expect(screen.getByRole('group', { name: 'Data sensitivity levels' })).toBeInTheDocument()
     })
 
-    it('renders all four sensitivity levels', () => {
+    it('renders all four sensitivity levels as toggle buttons', () => {
       render(<AssessWizard onComplete={onComplete} />)
-      expect(screen.getByRole('radio', { name: /^Low/ })).toBeInTheDocument()
-      expect(screen.getByRole('radio', { name: /^Medium/ })).toBeInTheDocument()
-      expect(screen.getByRole('radio', { name: /^High/ })).toBeInTheDocument()
-      expect(screen.getByRole('radio', { name: /^Critical/ })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /^Low/ })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /^Medium/ })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /^High/ })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /^Critical/ })).toBeInTheDocument()
     })
 
-    it('calls setDataSensitivity when an option is clicked', () => {
+    it('calls toggleDataSensitivity when an option is clicked', () => {
       render(<AssessWizard onComplete={onComplete} />)
-      fireEvent.click(screen.getByRole('radio', { name: /^Critical/ }))
-      expect(mockStore.setDataSensitivity).toHaveBeenCalledWith('critical')
+      fireEvent.click(screen.getByRole('button', { name: /^Critical/ }))
+      expect(mockStore.toggleDataSensitivity).toHaveBeenCalledWith('critical')
     })
 
     it('disables Next when no sensitivity selected', () => {
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByRole('button', { name: /Next/ })).toBeDisabled()
+    })
+
+    it('enables Next when at least one sensitivity is selected', () => {
+      mockStore.dataSensitivity = ['high']
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('button', { name: /Next/ })).toBeEnabled()
     })
 
     it('shows HNDL explanation', () => {
@@ -212,9 +268,9 @@ describe('AssessWizard', () => {
     })
   })
 
-  describe('step 4: Compliance', () => {
+  describe('step 5: Compliance', () => {
     beforeEach(() => {
-      mockStore.currentStep = 3
+      mockStore.currentStep = 4
     })
 
     it('renders compliance framework options', () => {
@@ -237,9 +293,9 @@ describe('AssessWizard', () => {
     })
   })
 
-  describe('step 5: Migration', () => {
+  describe('step 6: Migration', () => {
     beforeEach(() => {
-      mockStore.currentStep = 4
+      mockStore.currentStep = 5
     })
 
     it('renders migration status options', () => {
@@ -260,9 +316,9 @@ describe('AssessWizard', () => {
     })
   })
 
-  describe('step 12: Timeline Pressure', () => {
+  describe('step 13: Timeline Pressure', () => {
     beforeEach(() => {
-      mockStore.currentStep = 11
+      mockStore.currentStep = 12
     })
 
     it('renders timeline pressure options', () => {

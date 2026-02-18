@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, ChevronLeft, AlertTriangle, Info } from 'lucide-react'
+import { ChevronRight, ChevronLeft, AlertTriangle, Info, RotateCcw } from 'lucide-react'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import {
   AVAILABLE_INDUSTRIES,
@@ -10,10 +10,12 @@ import {
   AVAILABLE_INFRASTRUCTURE,
   VULNERABLE_ALGORITHMS,
 } from '../../hooks/useAssessmentEngine'
+import { timelineData, transformToGanttData } from '../../data/timelineData'
 import clsx from 'clsx'
 
 const STEP_TITLES = [
   'Industry',
+  'Country',
   'Crypto',
   'Sensitivity',
   'Compliance',
@@ -67,7 +69,7 @@ const StepIndicator = ({ current, total }: { current: number; total: number }) =
             </div>
             <span
               className={clsx(
-                'text-[9px] md:text-[10px] font-medium transition-colors',
+                'text-[9px] md:text-[10px] font-medium transition-colors whitespace-nowrap',
                 i === current ? 'text-foreground' : 'text-muted-foreground'
               )}
             >
@@ -125,7 +127,68 @@ const Step1Industry = () => {
   )
 }
 
-const Step2Crypto = () => {
+const Step2Country = () => {
+  const { country, setCountry } = useAssessmentStore()
+
+  const countries = useMemo(() => {
+    const seen = new Set<string>()
+    const list: Array<{ name: string; flagCode: string }> = []
+    timelineData.forEach((c) => {
+      if (!seen.has(c.countryName)) {
+        seen.add(c.countryName)
+        list.push({ name: c.countryName, flagCode: c.flagCode })
+      }
+    })
+    return list.sort((a, b) => a.name.localeCompare(b.name))
+  }, [])
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-xl font-bold text-foreground">
+        Which jurisdiction applies to your organization?
+      </h3>
+      <p className="text-sm text-muted-foreground">
+        Your country&apos;s regulatory timeline will be used to align your migration deadline
+        recommendations.
+      </p>
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 gap-2"
+        role="radiogroup"
+        aria-label="Country selection"
+      >
+        {countries.map((c) => (
+          <button
+            key={c.name}
+            role="radio"
+            aria-checked={country === c.name}
+            onClick={() => setCountry(c.name)}
+            className={clsx(
+              'p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+              country === c.name
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+            )}
+          >
+            <img
+              src={`https://flagcdn.com/w20/${c.flagCode.toLowerCase()}.png`}
+              alt=""
+              aria-hidden="true"
+              width={20}
+              height={15}
+              className="rounded-[2px] shrink-0"
+              onError={(e) => {
+                ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+              }}
+            />
+            {c.name}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const Step3Crypto = () => {
   const { currentCrypto, toggleCrypto } = useAssessmentStore()
 
   return (
@@ -167,30 +230,30 @@ const Step2Crypto = () => {
   )
 }
 
-const Step3Sensitivity = () => {
-  const { dataSensitivity, setDataSensitivity } = useAssessmentStore()
+const Step4Sensitivity = () => {
+  const { dataSensitivity, toggleDataSensitivity } = useAssessmentStore()
 
   const levels = [
     {
-      value: 'low' as const,
+      value: 'low',
       label: 'Low',
       description: 'Public data, marketing content, non-sensitive business data',
       color: 'border-success bg-success/10 text-success',
     },
     {
-      value: 'medium' as const,
+      value: 'medium',
       label: 'Medium',
       description: 'Internal business data, employee information, general customer data',
       color: 'border-primary bg-primary/10 text-primary',
     },
     {
-      value: 'high' as const,
+      value: 'high',
       label: 'High',
       description: 'Financial records, health data, personal identifiable information (PII)',
       color: 'border-warning bg-warning/10 text-warning',
     },
     {
-      value: 'critical' as const,
+      value: 'critical',
       label: 'Critical',
       description: 'State secrets, classified data, long-lived cryptographic keys, nuclear/defense',
       color: 'border-destructive bg-destructive/10 text-destructive',
@@ -202,7 +265,7 @@ const Step3Sensitivity = () => {
       <h3 className="text-xl font-bold text-foreground">How sensitive is your data?</h3>
       <p className="text-sm text-muted-foreground">
         Data sensitivity determines your exposure to &ldquo;Harvest Now, Decrypt Later&rdquo; (HNDL)
-        attacks.
+        attacks. Select all that apply — your risk is assessed against the highest level present.
       </p>
 
       <div className="glass-panel p-4 border-l-4 border-l-warning mb-4">
@@ -216,16 +279,15 @@ const Step3Sensitivity = () => {
         </div>
       </div>
 
-      <div className="space-y-3" role="radiogroup" aria-label="Data sensitivity level">
+      <div className="space-y-3" role="group" aria-label="Data sensitivity levels">
         {levels.map((level) => (
           <button
             key={level.value}
-            role="radio"
-            aria-checked={dataSensitivity === level.value}
-            onClick={() => setDataSensitivity(level.value)}
+            aria-pressed={dataSensitivity.includes(level.value)}
+            onClick={() => toggleDataSensitivity(level.value)}
             className={clsx(
               'w-full p-4 rounded-lg border text-left transition-colors',
-              dataSensitivity === level.value
+              dataSensitivity.includes(level.value)
                 ? level.color
                 : 'border-border text-muted-foreground hover:border-primary/30'
             )}
@@ -239,7 +301,7 @@ const Step3Sensitivity = () => {
   )
 }
 
-const Step4Compliance = () => {
+const Step5Compliance = () => {
   const { complianceRequirements, toggleCompliance } = useAssessmentStore()
 
   return (
@@ -280,7 +342,7 @@ const Step4Compliance = () => {
   )
 }
 
-const Step5Migration = () => {
+const Step6Migration = () => {
   const { migrationStatus, setMigrationStatus } = useAssessmentStore()
 
   const statuses = [
@@ -335,7 +397,7 @@ const Step5Migration = () => {
   )
 }
 
-const Step6UseCases = () => {
+const Step7UseCases = () => {
   const { cryptoUseCases, toggleCryptoUseCase } = useAssessmentStore()
 
   return (
@@ -373,37 +435,37 @@ const Step6UseCases = () => {
   )
 }
 
-const Step7DataRetention = () => {
-  const { dataRetention, setDataRetention } = useAssessmentStore()
+const Step8DataRetention = () => {
+  const { dataRetention, toggleDataRetention } = useAssessmentStore()
 
   const options = [
     {
-      value: 'under-1y' as const,
+      value: 'under-1y',
       label: 'Less than 1 year',
       description: 'Short-lived sessions, temporary tokens',
     },
     {
-      value: '1-5y' as const,
+      value: '1-5y',
       label: '1-5 years',
       description: 'Typical business records, customer data',
     },
     {
-      value: '5-10y' as const,
+      value: '5-10y',
       label: '5-10 years',
       description: 'Financial records, audit trails',
     },
     {
-      value: '10-25y' as const,
+      value: '10-25y',
       label: '10-25 years',
       description: 'Healthcare records, legal documents, PII',
     },
     {
-      value: '25-plus' as const,
+      value: '25-plus',
       label: '25+ years',
       description: 'Regulatory archives, insurance, government records',
     },
     {
-      value: 'indefinite' as const,
+      value: 'indefinite',
       label: 'Indefinite',
       description: 'Classified data, state secrets, cryptographic keys',
     },
@@ -415,8 +477,7 @@ const Step7DataRetention = () => {
         How long must your data stay confidential?
       </h3>
       <p className="text-sm text-muted-foreground">
-        Longer data retention means greater exposure to &ldquo;Harvest Now, Decrypt Later&rdquo;
-        attacks.
+        Select all categories that apply — HNDL risk is assessed against the longest period.
       </p>
 
       <div className="glass-panel p-4 border-l-4 border-l-warning mb-4">
@@ -429,16 +490,15 @@ const Step7DataRetention = () => {
         </div>
       </div>
 
-      <div className="space-y-3" role="radiogroup" aria-label="Data retention period">
+      <div className="space-y-3" role="group" aria-label="Data retention periods">
         {options.map((opt) => (
           <button
             key={opt.value}
-            role="radio"
-            aria-checked={dataRetention === opt.value}
-            onClick={() => setDataRetention(opt.value)}
+            aria-pressed={dataRetention.includes(opt.value)}
+            onClick={() => toggleDataRetention(opt.value)}
             className={clsx(
               'w-full p-4 rounded-lg border text-left transition-colors',
-              dataRetention === opt.value
+              dataRetention.includes(opt.value)
                 ? 'border-primary bg-primary/10 text-primary'
                 : 'border-border text-muted-foreground hover:border-primary/30'
             )}
@@ -452,7 +512,7 @@ const Step7DataRetention = () => {
   )
 }
 
-const Step8OrgScale = () => {
+const Step9OrgScale = () => {
   const { systemCount, setSystemCount, teamSize, setTeamSize } = useAssessmentStore()
 
   const systemOptions = [
@@ -523,7 +583,7 @@ const Step8OrgScale = () => {
   )
 }
 
-const Step9CryptoAgility = () => {
+const Step10CryptoAgility = () => {
   const { cryptoAgility, setCryptoAgility } = useAssessmentStore()
 
   const options = [
@@ -581,7 +641,7 @@ const Step9CryptoAgility = () => {
   )
 }
 
-const Step10Infrastructure = () => {
+const Step11Infrastructure = () => {
   const { infrastructure, toggleInfrastructure } = useAssessmentStore()
 
   return (
@@ -628,7 +688,7 @@ const Step10Infrastructure = () => {
   )
 }
 
-const Step11VendorDependency = () => {
+const Step12VendorDependency = () => {
   const { vendorDependency, setVendorDependency } = useAssessmentStore()
 
   const options = [
@@ -686,10 +746,29 @@ const Step11VendorDependency = () => {
   )
 }
 
-const Step12TimelinePressure = () => {
-  const { timelinePressure, setTimelinePressure } = useAssessmentStore()
+const CURRENT_YEAR = new Date().getFullYear()
 
-  const options = [
+function deriveTimelinePressure(
+  endYear: number
+): 'within-1y' | 'within-2-3y' | 'internal-deadline' {
+  if (endYear <= CURRENT_YEAR + 1) return 'within-1y'
+  if (endYear <= CURRENT_YEAR + 3) return 'within-2-3y'
+  return 'internal-deadline'
+}
+
+const Step13TimelinePressure = () => {
+  const { country, timelinePressure, setTimelinePressure } = useAssessmentStore()
+
+  // Build country-specific deadline options from the timeline
+  const countryDeadlines = useMemo(() => {
+    if (!country) return []
+    const ganttData = transformToGanttData(timelineData)
+    const entry = ganttData.find((g) => g.country.countryName === country)
+    if (!entry) return []
+    return entry.phases.filter((p) => p.phase === 'Deadline')
+  }, [country])
+
+  const staticOptions = [
     {
       value: 'within-1y' as const,
       label: 'Regulatory Deadline Within 1 Year',
@@ -717,31 +796,105 @@ const Step12TimelinePressure = () => {
     },
   ]
 
+  const hasCountryDeadlines = countryDeadlines.length > 0
+
   return (
     <div className="space-y-4">
       <h3 className="text-xl font-bold text-foreground">Do you have a migration deadline?</h3>
       <p className="text-sm text-muted-foreground">
         Timeline pressure affects how aggressively migration must be prioritized.
       </p>
-      <div className="space-y-3" role="radiogroup" aria-label="Migration timeline pressure">
-        {options.map((opt) => (
-          <button
-            key={opt.value}
-            role="radio"
-            aria-checked={timelinePressure === opt.value}
-            onClick={() => setTimelinePressure(opt.value)}
-            className={clsx(
-              'w-full p-4 rounded-lg border text-left transition-colors',
-              timelinePressure === opt.value
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border text-muted-foreground hover:border-primary/30'
-            )}
-          >
-            <span className="font-bold text-sm">{opt.label}</span>
-            <p className="text-xs mt-1 opacity-80">{opt.description}</p>
-          </button>
-        ))}
-      </div>
+
+      {hasCountryDeadlines ? (
+        <>
+          <div className="glass-panel p-4 border-l-4 border-l-primary mb-2">
+            <div className="flex items-start gap-2">
+              <Info size={16} className="text-primary shrink-0 mt-0.5" />
+              <p className="text-xs text-muted-foreground">
+                Deadlines below are sourced from {country}&apos;s official PQC regulatory timeline.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3" role="radiogroup" aria-label="Migration deadline">
+            {countryDeadlines.map((phase) => {
+              const derived = deriveTimelinePressure(phase.endYear)
+              const isSelected = timelinePressure === derived
+              return (
+                <button
+                  key={phase.title}
+                  role="radio"
+                  aria-checked={isSelected}
+                  onClick={() => setTimelinePressure(derived)}
+                  className={clsx(
+                    'w-full p-4 rounded-lg border text-left transition-colors',
+                    isSelected
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/30'
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-bold text-sm">{phase.title}</span>
+                    <span className="text-xs font-mono bg-muted/40 px-2 py-0.5 rounded shrink-0">
+                      {phase.startYear === phase.endYear
+                        ? phase.endYear
+                        : `${phase.startYear}–${phase.endYear}`}
+                    </span>
+                  </div>
+                  {phase.description && (
+                    <p className="text-xs mt-1 opacity-80 line-clamp-2">{phase.description}</p>
+                  )}
+                </button>
+              )
+            })}
+
+            {/* Always show fallback options */}
+            <div className="border-t border-border pt-3 mt-2 space-y-2">
+              <p className="text-xs text-muted-foreground font-medium">Other options</p>
+              {['no-deadline' as const, 'unknown' as const].map((val) => {
+                const opt = staticOptions.find((o) => o.value === val)!
+                return (
+                  <button
+                    key={val}
+                    role="radio"
+                    aria-checked={timelinePressure === val}
+                    onClick={() => setTimelinePressure(val)}
+                    className={clsx(
+                      'w-full p-4 rounded-lg border text-left transition-colors',
+                      timelinePressure === val
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:border-primary/30'
+                    )}
+                  >
+                    <span className="font-bold text-sm">{opt.label}</span>
+                    <p className="text-xs mt-1 opacity-80">{opt.description}</p>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="space-y-3" role="radiogroup" aria-label="Migration timeline pressure">
+          {staticOptions.map((opt) => (
+            <button
+              key={opt.value}
+              role="radio"
+              aria-checked={timelinePressure === opt.value}
+              onClick={() => setTimelinePressure(opt.value)}
+              className={clsx(
+                'w-full p-4 rounded-lg border text-left transition-colors',
+                timelinePressure === opt.value
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border text-muted-foreground hover:border-primary/30'
+              )}
+            >
+              <span className="font-bold text-sm">{opt.label}</span>
+              <p className="text-xs mt-1 opacity-80">{opt.description}</p>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -755,6 +908,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({ onComplete }) => {
     currentStep,
     setStep,
     industry,
+    country,
     currentCrypto,
     dataSensitivity,
     migrationStatus,
@@ -765,23 +919,25 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({ onComplete }) => {
     vendorDependency,
     timelinePressure,
     markComplete,
+    reset,
   } = useAssessmentStore()
 
   const [isGenerating, setIsGenerating] = useState(false)
 
   const stepComponents = [
     <Step1Industry key="industry" />,
-    <Step2Crypto key="crypto" />,
-    <Step3Sensitivity key="sensitivity" />,
-    <Step4Compliance key="compliance" />,
-    <Step5Migration key="migration" />,
-    <Step6UseCases key="use-cases" />,
-    <Step7DataRetention key="retention" />,
-    <Step8OrgScale key="scale" />,
-    <Step9CryptoAgility key="agility" />,
-    <Step10Infrastructure key="infra" />,
-    <Step11VendorDependency key="vendors" />,
-    <Step12TimelinePressure key="timeline" />,
+    <Step2Country key="country" />,
+    <Step3Crypto key="crypto" />,
+    <Step4Sensitivity key="sensitivity" />,
+    <Step5Compliance key="compliance" />,
+    <Step6Migration key="migration" />,
+    <Step7UseCases key="use-cases" />,
+    <Step8DataRetention key="retention" />,
+    <Step9OrgScale key="scale" />,
+    <Step10CryptoAgility key="agility" />,
+    <Step11Infrastructure key="infra" />,
+    <Step12VendorDependency key="vendors" />,
+    <Step13TimelinePressure key="timeline" />,
   ]
 
   const canProceed = () => {
@@ -789,26 +945,28 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({ onComplete }) => {
       case 0:
         return !!industry
       case 1:
-        return currentCrypto.length > 0
+        return !!country
       case 2:
-        return !!dataSensitivity
+        return currentCrypto.length > 0
       case 3:
-        return true // Compliance is optional
+        return dataSensitivity.length > 0
       case 4:
-        return !!migrationStatus
+        return true // Compliance optional
       case 5:
-        return true // Use cases optional
+        return !!migrationStatus
       case 6:
-        return !!dataRetention
+        return true // Use cases optional
       case 7:
-        return !!systemCount && !!teamSize
+        return dataRetention.length > 0
       case 8:
-        return !!cryptoAgility
+        return !!systemCount && !!teamSize
       case 9:
-        return true // Infrastructure optional
+        return !!cryptoAgility
       case 10:
-        return !!vendorDependency
+        return true // Infrastructure optional
       case 11:
+        return !!vendorDependency
+      case 12:
         return !!timelinePressure
       default:
         return false
@@ -847,7 +1005,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({ onComplete }) => {
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between mt-6">
+      <div className="flex justify-between items-center mt-6">
         <button
           onClick={() => setStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
@@ -855,6 +1013,15 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({ onComplete }) => {
         >
           <ChevronLeft size={16} />
           Previous
+        </button>
+
+        <button
+          onClick={reset}
+          className="flex items-center gap-1 px-3 py-2 text-xs text-muted-foreground hover:text-destructive transition-colors"
+          title="Clear all answers and start over"
+        >
+          <RotateCcw size={13} />
+          Reset
         </button>
 
         <button

@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.0] - 2026-02-18
+
+### Added
+
+- **Risk Assessment Country Picker** (`/assess`): New "Country" step (step 2 of 13) lets
+  organizations select their jurisdiction; the selection aligns the Timeline step with real
+  regulatory deadlines sourced directly from the PQC Gantt timeline data.
+- **Multi-select Data Sensitivity** (`/assess`): Organizations can now select multiple sensitivity
+  levels simultaneously (Low / Medium / High / Critical). Risk scoring uses the highest selected
+  level; useful for organizations managing data of mixed sensitivity.
+- **Multi-select Data Retention** (`/assess`): Multiple retention periods can be selected at once.
+  HNDL risk is computed against the longest selected period for accurate worst-case assessment.
+- **Country-aligned Migration Deadlines** (`/assess`): The Timeline step surfaces Deadline phases
+  from the selected country's Gantt timeline (real years, titles, descriptions) instead of generic
+  static options. Falls back gracefully when no country-specific deadlines exist.
+- **Wizard Reset Button** (`/assess`): A "Reset" button in the wizard navigation footer clears all
+  answers and returns to step 1, providing a quick path to restart without navigating away.
+
+### Fixed
+
+- **Assessment Store Schema Migration** (`/assess`): Persisted assessments from v1.12 and earlier
+  stored `dataSensitivity` and `dataRetention` as strings. On rehydration these are now
+  automatically upgraded to arrays, preventing a `TypeError: .filter is not a function` crash.
+
+### Changed
+
+- **Risk Assessment Wizard** (`/assess`): Expanded from 12 to 13 steps with the Country picker.
+  `AssessmentInput.dataSensitivity` and `.dataRetention` are now `string[]`; the scoring engine
+  uses `getMaxSensitivity()` and `getMaxRetentionYears()` helpers — fully backward-compatible.
+
 ## [1.12.0] - 2026-02-18
 
 ### Added
