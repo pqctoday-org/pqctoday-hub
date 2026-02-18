@@ -8,14 +8,29 @@ import {
   Layers,
   Filter,
   Download,
+  X,
 } from 'lucide-react'
 import type { GanttCountryData, TimelinePhase, Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
 import { GanttDetailPopover } from './GanttDetailPopover'
+import { DocumentTable } from './DocumentTable'
 import { logEvent } from '../../utils/analytics'
 import { CountryFlag } from '../common/CountryFlag'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { StatusBadge } from '../common/StatusBadge'
+
+const FilterChip = ({ label, onClear }: { label: string; onClear: () => void }) => (
+  <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-primary/10 border border-primary/30 text-xs text-primary font-medium">
+    {label}
+    <button
+      onClick={onClear}
+      aria-label={`Remove ${label} filter`}
+      className="hover:text-foreground transition-colors"
+    >
+      <X size={12} />
+    </button>
+  </span>
+)
 
 interface SimpleGanttChartProps {
   data: GanttCountryData[]
@@ -154,6 +169,24 @@ export const SimpleGanttChart = ({
     selectedPhaseType,
     selectedEventType,
   ])
+
+  const totalPhaseCount = useMemo(
+    () => processedData.reduce((sum, d) => sum + d.phases.length, 0),
+    [processedData]
+  )
+
+  const hasActiveFilters =
+    selectedCountry !== 'All' ||
+    selectedPhaseType !== 'All' ||
+    selectedEventType !== 'All' ||
+    filterText !== ''
+
+  const clearAllFilters = useCallback(() => {
+    setFilterText('')
+    setSelectedPhaseType('All')
+    setSelectedEventType('All')
+    onCountrySelect('All')
+  }, [onCountrySelect])
 
   const handleExportCSV = useCallback(() => {
     if (processedData.length === 0) return
@@ -325,14 +358,14 @@ export const SimpleGanttChart = ({
   return (
     <div className="flex flex-col gap-4">
       {/* Controls */}
-      <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-2 flex flex-col md:flex-row items-center gap-4">
+      <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-2 flex flex-col md:flex-row items-center gap-4 relative z-40">
         <div className="flex items-center gap-2 w-full md:w-auto text-xs">
           <div className="flex-1 min-w-[150px]">
             <FilterDropdown
               items={countryItems}
               selectedId={selectedCountry}
               onSelect={onCountrySelect}
-              defaultLabel="Region"
+              defaultLabel="Country"
               opaque
               className="mb-0 w-full"
               noContainer
@@ -398,6 +431,41 @@ export const SimpleGanttChart = ({
           <span className="hidden md:inline">Export CSV</span>
         </button>
       </div>
+
+      {/* Active filter chips + result count */}
+      {hasActiveFilters && (
+        <div className="flex flex-wrap items-center gap-2 px-1">
+          {selectedCountry !== 'All' && (
+            <FilterChip label={selectedCountry} onClear={() => onCountrySelect('All')} />
+          )}
+          {selectedPhaseType !== 'All' && (
+            <FilterChip label={selectedPhaseType} onClear={() => setSelectedPhaseType('All')} />
+          )}
+          {selectedEventType !== 'All' && (
+            <FilterChip
+              label={selectedEventType === 'Phase' ? 'Phases only' : 'Milestones only'}
+              onClear={() => setSelectedEventType('All')}
+            />
+          )}
+          {filterText && <FilterChip label={`"${filterText}"`} onClear={() => setFilterText('')} />}
+          <span className="text-xs text-muted-foreground">
+            {totalPhaseCount} {totalPhaseCount === 1 ? 'result' : 'results'}
+            {processedData.length !== data.length
+              ? ` · ${processedData.length} of ${data.length} countries`
+              : ''}
+          </span>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {processedData.length === 0 && (
+        <div className="text-center py-16 text-muted-foreground">
+          <p className="text-sm">No results match your filters.</p>
+          <button onClick={clearAllFilters} className="mt-2 text-primary text-xs hover:underline">
+            Clear all filters
+          </button>
+        </div>
+      )}
 
       {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-border bg-card" ref={tableRef}>
@@ -521,6 +589,11 @@ export const SimpleGanttChart = ({
           </tbody>
         </table>
       </div>
+
+      {/* Document Table — appears below Gantt when a country filter is active */}
+      {selectedCountry !== 'All' && processedData.length > 0 && (
+        <DocumentTable data={processedData} title={`Documents · ${selectedCountry}`} />
+      )}
 
       <GanttDetailPopover
         isOpen={!!selectedPhase}
