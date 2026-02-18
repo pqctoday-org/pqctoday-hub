@@ -30,9 +30,71 @@ const URGENCY_ORDER: Record<string, number> = {
   Low: 3,
 }
 
+// Maps raw CSV authorsOrOrganization values → canonical standardization body names.
+// Only entries present in this map appear as dropdown options (allowlist).
+// Sub-groups and working groups roll up to their parent body.
+const ORG_CANONICAL_MAP: Record<string, string> = {
+  // IETF — all working groups and individual submissions
+  'IETF LAMPS': 'IETF',
+  'IETF CFRG': 'IETF',
+  'IETF TLS WG': 'IETF',
+  'IETF IPSECME WG': 'IETF',
+  'IETF IPSECME': 'IETF',
+  'IETF PQUIP': 'IETF',
+  'IETF UTA': 'IETF',
+  'IETF OpenPGP WG': 'IETF',
+  'IETF COSE WG': 'IETF',
+  'IETF Individual Submission': 'IETF',
+  // NIST — core body and programs
+  NIST: 'NIST',
+  'NIST CMVP': 'NIST',
+  'NIST NCCoE': 'NIST',
+  'NIST/HQC Team': 'NIST',
+  // ETSI
+  ETSI: 'ETSI',
+  'ETSI QSC': 'ETSI',
+  // 3GPP
+  '3GPP': '3GPP',
+  '3GPP SA3': '3GPP',
+  // ENISA
+  ENISA: 'ENISA',
+  'ECCG/ENISA': 'ENISA',
+  // NSA / CISA (kept separate — distinct agencies)
+  NSA: 'NSA',
+  'CISA/NSA': 'CISA/NSA',
+  // Open source / industry bodies
+  'Open Quantum Safe': 'Open Quantum Safe',
+  'Linux Foundation PQCA': 'Open Quantum Safe',
+  // Direct mappings — standalone bodies
+  'ANSSI France': 'ANSSI France',
+  'ASD Australia': 'ASD Australia',
+  'BSI Germany': 'BSI Germany',
+  'CA/Browser Forum': 'CA/Browser Forum',
+  'CACR China': 'CACR China',
+  'CCCS Canada': 'CCCS Canada',
+  'CCSA China': 'CCSA China',
+  'CRYPTREC Japan': 'CRYPTREC Japan',
+  'Cloud Security Alliance': 'Cloud Security Alliance',
+  'European Commission': 'European Commission',
+  GSMA: 'GSMA',
+  IEEE: 'IEEE',
+  'ICCS China': 'ICCS China',
+  'IMDA Singapore': 'IMDA Singapore',
+  'ISO/IEC JTC 1/SC 27': 'ISO/IEC JTC 1/SC 27',
+  'ITU-T SG17': 'ITU-T SG17',
+  KISA: 'KISA',
+  'OSCCA China': 'OSCCA China',
+  'SAC China': 'SAC China',
+  'Trusted Computing Group': 'Trusted Computing Group',
+  'UK NCSC': 'UK NCSC',
+  'White House': 'White House',
+  // Excluded (not in map): 'Browser vendors', 'CAs', 'Ministry of Science and ICT',
+  // 'NIS Korea', 'NIS Korea', 'Samsung System LSI', 'Thales'
+}
+
 export const LibraryView: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('All')
-  const [activeRegion, setActiveRegion] = useState<string>('All')
+  const [activeOrg, setActiveOrg] = useState<string>('All')
   const [filterText, setFilterText] = useState('')
   const [inputValue, setInputValue] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('cards')
@@ -58,14 +120,17 @@ export const LibraryView: React.FC = () => {
     logEvent('Library', 'Filter Category', category)
   }
 
-  const regions = useMemo(() => {
-    const r = new Set<string>()
+  const orgs = useMemo(() => {
+    const o = new Set<string>()
     libraryData.forEach((item) => {
-      if (item.regionScope) {
-        item.regionScope.split(',').forEach((s) => r.add(s.trim()))
+      if (item.authorsOrOrganization) {
+        item.authorsOrOrganization.split(';').forEach((s) => {
+          const canonical = ORG_CANONICAL_MAP[s.trim()]
+          if (canonical) o.add(canonical)
+        })
       }
     })
-    return ['All', ...Array.from(r).sort()]
+    return ['All', ...Array.from(o).sort()]
   }, [])
 
   // Items with New or Updated status for the activity feed
@@ -97,9 +162,15 @@ export const LibraryView: React.FC = () => {
         return false
       }
 
-      // Region filter
-      if (activeRegion !== 'All') {
-        if (!item.regionScope || !item.regionScope.includes(activeRegion)) return false
+      // Organization filter — match against canonical names
+      if (activeOrg !== 'All') {
+        const itemCanonicalOrgs = item.authorsOrOrganization
+          ? item.authorsOrOrganization
+              .split(';')
+              .map((s) => ORG_CANONICAL_MAP[s.trim()])
+              .filter(Boolean)
+          : []
+        if (!itemCanonicalOrgs.includes(activeOrg)) return false
       }
 
       // Search filter
@@ -112,7 +183,7 @@ export const LibraryView: React.FC = () => {
         item.categories?.some((cat) => cat.toLowerCase().includes(searchLower))
       )
     })
-  }, [activeCategory, activeRegion, filterText])
+  }, [activeCategory, activeOrg, filterText])
 
   // Sorted items for card view
   const sortedItems = useMemo(() => {
@@ -274,17 +345,17 @@ export const LibraryView: React.FC = () => {
               </div>
             </div>
 
-            {/* Region + Search + Sort + ViewToggle */}
+            {/* Org + Search + Sort + ViewToggle */}
             <div className="flex items-center gap-2 w-full text-xs">
-              <div className="min-w-[120px]">
+              <div className="min-w-[140px]">
                 <FilterDropdown
-                  items={regions}
-                  selectedId={activeRegion}
-                  onSelect={(region) => {
-                    setActiveRegion(region)
-                    logEvent('Library', 'Filter Region', region)
+                  items={orgs}
+                  selectedId={activeOrg}
+                  onSelect={(org) => {
+                    setActiveOrg(org)
+                    logEvent('Library', 'Filter Org', org)
                   }}
-                  defaultLabel="Region"
+                  defaultLabel="Organization"
                   noContainer
                   opaque
                   className="mb-0 w-full"
