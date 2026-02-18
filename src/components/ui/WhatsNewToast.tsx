@@ -72,29 +72,29 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC Quiz</strong> &mdash; New interactive
-                    quiz in the Learning dashboard
+                    <strong className="text-foreground">Timeline Document Table</strong> &mdash;
+                    Select a country to see all its phases and milestones in a document table
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Compliance Polish</strong> &mdash; Unified
-                    filters, correct column labels, BSI source card
+                    <strong className="text-foreground">Filter Chips</strong> &mdash; Active filters
+                    show as dismissable chips with a live result count
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Accessibility</strong> &mdash; Focus
-                    management, ARIA fixes, and modal close icon in Compliance
+                    <strong className="text-foreground">Country Dropdown Fix</strong> &mdash;
+                    Dropdown now renders above the Gantt table headers
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Tour Fix</strong> &mdash; Mobile portrait no
-                    longer blocks tour completion
+                    <strong className="text-foreground">Empty State</strong> &mdash; Clear feedback
+                    and &ldquo;Clear all filters&rdquo; when no results match
                   </span>
                 </li>
               </ul>

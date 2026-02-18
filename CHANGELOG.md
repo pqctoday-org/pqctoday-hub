@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.12.0] - 2026-02-18
+
+### Added
+
+- **Timeline Document Table** (`/timeline`): Selecting a country from the Country filter now
+  reveals a document table below the Gantt chart listing all matching phases and milestones
+  with organization, phase badge, type, title, period (year range), description, and source link.
+
+### Fixed
+
+- **Timeline Filter UX** (`/timeline`):
+  - Renamed "Region" dropdown label to "Country" for clarity
+  - Active filter chips with × dismiss now appear below the filter bar for every active filter
+    (country, phase type, event type, and text search)
+  - Result count shown alongside chips ("N results · X of Y countries")
+  - Empty state with "Clear all filters" action when no results match
+  - Country dropdown now renders above the sticky Gantt table headers (z-index fix)
+
 ## [1.11.0] - 2026-02-17
 
 ### Added

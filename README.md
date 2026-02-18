@@ -5,6 +5,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
 ## Features
 
 - **Migration Timeline**: Global regulatory recommendations and migration phases visualization
+  - Country filter with active filter chips, result count, and empty state
+  - Document table: select a country to see all its phases/milestones in a structured table
+    with organization, phase type, title, period, description, and source links
 - **Algorithm Comparison**: Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) transition table
 - **Interactive Playground**: Hands-on cryptographic testing environment
   - Real WASM-powered cryptography (`@openforge-sh/liboqs`)
