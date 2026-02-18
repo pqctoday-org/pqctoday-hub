@@ -11,7 +11,7 @@ import type { AssessmentInput } from './useAssessmentEngine'
 const baseInput: AssessmentInput = {
   industry: 'Technology',
   currentCrypto: ['AES-256'],
-  dataSensitivity: 'low',
+  dataSensitivity: ['low'],
   complianceRequirements: [],
   migrationStatus: 'started',
 }
@@ -61,10 +61,10 @@ describe('computeAssessment', () => {
     it('adds data sensitivity scores correctly', () => {
       // Use a higher baseline so scores don't clamp to 0
       const sensInput = { ...baseInput, migrationStatus: 'planning' as const }
-      const low = computeAssessment({ ...sensInput, dataSensitivity: 'low' })
-      const medium = computeAssessment({ ...sensInput, dataSensitivity: 'medium' })
-      const high = computeAssessment({ ...sensInput, dataSensitivity: 'high' })
-      const critical = computeAssessment({ ...sensInput, dataSensitivity: 'critical' })
+      const low = computeAssessment({ ...sensInput, dataSensitivity: ['low'] })
+      const medium = computeAssessment({ ...sensInput, dataSensitivity: ['medium'] })
+      const high = computeAssessment({ ...sensInput, dataSensitivity: ['high'] })
+      const critical = computeAssessment({ ...sensInput, dataSensitivity: ['critical'] })
       expect(medium.riskScore).toBeGreaterThan(low.riskScore)
       expect(high.riskScore).toBeGreaterThan(medium.riskScore)
       expect(critical.riskScore).toBeGreaterThan(high.riskScore)
@@ -103,7 +103,7 @@ describe('computeAssessment', () => {
       const maxInput: AssessmentInput = {
         industry: 'Government & Defense',
         currentCrypto: AVAILABLE_ALGORITHMS,
-        dataSensitivity: 'critical',
+        dataSensitivity: ['critical'],
         complianceRequirements: AVAILABLE_COMPLIANCE,
         migrationStatus: 'unknown',
       }
@@ -130,7 +130,7 @@ describe('computeAssessment', () => {
       const result = computeAssessment({
         ...baseInput,
         currentCrypto: ['RSA-2048', 'RSA-4096'],
-        dataSensitivity: 'medium',
+        dataSensitivity: ['medium'],
         migrationStatus: 'not-started',
       })
       expect(result.riskScore).toBeGreaterThan(30)
@@ -144,7 +144,7 @@ describe('computeAssessment', () => {
         ...baseInput,
         industry: 'Government & Defense',
         currentCrypto: ['RSA-2048', 'ECDSA P-256'],
-        dataSensitivity: 'high',
+        dataSensitivity: ['high'],
         migrationStatus: 'not-started',
       })
       expect(result.riskScore).toBeGreaterThan(60)
@@ -157,7 +157,7 @@ describe('computeAssessment', () => {
         ...baseInput,
         industry: 'Government & Defense',
         currentCrypto: ['RSA-2048', 'ECDSA P-256', 'ECDH'],
-        dataSensitivity: 'critical',
+        dataSensitivity: ['critical'],
         migrationStatus: 'unknown',
       })
       expect(result.riskScore).toBeGreaterThan(80)
@@ -253,7 +253,7 @@ describe('computeAssessment', () => {
     it('recommends HNDL protection for high/critical sensitivity', () => {
       const result = computeAssessment({
         ...baseInput,
-        dataSensitivity: 'critical',
+        dataSensitivity: ['critical'],
       })
       const hndlAction = result.recommendedActions.find((a) => a.action.includes('HNDL'))
       expect(hndlAction).toBeDefined()
@@ -263,7 +263,7 @@ describe('computeAssessment', () => {
     it('does not recommend HNDL for low/medium sensitivity', () => {
       const result = computeAssessment({
         ...baseInput,
-        dataSensitivity: 'low',
+        dataSensitivity: ['low'],
       })
       const hndlAction = result.recommendedActions.find((a) => a.action.includes('HNDL'))
       expect(hndlAction).toBeUndefined()
@@ -304,7 +304,7 @@ describe('computeAssessment', () => {
       const result = computeAssessment({
         ...baseInput,
         currentCrypto: ['RSA-2048'],
-        dataSensitivity: 'critical',
+        dataSensitivity: ['critical'],
         complianceRequirements: ['FIPS 140-3'],
         migrationStatus: 'not-started',
       })
@@ -341,7 +341,7 @@ describe('computeAssessment', () => {
     it('mentions HNDL for high sensitivity data', () => {
       const result = computeAssessment({
         ...baseInput,
-        dataSensitivity: 'critical',
+        dataSensitivity: ['critical'],
       })
       expect(result.narrative).toContain('Harvest Now, Decrypt Later')
     })

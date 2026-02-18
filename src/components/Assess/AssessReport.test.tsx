@@ -17,7 +17,7 @@ const mockStore = {
   getInput: vi.fn(() => ({
     industry: 'Technology',
     currentCrypto: ['RSA-2048'],
-    dataSensitivity: 'high' as const,
+    dataSensitivity: ['high'],
     complianceRequirements: ['FIPS 140-3'],
     migrationStatus: 'not-started' as const,
   })),

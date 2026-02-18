@@ -327,14 +327,15 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
     if (input) {
       params.set('i', input.industry)
       params.set('c', input.currentCrypto.join(','))
-      params.set('d', input.dataSensitivity)
+      params.set('d', input.dataSensitivity.join(','))
       if (input.complianceRequirements.length > 0) {
         params.set('f', input.complianceRequirements.join(','))
       }
       params.set('m', input.migrationStatus)
       // Extended params
+      if (input.country) params.set('cy', encodeURIComponent(input.country))
       if (input.cryptoUseCases?.length) params.set('u', input.cryptoUseCases.join(','))
-      if (input.dataRetention) params.set('r', input.dataRetention)
+      if (input.dataRetention?.length) params.set('r', input.dataRetention.join(','))
       if (input.systemCount) params.set('s', input.systemCount)
       if (input.teamSize) params.set('t', input.teamSize)
       if (input.cryptoAgility) params.set('a', input.cryptoAgility)
