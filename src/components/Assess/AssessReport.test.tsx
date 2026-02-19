@@ -11,6 +11,15 @@ vi.mock(
   async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
 )
 
+// Mock collapsible-section children (always mounted in DOM for print support)
+vi.mock('./ReportTimelineStrip', () => ({
+  ReportTimelineStrip: () => <div data-testid="report-timeline-strip" />,
+}))
+
+vi.mock('./ReportThreatsAppendix', () => ({
+  ReportThreatsAppendix: () => <div data-testid="report-threats-appendix" />,
+}))
+
 const mockStore = {
   reset: vi.fn(),
   editFromStep: vi.fn(),

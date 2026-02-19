@@ -7,6 +7,7 @@ import { AssessReport } from './AssessReport'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { useAssessmentEngine } from '../../hooks/useAssessmentEngine'
 import type { AssessmentInput } from '../../hooks/useAssessmentEngine'
+import { metadata } from '../../data/industryAssessConfig'
 
 const VALID_SENSITIVITIES = new Set(['low', 'medium', 'high', 'critical'])
 const VALID_MIGRATIONS = new Set(['started', 'planning', 'not-started', 'unknown'])
@@ -175,6 +176,14 @@ export const AssessView: React.FC = () => {
               Answer a few questions to get a personalized quantum risk score, migration priorities,
               and actionable recommendations for your organization.
             </p>
+            {metadata && (
+              <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono mt-3">
+                <p>
+                  Data Source: {metadata.filename} • Updated:{' '}
+                  {metadata.lastUpdate.toLocaleDateString()}
+                </p>
+              </div>
+            )}
           </motion.div>
           <AssessWizard onComplete={markComplete} />
         </>

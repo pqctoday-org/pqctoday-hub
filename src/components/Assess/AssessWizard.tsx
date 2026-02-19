@@ -11,6 +11,13 @@ import {
   VULNERABLE_ALGORITHMS,
 } from '../../hooks/useAssessmentEngine'
 import { timelineData, transformToGanttData } from '../../data/timelineData'
+import {
+  industryComplianceConfigs,
+  industryUseCaseConfigs,
+  industryRetentionConfigs,
+  industrySensitivityConfigs,
+  getIndustryConfigs,
+} from '../../data/industryAssessConfig'
 import clsx from 'clsx'
 
 const STEP_TITLES = [
@@ -230,10 +237,29 @@ const Step3Crypto = () => {
   )
 }
 
-const Step4Sensitivity = () => {
-  const { dataSensitivity, toggleDataSensitivity } = useAssessmentStore()
+const SENSITIVITY_SCORE_TO_LEVEL: Record<number, string> = {
+  0: 'low',
+  5: 'medium',
+  15: 'high',
+  25: 'critical',
+}
 
-  const levels = [
+const SENSITIVITY_BADGE_STYLES: Record<string, { text: string; bg: string; label: string }> = {
+  low: { text: 'text-success', bg: 'bg-success/15', label: 'Low' },
+  medium: { text: 'text-primary', bg: 'bg-primary/15', label: 'Medium' },
+  high: { text: 'text-warning', bg: 'bg-warning/15', label: 'High' },
+  critical: { text: 'text-destructive', bg: 'bg-destructive/15', label: 'Critical' },
+}
+
+const Step4Sensitivity = () => {
+  const { dataSensitivity, toggleDataSensitivity, industry } = useAssessmentStore()
+
+  const industrySensitivities = useMemo(
+    () => getIndustryConfigs(industrySensitivityConfigs, industry),
+    [industry]
+  )
+
+  const universalLevels = [
     {
       value: 'low',
       label: 'Low',
@@ -279,30 +305,137 @@ const Step4Sensitivity = () => {
         </div>
       </div>
 
-      <div className="space-y-3" role="group" aria-label="Data sensitivity levels">
-        {levels.map((level) => (
-          <button
-            key={level.value}
-            aria-pressed={dataSensitivity.includes(level.value)}
-            onClick={() => toggleDataSensitivity(level.value)}
-            className={clsx(
-              'w-full p-4 rounded-lg border text-left transition-colors',
-              dataSensitivity.includes(level.value)
-                ? level.color
-                : 'border-border text-muted-foreground hover:border-primary/30'
-            )}
-          >
-            <span className="font-bold text-sm">{level.label}</span>
-            <p className="text-xs mt-1 opacity-80">{level.description}</p>
-          </button>
-        ))}
+      {/* ── Industry-specific data types ── */}
+      {industrySensitivities.length > 0 && (
+        <>
+          <div className="glass-panel p-3 border-l-4 border-l-primary">
+            <div className="flex items-center gap-2">
+              <Info size={14} className="text-primary shrink-0" />
+              <p className="text-xs text-muted-foreground">
+                Showing data types common in the{' '}
+                <strong className="text-foreground">{industry}</strong> sector.
+              </p>
+            </div>
+          </div>
+          <div className="space-y-3" role="group" aria-label={`${industry} data sensitivity types`}>
+            {industrySensitivities.map((item) => {
+              const level = SENSITIVITY_SCORE_TO_LEVEL[item.sensitivityScore] ?? 'medium'
+              const badge = SENSITIVITY_BADGE_STYLES[level]
+              const isSelected = dataSensitivity.includes(level)
+              return (
+                <button
+                  key={item.id}
+                  aria-pressed={isSelected}
+                  onClick={() => toggleDataSensitivity(level)}
+                  className={clsx(
+                    'w-full p-4 rounded-lg border text-left transition-colors',
+                    isSelected
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/30'
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-bold text-sm">{item.label}</span>
+                    {badge && (
+                      <span
+                        className={clsx(
+                          'text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0',
+                          badge.text,
+                          badge.bg
+                        )}
+                      >
+                        {badge.label}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs mt-1 opacity-80">{item.description}</p>
+                </button>
+              )
+            })}
+          </div>
+        </>
+      )}
+
+      {/* ── Universal sensitivity levels ── */}
+      <div className={clsx(industrySensitivities.length > 0 && 'border-t border-border pt-3 mt-2')}>
+        {industrySensitivities.length > 0 && (
+          <p className="text-xs text-muted-foreground font-medium mb-2">
+            General sensitivity levels
+          </p>
+        )}
+        <div className="space-y-3" role="group" aria-label="Data sensitivity levels">
+          {universalLevels.map((level) => (
+            <button
+              key={level.value}
+              aria-pressed={dataSensitivity.includes(level.value)}
+              onClick={() => toggleDataSensitivity(level.value)}
+              className={clsx(
+                'w-full p-4 rounded-lg border text-left transition-colors',
+                dataSensitivity.includes(level.value)
+                  ? level.color
+                  : 'border-border text-muted-foreground hover:border-primary/30'
+              )}
+            >
+              <span className="font-bold text-sm">{level.label}</span>
+              <p className="text-xs mt-1 opacity-80">{level.description}</p>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   )
 }
 
 const Step5Compliance = () => {
-  const { complianceRequirements, toggleCompliance } = useAssessmentStore()
+  const { complianceRequirements, toggleCompliance, industry } = useAssessmentStore()
+  const country = useAssessmentStore((s) => s.country)
+
+  // Build set of labels that match the selected country
+  const countryMatchingLabels = useMemo(() => {
+    if (!country || country === 'Global') return null // no filter
+    const set = new Set<string>()
+    for (const cfg of industryComplianceConfigs) {
+      if (
+        cfg.countries.length === 0 ||
+        cfg.countries.includes('Global') ||
+        cfg.countries.includes(country)
+      ) {
+        set.add(cfg.label)
+      }
+    }
+    return set
+  }, [country])
+
+  const industryFrameworks = useMemo(() => {
+    let configs = getIndustryConfigs(industryComplianceConfigs, industry)
+    if (countryMatchingLabels) {
+      configs = configs.filter((cfg) => countryMatchingLabels.has(cfg.label))
+    }
+    return configs
+  }, [industry, countryMatchingLabels])
+  const industryLabelSet = useMemo(
+    () => new Set(industryFrameworks.map((f) => f.label)),
+    [industryFrameworks]
+  )
+  const industrySpecificComplianceLabels = useMemo(() => {
+    const set = new Set<string>()
+    for (const cfg of industryComplianceConfigs) {
+      if (cfg.industries.length > 0 && cfg.industries.length <= 2) {
+        set.add(cfg.label)
+      }
+    }
+    return set
+  }, [])
+  const universalFrameworks = useMemo(
+    () =>
+      AVAILABLE_COMPLIANCE.filter(
+        (f) =>
+          !industryLabelSet.has(f) &&
+          (industry === 'Other' || !industry || !industrySpecificComplianceLabels.has(f)) &&
+          (!countryMatchingLabels || countryMatchingLabels.has(f))
+      ),
+    [industryLabelSet, industry, industrySpecificComplianceLabels, countryMatchingLabels]
+  )
 
   return (
     <div className="space-y-4">
@@ -313,27 +446,78 @@ const Step5Compliance = () => {
         Select all regulatory or compliance frameworks your organization must adhere to. This helps
         identify PQC-related obligations.
       </p>
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-2"
-        role="group"
-        aria-label="Compliance framework selection"
-      >
-        {AVAILABLE_COMPLIANCE.map((fw) => (
-          <button
-            key={fw}
-            aria-pressed={complianceRequirements.includes(fw)}
-            onClick={() => toggleCompliance(fw)}
-            className={clsx(
-              'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
-              complianceRequirements.includes(fw)
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
-            )}
+
+      {industryFrameworks.length > 0 && (
+        <>
+          <div className="glass-panel p-3 border-l-4 border-l-primary">
+            <div className="flex items-center gap-2">
+              <Info size={14} className="text-primary shrink-0" />
+              <p className="text-xs text-muted-foreground">
+                Showing frameworks commonly required in the{' '}
+                <strong className="text-foreground">{industry}</strong> sector
+                {country && country !== 'Global' && (
+                  <>
+                    {' '}
+                    in <strong className="text-foreground">{country}</strong>
+                  </>
+                )}
+                .
+              </p>
+            </div>
+          </div>
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 gap-2"
+            role="group"
+            aria-label={`${industry} compliance frameworks`}
           >
-            {fw}
-          </button>
-        ))}
-      </div>
+            {industryFrameworks.map((fw) => (
+              <button
+                key={fw.id}
+                aria-pressed={complianceRequirements.includes(fw.label)}
+                onClick={() => toggleCompliance(fw.label)}
+                className={clsx(
+                  'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                  complianceRequirements.includes(fw.label)
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                )}
+              >
+                {fw.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {universalFrameworks.length > 0 && (
+        <div className={clsx(industryFrameworks.length > 0 && 'border-t border-border pt-3 mt-2')}>
+          {industryFrameworks.length > 0 && (
+            <p className="text-xs text-muted-foreground font-medium mb-2">Universal frameworks</p>
+          )}
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 gap-2"
+            role="group"
+            aria-label="Universal compliance frameworks"
+          >
+            {universalFrameworks.map((fw) => (
+              <button
+                key={fw}
+                aria-pressed={complianceRequirements.includes(fw)}
+                onClick={() => toggleCompliance(fw)}
+                className={clsx(
+                  'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                  complianceRequirements.includes(fw)
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                )}
+              >
+                {fw}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <p className="text-xs text-muted-foreground">
         Don&apos;t see your framework? Skip this step — it won&apos;t affect your risk score
         significantly.
@@ -398,7 +582,34 @@ const Step6Migration = () => {
 }
 
 const Step7UseCases = () => {
-  const { cryptoUseCases, toggleCryptoUseCase } = useAssessmentStore()
+  const { cryptoUseCases, toggleCryptoUseCase, industry } = useAssessmentStore()
+
+  const industryUseCases = useMemo(
+    () => getIndustryConfigs(industryUseCaseConfigs, industry),
+    [industry]
+  )
+  const industryUseCaseLabelSet = useMemo(
+    () => new Set(industryUseCases.map((uc) => uc.label)),
+    [industryUseCases]
+  )
+  const industrySpecificUseCaseLabels = useMemo(() => {
+    const set = new Set<string>()
+    for (const cfg of industryUseCaseConfigs) {
+      if (cfg.industries.length > 0 && cfg.industries.length <= 2) {
+        set.add(cfg.label)
+      }
+    }
+    return set
+  }, [])
+  const universalUseCases = useMemo(
+    () =>
+      AVAILABLE_USE_CASES.filter(
+        (uc) =>
+          !industryUseCaseLabelSet.has(uc) &&
+          (industry === 'Other' || !industry || !industrySpecificUseCaseLabels.has(uc))
+      ),
+    [industryUseCaseLabelSet, industry, industrySpecificUseCaseLabels]
+  )
 
   return (
     <div className="space-y-4">
@@ -407,27 +618,71 @@ const Step7UseCases = () => {
         Select all cryptographic use cases in your organization. This helps prioritize which
         migrations are most urgent.
       </p>
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-2"
-        role="group"
-        aria-label="Cryptographic use case selection"
-      >
-        {AVAILABLE_USE_CASES.map((uc) => (
-          <button
-            key={uc}
-            aria-pressed={cryptoUseCases.includes(uc)}
-            onClick={() => toggleCryptoUseCase(uc)}
-            className={clsx(
-              'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
-              cryptoUseCases.includes(uc)
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
-            )}
+
+      {industryUseCases.length > 0 && (
+        <>
+          <div className="glass-panel p-3 border-l-4 border-l-primary">
+            <div className="flex items-center gap-2">
+              <Info size={14} className="text-primary shrink-0" />
+              <p className="text-xs text-muted-foreground">
+                Showing use cases common in the{' '}
+                <strong className="text-foreground">{industry}</strong> sector.
+              </p>
+            </div>
+          </div>
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 gap-2"
+            role="group"
+            aria-label={`${industry} use cases`}
           >
-            {uc}
-          </button>
-        ))}
-      </div>
+            {industryUseCases.map((uc) => (
+              <button
+                key={uc.id}
+                aria-pressed={cryptoUseCases.includes(uc.label)}
+                onClick={() => toggleCryptoUseCase(uc.label)}
+                className={clsx(
+                  'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                  cryptoUseCases.includes(uc.label)
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                )}
+              >
+                {uc.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {universalUseCases.length > 0 && (
+        <div className={clsx(industryUseCases.length > 0 && 'border-t border-border pt-3 mt-2')}>
+          {industryUseCases.length > 0 && (
+            <p className="text-xs text-muted-foreground font-medium mb-2">General use cases</p>
+          )}
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 gap-2"
+            role="group"
+            aria-label="General cryptographic use cases"
+          >
+            {universalUseCases.map((uc) => (
+              <button
+                key={uc}
+                aria-pressed={cryptoUseCases.includes(uc)}
+                onClick={() => toggleCryptoUseCase(uc)}
+                className={clsx(
+                  'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                  cryptoUseCases.includes(uc)
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                )}
+              >
+                {uc}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <p className="text-xs text-muted-foreground">
         Not sure? Skip this step — we&apos;ll provide general recommendations.
       </p>
@@ -436,9 +691,9 @@ const Step7UseCases = () => {
 }
 
 const Step8DataRetention = () => {
-  const { dataRetention, toggleDataRetention } = useAssessmentStore()
+  const { dataRetention, toggleDataRetention, industry } = useAssessmentStore()
 
-  const options = [
+  const universalOptions = [
     {
       value: 'under-1y',
       label: 'Less than 1 year',
@@ -471,6 +726,33 @@ const Step8DataRetention = () => {
     },
   ]
 
+  const industryRetentionOptions = useMemo(
+    () => getIndustryConfigs(industryRetentionConfigs, industry),
+    [industry]
+  )
+  const industryRetentionIdSet = useMemo(
+    () => new Set(industryRetentionOptions.map((r) => r.id)),
+    [industryRetentionOptions]
+  )
+  const industrySpecificRetentionIds = useMemo(() => {
+    const set = new Set<string>()
+    for (const cfg of industryRetentionConfigs) {
+      if (cfg.industries.length > 0 && cfg.industries.length <= 2) {
+        set.add(cfg.id)
+      }
+    }
+    return set
+  }, [])
+  const filteredUniversalOptions = useMemo(
+    () =>
+      universalOptions.filter(
+        (opt) =>
+          !industryRetentionIdSet.has(opt.value) &&
+          (industry === 'Other' || !industry || !industrySpecificRetentionIds.has(opt.value))
+      ),
+    [industryRetentionIdSet, industry, industrySpecificRetentionIds]
+  )
+
   return (
     <div className="space-y-4">
       <h3 className="text-xl font-bold text-foreground">
@@ -490,24 +772,67 @@ const Step8DataRetention = () => {
         </div>
       </div>
 
-      <div className="space-y-3" role="group" aria-label="Data retention periods">
-        {options.map((opt) => (
-          <button
-            key={opt.value}
-            aria-pressed={dataRetention.includes(opt.value)}
-            onClick={() => toggleDataRetention(opt.value)}
-            className={clsx(
-              'w-full p-4 rounded-lg border text-left transition-colors',
-              dataRetention.includes(opt.value)
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border text-muted-foreground hover:border-primary/30'
-            )}
-          >
-            <span className="font-bold text-sm">{opt.label}</span>
-            <p className="text-xs mt-1 opacity-80">{opt.description}</p>
-          </button>
-        ))}
-      </div>
+      {industryRetentionOptions.length > 0 && (
+        <>
+          <div className="glass-panel p-3 border-l-4 border-l-primary">
+            <div className="flex items-center gap-2">
+              <Info size={14} className="text-primary shrink-0" />
+              <p className="text-xs text-muted-foreground">
+                Showing retention periods common in the{' '}
+                <strong className="text-foreground">{industry}</strong> sector.
+              </p>
+            </div>
+          </div>
+          <div className="space-y-3" role="group" aria-label={`${industry} retention periods`}>
+            {industryRetentionOptions.map((opt) => (
+              <button
+                key={opt.id}
+                aria-pressed={dataRetention.includes(opt.id)}
+                onClick={() => toggleDataRetention(opt.id)}
+                className={clsx(
+                  'w-full p-4 rounded-lg border text-left transition-colors',
+                  dataRetention.includes(opt.id)
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary/30'
+                )}
+              >
+                <span className="font-bold text-sm">{opt.label}</span>
+                <p className="text-xs mt-1 opacity-80">{opt.description}</p>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {filteredUniversalOptions.length > 0 && (
+        <div
+          className={clsx(
+            industryRetentionOptions.length > 0 && 'border-t border-border pt-3 mt-2'
+          )}
+        >
+          {industryRetentionOptions.length > 0 && (
+            <p className="text-xs text-muted-foreground font-medium mb-2">General ranges</p>
+          )}
+          <div className="space-y-3" role="group" aria-label="General data retention periods">
+            {filteredUniversalOptions.map((opt) => (
+              <button
+                key={opt.value}
+                aria-pressed={dataRetention.includes(opt.value)}
+                onClick={() => toggleDataRetention(opt.value)}
+                className={clsx(
+                  'w-full p-4 rounded-lg border text-left transition-colors',
+                  dataRetention.includes(opt.value)
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary/30'
+                )}
+              >
+                <span className="font-bold text-sm">{opt.label}</span>
+                <p className="text-xs mt-1 opacity-80">{opt.description}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,0 +1,105 @@
+category,id,label,description,industries,hndl_relevance,migration_priority,retention_years,compliance_deadline,compliance_notes,countries
+compliance,FIPS-140-3,FIPS 140-3,NIST cryptographic module validation program,"Government & Defense;Finance & Banking;Technology",,,,"2030 (NIST deprecation target)","CMVP validation will require PQC algorithm support. FIPS 203/204/205 already published.","United States;Canada;Australia"
+compliance,COMMON-CRITERIA,Common Criteria,International security evaluation framework,"Government & Defense;Technology",,,,"Ongoing — PQC protection profiles emerging","New protection profiles for PQC are being developed. Certification timelines vary by scheme.",Global
+compliance,ANSSI,ANSSI,French national cybersecurity agency regulation,"Government & Defense;Finance & Banking",,,,"2025-2030 (phased)","French regulation requires hybrid PQC for new systems. Full migration by 2030.",European Union
+compliance,CNSA-2,CNSA 2.0,NSA mandate for national security systems,Government & Defense,,,,"2025 (software), 2030 (infrastructure)","NSA mandate for U.S. national security systems. Aggressive timeline.",United States
+compliance,EIDAS,eIDAS 2.0,EU Digital Identity and Trust Services regulation,"Technology;Finance & Banking",,,,"2027+ (wallet deployments)","EU Digital Identity framework. PQC readiness expected for wallet implementations.","European Union;Czech Republic"
+compliance,PCI-DSS,PCI DSS,Payment Card Industry Data Security Standard,"Finance & Banking;Retail & E-Commerce",,,,"No explicit PQC timeline yet","Payment card industry will follow NIST guidance. Monitor for updates.",Global
+compliance,HIPAA,HIPAA,US health data privacy and security rule,Healthcare,,,,"No explicit PQC timeline yet","Healthcare data has long sensitivity periods — HNDL risk is significant.",United States
+compliance,GSMA-NG116,GSMA NG.116 / FS.40,GSMA PQC guidelines for mobile network operators,Telecommunications,,,,"2026-2028","Mobile network operator PQC guidance from GSMA. Covers 5G and beyond.",Global
+compliance,ETSI-TS103744,ETSI TS 103 744,ETSI quantum-safe cryptography for telecommunications,Telecommunications,,,,"Ongoing","ETSI specification for quantum-safe algorithms in telecom protocols.",European Union
+compliance,DORA,DORA (EU Digital Operational Resilience),EU financial sector ICT risk and resilience regulation,Finance & Banking,,,,"2025 (effective)","Operational resilience requirements for EU financial entities. Crypto risk in scope.","European Union;Czech Republic"
+compliance,SWIFT-CSP,SWIFT CSP,SWIFT Customer Security Programme mandatory controls,Finance & Banking,,,,"Annual","Annual security attestation required for SWIFT network participants.",Global
+compliance,ISO-27001,ISO 27001,International information security management standard,"Finance & Banking;Technology;Healthcare;Telecommunications;Energy & Utilities",,,,"Ongoing","Widely adopted ISMS standard. No explicit PQC deadline but requires crypto risk management.",Global
+compliance,SOC-2,SOC 2,Service Organization Control 2 trust services criteria,"Technology;Finance & Banking;Healthcare",,,,"Ongoing","Trust Services Criteria. Cryptographic controls reviewed in SOC 2 Type II audits.","United States;Canada"
+compliance,GDPR,GDPR,EU General Data Protection Regulation,"Healthcare;Technology;Finance & Banking;Retail & E-Commerce;Education",,,,"Ongoing","Art. 32 requires appropriate encryption. PQC becoming expected standard for long-lived personal data.","European Union;Czech Republic"
+compliance,HITECH,HITECH Act,Health Information Technology for Economic and Clinical Health Act,Healthcare,,,,"Ongoing","Extends HIPAA enforcement. Mandates breach notification and strong encryption for ePHI.",United States
+compliance,FDA-21CFR11,FDA 21 CFR Part 11,Electronic records and signatures in FDA-regulated industries,Healthcare,,,,"Ongoing","Signature integrity requirements applicable to PQC migration for regulated medical software.",United States
+compliance,FEDRAMP,FedRAMP,Federal Risk and Authorization Management Program,Government & Defense,,,,"2027 (Rev 5 PQC guidance)","Cloud service authorization for U.S. federal agencies. Rev 5 expected to reference PQC.",United States
+compliance,DISA-STIG,DISA STIGs,Defense Information Systems Agency Security Technical Implementation Guides,Government & Defense,,,,"Ongoing","Mandatory hardening guides for U.S. DoD systems. Crypto requirements updated regularly.",United States
+compliance,NATO-4774,NATO STANAG 4774,NATO confidentiality metadata labeling standard,Government & Defense,,,,"Ongoing","Coalition partner interoperability requirements. PQC transition affects classified data exchange.","United States;European Union;Canada;Czech Republic;Australia"
+compliance,ISO-SAE-21434,ISO/SAE 21434,Road vehicle cybersecurity engineering standard,Automotive,,,,"Ongoing","Full vehicle lifecycle security including post-quantum readiness. Required for new type approvals.",Global
+compliance,UN-ECE-WP29,UN ECE WP.29 R155/R156,UN regulations for vehicle cybersecurity and software updates,Automotive,,,,"Ongoing","Type approval requires cybersecurity management systems and secure OTA update processes.",European Union
+compliance,NERC-CIP,NERC CIP,North American Electric Reliability Corporation Critical Infrastructure Protection,Energy & Utilities,,,,"Ongoing","Mandatory cybersecurity standards for bulk power systems. Crypto controls in CIP-005/007/011.","United States;Canada"
+compliance,IEC-62443,IEC 62443,Industrial cybersecurity standard for OT/ICS environments,"Energy & Utilities;Aerospace",,,,"Ongoing","Defense-in-depth for industrial control systems. PQC relevant for long-lived OT deployments.",Global
+compliance,DO-326A,DO-326A / ED-202A,Airworthiness security process specification for aircraft systems,Aerospace,,,,"Ongoing","Aviation cybersecurity certification basis. PQC critical given 30-40 year aircraft lifespans.",Global
+compliance,RTCA-DO-355A,RTCA DO-355A,Information security guidance for continuing airworthiness,Aerospace,,,,"Ongoing","Supplement to DO-326A for operational phase. Covers cryptographic controls in service.",Global
+compliance,FERPA,FERPA,Family Educational Rights and Privacy Act,Education,,,,"Ongoing","Student record confidentiality. Long retention periods imply HNDL exposure for sensitive records.",United States
+compliance,NIS2,NIS2 Directive,EU network and information security directive for essential and important entities,"Technology;Finance & Banking;Healthcare;Energy & Utilities;Telecommunications",,,,"2024 (transposition deadline)","EU-wide cybersecurity baseline. Member states transposing into national law. PQC crypto risk management required.","European Union;Czech Republic"
+compliance,COPPA,COPPA,US Children's Online Privacy Protection Act,"Education;Technology",,,,"Ongoing","Protects children under 13 online. PQC relevant for long-lived minor data and parental consent records.",United States
+compliance,TISAX,TISAX,Trusted Information Security Assessment Exchange for automotive supply chain,Automotive,,,,"Ongoing","VDA-managed assessment for automotive suppliers. Covers information security including cryptographic controls.",European Union
+compliance,MICA,MiCA,EU Markets in Crypto-Assets Regulation,Finance & Banking,,,,"2025 (phased)","EU regulation for crypto-asset service providers. Cryptographic custody and wallet security affected by PQC.","European Union;Czech Republic"
+compliance,TSA-PIPELINE,TSA Pipeline Security Directive,US TSA cybersecurity requirements for pipeline operators,Energy & Utilities,,,,"Ongoing","Mandatory cybersecurity measures for critical pipeline infrastructure. Covers encryption for SCADA/OT.",United States
+use_case,TLS,TLS/HTTPS,Securing web and API traffic with TLS,"Telecommunications;Technology;Finance & Banking;Retail & E-Commerce;Education;Healthcare",6,10,,,,,
+use_case,DATA-REST,Data-at-rest encryption,Encrypting stored data and files,"Healthcare;Finance & Banking;Government & Defense;Education;Energy & Utilities",9,7,,,,,
+use_case,SIGNING,Digital signatures / code signing,Signing software and documents cryptographically,"Government & Defense;Technology;Aerospace;Finance & Banking",3,8,,,,,
+use_case,KEY-EXCHANGE,Key exchange / agreement,Establishing shared secret keys between parties,"Government & Defense;Finance & Banking;Telecommunications",8,9,,,,,
+use_case,AUTH,Authentication / identity,User and machine identity verification,"Government & Defense;Technology;Finance & Banking;Education;Healthcare;Retail & E-Commerce",4,7,,,,,
+use_case,BLOCKCHAIN,Blockchain / cryptocurrency,Distributed ledger and digital asset cryptography,"Finance & Banking;Technology",5,6,,,,,
+use_case,EMAIL-ENC,"Email encryption (S/MIME, PGP)",Encrypting and signing email communications,"Government & Defense;Finance & Banking;Healthcare",7,5,,,,,
+use_case,VPN,VPN / IPSec,Encrypted network tunnels and site-to-site VPNs,"Government & Defense;Technology;Energy & Utilities;Telecommunications",7,8,,,,,
+use_case,IOT,IoT device communication,Cryptographic communication for connected devices,"Automotive;Energy & Utilities;Telecommunications",5,6,,,,,
+use_case,DB-ENC,Database encryption,Encrypting database contents and backups,"Healthcare;Finance & Banking;Retail & E-Commerce;Education",8,7,,,,,
+use_case,SIM-ESIM,SIM/eSIM provisioning,Cryptographic provisioning of cellular subscriber identities,Telecommunications,8,9,,,,,
+use_case,5G-SLICING,5G network slicing security,PQC for network slice authentication and isolation in 5G,Telecommunications,7,8,,,,,
+use_case,SS7,SS7/Diameter protocol security,Signaling protocol integrity for telecom core networks,Telecommunications,6,8,,,,,
+use_case,SWIFT-MSG,SWIFT messaging integrity,Cryptographic signing and verification of SWIFT interbank messages,Finance & Banking,9,9,,,,,
+use_case,TRADING,Trading system code signing,Digital signatures for high-frequency trading software,Finance & Banking,5,8,,,,,
+use_case,CARD-ENC,Card payment encryption,POS terminal and card-not-present transaction encryption,"Finance & Banking;Retail & E-Commerce",6,7,,,,,
+use_case,MEDICAL-DEVICE,Medical device communication,Encrypted telemetry for connected medical devices,Healthcare,8,9,,,,,
+use_case,EHR,EHR/FHIR data exchange,Secure exchange of electronic health records via HL7/FHIR,Healthcare,9,8,,,,,
+use_case,V2X,V2X communication,Vehicle-to-everything communication security (DSRC/C-V2X),Automotive,7,9,,,,,
+use_case,OTA,OTA firmware updates,Signed over-the-air vehicle and device software updates,"Automotive;Energy & Utilities",5,9,,,,,
+use_case,ECU-BOOT,ECU secure boot,Root-of-trust for automotive electronic control units,Automotive,4,8,,,,,
+use_case,SCADA,SCADA/OT system security,Cryptographic controls for industrial control systems,"Energy & Utilities;Aerospace",8,9,,,,,
+use_case,SMART-METER,Smart meter communication,Encrypted AMI/AMR infrastructure for utility metering,Energy & Utilities,7,7,,,,,
+use_case,AVIONICS,Avionics communication,Encrypted and authenticated flight-critical avionics comms,Aerospace,8,10,,,,,
+use_case,SATELLITE,Satellite link encryption,Long-lived key protection for satellite command and telemetry,Aerospace,10,9,,,,,
+use_case,PKI-HSPD12,PKI / HSPD-12,Federal identity credentialing and PIV card cryptography,Government & Defense,6,9,,,,,
+use_case,CLASSIFIED,Classified data exchange,Cryptographic protection of classified communications,Government & Defense,10,10,,,,,
+use_case,DNS-DNSSEC,DNS/DNSSEC,DNS resolution integrity and DNSSEC zone signing,"Technology;Telecommunications",3,8,,,,,
+use_case,TIMESTAMPING,Timestamping services,Long-lived cryptographic timestamps for legal and financial evidence,"Finance & Banking;Government & Defense",9,7,,,,,
+use_case,BACKUP-ENC,Backup/archive encryption,Encryption of backup tapes and cloud archives and disaster recovery stores,"Healthcare;Finance & Banking;Government & Defense",9,6,,,,,
+use_case,API-GATEWAY,API gateway / microservices,mTLS and JWT signing for service-to-service communication,"Technology;Finance & Banking",5,8,,,,,
+use_case,SECURE-BOOT,Secure boot (non-automotive),Root-of-trust and firmware verification for servers and devices,"Technology;Government & Defense",4,8,,,,,
+retention,under-1y,Less than 1 year,Short-lived sessions and temporary tokens,"Technology;Retail & E-Commerce;Telecommunications;Education",,,1,,,
+retention,1-5y,1-5 years,Typical business records and customer data,"Technology;Education;Retail & E-Commerce",,,5,,,
+retention,5-10y,5-10 years,Financial records and audit trails,"Finance & Banking;Healthcare;Energy & Utilities;Telecommunications",,,10,,,
+retention,10-25y,10-25 years,"Healthcare records, legal documents and PII","Healthcare;Finance & Banking;Government & Defense;Aerospace;Education",,,25,,,
+retention,25-plus,25+ years,Regulatory archives and long-lived institutional records,"Government & Defense;Aerospace",,,30,,,
+retention,indefinite,Indefinite,"Classified data, state secrets and cryptographic keys",Government & Defense,,,50,,,
+retention,2y,2 years (CDR / telecom),Call detail records typical retention for mobile operators,Telecommunications,,,2,,,
+retention,6y,6 years (HIPAA minimum),Minimum retention under HIPAA for protected health information,Healthcare,,,6,,,
+retention,7y,7 years (financial records),Standard regulatory records retention for financial institutions,Finance & Banking,,,7,,,
+retention,75y-plus,75+ years (government archival),Long-lived government and national security archival records,Government & Defense,,,75,,,
+retention,permanent,Permanent (state secrets),Records with no defined expiration date,Government & Defense,,,100,,,
+sensitivity,phi,Protected Health Information (PHI),"Patient records, diagnoses, prescriptions, lab results",Healthcare,15,,,,,
+sensitivity,genomic-data,Genomic / clinical trial data,"DNA sequencing, biobank records, longitudinal research",Healthcare,25,,,,,
+sensitivity,admin-health,Administrative health records,"Scheduling, billing codes, facility operations",Healthcare,5,,,,,
+sensitivity,customer-financial,Customer financial records,"Account balances, transactions, credit scores, PII",Finance & Banking,15,,,,,
+sensitivity,trading-algos,Trading algorithms / proprietary models,"HFT strategies, risk models, pricing engines",Finance & Banking,25,,,,,
+sensitivity,transaction-logs,Transaction logs,"Audit trails, reconciliation records, batch processing data",Finance & Banking,5,,,,,
+sensitivity,classified-info,Classified information (TS/SCI),"National security data, intelligence products",Government & Defense,25,,,,,
+sensitivity,cui,Controlled Unclassified Information (CUI),"Export-controlled data, law enforcement sensitive",Government & Defense,15,,,,,
+sensitivity,fouo,Internal government data (FOUO),"Pre-decisional documents, internal correspondence",Government & Defense,5,,,,,
+sensitivity,network-topology,Network topology / configurations,"Core network architecture, routing tables, SS7 configs",Telecommunications,25,,,,,
+sensitivity,cdr,Call detail records (CDR),"Subscriber communications metadata, location data",Telecommunications,15,,,,,
+sensitivity,subscriber-meta,Subscriber metadata,"Account info, service plans, billing data",Telecommunications,5,,,,,
+sensitivity,crypto-keys,Cryptographic keys / secrets,"Private keys, API secrets, HSM contents",Technology,25,,,,,
+sensitivity,source-code,Source code / intellectual property,"Proprietary algorithms, trade secrets",Technology,15,,,,,
+sensitivity,user-analytics,User analytics / telemetry,"Usage patterns, A/B test data, anonymized metrics",Technology,5,,,,,
+sensitivity,scada-ot,SCADA/OT operational data,"Industrial control commands, safety system configs",Energy & Utilities,25,,,,,
+sensitivity,grid-topology,Grid topology / infrastructure maps,"Distribution network, substation configurations",Energy & Utilities,15,,,,,
+sensitivity,meter-readings,Meter readings / consumption data,"AMI data, billing usage, demand forecasts",Energy & Utilities,5,,,,,
+sensitivity,ad-algorithms,Autonomous driving algorithms,"ML models, sensor fusion logic, safety-critical code",Automotive,25,,,,,
+sensitivity,v2x-data,V2X communication data,"Vehicle-to-infrastructure messages, location data",Automotive,15,,,,,
+sensitivity,vehicle-telemetry,Vehicle telemetry,"Engine diagnostics, performance metrics, OBD data",Automotive,5,,,,,
+sensitivity,flight-control,Flight control software / avionics,"Safety-critical algorithms, weapons systems",Aerospace,25,,,,,
+sensitivity,passenger-pii,Passenger manifests / crew PII,"Travel records, passport data, security clearances",Aerospace,15,,,,,
+sensitivity,maintenance-logs,Maintenance logs,"Service records, parts inventory, compliance documentation",Aerospace,5,,,,,
+sensitivity,pci-data,Payment card data (PCI scope),"Card numbers, CVVs, transaction auth data","Retail & E-Commerce;Finance & Banking",15,,,,,
+sensitivity,customer-purchase,Customer purchase history / PII,"Order history, addresses, preferences",Retail & E-Commerce,5,,,,,
+sensitivity,product-catalog,Product catalog,"Public listings, pricing, inventory counts",Retail & E-Commerce,0,,,,,
+sensitivity,student-records,Student records (FERPA),"Grades, disciplinary records, financial aid",Education,15,,,,,
+sensitivity,research-ip,Research data / IP,"Unpublished research, grant proposals, patent-pending work",Education,15,,,,,
+sensitivity,course-catalog,Course catalogs / schedules,"Public curriculum, class listings, academic calendar",Education,0,,,,,

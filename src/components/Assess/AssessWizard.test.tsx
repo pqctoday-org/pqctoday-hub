@@ -18,6 +18,16 @@ vi.mock('../../data/timelineData', () => ({
   transformToGanttData: () => [],
 }))
 
+// Mock industryAssessConfig — default empty (backward-compat); overridden per describe block
+vi.mock('../../data/industryAssessConfig', () => ({
+  industryComplianceConfigs: [],
+  industryUseCaseConfigs: [],
+  industryRetentionConfigs: [],
+  industrySensitivityConfigs: [],
+  metadata: null,
+  getIndustryConfigs: () => [],
+}))
+
 const mockStore = {
   currentStep: 0,
   industry: '',
@@ -276,8 +286,9 @@ describe('AssessWizard', () => {
     it('renders compliance framework options', () => {
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByText(/Which compliance frameworks/)).toBeInTheDocument()
+      // With no industry selected the universal group renders
       expect(
-        screen.getByRole('group', { name: 'Compliance framework selection' })
+        screen.getByRole('group', { name: 'Universal compliance frameworks' })
       ).toBeInTheDocument()
     })
 
@@ -379,6 +390,56 @@ describe('AssessWizard', () => {
       mockStore.currentStep = 1
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByRole('button', { name: /Previous/ })).toBeEnabled()
+    })
+  })
+
+  describe('step 5: compliance — industry-aware', () => {
+    it('renders universal frameworks only when no industry config matches', () => {
+      mockStore.currentStep = 4
+      mockStore.industry = 'Other'
+      render(<AssessWizard onComplete={onComplete} />)
+      // Universal frameworks should be visible
+      expect(screen.getByText('FIPS 140-3')).toBeInTheDocument()
+      // No industry banner since no industry-specific frameworks
+      expect(screen.queryByText(/Showing frameworks commonly required/)).not.toBeInTheDocument()
+    })
+
+    it('shows only universal section with no industry divider for empty industry', () => {
+      mockStore.currentStep = 4
+      mockStore.industry = ''
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText('FIPS 140-3')).toBeInTheDocument()
+      expect(screen.queryByText('Universal frameworks')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('step 7: use cases — industry-aware', () => {
+    it('renders general use cases only when no industry config matches', () => {
+      mockStore.currentStep = 6
+      mockStore.industry = 'Other'
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText('TLS/HTTPS')).toBeInTheDocument()
+      expect(screen.queryByText(/Showing use cases common in/)).not.toBeInTheDocument()
+    })
+  })
+
+  describe('step 8: retention — industry-aware', () => {
+    it('renders universal options only when no industry config matches', () => {
+      mockStore.currentStep = 7
+      mockStore.industry = 'Other'
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText('Less than 1 year')).toBeInTheDocument()
+      expect(screen.queryByText(/Showing retention periods common in/)).not.toBeInTheDocument()
+    })
+
+    it('all universal retention options are present for empty industry', () => {
+      mockStore.currentStep = 7
+      mockStore.industry = ''
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText('Less than 1 year')).toBeInTheDocument()
+      expect(screen.getByText('1-5 years')).toBeInTheDocument()
+      expect(screen.getByText('5-10 years')).toBeInTheDocument()
+      expect(screen.getByText('Indefinite')).toBeInTheDocument()
     })
   })
 })

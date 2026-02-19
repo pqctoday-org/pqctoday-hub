@@ -213,6 +213,140 @@ const COMPLIANCE_DB: Record<string, { requiresPQC: boolean; deadline: string; no
     deadline: 'No explicit PQC timeline yet',
     notes: 'Healthcare data has long sensitivity periods — HNDL risk is significant.',
   },
+  // ── Industry-specific frameworks (from pqcassessment CSV) ──
+  'GSMA NG.116 / FS.40': {
+    requiresPQC: true,
+    deadline: '2026-2028',
+    notes: 'Mobile network operator PQC guidance from GSMA. Covers 5G and beyond.',
+  },
+  'ETSI TS 103 744': {
+    requiresPQC: true,
+    deadline: 'Ongoing',
+    notes: 'ETSI specification for quantum-safe algorithms in telecom protocols.',
+  },
+  'DORA (EU Digital Operational Resilience)': {
+    requiresPQC: true,
+    deadline: '2025 (effective)',
+    notes: 'Operational resilience requirements for EU financial entities. Crypto risk in scope.',
+  },
+  'SWIFT CSP': {
+    requiresPQC: false,
+    deadline: 'Annual',
+    notes: 'Annual security attestation required for SWIFT network participants.',
+  },
+  'ISO 27001': {
+    requiresPQC: false,
+    deadline: 'Ongoing',
+    notes:
+      'Widely adopted ISMS standard. No explicit PQC deadline but requires crypto risk management.',
+  },
+  'SOC 2': {
+    requiresPQC: false,
+    deadline: 'Ongoing',
+    notes: 'Trust Services Criteria. Cryptographic controls reviewed in SOC 2 Type II audits.',
+  },
+  GDPR: {
+    requiresPQC: false,
+    deadline: 'Ongoing',
+    notes:
+      'Art. 32 requires appropriate encryption. PQC becoming expected standard for long-lived personal data.',
+  },
+  'HITECH Act': {
+    requiresPQC: false,
+    deadline: 'Ongoing',
+    notes:
+      'Extends HIPAA enforcement. Mandates breach notification and strong encryption for ePHI.',
+  },
+  'FDA 21 CFR Part 11': {
+    requiresPQC: false,
+    deadline: 'Ongoing',
+    notes:
+      'Signature integrity requirements applicable to PQC migration for regulated medical software.',
+  },
+  FedRAMP: {
+    requiresPQC: true,
+    deadline: '2027 (Rev 5 PQC guidance)',
+    notes:
+      'Cloud service authorization for U.S. federal agencies. Rev 5 expected to reference PQC.',
+  },
+  'DISA STIGs': {
+    requiresPQC: true,
+    deadline: 'Ongoing',
+    notes:
+      'Mandatory hardening guides for U.S. DoD systems. Crypto requirements updated regularly.',
+  },
+  'NATO STANAG 4774': {
+    requiresPQC: true,
+    deadline: 'Ongoing',
+    notes:
+      'Coalition partner interoperability requirements. PQC transition affects classified data exchange.',
+  },
+  'ISO/SAE 21434': {
+    requiresPQC: true,
+    deadline: 'Ongoing',
+    notes:
+      'Full vehicle lifecycle security including post-quantum readiness. Required for new type approvals.',
+  },
+  'UN ECE WP.29 R155/R156': {
+    requiresPQC: true,
+    deadline: 'Ongoing',
+    notes:
+      'Type approval requires cybersecurity management systems and secure OTA update processes.',
+  },
+  'NERC CIP': {
+    requiresPQC: true,
+    deadline: 'Ongoing',
+    notes:
+      'Mandatory cybersecurity standards for bulk power systems. Crypto controls in CIP-005/007/011.',
+  },
+  'IEC 62443': {
+    requiresPQC: true,
+    deadline: 'Ongoing',
+    notes:
+      'Defense-in-depth for industrial control systems. PQC relevant for long-lived OT deployments.',
+  },
+  'DO-326A / ED-202A': {
+    requiresPQC: true,
+    deadline: 'Ongoing',
+    notes:
+      'Aviation cybersecurity certification basis. PQC critical given 30-40 year aircraft lifespans.',
+  },
+  'RTCA DO-355A': {
+    requiresPQC: true,
+    deadline: 'Ongoing',
+    notes: 'Supplement to DO-326A for operational phase. Covers cryptographic controls in service.',
+  },
+  FERPA: {
+    requiresPQC: false,
+    deadline: 'Ongoing',
+    notes:
+      'Student record confidentiality. Long retention periods imply HNDL exposure for sensitive records.',
+  },
+  'NIS2 Directive': {
+    requiresPQC: true,
+    deadline: '2024 (transposition)',
+    notes: 'EU-wide cybersecurity baseline for essential and important entities.',
+  },
+  COPPA: {
+    requiresPQC: false,
+    deadline: 'Ongoing',
+    notes: "Children's online privacy — PQC relevant for long-lived minor data.",
+  },
+  TISAX: {
+    requiresPQC: false,
+    deadline: 'Ongoing',
+    notes: 'Automotive supply chain information security assessment.',
+  },
+  MiCA: {
+    requiresPQC: true,
+    deadline: '2025 (phased)',
+    notes: 'EU crypto-asset regulation — custody and wallet cryptographic security.',
+  },
+  'TSA Pipeline Security Directive': {
+    requiresPQC: true,
+    deadline: 'Ongoing',
+    notes: 'US pipeline cybersecurity — covers OT/SCADA encryption requirements.',
+  },
 }
 
 // Industry threat levels
@@ -272,6 +406,29 @@ const USE_CASE_WEIGHTS: Record<string, { hndlRelevance: number; migrationPriorit
   'VPN / IPSec': { hndlRelevance: 7, migrationPriority: 8 },
   'IoT device communication': { hndlRelevance: 5, migrationPriority: 6 },
   'Database encryption': { hndlRelevance: 8, migrationPriority: 7 },
+  // ── Industry-specific use cases (from pqcassessment CSV) ──
+  'SIM/eSIM provisioning': { hndlRelevance: 8, migrationPriority: 9 },
+  '5G network slicing security': { hndlRelevance: 7, migrationPriority: 8 },
+  'SS7/Diameter protocol security': { hndlRelevance: 6, migrationPriority: 8 },
+  'SWIFT messaging integrity': { hndlRelevance: 9, migrationPriority: 9 },
+  'Trading system code signing': { hndlRelevance: 5, migrationPriority: 8 },
+  'Card payment encryption': { hndlRelevance: 6, migrationPriority: 7 },
+  'Medical device communication': { hndlRelevance: 8, migrationPriority: 9 },
+  'EHR/FHIR data exchange': { hndlRelevance: 9, migrationPriority: 8 },
+  'V2X communication': { hndlRelevance: 7, migrationPriority: 9 },
+  'OTA firmware updates': { hndlRelevance: 5, migrationPriority: 9 },
+  'ECU secure boot': { hndlRelevance: 4, migrationPriority: 8 },
+  'SCADA/OT system security': { hndlRelevance: 8, migrationPriority: 9 },
+  'Smart meter communication': { hndlRelevance: 7, migrationPriority: 7 },
+  'Avionics communication': { hndlRelevance: 8, migrationPriority: 10 },
+  'Satellite link encryption': { hndlRelevance: 10, migrationPriority: 9 },
+  'PKI / HSPD-12': { hndlRelevance: 6, migrationPriority: 9 },
+  'Classified data exchange': { hndlRelevance: 10, migrationPriority: 10 },
+  'DNS/DNSSEC': { hndlRelevance: 3, migrationPriority: 8 },
+  'Timestamping services': { hndlRelevance: 9, migrationPriority: 7 },
+  'Backup/archive encryption': { hndlRelevance: 9, migrationPriority: 6 },
+  'API gateway / microservices': { hndlRelevance: 5, migrationPriority: 8 },
+  'Secure boot (non-automotive)': { hndlRelevance: 4, migrationPriority: 8 },
 }
 
 const DATA_RETENTION_YEARS: Record<string, number> = {
@@ -281,6 +438,12 @@ const DATA_RETENTION_YEARS: Record<string, number> = {
   '10-25y': 25,
   '25-plus': 30,
   indefinite: 50,
+  // ── Industry-specific retention periods (from pqcassessment CSV) ──
+  '2y': 2,
+  '6y': 6,
+  '7y': 7,
+  '75y-plus': 75,
+  permanent: 100,
 }
 
 const AGILITY_COMPLEXITY: Record<string, number> = {

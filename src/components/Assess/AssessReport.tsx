@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -14,6 +14,8 @@ import {
   BarChart3,
   Clock,
   Briefcase,
+  Calendar,
+  ChevronDown,
 } from 'lucide-react'
 import type {
   AssessmentResult,
@@ -21,7 +23,48 @@ import type {
   HNDLRiskWindow,
 } from '../../hooks/useAssessmentEngine'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
+import { ReportTimelineStrip } from './ReportTimelineStrip'
+import { ReportThreatsAppendix } from './ReportThreatsAppendix'
 import clsx from 'clsx'
+
+function CollapsibleSection({
+  title,
+  icon,
+  children,
+}: {
+  title: string
+  icon: React.ReactNode
+  children: React.ReactNode
+}) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="glass-panel p-6 print:border print:border-gray-300">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between print:hidden"
+        aria-expanded={open}
+      >
+        <div className="flex items-center gap-2 font-semibold text-foreground">
+          {icon}
+          {title}
+        </div>
+        <ChevronDown
+          size={18}
+          className={clsx(
+            'text-muted-foreground transition-transform duration-200',
+            open && 'rotate-180'
+          )}
+        />
+      </button>
+      {/* Print-only static title (no button/chevron) */}
+      <div className="hidden print:flex items-center gap-2 font-semibold text-foreground">
+        {icon}
+        {title}
+      </div>
+      <div className={clsx('mt-4', !open && 'hidden print:block')}>{children}</div>
+    </div>
+  )
+}
 
 const riskConfig = {
   low: {
@@ -316,6 +359,8 @@ interface AssessReportProps {
 
 export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
   const { reset, editFromStep } = useAssessmentStore()
+  const industry = useAssessmentStore((s) => s.industry)
+  const country = useAssessmentStore((s) => s.country)
 
   const config = riskConfig[result.riskLevel]
 
@@ -426,6 +471,14 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
           })}
         </p>
       </motion.div>
+
+      {/* Country PQC Migration Timeline */}
+      <CollapsibleSection
+        title={country ? `${country} PQC Migration Timeline` : 'Country PQC Migration Timeline'}
+        icon={<Calendar className="text-primary" size={20} />}
+      >
+        <ReportTimelineStrip countryName={country} />
+      </CollapsibleSection>
 
       {/* Risk Score */}
       <motion.div
@@ -672,6 +725,14 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
           ))}
         </div>
       </motion.div>
+
+      {/* Industry Threat Landscape */}
+      <CollapsibleSection
+        title={industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'}
+        icon={<ShieldAlert className="text-destructive" size={20} />}
+      >
+        <ReportThreatsAppendix industry={industry} />
+      </CollapsibleSection>
 
       {/* Actions Bar */}
       <div className="flex flex-wrap items-center justify-center gap-3 print:hidden">
