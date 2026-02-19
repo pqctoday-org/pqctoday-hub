@@ -171,15 +171,15 @@
     --phase-deadline: 0 84% 65%;
   }
 
-  /* Print page margins — leave room for fixed header/footer */
+  /* Minimal physical page margins — header/footer live inside the content area */
   @page {
     size: portrait;
-    margin: 26mm 15mm 20mm 15mm;
+    margin: 6mm 10mm 6mm 10mm;
   }
 
   /* Print: force light-mode values so dark-theme text is visible on white paper */
   @media print {
-    /* Fixed header and footer on every printed page */
+    /* Repeating header — position:fixed at top:0 renders on every page */
     .print-header {
       position: fixed;
       top: 0;
@@ -194,8 +194,11 @@
       font-size: 8px;
       color: hsl(215.4 16.3% 46.9%);
       font-family: Inter, system-ui, sans-serif;
+      background: white;
+      z-index: 9999;
     }
 
+    /* Repeating footer — position:fixed at bottom:0 renders on every page */
     .print-footer {
       position: fixed;
       bottom: 0;
@@ -210,13 +213,29 @@
       font-size: 7px;
       color: hsl(215.4 16.3% 46.9%);
       font-family: Inter, system-ui, sans-serif;
+      background: white;
+      z-index: 9999;
     }
 
-    /* Allow large tables to break across pages */
+    /* Prevent table rows from splitting across page breaks */
+    tr {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* Allow large tables to break across pages (between rows, not within) */
     .print\:break-inside-auto {
       break-inside: auto !important;
       page-break-inside: auto !important;
     }
+
+    /* Reset container padding for full-width print */
+    .container {
+      padding-left: 4mm !important;
+      padding-right: 4mm !important;
+      max-width: none !important;
+    }
+
     *,
     *::before,
     *::after {
@@ -285,7 +304,25 @@
       min-height: 0 !important;
     }
 
-    /* Tighter print margins */
+    /* Print-report spacer table: <thead>/<tfoot> repeat on every page,
+       reserving space so content doesn't clip behind the fixed header/footer. */
+    .print-report-table > thead {
+      display: table-header-group !important;
+    }
+
+    .print-report-table > tfoot {
+      display: table-footer-group !important;
+    }
+
+    .print-report-table > tbody > tr {
+      break-inside: auto !important;
+      page-break-inside: auto !important;
+    }
+
+    html {
+      margin: 0 !important;
+    }
+
     body {
       margin: 0 !important;
       padding: 0 !important;
@@ -324,6 +361,21 @@
 }
 
 @layer components {
+  /* Print-report spacer table — hidden on screen */
+  .print-report-table {
+    border-collapse: collapse;
+  }
+
+  .print-report-table td {
+    padding: 0;
+    border: none;
+  }
+
+  .print-report-table > thead,
+  .print-report-table > tfoot {
+    display: none;
+  }
+
   .container {
     @apply max-w-7xl mx-auto px-8;
   }

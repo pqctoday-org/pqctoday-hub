@@ -260,7 +260,7 @@ export const GuidedTour: React.FC = () => {
   return (
     <AnimatePresence>
       {isActive && (
-        <>
+        <div className="print:hidden">
           {/* Overlay */}
           <div
             className="fixed inset-0 z-50 bg-black/50"
@@ -386,7 +386,7 @@ export const GuidedTour: React.FC = () => {
               </motion.div>
             </AnimatePresence>
           </div>
-        </>
+        </div>
       )}
     </AnimatePresence>
   )

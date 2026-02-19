@@ -100,8 +100,8 @@ export const ReportThreatsAppendix: React.FC<ReportThreatsAppendixProps> = ({ in
   }, [industry])
 
   return (
-    <div className="space-y-4 overflow-x-auto">
-      <div className="min-w-[560px]">
+    <div className="space-y-4 overflow-x-auto print:overflow-visible">
+      <div className="min-w-[560px] print:min-w-0">
         {industryThreats.length > 0 ? (
           <table className="w-full text-sm">
             <thead>
