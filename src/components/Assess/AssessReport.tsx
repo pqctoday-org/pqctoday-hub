@@ -485,7 +485,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
       {/* Print-only repeating footer */}
       <div className="hidden print-footer" aria-hidden="true">
         <span>{assessUrl}</span>
-        <span className="print-page-number" />
+        <span>{generatedDateTime}</span>
       </div>
 
       {/* Header */}
@@ -757,7 +757,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
       </motion.div>
 
       {/* Industry Threat Landscape */}
-      <div className="print:break-before-page">
+      <div className="print:break-before-page print:break-inside-auto">
         <CollapsibleSection
           title={industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'}
           icon={<ShieldAlert className="text-destructive" size={20} />}

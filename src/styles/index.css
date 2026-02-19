@@ -173,7 +173,8 @@
 
   /* Print page margins — leave room for fixed header/footer */
   @page {
-    margin: 24mm 15mm 20mm 15mm;
+    size: portrait;
+    margin: 26mm 15mm 20mm 15mm;
   }
 
   /* Print: force light-mode values so dark-theme text is visible on white paper */
@@ -184,13 +185,13 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 16mm;
+      height: 12mm;
       display: flex !important;
       align-items: center;
       justify-content: space-between;
-      padding: 0 2mm;
-      border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
-      font-size: 9px;
+      padding: 0 4mm;
+      border-bottom: 0.5px solid hsl(214.3 31.8% 91.4%);
+      font-size: 8px;
       color: hsl(215.4 16.3% 46.9%);
       font-family: Inter, system-ui, sans-serif;
     }
@@ -200,20 +201,21 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 12mm;
+      height: 8mm;
       display: flex !important;
       align-items: center;
       justify-content: space-between;
-      padding: 0 2mm;
-      border-top: 1px solid hsl(214.3 31.8% 91.4%);
-      font-size: 8px;
+      padding: 0 4mm;
+      border-top: 0.5px solid hsl(214.3 31.8% 91.4%);
+      font-size: 7px;
       color: hsl(215.4 16.3% 46.9%);
       font-family: Inter, system-ui, sans-serif;
     }
 
-    /* Page counter in footer — uses CSS page counter */
-    .print-page-number::after {
-      content: 'Page ' counter(page);
+    /* Allow large tables to break across pages */
+    .print\:break-inside-auto {
+      break-inside: auto !important;
+      page-break-inside: auto !important;
     }
     *,
     *::before,
