@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.1] - 2026-02-19
+
+### Fixed
+
+- **PDF Content Clipping** (`/assess`): Eliminated content overlap behind the fixed print
+  header/footer on pages 2+. Uses invisible `<thead>`/`<tfoot>` spacer table to reserve
+  per-page space for the repeating header (14mm) and footer (10mm).
+- **Print Visibility** (`GuidedTour`, `WhatsNewToast`): Hidden from print output via `print:hidden`.
+- **Threat Table Print** (`/assess`): Added `print:overflow-visible` and `print:min-w-0` to
+  prevent right-column clipping in the PDF.
+
 ## [1.14.0] - 2026-02-19
 
 ### Added
