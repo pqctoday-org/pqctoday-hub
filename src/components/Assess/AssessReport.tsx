@@ -365,16 +365,18 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
       const { default: jsPDF } = await import('jspdf')
 
       const element = document.querySelector('.assess-report') as HTMLElement
+      if (!element) {
+        console.warn('PDF generation: .assess-report element not found')
+        return
+      }
 
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
+        allowTaint: true,
         logging: false,
-        scrollX: 0,
+        scrollX: -window.scrollX,
         scrollY: -window.scrollY,
-        windowWidth: element.scrollWidth,
-        height: element.scrollHeight,
-        windowHeight: element.scrollHeight,
       })
 
       const imgData = canvas.toDataURL('image/jpeg', 0.95)
@@ -399,6 +401,8 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
       }
 
       pdf.save(`PQC-Assessment-${industry}-${country || 'Global'}.pdf`)
+    } catch (err) {
+      console.warn('PDF generation failed:', err)
     } finally {
       setIsGeneratingPDF(false)
     }
