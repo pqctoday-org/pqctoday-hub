@@ -127,8 +127,7 @@ describe('AssessReport', () => {
     it('renders the generated date from result', () => {
       renderReport()
       // UTC midnight renders as local date — just check that the date element exists
-      expect(screen.getByText(/Generated on/)).toBeInTheDocument()
-      expect(screen.getByText(/2026/)).toBeInTheDocument()
+      expect(screen.getByText(/Generated on.*2026/)).toBeInTheDocument()
     })
   })
 

@@ -8,6 +8,8 @@ import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { useAssessmentEngine } from '../../hooks/useAssessmentEngine'
 import type { AssessmentInput } from '../../hooks/useAssessmentEngine'
 import { metadata } from '../../data/industryAssessConfig'
+import { ShareButton } from '../ui/ShareButton'
+import { GlossaryButton } from '../ui/GlossaryButton'
 
 const VALID_SENSITIVITIES = new Set(['low', 'medium', 'high', 'critical'])
 const VALID_MIGRATIONS = new Set(['started', 'planning', 'not-started', 'unknown'])
@@ -182,6 +184,11 @@ export const AssessView: React.FC = () => {
                   Data Source: {metadata.filename} • Updated:{' '}
                   {metadata.lastUpdate.toLocaleDateString()}
                 </p>
+                <ShareButton
+                  title="PQC Risk Assessment — Post-Quantum Cryptography Migration Tool"
+                  text="Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
+                />
+                <GlossaryButton />
               </div>
             )}
           </motion.div>

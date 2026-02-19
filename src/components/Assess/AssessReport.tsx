@@ -27,6 +27,9 @@ import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix } from './ReportThreatsAppendix'
 import clsx from 'clsx'
 
+declare const __APP_VERSION__: string
+const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
+
 function CollapsibleSection({
   title,
   icon,
@@ -451,8 +454,40 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
     URL.revokeObjectURL(url)
   }
 
+  const generatedDate = new Date(result.generatedAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+
+  const generatedDateTime = new Date(result.generatedAt).toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+
+  const assessUrl = `${window.location.origin}/assess`
+
   return (
-    <div className="max-w-3xl mx-auto space-y-6 print:space-y-4">
+    <div className="max-w-3xl mx-auto space-y-6 print:space-y-4 print:max-w-none">
+      {/* Print-only repeating header */}
+      <div className="hidden print-header" aria-hidden="true">
+        <span style={{ fontWeight: 600 }}>PQC Today — v{APP_VERSION}</span>
+        <span>
+          {industry}
+          {country && country !== 'Global' ? ` | ${country}` : ''}
+        </span>
+        <span>{generatedDateTime}</span>
+      </div>
+
+      {/* Print-only repeating footer */}
+      <div className="hidden print-footer" aria-hidden="true">
+        <span>{assessUrl}</span>
+        <span className="print-page-number" />
+      </div>
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -463,12 +498,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
           Your PQC Risk Assessment Report
         </h2>
         <p className="text-sm text-muted-foreground print:text-gray-600">
-          Generated on{' '}
-          {new Date(result.generatedAt).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
+          Generated on {generatedDate}
         </p>
       </motion.div>
 
@@ -714,7 +744,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                   )}
                   <Link
                     to={action.relatedModule}
-                    className="text-xs text-primary hover:underline flex items-center gap-1"
+                    className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
                   >
                     <ArrowRight size={10} />
                     Explore
@@ -727,12 +757,14 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
       </motion.div>
 
       {/* Industry Threat Landscape */}
-      <CollapsibleSection
-        title={industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'}
-        icon={<ShieldAlert className="text-destructive" size={20} />}
-      >
-        <ReportThreatsAppendix industry={industry} />
-      </CollapsibleSection>
+      <div className="print:break-before-page">
+        <CollapsibleSection
+          title={industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'}
+          icon={<ShieldAlert className="text-destructive" size={20} />}
+        >
+          <ReportThreatsAppendix industry={industry} />
+        </CollapsibleSection>
+      </div>
 
       {/* Actions Bar */}
       <div className="flex flex-wrap items-center justify-center gap-3 print:hidden">

@@ -38,13 +38,20 @@ export const ReportTimelineStrip: React.FC<ReportTimelineStripProps> = ({ countr
     <div className="space-y-3 overflow-x-auto">
       {/* Year scale header */}
       <div className="relative h-5 min-w-[480px]">
-        {TICK_YEARS.map((yr) => {
+        {TICK_YEARS.map((yr, i) => {
           const left = yearToPercent(yr)
+          const isFirst = i === 0
+          const isLast = i === TICK_YEARS.length - 1
+          const transform = isFirst
+            ? 'translateX(0)'
+            : isLast
+              ? 'translateX(-100%)'
+              : 'translateX(-50%)'
           return (
             <div
               key={yr}
               className="absolute flex flex-col items-center"
-              style={{ left: `${left}%`, transform: 'translateX(-50%)' }}
+              style={{ left: `${left}%`, transform }}
             >
               <div className="w-px h-2 bg-border" />
               <span className="text-[9px] text-muted-foreground font-mono mt-0.5">{yr}</span>

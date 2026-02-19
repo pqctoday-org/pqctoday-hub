@@ -93,59 +93,35 @@ interface ReportThreatsAppendixProps {
 }
 
 export const ReportThreatsAppendix: React.FC<ReportThreatsAppendixProps> = ({ industry }) => {
-  const { industryThreats, crossThreats } = useMemo(() => {
+  const industryThreats = useMemo(() => {
     // eslint-disable-next-line security/detect-object-injection
     const threatIndustryNames = ASSESS_TO_THREATS_INDUSTRY[industry] ?? []
-
-    const industry_ = threatsData.filter((t) => threatIndustryNames.includes(t.industry))
-    const cross = threatsData.filter((t) => t.industry === 'Cross-Industry')
-
-    return { industryThreats: industry_, crossThreats: cross }
+    return threatsData.filter((t) => threatIndustryNames.includes(t.industry))
   }, [industry])
-
-  const hasIndustryThreats = industryThreats.length > 0
 
   return (
     <div className="space-y-4 overflow-x-auto">
       <div className="min-w-[560px]">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border text-left">
-              <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">Threat ID</th>
-              <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">Criticality</th>
-              <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">Description</th>
-              <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">
-                Crypto at Risk
-              </th>
-              <th className="py-2 text-muted-foreground font-medium text-xs">PQC Replacement</th>
-            </tr>
-          </thead>
-          <tbody>
-            {hasIndustryThreats &&
-              industryThreats.map((t) => <ThreatRow key={t.threatId} threat={t} />)}
-          </tbody>
-        </table>
-
-        {/* Cross-industry threats divider */}
-        {crossThreats.length > 0 && (
-          <>
-            <div className="flex items-center gap-3 py-3 border-t border-border mt-2">
-              <span className="text-xs text-muted-foreground font-medium whitespace-nowrap">
-                Cross-Industry Threats
-              </span>
-              <div className="flex-1 h-px bg-border" />
-            </div>
-            <table className="w-full text-sm">
-              <tbody>
-                {crossThreats.map((t) => (
-                  <ThreatRow key={t.threatId} threat={t} />
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
-
-        {!hasIndustryThreats && crossThreats.length === 0 && (
+        {industryThreats.length > 0 ? (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border text-left">
+                <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">Threat ID</th>
+                <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">Criticality</th>
+                <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">Description</th>
+                <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">
+                  Crypto at Risk
+                </th>
+                <th className="py-2 text-muted-foreground font-medium text-xs">PQC Replacement</th>
+              </tr>
+            </thead>
+            <tbody>
+              {industryThreats.map((t) => (
+                <ThreatRow key={t.threatId} threat={t} />
+              ))}
+            </tbody>
+          </table>
+        ) : (
           <p className="text-muted-foreground text-sm py-4 text-center">
             No threat data available for this industry.
           </p>

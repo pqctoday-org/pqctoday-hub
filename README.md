@@ -67,6 +67,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Per-algorithm migration effort estimation (quick-win to multi-year)
   - Executive summary, category breakdowns, and URL-shareable assessments
   - Enhanced CSV export with effort ratings and rationale
+  - Industry-aware wizard: compliance, crypto, use-case, and infrastructure steps prioritize industry-relevant options
+  - Country compliance filtering: frameworks filtered by selected jurisdiction
+  - PDF/print support: downloadable report with header/footer, page numbers, and section-aware page breaks
 - **PQC Glossary**: Global floating glossary with 100+ PQC terms
   - Category filters, A-Z index, full-text search
   - Complexity badges (Beginner, Intermediate, Advanced)
@@ -83,7 +86,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - NIST FIPS documents (203, 204, 205)
   - Protocol specifications (TLS, SSH, IKEv2)
   - **Dynamic Tree Visualization**: Interactive dependency hierarchy (Standards → Profiles → Guidelines)
-  - **Advanced Filtering**: Region-based scoping (Global, US, EU) and category grouping
+  - **Advanced Filtering**: Organization-based scoping (NIST, IETF, ETSI, ISO, etc.) and category grouping
 - **Quantum Threat Impacts**: Industry-specific quantum threat analysis
   - Interactive dashboard with criticality ratings
   - **Detailed Threat Insights**: Popups with specific "Harvest Now, Decrypt Later" risks and PQC mitigations
@@ -183,7 +186,7 @@ The application is structured into several key components:
 - **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
 - **`src/components/PKILearning`**: Educational platform with 7 modules (PKI Workshop, Digital Assets, 5G Security, EUDI Wallet, TLS 1.3 Basics, PQC 101 Introduction, PQC Quiz).
-- **`src/components/Assess`**: 12-step risk assessment wizard with compound scoring engine and HNDL risk analysis.
+- **`src/components/Assess`**: 13-step industry-aware risk assessment wizard with compound scoring engine, HNDL risk analysis, and PDF print support.
 - **`src/components/Migrate`**: Comprehensive PQC migration planning module with verified software database and workflow guidance.
 - **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.
 - **`src/components/common/GuidedTour.tsx`**: Interactive first-visit onboarding tour.

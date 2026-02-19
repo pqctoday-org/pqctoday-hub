@@ -43,8 +43,11 @@ export const MainLayout = () => {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <header className="m-4 sticky top-4 z-50 transition-all duration-300" role="banner">
+    <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0">
+      <header
+        className="m-4 sticky top-4 z-50 transition-all duration-300 print:hidden"
+        role="banner"
+      >
         <div className="glass-panel p-2 lg:p-4 flex w-full justify-center lg:justify-between items-center relative">
           <div className="flex flex-row items-baseline gap-4">
             <div className="hidden lg:block">
@@ -120,7 +123,7 @@ export const MainLayout = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4">
+      <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden">
         <p>© 2025 PQC Today. Data sourced from the public internet resources.</p>
       </footer>
 

@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.0] - 2026-02-19
+
+### Added
+
+- **Industry-Aware Assessment Wizard** (`/assess`): Compliance, crypto usage, use case, and
+  infrastructure steps now surface industry-relevant options first based on CSV-driven config
+  (`pqcassessment_02192026.csv`). Industry-specific threats appendix included in report.
+- **Country Compliance Filtering** (`/assess`): Step 5 (Compliance) filters frameworks by the
+  selected country/jurisdiction — only globally-applicable and country-relevant frameworks are shown.
+- **PDF Print Support** (`/assess`): Full print-optimized report with repeating header
+  (app version, industry, country, date) and footer (assess URL, page number). Includes
+  `break-inside: avoid` on sections, light-mode forced variables, `print-color-adjust: exact`
+  for background colors, and framer-motion suppression.
+- **Report Collapsible Sections** (`/assess`): Country PQC Migration Timeline and Industry Threat
+  Landscape are collapsible on screen but always expanded in print via `hidden print:block` pattern.
+- **Organization Filter** (`/library`): Replaced the Region dropdown with an Organization filter
+  (NIST, IETF, ETSI, ISO, BSI, ANSSI, etc.) using a canonical org map that rolls up sub-groups.
+
+### Fixed
+
+- **Share URL Arrays** (`/assess`): `dataSensitivity` and `dataRetention` now correctly encode as
+  comma-joined arrays in the share URL; added `cy` (country) parameter.
+- **PDF Dark Mode** (`/assess`): Print CSS forces all semantic color variables to light-mode values,
+  preventing invisible text on white paper when dark theme is active.
+- **PDF Background Colors** (`/assess`): Added `print-color-adjust: exact` so bar graphs, badges,
+  and colored elements render in the PDF instead of being stripped by the browser.
+- **PDF Page Breaks** (`/assess`): `glass-panel` sections avoid splitting across pages; Threat
+  Landscape starts on a fresh page; trailing blank page eliminated via `min-height: 0`.
+- **Timeline Label Clipping** (`/assess`): Edge year labels (2024, 2035) use left/right-aligned
+  transforms instead of centered, preventing clipping in the report timeline strip.
+
+### Changed
+
+- **Assessment Report** (`/assess`): "Explore" links and action buttons hidden in print. Cross-industry
+  threats section removed from report — only industry-specific threats shown.
+
 ## [1.13.0] - 2026-02-18
 
 ### Added

@@ -170,6 +170,139 @@
     --phase-research: 258 90% 70%;
     --phase-deadline: 0 84% 65%;
   }
+
+  /* Print page margins — leave room for fixed header/footer */
+  @page {
+    margin: 24mm 15mm 20mm 15mm;
+  }
+
+  /* Print: force light-mode values so dark-theme text is visible on white paper */
+  @media print {
+    /* Fixed header and footer on every printed page */
+    .print-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 16mm;
+      display: flex !important;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2mm;
+      border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
+      font-size: 9px;
+      color: hsl(215.4 16.3% 46.9%);
+      font-family: Inter, system-ui, sans-serif;
+    }
+
+    .print-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 12mm;
+      display: flex !important;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2mm;
+      border-top: 1px solid hsl(214.3 31.8% 91.4%);
+      font-size: 8px;
+      color: hsl(215.4 16.3% 46.9%);
+      font-family: Inter, system-ui, sans-serif;
+    }
+
+    /* Page counter in footer — uses CSS page counter */
+    .print-page-number::after {
+      content: 'Page ' counter(page);
+    }
+    *,
+    *::before,
+    *::after {
+      print-color-adjust: exact !important;
+      -webkit-print-color-adjust: exact !important;
+    }
+
+    :root,
+    .dark {
+      --background: 0 0% 100%;
+      --foreground: 222.2 84% 4.9%;
+      --card: 0 0% 100%;
+      --card-foreground: 222.2 84% 4.9%;
+      --popover: 0 0% 100%;
+      --popover-foreground: 222.2 84% 4.9%;
+      --primary: 189 90% 40%;
+      --primary-foreground: 210 40% 98%;
+      --secondary: 255 85% 60%;
+      --secondary-foreground: 222.2 47.4% 11.2%;
+      --tertiary: 270 95% 65%;
+      --tertiary-foreground: 210 40% 98%;
+      --muted: 210 40% 96.1%;
+      --muted-foreground: 215.4 16.3% 46.9%;
+      --accent: 153 60% 45%;
+      --accent-foreground: 210 40% 98%;
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 210 40% 98%;
+      --border: 214.3 31.8% 91.4%;
+      --input: 214.3 31.8% 91.4%;
+      --ring: 189 90% 40%;
+      --success: 142.1 76.2% 36.3%;
+      --success-foreground: 355.7 100% 97.3%;
+      --warning: 38 92% 50%;
+      --warning-foreground: 48 96% 89%;
+      --file-key: 0 84% 60%;
+      --file-key-foreground: 215.4 16.3% 46.9%;
+      --file-cert: 221 83% 53%;
+      --file-cert-foreground: 215.4 16.3% 46.9%;
+      --file-csr: 262 83% 58%;
+      --file-csr-foreground: 215.4 16.3% 46.9%;
+      --phase-discovery: 217 91% 60%;
+      --phase-testing: 263 90% 76%;
+      --phase-poc: 28 96% 61%;
+      --phase-migration: 149 67% 52%;
+      --phase-standardization: 186 85% 53%;
+      --phase-guidance: 48 96% 53%;
+      --phase-policy: 24 6% 65%;
+      --phase-regulation: 0 84% 60%;
+      --phase-research: 258 90% 66%;
+      --phase-deadline: 0 84% 60%;
+    }
+
+    /* Force white background and remove glass-panel effects */
+    .glass-panel {
+      background: white !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      box-shadow: none !important;
+      border: 1px solid hsl(214.3 31.8% 91.4%) !important;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* Remove min-height that causes trailing blank pages */
+    .min-h-screen {
+      min-height: 0 !important;
+    }
+
+    /* Tighter print margins */
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* Force SVG elements to use dark stroke/fill for visibility */
+    svg text {
+      fill: currentColor !important;
+    }
+
+    /* Suppress framer-motion opacity/transform that can confuse print layout */
+    [style*='opacity'] {
+      opacity: 1 !important;
+    }
+
+    [style*='transform'] {
+      transform: none !important;
+    }
+  }
 }
 
 @layer base {
