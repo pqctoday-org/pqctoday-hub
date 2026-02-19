@@ -4,55 +4,110 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
-  Compass,
-  Globe,
-  FlaskConical,
+  ClipboardCheck,
   GraduationCap,
+  Globe,
+  AlertTriangle,
+  Shield,
   BookOpen,
+  ArrowRightLeft,
+  FlaskConical,
+  ShieldCheck,
+  Users,
+  Search,
 } from 'lucide-react'
 
 const TOUR_STORAGE_KEY = 'pqc-tour-completed'
 
 interface TourStep {
-  target: string // CSS selector (used by desktop tooltip)
+  target: string // CSS selector for highlight + desktop anchor
   title: string
   description: string
   position: 'bottom' | 'top' | 'left' | 'right'
   icon: React.FC<{ size?: number; className?: string }>
 }
 
+// Steps ordered left-to-right matching the nav bar layout
 const tourSteps: TourStep[] = [
   {
-    target: 'nav',
-    title: 'Navigation',
+    target: 'a[href="/assess"]',
+    title: 'Risk Assessment',
     description:
-      'Use the navigation bar to explore all PQC modules — timeline, threats, algorithms, and more.',
+      "Evaluate your organization's PQC readiness with a guided 13-step wizard. Get a scored report with tailored recommendations.",
     position: 'bottom',
-    icon: Compass,
-  },
-  {
-    target: 'a[href="/timeline"]',
-    title: 'Migration Timeline',
-    description:
-      'Track global PQC migration deadlines and regulatory milestones from 40+ countries.',
-    position: 'bottom',
-    icon: Globe,
-  },
-  {
-    target: 'a[href="/playground"]',
-    title: 'Crypto Playground',
-    description:
-      'Test real post-quantum cryptographic algorithms (ML-KEM, ML-DSA) directly in your browser.',
-    position: 'bottom',
-    icon: FlaskConical,
+    icon: ClipboardCheck,
   },
   {
     target: 'a[href="/learn"]',
     title: 'Learning Modules',
     description:
-      'New to PQC? Start with "PQC 101" for a beginner-friendly introduction, then explore hands-on workshops.',
+      'New to PQC? Start with "PQC 101" for a beginner-friendly introduction, then explore hands-on workshops and quizzes.',
     position: 'bottom',
     icon: GraduationCap,
+  },
+  {
+    target: 'a[href="/timeline"]',
+    title: 'Migration Timeline',
+    description:
+      'Track global PQC migration deadlines and regulatory milestones from 40+ countries on an interactive Gantt chart.',
+    position: 'bottom',
+    icon: Globe,
+  },
+  {
+    target: 'a[href="/threats"]',
+    title: 'Threat Landscape',
+    description:
+      'Explore the quantum threat landscape — harvest-now-decrypt-later attacks, crypto-agility gaps, and risk timelines.',
+    position: 'bottom',
+    icon: AlertTriangle,
+  },
+  {
+    target: 'a[href="/algorithms"]',
+    title: 'Algorithm Explorer',
+    description:
+      'Compare post-quantum algorithms by type, security level, performance, and standardization status.',
+    position: 'bottom',
+    icon: Shield,
+  },
+  {
+    target: 'a[href="/library"]',
+    title: 'Standards Library',
+    description:
+      'Browse 165+ PQC standards, drafts, and guidance documents from NIST, IETF, ETSI, and more.',
+    position: 'bottom',
+    icon: BookOpen,
+  },
+  {
+    target: 'a[href="/migrate"]',
+    title: 'Migration Planner',
+    description:
+      'Plan your migration with step-by-step guidance for transitioning your systems to post-quantum cryptography.',
+    position: 'bottom',
+    icon: ArrowRightLeft,
+  },
+  {
+    target: 'a[href="/playground"]',
+    title: 'Crypto Playground',
+    description:
+      'Run real ML-KEM and ML-DSA operations in your browser via WASM. Available on desktop.',
+    position: 'bottom',
+    icon: FlaskConical,
+  },
+  {
+    target: 'a[href="/compliance"]',
+    title: 'Compliance Tracker',
+    description:
+      'Track compliance requirements across NIST, ANSSI, BSI, and Common Criteria frameworks.',
+    position: 'bottom',
+    icon: ShieldCheck,
+  },
+  {
+    target: 'a[href="/leaders"]',
+    title: 'Industry Leaders',
+    description:
+      'See which organizations and countries are leading the post-quantum cryptography transition.',
+    position: 'bottom',
+    icon: Users,
   },
   {
     target: 'button[aria-label="Open glossary"]',
@@ -60,7 +115,7 @@ const tourSteps: TourStep[] = [
     description:
       "Don't know a term? Open the glossary anytime to look up PQC concepts, algorithms, and standards.",
     position: 'top',
-    icon: BookOpen,
+    icon: Search,
   },
 ]
 
@@ -93,13 +148,37 @@ export const GuidedTour: React.FC = () => {
     }
     const completed = localStorage.getItem(TOUR_STORAGE_KEY)
     if (!completed) {
-      // Delay the tour start so the page can fully render
       timerRef.current = setTimeout(() => setIsActive(true), 2000)
     }
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [])
+
+  // Highlight the target nav element and scroll it into view
+  useEffect(() => {
+    if (!isActive) return
+
+    // eslint-disable-next-line security/detect-object-injection
+    const step = tourSteps[currentStep]
+    if (!step) return
+
+    const el = document.querySelector(step.target) as HTMLElement | null
+    if (!el) return
+
+    // Save original cssText so we can restore it cleanly
+    const savedCssText = el.style.cssText
+
+    // Apply highlight — element pops above the z-50 overlay
+    el.style.cssText = `${savedCssText}; position: relative; z-index: 51; box-shadow: 0 0 0 3px hsl(var(--primary) / 0.6), 0 0 16px hsl(var(--primary) / 0.3); border-radius: 0.5rem; transition: box-shadow 0.3s ease;`
+
+    // Scroll the nav bar so the highlighted icon is visible
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+
+    return () => {
+      el.style.cssText = savedCssText
+    }
+  }, [isActive, currentStep])
 
   // Desktop-only: compute tooltip position anchored to target element
   const updatePosition = useCallback(() => {
