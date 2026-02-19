@@ -304,23 +304,9 @@
       min-height: 0 !important;
     }
 
-    /* Print-report spacer table: <thead>/<tfoot> repeat on every page,
-       reserving space so content doesn't clip behind the fixed header/footer. */
-    .print-report-table > thead {
-      display: table-header-group !important;
-    }
-
-    .print-report-table > tfoot {
-      display: table-footer-group !important;
-    }
-
-    .print-report-table > tbody > tr {
-      break-inside: auto !important;
-      page-break-inside: auto !important;
-    }
-
     html {
-      margin: 0 !important;
+      margin-top: 14mm !important;
+      margin-bottom: 10mm !important;
     }
 
     body {
@@ -361,21 +347,6 @@
 }
 
 @layer components {
-  /* Print-report spacer table — hidden on screen */
-  .print-report-table {
-    border-collapse: collapse;
-  }
-
-  .print-report-table td {
-    padding: 0;
-    border: none;
-  }
-
-  .print-report-table > thead,
-  .print-report-table > tfoot {
-    display: none;
-  }
-
   .container {
     @apply max-w-7xl mx-auto px-8;
   }
