@@ -318,16 +318,6 @@
     svg text {
       fill: currentColor !important;
     }
-
-    /* Suppress framer-motion GPU layers that Chrome print engine renders blank */
-    .assess-report,
-    .assess-report * {
-      opacity: 1 !important;
-      transform: none !important;
-      will-change: auto !important;
-      animation: none !important;
-      transition: none !important;
-    }
   }
 }
 
@@ -436,5 +426,18 @@
 
   .dark .shadow-glow-sm {
     box-shadow: 0 0 10px hsl(var(--primary) / 0.1);
+  }
+}
+
+/* Unlayered — highest !important cascade priority, beats any @layer rule.
+   Belt-and-suspenders: force all animated elements visible in print. */
+@media print {
+  .assess-report,
+  .assess-report * {
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto !important;
+    animation: none !important;
+    transition: none !important;
   }
 }

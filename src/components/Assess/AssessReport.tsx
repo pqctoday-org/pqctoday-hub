@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import {
   Printer,
   Share2,
@@ -206,12 +205,7 @@ const CategoryBreakdown = ({ scores }: { scores: CategoryScores }) => {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.15 }}
-      className="glass-panel p-6 print:border print:border-gray-300"
-    >
+    <div className="glass-panel p-6 print:border print:border-gray-300">
       <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
         <BarChart3 className="text-primary" size={20} />
         Risk Breakdown
@@ -244,7 +238,7 @@ const CategoryBreakdown = ({ scores }: { scores: CategoryScores }) => {
           )
         })}
       </div>
-    </motion.div>
+    </div>
   )
 }
 
@@ -257,12 +251,7 @@ const HNDLTimeline = ({ hndl }: { hndl: HNDLRiskWindow }) => {
   const dataEndOffset = (hndl.dataRetentionYears / totalSpan) * 100
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
-      className="glass-panel p-6 print:border print:border-gray-300"
-    >
+    <div className="glass-panel p-6 print:border print:border-gray-300">
       <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
         <Clock className="text-primary" size={20} />
         HNDL Risk Window
@@ -352,7 +341,7 @@ const HNDLTimeline = ({ hndl }: { hndl: HNDLRiskWindow }) => {
           Your data retention period does not extend beyond the estimated quantum threat year.
         </p>
       )}
-    </motion.div>
+    </div>
   )
 }
 
@@ -490,18 +479,14 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
 
       <div className="space-y-6 print:space-y-4">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center"
-        >
+        <div className="text-center">
           <h2 className="text-3xl font-bold text-gradient mb-2 print:text-black">
             Your PQC Risk Assessment Report
           </h2>
           <p className="text-sm text-muted-foreground print:text-gray-600">
             Generated on {generatedDate}
           </p>
-        </motion.div>
+        </div>
 
         {/* Country PQC Migration Timeline */}
         <CollapsibleSection
@@ -512,10 +497,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
         </CollapsibleSection>
 
         {/* Risk Score */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1 }}
+        <div
           className={clsx(
             'glass-panel p-6 border-l-4',
             config.border,
@@ -526,19 +508,14 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
           <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-gray-600">
             {result.narrative}
           </p>
-        </motion.div>
+        </div>
 
         {/* Category Score Breakdown */}
         {result.categoryScores && <CategoryBreakdown scores={result.categoryScores} />}
 
         {/* Executive Summary */}
         {result.executiveSummary && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.18 }}
-            className="glass-panel p-6 border-l-4 border-l-primary print:border print:border-gray-300"
-          >
+          <div className="glass-panel p-6 border-l-4 border-l-primary print:border print:border-gray-300">
             <h3 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
               <Briefcase className="text-primary" size={20} />
               Executive Summary
@@ -546,7 +523,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
             <p className="text-sm text-muted-foreground leading-relaxed">
               {result.executiveSummary}
             </p>
-          </motion.div>
+          </div>
         )}
 
         {/* HNDL Risk Window */}
@@ -554,12 +531,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
 
         {/* Algorithm Migration Matrix */}
         {result.algorithmMigrations.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="glass-panel p-6 print:border print:border-gray-300"
-          >
+          <div className="glass-panel p-6 print:border print:border-gray-300">
             <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
               <ShieldAlert className="text-primary" size={20} />
               Algorithm Migration Priority
@@ -651,17 +623,12 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                 </tbody>
               </table>
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Compliance Impact */}
         {result.complianceImpacts.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="glass-panel p-6 print:border print:border-gray-300"
-          >
+          <div className="glass-panel p-6 print:border print:border-gray-300">
             <h3 className="text-lg font-bold text-foreground mb-4">Compliance Impact</h3>
             <div className="space-y-3">
               {result.complianceImpacts.map((c) => (
@@ -692,16 +659,11 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Recommended Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="glass-panel p-6 print:border print:border-gray-300"
-        >
+        <div className="glass-panel p-6 print:border print:border-gray-300">
           <h3 className="text-lg font-bold text-foreground mb-4">Recommended Actions</h3>
           <div className="space-y-3">
             {result.recommendedActions.map((action) => (
@@ -762,7 +724,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Industry Threat Landscape */}
         <div className="print:break-before-page print:break-inside-auto">
