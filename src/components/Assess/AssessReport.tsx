@@ -471,7 +471,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
   const assessUrl = `${window.location.origin}/assess`
 
   return (
-    <div className="max-w-3xl mx-auto print:max-w-none">
+    <div className="assess-report max-w-3xl mx-auto print:max-w-none">
       {/* Print-only repeating header (position:fixed in CSS repeats on every page) */}
       <div className="hidden print-header" aria-hidden="true">
         <span style={{ fontWeight: 600 }}>PQC Today — v{APP_VERSION}</span>

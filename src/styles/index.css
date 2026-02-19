@@ -319,13 +319,14 @@
       fill: currentColor !important;
     }
 
-    /* Suppress framer-motion opacity/transform that can confuse print layout */
-    [style*='opacity'] {
+    /* Suppress framer-motion GPU layers that Chrome print engine renders blank */
+    .assess-report,
+    .assess-report * {
       opacity: 1 !important;
-    }
-
-    [style*='transform'] {
       transform: none !important;
+      will-change: auto !important;
+      animation: none !important;
+      transition: none !important;
     }
   }
 }
