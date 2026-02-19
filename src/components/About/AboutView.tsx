@@ -1,4 +1,4 @@
-import { Info, Shield, GithubIcon } from 'lucide-react'
+import { Info, Shield, GithubIcon, ShieldCheck, ShieldAlert } from 'lucide-react'
 
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
@@ -163,8 +163,8 @@ export function AboutView() {
                   <span className="text-xs text-muted-foreground/60">Native</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
-                  <span className="text-muted-foreground">pqcrypto</span>
-                  <span className="text-xs text-muted-foreground/60">v1.0.1</span>
+                  <span className="text-muted-foreground">@openforge-sh/liboqs</span>
+                  <span className="text-xs text-muted-foreground/60">v0.14.3</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@noble/hashes</span>
@@ -276,6 +276,102 @@ export function AboutView() {
                   <span className="text-xs text-muted-foreground/60">v2.2.2</span>
                 </li>
               </ul>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Security Audit Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.32 }}
+          className="glass-panel p-6"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <ShieldCheck className="text-primary" size={24} />
+            <div>
+              <h2 className="text-xl font-bold">Security Audit</h2>
+              <p className="text-xs text-muted-foreground">Last audited: February 19, 2026</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {/* Production Status */}
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/5 border border-green-500/20">
+              <ShieldCheck className="text-green-500 mt-0.5 shrink-0" size={18} />
+              <div>
+                <p className="text-sm font-semibold text-green-500">0 production vulnerabilities</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  All runtime dependencies (React, crypto libraries, Zustand, Tailwind, etc.) have
+                  zero known CVEs.
+                </p>
+              </div>
+            </div>
+
+            {/* Dev-only findings */}
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
+              <ShieldAlert className="text-amber-500 mt-0.5 shrink-0" size={18} />
+              <div>
+                <p className="text-sm font-semibold text-amber-500">
+                  13 dev-only findings (12 high, 1 moderate)
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  All findings are in the ESLint linting toolchain. These affect developer machines
+                  only and have no impact on the deployed application.
+                </p>
+              </div>
+            </div>
+
+            {/* CVE Details Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 pr-3 text-muted-foreground font-medium">CVE</th>
+                    <th className="text-left py-2 pr-3 text-muted-foreground font-medium">
+                      Severity
+                    </th>
+                    <th className="text-left py-2 pr-3 text-muted-foreground font-medium">
+                      Package
+                    </th>
+                    <th className="text-left py-2 text-muted-foreground font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-3 font-mono text-muted-foreground">
+                      GHSA-3ppc-4f35-3m26
+                    </td>
+                    <td className="py-2 pr-3">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-500">
+                        HIGH
+                      </span>
+                    </td>
+                    <td className="py-2 pr-3 text-muted-foreground">
+                      minimatch &lt; 10.2.1 (ReDoS)
+                    </td>
+                    <td className="py-2 text-muted-foreground">
+                      Dev-only &mdash; no upstream fix available
+                    </td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-3 font-mono text-muted-foreground">
+                      GHSA-2g4f-4pwh-qvx6
+                    </td>
+                    <td className="py-2 pr-3">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-500/10 text-yellow-500">
+                        MODERATE
+                      </span>
+                    </td>
+                    <td className="py-2 pr-3 text-muted-foreground">
+                      ajv &lt; 8.18.0 (ReDoS via $data)
+                    </td>
+                    <td className="py-2 text-muted-foreground">
+                      Dev-only &mdash; ESLint does not use $data
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </motion.div>

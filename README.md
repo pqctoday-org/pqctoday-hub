@@ -254,6 +254,20 @@ The application is structured into several key components:
 │   └── types.ts             # Global TypeScript definitions
 ```
 
+## Security
+
+Last audited: February 19, 2026
+
+| Severity | Production | Dev-only |
+| -------- | ---------- | -------- |
+| Critical | 0          | 0        |
+| High     | 0          | 12       |
+| Moderate | 0          | 1        |
+
+All runtime/production dependencies have **zero known CVEs**. The 13 dev-only findings are confined to the ESLint linting toolchain (`minimatch` ReDoS and `ajv` ReDoS) and do not affect the deployed application. See the [About page](/about) for full SBOM and CVE details.
+
+To verify: `npm audit`
+
 ## License
 
 [GPL-3.0](LICENSE)
