@@ -2,16 +2,6 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.14.1] - 2026-02-19
-
-### Changed
-
-- **Mobile Walkthrough** (`GuidedTour`): Redesigned the guided tour on mobile as a full-screen
-  swipeable card carousel with step icons, dot indicators, and drag gestures. Desktop anchored
-  tooltips unchanged. Added `?tour` query param to reset and replay the tour.
-- **WhatsNew Toast** (`WhatsNewToast`): Centered on mobile (was fixed bottom-right, overflowed on
-  narrow screens). Added `?whatsnew` query param for easy testing.
-
 ## [1.14.0] - 2026-02-19
 
 ### Added
@@ -45,6 +35,11 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Mobile Walkthrough** (`GuidedTour`): Redesigned the guided tour on mobile as a full-screen
+  swipeable card carousel with step icons, dot indicators, and drag gestures. Desktop anchored
+  tooltips unchanged. Added `?tour` query param to reset and replay the tour.
+- **WhatsNew Toast** (`WhatsNewToast`): Centered on mobile (was fixed bottom-right, overflowed on
+  narrow screens). Added `?whatsnew` query param for easy testing.
 - **Assessment Report** (`/assess`): "Explore" links and action buttons hidden in print. Cross-industry
   threats section removed from report — only industry-specific threats shown.
 
