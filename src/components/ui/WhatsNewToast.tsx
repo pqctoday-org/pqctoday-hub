@@ -5,11 +5,16 @@ import { useVersionStore, getCurrentVersion } from '../../store/useVersionStore'
 import { useState, useEffect } from 'react'
 
 export const WhatsNewToast = () => {
-  const { hasSeenCurrentVersion, markVersionSeen } = useVersionStore()
+  const { hasSeenCurrentVersion, markVersionSeen, resetForTesting } = useVersionStore()
   const [isVisible, setIsVisible] = useState(false)
   const version = getCurrentVersion()
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.has('whatsnew')) {
+      resetForTesting()
+    }
+
     // Small delay to avoid flash on initial load
     const timer = setTimeout(() => {
       if (!hasSeenCurrentVersion()) {
@@ -18,7 +23,7 @@ export const WhatsNewToast = () => {
     }, 1000)
 
     return () => clearTimeout(timer)
-  }, [hasSeenCurrentVersion])
+  }, [hasSeenCurrentVersion, resetForTesting])
 
   const handleDismiss = () => {
     setIsVisible(false)
@@ -38,7 +43,7 @@ export const WhatsNewToast = () => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="fixed bottom-6 right-6 z-[100] max-w-sm"
+          className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 z-[100] max-w-sm mx-auto md:mx-0"
           role="alertdialog"
           aria-labelledby="whats-new-title"
           aria-describedby="whats-new-description"

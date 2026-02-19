@@ -1,14 +1,24 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronRight, ChevronLeft } from 'lucide-react'
+import {
+  X,
+  ChevronRight,
+  ChevronLeft,
+  Compass,
+  Globe,
+  FlaskConical,
+  GraduationCap,
+  BookOpen,
+} from 'lucide-react'
 
 const TOUR_STORAGE_KEY = 'pqc-tour-completed'
 
 interface TourStep {
-  target: string // CSS selector
+  target: string // CSS selector (used by desktop tooltip)
   title: string
   description: string
   position: 'bottom' | 'top' | 'left' | 'right'
+  icon: React.FC<{ size?: number; className?: string }>
 }
 
 const tourSteps: TourStep[] = [
@@ -18,6 +28,7 @@ const tourSteps: TourStep[] = [
     description:
       'Use the navigation bar to explore all PQC modules — timeline, threats, algorithms, and more.',
     position: 'bottom',
+    icon: Compass,
   },
   {
     target: 'a[href="/timeline"]',
@@ -25,6 +36,7 @@ const tourSteps: TourStep[] = [
     description:
       'Track global PQC migration deadlines and regulatory milestones from 40+ countries.',
     position: 'bottom',
+    icon: Globe,
   },
   {
     target: 'a[href="/playground"]',
@@ -32,6 +44,7 @@ const tourSteps: TourStep[] = [
     description:
       'Test real post-quantum cryptographic algorithms (ML-KEM, ML-DSA) directly in your browser.',
     position: 'bottom',
+    icon: FlaskConical,
   },
   {
     target: 'a[href="/learn"]',
@@ -39,6 +52,7 @@ const tourSteps: TourStep[] = [
     description:
       'New to PQC? Start with "PQC 101" for a beginner-friendly introduction, then explore hands-on workshops.',
     position: 'bottom',
+    icon: GraduationCap,
   },
   {
     target: 'button[aria-label="Open glossary"]',
@@ -46,6 +60,7 @@ const tourSteps: TourStep[] = [
     description:
       "Don't know a term? Open the glossary anytime to look up PQC concepts, algorithms, and standards.",
     position: 'top',
+    icon: BookOpen,
   },
 ]
 
@@ -72,6 +87,10 @@ export const GuidedTour: React.FC = () => {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.has('tour')) {
+      localStorage.removeItem(TOUR_STORAGE_KEY)
+    }
     const completed = localStorage.getItem(TOUR_STORAGE_KEY)
     if (!completed) {
       // Delay the tour start so the page can fully render
@@ -82,35 +101,19 @@ export const GuidedTour: React.FC = () => {
     }
   }, [])
 
+  // Desktop-only: compute tooltip position anchored to target element
   const updatePosition = useCallback(() => {
     if (!isActive) return
     // eslint-disable-next-line security/detect-object-injection
     const step = tourSteps[currentStep]
     if (!step) return
 
-    // On narrow viewports, skip anchor-to-element positioning entirely.
-    // Use a centered card so the tooltip never overlaps nav or jumps with address-bar resize.
-    const vw = window.visualViewport?.width ?? window.innerWidth
-    if (vw < 640) {
-      setTooltipStyle({
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        zIndex: 60,
-        width: 'calc(100vw - 2rem)',
-        maxWidth: '340px',
-      })
-      return
-    }
-
     const el = document.querySelector(step.target)
     if (el) {
       const rect = el.getBoundingClientRect()
       const pos = getTooltipPosition(rect, step.position)
-      // Use visualViewport dimensions so the address-bar doesn't affect measurements
+      const vw = window.visualViewport?.width ?? window.innerWidth
       const vh = window.visualViewport?.height ?? window.innerHeight
-      // Clamp left so the tooltip stays within viewport bounds
       const clampedLeft = Math.max(
         TOOLTIP_WIDTH / 2 + 8,
         Math.min(pos.left, vw - TOOLTIP_WIDTH / 2 - 8)
@@ -132,9 +135,6 @@ export const GuidedTour: React.FC = () => {
   }, [isActive, currentStep])
 
   useEffect(() => {
-    // Initialize position on mount/step change without triggering cascading renders.
-    // No scroll listener — targets live in a sticky header and don't move on scroll.
-    // orientationchange is added separately as resize doesn't always fire reliably on rotation.
     const frame = requestAnimationFrame(() => updatePosition())
     window.addEventListener('resize', updatePosition)
     window.addEventListener('orientationchange', updatePosition)
@@ -168,6 +168,7 @@ export const GuidedTour: React.FC = () => {
 
   // eslint-disable-next-line security/detect-object-injection
   const step = tourSteps[currentStep]
+  const StepIcon = step.icon
 
   return (
     <AnimatePresence>
@@ -184,15 +185,15 @@ export const GuidedTour: React.FC = () => {
             }}
           />
 
-          {/* Tooltip */}
+          {/* Desktop: anchored tooltip */}
           <motion.div
-            key={currentStep}
+            key={`desktop-${currentStep}`}
             initial={{ opacity: 0, y: step.position === 'top' ? 10 : -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             style={tooltipStyle}
-            className="w-80 max-w-[calc(100vw-2rem)]"
+            className="hidden md:block w-80 max-w-[calc(100vw-2rem)]"
           >
             <div className="glass-panel p-4 shadow-2xl border-primary/30">
               <div className="flex items-start justify-between mb-2">
@@ -233,6 +234,71 @@ export const GuidedTour: React.FC = () => {
               </div>
             </div>
           </motion.div>
+
+          {/* Mobile: full-screen swipeable card carousel */}
+          <div className="md:hidden fixed inset-0 z-[60] flex items-center justify-center p-6">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`mobile-${currentStep}`}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -50) next()
+                  else if (info.offset.x > 50) prev()
+                }}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.2 }}
+                className="glass-panel p-6 w-full max-w-sm text-center shadow-2xl border-primary/30 cursor-grab active:cursor-grabbing"
+              >
+                {/* Icon */}
+                <div className="inline-flex p-3 rounded-full bg-primary/10 text-primary mb-4">
+                  <StepIcon size={28} />
+                </div>
+
+                {/* Title */}
+                <h3 className="font-bold text-foreground text-lg mb-2">{step.title}</h3>
+
+                {/* Description */}
+                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                  {step.description}
+                </p>
+
+                {/* Dot indicators */}
+                <div className="flex gap-1.5 justify-center mb-5">
+                  {tourSteps.map((_, i) => (
+                    <div
+                      key={i}
+                      className={`rounded-full transition-all ${
+                        i === currentStep
+                          ? 'w-6 h-1.5 bg-primary'
+                          : 'w-1.5 h-1.5 bg-muted-foreground/30'
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                {/* Navigation */}
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={dismiss}
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors py-2 px-1"
+                  >
+                    Skip
+                  </button>
+                  <button
+                    onClick={next}
+                    className="flex items-center gap-1 px-4 py-2 rounded-lg bg-primary text-black text-sm font-bold hover:bg-primary/90 transition-colors"
+                  >
+                    {currentStep === tourSteps.length - 1 ? 'Get Started' : 'Next'}
+                    {currentStep < tourSteps.length - 1 && <ChevronRight size={16} />}
+                  </button>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </>
       )}
     </AnimatePresence>
