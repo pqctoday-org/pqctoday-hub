@@ -12,6 +12,7 @@ import {
   BookOpen,
   ArrowRightLeft,
   FlaskConical,
+  Activity,
   ShieldCheck,
   Users,
   Search,
@@ -92,6 +93,14 @@ const tourSteps: TourStep[] = [
       'Run real ML-KEM and ML-DSA operations in your browser via WASM. Available on desktop.',
     position: 'bottom',
     icon: FlaskConical,
+  },
+  {
+    target: 'a[href="/openssl"]',
+    title: 'OpenSSL Studio',
+    description:
+      'Run OpenSSL commands in your browser via WASM — generate keys, sign certificates, and test PQC algorithms. Available on desktop.',
+    position: 'bottom',
+    icon: Activity,
   },
   {
     target: 'a[href="/compliance"]',
@@ -191,23 +200,22 @@ export const GuidedTour: React.FC = () => {
     if (el) {
       const rect = el.getBoundingClientRect()
       const pos = getTooltipPosition(rect, step.position)
-      const vw = window.visualViewport?.width ?? window.innerWidth
+      const vw = document.documentElement.clientWidth
       const vh = window.visualViewport?.height ?? window.innerHeight
-      const clampedLeft = Math.max(
-        TOOLTIP_WIDTH / 2 + 8,
-        Math.min(pos.left, vw - TOOLTIP_WIDTH / 2 - 8)
-      )
+      // Clamp so the full tooltip width stays within [8px, vw - 8px]
+      const idealLeft = pos.left - TOOLTIP_WIDTH / 2
+      const clampedLeft = Math.max(8, Math.min(idealLeft, vw - TOOLTIP_WIDTH - 8))
       setTooltipStyle({
         position: 'fixed',
         top: step.position === 'top' ? undefined : pos.top,
         bottom: step.position === 'top' ? `${vh - rect.top + 12}px` : undefined,
         left: clampedLeft,
         transform:
-          step.position === 'bottom' || step.position === 'top'
-            ? 'translateX(-50%)'
-            : step.position === 'left'
-              ? 'translateX(-100%) translateY(-50%)'
-              : 'translateY(-50%)',
+          step.position === 'left'
+            ? 'translateX(-100%) translateY(-50%)'
+            : step.position === 'right'
+              ? 'translateY(-50%)'
+              : undefined,
         zIndex: 60,
       })
     }
