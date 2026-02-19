@@ -357,26 +357,30 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
   const config = riskConfig[result.riskLevel]
 
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
+  const [pdfError, setPdfError] = useState<string | null>(null)
 
   const handlePrint = async () => {
     setIsGeneratingPDF(true)
+    setPdfError(null)
     try {
       const { default: html2canvas } = await import('html2canvas')
       const { default: jsPDF } = await import('jspdf')
 
       const element = document.querySelector('.assess-report') as HTMLElement
       if (!element) {
-        console.warn('PDF generation: .assess-report element not found')
+        setPdfError('Element not found — please try again.')
         return
       }
+
+      // Scroll to top so html2canvas captures from correct position
+      window.scrollTo(0, 0)
+      await new Promise((resolve) => setTimeout(resolve, 150))
 
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         logging: false,
-        scrollX: -window.scrollX,
-        scrollY: -window.scrollY,
       })
 
       const imgData = canvas.toDataURL('image/jpeg', 0.95)
@@ -403,6 +407,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
       pdf.save(`PQC-Assessment-${industry}-${country || 'Global'}.pdf`)
     } catch (err) {
       console.warn('PDF generation failed:', err)
+      setPdfError(err instanceof Error ? err.message : String(err))
     } finally {
       setIsGeneratingPDF(false)
     }
@@ -787,43 +792,50 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
         </div>
 
         {/* Actions Bar */}
-        <div className="flex flex-wrap items-center justify-center gap-3 print:hidden">
-          <button
-            onClick={handlePrint}
-            disabled={isGeneratingPDF}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Printer size={16} />
-            {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
-          </button>
-          <button
-            onClick={handleCSVExport}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
-          >
-            <Download size={16} />
-            Export CSV
-          </button>
-          <button
-            onClick={handleShare}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
-          >
-            <Share2 size={16} />
-            Share
-          </button>
-          <button
-            onClick={() => editFromStep(0)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
-          >
-            <Pencil size={16} />
-            Edit Answers
-          </button>
-          <button
-            onClick={reset}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
-          >
-            <RotateCcw size={16} />
-            Start Over
-          </button>
+        <div className="flex flex-col items-center gap-2 print:hidden">
+          {pdfError && (
+            <p className="text-xs text-destructive bg-destructive/10 rounded px-3 py-1">
+              PDF error: {pdfError}
+            </p>
+          )}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={handlePrint}
+              disabled={isGeneratingPDF}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Printer size={16} />
+              {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
+            </button>
+            <button
+              onClick={handleCSVExport}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+            >
+              <Download size={16} />
+              Export CSV
+            </button>
+            <button
+              onClick={handleShare}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+            >
+              <Share2 size={16} />
+              Share
+            </button>
+            <button
+              onClick={() => editFromStep(0)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+            >
+              <Pencil size={16} />
+              Edit Answers
+            </button>
+            <button
+              onClick={reset}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+            >
+              <RotateCcw size={16} />
+              Start Over
+            </button>
+          </div>
         </div>
       </div>
     </div>
