@@ -356,7 +356,53 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
 
   const config = riskConfig[result.riskLevel]
 
-  const handlePrint = () => window.print()
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
+
+  const handlePrint = async () => {
+    setIsGeneratingPDF(true)
+    try {
+      const { default: html2canvas } = await import('html2canvas')
+      const { default: jsPDF } = await import('jspdf')
+
+      const element = document.querySelector('.assess-report') as HTMLElement
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        scrollX: 0,
+        scrollY: -window.scrollY,
+        windowWidth: element.scrollWidth,
+        height: element.scrollHeight,
+        windowHeight: element.scrollHeight,
+      })
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95)
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+
+      const pageW = 210
+      const pageH = 297
+      const margin = 10
+      const contentW = pageW - margin * 2
+      const imgH = (canvas.height * contentW) / canvas.width
+
+      let yPos = margin
+      let remainingH = imgH
+
+      pdf.addImage(imgData, 'JPEG', margin, yPos, contentW, imgH)
+
+      while (remainingH > pageH - margin * 2) {
+        pdf.addPage()
+        yPos -= pageH - margin * 2
+        remainingH -= pageH - margin * 2
+        pdf.addImage(imgData, 'JPEG', margin, yPos, contentW, imgH)
+      }
+
+      pdf.save(`PQC-Assessment-${industry}-${country || 'Global'}.pdf`)
+    } finally {
+      setIsGeneratingPDF(false)
+    }
+  }
 
   const handleShare = async () => {
     const input = useAssessmentStore.getState().getInput()
@@ -740,10 +786,11 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
         <div className="flex flex-wrap items-center justify-center gap-3 print:hidden">
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+            disabled={isGeneratingPDF}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Printer size={16} />
-            Download PDF
+            {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
           </button>
           <button
             onClick={handleCSVExport}
