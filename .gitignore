@@ -58,6 +58,7 @@ build_debug*.log
 public/library/*
 !public/library/*.md
 !public/library/*.png
+public/library/_tmp_*.png
 
 # Temporary Files & Test Artifacts
 *.pem
