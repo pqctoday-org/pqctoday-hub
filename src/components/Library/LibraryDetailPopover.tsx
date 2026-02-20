@@ -1,8 +1,10 @@
 import { ExternalLink, Calendar, X } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import type { LibraryItem } from '../../data/libraryData'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import FocusLock from 'react-focus-lock'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 interface LibraryDetailPopoverProps {
   isOpen: boolean
@@ -10,8 +12,39 @@ interface LibraryDetailPopoverProps {
   item: LibraryItem | null
 }
 
+interface ParsedSummary {
+  sections: Record<string, string>
+  extractedText: string
+  pngUrl: string
+}
+
+function parseMarkdownSummary(text: string, stem: string): ParsedSummary {
+  // Strip YAML frontmatter (content between first two --- delimiters)
+  const parts = text.split(/^---\s*$/m)
+  const body = parts.length >= 3 ? parts.slice(2).join('---').trim() : text
+
+  // Extract trailing italic excerpt (* ... * at the very end)
+  const excerptMatch = body.match(/\n\*([^*]+)\*\s*$/)
+  const extractedText = excerptMatch ? excerptMatch[1].trim() : ''
+  const bodyWithoutExcerpt = excerptMatch ? body.slice(0, excerptMatch.index).trim() : body
+
+  // Parse ## sections into a map
+  const sections: Record<string, string> = {}
+  const chunks = bodyWithoutExcerpt.split(/(?=^## )/m)
+  for (const chunk of chunks) {
+    const m = chunk.match(/^## (.+)$/m)
+    if (m) {
+      sections[m[1].trim()] = chunk.replace(/^## .+$/m, '').trim()
+    }
+  }
+
+  return { sections, extractedText, pngUrl: `/library/${stem}.png` }
+}
+
 export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
+  const [summary, setSummary] = useState<ParsedSummary | null>(null)
+  const [pngVisible, setPngVisible] = useState(false)
 
   // Close on click outside
   useEffect(() => {
@@ -47,12 +80,41 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
     }
   }, [isOpen, onClose])
 
+  // Fetch markdown summary when item changes
+  useEffect(() => {
+    if (!isOpen || !item?.localFile) return
+
+    const stem = item.localFile
+      .split('/')
+      .pop()
+      ?.replace(/\.[^.]+$/, '')
+    if (!stem) return
+
+    let cancelled = false
+
+    fetch(`/library/${stem}.md`)
+      .then((r) => (r.ok ? r.text() : null))
+      .then((text) => {
+        if (!cancelled) setSummary(text ? parseMarkdownSummary(text, stem) : null)
+      })
+      .catch(() => {
+        if (!cancelled) setSummary(null)
+      })
+
+    return () => {
+      cancelled = true
+      setSummary(null)
+      setPngVisible(false)
+    }
+  }, [isOpen, item])
+
   if (!isOpen || !item) return null
 
-  // Center the popover
-  const style: React.CSSProperties = {
-    zIndex: 9999, // Ensure it's on top of everything
-  }
+  const style: React.CSSProperties = { zIndex: 9999 }
+
+  const pqcSection = summary?.sections['How It Relates to PQC']
+  const mechanismsSection = summary?.sections['PQC Key Types & Mechanisms']
+  const excerptText = summary?.extractedText
 
   const content = (
     // A-002: Focus trap for accessibility
@@ -65,8 +127,8 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
         aria-modal="true"
         aria-labelledby="popover-title"
       >
-        {/* Header - UX-003: Added close button */}
-        <div className="p-4 border-b border-border bg-muted/20 flex justify-between items-start gap-4">
+        {/* Header */}
+        <div className="p-4 border-b border-border bg-muted/20 flex justify-between items-start gap-4 flex-shrink-0">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-status-info text-status-info border-status-info/50">
@@ -87,9 +149,20 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-4 max-h-[70vh] overflow-y-auto space-y-2">
-          {/* Top Section: Description (Full Width) */}
+        {/* Scrollable Content */}
+        <div className="p-4 overflow-y-auto space-y-4">
+          {/* PNG Preview — only if available */}
+          {summary && (
+            <img
+              src={summary.pngUrl}
+              alt={`First page preview of ${item.documentTitle}`}
+              className={`w-full max-h-52 object-contain bg-muted/30 rounded-lg ${pngVisible ? 'block' : 'hidden'}`}
+              onLoad={() => setPngVisible(true)}
+              onError={() => setPngVisible(false)}
+            />
+          )}
+
+          {/* Description */}
           <div>
             <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-0">
               Description
@@ -99,9 +172,8 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
             </p>
           </div>
 
-          {/* Bottom Section: Metadata Grid (2 Columns) */}
+          {/* Metadata Grid */}
           <div className="grid grid-cols-2 gap-1 w-full">
-            {/* Status */}
             <div className="flex flex-row items-baseline gap-2">
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Status:
@@ -109,7 +181,6 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
               <p className="text-sm text-foreground">{item.documentStatus?.trim()}</p>
             </div>
 
-            {/* Authors/Org */}
             <div className="flex flex-row items-baseline gap-2">
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Authors:
@@ -122,7 +193,6 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
               </p>
             </div>
 
-            {/* Initial Pub. Date */}
             <div className="flex flex-row items-center gap-2">
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Published:
@@ -133,7 +203,6 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
               </div>
             </div>
 
-            {/* Last Update */}
             <div className="flex flex-row items-center gap-2">
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Updated:
@@ -144,7 +213,6 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
               </div>
             </div>
 
-            {/* Region Scope */}
             {item.regionScope && (
               <div className="flex flex-row items-baseline gap-2">
                 <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
@@ -154,7 +222,6 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
               </div>
             )}
 
-            {/* Migration Urgency */}
             {item.migrationUrgency && (
               <div className="flex flex-row items-baseline gap-2">
                 <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
@@ -164,9 +231,8 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
               </div>
             )}
 
-            {/* Applicable Industries */}
             {item.applicableIndustries && (
-              <div className="flex flex-row items-baseline gap-2">
+              <div className="flex flex-row items-baseline gap-2 col-span-2">
                 <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                   Industries:
                 </h4>
@@ -186,9 +252,40 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
             )}
           </div>
 
-          {/* Footer: Download Link */}
+          {pqcSection && (
+            <div>
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                How It Relates to PQC
+              </h4>
+              <p className="text-sm text-foreground leading-relaxed">{pqcSection}</p>
+            </div>
+          )}
+
+          {mechanismsSection && (
+            <div>
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                PQC Key Types & Mechanisms
+              </h4>
+              <div className="text-sm [&_table]:w-full [&_table]:border-collapse [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:text-muted-foreground [&_th]:uppercase [&_th]:tracking-wider [&_th]:py-1 [&_th]:pr-4 [&_td]:py-1 [&_td]:pr-4 [&_td]:text-foreground [&_tr]:border-b [&_tr]:border-border/50">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{mechanismsSection}</ReactMarkdown>
+              </div>
+            </div>
+          )}
+
+          {excerptText && (
+            <div className="pt-2 border-t border-border">
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                Document Excerpt
+              </h4>
+              <p className="text-xs italic text-muted-foreground line-clamp-4 leading-relaxed">
+                {excerptText}
+              </p>
+            </div>
+          )}
+
+          {/* Download Link */}
           {item.downloadUrl && (
-            <div className="pt-2 border-t border-border mt-2">
+            <div className="pt-2 border-t border-border">
               <a
                 href={item.downloadUrl}
                 target="_blank"

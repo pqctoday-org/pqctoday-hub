@@ -16,6 +16,7 @@ export interface LibraryItem {
   protocolOrToolImpact: string
   toolchainSupport: string
   migrationUrgency: string
+  localFile?: string // e.g. "public/library/FIPS_203.pdf"
   manualCategory?: string
   children?: LibraryItem[]
   categories: string[] // Multi-category support
@@ -244,6 +245,7 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
       protocolOrToolImpact: values[14].replace(/^"|"$/g, ''),
       toolchainSupport: values[15],
       migrationUrgency: values[16],
+      localFile: values[20] || undefined,
       manualCategory: values[18] || undefined,
       children: [],
       categories: [], // Will be populated below
