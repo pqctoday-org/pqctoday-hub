@@ -356,61 +356,8 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
 
   const config = riskConfig[result.riskLevel]
 
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
-  const [pdfError, setPdfError] = useState<string | null>(null)
-
-  const handlePrint = async () => {
-    setIsGeneratingPDF(true)
-    setPdfError(null)
-    try {
-      const { default: html2canvas } = await import('html2canvas')
-      const { default: jsPDF } = await import('jspdf')
-
-      const element = document.querySelector('.assess-report') as HTMLElement
-      if (!element) {
-        setPdfError('Element not found — please try again.')
-        return
-      }
-
-      // Scroll to top so html2canvas captures from correct position
-      window.scrollTo(0, 0)
-      await new Promise((resolve) => setTimeout(resolve, 150))
-
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-      })
-
-      const imgData = canvas.toDataURL('image/jpeg', 0.95)
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-
-      const pageW = 210
-      const pageH = 297
-      const margin = 10
-      const contentW = pageW - margin * 2
-      const imgH = (canvas.height * contentW) / canvas.width
-
-      let yPos = margin
-      let remainingH = imgH
-
-      pdf.addImage(imgData, 'JPEG', margin, yPos, contentW, imgH)
-
-      while (remainingH > pageH - margin * 2) {
-        pdf.addPage()
-        yPos -= pageH - margin * 2
-        remainingH -= pageH - margin * 2
-        pdf.addImage(imgData, 'JPEG', margin, yPos, contentW, imgH)
-      }
-
-      pdf.save(`PQC-Assessment-${industry}-${country || 'Global'}.pdf`)
-    } catch (err) {
-      console.warn('PDF generation failed:', err)
-      setPdfError(err instanceof Error ? err.message : String(err))
-    } finally {
-      setIsGeneratingPDF(false)
-    }
+  const handlePrint = () => {
+    window.print()
   }
 
   const handleShare = async () => {
@@ -791,21 +738,14 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
           </CollapsibleSection>
         </div>
 
-        {/* Actions Bar */}
         <div className="flex flex-col items-center gap-2 print:hidden">
-          {pdfError && (
-            <p className="text-xs text-destructive bg-destructive/10 rounded px-3 py-1">
-              PDF error: {pdfError}
-            </p>
-          )}
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={handlePrint}
-              disabled={isGeneratingPDF}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
             >
               <Printer size={16} />
-              {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
+              Download PDF
             </button>
             <button
               onClick={handleCSVExport}
