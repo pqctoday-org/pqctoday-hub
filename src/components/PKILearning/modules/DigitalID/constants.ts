@@ -1,5 +1,5 @@
 // EUDI Wallet Educational Module Constants
-// Based on ARF v2.4.0+ and cryptoimplementation.md requirements
+// Based on EUDI Wallet Architecture Reference Framework (ARF). Educational simulation.
 
 // Maria García's Identity Attributes (Reference Test Data)
 export const MARIA_IDENTITY = {
@@ -15,7 +15,7 @@ export const MARIA_IDENTITY = {
   age_over_21: true,
   document_number: '12345678X',
   issuing_country: 'ES',
-  issuing_authority: 'Dirección General de Tráfico',
+  issuing_authority: 'Dirección General de la Policía',
 }
 
 // OpenSSL Commands for EUDI Cryptographic Operations
@@ -60,22 +60,22 @@ export const getFilenames = (prefix: string) => ({
   DATA: `${prefix}_data.bin`,
 })
 
-// OpenID4VCI Metadata (PID Provider - Motor Vehicle Authority)
+// OpenID4VCI Metadata (PID Provider - National Identity Authority)
 export const OPENID4VCI_METADATA = {
-  credential_issuer: 'https://mva.gov.es',
-  credential_endpoint: 'https://mva.gov.es/credentials',
-  authorization_endpoint: 'https://mva.gov.es/authorize',
-  token_endpoint: 'https://mva.gov.es/token',
-  pushed_authorization_request_endpoint: 'https://mva.gov.es/par',
+  credential_issuer: 'https://pid-provider.gob.es',
+  credential_endpoint: 'https://pid-provider.gob.es/credentials',
+  authorization_endpoint: 'https://pid-provider.gob.es/authorize',
+  token_endpoint: 'https://pid-provider.gob.es/token',
+  pushed_authorization_request_endpoint: 'https://pid-provider.gob.es/par',
   credential_configurations_supported: [
     {
       format: 'mso_mdoc',
-      doctype: 'org.iso.18013.5.1.mDL',
+      doctype: 'eu.europa.ec.eudi.pid.1',
       cryptographic_binding_methods_supported: ['cose_key'],
       cryptographic_suites_supported: ['ES256', 'ES384'],
       display: [
         {
-          name: 'Mobile Driving License',
+          name: 'Person Identification Data',
           locale: 'en-US',
         },
       ],
@@ -94,10 +94,10 @@ export const OPENID4VP_PRESENTATION_DEF = {
       format: { mso_mdoc: {} },
       constraints: {
         fields: [
-          { path: ['$.family_name'], intent_to_retain: true },
-          { path: ['$.given_name'], intent_to_retain: true },
-          { path: ['$.birth_date'], intent_to_retain: true },
-          { path: ['$.resident_address'], intent_to_retain: true },
+          { path: ["$['eu.europa.ec.eudi.pid.1']['family_name']"], intent_to_retain: true },
+          { path: ["$['eu.europa.ec.eudi.pid.1']['given_name']"], intent_to_retain: true },
+          { path: ["$['eu.europa.ec.eudi.pid.1']['birth_date']"], intent_to_retain: true },
+          { path: ["$['eu.europa.ec.eudi.pid.1']['resident_address']"], intent_to_retain: true },
         ],
       },
     },
@@ -153,15 +153,24 @@ export const EUDI_GLOSSARY = {
   'Device Binding':
     'Cryptographic proof that the presenter controls the private key associated with the credential.',
   'Remote HSM':
-    'Hardware Security Module operated by the Wallet Provider, providing centralized key management.',
-  WSCD: 'Wallet Secure Cryptographic Device - The hardware component storing private keys (in this case, a remote HSM).',
+    'Hardware Security Module operated by the Wallet Provider for remote key management. The ARF supports both local WSCD (device secure element) and remote WSCD (HSM) models.',
+  WSCD: 'Wallet Secure Cryptographic Device - The secure hardware storing private keys. Can be local (device secure element, eSE, TEE) or remote (cloud HSM). This simulation demonstrates the remote HSM model.',
   WSCA: 'Wallet Secure Cryptographic Application - The firmware/software managing cryptographic operations in the WSCD.',
   'CSC API': 'Cloud Signature Consortium API - Standard for remote signature creation services.',
   QES: 'Qualified Electronic Signature - A type of electronic signature with the same legal effect as a handwritten signature in the EU.',
   QTSP: 'Qualified Trust Service Provider - An organization authorized to provide qualified trust services.',
   'Relying Party':
     'An entity that relies on and verifies credentials presented by a holder (e.g., a bank verifying identity).',
-  P2PKH: 'Pay to Public Key Hash - Bitcoin address format (educational reference).',
+  'Selective Disclosure':
+    'Cryptographic technique allowing the holder to reveal only specific attributes from a credential, hiding all others from the verifier.',
+  Unlinkability:
+    'Privacy property ensuring that multiple presentations by the same holder cannot be correlated across different Relying Parties.',
+  'Data Minimization':
+    'GDPR principle (Art. 5(1)(c)) requiring collection of only the minimum personal data necessary for a specific purpose.',
+  'Trusted List':
+    'Machine-readable registry of Qualified Trust Service Providers published by each EU member state, enabling cross-border trust verification.',
+  'eIDAS Trust Framework':
+    'Cross-border mechanism ensuring mutual recognition of digital identities and qualified attestations across all 27 EU member states.',
 }
 
 // Module metadata

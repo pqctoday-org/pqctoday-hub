@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../..
 import { Landmark, CheckCircle, Loader2, Eye } from 'lucide-react'
 import type { WalletInstance } from '../../types'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
-import { signData } from '../../utils/crypto-utils'
+import { signData, verifySignature } from '../../utils/crypto-utils'
+import type { CryptoKey } from '../../types'
 
 interface RelyingPartyComponentProps {
   wallet: WalletInstance
@@ -16,6 +17,11 @@ type RPStep = 'START' | 'DISCLOSURE' | 'PRESENTATION' | 'VERIFICATION' | 'COMPLE
 export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wallet, onBack }) => {
   const [step, setStep] = useState<RPStep>('START')
   const [loading, setLoading] = useState(false)
+  const [presentationData, setPresentationData] = useState<{
+    signature: string
+    payload: string
+    key: CryptoKey
+  } | null>(null)
   const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
     useDigitalIDLogs()
 
@@ -61,6 +67,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
       // We pass the payload string directly. helper handles encoding.
       const signature = await signData(availableKey, payloadStr, addOpenSSLLog)
 
+      setPresentationData({ signature, payload: payloadStr, key: availableKey })
       addLog(`Signature generated: ${signature.substring(0, 20)}...`)
       addLog('Presentation with Proof sent to Bank.')
 
@@ -79,12 +86,23 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
   const handleVerification = async () => {
     setLoading(true)
     addLog('Bank Verifying Proof...')
-    await new Promise((r) => setTimeout(r, 1000))
-    addLog('Checking credential revocation status (StatusList)...')
+
+    if (presentationData) {
+      const isValid = await verifySignature(
+        presentationData.key,
+        presentationData.signature,
+        presentationData.payload,
+        addOpenSSLLog
+      )
+      addLog(isValid ? 'Signature Valid.' : 'Signature INVALID!')
+    }
+
+    addLog(
+      'Checking credential revocation status (Token Status List — IETF draft-ietf-oauth-status-list)...'
+    )
     await new Promise((r) => setTimeout(r, 500))
-    addLog('StatusList checked. No revocations found.')
-    addLog('Signature Valid.')
-    addLog('Trust Chain Valid (eIDAS Bridge).')
+    addLog('Status checked. No revocations found.')
+    addLog('Trust Chain Valid (eIDAS Trust Framework).')
     addLog('Selective Disclosure Checked.')
     setLoading(false)
     setStep('COMPLETE')
@@ -133,9 +151,22 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
             {/* Actions */}
             <div className="mt-6 border-t pt-6">
               {step === 'START' && (
-                <Button onClick={handleStart} className="w-full">
-                  Login with Wallet
-                </Button>
+                <div className="space-y-4">
+                  <div className="bg-tertiary/5 p-3 rounded-lg border border-tertiary/20 text-sm text-muted-foreground">
+                    <p className="font-medium text-foreground mb-1">
+                      Note: Selective Disclosure & Data Minimization
+                    </p>
+                    <p>
+                      When a Relying Party requests your data, the EUDI Wallet shows you exactly
+                      which attributes are requested. You consent to share only the minimum required
+                      data (aligned with GDPR Art. 5(1)(c)). Attributes not requested are
+                      cryptographically hidden from the verifier.
+                    </p>
+                  </div>
+                  <Button onClick={handleStart} className="w-full">
+                    Login with Wallet
+                  </Button>
+                </div>
               )}
 
               {step === 'DISCLOSURE' && (

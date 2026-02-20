@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import { Trash2, Shield, FileText, PenTool, Building2, CheckSquare } from 'lucide-react'
+import { Trash2, Shield, FileText, PenTool, Building2, CheckSquare, BookOpen } from 'lucide-react'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { WalletComponent } from './components/Wallet/WalletComponent'
@@ -7,6 +7,7 @@ import { PIDIssuerComponent } from './components/PIDIssuer/PIDIssuerComponent'
 import { AttestationIssuerComponent } from './components/AttestationIssuer/AttestationIssuerComponent'
 import { QESProviderComponent } from './components/QESProvider/QESProviderComponent'
 import { RelyingPartyComponent } from './components/RelyingParty/RelyingPartyComponent'
+import { OverviewComponent } from './components/Overview/OverviewComponent'
 import type { WalletInstance, CryptoKey, VerifiableCredential } from './types'
 
 // Initial State
@@ -25,6 +26,12 @@ const INITIAL_WALLET: WalletInstance = {
 
 // Metadata for navigation
 const STEPS_INFO = [
+  {
+    id: 'overview',
+    title: 'Overview',
+    description: 'eIDAS 2.0, credential formats, and trust framework.',
+    icon: BookOpen,
+  },
   {
     id: 'wallet',
     title: 'EUDI Wallet',
@@ -126,6 +133,8 @@ export const DigitalIDModule: React.FC = () => {
     if (!step) return null
 
     switch (step.id) {
+      case 'overview':
+        return <OverviewComponent onNavigateTo={navigateTo} />
       case 'wallet':
         return <WalletComponent wallet={wallet} onAddCredential={() => navigateTo('pid-issuer')} />
       case 'pid-issuer':

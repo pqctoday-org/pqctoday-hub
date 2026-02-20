@@ -100,6 +100,17 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
           <div className="space-y-6 lg:col-span-2">
             {step === 'UPLOAD' && (
               <div className="space-y-4">
+                <div className="bg-warning/5 p-3 rounded-lg border border-warning/20 text-sm text-muted-foreground">
+                  <p className="font-medium text-foreground mb-1">
+                    Note: Cloud Signature Consortium (CSC) API
+                  </p>
+                  <p>
+                    Remote QES uses the CSC API standard (v2) to interact with a cloud-based HSM
+                    managed by a Qualified Trust Service Provider (QTSP). Your signing key never
+                    leaves the HSM. The QTSP ensures Sole Control Assurance (SCAL2) — only you can
+                    authorize signature operations on your key.
+                  </p>
+                </div>
                 <div className="border-2 border-dashed border-border rounded-lg p-8 text-center bg-muted/5">
                   <UploadCloud className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                   <Label className="block mb-2">Document Name</Label>

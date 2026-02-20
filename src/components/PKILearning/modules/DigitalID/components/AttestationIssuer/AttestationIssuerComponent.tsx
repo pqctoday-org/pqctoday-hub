@@ -10,6 +10,7 @@ import type {
 import { generateKeyPair, signData } from '../../utils/crypto-utils'
 import { createSDJWT } from '../../utils/sdjwt-utils'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
+import { MARIA_IDENTITY } from '../../constants'
 import { Loader2, CheckCircle, GraduationCap, ShieldCheck, AlertTriangle } from 'lucide-react'
 
 interface AttestationIssuerComponentProps {
@@ -92,16 +93,16 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
     setLoading(true)
     addLog('Issuing Master of Science Diploma...')
 
-    // 1. Generate Holder Key for Diploma Binding
-    const holderKey = await generateKeyPair('ES256', 'P-256', addOpenSSLLog)
-    addLog(`Generated Holder Key for Binding: ${holderKey.id}`)
+    // 1. Generate Holder Key for Diploma Binding (P-384/ES384 per ARF attestation profile)
+    const holderKey = await generateKeyPair('ES384', 'P-384', addOpenSSLLog)
+    addLog(`Generated Holder Key for Binding: ${holderKey.id} (P-384/ES384)`)
 
     // 2. University (Issuer) generates SD-JWT
-    const issuerKey = await generateKeyPair('ES256', 'P-256', addOpenSSLLog) // Mock issuer key
+    const issuerKey = await generateKeyPair('ES384', 'P-384', addOpenSSLLog) // Mock issuer key
 
     const claims: CredentialAttribute[] = [
-      { name: 'given_name', value: 'Maria Elena', type: 'sd' },
-      { name: 'family_name', value: wallet.owner.legalName, type: 'sd' },
+      { name: 'given_name', value: MARIA_IDENTITY.given_name, type: 'sd' },
+      { name: 'family_name', value: MARIA_IDENTITY.family_name, type: 'sd' },
       { name: 'degree', value: 'Master of Science (Computer Science)', type: 'sd' },
       { name: 'gpa', value: 3.8, type: 'sd' },
       { name: 'honors', value: true, type: 'sd' },

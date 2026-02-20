@@ -8,12 +8,12 @@ export const createMdoc = async (
   attributes: CredentialAttribute[],
   issuerKey: CryptoKey,
   deviceKey: CryptoKey,
-  docType: string = 'org.iso.18013.5.1.mDL',
+  docType: string = 'eu.europa.ec.eudi.pid.1',
   onLog?: (log: string) => void
 ): Promise<MsoMdoc> => {
   // 1. Organize attributes by namespace
-  // For MVA mDL, standard namespace is org.iso.18013.5.1
-  // EU PID adds eu.europa.ec.eudi.pid.1
+  // EU PID namespace: eu.europa.ec.eudi.pid.1
+  // ISO mDL namespace: org.iso.18013.5.1 (for driving licenses)
 
   /* eslint-disable security/detect-object-injection */
   const namespaces: Record<string, Record<string, unknown>> = {

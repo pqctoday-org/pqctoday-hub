@@ -6,6 +6,7 @@ import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { generateKeyPair, signData } from '../../utils/crypto-utils'
 import { createMdoc } from '../../utils/mdoc-utils'
 import { Loader2, CheckCircle, Smartphone, Lock, UserCheck, CreditCard } from 'lucide-react'
+import { MARIA_IDENTITY } from '../../constants'
 
 interface PIDIssuerComponentProps {
   wallet: WalletInstance
@@ -45,7 +46,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
   const handleStart = async () => {
     setStep('AUTH')
     addLog('Starting PID Issuance Flow...')
-    addLog('Discovered Issuer: https://mva.gov.es')
+    addLog('Discovered Issuer: https://pid-provider.gob.es')
   }
 
   const handleAuth = async () => {
@@ -93,8 +94,8 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
 
     // Create attributes from user profile
     const attributes = [
-      { name: 'family_name', value: wallet.owner.legalName },
-      { name: 'given_name', value: 'María Elena' },
+      { name: 'family_name', value: MARIA_IDENTITY.family_name },
+      { name: 'given_name', value: MARIA_IDENTITY.given_name },
       { name: 'birth_date', value: wallet.owner.birthDate },
       { name: 'age_over_18', value: true },
       { name: 'issuing_country', value: 'ES' },
@@ -103,14 +104,20 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
     // Mock Issuer Key
     const issuerKey = await generateKeyPair('ES256', 'P-256', addOpenSSLLog)
 
-    // Create mDoc
-    addLog('Issuer generating mdoc...')
-    const mDoc = await createMdoc(attributes, issuerKey, key, undefined, addOpenSSLLog)
+    // Create mDoc (EU PID format)
+    addLog('Issuer generating mdoc (eu.europa.ec.eudi.pid.1)...')
+    const mDoc = await createMdoc(
+      attributes,
+      issuerKey,
+      key,
+      'eu.europa.ec.eudi.pid.1',
+      addOpenSSLLog
+    )
 
     const credential: VerifiableCredential = {
       id: `pid-${Date.now()}`,
       type: ['VerifiableCredential', 'PersonIdentificationData'],
-      issuer: 'Motor Vehicle Authority',
+      issuer: 'Ministerio del Interior (PID Provider)',
       issuanceDate: new Date().toISOString(),
       expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
       credentialSubject: attributes.reduce(
@@ -138,10 +145,10 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
       <CardHeader className="bg-primary/5">
         <CardTitle className="text-primary flex items-center gap-2">
           <UserCheck className="w-6 h-6" />
-          Motor Vehicle Authority (PID Issuer)
+          National Identity Authority (PID Provider)
         </CardTitle>
         <CardDescription>
-          Issue your digital Driver's License and PID using OpenID4VCI
+          Issue your Person Identification Data (PID) using OpenID4VCI
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6">
@@ -162,10 +169,13 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
                     Note: Wallet Unit Attestation (WUA)
                   </p>
                   <p>
-                    In a production EUDI Wallet, activation begins with WUA provisioning — the
-                    Wallet Provider generates a WUA key in the Remote HSM and issues a Wallet Unit
-                    Attestation binding the wallet instance to the user&apos;s device. This
-                    simulation starts from PID issuance.
+                    In a production EUDI Wallet, activation begins with the Wallet Provider issuing
+                    a WUA. This process: (1) generates a key pair in the Wallet Secure Cryptographic
+                    Device (WSCD), (2) binds the wallet instance to the user&apos;s device, and (3)
+                    proves to PID Providers and Relying Parties that the wallet is genuine,
+                    unmodified, and running on certified hardware. Without a valid WUA, no PID
+                    Provider will issue credentials. This simulation starts from PID issuance for
+                    simplicity.
                   </p>
                 </div>
                 <Button onClick={handleStart} className="w-full">

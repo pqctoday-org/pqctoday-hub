@@ -80,11 +80,12 @@ vi.mock('../../../OpenSSLStudio/store', () => ({
 // vi.mock(...) removed
 
 describe('EUDI Digital ID Integration', () => {
-  it('renders the Digital ID dashboard with all 5 modules', () => {
+  it('renders the Digital ID dashboard with all 6 modules', () => {
     render(<DigitalID />)
 
     // Verify Tab Headers
     expect(screen.getByText('EUDI Digital Identity Wallet')).toBeDefined()
+    expect(screen.getByText('Overview')).toBeDefined()
     expect(screen.getAllByText('EUDI Wallet').length).toBeGreaterThan(0)
     expect(screen.getByText('PID Issuer')).toBeDefined()
     expect(screen.getByText('University')).toBeDefined()
@@ -95,17 +96,21 @@ describe('EUDI Digital ID Integration', () => {
   it('allows navigation between modules', async () => {
     render(<DigitalID />)
 
-    // Initial state should be Wallet
-    // The header in WalletComponent is "EUDI Wallet"
-    // But there is also the main header "EUDI Digital Identity Wallet" in index.tsx
-    // Let's look for "Managed by: María Elena García" which is unique to the Wallet view
-    expect(screen.getByText(/Managed by:/i)).toBeDefined()
+    // Initial state should be Overview (step 0)
+    expect(screen.getByText(/What is eIDAS 2.0/i)).toBeDefined()
+
+    // Navigate to Wallet
+    const walletTab = screen.getAllByText('EUDI Wallet')[0]
+    fireEvent.click(walletTab)
+    await waitFor(() => {
+      expect(screen.getByText(/Managed by:/i)).toBeDefined()
+    })
 
     // Navigate to PID Issuer
     const pidTab = screen.getByText('PID Issuer')
     fireEvent.click(pidTab)
     await waitFor(() => {
-      expect(screen.getByText(/Motor Vehicle Authority/i)).toBeDefined()
+      expect(screen.getByText(/National Identity Authority/i)).toBeDefined()
     })
 
     // Navigate to Relying Party
@@ -123,7 +128,7 @@ describe('EUDI Digital ID Integration', () => {
     // 1. Navigate to PID Issuer
     fireEvent.click(screen.getByText('PID Issuer'))
     await waitFor(() => {
-      expect(screen.getByText(/Motor Vehicle Authority/i)).toBeDefined()
+      expect(screen.getByText(/National Identity Authority/i)).toBeDefined()
     })
 
     // 2. Start Flow

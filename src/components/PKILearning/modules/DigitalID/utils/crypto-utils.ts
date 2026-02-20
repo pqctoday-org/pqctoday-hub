@@ -112,6 +112,10 @@ export const generateKeyPair = async (
   }
 }
 
+// Select digest algorithm based on key type: ES384/P-384 → sha384, else sha256
+const getDigestAlg = (key: CryptoKey): string =>
+  key.algorithm === 'ES384' || key.type === 'P-384' ? 'sha384' : 'sha256'
+
 export const signData = async (
   key: CryptoKey,
   data: string | Uint8Array,
@@ -123,6 +127,7 @@ export const signData = async (
 
   const privKeyPem = atob(key.privateKey)
   const dataBytes = typeof data === 'string' ? new TextEncoder().encode(data) : data
+  const dgst = getDigestAlg(key)
 
   const keyFileName = `key_sign_${Math.random().toString(36).substring(7)}.pem`
   const dataFileName = `data_sign_${Math.random().toString(36).substring(7)}.dat`
@@ -131,7 +136,7 @@ export const signData = async (
   try {
     // Write key and data to files
     const result = await openSSLService.execute(
-      `openssl dgst -sha256 -sign ${keyFileName} -out ${outFileName} ${dataFileName}`,
+      `openssl dgst -${dgst} -sign ${keyFileName} -out ${outFileName} ${dataFileName}`,
       [
         { name: keyFileName, data: new TextEncoder().encode(privKeyPem) },
         { name: dataFileName, data: dataBytes },
@@ -140,7 +145,7 @@ export const signData = async (
 
     if (onLog) {
       onLog(
-        `[OpenSSL: Sign Data]\n> openssl dgst -sha256 -sign key.pem -out sig.bin data.dat\n${result.stdout}\n${result.stderr}`
+        `[OpenSSL: Sign Data]\n> openssl dgst -${dgst} -sign key.pem -out sig.bin data.dat\n${result.stdout}\n${result.stderr}`
       )
     }
 
@@ -152,11 +157,8 @@ export const signData = async (
 
     return toBase64Url(sigFile.data)
   } finally {
-    // Cleanup is good practice but OpenSSLService cleans up files on init/reset usually.
-    // We'll manual delete to be nice.
     await openSSLService.deleteFile(keyFileName)
     await openSSLService.deleteFile(dataFileName)
-    // await openSSLService.deleteFile(outFileName) // handled by logic or left for GC
   }
 }
 
@@ -168,6 +170,7 @@ export const verifySignature = async (
 ): Promise<boolean> => {
   const pubKeyPem = atob(key.publicKey)
   const dataBytes = typeof data === 'string' ? new TextEncoder().encode(data) : data
+  const dgst = getDigestAlg(key)
 
   // Convert Base64URL signature back to binary
   const sigBytes = base64ToBytes(signature.replace(/-/g, '+').replace(/_/g, '/'))
@@ -178,7 +181,7 @@ export const verifySignature = async (
 
   try {
     const result = await openSSLService.execute(
-      `openssl dgst -sha256 -verify ${keyFileName} -signature ${sigFileName} ${dataFileName}`,
+      `openssl dgst -${dgst} -verify ${keyFileName} -signature ${sigFileName} ${dataFileName}`,
       [
         { name: keyFileName, data: new TextEncoder().encode(pubKeyPem) },
         { name: dataFileName, data: dataBytes },
@@ -188,7 +191,7 @@ export const verifySignature = async (
 
     if (onLog) {
       onLog(
-        `[OpenSSL: Verify Signature]\n> openssl dgst -sha256 -verify key.pem -signature sig.bin data.dat\n${result.stdout}\n${result.stderr}`
+        `[OpenSSL: Verify Signature]\n> openssl dgst -${dgst} -verify key.pem -signature sig.bin data.dat\n${result.stdout}\n${result.stderr}`
       )
     }
 
