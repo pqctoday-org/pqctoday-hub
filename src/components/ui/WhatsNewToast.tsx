@@ -77,22 +77,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
+                    <strong className="text-foreground">Learning Platform Upgrade</strong> &mdash;
+                    PKI, Digital Assets, and 5G modules restructured with Learn, Simulate, and
+                    Exercises tabs
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">5G Security Education</strong> &mdash; 6 new
+                    educational sections covering 3GPP security, SUCI profiles, and PQC threats
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
                     <strong className="text-foreground">Leaders Board Expanded</strong> &mdash; 12
-                    new PQC leaders added; now 98 total across industry, academic, and government
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
-                    <strong className="text-foreground">Algorithm Data Accuracy</strong> &mdash; 10
-                    factual corrections applied across PQC algorithm profiles
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
-                    <strong className="text-foreground">Migration Guide Accuracy</strong> &mdash; 5
-                    factual corrections applied to migration planning content
+                    new PQC leaders added; now 98 total
                   </span>
                 </li>
               </ul>

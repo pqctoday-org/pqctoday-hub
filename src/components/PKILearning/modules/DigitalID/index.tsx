@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import { Trash2, Shield, FileText, PenTool, Building2, CheckSquare, BookOpen } from 'lucide-react'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
@@ -65,14 +65,17 @@ const STEPS_INFO = [
 ]
 
 export const DigitalIDModule: React.FC = () => {
-  const resetProgress = useModuleStore((state) => state.resetProgress)
+  const resetModuleProgress = useModuleStore((state) => state.resetModuleProgress)
   const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
+  const markStepComplete = useModuleStore((state) => state.markStepComplete)
 
   const [currentStep, setCurrentStep] = useState(0)
   const [wallet, setWallet] = useState<WalletInstance>(INITIAL_WALLET)
+  const prevStepRef = useRef<number | null>(null)
 
-  // Track time spent
+  // Mark module in-progress on mount and track time spent
   useEffect(() => {
+    updateModuleProgress('digital-id', { status: 'in-progress' })
     const timer = setInterval(() => {
       const currentSpent = useModuleStore.getState().modules['digital-id']?.timeSpent || 0
       updateModuleProgress('digital-id', {
@@ -82,6 +85,15 @@ export const DigitalIDModule: React.FC = () => {
     return () => clearInterval(timer)
   }, [updateModuleProgress])
 
+  // Mark the previous step complete whenever the user navigates to a new step
+  useEffect(() => {
+    if (prevStepRef.current !== null) {
+      const prevId = STEPS_INFO[prevStepRef.current]?.id
+      if (prevId) markStepComplete('digital-id', prevId)
+    }
+    prevStepRef.current = currentStep
+  }, [currentStep, markStepComplete])
+
   const handleReset = () => {
     if (
       confirm(
@@ -89,7 +101,7 @@ export const DigitalIDModule: React.FC = () => {
       )
     ) {
       // Reset Zustand module state
-      resetProgress()
+      resetModuleProgress('digital-id')
 
       // Reset OpenSSL WASM file store
       const { resetStore } = useOpenSSLStore.getState()

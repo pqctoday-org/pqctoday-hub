@@ -1,34 +1,99 @@
-import React, { useState, useMemo, useEffect } from 'react'
-import { Trash2, CheckCircle } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { Trash2, Bitcoin, Hexagon, Zap, GitBranch } from 'lucide-react'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { BlockchainCryptoIntroduction } from './components/BlockchainCryptoIntroduction'
+import { BlockchainExercises } from './components/BlockchainExercises'
 import { BitcoinFlow } from './flows/BitcoinFlow'
 import { EthereumFlow } from './flows/EthereumFlow'
 import { SolanaFlow } from './flows/SolanaFlow'
 import { HDWalletFlow } from './flows/HDWalletFlow'
-import { PQCThreatSummary } from './components/PQCThreatSummary'
-import { ProgressIndicator } from './components/ProgressIndicator'
+
+const MODULE_ID = 'digital-assets'
+
+interface ChainOption {
+  id: string
+  label: string
+  description: string
+  icon: React.ReactNode
+}
+
+const CHAINS: ChainOption[] = [
+  {
+    id: 'bitcoin',
+    label: 'Bitcoin',
+    description: 'secp256k1 / ECDSA / SHA-256',
+    icon: <Bitcoin size={24} />,
+  },
+  {
+    id: 'ethereum',
+    label: 'Ethereum',
+    description: 'secp256k1 / ECDSA / Keccak-256',
+    icon: <Hexagon size={24} />,
+  },
+  {
+    id: 'solana',
+    label: 'Solana',
+    description: 'Ed25519 / EdDSA / Base58',
+    icon: <Zap size={24} />,
+  },
+  {
+    id: 'hd-wallet',
+    label: 'HD Wallet',
+    description: 'BIP32 / BIP39 / BIP44',
+    icon: <GitBranch size={24} />,
+  },
+]
 
 export const DigitalAssetsModule: React.FC = () => {
-  const navigate = useNavigate()
-  const markStepComplete = useModuleStore((state) => state.markStepComplete)
-  const resetModuleProgress = useModuleStore((state) => state.resetModuleProgress)
-  const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
+  const [activeTab, setActiveTab] = useState('learn')
+  const [activeChain, setActiveChain] = useState<string | null>(null)
+  const startTimeRef = useRef(0)
+  const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
   const { resetStore } = useOpenSSLStore()
-  const [currentStep, setCurrentStep] = useState(0)
 
-  // Track time spent
+  // Module progress tracking
   useEffect(() => {
-    const timer = setInterval(() => {
-      const currentSpent = useModuleStore.getState().modules['digital-assets']?.timeSpent || 0
-      updateModuleProgress('digital-assets', {
-        timeSpent: currentSpent + 1,
-      })
-    }, 60000) // Update every minute
+    startTimeRef.current = Date.now()
+    updateModuleProgress(MODULE_ID, {
+      status: 'in-progress',
+      lastVisited: Date.now(),
+    })
 
-    return () => clearInterval(timer)
+    return () => {
+      const elapsed = Date.now() - startTimeRef.current
+      const current = useModuleStore.getState().modules[MODULE_ID]
+      updateModuleProgress(MODULE_ID, {
+        timeSpent: (current?.timeSpent || 0) + elapsed,
+      })
+    }
   }, [updateModuleProgress])
+
+  // Track tab visits as completed steps
+  const handleTabChange = useCallback(
+    (tab: string) => {
+      markStepComplete(MODULE_ID, activeTab)
+      setActiveTab(tab)
+    },
+    [activeTab, markStepComplete]
+  )
+
+  const navigateToWorkshop = useCallback(
+    (chain?: string) => {
+      markStepComplete(MODULE_ID, activeTab)
+      if (chain === 'learn-pqc') {
+        // Navigate to Learn tab for PQC content
+        setActiveTab('learn')
+      } else {
+        setActiveTab('workshop')
+        if (chain) {
+          setActiveChain(chain)
+        }
+      }
+    },
+    [activeTab, markStepComplete]
+  )
 
   const handleReset = () => {
     if (
@@ -36,71 +101,20 @@ export const DigitalAssetsModule: React.FC = () => {
         'Are you sure you want to reset the module? This will clear all generated keys and transactions.'
       )
     ) {
-      resetModuleProgress('digital-assets')
+      resetModuleProgress(MODULE_ID)
       resetStore()
-      setCurrentStep(0)
+      setActiveTab('learn')
+      setActiveChain(null)
     }
   }
 
-  // Define steps with their components
-  // We pass a dummy onBack to flows because navigation is now handled by the outer stepper
-  // or we could wire it to go to previous step if we wanted.
-  const steps = useMemo(
-    () => [
-      {
-        id: 'bitcoin',
-        title: 'Module 1: Bitcoin',
-        description: 'Generate keys and sign transactions using secp256k1 and SHA-256.',
-        component: <BitcoinFlow onBack={() => {}} />,
-      },
-      {
-        id: 'ethereum',
-        title: 'Module 2: Ethereum',
-        description: 'Create Ethereum accounts and format transactions.',
-        component: <EthereumFlow onBack={() => setCurrentStep(0)} />,
-      },
-      {
-        id: 'solana',
-        title: 'Module 3: Solana',
-        description: 'Work with Ed25519 keys and Solana Message structures.',
-        component: <SolanaFlow onBack={() => setCurrentStep(1)} />,
-      },
-      {
-        id: 'hd-wallet',
-        title: 'Module 4: HD Wallet',
-        description: 'Generate a Hierarchical Deterministic wallet for all chains.',
-        component: <HDWalletFlow onBack={() => setCurrentStep(2)} />,
-      },
-      {
-        id: 'pqc-threats',
-        title: 'Module 5: PQC Threats',
-        description: 'Understand quantum computing threats to the cryptography you just learned.',
-        component: <PQCThreatSummary />,
-      },
-    ],
-    []
-  )
-
-  // Keyboard navigation (after steps definition)
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' && currentStep < steps.length - 1) {
-        setCurrentStep(currentStep + 1)
-      } else if (e.key === 'ArrowLeft' && currentStep > 0) {
-        setCurrentStep(currentStep - 1)
-      }
-    }
-    window.addEventListener('keydown', handleKeyPress)
-    return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [currentStep, steps])
-
   return (
-    <div className="max-w-7xl mx-auto overflow-x-hidden">
-      <div className="flex items-center justify-between mb-8">
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gradient mb-2">Digital Assets Program</h1>
-          <p className="text-muted-foreground">
-            Master the cryptographic primitives of major blockchains.
+          <h1 className="text-3xl font-bold text-gradient">Blockchain Cryptography</h1>
+          <p className="text-muted-foreground mt-2">
+            Master the cryptographic primitives of major blockchains and understand quantum threats.
           </p>
         </div>
         <button
@@ -112,90 +126,71 @@ export const DigitalAssetsModule: React.FC = () => {
         </button>
       </div>
 
-      {/* Progress Indicator */}
-      <ProgressIndicator currentStep={currentStep} totalSteps={steps.length} className="mb-6" />
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <TabsList className="w-full sm:w-auto">
+          <TabsTrigger value="learn">Learn</TabsTrigger>
+          <TabsTrigger value="workshop">Workshop</TabsTrigger>
+          <TabsTrigger value="exercises">Exercises</TabsTrigger>
+        </TabsList>
 
-      {/* Progress Steps */}
-      <div className="mb-8 overflow-x-auto px-2 sm:px-0">
-        <div className="flex justify-between relative min-w-max sm:min-w-0">
-          {/* Connecting Line - hidden on mobile due to scrolling */}
-          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
+        {/* Learn Tab */}
+        <TabsContent value="learn">
+          <BlockchainCryptoIntroduction onNavigateToWorkshop={() => navigateToWorkshop()} />
+        </TabsContent>
 
-          {steps.map((step, idx) => (
-            <button
-              key={step.id}
-              onClick={() => setCurrentStep(idx)}
-              className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
-            >
-              <div
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold text-xs sm:text-base
-                ${
-                  idx === currentStep
-                    ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
-                    : idx < currentStep
-                      ? 'border-success text-success'
-                      : 'border-border text-muted-foreground'
-                }
-              `}
-              >
-                {idx + 1}
+        {/* Workshop Tab */}
+        <TabsContent value="workshop">
+          <div className="space-y-6">
+            {!activeChain ? (
+              <>
+                <div className="glass-panel p-6">
+                  <h2 className="text-xl font-bold text-gradient mb-2">Choose a Blockchain</h2>
+                  <p className="text-muted-foreground text-sm">
+                    Select a blockchain to explore its cryptographic primitives hands-on. Each flow
+                    walks you through key generation, address derivation, transaction formatting,
+                    and digital signing using real cryptographic operations.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {CHAINS.map((chain) => (
+                    <button
+                      key={chain.id}
+                      onClick={() => setActiveChain(chain.id)}
+                      className="glass-panel p-6 text-left hover:border-primary/50 transition-colors group"
+                    >
+                      <div className="text-primary mb-3 group-hover:scale-110 transition-transform">
+                        {chain.icon}
+                      </div>
+                      <h3 className="text-lg font-bold text-foreground mb-1">{chain.label}</h3>
+                      <p className="text-xs text-muted-foreground font-mono">{chain.description}</p>
+                    </button>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div>
+                <button
+                  onClick={() => setActiveChain(null)}
+                  className="mb-4 px-4 py-2 rounded-lg border border-border hover:bg-muted/50 transition-colors text-sm text-foreground"
+                >
+                  &larr; Back to Chain Selection
+                </button>
+                {activeChain === 'bitcoin' && <BitcoinFlow onBack={() => setActiveChain(null)} />}
+                {activeChain === 'ethereum' && <EthereumFlow onBack={() => setActiveChain(null)} />}
+                {activeChain === 'solana' && <SolanaFlow onBack={() => setActiveChain(null)} />}
+                {activeChain === 'hd-wallet' && (
+                  <HDWalletFlow onBack={() => setActiveChain(null)} />
+                )}
               </div>
-              <span className="text-sm font-medium hidden md:block">
-                {step.title.split(':')[1]}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
+            )}
+          </div>
+        </TabsContent>
 
-      {/* Content Area */}
-      <div className="glass-panel p-8 min-h-[600px] animate-fade-in">
-        <div className="mb-6 border-b border-border pb-4">
-          {/* eslint-disable-next-line security/detect-object-injection */}
-          <h2 className="text-2xl font-bold text-foreground">{steps[currentStep].title}</h2>
-          {/* eslint-disable-next-line security/detect-object-injection */}
-          <p className="text-muted-foreground">{steps[currentStep].description}</p>
-        </div>
-        {/* eslint-disable-next-line security/detect-object-injection */}
-        {steps[currentStep].component}
-      </div>
-
-      {/* Navigation */}
-      <div className="flex flex-col sm:flex-row justify-between gap-3 mt-6">
-        <button
-          onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-          disabled={currentStep === 0}
-          className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted/50 disabled:opacity-50 transition-colors text-foreground"
-        >
-          ← Previous Step
-        </button>
-
-        {currentStep === steps.length - 1 ? (
-          <button
-            onClick={() => {
-              /* eslint-disable-next-line security/detect-object-injection */
-              markStepComplete('digital-assets', steps[currentStep].id)
-              navigate('/learn')
-            }}
-            className="px-6 py-3 min-h-[44px] bg-success text-success-foreground font-bold rounded-lg hover:bg-success/90 transition-colors flex items-center justify-center gap-2"
-          >
-            <CheckCircle size={16} />
-            Completed - Return to Learn
-          </button>
-        ) : (
-          <button
-            onClick={() => {
-              // Mark current step as complete when moving next
-              /* eslint-disable-next-line security/detect-object-injection */
-              markStepComplete('digital-assets', steps[currentStep].id)
-              setCurrentStep(Math.min(steps.length - 1, currentStep + 1))
-            }}
-            className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            Next Step →
-          </button>
-        )}
-      </div>
+        {/* Exercises Tab */}
+        <TabsContent value="exercises">
+          <BlockchainExercises onNavigateToWorkshop={navigateToWorkshop} />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

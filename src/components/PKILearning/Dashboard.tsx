@@ -195,8 +195,9 @@ export const Dashboard: React.FC = () => {
     {
       id: 'pki-workshop',
       title: 'PKI',
-      description: 'Complete hands-on workshop: CSRs, Root CAs, Signing, and Parsing.',
-      duration: '45 min',
+      description:
+        'Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.',
+      duration: '60 min',
     },
     {
       id: 'digital-assets',
@@ -234,13 +235,23 @@ export const Dashboard: React.FC = () => {
 
   const resumeModule = inProgressModules[0]
 
+  // Actual step counts per module
+  const MODULE_STEP_COUNTS: Record<string, number> = {
+    'pqc-101': 5,
+    'pki-workshop': 7,
+    'digital-assets': 3,
+    '5g-security': 3,
+    'digital-id': 6,
+    'tls-basics': 3,
+    quiz: 1,
+  }
+
   // Calculate progress percentage for resume module
   const getProgressPercentage = (moduleId: string): number => {
     const module = modules[moduleId]
     if (!module) return 0
-    // Estimate based on completed steps (this could be more sophisticated)
-    const totalSteps = 4 // Most modules have ~4 steps
-    return Math.round((module.completedSteps.length / totalSteps) * 100)
+    const totalSteps = MODULE_STEP_COUNTS[moduleId] ?? 4
+    return Math.min(100, Math.round((module.completedSteps.length / totalSteps) * 100))
   }
 
   return (

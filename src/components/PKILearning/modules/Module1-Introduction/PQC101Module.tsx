@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Link } from 'react-router-dom'
 import {
@@ -450,6 +450,11 @@ const Step5NextSteps: React.FC = () => {
 export const PQC101Module: React.FC = () => {
   const { markStepComplete, updateModuleProgress } = useModuleStore()
   const [currentStep, setCurrentStep] = useState(0)
+
+  // Mark module in-progress as soon as the user opens it
+  useEffect(() => {
+    updateModuleProgress(MODULE_ID, { status: 'in-progress' })
+  }, [updateModuleProgress])
 
   const handleStepComplete = (stepId: string, nextIndex: number) => {
     markStepComplete(MODULE_ID, stepId)

@@ -10,13 +10,15 @@ import clsx from 'clsx'
 
 interface SuciFlowProps {
   onBack: () => void
+  initialProfile?: 'A' | 'B' | 'C'
+  initialPqcMode?: 'hybrid' | 'pure'
 }
 
 type Profile = 'A' | 'B' | 'C'
 
-export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
-  const [profile, setProfile] = useState<Profile>('A')
-  const [pqcMode, setPqcMode] = useState<'hybrid' | 'pure'>('hybrid')
+export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, initialPqcMode }) => {
+  const [profile, setProfile] = useState<Profile>(initialProfile ?? 'A')
+  const [pqcMode, setPqcMode] = useState<'hybrid' | 'pure'>(initialPqcMode ?? 'hybrid')
 
   // Wrap setters to also clear crypto state when switching profiles/modes
   const changeProfile = (p: Profile) => {

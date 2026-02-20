@@ -24,17 +24,22 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Virtual File System**: Upload, edit, download, backup/restore with ZIP
   - **File Manager**: Sortable columns, timestamps, size tracking, public key extraction
 - **Learning Platform**: Comprehensive educational modules for cryptography and security
-  - **PKI Workshop**: 4-step certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing)
-    - CSV-based X.509 profiles for industry standards
-    - Support for classical and post-quantum algorithms
-  - **Digital Assets Program**: Blockchain cryptography deep-dive
+  - **PKI Workshop** (Learn | Workshop | Exercises): Certificate lifecycle education and hands-on practice
+    - **Learn**: 6 educational sections — What is PKI, Certificate Lifecycle diagram, X.509 Anatomy, Trust Chains & Validation, PQC in PKI
+    - **Workshop**: 4-step hands-on certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing) with CSV-based X.509 profiles
+    - **Exercises**: 5 guided scenarios (RSA-2048, ECDSA P-256, ML-DSA-44, ML-DSA-87, SLH-DSA) with "Load & Run" presets
+  - **Digital Assets Program** (Learn | Simulate | Exercises): Blockchain cryptography deep-dive
+    - **Learn**: Blockchain crypto introduction covering key generation, address derivation, signing, and PQC threat analysis per chain
     - **Bitcoin (BTC)**: secp256k1, P2PKH/SegWit addresses, ECDSA signing, double SHA256
     - **Ethereum (ETH)**: Keccak-256, EIP-55 checksummed addresses, EIP-1559 transactions, signature recovery
     - **Solana (SOL)**: Ed25519, Base58 addresses, EdDSA signing
     - **HD Wallet**: BIP32/39/44 multi-chain derivation (m/44'/0'/0'/0/0 for BTC, m/44'/60'/0'/0/0 for ETH, m/44'/501'/0'/0' for SOL)
-  - **5G Security Education**: Interactive 5G authentication and privacy flows
-    - **SUCI Deconcealment**: Profile A (Curve25519), Profile B (secp256r1), Profile C (ML-KEM-768 PQC)
+    - **Exercises**: Guided scenarios for each blockchain with pre-configured flows
+  - **5G Security Education** (Learn | Simulate | Exercises): Interactive 5G authentication and privacy flows
+    - **Learn**: 6 sections — What is 5G Security (3GPP TS 33.501), Three Pillars, SUCI Protection Schemes (Profile A/B/C), 5G-AKA Authentication (MILENAGE f1-f5, key hierarchy), SIM Provisioning, Post-Quantum Threat
+    - **SUCI Deconcealment**: Profile A (Curve25519), Profile B (secp256r1), Profile C (ML-KEM-768 PQC) with hybrid and pure modes
     - **5G-AKA Authentication**: MILENAGE algorithm set (f1-f5 functions) with HSM integration
+    - **Exercises**: 5 scenarios (Profile A Classical, Profile B NIST, Profile C Hybrid, Profile C Pure PQC, 5G-AKA Authentication)
   - **EU Digital Identity Wallet**: EUDI Wallet ecosystem with Remote HSM architecture
     - **PID Issuance**: Mobile Driving License (mDL) per ISO/IEC 18013-5
     - **Attestations**: QEAA, PuB-EAA, and EAA issuance flows

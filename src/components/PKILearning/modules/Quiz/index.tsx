@@ -123,7 +123,7 @@ export const QuizModule: React.FC = () => {
       const prevOverall = previousScores?.['overall'] ?? 0
       scores.overall = Math.max(prevOverall, summary.overall.percentage)
 
-      updateModuleProgress(MODULE_ID, { quizScores: scores })
+      updateModuleProgress(MODULE_ID, { quizScores: scores, status: 'completed' })
       markStepComplete(MODULE_ID, 'quiz-completed')
     },
     [updateModuleProgress, markStepComplete, previousScores]

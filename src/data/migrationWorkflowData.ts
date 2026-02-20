@@ -62,13 +62,6 @@ export const MIGRATION_REFERENCES: MigrationReference[] = [
     description: 'PQC capabilities matrix for the PKI ecosystem',
     type: 'Industry',
   },
-  {
-    name: 'PQC Guide',
-    organization: 'DigiCert',
-    url: 'https://www.digicert.com/campaigns/pqc-hub',
-    description: 'Enterprise guide to post-quantum cryptography readiness',
-    type: 'Industry',
-  },
 ]
 
 // ─── 7 Migration Steps ──────────────────────────────────────────────────────

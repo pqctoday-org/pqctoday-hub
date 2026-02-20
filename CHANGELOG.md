@@ -6,7 +6,32 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **Learning Platform Restructure** (`/learn`): PKI Workshop, Digital Assets, and 5G Security
+  modules restructured to the 3-tab layout (Learn | Simulate | Exercises) established by TLS
+  Basics. Each module now separates educational theory from hands-on practice and includes guided
+  exercise scenarios with "Load & Run" presets and a Quiz CTA.
+- **PKI Workshop** (`/learn/pki-workshop`): New Learn tab with 6 educational sections (What is
+  PKI, Certificate Lifecycle with interactive diagram, X.509 Anatomy, Trust Chains & Validation,
+  PQC in PKI, CTA). New Exercises tab with 5 guided scenarios (RSA-2048, ECDSA P-256, ML-DSA-44,
+  ML-DSA-87, SLH-DSA) that pre-configure the workshop and navigate to the correct step.
+- **Digital Assets** (`/learn/digital-assets`): New Learn tab with blockchain cryptography
+  introduction covering key generation, address derivation, digital signing, and PQC threat
+  analysis per chain. New Exercises tab with guided scenarios for Bitcoin, Ethereum, Solana, and
+  HD Wallet flows.
+- **5G Security** (`/learn/5g-security`): New Learn tab with 6 sections — What is 5G Security
+  (3GPP TS 33.501 overview, IMSI catcher history), The Three Pillars (Privacy/Authentication/
+  Provisioning), SUCI Protection Schemes (Profile A/B/C comparison), 5G-AKA Authentication
+  (MILENAGE f1-f5, key hierarchy), SIM Provisioning & Supply Chain, Post-Quantum Threat to 5G
+  (quantum-vulnerable vs quantum-resistant components). New Exercises tab with 5 scenarios
+  (Profile A Classical, Profile B NIST, Profile C Hybrid, Profile C Pure PQC, 5G-AKA
+  Authentication).
 - **Leaders Board Expanded**: 12 new PQC leaders added via `leaders_02202026.csv` — Prof Bill Buchanan OBE (Edinburgh Napier), Dr. Bob Sutor (Sutor Group), Bruno Couillard (Crypto4A), Dr. Colin Soutar (Deloitte), Denis Mandich (Qrypt), Éric Brier (Thales), Konstantinos Karagiannis (Protiviti), Dr. Krysta Svore (Microsoft Azure Quantum), Niccolò De Masi (IonQ), Philip Intallura (HSBC), Sheetal Mehta (NTT DATA), Tom Patterson (Accenture); total now 98 leaders
+
+### Changed
+
+- **Dashboard Progress** (`/learn`): Module progress calculation now uses accurate per-module step
+  counts via a `MODULE_STEP_COUNTS` map instead of a hardcoded default of 4 steps. PKI Workshop
+  description and duration updated (45 min → 60 min).
 
 ### Fixed
 
