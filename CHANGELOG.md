@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.16.0] - 2026-02-20
+
+### Added
+
+- **Leaders Board Expanded**: 12 new PQC leaders added via `leaders_02202026.csv` — Prof Bill Buchanan OBE (Edinburgh Napier), Dr. Bob Sutor (Sutor Group), Bruno Couillard (Crypto4A), Dr. Colin Soutar (Deloitte), Denis Mandich (Qrypt), Éric Brier (Thales), Konstantinos Karagiannis (Protiviti), Dr. Krysta Svore (Microsoft Azure Quantum), Niccolò De Masi (IonQ), Philip Intallura (HSBC), Sheetal Mehta (NTT DATA), Tom Patterson (Accenture); total now 98 leaders
+
+### Fixed
+
+- **Algorithm Data**: 10 factual inaccuracies corrected across PQC algorithm profiles
+- **Migration Guide**: 5 factual inaccuracies corrected in migration planning content
+
 ## [1.15.0] - 2026-02-20
 
 ### Added

@@ -77,23 +77,22 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Quiz CSV Data Layer</strong> &mdash; 162
-                    questions in a date-stamped CSV with smart category-coverage sampling
+                    <strong className="text-foreground">Leaders Board Expanded</strong> &mdash; 12
+                    new PQC leaders added; now 98 total across industry, academic, and government
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Expanded Question Pool</strong> &mdash; Grew
-                    from 80 to 162 questions grounded in the app&apos;s authoritative data sources
+                    <strong className="text-foreground">Algorithm Data Accuracy</strong> &mdash; 10
+                    factual corrections applied across PQC algorithm profiles
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Smart Quiz Sampling</strong> &mdash; Quick
-                    Quiz (20 q) and Full Assessment (80 q) both guarantee coverage across all 8
-                    categories
+                    <strong className="text-foreground">Migration Guide Accuracy</strong> &mdash; 5
+                    factual corrections applied to migration planning content
                   </span>
                 </li>
               </ul>
