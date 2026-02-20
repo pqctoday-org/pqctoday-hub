@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
 import { AlgorithmDetailedComparison } from './AlgorithmDetailedComparison'
@@ -11,6 +12,18 @@ import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
 
 export function AlgorithmsView() {
+  const [searchParams] = useSearchParams()
+  const highlightAlgorithms = useMemo(() => {
+    const raw = searchParams.get('highlight')
+    if (!raw) return undefined
+    return new Set(
+      raw
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    )
+  }, [searchParams])
+
   const [metadata, setMetadata] = useState<{ filename: string; date: Date | null } | null>(null)
   const [transitionMetadata, setTransitionMetadata] = useState<{
     filename: string
@@ -77,7 +90,7 @@ export function AlgorithmsView() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <AlgorithmComparison />
+            <AlgorithmComparison highlightAlgorithms={highlightAlgorithms} />
           </motion.div>
         </TabsContent>
 

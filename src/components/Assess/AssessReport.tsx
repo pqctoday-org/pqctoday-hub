@@ -15,6 +15,7 @@ import {
   Briefcase,
   Calendar,
   ChevronDown,
+  FlaskConical,
 } from 'lucide-react'
 import type {
   AssessmentResult,
@@ -24,6 +25,7 @@ import type {
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix } from './ReportThreatsAppendix'
+import { MigrationRoadmap } from './MigrationRoadmap'
 import clsx from 'clsx'
 
 declare const __APP_VERSION__: string
@@ -601,7 +603,22 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                                     </span>
                                   )}
                                 </td>
-                                <td className="py-2.5 pr-3 text-primary">{algo.replacement}</td>
+                                <td className="py-2.5 pr-3 text-primary">
+                                  <div className="flex items-center gap-2">
+                                    <span>{algo.replacement}</span>
+                                    {algo.quantumVulnerable &&
+                                      !algo.replacement.includes('No change') && (
+                                        <Link
+                                          to="/playground"
+                                          className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
+                                          title="Try in Playground"
+                                        >
+                                          <FlaskConical size={10} />
+                                          <span className="hidden lg:inline">Try</span>
+                                        </Link>
+                                      )}
+                                  </div>
+                                </td>
                                 {result.migrationEffort && (
                                   <>
                                     <td className="py-2.5 pr-3">
@@ -755,6 +772,12 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                     ))}
                   </div>
                 </div>
+
+                {/* Migration Roadmap */}
+                <MigrationRoadmap
+                  actions={result.recommendedActions}
+                  countryName={country || undefined}
+                />
 
                 {/* Industry Threat Landscape */}
                 <div className="print:break-before-page print:break-inside-auto">

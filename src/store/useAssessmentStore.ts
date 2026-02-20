@@ -3,8 +3,11 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import type { AssessmentInput } from '../hooks/useAssessmentEngine'
 import type { AssessmentResult } from '../hooks/useAssessmentEngine'
 
+export type AssessmentMode = 'quick' | 'comprehensive'
+
 interface AssessmentState {
   currentStep: number
+  assessmentMode: AssessmentMode | null
   industry: string
   country: string
   currentCrypto: string[]
@@ -26,6 +29,7 @@ interface AssessmentState {
   lastWizardUpdate: string | null
   // Actions
   setStep: (step: number) => void
+  setAssessmentMode: (mode: AssessmentMode) => void
   setIndustry: (industry: string) => void
   setCountry: (country: string) => void
   toggleCrypto: (algo: string) => void
@@ -49,6 +53,7 @@ interface AssessmentState {
 
 const INITIAL_STATE = {
   currentStep: 0,
+  assessmentMode: null as AssessmentMode | null,
   industry: '',
   country: '',
   currentCrypto: [] as string[],
@@ -68,7 +73,7 @@ const INITIAL_STATE = {
   lastWizardUpdate: null as string | null,
 }
 
-const STALE_THRESHOLD_MS = 24 * 60 * 60 * 1000 // 24 hours
+const STALE_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000 // 7 days
 
 export const useAssessmentStore = create<AssessmentState>()(
   persist(
@@ -76,6 +81,9 @@ export const useAssessmentStore = create<AssessmentState>()(
       ...INITIAL_STATE,
 
       setStep: (step) => set({ currentStep: step, lastWizardUpdate: new Date().toISOString() }),
+
+      setAssessmentMode: (mode) =>
+        set({ assessmentMode: mode, lastWizardUpdate: new Date().toISOString() }),
 
       setIndustry: (industry) => set({ industry, lastWizardUpdate: new Date().toISOString() }),
 
@@ -192,6 +200,7 @@ export const useAssessmentStore = create<AssessmentState>()(
       partialize: (state) => ({
         lastResult: state.lastResult,
         currentStep: state.currentStep,
+        assessmentMode: state.assessmentMode,
         industry: state.industry,
         country: state.country,
         currentCrypto: state.currentCrypto,
@@ -226,6 +235,7 @@ export const useAssessmentStore = create<AssessmentState>()(
         const elapsed = Date.now() - new Date(state.lastWizardUpdate).getTime()
         if (elapsed > STALE_THRESHOLD_MS) {
           state.currentStep = 0
+          state.assessmentMode = null
           state.industry = ''
           state.country = ''
           state.currentCrypto = []

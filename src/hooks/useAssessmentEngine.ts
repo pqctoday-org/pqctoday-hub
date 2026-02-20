@@ -761,6 +761,16 @@ function computeMigrationEffort(input: AssessmentInput): MigrationEffortItem[] {
     })
 }
 
+function buildAlgorithmHighlightUrl(algorithms: string[]): string {
+  if (algorithms.length === 0) return '/algorithms'
+  return `/algorithms?highlight=${encodeURIComponent(algorithms.join(','))}`
+}
+
+function buildThreatsUrl(industry?: string): string {
+  if (!industry) return '/threats'
+  return `/threats?industry=${encodeURIComponent(industry)}`
+}
+
 function generateExtendedActions(
   input: AssessmentInput,
   vulnerableCount: number,
@@ -770,6 +780,9 @@ function generateExtendedActions(
   const actions: RecommendedAction[] = []
   let priority = 1
 
+  // Build context-aware algorithm highlight URLs
+  const vulnerableAlgoNames = input.currentCrypto.filter((a) => ALGORITHM_DB[a]?.quantumVulnerable) // eslint-disable-line security/detect-object-injection
+
   // Quick wins first
   const quickWins = migrationEffort.filter((m) => m.estimatedScope === 'quick-win')
   if (quickWins.length > 0) {
@@ -777,7 +790,7 @@ function generateExtendedActions(
       priority: priority++,
       action: `Migrate ${quickWins.length} quick-win algorithm${quickWins.length > 1 ? 's' : ''} (${quickWins.map((q) => q.algorithm).join(', ')}) to PQC equivalents.`,
       category: 'immediate',
-      relatedModule: '/algorithms',
+      relatedModule: buildAlgorithmHighlightUrl(quickWins.map((q) => q.algorithm)),
       effort: 'low',
     })
   }
@@ -791,7 +804,7 @@ function generateExtendedActions(
       priority: priority++,
       action: `Plan migration for ${majorMigrations.length} high-complexity algorithm${majorMigrations.length > 1 ? 's' : ''} (${majorMigrations.map((m) => m.algorithm).join(', ')}).`,
       category: 'immediate',
-      relatedModule: '/algorithms',
+      relatedModule: buildAlgorithmHighlightUrl(majorMigrations.map((m) => m.algorithm)),
       effort: 'high',
     })
   }
@@ -803,18 +816,23 @@ function generateExtendedActions(
       priority: priority++,
       action: `Migrate ${vulnerableCount} quantum-vulnerable algorithm${vulnerableCount > 1 ? 's' : ''} to PQC equivalents.`,
       category: 'immediate',
-      relatedModule: '/algorithms',
+      relatedModule: buildAlgorithmHighlightUrl(vulnerableAlgoNames),
       effort: 'medium',
     })
   }
 
   // Use-case-specific TLS action
   if (input.cryptoUseCases?.includes('TLS/HTTPS') && vulnerableCount > 0) {
+    const tlsAlgos = vulnerableAlgoNames.filter((a) =>
+      ['ECDH', 'X25519', 'DH (Diffie-Hellman)', 'RSA-2048', 'RSA-4096'].includes(a)
+    )
     actions.push({
       priority: priority++,
       action: 'Migrate TLS endpoints to hybrid PQC key exchange (ML-KEM + X25519).',
       category: 'immediate',
-      relatedModule: '/algorithms',
+      relatedModule: buildAlgorithmHighlightUrl(
+        tlsAlgos.length > 0 ? tlsAlgos : vulnerableAlgoNames
+      ),
       effort: 'medium',
     })
   }
@@ -831,7 +849,7 @@ function generateExtendedActions(
       priority: priority++,
       action: 'Implement hybrid PQC encryption for data-at-rest to guard against HNDL attacks.',
       category: 'immediate',
-      relatedModule: '/threats',
+      relatedModule: buildThreatsUrl(input.industry),
       effort: 'high',
     })
   } else if (hasHighSensitivity) {
@@ -839,7 +857,7 @@ function generateExtendedActions(
       priority: priority++,
       action: 'Implement hybrid PQC encryption for data-at-rest to guard against HNDL attacks.',
       category: 'immediate',
-      relatedModule: '/threats',
+      relatedModule: buildThreatsUrl(input.industry),
       effort: 'medium',
     })
   }

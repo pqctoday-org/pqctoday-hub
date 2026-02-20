@@ -18,6 +18,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 import { threatsData, threatsMetadata } from '../../data/threatsData'
 import type { ThreatItem } from '../../data/threatsData'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -51,7 +52,16 @@ import { ThreatDetailDialog } from './ThreatDetailDialog'
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
 
 export const ThreatsDashboard: React.FC = () => {
-  const [selectedIndustry, setSelectedIndustry] = useState<string>('All')
+  const [searchParams] = useSearchParams()
+
+  const initialIndustry = useMemo(() => {
+    const param = searchParams.get('industry')
+    if (!param) return 'All'
+    const match = threatsData.find((d) => d.industry.toLowerCase() === param.toLowerCase())
+    return match ? match.industry : 'All'
+  }, [searchParams])
+
+  const [selectedIndustry, setSelectedIndustry] = useState<string>(initialIndustry)
   const [selectedCriticality, setSelectedCriticality] = useState<string>('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortField, setSortField] = useState<SortField>('industry')

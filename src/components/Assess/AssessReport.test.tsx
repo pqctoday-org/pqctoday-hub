@@ -239,9 +239,10 @@ describe('AssessReport', () => {
 
     it('renders all actions', () => {
       renderReport()
-      expect(screen.getByText(/quantum-vulnerable/)).toBeInTheDocument()
-      expect(screen.getByText(/hybrid PQC/)).toBeInTheDocument()
-      expect(screen.getByText(/awareness/)).toBeInTheDocument()
+      // Actions appear in both Recommended Actions section and Migration Roadmap
+      expect(screen.getAllByText(/quantum-vulnerable/).length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByText(/hybrid PQC/).length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByText(/awareness/).length).toBeGreaterThanOrEqual(1)
     })
 
     it('displays action category labels', () => {

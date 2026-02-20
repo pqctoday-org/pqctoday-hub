@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ShieldCheck } from 'lucide-react'
+import { ShieldCheck, RotateCcw, PlayCircle, Zap, ClipboardList } from 'lucide-react'
 import { AssessWizard } from './AssessWizard'
 import { AssessReport } from './AssessReport'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
+import type { AssessmentMode } from '../../store/useAssessmentStore'
 import { useAssessmentEngine } from '../../hooks/useAssessmentEngine'
 import type { AssessmentInput } from '../../hooks/useAssessmentEngine'
 import { metadata } from '../../data/industryAssessConfig'
@@ -26,13 +27,93 @@ const VALID_PRESSURE = new Set([
   'unknown',
 ])
 
+const STEP_LABELS = [
+  'Industry',
+  'Country',
+  'Crypto',
+  'Sensitivity',
+  'Compliance',
+  'Migration',
+  'Use Cases',
+  'Retention',
+  'Scale',
+  'Agility',
+  'Infra',
+  'Vendors',
+  'Timeline',
+]
+
+const ModeSelector: React.FC<{ onSelect: (mode: AssessmentMode) => void }> = ({ onSelect }) => (
+  <div className="max-w-2xl mx-auto">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <button
+        onClick={() => onSelect('quick')}
+        className="glass-panel p-6 text-left hover:border-primary/40 transition-colors group"
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-2 rounded-full bg-warning/10 group-hover:bg-warning/20 transition-colors">
+            <Zap className="text-warning" size={20} />
+          </div>
+          <h3 className="text-lg font-bold text-foreground">Quick</h3>
+        </div>
+        <p className="text-sm text-muted-foreground mb-3">
+          6 questions covering your industry, crypto stack, data sensitivity, and migration status.
+        </p>
+        <span className="text-xs font-mono text-muted-foreground/60">~2 minutes</span>
+      </button>
+
+      <button
+        onClick={() => onSelect('comprehensive')}
+        className="glass-panel p-6 text-left hover:border-primary/40 transition-colors group"
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-2 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+            <ClipboardList className="text-primary" size={20} />
+          </div>
+          <h3 className="text-lg font-bold text-foreground">Comprehensive</h3>
+        </div>
+        <p className="text-sm text-muted-foreground mb-3">
+          13 questions including infrastructure, team capacity, crypto agility, and vendor
+          dependencies for detailed migration planning.
+        </p>
+        <span className="text-xs font-mono text-muted-foreground/60">~5 minutes</span>
+      </button>
+    </div>
+  </div>
+)
+
 export const AssessView: React.FC = () => {
-  const { isComplete, getInput, markComplete, setResult } = useAssessmentStore()
+  const {
+    isComplete,
+    getInput,
+    markComplete,
+    setResult,
+    reset,
+    currentStep,
+    lastWizardUpdate,
+    assessmentMode,
+    setAssessmentMode,
+  } = useAssessmentStore()
   const input = getInput()
   const result = useAssessmentEngine(isComplete ? input : null)
   const persistedRef = useRef(false)
   const [searchParams] = useSearchParams()
   const hydratedRef = useRef(false)
+  const [showResumeBanner, setShowResumeBanner] = useState(false)
+
+  const handleModeSelect = (mode: AssessmentMode) => {
+    setAssessmentMode(mode)
+  }
+
+  // Check for saved incomplete assessment on mount
+  useEffect(() => {
+    if (isComplete || hydratedRef.current) return
+    const state = useAssessmentStore.getState()
+    if (state.currentStep > 0 && state.industry && state.lastWizardUpdate) {
+      setShowResumeBanner(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Hydrate store from shared URL params on first mount
   useEffect(() => {
@@ -142,6 +223,7 @@ export const AssessView: React.FC = () => {
       store.setTimelinePressure(pressure as NonNullable<AssessmentInput['timelinePressure']>)
     }
 
+    store.setAssessmentMode('comprehensive')
     store.markComplete()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -192,7 +274,57 @@ export const AssessView: React.FC = () => {
               </div>
             )}
           </motion.div>
-          <AssessWizard onComplete={markComplete} />
+          {showResumeBanner && lastWizardUpdate && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-2xl mx-auto mb-6"
+            >
+              <div className="glass-panel p-4 border-l-4 border-l-primary">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      Resume saved assessment?
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      You left off at step {currentStep + 1} ({STEP_LABELS[currentStep] ?? ''}) on{' '}
+                      {new Date(lastWizardUpdate).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })}
+                      .
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={() => {
+                        reset()
+                        setShowResumeBanner(false)
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground hover:text-destructive border border-border rounded-lg transition-colors"
+                    >
+                      <RotateCcw size={12} />
+                      Start Over
+                    </button>
+                    <button
+                      onClick={() => setShowResumeBanner(false)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-primary text-black rounded-lg hover:bg-primary/90 transition-colors"
+                    >
+                      <PlayCircle size={12} />
+                      Continue
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+          {!assessmentMode ? (
+            <ModeSelector onSelect={handleModeSelect} />
+          ) : (
+            <AssessWizard onComplete={markComplete} mode={assessmentMode} />
+          )}
         </>
       ) : result ? (
         <AssessReport result={result} />

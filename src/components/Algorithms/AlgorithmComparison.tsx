@@ -1,3 +1,4 @@
+import React from 'react'
 import { motion } from 'framer-motion'
 import { loadAlgorithmsData, type AlgorithmTransition } from '../../data/algorithmsData'
 import {
@@ -17,7 +18,14 @@ import { MobileAlgorithmList } from './MobileAlgorithmList'
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation'
 type SortDirection = 'asc' | 'desc' | null
 
-export const AlgorithmComparison = () => {
+interface AlgorithmComparisonProps {
+  /** Set of classical algorithm names to visually highlight (from assess cross-link) */
+  highlightAlgorithms?: Set<string>
+}
+
+export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
+  highlightAlgorithms,
+}) => {
   // Data loading state
   const [algorithmsData, setAlgorithmsData] = useState<AlgorithmTransition[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -301,67 +309,83 @@ export const AlgorithmComparison = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {sortedData.map((algo, index) => (
-                    <motion.tr
-                      key={`${algo.classical}-${algo.function}-${index}`}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className={clsx(
-                        'transition-colors group',
-                        index % 2 === 0 ? 'bg-card/50' : 'bg-muted/20',
-                        'hover:bg-primary/10'
-                      )}
-                    >
-                      <td className="px-4 py-4" style={{ width: `${columnWidths.function}px` }}>
-                        <div className="flex items-center gap-2 text-primary font-medium text-sm">
-                          {algo.function.includes('Signature') ? (
-                            <FileSignature size={24} className="flex-shrink-0" />
-                          ) : (
-                            <Lock size={24} className="flex-shrink-0" />
-                          )}
-                          <span className="truncate">{algo.function}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4" style={{ width: `${columnWidths.classical}px` }}>
-                        <div className="flex flex-col gap-1">
-                          <span className="text-foreground font-semibold text-sm truncate">
-                            {algo.classical}
-                          </span>
-                          {algo.keySize && (
-                            <span className="text-xs text-muted-foreground font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 w-fit">
-                              {algo.keySize}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4" style={{ width: `${columnWidths.pqc}px` }}>
-                        <div className="flex items-center gap-2 text-status-success font-semibold text-sm">
-                          <span className="truncate">{algo.pqc}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4" style={{ width: `${columnWidths.deprecation}px` }}>
-                        <div className="flex flex-wrap items-center gap-3">
-                          <span
-                            className={clsx(
-                              'text-xs px-2 py-1 rounded border font-medium shadow-sm whitespace-normal text-center',
-                              algo.deprecationDate.includes('Deprecated')
-                                ? 'bg-status-warning border-status-warning text-status-warning'
-                                : algo.deprecationDate.includes('Disallowed')
-                                  ? 'bg-status-error border-status-error text-status-error'
-                                  : 'bg-muted border-border text-muted-foreground'
+                  {sortedData.map((algo, index) => {
+                    const isHighlighted =
+                      highlightAlgorithms &&
+                      Array.from(highlightAlgorithms).some(
+                        (h) =>
+                          algo.classical.toLowerCase().includes(h.toLowerCase()) ||
+                          h.toLowerCase().includes(algo.classical.toLowerCase())
+                      )
+                    return (
+                      <motion.tr
+                        key={`${algo.classical}-${algo.function}-${index}`}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className={clsx(
+                          'transition-colors group',
+                          isHighlighted
+                            ? 'bg-primary/15 ring-1 ring-inset ring-primary/30'
+                            : index % 2 === 0
+                              ? 'bg-card/50'
+                              : 'bg-muted/20',
+                          'hover:bg-primary/10'
+                        )}
+                      >
+                        <td className="px-4 py-4" style={{ width: `${columnWidths.function}px` }}>
+                          <div className="flex items-center gap-2 text-primary font-medium text-sm">
+                            {algo.function.includes('Signature') ? (
+                              <FileSignature size={24} className="flex-shrink-0" />
+                            ) : (
+                              <Lock size={24} className="flex-shrink-0" />
                             )}
-                          >
-                            {algo.deprecationDate}
-                          </span>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <ArrowRight size={14} className="opacity-50" />
-                            <span className="font-mono">Std: {algo.standardizationDate}</span>
+                            <span className="truncate">{algo.function}</span>
                           </div>
-                        </div>
-                      </td>
-                    </motion.tr>
-                  ))}
+                        </td>
+                        <td className="px-4 py-4" style={{ width: `${columnWidths.classical}px` }}>
+                          <div className="flex flex-col gap-1">
+                            <span className="text-foreground font-semibold text-sm truncate">
+                              {algo.classical}
+                            </span>
+                            {algo.keySize && (
+                              <span className="text-xs text-muted-foreground font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 w-fit">
+                                {algo.keySize}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-4" style={{ width: `${columnWidths.pqc}px` }}>
+                          <div className="flex items-center gap-2 text-status-success font-semibold text-sm">
+                            <span className="truncate">{algo.pqc}</span>
+                          </div>
+                        </td>
+                        <td
+                          className="px-4 py-4"
+                          style={{ width: `${columnWidths.deprecation}px` }}
+                        >
+                          <div className="flex flex-wrap items-center gap-3">
+                            <span
+                              className={clsx(
+                                'text-xs px-2 py-1 rounded border font-medium shadow-sm whitespace-normal text-center',
+                                algo.deprecationDate.includes('Deprecated')
+                                  ? 'bg-status-warning border-status-warning text-status-warning'
+                                  : algo.deprecationDate.includes('Disallowed')
+                                    ? 'bg-status-error border-status-error text-status-error'
+                                    : 'bg-muted border-border text-muted-foreground'
+                              )}
+                            >
+                              {algo.deprecationDate}
+                            </span>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <ArrowRight size={14} className="opacity-50" />
+                              <span className="font-mono">Std: {algo.standardizationDate}</span>
+                            </div>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>

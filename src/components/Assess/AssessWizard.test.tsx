@@ -355,7 +355,7 @@ describe('AssessWizard', () => {
 
     it('renders migration status options', () => {
       render(<AssessWizard onComplete={onComplete} />)
-      expect(screen.getByText('What is your PQC migration status?')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: /PQC migration status/ })).toBeInTheDocument()
       expect(screen.getByRole('radiogroup', { name: 'Migration status' })).toBeInTheDocument()
     })
 

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { ThreatsDashboard } from './ThreatsDashboard'
 import type { ThreatData } from '../../data/threatsData'
 import '@testing-library/jest-dom'
@@ -90,13 +91,21 @@ describe('ThreatsDashboard', () => {
   })
 
   it('renders the dashboard with title and description', () => {
-    render(<ThreatsDashboard />)
+    render(
+      <MemoryRouter>
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
     expect(screen.getByText('Quantum Threats')).toBeInTheDocument()
     expect(screen.getByText(/Detailed analysis of quantum threats/)).toBeInTheDocument()
   })
 
   it('renders the table with data', () => {
-    render(<ThreatsDashboard />)
+    render(
+      <MemoryRouter>
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
     const table = screen.getByRole('table')
     expect(table).toBeInTheDocument()
 
@@ -108,7 +117,11 @@ describe('ThreatsDashboard', () => {
   })
 
   it('filters by Industry using dropdown', () => {
-    render(<ThreatsDashboard />)
+    render(
+      <MemoryRouter>
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
 
     // Check initial state (all present)
     const table = screen.getByRole('table')
@@ -127,7 +140,11 @@ describe('ThreatsDashboard', () => {
   })
 
   it('filters by Criticality using dropdown', () => {
-    render(<ThreatsDashboard />)
+    render(
+      <MemoryRouter>
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
 
     // Interact with Criticality dropdown
     const dropdown = screen.getByTestId('filter-Criticality') // defaultLabel="Criticality"
@@ -142,7 +159,11 @@ describe('ThreatsDashboard', () => {
   })
 
   it('searches threats by text', () => {
-    render(<ThreatsDashboard />)
+    render(
+      <MemoryRouter>
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
 
     const searchInput = screen.getByPlaceholderText('Search threats...')
     fireEvent.change(searchInput, { target: { value: 'banking' } }) // matches "Quantum attack on banking..."
@@ -153,7 +174,11 @@ describe('ThreatsDashboard', () => {
   })
 
   it('sorts by Industry', () => {
-    render(<ThreatsDashboard />)
+    render(
+      <MemoryRouter>
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
 
     const industryHeader = screen.getByRole('columnheader', { name: /Industry/i })
     fireEvent.click(industryHeader)
@@ -174,7 +199,11 @@ describe('ThreatsDashboard', () => {
   })
 
   it('sorts by Criticality', () => {
-    render(<ThreatsDashboard />)
+    render(
+      <MemoryRouter>
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
     const critHeader = screen.getByRole('columnheader', { name: /Criticality/i })
     fireEvent.click(critHeader)
     // Should behave without error
@@ -182,7 +211,11 @@ describe('ThreatsDashboard', () => {
   })
 
   it('displays "No threats found" message when filter returns empty', () => {
-    render(<ThreatsDashboard />)
+    render(
+      <MemoryRouter>
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
 
     const searchInput = screen.getByPlaceholderText('Search threats...')
     fireEvent.change(searchInput, { target: { value: 'NonExistentTermXYZ' } })

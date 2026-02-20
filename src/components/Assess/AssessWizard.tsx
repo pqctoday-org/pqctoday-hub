@@ -19,9 +19,12 @@ import {
   industrySensitivityConfigs,
   getIndustryConfigs,
 } from '../../data/industryAssessConfig'
+import { InlineTooltip } from '../ui/InlineTooltip'
 import clsx from 'clsx'
 
-const STEP_TITLES = [
+import type { AssessmentMode } from '../../store/useAssessmentStore'
+
+const STEP_TITLES_FULL = [
   'Industry',
   'Country',
   'Crypto',
@@ -37,7 +40,24 @@ const STEP_TITLES = [
   'Timeline',
 ]
 
-const StepIndicator = ({ current, total }: { current: number; total: number }) => (
+const STEP_TITLES_QUICK = [
+  'Industry',
+  'Country',
+  'Crypto',
+  'Sensitivity',
+  'Compliance',
+  'Migration',
+]
+
+const StepIndicator = ({
+  current,
+  total,
+  titles,
+}: {
+  current: number
+  total: number
+  titles: string[]
+}) => (
   <>
     {/* Compact display for small screens */}
     <div className="flex items-center justify-center gap-3 mb-6 sm:hidden">
@@ -63,7 +83,7 @@ const StepIndicator = ({ current, total }: { current: number; total: number }) =
           <div className="flex flex-col items-center gap-1">
             <div
               aria-current={i === current ? 'step' : undefined}
-              aria-label={`Step ${i + 1}: ${STEP_TITLES[i] ?? ''}${i < current ? ' (completed)' : i === current ? ' (current)' : ''}`}
+              aria-label={`Step ${i + 1}: ${titles[i] ?? ''}${i < current ? ' (completed)' : i === current ? ' (current)' : ''}`}
               className={clsx(
                 'w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold border-2 transition-colors',
                 i === current
@@ -82,7 +102,7 @@ const StepIndicator = ({ current, total }: { current: number; total: number }) =
               )}
             >
               {/* eslint-disable-next-line security/detect-object-injection */}
-              {STEP_TITLES[i]}
+              {titles[i]}
             </span>
           </div>
           {i < total - 1 && (
@@ -291,7 +311,8 @@ const Step4Sensitivity = () => {
     <div className="space-y-4">
       <h3 className="text-xl font-bold text-foreground">How sensitive is your data?</h3>
       <p className="text-sm text-muted-foreground">
-        Data sensitivity determines your exposure to &ldquo;Harvest Now, Decrypt Later&rdquo; (HNDL)
+        Data sensitivity determines your exposure to{' '}
+        <InlineTooltip term="HNDL">&ldquo;Harvest Now, Decrypt Later&rdquo; (HNDL)</InlineTooltip>{' '}
         attacks. Select all that apply — your risk is assessed against the highest level present.
       </p>
 
@@ -555,7 +576,9 @@ const Step6Migration = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">What is your PQC migration status?</h3>
+      <h3 className="text-xl font-bold text-foreground">
+        What is your <InlineTooltip term="PQC">PQC</InlineTooltip> migration status?
+      </h3>
       <p className="text-sm text-muted-foreground">
         Understanding where you are in the migration journey helps prioritize recommendations.
       </p>
@@ -713,7 +736,8 @@ const Step8DataRetention = () => {
         How long must your data stay confidential?
       </h3>
       <p className="text-sm text-muted-foreground">
-        Select all categories that apply — HNDL risk is assessed against the longest period.
+        Select all categories that apply — <InlineTooltip term="HNDL">HNDL</InlineTooltip> risk is
+        assessed against the longest period.
       </p>
 
       <div className="glass-panel p-4 border-l-4 border-l-warning mb-4">
@@ -894,8 +918,8 @@ const Step10CryptoAgility = () => {
         How easily can you swap cryptographic algorithms?
       </h3>
       <p className="text-sm text-muted-foreground">
-        Crypto agility is a major factor in migration complexity. Abstracted implementations are far
-        easier to migrate.
+        <InlineTooltip term="Crypto Agility">Crypto agility</InlineTooltip> is a major factor in
+        migration complexity. Abstracted implementations are far easier to migrate.
       </p>
       <div className="space-y-3" role="radiogroup" aria-label="Crypto agility level">
         {options.map((opt) => (
@@ -936,7 +960,8 @@ const Step11Infrastructure = () => {
         <div className="flex items-start gap-2">
           <Info size={16} className="text-warning shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground">
-            HSMs and legacy systems are typically the hardest to migrate to PQC algorithms.
+            <InlineTooltip term="HSM">HSMs</InlineTooltip> and legacy systems are typically the
+            hardest to migrate to <InlineTooltip term="PQC">PQC</InlineTooltip> algorithms.
           </p>
         </div>
       </div>
@@ -1000,7 +1025,7 @@ const Step12VendorDependency = () => {
       </h3>
       <p className="text-sm text-muted-foreground">
         Vendor dependencies affect your control over migration timelines. Heavy vendor reliance
-        means you depend on their PQC roadmap.
+        means you depend on their <InlineTooltip term="PQC">PQC</InlineTooltip> roadmap.
       </p>
       <div className="space-y-3" role="radiogroup" aria-label="Vendor dependency model">
         {options.map((opt) => (
@@ -1180,80 +1205,106 @@ const Step13TimelinePressure = () => {
 
 interface AssessWizardProps {
   onComplete: () => void
+  mode?: AssessmentMode
 }
 
-export const AssessWizard: React.FC<AssessWizardProps> = ({ onComplete }) => {
-  const {
-    currentStep,
-    setStep,
-    industry,
-    country,
-    currentCrypto,
-    dataSensitivity,
-    migrationStatus,
-    dataRetention,
-    systemCount,
-    teamSize,
-    cryptoAgility,
-    vendorDependency,
-    timelinePressure,
-    markComplete,
-    reset,
-  } = useAssessmentStore()
+const ALL_STEPS = [
+  {
+    key: 'industry',
+    component: <Step1Industry />,
+    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
+      !!s.industry,
+  },
+  {
+    key: 'country',
+    component: <Step2Country />,
+    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
+      !!s.country,
+  },
+  {
+    key: 'crypto',
+    component: <Step3Crypto />,
+    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
+      s.currentCrypto.length > 0,
+  },
+  {
+    key: 'sensitivity',
+    component: <Step4Sensitivity />,
+    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
+      s.dataSensitivity.length > 0,
+  },
+  { key: 'compliance', component: <Step5Compliance />, canProceed: () => true },
+  {
+    key: 'migration',
+    component: <Step6Migration />,
+    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
+      !!s.migrationStatus,
+  },
+  { key: 'use-cases', component: <Step7UseCases />, canProceed: () => true },
+  {
+    key: 'retention',
+    component: <Step8DataRetention />,
+    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
+      s.dataRetention.length > 0,
+  },
+  {
+    key: 'scale',
+    component: <Step9OrgScale />,
+    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
+      !!s.systemCount && !!s.teamSize,
+  },
+  {
+    key: 'agility',
+    component: <Step10CryptoAgility />,
+    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
+      !!s.cryptoAgility,
+  },
+  { key: 'infra', component: <Step11Infrastructure />, canProceed: () => true },
+  {
+    key: 'vendors',
+    component: <Step12VendorDependency />,
+    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
+      !!s.vendorDependency,
+  },
+  {
+    key: 'timeline',
+    component: <Step13TimelinePressure />,
+    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
+      !!s.timelinePressure,
+  },
+] as const
+
+const QUICK_STEP_KEYS = new Set([
+  'industry',
+  'country',
+  'crypto',
+  'sensitivity',
+  'compliance',
+  'migration',
+])
+
+export const AssessWizard: React.FC<AssessWizardProps> = ({
+  onComplete,
+  mode = 'comprehensive',
+}) => {
+  const store = useAssessmentStore()
+  const { currentStep, setStep, markComplete, reset } = store
 
   const [isGenerating, setIsGenerating] = useState(false)
 
-  const stepComponents = [
-    <Step1Industry key="industry" />,
-    <Step2Country key="country" />,
-    <Step3Crypto key="crypto" />,
-    <Step4Sensitivity key="sensitivity" />,
-    <Step5Compliance key="compliance" />,
-    <Step6Migration key="migration" />,
-    <Step7UseCases key="use-cases" />,
-    <Step8DataRetention key="retention" />,
-    <Step9OrgScale key="scale" />,
-    <Step10CryptoAgility key="agility" />,
-    <Step11Infrastructure key="infra" />,
-    <Step12VendorDependency key="vendors" />,
-    <Step13TimelinePressure key="timeline" />,
-  ]
+  const steps = useMemo(
+    () => (mode === 'quick' ? ALL_STEPS.filter((s) => QUICK_STEP_KEYS.has(s.key)) : [...ALL_STEPS]),
+    [mode]
+  )
+  const stepTitles = mode === 'quick' ? STEP_TITLES_QUICK : STEP_TITLES_FULL
 
   const canProceed = () => {
-    switch (currentStep) {
-      case 0:
-        return !!industry
-      case 1:
-        return !!country
-      case 2:
-        return currentCrypto.length > 0
-      case 3:
-        return dataSensitivity.length > 0
-      case 4:
-        return true // Compliance optional
-      case 5:
-        return !!migrationStatus
-      case 6:
-        return true // Use cases optional
-      case 7:
-        return dataRetention.length > 0
-      case 8:
-        return !!systemCount && !!teamSize
-      case 9:
-        return !!cryptoAgility
-      case 10:
-        return true // Infrastructure optional
-      case 11:
-        return !!vendorDependency
-      case 12:
-        return !!timelinePressure
-      default:
-        return false
-    }
+    const step = steps[currentStep]
+    return step ? step.canProceed(store) : false
   }
 
   const handleNext = () => {
-    if (currentStep < stepComponents.length - 1) {
+    if (currentStep < steps.length - 1) {
       setStep(currentStep + 1)
     } else {
       setIsGenerating(true)
@@ -1266,7 +1317,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({ onComplete }) => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <StepIndicator current={currentStep} total={stepComponents.length} />
+      <StepIndicator current={currentStep} total={steps.length} titles={stepTitles} />
 
       <div className="glass-panel p-6 md:p-8">
         <AnimatePresence mode="wait">
@@ -1277,8 +1328,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({ onComplete }) => {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
           >
-            {/* eslint-disable-next-line security/detect-object-injection */}
-            {stepComponents[currentStep]}
+            {steps[currentStep]?.component}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -1313,7 +1363,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({ onComplete }) => {
               <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
               Generating...
             </>
-          ) : currentStep === stepComponents.length - 1 ? (
+          ) : currentStep === steps.length - 1 ? (
             'Generate Report'
           ) : (
             <>
