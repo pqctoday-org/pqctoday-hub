@@ -13,10 +13,11 @@ const priorityMatrixModules = import.meta.glob('./pqc_software_category_priority
 
 export const MIGRATION_REFERENCES: MigrationReference[] = [
   {
-    name: 'NIST IR 8547',
+    name: 'NIST IR 8547 (Draft)',
     organization: 'NIST',
-    url: 'https://csrc.nist.gov/pubs/ir/8547/final',
-    description: 'Transition to Post-Quantum Cryptography Standards',
+    url: 'https://csrc.nist.gov/pubs/ir/8547/ipd',
+    description:
+      'Transition to Post-Quantum Cryptography Standards (Initial Public Draft, Nov 2024)',
     type: 'Government',
   },
   {
@@ -109,7 +110,7 @@ export const MIGRATION_STEPS: MigrationStep[] = [
       },
     ],
     frameworks: [
-      { source: 'NIST IR 8547', mapping: 'Inventory phase' },
+      { source: 'NIST IR 8547 (Draft)', mapping: 'Inventory phase' },
       { source: 'CISA', mapping: 'Inventory & Risk Assessment' },
       { source: 'ETSI TR 103 619', mapping: 'Asset Inventory' },
     ],
@@ -152,7 +153,7 @@ export const MIGRATION_STEPS: MigrationStep[] = [
       },
     ],
     frameworks: [
-      { source: 'NIST IR 8547', mapping: 'Risk Assessment & Prioritization' },
+      { source: 'NIST IR 8547 (Draft)', mapping: 'Risk Assessment & Prioritization' },
       { source: 'CISA', mapping: 'Risk Assessment' },
       { source: 'ETSI TR 103 619', mapping: 'Detailed Planning' },
     ],
@@ -195,12 +196,13 @@ export const MIGRATION_STEPS: MigrationStep[] = [
       },
     ],
     frameworks: [
-      { source: 'NIST IR 8547', mapping: 'Preparation' },
+      { source: 'NIST IR 8547 (Draft)', mapping: 'Preparation' },
       { source: 'CISA', mapping: 'Vendor Engagement' },
       { source: 'NSA CNSA 2.0', mapping: '2025 code signing acquisitions' },
     ],
     relevantSoftwareCategories: ['CSC-001', 'CSC-016', 'CSC-002'],
-    nsaTimeline: '2025: Begin acquiring CNSA 2.0-compliant solutions',
+    nsaTimeline:
+      '2025: Prefer CNSA 2.0 for firmware signing & web servers; 2026: Prefer for networking (VPN/routers)',
     estimatedDuration: '2-4 months',
   },
   {
@@ -239,7 +241,7 @@ export const MIGRATION_STEPS: MigrationStep[] = [
       },
     ],
     frameworks: [
-      { source: 'NIST IR 8547', mapping: 'Pilot deployment' },
+      { source: 'NIST IR 8547 (Draft)', mapping: 'Pilot deployment' },
       { source: 'CISA', mapping: 'Automated Discovery & Testing' },
       { source: 'ETSI TR 103 619', mapping: 'Implementation (testing)' },
     ],
@@ -282,12 +284,13 @@ export const MIGRATION_STEPS: MigrationStep[] = [
       },
     ],
     frameworks: [
-      { source: 'NIST IR 8547', mapping: 'Hybrid deployment' },
-      { source: 'NSA CNSA 2.0', mapping: '2027-2030 migration window' },
+      { source: 'NIST IR 8547 (Draft)', mapping: 'Hybrid deployment' },
+      { source: 'NSA CNSA 2.0', mapping: '2027-2030 prefer/exclusive window (by equipment type)' },
       { source: 'ETSI TR 103 619', mapping: 'Implementation (deployment)' },
     ],
     relevantSoftwareCategories: ['CSC-004', 'CSC-009', 'CSC-017', 'CSC-003'],
-    nsaTimeline: '2027: New NSS equipment must be CNSA 2.0 compliant',
+    nsaTimeline:
+      '2027: Prefer CNSA 2.0 for operating systems; 2030: Exclusive for networking & firmware signing',
     estimatedDuration: '6-12 months',
   },
   {
@@ -326,12 +329,13 @@ export const MIGRATION_STEPS: MigrationStep[] = [
       },
     ],
     frameworks: [
-      { source: 'NIST IR 8547', mapping: 'Full migration' },
-      { source: 'NSA CNSA 2.0', mapping: '2030 software milestone' },
+      { source: 'NIST IR 8547 (Draft)', mapping: 'Full migration' },
+      { source: 'NSA CNSA 2.0', mapping: '2030 networking/firmware exclusive; niche prefer' },
       { source: 'CISA', mapping: 'Full PQC deployment' },
     ],
     relevantSoftwareCategories: ['CSC-026', 'CSC-006', 'CSC-007', 'CSC-008'],
-    nsaTimeline: '2030: All deployed NSS software using CNSA 2.0 signatures',
+    nsaTimeline:
+      '2030: Prefer CNSA 2.0 for niche/legacy equipment; NSA expects most equipment transitions completed by end of 2030',
     estimatedDuration: '6-12 months',
   },
   {
@@ -370,12 +374,16 @@ export const MIGRATION_STEPS: MigrationStep[] = [
       },
     ],
     frameworks: [
-      { source: 'NIST IR 8547', mapping: 'Ongoing monitoring' },
-      { source: 'NSA CNSA 2.0', mapping: '2033 full compliance / 2035 disallow legacy' },
+      { source: 'NIST IR 8547 (Draft)', mapping: 'Ongoing monitoring' },
+      {
+        source: 'NSA CNSA 2.0',
+        mapping: '2033 exclusive across all equipment types',
+      },
       { source: 'ETSI TR 103 619', mapping: 'Continuous improvement' },
     ],
     relevantSoftwareCategories: ['CSC-028', 'CSC-023', 'CSC-030', 'CSC-025'],
-    nsaTimeline: '2033: Full CNSA 2.0 compliance; 2035: Legacy crypto disallowed',
+    nsaTimeline:
+      '2033: CNSA 2.0 exclusive across all NSS equipment types; 2035: Quantum-vulnerable algorithms disallowed (per NIST IR 8547 draft)',
     estimatedDuration: 'Ongoing',
   },
 ]
