@@ -77,14 +77,6 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Library Enrichment</strong> &mdash;
-                    Documents now include rich markdown summaries with key provisions and PQC
-                    relevance — look for the eye icon
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
                     <strong className="text-foreground">PDF Report (Chrome)</strong> &mdash; Fixed
                     header/footer overlap on pages 2+ when printing to PDF in Chrome
                   </span>

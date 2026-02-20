@@ -4,17 +4,6 @@ All notable changes to this project will be documented in this file.
 
 ## [1.14.3] - 2026-02-19
 
-### Added
-
-- **Library Document Summaries** (`/library`): Markdown-enriched summaries for all library
-  documents with structured sections (Overview, Key Provisions, Relevance). Detail popover
-  renders rich formatted content when a summary is available.
-- **Library Preview Indicator** (`/library`): Eye icon badge on document cards signals that
-  a rich markdown summary is available, helping users identify enriched documents at a glance.
-- **Library Download & Summarization Workflow** (`scripts/`): `summarize-library.py` script
-  automates downloading PDFs, extracting text, and generating AI-assisted markdown summaries
-  for the full document library.
-
 ### Fixed
 
 - **PDF Print Cross-Browser** (`/assess`): Report PDF now renders correctly in both Chrome and
