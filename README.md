@@ -46,8 +46,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
   - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, and HNDL attacks
-  - **PQC Quiz**: Interactive knowledge assessment with 70+ questions across 8 categories
-    - **3 Modes**: Quick (20 random), Full (all questions), Custom (by topic)
+  - **PQC Quiz**: Interactive knowledge assessment with 162 questions across 8 categories
+    - **3 Modes**: Quick (20 questions, guaranteed category coverage), Full Assessment (80 questions randomly sampled), Custom (by topic)
+    - **CSV-Driven**: Questions loaded from date-stamped CSV (`pqcquiz_MMDDYYYY.csv`) via `import.meta.glob`, with smart sampling guaranteeing ≥2 per category (Quick) / ≥10 per category (Full)
     - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations
     - **Score Tracking**: Per-category highest scores persisted across sessions
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow

@@ -77,22 +77,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Quick Assessment</strong> &mdash; New 6-step
-                    quick mode (~2 min) alongside the full 13-step comprehensive assessment
+                    <strong className="text-foreground">Quiz CSV Data Layer</strong> &mdash; 162
+                    questions in a date-stamped CSV with smart category-coverage sampling
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Migration Roadmap</strong> &mdash; Phased
-                    visualization of recommended actions (immediate / short-term / long-term)
+                    <strong className="text-foreground">Expanded Question Pool</strong> &mdash; Grew
+                    from 80 to 162 questions grounded in the app&apos;s authoritative data sources
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Inline Tooltips</strong> &mdash; Jargon
-                    terms in the wizard now show glossary definitions on click
+                    <strong className="text-foreground">Smart Quiz Sampling</strong> &mdash; Quick
+                    Quiz (20 q) and Full Assessment (80 q) both guarantee coverage across all 8
+                    categories
                   </span>
                 </li>
               </ul>

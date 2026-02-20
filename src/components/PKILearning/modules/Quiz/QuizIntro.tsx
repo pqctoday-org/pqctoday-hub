@@ -9,9 +9,18 @@ import type { QuizCategory, QuizMode } from './types'
 interface QuizIntroProps {
   previousScores?: Record<string, number>
   onStart: (mode: QuizMode, categories: QuizCategory[]) => void
+  quizMetadata?: { filename: string; lastUpdate: Date } | null
+  totalQuestions?: number
+  quickPoolSize?: number
 }
 
-export const QuizIntro: React.FC<QuizIntroProps> = ({ previousScores, onStart }) => {
+export const QuizIntro: React.FC<QuizIntroProps> = ({
+  previousScores,
+  onStart,
+  quizMetadata,
+  totalQuestions,
+  quickPoolSize,
+}) => {
   const [selectedCategories, setSelectedCategories] = useState<QuizCategory[]>([])
 
   const handleToggleCategory = (categoryId: QuizCategory) => {
@@ -32,6 +41,9 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({ previousScores, onStart })
     onStart('category', selectedCategories)
   }
 
+  const fullCount = totalQuestions || 80
+  const fullTimeMin = Math.round(fullCount * 0.56)
+
   return (
     <div className="space-y-8">
       <motion.div
@@ -43,6 +55,14 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({ previousScores, onStart })
         <p className="text-muted-foreground">
           Test your understanding of post-quantum cryptography across 8 topic areas.
         </p>
+        {quizMetadata && (
+          <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 mt-3 font-mono">
+            <p>
+              Data Source: {quizMetadata.filename} • Updated:{' '}
+              {quizMetadata.lastUpdate.toLocaleDateString()}
+            </p>
+          </div>
+        )}
       </motion.div>
 
       {/* All Topics modes */}
@@ -63,11 +83,13 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({ previousScores, onStart })
               </div>
               <div>
                 <h4 className="font-bold text-foreground">Quick Quiz</h4>
-                <p className="text-xs text-muted-foreground">~20 questions, ~15 min</p>
+                <p className="text-xs text-muted-foreground">
+                  20 questions from {quickPoolSize || '~120'} pool, ~15 min
+                </p>
               </div>
             </div>
             <p className="text-sm text-muted-foreground mb-4 flex-grow">
-              A random sample across all categories. Great for a focused review session.
+              A random sample across all categories with guaranteed topic coverage.
             </p>
             <Button variant="gradient" className="w-full" onClick={handleStartQuick}>
               Start Quick Quiz
@@ -86,7 +108,9 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({ previousScores, onStart })
               </div>
               <div>
                 <h4 className="font-bold text-foreground">Full Assessment</h4>
-                <p className="text-xs text-muted-foreground">~80 questions, ~45 min</p>
+                <p className="text-xs text-muted-foreground">
+                  {fullCount} questions, ~{fullTimeMin} min
+                </p>
               </div>
             </div>
             <p className="text-sm text-muted-foreground mb-4 flex-grow">

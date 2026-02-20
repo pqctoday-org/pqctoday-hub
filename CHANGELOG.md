@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.15.0] - 2026-02-20
+
+### Added
+
+- **Quiz CSV Data Layer** (`/learn/quiz`): Extracted all quiz questions from hardcoded TypeScript
+  into a date-stamped CSV file (`pqcquiz_02192026.csv`), following the established pattern used
+  by Leaders, Timeline, Threats, and Library modules. The quiz software auto-selects the most
+  recent CSV via `import.meta.glob` in the new `quizDataLoader.ts` loader.
+- **Quiz Mode Column** (`/learn/quiz`): New `quiz_mode` field on every question (`quick`, `full`,
+  `both`) enables pool-based filtering — Quick Quiz draws from the `quick`+`both` pool (~121
+  questions), Full Assessment samples from all 162 questions.
+- **Expanded Question Pool** (`/learn/quiz`): Grew from 80 to 162 questions across 8 categories,
+  grounded in the app's authoritative data sources (algorithm reference, timeline, threats, and
+  learn module content). ~20 questions per category.
+- **Smart Sampling with Guaranteed Coverage** (`/learn/quiz`): Both quiz modes now guarantee
+  minimum category representation — Quick Quiz: 20 questions with ≥2 per category; Full
+  Assessment: 80 questions with ≥10 per category. Every run produces a unique random mix.
+- **Source Attribution** (`/learn/quiz`): Quiz intro header displays the source CSV filename and
+  last-updated date, consistent with other data-driven pages.
+
+### Changed
+
+- **Full Assessment** (`/learn/quiz`): Changed from "all questions" to an 80-question random
+  sample drawn from the full 162-question pool with guaranteed category coverage.
+- **Quiz Data Structure** (`/learn/quiz`): `quizData.ts` is now a thin re-export shim; all data
+  loading and category metadata live in `quizDataLoader.ts`.
+
+### Fixed
+
+- **Quiz Question Accuracy** (`/learn/quiz`): Applied 7 factual corrections — CNSA 2.0 2030
+  scope clarification, EO 14306 date/attribution, Germany's QUANTITY initiative description,
+  GSMA PQ.03 v2.0 publication date, Canada CCCS 2026 milestone wording, and a self-contradictory
+  TLS hybrid failure explanation.
+
 ## [1.14.4] - 2026-02-19
 
 ### Added

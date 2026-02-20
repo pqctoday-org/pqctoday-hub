@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "1.14.4",
+  "version": "1.15.0",
   "license": "GPL-3.0",
   "type": "module",
   "engines": {

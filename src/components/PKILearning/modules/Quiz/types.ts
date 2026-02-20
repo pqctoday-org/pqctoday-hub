@@ -20,6 +20,8 @@ export interface QuizQuestion {
   category: QuizCategory
   type: QuestionType
   difficulty: 'beginner' | 'intermediate' | 'advanced'
+  /** Controls pool eligibility: 'both' = all modes, 'quick' = quick quiz only, 'full' = full assessment only */
+  quizMode: 'quick' | 'full' | 'both'
   question: string
   options: QuizOption[]
   /** For multiple-choice and true-false: single correct option ID. For multi-select: array of correct option IDs. */

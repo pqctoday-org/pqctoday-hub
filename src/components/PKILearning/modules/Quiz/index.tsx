@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
-import { QUIZ_QUESTIONS } from '@/data/quizData'
+import { QUIZ_QUESTIONS, quizMetadata } from '@/data/quizData'
 import { QuizIntro } from './QuizIntro'
 import { QuizWizard } from './QuizWizard'
 import type { QuizCompletionData } from './QuizWizard'
@@ -9,6 +9,8 @@ import type { QuizCategory, QuizMode, QuizQuestion } from './types'
 
 const MODULE_ID = 'quiz'
 const QUICK_QUIZ_COUNT = 20
+const FULL_QUIZ_COUNT = 80
+const MIN_PER_CATEGORY = 2
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array]
@@ -19,6 +21,10 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled
 }
 
+/**
+ * Sample questions with guaranteed coverage of all categories.
+ * Takes at least MIN_PER_CATEGORY from each category, fills remaining slots randomly.
+ */
 function sampleQuestions(questions: QuizQuestion[], count: number): QuizQuestion[] {
   const byCategory = new Map<QuizCategory, QuizQuestion[]>()
   for (const q of questions) {
@@ -27,20 +33,24 @@ function sampleQuestions(questions: QuizQuestion[], count: number): QuizQuestion
     byCategory.set(q.category, group)
   }
 
-  const totalQuestions = questions.length
   const sampled: QuizQuestion[] = []
-  let remaining = count
+  const usedIds = new Set<string>()
 
-  const entries = [...byCategory.entries()]
-  for (let i = 0; i < entries.length; i++) {
-    const [, categoryQuestions] = entries[i]
-    const isLast = i === entries.length - 1
-    const proportion = categoryQuestions.length / totalQuestions
-    const toTake = isLast ? remaining : Math.max(1, Math.round(count * proportion))
+  // Phase 1: Guarantee minimum coverage per category
+  for (const [, categoryQuestions] of byCategory.entries()) {
     const shuffled = shuffleArray(categoryQuestions)
-    sampled.push(...shuffled.slice(0, Math.min(toTake, remaining)))
-    remaining -= Math.min(toTake, remaining)
-    if (remaining <= 0) break
+    const toTake = Math.min(MIN_PER_CATEGORY, shuffled.length)
+    for (let i = 0; i < toTake; i++) {
+      sampled.push(shuffled[i])
+      usedIds.add(shuffled[i].id)
+    }
+  }
+
+  // Phase 2: Fill remaining slots randomly from unused questions
+  const remaining = count - sampled.length
+  if (remaining > 0) {
+    const unused = shuffleArray(questions.filter((q) => !usedIds.has(q.id)))
+    sampled.push(...unused.slice(0, remaining))
   }
 
   return shuffleArray(sampled)
@@ -80,10 +90,14 @@ export const QuizModule: React.FC = () => {
 
     let selected: QuizQuestion[]
     if (mode === 'quick') {
-      selected = sampleQuestions(QUIZ_QUESTIONS, QUICK_QUIZ_COUNT)
+      // Quick quiz: draw from 'quick' + 'both' pool, sample with guaranteed category coverage
+      const pool = QUIZ_QUESTIONS.filter((q) => q.quizMode === 'quick' || q.quizMode === 'both')
+      selected = sampleQuestions(pool, QUICK_QUIZ_COUNT)
     } else if (mode === 'full') {
-      selected = shuffleArray(QUIZ_QUESTIONS)
+      // Full assessment: sample 80 randomly from all 162 questions with guaranteed category coverage
+      selected = sampleQuestions(QUIZ_QUESTIONS, FULL_QUIZ_COUNT)
     } else {
+      // Category mode: filter by selected categories, use all questions
       const filtered = QUIZ_QUESTIONS.filter((q) => categories.includes(q.category))
       selected = shuffleArray(filtered)
     }
@@ -129,7 +143,17 @@ export const QuizModule: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      {view === 'intro' && <QuizIntro previousScores={previousScores} onStart={handleStart} />}
+      {view === 'intro' && (
+        <QuizIntro
+          previousScores={previousScores}
+          onStart={handleStart}
+          quizMetadata={quizMetadata}
+          totalQuestions={FULL_QUIZ_COUNT}
+          quickPoolSize={
+            QUIZ_QUESTIONS.filter((q) => q.quizMode === 'quick' || q.quizMode === 'both').length
+          }
+        />
+      )}
       {view === 'quiz' && (
         <QuizWizard questions={quizQuestions} onComplete={handleComplete} onExit={handleExitQuiz} />
       )}
