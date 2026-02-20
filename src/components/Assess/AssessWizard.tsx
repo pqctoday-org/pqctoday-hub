@@ -15,6 +15,7 @@ import {
   industryComplianceConfigs,
   industryUseCaseConfigs,
   industryRetentionConfigs,
+  universalRetentionConfigs,
   industrySensitivityConfigs,
   getIndustryConfigs,
 } from '../../data/industryAssessConfig'
@@ -693,39 +694,6 @@ const Step7UseCases = () => {
 const Step8DataRetention = () => {
   const { dataRetention, toggleDataRetention, industry } = useAssessmentStore()
 
-  const universalOptions = [
-    {
-      value: 'under-1y',
-      label: 'Less than 1 year',
-      description: 'Short-lived sessions, temporary tokens',
-    },
-    {
-      value: '1-5y',
-      label: '1-5 years',
-      description: 'Typical business records, customer data',
-    },
-    {
-      value: '5-10y',
-      label: '5-10 years',
-      description: 'Financial records, audit trails',
-    },
-    {
-      value: '10-25y',
-      label: '10-25 years',
-      description: 'Healthcare records, legal documents, PII',
-    },
-    {
-      value: '25-plus',
-      label: '25+ years',
-      description: 'Regulatory archives, insurance, government records',
-    },
-    {
-      value: 'indefinite',
-      label: 'Indefinite',
-      description: 'Classified data, state secrets, cryptographic keys',
-    },
-  ]
-
   const industryRetentionOptions = useMemo(
     () => getIndustryConfigs(industryRetentionConfigs, industry),
     [industry]
@@ -734,23 +702,9 @@ const Step8DataRetention = () => {
     () => new Set(industryRetentionOptions.map((r) => r.id)),
     [industryRetentionOptions]
   )
-  const industrySpecificRetentionIds = useMemo(() => {
-    const set = new Set<string>()
-    for (const cfg of industryRetentionConfigs) {
-      if (cfg.industries.length > 0 && cfg.industries.length <= 2) {
-        set.add(cfg.id)
-      }
-    }
-    return set
-  }, [])
   const filteredUniversalOptions = useMemo(
-    () =>
-      universalOptions.filter(
-        (opt) =>
-          !industryRetentionIdSet.has(opt.value) &&
-          (industry === 'Other' || !industry || !industrySpecificRetentionIds.has(opt.value))
-      ),
-    [industryRetentionIdSet, industry, industrySpecificRetentionIds]
+    () => universalRetentionConfigs.filter((opt) => !industryRetentionIdSet.has(opt.id)),
+    [industryRetentionIdSet]
   )
 
   return (
@@ -816,12 +770,12 @@ const Step8DataRetention = () => {
           <div className="space-y-3" role="group" aria-label="General data retention periods">
             {filteredUniversalOptions.map((opt) => (
               <button
-                key={opt.value}
-                aria-pressed={dataRetention.includes(opt.value)}
-                onClick={() => toggleDataRetention(opt.value)}
+                key={opt.id}
+                aria-pressed={dataRetention.includes(opt.id)}
+                onClick={() => toggleDataRetention(opt.id)}
                 className={clsx(
                   'w-full p-4 rounded-lg border text-left transition-colors',
-                  dataRetention.includes(opt.value)
+                  dataRetention.includes(opt.id)
                     ? 'border-primary bg-primary/10 text-primary'
                     : 'border-border text-muted-foreground hover:border-primary/30'
                 )}

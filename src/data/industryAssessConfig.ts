@@ -216,7 +216,11 @@ export const industryUseCaseConfigs: IndustryUseCaseConfig[] = allRows.filter(
 )
 
 export const industryRetentionConfigs: IndustryRetentionConfig[] = allRows.filter(
-  (r): r is IndustryRetentionConfig => r.category === 'retention'
+  (r): r is IndustryRetentionConfig => r.category === 'retention' && r.industries.length > 0
+)
+
+export const universalRetentionConfigs: IndustryRetentionConfig[] = allRows.filter(
+  (r): r is IndustryRetentionConfig => r.category === 'retention' && r.industries.length === 0
 )
 
 export const industrySensitivityConfigs: IndustrySensitivityConfig[] = allRows.filter(
