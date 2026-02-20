@@ -27,6 +27,72 @@ interface Props {
   title?: string
 }
 
+// Shared hex dump viewer — eliminates 3x duplication
+const HexDumpViewer: React.FC<{
+  hexString: string
+  variant: 'wire' | 'internal' | 'default'
+  label?: string
+}> = ({ hexString, variant, label }) => {
+  const cleanHex = hexString.replace(/\s/g, '')
+  const rows = []
+
+  const styles = {
+    wire: {
+      container: 'bg-muted/50 border-border',
+      offset: 'text-muted-foreground',
+      hex: 'text-primary',
+      ascii: 'text-warning opacity-70 border-l border-border pl-2',
+    },
+    internal: {
+      container: 'bg-warning/5 border-warning/20',
+      offset: 'text-muted-foreground opacity-50',
+      hex: 'text-warning/80',
+      ascii: 'text-muted-foreground opacity-50 border-l border-warning/20 pl-2',
+    },
+    default: {
+      container: 'bg-muted/50 border-border',
+      offset: 'text-muted-foreground opacity-50',
+      hex: 'text-primary',
+      ascii: 'text-warning opacity-70 border-l border-border pl-2',
+    },
+  }
+
+  const s = styles[variant]
+
+  for (let i = 0; i < cleanHex.length; i += 32) {
+    const chunk = cleanHex.slice(i, i + 32)
+    const bytes = []
+    const ascii = []
+
+    for (let j = 0; j < chunk.length; j += 2) {
+      const byteHex = chunk.slice(j, j + 2)
+      const byteVal = parseInt(byteHex, 16)
+      bytes.push(byteHex)
+      ascii.push(byteVal >= 32 && byteVal <= 126 ? String.fromCharCode(byteVal) : '.')
+    }
+
+    const hexPart = bytes.join(' ').padEnd(47, ' ')
+    const asciiPart = ascii.join('')
+
+    rows.push(
+      <div key={i} className="flex gap-4">
+        <span className={clsx('select-none', s.offset)}>{i.toString(16).padStart(4, '0')}</span>
+        <span className={s.hex}>{hexPart}</span>
+        <span className={s.ascii}>{asciiPart}</span>
+      </div>
+    )
+  }
+
+  return (
+    <div className={clsx('font-mono text-[10px] whitespace-pre p-2 rounded border', s.container)}>
+      {label && (
+        <div className="text-[9px] text-warning font-bold mb-1 uppercase opacity-70">{label}</div>
+      )}
+      {rows}
+    </div>
+  )
+}
+
 export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [copied, setCopied] = useState(false)
@@ -44,10 +110,8 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
   const getWireDetails = (
     hexData: string
   ): { type: string; badge: string; color: string; isEncrypted: boolean } | null => {
-    // Expected Format: "16 03 01 ..." (Hex Dump)
     const clean = hexData.replace(/\s/g, '').slice(0, 20)
     const typeByte = parseInt(clean.substring(0, 2), 16)
-    // const version = clean.substring(2, 6) // Record Layer Version (usually 0303 in TLS 1.3 compat)
 
     // RFC 8446 Record Types
     if (typeByte === 0x17)
@@ -105,7 +169,6 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
   }
 
   const formatDetails = (details: string, type: string) => {
-    // Simple hex dump formatting or key-value highlighting
     if (type === 'keylog') {
       const parts = details.split(' ')
       return (
@@ -117,54 +180,22 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
       )
     }
 
-    // Formatter for Hex Data (clear/encrypted)
-    // Check if it's a long hex string (common in crypto traces)
-    // We assume 'details' is the content string.
-    // If it contains "Length: X", we might want to skip or parse.
-    // But our C trace usually sends the hex string directly or specific messages.
-
-    // Simple Hex+ASCII viewer
     const isHex = /^[0-9A-Fa-f\s]+$/.test(details) && details.length > 20
+    const isInternalDump = type.includes('crypto_trace') || type === 'keylog'
 
-    if (isHex || type.includes('data')) {
-      // Clean spaces if any
-      const cleanHex = details.replace(/\s/g, '')
-      const rows = []
-      for (let i = 0; i < cleanHex.length; i += 32) {
-        const chunk = cleanHex.slice(i, i + 32)
-        const bytes = []
-        const ascii = []
-
-        for (let j = 0; j < chunk.length; j += 2) {
-          const byteHex = chunk.slice(j, j + 2)
-          const byteVal = parseInt(byteHex, 16)
-          bytes.push(byteHex)
-          ascii.push(byteVal >= 32 && byteVal <= 126 ? String.fromCharCode(byteVal) : '.')
-        }
-
-        // Pad last row
-        const hexPart = bytes.join(' ').padEnd(47, ' ')
-        const asciiPart = ascii.join('')
-
-        rows.push(
-          <div key={i} className="flex gap-4">
-            <span className="text-muted-foreground select-none">
-              {i.toString(16).padStart(4, '0')}
-            </span>
-            <span className="text-primary">{hexPart}</span>
-            <span className="text-warning opacity-70 border-l border-border pl-2">{asciiPart}</span>
-          </div>
-        )
-      }
-
+    // Internal OpenSSL buffer dump
+    if (isHex && isInternalDump) {
       return (
-        <div className="font-mono text-[10px] whitespace-pre bg-muted/50 p-2 rounded border border-border">
-          {rows}
-        </div>
+        <HexDumpViewer hexString={details} variant="internal" label="Internal OpenSSL Buffer" />
       )
     }
 
-    // For crypto_trace_state with hex dumps, try to detect TLS message type
+    // Wire data / generic hex dump
+    if (isHex || type.includes('data')) {
+      return <HexDumpViewer hexString={details} variant="wire" />
+    }
+
+    // crypto_trace_state with hex dumps — detect TLS message type
     if (type === 'crypto_trace_state' && details.includes('0000 -')) {
       const msgType = getTLSMessageType(details)
       return (
@@ -180,94 +211,9 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
               {msgType.type}
             </span>
           )}
-          <pre className="font-mono text-[10px] whitespace-pre-wrap break-all text-muted-foreground bg-slate-900/40 p-2 rounded">
+          <pre className="font-mono text-[10px] whitespace-pre-wrap break-all text-muted-foreground bg-muted/50 p-2 rounded">
             {details}
           </pre>
-        </div>
-      )
-    }
-
-    // New format for Internal Buffers (Init/Coder/Key/Data)
-    // Distinguish from Wire Data
-    const isInternalDump = type.includes('crypto_trace') || type === 'keylog'
-
-    if (isHex && isInternalDump) {
-      // Clean spaces if any
-      const cleanHex = details.replace(/\s/g, '')
-      const rows = []
-      for (let i = 0; i < cleanHex.length; i += 32) {
-        const chunk = cleanHex.slice(i, i + 32)
-        const bytes = []
-        const ascii = []
-
-        for (let j = 0; j < chunk.length; j += 2) {
-          const byteHex = chunk.slice(j, j + 2)
-          const byteVal = parseInt(byteHex, 16)
-          bytes.push(byteHex)
-          ascii.push(byteVal >= 32 && byteVal <= 126 ? String.fromCharCode(byteVal) : '.')
-        }
-
-        // Pad last row
-        const hexPart = bytes.join(' ').padEnd(47, ' ')
-        const asciiPart = ascii.join('')
-
-        rows.push(
-          <div key={i} className="flex gap-4">
-            <span className="text-muted-foreground select-none opacity-50">
-              {i.toString(16).padStart(4, '0')}
-            </span>
-            <span className="text-orange-400/80">{hexPart}</span>
-            <span className="text-muted-foreground opacity-50 border-l border-border pl-2 border-orange-500/20">
-              {asciiPart}
-            </span>
-          </div>
-        )
-      }
-
-      return (
-        <div className="font-mono text-[10px] whitespace-pre bg-orange-950/20 p-2 rounded border border-orange-500/20">
-          <div className="text-[9px] text-orange-400 font-bold mb-1 uppercase opacity-70">
-            Internal OpenSSL Buffer
-          </div>
-          {rows}
-        </div>
-      )
-    }
-
-    if (isHex || type.includes('data')) {
-      // Clean spaces if any
-      const cleanHex = details.replace(/\s/g, '')
-      const rows = []
-      for (let i = 0; i < cleanHex.length; i += 32) {
-        const chunk = cleanHex.slice(i, i + 32)
-        const bytes = []
-        const ascii = []
-
-        for (let j = 0; j < chunk.length; j += 2) {
-          const byteHex = chunk.slice(j, j + 2)
-          const byteVal = parseInt(byteHex, 16)
-          bytes.push(byteHex)
-          ascii.push(byteVal >= 32 && byteVal <= 126 ? String.fromCharCode(byteVal) : '.')
-        }
-
-        // Pad last row
-        const hexPart = bytes.join(' ').padEnd(47, ' ')
-        const asciiPart = ascii.join('')
-
-        rows.push(
-          <div key={i} className="flex gap-4">
-            <span className="text-muted-foreground select-none opacity-50">
-              {i.toString(16).padStart(4, '0')}
-            </span>
-            <span className="text-primary">{hexPart}</span>
-            <span className="text-warning opacity-70 border-l border-border pl-2">{asciiPart}</span>
-          </div>
-        )
-      }
-
-      return (
-        <div className="font-mono text-[10px] whitespace-pre bg-muted/50 p-2 rounded border border-border">
-          {rows}
         </div>
       )
     }
@@ -282,14 +228,14 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
 
   const getIcon = (type: string) => {
     if (type === 'keylog') return <Lock size={14} className="text-warning" />
-    if (type === 'wire_data') return <Activity size={14} className="text-purple-400" />
+    if (type === 'wire_data') return <Activity size={14} className="text-secondary" />
     if (type === 'message_sent') return <ArrowRight size={14} className="text-success" />
     if (type === 'message_received') return <ArrowLeft size={14} className="text-tertiary" />
     if (type === 'handshake_state' || type === 'handshake_start' || type === 'handshake_done')
       return <Zap size={14} className="text-primary" />
     if (type === 'alert') return <AlertTriangle size={14} className="text-destructive" />
-    if (type.includes('provider')) return <Settings size={14} className="text-cyan-400" />
-    if (type.includes('evp')) return <Zap size={14} className="text-indigo-400" />
+    if (type.includes('provider')) return <Settings size={14} className="text-accent" />
+    if (type.includes('evp')) return <Zap size={14} className="text-tertiary" />
     if (type.includes('data')) return <FileText size={14} className="text-primary" />
     if (type.includes('state')) return <Shield size={14} className="text-success" />
     return <Settings size={14} className="text-muted-foreground" />
@@ -299,7 +245,7 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
   const getEventBadge = (type: string) => {
     if (type === 'wire_data')
       return (
-        <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 font-bold">
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-secondary/20 text-secondary font-bold">
           WIRE
         </span>
       )
@@ -345,31 +291,31 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
       )
     if (type.includes('crypto_trace_provider'))
       return (
-        <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-bold">
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-accent/20 text-accent font-bold">
           PROVIDER CONF
         </span>
       )
     if (type.includes('crypto_trace_evp'))
       return (
-        <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-bold">
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-tertiary/20 text-tertiary font-bold">
           EVP OP
         </span>
       )
     if (type.includes('crypto_trace_coder'))
       return (
-        <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 font-bold">
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-warning/20 text-warning font-bold">
           CODEC
         </span>
       )
     if (type.includes('crypto_trace_init'))
       return (
-        <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-500/20 text-slate-400 font-bold">
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-bold">
           INIT
         </span>
       )
     if (type.includes('crypto_trace'))
       return (
-        <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-400/70 font-bold">
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-warning/10 text-warning/70 font-bold">
           INTERNAL
         </span>
       )
@@ -384,13 +330,6 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
-
-  // This part of the diff seems to belong to a parent component or a different context.
-  // I'm integrating the button changes into the existing CryptoLogDisplay header.
-  // The `view` state and `handleCopyProtocol` are not defined in this component,
-  // so I'm assuming the user wants to replace the existing copy button with the new structure.
-  // Given the context, I'll assume the `Lock` icon is for the main crypto log copy,
-  // and the `view === 'protocol'` part is a separate feature not directly in this component.
 
   return (
     <div className="flex flex-col h-full">
@@ -469,8 +408,8 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
                                 className={clsx(
                                   'text-[9px] px-1.5 py-0.5 rounded font-bold uppercase',
                                   info.isEncrypted
-                                    ? 'bg-purple-500/20 text-purple-400'
-                                    : 'bg-blue-500/20 text-blue-400'
+                                    ? 'bg-secondary/20 text-secondary'
+                                    : 'bg-primary/20 text-primary'
                                 )}
                               >
                                 {info.badge}

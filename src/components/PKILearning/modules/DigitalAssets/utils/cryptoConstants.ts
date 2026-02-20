@@ -24,7 +24,7 @@ export const CRYPTO_TOOLTIPS = {
   pbkdf2: {
     title: 'PBKDF2 (Password-Based Key Derivation Function 2)',
     description:
-      'Derives a secure cryptographic key from a password (seed) and salt. It applies a hash function (like HMAC-SHA256) many times to slow down brute-force attacks.',
+      'Derives a secure cryptographic key from a password (seed) and salt. It applies a hash function (HMAC-SHA512 in BIP39) many times to slow down brute-force attacks.',
   },
   ripemd160: {
     title: 'RIPEMD-160',
@@ -85,7 +85,7 @@ export const CRYPTO_TOOLTIPS = {
   eddsa: {
     title: 'EdDSA',
     description:
-      'Edwards-curve Digital Signature Algorithm. Used by Solana. Faster and more secure than ECDSA.',
+      'Edwards-curve Digital Signature Algorithm. Used by Solana. Faster than ECDSA with stronger resistance to implementation errors (deterministic nonces, side-channel resistance).',
   },
 
   // Ethereum Specific
@@ -144,6 +144,23 @@ export const CRYPTO_TOOLTIPS = {
       'Common gas price unit (1 gwei = 10^9 wei = 0.000000001 ETH). Pronounced "giga-wei". Typical gas prices range from 1-100 gwei.',
   },
 
+  // PQC / Quantum Threats
+  shors: {
+    title: "Shor's Algorithm",
+    description:
+      'A quantum algorithm that efficiently solves the discrete logarithm problem, breaking ECDSA (secp256k1) and EdDSA (Ed25519). Requires a cryptographically relevant quantum computer (CRQC) with thousands of logical qubits.',
+  },
+  hndl: {
+    title: 'Harvest Now, Decrypt Later (HNDL)',
+    description:
+      'An attack strategy where adversaries collect encrypted data or exposed public keys today, intending to break them once quantum computers become available. On-chain data is immutable, making blockchain especially vulnerable.',
+  },
+  qday: {
+    title: 'Q-Day',
+    description:
+      'The hypothetical future date when a quantum computer becomes powerful enough to break current public-key cryptography (RSA, ECDSA, EdDSA). Estimates range from 2030 to 2040+.',
+  },
+
   // Bitcoin Address Types
   p2pkh: {
     title: 'P2PKH (Pay-to-Public-Key-Hash)',
@@ -183,28 +200,28 @@ export const BITCOIN_FLOW_STEPS: FlowStep[] = [
     label: 'SHA-256',
     icon: 'Hash',
     description: 'First hash',
-    color: 'text-blue-400',
+    color: 'text-primary',
   },
   {
     id: 'ripemd160',
     label: 'RIPEMD-160',
     icon: 'Hash',
     description: 'Second hash',
-    color: 'text-green-400',
+    color: 'text-success',
   },
   {
     id: 'base58check',
     label: 'Base58Check',
     icon: 'Binary',
     description: 'With checksum',
-    color: 'text-yellow-400',
+    color: 'text-warning',
   },
   {
     id: 'address',
     label: 'Address',
     icon: 'Wallet',
-    description: '1... or bc1...',
-    color: 'text-yellow-400',
+    description: '1... (P2PKH)',
+    color: 'text-warning',
   },
 ]
 
@@ -228,28 +245,28 @@ export const ETHEREUM_FLOW_STEPS: FlowStep[] = [
     label: 'Keccak-256',
     icon: 'Hash',
     description: 'NOT SHA3-256!',
-    color: 'text-purple-400',
+    color: 'text-accent',
   },
   {
     id: 'last20',
     label: 'Last 20 Bytes',
     icon: 'Scissors',
     description: 'Take suffix',
-    color: 'text-blue-400',
+    color: 'text-primary',
   },
   {
     id: 'checksum',
     label: 'EIP-55 Checksum',
     icon: 'CheckCircle',
     description: 'Mixed case',
-    color: 'text-blue-400',
+    color: 'text-primary',
   },
   {
     id: 'address',
     label: 'Address',
     icon: 'Wallet',
     description: '0x...',
-    color: 'text-blue-400',
+    color: 'text-primary',
   },
 ]
 
@@ -273,14 +290,14 @@ export const SOLANA_FLOW_STEPS: FlowStep[] = [
     label: 'Base58',
     icon: 'Binary',
     description: 'Direct encoding',
-    color: 'text-purple-400',
+    color: 'text-accent',
   },
   {
     id: 'address',
     label: 'Address',
     icon: 'Wallet',
     description: 'Base58 string',
-    color: 'text-purple-400',
+    color: 'text-accent',
   },
 ]
 
@@ -304,28 +321,28 @@ export const HD_WALLET_FLOW_STEPS: FlowStep[] = [
     label: 'Seed',
     icon: 'Sprout',
     description: '512 bits (PBKDF2)',
-    color: 'text-green-400',
+    color: 'text-success',
   },
   {
     id: 'master',
     label: 'Master Key',
     icon: 'KeyRound',
     description: 'Root of tree',
-    color: 'text-yellow-400',
+    color: 'text-warning',
   },
   {
     id: 'derive',
     label: 'Derivation',
     icon: 'GitBranch',
     description: 'BIP32/SLIP-0010',
-    color: 'text-blue-400',
+    color: 'text-primary',
   },
   {
     id: 'addresses',
     label: 'Addresses',
     icon: 'Wallet',
     description: 'BTC, ETH, SOL',
-    color: 'text-purple-400',
+    color: 'text-accent',
   },
 ]
 

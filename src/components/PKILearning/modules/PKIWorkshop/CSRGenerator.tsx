@@ -86,42 +86,42 @@ const ALGORITHMS: AlgorithmOption[] = [
     name: 'ML-DSA-44 (Dilithium)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm ml-dsa-44',
-    keySizeLabel: 'Level 2',
+    keySizeLabel: 'Category 2',
   },
   {
     id: 'mldsa65',
     name: 'ML-DSA-65 (Dilithium)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm ml-dsa-65',
-    keySizeLabel: 'Level 3',
+    keySizeLabel: 'Category 3',
   },
   {
     id: 'slhdsa128s',
     name: 'SLH-DSA-SHA2-128s (SPHINCS+)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-128s',
-    keySizeLabel: 'Level 1 (small sig)',
+    keySizeLabel: 'Category 1 (small sig)',
   },
   {
     id: 'slhdsa128f',
     name: 'SLH-DSA-SHA2-128f (SPHINCS+)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-128f',
-    keySizeLabel: 'Level 1 (fast sign)',
+    keySizeLabel: 'Category 1 (fast sign)',
   },
   {
     id: 'slhdsa192s',
     name: 'SLH-DSA-SHA2-192s (SPHINCS+)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-192s',
-    keySizeLabel: 'Level 3 (small sig)',
+    keySizeLabel: 'Category 3 (small sig)',
   },
   {
     id: 'slhdsa192f',
     name: 'SLH-DSA-SHA2-192f (SPHINCS+)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-192f',
-    keySizeLabel: 'Level 3 (fast sign)',
+    keySizeLabel: 'Category 3 (fast sign)',
   },
 ]
 
@@ -330,6 +330,11 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
     }
   }
 
+  // Sanitize attribute values for OpenSSL config file interpolation
+  const escapeConfigValue = (value: string): string => {
+    return value.replace(/\\/g, '\\\\').replace(/\n/g, '').replace(/\r/g, '')
+  }
+
   const handleGenerate = async () => {
     setIsGenerating(true)
     setOutput('')
@@ -448,19 +453,20 @@ distinguished_name = dn
       attributes
         .filter((a) => a.enabled && a.elementType === 'SubjectRDN')
         .forEach((a) => {
+          const safeValue = escapeConfigValue(a.value)
           if (KNOWN_OIDS[a.id]) {
             // Known OID: use the standard name (e.g. organizationIdentifier)
-            configContent += `${KNOWN_OIDS[a.id]} = ${a.value}\n`
+            configContent += `${KNOWN_OIDS[a.id]} = ${safeValue}\n`
             // eslint-disable-next-line security/detect-unsafe-regex
           } else if (/^\d+(\.\d+)+$/.test(a.id)) {
             // Custom numeric OID: use the alias defined in new_oids
             const custom = customOids.find((o) => o.oid === a.id)
             if (custom) {
-              configContent += `${custom.name} = ${a.value}\n`
+              configContent += `${custom.name} = ${safeValue}\n`
             }
           } else {
             // Standard name (CN, O, etc.)
-            configContent += `${a.id} = ${a.value}\n`
+            configContent += `${a.id} = ${safeValue}\n`
           }
         })
 
@@ -469,7 +475,7 @@ distinguished_name = dn
         attributes
           .filter((a) => a.enabled && a.elementType === 'Extension')
           .forEach((a) => {
-            configContent += `${a.label} = ${a.value}\n`
+            configContent += `${a.label} = ${escapeConfigValue(a.value)}\n`
           })
       }
 
@@ -479,6 +485,18 @@ distinguished_name = dn
       }
 
       setOutput((prev) => prev + `Generated Config:\n${configContent}\n`)
+
+      // Detect PQC algorithm and add educational note about default_md
+      const algoId = selectedKeyId.startsWith('new-') ? selectedKeyId.replace('new-', '') : ''
+      const isPqcAlgo = algoId.startsWith('mldsa') || algoId.startsWith('slhdsa')
+      if (isPqcAlgo) {
+        const algoObj = ALGORITHMS.find((a) => a.id === algoId)
+        setOutput(
+          (prev) =>
+            prev +
+            `  Note: default_md = sha256 is set for OpenSSL compatibility, but ${algoObj?.name || 'this PQC algorithm'} uses its own internal hash function. SHA-256 is NOT the signature hash for this algorithm.\n\n`
+        )
+      }
 
       const timestamp = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14)
       const csrName = `pkiworkshop_${timestamp}.csr`

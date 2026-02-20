@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Eye,
   Code,
+  ShieldCheck,
 } from 'lucide-react'
 import { openSSLService } from '../../../../services/crypto/OpenSSLService'
 import { useModuleStore } from '../../../../store/useModuleStore'
@@ -24,8 +25,10 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
   const csrs = useModuleStore((state) => state.artifacts.csrs)
   const allCertificates = useModuleStore((state) => state.artifacts.certificates)
 
-  const rootCAs = allCertificates.filter((c) => c.tags?.includes('root-ca'))
-  const certificates = allCertificates.filter((c) => !c.tags?.includes('root-ca'))
+  const rootCAs = allCertificates.filter((c) => c.tags?.includes('root') && c.tags?.includes('ca'))
+  const certificates = allCertificates.filter(
+    (c) => !(c.tags?.includes('root') && c.tags?.includes('ca'))
+  )
 
   const [certInput, setCertInput] = useState('')
   const [selectedArtifactId, setSelectedArtifactId] = useState('')
@@ -40,6 +43,59 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     format: string
   } | null>(null)
   const [viewMode, setViewMode] = useState<'tree' | 'raw'>('tree')
+  const [isVerifying, setIsVerifying] = useState(false)
+  const [verifyResult, setVerifyResult] = useState<{
+    success: boolean
+    message: string
+  } | null>(null)
+
+  // Check if selected artifact is a non-Root-CA certificate (eligible for chain verification)
+  const selectedIsEndEntity = Boolean(
+    selectedArtifactId && certificates.find((c) => c.id === selectedArtifactId)
+  )
+  const canVerifyChain = selectedIsEndEntity && rootCAs.length > 0
+
+  const handleVerifyChain = async () => {
+    if (!canVerifyChain) return
+
+    setIsVerifying(true)
+    setVerifyResult(null)
+    setError(null)
+
+    try {
+      const cert = certificates.find((c) => c.id === selectedArtifactId)
+      const rootCA = rootCAs[0] // Use first available Root CA
+
+      if (!cert || !rootCA) return
+
+      const certFile = { name: 'cert.pem', data: new TextEncoder().encode(cert.pem) }
+      const caFile = { name: 'ca.pem', data: new TextEncoder().encode(rootCA.pem) }
+
+      const result = await openSSLService.execute('openssl verify -CAfile ca.pem cert.pem', [
+        certFile,
+        caFile,
+      ])
+
+      if (result.error || result.stdout.includes('error')) {
+        setVerifyResult({
+          success: false,
+          message: `Chain verification failed: ${result.stderr || result.stdout}`,
+        })
+      } else {
+        setVerifyResult({
+          success: true,
+          message: `Chain verified: ${cert.name} is signed by ${rootCA.name}`,
+        })
+      }
+    } catch (err) {
+      setVerifyResult({
+        success: false,
+        message: err instanceof Error ? err.message : 'Verification failed',
+      })
+    } finally {
+      setIsVerifying(false)
+    }
+  }
 
   // Collapsible tree node component
   const TreeNode: React.FC<{
@@ -200,6 +256,7 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     setSelectedArtifactId(id)
     setParsedOutput(null)
     setConversionResult(null)
+    setVerifyResult(null)
     setError(null)
 
     if (!id) {
@@ -474,6 +531,39 @@ AL9... (truncated for brevity) ...
               </button>
             </div>
           </div>
+
+          {canVerifyChain && (
+            <button
+              onClick={handleVerifyChain}
+              disabled={isVerifying}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
+              title="Verify this certificate's trust chain against the Root CA"
+            >
+              {isVerifying ? (
+                <Loader2 className="animate-spin" size={16} />
+              ) : (
+                <ShieldCheck size={16} />
+              )}
+              Verify Chain Against Root CA
+            </button>
+          )}
+
+          {verifyResult && (
+            <div
+              className={`rounded p-3 flex items-start gap-2 text-sm ${
+                verifyResult.success
+                  ? 'bg-success/10 border border-success/30 text-success'
+                  : 'bg-destructive/10 border border-destructive/30 text-destructive'
+              }`}
+            >
+              {verifyResult.success ? (
+                <Check size={16} className="shrink-0 mt-0.5" />
+              ) : (
+                <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+              )}
+              <span>{verifyResult.message}</span>
+            </div>
+          )}
 
           {error && (
             <div className="bg-destructive/10 border border-destructive/30 rounded p-3 flex items-start gap-2 text-destructive text-sm">

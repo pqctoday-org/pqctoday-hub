@@ -13,6 +13,7 @@ interface ModuleState extends LearningProgress {
   saveProgress: () => void
   loadProgress: (progress: LearningProgress) => void
   resetProgress: () => void
+  resetModuleProgress: (moduleId: string) => void
   getFullProgress: () => LearningProgress
   addKey: (key: LearningProgress['artifacts']['keys'][0]) => void
   addCertificate: (cert: LearningProgress['artifacts']['certificates'][0]) => void
@@ -151,6 +152,25 @@ export const useModuleStore = create<ModuleState>()(
 
       resetProgress: () => set(INITIAL_STATE),
 
+      resetModuleProgress: (moduleId) =>
+        set((state) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [moduleId]: _removed, ...remainingModules } = state.modules
+          return {
+            modules: {
+              ...remainingModules,
+              [moduleId]: {
+                status: 'not-started',
+                lastVisited: Date.now(),
+                timeSpent: 0,
+                completedSteps: [],
+                quizScores: {},
+              },
+            },
+            timestamp: Date.now(),
+          }
+        }),
+
       getFullProgress: () => {
         const {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -159,6 +179,8 @@ export const useModuleStore = create<ModuleState>()(
           loadProgress: _loadProgress,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           resetProgress: _resetProgress,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          resetModuleProgress: _resetModuleProgress,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           getFullProgress: _getFullProgress,
           ...data

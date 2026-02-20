@@ -1091,7 +1091,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     ],
     correctAnswer: 'true',
     explanation:
-      'True. Signal upgraded its protocol to include PQXDH (Post-Quantum Extended Diffie-Hellman) using ML-KEM for quantum-resistant key agreement, making it one of the first major messaging platforms to adopt PQC.',
+      'True. Signal upgraded its protocol to include PQXDH (Post-Quantum Extended Diffie-Hellman) using CRYSTALS-Kyber (now standardized as ML-KEM) for quantum-resistant key agreement, making it one of the first major messaging platforms to adopt PQC.',
     learnMorePath: '/timeline',
   },
   {

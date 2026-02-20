@@ -84,6 +84,10 @@ export const PKIWorkshop: React.FC = () => {
           <p className="text-muted-foreground text-sm md:text-base">
             Master the certificate lifecycle in 4 practical steps.
           </p>
+          <p className="text-xs text-muted-foreground/60 mt-1">
+            Learning sandbox — private keys are stored in your browser and should not be used in
+            production.
+          </p>
         </div>
         <button
           onClick={handleReset}

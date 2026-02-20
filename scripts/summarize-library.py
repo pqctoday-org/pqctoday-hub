@@ -2,11 +2,15 @@
 """
 scripts/summarize-library.py
 
-Generates structured 2-page markdown summaries + PNG previews for all downloaded library documents.
+Generates structured markdown summaries + PNG previews for all downloaded library documents.
 - Metadata from CSV
 - Text extracted via pdftotext / html.parser
+- Author names from <meta name="citation_author"> tags (HTML) or CSV fallback (PDF)
+- PQC risk profile: Harvest Now/Decrypt Later, Identity & Authentication, Digital Signature Integrity
+- Short description from CSV (already curated)
+- Long description (~600 words) from extracted document text
 - PNG previews for PDFs only (via pdftoppm)
-- Cost: $0 (no API calls)
+- Cost: $0 (no API calls, no web fetching)
 
 Usage:
   python3 scripts/summarize-library.py
@@ -56,17 +60,35 @@ class HTMLTextExtractor(HTMLParser):
         return ' '.join(self.text)
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Author extraction
+# ──────────────────────────────────────────────────────────────────────────────
+
+def extract_authors_from_html(html_path):
+    """Extract individual author names from <meta name='citation_author'> tags (IETF/RFC pattern)."""
+    try:
+        with open(html_path, 'r', encoding='utf-8', errors='ignore') as f:
+            # Only need the head section — first 20 KB is plenty
+            content = f.read(20000)
+        authors = re.findall(
+            r'<meta\s+name=["\']citation_author["\']\s+content=["\'](.*?)["\']',
+            content, re.IGNORECASE
+        )
+        return [a.strip() for a in authors if a.strip()]
+    except Exception:
+        return []
+
+# ──────────────────────────────────────────────────────────────────────────────
 # Text extraction
 # ──────────────────────────────────────────────────────────────────────────────
 
-def extract_text_from_pdf(pdf_path, max_lines=500):
-    """Extract text from first 3 pages of PDF using pdftotext."""
+def extract_text_from_pdf(pdf_path, max_lines=1000):
+    """Extract text from entire PDF using pdftotext (no page limit)."""
     try:
         result = subprocess.run(
-            ['pdftotext', '-l', '3', str(pdf_path), '-'],
+            ['pdftotext', str(pdf_path), '-'],
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=30
         )
         if result.returncode == 0:
             lines = result.stdout.strip().split('\n')[:max_lines]
@@ -75,7 +97,7 @@ def extract_text_from_pdf(pdf_path, max_lines=500):
         print(f"  ⚠ pdftotext failed for {pdf_path.name}: {e}")
     return ""
 
-def extract_text_from_html(html_path, max_chars=2000):
+def extract_text_from_html(html_path, max_chars=12000):
     """Extract text from HTML file using html.parser."""
     try:
         with open(html_path, 'r', encoding='utf-8', errors='ignore') as f:
@@ -91,12 +113,11 @@ def extract_text_from_html(html_path, max_chars=2000):
 # Clean extracted text
 # ──────────────────────────────────────────────────────────────────────────────
 
-def clean_text(text, max_words=300):
+def clean_text(text):
     """
     Clean extracted text:
     - Collapse whitespace
     - Remove common boilerplate
-    - Limit to first N words
     """
     # Collapse whitespace
     text = ' '.join(text.split())
@@ -105,16 +126,93 @@ def clean_text(text, max_words=300):
     boilerplate = [
         r'^\s*confidential\s*',
         r'^\s*draft\s*',
-        r'^\s*[a-z0-9\.\-]+@',  # email addresses
-        r'©.*?$',  # copyright
-        r'page\s+\d+\s+of\s+\d+',  # page numbers
+        r'[a-z0-9.\-]+@[a-z0-9.\-]+',  # email addresses
+        r'©.*?(?=\s)',                   # copyright notices
+        r'page\s+\d+\s+of\s+\d+',       # page numbers
     ]
     for pattern in boilerplate:
         text = re.sub(pattern, '', text, flags=re.IGNORECASE | re.MULTILINE)
 
-    # Limit to first N words
-    words = text.split()[:max_words]
+    return ' '.join(text.split())  # re-collapse after substitutions
+
+def generate_long_description(extracted_text, target_words=600):
+    """Return cleaned text trimmed to target_words (min 500, max 700)."""
+    cleaned = clean_text(extracted_text)
+    words = cleaned.split()
+    count = min(max(len(words), 0), target_words)
+    return ' '.join(words[:count])
+
+def generate_short_excerpt(extracted_text, max_words=80):
+    """Return first max_words words of cleaned text as the trailing excerpt."""
+    cleaned = clean_text(extracted_text)
+    words = cleaned.split()[:max_words]
     return ' '.join(words)
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PQC Risk Profile
+# ──────────────────────────────────────────────────────────────────────────────
+
+def assess_pqc_risks(row, extracted_text):
+    """
+    Assess three PQC-specific threat models using keyword matching against
+    extracted document text, protocol impact, and algorithm family fields.
+    Returns (hndl_text, identity_text, sig_text).
+    """
+    combined = (
+        extracted_text + ' ' +
+        row.get('ProtocolOrToolImpact', '') + ' ' +
+        row.get('AlgorithmFamily', '') + ' ' +
+        row.get('document_type', '') + ' ' +
+        row.get('short_description', '')
+    ).lower()
+
+    # 1. Harvest Now, Decrypt Later (HNDL) — key exchange / encryption docs
+    hndl_kw = [
+        'key encapsulation', 'kem', 'key exchange', 'key agreement',
+        'encryption', 'tls', 'quic', 'ssh ', 'ecdhe', 'ecdh', ' dh ',
+        'hybrid key', 'public-key encryption', 'public key encryption',
+        'key establishment', 'key transport', 'key wrap',
+    ]
+    hndl = any(k in combined for k in hndl_kw)
+
+    # 2. Identity & Authentication Integrity — PKI, certs, identity docs
+    identity_kw = [
+        'certificate', 'pki', 'x.509', 'identity', 'authentication',
+        'tls client', 'mutual auth', 'trust store', 'credential',
+        'access control', 'ca/', 'ca ', 'root ca', 'code signing',
+        'trust anchor', 'revocation',
+    ]
+    identity = any(k in combined for k in identity_kw)
+
+    # 3. Digital Signature Integrity — signing docs
+    sig_kw = [
+        'digital signature', 'ml-dsa', 'slh-dsa', 'xmss', 'lms',
+        'sphincs', 'hash-based signature', 'dsa ', 'signing',
+        'signature scheme', 'falcon', 'dilithium', 'fips 204', 'fips 205',
+        'firmware', 'software signing', 'document signing',
+    ]
+    sig = any(k in combined for k in sig_kw)
+
+    hndl_text = (
+        "**HIGH** — Encrypted data captured today can be decrypted by a future "
+        "quantum computer (harvest-now-decrypt-later attack). Adopting this "
+        "specification is critical to protect long-lived confidential data."
+        if hndl else "Not directly addressed by this document."
+    )
+    identity_text = (
+        "**HIGH** — A quantum-capable adversary could forge certificates or "
+        "impersonate identities protected by classical public-key cryptography. "
+        "Migration to PQC-safe PKI and authentication systems is essential."
+        if identity else "Not directly addressed by this document."
+    )
+    sig_text = (
+        "**HIGH** — Classical digital signatures (RSA, ECDSA) are vulnerable to "
+        "quantum forgery. Code signing, firmware integrity, and legally binding "
+        "digital signatures depend on adopting post-quantum signature schemes."
+        if sig else "Not directly addressed by this document."
+    )
+
+    return hndl_text, identity_text, sig_text
 
 # ──────────────────────────────────────────────────────────────────────────────
 # PNG generation for PDFs
@@ -149,8 +247,8 @@ def generate_png_from_pdf(pdf_path, output_dir):
 # Markdown generation
 # ──────────────────────────────────────────────────────────────────────────────
 
-def generate_markdown(row, extracted_text, has_png=False):
-    """Generate structured markdown from CSV row + extracted text."""
+def generate_markdown(row, extracted_text, author_names, has_png=False):
+    """Generate structured markdown from CSV row + extracted text + author names."""
 
     ref_id = row.get('reference_id', '').strip()
     title = row.get('document_title', '').strip()
@@ -170,8 +268,20 @@ def generate_markdown(row, extracted_text, has_png=False):
     deps = row.get('dependencies', '').strip()
     local_file = row.get('local_file', '').strip()
 
-    # Clean extracted text
-    intro = clean_text(extracted_text, max_words=300)
+    # Authors block
+    if author_names:
+        authors_line = f"**Authors:** {', '.join(author_names)}\n**Organization:** {org}"
+    else:
+        authors_line = f"**Organization:** {org}"
+
+    # PQC risk profile
+    hndl_text, identity_text, sig_text = assess_pqc_risks(row, extracted_text)
+
+    # Long description (600 words from document text)
+    long_desc = generate_long_description(extracted_text, target_words=600)
+
+    # Short excerpt for trailing italic (80 words)
+    excerpt = generate_short_excerpt(extracted_text, max_words=80)
 
     # Build markdown with YAML frontmatter
     md = f"""---
@@ -192,8 +302,8 @@ local_file: {local_file}
 
 # {title}
 
-## Author & Organization
-**Organization:** {org}
+## Authors
+{authors_line}
 
 ## Scope
 **Industries:** {industries}
@@ -205,9 +315,14 @@ local_file: {local_file}
 
 **Dependencies:** {deps}
 
-## Risks Addressed
+## PQC Risk Profile
+**Harvest Now, Decrypt Later:** {hndl_text}
+
+**Identity & Authentication Integrity:** {identity_text}
+
+**Digital Signature Integrity:** {sig_text}
+
 **Migration urgency:** {urgency}
-**Security levels:** {sec_levels}
 
 ## PQC Key Types & Mechanisms
 | Field | Value |
@@ -217,12 +332,15 @@ local_file: {local_file}
 | Protocol / tool impact | {protocol_impact} |
 | Toolchain support | {toolchain} |
 
-## Description
+## Short Description
 {short_desc}
+
+## Long Description
+{long_desc}
 
 ---
 
-*{intro}*
+*{excerpt}*
 """
 
     return md
@@ -278,15 +396,21 @@ def main():
             print(f"⚠  {basename}: no CSV entry found")
             continue
 
+        is_pdf = file_path.suffix == '.pdf'
+
         # Extract text
-        if file_path.suffix == '.pdf':
+        if is_pdf:
             extracted = extract_text_from_pdf(file_path)
+            author_names = []  # PDFs: org-level only, use CSV field
         else:
             extracted = extract_text_from_html(file_path)
+            author_names = extract_authors_from_html(file_path)
+
+        if author_names:
+            print(f"  👤 {basename}: {len(author_names)} author(s) found")
 
         # Generate markdown
-        is_pdf = file_path.suffix == '.pdf'
-        md = generate_markdown(row, extracted, has_png=is_pdf)
+        md = generate_markdown(row, extracted, author_names, has_png=is_pdf)
 
         # Write markdown
         md_path = LIBRARY_DIR / f"{basename}.md"

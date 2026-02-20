@@ -12,7 +12,7 @@ preview: ANSSI PQC Follow-up Paper.png
 
 # ANSSI Views on Post-Quantum Cryptography Transition (2023 Follow-up)
 
-## Author & Organization
+## Authors
 
 **Organization:** ANSSI France
 
@@ -28,10 +28,15 @@ French national security systems
 
 **Dependencies:** NIST PQC; ANSSI 2022
 
-## Risks Addressed
+## PQC Risk Profile
+
+**Harvest Now, Decrypt Later:** Not directly addressed by this document.
+
+**Identity & Authentication Integrity:** Not directly addressed by this document.
+
+**Digital Signature Integrity:** Not directly addressed by this document.
 
 **Migration urgency:** High
-**Security levels:** L5 recommended
 
 ## PQC Key Types & Mechanisms
 
@@ -42,9 +47,11 @@ French national security systems
 | Protocol / tool impact | French national security systems |
 | Toolchain support      | French agencies                  |
 
-## Description
+## Short Description
 
 Updated guidance on hybridization requirements and timeline phases through 2030+.
+
+## Long Description
 
 ---
 

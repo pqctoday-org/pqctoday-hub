@@ -11,7 +11,7 @@ local_file: public/library/ENISA_PQC_Guidelines.html
 
 # Post-Quantum Cryptography: Current State and Quantum Mitigation
 
-## Author & Organization
+## Authors
 
 **Organization:** ENISA
 
@@ -27,10 +27,15 @@ European PQC strategy
 
 **Dependencies:** NIST PQC; ETSI
 
-## Risks Addressed
+## PQC Risk Profile
+
+**Harvest Now, Decrypt Later:** Not directly addressed by this document.
+
+**Identity & Authentication Integrity:** Not directly addressed by this document.
+
+**Digital Signature Integrity:** Not directly addressed by this document.
 
 **Migration urgency:** High
-**Security levels:** N/A
 
 ## PQC Key Types & Mechanisms
 
@@ -41,9 +46,13 @@ European PQC strategy
 | Protocol / tool impact | European PQC strategy |
 | Toolchain support      | EU organizations      |
 
-## Description
+## Short Description
 
 ENISA recommendations on PQC adoption strategy for European organizations.
+
+## Long Description
+
+by the European Union Agency for Cybersecurity ENISA is an agency of the European Union Go to top
 
 ---
 

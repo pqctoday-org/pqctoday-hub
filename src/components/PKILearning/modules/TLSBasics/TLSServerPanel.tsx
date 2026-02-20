@@ -23,7 +23,6 @@ const CIPHER_SUITES = [
 const CLASSICAL_GROUPS = ['X25519', 'P-256', 'P-384', 'P-521']
 const PQC_GROUPS = ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024']
 const HYBRID_GROUPS = ['X25519MLKEM768', 'SecP256r1MLKEM768']
-const GROUPS = [...CLASSICAL_GROUPS, ...PQC_GROUPS, ...HYBRID_GROUPS]
 
 const SIG_ALGS = [
   // PQC - ML-DSA (Dilithium)
@@ -137,7 +136,7 @@ export const TLSServerPanel: React.FC = () => {
               isConnected ? 'bg-success animate-pulse' : 'bg-tertiary'
             )}
           />
-          Server Config{' '}
+          TLS Server{' '}
           {isConnected && (
             <span className="text-xs font-normal text-success bg-success/10 px-2 py-0.5 rounded ml-2">
               Active
@@ -373,7 +372,7 @@ export const TLSServerPanel: React.FC = () => {
                   onChange={(e) => setServerConfig({ verifyClient: e.target.checked })}
                 />
                 <label htmlFor="verifyClient" className="text-sm font-medium cursor-pointer">
-                  Request Client Certificate (mTLS)
+                  Require Client Certificate (mTLS)
                 </label>
               </div>
 
@@ -466,23 +465,72 @@ export const TLSServerPanel: React.FC = () => {
             {/* Supported Groups */}
             <div>
               <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 block">
-                Supported Groups
+                Key Exchange Groups
               </span>
-              <div className="flex flex-wrap gap-2">
-                {GROUPS.map((group) => (
-                  <button
-                    key={group}
-                    onClick={() => toggleGroup(group)}
-                    className={clsx(
-                      'px-3 py-1.5 rounded-md text-sm font-mono border transition-all',
-                      serverConfig.groups.includes(group)
-                        ? 'bg-tertiary/10 border-tertiary/50 text-foreground'
-                        : 'bg-muted border-border text-muted-foreground hover:border-border/80'
-                    )}
-                  >
-                    {group}
-                  </button>
-                ))}
+
+              {/* Classical */}
+              <div className="mb-3">
+                <span className="text-xs text-muted-foreground mb-2 block">Classical (ECDH)</span>
+                <div className="flex flex-wrap gap-2">
+                  {CLASSICAL_GROUPS.map((group) => (
+                    <button
+                      key={group}
+                      onClick={() => toggleGroup(group)}
+                      className={clsx(
+                        'px-3 py-1.5 rounded-md text-sm font-mono border transition-all',
+                        serverConfig.groups.includes(group)
+                          ? 'bg-tertiary/10 border-tertiary/50 text-foreground'
+                          : 'bg-muted border-border text-muted-foreground hover:border-border/80'
+                      )}
+                    >
+                      {group}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* PQC */}
+              <div className="mb-3">
+                <span className="text-xs text-muted-foreground mb-2 block">PQC (ML-KEM)</span>
+                <div className="flex flex-wrap gap-2">
+                  {PQC_GROUPS.map((group) => (
+                    <button
+                      key={group}
+                      onClick={() => toggleGroup(group)}
+                      className={clsx(
+                        'px-3 py-1.5 rounded-md text-sm font-mono border transition-all',
+                        serverConfig.groups.includes(group)
+                          ? 'bg-success/20 border-success/50 text-foreground'
+                          : 'bg-muted border-border text-muted-foreground hover:border-border/80'
+                      )}
+                    >
+                      {group}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Hybrid */}
+              <div>
+                <span className="text-xs text-muted-foreground mb-2 block">
+                  Hybrid (Classical + PQC)
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {HYBRID_GROUPS.map((group) => (
+                    <button
+                      key={group}
+                      onClick={() => toggleGroup(group)}
+                      className={clsx(
+                        'px-3 py-1.5 rounded-md text-sm font-mono border transition-all',
+                        serverConfig.groups.includes(group)
+                          ? 'bg-warning/20 border-warning/50 text-foreground'
+                          : 'bg-muted border-border text-muted-foreground hover:border-border/80'
+                      )}
+                    >
+                      {group}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 

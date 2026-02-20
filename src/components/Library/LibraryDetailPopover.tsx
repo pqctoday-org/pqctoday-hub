@@ -3,8 +3,6 @@ import { createPortal } from 'react-dom'
 import type { LibraryItem } from '../../data/libraryData'
 import { useEffect, useRef, useState } from 'react'
 import FocusLock from 'react-focus-lock'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 
 interface LibraryDetailPopoverProps {
   isOpen: boolean
@@ -12,52 +10,8 @@ interface LibraryDetailPopoverProps {
   item: LibraryItem | null
 }
 
-interface ParsedSummary {
-  sections: Record<string, string>
-  extractedText: string
-  pngUrl: string
-}
-
-function parseMarkdownSummary(text: string, stem: string): ParsedSummary {
-  // Strip YAML frontmatter (content between first two --- delimiters)
-  const parts = text.split(/^---\s*$/m)
-  const body = parts.length >= 3 ? parts.slice(2).join('---').trim() : text
-
-  // Extract trailing italic excerpt — find the last --- thematic break and take
-  // everything after it. Prettier converts *text* → _text_ so handle both delimiters.
-  const separatorIdx = body.lastIndexOf('\n---')
-  let extractedText = ''
-  let bodyWithoutExcerpt = body
-
-  if (separatorIdx !== -1) {
-    const afterSeparator = body
-      .slice(separatorIdx)
-      .replace(/^[\n-]+/, '')
-      .trim()
-    // Strip surrounding * or _ italic markers (both styles used by prettier)
-    const stripped = afterSeparator.replace(/^[*_]([\s\S]+?)[*_]$/, '$1').trim()
-    if (stripped && stripped !== afterSeparator) {
-      extractedText = stripped
-      bodyWithoutExcerpt = body.slice(0, separatorIdx).trim()
-    }
-  }
-
-  // Parse ## sections into a map
-  const sections: Record<string, string> = {}
-  const chunks = bodyWithoutExcerpt.split(/(?=^## )/m)
-  for (const chunk of chunks) {
-    const m = chunk.match(/^## (.+)$/m)
-    if (m) {
-      sections[m[1].trim()] = chunk.replace(/^## .+$/m, '').trim()
-    }
-  }
-
-  return { sections, extractedText, pngUrl: `/library/${stem}.png` }
-}
-
 export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
-  const [summary, setSummary] = useState<ParsedSummary | null>(null)
   const [pngVisible, setPngVisible] = useState(false)
 
   // Close on click outside
@@ -94,41 +48,23 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
     }
   }, [isOpen, onClose])
 
-  // Fetch markdown summary when item changes
+  // Reset PNG visibility when item changes
   useEffect(() => {
-    if (!isOpen || !item?.localFile) return
-
-    const stem = item.localFile
-      .split('/')
-      .pop()
-      ?.replace(/\.[^.]+$/, '')
-    if (!stem) return
-
-    let cancelled = false
-
-    fetch(`/library/${stem}.md`)
-      .then((r) => (r.ok ? r.text() : null))
-      .then((text) => {
-        if (!cancelled) setSummary(text ? parseMarkdownSummary(text, stem) : null)
-      })
-      .catch(() => {
-        if (!cancelled) setSummary(null)
-      })
-
     return () => {
-      cancelled = true
-      setSummary(null)
       setPngVisible(false)
     }
-  }, [isOpen, item])
+  }, [item])
 
   if (!isOpen || !item) return null
 
   const style: React.CSSProperties = { zIndex: 9999 }
 
-  const pqcSection = summary?.sections['How It Relates to PQC']
-  const mechanismsSection = summary?.sections['PQC Key Types & Mechanisms']
-  const excerptText = summary?.extractedText
+  // Derive PNG URL from localFile if available (e.g. "public/library/FIPS_203.pdf" → "/library/FIPS_203.png")
+  const stem = item.localFile
+    ?.split('/')
+    .pop()
+    ?.replace(/\.[^.]+$/, '')
+  const pngUrl = stem ? `/library/${stem}.png` : null
 
   const content = (
     // A-002: Focus trap for accessibility
@@ -165,10 +101,10 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
         {/* Scrollable Content */}
         <div className="p-4 overflow-y-auto space-y-4">
-          {/* PNG Preview — only if available */}
-          {summary && (
+          {/* PNG Preview — shown only if the file exists (onError hides it) */}
+          {pngUrl && (
             <img
-              src={summary.pngUrl}
+              src={pngUrl}
               alt={`First page preview of ${item.documentTitle}`}
               className={`w-full max-h-52 object-contain bg-muted/30 rounded-lg ${pngVisible ? 'block' : 'hidden'}`}
               onLoad={() => setPngVisible(true)}
@@ -265,39 +201,6 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
               </div>
             )}
           </div>
-
-          {pqcSection && (
-            <div>
-              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                How It Relates to PQC
-              </h4>
-              <div className="text-sm text-foreground leading-relaxed [&_strong]:font-semibold [&_p]:mb-1">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{pqcSection}</ReactMarkdown>
-              </div>
-            </div>
-          )}
-
-          {mechanismsSection && (
-            <div>
-              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                PQC Key Types & Mechanisms
-              </h4>
-              <div className="text-sm [&_table]:w-full [&_table]:border-collapse [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:text-muted-foreground [&_th]:uppercase [&_th]:tracking-wider [&_th]:py-1 [&_th]:pr-4 [&_td]:py-1 [&_td]:pr-4 [&_td]:text-foreground [&_tr]:border-b [&_tr]:border-border/50">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{mechanismsSection}</ReactMarkdown>
-              </div>
-            </div>
-          )}
-
-          {excerptText && (
-            <div className="pt-2 border-t border-border">
-              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                Document Excerpt
-              </h4>
-              <p className="text-xs italic text-muted-foreground line-clamp-4 leading-relaxed">
-                {excerptText}
-              </p>
-            </div>
-          )}
 
           {/* Download Link */}
           {item.downloadUrl && (

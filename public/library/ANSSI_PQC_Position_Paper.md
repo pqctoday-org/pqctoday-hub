@@ -12,7 +12,7 @@ preview: ANSSI PQC Position Paper.png
 
 # ANSSI Views on Post-Quantum Cryptography Transition
 
-## Author & Organization
+## Authors
 
 **Organization:** ANSSI France
 
@@ -28,10 +28,15 @@ French systems requiring long-term security
 
 **Dependencies:** NIST PQC
 
-## Risks Addressed
+## PQC Risk Profile
+
+**Harvest Now, Decrypt Later:** Not directly addressed by this document.
+
+**Identity & Authentication Integrity:** Not directly addressed by this document.
+
+**Digital Signature Integrity:** Not directly addressed by this document.
 
 **Migration urgency:** High
-**Security levels:** L5 recommended
 
 ## PQC Key Types & Mechanisms
 
@@ -42,9 +47,11 @@ French systems requiring long-term security
 | Protocol / tool impact | French systems requiring long-term security |
 | Toolchain support      | French government                           |
 
-## Description
+## Short Description
 
 French national guidance mandating hybrid approach for products requiring security beyond 2030.
+
+## Long Description
 
 ---
 

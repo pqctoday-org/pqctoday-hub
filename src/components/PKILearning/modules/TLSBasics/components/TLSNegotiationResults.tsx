@@ -6,6 +6,33 @@ import { useTLSStore } from '../../../../../store/tls-learning.store'
 import { CryptoLogDisplay } from './CryptoLogDisplay'
 import type { TraceEvent } from './CryptoLogDisplay'
 import { KeyColumn } from './KeyOverview'
+import {
+  DEFAULT_SERVER_CERT,
+  DEFAULT_CLIENT_CERT,
+  DEFAULT_MLDSA_SERVER_CERT,
+  DEFAULT_MLDSA_CLIENT_CERT,
+  DEFAULT_MLDSA87_SERVER_CERT,
+  DEFAULT_MLDSA87_CLIENT_CERT,
+} from '../utils/defaultCertificates'
+
+// Determine identity from certificate PEM (independent per side)
+const getIdentityFromCert = (certPem: string | undefined): string => {
+  if (!certPem) return 'None'
+  if (certPem === DEFAULT_MLDSA_SERVER_CERT || certPem === DEFAULT_MLDSA_CLIENT_CERT)
+    return 'ML-DSA-44'
+  if (certPem === DEFAULT_MLDSA87_SERVER_CERT || certPem === DEFAULT_MLDSA87_CLIENT_CERT)
+    return 'ML-DSA-87'
+  if (certPem === DEFAULT_SERVER_CERT || certPem === DEFAULT_CLIENT_CERT) return 'RSA-2048'
+  return 'Custom'
+}
+
+// Determine CA key type from the CA PEM used for verification
+const getCaTypeFromPem = (caPem: string | undefined): string => {
+  if (!caPem) return 'N/A'
+  if (caPem.includes('ML-DSA-87') || caPem.includes('mldsa87')) return 'ML-DSA-87'
+  if (caPem.includes('ML-DSA') || caPem.includes('mldsa')) return 'ML-DSA-44'
+  return 'RSA'
+}
 
 export const TLSNegotiationResults: React.FC = () => {
   const { results, clientConfig, serverConfig, addRunToHistory } = useTLSStore()
@@ -69,42 +96,24 @@ export const TLSNegotiationResults: React.FC = () => {
     const sigEvent = events.find((e) => e.details.includes('Peer Signature Algorithm:'))
     const signature = sigEvent?.details.match(/Peer Signature Algorithm: (.+)/)?.[1] || 'Unknown'
 
-    // Use the actual negotiated signature as the identity (signature from the peer certificate)
-    // Format it nicely - SHA256 usually means RSA-PSS, otherwise use the algorithm name directly
-    const formatSignature = (sig: string) => {
-      if (sig === 'SHA256') return 'RSA-PSS'
-      if (sig === 'SHA384') return 'RSA-PSS'
-      if (sig === 'SHA512') return 'RSA-PSS'
-      if (sig.includes('ecdsa')) return 'ECDSA'
-      return sig.toUpperCase()
-    }
+    // Determine identities independently from configured certificates
+    const serverIdentity = getIdentityFromCert(serverConfig.certificates.certPem)
+    const clientIdentity = serverConfig.verifyClient
+      ? getIdentityFromCert(clientConfig.certificates.certPem)
+      : 'N/A'
 
-    // Both client and server use the same signature type in the default certs
-    const identity = formatSignature(signature)
-
-    // Determine CA key type based on identity/signature
-    // Default certs: RSA-PSS/ECDSA use RSA CA
-    // ML-DSA uses matching ML-DSA CA level (44/65/87)
-    // If mTLS is disabled (verifyClient is false), Client CA should be N/A
-    const getCaType = (id: string) => {
-      if (id.includes('ML-DSA-44')) return 'ML-DSA-44'
-      if (id.includes('ML-DSA-65')) return 'ML-DSA-65'
-      if (id.includes('ML-DSA-87')) return 'ML-DSA-87'
-      if (id.includes('ML-DSA')) return 'ML-DSA-44' // Fallback
-      if (id === 'RSA-PSS' || id === 'ECDSA') return 'RSA'
-      return 'Unknown'
-    }
-
-    const serverCaKeyType = getCaType(identity)
-
-    const clientCaKeyType = serverConfig.verifyClient ? serverCaKeyType : 'N/A'
+    // Determine CA key types from the actual CA PEM used for verification
+    const serverCaKeyType = getCaTypeFromPem(clientConfig.certificates.caPem)
+    const clientCaKeyType = serverConfig.verifyClient
+      ? getCaTypeFromPem(serverConfig.certificates.caPem)
+      : 'N/A'
 
     addRunToHistory({
       cipher: negotiatedCipher || 'Unknown',
       keyExchange,
       signature,
-      clientIdentity: identity,
-      serverIdentity: identity,
+      clientIdentity,
+      serverIdentity,
       clientCaKeyType,
       serverCaKeyType,
       totalBytes,
@@ -306,7 +315,7 @@ export const TLSNegotiationResults: React.FC = () => {
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-2 gap-6 flex-grow overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow overflow-hidden">
         {/* LEFT COLUMN: Client Side */}
         <div className="flex flex-col gap-6 h-full overflow-hidden">
           {/* 1. Keys */}

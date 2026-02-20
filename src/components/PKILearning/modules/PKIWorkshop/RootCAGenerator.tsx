@@ -59,28 +59,28 @@ const ALGORITHMS: AlgorithmOption[] = [
     name: 'EdDSA (Ed448)',
     group: 'Classic',
     genCommand: 'openssl genpkey -algorithm ED448',
-    keySizeLabel: '456 bits',
+    keySizeLabel: '448-bit curve',
   },
   {
     id: 'mldsa',
     name: 'ML-DSA-87 (Dilithium)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm ml-dsa-87',
-    keySizeLabel: 'Level 5',
+    keySizeLabel: 'Category 5',
   },
   {
     id: 'slhdsa256s',
     name: 'SLH-DSA-SHA2-256s (SPHINCS+)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-256s',
-    keySizeLabel: 'Level 5 (small sig)',
+    keySizeLabel: 'Category 5 (small sig)',
   },
   {
     id: 'slhdsa256f',
     name: 'SLH-DSA-SHA2-256f (SPHINCS+)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-256f',
-    keySizeLabel: 'Level 5 (fast sign)',
+    keySizeLabel: 'Category 5 (fast sign)',
   },
 ]
 
@@ -280,20 +280,26 @@ x509_extensions = v3_ca
         })
       }
 
+      // Sanitize attribute values for OpenSSL config interpolation
+      const escapeConfigValue = (value: string): string => {
+        return value.replace(/\\/g, '\\\\').replace(/\n/g, '').replace(/\r/g, '')
+      }
+
       configContent += `\n[ dn ]\n`
       attributes
         .filter((a) => a.enabled && a.elementType === 'SubjectRDN')
         .forEach((a) => {
+          const safeValue = escapeConfigValue(a.value)
           if (KNOWN_OIDS[a.id]) {
-            configContent += `${KNOWN_OIDS[a.id]} = ${a.value}\n`
+            configContent += `${KNOWN_OIDS[a.id]} = ${safeValue}\n`
             // eslint-disable-next-line security/detect-unsafe-regex
           } else if (/^\d+(\.\d+)+$/.test(a.id)) {
             const custom = customOids.find((o) => o.oid === a.id)
             if (custom) {
-              configContent += `${custom.name} = ${a.value}\n`
+              configContent += `${custom.name} = ${safeValue}\n`
             }
           } else {
-            configContent += `${a.id} = ${a.value}\n`
+            configContent += `${a.id} = ${safeValue}\n`
           }
         })
 
@@ -309,11 +315,18 @@ x509_extensions = v3_ca
       if (!hasBasicConstraints) {
         configContent += `basicConstraints = critical,CA:TRUE\n`
       }
+      setOutput(
+        (prev) =>
+          prev +
+          `  basicConstraints = critical,CA:TRUE\n` +
+          `    Marks this certificate as a Certificate Authority.\n` +
+          `    "critical" means any system that doesn't understand this extension must reject the certificate.\n\n`
+      )
 
       attributes
         .filter((a) => a.enabled && a.elementType === 'Extension')
         .forEach((a) => {
-          configContent += `${a.label} = ${a.value}\n`
+          configContent += `${a.label} = ${escapeConfigValue(a.value)}\n`
         })
 
       const configFile = {
@@ -322,6 +335,20 @@ x509_extensions = v3_ca
       }
 
       setOutput((prev) => prev + `Generated Config:\n${configContent}\n`)
+
+      // Detect PQC algorithm and add educational note about default_md
+      const currentAlgoId = selectedKeyId.startsWith('new-')
+        ? selectedKeyId.replace('new-', '')
+        : ''
+      const isPqcAlgo = currentAlgoId.startsWith('mldsa') || currentAlgoId.startsWith('slhdsa')
+      if (isPqcAlgo) {
+        const algoObj = ALGORITHMS.find((a) => a.id === currentAlgoId)
+        setOutput(
+          (prev) =>
+            prev +
+            `  Note: default_md = sha256 is set for OpenSSL compatibility, but ${algoObj?.name || 'this PQC algorithm'} uses its own internal hash function. SHA-256 is NOT the signature hash for this algorithm.\n\n`
+        )
+      }
 
       // We need to use the same timestamp for the cert if we want them to match, or generate a new one?
       // Usually they are generated together. Let's reuse the timestamp if we generated a key, or generate new if using existing?

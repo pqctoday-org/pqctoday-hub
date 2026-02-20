@@ -11,7 +11,7 @@ local_file: public/library/UK_NCSC_PQC_Guidance.html
 
 # Preparing for Quantum-Safe Cryptography
 
-## Author & Organization
+## Authors
 
 **Organization:** UK NCSC
 
@@ -27,10 +27,15 @@ UK PQC migration strategy
 
 **Dependencies:** NIST PQC; ETSI
 
-## Risks Addressed
+## PQC Risk Profile
+
+**Harvest Now, Decrypt Later:** Not directly addressed by this document.
+
+**Identity & Authentication Integrity:** Not directly addressed by this document.
+
+**Digital Signature Integrity:** Not directly addressed by this document.
 
 **Migration urgency:** High
-**Security levels:** N/A
 
 ## PQC Key Types & Mechanisms
 
@@ -41,9 +46,11 @@ UK PQC migration strategy
 | Protocol / tool impact | UK PQC migration strategy |
 | Toolchain support      | UK organizations          |
 
-## Description
+## Short Description
 
 UK guidance on PQC migration with 2035 deadline for full transition.
+
+## Long Description
 
 ---
 

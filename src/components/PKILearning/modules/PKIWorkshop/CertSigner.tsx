@@ -228,6 +228,12 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       if (!hasBasicConstraints) {
         extContent += `basicConstraints = CA:FALSE\n`
       }
+      setOutput(
+        (prev) =>
+          prev +
+          `  basicConstraints = CA:FALSE\n` +
+          `    Marks this as an end-entity certificate (not a CA). It cannot sign other certificates.\n\n`
+      )
 
       // Check if keyUsage is already provided
       const hasKeyUsage = attributes.some(
@@ -236,17 +242,27 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       if (!hasKeyUsage) {
         extContent += `keyUsage = digitalSignature, keyEncipherment\n`
       }
+      setOutput(
+        (prev) =>
+          prev +
+          `  keyUsage = digitalSignature, keyEncipherment\n` +
+          `    Restricts this certificate to signing data and encrypting symmetric keys (typical for TLS server certs).\n` +
+          `    Other values: keyCertSign (CA only), nonRepudiation (legal signatures), dataEncipherment.\n\n`
+      )
+
+      // Sanitize attribute values for OpenSSL config/command interpolation
+      const escapeConfigValue = (value: string): string => {
+        return value.replace(/\\/g, '\\\\').replace(/\n/g, '').replace(/\r/g, '')
+      }
 
       // Add extensions from attributes
       attributes
         .filter((a) => a.enabled && a.elementType === 'Extension')
         .forEach((a) => {
-          extContent += `${a.label} = ${a.value}\n`
+          extContent += `${a.label} = ${escapeConfigValue(a.value)}\n`
         })
 
       const extFile = { name: 'ext.conf', data: new TextEncoder().encode(extContent) }
-
-      // ... (inside handleSign)
 
       // Construct Subject DN
       const subjectParts: string[] = []
@@ -254,7 +270,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         .filter((a) => a.enabled && a.elementType === 'SubjectRDN')
         .forEach((a) => {
           const key = KNOWN_OIDS[a.id] || a.id
-          subjectParts.push(`/${key}=${a.value}`)
+          subjectParts.push(`/${key}=${escapeConfigValue(a.value)}`)
         })
       const subjArg = subjectParts.join('')
 

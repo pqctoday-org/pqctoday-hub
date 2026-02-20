@@ -1,0 +1,68 @@
+# npm audit report
+
+ajv  <8.18.0
+Severity: moderate
+ajv has ReDoS when using `$data` option - https://github.com/advisories/GHSA-2g4f-4pwh-qvx6
+fix available via `npm audit fix --force`
+Will install eslint@10.0.0, which is a breaking change
+node_modules/@eslint/eslintrc/node_modules/ajv
+node_modules/eslint/node_modules/ajv
+  @eslint/eslintrc  *
+  Depends on vulnerable versions of ajv
+  Depends on vulnerable versions of minimatch
+  node_modules/@eslint/eslintrc
+    eslint  0.7.1 - 2.0.0-rc.1 || >=4.1.0
+    Depends on vulnerable versions of @eslint/config-array
+    Depends on vulnerable versions of @eslint/eslintrc
+    Depends on vulnerable versions of ajv
+    Depends on vulnerable versions of minimatch
+    node_modules/eslint
+
+minimatch  <10.2.1
+Severity: high
+minimatch has a ReDoS via repeated wildcards with non-matching literal in pattern - https://github.com/advisories/GHSA-3ppc-4f35-3m26
+fix available via `npm audit fix --force`
+Will install eslint@10.0.0, which is a breaking change
+node_modules/@eslint/config-array/node_modules/minimatch
+node_modules/@eslint/eslintrc/node_modules/minimatch
+node_modules/@typescript-eslint/typescript-estree/node_modules/minimatch
+node_modules/eslint-plugin-jsx-a11y/node_modules/minimatch
+node_modules/eslint/node_modules/minimatch
+  @eslint/config-array  <=0.22.0
+  Depends on vulnerable versions of minimatch
+  node_modules/@eslint/config-array
+  @typescript-eslint/typescript-estree  >=6.16.0
+  Depends on vulnerable versions of minimatch
+  node_modules/@typescript-eslint/typescript-estree
+    @typescript-eslint/parser  >=6.16.0
+    Depends on vulnerable versions of @typescript-eslint/typescript-estree
+    node_modules/@typescript-eslint/parser
+      @typescript-eslint/eslint-plugin  >=6.16.0
+      Depends on vulnerable versions of @typescript-eslint/parser
+      Depends on vulnerable versions of @typescript-eslint/type-utils
+      Depends on vulnerable versions of @typescript-eslint/utils
+      node_modules/@typescript-eslint/eslint-plugin
+        typescript-eslint  *
+        Depends on vulnerable versions of @typescript-eslint/eslint-plugin
+        Depends on vulnerable versions of @typescript-eslint/parser
+        Depends on vulnerable versions of @typescript-eslint/typescript-estree
+        Depends on vulnerable versions of @typescript-eslint/utils
+        node_modules/typescript-eslint
+    @typescript-eslint/type-utils  >=6.16.0
+    Depends on vulnerable versions of @typescript-eslint/typescript-estree
+    Depends on vulnerable versions of @typescript-eslint/utils
+    node_modules/@typescript-eslint/type-utils
+    @typescript-eslint/utils  >=6.16.0
+    Depends on vulnerable versions of @typescript-eslint/typescript-estree
+    node_modules/@typescript-eslint/utils
+      eslint-plugin-testing-library  >=7.0.0-beta.1
+      Depends on vulnerable versions of @typescript-eslint/utils
+      node_modules/eslint-plugin-testing-library
+  eslint-plugin-jsx-a11y  >=6.5.0
+  Depends on vulnerable versions of minimatch
+  node_modules/eslint-plugin-jsx-a11y
+
+13 vulnerabilities (1 moderate, 12 high)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force

@@ -44,14 +44,13 @@ export function useEthereumTransaction({
     },
     {
       id: 'visualize_msg',
-      title: '7. Visualize RLP Structure',
+      title: '7. Visualize Transaction Fields',
       description: (
         <>
-          View the RLP <InfoTooltip term="rlp" /> encoded structure fields that will be hashed with
-          Keccak - 256 <InfoTooltip term="keccak256" /> and signed.
-          <br /> <br />
-          <strong> RLP Encoding: </strong> Recursive Length Prefix is Ethereum's serialization
-          format. It encodes the transaction fields into a compact binary format before hashing.
+          View the transaction fields that will be hashed with Keccak-256{' '}
+          <InfoTooltip term="keccak256" /> and signed. In production Ethereum, these fields are
+          serialized using RLP <InfoTooltip term="rlp" /> (Recursive Length Prefix) binary encoding
+          before hashing. This demo uses a simplified JSON representation for readability.
         </>
       ),
       code: `// RLP Structure (Pre-Signature)\nconst rlpStructure = {\n  nonce: 0,\n  gasPrice: "20000000000",\n  gasLimit: 21000,\n  to: "${state.editableRecipientAddress || state.recipientAddress || '0x...'}",\n  value: "..."\n  // ...\n};`,
@@ -80,7 +79,7 @@ export function useEthereumTransaction({
         },
         {
           label: 'Value',
-          value: '1.5 ETH',
+          value: '0.1 ETH (100000000000000000 wei)',
           description: 'Amount of Ether to transfer (in Wei).',
         },
         {
@@ -92,6 +91,12 @@ export function useEthereumTransaction({
           label: 'Chain ID',
           value: '1',
           description: 'EIP-155 Chain ID (1 = Mainnet) to prevent replay across chains.',
+        },
+        {
+          label: 'Real RLP Format',
+          value: 'RLP([nonce, gasPrice, gasLimit, to, value, data, chainId, 0, 0])',
+          description:
+            'Production Ethereum transactions encode these fields using RLP binary serialization, where prefix bytes encode the type and length of each field. The result is compact binary, not JSON. EIP-1559 (Type 2) transactions additionally use maxFeePerGas and maxPriorityFeePerGas instead of gasPrice.',
         },
       ],
     },

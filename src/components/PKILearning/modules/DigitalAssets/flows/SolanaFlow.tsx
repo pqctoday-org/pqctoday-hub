@@ -165,14 +165,15 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
           SOL = 1 billion lamports).
         </>
       ),
-      code: `const transaction = {\n  recentBlockhash: "Gh9...",\n  instructions: [\n    {\n      programIdIndex: 2,\n      accounts: [0, 1],\n      data: "0200000000000000" // Transfer 2 SOL (little-endian)\n    }\n  ]\n};`,
+      code: `const transaction = {\n  recentBlockhash: "Gh9...",\n  instructions: [\n    {\n      programIdIndex: 2,\n      accounts: [0, 1],\n      data: "020000000065cd1d00000000" // Transfer instruction (type 2) + 0.5 SOL in lamports\n    }\n  ]\n};`,
       language: 'javascript',
       actionLabel: 'Format Transaction',
     },
     {
       id: 'visualize_msg',
-      title: 'Visualize Message',
-      description: 'View the Solana Message structure that will be serialized and signed.',
+      title: '7. Visualize Message',
+      description:
+        'View the Solana Message structure that will be serialized and signed. This demo uses a simplified JSON representation for readability. Production Solana transactions use a compact binary format.',
       code: '',
       language: 'javascript',
       actionLabel: 'Visualize Message',
@@ -198,6 +199,12 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
           label: 'Instructions',
           value: '[{ programIdIndex: 2, accounts: [0, 1], data: ... }]',
           description: 'List of instructions executed atomically.',
+        },
+        {
+          label: 'Real Binary Format',
+          value: 'Header(3B) | compact-u16 | Keys(32B each) | Blockhash(32B) | Instructions',
+          description:
+            'Production Solana messages use a compact binary format: 3-byte header, compact-u16 encoded counts, 32-byte account keys, 32-byte blockhash, and tightly packed instructions with 1-byte program index + compact-u16 account indices + compact-u16 data length + raw data bytes.',
         },
       ],
     },
@@ -346,12 +353,12 @@ ${openSSLOutput}`
       if (!sourceAddress || !recipientAddress) throw new Error('Addresses not generated')
 
       const txData = {
-        recentBlockhash: 'Gh9ZwEmd68M8r5BqQqEweramqJ9V1k15KqSu6Jbcz9GM', // Dummy blockhash
+        recentBlockhash: 'Gh9ZwEmd68M8r5BqQqEweramqJ9V1k15KqSu6Jbcz9GM', // Demo blockhash
         instructions: [
           {
             programIdIndex: 2, // System Program
             accounts: [0, 1], // Source, Destination
-            data: '0200000000000000', // Transfer 2 SOL (little-endian 64-bit integer)
+            data: '020000000065cd1d00000000', // Transfer instruction (type 2) + 0.5 SOL in lamports
           },
         ],
       }

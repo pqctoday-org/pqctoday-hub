@@ -46,7 +46,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
   const steps: Step[] = [
     {
       id: 'gen_key',
-      title: 'Generate Source Key',
+      title: '1. Generate Source Key',
       description: 'Generate a secp256k1 private key for the sender using OpenSSL.',
       code: `// Generate sender's private key\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.GEN_KEY(filenames.SRC_PRIVATE_KEY)}`,
       language: 'bash',
@@ -55,7 +55,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     },
     {
       id: 'pub_key',
-      title: 'Derive Source Public Key',
+      title: '2. Derive Source Public Key',
       description:
         "Derive the sender's public key using the standard elliptic curve cryptography (ECC) process. This is a one-way trapdoor function: Public Key = Private Key × G (where G is the generator point on secp256k1). It's computationally easy to derive the public key from the private key, but practically impossible to reverse (derive private key from public key). Bitcoin uses compressed public keys (33 bytes) which store only the x-coordinate plus a prefix byte (0x02 or 0x03) indicating y-coordinate parity, instead of the full uncompressed format (65 bytes with both x and y coordinates).",
       code: `// Derive sender's public key\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.EXTRACT_PUB(filenames.SRC_PRIVATE_KEY, filenames.SRC_PUBLIC_KEY)}\n\n// Standard ECC Process:\n// 1. Private key (scalar) × Generator point G = Public key point (x, y)\n// 2. Compress: Use x-coordinate + prefix (0x02 if y is even, 0x03 if y is odd)\n// 3. Result: 33-byte compressed public key (vs 65-byte uncompressed)`,
@@ -64,7 +64,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     },
     {
       id: 'address',
-      title: 'Create Source Address',
+      title: '3. Create Source Address',
       description: (
         <>
           Hash the sender's public key (SHA256 + RIPEMD160) and encode with Base58Check to create a{' '}
@@ -78,7 +78,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     },
     {
       id: 'gen_recipient_key',
-      title: 'Generate Recipient Key',
+      title: '4. Generate Recipient Key',
       description: 'Generate a key pair for the recipient to receive funds.',
       code: `// Generate recipient's private key\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.GEN_KEY(filenames.DST_PRIVATE_KEY)}\n\n// Derive recipient's public key\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.EXTRACT_PUB(filenames.DST_PRIVATE_KEY, filenames.DST_PUBLIC_KEY)}`,
       language: 'bash',
@@ -86,7 +86,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     },
     {
       id: 'recipient_address',
-      title: 'Create Recipient Address',
+      title: '5. Create Recipient Address',
       description: "Derive the recipient's address from their public key.",
       code: `// Derive recipient address\nconst recipientAddress = createAddress(recipientPubKeyBytes);`,
       language: 'javascript',
@@ -94,7 +94,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     },
     {
       id: 'format_tx',
-      title: 'Format Transaction',
+      title: '6. Format Transaction',
       description:
         'Define the transaction details including amount, fee, and addresses. Bitcoin transactions follow a specific binary format with multiple fields. Verify the recipient address carefully!',
       code: `const transaction = {\n  amount: 0.5,\n  fee: 0.0001,\n  sourceAddress: "${sourceAddress || '...'}",\n  recipientAddress: "${editableRecipientAddress || recipientAddress || '...'}"\n};`,
@@ -142,8 +142,9 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     },
     {
       id: 'visualize_msg',
-      title: 'Visualize Message',
-      description: 'View the raw transaction structure that will be hashed and signed.',
+      title: '7. Visualize Message',
+      description:
+        'View the transaction structure that will be hashed and signed. This demo uses a simplified JSON representation for readability. Production Bitcoin transactions use a specific binary format with little-endian integers, VarInts, and script bytecode.',
       code: '',
       language: 'javascript',
       actionLabel: 'Visualize Message',
@@ -180,11 +181,17 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
           description:
             'The block number or timestamp at which this transaction is locked (0 = immediate).',
         },
+        {
+          label: 'Real Binary Format',
+          value: 'Version(4B) | VarInt | Inputs | VarInt | Outputs | Locktime(4B)',
+          description:
+            'Production Bitcoin transactions use a specific binary format: Version (4B little-endian) | VarInt(inputCount) | [txid(32B) + vout(4B LE) + scriptLen + scriptSig + sequence(4B)] per input | VarInt(outputCount) | [value(8B LE) + scriptLen + scriptPubKey] per output | Locktime(4B LE). This demo uses a simplified JSON representation.',
+        },
       ],
     },
     {
       id: 'sign',
-      title: 'Sign Transaction',
+      title: '8. Sign Transaction',
       description: "Sign the transaction hash (Double SHA256) using the sender's private key.",
       code: `// 1. Double SHA256 of message\nconst sighash = sha256(sha256(rawTxBytes));\n\n// 2. Sign with OpenSSL\n// Using dynamic filenames for consistency\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.SIGN(filenames.SRC_PRIVATE_KEY, 'bitcoin_hashdata_[ts].dat', 'bitcoin_signdata_[ts].sig')}`,
       language: 'bash',
@@ -192,7 +199,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     },
     {
       id: 'verify',
-      title: 'Verify Signature',
+      title: '9. Verify Signature',
       description:
         "Verify the transaction signature using the sender's public key with standard ECDSA verification. This is the same process used in all ECC-based systems (TLS, SSH, etc.). The verifier uses the public key, signature (r, s), and message hash to mathematically confirm the signature was created by the corresponding private key. Bitcoin's verification is identical to classical ECC verification - there's nothing blockchain-specific about this cryptographic operation. The verification equation checks: r ≡ x₁ (mod n), where x₁ is derived from s⁻¹ × (H(m) × G + r × PublicKey).",
       code: `// Verify with OpenSSL\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.BITCOIN.VERIFY(filenames.SRC_PUBLIC_KEY, 'bitcoin_hashdata_[ts].dat', 'bitcoin_signdata_[ts].sig')}\n\n// Standard ECDSA Verification Process:\n// 1. Parse signature (r, s) from DER format\n// 2. Compute hash H(m) of the message\n// 3. Calculate u₁ = H(m) × s⁻¹ mod n\n// 4. Calculate u₂ = r × s⁻¹ mod n\n// 5. Compute point (x₁, y₁) = u₁ × G + u₂ × PublicKey\n// 6. Verify: r ≡ x₁ (mod n)\n// If true, signature is valid`,
@@ -294,7 +301,12 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
         version: 1,
         inputCount: 1,
         inputs: [
-          { txid: 'e3b0c442...', vout: 0, scriptSig: '<signature> <pubkey>', sequence: 0xffffffff },
+          {
+            txid: '(demo) a1b2c3d4...',
+            vout: 0,
+            scriptSig: '<signature> <pubkey>',
+            sequence: 0xffffffff,
+          },
         ],
         outputCount: 2,
         outputs: [

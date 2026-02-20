@@ -57,7 +57,7 @@ function deriveSLIP0010(seed: Uint8Array, path: string): Uint8Array {
 const steps: Step[] = [
   {
     id: 'mnemonic',
-    title: 'Generate Mnemonic',
+    title: '1. Generate Mnemonic',
     description: 'Generate 256-bit entropy using OpenSSL and convert to BIP39 mnemonic.',
     code: `// 1. Generate Entropy (OpenSSL)\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.COMMON.GEN_ENTROPY}\n\n// 2. Convert to Mnemonic (JS)\nconst mnemonic = bip39.entropyToMnemonic(entropy, wordlist);\nconsole.log(mnemonic);`,
     language: 'javascript',
@@ -66,7 +66,7 @@ const steps: Step[] = [
   },
   {
     id: 'seed',
-    title: 'Derive Seed',
+    title: '2. Derive Seed',
     description: 'Convert the mnemonic phrase into a 512-bit binary seed using PBKDF2.',
     code: `// PBKDF2 Derivation (JS)\nconst seed = bip39.mnemonicToSeedSync(mnemonic);\nconsole.log('Seed:', bytesToHex(seed));`,
     language: 'javascript',
@@ -74,7 +74,7 @@ const steps: Step[] = [
   },
   {
     id: 'derive',
-    title: 'Derive Addresses',
+    title: '3. Derive Addresses',
     description: 'Derive keys and addresses for Bitcoin, Ethereum, and Solana from the seed.',
     code: `// Bitcoin (BIP32)\nconst btcKey = HDKey.fromMasterSeed(seed).derive("${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.BITCOIN}");\n\n// Ethereum (BIP32)\nconst ethKey = HDKey.fromMasterSeed(seed).derive("${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.ETHEREUM}");\n\n// Solana (SLIP-0010)\nconst solKey = deriveSLIP0010(seed, "${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.SOLANA}");`,
     language: 'javascript',

@@ -7,12 +7,13 @@ import { BitcoinFlow } from './flows/BitcoinFlow'
 import { EthereumFlow } from './flows/EthereumFlow'
 import { SolanaFlow } from './flows/SolanaFlow'
 import { HDWalletFlow } from './flows/HDWalletFlow'
+import { PQCThreatSummary } from './components/PQCThreatSummary'
 import { ProgressIndicator } from './components/ProgressIndicator'
 
 export const DigitalAssetsModule: React.FC = () => {
   const navigate = useNavigate()
   const markStepComplete = useModuleStore((state) => state.markStepComplete)
-  const resetProgress = useModuleStore((state) => state.resetProgress)
+  const resetModuleProgress = useModuleStore((state) => state.resetModuleProgress)
   const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
   const { resetStore } = useOpenSSLStore()
   const [currentStep, setCurrentStep] = useState(0)
@@ -35,7 +36,7 @@ export const DigitalAssetsModule: React.FC = () => {
         'Are you sure you want to reset the module? This will clear all generated keys and transactions.'
       )
     ) {
-      resetProgress()
+      resetModuleProgress('digital-assets')
       resetStore()
       setCurrentStep(0)
     }
@@ -55,7 +56,7 @@ export const DigitalAssetsModule: React.FC = () => {
       {
         id: 'ethereum',
         title: 'Module 2: Ethereum',
-        description: 'Create Ethereum accounts and format RLP transactions.',
+        description: 'Create Ethereum accounts and format transactions.',
         component: <EthereumFlow onBack={() => setCurrentStep(0)} />,
       },
       {
@@ -70,6 +71,12 @@ export const DigitalAssetsModule: React.FC = () => {
         description: 'Generate a Hierarchical Deterministic wallet for all chains.',
         component: <HDWalletFlow onBack={() => setCurrentStep(2)} />,
       },
+      {
+        id: 'pqc-threats',
+        title: 'Module 5: PQC Threats',
+        description: 'Understand quantum computing threats to the cryptography you just learned.',
+        component: <PQCThreatSummary />,
+      },
     ],
     []
   )
@@ -78,8 +85,6 @@ export const DigitalAssetsModule: React.FC = () => {
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' && currentStep < steps.length - 1) {
-        /* eslint-disable-next-line security/detect-object-injection */
-        markStepComplete('digital-assets', steps[currentStep].id)
         setCurrentStep(currentStep + 1)
       } else if (e.key === 'ArrowLeft' && currentStep > 0) {
         setCurrentStep(currentStep - 1)
@@ -87,7 +92,7 @@ export const DigitalAssetsModule: React.FC = () => {
     }
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [currentStep, markStepComplete, steps])
+  }, [currentStep, steps])
 
   return (
     <div className="max-w-7xl mx-auto overflow-x-hidden">
@@ -114,7 +119,7 @@ export const DigitalAssetsModule: React.FC = () => {
       <div className="mb-8 overflow-x-auto px-2 sm:px-0">
         <div className="flex justify-between relative min-w-max sm:min-w-0">
           {/* Connecting Line - hidden on mobile due to scrolling */}
-          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/10 -z-10 hidden sm:block" />
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
 
           {steps.map((step, idx) => (
             <button
@@ -129,7 +134,7 @@ export const DigitalAssetsModule: React.FC = () => {
                     ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
                     : idx < currentStep
                       ? 'border-success text-success'
-                      : 'border-white/20 text-muted-foreground'
+                      : 'border-border text-muted-foreground'
                 }
               `}
               >
@@ -145,7 +150,7 @@ export const DigitalAssetsModule: React.FC = () => {
 
       {/* Content Area */}
       <div className="glass-panel p-8 min-h-[600px] animate-fade-in">
-        <div className="mb-6 border-b border-white/10 pb-4">
+        <div className="mb-6 border-b border-border pb-4">
           {/* eslint-disable-next-line security/detect-object-injection */}
           <h2 className="text-2xl font-bold text-foreground">{steps[currentStep].title}</h2>
           {/* eslint-disable-next-line security/detect-object-injection */}
@@ -160,7 +165,7 @@ export const DigitalAssetsModule: React.FC = () => {
         <button
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
-          className="px-6 py-3 min-h-[44px] rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 transition-colors text-foreground"
+          className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted/50 disabled:opacity-50 transition-colors text-foreground"
         >
           ← Previous Step
         </button>
