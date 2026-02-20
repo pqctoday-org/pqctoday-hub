@@ -77,8 +77,22 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PDF Report (Chrome)</strong> &mdash; Fixed
-                    header/footer overlap on pages 2+ when printing to PDF in Chrome
+                    <strong className="text-foreground">Quick Assessment</strong> &mdash; New 6-step
+                    quick mode (~2 min) alongside the full 13-step comprehensive assessment
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">Migration Roadmap</strong> &mdash; Phased
+                    visualization of recommended actions (immediate / short-term / long-term)
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">Inline Tooltips</strong> &mdash; Jargon
+                    terms in the wizard now show glossary definitions on click
                   </span>
                 </li>
               </ul>

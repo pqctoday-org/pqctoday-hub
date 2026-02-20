@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.4] - 2026-02-19
+
+### Added
+
+- **Inline Tooltips** (`/assess`): Jargon terms (HNDL, PQC, Crypto Agility, HSM) in the wizard
+  now show click-to-open glossary definitions via a new `InlineTooltip` component backed by 180+
+  glossary terms.
+- **Quick Assessment Mode** (`/assess`): New mode selector on the landing page — "Quick" (6 steps,
+  ~2 min) or "Comprehensive" (13 steps, ~5 min). Quick mode uses the legacy scoring path.
+- **Migration Roadmap** (`/assess`): Phased visualization in the report grouping recommended actions
+  into 3 swim lanes (0–6 mo, 6–18 mo, 18–36 mo) with effort badges and country deadline indicator.
+
+### Changed
+
+- **Context-Aware Cross-Links** (`/assess`): "Explore" links in recommended actions now carry
+  user-specific query params (e.g. `/algorithms?highlight=RSA-2048,ECDH`,
+  `/threats?industry=Finance`). Algorithm Transition Guide highlights matching rows; Threats
+  Dashboard pre-filters by industry. Migration matrix adds "Try in Playground" links for PQC
+  replacement algorithms.
+- **Progress Persistence** (`/assess`): Stale assessment threshold extended from 24 hours to 7 days.
+  Resume banner shows on return with step info, timestamp, and Continue / Start Over options.
+
 ## [1.14.3] - 2026-02-19
 
 ### Fixed
