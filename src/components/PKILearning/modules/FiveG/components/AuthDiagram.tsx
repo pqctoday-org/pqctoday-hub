@@ -17,7 +17,7 @@ export const AuthDiagram: React.FC<AuthDiagramProps> = ({ step }) => {
             ? 'border-primary bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.2)]'
             : step === 4
               ? 'border-primary bg-primary/10'
-              : 'border-white/10 bg-card/40'
+              : 'border-border bg-card/40'
         }
       `}
       >
@@ -29,7 +29,7 @@ export const AuthDiagram: React.FC<AuthDiagramProps> = ({ step }) => {
       {/* Connection Area */}
       <div className="flex-1 relative h-full flex flex-col items-center justify-center mx-4">
         {/* Connection Line */}
-        <div className="absolute top-1/2 left-0 w-full h-1 bg-white/10 -translate-y-1/2"></div>
+        <div className="absolute top-1/2 left-0 w-full h-1 bg-border -translate-y-1/2"></div>
 
         {/* Animated Data Packets */}
         {/* Step 1: Internal UDM processing (static) */}
@@ -69,7 +69,7 @@ export const AuthDiagram: React.FC<AuthDiagramProps> = ({ step }) => {
       <div
         className={`
         relative z-10 w-28 h-28 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step >= 3 ? 'border-secondary bg-secondary/10 shadow-[0_0_20px_hsl(var(--secondary)/0.2)]' : 'border-white/10 bg-card/40'}
+        ${step >= 3 ? 'border-secondary bg-secondary/10 shadow-[0_0_20px_hsl(var(--secondary)/0.2)]' : 'border-border bg-card/40'}
       `}
       >
         <Smartphone className="w-8 h-8 mb-2" />
@@ -81,7 +81,8 @@ export const AuthDiagram: React.FC<AuthDiagramProps> = ({ step }) => {
       <div
         className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
-          backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+          backgroundImage:
+            'radial-gradient(circle at 2px 2px, hsl(var(--foreground)) 1px, transparent 0)',
           backgroundSize: '24px 24px',
         }}
       ></div>

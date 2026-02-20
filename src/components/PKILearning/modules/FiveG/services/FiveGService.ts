@@ -4,6 +4,9 @@ import { MilenageService } from './MilenageService'
 
 const milenage = new MilenageService()
 
+// Default Operator Key — consistent across auth and provisioning flows
+const DEFAULT_OP = new Uint8Array(16).fill(0x55)
+
 export interface FiveGTestVectors {
   profileA?: { hnPriv: string; ephPriv: string; zEcdh?: string }
   profileB?: { hnPriv: string; ephPriv: string; zEcdh?: string }
@@ -532,8 +535,6 @@ Profile: ${profile}
 
 [SUCCESS] Key Loaded into Memory.`
   }
-
-  // ... (provisionUSIM and retrieveKey can stay mostly the same or be slightly tweaked)
 
   async generateEphemeralKey(profile: 'A' | 'B' | 'C', pqcMode: 'hybrid' | 'pure' = 'hybrid') {
     const ts = this.getTimestamp()
@@ -1083,8 +1084,10 @@ ${sharedSecretHex}
         throw new Error(`KDF iteration 2 failed - stdout: ${res2.stdout?.substring(0, 100)}`)
       }
 
-      // 5. Split: K_enc = first 128 bits of block1, K_mac = full 256 bits of block2
-      this.state.kEncHex = block1Hex.substring(0, 32) // 16 bytes = 32 hex chars
+      // 5. Split: K_enc from block1, K_mac = full 256 bits of block2
+      // Profile C (PQC): use full 256-bit block1 for AES-256
+      // Profile A/B: use first 128 bits of block1 for AES-128
+      this.state.kEncHex = profile === 'C' ? block1Hex : block1Hex.substring(0, 32)
       this.state.kMacHex = block2Hex // 32 bytes = 64 hex chars
 
       return `${header}
@@ -1105,7 +1108,7 @@ $ ${cmd2}
 Block 2: ${block2Hex}
 
 Step 5: Splitting Keys
-  > K_enc (128-bit AES):   ${this.state.kEncHex}
+  > K_enc (${profile === 'C' ? '256' : '128'}-bit AES):   ${this.state.kEncHex}
   > K_mac (256-bit HMAC):  ${this.state.kMacHex}
 
 [SUCCESS] Protection Keys Derived via OpenSSL (${hashName}).`
@@ -1259,7 +1262,7 @@ ${this.state.macTagHex}`
 ═══════════════════════════════════════════════════════════════
 
 [1. Subscription Permanent Identifier (SUPI)]
-  > Value: 310-260-123456789
+  > IMSI: 310260123456789
   > MCC: ${mcc} (USA)
   > MNC: ${mnc} (T-Mobile)
   > MSIN: 123456789 (BCD: 0x21 0x43 0x65 0x87 0xF9 — 5 bytes)
@@ -1277,6 +1280,59 @@ ${this.state.macTagHex}`
   suci-${mcc}-${mnc}-${routing}-${scheme}-${keyId}-${ephPub.substring(0, 8)}...-${cipher}-${mac}
 
 [SUCCESS] Structure Verified. Ready for Transmission.`
+  }
+
+  async assembleSUCI(profile: 'A' | 'B' | 'C') {
+    const mcc = '310'
+    const mnc = '260'
+    const routing = '0000'
+    const scheme = profile === 'A' ? '1' : profile === 'B' ? '2' : '3'
+    const keyId = '01'
+
+    const cipher = this.state.encryptedMSINHex || '[Missing Cipher]'
+    const mac = this.state.macTagHex || '[Missing MAC]'
+    const ephPub = this.state.ephemeralPubKeyHex || ''
+    const kemCt = this.state.ciphertextHex || ''
+
+    // Profile C includes KEM ciphertext instead of (or alongside) ephemeral public key
+    const schemeOutput =
+      profile === 'C'
+        ? kemCt
+          ? `${ephPub ? ephPub.substring(0, 16) + '...|' : ''}${kemCt.substring(0, 16)}...`
+          : '[Missing KEM Ciphertext]'
+        : ephPub
+          ? ephPub.substring(0, 16) + '...'
+          : '[Missing EphKey]'
+
+    const suciString = `suci-0-${mcc}-${mnc}-${routing}-${scheme}-${keyId}-${schemeOutput}-${cipher}-${mac}`
+    const suciBytes = new TextEncoder().encode(suciString)
+    const suciHex = bytesToHex(suciBytes)
+
+    return `═══════════════════════════════════════════════════════════════
+            SUCI ASSEMBLY (Profile ${profile})
+═══════════════════════════════════════════════════════════════
+
+Step 1: Gathering Components
+  > MCC:     ${mcc}
+  > MNC:     ${mnc}
+  > Routing: ${routing}
+  > Scheme:  ${scheme} (${profile === 'A' ? 'ECIES Profile A' : profile === 'B' ? 'ECIES Profile B' : 'KEM Profile C'})
+  > Key ID:  ${keyId}
+
+Step 2: Scheme Output (${profile === 'C' ? 'KEM Ciphertext' : 'Ephemeral Public Key'})
+  > ${schemeOutput}
+
+Step 3: Protected Fields
+  > Ciphertext: ${cipher}
+  > MAC Tag:    ${mac}
+
+Step 4: Final SUCI String
+  ${suciString}
+
+Step 5: SUCI Hex Encoding (${suciBytes.length} bytes)
+  ${suciHex.substring(0, 64)}${suciHex.length > 64 ? '...' : ''}
+
+[SUCCESS] SUCI assembled. Ready for transmission over the air interface.`
   }
 
   // --- Auth Flow ---
@@ -1309,7 +1365,7 @@ ${this.state.macTagHex}`
       OP = new Uint8Array(vec.op.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
     } else {
       K = new Uint8Array(16).fill(0x33)
-      OP = new Uint8Array(16).fill(0x55)
+      OP = new Uint8Array(DEFAULT_OP)
     }
 
     const SQN = new Uint8Array(6).fill(0x01)
@@ -1552,7 +1608,7 @@ Step 4: Result
         const decData = res.files.find((f) => f.name === decMsinFile)?.data
         if (decData) {
           const msin = this.bcdDecode(new Uint8Array(decData))
-          recoveredSupi = `310-260-${msin}`
+          recoveredSupi = `310260${msin}`
         } else {
           console.error('[FiveGService] Decrypt failed - no output file')
           console.error('[FiveGService] Decrypt stderr:', res.stderr)
@@ -1642,10 +1698,9 @@ Step 4: Result
       AMF = new Uint8Array([0x80, 0x00])
     } else {
       K = new Uint8Array(16).fill(0x33)
-      const OP = new Uint8Array(16).fill(0x55)
       RAND = new Uint8Array(16)
       window.crypto.getRandomValues(RAND)
-      OPc = await milenage.computeOPc(K, OP)
+      OPc = await milenage.computeOPc(K, new Uint8Array(DEFAULT_OP))
       SQN = new Uint8Array(6).fill(0x01)
       AMF = new Uint8Array([0x80, 0x00])
     }
@@ -1657,10 +1712,11 @@ Step 4: Result
 
     return {
       rand: bytesToHex(RAND),
-      autn: '...', // Constructed in computeAUTN step
+      mac: bytesToHex(vectors.MAC),
       res: bytesToHex(vectors.RES),
       ck: bytesToHex(vectors.CK),
       ik: bytesToHex(vectors.IK),
+      ak: bytesToHex(vectors.AK),
     }
   }
 
@@ -1673,8 +1729,7 @@ Step 4: Result
   }
 
   async computeOPc(kiHex: string) {
-    // Mock OP
-    const OP = new Uint8Array(16).fill(0xaa)
+    const OP = new Uint8Array(DEFAULT_OP)
     // Convert Ki hex to bytes
     const Ki = new Uint8Array(kiHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)))
 
@@ -1773,7 +1828,7 @@ declare global {
   }
 }
 
-// Expose for E2E Testing / Validation
-if (typeof window !== 'undefined') {
+// Expose for E2E Testing / Validation (dev/test only)
+if (typeof window !== 'undefined' && import.meta.env.DEV) {
   window.fiveGService = fiveGService
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import type { Step } from '../DigitalAssets/components/StepWizard'
 import { StepWizard } from '../DigitalAssets/components/StepWizard'
 import { useStepWizard } from '../DigitalAssets/hooks/useStepWizard'
@@ -17,6 +17,18 @@ type Profile = 'A' | 'B' | 'C'
 export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
   const [profile, setProfile] = useState<Profile>('A')
   const [pqcMode, setPqcMode] = useState<'hybrid' | 'pure'>('hybrid')
+
+  // Wrap setters to also clear crypto state when switching profiles/modes
+  const changeProfile = (p: Profile) => {
+    fiveGService.cleanup()
+    setArtifacts({})
+    setProfile(p)
+  }
+  const changePqcMode = (m: 'hybrid' | 'pure') => {
+    fiveGService.cleanup()
+    setArtifacts({})
+    setPqcMode(m)
+  }
 
   // Select steps based on profile
   const rawSteps =
@@ -91,10 +103,11 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
         result = await fiveGService.sidfDecrypt(profile)
       } else if (stepData.id === 'visualize_suci') {
         result = await fiveGService.visualizeStructure()
+      } else if (stepData.id === 'assemble_suci') {
+        result = await fiveGService.assembleSUCI(profile)
       } else {
-        // Fallback for steps not yet fully dynamic
         await new Promise((resolve) => setTimeout(resolve, 600))
-        result = stepData.output + '\n(Dynamic execution pending for this step)'
+        result = stepData.output
       }
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e)
@@ -109,22 +122,10 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
     onBack,
   })
 
-  // Reset wizard when profile changes
-  useEffect(() => {
-    // We can't easily reset the internal hook state without re-mounting or adding a reset to the hook
-    // For now, key-based re-mounting is simplest strategy in the parent,
-    // but here we can just accept that changing profile resets if we force it.
-    // To handle proper reset, we might need to modify useStepWizard or just remount this component.
-    // However, useStepWizard doesn't export a setStep.
-    // Let's rely on the user manually restarting or just re-rendering the wizard with new steps.
-    // Actually, if steps change, StepWizard usually needs a reset.
-    // Let's check typical behavior. The hook likely initializes state once.
-  }, [profile])
-
   return (
     <div className="space-y-6">
       {/* Profile Selector */}
-      <div className="bg-white/5 p-4 rounded-lg border border-white/10">
+      <div className="bg-muted/50 p-4 rounded-lg border border-border">
         <div className="flex items-center gap-2 mb-3 text-sm text-muted-foreground uppercase tracking-wider font-bold">
           <Shield size={14} />
           Select Protection Scheme
@@ -132,12 +133,12 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
         <div className="flex flex-col md:flex-row gap-4">
           <button
             data-testid="profile-a-btn"
-            onClick={() => setProfile('A')}
+            onClick={() => changeProfile('A')}
             className={clsx(
-              'flex-1 p-3 rounded border text-left transition-all hover:bg-white/5',
+              'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
               profile === 'A'
                 ? 'border-primary bg-primary/10 text-primary'
-                : 'border-white/10 text-muted-foreground'
+                : 'border-border text-muted-foreground'
             )}
           >
             <div className="font-bold flex items-center gap-2">
@@ -149,12 +150,12 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
 
           <button
             data-testid="profile-b-btn"
-            onClick={() => setProfile('B')}
+            onClick={() => changeProfile('B')}
             className={clsx(
-              'flex-1 p-3 rounded border text-left transition-all hover:bg-white/5',
+              'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
               profile === 'B'
                 ? 'border-secondary bg-secondary/10 text-secondary'
-                : 'border-white/10 text-muted-foreground'
+                : 'border-border text-muted-foreground'
             )}
           >
             <div className="font-bold flex items-center gap-2">
@@ -166,12 +167,12 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
 
           <button
             data-testid="profile-c-btn"
-            onClick={() => setProfile('C')}
+            onClick={() => changeProfile('C')}
             className={clsx(
-              'flex-1 p-3 rounded border text-left transition-all hover:bg-white/5',
+              'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
               profile === 'C'
                 ? 'border-tertiary bg-tertiary/10 text-tertiary'
-                : 'border-white/10 text-muted-foreground'
+                : 'border-border text-muted-foreground'
             )}
           >
             <div className="font-bold flex items-center gap-2">
@@ -180,7 +181,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
             </div>
             <div className="text-xs opacity-70 mt-1">ML-KEM (Kyber) + AES-256</div>
             <div className="text-xs italic text-muted-foreground mt-1">
-              Proposed for 3GPP Rel-19 — Not yet standardized
+              Under 3GPP SA3 study (TR 33.841) — Not yet standardized
             </div>
           </button>
         </div>
@@ -198,24 +199,24 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack }) => {
           </p>
           <div className="flex gap-4">
             <button
-              onClick={() => setPqcMode('hybrid')}
+              onClick={() => changePqcMode('hybrid')}
               className={clsx(
                 'flex-1 p-3 rounded border text-left transition-all',
                 pqcMode === 'hybrid'
                   ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground'
-                  : 'border-white/5 text-muted-foreground hover:bg-white/5'
+                  : 'border-border text-muted-foreground hover:bg-muted'
               )}
             >
               <div className="font-bold">Hybrid (Transition)</div>
               <div className="text-xs opacity-70">X25519 + ML-KEM-768</div>
             </button>
             <button
-              onClick={() => setPqcMode('pure')}
+              onClick={() => changePqcMode('pure')}
               className={clsx(
                 'flex-1 p-3 rounded border text-left transition-all',
                 pqcMode === 'pure'
                   ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground'
-                  : 'border-white/5 text-muted-foreground hover:bg-white/5'
+                  : 'border-border text-muted-foreground hover:bg-muted'
               )}
             >
               <div className="font-bold">Pure PQC (Target)</div>

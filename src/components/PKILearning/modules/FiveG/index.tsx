@@ -75,7 +75,7 @@ export const FiveGModule: React.FC = () => {
       {
         id: 'suci',
         title: 'Part 1: SUCI Deconcealment',
-        description: 'Subscriber Privacy & ECIES (Profile A/B/C).',
+        description: 'Subscriber Privacy: ECIES (Profile A/B) & KEM (Profile C).',
         component: <SuciFlow onBack={() => {}} />,
         icon: Shield,
       },
@@ -118,7 +118,7 @@ export const FiveGModule: React.FC = () => {
       {/* Progress Steps */}
       <div className="mb-8 overflow-x-auto px-2 sm:px-0">
         <div className="flex justify-between relative min-w-max sm:min-w-0">
-          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/10 -z-10 hidden sm:block" />
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
 
           {steps.map((step, idx) => {
             const Icon = step.icon
@@ -135,7 +135,7 @@ export const FiveGModule: React.FC = () => {
                                             ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
                                             : idx < currentStep
                                               ? 'border-success text-success'
-                                              : 'border-white/20 text-muted-foreground'
+                                              : 'border-border text-muted-foreground'
                                         }`}
                 >
                   <Icon size={18} />
@@ -151,7 +151,7 @@ export const FiveGModule: React.FC = () => {
 
       {/* Content Area */}
       <div className="glass-panel p-8 min-h-[600px] animate-fade-in">
-        <div className="mb-6 border-b border-white/10 pb-4">
+        <div className="mb-6 border-b border-border pb-4">
           <h2 className="text-2xl font-bold text-foreground">{steps[currentStep].title}</h2>
           <p className="text-muted-foreground">{steps[currentStep].description}</p>
         </div>
@@ -163,7 +163,7 @@ export const FiveGModule: React.FC = () => {
         <button
           onClick={() => handleStepChange(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
-          className="px-6 py-3 min-h-[44px] rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-50 transition-colors text-foreground"
+          className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
         >
           ← Previous Part
         </button>

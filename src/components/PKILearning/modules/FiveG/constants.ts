@@ -115,13 +115,13 @@ head -c 8 mac_full.bin > mac_tag.bin`,
       explanationTable: [
         {
           label: 'SUPI (Input)',
-          value: '310-260-123456789',
-          description: 'Subscriber Permanent Identifier (Cleartext).',
+          value: 'IMSI: 310260123456789 (MCC=310, MNC=260, MSIN=123456789)',
+          description: 'Subscriber Permanent Identifier (Cleartext). No dashes per 3GPP TS 23.003.',
         },
         {
           label: 'SUPI Hex',
-          value: '3331302d3236302d313233343536373839',
-          description: 'Raw Hexadecimal of SUPI string.',
+          value: '333130323630313233343536373839',
+          description: 'Raw Hexadecimal of IMSI digits (310260123456789).',
         },
         {
           label: 'Ciphertext',
@@ -174,7 +174,7 @@ openssl enc -d -aes-128-ctr -in ciphertext.bin ...`,
       output: `[SIDF] Receiving SUCI...
 [SIDF] Deriving Keys... Matches USIM.
 [SIDF] Decrypting...
-[SIDF] SUPI Recovered: 310-260-123456789`,
+[SIDF] SUPI Recovered: 310260123456789`,
     },
   ],
 
@@ -287,13 +287,13 @@ const K_mac = block2;               // 256-bit HMAC Key`,
       explanationTable: [
         {
           label: 'SUPI (Input)',
-          value: '310-260-123456789',
-          description: 'Subscriber Permanent Identifier.',
+          value: 'IMSI: 310260123456789 (MCC=310, MNC=260, MSIN=123456789)',
+          description: 'Subscriber Permanent Identifier. No dashes per 3GPP TS 23.003.',
         },
         {
           label: 'SUPI Hex',
-          value: '3331302d3236302d313233343536373839',
-          description: 'Raw Hexadecimal representation.',
+          value: '333130323630313233343536373839',
+          description: 'Raw Hexadecimal of IMSI digits.',
         },
         {
           label: 'Ciphertext',
@@ -335,7 +335,7 @@ openssl pkeyutl -derive -inkey hn_priv.key -peerkey eph_pub.key ...
 # 2. Decrypt
 openssl enc -d -aes-128-ctr ...`,
       output: `[SIDF] Processing SUCI (Profile B)...
-[SIDF] SUPI Recovered: 310-260-123456789`,
+[SIDF] SUPI Recovered: 310260123456789`,
     },
   ],
 
@@ -405,14 +405,14 @@ openssl pkeyutl -encap ...`,
       id: 'derive_keys',
       title: '6. Derive Keys (KDF w/ SHA3)',
       description:
-        'The shared secret is passed through ANSI X9.63 KDF using SHA3-256 (higher security assurance for PQC). Two iterations produce K_enc (128-bit AES-256 from block1) and K_mac (256-bit HMAC-SHA3-256 from block2).',
+        'The shared secret is passed through ANSI X9.63 KDF using SHA3-256 (higher security assurance for PQC). Two iterations produce K_enc (256-bit AES-256 from block1) and K_mac (256-bit HMAC-SHA3-256 from block2).',
       code: `# ANSI X9.63 KDF with SHA3-256 (2 iterations)
 block1 = SHA3_256(Z || 0x00000001 || SharedInfo)
 block2 = SHA3_256(Z || 0x00000002 || SharedInfo)
 
-enc_key = block1[0:16]   # 128-bit AES Key
+enc_key = block1          # 256-bit AES Key (full block)
 mac_key = block2          # 256-bit HMAC Key`,
-      output: `[USIM] Deriving Keys w/ SHA3...\n[USIM] K_enc: 128-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
+      output: `[USIM] Deriving Keys w/ SHA3...\n[USIM] K_enc: 256-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
     },
     {
       id: 'encrypt_msin',
@@ -442,13 +442,13 @@ mac_key = block2          # 256-bit HMAC Key`,
       explanationTable: [
         {
           label: 'SUPI',
-          value: '310-260-123456789',
-          description: 'Cleartext Identity.',
+          value: 'IMSI: 310260123456789 (MCC=310, MNC=260, MSIN=123456789)',
+          description: 'Cleartext Identity. No dashes per 3GPP TS 23.003.',
         },
         {
           label: 'SUPI Hex',
-          value: '3331302d3236302d313233343536373839',
-          description: 'Hex of "310-260..."',
+          value: '333130323630313233343536373839',
+          description: 'Raw Hexadecimal of IMSI digits.',
         },
         {
           label: 'ML-KEM Ciphertext',
@@ -494,7 +494,7 @@ openssl pkeyutl -decap \\
 openssl enc -d -aes-256-ctr ...`,
       output: `[SIDF] Decapsulating ML-KEM Secret...
 [SIDF] Keys Derived.
-[SIDF] SUPI Recovered: 310-260-123456789`,
+[SIDF] SUPI Recovered: 310260123456789`,
     },
   ],
 
@@ -503,8 +503,8 @@ openssl enc -d -aes-256-ctr ...`,
       id: 'retrieve_creds',
       title: '1. Retrieve Credentials (UDM/HSM)',
       description:
-        'The UDM retrieves the subscriber Key (K), Operator Key (OP), and Sequence Number (SQN) from the secure repository/HSM to prepare for authentication.',
-      code: `// Inside UDM/HSM
+        'The UDM (Unified Data Management) retrieves the subscriber Key (K), Operator Key (OP), and Sequence Number (SQN) from the ARPF (Authentication credential Repository and Processing Function) inside the HSM. The SEAF (Security Anchor Function) in the serving AMF forwarded the SUPI after SUCI deconcealment. SQN prevents replay attacks — the USIM will reject authentication if SQN is not fresh.',
+      code: `// Inside UDM/HSM (ARPF)
 const subProfile = HSM.getProfile(SUPI);
 const K = subProfile.Ki;  // Never exposes K outside HSM
 const OP = HSM.getOP();   // Operator Key
@@ -518,7 +518,7 @@ const SQN = subProfile.SQN;`,
       id: 'gen_rand',
       title: '2. Generate Random Challenge',
       description:
-        'The HSM generates a cryptographically secure 128-bit random number (RAND) to challenge the USIM.',
+        'The HSM generates a cryptographically secure 128-bit random number (RAND) to challenge the USIM. RAND is sent in cleartext to the UE via the SEAF — its secrecy is not required because the authentication relies on K (the shared secret), not RAND confidentiality.',
       code: `// Generate 128-bit random challenge
 const RAND = crypto.randomBytes(16);`,
       output: `[HSM] Assessing TRNG...
@@ -528,15 +528,15 @@ const RAND = crypto.randomBytes(16);`,
       id: 'compute_milenage',
       title: '3. Compute MILENAGE Functions',
       description:
-        'Using K, OPc, and RAND, the HSM computes the MILENAGE function set (f1-f5) to derive authentication vectors. This includes the MAC token, expected response (XRES), privacy key (AK), and encryption/integrity keys (CK, IK).',
-      code: `// Execute MILENAGE algorithm
+        "Using K, OPc, and RAND, the HSM computes the MILENAGE function set (f1-f5) per 3GPP TS 35.206. MILENAGE uses AES-128 internally — a symmetric algorithm that is quantum-resistant (Grover's algorithm only halves the effective key length to 64 bits, still computationally secure). This means 5G-AKA authentication itself does not require PQC upgrades, unlike SUCI concealment which relies on asymmetric crypto. On the UE side, the USIM performs the identical MILENAGE computation with its copy of K to verify the network and produce RES.",
+      code: `// Execute MILENAGE algorithm (both UDM and USIM compute this)
 const { MAC, XRES, CK, IK, AK } = milenage(K, OPc, RAND, SQN, AMF);
 
-// MAC: Network authentication token
-// XRES: Expected user response
-// CK: Cipher Key
-// IK: Integrity Key
-// AK: Anonymity Key to hide SQN`,
+// f1: MAC-A  — Network authentication (USIM verifies this)
+// f2: XRES   — Expected response (network verifies USIM's RES)
+// f3: CK     — Cipher Key (128-bit)
+// f4: IK     — Integrity Key (128-bit)
+// f5: AK     — Anonymity Key (conceals SQN in AUTN)`,
       output: `[HSM] Computing MILENAGE (f1-f5)...
 [HSM] MAC-A: 0x4A9FFAC3...
 [HSM] XRES: 0xA54211D5...
@@ -546,12 +546,19 @@ const { MAC, XRES, CK, IK, AK } = milenage(K, OPc, RAND, SQN, AMF);
     },
     {
       id: 'compute_autn',
-      title: '4. Compute AUTN',
+      title: '4. Compute AUTN (Mutual Authentication)',
       description:
-        "The Authentication Token (AUTN) is assembled by masking the Sequence Number (SQN) with the Anonymity Key (AK) and appending the MAC. This token proves the network's identity to the user.",
-      code: `// Construct AUTN
+        "The Authentication Token (AUTN) proves the network's identity to the UE — this is the 'mutual' in mutual authentication. AUTN = (SQN XOR AK) || AMF || MAC-A. The UE receives RAND + AUTN, recomputes MILENAGE with its own K, and verifies: (1) MAC-A matches (proving the network knows K), and (2) SQN is in the acceptable range (preventing replays). If verification passes, the USIM sends back RES. The SEAF compares HXRES* (hash of XRES*) to verify the UE without ever seeing the raw XRES.",
+      code: `// Network Side: Construct AUTN
 const concealedSQN = XOR(SQN, AK);
-const AUTN = concealedSQN + AMF + MAC;`,
+const AUTN = concealedSQN + AMF + MAC;
+
+// UE Side (mirror verification):
+// 1. Compute MILENAGE(K, OPc, RAND, ...)
+// 2. Recover SQN = concealedSQN XOR AK
+// 3. Verify MAC-A matches → network is authentic
+// 4. Verify SQN is fresh → not a replay
+// 5. Send RES back to network`,
       output: `[HSM] Assembling AUTN...
 [HSM] Concealed SQN: 0x55F23ED0...
 [HSM] AUTN: 0x55F23ED08D0CB9B94A9FFAC354DFAFB3`,
@@ -560,10 +567,14 @@ const AUTN = concealedSQN + AMF + MAC;`,
       id: 'derive_kausf',
       title: '5. Derive 5G Keys (KAUSF)',
       description:
-        'The 5G anchor key (KAUSF) is derived from CK and IK bound to the serving network name. This ensures keys valid in one network cannot be used in another.',
-      code: `// KDF for 5G Anchor Key
-const P0 = "serving_network_name";
-const KAUSF = HMAC_SHA256(CK + IK, P0 + length(P0) + ...);`,
+        'The 5G anchor key (KAUSF) is derived from CK and IK bound to the Serving Network Name (SNN). This binding ensures keys cannot be reused across networks (preventing roaming attacks). KAUSF feeds the full 5G key hierarchy: KAUSF → KSEAF (anchor at serving network) → KAMF (at AMF) → KNASint/KNASenc (NAS signaling protection) → KgNB (radio layer). The SEAF in the serving AMF receives KSEAF and never sees KAUSF itself, enforcing home-network control.',
+      code: `// KDF for 5G Anchor Key (TS 33.501 Annex A.2)
+// FC=0x6A binds to serving network name
+const SNN = "5G:mnc260.mcc310.3gppnetwork.org";
+const KAUSF = HMAC_SHA256(CK || IK, FC || SNN || len(SNN) || SQN_xor_AK || 0x0006);
+
+// Downstream Key Hierarchy:
+// KAUSF → KSEAF → KAMF → KNASint, KNASenc, KgNB`,
       output: `[UDM] Deriving 5G Anchor Key...
 [UDM] KAUSF: 0x8a9b... derived successfully.
 [UDM] Authentication Vector Ready: RAND, AUTN, XRES*, KAUSF`,

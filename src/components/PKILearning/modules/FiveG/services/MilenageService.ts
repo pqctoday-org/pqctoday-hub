@@ -105,38 +105,9 @@ export class MilenageService {
     const macEnc = await this.aes128(K, macInput)
     const macA = this.xor(macEnc, OPc).slice(0, 8) // 64 bits
 
-    // f2: RES, f5: AK
-    // OUT2 = E_K(TEMP XOR rot(in1 XOR OPc, r2) XOR c2) XOR OPc
-    // For f2 (RES), take last 8 bytes of OUT2? No, usually RES is 64-128 bits.
-    // Spec: f2 output is 64 bits. f5 output is 48 bits.
-    // Typically RES is full 128 or chopped. Spec says RES is 64 bits usually.
-    // Let's implement standard flow where we compute full blocks.
-
-    // Actually simplified:
-    // f2 (RES) = part of E_K(...)
-    // f5 (AK)  = part of E_K(...)
-
-    // Helper to simplify E_K(TEMP XOR rot(...) XOR c) XOR OPc
+    // f2-f5: compute OUT = E_K(rot(TEMP XOR OPc, r) XOR c) XOR OPc
+    // Per TS 35.206: f2/f5 share OUT2, f3 uses OUT3, f4 uses OUT4
     const computeBlock = async (r: number, c: Uint8Array) => {
-      // Wait, standard says:
-      // M = TEMP XOR OPc
-      // M1 = ROT(M, r1) XOR c1
-      // MAC = E_K(M1) XOR OPc
-
-      // No wait, the input is different for f1 vs f2/3/4/5.
-      // f1 uses SQN/AMF. f2-f5 usually use RAND.
-
-      // Correct logic typically:
-      // 1. TEMP = E_K(RAND XOR OPc)
-      // 2. To compute MAC (f1):
-      //    IN1 = SQN || AMF || ...
-      //    E_K(IN1 XOR OPc XOR rot(TEMP, r1) XOR c1) XOR OPc
-      //
-      // Let's assume standard behavior for simulation.
-      // We will mock slightly if too complex to perfect-match 100% spec,
-      // but we want real outputs that look consistent.
-
-      // Let's implement a clean approximation that is mathematically valid AES usage:
       const m = this.xor(temp, OPc)
       const rotated = this.rot(m, r)
       const input = this.xor(rotated, c)
@@ -144,13 +115,10 @@ export class MilenageService {
       return this.xor(enc, OPc)
     }
 
+    // OUT2: f2 (RES) = last 8 bytes, f5 (AK) = first 6 bytes
     const out2 = await computeBlock(MilenageService.r2, MilenageService.c2)
-    const RES = out2.slice(8, 16) // Last 8 bytes typically? Or first. Let's take last.
-    // AK (f5) uses same rotation usually? No f5 is specific.
-    // Let's assume f5 uses out2 or out5.
-    // Spec usually defines f2 and f5 together from one block, or f5 using r5.
-    // For simplicity: AK = out2.slice(0, 6) (48 bits).
-    const AK = out2.slice(0, 6)
+    const RES = out2.slice(8, 16) // 64 bits
+    const AK = out2.slice(0, 6) // 48 bits
 
     const out3 = await computeBlock(MilenageService.r3, MilenageService.c3)
     const CK = out3 // 128 bits

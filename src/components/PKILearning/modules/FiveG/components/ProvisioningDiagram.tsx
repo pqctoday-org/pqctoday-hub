@@ -12,7 +12,7 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
       <div
         className={`
         relative z-10 w-24 h-24 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step <= 3 ? 'border-primary bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.2)]' : 'border-white/10 bg-card/40'}
+        ${step <= 3 ? 'border-primary bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.2)]' : 'border-border bg-card/40'}
       `}
       >
         <Factory className="w-8 h-8 mb-2" />
@@ -21,12 +21,12 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
       </div>
 
       {/* Path 1: Factory to USIM (Personalization) */}
-      <div className="absolute left-[15%] bottom-[20%] w-[35%] h-[40%] border-l-2 border-b-2 border-dashed border-white/10 rounded-bl-3xl pointer-events-none"></div>
+      <div className="absolute left-[15%] bottom-[20%] w-[35%] h-[40%] border-l-2 border-b-2 border-dashed border-border rounded-bl-3xl pointer-events-none"></div>
 
       {/* Path 2: Factory to MNO (Transport) */}
       <div className="flex-1 relative h-full flex flex-col items-center justify-center mx-4">
         {/* Connection Line */}
-        <div className="absolute top-1/2 left-0 w-full h-1 bg-white/10 -translate-y-1/2"></div>
+        <div className="absolute top-1/2 left-0 w-full h-1 bg-border -translate-y-1/2"></div>
 
         {/* Step 0/1: Ki/OPc Gen (Pulse at Factory) */}
 
@@ -74,7 +74,7 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
       <div
         className={`
         relative z-10 w-24 h-24 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step === 4 ? 'border-success bg-success/10 shadow-[0_0_20px_hsl(var(--success)/0.2)]' : 'border-white/10 bg-card/40'}
+        ${step === 4 ? 'border-success bg-success/10 shadow-[0_0_20px_hsl(var(--success)/0.2)]' : 'border-border bg-card/40'}
       `}
       >
         <Server className="w-8 h-8 mb-2" />
@@ -86,7 +86,7 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
       <div
         className={`
         absolute bottom-4 left-1/2 -translate-x-1/2 z-10 w-20 h-20 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${step === 2 ? 'border-primary bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.2)]' : 'border-white/10 bg-card/40'}
+        ${step === 2 ? 'border-primary bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.2)]' : 'border-border bg-card/40'}
       `}
       >
         <CreditCard className="w-6 h-6 mb-2 rotate-90" />
@@ -97,7 +97,8 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
       <div
         className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
-          backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+          backgroundImage:
+            'radial-gradient(circle at 2px 2px, hsl(var(--foreground)) 1px, transparent 0)',
           backgroundSize: '24px 24px',
         }}
       ></div>

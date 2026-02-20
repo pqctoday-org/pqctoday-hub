@@ -17,7 +17,7 @@ export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => 
       <div
         className={`
         relative z-10 w-32 h-32 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${usimActive ? 'border-primary bg-primary/10 shadow-glow' : 'border-border/10 bg-card/40'}
+        ${usimActive ? 'border-primary bg-primary/10 shadow-glow' : 'border-border bg-card/40'}
       `}
       >
         <div className="text-4xl mb-2">📱</div>
@@ -83,7 +83,7 @@ export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => 
       <div
         className={`
         relative z-10 w-32 h-32 rounded-xl flex flex-col items-center justify-center border-2 transition-all duration-500
-        ${hnActive ? 'border-secondary bg-secondary/10 shadow-[0_0_20px_hsl(var(--secondary)/0.3)]' : 'border-border/10 bg-card/40'}
+        ${hnActive ? 'border-secondary bg-secondary/10 shadow-[0_0_20px_hsl(var(--secondary)/0.3)]' : 'border-border bg-card/40'}
       `}
       >
         <div className="text-4xl mb-2">☁️</div>

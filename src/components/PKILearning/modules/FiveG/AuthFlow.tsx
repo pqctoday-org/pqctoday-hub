@@ -46,11 +46,11 @@ Step 1: Input Parameters
   > AMF:  [from HSM]
 
 Step 2: Executing MILENAGE Functions
-  > f1 (MAC-A):  ${vec.res.substring(0, 16) + '...'}
+  > f1 (MAC-A):  ${vec.mac}
   > f2 (XRES):   ${vec.res}
   > f3 (CK):     ${vec.ck}
   > f4 (IK):     ${vec.ik}
-  > f5 (AK):     [computed]
+  > f5 (AK):     ${vec.ak}
 
 [SUCCESS] All MILENAGE vectors computed.`
     }
