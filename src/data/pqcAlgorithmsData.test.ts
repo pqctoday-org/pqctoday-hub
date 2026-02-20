@@ -7,8 +7,8 @@ import {
   getSecurityLevelColor,
   getPerformanceColor,
   loadPQCAlgorithmsData,
-  AlgorithmDetail,
 } from './pqcAlgorithmsData'
+import type { AlgorithmDetail } from './pqcAlgorithmsData'
 
 describe('pqcAlgorithmsData helpers', () => {
   it('getDateFromFilename parses correctly', () => {

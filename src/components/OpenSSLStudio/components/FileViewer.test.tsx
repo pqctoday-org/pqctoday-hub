@@ -107,6 +107,7 @@ describe('FileViewer', () => {
 
     vi.mocked(openSSLService.execute).mockResolvedValueOnce({
       stdout: mockCertOutput,
+      stderr: '',
       files: [],
     })
 
@@ -140,6 +141,7 @@ describe('FileViewer', () => {
     vi.mocked(openSSLService.execute).mockResolvedValueOnce({
       error: 'Simulated OpenSSL failure',
       stdout: '',
+      stderr: '',
       files: [],
     })
 
@@ -159,8 +161,8 @@ describe('FileViewer', () => {
     })
 
     vi.mocked(openSSLService.execute)
-      .mockResolvedValueOnce({ error: 'x509 failed', stdout: '', files: [] })
-      .mockResolvedValueOnce({ stdout: 'PrivateKeyData', files: [] })
+      .mockResolvedValueOnce({ error: 'x509 failed', stdout: '', stderr: '', files: [] })
+      .mockResolvedValueOnce({ stdout: 'PrivateKeyData', stderr: '', files: [] })
 
     render(<FileViewer />)
     await waitFor(() => {
@@ -178,6 +180,7 @@ describe('FileViewer', () => {
 
     vi.mocked(openSSLService.execute).mockResolvedValueOnce({
       stdout: 'some_tree_data',
+      stderr: '',
       files: [],
     })
 
@@ -220,6 +223,7 @@ describe('FileViewer', () => {
 
     vi.mocked(openSSLService.execute).mockResolvedValueOnce({
       stdout: 'csr_parsed',
+      stderr: '',
       files: [],
     })
 

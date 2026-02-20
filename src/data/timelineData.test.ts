@@ -25,6 +25,10 @@ describe('timelineData', () => {
         endYear: 2024,
         type: 'Phase',
         status: 'New',
+        orgName: 'NIST',
+        orgFullName: 'National Institute of Standards and Technology',
+        countryName: 'USA',
+        flagCode: 'US',
       }
 
       const mockEvent2: TimelineEvent = {
@@ -34,6 +38,10 @@ describe('timelineData', () => {
         startYear: 2022,
         endYear: 2023,
         type: 'Phase',
+        orgName: 'NIST',
+        orgFullName: 'National Institute of Standards and Technology',
+        countryName: 'USA',
+        flagCode: 'US',
       }
 
       const mockMigration1: TimelineEvent = {
@@ -43,6 +51,10 @@ describe('timelineData', () => {
         startYear: 2025,
         endYear: 2027,
         type: 'Phase',
+        orgName: 'NIST',
+        orgFullName: 'National Institute of Standards and Technology',
+        countryName: 'USA',
+        flagCode: 'US',
       }
 
       const mockMigration2: TimelineEvent = {
@@ -52,6 +64,10 @@ describe('timelineData', () => {
         startYear: 2026,
         endYear: 2028,
         type: 'Phase',
+        orgName: 'NIST',
+        orgFullName: 'National Institute of Standards and Technology',
+        countryName: 'USA',
+        flagCode: 'US',
       }
 
       const mockMilestone: TimelineEvent = {
@@ -62,18 +78,21 @@ describe('timelineData', () => {
         endYear: 2024,
         type: 'Milestone',
         status: 'Updated',
+        orgName: 'NIST',
+        orgFullName: 'National Institute of Standards and Technology',
+        countryName: 'USA',
+        flagCode: 'US',
       }
 
       const countryData: CountryData[] = [
         {
-          region: 'North America',
           countryName: 'USA',
-          countryCode: 'US',
-          priority: 1,
+          flagCode: 'US',
           bodies: [
             {
               name: 'NIST',
-              role: 'Standards body',
+              fullName: 'National Institute of Standards and Technology',
+              countryCode: 'US',
               events: [mockEvent1, mockEvent2, mockMigration1, mockMigration2, mockMilestone],
             },
           ],
