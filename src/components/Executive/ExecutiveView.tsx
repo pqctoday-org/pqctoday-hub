@@ -60,6 +60,7 @@ const KPICard = ({
         to={link}
         className="glass-panel p-5 flex flex-col items-center text-center hover:border-primary/30 transition-colors block"
       >
+        {/* eslint-disable-next-line security/detect-object-injection */}
         <div className={clsx('p-3 rounded-full mb-3 border', colorMap[color])}>
           <Icon size={24} />
         </div>

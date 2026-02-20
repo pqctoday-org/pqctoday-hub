@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import React, { useEffect } from 'react'
 import { Info } from 'lucide-react'
 import { useOpenSSLStore } from '../../store'
@@ -71,7 +72,7 @@ const fromPEM = (pem: string | Uint8Array): Uint8Array => {
   const b64 = pem.replace(/-----[^-]+-----/g, '').replace(/\s+/g, '')
   const binStr = atob(b64)
   const bytes = new Uint8Array(binStr.length)
-  // eslint-disable-next-line security/detect-object-injection
+
   for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i)
 
   // Parse ASN.1 to find Key

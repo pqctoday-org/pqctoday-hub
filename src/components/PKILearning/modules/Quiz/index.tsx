@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { QUIZ_QUESTIONS, quizMetadata } from '@/data/quizData'

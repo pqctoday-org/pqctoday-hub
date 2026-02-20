@@ -100,6 +100,7 @@ describe('ExecutiveView', () => {
     // 4 distinct active types from the mock compliance data
     // Find the KPI card containing "Active Standards" and verify its value
     const standardsLabel = screen.getByText('Active Standards')
+    // eslint-disable-next-line testing-library/no-node-access
     const kpiCard = standardsLabel.closest('a')!
     expect(kpiCard).toBeInTheDocument()
     expect(kpiCard.textContent).toContain('4')

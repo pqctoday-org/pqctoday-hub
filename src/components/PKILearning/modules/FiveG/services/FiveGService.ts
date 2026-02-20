@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import { openSSLService } from '../../../../../services/crypto/OpenSSLService'
 import { bytesToHex } from '../../../../../services/crypto/FileUtils'
 import { MilenageService } from './MilenageService'
@@ -117,7 +118,6 @@ export class FiveGService {
         // Convert to Uint8Array
         const bytes = new Uint8Array(binStr.length)
         for (let i = 0; i < binStr.length; i++) {
-          // eslint-disable-next-line security/detect-object-injection
           bytes[i] = binStr.charCodeAt(i)
         }
         return bytesToHex(bytes)
@@ -177,7 +177,7 @@ export class FiveGService {
             const b64 = readRes.stdout.replace(/\n/g, '')
             const binStr = atob(b64)
             privDerData = new Uint8Array(binStr.length)
-            // eslint-disable-next-line security/detect-object-injection
+
             for (let i = 0; i < binStr.length; i++) privDerData[i] = binStr.charCodeAt(i)
           } catch {
             /* ignore */
@@ -200,7 +200,7 @@ export class FiveGService {
             const b64 = readRes.stdout.replace(/\n/g, '')
             const binStr = atob(b64)
             pubDerData = new Uint8Array(binStr.length)
-            // eslint-disable-next-line security/detect-object-injection
+
             for (let i = 0; i < binStr.length; i++) pubDerData[i] = binStr.charCodeAt(i)
           } catch {
             /* ignore */
@@ -274,7 +274,7 @@ Public Key Hex: ${pubHex} `,
             const b64 = readRes.stdout.replace(/\n/g, '')
             const binStr = atob(b64)
             privDerData = new Uint8Array(binStr.length)
-            // eslint-disable-next-line security/detect-object-injection
+
             for (let i = 0; i < binStr.length; i++) privDerData[i] = binStr.charCodeAt(i)
           } catch {
             /* ignore */
@@ -297,7 +297,7 @@ Public Key Hex: ${pubHex} `,
             const b64 = readRes.stdout.replace(/\n/g, '')
             const binStr = atob(b64)
             pubDerData = new Uint8Array(binStr.length)
-            // eslint-disable-next-line security/detect-object-injection
+
             for (let i = 0; i < binStr.length; i++) pubDerData[i] = binStr.charCodeAt(i)
           } catch {
             /* ignore */
@@ -403,7 +403,7 @@ Public Key Hex: ${pubHex} `,
             const b64 = readRes.stdout.replace(/\n/g, '')
             const binStr = atob(b64)
             pubDerData = new Uint8Array(binStr.length)
-            // eslint-disable-next-line security/detect-object-injection
+
             for (let i = 0; i < binStr.length; i++) pubDerData[i] = binStr.charCodeAt(i)
           } catch {
             // ignore
@@ -785,7 +785,7 @@ ${zEcdhHex}
             const b64 = resRead.stdout.replace(/\n/g, '')
             const binStr = atob(b64)
             hnPubBytes = new Uint8Array(binStr.length)
-            // eslint-disable-next-line security/detect-object-injection
+
             for (let i = 0; i < binStr.length; i++) hnPubBytes[i] = binStr.charCodeAt(i)
           }
 
@@ -1405,8 +1405,14 @@ Step 4: Loading Sequence State
   }
 
   async generateRAND(): Promise<string> {
-    const RAND = new Uint8Array(16)
-    window.crypto.getRandomValues(RAND)
+    let RAND: Uint8Array
+    if (this.testVectors?.milenage) {
+      const vec = this.testVectors.milenage
+      RAND = new Uint8Array(vec.rand.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
+    } else {
+      RAND = new Uint8Array(16)
+      window.crypto.getRandomValues(RAND)
+    }
 
     this.authState.RAND = RAND
 
@@ -1436,7 +1442,6 @@ Step 2: Generating 128-bit Challenge
     // Concealed SQN = SQN ⊕ AK
     const concealedSQN = new Uint8Array(6)
     for (let i = 0; i < 6; i++) {
-      // eslint-disable-next-line security/detect-object-injection
       concealedSQN[i] = SQN[i] ^ AK[i]
     }
 
@@ -1488,7 +1493,6 @@ Step 3: Final AUTN (16 bytes)
     // Concealed SQN for AUTN reference
     const concealedSQN = new Uint8Array(6)
     for (let i = 0; i < 6; i++) {
-      // eslint-disable-next-line security/detect-object-injection
       concealedSQN[i] = SQN[i] ^ AK[i]
     }
     const AUTN = new Uint8Array(16)

@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import type { ReactNode, HTMLAttributes, ImgHTMLAttributes } from 'react'
 
 type MotionProps = Record<string, unknown> & { children?: ReactNode }

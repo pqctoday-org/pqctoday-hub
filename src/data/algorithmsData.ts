@@ -2,7 +2,7 @@ export interface AlgorithmTransition {
   classical: string
   keySize?: string
   pqc: string
-  function: 'Encryption/KEM' | 'Signature'
+  function: 'Encryption/KEM' | 'Signature' | 'Hybrid KEM'
   deprecationDate: string
   standardizationDate: string
 }
@@ -66,7 +66,7 @@ export async function loadAlgorithmsData(): Promise<AlgorithmTransition[]> {
         classical: values[0],
         keySize: values[1],
         pqc: values[2],
-        function: values[3] as 'Encryption/KEM' | 'Signature',
+        function: values[3] as 'Encryption/KEM' | 'Signature' | 'Hybrid KEM',
         deprecationDate: values[4],
         standardizationDate: values[5],
       })

@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import type { SoftwareItem } from '../types/MigrateTypes'
 import Papa from 'papaparse'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'

@@ -130,6 +130,7 @@ export const ReportTimelineStrip: React.FC<ReportTimelineStripProps> = ({ countr
             <span key={p} className="flex items-center gap-1 text-[9px] text-muted-foreground">
               <span
                 className="inline-block w-3 h-2 rounded-sm"
+                // eslint-disable-next-line security/detect-object-injection
                 style={{ backgroundColor: phaseColors[p]?.start }}
               />
               {p}

@@ -87,6 +87,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({ actions, cou
     ]
     for (const action of actions) {
       const idx = CATEGORY_MAP[action.category] ?? 2
+      // eslint-disable-next-line security/detect-object-injection
       grouped[idx].items.push(action)
     }
     return grouped
@@ -152,6 +153,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({ actions, cou
                 ) : (
                   lane.items.map((action) => {
                     const effort = action.effort ?? 'medium'
+                    // eslint-disable-next-line security/detect-object-injection
                     const effortStyle = EFFORT_CONFIG[effort] ?? EFFORT_CONFIG.medium
                     return (
                       <div
@@ -191,6 +193,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({ actions, cou
             Effort:
           </span>
           {(['low', 'medium', 'high'] as const).map((effort) => {
+            // eslint-disable-next-line security/detect-object-injection
             const style = EFFORT_CONFIG[effort]
             return (
               <span

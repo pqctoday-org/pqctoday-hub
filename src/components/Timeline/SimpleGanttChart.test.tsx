@@ -315,13 +315,14 @@ describe('SimpleGanttChart', () => {
       // US Research is row 1, US Policy is row 2
       const testingPhases = screen.getAllByLabelText(/Testing: Canada Testing/i)
       testingPhases[0].focus()
-      expect(document.activeElement).toBe(testingPhases[0])
+      expect(testingPhases[0]).toHaveFocus()
 
       // Press ArrowDown to navigate to next row (US Research)
       fireEvent.keyDown(testingPhases[0], { key: 'ArrowDown' })
 
-      const focusedEl = document.activeElement as HTMLElement
-      expect(focusedEl.getAttribute('data-phase-row')).toBe('1')
+      const researchPhases = screen.getAllByLabelText(/Research: PQC Research/i)
+      expect(researchPhases[0]).toHaveFocus()
+      expect(researchPhases[0]).toHaveAttribute('data-phase-row', '1')
     })
 
     it('phase buttons have data-phase attributes for navigation', () => {

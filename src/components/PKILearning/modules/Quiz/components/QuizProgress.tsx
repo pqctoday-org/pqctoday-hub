@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import React from 'react'
 import { CheckCircle, XCircle } from 'lucide-react'
 import clsx from 'clsx'

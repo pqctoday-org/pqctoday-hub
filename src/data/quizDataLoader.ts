@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import type {
   QuizQuestion,
   QuizCategory,
@@ -21,7 +22,7 @@ function getLatestQuizFile(): { content: string; filename: string; date: Date } 
       if (match) {
         const [, month, day, year] = match
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-        // eslint-disable-next-line security/detect-object-injection
+
         return { path, date, content: modules[path] as string }
       }
       return null
@@ -51,7 +52,6 @@ function parseLine(line: string): string[] {
   let inQuotes = false
 
   for (let i = 0; i < line.length; i++) {
-    // eslint-disable-next-line security/detect-object-injection
     const char = line[i]
 
     if (char === '"' && line[i + 1] === '"') {

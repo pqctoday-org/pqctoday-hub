@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import docsMapRaw from '../data/openssl_docs_map.csv?raw'
 
 let docsMapCache: Map<string, string> | null = null

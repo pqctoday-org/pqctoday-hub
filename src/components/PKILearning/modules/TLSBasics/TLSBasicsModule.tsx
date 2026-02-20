@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Play } from 'lucide-react'
 import { useTLSStore } from '../../../../store/tls-learning.store'

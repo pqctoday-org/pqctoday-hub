@@ -408,6 +408,12 @@ describe('AssessWizard', () => {
       expect(mockStore.markComplete).toHaveBeenCalledOnce()
       expect(onComplete).toHaveBeenCalledOnce()
     })
+
+    it('calls setTimelinePressure when an option is clicked', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      fireEvent.click(screen.getByRole('radio', { name: /^No Specific Deadline/ }))
+      expect(mockStore.setTimelinePressure).toHaveBeenCalledWith('no-deadline')
+    })
   })
 
   describe('navigation', () => {
@@ -434,6 +440,12 @@ describe('AssessWizard', () => {
       mockStore.currentStep = 1
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByRole('button', { name: /Previous/ })).toBeEnabled()
+    })
+
+    it('calls reset when Reset button is clicked', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      fireEvent.click(screen.getByRole('button', { name: /Reset/ }))
+      expect(mockStore.reset).toHaveBeenCalledOnce()
     })
   })
 
@@ -484,6 +496,220 @@ describe('AssessWizard', () => {
       expect(screen.getByText('1-5 years')).toBeInTheDocument()
       expect(screen.getByText('5-10 years')).toBeInTheDocument()
       expect(screen.getByText('Indefinite')).toBeInTheDocument()
+    })
+  })
+
+  describe('step 9: Org Scale', () => {
+    beforeEach(() => {
+      mockStore.currentStep = 8
+    })
+
+    it('renders organization scale options', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/What is your organizational scale/)).toBeInTheDocument()
+      expect(screen.getByRole('radiogroup', { name: 'Number of systems' })).toBeInTheDocument()
+    })
+
+    it('disables Next when no scale is selected', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('button', { name: /Next/ })).toBeDisabled()
+    })
+
+    it('enables Next when scale and team size are selected', () => {
+      mockStore.systemCount = '100-200'
+      mockStore.teamSize = '1-10'
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('button', { name: /Next/ })).toBeEnabled()
+    })
+
+    it('calls setSystemCount when an option is clicked', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      fireEvent.click(screen.getByRole('radio', { name: '51-200 systems' }))
+      expect(mockStore.setSystemCount).toHaveBeenCalledWith('51-200')
+    })
+
+    it('calls setTeamSize when an option is clicked', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      fireEvent.click(screen.getByRole('radio', { name: '51-200 engineers' }))
+      expect(mockStore.setTeamSize).toHaveBeenCalledWith('51-200')
+    })
+  })
+
+  describe('step 10: Crypto Agility', () => {
+    beforeEach(() => {
+      mockStore.currentStep = 9
+    })
+
+    it('renders crypto agility options', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(
+        screen.getByText(/How easily can you swap cryptographic algorithms/)
+      ).toBeInTheDocument()
+    })
+
+    it('disables Next when no agility is selected', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('button', { name: /Next/ })).toBeDisabled()
+    })
+
+    it('enables Next when agility is selected', () => {
+      mockStore.cryptoAgility = 'hardcoded'
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('button', { name: /Next/ })).toBeEnabled()
+    })
+
+    it('calls setCryptoAgility when an option is clicked', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      fireEvent.click(screen.getByRole('radio', { name: /^Partially Abstracted/ }))
+      expect(mockStore.setCryptoAgility).toHaveBeenCalledWith('partially-abstracted')
+    })
+  })
+
+  describe('step 11: Infrastructure', () => {
+    beforeEach(() => {
+      mockStore.currentStep = 10
+    })
+
+    it('renders infrastructure options', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/What infrastructure affects your cryptography/)).toBeInTheDocument()
+    })
+
+    it('allows proceeding without selecting infrastructure (it is optional)', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('button', { name: /Next/ })).toBeEnabled()
+    })
+
+    it('calls toggleInfrastructure when an option is clicked', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      fireEvent.click(screen.getByRole('button', { name: /^Cloud KMS/ }))
+      expect(mockStore.toggleInfrastructure).toHaveBeenCalledWith('Cloud KMS (AWS, Azure, GCP)')
+    })
+  })
+
+  describe('step 12: Vendor Dependency', () => {
+    beforeEach(() => {
+      mockStore.currentStep = 11
+    })
+
+    it('renders vendor dependency options', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/How do you manage cryptographic dependencies/)).toBeInTheDocument()
+    })
+
+    it('disables Next when no vendor dependency is selected', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('button', { name: /Next/ })).toBeDisabled()
+    })
+
+    it('enables Next when vendor dependency is selected', () => {
+      mockStore.vendorDependency = 'heavy-vendor'
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('button', { name: /Next/ })).toBeEnabled()
+    })
+
+    it('calls setVendorDependency when an option is clicked', () => {
+      render(<AssessWizard onComplete={onComplete} />)
+      fireEvent.click(screen.getByRole('radio', { name: /^Mixed/ }))
+      expect(mockStore.setVendorDependency).toHaveBeenCalledWith('mixed')
+    })
+  })
+
+  describe('Wizard Full Traversal', () => {
+    it('can traverse from step 0 to step 12 by filling required fields', () => {
+      // For this test, reset currentStep
+      mockStore.currentStep = 0
+
+      const { rerender } = render(<AssessWizard onComplete={onComplete} />)
+
+      // Navigate forward step by step by simulating the store update
+      const goNext = () => {
+        mockStore.currentStep += 1
+        rerender(<AssessWizard onComplete={onComplete} />)
+      }
+
+      // 1. Industry
+      mockStore.industry = 'Technology'
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('button', { name: /Next/ })).toBeEnabled()
+      goNext()
+
+      // 2. Country
+      mockStore.country = 'Germany'
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/Which jurisdiction applies/)).toBeInTheDocument()
+      goNext()
+
+      // 3. Crypto
+      mockStore.currentCrypto = ['RSA-2048']
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/What cryptography do you use today/)).toBeInTheDocument()
+      goNext()
+
+      // 4. Sensitivity
+      mockStore.dataSensitivity = ['high']
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/How sensitive is your data/)).toBeInTheDocument()
+      goNext()
+
+      // 5. Compliance
+      mockStore.complianceRequirements = ['FIPS 140-3']
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/Which compliance frameworks/)).toBeInTheDocument()
+      goNext()
+
+      // 6. Migration Status
+      mockStore.migrationStatus = 'not-started'
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByRole('radiogroup', { name: 'Migration status' })).toBeInTheDocument()
+      goNext()
+
+      // 7. Use Cases
+      mockStore.cryptoUseCases = ['TLS/HTTPS']
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/Where do you use cryptography/)).toBeInTheDocument()
+      goNext()
+
+      // 8. Retention
+      mockStore.dataRetention = ['1-5y']
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/How long must your data stay confidential/)).toBeInTheDocument()
+      goNext()
+
+      // 9. Scale
+      mockStore.systemCount = '1-10'
+      mockStore.teamSize = '1-10'
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/What is your organizational scale/)).toBeInTheDocument()
+      goNext()
+
+      // 10. Agility
+      mockStore.cryptoAgility = 'hardcoded'
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(
+        screen.getByText(/How easily can you swap cryptographic algorithms/)
+      ).toBeInTheDocument()
+      goNext()
+
+      // 11. Infrastructure
+      mockStore.infrastructure = ['Cloud Storage']
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/What infrastructure affects your cryptography/)).toBeInTheDocument()
+      goNext()
+
+      // 12. Vendors
+      mockStore.vendorDependency = 'in-house'
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/How do you manage cryptographic dependencies/)).toBeInTheDocument()
+      goNext()
+
+      // 13. Timeline
+      mockStore.timelinePressure = 'no-deadline'
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(screen.getByText(/Do you have a migration deadline/)).toBeInTheDocument()
+
+      // Ensure Generate Report is enabled
+      expect(screen.getByRole('button', { name: 'Generate Report' })).toBeEnabled()
     })
   })
 })

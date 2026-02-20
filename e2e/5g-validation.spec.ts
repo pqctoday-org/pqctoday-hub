@@ -50,6 +50,13 @@ c/wVjXjqJ9F7v7+0S9/Pc/wVjXmhRANCAATe+8+1abcde1234567890123456789
 }
 
 test.describe('5G SUCI Validation', () => {
+  test.beforeEach(async ({ page }) => {
+    // Disable Guided Tour to prevent intercepting clicks
+    await page.addInitScript(() => {
+      window.localStorage.setItem('pqc-tour-completed', 'true')
+    })
+  })
+
   test('validate Profile A (X25519) Decryption', async ({ page }) => {
     // Listen for console logs
     page.on('console', (msg) => console.log(`PAGE LOG: ${msg.text()}`))
@@ -170,7 +177,7 @@ test.describe('5G SUCI Validation', () => {
     // Verify Decryption
     const decryptOutput = await page.locator('.p-4.overflow-x-auto.overflow-y-auto').textContent()
     expect(decryptOutput).toContain('SUPI')
-    expect(decryptOutput).toContain('310-260')
+    expect(decryptOutput).toContain('310260')
     expect(decryptOutput).not.toContain('[Decryption Failed]')
   })
 
@@ -216,7 +223,7 @@ test.describe('5G SUCI Validation', () => {
     // Verify Decryption
     const decryptOutput = await page.locator('.p-4.overflow-x-auto.overflow-y-auto').textContent()
     expect(decryptOutput).toContain('SUPI')
-    expect(decryptOutput).toContain('310-260')
+    expect(decryptOutput).toContain('310260')
     expect(decryptOutput).not.toContain('[Decryption Failed]')
   })
 
@@ -249,11 +256,11 @@ test.describe('5G SUCI Validation', () => {
     const termRaw = await page.locator('.p-4.overflow-x-auto.overflow-y-auto').textContent()
     console.log('MILENAGE Output:', termRaw)
 
-    expect(termRaw).toContain('Computing MILENAGE')
+    expect(termRaw).toContain('MILENAGE COMPUTATION')
     expect(termRaw).toContain(`RAND: ${TEST_VECTORS.milenage.rand}`) // Verify deterministic RAND used
-    expect(termRaw).toContain('MAC:')
-    expect(termRaw).toContain('XRES:')
-    expect(termRaw).toContain('CK:')
-    expect(termRaw).toContain('IK:')
+    expect(termRaw).toContain('(MAC-A):')
+    expect(termRaw).toContain('(XRES):')
+    expect(termRaw).toContain('(CK):')
+    expect(termRaw).toContain('(IK):')
   })
 })

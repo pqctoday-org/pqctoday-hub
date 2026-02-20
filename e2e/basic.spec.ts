@@ -11,7 +11,7 @@ test('navigation works', async ({ page }) => {
   await page.goto('/')
 
   // Click the Playground link.
-  await page.getByRole('button', { name: 'Playground' }).click()
+  await page.getByRole('button', { name: 'Playground view' }).click()
 
   // Expects page to have a heading with the name of Installation.
   await expect(

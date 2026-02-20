@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 

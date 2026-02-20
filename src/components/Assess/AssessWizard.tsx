@@ -83,6 +83,7 @@ const StepIndicator = ({
           <div className="flex flex-col items-center gap-1">
             <div
               aria-current={i === current ? 'step' : undefined}
+              // eslint-disable-next-line security/detect-object-injection
               aria-label={`Step ${i + 1}: ${titles[i] ?? ''}${i < current ? ' (completed)' : i === current ? ' (current)' : ''}`}
               className={clsx(
                 'w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold border-2 transition-colors',
@@ -342,6 +343,7 @@ const Step4Sensitivity = () => {
           <div className="space-y-3" role="group" aria-label={`${industry} data sensitivity types`}>
             {industrySensitivities.map((item) => {
               const level = SENSITIVITY_SCORE_TO_LEVEL[item.sensitivityScore] ?? 'medium'
+              // eslint-disable-next-line security/detect-object-injection
               const badge = SENSITIVITY_BADGE_STYLES[level]
               const isSelected = dataSensitivity.includes(level)
               return (
@@ -1299,6 +1301,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
   const stepTitles = mode === 'quick' ? STEP_TITLES_QUICK : STEP_TITLES_FULL
 
   const canProceed = () => {
+    // eslint-disable-next-line security/detect-object-injection
     const step = steps[currentStep]
     return step ? step.canProceed(store) : false
   }
@@ -1328,6 +1331,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.2 }}
           >
+            {/* eslint-disable-next-line security/detect-object-injection */}
             {steps[currentStep]?.component}
           </motion.div>
         </AnimatePresence>

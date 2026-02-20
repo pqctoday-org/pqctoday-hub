@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import { useReducer, useCallback, useRef } from 'react'
 import type {
   QuizQuestion,

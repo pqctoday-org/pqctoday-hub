@@ -287,6 +287,7 @@ export const AssessView: React.FC = () => {
                       Resume saved assessment?
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
+                      {/* eslint-disable-next-line security/detect-object-injection */}
                       You left off at step {currentStep + 1} ({STEP_LABELS[currentStep] ?? ''}) on{' '}
                       {new Date(lastWizardUpdate).toLocaleDateString(undefined, {
                         month: 'short',

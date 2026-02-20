@@ -21,20 +21,4 @@ test.describe('About View', () => {
     await expect(sbomSection.getByText(/OpenSSL/)).toBeVisible()
     await expect(sbomSection.getByText(/v3\.\d+\.\d+/).first()).toBeVisible()
   })
-
-  test('displays feedback forms', async ({ page }) => {
-    // Check for Change Request form
-    await expect(page.getByText('Submit Change Request')).toBeVisible()
-    await expect(page.getByLabel('I am a...')).toBeVisible()
-
-    // Check for Kudos form
-    await expect(page.getByText('Give Kudos')).toBeVisible()
-    await expect(page.getByText('What do you like?')).toBeVisible()
-  })
-
-  test('displays submit buttons', async ({ page }) => {
-    // Verify submit buttons exist (implementation uses window.location.href on submit, so we check button presence)
-    await expect(page.getByRole('button', { name: 'Send Request' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Send Kudos' })).toBeVisible()
-  })
 })

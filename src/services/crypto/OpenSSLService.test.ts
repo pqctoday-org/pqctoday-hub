@@ -243,4 +243,250 @@ describe('OpenSSLService Functionality', () => {
     const execPromise = openSSLService.execute('badcmd')
     await expect(execPromise).rejects.toThrow('Unknown command')
   })
+
+  it('execute() throws if worker fails to initialize entirely', async () => {
+    ;(openSSLService as any).worker = null
+    const initSpy = vi.spyOn(openSSLService, 'init').mockRejectedValue(new Error('init fail'))
+    await expect(openSSLService.execute('test')).rejects.toThrow(
+      'OpenSSL Service not available: init fail'
+    )
+    initSpy.mockRestore()
+  })
+
+  it('execute() throws if worker is magically null after init', async () => {
+    const initSpy = vi.spyOn(openSSLService, 'init').mockResolvedValue(undefined)
+    ;(openSSLService as any).worker = null
+    await expect(openSSLService.execute('test')).rejects.toThrow('Worker not initialized')
+    initSpy.mockRestore()
+  })
+
+  describe('deleteFile()', () => {
+    it('deletes file successfully', async () => {
+      const worker = (openSSLService as any).worker
+      const postMessageMock = vi.fn((data: any) => {
+        worker.onmessage({ data: { type: 'DONE', requestId: data.requestId } } as MessageEvent)
+      })
+      worker.postMessage = postMessageMock
+
+      await openSSLService.deleteFile('test.pem')
+      expect(postMessageMock).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'DELETE_FILE', name: 'test.pem' })
+      )
+    })
+
+    it('returns early if init fails', async () => {
+      const initSpy = vi.spyOn(openSSLService, 'init').mockRejectedValue(new Error('init fail'))
+      await expect(openSSLService.deleteFile('test.pem')).resolves.toBeUndefined()
+      initSpy.mockRestore()
+    })
+
+    it('returns early if worker is null', async () => {
+      const initSpy = vi.spyOn(openSSLService, 'init').mockResolvedValue(undefined)
+      ;(openSSLService as any).worker = null
+      await expect(openSSLService.deleteFile('test.pem')).resolves.toBeUndefined()
+      initSpy.mockRestore()
+    })
+
+    it('handles worker deletion error gracefully', async () => {
+      const worker = (openSSLService as any).worker
+      const postMessageMock = vi.fn((data: any) => {
+        worker.onmessage({
+          data: { type: 'ERROR', error: 'no such file', requestId: data.requestId },
+        } as MessageEvent)
+        worker.onmessage({ data: { type: 'DONE', requestId: data.requestId } } as MessageEvent)
+      })
+      worker.postMessage = postMessageMock
+
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      await openSSLService.deleteFile('test.pem')
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        '[OpenSSLService] Delete failed:',
+        expect.any(Error)
+      )
+      consoleWarnSpy.mockRestore()
+    })
+
+    it('handles timeout in deleteFile', async () => {
+      vi.useFakeTimers()
+      const worker = (openSSLService as any).worker
+      worker.postMessage = vi.fn() // Do nothing to trigger timeout
+      const p = openSSLService.deleteFile('test.pem')
+      await Promise.resolve()
+      vi.advanceTimersByTime(5001)
+      await expect(p).resolves.toBeUndefined()
+      vi.useRealTimers()
+    })
+  })
+
+  describe('simulateTLS()', () => {
+    it('parses structured JSON result from stdout', async () => {
+      const worker = (openSSLService as any).worker
+      const postMessageMock = vi.fn((data: any) => {
+        worker.onmessage({
+          data: {
+            type: 'LOG',
+            stream: 'stdout',
+            message: 'SIMULATION_RESULT:{"success":true}',
+            requestId: data.requestId,
+          },
+        } as MessageEvent)
+        worker.onmessage({ data: { type: 'DONE', requestId: data.requestId } } as MessageEvent)
+      })
+      worker.postMessage = postMessageMock
+
+      const result = await openSSLService.simulateTLS('client', 'server')
+      expect(result).toBe('{"success":true}')
+    })
+
+    it('falls back to stdout if no structured result', async () => {
+      const worker = (openSSLService as any).worker
+      const postMessageMock = vi.fn((data: any) => {
+        worker.onmessage({
+          data: {
+            type: 'LOG',
+            stream: 'stdout',
+            message: 'raw handshake data',
+            requestId: data.requestId,
+          },
+        } as MessageEvent)
+        worker.onmessage({ data: { type: 'DONE', requestId: data.requestId } } as MessageEvent)
+      })
+      worker.postMessage = postMessageMock
+
+      const result = await openSSLService.simulateTLS('client', 'server')
+      expect(result.trim()).toBe('raw handshake data')
+    })
+
+    it('rejects with stderr if no structured result and stderr exists', async () => {
+      const worker = (openSSLService as any).worker
+      const postMessageMock = vi.fn((data: any) => {
+        worker.onmessage({
+          data: {
+            type: 'LOG',
+            stream: 'stderr',
+            message: 'connection refused',
+            requestId: data.requestId,
+          },
+        } as MessageEvent)
+        worker.onmessage({ data: { type: 'DONE', requestId: data.requestId } } as MessageEvent)
+      })
+      worker.postMessage = postMessageMock
+
+      await expect(openSSLService.simulateTLS('client', 'server')).rejects.toThrow(
+        'connection refused'
+      )
+    })
+
+    it('rejects on execution error', async () => {
+      const worker = (openSSLService as any).worker
+      const postMessageMock = vi.fn((data: any) => {
+        worker.onmessage({
+          data: { type: 'ERROR', error: 'sim fail', requestId: data.requestId },
+        } as MessageEvent)
+        worker.onmessage({ data: { type: 'DONE', requestId: data.requestId } } as MessageEvent)
+      })
+      worker.postMessage = postMessageMock
+
+      await expect(openSSLService.simulateTLS('client', 'server')).rejects.toThrow('sim fail')
+    })
+
+    it('handles initialization failure', async () => {
+      const initSpy = vi.spyOn(openSSLService, 'init').mockRejectedValue(new Error('init fail'))
+      await expect(openSSLService.simulateTLS('client', 'server')).rejects.toThrow(
+        'OpenSSL Service not available: Error: init fail'
+      )
+      initSpy.mockRestore()
+    })
+
+    it('throws if worker is missing', async () => {
+      const initSpy = vi.spyOn(openSSLService, 'init').mockResolvedValue(undefined)
+      ;(openSSLService as any).worker = null
+      await expect(openSSLService.simulateTLS('client', 'server')).rejects.toThrow(
+        'Worker not initialized'
+      )
+      initSpy.mockRestore()
+    })
+
+    it('handles timeout in simulateTLS', async () => {
+      vi.useFakeTimers()
+      const worker = (openSSLService as any).worker
+      worker.postMessage = vi.fn() // Do nothing
+      const p = openSSLService.simulateTLS('client', 'server')
+      await Promise.resolve()
+      vi.advanceTimersByTime(60001)
+      await expect(p).rejects.toThrow('TLS Simulation timed out')
+      vi.useRealTimers()
+    })
+  })
+
+  describe('executeSkey()', () => {
+    it('sends correct message for skey operation', async () => {
+      const worker = (openSSLService as any).worker
+      const postMessageMock = vi.fn((data: any) => {
+        worker.onmessage({ data: { type: 'DONE', requestId: data.requestId } } as MessageEvent)
+      })
+      worker.postMessage = postMessageMock
+
+      await openSSLService.executeSkey('create', { key: 'value' })
+      expect(postMessageMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'SKEY_OPERATION',
+          opType: 'create',
+          params: { key: 'value' },
+        })
+      )
+    })
+
+    it('handles initialization failure', async () => {
+      const initSpy = vi.spyOn(openSSLService, 'init').mockRejectedValue(new Error('init fail'))
+      await expect(openSSLService.executeSkey('create', {})).rejects.toThrow(
+        'OpenSSL Service not available: Error: init fail'
+      )
+      initSpy.mockRestore()
+    })
+
+    it('throws if worker is missing', async () => {
+      const initSpy = vi.spyOn(openSSLService, 'init').mockResolvedValue(undefined)
+      ;(openSSLService as any).worker = null
+      await expect(openSSLService.executeSkey('create', {})).rejects.toThrow(
+        'Worker not initialized'
+      )
+      initSpy.mockRestore()
+    })
+
+    it('handles worker error', async () => {
+      const worker = (openSSLService as any).worker
+      const postMessageMock = vi.fn((data: any) => {
+        worker.onmessage({
+          data: { type: 'ERROR', error: 'skey fail', requestId: data.requestId },
+        } as MessageEvent)
+        worker.onmessage({ data: { type: 'DONE', requestId: data.requestId } } as MessageEvent)
+      })
+      worker.postMessage = postMessageMock
+
+      await expect(openSSLService.executeSkey('create', {})).rejects.toThrow('skey fail')
+    })
+
+    it('handles timeout in executeSkey', async () => {
+      vi.useFakeTimers()
+      const worker = (openSSLService as any).worker
+      worker.postMessage = vi.fn()
+      const p = openSSLService.executeSkey('create', {})
+      await Promise.resolve()
+      vi.advanceTimersByTime(60001)
+      await expect(p).rejects.toThrow('SKEY Operation timed out')
+      vi.useRealTimers()
+    })
+  })
+
+  describe('handleMessage Edge Cases', () => {
+    it('ignores messages without requestId or unknown requestId', async () => {
+      const worker = (openSSLService as any).worker
+      // Should not throw or crash
+      worker.onmessage({ data: { type: 'LOG', stream: 'stdout', message: 'test' } } as MessageEvent)
+      worker.onmessage({
+        data: { type: 'LOG', stream: 'stdout', message: 'test', requestId: 'unknown' },
+      } as MessageEvent)
+    })
+  })
 })

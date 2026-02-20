@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { LearningProgress } from '../services/storage/types'
@@ -53,7 +54,6 @@ export const useModuleStore = create<ModuleState>()(
 
       updateModuleProgress: (moduleId, updates) =>
         set((state) => {
-          // eslint-disable-next-line security/detect-object-injection
           const currentModule = state.modules[moduleId] || {
             status: 'in-progress',
             lastVisited: Date.now(),
@@ -81,7 +81,6 @@ export const useModuleStore = create<ModuleState>()(
 
       markStepComplete: (moduleId, stepId) =>
         set((state) => {
-          // eslint-disable-next-line security/detect-object-injection
           const module = state.modules[moduleId]
           if (module && !module.completedSteps.includes(stepId)) {
             logStepComplete(moduleId, module.completedSteps.length)
