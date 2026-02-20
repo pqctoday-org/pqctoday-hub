@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.2] - 2026-02-19
+
+### Fixed
+
+- **Retention Step Industry-Awareness** (`/assess`): Step 8 (Data Retention) no longer shows
+  finance/healthcare-specific language for unrelated industries. Universal time-range options are
+  now sourced from the CSV (empty industries column) with purely time-based descriptions.
+  Every industry now has specific regulatory retention entries:
+  Automotive (telematics 1-3y, vehicle lifetime 10-15y),
+  Technology (SOC 2 audit logs 3y),
+  Energy & Utilities (NERC CIP-007 3y, FERC/billing 7y),
+  Aerospace (FAA/DO-178C aircraft lifetime 20-40y),
+  Retail & E-Commerce (PCI DSS audit logs 1y, cardholder data 2y),
+  Education (FERPA/financial aid 6y, permanent transcripts).
+- **PDF Export** (`/assess`): Reverted to `window.print()` from html2canvas/jsPDF for more
+  reliable cross-browser output.
+
 ## [1.14.1] - 2026-02-19
 
 ### Fixed

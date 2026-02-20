@@ -77,23 +77,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
+                    <strong className="text-foreground">Retention Step</strong> &mdash; Data
+                    retention periods now tailored to your industry with regulation-grounded options
+                    (HIPAA, NERC CIP, PCI DSS, FAA, FERPA &amp; more)
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">PDF Report</strong> &mdash; Reverted to
+                    native print for more reliable cross-browser PDF output
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
                     <strong className="text-foreground">Industry-Aware Assessment</strong> &mdash;
-                    Wizard steps now surface industry-relevant options first with country-filtered
+                    All wizard steps surface industry-relevant options with country-filtered
                     compliance
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
-                    <strong className="text-foreground">PDF Report</strong> &mdash; Download a
-                    print-ready report with header, footer, page numbers, and proper page breaks
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
-                    <strong className="text-foreground">Organization Filter</strong> &mdash; Library
-                    now filters by standardization body (NIST, IETF, ETSI, ISO) instead of region
                   </span>
                 </li>
               </ul>
