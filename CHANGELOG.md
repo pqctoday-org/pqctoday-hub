@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+#### Learning Platform Restructure
+
 - **Learning Platform Restructure** (`/learn`): PKI Workshop, Digital Assets, and 5G Security
   modules restructured to the 3-tab layout (Learn | Simulate | Exercises) established by TLS
   Basics. Each module now separates educational theory from hands-on practice and includes guided
@@ -25,6 +27,9 @@ All notable changes to this project will be documented in this file.
   (quantum-vulnerable vs quantum-resistant components). New Exercises tab with 5 scenarios
   (Profile A Classical, Profile B NIST, Profile C Hybrid, Profile C Pure PQC, 5G-AKA
   Authentication).
+
+#### Data Expansion
+
 - **Leaders Board Expanded**: 12 new PQC leaders added via `leaders_02202026.csv` — Prof Bill Buchanan OBE (Edinburgh Napier), Dr. Bob Sutor (Sutor Group), Bruno Couillard (Crypto4A), Dr. Colin Soutar (Deloitte), Denis Mandich (Qrypt), Éric Brier (Thales), Konstantinos Karagiannis (Protiviti), Dr. Krysta Svore (Microsoft Azure Quantum), Niccolò De Masi (IonQ), Philip Intallura (HSBC), Sheetal Mehta (NTT DATA), Tom Patterson (Accenture); total now 98 leaders
 
 ### Changed

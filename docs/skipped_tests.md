@@ -1,31 +1,62 @@
-# Skipped E2E Tests (CI Stabilization)
+# Skipped E2E Tests
 
-The following E2E tests have been skipped to prevent CI hangs and timeouts. These tests were identified as unstable or failing during the 2-worker parallel execution.
+Last reviewed: 2026-02-20
 
-## 5G Security (Application Bug)
+The following E2E tests are currently skipped. Tests are grouped by reason.
 
-- **File**: `e2e/5g-validation.spec.ts`
-- **Tests**: All tests in "5G SUCI Validation" suite.
-- **Reason**: Application bug "Error: ECDH Derivation failed" prevents successful execution.
+## Application Bugs
+
+### 5G Cross-Validation — ECDH Derivation Failure
 
 - **File**: `e2e/5g-cross-validation.spec.ts`
-- **Test**: "Validate OpenSSL implementation in app"
-- **Reason**: Application bug "Error: ECDH Derivation failed".
+- **Test**: "Validate OpenSSL implementation in app" (line 265)
+- **Reason**: Application bug — "Error: ECDH Derivation failed" prevents successful execution.
 
-## OpenSSL Studio (Timeouts / Element Visibility)
+## Flaky / Unstable Tests
+
+### OpenSSL Studio — Self-Signed Certificate
 
 - **File**: `e2e/openssl-advanced.spec.ts`
-- **Test**: "generates Self-Signed Certificate"
-- **Reason**: Flaky - passed on retry but kept here to monitor.
+- **Test**: "generates Self-Signed Certificate" (line 43)
+- **Reason**: Flaky — passes on retry but inconsistent in CI.
 
-## Timeline (Timeouts)
+### OpenSSL Studio — New Features (Entire Suite)
 
-- **File**: `e2e/timeline.spec.ts`
-- **Test**: "displays phase details in popover on click"
-- **Reason**: Timeout waiting for "Test Country" (Mock Data) to trigger popover.
+- **File**: `e2e/openssl-new-features.spec.ts`
+- **Test**: Entire `describe` block skipped (line 3)
+- **Reason**: WASM instability in CI with advanced Encryption, KEM, and PKCS#12 features.
 
-## Timeline (Timeouts)
+### OpenSSL Studio — Deterministic ECDSA (Entire Suite)
 
-- **File**: `e2e/timeline.spec.ts`
-- **Test**: "displays phase details in popover on click"
-- **Reason**: Timeout waiting for "Test Country" (Mock Data) to trigger popover.
+- **File**: `e2e/openssl-ecdsa-deterministic.spec.ts`
+- **Test**: Entire `describe` block skipped (line 3)
+- **Reason**: Deterministic ECDSA verification instability.
+
+### OpenSSL Studio — File Upload
+
+- **File**: `e2e/openssl-add-file.spec.ts`
+- **Test**: "should allow uploading a file to the VFS" (line 4)
+- **Reason**: File upload interaction unreliable in headless CI.
+
+## Browser-Specific Skips
+
+### PKI Workshop — Firefox
+
+- **File**: `e2e/pki-workshop.spec.ts`
+- **Test**: All tests in suite (line 24)
+- **Condition**: `browserName === 'firefox'`
+- **Reason**: Firefox has WASM/Rendering instability in CI.
+
+### OpenSSL IV Operations — WebKit
+
+- **File**: `e2e/openssl-iv.spec.ts`
+- **Test**: All tests in suite (line 6)
+- **Condition**: `browserName === 'webkit'`
+- **Reason**: WebKit has UI rendering instability in CI.
+
+### TLS Basics — Clipboard (Non-Chromium)
+
+- **File**: `e2e/v1_7_0-tls-basics.spec.ts`
+- **Test**: Clipboard-related test (line 261)
+- **Condition**: `browserName !== 'chromium'`
+- **Reason**: Clipboard permissions API only supported in Chromium.

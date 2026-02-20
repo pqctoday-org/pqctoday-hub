@@ -229,9 +229,9 @@ npm run validate:threats
 npm run dev
 
 # Navigate to affected feature
-# - Timeline: http://localhost:5173/timeline
-# - Library: http://localhost:5173/library
-# - Threats: http://localhost:5173/threats
+# - Timeline: http://localhost:5175/timeline
+# - Library: http://localhost:5175/library
+# - Threats: http://localhost:5175/threats
 ```
 
 ### 4.3 E2E Testing with New Data

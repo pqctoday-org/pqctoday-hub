@@ -37,7 +37,7 @@ The application is divided into ten main modules. Detailed requirements for each
     - Automated data scraping and visualization
 10. **[Transformation Leaders](requirements/leaders.md)**: Profiles of key public and private figures driving the transition.
 11. **[About & Feedback](requirements/about.md)**: Project information, feedback mechanisms, and Software Bill of Materials (SBOM).
-12. **PQC Risk Assessment** (`/assess`): 12-step quantum risk evaluation wizard with compound scoring engine, 4 risk dimensions (Quantum Exposure, Migration Complexity, Regulatory Pressure, Organizational Readiness), HNDL risk window visualization, and URL-shareable assessments.
+12. **PQC Risk Assessment** (`/assess`): 13-step quantum risk evaluation wizard with compound scoring engine, 4 risk dimensions (Quantum Exposure, Migration Complexity, Regulatory Pressure, Organizational Readiness), HNDL risk window visualization, and URL-shareable assessments.
 
 ## 3. Non-Functional Requirements
 

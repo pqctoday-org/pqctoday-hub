@@ -184,6 +184,20 @@ npm run test
 npm run test:e2e
 ```
 
+### Utility Scripts
+
+```bash
+# Generate test coverage report
+npm run coverage
+
+# Scrape compliance data from NIST, ANSSI, Common Criteria
+# (also runs automatically before build via prebuild hook)
+npm run scrape
+
+# Download standards library PDFs
+npm run download:library
+```
+
 ## Architecture Overview
 
 The application is structured into several key components:
@@ -219,7 +233,7 @@ The application is structured into several key components:
 │   │   ├── About/           # About page and feedback forms
 │   │   ├── ACVP/            # Automated Cryptographic Validation Protocol testing
 │   │   ├── Algorithms/      # Algorithm comparison table
-│   │   ├── Assess/          # 12-step PQC risk assessment with compound scoring
+│   │   ├── Assess/          # 13-step PQC risk assessment with compound scoring
 │   │   ├── Changelog/       # Changelog view
 │   │   ├── Compliance/      # Compliance tracking and visualization
 │   │   ├── ErrorBoundary.tsx # Global error boundary component
