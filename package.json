@@ -7,6 +7,10 @@
   "engines": {
     "node": ">=20"
   },
+  "overrides": {
+    "minimatch": "^10.2.1",
+    "ajv": "^8.18.0"
+  },
   "lint-staged": {
     "**/*.{ts,tsx,js,jsx,cjs,mjs}": [
       "eslint --fix",
