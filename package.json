@@ -29,7 +29,10 @@
     "coverage": "vitest run --coverage",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "download:library": "node scripts/download-library.js",
+    "download:library:dry": "node scripts/download-library.js --dry-run",
+    "summarize:library": "python3 scripts/summarize-library.py"
   },
   "dependencies": {
     "@noble/curves": "^2.0.1",
