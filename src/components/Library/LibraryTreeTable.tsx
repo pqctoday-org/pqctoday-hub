@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import clsx from 'clsx'
 import type { LibraryItem } from '../../data/libraryData'
 import {
   ChevronRight,
@@ -7,6 +8,7 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  Eye,
   Info,
 } from 'lucide-react'
 import { LibraryDetailPopover } from './LibraryDetailPopover'
@@ -197,11 +199,22 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
             <div className="flex items-center gap-1">
               <button
                 onClick={(e) => handleDetailsClick(item, e)}
-                className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-                title="View Details"
+                className={clsx(
+                  'p-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary',
+                  item.localFile
+                    ? 'text-primary hover:text-primary/80 hover:bg-primary/10'
+                    : 'text-muted-foreground hover:text-primary hover:bg-primary/10'
+                )}
+                title={
+                  item.localFile ? 'View details (summary + preview available)' : 'View details'
+                }
                 aria-label={`View details for ${item.documentTitle}`}
               >
-                <Info size={16} aria-hidden="true" />
+                {item.localFile ? (
+                  <Eye size={16} aria-hidden="true" />
+                ) : (
+                  <Info size={16} aria-hidden="true" />
+                )}
               </button>
             </div>
           </td>

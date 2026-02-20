@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Calendar, ExternalLink, Info } from 'lucide-react'
+import { Calendar, Eye, ExternalLink, Info } from 'lucide-react'
 import type { LibraryItem } from '../../data/libraryData'
 import { StatusBadge } from '../common/StatusBadge'
 import clsx from 'clsx'
@@ -37,14 +37,25 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
         {item.documentTitle}
       </h3>
 
-      <span
-        className={clsx(
-          'inline-flex self-start items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-3',
-          'bg-status-info text-status-info border border-status-info/50'
+      <div className="flex items-center gap-2 mb-3">
+        <span
+          className={clsx(
+            'inline-flex self-start items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider',
+            'bg-status-info text-status-info border border-status-info/50'
+          )}
+        >
+          {item.documentStatus}
+        </span>
+        {item.localFile && (
+          <span
+            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20"
+            title="Rich summary and preview available"
+          >
+            <Eye size={10} aria-hidden="true" />
+            Preview
+          </span>
         )}
-      >
-        {item.documentStatus}
-      </span>
+      </div>
 
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
         <Calendar size={12} aria-hidden="true" />
