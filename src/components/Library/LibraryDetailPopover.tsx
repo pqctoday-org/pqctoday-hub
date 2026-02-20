@@ -23,10 +23,24 @@ function parseMarkdownSummary(text: string, stem: string): ParsedSummary {
   const parts = text.split(/^---\s*$/m)
   const body = parts.length >= 3 ? parts.slice(2).join('---').trim() : text
 
-  // Extract trailing italic excerpt (* ... * at the very end)
-  const excerptMatch = body.match(/\n\*([^*]+)\*\s*$/)
-  const extractedText = excerptMatch ? excerptMatch[1].trim() : ''
-  const bodyWithoutExcerpt = excerptMatch ? body.slice(0, excerptMatch.index).trim() : body
+  // Extract trailing italic excerpt — find the last --- thematic break and take
+  // everything after it. Prettier converts *text* → _text_ so handle both delimiters.
+  const separatorIdx = body.lastIndexOf('\n---')
+  let extractedText = ''
+  let bodyWithoutExcerpt = body
+
+  if (separatorIdx !== -1) {
+    const afterSeparator = body
+      .slice(separatorIdx)
+      .replace(/^[\n-]+/, '')
+      .trim()
+    // Strip surrounding * or _ italic markers (both styles used by prettier)
+    const stripped = afterSeparator.replace(/^[*_]([\s\S]+?)[*_]$/, '$1').trim()
+    if (stripped && stripped !== afterSeparator) {
+      extractedText = stripped
+      bodyWithoutExcerpt = body.slice(0, separatorIdx).trim()
+    }
+  }
 
   // Parse ## sections into a map
   const sections: Record<string, string> = {}
@@ -257,7 +271,9 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
                 How It Relates to PQC
               </h4>
-              <p className="text-sm text-foreground leading-relaxed">{pqcSection}</p>
+              <div className="text-sm text-foreground leading-relaxed [&_strong]:font-semibold [&_p]:mb-1">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{pqcSection}</ReactMarkdown>
+              </div>
             </div>
           )}
 
