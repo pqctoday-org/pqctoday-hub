@@ -171,6 +171,23 @@
     --phase-deadline: 0 84% 65%;
   }
 
+  /* On screen: render as transparent block so report content is visible.
+     Use child combinators (>) so inner tables in report content are unaffected. */
+  .print-report-table {
+    display: block;
+  }
+
+  .print-report-table > thead,
+  .print-report-table > tfoot {
+    display: none;
+  }
+
+  .print-report-table > tbody,
+  .print-report-table > tbody > tr,
+  .print-report-table > tbody > tr > td {
+    display: block;
+  }
+
   /* Minimal physical page margins — header/footer live inside the content area */
   @page {
     size: portrait;
@@ -304,13 +321,43 @@
       min-height: 0 !important;
     }
 
-    html {
-      margin-top: 14mm !important;
-      margin-bottom: 10mm !important;
-    }
-
     body {
       margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* Invisible per-page spacer table — reserves space for fixed header/footer on EVERY page in Chrome.
+       Chrome only applies html { margin-top } on page 1; thead/tfoot repeat reliably per-page. */
+    .print-report-table {
+      display: table;
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .print-report-table > thead {
+      display: table-header-group;
+    }
+
+    .print-report-table > tfoot {
+      display: table-footer-group;
+    }
+
+    .print-report-table > tbody {
+      display: table-row-group;
+    }
+
+    .print-report-table > tbody > tr {
+      display: table-row;
+    }
+
+    .print-report-table > tbody > tr > td {
+      display: table-cell;
+    }
+
+    .print-report-table > thead > tr > td,
+    .print-report-table > tfoot > tr > td {
+      border: none !important;
+      background: transparent !important;
       padding: 0 !important;
     }
 

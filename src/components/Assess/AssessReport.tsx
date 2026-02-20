@@ -479,305 +479,337 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
         <span>{generatedDateTime}</span>
       </div>
 
-      <div className="space-y-6 print:space-y-4">
-        {/* Header */}
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gradient mb-2 print:text-black">
-            Your PQC Risk Assessment Report
-          </h2>
-          <p className="text-sm text-muted-foreground print:text-gray-600">
-            Generated on {generatedDate}
-          </p>
-        </div>
-
-        {/* Country PQC Migration Timeline */}
-        <CollapsibleSection
-          title={country ? `${country} PQC Migration Timeline` : 'Country PQC Migration Timeline'}
-          icon={<Calendar className="text-primary" size={20} />}
-        >
-          <ReportTimelineStrip countryName={country} />
-        </CollapsibleSection>
-
-        {/* Risk Score */}
-        <div
-          className={clsx(
-            'glass-panel p-6 border-l-4',
-            config.border,
-            'print:border print:border-gray-300'
-          )}
-        >
-          <RiskGauge score={result.riskScore} level={result.riskLevel} />
-          <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-gray-600">
-            {result.narrative}
-          </p>
-        </div>
-
-        {/* Category Score Breakdown */}
-        {result.categoryScores && <CategoryBreakdown scores={result.categoryScores} />}
-
-        {/* Executive Summary */}
-        {result.executiveSummary && (
-          <div className="glass-panel p-6 border-l-4 border-l-primary print:border print:border-gray-300">
-            <h3 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
-              <Briefcase className="text-primary" size={20} />
-              Executive Summary
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {result.executiveSummary}
-            </p>
-          </div>
-        )}
-
-        {/* HNDL Risk Window */}
-        {result.hndlRiskWindow && <HNDLTimeline hndl={result.hndlRiskWindow} />}
-
-        {/* Algorithm Migration Matrix */}
-        {result.algorithmMigrations.length > 0 && (
-          <div className="glass-panel p-6 print:border print:border-gray-300">
-            <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-              <ShieldAlert className="text-primary" size={20} />
-              Algorithm Migration Priority
-            </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border text-left">
-                    <th className="py-2 pr-3 text-muted-foreground font-medium">Current</th>
-                    <th className="py-2 pr-3 text-muted-foreground font-medium">Vulnerable?</th>
-                    <th className="py-2 pr-3 text-muted-foreground font-medium">PQC Replacement</th>
-                    {result.migrationEffort && (
-                      <>
-                        <th className="py-2 pr-3 text-muted-foreground font-medium">Effort</th>
-                        <th className="py-2 pr-3 text-muted-foreground font-medium">Scope</th>
-                      </>
-                    )}
-                    <th className="py-2 text-muted-foreground font-medium">Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {result.algorithmMigrations.map((algo) => {
-                    const effort = result.migrationEffort?.find(
-                      (e) => e.algorithm === algo.classical
-                    )
-                    return (
-                      <tr key={algo.classical} className="border-b border-border/50">
-                        <td className="py-2.5 pr-3 font-medium text-foreground">
-                          {algo.classical}
-                        </td>
-                        <td className="py-2.5 pr-3">
-                          {algo.quantumVulnerable ? (
-                            <span className="flex items-center gap-1 text-destructive">
-                              <AlertTriangle size={14} /> Yes
-                            </span>
-                          ) : (
-                            <span className="flex items-center gap-1 text-success">
-                              <CheckCircle size={14} /> No
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-2.5 pr-3 text-primary">{algo.replacement}</td>
-                        {result.migrationEffort && (
-                          <>
-                            <td className="py-2.5 pr-3">
-                              {effort ? (
-                                <span
-                                  className={clsx(
-                                    'text-xs font-bold px-2 py-0.5 rounded-full',
-
-                                    complexityConfig[effort.complexity]?.bg ?? 'bg-muted',
-
-                                    complexityConfig[effort.complexity]?.color ??
-                                      'text-muted-foreground'
-                                  )}
-                                >
-                                  {effort.complexity}
-                                </span>
-                              ) : (
-                                <span className="text-xs text-muted-foreground">—</span>
-                              )}
-                            </td>
-                            <td className="py-2.5 pr-3">
-                              {effort ? (
-                                <span
-                                  className={clsx(
-                                    'text-xs font-bold px-2 py-0.5 rounded-full',
-
-                                    scopeConfig[effort.estimatedScope]?.bg ?? 'bg-muted',
-
-                                    scopeConfig[effort.estimatedScope]?.color ??
-                                      'text-muted-foreground'
-                                  )}
-                                >
-                                  {}
-                                  {scopeConfig[effort.estimatedScope]?.label ??
-                                    effort.estimatedScope}
-                                </span>
-                              ) : (
-                                <span className="text-xs text-muted-foreground">—</span>
-                              )}
-                            </td>
-                          </>
-                        )}
-                        <td className="py-2.5 text-muted-foreground text-xs">{algo.notes}</td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* Compliance Impact */}
-        {result.complianceImpacts.length > 0 && (
-          <div className="glass-panel p-6 print:border print:border-gray-300">
-            <h3 className="text-lg font-bold text-foreground mb-4">Compliance Impact</h3>
-            <div className="space-y-3">
-              {result.complianceImpacts.map((c) => (
-                <div
-                  key={c.framework}
-                  className={clsx(
-                    'p-3 rounded-lg border text-sm',
-                    c.requiresPQC ? 'border-warning/30 bg-warning/5' : 'border-border'
-                  )}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-semibold text-foreground">{c.framework}</span>
-                    <span
-                      className={clsx(
-                        'text-xs font-bold px-2 py-0.5 rounded-full',
-                        c.requiresPQC
-                          ? 'bg-warning/10 text-warning'
-                          : 'bg-muted text-muted-foreground'
-                      )}
-                    >
-                      {c.requiresPQC ? 'PQC Required' : 'No PQC mandate yet'}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    <strong>Deadline:</strong> {c.deadline}
+      {/* Invisible per-page spacer table — reserves header/footer space on EVERY print page.
+          Chrome ignores html { margin-top } after page 1; thead/tfoot repeat reliably per-page. */}
+      <table className="print-report-table">
+        <thead aria-hidden="true">
+          <tr>
+            <td style={{ height: '14mm', padding: 0 }} />
+          </tr>
+        </thead>
+        <tfoot aria-hidden="true">
+          <tr>
+            <td style={{ height: '10mm', padding: 0 }} />
+          </tr>
+        </tfoot>
+        <tbody>
+          <tr>
+            <td style={{ padding: 0 }}>
+              <div className="space-y-6 print:space-y-4">
+                {/* Header */}
+                <div className="text-center">
+                  <h2 className="text-3xl font-bold text-gradient mb-2 print:text-black">
+                    Your PQC Risk Assessment Report
+                  </h2>
+                  <p className="text-sm text-muted-foreground print:text-gray-600">
+                    Generated on {generatedDate}
                   </p>
-                  <p className="text-xs text-muted-foreground">{c.notes}</p>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {/* Recommended Actions */}
-        <div className="glass-panel p-6 print:border print:border-gray-300">
-          <h3 className="text-lg font-bold text-foreground mb-4">Recommended Actions</h3>
-          <div className="space-y-3">
-            {result.recommendedActions.map((action) => (
-              <div
-                key={action.priority}
-                className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
-              >
+                {/* Country PQC Migration Timeline */}
+                <CollapsibleSection
+                  title={
+                    country ? `${country} PQC Migration Timeline` : 'Country PQC Migration Timeline'
+                  }
+                  icon={<Calendar className="text-primary" size={20} />}
+                >
+                  <ReportTimelineStrip countryName={country} />
+                </CollapsibleSection>
+
+                {/* Risk Score */}
                 <div
                   className={clsx(
-                    'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-2',
-                    action.category === 'immediate'
-                      ? 'border-destructive text-destructive'
-                      : action.category === 'short-term'
-                        ? 'border-warning text-warning'
-                        : 'border-border text-muted-foreground'
+                    'glass-panel p-6 border-l-4',
+                    config.border,
+                    'print:border print:border-gray-300'
                   )}
                 >
-                  {action.priority}
+                  <RiskGauge score={result.riskScore} level={result.riskLevel} />
+                  <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-gray-600">
+                    {result.narrative}
+                  </p>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm text-foreground">{action.action}</p>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span
-                      className={clsx(
-                        'text-[10px] font-bold uppercase',
-                        action.category === 'immediate'
-                          ? 'text-destructive'
-                          : action.category === 'short-term'
-                            ? 'text-warning'
-                            : 'text-muted-foreground'
-                      )}
-                    >
-                      {action.category}
-                    </span>
-                    {action.effort && (
-                      <span
-                        className={clsx(
-                          'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded',
 
-                          effortConfig[action.effort]?.bg ?? 'bg-muted',
+                {/* Category Score Breakdown */}
+                {result.categoryScores && <CategoryBreakdown scores={result.categoryScores} />}
 
-                          effortConfig[action.effort]?.color ?? 'text-muted-foreground'
-                        )}
+                {/* Executive Summary */}
+                {result.executiveSummary && (
+                  <div className="glass-panel p-6 border-l-4 border-l-primary print:border print:border-gray-300">
+                    <h3 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
+                      <Briefcase className="text-primary" size={20} />
+                      Executive Summary
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {result.executiveSummary}
+                    </p>
+                  </div>
+                )}
+
+                {/* HNDL Risk Window */}
+                {result.hndlRiskWindow && <HNDLTimeline hndl={result.hndlRiskWindow} />}
+
+                {/* Algorithm Migration Matrix */}
+                {result.algorithmMigrations.length > 0 && (
+                  <div className="glass-panel p-6 print:border print:border-gray-300">
+                    <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                      <ShieldAlert className="text-primary" size={20} />
+                      Algorithm Migration Priority
+                    </h3>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-border text-left">
+                            <th className="py-2 pr-3 text-muted-foreground font-medium">Current</th>
+                            <th className="py-2 pr-3 text-muted-foreground font-medium">
+                              Vulnerable?
+                            </th>
+                            <th className="py-2 pr-3 text-muted-foreground font-medium">
+                              PQC Replacement
+                            </th>
+                            {result.migrationEffort && (
+                              <>
+                                <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                  Effort
+                                </th>
+                                <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                  Scope
+                                </th>
+                              </>
+                            )}
+                            <th className="py-2 text-muted-foreground font-medium">Notes</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {result.algorithmMigrations.map((algo) => {
+                            const effort = result.migrationEffort?.find(
+                              (e) => e.algorithm === algo.classical
+                            )
+                            return (
+                              <tr key={algo.classical} className="border-b border-border/50">
+                                <td className="py-2.5 pr-3 font-medium text-foreground">
+                                  {algo.classical}
+                                </td>
+                                <td className="py-2.5 pr-3">
+                                  {algo.quantumVulnerable ? (
+                                    <span className="flex items-center gap-1 text-destructive">
+                                      <AlertTriangle size={14} /> Yes
+                                    </span>
+                                  ) : (
+                                    <span className="flex items-center gap-1 text-success">
+                                      <CheckCircle size={14} /> No
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="py-2.5 pr-3 text-primary">{algo.replacement}</td>
+                                {result.migrationEffort && (
+                                  <>
+                                    <td className="py-2.5 pr-3">
+                                      {effort ? (
+                                        <span
+                                          className={clsx(
+                                            'text-xs font-bold px-2 py-0.5 rounded-full',
+
+                                            complexityConfig[effort.complexity]?.bg ?? 'bg-muted',
+
+                                            complexityConfig[effort.complexity]?.color ??
+                                              'text-muted-foreground'
+                                          )}
+                                        >
+                                          {effort.complexity}
+                                        </span>
+                                      ) : (
+                                        <span className="text-xs text-muted-foreground">—</span>
+                                      )}
+                                    </td>
+                                    <td className="py-2.5 pr-3">
+                                      {effort ? (
+                                        <span
+                                          className={clsx(
+                                            'text-xs font-bold px-2 py-0.5 rounded-full',
+
+                                            scopeConfig[effort.estimatedScope]?.bg ?? 'bg-muted',
+
+                                            scopeConfig[effort.estimatedScope]?.color ??
+                                              'text-muted-foreground'
+                                          )}
+                                        >
+                                          {}
+                                          {scopeConfig[effort.estimatedScope]?.label ??
+                                            effort.estimatedScope}
+                                        </span>
+                                      ) : (
+                                        <span className="text-xs text-muted-foreground">—</span>
+                                      )}
+                                    </td>
+                                  </>
+                                )}
+                                <td className="py-2.5 text-muted-foreground text-xs">
+                                  {algo.notes}
+                                </td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* Compliance Impact */}
+                {result.complianceImpacts.length > 0 && (
+                  <div className="glass-panel p-6 print:border print:border-gray-300">
+                    <h3 className="text-lg font-bold text-foreground mb-4">Compliance Impact</h3>
+                    <div className="space-y-3">
+                      {result.complianceImpacts.map((c) => (
+                        <div
+                          key={c.framework}
+                          className={clsx(
+                            'p-3 rounded-lg border text-sm',
+                            c.requiresPQC ? 'border-warning/30 bg-warning/5' : 'border-border'
+                          )}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-semibold text-foreground">{c.framework}</span>
+                            <span
+                              className={clsx(
+                                'text-xs font-bold px-2 py-0.5 rounded-full',
+                                c.requiresPQC
+                                  ? 'bg-warning/10 text-warning'
+                                  : 'bg-muted text-muted-foreground'
+                              )}
+                            >
+                              {c.requiresPQC ? 'PQC Required' : 'No PQC mandate yet'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            <strong>Deadline:</strong> {c.deadline}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{c.notes}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Recommended Actions */}
+                <div className="glass-panel p-6 print:border print:border-gray-300">
+                  <h3 className="text-lg font-bold text-foreground mb-4">Recommended Actions</h3>
+                  <div className="space-y-3">
+                    {result.recommendedActions.map((action) => (
+                      <div
+                        key={action.priority}
+                        className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
                       >
-                        {}
-                        {effortConfig[action.effort]?.label ?? action.effort} effort
-                      </span>
-                    )}
-                    <Link
-                      to={action.relatedModule}
-                      className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
+                        <div
+                          className={clsx(
+                            'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-2',
+                            action.category === 'immediate'
+                              ? 'border-destructive text-destructive'
+                              : action.category === 'short-term'
+                                ? 'border-warning text-warning'
+                                : 'border-border text-muted-foreground'
+                          )}
+                        >
+                          {action.priority}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-foreground">{action.action}</p>
+                          <div className="flex items-center gap-3 mt-1">
+                            <span
+                              className={clsx(
+                                'text-[10px] font-bold uppercase',
+                                action.category === 'immediate'
+                                  ? 'text-destructive'
+                                  : action.category === 'short-term'
+                                    ? 'text-warning'
+                                    : 'text-muted-foreground'
+                              )}
+                            >
+                              {action.category}
+                            </span>
+                            {action.effort && (
+                              <span
+                                className={clsx(
+                                  'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded',
+
+                                  effortConfig[action.effort]?.bg ?? 'bg-muted',
+
+                                  effortConfig[action.effort]?.color ?? 'text-muted-foreground'
+                                )}
+                              >
+                                {}
+                                {effortConfig[action.effort]?.label ?? action.effort} effort
+                              </span>
+                            )}
+                            <Link
+                              to={action.relatedModule}
+                              className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
+                            >
+                              <ArrowRight size={10} />
+                              Explore
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Industry Threat Landscape */}
+                <div className="print:break-before-page print:break-inside-auto">
+                  <CollapsibleSection
+                    title={industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'}
+                    icon={<ShieldAlert className="text-destructive" size={20} />}
+                  >
+                    <ReportThreatsAppendix industry={industry} />
+                  </CollapsibleSection>
+                </div>
+
+                <div className="flex flex-col items-center gap-2 print:hidden">
+                  <div className="flex flex-wrap items-center justify-center gap-3">
+                    <button
+                      onClick={handlePrint}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
                     >
-                      <ArrowRight size={10} />
-                      Explore
-                    </Link>
+                      <Printer size={16} />
+                      Download PDF
+                    </button>
+                    <button
+                      onClick={handleCSVExport}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                    >
+                      <Download size={16} />
+                      Export CSV
+                    </button>
+                    <button
+                      onClick={handleShare}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                    >
+                      <Share2 size={16} />
+                      Share
+                    </button>
+                    <button
+                      onClick={() => editFromStep(0)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                    >
+                      <Pencil size={16} />
+                      Edit Answers
+                    </button>
+                    <button
+                      onClick={reset}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                    >
+                      <RotateCcw size={16} />
+                      Start Over
+                    </button>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Industry Threat Landscape */}
-        <div className="print:break-before-page print:break-inside-auto">
-          <CollapsibleSection
-            title={industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'}
-            icon={<ShieldAlert className="text-destructive" size={20} />}
-          >
-            <ReportThreatsAppendix industry={industry} />
-          </CollapsibleSection>
-        </div>
-
-        <div className="flex flex-col items-center gap-2 print:hidden">
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
-            >
-              <Printer size={16} />
-              Download PDF
-            </button>
-            <button
-              onClick={handleCSVExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
-            >
-              <Download size={16} />
-              Export CSV
-            </button>
-            <button
-              onClick={handleShare}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
-            >
-              <Share2 size={16} />
-              Share
-            </button>
-            <button
-              onClick={() => editFromStep(0)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
-            >
-              <Pencil size={16} />
-              Edit Answers
-            </button>
-            <button
-              onClick={reset}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
-            >
-              <RotateCcw size={16} />
-              Start Over
-            </button>
-          </div>
-        </div>
-      </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   )
 }
