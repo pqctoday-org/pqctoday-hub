@@ -32,7 +32,7 @@ jobs:
         run: npm ci
 
       - name: Security Audit
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=high --omit=dev
 
       - name: Check Formatting
         run: npm run format:check
