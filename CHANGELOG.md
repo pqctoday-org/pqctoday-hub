@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.3] - 2026-02-19
+
+### Added
+
+- **Library Document Summaries** (`/library`): Markdown-enriched summaries for all library
+  documents with structured sections (Overview, Key Provisions, Relevance). Detail popover
+  renders rich formatted content when a summary is available.
+- **Library Preview Indicator** (`/library`): Eye icon badge on document cards signals that
+  a rich markdown summary is available, helping users identify enriched documents at a glance.
+- **Library Download & Summarization Workflow** (`scripts/`): `summarize-library.py` script
+  automates downloading PDFs, extracting text, and generating AI-assisted markdown summaries
+  for the full document library.
+
+### Fixed
+
+- **PDF Print Cross-Browser** (`/assess`): Report PDF now renders correctly in both Chrome and
+  Safari. Chrome was not repeating `html { margin-top }` on pages 2+, causing content to overlap
+  the fixed header/footer. Replaced with an invisible `<table class="print-report-table">` whose
+  `<thead>` (14mm) and `<tfoot>` (10mm) are treated as per-page repeating groups by both browsers.
+  All CSS selectors use child combinators (`>`) to avoid cascading into inner report tables.
+- **Library Markdown Parser** (`/library`): Fixed markdown rendering regression introduced by
+  Prettier reformatting the parser configuration.
+- **Security Dependencies** (`deps`): Added `overrides` for `minimatch` and `ajv` to resolve
+  high-severity audit findings in transitive dependencies.
+- **CI Security Audit** (`ci`): Scoped `npm audit` to production dependencies only, eliminating
+  false positives from dev-only packages in the CI pipeline.
+
 ## [1.14.2] - 2026-02-19
 
 ### Fixed

@@ -77,24 +77,16 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Retention Step</strong> &mdash; Data
-                    retention periods now tailored to your industry with regulation-grounded options
-                    (HIPAA, NERC CIP, PCI DSS, FAA, FERPA &amp; more)
+                    <strong className="text-foreground">Library Enrichment</strong> &mdash;
+                    Documents now include rich markdown summaries with key provisions and PQC
+                    relevance — look for the eye icon
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PDF Report</strong> &mdash; Reverted to
-                    native print for more reliable cross-browser PDF output
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
-                    <strong className="text-foreground">Industry-Aware Assessment</strong> &mdash;
-                    All wizard steps surface industry-relevant options with country-filtered
-                    compliance
+                    <strong className="text-foreground">PDF Report (Chrome)</strong> &mdash; Fixed
+                    header/footer overlap on pages 2+ when printing to PDF in Chrome
                   </span>
                 </li>
               </ul>
