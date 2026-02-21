@@ -154,10 +154,15 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Dynamic Tree Visualization**: Interactive dependency hierarchy (Standards → Profiles → Guidelines)
   - **Advanced Filtering**: Organization-based scoping (NIST, IETF, ETSI, ISO, etc.) and category grouping
 - **Quantum Threat Impacts**: Industry-specific quantum threat analysis
-  - Interactive dashboard with criticality ratings
-  - **Detailed Threat Insights**: Popups with specific "Harvest Now, Decrypt Later" risks and PQC mitigations
+  - **80 threats across 20 industries**: Aerospace/Aviation, Automotive, Cloud Computing,
+    Cryptocurrency/Blockchain, Energy/Critical Infrastructure, Financial Services, Government/Defense,
+    Healthcare, Insurance, IoT, IT/Software, Legal/eSignature, Media/DRM, Payment Card Industry,
+    Rail/Transit, Retail/E-Commerce, Supply Chain/Logistics, Telecommunications, and Water/Wastewater
+  - Interactive dashboard with criticality ratings (Critical / High)
+  - **Detailed Threat Insights**: Popups with specific "Harvest Now, Decrypt Later" risks, vulnerable
+    algorithms, PQC replacements, and primary source citations
   - Direct access to primary source references for each threat
-- **Transformation Leaders**: 115+ comprehensive profiles of key PQC transition figures
+- **Transformation Leaders**: 100+ verified profiles of key PQC transition figures
 
 > 📋 See [REQUIREMENTS.md](REQUIREMENTS.md) for detailed specifications of each feature.
 

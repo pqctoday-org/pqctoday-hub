@@ -78,28 +78,27 @@ export const WhatsNewToast = () => {
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
                     <strong className="text-foreground">
-                      Consistent &ldquo;I don&apos;t know&rdquo; UX
+                      80 quantum threats across 20 industries
                     </strong>{' '}
-                    &mdash; all wizard steps now use the same escape-hatch button pattern; unknowns
-                    scored as worst-case risk
+                    &mdash; from aerospace avionics to water SCADA, each with criticality,
+                    vulnerable algorithms, PQC replacement, and primary source citations
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">
-                      Consolidated HNDL / HNFL risk windows
-                    </strong>{' '}
-                    &mdash; unified section with key milestones table showing your data and
-                    credential expiry dates against the quantum threat horizon
+                    <strong className="text-foreground">Global PQC timeline expanded</strong>{' '}
+                    &mdash; new milestones through Feb 2026: Ethereum PQC initiative, CISA federal
+                    procurement guidance, G7 financial roadmap, DoD/SandboxAQ deployment, and more
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Risk windows for unknowns</strong> &mdash;
-                    selecting &ldquo;I don&apos;t know&rdquo; on retention or credential steps now
-                    shows HNDL/HNFL visualizations with conservative estimates
+                    <strong className="text-foreground">100 Transformation Leaders</strong> &mdash;
+                    refreshed with 12 new profiles including Philip Intallura (HSBC), Dr. Krysta
+                    Svore (NVIDIA), and &Eacute;ric Brier (Thales/FALCON). Google Cloud HSM PQC
+                    support corrected.
                   </span>
                 </li>
               </ul>

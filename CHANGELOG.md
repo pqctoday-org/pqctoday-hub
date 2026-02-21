@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.0] - 2026-02-21
+
+### Added
+
+- **Expanded quantum threat dataset (80 threats, 20 industries)**: The Quantum Threats module now
+  draws from an updated dataset covering Aerospace/Aviation, Automotive/Connected Vehicles, Cloud
+  Computing, Cryptocurrency/Blockchain, Energy/Critical Infrastructure, Financial Services,
+  Government/Defense, Healthcare, Insurance, IoT, IT/Software, Legal/eSignature, Media/DRM,
+  Payment Card Industry, Rail/Transit, Retail/E-Commerce, Supply Chain/Logistics,
+  Telecommunications, and Water/Wastewater — each with criticality rating, vulnerable algorithms,
+  PQC replacement recommendation, and primary source citations.
+- **Expanded global PQC timeline**: Timeline updated with new milestones through February 2026
+  including DoD/SandboxAQ AQtive Guard deployment (Pentagon 5-year contract), Ethereum Foundation
+  PQC security initiative ($2M research prize pool, Jan 2026), CISA federal PQC procurement
+  guidance (Jan 2026, pursuant to EO 14306), G7 financial sector PQC roadmap (Jan 2026,
+  U.S. Treasury + Bank of England), National Quantum Initiative reauthorization (Jan 2026),
+  Samsung/Thales ML-KEM embedded secure element (Jan 2026), Australia ASD migration deadlines
+  (2026–2030), Canada departmental planning deadlines (2026–2031), China NGCC program and
+  financial sector milestones (2025–2030), EU coordinated PQC roadmap milestones (2026–2035),
+  France ANSSI first PQC certifications (Sept–Oct 2025), and Germany BSI quantum-secure
+  demonstrator (Nov 2025).
+
+### Changed
+
+- **Transformation Leaders updated to 100 verified profiles**: Dataset refreshed with corrections
+  and new additions including Philip Intallura (HSBC Group Head Quantum Technologies), Dr. Krysta
+  Svore (NVIDIA, former Microsoft Azure Quantum VP), Niccolò De Masi (IonQ Chairman & CEO),
+  Bruno Couillard (Crypto4A, pioneer of crypto-agile HSMs), Denis Mandich (Qrypt, 20 years US
+  Intelligence Community), Éric Brier (Thales, FALCON algorithm co-designer), Dr. Bob Sutor
+  (Sutor Group, former IBM VP Quantum, 40+ years at IBM), Prof. Bill Buchanan OBE (Edinburgh
+  Napier, Stanford top 2% scientists 2025), Dr. Colin Soutar (Deloitte Global Quantum Cyber
+  Readiness Lead), Konstantinos Karagiannis (Protiviti Director Quantum Computing Services),
+  Sheetal Mehta (NTT DATA SVP Global Head of Cybersecurity), and Tom Patterson (Accenture
+  Managing Director Emerging Technology Security).
+- **Software reference corrected — Google Cloud HSM now shows PQC support**: Google Cloud HSM
+  entry updated to reflect that PQC key types (ML-KEM, ML-DSA, SLH-DSA, X-Wing) are available
+  through Cloud KMS with HSM protection level. Previous entry incorrectly listed PQC as
+  unavailable.
+
 ## [1.18.1] - 2026-02-21
 
 ### Added
