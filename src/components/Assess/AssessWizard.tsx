@@ -21,6 +21,8 @@ import {
 } from '../../data/industryAssessConfig'
 import { InlineTooltip } from '../ui/InlineTooltip'
 import clsx from 'clsx'
+import { usePersonaStore } from '../../store/usePersonaStore'
+import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 
 import type { AssessmentMode } from '../../store/useAssessmentStore'
 
@@ -158,6 +160,7 @@ const Step1Industry = () => {
 
 const Step2Country = () => {
   const { country, setCountry } = useAssessmentStore()
+  const { selectedRegion } = usePersonaStore()
 
   const countries = useMemo(() => {
     const seen = new Set<string>()
@@ -168,8 +171,11 @@ const Step2Country = () => {
         list.push({ name: c.countryName, flagCode: c.flagCode })
       }
     })
-    return list.sort((a, b) => a.name.localeCompare(b.name))
-  }, [])
+    const sorted = list.sort((a, b) => a.name.localeCompare(b.name))
+    if (!selectedRegion || selectedRegion === 'global') return sorted
+    const allowed = new Set(REGION_COUNTRIES_MAP[selectedRegion])
+    return sorted.filter((c) => allowed.has(c.name))
+  }, [selectedRegion])
 
   return (
     <div className="space-y-4">
