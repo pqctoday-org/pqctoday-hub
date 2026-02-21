@@ -151,7 +151,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - `@scure/bip32`, `@scure/bip39`, `@scure/base` for HD wallet
   - `micro-eth-signer` for Ethereum transactions
   - `ed25519-hd-key` for Solana key derivation
-- **Styling**: Tailwind CSS 4.1.17 with custom design system and CSS variables
+- **Styling**: Tailwind CSS 4.2.0 with custom design system and CSS variables
 - **State Management**: Zustand for module state and persistence
 - **Data Processing**: Papa Parse (CSV), JSZip (file backup), LocalForage (storage)
 - **UI/UX**: Framer Motion (animations), React Markdown (documentation)
@@ -316,7 +316,7 @@ The application is structured into several key components:
 
 ## Security
 
-Last audited: February 20, 2026
+Last audited: February 21, 2026
 
 | Severity | Production | Dev-only |
 | -------- | ---------- | -------- |
