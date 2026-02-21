@@ -1,6 +1,20 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Shield, Layers, FileCheck, Route, Scale, Network, AlertTriangle, Key } from 'lucide-react'
+import {
+  Shield,
+  Layers,
+  FileCheck,
+  Route,
+  Scale,
+  Network,
+  AlertTriangle,
+  Key,
+  Bitcoin,
+  Lock,
+  Award,
+  Fingerprint,
+  Radio,
+} from 'lucide-react'
 import clsx from 'clsx'
 import type { QuizCategoryMeta, QuizCategory } from '../types'
 
@@ -13,6 +27,11 @@ const iconMap: Record<string, React.ElementType> = {
   Network,
   AlertTriangle,
   Key,
+  Bitcoin,
+  Lock,
+  Award,
+  Fingerprint,
+  Radio,
 }
 
 interface TopicSelectorProps {

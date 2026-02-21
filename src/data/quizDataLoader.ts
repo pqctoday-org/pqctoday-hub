@@ -175,6 +175,36 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'KEMs vs signatures, key sizes, encapsulation, performance, and practical trade-offs.',
       icon: 'Key',
     },
+    'digital-assets': {
+      label: 'Digital Assets',
+      description:
+        'Blockchain cryptography, elliptic curves, HD wallets, and post-quantum threats to digital assets.',
+      icon: 'Bitcoin',
+    },
+    'tls-basics': {
+      label: 'TLS Basics',
+      description:
+        'TLS 1.3 handshake, cipher suites, key exchange, certificates, and PQC integration.',
+      icon: 'Lock',
+    },
+    'pki-infrastructure': {
+      label: 'PKI Infrastructure',
+      description:
+        'X.509 certificates, certificate authorities, digital signatures, and PQC migration for PKI.',
+      icon: 'Award',
+    },
+    'digital-id': {
+      label: 'Digital Identity',
+      description:
+        'eIDAS 2.0, EUDI Wallets, credential formats, trust frameworks, and post-quantum readiness for digital identity.',
+      icon: 'Fingerprint',
+    },
+    '5g-security': {
+      label: '5G Security',
+      description:
+        'SUCI subscriber privacy, 5G-AKA authentication, MILENAGE, SIM provisioning, and post-quantum upgrades for 5G networks.',
+      icon: 'Radio',
+    },
   }
 
 // Compute question counts dynamically from loaded data

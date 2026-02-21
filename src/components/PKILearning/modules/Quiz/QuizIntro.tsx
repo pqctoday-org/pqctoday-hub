@@ -53,7 +53,8 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
       >
         <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient">PQC Knowledge Quiz</h2>
         <p className="text-muted-foreground">
-          Test your understanding of post-quantum cryptography across 8 topic areas.
+          Test your understanding of post-quantum cryptography across {QUIZ_CATEGORIES.length} topic
+          areas.
         </p>
         {quizMetadata && (
           <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 mt-3 font-mono">

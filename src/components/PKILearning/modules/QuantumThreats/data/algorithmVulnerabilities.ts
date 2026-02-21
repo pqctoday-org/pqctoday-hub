@@ -1,0 +1,138 @@
+export interface VulnerabilityEntry {
+  algorithm: string
+  shorsImpact: 'broken' | 'n/a'
+  groversImpact: 'weakened' | 'n/a'
+  classicalBestAttack: string
+  quantumBestAttack: string
+  quantumComplexity: string
+  recommendation: string
+}
+
+export const VULNERABILITY_MATRIX: VulnerabilityEntry[] = [
+  {
+    algorithm: 'RSA-2048',
+    shorsImpact: 'broken',
+    groversImpact: 'n/a',
+    classicalBestAttack: 'GNFS O(e^{1.9 * n^{1/3}})',
+    quantumBestAttack: "Shor's O(n³)",
+    quantumComplexity: '~4,098 logical qubits',
+    recommendation: 'Replace with ML-KEM / ML-DSA',
+  },
+  {
+    algorithm: 'RSA-3072',
+    shorsImpact: 'broken',
+    groversImpact: 'n/a',
+    classicalBestAttack: 'GNFS O(e^{1.9 * n^{1/3}})',
+    quantumBestAttack: "Shor's O(n³)",
+    quantumComplexity: '~6,146 logical qubits',
+    recommendation: 'Replace with ML-KEM / ML-DSA',
+  },
+  {
+    algorithm: 'RSA-4096',
+    shorsImpact: 'broken',
+    groversImpact: 'n/a',
+    classicalBestAttack: 'GNFS O(e^{1.9 * n^{1/3}})',
+    quantumBestAttack: "Shor's O(n³)",
+    quantumComplexity: '~8,194 logical qubits',
+    recommendation: 'Replace with ML-KEM / ML-DSA',
+  },
+  {
+    algorithm: 'ECDSA P-256',
+    shorsImpact: 'broken',
+    groversImpact: 'n/a',
+    classicalBestAttack: 'Pollard rho O(2^{128})',
+    quantumBestAttack: "Shor's O(n³)",
+    quantumComplexity: '~2,330 logical qubits',
+    recommendation: 'Replace with ML-DSA',
+  },
+  {
+    algorithm: 'ECDSA P-384',
+    shorsImpact: 'broken',
+    groversImpact: 'n/a',
+    classicalBestAttack: 'Pollard rho O(2^{192})',
+    quantumBestAttack: "Shor's O(n³)",
+    quantumComplexity: '~3,484 logical qubits',
+    recommendation: 'Replace with ML-DSA',
+  },
+  {
+    algorithm: 'X25519 / Ed25519',
+    shorsImpact: 'broken',
+    groversImpact: 'n/a',
+    classicalBestAttack: 'Pollard rho O(2^{128})',
+    quantumBestAttack: "Shor's O(n³)",
+    quantumComplexity: '~2,330 logical qubits',
+    recommendation: 'Replace with ML-KEM / ML-DSA',
+  },
+  {
+    algorithm: 'DH-2048 (MODP)',
+    shorsImpact: 'broken',
+    groversImpact: 'n/a',
+    classicalBestAttack: 'GNFS O(e^{1.9 * n^{1/3}})',
+    quantumBestAttack: "Shor's O(n³)",
+    quantumComplexity: '~4,098 logical qubits',
+    recommendation: 'Replace with ML-KEM',
+  },
+  {
+    algorithm: 'AES-128',
+    shorsImpact: 'n/a',
+    groversImpact: 'weakened',
+    classicalBestAttack: 'Brute force O(2^{128})',
+    quantumBestAttack: "Grover's O(2^{64})",
+    quantumComplexity: '~2,953 logical qubits',
+    recommendation: 'Upgrade to AES-256',
+  },
+  {
+    algorithm: 'AES-256',
+    shorsImpact: 'n/a',
+    groversImpact: 'weakened',
+    classicalBestAttack: 'Brute force O(2^{256})',
+    quantumBestAttack: "Grover's O(2^{128})",
+    quantumComplexity: '~6,681 logical qubits',
+    recommendation: 'Already quantum-safe (128-bit post-quantum)',
+  },
+  {
+    algorithm: 'SHA-256',
+    shorsImpact: 'n/a',
+    groversImpact: 'weakened',
+    classicalBestAttack: 'Birthday O(2^{128})',
+    quantumBestAttack: 'BHT O(2^{85})',
+    quantumComplexity: 'Quadratic speedup on preimage',
+    recommendation: 'Adequate for most uses. SHA-384+ for high security.',
+  },
+  {
+    algorithm: 'ML-KEM-768',
+    shorsImpact: 'n/a',
+    groversImpact: 'n/a',
+    classicalBestAttack: 'Lattice sieving O(2^{192})',
+    quantumBestAttack: 'No known quantum advantage',
+    quantumComplexity: 'N/A — quantum-resistant by design',
+    recommendation: 'NIST Level 3 — recommended for general use',
+  },
+  {
+    algorithm: 'ML-DSA-65',
+    shorsImpact: 'n/a',
+    groversImpact: 'n/a',
+    classicalBestAttack: 'Lattice sieving O(2^{192})',
+    quantumBestAttack: 'No known quantum advantage',
+    quantumComplexity: 'N/A — quantum-resistant by design',
+    recommendation: 'NIST Level 3 — recommended for general use',
+  },
+  {
+    algorithm: 'SLH-DSA-128s',
+    shorsImpact: 'n/a',
+    groversImpact: 'n/a',
+    classicalBestAttack: 'Hash preimage O(2^{128})',
+    quantumBestAttack: "Grover's on hash O(2^{64}) — but security margin accounts for this",
+    quantumComplexity: 'N/A — designed with quantum security margin',
+    recommendation: 'Conservative choice — minimal security assumptions',
+  },
+  {
+    algorithm: 'HQC-128',
+    shorsImpact: 'n/a',
+    groversImpact: 'n/a',
+    classicalBestAttack: 'ISD O(2^{128})',
+    quantumBestAttack: 'Quantum ISD O(2^{64}) — accounted for in parameter selection',
+    quantumComplexity: 'N/A — quantum-resistant by design',
+    recommendation: 'NIST Level 1 — code-based alternative to ML-KEM',
+  },
+]

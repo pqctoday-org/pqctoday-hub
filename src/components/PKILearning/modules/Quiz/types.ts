@@ -9,6 +9,11 @@ export type QuizCategory =
   | 'protocol-integration'
   | 'industry-threats'
   | 'crypto-operations'
+  | 'digital-assets'
+  | 'tls-basics'
+  | 'pki-infrastructure'
+  | 'digital-id'
+  | '5g-security'
 
 export interface QuizOption {
   id: string
