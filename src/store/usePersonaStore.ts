@@ -10,6 +10,7 @@ interface PersonaState {
   selectedRegion: Region | null
   selectedIndustry: string | null
   selectedIndustries: string[]
+  suppressSuggestion: boolean
   setPersona: (persona: PersonaId | null) => void
   clearPersona: () => void
   markPickerSeen: () => void
@@ -27,9 +28,14 @@ export const usePersonaStore = create<PersonaState>()(
       selectedRegion: 'global' as Region,
       selectedIndustry: null,
       selectedIndustries: [],
+      suppressSuggestion: false,
 
       setPersona: (persona) =>
-        set({ selectedPersona: persona, hasSeenPersonaPicker: persona !== null }),
+        set({
+          selectedPersona: persona,
+          hasSeenPersonaPicker: persona !== null,
+          suppressSuggestion: false,
+        }),
 
       clearPersona: () => set({ selectedPersona: null, hasSeenPersonaPicker: false }),
 
@@ -48,6 +54,7 @@ export const usePersonaStore = create<PersonaState>()(
           selectedRegion: 'global',
           selectedIndustry: null,
           selectedIndustries: [],
+          suppressSuggestion: true,
         }),
     }),
     {

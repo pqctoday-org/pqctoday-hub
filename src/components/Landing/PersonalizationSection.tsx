@@ -60,6 +60,7 @@ export const PersonalizationSection = () => {
     selectedPersona,
     selectedRegion,
     selectedIndustries,
+    suppressSuggestion,
     setPersona,
     setRegion,
     setIndustries,
@@ -149,7 +150,7 @@ export const PersonalizationSection = () => {
             const persona = PERSONAS[id]
             const Icon = PERSONA_ICONS[persona.icon]
             const isActive = selectedPersona === id
-            const isSuggested = suggestedPersona === id
+            const isSuggested = !suppressSuggestion && suggestedPersona === id
             return (
               <button
                 key={id}
