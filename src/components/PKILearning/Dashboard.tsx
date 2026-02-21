@@ -7,7 +7,7 @@ import {
   Brain,
   ChevronDown,
   ChevronRight,
-  Compass,
+  Home,
   Save,
   Upload,
   PlayCircle,
@@ -18,7 +18,6 @@ import { MODULE_INDUSTRY_RELEVANCE } from '../../data/personaConfig'
 import { Button } from '../ui/button'
 import { ModuleCard } from './ModuleCard'
 import { MODULE_TRACKS, MODULE_STEP_COUNTS } from './moduleData'
-import { PersonaPicker } from './PersonaPicker'
 import { LearningPath } from './LearningPath'
 
 const SaveRestorePanel = () => {
@@ -111,7 +110,7 @@ const SaveRestorePanel = () => {
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate()
   const { modules } = useModuleStore()
-  const { selectedPersona, hasSeenPersonaPicker, clearPersona } = usePersonaStore()
+  const { selectedPersona } = usePersonaStore()
   const [gridExpanded, setGridExpanded] = useState(false)
 
   const activeModules = MODULE_TRACKS.flatMap((t) => t.modules)
@@ -130,13 +129,10 @@ export const Dashboard: React.FC = () => {
     return Math.min(100, Math.round((module.completedSteps.length / totalSteps) * 100))
   }
 
-  // Show persona picker if user hasn't picked one and hasn't dismissed the picker
-  const showPersonaPicker = !selectedPersona && !hasSeenPersonaPicker
-  // Show learning path if user has selected a persona
+  // Show learning path if user has selected a persona (set from the home page)
   const showLearningPath = !!selectedPersona
-  // Show full grid: when persona is dismissed (seen picker but no selection), or collapsible when persona active
-  // Hide the grid when the picker is showing so it doesn't compete for attention
-  const showFullGrid = !selectedPersona && hasSeenPersonaPicker
+  // Show full grid when no persona selected — persona is now set from the home page
+  const showFullGrid = !selectedPersona
 
   return (
     <div className="space-y-8">
@@ -174,10 +170,7 @@ export const Dashboard: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Persona Picker — shown when no persona selected and not dismissed */}
-      {showPersonaPicker && <PersonaPicker />}
-
-      {/* Learning Path — shown when persona is selected */}
+      {/* Learning Path — shown when persona is selected (set from the home page) */}
       {showLearningPath && <LearningPath />}
 
       {/* Module Tracks Grid */}
@@ -208,7 +201,7 @@ export const Dashboard: React.FC = () => {
         </div>
       ) : (
         /* When no persona, show full grid directly */
-        showFullGrid && <ModuleTracksGrid navigate={navigate} onChoosePath={() => clearPersona()} />
+        showFullGrid && <ModuleTracksGrid navigate={navigate} onGoHome={() => navigate('/')} />
       )}
 
       {/* Knowledge Check Section — hidden when learning path is active (quiz is included in the path) */}
@@ -247,10 +240,10 @@ export const Dashboard: React.FC = () => {
 /** The existing module grid organized by track */
 const ModuleTracksGrid = ({
   navigate,
-  onChoosePath,
+  onGoHome,
 }: {
   navigate: (path: string) => void
-  onChoosePath?: () => void
+  onGoHome?: () => void
 }) => {
   const { selectedIndustry } = usePersonaStore()
 
@@ -272,10 +265,10 @@ const ModuleTracksGrid = ({
             Interactive hands-on workshops to master cryptographic concepts.
           </p>
         </div>
-        {onChoosePath && (
-          <Button variant="outline" size="sm" onClick={onChoosePath}>
-            <Compass size={14} className="mr-1.5" />
-            Choose a learning path
+        {onGoHome && (
+          <Button variant="outline" size="sm" onClick={onGoHome}>
+            <Home size={14} className="mr-1.5" />
+            Personalize from home
           </Button>
         )}
       </div>
