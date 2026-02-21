@@ -1,7 +1,15 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 
 import { DigitalIDModule as DigitalID } from './index'
+
+const renderWithRouter = () =>
+  render(
+    <MemoryRouter>
+      <DigitalID />
+    </MemoryRouter>
+  )
 
 // Mock OpenSSL Service to avoid Web Worker initialization in tests
 vi.mock('../../../../services/crypto/OpenSSLService', () => ({
@@ -76,56 +84,54 @@ vi.mock('../../../OpenSSLStudio/store', () => ({
   }),
 }))
 
-// Remove ineffective useArtifactManagement mock since we are mocking the store it uses
-// vi.mock(...) removed
-
 describe('EUDI Digital ID Integration', () => {
-  it('renders the Digital ID dashboard with all 6 modules', () => {
-    render(<DigitalID />)
+  it('renders the Digital ID module with 4-tab navigation', () => {
+    renderWithRouter()
 
-    // Verify Tab Headers
     expect(screen.getByText('EUDI Digital Identity Wallet')).toBeDefined()
-    expect(screen.getByText('Overview')).toBeDefined()
-    expect(screen.getAllByText('EUDI Wallet').length).toBeGreaterThan(0)
-    expect(screen.getByText('PID Issuer')).toBeDefined()
-    expect(screen.getByText('University')).toBeDefined()
-    expect(screen.getByText('Bank (RP)')).toBeDefined()
-    expect(screen.getByText('QTSP (QES)')).toBeDefined()
+    // 4-tab nav triggers
+    expect(screen.getByText('Learn')).toBeDefined()
+    expect(screen.getByText('Workshop')).toBeDefined()
+    expect(screen.getByText('Exercises')).toBeDefined()
+    expect(screen.getByText('References')).toBeDefined()
+    // Learn tab is active by default — shows eIDAS 2.0 overview content
+    expect(screen.getByText(/What is eIDAS 2\.0/i)).toBeDefined()
   })
 
-  it('allows navigation between modules', async () => {
-    render(<DigitalID />)
+  it('allows navigation between workshop steps', async () => {
+    renderWithRouter()
 
-    // Initial state should be Overview (step 0)
-    expect(screen.getByText(/What is eIDAS 2.0/i)).toBeDefined()
+    // Switch to Workshop tab
+    fireEvent.click(screen.getByText('Workshop'))
 
-    // Navigate to Wallet
-    const walletTab = screen.getAllByText('EUDI Wallet')[0]
-    fireEvent.click(walletTab)
     await waitFor(() => {
-      expect(screen.getByText(/Managed by:/i)).toBeDefined()
+      // Workshop step pills should be visible
+      expect(screen.getAllByText(/EUDI Wallet/i).length).toBeGreaterThan(0)
     })
 
-    // Navigate to PID Issuer
-    const pidTab = screen.getByText('PID Issuer')
-    fireEvent.click(pidTab)
+    // Navigate to PID Issuer step (step 2 pill)
+    fireEvent.click(screen.getByText('PID Issuer'))
     await waitFor(() => {
       expect(screen.getByText(/National Identity Authority/i)).toBeDefined()
     })
 
-    // Navigate to Relying Party
-    const rpTab = screen.getByText('Bank (RP)')
-    fireEvent.click(rpTab)
+    // Navigate to Bank (RP) step
+    fireEvent.click(screen.getByText('Bank (RP)'))
     await waitFor(() => {
-      // RelyingPartyComponent header
       expect(screen.getByText(/Bank \(Relying Party\)/i)).toBeDefined()
     })
   })
 
   it('completes the PID Issuance and Relying Party flow', async () => {
-    render(<DigitalID />)
+    renderWithRouter()
 
-    // 1. Navigate to PID Issuer
+    // Switch to Workshop tab first
+    fireEvent.click(screen.getByText('Workshop'))
+
+    // 1. Navigate to PID Issuer step
+    await waitFor(() => {
+      expect(screen.getByText('PID Issuer')).toBeDefined()
+    })
     fireEvent.click(screen.getByText('PID Issuer'))
     await waitFor(() => {
       expect(screen.getByText(/National Identity Authority/i)).toBeDefined()
@@ -136,13 +142,10 @@ describe('EUDI Digital ID Integration', () => {
     fireEvent.click(startBtn)
 
     // 3. Authenticate and Run
-    // It might take a moment to transition to AUTH step if there were async ops in handleStart (there aren't, but let's wait)
     const authBtn = await screen.findByRole('button', { name: /Proceed with Authentication/i })
     fireEvent.click(authBtn)
 
     // 4. Wait for Completion
-    // The flow has delays (1000ms + 500ms + 1500ms approx 3-4s total)
-    // We need a long timeout
     await waitFor(
       () => {
         expect(screen.getByText(/Success!/i)).toBeDefined()
@@ -150,9 +153,9 @@ describe('EUDI Digital ID Integration', () => {
       },
       { timeout: 6000 }
     )
-    // 5. Navigate to Relying Party (Now that we have keys)
-    const rpTab = screen.getByText('Bank (RP)')
-    fireEvent.click(rpTab)
+
+    // 5. Navigate to Bank (RP) step
+    fireEvent.click(screen.getByText('Bank (RP)'))
     await waitFor(() => {
       expect(screen.getByText(/Bank \(Relying Party\)/i)).toBeDefined()
     })

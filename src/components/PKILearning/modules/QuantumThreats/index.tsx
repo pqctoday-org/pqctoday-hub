@@ -9,6 +9,7 @@ import { KeySizeAnalyzer } from './workshop/KeySizeAnalyzer'
 import { HNDLTimeline } from './workshop/HNDLTimeline'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 
 const MODULE_ID = 'quantum-threats'
 
@@ -133,6 +134,7 @@ export const QuantumThreatsModule: React.FC = () => {
           <TabsTrigger value="learn">Learn</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
+          <TabsTrigger value="references">References</TabsTrigger>
         </TabsList>
 
         {/* Learn Tab */}
@@ -237,6 +239,10 @@ export const QuantumThreatsModule: React.FC = () => {
             onNavigateToWorkshop={navigateToWorkshop}
             onSetWorkshopConfig={handleSetWorkshopConfig}
           />
+        </TabsContent>
+        {/* References Tab */}
+        <TabsContent value="references">
+          <ModuleReferencesTab moduleId="quantum-threats" />
         </TabsContent>
       </Tabs>
     </div>

@@ -8,6 +8,7 @@ import { XMSSKeyGenDemo } from './workshop/XMSSKeyGenDemo'
 import { StateManagementVisualizer } from './workshop/StateManagementVisualizer'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 
 const MODULE_ID = 'stateful-signatures'
 
@@ -118,6 +119,7 @@ export const StatefulSignaturesModule: React.FC = () => {
           <TabsTrigger value="learn">Learn</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
+          <TabsTrigger value="references">References</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -213,6 +215,10 @@ export const StatefulSignaturesModule: React.FC = () => {
             onNavigateToWorkshop={navigateToWorkshop}
             onSetWorkshopConfig={handleSetWorkshopConfig}
           />
+        </TabsContent>
+        {/* References Tab */}
+        <TabsContent value="references">
+          <ModuleReferencesTab moduleId="stateful-signatures" />
         </TabsContent>
       </Tabs>
     </div>

@@ -9,6 +9,7 @@ import { FiveGExercises } from './components/FiveGExercises'
 import type { SimulationConfig } from './components/FiveGExercises'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 
 const MODULE_ID = '5g-security'
 
@@ -134,6 +135,7 @@ export const FiveGModule: React.FC = () => {
           <TabsTrigger value="learn">Learn</TabsTrigger>
           <TabsTrigger value="simulate">Simulate</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
+          <TabsTrigger value="references">References</TabsTrigger>
         </TabsList>
 
         {/* Learn Tab */}
@@ -233,6 +235,10 @@ export const FiveGModule: React.FC = () => {
             onNavigateToSimulate={navigateToSimulate}
             onSetSimulationConfig={setSimulationConfig}
           />
+        </TabsContent>
+        {/* References Tab */}
+        <TabsContent value="references">
+          <ModuleReferencesTab moduleId="5g-security" />
         </TabsContent>
       </Tabs>
     </div>

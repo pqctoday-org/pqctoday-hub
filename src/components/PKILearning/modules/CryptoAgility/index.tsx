@@ -8,6 +8,7 @@ import { CBOMScanner } from './workshop/CBOMScanner'
 import { MigrationPlanningExercise } from './workshop/MigrationPlanningExercise'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 
 const MODULE_ID = 'crypto-agility'
 
@@ -122,6 +123,7 @@ export const CryptoAgilityModule: React.FC = () => {
           <TabsTrigger value="learn">Learn</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
+          <TabsTrigger value="references">References</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -215,6 +217,10 @@ export const CryptoAgilityModule: React.FC = () => {
             onNavigateToWorkshop={navigateToWorkshop}
             onSetWorkshopConfig={handleSetWorkshopConfig}
           />
+        </TabsContent>
+        {/* References Tab */}
+        <TabsContent value="references">
+          <ModuleReferencesTab moduleId="crypto-agility" />
         </TabsContent>
       </Tabs>
     </div>

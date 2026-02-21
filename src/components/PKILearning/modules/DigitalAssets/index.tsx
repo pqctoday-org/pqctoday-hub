@@ -9,6 +9,7 @@ import { BitcoinFlow } from './flows/BitcoinFlow'
 import { EthereumFlow } from './flows/EthereumFlow'
 import { SolanaFlow } from './flows/SolanaFlow'
 import { HDWalletFlow } from './flows/HDWalletFlow'
+import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 
 const MODULE_ID = 'digital-assets'
 
@@ -134,6 +135,7 @@ export const DigitalAssetsModule: React.FC = () => {
           <TabsTrigger value="learn">Learn</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
+          <TabsTrigger value="references">References</TabsTrigger>
         </TabsList>
 
         {/* Learn Tab */}
@@ -192,6 +194,10 @@ export const DigitalAssetsModule: React.FC = () => {
         {/* Exercises Tab */}
         <TabsContent value="exercises">
           <BlockchainExercises onNavigateToWorkshop={navigateToWorkshop} />
+        </TabsContent>
+        {/* References Tab */}
+        <TabsContent value="references">
+          <ModuleReferencesTab moduleId="digital-assets" />
         </TabsContent>
       </Tabs>
     </div>

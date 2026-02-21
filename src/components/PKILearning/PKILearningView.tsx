@@ -19,8 +19,8 @@ const TLSBasicsModule = lazy(() =>
   import('./modules/TLSBasics').then((module) => ({ default: module.TLSBasicsModule }))
 )
 const PQC101Module = lazy(() =>
-  import('./modules/Module1-Introduction/PQC101Module').then((module) => ({
-    default: module.PQC101Module,
+  import('./modules/Module1-Introduction').then((module) => ({
+    default: module.Module1,
   }))
 )
 const QuizModule = lazy(() =>

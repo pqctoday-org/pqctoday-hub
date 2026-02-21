@@ -8,6 +8,7 @@ import { HSMSimulator } from './workshop/HSMSimulator'
 import { KeyRotationPlanner } from './workshop/KeyRotationPlanner'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 
 const MODULE_ID = 'key-management'
 
@@ -115,6 +116,7 @@ export const KeyManagementModule: React.FC = () => {
           <TabsTrigger value="learn">Learn</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
+          <TabsTrigger value="references">References</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -203,6 +205,10 @@ export const KeyManagementModule: React.FC = () => {
             onNavigateToWorkshop={navigateToWorkshop}
             onSetWorkshopConfig={handleSetWorkshopConfig}
           />
+        </TabsContent>
+        {/* References Tab */}
+        <TabsContent value="references">
+          <ModuleReferencesTab moduleId="key-management" />
         </TabsContent>
       </Tabs>
     </div>

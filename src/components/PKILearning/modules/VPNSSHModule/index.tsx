@@ -10,6 +10,7 @@ import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import type { IKEv2Mode } from './data/ikev2Constants'
 import type { SSHKexAlgorithm } from './data/sshConstants'
+import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 
 const MODULE_ID = 'vpn-ssh-pqc'
 
@@ -135,6 +136,7 @@ export const VPNSSHModule: React.FC = () => {
           <TabsTrigger value="learn">Learn</TabsTrigger>
           <TabsTrigger value="simulate">Simulate</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
+          <TabsTrigger value="references">References</TabsTrigger>
         </TabsList>
 
         {/* Learn Tab */}
@@ -234,6 +236,10 @@ export const VPNSSHModule: React.FC = () => {
             onNavigateToSimulate={navigateToSimulate}
             onSetSimulationConfig={setSimulationConfig}
           />
+        </TabsContent>
+        {/* References Tab */}
+        <TabsContent value="references">
+          <ModuleReferencesTab moduleId="vpn-ssh-pqc" />
         </TabsContent>
       </Tabs>
     </div>

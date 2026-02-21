@@ -18,6 +18,7 @@ export interface LibraryItem {
   migrationUrgency: string
   localFile?: string // e.g. "public/library/FIPS_203.pdf"
   manualCategory?: string
+  moduleIds?: string[] // e.g. ['pki-workshop', 'email-signing']
   children?: LibraryItem[]
   categories: string[] // Multi-category support
   status?: 'New' | 'Updated'
@@ -247,6 +248,14 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
       migrationUrgency: values[16],
       localFile: values[20] || undefined,
       manualCategory: values[18] || undefined,
+      moduleIds:
+        values[21] && values[21].trim()
+          ? values[21]
+              .trim()
+              .split(';')
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : undefined,
       children: [],
       categories: [], // Will be populated below
     }
@@ -302,4 +311,9 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
 
   // Return ALL items, not just roots, so we can group them by category
   return items
+}
+
+// Returns library items tagged for a given learn module ID
+export function getLibraryItemsForModule(moduleId: string): LibraryItem[] {
+  return libraryData.filter((item) => item.moduleIds?.includes(moduleId))
 }

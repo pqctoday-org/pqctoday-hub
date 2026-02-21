@@ -7,6 +7,7 @@ import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PKIIntroduction } from './components/PKIIntroduction'
 import { PKIExercises } from './components/PKIExercises'
+import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { CSRGenerator } from './CSRGenerator'
 import { RootCAGenerator } from './RootCAGenerator'
 import { CertSigner } from './CertSigner'
@@ -134,6 +135,7 @@ export const PKIWorkshop: React.FC = () => {
           <TabsTrigger value="learn">Learn</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
+          <TabsTrigger value="references">References</TabsTrigger>
         </TabsList>
 
         {/* Learn Tab */}
@@ -236,6 +238,11 @@ export const PKIWorkshop: React.FC = () => {
             onNavigateToWorkshop={navigateToWorkshop}
             onSetWorkshopStep={handleSetWorkshopStep}
           />
+        </TabsContent>
+
+        {/* References Tab */}
+        <TabsContent value="references">
+          <ModuleReferencesTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>
