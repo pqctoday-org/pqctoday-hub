@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import { SoftwareTable } from './SoftwareTable'
 import { MigrationWorkflow } from './MigrationWorkflow'
+import { InfrastructureStack, type InfrastructureLayerType } from './InfrastructureStack'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Search, AlertTriangle, X } from 'lucide-react'
 import debounce from 'lodash/debounce'
@@ -14,6 +15,8 @@ export const MigrateView: React.FC = () => {
   const [searchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState<string>('All')
   const [activePlatform, setActivePlatform] = useState<string>('All')
+  const [activeInfrastructureLayer, setActiveInfrastructureLayer] =
+    useState<InfrastructureLayerType>('All')
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
 
@@ -112,6 +115,11 @@ export const MigrateView: React.FC = () => {
         if (!item.primaryPlatforms || !item.primaryPlatforms.includes(activePlatform)) return false
       }
 
+      // Infrastructure Layer Filter
+      if (activeInfrastructureLayer !== 'All') {
+        if (item.infrastructureLayer !== activeInfrastructureLayer) return false
+      }
+
       // Search Filter
       if (!filterText) return true
       const searchLower = filterText.toLowerCase()
@@ -121,7 +129,7 @@ export const MigrateView: React.FC = () => {
         item.license?.toLowerCase().includes(searchLower)
       )
     })
-  }, [activeTab, stepFilter, activePlatform, filterText])
+  }, [activeTab, stepFilter, activePlatform, activeInfrastructureLayer, filterText])
 
   if (!softwareData || softwareData.length === 0) {
     return (
@@ -154,6 +162,18 @@ export const MigrateView: React.FC = () => {
 
       {/* Migration Workflow Hero */}
       <MigrationWorkflow onViewSoftware={handleViewSoftware} />
+
+      {/* Infrastructure Stack */}
+      <div className="py-8">
+        <InfrastructureStack
+          activeLayer={activeInfrastructureLayer}
+          onSelectLayer={(layer) => {
+            setActiveInfrastructureLayer(layer)
+            setStepFilter(null)
+            setActiveTab('All')
+          }}
+        />
+      </div>
 
       {/* Software Catalog */}
       <div ref={softwareTableRef} className="pt-4">

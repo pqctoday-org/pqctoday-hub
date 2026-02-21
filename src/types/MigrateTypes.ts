@@ -2,6 +2,7 @@ export interface SoftwareItem {
   softwareName: string
   categoryId: string
   categoryName: string
+  infrastructureLayer: string
   pqcSupport: string
   pqcCapabilityDescription: string
   licenseType: string

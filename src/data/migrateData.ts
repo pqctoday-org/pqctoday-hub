@@ -78,6 +78,7 @@ interface RawSoftwareItem {
   software_name: string
   category_id: string
   category_name: string
+  infrastructure_layer: string
   pqc_support: string
   pqc_capability_description: string
   license_type: string
@@ -107,6 +108,7 @@ function parseSoftwareCSV(csvContent: string): SoftwareItem[] {
     softwareName: row.software_name,
     categoryId: row.category_id,
     categoryName: row.category_name,
+    infrastructureLayer: row.infrastructure_layer,
     pqcSupport: row.pqc_support,
     pqcCapabilityDescription: row.pqc_capability_description,
     licenseType: row.license_type,
