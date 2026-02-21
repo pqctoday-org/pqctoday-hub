@@ -14,7 +14,10 @@ export default defineConfig([
 
   // Base JS rules
   js.configs.recommended,
-  security.configs.recommended,
+  {
+    plugins: { security },
+    rules: security.configs.recommended.rules,
+  },
 
   // TypeScript rules - ONLY for TS files
   ...tseslint.configs.recommended.map((config) => ({
