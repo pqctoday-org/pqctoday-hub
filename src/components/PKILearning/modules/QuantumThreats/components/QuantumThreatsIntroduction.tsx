@@ -6,6 +6,7 @@ import {
   Search,
   Clock,
   Shield,
+  PenLine,
   ArrowRight,
   BarChart3,
   Target,
@@ -302,6 +303,74 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             <em>Y</em> years, and a CRQC is expected in <em>Z</em> years, you must start migrating{' '}
             within <strong>Z &minus; X &minus; Y</strong> years. For data with 25-year sensitivity,
             a 5-year migration time, and a CRQC in 2035, migration should have started by 2005.
+          </p>
+        </div>
+      </section>
+
+      {/* HNFL Attack Model */}
+      <section className="glass-panel p-6">
+        <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
+          <PenLine size={20} /> Harvest Now, Forge Later (HNFL)
+        </h2>
+        <p className="text-foreground/80 leading-relaxed mb-4">
+          HNDL targets confidentiality. <strong>HNFL targets authenticity and integrity.</strong>{' '}
+          Adversaries collect signed artifacts today — firmware images, certificate chains,
+          code-signing blobs — and store them. Once a CRQC arrives, Shor&apos;s algorithm recovers
+          the signer&apos;s private key, enabling forged signatures on any document or binary.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+          <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20 text-center">
+            <div className="text-2xl mb-1">📂</div>
+            <div className="text-sm font-bold text-destructive mb-1">Phase 1: Capture</div>
+            <p className="text-xs text-muted-foreground">
+              Collect signed artifacts — firmware images, CA certificates, code-signing blobs.
+              Public-key material is often publicly accessible.
+            </p>
+          </div>
+          <div className="bg-warning/5 rounded-lg p-3 border border-warning/20 text-center">
+            <div className="text-2xl mb-1">💾</div>
+            <div className="text-sm font-bold text-warning mb-1">Phase 2: Store</div>
+            <p className="text-xs text-muted-foreground">
+              Archive for years to decades. No active attack is needed — the adversary waits for
+              quantum capability.
+            </p>
+          </div>
+          <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 text-center">
+            <div className="text-2xl mb-1">✍️</div>
+            <div className="text-sm font-bold text-primary mb-1">Phase 3: Forge</div>
+            <p className="text-xs text-muted-foreground">
+              CRQC runs Shor&apos;s algorithm on the signer&apos;s public key, recovers the private
+              key, and forges arbitrary signatures retroactively.
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-xs font-bold text-foreground mb-1">High-risk targets</div>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>• PKI hierarchies &amp; root CA certificates</li>
+              <li>• Firmware signing (medical devices, industrial, automotive)</li>
+              <li>• Software update pipelines &amp; code-signing certs</li>
+              <li>• Government ePassports &amp; digital ID credentials</li>
+            </ul>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-xs font-bold text-foreground mb-1">Why it&apos;s urgent now</div>
+            <p className="text-xs text-muted-foreground">
+              A Root CA issued today with a 20-year validity period will still be trusted in 2046.
+              If a CRQC arrives in 2035, that CA&apos;s RSA or ECDSA key is breakable — and every
+              certificate it ever signed becomes forgeable. Migration to{' '}
+              <strong>ML-DSA or SLH-DSA</strong> must complete before CRQC arrival.
+            </p>
+          </div>
+        </div>
+        <div className="bg-secondary/5 rounded-lg p-3 border border-secondary/20">
+          <p className="text-xs text-muted-foreground">
+            <strong className="text-secondary">HNFL vs HNDL:</strong> HNDL requires intercepting
+            encrypted traffic. HNFL does not — signed artifacts are often public. The re-issuance
+            deadline formula is simpler:{' '}
+            <strong>Re-issuance Deadline = CRQC Year &minus; Re-issuance Time</strong>. Use the Step
+            5 workshop to calculate your credential migration window.
           </p>
         </div>
       </section>

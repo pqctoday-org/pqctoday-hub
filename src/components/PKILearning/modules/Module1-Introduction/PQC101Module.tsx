@@ -64,26 +64,48 @@ const Step1WhyPQC: React.FC<StepProps> = ({ onComplete }) => {
             <li className="flex items-start gap-2">
               <ChevronRight size={14} className="shrink-0 mt-1 text-primary" />
               <span>
-                <strong>Digital signatures & code signing</strong> — firmware and software updates
+                <strong>Digital signatures & code signing</strong> — firmware and software updates{' '}
+                <em>(HNFL risk)</em>
               </span>
             </li>
           </ul>
         </div>
-        <div className="glass-panel p-5">
-          <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-            <Lightbulb className="text-secondary" size={18} />
-            Key concept: HNDL
-          </h4>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-            <strong>&ldquo;Harvest Now, Decrypt Later&rdquo;</strong> (HNDL) is an attack strategy
-            where adversaries collect encrypted data <em>today</em> and store it until quantum
-            computers can break the encryption.
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            This means <strong>data encrypted now</strong> with RSA or ECC could be readable in the
-            future. For sensitive data with long lifespans (health records, state secrets),
-            migration must start <em>before</em> quantum computers arrive.
-          </p>
+        <div className="flex flex-col gap-4">
+          <div className="glass-panel p-5">
+            <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+              <Lightbulb className="text-secondary" size={18} />
+              Key concept: HNDL
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+              <strong>&ldquo;Harvest Now, Decrypt Later&rdquo;</strong> (HNDL) is an attack strategy
+              where adversaries collect encrypted data <em>today</em> and store it until quantum
+              computers can break the encryption.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              This means <strong>data encrypted now</strong> with RSA or ECC could be readable in
+              the future. For sensitive data with long lifespans (health records, state secrets),
+              migration must start <em>before</em> quantum computers arrive.
+            </p>
+          </div>
+
+          <div className="glass-panel p-5 border-l-4 border-l-secondary">
+            <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+              <Lightbulb className="text-secondary" size={18} />
+              Key concept: HNFL
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+              <strong>&ldquo;Harvest Now, Fix Later&rdquo;</strong> (HNFL) is the signature
+              counterpart to HNDL. Adversaries capture <strong>signed artifacts today</strong> —
+              firmware images, certificate chains, code-signing blobs — and store them. Once a
+              quantum computer exists, they can forge or repudiate those signatures retroactively.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Unlike HNDL (which targets <em>confidentiality</em>), HNFL targets{' '}
+              <em>authenticity and integrity</em>. Long-lived credentials — PKI hierarchies,
+              firmware signing keys, code-signing certificates — must migrate to PQC signing
+              algorithms (ML-DSA, SLH-DSA) before quantum computers mature.
+            </p>
+          </div>
         </div>
       </div>
 

@@ -13,7 +13,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     id: 'quantum-threats',
     title: 'Quantum Threats',
     description:
-      "Understand how Shor's and Grover's algorithms break cryptography, CRQC timelines, and HNDL attack mechanics.",
+      "Understand how Shor's and Grover's algorithms break cryptography, CRQC timelines, and HNDL/HNFL attack mechanics.",
     duration: '60 min',
   },
   'hybrid-crypto': {
@@ -107,7 +107,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   '5g-security': 3,
   'digital-id': 6,
   'tls-basics': 3,
-  'quantum-threats': 4,
+  'quantum-threats': 5,
   'hybrid-crypto': 3,
   'crypto-agility': 3,
   'stateful-signatures': 3,

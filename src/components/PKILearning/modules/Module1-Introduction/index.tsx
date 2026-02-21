@@ -376,8 +376,7 @@ export const Module1: React.FC = () => {
                       Generated {classicalAlgos[selectedAlgo].name} key pair
                     </p>
                     <p className="text-muted-foreground mt-1">
-                      The public key above is{' '}
-                      {/* eslint-disable-next-line security/detect-object-injection */}
+                      The public key above is {}
                       <strong className="text-primary">
                         {fmt(classicalAlgos[selectedAlgo].pubKeyB)}
                       </strong>
@@ -411,8 +410,8 @@ export const Module1: React.FC = () => {
                 hint: "Classical computers require exponential time to factor large integers. Shor's Algorithm on a sufficiently powerful quantum computer reduces integer factorisation to polynomial time — making RSA-2048 breakable.",
               },
               {
-                q: 'What is "Harvest Now, Decrypt Later" (HNDL) and why is it urgent today?',
-                hint: 'Adversaries are collecting encrypted ciphertext now and storing it. Once large quantum computers exist, they will decrypt it retroactively. Data encrypted today with RSA/ECC may be at risk years before quantum computers mature.',
+                q: 'What is the difference between HNDL and HNFL, and which types of assets does each threaten?',
+                hint: 'HNDL ("Harvest Now, Decrypt Later") targets confidentiality: adversaries collect encrypted ciphertext today and decrypt it once a CRQC exists — threatening any long-lived sensitive data (health records, state secrets). HNFL ("Harvest Now, Fix Later") targets authenticity and integrity: adversaries capture signed artifacts (firmware, certificates, code-signing blobs) today, then forge or repudiate those signatures later using a CRQC. HNDL demands migrating key-exchange algorithms (ML-KEM); HNFL demands migrating signing algorithms (ML-DSA, SLH-DSA). Both require action before quantum computers arrive.',
               },
               {
                 q: 'Which NIST-standardised algorithm provides key encapsulation, and which provide digital signatures?',

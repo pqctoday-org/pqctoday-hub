@@ -75,8 +75,19 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
       config: { step: 3 },
     },
     {
+      id: 'hnfl-root-ca',
+      title: '5. HNFL Risk: Root CA Certificate',
+      description:
+        'A Root CA issued today with a 20-year validity period — calculate when the PKI infrastructure must migrate to PQC signing to avoid HNFL exposure. Assume a 5-year re-issuance time.',
+      badge: 'HNFL',
+      badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
+      observe:
+        'With a CRQC expected in 2035 and a 5-year re-issuance time, the deadline is 2030. A Root CA valid until 2046 remains trusted well into the forge window — every certificate it has ever signed becomes retroactively forgeable. Migration to ML-DSA must begin now.',
+      config: { step: 4 },
+    },
+    {
       id: 'pqc-safe',
-      title: '5. PQC Algorithms: Built for Quantum',
+      title: '6. PQC Algorithms: Built for Quantum',
       description:
         'Compare ML-KEM-768 and ML-DSA-65 in the Key Size Analyzer. Verify that their classical and quantum security levels are identical — no degradation under quantum attack.',
       badge: 'PQC',

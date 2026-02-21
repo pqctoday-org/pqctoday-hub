@@ -1,12 +1,13 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, BarChart3, Grid3X3, GitCompare, Clock } from 'lucide-react'
+import { Trash2, BarChart3, Grid3X3, GitCompare, Clock, PenLine } from 'lucide-react'
 import { QuantumThreatsIntroduction } from './components/QuantumThreatsIntroduction'
 import { QuantumThreatsExercises, type WorkshopConfig } from './components/QuantumThreatsExercises'
 import { SecurityLevelDegradation } from './workshop/SecurityLevelDegradation'
 import { AlgorithmVulnerabilityMatrix } from './workshop/AlgorithmVulnerabilityMatrix'
 import { KeySizeAnalyzer } from './workshop/KeySizeAnalyzer'
 import { HNDLTimeline } from './workshop/HNDLTimeline'
+import { HNFLTimeline } from './workshop/HNFLTimeline'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
@@ -37,6 +38,12 @@ const PARTS = [
     title: 'Step 4: HNDL Timeline',
     description: 'Calculate your migration deadline.',
     icon: Clock,
+  },
+  {
+    id: 'hnfl-timeline',
+    title: 'Step 5: HNFL Risk Calculator',
+    description: 'Calculate when signing credentials must be rotated to PQC.',
+    icon: PenLine,
   },
 ]
 
@@ -211,6 +218,7 @@ export const QuantumThreatsModule: React.FC = () => {
                 />
               )}
               {currentPart === 3 && <HNDLTimeline />}
+              {currentPart === 4 && <HNFLTimeline />}
             </div>
 
             {/* Part Navigation */}

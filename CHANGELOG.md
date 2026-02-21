@@ -1,6 +1,21 @@
 # Changelog
 
+<!-- markdownlint-disable MD024 -->
+
 All notable changes to this project will be documented in this file.
+
+## [1.20.0] - 2026-02-21
+
+### Added
+
+- **HNFL concept in PQC 101**: The introductory module now covers both harvest-now attack models
+  side-by-side. A new "Key concept: HNFL" panel in Step 1 explains that "Harvest Now, Fix Later"
+  targets **authenticity and integrity** — adversaries capture signed artifacts (firmware images,
+  certificate chains, code-signing blobs) today and retroactively forge or repudiate those
+  signatures once a CRQC exists. This contrasts with HNDL (which targets confidentiality). The
+  "Digital signatures & code signing" risk bullet now surfaces the HNFL label as a forward
+  reference, and Exercise 2 has been reframed to ask learners to distinguish both threat models and
+  the algorithm families (ML-DSA/SLH-DSA for HNFL, ML-KEM for HNDL) that address each.
 
 ## [1.19.0] - 2026-02-21
 
