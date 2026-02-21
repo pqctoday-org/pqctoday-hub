@@ -9,6 +9,7 @@ import {
   AVAILABLE_USE_CASES,
   AVAILABLE_INFRASTRUCTURE,
   VULNERABLE_ALGORITHMS,
+  COMPLIANCE_DESCRIPTIONS,
 } from '../../hooks/useAssessmentEngine'
 import { timelineData, transformToGanttData } from '../../data/timelineData'
 import {
@@ -224,7 +225,7 @@ const Step2Country = () => {
 }
 
 const Step3Crypto = () => {
-  const { currentCrypto, toggleCrypto } = useAssessmentStore()
+  const { currentCrypto, toggleCrypto, cryptoUnknown, setCryptoUnknown } = useAssessmentStore()
 
   return (
     <div className="space-y-4">
@@ -233,10 +234,29 @@ const Step3Crypto = () => {
         Select all algorithms currently in use across your systems. Don&apos;t worry if you&apos;re
         unsure — select the ones you know about.
       </p>
+
+      {/* I don't know escape hatch */}
+      <button
+        aria-pressed={cryptoUnknown}
+        onClick={() => setCryptoUnknown(!cryptoUnknown)}
+        className={clsx(
+          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          cryptoUnknown
+            ? 'border-muted-foreground bg-muted/20 text-foreground'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+        )}
+      >
+        <Info size={14} className="shrink-0" />I don&apos;t know / Not sure what algorithms we use
+      </button>
+
       <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-2"
+        className={clsx(
+          'grid grid-cols-1 md:grid-cols-2 gap-2 transition-opacity',
+          cryptoUnknown && 'opacity-40 pointer-events-none'
+        )}
         role="group"
         aria-label="Algorithm selection"
+        aria-disabled={cryptoUnknown}
       >
         {AVAILABLE_ALGORITHMS.map((algo) => {
           const isVulnerable = VULNERABLE_ALGORITHMS.has(algo)
@@ -477,6 +497,15 @@ const Step5Compliance = () => {
         identify PQC-related obligations.
       </p>
 
+      {/* None apply escape hatch */}
+      <button
+        onClick={() => complianceRequirements.forEach((fw) => toggleCompliance(fw))}
+        className="w-full p-3 rounded-lg border border-dashed border-muted-foreground/40 text-left text-sm font-medium text-muted-foreground transition-colors flex items-center gap-2 hover:border-muted-foreground/60 hover:text-foreground"
+      >
+        <Info size={14} className="shrink-0" />
+        None apply / I don&apos;t know — clear all selections
+      </button>
+
       {industryFrameworks.length > 0 && (
         <>
           <div className="glass-panel p-3 border-l-4 border-l-primary">
@@ -512,7 +541,12 @@ const Step5Compliance = () => {
                     : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
                 )}
               >
-                {fw.label}
+                <span>{fw.label}</span>
+                {fw.description && (
+                  <p className="text-xs mt-1 opacity-80 font-normal leading-snug">
+                    {fw.description}
+                  </p>
+                )}
               </button>
             ))}
           </div>
@@ -541,7 +575,15 @@ const Step5Compliance = () => {
                     : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
                 )}
               >
-                {fw}
+                {}
+                <span>{fw}</span>
+                {/* eslint-disable-next-line security/detect-object-injection */}
+                {COMPLIANCE_DESCRIPTIONS[fw] && (
+                  <p className="text-xs mt-1 opacity-80 font-normal leading-snug">
+                    {/* eslint-disable-next-line security/detect-object-injection */}
+                    {COMPLIANCE_DESCRIPTIONS[fw].notes}
+                  </p>
+                )}
               </button>
             ))}
           </div>
@@ -715,15 +757,19 @@ const Step7UseCases = () => {
         </div>
       )}
 
-      <p className="text-xs text-muted-foreground">
-        Not sure? Skip this step — we&apos;ll provide general recommendations.
-      </p>
+      <button
+        onClick={() => cryptoUseCases.forEach((uc) => toggleCryptoUseCase(uc))}
+        className="w-full p-3 rounded-lg border border-dashed border-muted-foreground/40 text-left text-sm font-medium text-muted-foreground transition-colors flex items-center gap-2 hover:border-muted-foreground/60 hover:text-foreground"
+      >
+        <Info size={14} className="shrink-0" />I don&apos;t know / None of these — skip this step
+      </button>
     </div>
   )
 }
 
 const Step8DataRetention = () => {
-  const { dataRetention, toggleDataRetention, industry } = useAssessmentStore()
+  const { dataRetention, toggleDataRetention, retentionUnknown, setRetentionUnknown, industry } =
+    useAssessmentStore()
 
   const industryRetentionOptions = useMemo(
     () => getIndustryConfigs(industryRetentionConfigs, industry),
@@ -758,67 +804,84 @@ const Step8DataRetention = () => {
         </div>
       </div>
 
-      {industryRetentionOptions.length > 0 && (
-        <>
-          <div className="glass-panel p-3 border-l-4 border-l-primary">
-            <div className="flex items-center gap-2">
-              <Info size={14} className="text-primary shrink-0" />
-              <p className="text-xs text-muted-foreground">
-                Showing retention periods common in the{' '}
-                <strong className="text-foreground">{industry}</strong> sector.
-              </p>
+      {/* I don't know escape hatch */}
+      <button
+        aria-pressed={retentionUnknown}
+        onClick={() => setRetentionUnknown(!retentionUnknown)}
+        className={clsx(
+          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          retentionUnknown
+            ? 'border-muted-foreground bg-muted/20 text-foreground'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+        )}
+      >
+        <Info size={14} className="shrink-0" />I don&apos;t know / Our retention policies are
+        undefined
+      </button>
+
+      <div className={clsx('space-y-4', retentionUnknown && 'opacity-40 pointer-events-none')}>
+        {industryRetentionOptions.length > 0 && (
+          <>
+            <div className="glass-panel p-3 border-l-4 border-l-primary">
+              <div className="flex items-center gap-2">
+                <Info size={14} className="text-primary shrink-0" />
+                <p className="text-xs text-muted-foreground">
+                  Showing retention periods common in the{' '}
+                  <strong className="text-foreground">{industry}</strong> sector.
+                </p>
+              </div>
+            </div>
+            <div className="space-y-3" role="group" aria-label={`${industry} retention periods`}>
+              {industryRetentionOptions.map((opt) => (
+                <button
+                  key={opt.id}
+                  aria-pressed={dataRetention.includes(opt.id)}
+                  onClick={() => toggleDataRetention(opt.id)}
+                  className={clsx(
+                    'w-full p-4 rounded-lg border text-left transition-colors',
+                    dataRetention.includes(opt.id)
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/30'
+                  )}
+                >
+                  <span className="font-bold text-sm">{opt.label}</span>
+                  <p className="text-xs mt-1 opacity-80">{opt.description}</p>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {filteredUniversalOptions.length > 0 && (
+          <div
+            className={clsx(
+              industryRetentionOptions.length > 0 && 'border-t border-border pt-3 mt-2'
+            )}
+          >
+            {industryRetentionOptions.length > 0 && (
+              <p className="text-xs text-muted-foreground font-medium mb-2">General ranges</p>
+            )}
+            <div className="space-y-3" role="group" aria-label="General data retention periods">
+              {filteredUniversalOptions.map((opt) => (
+                <button
+                  key={opt.id}
+                  aria-pressed={dataRetention.includes(opt.id)}
+                  onClick={() => toggleDataRetention(opt.id)}
+                  className={clsx(
+                    'w-full p-4 rounded-lg border text-left transition-colors',
+                    dataRetention.includes(opt.id)
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/30'
+                  )}
+                >
+                  <span className="font-bold text-sm">{opt.label}</span>
+                  <p className="text-xs mt-1 opacity-80">{opt.description}</p>
+                </button>
+              ))}
             </div>
           </div>
-          <div className="space-y-3" role="group" aria-label={`${industry} retention periods`}>
-            {industryRetentionOptions.map((opt) => (
-              <button
-                key={opt.id}
-                aria-pressed={dataRetention.includes(opt.id)}
-                onClick={() => toggleDataRetention(opt.id)}
-                className={clsx(
-                  'w-full p-4 rounded-lg border text-left transition-colors',
-                  dataRetention.includes(opt.id)
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:border-primary/30'
-                )}
-              >
-                <span className="font-bold text-sm">{opt.label}</span>
-                <p className="text-xs mt-1 opacity-80">{opt.description}</p>
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-
-      {filteredUniversalOptions.length > 0 && (
-        <div
-          className={clsx(
-            industryRetentionOptions.length > 0 && 'border-t border-border pt-3 mt-2'
-          )}
-        >
-          {industryRetentionOptions.length > 0 && (
-            <p className="text-xs text-muted-foreground font-medium mb-2">General ranges</p>
-          )}
-          <div className="space-y-3" role="group" aria-label="General data retention periods">
-            {filteredUniversalOptions.map((opt) => (
-              <button
-                key={opt.id}
-                aria-pressed={dataRetention.includes(opt.id)}
-                onClick={() => toggleDataRetention(opt.id)}
-                className={clsx(
-                  'w-full p-4 rounded-lg border text-left transition-colors',
-                  dataRetention.includes(opt.id)
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:border-primary/30'
-                )}
-              >
-                <span className="font-bold text-sm">{opt.label}</span>
-                <p className="text-xs mt-1 opacity-80">{opt.description}</p>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
@@ -995,13 +1058,20 @@ const Step11Infrastructure = () => {
           </button>
         ))}
       </div>
-      <p className="text-xs text-muted-foreground">None of these apply? Skip this step.</p>
+      <button
+        onClick={() => infrastructure.forEach((item) => toggleInfrastructure(item))}
+        className="w-full p-3 rounded-lg border border-dashed border-muted-foreground/40 text-left text-sm font-medium text-muted-foreground transition-colors flex items-center gap-2 hover:border-muted-foreground/60 hover:text-foreground"
+      >
+        <Info size={14} className="shrink-0" />
+        None of these / I don&apos;t know — skip this step
+      </button>
     </div>
   )
 }
 
 const Step12VendorDependency = () => {
-  const { vendorDependency, setVendorDependency } = useAssessmentStore()
+  const { vendorDependency, setVendorDependency, vendorUnknown, setVendorUnknown } =
+    useAssessmentStore()
 
   const options = [
     {
@@ -1035,7 +1105,27 @@ const Step12VendorDependency = () => {
         Vendor dependencies affect your control over migration timelines. Heavy vendor reliance
         means you depend on their <InlineTooltip term="PQC">PQC</InlineTooltip> roadmap.
       </p>
-      <div className="space-y-3" role="radiogroup" aria-label="Vendor dependency model">
+      {/* I don't know escape hatch */}
+      <button
+        aria-pressed={vendorUnknown}
+        onClick={() => setVendorUnknown(!vendorUnknown)}
+        className={clsx(
+          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          vendorUnknown
+            ? 'border-muted-foreground bg-muted/20 text-foreground'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+        )}
+      >
+        <Info size={14} className="shrink-0" />I don&apos;t know / Not sure how we manage crypto
+        dependencies
+      </button>
+
+      <div
+        className={clsx('space-y-3', vendorUnknown && 'opacity-40 pointer-events-none')}
+        role="radiogroup"
+        aria-label="Vendor dependency model"
+        aria-disabled={vendorUnknown}
+      >
         {options.map((opt) => (
           <button
             key={opt.value}
@@ -1233,7 +1323,7 @@ const ALL_STEPS = [
     key: 'crypto',
     component: <Step3Crypto />,
     canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      s.currentCrypto.length > 0,
+      s.currentCrypto.length > 0 || s.cryptoUnknown,
   },
   {
     key: 'sensitivity',
@@ -1253,7 +1343,7 @@ const ALL_STEPS = [
     key: 'retention',
     component: <Step8DataRetention />,
     canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      s.dataRetention.length > 0,
+      s.dataRetention.length > 0 || s.retentionUnknown,
   },
   {
     key: 'scale',
@@ -1272,7 +1362,7 @@ const ALL_STEPS = [
     key: 'vendors',
     component: <Step12VendorDependency />,
     canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      !!s.vendorDependency,
+      !!s.vendorDependency || s.vendorUnknown,
   },
   {
     key: 'timeline',

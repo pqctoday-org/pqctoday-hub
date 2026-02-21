@@ -14,7 +14,7 @@ describe('useAssessmentEngine / computeAssessment', () => {
     const result = computeAssessment(input)
     expect(result.riskScore).toBeGreaterThan(0)
     expect(result.algorithmMigrations).toHaveLength(2)
-    expect(result.executiveSummary).toBeUndefined()
+    expect(result.executiveSummary).toBeTypeOf('string')
   })
 
   it('computes extended assessment with critical values', () => {

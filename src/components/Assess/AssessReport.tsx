@@ -359,6 +359,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
   const { reset, editFromStep } = useAssessmentStore()
   const industry = useAssessmentStore((s) => s.industry)
   const country = useAssessmentStore((s) => s.country)
+  const dataSensitivity = useAssessmentStore((s) => s.dataSensitivity)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 
   /** Check if a given route is visible for the current persona's nav */
@@ -520,6 +521,16 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                   <p className="text-sm text-muted-foreground print:text-gray-600">
                     Generated on {generatedDate}
                   </p>
+                  <span
+                    className={clsx(
+                      'inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border mt-2',
+                      result.categoryScores
+                        ? 'border-primary/30 bg-primary/10 text-primary'
+                        : 'border-border bg-muted/20 text-muted-foreground'
+                    )}
+                  >
+                    {result.categoryScores ? 'Comprehensive Assessment' : 'Quick Assessment'}
+                  </span>
                 </div>
 
                 {/* Country PQC Migration Timeline */}
@@ -561,6 +572,25 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                     </p>
                   </div>
                 )}
+
+                {/* HNDL warning for quick assessments with high sensitivity */}
+                {!result.categoryScores &&
+                  ((dataSensitivity ?? []).includes('critical') ||
+                    (dataSensitivity ?? []).includes('high')) && (
+                    <div className="glass-panel p-4 border-l-4 border-l-warning flex items-start gap-3">
+                      <AlertTriangle size={18} className="text-warning shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          HNDL Risk Not Quantified
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          This quick assessment did not include data retention information.
+                          Harvest-Now-Decrypt-Later risk cannot be calculated. For sensitive
+                          long-lived data, run a Comprehensive Assessment to quantify this exposure.
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                 {/* HNDL Risk Window */}
                 {result.hndlRiskWindow && <HNDLTimeline hndl={result.hndlRiskWindow} />}
@@ -665,7 +695,6 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                                               'text-muted-foreground'
                                           )}
                                         >
-                                          {}
                                           {scopeConfig[effort.estimatedScope]?.label ??
                                             effort.estimatedScope}
                                         </span>
@@ -697,7 +726,11 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                           key={c.framework}
                           className={clsx(
                             'p-3 rounded-lg border text-sm',
-                            c.requiresPQC ? 'border-warning/30 bg-warning/5' : 'border-border'
+                            c.requiresPQC === true
+                              ? 'border-warning/30 bg-warning/5'
+                              : c.requiresPQC === null
+                                ? 'border-muted/50 bg-muted/5'
+                                : 'border-border'
                           )}
                         >
                           <div className="flex items-center justify-between mb-1">
@@ -705,12 +738,18 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                             <span
                               className={clsx(
                                 'text-xs font-bold px-2 py-0.5 rounded-full',
-                                c.requiresPQC
+                                c.requiresPQC === true
                                   ? 'bg-warning/10 text-warning'
-                                  : 'bg-muted text-muted-foreground'
+                                  : c.requiresPQC === null
+                                    ? 'bg-muted/20 text-muted-foreground'
+                                    : 'bg-muted text-muted-foreground'
                               )}
                             >
-                              {c.requiresPQC ? 'PQC Required' : 'No PQC mandate yet'}
+                              {c.requiresPQC === true
+                                ? 'PQC Required'
+                                : c.requiresPQC === null
+                                  ? 'Status unknown'
+                                  : 'No PQC mandate yet'}
                             </span>
                           </div>
                           <p className="text-xs text-muted-foreground">
@@ -769,7 +808,6 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                                   effortConfig[action.effort]?.color ?? 'text-muted-foreground'
                                 )}
                               >
-                                {}
                                 {effortConfig[action.effort]?.label ?? action.effort} effort
                               </span>
                             )}

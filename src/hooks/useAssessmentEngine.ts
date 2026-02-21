@@ -3,6 +3,8 @@ import { useMemo } from 'react'
 export interface AssessmentInput {
   industry: string
   currentCrypto: string[]
+  /** When true, user indicated they don't know their cryptographic algorithms. */
+  currentCryptoUnknown?: boolean
   /** One or more sensitivity levels — risk scored against the highest selected. */
   dataSensitivity: string[]
   complianceRequirements: string[]
@@ -12,11 +14,15 @@ export interface AssessmentInput {
   cryptoUseCases?: string[]
   /** One or more retention periods — HNDL risk uses the longest selected. */
   dataRetention?: string[]
+  /** When true, user indicated they don't know their data retention period. */
+  retentionUnknown?: boolean
   systemCount?: '1-10' | '11-50' | '51-200' | '200-plus'
   teamSize?: '1-10' | '11-50' | '51-200' | '200-plus'
   cryptoAgility?: 'fully-abstracted' | 'partially-abstracted' | 'hardcoded' | 'unknown'
   infrastructure?: string[]
   vendorDependency?: 'heavy-vendor' | 'open-source' | 'mixed' | 'in-house'
+  /** When true, user indicated they don't know their vendor dependency model. */
+  vendorUnknown?: boolean
   timelinePressure?: 'within-1y' | 'within-2-3y' | 'internal-deadline' | 'no-deadline' | 'unknown'
 }
 
@@ -30,7 +36,8 @@ export interface AlgorithmMigration {
 
 export interface ComplianceImpact {
   framework: string
-  requiresPQC: boolean
+  /** true = PQC required, false = not required, null = framework not in database */
+  requiresPQC: boolean | null
   deadline: string
   notes: string
 }
@@ -324,8 +331,9 @@ const COMPLIANCE_DB: Record<string, { requiresPQC: boolean; deadline: string; no
   },
   'NIS2 Directive': {
     requiresPQC: true,
-    deadline: '2024 (transposition)',
-    notes: 'EU-wide cybersecurity baseline for essential and important entities.',
+    deadline: 'October 2024 (transposition passed — enforcement underway)',
+    notes:
+      'EU-wide cybersecurity baseline for essential and important entities. Member states were required to transpose NIS2 by October 2024; enforcement is now active across the EU.',
   },
   COPPA: {
     requiresPQC: false,
@@ -492,6 +500,32 @@ const TIMELINE_URGENCY: Record<string, number> = {
   unknown: 1.1,
 }
 
+/** Country-specific regulatory urgency scores (0-12) for risk scoring. */
+const COUNTRY_REGULATORY_URGENCY: Record<string, number> = {
+  'United States': 12, // CNSA 2.0, FedRAMP, FIPS 140-3
+  France: 10, // ANSSI 2025 mandate
+  Germany: 8, // BSI PQC guidance, NIS2
+  Netherlands: 7, // NIS2, EU financial regulation
+  'United Kingdom': 7, // NCSC PQC guidance
+  Australia: 6, // ASD guidance
+  Canada: 6, // CCCS guidance
+  Japan: 5, // NISC guidance
+  'South Korea': 5, // KISA guidance
+  Spain: 6, // NIS2
+  Italy: 6, // NIS2
+  Belgium: 6, // NIS2
+  Sweden: 6, // NIS2
+  Denmark: 5, // NIS2
+}
+
+/** Expose compliance deadline/notes for UI tooltips in the wizard. */
+export const COMPLIANCE_DESCRIPTIONS: Record<string, { deadline: string; notes: string }> =
+  Object.fromEntries(
+    Object.entries(COMPLIANCE_DB).map(([k, v]) => [k, { deadline: v.deadline, notes: v.notes }])
+  )
+
+// Planning horizon aligned with NIST and NSA guidance (2030–2035 range).
+// NSA CNSA 2.0 targets 2030 for software; NIST uses 2035 as conservative planning horizon.
 const ESTIMATED_QUANTUM_THREAT_YEAR = 2035
 
 // ── Multi-select helpers ──
@@ -513,6 +547,24 @@ function getMaxRetentionYears(arr: string[]): number {
 // ── Category score functions (each 0-100) ──
 
 function computeQuantumExposure(input: AssessmentInput, vulnerableCount: number): number {
+  // When user indicated unknown crypto, apply a conservative default equivalent to RSA-2048 + ECDH
+  if (input.currentCryptoUnknown) {
+    const sensitivityScore = Math.min(
+      15,
+      (DATA_SENSITIVITY_SCORES[getMaxSensitivity(input.dataSensitivity)] ?? 0) * 0.6
+    )
+    const useCaseScore = input.cryptoUseCases?.length
+      ? Math.min(
+          25,
+          input.cryptoUseCases.reduce(
+            (s, uc) => s + (USE_CASE_WEIGHTS[uc]?.hndlRelevance ?? 5), // eslint-disable-line security/detect-object-injection
+            0
+          ) * 2.5
+        )
+      : 10
+    return Math.min(100, Math.round(20 + useCaseScore + sensitivityScore))
+  }
+
   // Base from vulnerable algorithm weights (reuse existing weights)
   let base = 0
   const vulnerableAlgos = input.currentCrypto.filter(
@@ -549,7 +601,8 @@ function computeQuantumExposure(input: AssessmentInput, vulnerableCount: number)
     retentionScore = ms === 'critical' ? 16 : ms === 'high' ? 10 : ms === 'medium' ? 4 : 0
   }
 
-  // Data sensitivity multiplier (0-15)
+  // Data sensitivity modifier (0-15). Caps at 15 (= 25 * 0.6) — sensitivity is a modifier,
+  // not a primary driver; algorithm exposure and data retention dominate quantum exposure.
   const sensitivityScore = Math.min(
     15,
     (DATA_SENSITIVITY_SCORES[getMaxSensitivity(input.dataSensitivity)] ?? 0) * 0.6
@@ -610,11 +663,13 @@ function computeRegulatoryPressure(
   const industryBase = INDUSTRY_THREAT[input.industry] ?? 10
   const industryRegScore = Math.min(25, industryBase * 0.85)
 
-  // Timeline pressure (multiplier applied at end)
+  // Country-specific regulatory urgency (0-10), independent of framework selection
+  const countryUrgency = COUNTRY_REGULATORY_URGENCY[input.country ?? ''] ?? 0
 
+  // Timeline pressure (multiplier applied at end)
   const timelineMul = TIMELINE_URGENCY[input.timelinePressure ?? 'unknown'] ?? 1.1
 
-  const raw = (frameworkScore + industryRegScore) * timelineMul
+  const raw = (frameworkScore + industryRegScore + Math.min(10, countryUrgency)) * timelineMul
 
   return Math.max(0, Math.min(100, Math.round(raw)))
 }
@@ -779,6 +834,74 @@ function generateExtendedActions(
 ): RecommendedAction[] {
   const actions: RecommendedAction[] = []
   let priority = 1
+
+  // ── Awareness-gap actions (highest priority — fill knowledge voids first) ──
+
+  if (input.currentCryptoUnknown) {
+    actions.push({
+      priority: priority++,
+      action:
+        'Conduct a cryptographic asset inventory to identify all algorithms in use across systems, services, and dependencies.',
+      category: 'immediate',
+      relatedModule: '/migrate',
+      effort: 'high',
+    })
+  }
+
+  if (input.retentionUnknown) {
+    actions.push({
+      priority: priority++,
+      action:
+        'Establish a data classification and retention policy to quantify HNDL exposure for long-lived sensitive data.',
+      category: 'immediate',
+      relatedModule: '/threats',
+      effort: 'medium',
+    })
+  }
+
+  if (input.vendorUnknown) {
+    actions.push({
+      priority: priority++,
+      action:
+        'Engage technology vendors and suppliers to document their cryptographic implementations and PQC migration roadmaps.',
+      category: 'short-term',
+      relatedModule: '/migrate',
+      effort: 'medium',
+    })
+  }
+
+  if (input.complianceRequirements.length === 0) {
+    actions.push({
+      priority: priority++,
+      action:
+        'Identify applicable regulatory and compliance frameworks for your industry and region to understand PQC obligations.',
+      category: 'short-term',
+      relatedModule: '/compliance',
+      effort: 'low',
+    })
+  }
+
+  if (!input.cryptoUseCases?.length) {
+    actions.push({
+      priority: priority++,
+      action:
+        'Map all business processes and applications that rely on cryptography to prioritize migration efforts.',
+      category: 'short-term',
+      relatedModule: '/migrate',
+      effort: 'medium',
+    })
+  }
+
+  if (!input.infrastructure?.length) {
+    actions.push({
+      priority: priority++,
+      action:
+        'Audit infrastructure for cryptographic dependencies — HSMs, legacy systems, cloud KMS, and embedded devices affect migration complexity.',
+      category: 'short-term',
+      relatedModule: '/migrate',
+      effort: 'medium',
+    })
+  }
 
   // Build context-aware algorithm highlight URLs
   const vulnerableAlgoNames = input.currentCrypto.filter((a) => ALGORITHM_DB[a]?.quantumVulnerable) // eslint-disable-line security/detect-object-injection
@@ -996,28 +1119,79 @@ function generateExecutiveSummary(
   return parts.filter(Boolean).join(' ')
 }
 
+function generateQuickSummary(
+  input: AssessmentInput,
+  riskScore: number,
+  riskLevel: string,
+  vulnerableCount: number,
+  pqcFrameworkCount: number
+): string {
+  const parts: string[] = []
+  parts.push(
+    `Your ${input.industry} organization faces a ${riskLevel} quantum risk (${riskScore}/100) based on a quick assessment.`
+  )
+  if (input.currentCryptoUnknown) {
+    parts.push(
+      'Cryptographic algorithms were not specified — conservative defaults applied. Complete a cryptographic inventory for a precise assessment.'
+    )
+  } else if (vulnerableCount > 0) {
+    parts.push(
+      `${vulnerableCount} quantum-vulnerable algorithm${vulnerableCount > 1 ? 's' : ''} identified.`
+    )
+  }
+  if (input.dataSensitivity.includes('critical') || input.dataSensitivity.includes('high')) {
+    parts.push(
+      'High data sensitivity means Harvest-Now-Decrypt-Later attacks are a concern. Run a comprehensive assessment to quantify retention risk.'
+    )
+  }
+  if (pqcFrameworkCount > 0) {
+    parts.push(
+      `${pqcFrameworkCount} compliance framework${pqcFrameworkCount > 1 ? 's' : ''} mandate${pqcFrameworkCount === 1 ? 's' : ''} PQC adoption.`
+    )
+  }
+  const statusMsg: Record<string, string> = {
+    started: 'Migration is underway.',
+    planning: 'Migration planning is in progress — prioritize execution.',
+    'not-started': 'Migration has not begun — immediate action recommended.',
+    unknown: 'Migration status is unclear — establish a baseline first.',
+  }
+  parts.push(statusMsg[input.migrationStatus] ?? '')
+  return parts.filter(Boolean).join(' ')
+}
+
 function computeAssessment(input: AssessmentInput): AssessmentResult {
   // Build algorithm migrations and compliance impacts (shared by both paths)
-  const algorithmMigrations: AlgorithmMigration[] = input.currentCrypto.map((algo) => {
-    // eslint-disable-next-line security/detect-object-injection
-    const info = ALGORITHM_DB[algo]
-    if (!info) {
-      return {
-        classical: algo,
-        quantumVulnerable: false,
-        replacement: 'Unknown — review manually',
-        urgency: 'long-term' as const,
-        notes: 'Algorithm not in database. Manual review recommended.',
-      }
-    }
-    return {
-      classical: algo,
-      quantumVulnerable: info.quantumVulnerable,
-      replacement: info.replacement,
-      urgency: info.quantumVulnerable ? ('immediate' as const) : ('long-term' as const),
-      notes: info.notes,
-    }
-  })
+  const algorithmMigrations: AlgorithmMigration[] = input.currentCryptoUnknown
+    ? [
+        {
+          classical: 'Unknown algorithms (inventory required)',
+          quantumVulnerable: true,
+          replacement: 'Complete a cryptographic asset inventory first',
+          urgency: 'immediate' as const,
+          notes:
+            'Cryptographic algorithms not identified. Conduct a full cryptographic asset inventory before migration planning.',
+        },
+      ]
+    : input.currentCrypto.map((algo) => {
+        // eslint-disable-next-line security/detect-object-injection
+        const info = ALGORITHM_DB[algo]
+        if (!info) {
+          return {
+            classical: algo,
+            quantumVulnerable: false,
+            replacement: 'Unknown — review manually',
+            urgency: 'long-term' as const,
+            notes: 'Algorithm not in database. Manual review recommended.',
+          }
+        }
+        return {
+          classical: algo,
+          quantumVulnerable: info.quantumVulnerable,
+          replacement: info.replacement,
+          urgency: info.quantumVulnerable ? ('immediate' as const) : ('long-term' as const),
+          notes: info.notes,
+        }
+      })
 
   const complianceImpacts: ComplianceImpact[] = input.complianceRequirements.map((fw) => {
     // eslint-disable-next-line security/detect-object-injection
@@ -1025,9 +1199,9 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
     if (!info) {
       return {
         framework: fw,
-        requiresPQC: false,
+        requiresPQC: null,
         deadline: 'Unknown',
-        notes: 'Framework not in database.',
+        notes: 'Framework not in database — verify PQC requirements independently.',
       }
     }
     return { framework: fw, ...info }
@@ -1040,11 +1214,13 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
   const hasExtendedInput = !!(
     input.cryptoUseCases?.length ||
     input.dataRetention?.length ||
+    input.retentionUnknown ||
     input.cryptoAgility ||
     input.infrastructure?.length ||
     input.systemCount ||
     input.teamSize ||
     input.vendorDependency ||
+    input.vendorUnknown ||
     input.timelinePressure
   )
 
@@ -1079,14 +1255,19 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
       migrationEffort
     )
   } else {
-    // ── Legacy additive scoring path (unchanged for backward compat) ──
+    // ── Legacy additive scoring path ──
     let score = INDUSTRY_THREAT[input.industry] ?? 10
 
-    const vulnerableAlgos = algorithmMigrations.filter((a) => a.quantumVulnerable)
-    vulnerableAlgos.forEach((algo, i) => {
-      const weight = ALGORITHM_WEIGHTS[algo.classical] ?? DEFAULT_ALGORITHM_WEIGHT
-      score += i < 3 ? weight : Math.round(weight * 0.5)
-    })
+    if (input.currentCryptoUnknown) {
+      // Conservative default: equivalent to RSA-2048 + ECDH (~18 pts)
+      score += 18
+    } else {
+      const vulnerableAlgos = algorithmMigrations.filter((a) => a.quantumVulnerable)
+      vulnerableAlgos.forEach((algo, i) => {
+        const weight = ALGORITHM_WEIGHTS[algo.classical] ?? DEFAULT_ALGORITHM_WEIGHT
+        score += i < 3 ? weight : Math.round(weight * 0.5)
+      })
+    }
 
     score += DATA_SENSITIVITY_SCORES[getMaxSensitivity(input.dataSensitivity)] ?? 0
 
@@ -1096,13 +1277,39 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
 
     score += MIGRATION_STATUS_SCORES[input.migrationStatus] ?? 0
 
+    // Country-specific regulatory boost (scaled for additive scoring, max +5)
+    const countryBoost = COUNTRY_REGULATORY_URGENCY[input.country ?? ''] ?? 0
+    score += Math.round(Math.min(5, countryBoost * 0.4))
+
     riskScore = Math.max(0, Math.min(100, score))
 
-    // Build legacy recommended actions
+    // Build legacy recommended actions — awareness gaps first
     recommendedActions = []
     let priority = 1
 
-    if (vulnerableCount > 0) {
+    if (input.currentCryptoUnknown) {
+      recommendedActions.push({
+        priority: priority++,
+        action:
+          'Conduct a cryptographic asset inventory to identify all algorithms in use across systems, services, and dependencies.',
+        category: 'immediate',
+        effort: 'high' as const,
+        relatedModule: '/migrate',
+      })
+    }
+
+    if (input.complianceRequirements.length === 0) {
+      recommendedActions.push({
+        priority: priority++,
+        action:
+          'Identify applicable regulatory and compliance frameworks for your industry and region to understand PQC obligations.',
+        category: 'short-term',
+        effort: 'low' as const,
+        relatedModule: '/compliance',
+      })
+    }
+
+    if (!input.currentCryptoUnknown && vulnerableCount > 0) {
       recommendedActions.push({
         priority: priority++,
         action: `Migrate ${vulnerableCount} quantum-vulnerable algorithm${vulnerableCount > 1 ? 's' : ''} to PQC equivalents.`,
@@ -1155,7 +1362,7 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
   }
 
   const riskLevel: AssessmentResult['riskLevel'] =
-    riskScore <= 30 ? 'low' : riskScore <= 60 ? 'medium' : riskScore <= 80 ? 'high' : 'critical'
+    riskScore <= 25 ? 'low' : riskScore <= 55 ? 'medium' : riskScore <= 75 ? 'high' : 'critical'
 
   const narrative = generateNarrative(
     input,
@@ -1173,6 +1380,14 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
       vulnerableCount,
       migrationEffort!,
       hndlRiskWindow,
+      pqcCompliance.length
+    )
+  } else {
+    executiveSummary = generateQuickSummary(
+      input,
+      riskScore,
+      riskLevel,
+      vulnerableCount,
       pqcCompliance.length
     )
   }
