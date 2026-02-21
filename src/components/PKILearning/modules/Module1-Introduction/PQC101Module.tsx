@@ -102,7 +102,7 @@ const Step2WhatsChanging: React.FC<StepProps> = ({ onComplete }) => {
     {
       name: 'Lattice-Based',
       description: 'Based on the hardness of problems involving mathematical lattices.',
-      algorithms: 'ML-KEM (Kyber), ML-DSA (Dilithium)',
+      algorithms: 'ML-KEM (Kyber), ML-DSA (Dilithium), FN-DSA (FALCON)',
       strengths: 'Fast, small keys, well-studied',
       color: 'border-l-primary',
     },
@@ -145,7 +145,7 @@ const Step2WhatsChanging: React.FC<StepProps> = ({ onComplete }) => {
             </thead>
             <tbody className="text-muted-foreground">
               <tr className="border-b border-border/50">
-                <td className="py-2.5 pr-4 font-medium text-foreground">Key Exchange</td>
+                <td className="py-2.5 pr-4 font-medium text-foreground">Key Establishment</td>
                 <td className="py-2.5 pr-4">RSA, ECDH, DH</td>
                 <td className="py-2.5 text-green-400">ML-KEM (FIPS 203)</td>
               </tr>
@@ -197,7 +197,7 @@ const Step3Timeline: React.FC<StepProps> = ({ onComplete }) => {
     { year: '2016', event: 'NIST launches PQC standardization competition', phase: 'Research' },
     {
       year: '2022',
-      event: 'NIST selects first PQC standards (Kyber, Dilithium, SPHINCS+)',
+      event: 'NIST selects first PQC standards (Kyber, Dilithium, FALCON, SPHINCS+)',
       phase: 'Selection',
     },
     {
@@ -207,7 +207,7 @@ const Step3Timeline: React.FC<StepProps> = ({ onComplete }) => {
     },
     {
       year: '2025',
-      event: 'CNSA 2.0 mandates PQC for U.S. national security systems',
+      event: 'CNSA 2.0 begins phased PQC mandates for U.S. national security systems',
       phase: 'Policy',
     },
     {

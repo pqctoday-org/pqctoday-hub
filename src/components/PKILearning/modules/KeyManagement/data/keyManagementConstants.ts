@@ -42,7 +42,7 @@ export const KEY_LIFECYCLE_STAGES: KeyLifecycleStage[] = [
     name: 'Generation',
     description:
       'Cryptographic keys are created using approved random number generators (DRBG) within a secure environment, typically an HSM. Key generation must use sufficient entropy and comply with algorithm-specific parameter requirements.',
-    nistReference: 'NIST SP 800-57 Part 1, Section 5.1',
+    nistReference: 'NIST SP 800-57 Part 1, Rev. 5',
     classicalApproach:
       'RSA: Generate two large primes (p, q), compute n = p*q, derive public/private exponents. ECDSA: Select random scalar k on chosen curve. Fast generation, small keys.',
     pqcImpact:
@@ -54,7 +54,7 @@ export const KEY_LIFECYCLE_STAGES: KeyLifecycleStage[] = [
     name: 'Distribution',
     description:
       'Public keys are distributed to communicating parties via certificates, key servers, or direct exchange. Private keys may be distributed to authorized backup systems. Secure channels and authentication are required.',
-    nistReference: 'NIST SP 800-57 Part 1, Section 5.2',
+    nistReference: 'NIST SP 800-57 Part 1, Rev. 5',
     classicalApproach:
       'X.509 certificates carry RSA/ECDSA public keys. Certificate sizes are small (1-2 KB). Distribution via CAs, LDAP, or key servers is well-established.',
     pqcImpact:
@@ -66,7 +66,7 @@ export const KEY_LIFECYCLE_STAGES: KeyLifecycleStage[] = [
     name: 'Storage',
     description:
       'Keys must be stored securely with appropriate access controls. Private keys should be protected by HSMs or encrypted key stores. Key metadata (algorithm, expiration, usage constraints) must be maintained.',
-    nistReference: 'NIST SP 800-57 Part 1, Section 5.3',
+    nistReference: 'NIST SP 800-57 Part 1, Rev. 5',
     classicalApproach:
       'RSA-2048 private key: 1,192 bytes. ECDSA P-256 private key: 32 bytes. Easily fits in HSM key slots, PKCS#12 files, and key management databases.',
     pqcImpact:
@@ -78,7 +78,7 @@ export const KEY_LIFECYCLE_STAGES: KeyLifecycleStage[] = [
     name: 'Usage',
     description:
       'Keys are used for their designated cryptographic operations: encryption, signing, key agreement, or authentication. Usage must comply with key type restrictions and algorithm specifications.',
-    nistReference: 'NIST SP 800-57 Part 1, Section 5.4',
+    nistReference: 'NIST SP 800-57 Part 1, Rev. 5',
     classicalApproach:
       'RSA keys can encrypt, sign, and wrap. ECDSA signs only. ECDH performs key agreement. Operations are fast and well-understood. One key type often serves multiple purposes.',
     pqcImpact:
@@ -90,7 +90,7 @@ export const KEY_LIFECYCLE_STAGES: KeyLifecycleStage[] = [
     name: 'Rotation',
     description:
       'Keys are periodically replaced to limit exposure from potential compromise. Rotation involves generating new keys, re-encrypting or re-signing with new keys, and securely transitioning from old to new keys.',
-    nistReference: 'NIST SP 800-57 Part 1, Section 5.5',
+    nistReference: 'NIST SP 800-57 Part 1, Rev. 5',
     classicalApproach:
       'Automated rotation every 1-3 years for most use cases. Certificate renewal via ACME or manual CSR. Re-encryption of stored data is fast with small keys.',
     pqcImpact:
@@ -102,7 +102,7 @@ export const KEY_LIFECYCLE_STAGES: KeyLifecycleStage[] = [
     name: 'Archival',
     description:
       'Expired or retired keys are preserved for verifying old signatures or decrypting archived data. Archived keys must remain accessible but protected. Retention periods depend on data sensitivity and regulatory requirements.',
-    nistReference: 'NIST SP 800-57 Part 1, Section 5.6',
+    nistReference: 'NIST SP 800-57 Part 1, Rev. 5',
     classicalApproach:
       'Archive RSA/ECDSA keys in encrypted vaults or HSM partitions. Small key sizes mean minimal storage overhead. Verification of old signatures requires maintaining algorithm support.',
     pqcImpact:
@@ -114,7 +114,7 @@ export const KEY_LIFECYCLE_STAGES: KeyLifecycleStage[] = [
     name: 'Destruction',
     description:
       'Keys are securely destroyed when no longer needed. Destruction must be irreversible and include all copies (primary, backup, cached). HSMs provide certified zeroization. Key destruction is logged for audit compliance.',
-    nistReference: 'NIST SP 800-57 Part 1, Section 5.7',
+    nistReference: 'NIST SP 800-57 Part 1, Rev. 5',
     classicalApproach:
       'HSM zeroization, secure memory wiping, and physical destruction of media. Small key sizes mean fewer storage locations to sanitize.',
     pqcImpact:
@@ -372,21 +372,25 @@ export const ENTERPRISE_SCENARIO = {
     apiAuth: { algorithm: 'ML-DSA-44', keySize: 1312 },
   },
   complianceDeadlines: [
-    { framework: 'CNSA 2.0 (NSA)', deadline: '2030', requirement: 'Hybrid PQC for all NSS' },
+    {
+      framework: 'CNSA 2.0 (NSA)',
+      deadline: '2025–2033',
+      requirement: 'Phased PQC adoption: signing by 2025, networking by 2026, all NSS by 2033',
+    },
     {
       framework: 'NIST IR 8547',
-      deadline: '2030',
-      requirement: 'Deprecate RSA/ECDSA for digital signatures',
+      deadline: '2030 / 2035',
+      requirement: 'Deprecate classical public-key crypto by 2030, disallow by 2035',
     },
     {
       framework: 'PCI DSS v4.0',
-      deadline: '2028',
-      requirement: 'Inventory quantum-vulnerable crypto',
+      deadline: '2025',
+      requirement: 'Cryptographic inventory required (Req. 12.3.3)',
     },
     {
       framework: 'DORA (EU)',
-      deadline: '2027',
-      requirement: 'Demonstrate crypto agility in ICT risk framework',
+      deadline: '2025',
+      requirement: 'ICT risk management framework including cryptographic risk assessment',
     },
   ],
 }

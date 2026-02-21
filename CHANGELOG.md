@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.16.1] - 2026-02-20
+
+### Added
+
+- **Executive Summary Dashboard** (`/executive`): High-level PQC readiness metrics, organizational risk scores, and priority action items.
+- **7 New PKI Learning Modules** (`/learn`): Added new comprehensive interactive courses:
+  - Quantum Threats (HNDL Timeline, Algorithm Vulnerability)
+  - Hybrid Cryptography (Key Generation, Signatures)
+  - Crypto Agility & Architecture (Abstraction, CBOM)
+  - Stateful Hash Signatures (LMS, XMSS)
+  - Email & Document Signing (S/MIME, CMS)
+  - VPN/IPsec & SSH
+  - Key Management & HSM
+
+### Fixed
+
+- **Time Tracking Analytics** (`/learn`): Replaced erroneous `Date.now()` logic that was previously causing massive `timeSpent` metric inflation. Restored sub-minute `float` state precision to correctly accumulate elapsed time across all 14 learning modules, and applied a clean decimal-mask (`Math.floor()`) during frontend Dashboard render.
+- **KeyRotationPlanner Build**: Fixed a strict TS compilation error regarding target algorithms missing data keys.
+
 ## [1.16.0] - 2026-02-20
 
 ### Added

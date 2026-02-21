@@ -132,7 +132,7 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           <p>
             OpenSSH has been a pioneer in deploying post-quantum key exchange. Since version 8.5
             (March 2021), it has shipped with <strong>sntrup761x25519-sha512</strong> &mdash; a
-            hybrid of Streamlined NTRU Prime and X25519. In OpenSSH 9.9 (October 2024),
+            hybrid of Streamlined NTRU Prime and X25519. In OpenSSH 9.9 (September 2024),
             NIST-standard <strong>mlkem768x25519-sha256</strong> was added.
           </p>
           <div className="space-y-2">

@@ -62,11 +62,14 @@ export const DigitalAssetsModule: React.FC = () => {
     })
 
     return () => {
-      const elapsed = Date.now() - startTimeRef.current
-      const current = useModuleStore.getState().modules[MODULE_ID]
-      updateModuleProgress(MODULE_ID, {
-        timeSpent: (current?.timeSpent || 0) + elapsed,
-      })
+      const elapsedMs = Date.now() - startTimeRef.current
+      const elapsedMins = elapsedMs / 60000
+      if (elapsedMins > 0) {
+        const current = useModuleStore.getState().modules[MODULE_ID]
+        updateModuleProgress(MODULE_ID, {
+          timeSpent: (current?.timeSpent || 0) + elapsedMins,
+        })
+      }
     }
   }, [updateModuleProgress])
 

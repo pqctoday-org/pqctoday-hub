@@ -288,7 +288,7 @@ export const StateManagementVisualizer: React.FC = () => {
                 { label: 'Max Signatures', value: formatSignatureCount(maxSigs) },
                 {
                   label: 'State Storage',
-                  value: `${counter * 4} bytes (counter + used leaf bitmap)`,
+                  value: '4 bytes (monotonic leaf index counter)',
                 },
               ].map((row) => (
                 <div key={row.label} className="flex justify-between text-xs">

@@ -189,7 +189,7 @@ export const useModuleStore = create<ModuleState>()(
     }),
     {
       name: 'pki-module-storage',
-      version: 1,
+      version: 2,
       // Migration function for handling state version upgrades
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -197,36 +197,34 @@ export const useModuleStore = create<ModuleState>()(
 
         // Version 0 → Version 1: Ensure all required fields exist
         if (version === 0) {
-          return {
-            ...state,
-            // Ensure artifacts structure exists (added in v1.0.0)
-            artifacts: state.artifacts || {
-              keys: [],
-              certificates: [],
-              csrs: [],
-            },
-            // Ensure preferences exist
-            preferences: state.preferences || {
-              theme: 'dark',
-              defaultKeyType: 'RSA',
-              autoSave: true,
-            },
-            // Ensure notes exist
-            notes: state.notes || {},
-            // Ensure ejbcaConnections exist
-            ejbcaConnections: state.ejbcaConnections || {},
-            // Add version field
-            version: '1.0.0',
-            // Update timestamp
-            timestamp: state.timestamp || Date.now(),
+          state.artifacts = state.artifacts || { keys: [], certificates: [], csrs: [] }
+          state.preferences = state.preferences || {
+            theme: 'dark',
+            defaultKeyType: 'RSA',
+            autoSave: true,
           }
+          state.notes = state.notes || {}
+          state.ejbcaConnections = state.ejbcaConnections || {}
+          state.version = '1.0.0'
+          state.timestamp = state.timestamp || Date.now()
         }
 
-        // Future migrations can be added here
-        // Example for v2:
-        // if (version === 1) {
-        //   return { ...state, newField: defaultValue }
-        // }
+        // Version 1 → Version 2: Fix timeSpent bug where ms were saved instead of minutes
+        if (version <= 1) {
+          if (state.modules) {
+            Object.keys(state.modules).forEach((moduleId) => {
+              const mod = state.modules[moduleId]
+              // If timeSpent > 2000, it's virtually guaranteed to be raw milliseconds
+              // (2000 minutes = ~33 hours in a single module, effectively impossible)
+              if (mod && typeof mod.timeSpent === 'number' && mod.timeSpent > 2000) {
+                // Convert back to minutes
+                mod.timeSpent = Math.max(1, Math.round(mod.timeSpent / 60000))
+              }
+            })
+          }
+          state.version = '2.0.0'
+          state.timestamp = Date.now()
+        }
 
         return state
       },

@@ -1,6 +1,9 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useModuleStore } from '@/store/useModuleStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { PERSONAS } from '@/data/learningPersonas'
 import { QUIZ_QUESTIONS, quizMetadata } from '@/data/quizData'
 import { QuizIntro } from './QuizIntro'
 import { QuizWizard } from './QuizWizard'
@@ -58,7 +61,15 @@ function sampleQuestions(questions: QuizQuestion[], count: number): QuizQuestion
 }
 
 export const QuizModule: React.FC = () => {
+  const location = useLocation()
+  const checkpointState = location.state as {
+    checkpointCategories?: QuizCategory[]
+    checkpointLabel?: string
+  } | null
+
   const { updateModuleProgress, markStepComplete, modules } = useModuleStore()
+  const { selectedPersona } = usePersonaStore()
+  const persona = selectedPersona ? PERSONAS[selectedPersona] : null
   const [view, setView] = useState<'intro' | 'quiz' | 'results'>('intro')
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
   const [completionData, setCompletionData] = useState<QuizCompletionData | null>(null)
@@ -72,7 +83,7 @@ export const QuizModule: React.FC = () => {
     updateModuleProgress(MODULE_ID, { status: 'in-progress' })
 
     return () => {
-      const elapsed = Math.round((Date.now() - startTimeRef.current) / 60000)
+      const elapsed = (Date.now() - startTimeRef.current) / 60000
       if (elapsed > 0) {
         const currentSpent = useModuleStore.getState().modules[MODULE_ID]?.timeSpent || 0
         updateModuleProgress(MODULE_ID, { timeSpent: currentSpent + elapsed })
@@ -153,6 +164,13 @@ export const QuizModule: React.FC = () => {
           quickPoolSize={
             QUIZ_QUESTIONS.filter((q) => q.quizMode === 'quick' || q.quizMode === 'both').length
           }
+          initialCategories={
+            checkpointState?.checkpointCategories ??
+            (persona && persona.quizCategories.length > 0
+              ? (persona.quizCategories as QuizCategory[])
+              : undefined)
+          }
+          personaLabel={checkpointState?.checkpointLabel ?? persona?.label}
         />
       )}
       {view === 'quiz' && (

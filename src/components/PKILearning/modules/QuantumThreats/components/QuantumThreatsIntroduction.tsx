@@ -1,5 +1,17 @@
 import React from 'react'
-import { Atom, Calculator, Search, Clock, Shield, ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import {
+  Atom,
+  Calculator,
+  Search,
+  Clock,
+  Shield,
+  ArrowRight,
+  BarChart3,
+  Target,
+  Calendar,
+  ClipboardCheck,
+} from 'lucide-react'
 
 interface QuantumThreatsIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -290,6 +302,61 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             years, you must migrate to PQC within <strong>Y &minus; X</strong> years. For data with
             25-year sensitivity and a CRQC in 2035, migration should have started by 2010.
           </p>
+        </div>
+      </section>
+
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/threats"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Target size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Threat Dashboard</div>
+              <div className="text-xs text-muted-foreground">
+                Industry-specific quantum risks &amp; PQC replacements
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/algorithms"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <BarChart3 size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Algorithm Explorer</div>
+              <div className="text-xs text-muted-foreground">
+                Compare key sizes, security levels &amp; performance
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/timeline"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Calendar size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Migration Timeline</div>
+              <div className="text-xs text-muted-foreground">
+                NIST milestones, country deadlines &amp; standardization
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/assess"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <ClipboardCheck size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Risk Assessment</div>
+              <div className="text-xs text-muted-foreground">
+                Assess your organization&apos;s quantum readiness
+              </div>
+            </div>
+          </Link>
         </div>
       </section>
 

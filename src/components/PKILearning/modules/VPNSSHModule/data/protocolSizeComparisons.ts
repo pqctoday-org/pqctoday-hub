@@ -109,7 +109,7 @@ export const PROTOCOL_SIZE_DATA: ProtocolSizeEntry[] = [
     mode: 'hybrid',
     modeLabel: 'X25519 + ML-KEM-768 (Rosenpass)',
     kexAlgorithm: 'X25519 + ML-KEM-768',
-    authAlgorithm: 'X25519 (static) + ML-KEM-1024',
+    authAlgorithm: 'X25519 (static) + Classic McEliece',
     handshakeBytes: 6800,
     roundTrips: 2,
     publicKeyBytes: 1216,
@@ -152,7 +152,7 @@ export const PROTOCOL_SIZE_DATA: ProtocolSizeEntry[] = [
     roundTrips: 1,
     publicKeyBytes: 1216,
     ciphertextBytes: 1120,
-    notes: 'RFC 9798; deployed in Chrome 124, Cloudflare',
+    notes: 'RFC 9798; hybrid KEX in Chrome 124 (Kyber draft), final ML-KEM in Chrome 131',
   },
   {
     protocol: 'TLS 1.3',
@@ -223,7 +223,7 @@ export const PROTOCOL_FEATURE_COMPARISON: ProtocolFeature[] = [
     feature: 'PQC Auth Status',
     ikev2: 'draft-ietf-ipsecme-ikev2-mldsa (ML-DSA)',
     ssh: 'No PQC host key standard yet',
-    wireguard: 'Rosenpass uses ML-KEM for auth',
+    wireguard: 'Rosenpass uses Classic McEliece for auth',
     tls13: 'draft-ietf-tls-mldsa (ML-DSA certs)',
   },
   {

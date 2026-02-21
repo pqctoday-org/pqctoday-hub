@@ -72,17 +72,25 @@ export const DigitalIDModule: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [wallet, setWallet] = useState<WalletInstance>(INITIAL_WALLET)
   const prevStepRef = useRef<number | null>(null)
+  const startTimeRef = useRef(0)
 
   // Mark module in-progress on mount and track time spent
   useEffect(() => {
-    updateModuleProgress('digital-id', { status: 'in-progress' })
-    const timer = setInterval(() => {
-      const currentSpent = useModuleStore.getState().modules['digital-id']?.timeSpent || 0
-      updateModuleProgress('digital-id', {
-        timeSpent: currentSpent + 1,
-      })
-    }, 60000)
-    return () => clearInterval(timer)
+    startTimeRef.current = Date.now()
+    updateModuleProgress('digital-id', {
+      status: 'in-progress',
+      lastVisited: Date.now(),
+    })
+
+    return () => {
+      const elapsed = (Date.now() - startTimeRef.current) / 60000
+      if (elapsed > 0) {
+        const current = useModuleStore.getState().modules['digital-id']
+        updateModuleProgress('digital-id', {
+          timeSpent: (current?.timeSpent || 0) + elapsed,
+        })
+      }
+    }
   }, [updateModuleProgress])
 
   // Mark the previous step complete whenever the user navigates to a new step

@@ -30,8 +30,8 @@ export const HSM_VENDORS: HSMVendor[] = [
     supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'SLH-DSA', 'LMS/HSS'],
     formFactor: 'network',
     notes:
-      'Full PQC support in firmware 7.8.4+. Supports hybrid key generation and composite certificates. Luna Client 10.7+ required for PKCS#11 PQC mechanisms.',
-    firmwareVersion: '7.8.4+',
+      'Full PQC support in firmware 7.9.2+. Supports hybrid key generation and composite certificates. Luna Client 10.9.2+ required for PKCS#11 PQC mechanisms.',
+    firmwareVersion: '7.9.2+',
   },
   {
     id: 'entrust-nshield',
@@ -130,7 +130,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
 )`,
     description: 'Extract the ML-KEM-768 public key for distribution.',
     detail:
-      'Public keys can always be exported (CKA_SENSITIVE does not apply). The 1,184-byte public key is used by peers to encapsulate shared secrets. In a TLS handshake, this would be sent in the ServerKeyExchange message.',
+      'Public keys can always be exported (CKA_SENSITIVE does not apply). The 1,184-byte public key is used by peers to encapsulate shared secrets. In a TLS 1.3 handshake, this would be sent in the key_share extension of the ServerHello message.',
     output: `CKR_OK
   Attribute:    CKA_VALUE
   Length:       1,184 bytes
@@ -201,7 +201,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
   Signature Length: 3,309 bytes
   Algorithm:       ML-DSA-65
   NIST Level:      3
-  Deterministic:   YES`,
+  Randomized:      YES (hedged mode per FIPS 204)`,
   },
   {
     id: 'verify',

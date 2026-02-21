@@ -356,7 +356,7 @@ export const USE_CASE_RECOMMENDATIONS: UseCaseRecommendation[] = [
     recommendedScheme: 'LMS',
     recommendedParams: 'LMS H10/W8 (small signatures)',
     rationale:
-      'Verification speed is critical. Small W parameter trades signing speed for compact signatures. Very few signatures needed.',
+      'Verification speed is critical. Large W parameter (W=8) trades signing speed for compact signatures. Very few signatures needed.',
     maxSignaturesNeeded: '~100 (rarely re-signed)',
     stateStorageRequirement: 'OTP fuses or write-protected flash',
   },

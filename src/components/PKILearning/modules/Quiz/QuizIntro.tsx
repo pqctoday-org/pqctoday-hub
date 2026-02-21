@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Brain, Zap, BookOpen } from 'lucide-react'
+import { Brain, Zap, BookOpen, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { QUIZ_CATEGORIES } from '@/data/quizData'
 import { TopicSelector } from './components/TopicSelector'
@@ -12,6 +12,10 @@ interface QuizIntroProps {
   quizMetadata?: { filename: string; lastUpdate: Date } | null
   totalQuestions?: number
   quickPoolSize?: number
+  /** Pre-selected categories based on the active learning persona */
+  initialCategories?: QuizCategory[]
+  /** Label of the active persona for the suggestion banner */
+  personaLabel?: string
 }
 
 export const QuizIntro: React.FC<QuizIntroProps> = ({
@@ -20,8 +24,12 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   quizMetadata,
   totalQuestions,
   quickPoolSize,
+  initialCategories,
+  personaLabel,
 }) => {
-  const [selectedCategories, setSelectedCategories] = useState<QuizCategory[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<QuizCategory[]>(
+    initialCategories ?? []
+  )
 
   const handleToggleCategory = (categoryId: QuizCategory) => {
     setSelectedCategories((prev) =>
@@ -126,9 +134,19 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
 
       {/* Topic selection */}
       <div>
-        <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">
-          Or Select Topics
-        </h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
+            {initialCategories && initialCategories.length > 0
+              ? 'Select Topics'
+              : 'Or Select Topics'}
+          </h3>
+          {personaLabel && initialCategories && initialCategories.length > 0 && (
+            <span className="flex items-center gap-1 text-xs text-primary">
+              <Sparkles size={12} />
+              Filtered for {personaLabel}
+            </span>
+          )}
+        </div>
         <TopicSelector
           categories={QUIZ_CATEGORIES}
           selectedCategories={selectedCategories}

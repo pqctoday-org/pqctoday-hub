@@ -291,7 +291,7 @@ export function AboutView() {
             <ShieldCheck className="text-primary" size={24} />
             <div>
               <h2 className="text-xl font-bold">Security Audit</h2>
-              <p className="text-xs text-muted-foreground">Last audited: February 19, 2026</p>
+              <p className="text-xs text-muted-foreground">Last audited: February 20, 2026</p>
             </div>
           </div>
 

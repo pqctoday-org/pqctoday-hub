@@ -272,7 +272,7 @@ export const SIZE_COMPARISONS: SizeComparison[] = [
   {
     metric: 'Public Key',
     rsa2048: '256',
-    ecdsaP256: '64',
+    ecdsaP256: '65',
     mlDsa65: '1,952',
     mlKem768: '1,184',
     unit: 'bytes',
@@ -280,7 +280,7 @@ export const SIZE_COMPARISONS: SizeComparison[] = [
   {
     metric: 'Signature / Ciphertext',
     rsa2048: '256',
-    ecdsaP256: '64',
+    ecdsaP256: '~72 (DER)',
     mlDsa65: '3,309',
     mlKem768: '1,088',
     unit: 'bytes',
@@ -459,12 +459,12 @@ export const SIGNER_INFO_COMPARISON: SignerComparison[] = [
   },
   {
     field: 'Signature Size',
-    ecdsaValue: '64 bytes (r, s)',
+    ecdsaValue: '~72 bytes (DER-encoded r, s)',
     mlDsaValue: '3,309 bytes',
   },
   {
     field: 'Public Key Size',
-    ecdsaValue: '64 bytes (uncompressed P-256)',
+    ecdsaValue: '65 bytes (uncompressed P-256)',
     mlDsaValue: '1,952 bytes',
   },
   {
@@ -474,7 +474,7 @@ export const SIGNER_INFO_COMPARISON: SignerComparison[] = [
   },
   {
     field: 'Standards',
-    ecdsaValue: 'RFC 5753 / RFC 5652',
+    ecdsaValue: 'RFC 5754 / RFC 5652',
     mlDsaValue: 'RFC 9882 (ML-DSA in CMS)',
   },
   {
@@ -522,14 +522,13 @@ export const KEY_RFCS: RFCReference[] = [
   {
     number: 'RFC 9708',
     title: 'HSS/LMS in CMS',
-    description: 'Specifies use of hash-based signatures (LMS/HSS per FIPS 208) in CMS.',
-    year: 2024,
+    description: 'Specifies use of hash-based signatures (LMS/HSS per SP 800-208) in CMS.',
+    year: 2025,
   },
   {
     number: 'RFC 9690',
-    title: 'ML-KEM in CMS',
-    description:
-      'Algorithm identifiers and encoding for ML-KEM (FIPS 203) in CMS using KEMRecipientInfo.',
+    title: 'Using RSA-KEM in CMS',
+    description: 'Defines RSA-KEM usage in CMS EnvelopedData. Updates and obsoletes RFC 5990.',
     year: 2024,
   },
 ]

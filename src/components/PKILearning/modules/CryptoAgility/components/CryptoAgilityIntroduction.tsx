@@ -218,7 +218,7 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-xs font-bold text-primary mb-2">Apple</div>
             <p className="text-xs text-muted-foreground">
-              iMessage adopted PQ3 protocol (X25519 + ML-KEM-768 ratchet) in iOS 17.4. Phased
+              iMessage adopted PQ3 protocol (X25519 + Kyber-1024 ratchet) in iOS 17.4. Phased
               rollout leveraging protocol agility.
             </p>
           </div>

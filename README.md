@@ -56,6 +56,27 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **CSV-Driven**: Questions loaded from date-stamped CSV (`pqcquiz_MMDDYYYY.csv`) via `import.meta.glob`, with smart sampling guaranteeing ≥2 per category (Quick) / ≥10 per category (Full)
     - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations
     - **Score Tracking**: Per-category highest scores persisted across sessions
+  - **Quantum Threats**:
+    - Analyzes security level degradation and algorithm vulnerability matrices
+    - Features a key size analyzer and "Harvest Now, Decrypt Later" timeline calculator
+  - **Hybrid Cryptography**:
+    - Explores key generation, KEM encapsulation, and signatures with hybrid algorithms
+    - Inspects composite PQC certificates
+  - **Crypto Agility & Architecture**:
+    - Demonstrates abstraction layers and backend swapping
+    - Features a Cryptographic Bill of Materials (CBOM) scanner and migration planning framework
+  - **Stateful Hash Signatures**:
+    - Deep-dives into LMS and XMSS key generation
+    - Visualizes catastrophic state loss and signature state management
+  - **Email & Document Signing**:
+    - Explores S/MIME certificates and CMS signing/encryption workflows
+    - Compares RSA key transport with KEM-based encryption (RFC 9629)
+  - **VPN/IPsec & SSH**:
+    - Walkthroughs for IKEv2 handshakes and SSH key exchanges using classical, hybrid, and PQC modes
+    - WireGuard vs TLS 1.3 vs IPsec protocol comparisons
+  - **Key Management & HSM**:
+    - Explores the 7 stages of the key lifecycle and PQC impact
+    - Simulates PKCS#11 HSM operations and key rotation planning for enterprises
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
   - **Verified Database**: 140+ verified PQC-ready software entries (OS, Libraries, Network, etc.)
   - **7-Step Migration Workflow**: Assess, Plan, Pilot, Implement, Test, Optimize, Measure
@@ -135,6 +156,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -163,11 +185,11 @@ The output will be in the `dist` directory.
 
 We welcome contributions! Please follow these steps:
 
-1.  **Fork the repository**.
-2.  **Create a feature branch**: `git checkout -b feature/my-new-feature`.
-3.  **Commit your changes**: `git commit -m 'Add some feature'`.
-4.  **Push to the branch**: `git push origin feature/my-new-feature`.
-5.  **Open a Pull Request**.
+1. **Fork the repository**.
+2. **Create a feature branch**: `git checkout -b feature/my-new-feature`.
+3. **Commit your changes**: `git commit -m 'Add some feature'`.
+4. **Push to the branch**: `git push origin feature/my-new-feature`.
+5. **Open a Pull Request**.
 
 ### Testing & Linting
 
@@ -205,7 +227,7 @@ The application is structured into several key components:
 - **`src/components/Playground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
 - **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
-- **`src/components/PKILearning`**: Educational platform with 7 modules (PKI Workshop, Digital Assets, 5G Security, EUDI Wallet, TLS 1.3 Basics, PQC 101 Introduction, PQC Quiz).
+- **`src/components/PKILearning`**: Educational platform with 14 modules including hybrid crypto, agility, stateful signatures and more.
 - **`src/components/Assess`**: 13-step industry-aware risk assessment wizard with compound scoring engine, HNDL risk analysis, and PDF print support.
 - **`src/components/Migrate`**: Comprehensive PQC migration planning module with verified software database and workflow guidance.
 - **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.
@@ -217,7 +239,7 @@ The application is structured into several key components:
 
 ## Project Structure
 
-```
+```text
 ├── docs/                # Documentation and audit reports
 ├── e2e/                 # Playwright end-to-end tests
 ├── public/              # Static assets served at root

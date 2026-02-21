@@ -16,10 +16,6 @@ import {
   ClipboardCheck,
 } from 'lucide-react'
 import { Button } from '../ui/button'
-import { timelineData } from '@/data/timelineData'
-import { libraryData } from '@/data/libraryData'
-import { softwareData } from '@/data/migrateData'
-import { leadersData } from '@/data/leadersData'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 
 const fadeUp = {
@@ -31,98 +27,111 @@ const fadeUp = {
   },
 }
 
-// Compute counts once at module level (sync data — stable, never changes)
-const timelineEventCount = timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events)).length
-const libraryCount = libraryData.length
-const softwareCount = softwareData.length
-const leadersCount = leadersData.length
-
-const features = [
-  {
-    icon: Globe,
-    title: 'Migration Timeline',
-    description: `${timelineEventCount}+ events tracking global PQC standardization from NIST, ETSI, IETF, and more`,
-    path: '/timeline',
-    color: 'text-primary',
-  },
-  {
-    icon: Shield,
-    title: 'Algorithm Explorer',
-    description: '40+ algorithms compared — ML-KEM, ML-DSA, SLH-DSA, FrodoKEM, and beyond',
-    path: '/algorithms',
-    color: 'text-secondary',
-  },
-  {
-    icon: FlaskConical,
-    title: 'Crypto Playground',
-    description: 'Real key generation, encapsulation, and signing with ML-KEM & ML-DSA in-browser',
-    path: '/playground',
-    color: 'text-accent',
-  },
-  {
-    icon: Activity,
-    title: 'OpenSSL Studio',
-    description:
-      'Full OpenSSL v3.6.0 running in WASM — generate keys, sign certs, test TLS configs',
-    path: '/openssl',
-    color: 'text-primary',
-  },
-  {
-    icon: GraduationCap,
-    title: 'Learning Modules',
-    description: '6 hands-on courses: PKI, X.509, 5G security, digital assets, eIDAS 2.0',
-    path: '/learn',
-    color: 'text-secondary',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Compliance Tracker',
-    description: 'FIPS 140-3, ACVP, and Common Criteria certifications with PQC readiness status',
-    path: '/compliance',
-    color: 'text-accent',
-  },
-  {
-    icon: ClipboardCheck,
-    title: 'Risk Assessment',
-    description: '5-question wizard for personalized quantum risk score and migration roadmap',
-    path: '/assess',
-    color: 'text-primary',
-  },
-]
-
-const secondaryFeatures = [
-  {
-    icon: AlertTriangle,
-    title: 'Threat Dashboard',
-    description: 'Quantum risk by industry',
-    path: '/threats',
-  },
-  {
-    icon: BookOpen,
-    title: 'Standards Library',
-    description: `${libraryCount} PQC standards & drafts`,
-    path: '/library',
-  },
-  {
-    icon: ArrowRightLeft,
-    title: 'Migration Guide',
-    description: `${softwareCount} verified PQC software tools`,
-    path: '/migrate',
-  },
-  {
-    icon: Users,
-    title: 'Industry Leaders',
-    description: `${leadersCount} organizations tracked`,
-    path: '/leaders',
-  },
-]
-
 export const LandingView = () => {
   const [algorithmCount, setAlgorithmCount] = useState<number | null>(null)
+  const [timelineEventCount, setTimelineEventCount] = useState<number | null>(null)
+  const [libraryCount, setLibraryCount] = useState<number | null>(null)
+  const [softwareCount, setSoftwareCount] = useState<number | null>(null)
+  const [leadersCount, setLeadersCount] = useState<number | null>(null)
 
   useEffect(() => {
     loadPQCAlgorithmsData().then((data) => setAlgorithmCount(data.length))
+
+    // Dynamically import heavy data files to avoid blocking initial render
+    import('@/data/timelineData').then(({ timelineData }) => {
+      setTimelineEventCount(timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events)).length)
+    })
+    import('@/data/libraryData').then(({ libraryData }) => {
+      setLibraryCount(libraryData.length)
+    })
+    import('@/data/migrateData').then(({ softwareData }) => {
+      setSoftwareCount(softwareData.length)
+    })
+    import('@/data/leadersData').then(({ leadersData }) => {
+      setLeadersCount(leadersData.length)
+    })
   }, [])
+
+  const features = [
+    {
+      icon: Globe,
+      title: 'Migration Timeline',
+      description: `${timelineEventCount || '...'} events tracking global PQC standardization from NIST, ETSI, IETF, and more`,
+      path: '/timeline',
+      color: 'text-primary',
+    },
+    {
+      icon: Shield,
+      title: 'Algorithm Explorer',
+      description: '40+ algorithms compared — ML-KEM, ML-DSA, SLH-DSA, FrodoKEM, and beyond',
+      path: '/algorithms',
+      color: 'text-secondary',
+    },
+    {
+      icon: FlaskConical,
+      title: 'Crypto Playground',
+      description:
+        'Real key generation, encapsulation, and signing with ML-KEM & ML-DSA in-browser',
+      path: '/playground',
+      color: 'text-accent',
+    },
+    {
+      icon: Activity,
+      title: 'OpenSSL Studio',
+      description:
+        'Full OpenSSL v3.6.0 running in WASM — generate keys, sign certs, test TLS configs',
+      path: '/openssl',
+      color: 'text-primary',
+    },
+    {
+      icon: GraduationCap,
+      title: 'Learning Modules',
+      description: '6 hands-on courses: PKI, X.509, 5G security, digital assets, eIDAS 2.0',
+      path: '/learn',
+      color: 'text-secondary',
+    },
+    {
+      icon: ShieldCheck,
+      title: 'Compliance Tracker',
+      description: 'FIPS 140-3, ACVP, and Common Criteria certifications with PQC readiness status',
+      path: '/compliance',
+      color: 'text-accent',
+    },
+    {
+      icon: ClipboardCheck,
+      title: 'Risk Assessment',
+      description: '5-question wizard for personalized quantum risk score and migration roadmap',
+      path: '/assess',
+      color: 'text-primary',
+    },
+  ]
+
+  const secondaryFeatures = [
+    {
+      icon: AlertTriangle,
+      title: 'Threat Dashboard',
+      description: 'Quantum risk by industry',
+      path: '/threats',
+    },
+    {
+      icon: BookOpen,
+      title: 'Standards Library',
+      description: `${libraryCount || '...'} PQC standards & drafts`,
+      path: '/library',
+    },
+    {
+      icon: ArrowRightLeft,
+      title: 'Migration Guide',
+      description: `${softwareCount || '...'} verified PQC software tools`,
+      path: '/migrate',
+    },
+    {
+      icon: Users,
+      title: 'Industry Leaders',
+      description: `${leadersCount || '...'} organizations tracked`,
+      path: '/leaders',
+    },
+  ]
 
   return (
     <div className="max-w-6xl mx-auto space-y-16 md:space-y-24">
@@ -192,8 +201,14 @@ export const LandingView = () => {
               value: algorithmCount !== null ? String(algorithmCount) : '...',
               label: 'Algorithms',
             },
-            { value: String(timelineEventCount), label: 'Timeline Events' },
-            { value: String(libraryCount), label: 'Standards Tracked' },
+            {
+              value: timelineEventCount !== null ? String(timelineEventCount) : '...',
+              label: 'Timeline Events',
+            },
+            {
+              value: libraryCount !== null ? String(libraryCount) : '...',
+              label: 'Standards Tracked',
+            },
             { value: '6', label: 'Learning Modules' },
           ].map((stat) => (
             <div key={stat.label} className="glass-panel p-4">

@@ -182,7 +182,7 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             The <strong>Leighton-Micali Signature Scheme (LMS)</strong> is defined in RFC 8554. It
-            uses a single Merkle tree with Winternitz OTS+ (W-OTS+) at the leaves. The{' '}
+            uses a single Merkle tree with LM-OTS (Leighton-Micali OTS) at the leaves. The{' '}
             <strong>Hierarchical Signature System (HSS)</strong> extends LMS with multiple levels of
             trees, where each non-leaf tree signs the root of the tree below it.
           </p>

@@ -126,22 +126,34 @@ describe('useModuleStore', () => {
     expect(global.URL.revokeObjectURL).toHaveBeenCalledWith('blob:test')
   })
 
-  it('migrates from version 0 to 1', () => {
+  it('migrates from version 0 to 2', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v0State = { timestamp: 123 }
     const migrated = migrate(v0State, 0)
-    expect(migrated.version).toBe('1.0.0')
+    expect(migrated.version).toBe('2.0.0')
     expect(migrated.artifacts).toBeDefined()
-    expect(migrated.timestamp).toBe(123)
+    expect(migrated.timestamp).toEqual(expect.any(Number))
+  })
+
+  it('migrates from version 1 to 2, converting ms to min', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
+    const migrate = (useModuleStore.persist.getOptions() as any).migrate
+    const v1State = {
+      version: '1.0.0',
+      modules: { 'mod-1': { timeSpent: 120000 } },
+    }
+    const migrated = migrate(v1State, 1)
+    expect(migrated.version).toBe('2.0.0')
+    expect(migrated.modules['mod-1'].timeSpent).toBe(2)
   })
 
   it('handles other versions in migrate', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
-    const v1State = { version: '1.0.0', custom: true }
-    const migrated = migrate(v1State, 1)
-    expect(migrated).toEqual(v1State)
+    const v2State = { version: '2.0.0', custom: true }
+    const migrated = migrate(v2State, 2)
+    expect(migrated).toEqual(v2State)
   })
 
   it('handles beforeunload event to save to localStorage', () => {

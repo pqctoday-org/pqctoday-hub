@@ -23,11 +23,11 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <BookOpen size={20} /> What is eIDAS 2.0?
         </h2>
         <p className="text-foreground/80 leading-relaxed">
-          The European Digital Identity Regulation (eIDAS 2.0, Regulation EU 2024/1183) was adopted
-          in May 2024 and mandates that all 27 EU member states provide citizens and residents with
-          at least one EUDI Wallet by late 2026. Unlike eIDAS 1.0 where national eID notification
-          was voluntary, eIDAS 2.0 makes digital identity wallets mandatory — creating a
-          pan-European trust framework for identity, attestations, and qualified electronic
+          The European Digital Identity Regulation (eIDAS 2.0, Regulation EU 2024/1183) entered into
+          force in May 2024 and mandates that all 27 EU member states provide citizens and residents
+          with at least one EUDI Wallet by late 2026. Unlike eIDAS 1.0 where national eID
+          notification was voluntary, eIDAS 2.0 makes digital identity wallets mandatory — creating
+          a pan-European trust framework for identity, attestations, and qualified electronic
           signatures.
         </p>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -52,7 +52,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-warning mb-1">Key Deadlines</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>May 2024: Regulation adopted</li>
+              <li>May 2024: Regulation entered into force</li>
               <li>Dec 2024: First implementing acts</li>
               <li>Dec 2026: Wallets available</li>
               <li>Late 2027: Private sector acceptance</li>
@@ -204,7 +204,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
         </p>
         <p className="text-xs text-muted-foreground">
           This simulation uses classical algorithms to match current ARF specifications. The PQC
-          migration path for EUDI is an active area of research (ETSI TR 104 016).
+          migration path for EUDI is an active area of ETSI and ENISA research.
         </p>
       </section>
 
@@ -215,7 +215,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
           The EU funded four Large-Scale Pilots (LSPs) testing EUDI wallets in real conditions
-          across 26+ countries with 550+ organizations.
+          across 26+ countries.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
           <div className="p-2 rounded border bg-muted/30 text-center">
@@ -227,12 +227,12 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
             <div className="text-muted-foreground">Travel & Org Identity</div>
           </div>
           <div className="p-2 rounded border bg-muted/30 text-center">
-            <div className="font-bold text-foreground">APTITUDE</div>
+            <div className="font-bold text-foreground">NOBID</div>
             <div className="text-muted-foreground">Banking & Telecom</div>
           </div>
           <div className="p-2 rounded border bg-muted/30 text-center">
-            <div className="font-bold text-foreground">WE BUILD</div>
-            <div className="text-muted-foreground">Government Services</div>
+            <div className="font-bold text-foreground">POTENTIAL</div>
+            <div className="text-muted-foreground">Government & Payments</div>
           </div>
         </div>
       </section>

@@ -1,103 +1,30 @@
 /* eslint-disable security/detect-object-injection */
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { BookOpen, Brain, CheckCircle, Circle, Clock, Save, Upload, PlayCircle } from 'lucide-react'
+import {
+  BookOpen,
+  Brain,
+  ChevronDown,
+  ChevronRight,
+  Compass,
+  Save,
+  Upload,
+  PlayCircle,
+} from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
+import { usePersonaStore } from '../../store/usePersonaStore'
 import { Button } from '../ui/button'
-import clsx from 'clsx'
-
-interface ModuleItem {
-  id: string
-  title: string
-  description: string
-  duration: string
-  workInProgress?: boolean
-}
-
-const ModuleCard = ({
-  module,
-  onSelectModule,
-}: {
-  module: ModuleItem
-  onSelectModule: (moduleId: string) => void
-}) => {
-  const { modules } = useModuleStore()
-  const status = modules[module.id]?.status || 'not-started'
-  const timeSpentRaw = modules[module.id]?.timeSpent || 0
-  const timeSpentFloored = Math.floor(timeSpentRaw)
-
-  const durationDisplay =
-    status === 'not-started' ? module.duration : `${module.duration} / ${timeSpentFloored} min`
-
-  return (
-    <motion.article
-      layout
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.2 }}
-      className="glass-panel p-6 flex flex-col h-full transition-colors hover:border-secondary/50 cursor-pointer"
-      onClick={() => onSelectModule(module.id)}
-    >
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-full bg-white/5 text-primary" aria-hidden="true">
-            <BookOpen size={24} />
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {module.workInProgress && (
-            <span className="px-3 py-1 rounded-full text-xs font-bold border bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
-              WIP
-            </span>
-          )}
-          <span
-            className={clsx(
-              'px-3 py-1 rounded-full text-xs font-bold border',
-              status === 'completed'
-                ? 'bg-green-500/10 text-green-400 border-green-500/20'
-                : status === 'in-progress'
-                  ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                  : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-            )}
-          >
-            {status === 'completed'
-              ? 'Completed'
-              : status === 'in-progress'
-                ? 'In Progress'
-                : 'Not Started'}
-          </span>
-        </div>
-      </div>
-
-      <h3 className="text-xl font-bold mb-2">{module.title}</h3>
-
-      <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-grow">
-        {module.description}
-      </p>
-
-      <div className="flex items-center justify-between pt-4 border-t border-white/5">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Clock size={14} />
-          {durationDisplay}
-        </div>
-        {status === 'completed' ? (
-          <CheckCircle className="text-green-400" size={20} />
-        ) : (
-          <Circle className="text-muted-foreground" size={20} />
-        )}
-      </div>
-    </motion.article>
-  )
-}
+import { ModuleCard } from './ModuleCard'
+import { MODULE_TRACKS, MODULE_STEP_COUNTS } from './moduleData'
+import { PersonaPicker } from './PersonaPicker'
+import { LearningPath } from './LearningPath'
 
 const SaveRestorePanel = () => {
   const { saveProgress, loadProgress } = useModuleStore()
 
   const handleSave = () => {
     saveProgress()
-    // Could add toast notification here
   }
 
   const handleRestore = () => {
@@ -112,10 +39,8 @@ const SaveRestorePanel = () => {
           try {
             const data = JSON.parse(event.target?.result as string)
             loadProgress(data)
-            // Could add toast notification here
           } catch (error) {
             console.error('Failed to load progress:', error)
-            // Could add error toast here
           }
         }
         reader.readAsText(file)
@@ -185,125 +110,10 @@ const SaveRestorePanel = () => {
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate()
   const { modules } = useModuleStore()
-  const moduleTracks: { track: string; modules: ModuleItem[] }[] = [
-    {
-      track: 'Foundations',
-      modules: [
-        {
-          id: 'pqc-101',
-          title: 'PQC 101',
-          description:
-            'Start here! A beginner-friendly introduction to the quantum threat and post-quantum cryptography.',
-          duration: '15 min',
-        },
-        {
-          id: 'quantum-threats',
-          title: 'Quantum Threats',
-          description:
-            "Understand how Shor's and Grover's algorithms break cryptography, CRQC timelines, and HNDL attack mechanics.",
-          duration: '60 min',
-        },
-      ],
-    },
-    {
-      track: 'Strategy',
-      modules: [
-        {
-          id: 'hybrid-crypto',
-          title: 'Hybrid Cryptography',
-          description:
-            'Combine classical and PQC algorithms: hybrid KEMs, composite signatures, and side-by-side certificate comparison.',
-          duration: '60 min',
-        },
-        {
-          id: 'crypto-agility',
-          title: 'Crypto Agility',
-          description:
-            'Design crypto-agile architectures: abstraction layers, CBOM scanning, and the 7-phase migration framework.',
-          duration: '60 min',
-        },
-      ],
-    },
-    {
-      track: 'Protocols',
-      modules: [
-        {
-          id: 'tls-basics',
-          title: 'TLS Basics',
-          description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',
-          duration: '60 min',
-        },
-        {
-          id: 'vpn-ssh-pqc',
-          title: 'VPN/IPsec & SSH',
-          description:
-            'IKEv2 and SSH key exchange with PQC: hybrid ML-KEM integration, WireGuard Rosenpass, and protocol size comparison.',
-          duration: '90 min',
-        },
-        {
-          id: 'email-signing',
-          title: 'Email & Document Signing',
-          description:
-            'S/MIME and CMS: signing workflows, KEM-based encryption (RFC 9629), and PQC migration for email security.',
-          duration: '60 min',
-        },
-      ],
-    },
-    {
-      track: 'Infrastructure',
-      modules: [
-        {
-          id: 'pki-workshop',
-          title: 'PKI',
-          description:
-            'Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.',
-          duration: '60 min',
-        },
-        {
-          id: 'key-management',
-          title: 'Key Management & HSM',
-          description:
-            'Key lifecycle management, HSM operations via PKCS#11, and enterprise PQC key rotation planning.',
-          duration: '60 min',
-        },
-        {
-          id: 'stateful-signatures',
-          title: 'Stateful Hash Signatures',
-          description:
-            'Master LMS/HSS and XMSS/XMSS^MT: Merkle tree signatures, parameter trade-offs, and critical state management.',
-          duration: '60 min',
-        },
-      ],
-    },
-    {
-      track: 'Applications',
-      modules: [
-        {
-          id: 'digital-assets',
-          title: 'Digital Assets',
-          description:
-            'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana using OpenSSL.',
-          duration: '60 min',
-        },
-        {
-          id: '5g-security',
-          title: '5G Security',
-          description:
-            'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
-          duration: '90 min',
-        },
-        {
-          id: 'digital-id',
-          title: 'Digital ID',
-          description:
-            'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
-          duration: '120 min',
-        },
-      ],
-    },
-  ]
+  const { selectedPersona, hasSeenPersonaPicker, clearPersona } = usePersonaStore()
+  const [gridExpanded, setGridExpanded] = useState(false)
 
-  const activeModules = moduleTracks.flatMap((t) => t.modules)
+  const activeModules = MODULE_TRACKS.flatMap((t) => t.modules)
 
   // Find most recently visited in-progress module
   const inProgressModules = activeModules
@@ -312,31 +122,20 @@ export const Dashboard: React.FC = () => {
 
   const resumeModule = inProgressModules[0]
 
-  // Actual step counts per module
-  const MODULE_STEP_COUNTS: Record<string, number> = {
-    'pqc-101': 5,
-    'pki-workshop': 7,
-    'digital-assets': 3,
-    '5g-security': 3,
-    'digital-id': 6,
-    'tls-basics': 3,
-    'quantum-threats': 4,
-    'hybrid-crypto': 3,
-    'crypto-agility': 3,
-    'stateful-signatures': 3,
-    'email-signing': 3,
-    'vpn-ssh-pqc': 3,
-    'key-management': 3,
-    quiz: 1,
-  }
-
-  // Calculate progress percentage for resume module
   const getProgressPercentage = (moduleId: string): number => {
     const module = modules[moduleId]
     if (!module) return 0
     const totalSteps = MODULE_STEP_COUNTS[moduleId] ?? 4
     return Math.min(100, Math.round((module.completedSteps.length / totalSteps) * 100))
   }
+
+  // Show persona picker if user hasn't picked one and hasn't dismissed the picker
+  const showPersonaPicker = !selectedPersona && !hasSeenPersonaPicker
+  // Show learning path if user has selected a persona
+  const showLearningPath = !!selectedPersona
+  // Show full grid: when persona is dismissed (seen picker but no selection), or collapsible when persona active
+  // Hide the grid when the picker is showing so it doesn't compete for attention
+  const showFullGrid = !selectedPersona && hasSeenPersonaPicker
 
   return (
     <div className="space-y-8">
@@ -374,63 +173,114 @@ export const Dashboard: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Module Tracks */}
-      <div className="space-y-8">
-        <div className="mb-2 md:mb-4">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
-            <BookOpen className="text-primary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
-            Learning Workshops
-          </h2>
-          <p className="hidden lg:block text-muted-foreground">
-            Interactive hands-on workshops to master cryptographic concepts.
-          </p>
-        </div>
+      {/* Persona Picker — shown when no persona selected and not dismissed */}
+      {showPersonaPicker && <PersonaPicker />}
 
-        {moduleTracks.map((group) => (
-          <div key={group.track}>
-            <h3 className="text-lg font-bold text-foreground mb-3 pl-1">{group.track}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              <AnimatePresence mode="popLayout">
-                {group.modules.map((module) => (
-                  <ModuleCard
-                    key={module.id}
-                    module={module}
-                    onSelectModule={(id) => navigate(id)}
-                  />
-                ))}
-              </AnimatePresence>
-            </div>
+      {/* Learning Path — shown when persona is selected */}
+      {showLearningPath && <LearningPath />}
+
+      {/* Module Tracks Grid */}
+      {showLearningPath ? (
+        /* When learning path is active, show grid as collapsible */
+        <div>
+          <button
+            onClick={() => setGridExpanded((prev) => !prev)}
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+          >
+            {gridExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            Browse all workshops by track
+          </button>
+
+          <AnimatePresence>
+            {gridExpanded && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.25 }}
+                className="overflow-hidden"
+              >
+                <ModuleTracksGrid navigate={navigate} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      ) : (
+        /* When no persona, show full grid directly */
+        showFullGrid && <ModuleTracksGrid navigate={navigate} onChoosePath={() => clearPersona()} />
+      )}
+
+      {/* Knowledge Check Section — hidden when learning path is active (quiz is included in the path) */}
+      {!showLearningPath && (
+        <div>
+          <div className="mb-4 md:mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
+              <Brain className="text-secondary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
+              Knowledge Check
+            </h2>
+            <p className="hidden lg:block text-muted-foreground">
+              Test your understanding of post-quantum cryptography concepts.
+            </p>
           </div>
-        ))}
-      </div>
-
-      {/* Knowledge Check Section */}
-      <div>
-        <div className="mb-4 md:mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
-            <Brain className="text-secondary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
-            Knowledge Check
-          </h2>
-          <p className="hidden lg:block text-muted-foreground">
-            Test your understanding of post-quantum cryptography concepts.
-          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <ModuleCard
+              module={{
+                id: 'quiz',
+                title: 'PQC Quiz',
+                description:
+                  'Test your knowledge across all PQC topics — algorithms, standards, compliance, migration, and more.',
+                duration: '15 min',
+              }}
+              onSelectModule={() => navigate('quiz')}
+            />
+          </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          <ModuleCard
-            module={{
-              id: 'quiz',
-              title: 'PQC Quiz',
-              description:
-                'Test your knowledge across all PQC topics — algorithms, standards, compliance, migration, and more.',
-              duration: '15 min',
-            }}
-            onSelectModule={() => navigate('quiz')}
-          />
-        </div>
-      </div>
+      )}
 
       {/* Progress Management Section */}
       <SaveRestorePanel />
     </div>
   )
 }
+
+/** The existing module grid organized by track */
+const ModuleTracksGrid = ({
+  navigate,
+  onChoosePath,
+}: {
+  navigate: (path: string) => void
+  onChoosePath?: () => void
+}) => (
+  <div className="space-y-8 pt-4">
+    <div className="mb-2 md:mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div>
+        <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
+          <BookOpen className="text-primary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
+          Learning Workshops
+        </h2>
+        <p className="hidden lg:block text-muted-foreground">
+          Interactive hands-on workshops to master cryptographic concepts.
+        </p>
+      </div>
+      {onChoosePath && (
+        <Button variant="outline" size="sm" onClick={onChoosePath}>
+          <Compass size={14} className="mr-1.5" />
+          Choose a learning path
+        </Button>
+      )}
+    </div>
+
+    {MODULE_TRACKS.map((group) => (
+      <div key={group.track}>
+        <h3 className="text-lg font-bold text-foreground mb-3 pl-1">{group.track}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <AnimatePresence mode="popLayout">
+            {group.modules.map((module) => (
+              <ModuleCard key={module.id} module={module} onSelectModule={(id) => navigate(id)} />
+            ))}
+          </AnimatePresence>
+        </div>
+      </div>
+    ))}
+  </div>
+)

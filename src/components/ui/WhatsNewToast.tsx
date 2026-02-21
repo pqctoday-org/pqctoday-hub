@@ -77,23 +77,22 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Learning Platform Upgrade</strong> &mdash;
-                    PKI, Digital Assets, and 5G modules restructured with Learn, Simulate, and
-                    Exercises tabs
+                    <strong className="text-foreground">7 New Learning Modules</strong> &mdash;
+                    Quantum Threats, State Hash Signatures, Hybrid Crypto, and Key Management
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">5G Security Education</strong> &mdash; 6 new
-                    educational sections covering 3GPP security, SUCI profiles, and PQC threats
+                    <strong className="text-foreground">Executive Overview Dashboard</strong>{' '}
+                    &mdash; High-level PQC risk scoring and actionable priority items
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Leaders Board Expanded</strong> &mdash; 12
-                    new PQC leaders added; now 98 total
+                    <strong className="text-foreground">Time Tracking Fixes</strong> &mdash;
+                    Re-engineered progress analytics for perfect sub-minute precision
                   </span>
                 </li>
               </ul>
