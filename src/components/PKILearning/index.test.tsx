@@ -1,8 +1,9 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { PKILearningView as PKILearning } from './PKILearningView'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import '@testing-library/jest-dom'
+import { usePersonaStore } from '../../store/usePersonaStore'
 
 // Mock sub-components
 vi.mock('./modules/DigitalAssets', () => ({
@@ -24,6 +25,10 @@ const renderWithRouter = () => {
 }
 
 describe('PKILearning', () => {
+  beforeEach(() => {
+    // Simulate picker already dismissed so the module grid is visible
+    usePersonaStore.setState({ selectedPersona: null, hasSeenPersonaPicker: true })
+  })
   it('renders the header and module navigation cards', () => {
     renderWithRouter()
 

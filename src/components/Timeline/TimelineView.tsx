@@ -5,6 +5,8 @@ import {
   transformToGanttData,
   type CountryData,
 } from '../../data/timelineData'
+import { usePersonaStore } from '../../store/usePersonaStore'
+import { REGION_COUNTRY_MAP } from '../../data/personaConfig'
 import { SimpleGanttChart } from './SimpleGanttChart'
 
 import { GanttLegend } from './GanttLegend'
@@ -15,8 +17,13 @@ import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
 
 export const TimelineView = () => {
-  const [selectedCountry, setSelectedCountry] = useState<CountryData | null>(null)
-  // Removed unused viewMode state as we now use CSS media queries for view switching
+  const [selectedCountry, setSelectedCountry] = useState<CountryData | null>(() => {
+    const region = usePersonaStore.getState().selectedRegion
+    if (!region) return null
+    const countryName = REGION_COUNTRY_MAP[region]
+    if (!countryName) return null
+    return timelineData.find((d) => d.countryName === countryName) ?? null
+  })
 
   // Always call hooks first (React rules)
   const ganttData = useMemo(() => {

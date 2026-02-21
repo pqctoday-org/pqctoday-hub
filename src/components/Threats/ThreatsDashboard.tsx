@@ -24,6 +24,8 @@ import type { ThreatItem } from '../../data/threatsData'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { logEvent } from '../../utils/analytics'
+import { usePersonaStore } from '../../store/usePersonaStore'
+import { INDUSTRY_TO_THREATS_MAP } from '../../data/personaConfig'
 import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
 import { SourcesButton } from '../ui/SourcesButton'
@@ -53,13 +55,17 @@ import { ThreatDetailDialog } from './ThreatDetailDialog'
 
 export const ThreatsDashboard: React.FC = () => {
   const [searchParams] = useSearchParams()
+  const { selectedIndustry: storeIndustry } = usePersonaStore()
 
   const initialIndustry = useMemo(() => {
     const param = searchParams.get('industry')
-    if (!param) return 'All'
-    const match = threatsData.find((d) => d.industry.toLowerCase() === param.toLowerCase())
+    // URL param takes precedence, then translate store industry via mapping
+    const raw =
+      param ?? (storeIndustry ? (INDUSTRY_TO_THREATS_MAP[storeIndustry] ?? null) : null) ?? ''
+    if (!raw) return 'All'
+    const match = threatsData.find((d) => d.industry.toLowerCase() === raw.toLowerCase())
     return match ? match.industry : 'All'
-  }, [searchParams])
+  }, [searchParams, storeIndustry])
 
   const [selectedIndustry, setSelectedIndustry] = useState<string>(initialIndustry)
   const [selectedCriticality, setSelectedCriticality] = useState<string>('All')

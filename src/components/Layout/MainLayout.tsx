@@ -19,9 +19,12 @@ import {
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
 import { GuidedTour } from '../common/GuidedTour'
+import { usePersonaStore } from '../../store/usePersonaStore'
+import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
 
 export const MainLayout = () => {
   const location = useLocation()
+  const { selectedPersona } = usePersonaStore()
 
   // Build timestamp - set at compile time
   const buildTime = __BUILD_TIMESTAMP__
@@ -41,6 +44,13 @@ export const MainLayout = () => {
     { path: '/leaders', label: 'Leaders', icon: Users },
     { path: '/about', label: 'About', icon: Info },
   ]
+
+  const personaAllowed = selectedPersona ? PERSONA_NAV_PATHS[selectedPersona] : null
+  const visibleNavItems = personaAllowed
+    ? navItems.filter(
+        (item) => ALWAYS_VISIBLE_PATHS.includes(item.path) || personaAllowed.includes(item.path)
+      )
+    : navItems
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0">
@@ -64,7 +74,7 @@ export const MainLayout = () => {
             role="navigation"
             aria-label="Main navigation"
           >
-            {navItems.map((item) => (
+            {visibleNavItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}

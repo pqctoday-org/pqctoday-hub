@@ -22,6 +22,7 @@ import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
 import debounce from 'lodash/debounce'
 import { logLibrarySearch, logEvent } from '../../utils/analytics'
+import { usePersonaStore } from '../../store/usePersonaStore'
 
 const URGENCY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -93,8 +94,10 @@ const ORG_CANONICAL_MAP: Record<string, string> = {
 }
 
 export const LibraryView: React.FC = () => {
+  const { selectedIndustry: storeIndustry } = usePersonaStore()
   const [activeCategory, setActiveCategory] = useState<string>('All')
   const [activeOrg, setActiveOrg] = useState<string>('All')
+  const [activeIndustry, setActiveIndustry] = useState<string>(storeIndustry ?? 'All')
   const [filterText, setFilterText] = useState('')
   const [inputValue, setInputValue] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('cards')
@@ -119,6 +122,16 @@ export const LibraryView: React.FC = () => {
     setActiveCategory(category)
     logEvent('Library', 'Filter Category', category)
   }
+
+  const industries = useMemo(() => {
+    const set = new Set<string>()
+    libraryData.forEach((item) => {
+      item.applicableIndustries?.forEach((ind) => {
+        if (ind) set.add(ind)
+      })
+    })
+    return ['All', ...Array.from(set).sort()]
+  }, [])
 
   const orgs = useMemo(() => {
     const o = new Set<string>()
@@ -162,6 +175,11 @@ export const LibraryView: React.FC = () => {
         return false
       }
 
+      // Industry filter
+      if (activeIndustry !== 'All' && !item.applicableIndustries?.includes(activeIndustry)) {
+        return false
+      }
+
       // Organization filter — match against canonical names
       if (activeOrg !== 'All') {
         const itemCanonicalOrgs = item.authorsOrOrganization
@@ -183,7 +201,7 @@ export const LibraryView: React.FC = () => {
         item.categories?.some((cat) => cat.toLowerCase().includes(searchLower))
       )
     })
-  }, [activeCategory, activeOrg, filterText])
+  }, [activeCategory, activeOrg, activeIndustry, filterText])
 
   // Sorted items for card view
   const sortedItems = useMemo(() => {
@@ -356,6 +374,21 @@ export const LibraryView: React.FC = () => {
                     logEvent('Library', 'Filter Org', org)
                   }}
                   defaultLabel="Organization"
+                  noContainer
+                  opaque
+                  className="mb-0 w-full"
+                />
+              </div>
+
+              <div className="min-w-[140px]">
+                <FilterDropdown
+                  items={industries}
+                  selectedId={activeIndustry}
+                  onSelect={(ind) => {
+                    setActiveIndustry(ind)
+                    logEvent('Library', 'Filter Industry', ind)
+                  }}
+                  defaultLabel="Industry"
                   noContainer
                   opaque
                   className="mb-0 w-full"

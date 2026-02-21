@@ -17,6 +17,9 @@ import {
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { PERSONA_RECOMMENDED_PATHS } from '@/data/personaConfig'
+import { PersonalizationSection } from './PersonalizationSection'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -28,6 +31,9 @@ const fadeUp = {
 }
 
 export const LandingView = () => {
+  const { selectedPersona } = usePersonaStore()
+  const recommendedPaths = selectedPersona ? PERSONA_RECOMMENDED_PATHS[selectedPersona] : []
+
   const [algorithmCount, setAlgorithmCount] = useState<number | null>(null)
   const [timelineEventCount, setTimelineEventCount] = useState<number | null>(null)
   const [libraryCount, setLibraryCount] = useState<number | null>(null)
@@ -221,6 +227,9 @@ export const LandingView = () => {
         </motion.div>
       </section>
 
+      {/* Personalization Section */}
+      <PersonalizationSection />
+
       {/* Primary Features Grid */}
       <section>
         <motion.div
@@ -243,19 +252,29 @@ export const LandingView = () => {
           animate="visible"
           variants={{ visible: { transition: { delayChildren: 0.5, staggerChildren: 0.08 } } }}
         >
-          {features.map((feature) => (
-            <motion.div key={feature.path} variants={fadeUp}>
-              <Link to={feature.path} className="block h-full">
-                <div className="glass-panel p-6 h-full hover:border-primary/30 transition-colors group">
-                  <feature.icon className={`${feature.color} mb-3`} size={28} />
-                  <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+          {features.map((feature) => {
+            const isRecommended = recommendedPaths.includes(feature.path)
+            return (
+              <motion.div key={feature.path} variants={fadeUp}>
+                <Link to={feature.path} className="block h-full">
+                  <div className="glass-panel p-6 h-full hover:border-primary/30 transition-colors group">
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <feature.icon className={feature.color} size={28} />
+                      {isRecommended && (
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1.5 py-0.5 shrink-0">
+                          For you
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                      {feature.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  </div>
+                </Link>
+              </motion.div>
+            )
+          })}
         </motion.div>
       </section>
 

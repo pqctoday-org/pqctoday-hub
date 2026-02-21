@@ -14,9 +14,11 @@ export interface ModuleItem {
 export const ModuleCard = ({
   module,
   onSelectModule,
+  isRelevant,
 }: {
   module: ModuleItem
   onSelectModule: (moduleId: string) => void
+  isRelevant?: boolean
 }) => {
   const { modules } = useModuleStore()
   const status = modules[module.id]?.status || 'not-started'
@@ -43,6 +45,11 @@ export const ModuleCard = ({
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {isRelevant && (
+            <span className="text-[10px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1.5 py-0.5">
+              Relevant
+            </span>
+          )}
           {module.workInProgress && (
             <span className="px-3 py-1 rounded-full text-xs font-bold border bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
               WIP

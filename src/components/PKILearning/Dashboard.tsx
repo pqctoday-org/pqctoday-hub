@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { MODULE_INDUSTRY_RELEVANCE } from '../../data/personaConfig'
 import { Button } from '../ui/button'
 import { ModuleCard } from './ModuleCard'
 import { MODULE_TRACKS, MODULE_STEP_COUNTS } from './moduleData'
@@ -250,37 +251,52 @@ const ModuleTracksGrid = ({
 }: {
   navigate: (path: string) => void
   onChoosePath?: () => void
-}) => (
-  <div className="space-y-8 pt-4">
-    <div className="mb-2 md:mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <div>
-        <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
-          <BookOpen className="text-primary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
-          Learning Workshops
-        </h2>
-        <p className="hidden lg:block text-muted-foreground">
-          Interactive hands-on workshops to master cryptographic concepts.
-        </p>
-      </div>
-      {onChoosePath && (
-        <Button variant="outline" size="sm" onClick={onChoosePath}>
-          <Compass size={14} className="mr-1.5" />
-          Choose a learning path
-        </Button>
-      )}
-    </div>
+}) => {
+  const { selectedIndustry } = usePersonaStore()
 
-    {MODULE_TRACKS.map((group) => (
-      <div key={group.track}>
-        <h3 className="text-lg font-bold text-foreground mb-3 pl-1">{group.track}</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          <AnimatePresence mode="popLayout">
-            {group.modules.map((module) => (
-              <ModuleCard key={module.id} module={module} onSelectModule={(id) => navigate(id)} />
-            ))}
-          </AnimatePresence>
+  const isModuleRelevant = (moduleId: string): boolean => {
+    if (!selectedIndustry) return false
+    const relevant = MODULE_INDUSTRY_RELEVANCE[moduleId]
+    return relevant === null || (relevant?.includes(selectedIndustry) ?? false)
+  }
+
+  return (
+    <div className="space-y-8 pt-4">
+      <div className="mb-2 md:mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
+            <BookOpen className="text-primary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
+            Learning Workshops
+          </h2>
+          <p className="hidden lg:block text-muted-foreground">
+            Interactive hands-on workshops to master cryptographic concepts.
+          </p>
         </div>
+        {onChoosePath && (
+          <Button variant="outline" size="sm" onClick={onChoosePath}>
+            <Compass size={14} className="mr-1.5" />
+            Choose a learning path
+          </Button>
+        )}
       </div>
-    ))}
-  </div>
-)
+
+      {MODULE_TRACKS.map((group) => (
+        <div key={group.track}>
+          <h3 className="text-lg font-bold text-foreground mb-3 pl-1">{group.track}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <AnimatePresence mode="popLayout">
+              {group.modules.map((module) => (
+                <ModuleCard
+                  key={module.id}
+                  module={module}
+                  onSelectModule={(id) => navigate(id)}
+                  isRelevant={isModuleRelevant(module.id)}
+                />
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
