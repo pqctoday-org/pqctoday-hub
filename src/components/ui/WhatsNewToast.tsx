@@ -77,23 +77,27 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Persona-aware navigation</strong> &mdash;
-                    Executive, Developer, and Architect personas now have the correct routes — no
-                    more dead links in assessment reports
+                    <strong className="text-foreground">
+                      &ldquo;I don&apos;t know&rdquo; wizard options
+                    </strong>{' '}
+                    &mdash; six assessment steps now have explicit uncertainty escape hatches so you
+                    can complete the assessment even without a full cryptographic inventory
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Smarter role inference</strong> &mdash;
-                    Assessment results now correctly suggest all four personas, including Researcher
+                    <strong className="text-foreground">Awareness-gap actions in report</strong>{' '}
+                    &mdash; when you answer &ldquo;I don&apos;t know&rdquo;, the report surfaces
+                    targeted remediation actions to close those knowledge gaps first
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Persona-aware onboarding</strong> &mdash;
-                    Guided tour and hero CTAs now adapt to your selected role
+                    <strong className="text-foreground">Smarter scoring</strong> &mdash; country
+                    regulatory urgency now affects your score; risk thresholds and HNDL visibility
+                    for quick assessments improved
                   </span>
                 </li>
               </ul>

@@ -89,10 +89,23 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Country/Jurisdiction Picker**: select your regulatory jurisdiction to align deadlines with the PQC timeline
   - **Multi-select Sensitivity & Retention**: pick all applicable levels; scoring uses worst-case HNDL risk
   - **Country-aligned Deadlines**: Timeline step surfaces real regulatory deadline phases from the Gantt data
-  - Compound scoring engine with 4 risk dimensions: Quantum Exposure, Migration Complexity, Regulatory Pressure, Organizational Readiness
+  - **"I don't know" escape hatches**: Steps 3, 8, and 12 have explicit uncertainty options (required steps) so
+    users without a full inventory can still complete the assessment; Steps 5, 7, and 11 have styled skip/clear
+    buttons (optional steps)
+  - **Awareness-gap remediation actions**: Answering "I don't know" on any step automatically injects targeted
+    recommended actions at the top of the report (e.g. "conduct a cryptographic asset inventory") to help close
+    knowledge gaps first
+  - **Compliance framework descriptions**: Step 5 shows deadline and regulatory notes as sub-text beneath each
+    framework button for in-context guidance
+  - Compound scoring engine with 4 risk dimensions: Quantum Exposure, Migration Complexity, Regulatory Pressure,
+    Organizational Readiness — Regulatory Pressure now incorporates country-specific urgency weighting
   - HNDL Risk Window visualization: data retention vs. quantum threat timeline
   - Per-algorithm migration effort estimation (quick-win to multi-year)
-  - Executive summary, category breakdowns, and URL-shareable assessments
+  - **Quick/Comprehensive badge** in report header — clearly identifies the depth of the completed assessment
+  - **HNDL warning banner**: quick assessments with high or critical sensitivity display a banner noting that
+    Harvest-Now-Decrypt-Later risk was not quantified and recommending a comprehensive assessment
+  - Executive summary generated for both quick and comprehensive assessments; category breakdowns and
+    URL-shareable assessments for comprehensive mode
   - Enhanced CSV export with effort ratings and rationale
   - Industry-aware wizard: compliance, crypto, use-case, and infrastructure steps prioritize industry-relevant options
   - Country compliance filtering: frameworks filtered by selected jurisdiction

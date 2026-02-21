@@ -2,6 +2,66 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.18.0] - 2026-02-21
+
+### Added
+
+- **"I don't know" escape hatches in Risk Assessment wizard**: Six wizard steps now include explicit
+  uncertainty options, ensuring users who lack complete information can still complete the assessment:
+  - **Step 3 (Current Crypto)**: "I don't know / Not sure" chip clears algorithm selections and
+    triggers conservative RSA-2048 + ECDH equivalent scoring in the engine; all algorithm chips dim
+    while active. Wizard cannot advance without at least one algorithm selected _or_ the unknown flag set.
+  - **Step 5 (Compliance)**: "None apply / I don't know" button clears all selected frameworks
+    (optional step — no blocking).
+  - **Step 7 (Use Cases)**: Styled "I don't know / None of these" button replaces the old plain text
+    skip hint (optional step — no blocking).
+  - **Step 8 (Data Retention)**: "I don't know / Not sure" chip clears retention selections;
+    engine falls back to sensitivity-based HNDL estimate. Wizard requires at least one selection
+    _or_ the unknown flag before advancing.
+  - **Step 11 (Infrastructure)**: Styled "None of these / I don't know" button (optional step —
+    no blocking).
+  - **Step 12 (Vendors)**: "I don't know / Not sure" button clears vendor selection and defaults
+    engine to `mixed` dependency weighting. Wizard requires a selection _or_ the unknown flag.
+- **Compliance framework descriptions in Step 5**: Each compliance framework button now shows
+  a description sub-line — industry-specific frameworks use their config description; universal
+  frameworks (NIST, NIS2, etc.) show the deadline and first sentence of regulatory notes.
+- **Awareness-gap remediation actions**: When a user answers "I don't know" on any wizard step,
+  the assessment report automatically surfaces targeted recommended actions at the top of the
+  priority list to help close those knowledge gaps — e.g. "Conduct a cryptographic asset inventory"
+  for unknown algorithms, "Establish a data retention policy" for unknown retention, etc. Covers
+  unknown crypto, unknown retention, unknown vendors, missing compliance selections, missing use
+  cases, and missing infrastructure data.
+- **Quick Assessment executive summary**: Quick assessments (steps 1–6 only) now produce a
+  concise executive summary paragraph in the report, summarising risk level, vulnerable algorithms,
+  compliance pressure, and migration status. Previously only comprehensive assessments had this.
+- **Quick/Comprehensive badge in report header**: A small pill badge in the report header identifies
+  whether the result came from a Quick or Comprehensive assessment.
+- **HNDL warning banner for quick assessments**: When a quick assessment is completed with
+  `high` or `critical` data sensitivity, a warning banner appears in the report noting that
+  Harvest-Now-Decrypt-Later risk was not quantified (data retention was not collected) and
+  recommending a comprehensive assessment.
+- **Country-aware regulatory pressure scoring**: The compound engine now incorporates a
+  `COUNTRY_REGULATORY_URGENCY` map (14 jurisdictions) so selecting a country with active
+  PQC mandates (e.g. United States, France) increases the Regulatory Pressure category score.
+  The legacy quick path also receives a country boost proportional to the urgency weight.
+- **`requiresPQC: null` third state for unrecognised compliance frameworks**: Compliance
+  frameworks not in the database now surface as "Status unknown" (grey badge) rather than
+  "No PQC mandate yet" (which was misleading). The report's compliance impact panel handles
+  all three states: `true` (PQC Required / amber), `null` (Status unknown / grey),
+  `false` (No PQC mandate yet / grey).
+
+### Changed
+
+- **Risk thresholds recalibrated**: Low/Medium/High/Critical boundaries moved from 30/60/80 to
+  25/55/75. This better reflects the distribution of real scores — fewer organisations
+  incorrectly land in "Low" and the "Critical" band triggers sooner for high-exposure profiles.
+- **NIS2 deadline text updated**: The NIS2 Directive entry now reads
+  "October 2024 (transposition passed — enforcement underway)" to reflect that the transposition
+  deadline has passed and enforcement is active across the EU.
+- **Assessment stale threshold extended**: In-progress (incomplete) wizard sessions are now
+  preserved for 30 days before being auto-reset (previously 7 days), reducing accidental
+  loss of partially-completed assessments.
+
 ## [1.17.5] - 2026-02-21
 
 ### Changed
