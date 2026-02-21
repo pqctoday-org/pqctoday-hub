@@ -89,7 +89,7 @@
     "eslint-plugin-testing-library": "^7.16.0",
     "globals": "^17.3.0",
     "husky": "^9.1.7",
-    "jsdom": "^27.4.0",
+    "jsdom": "^28.1.0",
     "lint-staged": "^16.2.7",
     "lodash": "^4.17.23",
     "pdf-parse": "^2.4.5",
