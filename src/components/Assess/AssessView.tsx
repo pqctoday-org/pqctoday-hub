@@ -9,6 +9,8 @@ import type { AssessmentMode } from '../../store/useAssessmentStore'
 import { useAssessmentEngine } from '../../hooks/useAssessmentEngine'
 import type { AssessmentInput } from '../../hooks/useAssessmentEngine'
 import { metadata } from '../../data/industryAssessConfig'
+import { usePersonaStore } from '../../store/usePersonaStore'
+import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
 
@@ -225,6 +227,21 @@ export const AssessView: React.FC = () => {
 
     store.setAssessmentMode('comprehensive')
     store.markComplete()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Seed industry and country from persona store when starting fresh (no URL params, no in-progress assessment)
+  useEffect(() => {
+    if (hydratedRef.current || isComplete) return
+    const store = useAssessmentStore.getState()
+    if (store.industry) return // existing assessment in progress — don't overwrite
+
+    const { selectedIndustry, selectedRegion } = usePersonaStore.getState()
+    if (selectedIndustry) store.setIndustry(selectedIndustry)
+    if (selectedRegion && selectedRegion !== 'global') {
+      const country = REGION_COUNTRIES_MAP[selectedRegion]?.[0]
+      if (country) store.setCountry(country)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
