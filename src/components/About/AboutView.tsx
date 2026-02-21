@@ -82,11 +82,11 @@ export function AboutView() {
               <ul className="space-y-2">
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React</span>
-                  <span className="text-xs text-muted-foreground/60">v19.2.3</span>
+                  <span className="text-xs text-muted-foreground/60">v19.2.4</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Framer Motion</span>
-                  <span className="text-xs text-muted-foreground/60">v12.27.5</span>
+                  <span className="text-xs text-muted-foreground/60">v12.34.2</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Lucide React</span>
@@ -94,7 +94,7 @@ export function AboutView() {
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Tailwind CSS</span>
-                  <span className="text-xs text-muted-foreground/60">v4.1.17</span>
+                  <span className="text-xs text-muted-foreground/60">v4.2.0</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">clsx</span>
@@ -102,7 +102,7 @@ export function AboutView() {
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">tailwind-merge</span>
-                  <span className="text-xs text-muted-foreground/60">v3.4.0</span>
+                  <span className="text-xs text-muted-foreground/60">v3.5.0</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">class-variance-authority</span>
@@ -110,7 +110,7 @@ export function AboutView() {
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React Router</span>
-                  <span className="text-xs text-muted-foreground/60">v7.12.0</span>
+                  <span className="text-xs text-muted-foreground/60">v7.13.0</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React Markdown</span>
@@ -201,7 +201,7 @@ export function AboutView() {
               <ul className="space-y-2">
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Zustand</span>
-                  <span className="text-xs text-muted-foreground/60">v5.0.10</span>
+                  <span className="text-xs text-muted-foreground/60">v5.0.11</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Immer</span>
@@ -248,7 +248,7 @@ export function AboutView() {
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Prettier</span>
-                  <span className="text-xs text-muted-foreground/60">v3.8.0</span>
+                  <span className="text-xs text-muted-foreground/60">v3.8.1</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Husky</span>
@@ -261,11 +261,11 @@ export function AboutView() {
               <ul className="space-y-2">
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Vitest</span>
-                  <span className="text-xs text-muted-foreground/60">v4.0.17</span>
+                  <span className="text-xs text-muted-foreground/60">v4.0.18</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Playwright</span>
-                  <span className="text-xs text-muted-foreground/60">v1.57.0</span>
+                  <span className="text-xs text-muted-foreground/60">v1.58.2</span>
                 </li>
                 <li className="flex justify-between items-center text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Testing Library (React)</span>
@@ -291,7 +291,7 @@ export function AboutView() {
             <ShieldCheck className="text-primary" size={24} />
             <div>
               <h2 className="text-xl font-bold">Security Audit</h2>
-              <p className="text-xs text-muted-foreground">Last audited: February 20, 2026</p>
+              <p className="text-xs text-muted-foreground">Last audited: February 21, 2026</p>
             </div>
           </div>
 
