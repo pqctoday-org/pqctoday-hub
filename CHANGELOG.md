@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.17.2] - 2026-02-20
+
+### Fixed
+
+- **Library industry filter**: Normalized 40+ raw CSV industry aliases (e.g. `Finance`, `Gov`,
+  `Telecom`, `Critical Infrastructure`) to the 11 canonical industry names used across the app.
+  The industry dropdown now shows clean canonical names instead of 30+ fragmented raw tags.
+- **Library persona → filter**: Selecting an industry on the home page now correctly pre-filters
+  the Library (was returning 0 results due to vocabulary mismatch between canonical names and CSV tags).
+- **Library untagged items**: Documents with no specific industry tag (broadly applicable standards)
+  now appear in all industry-filtered views instead of being hidden.
+
+### Changed
+
+- **Assessment country step**: Step 2 (Country) now lists only the countries that belong to the
+  region selected on the home page (Americas → US + Canada, Europe → 8 EU countries,
+  APAC → 8 APAC countries, Global/none → all countries).
+- **Assessment pre-seeding**: Industry and country fields are now seeded from the home page
+  persona selection when starting a fresh assessment (no URL params, no in-progress assessment).
+
 ## [1.17.1] - 2026-02-21
 
 ### Added
