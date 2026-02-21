@@ -79,9 +79,9 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
   'pki-workshop': ['Government & Defense', 'Finance & Banking', 'Healthcare'],
   'key-management': ['Finance & Banking', 'Government & Defense', 'Healthcare', 'Technology'],
   'stateful-signatures': ['Government & Defense', 'Aerospace'],
-  'digital-assets': ['Finance & Banking'],
-  '5g-security': ['Telecommunications'],
-  'digital-id': ['Government & Defense'],
+  'digital-assets': ['Finance & Banking', 'Retail & E-Commerce'],
+  '5g-security': ['Telecommunications', 'Government & Defense'],
+  'digital-id': ['Government & Defense', 'Healthcare'],
 }
 
 /** Nav paths that are always shown regardless of persona. */
