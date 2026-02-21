@@ -44,7 +44,7 @@ export const CryptoAgilityExercises: React.FC<CryptoAgilityExercisesProps> = ({
       id: 'anti-patterns',
       title: '2. Spot the Anti-Patterns',
       description:
-        'Review the three common anti-patterns that block crypto agility: hardcoded algorithms, missing inventory, and single provider lock-in. Compare with the abstraction layer approach.',
+        'Review the four common anti-patterns that block crypto agility: hardcoded algorithms, hardcoded buffer sizes, missing inventory, and single provider lock-in. Compare with the abstraction layer approach.',
       badge: 'Architecture',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
@@ -81,7 +81,7 @@ export const CryptoAgilityExercises: React.FC<CryptoAgilityExercisesProps> = ({
       badge: 'Full Plan',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'The framework spans from discovery through monitoring. NSA CNSA 2.0 requires phased PQC adoption: prefer PQC for signing by 2025, networking by 2026; exclusive use across all NSS by 2033.',
+        'The framework spans from discovery through monitoring. NSA CNSA 2.0 requires phased PQC adoption: exclusive use for web/browsers/networking by 2030, and exclusive use across all legacy NSS by 2033.',
       config: { step: 2 },
     },
   ]

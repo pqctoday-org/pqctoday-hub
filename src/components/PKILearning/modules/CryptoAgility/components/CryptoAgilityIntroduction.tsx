@@ -70,50 +70,90 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
         </div>
       </section>
 
-      {/* Section 2: Abstraction Layers */}
+      {/* Section 2: Architecture Patterns */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <Layers size={24} className="text-secondary" />
           </div>
-          <h2 className="text-xl font-bold text-gradient">Abstraction Layers</h2>
+          <h2 className="text-xl font-bold text-gradient">Architecture Patterns</h2>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            The provider model separates <em>what</em> crypto operations your app needs from{' '}
-            <em>how</em> they&apos;re implemented. This is the foundation of crypto agility.
+            Crypto agility isn't just about code — it's an architectural decision. Organizations
+            typically use one or more of these three macro-patterns to achieve agility:
           </p>
-          <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <div className="space-y-2 text-center">
-              <div className="p-2 rounded bg-primary/10 text-primary text-xs font-bold">
-                Application Code
-              </div>
-              <div className="text-muted-foreground">&darr;</div>
-              <div className="p-2 rounded bg-secondary/10 text-secondary text-xs font-bold">
-                Crypto Abstraction API (encrypt, sign, verify, keyExchange)
-              </div>
-              <div className="text-muted-foreground">&darr;</div>
-              <div className="p-2 rounded bg-muted text-foreground text-xs font-bold">
-                Provider Registry (configuration-driven)
-              </div>
-              <div className="text-muted-foreground">&darr;</div>
-              <div className="grid grid-cols-3 gap-2">
-                <div className="p-2 rounded bg-warning/10 text-warning text-[10px] font-bold text-center">
-                  RSA-2048
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            {/* Pattern 1: Provider Model */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border flex flex-col">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-1.5 rounded bg-primary/10 text-primary">
+                  <Layers size={16} />
                 </div>
-                <div className="p-2 rounded bg-success/10 text-success text-[10px] font-bold text-center">
-                  ML-KEM-768
+                <div className="text-sm font-bold text-foreground">Provider Model</div>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3 flex-grow">
+                Applications link to a crypto library through an abstraction API (like JCA or
+                OpenSSL Providers). Agility is achieved at the application level via config changes.
+              </p>
+              <div className="mt-auto space-y-1 text-[10px] font-mono bg-background p-2 rounded">
+                <div className="text-primary text-center">App Code</div>
+                <div className="text-center text-muted-foreground">&darr;</div>
+                <div className="text-secondary text-center">Provider API</div>
+                <div className="text-center text-muted-foreground">&darr;</div>
+                <div className="text-foreground text-center border-t border-border pt-1">
+                  Algorithm
                 </div>
-                <div className="p-2 rounded bg-primary/10 text-primary text-[10px] font-bold text-center">
-                  X25519MLKEM768
+              </div>
+            </div>
+
+            {/* Pattern 2: Service Mesh */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border flex flex-col">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-1.5 rounded bg-success/10 text-success">
+                  <Route size={16} />
+                </div>
+                <div className="text-sm font-bold text-foreground">Service Mesh / Proxy</div>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3 flex-grow">
+                Cryptography for data-in-transit (mTLS) is completely offloaded to an infrastructure
+                proxy (Envoy, Istio). Zero app code changes required.
+              </p>
+              <div className="mt-auto space-y-1 text-[10px] font-mono bg-background p-2 rounded">
+                <div className="text-primary text-center">App (Plaintext)</div>
+                <div className="text-center text-muted-foreground">&harr;</div>
+                <div className="text-success text-center">Sidecar Proxy</div>
+                <div className="text-center text-muted-foreground">&harr;</div>
+                <div className="text-foreground text-center border-t border-border pt-1">
+                  PQC Network
+                </div>
+              </div>
+            </div>
+
+            {/* Pattern 3: External KMS */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-border flex flex-col">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-1.5 rounded bg-warning/10 text-warning">
+                  <Building2 size={16} />
+                </div>
+                <div className="text-sm font-bold text-foreground">External KMS / HSM</div>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3 flex-grow">
+                Crypto operations are outsourced over the network to a central service (AWS KMS,
+                Azure Key Vault). Upgrading the central KMS upgrades the enterprise.
+              </p>
+              <div className="mt-auto space-y-1 text-[10px] font-mono bg-background p-2 rounded">
+                <div className="text-primary text-center">App (API Request)</div>
+                <div className="text-center text-muted-foreground">&harr;</div>
+                <div className="text-warning text-center">Cloud KMS API</div>
+                <div className="text-center text-muted-foreground">&harr;</div>
+                <div className="text-foreground text-center border-t border-border pt-1">
+                  Hardware Security Module
                 </div>
               </div>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Real-world examples: Java&apos;s JCA (Java Cryptography Architecture), OpenSSL&apos;s
-            provider framework (3.x), PKCS#11 for HSMs, and cloud KMS APIs (AWS, Azure, GCP).
-          </p>
         </div>
       </section>
 

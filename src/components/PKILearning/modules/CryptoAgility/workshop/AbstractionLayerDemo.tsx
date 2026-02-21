@@ -170,7 +170,7 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
       {/* Anti-patterns */}
       <div>
         <h4 className="text-sm font-bold text-foreground mb-3">Common Anti-Patterns</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
           {ANTI_PATTERNS.map((pattern) => (
             <div key={pattern.id} className="glass-panel p-3 space-y-2">
               <div className="flex items-center gap-2">

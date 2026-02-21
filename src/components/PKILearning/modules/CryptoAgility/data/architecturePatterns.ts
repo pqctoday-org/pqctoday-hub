@@ -38,6 +38,30 @@ export const ABSTRACTION_LAYERS: ArchitectureLayer[] = [
   },
 ]
 
+export const MACRO_ARCHITECTURE_PATTERNS = [
+  {
+    id: 'provider-model',
+    label: 'Provider Model / App-Level Abstraction',
+    description:
+      'Applications statically or dynamically link to a cryptography library (like OpenSSL or BouncyCastle) through an abstraction layer (like JCA). Changing algorithms requires only config updates, but must be done per-application.',
+    icon: 'Layers',
+  },
+  {
+    id: 'service-mesh',
+    label: 'Service Mesh / Sidecar Proxy',
+    description:
+      'Cryptographic operations for data-in-transit (e.g., mTLS) are completely offloaded to an infrastructure layer proxy (like Envoy or Istio). Applications speak plaintext to the proxy. Zero code or config changes needed at the application level to migrate protocols.',
+    icon: 'Network',
+  },
+  {
+    id: 'external-kms',
+    label: 'External KMS / Cloud HSM',
+    description:
+      'Cryptography is outsourced over the network to a centralized service (like AWS KMS, Azure Key Vault, or an on-prem HSM cluster). Agility is achieved instantly across the enterprise when the central service is upgraded by the provider.',
+    icon: 'Cloud',
+  },
+]
+
 export const ABSTRACTION_BACKENDS: AbstractionBackend[] = [
   {
     id: 'rsa',
@@ -92,6 +116,15 @@ export const ANTI_PATTERNS = [
     description:
       'Algorithm names embedded in application code. Changing requires code changes, testing, and redeployment.',
     example: "import { rsaEncrypt } from 'crypto'\nrsaEncrypt(data, key, 'RSA-OAEP')",
+    severity: 'critical' as const,
+  },
+  {
+    id: 'hardcoded-buffers',
+    label: 'Hardcoded Buffer & Schema Sizes',
+    description:
+      'Allocating fixed-size memory buffers or database columns (e.g., VARCHAR(256)) based on classical key sizes. PQC keys are significantly larger (1-20KB) and will cause buffer overflows or DB truncation errors.',
+    example:
+      '// PQC keys require 1000+ bytes!\nchar publicKey[256]; \nSQL: CREATE TABLE users (key VARCHAR(256))',
     severity: 'critical' as const,
   },
   {
