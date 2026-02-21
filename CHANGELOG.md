@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.17.5] - 2026-02-21
+
+### Changed
+
+- **Dependency upgrades**: Merged 4 Dependabot updates — `@vitest/coverage-v8` 4.0.18,
+  `eslint-plugin-react-refresh` 0.5.0, `jsdom` 28.1.0, `eslint-plugin-security` 4.0.0.
+- **ESLint config for security plugin v4**: Adapted flat config to manually extract plugins and
+  rules from `security.configs.recommended` to avoid circular reference crash in `defineConfig()`.
+- **Updated SBOM**: Refreshed 9 dependency versions in About page to match actual installed
+  (React 19.2.4, Framer Motion 12.34.2, Tailwind CSS 4.2.0, tailwind-merge 3.5.0,
+  React Router 7.13.0, Zustand 5.0.11, Prettier 3.8.1, Vitest 4.0.18, Playwright 1.58.2).
+- **Security audit date**: Bumped to February 21, 2026 (same findings — 13 dev-only, 0 production).
+
+### Fixed
+
+- **Persona "For you" badge**: `setPersona` no longer resets `suppressSuggestion` to false,
+  preventing the assessment-inferred badge from reappearing after selecting then clearing a role.
+
 ## [1.17.4] - 2026-02-20
 
 ### Added
