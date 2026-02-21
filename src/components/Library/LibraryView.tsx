@@ -93,6 +93,88 @@ const ORG_CANONICAL_MAP: Record<string, string> = {
   // 'NIS Korea', 'NIS Korea', 'Samsung System LSI', 'Thales'
 }
 
+// Maps raw CSV applicable_industries values → canonical industry names (matching AVAILABLE_INDUSTRIES).
+// Normalizes aliases, abbreviations, and sub-categories so the dropdown shows clean canonical names
+// and persona-selected industry (e.g. "Finance & Banking") correctly matches library documents.
+// Tags not in this map are excluded from the dropdown but still matched under "All".
+// Note: Automotive, Aerospace, Retail & E-Commerce have no tagged documents yet — they won't appear.
+const INDUSTRY_CANONICAL_MAP: Record<string, string> = {
+  // Finance & Banking
+  Finance: 'Finance & Banking',
+  Banking: 'Finance & Banking',
+  'Finance & Banking': 'Finance & Banking',
+
+  // Government & Defense
+  Government: 'Government & Defense',
+  Gov: 'Government & Defense',
+  'Federal Government': 'Government & Defense',
+  Defense: 'Government & Defense',
+  'Government & Defense': 'Government & Defense',
+
+  // Healthcare
+  Healthcare: 'Healthcare',
+  'Regulated industries': 'Healthcare',
+  Pharmaceutical: 'Healthcare',
+
+  // Telecommunications
+  Telecom: 'Telecommunications',
+  Telecommunications: 'Telecommunications',
+  'Mobile Networks': 'Telecommunications',
+  '5G': 'Telecommunications',
+  GSMA: 'Telecommunications',
+
+  // Technology
+  IT: 'Technology',
+  'Software Development': 'Technology',
+  Enterprise: 'Technology',
+  'Enterprise IT': 'Technology',
+  Cloud: 'Technology',
+  'Cloud Security': 'Technology',
+  Web: 'Technology',
+  'Web APIs': 'Technology',
+  IoT: 'Technology',
+  'Embedded Systems': 'Technology',
+  Firmware: 'Technology',
+  'Hardware Security': 'Technology',
+  'HSM Vendors': 'Technology',
+  'Certificate Authorities': 'Technology',
+  'Web PKI': 'Technology',
+  PKI: 'Technology',
+  'ICT Products': 'Technology',
+  Protocol: 'Technology',
+  'Data Protection': 'Technology',
+  'Identity Management': 'Technology',
+  'Secure Messaging': 'Technology',
+  Messaging: 'Technology',
+  Email: 'Technology',
+  'Email Security': 'Technology',
+  'Document Signing': 'Technology',
+  VPN: 'Technology',
+  'Remote Access': 'Technology',
+  DNS: 'Technology',
+  'Constrained Devices': 'Technology',
+
+  // Energy & Utilities
+  'Critical Infrastructure': 'Energy & Utilities',
+  Energy: 'Energy & Utilities',
+  'Energy & Utilities': 'Energy & Utilities',
+
+  // Education
+  Research: 'Education',
+  Academia: 'Education',
+  'Cryptography Research': 'Education',
+
+  // Long-term Archival — loosely Technology or Government; map to Technology
+  Archival: 'Technology',
+  'Long-term Archival': 'Technology',
+  'High Security': 'Technology',
+
+  // Catch-alls (skip in dropdown — appear under "All")
+  'All industries': 'All',
+  Global: 'All',
+  Mobile: 'All',
+}
+
 export const LibraryView: React.FC = () => {
   const { selectedIndustry: storeIndustry } = usePersonaStore()
   const [activeCategory, setActiveCategory] = useState<string>('All')
@@ -127,7 +209,8 @@ export const LibraryView: React.FC = () => {
     const set = new Set<string>()
     libraryData.forEach((item) => {
       item.applicableIndustries?.forEach((ind) => {
-        if (ind) set.add(ind)
+        const canonical = INDUSTRY_CANONICAL_MAP[ind?.trim()]
+        if (canonical && canonical !== 'All') set.add(canonical)
       })
     })
     return ['All', ...Array.from(set).sort()]
@@ -175,9 +258,20 @@ export const LibraryView: React.FC = () => {
         return false
       }
 
-      // Industry filter
-      if (activeIndustry !== 'All' && !item.applicableIndustries?.includes(activeIndustry)) {
-        return false
+      // Industry filter — match via canonical map to normalize CSV aliases.
+      // Items with no industry tags, or tagged "All industries"/"Global", are universally
+      // applicable and pass through regardless of the selected industry.
+      if (activeIndustry !== 'All') {
+        const itemCanonicals =
+          item.applicableIndustries
+            ?.map((ind) => INDUSTRY_CANONICAL_MAP[ind?.trim()])
+            .filter(Boolean) ?? []
+        if (
+          itemCanonicals.length > 0 &&
+          !itemCanonicals.includes('All') &&
+          !itemCanonicals.includes(activeIndustry)
+        )
+          return false
       }
 
       // Organization filter — match against canonical names
