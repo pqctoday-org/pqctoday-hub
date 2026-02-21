@@ -1,12 +1,7 @@
 import { useState, useMemo } from 'react'
-import {
-  timelineData,
-  timelineMetadata,
-  transformToGanttData,
-  type CountryData,
-} from '../../data/timelineData'
+import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
 import { usePersonaStore } from '../../store/usePersonaStore'
-import { REGION_COUNTRY_MAP } from '../../data/personaConfig'
+import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 import { SimpleGanttChart } from './SimpleGanttChart'
 
 import { GanttLegend } from './GanttLegend'
@@ -17,12 +12,12 @@ import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
 
 export const TimelineView = () => {
-  const [selectedCountry, setSelectedCountry] = useState<CountryData | null>(() => {
+  const { selectedRegion } = usePersonaStore()
+
+  const [selectedCountry, setSelectedCountry] = useState<string>(() => {
     const region = usePersonaStore.getState().selectedRegion
-    if (!region) return null
-    const countryName = REGION_COUNTRY_MAP[region]
-    if (!countryName) return null
-    return timelineData.find((d) => d.countryName === countryName) ?? null
+    if (!region || region === 'global') return 'All'
+    return `region:${region}`
   })
 
   // Always call hooks first (React rules)
@@ -33,27 +28,48 @@ export const TimelineView = () => {
 
   const countryItems = useMemo(() => {
     if (!timelineData || timelineData.length === 0) return []
-    // Get unique country names
-    const countries = Array.from(new Set(timelineData.map((d) => d.countryName))).sort()
-    return countries.map((c) => {
-      const countryData = timelineData.find((d) => d.countryName === c)
-      return {
-        id: c,
-        label: c,
-        icon: (
-          <CountryFlag
-            code={countryData?.flagCode || ''}
-            width={16}
-            height={12}
-            className="rounded-[1px]"
-          />
-        ),
-      }
-    })
-  }, [])
 
-  const handleCountrySelect = (country: CountryData | null) => {
-    setSelectedCountry(country)
+    const allRegionGroups = [
+      { id: 'region:americas', label: 'Americas (all)' },
+      { id: 'region:eu', label: 'EMEA (all)' },
+      { id: 'region:apac', label: 'Asia-Pacific (all)' },
+      { id: 'region:global', label: 'Global / International (all)' },
+    ].map((r) => ({ ...r, icon: null }))
+
+    const allCountries = Array.from(new Set(timelineData.map((d) => d.countryName))).sort()
+
+    // When a specific region is selected on the home page, restrict to that region's countries
+    const isFiltered = selectedRegion && selectedRegion !== 'global'
+    // eslint-disable-next-line security/detect-object-injection
+    const allowedCountries = isFiltered ? new Set(REGION_COUNTRIES_MAP[selectedRegion]) : null
+
+    const regionGroups = isFiltered
+      ? allRegionGroups.filter((r) => r.id === `region:${selectedRegion}`)
+      : allRegionGroups
+
+    const countryEntries = allCountries
+      .filter((c) => !allowedCountries || allowedCountries.has(c))
+      .map((c) => {
+        const countryData = timelineData.find((d) => d.countryName === c)
+        return {
+          id: c,
+          label: c,
+          icon: (
+            <CountryFlag
+              code={countryData?.flagCode || ''}
+              width={16}
+              height={12}
+              className="rounded-[1px]"
+            />
+          ),
+        }
+      })
+
+    return [...regionGroups, ...countryEntries]
+  }, [selectedRegion])
+
+  const handleCountrySelect = (id: string) => {
+    setSelectedCountry(id)
   }
 
   // Early return if data isn't loaded yet to prevent blank screen
@@ -99,12 +115,8 @@ export const TimelineView = () => {
         <div className="hidden md:block" data-testid="desktop-view-container">
           <SimpleGanttChart
             data={ganttData}
-            selectedCountry={selectedCountry ? selectedCountry.countryName : 'All'}
-            onCountrySelect={(id) => {
-              const country =
-                id === 'All' ? null : timelineData.find((c) => c.countryName === id) || null
-              handleCountrySelect(country)
-            }}
+            selectedCountry={selectedCountry}
+            onCountrySelect={handleCountrySelect}
             countryItems={countryItems}
           />
         </div>
