@@ -833,7 +833,7 @@ function computeHNDLRiskWindow(input: AssessmentInput): HNDLRiskWindow | undefin
   const currentYear = new Date().getFullYear()
 
   // Conservative default: 15 years when user doesn't know retention period
-  const retentionYears = isEstimated ? 15 : getMaxRetentionYears(input.dataRetention)
+  const retentionYears = isEstimated ? 15 : getMaxRetentionYears(input.dataRetention ?? [])
   const dataExpirationYear = currentYear + retentionYears
   const riskWindowYears = dataExpirationYear - ESTIMATED_QUANTUM_THREAT_YEAR
 
