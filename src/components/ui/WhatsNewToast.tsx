@@ -77,22 +77,22 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">7 New Learning Modules</strong> &mdash;
-                    Quantum Threats, State Hash Signatures, Hybrid Crypto, and Key Management
+                    <strong className="text-foreground">Personalization Panel</strong> &mdash; Pick
+                    your role, region, and industry from the home page to adapt the entire app
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Executive Overview Dashboard</strong>{' '}
-                    &mdash; High-level PQC risk scoring and actionable priority items
+                    <strong className="text-foreground">Persona-driven nav</strong> &mdash; Only
+                    pages relevant to your role appear in the nav; generic pages always visible
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Time Tracking Fixes</strong> &mdash;
-                    Re-engineered progress analytics for perfect sub-minute precision
+                    <strong className="text-foreground">Smart pre-filtering</strong> &mdash; Region
+                    and industry selections pre-seed Assessment, Timeline, Threats, and Library
                   </span>
                 </li>
               </ul>

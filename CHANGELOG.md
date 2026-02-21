@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.17.0] - 2026-02-20
+
+### Added
+
+- **Personalization Panel** (`/`): New three-dimension picker on the home page lets users set their
+  role (Executive, Developer, Architect, Researcher), region (Americas, Europe, APAC, Global),
+  and industry (11 sectors) in a single always-editable section below the hero stats bar.
+  Selections persist across sessions via localStorage.
+- **Persona-driven navigation**: Selecting a role hides irrelevant pages from the nav;
+  always-visible pages (Home, Learn, Timeline, Threats, About) remain accessible to all users
+  regardless of persona.
+- **"For you" card badges**: Landing page feature cards show a "For you" badge for the top 3
+  pages most relevant to the active persona.
+- **Region pre-seeding**: Selecting a region pre-filters the Timeline on mount and pre-seeds the
+  Assessment country field (Americas → United States, Europe → France, APAC → Japan).
+- **Industry pre-seeding**: Selecting an industry pre-seeds the Assessment industry field,
+  pre-filters the Threats dashboard, adds an industry filter chip row to the Library, and
+  highlights relevant Learning modules with a "Relevant" badge.
+- **Industry icons**: Each industry chip in the personalization panel now displays a contextual
+  icon (e.g. `Landmark` for Finance, `Shield` for Government, `HeartPulse` for Healthcare).
+- **"All Industries" chip**: Explicit chip in the industry row to reset to no filter, always
+  highlighted when no industry is selected.
+
+### Changed
+
+- **Learn module**: Removed the in-Learn persona picker; learning paths are now driven entirely
+  by the home page persona selection. When no persona is set, the full module grid is shown with
+  a "Personalize from home" button linking back to the home page.
+
 ## [1.16.1] - 2026-02-20
 
 ### Added

@@ -1,5 +1,23 @@
 /* eslint-disable security/detect-object-injection */
-import { Briefcase, Code, ShieldCheck, GraduationCap, Globe, Factory } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import {
+  Briefcase,
+  Car,
+  Code,
+  Cpu,
+  Factory,
+  GraduationCap,
+  Globe,
+  HeartPulse,
+  Landmark,
+  Layers,
+  Plane,
+  Radio,
+  Shield,
+  ShieldCheck,
+  ShoppingCart,
+  Zap,
+} from 'lucide-react'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { Region } from '@/store/usePersonaStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
@@ -15,6 +33,20 @@ const PERSONA_ICONS = {
   ShieldCheck,
   GraduationCap,
 } as const
+
+const INDUSTRY_ICONS: Record<string, LucideIcon> = {
+  'Finance & Banking': Landmark,
+  'Government & Defense': Shield,
+  Healthcare: HeartPulse,
+  Telecommunications: Radio,
+  Technology: Cpu,
+  'Energy & Utilities': Zap,
+  Automotive: Car,
+  Aerospace: Plane,
+  'Retail & E-Commerce': ShoppingCart,
+  Education: GraduationCap,
+  Other: Layers,
+}
 
 const REGIONS: { id: Region; label: string }[] = [
   { id: 'americas', label: 'Americas' },
@@ -158,20 +190,40 @@ export const PersonalizationSection = () => {
           Industry
         </p>
         <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Select your industry">
+          {/* All Industries chip */}
+          <button
+            role="radio"
+            aria-checked={selectedIndustry === null}
+            onClick={() => {
+              setIndustry(null)
+              setAssessIndustry('')
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
+              selectedIndustry === null
+                ? 'border-primary/30 bg-primary/10 text-foreground'
+                : 'border-border bg-card text-muted-foreground hover:border-primary/20 hover:text-foreground'
+            }`}
+          >
+            <Globe size={11} className="shrink-0" />
+            All Industries
+          </button>
+
           {AVAILABLE_INDUSTRIES.map((industry) => {
             const isActive = selectedIndustry === industry
+            const Icon = INDUSTRY_ICONS[industry]
             return (
               <button
                 key={industry}
                 role="radio"
                 aria-checked={isActive}
                 onClick={() => handleIndustry(industry)}
-                className={`px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
                   isActive
                     ? 'border-primary/30 bg-primary/10 text-foreground'
                     : 'border-border bg-card text-muted-foreground hover:border-primary/20 hover:text-foreground'
                 }`}
               >
+                {Icon && <Icon size={11} className="shrink-0" />}
                 {industry}
               </button>
             )

@@ -101,6 +101,16 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Category filters, A-Z index, full-text search
   - Complexity badges (Beginner, Intermediate, Advanced)
   - Cross-references to learning modules
+- **Personalization System**: Role, region, and industry picker on the home page that adapts the
+  entire application to the user's context
+  - **Role picker**: Executive/CISO, Developer/Engineer, Security Architect, Researcher/Academic
+  - **Persona-driven navigation**: irrelevant pages hidden from nav; always-visible pages (Home,
+    Learn, Timeline, Threats, About) remain accessible to all
+  - **"For you" badges**: landing page cards highlight the top 3 recommended pages per role
+  - **Region pre-seeding**: pre-filters Timeline and pre-seeds Assessment country on mount
+  - **Industry pre-seeding**: pre-seeds Assessment industry, pre-filters Threats and Library,
+    highlights relevant Learn modules with "Relevant" badges
+  - Selections persist across sessions via localStorage
 - **Guided Tour**: Interactive first-visit onboarding overlay
   - Highlights key platform features and navigation
   - Remembers completion status
@@ -260,13 +270,13 @@ The application is structured into several key components:
 │   │   ├── Compliance/      # Compliance tracking and visualization
 │   │   ├── ErrorBoundary.tsx # Global error boundary component
 │   │   ├── Executive/       # Executive summary components
-│   │   ├── Landing/         # Landing/home page
+│   │   ├── Landing/         # Landing/home page (PersonalizationSection, LandingView)
 │   │   ├── Leaders/         # PQC transformation leaders profiles
 │   │   ├── Layout/          # Main layout and navigation components
 │   │   ├── Library/         # PQC standards library
 │   │   ├── Migrate/         # PQC migration planning with verified software database
 │   │   ├── OpenSSLStudio/   # OpenSSL v3.6.0 workbench (WASM)
-│   │   ├── PKILearning/     # Learning platform with 7 modules
+│   │   ├── PKILearning/     # Learning platform with 14 modules
 │   │   │   ├── modules/
 │   │   │   │   ├── Introduction/         # PQC 101 Introduction module
 │   │   │   │   ├── PKIWorkshop/          # 4-step PKI lifecycle
@@ -281,7 +291,7 @@ The application is structured into several key components:
 │   │   ├── Timeline/        # Migration timeline visualization
 │   │   ├── common/          # Shared components and utilities
 │   │   └── ui/              # Reusable UI components (Button, Card, etc.)
-│   ├── data/                # Static data (timelines, test vectors, profiles)
+│   ├── data/                # Static data (timelines, test vectors, profiles, personaConfig)
 │   │   ├── acvp/            # NIST ACVP test vectors (ML-KEM, ML-DSA)
 │   │   └── x509_profiles/   # CSV-based certificate profiles (3GPP, CAB Forum, ETSI)
 │   ├── hooks/               # Custom React hooks
