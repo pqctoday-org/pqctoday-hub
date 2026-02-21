@@ -7,7 +7,7 @@ import type { Region } from '../store/usePersonaStore'
  * null = show all (researcher / no persona)
  */
 export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
-  executive: ['/assess', '/compliance', '/leaders'],
+  executive: ['/assess', '/leaders', '/library'],
   developer: ['/algorithms', '/library', '/migrate', '/playground', '/openssl'],
   architect: ['/assess', '/algorithms', '/library', '/migrate', '/compliance', '/leaders'],
   researcher: null,
@@ -17,7 +17,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
  * Top 3 landing page feature card paths to badge as "Recommended" per persona.
  */
 export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {
-  executive: ['/assess', '/compliance', '/timeline'],
+  executive: ['/assess', '/timeline', '/leaders'],
   developer: ['/playground', '/openssl', '/algorithms'],
   architect: ['/timeline', '/assess', '/compliance'],
   researcher: ['/algorithms', '/openssl', '/playground'],
@@ -26,12 +26,42 @@ export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {
 /**
  * Broad region → representative country name matching timeline CSV data.
  * null means no pre-filter (Global).
+ * @deprecated Use REGION_COUNTRIES_MAP for multi-country region filtering.
  */
 export const REGION_COUNTRY_MAP: Record<Region, string | null> = {
   americas: 'United States',
   eu: 'France',
   apac: 'Japan',
   global: null,
+}
+
+/**
+ * Broad region → all matching country names in the timeline CSV data.
+ * Used to power multi-country region filter in the Gantt chart.
+ */
+export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
+  americas: ['United States', 'Canada'],
+  eu: [
+    'European Union',
+    'France',
+    'Germany',
+    'Italy',
+    'Spain',
+    'United Kingdom',
+    'Czech Republic',
+    'Israel',
+  ],
+  apac: [
+    'Japan',
+    'Singapore',
+    'Australia',
+    'South Korea',
+    'Taiwan',
+    'India',
+    'China',
+    'New Zealand',
+  ],
+  global: ['Global', 'International', 'G7', 'NATO', 'BIS', 'GSMA'],
 }
 
 /**
@@ -49,9 +79,9 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
   'pki-workshop': ['Government & Defense', 'Finance & Banking', 'Healthcare'],
   'key-management': ['Finance & Banking', 'Government & Defense', 'Healthcare', 'Technology'],
   'stateful-signatures': ['Government & Defense', 'Aerospace'],
-  'digital-assets': ['Finance & Banking', 'Retail & E-Commerce'],
-  '5g-security': ['Telecommunications', 'Government & Defense'],
-  'digital-id': ['Government & Defense', 'Healthcare'],
+  'digital-assets': ['Finance & Banking'],
+  '5g-security': ['Telecommunications'],
+  'digital-id': ['Government & Defense'],
 }
 
 /** Nav paths that are always shown regardless of persona. */
