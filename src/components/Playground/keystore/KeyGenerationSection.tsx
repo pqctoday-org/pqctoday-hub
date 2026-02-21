@@ -1,5 +1,190 @@
-import React from 'react'
-import { Key as KeyIcon, RefreshCw, Layers, Lock } from 'lucide-react'
+import React, { useState } from 'react'
+import {
+  Key as KeyIcon,
+  RefreshCw,
+  Layers,
+  Lock,
+  Code,
+  ChevronDown,
+  Copy,
+  Check,
+} from 'lucide-react'
+
+// Maps a selected algorithm/keySize to OpenSSL CLI + liboqs-python + Go snippets
+function getCodeSnippets(
+  algorithm: string,
+  keySize: string
+): { label: string; lang: string; code: string }[] {
+  const algKey = algorithm.startsWith('ML-KEM')
+    ? `ML-KEM-${keySize}`
+    : algorithm.startsWith('ML-DSA')
+      ? `ML-DSA-${keySize}`
+      : keySize // HQC-*, FrodoKEM-*, SLH-DSA-*, FN-DSA-*, Classic-McEliece-*
+
+  const isKEM =
+    algKey.startsWith('ML-KEM') ||
+    algKey.startsWith('HQC') ||
+    algKey.startsWith('FrodoKEM') ||
+    algKey.startsWith('Classic-McEliece')
+
+  const isSig =
+    algKey.startsWith('ML-DSA') || algKey.startsWith('SLH-DSA') || algKey.startsWith('FN-DSA')
+
+  const opensslAlg = algKey.replace('FN-DSA-512', 'falcon512').replace('FN-DSA-1024', 'falcon1024')
+
+  const opensslSnippet = `# OpenSSL 3.6+ — ${algKey}
+openssl genpkey -algorithm ${opensslAlg} -out private.pem
+openssl pkey -in private.pem -pubout -out public.pem`
+
+  const pythonKEM = `# liboqs-python — ${algKey}
+import oqs
+
+with oqs.KeyEncapsulation("${algKey}") as kem:
+    public_key = kem.generate_keypair()
+    secret_key = kem.export_secret_key()
+
+    # Encapsulate (sender)
+    ciphertext, shared_secret_enc = kem.encap_secret(public_key)
+
+    # Decapsulate (receiver)
+    shared_secret_dec = kem.decap_secret(ciphertext)
+    assert shared_secret_enc == shared_secret_dec`
+
+  const pythonSig = `# liboqs-python — ${algKey}
+import oqs
+
+with oqs.Signature("${algKey}") as sig:
+    public_key = sig.generate_keypair()
+    secret_key = sig.export_secret_key()
+
+    message = b"Hello, post-quantum world!"
+    signature = sig.sign(message)
+    valid = sig.verify(message, signature, public_key)
+    assert valid`
+
+  const goKEM = `// liboqs-go — ${algKey}
+package main
+
+import (
+    "fmt"
+    "github.com/open-quantum-safe/liboqs-go/oqs"
+)
+
+func main() {
+    kem := oqs.NewKeyEncapsulation("${algKey}", nil)
+    defer kem.Clean()
+
+    pubKey, _ := kem.GenerateKeyPair()
+    ciphertext, sharedSecretEnc, _ := kem.EncapSecret(pubKey)
+    sharedSecretDec, _ := kem.DecapSecret(ciphertext)
+    fmt.Println("Secrets match:", string(sharedSecretEnc) == string(sharedSecretDec))
+}`
+
+  const goSig = `// liboqs-go — ${algKey}
+package main
+
+import (
+    "fmt"
+    "github.com/open-quantum-safe/liboqs-go/oqs"
+)
+
+func main() {
+    signer := oqs.NewSignature("${algKey}", nil)
+    defer signer.Clean()
+
+    pubKey, _ := signer.GenerateKeyPair()
+    msg := []byte("Hello, post-quantum world!")
+    signature, _ := signer.Sign(msg)
+
+    verifier := oqs.NewSignature("${algKey}", nil)
+    defer verifier.Clean()
+    valid, _ := verifier.Verify(msg, signature, pubKey)
+    fmt.Println("Valid:", valid)
+}`
+
+  const snippets = [{ label: 'OpenSSL CLI', lang: 'bash', code: opensslSnippet }]
+  if (isKEM) {
+    snippets.push({ label: 'Python (liboqs)', lang: 'python', code: pythonKEM })
+    snippets.push({ label: 'Go (liboqs-go)', lang: 'go', code: goKEM })
+  } else if (isSig) {
+    snippets.push({ label: 'Python (liboqs)', lang: 'python', code: pythonSig })
+    snippets.push({ label: 'Go (liboqs-go)', lang: 'go', code: goSig })
+  }
+  return snippets
+}
+
+function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: string }) {
+  const [open, setOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState(0)
+  const [copied, setCopied] = useState(false)
+
+  const snippets = getCodeSnippets(algorithm, keySize)
+  // eslint-disable-next-line security/detect-object-injection
+  const active = snippets[activeTab] ?? snippets[0]
+
+  const handleCopy = () => {
+    if (!active) return
+    navigator.clipboard.writeText(active.code).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1800)
+    })
+  }
+
+  if (snippets.length === 0) return null
+
+  return (
+    <div className="bg-muted/20 border border-border rounded-xl overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between px-4 py-3 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
+        aria-expanded={open}
+      >
+        <span className="flex items-center gap-2">
+          <Code size={14} />
+          Code Reference
+        </span>
+        <ChevronDown size={14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="border-t border-border">
+          {/* Tab bar */}
+          <div className="flex border-b border-border bg-muted/10">
+            {snippets.map((s, i) => (
+              <button
+                key={s.label}
+                type="button"
+                onClick={() => setActiveTab(i)}
+                className={`px-3 py-2 text-xs font-medium transition-colors ${
+                  i === activeTab
+                    ? 'text-primary border-b-2 border-primary bg-primary/5'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="ml-auto px-3 py-2 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
+              aria-label="Copy code snippet"
+            >
+              {copied ? <Check size={13} className="text-success" /> : <Copy size={13} />}
+              {copied ? 'Copied' : 'Copy'}
+            </button>
+          </div>
+
+          {/* Code block */}
+          <pre className="p-4 text-xs font-mono text-foreground/90 overflow-x-auto leading-relaxed whitespace-pre bg-background/50">
+            {active?.code}
+          </pre>
+        </div>
+      )}
+    </div>
+  )
+}
 
 interface KeyGenerationSectionProps {
   algorithm: string
@@ -142,6 +327,9 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Code snippet reference for selected PQC algorithm */}
+      <CodeSnippetPanel algorithm={algorithm} keySize={keySize} />
 
       {/* Classical Algorithms Key Generation Section */}
       <div className="bg-muted/30 border border-border rounded-xl p-6">

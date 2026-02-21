@@ -46,26 +46,48 @@ vi.mock('../common/FilterDropdown', () => ({
   FilterDropdown: ({
     items,
     onSelect,
+    onMultiSelect,
+    multiSelectedIds,
     label,
     defaultLabel,
     selectedId,
   }: {
     items: { id: string; label: string }[]
     onSelect: (id: string) => void
+    onMultiSelect?: (ids: string[]) => void
+    multiSelectedIds?: string[]
     label?: string
     defaultLabel?: string
     selectedId: string
   }) => {
     const effectiveLabel = label || defaultLabel || 'dropdown'
+    const isMulti = onMultiSelect !== undefined && multiSelectedIds !== undefined
     return (
       <div data-testid={`filter-${effectiveLabel}`}>
-        <button onClick={() => onSelect('All')} aria-label={effectiveLabel}>
+        <button
+          onClick={() => (isMulti ? onMultiSelect!([]) : onSelect('All'))}
+          aria-label={effectiveLabel}
+        >
           {effectiveLabel}: {items.find((i) => i.id === selectedId)?.label || selectedId}
         </button>
         <ul>
           {items.map((item) => (
             <li key={item.id}>
-              <button onClick={() => onSelect(item.id)}>{item.label}</button>
+              <button
+                onClick={() => {
+                  if (isMulti) {
+                    const current = multiSelectedIds ?? []
+                    const next = current.includes(item.id)
+                      ? current.filter((x: string) => x !== item.id)
+                      : [...current, item.id]
+                    onMultiSelect!(next)
+                  } else {
+                    onSelect(item.id)
+                  }
+                }}
+              >
+                {item.label}
+              </button>
             </li>
           ))}
         </ul>
@@ -220,6 +242,7 @@ describe('ThreatsDashboard', () => {
     const searchInput = screen.getByPlaceholderText('Search threats...')
     fireEvent.change(searchInput, { target: { value: 'NonExistentTermXYZ' } })
 
-    expect(screen.getByText('No threats found matching your filters.')).toBeInTheDocument()
+    // Both mobile and desktop render the empty state message
+    expect(screen.getAllByText('No threats found matching your filters.').length).toBeGreaterThan(0)
   })
 })

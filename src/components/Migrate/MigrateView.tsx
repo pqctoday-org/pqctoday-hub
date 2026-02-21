@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { softwareData, softwareMetadata } from '../../data/migrateData'
+import { useSearchParams } from 'react-router-dom'
 
 import { SoftwareTable } from './SoftwareTable'
 import { MigrationWorkflow } from './MigrationWorkflow'
@@ -10,16 +11,30 @@ import { logMigrateAction } from '../../utils/analytics'
 import type { MigrationStep } from '../../types/MigrateTypes'
 
 export const MigrateView: React.FC = () => {
+  const [searchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState<string>('All')
   const [activePlatform, setActivePlatform] = useState<string>('All')
-  const [filterText, setFilterText] = useState('')
-  const [inputValue, setInputValue] = useState('')
+  const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
+  const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
+
+  // Scroll to software table when navigated here with a pre-set query
+  const softwareTableRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const q = searchParams.get('q')
+    if (q && softwareTableRef.current) {
+      setTimeout(
+        () => softwareTableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+        300
+      )
+    }
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const [stepFilter, setStepFilter] = useState<{
     stepNumber: number
     stepTitle: string
     categoryIds: string[]
   } | null>(null)
-  const softwareTableRef = useRef<HTMLDivElement>(null)
 
   // Debounced search
   // eslint-disable-next-line react-hooks/exhaustive-deps

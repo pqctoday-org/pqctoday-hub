@@ -18,6 +18,8 @@ import { logEvent } from '../../utils/analytics'
 import { CountryFlag } from '../common/CountryFlag'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { StatusBadge } from '../common/StatusBadge'
+import { usePersonaStore } from '../../store/usePersonaStore'
+import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 
 const FilterChip = ({ label, onClear }: { label: string; onClear: () => void }) => (
   <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-primary/10 border border-primary/30 text-xs text-primary font-medium">
@@ -64,7 +66,9 @@ export const SimpleGanttChart = ({
   const [sortField, setSortField] = useState<'country' | 'organization'>('country')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
-  const [selectedPhaseType, setSelectedPhaseType] = useState('All')
+  const [selectedPhaseType, setSelectedPhaseType] = useState(() =>
+    usePersonaStore.getState().selectedPersona === 'executive' ? 'Deadline' : 'All'
+  )
   const [selectedEventType, setSelectedEventType] = useState('All')
 
   const phaseTypeItems = useMemo(
@@ -121,7 +125,17 @@ export const SimpleGanttChart = ({
       const matchesSearch =
         d.country.countryName.toLowerCase().includes(filterText.toLowerCase()) ||
         d.country.bodies.some((b) => b.name.toLowerCase().includes(filterText.toLowerCase()))
-      const matchesRegion = selectedCountry === 'All' || d.country.countryName === selectedCountry
+      let matchesRegion: boolean
+      if (selectedCountry === 'All') {
+        matchesRegion = true
+      } else if (selectedCountry.startsWith('region:')) {
+        const regionKey = selectedCountry.slice(7) as keyof typeof REGION_COUNTRIES_MAP
+        // eslint-disable-next-line security/detect-object-injection
+        const regionCountries = REGION_COUNTRIES_MAP[regionKey] ?? []
+        matchesRegion = regionCountries.includes(d.country.countryName)
+      } else {
+        matchesRegion = d.country.countryName === selectedCountry
+      }
       return matchesSearch && matchesRegion
     })
 
@@ -421,6 +435,22 @@ export const SimpleGanttChart = ({
             className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
           />
         </div>
+        <button
+          onClick={() => {
+            const next = selectedPhaseType === 'Deadline' ? 'All' : 'Deadline'
+            setSelectedPhaseType(next)
+            logEvent('Timeline', 'Quick Filter Deadlines', next)
+          }}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm transition-colors whitespace-nowrap ${
+            selectedPhaseType === 'Deadline'
+              ? 'bg-destructive/20 border-destructive/50 text-destructive hover:bg-destructive/30'
+              : 'bg-muted/30 hover:bg-muted/50 border-border text-foreground'
+          }`}
+          aria-label="Show deadlines only"
+        >
+          <Flag size={16} />
+          <span className="hidden md:inline">Deadlines</span>
+        </button>
         <button
           onClick={handleExportCSV}
           disabled={processedData.length === 0}

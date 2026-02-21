@@ -9,7 +9,9 @@ import {
   TrendingUp,
   AlertTriangle,
   ArrowDown,
+  ScanSearch,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import type { MigrationStep } from '../../types/MigrateTypes'
 import { STEP_PHASE_COLORS } from '../../data/migrationWorkflowData'
 
@@ -115,6 +117,17 @@ export const MigrationStepCard: React.FC<MigrationStepCardProps> = ({ step, onVi
               <ArrowDown size={14} />
               View Related Software
             </button>
+          )}
+
+          {/* CBOM scanner deep-link — only on the Assessment step */}
+          {step.id === 'assess' && (
+            <Link
+              to="/learn/crypto-agility"
+              className="inline-flex items-center gap-2 text-sm text-secondary hover:text-secondary/80 transition-colors mt-2"
+            >
+              <ScanSearch size={14} />
+              Try interactive CBOM Scanner →
+            </Link>
           )}
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import type { LogEntry } from '../../../types'
 import * as MLDSA from '../../../wasm/liboqs_dsa'
 import { SettingsContext } from './SettingsContext'
@@ -87,26 +87,28 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   })
 
-  // --- Helpers ---
-  const handleAlgorithmChange = (newAlgorithm: string) => {
+  // --- Helpers (stable callbacks) ---
+  const handleAlgorithmChange = useCallback((newAlgorithm: string) => {
     setAlgorithm(newAlgorithm)
     setKeySize(newAlgorithm === 'ML-KEM' ? '768' : '65')
-  }
-  const toggleAlgorithm = (
-    category: 'kem' | 'signature' | 'symmetric' | 'hash',
-    algorithm: string
-  ) => {
-    setEnabledAlgorithms((prev: Record<string, Record<string, boolean>>) => ({
-      ...prev,
-      [category]: {
-        // eslint-disable-next-line security/detect-object-injection
-        ...prev[category],
-        // eslint-disable-next-line security/detect-object-injection
-        [algorithm]: !prev[category][algorithm as keyof (typeof prev)[typeof category]],
-      },
-    }))
-  }
-  const addLog = (entry: Omit<LogEntry, 'id' | 'timestamp'>) => {
+  }, [])
+
+  const toggleAlgorithm = useCallback(
+    (category: 'kem' | 'signature' | 'symmetric' | 'hash', algoName: string) => {
+      setEnabledAlgorithms((prev: Record<string, Record<string, boolean>>) => ({
+        ...prev,
+        [category]: {
+          // eslint-disable-next-line security/detect-object-injection
+          ...prev[category],
+          // eslint-disable-next-line security/detect-object-injection
+          [algoName]: !prev[category][algoName as keyof (typeof prev)[typeof category]],
+        },
+      }))
+    },
+    []
+  )
+
+  const addLog = useCallback((entry: Omit<LogEntry, 'id' | 'timestamp'>) => {
     const newEntry: LogEntry = {
       id: Math.random().toString(36).substring(2, 9),
       timestamp: new Date().toLocaleTimeString([], {
@@ -123,29 +125,37 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return updated.length > 1000 ? updated.slice(0, 1000) : updated
     })
     setLastLogEntry(newEntry)
-  }
-  const clearLogs = () => {
+  }, [])
+
+  const clearLogs = useCallback(() => {
     setLogs([])
     setLastLogEntry(null)
-  }
+  }, [])
 
-  const handleSort = (column: SortColumn) => {
-    if (sortColumn === column) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
-    } else {
-      setSortColumn(column)
-      setSortDirection('desc')
-    }
-  }
-  const startResize = (e: React.MouseEvent, column: SortColumn) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setResizingColumn(column)
-    resizeStartX.current = e.clientX
-    // eslint-disable-next-line security/detect-object-injection
-    resizeStartWidth.current = columnWidths[column]
-    document.body.style.cursor = 'col-resize'
-  }
+  const handleSort = useCallback(
+    (column: SortColumn) => {
+      if (sortColumn === column) {
+        setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+      } else {
+        setSortColumn(column)
+        setSortDirection('desc')
+      }
+    },
+    [sortColumn, sortDirection]
+  )
+
+  const startResize = useCallback(
+    (e: React.MouseEvent, column: SortColumn) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setResizingColumn(column)
+      resizeStartX.current = e.clientX
+      // eslint-disable-next-line security/detect-object-injection
+      resizeStartWidth.current = columnWidths[column]
+      document.body.style.cursor = 'col-resize'
+    },
+    [columnWidths]
+  )
 
   // --- Effects ---
   useEffect(() => {
@@ -168,7 +178,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     }
     loadWASM()
-  }, [executionMode, wasmLoaded])
+  }, [executionMode, wasmLoaded, addLog])
 
   useEffect(() => {
     sessionStorage.setItem('playground-execution-mode', executionMode)
@@ -201,61 +211,85 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [resizingColumn])
 
-  const sortedLogs = [...logs].sort((a, b) => {
-    // eslint-disable-next-line security/detect-object-injection
-    let aValue: string | number = a[sortColumn]
-    // eslint-disable-next-line security/detect-object-injection
-    let bValue: string | number = b[sortColumn]
-    if (sortColumn === 'executionTime')
-      return sortDirection === 'asc'
-        ? (aValue as number) - (bValue as number)
-        : (bValue as number) - (aValue as number)
-    aValue = String(aValue).toLowerCase()
-    bValue = String(bValue).toLowerCase()
-    if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1
-    if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
-    return 0
-  })
+  const sortedLogs = useMemo(() => {
+    return [...logs].sort((a, b) => {
+      // eslint-disable-next-line security/detect-object-injection
+      let aValue: string | number = a[sortColumn]
+      // eslint-disable-next-line security/detect-object-injection
+      let bValue: string | number = b[sortColumn]
+      if (sortColumn === 'executionTime')
+        return sortDirection === 'asc'
+          ? (aValue as number) - (bValue as number)
+          : (bValue as number) - (aValue as number)
+      aValue = String(aValue).toLowerCase()
+      bValue = String(bValue).toLowerCase()
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
+      return 0
+    })
+  }, [logs, sortColumn, sortDirection])
 
-  return (
-    <SettingsContext.Provider
-      value={{
-        algorithm,
-        setAlgorithm,
-        keySize,
-        setKeySize,
-        executionMode,
-        setExecutionMode,
-        wasmLoaded,
-        logs,
-        lastLogEntry,
-        loading,
-        setLoading,
-        error,
-        setError,
-        sortColumn,
-        setSortColumn,
-        sortDirection,
-        setSortDirection,
-        columnWidths,
-        setColumnWidths,
-        resizingColumn,
-        setResizingColumn,
-        startResize,
-        handleSort,
-        sortedLogs,
-        classicalAlgorithm,
-        setClassicalAlgorithm,
-        enabledAlgorithms,
-        toggleAlgorithm,
-        handleAlgorithmChange,
-        activeTab,
-        setActiveTab,
-        addLog,
-        clearLogs,
-      }}
-    >
-      {children}
-    </SettingsContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      algorithm,
+      setAlgorithm,
+      keySize,
+      setKeySize,
+      executionMode,
+      setExecutionMode,
+      wasmLoaded,
+      logs,
+      lastLogEntry,
+      loading,
+      setLoading,
+      error,
+      setError,
+      sortColumn,
+      setSortColumn,
+      sortDirection,
+      setSortDirection,
+      columnWidths,
+      setColumnWidths,
+      resizingColumn,
+      setResizingColumn,
+      startResize,
+      handleSort,
+      sortedLogs,
+      classicalAlgorithm,
+      setClassicalAlgorithm,
+      enabledAlgorithms,
+      toggleAlgorithm,
+      handleAlgorithmChange,
+      activeTab,
+      setActiveTab,
+      addLog,
+      clearLogs,
+    }),
+    [
+      algorithm,
+      keySize,
+      executionMode,
+      wasmLoaded,
+      logs,
+      lastLogEntry,
+      loading,
+      error,
+      sortColumn,
+      sortDirection,
+      columnWidths,
+      resizingColumn,
+      sortedLogs,
+      classicalAlgorithm,
+      enabledAlgorithms,
+      activeTab,
+      startResize,
+      handleSort,
+      handleAlgorithmChange,
+      toggleAlgorithm,
+      addLog,
+      clearLogs,
+    ]
   )
+
+  return <SettingsContext.Provider value={contextValue}>{children}</SettingsContext.Provider>
 }

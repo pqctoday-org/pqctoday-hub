@@ -62,7 +62,7 @@ vi.mock('./services', () => ({
   },
 }))
 
-// Mock the ComplianceTable to avoid testing its complex internals here
+// Mock the ComplianceTable and MobileComplianceView to avoid testing complex internals here
 vi.mock('./ComplianceTable', () => ({
   ComplianceTable: ({
     data,
@@ -73,6 +73,12 @@ vi.mock('./ComplianceTable', () => ({
     lastUpdated: Date | null
     onEnrich?: (id: string) => void
   }) => <div data-testid="compliance-table">Table ({data.length} records)</div>,
+}))
+
+vi.mock('./MobileComplianceView', () => ({
+  MobileComplianceView: ({ data }: { data: { id: string }[] }) => (
+    <div data-testid="mobile-compliance-view">Mobile ({data.length} records)</div>
+  ),
 }))
 
 // Mock analytics

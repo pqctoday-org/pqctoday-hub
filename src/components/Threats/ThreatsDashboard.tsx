@@ -56,19 +56,26 @@ import { MobileThreatsList } from './MobileThreatsList'
 
 export const ThreatsDashboard: React.FC = () => {
   const [searchParams] = useSearchParams()
-  const { selectedIndustry: storeIndustry } = usePersonaStore()
+  const { selectedIndustries: storeIndustries } = usePersonaStore()
 
-  const initialIndustry = useMemo(() => {
+  const initialIndustries = useMemo(() => {
     const param = searchParams.get('industry')
-    // URL param takes precedence, then translate store industry via mapping
-    const raw =
-      param ?? (storeIndustry ? (INDUSTRY_TO_THREATS_MAP[storeIndustry] ?? null) : null) ?? ''
-    if (!raw) return 'All'
-    const match = threatsData.find((d) => d.industry.toLowerCase() === raw.toLowerCase())
-    return match ? match.industry : 'All'
-  }, [searchParams, storeIndustry])
+    // URL param takes precedence (single industry)
+    if (param) {
+      const match = threatsData.find((d) => d.industry.toLowerCase() === param.toLowerCase())
+      return match ? [match.industry] : []
+    }
+    // Map all home-page selected industries through the threats name mapping
+    return (
+      storeIndustries
+        // eslint-disable-next-line security/detect-object-injection
+        .map((ind) => INDUSTRY_TO_THREATS_MAP[ind])
+        .filter((v): v is string => v !== null)
+        .filter((mapped) => threatsData.some((d) => d.industry === mapped))
+    )
+  }, [searchParams, storeIndustries])
 
-  const [selectedIndustry, setSelectedIndustry] = useState<string>(initialIndustry)
+  const [selectedIndustries, setSelectedIndustries] = useState<string[]>(initialIndustries)
   const [selectedCriticality, setSelectedCriticality] = useState<string>('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortField, setSortField] = useState<SortField>('industry')
@@ -78,16 +85,9 @@ export const ThreatsDashboard: React.FC = () => {
   // Extract unique industries for filter
   const industryItems = useMemo(() => {
     const unique = new Set(threatsData.map((d) => d.industry))
-    const sortedIndustries = Array.from(unique).sort()
-
-    return [
-      { id: 'All', label: 'All Industries', icon: null },
-      ...sortedIndustries.map((ind) => ({
-        id: ind,
-        label: ind,
-        icon: getIndustryIcon(ind),
-      })),
-    ]
+    return Array.from(unique)
+      .sort()
+      .map((ind) => ({ id: ind, label: ind, icon: getIndustryIcon(ind) }))
   }, [])
 
   // Criticality items
@@ -122,9 +122,9 @@ export const ThreatsDashboard: React.FC = () => {
   const filteredAndSortedData = useMemo(() => {
     let data = [...threatsData]
 
-    // Filter by Industry
-    if (selectedIndustry !== 'All') {
-      data = data.filter((item) => item.industry === selectedIndustry)
+    // Filter by Industry (multi-select: empty = all)
+    if (selectedIndustries.length > 0) {
+      data = data.filter((item) => selectedIndustries.includes(item.industry))
     }
 
     // Filter by Criticality
@@ -185,7 +185,7 @@ export const ThreatsDashboard: React.FC = () => {
     })
 
     return data
-  }, [selectedIndustry, selectedCriticality, searchQuery, sortField, sortDirection])
+  }, [selectedIndustries, selectedCriticality, searchQuery, sortField, sortDirection])
 
   return (
     <div className="max-w-7xl mx-auto px-4">
@@ -218,10 +218,12 @@ export const ThreatsDashboard: React.FC = () => {
           <div className="flex-1 min-w-[120px]">
             <FilterDropdown
               items={industryItems}
-              selectedId={selectedIndustry}
-              onSelect={(id) => {
-                setSelectedIndustry(id)
-                logEvent('Threats', 'Filter Industry', id)
+              selectedId="All"
+              onSelect={() => {}}
+              multiSelectedIds={selectedIndustries}
+              onMultiSelect={(ids) => {
+                setSelectedIndustries(ids)
+                logEvent('Threats', 'Filter Industry', ids.join(','))
               }}
               defaultLabel="Industry"
               defaultIcon={<Briefcase size={14} className="text-primary" />}

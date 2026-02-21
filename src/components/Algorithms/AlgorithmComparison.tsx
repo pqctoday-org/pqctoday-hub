@@ -9,11 +9,24 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  Wrench,
 } from 'lucide-react'
 import clsx from 'clsx'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { logEvent } from '../../utils/analytics'
 import { MobileAlgorithmList } from './MobileAlgorithmList'
+
+// Extract the primary algorithm family from a PQC replacement string for migrate search
+function getPrimaryAlgoSearch(pqc: string): string {
+  const first = pqc.split(/[,/]/)[0].trim()
+  if (first.startsWith('ML-KEM')) return 'ML-KEM'
+  if (first.startsWith('ML-DSA')) return 'ML-DSA'
+  if (first.startsWith('SLH-DSA') || first.startsWith('SPHINCS')) return 'SLH-DSA'
+  if (first.startsWith('FN-DSA') || first.startsWith('Falcon')) return 'Falcon'
+  if (first.startsWith('LMS') || first.startsWith('HSS')) return 'LMS'
+  return first.split('-')[0]
+}
 
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation'
 type SortDirection = 'asc' | 'desc' | null
@@ -61,38 +74,39 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
   const [startWidth, setStartWidth] = useState(0)
 
   // Sort the data
-  const sortedData = [...algorithmsData].sort((a, b) => {
-    if (!sortColumn || !sortDirection) return 0
+  const sortedData = useMemo(() => {
+    if (!sortColumn || !sortDirection) return algorithmsData
+    return [...algorithmsData].sort((a, b) => {
+      let aValue: string = ''
+      let bValue: string = ''
 
-    let aValue: string = ''
-    let bValue: string = ''
+      switch (sortColumn) {
+        case 'function':
+          aValue = a.function
+          bValue = b.function
+          break
+        case 'classical':
+          aValue = a.classical
+          bValue = b.classical
+          break
+        case 'pqc':
+          aValue = a.pqc
+          bValue = b.pqc
+          break
+        case 'deprecation':
+          // Extract first year for sorting
+          aValue = a.deprecationDate.match(/\d{4}/)?.[0] || '9999'
+          bValue = b.deprecationDate.match(/\d{4}/)?.[0] || '9999'
+          // Entries with "Deprecated" phase sort before "Disallowed"-only (more urgent)
+          if (a.deprecationDate.includes('Deprecated')) aValue = (parseInt(aValue) - 0.5).toString()
+          if (b.deprecationDate.includes('Deprecated')) bValue = (parseInt(bValue) - 0.5).toString()
+          break
+      }
 
-    switch (sortColumn) {
-      case 'function':
-        aValue = a.function
-        bValue = b.function
-        break
-      case 'classical':
-        aValue = a.classical
-        bValue = b.classical
-        break
-      case 'pqc':
-        aValue = a.pqc
-        bValue = b.pqc
-        break
-      case 'deprecation':
-        // Extract first year for sorting
-        aValue = a.deprecationDate.match(/\d{4}/)?.[0] || '9999'
-        bValue = b.deprecationDate.match(/\d{4}/)?.[0] || '9999'
-        // Entries with "Deprecated" phase sort before "Disallowed"-only (more urgent)
-        if (a.deprecationDate.includes('Deprecated')) aValue = (parseInt(aValue) - 0.5).toString()
-        if (b.deprecationDate.includes('Deprecated')) bValue = (parseInt(bValue) - 0.5).toString()
-        break
-    }
-
-    const comparison = aValue.localeCompare(bValue, undefined, { numeric: true })
-    return sortDirection === 'asc' ? comparison : -comparison
-  })
+      const comparison = aValue.localeCompare(bValue, undefined, { numeric: true })
+      return sortDirection === 'asc' ? comparison : -comparison
+    })
+  }, [algorithmsData, sortColumn, sortDirection])
 
   // Handle sort click
   const handleSort = (column: SortColumn) => {
@@ -356,8 +370,18 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                           </div>
                         </td>
                         <td className="px-4 py-4" style={{ width: `${columnWidths.pqc}px` }}>
-                          <div className="flex items-center gap-2 text-status-success font-semibold text-sm">
-                            <span className="truncate">{algo.pqc}</span>
+                          <div className="flex flex-col gap-1.5">
+                            <span className="text-status-success font-semibold text-sm truncate">
+                              {algo.pqc}
+                            </span>
+                            <Link
+                              to={`/migrate?q=${encodeURIComponent(getPrimaryAlgoSearch(algo.pqc))}`}
+                              onClick={() => logEvent('Algorithms', 'Find Tools', algo.pqc)}
+                              className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-primary transition-colors w-fit"
+                            >
+                              <Wrench size={11} />
+                              Find tools
+                            </Link>
                           </div>
                         </td>
                         <td

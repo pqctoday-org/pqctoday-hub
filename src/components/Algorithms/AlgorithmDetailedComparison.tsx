@@ -289,6 +289,27 @@ const PerformanceView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
     })
   }, [algorithms, sortField, sortDir])
 
+  // Max values for normalizing inline bar widths (relative comparison across visible rows)
+  const maxValues = useMemo(() => {
+    const maxKeygen = Math.max(...sorted.map((a) => getPerformanceMultiplier(a.keyGenCycles)), 1)
+    const maxSign = Math.max(...sorted.map((a) => getPerformanceMultiplier(a.signEncapsCycles)), 1)
+    const maxVerify = Math.max(
+      ...sorted.map((a) => getPerformanceMultiplier(a.verifyDecapsCycles)),
+      1
+    )
+    const maxRam = Math.max(...sorted.map((a) => a.stackRAM), 1)
+    return { maxKeygen, maxSign, maxVerify, maxRam }
+  }, [sorted])
+
+  const PerfBar = ({ value, max, color }: { value: number; max: number; color: string }) => {
+    const pct = Math.min((value / max) * 100, 100)
+    return (
+      <div className="w-full h-1 rounded-full bg-border/50 mt-1" aria-hidden="true">
+        <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
+      </div>
+    )
+  }
+
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) return <ArrowUpDown size={14} className="text-muted-foreground/50" />
     return sortDir === 'asc' ? (
@@ -360,8 +381,8 @@ const PerformanceView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
                     </div>
                   </td>
                   <td className="p-4 text-sm text-muted-foreground">{algo.family}</td>
-                  <td className="p-4">
-                    <div className="flex flex-col gap-1">
+                  <td className="p-4 min-w-[110px]">
+                    <div className="flex flex-col gap-0.5">
                       <span
                         className={clsx(
                           'text-xs px-2 py-1 rounded border font-medium w-fit',
@@ -373,10 +394,15 @@ const PerformanceView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
                       <span className="text-xs text-muted-foreground font-mono">
                         {algo.keyGenCycles}
                       </span>
+                      <PerfBar
+                        value={getPerformanceMultiplier(algo.keyGenCycles)}
+                        max={maxValues.maxKeygen}
+                        color="bg-primary/50"
+                      />
                     </div>
                   </td>
-                  <td className="p-4">
-                    <div className="flex flex-col gap-1">
+                  <td className="p-4 min-w-[110px]">
+                    <div className="flex flex-col gap-0.5">
                       <span
                         className={clsx(
                           'text-xs px-2 py-1 rounded border font-medium w-fit',
@@ -388,10 +414,15 @@ const PerformanceView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
                       <span className="text-xs text-muted-foreground font-mono">
                         {algo.signEncapsCycles}
                       </span>
+                      <PerfBar
+                        value={getPerformanceMultiplier(algo.signEncapsCycles)}
+                        max={maxValues.maxSign}
+                        color="bg-accent/50"
+                      />
                     </div>
                   </td>
-                  <td className="p-4">
-                    <div className="flex flex-col gap-1">
+                  <td className="p-4 min-w-[110px]">
+                    <div className="flex flex-col gap-0.5">
                       <span
                         className={clsx(
                           'text-xs px-2 py-1 rounded border font-medium w-fit',
@@ -403,10 +434,24 @@ const PerformanceView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
                       <span className="text-xs text-muted-foreground font-mono">
                         {algo.verifyDecapsCycles}
                       </span>
+                      <PerfBar
+                        value={getPerformanceMultiplier(algo.verifyDecapsCycles)}
+                        max={maxValues.maxVerify}
+                        color="bg-secondary/50"
+                      />
                     </div>
                   </td>
-                  <td className="p-4 text-sm font-mono text-muted-foreground">
-                    ~{(algo.stackRAM / 1000).toFixed(1)}KB
+                  <td className="p-4 min-w-[90px]">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-mono text-muted-foreground">
+                        ~{(algo.stackRAM / 1000).toFixed(1)}KB
+                      </span>
+                      <PerfBar
+                        value={algo.stackRAM}
+                        max={maxValues.maxRam}
+                        color="bg-muted-foreground/40"
+                      />
+                    </div>
                   </td>
                   <td className="p-4 text-sm text-muted-foreground">{algo.optimizationTarget}</td>
                 </tr>

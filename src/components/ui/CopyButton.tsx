@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Copy, Check } from 'lucide-react'
 
 interface CopyButtonProps {
@@ -9,6 +9,13 @@ interface CopyButtonProps {
 
 export const CopyButton = ({ text, label = 'Copy', className = '' }: CopyButtonProps) => {
   const [copied, setCopied] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [])
 
   const handleCopy = async () => {
     try {
@@ -30,7 +37,8 @@ export const CopyButton = ({ text, label = 'Copy', className = '' }: CopyButtonP
       }
 
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      if (timerRef.current) clearTimeout(timerRef.current)
+      timerRef.current = setTimeout(() => setCopied(false), 2000)
     } catch (err) {
       console.error('Failed to copy:', err)
     }

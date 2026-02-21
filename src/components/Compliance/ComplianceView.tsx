@@ -2,13 +2,85 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable } from './ComplianceTable'
 import { MobileComplianceView } from './MobileComplianceView'
 import { useComplianceRefresh, AUTHORITATIVE_SOURCES } from './services'
-import { ShieldCheck, FileCheck, Server, GlobeLock, Building2 } from 'lucide-react'
+import { ShieldCheck, FileCheck, Server, GlobeLock, Building2, Info } from 'lucide-react'
 import { logComplianceFilter } from '../../utils/analytics'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { usePersonaStore } from '../../store/usePersonaStore'
+
+// Maps industry → recommended certification type and a short rationale
+const INDUSTRY_COMPLIANCE_HINT: Record<string, { tab: string; rationale: string }> = {
+  'Finance & Banking': {
+    tab: 'FIPS 140-3',
+    rationale:
+      'FIPS 140-3 validated modules are mandatory for US federal financial systems and broadly adopted in banking for encryption compliance.',
+  },
+  'Government & Defense': {
+    tab: 'FIPS 140-3',
+    rationale:
+      'FIPS 140-3 is required for federal information systems. Common Criteria EAL4+ applies to high-assurance defense products.',
+  },
+  Healthcare: {
+    tab: 'FIPS 140-3',
+    rationale:
+      'HIPAA requires FIPS-validated encryption for ePHI. FIPS 140-3 validated modules satisfy this requirement.',
+  },
+  Telecommunications: {
+    tab: 'ACVP',
+    rationale:
+      'Algorithm-level ACVP validation is key for telecom protocol stacks. Common Criteria applies to network infrastructure products.',
+  },
+  Technology: {
+    tab: 'ACVP',
+    rationale:
+      'ACVP validates algorithm implementations directly. FIPS 140-3 applies if building products for federal customers.',
+  },
+  'Energy & Utilities': {
+    tab: 'FIPS 140-3',
+    rationale:
+      'NERC-CIP and federal energy regulations increasingly require FIPS-validated cryptographic modules for critical infrastructure.',
+  },
+  Automotive: {
+    tab: 'Common Criteria',
+    rationale:
+      'Common Criteria (ISO/IEC 15408) is used for automotive V2X and ECU security evaluations under UN R155.',
+  },
+  Aerospace: {
+    tab: 'FIPS 140-3',
+    rationale:
+      'DO-326A and federal programs require FIPS-validated modules. Common Criteria applies to avionics security products.',
+  },
+  'Retail & E-Commerce': {
+    tab: 'FIPS 140-3',
+    rationale:
+      'PCI-DSS aligns with FIPS 140-3 for payment cryptography. FIPS validation is the baseline for payment processors.',
+  },
+}
+
+// EU region pushes Common Criteria/EUCC tab
+const REGION_COMPLIANCE_HINT: Record<string, { tab: string; rationale: string } | undefined> = {
+  eu: {
+    tab: 'Common Criteria',
+    rationale:
+      'EU Cybersecurity Act (EUCC scheme) mandates Common Criteria evaluations for products sold in the EU market.',
+  },
+}
 
 export const ComplianceView = () => {
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
+  const { selectedIndustries, selectedRegion } = usePersonaStore()
+
+  const primaryIndustry = selectedIndustries[0] ?? null
+  // eslint-disable-next-line security/detect-object-injection
+  const industryHint = primaryIndustry ? INDUSTRY_COMPLIANCE_HINT[primaryIndustry] : undefined
+  // eslint-disable-next-line security/detect-object-injection
+  const regionHint = selectedRegion ? REGION_COMPLIANCE_HINT[selectedRegion] : undefined
+  const complianceHint = industryHint ?? regionHint
+  const complianceHintLabel = primaryIndustry
+    ? `${primaryIndustry} focus`
+    : selectedRegion === 'eu'
+      ? 'EU region'
+      : null
 
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto animate-fade-in">
@@ -33,6 +105,19 @@ export const ComplianceView = () => {
           <GlossaryButton />
         </div>
       </div>
+
+      {/* Persona/industry context hint */}
+      {complianceHint && complianceHintLabel && (
+        <div className="flex items-start gap-3 p-3 rounded-lg border border-primary/20 bg-primary/5 text-sm">
+          <Info size={16} className="text-primary mt-0.5 shrink-0" />
+          <div className="space-y-0.5">
+            <span className="font-semibold text-foreground">
+              {complianceHintLabel}: <span className="text-primary">{complianceHint.tab}</span>
+            </span>
+            <p className="text-muted-foreground text-xs">{complianceHint.rationale}</p>
+          </div>
+        </div>
+      )}
 
       {/* External Links Reference (User Request: Show authoritative sources) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">

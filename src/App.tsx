@@ -97,10 +97,38 @@ function App() {
       >
         <Routes>
           <Route element={<MainLayout />}>
-            <Route path="/" element={<LandingView />} />
-            <Route path="/timeline" element={<TimelineView />} />
-            <Route path="/algorithms" element={<AlgorithmsView />} />
-            <Route path="/library" element={<LibraryView />} />
+            <Route
+              path="/"
+              element={
+                <ErrorBoundary>
+                  <LandingView />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/timeline"
+              element={
+                <ErrorBoundary>
+                  <TimelineView />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/algorithms"
+              element={
+                <ErrorBoundary>
+                  <AlgorithmsView />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/library"
+              element={
+                <ErrorBoundary>
+                  <LibraryView />
+                </ErrorBoundary>
+              }
+            />
             <Route
               path="/learn/*"
               element={
@@ -125,12 +153,54 @@ function App() {
                 </ErrorBoundary>
               }
             />
-            <Route path="/threats" element={<ThreatsDashboard />} />
-            <Route path="/leaders" element={<LeadersGrid />} />
-            <Route path="/compliance" element={<ComplianceView />} />
-            <Route path="/changelog" element={<ChangelogView />} />
-            <Route path="/migrate" element={<MigrateView />} />
-            <Route path="/about" element={<AboutView />} />
+            <Route
+              path="/threats"
+              element={
+                <ErrorBoundary>
+                  <ThreatsDashboard />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/leaders"
+              element={
+                <ErrorBoundary>
+                  <LeadersGrid />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/compliance"
+              element={
+                <ErrorBoundary>
+                  <ComplianceView />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/changelog"
+              element={
+                <ErrorBoundary>
+                  <ChangelogView />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/migrate"
+              element={
+                <ErrorBoundary>
+                  <MigrateView />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <ErrorBoundary>
+                  <AboutView />
+                </ErrorBoundary>
+              }
+            />
             <Route
               path="/assess"
               element={
