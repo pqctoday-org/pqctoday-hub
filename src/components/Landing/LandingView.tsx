@@ -86,7 +86,8 @@ export const LandingView = () => {
     {
       icon: GraduationCap,
       title: 'Learning Modules',
-      description: '6 hands-on courses: PKI, X.509, 5G security, digital assets, eIDAS 2.0',
+      description:
+        '14 interactive modules: PKI, TLS, 5G, Digital Assets, Quantum Threats, Hybrid Crypto, and more — plus a 332-question quiz with 20-question quick and 80-question full assessment modes',
       path: '/learn',
       color: 'text-secondary',
     },
@@ -100,7 +101,8 @@ export const LandingView = () => {
     {
       icon: ClipboardCheck,
       title: 'Risk Assessment',
-      description: '5-question wizard for personalized quantum risk score and migration roadmap',
+      description:
+        '13-step wizard covering crypto inventory, sensitivity, compliance gaps, and deadlines — with personalized quantum risk score',
       path: '/assess',
       color: 'text-primary',
     },
@@ -209,7 +211,7 @@ export const LandingView = () => {
               value: libraryCount !== null ? String(libraryCount) : '...',
               label: 'Standards Tracked',
             },
-            { value: '6', label: 'Learning Modules' },
+            { value: '14', label: 'Learning Modules' },
           ].map((stat) => (
             <div key={stat.label} className="glass-panel p-4">
               <div className="text-2xl md:text-3xl font-bold text-gradient">{stat.value}</div>
