@@ -77,22 +77,22 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Personalization Panel</strong> &mdash; Pick
-                    your role, region, and industry from the home page to adapt the entire app
+                    <strong className="text-foreground">Mobile Compliance &amp; Threats</strong>{' '}
+                    &mdash; Dedicated card-based mobile views for Compliance and Threats
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Persona-driven nav</strong> &mdash; Only
-                    pages relevant to your role appear in the nav; generic pages always visible
+                    <strong className="text-foreground">Tap-to-toggle tooltips</strong> &mdash;
+                    Compliance algorithm tooltips now work on touch devices, not just hover
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Smart pre-filtering</strong> &mdash; Region
-                    and industry selections pre-seed Assessment, Timeline, Threats, and Library
+                    <strong className="text-foreground">Mobile layout polish</strong> &mdash;
+                    Navigation, popovers, filters, and cards refined across all views
                   </span>
                 </li>
               </ul>

@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.17.1] - 2026-02-21
+
+### Added
+
+- **Mobile Compliance View** (`/compliance`): New dedicated mobile layout with card-based display
+  for compliance records, optimized for touch navigation and small screens.
+- **Mobile Threats List** (`/threats`): New dedicated mobile layout for the threats dashboard,
+  presenting threat cards in a vertically stacked, touch-friendly format.
+
+### Changed
+
+- **Compliance Table tooltips**: PQC mechanism and classical algorithm tooltips now support
+  tap-to-toggle on mobile in addition to hover on desktop, replacing the hover-only interaction.
+- **Tooltip viewport clamping**: Tooltip width constrained to `min(256px, 100vw-32px)` to prevent
+  overflow on small screens.
+- **Gantt Detail Popover**: Refactored layout for improved readability and usability on mobile.
+- **Filter Dropdown**: Adjusted touch targets for better mobile usability.
+- **Personalization Section**: Minor layout refinements for small-screen display.
+- **Main Layout**: Navigation adjustments for mobile responsiveness.
+
 ## [1.17.0] - 2026-02-20
 
 ### Added
