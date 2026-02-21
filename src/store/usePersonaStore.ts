@@ -34,7 +34,7 @@ export const usePersonaStore = create<PersonaState>()(
         set({
           selectedPersona: persona,
           hasSeenPersonaPicker: persona !== null,
-          suppressSuggestion: false,
+          suppressSuggestion: true,
         }),
 
       clearPersona: () => set({ selectedPersona: null, hasSeenPersonaPicker: false }),
