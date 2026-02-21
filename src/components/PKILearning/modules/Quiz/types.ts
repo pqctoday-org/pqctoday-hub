@@ -14,6 +14,13 @@ export type QuizCategory =
   | 'pki-infrastructure'
   | 'digital-id'
   | '5g-security'
+  | 'quantum-threats'
+  | 'hybrid-crypto'
+  | 'crypto-agility'
+  | 'vpn-ssh-pqc'
+  | 'stateful-signatures'
+  | 'email-signing'
+  | 'key-management'
 
 export interface QuizOption {
   id: string

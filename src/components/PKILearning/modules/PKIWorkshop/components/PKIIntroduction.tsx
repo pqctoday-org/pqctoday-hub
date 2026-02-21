@@ -1,5 +1,6 @@
 import React from 'react'
-import { Shield, RefreshCw, FileText, PenTool, Key, ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Shield, RefreshCw, FileText, PenTool, Key, ArrowRight, ExternalLink } from 'lucide-react'
 import { PKICertificateLifecycleDiagram } from './PKICertificateLifecycleDiagram'
 
 interface PKIIntroductionProps {
@@ -214,6 +215,29 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
         >
           Try It in the Workshop <ArrowRight size={16} />
         </button>
+      </section>
+
+      {/* Related Modules */}
+      <section className="glass-panel p-6">
+        <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
+          <ExternalLink size={20} /> Related Modules
+        </h2>
+        <div className="space-y-2">
+          <Link
+            to="/learn/email-signing"
+            className="flex items-center gap-2 text-sm text-primary hover:underline"
+          >
+            <ArrowRight size={14} />
+            Email & Document Signing — S/MIME and CMS with PQC
+          </Link>
+          <Link
+            to="/learn/key-management"
+            className="flex items-center gap-2 text-sm text-primary hover:underline"
+          >
+            <ArrowRight size={14} />
+            Key Management & HSM — enterprise key lifecycle and HSM operations
+          </Link>
+        </div>
       </section>
     </div>
   )

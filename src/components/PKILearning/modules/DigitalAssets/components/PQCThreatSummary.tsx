@@ -97,13 +97,20 @@ export const PQCThreatSummary: React.FC = () => {
       </div>
 
       {/* Explore Further */}
-      <div className="flex justify-center">
+      <div className="flex flex-wrap justify-center gap-3">
         <Link
           to="/threats"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:bg-muted/50 text-sm font-medium text-foreground transition-colors"
         >
           <ExternalLink size={16} />
           Explore Full Quantum Threat Dashboard
+        </Link>
+        <Link
+          to="/learn/quantum-threats"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:bg-muted/50 text-sm font-medium text-foreground transition-colors"
+        >
+          <ExternalLink size={16} />
+          Quantum Threats Module — understand how quantum computers break cryptography
         </Link>
       </div>
     </div>

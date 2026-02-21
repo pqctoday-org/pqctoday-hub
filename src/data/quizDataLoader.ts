@@ -205,6 +205,48 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'SUCI subscriber privacy, 5G-AKA authentication, MILENAGE, SIM provisioning, and post-quantum upgrades for 5G networks.',
       icon: 'Radio',
     },
+    'quantum-threats': {
+      label: 'Quantum Threats',
+      description:
+        "Shor's and Grover's algorithms, CRQC timelines, HNDL attack mechanics, and security level degradation.",
+      icon: 'Zap',
+    },
+    'hybrid-crypto': {
+      label: 'Hybrid Cryptography',
+      description:
+        'Hybrid KEMs, composite signatures, X25519MLKEM768, dual-OID certificates, and transition standards.',
+      icon: 'Combine',
+    },
+    'crypto-agility': {
+      label: 'Crypto Agility',
+      description:
+        'Abstraction layers, CBOM scanning, provider model, CycloneDX, and the 7-phase migration framework.',
+      icon: 'Repeat',
+    },
+    'vpn-ssh-pqc': {
+      label: 'VPN/IPsec & SSH',
+      description:
+        'IKEv2 with ML-KEM, SSH hybrid key exchange, WireGuard Rosenpass, and protocol size comparisons.',
+      icon: 'Shield',
+    },
+    'stateful-signatures': {
+      label: 'Stateful Signatures',
+      description:
+        'LMS/HSS, XMSS/XMSS^MT, Merkle tree signatures, one-time signature state, and NIST SP 800-208.',
+      icon: 'GitBranch',
+    },
+    'email-signing': {
+      label: 'Email & Document Signing',
+      description:
+        'S/MIME, CMS SignedData/EnvelopedData, RFC 9629 KEMRecipientInfo, and PQC migration for email.',
+      icon: 'Mail',
+    },
+    'key-management': {
+      label: 'Key Management & HSM',
+      description:
+        'Key lifecycle (NIST SP 800-57), HSM FIPS 140-3, PKCS#11 operations, and PQC key rotation planning.',
+      icon: 'KeyRound',
+    },
   }
 
 // Compute question counts dynamically from loaded data

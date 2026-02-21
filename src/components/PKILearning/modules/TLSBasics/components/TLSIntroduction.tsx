@@ -1,5 +1,6 @@
 import React from 'react'
-import { Shield, Key, Lock, Zap, ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Shield, Key, Lock, Zap, ArrowRight, ExternalLink } from 'lucide-react'
 import { TLSHandshakeDiagram } from './TLSHandshakeDiagram'
 
 interface TLSIntroductionProps {
@@ -193,6 +194,20 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
         >
           Try It in the Simulator <ArrowRight size={16} />
         </button>
+      </section>
+
+      {/* Related Modules */}
+      <section className="glass-panel p-6">
+        <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
+          <ExternalLink size={20} /> Related Modules
+        </h2>
+        <Link
+          to="/learn/vpn-ssh-pqc"
+          className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+        >
+          <ArrowRight size={14} />
+          VPN/IPsec & SSH PQC — explore PQC in IKEv2, SSH, and WireGuard
+        </Link>
       </section>
     </div>
   )

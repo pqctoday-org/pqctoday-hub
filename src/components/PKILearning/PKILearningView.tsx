@@ -26,6 +26,31 @@ const PQC101Module = lazy(() =>
 const QuizModule = lazy(() =>
   import('./modules/Quiz').then((module) => ({ default: module.QuizModule }))
 )
+const QuantumThreatsModule = lazy(() =>
+  import('./modules/QuantumThreats').then((module) => ({ default: module.QuantumThreatsModule }))
+)
+const HybridCryptoModule = lazy(() =>
+  import('./modules/HybridCrypto').then((module) => ({ default: module.HybridCryptoModule }))
+)
+const CryptoAgilityModule = lazy(() =>
+  import('./modules/CryptoAgility').then((module) => ({ default: module.CryptoAgilityModule }))
+)
+const StatefulSignaturesModule = lazy(() =>
+  import('./modules/StatefulSignatures').then((module) => ({
+    default: module.StatefulSignaturesModule,
+  }))
+)
+const EmailSigningModule = lazy(() =>
+  import('./modules/EmailSigning').then((module) => ({
+    default: module.EmailSigningModule,
+  }))
+)
+const VPNSSHModule = lazy(() =>
+  import('./modules/VPNSSHModule').then((module) => ({ default: module.VPNSSHModule }))
+)
+const KeyManagementModule = lazy(() =>
+  import('./modules/KeyManagement').then((module) => ({ default: module.KeyManagementModule }))
+)
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -63,6 +88,13 @@ export const PKILearningView: React.FC = () => {
           <Route path="tls-basics" element={<TLSBasicsModule />} />
           <Route path="pqc-101" element={<PQC101Module />} />
           <Route path="quiz" element={<QuizModule />} />
+          <Route path="quantum-threats" element={<QuantumThreatsModule />} />
+          <Route path="hybrid-crypto" element={<HybridCryptoModule />} />
+          <Route path="crypto-agility" element={<CryptoAgilityModule />} />
+          <Route path="stateful-signatures" element={<StatefulSignaturesModule />} />
+          <Route path="email-signing" element={<EmailSigningModule />} />
+          <Route path="vpn-ssh-pqc" element={<VPNSSHModule />} />
+          <Route path="key-management" element={<KeyManagementModule />} />
         </Routes>
       </Suspense>
     </div>

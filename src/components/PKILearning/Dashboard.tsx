@@ -24,10 +24,11 @@ const ModuleCard = ({
 }) => {
   const { modules } = useModuleStore()
   const status = modules[module.id]?.status || 'not-started'
-  const timeSpent = modules[module.id]?.timeSpent || 0
+  const timeSpentRaw = modules[module.id]?.timeSpent || 0
+  const timeSpentFloored = Math.floor(timeSpentRaw)
 
   const durationDisplay =
-    status === 'not-started' ? module.duration : `${module.duration} / ${timeSpent} min`
+    status === 'not-started' ? module.duration : `${module.duration} / ${timeSpentFloored} min`
 
   return (
     <motion.article
@@ -184,49 +185,125 @@ const SaveRestorePanel = () => {
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate()
   const { modules } = useModuleStore()
-  const activeModules: ModuleItem[] = [
+  const moduleTracks: { track: string; modules: ModuleItem[] }[] = [
     {
-      id: 'pqc-101',
-      title: 'PQC 101',
-      description:
-        'Start here! A beginner-friendly introduction to the quantum threat and post-quantum cryptography.',
-      duration: '15 min',
+      track: 'Foundations',
+      modules: [
+        {
+          id: 'pqc-101',
+          title: 'PQC 101',
+          description:
+            'Start here! A beginner-friendly introduction to the quantum threat and post-quantum cryptography.',
+          duration: '15 min',
+        },
+        {
+          id: 'quantum-threats',
+          title: 'Quantum Threats',
+          description:
+            "Understand how Shor's and Grover's algorithms break cryptography, CRQC timelines, and HNDL attack mechanics.",
+          duration: '60 min',
+        },
+      ],
     },
     {
-      id: 'pki-workshop',
-      title: 'PKI',
-      description:
-        'Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.',
-      duration: '60 min',
+      track: 'Strategy',
+      modules: [
+        {
+          id: 'hybrid-crypto',
+          title: 'Hybrid Cryptography',
+          description:
+            'Combine classical and PQC algorithms: hybrid KEMs, composite signatures, and side-by-side certificate comparison.',
+          duration: '60 min',
+        },
+        {
+          id: 'crypto-agility',
+          title: 'Crypto Agility',
+          description:
+            'Design crypto-agile architectures: abstraction layers, CBOM scanning, and the 7-phase migration framework.',
+          duration: '60 min',
+        },
+      ],
     },
     {
-      id: 'digital-assets',
-      title: 'Digital Assets',
-      description:
-        'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana using OpenSSL.',
-      duration: '60 min',
+      track: 'Protocols',
+      modules: [
+        {
+          id: 'tls-basics',
+          title: 'TLS Basics',
+          description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',
+          duration: '60 min',
+        },
+        {
+          id: 'vpn-ssh-pqc',
+          title: 'VPN/IPsec & SSH',
+          description:
+            'IKEv2 and SSH key exchange with PQC: hybrid ML-KEM integration, WireGuard Rosenpass, and protocol size comparison.',
+          duration: '90 min',
+        },
+        {
+          id: 'email-signing',
+          title: 'Email & Document Signing',
+          description:
+            'S/MIME and CMS: signing workflows, KEM-based encryption (RFC 9629), and PQC migration for email security.',
+          duration: '60 min',
+        },
+      ],
     },
     {
-      id: '5g-security',
-      title: '5G Security',
-      description:
-        'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
-      duration: '90 min',
+      track: 'Infrastructure',
+      modules: [
+        {
+          id: 'pki-workshop',
+          title: 'PKI',
+          description:
+            'Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.',
+          duration: '60 min',
+        },
+        {
+          id: 'key-management',
+          title: 'Key Management & HSM',
+          description:
+            'Key lifecycle management, HSM operations via PKCS#11, and enterprise PQC key rotation planning.',
+          duration: '60 min',
+        },
+        {
+          id: 'stateful-signatures',
+          title: 'Stateful Hash Signatures',
+          description:
+            'Master LMS/HSS and XMSS/XMSS^MT: Merkle tree signatures, parameter trade-offs, and critical state management.',
+          duration: '60 min',
+        },
+      ],
     },
     {
-      id: 'digital-id',
-      title: 'Digital ID',
-      description:
-        'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
-      duration: '120 min',
-    },
-    {
-      id: 'tls-basics',
-      title: 'TLS Basics',
-      description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',
-      duration: '60 min',
+      track: 'Applications',
+      modules: [
+        {
+          id: 'digital-assets',
+          title: 'Digital Assets',
+          description:
+            'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana using OpenSSL.',
+          duration: '60 min',
+        },
+        {
+          id: '5g-security',
+          title: '5G Security',
+          description:
+            'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
+          duration: '90 min',
+        },
+        {
+          id: 'digital-id',
+          title: 'Digital ID',
+          description:
+            'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
+          duration: '120 min',
+        },
+      ],
     },
   ]
+
+  const activeModules = moduleTracks.flatMap((t) => t.modules)
 
   // Find most recently visited in-progress module
   const inProgressModules = activeModules
@@ -243,6 +320,13 @@ export const Dashboard: React.FC = () => {
     '5g-security': 3,
     'digital-id': 6,
     'tls-basics': 3,
+    'quantum-threats': 4,
+    'hybrid-crypto': 3,
+    'crypto-agility': 3,
+    'stateful-signatures': 3,
+    'email-signing': 3,
+    'vpn-ssh-pqc': 3,
+    'key-management': 3,
     quiz: 1,
   }
 
@@ -277,7 +361,7 @@ export const Dashboard: React.FC = () => {
                   Progress: {getProgressPercentage(resumeModule.id)}%
                 </span>
                 <span className="text-muted-foreground">
-                  Time spent: {modules[resumeModule.id]?.timeSpent || 0} min
+                  Time spent: {Math.floor(modules[resumeModule.id]?.timeSpent || 0)} min
                 </span>
               </div>
             </div>
@@ -290,9 +374,9 @@ export const Dashboard: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Active Modules Section */}
-      <div>
-        <div className="mb-4 md:mb-6">
+      {/* Module Tracks */}
+      <div className="space-y-8">
+        <div className="mb-2 md:mb-4">
           <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
             <BookOpen className="text-primary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
             Learning Workshops
@@ -301,13 +385,23 @@ export const Dashboard: React.FC = () => {
             Interactive hands-on workshops to master cryptographic concepts.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          <AnimatePresence mode="popLayout">
-            {activeModules.map((module) => (
-              <ModuleCard key={module.id} module={module} onSelectModule={(id) => navigate(id)} />
-            ))}
-          </AnimatePresence>
-        </div>
+
+        {moduleTracks.map((group) => (
+          <div key={group.track}>
+            <h3 className="text-lg font-bold text-foreground mb-3 pl-1">{group.track}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              <AnimatePresence mode="popLayout">
+                {group.modules.map((module) => (
+                  <ModuleCard
+                    key={module.id}
+                    module={module}
+                    onSelectModule={(id) => navigate(id)}
+                  />
+                ))}
+              </AnimatePresence>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Knowledge Check Section */}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Link } from 'react-router-dom'
 import {
@@ -436,6 +436,34 @@ const Step5NextSteps: React.FC = () => {
         ))}
       </div>
 
+      {/* Deep Dive Topics */}
+      <div className="glass-panel p-5">
+        <h4 className="font-semibold text-foreground mb-3">Deep Dive Topics</h4>
+        <div className="space-y-2">
+          <Link
+            to="/learn/quantum-threats"
+            className="flex items-center gap-2 text-sm text-primary hover:underline"
+          >
+            <ArrowRight size={14} />
+            Deep dive into quantum attack mechanics
+          </Link>
+          <Link
+            to="/learn/hybrid-crypto"
+            className="flex items-center gap-2 text-sm text-primary hover:underline"
+          >
+            <ArrowRight size={14} />
+            Learn hybrid/composite cryptography
+          </Link>
+          <Link
+            to="/learn/crypto-agility"
+            className="flex items-center gap-2 text-sm text-primary hover:underline"
+          >
+            <ArrowRight size={14} />
+            Master crypto-agile architecture
+          </Link>
+        </div>
+      </div>
+
       <div className="glass-panel p-5 border-l-4 border-l-green-500 text-center">
         <p className="text-green-400 font-semibold mb-1">🎉 You&apos;ve completed PQC 101!</p>
         <p className="text-sm text-muted-foreground">
@@ -450,10 +478,25 @@ const Step5NextSteps: React.FC = () => {
 export const PQC101Module: React.FC = () => {
   const { markStepComplete, updateModuleProgress } = useModuleStore()
   const [currentStep, setCurrentStep] = useState(0)
+  const startTimeRef = useRef(0)
 
   // Mark module in-progress as soon as the user opens it
   useEffect(() => {
-    updateModuleProgress(MODULE_ID, { status: 'in-progress' })
+    startTimeRef.current = Date.now()
+    updateModuleProgress(MODULE_ID, {
+      status: 'in-progress',
+      lastVisited: Date.now(),
+    })
+
+    return () => {
+      const elapsed = (Date.now() - startTimeRef.current) / 60000
+      if (elapsed > 0) {
+        const current = useModuleStore.getState().modules[MODULE_ID]
+        updateModuleProgress(MODULE_ID, {
+          timeSpent: (current?.timeSpent || 0) + elapsed,
+        })
+      }
+    }
   }, [updateModuleProgress])
 
   const handleStepComplete = (stepId: string, nextIndex: number) => {
