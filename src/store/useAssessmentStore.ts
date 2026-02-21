@@ -13,16 +13,22 @@ interface AssessmentState {
   currentCrypto: string[]
   cryptoUnknown: boolean
   dataSensitivity: string[]
+  sensitivityUnknown: boolean
   complianceRequirements: string[]
+  complianceUnknown: boolean
   migrationStatus: AssessmentInput['migrationStatus'] | ''
   // Extended fields
   cryptoUseCases: string[]
+  useCasesUnknown: boolean
   dataRetention: string[]
   retentionUnknown: boolean
+  credentialLifetime: string[]
+  credentialLifetimeUnknown: boolean
   systemCount: NonNullable<AssessmentInput['systemCount']> | ''
   teamSize: NonNullable<AssessmentInput['teamSize']> | ''
   cryptoAgility: NonNullable<AssessmentInput['cryptoAgility']> | ''
   infrastructure: string[]
+  infrastructureUnknown: boolean
   vendorDependency: NonNullable<AssessmentInput['vendorDependency']> | ''
   vendorUnknown: boolean
   timelinePressure: NonNullable<AssessmentInput['timelinePressure']> | ''
@@ -38,15 +44,21 @@ interface AssessmentState {
   toggleCrypto: (algo: string) => void
   setCryptoUnknown: (val: boolean) => void
   toggleDataSensitivity: (level: string) => void
+  setSensitivityUnknown: (val: boolean) => void
   toggleCompliance: (framework: string) => void
+  setComplianceUnknown: (val: boolean) => void
   setMigrationStatus: (status: AssessmentInput['migrationStatus']) => void
   toggleCryptoUseCase: (useCase: string) => void
+  setUseCasesUnknown: (val: boolean) => void
   toggleDataRetention: (value: string) => void
   setRetentionUnknown: (val: boolean) => void
+  toggleCredentialLifetime: (value: string) => void
+  setCredentialLifetimeUnknown: (val: boolean) => void
   setSystemCount: (count: NonNullable<AssessmentInput['systemCount']>) => void
   setTeamSize: (size: NonNullable<AssessmentInput['teamSize']>) => void
   setCryptoAgility: (agility: NonNullable<AssessmentInput['cryptoAgility']>) => void
   toggleInfrastructure: (item: string) => void
+  setInfrastructureUnknown: (val: boolean) => void
   setVendorDependency: (dep: NonNullable<AssessmentInput['vendorDependency']>) => void
   setVendorUnknown: (val: boolean) => void
   setTimelinePressure: (pressure: NonNullable<AssessmentInput['timelinePressure']>) => void
@@ -65,15 +77,21 @@ const INITIAL_STATE = {
   currentCrypto: [] as string[],
   cryptoUnknown: false,
   dataSensitivity: [] as string[],
+  sensitivityUnknown: false,
   complianceRequirements: [] as string[],
+  complianceUnknown: false,
   migrationStatus: '' as AssessmentInput['migrationStatus'] | '',
   cryptoUseCases: [] as string[],
+  useCasesUnknown: false,
   dataRetention: [] as string[],
   retentionUnknown: false,
+  credentialLifetime: [] as string[],
+  credentialLifetimeUnknown: false,
   systemCount: '' as NonNullable<AssessmentInput['systemCount']> | '',
   teamSize: '' as NonNullable<AssessmentInput['teamSize']> | '',
   cryptoAgility: '' as NonNullable<AssessmentInput['cryptoAgility']> | '',
   infrastructure: [] as string[],
+  infrastructureUnknown: false,
   vendorDependency: '' as NonNullable<AssessmentInput['vendorDependency']> | '',
   vendorUnknown: false,
   timelinePressure: '' as NonNullable<AssessmentInput['timelinePressure']> | '',
@@ -121,30 +139,69 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       toggleDataSensitivity: (level) =>
         set((state) => ({
+          sensitivityUnknown: false,
           dataSensitivity: state.dataSensitivity.includes(level)
             ? state.dataSensitivity.filter((l) => l !== level)
             : [...state.dataSensitivity, level],
           lastWizardUpdate: new Date().toISOString(),
         })),
 
+      setSensitivityUnknown: (val) => {
+        if (val) {
+          set({
+            sensitivityUnknown: true,
+            dataSensitivity: [],
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        } else {
+          set({ sensitivityUnknown: false, lastWizardUpdate: new Date().toISOString() })
+        }
+      },
+
       toggleCompliance: (framework) =>
         set((state) => ({
+          complianceUnknown: false,
           complianceRequirements: state.complianceRequirements.includes(framework)
             ? state.complianceRequirements.filter((f) => f !== framework)
             : [...state.complianceRequirements, framework],
           lastWizardUpdate: new Date().toISOString(),
         })),
 
+      setComplianceUnknown: (val) => {
+        if (val) {
+          set({
+            complianceUnknown: true,
+            complianceRequirements: [],
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        } else {
+          set({ complianceUnknown: false, lastWizardUpdate: new Date().toISOString() })
+        }
+      },
+
       setMigrationStatus: (status) =>
         set({ migrationStatus: status, lastWizardUpdate: new Date().toISOString() }),
 
       toggleCryptoUseCase: (useCase) =>
         set((state) => ({
+          useCasesUnknown: false,
           cryptoUseCases: state.cryptoUseCases.includes(useCase)
             ? state.cryptoUseCases.filter((u) => u !== useCase)
             : [...state.cryptoUseCases, useCase],
           lastWizardUpdate: new Date().toISOString(),
         })),
+
+      setUseCasesUnknown: (val) => {
+        if (val) {
+          set({
+            useCasesUnknown: true,
+            cryptoUseCases: [],
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        } else {
+          set({ useCasesUnknown: false, lastWizardUpdate: new Date().toISOString() })
+        }
+      },
 
       toggleDataRetention: (value) =>
         set((state) => ({
@@ -167,6 +224,27 @@ export const useAssessmentStore = create<AssessmentState>()(
         }
       },
 
+      toggleCredentialLifetime: (value) =>
+        set((state) => ({
+          credentialLifetimeUnknown: false,
+          credentialLifetime: state.credentialLifetime.includes(value)
+            ? state.credentialLifetime.filter((v) => v !== value)
+            : [...state.credentialLifetime, value],
+          lastWizardUpdate: new Date().toISOString(),
+        })),
+
+      setCredentialLifetimeUnknown: (val) => {
+        if (val) {
+          set({
+            credentialLifetimeUnknown: true,
+            credentialLifetime: [],
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        } else {
+          set({ credentialLifetimeUnknown: false, lastWizardUpdate: new Date().toISOString() })
+        }
+      },
+
       setSystemCount: (count) =>
         set({ systemCount: count, lastWizardUpdate: new Date().toISOString() }),
 
@@ -177,11 +255,24 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       toggleInfrastructure: (item) =>
         set((state) => ({
+          infrastructureUnknown: false,
           infrastructure: state.infrastructure.includes(item)
             ? state.infrastructure.filter((i) => i !== item)
             : [...state.infrastructure, item],
           lastWizardUpdate: new Date().toISOString(),
         })),
+
+      setInfrastructureUnknown: (val) => {
+        if (val) {
+          set({
+            infrastructureUnknown: true,
+            infrastructure: [],
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        } else {
+          set({ infrastructureUnknown: false, lastWizardUpdate: new Date().toISOString() })
+        }
+      },
 
       setVendorDependency: (dep) =>
         set({
@@ -215,7 +306,11 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       getInput: () => {
         const state = get()
-        if (!state.industry || state.dataSensitivity.length === 0 || !state.migrationStatus)
+        if (
+          !state.industry ||
+          (state.dataSensitivity.length === 0 && !state.sensitivityUnknown) ||
+          !state.migrationStatus
+        )
           return null
         const input: AssessmentInput = {
           industry: state.industry,
@@ -225,10 +320,15 @@ export const useAssessmentStore = create<AssessmentState>()(
           migrationStatus: state.migrationStatus as AssessmentInput['migrationStatus'],
         }
         if (state.cryptoUnknown) input.currentCryptoUnknown = true
+        if (state.sensitivityUnknown) input.sensitivityUnknown = true
         if (state.country) input.country = state.country
+        if (state.complianceUnknown) input.complianceUnknown = true
         if (state.cryptoUseCases.length > 0) input.cryptoUseCases = state.cryptoUseCases
+        if (state.useCasesUnknown) input.useCasesUnknown = true
         if (state.dataRetention.length > 0) input.dataRetention = state.dataRetention
         if (state.retentionUnknown) input.retentionUnknown = true
+        if (state.credentialLifetime.length > 0) input.credentialLifetime = state.credentialLifetime
+        if (state.credentialLifetimeUnknown) input.credentialLifetimeUnknown = true
         if (state.systemCount)
           input.systemCount = state.systemCount as NonNullable<AssessmentInput['systemCount']>
         if (state.teamSize)
@@ -236,6 +336,7 @@ export const useAssessmentStore = create<AssessmentState>()(
         if (state.cryptoAgility)
           input.cryptoAgility = state.cryptoAgility as NonNullable<AssessmentInput['cryptoAgility']>
         if (state.infrastructure.length > 0) input.infrastructure = state.infrastructure
+        if (state.infrastructureUnknown) input.infrastructureUnknown = true
         if (state.vendorDependency)
           input.vendorDependency = state.vendorDependency as NonNullable<
             AssessmentInput['vendorDependency']
@@ -260,15 +361,21 @@ export const useAssessmentStore = create<AssessmentState>()(
         currentCrypto: state.currentCrypto,
         cryptoUnknown: state.cryptoUnknown,
         dataSensitivity: state.dataSensitivity,
+        sensitivityUnknown: state.sensitivityUnknown,
         complianceRequirements: state.complianceRequirements,
+        complianceUnknown: state.complianceUnknown,
         migrationStatus: state.migrationStatus,
         cryptoUseCases: state.cryptoUseCases,
+        useCasesUnknown: state.useCasesUnknown,
         dataRetention: state.dataRetention,
         retentionUnknown: state.retentionUnknown,
+        credentialLifetime: state.credentialLifetime,
+        credentialLifetimeUnknown: state.credentialLifetimeUnknown,
         systemCount: state.systemCount,
         teamSize: state.teamSize,
         cryptoAgility: state.cryptoAgility,
         infrastructure: state.infrastructure,
+        infrastructureUnknown: state.infrastructureUnknown,
         vendorDependency: state.vendorDependency,
         vendorUnknown: state.vendorUnknown,
         timelinePressure: state.timelinePressure,
@@ -298,15 +405,21 @@ export const useAssessmentStore = create<AssessmentState>()(
           state.currentCrypto = []
           state.cryptoUnknown = false
           state.dataSensitivity = []
+          state.sensitivityUnknown = false
           state.complianceRequirements = []
+          state.complianceUnknown = false
           state.migrationStatus = ''
           state.cryptoUseCases = []
+          state.useCasesUnknown = false
           state.dataRetention = []
           state.retentionUnknown = false
+          state.credentialLifetime = []
+          state.credentialLifetimeUnknown = false
           state.systemCount = ''
           state.teamSize = ''
           state.cryptoAgility = ''
           state.infrastructure = []
+          state.infrastructureUnknown = false
           state.vendorDependency = ''
           state.vendorUnknown = false
           state.timelinePressure = ''

@@ -74,37 +74,57 @@ vi.mock('../../data/industryAssessConfig', () => ({
 
 const mockStore = {
   currentStep: 0,
+  assessmentMode: null,
   industry: '',
   country: '',
   currentCrypto: [] as string[],
+  cryptoUnknown: false,
   dataSensitivity: [] as string[],
+  sensitivityUnknown: false,
   complianceRequirements: [] as string[],
+  complianceUnknown: false,
   migrationStatus: '' as string,
   cryptoUseCases: [] as string[],
+  useCasesUnknown: false,
   dataRetention: [] as string[],
+  retentionUnknown: false,
+  credentialLifetime: [] as string[],
+  credentialLifetimeUnknown: false,
   systemCount: '' as string,
   teamSize: '' as string,
   cryptoAgility: '' as string,
   infrastructure: [] as string[],
+  infrastructureUnknown: false,
   vendorDependency: '' as string,
+  vendorUnknown: false,
   timelinePressure: '' as string,
   isComplete: false,
   lastResult: null,
   lastWizardUpdate: null,
   setStep: vi.fn(),
+  setAssessmentMode: vi.fn(),
   setIndustry: vi.fn(),
   setCountry: vi.fn(),
   toggleCrypto: vi.fn(),
+  setCryptoUnknown: vi.fn(),
   toggleDataSensitivity: vi.fn(),
+  setSensitivityUnknown: vi.fn(),
   toggleCompliance: vi.fn(),
+  setComplianceUnknown: vi.fn(),
   setMigrationStatus: vi.fn(),
   toggleCryptoUseCase: vi.fn(),
+  setUseCasesUnknown: vi.fn(),
   toggleDataRetention: vi.fn(),
+  setRetentionUnknown: vi.fn(),
+  toggleCredentialLifetime: vi.fn(),
+  setCredentialLifetimeUnknown: vi.fn(),
   setSystemCount: vi.fn(),
   setTeamSize: vi.fn(),
   setCryptoAgility: vi.fn(),
   toggleInfrastructure: vi.fn(),
+  setInfrastructureUnknown: vi.fn(),
   setVendorDependency: vi.fn(),
+  setVendorUnknown: vi.fn(),
   setTimelinePressure: vi.fn(),
   markComplete: vi.fn(),
   setResult: vi.fn(),
@@ -127,16 +147,25 @@ describe('AssessWizard', () => {
     mockStore.industry = ''
     mockStore.country = ''
     mockStore.currentCrypto = []
+    mockStore.cryptoUnknown = false
     mockStore.dataSensitivity = []
+    mockStore.sensitivityUnknown = false
     mockStore.complianceRequirements = []
+    mockStore.complianceUnknown = false
     mockStore.migrationStatus = ''
     mockStore.cryptoUseCases = []
+    mockStore.useCasesUnknown = false
     mockStore.dataRetention = []
+    mockStore.retentionUnknown = false
+    mockStore.credentialLifetime = []
+    mockStore.credentialLifetimeUnknown = false
     mockStore.systemCount = ''
     mockStore.teamSize = ''
     mockStore.cryptoAgility = ''
     mockStore.infrastructure = []
+    mockStore.infrastructureUnknown = false
     mockStore.vendorDependency = ''
+    mockStore.vendorUnknown = false
     mockStore.timelinePressure = ''
   })
 
@@ -145,7 +174,7 @@ describe('AssessWizard', () => {
   })
 
   describe('step indicator', () => {
-    it('renders progress group with 13 step labels', () => {
+    it('renders progress group with 14 step labels', () => {
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByRole('group', { name: 'Assessment progress' })).toBeInTheDocument()
       expect(screen.getByText('Industry')).toBeInTheDocument()
@@ -156,6 +185,7 @@ describe('AssessWizard', () => {
       expect(screen.getByText('Migration')).toBeInTheDocument()
       expect(screen.getByText('Use Cases')).toBeInTheDocument()
       expect(screen.getByText('Retention')).toBeInTheDocument()
+      expect(screen.getByText('Credential')).toBeInTheDocument()
       expect(screen.getByText('Scale')).toBeInTheDocument()
       expect(screen.getByText('Agility')).toBeInTheDocument()
       expect(screen.getByText('Infra')).toBeInTheDocument()
@@ -373,7 +403,7 @@ describe('AssessWizard', () => {
 
   describe('step 13: Timeline Pressure', () => {
     beforeEach(() => {
-      mockStore.currentStep = 12
+      mockStore.currentStep = 13
     })
 
     it('renders timeline pressure options', () => {
@@ -501,7 +531,7 @@ describe('AssessWizard', () => {
 
   describe('step 9: Org Scale', () => {
     beforeEach(() => {
-      mockStore.currentStep = 8
+      mockStore.currentStep = 9
     })
 
     it('renders organization scale options', () => {
@@ -537,7 +567,7 @@ describe('AssessWizard', () => {
 
   describe('step 10: Crypto Agility', () => {
     beforeEach(() => {
-      mockStore.currentStep = 9
+      mockStore.currentStep = 10
     })
 
     it('renders crypto agility options', () => {
@@ -567,7 +597,7 @@ describe('AssessWizard', () => {
 
   describe('step 11: Infrastructure', () => {
     beforeEach(() => {
-      mockStore.currentStep = 10
+      mockStore.currentStep = 11
     })
 
     it('renders infrastructure options', () => {
@@ -589,7 +619,7 @@ describe('AssessWizard', () => {
 
   describe('step 12: Vendor Dependency', () => {
     beforeEach(() => {
-      mockStore.currentStep = 11
+      mockStore.currentStep = 12
     })
 
     it('renders vendor dependency options', () => {
@@ -616,7 +646,7 @@ describe('AssessWizard', () => {
   })
 
   describe('Wizard Full Traversal', () => {
-    it('can traverse from step 0 to step 12 by filling required fields', () => {
+    it('can traverse from step 0 to step 13 by filling required fields', () => {
       // For this test, reset currentStep
       mockStore.currentStep = 0
 
@@ -676,14 +706,22 @@ describe('AssessWizard', () => {
       expect(screen.getByText(/How long must your data stay confidential/)).toBeInTheDocument()
       goNext()
 
-      // 9. Scale
+      // 9. Credential Lifetime
+      mockStore.credentialLifetime = ['1-3y']
+      rerender(<AssessWizard onComplete={onComplete} />)
+      expect(
+        screen.getByText(/How long must your digital signatures.*certificates remain trusted/)
+      ).toBeInTheDocument()
+      goNext()
+
+      // 10. Scale
       mockStore.systemCount = '1-10'
       mockStore.teamSize = '1-10'
       rerender(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByText(/What is your organizational scale/)).toBeInTheDocument()
       goNext()
 
-      // 10. Agility
+      // 11. Agility
       mockStore.cryptoAgility = 'hardcoded'
       rerender(<AssessWizard onComplete={onComplete} />)
       expect(
@@ -691,19 +729,19 @@ describe('AssessWizard', () => {
       ).toBeInTheDocument()
       goNext()
 
-      // 11. Infrastructure
+      // 12. Infrastructure
       mockStore.infrastructure = ['Cloud Storage']
       rerender(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByText(/What infrastructure affects your cryptography/)).toBeInTheDocument()
       goNext()
 
-      // 12. Vendors
+      // 13. Vendors
       mockStore.vendorDependency = 'in-house'
       rerender(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByText(/How do you manage cryptographic dependencies/)).toBeInTheDocument()
       goNext()
 
-      // 13. Timeline
+      // 14. Timeline
       mockStore.timelinePressure = 'no-deadline'
       rerender(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByText(/Do you have a migration deadline/)).toBeInTheDocument()

@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.18.1] - 2026-02-21
+
+### Added
+
+- **Consistent "I don't know" UX across all wizard steps**: Steps 6 (Migration Status), 11 (Crypto
+  Agility), and 14 (Timeline Pressure) now use the same dashed-border escape-hatch button pattern
+  as Step 3. Previously these three steps embedded "Don't Know" as a regular radio option
+  indistinguishable from substantive answers.
+- **Consolidated HNDL / HNFL Risk Windows section in report**: The two separate risk window panels
+  are now unified into a single "Harvest-Now Attack Risk Windows" section with a **Key Milestones**
+  table at the top (Today, Estimated CRQC, Data/Credential expiry dates with at-risk / safe badges)
+  followed by the individual timeline visualizations.
+- **HNDL / HNFL risk windows for "I don't know" users**: When users select "I don't know" on the
+  Data Retention or Credential Lifetime steps, the report now shows risk window visualizations using
+  conservative defaults (15-year retention, 10-year credential lifetime) with "(estimated)" labels
+  and guidance to define policies for a precise assessment. Previously these sections were invisible
+  when the user didn't know their values.
+
+### Changed
+
+- **"I don't know" scoring treats unknowns as high risk**: All "don't know" inputs are now scored
+  conservatively rather than as low/moderate risk:
+  - Crypto agility unknown: 0.7 &rarr; 0.9 (same as hardcoded)
+  - Timeline pressure unknown: 1.1&times; &rarr; 1.2&times; (near-term pressure assumed)
+  - Sensitivity unknown: treated as "high" (was implicitly "low")
+  - Retention unknown: 12pts retention score (was 0)
+  - Infrastructure unknown: 15pts complexity (was 10)
+  - Vendor dependency unknown: treated as heavy-vendor (was mixed)
+
 ## [1.18.0] - 2026-02-21
 
 ### Added

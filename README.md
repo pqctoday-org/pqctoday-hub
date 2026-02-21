@@ -96,9 +96,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Country/Jurisdiction Picker**: select your regulatory jurisdiction to align deadlines with the PQC timeline
   - **Multi-select Sensitivity & Retention**: pick all applicable levels; scoring uses worst-case HNDL risk
   - **Country-aligned Deadlines**: Timeline step surfaces real regulatory deadline phases from the Gantt data
-  - **"I don't know" escape hatches**: Steps 3, 8, and 12 have explicit uncertainty options (required steps) so
-    users without a full inventory can still complete the assessment; Steps 5, 7, and 11 have styled skip/clear
-    buttons (optional steps)
+  - **"I don't know" escape hatches**: All steps with uncertainty options use a consistent dashed-border
+    escape-hatch button pattern; unknowns are scored as worst-case risk (not low/moderate)
   - **Awareness-gap remediation actions**: Answering "I don't know" on any step automatically injects targeted
     recommended actions at the top of the report (e.g. "conduct a cryptographic asset inventory") to help close
     knowledge gaps first
@@ -106,7 +105,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
     framework button for in-context guidance
   - Compound scoring engine with 4 risk dimensions: Quantum Exposure, Migration Complexity, Regulatory Pressure,
     Organizational Readiness — Regulatory Pressure now incorporates country-specific urgency weighting
-  - HNDL Risk Window visualization: data retention vs. quantum threat timeline
+  - **Consolidated HNDL / HNFL Risk Windows**: unified section with Key Milestones table (today, CRQC arrival,
+    data/credential expiry dates with at-risk/safe badges) plus individual timeline visualizations; risk windows
+    render with conservative estimates when users select "I don't know" on retention or credential lifetime steps
   - Per-algorithm migration effort estimation (quick-win to multi-year)
   - **Quick/Comprehensive badge** in report header — clearly identifies the depth of the completed assessment
   - **HNDL warning banner**: quick assessments with high or critical sensitivity display a banner noting that
@@ -270,7 +271,7 @@ The application is structured into several key components:
 - **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
 - **`src/components/PKILearning`**: Educational platform with 14 modules including hybrid crypto, agility, stateful signatures and more.
-- **`src/components/Assess`**: 13-step industry-aware risk assessment wizard with compound scoring engine, HNDL risk analysis, and PDF print support.
+- **`src/components/Assess`**: 13-step industry-aware risk assessment wizard with compound scoring engine, consolidated HNDL/HNFL risk analysis, and PDF print support.
 - **`src/components/Migrate`**: Comprehensive PQC migration planning module with verified software database and workflow guidance.
 - **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.
 - **`src/components/common/GuidedTour.tsx`**: Interactive first-visit onboarding tour.

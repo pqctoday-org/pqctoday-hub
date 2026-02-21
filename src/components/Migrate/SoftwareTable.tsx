@@ -10,6 +10,7 @@ import {
   Info,
   CheckCircle,
 } from 'lucide-react'
+import { LAYERS } from './InfrastructureStack'
 
 interface SoftwareTableProps {
   data: SoftwareItem[]
@@ -47,10 +48,8 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
     if (!sortConfig.direction) return data
 
     return [...data].sort((a, b) => {
-      const aValue = a[sortConfig.key]
-      const bValue = b[sortConfig.key]
-
-      if (aValue === undefined || bValue === undefined) return 0
+      const aValue = a[sortConfig.key] || ''
+      const bValue = b[sortConfig.key] || ''
 
       const aString = String(aValue).toLowerCase()
       const bString = String(bValue).toLowerCase()
@@ -95,6 +94,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
 
   const headers: { key: SortKey; label: string }[] = [
     { key: 'softwareName', label: 'Software' },
+    { key: 'infrastructureLayer', label: 'Layer' },
     { key: 'categoryName', label: 'Category' },
     { key: 'pqcSupport', label: 'PQC Support' },
     { key: 'license', label: 'License' },
@@ -147,23 +147,44 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
                       )}
                     </td>
                     <td className="p-4 font-medium text-foreground">
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-2">
-                          <span>{item.softwareName}</span>
-                          {item.status && (
-                            <span
-                              className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold border ${
-                                item.status === 'New'
-                                  ? 'bg-blue-500/10 text-blue-500 border-blue-500/20'
-                                  : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
-                              }`}
+                      <div className="flex items-center gap-3">
+                        {(() => {
+                          const layer = LAYERS.find((l) => l.id === item.infrastructureLayer)
+                          if (!layer) return null
+                          const Icon = layer.icon
+                          return (
+                            <div
+                              className={`p-1.5 rounded-md bg-muted/20 border ${layer.borderColor} ${layer.iconColor}`}
+                              title={layer.label}
                             >
-                              {item.status}
-                            </span>
-                          )}
+                              <Icon size={16} />
+                            </div>
+                          )
+                        })()}
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <span>{item.softwareName}</span>
+                            {item.status && (
+                              <span
+                                className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold border ${
+                                  item.status === 'New'
+                                    ? 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+                                    : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                                }`}
+                              >
+                                {item.status}
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            {item.latestVersion}
+                          </span>
                         </div>
-                        <span className="text-xs text-muted-foreground">{item.latestVersion}</span>
                       </div>
+                    </td>
+                    <td className="p-4 text-sm text-muted-foreground">
+                      {LAYERS.find((l) => l.id === item.infrastructureLayer)?.label ||
+                        item.infrastructureLayer}
                     </td>
                     <td className="p-4 text-sm text-muted-foreground">{item.categoryName}</td>
                     <td className="p-4 text-sm">{renderPqcSupport(item.pqcSupport)}</td>
@@ -172,7 +193,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
                   </tr>
                   {isExpanded && (
                     <tr className="bg-muted/10 border-b border-border">
-                      <td colSpan={6} className="p-0">
+                      <td colSpan={7} className="p-0">
                         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                           <div>
                             <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">

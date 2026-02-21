@@ -15,12 +15,12 @@ interface InfrastructureStackProps {
   onSelectLayer: (layer: InfrastructureLayerType) => void
 }
 
-const LAYERS = [
+export const LAYERS = [
   {
     id: 'Cloud/Network',
     label: 'Cloud & Network',
     icon: Cloud,
-    description: 'Cloud Gateways, KMS, Network Security, PKI',
+    description: 'Cloud Gateways, KMS, Network Security, PKI, Secrets Management',
     color: 'from-blue-500/20 to-cyan-500/20',
     borderColor: 'border-blue-500/50',
     activeColor: 'bg-blue-500/30 border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)]',
@@ -30,7 +30,7 @@ const LAYERS = [
     id: 'Application',
     label: 'Application Servers & Software',
     icon: Laptop,
-    description: 'TLS, Web Servers, Messaging, Code Signing',
+    description: 'TLS, Web Servers, Messaging, Code Signing, CI/CD, Artifacts',
     color: 'from-purple-500/20 to-pink-500/20',
     borderColor: 'border-purple-500/50',
     activeColor: 'bg-purple-500/30 border-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.5)]',

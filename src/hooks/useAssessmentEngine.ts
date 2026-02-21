@@ -24,6 +24,18 @@ export interface AssessmentInput {
   /** When true, user indicated they don't know their vendor dependency model. */
   vendorUnknown?: boolean
   timelinePressure?: 'within-1y' | 'within-2-3y' | 'internal-deadline' | 'no-deadline' | 'unknown'
+  /** How long signed artifacts / certificates must remain trusted (multi-select, HNFL uses longest). */
+  credentialLifetime?: string[]
+  /** When true, user indicated they don't know their credential lifetime. */
+  credentialLifetimeUnknown?: boolean
+  /** When true, user indicated they don't know their data sensitivity level. */
+  sensitivityUnknown?: boolean
+  /** When true, user indicated they don't know their compliance requirements. */
+  complianceUnknown?: boolean
+  /** When true, user indicated they don't know their crypto use cases. */
+  useCasesUnknown?: boolean
+  /** When true, user indicated they don't know their infrastructure. */
+  infrastructureUnknown?: boolean
 }
 
 export interface AlgorithmMigration {
@@ -63,6 +75,22 @@ export interface HNDLRiskWindow {
   currentYear: number
   isAtRisk: boolean
   riskWindowYears: number
+  /** true when retention period is a conservative default (user selected "I don't know") */
+  isEstimated?: boolean
+}
+
+export interface HNFLRiskWindow {
+  credentialLifetimeYears: number
+  estimatedQuantumThreatYear: number
+  currentYear: number
+  /** true only when signing algorithms are present AND credentials expire past the threat year */
+  isAtRisk: boolean
+  riskWindowYears: number
+  hasSigningAlgorithms: boolean
+  /** Use cases with hnflRelevance >= 7 */
+  hnflRelevantUseCases: string[]
+  /** true when credential lifetime is a conservative default (user selected "I don't know") */
+  isEstimated?: boolean
 }
 
 export interface MigrationEffortItem {
@@ -83,6 +111,7 @@ export interface AssessmentResult {
   // Extended result fields (present only for extended assessments)
   categoryScores?: CategoryScores
   hndlRiskWindow?: HNDLRiskWindow
+  hnflRiskWindow?: HNFLRiskWindow
   migrationEffort?: MigrationEffortItem[]
   executiveSummary?: string
 }
@@ -180,6 +209,16 @@ export const VULNERABLE_ALGORITHMS = new Set(
     .filter(([, info]) => info.quantumVulnerable)
     .map(([name]) => name)
 )
+
+/** Signature algorithms vulnerable to Shor's algorithm (HNFL targets). */
+export const SIGNING_ALGORITHMS = new Set([
+  'RSA-2048',
+  'RSA-4096',
+  'ECDSA P-256',
+  'ECDSA P-384',
+  'Ed25519',
+  'secp256k1',
+])
 
 // Compliance framework data
 const COMPLIANCE_DB: Record<string, { requiresPQC: boolean; deadline: string; notes: string }> = {
@@ -403,40 +442,47 @@ const MIGRATION_STATUS_SCORES: Record<string, number> = {
 
 // ── Extended scoring reference data ──
 
-const USE_CASE_WEIGHTS: Record<string, { hndlRelevance: number; migrationPriority: number }> = {
-  'TLS/HTTPS': { hndlRelevance: 6, migrationPriority: 10 },
-  'Data-at-rest encryption': { hndlRelevance: 9, migrationPriority: 7 },
-  'Digital signatures / code signing': { hndlRelevance: 3, migrationPriority: 8 },
-  'Key exchange / agreement': { hndlRelevance: 8, migrationPriority: 9 },
-  'Authentication / identity': { hndlRelevance: 4, migrationPriority: 7 },
-  'Blockchain / cryptocurrency': { hndlRelevance: 5, migrationPriority: 6 },
-  'Email encryption (S/MIME, PGP)': { hndlRelevance: 7, migrationPriority: 5 },
-  'VPN / IPSec': { hndlRelevance: 7, migrationPriority: 8 },
-  'IoT device communication': { hndlRelevance: 5, migrationPriority: 6 },
-  'Database encryption': { hndlRelevance: 8, migrationPriority: 7 },
+const USE_CASE_WEIGHTS: Record<
+  string,
+  { hndlRelevance: number; migrationPriority: number; hnflRelevance: number }
+> = {
+  'TLS/HTTPS': { hndlRelevance: 6, migrationPriority: 10, hnflRelevance: 5 },
+  'Data-at-rest encryption': { hndlRelevance: 9, migrationPriority: 7, hnflRelevance: 1 },
+  'Digital signatures / code signing': {
+    hndlRelevance: 3,
+    migrationPriority: 8,
+    hnflRelevance: 10,
+  },
+  'Key exchange / agreement': { hndlRelevance: 8, migrationPriority: 9, hnflRelevance: 2 },
+  'Authentication / identity': { hndlRelevance: 4, migrationPriority: 7, hnflRelevance: 7 },
+  'Blockchain / cryptocurrency': { hndlRelevance: 5, migrationPriority: 6, hnflRelevance: 8 },
+  'Email encryption (S/MIME, PGP)': { hndlRelevance: 7, migrationPriority: 5, hnflRelevance: 6 },
+  'VPN / IPSec': { hndlRelevance: 7, migrationPriority: 8, hnflRelevance: 4 },
+  'IoT device communication': { hndlRelevance: 5, migrationPriority: 6, hnflRelevance: 5 },
+  'Database encryption': { hndlRelevance: 8, migrationPriority: 7, hnflRelevance: 1 },
   // ── Industry-specific use cases (from pqcassessment CSV) ──
-  'SIM/eSIM provisioning': { hndlRelevance: 8, migrationPriority: 9 },
-  '5G network slicing security': { hndlRelevance: 7, migrationPriority: 8 },
-  'SS7/Diameter protocol security': { hndlRelevance: 6, migrationPriority: 8 },
-  'SWIFT messaging integrity': { hndlRelevance: 9, migrationPriority: 9 },
-  'Trading system code signing': { hndlRelevance: 5, migrationPriority: 8 },
-  'Card payment encryption': { hndlRelevance: 6, migrationPriority: 7 },
-  'Medical device communication': { hndlRelevance: 8, migrationPriority: 9 },
-  'EHR/FHIR data exchange': { hndlRelevance: 9, migrationPriority: 8 },
-  'V2X communication': { hndlRelevance: 7, migrationPriority: 9 },
-  'OTA firmware updates': { hndlRelevance: 5, migrationPriority: 9 },
-  'ECU secure boot': { hndlRelevance: 4, migrationPriority: 8 },
-  'SCADA/OT system security': { hndlRelevance: 8, migrationPriority: 9 },
-  'Smart meter communication': { hndlRelevance: 7, migrationPriority: 7 },
-  'Avionics communication': { hndlRelevance: 8, migrationPriority: 10 },
-  'Satellite link encryption': { hndlRelevance: 10, migrationPriority: 9 },
-  'PKI / HSPD-12': { hndlRelevance: 6, migrationPriority: 9 },
-  'Classified data exchange': { hndlRelevance: 10, migrationPriority: 10 },
-  'DNS/DNSSEC': { hndlRelevance: 3, migrationPriority: 8 },
-  'Timestamping services': { hndlRelevance: 9, migrationPriority: 7 },
-  'Backup/archive encryption': { hndlRelevance: 9, migrationPriority: 6 },
-  'API gateway / microservices': { hndlRelevance: 5, migrationPriority: 8 },
-  'Secure boot (non-automotive)': { hndlRelevance: 4, migrationPriority: 8 },
+  'SIM/eSIM provisioning': { hndlRelevance: 8, migrationPriority: 9, hnflRelevance: 4 },
+  '5G network slicing security': { hndlRelevance: 7, migrationPriority: 8, hnflRelevance: 4 },
+  'SS7/Diameter protocol security': { hndlRelevance: 6, migrationPriority: 8, hnflRelevance: 3 },
+  'SWIFT messaging integrity': { hndlRelevance: 9, migrationPriority: 9, hnflRelevance: 8 },
+  'Trading system code signing': { hndlRelevance: 5, migrationPriority: 8, hnflRelevance: 9 },
+  'Card payment encryption': { hndlRelevance: 6, migrationPriority: 7, hnflRelevance: 2 },
+  'Medical device communication': { hndlRelevance: 8, migrationPriority: 9, hnflRelevance: 4 },
+  'EHR/FHIR data exchange': { hndlRelevance: 9, migrationPriority: 8, hnflRelevance: 3 },
+  'V2X communication': { hndlRelevance: 7, migrationPriority: 9, hnflRelevance: 6 },
+  'OTA firmware updates': { hndlRelevance: 5, migrationPriority: 9, hnflRelevance: 9 },
+  'ECU secure boot': { hndlRelevance: 4, migrationPriority: 8, hnflRelevance: 9 },
+  'SCADA/OT system security': { hndlRelevance: 8, migrationPriority: 9, hnflRelevance: 5 },
+  'Smart meter communication': { hndlRelevance: 7, migrationPriority: 7, hnflRelevance: 4 },
+  'Avionics communication': { hndlRelevance: 8, migrationPriority: 10, hnflRelevance: 7 },
+  'Satellite link encryption': { hndlRelevance: 10, migrationPriority: 9, hnflRelevance: 4 },
+  'PKI / HSPD-12': { hndlRelevance: 6, migrationPriority: 9, hnflRelevance: 10 },
+  'Classified data exchange': { hndlRelevance: 10, migrationPriority: 10, hnflRelevance: 7 },
+  'DNS/DNSSEC': { hndlRelevance: 3, migrationPriority: 8, hnflRelevance: 9 },
+  'Timestamping services': { hndlRelevance: 9, migrationPriority: 7, hnflRelevance: 9 },
+  'Backup/archive encryption': { hndlRelevance: 9, migrationPriority: 6, hnflRelevance: 1 },
+  'API gateway / microservices': { hndlRelevance: 5, migrationPriority: 8, hnflRelevance: 5 },
+  'Secure boot (non-automotive)': { hndlRelevance: 4, migrationPriority: 8, hnflRelevance: 9 },
 }
 
 const DATA_RETENTION_YEARS: Record<string, number> = {
@@ -454,11 +500,21 @@ const DATA_RETENTION_YEARS: Record<string, number> = {
   permanent: 100,
 }
 
+/** Credential / signature lifetime → years (parallel to DATA_RETENTION_YEARS for HNFL). */
+const CREDENTIAL_LIFETIME_YEARS: Record<string, number> = {
+  'under-1y': 1,
+  '1-3y': 3,
+  '3-10y': 10,
+  '10-25y': 25,
+  '25-plus': 30,
+  indefinite: 100,
+}
+
 const AGILITY_COMPLEXITY: Record<string, number> = {
   'fully-abstracted': 0.2,
   'partially-abstracted': 0.5,
   hardcoded: 0.9,
-  unknown: 0.7,
+  unknown: 0.9, // not knowing is worst-case — assume hardcoded
 }
 
 const INFRA_COMPLEXITY: Record<string, number> = {
@@ -497,7 +553,7 @@ const TIMELINE_URGENCY: Record<string, number> = {
   'within-2-3y': 1.15,
   'internal-deadline': 1.05,
   'no-deadline': 1.0,
-  unknown: 1.1,
+  unknown: 1.2, // not knowing is worse than no deadline — assume near-term pressure
 }
 
 /** Country-specific regulatory urgency scores (0-12) for risk scoring. */
@@ -592,7 +648,10 @@ function computeQuantumExposure(input: AssessmentInput, vulnerableCount: number)
 
   // Data retention amplifier (0-20)
   let retentionScore = 0
-  if (input.dataRetention?.length) {
+  if (input.retentionUnknown) {
+    // Not knowing retention is worst-case — assume 15-year retention (~12 pts)
+    retentionScore = 12
+  } else if (input.dataRetention?.length) {
     const years = getMaxRetentionYears(input.dataRetention)
     retentionScore = Math.min(20, years * 0.8)
   } else {
@@ -603,9 +662,13 @@ function computeQuantumExposure(input: AssessmentInput, vulnerableCount: number)
 
   // Data sensitivity modifier (0-15). Caps at 15 (= 25 * 0.6) — sensitivity is a modifier,
   // not a primary driver; algorithm exposure and data retention dominate quantum exposure.
+  // Not knowing sensitivity → treat as 'high' (conservative worst-case)
+  const effectiveSensitivity = input.sensitivityUnknown
+    ? 'high'
+    : getMaxSensitivity(input.dataSensitivity)
   const sensitivityScore = Math.min(
     15,
-    (DATA_SENSITIVITY_SCORES[getMaxSensitivity(input.dataSensitivity)] ?? 0) * 0.6
+    (DATA_SENSITIVITY_SCORES[effectiveSensitivity] ?? 0) * 0.6 // eslint-disable-line security/detect-object-injection
   )
 
   return Math.max(
@@ -622,7 +685,9 @@ function computeMigrationComplexity(input: AssessmentInput): number {
 
   // Infrastructure complexity (0-30)
   let infraScore = 0
-  if (input.infrastructure?.length) {
+  if (input.infrastructureUnknown) {
+    infraScore = 15 // not knowing infrastructure is worse than the moderate default
+  } else if (input.infrastructure?.length) {
     const totalInfra = input.infrastructure.reduce((sum, item) => {
       // eslint-disable-next-line security/detect-object-injection
       return sum + (INFRA_COMPLEXITY[item] ?? 5)
@@ -638,11 +703,11 @@ function computeMigrationComplexity(input: AssessmentInput): number {
   const scaleScore = Math.min(15, scale * 7.5)
 
   // Vendor dependency (0-15)
-
-  const vendorScore = Math.min(
-    15,
-    (VENDOR_DEPENDENCY_WEIGHT[input.vendorDependency ?? 'mixed'] ?? 10) * 0.75
-  )
+  // Not knowing vendor dependency → treat as heavy-vendor (worst case)
+  const effectiveVendorWeight = input.vendorUnknown
+    ? VENDOR_DEPENDENCY_WEIGHT['heavy-vendor']
+    : (VENDOR_DEPENDENCY_WEIGHT[input.vendorDependency ?? 'mixed'] ?? 10)
+  const vendorScore = Math.min(15, effectiveVendorWeight * 0.75)
 
   return Math.max(
     0,
@@ -701,8 +766,10 @@ function computeOrganizationalReadiness(input: AssessmentInput): number {
   const readinessAgilityScore = Math.round(agilityFactor * 20)
 
   // Vendor dependency (heavy vendor = less control) (0-15)
-
-  const vendorWeight = VENDOR_DEPENDENCY_WEIGHT[input.vendorDependency ?? 'mixed'] ?? 10
+  // Not knowing vendor dependency → treat as heavy-vendor (worst case)
+  const vendorWeight = input.vendorUnknown
+    ? VENDOR_DEPENDENCY_WEIGHT['heavy-vendor']
+    : (VENDOR_DEPENDENCY_WEIGHT[input.vendorDependency ?? 'mixed'] ?? 10)
   const vendorReadiness = Math.min(15, Math.round(vendorWeight * 0.75))
 
   return Math.max(
@@ -728,6 +795,17 @@ function computeCompositeScore(categoryScores: CategoryScores, input: Assessment
     composite *= 1.15
   }
 
+  // HNFL multiplier: signing algos + long credential lifetime + migration not started
+  const hasSigningAlgos = (input.currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a))
+  if (
+    hasSigningAlgos &&
+    input.credentialLifetime?.length &&
+    Math.max(...input.credentialLifetime.map((v) => CREDENTIAL_LIFETIME_YEARS[v] ?? 0)) > 10 && // eslint-disable-line security/detect-object-injection
+    input.migrationStatus !== 'started'
+  ) {
+    composite *= 1.1
+  }
+
   // Compliance urgency: Government + CNSA 2.0 + no migration
   if (
     input.industry === 'Government & Defense' &&
@@ -749,11 +827,13 @@ function computeCompositeScore(categoryScores: CategoryScores, input: Assessment
 }
 
 function computeHNDLRiskWindow(input: AssessmentInput): HNDLRiskWindow | undefined {
-  if (!input.dataRetention?.length) return undefined
+  const isEstimated = !!input.retentionUnknown
+  if (!input.dataRetention?.length && !isEstimated) return undefined
 
   const currentYear = new Date().getFullYear()
 
-  const retentionYears = getMaxRetentionYears(input.dataRetention)
+  // Conservative default: 15 years when user doesn't know retention period
+  const retentionYears = isEstimated ? 15 : getMaxRetentionYears(input.dataRetention)
   const dataExpirationYear = currentYear + retentionYears
   const riskWindowYears = dataExpirationYear - ESTIMATED_QUANTUM_THREAT_YEAR
 
@@ -763,6 +843,41 @@ function computeHNDLRiskWindow(input: AssessmentInput): HNDLRiskWindow | undefin
     currentYear,
     isAtRisk: riskWindowYears > 0,
     riskWindowYears: Math.max(0, riskWindowYears),
+    isEstimated,
+  }
+}
+
+function computeHNFLRiskWindow(input: AssessmentInput): HNFLRiskWindow | undefined {
+  const isEstimated = !!input.credentialLifetimeUnknown
+  if (!input.credentialLifetime?.length && !isEstimated) return undefined
+
+  const currentYear = new Date().getFullYear()
+  const hasSigningAlgorithms =
+    (input.currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a)) ||
+    !!input.currentCryptoUnknown // conservative: treat unknown as potentially signing
+
+  // Conservative default: 10 years when user doesn't know credential lifetimes
+  const lifetimeYears = isEstimated
+    ? 10
+    : Math.max(
+        ...input.credentialLifetime!.map((v) => CREDENTIAL_LIFETIME_YEARS[v] ?? 0) // eslint-disable-line security/detect-object-injection
+      )
+  const credentialExpiryYear = currentYear + lifetimeYears
+  const riskWindowYears = credentialExpiryYear - ESTIMATED_QUANTUM_THREAT_YEAR
+
+  const hnflRelevantUseCases = (input.cryptoUseCases ?? []).filter(
+    (uc) => (USE_CASE_WEIGHTS[uc]?.hnflRelevance ?? 0) >= 7 // eslint-disable-line security/detect-object-injection
+  )
+
+  return {
+    credentialLifetimeYears: lifetimeYears,
+    estimatedQuantumThreatYear: ESTIMATED_QUANTUM_THREAT_YEAR,
+    currentYear,
+    isAtRisk: riskWindowYears > 0 && hasSigningAlgorithms,
+    riskWindowYears: Math.max(0, riskWindowYears),
+    hasSigningAlgorithms,
+    hnflRelevantUseCases,
+    isEstimated,
   }
 }
 
@@ -848,6 +963,17 @@ function generateExtendedActions(
     })
   }
 
+  if (input.sensitivityUnknown) {
+    actions.push({
+      priority: priority++,
+      action:
+        'Conduct a data classification exercise to identify the sensitivity levels of data protected by cryptography — this determines Harvest-Now-Decrypt-Later exposure and appropriate encryption requirements.',
+      category: 'immediate',
+      relatedModule: '/threats',
+      effort: 'medium',
+    })
+  }
+
   if (input.retentionUnknown) {
     actions.push({
       priority: priority++,
@@ -870,7 +996,19 @@ function generateExtendedActions(
     })
   }
 
-  if (input.complianceRequirements.length === 0) {
+  if (input.credentialLifetimeUnknown) {
+    actions.push({
+      priority: priority++,
+      action:
+        'Audit the validity periods of all certificates, signed firmware, and digital credentials to quantify Harvest-Now-Forge-Later exposure.',
+      category: 'short-term',
+      relatedModule: '/migrate',
+      effort: 'medium',
+    })
+  }
+
+  // Only fire compliance awareness action when user explicitly said "I don't know" (not "none apply")
+  if (input.complianceUnknown) {
     actions.push({
       priority: priority++,
       action:
@@ -881,7 +1019,8 @@ function generateExtendedActions(
     })
   }
 
-  if (!input.cryptoUseCases?.length) {
+  // Only fire use-case awareness action when user explicitly said "I don't know" (not "none apply")
+  if (input.useCasesUnknown) {
     actions.push({
       priority: priority++,
       action:
@@ -892,7 +1031,8 @@ function generateExtendedActions(
     })
   }
 
-  if (!input.infrastructure?.length) {
+  // Only fire infrastructure awareness action when user explicitly said "I don't know" (not "none apply")
+  if (input.infrastructureUnknown) {
     actions.push({
       priority: priority++,
       action:
@@ -985,6 +1125,29 @@ function generateExtendedActions(
     })
   }
 
+  // HNFL actions — signing algorithms + long-lived credentials at risk
+  const hnfl = computeHNFLRiskWindow(input)
+  if ((input.currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a)) && hnfl?.isAtRisk) {
+    if (hnfl.hnflRelevantUseCases.some((uc) => uc.includes('PKI') || uc.includes('code signing'))) {
+      actions.push({
+        priority: priority++,
+        action:
+          'Audit Root CA and sub-CA certificate lifetimes — certificates issued today may be cryptographically broken before they expire. Plan CA key ceremonies using ML-DSA or SLH-DSA.',
+        category: 'immediate',
+        relatedModule: '/migrate',
+        effort: 'high',
+      })
+    }
+    actions.push({
+      priority: priority++,
+      action:
+        'Migrate signature algorithms (RSA, ECDSA, Ed25519) to ML-DSA or SLH-DSA. Long-lived signed artifacts and credentials are vulnerable to Harvest-Now-Forge-Later attacks.',
+      category: 'immediate',
+      relatedModule: '/migrate',
+      effort: 'high',
+    })
+  }
+
   // HSM-specific action
   if (input.infrastructure?.some((i) => i.includes('HSM'))) {
     actions.push({
@@ -1069,6 +1232,7 @@ function generateExecutiveSummary(
   vulnerableCount: number,
   migrationEffort: MigrationEffortItem[],
   hndl: HNDLRiskWindow | undefined,
+  hnfl: HNFLRiskWindow | undefined,
   pqcFrameworkCount: number
 ): string {
   const parts: string[] = []
@@ -1098,6 +1262,12 @@ function generateExecutiveSummary(
   if (hndl?.isAtRisk) {
     parts.push(
       `Data persists ${hndl.riskWindowYears} year${hndl.riskWindowYears !== 1 ? 's' : ''} beyond the estimated quantum threat horizon, making HNDL attacks an active concern.`
+    )
+  }
+
+  if (hnfl?.isAtRisk) {
+    parts.push(
+      `Credential lifetimes extend ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} beyond the quantum threat horizon — Harvest-Now-Forge-Later attacks on signature keys are an active concern.`
     )
   }
 
@@ -1213,10 +1383,14 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
   // Determine if this is an extended assessment
   const hasExtendedInput = !!(
     input.cryptoUseCases?.length ||
+    input.useCasesUnknown ||
     input.dataRetention?.length ||
     input.retentionUnknown ||
+    input.credentialLifetime?.length ||
+    input.credentialLifetimeUnknown ||
     input.cryptoAgility ||
     input.infrastructure?.length ||
+    input.infrastructureUnknown ||
     input.systemCount ||
     input.teamSize ||
     input.vendorDependency ||
@@ -1227,6 +1401,7 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
   let riskScore: number
   let categoryScores: CategoryScores | undefined
   let hndlRiskWindow: HNDLRiskWindow | undefined
+  let hnflRiskWindow: HNFLRiskWindow | undefined
   let migrationEffort: MigrationEffortItem[] | undefined
   let recommendedActions: RecommendedAction[]
   let executiveSummary: string | undefined
@@ -1247,6 +1422,7 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
 
     riskScore = computeCompositeScore(categoryScores, input)
     hndlRiskWindow = computeHNDLRiskWindow(input)
+    hnflRiskWindow = computeHNFLRiskWindow(input)
     migrationEffort = computeMigrationEffort(input)
     recommendedActions = generateExtendedActions(
       input,
@@ -1269,7 +1445,11 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
       })
     }
 
-    score += DATA_SENSITIVITY_SCORES[getMaxSensitivity(input.dataSensitivity)] ?? 0
+    // Not knowing sensitivity → treat as 'high' (conservative worst-case)
+    const legacySensitivity = input.sensitivityUnknown
+      ? 'high'
+      : getMaxSensitivity(input.dataSensitivity)
+    score += DATA_SENSITIVITY_SCORES[legacySensitivity] ?? 0 // eslint-disable-line security/detect-object-injection
 
     complianceImpacts.forEach((ci) => {
       if (ci.requiresPQC) score += 8
@@ -1298,7 +1478,18 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
       })
     }
 
-    if (input.complianceRequirements.length === 0) {
+    if (input.sensitivityUnknown) {
+      recommendedActions.push({
+        priority: priority++,
+        action:
+          'Conduct a data classification exercise to identify the sensitivity levels of data protected by cryptography — this determines Harvest-Now-Decrypt-Later exposure and appropriate encryption requirements.',
+        category: 'immediate',
+        effort: 'medium' as const,
+        relatedModule: '/threats',
+      })
+    }
+
+    if (input.complianceUnknown) {
       recommendedActions.push({
         priority: priority++,
         action:
@@ -1380,6 +1571,7 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
       vulnerableCount,
       migrationEffort!,
       hndlRiskWindow,
+      hnflRiskWindow,
       pqcCompliance.length
     )
   } else {
@@ -1402,6 +1594,7 @@ function computeAssessment(input: AssessmentInput): AssessmentResult {
     generatedAt: new Date().toISOString(),
     categoryScores,
     hndlRiskWindow,
+    hnflRiskWindow,
     migrationEffort,
     executiveSummary,
   }
@@ -1491,6 +1684,14 @@ export const AVAILABLE_DATA_RETENTION: string[] = [
   'under-1y',
   '1-5y',
   '5-10y',
+  '10-25y',
+  '25-plus',
+  'indefinite',
+]
+export const AVAILABLE_CREDENTIAL_LIFETIME: string[] = [
+  'under-1y',
+  '1-3y',
+  '3-10y',
   '10-25y',
   '25-plus',
   'indefinite',

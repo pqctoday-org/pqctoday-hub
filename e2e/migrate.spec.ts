@@ -6,7 +6,7 @@ test.describe('Migrate Module', () => {
   })
 
   test('should load the migrate page and display software table', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'PQC Software Migration Guide' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'PQC Migration Guide' })).toBeVisible()
     await expect(page.getByRole('table')).toBeVisible()
   })
 

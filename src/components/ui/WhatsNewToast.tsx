@@ -78,26 +78,28 @@ export const WhatsNewToast = () => {
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
                     <strong className="text-foreground">
-                      &ldquo;I don&apos;t know&rdquo; wizard options
+                      Consistent &ldquo;I don&apos;t know&rdquo; UX
                     </strong>{' '}
-                    &mdash; six assessment steps now have explicit uncertainty escape hatches so you
-                    can complete the assessment even without a full cryptographic inventory
+                    &mdash; all wizard steps now use the same escape-hatch button pattern; unknowns
+                    scored as worst-case risk
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Awareness-gap actions in report</strong>{' '}
-                    &mdash; when you answer &ldquo;I don&apos;t know&rdquo;, the report surfaces
-                    targeted remediation actions to close those knowledge gaps first
+                    <strong className="text-foreground">
+                      Consolidated HNDL / HNFL risk windows
+                    </strong>{' '}
+                    &mdash; unified section with key milestones table showing your data and
+                    credential expiry dates against the quantum threat horizon
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Smarter scoring</strong> &mdash; country
-                    regulatory urgency now affects your score; risk thresholds and HNDL visibility
-                    for quick assessments improved
+                    <strong className="text-foreground">Risk windows for unknowns</strong> &mdash;
+                    selecting &ldquo;I don&apos;t know&rdquo; on retention or credential steps now
+                    shows HNDL/HNFL visualizations with conservative estimates
                   </span>
                 </li>
               </ul>

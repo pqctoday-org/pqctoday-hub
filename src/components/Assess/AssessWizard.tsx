@@ -8,6 +8,7 @@ import {
   AVAILABLE_COMPLIANCE,
   AVAILABLE_USE_CASES,
   AVAILABLE_INFRASTRUCTURE,
+  AVAILABLE_CREDENTIAL_LIFETIME,
   VULNERABLE_ALGORITHMS,
   COMPLIANCE_DESCRIPTIONS,
 } from '../../hooks/useAssessmentEngine'
@@ -36,6 +37,7 @@ const STEP_TITLES_FULL = [
   'Migration',
   'Use Cases',
   'Retention',
+  'Credential',
   'Scale',
   'Agility',
   'Infra',
@@ -300,7 +302,13 @@ const SENSITIVITY_BADGE_STYLES: Record<string, { text: string; bg: string; label
 }
 
 const Step4Sensitivity = () => {
-  const { dataSensitivity, toggleDataSensitivity, industry } = useAssessmentStore()
+  const {
+    dataSensitivity,
+    toggleDataSensitivity,
+    sensitivityUnknown,
+    setSensitivityUnknown,
+    industry,
+  } = useAssessmentStore()
 
   const industrySensitivities = useMemo(
     () => getIndustryConfigs(industrySensitivityConfigs, industry),
@@ -354,82 +362,105 @@ const Step4Sensitivity = () => {
         </div>
       </div>
 
-      {/* ── Industry-specific data types ── */}
-      {industrySensitivities.length > 0 && (
-        <>
-          <div className="glass-panel p-3 border-l-4 border-l-primary">
-            <div className="flex items-center gap-2">
-              <Info size={14} className="text-primary shrink-0" />
-              <p className="text-xs text-muted-foreground">
-                Showing data types common in the{' '}
-                <strong className="text-foreground">{industry}</strong> sector.
-              </p>
-            </div>
-          </div>
-          <div className="space-y-3" role="group" aria-label={`${industry} data sensitivity types`}>
-            {industrySensitivities.map((item) => {
-              const level = SENSITIVITY_SCORE_TO_LEVEL[item.sensitivityScore] ?? 'medium'
-              // eslint-disable-next-line security/detect-object-injection
-              const badge = SENSITIVITY_BADGE_STYLES[level]
-              const isSelected = dataSensitivity.includes(level)
-              return (
-                <button
-                  key={item.id}
-                  aria-pressed={isSelected}
-                  onClick={() => toggleDataSensitivity(level)}
-                  className={clsx(
-                    'w-full p-4 rounded-lg border text-left transition-colors',
-                    isSelected
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border text-muted-foreground hover:border-primary/30'
-                  )}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-bold text-sm">{item.label}</span>
-                    {badge && (
-                      <span
-                        className={clsx(
-                          'text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0',
-                          badge.text,
-                          badge.bg
-                        )}
-                      >
-                        {badge.label}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs mt-1 opacity-80">{item.description}</p>
-                </button>
-              )
-            })}
-          </div>
-        </>
-      )}
-
-      {/* ── Universal sensitivity levels ── */}
-      <div className={clsx(industrySensitivities.length > 0 && 'border-t border-border pt-3 mt-2')}>
-        {industrySensitivities.length > 0 && (
-          <p className="text-xs text-muted-foreground font-medium mb-2">
-            General sensitivity levels
-          </p>
+      {/* ── "I don't know" escape hatch ── */}
+      <button
+        aria-pressed={sensitivityUnknown}
+        onClick={() => setSensitivityUnknown(!sensitivityUnknown)}
+        className={clsx(
+          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          sensitivityUnknown
+            ? 'border-muted-foreground bg-muted/20 text-foreground'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
         )}
-        <div className="space-y-3" role="group" aria-label="Data sensitivity levels">
-          {universalLevels.map((level) => (
-            <button
-              key={level.value}
-              aria-pressed={dataSensitivity.includes(level.value)}
-              onClick={() => toggleDataSensitivity(level.value)}
-              className={clsx(
-                'w-full p-4 rounded-lg border text-left transition-colors',
-                dataSensitivity.includes(level.value)
-                  ? level.color
-                  : 'border-border text-muted-foreground hover:border-primary/30'
-              )}
+      >
+        <Info size={14} className="shrink-0" />I don&apos;t know / Not sure about our data
+        sensitivity
+      </button>
+
+      <div className={clsx('space-y-4', sensitivityUnknown && 'opacity-40 pointer-events-none')}>
+        {/* ── Industry-specific data types ── */}
+        {industrySensitivities.length > 0 && (
+          <>
+            <div className="glass-panel p-3 border-l-4 border-l-primary">
+              <div className="flex items-center gap-2">
+                <Info size={14} className="text-primary shrink-0" />
+                <p className="text-xs text-muted-foreground">
+                  Showing data types common in the{' '}
+                  <strong className="text-foreground">{industry}</strong> sector.
+                </p>
+              </div>
+            </div>
+            <div
+              className="space-y-3"
+              role="group"
+              aria-label={`${industry} data sensitivity types`}
             >
-              <span className="font-bold text-sm">{level.label}</span>
-              <p className="text-xs mt-1 opacity-80">{level.description}</p>
-            </button>
-          ))}
+              {industrySensitivities.map((item) => {
+                const level = SENSITIVITY_SCORE_TO_LEVEL[item.sensitivityScore] ?? 'medium'
+                // eslint-disable-next-line security/detect-object-injection
+                const badge = SENSITIVITY_BADGE_STYLES[level]
+                const isSelected = dataSensitivity.includes(level)
+                return (
+                  <button
+                    key={item.id}
+                    aria-pressed={isSelected}
+                    onClick={() => toggleDataSensitivity(level)}
+                    className={clsx(
+                      'w-full p-4 rounded-lg border text-left transition-colors',
+                      isSelected
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:border-primary/30'
+                    )}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-bold text-sm">{item.label}</span>
+                      {badge && (
+                        <span
+                          className={clsx(
+                            'text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0',
+                            badge.text,
+                            badge.bg
+                          )}
+                        >
+                          {badge.label}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs mt-1 opacity-80">{item.description}</p>
+                  </button>
+                )
+              })}
+            </div>
+          </>
+        )}
+
+        {/* ── Universal sensitivity levels ── */}
+        <div
+          className={clsx(industrySensitivities.length > 0 && 'border-t border-border pt-3 mt-2')}
+        >
+          {industrySensitivities.length > 0 && (
+            <p className="text-xs text-muted-foreground font-medium mb-2">
+              General sensitivity levels
+            </p>
+          )}
+          <div className="space-y-3" role="group" aria-label="Data sensitivity levels">
+            {universalLevels.map((level) => (
+              <button
+                key={level.value}
+                aria-pressed={dataSensitivity.includes(level.value)}
+                onClick={() => toggleDataSensitivity(level.value)}
+                className={clsx(
+                  'w-full p-4 rounded-lg border text-left transition-colors',
+                  dataSensitivity.includes(level.value)
+                    ? level.color
+                    : 'border-border text-muted-foreground hover:border-primary/30'
+                )}
+              >
+                <span className="font-bold text-sm">{level.label}</span>
+                <p className="text-xs mt-1 opacity-80">{level.description}</p>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -437,7 +468,13 @@ const Step4Sensitivity = () => {
 }
 
 const Step5Compliance = () => {
-  const { complianceRequirements, toggleCompliance, industry } = useAssessmentStore()
+  const {
+    complianceRequirements,
+    toggleCompliance,
+    complianceUnknown,
+    setComplianceUnknown,
+    industry,
+  } = useAssessmentStore()
   const country = useAssessmentStore((s) => s.country)
 
   // Build set of labels that match the selected country
@@ -497,103 +534,112 @@ const Step5Compliance = () => {
         identify PQC-related obligations.
       </p>
 
-      {/* None apply escape hatch */}
+      {/* None apply / I don't know — Step 3 model (toggleable, dismissable, dims content) */}
       <button
-        onClick={() => complianceRequirements.forEach((fw) => toggleCompliance(fw))}
-        className="w-full p-3 rounded-lg border border-dashed border-muted-foreground/40 text-left text-sm font-medium text-muted-foreground transition-colors flex items-center gap-2 hover:border-muted-foreground/60 hover:text-foreground"
+        aria-pressed={complianceUnknown}
+        onClick={() => setComplianceUnknown(!complianceUnknown)}
+        className={clsx(
+          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          complianceUnknown
+            ? 'border-muted-foreground bg-muted/20 text-foreground'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+        )}
       >
         <Info size={14} className="shrink-0" />
-        None apply / I don&apos;t know — clear all selections
+        None apply / I don&apos;t know
       </button>
 
-      {industryFrameworks.length > 0 && (
-        <>
-          <div className="glass-panel p-3 border-l-4 border-l-primary">
-            <div className="flex items-center gap-2">
-              <Info size={14} className="text-primary shrink-0" />
-              <p className="text-xs text-muted-foreground">
-                Showing frameworks commonly required in the{' '}
-                <strong className="text-foreground">{industry}</strong> sector
-                {country && country !== 'Global' && (
-                  <>
-                    {' '}
-                    in <strong className="text-foreground">{country}</strong>
-                  </>
-                )}
-                .
-              </p>
+      <div className={clsx('space-y-4', complianceUnknown && 'opacity-40 pointer-events-none')}>
+        {industryFrameworks.length > 0 && (
+          <>
+            <div className="glass-panel p-3 border-l-4 border-l-primary">
+              <div className="flex items-center gap-2">
+                <Info size={14} className="text-primary shrink-0" />
+                <p className="text-xs text-muted-foreground">
+                  Showing frameworks commonly required in the{' '}
+                  <strong className="text-foreground">{industry}</strong> sector
+                  {country && country !== 'Global' && (
+                    <>
+                      {' '}
+                      in <strong className="text-foreground">{country}</strong>
+                    </>
+                  )}
+                  .
+                </p>
+              </div>
+            </div>
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 gap-2"
+              role="group"
+              aria-label={`${industry} compliance frameworks`}
+            >
+              {industryFrameworks.map((fw) => (
+                <button
+                  key={fw.id}
+                  aria-pressed={complianceRequirements.includes(fw.label)}
+                  onClick={() => toggleCompliance(fw.label)}
+                  className={clsx(
+                    'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                    complianceRequirements.includes(fw.label)
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                  )}
+                >
+                  <span>{fw.label}</span>
+                  {fw.description && (
+                    <p className="text-xs mt-1 opacity-80 font-normal leading-snug">
+                      {fw.description}
+                    </p>
+                  )}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {universalFrameworks.length > 0 && (
+          <div
+            className={clsx(industryFrameworks.length > 0 && 'border-t border-border pt-3 mt-2')}
+          >
+            {industryFrameworks.length > 0 && (
+              <p className="text-xs text-muted-foreground font-medium mb-2">Universal frameworks</p>
+            )}
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 gap-2"
+              role="group"
+              aria-label="Universal compliance frameworks"
+            >
+              {universalFrameworks.map((fw) => (
+                <button
+                  key={fw}
+                  aria-pressed={complianceRequirements.includes(fw)}
+                  onClick={() => toggleCompliance(fw)}
+                  className={clsx(
+                    'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                    complianceRequirements.includes(fw)
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                  )}
+                >
+                  <span>{fw}</span>
+                  {/* eslint-disable-next-line security/detect-object-injection */}
+                  {COMPLIANCE_DESCRIPTIONS[fw] && (
+                    <p className="text-xs mt-1 opacity-80 font-normal leading-snug">
+                      {/* eslint-disable-next-line security/detect-object-injection */}
+                      {COMPLIANCE_DESCRIPTIONS[fw].notes}
+                    </p>
+                  )}
+                </button>
+              ))}
             </div>
           </div>
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 gap-2"
-            role="group"
-            aria-label={`${industry} compliance frameworks`}
-          >
-            {industryFrameworks.map((fw) => (
-              <button
-                key={fw.id}
-                aria-pressed={complianceRequirements.includes(fw.label)}
-                onClick={() => toggleCompliance(fw.label)}
-                className={clsx(
-                  'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
-                  complianceRequirements.includes(fw.label)
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                )}
-              >
-                <span>{fw.label}</span>
-                {fw.description && (
-                  <p className="text-xs mt-1 opacity-80 font-normal leading-snug">
-                    {fw.description}
-                  </p>
-                )}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
+        )}
 
-      {universalFrameworks.length > 0 && (
-        <div className={clsx(industryFrameworks.length > 0 && 'border-t border-border pt-3 mt-2')}>
-          {industryFrameworks.length > 0 && (
-            <p className="text-xs text-muted-foreground font-medium mb-2">Universal frameworks</p>
-          )}
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 gap-2"
-            role="group"
-            aria-label="Universal compliance frameworks"
-          >
-            {universalFrameworks.map((fw) => (
-              <button
-                key={fw}
-                aria-pressed={complianceRequirements.includes(fw)}
-                onClick={() => toggleCompliance(fw)}
-                className={clsx(
-                  'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
-                  complianceRequirements.includes(fw)
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                )}
-              >
-                {}
-                <span>{fw}</span>
-                {/* eslint-disable-next-line security/detect-object-injection */}
-                {COMPLIANCE_DESCRIPTIONS[fw] && (
-                  <p className="text-xs mt-1 opacity-80 font-normal leading-snug">
-                    {/* eslint-disable-next-line security/detect-object-injection */}
-                    {COMPLIANCE_DESCRIPTIONS[fw].notes}
-                  </p>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <p className="text-xs text-muted-foreground">
-        Don&apos;t see your framework? Skip this step — it won&apos;t affect your risk score
-        significantly.
-      </p>
+        <p className="text-xs text-muted-foreground">
+          Don&apos;t see your framework? Skip this step — it won&apos;t affect your risk score
+          significantly.
+        </p>
+      </div>
     </div>
   )
 }
@@ -616,11 +662,6 @@ const Step6Migration = () => {
       value: 'not-started' as const,
       label: 'Not Started',
       description: 'We have not begun any PQC migration activities.',
-    },
-    {
-      value: 'unknown' as const,
-      label: "Don't Know",
-      description: "We're unsure about our current PQC migration status.",
     },
   ]
 
@@ -651,12 +692,27 @@ const Step6Migration = () => {
           </button>
         ))}
       </div>
+      {/* I don't know escape hatch */}
+      <button
+        aria-pressed={migrationStatus === 'unknown'}
+        onClick={() => setMigrationStatus('unknown')}
+        className={clsx(
+          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          migrationStatus === 'unknown'
+            ? 'border-muted-foreground bg-muted/20 text-foreground'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+        )}
+      >
+        <Info size={14} className="shrink-0" />I don&apos;t know / Not sure about our migration
+        status
+      </button>
     </div>
   )
 }
 
 const Step7UseCases = () => {
-  const { cryptoUseCases, toggleCryptoUseCase, industry } = useAssessmentStore()
+  const { cryptoUseCases, toggleCryptoUseCase, useCasesUnknown, setUseCasesUnknown, industry } =
+    useAssessmentStore()
 
   const industryUseCases = useMemo(
     () => getIndustryConfigs(industryUseCaseConfigs, industry),
@@ -693,76 +749,85 @@ const Step7UseCases = () => {
         migrations are most urgent.
       </p>
 
-      {industryUseCases.length > 0 && (
-        <>
-          <div className="glass-panel p-3 border-l-4 border-l-primary">
-            <div className="flex items-center gap-2">
-              <Info size={14} className="text-primary shrink-0" />
-              <p className="text-xs text-muted-foreground">
-                Showing use cases common in the{' '}
-                <strong className="text-foreground">{industry}</strong> sector.
-              </p>
+      {/* I don't know — Step 3 model */}
+      <button
+        aria-pressed={useCasesUnknown}
+        onClick={() => setUseCasesUnknown(!useCasesUnknown)}
+        className={clsx(
+          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          useCasesUnknown
+            ? 'border-muted-foreground bg-muted/20 text-foreground'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+        )}
+      >
+        <Info size={14} className="shrink-0" />I don&apos;t know / None of these
+      </button>
+
+      <div className={clsx('space-y-4', useCasesUnknown && 'opacity-40 pointer-events-none')}>
+        {industryUseCases.length > 0 && (
+          <>
+            <div className="glass-panel p-3 border-l-4 border-l-primary">
+              <div className="flex items-center gap-2">
+                <Info size={14} className="text-primary shrink-0" />
+                <p className="text-xs text-muted-foreground">
+                  Showing use cases common in the{' '}
+                  <strong className="text-foreground">{industry}</strong> sector.
+                </p>
+              </div>
+            </div>
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 gap-2"
+              role="group"
+              aria-label={`${industry} use cases`}
+            >
+              {industryUseCases.map((uc) => (
+                <button
+                  key={uc.id}
+                  aria-pressed={cryptoUseCases.includes(uc.label)}
+                  onClick={() => toggleCryptoUseCase(uc.label)}
+                  className={clsx(
+                    'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                    cryptoUseCases.includes(uc.label)
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                  )}
+                >
+                  {uc.label}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {universalUseCases.length > 0 && (
+          <div className={clsx(industryUseCases.length > 0 && 'border-t border-border pt-3 mt-2')}>
+            {industryUseCases.length > 0 && (
+              <p className="text-xs text-muted-foreground font-medium mb-2">General use cases</p>
+            )}
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 gap-2"
+              role="group"
+              aria-label="General cryptographic use cases"
+            >
+              {universalUseCases.map((uc) => (
+                <button
+                  key={uc}
+                  aria-pressed={cryptoUseCases.includes(uc)}
+                  onClick={() => toggleCryptoUseCase(uc)}
+                  className={clsx(
+                    'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                    cryptoUseCases.includes(uc)
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                  )}
+                >
+                  {uc}
+                </button>
+              ))}
             </div>
           </div>
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 gap-2"
-            role="group"
-            aria-label={`${industry} use cases`}
-          >
-            {industryUseCases.map((uc) => (
-              <button
-                key={uc.id}
-                aria-pressed={cryptoUseCases.includes(uc.label)}
-                onClick={() => toggleCryptoUseCase(uc.label)}
-                className={clsx(
-                  'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
-                  cryptoUseCases.includes(uc.label)
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                )}
-              >
-                {uc.label}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-
-      {universalUseCases.length > 0 && (
-        <div className={clsx(industryUseCases.length > 0 && 'border-t border-border pt-3 mt-2')}>
-          {industryUseCases.length > 0 && (
-            <p className="text-xs text-muted-foreground font-medium mb-2">General use cases</p>
-          )}
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 gap-2"
-            role="group"
-            aria-label="General cryptographic use cases"
-          >
-            {universalUseCases.map((uc) => (
-              <button
-                key={uc}
-                aria-pressed={cryptoUseCases.includes(uc)}
-                onClick={() => toggleCryptoUseCase(uc)}
-                className={clsx(
-                  'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
-                  cryptoUseCases.includes(uc)
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                )}
-              >
-                {uc}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <button
-        onClick={() => cryptoUseCases.forEach((uc) => toggleCryptoUseCase(uc))}
-        className="w-full p-3 rounded-lg border border-dashed border-muted-foreground/40 text-left text-sm font-medium text-muted-foreground transition-colors flex items-center gap-2 hover:border-muted-foreground/60 hover:text-foreground"
-      >
-        <Info size={14} className="shrink-0" />I don&apos;t know / None of these — skip this step
-      </button>
+        )}
+      </div>
     </div>
   )
 }
@@ -886,6 +951,120 @@ const Step8DataRetention = () => {
   )
 }
 
+const StepCredentialLifetime = () => {
+  const {
+    credentialLifetime,
+    toggleCredentialLifetime,
+    credentialLifetimeUnknown,
+    setCredentialLifetimeUnknown,
+  } = useAssessmentStore()
+
+  const options = [
+    {
+      id: 'under-1y',
+      label: 'Under 1 year',
+      description: 'Short-lived tokens, ACME auto-renewed certificates',
+    },
+    {
+      id: '1-3y',
+      label: '1–3 years',
+      description: 'Standard TLS / end-entity certificates',
+    },
+    {
+      id: '3-10y',
+      label: '3–10 years',
+      description: 'Code signing certificates, intermediate CA certificates',
+    },
+    {
+      id: '10-25y',
+      label: '10–25 years',
+      description: 'Root CA certificates, long-lived PKI infrastructure',
+    },
+    {
+      id: '25-plus',
+      label: '25+ years',
+      description: 'Government, aerospace, or critical infrastructure credentials',
+    },
+    {
+      id: 'indefinite',
+      label: 'Indefinite / permanent',
+      description: 'Blockchain transactions, immutable audit logs, legal records',
+    },
+  ]
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-xl font-bold text-foreground">
+        How long must your digital signatures &amp; certificates remain trusted?
+      </h3>
+      <p className="text-sm text-muted-foreground">
+        Select all that apply — <InlineTooltip term="HNFL">HNFL</InlineTooltip> risk is assessed
+        against the longest period. Credentials that outlive the quantum threat horizon are
+        vulnerable to signature forgery.
+      </p>
+
+      <div className="glass-panel p-4 border-l-4 border-l-destructive mb-4">
+        <div className="flex items-start gap-2">
+          <Info size={16} className="text-destructive shrink-0 mt-0.5" />
+          <p className="text-xs text-muted-foreground">
+            <strong className="text-destructive">HNFL</strong>: Adversaries collect public keys and
+            signed artifacts today and wait for quantum computers to forge signatures. Root CA
+            certificates issued today with a 20-year validity period are a primary HNFL target.
+          </p>
+        </div>
+      </div>
+
+      {/* I don't know — Step 3 model */}
+      <button
+        aria-pressed={credentialLifetimeUnknown}
+        onClick={() => setCredentialLifetimeUnknown(!credentialLifetimeUnknown)}
+        className={clsx(
+          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          credentialLifetimeUnknown
+            ? 'border-muted-foreground bg-muted/20 text-foreground'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+        )}
+      >
+        <Info size={14} className="shrink-0" />I don&apos;t know / Our credential lifetimes are not
+        defined
+      </button>
+
+      <div
+        className={clsx('space-y-3', credentialLifetimeUnknown && 'opacity-40 pointer-events-none')}
+        role="group"
+        aria-label="Credential lifetime selection"
+        aria-disabled={credentialLifetimeUnknown}
+      >
+        {AVAILABLE_CREDENTIAL_LIFETIME.map((id) => {
+          const opt = options.find((o) => o.id === id)
+          if (!opt) return null
+          return (
+            <button
+              key={opt.id}
+              aria-pressed={credentialLifetime.includes(opt.id)}
+              onClick={() => toggleCredentialLifetime(opt.id)}
+              className={clsx(
+                'w-full p-4 rounded-lg border text-left transition-colors',
+                credentialLifetime.includes(opt.id)
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border text-muted-foreground hover:border-primary/30'
+              )}
+            >
+              <span className="font-bold text-sm">{opt.label}</span>
+              <p className="text-xs mt-1 opacity-80">{opt.description}</p>
+            </button>
+          )
+        })}
+      </div>
+
+      <p className="text-xs text-muted-foreground">
+        Root CA certificates issued today with a 20-year validity period must be trusted past the
+        estimated quantum threat horizon of 2035.
+      </p>
+    </div>
+  )
+}
+
 const Step9OrgScale = () => {
   const { systemCount, setSystemCount, teamSize, setTeamSize } = useAssessmentStore()
 
@@ -976,11 +1155,6 @@ const Step10CryptoAgility = () => {
       label: 'Hardcoded Throughout',
       description: 'Algorithms are embedded directly in application code.',
     },
-    {
-      value: 'unknown' as const,
-      label: 'Unknown / Not Assessed',
-      description: "We haven't evaluated our cryptographic agility.",
-    },
   ]
 
   return (
@@ -1011,12 +1185,27 @@ const Step10CryptoAgility = () => {
           </button>
         ))}
       </div>
+      {/* I don't know escape hatch */}
+      <button
+        aria-pressed={cryptoAgility === 'unknown'}
+        onClick={() => setCryptoAgility('unknown')}
+        className={clsx(
+          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          cryptoAgility === 'unknown'
+            ? 'border-muted-foreground bg-muted/20 text-foreground'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+        )}
+      >
+        <Info size={14} className="shrink-0" />I don&apos;t know / We haven&apos;t assessed our
+        cryptographic agility
+      </button>
     </div>
   )
 }
 
 const Step11Infrastructure = () => {
-  const { infrastructure, toggleInfrastructure } = useAssessmentStore()
+  const { infrastructure, toggleInfrastructure, infrastructureUnknown, setInfrastructureUnknown } =
+    useAssessmentStore()
 
   return (
     <div className="space-y-4">
@@ -1037,10 +1226,29 @@ const Step11Infrastructure = () => {
         </div>
       </div>
 
+      {/* None of these / I don't know — Step 3 model */}
+      <button
+        aria-pressed={infrastructureUnknown}
+        onClick={() => setInfrastructureUnknown(!infrastructureUnknown)}
+        className={clsx(
+          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          infrastructureUnknown
+            ? 'border-muted-foreground bg-muted/20 text-foreground'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+        )}
+      >
+        <Info size={14} className="shrink-0" />
+        None of these / I don&apos;t know
+      </button>
+
       <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-2"
+        className={clsx(
+          'grid grid-cols-1 md:grid-cols-2 gap-2 transition-opacity',
+          infrastructureUnknown && 'opacity-40 pointer-events-none'
+        )}
         role="group"
         aria-label="Infrastructure selection"
+        aria-disabled={infrastructureUnknown}
       >
         {AVAILABLE_INFRASTRUCTURE.map((item) => (
           <button
@@ -1058,13 +1266,6 @@ const Step11Infrastructure = () => {
           </button>
         ))}
       </div>
-      <button
-        onClick={() => infrastructure.forEach((item) => toggleInfrastructure(item))}
-        className="w-full p-3 rounded-lg border border-dashed border-muted-foreground/40 text-left text-sm font-medium text-muted-foreground transition-colors flex items-center gap-2 hover:border-muted-foreground/60 hover:text-foreground"
-      >
-        <Info size={14} className="shrink-0" />
-        None of these / I don&apos;t know — skip this step
-      </button>
     </div>
   )
 }
@@ -1191,14 +1392,24 @@ const Step13TimelinePressure = () => {
       label: 'No Specific Deadline',
       description: 'We have no regulatory or internal deadline for PQC migration.',
     },
-    {
-      value: 'unknown' as const,
-      label: "Don't Know",
-      description: "We're unsure about any applicable deadlines.",
-    },
   ]
 
   const hasCountryDeadlines = countryDeadlines.length > 0
+
+  const unknownButton = (
+    <button
+      aria-pressed={timelinePressure === 'unknown'}
+      onClick={() => setTimelinePressure('unknown')}
+      className={clsx(
+        'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+        timelinePressure === 'unknown'
+          ? 'border-muted-foreground bg-muted/20 text-foreground'
+          : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+      )}
+    >
+      <Info size={14} className="shrink-0" />I don&apos;t know / Not sure about our deadlines
+    </button>
+  )
 
   return (
     <div className="space-y-4">
@@ -1253,17 +1464,17 @@ const Step13TimelinePressure = () => {
             {/* Always show fallback options */}
             <div className="border-t border-border pt-3 mt-2 space-y-2">
               <p className="text-xs text-muted-foreground font-medium">Other options</p>
-              {['no-deadline' as const, 'unknown' as const].map((val) => {
-                const opt = staticOptions.find((o) => o.value === val)!
-                return (
+              {staticOptions
+                .filter((o) => o.value === 'no-deadline')
+                .map((opt) => (
                   <button
-                    key={val}
+                    key={opt.value}
                     role="radio"
-                    aria-checked={timelinePressure === val}
-                    onClick={() => setTimelinePressure(val)}
+                    aria-checked={timelinePressure === opt.value}
+                    onClick={() => setTimelinePressure(opt.value)}
                     className={clsx(
                       'w-full p-4 rounded-lg border text-left transition-colors',
-                      timelinePressure === val
+                      timelinePressure === opt.value
                         ? 'border-primary bg-primary/10 text-primary'
                         : 'border-border text-muted-foreground hover:border-primary/30'
                     )}
@@ -1271,31 +1482,34 @@ const Step13TimelinePressure = () => {
                     <span className="font-bold text-sm">{opt.label}</span>
                     <p className="text-xs mt-1 opacity-80">{opt.description}</p>
                   </button>
-                )
-              })}
+                ))}
             </div>
           </div>
+          {unknownButton}
         </>
       ) : (
-        <div className="space-y-3" role="radiogroup" aria-label="Migration timeline pressure">
-          {staticOptions.map((opt) => (
-            <button
-              key={opt.value}
-              role="radio"
-              aria-checked={timelinePressure === opt.value}
-              onClick={() => setTimelinePressure(opt.value)}
-              className={clsx(
-                'w-full p-4 rounded-lg border text-left transition-colors',
-                timelinePressure === opt.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border text-muted-foreground hover:border-primary/30'
-              )}
-            >
-              <span className="font-bold text-sm">{opt.label}</span>
-              <p className="text-xs mt-1 opacity-80">{opt.description}</p>
-            </button>
-          ))}
-        </div>
+        <>
+          <div className="space-y-3" role="radiogroup" aria-label="Migration timeline pressure">
+            {staticOptions.map((opt) => (
+              <button
+                key={opt.value}
+                role="radio"
+                aria-checked={timelinePressure === opt.value}
+                onClick={() => setTimelinePressure(opt.value)}
+                className={clsx(
+                  'w-full p-4 rounded-lg border text-left transition-colors',
+                  timelinePressure === opt.value
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary/30'
+                )}
+              >
+                <span className="font-bold text-sm">{opt.label}</span>
+                <p className="text-xs mt-1 opacity-80">{opt.description}</p>
+              </button>
+            ))}
+          </div>
+          {unknownButton}
+        </>
       )}
     </div>
   )
@@ -1329,7 +1543,7 @@ const ALL_STEPS = [
     key: 'sensitivity',
     component: <Step4Sensitivity />,
     canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      s.dataSensitivity.length > 0,
+      s.dataSensitivity.length > 0 || s.sensitivityUnknown,
   },
   { key: 'compliance', component: <Step5Compliance />, canProceed: () => true },
   {
@@ -1344,6 +1558,12 @@ const ALL_STEPS = [
     component: <Step8DataRetention />,
     canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
       s.dataRetention.length > 0 || s.retentionUnknown,
+  },
+  {
+    key: 'credential-lifetime',
+    component: <StepCredentialLifetime />,
+    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
+      s.credentialLifetime.length > 0 || s.credentialLifetimeUnknown,
   },
   {
     key: 'scale',
