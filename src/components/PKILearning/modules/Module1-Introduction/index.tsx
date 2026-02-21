@@ -411,7 +411,7 @@ export const Module1: React.FC = () => {
               },
               {
                 q: 'What is the difference between HNDL and HNFL, and which types of assets does each threaten?',
-                hint: 'HNDL ("Harvest Now, Decrypt Later") targets confidentiality: adversaries collect encrypted ciphertext today and decrypt it once a CRQC exists — threatening any long-lived sensitive data (health records, state secrets). HNFL ("Harvest Now, Fix Later") targets authenticity and integrity: adversaries capture signed artifacts (firmware, certificates, code-signing blobs) today, then forge or repudiate those signatures later using a CRQC. HNDL demands migrating key-exchange algorithms (ML-KEM); HNFL demands migrating signing algorithms (ML-DSA, SLH-DSA). Both require action before quantum computers arrive.',
+                hint: 'HNDL ("Harvest Now, Decrypt Later") targets confidentiality: adversaries collect encrypted ciphertext today and decrypt it once a CRQC exists — threatening any long-lived sensitive data (health records, state secrets). HNFL ("Harvest Now, Forge Later") targets authenticity and integrity: adversaries capture signed artifacts (firmware, certificates, code-signing blobs) today, then forge or repudiate those signatures later using a CRQC. HNDL demands migrating key-exchange algorithms (ML-KEM); HNFL demands migrating signing algorithms (ML-DSA, SLH-DSA). Both require action before quantum computers arrive.',
               },
               {
                 q: 'Which NIST-standardised algorithm provides key encapsulation, and which provide digital signatures?',

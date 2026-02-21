@@ -94,7 +94,7 @@ const Step1WhyPQC: React.FC<StepProps> = ({ onComplete }) => {
               Key concept: HNFL
             </h4>
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-              <strong>&ldquo;Harvest Now, Fix Later&rdquo;</strong> (HNFL) is the signature
+              <strong>&ldquo;Harvest Now, Forge Later&rdquo;</strong> (HNFL) is the signature
               counterpart to HNDL. Adversaries capture <strong>signed artifacts today</strong> —
               firmware images, certificate chains, code-signing blobs — and store them. Once a
               quantum computer exists, they can forge or repudiate those signatures retroactively.

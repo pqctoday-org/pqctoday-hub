@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - **HNFL concept in PQC 101**: The introductory module now covers both harvest-now attack models
-  side-by-side. A new "Key concept: HNFL" panel in Step 1 explains that "Harvest Now, Fix Later"
+  side-by-side. A new "Key concept: HNFL" panel in Step 1 explains that "Harvest Now, Forge Later"
   targets **authenticity and integrity** — adversaries capture signed artifacts (firmware images,
   certificate chains, code-signing blobs) today and retroactively forge or repudiate those
   signatures once a CRQC exists. This contrasts with HNDL (which targets confidentiality). The
