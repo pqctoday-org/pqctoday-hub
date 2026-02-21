@@ -63,8 +63,13 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - Explores key generation, KEM encapsulation, and signatures with hybrid algorithms
     - Inspects composite PQC certificates
   - **Crypto Agility & Architecture**:
-    - Demonstrates abstraction layers and backend swapping
-    - Features a Cryptographic Bill of Materials (CBOM) scanner and migration planning framework
+    - Three macro-architecture patterns: Provider Model (JCA/OpenSSL provider abstraction),
+      Service Mesh / Sidecar Proxy (mTLS offloaded to Envoy/Istio), External KMS / HSM
+      (centralized key service — upgrade once, enterprise-wide effect)
+    - Interactive abstraction layer demo with live backend swapping (RSA → ML-KEM)
+    - Four critical anti-patterns: hardcoded algorithms, hardcoded buffer & schema sizes
+      (VARCHAR(256) breaks for PQC keys), missing crypto inventory, single-provider lock-in
+    - Cryptographic Bill of Materials (CBOM) scanner and migration planning framework
   - **Stateful Hash Signatures**:
     - Deep-dives into LMS and XMSS key generation
     - Visualizes catastrophic state loss and signature state management
@@ -78,13 +83,15 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - Explores the 7 stages of the key lifecycle and PQC impact
     - Simulates PKCS#11 HSM operations and key rotation planning for enterprises
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
-  - **Verified Database**: 140+ verified PQC-ready software entries (OS, Libraries, Network, etc.)
+  - **Verified Database**: 148+ verified PQC-ready software entries (OS, Libraries, Network, etc.)
+  - **Infrastructure Layer View**: 5-layer visual stack (Hardware, OS, Database, Application,
+    Cloud/Network) — click any layer to filter the software table by architectural tier
   - **7-Step Migration Workflow**: Assess, Plan, Pilot, Implement, Test, Optimize, Measure
   - **Framework Mappings**: NIST, ETSI, and CISA guideline alignment
   - **Gap Analysis**: Software category coverage assessment with priority matrix
   - **Reference Panel**: Curated authoritative migration resources
   - **Change Tracking**: "New" and "Updated" indicators for recent PQC landscape changes
-  - **Filtering**: Deep filtering by category, platform, and industry
+  - **Filtering**: Deep filtering by category, platform, industry, and infrastructure layer
 - **PQC Risk Assessment** (`/assess`): Comprehensive 13-step quantum risk evaluation wizard
   - **Country/Jurisdiction Picker**: select your regulatory jurisdiction to align deadlines with the PQC timeline
   - **Multi-select Sensitivity & Retention**: pick all applicable levels; scoring uses worst-case HNDL risk
@@ -249,6 +256,10 @@ npm run scrape
 
 # Download standards library PDFs
 npm run download:library
+
+# Enrich the quantum-safe software reference CSV with infrastructure_layer classification
+# and append new software entries; outputs a date-stamped CSV to src/data/
+python scripts/update_csv.py
 ```
 
 ## Architecture Overview

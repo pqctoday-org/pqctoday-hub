@@ -263,3 +263,37 @@ An interactive knowledge assessment module with adaptive question selection and 
 - **Data Source:** `src/data/quizData.ts` (70+ questions).
 - **Components:** `QuizModule` (orchestrator), `QuizIntro`, `QuizWizard`, `QuizResults`, `QuestionCard`, `QuizProgress`, `TopicSelector`, `FeedbackPanel`, `ScoreBreakdown`.
 - **Custom Hook:** `useQuizState` for quiz session state management.
+
+---
+
+## Module 9: Crypto Agility & Architecture
+
+Covers the organizational and engineering disciplines required to swap cryptographic algorithms
+without application-level rewrites, with emphasis on PQC transition readiness.
+
+### Introduction
+
+- Three macro-architecture patterns for enterprise agility:
+  1. **Provider Model** — applications link to a crypto library through an abstraction API
+     (JCA, OpenSSL Providers, PKCS#11); algorithm changes are config-only.
+  2. **Service Mesh / Sidecar Proxy** — mTLS cryptography is offloaded to an infrastructure
+     proxy (Envoy, Istio); zero app-code changes required to upgrade protocols.
+  3. **External KMS / HSM** — crypto operations outsourced to a centralized service
+     (AWS KMS, Azure Key Vault, on-prem HSM); upgrading the KMS upgrades the enterprise.
+- NSA CNSA 2.0 timeline: exclusive PQC use for web/networking by 2030, all legacy NSS by 2033.
+
+### Workshop
+
+- **Step 1 — Provider Model Demo**: swap between RSA-2048 (vulnerable) and ML-KEM-768 (quantum-safe)
+  backends via a live abstraction layer visualization; observe unchanged application interface.
+- **Step 2 — Anti-Patterns Review**: four critical anti-patterns to eliminate before migration:
+  1. Hardcoded algorithms (direct `rsaEncrypt()` calls bypassing any abstraction layer)
+  2. Hardcoded buffer & schema sizes (`char key[256]`; `VARCHAR(256)` — PQC keys are 1–20 KB)
+  3. Missing cryptographic inventory (no CBOM — cannot assess migration scope)
+  4. Single-provider lock-in (no abstraction layer — algorithm swap requires full rewrite)
+- **Step 3 — Migration Plan**: full 6-phase plan from discovery through continuous monitoring;
+  CNSA 2.0-aligned phase gates with timeline estimates per organizational size.
+- **Components:** `CryptoAgilityIntroduction`, `CryptoAgilityExercises`, `AbstractionLayerDemo`,
+  `AntiPatternReview`, `MigrationPlanView`.
+- **Data:** `architecturePatterns.ts` (`ABSTRACTION_LAYERS`, `MACRO_ARCHITECTURE_PATTERNS`,
+  `ANTI_PATTERNS`, `ABSTRACTION_BACKENDS`).
