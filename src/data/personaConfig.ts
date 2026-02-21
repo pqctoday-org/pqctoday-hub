@@ -81,7 +81,7 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
   'stateful-signatures': ['Government & Defense', 'Aerospace'],
   'digital-assets': ['Finance & Banking', 'Retail & E-Commerce'],
   '5g-security': ['Telecommunications', 'Government & Defense'],
-  'digital-id': ['Government & Defense', 'Healthcare'],
+  'digital-id': ['Government & Defense', 'Healthcare', 'Finance & Banking'],
 }
 
 /** Nav paths that are always shown regardless of persona. */
