@@ -59,18 +59,23 @@ export const PersonalizationSection = () => {
   const {
     selectedPersona,
     selectedRegion,
-    selectedIndustry,
+    selectedIndustries,
     setPersona,
     setRegion,
-    setIndustry,
+    setIndustries,
     clearPreferences,
   } = usePersonaStore()
-  const { setCountry, setIndustry: setAssessIndustry } = useAssessmentStore()
+  const {
+    setCountry,
+    setIndustry: setAssessIndustry,
+    isComplete,
+    editFromStep,
+  } = useAssessmentStore()
 
   const hasAnySelection =
     (selectedPersona !== null && selectedPersona !== 'researcher') ||
     (selectedRegion !== null && selectedRegion !== 'global') ||
-    selectedIndustry !== null
+    selectedIndustries.length > 0
 
   const handlePersona = (id: PersonaId) => {
     setPersona(id === selectedPersona ? null : id)
@@ -82,15 +87,15 @@ export const PersonalizationSection = () => {
     if (next) {
       const country = REGION_COUNTRY_MAP[next]
       setCountry(country ?? '')
+      if (isComplete) editFromStep(0)
     }
   }
 
   const handleIndustry = (industry: string) => {
-    const next = industry === selectedIndustry ? null : industry
-    setIndustry(next)
-    if (next) {
-      setAssessIndustry(next)
-    }
+    const next = selectedIndustries[0] === industry ? [] : [industry]
+    setIndustries(next)
+    setAssessIndustry(next[0] ?? '')
+    if (isComplete) editFromStep(0)
   }
 
   const handleClear = () => {
@@ -191,17 +196,16 @@ export const PersonalizationSection = () => {
           <Factory size={12} className="shrink-0" />
           Industry
         </p>
-        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Select your industry">
-          {/* All Industries chip */}
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Select your industries">
+          {/* All Industries chip — clears selection */}
           <button
-            role="radio"
-            aria-checked={selectedIndustry === null}
+            aria-pressed={selectedIndustries.length === 0}
             onClick={() => {
-              setIndustry(null)
+              setIndustries([])
               setAssessIndustry('')
             }}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
-              selectedIndustry === null
+              selectedIndustries.length === 0
                 ? 'border-primary/30 bg-primary/10 text-foreground'
                 : 'border-border bg-card text-muted-foreground hover:border-primary/20 hover:text-foreground'
             }`}
@@ -211,13 +215,12 @@ export const PersonalizationSection = () => {
           </button>
 
           {AVAILABLE_INDUSTRIES.map((industry) => {
-            const isActive = selectedIndustry === industry
+            const isActive = selectedIndustries.includes(industry)
             const Icon = INDUSTRY_ICONS[industry]
             return (
               <button
                 key={industry}
-                role="radio"
-                aria-checked={isActive}
+                aria-pressed={isActive}
                 onClick={() => handleIndustry(industry)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
                   isActive
