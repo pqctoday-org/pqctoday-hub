@@ -29,6 +29,10 @@ export const PersonaPicker = () => {
     teamSize: assessment.teamSize,
     migrationStatus: assessment.migrationStatus,
     cryptoAgility: assessment.cryptoAgility,
+    currentCrypto: assessment.currentCrypto,
+    complianceRequirements: assessment.complianceRequirements,
+    cryptoUseCases: assessment.cryptoUseCases,
+    infrastructure: assessment.infrastructure,
   })
 
   const handleSelect = (personaId: PersonaId) => {

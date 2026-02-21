@@ -30,9 +30,37 @@ const fadeUp = {
   },
 }
 
+const PERSONA_HERO_CTA: Record<
+  string,
+  { primary: { label: string; path: string }; secondary: { label: string; path: string } }
+> = {
+  executive: {
+    primary: { label: 'Assess Your Risk', path: '/assess' },
+    secondary: { label: 'View the Timeline', path: '/timeline' },
+  },
+  developer: {
+    primary: { label: 'Try the Playground', path: '/playground' },
+    secondary: { label: 'Explore Algorithms', path: '/algorithms' },
+  },
+  architect: {
+    primary: { label: 'Explore the Timeline', path: '/timeline' },
+    secondary: { label: 'Assess Your Risk', path: '/assess' },
+  },
+  researcher: {
+    primary: { label: 'Explore Algorithms', path: '/algorithms' },
+    secondary: { label: 'Try the Playground', path: '/playground' },
+  },
+}
+
+const DEFAULT_HERO_CTA = {
+  primary: { label: 'Explore the Timeline', path: '/timeline' },
+  secondary: { label: 'Try the Playground', path: '/playground' },
+}
+
 export const LandingView = () => {
   const { selectedPersona } = usePersonaStore()
   const recommendedPaths = selectedPersona ? PERSONA_RECOMMENDED_PATHS[selectedPersona] : []
+  const heroCta = (selectedPersona && PERSONA_HERO_CTA[selectedPersona]) || DEFAULT_HERO_CTA
 
   const [algorithmCount, setAlgorithmCount] = useState<number | null>(null)
   const [timelineEventCount, setTimelineEventCount] = useState<number | null>(null)
@@ -183,15 +211,15 @@ export const LandingView = () => {
           custom={3}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <Link to="/timeline">
+          <Link to={heroCta.primary.path}>
             <Button variant="gradient" size="lg" className="w-full sm:w-auto text-base">
-              Explore the Timeline
+              {heroCta.primary.label}
               <ArrowRight className="ml-2" size={18} />
             </Button>
           </Link>
-          <Link to="/playground">
+          <Link to={heroCta.secondary.path}>
             <Button variant="outline" size="lg" className="w-full sm:w-auto text-base">
-              Try the Playground
+              {heroCta.secondary.label}
             </Button>
           </Link>
         </motion.div>

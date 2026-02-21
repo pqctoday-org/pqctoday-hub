@@ -1,13 +1,23 @@
 /* eslint-disable security/detect-object-injection */
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, ChevronRight, RotateCcw, Target, ArrowRight, Flag, Check } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronRight,
+  RotateCcw,
+  Target,
+  ArrowRight,
+  Flag,
+  Check,
+  ClipboardCheck,
+} from 'lucide-react'
 import { Briefcase, Code, ShieldCheck, GraduationCap } from 'lucide-react'
 import { PERSONAS } from '../../data/learningPersonas'
 import type { PathItem } from '../../data/learningPersonas'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useModuleStore } from '../../store/useModuleStore'
+import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { Button } from '../ui/button'
 import { ModuleCard, type ModuleItem } from './ModuleCard'
 import { MODULE_CATALOG, MODULE_STEP_COUNTS } from './moduleData'
@@ -93,6 +103,7 @@ export const LearningPath = () => {
   const navigate = useNavigate()
   const { selectedPersona, clearPersona } = usePersonaStore()
   const { modules } = useModuleStore()
+  const assessmentComplete = useAssessmentStore((s) => s.isComplete)
   const [showAllExpanded, setShowAllExpanded] = useState(false)
 
   if (!selectedPersona) return null
@@ -273,6 +284,25 @@ export const LearningPath = () => {
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+      )}
+
+      {/* Cross-view CTA: Take Risk Assessment */}
+      {!assessmentComplete && (
+        <div className="glass-panel p-4 flex items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-foreground">Assess your organization's risk</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Get a personalized PQC risk score and migration roadmap
+            </p>
+          </div>
+          <Link
+            to="/assess"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0"
+          >
+            <ClipboardCheck size={16} />
+            Start Assessment
+          </Link>
         </div>
       )}
     </div>

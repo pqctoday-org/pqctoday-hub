@@ -103,17 +103,25 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Cross-references to learning modules
 - **Personalization System**: Role, region, and industry picker on the home page that adapts the
   entire application to the user's context
-  - **Role picker**: Executive/CISO, Developer/Engineer, Security Architect, Researcher/Academic
+  - **Role picker**: Executive/CISO, Developer/Engineer, Security Architect, Researcher/Academic —
+    ordered by access breadth; unified order across home page and Learn page
   - **Persona-driven navigation**: irrelevant pages hidden from nav; always-visible pages (Home,
-    Learn, Timeline, Threats, About) remain accessible to all
-  - **"For you" badges**: landing page cards highlight the top 3 recommended pages per role
+    Learn, Timeline, Threats, About) remain accessible to all. Each persona's nav is tuned:
+    Executive includes Compliance and Migrate; Developer includes Assess; Architect includes
+    Playground
+  - **"For you" badges**: landing page cards highlight the top 3 recommended pages per role;
+    inferred persona badge appears on home page role picker after assessment completion
+  - **Persona-aware hero CTAs**: primary and secondary landing page actions adapt to the selected
+    role (Executive → Assess, Developer → Playground, Architect → Timeline, Researcher → Algorithms)
+  - **Persona inference**: assessment results map to all four personas using correct field values;
+    returns null when signal is insufficient rather than defaulting to Architect
   - **Region pre-seeding**: pre-filters Timeline and pre-seeds Assessment country on mount
   - **Industry pre-seeding**: pre-seeds Assessment industry, pre-filters Threats and Library,
     highlights relevant Learn modules with "Relevant" badges
-  - Selections persist across sessions via localStorage
+  - Selections persist across sessions via localStorage; "Clear all" fully resets to no selection
 - **Guided Tour**: Interactive first-visit onboarding overlay
-  - Highlights key platform features and navigation
-  - Remembers completion status
+  - Filters tour steps to only show features visible in the active persona's navigation
+  - Remembers completion status; re-trigger with `?tour` query parameter
 - **Compliance Module**: Real-time compliance tracking and standards monitoring
   - NIST FIPS document tracking (203, 204, 205)
   - ANSSI recommendations
@@ -308,7 +316,7 @@ The application is structured into several key components:
 
 ## Security
 
-Last audited: February 19, 2026
+Last audited: February 20, 2026
 
 | Severity | Production | Dev-only |
 | -------- | ---------- | -------- |

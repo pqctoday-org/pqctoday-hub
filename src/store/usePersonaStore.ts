@@ -9,21 +9,24 @@ interface PersonaState {
   hasSeenPersonaPicker: boolean
   selectedRegion: Region | null
   selectedIndustry: string | null
+  selectedIndustries: string[]
   setPersona: (persona: PersonaId | null) => void
   clearPersona: () => void
   markPickerSeen: () => void
   setRegion: (region: Region | null) => void
   setIndustry: (industry: string | null) => void
+  setIndustries: (industries: string[]) => void
   clearPreferences: () => void
 }
 
 export const usePersonaStore = create<PersonaState>()(
   persist(
     (set) => ({
-      selectedPersona: 'researcher' as PersonaId,
+      selectedPersona: null,
       hasSeenPersonaPicker: false,
       selectedRegion: 'global' as Region,
       selectedIndustry: null,
+      selectedIndustries: [],
 
       setPersona: (persona) =>
         set({ selectedPersona: persona, hasSeenPersonaPicker: persona !== null }),
@@ -36,8 +39,16 @@ export const usePersonaStore = create<PersonaState>()(
 
       setIndustry: (industry) => set({ selectedIndustry: industry }),
 
+      setIndustries: (industries) =>
+        set({ selectedIndustries: industries, selectedIndustry: industries[0] ?? null }),
+
       clearPreferences: () =>
-        set({ selectedPersona: 'researcher', selectedRegion: 'global', selectedIndustry: null }),
+        set({
+          selectedPersona: null,
+          selectedRegion: 'global',
+          selectedIndustry: null,
+          selectedIndustries: [],
+        }),
     }),
     {
       name: 'pqc-learning-persona',

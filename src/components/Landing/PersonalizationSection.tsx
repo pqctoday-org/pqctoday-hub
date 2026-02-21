@@ -21,11 +21,11 @@ import {
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { Region } from '@/store/usePersonaStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
-import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
+import { PERSONAS, inferPersonaFromAssessment, type PersonaId } from '@/data/learningPersonas'
 import { REGION_COUNTRY_MAP } from '@/data/personaConfig'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/useAssessmentEngine'
 
-const PERSONA_ORDER: PersonaId[] = ['researcher', 'executive', 'developer', 'architect']
+const PERSONA_ORDER: PersonaId[] = ['executive', 'developer', 'architect', 'researcher']
 
 const PERSONA_ICONS = {
   Briefcase,
@@ -72,8 +72,19 @@ export const PersonalizationSection = () => {
     editFromStep,
   } = useAssessmentStore()
 
+  const suggestedPersona = inferPersonaFromAssessment({
+    isComplete,
+    teamSize: useAssessmentStore.getState().teamSize,
+    migrationStatus: useAssessmentStore.getState().migrationStatus,
+    cryptoAgility: useAssessmentStore.getState().cryptoAgility,
+    currentCrypto: useAssessmentStore.getState().currentCrypto,
+    complianceRequirements: useAssessmentStore.getState().complianceRequirements,
+    cryptoUseCases: useAssessmentStore.getState().cryptoUseCases,
+    infrastructure: useAssessmentStore.getState().infrastructure,
+  })
+
   const hasAnySelection =
-    (selectedPersona !== null && selectedPersona !== 'researcher') ||
+    selectedPersona !== null ||
     (selectedRegion !== null && selectedRegion !== 'global') ||
     selectedIndustries.length > 0
 
@@ -138,20 +149,28 @@ export const PersonalizationSection = () => {
             const persona = PERSONAS[id]
             const Icon = PERSONA_ICONS[persona.icon]
             const isActive = selectedPersona === id
+            const isSuggested = suggestedPersona === id
             return (
               <button
                 key={id}
                 role="radio"
                 aria-checked={isActive}
                 onClick={() => handlePersona(id)}
-                className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-all ${
+                className={`relative flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-all ${
                   isActive
                     ? 'border-primary/30 bg-primary/10 text-foreground'
-                    : 'border-border bg-card text-muted-foreground hover:border-primary/20 hover:text-foreground'
+                    : isSuggested
+                      ? 'border-secondary/40 bg-secondary/5 text-foreground ring-1 ring-secondary/20'
+                      : 'border-border bg-card text-muted-foreground hover:border-primary/20 hover:text-foreground'
                 }`}
               >
                 <Icon size={15} className="shrink-0" />
                 <span className="truncate">{persona.label}</span>
+                {isSuggested && !isActive && (
+                  <span className="absolute -top-2 -right-1 text-[9px] font-bold uppercase tracking-wide bg-secondary text-secondary-foreground px-1.5 py-0.5 rounded-full leading-none">
+                    For you
+                  </span>
+                )}
               </button>
             )
           })}

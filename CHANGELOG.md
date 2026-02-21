@@ -2,6 +2,53 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.17.4] - 2026-02-20
+
+### Added
+
+- **Persona-aware guided tour**: The first-visit onboarding tour now filters steps to only highlight
+  features visible in the active persona's navigation — an Executive won't be shown the Playground
+  or OpenSSL Studio steps.
+- **Persona-aware hero CTAs**: Landing page primary and secondary call-to-action buttons now adapt
+  to the selected role — Executives are directed to Risk Assessment, Developers to the Playground,
+  Architects to the Migration Timeline, and Researchers to Algorithm Explorer.
+- **"For you" persona badge on landing**: After completing the Risk Assessment, the inferred
+  recommended persona is surfaced with a "For you" badge on the home page role picker.
+- **Cross-view CTAs**: Assessment report now includes a "Start Learning" link to the persona-matched
+  learning path; the learning path panel includes a "Start Assessment" CTA when no assessment has
+  been completed.
+- **Compliance and Migrate in executive nav**: `/compliance` and `/migrate` added to the Executive
+  persona's navigation — assessment report links to both views are no longer dead ends.
+- **Assess in developer nav**: `/assess` added to the Developer persona's navigation — the
+  algorithm migration matrix in the report is now reachable.
+- **Playground in architect nav**: `/playground` added to the Security Architect persona's
+  navigation for hands-on PoC algorithm evaluation.
+
+### Changed
+
+- **Persona inference rewritten**: `inferPersonaFromAssessment()` now correctly maps assessment
+  answers to all four persona types. Previous implementation used wrong enum values and always
+  defaulted to Architect; Researcher was never reachable. Now uses correct field values
+  (`not-started`/`started`/`planning`, `fully-abstracted`, etc.) and returns `null` when signal is
+  insufficient.
+- **Default persona is now null**: First-time visitors see the full navigation (same as Researcher)
+  rather than being silently assigned Researcher. "Clear all" in the persona picker now fully resets
+  to no selection.
+- **Developer learning path expanded**: Added Quantum Threats module (after PQC 101) and Crypto
+  Agility module (after Hybrid Crypto). Path now includes a 4th checkpoint and grows from 405 to
+  495 estimated minutes.
+- **Architect learning path expanded**: Added TLS Basics module (after Hybrid Crypto). Estimated
+  time grows from 420 to 465 minutes.
+- **Executive quiz categories fixed**: Removed `industry-threats` from quiz pre-selection — the
+  corresponding module was never taught in the executive path. Replaced with `crypto-agility` which
+  is covered by the Crypto Agility module.
+- **Persona order unified**: Role buttons across home page and learn page now follow the same
+  order: Executive → Developer → Architect → Researcher.
+- **Assessment report link filtering**: "Explore" action links in the assessment report are now
+  hidden when they point to a route outside the active persona's navigation — no more dead links.
+- **Researcher learning path**: Added 5th checkpoint after the three application modules (Digital
+  Assets, 5G Security, Digital ID) for consistent knowledge verification before the final quiz.
+
 ## [1.17.3] - 2026-02-20
 
 ### Changed

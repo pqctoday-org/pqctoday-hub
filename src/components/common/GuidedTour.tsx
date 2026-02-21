@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   X,
@@ -17,6 +17,9 @@ import {
   Users,
   Search,
 } from 'lucide-react'
+
+import { usePersonaStore } from '../../store/usePersonaStore'
+import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
 
 const TOUR_STORAGE_KEY = 'pqc-tour-completed'
 
@@ -149,6 +152,21 @@ export const GuidedTour: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({})
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+
+  // Filter tour steps to only include features visible for the current persona
+  const visibleSteps = useMemo(() => {
+    const personaPaths = selectedPersona ? PERSONA_NAV_PATHS[selectedPersona] : null
+    if (personaPaths === null) return tourSteps // researcher or no persona: show all
+
+    const allVisible = new Set([...ALWAYS_VISIBLE_PATHS, ...personaPaths])
+    return tourSteps.filter((step) => {
+      // Extract path from CSS selector like 'a[href="/assess"]'
+      const match = step.target.match(/href="([^"]+)"/)
+      if (!match) return true // non-nav steps (e.g., glossary button) always shown
+      return allVisible.has(match[1])
+    })
+  }, [selectedPersona])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -169,7 +187,7 @@ export const GuidedTour: React.FC = () => {
     if (!isActive) return
 
     // eslint-disable-next-line security/detect-object-injection
-    const step = tourSteps[currentStep]
+    const step = visibleSteps[currentStep]
     if (!step) return
 
     const el = document.querySelector(step.target) as HTMLElement | null
@@ -187,13 +205,13 @@ export const GuidedTour: React.FC = () => {
     return () => {
       el.style.cssText = savedCssText
     }
-  }, [isActive, currentStep])
+  }, [isActive, currentStep, visibleSteps])
 
   // Desktop-only: compute tooltip position anchored to target element
   const updatePosition = useCallback(() => {
     if (!isActive) return
     // eslint-disable-next-line security/detect-object-injection
-    const step = tourSteps[currentStep]
+    const step = visibleSteps[currentStep]
     if (!step) return
 
     const el = document.querySelector(step.target)
@@ -219,7 +237,7 @@ export const GuidedTour: React.FC = () => {
         zIndex: 60,
       })
     }
-  }, [isActive, currentStep])
+  }, [isActive, currentStep, visibleSteps])
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => updatePosition())
@@ -238,7 +256,7 @@ export const GuidedTour: React.FC = () => {
   }, [])
 
   const next = () => {
-    if (currentStep < tourSteps.length - 1) {
+    if (currentStep < visibleSteps.length - 1) {
       setCurrentStep((s) => s + 1)
     } else {
       dismiss()
@@ -254,7 +272,7 @@ export const GuidedTour: React.FC = () => {
   if (!isActive) return null
 
   // eslint-disable-next-line security/detect-object-injection
-  const step = tourSteps[currentStep]
+  const step = visibleSteps[currentStep]
   const StepIcon = step.icon
 
   return (
@@ -298,7 +316,7 @@ export const GuidedTour: React.FC = () => {
               </p>
               <div className="flex items-center justify-between">
                 <span className="text-[10px] text-muted-foreground">
-                  {currentStep + 1} / {tourSteps.length}
+                  {currentStep + 1} / {visibleSteps.length}
                 </span>
                 <div className="flex items-center gap-1">
                   {currentStep > 0 && (
@@ -314,8 +332,8 @@ export const GuidedTour: React.FC = () => {
                     onClick={next}
                     className="flex items-center gap-1 px-3 py-1 rounded-lg bg-primary text-black text-xs font-bold hover:bg-primary/90 transition-colors"
                   >
-                    {currentStep === tourSteps.length - 1 ? 'Done' : 'Next'}
-                    {currentStep < tourSteps.length - 1 && <ChevronRight size={14} />}
+                    {currentStep === visibleSteps.length - 1 ? 'Done' : 'Next'}
+                    {currentStep < visibleSteps.length - 1 && <ChevronRight size={14} />}
                   </button>
                 </div>
               </div>
@@ -355,7 +373,7 @@ export const GuidedTour: React.FC = () => {
 
                 {/* Dot indicators */}
                 <div className="flex gap-1.5 justify-center mb-5">
-                  {tourSteps.map((_, i) => (
+                  {visibleSteps.map((_, i) => (
                     <div
                       key={i}
                       className={`rounded-full transition-all ${
@@ -379,8 +397,8 @@ export const GuidedTour: React.FC = () => {
                     onClick={next}
                     className="flex items-center gap-1 px-4 py-2 rounded-lg bg-primary text-black text-sm font-bold hover:bg-primary/90 transition-colors"
                   >
-                    {currentStep === tourSteps.length - 1 ? 'Get Started' : 'Next'}
-                    {currentStep < tourSteps.length - 1 && <ChevronRight size={16} />}
+                    {currentStep === visibleSteps.length - 1 ? 'Get Started' : 'Next'}
+                    {currentStep < visibleSteps.length - 1 && <ChevronRight size={16} />}
                   </button>
                 </div>
               </motion.div>

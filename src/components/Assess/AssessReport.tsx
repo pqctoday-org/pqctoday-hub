@@ -16,6 +16,7 @@ import {
   Calendar,
   ChevronDown,
   FlaskConical,
+  BookOpen,
 } from 'lucide-react'
 import type {
   AssessmentResult,
@@ -23,6 +24,9 @@ import type {
   HNDLRiskWindow,
 } from '../../hooks/useAssessmentEngine'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
+import { usePersonaStore } from '../../store/usePersonaStore'
+import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
+import { PERSONAS } from '../../data/learningPersonas'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix } from './ReportThreatsAppendix'
 import { MigrationRoadmap } from './MigrationRoadmap'
@@ -355,6 +359,16 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
   const { reset, editFromStep } = useAssessmentStore()
   const industry = useAssessmentStore((s) => s.industry)
   const country = useAssessmentStore((s) => s.country)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+
+  /** Check if a given route is visible for the current persona's nav */
+  const isPathVisible = (path: string): boolean => {
+    if (!selectedPersona) return true
+    const personaPaths = PERSONA_NAV_PATHS[selectedPersona]
+    if (personaPaths === null) return true // researcher sees all
+    const basePath = '/' + path.split('/').filter(Boolean)[0]
+    return ALWAYS_VISIBLE_PATHS.includes(basePath) || personaPaths.includes(basePath)
+  }
 
   const config = riskConfig[result.riskLevel]
 
@@ -759,13 +773,15 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                                 {effortConfig[action.effort]?.label ?? action.effort} effort
                               </span>
                             )}
-                            <Link
-                              to={action.relatedModule}
-                              className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
-                            >
-                              <ArrowRight size={10} />
-                              Explore
-                            </Link>
+                            {isPathVisible(action.relatedModule) && (
+                              <Link
+                                to={action.relatedModule}
+                                className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
+                              >
+                                <ArrowRight size={10} />
+                                Explore
+                              </Link>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -788,6 +804,29 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                     <ReportThreatsAppendix industry={industry} />
                   </CollapsibleSection>
                 </div>
+
+                {/* Cross-view CTA: Continue to Learning Path */}
+                {selectedPersona && PERSONAS[selectedPersona] && (
+                  <div className="glass-panel p-4 flex items-center justify-between gap-4 print:hidden">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground">
+                        Continue your PQC journey
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Start the {PERSONAS[selectedPersona].label} learning path —{' '}
+                        {PERSONAS[selectedPersona].recommendedPath.length - 1} modules, ~
+                        {Math.round(PERSONAS[selectedPersona].estimatedMinutes / 60)} hours
+                      </p>
+                    </div>
+                    <Link
+                      to="/learn"
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0"
+                    >
+                      <BookOpen size={16} />
+                      Start Learning
+                    </Link>
+                  </div>
+                )}
 
                 <div className="flex flex-col items-center gap-2 print:hidden">
                   <div className="flex flex-wrap items-center justify-center gap-3">

@@ -64,7 +64,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'quantum-threats',
       'compliance',
       'migration-planning',
-      'industry-threats',
+      'crypto-agility',
     ],
   },
   developer: {
@@ -76,47 +76,60 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'Hands-on protocol integration: TLS, VPN/SSH, PKI certificates, and hybrid cryptography.',
     recommendedPath: [
       'pqc-101',
+      'quantum-threats',
       'tls-basics',
       'vpn-ssh-pqc',
       'hybrid-crypto',
+      'crypto-agility',
       'pki-workshop',
       'email-signing',
       'quiz',
     ],
     pathItems: [
       { type: 'module', moduleId: 'pqc-101' },
-      { type: 'module', moduleId: 'tls-basics' },
+      { type: 'module', moduleId: 'quantum-threats' },
       {
         type: 'checkpoint',
         id: 'dev-cp-1',
-        label: 'Protocol Basics',
-        categories: ['pqc-fundamentals', 'tls-basics'],
+        label: 'Foundations & Threats',
+        categories: ['pqc-fundamentals', 'quantum-threats'],
       },
+      { type: 'module', moduleId: 'tls-basics' },
       { type: 'module', moduleId: 'vpn-ssh-pqc' },
-      { type: 'module', moduleId: 'hybrid-crypto' },
       {
         type: 'checkpoint',
         id: 'dev-cp-2',
-        label: 'Protocols & Hybrid Crypto',
-        categories: ['protocol-integration', 'hybrid-crypto', 'vpn-ssh-pqc'],
+        label: 'Protocol Integration',
+        categories: ['tls-basics', 'protocol-integration', 'vpn-ssh-pqc'],
+      },
+      { type: 'module', moduleId: 'hybrid-crypto' },
+      { type: 'module', moduleId: 'crypto-agility' },
+      {
+        type: 'checkpoint',
+        id: 'dev-cp-3',
+        label: 'Hybrid & Agility',
+        categories: ['hybrid-crypto', 'crypto-agility'],
       },
       { type: 'module', moduleId: 'pki-workshop' },
       { type: 'module', moduleId: 'email-signing' },
       {
         type: 'checkpoint',
-        id: 'dev-cp-3',
+        id: 'dev-cp-4',
         label: 'PKI & Signing',
         categories: ['pki-infrastructure', 'email-signing', 'crypto-operations'],
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 405,
+    estimatedMinutes: 495,
     quizDescription:
-      'Test your knowledge on TLS, VPN/SSH, PKI, hybrid cryptography, and protocol integration.',
+      'Test your knowledge on quantum threats, TLS, VPN/SSH, PKI, hybrid cryptography, crypto agility, and protocol integration.',
     quizCategories: [
+      'pqc-fundamentals',
+      'quantum-threats',
       'tls-basics',
       'protocol-integration',
       'hybrid-crypto',
+      'crypto-agility',
       'pki-infrastructure',
       'crypto-operations',
       'vpn-ssh-pqc',
@@ -135,6 +148,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'quantum-threats',
       'crypto-agility',
       'hybrid-crypto',
+      'tls-basics',
       'key-management',
       'stateful-signatures',
       'pki-workshop',
@@ -157,22 +171,24 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
         label: 'Architecture Strategy',
         categories: ['crypto-agility', 'hybrid-crypto', 'nist-standards'],
       },
+      { type: 'module', moduleId: 'tls-basics' },
       { type: 'module', moduleId: 'key-management' },
       { type: 'module', moduleId: 'stateful-signatures' },
       { type: 'module', moduleId: 'pki-workshop' },
       {
         type: 'checkpoint',
         id: 'arch-cp-3',
-        label: 'Infrastructure',
-        categories: ['key-management', 'stateful-signatures', 'pki-infrastructure'],
+        label: 'Infrastructure & Protocols',
+        categories: ['tls-basics', 'key-management', 'stateful-signatures', 'pki-infrastructure'],
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 420,
+    estimatedMinutes: 465,
     quizDescription:
-      'Test your knowledge on crypto agility, key management, stateful signatures, and architecture patterns.',
+      'Test your knowledge on crypto agility, TLS, key management, stateful signatures, and architecture patterns.',
     quizCategories: [
       'crypto-agility',
+      'tls-basics',
       'key-management',
       'stateful-signatures',
       'migration-planning',
@@ -242,6 +258,12 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'digital-assets' },
       { type: 'module', moduleId: '5g-security' },
       { type: 'module', moduleId: 'digital-id' },
+      {
+        type: 'checkpoint',
+        id: 'res-cp-5',
+        label: 'Applications',
+        categories: ['digital-assets', '5g-security', 'industry-threats'],
+      },
       { type: 'module', moduleId: 'quiz' },
     ],
     estimatedMinutes: 780,
@@ -260,27 +282,49 @@ export function inferPersonaFromAssessment(assessment: {
   teamSize: string
   migrationStatus: string
   cryptoAgility: string
+  currentCrypto?: string[]
+  complianceRequirements?: string[]
+  cryptoUseCases?: string[]
+  infrastructure?: string[]
 }): PersonaId | null {
   if (!assessment.isComplete) return null
 
-  // Small team + early migration stage → likely executive/decision-maker
+  const cryptoCount = assessment.currentCrypto?.length ?? 0
+  const complianceCount = assessment.complianceRequirements?.length ?? 0
+  const useCaseCount = assessment.cryptoUseCases?.length ?? 0
+  const infraCount = assessment.infrastructure?.length ?? 0
+
+  // Researcher: comprehensive breadth across many assessment dimensions
+  // (selected many algorithms, many compliance frameworks, many use cases)
+  if (cryptoCount >= 5 && complianceCount >= 4 && useCaseCount >= 4) {
+    return 'researcher'
+  }
+
+  // Executive: early-stage migration, focus on risk/compliance rather than implementation
   if (
-    (assessment.teamSize === 'small' || assessment.teamSize === '') &&
-    (assessment.migrationStatus === 'not_started' || assessment.migrationStatus === '')
+    (assessment.migrationStatus === 'not-started' ||
+      assessment.migrationStatus === 'unknown' ||
+      assessment.migrationStatus === '') &&
+    assessment.cryptoAgility !== 'fully-abstracted' &&
+    infraCount <= 2
   ) {
     return 'executive'
   }
 
-  // High crypto agility or large team → likely architect
-  if (assessment.cryptoAgility === 'high' || assessment.teamSize === 'large') {
+  // Architect: deep infrastructure involvement or crypto-agile design focus
+  if (
+    assessment.cryptoAgility === 'fully-abstracted' ||
+    assessment.cryptoAgility === 'partially-abstracted' ||
+    infraCount >= 3
+  ) {
     return 'architect'
   }
 
-  // Medium team actively migrating → likely developer
-  if (assessment.migrationStatus === 'in_progress' || assessment.migrationStatus === 'planning') {
+  // Developer: actively migrating or planning, implementation-focused
+  if (assessment.migrationStatus === 'started' || assessment.migrationStatus === 'planning') {
     return 'developer'
   }
 
-  // Default suggestion for assessment completers
-  return 'architect'
+  // Not enough signal to suggest a persona
+  return null
 }

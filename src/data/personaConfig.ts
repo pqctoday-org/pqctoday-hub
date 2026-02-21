@@ -7,9 +7,17 @@ import type { Region } from '../store/usePersonaStore'
  * null = show all (researcher / no persona)
  */
 export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
-  executive: ['/assess', '/leaders', '/library'],
-  developer: ['/algorithms', '/library', '/migrate', '/playground', '/openssl'],
-  architect: ['/assess', '/algorithms', '/library', '/migrate', '/compliance', '/leaders'],
+  executive: ['/assess', '/leaders', '/library', '/compliance', '/migrate'],
+  developer: ['/assess', '/algorithms', '/library', '/migrate', '/playground', '/openssl'],
+  architect: [
+    '/assess',
+    '/algorithms',
+    '/library',
+    '/migrate',
+    '/compliance',
+    '/leaders',
+    '/playground',
+  ],
   researcher: null,
 }
 
@@ -17,9 +25,9 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
  * Top 3 landing page feature card paths to badge as "Recommended" per persona.
  */
 export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {
-  executive: ['/assess', '/timeline', '/leaders'],
+  executive: ['/assess', '/timeline', '/compliance'],
   developer: ['/playground', '/openssl', '/algorithms'],
-  architect: ['/timeline', '/assess', '/compliance'],
+  architect: ['/assess', '/compliance', '/timeline'],
   researcher: ['/algorithms', '/openssl', '/playground'],
 }
 

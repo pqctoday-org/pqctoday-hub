@@ -77,25 +77,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Single-select industry</strong> &mdash; Home
-                    page industry picker now selects one at a time; drives Library, Assessment, and
-                    Learning path
+                    <strong className="text-foreground">Persona-aware navigation</strong> &mdash;
+                    Executive, Developer, and Architect personas now have the correct routes — no
+                    more dead links in assessment reports
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Region-scoped country lists</strong> &mdash;
-                    Timeline filter and Assessment wizard show only countries matching your selected
-                    region
+                    <strong className="text-foreground">Smarter role inference</strong> &mdash;
+                    Assessment results now correctly suggest all four personas, including Researcher
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Smarter persona pre-seeding</strong> &mdash;
-                    Assessment industry and country auto-filled from home page selections on fresh
-                    start
+                    <strong className="text-foreground">Persona-aware onboarding</strong> &mdash;
+                    Guided tour and hero CTAs now adapt to your selected role
                   </span>
                 </li>
               </ul>
