@@ -16,6 +16,18 @@ The "Learn" feature is a comprehensive educational platform designed to teach va
 - **TLS 1.3 Basics** (Implemented)
 - **PQC 101 Introduction** (Implemented)
 - **PQC Quiz** (Implemented)
+- **Key Management & HSM** (Implemented)
+
+## Module 8: Key Management & HSM (Implemented)
+
+This module covers key lifecycle management, HSM operations, and PQC migration planning for enterprise cryptographic infrastructure.
+
+**Key Features:**
+
+- **Key Lifecycle:** Walkthrough of all 7 stages of the key lifecycle (Generation to Destruction) with comparisons between classical approaches and PQC impact.
+- **HSM Simulator:** Step-by-step interactive simulation of PKCS#11 API calls (Generate, Export, Wrap, Unwrap, Sign, Verify) specifically for PQC mechanisms (ML-KEM, ML-DSA).
+- **Rotation Planner:** Enterprise mock scenario with tools to analyze storage and bandwidth impact when migrating TLS, Code Signing, and CA keys to hybrid or full-PQC algorithms.
+- **Compliance Deadlines:** Outlines deadlines for major frameworks (ANSSI, BSI, PCI DSS, DORA, NIST).
 
 ## Module 1: PKI Workshop (Implemented)
 
@@ -83,12 +95,12 @@ The workshop consists of a linear 4-step process:
 **Goal:** Sign a CSR using the Root CA created in Step 2.
 
 - **Process Flow:**
-  1.  **Receive & Validate:** Select a CSR from Step 1. The system parses and displays the Subject DN.
-  2.  **Select Profile:** Choose an End-Entity Certificate Profile (e.g., `Cert-TLS-Server.csv`).
-  3.  **Build Certificate:**
-      - **Attribute Source:** Attributes are clearly labeled as coming from the **CSR** (Blue) or the **CA Profile** (Purple).
-      - **Modifiability:** CSR-derived attributes are locked to ensure integrity. Profile attributes can be modified if allowed.
-  4.  **Sign with CA Key:** Select the Root CA Private Key to sign the certificate.
+  1. **Receive & Validate:** Select a CSR from Step 1. The system parses and displays the Subject DN.
+  2. **Select Profile:** Choose an End-Entity Certificate Profile (e.g., `Cert-TLS-Server.csv`).
+  3. **Build Certificate:**
+     - **Attribute Source:** Attributes are clearly labeled as coming from the **CSR** (Blue) or the **CA Profile** (Purple).
+     - **Modifiability:** CSR-derived attributes are locked to ensure integrity. Profile attributes can be modified if allowed.
+  4. **Sign with CA Key:** Select the Root CA Private Key to sign the certificate.
 - **Configuration:**
   - **Validity:** Configurable validity period (default 365 days).
 - **Output:**

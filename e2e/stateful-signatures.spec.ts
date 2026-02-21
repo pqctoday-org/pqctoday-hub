@@ -16,10 +16,12 @@ test.describe('Stateful Signatures Module', () => {
     await page.getByText('Workshop', { exact: true }).click()
 
     // Step 1: LMS Key Generation should be visible
-    await expect(page.getByRole('heading', { name: 'LMS Key Generation' })).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: 'LMS Key Generation', exact: true })
+    ).toBeVisible()
 
     // HSS is now in WORKSHOP_DISPLAY_PARAMS so it should be visible by default
-    const hssButton = page.getByRole('button', { name: 'HSS-L2 (H10x2) / W4' })
+    const hssButton = page.getByRole('button', { name: 'HSS/W4' })
     await expect(hssButton).toBeVisible()
 
     // Click on the HSS parameter

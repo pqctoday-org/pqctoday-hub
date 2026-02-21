@@ -17,8 +17,8 @@ test.describe('Key Management & HSM Module', () => {
   })
 
   test('should navigate to Key Rotation Planner and verifiy compliance text', async ({ page }) => {
-    // Click Workshop tab
-    await page.getByRole('tab', { name: 'Workshop' }).click()
+    // Click Start Workshop
+    await page.getByRole('button', { name: /Start Workshop/i }).click()
 
     // Switch to step 3 (Rotation Planner)
     await page.getByRole('button', { name: /Next Step/i }).click()

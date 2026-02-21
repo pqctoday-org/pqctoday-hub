@@ -16,11 +16,21 @@ test('verify hd wallet flow', async ({ page }) => {
   }
 
   // 1. Navigate to Digital Assets directly
+  // Disable Guided Tour to prevent intercepting clicks
+  await page.addInitScript(() => {
+    window.localStorage.setItem('pqc-tour-completed', 'true')
+  })
+
   await page.goto('/learn/digital-assets')
-  await expect(page.getByRole('button', { name: /HD Wallet/i })).toBeVisible({ timeout: 30000 })
+  await expect(
+    page.getByRole('heading', { name: 'Blockchain Cryptography', exact: true })
+  ).toBeVisible({ timeout: 15000 })
+
+  // navigate to workshop
+  await page.getByRole('button', { name: 'Workshop', exact: true }).click()
 
   // 2. Select HD Wallet Module (Step 4)
-  await page.getByRole('button', { name: /HD Wallet/i }).click()
+  await page.getByRole('heading', { name: /HD Wallet/i }).click()
 
   // 3. Step 1: Generate Mnemonic
   await expect(page.getByRole('heading', { name: 'Generate Mnemonic' })).toBeVisible({

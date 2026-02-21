@@ -25,7 +25,7 @@ test.describe('Migrate Module', () => {
     await expect(page.getByRole('cell', { name: 'OpenSSL' }).first()).toBeVisible()
 
     // Check that unrelated item is hidden (e.g., "Windows Server")
-    await expect(page.getByRole('cell', { name: 'Windows Server' })).toBeHidden()
+    await expect(page.getByRole('cell', { name: 'Windows Server' }).first()).toBeHidden()
   })
 
   test('should display "New" status badges', async ({ page }) => {

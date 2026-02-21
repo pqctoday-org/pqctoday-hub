@@ -21,17 +21,25 @@ test('Ethereum Flow E2E', async ({ page }) => {
 
   // 1. Navigate to Digital Assets Module
   await test.step('Navigate to Digital Assets', async () => {
+    // Disable Guided Tour to prevent intercepting clicks
+    await page.addInitScript(() => {
+      window.localStorage.setItem('pqc-tour-completed', 'true')
+    })
+
     await page.goto('/learn')
     // await page.waitForLoadState('networkidle') - Causes hacks
     await page.getByText('Digital Assets', { exact: true }).click()
-    await expect(page.getByRole('heading', { name: 'Bitcoin', exact: true })).toBeVisible({
+    await expect(
+      page.getByRole('heading', { name: 'Blockchain Cryptography', exact: true })
+    ).toBeVisible({
       timeout: 15000,
     })
   })
 
   // 2. Switch to Ethereum Tab
   await test.step('Switch to Ethereum Module', async () => {
-    await page.getByRole('button', { name: /Ethereum/i }).click()
+    await page.getByRole('button', { name: 'Workshop', exact: true }).click()
+    await page.getByRole('heading', { name: 'Ethereum', exact: true }).click()
     await expect(page.getByText(/Generate Source Keypair/i)).toBeVisible({ timeout: 10000 })
   })
 
@@ -110,7 +118,7 @@ test('Ethereum Flow E2E', async ({ page }) => {
 
   // 9. Step 7: Visualize Message
   await test.step('Step 7: Visualize Message', async () => {
-    await expect(page.getByText('Visualize RLP Structure')).toBeVisible()
+    await expect(page.getByText('7. Visualize Transaction Fields')).toBeVisible()
     const executeBtn = page.getByRole('button', { name: 'Visualize Message' })
     await executeBtn.click()
     await waitForCryptoOperation()

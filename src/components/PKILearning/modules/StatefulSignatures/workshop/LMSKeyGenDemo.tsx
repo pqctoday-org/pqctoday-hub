@@ -71,7 +71,9 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                   : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
               }`}
             >
-              H{param.treeHeight}/W{param.winternitzParam}
+              {param.variant === 'multi-tree'
+                ? `HSS/W${param.winternitzParam}`
+                : `H${param.treeHeight}/W${param.winternitzParam}`}
             </button>
           ))}
         </div>
