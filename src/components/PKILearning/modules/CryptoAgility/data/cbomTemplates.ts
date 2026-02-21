@@ -68,7 +68,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     keySize: 384,
     usage: 'IPsec key exchange',
     quantumStatus: 'vulnerable',
-    recommendation: 'Add ML-KEM-768 additional key exchange per RFC 9370',
+    recommendation: 'Add ML-KEM-768 additional key exchange using RFC 9370 framework',
   },
   {
     id: 'vpn-auth',
@@ -129,7 +129,30 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     keySize: 2048,
     usage: 'Email encryption and signing',
     quantumStatus: 'vulnerable',
-    recommendation: 'Migrate to ML-DSA-65 signing + ML-KEM-768 encryption per RFC 9629',
+    recommendation:
+      'Migrate to ML-DSA-65 signing + ML-KEM-768 encryption using RFC 9629 KEM framework',
+  },
+  {
+    id: 'legacy-3des',
+    component: 'Payment Terminal',
+    location: 'Card data encryption',
+    algorithm: '3DES-168',
+    keySize: 168,
+    usage: 'Legacy payment card data encryption in transit',
+    quantumStatus: 'weakened',
+    recommendation:
+      'Migrate to AES-256 — 3DES effective security is 112 bits classical, ~56 bits post-quantum (Grover)',
+  },
+  {
+    id: 'legacy-sha1',
+    component: 'Legacy Internal App',
+    location: 'Certificate pinning',
+    algorithm: 'SHA-1',
+    keySize: 160,
+    usage: 'Certificate fingerprint pinning in legacy app',
+    quantumStatus: 'weakened',
+    recommendation:
+      'Upgrade to SHA-256 — SHA-1 has known collision attacks and only ~80-bit post-quantum preimage resistance',
   },
 ]
 
@@ -149,23 +172,30 @@ export const CBOM_CYCLONEDX_SAMPLE = {
     {
       type: 'cryptographic-asset',
       name: 'RSA-2048 TLS Certificate',
-      'crypto:properties': {
+      cryptoProperties: {
         assetType: 'certificate',
-        algorithmRef: 'RSA',
-        keySize: 2048,
-        classicalSecurityLevel: 112,
-        quantumSecurityLevel: 0,
+        algorithmProperties: {
+          primitive: 'pke',
+          parameterSetIdentifier: '2048',
+          classicalSecurityLevel: 112,
+          nistQuantumSecurityLevel: 0,
+        },
+        oid: '1.2.840.113549.1.1.1',
       },
     },
     {
       type: 'cryptographic-asset',
       name: 'AES-256-GCM Session Cipher',
-      'crypto:properties': {
+      cryptoProperties: {
         assetType: 'algorithm',
-        algorithmRef: 'AES',
-        keySize: 256,
-        classicalSecurityLevel: 256,
-        quantumSecurityLevel: 128,
+        algorithmProperties: {
+          primitive: 'ae',
+          parameterSetIdentifier: '256',
+          mode: 'gcm',
+          classicalSecurityLevel: 256,
+          nistQuantumSecurityLevel: 1,
+        },
+        oid: '2.16.840.1.101.3.4.1.46',
       },
     },
   ],

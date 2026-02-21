@@ -215,7 +215,253 @@ export const KeyManagementIntroduction: React.FC<KeyManagementIntroductionProps>
         </div>
       </section>
 
-      {/* Section 4: Enterprise Key Management */}
+      {/* Section 4: KEMs vs Key Exchange */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-secondary/10">
+            <KeyRound size={24} className="text-secondary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">KEMs vs. Key Exchange</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            PQC replaces classical key exchange (DH/ECDH) with{' '}
+            <strong>Key Encapsulation Mechanisms (KEMs)</strong>. Understanding this distinction is
+            essential for migration planning and HSM operations.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-destructive/5 rounded-lg p-4 border border-destructive/20">
+              <div className="text-xs font-bold text-destructive mb-2">
+                Classical Key Exchange (DH/ECDH)
+              </div>
+              <ul className="text-xs text-muted-foreground space-y-1">
+                <li>&bull; Both parties contribute random values</li>
+                <li>&bull; Shared secret derived from both contributions</li>
+                <li>&bull; Interactive: requires round-trip</li>
+                <li>&bull; Same mathematical structure as signing (e.g. elliptic curves)</li>
+              </ul>
+            </div>
+            <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
+              <div className="text-xs font-bold text-primary mb-2">KEM (ML-KEM)</div>
+              <ul className="text-xs text-muted-foreground space-y-1">
+                <li>&bull; Sender encapsulates: (ciphertext, shared_secret) = Encaps(pk)</li>
+                <li>&bull; Receiver decapsulates: shared_secret = Decaps(sk, ciphertext)</li>
+                <li>&bull; Non-interactive: sender only needs receiver&apos;s public key</li>
+                <li>
+                  &bull; Separate from signing &mdash; ML-KEM cannot sign, ML-DSA cannot encapsulate
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-4 border border-border">
+            <p className="text-xs text-foreground/80">
+              <strong>Key management impact:</strong> Because KEMs produce a fixed 32-byte shared
+              secret (not a directly wrapped key), the PKCS#11 mapping uses C_WrapKey/C_UnwrapKey as
+              a two-step abstraction: encapsulate to derive a KEK, then wrap the session key with
+              the KEK. This differs from RSA-OAEP which directly wraps the key in one step.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 5: Stateful vs Stateless Signatures */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Shield size={24} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">Stateful vs. Stateless Signatures</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            NIST has standardized two families of hash-based signatures with very different key
+            management requirements. Choosing the wrong one &mdash; or mismanaging state &mdash; can
+            be catastrophic.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-warning/5 rounded-lg p-4 border border-warning/20">
+              <div className="text-xs font-bold text-warning mb-2">
+                Stateful: LMS/HSS &amp; XMSS (NIST SP 800-208)
+              </div>
+              <ul className="text-xs text-muted-foreground space-y-1">
+                <li>&bull; Each signature uses a one-time key from a finite pool</li>
+                <li>
+                  &bull; HSM <strong>must</strong> track which keys have been used
+                </li>
+                <li>
+                  &bull; Reusing a one-time key <strong>breaks security completely</strong>
+                </li>
+                <li>&bull; Small signatures (~2-5 KB), but limited total signatures per key</li>
+                <li>&bull; Best for firmware signing, code signing (low volume, HSM-managed)</li>
+              </ul>
+            </div>
+            <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
+              <div className="text-xs font-bold text-primary mb-2">
+                Stateless: SLH-DSA / ML-DSA (FIPS 204 &amp; 205)
+              </div>
+              <ul className="text-xs text-muted-foreground space-y-1">
+                <li>&bull; No per-signature state to track</li>
+                <li>&bull; Unlimited signatures per key pair</li>
+                <li>&bull; No risk of catastrophic state reuse</li>
+                <li>&bull; ML-DSA: moderate signatures (~2-5 KB), fast</li>
+                <li>
+                  &bull; SLH-DSA: large signatures (7-30 KB) but conservative security assumptions
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="bg-destructive/5 rounded-lg p-4 border border-destructive/20">
+            <p className="text-xs text-foreground/80">
+              <strong>Critical HSM requirement:</strong> If deploying LMS/HSS or XMSS, the HSM must
+              persist signature state to non-volatile storage after every signing operation. A power
+              failure or crash between signing and state update can cause key reuse. CNSA 2.0
+              includes LMS/HSS for firmware signing specifically because HSMs can enforce this state
+              management.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 6: Hybrid & Composite Certificates */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-secondary/10">
+            <Building2 size={24} className="text-secondary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">Hybrid &amp; Composite Certificates</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            During the PQC transition, organizations need certificates that work with both classical
+            and post-quantum algorithms. Two main approaches exist:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="text-xs font-bold text-primary mb-2">
+                Composite Certificates (IETF Draft)
+              </div>
+              <ul className="text-xs text-muted-foreground space-y-1">
+                <li>&bull; Single certificate contains both classical + PQC keys and signatures</li>
+                <li>&bull; Both algorithms must validate for the certificate to be trusted</li>
+                <li>
+                  &bull; One OID represents the combined algorithm (e.g. ML-DSA-65 + ECDSA P-256)
+                </li>
+                <li>&bull; Largest certificate size but strongest security guarantee</li>
+              </ul>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="text-xs font-bold text-primary mb-2">
+                Parallel / Dual Certificates
+              </div>
+              <ul className="text-xs text-muted-foreground space-y-1">
+                <li>&bull; Separate classical and PQC certificates for the same entity</li>
+                <li>&bull; Server presents both; client uses whichever it supports</li>
+                <li>&bull; Simpler to deploy incrementally</li>
+                <li>&bull; Requires managing two certificate lifecycles per entity</li>
+              </ul>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Key management impact: composite certificates require HSMs that support composite key
+            generation (generating both key pairs atomically). Rotation must update both algorithm
+            components simultaneously. HSM vendors like Thales and Entrust already support composite
+            key generation in PQC-capable firmware.
+          </p>
+        </div>
+      </section>
+
+      {/* Section 7: Key Backup & Recovery */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Server size={24} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">Key Backup &amp; Recovery</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            Enterprise disaster recovery depends on secure key backup. PQC migration introduces new
+            challenges for backup, escrow, and recovery operations.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">M-of-N Key Splitting</div>
+              <p className="text-xs text-muted-foreground">
+                HSM master keys are split into N shares, requiring M shares to reconstruct (e.g. 3
+                of 5). With PQC, larger keys produce larger shares, and the wrapping keys protecting
+                shares must also be quantum-safe.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">HSM Cloning</div>
+              <p className="text-xs text-muted-foreground">
+                Replicating keys across HSM clusters for HA. PQC key wrapping during clone
+                operations uses more bandwidth (larger wrapped keys). Ensure the wrapping mechanism
+                is itself quantum-safe.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">Key Escrow</div>
+              <p className="text-xs text-muted-foreground">
+                Regulatory escrow (e.g. for encrypted data recovery) must use PQC-protected escrow
+                envelopes. Escrowed classical keys remain useful only if the escrow container
+                resists quantum attack.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 8: Side-Channel Considerations */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-secondary/10">
+            <AlertTriangle size={24} className="text-secondary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">Side-Channel Considerations</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            PQC algorithms introduce new side-channel attack surfaces that differ from classical
+            cryptography. HSM implementations must address these to maintain their security
+            guarantees.
+          </p>
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="bg-muted/50 rounded-lg p-3 border border-border">
+                <div className="text-xs font-bold text-foreground mb-1">
+                  Lattice-Based (ML-KEM, ML-DSA)
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Polynomial multiplication and NTT operations can leak secret key information
+                  through power analysis and electromagnetic emanations. Constant-time
+                  implementations and masking countermeasures are essential.
+                </p>
+              </div>
+              <div className="bg-muted/50 rounded-lg p-3 border border-border">
+                <div className="text-xs font-bold text-foreground mb-1">
+                  Hash-Based (SLH-DSA, LMS)
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Rely heavily on hash function calls. While simpler to protect than lattice
+                  operations, the large number of hash invocations per signature increases the
+                  window for timing and cache attacks.
+                </p>
+              </div>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <p className="text-xs text-foreground/80">
+                <strong>Hedged signing (FIPS 204):</strong> ML-DSA supports a &ldquo;hedged&rdquo;
+                signing mode where internal randomness supplements the message, providing protection
+                against fault injection attacks. In HSM contexts, hedged mode is recommended over
+                deterministic signing because the HSM has access to a hardware entropy source.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Enterprise Key Management */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">

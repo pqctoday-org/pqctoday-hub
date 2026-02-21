@@ -81,15 +81,42 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         {/* Left: Merkle tree visualization */}
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <h4 className="text-sm font-bold text-foreground mb-3">
-            Merkle Tree (showing {treeDepth} of {selected.treeHeight} levels)
+            {selected.variant === 'multi-tree' ? 'HSS Multi-Tree' : 'Merkle Tree'} Structure
+            {selected.variant === 'multi-tree' ? (
+              <span className="ml-2 text-[10px] font-normal text-primary">
+                (showing one sub-tree of depth {treeDepth})
+              </span>
+            ) : (
+              <span className="ml-2 text-[10px] font-normal text-primary">
+                (showing {treeDepth} of {selected.treeHeight} levels)
+              </span>
+            )}
           </h4>
           <div className="space-y-2 overflow-x-auto">
             {/* Root */}
             <div className="flex justify-center">
               <div className="px-3 py-1.5 rounded bg-primary/20 text-primary text-[10px] font-bold border border-primary/30">
-                Root (PK)
+                {selected.variant === 'multi-tree' ? 'HSS Root' : 'Root (PK)'}
               </div>
             </div>
+
+            {/* Multi-tree indicator */}
+            {selected.variant === 'multi-tree' && (
+              <>
+                <div className="text-center text-[9px] text-muted-foreground my-1">
+                  &darr; signs sub-tree roots &darr;
+                </div>
+                <div className="flex justify-center gap-2 mb-2">
+                  <div className="px-2 py-1 rounded bg-primary/10 text-primary text-[9px] font-bold border border-primary/20">
+                    Sub-tree 0
+                  </div>
+                  <div className="px-2 py-1 rounded bg-muted text-muted-foreground text-[9px] border border-border">
+                    Sub-tree 1
+                  </div>
+                  <div className="text-muted-foreground text-[9px] flex items-center">...</div>
+                </div>
+              </>
+            )}
 
             {/* Intermediate levels */}
             {Array.from({ length: treeDepth - 1 }, (_, level) => {
@@ -142,8 +169,10 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
               <Info size={12} className="text-primary shrink-0 mt-0.5" />
               <p className="text-[10px] text-muted-foreground">
                 Full tree has {selected.treeHeight} levels with{' '}
-                {formatSignatureCount(selected.maxSignatures)} leaves. Only the top {treeDepth}{' '}
-                levels are shown for readability.
+                {formatSignatureCount(selected.maxSignatures)} leaves.
+                {selected.variant === 'multi-tree'
+                  ? ' Multi-tree chains multiple sub-trees for expanded capacity.'
+                  : ` Only the top ${treeDepth} levels are shown for readability.`}
               </p>
             </div>
           )}
@@ -159,6 +188,11 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                 { label: 'Hash Function', value: selected.hashFunction },
                 { label: 'Tree Height (H)', value: String(selected.treeHeight) },
                 { label: 'Winternitz (W)', value: String(selected.winternitzParam) },
+                {
+                  label: 'Variant',
+                  value:
+                    selected.variant === 'multi-tree' ? 'Multi-tree (HSS)' : 'Single tree (LMS)',
+                },
                 { label: 'Security Level', value: selected.securityLevel },
               ].map((row) => (
                 <div key={row.label} className="flex justify-between text-xs">

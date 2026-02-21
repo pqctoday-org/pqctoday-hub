@@ -121,12 +121,12 @@ export const PROTOCOL_SIZE_DATA: ProtocolSizeEntry[] = [
     mode: 'pure-pqc',
     modeLabel: 'ML-KEM-768 (future)',
     kexAlgorithm: 'ML-KEM-768',
-    authAlgorithm: 'ML-DSA-65',
+    authAlgorithm: 'Static ML-KEM-768 / Classic McEliece',
     handshakeBytes: 5500,
     roundTrips: 2,
     publicKeyBytes: 1184,
     ciphertextBytes: 1088,
-    notes: 'Hypothetical; Noise protocol modification required',
+    notes: 'Hypothetical; Noise requires static KEM operations for auth, not digital signatures',
   },
 
   // TLS 1.3
@@ -230,7 +230,7 @@ export const PROTOCOL_FEATURE_COMPARISON: ProtocolFeature[] = [
     feature: 'Crypto Agility',
     ikev2: 'High: negotiated transforms',
     ssh: 'High: negotiated algorithms',
-    wireguard: 'Low: fixed X25519 + ChaCha20',
+    wireguard: 'None: fixed X25519 + ChaCha20',
     tls13: 'High: negotiated cipher suites',
   },
   {

@@ -17,10 +17,10 @@ test('verify hd wallet flow', async ({ page }) => {
 
   // 1. Navigate to Digital Assets directly
   await page.goto('/learn/digital-assets')
-  await expect(page.getByRole('button', { name: '4 HD Wallet' })).toBeVisible({ timeout: 30000 })
+  await expect(page.getByRole('button', { name: /HD Wallet/i })).toBeVisible({ timeout: 30000 })
 
   // 2. Select HD Wallet Module (Step 4)
-  await page.getByRole('button', { name: '4 HD Wallet' }).click()
+  await page.getByRole('button', { name: /HD Wallet/i }).click()
 
   // 3. Step 1: Generate Mnemonic
   await expect(page.getByRole('heading', { name: 'Generate Mnemonic' })).toBeVisible({

@@ -51,6 +51,7 @@ c/wVjXjqJ9F7v7+0S9/Pc/wVjXmhRANCAATe+8+1abcde1234567890123456789
 
 test.describe('5G SUCI Validation', () => {
   test.beforeEach(async ({ page }) => {
+    test.setTimeout(120000) // Increase timeout for heavy crypto ops
     // Disable Guided Tour to prevent intercepting clicks
     await page.addInitScript(() => {
       window.localStorage.setItem('pqc-tour-completed', 'true')
@@ -76,48 +77,49 @@ test.describe('5G SUCI Validation', () => {
 
     await page.waitForTimeout(2000)
 
+    await page.locator('button:has-text("Simulate")').click()
     // 3. Select Profile A
     await page.click('button[data-testid="profile-a-btn"]')
 
     // Step 1: Generate HN Keys
     await executeAndValidateStep(page)
     await page.click('button:has-text("Next Step")')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(100)
 
     // Step 2: Provision USIM
     await executeAndValidateStep(page)
     await page.click('button:has-text("Next Step")')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(100)
 
     // Step 3: USIM Key Retrieval
     await executeAndValidateStep(page)
     await page.click('button:has-text("Next Step")')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(100)
 
     // Step 4: Ephemeral Key Gen
     await executeAndValidateStep(page)
     await page.click('button:has-text("Next Step")')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(100)
 
     // Step 5: Shared Secret
     await executeAndValidateStep(page)
     await page.click('button:has-text("Next Step")')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(100)
 
     // Step 6: Key Derivation
     await executeAndValidateStep(page)
     await page.click('button:has-text("Next Step")')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(100)
 
     // Step 7: Encrypt MSIN
     await executeAndValidateStep(page)
     await page.click('button:has-text("Next Step")')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(100)
 
     // Step 8: MAC Tag
     await executeAndValidateStep(page)
     await page.click('button:has-text("Next Step")')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(100)
 
     // Step 9: SUCI Output
     await executeAndValidateStep(page)
@@ -128,12 +130,12 @@ test.describe('5G SUCI Validation', () => {
     expect(suciText).toContain('260') // MNC
 
     await page.click('button:has-text("Next Step")')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(100)
 
     // Step 10: Assemble SUCI
     await executeAndValidateStep(page)
     await page.click('button:has-text("Next Step")')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(100)
 
     // Step 11: SIDF Decryption
     await executeAndValidateStep(page)
@@ -149,7 +151,9 @@ test.describe('5G SUCI Validation', () => {
   test('validate Profile B (P-256) Full Flow', async ({ page }) => {
     // 1. Navigate
     await page.goto('/learn/5g-security')
-    await expect(page.getByRole('heading', { name: '5G Security' })).toBeVisible({ timeout: 30000 })
+    await expect(
+      page.getByRole('heading', { name: '5G Security Architecture', exact: true })
+    ).toBeVisible({ timeout: 30000 })
 
     // 2. Inject Test Vectors
     await page.evaluate((vectors) => {
@@ -159,6 +163,7 @@ test.describe('5G SUCI Validation', () => {
 
     await page.waitForTimeout(1000)
 
+    await page.locator('button:has-text("Simulate")').click()
     // 3. Select Profile B
     await page.click('button[data-testid="profile-b-btn"]')
 
@@ -170,7 +175,7 @@ test.describe('5G SUCI Validation', () => {
       // click next if not last step
       if (i < steps) {
         await page.click('button:has-text("Next Step")')
-        await page.waitForTimeout(500)
+        await page.waitForTimeout(100)
       }
     }
 
@@ -186,7 +191,9 @@ test.describe('5G SUCI Validation', () => {
 
     // Wait for app to be interactive
     // Wait for app to be interactive
-    await expect(page.getByRole('heading', { name: '5G Security' })).toBeVisible({ timeout: 30000 })
+    await expect(
+      page.getByRole('heading', { name: '5G Security Architecture', exact: true })
+    ).toBeVisible({ timeout: 30000 })
 
     // Inject
     await page.evaluate((vectors) => {
@@ -196,6 +203,7 @@ test.describe('5G SUCI Validation', () => {
 
     await page.waitForTimeout(1000)
 
+    await page.locator('button:has-text("Simulate")').click()
     // 3. Select Profile C
     await page.click('button[data-testid="profile-c-btn"]')
 
@@ -229,7 +237,9 @@ test.describe('5G SUCI Validation', () => {
 
   test('validate Subscriber Authentication (MILENAGE)', async ({ page }) => {
     await page.goto('/learn/5g-security')
-    await expect(page.getByRole('heading', { name: '5G Security' })).toBeVisible({ timeout: 30000 })
+    await expect(
+      page.getByRole('heading', { name: '5G Security Architecture', exact: true })
+    ).toBeVisible({ timeout: 30000 })
 
     // Inject
     await page.evaluate((vectors) => {
@@ -237,6 +247,7 @@ test.describe('5G SUCI Validation', () => {
       if (window.fiveGService) window.fiveGService.enableTestMode(vectors)
     }, TEST_VECTORS)
 
+    await page.locator('button:has-text("Simulate")').click()
     // Navigate to Auth Tab (Part 2)
     await page.locator('button').filter({ hasText: 'Part 2' }).click()
     await page.waitForTimeout(500)

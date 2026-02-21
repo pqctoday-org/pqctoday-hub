@@ -3,10 +3,14 @@ import { CRQC_ESTIMATES } from '../data/quantumConstants'
 
 export const HNDLTimeline: React.FC = () => {
   const [dataLifetime, setDataLifetime] = useState(25)
+  const [migrationTime, setMigrationTime] = useState(5)
   const [crqcYear, setCrqcYear] = useState(2035)
   const currentYear = 2026
 
-  const migrationDeadline = useMemo(() => crqcYear - dataLifetime, [crqcYear, dataLifetime])
+  const migrationDeadline = useMemo(
+    () => crqcYear - dataLifetime - migrationTime,
+    [crqcYear, dataLifetime, migrationTime]
+  )
 
   const yearsRemaining = useMemo(() => migrationDeadline - currentYear, [migrationDeadline])
 
@@ -115,36 +119,65 @@ export const HNDLTimeline: React.FC = () => {
           </div>
         </div>
 
-        <div className="glass-panel p-4">
-          <label
-            htmlFor="crqc-year-slider"
-            className="block text-sm font-medium text-foreground mb-2"
-          >
-            Expected CRQC Arrival Year
-          </label>
-          <div className="flex items-center gap-3">
-            <input
-              id="crqc-year-slider"
-              type="range"
-              min={2028}
-              max={2045}
-              value={crqcYear}
-              onChange={(e) => setCrqcYear(Number(e.target.value))}
-              className="flex-1 accent-secondary"
-            />
-            <span className="text-lg font-bold text-secondary w-20 text-right">{crqcYear}</span>
+        <div className="glass-panel p-4 space-y-6">
+          <div>
+            <label
+              htmlFor="crqc-year-slider"
+              className="block text-sm font-medium text-foreground mb-2"
+            >
+              Expected CRQC Arrival Year
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                id="crqc-year-slider"
+                type="range"
+                min={2028}
+                max={2045}
+                value={crqcYear}
+                onChange={(e) => setCrqcYear(Number(e.target.value))}
+                className="flex-1 accent-secondary"
+              />
+              <span className="text-lg font-bold text-secondary w-20 text-right">{crqcYear}</span>
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground mt-1">
+              <span>2028</span>
+              <span>2045</span>
+            </div>
+            <div className="mt-3 space-y-1">
+              {CRQC_ESTIMATES.slice(0, 3).map((estimate) => (
+                <div key={estimate.source} className="flex items-center gap-2 text-xs">
+                  <span className="text-muted-foreground truncate">{estimate.source}:</span>
+                  <span className="text-foreground/80">{estimate.confidence}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="flex justify-between text-xs text-muted-foreground mt-1">
-            <span>2028</span>
-            <span>2045</span>
-          </div>
-          <div className="mt-3 space-y-1">
-            {CRQC_ESTIMATES.slice(0, 3).map((estimate) => (
-              <div key={estimate.source} className="flex items-center gap-2 text-xs">
-                <span className="text-muted-foreground truncate">{estimate.source}:</span>
-                <span className="text-foreground/80">{estimate.confidence}</span>
-              </div>
-            ))}
+
+          <div className="border-t border-border pt-4">
+            <label
+              htmlFor="migration-time-slider"
+              className="block text-sm font-medium text-foreground mb-2"
+            >
+              System Migration Time
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                id="migration-time-slider"
+                type="range"
+                min={1}
+                max={15}
+                value={migrationTime}
+                onChange={(e) => setMigrationTime(Number(e.target.value))}
+                className="flex-1 accent-warning"
+              />
+              <span className="text-lg font-bold text-warning w-20 text-right">
+                {migrationTime} yrs
+              </span>
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground mt-1">
+              <span>1 year</span>
+              <span>15 years</span>
+            </div>
           </div>
         </div>
       </div>
@@ -165,12 +198,12 @@ export const HNDLTimeline: React.FC = () => {
             <p className="text-sm text-muted-foreground mt-1">{urgency.message}</p>
           </div>
           <div className="text-right">
-            <div className="text-xs text-muted-foreground">Formula</div>
+            <div className="text-xs text-muted-foreground">Mosca&apos;s Theorem</div>
             <div className="font-mono text-sm text-foreground">
-              {crqcYear} &minus; {dataLifetime} = {migrationDeadline}
+              {crqcYear} &minus; {dataLifetime} &minus; {migrationTime} = {migrationDeadline}
             </div>
             <div className="text-xs text-muted-foreground mt-1">
-              CRQC Year &minus; Data Lifetime
+              CRQC Year &minus; Data Lifetime &minus; Migration Time
             </div>
           </div>
         </div>

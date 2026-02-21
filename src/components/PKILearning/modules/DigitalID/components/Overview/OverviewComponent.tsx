@@ -53,7 +53,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
             <div className="text-sm font-bold text-warning mb-1">Key Deadlines</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>May 2024: Regulation entered into force</li>
-              <li>Dec 2024: First implementing acts</li>
+              <li>Dec 2024: Five implementing regulations adopted</li>
               <li>Dec 2026: Wallets available</li>
               <li>Late 2027: Private sector acceptance</li>
             </ul>
@@ -67,7 +67,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <FileText size={20} /> Credential Formats: mdoc vs SD-JWT
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          The EUDI Architecture Reference Framework (ARF) supports two credential formats. Both
+          The EUDI Architecture Reference Framework (ARF 2.0) supports two credential formats. Both
           enable selective disclosure, but serve different use cases.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -92,7 +92,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <div className="text-sm font-bold text-success mb-2">vc+sd-jwt (IETF SD-JWT VC)</div>
+            <div className="text-sm font-bold text-success mb-2">vc+sd-jwt (SD-JWT RFC 9901)</div>
             <ul className="text-xs text-muted-foreground space-y-1.5">
               <li>
                 <span className="font-medium text-foreground">Encoding:</span> JSON (text-based)
@@ -202,6 +202,16 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           versions are expected to require PQC-safe algorithms (ML-DSA, SLH-DSA) for long-lived
           credentials.
         </p>
+        <div className="bg-muted/50 rounded-lg p-3 border border-border mb-3">
+          <div className="text-xs font-bold text-foreground mb-1">
+            EU PQC Transition Roadmap (April 2024)
+          </div>
+          <ul className="text-xs text-muted-foreground space-y-1">
+            <li>Dec 2026: National PQC transition roadmaps due</li>
+            <li>Dec 2030: High-risk use cases migrated</li>
+            <li>Dec 2035: Full transition to PQC</li>
+          </ul>
+        </div>
         <p className="text-xs text-muted-foreground">
           This simulation uses classical algorithms to match current ARF specifications. The PQC
           migration path for EUDI is an active area of ETSI and ENISA research.
@@ -214,25 +224,47 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <Globe size={20} /> Large-Scale Pilots
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          The EU funded four Large-Scale Pilots (LSPs) testing EUDI wallets in real conditions
-          across 26+ countries.
+          The EU funded four Large-Scale Pilots (LSPs) testing EUDI wallets across 26+ countries,
+          followed by a second wave in 2025.
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-          <div className="p-2 rounded border bg-muted/30 text-center">
-            <div className="font-bold text-foreground">DC4EU</div>
-            <div className="text-muted-foreground">Education & Social Security</div>
+        <div className="space-y-3">
+          <div>
+            <div className="text-xs font-medium text-muted-foreground mb-1.5">
+              Wave 1 (2023&ndash;2025)
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div className="p-2 rounded border bg-muted/30 text-center">
+                <div className="font-bold text-foreground">DC4EU</div>
+                <div className="text-muted-foreground">Education & Social Security</div>
+              </div>
+              <div className="p-2 rounded border bg-muted/30 text-center">
+                <div className="font-bold text-foreground">EWC</div>
+                <div className="text-muted-foreground">Travel & Org Identity</div>
+              </div>
+              <div className="p-2 rounded border bg-muted/30 text-center">
+                <div className="font-bold text-foreground">NOBID</div>
+                <div className="text-muted-foreground">Banking & Telecom</div>
+              </div>
+              <div className="p-2 rounded border bg-muted/30 text-center">
+                <div className="font-bold text-foreground">POTENTIAL</div>
+                <div className="text-muted-foreground">Government & Payments</div>
+              </div>
+            </div>
           </div>
-          <div className="p-2 rounded border bg-muted/30 text-center">
-            <div className="font-bold text-foreground">EWC</div>
-            <div className="text-muted-foreground">Travel & Org Identity</div>
-          </div>
-          <div className="p-2 rounded border bg-muted/30 text-center">
-            <div className="font-bold text-foreground">NOBID</div>
-            <div className="text-muted-foreground">Banking & Telecom</div>
-          </div>
-          <div className="p-2 rounded border bg-muted/30 text-center">
-            <div className="font-bold text-foreground">POTENTIAL</div>
-            <div className="text-muted-foreground">Government & Payments</div>
+          <div>
+            <div className="text-xs font-medium text-muted-foreground mb-1.5">
+              Wave 2 (2025&ndash;2027)
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div className="p-2 rounded border bg-muted/30 text-center">
+                <div className="font-bold text-foreground">APTITUDE</div>
+                <div className="text-muted-foreground">Travel Credentials & Banking</div>
+              </div>
+              <div className="p-2 rounded border bg-muted/30 text-center">
+                <div className="font-bold text-foreground">WE BUILD</div>
+                <div className="text-muted-foreground">Business Identity (NL/SE)</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

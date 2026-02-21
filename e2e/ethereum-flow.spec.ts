@@ -24,14 +24,15 @@ test('Ethereum Flow E2E', async ({ page }) => {
     await page.goto('/learn')
     // await page.waitForLoadState('networkidle') - Causes hacks
     await page.getByText('Digital Assets', { exact: true }).click()
-    await expect(page.getByText('Module 1: Bitcoin')).toBeVisible({ timeout: 15000 })
+    await expect(page.getByRole('heading', { name: 'Bitcoin', exact: true })).toBeVisible({
+      timeout: 15000,
+    })
   })
 
   // 2. Switch to Ethereum Tab
   await test.step('Switch to Ethereum Module', async () => {
     await page.getByRole('button', { name: /Ethereum/i }).click()
-    await expect(page.getByText('Module 2: Ethereum')).toBeVisible({ timeout: 10000 })
-    await expect(page.getByText('Generate Source Keypair')).toBeVisible()
+    await expect(page.getByText(/Generate Source Keypair/i)).toBeVisible({ timeout: 10000 })
   })
 
   // 3. Step 1: Generate Source Key

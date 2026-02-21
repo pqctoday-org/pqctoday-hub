@@ -81,7 +81,7 @@ export const CryptoAgilityExercises: React.FC<CryptoAgilityExercisesProps> = ({
       badge: 'Full Plan',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'The framework spans from discovery through monitoring. NSA CNSA 2.0 requires phased PQC adoption: signing by 2025, networking by 2026, exclusive use across all NSS by 2033.',
+        'The framework spans from discovery through monitoring. NSA CNSA 2.0 requires phased PQC adoption: prefer PQC for signing by 2025, networking by 2026; exclusive use across all NSS by 2033.',
       config: { step: 2 },
     },
   ]

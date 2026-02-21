@@ -52,15 +52,15 @@ export const KeyRotationPlanner: React.FC = () => {
 
   // Calculate bandwidth impact per rotation cycle
   const bandwidthAnalysis = useMemo(() => {
-    const certDistributionOverhead = 300 * (1952 + 64 - 256) // TLS certs: hybrid pub key size delta
-    const codeSigningOverhead = 50 * (1952 - 64) // code signing: ML-DSA-65 vs ECDSA
+    const certDistributionOverhead = 300 * (1952 + 65 - 256) // TLS certs: hybrid pub key size delta
+    const codeSigningOverhead = 50 * (1952 - 65) // code signing: ML-DSA-65 vs ECDSA
     const caKeyOverhead = 15 * (2592 - 512) // CA keys: ML-DSA-87 vs RSA-4096
 
     const totalBandwidthIncrease = certDistributionOverhead + codeSigningOverhead + caKeyOverhead
 
     return {
       totalIncrease: totalBandwidthIncrease,
-      perCertIncrease: 1952 + 64 - 256,
+      perCertIncrease: 1952 + 65 - 256,
       totalCertsToRotate: 500,
     }
   }, [])
@@ -119,7 +119,7 @@ export const KeyRotationPlanner: React.FC = () => {
           { name: 'Revoke all pure-classical TLS certificates', status: 'pending' },
           { name: 'Migrate CA intermediate keys to ML-DSA-87', status: 'pending' },
           { name: 'Update API authentication to ML-DSA-44 (35 services)', status: 'pending' },
-          { name: 'Verify compliance: CNSA 2.0 hybrid requirement met', status: 'pending' },
+          { name: 'Verify compliance: ANSSI/BSI hybrid recommendations met', status: 'pending' },
           { name: 'Decommission classical-only HSM partitions', status: 'pending' },
         ],
       },
@@ -251,15 +251,15 @@ export const KeyRotationPlanner: React.FC = () => {
                 label: 'TLS Certificates',
                 count: 300,
                 current: 'RSA-2048 (256 B)',
-                target: 'Hybrid (2,016 B)',
+                target: 'Hybrid (2,017 B)',
                 increase: '7.9x',
               },
               {
                 label: 'Code Signing',
                 count: 50,
-                current: 'ECDSA P-256 (64 B)',
+                current: 'ECDSA P-256 (65 B)',
                 target: 'ML-DSA-65 (1,952 B)',
-                increase: '30.5x',
+                increase: '30.0x',
               },
               {
                 label: 'CA Keys',
@@ -278,9 +278,9 @@ export const KeyRotationPlanner: React.FC = () => {
               {
                 label: 'API Auth',
                 count: 35,
-                current: 'ECDSA P-256 (64 B)',
+                current: 'ECDSA P-256 (65 B)',
                 target: 'ML-DSA-44 (1,312 B)',
-                increase: '20.5x',
+                increase: '20.2x',
               },
             ] as const
           ).map((cat) => (

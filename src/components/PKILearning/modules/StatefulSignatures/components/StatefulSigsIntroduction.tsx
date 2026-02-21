@@ -11,6 +11,7 @@ import {
   BookOpen,
   Library,
   KeyRound,
+  ExternalLink,
 } from 'lucide-react'
 
 interface StatefulSigsIntroductionProps {
@@ -32,10 +33,13 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            <strong>Hash-based signatures</strong> derive their security solely from the
-            collision-resistance and preimage-resistance of cryptographic hash functions &mdash; the
-            most conservative and well-understood security assumption in cryptography. Unlike
-            lattice-based or code-based schemes, they require no new hardness assumptions.
+            <strong>Hash-based signatures</strong> derive their security solely from the properties
+            of cryptographic hash functions &mdash; the most conservative and well-understood
+            assumption in cryptography. Unlike lattice-based or code-based schemes, they require no
+            new hardness assumptions. LMS security rests on collision and second-preimage
+            resistance; XMSS has a tighter proof requiring only{' '}
+            <strong>second-preimage resistance</strong> &mdash; a weaker assumption that provides a
+            stronger theoretical guarantee.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
@@ -65,10 +69,22 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">CNSA 2.0 Required</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground mb-2">
                 NSA CNSA 2.0 mandates LMS/XMSS for firmware and software signing in national
-                security systems by 2025, ahead of ML-DSA adoption.
+                security systems, ahead of ML-DSA adoption. Phased timeline:
               </p>
+              <ul className="text-xs text-muted-foreground space-y-0.5">
+                <li>
+                  &bull; <strong>2025:</strong> New software/firmware should support &amp; prefer
+                  CNSA 2.0
+                </li>
+                <li>
+                  &bull; <strong>2030:</strong> All deployed NSS must use CNSA 2.0 signatures
+                </li>
+                <li>
+                  &bull; <strong>2033&ndash;35:</strong> Full quantum-resistant enforcement
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -168,6 +184,41 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
               </p>
             </div>
           </div>
+          <div className="bg-muted/50 rounded-lg p-4 border border-border">
+            <div className="text-xs font-bold text-foreground mb-2">
+              How Winternitz Hash Chains Work &mdash; and Why Reuse is Catastrophic
+            </div>
+            <p className="text-xs text-muted-foreground mb-3">
+              Each OTS secret key is a set of random values. To sign, each value is hashed a number
+              of times based on the message digest &mdash; revealing an intermediate chain value.
+              The public key is the <em>fully hashed</em> end of each chain.
+            </p>
+            <div className="space-y-1 text-[10px] font-mono">
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">sk</span>
+                <span className="text-muted-foreground">&rarr;</span>
+                <span className="px-1.5 py-0.5 rounded bg-destructive/10 border border-destructive/20 text-destructive">
+                  H&sup1;(sk)
+                </span>
+                <span className="text-muted-foreground">&rarr;</span>
+                <span className="px-1.5 py-0.5 rounded bg-warning/10 border border-warning/20 text-warning">
+                  H&sup2;(sk)
+                </span>
+                <span className="text-muted-foreground">&rarr; &hellip; &rarr;</span>
+                <span className="px-1.5 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary">
+                  H&sup7;(sk) = pk
+                </span>
+              </div>
+              <p className="text-muted-foreground mt-2">
+                Signing message A reveals H&sup3;(sk); signing message B (different digit) reveals
+                H&sup5;(sk). An attacker who sees both can compute the full chain and forge
+                arbitrary messages &mdash; this is why OTS reuse is a{' '}
+                <strong>complete break</strong>, not a partial leak. The checksum field prevents
+                attackers from simply &ldquo;advancing&rdquo; the chain to forge messages with
+                higher digit values.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -236,7 +287,23 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
                   <span>Verify: {row.verifySpeed}</span>
                 </div>
               ))}
+              <p className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
+                <strong>Security note:</strong> W has <em>zero impact on security level</em>. It
+                only controls the size&thinsp;/&thinsp;speed trade-off. Security is determined by
+                the hash function and n (hash output length), not by W.
+              </p>
             </div>
+          </div>
+          <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
+            <div className="text-xs font-bold text-warning mb-1">
+              SP 800-208 Operational Requirement
+            </div>
+            <p className="text-xs text-muted-foreground">
+              NIST SP 800-208 originally required that key generation and signing be performed
+              inside a <strong>FIPS 140-validated hardware cryptographic module</strong> with no
+              private key export. HSMs with atomic state management are therefore not merely a
+              best-practice &mdash; they are the basis of the standard&rsquo;s security model.
+            </p>
           </div>
         </div>
       </section>
@@ -293,6 +360,13 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
                     <td className="py-2 pr-4">Slightly larger</td>
                     <td className="py-2">Slightly smaller at same tree height</td>
                   </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-4 font-medium text-foreground">Forward Security</td>
+                    <td className="py-2 pr-4 text-muted-foreground/60">No</td>
+                    <td className="py-2 text-success font-medium">
+                      Yes &mdash; past signatures stay secure even if current key is compromised
+                    </td>
+                  </tr>
                   <tr>
                     <td className="py-2 pr-4 font-medium text-foreground">Adoption</td>
                     <td className="py-2 pr-4">NSA CNSA 2.0, broader industry</td>
@@ -302,11 +376,21 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
               </table>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Both LMS and XMSS are approved by NIST SP 800-208. The choice between them often depends
-            on regulatory requirements: NSA CNSA 2.0 favors LMS/HSS, while BSI guidelines favor
-            XMSS/XMSS^MT.
-          </p>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground space-y-1">
+            <p>
+              <strong className="text-foreground">XMSS internals:</strong> Two key constructions
+              distinguish XMSS from LMS. An <strong>L-tree</strong> compresses the WOTS+ public key
+              (up to 67 hash values) into a single leaf via an unbalanced binary tree.{' '}
+              <strong>RAND_HASH</strong> randomizes each internal node by XOR&rsquo;ing inputs with
+              PRF-derived bitmasks before hashing, providing domain separation and multi-target
+              attack resistance. These add ~4&times; the hash computations of LMS but yield the
+              tighter second-preimage-only security proof.
+            </p>
+            <p>
+              Both LMS and XMSS are approved by NIST SP 800-208. Regulatory preference: NSA CNSA 2.0
+              favors LMS/HSS; BSI guidelines favor XMSS/XMSS^MT.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -366,12 +450,65 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
               </ul>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">
-            This state management burden is why NIST also standardized <strong>stateless</strong>{' '}
-            hash-based signatures (SLH-DSA / SPHINCS+) &mdash; which trade larger signatures for the
-            elimination of state tracking. However, stateful schemes offer much smaller signatures
-            and faster verification, making them preferred for constrained environments.
-          </p>
+          <div className="bg-muted/50 rounded-lg p-4 border border-border">
+            <div className="text-xs font-bold text-foreground mb-3">
+              Stateful (LMS/XMSS) vs Stateless (SLH-DSA / SPHINCS+)
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 pr-4 text-muted-foreground font-bold">
+                      Property
+                    </th>
+                    <th className="text-left py-2 pr-4 text-primary font-bold">LMS / XMSS</th>
+                    <th className="text-left py-2 text-secondary font-bold">SLH-DSA (FIPS 205)</th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted-foreground">
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-4 font-medium text-foreground">State required</td>
+                    <td className="py-2 pr-4 text-destructive font-medium">
+                      Yes &mdash; monotonic counter
+                    </td>
+                    <td className="py-2 text-success font-medium">No &mdash; fully stateless</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-4 font-medium text-foreground">Signature size</td>
+                    <td className="py-2 pr-4 text-success font-medium">Small (1.3 &ndash; 9 KB)</td>
+                    <td className="py-2 text-warning">Large (8 &ndash; 49 KB)</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-4 font-medium text-foreground">Signing speed</td>
+                    <td className="py-2 pr-4 text-success font-medium">Fast</td>
+                    <td className="py-2 text-warning">Slow (many hash rounds)</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-4 font-medium text-foreground">Max signatures</td>
+                    <td className="py-2 pr-4">Bounded by 2^H (plan ahead)</td>
+                    <td className="py-2 text-success font-medium">Effectively unlimited</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-4 font-medium text-foreground">CNSA 2.0</td>
+                    <td className="py-2 pr-4 text-success font-medium">
+                      Required for firmware/software
+                    </td>
+                    <td className="py-2 text-muted-foreground/60">Not included in CNSA 2.0</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-medium text-foreground">Best for</td>
+                    <td className="py-2 pr-4">Firmware, code signing, secure boot (controlled)</td>
+                    <td className="py-2">TLS, general-purpose, distributed signing</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground mt-3">
+              LMS/XMSS and SLH-DSA are <strong>complementary</strong>, not competing. Stateful
+              schemes win on size and speed in controlled environments; SLH-DSA wins wherever state
+              management is impractical.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -427,6 +564,22 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
               </div>
             </div>
           </Link>
+          <a
+            href="https://datatracker.ietf.org/doc/draft-ietf-pquip-hbs-state/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <ExternalLink size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">
+                IETF HBS State Management Draft
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Practical guidance on state, backup, and recovery for LMS/XMSS deployments
+              </div>
+            </div>
+          </a>
         </div>
       </section>
 

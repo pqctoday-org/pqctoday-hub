@@ -1084,11 +1084,12 @@ ${sharedSecretHex}
         throw new Error(`KDF iteration 2 failed - stdout: ${res2.stdout?.substring(0, 100)}`)
       }
 
-      // 5. Split: K_enc from block1, K_mac = full 256 bits of block2
+      // 5. Split: K_enc from block1, K_mac = 256 bits after K_enc
       // Profile C (PQC): use full 256-bit block1 for AES-256
-      // Profile A/B: use first 128 bits of block1 for AES-128
+      // Profile A/B: use first 128 bits of block1 for AES-128, then next 256 bits for HMAC
       this.state.kEncHex = profile === 'C' ? block1Hex : block1Hex.substring(0, 32)
-      this.state.kMacHex = block2Hex // 32 bytes = 64 hex chars
+      this.state.kMacHex =
+        profile === 'C' ? block2Hex : block1Hex.substring(32) + block2Hex.substring(0, 32)
 
       return `${header}
 

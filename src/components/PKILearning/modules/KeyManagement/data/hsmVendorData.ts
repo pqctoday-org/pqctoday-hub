@@ -151,7 +151,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
 )`,
     description: 'Use ML-KEM encapsulation to wrap an AES-256 session key.',
     detail:
-      'ML-KEM encapsulation produces a ciphertext and a shared secret. The shared secret is used as a KEK to wrap the actual session key. The 1,088-byte ciphertext is sent to the private key holder. This replaces RSA-OAEP key wrapping.',
+      'Unlike RSA-OAEP which directly wraps the key, ML-KEM is a two-step process: encapsulation produces a ciphertext and a 32-byte shared secret, then the shared secret is used as a KEK to wrap the session key. The PKCS#11 C_WrapKey call abstracts both steps. The 1,088-byte ciphertext is sent to the private key holder. PKCS#11 3.2 PQC mechanism mappings are still being finalized by OASIS.',
     output: `CKR_OK
   Wrapped Key Length: 1,088 bytes
   Mechanism:         CKM_ML_KEM_ENCAPSULATE
@@ -196,12 +196,13 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
 // mechanism = CKM_ML_DSA`,
     description: 'Create a digital signature using ML-DSA-65.',
     detail:
-      'ML-DSA-65 produces 3,309-byte signatures (vs 64 bytes for ECDSA P-256). The signing key must have been generated with CKM_ML_DSA_KEY_PAIR_GEN. Signing is performed inside the HSM; only the signature is returned. ML-DSA is a stateless scheme, unlike LMS/XMSS.',
+      'ML-DSA-65 produces 3,309-byte signatures (vs 64 bytes for ECDSA P-256). The signing key must have been generated with CKM_ML_DSA_KEY_PAIR_GEN. Signing is performed inside the HSM; only the signature is returned. ML-DSA is a stateless scheme, unlike LMS/XMSS which require the HSM to track per-signature state to prevent catastrophic key reuse.',
     output: `CKR_OK
   Signature Length: 3,309 bytes
   Algorithm:       ML-DSA-65
   NIST Level:      3
-  Randomized:      YES (hedged mode per FIPS 204)`,
+  Hedged Signing:  YES (rnd ≠ 0, per FIPS 204 §3.5.2)
+  Note:            Hedged mode recommended for side-channel protection`,
   },
   {
     id: 'verify',

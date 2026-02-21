@@ -2,7 +2,7 @@
 import React, { useState, useCallback } from 'react'
 import { ChevronRight, ChevronDown, Lock, Key, Shuffle } from 'lucide-react'
 import {
-  CMS_ENVELOPED_DATA_STRUCTURE,
+  CMS_AUTH_ENVELOPED_DATA_STRUCTURE,
   RECIPIENT_INFO_COMPARISON,
   type ASN1Node,
 } from '../data/emailSigningConstants'
@@ -45,8 +45,8 @@ const ENCRYPTION_STEPS: {
     label: '4. CMS Wrap',
     descriptions: {
       classical:
-        'The encrypted content and KeyTransRecipientInfo are assembled into CMS EnvelopedData (version 0).',
-      kem: 'The encrypted content and KEMRecipientInfo (containing KEM ciphertext + wrapped CEK) are assembled into CMS EnvelopedData (version 2).',
+        'The encrypted content and KeyTransRecipientInfo are assembled into CMS AuthEnvelopedData (RFC 5083). AEAD ciphers like AES-GCM require AuthEnvelopedData, not plain EnvelopedData.',
+      kem: 'The encrypted content and KEMRecipientInfo (containing KEM ciphertext + wrapped CEK) are assembled into CMS AuthEnvelopedData (RFC 5083).',
     },
   },
 ]
@@ -60,7 +60,7 @@ const ASN1TreeNode: React.FC<{
   const hasChildren = node.children && node.children.length > 0
 
   const isHighlighted =
-    (activeStep === 'content' && node.label === 'encryptedContentInfo') ||
+    (activeStep === 'content' && node.label === 'authEncryptedContentInfo') ||
     (activeStep === 'cek' && node.label === 'contentEncryptionAlgorithm') ||
     (activeStep === 'encap' && node.label === 'recipientInfos') ||
     (activeStep === 'wrap' && depth === 0)
@@ -164,7 +164,7 @@ export const CMSEncryptionDemo: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">CMS Encryption Workflow</h3>
         <p className="text-sm text-muted-foreground">
           Compare classical RSA key transport with KEM-based encryption (RFC 9629). Toggle between
-          modes to see how the CMS EnvelopedData structure changes.
+          modes to see how the CMS AuthEnvelopedData structure changes.
         </p>
       </div>
 
@@ -277,8 +277,8 @@ export const CMSEncryptionDemo: React.FC = () => {
                 }
                 onClick={() => setActiveStep('wrap')}
               >
-                <div className="text-xs font-bold text-foreground">EnvelopedData</div>
-                <div className="text-[10px] text-muted-foreground">version 0</div>
+                <div className="text-xs font-bold text-foreground">AuthEnvelopedData</div>
+                <div className="text-[10px] text-muted-foreground">RFC 5083 (AEAD)</div>
               </PipelineStep>
             </div>
           </div>
@@ -334,8 +334,8 @@ export const CMSEncryptionDemo: React.FC = () => {
                 }
                 onClick={() => setActiveStep('wrap')}
               >
-                <div className="text-xs font-bold text-foreground">EnvelopedData</div>
-                <div className="text-[10px] text-muted-foreground">version 2</div>
+                <div className="text-xs font-bold text-foreground">AuthEnvelopedData</div>
+                <div className="text-[10px] text-muted-foreground">RFC 5083 (AEAD)</div>
               </PipelineStep>
             </div>
 
@@ -374,10 +374,10 @@ export const CMSEncryptionDemo: React.FC = () => {
       {/* ASN.1 Tree View */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3">
-          CMS EnvelopedData ASN.1 Structure
+          CMS AuthEnvelopedData ASN.1 Structure
         </h4>
         <div className="bg-background rounded-lg p-3 border border-border max-h-80 overflow-y-auto">
-          <ASN1TreeNode node={CMS_ENVELOPED_DATA_STRUCTURE} activeStep={activeStep} />
+          <ASN1TreeNode node={CMS_AUTH_ENVELOPED_DATA_STRUCTURE} activeStep={activeStep} />
         </div>
         <p className="text-[10px] text-muted-foreground mt-2">
           Click to expand/collapse nodes. Highlighted fields correspond to the active step.
@@ -424,8 +424,10 @@ export const CMSEncryptionDemo: React.FC = () => {
           <strong>Key insight:</strong> RFC 9629 introduces{' '}
           <code className="text-foreground/70">KEMRecipientInfo</code> as a new CHOICE in the CMS
           RecipientInfo structure. This is a non-breaking extension &mdash; existing CMS
-          implementations simply skip recipient infos they don&apos;t understand. This design
-          enables gradual deployment: senders can include both{' '}
+          implementations simply skip recipient infos they don&apos;t understand. Modern S/MIME uses{' '}
+          <code className="text-foreground/70">AuthEnvelopedData</code> (RFC 5083) with AEAD ciphers
+          like AES-GCM, rather than plain <code className="text-foreground/70">EnvelopedData</code>{' '}
+          which only provides confidentiality. Senders can include both{' '}
           <code className="text-foreground/70">KeyTransRecipientInfo</code> (RSA) and{' '}
           <code className="text-foreground/70">KEMRecipientInfo</code> (ML-KEM) for the same
           recipient during the transition period.

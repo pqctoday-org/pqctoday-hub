@@ -124,7 +124,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
       issuanceDate: new Date().toISOString(),
       credentialSubject: {}, // In SD-JWT, claims are in the JWT/disclosures
       format: 'vc+sd-jwt',
-      raw: sdJwt.raw,
+      raw: JSON.stringify(sdJwt),
     }
 
     addLog('Credential Issued (SD-JWT) and downloaded to Wallet.')

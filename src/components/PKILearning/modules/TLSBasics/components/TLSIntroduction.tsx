@@ -92,6 +92,18 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
               ChaCha20-Poly1305 (AEAD) + SHA-256 — optimized for mobile/ARM
             </span>
           </div>
+          <div>
+            <span className="text-primary font-bold">TLS_AES_128_CCM_SHA256</span>
+            <span className="text-muted-foreground ml-3 text-xs">
+              AES-128 in CCM mode + SHA-256 — designed for constrained environments (IoT)
+            </span>
+          </div>
+          <div>
+            <span className="text-primary font-bold">TLS_AES_128_CCM_8_SHA256</span>
+            <span className="text-muted-foreground ml-3 text-xs">
+              AES-128 in CCM mode with 8-byte auth tag + SHA-256 — for highly constrained devices
+            </span>
+          </div>
         </div>
       </section>
 

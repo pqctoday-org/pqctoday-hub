@@ -287,9 +287,55 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           </div>
           <p className="text-xs text-muted-foreground">
             WireGuard sees the largest relative increase (22x) because its classical handshake is
-            extremely compact. IKEv2 and SSH handle larger payloads gracefully due to TCP transport
-            or built-in fragmentation (RFC 7383).
+            extremely compact. IKEv2 handles fragmentation explicitly (RFC 7383) over UDP, while SSH
+            handles larger payloads natively because it relies on TCP transport.
           </p>
+        </div>
+      </section>
+
+      {/* Section 6: Authentication & Data Plane Integration */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-warning/10">
+            <Lock size={24} className="text-warning" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">Authentication: The Missing Half</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            While PQC Key Exchange (ML-KEM) secures connections against future decryption,{' '}
+            <strong>Authentication</strong> using digital signatures secures against active
+            attackers. Both IKEv2 and SSH uniquely require multiple layers of authentication that
+            must be migrated.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">IKEv2 (IKE_AUTH)</div>
+              <p className="text-xs text-muted-foreground">
+                In addition to the AKE payloads, draft-ietf-ipsecme-ikev2-mldsa updates the IKE_AUTH
+                phase to support <strong>ML-DSA</strong> (FIPS 204). The Auth payload verifies
+                identities using post-quantum certificates.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">SSH Host &amp; User Auth</div>
+              <p className="text-xs text-muted-foreground">
+                SSH requires PQC host keys (server identity) and user keys (UserAuth). While OpenSSH
+                9.9 supports ML-KEM, standardizing ML-DSA keys for host and user authentication is
+                still an active effort.
+              </p>
+            </div>
+          </div>
+          <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
+            <h4 className="font-bold text-primary mb-1">Control Plane vs. Data Plane</h4>
+            <p className="text-xs text-muted-foreground">
+              The migration to PQC only applies to the <strong>Control Plane</strong> (key exchange
+              &amp; auth). The actual <strong>Data Plane</strong> (the VPN tunnel) already uses
+              symmetric algorithms like AES-GCM or ChaCha20-Poly1305. These algorithms are naturally
+              quantum-resistant, requiring only standard key lengths (256-bit) to be secure against
+              Grover&apos;s algorithm.
+            </p>
+          </div>
         </div>
       </section>
 

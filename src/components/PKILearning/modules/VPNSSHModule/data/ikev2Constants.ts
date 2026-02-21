@@ -70,6 +70,10 @@ export interface IKEv2ExchangeData {
     initiator: IKEv2Message
     responder: IKEv2Message
   }
+  ikeIntermediate?: {
+    initiator: IKEv2Message
+    responder: IKEv2Message
+  }
   ikeAuth: {
     initiator: IKEv2Message
     responder: IKEv2Message
@@ -259,11 +263,11 @@ export const IKE_V2_EXCHANGES: Record<IKEv2Mode, IKEv2ExchangeData> = {
         ],
       },
     },
-    ikeAuth: {
+    ikeIntermediate: {
       initiator: {
-        name: 'IKE_INTERMEDIATE (AKE)',
+        name: 'IKE_INTERMEDIATE Request',
         direction: 'initiator',
-        description: 'Additional Key Exchange: ML-KEM-768 encapsulation key.',
+        description: 'Additional Key Exchange: initiator sends ML-KEM-768 encapsulation key.',
         payloads: [
           {
             name: 'IKE Header',
@@ -274,27 +278,67 @@ export const IKE_V2_EXCHANGES: Record<IKEv2Mode, IKEv2ExchangeData> = {
           {
             name: 'Encrypted Payload',
             abbreviation: 'SK',
-            description: 'ML-KEM-768 encapsulation key (1,184 bytes) + IKE_AUTH payloads',
-            sizeBytes: 1700,
+            description: 'ML-KEM-768 encapsulation key (1,184 bytes)',
+            sizeBytes: 1192,
           },
         ],
       },
       responder: {
-        name: 'IKE_INTERMEDIATE + IKE_AUTH Response',
+        name: 'IKE_INTERMEDIATE Response',
         direction: 'responder',
-        description: 'AKE ciphertext + IKE_AUTH response with encrypted identity and auth.',
+        description: 'Responder encapsulates shared secret and returns ML-KEM-768 ciphertext.',
         payloads: [
           {
             name: 'IKE Header',
             abbreviation: 'HDR',
-            description: 'Intermediate + auth exchange header',
+            description: 'Intermediate exchange header',
             sizeBytes: 28,
           },
           {
             name: 'Encrypted Payload',
             abbreviation: 'SK',
-            description: 'ML-KEM-768 ciphertext (1,088 bytes) + IKE_AUTH payloads',
-            sizeBytes: 1604,
+            description: 'ML-KEM-768 ciphertext (1,088 bytes)',
+            sizeBytes: 1096,
+          },
+        ],
+      },
+    },
+    ikeAuth: {
+      initiator: {
+        name: 'IKE_AUTH Request',
+        direction: 'initiator',
+        description: 'Encrypted: identity, certificate, auth, child SA.',
+        payloads: [
+          {
+            name: 'IKE Header',
+            abbreviation: 'HDR',
+            description: 'Encrypted exchange header',
+            sizeBytes: 28,
+          },
+          {
+            name: 'Encrypted Payload',
+            abbreviation: 'SK',
+            description: 'IDi, CERT, AUTH, SAi2, TSi, TSr (encrypted)',
+            sizeBytes: 480,
+          },
+        ],
+      },
+      responder: {
+        name: 'IKE_AUTH Response',
+        direction: 'responder',
+        description: 'Encrypted: identity, certificate, auth, child SA.',
+        payloads: [
+          {
+            name: 'IKE Header',
+            abbreviation: 'HDR',
+            description: 'Encrypted exchange header',
+            sizeBytes: 28,
+          },
+          {
+            name: 'Encrypted Payload',
+            abbreviation: 'SK',
+            description: 'IDr, CERT, AUTH, SAr2, TSi, TSr (encrypted)',
+            sizeBytes: 480,
           },
         ],
       },

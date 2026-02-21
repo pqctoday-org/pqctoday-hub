@@ -4,14 +4,10 @@ import { SAMPLE_CBOM, CBOM_CYCLONEDX_SAMPLE, type CBOMEntry } from '../data/cbom
 
 export const CBOMScanner: React.FC = () => {
   const [showJson, setShowJson] = useState(false)
-  const [filter, setFilter] = useState<'all' | 'vulnerable' | 'safe'>('all')
+  const [filter, setFilter] = useState<'all' | 'vulnerable' | 'safe' | 'weakened'>('all')
 
   const filtered =
-    filter === 'all'
-      ? SAMPLE_CBOM
-      : SAMPLE_CBOM.filter((e) =>
-          filter === 'vulnerable' ? e.quantumStatus === 'vulnerable' : e.quantumStatus === 'safe'
-        )
+    filter === 'all' ? SAMPLE_CBOM : SAMPLE_CBOM.filter((e) => e.quantumStatus === filter)
 
   const stats = {
     total: SAMPLE_CBOM.length,
@@ -110,6 +106,17 @@ export const CBOMScanner: React.FC = () => {
           <CheckCircle size={10} className="inline mr-1" />
           Safe ({stats.safe})
         </button>
+        <button
+          onClick={() => setFilter('weakened')}
+          className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+            filter === 'weakened'
+              ? 'bg-warning/20 text-warning border border-warning/50'
+              : 'bg-muted/50 text-muted-foreground border border-border'
+          }`}
+        >
+          <Shield size={10} className="inline mr-1" />
+          Weakened ({stats.weakened})
+        </button>
 
         <div className="flex-1" />
 
@@ -165,7 +172,7 @@ export const CBOMScanner: React.FC = () => {
                 </div>
               </div>
             </div>
-            {entry.quantumStatus === 'vulnerable' && (
+            {entry.quantumStatus !== 'safe' && (
               <div className="mt-2 p-2 bg-muted/50 rounded border border-border">
                 <div className="flex items-start gap-1">
                   <Shield size={10} className="text-primary shrink-0 mt-0.5" />

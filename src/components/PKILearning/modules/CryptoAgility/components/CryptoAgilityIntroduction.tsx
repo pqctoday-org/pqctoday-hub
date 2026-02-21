@@ -41,7 +41,9 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
               &ldquo;Organizations should begin preparing for the migration to post-quantum
               cryptography by designing systems with cryptographic agility.&rdquo;
             </blockquote>
-            <p className="text-xs text-muted-foreground mt-2">&mdash; NIST IR 8547, March 2025</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              &mdash; NIST IR 8547 (Draft), November 2024
+            </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -204,22 +206,23 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-xs font-bold text-primary mb-2">Cloudflare</div>
             <p className="text-xs text-muted-foreground">
-              Deployed X25519MLKEM768 hybrid key exchange across all TLS connections in 2024.
-              Observed &lt;1% performance overhead with 3x ciphertext size increase.
+              Enabled hybrid PQC key exchange (X25519Kyber768, later X25519MLKEM768) across its
+              network in 2024. TLS handshake times increased ~4%; hybrid client key share is 1,216
+              bytes vs 32 bytes for X25519 alone.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-xs font-bold text-primary mb-2">Google Chrome</div>
             <p className="text-xs text-muted-foreground">
-              Enabled hybrid TLS key exchange by default in Chrome 124. Crypto agile architecture
-              allowed rollout without changing the TLS stack.
+              Enabled hybrid PQC key exchange (X25519Kyber768) by default in Chrome 124 (April
+              2024); upgraded to standardized X25519MLKEM768 in Chrome 131 (November 2024).
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-xs font-bold text-primary mb-2">Apple</div>
             <p className="text-xs text-muted-foreground">
-              iMessage adopted PQ3 protocol (X25519 + Kyber-1024 ratchet) in iOS 17.4. Phased
-              rollout leveraging protocol agility.
+              iMessage adopted PQ3 protocol (P-256 ECDH + Kyber-1024 initial keys, Kyber-768
+              rekeying ratchet) in iOS 17.4. Phased rollout leveraging protocol agility.
             </p>
           </div>
         </div>

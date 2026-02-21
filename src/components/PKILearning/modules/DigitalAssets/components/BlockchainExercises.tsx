@@ -69,7 +69,7 @@ const scenarios: Scenario[] = [
     badge: 'PQC',
     badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
     observe:
-      "Every signature you created relies on the elliptic curve discrete logarithm problem. A quantum computer could reverse the public key derivation to recover the private key. Bitcoin's HNDL risk is particularly severe because on-chain data is immutable — exposed public keys cannot be retroactively protected.",
+      "Every signature you created relies on the elliptic curve discrete logarithm problem. A quantum computer could reverse the public key derivation to recover the private key. Bitcoin's HNFL risk is particularly severe because on-chain data is immutable — exposed public keys cannot be retroactively protected.",
     chain: 'learn-pqc',
   },
 ]

@@ -41,28 +41,50 @@ export const IKEv2HandshakeSimulator: React.FC<IKEv2HandshakeSimulatorProps> = (
   const exchange = IKE_V2_EXCHANGES[selectedMode]
   const modeConfig = IKE_V2_MODES.find((m) => m.id === selectedMode)
 
-  const steps = [
-    {
-      label: 'IKE_SA_INIT Request',
-      direction: 'right' as const,
-      message: exchange.ikeSaInit.initiator,
-    },
-    {
-      label: 'IKE_SA_INIT Response',
-      direction: 'left' as const,
-      message: exchange.ikeSaInit.responder,
-    },
-    {
-      label: selectedMode === 'hybrid' ? 'IKE_INTERMEDIATE (AKE)' : 'IKE_AUTH Request',
-      direction: 'right' as const,
-      message: exchange.ikeAuth.initiator,
-    },
-    {
-      label: selectedMode === 'hybrid' ? 'IKE_INTERMEDIATE + IKE_AUTH' : 'IKE_AUTH Response',
-      direction: 'left' as const,
-      message: exchange.ikeAuth.responder,
-    },
-  ]
+  const steps = (() => {
+    const result = [
+      {
+        label: 'IKE_SA_INIT Request',
+        direction: 'right' as const,
+        message: exchange.ikeSaInit.initiator,
+      },
+      {
+        label: 'IKE_SA_INIT Response',
+        direction: 'left' as const,
+        message: exchange.ikeSaInit.responder,
+      },
+    ]
+
+    if (exchange.ikeIntermediate) {
+      result.push(
+        {
+          label: 'IKE_INTERMEDIATE Request',
+          direction: 'right' as const,
+          message: exchange.ikeIntermediate.initiator,
+        },
+        {
+          label: 'IKE_INTERMEDIATE Response',
+          direction: 'left' as const,
+          message: exchange.ikeIntermediate.responder,
+        }
+      )
+    }
+
+    result.push(
+      {
+        label: 'IKE_AUTH Request',
+        direction: 'right' as const,
+        message: exchange.ikeAuth.initiator,
+      },
+      {
+        label: 'IKE_AUTH Response',
+        direction: 'left' as const,
+        message: exchange.ikeAuth.responder,
+      }
+    )
+
+    return result
+  })()
 
   const handleReset = useCallback(() => {
     setCurrentStep(0)

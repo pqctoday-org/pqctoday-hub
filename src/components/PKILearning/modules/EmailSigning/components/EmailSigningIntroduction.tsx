@@ -57,9 +57,9 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">S/MIME Encryption</div>
               <p className="text-xs text-muted-foreground">
-                Creates a CMS <code className="text-foreground/70">EnvelopedData</code> structure:
-                the message is encrypted with a random content-encryption key (CEK), which is then
-                wrapped for each recipient.
+                Creates a CMS <code className="text-foreground/70">AuthEnvelopedData</code>{' '}
+                structure (RFC 5083): the message is AEAD-encrypted (AES-GCM) with a random
+                content-encryption key (CEK), which is then wrapped for each recipient.
               </p>
             </div>
           </div>
@@ -108,8 +108,9 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
           </div>
           <p className="text-xs text-muted-foreground">
             Together, these RFCs provide a complete PQC story for CMS: ML-DSA for signing (RFC
-            9882), ML-KEM for encryption via KEMRecipientInfo (RFC 9629 + RFC 9690), and HSS/LMS for
-            hash-based firmware and long-lived signatures (RFC 9708).
+            9882), KEM-based encryption via KEMRecipientInfo (RFC 9629), RSA-KEM as a transitional
+            KEM option (RFC 9690), and HSS/LMS for hash-based firmware and long-lived signatures
+            (RFC 9708).
           </p>
         </div>
       </section>
@@ -227,7 +228,8 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
               <div className="text-xs font-bold text-primary mb-1">Encryption Certificate</div>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>
-                  &bull; <strong>keyUsage:</strong> keyEncipherment (RSA) or keyAgreement (KEM)
+                  &bull; <strong>keyUsage:</strong> keyEncipherment (RSA) or keyAgreement (ECDH).
+                  KEM keyUsage is still being standardized
                 </li>
                 <li>
                   &bull; <strong>extKeyUsage:</strong> id-kp-emailProtection
@@ -278,7 +280,7 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
               },
               {
                 t: 'Message Size Impact',
-                d: 'ML-DSA-65 signatures are ~3.3 KB (vs 64 bytes for ECDSA). Signed emails with certificate chains can grow by 10-15 KB, impacting mobile clients and constrained networks.',
+                d: 'ML-DSA-65 signatures are ~3.3 KB (vs ~72 bytes DER-encoded for ECDSA). Signed emails with certificate chains can grow by 10-15 KB, impacting mobile clients and constrained networks.',
               },
               {
                 t: 'Archival & Long-Term Validation',

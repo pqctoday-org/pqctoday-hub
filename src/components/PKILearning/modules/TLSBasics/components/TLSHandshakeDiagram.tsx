@@ -22,6 +22,12 @@ const MESSAGES = [
     encrypted: true,
   },
   {
+    label: '{CertificateRequest}*',
+    sublabel: 'mTLS optional',
+    direction: 'left' as const,
+    encrypted: true,
+  },
+  {
     label: '{Certificate}',
     sublabel: 'Server identity',
     direction: 'left' as const,
@@ -37,6 +43,18 @@ const MESSAGES = [
     label: '{Finished}',
     sublabel: 'Server handshake MAC',
     direction: 'left' as const,
+    encrypted: true,
+  },
+  {
+    label: '{Certificate}*',
+    sublabel: 'Client identity (mTLS)',
+    direction: 'right' as const,
+    encrypted: true,
+  },
+  {
+    label: '{CertificateVerify}*',
+    sublabel: 'Client signature (mTLS)',
+    direction: 'right' as const,
     encrypted: true,
   },
   {

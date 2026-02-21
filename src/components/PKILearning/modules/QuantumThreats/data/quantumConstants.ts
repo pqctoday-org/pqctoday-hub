@@ -109,8 +109,9 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     quantumBits: 96,
     quantumAttack: 'grover',
     estimatedQubits: 4449,
-    status: 'safe',
-    notes: "Grover's reduces to 96-bit — still considered secure.",
+    status: 'weakened',
+    notes:
+      "Grover's reduces to 96-bit — considered adequate for some legacy systems but below the 128-bit post-quantum threshold.",
   },
   {
     name: 'AES-256',

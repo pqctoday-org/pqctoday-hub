@@ -67,11 +67,11 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
       id: 'hndl-healthcare',
       title: '4. HNDL Risk: Healthcare Records',
       description:
-        'Calculate the HNDL migration deadline for medical records that must remain confidential for 50 years. With a CRQC expected between 2030-2040, when should migration have started?',
+        'Calculate the HNDL migration deadline for medical records that must remain confidential for 50 years, assuming a 5-year migration time. With a CRQC expected between 2030-2040, when should migration have started?',
       badge: 'HNDL',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'With 50-year data sensitivity and a CRQC in 2035, the migration deadline was 1985. This illustrates why healthcare data intercepted today is already at risk — HNDL is not a future problem.',
+        'With 50-year data sensitivity, a 5-year migration time, and a CRQC in 2035, the migration deadline was 1980. This illustrates why healthcare data intercepted today is already at risk — HNDL is not a future problem.',
       config: { step: 3 },
     },
     {

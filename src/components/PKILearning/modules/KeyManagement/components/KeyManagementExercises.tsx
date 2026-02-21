@@ -32,7 +32,7 @@ export const KeyManagementExercises: React.FC<KeyManagementExercisesProps> = ({
       id: 'lifecycle-generation',
       title: '1. Key Generation: Classical vs PQC',
       description:
-        'Walk through the Generation stage of the key lifecycle. Compare RSA-2048 key generation (256-byte public key) with ML-KEM-768 (1,184-byte public key). Observe how the HSM handles larger key material.',
+        'Walk through the Generation stage of the key lifecycle. Compare RSA-2048 key generation (256-byte public key) with ML-KEM-768 (1,184-byte public key) and ML-DSA-65 (1,952-byte public key). Observe how the HSM handles larger key material.',
       badge: 'Lifecycle',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
@@ -76,11 +76,11 @@ export const KeyManagementExercises: React.FC<KeyManagementExercisesProps> = ({
       id: 'rotation-compliance',
       title: '5. Compliance-Driven Rotation Schedule',
       description:
-        'Plan a rotation schedule aligned with CNSA 2.0 (2030 deadline), NIST IR 8547, PCI DSS v4.0, and DORA. Calculate the bandwidth impact of rotating 500 certificates to PQC algorithms.',
+        'Plan a rotation schedule aligned with CNSA 2.0 (2025–2033 phased timeline), NIST IR 8547 (draft: deprecate by 2030, disallow by 2035), PCI DSS v4.0, and DORA. Calculate the bandwidth impact of rotating 500 certificates to PQC algorithms.',
       badge: 'Compliance',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'The compliance deadlines create a clear migration timeline: PCI DSS inventory by 2028, DORA crypto agility by 2027, and full CNSA 2.0 hybrid deployment by 2030. Rotation schedules must account for larger certificates and signatures.',
+        'The compliance deadlines create a clear migration timeline: PCI DSS crypto inventory required by 2025 (Req. 12.3.3), DORA ICT risk framework effective January 2025, CNSA 2.0 phased from 2025 (prefer PQC) to 2033 (exclusively PQC for all NSS), and NIST IR 8547 proposing classical deprecation by 2030. Rotation schedules must account for larger certificates and signatures.',
       config: { step: 2 },
     },
   ]

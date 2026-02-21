@@ -9,6 +9,7 @@ export interface LMSParameterSet {
   maxSignatures: number
   securityLevel: string
   hashFunction: string
+  variant?: 'single-tree' | 'multi-tree'
 }
 
 export interface XMSSParameterSet {
@@ -213,6 +214,32 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
   },
+  {
+    id: 'hss-l2-h20-w4',
+    name: 'HSS-L2 (H10x2) / W4',
+    treeHeight: 20,
+    winternitzParam: 4,
+    signatureSize: 5084,
+    publicKeySize: 60,
+    privateKeySize: 128,
+    maxSignatures: 1048576,
+    securityLevel: 'NIST Level 1',
+    hashFunction: 'SHA-256',
+    variant: 'multi-tree',
+  },
+  {
+    id: 'hss-l2-h20-w8',
+    name: 'HSS-L2 (H10x2) / W8',
+    treeHeight: 20,
+    winternitzParam: 8,
+    signatureSize: 2972,
+    publicKeySize: 60,
+    privateKeySize: 128,
+    maxSignatures: 1048576,
+    securityLevel: 'NIST Level 1',
+    hashFunction: 'SHA-256',
+    variant: 'multi-tree',
+  },
 ]
 
 export const XMSS_PARAMETER_SETS: XMSSParameterSet[] = [
@@ -221,7 +248,7 @@ export const XMSS_PARAMETER_SETS: XMSSParameterSet[] = [
     name: 'XMSS-SHA2_10_256',
     treeHeight: 10,
     signatureSize: 2500,
-    publicKeySize: 64,
+    publicKeySize: 68,
     privateKeySize: 1373,
     maxSignatures: 1024,
     securityLevel: 'NIST Level 1',
@@ -233,7 +260,7 @@ export const XMSS_PARAMETER_SETS: XMSSParameterSet[] = [
     name: 'XMSS-SHA2_16_256',
     treeHeight: 16,
     signatureSize: 2692,
-    publicKeySize: 64,
+    publicKeySize: 68,
     privateKeySize: 2093,
     maxSignatures: 65536,
     securityLevel: 'NIST Level 1',
@@ -245,7 +272,7 @@ export const XMSS_PARAMETER_SETS: XMSSParameterSet[] = [
     name: 'XMSS-SHA2_20_256',
     treeHeight: 20,
     signatureSize: 2820,
-    publicKeySize: 64,
+    publicKeySize: 68,
     privateKeySize: 2573,
     maxSignatures: 1048576,
     securityLevel: 'NIST Level 1',
@@ -257,7 +284,7 @@ export const XMSS_PARAMETER_SETS: XMSSParameterSet[] = [
     name: 'XMSS-SHAKE_10_256',
     treeHeight: 10,
     signatureSize: 2500,
-    publicKeySize: 64,
+    publicKeySize: 68,
     privateKeySize: 1373,
     maxSignatures: 1024,
     securityLevel: 'NIST Level 1',
@@ -269,7 +296,7 @@ export const XMSS_PARAMETER_SETS: XMSSParameterSet[] = [
     name: 'XMSS-SHAKE_16_256',
     treeHeight: 16,
     signatureSize: 2692,
-    publicKeySize: 64,
+    publicKeySize: 68,
     privateKeySize: 2093,
     maxSignatures: 65536,
     securityLevel: 'NIST Level 1',
@@ -281,7 +308,7 @@ export const XMSS_PARAMETER_SETS: XMSSParameterSet[] = [
     name: 'XMSS-SHAKE_20_256',
     treeHeight: 20,
     signatureSize: 2820,
-    publicKeySize: 64,
+    publicKeySize: 68,
     privateKeySize: 2573,
     maxSignatures: 1048576,
     securityLevel: 'NIST Level 1',
@@ -293,7 +320,7 @@ export const XMSS_PARAMETER_SETS: XMSSParameterSet[] = [
     name: 'XMSS^MT-SHA2_20/2_256',
     treeHeight: 20,
     signatureSize: 4963,
-    publicKeySize: 64,
+    publicKeySize: 68,
     privateKeySize: 5998,
     maxSignatures: 1048576,
     securityLevel: 'NIST Level 1',
@@ -305,7 +332,7 @@ export const XMSS_PARAMETER_SETS: XMSSParameterSet[] = [
     name: 'XMSS^MT-SHA2_40/4_256',
     treeHeight: 40,
     signatureSize: 9893,
-    publicKeySize: 64,
+    publicKeySize: 68,
     privateKeySize: 12718,
     maxSignatures: 1099511627776,
     securityLevel: 'NIST Level 1',
@@ -317,7 +344,7 @@ export const XMSS_PARAMETER_SETS: XMSSParameterSet[] = [
     name: 'XMSS^MT-SHA2_60/6_256',
     treeHeight: 60,
     signatureSize: 14824,
-    publicKeySize: 64,
+    publicKeySize: 68,
     privateKeySize: 19438,
     maxSignatures: 1152921504606846976,
     securityLevel: 'NIST Level 1',
@@ -386,7 +413,14 @@ export const USE_CASE_RECOMMENDATIONS: UseCaseRecommendation[] = [
 ]
 
 export const WORKSHOP_DISPLAY_PARAMS = {
-  lms: ['lms-h5-w8', 'lms-h10-w4', 'lms-h15-w2', 'lms-h20-w4'] as const,
+  lms: [
+    'lms-h5-w8',
+    'lms-h10-w4',
+    'lms-h15-w2',
+    'lms-h20-w4',
+    'hss-l2-h20-w4',
+    'hss-l2-h20-w8',
+  ] as const,
   xmss: ['xmss-sha2-10', 'xmss-sha2-16', 'xmss-sha2-20'] as const,
 }
 

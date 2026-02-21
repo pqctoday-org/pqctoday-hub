@@ -77,8 +77,9 @@ xxd -p shared_secret.bin`,
 const block1 = SHA256(Z || 0x00000001 || EphPubKey);
 const block2 = SHA256(Z || 0x00000002 || EphPubKey);
 
-const K_enc = block1.slice(0, 16);  // 128-bit AES Key
-const K_mac = block2;               // 256-bit HMAC Key`,
+const K = Buffer.concat([block1, block2]);
+const K_enc = K.slice(0, 16);   // 128-bit AES Key
+const K_mac = K.slice(16, 48);  // 256-bit HMAC Key`,
       output: `[USIM] Deriving Keys...\n[USIM] K_enc: 128-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
     },
     {
@@ -255,8 +256,9 @@ openssl pkeyutl -derive \\
 const block1 = SHA256(Z || 0x00000001 || EphPubKey);
 const block2 = SHA256(Z || 0x00000002 || EphPubKey);
 
-const K_enc = block1.slice(0, 16);  // 128-bit AES Key
-const K_mac = block2;               // 256-bit HMAC Key`,
+const K = Buffer.concat([block1, block2]);
+const K_enc = K.slice(0, 16);   // 128-bit AES Key
+const K_mac = K.slice(16, 48);  // 256-bit HMAC Key`,
       output: `[USIM] Deriving Keys...\n[USIM] K_enc: 128-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
     },
     {
@@ -410,8 +412,9 @@ openssl pkeyutl -encap ...`,
 block1 = SHA3_256(Z || 0x00000001 || SharedInfo)
 block2 = SHA3_256(Z || 0x00000002 || SharedInfo)
 
-enc_key = block1          # 256-bit AES Key (full block)
-mac_key = block2          # 256-bit HMAC Key`,
+K = block1 + block2       # Concatenated KDF output
+enc_key = K[0:32]         # 256-bit AES Key (full block1)
+mac_key = K[32:64]        # 256-bit HMAC Key (full block2)`,
       output: `[USIM] Deriving Keys w/ SHA3...\n[USIM] K_enc: 256-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
     },
     {

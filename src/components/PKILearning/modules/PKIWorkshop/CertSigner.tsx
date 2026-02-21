@@ -240,14 +240,14 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         (a) => a.enabled && (a.id === 'keyUsage' || a.label === 'keyUsage')
       )
       if (!hasKeyUsage) {
-        extContent += `keyUsage = digitalSignature, keyEncipherment\n`
+        extContent += `keyUsage = digitalSignature\n`
       }
       setOutput(
         (prev) =>
           prev +
-          `  keyUsage = digitalSignature, keyEncipherment\n` +
-          `    Restricts this certificate to signing data and encrypting symmetric keys (typical for TLS server certs).\n` +
-          `    Other values: keyCertSign (CA only), nonRepudiation (legal signatures), dataEncipherment.\n\n`
+          `  keyUsage = digitalSignature\n` +
+          `    Restricts this certificate to signing data (typical for TLS server certs using ECDSA or PQC algorithms).\n` +
+          `    Other values: keyCertSign (CA only), keyEncipherment (RSA only), nonRepudiation.\n\n`
       )
 
       // Sanitize attribute values for OpenSSL config/command interpolation

@@ -45,7 +45,7 @@ export const ABSTRACTION_BACKENDS: AbstractionBackend[] = [
     algorithm: 'RSA-2048',
     type: 'classical',
     config: 'provider: "openssl"\nalgorithm: "RSA-2048"\nmode: "OAEP-SHA256"',
-    keySize: '256 bytes public key',
+    keySize: '~294 bytes public key (DER)',
     quantumSafe: false,
   },
   {

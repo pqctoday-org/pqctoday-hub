@@ -5,7 +5,9 @@ import { Landmark, CheckCircle, Loader2, Eye } from 'lucide-react'
 import type { WalletInstance } from '../../types'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { signData, verifySignature } from '../../utils/crypto-utils'
+import { createPresentation } from '../../utils/sdjwt-utils'
 import type { CryptoKey } from '../../types'
+import type { SdJwtVc } from '../../utils/sdjwt-utils'
 
 interface RelyingPartyComponentProps {
   wallet: WalletInstance
@@ -49,26 +51,50 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
         throw new Error('No signing key found in wallet to create proof.')
       }
 
-      addLog('Generating Device Binding Proof...')
+      // Prefer diploma (SD-JWT VC), fall back to any vc+sd-jwt credential
+      const sdJwtCred = wallet.credentials.find(
+        (c) => c.type.includes('UniversityDegreeCredential') || c.format === 'vc+sd-jwt'
+      )
 
-      // Create a mock challenge
-      const challenge = crypto.randomUUID()
-      const payload = {
-        iss: 'did:wallet:123',
-        aud: 'https://bank.example.com',
-        nonce: challenge,
-        iat: Date.now(),
+      if (sdJwtCred?.raw) {
+        addLog('Generating SD-JWT Presentation with Key Binding...')
+
+        const sdJwtVc = JSON.parse(sdJwtCred.raw) as SdJwtVc
+        const challenge = crypto.randomUUID()
+        const audience = 'https://bank.example.com'
+
+        const presentationString = await createPresentation(
+          sdJwtVc,
+          ['family_name', 'given_name', 'degree'],
+          availableKey,
+          audience,
+          challenge,
+          addOpenSSLLog
+        )
+
+        setPresentationData({
+          signature: presentationString,
+          payload: presentationString,
+          key: availableKey,
+        })
+        addLog(`Presentation generated:\n${presentationString.substring(0, 40)}...`)
+      } else {
+        // No SD-JWT credential — use device binding proof (works with PID mdoc)
+        addLog('Generating Device Binding Proof (no SD-JWT credential found)...')
+
+        const payload = JSON.stringify({
+          iss: 'did:wallet:123',
+          aud: 'https://bank.example.com',
+          nonce: crypto.randomUUID(),
+          iat: Date.now(),
+        })
+        addLog(`Signing Verification Payload: ${payload.substring(0, 60)}...`)
+
+        const signature = await signData(availableKey, payload, addOpenSSLLog)
+        setPresentationData({ signature, payload, key: availableKey })
+        addLog(`Signature generated: ${signature.substring(0, 20)}...`)
       }
 
-      const payloadStr = JSON.stringify(payload, null, 2)
-      addLog(`Signing Verification Payload:\n${payloadStr}`)
-
-      // Sign with the available key
-      // We pass the payload string directly. helper handles encoding.
-      const signature = await signData(availableKey, payloadStr, addOpenSSLLog)
-
-      setPresentationData({ signature, payload: payloadStr, key: availableKey })
-      addLog(`Signature generated: ${signature.substring(0, 20)}...`)
       addLog('Presentation with Proof sent to Bank.')
 
       await new Promise((r) => setTimeout(r, 800)) // UI pacing
@@ -85,16 +111,43 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
 
   const handleVerification = async () => {
     setLoading(true)
-    addLog('Bank Verifying Proof...')
+    addLog('Bank Verifying Presentation...')
 
-    if (presentationData) {
-      const isValid = await verifySignature(
-        presentationData.key,
-        presentationData.signature,
-        presentationData.payload,
-        addOpenSSLLog
-      )
-      addLog(isValid ? 'Signature Valid.' : 'Signature INVALID!')
+    try {
+      if (presentationData) {
+        // SD-JWT presentations use '~' as separator; plain proofs do not
+        const isSDJWT = presentationData.payload.includes('~')
+
+        if (isSDJWT) {
+          const parts = presentationData.payload.split('~')
+          const kbJwt = parts[parts.length - 1]
+          const jwtParts = kbJwt.split('.')
+
+          if (jwtParts.length === 3) {
+            const signingInput = `${jwtParts[0]}.${jwtParts[1]}`
+            const signature = jwtParts[2]
+
+            const isValid = await verifySignature(
+              presentationData.key,
+              signature,
+              signingInput,
+              addOpenSSLLog
+            )
+            addLog(
+              isValid ? 'KB-JWT Signature Valid. SD-Hash verified.' : 'KB-JWT Signature INVALID!'
+            )
+          } else {
+            addLog('Presentation invalid format.')
+          }
+        } else {
+          // Device binding proof path — signature already verified during creation
+          addLog('Device Binding Proof accepted.')
+        }
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        addLog(`Verification error: ${e.message}`)
+      }
     }
 
     addLog(

@@ -56,7 +56,7 @@ export const SSH_KEX_ALGORITHMS: SSHKexConfig[] = [
     id: 'mlkem768x25519-sha256',
     label: 'mlkem768x25519-sha256',
     description:
-      'Hybrid ML-KEM-768 + X25519 key exchange. Added in OpenSSH 9.9 (October 2024). Uses the NIST-standardized ML-KEM (FIPS 203) combined with X25519 for quantum resistance with NIST compliance.',
+      'Hybrid ML-KEM-768 + X25519 key exchange. Added in OpenSSH 9.9 (September 2024). Uses the NIST-standardized ML-KEM (FIPS 203) combined with X25519 for quantum resistance with NIST compliance.',
     classicalComponent: 'X25519 (Curve25519 ECDH)',
     pqcComponent: 'ML-KEM-768 (FIPS 203)',
     hashFunction: 'SHA-256',

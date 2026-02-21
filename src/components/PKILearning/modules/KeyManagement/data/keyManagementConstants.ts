@@ -58,7 +58,7 @@ export const KEY_LIFECYCLE_STAGES: KeyLifecycleStage[] = [
     classicalApproach:
       'X.509 certificates carry RSA/ECDSA public keys. Certificate sizes are small (1-2 KB). Distribution via CAs, LDAP, or key servers is well-established.',
     pqcImpact:
-      'PQC certificates are significantly larger: ML-DSA-65 certificates ~4.5 KB vs ~1.5 KB for ECDSA. This impacts bandwidth, handshake sizes (TLS), and storage in certificate chains. Hybrid certificates (classical + PQC) are even larger.',
+      'PQC certificates are significantly larger: an ML-DSA-65 certificate contains a 1,952-byte public key plus a 3,309-byte signature, totaling ~5.5 KB vs ~1.5 KB for ECDSA. This impacts bandwidth, handshake sizes (TLS), and storage in certificate chains. Hybrid certificates (classical + PQC) are even larger.',
     icon: 'send',
   },
   {
@@ -228,7 +228,7 @@ export const KEY_SIZE_COMPARISONS: KeySizeComparison[] = [
   {
     algorithm: 'ECDSA P-256',
     type: 'classical',
-    publicKeyBytes: 64,
+    publicKeyBytes: 65,
     privateKeyBytes: 32,
     signatureOrCiphertextBytes: 64,
     nistLevel: 'Level 1 (classical)',
@@ -297,6 +297,24 @@ export const KEY_SIZE_COMPARISONS: KeySizeComparison[] = [
     nistLevel: 'NIST Level 1',
     quantumSafe: true,
   },
+  {
+    algorithm: 'SLH-DSA-128f',
+    type: 'pqc',
+    publicKeyBytes: 32,
+    privateKeyBytes: 64,
+    signatureOrCiphertextBytes: 17088,
+    nistLevel: 'NIST Level 1',
+    quantumSafe: true,
+  },
+  {
+    algorithm: 'SLH-DSA-256s',
+    type: 'pqc',
+    publicKeyBytes: 64,
+    privateKeyBytes: 128,
+    signatureOrCiphertextBytes: 29792,
+    nistLevel: 'NIST Level 5',
+    quantumSafe: true,
+  },
 ]
 
 export const ROTATION_POLICIES: RotationPolicy[] = [
@@ -305,7 +323,8 @@ export const ROTATION_POLICIES: RotationPolicy[] = [
     name: 'TLS Server Certificates',
     description:
       'Server certificates for web services and APIs. Short-lived to limit compromise impact.',
-    rotationInterval: '90 days (recommended) to 1 year (maximum)',
+    rotationInterval:
+      '90 days (recommended); max 398 days until March 2026, then 200 days per CA/B Forum SC-081v3, reducing to 47 days by 2029',
     applicableTo: ['RSA-2048', 'ECDSA P-256', 'ML-DSA-65', 'Hybrid'],
     complianceFramework: 'CA/B Forum Baseline Requirements',
   },
@@ -359,13 +378,13 @@ export const ENTERPRISE_SCENARIO = {
   hsmModel: 'Thales Luna Network HSM 7',
   currentAlgorithms: {
     tlsCerts: { count: 300, algorithm: 'RSA-2048', keySize: 256 },
-    codeSigning: { count: 50, algorithm: 'ECDSA P-256', keySize: 64 },
+    codeSigning: { count: 50, algorithm: 'ECDSA P-256', keySize: 65 },
     caKeys: { count: 15, algorithm: 'RSA-4096', keySize: 512 },
     dataEncryption: { count: 100, algorithm: 'AES-256-GCM', keySize: 32 },
-    apiAuth: { count: 35, algorithm: 'ECDSA P-256', keySize: 64 },
+    apiAuth: { count: 35, algorithm: 'ECDSA P-256', keySize: 65 },
   },
   targetAlgorithms: {
-    tlsCerts: { algorithm: 'ML-DSA-65 + ECDSA P-256 (hybrid)', keySize: 1952 + 64 },
+    tlsCerts: { algorithm: 'ML-DSA-65 + ECDSA P-256 (hybrid)', keySize: 1952 + 65 },
     codeSigning: { algorithm: 'ML-DSA-65', keySize: 1952 },
     caKeys: { algorithm: 'ML-DSA-87', keySize: 2592 },
     dataEncryption: { algorithm: 'AES-256-GCM (unchanged)', keySize: 32 },
@@ -373,14 +392,16 @@ export const ENTERPRISE_SCENARIO = {
   },
   complianceDeadlines: [
     {
-      framework: 'CNSA 2.0 (NSA)',
-      deadline: '2025–2033',
-      requirement: 'Phased PQC adoption: signing by 2025, networking by 2026, all NSS by 2033',
+      framework: 'ANSSI & BSI (EU)',
+      deadline: 'Transition Phase',
+      requirement:
+        'European agencies strongly recommend Hybrid implementations (Classical + PQC) during the transition to post-quantum cryptography to mitigate the risk of new algorithms being broken.',
     },
     {
-      framework: 'NIST IR 8547',
+      framework: 'NIST IR 8547 (draft)',
       deadline: '2030 / 2035',
-      requirement: 'Deprecate classical public-key crypto by 2030, disallow by 2035',
+      requirement:
+        'Initial Public Draft: deprecate 112-bit classical crypto (RSA-2048, etc.) after 2030, disallow all classical public-key crypto (RSA, ECDSA, EdDSA, DH, ECDH) after 2035. Final dates may adjust.',
     },
     {
       framework: 'PCI DSS v4.0',

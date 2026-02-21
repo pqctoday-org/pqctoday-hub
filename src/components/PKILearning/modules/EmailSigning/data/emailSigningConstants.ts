@@ -88,7 +88,7 @@ export const ALGORITHM_OIDS: AlgorithmOID[] = [
     oid: '1.2.840.113549.1.9.16.3.17',
     type: 'pqc',
     category: 'signature',
-    nistLevel: 1,
+    // Security level is parameter-dependent (hash function and tree height)
   },
   // KEM algorithms
   {
@@ -163,8 +163,9 @@ export const SMIME_CERT_EXTENSIONS: CertExtension[] = [
     oid: '2.5.29.15',
     critical: true,
     signingValue: 'digitalSignature, nonRepudiation',
-    encryptionValue: 'keyEncipherment (RSA) / keyAgreement (ECDH/KEM)',
-    description: 'Defines permitted key operations for the certificate',
+    encryptionValue: 'keyEncipherment (RSA) / keyAgreement (ECDH). KEM keyUsage is TBD by LAMPS WG',
+    description:
+      'Defines permitted key operations for the certificate. No existing keyUsage bit maps cleanly to KEMs.',
   },
   {
     name: 'extKeyUsage',
@@ -398,27 +399,29 @@ export const CMS_SIGNED_DATA_STRUCTURE: ASN1Node = {
   ],
 }
 
-// ── CMS EnvelopedData ASN.1 Structure ───────────────────────────────────────
-export const CMS_ENVELOPED_DATA_STRUCTURE: ASN1Node = {
+// ── CMS AuthEnvelopedData ASN.1 Structure (RFC 5083) ─────────────────────────
+// AES-GCM is an AEAD cipher and MUST use AuthEnvelopedData, not plain EnvelopedData.
+// Plain EnvelopedData (RFC 5652) is for non-AEAD ciphers like AES-CBC.
+export const CMS_AUTH_ENVELOPED_DATA_STRUCTURE: ASN1Node = {
   label: 'ContentInfo',
   children: [
     {
       label: 'contentType',
-      oid: '1.2.840.113549.1.7.3',
-      value: 'enveloped-data',
+      oid: '1.2.840.113549.1.9.16.1.23',
+      value: 'authenticated-enveloped-data',
       highlight: 'common',
     },
     {
-      label: 'EnvelopedData',
+      label: 'AuthEnvelopedData',
       children: [
-        { label: 'version', value: '0 (classical) / 2 (KEM)', highlight: 'common' },
+        { label: 'version', value: '0', highlight: 'common' },
         {
           label: 'recipientInfos',
           value: '(recipient-specific structure)',
           highlight: 'common',
         },
         {
-          label: 'encryptedContentInfo',
+          label: 'authEncryptedContentInfo',
           children: [
             {
               label: 'contentType',
@@ -434,10 +437,15 @@ export const CMS_ENVELOPED_DATA_STRUCTURE: ASN1Node = {
             },
             {
               label: 'encryptedContent',
-              value: '[AES-encrypted email bytes]',
+              value: '[AEAD-encrypted email bytes + auth tag]',
               highlight: 'common',
             },
           ],
+        },
+        {
+          label: 'mac',
+          value: '[implicit in GCM auth tag]',
+          highlight: 'common',
         },
       ],
     },

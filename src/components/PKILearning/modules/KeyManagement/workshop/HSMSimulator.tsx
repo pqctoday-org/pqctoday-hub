@@ -33,6 +33,10 @@ export const HSMSimulator: React.FC = () => {
           Step through simulated PKCS#11 operations on a post-quantum HSM. Each step shows the
           actual API call, what happens inside the HSM, and the expected output.
         </p>
+        <p className="text-xs text-muted-foreground mt-1">
+          Note: PQC mechanism codes (CKM_ML_KEM_*, CKM_ML_DSA_*, CKM_SLH_DSA_*) are from the OASIS
+          PKCS#11 3.2 draft and may change before final standardization.
+        </p>
       </div>
 
       {/* Operation stepper */}

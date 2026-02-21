@@ -11,6 +11,7 @@ import { CSRGenerator } from './CSRGenerator'
 import { RootCAGenerator } from './RootCAGenerator'
 import { CertSigner } from './CertSigner'
 import { CertParser } from './CertParser'
+import { CRLGenerator } from './CRLGenerator'
 
 const MODULE_ID = 'pki-workshop'
 
@@ -103,6 +104,12 @@ export const PKIWorkshop: React.FC = () => {
         description: 'Inspect the details of your generated certificate.',
         component: <CertParser onComplete={() => markStepComplete(MODULE_ID, 'parse')} />,
       },
+      {
+        id: 'revoke',
+        title: 'Step 5: Revocation (CRL)',
+        description: 'Generate an empty Certificate Revocation List (CRL) for your Root CA.',
+        component: <CRLGenerator onComplete={() => markStepComplete(MODULE_ID, 'revoke')} />,
+      },
     ],
     [markStepComplete]
   )
@@ -134,7 +141,7 @@ export const PKIWorkshop: React.FC = () => {
           <PKIIntroduction onNavigateToWorkshop={navigateToWorkshop} />
         </TabsContent>
 
-        {/* Workshop Tab — existing 4-step stepper */}
+        {/* Workshop Tab */}
         <TabsContent value="workshop">
           <div className="max-w-5xl mx-auto">
             {/* Reset button */}

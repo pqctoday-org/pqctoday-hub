@@ -297,10 +297,11 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
         </div>
         <div className="bg-muted/50 rounded-lg p-3 border border-border">
           <p className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Migration deadline formula:</strong> If your data
-            must remain confidential for <em>X</em> years, and a CRQC is expected in <em>Y</em>{' '}
-            years, you must migrate to PQC within <strong>Y &minus; X</strong> years. For data with
-            25-year sensitivity and a CRQC in 2035, migration should have started by 2010.
+            <strong className="text-foreground">Mosca&apos;s Theorem (Migration Deadline):</strong>{' '}
+            If your data must remain secure for <em>X</em> years, your migration will take{' '}
+            <em>Y</em> years, and a CRQC is expected in <em>Z</em> years, you must start migrating{' '}
+            within <strong>Z &minus; X &minus; Y</strong> years. For data with 25-year sensitivity,
+            a 5-year migration time, and a CRQC in 2035, migration should have started by 2005.
           </p>
         </div>
       </section>

@@ -27,7 +27,8 @@ const PARTS = [
   {
     id: 'cms-encryption',
     title: 'Step 3: CMS Encryption',
-    description: 'Compare RSA key transport with KEM-based encryption (RFC 9629).',
+    description:
+      'Compare RSA key transport with KEM-based encryption (RFC 9629) using AuthEnvelopedData.',
     icon: Lock,
   },
 ]

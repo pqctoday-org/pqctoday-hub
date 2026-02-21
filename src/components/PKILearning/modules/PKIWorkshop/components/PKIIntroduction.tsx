@@ -198,8 +198,10 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           <Shield size={20} /> PQC Migration for PKI
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          Root CA certificates can have lifetimes of 20+ years, making them prime targets for
-          &quot;harvest now, decrypt later&quot; attacks. NIST IR 8547 recommends beginning the
+          Root CA certificates can have lifetimes of 20+ years. While data encryption is vulnerable
+          to &quot;harvest now, decrypt later&quot; attacks, long-lived CAs are vulnerable to
+          &quot;forge later&quot; attacks, where a cryptographically relevant quantum computer could
+          forge signatures and issue rogue certificates. NIST IR 8547 recommends beginning the
           transition to post-quantum algorithms immediately, with CNSA 2.0 (NSA) setting a 2030
           deadline for PQC-only PKI in national security systems.
         </p>

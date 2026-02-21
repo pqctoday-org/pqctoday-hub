@@ -43,7 +43,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <div className="text-xs font-bold text-primary mb-1">ANSSI Mandate</div>
               <p className="text-xs text-muted-foreground">
                 France&apos;s ANSSI requires hybrid mode during transition &mdash; PQC-only is not
-                acceptable until algorithms are more mature.
+                acceptable until algorithms are more mature. Exception: hash-based signatures
+                (SLH-DSA/SPHINCS+, LMS, XMSS) may be used standalone.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -106,6 +107,12 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </p>
             </div>
           </div>
+          <p className="text-xs text-muted-foreground">
+            <strong>Interoperability trade-off:</strong> Composite requires all verifiers to support
+            the PQC algorithm &mdash; no fallback if they don&apos;t. Concatenated allows legacy
+            verifiers to validate the primary signature while ignoring extensions, enabling gradual
+            rollout. This makes concatenated easier to deploy but weaker against downgrade attacks.
+          </p>
         </div>
       </section>
 
@@ -159,6 +166,22 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             Even if ML-KEM-768 is broken in the future, X25519 still provides classical security.
             Even if X25519 is broken by a quantum computer, ML-KEM-768 provides quantum resistance.
           </p>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border space-y-2">
+            <h4 className="text-xs font-bold text-foreground">Other Hybrid KEM Variants</h4>
+            <p className="text-xs text-muted-foreground">
+              <strong>SecP256r1MLKEM768</strong> &mdash; P-256 + ML-KEM-768. Important for
+              organizations requiring FIPS-approved classical curves (X25519 is not FIPS-approved).
+            </p>
+            <p className="text-xs text-muted-foreground">
+              <strong>SecP384r1MLKEM1024</strong> &mdash; P-384 + ML-KEM-1024. Provides NIST Level 5
+              security for high-assurance environments.
+            </p>
+            <p className="text-[10px] text-muted-foreground/70 italic">
+              Note: The KDF step above is simplified. In TLS 1.3, the concatenated shared secrets
+              feed into the protocol&apos;s HKDF-based key schedule. The X-Wing KEM draft uses a
+              separate labeled extraction.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -229,6 +252,42 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </thead>
               <tbody>
                 <tr className="border-b border-border/50">
+                  <td className="p-2 font-mono text-xs">NIST SP 800-227</td>
+                  <td className="p-2 text-xs">Recommendations for key-encapsulation mechanisms</td>
+                  <td className="p-2 text-center">
+                    <span className="text-xs px-2 py-0.5 rounded bg-success/10 text-success border border-success/20">
+                      Final
+                    </span>
+                  </td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-2 font-mono text-xs">RFC 9794</td>
+                  <td className="p-2 text-xs">Terminology for PQ/T hybrid schemes</td>
+                  <td className="p-2 text-center">
+                    <span className="text-xs px-2 py-0.5 rounded bg-success/10 text-success border border-success/20">
+                      Published
+                    </span>
+                  </td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-2 font-mono text-xs">draft-ietf-tls-ecdhe-mlkem</td>
+                  <td className="p-2 text-xs">Hybrid ECDHE-MLKEM key agreement for TLS 1.3</td>
+                  <td className="p-2 text-center">
+                    <span className="text-xs px-2 py-0.5 rounded bg-warning/10 text-warning border border-warning/20">
+                      Draft
+                    </span>
+                  </td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-2 font-mono text-xs">draft-ietf-tls-hybrid-design</td>
+                  <td className="p-2 text-xs">Hybrid key exchange framework for TLS 1.3</td>
+                  <td className="p-2 text-center">
+                    <span className="text-xs px-2 py-0.5 rounded bg-warning/10 text-warning border border-warning/20">
+                      Draft
+                    </span>
+                  </td>
+                </tr>
+                <tr className="border-b border-border/50">
                   <td className="p-2 font-mono text-xs">draft-ietf-lamps-pq-composite-sigs</td>
                   <td className="p-2 text-xs">Composite ML-DSA + traditional signatures</td>
                   <td className="p-2 text-center">
@@ -243,33 +302,6 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                   <td className="p-2 text-center">
                     <span className="text-xs px-2 py-0.5 rounded bg-warning/10 text-warning border border-warning/20">
                       Draft
-                    </span>
-                  </td>
-                </tr>
-                <tr className="border-b border-border/50">
-                  <td className="p-2 font-mono text-xs">draft-ietf-tls-hybrid-design</td>
-                  <td className="p-2 text-xs">Hybrid key exchange in TLS 1.3</td>
-                  <td className="p-2 text-center">
-                    <span className="text-xs px-2 py-0.5 rounded bg-warning/10 text-warning border border-warning/20">
-                      Draft
-                    </span>
-                  </td>
-                </tr>
-                <tr className="border-b border-border/50">
-                  <td className="p-2 font-mono text-xs">NIST SP 800-227</td>
-                  <td className="p-2 text-xs">Recommendations for PQC key establishment</td>
-                  <td className="p-2 text-center">
-                    <span className="text-xs px-2 py-0.5 rounded bg-success/10 text-success border border-success/20">
-                      Final
-                    </span>
-                  </td>
-                </tr>
-                <tr className="border-b border-border/50">
-                  <td className="p-2 font-mono text-xs">X25519MLKEM768 (IETF)</td>
-                  <td className="p-2 text-xs">X25519 + ML-KEM-768 hybrid KEM</td>
-                  <td className="p-2 text-center">
-                    <span className="text-xs px-2 py-0.5 rounded bg-success/10 text-success border border-success/20">
-                      Deployed
                     </span>
                   </td>
                 </tr>

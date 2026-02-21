@@ -56,7 +56,7 @@ export const HYBRID_ALGORITHMS: HybridAlgorithmInfo[] = [
     privateKeyBytes: 2432,
     ciphertextOrSigBytes: 1120,
     nistLevel: 3,
-    description: 'X25519 + ML-KEM-768 hybrid. IETF draft standard.',
+    description: 'X25519 + ML-KEM-768 hybrid. IETF draft, widely deployed.',
   },
   // Classical signatures
   {

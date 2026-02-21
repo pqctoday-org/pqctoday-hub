@@ -32,7 +32,8 @@
     "prepare": "husky",
     "download:library": "node scripts/download-library.js",
     "download:library:dry": "node scripts/download-library.js --dry-run",
-    "summarize:library": "python3 scripts/summarize-library.py"
+    "summarize:library": "python3 scripts/summarize-library.py",
+    "validate:references": "tsx scripts/validate-references.ts"
   },
   "dependencies": {
     "@noble/curves": "^2.0.1",

@@ -78,17 +78,17 @@ export const PQCThreatSummary: React.FC = () => {
         </table>
       </div>
 
-      {/* HNDL Callout */}
+      {/* HNFL Callout */}
       <div className="glass-panel p-4 border-l-4 border-l-destructive">
         <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-          <InfoTooltip term="hndl" /> Risk for Blockchains
+          <InfoTooltip term="hnfl" /> Risk for Blockchains
         </h4>
         <p className="text-sm text-muted-foreground leading-relaxed">
           On-chain data is <strong className="text-foreground">immutable</strong> — unlike
           traditional systems where you can rotate keys, blockchain transaction history is
           permanent. Public keys exposed in past transactions remain harvestable indefinitely. When
           cryptographically relevant quantum computers arrive, every previously exposed public key
-          becomes a target. This makes the HNDL threat particularly severe for blockchains: there is
+          becomes a target. This makes the HNFL threat particularly severe for blockchains: there is
           no retroactive fix for exposed keys.
         </p>
         <p className="text-xs text-muted-foreground mt-2 italic">

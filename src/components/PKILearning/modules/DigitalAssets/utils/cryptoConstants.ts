@@ -150,10 +150,10 @@ export const CRYPTO_TOOLTIPS = {
     description:
       'A quantum algorithm that efficiently solves the discrete logarithm problem, breaking ECDSA (secp256k1) and EdDSA (Ed25519). Requires a cryptographically relevant quantum computer (CRQC) with thousands of logical qubits.',
   },
-  hndl: {
-    title: 'Harvest Now, Decrypt Later (HNDL)',
+  hnfl: {
+    title: 'Harvest Now, Forge Later (HNFL)',
     description:
-      'An attack strategy where adversaries collect encrypted data or exposed public keys today, intending to break them once quantum computers become available. On-chain data is immutable, making blockchain especially vulnerable.',
+      'An attack strategy where adversaries collect exposed public keys today, intending to forge signatures once quantum computers become available. On-chain data is immutable, making blockchain especially vulnerable.',
   },
   qday: {
     title: 'Q-Day',

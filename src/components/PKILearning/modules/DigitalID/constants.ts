@@ -145,10 +145,11 @@ export const EUDI_GLOSSARY = {
   'PuB-EAA':
     'Public Body Electronic Attestation of Attributes - An attestation issued by a public body based on authentic sources.',
   OpenID4VCI:
-    'OpenID for Verifiable Credential Issuance - Protocol for issuing verifiable credentials.',
+    'OpenID for Verifiable Credential Issuance (1.0) - Protocol for issuing verifiable credentials to wallets.',
   OpenID4VP:
-    'OpenID for Verifiable Presentations - Protocol for presenting verifiable credentials.',
-  'SD-JWT': 'Selective Disclosure JWT - A JWT format that allows selective disclosure of claims.',
+    'OpenID for Verifiable Presentations (1.0 Final, July 2025) - Protocol for presenting verifiable credentials to Relying Parties.',
+  'SD-JWT':
+    'Selective Disclosure JWT (RFC 9901) - A JWT format that allows selective disclosure of claims. The SD-JWT VC credential profile remains a draft.',
   mdoc: 'Mobile Document - CBOR-based credential format defined in ISO/IEC 18013-5.',
   'Device Binding':
     'Cryptographic proof that the presenter controls the private key associated with the credential.',
