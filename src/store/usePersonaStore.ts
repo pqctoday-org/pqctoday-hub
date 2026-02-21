@@ -20,9 +20,9 @@ interface PersonaState {
 export const usePersonaStore = create<PersonaState>()(
   persist(
     (set) => ({
-      selectedPersona: null,
+      selectedPersona: 'researcher' as PersonaId,
       hasSeenPersonaPicker: false,
-      selectedRegion: null,
+      selectedRegion: 'global' as Region,
       selectedIndustry: null,
 
       setPersona: (persona) =>
@@ -37,7 +37,7 @@ export const usePersonaStore = create<PersonaState>()(
       setIndustry: (industry) => set({ selectedIndustry: industry }),
 
       clearPreferences: () =>
-        set({ selectedPersona: null, selectedRegion: null, selectedIndustry: null }),
+        set({ selectedPersona: 'researcher', selectedRegion: 'global', selectedIndustry: null }),
     }),
     {
       name: 'pqc-learning-persona',

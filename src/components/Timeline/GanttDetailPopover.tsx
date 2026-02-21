@@ -82,7 +82,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
         {/* Badge and Title */}
         <div className="flex items-center gap-2">
           <div
-            className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-black flex-shrink-0"
+            className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider text-black flex-shrink-0"
             style={{ backgroundColor: colors.start }}
           >
             {phase.phase}
@@ -100,59 +100,50 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
           </p>
         </div>
 
-        {/* Table Layout for Details: 4 columns (Label Value Label Value) */}
+        {/* Detail grid: 2×2 on small screens, 4-col inline on sm+ */}
         <div className="pt-3 border-t border-border">
-          <table className="w-full text-xs border-collapse">
-            <tbody>
-              {/* Row 1: Start and End */}
-              <tr>
-                <td className="py-1.5 pr-3 text-muted-foreground uppercase tracking-wider font-medium text-[10px] whitespace-nowrap w-1">
-                  Start
-                </td>
-                <td className="py-1.5 pr-6 font-mono text-foreground text-[10px]">
-                  {phase.startYear}
-                </td>
-
-                <td className="py-1.5 pr-3 text-muted-foreground uppercase tracking-wider font-medium text-[10px] whitespace-nowrap w-1">
-                  End
-                </td>
-                <td className="py-1.5 font-mono text-foreground text-[10px]">{phase.endYear}</td>
-              </tr>
-
-              {/* Row 2: Source and Date */}
-              <tr>
-                <td className="py-1.5 pr-3 text-muted-foreground uppercase tracking-wider font-medium text-[10px] whitespace-nowrap">
-                  Source
-                </td>
-                <td className="py-1.5 pr-6">
-                  {sourceUrl ? (
-                    <a
-                      href={sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors truncate max-w-[120px]"
-                      title={sourceUrl}
-                    >
-                      <ExternalLink className="w-3 h-3 shrink-0" />
-                      <span className="truncate">View</span>
-                    </a>
-                  ) : (
-                    <span className="text-muted-foreground text-[10px]">-</span>
-                  )}
-                </td>
-
-                <td className="py-1.5 pr-3 text-muted-foreground uppercase tracking-wider font-medium text-[10px] whitespace-nowrap">
-                  Date
-                </td>
-                <td className="py-1.5">
-                  <div className="flex items-center gap-1.5 text-foreground text-[10px]">
-                    <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
-                    <span className="truncate">{sourceDate || '-'}</span>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-xs">
+            <div>
+              <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                Start
+              </span>
+              <span className="font-mono text-foreground">{phase.startYear}</span>
+            </div>
+            <div>
+              <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                End
+              </span>
+              <span className="font-mono text-foreground">{phase.endYear}</span>
+            </div>
+            <div>
+              <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                Source
+              </span>
+              {sourceUrl ? (
+                <a
+                  href={sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors"
+                  title={sourceUrl}
+                >
+                  <ExternalLink className="w-3 h-3 shrink-0" />
+                  <span>View</span>
+                </a>
+              ) : (
+                <span className="text-muted-foreground">-</span>
+              )}
+            </div>
+            <div>
+              <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                Date
+              </span>
+              <div className="flex items-center gap-1.5 text-foreground">
+                <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
+                <span className="truncate">{sourceDate || '-'}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

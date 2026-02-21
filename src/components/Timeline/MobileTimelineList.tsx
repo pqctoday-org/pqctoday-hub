@@ -134,7 +134,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                           </span>
                           <StatusBadge status={currentPhase.status} size="sm" />
                         </div>
-                        <span className="text-[10px] text-muted-foreground font-mono">
+                        <span className="text-xs text-muted-foreground font-mono">
                           {currentPhase.startYear} -{' '}
                           {currentPhase.endYear === 2035 ? '2035+' : currentPhase.endYear}
                         </span>
@@ -156,7 +156,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                           [country.countryName]: i,
                         }))
                       }
-                      className="transition-all"
+                      className="flex items-center justify-center min-w-[28px] min-h-[28px] transition-all"
                       aria-label={`Go to phase ${i + 1}: ${p.phase}`}
                     >
                       <div

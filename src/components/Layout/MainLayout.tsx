@@ -60,9 +60,13 @@ export const MainLayout = () => {
       >
         <div className="glass-panel p-2 lg:p-4 flex w-full justify-center lg:justify-between items-center relative">
           <div className="flex flex-row items-baseline gap-4">
+            {/* Abbreviated brand on mobile, full brand on desktop */}
+            <div className="lg:hidden flex-shrink-0">
+              <span className="text-base font-bold text-gradient">PQC</span>
+            </div>
             <div className="hidden lg:block">
               <h1 className="text-2xl font-bold text-gradient">PQC Today</h1>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-widest hidden sm:block">
+              <p className="text-xs text-muted-foreground uppercase tracking-widest hidden sm:block">
                 Last Updated: {buildTime}
               </p>
             </div>
@@ -93,8 +97,8 @@ export const MainLayout = () => {
                     aria-current={isActive ? 'page' : undefined}
                     className={
                       isActive
-                        ? 'bg-primary/10 text-foreground border border-primary/20 px-2 lg:px-4'
-                        : 'text-muted-foreground hover:text-foreground px-2 lg:px-4'
+                        ? 'bg-primary/10 text-foreground border border-primary/20 px-2 lg:px-4 min-h-[44px] lg:min-h-0'
+                        : 'text-muted-foreground hover:text-foreground px-2 lg:px-4 min-h-[44px] lg:min-h-0'
                     }
                   >
                     <item.icon size={20} aria-hidden="true" className="lg:mr-2" />
@@ -133,7 +137,7 @@ export const MainLayout = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden">
+      <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden safe-bottom">
         <p>© 2025 PQC Today. Data sourced from the public internet resources.</p>
       </footer>
 

@@ -68,6 +68,8 @@ const ComplianceRow = ({
   }, [record, onEnrich])
 
   const [showDetailsPopup, setShowDetailsPopup] = useState(false)
+  const [showPqcTooltip, setShowPqcTooltip] = useState(false)
+  const [showClassicalTooltip, setShowClassicalTooltip] = useState(false)
 
   return (
     <tr className="border-b border-border hover:bg-muted/50 transition-colors">
@@ -111,25 +113,31 @@ const ComplianceRow = ({
       <td className="px-4 py-3 relative group">
         {record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
           <div className="flex items-center">
-            <div
+            <button
+              type="button"
+              onClick={() => setShowPqcTooltip((v) => !v)}
               className={clsx(
                 'cursor-help p-1 rounded-full transition-colors',
                 record.pqcCoverage === 'Pending Check...'
                   ? 'bg-warning/10 text-warning animate-pulse'
                   : 'bg-tertiary/10 text-tertiary hover:bg-tertiary/20'
               )}
+              aria-label="View PQC mechanisms"
             >
               {record.pqcCoverage === 'Pending Check...' ? (
                 <RefreshCw size={16} className="animate-spin" />
               ) : (
                 <ShieldCheck size={18} />
               )}
-            </div>
+            </button>
 
             <div
               className={clsx(
-                'absolute left-1/2 -translate-x-1/2 w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-[100] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-normal',
-                index < 2 ? 'top-full mt-2' : 'bottom-full mb-2'
+                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-[100] transition-opacity whitespace-normal',
+                index < 2 ? 'top-full mt-2' : 'bottom-full mb-2',
+                showPqcTooltip
+                  ? 'opacity-100 pointer-events-auto'
+                  : 'opacity-0 pointer-events-none group-hover:opacity-100'
               )}
             >
               <div className="font-semibold text-tertiary mb-1">PQC Mechanisms</div>
@@ -172,13 +180,21 @@ const ComplianceRow = ({
       <td className="px-4 py-3 relative group">
         {record.classicalAlgorithms ? (
           <div className="flex items-center justify-center">
-            <div className="cursor-help p-1 rounded-full bg-muted text-muted-foreground hover:bg-muted/80 transition-colors">
+            <button
+              type="button"
+              onClick={() => setShowClassicalTooltip((v) => !v)}
+              className="cursor-help p-1 rounded-full bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
+              aria-label="View classical algorithms"
+            >
               <LockKeyhole size={14} />
-            </div>
+            </button>
             <div
               className={clsx(
-                'absolute left-1/2 -translate-x-1/2 w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-[100] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-normal',
-                index < 2 ? 'top-full mt-2' : 'bottom-full mb-2'
+                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-[100] transition-opacity whitespace-normal',
+                index < 2 ? 'top-full mt-2' : 'bottom-full mb-2',
+                showClassicalTooltip
+                  ? 'opacity-100 pointer-events-auto'
+                  : 'opacity-0 pointer-events-none group-hover:opacity-100'
               )}
             >
               <div className="font-semibold text-muted-foreground mb-1">Classical Algorithms</div>

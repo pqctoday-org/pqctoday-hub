@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable } from './ComplianceTable'
+import { MobileComplianceView } from './MobileComplianceView'
 import { useComplianceRefresh, AUTHORITATIVE_SOURCES } from './services'
 import { ShieldCheck, FileCheck, Server, GlobeLock, Building2 } from 'lucide-react'
 import { logComplianceFilter } from '../../utils/analytics'
@@ -97,63 +98,70 @@ export const ComplianceView = () => {
         </a>
       </div>
 
-      {/* Main Content Tabs */}
-      <Tabs
-        defaultValue="all"
-        className="w-full"
-        onValueChange={(tab) => logComplianceFilter('Tab', tab)}
-      >
-        <TabsList className="mb-4 bg-muted/50 border border-border">
-          <TabsTrigger value="all">All Records</TabsTrigger>
-          <TabsTrigger value="fips">FIPS 140-3</TabsTrigger>
-          <TabsTrigger value="acvp">ACVP</TabsTrigger>
-          <TabsTrigger value="cc">Common Criteria</TabsTrigger>
-        </TabsList>
+      {/* Mobile: simple card list (no tabs — tabs don't render well at mobile widths) */}
+      <div className="md:hidden">
+        <MobileComplianceView data={data} />
+      </div>
 
-        <TabsContent value="all" className="mt-0">
-          <ComplianceTable
-            data={data}
-            onRefresh={refresh}
-            isRefreshing={loading}
-            lastUpdated={lastUpdated}
-            onEnrich={enrichRecord}
-          />
-        </TabsContent>
+      {/* Desktop: full tabbed table */}
+      <div className="hidden md:block">
+        <Tabs
+          defaultValue="all"
+          className="w-full"
+          onValueChange={(tab) => logComplianceFilter('Tab', tab)}
+        >
+          <TabsList className="mb-4 bg-muted/50 border border-border">
+            <TabsTrigger value="all">All Records</TabsTrigger>
+            <TabsTrigger value="fips">FIPS 140-3</TabsTrigger>
+            <TabsTrigger value="acvp">ACVP</TabsTrigger>
+            <TabsTrigger value="cc">Common Criteria</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="fips" className="mt-0">
-          <ComplianceTable
-            data={data.filter((r) => r.type === 'FIPS 140-3')}
-            onRefresh={refresh}
-            isRefreshing={loading}
-            lastUpdated={lastUpdated}
-          />
-        </TabsContent>
+          <TabsContent value="all" className="mt-0">
+            <ComplianceTable
+              data={data}
+              onRefresh={refresh}
+              isRefreshing={loading}
+              lastUpdated={lastUpdated}
+              onEnrich={enrichRecord}
+            />
+          </TabsContent>
 
-        <TabsContent value="acvp" className="mt-0">
-          <ComplianceTable
-            data={data.filter((r) => r.type === 'ACVP')}
-            onRefresh={refresh}
-            isRefreshing={loading}
-            lastUpdated={lastUpdated}
-            onEnrich={enrichRecord}
-          />
-        </TabsContent>
+          <TabsContent value="fips" className="mt-0">
+            <ComplianceTable
+              data={data.filter((r) => r.type === 'FIPS 140-3')}
+              onRefresh={refresh}
+              isRefreshing={loading}
+              lastUpdated={lastUpdated}
+            />
+          </TabsContent>
 
-        <TabsContent value="cc" className="mt-0">
-          <ComplianceTable
-            data={data.filter(
-              (r) =>
-                r.type === 'Common Criteria' ||
-                r.type === 'EUCC' ||
-                r.source === 'ANSSI' ||
-                r.source === 'ENISA'
-            )}
-            onRefresh={refresh}
-            isRefreshing={loading}
-            lastUpdated={lastUpdated}
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="acvp" className="mt-0">
+            <ComplianceTable
+              data={data.filter((r) => r.type === 'ACVP')}
+              onRefresh={refresh}
+              isRefreshing={loading}
+              lastUpdated={lastUpdated}
+              onEnrich={enrichRecord}
+            />
+          </TabsContent>
+
+          <TabsContent value="cc" className="mt-0">
+            <ComplianceTable
+              data={data.filter(
+                (r) =>
+                  r.type === 'Common Criteria' ||
+                  r.type === 'EUCC' ||
+                  r.source === 'ANSSI' ||
+                  r.source === 'ENISA'
+              )}
+              onRefresh={refresh}
+              isRefreshing={loading}
+              lastUpdated={lastUpdated}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   )
 }

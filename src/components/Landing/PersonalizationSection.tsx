@@ -25,7 +25,7 @@ import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { REGION_COUNTRY_MAP } from '@/data/personaConfig'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/useAssessmentEngine'
 
-const PERSONA_ORDER: PersonaId[] = ['executive', 'developer', 'architect', 'researcher']
+const PERSONA_ORDER: PersonaId[] = ['researcher', 'executive', 'developer', 'architect']
 
 const PERSONA_ICONS = {
   Briefcase,
@@ -49,10 +49,10 @@ const INDUSTRY_ICONS: Record<string, LucideIcon> = {
 }
 
 const REGIONS: { id: Region; label: string }[] = [
+  { id: 'global', label: 'Global' },
   { id: 'americas', label: 'Americas' },
   { id: 'eu', label: 'Europe' },
   { id: 'apac', label: 'APAC' },
-  { id: 'global', label: 'Global' },
 ]
 
 export const PersonalizationSection = () => {
@@ -68,7 +68,9 @@ export const PersonalizationSection = () => {
   const { setCountry, setIndustry: setAssessIndustry } = useAssessmentStore()
 
   const hasAnySelection =
-    selectedPersona !== null || selectedRegion !== null || selectedIndustry !== null
+    (selectedPersona !== null && selectedPersona !== 'researcher') ||
+    (selectedRegion !== null && selectedRegion !== 'global') ||
+    selectedIndustry !== null
 
   const handlePersona = (id: PersonaId) => {
     setPersona(id === selectedPersona ? null : id)

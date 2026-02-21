@@ -261,7 +261,7 @@ export const LandingView = () => {
                     <div className="flex items-start justify-between gap-2 mb-3">
                       <feature.icon className={feature.color} size={28} />
                       {isRecommended && (
-                        <span className="text-[10px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1.5 py-0.5 shrink-0">
+                        <span className="text-xs font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1.5 py-0.5 shrink-0">
                           For you
                         </span>
                       )}

@@ -50,6 +50,7 @@ const getIndustryIcon = (industry: string) => {
 }
 
 import { ThreatDetailDialog } from './ThreatDetailDialog'
+import { MobileThreatsList } from './MobileThreatsList'
 
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
 
@@ -263,8 +264,13 @@ export const ThreatsDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="glass-panel overflow-hidden">
+      {/* Mobile: card list */}
+      <div className="md:hidden">
+        <MobileThreatsList items={filteredAndSortedData} />
+      </div>
+
+      {/* Desktop: table */}
+      <div className="hidden md:block glass-panel overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -353,7 +359,7 @@ export const ThreatsDashboard: React.FC = () => {
                       {item.description.length > 120
                         ? `${item.description.substring(0, 120)}...`
                         : item.description}
-                      <div className="text-[10px] text-muted-foreground/50 mt-1 uppercase tracking-wider">
+                      <div className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider">
                         Source: {item.mainSource}
                       </div>
                     </td>
@@ -411,6 +417,7 @@ export const ThreatsDashboard: React.FC = () => {
           </div>
         )}
       </div>
+      {/* End desktop wrapper */}
       <AnimatePresence>
         {selectedThreat && (
           <ThreatDetailDialog threat={selectedThreat} onClose={() => setSelectedThreat(null)} />

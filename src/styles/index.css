@@ -386,7 +386,12 @@
 
 @layer components {
   .container {
-    @apply max-w-7xl mx-auto px-8;
+    @apply max-w-7xl mx-auto px-4 md:px-8;
+  }
+
+  /* Safe-area padding for notched devices (iPhone X+) */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .glass-panel {
