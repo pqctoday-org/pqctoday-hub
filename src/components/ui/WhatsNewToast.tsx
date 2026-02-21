@@ -77,22 +77,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Mobile Compliance &amp; Threats</strong>{' '}
-                    &mdash; Dedicated card-based mobile views for Compliance and Threats
+                    <strong className="text-foreground">Single-select industry</strong> &mdash; Home
+                    page industry picker now selects one at a time; drives Library, Assessment, and
+                    Learning path
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Tap-to-toggle tooltips</strong> &mdash;
-                    Compliance algorithm tooltips now work on touch devices, not just hover
+                    <strong className="text-foreground">Region-scoped country lists</strong> &mdash;
+                    Timeline filter and Assessment wizard show only countries matching your selected
+                    region
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Mobile layout polish</strong> &mdash;
-                    Navigation, popovers, filters, and cards refined across all views
+                    <strong className="text-foreground">Smarter persona pre-seeding</strong> &mdash;
+                    Assessment industry and country auto-filled from home page selections on fresh
+                    start
                   </span>
                 </li>
               </ul>

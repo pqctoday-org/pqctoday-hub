@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.17.3] - 2026-02-20
+
+### Changed
+
+- **Single-select industry**: The industry picker on the home page now works as single-select —
+  clicking an industry selects it exclusively; clicking the active industry deselects it (returns
+  to All Industries). Previously allowed multi-select.
+- **Timeline country dropdown scoped to region**: When a region is selected on the home page,
+  the Timeline country filter shows only that region's group and its individual countries
+  (Americas → US + Canada, Europe → 8 EU countries, APAC → 8 APAC countries; Global/none shows all).
+- **Digital ID learning module**: Finance & Banking added as a relevant industry alongside
+  Government & Defense and Healthcare.
+
 ## [1.17.2] - 2026-02-20
 
 ### Fixed
