@@ -151,6 +151,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     inferred persona badge appears on home page role picker after assessment completion
   - **Persona-aware hero CTAs**: primary and secondary landing page actions adapt to the selected
     role (Executive → Assess, Developer → Playground, Architect → Timeline, Researcher → Algorithms)
+  - **Journey step rail**: landing page features a horizontal 7-step progression (Learn → Assess →
+    Explore → Test → Deploy → Ramp Up → Stay Agile); steps inaccessible to the active persona are
+    dimmed; persona-priority steps receive "For you" badges; each card shows route chips for all
+    available paths
   - **Persona inference**: assessment results map to all four personas using correct field values;
     returns null when signal is insufficient rather than defaulting to Architect
   - **Region pre-seeding**: pre-filters Timeline and pre-seeds Assessment country on mount
@@ -296,7 +300,7 @@ The application is structured into several key components:
 - **`src/components/Playground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
 - **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
-- **`src/components/PKILearning`**: Educational platform with 14 modules including hybrid crypto, agility, stateful signatures and more.
+- **`src/components/PKILearning`**: Educational platform with 15 modules including hybrid crypto, agility, stateful signatures and more.
 - **`src/components/Assess`**: 13-step industry-aware risk assessment wizard with compound scoring engine, consolidated HNDL/HNFL risk analysis, and PDF print support.
 - **`src/components/Migrate`**: Comprehensive PQC migration planning module with verified software database and workflow guidance.
 - **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.

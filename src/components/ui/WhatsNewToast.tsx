@@ -77,24 +77,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Entropy & Randomness quiz category</strong>{' '}
-                    &mdash; SP 800-90 A/B/C, DRBGs, TRNG vs QRNG, FIPS 203/204 seed requirements
+                    <strong className="text-foreground">Persona-aware journey step rail</strong>{' '}
+                    &mdash; 7-step progression on the home page with &ldquo;For you&rdquo; badges
+                    and route chips per role
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">BB84 partial eavesdropping</strong> &mdash;
-                    configurable Eve interception rate slider to explore QBER vs intercept
-                    probability
+                    <strong className="text-foreground">Hero messaging refresh</strong> &mdash; new
+                    &ldquo;Your PQC Transformation&rdquo; framing and role-aware CTAs
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">3 security fixes</strong> &mdash; URL
-                    injection guard in Assess, XSS-safe error overlay, eval() removed from OpenSSL
-                    worker
+                    <strong className="text-foreground">Test reliability</strong> &mdash; resolved
+                    pre-existing ComplianceView and audit_suci failures; safer WASM test context
                   </span>
                 </li>
               </ul>

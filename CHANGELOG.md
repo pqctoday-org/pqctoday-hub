@@ -4,6 +4,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.25.0] - 2026-02-22
+
+### Added
+
+- **Persona-aware journey step rail** (`/`): The landing page now features a horizontal 7-step
+  progression rail — Learn → Assess → Explore → Test → Deploy → Ramp Up → Stay Agile —
+  replacing the previous feature-grid layout. Inaccessible steps are dimmed at 35% opacity
+  based on the active persona; persona-priority steps receive a "For you" badge. Each step card
+  shows route chips for all paths (Explore → Timeline / Algorithms / Library; Stay Agile →
+  Threats / Leaders; single-path steps show their chip too for visual consistency).
+
+- **Hero messaging refresh** (`/`): Updated hero tagline to "The quantum era is here. Your
+  transformation journey starts now." with a new "Your PQC Transformation" headline and
+  persona-aware CTA buttons routing each role to its most relevant starting point
+  (Executive → Assess, Developer → Playground, Architect → Timeline, Researcher → Algorithms).
+
+### Fixed
+
+- **Landing — path chips on all step cards** (`/`): Route chips previously only rendered on
+  multi-path steps (`step.paths.length > 1` guard removed). All 7 journey cards now display
+  their chips, giving every step a consistent visual affordance.
+
+- **Landing — step rail connector alignment** (`/`): Vertical connector lines between step circles
+  now pin correctly to circle center regardless of card column height (fixed via `items-start` +
+  `mt-4` offset on the connector div).
+
+- **Tests — ComplianceView and audit_suci** (`src/`): Resolved pre-existing failures by wrapping
+  `render()` calls in `<MemoryRouter>`, correcting the default-tab assertion (`"landscape"` not
+  `"all"`), adding `Buffer` to the WASM test `vm` context, and replacing `new Function()` with
+  `vm.runInContext()` for safer WASM glue code loading.
+
 ## [1.24.0] - 2026-02-22
 
 ### Added
