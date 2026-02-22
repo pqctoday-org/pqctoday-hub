@@ -77,23 +77,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Sources, Share & Glossary buttons</strong>{' '}
-                    &mdash; Compliance, Migrate & OpenSSL Studio pages now follow the standard page
-                    header pattern
+                    <strong className="text-foreground">Web Browsers in Migrate</strong> &mdash;
+                    Chrome, Edge, Firefox & Safari added to PQC migration catalog with ML-KEM
+                    support details
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Authoritative sources extended</strong>{' '}
-                    &mdash; data model now tracks sources for Compliance and Migrate views
+                    <strong className="text-foreground">FIPS accuracy upgrade</strong> &mdash;
+                    three-tier badge (Validated / Partial / No) replaces misleading binary display
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Playground layout fix</strong> &mdash;
-                    description text now appears above action buttons for correct visual hierarchy
+                    <strong className="text-foreground">CSV reliability fix</strong> &mdash; line
+                    ending normalization prevents silent data loss during parsing
                   </span>
                 </li>
               </ul>

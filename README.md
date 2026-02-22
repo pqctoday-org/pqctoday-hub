@@ -95,7 +95,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - Global QKD deployment explorer with real-world adoption data including AWS Center for Quantum
       Networking (CQN) and Chicago Quantum Exchange (CQE) 111 km fiber network
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
-  - **Reference Catalog**: 193 verified PQC-relevant product entries across 7 infrastructure layers
+  - **Reference Catalog**: 186 verified PQC-relevant product entries across 7 infrastructure layers
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
     Security Stack, Operating System, Hardware & Secure Elements — click any layer to filter the
     catalog. Products can span multiple layers (e.g., AWS KMS in Cloud + Security Stack).

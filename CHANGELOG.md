@@ -4,6 +4,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.27.0] - 2026-02-22
+
+### Added
+
+- **Web Browsers category in Migrate catalog** (`/migrate`): Added Google Chrome, Microsoft Edge,
+  Mozilla Firefox, and Apple Safari (CSC-037) with ML-KEM TLS 1.3 support details. All four tagged
+  for both migrate and launch phases. New `02222026.csv` created per CSV maintenance rules.
+
+### Changed
+
+- **Three-tier FIPS validation badge** (`/migrate`): FIPS column now distinguishes between
+  FIPS 140/203 certified (green "Validated"), indirect or partial claims like FedRAMP, WebTrust,
+  FIPS mode (amber "Partial"), and no validation (gray "No"). Previously any "Yes" value showed
+  a misleading green "Validated" badge.
+
+### Fixed
+
+- **CSV line ending normalization**: Fixed mixed CRLF/LF line endings in software reference CSVs
+  that caused PapaParse to silently drop rows with quoted comma fields.
+
 ## [1.26.0] - 2026-02-22
 
 ### Added

@@ -42,7 +42,7 @@ export const LAYERS = [
     id: 'Application',
     label: 'Application Servers & Software',
     icon: Laptop,
-    description: 'TLS, Web Servers, Messaging, Code Signing, CI/CD, Artifacts',
+    description: 'TLS, Web Servers, Web Browsers, Messaging, Code Signing, CI/CD, Artifacts',
     color: 'from-purple-500/20 to-pink-500/20',
     borderColor: 'border-purple-500/50',
     activeColor: 'bg-purple-500/30 border-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.5)]',

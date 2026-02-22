@@ -13,7 +13,7 @@ test.describe('Migrate Module', () => {
   test('should display search and filter controls', async ({ page }) => {
     await expect(page.getByPlaceholder('Search software...')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Category' })).toBeVisible() // Category filter
-    await expect(page.getByRole('button', { name: 'Platform' })).toBeVisible() // Platform filter
+    await expect(page.getByRole('button', { name: 'PQC Support' })).toBeVisible() // PQC Support filter
   })
 
   test('should filter table by search text', async ({ page }) => {
