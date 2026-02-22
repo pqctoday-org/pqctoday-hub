@@ -13,7 +13,7 @@ const CodeBlock = React.forwardRef<HTMLPreElement, CodeBlockProps>(
       <pre
         ref={ref}
         className={cn(
-          'mb-4 mt-6 max-h-[650px] overflow-x-auto rounded-lg border bg-zinc-950 py-4 dark:bg-zinc-900',
+          'mb-4 mt-6 max-h-[650px] overflow-x-auto rounded-lg border bg-muted py-4',
           className
         )}
         {...props}

@@ -343,7 +343,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           onClick={() => setMode('generate')}
           className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
             mode === 'generate'
-              ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+              ? 'bg-accent/10 text-accent border border-accent/30'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -354,7 +354,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           onClick={() => setMode('sign')}
           className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
             mode === 'sign'
-              ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+              ? 'bg-primary/10 text-primary border border-primary/30'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -365,7 +365,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           onClick={() => setMode('verify')}
           className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
             mode === 'verify'
-              ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+              ? 'bg-secondary/20 text-secondary border border-secondary/30'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -373,8 +373,8 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
         </button>
       </div>
 
-      <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
-        <div className="flex gap-2 text-blue-400 mb-1">
+      <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
+        <div className="flex gap-2 text-primary mb-1">
           <Info size={16} className="shrink-0 mt-0.5" />
           <span className="text-sm font-bold">LMS / HSS (Stateful Hash-Based Signatures)</span>
         </div>
@@ -384,7 +384,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
         </p>
         <button
           onClick={handleLoadSamples}
-          className="ml-6 px-2 py-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 text-xs rounded border border-blue-500/30 transition-colors"
+          className="ml-6 px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary text-xs rounded border border-primary/30 transition-colors"
         >
           Load Sample Data
         </button>
@@ -392,9 +392,9 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
 
       {/* Key Generation Section (only in generate mode) */}
       {mode === 'generate' && (
-        <div className="space-y-3 pb-4 border-b border-white/10">
+        <div className="space-y-3 pb-4 border-b border-border">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-green-400 uppercase tracking-wider">
+            <span className="text-xs font-bold text-accent uppercase tracking-wider">
               Generator
             </span>
           </div>
@@ -497,7 +497,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
                 )
               }
             }}
-            className="w-full py-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 text-xs font-bold rounded border border-green-500/30 transition-colors uppercase tracking-wider"
+            className="w-full py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-bold rounded border border-accent/30 transition-colors uppercase tracking-wider"
           >
             Generate New LMS Keypair
           </button>
@@ -506,9 +506,9 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
 
       {/* Signer Section (Only in Sign Mode) */}
       {mode === 'sign' && (
-        <div className="space-y-3 pb-4 border-b border-white/10">
+        <div className="space-y-3 pb-4 border-b border-border">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Signer</span>
+            <span className="text-xs font-bold text-primary uppercase tracking-wider">Signer</span>
           </div>
 
           {/* Private Key Selection */}
@@ -607,7 +607,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
             }}
             className={`w-full py-2 text-xs font-bold rounded border transition-colors uppercase tracking-wider ${
               lmsDataFile && lmsKeyFile
-                ? 'bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border-blue-500/30'
+                ? 'bg-primary/10 hover:bg-primary/20 text-primary border-primary/30'
                 : 'bg-gray-500/10 text-gray-500 border-gray-500/20 cursor-not-allowed'
             }`}
           >
@@ -623,9 +623,9 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
 
       {/* Verifier Section (Only in Verify Mode) */}
       {mode === 'verify' && (
-        <div className="space-y-3 pb-4 border-b border-white/10">
+        <div className="space-y-3 pb-4 border-b border-border">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">
+            <span className="text-xs font-bold text-secondary uppercase tracking-wider">
               Verifier
             </span>
           </div>
@@ -671,7 +671,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
             }}
             className={`w-full py-2 text-xs font-bold rounded border transition-colors uppercase tracking-wider ${
               lmsKeyFile && lmsSigFile && lmsDataFile
-                ? 'bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 border-purple-500/30'
+                ? 'bg-secondary/20 hover:bg-secondary/30 text-secondary border-secondary/30'
                 : 'bg-gray-500/10 text-gray-500 border-gray-500/20 cursor-not-allowed'
             }`}
           >

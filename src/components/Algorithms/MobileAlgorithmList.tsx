@@ -25,8 +25,8 @@ export const MobileAlgorithmList = ({ data }: MobileAlgorithmListProps) => {
               className={clsx(
                 'p-2 rounded-full',
                 algo.function.includes('Signature')
-                  ? 'bg-blue-500/10 text-blue-400'
-                  : 'bg-emerald-500/10 text-emerald-400'
+                  ? 'bg-primary/10 text-primary'
+                  : 'bg-accent/10 text-accent'
               )}
             >
               {algo.function.includes('Signature') ? (
@@ -52,9 +52,9 @@ export const MobileAlgorithmList = ({ data }: MobileAlgorithmListProps) => {
               className={clsx(
                 'text-xs px-2 py-1 rounded border font-medium whitespace-nowrap',
                 algo.deprecationDate.includes('Deprecated')
-                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                  ? 'bg-status-warning border-status-warning text-status-warning'
                   : algo.deprecationDate.includes('Disallowed')
-                    ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                    ? 'bg-status-error border-status-error text-status-error'
                     : 'bg-muted/10 border-border text-muted-foreground'
               )}
             >

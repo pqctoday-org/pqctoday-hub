@@ -144,7 +144,7 @@ export const LeaderCard = ({ leader }: LeaderCardProps) => {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Visit ${leader.name}'s LinkedIn profile (opens in new window)`}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-info hover:bg-blue-500/20 border-status-info/50 hover:border-blue-500/40 text-status-info text-xs font-medium transition-all group"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-info hover:bg-primary/20 border-status-info/50 hover:border-primary/40 text-status-info text-xs font-medium transition-all group"
             >
               <svg
                 width="14"

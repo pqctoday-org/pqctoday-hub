@@ -50,7 +50,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-muted/30 p-4 rounded-lg border border-border/50">
-              <h3 className="text-sm font-semibold text-red-400 mb-2 flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-status-error mb-2 flex items-center gap-2">
                 <Lock size={14} /> At-Risk Cryptography
               </h3>
               <p className="text-sm font-mono text-foreground/80 break-words">
@@ -76,10 +76,10 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
               <span
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   threat.criticality.toLowerCase() === 'critical'
-                    ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                    ? 'bg-status-error text-status-error border border-status-error'
                     : threat.criticality.toLowerCase() === 'high'
-                      ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
-                      : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                      ? 'bg-status-error text-status-error border border-status-error'
+                      : 'bg-status-warning text-status-warning border border-status-warning'
                 }`}
               >
                 {threat.criticality}

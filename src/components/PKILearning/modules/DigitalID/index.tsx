@@ -216,7 +216,7 @@ export const DigitalIDModule: React.FC = () => {
 
         {/* Workshop Tab */}
         <TabsContent value="workshop">
-          <div className="max-w-screen-2xl mx-auto space-y-6">
+          <div className="max-w-7xl mx-auto space-y-6">
             {/* Reset button */}
             <div className="flex justify-end">
               <button
@@ -224,33 +224,38 @@ export const DigitalIDModule: React.FC = () => {
                 className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
               >
                 <Trash2 size={16} />
-                Reset Workshop
+                Reset
               </button>
             </div>
 
-            {/* Step Progress */}
+            {/* Part Progress Steps */}
             <div className="overflow-x-auto px-2 sm:px-0">
-              <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+              <div className="flex justify-between relative min-w-max sm:min-w-0">
+                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
+
                 {WORKSHOP_STEPS.map((step, idx) => {
                   const Icon = step.icon
-                  const isActive = currentStep === idx
                   return (
                     <button
                       key={step.id}
                       onClick={() => setCurrentStep(idx)}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${
-                        isActive
-                          ? 'bg-primary/20 border-primary text-primary shadow-lg shadow-primary/10'
-                          : idx < currentStep
-                            ? 'bg-success/10 border-success text-success'
-                            : 'bg-transparent border-border text-muted-foreground hover:bg-muted/10'
-                      }`}
+                      className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
                     >
-                      <Icon size={16} />
-                      <span className="font-medium hidden sm:inline">
-                        {step.title.split(':')[1]?.trim()}
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                          ${
+                            idx === currentStep
+                              ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
+                              : idx < currentStep
+                                ? 'border-success text-success'
+                                : 'border-border text-muted-foreground'
+                          }`}
+                      >
+                        <Icon size={18} />
+                      </div>
+                      <span className="text-sm font-medium hidden md:block">
+                        {step.title.split(':')[0]}
                       </span>
-                      <span className="font-medium sm:hidden">{idx + 1}</span>
                     </button>
                   )
                 })}
@@ -258,7 +263,7 @@ export const DigitalIDModule: React.FC = () => {
             </div>
 
             {/* Content Area */}
-            <div className="glass-panel p-1 animate-fade-in min-h-0 overflow-y-auto">
+            <div className="glass-panel p-4 animate-fade-in min-h-[600px] overflow-y-auto">
               {currentStepComponent}
             </div>
 
@@ -267,17 +272,27 @@ export const DigitalIDModule: React.FC = () => {
               <button
                 onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
                 disabled={currentStep === 0}
-                className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted/50 disabled:opacity-50 transition-colors text-foreground"
+                className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
               >
                 &larr; Previous Step
               </button>
-              <button
-                onClick={() => setCurrentStep(Math.min(WORKSHOP_STEPS.length - 1, currentStep + 1))}
-                disabled={currentStep === WORKSHOP_STEPS.length - 1}
-                className="px-6 py-3 min-h-[44px] bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
-              >
-                Next Step &rarr;
-              </button>
+              {currentStep === WORKSHOP_STEPS.length - 1 ? (
+                <button
+                  onClick={() => markStepComplete(MODULE_ID, WORKSHOP_STEPS[currentStep].id)}
+                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+                >
+                  Complete Module ✓
+                </button>
+              ) : (
+                <button
+                  onClick={() =>
+                    setCurrentStep(Math.min(WORKSHOP_STEPS.length - 1, currentStep + 1))
+                  }
+                  className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Next Step &rarr;
+                </button>
+              )}
             </div>
 
             <div className="text-center text-xs text-muted-foreground max-w-2xl mx-auto">

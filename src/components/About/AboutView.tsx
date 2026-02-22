@@ -297,10 +297,12 @@ export function AboutView() {
 
           <div className="space-y-4">
             {/* Production Status */}
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/5 border border-green-500/20">
-              <ShieldCheck className="text-green-500 mt-0.5 shrink-0" size={18} />
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-status-success border border-status-success">
+              <ShieldCheck className="text-status-success mt-0.5 shrink-0" size={18} />
               <div>
-                <p className="text-sm font-semibold text-green-500">0 production vulnerabilities</p>
+                <p className="text-sm font-semibold text-status-success">
+                  0 production vulnerabilities
+                </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   All runtime dependencies (React, crypto libraries, Zustand, Tailwind, etc.) have
                   zero known CVEs.
@@ -359,7 +361,7 @@ export function AboutView() {
                       GHSA-2g4f-4pwh-qvx6
                     </td>
                     <td className="py-2 pr-3">
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-500/10 text-yellow-500">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-status-warning text-status-warning">
                         MODERATE
                       </span>
                     </td>

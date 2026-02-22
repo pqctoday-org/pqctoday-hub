@@ -349,7 +349,7 @@ export const SimpleGanttChart = ({
                 </div>
               ) : isFirst && !isMilestone ? (
                 <div className="relative flex items-center">
-                  <span className="absolute left-2 text-[10px] font-bold text-white bg-black/40 px-1 rounded whitespace-nowrap drop-shadow-md select-none z-20 pointer-events-none">
+                  <span className="absolute left-2 text-[10px] font-bold text-foreground bg-background/70 px-1 rounded whitespace-nowrap drop-shadow-md select-none z-20 pointer-events-none">
                     {phaseData.phase}
                   </span>
                   {phaseData.status && (

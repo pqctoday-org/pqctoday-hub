@@ -39,6 +39,8 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 
 **Data Sources**: Static JSON/CSV files in `src/data/`. Compliance data scraped at build time via `npm run scrape` from NIST, ANSSI, and Common Criteria. CSV files use versioned naming (e.g., `leaders_01192026.csv`). Dev server proxies requests to NIST, BSI, ANSSI, and Common Criteria APIs (configured in `vite.config.ts`).
 
+**CSV Date-Stamping Rule**: When modifying any CSV file in `src/data/`, ALWAYS create a new copy with today's date (`MMDDYYYY`) instead of editing the existing file in place. The loaders (e.g., `libraryData.ts`) use `import.meta.glob` to auto-discover the latest file by date. The previous version is kept for change tracking (`New`/`Updated` status). Example: to update `library_02212026.csv` on Feb 22, copy it to `library_02222026.csv` and make edits there. Never edit a CSV with a stale date stamp.
+
 **WASM Requirements**: Dev and preview servers set `Cross-Origin-Embedder-Policy: require-corp` and `Cross-Origin-Opener-Policy: same-origin` headers for SharedArrayBuffer support. The `predev` and `build` scripts copy liboqs WASM dist into `public/dist`.
 
 **Tailwind v4 Theme**: No separate `tailwind.config` file. Theme is defined inline in `src/styles/index.css` using the `@theme` block with CSS custom properties. Light and dark mode color systems, phase colors, file type colors, and utility classes (`.glass-panel`, `.text-gradient`, `.shadow-glow`, status colors) are all defined there.
@@ -47,12 +49,24 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 
 ## Coding Standards
 
-**Styling — Semantic tokens only**:
+**Styling — Semantic tokens only** (full standard: `docs/ux-standard.md`, violations: `docs/ux-gap-analysis.md`):
 
-- ALWAYS use Tailwind semantic tokens: `text-primary`, `text-foreground`, `text-muted-foreground`, `bg-background`, `bg-card`, `border-border`
-- NEVER use hardcoded colors like `text-cyan-400`, `bg-gray-900`, `text-green-300`
-- Use `.glass-panel` for card containers, `.text-gradient` for section headings
-- Use `<Button variant="gradient">` for primary CTAs, `variant="outline"` or `variant="ghost"` for secondary
+- ALWAYS use semantic tokens: `text-primary`, `text-secondary`, `text-accent`, `text-foreground`, `text-muted-foreground`, `bg-background`, `bg-card`, `bg-muted`, `border-border`, `border-input`
+- NEVER use raw palette classes: `text-blue-400`, `bg-gray-900`, `text-green-300`, `bg-black/40`, `border-white/10`, `bg-zinc-950`
+- EXCEPTION: Full-screen modal backdrops (`fixed inset-0`) MAY use `bg-black/60`
+- For status indicators use `.text-status-error`, `.text-status-warning`, `.text-status-success` + their `.bg-status-*` counterparts
+- ⚠ `.text-status-info` / `.bg-status-info` are broken (resolve to `text-blue-400`) — do NOT use until `--info` CSS var is added to `src/styles/index.css`
+- Use `.glass-panel` for all card/pane containers; `.text-gradient` for primary page titles only (≥ `text-lg`)
+- Every content page header MUST follow: `<Icon> + .text-gradient title + muted description + [SourcesButton, ShareButton, GlossaryButton]` (cluster hidden on mobile; omit on Landing and About)
+
+**Component contracts**:
+
+- `<Button>` — MUST for all click targets; never raw `<button>` in production code; variants: `gradient` (primary CTA), `outline`, `ghost`, `secondary`, `destructive`, `link`
+- `<Input>` — MUST for all text inputs (current `bg-black/40` in component is a known bug, do not copy)
+- `<FilterDropdown>` from `src/components/common/FilterDropdown.tsx` — MUST replace all native `<select>` elements
+- `<CodeBlock>` — MUST for multi-line code display (current `bg-zinc-950` is a known bug, do not copy)
+- Icons: `lucide-react` exclusively; icon colors must use semantic tokens (`text-primary`, `text-muted-foreground`, `.text-status-*`)
+- Missing components to create (do not inline-style as workaround): `<Skeleton>`, `<EmptyState>`, `<ErrorAlert>`, `<CategoryBadge>` — see `docs/ux-standard.md` S4.8
 
 **TypeScript**: Strict mode. Use `interface` for objects, `type` for unions/primitives. Avoid `any` — use `unknown` with narrowing.
 

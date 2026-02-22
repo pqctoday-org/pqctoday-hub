@@ -4,6 +4,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.23.0] - 2026-02-22
+
+### Added
+
+- **Quantum Key Distribution (QKD) Learning Module** (`/learn`): New module with three workshop
+  parts — (1) Interactive BB84 protocol simulator with configurable qubit count (8/16/32) and
+  toggleable Eve eavesdropper for eavesdropping detection demos, (2) Post-processing visualization
+  covering error correction, privacy amplification, and hybrid key derivation, and (3) Global QKD
+  deployment explorer with real-world adoption data. Includes Learn, Workshop, Exercises, and
+  References tabs. Fully integrated with InlineTooltip glossary, time-spent tracking, and the
+  Learning Journey scorecard.
+
+- **Compliance Landscape Dashboard** (`/compliance`): New interactive compliance visualization
+  with a 2024–2036 deadline timeline (urgency-coded: imminent/near-term/future), framework cards
+  showing PQC requirements, region/industry chips, and cross-references to Library and Timeline.
+  Persona integration pre-selects relevant region/industry filters. Includes summary stats (total
+  frameworks, PQC-required count, deadline count) and expandable framework detail with related
+  documents.
+
+- **Four new UI components** (`src/components/ui/`): `<Skeleton>` (pulse loading placeholder),
+  `<EmptyState>` (icon/title/description/action), `<ErrorAlert>` (retry-capable error display),
+  and `<CategoryBadge>` (region/industry/level semantic badge). All use semantic tokens only and
+  fulfill missing component entries from `docs/ux-standard.md`.
+
+- **Assessment wizard modularized**: The 13-step risk assessment wizard is now split into
+  dedicated step components (`src/components/Assess/steps/`) — one file per step — improving
+  maintainability and enabling independent testing. Steps include multi-select fields for data
+  sensitivity, retention, and credential lifetime with consistent "Unknown" escape-hatch buttons.
+
+- **Assessment data layer extracted**: Scoring logic, type definitions (`AssessmentInput`,
+  `HNDLRiskWindow`, `HNFLRiskWindow`), and algorithm database extracted into
+  `src/hooks/assessmentData.ts`, `assessmentTypes.ts`, and `assessmentUtils.ts` for cleaner
+  separation of concerns and reuse across wizard steps.
+
+- **UX design system documentation** (`docs/`): Added `ux-standard.md` (full semantic token
+  standard, component contracts, page header conventions) and `ux-gap-analysis.md` (current
+  violations inventory and remediation backlog).
+
+- **Compliance CSV** (`src/data/compliance_02222026.csv`): New date-stamped compliance framework
+  dataset with framework metadata, deadlines, regions, industries, PQC requirements, and
+  cross-references. Auto-discovered by `complianceData.ts` via `import.meta.glob`.
+
 ## [1.22.0] - 2026-02-22
 
 ### Added

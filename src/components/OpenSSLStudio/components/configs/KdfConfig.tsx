@@ -64,8 +64,8 @@ export const KdfConfig: React.FC<KdfConfigProps> = ({
         2. Configuration
       </span>
 
-      <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">
-        <div className="flex gap-2 text-purple-400 mb-1">
+      <div className="bg-secondary/10 border border-secondary/20 rounded-lg p-3">
+        <div className="flex gap-2 text-secondary mb-1">
           <Key size={16} className="shrink-0 mt-0.5" />
           <span className="text-sm font-bold">Key Derivation (KDF)</span>
         </div>

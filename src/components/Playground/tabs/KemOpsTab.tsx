@@ -630,8 +630,8 @@ export const KemOpsTab: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Encrypt Data */}
-          <div className="p-6 bg-card rounded-xl border border-border hover:border-blue-700/30 transition-colors flex flex-col">
-            <div className="text-sm text-blue-700 dark:text-blue-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+          <div className="p-6 bg-card rounded-xl border border-border hover:border-primary/30 transition-colors flex flex-col">
+            <div className="text-sm text-primary mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <Lock size={16} /> Encrypt Message
             </div>
 
@@ -665,7 +665,7 @@ export const KemOpsTab: React.FC = () => {
                   logEvent('Playground', 'Hybrid Encrypt')
                 }}
                 disabled={!sharedSecret || loading}
-                className="w-full py-3 rounded-lg bg-blue-700/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-700/30 dark:border-blue-500/30 hover:bg-blue-700/20 dark:hover:bg-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+                className="w-full py-3 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Encrypt
               </button>
@@ -681,8 +681,8 @@ export const KemOpsTab: React.FC = () => {
           </div>
 
           {/* Decrypt Data */}
-          <div className="p-6 bg-card rounded-xl border border-border hover:border-emerald-700/30 transition-colors flex flex-col">
-            <div className="text-sm text-emerald-700 dark:text-emerald-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+          <div className="p-6 bg-card rounded-xl border border-border hover:border-accent/30 transition-colors flex flex-col">
+            <div className="text-sm text-accent mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
               <KeyIcon size={16} /> Decrypt Message
             </div>
 
@@ -716,7 +716,7 @@ export const KemOpsTab: React.FC = () => {
                   logEvent('Playground', 'Hybrid Decrypt')
                 }}
                 disabled={!encryptedData || loading}
-                className="w-full py-3 rounded-lg bg-emerald-700/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-700/30 dark:border-emerald-500/30 hover:bg-emerald-700/20 dark:hover:bg-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+                className="w-full py-3 rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Decrypt
               </button>

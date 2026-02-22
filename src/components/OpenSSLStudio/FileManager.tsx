@@ -58,7 +58,7 @@ export const FileManager = () => {
       case 'key':
         return <FileKey size={16} className="text-amber-400" />
       case 'cert':
-        return <FileCode size={16} className="text-blue-400" />
+        return <FileCode size={16} className="text-primary" />
       default:
         return <File size={16} className="text-muted-foreground" />
     }
@@ -127,7 +127,7 @@ export const FileManager = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => files.forEach((f) => removeFile(f.name))}
-            className="text-xs text-muted-foreground hover:text-red-400 flex items-center gap-1 transition-colors"
+            className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors"
             title="Clear all files"
           >
             <Trash2 size={12} /> Clear
@@ -161,7 +161,7 @@ export const FileManager = () => {
                     {file.executionTime && (
                       <>
                         <span className="opacity-50">•</span>
-                        <span className="font-mono text-xs text-green-400">
+                        <span className="font-mono text-xs text-status-success">
                           {file.executionTime.toFixed(1)} ms
                         </span>
                       </>
@@ -195,7 +195,7 @@ export const FileManager = () => {
                 </button>
                 <button
                   onClick={() => removeFile(file.name)}
-                  className="p-1.5 hover:bg-red-500/20 rounded text-muted-foreground hover:text-red-400"
+                  className="p-1.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive"
                   title="Delete"
                 >
                   <Trash2 size={14} />

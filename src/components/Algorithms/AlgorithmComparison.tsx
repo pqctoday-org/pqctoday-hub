@@ -207,7 +207,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                   type, classical algorithm, PQC alternative, and transition timeline
                 </caption>
                 <thead>
-                  <tr className="bg-white/10 text-muted-foreground text-sm uppercase tracking-wider border-b border-white/10">
+                  <tr className="bg-muted text-muted-foreground text-sm uppercase tracking-wider border-b border-border">
                     <th
                       scope="col"
                       aria-sort={
@@ -217,7 +217,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             : 'descending'
                           : 'none'
                       }
-                      className="font-bold whitespace-nowrap relative hover:bg-white/5 transition-colors select-none p-0"
+                      className="font-bold whitespace-nowrap relative hover:bg-muted/50 transition-colors select-none p-0"
                       style={{ width: `${columnWidths.function}px` }}
                     >
                       <button
@@ -245,7 +245,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             : 'descending'
                           : 'none'
                       }
-                      className="font-bold whitespace-nowrap relative hover:bg-white/5 transition-colors select-none p-0"
+                      className="font-bold whitespace-nowrap relative hover:bg-muted/50 transition-colors select-none p-0"
                       style={{ width: `${columnWidths.classical}px` }}
                     >
                       <button
@@ -273,7 +273,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             : 'descending'
                           : 'none'
                       }
-                      className="font-bold whitespace-nowrap relative hover:bg-white/5 transition-colors select-none p-0"
+                      className="font-bold whitespace-nowrap relative hover:bg-muted/50 transition-colors select-none p-0"
                       style={{ width: `${columnWidths.pqc}px` }}
                     >
                       <button
@@ -301,7 +301,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             : 'descending'
                           : 'none'
                       }
-                      className="font-bold whitespace-nowrap relative hover:bg-white/5 transition-colors select-none p-0"
+                      className="font-bold whitespace-nowrap relative hover:bg-muted/50 transition-colors select-none p-0"
                       style={{ width: `${columnWidths.deprecation}px` }}
                     >
                       <button
@@ -322,7 +322,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-border/40">
                   {sortedData.map((algo, index) => {
                     const isHighlighted =
                       highlightAlgorithms &&
@@ -363,7 +363,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                               {algo.classical}
                             </span>
                             {algo.keySize && (
-                              <span className="text-xs text-muted-foreground font-mono px-2 py-0.5 rounded-full bg-white/5 border border-white/10 w-fit">
+                              <span className="text-xs text-muted-foreground font-mono px-2 py-0.5 rounded-full bg-muted border border-border w-fit">
                                 {algo.keySize}
                               </span>
                             )}

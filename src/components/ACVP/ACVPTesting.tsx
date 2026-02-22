@@ -232,9 +232,9 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
         {/* Results Column */}
         <div className="space-y-4 flex flex-col min-h-0">
           <h4 className="font-bold text-muted-foreground uppercase tracking-wider">Test Results</h4>
-          <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden flex-1 overflow-y-auto custom-scrollbar">
+          <div className="bg-muted/30 border border-border rounded-lg overflow-hidden flex-1 overflow-y-auto custom-scrollbar">
             <table className="w-full text-left text-sm">
-              <thead className="bg-white/5 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md">
+              <thead className="bg-muted/30 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md">
                 <tr>
                   <th className="p-3 font-bold">Algorithm</th>
                   <th className="p-3 font-bold">Test Case</th>
@@ -242,7 +242,7 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
                   <th className="p-3 font-bold">Details</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-border/40">
                 {results.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="p-8 text-center text-foreground/30 italic">
@@ -251,7 +251,7 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
                   </tr>
                 ) : (
                   results.map((res) => (
-                    <tr key={res.id} className="hover:bg-white/5 transition-colors">
+                    <tr key={res.id} className="hover:bg-muted/30 transition-colors">
                       <td className="p-3 font-medium text-foreground">{res.algorithm}</td>
                       <td className="p-3 text-muted-foreground">{res.testCase}</td>
                       <td className="p-3">
@@ -290,7 +290,7 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
           <h4 className="font-bold text-muted-foreground uppercase tracking-wider">
             Execution Log
           </h4>
-          <div className="bg-muted/50 border border-white/10 rounded-lg p-4 font-mono text-xs text-success/80 overflow-y-auto custom-scrollbar flex-1">
+          <div className="bg-muted/50 border border-border rounded-lg p-4 font-mono text-xs text-success/80 overflow-y-auto custom-scrollbar flex-1">
             {logs.length === 0 ? (
               <span className="text-foreground/20 italic">Ready to start...</span>
             ) : (

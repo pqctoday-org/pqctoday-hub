@@ -279,9 +279,10 @@ export const GuidedTour: React.FC = () => {
     <AnimatePresence>
       {isActive && (
         <div className="print:hidden">
-          {/* Overlay */}
+          {/* Overlay — desktop: click-to-dismiss; mobile: visual only (pointer-events-none so background
+              content remains tappable; the card's own Skip/Get Started buttons handle dismissal) */}
           <div
-            className="fixed inset-0 z-50 bg-black/50"
+            className="fixed inset-0 z-50 bg-black/50 pointer-events-none md:pointer-events-auto"
             role="button"
             tabIndex={-1}
             onClick={dismiss}
@@ -340,8 +341,10 @@ export const GuidedTour: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Mobile: full-screen swipeable card carousel */}
-          <div className="md:hidden fixed inset-0 z-[60] flex items-center justify-center p-6">
+          {/* Mobile: full-screen swipeable card carousel.
+              Container is pointer-events-none so taps outside the card reach the page;
+              the card itself restores pointer-events-auto for drag + buttons. */}
+          <div className="md:hidden fixed inset-0 z-[60] flex items-center justify-center p-6 pointer-events-none">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`mobile-${currentStep}`}
@@ -356,7 +359,7 @@ export const GuidedTour: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -30 }}
                 transition={{ duration: 0.2 }}
-                className="glass-panel p-6 w-full max-w-sm text-center shadow-2xl border-primary/30 cursor-grab active:cursor-grabbing"
+                className="glass-panel p-6 w-full max-w-sm text-center shadow-2xl border-primary/30 cursor-grab active:cursor-grabbing pointer-events-auto"
               >
                 {/* Icon */}
                 <div className="inline-flex p-3 rounded-full bg-primary/10 text-primary mb-4">

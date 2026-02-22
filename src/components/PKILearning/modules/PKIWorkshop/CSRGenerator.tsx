@@ -582,8 +582,8 @@ distinguished_name = dn
       {/* Row 1: Step 1 & Step 2 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Step 1: Key Configuration */}
-        <div className="glass-panel p-5 border border-white/10">
-          <div className="mb-4 border-b border-white/10 pb-3">
+        <div className="glass-panel p-5 border border-border">
+          <div className="mb-4 border-b border-border pb-3">
             <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
               <span className="text-primary font-mono text-xl">01</span>
               <span className="text-foreground/80">|</span>
@@ -602,7 +602,7 @@ distinguished_name = dn
               id="key-select"
               value={selectedKeyId}
               onChange={(e) => setSelectedKeyId(e.target.value)}
-              className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
+              className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
             >
               <optgroup label="Generate New Key">
                 {ALGORITHMS.map((algo) => (
@@ -625,8 +625,8 @@ distinguished_name = dn
         </div>
 
         {/* Step 2: Profile Selection */}
-        <div className="glass-panel p-5 border border-white/10">
-          <div className="mb-4 border-b border-white/10 pb-3">
+        <div className="glass-panel p-5 border border-border">
+          <div className="mb-4 border-b border-border pb-3">
             <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
               <span className="text-primary font-mono text-xl">02</span>
               <span className="text-foreground/80">|</span>
@@ -659,7 +659,7 @@ distinguished_name = dn
                 id="profile-select"
                 value={selectedProfile}
                 onChange={(e) => handleProfileSelect(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
+                className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
               >
                 <option value="">-- Select a Profile --</option>
                 {availableProfiles.map((profile) => (
@@ -671,7 +671,7 @@ distinguished_name = dn
             </div>
 
             {profileMetadata && (
-              <div className="text-xs space-y-2 p-3 bg-black/20 rounded border border-white/5">
+              <div className="text-xs space-y-2 p-3 bg-muted/30 rounded border border-border/30">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Industry:</span>
                   <span className="text-foreground">{profileMetadata.industry}</span>
@@ -687,8 +687,8 @@ distinguished_name = dn
       </div>
 
       {/* Row 2: Step 3 (Attributes) */}
-      <div className="glass-panel p-5 border border-white/10">
-        <div className="mb-4 border-b border-white/10 pb-3">
+      <div className="glass-panel p-5 border border-border">
+        <div className="mb-4 border-b border-border pb-3">
           <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
             <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold">
               3
@@ -703,7 +703,7 @@ distinguished_name = dn
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/10 text-muted-foreground text-xs uppercase tracking-wider">
+              <tr className="border-b border-border text-muted-foreground text-xs uppercase tracking-wider">
                 <th className="p-3 w-10 text-center">Use</th>
                 <th className="p-3">Type</th>
                 <th className="p-3">Name</th>
@@ -715,7 +715,7 @@ distinguished_name = dn
               {attributes.map((attr) => (
                 <tr
                   key={attr.id}
-                  className={`border-b border-white/5 hover:bg-white/5 transition-colors ${!attr.enabled ? 'opacity-50' : ''}`}
+                  className={`border-b border-border/30 hover:bg-muted/50 transition-colors ${!attr.enabled ? 'opacity-50' : ''}`}
                 >
                   <td className="p-3 text-center">
                     <input
@@ -723,7 +723,7 @@ distinguished_name = dn
                       checked={attr.enabled}
                       disabled={attr.status === 'mandatory'}
                       onChange={(e) => handleAttributeChange(attr.id, 'enabled', e.target.checked)}
-                      className="rounded border-white/20 bg-black/40 text-primary focus:ring-primary cursor-pointer w-4 h-4"
+                      className="rounded border-border bg-muted text-primary focus:ring-primary cursor-pointer w-4 h-4"
                     />
                   </td>
                   <td className="p-3 text-muted-foreground text-xs">{attr.elementType}</td>
@@ -746,7 +746,7 @@ distinguished_name = dn
                       onChange={(e) => handleAttributeChange(attr.id, 'value', e.target.value)}
                       placeholder={attr.placeholder}
                       disabled={!attr.enabled}
-                      className="w-full bg-black/40 border border-white/10 rounded px-2 py-1.5 text-sm text-accent-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-muted border border-border rounded px-2 py-1.5 text-sm text-accent-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </td>
                   <td className="p-3 text-muted-foreground text-xs max-w-[200px]">
@@ -762,8 +762,8 @@ distinguished_name = dn
       {/* Row 3: Step 4 & Output */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Step 4: Generate */}
-        <div className="glass-panel p-5 border border-white/10 h-fit">
-          <div className="mb-4 border-b border-white/10 pb-3">
+        <div className="glass-panel p-5 border border-border h-fit">
+          <div className="mb-4 border-b border-border pb-3">
             <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
               <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold">
                 4
@@ -788,12 +788,12 @@ distinguished_name = dn
         {/* Output Section */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-foreground">Console Output</h3>
-          <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[300px] overflow-y-auto custom-scrollbar border border-white/10">
+          <div className="bg-muted rounded-lg p-4 font-mono text-xs h-[300px] overflow-y-auto custom-scrollbar border border-border">
             <pre className="text-accent-foreground whitespace-pre-wrap break-all break-words max-w-full">
               {output}
             </pre>
             {csr && (
-              <div className="mt-4 pt-4 border-t border-white/10">
+              <div className="mt-4 pt-4 border-t border-border">
                 <p className="text-muted-foreground mb-2">Generated CSR:</p>
                 <pre className="text-foreground whitespace-pre-wrap break-all break-words max-w-full">
                   {csr}
@@ -811,7 +811,7 @@ distinguished_name = dn
           role="dialog"
           aria-modal="true"
           aria-labelledby="profile-doc-title"
-          className="fixed inset-0 bg-black/80 flex items-start justify-center z-50 pt-8"
+          className="fixed inset-0 bg-background/80 flex items-start justify-center z-50 pt-8"
           onClick={() => setShowProfileInfo(false)}
           onKeyDown={(e) => e.key === 'Escape' && setShowProfileInfo(false)}
         >

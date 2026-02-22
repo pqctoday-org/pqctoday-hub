@@ -18,13 +18,6 @@ import {
   FlaskConical,
   BookOpen,
 } from 'lucide-react'
-import type {
-  AssessmentResult,
-  CategoryScores,
-  HNDLRiskWindow,
-  HNFLRiskWindow,
-} from '../../hooks/useAssessmentEngine'
-import { SIGNING_ALGORITHMS } from '../../hooks/useAssessmentEngine'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
@@ -33,6 +26,11 @@ import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix } from './ReportThreatsAppendix'
 import { MigrationRoadmap } from './MigrationRoadmap'
 import clsx from 'clsx'
+import type { AssessmentResult } from '../../hooks/assessmentTypes'
+import type { CategoryScores } from '../../hooks/assessmentTypes'
+import type { HNDLRiskWindow } from '../../hooks/assessmentTypes'
+import type { HNFLRiskWindow } from '../../hooks/assessmentTypes'
+import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'

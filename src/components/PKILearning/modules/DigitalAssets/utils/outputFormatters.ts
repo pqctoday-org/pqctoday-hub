@@ -100,13 +100,13 @@ export function getCryptoColorClass(
 ): string {
   switch (type) {
     case 'bitcoin':
-      return 'text-yellow-400'
+      return 'text-warning'
     case 'ethereum':
-      return 'text-blue-400'
+      return 'text-primary'
     case 'solana':
-      return 'text-purple-400'
+      return 'text-secondary'
     case 'hex':
-      return 'text-green-400'
+      return 'text-accent'
     default:
       return 'text-foreground'
   }

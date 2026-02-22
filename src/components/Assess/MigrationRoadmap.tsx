@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
 import { Map } from 'lucide-react'
 import clsx from 'clsx'
-import type { RecommendedAction } from '../../hooks/useAssessmentEngine'
 import { timelineData, transformToGanttData } from '../../data/timelineData'
+import type { RecommendedAction } from '../../hooks/assessmentTypes'
 
 interface MigrationRoadmapProps {
   actions: RecommendedAction[]

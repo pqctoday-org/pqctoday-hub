@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable } from './ComplianceTable'
+import { ComplianceLandscape } from './ComplianceLandscape'
 import { MobileComplianceView } from './MobileComplianceView'
 import { useComplianceRefresh, AUTHORITATIVE_SOURCES } from './services'
 import { ShieldCheck, FileCheck, Server, GlobeLock, Building2, Info } from 'lucide-react'
@@ -64,6 +66,39 @@ const REGION_COMPLIANCE_HINT: Record<string, { tab: string; rationale: string } 
     rationale:
       'EU Cybersecurity Act (EUCC scheme) mandates Common Criteria evaluations for products sold in the EU market.',
   },
+}
+
+// Mobile toggle between Landscape and Records views
+function MobileViewToggle({ data }: { data: import('./types').ComplianceRecord[] }) {
+  const [view, setView] = useState<'landscape' | 'records'>('landscape')
+
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-2">
+        <button
+          onClick={() => setView('landscape')}
+          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            view === 'landscape'
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-muted text-muted-foreground'
+          }`}
+        >
+          Landscape
+        </button>
+        <button
+          onClick={() => setView('records')}
+          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            view === 'records'
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-muted text-muted-foreground'
+          }`}
+        >
+          Cert Records
+        </button>
+      </div>
+      {view === 'landscape' ? <ComplianceLandscape /> : <MobileComplianceView data={data} />}
+    </div>
+  )
 }
 
 export const ComplianceView = () => {
@@ -183,24 +218,29 @@ export const ComplianceView = () => {
         </a>
       </div>
 
-      {/* Mobile: simple card list (no tabs — tabs don't render well at mobile widths) */}
+      {/* Mobile: toggle between landscape and records */}
       <div className="md:hidden">
-        <MobileComplianceView data={data} />
+        <MobileViewToggle data={data} />
       </div>
 
       {/* Desktop: full tabbed table */}
       <div className="hidden md:block">
         <Tabs
-          defaultValue="all"
+          defaultValue="landscape"
           className="w-full"
           onValueChange={(tab) => logComplianceFilter('Tab', tab)}
         >
           <TabsList className="mb-4 bg-muted/50 border border-border">
+            <TabsTrigger value="landscape">Compliance Landscape</TabsTrigger>
             <TabsTrigger value="all">All Records</TabsTrigger>
             <TabsTrigger value="fips">FIPS 140-3</TabsTrigger>
             <TabsTrigger value="acvp">ACVP</TabsTrigger>
             <TabsTrigger value="cc">Common Criteria</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="landscape" className="mt-0">
+            <ComplianceLandscape />
+          </TabsContent>
 
           <TabsContent value="all" className="mt-0">
             <ComplianceTable

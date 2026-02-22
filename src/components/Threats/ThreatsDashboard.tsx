@@ -97,16 +97,20 @@ export const ThreatsDashboard: React.FC = () => {
       {
         id: 'Critical',
         label: 'Critical',
-        icon: <AlertOctagon size={16} className="text-red-400" />,
+        icon: <AlertOctagon size={16} className="text-status-error" />,
       },
-      { id: 'High', label: 'High', icon: <AlertTriangle size={16} className="text-orange-400" /> },
+      {
+        id: 'High',
+        label: 'High',
+        icon: <AlertTriangle size={16} className="text-status-error" />,
+      },
       {
         id: 'Medium-High',
         label: 'Medium-High',
-        icon: <AlertCircle size={16} className="text-yellow-400" />,
+        icon: <AlertCircle size={16} className="text-status-warning" />,
       },
-      { id: 'Medium', label: 'Medium', icon: <Info size={16} className="text-blue-400" /> },
-      { id: 'Low', label: 'Low', icon: <CheckCircle size={16} className="text-green-400" /> },
+      { id: 'Medium', label: 'Medium', icon: <Info size={16} className="text-primary" /> },
+      { id: 'Low', label: 'Low', icon: <CheckCircle size={16} className="text-status-success" /> },
     ]
   }, [])
 
@@ -377,10 +381,10 @@ export const ThreatsDashboard: React.FC = () => {
                         className={clsx(
                           'hidden md:inline-block px-2 py-1 rounded text-xs font-bold border',
                           item.criticality.toLowerCase() === 'critical'
-                            ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                            ? 'bg-status-error text-status-error border-status-error'
                             : item.criticality.toLowerCase() === 'high'
-                              ? 'bg-orange-500/10 text-orange-400 border-orange-500/20'
-                              : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                              ? 'bg-status-error text-status-error border-status-error'
+                              : 'bg-primary/10 text-primary border-primary/20'
                         )}
                       >
                         {item.criticality}
@@ -392,7 +396,7 @@ export const ThreatsDashboard: React.FC = () => {
                         <div key={i}>{c.trim()}</div>
                       ))}
                     </td>
-                    <td className="p-4 text-xs text-green-400/80 font-mono">
+                    <td className="p-4 text-xs text-status-success/80 font-mono">
                       {item.pqcReplacement.split(',').map((c, i) => (
                         <div key={i}>{c.trim()}</div>
                       ))}

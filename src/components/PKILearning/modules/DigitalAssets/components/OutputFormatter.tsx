@@ -31,7 +31,7 @@ export const OutputFormatter: React.FC<OutputFormatterProps> = ({ output, classN
           <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
             <span className="text-muted-foreground">{label}:</span>
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <code className="text-yellow-400 font-mono text-sm break-all">{trimmedValue}</code>
+              <code className="text-warning font-mono text-sm break-all">{trimmedValue}</code>
               <CopyButton text={trimmedValue} label="" className="shrink-0" />
             </div>
           </div>
@@ -43,7 +43,7 @@ export const OutputFormatter: React.FC<OutputFormatterProps> = ({ output, classN
           <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
             <span className="text-muted-foreground">{label}:</span>
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <code className="text-blue-400 font-mono text-sm break-all">{trimmedValue}</code>
+              <code className="text-primary font-mono text-sm break-all">{trimmedValue}</code>
               <CopyButton text={trimmedValue} label="" className="shrink-0" />
             </div>
           </div>
@@ -55,7 +55,7 @@ export const OutputFormatter: React.FC<OutputFormatterProps> = ({ output, classN
           <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
             <span className="text-muted-foreground">{label}:</span>
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <code className="text-purple-400 font-mono text-sm break-all">{trimmedValue}</code>
+              <code className="text-secondary font-mono text-sm break-all">{trimmedValue}</code>
               <CopyButton text={trimmedValue} label="" className="shrink-0" />
             </div>
           </div>
@@ -67,7 +67,7 @@ export const OutputFormatter: React.FC<OutputFormatterProps> = ({ output, classN
           <div key={index} className="flex flex-col sm:flex-row sm:items-start gap-2 mb-2">
             <span className="text-muted-foreground shrink-0">{label}:</span>
             <div className="flex items-start gap-2 flex-1 min-w-0">
-              <code className="text-green-400 font-mono text-sm break-all">{trimmedValue}</code>
+              <code className="text-accent font-mono text-sm break-all">{trimmedValue}</code>
               <CopyButton text={trimmedValue} label="" className="shrink-0" />
             </div>
           </div>
@@ -112,7 +112,7 @@ export const OutputFormatter: React.FC<OutputFormatterProps> = ({ output, classN
               if (isHexValue(word)) {
                 return (
                   <span key={wordIndex} className="inline-flex items-center gap-1 mr-2">
-                    <code className="text-green-400 font-mono text-sm break-all">{word}</code>
+                    <code className="text-accent font-mono text-sm break-all">{word}</code>
                     <CopyButton text={word} label="" className="shrink-0" />
                   </span>
                 )

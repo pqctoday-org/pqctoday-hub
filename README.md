@@ -82,6 +82,12 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Key Management & HSM**:
     - Explores the 7 stages of the key lifecycle and PQC impact
     - Simulates PKCS#11 HSM operations and key rotation planning for enterprises
+  - **Quantum Key Distribution (QKD)**:
+    - Interactive BB84 protocol simulator with configurable qubit count and toggleable Eve
+      eavesdropper for real-time detection demos
+    - Post-processing pipeline visualization (error correction, privacy amplification, hybrid
+      key derivation via HKDF)
+    - Global QKD deployment explorer with real-world adoption data and infrastructure context
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
   - **Reference Catalog**: 193 verified PQC-relevant product entries across 7 infrastructure layers
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
@@ -148,6 +154,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Filters tour steps to only show features visible in the active persona's navigation
   - Remembers completion status; re-trigger with `?tour` query parameter
 - **Compliance Module**: Real-time compliance tracking and standards monitoring
+  - **Compliance Landscape**: Interactive 2024–2036 deadline timeline with urgency color-coding
+    (imminent/near-term/future), region/industry filters, and persona-aware pre-filtering
+  - Framework cards with PQC requirement indicators, enforcement body, and cross-references
+    to Library and Timeline
   - NIST FIPS document tracking (203, 204, 205)
   - ANSSI recommendations
   - Common Criteria certifications
@@ -326,6 +336,7 @@ The application is structured into several key components:
 │   │   │   │   ├── FiveG/                # SUCI + 5G-AKA flows
 │   │   │   │   ├── DigitalID/            # EUDI Wallet ecosystem
 │   │   │   │   ├── TLSBasics/            # TLS 1.3 handshake simulation
+│   │   │   │   ├── QKD/                  # Quantum Key Distribution (BB84, post-processing, deployments)
 │   │   │   │   └── Quiz/                 # PQC knowledge assessment quiz
 │   │   ├── Playground/      # Interactive cryptography playground
 │   │   ├── Router/          # Routing utilities (ScrollToTop)
@@ -350,7 +361,7 @@ The application is structured into several key components:
 
 ## Security
 
-Last audited: February 21, 2026
+Last audited: February 22, 2026
 
 | Severity | Production | Dev-only |
 | -------- | ---------- | -------- |

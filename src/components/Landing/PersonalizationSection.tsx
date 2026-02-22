@@ -22,8 +22,8 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import type { Region } from '@/store/usePersonaStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { PERSONAS, inferPersonaFromAssessment, type PersonaId } from '@/data/learningPersonas'
-import { REGION_COUNTRY_MAP } from '@/data/personaConfig'
-import { AVAILABLE_INDUSTRIES } from '@/hooks/useAssessmentEngine'
+import { REGION_COUNTRY_MAP, PERSONA_RECOMMENDED_PATHS } from '@/data/personaConfig'
+import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 
 const PERSONA_ORDER: PersonaId[] = ['executive', 'developer', 'architect', 'researcher']
 
@@ -176,6 +176,12 @@ export const PersonalizationSection = () => {
             )
           })}
         </div>
+        {selectedPersona && (
+          <p className="mt-1.5 text-xs text-primary/90">
+            {PERSONA_RECOMMENDED_PATHS[selectedPersona].length} features highlighted below ↓
+            &nbsp;·&nbsp; navigation personalized
+          </p>
+        )}
       </div>
 
       {/* Row 2 — Region */}

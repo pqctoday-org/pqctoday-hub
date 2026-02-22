@@ -5,6 +5,9 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
   AlertTriangle,
   ArrowRight,
+  BarChart3,
+  Calendar,
+  ClipboardCheck,
   Shield,
   Users,
   GraduationCap,
@@ -77,7 +80,7 @@ const Step1WhyPQC: React.FC<StepProps> = ({ onComplete }) => {
           </ul>
         </div>
         <div className="flex flex-col gap-4">
-          <div className="glass-panel p-5">
+          <div className="glass-panel p-5 border-l-4 border-l-secondary">
             <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
               <Lightbulb className="text-secondary" size={18} />
               Key concept: HNDL
@@ -100,7 +103,7 @@ const Step1WhyPQC: React.FC<StepProps> = ({ onComplete }) => {
             </p>
           </div>
 
-          <div className="glass-panel p-5 border-l-4 border-l-secondary">
+          <div className="glass-panel p-5">
             <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
               <Lightbulb className="text-secondary" size={18} />
               Key concept: HNFL
@@ -187,14 +190,14 @@ const Step2WhatsChanging: React.FC<StepProps> = ({ onComplete }) => {
               <tr className="border-b border-border text-left">
                 <th className="py-2 pr-4 text-muted-foreground font-medium">Use Case</th>
                 <th className="py-2 pr-4 text-destructive font-medium">Classical (Vulnerable)</th>
-                <th className="py-2 text-green-400 font-medium">PQC Replacement</th>
+                <th className="py-2 text-accent font-medium">PQC Replacement</th>
               </tr>
             </thead>
             <tbody className="text-muted-foreground">
               <tr className="border-b border-border/50">
                 <td className="py-2.5 pr-4 font-medium text-foreground">Key Establishment</td>
                 <td className="py-2.5 pr-4">RSA, ECDH, DH</td>
-                <td className="py-2.5 text-green-400">
+                <td className="py-2.5 text-accent">
                   <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> (
                   <InlineTooltip term="FIPS 203">FIPS 203</InlineTooltip>)
                 </td>
@@ -207,14 +210,14 @@ const Step2WhatsChanging: React.FC<StepProps> = ({ onComplete }) => {
                   RSA, <InlineTooltip term="ECDSA">ECDSA</InlineTooltip>,{' '}
                   <InlineTooltip term="EdDSA">EdDSA</InlineTooltip>
                 </td>
-                <td className="py-2.5 text-green-400">
+                <td className="py-2.5 text-accent">
                   ML-DSA (<InlineTooltip term="FIPS 204">FIPS 204</InlineTooltip>)
                 </td>
               </tr>
               <tr>
                 <td className="py-2.5 pr-4 font-medium text-foreground">Conservative Signatures</td>
                 <td className="py-2.5 pr-4">RSA, ECDSA</td>
-                <td className="py-2.5 text-green-400">
+                <td className="py-2.5 text-accent">
                   SLH-DSA (<InlineTooltip term="FIPS 205">FIPS 205</InlineTooltip>)
                 </td>
               </tr>
@@ -297,7 +300,9 @@ const Step3Timeline: React.FC<StepProps> = ({ onComplete }) => {
             <div key={m.year} className="flex gap-4 items-start relative">
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 bg-background z-10 shrink-0 ${
-                  i <= 3 ? 'border-green-500 text-green-400' : 'border-amber-500 text-amber-400'
+                  i <= 3
+                    ? 'border-status-success text-status-success'
+                    : 'border-amber-500 text-amber-400'
                 }`}
               >
                 {i <= 3 ? '✓' : '!'}
@@ -523,8 +528,8 @@ const Step5NextSteps: React.FC = () => {
         </div>
       </div>
 
-      <div className="glass-panel p-5 border-l-4 border-l-green-500 text-center">
-        <p className="text-green-400 font-semibold mb-1">🎉 You&apos;ve completed PQC 101!</p>
+      <div className="glass-panel p-5 border-l-4 border-l-status-success text-center">
+        <p className="text-status-success font-semibold mb-1">🎉 You&apos;ve completed PQC 101!</p>
         <p className="text-sm text-muted-foreground">
           You now understand the quantum threat, the PQC solution, and the timeline. Explore the
           modules above or use the Glossary button (bottom right) for any term you encounter.
@@ -624,7 +629,7 @@ export const PQC101Module: React.FC = () => {
                   idx === currentStep
                     ? 'border-primary text-primary'
                     : idx < currentStep
-                      ? 'border-green-500 text-green-400'
+                      ? 'border-status-success text-status-success'
                       : 'border-border text-muted-foreground'
                 }
               `}
@@ -660,7 +665,7 @@ export const PQC101Module: React.FC = () => {
         {currentStep === steps.length - 1 ? (
           <button
             onClick={handleFinalComplete}
-            className="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-500 transition-colors"
+            className="px-6 py-2 bg-status-success text-white font-bold rounded-lg hover:bg-status-success/90 transition-colors"
           >
             ✓ Complete Module
           </button>
@@ -673,6 +678,61 @@ export const PQC101Module: React.FC = () => {
           </button>
         )}
       </div>
+
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20 mt-6">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/threats"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Shield size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Threat Dashboard</div>
+              <div className="text-xs text-muted-foreground">
+                Industry-specific quantum risks &amp; PQC replacements
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/algorithms"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <BarChart3 size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Algorithm Explorer</div>
+              <div className="text-xs text-muted-foreground">
+                Compare key sizes, security levels &amp; performance
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/timeline"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Calendar size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Migration Timeline</div>
+              <div className="text-xs text-muted-foreground">
+                NIST milestones, country deadlines &amp; standardization
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/assess"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <ClipboardCheck size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Risk Assessment</div>
+              <div className="text-xs text-muted-foreground">
+                Assess your organisation&apos;s quantum readiness
+              </div>
+            </div>
+          </Link>
+        </div>
+      </section>
     </div>
   )
 }

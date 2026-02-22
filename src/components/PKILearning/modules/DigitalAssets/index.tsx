@@ -50,6 +50,7 @@ const CHAINS: ChainOption[] = [
 export const DigitalAssetsModule: React.FC = () => {
   const [activeTab, setActiveTab] = useState('learn')
   const [activeChain, setActiveChain] = useState<string | null>(null)
+  const [configKey, setConfigKey] = useState(0)
   const startTimeRef = useRef(0)
   const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
   const { resetStore } = useOpenSSLStore()
@@ -93,6 +94,7 @@ export const DigitalAssetsModule: React.FC = () => {
         setActiveTab('workshop')
         if (chain) {
           setActiveChain(chain)
+          setConfigKey((prev) => prev + 1)
         }
       }
     },
@@ -107,8 +109,8 @@ export const DigitalAssetsModule: React.FC = () => {
     ) {
       resetModuleProgress(MODULE_ID)
       resetStore()
-      setActiveTab('learn')
       setActiveChain(null)
+      setConfigKey((prev) => prev + 1)
     }
   }
 
@@ -121,13 +123,6 @@ export const DigitalAssetsModule: React.FC = () => {
             Master the cryptographic primitives of major blockchains and understand quantum threats.
           </p>
         </div>
-        <button
-          onClick={handleReset}
-          className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
-        >
-          <Trash2 size={16} />
-          Reset Module
-        </button>
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
@@ -145,7 +140,18 @@ export const DigitalAssetsModule: React.FC = () => {
 
         {/* Workshop Tab */}
         <TabsContent value="workshop">
-          <div className="space-y-6">
+          <div className="max-w-7xl mx-auto space-y-6">
+            {/* Reset button */}
+            <div className="flex justify-end">
+              <button
+                onClick={handleReset}
+                className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
+              >
+                <Trash2 size={16} />
+                Reset
+              </button>
+            </div>
+
             {!activeChain ? (
               <>
                 <div className="glass-panel p-6">
@@ -160,7 +166,10 @@ export const DigitalAssetsModule: React.FC = () => {
                   {CHAINS.map((chain) => (
                     <button
                       key={chain.id}
-                      onClick={() => setActiveChain(chain.id)}
+                      onClick={() => {
+                        setActiveChain(chain.id)
+                        setConfigKey((prev) => prev + 1)
+                      }}
                       className="glass-panel p-6 text-left hover:border-primary/50 transition-colors group"
                     >
                       <div className="text-primary mb-3 group-hover:scale-110 transition-transform">
@@ -171,6 +180,14 @@ export const DigitalAssetsModule: React.FC = () => {
                     </button>
                   ))}
                 </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => markStepComplete(MODULE_ID, 'workshop')}
+                    className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+                  >
+                    Complete Module ✓
+                  </button>
+                </div>
               </>
             ) : (
               <div>
@@ -180,11 +197,17 @@ export const DigitalAssetsModule: React.FC = () => {
                 >
                   &larr; Back to Chain Selection
                 </button>
-                {activeChain === 'bitcoin' && <BitcoinFlow onBack={() => setActiveChain(null)} />}
-                {activeChain === 'ethereum' && <EthereumFlow onBack={() => setActiveChain(null)} />}
-                {activeChain === 'solana' && <SolanaFlow onBack={() => setActiveChain(null)} />}
+                {activeChain === 'bitcoin' && (
+                  <BitcoinFlow key={`bitcoin-${configKey}`} onBack={() => setActiveChain(null)} />
+                )}
+                {activeChain === 'ethereum' && (
+                  <EthereumFlow key={`ethereum-${configKey}`} onBack={() => setActiveChain(null)} />
+                )}
+                {activeChain === 'solana' && (
+                  <SolanaFlow key={`solana-${configKey}`} onBack={() => setActiveChain(null)} />
+                )}
                 {activeChain === 'hd-wallet' && (
-                  <HDWalletFlow onBack={() => setActiveChain(null)} />
+                  <HDWalletFlow key={`hdwallet-${configKey}`} onBack={() => setActiveChain(null)} />
                 )}
               </div>
             )}

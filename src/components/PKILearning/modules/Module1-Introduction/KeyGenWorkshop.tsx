@@ -86,7 +86,7 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
                 if (e.target.value === 'EC') setKeySize('P-256')
                 else if (e.target.value === 'RSA') setKeySize('2048')
               }}
-              className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground"
+              className="w-full bg-muted border border-border rounded px-3 py-2 text-foreground"
             >
               <option value="RSA">RSA (Classic)</option>
               <option value="EC">Elliptic Curve (Modern)</option>
@@ -103,7 +103,7 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
                 id="size-select"
                 value={keySize}
                 onChange={(e) => setKeySize(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground"
+                className="w-full bg-muted border border-border rounded px-3 py-2 text-foreground"
               >
                 {algorithm === 'RSA' ? (
                   <>
@@ -132,18 +132,18 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
 
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-foreground">Output</h3>
-          <div className="bg-black/40 rounded-lg p-4 font-mono text-sm h-[300px] overflow-y-auto custom-scrollbar border border-white/10">
-            <pre className="text-green-400 whitespace-pre-wrap">{output}</pre>
+          <div className="bg-muted rounded-lg p-4 font-mono text-sm h-[300px] overflow-y-auto custom-scrollbar border border-border">
+            <pre className="text-status-success whitespace-pre-wrap">{output}</pre>
           </div>
         </div>
       </div>
 
       {generatedKey && (
-        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 flex items-start gap-3">
-          <Check className="text-green-400 shrink-0 mt-1" />
+        <div className="bg-status-success rounded-lg p-4 flex items-start gap-3">
+          <Check className="text-status-success shrink-0 mt-1" />
           <div>
-            <h4 className="font-bold text-green-400">Success!</h4>
-            <p className="text-sm text-green-300/80">
+            <h4 className="font-bold text-status-success">Success!</h4>
+            <p className="text-sm text-status-success/80">
               You have successfully generated a {algorithm} key pair using OpenSSL. The private key
               is kept secure, and the public key can be shared.
             </p>

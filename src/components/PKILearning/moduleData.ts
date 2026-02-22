@@ -101,8 +101,8 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     id: 'qkd',
     title: 'Quantum Key Distribution',
     description:
-      'Explore QKD fundamentals: BB84 protocol, classical post-processing, hybrid key derivation, and global deployment landscape.',
-    duration: '90 min',
+      'Explore QKD fundamentals: BB84 protocol, classical post-processing, hybrid key derivation, global deployments, protocol integration, and HSM key derivation.',
+    duration: '150 min',
   },
   quiz: {
     id: 'quiz',

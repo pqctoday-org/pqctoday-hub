@@ -23,8 +23,8 @@ export const ConfigUtlConfig: React.FC<ConfigUtlConfigProps> = ({
         2. Configuration
       </span>
 
-      <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
-        <div className="flex gap-2 text-blue-400 mb-1">
+      <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
+        <div className="flex gap-2 text-primary mb-1">
           <FileSearch size={16} className="shrink-0 mt-0.5" />
           <span className="text-sm font-bold">ConfigUtl</span>
         </div>

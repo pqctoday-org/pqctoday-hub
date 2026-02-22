@@ -3,7 +3,8 @@ import { threatsData } from '../data/threatsData'
 import { algorithmsData } from '../data/algorithmsData'
 import { softwareData } from '../data/migrateData'
 import type { ComplianceRecord } from '../components/Compliance/types'
-import type { AssessmentResult, CategoryScores } from './useAssessmentEngine'
+import type { AssessmentResult } from './assessmentTypes'
+import type { CategoryScores } from './assessmentTypes'
 
 export interface PriorityAction {
   priority: number

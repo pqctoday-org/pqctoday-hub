@@ -66,7 +66,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
   const renderFipsStatus = (status: string) => {
     if (status && status.toLowerCase().includes('yes')) {
       return (
-        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 border border-green-500/20">
+        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-status-success text-status-success">
           <CheckCircle size={10} /> Validated
         </span>
       )
@@ -84,9 +84,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
     return (
       <span
         className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${
-          isYes
-            ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-            : 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
+          isYes ? 'bg-status-warning text-status-warning' : 'bg-status-warning text-status-warning'
         }`}
       >
         {support}
@@ -174,7 +172,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
                               <span
                                 className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold border ${
                                   item.status === 'New'
-                                    ? 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+                                    ? 'bg-primary/10 text-primary border-primary/20'
                                     : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
                                 }`}
                               >
@@ -227,7 +225,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
                               <div className="grid grid-cols-[120px_1fr] gap-2">
                                 <span className="text-muted-foreground">Migration Priority:</span>
                                 <span
-                                  className={`font-medium ${item.pqcMigrationPriority === 'Critical' ? 'text-red-400' : 'text-foreground'}`}
+                                  className={`font-medium ${item.pqcMigrationPriority === 'Critical' ? 'text-status-error' : 'text-foreground'}`}
                                 >
                                   {item.pqcMigrationPriority}
                                 </span>

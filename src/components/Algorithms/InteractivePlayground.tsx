@@ -215,7 +215,7 @@ export const InteractivePlayground = () => {
           Interactive Playground
         </h3>
         <div
-          className="flex bg-white/5 rounded-lg p-1"
+          className="flex bg-muted/30 rounded-lg p-1"
           role="group"
           aria-label="Select cryptographic algorithm"
         >
@@ -267,7 +267,7 @@ export const InteractivePlayground = () => {
               {keyStore.length > 0 && (
                 <button
                   onClick={clearKeys}
-                  className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1"
+                  className="text-xs text-status-error hover:text-destructive/80 flex items-center gap-1"
                 >
                   <Trash2 size={12} /> Clear Keys
                 </button>
@@ -284,7 +284,7 @@ export const InteractivePlayground = () => {
                 id="key-size-select"
                 value={keySize}
                 onChange={(e) => setKeySize(e.target.value)}
-                className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary appearance-none"
+                className="w-full bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary appearance-none"
               >
                 {algorithm === 'ML-KEM' ? (
                   <>
@@ -324,7 +324,7 @@ export const InteractivePlayground = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               aria-describedby={error ? 'playground-error' : undefined}
-              className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm text-foreground focus:border-primary outline-none transition-colors h-32 resize-none placeholder:text-foreground/20 leading-relaxed"
+              className="w-full bg-muted/30 border border-border rounded-lg p-3 text-sm text-foreground focus:border-primary outline-none transition-colors h-32 resize-none placeholder:text-foreground/20 leading-relaxed"
             />
           </div>
 
@@ -337,15 +337,15 @@ export const InteractivePlayground = () => {
             {algorithm === 'ML-KEM' ? (
               <div className="grid grid-cols-1 gap-4">
                 {/* Encapsulate */}
-                <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                  <div className="text-xs text-blue-200 mb-2 font-bold uppercase tracking-wider">
+                <div className="p-4 bg-muted/30 rounded-lg border border-border">
+                  <div className="text-xs text-primary/80 mb-2 font-bold uppercase tracking-wider">
                     Encapsulate (Public Key)
                   </div>
                   <select
                     value={selectedEncKeyId}
                     onChange={(e) => setSelectedEncKeyId(e.target.value)}
                     aria-label="Select Public Key for Encapsulation"
-                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary appearance-none"
+                    className="w-full mb-3 bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary appearance-none"
                   >
                     <option value="">Select Public Key...</option>
                     {publicKeys.map((k) => (
@@ -357,22 +357,22 @@ export const InteractivePlayground = () => {
                   <button
                     onClick={() => runOperation('encapsulate')}
                     disabled={!selectedEncKeyId || loading}
-                    className="w-full py-2.5 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30 hover:bg-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                   >
                     <Lock size={16} /> Encapsulate
                   </button>
                 </div>
 
                 {/* Decapsulate */}
-                <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                  <div className="text-xs text-purple-200 mb-2 font-bold uppercase tracking-wider">
+                <div className="p-4 bg-muted/30 rounded-lg border border-border">
+                  <div className="text-xs text-secondary/80 mb-2 font-bold uppercase tracking-wider">
                     Decapsulate (Private Key)
                   </div>
                   <select
                     value={selectedDecKeyId}
                     onChange={(e) => setSelectedDecKeyId(e.target.value)}
                     aria-label="Select Private Key for Decapsulation"
-                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-secondary appearance-none"
+                    className="w-full mb-3 bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-secondary appearance-none"
                   >
                     <option value="">Select Private Key...</option>
                     {privateKeys.map((k) => (
@@ -384,7 +384,7 @@ export const InteractivePlayground = () => {
                   <button
                     onClick={() => runOperation('decapsulate')}
                     disabled={!selectedDecKeyId || loading}
-                    className="w-full py-2.5 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30 hover:bg-purple-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-lg bg-secondary/20 text-secondary border border-secondary/30 hover:bg-secondary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                   >
                     <KeyIcon size={16} /> Decapsulate
                   </button>
@@ -401,7 +401,7 @@ export const InteractivePlayground = () => {
                         type="text"
                         value={sharedSecret}
                         onChange={(e) => setSharedSecret(e.target.value)}
-                        className="w-full bg-black/40 border border-purple-500/30 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-purple-500 font-mono"
+                        className="w-full bg-muted border border-secondary/30 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-secondary font-mono"
                         placeholder="Shared secret will appear here..."
                       />
                     </div>
@@ -409,14 +409,14 @@ export const InteractivePlayground = () => {
                 </div>
 
                 {/* Encrypt Data */}
-                <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                  <div className="text-xs text-cyan-200 mb-2 font-bold uppercase tracking-wider">
+                <div className="p-4 bg-muted/30 rounded-lg border border-border">
+                  <div className="text-xs text-primary/80 mb-2 font-bold uppercase tracking-wider">
                     Encrypt Data (Shared Secret)
                   </div>
                   <button
                     onClick={() => runOperation('encrypt')}
                     disabled={!sharedSecret || loading}
-                    className="w-full py-2.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                   >
                     <Lock size={16} /> Encrypt Message
                   </button>
@@ -428,14 +428,14 @@ export const InteractivePlayground = () => {
                 </div>
 
                 {/* Decrypt Data */}
-                <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                  <div className="text-xs text-emerald-200 mb-2 font-bold uppercase tracking-wider">
+                <div className="p-4 bg-muted/30 rounded-lg border border-border">
+                  <div className="text-xs text-accent/80 mb-2 font-bold uppercase tracking-wider">
                     Decrypt Data (Shared Secret)
                   </div>
                   <button
                     onClick={() => runOperation('decrypt')}
                     disabled={!encryptedData || loading}
-                    className="w-full py-2.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-lg bg-accent/20 text-accent border border-accent/30 hover:bg-accent/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                   >
                     <KeyIcon size={16} /> Decrypt Message
                   </button>
@@ -449,15 +449,15 @@ export const InteractivePlayground = () => {
             ) : (
               <div className="grid grid-cols-1 gap-4">
                 {/* Sign */}
-                <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                  <div className="text-xs text-green-200 mb-2 font-bold uppercase tracking-wider">
+                <div className="p-4 bg-muted/30 rounded-lg border border-border">
+                  <div className="text-xs text-accent/80 mb-2 font-bold uppercase tracking-wider">
                     Sign (Private Key)
                   </div>
                   <select
                     value={selectedSignKeyId}
                     onChange={(e) => setSelectedSignKeyId(e.target.value)}
                     aria-label="Select Private Key for Signing"
-                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent appearance-none"
+                    className="w-full mb-3 bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent appearance-none"
                   >
                     <option value="">Select Private Key...</option>
                     {privateKeys.map((k) => (
@@ -469,14 +469,14 @@ export const InteractivePlayground = () => {
                   <button
                     onClick={() => runOperation('sign')}
                     disabled={!selectedSignKeyId || loading}
-                    className="w-full py-2.5 rounded-lg bg-green-500/20 text-green-300 border border-green-500/30 hover:bg-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-lg bg-accent/20 text-accent border border-accent/30 hover:bg-accent/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                   >
                     <FileSignature size={16} /> Sign Message
                   </button>
                 </div>
 
                 {/* Verify */}
-                <div className="p-4 bg-white/5 rounded-lg border border-white/10">
+                <div className="p-4 bg-muted/30 rounded-lg border border-border">
                   <div className="text-xs text-amber-200 mb-2 font-bold uppercase tracking-wider">
                     Verify (Public Key)
                   </div>
@@ -484,7 +484,7 @@ export const InteractivePlayground = () => {
                     value={selectedVerifyKeyId}
                     onChange={(e) => setSelectedVerifyKeyId(e.target.value)}
                     aria-label="Select Public Key for Verification"
-                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent appearance-none"
+                    className="w-full mb-3 bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent appearance-none"
                   >
                     <option value="">Select Public Key...</option>
                     {publicKeys.map((k) => (
@@ -505,7 +505,7 @@ export const InteractivePlayground = () => {
                     value={signature}
                     onChange={(e) => setSignature(e.target.value)}
                     placeholder="Paste or edit signature here..."
-                    className="w-full mb-3 bg-black/40 border border-white/20 rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent font-mono"
+                    className="w-full mb-3 bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent font-mono"
                   />
                   <button
                     onClick={() => runOperation('verify')}
@@ -526,17 +526,17 @@ export const InteractivePlayground = () => {
             <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
               Key Store ({keyStore.length})
             </label>
-            <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden h-64 flex flex-col">
+            <div className="bg-muted/30 border border-border rounded-lg overflow-hidden h-64 flex flex-col">
               <div className="overflow-y-auto flex-1 custom-scrollbar">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-white/5 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md">
+                  <thead className="bg-muted/30 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md">
                     <tr>
                       <th className="p-3 font-bold">Name</th>
                       <th className="p-3 font-bold">Type</th>
                       <th className="p-3 font-bold">Algorithm</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-border/40">
                     {keyStore.length === 0 ? (
                       <tr>
                         <td colSpan={3} className="p-8 text-center text-foreground/30 italic">
@@ -545,7 +545,7 @@ export const InteractivePlayground = () => {
                       </tr>
                     ) : (
                       keyStore.map((key) => (
-                        <tr key={key.id} className="hover:bg-white/5 transition-colors">
+                        <tr key={key.id} className="hover:bg-muted/30 transition-colors">
                           <td className="p-3 font-medium text-foreground">{key.name}</td>
                           <td className="p-3">
                             <span
@@ -574,7 +574,7 @@ export const InteractivePlayground = () => {
               Output Log
             </span>
             <div
-              className="bg-white/5 border border-white/10 rounded-lg p-4 h-64 overflow-y-auto font-mono text-sm break-all text-accent whitespace-pre-wrap shadow-inner custom-scrollbar"
+              className="bg-muted/30 border border-border rounded-lg p-4 h-64 overflow-y-auto font-mono text-sm break-all text-accent whitespace-pre-wrap shadow-inner custom-scrollbar"
               role="log"
               aria-live="polite"
               aria-atomic="false"
@@ -591,7 +591,7 @@ export const InteractivePlayground = () => {
         <div
           id="playground-error"
           role="alert"
-          className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2 text-red-400 text-sm"
+          className="mt-4 p-3 bg-status-error border border-status-error rounded-lg flex items-center gap-2 text-status-error text-sm"
         >
           <AlertCircle size={16} aria-hidden="true" />
           {error}

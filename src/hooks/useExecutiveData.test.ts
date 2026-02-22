@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useExecutiveData } from './useExecutiveData'
 import type { ComplianceRecord } from '../components/Compliance/types'
-import type { AssessmentResult } from './useAssessmentEngine'
+import type { AssessmentResult } from './assessmentTypes'
 
 vi.mock('../data/threatsData', () => ({
   threatsData: [

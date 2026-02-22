@@ -1,6 +1,6 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { Trash2, Check } from 'lucide-react'
+import { Trash2, FilePlus, Shield, FileCheck, FileSearch, XCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
@@ -16,6 +16,39 @@ import { CRLGenerator } from './CRLGenerator'
 
 const MODULE_ID = 'pki-workshop'
 
+const PARTS = [
+  {
+    id: 'csr',
+    title: 'Step 1: Generate CSR',
+    description: 'Create a Certificate Signing Request using a key pair.',
+    icon: FilePlus,
+  },
+  {
+    id: 'root-ca',
+    title: 'Step 2: Create Root CA',
+    description: 'Generate a self-signed Root Certificate Authority.',
+    icon: Shield,
+  },
+  {
+    id: 'sign',
+    title: 'Step 3: Certificate Issuance',
+    description: 'Use your Root CA to sign the CSR from Step 1.',
+    icon: FileCheck,
+  },
+  {
+    id: 'parse',
+    title: 'Step 4: Parse Certificate',
+    description: 'Inspect the details of your generated certificate.',
+    icon: FileSearch,
+  },
+  {
+    id: 'revoke',
+    title: 'Step 5: Revocation (CRL)',
+    description: 'Generate an empty Certificate Revocation List (CRL) for your Root CA.',
+    icon: XCircle,
+  },
+]
+
 export const PKIWorkshop: React.FC = () => {
   const [activeTab, setActiveTab] = useState('learn')
   const [currentStep, setCurrentStep] = useState(0)
@@ -24,9 +57,9 @@ export const PKIWorkshop: React.FC = () => {
   const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
   const { resetStore } = useOpenSSLStore()
 
-  // --- Module Progress Tracking (mount/unmount elapsed pattern, matching TLS Basics) ---
+  // --- Module Progress Tracking ---
   useEffect(() => {
-    startTimeRef.current = Date.now() // Set in effect to avoid impure render call
+    startTimeRef.current = Date.now()
     updateModuleProgress(MODULE_ID, {
       status: 'in-progress',
       lastVisited: Date.now(),
@@ -62,6 +95,17 @@ export const PKIWorkshop: React.FC = () => {
     setCurrentStep(step)
   }, [])
 
+  // Part navigation — mark current part complete when moving forward
+  const handlePartChange = useCallback(
+    (newStep: number) => {
+      if (newStep > currentStep) {
+        markStepComplete(MODULE_ID, PARTS[currentStep].id)
+      }
+      setCurrentStep(newStep)
+    },
+    [currentStep, markStepComplete]
+  )
+
   const handleReset = () => {
     if (
       confirm(
@@ -78,42 +122,6 @@ export const PKIWorkshop: React.FC = () => {
     updateModuleProgress(MODULE_ID, { status: 'completed' })
     navigate('/learn')
   }
-
-  const steps = React.useMemo(
-    () => [
-      {
-        id: 'csr',
-        title: 'Step 1: Generate CSR',
-        description: 'Create a Certificate Signing Request using a key pair.',
-        component: <CSRGenerator onComplete={() => markStepComplete(MODULE_ID, 'csr')} />,
-      },
-      {
-        id: 'root-ca',
-        title: 'Step 2: Create Root CA',
-        description: 'Generate a self-signed Root Certificate Authority.',
-        component: <RootCAGenerator onComplete={() => markStepComplete(MODULE_ID, 'root-ca')} />,
-      },
-      {
-        id: 'sign',
-        title: 'Step 3: Certificate Issuance',
-        description: 'Use your Root CA to sign the CSR from Step 1.',
-        component: <CertSigner onComplete={() => markStepComplete(MODULE_ID, 'sign')} />,
-      },
-      {
-        id: 'parse',
-        title: 'Step 4: Parse Certificate',
-        description: 'Inspect the details of your generated certificate.',
-        component: <CertParser onComplete={() => markStepComplete(MODULE_ID, 'parse')} />,
-      },
-      {
-        id: 'revoke',
-        title: 'Step 5: Revocation (CRL)',
-        description: 'Generate an empty Certificate Revocation List (CRL) for your Root CA.',
-        component: <CRLGenerator onComplete={() => markStepComplete(MODULE_ID, 'revoke')} />,
-      },
-    ],
-    [markStepComplete]
-  )
 
   return (
     <div className="space-y-6">
@@ -145,85 +153,96 @@ export const PKIWorkshop: React.FC = () => {
 
         {/* Workshop Tab */}
         <TabsContent value="workshop">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-7xl mx-auto space-y-6">
             {/* Reset button */}
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-end">
               <button
                 onClick={handleReset}
-                className="hidden md:flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
+                className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
               >
                 <Trash2 size={16} />
-                Reset Workshop
+                Reset
               </button>
             </div>
 
-            {/* Progress Steps */}
-            <div className="mb-8">
-              <div className="flex justify-between relative">
-                {/* Connecting Line */}
-                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10" />
+            {/* Part Progress Steps */}
+            <div className="overflow-x-auto px-2 sm:px-0">
+              <div className="flex justify-between relative min-w-max sm:min-w-0">
+                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
 
-                {steps.map((step, idx) => (
-                  <button
-                    key={step.id}
-                    onClick={() => setCurrentStep(idx)}
-                    className={`flex flex-col items-center gap-2 group ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
-                  >
-                    <div
-                      className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold text-sm md:text-base
-                      ${
-                        idx === currentStep
-                          ? 'border-primary text-primary shadow-glow'
-                          : idx < currentStep
-                            ? 'border-success text-success'
-                            : 'border-border text-muted-foreground'
-                      }
-                    `}
+                {PARTS.map((part, idx) => {
+                  const Icon = part.icon
+                  return (
+                    <button
+                      key={part.id}
+                      onClick={() => setCurrentStep(idx)}
+                      className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
                     >
-                      {idx + 1}
-                    </div>
-                    <span className="text-sm font-medium hidden md:block">
-                      {step.title.split(':')[1]}
-                    </span>
-                  </button>
-                ))}
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                          ${
+                            idx === currentStep
+                              ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
+                              : idx < currentStep
+                                ? 'border-success text-success'
+                                : 'border-border text-muted-foreground'
+                          }`}
+                      >
+                        <Icon size={18} />
+                      </div>
+                      <span className="text-sm font-medium hidden md:block">
+                        {part.title.split(':')[0]}
+                      </span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
 
             {/* Content Area */}
-            <div className="glass-panel p-4 md:p-8 min-h-[300px] md:min-h-[500px] animate-fade-in">
+            <div className="glass-panel p-8 min-h-[600px] animate-fade-in">
               <div className="mb-6 border-b border-border pb-4">
-                <h2 className="text-xl md:text-2xl font-bold text-foreground">
-                  {steps[currentStep].title}
-                </h2>
-                <p className="text-muted-foreground mt-2">{steps[currentStep].description}</p>
+                <h2 className="text-2xl font-bold text-foreground">{PARTS[currentStep].title}</h2>
+                <p className="text-muted-foreground">{PARTS[currentStep].description}</p>
               </div>
 
-              {steps[currentStep].component}
+              {currentStep === 0 && (
+                <CSRGenerator onComplete={() => markStepComplete(MODULE_ID, 'csr')} />
+              )}
+              {currentStep === 1 && (
+                <RootCAGenerator onComplete={() => markStepComplete(MODULE_ID, 'root-ca')} />
+              )}
+              {currentStep === 2 && (
+                <CertSigner onComplete={() => markStepComplete(MODULE_ID, 'sign')} />
+              )}
+              {currentStep === 3 && (
+                <CertParser onComplete={() => markStepComplete(MODULE_ID, 'parse')} />
+              )}
+              {currentStep === 4 && (
+                <CRLGenerator onComplete={() => markStepComplete(MODULE_ID, 'revoke')} />
+              )}
             </div>
 
-            {/* Navigation */}
-            <div className="flex justify-between mt-6">
+            {/* Part Navigation */}
+            <div className="flex flex-col sm:flex-row justify-between gap-3">
               <button
-                onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+                onClick={() => handlePartChange(Math.max(0, currentStep - 1))}
                 disabled={currentStep === 0}
-                className="px-6 py-2 rounded-lg border border-border hover:bg-muted/50 disabled:opacity-50 transition-colors text-foreground"
+                className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
               >
                 &larr; Previous Step
               </button>
-
-              {currentStep === steps.length - 1 ? (
+              {currentStep === PARTS.length - 1 ? (
                 <button
                   onClick={handleComplete}
-                  className="px-6 py-2 bg-success text-success-foreground font-bold rounded-lg hover:bg-success/90 transition-colors flex items-center gap-2"
+                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
                 >
-                  <Check size={20} />
-                  Completed
+                  Complete Module ✓
                 </button>
               ) : (
                 <button
-                  onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
-                  className="px-6 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors"
+                  onClick={() => handlePartChange(Math.min(PARTS.length - 1, currentStep + 1))}
+                  className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   Next Step &rarr;
                 </button>

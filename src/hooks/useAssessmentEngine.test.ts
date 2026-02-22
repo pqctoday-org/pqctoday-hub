@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeAssessment } from './useAssessmentEngine'
+import { computeAssessment } from './assessmentUtils'
 
 describe('useAssessmentEngine / computeAssessment', () => {
   it('computes legacy assessment (no extended inputs)', () => {

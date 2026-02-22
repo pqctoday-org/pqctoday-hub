@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import { BookOpen, CheckCircle, Circle, Clock } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
-import clsx from 'clsx'
 
 export interface ModuleItem {
   id: string
@@ -40,7 +39,7 @@ export const ModuleCard = ({
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-full bg-white/5 text-primary" aria-hidden="true">
+          <div className="p-3 rounded-full bg-muted text-primary" aria-hidden="true">
             <BookOpen size={24} />
           </div>
         </div>
@@ -51,19 +50,19 @@ export const ModuleCard = ({
             </span>
           )}
           {module.workInProgress && (
-            <span className="px-3 py-1 rounded-full text-xs font-bold border bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
+            <span className="px-3 py-1 rounded-full text-xs font-bold border bg-status-warning text-status-warning">
               WIP
             </span>
           )}
           <span
-            className={clsx(
-              'px-3 py-1 rounded-full text-xs font-bold border',
-              status === 'completed'
-                ? 'bg-green-500/10 text-green-400 border-green-500/20'
+            className={
+              'px-3 py-1 rounded-full text-xs font-bold border ' +
+              (status === 'completed'
+                ? 'bg-status-success text-status-success'
                 : status === 'in-progress'
-                  ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                  : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-            )}
+                  ? 'bg-status-info text-status-info'
+                  : 'bg-secondary/10 text-secondary border-secondary/30')
+            }
           >
             {status === 'completed'
               ? 'Completed'
@@ -80,13 +79,13 @@ export const ModuleCard = ({
         {module.description}
       </p>
 
-      <div className="flex items-center justify-between pt-4 border-t border-white/5">
+      <div className="flex items-center justify-between pt-4 border-t border-border">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Clock size={14} />
           {durationDisplay}
         </div>
         {status === 'completed' ? (
-          <CheckCircle className="text-green-400" size={20} />
+          <CheckCircle className="text-status-success" size={20} />
         ) : (
           <Circle className="text-muted-foreground" size={20} />
         )}

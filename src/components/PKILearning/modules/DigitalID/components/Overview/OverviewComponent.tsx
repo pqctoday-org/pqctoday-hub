@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import {
   BookOpen,
   Shield,
@@ -8,6 +9,7 @@ import {
   Lock,
   ArrowRight,
   AlertTriangle,
+  Calendar,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
@@ -290,6 +292,61 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           Start the Simulation <ArrowRight size={16} />
         </button>
       </div>
+
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/compliance"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <FileText size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Compliance</div>
+              <div className="text-xs text-muted-foreground">
+                NIST, BSI, ANSSI &amp; Common Criteria requirements
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/assess"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Shield size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Risk Assessment</div>
+              <div className="text-xs text-muted-foreground">
+                Assess your organisation&apos;s quantum readiness
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/timeline"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Calendar size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Migration Timeline</div>
+              <div className="text-xs text-muted-foreground">
+                NIST milestones, country deadlines &amp; standardization
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/threats"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <AlertTriangle size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Threat Dashboard</div>
+              <div className="text-xs text-muted-foreground">
+                Industry-specific quantum risks &amp; PQC replacements
+              </div>
+            </div>
+          </Link>
+        </div>
+      </section>
     </div>
   )
 }

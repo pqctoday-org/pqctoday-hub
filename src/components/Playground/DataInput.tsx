@@ -133,7 +133,7 @@ export const DataInput: React.FC<DataInputProps> = ({
         )}
       />
 
-      {error && <div className="mt-2 text-xs text-red-400 font-medium">{error}</div>}
+      {error && <div className="mt-2 text-xs text-status-error font-medium">{error}</div>}
     </div>
   )
 }

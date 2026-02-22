@@ -1,6 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Shield, RefreshCw, FileText, PenTool, Key, ArrowRight, ExternalLink } from 'lucide-react'
+import {
+  Shield,
+  RefreshCw,
+  FileText,
+  PenTool,
+  Key,
+  ArrowRight,
+  Mail,
+  FileCheck,
+  BookOpen,
+} from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { PKICertificateLifecycleDiagram } from './PKICertificateLifecycleDiagram'
 
@@ -240,25 +250,57 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
         </button>
       </section>
 
-      {/* Related Modules */}
-      <section className="glass-panel p-6">
-        <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <ExternalLink size={20} /> Related Modules
-        </h2>
-        <div className="space-y-2">
-          <Link
-            to="/learn/email-signing"
-            className="flex items-center gap-2 text-sm text-primary hover:underline"
-          >
-            <ArrowRight size={14} />
-            Email & Document Signing — S/MIME and CMS with PQC
-          </Link>
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Link
             to="/learn/key-management"
-            className="flex items-center gap-2 text-sm text-primary hover:underline"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
           >
-            <ArrowRight size={14} />
-            Key Management & HSM — enterprise key lifecycle and HSM operations
+            <Key size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Key Management</div>
+              <div className="text-xs text-muted-foreground">
+                Enterprise key lifecycle and HSM operations
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/email-signing"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Mail size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Email Signing</div>
+              <div className="text-xs text-muted-foreground">
+                S/MIME and CMS document signing with PQC
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/compliance"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <FileCheck size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Compliance</div>
+              <div className="text-xs text-muted-foreground">
+                NIST, BSI, ANSSI &amp; Common Criteria requirements
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/library"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <BookOpen size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Standards Library</div>
+              <div className="text-xs text-muted-foreground">
+                FIPS, RFC, and ISO PQC standards reference
+              </div>
+            </div>
           </Link>
         </div>
       </section>

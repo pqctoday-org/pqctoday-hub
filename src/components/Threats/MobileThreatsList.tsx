@@ -16,11 +16,11 @@ const criticalityConfig = {
   },
   High: {
     icon: AlertTriangle,
-    classes: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+    classes: 'bg-status-error text-status-error border-status-error',
   },
   'Medium-High': {
     icon: AlertCircle,
-    classes: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+    classes: 'bg-status-warning text-status-warning border-status-warning',
   },
   Medium: {
     icon: Info,

@@ -99,10 +99,11 @@ export const ComplianceDetailPopover = ({
   if (!isOpen || !record) return null
 
   const content = (
-    <div className="fixed inset-0 z-[9999] bg-background/80 backdrop-blur-sm" aria-hidden="true">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" aria-hidden="true">
       <div
         ref={popoverRef}
         className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] md:w-[60vw] max-w-[800px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+        style={{ zIndex: 9999 }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="popover-title"

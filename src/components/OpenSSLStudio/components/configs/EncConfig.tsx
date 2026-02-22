@@ -177,7 +177,7 @@ export const EncConfig: React.FC<EncConfigProps> = ({
           placeholder="e.g. 0102030405060708..."
         />
         {encCustomIV.length > 0 && encCustomIV.length !== 32 && (
-          <p className="text-[10px] text-yellow-500">
+          <p className="text-[10px] text-status-warning">
             Warning: AES (128/192/256) requires a 16-byte IV (32 hex characters). Current length:{' '}
             {encCustomIV.length} chars.
           </p>

@@ -113,8 +113,8 @@ preserve = no
 
   return (
     <div className="space-y-8">
-      <div className="glass-panel p-5 border border-white/10">
-        <div className="mb-4 border-b border-white/10 pb-3">
+      <div className="glass-panel p-5 border border-border">
+        <div className="mb-4 border-b border-border pb-3">
           <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
             <span className="text-primary font-mono text-xl">01</span>
             <span className="text-foreground/80">|</span>
@@ -134,7 +134,7 @@ preserve = no
               id="ca-key-select"
               value={selectedKeyId}
               onChange={(e) => setSelectedKeyId(e.target.value)}
-              className="w-full bg-black/20 border border-white/10 rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
+              className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
             >
               <option value="">-- Select CA Key --</option>
               {rootKeys.map((key) => (
@@ -159,12 +159,12 @@ preserve = no
       {/* Output Section */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-foreground">Console Output</h3>
-        <div className="bg-black/40 rounded-lg p-4 font-mono text-xs h-[300px] overflow-y-auto custom-scrollbar border border-white/10">
+        <div className="bg-muted rounded-lg p-4 font-mono text-xs h-[300px] overflow-y-auto custom-scrollbar border border-border">
           <pre className="text-accent-foreground whitespace-pre-wrap break-all break-words max-w-full">
             {output}
           </pre>
           {crlContent && (
-            <div className="mt-4 pt-4 border-t border-white/10">
+            <div className="mt-4 pt-4 border-t border-border">
               <p className="text-muted-foreground mb-2">Generated CRL:</p>
               <pre className="text-foreground whitespace-pre-wrap break-all break-words max-w-full">
                 {crlContent}

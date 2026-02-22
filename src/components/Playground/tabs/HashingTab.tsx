@@ -66,8 +66,8 @@ export const HashingTab: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Input */}
-        <div className="p-6 bg-muted/20 rounded-xl border border-border hover:border-cyan-500/30 transition-colors">
-          <div className="text-sm text-cyan-500 dark:text-cyan-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+        <div className="p-6 bg-muted/20 rounded-xl border border-border hover:border-primary/30 transition-colors">
+          <div className="text-sm text-primary mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
             <Hash size={16} /> Input Data
           </div>
           <DataInput
@@ -85,7 +85,7 @@ export const HashingTab: React.FC = () => {
           <button
             onClick={() => runOperation('hash')}
             disabled={!hashInput || loading}
-            className="w-full mt-4 py-3 rounded-lg bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+            className="w-full mt-4 py-3 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
           >
             Compute Hash
           </button>
@@ -93,7 +93,7 @@ export const HashingTab: React.FC = () => {
 
         {/* Output */}
         <div className="p-6 bg-muted/20 rounded-xl border border-border hover:border-emerald-500/30 transition-colors">
-          <div className="text-sm text-emerald-300 mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
+          <div className="text-sm text-accent mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
             <Hash size={16} /> Hash Output
           </div>
           <DataInput
@@ -120,7 +120,7 @@ export const HashingTab: React.FC = () => {
               }
             }}
             disabled={!hashOutput}
-            className="w-full mt-4 py-3 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+            className="w-full mt-4 py-3 rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
           >
             Copy Hash
           </button>
@@ -128,8 +128,8 @@ export const HashingTab: React.FC = () => {
       </div>
 
       {/* Info Section */}
-      <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-        <h5 className="text-sm font-bold text-blue-400 mb-2 flex items-center gap-2">
+      <div className="mt-6 p-4 bg-primary/10 border border-primary/20 rounded-xl">
+        <h5 className="text-sm font-bold text-primary mb-2 flex items-center gap-2">
           <Info size={14} /> About Cryptographic Hashing
         </h5>
         <p className="text-xs text-muted-foreground leading-relaxed">

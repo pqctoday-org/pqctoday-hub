@@ -207,9 +207,9 @@ try {
   console.error('Failed to load industry assess config:', error)
 }
 
-export const industryComplianceConfigs: IndustryComplianceConfig[] = allRows.filter(
-  (r): r is IndustryComplianceConfig => r.category === 'compliance'
-)
+// Compliance configs now come from the dedicated compliance CSV
+// (single source of truth: compliance_*.csv → complianceData.ts)
+export { complianceAsIndustryConfigs as industryComplianceConfigs } from './complianceData'
 
 export const industryUseCaseConfigs: IndustryUseCaseConfig[] = allRows.filter(
   (r): r is IndustryUseCaseConfig => r.category === 'use_case'

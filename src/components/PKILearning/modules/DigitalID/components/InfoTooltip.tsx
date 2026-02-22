@@ -30,7 +30,7 @@ export const InfoTooltip: React.FC<InfoTooltipProps> = ({ term, className = '' }
 
       {isVisible && (
         <div
-          className="absolute z-50 w-64 p-3 mt-2 text-sm bg-background border border-white/20 rounded-lg shadow-lg"
+          className="absolute z-50 w-64 p-3 mt-2 text-sm bg-background border border-border rounded-lg shadow-lg"
           role="tooltip"
         >
           <div className="font-semibold text-primary mb-1">{term}</div>

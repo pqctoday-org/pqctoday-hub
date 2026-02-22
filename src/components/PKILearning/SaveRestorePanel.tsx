@@ -105,13 +105,13 @@ export const SaveRestorePanel: React.FC = () => {
       </h2>
 
       {/* Auto-save Status - Moved to top for visibility */}
-      <div className="mb-6 p-4 rounded-lg bg-white/5 border border-white/10">
+      <div className="mb-6 p-4 rounded-lg bg-muted/50 border border-border">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-semibold text-foreground">Auto-save to browser:</span>
           {storageHealth?.available ? (
-            <span className="text-sm text-green-400 font-medium">✓ Enabled on changes</span>
+            <span className="text-sm text-status-success font-medium">✓ Enabled on changes</span>
           ) : (
-            <span className="text-sm text-red-400 font-medium">✗ Unavailable</span>
+            <span className="text-sm text-status-error font-medium">✗ Unavailable</span>
           )}
         </div>
         {lastSaved && storageHealth?.available && (
@@ -134,8 +134,7 @@ export const SaveRestorePanel: React.FC = () => {
           <div className="flex gap-2">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 
-                         text-foreground rounded hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 text-foreground rounded transition-colors"
             >
               <Download size={16} />
               Export Progress
@@ -151,10 +150,7 @@ export const SaveRestorePanel: React.FC = () => {
           </p>
 
           <div className="flex gap-2">
-            <label
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 
-                              text-foreground rounded hover:bg-purple-700 cursor-pointer transition-colors"
-            >
+            <label className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 text-foreground rounded cursor-pointer transition-colors">
               <Upload size={16} />
               Import Progress
               <input type="file" accept=".json" onChange={handleImport} className="hidden" />
@@ -163,16 +159,15 @@ export const SaveRestorePanel: React.FC = () => {
         </div>
 
         {/* Reset Section */}
-        <div className="pt-4 border-t border-white/10">
-          <h3 className="text-lg font-semibold mb-2 text-red-400">🗑️ Reset All Progress</h3>
+        <div className="pt-4 border-t border-border">
+          <h3 className="text-lg font-semibold mb-2 text-status-error">🗑️ Reset All Progress</h3>
           <p className="text-sm text-muted-foreground mb-3">
             Delete all modules, artifacts, and preferences. This cannot be undone.
           </p>
 
           <button
             onClick={handleReset}
-            className="flex items-center gap-2 px-4 py-2 bg-red-600/20 border border-red-600/50
-                       text-red-400 rounded hover:bg-red-600/30 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-status-error text-status-error rounded hover:bg-status-error transition-colors"
           >
             <Trash2 size={16} />
             Reset Everything

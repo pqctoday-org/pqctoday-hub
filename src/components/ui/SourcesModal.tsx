@@ -1,12 +1,12 @@
 import { useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ExternalLink } from 'lucide-react'
-import clsx from 'clsx'
 import {
   getSourcesForView,
   type ViewType,
   type AuthoritativeSource,
 } from '../../data/authoritativeSourcesData'
+import { CategoryBadge } from './category-badge'
 
 interface SourcesModalProps {
   isOpen: boolean
@@ -14,11 +14,14 @@ interface SourcesModalProps {
   viewType: ViewType
 }
 
-const regionColors: Record<AuthoritativeSource['region'], string> = {
-  Americas: 'bg-blue-500/20 text-blue-400 border-blue-500/50',
-  EMEA: 'bg-green-500/20 text-green-400 border-green-500/50',
-  APAC: 'bg-purple-500/20 text-purple-400 border-purple-500/50',
-  Global: 'bg-gray-500/20 text-gray-400 border-gray-500/50',
+const regionToBadgeCategory: Record<
+  AuthoritativeSource['region'],
+  'americas' | 'emea' | 'apac' | 'global'
+> = {
+  Americas: 'americas',
+  EMEA: 'emea',
+  APAC: 'apac',
+  Global: 'global',
 }
 
 export const SourcesModal = ({ isOpen, onClose, viewType }: SourcesModalProps) => {
@@ -124,14 +127,10 @@ export const SourcesModal = ({ isOpen, onClose, viewType }: SourcesModalProps) =
                                 </p>
                               </div>
                               <div className="flex flex-col items-end gap-2">
-                                <span
-                                  className={clsx(
-                                    'text-xs px-2 py-1 rounded border font-medium whitespace-nowrap',
-                                    regionColors[source.region]
-                                  )}
-                                >
-                                  {source.region}
-                                </span>
+                                <CategoryBadge
+                                  category={regionToBadgeCategory[source.region]}
+                                  label={source.region}
+                                />
                                 <span className="text-xs text-muted-foreground whitespace-nowrap">
                                   Verified: {source.lastVerifiedDate}
                                 </span>

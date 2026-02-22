@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import type { AssessmentInput } from '../hooks/useAssessmentEngine'
-import type { AssessmentResult } from '../hooks/useAssessmentEngine'
+import type { AssessmentInput } from '../hooks/assessmentTypes'
+import type { AssessmentResult } from '../hooks/assessmentTypes'
 
 export type AssessmentMode = 'quick' | 'comprehensive'
 

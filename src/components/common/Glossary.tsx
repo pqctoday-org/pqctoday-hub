@@ -4,12 +4,7 @@ import { BookOpenText, Search, X, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { glossaryTerms, type GlossaryTerm } from '../../data/glossaryData'
 import clsx from 'clsx'
-
-const complexityColors = {
-  beginner: 'bg-green-500/10 text-green-400 border-green-500/20',
-  intermediate: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  advanced: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-}
+import { CategoryBadge } from '../ui/category-badge'
 
 const categoryColors = {
   algorithm: 'text-primary',
@@ -29,15 +24,7 @@ const TermCard = ({ term }: { term: GlossaryTerm }) => (
         )}
       </div>
       <div className="flex items-center gap-1.5 shrink-0">
-        <span
-          className={clsx(
-            'px-2 py-0.5 rounded-full text-[10px] font-bold border capitalize',
-
-            complexityColors[term.complexity]
-          )}
-        >
-          {term.complexity}
-        </span>
+        <CategoryBadge category={term.complexity} />
       </div>
     </div>
     <p className="text-sm text-muted-foreground leading-relaxed mb-2">{term.definition}</p>

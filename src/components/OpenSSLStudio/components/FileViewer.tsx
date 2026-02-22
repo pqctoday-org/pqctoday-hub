@@ -316,7 +316,7 @@ export const FileViewer: React.FC = () => {
             isParsing ? (
               <div className="text-center text-muted-foreground py-8">Parsing file...</div>
             ) : error ? (
-              <div className="text-red-400 whitespace-pre-wrap">{error}</div>
+              <div className="text-status-error whitespace-pre-wrap">{error}</div>
             ) : parsedOutput ? (
               <ParsedCertView output={parsedOutput} />
             ) : (

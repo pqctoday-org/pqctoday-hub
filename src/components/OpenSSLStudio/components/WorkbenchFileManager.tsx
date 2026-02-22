@@ -218,8 +218,8 @@ export const WorkbenchFileManager: React.FC = () => {
             className={clsx(
               'px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-2',
               confirmClear
-                ? 'bg-red-500 text-foreground hover:bg-red-600 border border-red-500'
-                : 'bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20',
+                ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90 border border-destructive'
+                : 'bg-status-error text-status-error',
               files.length === 0 &&
                 'opacity-50 cursor-not-allowed bg-muted border-border text-muted-foreground'
             )}
@@ -450,7 +450,7 @@ export const WorkbenchFileManager: React.FC = () => {
                             removeFile(file.name)
                             logEvent('OpenSSL Studio', 'Delete File', file.type)
                           }}
-                          className="p-1.5 hover:bg-red-500/20 rounded text-muted-foreground hover:text-red-400 transition-colors"
+                          className="p-1.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive transition-colors"
                           title="Delete"
                         >
                           <Trash2 size={14} />

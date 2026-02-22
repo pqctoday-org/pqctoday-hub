@@ -56,7 +56,7 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="w-full h-32 bg-black/20 border border-white/10 rounded p-3 text-foreground resize-none"
+            className="w-full h-32 bg-muted border border-border rounded p-3 text-foreground resize-none"
             placeholder="Enter a message to sign..."
           />
 
@@ -72,9 +72,9 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
 
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-foreground">2. Digital Signature</h3>
-          <div className="bg-black/40 rounded-lg p-4 border border-white/10 h-32 overflow-y-auto custom-scrollbar">
+          <div className="bg-muted rounded-lg p-4 border border-border h-32 overflow-y-auto custom-scrollbar">
             {signature ? (
-              <code className="text-xs text-blue-300 break-all">{signature}</code>
+              <code className="text-xs text-primary break-all">{signature}</code>
             ) : (
               <p className="text-muted-foreground text-sm italic">Signature will appear here...</p>
             )}

@@ -73,7 +73,7 @@ export const KeyStoreView = ({
               </button>
               <button
                 onClick={clearKeys}
-                className="text-sm text-red-400 hover:text-red-300 flex items-center gap-1 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-500/10"
+                className="text-sm text-destructive hover:text-destructive/80 flex items-center gap-1 transition-colors px-3 py-1.5 rounded-lg hover:bg-destructive/10"
               >
                 <Trash2 size={14} /> Clear All Keys
               </button>

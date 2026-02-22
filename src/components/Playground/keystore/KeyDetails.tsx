@@ -227,7 +227,11 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                 title="Copy to clipboard"
               >
-                {copiedRaw ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                {copiedRaw ? (
+                  <Check size={14} className="text-status-success" />
+                ) : (
+                  <Copy size={14} />
+                )}
               </button>
             </div>
           </div>
@@ -292,7 +296,11 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 title="Copy to clipboard"
               >
                 {' '}
-                {copiedPkcs8 ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                {copiedPkcs8 ? (
+                  <Check size={14} className="text-status-success" />
+                ) : (
+                  <Copy size={14} />
+                )}
               </button>
             </div>
           </div>

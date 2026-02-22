@@ -73,10 +73,10 @@ const PlaygroundContent = () => {
               className={clsx(
                 'font-bold',
                 lastLogEntry.executionTime < 100
-                  ? 'text-green-400'
+                  ? 'text-status-success'
                   : lastLogEntry.executionTime < 500
-                    ? 'text-yellow-400'
-                    : 'text-red-400'
+                    ? 'text-status-warning'
+                    : 'text-status-error'
               )}
             >
               {lastLogEntry.executionTime.toFixed(2)} ms
@@ -227,7 +227,7 @@ const PlaygroundContent = () => {
         <div
           id="playground-error"
           role="alert"
-          className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-400 text-sm shrink-0"
+          className="mt-6 p-4 bg-status-error border border-status-error rounded-xl flex items-center gap-3 text-status-error text-sm shrink-0"
         >
           <AlertCircle size={20} aria-hidden="true" />
           <span className="font-medium">{error}</span>

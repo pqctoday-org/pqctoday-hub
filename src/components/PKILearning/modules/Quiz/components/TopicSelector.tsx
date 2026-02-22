@@ -72,7 +72,7 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
               <div
                 className={clsx(
                   'p-2 rounded-lg',
-                  isSelected ? 'bg-primary/10 text-primary' : 'bg-white/5 text-muted-foreground'
+                  isSelected ? 'bg-primary/10 text-primary' : 'bg-muted/50 text-muted-foreground'
                 )}
               >
                 <Icon size={18} />

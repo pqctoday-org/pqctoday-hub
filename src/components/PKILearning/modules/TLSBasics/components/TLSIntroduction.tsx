@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Shield, Key, Lock, Zap, ArrowRight, ExternalLink } from 'lucide-react'
+import { Shield, Key, Lock, Zap, ArrowRight, BarChart3, Terminal } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { TLSHandshakeDiagram } from './TLSHandshakeDiagram'
 
@@ -226,18 +226,59 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
         </button>
       </section>
 
-      {/* Related Modules */}
-      <section className="glass-panel p-6">
-        <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <ExternalLink size={20} /> Related Modules
-        </h2>
-        <Link
-          to="/learn/vpn-ssh-pqc"
-          className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
-        >
-          <ArrowRight size={14} />
-          VPN/IPsec & SSH PQC — explore PQC in IKEv2, SSH, and WireGuard
-        </Link>
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/learn/vpn-ssh-pqc"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Lock size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">VPN/IPsec &amp; SSH</div>
+              <div className="text-xs text-muted-foreground">
+                PQC in IKEv2, SSH, and WireGuard protocols
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/algorithms"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <BarChart3 size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Algorithm Explorer</div>
+              <div className="text-xs text-muted-foreground">
+                Compare key sizes, security levels &amp; performance
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/openssl"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Terminal size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">OpenSSL Studio</div>
+              <div className="text-xs text-muted-foreground">
+                Run PQC commands live in your browser
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/threats"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Shield size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Threat Dashboard</div>
+              <div className="text-xs text-muted-foreground">
+                Industry-specific quantum risks &amp; PQC replacements
+              </div>
+            </div>
+          </Link>
+        </div>
       </section>
     </div>
   )

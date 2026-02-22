@@ -12,8 +12,8 @@ interface DocumentCardProps {
 
 const URGENCY_COLORS: Record<string, string> = {
   Critical: 'bg-destructive/10 text-destructive border-destructive/20',
-  High: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
-  Medium: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+  High: 'bg-status-warning text-status-warning',
+  Medium: 'bg-status-warning text-status-warning',
   Low: 'bg-status-success text-status-success border-status-success',
 }
 

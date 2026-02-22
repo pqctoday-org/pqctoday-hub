@@ -26,7 +26,7 @@ export const LAYERS = [
     color: 'from-blue-500/20 to-cyan-500/20',
     borderColor: 'border-blue-500/50',
     activeColor: 'bg-blue-500/30 border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)]',
-    iconColor: 'text-blue-400',
+    iconColor: 'text-primary',
   },
   {
     id: 'Network',
@@ -36,7 +36,7 @@ export const LAYERS = [
     color: 'from-sky-500/20 to-indigo-500/20',
     borderColor: 'border-sky-500/50',
     activeColor: 'bg-sky-500/30 border-sky-400 shadow-[0_0_15px_rgba(14,165,233,0.5)]',
-    iconColor: 'text-sky-400',
+    iconColor: 'text-primary',
   },
   {
     id: 'Application',
@@ -46,7 +46,7 @@ export const LAYERS = [
     color: 'from-purple-500/20 to-pink-500/20',
     borderColor: 'border-purple-500/50',
     activeColor: 'bg-purple-500/30 border-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.5)]',
-    iconColor: 'text-purple-400',
+    iconColor: 'text-secondary',
   },
   {
     id: 'Database',
@@ -56,7 +56,7 @@ export const LAYERS = [
     color: 'from-emerald-500/20 to-teal-500/20',
     borderColor: 'border-emerald-500/50',
     activeColor: 'bg-emerald-500/30 border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]',
-    iconColor: 'text-emerald-400',
+    iconColor: 'text-accent',
   },
   {
     id: 'Security Stack',
@@ -67,7 +67,7 @@ export const LAYERS = [
     color: 'from-rose-500/20 to-red-500/20',
     borderColor: 'border-rose-500/50',
     activeColor: 'bg-rose-500/30 border-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.5)]',
-    iconColor: 'text-rose-400',
+    iconColor: 'text-destructive',
   },
   {
     id: 'OS',
@@ -77,7 +77,7 @@ export const LAYERS = [
     color: 'from-orange-500/20 to-amber-500/20',
     borderColor: 'border-orange-500/50',
     activeColor: 'bg-orange-500/30 border-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.5)]',
-    iconColor: 'text-orange-400',
+    iconColor: 'text-warning',
   },
   {
     id: 'Hardware',
@@ -87,7 +87,7 @@ export const LAYERS = [
     color: 'from-slate-500/20 to-gray-400/20',
     borderColor: 'border-slate-500/50',
     activeColor: 'bg-slate-500/30 border-slate-400 shadow-[0_0_15px_rgba(100,116,139,0.5)]',
-    iconColor: 'text-slate-300',
+    iconColor: 'text-muted-foreground',
   },
 ]
 
@@ -117,7 +117,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
 
       <div className="flex flex-col gap-3 p-6 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl shadow-2xl relative">
         {/* Connection Line */}
-        <div className="absolute left-1/2 top-10 bottom-10 w-px bg-gradient-to-b from-blue-500/20 via-primary/20 to-slate-500/20 -translate-x-1/2 z-0 hidden md:block" />
+        <div className="absolute left-1/2 top-10 bottom-10 w-px bg-gradient-to-b from-primary/20 via-primary/20 to-muted-foreground/20 -translate-x-1/2 z-0 hidden md:block" />
 
         {LAYERS.map((layer, index) => {
           const isActive = activeLayer === layer.id
@@ -149,7 +149,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
 
               <div className="flex items-center gap-4 w-full md:w-auto">
                 <div
-                  className={`p-3 rounded-lg bg-background/50 backdrop-blur border border-white/5 shadow-inner transition-colors ${
+                  className={`p-3 rounded-lg bg-background/50 backdrop-blur border border-border/30 shadow-inner transition-colors ${
                     isActive ? layer.iconColor : 'text-muted-foreground group-hover:text-foreground'
                   }`}
                 >
@@ -180,8 +180,8 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
               <div
                 className={`hidden md:flex items-center gap-2 text-xs font-medium px-3 py-1 rounded-full border transition-colors ${
                   isActive
-                    ? 'bg-background/80 text-foreground border-white/20'
-                    : 'bg-background/40 text-muted-foreground border-transparent group-hover:border-white/10 group-hover:text-foreground/80'
+                    ? 'bg-background/80 text-foreground border-border'
+                    : 'bg-background/40 text-muted-foreground border-transparent group-hover:border-border/50 group-hover:text-foreground/80'
                 }`}
               >
                 {isActive ? 'Filtered' : 'Click to filter'}

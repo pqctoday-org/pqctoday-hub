@@ -26,6 +26,14 @@ export const TimelineView = () => {
     return transformToGanttData(timelineData)
   }, [])
 
+  // Mobile: filter ganttData to the selected region's countries (mirrors desktop Gantt behaviour)
+  const mobileGanttData = useMemo(() => {
+    if (!selectedRegion || selectedRegion === 'global') return ganttData
+    // eslint-disable-next-line security/detect-object-injection
+    const allowed = new Set(REGION_COUNTRIES_MAP[selectedRegion])
+    return ganttData.filter((d) => allowed.has(d.country.countryName))
+  }, [ganttData, selectedRegion])
+
   const countryItems = useMemo(() => {
     if (!timelineData || timelineData.length === 0) return []
 
@@ -123,7 +131,14 @@ export const TimelineView = () => {
 
         {/* Mobile View: Simplified List */}
         <div className="md:hidden" data-testid="mobile-view-container">
-          <MobileTimelineList data={ganttData} />
+          {selectedRegion && selectedRegion !== 'global' && (
+            <p className="text-xs text-primary/90 mb-3">
+              Filtered:{' '}
+              {{ americas: 'Americas', eu: 'Europe', apac: 'Asia-Pacific' }[selectedRegion]} (
+              {mobileGanttData.length} countries)
+            </p>
+          )}
+          <MobileTimelineList data={mobileGanttData} />
         </div>
       </div>
 

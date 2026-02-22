@@ -156,7 +156,7 @@ export const LogsTab: React.FC = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-border/40">
               {sortedLogs.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="p-12 text-center text-foreground/30 italic">

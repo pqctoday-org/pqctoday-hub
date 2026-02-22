@@ -6,9 +6,9 @@ export const LogsTab = () => {
   const { structuredLogs, clearStructuredLogs } = useOpenSSLStore()
 
   const getPerformanceColor = (ms: number): string => {
-    if (ms < 100) return 'text-green-400'
-    if (ms < 500) return 'text-yellow-400'
-    return 'text-red-400'
+    if (ms < 100) return 'text-status-success'
+    if (ms < 500) return 'text-status-warning'
+    return 'text-status-error'
   }
 
   const formatSize = (bytes: number) => {

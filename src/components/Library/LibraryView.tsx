@@ -378,7 +378,7 @@ export const LibraryView: React.FC = () => {
       <div className="space-y-8">
         {sections.map((section) => (
           <div key={section} className="space-y-4">
-            <h3 className="text-xl font-semibold text-foreground border-b border-white/10 pb-2">
+            <h3 className="text-xl font-semibold text-foreground border-b border-border pb-2">
               {section}
             </h3>
             {(groupedData.get(section)?.length ?? 0) > 0 ? (

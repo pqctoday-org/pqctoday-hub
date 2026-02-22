@@ -16,7 +16,7 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="border-b border-white/10 text-muted-foreground text-xs uppercase tracking-wider">
+          <tr className="border-b border-border text-muted-foreground text-xs uppercase tracking-wider">
             <th className="p-3 w-10 text-center">Use</th>
             {showSource && <th className="p-3">Source</th>}
             <th className="p-3">Type</th>
@@ -29,7 +29,7 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
           {attributes.map((attr) => (
             <tr
               key={attr.id}
-              className={`border-b border-white/5 hover:bg-white/5 transition-colors ${!attr.enabled ? 'opacity-50' : ''}`}
+              className={`border-b border-border/40 hover:bg-muted/50 transition-colors ${!attr.enabled ? 'opacity-50' : ''}`}
             >
               <td className="p-3 text-center">
                 <input
@@ -37,7 +37,7 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
                   checked={attr.enabled}
                   disabled={attr.status === 'mandatory'}
                   onChange={(e) => onAttributeChange(attr.id, 'enabled', e.target.checked)}
-                  className="rounded border-white/20 bg-black/40 text-primary focus:ring-primary cursor-pointer w-4 h-4"
+                  className="rounded border-border bg-muted text-primary focus:ring-primary cursor-pointer w-4 h-4"
                 />
               </td>
               {showSource && (
@@ -80,7 +80,7 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
                   placeholder={attr.placeholder}
                   disabled={!attr.enabled || (showSource && attr.source === 'CSR')}
                   aria-label={attr.label}
-                  className="w-full bg-black/40 border border-white/10 rounded px-2 py-1.5 text-sm text-accent-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-muted border border-border rounded px-2 py-1.5 text-sm text-accent-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </td>
               <td className="p-3 text-muted-foreground text-xs max-w-[200px]">

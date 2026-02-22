@@ -6,14 +6,14 @@ import { AssessWizard } from './AssessWizard'
 import { AssessReport } from './AssessReport'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import type { AssessmentMode } from '../../store/useAssessmentStore'
-import { useAssessmentEngine } from '../../hooks/useAssessmentEngine'
-import type { AssessmentInput } from '../../hooks/useAssessmentEngine'
+import { computeAssessment } from '../../hooks/assessmentUtils'
 import { metadata } from '../../data/industryAssessConfig'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useModuleStore } from '../../store/useModuleStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import type { AssessmentInput } from '../../hooks/assessmentTypes'
 
 const VALID_SENSITIVITIES = new Set(['low', 'medium', 'high', 'critical'])
 const VALID_MIGRATIONS = new Set(['started', 'planning', 'not-started', 'unknown'])
@@ -98,7 +98,7 @@ export const AssessView: React.FC = () => {
     setAssessmentMode,
   } = useAssessmentStore()
   const input = getInput()
-  const result = useAssessmentEngine(isComplete ? input : null)
+  const result = isComplete && input ? computeAssessment(input) : null
   const persistedRef = useRef(false)
   const [searchParams] = useSearchParams()
   const hydratedRef = useRef(false)

@@ -148,6 +148,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'quantum-threats',
       'crypto-agility',
       'hybrid-crypto',
+      'qkd',
       'tls-basics',
       'key-management',
       'stateful-signatures',
@@ -165,6 +166,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'crypto-agility' },
       { type: 'module', moduleId: 'hybrid-crypto' },
+      { type: 'module', moduleId: 'qkd' },
       {
         type: 'checkpoint',
         id: 'arch-cp-2',
@@ -183,7 +185,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 465,
+    estimatedMinutes: 555,
     quizDescription:
       'Test your knowledge on crypto agility, TLS, key management, stateful signatures, and architecture patterns.',
     quizCategories: [
@@ -209,6 +211,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'quantum-threats',
       'hybrid-crypto',
       'crypto-agility',
+      'qkd',
       'tls-basics',
       'vpn-ssh-pqc',
       'email-signing',
@@ -231,6 +234,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'hybrid-crypto' },
       { type: 'module', moduleId: 'crypto-agility' },
+      { type: 'module', moduleId: 'qkd' },
       {
         type: 'checkpoint',
         id: 'res-cp-2',
@@ -266,7 +270,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 780,
+    estimatedMinutes: 870,
     quizDescription:
       'Full assessment across all 16 PQC categories — algorithms, protocols, standards, compliance, and applications.',
     quizCategories: [], // empty = all categories shown (full coverage for researcher)

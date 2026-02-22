@@ -73,7 +73,7 @@ export const LeadersGrid = () => {
       {
         id: 'Academic',
         label: 'Academic',
-        icon: <School size={14} className="text-blue-400" />,
+        icon: <School size={14} className="text-secondary" />,
       },
     ]
   }, [])
