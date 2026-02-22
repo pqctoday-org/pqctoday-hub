@@ -95,6 +95,7 @@ interface RawSoftwareItem {
   source_type: string
   verification_status: string
   last_verified_date: string
+  migration_phases: string
 }
 
 function parseSoftwareCSV(csvContent: string): SoftwareItem[] {
@@ -125,5 +126,6 @@ function parseSoftwareCSV(csvContent: string): SoftwareItem[] {
     sourceType: row.source_type,
     verificationStatus: row.verification_status,
     lastVerifiedDate: row.last_verified_date,
+    migrationPhases: row.migration_phases || '',
   }))
 }

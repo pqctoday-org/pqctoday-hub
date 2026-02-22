@@ -19,6 +19,7 @@ export interface SoftwareItem {
   sourceType: string
   verificationStatus: string
   lastVerifiedDate: string
+  migrationPhases: string
   status?: 'New' | 'Updated' | 'Deleted'
 }
 

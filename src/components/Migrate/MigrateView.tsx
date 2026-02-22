@@ -36,7 +36,7 @@ export const MigrateView: React.FC = () => {
   const [stepFilter, setStepFilter] = useState<{
     stepNumber: number
     stepTitle: string
-    categoryIds: string[]
+    stepId: string
   } | null>(null)
 
   // Debounced search
@@ -123,7 +123,7 @@ export const MigrateView: React.FC = () => {
     setStepFilter({
       stepNumber: step.stepNumber,
       stepTitle: step.title,
-      categoryIds: step.relevantSoftwareCategories,
+      stepId: step.id,
     })
     setActiveTab('All')
     logMigrateAction('View Related Software', step.title)
@@ -132,9 +132,10 @@ export const MigrateView: React.FC = () => {
 
   const filteredData = useMemo(() => {
     return softwareData.filter((item) => {
-      // Step filter (multi-category, from "View Related Software")
+      // Step filter (per-product phase matching from "View Related Products")
       if (stepFilter) {
-        if (!stepFilter.categoryIds.includes(item.categoryId)) return false
+        const phases = item.migrationPhases?.split(',').map((p) => p.trim()) ?? []
+        if (!phases.includes(stepFilter.stepId)) return false
       } else if (activeTab !== 'All' && item.categoryName !== activeTab) {
         // Manual single-category tab filter
         return false
@@ -253,12 +254,11 @@ export const MigrateView: React.FC = () => {
       {stepFilter && (
         <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2 mb-2">
           <span>
-            Showing software for{' '}
+            Showing products for{' '}
             <strong>
               Step {stepFilter.stepNumber}: {stepFilter.stepTitle}
             </strong>{' '}
-            &middot; {stepFilter.categoryIds.length}{' '}
-            {stepFilter.categoryIds.length === 1 ? 'category' : 'categories'}
+            &middot; {filteredData.length} {filteredData.length === 1 ? 'product' : 'products'}
           </span>
           <button
             onClick={() => setStepFilter(null)}
