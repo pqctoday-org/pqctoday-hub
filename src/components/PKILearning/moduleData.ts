@@ -90,6 +90,20 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
       'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
     duration: '120 min',
   },
+  'entropy-randomness': {
+    id: 'entropy-randomness',
+    title: 'Entropy & Randomness',
+    description:
+      'Master entropy sources, DRBG mechanisms, and quantum randomness — NIST SP 800-90 standards, entropy testing, TRNG vs QRNG, and combining sources for defense-in-depth.',
+    duration: '60 min',
+  },
+  qkd: {
+    id: 'qkd',
+    title: 'Quantum Key Distribution',
+    description:
+      'Explore QKD fundamentals: BB84 protocol, classical post-processing, hybrid key derivation, and global deployment landscape.',
+    duration: '90 min',
+  },
   quiz: {
     id: 'quiz',
     title: 'PQC Quiz',
@@ -114,6 +128,8 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'email-signing': 3,
   'vpn-ssh-pqc': 3,
   'key-management': 3,
+  'entropy-randomness': 5,
+  qkd: 3,
   quiz: 1,
   assess: 1, // Assessment wizard completion
 }
@@ -122,11 +138,19 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
 export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
   {
     track: 'Foundations',
-    modules: [MODULE_CATALOG['pqc-101'], MODULE_CATALOG['quantum-threats']],
+    modules: [
+      MODULE_CATALOG['pqc-101'],
+      MODULE_CATALOG['quantum-threats'],
+      MODULE_CATALOG['entropy-randomness'],
+    ],
   },
   {
     track: 'Strategy',
-    modules: [MODULE_CATALOG['hybrid-crypto'], MODULE_CATALOG['crypto-agility']],
+    modules: [
+      MODULE_CATALOG['hybrid-crypto'],
+      MODULE_CATALOG['crypto-agility'],
+      MODULE_CATALOG['qkd'],
+    ],
   },
   {
     track: 'Protocols',

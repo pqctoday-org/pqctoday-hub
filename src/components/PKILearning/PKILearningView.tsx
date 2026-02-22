@@ -52,6 +52,12 @@ const VPNSSHModule = lazy(() =>
 const KeyManagementModule = lazy(() =>
   import('./modules/KeyManagement').then((module) => ({ default: module.KeyManagementModule }))
 )
+const QKDModule = lazy(() =>
+  import('./modules/QKD').then((module) => ({ default: module.QKDModule }))
+)
+const EntropyModule = lazy(() =>
+  import('./modules/Entropy').then((module) => ({ default: module.EntropyModule }))
+)
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -101,6 +107,8 @@ export const PKILearningView: React.FC = () => {
           <Route path="email-signing" element={<EmailSigningModule />} />
           <Route path="vpn-ssh-pqc" element={<VPNSSHModule />} />
           <Route path="key-management" element={<KeyManagementModule />} />
+          <Route path="qkd" element={<QKDModule />} />
+          <Route path="entropy-randomness" element={<EntropyModule />} />
         </Routes>
       </Suspense>
     </div>

@@ -90,6 +90,7 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
   'digital-assets': ['Finance & Banking', 'Retail & E-Commerce'],
   '5g-security': ['Telecommunications', 'Government & Defense'],
   'digital-id': ['Government & Defense', 'Healthcare', 'Finance & Banking'],
+  'entropy-randomness': null,
 }
 
 /** Nav paths that are always shown regardless of persona. */

@@ -1054,9 +1054,75 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Quantum Key Distribution, a method of distributing encryption keys using quantum physics rather than mathematical hardness. Distinct from PQC and requires specialized hardware.',
     technicalNote:
       'QKD (e.g., BB84 protocol) uses photons to detect eavesdropping. Unlike PQC, it requires dedicated fiber or satellite links and cannot run on standard networks.',
-    relatedModule: '/library',
+    relatedModule: '/learn/qkd',
     complexity: 'advanced',
     category: 'concept',
+  },
+  {
+    term: 'BB84',
+    definition:
+      'The first quantum key distribution protocol, proposed by Bennett and Brassard in 1984. Uses four quantum states in two conjugate bases to establish a shared secret key.',
+    technicalNote:
+      'Alice encodes random bits in rectilinear (+) or diagonal (x) bases. Bob measures in a randomly chosen basis. After basis reconciliation over a classical channel, only matching-basis bits form the sifted key.',
+    relatedModule: '/learn/qkd',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'QBER',
+    acronym: 'QBER',
+    definition:
+      'Quantum Bit Error Rate, the fraction of sifted key bits where Alice and Bob disagree despite using the same measurement basis. A QBER above ~11% indicates eavesdropping.',
+    technicalNote:
+      'In BB84, an eavesdropper measuring in the wrong basis introduces a 25% error rate on intercepted qubits. The theoretical QBER threshold for secure key generation is approximately 11%.',
+    relatedModule: '/learn/qkd',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Sifted Key',
+    definition:
+      'The subset of raw key bits where both parties used the same measurement basis during QKD. Typically about half the transmitted bits survive sifting.',
+    relatedModule: '/learn/qkd',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Privacy Amplification',
+    definition:
+      'A post-processing step in QKD that uses universal hash functions to distill a shorter, provably secret key from a partially compromised key by removing any information an eavesdropper may have obtained.',
+    technicalNote:
+      "The output key length depends on the estimated information leakage. Uses hash functions (e.g., SHA-256) to compress the corrected key, reducing Eve's knowledge to negligible levels.",
+    relatedModule: '/learn/qkd',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'No-Cloning Theorem',
+    definition:
+      'A fundamental quantum mechanics result proving it is impossible to create an identical copy of an unknown quantum state, providing the theoretical basis for QKD security.',
+    relatedModule: '/learn/qkd',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Trusted Node',
+    definition:
+      'A physically secured relay point in a QKD network where keys are decrypted and re-encrypted to extend range beyond single-link limits (typically ~100 km for fiber).',
+    technicalNote:
+      'Trusted nodes are a practical necessity but a security concern: compromising any node reveals all keys routed through it. This is a major architectural limitation of current QKD networks.',
+    relatedModule: '/learn/qkd',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'EuroQCI',
+    acronym: 'EuroQCI',
+    definition:
+      'The European Quantum Communication Infrastructure initiative, a pan-EU program to deploy a quantum communication network across all 27 member states combining terrestrial fiber and satellite links.',
+    relatedModule: '/learn/qkd',
+    complexity: 'intermediate',
+    category: 'organization',
   },
   {
     term: 'Cryptographic Inventory',
@@ -2133,5 +2199,101 @@ export const glossaryTerms: GlossaryTerm[] = [
     relatedModule: '/learn/digital-id',
     complexity: 'advanced',
     category: 'concept',
+  },
+
+  // === Entropy & Randomness ===
+  {
+    term: 'Entropy',
+    definition:
+      'A measure of unpredictability or randomness in data. In cryptography, high entropy means data is difficult to predict, which is essential for secure key generation and nonce creation.',
+    technicalNote:
+      'Min-entropy is the most conservative measure: -log2(max probability of any single outcome). NIST SP 800-90B defines methods for estimating entropy of physical noise sources.',
+    relatedModule: '/learn/entropy-randomness',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  {
+    term: 'CSPRNG',
+    acronym: 'CSPRNG',
+    definition:
+      'Cryptographically Secure Pseudo-Random Number Generator. A PRNG whose output is computationally indistinguishable from true randomness, suitable for cryptographic key generation.',
+    technicalNote:
+      'Typically implemented as DRBGs (SP 800-90A) seeded from hardware entropy sources. Examples: /dev/urandom (Linux), CryptGenRandom (Windows), crypto.getRandomValues (Web Crypto API).',
+    relatedModule: '/learn/entropy-randomness',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'DRBG',
+    acronym: 'DRBG',
+    definition:
+      'Deterministic Random Bit Generator. An algorithm that produces a sequence of pseudorandom bits from a secret seed value. NIST SP 800-90A defines three approved mechanisms: CTR_DRBG, Hash_DRBG, and HMAC_DRBG.',
+    technicalNote:
+      'CTR_DRBG (AES-based) is the most widely deployed, used by OpenSSL and the Linux kernel. All three mechanisms use symmetric primitives and are quantum-safe.',
+    relatedModule: '/learn/entropy-randomness',
+    complexity: 'advanced',
+    category: 'algorithm',
+  },
+  {
+    term: 'TRNG',
+    acronym: 'TRNG',
+    definition:
+      'True Random Number Generator. A hardware device that generates random numbers from physical phenomena such as thermal noise, shot noise, or clock jitter.',
+    technicalNote:
+      'Intel RDRAND/RDSEED, ARM RNDR, and TPM RNG are common TRNG implementations. TRNG output is not affected by quantum computers since it relies on physical processes, not computational assumptions.',
+    relatedModule: '/learn/entropy-randomness',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'QRNG',
+    acronym: 'QRNG',
+    definition:
+      'Quantum Random Number Generator. A device that generates random numbers from quantum mechanical phenomena such as photon detection, vacuum fluctuations, or quantum beam splitting.',
+    technicalNote:
+      'QRNG randomness is guaranteed by the laws of quantum physics (Born rule). Commercial products are available from ID Quantique, Toshiba, and others. The Australian National University (ANU) operates a public QRNG service.',
+    relatedModule: '/learn/entropy-randomness',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Min-Entropy',
+    definition:
+      'The most conservative measure of entropy, defined as the negative base-2 logarithm of the probability of the most likely outcome. Used by NIST SP 800-90B for entropy source validation.',
+    technicalNote:
+      'For a uniform byte distribution, min-entropy = 8 bits per byte. Real entropy sources typically achieve 6-8 bits per byte before conditioning. The NIST SP 800-90B EntropyAssessment tool computes min-entropy estimates.',
+    relatedModule: '/learn/entropy-randomness',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'SP 800-90A',
+    definition:
+      'NIST Special Publication defining three Deterministic Random Bit Generator (DRBG) mechanisms: CTR_DRBG (AES-based), Hash_DRBG (SHA-based), and HMAC_DRBG. Published June 2015 (Rev. 1).',
+    technicalNote:
+      'All three DRBGs use symmetric primitives and are quantum-safe. CTR_DRBG is the default in OpenSSL. Rev. 2 is in draft, adding XOF_DRBG (SHAKE-based) and removing TDES/SHA-1.',
+    relatedModule: '/learn/entropy-randomness',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'SP 800-90B',
+    definition:
+      'NIST Special Publication providing methods for validating entropy sources used as input to DRBGs. Defines health tests (repetition count, adaptive proportion) and min-entropy estimation procedures. Published January 2018.',
+    technicalNote:
+      'The NIST Entropy Source Validation (ESV) program under CMVP uses SP 800-90B to certify hardware entropy sources. The NIST EntropyAssessment tool on GitHub implements the min-entropy assessment methods.',
+    relatedModule: '/learn/entropy-randomness',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'SP 800-90C',
+    definition:
+      'NIST Special Publication describing constructions for Random Bit Generators (RBGs) that combine entropy sources with DRBGs. Defines RBG1, RBG2, RBG3, and RBGC construction classes. Published September 2025.',
+    technicalNote:
+      'Completes the SP 800-90 series. Specifies how to combine multiple independent entropy sources for defense-in-depth, using XOR and conditioning functions to ensure combined output retains entropy even if one source is compromised.',
+    relatedModule: '/learn/entropy-randomness',
+    complexity: 'advanced',
+    category: 'standard',
   },
 ]
