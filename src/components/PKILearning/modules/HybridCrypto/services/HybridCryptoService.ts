@@ -238,12 +238,20 @@ export class HybridCryptoService {
         return { pem: '', parsed: '', timingMs: performance.now() - start, error: result.error }
       }
 
-      const pemResult = await openSSLService.execute(`openssl x509 -in ${certFile}`)
-      const parsedResult = await openSSLService.execute(`openssl x509 -in ${certFile} -text -noout`)
+      // Get PEM directly from FILE_CREATED event — more reliable than reading stdout
+      const certFileData = result.files.find((f) => f.name === certFile)
+      const pem = certFileData ? new TextDecoder().decode(certFileData.data) : ''
+
+      // Parse certificate by passing cert data as explicit input (avoids FS persistence dependency)
+      const parsedResult = await openSSLService.execute(
+        `openssl x509 -in ${certFile} -text -noout`,
+        certFileData ? [{ name: certFile, data: certFileData.data }] : []
+      )
+      const parsed = parsedResult.stdout || parsedResult.stderr || ''
 
       return {
-        pem: pemResult.stdout || '',
-        parsed: parsedResult.stdout || '',
+        pem,
+        parsed,
         timingMs: performance.now() - start,
       }
     } catch (e) {

@@ -206,13 +206,21 @@ export const HybridCryptoModule: React.FC = () => {
               >
                 &larr; Previous Step
               </button>
-              <button
-                onClick={() => handlePartChange(Math.min(PARTS.length - 1, currentPart + 1))}
-                disabled={currentPart === PARTS.length - 1}
-                className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
-              >
-                Next Step &rarr;
-              </button>
+              {currentPart === PARTS.length - 1 ? (
+                <button
+                  onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
+                  className="px-6 py-3 min-h-[44px] bg-green-600 text-white font-bold rounded-lg hover:bg-green-500 transition-colors"
+                >
+                  Complete Module ✓
+                </button>
+              ) : (
+                <button
+                  onClick={() => handlePartChange(currentPart + 1)}
+                  className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Next Step &rarr;
+                </button>
+              )}
             </div>
           </div>
         </TabsContent>
