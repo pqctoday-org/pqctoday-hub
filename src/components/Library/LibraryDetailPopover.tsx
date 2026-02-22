@@ -71,7 +71,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
     <FocusLock returnFocus>
       <div
         ref={popoverRef}
-        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] max-w-[1200px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[85vw] md:w-[60vw] max-w-[1200px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
         style={style}
         role="dialog"
         aria-modal="true"
@@ -123,7 +123,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
           </div>
 
           {/* Metadata Grid */}
-          <div className="grid grid-cols-2 gap-1 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 w-full">
             <div className="flex flex-row items-baseline gap-2">
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
                 Status:
