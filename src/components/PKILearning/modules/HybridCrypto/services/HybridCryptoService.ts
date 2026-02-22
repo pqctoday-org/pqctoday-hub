@@ -1,4 +1,5 @@
 import { openSSLService } from '@/services/crypto/OpenSSLService'
+import { generateX25519KeyPair, deriveSharedSecret, hkdfExtract } from '@/utils/webCrypto'
 
 export interface KeyGenResult {
   algorithm: string
@@ -22,6 +23,21 @@ export interface SignVerifyResult {
   verified: boolean
   timingMs: number
   sigFileData?: { name: string; data: Uint8Array }
+  error?: string
+}
+
+export interface HybridKemResult {
+  pqcSecretHex: string
+  classicalSecretHex: string
+  combinedSecretHex: string
+  pqcCiphertextHex: string
+  classicalEphemeralPubHex: string
+  pqcSecretsMatch: boolean
+  keyGenMs: number
+  encapMs: number
+  decapMs: number
+  hkdfMs: number
+  totalMs: number
   error?: string
 }
 
@@ -60,14 +76,21 @@ export class HybridCryptoService {
         }
       }
 
-      const keyFile = genResult.files.find((f) => f.name === filename)
+      // Look for the key file in output; fallback to stdout if WASM wrote there instead
+      let keyFile = genResult.files.find((f) => f.name === filename)
+      if (!keyFile && genResult.stdout && genResult.stdout.includes('-----BEGIN')) {
+        keyFile = { name: filename, data: new TextEncoder().encode(genResult.stdout) }
+      }
       if (!keyFile) {
+        const detail = genResult.stderr?.trim()
         return {
           algorithm,
           pemOutput: '',
           keyInfo: '',
           timingMs: performance.now() - start,
-          error: 'Key file not found in output',
+          error: detail
+            ? `Key generation failed: ${detail}`
+            : `Algorithm "${algorithm}" is not supported for standalone key generation in this OpenSSL WASM build`,
         }
       }
 
@@ -272,6 +295,120 @@ export class HybridCryptoService {
         timingMs: performance.now() - start,
         error: e instanceof Error ? e.message : 'Verification failed',
       }
+    }
+  }
+
+  async hybridKemEncapDecap(): Promise<HybridKemResult> {
+    const start = performance.now()
+    try {
+      // 1. ML-KEM-768 keygen via OpenSSL
+      const keyGenStart = performance.now()
+      const pqcKey = await this.generateKey('ML-KEM-768', 'hybrid_pqc_key.pem')
+      if (pqcKey.error || !pqcKey.fileData) {
+        return this.hybridKemError(start, pqcKey.error || 'PQC key generation failed')
+      }
+      const pubResult = await this.extractPublicKey(
+        'hybrid_pqc_key.pem',
+        'hybrid_pqc_pub.pem',
+        pqcKey.fileData
+      )
+      if (pubResult.error || !pubResult.fileData) {
+        return this.hybridKemError(start, pubResult.error || 'PQC public key extraction failed')
+      }
+      const keyGenMs = performance.now() - keyGenStart
+
+      // 2. ML-KEM-768 encap + X25519 ECDH
+      const encapStart = performance.now()
+      const encapResult = await this.kemEncapsulate(
+        'hybrid_pqc_pub.pem',
+        'hybrid_pqc',
+        pubResult.fileData
+      )
+      if (encapResult.error) {
+        return this.hybridKemError(start, encapResult.error)
+      }
+
+      // X25519 ECDH: generate ephemeral pair and derive shared secret against itself
+      // (self-agreement demo — shows the mechanism)
+      const x25519Sender = await generateX25519KeyPair()
+      const x25519Receiver = await generateX25519KeyPair()
+      const classicalSecret = await deriveSharedSecret(
+        x25519Sender.privateKey,
+        x25519Receiver.publicKey
+      )
+      const classicalSecretVerify = await deriveSharedSecret(
+        x25519Receiver.privateKey,
+        x25519Sender.publicKey
+      )
+      const encapMs = performance.now() - encapStart
+
+      // 3. ML-KEM-768 decap
+      const decapStart = performance.now()
+      const ctFile = 'hybrid_pqc_ct.bin'
+      const decapInputFiles: { name: string; data: Uint8Array }[] = []
+      if (pqcKey.fileData) decapInputFiles.push(pqcKey.fileData)
+      if (encapResult.ctFileData) decapInputFiles.push(encapResult.ctFileData)
+      const decapResult = await this.kemDecapsulate(
+        'hybrid_pqc_key.pem',
+        ctFile,
+        'hybrid_pqc',
+        decapInputFiles
+      )
+      const decapMs = performance.now() - decapStart
+
+      const pqcSecretsMatch =
+        encapResult.sharedSecretHex === decapResult.sharedSecretHex &&
+        encapResult.sharedSecretHex.length > 0
+
+      // 4. Combine PQC + classical secrets via HKDF-Extract
+      const hkdfStart = performance.now()
+      const pqcSecretBytes = new Uint8Array(
+        (encapResult.sharedSecretHex.match(/.{2}/g) || []).map((b) => parseInt(b, 16))
+      )
+      const combined = new Uint8Array(classicalSecret.length + pqcSecretBytes.length)
+      combined.set(classicalSecret)
+      combined.set(pqcSecretBytes, classicalSecret.length)
+      const hybridSecret = await hkdfExtract(new Uint8Array(0), combined, 'SHA-256')
+      const hkdfMs = performance.now() - hkdfStart
+
+      // Verify classical ECDH round-trip
+      const classicalMatch = classicalSecret.every(
+        // eslint-disable-next-line security/detect-object-injection
+        (b, i) => b === classicalSecretVerify[i]
+      )
+
+      return {
+        pqcSecretHex: encapResult.sharedSecretHex,
+        classicalSecretHex: this.toHex(classicalSecret),
+        combinedSecretHex: this.toHex(hybridSecret),
+        pqcCiphertextHex: encapResult.ciphertextHex,
+        classicalEphemeralPubHex: x25519Sender.publicKeyHex,
+        pqcSecretsMatch: pqcSecretsMatch && classicalMatch,
+        keyGenMs,
+        encapMs,
+        decapMs,
+        hkdfMs,
+        totalMs: performance.now() - start,
+      }
+    } catch (e) {
+      return this.hybridKemError(start, e instanceof Error ? e.message : 'Hybrid KEM failed')
+    }
+  }
+
+  private hybridKemError(start: number, error: string): HybridKemResult {
+    return {
+      pqcSecretHex: '',
+      classicalSecretHex: '',
+      combinedSecretHex: '',
+      pqcCiphertextHex: '',
+      classicalEphemeralPubHex: '',
+      pqcSecretsMatch: false,
+      keyGenMs: 0,
+      encapMs: 0,
+      decapMs: 0,
+      hkdfMs: 0,
+      totalMs: performance.now() - start,
+      error,
     }
   }
 

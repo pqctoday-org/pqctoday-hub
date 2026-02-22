@@ -51,12 +51,12 @@ export const HYBRID_ALGORITHMS: HybridAlgorithmInfo[] = [
     name: 'X25519MLKEM768',
     type: 'hybrid',
     category: 'kem',
-    opensslAlgorithm: 'X25519MLKEM768',
+    opensslAlgorithm: 'SIMULATED',
     publicKeyBytes: 1216,
     privateKeyBytes: 2432,
     ciphertextOrSigBytes: 1120,
     nistLevel: 3,
-    description: 'X25519 + ML-KEM-768 hybrid. IETF draft, widely deployed.',
+    description: 'X25519 + ML-KEM-768 hybrid. Simulated via separate operations + HKDF.',
   },
   // Classical signatures
   {
@@ -88,6 +88,9 @@ export const KEY_GEN_COMMANDS: Record<string, string[]> = {
   X25519: ['openssl genpkey -algorithm X25519 -out x25519_key.pem'],
   EC: ['openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out ec_key.pem'],
   'ML-KEM-768': ['openssl genpkey -algorithm ML-KEM-768 -out mlkem768_key.pem'],
-  X25519MLKEM768: ['openssl genpkey -algorithm X25519MLKEM768 -out hybrid_kem_key.pem'],
+  X25519MLKEM768: [
+    'openssl genpkey -algorithm X25519 -out x25519_key.pem',
+    'openssl genpkey -algorithm ML-KEM-768 -out mlkem768_key.pem',
+  ],
   'ML-DSA-65': ['openssl genpkey -algorithm ML-DSA-65 -out mldsa65_key.pem'],
 }

@@ -49,9 +49,47 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
     const newResults = new Map<string, KeyGenResult>()
 
     for (const algo of algorithms) {
-      const filename = `${algo.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_key.pem`
-      const result = await hybridCryptoService.generateKey(algo.opensslAlgorithm, filename)
-      newResults.set(algo.name, { ...result, algorithm: algo.name })
+      if (algo.opensslAlgorithm === 'SIMULATED') {
+        // Hybrid: generate X25519 + ML-KEM-768 separately
+        const x25519Result = await hybridCryptoService.generateKey(
+          'X25519',
+          'hybrid_x25519_key.pem'
+        )
+        const mlkemResult = await hybridCryptoService.generateKey(
+          'ML-KEM-768',
+          'hybrid_mlkem768_key.pem'
+        )
+        if (x25519Result.error || mlkemResult.error) {
+          newResults.set(algo.name, {
+            algorithm: algo.name,
+            pemOutput: '',
+            keyInfo: '',
+            timingMs: x25519Result.timingMs + mlkemResult.timingMs,
+            error: x25519Result.error || mlkemResult.error,
+          })
+        } else {
+          newResults.set(algo.name, {
+            algorithm: algo.name,
+            pemOutput: [
+              '--- X25519 Key ---',
+              x25519Result.pemOutput,
+              '--- ML-KEM-768 Key ---',
+              mlkemResult.pemOutput,
+            ].join('\n'),
+            keyInfo: [
+              '--- X25519 ---',
+              x25519Result.keyInfo,
+              '--- ML-KEM-768 ---',
+              mlkemResult.keyInfo,
+            ].join('\n'),
+            timingMs: x25519Result.timingMs + mlkemResult.timingMs,
+          })
+        }
+      } else {
+        const filename = `${algo.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_key.pem`
+        const result = await hybridCryptoService.generateKey(algo.opensslAlgorithm, filename)
+        newResults.set(algo.name, { ...result, algorithm: algo.name })
+      }
     }
 
     setResults(newResults)
