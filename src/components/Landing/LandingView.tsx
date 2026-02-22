@@ -122,7 +122,7 @@ export const LandingView = () => {
       icon: GraduationCap,
       title: 'Learning Modules',
       description:
-        '14 interactive modules: PKI, TLS, 5G, Digital Assets, Quantum Threats, Hybrid Crypto, and more — plus a 332-question quiz with 20-question quick and 80-question full assessment modes',
+        '15 interactive modules: PKI, TLS, 5G, Digital Assets, Quantum Threats, Entropy & Randomness, and more — plus a 340-question quiz with 20-question quick and 80-question full assessment modes',
       path: '/learn',
       color: 'text-secondary',
     },
@@ -246,7 +246,7 @@ export const LandingView = () => {
               value: libraryCount !== null ? String(libraryCount) : '...',
               label: 'Standards Tracked',
             },
-            { value: '14', label: 'Learning Modules' },
+            { value: '15', label: 'Learning Modules' },
           ].map((stat) => (
             <div key={stat.label} className="glass-panel p-4">
               <div className="text-2xl md:text-3xl font-bold text-gradient">{stat.value}</div>
