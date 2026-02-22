@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { ComplianceView } from './ComplianceView'
 import '@testing-library/jest-dom'
 
@@ -96,19 +97,31 @@ vi.mock('../ui/GlossaryButton', () => ({
 
 describe('ComplianceView', () => {
   it('renders the page title', () => {
-    render(<ComplianceView />)
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
     expect(screen.getByText('Compliance & Certification')).toBeInTheDocument()
   })
 
   it('renders the description text', () => {
-    render(<ComplianceView />)
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
     expect(
       screen.getByText(/Streamlined access to cryptographic module validations/)
     ).toBeInTheDocument()
   })
 
   it('renders authoritative source links', () => {
-    render(<ComplianceView />)
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
     expect(screen.getByText('NIST CMVP')).toBeInTheDocument()
     expect(screen.getByText('NIST CAVP')).toBeInTheDocument()
     expect(screen.getByText('CC Portal')).toBeInTheDocument()
@@ -117,16 +130,25 @@ describe('ComplianceView', () => {
   })
 
   it('renders tab triggers for All, FIPS, ACVP, and CC', () => {
-    render(<ComplianceView />)
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
     expect(screen.getByRole('button', { name: 'All Records' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'FIPS 140-3' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'ACVP' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Common Criteria' })).toBeInTheDocument()
   })
 
-  it('shows All Records tab by default with all data', () => {
-    render(<ComplianceView />)
-    // The "All Records" tab should be active by default, showing all 3 records
+  it('shows all data when All Records tab is clicked', () => {
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    // Default tab is "Compliance Landscape" — click "All Records" to show the table
+    fireEvent.click(screen.getByRole('button', { name: 'All Records' }))
     expect(screen.getByText('Table (3 records)')).toBeInTheDocument()
   })
 })

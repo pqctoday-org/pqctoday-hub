@@ -18,6 +18,7 @@ const loadScript = () => {
     process,
     __dirname: WASM_DIR,
     global,
+    Buffer,
     module: moduleShim,
     exports: moduleShim.exports,
     createOpenSSLModule: undefined as unknown,
