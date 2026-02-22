@@ -14,7 +14,7 @@ import {
   Award,
   Fingerprint,
   Radio,
-  Dice,
+  Dice1,
 } from 'lucide-react'
 import clsx from 'clsx'
 import type { QuizCategoryMeta, QuizCategory } from '../types'
@@ -33,7 +33,7 @@ const iconMap: Record<string, React.ElementType> = {
   Award,
   Fingerprint,
   Radio,
-  Dice,
+  Dice1,
 }
 
 interface TopicSelectorProps {

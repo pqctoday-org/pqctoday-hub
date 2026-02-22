@@ -19,7 +19,8 @@ function getQkdJson(qkdSecret: string): string {
 }
 
 async function hkdfDerive(ikm: Uint8Array, info: string, length: number): Promise<string> {
-  const keyMaterial = await crypto.subtle.importKey('raw', ikm, 'HKDF', false, ['deriveBits'])
+  const ikmCopy = new Uint8Array(ikm) as Uint8Array<ArrayBuffer>
+  const keyMaterial = await crypto.subtle.importKey('raw', ikmCopy, 'HKDF', false, ['deriveBits'])
   const bits = await crypto.subtle.deriveBits(
     {
       name: 'HKDF',
