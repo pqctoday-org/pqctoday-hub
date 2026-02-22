@@ -36,14 +36,17 @@ export function AboutView() {
           </div>
           <div className="prose prose-invert max-w-none">
             <p className="text-lg text-muted-foreground">
-              PQC Today is your comprehensive resource for tracking the transition to Post-Quantum
-              Cryptography. We provide real-time updates on standardization efforts, detailed
-              algorithm analysis, and interactive tools to help organizations prepare for the
-              quantum future.
+              PQC Today is an interactive platform for the post-quantum transition. Fifteen learning
+              modules, hands-on cryptographic labs powered by OpenSSL WASM and liboqs, a 13-step
+              risk assessment wizard, a 193-product migration catalog, and global compliance
+              tracking give developers, architects, executives, and researchers everything they need
+              to understand, plan, and act &mdash; at their level.
             </p>
             <p className="text-muted-foreground mt-4">
-              Our mission is to demystify quantum threats and make PQC adoption accessible to
-              everyone, from security researchers to business leaders.
+              Our mission is to make PQC adoption actionable for everyone &mdash; whether
+              you&apos;re a developer integrating ML-KEM and ML-DSA, an architect designing
+              crypto-agile systems, an executive tracking regulatory deadlines, or a researcher
+              exploring quantum key distribution and entropy sources.
             </p>
             <p className="text-muted-foreground mt-4">
               Connect with me on LinkedIn:{' '}

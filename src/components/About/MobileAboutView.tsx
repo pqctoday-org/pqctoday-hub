@@ -19,7 +19,7 @@ export const MobileAboutView = () => {
           About PQC Today
         </h1>
         <p className="text-sm text-muted-foreground">
-          Tracking the global transition to Post-Quantum Cryptography.
+          Learn, assess, explore, and act on the post-quantum transition.
         </p>
         <p className="text-xs text-muted-foreground/60 font-mono mt-1">v{version}</p>
       </motion.div>
@@ -38,9 +38,9 @@ export const MobileAboutView = () => {
           <h2 className="text-lg font-bold">Our Mission</h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          We aim to provide a comprehensive, real-time overview of how nations and organizations are
-          preparing for the quantum threat. By aggregating data on policy, regulation, and technical
-          migration, we help the community stay informed.
+          PQC Today brings together 15 learning modules, hands-on cryptographic labs, a risk
+          assessment wizard, migration planning tools, and global compliance tracking &mdash; tuned
+          to your role and organization.
         </p>
       </motion.div>
 
