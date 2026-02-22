@@ -21,6 +21,7 @@ export type QuizCategory =
   | 'stateful-signatures'
   | 'email-signing'
   | 'key-management'
+  | 'entropy-randomness'
 
 export interface QuizOption {
   id: string

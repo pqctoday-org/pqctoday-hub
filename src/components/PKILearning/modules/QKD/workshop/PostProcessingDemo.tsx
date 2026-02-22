@@ -42,7 +42,8 @@ export const PostProcessingDemo: React.FC = () => {
 
   // Step 1: Generate a sifted key from BB84
   const handleGenerateKey = useCallback(() => {
-    const result = runFullProtocol(64, false) // 64 qubits, no Eve
+    // 64 qubits, no Eve, 100% intercept (ignored), 5% channel noise
+    const result = runFullProtocol(64, false, 1.0, 0.05)
     setBB84State(result)
     const key = getFinalKey(result)
     setFinalKey(key)
@@ -234,9 +235,9 @@ export const PostProcessingDemo: React.FC = () => {
               Error Correction (Simplified Cascade)
             </h3>
             <p className="text-xs text-muted-foreground">
-              In real QKD, Cascade or LDPC codes correct bit errors introduced by channel noise.
-              This demo shows parity-check blocks — each block of 4 bits is checked for odd parity,
-              and errors are located via binary search.
+              In real QKD, Cascade or LDPC codes correct bit errors introduced by natural channel
+              noise (simulated here at 5%). This demo shows parity-check blocks — each block of 4
+              bits is checked for odd parity, and errors are located via binary search.
             </p>
             <div className="bg-background rounded p-3 border border-border">
               <div className="text-xs text-muted-foreground mb-2">Parity Check Blocks</div>
@@ -271,11 +272,14 @@ export const PostProcessingDemo: React.FC = () => {
         {/* Step 4: Privacy Amplification */}
         {currentStep === 3 && (
           <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-3">
-            <h3 className="text-sm font-bold text-foreground">Privacy Amplification (SHA-256)</h3>
+            <h3 className="text-sm font-bold text-foreground">
+              Privacy Amplification (Universal Hashing)
+            </h3>
             <p className="text-xs text-muted-foreground">
-              Privacy amplification uses a universal hash function to compress the corrected key,
-              removing any partial information Eve may have gained. The output is shorter but
-              provably secret.
+              Privacy amplification uses a universal hash function (such as Toeplitz matrix
+              multiplication) to compress the corrected key, mathematically removing any partial
+              information Eve may have gained. For this browser demo, we simulate this compression
+              step using SHA-256.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="bg-background rounded p-3 border border-border">
@@ -289,7 +293,7 @@ export const PostProcessingDemo: React.FC = () => {
               <div className="bg-background rounded p-3 border border-border flex items-center justify-center">
                 <div className="text-center">
                   <Hash size={24} className="text-primary mx-auto mb-1" />
-                  <div className="text-xs text-muted-foreground">SHA-256</div>
+                  <div className="text-xs text-muted-foreground">Compression (SHA-256 sim)</div>
                 </div>
               </div>
             </div>

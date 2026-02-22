@@ -106,6 +106,14 @@ export const DRBG_MECHANISMS = [
     strengths:
       'Provable security reduction to HMAC. Used for deterministic ECDSA. Clean extract-then-expand design.',
   },
+  {
+    name: 'XOF_DRBG',
+    basis: 'SHAKE128 / SHAKE256',
+    description:
+      'Added in SP 800-90A Rev 2. Uses extendable-output functions (XOFs) for state update and output.',
+    strengths:
+      'Ideal synergy with PQC algorithms (like ML-KEM and ML-DSA) that heavily utilize SHAKE. Highly parallelizable.',
+  },
 ] as const
 
 /** TRNG vs QRNG comparison data */

@@ -39,7 +39,15 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 
 **Data Sources**: Static JSON/CSV files in `src/data/`. Compliance data scraped at build time via `npm run scrape` from NIST, ANSSI, and Common Criteria. CSV files use versioned naming (e.g., `leaders_01192026.csv`). Dev server proxies requests to NIST, BSI, ANSSI, and Common Criteria APIs (configured in `vite.config.ts`).
 
-**CSV Date-Stamping Rule**: When modifying any CSV file in `src/data/`, ALWAYS create a new copy with today's date (`MMDDYYYY`) instead of editing the existing file in place. The loaders (e.g., `libraryData.ts`) use `import.meta.glob` to auto-discover the latest file by date. The previous version is kept for change tracking (`New`/`Updated` status). Example: to update `library_02212026.csv` on Feb 22, copy it to `library_02222026.csv` and make edits there. Never edit a CSV with a stale date stamp.
+**CSV Management** — MUST read and follow `docs/CSVmaintenance.md` before ANY CSV operation (record insert, update, delete, format change, or web source refresh). This is mandatory, not optional. Key rules:
+
+- **Never edit a CSV in place** — copy to a new file with today's date (`MMDDYYYY`). Loaders auto-discover the latest via `import.meta.glob`. Example: to update `library_02212026.csv` on Feb 22, copy it to `library_02222026.csv` and make edits there.
+- **Keep 2 versions** in `src/data/` for status tracking (`New`/`Updated` badges). Archive older files to `src/data/archive/`.
+- **ID fields are sacred** — never change a record's ID value (`referenceId`, `threatId`, `name`, `softwareName`, etc.). This breaks status tracking and cross-references.
+- **Cross-references** — before deleting any record, grep all CSVs for its ID (see `CSVmaintenance.md §5` for full dependency map). Key links: `compliance.libraryRefs → library.referenceId`, `compliance.timelineRefs → timeline events`, `library.dependencies → library.referenceId`.
+- **Format changes** (add/remove/rename columns) require updating the loader's TypeScript interface AND parse function. Follow the checklist in `CSVmaintenance.md §3.4`.
+- **Web source updates** — when refreshing data from external sources, follow the 6-step workflow in `CSVmaintenance.md §8.2`: verify source → identify changes → record context in commit → apply to all affected CSVs → update changelog → verify.
+- **Verify after changes**: `npm run build && npm run test`, then visually check the affected view + browser console.
 
 **WASM Requirements**: Dev and preview servers set `Cross-Origin-Embedder-Policy: require-corp` and `Cross-Origin-Opener-Policy: same-origin` headers for SharedArrayBuffer support. The `predev` and `build` scripts copy liboqs WASM dist into `public/dist`.
 

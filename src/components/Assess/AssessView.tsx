@@ -11,6 +11,13 @@ import { metadata } from '../../data/industryAssessConfig'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useModuleStore } from '../../store/useModuleStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
+import {
+  AVAILABLE_INDUSTRIES,
+  AVAILABLE_ALGORITHMS,
+  AVAILABLE_COMPLIANCE,
+  AVAILABLE_USE_CASES,
+  AVAILABLE_INFRASTRUCTURE,
+} from '../../hooks/assessmentData'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
 import type { AssessmentInput } from '../../hooks/assessmentTypes'
@@ -29,6 +36,13 @@ const VALID_PRESSURE = new Set([
   'no-deadline',
   'unknown',
 ])
+// Allowlists built from canonical data sources — used to validate URL-hydrated state
+const VALID_INDUSTRIES = new Set(AVAILABLE_INDUSTRIES)
+const VALID_ALGORITHMS = new Set(AVAILABLE_ALGORITHMS)
+const VALID_COMPLIANCE = new Set(AVAILABLE_COMPLIANCE)
+const VALID_USE_CASES = new Set(AVAILABLE_USE_CASES)
+const VALID_INFRA = new Set(AVAILABLE_INFRASTRUCTURE)
+const VALID_COUNTRIES = new Set(Object.values(REGION_COUNTRIES_MAP).flat())
 
 const STEP_LABELS = [
   'Industry',
@@ -126,18 +140,19 @@ export const AssessView: React.FC = () => {
     hydratedRef.current = true
 
     const store = useAssessmentStore.getState()
-    store.setIndustry(industry)
+    if (VALID_INDUSTRIES.has(industry)) store.setIndustry(industry)
 
     const countryParam = searchParams.get('cy')
     if (countryParam) {
-      store.setCountry(decodeURIComponent(countryParam))
+      const decoded = decodeURIComponent(countryParam)
+      if (VALID_COUNTRIES.has(decoded)) store.setCountry(decoded)
     }
 
     const crypto = searchParams.get('c')
     if (crypto) {
       crypto
         .split(',')
-        .filter(Boolean)
+        .filter((a) => VALID_ALGORITHMS.has(a))
         .forEach((a) => {
           if (!store.currentCrypto.includes(a)) store.toggleCrypto(a)
         })
@@ -158,7 +173,7 @@ export const AssessView: React.FC = () => {
     if (frameworks) {
       frameworks
         .split(',')
-        .filter(Boolean)
+        .filter((f) => VALID_COMPLIANCE.has(f))
         .forEach((f) => {
           if (!store.complianceRequirements.includes(f)) store.toggleCompliance(f)
         })
@@ -174,7 +189,7 @@ export const AssessView: React.FC = () => {
     if (useCases) {
       useCases
         .split(',')
-        .filter(Boolean)
+        .filter((uc) => VALID_USE_CASES.has(uc))
         .forEach((uc) => {
           if (!store.cryptoUseCases.includes(uc)) store.toggleCryptoUseCase(uc)
         })
@@ -210,7 +225,7 @@ export const AssessView: React.FC = () => {
     if (infra) {
       infra
         .split(',')
-        .filter(Boolean)
+        .filter((item) => VALID_INFRA.has(item))
         .forEach((item) => {
           if (!store.infrastructure.includes(item)) store.toggleInfrastructure(item)
         })

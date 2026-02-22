@@ -239,6 +239,38 @@ export const QKD_DEPLOYMENTS: QKDDeployment[] = [
     source: 'https://www.energy.gov/science/doe-explainsquantum-networks',
     highlights: ['National lab infrastructure', 'Quantum repeater research', 'Multi-site testbed'],
   },
+  {
+    id: 'us-aws-cqn',
+    name: 'AWS Center for Quantum Networking (CQN)',
+    country: 'United States',
+    region: 'Americas',
+    operator: 'AWS',
+    operatorType: 'Research',
+    technology: 'Fiber',
+    status: 'Planned',
+    yearStarted: 2022,
+    description:
+      'AWS research initiative focusing on quantum memory, repeaters, and scalable quantum networking technologies to eventually construct a global quantum internet.',
+    source:
+      'https://aws.amazon.com/blogs/quantum-computing/announcing-the-aws-center-for-quantum-networking/',
+    highlights: ['Commercial tech research', 'Quantum repeater focus', 'Cloud scale'],
+  },
+  {
+    id: 'us-cqe',
+    name: 'Chicago Quantum Exchange (CQE) Network',
+    country: 'United States',
+    region: 'Americas',
+    operator: 'CQE / UChicago / Argonne / Toshiba',
+    operatorType: 'Research',
+    technology: 'Fiber',
+    status: 'Operational',
+    yearStarted: 2022,
+    distance: '111 km (Chicago area)',
+    description:
+      'Major terrestrial quantum network in the US connecting UChicago, Argonne National Laboratory, and other partners. Demonstrated multi-node quantum entanglement distribution.',
+    source: 'https://chicagoquantum.org/',
+    highlights: ['111 km entanglement network', 'Multi-institution', 'National lab integration'],
+  },
 ]
 
 /** All unique regions in the deployment dataset */

@@ -1,24 +1,37 @@
 import * as path from 'path'
 import * as fs from 'fs'
+import * as vm from 'vm'
 
 // Absolute path to the WASM directory in the project
 const WASM_DIR = path.resolve(__dirname, '../../../../../../../public/wasm')
 
 const opensslJsPath = path.join(WASM_DIR, 'openssl.js')
 
-// Helper to load legacy script
+// Helper to load legacy WASM script in a sandboxed vm context.
+// Uses vm.runInContext instead of new Function() to avoid unsafe dynamic code execution.
 const loadScript = () => {
   // eslint-disable-next-line security/detect-non-literal-fs-filename
   const code = fs.readFileSync(opensslJsPath, 'utf8')
-  // We wrap it in a function that returns createOpenSSLModule
-  const factory = new Function(
-    'require',
-    'process',
-    '__dirname',
-    'global',
-    code + ';\nreturn createOpenSSLModule;'
-  )
-  return factory(require, process, WASM_DIR, global) // Pass global for generic
+  const moduleShim: { exports: Record<string, unknown> } = { exports: {} }
+  const context = vm.createContext({
+    require,
+    process,
+    __dirname: WASM_DIR,
+    global,
+    module: moduleShim,
+    exports: moduleShim.exports,
+    createOpenSSLModule: undefined as unknown,
+  })
+  vm.runInContext(code, context)
+  // openssl.js exposes createOpenSSLModule either as a global or via module.exports
+  const factory =
+    (context.createOpenSSLModule as unknown) ??
+    moduleShim.exports['default'] ??
+    moduleShim.exports['createOpenSSLModule']
+  if (typeof factory !== 'function') {
+    throw new Error('createOpenSSLModule not found after loading openssl.js via vm')
+  }
+  return factory
 }
 
 const createOpenSSLModule = loadScript()

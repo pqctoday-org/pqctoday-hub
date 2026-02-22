@@ -77,6 +77,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     recommendedPath: [
       'pqc-101',
       'quantum-threats',
+      'entropy-randomness',
       'tls-basics',
       'vpn-ssh-pqc',
       'hybrid-crypto',
@@ -88,11 +89,12 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     pathItems: [
       { type: 'module', moduleId: 'pqc-101' },
       { type: 'module', moduleId: 'quantum-threats' },
+      { type: 'module', moduleId: 'entropy-randomness' },
       {
         type: 'checkpoint',
         id: 'dev-cp-1',
         label: 'Foundations & Threats',
-        categories: ['pqc-fundamentals', 'quantum-threats'],
+        categories: ['pqc-fundamentals', 'quantum-threats', 'entropy-randomness'],
       },
       { type: 'module', moduleId: 'tls-basics' },
       { type: 'module', moduleId: 'vpn-ssh-pqc' },
@@ -120,12 +122,13 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 495,
+    estimatedMinutes: 555,
     quizDescription:
       'Test your knowledge on quantum threats, TLS, VPN/SSH, PKI, hybrid cryptography, crypto agility, and protocol integration.',
     quizCategories: [
       'pqc-fundamentals',
       'quantum-threats',
+      'entropy-randomness',
       'tls-basics',
       'protocol-integration',
       'hybrid-crypto',
@@ -146,6 +149,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     recommendedPath: [
       'pqc-101',
       'quantum-threats',
+      'entropy-randomness',
       'crypto-agility',
       'hybrid-crypto',
       'qkd',
@@ -158,11 +162,17 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     pathItems: [
       { type: 'module', moduleId: 'pqc-101' },
       { type: 'module', moduleId: 'quantum-threats' },
+      { type: 'module', moduleId: 'entropy-randomness' },
       {
         type: 'checkpoint',
         id: 'arch-cp-1',
         label: 'Foundations',
-        categories: ['pqc-fundamentals', 'quantum-threats', 'algorithm-families'],
+        categories: [
+          'pqc-fundamentals',
+          'quantum-threats',
+          'algorithm-families',
+          'entropy-randomness',
+        ],
       },
       { type: 'module', moduleId: 'crypto-agility' },
       { type: 'module', moduleId: 'hybrid-crypto' },
@@ -185,10 +195,11 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 555,
+    estimatedMinutes: 615,
     quizDescription:
       'Test your knowledge on crypto agility, TLS, key management, stateful signatures, and architecture patterns.',
     quizCategories: [
+      'entropy-randomness',
       'crypto-agility',
       'tls-basics',
       'key-management',
@@ -209,6 +220,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     recommendedPath: [
       'pqc-101',
       'quantum-threats',
+      'entropy-randomness',
       'hybrid-crypto',
       'crypto-agility',
       'qkd',
@@ -226,11 +238,12 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     pathItems: [
       { type: 'module', moduleId: 'pqc-101' },
       { type: 'module', moduleId: 'quantum-threats' },
+      { type: 'module', moduleId: 'entropy-randomness' },
       {
         type: 'checkpoint',
         id: 'res-cp-1',
         label: 'Foundations',
-        categories: ['pqc-fundamentals', 'quantum-threats'],
+        categories: ['pqc-fundamentals', 'quantum-threats', 'entropy-randomness'],
       },
       { type: 'module', moduleId: 'hybrid-crypto' },
       { type: 'module', moduleId: 'crypto-agility' },
@@ -270,9 +283,9 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 870,
+    estimatedMinutes: 930,
     quizDescription:
-      'Full assessment across all 16 PQC categories — algorithms, protocols, standards, compliance, and applications.',
+      'Full assessment across all PQC categories — algorithms, protocols, standards, compliance, and applications.',
     quizCategories: [], // empty = all categories shown (full coverage for researcher)
   },
 }

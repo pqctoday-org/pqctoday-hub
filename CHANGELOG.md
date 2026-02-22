@@ -4,6 +4,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.24.0] - 2026-02-22
+
+### Added
+
+- **Entropy & Randomness quiz category** (`/learn/quiz`): New `entropy-randomness` category with Dice icon covering SP 800-90 A/B/C, DRBG mechanisms, entropy sources, TRNG vs QRNG, and min-entropy estimation. Integrated into Developer, Architect, and Researcher learning personas — quiz paths and checkpoint categories updated; estimated path minutes increased accordingly.
+
+- **BB84 simulator — configurable Eve interception rate** (`/learn`): Eve eavesdropping is no longer all-or-nothing. A slider (10%–100%) controls the fraction of qubits Eve intercepts, enabling partial-eavesdropping experiments that show how QBER scales with interception probability. `BB84Service` gains `eveInterceptionRate` and `channelNoise` parameters; `runFullProtocol` and `createInitialState` updated accordingly.
+
+- **QKD deployment explorer — 2 new US deployments** (`/learn`): Added AWS Center for Quantum Networking (CQN) — Amazon's research initiative focused on quantum memory, repeaters, and scalable networking toward a global quantum internet — and the Chicago Quantum Exchange (CQE) 111 km fiber network connecting UChicago, Argonne National Laboratory, and Toshiba, demonstrating multi-node entanglement distribution.
+
+- **Entropy & Randomness module — FIPS 203/204 seed requirements** (`/learn`): New callout section documents that ML-KEM (FIPS 203) requires exactly 32 bytes of full entropy for `d` and `z` seeds, ML-DSA (FIPS 204) requires 32 bytes for `ρ`, `ρ'`, and `K` seeds, and that per SP 800-131A Rev 3 the RBG security strength must match the target PQC security category (e.g., 256-bit RBG for ML-KEM-1024 Category 5). Also added LMS/XMSS stateful signature entropy failure note and XOF_DRBG (SHAKE-based, SP 800-90A Rev 2) to the DRBG mechanism comparison.
+
+- **Standards Library — 4 new records** (`/library`): RFC 9258 (TLS 1.3 external PSK importer for QKD key injection), NIST SP 800-108 Rev 1 (KDF using PRFs — counter, feedback, and double-pipeline modes; PKCS#11 `CKM_SP800_108_COUNTER_KDF`), NIST SP 800-56C Rev 2 (key derivation for key-establishment including hybrid QKD+PQC EtE), and PKCS#11 v3.0 OASIS Standard (`CKM_HKDF_DERIVE`, `CKM_SP800_108_COUNTER_KDF`, `CKM_HKDF_KEY_GEN`). All tagged with `qkd`, `key-management`, `hybrid-crypto`, or `tls-basics` cross-references.
+
+- **ScoreCard — scoring transparency modal** (`/`): An info button (ⓘ) on the Learning Journey ScoreCard opens a `ScoringModal` explaining the four weighted dimensions: Knowledge (40%), Breadth (30%), Practice (20%), and Time & Consistency (10%), with belt thresholds displayed for each rank.
+
+### Fixed
+
+- **Security — Assessment URL parameter injection** (`/assess`): URL-hydrated state (industry, country, algorithms, compliance frameworks, use cases, infrastructure) is now validated against allowlists derived from the canonical `assessmentData` constants and `REGION_COUNTRIES_MAP`. Arbitrary values injected via shared assessment URLs are silently discarded rather than written to the store.
+
+- **Security — XSS-safe global error overlay** (`src/main.tsx`): Replaced `innerHTML`-based error display with safe DOM construction (`textContent` / `createElement`). Handler is now gated behind `import.meta.env.DEV` so it is completely absent from production bundles.
+
+- **Security — OpenSSL worker eval() removal** (`/openssl`): The `fetch()+eval()` fallback path in the WASM script loader has been replaced with a hard fail and descriptive error message. The worker is a Classic Worker and must use `importScripts`; silent eval was a supply-chain risk and is now gone.
+
 ## [1.23.0] - 2026-02-22
 
 ### Added

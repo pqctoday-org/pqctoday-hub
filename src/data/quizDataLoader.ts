@@ -248,6 +248,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'Key lifecycle (NIST SP 800-57), HSM FIPS 140-3, PKCS#11 operations, and PQC key rotation planning.',
       icon: 'KeyRound',
     },
+    'entropy-randomness': {
+      label: 'Entropy & Randomness',
+      description:
+        'SP 800-90 A/B/C, DRBGs, entropy sources, TRNG vs QRNG, and min-entropy estimation.',
+      icon: 'Dice',
+    },
   }
 
 // Compute question counts dynamically from loaded data

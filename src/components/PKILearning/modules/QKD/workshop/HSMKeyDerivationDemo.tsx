@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback } from 'react'
 import { Play, ExternalLink, CheckCircle2, Lock, Key, Cpu, Zap } from 'lucide-react'
 
@@ -60,6 +61,7 @@ async function sp800108CounterKDF(
 interface DemoState {
   keyId: string
   qkdSecret: string
+  qkdResponseJson: string
   sessionId: string
   sessionKey: string
 }
@@ -75,7 +77,21 @@ export const HSMKeyDerivationDemo: React.FC = () => {
     await new Promise((r) => setTimeout(r, 600)) // simulate network latency
     const keyId = getRandomUUID()
     const qkdSecret = getRandomHex(32)
-    setState({ keyId, qkdSecret })
+    const hexArray = qkdSecret.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || []
+    const base64Key = btoa(String.fromCharCode(...hexArray))
+    const qkdResponseJson = JSON.stringify(
+      {
+        keys: [
+          {
+            key_ID: keyId,
+            key: base64Key,
+          },
+        ],
+      },
+      null,
+      2
+    )
+    setState({ keyId, qkdSecret, qkdResponseJson })
     setCurrentStep(1)
     setProcessing(false)
   }, [])
@@ -210,6 +226,14 @@ export const HSMKeyDerivationDemo: React.FC = () => {
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
             <Lock size={15} className="text-primary" /> Step 2: Import into HSM (PKCS#11)
           </h3>
+          <div className="bg-background rounded p-3 border border-border">
+            <div className="text-xs text-muted-foreground mb-2">
+              QKD Manager Response (ETSI GS QKD 014 JSON)
+            </div>
+            <pre className="text-xs font-mono text-primary overflow-x-auto">
+              {state.qkdResponseJson}
+            </pre>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-background rounded p-3 border border-border">
               <div className="text-xs text-muted-foreground mb-1">key_ID (UUID)</div>

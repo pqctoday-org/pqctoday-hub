@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback } from 'react'
 import { Play, ExternalLink, ShieldCheck, Wifi, Server, Terminal } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -10,14 +11,21 @@ function getRandomHex(bytes: number): string {
     .join('')
 }
 
+function getQkdJson(qkdSecret: string): string {
+  const hexArray = qkdSecret.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || []
+  const base64Key = btoa(String.fromCharCode(...hexArray))
+  const keyId = crypto.randomUUID ? crypto.randomUUID() : getRandomHex(16)
+  return JSON.stringify({ keys: [{ key_ID: keyId, key: base64Key }] }, null, 2)
+}
+
 async function hkdfDerive(ikm: Uint8Array, info: string, length: number): Promise<string> {
   const keyMaterial = await crypto.subtle.importKey('raw', ikm, 'HKDF', false, ['deriveBits'])
   const bits = await crypto.subtle.deriveBits(
     {
       name: 'HKDF',
       hash: 'SHA-256',
-      salt: new Uint8Array(32),
-      info: new TextEncoder().encode(info),
+      salt: new Uint8Array(32).buffer,
+      info: new TextEncoder().encode(info).buffer,
     },
     keyMaterial,
     length * 8
@@ -29,6 +37,7 @@ async function hkdfDerive(ikm: Uint8Array, info: string, length: number): Promis
 
 interface SimResult {
   qkdSecret: string
+  qkdResponseJson: string
   derivedField: string
   label: string
 }
@@ -45,7 +54,12 @@ const TLSPanel: React.FC = () => {
     const pskBytes = new Uint8Array(32)
     for (let i = 0; i < 32; i++) pskBytes[i] = parseInt(qkdSecret.slice(i * 2, i * 2 + 2), 16)
     // RFC 9258: the imported PSK is used directly — no further derivation step shown here
-    setResult({ qkdSecret, derivedField: qkdSecret, label: 'TLS 1.3 external_psk (RFC 9258)' })
+    setResult({
+      qkdSecret,
+      qkdResponseJson: getQkdJson(qkdSecret),
+      derivedField: qkdSecret,
+      label: 'TLS 1.3 external_psk (RFC 9258)',
+    })
     setRunning(false)
   }, [])
 
@@ -125,8 +139,12 @@ const TLSPanel: React.FC = () => {
             Simulated — for educational purposes only
           </div>
           <div className="bg-background rounded p-3 border border-border">
-            <div className="text-xs text-muted-foreground mb-1">QKD Secret (from ETSI QKD 014)</div>
-            <code className="text-xs font-mono text-primary break-all">{result.qkdSecret}</code>
+            <div className="text-xs text-muted-foreground mb-1">
+              QKD Manager Response (ETSI GS QKD 014 JSON)
+            </div>
+            <pre className="text-xs font-mono text-primary overflow-x-auto">
+              {result.qkdResponseJson}
+            </pre>
           </div>
           <div className="bg-background rounded p-3 border border-border">
             <div className="text-xs text-muted-foreground mb-1">{result.label}</div>
@@ -147,6 +165,7 @@ const TLSPanel: React.FC = () => {
 const IKEv2Panel: React.FC = () => {
   const [result, setResult] = useState<{
     qkdSecret: string
+    qkdResponseJson: string
     ni: string
     nr: string
     skeyseed: string
@@ -168,7 +187,7 @@ const IKEv2Panel: React.FC = () => {
       combined[64 + i] = parseInt(nr.slice(i * 2, i * 2 + 2), 16)
     }
     const skeyseed = await hkdfDerive(combined, 'SKEYSEED', 32)
-    setResult({ qkdSecret: qkdHex, ni, nr, skeyseed })
+    setResult({ qkdSecret: qkdHex, qkdResponseJson: getQkdJson(qkdHex), ni, nr, skeyseed })
     setRunning(false)
   }, [])
 
@@ -241,8 +260,10 @@ const IKEv2Panel: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div className="bg-background rounded p-3 border border-border">
-              <div className="text-xs text-muted-foreground mb-1">QKD Secret</div>
-              <code className="text-xs font-mono text-primary break-all">{result.qkdSecret}</code>
+              <div className="text-xs text-muted-foreground mb-1">QKD Manager Response</div>
+              <pre className="text-xs font-mono text-primary overflow-x-auto">
+                {result.qkdResponseJson}
+              </pre>
             </div>
             <div className="bg-background rounded p-3 border border-border">
               <div className="text-xs text-muted-foreground mb-1">Ni (initiator nonce)</div>
@@ -268,7 +289,12 @@ const IKEv2Panel: React.FC = () => {
 // ─── MACsec Panel ────────────────────────────────────────────────────────────
 
 const MACsecPanel: React.FC = () => {
-  const [result, setResult] = useState<{ qkdSecret: string; sak: string; sci: string } | null>(null)
+  const [result, setResult] = useState<{
+    qkdSecret: string
+    qkdResponseJson: string
+    sak: string
+    sci: string
+  } | null>(null)
   const [running, setRunning] = useState(false)
 
   const run = useCallback(async () => {
@@ -279,7 +305,7 @@ const MACsecPanel: React.FC = () => {
     for (let i = 0; i < 32; i++) qkdBytes[i] = parseInt(qkdHex.slice(i * 2, i * 2 + 2), 16)
     // SAK derived: HKDF(IKM=qkd_secret, info="MACsec SAK v1 " + SCI)
     const sak = await hkdfDerive(qkdBytes, `MACsec SAK v1 ${sci}`, 32)
-    setResult({ qkdSecret: qkdHex, sak, sci })
+    setResult({ qkdSecret: qkdHex, qkdResponseJson: getQkdJson(qkdHex), sak, sci })
     setRunning(false)
   }, [])
 
@@ -359,8 +385,10 @@ const MACsecPanel: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="bg-background rounded p-3 border border-border">
-              <div className="text-xs text-muted-foreground mb-1">QKD Secret (32 bytes)</div>
-              <code className="text-xs font-mono text-primary break-all">{result.qkdSecret}</code>
+              <div className="text-xs text-muted-foreground mb-1">QKD Manager Response</div>
+              <pre className="text-xs font-mono text-primary overflow-x-auto">
+                {result.qkdResponseJson}
+              </pre>
             </div>
             <div className="bg-background rounded p-3 border border-border">
               <div className="text-xs text-muted-foreground mb-1">
@@ -389,6 +417,7 @@ const MACsecPanel: React.FC = () => {
 const SSHPanel: React.FC = () => {
   const [result, setResult] = useState<{
     qkdSecret: string
+    qkdResponseJson: string
     clientCookie: string
     serverCookie: string
     sessionId: string
@@ -412,7 +441,13 @@ const SSHPanel: React.FC = () => {
       combined[48 + i] = parseInt(serverCookie.slice(i * 2, i * 2 + 2), 16)
 
     const sessionId = await hkdfDerive(combined, 'SSH session-id', 32)
-    setResult({ qkdSecret: qkdHex, clientCookie, serverCookie, sessionId })
+    setResult({
+      qkdSecret: qkdHex,
+      qkdResponseJson: getQkdJson(qkdHex),
+      clientCookie,
+      serverCookie,
+      sessionId,
+    })
     setRunning(false)
   }, [])
 
@@ -491,8 +526,10 @@ const SSHPanel: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div className="bg-background rounded p-3 border border-border">
-              <div className="text-xs text-muted-foreground mb-1">QKD Secret (K replacement)</div>
-              <code className="text-xs font-mono text-primary break-all">{result.qkdSecret}</code>
+              <div className="text-xs text-muted-foreground mb-1">QKD Manager Response</div>
+              <pre className="text-xs font-mono text-primary overflow-x-auto">
+                {result.qkdResponseJson}
+              </pre>
             </div>
             <div className="bg-background rounded p-3 border border-border">
               <div className="text-xs text-muted-foreground mb-1">Client Cookie</div>

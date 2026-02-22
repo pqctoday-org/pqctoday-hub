@@ -35,10 +35,14 @@ export interface BB84SimulationState {
   siftedKeyBob: BitValue[]
   /** Eve eavesdropping enabled */
   evePresent: boolean
+  /** Probability (0-1) that Eve intercepts a given qubit */
+  eveInterceptionRate: number
   /** Which qubits Eve intercepted */
   eveInterceptions: boolean[]
   /** Eve's measurement results */
   eveMeasurements: (BitValue | null)[]
+  /** Probability (0-1) of random bit flip during transmission/measurement */
+  channelNoise: number
   /** Calculated QBER from sample */
   qber: number | null
   /** Sample size used for QBER estimation */
@@ -115,7 +119,12 @@ function measureQubit(qubit: Qubit, measureBasis: Basis): BitValue {
   return randomBit()
 }
 
-export function createInitialState(numQubits: number, evePresent: boolean): BB84SimulationState {
+export function createInitialState(
+  numQubits: number,
+  evePresent: boolean,
+  eveInterceptionRate: number = 1.0,
+  channelNoise: number = 0.0
+): BB84SimulationState {
   return {
     phase: 'idle',
     numQubits,
@@ -126,8 +135,10 @@ export function createInitialState(numQubits: number, evePresent: boolean): BB84
     siftedKeyAlice: [],
     siftedKeyBob: [],
     evePresent,
+    eveInterceptionRate,
     eveInterceptions: [],
     eveMeasurements: [],
+    channelNoise,
     qber: null,
     sampleSize: null,
     isSecure: null,
@@ -153,9 +164,9 @@ export function prepareQubits(state: BB84SimulationState): BB84SimulationState {
 export function transmitQubits(state: BB84SimulationState): BB84SimulationState {
   const eveInterceptions: boolean[] = []
   const eveMeasurements: (BitValue | null)[] = []
-  // If Eve is present, she intercepts every qubit
+  // Eve intercepts qubits based on interception rate
   const transmittedQubits = state.aliceQubits.map((qubit) => {
-    if (state.evePresent) {
+    if (state.evePresent && Math.random() < state.eveInterceptionRate) {
       eveInterceptions.push(true)
       // Eve measures in random basis
       const eveBasis = randomBasis()
@@ -195,7 +206,12 @@ export function measureQubits(state: BB84SimulationState): BB84SimulationState {
   for (let i = 0; i < state.numQubits; i++) {
     const bobBasis = randomBasis()
     bobBases.push(bobBasis)
-    bobMeasurements.push(measureQubit(transmitted[i], bobBasis))
+    let result = measureQubit(transmitted[i], bobBasis)
+    // Apply channel noise (random flip)
+    if (Math.random() < state.channelNoise) {
+      result = result === 0 ? 1 : 0
+    }
+    bobMeasurements.push(result)
   }
 
   return { ...state, phase: 'measure', bobBases, bobMeasurements }
@@ -274,8 +290,13 @@ export function advancePhase(state: BB84SimulationState): BB84SimulationState {
 }
 
 /** Run the full protocol in one go (useful for testing) */
-export function runFullProtocol(numQubits: number, evePresent: boolean): BB84SimulationState {
-  let state = createInitialState(numQubits, evePresent)
+export function runFullProtocol(
+  numQubits: number,
+  evePresent: boolean,
+  eveInterceptionRate: number = 1.0,
+  channelNoise: number = 0.0
+): BB84SimulationState {
+  let state = createInitialState(numQubits, evePresent, eveInterceptionRate, channelNoise)
   while (state.phase !== 'complete') {
     state = advancePhase(state)
   }

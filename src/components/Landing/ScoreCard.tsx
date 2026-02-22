@@ -12,8 +12,10 @@ import {
   Clock,
   Brain,
   GraduationCap,
+  Info,
 } from 'lucide-react'
 import { Button } from '../ui/button'
+import { ScoringModal } from './ScoringModal'
 import {
   useAwarenessScore,
   BELT_RANKS,
@@ -214,6 +216,7 @@ function BeltLadder({ currentBelt }: { currentBelt: BeltRank }) {
 export function ScoreCard() {
   const result = useAwarenessScore()
   const [isOpen, setIsOpen] = useState(result.hasStarted)
+  const [showScoring, setShowScoring] = useState(false)
 
   const {
     hasStarted,
@@ -306,6 +309,13 @@ export function ScoreCard() {
               <span className="text-sm font-semibold text-foreground" id="scorecard-heading">
                 {belt.name}
               </span>
+              <button
+                onClick={() => setShowScoring(true)}
+                className="p-0.5 rounded text-muted-foreground hover:text-primary transition-colors"
+                aria-label="How scoring works"
+              >
+                <Info size={14} />
+              </button>
               <StreakBadge streak={streak.current} />
             </div>
             <p className="text-xs text-muted-foreground mt-0.5 italic">{belt.tagline}</p>
@@ -418,6 +428,8 @@ export function ScoreCard() {
           )}
         </AnimatePresence>
       </div>
+
+      <ScoringModal isOpen={showScoring} onClose={() => setShowScoring(false)} />
     </motion.section>
   )
 }

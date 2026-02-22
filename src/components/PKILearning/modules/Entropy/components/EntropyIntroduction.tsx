@@ -44,6 +44,11 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
               <li>Debian OpenSSL bug (2008): PID-only seeding produced ~32,768 possible keys</li>
               <li>Predictable seeds lead to key recovery attacks</li>
               <li>Hardware failures (stuck-at) can produce constant output</li>
+              <li>
+                <span className="font-medium text-foreground">Stateful Signatures (LMS/XMSS):</span>{' '}
+                Catastrophic tree security failure during key generation if the RNG repeats a seed
+                or lacks entropy.
+              </li>
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -140,9 +145,9 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           <Cog size={20} /> DRBG Mechanisms (SP 800-90A)
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          SP 800-90A Rev. 1 (2015) defines three approved DRBG mechanisms. All use symmetric
-          primitives and are quantum-safe — Grover&apos;s algorithm at most halves the effective key
-          length, which is addressed by using 256-bit keys.
+          SP 800-90A Rev. 1 (2015) defines approved DRBG mechanisms using symmetric primitives. All
+          are quantum-safe — Grover's algorithm at most halves the effective key length, which is
+          addressed by using 256-bit keys to achieve PQC Security Categories 3 and 5.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
           {DRBG_MECHANISMS.map((mech) => (
@@ -159,8 +164,9 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           ))}
         </div>
         <p className="text-xs text-muted-foreground">
-          <span className="font-medium text-foreground/70">Note:</span> Rev. 2 is in draft, adding
-          XOF_DRBG (SHAKE-based) and removing deprecated TDES and SHA-1.
+          <span className="font-medium text-foreground/70">Note:</span> SP 800-90A Rev. 2 removes
+          deprecated TDES and SHA-1, and adds <strong>XOF_DRBG (SHAKE-based)</strong>, which
+          synergizes perfectly with the SHAKE-heavy PQC algorithms (ML-KEM, ML-DSA).
         </p>
       </section>
 
@@ -355,6 +361,36 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
               <span className="font-medium text-foreground/70">Conditioning:</span> HMAC or hash
               conditioning distributes entropy uniformly across the output, removing any bias from
               individual sources
+            </li>
+          </ul>
+        </div>
+
+        <div className="bg-primary/5 rounded-lg p-4 border border-primary/20 mb-4">
+          <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
+            <Atom size={16} className="text-primary" /> FIPS 203 & 204 Seed Requirements
+          </h3>
+          <ul className="text-xs text-foreground/80 space-y-2">
+            <li>
+              <span className="font-medium text-foreground">ML-KEM (FIPS 203):</span> Explicitly
+              requires exactly
+              <strong> 32 bytes of full entropy</strong> directly from the RBG to generate the{' '}
+              <code className="text-primary font-mono">d</code> and{' '}
+              <code className="text-primary font-mono">z</code> seeds during encapsulation and key
+              generation.
+            </li>
+            <li>
+              <span className="font-medium text-foreground">ML-DSA (FIPS 204):</span> Requires
+              exactly
+              <strong> 32 bytes of full entropy</strong> to derive the{' '}
+              <code className="text-primary font-mono">ρ</code> (rho),{' '}
+              <code className="text-primary font-mono">ρ'</code> (rhoprime), and{' '}
+              <code className="text-primary font-mono">K</code> seeds.
+            </li>
+            <li>
+              <span className="font-medium text-foreground">Strength Match:</span> Per SP 800-131A
+              Rev 3, to achieve PQC Security Category 5 (equivalent to AES-256), your RBG must
+              operate at a 256-bit security strength. Do not feed a 128-bit DRBG into an ML-KEM-1024
+              keypair generation.
             </li>
           </ul>
         </div>

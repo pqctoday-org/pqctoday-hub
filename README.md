@@ -51,10 +51,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
   - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attacks
-  - **PQC Quiz**: Interactive knowledge assessment with 162 questions across 8 categories
+  - **PQC Quiz**: Interactive knowledge assessment with 162+ questions across 9 categories
     - **3 Modes**: Quick (20 questions, guaranteed category coverage), Full Assessment (80 questions randomly sampled), Custom (by topic)
     - **CSV-Driven**: Questions loaded from date-stamped CSV (`pqcquiz_MMDDYYYY.csv`) via `import.meta.glob`, with smart sampling guaranteeing ≥2 per category (Quick) / ≥10 per category (Full)
-    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations
+    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, **Entropy & Randomness** (SP 800-90 A/B/C, DRBGs, TRNG vs QRNG, min-entropy estimation)
     - **Score Tracking**: Per-category highest scores persisted across sessions
   - **Quantum Threats**:
     - Analyzes security level degradation and algorithm vulnerability matrices
@@ -82,12 +82,18 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Key Management & HSM**:
     - Explores the 7 stages of the key lifecycle and PQC impact
     - Simulates PKCS#11 HSM operations and key rotation planning for enterprises
+  - **Entropy & Randomness** (SP 800-90 A/B/C):
+    - DRBG mechanism comparison: CTR_DRBG, Hash_DRBG, HMAC_DRBG, and XOF_DRBG (SHAKE-based, SP 800-90A Rev 2)
+    - TRNG vs QRNG comparison; min-entropy estimation; entropy source health monitoring
+    - FIPS 203 & 204 seed requirements (32-byte entropy for ML-KEM/ML-DSA; security strength matching per SP 800-131A)
+    - LMS/XMSS stateful signature entropy failure analysis
   - **Quantum Key Distribution (QKD)**:
-    - Interactive BB84 protocol simulator with configurable qubit count and toggleable Eve
-      eavesdropper for real-time detection demos
+    - Interactive BB84 protocol simulator with configurable qubit count, toggleable Eve
+      eavesdropper, and **adjustable interception rate** (10%–100%) for partial-eavesdropping experiments
     - Post-processing pipeline visualization (error correction, privacy amplification, hybrid
       key derivation via HKDF)
-    - Global QKD deployment explorer with real-world adoption data and infrastructure context
+    - Global QKD deployment explorer with real-world adoption data including AWS Center for Quantum
+      Networking (CQN) and Chicago Quantum Exchange (CQE) 111 km fiber network
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
   - **Reference Catalog**: 193 verified PQC-relevant product entries across 7 infrastructure layers
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
@@ -123,7 +129,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **HNDL warning banner**: quick assessments with high or critical sensitivity display a banner noting that
     Harvest-Now-Decrypt-Later risk was not quantified and recommending a comprehensive assessment
   - Executive summary generated for both quick and comprehensive assessments; category breakdowns and
-    URL-shareable assessments for comprehensive mode
+    URL-shareable assessments for comprehensive mode; URL-hydrated parameters validated against canonical
+    allowlists to prevent injection of arbitrary values via shared links
   - Enhanced CSV export with effort ratings and rationale
   - Industry-aware wizard: compliance, crypto, use-case, and infrastructure steps prioritize industry-relevant options
   - Country compliance filtering: frameworks filtered by selected jurisdiction

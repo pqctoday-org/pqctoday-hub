@@ -6,27 +6,46 @@ import { initGA } from './utils/analytics'
 // Initialize Google Analytics
 initGA()
 
-// Global error handler
-window.onerror = function (message, source, lineno, colno, error) {
-  const errorDiv = document.getElementById('global-error-display') || document.createElement('div')
-  errorDiv.id = 'global-error-display'
-  errorDiv.style.position = 'fixed'
-  errorDiv.style.top = '0'
-  errorDiv.style.left = '0'
-  errorDiv.style.width = '100%'
-  errorDiv.style.backgroundColor = 'red'
-  errorDiv.style.color = 'white'
-  errorDiv.style.padding = '20px'
-  errorDiv.style.zIndex = '9999'
-  errorDiv.innerHTML += `
-    <div style="border-bottom: 1px solid white; margin-bottom: 10px; padding-bottom: 10px;">
-      <h3>Global Error Caught</h3>
-      <p>Message: ${message}</p>
-      <p>Source: ${source}:${lineno}:${colno}</p>
-      <pre>${error?.stack || 'No stack trace'}</pre>
-    </div>
-  `
-  if (!document.body.contains(errorDiv)) document.body.appendChild(errorDiv)
+// Global error handler — dev only, uses safe DOM construction (no innerHTML) to prevent XSS
+if (import.meta.env.DEV) {
+  window.onerror = function (message, source, lineno, colno, error) {
+    const errorDiv =
+      document.getElementById('global-error-display') || document.createElement('div')
+    errorDiv.id = 'global-error-display'
+    errorDiv.style.position = 'fixed'
+    errorDiv.style.top = '0'
+    errorDiv.style.left = '0'
+    errorDiv.style.width = '100%'
+    errorDiv.style.backgroundColor = 'red'
+    errorDiv.style.color = 'white'
+    errorDiv.style.padding = '20px'
+    errorDiv.style.zIndex = '9999'
+
+    const entry = document.createElement('div')
+    entry.style.borderBottom = '1px solid white'
+    entry.style.marginBottom = '10px'
+    entry.style.paddingBottom = '10px'
+
+    const heading = document.createElement('h3')
+    heading.textContent = 'Global Error Caught'
+
+    const msgP = document.createElement('p')
+    msgP.textContent = `Message: ${String(message)}`
+
+    const srcP = document.createElement('p')
+    srcP.textContent = `Source: ${String(source)}:${lineno}:${colno}`
+
+    const stackPre = document.createElement('pre')
+    stackPre.textContent = error?.stack ?? 'No stack trace'
+
+    entry.appendChild(heading)
+    entry.appendChild(msgP)
+    entry.appendChild(srcP)
+    entry.appendChild(stackPre)
+    errorDiv.appendChild(entry)
+
+    if (!document.body.contains(errorDiv)) document.body.appendChild(errorDiv)
+  }
 }
 
 const rootElement = document.getElementById('root')

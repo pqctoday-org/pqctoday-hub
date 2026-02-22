@@ -77,25 +77,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">QKD Learning Module</strong> &mdash; BB84
-                    protocol simulator with Eve eavesdropping detection, post-processing demo, and
-                    global deployment explorer
+                    <strong className="text-foreground">Entropy & Randomness quiz category</strong>{' '}
+                    &mdash; SP 800-90 A/B/C, DRBGs, TRNG vs QRNG, FIPS 203/204 seed requirements
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Compliance Landscape</strong> &mdash;
-                    interactive 2024&ndash;2036 deadline timeline with PQC requirement flags and
-                    persona-aware filtering
+                    <strong className="text-foreground">BB84 partial eavesdropping</strong> &mdash;
+                    configurable Eve interception rate slider to explore QBER vs intercept
+                    probability
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Assessment wizard modularized</strong>{' '}
-                    &mdash; 13 steps split into dedicated components with improved multi-select and
-                    &ldquo;Unknown&rdquo; escape hatches
+                    <strong className="text-foreground">3 security fixes</strong> &mdash; URL
+                    injection guard in Assess, XSS-safe error overlay, eval() removed from OpenSSL
+                    worker
                   </span>
                 </li>
               </ul>

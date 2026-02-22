@@ -133,12 +133,14 @@ var loadOpenSSLScript = async (
         }
       }
 
-      // Fallback: Fetch + Eval
+      // This worker is a Classic Worker (Script, not Module) — importScripts is required.
+      // Do not fall back to eval: if importScripts failed or is unavailable, fail fast.
       if (!loaded) {
-        const resp = await fetch(url)
-        if (!resp.ok) throw new Error(`Failed to fetch ${url}: ${resp.statusText}`)
-        const script = await resp.text()
-        ;(0, eval)(script)
+        throw new Error(
+          'OpenSSL WASM script could not be loaded via importScripts. ' +
+            'This worker must run as a Classic Worker (not a Module Worker). ' +
+            'Check the worker instantiation in OpenSSLService.ts.'
+        )
       }
 
       // Check for CommonJS export

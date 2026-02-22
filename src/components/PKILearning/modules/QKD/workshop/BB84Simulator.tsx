@@ -24,8 +24,9 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
 }) => {
   const [numQubits, setNumQubits] = useState<number>(initialNumQubits)
   const [eveEnabled, setEveEnabled] = useState(initialEveEnabled)
+  const [eveRate, setEveRate] = useState(1.0)
   const [state, setState] = useState<BB84SimulationState>(() =>
-    createInitialState(numQubits, eveEnabled)
+    createInitialState(numQubits, eveEnabled, eveRate)
   )
 
   const currentPhaseIndex = useMemo(() => {
@@ -41,22 +42,33 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
   }, [])
 
   const handleReset = useCallback(() => {
-    setState(createInitialState(numQubits, eveEnabled))
-  }, [numQubits, eveEnabled])
+    setState(createInitialState(numQubits, eveEnabled, eveRate))
+  }, [numQubits, eveEnabled, eveRate])
 
   const handleQubitChange = useCallback(
     (n: number) => {
       setNumQubits(n)
-      setState(createInitialState(n, eveEnabled))
+      setState(createInitialState(n, eveEnabled, eveRate))
     },
-    [eveEnabled]
+    [eveEnabled, eveRate]
   )
 
   const handleEveToggle = useCallback(() => {
     const newEve = !eveEnabled
     setEveEnabled(newEve)
-    setState(createInitialState(numQubits, newEve))
-  }, [eveEnabled, numQubits])
+    setState(createInitialState(numQubits, newEve, eveRate))
+  }, [eveEnabled, numQubits, eveRate])
+
+  const handleEveRateChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const rate = parseFloat(e.target.value)
+      setEveRate(rate)
+      if (isIdle) {
+        setState(createInitialState(numQubits, eveEnabled, rate))
+      }
+    },
+    [numQubits, eveEnabled, isIdle]
+  )
 
   return (
     <div className="space-y-6">
@@ -82,18 +94,41 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
           </div>
         </div>
 
-        <button
-          onClick={handleEveToggle}
-          disabled={!isIdle}
-          className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded border transition-colors ${
-            eveEnabled
-              ? 'bg-destructive/10 text-destructive border-destructive/30 font-bold'
-              : 'bg-muted border-border text-muted-foreground hover:border-primary/50 disabled:opacity-50'
-          }`}
-        >
-          <Eye size={14} />
-          Eve: {eveEnabled ? 'ON' : 'OFF'}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleEveToggle}
+            disabled={!isIdle}
+            className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded border transition-colors ${
+              eveEnabled
+                ? 'bg-destructive/10 text-destructive border-destructive/30 font-bold'
+                : 'bg-muted border-border text-muted-foreground hover:border-primary/50 disabled:opacity-50'
+            }`}
+          >
+            <Eye size={14} />
+            Eve: {eveEnabled ? 'ON' : 'OFF'}
+          </button>
+
+          {eveEnabled && (
+            <div className="flex items-center gap-2 text-sm border border-border bg-muted/30 px-3 py-1.5 rounded disabled:opacity-50">
+              <span className="text-muted-foreground whitespace-nowrap hidden sm:inline">
+                Intercept:
+              </span>
+              <input
+                type="range"
+                min="0.1"
+                max="1.0"
+                step="0.1"
+                disabled={!isIdle}
+                value={eveRate}
+                onChange={handleEveRateChange}
+                className="w-16 sm:w-24 accent-destructive disabled:opacity-50"
+              />
+              <span className="text-destructive font-mono w-9 text-right">
+                {Math.round(eveRate * 100)}%
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Phase Progress Bar */}
@@ -351,7 +386,7 @@ function PhaseExplanation({ phase, evePresent }: { phase: BB84Phase; evePresent:
     prepare:
       'Alice generates random bits and encodes each in a randomly chosen basis (+ or x). Each qubit is represented as a polarized photon.',
     transmit: evePresent
-      ? 'Alice sends photons over the quantum channel. Eve intercepts each qubit, measures it in a random basis, and re-sends it — inevitably disturbing some states.'
+      ? 'Alice sends photons over the quantum channel. Eve intercepts a fraction of qubits, measures them, and re-sends them — inevitably disturbing some states.'
       : 'Alice sends photons over the quantum channel to Bob. Without interference, the quantum states arrive undisturbed.',
     measure:
       "Bob independently chooses a random basis for each qubit and measures. When his basis matches Alice's, the result is deterministic. Otherwise it's random.",
