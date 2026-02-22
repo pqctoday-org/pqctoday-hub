@@ -316,7 +316,7 @@ export const LandingView = () => {
             const accessible = isAccessible(step)
             const recommended = isRecommendedStep(step)
             return (
-              <div key={step.id} className="flex items-center flex-1 min-w-0">
+              <div key={step.id} className="flex items-start flex-1 min-w-0">
                 <div
                   className={`flex flex-col items-center flex-shrink-0 transition-opacity ${accessible ? 'opacity-100' : 'opacity-35'}`}
                 >
@@ -339,7 +339,7 @@ export const LandingView = () => {
                   )}
                 </div>
                 {idx < JOURNEY_STEPS.length - 1 && (
-                  <div className="h-0.5 flex-1 min-w-[8px] mx-1 sm:mx-2 bg-border" />
+                  <div className="h-0.5 flex-1 min-w-[8px] mx-1 sm:mx-2 bg-border mt-4" />
                 )}
               </div>
             )
