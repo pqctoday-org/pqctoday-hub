@@ -381,18 +381,16 @@ export const LandingView = () => {
                       {step.label}
                     </h3>
                     <p className="text-sm text-muted-foreground">{step.description}</p>
-                    {step.paths.length > 1 && (
-                      <div className="flex flex-wrap gap-1 mt-3">
-                        {step.paths.map((p) => (
-                          <span
-                            key={p}
-                            className="text-[10px] font-mono text-muted-foreground bg-muted rounded px-1.5 py-0.5"
-                          >
-                            {p}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                    <div className="flex flex-wrap gap-1 mt-3">
+                      {step.paths.map((p) => (
+                        <span
+                          key={p}
+                          className="text-[10px] font-mono text-muted-foreground bg-muted rounded px-1.5 py-0.5"
+                        >
+                          {p}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </Link>
               </motion.div>
