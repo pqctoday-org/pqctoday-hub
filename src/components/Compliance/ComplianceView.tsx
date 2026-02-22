@@ -8,6 +8,7 @@ import { ShieldCheck, FileCheck, Server, GlobeLock, Building2, Info } from 'luci
 import { logComplianceFilter } from '../../utils/analytics'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { SourcesButton } from '../ui/SourcesButton'
 import { usePersonaStore } from '../../store/usePersonaStore'
 
 // Maps industry → recommended certification type and a short rationale
@@ -133,6 +134,7 @@ export const ComplianceView = () => {
           (PQC) readiness.
         </p>
         <div className="hidden md:flex items-center justify-center gap-3 text-xs text-muted-foreground/60 font-mono">
+          <SourcesButton viewType="Compliance" />
           <ShareButton
             title="PQC Compliance Tracker — FIPS 140-3, ACVP, Common Criteria"
             text="Track PQC compliance certifications: FIPS 140-3, ACVP algorithm validation, and Common Criteria with PQC readiness status."

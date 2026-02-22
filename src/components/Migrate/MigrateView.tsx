@@ -6,10 +6,13 @@ import { SoftwareTable } from './SoftwareTable'
 import { MigrationWorkflow } from './MigrationWorkflow'
 import { InfrastructureStack, LAYERS, type InfrastructureLayerType } from './InfrastructureStack'
 import { FilterDropdown } from '../common/FilterDropdown'
-import { Search, AlertTriangle, X } from 'lucide-react'
+import { Search, AlertTriangle, X, ArrowRightLeft } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
 import type { MigrationStep } from '../../types/MigrateTypes'
+import { SourcesButton } from '../ui/SourcesButton'
+import { ShareButton } from '../ui/ShareButton'
+import { GlossaryButton } from '../ui/GlossaryButton'
 
 export const MigrateView: React.FC = () => {
   const [searchParams] = useSearchParams()
@@ -183,7 +186,8 @@ export const MigrateView: React.FC = () => {
   return (
     <div className="space-y-8">
       <div className="text-center mb-2 md:mb-12">
-        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
+        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient flex items-center justify-center gap-2 md:gap-3">
+          <ArrowRightLeft className="w-5 h-5 md:w-9 md:h-9 text-primary" aria-hidden="true" />
           PQC Migration Guide
         </h2>
         <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
@@ -195,6 +199,12 @@ export const MigrateView: React.FC = () => {
               Data Source: {softwareMetadata.filename} • Updated:{' '}
               {softwareMetadata.lastUpdate.toLocaleDateString()}
             </p>
+            <SourcesButton viewType="Migrate" />
+            <ShareButton
+              title="PQC Migration Guide — 7-Phase Framework for Post-Quantum Readiness"
+              text="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance. Explore software readiness and migration steps."
+            />
+            <GlossaryButton />
           </div>
         )}
       </div>

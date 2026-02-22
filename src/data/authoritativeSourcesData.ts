@@ -10,10 +10,19 @@ export interface AuthoritativeSource {
   algorithmCsv: boolean
   threatsCsv: boolean
   timelineCsv: boolean
+  complianceCsv: boolean
+  migrateCsv: boolean
   lastVerifiedDate: string
 }
 
-export type ViewType = 'Timeline' | 'Library' | 'Threats' | 'Leaders' | 'Algorithms'
+export type ViewType =
+  | 'Timeline'
+  | 'Library'
+  | 'Threats'
+  | 'Leaders'
+  | 'Algorithms'
+  | 'Compliance'
+  | 'Migrate'
 
 // Helper to parse date from filename (format: pqc_authoritative_sources_reference_MMDDYYYY.csv)
 function getDateFromFilename(path: string): Date | null {
@@ -97,7 +106,7 @@ function parseSourcesCSV(content: string): AuthoritativeSource[] {
   for (let i = 1; i < lines.length; i++) {
     const values = parseLine(lines[i])
 
-    if (values.length >= 11) {
+    if (values.length >= 13) {
       sources.push({
         sourceName: values[0],
         sourceType: values[1] as AuthoritativeSource['sourceType'],
@@ -109,7 +118,9 @@ function parseSourcesCSV(content: string): AuthoritativeSource[] {
         algorithmCsv: values[7] === 'Yes',
         threatsCsv: values[8] === 'Yes',
         timelineCsv: values[9] === 'Yes',
-        lastVerifiedDate: values[10],
+        complianceCsv: values[10] === 'Yes',
+        migrateCsv: values[11] === 'Yes',
+        lastVerifiedDate: values[12],
       })
     }
   }
@@ -135,6 +146,8 @@ export function getSourcesForView(viewType: ViewType): AuthoritativeSource[] {
     Threats: 'threatsCsv',
     Leaders: 'leadersCsv',
     Algorithms: 'algorithmCsv',
+    Compliance: 'complianceCsv',
+    Migrate: 'migrateCsv',
   }
 
   const filterKey = filterMap[viewType]

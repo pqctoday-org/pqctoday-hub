@@ -4,6 +4,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.26.0] - 2026-02-22
+
+### Added
+
+- **Sources button on Compliance page** (`/compliance`): Page header now includes a `SourcesButton`
+  giving users direct access to authoritative sources referenced in the compliance landscape.
+
+- **Full header cluster on Migrate page** (`/migrate`): The PQC Migration Catalog page header now
+  includes an `ArrowRightLeft` icon, plus `SourcesButton`, `ShareButton`, and `GlossaryButton`,
+  completing the standard content-page header pattern across all major views.
+
+- **Share & Glossary buttons on OpenSSL Studio** (`/openssl`): Desktop header now includes
+  `ShareButton` and `GlossaryButton` (hidden on mobile), consistent with other tool pages.
+
+### Changed
+
+- **Authoritative sources data model** (`src/data/authoritativeSourcesData.ts`): Added
+  `complianceCsv` and `migrateCsv` boolean fields to `AuthoritativeSource`; extended `ViewType`
+  to include `'Compliance'` and `'Migrate'`; CSV parser updated to 13 columns with
+  `lastVerifiedDate` shifted from index 10 to index 12.
+
+### Fixed
+
+- **Playground page layout** (`/playground`): Description paragraph moved above the button cluster
+  so it reads correctly before the action controls rather than inline with them.
+
 ## [1.25.0] - 2026-02-22
 
 ### Added

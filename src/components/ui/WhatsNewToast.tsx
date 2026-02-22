@@ -77,23 +77,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Persona-aware journey step rail</strong>{' '}
-                    &mdash; 7-step progression on the home page with &ldquo;For you&rdquo; badges
-                    and route chips per role
+                    <strong className="text-foreground">Sources, Share & Glossary buttons</strong>{' '}
+                    &mdash; Compliance, Migrate & OpenSSL Studio pages now follow the standard page
+                    header pattern
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Hero messaging refresh</strong> &mdash; new
-                    &ldquo;Your PQC Transformation&rdquo; framing and role-aware CTAs
+                    <strong className="text-foreground">Authoritative sources extended</strong>{' '}
+                    &mdash; data model now tracks sources for Compliance and Migrate views
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Test reliability</strong> &mdash; resolved
-                    pre-existing ComplianceView and audit_suci failures; safer WASM test context
+                    <strong className="text-foreground">Playground layout fix</strong> &mdash;
+                    description text now appears above action buttons for correct visual hierarchy
                   </span>
                 </li>
               </ul>
