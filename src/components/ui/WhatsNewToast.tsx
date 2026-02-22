@@ -77,27 +77,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">
-                      7-layer Infrastructure Stack &middot; 193 products
-                    </strong>{' '}
-                    &mdash; Cloud, Network, Application, Database, Security Stack, OS, and Hardware
-                    layers with multi-layer support and 30+ new entries
+                    <strong className="text-foreground">Hybrid KEM simulation</strong> &mdash;
+                    Hybrid Crypto workshop now runs X25519 ECDH + ML-KEM-768 separately and combines
+                    secrets via HKDF-Extract, with component secret breakdown
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Security Stack layer</strong> &mdash;
-                    dedicated layer for KMS, PKI, Crypto Libraries, Secrets, IAM, Data Protection,
-                    and CIAM with 42 tracked products
+                    <strong className="text-foreground">Hybrid module fixes</strong> &mdash; fixed
+                    WASM file persistence across all crypto operations, resolving ML-DSA-65
+                    certificate and KEM failures
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC Support filter</strong> &mdash;
-                    instantly filter the reference catalog by quantum-readiness status: Yes,
-                    Limited, Planned, or No
+                    <strong className="text-foreground">Complete Module button</strong> &mdash; now
+                    correctly visible on the last step of all learning modules
                   </span>
                 </li>
               </ul>

@@ -4,6 +4,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.21.1] - 2026-02-22
+
+### Added
+
+- **Simulated Hybrid KEM in Hybrid Crypto Workshop** (`/learn`): X25519MLKEM768 is not available as
+  a standalone `genpkey` algorithm in the OpenSSL WASM build. The workshop now simulates hybrid KEM
+  by running X25519 ECDH (Web Crypto API) and ML-KEM-768 (OpenSSL WASM) as separate operations, then
+  combining shared secrets via HKDF-Extract (SHA-256). The KEM demo shows side-by-side cards for pure
+  PQC (ML-KEM-768) and hybrid (X25519 + ML-KEM-768) with component secret breakdown (PQC secret,
+  classical secret, combined HKDF secret) and per-phase timing. Key generation step produces separate
+  X25519 and ML-KEM-768 keys with combined PEM output.
+
+### Fixed
+
+- **Hybrid Crypto WASM file persistence** (`/learn`): All HybridCryptoService methods now correctly
+  pass file data between OpenSSL WASM calls. Previously, key files, ciphertext, and signatures were
+  lost between `openSSLService.execute()` invocations because each call creates a fresh WASM
+  instance. Fixes ML-DSA-65 certificate generation ("No such file or directory") and KEM
+  encapsulation/decapsulation failures.
+
+- **Complete Module button visibility** (`/learn`): The "Complete Module" button now correctly
+  appears on the last step of all learning modules including Quantum Threats and Hybrid Crypto.
+  Previously the button was hidden on the final step due to an off-by-one check.
+
+- **Composite certificate generation** (`/learn`): Fixed CompositeCertificateViewer to pass key file
+  data when generating self-signed certificates, resolving "Could not open file" errors for both
+  ECDSA P-256 and ML-DSA-65 certificates.
+
+- **Library detail modal on mobile** (`/library`): Made the document detail modal responsive on
+  mobile devices with proper layout and scrolling.
+
 ## [1.21.0] - 2026-02-21
 
 ### Added
