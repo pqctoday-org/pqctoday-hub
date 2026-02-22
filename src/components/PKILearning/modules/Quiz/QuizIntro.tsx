@@ -2,9 +2,8 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Brain, Zap, BookOpen, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { QUIZ_CATEGORIES } from '@/data/quizData'
 import { TopicSelector } from './components/TopicSelector'
-import type { QuizCategory, QuizMode } from './types'
+import type { QuizCategory, QuizMode, QuizCategoryMeta } from './types'
 
 interface QuizIntroProps {
   previousScores?: Record<string, number>
@@ -12,6 +11,7 @@ interface QuizIntroProps {
   quizMetadata?: { filename: string; lastUpdate: Date } | null
   totalQuestions?: number
   quickPoolSize?: number
+  categories: QuizCategoryMeta[]
   /** Pre-selected categories based on the active learning persona */
   initialCategories?: QuizCategory[]
   /** Label of the active persona for the suggestion banner */
@@ -24,6 +24,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   quizMetadata,
   totalQuestions,
   quickPoolSize,
+  categories,
   initialCategories,
   personaLabel,
 }) => {
@@ -61,7 +62,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
       >
         <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient">PQC Knowledge Quiz</h2>
         <p className="text-muted-foreground">
-          Test your understanding of post-quantum cryptography across {QUIZ_CATEGORIES.length} topic
+          Test your understanding of post-quantum cryptography across {categories.length} topic
           areas.
         </p>
         {quizMetadata && (
@@ -148,7 +149,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
           )}
         </div>
         <TopicSelector
-          categories={QUIZ_CATEGORIES}
+          categories={categories}
           selectedCategories={selectedCategories}
           onToggleCategory={handleToggleCategory}
           previousScores={previousScores}

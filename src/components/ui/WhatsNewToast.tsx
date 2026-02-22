@@ -77,24 +77,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Hybrid KEM simulation</strong> &mdash;
-                    Hybrid Crypto workshop now runs X25519 ECDH + ML-KEM-768 separately and combines
-                    secrets via HKDF-Extract, with component secret breakdown
+                    <strong className="text-foreground">Persona-filtered quiz</strong> &mdash; quiz
+                    adapts to your active learning persona, showing only relevant questions and
+                    categories
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Hybrid module fixes</strong> &mdash; fixed
-                    WASM file persistence across all crypto operations, resolving ML-DSA-65
-                    certificate and KEM failures
+                    <strong className="text-foreground">24 new glossary terms</strong> &mdash;
+                    expanded coverage across TLS, 5G, digital identity, and more, with deep links to
+                    learning modules
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Complete Module button</strong> &mdash; now
-                    correctly visible on the last step of all learning modules
+                    <strong className="text-foreground">Glossary in Learn</strong> &mdash;
+                    quick-access glossary button now available on all Learn pages
                   </span>
                 </li>
               </ul>

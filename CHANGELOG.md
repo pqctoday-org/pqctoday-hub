@@ -4,6 +4,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.22.0] - 2026-02-22
+
+### Added
+
+- **Persona-filtered quiz** (`/learn/quiz`): Quiz questions now carry a `personas` tag (CSV column).
+  When a learning persona is active, the quiz module filters questions and dynamically recomputes
+  category metadata (question counts, available categories) so each persona sees only relevant
+  content. Quick, Full, and Category modes all respect the active persona filter.
+
+- **Glossary expansion** (`/learn`): Added 24 new glossary terms covering TLS (cipher suites,
+  handshake), VPN/SSH (Rosenpass, sntrup761), email signing (SignedData, EnvelopedData,
+  KEMRecipientInfo), key management (PKCS#11, key lifecycle), stateful signatures (Merkle tree,
+  Winternitz OTS), digital assets (P2PKH, BIP44), 5G security (ECIES, AUSF, SIDF, UDM), and
+  digital identity (PID, Relying Party, Wallet Instance Attestation). Enriched ~40 existing terms
+  with `relatedModule` deep links to learning modules.
+
+- **Glossary button in Learn header** (`/learn`): Added the `GlossaryButton` component to the
+  `PKILearningView` header bar, accessible from both the dashboard and individual module views.
+
 ## [1.21.1] - 2026-02-22
 
 ### Added

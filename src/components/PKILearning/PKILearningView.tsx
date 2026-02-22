@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react'
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Dashboard } from './Dashboard'
 import { ArrowLeft } from 'lucide-react'
+import { GlossaryButton } from '../ui/GlossaryButton'
 
 const PKIWorkshop = lazy(() =>
   import('./modules/PKIWorkshop').then((module) => ({ default: module.PKIWorkshop }))
@@ -59,15 +60,20 @@ export const PKILearningView: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4 animate-fade-in">
-      {!isDashboard && (
-        <button
-          onClick={() => navigate('/learn')}
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
-        >
-          <ArrowLeft size={20} />
-          Back to Dashboard
-        </button>
-      )}
+      <div className="flex items-center justify-between mb-6">
+        {!isDashboard ? (
+          <button
+            onClick={() => navigate('/learn')}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft size={20} />
+            Back to Dashboard
+          </button>
+        ) : (
+          <div />
+        )}
+        <GlossaryButton />
+      </div>
 
       <Suspense
         fallback={

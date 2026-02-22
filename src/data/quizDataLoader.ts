@@ -112,6 +112,7 @@ function parseQuizCSV(csvContent: string): QuizQuestion[] {
       options,
       correctAnswer,
       explanation: v[11],
+      personas: v[13] ? v[13].split('|') : [],
     }
     if (v[12]) q.learnMorePath = v[12]
     results.push(q)

@@ -25,6 +25,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Quantum Computing',
     definition:
       'A type of computing that uses quantum-mechanical phenomena like superposition and entanglement to perform calculations exponentially faster than classical computers for certain problems.',
+    relatedModule: '/learn/pqc-101',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -32,6 +33,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Q-Day',
     definition:
       'The hypothetical future date when a quantum computer becomes powerful enough to break current public-key cryptography (RSA, ECC).',
+    relatedModule: '/threats',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -48,6 +50,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Encryption',
     definition:
       'The process of converting readable data (plaintext) into an unreadable format (ciphertext) using an algorithm and a key, so only authorized parties can read it.',
+    relatedModule: '/learn/pqc-101',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -63,6 +66,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Public Key',
     definition:
       'A cryptographic key that can be shared openly. Used to encrypt data or verify digital signatures.',
+    relatedModule: '/learn/pki-workshop',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -70,6 +74,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Private Key',
     definition:
       'A cryptographic key kept secret by its owner. Used to decrypt data or create digital signatures.',
+    relatedModule: '/learn/pki-workshop',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -77,6 +82,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Key Pair',
     definition:
       'A mathematically linked public key and private key used together for encryption/decryption or signing/verification.',
+    relatedModule: '/learn/pki-workshop',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -84,6 +90,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Hybrid Cryptography',
     definition:
       'Using both classical and post-quantum algorithms together during the transition period, providing security even if one algorithm is broken.',
+    relatedModule: '/learn/hybrid-crypto',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -91,6 +98,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Crypto Agility',
     definition:
       'The ability of a system to quickly switch between cryptographic algorithms without major redesign, critical for adapting to PQC.',
+    relatedModule: '/learn/crypto-agility',
     complexity: 'intermediate',
     category: 'concept',
   },
@@ -98,6 +106,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Qubit',
     definition:
       'The basic unit of quantum information, analogous to a classical bit but capable of existing in superposition of 0 and 1 simultaneously.',
+    relatedModule: '/learn/pqc-101',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -105,6 +114,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Superposition',
     definition:
       'A quantum property where a qubit can represent both 0 and 1 at the same time, enabling quantum computers to explore many solutions simultaneously.',
+    relatedModule: '/learn/pqc-101',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -231,6 +241,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Advanced Encryption Standard, a symmetric encryption algorithm. Relatively safe from quantum attacks (just double the key size: AES-256).',
     technicalNote:
       "Quantum attacks via Grover's algorithm halve the effective security level, so AES-128 becomes ~64-bit. AES-256 remains secure.",
+    relatedModule: '/learn/pqc-101',
     complexity: 'beginner',
     category: 'algorithm',
   },
@@ -303,6 +314,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'SHA-256',
     definition:
       'Secure Hash Algorithm producing a 256-bit digest. Used extensively in Bitcoin and TLS. Quantum-safe at current key sizes.',
+    relatedModule: '/learn/digital-assets',
     complexity: 'beginner',
     category: 'algorithm',
   },
@@ -780,6 +792,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'A family of PQC algorithms based on the hardness of problems involving mathematical lattices. The basis for ML-KEM and ML-DSA.',
     technicalNote:
       'Key problems: Learning With Errors (LWE), Module-LWE, Ring-LWE. Offer good performance and key sizes.',
+    relatedModule: '/algorithms',
     complexity: 'intermediate',
     category: 'concept',
   },
@@ -789,6 +802,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Digital signature schemes whose security relies only on the properties of hash functions. Very conservative security but can be stateful.',
     technicalNote:
       'Stateful: LMS/XMSS (must track which keys are used). Stateless: SLH-DSA/SPHINCS+ (larger signatures).',
+    relatedModule: '/learn/stateful-signatures',
     complexity: 'intermediate',
     category: 'concept',
   },
@@ -796,6 +810,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Code-Based Cryptography',
     definition:
       'PQC algorithms based on the hardness of decoding random linear error-correcting codes. Used by Classic McEliece and HQC.',
+    relatedModule: '/algorithms',
     complexity: 'advanced',
     category: 'concept',
   },
@@ -813,6 +828,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Key Exchange',
     definition:
       'The process by which two parties establish a shared secret key over an insecure channel. In PQC, replaced by Key Encapsulation Mechanisms.',
+    relatedModule: '/learn/tls-basics',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -820,6 +836,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Quantum Advantage',
     definition:
       'The point at which a quantum computer can solve a specific problem faster than any classical computer. Also called "quantum supremacy."',
+    relatedModule: '/learn/quantum-threats',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -845,6 +862,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Entanglement',
     definition:
       'A quantum phenomenon where two qubits become correlated so measuring one instantly determines the state of the other, regardless of distance.',
+    relatedModule: '/learn/pqc-101',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -1179,6 +1197,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'The third generation Secure Hash Algorithm standard (FIPS 202), based on the Keccak sponge construction. Includes SHA3-256, SHA3-512, and SHAKE variants.',
     technicalNote:
       'SHA-3 provides an independent alternative to SHA-2 with different mathematical foundations. Used in SLH-DSA parameter sets.',
+    relatedModule: '/algorithms',
     complexity: 'intermediate',
     category: 'algorithm',
   },
@@ -1561,6 +1580,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Cryptographically Relevant Quantum Computer, a hypothetical future quantum computer powerful enough to break RSA, ECC, and other classical public-key cryptography.',
     technicalNote:
       'Estimates vary, but a CRQC would need thousands of stable logical qubits. Most timelines estimate 2030-2040 for CRQC capability.',
+    relatedModule: '/learn/quantum-threats',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -1760,6 +1780,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Techniques to protect quantum information from decoherence and errors during computation. Essential for building practical, large-scale quantum computers.',
     technicalNote:
       'Current quantum computers lack sufficient error correction for cryptanalysis. Advances in error correction directly affect CRQC timelines.',
+    relatedModule: '/learn/quantum-threats',
     complexity: 'intermediate',
     category: 'concept',
   },
@@ -1832,6 +1853,276 @@ export const glossaryTerms: GlossaryTerm[] = [
     technicalNote:
       'Omits confusable characters (0, O, I, l). Used for Bitcoin addresses, WIF private keys, and extended public/private keys.',
     relatedModule: '/learn/digital-assets',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+
+  // === Terms covering Learn Module content gaps ===
+
+  // PQC 101
+  {
+    term: 'Harvest Now, Forge Later',
+    acronym: 'HNFL',
+    definition:
+      'An attack strategy where adversaries record digitally signed data today, planning to forge signatures once quantum computers can break the signing algorithm.',
+    technicalNote:
+      'While HNDL targets confidentiality (encrypted data), HNFL targets authenticity and integrity — firmware updates, certificates, and legal documents signed with RSA/ECDSA become forgeable.',
+    relatedModule: '/learn/pqc-101',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+
+  // Hybrid Crypto
+  {
+    term: 'X25519MLKEM768',
+    definition:
+      'A hybrid key exchange algorithm combining X25519 (classical ECDH) with ML-KEM-768 (post-quantum KEM). Both shared secrets are combined via HKDF so the result is secure if either algorithm holds.',
+    technicalNote:
+      'Deployed in Chrome, Firefox, and Cloudflare TLS 1.3. Uses concatenated shared secrets fed through HKDF-SHA256 for the final key.',
+    relatedModule: '/learn/hybrid-crypto',
+    complexity: 'intermediate',
+    category: 'algorithm',
+  },
+
+  // TLS Basics
+  {
+    term: 'Cipher Suite',
+    definition:
+      'A named combination of cryptographic algorithms used together in a TLS connection — specifying the key exchange, authentication, bulk encryption, and hash algorithms.',
+    technicalNote:
+      'TLS 1.3 cipher suites (e.g., TLS_AES_256_GCM_SHA384) are simpler than TLS 1.2, separating key exchange from the cipher suite. PQC adds new key exchange groups like X25519MLKEM768.',
+    relatedModule: '/learn/tls-basics',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  {
+    term: 'TLS Handshake',
+    definition:
+      'The initial negotiation between client and server that establishes a secure TLS connection — agreeing on cipher suites, exchanging keys, and authenticating the server.',
+    technicalNote:
+      'TLS 1.3 completes in 1 round-trip (1-RTT). PQC key exchange increases ClientHello size significantly (ML-KEM public keys are ~1,184 bytes vs 32 bytes for X25519).',
+    relatedModule: '/learn/tls-basics',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+
+  // VPN/SSH
+  {
+    term: 'Rosenpass',
+    definition:
+      'A post-quantum key exchange protocol designed as a companion to WireGuard VPN. Performs a separate ML-KEM key exchange and feeds the resulting key into WireGuard.',
+    technicalNote:
+      'Rosenpass runs alongside WireGuard rather than modifying it, adding PQC protection without changing the WireGuard protocol itself.',
+    relatedModule: '/learn/vpn-ssh-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'sntrup761',
+    definition:
+      'A lattice-based key encapsulation mechanism used in OpenSSH hybrid key exchange. Combined with X25519 to provide post-quantum protection for SSH connections.',
+    technicalNote:
+      'Available in OpenSSH since version 9.0 as sntrup761x25519-sha512. Being superseded by mlkem768x25519-sha256 in newer OpenSSH versions.',
+    relatedModule: '/learn/vpn-ssh-pqc',
+    complexity: 'advanced',
+    category: 'algorithm',
+  },
+
+  // Email Signing
+  {
+    term: 'SignedData',
+    definition:
+      'A CMS (Cryptographic Message Syntax) structure defined in RFC 5652 that carries digitally signed content. The foundation of S/MIME email signatures.',
+    technicalNote:
+      'Contains the original content, signer certificates, and one or more SignerInfo structures with the actual signatures. PQC migration requires updating the signature algorithms.',
+    relatedModule: '/learn/email-signing',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'EnvelopedData',
+    definition:
+      'A CMS structure for encrypted content using key transport (RSA) or key agreement (ECDH). Being superseded by AuthEnvelopedData with KEM-based encryption for PQC.',
+    technicalNote:
+      'Traditional EnvelopedData uses RSA key transport, which is vulnerable to quantum attacks. RFC 9629 defines KEMRecipientInfo as the PQC replacement.',
+    relatedModule: '/learn/email-signing',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'KEMRecipientInfo',
+    definition:
+      'A CMS recipient info type defined in RFC 9629 that uses Key Encapsulation Mechanisms (KEMs) instead of RSA key transport for encrypting content-encryption keys.',
+    technicalNote:
+      "Enables ML-KEM-based encryption in S/MIME and CMS. The sender encapsulates a shared secret to the recipient's KEM public key, then derives the content-encryption key.",
+    relatedModule: '/learn/email-signing',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+
+  // PKI Workshop
+  {
+    term: 'Certificate Revocation List',
+    acronym: 'CRL',
+    definition:
+      'A signed list published by a Certificate Authority containing the serial numbers of certificates that have been revoked before their expiration date.',
+    technicalNote:
+      'CRLs are periodically published and can become large. OCSP provides real-time revocation checking as an alternative. PQC migration requires CRLs to be signed with quantum-safe algorithms.',
+    relatedModule: '/learn/pki-workshop',
+    complexity: 'beginner',
+    category: 'protocol',
+  },
+
+  // Key Management
+  {
+    term: 'PKCS#11',
+    definition:
+      'A standard API (also called Cryptoki) for accessing cryptographic hardware like Hardware Security Modules (HSMs), smart cards, and tokens.',
+    technicalNote:
+      'Defines C-language function calls for key generation, signing, encryption, and object management. PQC algorithm support in PKCS#11 is being standardized by OASIS.',
+    relatedModule: '/learn/key-management',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'Key Lifecycle',
+    definition:
+      'The complete management process for cryptographic keys from creation to destruction, typically comprising 7 stages: generation, storage, activation, rotation, deactivation, compromise response, and destruction.',
+    technicalNote:
+      'Defined by NIST SP 800-57. PQC migration adds complexity — organizations must plan parallel classical and PQC key lifecycles during the transition period.',
+    relatedModule: '/learn/key-management',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+
+  // Stateful Signatures
+  {
+    term: 'Merkle Tree',
+    definition:
+      'A binary tree of hash values where each leaf contains a hash of a data block and each internal node contains a hash of its children. The foundation of stateful hash-based signature schemes.',
+    technicalNote:
+      'In LMS/XMSS, each leaf holds a one-time signature key pair. The tree height determines the maximum number of signatures (2^h). The root hash serves as the public key.',
+    relatedModule: '/learn/stateful-signatures',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Winternitz One-Time Signature',
+    acronym: 'WOTS+',
+    definition:
+      'A hash-based one-time signature scheme used as the building block for LMS and XMSS. Each key pair can only sign one message safely.',
+    technicalNote:
+      'The Winternitz parameter (w) controls the trade-off between signature size and computation time. Larger w = smaller signatures but more hash operations.',
+    relatedModule: '/learn/stateful-signatures',
+    complexity: 'advanced',
+    category: 'algorithm',
+  },
+  {
+    term: 'One-Time Signature',
+    acronym: 'OTS',
+    definition:
+      'A signature scheme where each private key must be used to sign exactly one message. Reusing a key leaks information that allows signature forgery.',
+    technicalNote:
+      'LMS and XMSS use Merkle trees of OTS keys to enable multiple signatures from a single public key. Strict state management is required to prevent key reuse.',
+    relatedModule: '/learn/stateful-signatures',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+
+  // Digital Assets
+  {
+    term: 'P2PKH',
+    definition:
+      'Pay-to-Public-Key-Hash, a Bitcoin address format (starting with "1") that hides the public key behind a hash until the first spending transaction.',
+    technicalNote:
+      'Provides some quantum protection for unspent outputs since the public key is not exposed. Once spent, the public key is revealed on the immutable blockchain and becomes harvestable.',
+    relatedModule: '/learn/digital-assets',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'BIP44',
+    definition:
+      "Bitcoin Improvement Proposal 44, defining a multi-account hierarchy for deterministic wallets using derivation paths like m/44'/0'/0'/0/0 (purpose/coin/account/change/index).",
+    technicalNote:
+      'Builds on BIP32 (HD wallets) and BIP43 (purpose field). Enables standard derivation paths across different cryptocurrencies and wallet implementations.',
+    relatedModule: '/learn/digital-assets',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+
+  // 5G Security
+  {
+    term: 'ECIES',
+    acronym: 'ECIES',
+    definition:
+      'Elliptic Curve Integrated Encryption Scheme, used in 5G networks to conceal subscriber identity (SUCI). Combines ECDH key agreement with symmetric encryption.',
+    technicalNote:
+      '5G defines three SUCI protection profiles: Profile A (ECIES with Curve25519), Profile B (ECIES with P-256), and Profile C (ML-KEM for post-quantum protection).',
+    relatedModule: '/learn/5g-security',
+    complexity: 'intermediate',
+    category: 'algorithm',
+  },
+  {
+    term: 'AUSF',
+    acronym: 'AUSF',
+    definition:
+      'Authentication Server Function, a 5G core network function that handles subscriber authentication using the 5G-AKA protocol and interfaces with the UDM for credential verification.',
+    relatedModule: '/learn/5g-security',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'SIDF',
+    acronym: 'SIDF',
+    definition:
+      'Subscription Identifier De-concealing Function, the 5G core component that decrypts the SUCI (concealed subscriber ID) back to the SUPI (permanent ID) using the home network private key.',
+    technicalNote:
+      'SIDF uses ECIES (Profile A/B) or ML-KEM (Profile C) decapsulation to recover the subscriber identity. A key target for PQC migration in 5G networks.',
+    relatedModule: '/learn/5g-security',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'UDM',
+    acronym: 'UDM',
+    definition:
+      'Unified Data Management, a 5G core network function that stores subscriber profiles, authentication credentials, and subscription data. Works with the AUSF for 5G-AKA authentication.',
+    relatedModule: '/learn/5g-security',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+
+  // Digital Identity
+  {
+    term: 'Person Identification Data',
+    acronym: 'PID',
+    definition:
+      'The foundational digital identity credential in the EUDI Wallet ecosystem, containing core attributes like name, date of birth, and nationality issued by a national authority.',
+    technicalNote:
+      "PID is the prerequisite for all other attestations (diplomas, driving licenses). Must be cryptographically bound to the wallet holder's key to prevent transfer.",
+    relatedModule: '/learn/digital-id',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Relying Party',
+    definition:
+      'An entity (organization, service, or application) that relies on a digital credential presented by a holder to make trust decisions — such as granting access or completing a transaction.',
+    technicalNote:
+      'In the EUDI ecosystem, relying parties use OpenID4VP to request and verify credentials. They can only request attributes they are authorized to see (selective disclosure).',
+    relatedModule: '/learn/digital-id',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  {
+    term: 'Wallet Instance Attestation',
+    acronym: 'WIA',
+    definition:
+      'A cryptographic proof that a digital identity wallet app is a genuine, certified instance running on a secure device. Required by issuers before they will provision credentials.',
+    technicalNote:
+      "Attests to the wallet's integrity, certification status, and device security. Prevents credential issuance to compromised or counterfeit wallet applications.",
+    relatedModule: '/learn/digital-id',
     complexity: 'advanced',
     category: 'concept',
   },

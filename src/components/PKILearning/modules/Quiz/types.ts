@@ -42,6 +42,8 @@ export interface QuizQuestion {
   explanation: string
   /** Optional link to relevant app page for deeper learning */
   learnMorePath?: string
+  /** Personas that this question is relevant for */
+  personas: string[]
 }
 
 export interface QuizCategoryMeta {

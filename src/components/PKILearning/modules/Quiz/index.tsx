@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS } from '@/data/learningPersonas'
-import { QUIZ_QUESTIONS, quizMetadata } from '@/data/quizData'
+import { QUIZ_QUESTIONS, quizMetadata, QUIZ_CATEGORIES } from '@/data/quizData'
 import { QuizIntro } from './QuizIntro'
 import { QuizWizard } from './QuizWizard'
 import type { QuizCompletionData } from './QuizWizard'
@@ -77,6 +77,23 @@ export const QuizModule: React.FC = () => {
   const [lastCategories, setLastCategories] = useState<QuizCategory[]>([])
   const startTimeRef = useRef(0)
 
+  const filteredQuestions = useMemo(() => {
+    if (!selectedPersona) return QUIZ_QUESTIONS
+    return QUIZ_QUESTIONS.filter((q) => q.personas.includes(selectedPersona))
+  }, [selectedPersona])
+
+  const filteredCategories = useMemo(() => {
+    const counts = new Map<QuizCategory, number>()
+    for (const q of filteredQuestions) {
+      counts.set(q.category, (counts.get(q.category) || 0) + 1)
+    }
+
+    return QUIZ_CATEGORIES.map((c) => ({
+      ...c,
+      questionCount: counts.get(c.id) || 0,
+    })).filter((c) => c.questionCount > 0)
+  }, [filteredQuestions])
+
   // Time tracking
   useEffect(() => {
     startTimeRef.current = Date.now()
@@ -96,27 +113,35 @@ export const QuizModule: React.FC = () => {
     return moduleData?.quizScores ?? undefined
   }, [modules])
 
-  const handleStart = useCallback((mode: QuizMode, categories: QuizCategory[]) => {
-    setLastMode(mode)
-    setLastCategories(categories)
+  const handleStart = useCallback(
+    (mode: QuizMode, categories: QuizCategory[]) => {
+      setLastMode(mode)
+      setLastCategories(categories)
 
-    let selected: QuizQuestion[]
-    if (mode === 'quick') {
-      // Quick quiz: draw from 'quick' + 'both' pool, sample with guaranteed category coverage
-      const pool = QUIZ_QUESTIONS.filter((q) => q.quizMode === 'quick' || q.quizMode === 'both')
-      selected = sampleQuestions(pool, QUICK_QUIZ_COUNT)
-    } else if (mode === 'full') {
-      // Full assessment: sample 80 randomly from all 162 questions with guaranteed category coverage
-      selected = sampleQuestions(QUIZ_QUESTIONS, FULL_QUIZ_COUNT)
-    } else {
-      // Category mode: filter by selected categories, use all questions
-      const filtered = QUIZ_QUESTIONS.filter((q) => categories.includes(q.category))
-      selected = shuffleArray(filtered)
-    }
+      let selected: QuizQuestion[]
+      if (mode === 'quick') {
+        // Quick quiz: draw from 'quick' + 'both' pool, sample with guaranteed category coverage
+        const pool = filteredQuestions.filter(
+          (q) => q.quizMode === 'quick' || q.quizMode === 'both'
+        )
+        selected = sampleQuestions(pool, QUICK_QUIZ_COUNT)
+      } else if (mode === 'full') {
+        // Full assessment: sample 80 randomly from all available questions with guaranteed category coverage
+        selected = sampleQuestions(
+          filteredQuestions,
+          Math.min(FULL_QUIZ_COUNT, filteredQuestions.length)
+        )
+      } else {
+        // Category mode: filter by selected categories, use all questions
+        const filtered = filteredQuestions.filter((q) => categories.includes(q.category))
+        selected = shuffleArray(filtered)
+      }
 
-    setQuizQuestions(selected)
-    setView('quiz')
-  }, [])
+      setQuizQuestions(selected)
+      setView('quiz')
+    },
+    [filteredQuestions]
+  )
 
   const handleComplete = useCallback(
     (data: QuizCompletionData) => {
@@ -160,10 +185,11 @@ export const QuizModule: React.FC = () => {
           previousScores={previousScores}
           onStart={handleStart}
           quizMetadata={quizMetadata}
-          totalQuestions={FULL_QUIZ_COUNT}
+          totalQuestions={Math.min(FULL_QUIZ_COUNT, filteredQuestions.length)}
           quickPoolSize={
-            QUIZ_QUESTIONS.filter((q) => q.quizMode === 'quick' || q.quizMode === 'both').length
+            filteredQuestions.filter((q) => q.quizMode === 'quick' || q.quizMode === 'both').length
           }
+          categories={filteredCategories}
           initialCategories={
             checkpointState?.checkpointCategories ??
             (persona && persona.quizCategories.length > 0
