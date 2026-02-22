@@ -189,6 +189,7 @@ After **any** CSV change, run these steps in order:
    npm run test
    ```
 4. **Visual check** — start dev server and navigate to the affected view:
+
    ```bash
    npm run dev   # http://localhost:5175
    ```
@@ -196,6 +197,7 @@ After **any** CSV change, run these steps in order:
    - Verify data renders (no empty states or missing rows)
    - Verify `New`/`Updated` badges appear correctly (status-tracked CSVs only)
    - Check cross-referencing views (e.g., Compliance → Library links, Assessment report)
+
 5. **Console check** — open browser DevTools console. Look for `warn` messages about missing CSV files or parse errors.
 
 ---
