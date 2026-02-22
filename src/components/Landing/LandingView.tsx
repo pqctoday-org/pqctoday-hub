@@ -20,6 +20,7 @@ import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONA_RECOMMENDED_PATHS } from '@/data/personaConfig'
 import { PersonalizationSection } from './PersonalizationSection'
+import { ScoreCard } from './ScoreCard'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -257,6 +258,9 @@ export const LandingView = () => {
 
       {/* Personalization Section */}
       <PersonalizationSection />
+
+      {/* Learning Journey Scorecard */}
+      <ScoreCard />
 
       {/* Primary Features Grid */}
       <section>

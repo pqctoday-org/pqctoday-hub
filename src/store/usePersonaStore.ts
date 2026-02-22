@@ -60,6 +60,10 @@ export const usePersonaStore = create<PersonaState>()(
     {
       name: 'pqc-learning-persona',
       storage: createJSONStorage(() => localStorage),
+      version: 1,
+      // Stub migration — establishes the pattern for future persona/region schema changes
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      migrate: (persistedState: unknown, _version: number) => persistedState,
     }
   )
 )

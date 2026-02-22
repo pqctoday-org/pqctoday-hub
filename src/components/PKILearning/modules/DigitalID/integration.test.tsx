@@ -109,14 +109,14 @@ describe('EUDI Digital ID Integration', () => {
       expect(screen.getAllByText(/EUDI Wallet/i).length).toBeGreaterThan(0)
     })
 
-    // Navigate to PID Issuer step (step 2 pill)
-    fireEvent.click(screen.getByText('PID Issuer'))
+    // Navigate to PID Issuer step (step 2 nav button)
+    fireEvent.click(screen.getByText('Step 2'))
     await waitFor(() => {
       expect(screen.getByText(/National Identity Authority/i)).toBeDefined()
     })
 
     // Navigate to Bank (RP) step
-    fireEvent.click(screen.getByText('Bank (RP)'))
+    fireEvent.click(screen.getByText('Step 4'))
     await waitFor(() => {
       expect(screen.getByText(/Bank \(Relying Party\)/i)).toBeDefined()
     })
@@ -128,11 +128,11 @@ describe('EUDI Digital ID Integration', () => {
     // Switch to Workshop tab first
     fireEvent.click(screen.getByText('Workshop'))
 
-    // 1. Navigate to PID Issuer step
+    // 1. Navigate to PID Issuer step (nav label shows "Step 2")
     await waitFor(() => {
-      expect(screen.getByText('PID Issuer')).toBeDefined()
+      expect(screen.getByText('Step 2')).toBeDefined()
     })
-    fireEvent.click(screen.getByText('PID Issuer'))
+    fireEvent.click(screen.getByText('Step 2'))
     await waitFor(() => {
       expect(screen.getByText(/National Identity Authority/i)).toBeDefined()
     })
@@ -154,8 +154,8 @@ describe('EUDI Digital ID Integration', () => {
       { timeout: 6000 }
     )
 
-    // 5. Navigate to Bank (RP) step
-    fireEvent.click(screen.getByText('Bank (RP)'))
+    // 5. Navigate to Bank (RP) step (nav label shows "Step 4")
+    fireEvent.click(screen.getByText('Step 4'))
     await waitFor(() => {
       expect(screen.getByText(/Bank \(Relying Party\)/i)).toBeDefined()
     })

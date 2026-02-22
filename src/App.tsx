@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { lazy, Suspense } from 'react'
 import { MainLayout } from './components/Layout/MainLayout'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { useModuleStore } from './store/useModuleStore'
 
 // Lazy load route components for code splitting
 const TimelineView = lazy(() =>
@@ -81,11 +82,20 @@ function AnalyticsTracker() {
 
 import { ScrollToTop } from './components/Router/ScrollToTop'
 
+function DailyVisitTracker() {
+  const trackDailyVisit = useModuleStore((s) => s.trackDailyVisit)
+  useEffect(() => {
+    trackDailyVisit()
+  }, [trackDailyVisit])
+  return null
+}
+
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
       <AnalyticsTracker />
+      <DailyVisitTracker />
       <Suspense
         fallback={
           <div className="flex h-screen w-full items-center justify-center bg-black">

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useModuleStore } from '../../store/useModuleStore'
 
 export interface VirtualFile {
   name: string
@@ -76,8 +77,48 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
   persist(
     (set, get) => ({
       files: [],
-      addFile: (file) =>
-        set((state) => ({ files: [...state.files.filter((f) => f.name !== file.name), file] })),
+      addFile: (file) => {
+        // Bridge: sync key/cert/csr creation to the scoring system
+        if (file.type === 'key' || file.type === 'cert' || file.type === 'csr') {
+          const moduleStore = useModuleStore.getState()
+          const fileId = `openssl::${file.name}`
+          const content = typeof file.content === 'string' ? file.content : ''
+          if (file.type === 'key' && !moduleStore.artifacts.keys.some((k) => k.id === fileId)) {
+            moduleStore.addKey({
+              id: fileId,
+              name: file.name,
+              algorithm: 'OpenSSL',
+              keySize: 0,
+              created: file.timestamp,
+              publicKey: content,
+              description: 'OpenSSL Studio',
+            })
+          } else if (
+            file.type === 'cert' &&
+            !moduleStore.artifacts.certificates.some((c) => c.id === fileId)
+          ) {
+            moduleStore.addCertificate({
+              id: fileId,
+              name: file.name,
+              pem: content,
+              created: file.timestamp,
+              metadata: { subject: '', issuer: '', serial: '', notBefore: 0, notAfter: 0 },
+              tags: ['openssl-studio'],
+            })
+          } else if (
+            file.type === 'csr' &&
+            !moduleStore.artifacts.csrs.some((c) => c.id === fileId)
+          ) {
+            moduleStore.addCSR({
+              id: fileId,
+              name: file.name,
+              pem: content,
+              created: file.timestamp,
+            })
+          }
+        }
+        set((state) => ({ files: [...state.files.filter((f) => f.name !== file.name), file] }))
+      },
       removeFile: (name) => set((state) => ({ files: state.files.filter((f) => f.name !== name) })),
       clearFiles: () => set(() => ({ files: [], editingFile: null, viewingFile: null })),
       getFile: (name) => get().files.find((f) => f.name === name),

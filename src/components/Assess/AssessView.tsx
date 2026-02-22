@@ -10,6 +10,7 @@ import { useAssessmentEngine } from '../../hooks/useAssessmentEngine'
 import type { AssessmentInput } from '../../hooks/useAssessmentEngine'
 import { metadata } from '../../data/industryAssessConfig'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { useModuleStore } from '../../store/useModuleStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
@@ -255,6 +256,15 @@ export const AssessView: React.FC = () => {
       setResult(result)
     }
   }, [isComplete, result, setResult])
+
+  // Bridge: mark assessment complete in useModuleStore so it contributes to breadth scoring
+  useEffect(() => {
+    if (!isComplete) return
+    useModuleStore.getState().updateModuleProgress('assess', {
+      status: 'completed',
+      completedSteps: ['assessment-completed'],
+    })
+  }, [isComplete])
 
   return (
     <div className="container mx-auto p-4 animate-fade-in">

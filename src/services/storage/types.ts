@@ -75,4 +75,14 @@ export interface LearningProgress {
   notes: {
     [moduleId: string]: string
   }
+
+  // Session and streak tracking
+  sessionTracking?: {
+    firstVisit: number // ms timestamp of first ever visit
+    lastVisitDate: string // 'YYYY-MM-DD' of last app open
+    totalSessions: number // incremented once per calendar day
+    currentStreak: number // consecutive days with at least one visit
+    longestStreak: number // all-time best streak
+    visitDates: string[] // last 30 YYYY-MM-DD strings (sliding window)
+  }
 }

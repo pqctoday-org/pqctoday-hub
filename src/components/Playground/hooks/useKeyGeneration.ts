@@ -7,6 +7,7 @@ import * as LIBOQS_SIG from '../../../wasm/liboqs_sig'
 import * as WebCrypto from '../../../utils/webCrypto'
 import { bytesToHex } from '../../../utils/dataInputUtils'
 import type { ExecutionMode, ClassicalAlgorithm } from '../PlaygroundContext'
+import { useModuleStore } from '../../../store/useModuleStore'
 
 interface UseKeyGenerationProps {
   algorithm: string
@@ -106,6 +107,16 @@ export const useKeyGeneration = ({
           })
           setSelectedEncKeyId(newKeys[0].id)
           setSelectedDecKeyId(newKeys[1].id)
+          // Bridge: record generated key pair to scoring system
+          useModuleStore.getState().addKey({
+            id: newKeys[1].id,
+            name: algoName,
+            algorithm: algoName,
+            keySize: 0,
+            created: Date.now(),
+            publicKey: '',
+            description: 'Playground',
+          })
 
           const end = performance.now()
           addLog({
@@ -151,6 +162,16 @@ export const useKeyGeneration = ({
           })
           setSelectedSignKeyId(newKeys[1].id)
           setSelectedVerifyKeyId(newKeys[0].id)
+          // Bridge: record generated key pair to scoring system
+          useModuleStore.getState().addKey({
+            id: newKeys[1].id,
+            name: algoName,
+            algorithm: algoName,
+            keySize: 0,
+            created: Date.now(),
+            publicKey: '',
+            description: 'Playground',
+          })
 
           const end = performance.now()
           addLog({
@@ -194,6 +215,16 @@ export const useKeyGeneration = ({
           })
           setSelectedSignKeyId(newKeys[1].id)
           setSelectedVerifyKeyId(newKeys[0].id)
+          // Bridge: record generated key pair to scoring system
+          useModuleStore.getState().addKey({
+            id: newKeys[1].id,
+            name: algoName,
+            algorithm: algoName,
+            keySize: 0,
+            created: Date.now(),
+            publicKey: '',
+            description: 'Playground',
+          })
 
           const end = performance.now()
           addLog({
@@ -432,6 +463,20 @@ export const useKeyGeneration = ({
         const newStore = [...prev, ...newKeys]
         return newStore.length > MAX_KEYS ? newStore.slice(-MAX_KEYS) : newStore
       })
+      // Bridge: record generated key to scoring system
+      if (newKeys.length > 0) {
+        const bridgeKey =
+          newKeys.find((k) => k.type === 'private' || k.type === 'symmetric') ?? newKeys[0]
+        useModuleStore.getState().addKey({
+          id: bridgeKey.id,
+          name: classicalAlgorithm,
+          algorithm: classicalAlgorithm,
+          keySize: 0,
+          created: Date.now(),
+          publicKey: '',
+          description: 'Playground',
+        })
+      }
 
       const end = performance.now()
 

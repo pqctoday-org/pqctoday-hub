@@ -115,6 +115,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'vpn-ssh-pqc': 3,
   'key-management': 3,
   quiz: 1,
+  assess: 1, // Assessment wizard completion
 }
 
 /** Module tracks for the grid display */

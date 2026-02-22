@@ -126,17 +126,18 @@ describe('useModuleStore', () => {
     expect(global.URL.revokeObjectURL).toHaveBeenCalledWith('blob:test')
   })
 
-  it('migrates from version 0 to 2', () => {
+  it('migrates from version 0 to current (3), initializing all fields', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v0State = { timestamp: 123 }
     const migrated = migrate(v0State, 0)
-    expect(migrated.version).toBe('2.0.0')
+    expect(migrated.version).toBe('3.0.0')
     expect(migrated.artifacts).toBeDefined()
+    expect(migrated.sessionTracking).toBeDefined()
     expect(migrated.timestamp).toEqual(expect.any(Number))
   })
 
-  it('migrates from version 1 to 2, converting ms to min', () => {
+  it('migrates from version 1 to current (3), converting ms to min', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v1State = {
@@ -144,8 +145,9 @@ describe('useModuleStore', () => {
       modules: { 'mod-1': { timeSpent: 120000 } },
     }
     const migrated = migrate(v1State, 1)
-    expect(migrated.version).toBe('2.0.0')
+    expect(migrated.version).toBe('3.0.0')
     expect(migrated.modules['mod-1'].timeSpent).toBe(2)
+    expect(migrated.sessionTracking).toBeDefined()
   })
 
   it('handles other versions in migrate', () => {

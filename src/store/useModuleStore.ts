@@ -19,6 +19,7 @@ interface ModuleState extends LearningProgress {
   addKey: (key: LearningProgress['artifacts']['keys'][0]) => void
   addCertificate: (cert: LearningProgress['artifacts']['certificates'][0]) => void
   addCSR: (csr: LearningProgress['artifacts']['csrs'][0]) => void
+  trackDailyVisit: () => void
 }
 
 const INITIAL_STATE: LearningProgress = {
@@ -45,6 +46,7 @@ const INITIAL_STATE: LearningProgress = {
     autoSave: true,
   },
   notes: {},
+  sessionTracking: undefined,
 }
 
 export const useModuleStore = create<ModuleState>()(
@@ -147,6 +149,8 @@ export const useModuleStore = create<ModuleState>()(
         set((state) => ({
           ...state,
           ...progress,
+          // Preserve sessionTracking from live state if imported file predates v3
+          sessionTracking: progress.sessionTracking ?? state.sessionTracking,
         })),
 
       resetProgress: () => set(INITIAL_STATE),
@@ -182,14 +186,44 @@ export const useModuleStore = create<ModuleState>()(
           resetModuleProgress: _resetModuleProgress,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           getFullProgress: _getFullProgress,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          trackDailyVisit: _trackDailyVisit,
           ...data
         } = get()
         return data
       },
+
+      trackDailyVisit: () =>
+        set((state) => {
+          const today = new Date().toISOString().split('T')[0]
+          const existing = state.sessionTracking
+
+          // No-op if already tracked today
+          if (existing?.lastVisitDate === today) return state
+
+          const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+          const prevStreak = existing?.currentStreak ?? 0
+          const newStreak = existing?.lastVisitDate === yesterday ? prevStreak + 1 : 1
+          const newLongest = Math.max(existing?.longestStreak ?? 0, newStreak)
+
+          const prevDates = existing?.visitDates ?? []
+          const visitDates = [...prevDates.filter((d) => d !== today), today].slice(-30)
+
+          return {
+            sessionTracking: {
+              firstVisit: existing?.firstVisit ?? Date.now(),
+              lastVisitDate: today,
+              totalSessions: (existing?.totalSessions ?? 0) + 1,
+              currentStreak: newStreak,
+              longestStreak: newLongest,
+              visitDates,
+            },
+          }
+        }),
     }),
     {
       name: 'pki-module-storage',
-      version: 2,
+      version: 3,
       // Migration function for handling state version upgrades
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -226,6 +260,23 @@ export const useModuleStore = create<ModuleState>()(
           state.timestamp = Date.now()
         }
 
+        // Version 2 → Version 3: Add sessionTracking field
+        if (version <= 2) {
+          if (!state.sessionTracking) {
+            const today = new Date().toISOString().split('T')[0]
+            state.sessionTracking = {
+              firstVisit: state.timestamp ?? Date.now(),
+              lastVisitDate: today,
+              totalSessions: 1,
+              currentStreak: 1,
+              longestStreak: 1,
+              visitDates: [today],
+            }
+          }
+          state.version = '3.0.0'
+          state.timestamp = Date.now()
+        }
+
         return state
       },
     }
@@ -238,7 +289,7 @@ if (typeof window !== 'undefined') {
     try {
       const state = useModuleStore.getState()
       const progress = state.getFullProgress()
-      const persistData = { state: progress, version: 1 }
+      const persistData = { state: progress, version: 3 }
       localStorage.setItem('pki-module-storage', JSON.stringify(persistData))
     } catch (error) {
       // Handle QuotaExceededError and other storage errors
