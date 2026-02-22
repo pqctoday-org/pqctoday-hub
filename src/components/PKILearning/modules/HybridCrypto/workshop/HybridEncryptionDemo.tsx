@@ -66,7 +66,11 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
         continue
       }
 
-      const pubResult = await hybridCryptoService.extractPublicKey(keyFile, pubFile)
+      const pubResult = await hybridCryptoService.extractPublicKey(
+        keyFile,
+        pubFile,
+        keyResult.fileData
+      )
       if (pubResult.error) {
         results.push({
           algorithm: algo.name,
@@ -82,7 +86,11 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
         continue
       }
 
-      const encapResult = await hybridCryptoService.kemEncapsulate(pubFile, prefix)
+      const encapResult = await hybridCryptoService.kemEncapsulate(
+        pubFile,
+        prefix,
+        pubResult.fileData
+      )
       if (encapResult.error) {
         results.push({
           algorithm: algo.name,
@@ -99,7 +107,15 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
       }
 
       const ctFile = `${prefix}_ct.bin`
-      const decapResult = await hybridCryptoService.kemDecapsulate(keyFile, ctFile, prefix)
+      const decapInputFiles: { name: string; data: Uint8Array }[] = []
+      if (keyResult.fileData) decapInputFiles.push(keyResult.fileData)
+      if (encapResult.ctFileData) decapInputFiles.push(encapResult.ctFileData)
+      const decapResult = await hybridCryptoService.kemDecapsulate(
+        keyFile,
+        ctFile,
+        prefix,
+        decapInputFiles
+      )
 
       const secretsMatch =
         encapResult.sharedSecretHex === decapResult.sharedSecretHex &&
@@ -149,9 +165,18 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
         continue
       }
 
-      await hybridCryptoService.extractPublicKey(keyFile, pubFile)
+      const pubResult = await hybridCryptoService.extractPublicKey(
+        keyFile,
+        pubFile,
+        keyResult.fileData
+      )
 
-      const signResult = await hybridCryptoService.signData(keyFile, message, prefix)
+      const signResult = await hybridCryptoService.signData(
+        keyFile,
+        message,
+        prefix,
+        keyResult.fileData
+      )
       if (signResult.error) {
         results.push({
           algorithm: algo.name,
@@ -166,11 +191,15 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
       }
 
       const sigFile = `${prefix}_sig.bin`
+      const verifyInputFiles: { name: string; data: Uint8Array }[] = []
+      if (pubResult.fileData) verifyInputFiles.push(pubResult.fileData)
+      if (signResult.sigFileData) verifyInputFiles.push(signResult.sigFileData)
       const verifyResult = await hybridCryptoService.verifySignature(
         pubFile,
         message,
         sigFile,
-        prefix
+        prefix,
+        verifyInputFiles
       )
 
       results.push({

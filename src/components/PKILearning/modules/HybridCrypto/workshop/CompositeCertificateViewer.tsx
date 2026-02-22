@@ -56,7 +56,8 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
       const certResult = await hybridCryptoService.generateSelfSignedCert(
         keyFile,
         certFile,
-        `/CN=${algo.label} Demo/O=PQC Today/OU=Hybrid Crypto Workshop`
+        `/CN=${algo.label} Demo/O=PQC Today/OU=Hybrid Crypto Workshop`,
+        keyResult.fileData
       )
 
       newResults.push({

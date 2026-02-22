@@ -5,6 +5,7 @@ export interface KeyGenResult {
   pemOutput: string
   keyInfo: string
   timingMs: number
+  fileData?: { name: string; data: Uint8Array }
   error?: string
 }
 
@@ -12,6 +13,7 @@ export interface KemResult {
   ciphertextHex: string
   sharedSecretHex: string
   timingMs: number
+  ctFileData?: { name: string; data: Uint8Array }
   error?: string
 }
 
@@ -19,6 +21,7 @@ export interface SignVerifyResult {
   signatureHex: string
   verified: boolean
   timingMs: number
+  sigFileData?: { name: string; data: Uint8Array }
   error?: string
 }
 
@@ -57,14 +60,28 @@ export class HybridCryptoService {
         }
       }
 
-      const readResult = await openSSLService.execute(`openssl pkey -in ${filename} -text -noout`)
-      const pemResult = await openSSLService.execute(`openssl pkey -in ${filename}`)
+      const keyFile = genResult.files.find((f) => f.name === filename)
+      if (!keyFile) {
+        return {
+          algorithm,
+          pemOutput: '',
+          keyInfo: '',
+          timingMs: performance.now() - start,
+          error: 'Key file not found in output',
+        }
+      }
+
+      const readResult = await openSSLService.execute(`openssl pkey -in ${filename} -text -noout`, [
+        keyFile,
+      ])
+      const pemResult = await openSSLService.execute(`openssl pkey -in ${filename}`, [keyFile])
 
       return {
         algorithm,
         pemOutput: pemResult.stdout || '',
         keyInfo: readResult.stdout || '',
         timingMs: performance.now() - start,
+        fileData: keyFile,
       }
     } catch (e) {
       return {
@@ -77,24 +94,36 @@ export class HybridCryptoService {
     }
   }
 
-  async extractPublicKey(privKeyFile: string, pubKeyFile: string): Promise<{ error?: string }> {
+  async extractPublicKey(
+    privKeyFile: string,
+    pubKeyFile: string,
+    privKeyData?: { name: string; data: Uint8Array }
+  ): Promise<{ fileData?: { name: string; data: Uint8Array }; error?: string }> {
     try {
       const result = await openSSLService.execute(
-        `openssl pkey -in ${privKeyFile} -pubout -out ${pubKeyFile}`
+        `openssl pkey -in ${privKeyFile} -pubout -out ${pubKeyFile}`,
+        privKeyData ? [privKeyData] : []
       )
-      return { error: result.error || undefined }
+      if (result.error) return { error: result.error }
+      const pubFile = result.files.find((f) => f.name === pubKeyFile)
+      return { fileData: pubFile, error: undefined }
     } catch (e) {
       return { error: e instanceof Error ? e.message : 'Public key extraction failed' }
     }
   }
 
-  async kemEncapsulate(pubKeyFile: string, prefix: string): Promise<KemResult> {
+  async kemEncapsulate(
+    pubKeyFile: string,
+    prefix: string,
+    pubKeyData?: { name: string; data: Uint8Array }
+  ): Promise<KemResult> {
     const start = performance.now()
     const ctFile = `${prefix}_ct.bin`
     const ssFile = `${prefix}_ss.bin`
     try {
       const result = await openSSLService.execute(
-        `openssl pkeyutl -encap -pubin -inkey ${pubKeyFile} -out ${ctFile} -secret ${ssFile}`
+        `openssl pkeyutl -encap -pubin -inkey ${pubKeyFile} -out ${ctFile} -secret ${ssFile}`,
+        pubKeyData ? [pubKeyData] : []
       )
       if (result.error) {
         return {
@@ -111,6 +140,7 @@ export class HybridCryptoService {
       return {
         ciphertextHex: ctData ? this.toHex(ctData.data) : '',
         sharedSecretHex: ssData ? this.toHex(ssData.data) : '',
+        ctFileData: ctData,
         timingMs: performance.now() - start,
       }
     } catch (e) {
@@ -123,12 +153,18 @@ export class HybridCryptoService {
     }
   }
 
-  async kemDecapsulate(privKeyFile: string, ctFile: string, prefix: string): Promise<KemResult> {
+  async kemDecapsulate(
+    privKeyFile: string,
+    ctFile: string,
+    prefix: string,
+    inputFiles?: { name: string; data: Uint8Array }[]
+  ): Promise<KemResult> {
     const start = performance.now()
     const ssFile = `${prefix}_ss_dec.bin`
     try {
       const result = await openSSLService.execute(
-        `openssl pkeyutl -decap -inkey ${privKeyFile} -in ${ctFile} -secret ${ssFile}`
+        `openssl pkeyutl -decap -inkey ${privKeyFile} -in ${ctFile} -secret ${ssFile}`,
+        inputFiles || []
       )
       if (result.error) {
         return {
@@ -156,14 +192,24 @@ export class HybridCryptoService {
     }
   }
 
-  async signData(privKeyFile: string, message: string, prefix: string): Promise<SignVerifyResult> {
+  async signData(
+    privKeyFile: string,
+    message: string,
+    prefix: string,
+    privKeyData?: { name: string; data: Uint8Array }
+  ): Promise<SignVerifyResult> {
     const start = performance.now()
     const msgFile = `${prefix}_msg.bin`
     const sigFile = `${prefix}_sig.bin`
     try {
+      const inputFiles: { name: string; data: Uint8Array }[] = [
+        { name: msgFile, data: new TextEncoder().encode(message) },
+      ]
+      if (privKeyData) inputFiles.push(privKeyData)
+
       const result = await openSSLService.execute(
         `openssl pkeyutl -sign -inkey ${privKeyFile} -in ${msgFile} -out ${sigFile}`,
-        [{ name: msgFile, data: new TextEncoder().encode(message) }]
+        inputFiles
       )
       if (result.error) {
         return {
@@ -179,6 +225,7 @@ export class HybridCryptoService {
       return {
         signatureHex: sigData ? this.toHex(sigData.data) : '',
         verified: false,
+        sigFileData: sigData,
         timingMs: performance.now() - start,
       }
     } catch (e) {
@@ -195,14 +242,19 @@ export class HybridCryptoService {
     pubKeyFile: string,
     message: string,
     sigFile: string,
-    prefix: string
+    prefix: string,
+    inputFiles?: { name: string; data: Uint8Array }[]
   ): Promise<SignVerifyResult> {
     const start = performance.now()
     const msgFile = `${prefix}_msg_v.bin`
     try {
+      const files: { name: string; data: Uint8Array }[] = [
+        { name: msgFile, data: new TextEncoder().encode(message) },
+        ...(inputFiles || []),
+      ]
       const result = await openSSLService.execute(
         `openssl pkeyutl -verify -pubin -inkey ${pubKeyFile} -in ${msgFile} -sigfile ${sigFile}`,
-        [{ name: msgFile, data: new TextEncoder().encode(message) }]
+        files
       )
 
       const verified = (result.stdout || '').includes('Signature Verified Successfully')
@@ -226,13 +278,15 @@ export class HybridCryptoService {
   async generateSelfSignedCert(
     keyFile: string,
     certFile: string,
-    subject?: string
+    subject?: string,
+    keyFileData?: { name: string; data: Uint8Array }
   ): Promise<CertResult> {
     const start = performance.now()
     const subj = subject || '/CN=Hybrid Crypto Demo/O=PQC Today'
     try {
       const result = await openSSLService.execute(
-        `openssl req -new -x509 -key ${keyFile} -out ${certFile} -days 365 -subj "${subj}"`
+        `openssl req -new -x509 -key ${keyFile} -out ${certFile} -days 365 -subj "${subj}"`,
+        keyFileData ? [keyFileData] : []
       )
       if (result.error) {
         return { pem: '', parsed: '', timingMs: performance.now() - start, error: result.error }
