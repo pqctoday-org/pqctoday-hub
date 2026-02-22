@@ -26,6 +26,8 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
     defaultSort || { key: 'softwareName', direction: 'asc' }
   )
 
+  const rowKey = (item: SoftwareItem) => `${item.softwareName}::${item.categoryId}`
+
   const toggleExpand = (id: string) => {
     const newExpanded = new Set(expandedIds)
     if (newExpanded.has(id)) {
@@ -132,12 +134,13 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
           </thead>
           <tbody>
             {sortedData.map((item) => {
-              const isExpanded = expandedIds.has(item.softwareName) // Using Name as unique ID for expansion
+              const key = rowKey(item)
+              const isExpanded = expandedIds.has(key)
               return (
-                <React.Fragment key={item.softwareName}>
+                <React.Fragment key={key}>
                   <tr
                     className="border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
-                    onClick={() => toggleExpand(item.softwareName)}
+                    onClick={() => toggleExpand(key)}
                   >
                     <td className="p-4">
                       {isExpanded ? (

@@ -332,7 +332,7 @@ export const MigrateView: React.FC = () => {
       <div className="space-y-4">
         {filteredData.length > 0 ? (
           <SoftwareTable
-            key={`${activeInfrastructureLayer}-${activeTab}-${activePqcSupport}`}
+            key={`${activeInfrastructureLayer}-${activeTab}-${activePqcSupport}-${stepFilter?.stepId ?? 'none'}`}
             data={filteredData}
             defaultSort={{ key: 'softwareName', direction: 'asc' }}
           />
