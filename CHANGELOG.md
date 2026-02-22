@@ -4,6 +4,62 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.21.0] - 2026-02-21
+
+### Added
+
+- **7-layer Enterprise Infrastructure Stack**: Restructured the Migrate module from 5 layers to 7
+  distinct architectural tiers — Cloud, Network, Application Servers & Software, Database, Security
+  Stack, Operating System, Hardware & Secure Elements. Each layer has a dedicated icon, color
+  scheme, and descriptive subtitle. Products can now span multiple layers via comma-separated values
+  (e.g., AWS KMS appears under both Cloud and Security Stack), with the filter, table icon, and
+  layer label column all supporting multi-layer display.
+
+- **Security Stack layer with 42 products**: New dedicated layer for security-critical
+  infrastructure covering KMS, PKI, Crypto Libraries, Certificate Lifecycle Management, Secrets
+  Management, IAM, Data Protection, and CIAM. Includes Venafi, Keyfactor, HashiCorp Vault, Okta,
+  Keycloak, Auth0, ForgeRock, DigiCert, Sectigo, Thales CipherTrust DSP, IBM Guardium, Virtru,
+  and core cryptographic libraries (OpenSSL, Bouncy Castle, liboqs, wolfSSL, Google Tink, AWS-LC).
+
+- **30+ new product entries across 10 categories**: Cloud KMS (AWS, Google, Azure), Cloud HSM
+  (Thales Luna, AWS CloudHSM, Azure Dedicated HSM), QRNG (ID Quantique Quantis, Quantinuum Quantum
+  Origin, QuintessenceLabs), QKD (ID Quantique Cerberis, Toshiba QKD, Quantum Bridge), Network
+  Encryptors (Thales HSE, Senetas CN7000, Adva FSP 3000, Ciena WaveLogic 6), Confidential
+  Computing (Intel TDX, AMD SEV-SNP, ARM CCA), IAM (Okta, Keycloak, Ping Identity), CIAM (Auth0,
+  ForgeRock), Data Protection (Thales CipherTrust DSP, IBM Guardium, Virtru), and Certificate
+  Lifecycle Management (DigiCert, Sectigo, EJBCA).
+
+- **PQC Support filter**: Replaced the Platform dropdown with a PQC Support filter that normalizes
+  the detailed capability strings into four broad groups — Yes, Limited, Planned, No — so users can
+  instantly find products with production-ready quantum-safe capabilities versus those still on the
+  roadmap.
+
+- **Contextual filter cascading**: Category and PQC Support dropdowns now derive their available
+  options from the currently filtered dataset. Selecting a layer automatically reduces the Category
+  dropdown to only categories present in that layer, and vice versa. Stale selections auto-reset to
+  "All" when they become unavailable.
+
+### Changed
+
+- **Reference Catalog renamed**: "Software Reference Catalog" heading renamed to "Reference
+  Catalog", "Software" column renamed to "Product", "View Related Software" button renamed to "View
+  Related Products", and "Software Coverage Gaps" renamed to "Coverage Gaps" throughout the Migrate
+  module.
+
+- **193 total products** (up from 161), with multi-layer overlap bringing effective per-layer
+  counts to: Cloud 24, Network 13, Application 86, Database 6, Security Stack 42, OS 7,
+  Hardware 27.
+
+### Fixed
+
+- **CSV data quality audit**: Consolidated redundant PKI category (CSC-020 merged into CSC-004),
+  removed duplicate HashiCorp Vault row, corrected Palo Alto PAN-OS layer assignment from OS to
+  Network to match its NGFW peer group.
+
+- **Thales Luna Cloud HSM accuracy**: Corrected PQC support from "Yes (ML-KEM ML-DSA FIPS 140-3
+  L3)" to "No (PQC roadmap pending)" and FIPS validation from "FIPS 140-3 L3" to "FIPS 140-2 L3"
+  based on current product capabilities.
+
 ## [1.20.0] - 2026-02-21
 
 ### Added

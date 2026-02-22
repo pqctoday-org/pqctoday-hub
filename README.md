@@ -83,15 +83,19 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - Explores the 7 stages of the key lifecycle and PQC impact
     - Simulates PKCS#11 HSM operations and key rotation planning for enterprises
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
-  - **Verified Database**: 148+ verified PQC-ready software entries (OS, Libraries, Network, etc.)
-  - **Infrastructure Layer View**: 5-layer visual stack (Hardware, OS, Database, Application,
-    Cloud/Network) — click any layer to filter the software table by architectural tier
+  - **Reference Catalog**: 193 verified PQC-relevant product entries across 7 infrastructure layers
+  - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
+    Security Stack, Operating System, Hardware & Secure Elements — click any layer to filter the
+    catalog. Products can span multiple layers (e.g., AWS KMS in Cloud + Security Stack).
+  - **Security Stack Layer**: KMS, PKI, Crypto Libraries, Certificate Lifecycle, Secrets, IAM,
+    Data Protection, CIAM — 42 products including OpenSSL, Bouncy Castle, HashiCorp Vault, Okta
   - **7-Step Migration Workflow**: Assess, Plan, Pilot, Implement, Test, Optimize, Measure
   - **Framework Mappings**: NIST, ETSI, and CISA guideline alignment
-  - **Gap Analysis**: Software category coverage assessment with priority matrix
+  - **Gap Analysis**: Coverage assessment with priority matrix
   - **Reference Panel**: Curated authoritative migration resources
   - **Change Tracking**: "New" and "Updated" indicators for recent PQC landscape changes
-  - **Filtering**: Deep filtering by category, platform, industry, and infrastructure layer
+  - **Filtering**: Contextual cascading filters by category, PQC support status, and infrastructure
+    layer with search
 - **PQC Risk Assessment** (`/assess`): Comprehensive 13-step quantum risk evaluation wizard
   - **Country/Jurisdiction Picker**: select your regulatory jurisdiction to align deadlines with the PQC timeline
   - **Multi-select Sensitivity & Retention**: pick all applicable levels; scoring uses worst-case HNDL risk

@@ -115,7 +115,7 @@ export const MigrationStepCard: React.FC<MigrationStepCardProps> = ({ step, onVi
               className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors mt-2 cursor-pointer"
             >
               <ArrowDown size={14} />
-              View Related Software
+              View Related Products
             </button>
           )}
 

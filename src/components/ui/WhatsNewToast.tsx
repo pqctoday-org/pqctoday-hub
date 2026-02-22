@@ -78,27 +78,26 @@ export const WhatsNewToast = () => {
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
                     <strong className="text-foreground">
-                      80 quantum threats across 20 industries
+                      7-layer Infrastructure Stack &middot; 193 products
                     </strong>{' '}
-                    &mdash; from aerospace avionics to water SCADA, each with criticality,
-                    vulnerable algorithms, PQC replacement, and primary source citations
+                    &mdash; Cloud, Network, Application, Database, Security Stack, OS, and Hardware
+                    layers with multi-layer support and 30+ new entries
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Global PQC timeline expanded</strong>{' '}
-                    &mdash; new milestones through Feb 2026: Ethereum PQC initiative, CISA federal
-                    procurement guidance, G7 financial roadmap, DoD/SandboxAQ deployment, and more
+                    <strong className="text-foreground">Security Stack layer</strong> &mdash;
+                    dedicated layer for KMS, PKI, Crypto Libraries, Secrets, IAM, Data Protection,
+                    and CIAM with 42 tracked products
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">100 Transformation Leaders</strong> &mdash;
-                    refreshed with 12 new profiles including Philip Intallura (HSBC), Dr. Krysta
-                    Svore (NVIDIA), and &Eacute;ric Brier (Thales/FALCON). Google Cloud HSM PQC
-                    support corrected.
+                    <strong className="text-foreground">PQC Support filter</strong> &mdash;
+                    instantly filter the reference catalog by quantum-readiness status: Yes,
+                    Limited, Planned, or No
                   </span>
                 </li>
               </ul>

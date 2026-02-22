@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import { SoftwareTable } from './SoftwareTable'
 import { MigrationWorkflow } from './MigrationWorkflow'
-import { InfrastructureStack, type InfrastructureLayerType } from './InfrastructureStack'
+import { InfrastructureStack, LAYERS, type InfrastructureLayerType } from './InfrastructureStack'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Search, AlertTriangle, X } from 'lucide-react'
 import debounce from 'lodash/debounce'
@@ -14,7 +14,7 @@ import type { MigrationStep } from '../../types/MigrateTypes'
 export const MigrateView: React.FC = () => {
   const [searchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState<string>('All')
-  const [activePlatform, setActivePlatform] = useState<string>('All')
+  const [activePqcSupport, setActivePqcSupport] = useState<string>('All')
   const [activeInfrastructureLayer, setActiveInfrastructureLayer] =
     useState<InfrastructureLayerType>('All')
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
@@ -54,40 +54,70 @@ export const MigrateView: React.FC = () => {
     debouncedSetFilter(e.target.value)
   }
 
-  // Extract unique categories for tabs
+  // Base data filtered by infrastructure layer (used to derive contextual dropdown options)
+  const layerFilteredData = useMemo(() => {
+    if (activeInfrastructureLayer === 'All') return softwareData
+    return softwareData.filter((item) => {
+      const layers = item.infrastructureLayer.split(',').map((l) => l.trim())
+      return layers.includes(activeInfrastructureLayer)
+    })
+  }, [activeInfrastructureLayer])
+
+  // Normalize PQC support values to broad groups
+  const normalizePqcSupport = useCallback((pqcSupport: string): string => {
+    if (!pqcSupport) return 'Unknown'
+    const lower = pqcSupport.toLowerCase()
+    if (lower.startsWith('yes')) return 'Yes'
+    if (lower.startsWith('limited')) return 'Limited'
+    if (lower.startsWith('planned')) return 'Planned'
+    if (lower.startsWith('no')) return 'No'
+    return 'Unknown'
+  }, [])
+
+  // Extract unique categories — scoped to active layer + PQC support filters
   const categories = useMemo(() => {
+    const source =
+      activePqcSupport === 'All'
+        ? layerFilteredData
+        : layerFilteredData.filter(
+            (item) => normalizePqcSupport(item.pqcSupport) === activePqcSupport
+          )
     const cats = new Set<string>()
-    softwareData.forEach((item) => {
+    source.forEach((item) => {
       if (item.categoryName) cats.add(item.categoryName)
     })
     return Array.from(cats).sort()
-  }, [])
+  }, [layerFilteredData, activePqcSupport, normalizePqcSupport])
 
   const tabs = ['All', ...categories]
 
-  // Extract unique platforms for dropdown
-  const platforms = useMemo(() => {
-    const p = new Set<string>()
-    softwareData.forEach((item) => {
-      if (item.primaryPlatforms) {
-        // Platforms might be space or comma separated in CSV, data view showed "Linux macOS Windows" (space)
-        // But let's assume simple contains check is better for usage, or split by space/comma for the list
-        // CSV Example: "Windows Linux macOS (.NET)"
-        // For the dropdown, let's just grab the whole string or common OSes if we want to be smart.
-        // To keep it simple like LibraryView's regionScope:
-        if (item.primaryPlatforms.includes(',')) {
-          item.primaryPlatforms.split(',').forEach((s) => p.add(s.trim()))
-        } else {
-          item.primaryPlatforms.split(' ').forEach((s) => p.add(s.trim()))
-        }
-      }
+  // Extract PQC support options — scoped to active layer + category filters
+  const pqcSupportOptions = useMemo(() => {
+    const source =
+      activeTab === 'All'
+        ? layerFilteredData
+        : layerFilteredData.filter((item) => item.categoryName === activeTab)
+    const groups = new Set<string>()
+    source.forEach((item) => {
+      groups.add(normalizePqcSupport(item.pqcSupport))
     })
-    // Filter out empty or noise
-    const clean = Array.from(p)
-      .filter((x) => x.length > 2 && !x.startsWith('('))
-      .sort()
-    return ['All', ...clean]
-  }, [])
+    // Fixed order: Yes, Limited, Planned, No
+    const order = ['Yes', 'Limited', 'Planned', 'No', 'Unknown']
+    return ['All', ...order.filter((g) => groups.has(g))]
+  }, [layerFilteredData, activeTab, normalizePqcSupport])
+
+  // Reset category/PQC support if current selection is no longer available
+  useEffect(() => {
+    if (activeTab !== 'All' && !categories.includes(activeTab)) {
+      setActiveTab('All')
+    }
+  }, [categories, activeTab])
+
+  useEffect(() => {
+    if (activePqcSupport !== 'All' && !pqcSupportOptions.includes(activePqcSupport)) {
+      setActivePqcSupport('All')
+    }
+  }, [pqcSupportOptions, activePqcSupport])
 
   const handleViewSoftware = useCallback((step: MigrationStep) => {
     setStepFilter({
@@ -110,14 +140,15 @@ export const MigrateView: React.FC = () => {
         return false
       }
 
-      // Platform Filter
-      if (activePlatform !== 'All') {
-        if (!item.primaryPlatforms || !item.primaryPlatforms.includes(activePlatform)) return false
+      // PQC Support Filter
+      if (activePqcSupport !== 'All') {
+        if (normalizePqcSupport(item.pqcSupport) !== activePqcSupport) return false
       }
 
-      // Infrastructure Layer Filter
+      // Infrastructure Layer Filter (supports comma-separated multi-layer values)
       if (activeInfrastructureLayer !== 'All') {
-        if (item.infrastructureLayer !== activeInfrastructureLayer) return false
+        const layers = item.infrastructureLayer.split(',').map((l) => l.trim())
+        if (!layers.includes(activeInfrastructureLayer)) return false
       }
 
       // Search Filter
@@ -129,7 +160,14 @@ export const MigrateView: React.FC = () => {
         item.license?.toLowerCase().includes(searchLower)
       )
     })
-  }, [activeTab, stepFilter, activePlatform, activeInfrastructureLayer, filterText])
+  }, [
+    activeTab,
+    stepFilter,
+    activePqcSupport,
+    normalizePqcSupport,
+    activeInfrastructureLayer,
+    filterText,
+  ])
 
   if (!softwareData || softwareData.length === 0) {
     return (
@@ -171,6 +209,13 @@ export const MigrateView: React.FC = () => {
             setActiveInfrastructureLayer(layer)
             setStepFilter(null)
             setActiveTab('All')
+            if (layer !== 'All') {
+              setTimeout(
+                () =>
+                  softwareTableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+                100
+              )
+            }
           }}
         />
       </div>
@@ -178,9 +223,31 @@ export const MigrateView: React.FC = () => {
       {/* Software Catalog */}
       <div ref={softwareTableRef} className="pt-4">
         <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4">
-          Software Reference Catalog
+          Reference Catalog
         </h3>
       </div>
+
+      {/* Active layer banner */}
+      {activeInfrastructureLayer !== 'All' && (
+        <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2 mb-2">
+          <span>
+            Filtering by layer:{' '}
+            <strong>
+              {LAYERS.find((l) => l.id === activeInfrastructureLayer)?.label ??
+                activeInfrastructureLayer}
+            </strong>{' '}
+            &middot; {filteredData.length} {filteredData.length === 1 ? 'product' : 'products'}
+          </span>
+          <button
+            onClick={() => setActiveInfrastructureLayer('All')}
+            className="ml-auto flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Clear layer filter"
+          >
+            <X size={12} />
+            Clear
+          </button>
+        </div>
+      )}
 
       {/* Step filter banner */}
       {stepFilter && (
@@ -225,16 +292,16 @@ export const MigrateView: React.FC = () => {
             />
           </div>
 
-          {/* Platform Dropdown */}
+          {/* PQC Support Dropdown */}
           <div className="flex-1 min-w-[120px]">
             <FilterDropdown
-              items={platforms}
-              selectedId={activePlatform}
-              onSelect={(platform) => {
-                setActivePlatform(platform)
-                logMigrateAction('Filter Platform', platform)
+              items={pqcSupportOptions}
+              selectedId={activePqcSupport}
+              onSelect={(pqc) => {
+                setActivePqcSupport(pqc)
+                logMigrateAction('Filter PQC Support', pqc)
               }}
-              defaultLabel="Platform"
+              defaultLabel="PQC Support"
               noContainer
               opaque
               className="mb-0 w-full"
@@ -265,6 +332,7 @@ export const MigrateView: React.FC = () => {
       <div className="space-y-4">
         {filteredData.length > 0 ? (
           <SoftwareTable
+            key={`${activeInfrastructureLayer}-${activeTab}-${activePqcSupport}`}
             data={filteredData}
             defaultSort={{ key: 'softwareName', direction: 'asc' }}
           />

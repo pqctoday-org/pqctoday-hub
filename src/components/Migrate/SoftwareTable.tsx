@@ -93,7 +93,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
   }
 
   const headers: { key: SortKey; label: string }[] = [
-    { key: 'softwareName', label: 'Software' },
+    { key: 'softwareName', label: 'Product' },
     { key: 'infrastructureLayer', label: 'Layer' },
     { key: 'categoryName', label: 'Category' },
     { key: 'pqcSupport', label: 'PQC Support' },
@@ -149,13 +149,16 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
                     <td className="p-4 font-medium text-foreground">
                       <div className="flex items-center gap-3">
                         {(() => {
-                          const layer = LAYERS.find((l) => l.id === item.infrastructureLayer)
+                          const layerIds = item.infrastructureLayer.split(',').map((l) => l.trim())
+                          const layer = LAYERS.find((l) => layerIds.includes(l.id))
                           if (!layer) return null
                           const Icon = layer.icon
                           return (
                             <div
                               className={`p-1.5 rounded-md bg-muted/20 border ${layer.borderColor} ${layer.iconColor}`}
-                              title={layer.label}
+                              title={layerIds
+                                .map((id) => LAYERS.find((l) => l.id === id)?.label ?? id)
+                                .join(', ')}
                             >
                               <Icon size={16} />
                             </div>
@@ -183,8 +186,11 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
                       </div>
                     </td>
                     <td className="p-4 text-sm text-muted-foreground">
-                      {LAYERS.find((l) => l.id === item.infrastructureLayer)?.label ||
-                        item.infrastructureLayer}
+                      {item.infrastructureLayer
+                        .split(',')
+                        .map((id) => id.trim())
+                        .map((id) => LAYERS.find((l) => l.id === id)?.label ?? id)
+                        .join(', ')}
                     </td>
                     <td className="p-4 text-sm text-muted-foreground">{item.categoryName}</td>
                     <td className="p-4 text-sm">{renderPqcSupport(item.pqcSupport)}</td>

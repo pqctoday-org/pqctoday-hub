@@ -50,9 +50,9 @@ export const MigrationGapAnalysis: React.FC<MigrationGapAnalysisProps> = ({ gaps
       >
         <div className="flex items-center gap-2.5">
           <AlertTriangle size={16} className="text-warning" />
-          <span className="text-sm font-semibold text-foreground">Software Coverage Gaps</span>
+          <span className="text-sm font-semibold text-foreground">Coverage Gaps</span>
           <span className="text-xs text-muted-foreground">
-            {missingGaps.length} categories with no tracked PQC software
+            {missingGaps.length} categories with no tracked PQC products
           </span>
         </div>
         {isExpanded ? (

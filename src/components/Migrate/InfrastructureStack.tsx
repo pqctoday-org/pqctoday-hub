@@ -1,14 +1,16 @@
 import React from 'react'
-import { Server, Monitor, Database, Laptop, Cloud } from 'lucide-react'
+import { Server, Monitor, Database, Laptop, Cloud, ShieldCheck, Network } from 'lucide-react'
 import { logMigrateAction } from '../../utils/analytics'
 
 export type InfrastructureLayerType =
   | 'All'
   | 'Hardware'
   | 'OS'
+  | 'Security Stack'
   | 'Database'
   | 'Application'
-  | 'Cloud/Network'
+  | 'Network'
+  | 'Cloud'
 
 interface InfrastructureStackProps {
   activeLayer: InfrastructureLayerType
@@ -17,14 +19,24 @@ interface InfrastructureStackProps {
 
 export const LAYERS = [
   {
-    id: 'Cloud/Network',
-    label: 'Cloud & Network',
+    id: 'Cloud',
+    label: 'Cloud',
     icon: Cloud,
-    description: 'Cloud Gateways, KMS, Network Security, PKI, Secrets Management',
+    description: 'Cloud Encryption Gateways, Cloud KMS, CDN Edge, Crypto Agility',
     color: 'from-blue-500/20 to-cyan-500/20',
     borderColor: 'border-blue-500/50',
     activeColor: 'bg-blue-500/30 border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)]',
     iconColor: 'text-blue-400',
+  },
+  {
+    id: 'Network',
+    label: 'Network',
+    icon: Network,
+    description: 'VPN, IPsec, Network Security, Protocol Analyzers',
+    color: 'from-sky-500/20 to-indigo-500/20',
+    borderColor: 'border-sky-500/50',
+    activeColor: 'bg-sky-500/30 border-sky-400 shadow-[0_0_15px_rgba(14,165,233,0.5)]',
+    iconColor: 'text-sky-400',
   },
   {
     id: 'Application',
@@ -47,6 +59,17 @@ export const LAYERS = [
     iconColor: 'text-emerald-400',
   },
   {
+    id: 'Security Stack',
+    label: 'Security Stack',
+    icon: ShieldCheck,
+    description:
+      'KMS, PKI, Crypto Libraries, Certificate Lifecycle, Secrets, IAM, Data Protection, CIAM',
+    color: 'from-rose-500/20 to-red-500/20',
+    borderColor: 'border-rose-500/50',
+    activeColor: 'bg-rose-500/30 border-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.5)]',
+    iconColor: 'text-rose-400',
+  },
+  {
     id: 'OS',
     label: 'Operating System',
     icon: Monitor,
@@ -60,7 +83,7 @@ export const LAYERS = [
     id: 'Hardware',
     label: 'Hardware & Secure Elements',
     icon: Server,
-    description: 'HSMs, Secure Boot, Semiconductors',
+    description: 'HSMs, Secure Boot, Semiconductors, Confidential Computing',
     color: 'from-slate-500/20 to-gray-400/20',
     borderColor: 'border-slate-500/50',
     activeColor: 'bg-slate-500/30 border-slate-400 shadow-[0_0_15px_rgba(100,116,139,0.5)]',
