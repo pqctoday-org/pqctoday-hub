@@ -4,6 +4,7 @@ import { HDWalletFlowDiagram } from './CryptoFlowDiagram'
 import { InfoTooltip } from './InfoTooltip'
 import { PQCThreatSummary } from './PQCThreatSummary'
 import { DERIVATION_PATH_EXPLANATIONS } from '../utils/cryptoConstants'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface BlockchainCryptoIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -20,10 +21,11 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
           <Shield size={20} /> What is Blockchain Cryptography?
         </h2>
         <p className="text-foreground/80 leading-relaxed">
-          Blockchains are fundamentally cryptographic systems. Every transaction is authorized by a
-          digital signature, every address is derived from a public key through hash functions, and
-          every wallet generates its keys from elliptic curve mathematics. There is no central
-          authority — cryptography alone establishes ownership and prevents fraud.
+          Blockchains are fundamentally cryptographic systems. Every transaction is authorized by a{' '}
+          <InlineTooltip term="Digital Signature">digital signature</InlineTooltip>, every address
+          is derived from a public key through hash functions, and every wallet generates its keys
+          from elliptic curve mathematics. There is no central authority — cryptography alone
+          establishes ownership and prevents fraud.
         </p>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -64,8 +66,10 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
           Blockchain private keys are random 256-bit numbers. The corresponding public key is
-          derived via scalar multiplication on an elliptic curve — a one-way trapdoor function that
-          is easy to compute forward but computationally infeasible to reverse. Two curves dominate:
+          derived via scalar multiplication on an{' '}
+          <InlineTooltip term="Elliptic Curve Cryptography">elliptic curve</InlineTooltip> — a
+          one-way trapdoor function that is easy to compute forward but computationally infeasible
+          to reverse. Two curves dominate:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
@@ -209,12 +213,12 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
           <GitBranch size={20} /> HD Wallets and Key Management
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          Rather than managing separate private keys for each address, Hierarchical Deterministic
-          (HD) wallets derive an unlimited number of keys from a single seed. The{' '}
-          <InfoTooltip term="bip39" /> standard converts random entropy into a 24-word mnemonic
-          phrase for human-readable backup. <InfoTooltip term="bip32" /> defines the tree
-          derivation, and <InfoTooltip term="bip44" /> standardizes the path structure across
-          chains.
+          Rather than managing separate private keys for each address,{' '}
+          <InlineTooltip term="HD Wallet">Hierarchical Deterministic (HD) wallets</InlineTooltip>{' '}
+          derive an unlimited number of keys from a single seed. The <InfoTooltip term="bip39" />{' '}
+          standard converts random entropy into a 24-word mnemonic phrase for human-readable backup.{' '}
+          <InfoTooltip term="bip32" /> defines the tree derivation, and <InfoTooltip term="bip44" />{' '}
+          standardizes the path structure across chains.
         </p>
 
         <HDWalletFlowDiagram />

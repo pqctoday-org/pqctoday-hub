@@ -13,6 +13,7 @@ import {
   Calendar,
   ClipboardCheck,
 } from 'lucide-react'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface QuantumThreatsIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -30,8 +31,11 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           Classical computers store information as bits — each is definitively 0 or 1. A quantum
-          computer uses <strong>qubits</strong>, which exploit two quantum phenomena to process
-          information fundamentally differently.
+          computer uses{' '}
+          <strong>
+            <InlineTooltip term="Qubit">qubits</InlineTooltip>
+          </strong>
+          , which exploit two quantum phenomena to process information fundamentally differently.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -48,9 +52,15 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
               &alpha;|0&rang; + &beta;|1&rang;
             </div>
             <p className="text-xs text-muted-foreground">
-              <strong>Superposition:</strong> exists in a combination of 0 and 1 simultaneously.{' '}
-              <strong>Entanglement:</strong> qubits can be correlated so measuring one instantly
-              determines the other. Together, N qubits can process 2<sup>N</sup> states in parallel.
+              <strong>
+                <InlineTooltip term="Superposition">Superposition:</InlineTooltip>
+              </strong>{' '}
+              exists in a combination of 0 and 1 simultaneously.{' '}
+              <strong>
+                <InlineTooltip term="Entanglement">Entanglement:</InlineTooltip>
+              </strong>{' '}
+              qubits can be correlated so measuring one instantly determines the other. Together, N
+              qubits can process 2<sup>N</sup> states in parallel.
             </p>
           </div>
         </div>
@@ -59,7 +69,9 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             <strong className="text-warning">Key insight:</strong> Quantum speedup doesn&apos;t come
             from &quot;trying all answers at once.&quot; It comes from carefully constructing
             interference patterns that amplify correct answers and cancel wrong ones. Only specific
-            algorithms (like Shor&apos;s and Grover&apos;s) can exploit this structure.
+            algorithms (like <InlineTooltip term="Shor's Algorithm">Shor&apos;s</InlineTooltip> and{' '}
+            <InlineTooltip term="Grover's Algorithm">Grover&apos;s</InlineTooltip>) can exploit this
+            structure.
           </p>
         </div>
       </section>
@@ -67,7 +79,9 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
       {/* Shor's Algorithm */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <Calculator size={20} /> Shor&apos;s Algorithm — Breaking RSA &amp; ECC
+          <Calculator size={20} /> Shor&apos;s Algorithm — Breaking{' '}
+          <InlineTooltip term="RSA">RSA</InlineTooltip> &amp;{' '}
+          <InlineTooltip term="ECC">ECC</InlineTooltip>
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           Peter Shor discovered in 1994 that a quantum computer can solve two hard mathematical
@@ -104,8 +118,10 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             </div>
             <div className="space-y-2 text-xs text-muted-foreground">
               <p>
-                ECC (ECDSA, ECDH, EdDSA) and Diffie-Hellman rely on the hardness of discrete
-                logarithms.
+                ECC (<InlineTooltip term="ECDSA">ECDSA</InlineTooltip>,{' '}
+                <InlineTooltip term="ECDH">ECDH</InlineTooltip>,{' '}
+                <InlineTooltip term="EdDSA">EdDSA</InlineTooltip>) and Diffie-Hellman rely on the
+                hardness of discrete logarithms.
               </p>
               <div className="bg-background/50 rounded p-2 font-mono text-center">
                 <div>
@@ -116,8 +132,9 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
                 </div>
               </div>
               <p>
-                P-256 requires ~2,330 logical qubits. All ECC variants (P-256, P-384, X25519,
-                Ed25519) are equally broken.
+                P-256 requires ~2,330 logical qubits. All ECC variants (P-256, P-384,{' '}
+                <InlineTooltip term="X25519">X25519</InlineTooltip>,{' '}
+                <InlineTooltip term="Ed25519">Ed25519</InlineTooltip>) are equally broken.
               </p>
             </div>
           </div>
@@ -135,7 +152,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
       {/* Grover's Algorithm */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <Search size={20} /> Grover&apos;s Algorithm — Weakening AES &amp; SHA
+          <Search size={20} /> Grover&apos;s Algorithm — Weakening{' '}
+          <InlineTooltip term="AES">AES</InlineTooltip> &amp; SHA
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           Lov Grover discovered in 1996 that a quantum computer can search an unstructured database
@@ -211,9 +229,14 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
           <Clock size={20} /> CRQC Timeline Projections
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          A <strong>Cryptographically Relevant Quantum Computer (CRQC)</strong> is one powerful
-          enough to run Shor&apos;s algorithm against production-size keys. Experts disagree on when
-          this will happen, but major agencies are planning for it now:
+          A{' '}
+          <strong>
+            <InlineTooltip term="CRQC">
+              Cryptographically Relevant Quantum Computer (CRQC)
+            </InlineTooltip>
+          </strong>{' '}
+          is one powerful enough to run Shor&apos;s algorithm against production-size keys. Experts
+          disagree on when this will happen, but major agencies are planning for it now:
         </p>
         <div className="space-y-3">
           {[
@@ -264,7 +287,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
       {/* HNDL Attack Model */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <Shield size={20} /> Harvest Now, Decrypt Later (HNDL)
+          <Shield size={20} />{' '}
+          <InlineTooltip term="HNDL">Harvest Now, Decrypt Later (HNDL)</InlineTooltip>
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           The most urgent quantum threat is not future code-breaking — it&apos;s data being
@@ -310,7 +334,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
       {/* HNFL Attack Model */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <PenLine size={20} /> Harvest Now, Forge Later (HNFL)
+          <PenLine size={20} />{' '}
+          <InlineTooltip term="HNFL">Harvest Now, Forge Later (HNFL)</InlineTooltip>
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           HNDL targets confidentiality. <strong>HNFL targets authenticity and integrity.</strong>{' '}
@@ -348,7 +373,10 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-xs font-bold text-foreground mb-1">High-risk targets</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>• PKI hierarchies &amp; root CA certificates</li>
+              <li>
+                • <InlineTooltip term="PKI">PKI</InlineTooltip> hierarchies &amp; root CA
+                certificates
+              </li>
               <li>• Firmware signing (medical devices, industrial, automotive)</li>
               <li>• Software update pipelines &amp; code-signing certs</li>
               <li>• Government ePassports &amp; digital ID credentials</li>
@@ -360,7 +388,11 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
               A Root CA issued today with a 20-year validity period will still be trusted in 2046.
               If a CRQC arrives in 2035, that CA&apos;s RSA or ECDSA key is breakable — and every
               certificate it ever signed becomes forgeable. Migration to{' '}
-              <strong>ML-DSA or SLH-DSA</strong> must complete before CRQC arrival.
+              <strong>
+                <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> or{' '}
+                <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>
+              </strong>{' '}
+              must complete before CRQC arrival.
             </p>
           </div>
         </div>

@@ -12,6 +12,7 @@ import {
   Terminal,
   FlaskConical,
 } from 'lucide-react'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface HybridCryptoIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -33,22 +34,32 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             The transition to post-quantum cryptography faces a fundamental dilemma: PQC algorithms
-            are newer and less battle-tested than classical algorithms, yet the &ldquo;Harvest Now,
-            Decrypt Later&rdquo; (HNDL) threat means waiting is dangerous.{' '}
-            <strong>Hybrid cryptography</strong> solves this by combining classical and PQC
-            algorithms together.
+            are newer and less battle-tested than classical algorithms, yet the &ldquo;
+            <InlineTooltip term="Harvest Now, Decrypt Later">
+              Harvest Now, Decrypt Later
+            </InlineTooltip>
+            &rdquo; (HNDL) threat means waiting is dangerous.{' '}
+            <strong>
+              <InlineTooltip term="Hybrid Cryptography">Hybrid cryptography</InlineTooltip>
+            </strong>{' '}
+            solves this by combining classical and PQC algorithms together.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
-              <div className="text-xs font-bold text-primary mb-1">ANSSI Mandate</div>
+              <div className="text-xs font-bold text-primary mb-1">
+                <InlineTooltip term="ANSSI">ANSSI</InlineTooltip> Mandate
+              </div>
               <p className="text-xs text-muted-foreground">
                 France&apos;s ANSSI requires hybrid mode during transition &mdash; PQC-only is not
-                acceptable until algorithms are more mature. Exception: hash-based signatures
-                (SLH-DSA/SPHINCS+, LMS, XMSS) may be used standalone.
+                acceptable until algorithms are more mature. Exception: hash-based signatures (
+                <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>/SPHINCS+, LMS, XMSS) may be
+                used standalone.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
-              <div className="text-xs font-bold text-primary mb-1">NIST SP 800-227</div>
+              <div className="text-xs font-bold text-primary mb-1">
+                <InlineTooltip term="NIST">NIST</InlineTooltip> SP 800-227
+              </div>
               <p className="text-xs text-muted-foreground">
                 NIST recommends hybrid key exchange for TLS and other protocols during the PQC
                 transition period.
@@ -102,7 +113,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 <div className="text-muted-foreground">{`}`}</div>
               </div>
               <p className="text-xs text-muted-foreground">
-                Separate algorithm OIDs. The classical algorithm rides in X.509 extensions. More
+                Separate algorithm OIDs. The classical algorithm rides in{' '}
+                <InlineTooltip term="X.509">X.509</InlineTooltip> extensions. More
                 backward-compatible but more complex.
               </p>
             </div>
@@ -126,8 +138,10 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            X25519MLKEM768 is the leading hybrid KEM, combining Curve25519 ECDH with ML-KEM-768.
-            It&apos;s already deployed in Chrome, Cloudflare, and AWS.
+            <InlineTooltip term="X25519MLKEM768">X25519MLKEM768</InlineTooltip> is the leading
+            hybrid <InlineTooltip term="Key Encapsulation Mechanism">KEM</InlineTooltip>, combining
+            Curve25519 ECDH with <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>-768. It&apos;s
+            already deployed in Chrome, Cloudflare, and AWS.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <h3 className="text-sm font-bold text-foreground mb-3">How X25519MLKEM768 Works</h3>
@@ -135,7 +149,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <div className="flex items-start gap-2">
                 <span className="text-primary font-bold shrink-0">1.</span>
                 <span>
-                  <strong>Key Generation:</strong> Generate both X25519 key pair and ML-KEM-768 key
+                  <strong>Key Generation:</strong> Generate both{' '}
+                  <InlineTooltip term="X25519">X25519</InlineTooltip> key pair and ML-KEM-768 key
                   pair
                 </span>
               </div>
@@ -178,8 +193,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             </p>
             <p className="text-[10px] text-muted-foreground/70 italic">
               Note: The KDF step above is simplified. In TLS 1.3, the concatenated shared secrets
-              feed into the protocol&apos;s HKDF-based key schedule. The X-Wing KEM draft uses a
-              separate labeled extraction.
+              feed into the protocol&apos;s <InlineTooltip term="HKDF">HKDF</InlineTooltip>-based
+              key schedule. The X-Wing KEM draft uses a separate labeled extraction.
             </p>
           </div>
         </div>
@@ -195,7 +210,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            Composite signatures combine ML-DSA with ECDSA or Ed25519 into a single signature
+            Composite signatures combine <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> with{' '}
+            <InlineTooltip term="ECDSA">ECDSA</InlineTooltip> or Ed25519 into a single signature
             operation. Both signatures must verify for the composite to be valid.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -375,7 +391,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           Start Workshop <ArrowRight size={18} />
         </button>
         <p className="text-xs text-muted-foreground mt-2">
-          Generate hybrid keys, run KEM operations, and inspect composite certificates.
+          Generate hybrid keys, run KEM operations, and inspect{' '}
+          <InlineTooltip term="Composite Certificate">composite certificates</InlineTooltip>.
         </p>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Shield, Key, Lock, Zap, ArrowRight, ExternalLink } from 'lucide-react'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { TLSHandshakeDiagram } from './TLSHandshakeDiagram'
 
 interface TLSIntroductionProps {
@@ -16,9 +17,10 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           <Shield size={20} /> What is TLS 1.3?
         </h2>
         <p className="text-foreground/80 leading-relaxed">
-          TLS 1.3 (RFC 8446) is the latest version of the Transport Layer Security protocol,
-          securing virtually all HTTPS traffic on the internet. It was a major overhaul from TLS
-          1.2, removing insecure legacy features and introducing mandatory forward secrecy, a faster
+          <InlineTooltip term="TLS">TLS</InlineTooltip> 1.3 (RFC 8446) is the latest version of the
+          Transport Layer Security protocol, securing virtually all HTTPS traffic on the internet.
+          It was a major overhaul from TLS 1.2, removing insecure legacy features and introducing
+          mandatory <InlineTooltip term="Forward Secrecy">forward secrecy</InlineTooltip>, a faster
           1-RTT handshake, and a dramatically simplified cipher suite list.
         </p>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -52,13 +54,14 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
       {/* The Handshake */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <Zap size={20} /> The TLS 1.3 Handshake
+          <Zap size={20} /> The TLS 1.3{' '}
+          <InlineTooltip term="TLS Handshake">Handshake</InlineTooltip>
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           The handshake establishes a secure connection in a single round trip. The client sends its
           supported parameters and a key share; the server responds with its choice and key share.
           After the ServerHello, all remaining handshake messages are encrypted using handshake
-          traffic keys derived via HKDF.
+          traffic keys derived via <InlineTooltip term="HKDF">HKDF</InlineTooltip>.
         </p>
         <TLSHandshakeDiagram />
       </section>
@@ -66,7 +69,8 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
       {/* Cipher Suites Explained */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <Lock size={20} /> Cipher Suites Explained
+          <Lock size={20} /> <InlineTooltip term="Cipher Suite">Cipher Suites</InlineTooltip>{' '}
+          Explained
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
           TLS 1.3 cipher suites only specify the symmetric encryption algorithm and hash — key
@@ -77,7 +81,8 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           <div>
             <span className="text-primary font-bold">TLS_AES_256_GCM_SHA384</span>
             <span className="text-muted-foreground ml-3 text-xs">
-              AES-256 in GCM mode (AEAD) + SHA-384 for HKDF
+              <InlineTooltip term="AES">AES-256</InlineTooltip> in GCM mode (AEAD) + SHA-384 for
+              HKDF
             </span>
           </div>
           <div>
@@ -89,7 +94,8 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           <div>
             <span className="text-primary font-bold">TLS_CHACHA20_POLY1305_SHA256</span>
             <span className="text-muted-foreground ml-3 text-xs">
-              ChaCha20-Poly1305 (AEAD) + SHA-256 — optimized for mobile/ARM
+              <InlineTooltip term="ChaCha20-Poly1305">ChaCha20-Poly1305</InlineTooltip> (AEAD) +
+              SHA-256 — optimized for mobile/ARM
             </span>
           </div>
           <div>
@@ -118,13 +124,20 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
-            <div className="text-sm font-bold text-primary mb-1">Classical (ECDH)</div>
+            <div className="text-sm font-bold text-primary mb-1">
+              Classical (<InlineTooltip term="ECDH">ECDH</InlineTooltip>)
+            </div>
             <p className="text-xs text-muted-foreground">
-              X25519, P-256, P-384. Fast and small (~32 byte keys). Vulnerable to quantum computers.
+              <InlineTooltip term="X25519">X25519</InlineTooltip>,{' '}
+              <InlineTooltip term="P-256">P-256</InlineTooltip>,{' '}
+              <InlineTooltip term="P-384">P-384</InlineTooltip>. Fast and small (~32 byte keys).
+              Vulnerable to quantum computers.
             </p>
           </div>
           <div className="bg-success/5 rounded-lg p-3 border border-success/20">
-            <div className="text-sm font-bold text-success mb-1">PQC (ML-KEM)</div>
+            <div className="text-sm font-bold text-success mb-1">
+              PQC (<InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>)
+            </div>
             <p className="text-xs text-muted-foreground">
               ML-KEM-512/768/1024. Quantum-resistant. Larger keys (~1.2 KB for ML-KEM-768) increase
               handshake size.
@@ -133,8 +146,8 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
             <div className="text-sm font-bold text-warning mb-1">Hybrid</div>
             <p className="text-xs text-muted-foreground">
-              X25519MLKEM768 combines both. Already deployed in Chrome and Firefox. Secure even if
-              one algorithm is broken.
+              <InlineTooltip term="X25519MLKEM768">X25519MLKEM768</InlineTooltip> combines both.
+              Already deployed in Chrome and Firefox. Secure even if one algorithm is broken.
             </p>
           </div>
         </div>
@@ -189,10 +202,15 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           <Shield size={20} /> Post-Quantum Cryptography in TLS
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          Quantum computers threaten classical key exchange (ECDH) through Shor's algorithm. The
-          &quot;harvest now, decrypt later&quot; attack means adversaries can record encrypted
-          traffic today and decrypt it once quantum computers are available. PQC integration into
-          TLS addresses this by using lattice-based KEMs (ML-KEM) and signatures (ML-DSA).
+          Quantum computers threaten classical key exchange (ECDH) through{' '}
+          <InlineTooltip term="Shor's Algorithm">Shor&apos;s algorithm</InlineTooltip>. The{' '}
+          <InlineTooltip term="Harvest Now, Decrypt Later">
+            &quot;harvest now, decrypt later&quot;
+          </InlineTooltip>{' '}
+          attack means adversaries can record encrypted traffic today and decrypt it once quantum
+          computers are available. PQC integration into TLS addresses this by using{' '}
+          <InlineTooltip term="Lattice-Based Cryptography">lattice-based</InlineTooltip> KEMs
+          (ML-KEM) and signatures (<InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>).
         </p>
         <p className="text-foreground/80 leading-relaxed mb-4">
           The trade-off: PQC algorithms have larger keys and ciphertexts, increasing handshake

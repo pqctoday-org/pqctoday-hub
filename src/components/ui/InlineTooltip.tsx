@@ -29,21 +29,21 @@ export const InlineTooltip: React.FC<InlineTooltipProps> = ({ term, children }) 
 
   const close = useCallback(() => setIsOpen(false), [])
 
-  const toggle = useCallback(() => {
-    setIsOpen((prev) => {
-      if (!prev && triggerRef.current) {
-        const rect = triggerRef.current.getBoundingClientRect()
-        const spaceBelow = window.innerHeight - rect.bottom
-        setPosition(spaceBelow < 220 ? 'above' : 'below')
-      }
-      return !prev
-    })
+  const open = useCallback(() => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect()
+      setPosition(window.innerHeight - rect.bottom < 220 ? 'above' : 'below')
+    }
+    setIsOpen(true)
   }, [])
 
-  // Close on outside click or Escape
+  // Close on Escape key; close on outside tap for touch devices
   useEffect(() => {
     if (!isOpen) return
-    const handleClick = (e: MouseEvent) => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close()
+    }
+    const handleOutsideTap = (e: MouseEvent) => {
       if (
         triggerRef.current?.contains(e.target as Node) ||
         popoverRef.current?.contains(e.target as Node)
@@ -51,14 +51,11 @@ export const InlineTooltip: React.FC<InlineTooltipProps> = ({ term, children }) 
         return
       close()
     }
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close()
-    }
-    document.addEventListener('mousedown', handleClick)
     document.addEventListener('keydown', handleKey)
+    document.addEventListener('mousedown', handleOutsideTap)
     return () => {
-      document.removeEventListener('mousedown', handleClick)
       document.removeEventListener('keydown', handleKey)
+      document.removeEventListener('mousedown', handleOutsideTap)
     }
   }, [isOpen, close])
 
@@ -68,7 +65,11 @@ export const InlineTooltip: React.FC<InlineTooltipProps> = ({ term, children }) 
     <span className="relative inline print:contents">
       <button
         ref={triggerRef}
-        onClick={toggle}
+        onMouseEnter={open}
+        onMouseLeave={close}
+        onFocus={open}
+        onBlur={close}
+        onClick={() => setIsOpen((prev) => !prev)}
         className={clsx(
           'inline cursor-help border-b border-dotted border-primary/40 text-inherit font-inherit transition-colors hover:border-primary hover:text-primary',
           'print:border-0 print:cursor-default'

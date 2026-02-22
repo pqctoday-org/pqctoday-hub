@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Link } from 'react-router-dom'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
   AlertTriangle,
   ArrowRight,
@@ -26,10 +27,15 @@ const Step1WhyPQC: React.FC<StepProps> = ({ onComplete }) => {
           <div>
             <h3 className="text-lg font-bold text-foreground mb-2">The Quantum Threat</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Today&apos;s most widely used encryption — RSA and ECC — relies on math problems that
-              are extremely hard for classical computers. But <strong>quantum computers</strong>{' '}
-              using an algorithm called <strong>Shor&apos;s Algorithm</strong> can solve these
-              problems exponentially faster.
+              Today&apos;s most widely used encryption —{' '}
+              <InlineTooltip term="RSA">RSA</InlineTooltip> and{' '}
+              <InlineTooltip term="Elliptic Curve Cryptography">ECC</InlineTooltip> — relies on math
+              problems that are extremely hard for classical computers. But{' '}
+              <strong>quantum computers</strong> using an algorithm called{' '}
+              <strong>
+                <InlineTooltip term="Shor's Algorithm">Shor&apos;s Algorithm</InlineTooltip>
+              </strong>{' '}
+              can solve these problems exponentially faster.
             </p>
           </div>
         </div>
@@ -77,9 +83,15 @@ const Step1WhyPQC: React.FC<StepProps> = ({ onComplete }) => {
               Key concept: HNDL
             </h4>
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-              <strong>&ldquo;Harvest Now, Decrypt Later&rdquo;</strong> (HNDL) is an attack strategy
-              where adversaries collect encrypted data <em>today</em> and store it until quantum
-              computers can break the encryption.
+              <strong>
+                &ldquo;
+                <InlineTooltip term="Harvest Now, Decrypt Later">
+                  Harvest Now, Decrypt Later
+                </InlineTooltip>
+                &rdquo;
+              </strong>{' '}
+              (HNDL) is an attack strategy where adversaries collect encrypted data <em>today</em>{' '}
+              and store it until quantum computers can break the encryption.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This means <strong>data encrypted now</strong> with RSA or ECC could be readable in
@@ -94,16 +106,25 @@ const Step1WhyPQC: React.FC<StepProps> = ({ onComplete }) => {
               Key concept: HNFL
             </h4>
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-              <strong>&ldquo;Harvest Now, Forge Later&rdquo;</strong> (HNFL) is the signature
-              counterpart to HNDL. Adversaries capture <strong>signed artifacts today</strong> —
-              firmware images, certificate chains, code-signing blobs — and store them. Once a
-              quantum computer exists, they can forge or repudiate those signatures retroactively.
+              <strong>
+                &ldquo;
+                <InlineTooltip term="Harvest Now, Forge Later">
+                  Harvest Now, Forge Later
+                </InlineTooltip>
+                &rdquo;
+              </strong>{' '}
+              (HNFL) is the signature counterpart to HNDL. Adversaries capture{' '}
+              <strong>signed artifacts today</strong> — firmware images, certificate chains,
+              code-signing blobs — and store them. Once a quantum computer exists, they can forge or
+              repudiate those signatures retroactively.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Unlike HNDL (which targets <em>confidentiality</em>), HNFL targets{' '}
               <em>authenticity and integrity</em>. Long-lived credentials — PKI hierarchies,
               firmware signing keys, code-signing certificates — must migrate to PQC signing
-              algorithms (ML-DSA, SLH-DSA) before quantum computers mature.
+              algorithms (<InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>,{' '}
+              <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>) before quantum computers
+              mature.
             </p>
           </div>
         </div>
@@ -148,10 +169,14 @@ const Step2WhatsChanging: React.FC<StepProps> = ({ onComplete }) => {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground leading-relaxed">
-        NIST (the U.S. National Institute of Standards and Technology) has been running a multi-year
-        competition to standardize <strong>Post-Quantum Cryptography (PQC)</strong> algorithms — new
-        math that even quantum computers can&apos;t crack. The first standards were published in{' '}
-        <strong>August 2024</strong>.
+        <InlineTooltip term="NIST">NIST</InlineTooltip> (the U.S. National Institute of Standards
+        and Technology) has been running a multi-year competition to standardize{' '}
+        <strong>
+          <InlineTooltip term="Post-Quantum Cryptography">Post-Quantum Cryptography</InlineTooltip>{' '}
+          (PQC)
+        </strong>{' '}
+        algorithms — new math that even quantum computers can&apos;t crack. The first standards were
+        published in <strong>August 2024</strong>.
       </p>
 
       <div className="glass-panel p-5">
@@ -169,17 +194,29 @@ const Step2WhatsChanging: React.FC<StepProps> = ({ onComplete }) => {
               <tr className="border-b border-border/50">
                 <td className="py-2.5 pr-4 font-medium text-foreground">Key Establishment</td>
                 <td className="py-2.5 pr-4">RSA, ECDH, DH</td>
-                <td className="py-2.5 text-green-400">ML-KEM (FIPS 203)</td>
+                <td className="py-2.5 text-green-400">
+                  <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> (
+                  <InlineTooltip term="FIPS 203">FIPS 203</InlineTooltip>)
+                </td>
               </tr>
               <tr className="border-b border-border/50">
-                <td className="py-2.5 pr-4 font-medium text-foreground">Digital Signatures</td>
-                <td className="py-2.5 pr-4">RSA, ECDSA, EdDSA</td>
-                <td className="py-2.5 text-green-400">ML-DSA (FIPS 204)</td>
+                <td className="py-2.5 pr-4 font-medium text-foreground">
+                  <InlineTooltip term="Digital Signature">Digital Signatures</InlineTooltip>
+                </td>
+                <td className="py-2.5 pr-4">
+                  RSA, <InlineTooltip term="ECDSA">ECDSA</InlineTooltip>,{' '}
+                  <InlineTooltip term="EdDSA">EdDSA</InlineTooltip>
+                </td>
+                <td className="py-2.5 text-green-400">
+                  ML-DSA (<InlineTooltip term="FIPS 204">FIPS 204</InlineTooltip>)
+                </td>
               </tr>
               <tr>
                 <td className="py-2.5 pr-4 font-medium text-foreground">Conservative Signatures</td>
                 <td className="py-2.5 pr-4">RSA, ECDSA</td>
-                <td className="py-2.5 text-green-400">SLH-DSA (FIPS 205)</td>
+                <td className="py-2.5 text-green-400">
+                  SLH-DSA (<InlineTooltip term="FIPS 205">FIPS 205</InlineTooltip>)
+                </td>
               </tr>
             </tbody>
           </table>

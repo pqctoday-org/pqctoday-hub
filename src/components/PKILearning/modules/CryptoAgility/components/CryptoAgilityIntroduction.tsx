@@ -11,6 +11,7 @@ import {
   BookOpen,
   FlaskConical,
 } from 'lucide-react'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface CryptoAgilityIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -31,10 +32,12 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            <strong>Crypto agility</strong> is the ability to rapidly switch cryptographic
-            algorithms, protocols, and implementations without significant changes to application
-            code or infrastructure. It&apos;s NIST&apos;s top recommendation for PQC transition
-            preparedness.
+            <strong>
+              <InlineTooltip term="Crypto Agility">Crypto agility</InlineTooltip>
+            </strong>{' '}
+            is the ability to rapidly switch cryptographic algorithms, protocols, and
+            implementations without significant changes to application code or infrastructure.
+            It&apos;s NIST&apos;s top recommendation for PQC transition preparedness.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
@@ -49,14 +52,16 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Algorithm Agility</div>
               <p className="text-xs text-muted-foreground">
-                Swap algorithms (RSA &rarr; ML-KEM) via configuration changes, not code rewrites.
+                Swap algorithms (<InlineTooltip term="RSA">RSA</InlineTooltip> &rarr;{' '}
+                <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>) via configuration changes, not
+                code rewrites.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Protocol Agility</div>
               <p className="text-xs text-muted-foreground">
-                Support multiple protocol versions simultaneously (TLS 1.2/1.3, hybrid key
-                exchange).
+                Support multiple protocol versions simultaneously (
+                <InlineTooltip term="TLS">TLS</InlineTooltip> 1.2/1.3, hybrid key exchange).
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -137,7 +142,10 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
                 <div className="p-1.5 rounded bg-warning/10 text-warning">
                   <Building2 size={16} />
                 </div>
-                <div className="text-sm font-bold text-foreground">External KMS / HSM</div>
+                <div className="text-sm font-bold text-foreground">
+                  External <InlineTooltip term="KMS">KMS</InlineTooltip> /{' '}
+                  <InlineTooltip term="HSM">HSM</InlineTooltip>
+                </div>
               </div>
               <p className="text-xs text-muted-foreground mb-3 flex-grow">
                 Crypto operations are outsourced over the network to a central service (AWS KMS,
@@ -168,7 +176,8 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             Before you can migrate, you need to <em>find</em> every cryptographic algorithm in your
-            organization. A CBOM provides this visibility using the CycloneDX standard.
+            organization. A <InlineTooltip term="CBOM">CBOM</InlineTooltip> provides this visibility
+            using the CycloneDX standard.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -207,8 +216,11 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            PQC migration follows a structured framework aligned with NIST IR 8547, CISA guidance,
-            and NSA CNSA 2.0 timelines. Each phase builds on the previous.
+            <InlineTooltip term="Post-Quantum Cryptography">PQC</InlineTooltip> migration follows a
+            structured framework aligned with{' '}
+            <InlineTooltip term="NIST IR 8547">NIST IR 8547</InlineTooltip>, CISA guidance, and NSA{' '}
+            <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> timelines. Each phase builds on
+            the previous.
           </p>
           <div className="space-y-2">
             {[
@@ -246,7 +258,8 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-xs font-bold text-primary mb-2">Cloudflare</div>
             <p className="text-xs text-muted-foreground">
-              Enabled hybrid PQC key exchange (X25519Kyber768, later X25519MLKEM768) across its
+              Enabled hybrid PQC key exchange (X25519Kyber768, later{' '}
+              <InlineTooltip term="X25519MLKEM768">X25519MLKEM768</InlineTooltip>) across its
               network in 2024. TLS handshake times increased ~4%; hybrid client key share is 1,216
               bytes vs 32 bytes for X25519 alone.
             </p>
@@ -304,7 +317,8 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
             <div>
               <div className="text-sm font-medium text-foreground">Compliance Tracker</div>
               <div className="text-xs text-muted-foreground">
-                NIST, ANSSI, and BSI compliance requirements
+                NIST, <InlineTooltip term="ANSSI">ANSSI</InlineTooltip>, and{' '}
+                <InlineTooltip term="BSI">BSI</InlineTooltip> compliance requirements
               </div>
             </div>
           </Link>

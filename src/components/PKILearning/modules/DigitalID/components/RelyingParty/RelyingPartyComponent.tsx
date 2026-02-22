@@ -8,6 +8,7 @@ import { signData, verifySignature } from '../../utils/crypto-utils'
 import { createPresentation } from '../../utils/sdjwt-utils'
 import type { CryptoKey } from '../../types'
 import type { SdJwtVc } from '../../utils/sdjwt-utils'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface RelyingPartyComponentProps {
   wallet: WalletInstance
@@ -207,12 +208,18 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
                 <div className="space-y-4">
                   <div className="bg-tertiary/5 p-3 rounded-lg border border-tertiary/20 text-sm text-muted-foreground">
                     <p className="font-medium text-foreground mb-1">
-                      Note: Selective Disclosure & Data Minimization
+                      Note:{' '}
+                      <InlineTooltip term="Selective Disclosure">
+                        Selective Disclosure
+                      </InlineTooltip>{' '}
+                      & Data Minimization
                     </p>
                     <p>
-                      When a Relying Party requests your data, the EUDI Wallet shows you exactly
-                      which attributes are requested. You consent to share only the minimum required
-                      data (aligned with GDPR Art. 5(1)(c)). Attributes not requested are
+                      When a <InlineTooltip term="Relying Party">Relying Party</InlineTooltip>{' '}
+                      requests your data, the{' '}
+                      <InlineTooltip term="EUDI Wallet">EUDI Wallet</InlineTooltip> shows you
+                      exactly which attributes are requested. You consent to share only the minimum
+                      required data (aligned with GDPR Art. 5(1)(c)). Attributes not requested are
                       cryptographically hidden from the verifier.
                     </p>
                   </div>

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
   Shield,
   GitBranch,
@@ -33,11 +34,16 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            <strong>Hash-based signatures</strong> derive their security solely from the properties
-            of cryptographic hash functions &mdash; the most conservative and well-understood
-            assumption in cryptography. Unlike lattice-based or code-based schemes, they require no
-            new hardness assumptions. LMS security rests on collision and second-preimage
-            resistance; XMSS has a tighter proof requiring only{' '}
+            <strong>
+              <InlineTooltip term="Hash-Based Signatures">Hash-based signatures</InlineTooltip>
+            </strong>{' '}
+            derive their security solely from the properties of cryptographic hash functions &mdash;
+            the most conservative and well-understood assumption in cryptography. Unlike{' '}
+            <InlineTooltip term="Lattice-Based Cryptography">lattice-based</InlineTooltip> or{' '}
+            <InlineTooltip term="Code-Based Cryptography">code-based</InlineTooltip> schemes, they
+            require no new hardness assumptions. <InlineTooltip term="LMS/HSS">LMS</InlineTooltip>{' '}
+            security rests on collision and second-preimage resistance;{' '}
+            <InlineTooltip term="XMSS">XMSS</InlineTooltip> has a tighter proof requiring only{' '}
             <strong>second-preimage resistance</strong> &mdash; a weaker assumption that provides a
             stronger theoretical guarantee.
           </p>
@@ -48,8 +54,8 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
               recommendation.&rdquo;
             </blockquote>
             <p className="text-xs text-muted-foreground mt-2">
-              &mdash; NIST SP 800-208: Recommendation for Stateful Hash-Based Signature Schemes
-              (October 2020)
+              &mdash; <InlineTooltip term="NIST SP 800-208">NIST SP 800-208</InlineTooltip>:
+              Recommendation for Stateful Hash-Based Signature Schemes (October 2020)
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -70,8 +76,9 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">CNSA 2.0 Required</div>
               <p className="text-xs text-muted-foreground mb-2">
-                NSA CNSA 2.0 mandates LMS/XMSS for firmware and software signing in national
-                security systems, ahead of ML-DSA adoption. Phased timeline:
+                NSA <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> mandates LMS/XMSS for
+                firmware and software signing in national security systems, ahead of ML-DSA
+                adoption. Phased timeline:
               </p>
               <ul className="text-xs text-muted-foreground space-y-0.5">
                 <li>
@@ -100,10 +107,14 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            The core idea is a <strong>Merkle tree</strong> of one-time signature (OTS) key pairs.
-            Each leaf contains the hash of a unique OTS public key. The tree root is the overall
-            public key. To sign, you use the next unused OTS leaf and provide an authentication path
-            from that leaf to the root.
+            The core idea is a{' '}
+            <strong>
+              <InlineTooltip term="Merkle Tree">Merkle tree</InlineTooltip>
+            </strong>{' '}
+            of <InlineTooltip term="One-Time Signature">one-time signature (OTS)</InlineTooltip> key
+            pairs. Each leaf contains the hash of a unique OTS public key. The tree root is the
+            overall public key. To sign, you use the next unused OTS leaf and provide an
+            authentication path from that leaf to the root.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="space-y-3 text-center">
@@ -171,8 +182,10 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
                 One-Time Signatures (OTS)
               </div>
               <p className="text-xs text-muted-foreground">
-                Each OTS key pair (e.g., Winternitz OTS+) can sign exactly one message. Reusing an
-                OTS key leaks the private key, enabling forgeries.
+                Each OTS key pair (e.g.,{' '}
+                <InlineTooltip term="Winternitz One-Time Signature">Winternitz OTS+</InlineTooltip>)
+                can sign exactly one message. Reusing an OTS key leaks the private key, enabling
+                forgeries.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -300,9 +313,14 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
             </div>
             <p className="text-xs text-muted-foreground">
               NIST SP 800-208 originally required that key generation and signing be performed
-              inside a <strong>FIPS 140-validated hardware cryptographic module</strong> with no
-              private key export. HSMs with atomic state management are therefore not merely a
-              best-practice &mdash; they are the basis of the standard&rsquo;s security model.
+              inside a{' '}
+              <strong>
+                <InlineTooltip term="FIPS 140-3">FIPS 140-validated</InlineTooltip> hardware
+                cryptographic module
+              </strong>{' '}
+              with no private key export. <InlineTooltip term="HSM">HSMs</InlineTooltip> with atomic
+              state management are therefore not merely a best-practice &mdash; they are the basis
+              of the standard&rsquo;s security model.
             </p>
           </div>
         </div>
@@ -361,7 +379,9 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
                     <td className="py-2">Slightly smaller at same tree height</td>
                   </tr>
                   <tr className="border-b border-border/50">
-                    <td className="py-2 pr-4 font-medium text-foreground">Forward Security</td>
+                    <td className="py-2 pr-4 font-medium text-foreground">
+                      <InlineTooltip term="Forward Secrecy">Forward Security</InlineTooltip>
+                    </td>
                     <td className="py-2 pr-4 text-muted-foreground/60">No</td>
                     <td className="py-2 text-success font-medium">
                       Yes &mdash; past signatures stay secure even if current key is compromised
@@ -370,7 +390,9 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
                   <tr>
                     <td className="py-2 pr-4 font-medium text-foreground">Adoption</td>
                     <td className="py-2 pr-4">NSA CNSA 2.0, broader industry</td>
-                    <td className="py-2">BSI (Germany), European preference</td>
+                    <td className="py-2">
+                      <InlineTooltip term="BSI">BSI</InlineTooltip> (Germany), European preference
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -452,7 +474,8 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-xs font-bold text-foreground mb-3">
-              Stateful (LMS/XMSS) vs Stateless (SLH-DSA / SPHINCS+)
+              Stateful (LMS/XMSS) vs Stateless (
+              <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip> / SPHINCS+)
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">

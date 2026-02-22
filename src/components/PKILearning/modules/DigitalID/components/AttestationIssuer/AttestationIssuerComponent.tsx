@@ -12,6 +12,7 @@ import { createSDJWT } from '../../utils/sdjwt-utils'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { MARIA_IDENTITY } from '../../constants'
 import { Loader2, CheckCircle, GraduationCap, ShieldCheck, AlertTriangle } from 'lucide-react'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface AttestationIssuerComponentProps {
   wallet: WalletInstance
@@ -165,7 +166,9 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
                 className={`p-4 rounded-lg border flex items-center gap-3 ${step === 'ISSUANCE' ? 'bg-secondary/10 border-secondary' : 'bg-muted/5'}`}
               >
                 <div className="bg-secondary/20 p-2 rounded-full text-secondary font-bold">3</div>
-                <div>Issue Diploma (SD-JWT)</div>
+                <div>
+                  Issue Diploma (<InlineTooltip term="SD-JWT">SD-JWT</InlineTooltip>)
+                </div>
               </div>
             </div>
 

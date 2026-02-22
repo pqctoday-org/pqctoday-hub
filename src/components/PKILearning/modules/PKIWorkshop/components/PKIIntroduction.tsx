@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Shield, RefreshCw, FileText, PenTool, Key, ArrowRight, ExternalLink } from 'lucide-react'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { PKICertificateLifecycleDiagram } from './PKICertificateLifecycleDiagram'
 
 interface PKIIntroductionProps {
@@ -16,11 +17,13 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           <Shield size={20} /> What is PKI?
         </h2>
         <p className="text-foreground/80 leading-relaxed">
-          Public Key Infrastructure (PKI) is a framework of policies, hardware, software, and
-          procedures for creating, managing, distributing, and revoking digital certificates.
-          Defined by ITU-T X.509 and profiled for the internet in RFC 5280, PKI enables entities to
-          establish trust through a hierarchy of Certificate Authorities (CAs) that vouch for the
-          binding between a public key and an identity.
+          <InlineTooltip term="Public Key Infrastructure">Public Key Infrastructure</InlineTooltip>{' '}
+          (PKI) is a framework of policies, hardware, software, and procedures for creating,
+          managing, distributing, and revoking digital certificates. Defined by ITU-T{' '}
+          <InlineTooltip term="X.509">X.509</InlineTooltip> and profiled for the internet in RFC
+          5280, PKI enables entities to establish trust through a hierarchy of{' '}
+          <InlineTooltip term="Certificate Authority">Certificate Authorities</InlineTooltip> (CAs)
+          that vouch for the binding between a public key and an identity.
         </p>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -43,7 +46,10 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
             <div className="text-sm font-bold text-warning mb-1">Standards</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>X.509v3 certificates (RFC 5280)</li>
-              <li>PKCS#10 CSR format (RFC 2986)</li>
+              <li>
+                PKCS#10 <InlineTooltip term="Certificate Signing Request">CSR</InlineTooltip> format
+                (RFC 2986)
+              </li>
               <li>CMP enrollment (RFC 4210)</li>
             </ul>
           </div>
@@ -58,8 +64,10 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
         <p className="text-foreground/80 leading-relaxed mb-4">
           Every X.509 certificate follows a defined lifecycle from key generation through
           revocation. RFC 5280 Section 3 describes the certificate path processing model, while RFC
-          6960 (OCSP) and RFC 5280 Section 5 (CRLs) define the revocation checking mechanisms that
-          relying parties use to verify certificate validity in real time.
+          6960 (<InlineTooltip term="OCSP">OCSP</InlineTooltip>) and RFC 5280 Section 5 (
+          <InlineTooltip term="Certificate Revocation List">CRL</InlineTooltip>s) define the
+          revocation checking mechanisms that relying parties use to verify certificate validity in
+          real time.
         </p>
         <PKICertificateLifecycleDiagram />
       </section>
@@ -130,9 +138,11 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           <PenTool size={20} /> Digital Signatures in PKI
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          Certificate issuance and verification rely on digital signatures as defined in RFC 5280
-          Section 4.1.1.2. The CA signs the TBSCertificate using its private key, and any relying
-          party can verify the signature using the CA&apos;s public key from a trusted root store.
+          Certificate issuance and verification rely on{' '}
+          <InlineTooltip term="Digital Signature">digital signatures</InlineTooltip> as defined in
+          RFC 5280 Section 4.1.1.2. The CA signs the TBSCertificate using its private key, and any
+          relying party can verify the signature using the CA&apos;s public key from a trusted root
+          store.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
@@ -162,10 +172,14 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           <Key size={20} /> Classical vs PQC Algorithms in PKI
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          Traditional PKI relies on RSA and ECDSA signatures, both vulnerable to Shor&apos;s
-          algorithm on a cryptographically relevant quantum computer. NIST has standardized
-          post-quantum replacements: ML-DSA (FIPS 204) for lattice-based signatures and SLH-DSA
-          (FIPS 205) for stateless hash-based signatures.
+          Traditional PKI relies on <InlineTooltip term="RSA">RSA</InlineTooltip> and{' '}
+          <InlineTooltip term="ECDSA">ECDSA</InlineTooltip> signatures, both vulnerable to{' '}
+          <InlineTooltip term="Shor's Algorithm">Shor&apos;s algorithm</InlineTooltip> on a
+          cryptographically relevant quantum computer. NIST has standardized post-quantum
+          replacements: <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> (FIPS 204) for{' '}
+          <InlineTooltip term="Lattice-Based Cryptography">lattice-based</InlineTooltip> signatures
+          and <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip> (FIPS 205) for stateless
+          hash-based signatures.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
@@ -183,7 +197,9 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
             </p>
           </div>
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
-            <div className="text-sm font-bold text-warning mb-1">Hybrid / Composite</div>
+            <div className="text-sm font-bold text-warning mb-1">
+              Hybrid / <InlineTooltip term="Composite Certificate">Composite</InlineTooltip>
+            </div>
             <p className="text-xs text-muted-foreground">
               Combine classical + PQC in one certificate for backward compatibility. Protects
               against both classical and quantum attacks during transition.
@@ -199,11 +215,16 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
           Root CA certificates can have lifetimes of 20+ years. While data encryption is vulnerable
-          to &quot;harvest now, decrypt later&quot; attacks, long-lived CAs are vulnerable to
-          &quot;forge later&quot; attacks, where a cryptographically relevant quantum computer could
-          forge signatures and issue rogue certificates. NIST IR 8547 recommends beginning the
-          transition to post-quantum algorithms immediately, with CNSA 2.0 (NSA) setting a 2030
-          deadline for PQC-only PKI in national security systems.
+          to &quot;
+          <InlineTooltip term="Harvest Now, Decrypt Later">
+            harvest now, decrypt later
+          </InlineTooltip>
+          &quot; attacks, long-lived CAs are vulnerable to &quot;forge later&quot; attacks, where a
+          cryptographically relevant quantum computer could forge signatures and issue rogue
+          certificates. <InlineTooltip term="NIST IR 8547">NIST IR 8547</InlineTooltip> recommends
+          beginning the transition to post-quantum algorithms immediately, with{' '}
+          <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> (NSA) setting a 2030 deadline for
+          PQC-only PKI in national security systems.
         </p>
         <p className="text-foreground/80 leading-relaxed mb-4">
           Key migration challenges include certificate size growth (ML-DSA-87 public keys are ~2,592

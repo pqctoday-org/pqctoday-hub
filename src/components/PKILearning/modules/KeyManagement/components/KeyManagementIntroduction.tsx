@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
   KeyRound,
   Shield,
@@ -33,9 +34,11 @@ export const KeyManagementIntroduction: React.FC<KeyManagementIntroductionProps>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             Every cryptographic key follows a defined lifecycle from creation to destruction.{' '}
-            <strong>NIST SP 800-57</strong> defines seven stages that ensure keys are properly
-            managed throughout their operational life. Understanding this lifecycle is essential for
-            planning a PQC migration.
+            <strong>
+              <InlineTooltip term="NIST SP 800-57">NIST SP 800-57</InlineTooltip>
+            </strong>{' '}
+            defines seven stages that ensure keys are properly managed throughout their operational
+            life. Understanding this lifecycle is essential for planning a PQC migration.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
@@ -97,9 +100,13 @@ export const KeyManagementIntroduction: React.FC<KeyManagementIntroductionProps>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            A <strong>Hardware Security Module (HSM)</strong> is a dedicated cryptographic processor
-            that generates, stores, and manages keys within a tamper-resistant boundary. HSMs are
-            the gold standard for key protection in enterprise environments.
+            A{' '}
+            <strong>
+              <InlineTooltip term="HSM">Hardware Security Module (HSM)</InlineTooltip>
+            </strong>{' '}
+            is a dedicated cryptographic processor that generates, stores, and manages keys within a
+            tamper-resistant boundary. HSMs are the gold standard for key protection in enterprise
+            environments.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -197,9 +204,11 @@ export const KeyManagementIntroduction: React.FC<KeyManagementIntroductionProps>
               <div className="bg-muted/50 rounded-lg p-3 border border-border">
                 <div className="text-xs font-bold text-foreground mb-1">Algorithm Separation</div>
                 <p className="text-xs text-muted-foreground">
-                  RSA can sign and encrypt. PQC enforces strict separation: ML-KEM for key
-                  establishment only, ML-DSA for signatures only. Organizations need separate key
-                  pairs where one RSA key previously sufficed.
+                  <InlineTooltip term="RSA">RSA</InlineTooltip> can sign and encrypt. PQC enforces
+                  strict separation: <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> for key
+                  establishment only, <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> for
+                  signatures only. Organizations need separate key pairs where one RSA key
+                  previously sufficed.
                 </p>
               </div>
               <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -225,9 +234,14 @@ export const KeyManagementIntroduction: React.FC<KeyManagementIntroductionProps>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            PQC replaces classical key exchange (DH/ECDH) with{' '}
-            <strong>Key Encapsulation Mechanisms (KEMs)</strong>. Understanding this distinction is
-            essential for migration planning and HSM operations.
+            PQC replaces classical key exchange (DH/<InlineTooltip term="ECDH">ECDH</InlineTooltip>)
+            with{' '}
+            <strong>
+              <InlineTooltip term="Key Encapsulation Mechanism">
+                Key Encapsulation Mechanisms (KEMs)
+              </InlineTooltip>
+            </strong>
+            . Understanding this distinction is essential for migration planning and HSM operations.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-destructive/5 rounded-lg p-4 border border-destructive/20">
@@ -256,9 +270,11 @@ export const KeyManagementIntroduction: React.FC<KeyManagementIntroductionProps>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <p className="text-xs text-foreground/80">
               <strong>Key management impact:</strong> Because KEMs produce a fixed 32-byte shared
-              secret (not a directly wrapped key), the PKCS#11 mapping uses C_WrapKey/C_UnwrapKey as
-              a two-step abstraction: encapsulate to derive a KEK, then wrap the session key with
-              the KEK. This differs from RSA-OAEP which directly wraps the key in one step.
+              secret (not a directly wrapped key), the{' '}
+              <InlineTooltip term="PKCS#11">PKCS#11</InlineTooltip> mapping uses
+              C_WrapKey/C_UnwrapKey as a two-step abstraction: encapsulate to derive a KEK, then
+              wrap the session key with the KEK. This differs from RSA-OAEP which directly wraps the
+              key in one step.
             </p>
           </div>
         </div>
@@ -305,18 +321,20 @@ export const KeyManagementIntroduction: React.FC<KeyManagementIntroductionProps>
                 <li>&bull; No risk of catastrophic state reuse</li>
                 <li>&bull; ML-DSA: moderate signatures (~2-5 KB), fast</li>
                 <li>
-                  &bull; SLH-DSA: large signatures (7-30 KB) but conservative security assumptions
+                  &bull; <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>: large signatures
+                  (7-30 KB) but conservative security assumptions
                 </li>
               </ul>
             </div>
           </div>
           <div className="bg-destructive/5 rounded-lg p-4 border border-destructive/20">
             <p className="text-xs text-foreground/80">
-              <strong>Critical HSM requirement:</strong> If deploying LMS/HSS or XMSS, the HSM must
-              persist signature state to non-volatile storage after every signing operation. A power
-              failure or crash between signing and state update can cause key reuse. CNSA 2.0
-              includes LMS/HSS for firmware signing specifically because HSMs can enforce this state
-              management.
+              <strong>Critical HSM requirement:</strong> If deploying{' '}
+              <InlineTooltip term="LMS/HSS">LMS/HSS</InlineTooltip> or{' '}
+              <InlineTooltip term="XMSS">XMSS</InlineTooltip>, the HSM must persist signature state
+              to non-volatile storage after every signing operation. A power failure or crash
+              between signing and state update can cause key reuse. CNSA 2.0 includes LMS/HSS for
+              firmware signing specifically because HSMs can enforce this state management.
             </p>
           </div>
         </div>
@@ -362,10 +380,12 @@ export const KeyManagementIntroduction: React.FC<KeyManagementIntroductionProps>
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            Key management impact: composite certificates require HSMs that support composite key
-            generation (generating both key pairs atomically). Rotation must update both algorithm
-            components simultaneously. HSM vendors like Thales and Entrust already support composite
-            key generation in PQC-capable firmware.
+            Key management impact:{' '}
+            <InlineTooltip term="Composite Certificate">composite certificates</InlineTooltip>{' '}
+            require HSMs that support composite key generation (generating both key pairs
+            atomically). Rotation must update both algorithm components simultaneously. HSM vendors
+            like Thales and Entrust already support composite key generation in PQC-capable
+            firmware.
           </p>
         </div>
       </section>
@@ -422,9 +442,10 @@ export const KeyManagementIntroduction: React.FC<KeyManagementIntroductionProps>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            PQC algorithms introduce new side-channel attack surfaces that differ from classical
-            cryptography. HSM implementations must address these to maintain their security
-            guarantees.
+            PQC algorithms introduce new{' '}
+            <InlineTooltip term="Side-Channel Attack">side-channel attack</InlineTooltip> surfaces
+            that differ from classical cryptography. HSM implementations must address these to
+            maintain their security guarantees.
           </p>
           <div className="space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -471,8 +492,9 @@ export const KeyManagementIntroduction: React.FC<KeyManagementIntroductionProps>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            Enterprise Key Management Systems (KMS) centralize key lifecycle operations across the
-            organization. A well-architected KMS is the foundation for a successful PQC migration.
+            Enterprise Key Management Systems (<InlineTooltip term="KMS">KMS</InlineTooltip>)
+            centralize key lifecycle operations across the organization. A well-architected KMS is
+            the foundation for a successful PQC migration.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -544,9 +566,10 @@ export const KeyManagementIntroduction: React.FC<KeyManagementIntroductionProps>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            Major HSM vendors are actively adding PQC algorithm support. FIPS 140-3 validation for
-            PQC operations is in progress, with several vendors already offering production-ready
-            PQC firmware.
+            Major HSM vendors are actively adding PQC algorithm support.{' '}
+            <InlineTooltip term="FIPS 140-3">FIPS 140-3</InlineTooltip> validation for PQC
+            operations is in progress, with several vendors already offering production-ready PQC
+            firmware.
           </p>
           <div className="space-y-2">
             {[

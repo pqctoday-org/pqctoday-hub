@@ -12,6 +12,7 @@ import {
   Layers,
 } from 'lucide-react'
 import { KEY_RFCS } from '../data/emailSigningConstants'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface EmailSigningIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -32,11 +33,16 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            <strong>Cryptographic Message Syntax (CMS)</strong>, defined in RFC 5652, is the
-            foundational format for digitally signing and encrypting arbitrary data. It powers{' '}
-            <strong>S/MIME</strong> (Secure/Multipurpose Internet Mail Extensions), the standard for
-            end-to-end email security used by enterprises, governments, and military organizations
-            worldwide.
+            <strong>
+              <InlineTooltip term="CMS">Cryptographic Message Syntax (CMS)</InlineTooltip>
+            </strong>
+            , defined in RFC 5652, is the foundational format for digitally signing and encrypting
+            arbitrary data. It powers{' '}
+            <strong>
+              <InlineTooltip term="S/MIME">S/MIME</InlineTooltip>
+            </strong>{' '}
+            (Secure/Multipurpose Internet Mail Extensions), the standard for end-to-end email
+            security used by enterprises, governments, and military organizations worldwide.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
@@ -58,8 +64,10 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
               <div className="text-xs font-bold text-primary mb-1">S/MIME Encryption</div>
               <p className="text-xs text-muted-foreground">
                 Creates a CMS <code className="text-foreground/70">AuthEnvelopedData</code>{' '}
-                structure (RFC 5083): the message is AEAD-encrypted (AES-GCM) with a random
-                content-encryption key (CEK), which is then wrapped for each recipient.
+                structure (RFC 5083): the message is AEAD-encrypted (
+                <InlineTooltip term="AES">AES</InlineTooltip>
+                -GCM) with a random content-encryption key (CEK), which is then wrapped for each
+                recipient.
               </p>
             </div>
           </div>
@@ -89,9 +97,9 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            The IETF LAMPS working group has published a series of RFCs that bring post-quantum
-            cryptography into CMS. These standards define how PQC algorithms integrate with existing
-            S/MIME infrastructure.
+            The <InlineTooltip term="IETF">IETF</InlineTooltip> LAMPS working group has published a
+            series of RFCs that bring post-quantum cryptography into CMS. These standards define how
+            PQC algorithms integrate with existing S/MIME infrastructure.
           </p>
           <div className="space-y-2">
             {KEY_RFCS.filter((rfc) =>
@@ -109,8 +117,8 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
           <p className="text-xs text-muted-foreground">
             Together, these RFCs provide a complete PQC story for CMS: ML-DSA for signing (RFC
             9882), KEM-based encryption via KEMRecipientInfo (RFC 9629), RSA-KEM as a transitional
-            KEM option (RFC 9690), and HSS/LMS for hash-based firmware and long-lived signatures
-            (RFC 9708).
+            KEM option (RFC 9690), and <InlineTooltip term="LMS/HSS">HSS/LMS</InlineTooltip> for
+            hash-based firmware and long-lived signatures (RFC 9708).
           </p>
         </div>
       </section>
@@ -125,10 +133,16 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            Classical S/MIME encryption uses <strong>RSA key transport</strong>: the sender encrypts
-            the CEK directly with the recipient&apos;s RSA public key. PQC replaces this with a{' '}
-            <strong>Key Encapsulation Mechanism (KEM)</strong> &mdash; a fundamentally different
-            approach.
+            Classical S/MIME encryption uses{' '}
+            <strong>
+              <InlineTooltip term="RSA">RSA</InlineTooltip> key transport
+            </strong>
+            : the sender encrypts the CEK directly with the recipient&apos;s RSA public key. PQC
+            replaces this with a{' '}
+            <strong>
+              <InlineTooltip term="KEM">Key Encapsulation Mechanism (KEM)</InlineTooltip>
+            </strong>{' '}
+            &mdash; a fundamentally different approach.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -149,7 +163,8 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
                 </div>
               </div>
               <p className="text-[10px] text-muted-foreground mt-2">
-                The CEK is directly encrypted &mdash; vulnerable to Shor&apos;s algorithm.
+                The CEK is directly encrypted &mdash; vulnerable to{' '}
+                <InlineTooltip term="Shor's Algorithm">Shor&apos;s algorithm</InlineTooltip>.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -160,7 +175,8 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
                 </div>
                 <div className="text-muted-foreground">&darr;</div>
                 <div className="p-2 rounded bg-success/10 text-success text-xs font-bold">
-                  KDF (HKDF-SHA256) &rarr; key-wrap key from shared secret
+                  KDF (<InlineTooltip term="HKDF">HKDF</InlineTooltip>-SHA256) &rarr; key-wrap key
+                  from shared secret
                 </div>
                 <div className="text-muted-foreground">&darr;</div>
                 <div className="p-2 rounded bg-muted text-foreground text-xs font-bold">
@@ -168,7 +184,8 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
                 </div>
                 <div className="text-muted-foreground">&darr;</div>
                 <div className="p-2 rounded bg-success/10 text-success text-xs font-bold">
-                  Store kemct + wrappedCEK in KEMRecipientInfo
+                  Store kemct + wrappedCEK in{' '}
+                  <InlineTooltip term="KEMRecipientInfo">KEMRecipientInfo</InlineTooltip>
                 </div>
               </div>
               <p className="text-[10px] text-muted-foreground mt-2">
@@ -182,11 +199,13 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
             </div>
             <p className="text-xs text-muted-foreground">
               Post-quantum public-key encryption (like lattice-based encryption) is less efficient
-              and harder to standardize than KEM + symmetric key wrap. NIST standardized ML-KEM
-              (FIPS 203) as a KEM primitive, not a public-key encryption scheme. RFC 9629 bridges
-              this gap by defining <code className="text-foreground/70">KEMRecipientInfo</code>, a
-              new CMS structure that replaces{' '}
-              <code className="text-foreground/70">KeyTransRecipientInfo</code>.
+              and harder to standardize than KEM + symmetric key wrap.{' '}
+              <InlineTooltip term="NIST">NIST</InlineTooltip> standardized{' '}
+              <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> (
+              <InlineTooltip term="FIPS 203">FIPS 203</InlineTooltip>) as a KEM primitive, not a
+              public-key encryption scheme. RFC 9629 bridges this gap by defining{' '}
+              <code className="text-foreground/70">KEMRecipientInfo</code>, a new CMS structure that
+              replaces <code className="text-foreground/70">KeyTransRecipientInfo</code>.
             </p>
           </div>
         </div>
@@ -220,7 +239,9 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
                   &bull; <strong>subjectAltName:</strong> rfc822Name (email)
                 </li>
                 <li>
-                  &bull; <strong>Algorithm:</strong> ML-DSA-65 or ECDSA P-256
+                  &bull; <strong>Algorithm:</strong>{' '}
+                  <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>-65 or{' '}
+                  <InlineTooltip term="ECDSA">ECDSA</InlineTooltip> P-256
                 </li>
               </ul>
             </div>
@@ -228,8 +249,9 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
               <div className="text-xs font-bold text-primary mb-1">Encryption Certificate</div>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>
-                  &bull; <strong>keyUsage:</strong> keyEncipherment (RSA) or keyAgreement (ECDH).
-                  KEM keyUsage is still being standardized
+                  &bull; <strong>keyUsage:</strong> keyEncipherment (RSA) or keyAgreement (
+                  <InlineTooltip term="ECDH">ECDH</InlineTooltip>). KEM keyUsage is still being
+                  standardized
                 </li>
                 <li>
                   &bull; <strong>extKeyUsage:</strong> id-kp-emailProtection

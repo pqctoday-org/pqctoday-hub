@@ -1,5 +1,6 @@
 import React from 'react'
 import { Shield, Radio, Key, Lock, Server, ArrowRight } from 'lucide-react'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface FiveGIntroductionProps {
   onNavigateToSimulate: () => void
@@ -18,8 +19,9 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           improvements over previous generations. In 2G/3G/4G networks, the subscriber&apos;s
           permanent identity (IMSI) was transmitted in cleartext over the air interface, enabling
           &quot;IMSI catchers&quot; — rogue base stations that intercept and track mobile users. 5G
-          addresses this with SUCI (Subscription Concealed Identifier), encrypting the subscriber
-          identity before it ever leaves the device.
+          addresses this with{' '}
+          <InlineTooltip term="SUCI">SUCI (Subscription Concealed Identifier)</InlineTooltip>,
+          encrypting the subscriber identity before it ever leaves the device.
         </p>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -34,14 +36,20 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
             <div className="text-sm font-bold text-primary mb-1">5G Solution</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>SUCI encrypts identity on the USIM</li>
-              <li>ECIES-based concealment (Profile A/B)</li>
-              <li>Mutual authentication (5G-AKA)</li>
+              <li>
+                <InlineTooltip term="ECIES">ECIES</InlineTooltip>-based concealment (Profile A/B)
+              </li>
+              <li>
+                Mutual authentication (<InlineTooltip term="5G-AKA">5G-AKA</InlineTooltip>)
+              </li>
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-success mb-1">PQC Future</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>Profile C: ML-KEM (Kyber) concealment</li>
+              <li>
+                Profile C: <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> (Kyber) concealment
+              </li>
               <li>Quantum-resistant subscriber privacy</li>
               <li>Under 3GPP SA3 study (TR 33.841)</li>
             </ul>
@@ -63,22 +71,25 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
             <div className="text-sm font-bold text-primary mb-1">Privacy (SUCI)</div>
             <p className="text-xs text-muted-foreground">
-              The USIM encrypts the subscriber&apos;s permanent identity (SUPI) into a concealed
-              identifier (SUCI) using ECIES or KEM. Only the Home Network can de-conceal it.
+              The USIM encrypts the subscriber&apos;s permanent identity (
+              <InlineTooltip term="SUPI">SUPI</InlineTooltip>) into a concealed identifier (SUCI)
+              using ECIES or KEM. Only the Home Network can de-conceal it.
             </p>
           </div>
           <div className="bg-success/5 rounded-lg p-3 border border-success/20">
             <div className="text-sm font-bold text-success mb-1">Authentication (5G-AKA)</div>
             <p className="text-xs text-muted-foreground">
               Mutual authentication ensures both the network and subscriber prove their identity.
-              Uses the MILENAGE algorithm (AES-128 based) and a 5G-specific key hierarchy.
+              Uses the <InlineTooltip term="MILENAGE">MILENAGE</InlineTooltip> algorithm (AES-128
+              based) and a 5G-specific key hierarchy.
             </p>
           </div>
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
             <div className="text-sm font-bold text-warning mb-1">Provisioning</div>
             <p className="text-xs text-muted-foreground">
-              Secure SIM manufacturing and key distribution. Subscriber keys (Ki) are generated in
-              HSMs, encrypted for transport, and imported at the operator&apos;s UDM.
+              Secure SIM manufacturing and key distribution. Subscriber keys (Ki) are generated in{' '}
+              <InlineTooltip term="HSM">HSMs</InlineTooltip>, encrypted for transport, and imported
+              at the operator&apos;s UDM.
             </p>
           </div>
         </div>
@@ -97,9 +108,13 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
-            <div className="text-sm font-bold text-primary mb-2">Profile A (X25519)</div>
+            <div className="text-sm font-bold text-primary mb-2">
+              Profile A (<InlineTooltip term="X25519">X25519</InlineTooltip>)
+            </div>
             <div className="space-y-1 text-xs text-muted-foreground">
-              <p>Curve25519 elliptic curve (ECDH)</p>
+              <p>
+                Curve25519 elliptic curve (<InlineTooltip term="ECDH">ECDH</InlineTooltip>)
+              </p>
               <p>32-byte public keys</p>
               <p>AES-128-CTR encryption</p>
               <p>HMAC-SHA-256 integrity</p>
@@ -247,10 +262,11 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
           Not all parts of 5G security are equally vulnerable to quantum computers. SUCI concealment
-          relies on asymmetric cryptography (ECDH in Profile A/B), which is broken by Shor&apos;s
-          algorithm. However, 5G-AKA authentication uses MILENAGE, which is built on AES-128 — a
-          symmetric algorithm where Grover&apos;s algorithm only halves the effective key length to
-          64 bits, still computationally secure.
+          relies on asymmetric cryptography (ECDH in Profile A/B), which is broken by{' '}
+          <InlineTooltip term="Shor's Algorithm">Shor&apos;s algorithm</InlineTooltip>. However,
+          5G-AKA authentication uses MILENAGE, which is built on AES-128 — a symmetric algorithm
+          where <InlineTooltip term="Grover's Algorithm">Grover&apos;s algorithm</InlineTooltip>{' '}
+          only halves the effective key length to 64 bits, still computationally secure.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20">
@@ -258,7 +274,12 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>SUCI Profile A (X25519 ECDH)</li>
               <li>SUCI Profile B (P-256 ECDH)</li>
-              <li>&quot;Harvest now, decrypt later&quot; risk</li>
+              <li>
+                <InlineTooltip term="Harvest Now, Decrypt Later">
+                  &quot;Harvest now, decrypt later&quot;
+                </InlineTooltip>{' '}
+                risk
+              </li>
             </ul>
           </div>
           <div className="bg-success/5 rounded-lg p-3 border border-success/20">

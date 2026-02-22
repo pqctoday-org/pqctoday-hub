@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
   Shield,
   ArrowRight,
@@ -30,10 +31,13 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            <strong>IKEv2</strong> (Internet Key Exchange version 2, RFC 7296) is the key
-            negotiation protocol for IPsec VPNs. It establishes Security Associations (SAs) through
-            a two-phase handshake: <strong>IKE_SA_INIT</strong> for key exchange and{' '}
-            <strong>IKE_AUTH</strong> for identity verification.
+            <InlineTooltip term="IKEv2">
+              <strong>IKEv2</strong>
+            </InlineTooltip>{' '}
+            (Internet Key Exchange version 2, RFC 7296) is the key negotiation protocol for{' '}
+            <InlineTooltip term="IPsec">IPsec</InlineTooltip> VPNs. It establishes Security
+            Associations (SAs) through a two-phase handshake: <strong>IKE_SA_INIT</strong> for key
+            exchange and <strong>IKE_AUTH</strong> for identity verification.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="space-y-3 text-center">
@@ -63,9 +67,10 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            The KE payload carries Diffie-Hellman public values. Both parties derive the same shared
-            secret (SKEYSEED) from their DH exchange, nonces, and SPIs, then derive encryption and
-            integrity keys for the IKE SA.
+            The KE payload carries{' '}
+            <InlineTooltip term="Diffie-Hellman">Diffie-Hellman</InlineTooltip> public values. Both
+            parties derive the same shared secret (SKEYSEED) from their DH exchange, nonces, and
+            SPIs, then derive encryption and integrity keys for the IKE SA.
           </p>
         </div>
       </section>
@@ -76,14 +81,16 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           <div className="p-2 rounded-lg bg-secondary/10">
             <Network size={24} className="text-secondary" />
           </div>
-          <h2 className="text-xl font-bold text-gradient">ML-KEM in IKEv2</h2>
+          <h2 className="text-xl font-bold text-gradient">
+            <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> in IKEv2
+          </h2>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             The IETF draft <strong>draft-ietf-ipsecme-ikev2-mlkem</strong> defines how to integrate
-            ML-KEM (FIPS 203) into IKEv2 using the <strong>Additional Key Exchange (AKE)</strong>{' '}
-            framework (RFC 9370). This enables hybrid key exchange without modifying the core IKEv2
-            state machine.
+            ML-KEM (<InlineTooltip term="FIPS 203">FIPS 203</InlineTooltip>) into IKEv2 using the{' '}
+            <strong>Additional Key Exchange (AKE)</strong> framework (RFC 9370). This enables hybrid
+            key exchange without modifying the core IKEv2 state machine.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
@@ -126,7 +133,10 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           <div className="p-2 rounded-lg bg-primary/10">
             <Terminal size={24} className="text-primary" />
           </div>
-          <h2 className="text-xl font-bold text-gradient">SSH Key Exchange with PQC</h2>
+          <h2 className="text-xl font-bold text-gradient">
+            <InlineTooltip term="SSH">SSH</InlineTooltip> Key Exchange with{' '}
+            <InlineTooltip term="Post-Quantum Cryptography">PQC</InlineTooltip>
+          </h2>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
@@ -189,14 +199,19 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           <div className="p-2 rounded-lg bg-secondary/10">
             <Lock size={24} className="text-secondary" />
           </div>
-          <h2 className="text-xl font-bold text-gradient">WireGuard &amp; PQC</h2>
+          <h2 className="text-xl font-bold text-gradient">
+            <InlineTooltip term="WireGuard">WireGuard</InlineTooltip> &amp; PQC
+          </h2>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             WireGuard uses the <strong>Noise IK</strong> protocol framework with a fixed cipher
-            suite: X25519, ChaCha20-Poly1305, BLAKE2s. This minimal design makes WireGuard fast and
-            auditable, but also means it has <strong>zero crypto agility</strong> &mdash; algorithms
-            cannot be negotiated.
+            suite: <InlineTooltip term="X25519">X25519</InlineTooltip>, ChaCha20-Poly1305, BLAKE2s.
+            This minimal design makes WireGuard fast and auditable, but also means it has{' '}
+            <strong>
+              zero <InlineTooltip term="Crypto Agility">crypto agility</InlineTooltip>
+            </strong>{' '}
+            &mdash; algorithms cannot be negotiated.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -209,8 +224,11 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">Rosenpass Solution</div>
               <p className="text-xs text-muted-foreground">
-                <strong>Rosenpass</strong> runs a separate PQC key exchange (ML-KEM + Classic
-                McEliece) and feeds the resulting PSK into WireGuard&apos;s pre-shared key slot.
+                <InlineTooltip term="Rosenpass">
+                  <strong>Rosenpass</strong>
+                </InlineTooltip>{' '}
+                runs a separate PQC key exchange (ML-KEM + Classic McEliece) and feeds the resulting
+                PSK into WireGuard&apos;s pre-shared key slot.
               </p>
             </div>
           </div>
@@ -304,16 +322,21 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             While PQC Key Exchange (ML-KEM) secures connections against future decryption,{' '}
-            <strong>Authentication</strong> using digital signatures secures against active
-            attackers. Both IKEv2 and SSH uniquely require multiple layers of authentication that
-            must be migrated.
+            <strong>Authentication</strong> using{' '}
+            <InlineTooltip term="Digital Signature">digital signatures</InlineTooltip> secures
+            against active attackers. Both IKEv2 and SSH uniquely require multiple layers of
+            authentication that must be migrated.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">IKEv2 (IKE_AUTH)</div>
               <p className="text-xs text-muted-foreground">
                 In addition to the AKE payloads, draft-ietf-ipsecme-ikev2-mldsa updates the IKE_AUTH
-                phase to support <strong>ML-DSA</strong> (FIPS 204). The Auth payload verifies
+                phase to support{' '}
+                <InlineTooltip term="ML-DSA">
+                  <strong>ML-DSA</strong>
+                </InlineTooltip>{' '}
+                (<InlineTooltip term="FIPS 204">FIPS 204</InlineTooltip>). The Auth payload verifies
                 identities using post-quantum certificates.
               </p>
             </div>
@@ -385,7 +408,9 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           >
             <Layers size={18} className="text-primary shrink-0" />
             <div>
-              <div className="text-sm font-medium text-foreground">Hybrid Cryptography</div>
+              <div className="text-sm font-medium text-foreground">
+                <InlineTooltip term="Hybrid Cryptography">Hybrid Cryptography</InlineTooltip>
+              </div>
               <div className="text-xs text-muted-foreground">
                 Hybrid KEMs, composite signatures, and certificate comparison
               </div>

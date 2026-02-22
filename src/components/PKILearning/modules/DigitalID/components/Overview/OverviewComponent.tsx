@@ -9,6 +9,7 @@ import {
   ArrowRight,
   AlertTriangle,
 } from 'lucide-react'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface OverviewComponentProps {
   onNavigateTo: (stepId: string) => void
@@ -23,12 +24,14 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <BookOpen size={20} /> What is eIDAS 2.0?
         </h2>
         <p className="text-foreground/80 leading-relaxed">
-          The European Digital Identity Regulation (eIDAS 2.0, Regulation EU 2024/1183) entered into
-          force in May 2024 and mandates that all 27 EU member states provide citizens and residents
-          with at least one EUDI Wallet by late 2026. Unlike eIDAS 1.0 where national eID
-          notification was voluntary, eIDAS 2.0 makes digital identity wallets mandatory — creating
-          a pan-European trust framework for identity, attestations, and qualified electronic
-          signatures.
+          The European Digital Identity Regulation (
+          <InlineTooltip term="eIDAS 2.0">eIDAS 2.0</InlineTooltip>, Regulation EU 2024/1183)
+          entered into force in May 2024 and mandates that all 27 EU member states provide citizens
+          and residents with at least one{' '}
+          <InlineTooltip term="EUDI Wallet">EUDI Wallet</InlineTooltip> by late 2026. Unlike eIDAS
+          1.0 where national eID notification was voluntary, eIDAS 2.0 makes digital identity
+          wallets mandatory — creating a pan-European trust framework for identity, attestations,
+          and qualified electronic signatures.
         </p>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -68,7 +71,8 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           The EUDI Architecture Reference Framework (ARF 2.0) supports two credential formats. Both
-          enable selective disclosure, but serve different use cases.
+          enable <InlineTooltip term="Selective Disclosure">selective disclosure</InlineTooltip>,
+          but serve different use cases.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -92,7 +96,9 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <div className="text-sm font-bold text-success mb-2">vc+sd-jwt (SD-JWT RFC 9901)</div>
+            <div className="text-sm font-bold text-success mb-2">
+              vc+sd-jwt (<InlineTooltip term="SD-JWT">SD-JWT</InlineTooltip> RFC 9901)
+            </div>
             <ul className="text-xs text-muted-foreground space-y-1.5">
               <li>
                 <span className="font-medium text-foreground">Encoding:</span> JSON (text-based)
@@ -120,8 +126,9 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <Shield size={20} /> Trust Framework
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          EUDI establishes a layered trust chain. Relying Parties can verify credential authenticity
-          without contacting the issuer, using public trust infrastructure.
+          EUDI establishes a layered trust chain.{' '}
+          <InlineTooltip term="Relying Party">Relying Parties</InlineTooltip> can verify credential
+          authenticity without contacting the issuer, using public trust infrastructure.
         </p>
         <div className="flex flex-col gap-2 text-sm">
           <div className="flex items-center gap-3 p-3 rounded border bg-muted/30">
@@ -137,10 +144,13 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <div className="flex items-center gap-3 p-3 rounded border bg-muted/30">
             <Users className="w-5 h-5 text-success shrink-0" />
             <div>
-              <span className="font-medium">QTSPs (Qualified Trust Service Providers)</span>
+              <span className="font-medium">
+                <InlineTooltip term="QTSP">QTSPs (Qualified Trust Service Providers)</InlineTooltip>
+              </span>
               <span className="text-xs text-muted-foreground block">
                 Certified organizations that issue qualified attestations (QEAA) and provide
-                qualified signatures (QES).
+                qualified signatures (
+                <InlineTooltip term="Qualified Electronic Signature">QES</InlineTooltip>).
               </span>
             </div>
           </div>
@@ -196,11 +206,13 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           <AlertTriangle size={20} /> Post-Quantum Readiness
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          Current EUDI implementations use classical ECDSA (P-256, P-384) for signatures and key
+          Current EUDI implementations use classical{' '}
+          <InlineTooltip term="ECDSA">ECDSA</InlineTooltip> (P-256, P-384) for signatures and key
           binding. eIDAS 2.0 does not yet mandate post-quantum cryptography, but ENISA has
           identified wallet providers as high-impact entities for early PQC adoption. Future ARF
-          versions are expected to require PQC-safe algorithms (ML-DSA, SLH-DSA) for long-lived
-          credentials.
+          versions are expected to require PQC-safe algorithms (
+          <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>,{' '}
+          <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>) for long-lived credentials.
         </p>
         <div className="bg-muted/50 rounded-lg p-3 border border-border mb-3">
           <div className="text-xs font-bold text-foreground mb-1">

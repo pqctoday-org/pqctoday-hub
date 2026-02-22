@@ -7,6 +7,7 @@ import { generateKeyPair, signData } from '../../utils/crypto-utils'
 import { createMdoc } from '../../utils/mdoc-utils'
 import { Loader2, CheckCircle, Smartphone, Lock, UserCheck, CreditCard } from 'lucide-react'
 import { MARIA_IDENTITY } from '../../constants'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface PIDIssuerComponentProps {
   wallet: WalletInstance
@@ -148,7 +149,11 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
           National Identity Authority (PID Provider)
         </CardTitle>
         <CardDescription>
-          Issue your Person Identification Data (PID) using OpenID4VCI
+          Issue your{' '}
+          <InlineTooltip term="Person Identification Data">
+            Person Identification Data (PID)
+          </InlineTooltip>{' '}
+          using <InlineTooltip term="OpenID4VCI">OpenID4VCI</InlineTooltip>
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6">

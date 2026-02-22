@@ -1975,6 +1975,14 @@ export const glossaryTerms: GlossaryTerm[] = [
 
   // Key Management
   {
+    term: 'NIST SP 800-57',
+    definition:
+      'NIST Special Publication 800-57: Recommendation for Key Management. Defines the seven-stage key lifecycle (pre-operational, operational, post-operational, etc.) and cryptoperiod guidance.',
+    complexity: 'intermediate',
+    category: 'standard',
+    relatedModule: '/learn/key-management',
+  },
+  {
     term: 'PKCS#11',
     definition:
       'A standard API (also called Cryptoki) for accessing cryptographic hardware like Hardware Security Modules (HSMs), smart cards, and tokens.',

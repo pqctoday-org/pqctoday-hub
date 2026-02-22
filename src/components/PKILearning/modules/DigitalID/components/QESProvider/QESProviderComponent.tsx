@@ -7,6 +7,7 @@ import { sha256Hash } from '../../utils/crypto-utils'
 import { Loader2, FileSignature, UploadCloud, CheckCircle, PenTool, Lock } from 'lucide-react'
 import { Input } from '../../../../../ui/input'
 import { Label } from '../../../../../ui/label'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface QESProviderComponentProps {
   wallet: WalletInstance
@@ -105,10 +106,13 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
                     Note: Cloud Signature Consortium (CSC) API
                   </p>
                   <p>
-                    Remote QES uses the CSC API standard (v2) to interact with a cloud-based HSM
-                    managed by a Qualified Trust Service Provider (QTSP). Your signing key never
-                    leaves the HSM. The QTSP ensures Sole Control Assurance (SCAL2) — only you can
-                    authorize signature operations on your key.
+                    Remote <InlineTooltip term="Qualified Electronic Signature">QES</InlineTooltip>{' '}
+                    uses the CSC API standard (v2) to interact with a cloud-based HSM managed by a{' '}
+                    <InlineTooltip term="QTSP">
+                      Qualified Trust Service Provider (QTSP)
+                    </InlineTooltip>
+                    . Your signing key never leaves the HSM. The QTSP ensures Sole Control Assurance
+                    (SCAL2) — only you can authorize signature operations on your key.
                   </p>
                 </div>
                 <div className="border-2 border-dashed border-border rounded-lg p-8 text-center bg-muted/5">
