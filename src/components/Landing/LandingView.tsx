@@ -176,7 +176,7 @@ export const LandingView = () => {
       <section className="text-center pt-8 md:pt-16">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
           <p className="text-sm font-mono uppercase tracking-widest text-primary mb-4">
-            Post-Quantum Cryptography
+            Your PQC Transformation
           </p>
         </motion.div>
 
@@ -187,10 +187,10 @@ export const LandingView = () => {
           custom={1}
           className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
         >
-          The quantum threat is <span className="text-gradient">not theoretical.</span>
+          The quantum era is <span className="text-gradient">here.</span>
           <br />
           <span className="text-muted-foreground text-2xl md:text-3xl lg:text-4xl font-normal mt-2 block">
-            Your migration plan should not be either.
+            Your transformation journey starts now.
           </span>
         </motion.h1>
 
@@ -201,8 +201,8 @@ export const LandingView = () => {
           custom={2}
           className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
         >
-          Explore interactive timelines, test real PQC algorithms in your browser, and track
-          compliance — all from a single open-source platform.
+          Explore global migration timelines, test real PQC algorithms in your browser, assess your
+          risk, and build a roadmap — all from a single open-source platform.
         </motion.p>
 
         <motion.div
