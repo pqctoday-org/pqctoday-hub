@@ -42,7 +42,7 @@ class OpenSSLService {
         // Use Vite's worker import to load the TypeScript source directly
         this.worker = new Worker(
           new URL('../../components/OpenSSLStudio/worker/openssl.worker.ts', import.meta.url),
-          { type: 'module' }
+          { type: 'classic' }
         )
 
         this.worker.onmessage = (event) => {
