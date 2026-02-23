@@ -11,7 +11,7 @@ import { KeyGenWorkshop } from './KeyGenWorkshop'
 import { SignatureDemo } from './SignatureDemo'
 import { PQC101Exercises, type WorkshopConfig } from './PQC101Exercises'
 
-const MODULE_ID = 'introduction'
+const MODULE_ID = 'pqc-101'
 
 const PARTS = [
   {

@@ -10,6 +10,7 @@ interface QuizIntroProps {
   onStart: (mode: QuizMode, categories: QuizCategory[]) => void
   quizMetadata?: { filename: string; lastUpdate: Date } | null
   totalQuestions?: number
+  totalPoolSize?: number
   quickPoolSize?: number
   categories: QuizCategoryMeta[]
   /** Pre-selected categories based on the active learning persona */
@@ -23,6 +24,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   onStart,
   quizMetadata,
   totalQuestions,
+  totalPoolSize,
   quickPoolSize,
   categories,
   initialCategories,
@@ -119,12 +121,12 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               <div>
                 <h4 className="font-bold text-foreground">Full Assessment</h4>
                 <p className="text-xs text-muted-foreground">
-                  {fullCount} questions, ~{fullTimeMin} min
+                  {fullCount} from {totalPoolSize || 340} pool, ~{fullTimeMin} min
                 </p>
               </div>
             </div>
             <p className="text-sm text-muted-foreground mb-4 flex-grow">
-              Every question in the bank. Comprehensive coverage of all PQC topics.
+              A broad random sample across all PQC topics with guaranteed category coverage.
             </p>
             <Button variant="outline" className="w-full" onClick={handleStartFull}>
               Start Full Assessment

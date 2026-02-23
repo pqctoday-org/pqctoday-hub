@@ -186,6 +186,7 @@ export const QuizModule: React.FC = () => {
           onStart={handleStart}
           quizMetadata={quizMetadata}
           totalQuestions={Math.min(FULL_QUIZ_COUNT, filteredQuestions.length)}
+          totalPoolSize={filteredQuestions.length}
           quickPoolSize={
             filteredQuestions.filter((q) => q.quizMode === 'quick' || q.quizMode === 'both').length
           }
