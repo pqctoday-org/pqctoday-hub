@@ -17,8 +17,19 @@ import {
   CREDENTIAL_LIFETIME_YEARS,
   ESTIMATED_QUANTUM_THREAT_YEAR,
   MIGRATION_STATUS_SCORES,
+  COUNTRY_PLANNING_HORIZON,
+  INDUSTRY_COMPOSITE_WEIGHTS,
+  DEFAULT_COMPOSITE_WEIGHTS,
 } from './assessmentData'
-import { complianceFrameworks } from '../data/complianceData'
+
+import {
+  industryRetentionConfigs,
+  universalRetentionConfigs,
+  industryComplianceConfigs,
+  getIndustryConfigs,
+} from '../data/industryAssessConfig'
+
+const ALL_RETENTION_CONFIGS = [...industryRetentionConfigs, ...universalRetentionConfigs]
 
 import { useMemo } from 'react'
 import { SIGNING_ALGORITHMS } from './assessmentData'
@@ -26,6 +37,7 @@ import type {
   AssessmentInput,
   ComplianceImpact,
   CategoryScores,
+  CategoryDrivers,
   HNDLRiskWindow,
   HNFLRiskWindow,
   MigrationEffortItem,
@@ -46,8 +58,14 @@ function getMaxSensitivity(arr: string[]): string {
 /** Returns the maximum retention years across all selected retention periods. */
 function getMaxRetentionYears(arr: string[]): number {
   if (!arr.length) return 0
-  // eslint-disable-next-line security/detect-object-injection
-  return Math.max(...arr.map((r) => DATA_RETENTION_YEARS[r] ?? 0))
+  return Math.max(
+    ...arr.map((r) => {
+      const cfg = ALL_RETENTION_CONFIGS.find((c) => c.id === r)
+      if (cfg) return cfg.retentionYears
+      // eslint-disable-next-line security/detect-object-injection
+      return DATA_RETENTION_YEARS[r] ?? 0
+    })
+  )
 }
 
 function computeQuantumExposure(input: AssessmentInput, vulnerableCount: number): number {
@@ -91,8 +109,9 @@ function computeQuantumExposure(input: AssessmentInput, vulnerableCount: number)
 
   let retentionScore = 0
   if (input.retentionUnknown) {
-    // Not knowing retention is worst-case — assume 15-year retention (~12 pts)
-    retentionScore = 12
+    // Industry-aware conservative default (e.g., 75y gov, 40y aerospace, min 15y)
+    const conservativeYears = getIndustryRetentionDefault(input.industry)
+    retentionScore = Math.min(20, conservativeYears * 0.8)
   } else if (input.dataRetention?.length) {
     const years = getMaxRetentionYears(input.dataRetention)
     retentionScore = Math.min(20, years * 0.8)
@@ -143,17 +162,43 @@ function computeMigrationComplexity(input: AssessmentInput): number {
   )
 }
 
+/** Extract the earliest 4-digit year from a freeform deadline string. */
+function parseDeadlineYear(deadline: string): number | null {
+  const match = deadline.match(/\b(20\d{2})\b/)
+  return match ? parseInt(match[1], 10) : null
+}
+
 function computeRegulatoryPressure(
   input: AssessmentInput,
   complianceImpacts: ComplianceImpact[]
 ): number {
-  const pqcCount = complianceImpacts.filter((c) => c.requiresPQC).length
-  const frameworkScore = Math.min(40, pqcCount * 12)
+  const currentYear = new Date().getFullYear()
+  const pqcCompliance = complianceImpacts.filter((c) => c.requiresPQC)
+
+  // Deadline-aware framework scoring: closer deadlines score higher
+  let frameworkScore = 0
+  for (const fw of pqcCompliance) {
+    const deadlineYear = parseDeadlineYear(fw.deadline)
+    if (!deadlineYear) {
+      frameworkScore += 10 // ongoing/unknown → moderate
+    } else {
+      const yearsUntil = deadlineYear - currentYear
+      if (yearsUntil <= 0)
+        frameworkScore += 15 // deadline passed — very urgent
+      else if (yearsUntil <= 2)
+        frameworkScore += 14 // imminent
+      else if (yearsUntil <= 5)
+        frameworkScore += 12 // near-term
+      else frameworkScore += 8 // distant
+    }
+  }
+  frameworkScore = Math.min(45, frameworkScore)
+
   const industryBase = INDUSTRY_THREAT[input.industry] ?? 10
   const industryRegScore = Math.min(25, industryBase * 0.85)
   const countryUrgency = COUNTRY_REGULATORY_URGENCY[input.country ?? ''] ?? 0
   const timelineMul = TIMELINE_URGENCY[input.timelinePressure ?? 'unknown'] ?? 1.1
-  const raw = (frameworkScore + industryRegScore + Math.min(10, countryUrgency)) * timelineMul
+  const raw = (frameworkScore + industryRegScore + countryUrgency) * timelineMul
   return Math.max(0, Math.min(100, Math.round(raw)))
 }
 
@@ -182,11 +227,12 @@ function computeOrganizationalReadiness(input: AssessmentInput): number {
 }
 
 function computeCompositeScore(categoryScores: CategoryScores, input: AssessmentInput): number {
+  const w = INDUSTRY_COMPOSITE_WEIGHTS[input.industry] ?? DEFAULT_COMPOSITE_WEIGHTS
   let composite =
-    categoryScores.quantumExposure * 0.35 +
-    categoryScores.migrationComplexity * 0.2 +
-    categoryScores.regulatoryPressure * 0.2 +
-    categoryScores.organizationalReadiness * 0.25
+    categoryScores.quantumExposure * w.qe +
+    categoryScores.migrationComplexity * w.mc +
+    categoryScores.regulatoryPressure * w.rp +
+    categoryScores.organizationalReadiness * w.or
   if (
     input.dataSensitivity.includes('critical') &&
     input.dataRetention?.length &&
@@ -224,16 +270,34 @@ function computeCompositeScore(categoryScores: CategoryScores, input: Assessment
   return Math.max(0, Math.min(100, Math.round(composite)))
 }
 
+/** Effective planning horizon: country-specific if available, else global default. */
+function getEffectiveThreatYear(country?: string): number {
+  return Math.min(
+    ESTIMATED_QUANTUM_THREAT_YEAR,
+    COUNTRY_PLANNING_HORIZON[country ?? ''] ?? ESTIMATED_QUANTUM_THREAT_YEAR
+  )
+}
+
+/** Industry-aware conservative retention default when user selects "I don't know". */
+function getIndustryRetentionDefault(industry: string): number {
+  const configs = getIndustryConfigs(industryRetentionConfigs, industry)
+  const industryMax = configs.length > 0 ? Math.max(...configs.map((r) => r.retentionYears)) : 15
+  return Math.max(15, industryMax) // never weaken below 15-year baseline
+}
+
 function computeHNDLRiskWindow(input: AssessmentInput): HNDLRiskWindow | undefined {
   const isEstimated = !!input.retentionUnknown
   if (!input.dataRetention?.length && !isEstimated) return undefined
   const currentYear = new Date().getFullYear()
-  const retentionYears = isEstimated ? 15 : getMaxRetentionYears(input.dataRetention ?? [])
+  const retentionYears = isEstimated
+    ? getIndustryRetentionDefault(input.industry)
+    : getMaxRetentionYears(input.dataRetention ?? [])
+  const effectiveThreatYear = getEffectiveThreatYear(input.country)
   const dataExpirationYear = currentYear + retentionYears
-  const riskWindowYears = dataExpirationYear - ESTIMATED_QUANTUM_THREAT_YEAR
+  const riskWindowYears = dataExpirationYear - effectiveThreatYear
   return {
     dataRetentionYears: retentionYears,
-    estimatedQuantumThreatYear: ESTIMATED_QUANTUM_THREAT_YEAR,
+    estimatedQuantumThreatYear: effectiveThreatYear,
     currentYear,
     isAtRisk: riskWindowYears > 0,
     riskWindowYears: Math.max(0, riskWindowYears),
@@ -253,14 +317,15 @@ function computeHNFLRiskWindow(input: AssessmentInput): HNFLRiskWindow | undefin
     : Math.max(
         ...input.credentialLifetime!.map((v) => CREDENTIAL_LIFETIME_YEARS[v] ?? 0) // eslint-disable-line security/detect-object-injection
       )
+  const effectiveThreatYear = getEffectiveThreatYear(input.country)
   const credentialExpiryYear = currentYear + lifetimeYears
-  const riskWindowYears = credentialExpiryYear - ESTIMATED_QUANTUM_THREAT_YEAR
+  const riskWindowYears = credentialExpiryYear - effectiveThreatYear
   const hnflRelevantUseCases = (input.cryptoUseCases ?? []).filter(
     (uc) => (USE_CASE_WEIGHTS[uc]?.hnflRelevance ?? 0) >= 7 // eslint-disable-line security/detect-object-injection
   )
   return {
     credentialLifetimeYears: lifetimeYears,
-    estimatedQuantumThreatYear: ESTIMATED_QUANTUM_THREAT_YEAR,
+    estimatedQuantumThreatYear: effectiveThreatYear,
     currentYear,
     isAtRisk: riskWindowYears > 0 && hasSigningAlgorithms,
     riskWindowYears: Math.max(0, riskWindowYears),
@@ -326,6 +391,87 @@ function buildAlgorithmHighlightUrl(algorithms: string[]): string {
 function buildThreatsUrl(industry?: string): string {
   if (!industry) return '/threats'
   return `/threats?industry=${encodeURIComponent(industry)}`
+}
+
+function generateCategoryDrivers(
+  input: AssessmentInput,
+  vulnerableCount: number,
+  pqcCount: number
+): CategoryDrivers {
+  // Quantum Exposure drivers
+  const qeParts: string[] = []
+  if (input.currentCryptoUnknown) {
+    qeParts.push('algorithms unknown (conservative)')
+  } else if (vulnerableCount > 0) {
+    qeParts.push(`${vulnerableCount} vulnerable algorithm${vulnerableCount !== 1 ? 's' : ''}`)
+  } else {
+    qeParts.push('no vulnerable algorithms')
+  }
+  const maxSens = input.sensitivityUnknown
+    ? 'high (assumed)'
+    : getMaxSensitivity(input.dataSensitivity)
+  qeParts.push(`${maxSens} sensitivity`)
+  if (input.retentionUnknown) {
+    qeParts.push(`${getIndustryRetentionDefault(input.industry)}y retention (assumed)`)
+  } else if (input.dataRetention?.length) {
+    qeParts.push(`${getMaxRetentionYears(input.dataRetention)}y retention`)
+  }
+
+  // Migration Complexity drivers
+  const mcParts: string[] = []
+  const agilityLabels: Record<string, string> = {
+    'fully-abstracted': 'abstracted',
+    'partially-abstracted': 'partial',
+    hardcoded: 'hardcoded',
+    unknown: 'unknown',
+  }
+  mcParts.push(`${agilityLabels[input.cryptoAgility ?? 'unknown'] ?? 'unknown'} crypto agility`)
+  if (input.infrastructureUnknown) {
+    mcParts.push('infrastructure unknown')
+  } else if (input.infrastructure?.length) {
+    mcParts.push(
+      `${input.infrastructure.length} infra type${input.infrastructure.length !== 1 ? 's' : ''}`
+    )
+  }
+  if (input.systemCount) mcParts.push(`${input.systemCount} systems`)
+
+  // Regulatory Pressure drivers
+  const rpParts: string[] = []
+  if (pqcCount > 0) {
+    rpParts.push(`${pqcCount} PQC mandate${pqcCount !== 1 ? 's' : ''}`)
+  } else {
+    rpParts.push('no PQC mandates')
+  }
+  rpParts.push(input.industry)
+  if (input.country) rpParts.push(input.country)
+
+  // Organizational Readiness drivers
+  const orParts: string[] = []
+  const statusLabels: Record<string, string> = {
+    started: 'migration started',
+    planning: 'planning phase',
+    'not-started': 'not started',
+    unknown: 'status unknown',
+  }
+  orParts.push(statusLabels[input.migrationStatus] ?? input.migrationStatus)
+  if (input.systemCount && input.teamSize) {
+    orParts.push(`${input.systemCount} systems / ${input.teamSize} team`)
+  }
+  const vendorLabel = input.vendorUnknown
+    ? 'vendor unknown'
+    : input.vendorDependency === 'heavy-vendor'
+      ? 'heavy vendor dependency'
+      : input.vendorDependency === 'in-house'
+        ? 'in-house crypto'
+        : (input.vendorDependency ?? '')
+  if (vendorLabel) orParts.push(vendorLabel)
+
+  return {
+    quantumExposure: qeParts.join(', '),
+    migrationComplexity: mcParts.join(', '),
+    regulatoryPressure: rpParts.join(', '),
+    organizationalReadiness: orParts.join(', '),
+  }
 }
 
 function generateExtendedActions(
@@ -552,6 +698,105 @@ function generateExtendedActions(
     })
   }
 
+  // Industry-specific actions
+  const INDUSTRY_ACTIONS: Record<
+    string,
+    {
+      action: string
+      category: RecommendedAction['category']
+      effort: RecommendedAction['effort']
+      relatedModule: string
+    }[]
+  > = {
+    'Government & Defense': [
+      {
+        action:
+          'Align all national security systems with CNSA 2.0 requirements and begin FIPS 203/204/205 module validation.',
+        category: 'immediate',
+        effort: 'high',
+        relatedModule: '/compliance',
+      },
+    ],
+    'Finance & Banking': [
+      {
+        action:
+          'Coordinate with SWIFT, payment processors, and banking partners on PQC migration timelines for transaction integrity.',
+        category: 'short-term',
+        effort: 'medium',
+        relatedModule: '/compliance',
+      },
+    ],
+    Healthcare: [
+      {
+        action:
+          'Assess HIPAA-covered systems and EHR/FHIR data exchange channels for PQC readiness — patient data has long retention and high HNDL exposure.',
+        category: 'immediate',
+        effort: 'medium',
+        relatedModule: buildThreatsUrl('Healthcare'),
+      },
+    ],
+    Telecommunications: [
+      {
+        action:
+          'Plan PQC migration for SIM/eSIM provisioning and 5G network slicing security — these are high-value targets with complex upgrade paths.',
+        category: 'short-term',
+        effort: 'high',
+        relatedModule: '/migrate',
+      },
+    ],
+    'Energy & Utilities': [
+      {
+        action:
+          'Assess SCADA/OT systems for PQC readiness — embedded controllers and legacy protocols require extended migration timelines.',
+        category: 'immediate',
+        effort: 'high',
+        relatedModule: buildThreatsUrl('Energy & Utilities'),
+      },
+    ],
+    Automotive: [
+      {
+        action:
+          'Plan PQC migration for V2X communication and ECU secure boot — vehicle lifetime (15+ years) creates long HNFL exposure.',
+        category: 'short-term',
+        effort: 'high',
+        relatedModule: '/migrate',
+      },
+    ],
+    Aerospace: [
+      {
+        action:
+          'Assess avionics communication and satellite link encryption for PQC readiness — aircraft lifetime (40+ years) creates extreme HNDL/HNFL exposure.',
+        category: 'immediate',
+        effort: 'high',
+        relatedModule: buildThreatsUrl('Aerospace'),
+      },
+    ],
+    Technology: [
+      {
+        action:
+          'Evaluate PQC support in cloud KMS providers (AWS, Azure, GCP) and plan API gateway migration to hybrid key exchange.',
+        category: 'short-term',
+        effort: 'medium',
+        relatedModule: '/migrate',
+      },
+    ],
+    'Retail & E-Commerce': [
+      {
+        action:
+          'Coordinate with payment gateway providers on PQC timeline for card transaction encryption and PCI DSS alignment.',
+        category: 'short-term',
+        effort: 'medium',
+        relatedModule: '/compliance',
+      },
+    ],
+  }
+  const industryActions = INDUSTRY_ACTIONS[input.industry]
+  if (industryActions) {
+    for (const ia of industryActions) {
+      actions.push({ priority: priority++, ...ia })
+    }
+  }
+
   if (input.migrationStatus === 'not-started' || input.migrationStatus === 'unknown') {
     actions.push({
       priority: priority++,
@@ -641,6 +886,16 @@ function generateExecutiveSummary(
     )
   }
 
+  // Country deadline context
+  if (input.country) {
+    const effectiveThreatYear = getEffectiveThreatYear(input.country)
+    if (effectiveThreatYear < ESTIMATED_QUANTUM_THREAT_YEAR) {
+      parts.push(
+        `${input.country}'s regulatory framework targets PQC transition by ${effectiveThreatYear}, ahead of the global ${ESTIMATED_QUANTUM_THREAT_YEAR} planning horizon.`
+      )
+    }
+  }
+
   const statusSummary: Record<string, string> = {
     started: 'Migration is underway, reducing overall risk.',
     planning: 'Migration planning is in progress — prioritize execution.',
@@ -728,7 +983,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
       })
   // Filter compliance requirements to only include frameworks relevant to the user's industry
   const filteredCompliance = input.complianceRequirements.filter((fw) => {
-    const framework = complianceFrameworks.find((f) => f.label === fw)
+    const framework = industryComplianceConfigs.find((f) => f.label === fw)
     // Keep if: not in DB (don't silently drop unknowns), matches industry, or universal (3+ industries)
     return (
       !framework ||
@@ -769,6 +1024,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
   )
   let riskScore: number
   let categoryScores: CategoryScores | undefined
+  let categoryDrivers: CategoryDrivers | undefined
   let hndlRiskWindow: HNDLRiskWindow | undefined
   let hnflRiskWindow: HNFLRiskWindow | undefined
   let migrationEffort: MigrationEffortItem[] | undefined
@@ -792,6 +1048,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     hndlRiskWindow = computeHNDLRiskWindow(input)
     hnflRiskWindow = computeHNFLRiskWindow(input)
     migrationEffort = computeMigrationEffort(input)
+    categoryDrivers = generateCategoryDrivers(input, vulnerableCount, pqcCompliance.length)
     recommendedActions = generateExtendedActions(
       input,
       vulnerableCount,
@@ -959,6 +1216,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     narrative,
     generatedAt: new Date().toISOString(),
     categoryScores,
+    categoryDrivers,
     hndlRiskWindow,
     hnflRiskWindow,
     migrationEffort,

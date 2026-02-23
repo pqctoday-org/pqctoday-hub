@@ -4,6 +4,59 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.29.0] - 2026-02-22
+
+### Added
+
+- **Industry-weighted composite scoring** (`/assess`): Risk scores now use industry-tailored
+  category weights — government and finance boost regulatory pressure (0.30), telecom and energy
+  boost migration complexity (0.25), and technology boosts organizational readiness (0.30) — instead
+  of fixed weights across all industries.
+
+- **Country planning horizons** (`/assess`): HNDL and HNFL risk windows now use country-specific
+  regulatory deadlines (US/France/Canada target 2030, Germany/UK/Australia target 2035) instead of
+  a universal 2035 planning horizon. Users in countries with earlier deadlines see more urgent risk
+  assessments.
+
+- **Compliance deadline-aware scoring** (`/assess`): Regulatory pressure scoring now parses actual
+  deadline years from compliance frameworks. Passed deadlines score 15 points, imminent (≤2 years)
+  score 14, near-term (≤5 years) score 12, and distant deadlines score 8 — replacing the previous
+  flat per-framework scoring.
+
+- **Category score driver explanations** (`/assess`): Each of the four risk category progress bars
+  now shows a human-readable explanation of what drives the score (e.g., "3 vulnerable algorithms,
+  high sensitivity, 25-year retention").
+
+- **Industry-specific recommended actions** (`/assess`): Nine industry-tailored actions added —
+  from CNSA 2.0 alignment for government to SCADA/OT assessment for energy, V2X planning for
+  automotive, and cloud KMS evaluation for technology.
+
+- **Algorithm-highlighted threat landscape** (`/assess`): Threat rows matching the user's selected
+  algorithms are now visually highlighted with a primary-colored left border and subtle background.
+
+- **Country-aware migration roadmap** (`/assess`): Roadmap swim lane phases (Immediate, Short-term,
+  Long-term) now dynamically compress or expand based on deadline proximity — urgent deadlines
+  (≤24 months) compress to 0–3/3–12 months, distant deadlines (≥60 months) expand to 0–12/12–24
+  months.
+
+- **Industry-aware retention defaults** (`/assess`): "I don't know" retention answers now use
+  industry-specific conservative defaults from CSV data (75 years for government, 40 for aerospace)
+  instead of a flat 15-year default.
+
+### Changed
+
+- **Methodology modal accuracy** (`/assess`): Updated risk score description to reflect actual
+  industry-tailored weights and deadline proximity scoring. Added country planning horizon context
+  to HNDL description. Updated "I don't know" section with industry-specific retention defaults.
+
+- **Country urgency scoring uncapped** (`/assess`): Removed the artificial cap on country regulatory
+  urgency contribution, allowing high-urgency countries (US, France) to contribute their full
+  weight to the regulatory pressure score.
+
+- **Executive summary country context** (`/assess`): When a user's country has an accelerated
+  planning horizon, the executive summary now explicitly mentions the country's target year
+  relative to the global planning horizon.
+
 ## [1.28.0] - 2026-02-22
 
 ### Added

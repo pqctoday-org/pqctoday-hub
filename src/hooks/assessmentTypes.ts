@@ -97,6 +97,14 @@ export interface MigrationEffortItem {
   rationale: string
 }
 
+/** Human-readable explanations of what drives each category score. */
+export interface CategoryDrivers {
+  quantumExposure: string
+  migrationComplexity: string
+  regulatoryPressure: string
+  organizationalReadiness: string
+}
+
 export interface AssessmentResult {
   riskScore: number
   riskLevel: 'low' | 'medium' | 'high' | 'critical'
@@ -106,6 +114,7 @@ export interface AssessmentResult {
   narrative: string
   generatedAt: string
   categoryScores?: CategoryScores
+  categoryDrivers?: CategoryDrivers
   hndlRiskWindow?: HNDLRiskWindow
   hnflRiskWindow?: HNFLRiskWindow
   migrationEffort?: MigrationEffortItem[]

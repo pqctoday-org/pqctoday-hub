@@ -27,7 +27,7 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 
 **Routing & Code Splitting**: All top-level views are lazy-loaded via `React.lazy()` in `src/App.tsx`. Routes nest under `MainLayout` which provides the navigation shell. `AppRoot.tsx` wraps everything in `ErrorBoundary` → `Suspense` → `App`. Routes: `/` (Landing), `/timeline`, `/algorithms`, `/library`, `/learn/*` (includes `/learn/quiz`), `/playground`, `/openssl`, `/threats`, `/leaders`, `/compliance`, `/changelog`, `/migrate`, `/assess`, `/about`.
 
-**State Management**: Zustand stores in `src/store/` with `persist` middleware for localStorage. Stores are modular — `useModuleStore` (learning progress/artifacts), `useThemeStore` (dark/light), `useVersionStore` (what's-new tracking), `tls-learning.store.ts` (TLS simulation), `useAssessmentStore` (assessment wizard, persisted to localStorage).
+**State Management**: Zustand stores in `src/store/` with `persist` middleware for localStorage. Stores are modular — `useModuleStore` (learning progress/artifacts), `useThemeStore` (dark/light), `useVersionStore` (what's-new tracking), `tls-learning.store.ts` (TLS simulation), `useAssessmentStore` (assessment wizard, persisted to localStorage), `usePersonaStore` (active persona: executive/developer/architect/researcher, drives landing CTAs and journey step visibility).
 
 **Crypto Stack** (layered, strict priority):
 
@@ -37,7 +37,7 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 4. **@noble/\*, @scure/\*** — blockchain crypto (secp256k1, Ed25519, BIP32/39/44, Ethereum)
 5. **Web Crypto API** (`src/utils/webCrypto.ts`) — X25519, P-256, ECDH
 
-**Data Sources**: Static JSON/CSV files in `src/data/`. Compliance data scraped at build time via `npm run scrape` from NIST, ANSSI, and Common Criteria. CSV files use versioned naming (e.g., `leaders_01192026.csv`). Dev server proxies requests to NIST, BSI, ANSSI, and Common Criteria APIs (configured in `vite.config.ts`).
+**Data Sources**: Static JSON/CSV files in `src/data/`. Compliance data scraped at build time via `npm run scrape` from NIST, ANSSI, and Common Criteria. CSV files use versioned naming (e.g., `leaders_01192026.csv`). Dev server proxies requests to NIST, BSI, ANSSI, and Common Criteria APIs (configured in `vite.config.ts`). Authoritative sources CSV (`pqc_authoritative_sources_reference_*.csv`) uses 13 columns with `lastVerifiedDate` at index 12; `AuthoritativeSource` type has `complianceCsv` and `migrateCsv` boolean fields; `ViewType` includes `'Compliance'` and `'Migrate'`.
 
 **CSV Management** — MUST read and follow `docs/CSVmaintenance.md` before ANY CSV operation (record insert, update, delete, format change, or web source refresh). This is mandatory, not optional. Key rules:
 
@@ -74,7 +74,7 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 - `<FilterDropdown>` from `src/components/common/FilterDropdown.tsx` — MUST replace all native `<select>` elements
 - `<CodeBlock>` — MUST for multi-line code display (current `bg-zinc-950` is a known bug, do not copy)
 - Icons: `lucide-react` exclusively; icon colors must use semantic tokens (`text-primary`, `text-muted-foreground`, `.text-status-*`)
-- Missing components to create (do not inline-style as workaround): `<Skeleton>`, `<EmptyState>`, `<ErrorAlert>`, `<CategoryBadge>` — see `docs/ux-standard.md` S4.8
+- Shared UI components (`src/components/ui/`): `<Skeleton>`, `<EmptyState>`, `<ErrorAlert>`, `<CategoryBadge>` exist and MUST be used — do not inline-style as workaround. See `docs/ux-standard.md` S4.8
 
 **TypeScript**: Strict mode. Use `interface` for objects, `type` for unions/primitives. Avoid `any` — use `unknown` with narrowing.
 

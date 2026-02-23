@@ -51,7 +51,7 @@ export default defineConfig([
   {
     files: [
       '*.{js,cjs,mjs,ts}',
-      'scripts/**/*.{js,ts}',
+      'scripts/**/*.{js,mjs,ts}',
       'e2e/**/*.{ts,js}',
       'test-improvements.cjs',
     ],
@@ -60,6 +60,7 @@ export default defineConfig([
     },
     rules: {
       'security/detect-non-literal-fs-filename': 'off',
+      'no-unused-vars': 'warn',
     },
   },
 

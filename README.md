@@ -119,11 +119,24 @@ Test your PQC readiness with this interactive web application visualizing the gl
     knowledge gaps first
   - **Compliance framework descriptions**: Step 5 shows deadline and regulatory notes as sub-text beneath each
     framework button for in-context guidance
-  - Compound scoring engine with 4 risk dimensions: Quantum Exposure, Migration Complexity, Regulatory Pressure,
-    Organizational Readiness — Regulatory Pressure now incorporates country-specific urgency weighting
+  - **Industry-weighted compound scoring**: 4 risk dimensions (Quantum Exposure, Migration Complexity,
+    Regulatory Pressure, Organizational Readiness) with per-industry category weights — government and
+    finance boost regulatory pressure, telecom and energy boost migration complexity
+  - **Country planning horizons**: HNDL/HNFL risk windows use country-specific regulatory deadlines
+    (US/France/Canada 2030, Germany/UK/Australia 2035) instead of a universal planning horizon
+  - **Compliance deadline-aware scoring**: Regulatory pressure parses actual deadline years from
+    frameworks — imminent deadlines score higher than distant ones
+  - **Category score driver explanations**: Human-readable descriptions below each risk category bar
+    explaining what drives the score
+  - **Industry-specific recommended actions**: Tailored actions per industry (CNSA 2.0 for government,
+    SCADA/OT for energy, V2X for automotive, cloud KMS for technology)
+  - **Algorithm-highlighted threat landscape**: Threats matching the user's selected algorithms are
+    visually highlighted in the report
+  - **Country-aware migration roadmap**: Swim lane phases dynamically compress or expand based on
+    deadline proximity
   - **Consolidated HNDL / HNFL Risk Windows**: unified section with Key Milestones table (today, CRQC arrival,
     data/credential expiry dates with at-risk/safe badges) plus individual timeline visualizations; risk windows
-    render with conservative estimates when users select "I don't know" on retention or credential lifetime steps
+    render with industry-aware conservative estimates when users select "I don't know"
   - Per-algorithm migration effort estimation (quick-win to multi-year)
   - **Quick/Comprehensive badge** in report header — clearly identifies the depth of the completed assessment
   - **HNDL warning banner**: quick assessments with high or critical sensitivity display a banner noting that

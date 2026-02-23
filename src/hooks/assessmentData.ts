@@ -290,6 +290,33 @@ export const COUNTRY_REGULATORY_URGENCY: Record<string, number> = {
   Denmark: 5, // NIS2
 }
 export const ESTIMATED_QUANTUM_THREAT_YEAR = 2035
+/** Country-specific regulatory planning horizons (earliest hard deadline year). */
+export const COUNTRY_PLANNING_HORIZON: Record<string, number> = {
+  'United States': 2030, // CNSA 2.0 software deprecation
+  France: 2030, // ANSSI mandate
+  Germany: 2035, // BSI guidance
+  'United Kingdom': 2035, // NCSC
+  Australia: 2035, // ASD ISM
+  Canada: 2030, // CCCS effective 2025
+}
+/** Industry-specific composite score weights (must sum to 1.0). */
+export const INDUSTRY_COMPOSITE_WEIGHTS: Record<
+  string,
+  { qe: number; mc: number; rp: number; or: number }
+> = {
+  'Government & Defense': { qe: 0.3, mc: 0.15, rp: 0.3, or: 0.25 },
+  'Finance & Banking': { qe: 0.3, mc: 0.2, rp: 0.3, or: 0.2 },
+  Healthcare: { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 },
+  Telecommunications: { qe: 0.3, mc: 0.25, rp: 0.2, or: 0.25 },
+  Technology: { qe: 0.35, mc: 0.2, rp: 0.15, or: 0.3 },
+  'Energy & Utilities': { qe: 0.3, mc: 0.25, rp: 0.2, or: 0.25 },
+  Automotive: { qe: 0.3, mc: 0.25, rp: 0.2, or: 0.25 },
+  Aerospace: { qe: 0.3, mc: 0.25, rp: 0.25, or: 0.2 },
+  'Retail & E-Commerce': { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 },
+  Education: { qe: 0.4, mc: 0.15, rp: 0.15, or: 0.3 },
+  Other: { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 },
+}
+export const DEFAULT_COMPOSITE_WEIGHTS = { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 }
 export const AVAILABLE_INDUSTRIES = Object.keys(INDUSTRY_THREAT)
 export const AVAILABLE_ALGORITHMS = Object.keys(ALGORITHM_DB)
 export const AVAILABLE_COMPLIANCE = Object.keys(COMPLIANCE_DB)

@@ -28,10 +28,13 @@ import { ReportThreatsAppendix } from './ReportThreatsAppendix'
 import { MigrationRoadmap } from './MigrationRoadmap'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
 import clsx from 'clsx'
-import type { AssessmentResult } from '../../hooks/assessmentTypes'
-import type { CategoryScores } from '../../hooks/assessmentTypes'
-import type { HNDLRiskWindow } from '../../hooks/assessmentTypes'
-import type { HNFLRiskWindow } from '../../hooks/assessmentTypes'
+import type {
+  AssessmentResult,
+  CategoryScores,
+  CategoryDrivers,
+  HNDLRiskWindow,
+  HNFLRiskWindow,
+} from '../../hooks/assessmentTypes'
 import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
 
 declare const __APP_VERSION__: string
@@ -192,7 +195,13 @@ const RiskGauge = ({ score, level }: { score: number; level: AssessmentResult['r
   )
 }
 
-const CategoryBreakdown = ({ scores }: { scores: CategoryScores }) => {
+const CategoryBreakdown = ({
+  scores,
+  drivers,
+}: {
+  scores: CategoryScores
+  drivers?: CategoryDrivers
+}) => {
   const categories = [
     { label: 'Quantum Exposure', key: 'quantumExposure' as const },
     { label: 'Migration Complexity', key: 'migrationComplexity' as const },
@@ -242,6 +251,13 @@ const CategoryBreakdown = ({ scores }: { scores: CategoryScores }) => {
                   aria-label={`${label}: ${score} out of 100`}
                 />
               </div>
+              {/* eslint-disable-next-line security/detect-object-injection */}
+              {drivers?.[key] && (
+                <p className="text-xs text-muted-foreground/70 mt-1 capitalize">
+                  {/* eslint-disable-next-line security/detect-object-injection */}
+                  {drivers[key]}
+                </p>
+              )}
             </div>
           )
         })}
@@ -808,7 +824,12 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                 </div>
 
                 {/* Category Score Breakdown */}
-                {result.categoryScores && <CategoryBreakdown scores={result.categoryScores} />}
+                {result.categoryScores && (
+                  <CategoryBreakdown
+                    scores={result.categoryScores}
+                    drivers={result.categoryDrivers}
+                  />
+                )}
 
                 {/* Executive Summary */}
                 {result.executiveSummary && (
@@ -1110,7 +1131,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                     title={industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'}
                     icon={<ShieldAlert className="text-destructive" size={20} />}
                   >
-                    <ReportThreatsAppendix industry={industry} />
+                    <ReportThreatsAppendix industry={industry} userAlgorithms={currentCrypto} />
                   </CollapsibleSection>
                 </div>
 

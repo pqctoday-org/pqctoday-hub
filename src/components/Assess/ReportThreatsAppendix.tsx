@@ -46,11 +46,19 @@ const criticalityConfig: Record<ThreatData['criticality'], { label: string; clas
   Low: { label: 'Low', className: 'bg-success/10 text-success' },
 }
 
-const ThreatRow: React.FC<{ threat: ThreatData }> = ({ threat }) => {
+const ThreatRow: React.FC<{ threat: ThreatData; isRelevant?: boolean }> = ({
+  threat,
+  isRelevant,
+}) => {
   const crit = criticalityConfig[threat.criticality] ?? criticalityConfig['Medium']
 
   return (
-    <tr className="border-b border-border/50 align-top">
+    <tr
+      className={clsx(
+        'border-b border-border/50 align-top',
+        isRelevant && 'bg-primary/5 border-l-2 border-l-primary'
+      )}
+    >
       <td className="py-2.5 pr-3 font-mono text-xs text-muted-foreground whitespace-nowrap">
         {threat.sourceUrl ? (
           <a
@@ -90,9 +98,24 @@ const ThreatRow: React.FC<{ threat: ThreatData }> = ({ threat }) => {
 
 interface ReportThreatsAppendixProps {
   industry: string
+  /** User's selected algorithms — rows matching these get highlighted. */
+  userAlgorithms?: string[]
 }
 
-export const ReportThreatsAppendix: React.FC<ReportThreatsAppendixProps> = ({ industry }) => {
+/** Check if a threat's cryptoAtRisk field mentions any of the user's algorithms. */
+function threatMatchesAlgorithms(cryptoAtRisk: string, algorithms: string[]): boolean {
+  const normalized = cryptoAtRisk.toLowerCase()
+  return algorithms.some((algo) => {
+    // Normalize algo names for fuzzy matching (e.g., "ECDSA P-256" → "ecdsa", "RSA-2048" → "rsa")
+    const base = algo.toLowerCase().split(/[-\s]/)[0]
+    return normalized.includes(base)
+  })
+}
+
+export const ReportThreatsAppendix: React.FC<ReportThreatsAppendixProps> = ({
+  industry,
+  userAlgorithms,
+}) => {
   const industryThreats = useMemo(() => {
     // eslint-disable-next-line security/detect-object-injection
     const threatIndustryNames = ASSESS_TO_THREATS_INDUSTRY[industry] ?? []
@@ -117,7 +140,15 @@ export const ReportThreatsAppendix: React.FC<ReportThreatsAppendixProps> = ({ in
             </thead>
             <tbody>
               {industryThreats.map((t) => (
-                <ThreatRow key={t.threatId} threat={t} />
+                <ThreatRow
+                  key={t.threatId}
+                  threat={t}
+                  isRelevant={
+                    userAlgorithms?.length
+                      ? threatMatchesAlgorithms(t.cryptoAtRisk, userAlgorithms)
+                      : false
+                  }
+                />
               ))}
             </tbody>
           </table>

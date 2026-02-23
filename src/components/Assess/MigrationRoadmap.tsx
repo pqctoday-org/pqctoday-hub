@@ -78,25 +78,72 @@ function findCountryDeadlineYear(countryName: string): number | null {
   return Math.min(...deadlinePhases.map((p) => p.startYear))
 }
 
-export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({ actions, countryName }) => {
-  const lanes: SwimLane[] = useMemo(() => {
-    const grouped: SwimLane[] = [
-      { label: 'Phase 1: Immediate', range: '0–6 months', category: 'immediate', items: [] },
-      { label: 'Phase 2: Short-term', range: '6–18 months', category: 'short-term', items: [] },
-      { label: 'Phase 3: Long-term', range: '18–36 months', category: 'long-term', items: [] },
+/** Compute phase ranges adapted to deadline proximity. */
+function computePhaseRanges(
+  deadlineYear: number | null
+): { label: string; range: string; category: RecommendedAction['category'] }[] {
+  if (!deadlineYear) {
+    return [
+      { label: 'Phase 1: Immediate', range: '0\u20136 months', category: 'immediate' },
+      { label: 'Phase 2: Short-term', range: '6\u201318 months', category: 'short-term' },
+      { label: 'Phase 3: Long-term', range: '18\u201336 months', category: 'long-term' },
     ]
+  }
+
+  const currentYear = new Date().getFullYear()
+  const monthsUntil = (deadlineYear - currentYear) * 12
+
+  if (monthsUntil <= 24) {
+    // Compressed: urgent deadline
+    return [
+      { label: 'Phase 1: Immediate', range: '0\u20133 months', category: 'immediate' },
+      { label: 'Phase 2: Short-term', range: '3\u201312 months', category: 'short-term' },
+      {
+        label: 'Phase 3: Long-term',
+        range: `12\u2013${Math.max(12, monthsUntil)} months`,
+        category: 'long-term',
+      },
+    ]
+  }
+
+  if (monthsUntil >= 60) {
+    // Expanded: distant deadline
+    return [
+      { label: 'Phase 1: Immediate', range: '0\u201312 months', category: 'immediate' },
+      { label: 'Phase 2: Short-term', range: '12\u201324 months', category: 'short-term' },
+      { label: 'Phase 3: Long-term', range: '24\u201348 months', category: 'long-term' },
+    ]
+  }
+
+  // Standard
+  return [
+    { label: 'Phase 1: Immediate', range: '0\u20136 months', category: 'immediate' },
+    { label: 'Phase 2: Short-term', range: '6\u201318 months', category: 'short-term' },
+    { label: 'Phase 3: Long-term', range: '18\u201336 months', category: 'long-term' },
+  ]
+}
+
+export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({ actions, countryName }) => {
+  const deadlineYear = useMemo(
+    () => (countryName ? findCountryDeadlineYear(countryName) : null),
+    [countryName]
+  )
+
+  const lanes: SwimLane[] = useMemo(() => {
+    const phases = computePhaseRanges(deadlineYear)
+    const grouped: SwimLane[] = phases.map((p) => ({
+      label: p.label,
+      range: p.range,
+      category: p.category,
+      items: [],
+    }))
     for (const action of actions) {
       const idx = CATEGORY_MAP[action.category] ?? 2
       // eslint-disable-next-line security/detect-object-injection
       grouped[idx].items.push(action)
     }
     return grouped
-  }, [actions])
-
-  const deadlineYear = useMemo(
-    () => (countryName ? findCountryDeadlineYear(countryName) : null),
-    [countryName]
-  )
+  }, [actions, deadlineYear])
 
   const currentYear = new Date().getFullYear()
 

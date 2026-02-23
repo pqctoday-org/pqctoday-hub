@@ -100,9 +100,10 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                     </p>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       A composite score derived from four weighted categories. Higher means more
-                      urgent action is needed. Your industry and country influence how the
-                      categories are weighted &mdash; for example, government organizations see
-                      higher regulatory pressure weighting.
+                      urgent action is needed. Each industry uses tailored category weights &mdash;
+                      for example, government and finance weight regulatory pressure higher, while
+                      telecom and energy weight migration complexity higher. Compliance frameworks
+                      with nearer deadlines contribute more to regulatory pressure.
                     </p>
                   </div>
                 </div>
@@ -138,7 +139,8 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                       </span>{' '}
                       Adversaries can capture encrypted data today and decrypt it once quantum
                       computers arrive. Your risk window is the gap between how long your data must
-                      stay confidential and the estimated quantum threat year.
+                      stay confidential and the planning horizon. Countries with earlier regulatory
+                      deadlines (e.g., US and France target 2030) use an accelerated horizon.
                     </p>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       <span className="font-medium text-foreground">
@@ -168,8 +170,11 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                     </p>
                     <ul className="text-xs text-muted-foreground space-y-1 ml-4 list-disc">
                       <li>
-                        Unknown data retention &rarr; assumes{' '}
-                        <span className="font-medium text-foreground">15-year</span> retention
+                        Unknown data retention &rarr; assumes an{' '}
+                        <span className="font-medium text-foreground">
+                          industry-specific conservative default
+                        </span>{' '}
+                        (e.g., 75 years for government, 40 for aerospace, 15 minimum)
                       </li>
                       <li>
                         Unknown credential lifetime &rarr; assumes{' '}

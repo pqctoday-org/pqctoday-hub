@@ -77,23 +77,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Web Browsers in Migrate</strong> &mdash;
-                    Chrome, Edge, Firefox & Safari added to PQC migration catalog with ML-KEM
-                    support details
+                    <strong className="text-foreground">Industry-weighted scoring</strong> &mdash;
+                    risk scores now use tailored category weights per industry (e.g., gov/finance
+                    boost regulatory pressure)
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">FIPS accuracy upgrade</strong> &mdash;
-                    three-tier badge (Validated / Partial / No) replaces misleading binary display
+                    <strong className="text-foreground">Country planning horizons</strong> &mdash;
+                    US, France & Canada use 2030 deadline for more urgent HNDL/HNFL risk windows
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">CSV reliability fix</strong> &mdash; line
-                    ending normalization prevents silent data loss during parsing
+                    <strong className="text-foreground">Personalized reports</strong> &mdash;
+                    category driver explanations, algorithm-highlighted threats & industry-specific
+                    actions
                   </span>
                 </li>
               </ul>
