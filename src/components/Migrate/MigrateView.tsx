@@ -13,6 +13,8 @@ import type { MigrationStep } from '../../types/MigrateTypes'
 import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { useAssessmentStore } from '../../store/useAssessmentStore'
+import { usePersonaStore } from '../../store/usePersonaStore'
 
 export const MigrateView: React.FC = () => {
   const [searchParams] = useSearchParams()
@@ -22,6 +24,17 @@ export const MigrateView: React.FC = () => {
     useState<InfrastructureLayerType>('All')
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
+
+  // Industry filter — initialized from URL param, assessment store, or persona store
+  const assessIndustry = useAssessmentStore((s) => s.industry)
+  const personaIndustry = usePersonaStore((s) => s.selectedIndustry)
+  const [activeIndustry, setActiveIndustry] = useState<string>(() => {
+    const urlIndustry = searchParams.get('industry')
+    if (urlIndustry) return urlIndustry
+    if (assessIndustry) return assessIndustry
+    if (personaIndustry) return personaIndustry
+    return 'All'
+  })
 
   // Scroll to software table when navigated here with a pre-set query
   const softwareTableRef = useRef<HTMLDivElement>(null)
@@ -122,6 +135,27 @@ export const MigrateView: React.FC = () => {
     }
   }, [pqcSupportOptions, activePqcSupport])
 
+  // Extract unique target industries from software data
+  const industryOptions = useMemo(() => {
+    const industries = new Set<string>()
+    softwareData.forEach((item) => {
+      if (item.targetIndustries) {
+        item.targetIndustries.split(',').forEach((ind) => {
+          const trimmed = ind.trim()
+          if (trimmed) industries.add(trimmed)
+        })
+      }
+    })
+    return ['All', ...Array.from(industries).sort()]
+  }, [])
+
+  // Reset industry filter if current selection is no longer available
+  useEffect(() => {
+    if (activeIndustry !== 'All' && !industryOptions.includes(activeIndustry)) {
+      setActiveIndustry('All')
+    }
+  }, [industryOptions, activeIndustry])
+
   const handleViewSoftware = useCallback((step: MigrationStep) => {
     setStepFilter({
       stepNumber: step.stepNumber,
@@ -155,6 +189,12 @@ export const MigrateView: React.FC = () => {
         if (!layers.includes(activeInfrastructureLayer)) return false
       }
 
+      // Industry Filter
+      if (activeIndustry !== 'All') {
+        const industries = item.targetIndustries?.split(',').map((ind) => ind.trim().toLowerCase())
+        if (!industries?.includes(activeIndustry.toLowerCase())) return false
+      }
+
       // Search Filter
       if (!filterText) return true
       const searchLower = filterText.toLowerCase()
@@ -170,6 +210,7 @@ export const MigrateView: React.FC = () => {
     activePqcSupport,
     normalizePqcSupport,
     activeInfrastructureLayer,
+    activeIndustry,
     filterText,
   ])
 
@@ -260,6 +301,24 @@ export const MigrateView: React.FC = () => {
         </div>
       )}
 
+      {/* Industry filter banner */}
+      {activeIndustry !== 'All' && (
+        <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2 mb-2">
+          <span>
+            Filtered for industry: <strong>{activeIndustry}</strong> &middot; {filteredData.length}{' '}
+            {filteredData.length === 1 ? 'product' : 'products'}
+          </span>
+          <button
+            onClick={() => setActiveIndustry('All')}
+            className="ml-auto flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Clear industry filter"
+          >
+            <X size={12} />
+            Clear
+          </button>
+        </div>
+      )}
+
       {/* Step filter banner */}
       {stepFilter && (
         <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2 mb-2">
@@ -317,6 +376,22 @@ export const MigrateView: React.FC = () => {
               className="mb-0 w-full"
             />
           </div>
+
+          {/* Industry Dropdown */}
+          <div className="flex-1 min-w-[140px]">
+            <FilterDropdown
+              items={industryOptions}
+              selectedId={activeIndustry}
+              onSelect={(ind) => {
+                setActiveIndustry(ind)
+                logMigrateAction('Filter Industry', ind)
+              }}
+              defaultLabel="Industry"
+              noContainer
+              opaque
+              className="mb-0 w-full"
+            />
+          </div>
         </div>
 
         <span className="hidden md:inline text-muted-foreground px-2">Search:</span>
@@ -342,7 +417,7 @@ export const MigrateView: React.FC = () => {
       <div className="space-y-4">
         {filteredData.length > 0 ? (
           <SoftwareTable
-            key={`${activeInfrastructureLayer}-${activeTab}-${activePqcSupport}-${stepFilter?.stepId ?? 'none'}`}
+            key={`${activeInfrastructureLayer}-${activeTab}-${activePqcSupport}-${activeIndustry}-${stepFilter?.stepId ?? 'none'}`}
             data={filteredData}
             defaultSort={{ key: 'softwareName', direction: 'asc' }}
           />

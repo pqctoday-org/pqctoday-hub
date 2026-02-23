@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
+import { usePersonaStore } from '../../store/usePersonaStore'
+import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 
 import type { AssessmentMode } from '../../store/useAssessmentStore'
 
@@ -141,6 +143,19 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
   const { currentStep, setStep, markComplete, reset } = store
 
   const [isGenerating, setIsGenerating] = useState(false)
+
+  // Pre-fill industry and country from persona store when fields are blank
+  const personaIndustry = usePersonaStore((s) => s.selectedIndustry)
+  const personaRegion = usePersonaStore((s) => s.selectedRegion)
+  useEffect(() => {
+    const { industry, country, setIndustry, setCountry } = useAssessmentStore.getState()
+    if (!industry && personaIndustry) setIndustry(personaIndustry)
+    if (!country && personaRegion && personaRegion !== 'global') {
+      const regionCountries = REGION_COUNTRIES_MAP[personaRegion]
+      if (regionCountries?.[0]) setCountry(regionCountries[0])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const steps = useMemo(
     () => (mode === 'quick' ? ALL_STEPS.filter((s) => QUICK_STEP_KEYS.has(s.key)) : [...ALL_STEPS]),

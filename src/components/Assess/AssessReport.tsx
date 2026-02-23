@@ -44,12 +44,14 @@ function CollapsibleSection({
   title,
   icon,
   children,
+  defaultOpen = false,
 }: {
   title: string
   icon: React.ReactNode
   children: React.ReactNode
+  defaultOpen?: boolean
 }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(defaultOpen)
   return (
     <div className="glass-panel p-6 print:border print:border-gray-300">
       <button
@@ -617,6 +619,8 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
   const hasSigningAlgos =
     (currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a)) || cryptoUnknown
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const isExecutive = selectedPersona === 'executive'
+  const [showFullReport, setShowFullReport] = useState(false)
   const [methodologyOpen, setMethodologyOpen] = useState(false)
 
   /** Check if a given route is visible for the current persona's nav */
@@ -799,6 +803,36 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                   </span>
                 </div>
 
+                {/* Executive view toggle */}
+                {isExecutive && !showFullReport && (
+                  <div className="glass-panel p-3 flex items-center justify-between print:hidden">
+                    <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                      <Briefcase size={14} className="text-primary" />
+                      Showing executive summary
+                    </span>
+                    <button
+                      onClick={() => setShowFullReport(true)}
+                      className="text-xs text-primary hover:underline"
+                    >
+                      View full technical report
+                    </button>
+                  </div>
+                )}
+                {isExecutive && showFullReport && (
+                  <div className="glass-panel p-3 flex items-center justify-between print:hidden">
+                    <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                      <Briefcase size={14} className="text-primary" />
+                      Showing full technical report
+                    </span>
+                    <button
+                      onClick={() => setShowFullReport(false)}
+                      className="text-xs text-primary hover:underline"
+                    >
+                      Switch to executive summary
+                    </button>
+                  </div>
+                )}
+
                 {/* Country PQC Migration Timeline */}
                 <CollapsibleSection
                   title={
@@ -845,9 +879,10 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                 )}
 
                 {/* Consolidated HNDL / HNFL Risk Windows */}
-                {(result.hndlRiskWindow || result.hnflRiskWindow) && (
-                  <HNDLHNFLSection hndl={result.hndlRiskWindow} hnfl={result.hnflRiskWindow} />
-                )}
+                {(result.hndlRiskWindow || result.hnflRiskWindow) &&
+                  (!isExecutive || showFullReport) && (
+                    <HNDLHNFLSection hndl={result.hndlRiskWindow} hnfl={result.hnflRiskWindow} />
+                  )}
 
                 {/* HNDL warning for quick assessments with high sensitivity */}
                 {!result.categoryScores &&
@@ -888,7 +923,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                 )}
 
                 {/* Algorithm Migration Matrix */}
-                {result.algorithmMigrations.length > 0 && (
+                {result.algorithmMigrations.length > 0 && (!isExecutive || showFullReport) && (
                   <div className="glass-panel p-6 print:border print:border-gray-300 print:break-inside-auto">
                     <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                       <ShieldAlert className="text-primary" size={20} />
@@ -1056,66 +1091,79 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
 
                 {/* Recommended Actions */}
                 <div className="glass-panel p-6 print:border print:border-gray-300 print:break-inside-auto">
-                  <h3 className="text-lg font-bold text-foreground mb-4">Recommended Actions</h3>
+                  <h3 className="text-lg font-bold text-foreground mb-4">
+                    Recommended Actions
+                    {isExecutive && !showFullReport && (
+                      <span className="text-xs font-normal text-muted-foreground ml-2">
+                        (Top 5)
+                      </span>
+                    )}
+                  </h3>
                   <div className="space-y-3">
-                    {result.recommendedActions.map((action) => (
-                      <div
-                        key={action.priority}
-                        className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
-                      >
+                    {result.recommendedActions
+                      .slice(0, isExecutive && !showFullReport ? 5 : undefined)
+                      .map((action) => (
                         <div
-                          className={clsx(
-                            'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-2',
-                            action.category === 'immediate'
-                              ? 'border-destructive text-destructive'
-                              : action.category === 'short-term'
-                                ? 'border-warning text-warning'
-                                : 'border-border text-muted-foreground'
-                          )}
+                          key={action.priority}
+                          className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
                         >
-                          {action.priority}
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm text-foreground">{action.action}</p>
-                          <div className="flex items-center gap-3 mt-1">
-                            <span
-                              className={clsx(
-                                'text-[10px] font-bold uppercase',
-                                action.category === 'immediate'
-                                  ? 'text-destructive'
-                                  : action.category === 'short-term'
-                                    ? 'text-warning'
-                                    : 'text-muted-foreground'
-                              )}
-                            >
-                              {action.category}
-                            </span>
-                            {action.effort && (
+                          <div
+                            className={clsx(
+                              'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-2',
+                              action.category === 'immediate'
+                                ? 'border-destructive text-destructive'
+                                : action.category === 'short-term'
+                                  ? 'border-warning text-warning'
+                                  : 'border-border text-muted-foreground'
+                            )}
+                          >
+                            {action.priority}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm text-foreground">{action.action}</p>
+                            <div className="flex items-center gap-3 mt-1">
                               <span
                                 className={clsx(
-                                  'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded',
-
-                                  effortConfig[action.effort]?.bg ?? 'bg-muted',
-
-                                  effortConfig[action.effort]?.color ?? 'text-muted-foreground'
+                                  'text-[10px] font-bold uppercase',
+                                  action.category === 'immediate'
+                                    ? 'text-destructive'
+                                    : action.category === 'short-term'
+                                      ? 'text-warning'
+                                      : 'text-muted-foreground'
                                 )}
                               >
-                                {effortConfig[action.effort]?.label ?? action.effort} effort
+                                {action.category}
                               </span>
-                            )}
-                            {isPathVisible(action.relatedModule) && (
-                              <Link
-                                to={action.relatedModule}
-                                className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
-                              >
-                                <ArrowRight size={10} />
-                                Explore
-                              </Link>
-                            )}
+                              {action.effort && (
+                                <span
+                                  className={clsx(
+                                    'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded',
+
+                                    effortConfig[action.effort]?.bg ?? 'bg-muted',
+
+                                    effortConfig[action.effort]?.color ?? 'text-muted-foreground'
+                                  )}
+                                >
+                                  {effortConfig[action.effort]?.label ?? action.effort} effort
+                                </span>
+                              )}
+                              {isPathVisible(action.relatedModule) && (
+                                <Link
+                                  to={
+                                    action.relatedModule.startsWith('/migrate') && industry
+                                      ? `${action.relatedModule}${action.relatedModule.includes('?') ? '&' : '?'}industry=${encodeURIComponent(industry)}`
+                                      : action.relatedModule
+                                  }
+                                  className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
+                                >
+                                  <ArrowRight size={10} />
+                                  Explore
+                                </Link>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
 
@@ -1130,6 +1178,9 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                   <CollapsibleSection
                     title={industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'}
                     icon={<ShieldAlert className="text-destructive" size={20} />}
+                    defaultOpen={
+                      selectedPersona === 'researcher' || selectedPersona === 'architect'
+                    }
                   >
                     <ReportThreatsAppendix industry={industry} userAlgorithms={currentCrypto} />
                   </CollapsibleSection>
