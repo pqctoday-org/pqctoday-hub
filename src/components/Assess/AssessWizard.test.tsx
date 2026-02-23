@@ -133,9 +133,18 @@ const mockStore = {
   getInput: vi.fn(() => null),
 }
 
-vi.mock('../../store/useAssessmentStore', () => ({
-  useAssessmentStore: (selector?: (s: typeof mockStore) => unknown) =>
-    selector ? selector(mockStore) : mockStore,
+vi.mock('../../store/useAssessmentStore', () => {
+  const hook = (selector?: (s: typeof mockStore) => unknown) =>
+    selector ? selector(mockStore) : mockStore
+  hook.getState = () => mockStore
+  return { useAssessmentStore: hook }
+})
+
+vi.mock('../../store/usePersonaStore', () => ({
+  usePersonaStore: (selector?: (s: Record<string, unknown>) => unknown) =>
+    selector
+      ? selector({ selectedIndustry: null, selectedRegion: null, selectedPersona: null })
+      : { selectedIndustry: null, selectedRegion: null, selectedPersona: null },
 }))
 
 describe('AssessWizard', () => {
