@@ -17,6 +17,7 @@ import {
   ChevronDown,
   FlaskConical,
   BookOpen,
+  Info,
 } from 'lucide-react'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -25,6 +26,7 @@ import { PERSONAS } from '../../data/learningPersonas'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix } from './ReportThreatsAppendix'
 import { MigrationRoadmap } from './MigrationRoadmap'
+import { ReportMethodologyModal } from './ReportMethodologyModal'
 import clsx from 'clsx'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import type { CategoryScores } from '../../hooks/assessmentTypes'
@@ -599,6 +601,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
   const hasSigningAlgos =
     (currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a)) || cryptoUnknown
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const [methodologyOpen, setMethodologyOpen] = useState(false)
 
   /** Check if a given route is visible for the current persona's nav */
   const isPathVisible = (path: string): boolean => {
@@ -748,14 +751,23 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
           </tr>
         </tfoot>
         <tbody>
-          <tr>
+          <tr className="print:break-inside-auto">
             <td style={{ padding: 0 }}>
               <div className="space-y-6 print:space-y-4">
                 {/* Header */}
                 <div className="text-center">
-                  <h2 className="text-3xl font-bold text-gradient mb-2 print:text-black">
-                    Your PQC Risk Assessment Report
-                  </h2>
+                  <div className="flex items-center justify-center gap-2">
+                    <h2 className="text-3xl font-bold text-gradient mb-2 print:text-black">
+                      Your PQC Risk Assessment Report
+                    </h2>
+                    <button
+                      onClick={() => setMethodologyOpen(true)}
+                      className="p-1.5 rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors print:hidden mb-2"
+                      aria-label="How this report works"
+                    >
+                      <Info size={18} />
+                    </button>
+                  </div>
                   <p className="text-sm text-muted-foreground print:text-gray-600">
                     Generated on {generatedDate}
                   </p>
@@ -856,7 +868,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
 
                 {/* Algorithm Migration Matrix */}
                 {result.algorithmMigrations.length > 0 && (
-                  <div className="glass-panel p-6 print:border print:border-gray-300">
+                  <div className="glass-panel p-6 print:border print:border-gray-300 print:break-inside-auto">
                     <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                       <ShieldAlert className="text-primary" size={20} />
                       Algorithm Migration Priority
@@ -977,7 +989,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
 
                 {/* Compliance Impact */}
                 {result.complianceImpacts.length > 0 && (
-                  <div className="glass-panel p-6 print:border print:border-gray-300">
+                  <div className="glass-panel p-6 print:border print:border-gray-300 print:break-inside-auto">
                     <h3 className="text-lg font-bold text-foreground mb-4">Compliance Impact</h3>
                     <div className="space-y-3">
                       {result.complianceImpacts.map((c) => (
@@ -1022,7 +1034,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                 )}
 
                 {/* Recommended Actions */}
-                <div className="glass-panel p-6 print:border print:border-gray-300">
+                <div className="glass-panel p-6 print:border print:border-gray-300 print:break-inside-auto">
                   <h3 className="text-lg font-bold text-foreground mb-4">Recommended Actions</h3>
                   <div className="space-y-3">
                     {result.recommendedActions.map((action) => (
@@ -1169,6 +1181,8 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
           </tr>
         </tbody>
       </table>
+
+      <ReportMethodologyModal isOpen={methodologyOpen} onClose={() => setMethodologyOpen(false)} />
     </div>
   )
 }

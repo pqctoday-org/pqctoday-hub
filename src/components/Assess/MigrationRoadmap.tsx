@@ -101,7 +101,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({ actions, cou
   const currentYear = new Date().getFullYear()
 
   return (
-    <div className="glass-panel p-6 print:border print:border-gray-300">
+    <div className="glass-panel p-6 print:border print:border-gray-300 print:break-inside-auto">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
           <Map className="text-primary" size={20} />

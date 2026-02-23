@@ -112,9 +112,21 @@ export const useAssessmentStore = create<AssessmentState>()(
       setAssessmentMode: (mode) =>
         set({ assessmentMode: mode, lastWizardUpdate: new Date().toISOString() }),
 
-      setIndustry: (industry) => set({ industry, lastWizardUpdate: new Date().toISOString() }),
+      setIndustry: (industry) =>
+        set({
+          industry,
+          complianceRequirements: [],
+          complianceUnknown: false,
+          lastWizardUpdate: new Date().toISOString(),
+        }),
 
-      setCountry: (country) => set({ country, lastWizardUpdate: new Date().toISOString() }),
+      setCountry: (country) =>
+        set({
+          country,
+          complianceRequirements: [],
+          complianceUnknown: false,
+          lastWizardUpdate: new Date().toISOString(),
+        }),
 
       toggleCrypto: (algo) =>
         set((state) => ({

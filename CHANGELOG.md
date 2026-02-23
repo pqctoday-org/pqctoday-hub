@@ -4,6 +4,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.28.0] - 2026-02-22
+
+### Added
+
+- **Report methodology modal** (`/assess`): Info button next to the report title opens a modal
+  explaining how the risk score, four risk categories, HNDL/HNFL risk windows, conservative
+  defaults for "I don't know" responses, and action prioritization work. Hidden in print view.
+
+### Fixed
+
+- **Compliance impact industry filtering** (`/assess`): Fixed bug where telecom-only compliance
+  frameworks (e.g., GSMA NG.116) appeared in Finance industry reports. Changing industry or country
+  now clears stale compliance selections, and the scoring engine filters out frameworks that don't
+  match the selected industry.
+
 ## [1.27.0] - 2026-02-22
 
 ### Added

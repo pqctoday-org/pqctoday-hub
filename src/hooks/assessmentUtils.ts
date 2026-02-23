@@ -18,6 +18,7 @@ import {
   ESTIMATED_QUANTUM_THREAT_YEAR,
   MIGRATION_STATUS_SCORES,
 } from './assessmentData'
+import { complianceFrameworks } from '../data/complianceData'
 
 import { useMemo } from 'react'
 import { SIGNING_ALGORITHMS } from './assessmentData'
@@ -725,7 +726,17 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
           notes: info.notes,
         }
       })
-  const complianceImpacts: ComplianceImpact[] = input.complianceRequirements.map((fw) => {
+  // Filter compliance requirements to only include frameworks relevant to the user's industry
+  const filteredCompliance = input.complianceRequirements.filter((fw) => {
+    const framework = complianceFrameworks.find((f) => f.label === fw)
+    // Keep if: not in DB (don't silently drop unknowns), matches industry, or universal (3+ industries)
+    return (
+      !framework ||
+      framework.industries.includes(input.industry) ||
+      framework.industries.length >= 3
+    )
+  })
+  const complianceImpacts: ComplianceImpact[] = filteredCompliance.map((fw) => {
     // eslint-disable-next-line security/detect-object-injection
     const info = COMPLIANCE_DB[fw]
     if (!info) {
