@@ -77,24 +77,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Industry-weighted scoring</strong> &mdash;
-                    risk scores now use tailored category weights per industry (e.g., gov/finance
-                    boost regulatory pressure)
+                    <strong className="text-foreground">Persona-aware reports</strong> &mdash;
+                    executives see a streamlined summary; developers and architects get the full
+                    technical deep-dive
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Country planning horizons</strong> &mdash;
-                    US, France & Canada use 2030 deadline for more urgent HNDL/HNFL risk windows
+                    <strong className="text-foreground">Industry filter on Migrate</strong> &mdash;
+                    the software catalog now filters by your industry, auto-applied from your
+                    assessment
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Personalized reports</strong> &mdash;
-                    category driver explanations, algorithm-highlighted threats & industry-specific
-                    actions
+                    <strong className="text-foreground">Wizard pre-fill</strong> &mdash; assessment
+                    wizard auto-fills industry and country from your landing page persona selections
                   </span>
                 </li>
               </ul>

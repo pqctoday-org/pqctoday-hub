@@ -4,6 +4,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.30.0] - 2026-02-22
+
+### Added
+
+- **Persona-aware assessment report** (`/assess`): Executive persona now sees a streamlined report —
+  HNDL/HNFL risk windows and algorithm migration matrix are hidden by default, recommended actions
+  are clamped to top 5. A "View full technical report" toggle reveals the complete report.
+  Researcher and architect personas get the Industry Threat Landscape section expanded by default.
+
+- **Wizard pre-fill from persona store** (`/assess`): The assessment wizard now auto-fills industry
+  and country from the persona/region selections made on the landing page, so users don't re-enter
+  data they already provided.
+
+- **Industry filter on Migrate catalog** (`/migrate`): New Industry dropdown filter in the software
+  catalog, powered by each product's `targetIndustries` field. Auto-initialized from the
+  assessment's industry, persona store, or `?industry=` URL parameter. Includes a filter banner
+  with clear button matching the existing layer/step filter pattern.
+
+- **Assessment → Migrate deep link** (`/assess`): "Explore" links on recommended actions pointing
+  to `/migrate` now append `?industry=...` so the Migrate catalog auto-filters to industry-relevant
+  tools.
+
 ## [1.29.0] - 2026-02-22
 
 ### Added

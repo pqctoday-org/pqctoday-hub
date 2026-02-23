@@ -38,9 +38,9 @@ export function AboutView() {
             <p className="text-lg text-muted-foreground">
               PQC Today is an interactive platform for the post-quantum transition. Fifteen learning
               modules, hands-on cryptographic labs powered by OpenSSL WASM and liboqs, a 13-step
-              risk assessment wizard, a 193-product migration catalog, and global compliance
-              tracking give developers, architects, executives, and researchers everything they need
-              to understand, plan, and act &mdash; at their level.
+              risk assessment wizard with persona-aware reporting, an industry-filtered migration
+              catalog, and global compliance tracking give developers, architects, executives, and
+              researchers everything they need to understand, plan, and act &mdash; at their level.
             </p>
             <p className="text-muted-foreground mt-4">
               Our mission is to make PQC adoption actionable for everyone &mdash; whether
