@@ -5,7 +5,7 @@ test.describe('PKI Workshop Module', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
     // Navigate to Learn module
-    await page.getByRole('button', { name: 'Learn' }).click()
+    await page.getByRole('button', { name: 'Learn view' }).click()
 
     // Select PKI Workshop from Dashboard
     const card = page.getByRole('heading', { name: 'PKI', exact: true })

@@ -23,7 +23,7 @@ test.describe('Quantum Threat Mechanics Module', () => {
     await page.getByRole('tab', { name: 'Workshop' }).click()
 
     // Navigate to Step 4: HNDL Timeline
-    await page.getByText('Step 4: HNDL Timeline').click()
+    await page.getByText('Step 4: HNDL Timeline').first().click()
     await expect(page.getByRole('heading', { name: '4. HNDL Timeline', level: 2 })).toBeVisible()
 
     // Verify sliders exist

@@ -8,10 +8,11 @@ test.describe('TLS 1.3 Basics Module', () => {
     page.on('console', (msg) => console.log(`[Browser] ${msg.type()}: ${msg.text()}`))
     // Navigate directly to the module
     await page.goto('/learn/tls-basics')
-    // Wait for WebAssembly to load if necessary
-    await page.waitForTimeout(1000)
     // Wait for page to load
     await expect(page.getByRole('heading', { name: 'TLS 1.3 Basics' })).toBeVisible()
+    // Module defaults to the "Learn" (intro) tab; navigate to Workshop where the simulation UI lives
+    await page.getByRole('tab', { name: 'Workshop' }).click()
+    await expect(page.getByRole('button', { name: 'Start Full Interaction' })).toBeVisible()
   })
 
   test('perform successful handshake and messaging flow', async ({ page }) => {

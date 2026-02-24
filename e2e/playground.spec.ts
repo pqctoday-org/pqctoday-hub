@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Playground', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('button', { name: 'Playground' }).click()
+    await page.getByRole('button', { name: 'Playground view' }).click()
     await expect(
       page.getByRole('heading', { name: 'Interactive Playground', level: 2 })
     ).toBeVisible()

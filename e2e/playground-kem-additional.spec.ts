@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('button', { name: 'Playground' }).click()
+    await page.getByRole('button', { name: 'Playground view' }).click()
     // Wait for Playground to load
     await expect(
       page.getByRole('heading', { name: /Interactive Playground/i, level: 2 })
