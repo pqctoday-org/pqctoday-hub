@@ -7,6 +7,7 @@ import { MainLayout } from './components/Layout/MainLayout'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { useModuleStore } from './store/useModuleStore'
 import { lazyWithRetry } from './utils/lazyWithRetry'
+import { PageMeta } from './seo/PageMeta'
 
 // Lazy load route components with automatic retry on chunk fetch failures
 const TimelineView = lazyWithRetry(() =>
@@ -97,6 +98,7 @@ function App() {
       <ScrollToTop />
       <AnalyticsTracker />
       <DailyVisitTracker />
+      <PageMeta />
       <Suspense
         fallback={
           <div className="flex h-screen w-full items-center justify-center bg-black">
