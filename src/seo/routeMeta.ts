@@ -1,4 +1,4 @@
-const BASE_URL = 'https://pqctoday.com'
+const BASE_URL = 'https://www.pqctoday.com'
 
 export interface RouteMeta {
   title: string

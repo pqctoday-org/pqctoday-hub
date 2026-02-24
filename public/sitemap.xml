@@ -2,79 +2,79 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Main pages -->
   <url>
-    <loc>https://pqctoday.com/</loc>
+    <loc>https://www.pqctoday.com/</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/timeline</loc>
+    <loc>https://www.pqctoday.com/timeline</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/algorithms</loc>
+    <loc>https://www.pqctoday.com/algorithms</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/playground</loc>
+    <loc>https://www.pqctoday.com/playground</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/openssl</loc>
+    <loc>https://www.pqctoday.com/openssl</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/compliance</loc>
+    <loc>https://www.pqctoday.com/compliance</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/migrate</loc>
+    <loc>https://www.pqctoday.com/migrate</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/assess</loc>
+    <loc>https://www.pqctoday.com/assess</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/threats</loc>
+    <loc>https://www.pqctoday.com/threats</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/leaders</loc>
+    <loc>https://www.pqctoday.com/leaders</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/library</loc>
+    <loc>https://www.pqctoday.com/library</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/about</loc>
+    <loc>https://www.pqctoday.com/about</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/changelog</loc>
+    <loc>https://www.pqctoday.com/changelog</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.4</priority>
@@ -82,7 +82,7 @@
 
   <!-- Learning hub -->
   <url>
-    <loc>https://pqctoday.com/learn</loc>
+    <loc>https://www.pqctoday.com/learn</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -90,19 +90,19 @@
 
   <!-- Learning modules: Foundations -->
   <url>
-    <loc>https://pqctoday.com/learn/pqc-101</loc>
+    <loc>https://www.pqctoday.com/learn/pqc-101</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/learn/quantum-threats</loc>
+    <loc>https://www.pqctoday.com/learn/quantum-threats</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/learn/entropy-randomness</loc>
+    <loc>https://www.pqctoday.com/learn/entropy-randomness</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -110,19 +110,19 @@
 
   <!-- Learning modules: Strategy -->
   <url>
-    <loc>https://pqctoday.com/learn/hybrid-crypto</loc>
+    <loc>https://www.pqctoday.com/learn/hybrid-crypto</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/learn/crypto-agility</loc>
+    <loc>https://www.pqctoday.com/learn/crypto-agility</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/learn/qkd</loc>
+    <loc>https://www.pqctoday.com/learn/qkd</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -130,19 +130,19 @@
 
   <!-- Learning modules: Protocols -->
   <url>
-    <loc>https://pqctoday.com/learn/tls-basics</loc>
+    <loc>https://www.pqctoday.com/learn/tls-basics</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/learn/vpn-ssh-pqc</loc>
+    <loc>https://www.pqctoday.com/learn/vpn-ssh-pqc</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/learn/email-signing</loc>
+    <loc>https://www.pqctoday.com/learn/email-signing</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -150,25 +150,25 @@
 
   <!-- Learning modules: Infrastructure -->
   <url>
-    <loc>https://pqctoday.com/learn/pki-workshop</loc>
+    <loc>https://www.pqctoday.com/learn/pki-workshop</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/learn/key-management</loc>
+    <loc>https://www.pqctoday.com/learn/key-management</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/learn/stateful-signatures</loc>
+    <loc>https://www.pqctoday.com/learn/stateful-signatures</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/learn/merkle-tree-certs</loc>
+    <loc>https://www.pqctoday.com/learn/merkle-tree-certs</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -176,19 +176,19 @@
 
   <!-- Learning modules: Applications -->
   <url>
-    <loc>https://pqctoday.com/learn/digital-assets</loc>
+    <loc>https://www.pqctoday.com/learn/digital-assets</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/learn/5g-security</loc>
+    <loc>https://www.pqctoday.com/learn/5g-security</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://pqctoday.com/learn/digital-id</loc>
+    <loc>https://www.pqctoday.com/learn/digital-id</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -196,7 +196,7 @@
 
   <!-- Quiz -->
   <url>
-    <loc>https://pqctoday.com/learn/quiz</loc>
+    <loc>https://www.pqctoday.com/learn/quiz</loc>
     <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
