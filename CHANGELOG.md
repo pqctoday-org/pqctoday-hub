@@ -4,6 +4,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.33.0] - 2026-02-24
+
+### Added
+
+- **PQC Live Comparison Demo** (`DigitalAssets/PQCMigrationFlow`, `PQCLiveComparisonFlow`): Added
+  Part 5 "Try It Live" to the PQC Defense workshop flow in the Digital Assets module. Users can
+  now run real ML-DSA-65 and secp256k1 crypto operations side-by-side in the browser via OpenSSL
+  WASM v3.6.0. Three-step interactive wizard: (1) key generation with real PEM byte size
+  comparison, (2) signing the same message with both algorithms and a CSS bar chart showing the
+  ~46× signature size difference, (3) verifying both signatures with a live BIP-360 witness
+  overhead calculation. secp256k1 signing uses `-rawin -digest sha256` to handle raw messages
+  (ECDSA expects a pre-computed digest by default); ML-DSA-65 handles arbitrary-length messages
+  natively per FIPS 204. No liboqs required — OpenSSL 3.6.0 natively supports ML-DSA-44/65/87.
+
+- **`ML_DSA_65` command templates** (`DigitalAssets/constants.ts`): Added `ML_DSA_65` command
+  group alongside existing `BITCOIN`, `ETHEREUM`, `SOLANA` groups with `GEN_KEY`, `EXTRACT_PUB`,
+  `SIGN`, and `VERIFY` helpers for OpenSSL ML-DSA-65 operations.
+
 ## [1.32.0] - 2026-02-24
 
 ### Fixed

@@ -28,12 +28,13 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Learn**: 6 educational sections — What is PKI, Certificate Lifecycle diagram, X.509 Anatomy, Trust Chains & Validation, PQC in PKI
     - **Workshop**: 4-step hands-on certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing) with CSV-based X.509 profiles
     - **Exercises**: 5 guided scenarios (RSA-2048, ECDSA P-256, ML-DSA-44, ML-DSA-87, SLH-DSA) with "Load & Run" presets
-  - **Digital Assets Program** (Learn | Simulate | Exercises): Blockchain cryptography deep-dive
+  - **Digital Assets Program** (Learn | Workshop | Exercises): Blockchain cryptography deep-dive
     - **Learn**: Blockchain crypto introduction covering key generation, address derivation, signing, and PQC threat analysis per chain
     - **Bitcoin (BTC)**: secp256k1, P2PKH/SegWit addresses, ECDSA signing, double SHA256
     - **Ethereum (ETH)**: Keccak-256, EIP-55 checksummed addresses, EIP-1559 transactions, signature recovery
     - **Solana (SOL)**: Ed25519, Base58 addresses, EdDSA signing
     - **HD Wallet**: BIP32/39/44 multi-chain derivation (m/44'/0'/0'/0/0 for BTC, m/44'/60'/0'/0/0 for ETH, m/44'/501'/0'/0' for SOL)
+    - **PQC Defense** (5-part): Quantum threat landscape, Bitcoin BIP-360 (P2QRH), Ethereum AA (EIP-4337/7702), Solana structural challenge, and **live ML-DSA-65 vs secp256k1 side-by-side demo** with real OpenSSL WASM v3.6.0 crypto — key gen, sign, verify, and BIP-360 witness overhead calculation
     - **Exercises**: Guided scenarios for each blockchain with pre-configured flows
   - **5G Security Education** (Learn | Simulate | Exercises): Interactive 5G authentication and privacy flows
     - **Learn**: 6 sections — What is 5G Security (3GPP TS 33.501), Three Pillars, SUCI Protection Schemes (Profile A/B/C), 5G-AKA Authentication (MILENAGE f1-f5, key hierarchy), SIM Provisioning, Post-Quantum Threat

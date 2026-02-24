@@ -36,6 +36,14 @@ export const DIGITAL_ASSETS_CONSTANTS = {
       VERIFY: (keyFile: string, inFile: string, sigFile: string) =>
         `openssl pkeyutl -verify -pubin -inkey ${keyFile} -in ${inFile} -sigfile ${sigFile} -rawin`,
     },
+    ML_DSA_65: {
+      GEN_KEY: (out: string) => `openssl genpkey -algorithm ML-DSA-65 -out ${out}`,
+      EXTRACT_PUB: (priv: string, out: string) => `openssl pkey -in ${priv} -pubout -out ${out}`,
+      SIGN: (key: string, msg: string, sig: string) =>
+        `openssl pkeyutl -sign -inkey ${key} -in ${msg} -out ${sig}`,
+      VERIFY: (pub: string, msg: string, sig: string) =>
+        `openssl pkeyutl -verify -pubin -inkey ${pub} -in ${msg} -sigfile ${sig}`,
+    },
     COMMON: {
       GEN_ENTROPY: 'openssl rand -hex 32',
     },

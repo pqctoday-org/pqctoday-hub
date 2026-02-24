@@ -4,12 +4,14 @@ import {
   Bitcoin,
   Hexagon,
   Zap,
+  FlaskConical,
   ExternalLink,
   ChevronLeft,
   ChevronRight,
   CheckCircle,
   ArrowRight,
 } from 'lucide-react'
+import { PQCLiveComparisonFlow } from './PQCLiveComparisonFlow'
 
 interface PQCMigrationFlowProps {
   onBack: () => void
@@ -39,6 +41,12 @@ const PARTS = [
     title: 'Part 4: Solana — The Hard Problem',
     shortTitle: 'Solana SIMD',
     icon: Zap,
+  },
+  {
+    id: 'live-comparison',
+    title: 'Part 5: Try It Live',
+    shortTitle: 'Live Demo',
+    icon: FlaskConical,
   },
 ]
 
@@ -686,43 +694,49 @@ export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack }) =>
       </div>
 
       {/* Content area */}
-      <div className="glass-panel p-6 min-h-[600px]">
-        <div className="mb-6 border-b border-border pb-4">
-          <h2 className="text-2xl font-bold text-foreground">{PARTS[currentPart].title}</h2>
+      {currentPart < 4 ? (
+        <div className="glass-panel p-6 min-h-[600px]">
+          <div className="mb-6 border-b border-border pb-4">
+            <h2 className="text-2xl font-bold text-foreground">{PARTS[currentPart].title}</h2>
+          </div>
+          {currentPart === 0 && <VulnerabilityLandscape />}
+          {currentPart === 1 && <BitcoinP2QRH />}
+          {currentPart === 2 && <EthereumPQC />}
+          {currentPart === 3 && <SolanaHardProblem />}
         </div>
-        {currentPart === 0 && <VulnerabilityLandscape />}
-        {currentPart === 1 && <BitcoinP2QRH />}
-        {currentPart === 2 && <EthereumPQC />}
-        {currentPart === 3 && <SolanaHardProblem />}
-      </div>
+      ) : (
+        <PQCLiveComparisonFlow onBack={() => setCurrentPart(3)} onComplete={onBack} />
+      )}
 
-      {/* Navigation */}
-      <div className="flex justify-between gap-3">
-        <button
-          onClick={() => setCurrentPart((p) => Math.max(0, p - 1))}
-          disabled={currentPart === 0}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:bg-muted/50 transition-colors text-sm text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          <ChevronLeft size={16} />
-          Previous
-        </button>
-        {currentPart < PARTS.length - 1 ? (
+      {/* Navigation — hidden on Part 5 (StepWizard has its own nav) */}
+      {currentPart < 4 && (
+        <div className="flex justify-between gap-3">
           <button
-            onClick={() => setCurrentPart((p) => Math.min(PARTS.length - 1, p + 1))}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
+            onClick={() => setCurrentPart((p) => Math.max(0, p - 1))}
+            disabled={currentPart === 0}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:bg-muted/50 transition-colors text-sm text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Next
-            <ChevronRight size={16} />
+            <ChevronLeft size={16} />
+            Previous
           </button>
-        ) : (
-          <button
-            onClick={onBack}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-colors text-sm font-medium"
-          >
-            Complete ✓
-          </button>
-        )}
-      </div>
+          {currentPart < PARTS.length - 1 ? (
+            <button
+              onClick={() => setCurrentPart((p) => Math.min(PARTS.length - 1, p + 1))}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
+            >
+              Next
+              <ChevronRight size={16} />
+            </button>
+          ) : (
+            <button
+              onClick={onBack}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-colors text-sm font-medium"
+            >
+              Complete ✓
+            </button>
+          )}
+        </div>
+      )}
     </div>
   )
 }

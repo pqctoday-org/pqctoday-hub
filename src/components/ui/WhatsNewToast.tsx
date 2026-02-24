@@ -77,25 +77,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Persona-aware reports</strong> &mdash;
-                    executives see a streamlined summary; developers and architects get the full
-                    technical deep-dive
+                    <strong className="text-foreground">PQC Live Demo in Digital Assets</strong>{' '}
+                    &mdash; run real ML-DSA-65 and secp256k1 crypto side-by-side in your browser via
+                    OpenSSL WASM
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Industry filter on Migrate</strong> &mdash;
-                    the software catalog now filters by your industry, auto-applied from your
-                    assessment
+                    <strong className="text-foreground">~46× signature size difference</strong>{' '}
+                    &mdash; see the real byte overhead driving Bitcoin&apos;s BIP-360 witness data
+                    cost, computed from your own generated keys
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Page load resilience</strong> &mdash; failed
-                    chunk loads now auto-retry with exponential backoff instead of requiring a
-                    manual refresh
+                    <strong className="text-foreground">BIP-360 overhead calculator</strong> &mdash;
+                    Part 5 of the PQC Defense flow computes the witness data ratio using your actual
+                    key and signature sizes
                   </span>
                 </li>
               </ul>
