@@ -90,16 +90,26 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
     )
   }
 
-  // Helper to render PQC Support badge
+  // Helper to render PQC Support badge with level-specific colors
   const renderPqcSupport = (support: string) => {
-    const isYes = support && support.toLowerCase().startsWith('yes')
+    const lower = (support || '').toLowerCase()
+    let badgeClass: string
+    if (lower.startsWith('yes')) {
+      badgeClass = 'bg-status-success text-status-success'
+    } else if (lower.startsWith('limited')) {
+      badgeClass = 'bg-status-warning text-status-warning'
+    } else if (lower.startsWith('planned')) {
+      badgeClass = 'bg-primary/10 text-primary border-primary/20'
+    } else if (lower.startsWith('no')) {
+      badgeClass = 'bg-destructive/10 text-destructive border-destructive/20'
+    } else {
+      badgeClass = 'bg-muted/50 text-muted-foreground border-border'
+    }
     return (
       <span
-        className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${
-          isYes ? 'bg-status-warning text-status-warning' : 'bg-status-warning text-status-warning'
-        }`}
+        className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${badgeClass}`}
       >
-        {support}
+        {support || 'Unknown'}
       </span>
     )
   }
@@ -125,6 +135,13 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
                   key={header.key}
                   className="p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
                   onClick={() => handleSort(header.key)}
+                  aria-sort={
+                    sortConfig.key === header.key
+                      ? sortConfig.direction === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                  }
                 >
                   <div className="flex items-center gap-1">
                     {header.label}
@@ -185,7 +202,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
                                 className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold border ${
                                   item.status === 'New'
                                     ? 'bg-primary/10 text-primary border-primary/20'
-                                    : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                                    : 'bg-status-warning/10 text-status-warning border-status-warning/20'
                                 }`}
                               >
                                 {item.status}
@@ -237,7 +254,15 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
                               <div className="grid grid-cols-[120px_1fr] gap-2">
                                 <span className="text-muted-foreground">Migration Priority:</span>
                                 <span
-                                  className={`font-medium ${item.pqcMigrationPriority === 'Critical' ? 'text-status-error' : 'text-foreground'}`}
+                                  className={`font-medium ${
+                                    item.pqcMigrationPriority === 'Critical'
+                                      ? 'text-status-error'
+                                      : item.pqcMigrationPriority === 'High'
+                                        ? 'text-status-warning'
+                                        : item.pqcMigrationPriority === 'Medium'
+                                          ? 'text-primary'
+                                          : 'text-muted-foreground'
+                                  }`}
                                 >
                                   {item.pqcMigrationPriority}
                                 </span>

@@ -279,6 +279,11 @@ export const useModuleStore = create<ModuleState>()(
 
         return state
       },
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) {
+          console.error('Module store rehydration failed:', error)
+        }
+      },
     }
   )
 )

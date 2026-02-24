@@ -37,6 +37,11 @@ export const useThemeStore = create<ThemeState>()(
 
         return persistedState as ThemeState
       },
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) {
+          console.error('Theme store rehydration failed:', error)
+        }
+      },
     }
   )
 )

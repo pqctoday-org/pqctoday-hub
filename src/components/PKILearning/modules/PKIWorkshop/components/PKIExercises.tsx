@@ -79,6 +79,17 @@ export const PKIExercises: React.FC<PKIExercisesProps> = ({
         'Each profile requires different mandatory Subject DN fields and certificate extensions. Financial profiles require organizationIdentifier; Telecom profiles add NF Type extensions. Click the "Info" button next to each profile to read the full standard documentation.',
       workshopStep: 0,
     },
+    {
+      id: 'mtc-comparison',
+      title: '6. MTC Size Analysis',
+      description:
+        'Compare the TLS handshake authentication size using traditional X.509 certificate chains versus Merkle Tree Certificates (MTCs). Toggle between ECDSA, ML-DSA-44, ML-DSA-87, and SLH-DSA to see how post-quantum signature bloat is addressed.',
+      badge: 'MTC',
+      badgeColor: 'bg-success/20 text-success border-success/50',
+      observe:
+        'With ML-DSA-44, the traditional chain requires ~12.3 KB (3 signatures + 3 keys + SCTs) while the MTC approach needs only ~4.5 KB (1 root signature + inclusion proof). The reduction is even more dramatic with SLH-DSA. Note the tradeoff: MTC clients must periodically synchronize with the transparency service.',
+      workshopStep: 5,
+    },
   ]
 
   const handleStartExercise = (scenario: Scenario) => {

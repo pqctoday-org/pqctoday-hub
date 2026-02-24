@@ -51,7 +51,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
   - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attacks
-  - **PQC Quiz**: Interactive knowledge assessment with 162+ questions across 9 categories
+  - **PQC Quiz**: Interactive knowledge assessment with 340+ questions across 9 categories
     - **3 Modes**: Quick (20 questions, guaranteed category coverage), Full Assessment (80 questions randomly sampled), Custom (by topic)
     - **CSV-Driven**: Questions loaded from date-stamped CSV (`pqcquiz_MMDDYYYY.csv`) via `import.meta.glob`, with smart sampling guaranteeing ≥2 per category (Quick) / ≥10 per category (Full)
     - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, **Entropy & Randomness** (SP 800-90 A/B/C, DRBGs, TRNG vs QRNG, min-entropy estimation)
@@ -94,6 +94,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
       key derivation via HKDF)
     - Global QKD deployment explorer with real-world adoption data including AWS Center for Quantum
       Networking (CQN) and Chicago Quantum Exchange (CQE) 111 km fiber network
+  - **Merkle Tree Certificates**:
+    - Build Merkle trees interactively, generate inclusion proofs, and compare MTC vs traditional PKI for post-quantum TLS
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
   - **Reference Catalog**: 186 verified PQC-relevant product entries across 7 infrastructure layers
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
@@ -220,6 +222,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
 - **Data Processing**: Papa Parse (CSV), JSZip (file backup), LocalForage (storage)
 - **UI/UX**: Framer Motion (animations), React Markdown (documentation)
 - **Testing**: Vitest + React Testing Library + Playwright
+- **Resilience**: `lazyWithRetry` wrapper retries failed chunk loads with exponential backoff; WASM
+  instance caches self-heal on failure
 
 ## Getting Started
 
@@ -352,7 +356,7 @@ The application is structured into several key components:
 │   │   ├── Library/         # PQC standards library
 │   │   ├── Migrate/         # PQC migration planning with verified software database
 │   │   ├── OpenSSLStudio/   # OpenSSL v3.6.0 workbench (WASM)
-│   │   ├── PKILearning/     # Learning platform with 14 modules
+│   │   ├── PKILearning/     # Learning platform with 16 modules
 │   │   │   ├── modules/
 │   │   │   │   ├── Introduction/         # PQC 101 Introduction module
 │   │   │   │   ├── PKIWorkshop/          # 4-step PKI lifecycle
@@ -360,6 +364,7 @@ The application is structured into several key components:
 │   │   │   │   ├── FiveG/                # SUCI + 5G-AKA flows
 │   │   │   │   ├── DigitalID/            # EUDI Wallet ecosystem
 │   │   │   │   ├── TLSBasics/            # TLS 1.3 handshake simulation
+│   │   │   │   ├── MerkleTreeCerts/      # Merkle Tree Certificates for PQC TLS
 │   │   │   │   ├── QKD/                  # Quantum Key Distribution (BB84, post-processing, deployments)
 │   │   │   │   └── Quiz/                 # PQC knowledge assessment quiz
 │   │   ├── Playground/      # Interactive cryptography playground
@@ -385,15 +390,15 @@ The application is structured into several key components:
 
 ## Security
 
-Last audited: February 22, 2026
+Last audited: February 23, 2026
 
 | Severity | Production | Dev-only |
 | -------- | ---------- | -------- |
 | Critical | 0          | 0        |
-| High     | 0          | 12       |
+| High     | 0          | 5        |
 | Moderate | 0          | 1        |
 
-All runtime/production dependencies have **zero known CVEs**. The 13 dev-only findings are confined to the ESLint linting toolchain (`minimatch` ReDoS and `ajv` ReDoS) and do not affect the deployed application. See the [About page](/about) for full SBOM and CVE details.
+All runtime/production dependencies have **zero known CVEs**. The 6 dev-only findings are confined to the ESLint linting toolchain (`minimatch` ReDoS) and do not affect the deployed application. Full resolution requires ESLint 9→10 major bump (tracked). See the [About page](/about) for full SBOM and CVE details.
 
 To verify: `npm audit`
 

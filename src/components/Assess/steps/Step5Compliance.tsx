@@ -10,6 +10,8 @@ import { industryComplianceConfigs, getIndustryConfigs } from '../../../data/ind
 
 import clsx from 'clsx'
 
+import { PersonaHint } from './PersonaHint'
+
 const Step5Compliance = () => {
   const {
     complianceRequirements,
@@ -76,6 +78,8 @@ const Step5Compliance = () => {
         Select all regulatory or compliance frameworks your organization must adhere to. This helps
         identify PQC-related obligations.
       </p>
+
+      <PersonaHint stepKey="compliance" />
 
       {/* None apply / I don't know — Step 3 model (toggleable, dismissable, dims content) */}
       <button

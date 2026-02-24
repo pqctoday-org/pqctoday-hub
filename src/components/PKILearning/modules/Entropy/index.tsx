@@ -216,9 +216,9 @@ export const EntropyModule: React.FC = () => {
               {currentPart === PARTS.length - 1 ? (
                 <button
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
-                  className="px-6 py-3 min-h-[44px] bg-success text-success-foreground font-bold rounded-lg hover:bg-success/90 transition-colors"
+                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
                 >
-                  Complete Module
+                  Complete Module ✓
                 </button>
               ) : (
                 <button

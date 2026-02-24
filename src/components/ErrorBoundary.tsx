@@ -24,6 +24,17 @@ export class ErrorBoundary extends Component<Props, State> {
     console.error('Uncaught error:', error, errorInfo)
   }
 
+  private isChunkLoadError(error: Error | null): boolean {
+    if (!error) return false
+    const msg = error.message.toLowerCase()
+    return (
+      msg.includes('dynamically imported module') ||
+      msg.includes('failed to fetch') ||
+      msg.includes('loading chunk') ||
+      msg.includes('loading css chunk')
+    )
+  }
+
   public render() {
     if (this.state.hasError) {
       return (
@@ -35,7 +46,13 @@ export class ErrorBoundary extends Component<Props, State> {
             </p>
             <button
               className="mt-4 px-4 py-2 bg-destructive/20 text-destructive rounded hover:bg-destructive/30"
-              onClick={() => this.setState({ hasError: false, error: null })}
+              onClick={() => {
+                if (this.isChunkLoadError(this.state.error)) {
+                  window.location.reload()
+                } else {
+                  this.setState({ hasError: false, error: null })
+                }
+              }}
             >
               Try again
             </button>

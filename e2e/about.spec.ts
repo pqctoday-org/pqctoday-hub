@@ -8,7 +8,7 @@ test.describe('About View', () => {
 
   test('displays project bio', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'About PQC Today' })).toBeVisible()
-    await expect(page.getByText('demystify quantum threats').first()).toBeVisible()
+    await expect(page.getByText('PQC Today is an interactive platform').first()).toBeVisible()
   })
 
   test('displays SBOM', async ({ page }) => {

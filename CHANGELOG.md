@@ -26,6 +26,28 @@ All notable changes to this project will be documented in this file.
   to `/migrate` now append `?industry=...` so the Migrate catalog auto-filters to industry-relevant
   tools.
 
+### Fixed
+
+- **Chunk loading resilience**: All 30 lazy-loaded routes and modules now use `lazyWithRetry` — a
+  wrapper that retries failed dynamic imports up to 3 times with exponential backoff (1s → 2s → 4s)
+  and auto-reloads the page as a last resort (once, via sessionStorage guard). Eliminates the
+  "page won't load until you manually refresh" issue caused by stale chunks after deploys or
+  transient network failures.
+
+- **ErrorBoundary smart recovery**: The "Try again" button now detects chunk load errors
+  (`dynamically imported module`, `Failed to fetch`) and performs a full page reload instead of
+  just resetting React error state — which was ineffective because React.lazy caches rejected
+  promises.
+
+- **WASM promise cache invalidation**: liboqs KEM and signature instance caches (`liboqs_kem.ts`,
+  `liboqs_sig.ts`) now evict rejected promises on failure so the next call retries the WASM factory
+  instead of permanently returning the same dead promise. Cleanup also catches already-failed
+  promises to prevent unhandled rejection warnings.
+
+- **LmsService init race condition**: Concurrent `init()` callers now detect whether the first
+  init attempt succeeded or failed, instead of silently returning without a module. Failed script
+  elements are removed from the DOM so retries can re-add them.
+
 ## [1.29.0] - 2026-02-22
 
 ### Added

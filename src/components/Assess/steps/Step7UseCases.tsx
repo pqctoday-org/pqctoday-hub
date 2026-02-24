@@ -10,6 +10,8 @@ import { industryUseCaseConfigs, getIndustryConfigs } from '../../../data/indust
 
 import clsx from 'clsx'
 
+import { PersonaHint } from './PersonaHint'
+
 const Step7UseCases = () => {
   const { cryptoUseCases, toggleCryptoUseCase, useCasesUnknown, setUseCasesUnknown, industry } =
     useAssessmentStore()
@@ -48,6 +50,8 @@ const Step7UseCases = () => {
         Select all cryptographic use cases in your organization. This helps prioritize which
         migrations are most urgent.
       </p>
+
+      <PersonaHint stepKey="use-cases" />
 
       {/* I don't know — Step 3 model */}
       <button

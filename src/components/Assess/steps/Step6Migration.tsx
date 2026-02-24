@@ -6,6 +6,8 @@ import { InlineTooltip } from '../../ui/InlineTooltip'
 
 import clsx from 'clsx'
 
+import { PersonaHint } from './PersonaHint'
+
 const Step6Migration = () => {
   const { migrationStatus, setMigrationStatus } = useAssessmentStore()
 
@@ -35,7 +37,32 @@ const Step6Migration = () => {
       <p className="text-sm text-muted-foreground">
         Understanding where you are in the migration journey helps prioritize recommendations.
       </p>
-      <div className="space-y-3" role="radiogroup" aria-label="Migration status">
+
+      <PersonaHint stepKey="migration" />
+
+      {/* I don't know escape hatch */}
+      <button
+        aria-pressed={migrationStatus === 'unknown'}
+        onClick={() => setMigrationStatus('unknown')}
+        className={clsx(
+          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          migrationStatus === 'unknown'
+            ? 'border-muted-foreground bg-muted/20 text-foreground'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+        )}
+      >
+        <Info size={14} className="shrink-0" />I don&apos;t know / Not sure about our migration
+        status
+      </button>
+      <div
+        className={clsx(
+          'space-y-3 transition-opacity',
+          migrationStatus === 'unknown' && 'opacity-40 pointer-events-none'
+        )}
+        role="radiogroup"
+        aria-label="Migration status"
+        aria-disabled={migrationStatus === 'unknown'}
+      >
         {statuses.map((s) => (
           <button
             key={s.value}
@@ -54,20 +81,6 @@ const Step6Migration = () => {
           </button>
         ))}
       </div>
-      {/* I don't know escape hatch */}
-      <button
-        aria-pressed={migrationStatus === 'unknown'}
-        onClick={() => setMigrationStatus('unknown')}
-        className={clsx(
-          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
-          migrationStatus === 'unknown'
-            ? 'border-muted-foreground bg-muted/20 text-foreground'
-            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
-        )}
-      >
-        <Info size={14} className="shrink-0" />I don&apos;t know / Not sure about our migration
-        status
-      </button>
     </div>
   )
 }

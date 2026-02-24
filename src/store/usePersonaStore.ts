@@ -61,9 +61,27 @@ export const usePersonaStore = create<PersonaState>()(
       name: 'pqc-learning-persona',
       storage: createJSONStorage(() => localStorage),
       version: 1,
-      // Stub migration — establishes the pattern for future persona/region schema changes
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      migrate: (persistedState: unknown, _version: number) => persistedState,
+      migrate: (persistedState: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const state = (persistedState ?? {}) as any
+
+        // Ensure all expected fields exist with safe defaults
+        state.selectedPersona = state.selectedPersona ?? null
+        state.hasSeenPersonaPicker = state.hasSeenPersonaPicker ?? false
+        state.selectedRegion = state.selectedRegion ?? 'global'
+        state.selectedIndustry = state.selectedIndustry ?? null
+        state.selectedIndustries = Array.isArray(state.selectedIndustries)
+          ? state.selectedIndustries
+          : []
+        state.suppressSuggestion = state.suppressSuggestion ?? false
+
+        return state
+      },
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) {
+          console.error('Persona store rehydration failed:', error)
+        }
+      },
     }
   )
 )

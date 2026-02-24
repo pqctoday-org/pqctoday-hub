@@ -36,7 +36,7 @@ export function AboutView() {
           </div>
           <div className="prose prose-invert max-w-none">
             <p className="text-lg text-muted-foreground">
-              PQC Today is an interactive platform for the post-quantum transition. Fifteen learning
+              PQC Today is an interactive platform for the post-quantum transition. Sixteen learning
               modules, hands-on cryptographic labs powered by OpenSSL WASM and liboqs, a 13-step
               risk assessment wizard with persona-aware reporting, an industry-filtered migration
               catalog, and global compliance tracking give developers, architects, executives, and

@@ -1,7 +1,6 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { Trash2, FilePlus, Shield, FileCheck, FileSearch, XCircle } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { Trash2, FilePlus, Shield, FileCheck, FileSearch, XCircle, GitBranch } from 'lucide-react'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -13,6 +12,7 @@ import { RootCAGenerator } from './RootCAGenerator'
 import { CertSigner } from './CertSigner'
 import { CertParser } from './CertParser'
 import { CRLGenerator } from './CRLGenerator'
+import { MTCComparison } from './MTCComparison'
 
 const MODULE_ID = 'pki-workshop'
 
@@ -47,13 +47,18 @@ const PARTS = [
     description: 'Generate an empty Certificate Revocation List (CRL) for your Root CA.',
     icon: XCircle,
   },
+  {
+    id: 'mtc',
+    title: 'Step 6: MTC Comparison',
+    description: 'Compare traditional certificate chains with Merkle Tree Certificates.',
+    icon: GitBranch,
+  },
 ]
 
 export const PKIWorkshop: React.FC = () => {
   const [activeTab, setActiveTab] = useState('learn')
   const [currentStep, setCurrentStep] = useState(0)
   const startTimeRef = useRef(0)
-  const navigate = useNavigate()
   const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
   const { resetStore } = useOpenSSLStore()
 
@@ -119,8 +124,8 @@ export const PKIWorkshop: React.FC = () => {
   }
 
   const handleComplete = () => {
+    markStepComplete(MODULE_ID, PARTS[currentStep].id)
     updateModuleProgress(MODULE_ID, { status: 'completed' })
-    navigate('/learn')
   }
 
   return (
@@ -220,6 +225,9 @@ export const PKIWorkshop: React.FC = () => {
               )}
               {currentStep === 4 && (
                 <CRLGenerator onComplete={() => markStepComplete(MODULE_ID, 'revoke')} />
+              )}
+              {currentStep === 5 && (
+                <MTCComparison onComplete={() => markStepComplete(MODULE_ID, 'mtc')} />
               )}
             </div>
 

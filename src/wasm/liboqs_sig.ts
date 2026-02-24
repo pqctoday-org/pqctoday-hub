@@ -93,7 +93,12 @@ const getInstance = async (algorithmName: string): Promise<SigInstance> => {
         throw new Error(`Unknown signature algorithm: ${algorithmName}`)
     }
 
-    instanceCache.set(algorithmName, createAlgo())
+    const promise = createAlgo().catch((error: unknown) => {
+      // Remove from cache so the next call retries instead of getting a stale rejection
+      instanceCache.delete(algorithmName)
+      throw error
+    })
+    instanceCache.set(algorithmName, promise)
   } else {
     logger.debug(`Reusing cached WASM instance for ${algorithmName}`)
   }
@@ -107,11 +112,15 @@ const getInstance = async (algorithmName: string): Promise<SigInstance> => {
 export const clearInstanceCache = () => {
   logger.debug('Clearing signature WASM instance cache')
   instanceCache.forEach((instancePromise) => {
-    instancePromise.then((instance) => {
-      if (instance.destroy) {
-        instance.destroy()
-      }
-    })
+    instancePromise
+      .then((instance) => {
+        if (instance.destroy) {
+          instance.destroy()
+        }
+      })
+      .catch(() => {
+        // Instance creation already failed — nothing to clean up
+      })
   })
   instanceCache.clear()
 }

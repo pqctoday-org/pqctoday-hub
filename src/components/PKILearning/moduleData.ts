@@ -97,6 +97,13 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
       'Master entropy sources, DRBG mechanisms, and quantum randomness — NIST SP 800-90 standards, entropy testing, TRNG vs QRNG, and combining sources for defense-in-depth.',
     duration: '60 min',
   },
+  'merkle-tree-certs': {
+    id: 'merkle-tree-certs',
+    title: 'Merkle Tree Certificates',
+    description:
+      'Build Merkle trees interactively, generate inclusion proofs, and compare MTC vs traditional PKI for post-quantum TLS.',
+    duration: '60 min',
+  },
   qkd: {
     id: 'qkd',
     title: 'Quantum Key Distribution',
@@ -116,7 +123,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
 /** Actual step counts per module for progress calculation */
 export const MODULE_STEP_COUNTS: Record<string, number> = {
   'pqc-101': 5,
-  'pki-workshop': 7,
+  'pki-workshop': 8,
   'digital-assets': 3,
   '5g-security': 3,
   'digital-id': 6,
@@ -129,6 +136,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'vpn-ssh-pqc': 3,
   'key-management': 3,
   'entropy-randomness': 5,
+  'merkle-tree-certs': 6,
   qkd: 3,
   quiz: 1,
   assess: 1, // Assessment wizard completion
@@ -166,6 +174,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['pki-workshop'],
       MODULE_CATALOG['key-management'],
       MODULE_CATALOG['stateful-signatures'],
+      MODULE_CATALOG['merkle-tree-certs'],
     ],
   },
   {

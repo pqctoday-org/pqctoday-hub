@@ -32,27 +32,36 @@ declare global {
 export class LmsService {
   private module: LmsModule | null = null
   private isInitializing = false
+  private initError: Error | null = null
 
   async init(): Promise<void> {
     if (this.module) return
     if (this.isInitializing) {
-      // Simple wait loop
       while (this.isInitializing) {
         await new Promise((r) => setTimeout(r, 100))
       }
+      // Check if the concurrent init succeeded or failed
+      if (this.initError) throw this.initError
+      if (!this.module) throw new Error('LMS initialization failed')
       return
     }
 
     this.isInitializing = true
+    this.initError = null
     try {
       // Load the script if not present
-      if (!document.getElementById('lms-wasm-script')) {
+      const existingScript = document.getElementById('lms-wasm-script')
+      if (!existingScript) {
         await new Promise<void>((resolve, reject) => {
           const script = document.createElement('script')
           script.id = 'lms-wasm-script'
           script.src = '/wasm/lms.js'
           script.onload = () => resolve()
-          script.onerror = () => reject(new Error('Failed to load lms.js'))
+          script.onerror = () => {
+            // Remove failed script so retries can re-add it
+            script.remove()
+            reject(new Error('Failed to load lms.js'))
+          }
           document.body.appendChild(script)
         })
       }
@@ -71,8 +80,10 @@ export class LmsService {
         console.error('HEAPU8 is missing from module!')
       }
     } catch (e) {
+      const error = e instanceof Error ? e : new Error(String(e))
+      this.initError = error
       console.error('LMS Init Error:', e)
-      throw e
+      throw error
     } finally {
       this.isInitializing = false
     }

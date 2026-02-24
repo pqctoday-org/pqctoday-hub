@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { Trash2, Bitcoin, Hexagon, Zap, GitBranch } from 'lucide-react'
+import { Trash2, Bitcoin, Hexagon, Zap, GitBranch, ShieldAlert } from 'lucide-react'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -10,6 +10,7 @@ import { EthereumFlow } from './flows/EthereumFlow'
 import { SolanaFlow } from './flows/SolanaFlow'
 import { HDWalletFlow } from './flows/HDWalletFlow'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { PQCMigrationFlow } from './flows/PQCMigrationFlow'
 
 const MODULE_ID = 'digital-assets'
 
@@ -45,11 +46,18 @@ const CHAINS: ChainOption[] = [
     description: 'BIP32 / BIP39 / BIP44',
     icon: <GitBranch size={24} />,
   },
+  {
+    id: 'pqc-migration',
+    label: 'PQC Defense',
+    description: 'Migration proposals & initiatives',
+    icon: <ShieldAlert size={24} />,
+  },
 ]
 
 export const DigitalAssetsModule: React.FC = () => {
   const [activeTab, setActiveTab] = useState('learn')
   const [activeChain, setActiveChain] = useState<string | null>(null)
+  const [hasExploredAnyChain, setHasExploredAnyChain] = useState(false)
   const [configKey, setConfigKey] = useState(0)
   const startTimeRef = useRef(0)
   const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
@@ -94,6 +102,7 @@ export const DigitalAssetsModule: React.FC = () => {
         setActiveTab('workshop')
         if (chain) {
           setActiveChain(chain)
+          setHasExploredAnyChain(true)
           setConfigKey((prev) => prev + 1)
         }
       }
@@ -162,17 +171,26 @@ export const DigitalAssetsModule: React.FC = () => {
                     and digital signing using real cryptographic operations.
                   </p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                   {CHAINS.map((chain) => (
                     <button
                       key={chain.id}
                       onClick={() => {
                         setActiveChain(chain.id)
+                        setHasExploredAnyChain(true)
                         setConfigKey((prev) => prev + 1)
                       }}
-                      className="glass-panel p-6 text-left hover:border-primary/50 transition-colors group"
+                      className={`glass-panel p-6 text-left transition-colors group ${
+                        chain.id === 'pqc-migration'
+                          ? 'hover:border-destructive/50 border-destructive/20'
+                          : 'hover:border-primary/50'
+                      }`}
                     >
-                      <div className="text-primary mb-3 group-hover:scale-110 transition-transform">
+                      <div
+                        className={`mb-3 group-hover:scale-110 transition-transform ${
+                          chain.id === 'pqc-migration' ? 'text-destructive' : 'text-primary'
+                        }`}
+                      >
                         {chain.icon}
                       </div>
                       <h3 className="text-lg font-bold text-foreground mb-1">{chain.label}</h3>
@@ -180,14 +198,16 @@ export const DigitalAssetsModule: React.FC = () => {
                     </button>
                   ))}
                 </div>
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => markStepComplete(MODULE_ID, 'workshop')}
-                    className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
-                  >
-                    Complete Module ✓
-                  </button>
-                </div>
+                {hasExploredAnyChain && (
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => markStepComplete(MODULE_ID, 'workshop')}
+                      className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+                    >
+                      Complete Module ✓
+                    </button>
+                  </div>
+                )}
               </>
             ) : (
               <div>
@@ -208,6 +228,9 @@ export const DigitalAssetsModule: React.FC = () => {
                 )}
                 {activeChain === 'hd-wallet' && (
                   <HDWalletFlow key={`hdwallet-${configKey}`} onBack={() => setActiveChain(null)} />
+                )}
+                {activeChain === 'pqc-migration' && (
+                  <PQCMigrationFlow key={`pqc-${configKey}`} onBack={() => setActiveChain(null)} />
                 )}
               </div>
             )}

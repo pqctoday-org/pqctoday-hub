@@ -169,6 +169,22 @@ export const QKD_DEPLOYMENTS: QKDDeployment[] = [
     source: 'https://www.quantumcommshub.net/',
     highlights: ['National testbed', 'Multi-node research', 'University-industry partnership'],
   },
+  {
+    id: 'uk-qkdsat',
+    name: 'QKDSat',
+    country: 'United Kingdom',
+    region: 'Europe',
+    operator: 'ESA / Craft Prospect',
+    operatorType: 'Research',
+    technology: 'Satellite',
+    status: 'Planned',
+    yearStarted: 2023,
+    description:
+      'ESA-supported UK industry satellite QKD mission aiming to deliver quantum key distribution as a service from orbit.',
+    source:
+      'https://www.esa.int/Applications/Connectivity_and_Secure_Communications/QKDSat_Secure_communication_via_quantum_cryptography',
+    highlights: ['Commercial QKD-as-a-service', 'ESA partnership', 'UK industry-led'],
+  },
   // Asia (non-China)
   {
     id: 'kr-sk-telecom',
@@ -206,7 +222,60 @@ export const QKD_DEPLOYMENTS: QKDDeployment[] = [
     source: 'https://doi.org/10.1364/OE.19.010387',
     highlights: ['Multi-vendor interoperability', 'UQCC project', 'Four QKD system types'],
   },
+  {
+    id: 'jp-socrates',
+    name: 'SOCRATES Microsatellite',
+    country: 'Japan',
+    region: 'Asia',
+    operator: 'NICT',
+    operatorType: 'Research',
+    technology: 'Satellite',
+    status: 'Completed',
+    yearStarted: 2014,
+    description:
+      'Small Optical Communication Satellite (SOCRATES) carrying the SOTA laser terminal. Demonstrated space-to-ground quantum-limited communication from LEO in 2016.',
+    source: 'https://doi.org/10.1038/nphoton.2017.107',
+    highlights: [
+      'Microsatellite platform',
+      'Space-to-ground quantum communication',
+      'SOTA laser terminal',
+    ],
+  },
+  {
+    id: 'sg-spooqy-1',
+    name: 'SpooQy-1 CubeSat',
+    country: 'Singapore',
+    region: 'Asia',
+    operator: 'NUS Centre for Quantum Technologies',
+    operatorType: 'Research',
+    technology: 'Free-Space',
+    status: 'Completed',
+    yearStarted: 2019,
+    description:
+      'CubeSat (3U) that demonstrated generation of polarization-entangled photon pairs in low-Earth orbit. Proved miniaturized entangled-photon sources can operate in the space environment.',
+    source: 'https://doi.org/10.1364/OPTICA.381684',
+    highlights: [
+      'CubeSat form factor',
+      'Entangled photon pairs in orbit',
+      'Miniaturized quantum source',
+    ],
+  },
   // Americas
+  {
+    id: 'ca-qeyssat',
+    name: 'QEYSSat',
+    country: 'Canada',
+    region: 'Americas',
+    operator: 'Canadian Space Agency / U. Waterloo IQC',
+    operatorType: 'Government',
+    technology: 'Satellite',
+    status: 'Planned',
+    yearStarted: 2017,
+    description:
+      'Quantum Encryption and Science Satellite (QEYSSat) microsatellite mission led by the Canadian Space Agency and the University of Waterloo Institute for Quantum Computing. Aims to demonstrate satellite-based QKD.',
+    source: 'https://www.asc-csa.gc.ca/eng/satellites/qeyssat.asp',
+    highlights: ['Canadian microsatellite', 'IQC partnership', 'Ground-to-space QKD demo'],
+  },
   {
     id: 'us-jpmorgan-toshiba',
     name: 'JPMorgan Chase / Toshiba QKD Trial',

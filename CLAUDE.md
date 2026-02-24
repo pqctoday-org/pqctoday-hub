@@ -18,6 +18,7 @@ npm run test         # Vitest unit tests (all *.test.ts/.test.tsx)
 npm run test:watch   # Vitest watch mode
 npm run test:e2e     # Playwright E2E tests (e2e/ directory)
 npm run coverage     # Vitest coverage report (v8 provider)
+npm run test:ui      # Vitest browser UI
 ```
 
 Run a single unit test: `npx vitest run src/components/MyComponent/MyComponent.test.tsx`
@@ -28,6 +29,14 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 **Routing & Code Splitting**: All top-level views are lazy-loaded via `React.lazy()` in `src/App.tsx`. Routes nest under `MainLayout` which provides the navigation shell. `AppRoot.tsx` wraps everything in `ErrorBoundary` → `Suspense` → `App`. Routes: `/` (Landing), `/timeline`, `/algorithms`, `/library`, `/learn/*` (includes `/learn/quiz`), `/playground`, `/openssl`, `/threats`, `/leaders`, `/compliance`, `/changelog`, `/migrate`, `/assess`, `/about`.
 
 **State Management**: Zustand stores in `src/store/` with `persist` middleware for localStorage. Stores are modular — `useModuleStore` (learning progress/artifacts), `useThemeStore` (dark/light), `useVersionStore` (what's-new tracking), `tls-learning.store.ts` (TLS simulation), `useAssessmentStore` (assessment wizard, persisted to localStorage), `usePersonaStore` (active persona: executive/developer/architect/researcher, drives landing CTAs and journey step visibility).
+
+**Persistence Conventions** — every persisted Zustand store MUST follow these rules to prevent data loss and crashes on version upgrades:
+
+- **Explicit `version` number**: Every `persist()` config must include a numeric `version` field.
+- **`migrate(persistedState, version)` function**: Must handle all version transitions. Must ensure every expected field exists with a safe default (empty string for scalars, empty array for arrays, `false` for booleans, `null` for nullable). Use `Array.isArray()` checks for array fields and `??` for scalars.
+- **`onRehydrateStorage` crash guard**: Every store must include `onRehydrateStorage: () => (_state, error) => { if (error) console.error(...) }` so corrupted localStorage never crashes the app.
+- **When adding/removing/renaming a persisted field**: Bump the `version` number and add a migration step in `migrate()` that provides a default for the new field or converts the old shape.
+- **Never silently wipe user data**: Resets must be explicit user actions (e.g., a Reset button with confirmation). No auto-resets based on time thresholds.
 
 **Crypto Stack** (layered, strict priority):
 
@@ -63,7 +72,7 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 - NEVER use raw palette classes: `text-blue-400`, `bg-gray-900`, `text-green-300`, `bg-black/40`, `border-white/10`, `bg-zinc-950`
 - EXCEPTION: Full-screen modal backdrops (`fixed inset-0`) MAY use `bg-black/60`
 - For status indicators use `.text-status-error`, `.text-status-warning`, `.text-status-success` + their `.bg-status-*` counterparts
-- ⚠ `.text-status-info` / `.bg-status-info` are broken (resolve to `text-blue-400`) — do NOT use until `--info` CSS var is added to `src/styles/index.css`
+- `.text-status-info` / `.bg-status-info` — available (uses `--info` CSS var defined in `src/styles/index.css`)
 - Use `.glass-panel` for all card/pane containers; `.text-gradient` for primary page titles only (≥ `text-lg`)
 - Every content page header MUST follow: `<Icon> + .text-gradient title + muted description + [SourcesButton, ShareButton, GlossaryButton]` (cluster hidden on mobile; omit on Landing and About)
 
@@ -82,7 +91,7 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 
 **Imports**: Use `@/` path alias (maps to `src/`). Group: std lib → 3rd party → local components → styles/types.
 
-**Crypto operations**: OpenSSL first for all standard operations. Use modern commands (`genpkey`, `pkey`) over deprecated ones (`ec`, `ecparam`). Do NOT install new crypto libraries without explicit permission. Only these are allowed: `@openforge-sh/liboqs`, `openssl-wasm`, `mlkem-wasm`, `pqcrypto`, `@noble/*`, `@scure/*`, `ed25519-hd-key`, `micro-eth-signer`.
+**Crypto operations**: OpenSSL first for all standard operations. Use modern commands (`genpkey`, `pkey`) over deprecated ones (`ec`, `ecparam`). Do NOT install new crypto libraries without explicit permission. Only these are allowed (installed or pre-approved): `@openforge-sh/liboqs` (deprecated — migration to `@oqs/liboqs-js` planned), `@noble/*`, `@scure/*`, `ed25519-hd-key`, `micro-eth-signer`.
 
 ## Testing
 
@@ -95,6 +104,21 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 ## CI Pipeline
 
 Push to main or PR triggers: npm ci → security audit → format:check → lint → build → unit tests → E2E tests (sharded across 2 workers, Chromium only). Node 20 required. Separate workflows handle GitHub Pages deploy (`deploy.yml`), release creation from tags (`release.yml`), and daily compliance data scraping (`update-compliance.yml`).
+
+## OWASP Compliance
+
+This project enforces OWASP Top 10 controls. These rules are mandatory for all contributions:
+
+- **No `dangerouslySetInnerHTML`** — React auto-escaping handles all rendering. Zero exceptions in production code.
+- **No `eval()`, `Function()`, or `innerHTML`** — eliminates code injection vectors.
+- **No hardcoded secrets** — API keys, tokens, credentials must use environment variables (`.env` in `.gitignore`). CI secrets via GitHub Actions Secrets.
+- **All `target="_blank"` links** must include `rel="noopener noreferrer"` — prevents tabnabbing.
+- **CSP enforced** — Content-Security-Policy header configured in `vite.config.ts` for dev/preview. `script-src 'self' 'wasm-unsafe-eval'` only.
+- **Dependency audit** — `npm audit --audit-level=high --omit=dev` runs in CI. Zero production CVEs policy.
+- **Lockfile committed** — `package-lock.json` ensures reproducible builds. CI uses `npm ci`.
+- **ESLint security plugin** — `eslint-plugin-security` active in `eslint.config.js`.
+- **No TLS bypass** — never use `NODE_TLS_REJECT_UNAUTHORIZED=0` or skip certificate validation.
+- **Educational crypto disclaimer** — all crypto operations include disclaimers that generated keys are for educational use only, not production.
 
 ## Formatting
 

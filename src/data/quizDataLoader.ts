@@ -113,6 +113,7 @@ function parseQuizCSV(csvContent: string): QuizQuestion[] {
       correctAnswer,
       explanation: v[11],
       personas: v[13] ? v[13].split('|') : [],
+      industries: v[14] ? v[14].split('|') : [],
     }
     if (v[12]) q.learnMorePath = v[12]
     results.push(q)
@@ -253,6 +254,18 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
       description:
         'SP 800-90 A/B/C, DRBGs, entropy sources, TRNG vs QRNG, and min-entropy estimation.',
       icon: 'Dice',
+    },
+    'merkle-tree-certs': {
+      label: 'Merkle Tree Certificates',
+      description:
+        'MTC batch signing, inclusion proofs, MTCA architecture, domain-separated hashing, and IETF PLANTS WG standardization.',
+      icon: 'TreePine',
+    },
+    qkd: {
+      label: 'Quantum Key Distribution',
+      description:
+        'BB84 protocol, QBER eavesdropper detection, sifted keys, privacy amplification, satellite QKD, and QKD + PQC hybrid integration.',
+      icon: 'Atom',
     },
   }
 

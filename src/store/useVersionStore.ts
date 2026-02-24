@@ -38,6 +38,11 @@ export const useVersionStore = create<VersionState>()(
       storage: createJSONStorage(() => localStorage),
       // Only persist lastSeenVersion, not the current version
       partialize: (state) => ({ lastSeenVersion: state.lastSeenVersion }),
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) {
+          console.error('Version store rehydration failed:', error)
+        }
+      },
     }
   )
 )

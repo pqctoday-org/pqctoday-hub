@@ -27,8 +27,8 @@ const PARTS = [
   },
   {
     id: 'composite-certs',
-    title: 'Step 3: Composite Certificates',
-    description: 'Generate and inspect composite PQC certificates.',
+    title: 'Step 3: Certificate Formats',
+    description: 'Compare classical, pure PQC (RFC 9881), and composite certificate formats.',
     icon: FileCheck,
   },
 ]

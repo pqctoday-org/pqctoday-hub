@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Printer,
@@ -23,6 +23,8 @@ import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
 import { PERSONAS } from '../../data/learningPersonas'
+import { complianceFrameworks } from '../../data/complianceData'
+import { softwareData } from '../../data/migrateData'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix } from './ReportThreatsAppendix'
 import { MigrationRoadmap } from './MigrationRoadmap'
@@ -30,6 +32,7 @@ import { ReportMethodologyModal } from './ReportMethodologyModal'
 import clsx from 'clsx'
 import type {
   AssessmentResult,
+  AssessmentProfile,
   CategoryScores,
   CategoryDrivers,
   HNDLRiskWindow,
@@ -475,6 +478,151 @@ const HNFLTimelineBar = ({ hnfl }: { hnfl: HNFLRiskWindow }) => {
   )
 }
 
+const AGILITY_LABELS: Record<string, string> = {
+  'fully-abstracted': 'Fully abstracted',
+  'partially-abstracted': 'Partially abstracted',
+  hardcoded: 'Hardcoded',
+  unknown: 'Unknown',
+}
+
+const MIGRATION_STATUS_LABELS: Record<string, string> = {
+  started: 'Started',
+  planning: 'Planning',
+  'not-started': 'Not started',
+  unknown: 'Unknown',
+}
+
+const TIMELINE_LABELS: Record<string, string> = {
+  'within-1y': 'Within 1 year',
+  'within-2-3y': 'Within 2-3 years',
+  'internal-deadline': 'Internal deadline',
+  'no-deadline': 'No deadline',
+  unknown: 'Unknown',
+}
+
+const ProfileField = ({ label, value }: { label: string; value: string | undefined }) => {
+  if (!value) return null
+  return (
+    <div className="flex flex-col gap-0.5">
+      <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+        {label}
+      </span>
+      <span className="text-xs text-foreground">{value}</span>
+    </div>
+  )
+}
+
+const AssessmentProfileSummary = ({ profile }: { profile: AssessmentProfile }) => {
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+
+  return (
+    <CollapsibleSection
+      title="Assessment Profile"
+      icon={<Briefcase className="text-primary" size={20} />}
+      defaultOpen={selectedPersona === 'architect' || selectedPersona === 'researcher'}
+    >
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <ProfileField label="Industry" value={profile.industry} />
+        <ProfileField label="Country" value={profile.country || 'Not specified'} />
+        <ProfileField
+          label="Algorithms"
+          value={
+            profile.algorithmUnknown
+              ? 'Unknown (conservative defaults)'
+              : profile.algorithmsSelected.length > 0
+                ? `${profile.algorithmsSelected.length} selected`
+                : 'None'
+          }
+        />
+        <ProfileField
+          label="Sensitivity"
+          value={
+            profile.sensitivityUnknown
+              ? 'Unknown (assumed high)'
+              : profile.sensitivityLevels.join(', ') || 'None'
+          }
+        />
+        <ProfileField
+          label="Compliance"
+          value={
+            profile.complianceUnknown
+              ? 'Unknown'
+              : profile.complianceFrameworks.length > 0
+                ? `${profile.complianceFrameworks.length} framework${profile.complianceFrameworks.length !== 1 ? 's' : ''}`
+                : 'None'
+          }
+        />
+        <ProfileField
+          label="Migration Status"
+          value={MIGRATION_STATUS_LABELS[profile.migrationStatus] ?? profile.migrationStatus}
+        />
+        {profile.mode === 'comprehensive' && (
+          <>
+            <ProfileField
+              label="Use Cases"
+              value={
+                profile.useCasesUnknown
+                  ? 'Unknown'
+                  : profile.useCases?.length
+                    ? `${profile.useCases.length} selected`
+                    : 'None'
+              }
+            />
+            <ProfileField
+              label="Data Retention"
+              value={
+                profile.retentionUnknown
+                  ? 'Unknown (industry default)'
+                  : profile.retentionPeriods?.join(', ') || 'None'
+              }
+            />
+            <ProfileField
+              label="Crypto Agility"
+              value={profile.cryptoAgility ? AGILITY_LABELS[profile.cryptoAgility] : undefined}
+            />
+            <ProfileField
+              label="Infrastructure"
+              value={
+                profile.infrastructureUnknown
+                  ? 'Unknown'
+                  : profile.infrastructure?.length
+                    ? `${profile.infrastructure.length} layer${profile.infrastructure.length !== 1 ? 's' : ''}`
+                    : 'None'
+              }
+            />
+            <ProfileField
+              label="Vendor Model"
+              value={
+                profile.vendorUnknown
+                  ? 'Unknown'
+                  : profile.vendorDependency?.replace('-', ' ') || undefined
+              }
+            />
+            <ProfileField
+              label="Timeline Pressure"
+              value={
+                profile.timelinePressure ? TIMELINE_LABELS[profile.timelinePressure] : undefined
+              }
+            />
+          </>
+        )}
+      </div>
+      <div className="mt-2">
+        <span
+          className={clsx(
+            'inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full',
+            profile.mode === 'comprehensive'
+              ? 'bg-primary/10 text-primary'
+              : 'bg-muted/20 text-muted-foreground'
+          )}
+        >
+          {profile.mode === 'comprehensive' ? 'Comprehensive' : 'Quick'} Assessment
+        </span>
+      </div>
+    </CollapsibleSection>
+  )
+}
+
 interface AssessReportProps {
   result: AssessmentResult
 }
@@ -618,10 +766,31 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
   const cryptoUnknown = useAssessmentStore((s) => s.cryptoUnknown)
   const hasSigningAlgos =
     (currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a)) || cryptoUnknown
+  const infrastructure = useAssessmentStore((s) => s.infrastructure)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const isExecutive = selectedPersona === 'executive'
   const [showFullReport, setShowFullReport] = useState(false)
   const [methodologyOpen, setMethodologyOpen] = useState(false)
+
+  /** Top migrate catalog products relevant to this assessment's industry + infrastructure. */
+  const relevantSoftware = useMemo(() => {
+    if (!industry || !softwareData?.length) return []
+    const industryLower = industry.toLowerCase()
+    return softwareData
+      .filter((item) => {
+        const industryMatch = item.targetIndustries.toLowerCase().includes(industryLower)
+        const infraMatch = (infrastructure ?? []).some((i) =>
+          item.infrastructureLayer.toLowerCase().includes(i.toLowerCase().split(' ')[0])
+        )
+        const hasPqcSupport = item.pqcSupport.toLowerCase() !== 'none' && item.pqcSupport !== ''
+        return (industryMatch || infraMatch) && hasPqcSupport
+      })
+      .sort((a, b) => {
+        const order: Record<string, number> = { Critical: 0, High: 1, Medium: 2, Low: 3 }
+        return (order[a.pqcMigrationPriority] ?? 3) - (order[b.pqcMigrationPriority] ?? 3)
+      })
+      .slice(0, 5)
+  }, [industry, infrastructure])
 
   /** Check if a given route is visible for the current persona's nav */
   const isPathVisible = (path: string): boolean => {
@@ -853,7 +1022,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                 >
                   <RiskGauge score={result.riskScore} level={result.riskLevel} />
                   <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-gray-600">
-                    {result.narrative}
+                    {result.personaNarrative ?? result.narrative}
                   </p>
                 </div>
 
@@ -876,6 +1045,11 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                       {result.executiveSummary}
                     </p>
                   </div>
+                )}
+
+                {/* Assessment Profile */}
+                {result.assessmentProfile && (
+                  <AssessmentProfileSummary profile={result.assessmentProfile} />
                 )}
 
                 {/* Consolidated HNDL / HNFL Risk Windows */}
@@ -1083,6 +1257,39 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                             <strong>Deadline:</strong> {c.deadline}
                           </p>
                           <p className="text-xs text-muted-foreground">{c.notes}</p>
+                          {(() => {
+                            const fullFw = complianceFrameworks.find((f) => f.label === c.framework)
+                            if (!fullFw) return null
+                            const hasRefs =
+                              fullFw.libraryRefs.length > 0 || fullFw.timelineRefs.length > 0
+                            if (!hasRefs) return null
+                            return (
+                              <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
+                                {fullFw.libraryRefs.map((ref) => (
+                                  <Link
+                                    to={`/library?search=${encodeURIComponent(ref)}`}
+                                    key={ref}
+                                    className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
+                                    title={`View ${ref} in Library`}
+                                  >
+                                    <BookOpen size={8} />
+                                    {ref}
+                                  </Link>
+                                ))}
+                                {fullFw.timelineRefs.map((ref) => (
+                                  <Link
+                                    to="/timeline"
+                                    key={ref}
+                                    className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
+                                    title={`${ref} in Timeline`}
+                                  >
+                                    <Calendar size={8} />
+                                    {ref}
+                                  </Link>
+                                ))}
+                              </div>
+                            )
+                          })()}
                         </div>
                       ))}
                     </div>
@@ -1161,6 +1368,23 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                                 </Link>
                               )}
                             </div>
+                            {action.relatedModule.startsWith('/migrate') &&
+                              relevantSoftware.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
+                                  <span className="text-[10px] text-muted-foreground/70">
+                                    Tools:
+                                  </span>
+                                  {relevantSoftware.slice(0, 2).map((sw) => (
+                                    <Link
+                                      to={`/migrate?industry=${encodeURIComponent(industry)}`}
+                                      key={sw.softwareName}
+                                      className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
+                                    >
+                                      {sw.softwareName}
+                                    </Link>
+                                  ))}
+                                </div>
+                              )}
                           </div>
                         </div>
                       ))}

@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { AssessmentInput } from '../hooks/assessmentTypes'
 import type { AssessmentResult } from '../hooks/assessmentTypes'
+import { usePersonaStore } from './usePersonaStore'
 
 export type AssessmentMode = 'quick' | 'comprehensive'
 
@@ -99,8 +100,6 @@ const INITIAL_STATE = {
   lastResult: null as AssessmentResult | null,
   lastWizardUpdate: null as string | null,
 }
-
-const STALE_THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000 // 30 days
 
 export const useAssessmentStore = create<AssessmentState>()(
   persist(
@@ -358,12 +357,65 @@ export const useAssessmentStore = create<AssessmentState>()(
           input.timelinePressure = state.timelinePressure as NonNullable<
             AssessmentInput['timelinePressure']
           >
+        const persona = usePersonaStore.getState().selectedPersona
+        if (persona) input.persona = persona
         return input
       },
     }),
     {
       name: 'pqc-assessment',
       storage: createJSONStorage(() => localStorage),
+      version: 2,
+      migrate: (persistedState: unknown, version: number) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const state = (persistedState ?? {}) as any
+
+        // v0/v1 → v2: Convert dataSensitivity/dataRetention from string to string[]
+        if (version <= 1) {
+          if (typeof state.dataSensitivity === 'string') {
+            state.dataSensitivity = state.dataSensitivity ? [state.dataSensitivity] : []
+          }
+          if (typeof state.dataRetention === 'string') {
+            state.dataRetention = state.dataRetention ? [state.dataRetention] : []
+          }
+        }
+
+        // Ensure all expected fields exist with safe defaults
+        state.currentStep = state.currentStep ?? 0
+        state.assessmentMode = state.assessmentMode ?? null
+        state.industry = state.industry ?? ''
+        state.country = state.country ?? ''
+        state.currentCrypto = Array.isArray(state.currentCrypto) ? state.currentCrypto : []
+        state.cryptoUnknown = state.cryptoUnknown ?? false
+        state.dataSensitivity = Array.isArray(state.dataSensitivity) ? state.dataSensitivity : []
+        state.sensitivityUnknown = state.sensitivityUnknown ?? false
+        state.complianceRequirements = Array.isArray(state.complianceRequirements)
+          ? state.complianceRequirements
+          : []
+        state.complianceUnknown = state.complianceUnknown ?? false
+        state.migrationStatus = state.migrationStatus ?? ''
+        state.cryptoUseCases = Array.isArray(state.cryptoUseCases) ? state.cryptoUseCases : []
+        state.useCasesUnknown = state.useCasesUnknown ?? false
+        state.dataRetention = Array.isArray(state.dataRetention) ? state.dataRetention : []
+        state.retentionUnknown = state.retentionUnknown ?? false
+        state.credentialLifetime = Array.isArray(state.credentialLifetime)
+          ? state.credentialLifetime
+          : []
+        state.credentialLifetimeUnknown = state.credentialLifetimeUnknown ?? false
+        state.systemCount = state.systemCount ?? ''
+        state.teamSize = state.teamSize ?? ''
+        state.cryptoAgility = state.cryptoAgility ?? ''
+        state.infrastructure = Array.isArray(state.infrastructure) ? state.infrastructure : []
+        state.infrastructureUnknown = state.infrastructureUnknown ?? false
+        state.vendorDependency = state.vendorDependency ?? ''
+        state.vendorUnknown = state.vendorUnknown ?? false
+        state.timelinePressure = state.timelinePressure ?? ''
+        state.isComplete = state.isComplete ?? false
+        state.lastResult = state.lastResult ?? null
+        state.lastWizardUpdate = state.lastWizardUpdate ?? null
+
+        return state
+      },
       partialize: (state) => ({
         lastResult: state.lastResult,
         currentStep: state.currentStep,
@@ -394,48 +446,9 @@ export const useAssessmentStore = create<AssessmentState>()(
         isComplete: state.isComplete,
         lastWizardUpdate: state.lastWizardUpdate,
       }),
-      onRehydrateStorage: () => (state) => {
-        if (!state) return
-        // Migrate v1 string values → v2 arrays (schema upgrade)
-        if (typeof state.dataSensitivity === 'string') {
-          state.dataSensitivity = (state.dataSensitivity as unknown as string)
-            ? [state.dataSensitivity as unknown as string]
-            : []
-        }
-        if (typeof state.dataRetention === 'string') {
-          state.dataRetention = (state.dataRetention as unknown as string)
-            ? [state.dataRetention as unknown as string]
-            : []
-        }
-        if (!state.lastWizardUpdate || state.isComplete) return
-        const elapsed = Date.now() - new Date(state.lastWizardUpdate).getTime()
-        if (elapsed > STALE_THRESHOLD_MS) {
-          state.currentStep = 0
-          state.assessmentMode = null
-          state.industry = ''
-          state.country = ''
-          state.currentCrypto = []
-          state.cryptoUnknown = false
-          state.dataSensitivity = []
-          state.sensitivityUnknown = false
-          state.complianceRequirements = []
-          state.complianceUnknown = false
-          state.migrationStatus = ''
-          state.cryptoUseCases = []
-          state.useCasesUnknown = false
-          state.dataRetention = []
-          state.retentionUnknown = false
-          state.credentialLifetime = []
-          state.credentialLifetimeUnknown = false
-          state.systemCount = ''
-          state.teamSize = ''
-          state.cryptoAgility = ''
-          state.infrastructure = []
-          state.infrastructureUnknown = false
-          state.vendorDependency = ''
-          state.vendorUnknown = false
-          state.timelinePressure = ''
-          state.lastWizardUpdate = null
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) {
+          console.error('Assessment store rehydration failed:', error)
         }
       },
     }

@@ -1,153 +1,408 @@
 import React, { useState } from 'react'
-import { Play, Check, Loader2 } from 'lucide-react'
+import { Play, Loader2, ArrowLeftRight } from 'lucide-react'
 import { openSSLService } from '../../../../services/crypto/OpenSSLService'
+import { CLASSICAL_SIG_ALGOS, PQC_SIG_ALGOS } from './algorithmConfig'
 
 interface KeyGenWorkshopProps {
   onComplete: () => void
 }
 
-export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) => {
-  const [algorithm, setAlgorithm] = useState('RSA')
-  const [keySize, setKeySize] = useState('2048')
-  const [output, setOutput] = useState('')
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [generatedKey, setGeneratedKey] = useState<string | null>(null)
+// KEM algorithms (key generation only — cannot sign)
+const CLASSICAL_KEM_ALGOS = [
+  {
+    value: 'RSA-2048',
+    label: 'RSA-2048',
+    cmd: 'openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out private.key',
+  },
+  {
+    value: 'RSA-4096',
+    label: 'RSA-4096',
+    cmd: 'openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out private.key',
+  },
+  {
+    value: 'ECDH-P256',
+    label: 'ECDH P-256',
+    cmd: 'openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out private.key',
+  },
+] as const
 
-  const handleGenerate = async () => {
-    setIsGenerating(true)
-    setOutput('')
-    setGeneratedKey(null)
+const PQC_KEM_ALGOS = [
+  {
+    value: 'ML-KEM-512',
+    label: 'ML-KEM-512 (FIPS 203)',
+    cmd: 'openssl genpkey -algorithm ML-KEM-512 -out private.key',
+  },
+  {
+    value: 'ML-KEM-768',
+    label: 'ML-KEM-768 (FIPS 203)',
+    cmd: 'openssl genpkey -algorithm ML-KEM-768 -out private.key',
+  },
+  {
+    value: 'ML-KEM-1024',
+    label: 'ML-KEM-1024 (FIPS 203)',
+    cmd: 'openssl genpkey -algorithm ML-KEM-1024 -out private.key',
+  },
+] as const
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function pemToBytes(pem: string): number {
+  const b64 = pem.replace(/-----[^-]+-----/g, '').replace(/\s/g, '')
+  return Math.floor((b64.length * 3) / 4)
+}
+
+function findCmd(value: string): string | undefined {
+  return [...CLASSICAL_SIG_ALGOS, ...CLASSICAL_KEM_ALGOS, ...PQC_SIG_ALGOS, ...PQC_KEM_ALGOS].find(
+    (a) => a.value === value
+  )?.cmd
+}
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+interface KeyState {
+  output: string
+  privBytes: number | null
+  pubBytes: number | null
+  loading: boolean
+}
+
+const emptyKeyState = (): KeyState => ({
+  output: '',
+  privBytes: null,
+  pubBytes: null,
+  loading: false,
+})
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
+export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) => {
+  const [classicalAlgo, setClassicalAlgo] = useState('Ed25519')
+  const [pqcAlgo, setPqcAlgo] = useState('ML-DSA-65')
+  const [classicalKey, setClassicalKey] = useState<KeyState>(emptyKeyState())
+  const [pqcKey, setPqcKey] = useState<KeyState>(emptyKeyState())
+  const [everCompleted, setEverCompleted] = useState(false)
+
+  const runGenerate = async (
+    algoValue: string,
+    setState: React.Dispatch<React.SetStateAction<KeyState>>
+  ) => {
+    const cmd = findCmd(algoValue)
+    if (!cmd) return
+
+    setState({ output: `$ ${cmd}\n`, privBytes: null, pubBytes: null, loading: true })
 
     try {
-      let command = ''
-      if (algorithm === 'RSA') {
-        command = `openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:${keySize} -out private.key`
-      } else if (algorithm === 'EC') {
-        command = `openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:${keySize} -out private.key`
-      } else if (algorithm === 'ED25519') {
-        command = `openssl genpkey -algorithm ED25519 -out private.key`
-      }
-
-      setOutput(`$ ${command}\n`)
-
-      const result = await openSSLService.execute(command)
-
+      const result = await openSSLService.execute(cmd)
       if (result.error) {
-        setOutput((prev) => prev + `Error: ${result.error}\n`)
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          output: prev.output + `Error: ${result.error}\n`,
+        }))
         return
       }
 
-      setOutput((prev) => prev + result.stdout + result.stderr + '\nKey generated successfully!\n')
+      const privFile = result.files.find((f) => f.name === 'private.key')
+      if (!privFile) {
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          output: prev.output + 'Error: key file not produced\n',
+        }))
+        return
+      }
 
-      // Get the key content
-      const keyFile = result.files.find((f) => f.name === 'private.key')
-      if (keyFile) {
-        const keyContent = new TextDecoder().decode(keyFile.data)
-        setGeneratedKey(keyContent)
+      const privPem = new TextDecoder().decode(privFile.data)
+      const privBytes = pemToBytes(privPem)
+      let log = result.stdout + result.stderr + '\nKey generated successfully!\n'
 
-        // Also generate public key for display
-        const pubCmd = `openssl pkey -in private.key -pubout -out public.key`
-        setOutput((prev) => prev + `\n$ ${pubCmd}\n`)
+      // Extract public key
+      const pubCmd = 'openssl pkey -in private.key -pubout -out public.key'
+      log += `\n$ ${pubCmd}\n`
+      const pubResult = await openSSLService.execute(pubCmd, [privFile])
+      const pubFile = pubResult.files.find((f) => f.name === 'public.key')
+      const pubPem = pubFile ? new TextDecoder().decode(pubFile.data) : ''
+      const pubBytes = pubPem ? pemToBytes(pubPem) : null
+      if (pubPem) log += pubPem
 
-        // We need to pass the private key file to the next command
-        const pubResult = await openSSLService.execute(pubCmd, [keyFile])
-        const pubFile = pubResult.files.find((f) => f.name === 'public.key')
+      setState({ output: `$ ${cmd}\n` + log, privBytes, pubBytes, loading: false })
 
-        if (pubFile) {
-          const pubContent = new TextDecoder().decode(pubFile.data)
-          setOutput((prev) => prev + pubContent)
-        }
-
+      if (!everCompleted) {
+        setEverCompleted(true)
         onComplete()
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      setOutput((prev) => prev + `System Error: ${errorMessage}\n`)
-    } finally {
-      setIsGenerating(false)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        output: prev.output + `System Error: ${msg}\n`,
+      }))
     }
   }
 
+  const handleGenerateClassical = () => runGenerate(classicalAlgo, setClassicalKey)
+  const handleGeneratePQC = () => runGenerate(pqcAlgo, setPqcKey)
+
+  const handleGenerateBoth = () => {
+    handleGenerateClassical()
+    handleGeneratePQC()
+  }
+
+  const bothReady = classicalKey.privBytes !== null && pqcKey.privBytes !== null
+  const maxBytes = Math.max(
+    classicalKey.privBytes ?? 0,
+    classicalKey.pubBytes ?? 0,
+    pqcKey.privBytes ?? 0,
+    pqcKey.pubBytes ?? 0,
+    64
+  )
+
   return (
     <div className="space-y-6">
+      {/* Generate Both CTA */}
+      <div className="flex justify-center">
+        <button
+          onClick={handleGenerateBoth}
+          disabled={classicalKey.loading || pqcKey.loading}
+          className="flex items-center gap-2 px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+        >
+          <ArrowLeftRight size={16} />
+          Generate Both &amp; Compare
+        </button>
+      </div>
+
+      {/* Two-column layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* ── Classical ── */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">Configuration</h3>
+          <span className="inline-block px-2 py-0.5 rounded text-xs font-bold bg-destructive/10 text-destructive border border-destructive/20">
+            Classical (Quantum-Vulnerable)
+          </span>
 
           <div>
-            <label htmlFor="algo-select" className="block text-sm text-muted-foreground mb-1">
+            <label htmlFor="classical-algo" className="block text-sm text-muted-foreground mb-1">
               Algorithm
             </label>
             <select
-              id="algo-select"
-              value={algorithm}
-              onChange={(e) => {
-                setAlgorithm(e.target.value)
-                if (e.target.value === 'EC') setKeySize('P-256')
-                else if (e.target.value === 'RSA') setKeySize('2048')
-              }}
+              id="classical-algo"
+              value={classicalAlgo}
+              onChange={(e) => setClassicalAlgo(e.target.value)}
               className="w-full bg-muted border border-border rounded px-3 py-2 text-foreground"
             >
-              <option value="RSA">RSA (Classic)</option>
-              <option value="EC">Elliptic Curve (Modern)</option>
-              <option value="ED25519">Ed25519 (Fast & Secure)</option>
+              <optgroup label="Signature">
+                {CLASSICAL_SIG_ALGOS.map((a) => (
+                  <option key={a.value} value={a.value}>
+                    {a.label}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Key Exchange / Encryption">
+                {CLASSICAL_KEM_ALGOS.map((a) => (
+                  <option key={a.value} value={a.value}>
+                    {a.label}
+                  </option>
+                ))}
+              </optgroup>
             </select>
           </div>
 
-          {algorithm !== 'ED25519' && (
-            <div>
-              <label htmlFor="size-select" className="block text-sm text-muted-foreground mb-1">
-                {algorithm === 'RSA' ? 'Key Size (bits)' : 'Curve'}
-              </label>
-              <select
-                id="size-select"
-                value={keySize}
-                onChange={(e) => setKeySize(e.target.value)}
-                className="w-full bg-muted border border-border rounded px-3 py-2 text-foreground"
-              >
-                {algorithm === 'RSA' ? (
-                  <>
-                    <option value="2048">2048 (Standard)</option>
-                    <option value="4096">4096 (High Security)</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="P-256">P-256 (NIST)</option>
-                    <option value="P-384">P-384 (NIST)</option>
-                  </>
-                )}
-              </select>
+          <button
+            onClick={handleGenerateClassical}
+            disabled={classicalKey.loading}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-destructive/40 text-destructive font-bold rounded hover:bg-destructive/10 transition-colors disabled:opacity-50"
+          >
+            {classicalKey.loading ? (
+              <Loader2 className="animate-spin" size={16} />
+            ) : (
+              <Play size={16} />
+            )}
+            Generate {classicalAlgo}
+          </button>
+
+          <div className="bg-muted rounded-lg p-4 font-mono text-xs h-[220px] overflow-y-auto custom-scrollbar border border-border">
+            <pre className="text-status-success whitespace-pre-wrap">
+              {classicalKey.output || (
+                <span className="text-muted-foreground italic">Output will appear here…</span>
+              )}
+            </pre>
+          </div>
+
+          {classicalKey.privBytes !== null && (
+            <div className="text-xs text-muted-foreground space-y-1">
+              <div className="flex justify-between">
+                <span>Private key</span>
+                <span className="font-mono text-foreground">
+                  {classicalKey.privBytes.toLocaleString()} bytes
+                </span>
+              </div>
+              {classicalKey.pubBytes !== null && (
+                <div className="flex justify-between">
+                  <span>Public key</span>
+                  <span className="font-mono text-foreground">
+                    {classicalKey.pubBytes.toLocaleString()} bytes
+                  </span>
+                </div>
+              )}
             </div>
           )}
-
-          <button
-            onClick={handleGenerate}
-            disabled={isGenerating}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
-          >
-            {isGenerating ? <Loader2 className="animate-spin" /> : <Play size={16} />}
-            Generate Key Pair
-          </button>
         </div>
 
+        {/* ── PQC ── */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">Output</h3>
-          <div className="bg-muted rounded-lg p-4 font-mono text-sm h-[300px] overflow-y-auto custom-scrollbar border border-border">
-            <pre className="text-status-success whitespace-pre-wrap">{output}</pre>
+          <span className="inline-block px-2 py-0.5 rounded text-xs font-bold bg-accent/10 text-accent border border-accent/20">
+            Post-Quantum (Quantum-Safe)
+          </span>
+
+          <div>
+            <label htmlFor="pqc-algo" className="block text-sm text-muted-foreground mb-1">
+              Algorithm
+            </label>
+            <select
+              id="pqc-algo"
+              value={pqcAlgo}
+              onChange={(e) => setPqcAlgo(e.target.value)}
+              className="w-full bg-muted border border-border rounded px-3 py-2 text-foreground"
+            >
+              <optgroup label="Signature (FIPS 204 / 205)">
+                {PQC_SIG_ALGOS.map((a) => (
+                  <option key={a.value} value={a.value}>
+                    {a.label}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Key Encapsulation (FIPS 203)">
+                {PQC_KEM_ALGOS.map((a) => (
+                  <option key={a.value} value={a.value}>
+                    {a.label}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
           </div>
+
+          <button
+            onClick={handleGeneratePQC}
+            disabled={pqcKey.loading}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-accent/40 text-accent font-bold rounded hover:bg-accent/10 transition-colors disabled:opacity-50"
+          >
+            {pqcKey.loading ? <Loader2 className="animate-spin" size={16} /> : <Play size={16} />}
+            Generate {pqcAlgo}
+          </button>
+
+          <div className="bg-muted rounded-lg p-4 font-mono text-xs h-[220px] overflow-y-auto custom-scrollbar border border-border">
+            <pre className="text-status-success whitespace-pre-wrap">
+              {pqcKey.output || (
+                <span className="text-muted-foreground italic">Output will appear here…</span>
+              )}
+            </pre>
+          </div>
+
+          {pqcKey.privBytes !== null && (
+            <div className="text-xs text-muted-foreground space-y-1">
+              <div className="flex justify-between">
+                <span>Private key</span>
+                <span className="font-mono text-foreground">
+                  {pqcKey.privBytes.toLocaleString()} bytes
+                </span>
+              </div>
+              {pqcKey.pubBytes !== null && (
+                <div className="flex justify-between">
+                  <span>Public key</span>
+                  <span className="font-mono text-foreground">
+                    {pqcKey.pubBytes.toLocaleString()} bytes
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-      {generatedKey && (
-        <div className="bg-status-success rounded-lg p-4 flex items-start gap-3">
-          <Check className="text-status-success shrink-0 mt-1" />
-          <div>
-            <h4 className="font-bold text-status-success">Success!</h4>
-            <p className="text-sm text-status-success/80">
-              You have successfully generated a {algorithm} key pair using OpenSSL. The private key
-              is kept secure, and the public key can be shared.
+      {/* ── Key Size Comparison ── */}
+      {bothReady && (
+        <div className="glass-panel p-5 space-y-4">
+          <h4 className="font-semibold text-foreground">Key Size Comparison</h4>
+
+          {/* Private key bars */}
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              Private Key
             </p>
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-3">
+                <div className="w-32 text-xs text-right text-muted-foreground truncate">
+                  {classicalAlgo}
+                </div>
+                <div className="flex-1 h-5 bg-muted rounded overflow-hidden">
+                  <div
+                    className="h-full bg-destructive/50 rounded transition-all duration-500"
+                    style={{ width: `${((classicalKey.privBytes ?? 0) / maxBytes) * 100}%` }}
+                  />
+                </div>
+                <div className="w-20 text-xs font-mono text-foreground text-right">
+                  {classicalKey.privBytes?.toLocaleString()} B
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-32 text-xs text-right text-accent truncate">{pqcAlgo}</div>
+                <div className="flex-1 h-5 bg-muted rounded overflow-hidden">
+                  <div
+                    className="h-full bg-accent/50 rounded transition-all duration-500"
+                    style={{ width: `${((pqcKey.privBytes ?? 0) / maxBytes) * 100}%` }}
+                  />
+                </div>
+                <div className="w-20 text-xs font-mono text-foreground text-right">
+                  {pqcKey.privBytes?.toLocaleString()} B
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Public key bars */}
+          {classicalKey.pubBytes !== null && pqcKey.pubBytes !== null && (
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                Public Key
+              </p>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-3">
+                  <div className="w-32 text-xs text-right text-muted-foreground truncate">
+                    {classicalAlgo}
+                  </div>
+                  <div className="flex-1 h-5 bg-muted rounded overflow-hidden">
+                    <div
+                      className="h-full bg-destructive/50 rounded transition-all duration-500"
+                      style={{ width: `${((classicalKey.pubBytes ?? 0) / maxBytes) * 100}%` }}
+                    />
+                  </div>
+                  <div className="w-20 text-xs font-mono text-foreground text-right">
+                    {classicalKey.pubBytes?.toLocaleString()} B
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-32 text-xs text-right text-accent truncate">{pqcAlgo}</div>
+                  <div className="flex-1 h-5 bg-muted rounded overflow-hidden">
+                    <div
+                      className="h-full bg-accent/50 rounded transition-all duration-500"
+                      style={{ width: `${((pqcKey.pubBytes ?? 0) / maxBytes) * 100}%` }}
+                    />
+                  </div>
+                  <div className="w-20 text-xs font-mono text-foreground text-right">
+                    {pqcKey.pubBytes?.toLocaleString()} B
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <p className="text-sm text-muted-foreground">
+            <strong className="text-foreground">Why are PQC keys larger?</strong> Quantum-resistant
+            algorithms are based on harder mathematical problems — lattices or hash functions
+            instead of integer factoring or elliptic curves. Representing these harder problems
+            requires more bytes, but that extra size is exactly what makes them safe against quantum
+            computers running Shor&apos;s algorithm.
+          </p>
         </div>
       )}
     </div>

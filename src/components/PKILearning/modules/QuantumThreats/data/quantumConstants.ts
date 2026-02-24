@@ -348,3 +348,53 @@ export const NIST_SECURITY_LEVELS = [
   { level: 4, description: 'At least as hard as SHA-384 collision', aesEquivalent: 192 },
   { level: 5, description: 'At least as hard as AES-256 key recovery', aesEquivalent: 256 },
 ]
+
+export interface QuantumComputerRecord {
+  name: string
+  vendor: string
+  year: number
+  physicalQubits: number
+  estimatedLogicalQubits: number // approximate, based on published experimental results
+  qubitType: string
+  notes: string
+}
+
+export const CURRENT_QUANTUM_COMPUTERS: QuantumComputerRecord[] = [
+  {
+    name: 'Condor',
+    vendor: 'IBM',
+    year: 2023,
+    physicalQubits: 1121,
+    estimatedLogicalQubits: 5,
+    qubitType: 'Superconducting',
+    notes:
+      'Largest superconducting qubit count to date. NISQ era — no fault-tolerant logical qubits.',
+  },
+  {
+    name: 'Heron r2',
+    vendor: 'IBM',
+    year: 2024,
+    physicalQubits: 156,
+    estimatedLogicalQubits: 3,
+    qubitType: 'Superconducting',
+    notes: 'Highest gate fidelity IBM processor; optimized for quality over quantity.',
+  },
+  {
+    name: 'Willow',
+    vendor: 'Google',
+    year: 2024,
+    physicalQubits: 105,
+    estimatedLogicalQubits: 2,
+    qubitType: 'Superconducting',
+    notes: 'First to demonstrate below-threshold error correction (Nature 2024).',
+  },
+  {
+    name: 'H2-1',
+    vendor: 'Quantinuum',
+    year: 2024,
+    physicalQubits: 56,
+    estimatedLogicalQubits: 10,
+    qubitType: 'Trapped ion',
+    notes: 'Best physical/logical ratio today due to ~99.9% two-qubit gate fidelity.',
+  },
+]

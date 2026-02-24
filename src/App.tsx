@@ -2,70 +2,71 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 
 import { logPageView } from './utils/analytics'
 import { useEffect } from 'react'
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
 import { MainLayout } from './components/Layout/MainLayout'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { useModuleStore } from './store/useModuleStore'
+import { lazyWithRetry } from './utils/lazyWithRetry'
 
-// Lazy load route components for code splitting
-const TimelineView = lazy(() =>
+// Lazy load route components with automatic retry on chunk fetch failures
+const TimelineView = lazyWithRetry(() =>
   import('./components/Timeline/TimelineView').then((module) => ({ default: module.TimelineView }))
 )
-const ThreatsDashboard = lazy(() =>
+const ThreatsDashboard = lazyWithRetry(() =>
   import('./components/Threats/ThreatsDashboard').then((module) => ({
     default: module.ThreatsDashboard,
   }))
 )
-const LeadersGrid = lazy(() =>
+const LeadersGrid = lazyWithRetry(() =>
   import('./components/Leaders/LeadersGrid').then((module) => ({ default: module.LeadersGrid }))
 )
-const AlgorithmsView = lazy(() =>
+const AlgorithmsView = lazyWithRetry(() =>
   import('./components/Algorithms/AlgorithmsView').then((module) => ({
     default: module.AlgorithmsView,
   }))
 )
-const PlaygroundView = lazy(() =>
+const PlaygroundView = lazyWithRetry(() =>
   import('./components/Playground/PlaygroundView').then((module) => ({
     default: module.PlaygroundView,
   }))
 )
-const OpenSSLStudioView = lazy(() =>
+const OpenSSLStudioView = lazyWithRetry(() =>
   import('./components/OpenSSLStudio/OpenSSLStudioView').then((module) => ({
     default: module.OpenSSLStudioView,
   }))
 )
-const LibraryView = lazy(() =>
+const LibraryView = lazyWithRetry(() =>
   import('./components/Library/LibraryView').then((module) => ({ default: module.LibraryView }))
 )
-const MigrateView = lazy(() =>
+const MigrateView = lazyWithRetry(() =>
   import('./components/Migrate/MigrateView').then((module) => ({
     default: module.MigrateView,
   }))
 )
-const AboutView = lazy(() =>
+const AboutView = lazyWithRetry(() =>
   import('./components/About/AboutView').then((module) => ({ default: module.AboutView }))
 )
-const PKILearningView = lazy(() =>
+const PKILearningView = lazyWithRetry(() =>
   import('./components/PKILearning/PKILearningView').then((module) => ({
     default: module.PKILearningView,
   }))
 )
-const ComplianceView = lazy(() =>
+const ComplianceView = lazyWithRetry(() =>
   import('./components/Compliance/ComplianceView').then((module) => ({
     default: module.ComplianceView,
   }))
 )
-const ChangelogView = lazy(() =>
+const ChangelogView = lazyWithRetry(() =>
   import('./components/Changelog/ChangelogView').then((module) => ({
     default: module.ChangelogView,
   }))
 )
-const LandingView = lazy(() =>
+const LandingView = lazyWithRetry(() =>
   import('./components/Landing/LandingView').then((module) => ({
     default: module.LandingView,
   }))
 )
-const AssessView = lazy(() =>
+const AssessView = lazyWithRetry(() =>
   import('./components/Assess/AssessView').then((module) => ({ default: module.AssessView }))
 )
 

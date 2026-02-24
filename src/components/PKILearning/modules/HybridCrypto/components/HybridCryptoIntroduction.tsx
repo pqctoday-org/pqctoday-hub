@@ -5,7 +5,6 @@ import {
   Layers,
   Lock,
   PenTool,
-  BookOpen,
   ArrowRight,
   Cpu,
   Library,
@@ -76,54 +75,94 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
         </div>
       </section>
 
-      {/* Section 2: Composite vs Concatenated */}
+      {/* Section 2: Three Certificate Format Approaches */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <Layers size={24} className="text-secondary" />
           </div>
-          <h2 className="text-xl font-bold text-gradient">Composite vs. Concatenated</h2>
+          <h2 className="text-xl font-bold text-gradient">Three Certificate Format Approaches</h2>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
-          <p>There are two main approaches to combining classical and PQC algorithms:</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-              <h3 className="text-sm font-bold text-primary mb-2">Composite (Single OID)</h3>
+          <p>
+            There are three distinct X.509 certificate formats for PQC deployment — each with
+            different standardization status and trade-offs:
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Pure PQC */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-success/20">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold text-success">Pure PQC</h3>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 font-bold">
+                  Published
+                </span>
+              </div>
               <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
                 <div className="text-muted-foreground">{`Certificate {`}</div>
-                <div className="text-primary pl-3">{`algorithm: composite-ML-DSA-65-ECDSA-P256`}</div>
+                <div className="text-success pl-3">{`algorithm: id-ml-dsa-65`}</div>
+                <div className="text-success pl-3">{`  OID: 2.16.840.1.101.3.4.3.18`}</div>
+                <div className="text-foreground pl-3">{`publicKey: ML-DSA-65-key`}</div>
+                <div className="text-foreground pl-3">{`signature: ML-DSA-65-sig`}</div>
+                <div className="text-muted-foreground">{`}`}</div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Standard single-algorithm X.509 using a PQC signature. ML-DSA OIDs are standardized
+                in <strong>RFC 9881</strong>; SLH-DSA/LMS OIDs in <strong>RFC 9802</strong>.
+                Quantum-safe but requires all verifiers to support the PQC algorithm.
+              </p>
+            </div>
+            {/* Composite */}
+            <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold text-primary">Composite (Dual-Algorithm)</h3>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
+                  Draft
+                </span>
+              </div>
+              <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
+                <div className="text-muted-foreground">{`Certificate {`}</div>
+                <div className="text-primary pl-3">{`algorithm: id-MLDSA65-ECDSA-P256`}</div>
+                <div className="text-primary pl-3">{`  OID: 2.16.840.1.114027.80.8.1.6`}</div>
                 <div className="text-foreground pl-3">{`publicKey: ML-DSA-65-key || ECDSA-key`}</div>
                 <div className="text-foreground pl-3">{`signature: ML-DSA-65-sig || ECDSA-sig`}</div>
                 <div className="text-muted-foreground">{`}`}</div>
               </div>
               <p className="text-xs text-muted-foreground">
-                A single algorithm OID identifies the combined pair. Both signatures are required
-                for validation. Standardized in draft-ietf-lamps-pq-composite-sigs.
+                A single composite OID identifies the algorithm pair. Both signatures must verify.
+                Defined in <strong>draft-ietf-lamps-pq-composite-sigs-14</strong>. Not yet in
+                OpenSSL production builds — strongest security model.
               </p>
             </div>
+            {/* Parallel/Concatenated */}
             <div className="bg-muted/50 rounded-lg p-4 border border-secondary/20">
-              <h3 className="text-sm font-bold text-secondary mb-2">Concatenated (Nested)</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold text-secondary">Parallel (Alt-Sig)</h3>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border font-bold">
+                  Informational
+                </span>
+              </div>
               <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
                 <div className="text-muted-foreground">{`Certificate {`}</div>
-                <div className="text-secondary pl-3">{`algorithm: ML-DSA-65`}</div>
+                <div className="text-secondary pl-3">{`algorithm: id-ml-dsa-65`}</div>
                 <div className="text-foreground pl-3">{`extensions {`}</div>
-                <div className="text-foreground pl-6">{`altSignature: ECDSA-P256-sig`}</div>
-                <div className="text-foreground pl-6">{`altPublicKey: ECDSA-P256-key`}</div>
+                <div className="text-foreground pl-6">{`AltSigAlg (2.5.29.73): ECDSA-P256`}</div>
+                <div className="text-foreground pl-6">{`AltSigValue (2.5.29.74): ECDSA-sig`}</div>
                 <div className="text-foreground pl-3">{`}`}</div>
                 <div className="text-muted-foreground">{`}`}</div>
               </div>
               <p className="text-xs text-muted-foreground">
-                Separate algorithm OIDs. The classical algorithm rides in{' '}
-                <InlineTooltip term="X.509">X.509</InlineTooltip> extensions. More
-                backward-compatible but more complex.
+                PQC primary signature with classical key/sig in X.509 extension fields (OIDs
+                2.5.29.73/74). Legacy verifiers validate the primary PQC sig and ignore extensions.
+                Maximizes backward compatibility at the cost of complexity.
               </p>
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            <strong>Interoperability trade-off:</strong> Composite requires all verifiers to support
-            the PQC algorithm &mdash; no fallback if they don&apos;t. Concatenated allows legacy
-            verifiers to validate the primary signature while ignoring extensions, enabling gradual
-            rollout. This makes concatenated easier to deploy but weaker against downgrade attacks.
+            <strong>Deployment guidance:</strong> Pure PQC is ready today (RFC 9881 OIDs in OpenSSL
+            3.x). Composite requires both parties to support the draft spec — ideal for closed PKI
+            environments. Parallel works with legacy verifiers but adds X.509 extension complexity.
+            ANSSI explicitly permits pure hash-based (
+            <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>, LMS) as standalone alternatives.
           </p>
         </div>
       </section>
@@ -241,88 +280,18 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; Larger signatures (~3.4 KB vs ~72 B for ECDSA alone)</li>
                 <li>&bull; Both algorithms must be supported by verifier</li>
-                <li>&bull; Draft standard &mdash; not yet finalized</li>
+                <li>&bull; Composite draft not yet finalized &mdash; OIDs may change before RFC</li>
               </ul>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Section 5: Standards Landscape */}
-      <section className="glass-panel p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-lg bg-primary/10">
-            <BookOpen size={24} className="text-primary" />
-          </div>
-          <h2 className="text-xl font-bold text-gradient">Standards Landscape</h2>
-        </div>
-        <div className="space-y-4 text-sm text-foreground/80">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left p-2 text-muted-foreground font-medium">Standard</th>
-                  <th className="text-left p-2 text-muted-foreground font-medium">Scope</th>
-                  <th className="text-center p-2 text-muted-foreground font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-border/50">
-                  <td className="p-2 font-mono text-xs">NIST SP 800-227</td>
-                  <td className="p-2 text-xs">Recommendations for key-encapsulation mechanisms</td>
-                  <td className="p-2 text-center">
-                    <span className="text-xs px-2 py-0.5 rounded bg-success/10 text-success border border-success/20">
-                      Final
-                    </span>
-                  </td>
-                </tr>
-                <tr className="border-b border-border/50">
-                  <td className="p-2 font-mono text-xs">RFC 9794</td>
-                  <td className="p-2 text-xs">Terminology for PQ/T hybrid schemes</td>
-                  <td className="p-2 text-center">
-                    <span className="text-xs px-2 py-0.5 rounded bg-success/10 text-success border border-success/20">
-                      Published
-                    </span>
-                  </td>
-                </tr>
-                <tr className="border-b border-border/50">
-                  <td className="p-2 font-mono text-xs">draft-ietf-tls-ecdhe-mlkem</td>
-                  <td className="p-2 text-xs">Hybrid ECDHE-MLKEM key agreement for TLS 1.3</td>
-                  <td className="p-2 text-center">
-                    <span className="text-xs px-2 py-0.5 rounded bg-warning/10 text-warning border border-warning/20">
-                      Draft
-                    </span>
-                  </td>
-                </tr>
-                <tr className="border-b border-border/50">
-                  <td className="p-2 font-mono text-xs">draft-ietf-tls-hybrid-design</td>
-                  <td className="p-2 text-xs">Hybrid key exchange framework for TLS 1.3</td>
-                  <td className="p-2 text-center">
-                    <span className="text-xs px-2 py-0.5 rounded bg-warning/10 text-warning border border-warning/20">
-                      Draft
-                    </span>
-                  </td>
-                </tr>
-                <tr className="border-b border-border/50">
-                  <td className="p-2 font-mono text-xs">draft-ietf-lamps-pq-composite-sigs</td>
-                  <td className="p-2 text-xs">Composite ML-DSA + traditional signatures</td>
-                  <td className="p-2 text-center">
-                    <span className="text-xs px-2 py-0.5 rounded bg-warning/10 text-warning border border-warning/20">
-                      Draft
-                    </span>
-                  </td>
-                </tr>
-                <tr className="border-b border-border/50">
-                  <td className="p-2 font-mono text-xs">draft-ietf-lamps-pq-composite-kem</td>
-                  <td className="p-2 text-xs">Composite ML-KEM + traditional KEMs</td>
-                  <td className="p-2 text-center">
-                    <span className="text-xs px-2 py-0.5 rounded bg-warning/10 text-warning border border-warning/20">
-                      Draft
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="bg-muted/50 rounded-lg p-3 border border-success/20 mt-2">
+            <p className="text-xs text-muted-foreground">
+              <strong className="text-success">Note:</strong> If you only need quantum safety
+              without a classical fallback, use a <strong>pure PQC certificate</strong> instead
+              &mdash; ML-DSA OIDs are fully standardized in <strong>RFC 9881</strong> and work in
+              OpenSSL today. Composite is specifically for environments that require the{' '}
+              <em>both-must-verify</em> dual-algorithm property.
+            </p>
           </div>
         </div>
       </section>

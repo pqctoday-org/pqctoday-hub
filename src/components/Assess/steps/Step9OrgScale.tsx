@@ -2,6 +2,8 @@ import { useAssessmentStore } from '../../../store/useAssessmentStore'
 
 import clsx from 'clsx'
 
+import { PersonaHint } from './PersonaHint'
+
 const Step9OrgScale = () => {
   const { systemCount, setSystemCount, teamSize, setTeamSize } = useAssessmentStore()
 
@@ -25,6 +27,8 @@ const Step9OrgScale = () => {
       <p className="text-sm text-muted-foreground">
         Migration scope and team capacity directly affect timelines and effort.
       </p>
+
+      <PersonaHint stepKey="scale" />
 
       <div className="space-y-2">
         <h4 className="text-sm font-semibold text-foreground">Systems using cryptography</h4>

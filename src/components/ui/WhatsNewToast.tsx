@@ -93,8 +93,9 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Wizard pre-fill</strong> &mdash; assessment
-                    wizard auto-fills industry and country from your landing page persona selections
+                    <strong className="text-foreground">Page load resilience</strong> &mdash; failed
+                    chunk loads now auto-retry with exponential backoff instead of requiring a
+                    manual refresh
                   </span>
                 </li>
               </ul>

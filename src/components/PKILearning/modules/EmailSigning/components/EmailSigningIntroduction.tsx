@@ -11,7 +11,6 @@ import {
   Library,
   Layers,
 } from 'lucide-react'
-import { KEY_RFCS } from '../data/emailSigningConstants'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface EmailSigningIntroductionProps {
@@ -101,24 +100,12 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
             series of RFCs that bring post-quantum cryptography into CMS. These standards define how
             PQC algorithms integrate with existing S/MIME infrastructure.
           </p>
-          <div className="space-y-2">
-            {KEY_RFCS.filter((rfc) =>
-              ['RFC 9629', 'RFC 9882', 'RFC 9708', 'RFC 9690'].includes(rfc.number)
-            ).map((rfc) => (
-              <div key={rfc.number} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
-                <span className="text-sm font-bold text-primary shrink-0 w-20">{rfc.number}</span>
-                <div>
-                  <div className="text-sm font-medium text-foreground">{rfc.title}</div>
-                  <p className="text-xs text-muted-foreground">{rfc.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="text-xs text-muted-foreground">
+          <p>
             Together, these RFCs provide a complete PQC story for CMS: ML-DSA for signing (RFC
             9882), KEM-based encryption via KEMRecipientInfo (RFC 9629), RSA-KEM as a transitional
             KEM option (RFC 9690), and <InlineTooltip term="LMS/HSS">HSS/LMS</InlineTooltip> for
-            hash-based firmware and long-lived signatures (RFC 9708).
+            hash-based firmware and long-lived signatures (RFC 9708). See the{' '}
+            <strong>References</strong> tab for full details on each standard.
           </p>
         </div>
       </section>

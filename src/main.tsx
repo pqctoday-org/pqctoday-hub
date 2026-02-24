@@ -6,6 +6,11 @@ import { initGA } from './utils/analytics'
 // Initialize Google Analytics
 initGA()
 
+// Automatically disable Guided Tour during E2E testing
+if (typeof window !== 'undefined' && window.navigator?.webdriver) {
+  localStorage.setItem('pqc-tour-completed', 'true')
+}
+
 // Global error handler — dev only, uses safe DOM construction (no innerHTML) to prevent XSS
 if (import.meta.env.DEV) {
   window.onerror = function (message, source, lineno, colno, error) {

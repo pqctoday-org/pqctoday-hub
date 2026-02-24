@@ -133,7 +133,7 @@ export const FiveGModule: React.FC = () => {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="learn">Learn</TabsTrigger>
-          <TabsTrigger value="simulate">Simulate</TabsTrigger>
+          <TabsTrigger value="simulate">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
         </TabsList>
@@ -216,7 +216,7 @@ export const FiveGModule: React.FC = () => {
                 disabled={currentPart === 0}
                 className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
               >
-                &larr; Previous Part
+                &larr; Previous Step
               </button>
               {currentPart === PARTS.length - 1 ? (
                 <button
@@ -230,7 +230,7 @@ export const FiveGModule: React.FC = () => {
                   onClick={() => handlePartChange(currentPart + 1)}
                   className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
                 >
-                  Next Part &rarr;
+                  Next Step &rarr;
                 </button>
               )}
             </div>

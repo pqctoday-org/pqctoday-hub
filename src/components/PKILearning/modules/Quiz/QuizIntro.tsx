@@ -1,9 +1,21 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Brain, Zap, BookOpen, Sparkles } from 'lucide-react'
+import { Brain, Zap, BookOpen, Sparkles, Building2, X } from 'lucide-react'
+import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { TopicSelector } from './components/TopicSelector'
 import type { QuizCategory, QuizMode, QuizCategoryMeta } from './types'
+
+const DIFFICULTY_OPTIONS = [
+  { id: 'beginner', label: 'Beginner', color: 'text-status-success', bg: 'bg-status-success' },
+  {
+    id: 'intermediate',
+    label: 'Intermediate',
+    color: 'text-status-warning',
+    bg: 'bg-status-warning',
+  },
+  { id: 'advanced', label: 'Advanced', color: 'text-destructive', bg: 'bg-destructive' },
+] as const
 
 interface QuizIntroProps {
   previousScores?: Record<string, number>
@@ -17,6 +29,11 @@ interface QuizIntroProps {
   initialCategories?: QuizCategory[]
   /** Label of the active persona for the suggestion banner */
   personaLabel?: string
+  /** Active industry filter from persona store (null = no filter) */
+  industryFilter: string | null
+  onClearIndustryFilter: () => void
+  selectedDifficulties: string[]
+  onToggleDifficulty: (difficulty: string) => void
 }
 
 export const QuizIntro: React.FC<QuizIntroProps> = ({
@@ -29,6 +46,10 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   categories,
   initialCategories,
   personaLabel,
+  industryFilter,
+  onClearIndustryFilter,
+  selectedDifficulties,
+  onToggleDifficulty,
 }) => {
   const [selectedCategories, setSelectedCategories] = useState<QuizCategory[]>(
     initialCategories ?? []
@@ -76,6 +97,27 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
           </div>
         )}
       </motion.div>
+
+      {/* Industry filter banner */}
+      {industryFilter && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-panel p-3 flex items-center justify-between bg-primary/5 border-primary/30"
+        >
+          <span className="flex items-center gap-2 text-sm text-foreground">
+            <Building2 size={16} className="text-primary" />
+            Quiz filtered for: <span className="font-semibold">{industryFilter}</span>
+          </span>
+          <button
+            onClick={onClearIndustryFilter}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X size={14} />
+            Clear
+          </button>
+        </motion.div>
+      )}
 
       {/* All Topics modes */}
       <div>
@@ -132,6 +174,32 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               Start Full Assessment
             </Button>
           </motion.div>
+        </div>
+      </div>
+
+      {/* Difficulty filter */}
+      <div>
+        <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">
+          Difficulty
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {DIFFICULTY_OPTIONS.map((opt) => {
+            const isActive = selectedDifficulties.includes(opt.id)
+            return (
+              <button
+                key={opt.id}
+                onClick={() => onToggleDifficulty(opt.id)}
+                className={clsx(
+                  'px-4 py-2 rounded-full text-sm font-medium transition-all border',
+                  isActive
+                    ? `${opt.bg}/15 ${opt.color} border-current`
+                    : 'bg-muted/30 text-muted-foreground border-transparent opacity-50'
+                )}
+              >
+                {opt.label}
+              </button>
+            )
+          })}
         </div>
       </div>
 

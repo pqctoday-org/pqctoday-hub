@@ -6,6 +6,8 @@ import { AVAILABLE_ALGORITHMS, VULNERABLE_ALGORITHMS } from '../../../hooks/asse
 
 import clsx from 'clsx'
 
+import { PersonaHint } from './PersonaHint'
+
 const Step3Crypto = () => {
   const { currentCrypto, toggleCrypto, cryptoUnknown, setCryptoUnknown } = useAssessmentStore()
 
@@ -16,6 +18,8 @@ const Step3Crypto = () => {
         Select all algorithms currently in use across your systems. Don&apos;t worry if you&apos;re
         unsure — select the ones you know about.
       </p>
+
+      <PersonaHint stepKey="crypto" />
 
       {/* I don't know escape hatch */}
       <button

@@ -8,6 +8,8 @@ import { InlineTooltip } from '../../ui/InlineTooltip'
 
 import clsx from 'clsx'
 
+import { PersonaHint } from './PersonaHint'
+
 const StepCredentialLifetime = () => {
   const {
     credentialLifetime,
@@ -59,6 +61,8 @@ const StepCredentialLifetime = () => {
         against the longest period. Credentials that outlive the quantum threat horizon are
         vulnerable to signature forgery.
       </p>
+
+      <PersonaHint stepKey="credential" />
 
       <div className="glass-panel p-4 border-l-4 border-l-destructive mb-4">
         <div className="flex items-start gap-2">

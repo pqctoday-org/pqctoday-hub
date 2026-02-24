@@ -1,62 +1,68 @@
-import React, { lazy, Suspense } from 'react'
+import React, { Suspense } from 'react'
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Dashboard } from './Dashboard'
 import { ArrowLeft } from 'lucide-react'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { lazyWithRetry } from '@/utils/lazyWithRetry'
 
-const PKIWorkshop = lazy(() =>
+const PKIWorkshop = lazyWithRetry(() =>
   import('./modules/PKIWorkshop').then((module) => ({ default: module.PKIWorkshop }))
 )
-const DigitalAssetsModule = lazy(() =>
+const DigitalAssetsModule = lazyWithRetry(() =>
   import('./modules/DigitalAssets').then((module) => ({ default: module.DigitalAssetsModule }))
 )
-const FiveGModule = lazy(() =>
+const FiveGModule = lazyWithRetry(() =>
   import('./modules/FiveG').then((module) => ({ default: module.FiveGModule }))
 )
-const DigitalIDModule = lazy(() =>
+const DigitalIDModule = lazyWithRetry(() =>
   import('./modules/DigitalID').then((module) => ({ default: module.DigitalIDModule }))
 )
-const TLSBasicsModule = lazy(() =>
+const TLSBasicsModule = lazyWithRetry(() =>
   import('./modules/TLSBasics').then((module) => ({ default: module.TLSBasicsModule }))
 )
-const PQC101Module = lazy(() =>
+const PQC101Module = lazyWithRetry(() =>
   import('./modules/Module1-Introduction').then((module) => ({
     default: module.Module1,
   }))
 )
-const QuizModule = lazy(() =>
+const QuizModule = lazyWithRetry(() =>
   import('./modules/Quiz').then((module) => ({ default: module.QuizModule }))
 )
-const QuantumThreatsModule = lazy(() =>
+const QuantumThreatsModule = lazyWithRetry(() =>
   import('./modules/QuantumThreats').then((module) => ({ default: module.QuantumThreatsModule }))
 )
-const HybridCryptoModule = lazy(() =>
+const HybridCryptoModule = lazyWithRetry(() =>
   import('./modules/HybridCrypto').then((module) => ({ default: module.HybridCryptoModule }))
 )
-const CryptoAgilityModule = lazy(() =>
+const CryptoAgilityModule = lazyWithRetry(() =>
   import('./modules/CryptoAgility').then((module) => ({ default: module.CryptoAgilityModule }))
 )
-const StatefulSignaturesModule = lazy(() =>
+const StatefulSignaturesModule = lazyWithRetry(() =>
   import('./modules/StatefulSignatures').then((module) => ({
     default: module.StatefulSignaturesModule,
   }))
 )
-const EmailSigningModule = lazy(() =>
+const EmailSigningModule = lazyWithRetry(() =>
   import('./modules/EmailSigning').then((module) => ({
     default: module.EmailSigningModule,
   }))
 )
-const VPNSSHModule = lazy(() =>
+const VPNSSHModule = lazyWithRetry(() =>
   import('./modules/VPNSSHModule').then((module) => ({ default: module.VPNSSHModule }))
 )
-const KeyManagementModule = lazy(() =>
+const KeyManagementModule = lazyWithRetry(() =>
   import('./modules/KeyManagement').then((module) => ({ default: module.KeyManagementModule }))
 )
-const QKDModule = lazy(() =>
+const QKDModule = lazyWithRetry(() =>
   import('./modules/QKD').then((module) => ({ default: module.QKDModule }))
 )
-const EntropyModule = lazy(() =>
+const EntropyModule = lazyWithRetry(() =>
   import('./modules/Entropy').then((module) => ({ default: module.EntropyModule }))
+)
+const MerkleTreeCertsModule = lazyWithRetry(() =>
+  import('./modules/MerkleTreeCerts').then((module) => ({
+    default: module.MerkleTreeCertsModule,
+  }))
 )
 
 export const PKILearningView: React.FC = () => {
@@ -109,6 +115,7 @@ export const PKILearningView: React.FC = () => {
           <Route path="key-management" element={<KeyManagementModule />} />
           <Route path="qkd" element={<QKDModule />} />
           <Route path="entropy-randomness" element={<EntropyModule />} />
+          <Route path="merkle-tree-certs" element={<MerkleTreeCertsModule />} />
         </Routes>
       </Suspense>
     </div>

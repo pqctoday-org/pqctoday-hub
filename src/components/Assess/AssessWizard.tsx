@@ -147,6 +147,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
   // Pre-fill industry and country from persona store when fields are blank
   const personaIndustry = usePersonaStore((s) => s.selectedIndustry)
   const personaRegion = usePersonaStore((s) => s.selectedRegion)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   useEffect(() => {
     const { industry, country, setIndustry, setCountry } = useAssessmentStore.getState()
     if (!industry && personaIndustry) setIndustry(personaIndustry)
@@ -162,6 +163,21 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
     [mode]
   )
   const stepTitles = mode === 'quick' ? STEP_TITLES_QUICK : STEP_TITLES_FULL
+
+  // Auto-suggest "I don't know" for executive persona on technical steps
+  useEffect(() => {
+    if (selectedPersona !== 'executive') return
+    const s = useAssessmentStore.getState()
+    // eslint-disable-next-line security/detect-object-injection
+    const stepKey = steps[currentStep]?.key
+    if (stepKey === 'crypto' && s.currentCrypto.length === 0 && !s.cryptoUnknown) {
+      s.setCryptoUnknown(true)
+    } else if (stepKey === 'agility' && !s.cryptoAgility) {
+      s.setCryptoAgility('unknown')
+    } else if (stepKey === 'infra' && s.infrastructure.length === 0 && !s.infrastructureUnknown) {
+      s.setInfrastructureUnknown(true)
+    }
+  }, [currentStep, selectedPersona, steps])
 
   const canProceed = () => {
     // eslint-disable-next-line security/detect-object-injection

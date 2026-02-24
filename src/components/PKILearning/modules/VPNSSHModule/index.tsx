@@ -134,7 +134,7 @@ export const VPNSSHModule: React.FC = () => {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="learn">Learn</TabsTrigger>
-          <TabsTrigger value="simulate">Simulate</TabsTrigger>
+          <TabsTrigger value="simulate">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
         </TabsList>

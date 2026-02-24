@@ -18,7 +18,7 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
   test('Completes PID Issuance and Relying Party Flows', async ({ page }) => {
     // 1. Navigation to Digital ID Module
     await page.goto('/')
-    await page.getByRole('button', { name: 'Learn' }).click()
+    await page.getByRole('button', { name: 'Learn' }).first().click()
 
     // Wait for modules to load - avoiding networkidle as it causes hangs in CI
     const digitalIdCard = page.getByRole('heading', { name: 'Digital ID', exact: true })
@@ -29,16 +29,30 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
     await expect(page.getByRole('heading', { name: 'EUDI Digital Identity Wallet' })).toBeVisible()
     await expect(page.getByText('Explore the European Digital Identity ecosystem')).toBeVisible()
 
+    // Enter Workshop Mode
+    await page.getByRole('button', { name: /Start the Simulation/i }).click()
+
+    // Dismiss "What's New" overlay if present
+    const dismissBtn = page.getByRole('button', { name: 'Dismiss', exact: true })
+    try {
+      await dismissBtn.waitFor({ state: 'visible', timeout: 3000 })
+      await dismissBtn.click()
+    } catch {
+      // ignore
+    }
+
     // -------------------------------------------------------------
     // Flow 1: PID Issuance
     // -------------------------------------------------------------
     await test.step('PID Issuance Flow', async () => {
-      // Select PID Issuer
-      const pidIssuerBtn = page.getByRole('button', { name: 'PID Issuer' })
-      await expect(pidIssuerBtn).toBeVisible()
-      await pidIssuerBtn.click()
+      // Wait for animation
+      await page.waitForTimeout(1000)
+      // Navigate to Step 2: PID Issuer
+      const pidIssuerBtn = page.getByRole('button', { name: /Step 2/i }).first()
+      await expect(pidIssuerBtn).toBeVisible({ timeout: 10000 })
+      await pidIssuerBtn.click({ force: true })
 
-      await expect(page.getByText('Motor Vehicle Authority')).toBeVisible()
+      await expect(page.getByText('National Identity Authority')).toBeVisible()
 
       // Step 1: Start Flow
       const startBtn = page.getByRole('button', { name: 'Start Issuance Flow' })
@@ -73,8 +87,11 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
     // Flow 2: Attestation Issuer (University)
     // -------------------------------------------------------------
     await test.step('Attestation Issuer Flow', async () => {
-      // Navigate to University
-      await page.getByRole('button', { name: 'University' }).click()
+      // Navigate to University (Step 3)
+      await page
+        .getByRole('button', { name: /Step 3/i })
+        .first()
+        .click({ force: true })
       await expect(page.getByText('Technical University')).toBeVisible()
 
       // Start Issuance
@@ -101,8 +118,11 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
     // Flow 3: Remote QES Provider
     // -------------------------------------------------------------
     await test.step('QES Provider Flow', async () => {
-      await page.getByRole('button', { name: 'QTSP (QES)' }).click()
-      await expect(page.getByText('Qualified Trust Service Provider')).toBeVisible()
+      await page
+        .getByRole('button', { name: /Step 5/i })
+        .first()
+        .click({ force: true })
+      await expect(page.getByText('Qualified Trust Service Provider').first()).toBeVisible()
 
       // Start UPLOAD Flow (simulated)
       await page.getByRole('button', { name: 'Proceed to Sign' }).click()
@@ -128,7 +148,10 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
     // Flow 4: Relying Party (Bank)
     // -------------------------------------------------------------
     await test.step('Relying Party Flow', async () => {
-      await page.getByRole('button', { name: 'Bank (RP)' }).click()
+      await page
+        .getByRole('button', { name: /Step 4/i })
+        .first()
+        .click({ force: true })
       await expect(page.getByRole('heading', { name: 'Bank (Relying Party)' })).toBeVisible()
 
       // Step 1: Login
@@ -139,7 +162,7 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
       await page.getByRole('button', { name: 'Consent & Share' }).click()
 
       // Wait for automated presentation/proof generation
-      await expect(page.getByText('Generating Zero-Knowledge Proof...')).toBeVisible({
+      await expect(page.getByText('Generating Device Binding Proof...')).toBeVisible({
         timeout: 5000,
       })
       await expect(page.getByRole('button', { name: 'Check Verification Result' })).toBeVisible({

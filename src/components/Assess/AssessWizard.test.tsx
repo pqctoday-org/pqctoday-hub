@@ -147,6 +147,9 @@ vi.mock('../../store/usePersonaStore', () => ({
       : { selectedIndustry: null, selectedRegion: null, selectedPersona: null },
 }))
 
+// jsdom does not implement scrollIntoView
+Element.prototype.scrollIntoView = vi.fn()
+
 describe('AssessWizard', () => {
   const onComplete = vi.fn()
 

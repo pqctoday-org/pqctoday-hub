@@ -236,7 +236,7 @@ export const AGILITY_COMPLEXITY: Record<string, number> = {
   'fully-abstracted': 0.2,
   'partially-abstracted': 0.5,
   hardcoded: 0.9,
-  unknown: 0.9, // not knowing is worst-case — assume hardcoded
+  unknown: 0.75, // conservative but not worst-case — softer than confirmed hardcoded
 }
 export const INFRA_COMPLEXITY: Record<string, number> = {
   'HSM / Hardware security modules': 15,
@@ -306,14 +306,14 @@ export const INDUSTRY_COMPOSITE_WEIGHTS: Record<
 > = {
   'Government & Defense': { qe: 0.3, mc: 0.15, rp: 0.3, or: 0.25 },
   'Finance & Banking': { qe: 0.3, mc: 0.2, rp: 0.3, or: 0.2 },
-  Healthcare: { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 },
+  Healthcare: { qe: 0.3, mc: 0.2, rp: 0.25, or: 0.25 },
   Telecommunications: { qe: 0.3, mc: 0.25, rp: 0.2, or: 0.25 },
   Technology: { qe: 0.35, mc: 0.2, rp: 0.15, or: 0.3 },
   'Energy & Utilities': { qe: 0.3, mc: 0.25, rp: 0.2, or: 0.25 },
   Automotive: { qe: 0.3, mc: 0.25, rp: 0.2, or: 0.25 },
   Aerospace: { qe: 0.3, mc: 0.25, rp: 0.25, or: 0.2 },
   'Retail & E-Commerce': { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 },
-  Education: { qe: 0.4, mc: 0.15, rp: 0.15, or: 0.3 },
+  Education: { qe: 0.35, mc: 0.15, rp: 0.2, or: 0.3 },
   Other: { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 },
 }
 export const DEFAULT_COMPOSITE_WEIGHTS = { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 }

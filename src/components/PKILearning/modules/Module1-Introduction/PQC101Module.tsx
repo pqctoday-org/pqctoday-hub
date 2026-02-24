@@ -17,11 +17,7 @@ import {
 
 const MODULE_ID = 'pqc-101'
 
-interface StepProps {
-  onComplete: () => void
-}
-
-const Step1WhyPQC: React.FC<StepProps> = ({ onComplete }) => {
+const Step1WhyPQC: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="glass-panel p-6 border-l-4 border-l-destructive">
@@ -133,17 +129,14 @@ const Step1WhyPQC: React.FC<StepProps> = ({ onComplete }) => {
         </div>
       </div>
 
-      <button
-        onClick={onComplete}
-        className="ml-auto block px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
-      >
-        Got it — what&apos;s being done about it? →
-      </button>
+      <p className="text-sm text-muted-foreground text-right mt-4">
+        Use the <strong>Next →</strong> button below to continue.
+      </p>
     </div>
   )
 }
 
-const Step2WhatsChanging: React.FC<StepProps> = ({ onComplete }) => {
+const Step2WhatsChanging: React.FC = () => {
   const families = [
     {
       name: 'Lattice-Based',
@@ -244,17 +237,14 @@ const Step2WhatsChanging: React.FC<StepProps> = ({ onComplete }) => {
         ))}
       </div>
 
-      <button
-        onClick={onComplete}
-        className="ml-auto block px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
-      >
-        What are the deadlines? →
-      </button>
+      <p className="text-sm text-muted-foreground text-right mt-4">
+        Use the <strong>Next →</strong> button below to continue.
+      </p>
     </div>
   )
 }
 
-const Step3Timeline: React.FC<StepProps> = ({ onComplete }) => {
+const Step3Timeline: React.FC = () => {
   const milestones = [
     { year: '2016', event: 'NIST launches PQC standardization competition', phase: 'Research' },
     {
@@ -336,17 +326,14 @@ const Step3Timeline: React.FC<StepProps> = ({ onComplete }) => {
         Explore the full interactive timeline →
       </Link>
 
-      <button
-        onClick={onComplete}
-        className="ml-auto block px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
-      >
-        Who needs to act? →
-      </button>
+      <p className="text-sm text-muted-foreground text-right mt-4">
+        Use the <strong>Next →</strong> button below to continue.
+      </p>
     </div>
   )
 }
 
-const Step4WhoNeedsToAct: React.FC<StepProps> = ({ onComplete }) => {
+const Step4WhoNeedsToAct: React.FC = () => {
   const sectors = [
     {
       name: 'Finance & Banking',
@@ -414,12 +401,9 @@ const Step4WhoNeedsToAct: React.FC<StepProps> = ({ onComplete }) => {
         View the full Quantum Threat Dashboard →
       </Link>
 
-      <button
-        onClick={onComplete}
-        className="ml-auto block px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
-      >
-        What should I do next? →
-      </button>
+      <p className="text-sm text-muted-foreground text-right mt-4">
+        Use the <strong>Next →</strong> button below to continue.
+      </p>
     </div>
   )
 }
@@ -578,22 +562,22 @@ export const PQC101Module: React.FC = () => {
     {
       id: 'why-pqc',
       title: 'Why PQC?',
-      component: <Step1WhyPQC onComplete={() => handleStepComplete('why-pqc', 1)} />,
+      component: <Step1WhyPQC />,
     },
     {
       id: 'whats-changing',
       title: "What's Changing",
-      component: <Step2WhatsChanging onComplete={() => handleStepComplete('whats-changing', 2)} />,
+      component: <Step2WhatsChanging />,
     },
     {
       id: 'the-timeline',
       title: 'The Timeline',
-      component: <Step3Timeline onComplete={() => handleStepComplete('the-timeline', 3)} />,
+      component: <Step3Timeline />,
     },
     {
       id: 'who-acts',
       title: 'Who Needs to Act',
-      component: <Step4WhoNeedsToAct onComplete={() => handleStepComplete('who-acts', 4)} />,
+      component: <Step4WhoNeedsToAct />,
     },
     {
       id: 'next-steps',
@@ -671,7 +655,11 @@ export const PQC101Module: React.FC = () => {
           </button>
         ) : (
           <button
-            onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
+            onClick={() => {
+              const step = steps[currentStep]
+
+              handleStepComplete(step.id, currentStep + 1)
+            }}
             className="px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
           >
             Next →

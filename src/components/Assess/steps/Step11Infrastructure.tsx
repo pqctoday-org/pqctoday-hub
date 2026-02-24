@@ -8,6 +8,8 @@ import { InlineTooltip } from '../../ui/InlineTooltip'
 
 import clsx from 'clsx'
 
+import { PersonaHint } from './PersonaHint'
+
 const Step11Infrastructure = () => {
   const { infrastructure, toggleInfrastructure, infrastructureUnknown, setInfrastructureUnknown } =
     useAssessmentStore()
@@ -20,6 +22,8 @@ const Step11Infrastructure = () => {
       <p className="text-sm text-muted-foreground">
         Infrastructure dependencies can significantly impact migration complexity and timelines.
       </p>
+
+      <PersonaHint stepKey="infra" />
 
       <div className="glass-panel p-4 border-l-4 border-l-warning mb-4">
         <div className="flex items-start gap-2">

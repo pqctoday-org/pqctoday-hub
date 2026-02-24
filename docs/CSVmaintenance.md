@@ -142,6 +142,7 @@ Keep at least **2 versions** in `src/data/` for status comparison. Move older fi
 - **Semicolon** `;` — multi-value fields (`industries`, `countries`, `libraryRefs`, `timelineRefs`)
 - **Pipe** `|` — multi-select quiz answers (`correctAnswer` in quiz CSV)
 - **Empty fields** — use `""` (empty quoted string), never omit the delimiter
+- **`migration_phases`** — comma-separated step IDs from the fixed set: `assess`, `plan`, `prepare`, `test`, `migrate`, `launch`, `rampup`. No spaces around commas. Quote the field if it contains commas (e.g., `"prepare,test,migrate"`). Must match step IDs defined in `migrationWorkflowData.ts`.
 
 ---
 

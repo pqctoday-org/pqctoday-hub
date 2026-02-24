@@ -1,97 +1,349 @@
 import React, { useState } from 'react'
 import { PenTool, Loader2 } from 'lucide-react'
 import { openSSLService } from '../../../../services/crypto/OpenSSLService'
+import { CLASSICAL_SIG_ALGOS, PQC_SIG_ALGOS } from './algorithmConfig'
 
 interface SignatureDemoProps {
   onComplete: () => void
 }
 
+// Signing metadata — extends the shared algorithm list with signing-specific flags
+const CLASSICAL_SIGN_META: Record<string, { genCmd: string; rawin: boolean }> = {
+  Ed25519: {
+    genCmd: 'openssl genpkey -algorithm ED25519 -out sign.key',
+    rawin: true,
+  },
+  'EC-P256': {
+    genCmd: 'openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out sign.key',
+    rawin: true,
+  },
+}
+
+const PQC_SIGN_META: Record<string, { genCmd: string; rawin: boolean }> = {
+  'ML-DSA-44': {
+    genCmd: 'openssl genpkey -algorithm ML-DSA-44 -out sign.key',
+    rawin: false,
+  },
+  'ML-DSA-65': {
+    genCmd: 'openssl genpkey -algorithm ML-DSA-65 -out sign.key',
+    rawin: false,
+  },
+  'ML-DSA-87': {
+    genCmd: 'openssl genpkey -algorithm ML-DSA-87 -out sign.key',
+    rawin: false,
+  },
+  'SLH-DSA-SHA2-128s': {
+    genCmd: 'openssl genpkey -algorithm SLH-DSA-SHA2-128s -out sign.key',
+    rawin: false,
+  },
+}
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+interface SigState {
+  sigHex: string | null
+  sigBytes: number | null
+  loading: boolean
+  algoLabel: string
+}
+
+const emptySigState = (label: string): SigState => ({
+  sigHex: null,
+  sigBytes: null,
+  loading: false,
+  algoLabel: label,
+})
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
 export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
   const [message, setMessage] = useState('Hello, PKI World!')
-  const [signature, setSignature] = useState<string | null>(null)
-  const [isSigning, setIsSigning] = useState(false)
+  const [classicalAlgo, setClassicalAlgo] = useState('Ed25519')
+  const [pqcAlgo, setPqcAlgo] = useState('ML-DSA-65')
+  const [classicalSig, setClassicalSig] = useState<SigState>(
+    emptySigState(CLASSICAL_SIG_ALGOS[0].label)
+  )
+  const [pqcSig, setPqcSig] = useState<SigState>(emptySigState(PQC_SIG_ALGOS[1].label))
+  const [everCompleted, setEverCompleted] = useState(false)
 
-  const handleSign = async () => {
-    setIsSigning(true)
+  const runSign = async (
+    algoValue: string,
+    meta: Record<string, { genCmd: string; rawin: boolean }>,
+    algoList: ReadonlyArray<{ value: string; label: string }>,
+    setState: React.Dispatch<React.SetStateAction<SigState>>
+  ) => {
+    // eslint-disable-next-line security/detect-object-injection
+    const m = meta[algoValue]
+    const label = algoList.find((a) => a.value === algoValue)?.label ?? algoValue
+    if (!m) return
+
+    setState({ sigHex: null, sigBytes: null, loading: true, algoLabel: label })
 
     try {
-      // 1. Generate a temporary key for signing
-      const keyResult = await openSSLService.execute(
-        'openssl genpkey -algorithm ED25519 -out sign.key'
-      )
+      // 1. Generate ephemeral signing key
+      const keyResult = await openSSLService.execute(m.genCmd)
       const keyFile = keyResult.files.find((f) => f.name === 'sign.key')
-
       if (!keyFile) throw new Error('Failed to generate signing key')
 
       // 2. Create message file
       const msgFile = { name: 'message.txt', data: new TextEncoder().encode(message) }
 
-      // 3. Sign the message
-      // openssl pkeyutl -sign -inkey sign.key -rawin -in message.txt -out signature.bin
-      const signCmd =
-        'openssl pkeyutl -sign -inkey sign.key -rawin -in message.txt -out signature.bin'
+      // 3. Sign — ML-DSA/SLH-DSA have internal hash, Ed25519/EC need -rawin
+      const rawFlag = m.rawin ? ' -rawin' : ''
+      const signCmd = `openssl pkeyutl -sign -inkey sign.key${rawFlag} -in message.txt -out signature.bin`
       const signResult = await openSSLService.execute(signCmd, [keyFile, msgFile])
 
       const sigFile = signResult.files.find((f) => f.name === 'signature.bin')
-      if (sigFile) {
-        // Convert binary signature to hex for display
-        const hexSig = Array.from(sigFile.data)
-          .map((b) => b.toString(16).padStart(2, '0'))
-          .join('')
-        setSignature(hexSig)
+      if (!sigFile) throw new Error('Signature not produced')
+
+      const hex = Array.from(sigFile.data)
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+
+      setState({ sigHex: hex, sigBytes: sigFile.data.length, loading: false, algoLabel: label })
+
+      if (!everCompleted) {
+        setEverCompleted(true)
         onComplete()
       }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsSigning(false)
+    } catch (err) {
+      console.error(err)
+      setState((prev) => ({ ...prev, loading: false }))
     }
   }
 
+  const handleSignClassical = () =>
+    runSign(classicalAlgo, CLASSICAL_SIGN_META, CLASSICAL_SIG_ALGOS, setClassicalSig)
+  const handleSignPQC = () => runSign(pqcAlgo, PQC_SIGN_META, PQC_SIG_ALGOS, setPqcSig)
+
+  const handleSignBoth = () => {
+    handleSignClassical()
+    handleSignPQC()
+  }
+
+  const bothReady = classicalSig.sigBytes !== null && pqcSig.sigBytes !== null
+  const maxSigBytes = Math.max(classicalSig.sigBytes ?? 0, pqcSig.sigBytes ?? 0, 64)
+
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* Shared message input */}
+      <div className="space-y-2">
+        <label htmlFor="sign-message" className="block text-sm font-medium text-foreground">
+          Message to Sign
+        </label>
+        <textarea
+          id="sign-message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="w-full h-20 bg-muted border border-border rounded p-3 text-foreground resize-none text-sm"
+          placeholder="Enter a message to sign…"
+        />
+      </div>
+
+      {/* Sign Both CTA */}
+      <div className="flex justify-center">
+        <button
+          onClick={handleSignBoth}
+          disabled={classicalSig.loading || pqcSig.loading || !message}
+          className="flex items-center gap-2 px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+        >
+          <PenTool size={16} />
+          Sign with Both &amp; Compare
+        </button>
+      </div>
+
+      {/* Two-column layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* ── Classical ── */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">1. Create Message</h3>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-full h-32 bg-muted border border-border rounded p-3 text-foreground resize-none"
-            placeholder="Enter a message to sign..."
-          />
+          <span className="inline-block px-2 py-0.5 rounded text-xs font-bold bg-destructive/10 text-destructive border border-destructive/20">
+            Classical (Quantum-Vulnerable)
+          </span>
+
+          <div>
+            <label
+              htmlFor="classical-sig-algo"
+              className="block text-sm text-muted-foreground mb-1"
+            >
+              Algorithm
+            </label>
+            <select
+              id="classical-sig-algo"
+              value={classicalAlgo}
+              onChange={(e) => setClassicalAlgo(e.target.value)}
+              className="w-full bg-muted border border-border rounded px-3 py-2 text-foreground"
+            >
+              {CLASSICAL_SIG_ALGOS.map((a) => (
+                <option key={a.value} value={a.value}>
+                  {a.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <button
-            onClick={handleSign}
-            disabled={isSigning || !message}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
+            onClick={handleSignClassical}
+            disabled={classicalSig.loading || !message}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-destructive/40 text-destructive font-bold rounded hover:bg-destructive/10 transition-colors disabled:opacity-50"
           >
-            {isSigning ? <Loader2 className="animate-spin" /> : <PenTool size={16} />}
-            Sign Message
-          </button>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">2. Digital Signature</h3>
-          <div className="bg-muted rounded-lg p-4 border border-border h-32 overflow-y-auto custom-scrollbar">
-            {signature ? (
-              <code className="text-xs text-primary break-all">{signature}</code>
+            {classicalSig.loading ? (
+              <Loader2 className="animate-spin" size={16} />
             ) : (
-              <p className="text-muted-foreground text-sm italic">Signature will appear here...</p>
+              <PenTool size={16} />
+            )}
+            Sign with {classicalAlgo}
+          </button>
+
+          <div className="bg-muted rounded-lg p-4 border border-border h-[120px] overflow-y-auto custom-scrollbar">
+            {classicalSig.sigHex ? (
+              <code className="text-xs text-primary break-all">{classicalSig.sigHex}</code>
+            ) : (
+              <p className="text-muted-foreground text-sm italic">Signature will appear here…</p>
             )}
           </div>
 
-          {signature && (
-            <div className="text-sm text-muted-foreground">
-              <p>This unique signature proves that:</p>
-              <ul className="list-disc list-inside mt-1 space-y-1">
-                <li>The message came from you (Authentication)</li>
-                <li>The message hasn't been changed (Integrity)</li>
-                <li>You cannot deny signing it (Non-repudiation)</li>
-              </ul>
+          {classicalSig.sigBytes !== null && (
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Signature size</span>
+              <span className="font-mono font-bold text-foreground">
+                {classicalSig.sigBytes} bytes
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* ── PQC ── */}
+        <div className="space-y-4">
+          <span className="inline-block px-2 py-0.5 rounded text-xs font-bold bg-accent/10 text-accent border border-accent/20">
+            Post-Quantum (Quantum-Safe)
+          </span>
+
+          <div>
+            <label htmlFor="pqc-sig-algo" className="block text-sm text-muted-foreground mb-1">
+              Algorithm
+            </label>
+            <select
+              id="pqc-sig-algo"
+              value={pqcAlgo}
+              onChange={(e) => setPqcAlgo(e.target.value)}
+              className="w-full bg-muted border border-border rounded px-3 py-2 text-foreground"
+            >
+              {PQC_SIG_ALGOS.map((a) => (
+                <option key={a.value} value={a.value}>
+                  {a.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            onClick={handleSignPQC}
+            disabled={pqcSig.loading || !message}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-accent/40 text-accent font-bold rounded hover:bg-accent/10 transition-colors disabled:opacity-50"
+          >
+            {pqcSig.loading ? (
+              <Loader2 className="animate-spin" size={16} />
+            ) : (
+              <PenTool size={16} />
+            )}
+            Sign with {pqcAlgo}
+          </button>
+
+          <div className="bg-muted rounded-lg p-4 border border-border h-[120px] overflow-y-auto custom-scrollbar">
+            {pqcSig.sigHex ? (
+              <code className="text-xs text-accent break-all">{pqcSig.sigHex}</code>
+            ) : (
+              <p className="text-muted-foreground text-sm italic">Signature will appear here…</p>
+            )}
+          </div>
+
+          {pqcSig.sigBytes !== null && (
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Signature size</span>
+              <span className="font-mono font-bold text-foreground">{pqcSig.sigBytes} bytes</span>
             </div>
           )}
         </div>
       </div>
+
+      {/* ── Signature Size Comparison ── */}
+      {bothReady && (
+        <div className="glass-panel p-5 space-y-4">
+          <h4 className="font-semibold text-foreground">Signature Size Comparison</h4>
+
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-3">
+              <div className="w-32 text-xs text-right text-muted-foreground truncate">
+                {classicalSig.algoLabel}
+              </div>
+              <div className="flex-1 h-5 bg-muted rounded overflow-hidden">
+                <div
+                  className="h-full bg-destructive/50 rounded transition-all duration-700"
+                  style={{ width: `${((classicalSig.sigBytes ?? 0) / maxSigBytes) * 100}%` }}
+                />
+              </div>
+              <div className="w-20 text-xs font-mono text-foreground text-right">
+                {classicalSig.sigBytes} B
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-32 text-xs text-right text-accent truncate">{pqcSig.algoLabel}</div>
+              <div className="flex-1 h-5 bg-muted rounded overflow-hidden">
+                <div
+                  className="h-full bg-accent/50 rounded transition-all duration-700"
+                  style={{ width: `${((pqcSig.sigBytes ?? 0) / maxSigBytes) * 100}%` }}
+                />
+              </div>
+              <div className="w-20 text-xs font-mono text-foreground text-right">
+                {pqcSig.sigBytes} B
+              </div>
+            </div>
+          </div>
+
+          {/* Properties table */}
+          <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border">
+            <div className="text-xs space-y-1.5">
+              <p className="font-semibold text-muted-foreground mb-2">{classicalSig.algoLabel}</p>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Quantum-safe</span>
+                <span className="text-destructive font-bold">✗ No</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Sig size</span>
+                <span className="font-mono text-foreground">{classicalSig.sigBytes} B</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Standard</span>
+                <span className="text-foreground">RFC 8032</span>
+              </div>
+            </div>
+            <div className="text-xs space-y-1.5">
+              <p className="font-semibold text-accent mb-2">{pqcSig.algoLabel}</p>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Quantum-safe</span>
+                <span className="text-status-success font-bold">✓ Yes</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Sig size</span>
+                <span className="font-mono text-foreground">{pqcSig.sigBytes} B</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Standard</span>
+                <span className="text-foreground">
+                  {pqcAlgo.startsWith('SLH') ? 'FIPS 205' : 'FIPS 204'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-sm text-muted-foreground">
+            <strong className="text-foreground">Key insight:</strong> PQC signatures are larger
+            because lattice and hash-based math requires more data to encode security. The trade-off
+            is intentional — that extra size is what keeps signatures safe even against a
+            cryptographically-relevant quantum computer.
+          </p>
+        </div>
+      )}
     </div>
   )
 }

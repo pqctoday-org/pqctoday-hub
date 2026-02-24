@@ -2296,4 +2296,126 @@ export const glossaryTerms: GlossaryTerm[] = [
     complexity: 'advanced',
     category: 'standard',
   },
+
+  // === Merkle Tree Certificates ===
+  {
+    term: 'Merkle Tree Certificate',
+    acronym: 'MTC',
+    definition:
+      'A certificate format that replaces individual per-certificate digital signatures with a compact inclusion proof in a Merkle tree. A single CA signature on the tree root covers the entire batch, dramatically reducing TLS handshake sizes for post-quantum algorithms.',
+    technicalNote:
+      'For a batch of ~4.4 million certificates, the inclusion proof is 736 bytes (23 sibling hashes × 32 bytes). This achieves 63–74% size reduction compared to traditional X.509 certificate chains with ML-DSA signatures.',
+    relatedModule: '/learn/merkle-tree-certs',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Merkle Tree Certificate Authority',
+    acronym: 'MTCA',
+    definition:
+      'A Certificate Authority that collects certificate assertions into a Merkle tree, signs the root hash, and distributes inclusion proofs to subscribers. The MTCA replaces individual certificate signatures with batch-level tree signing.',
+    technicalNote:
+      'The MTCA role is defined in draft-ietf-plants-merkle-tree-certs. Unlike traditional CAs that sign each certificate individually, an MTCA signs once per batch. A transparency service publishes signed roots for client synchronization.',
+    relatedModule: '/learn/merkle-tree-certs',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Inclusion Proof',
+    definition:
+      'A compact chain of sibling hashes from a leaf to the root of a Merkle tree, proving that a specific item (such as a certificate) is part of the committed batch. Verification requires only hash recomputation, not signature verification.',
+    technicalNote:
+      'The proof size is O(log₂ N) where N is the number of leaves. For 2²³ (~8.4 million) leaves, the proof contains 23 sibling hashes (736 bytes at 32 bytes per SHA-256 hash). Domain-separated hashing (0x00 for leaves, 0x01 for internal nodes per RFC 9162) prevents second-preimage attacks.',
+    relatedModule: '/learn/merkle-tree-certs',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Certificate Bloat',
+    definition:
+      'The significant increase in TLS certificate chain sizes caused by post-quantum signature algorithms. An ML-DSA-44 signature is 2,420 bytes compared to 64 bytes for ECDSA P-256, leading to 18–36 KB PQC TLS chain overhead that can break constrained clients and degrade connection setup times.',
+    relatedModule: '/learn/merkle-tree-certs',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Batch Signing',
+    definition:
+      'A cryptographic technique where a single digital signature covers multiple items simultaneously by signing a hash that commits to the entire set. In Merkle Tree Certificates, the CA signs the tree root once to authenticate potentially millions of certificates.',
+    relatedModule: '/learn/merkle-tree-certs',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Domain-Separated Hashing',
+    definition:
+      'A technique that prepends a unique prefix byte to hash inputs depending on their type, preventing one type of hash from being confused with another. In Merkle trees, leaf hashes use prefix 0x00 and internal node hashes use prefix 0x01, as specified in RFC 9162.',
+    technicalNote:
+      'Without domain separation, an attacker could construct a leaf whose hash matches an internal node, enabling second-preimage attacks. The 0x00/0x01 prefix convention is defined in RFC 9162 (Certificate Transparency v2).',
+    relatedModule: '/learn/merkle-tree-certs',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'IETF PLANTS Working Group',
+    acronym: 'PLANTS',
+    definition:
+      'The IETF working group responsible for standardizing Merkle Tree Certificates and related post-quantum PKI infrastructure. Adopted draft-ietf-plants-merkle-tree-certs in January 2026.',
+    relatedModule: '/learn/merkle-tree-certs',
+    complexity: 'intermediate',
+    category: 'organization',
+  },
+  {
+    term: 'Cosigner Quorum',
+    definition:
+      'A trust mechanism in Merkle Tree Certificate deployments where relying parties accept a signed subtree only after a configured set of external witnesses (cosigners) have co-signed it, preventing a compromised CA from silently issuing fraudulent certificates.',
+    relatedModule: '/learn/merkle-tree-certs',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+
+  // === Digital Assets PQC Migration ===
+  {
+    term: 'BIP-360',
+    acronym: 'P2QRH',
+    definition:
+      'Pay to Quantum Resistant Hash, a proposed Bitcoin soft fork that introduces a new native SegWit v3 output type using NIST PQC signature algorithms (ML-DSA or FN-DSA) instead of secp256k1 ECDSA. Proposed by Hunter Beast in 2024.',
+    technicalNote:
+      'P2QRH addresses use bech32m encoding (bc1r…). The PQC public key is hashed (SHA-256 then HASH160) until spending time, when the full public key and PQC signature are revealed in the witness data. Transaction witness sizes increase 9–46× depending on the algorithm.',
+    relatedModule: '/learn/digital-assets',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'Account Abstraction',
+    acronym: 'AA',
+    definition:
+      'An Ethereum protocol feature (EIP-4337) that enables smart contract wallets with arbitrary signature verification logic. This allows users to switch from ECDSA to PQC signatures (ML-DSA or FN-DSA) today without a protocol hard fork.',
+    technicalNote:
+      'EIP-4337 smart accounts verify PQC signatures on-chain at higher gas cost (~300k–500k gas per PQC signature vs ~21k for ECDSA). Combined with EIP-7702 (code delegation for EOAs), this provides a two-phase PQC migration path for Ethereum.',
+    relatedModule: '/learn/digital-assets',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Solana Improvement Document',
+    acronym: 'SIMD',
+    definition:
+      "The formal proposal process for Solana protocol changes, analogous to Bitcoin BIPs and Ethereum EIPs. As of early 2026, no SIMD for PQC has been ratified, making Solana's quantum migration path the least defined of the three major blockchains.",
+    relatedModule: '/learn/digital-assets',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+
+  // === QKD ===
+  {
+    term: 'Information-Theoretic Security',
+    definition:
+      "A security guarantee that holds regardless of the adversary's computational power, including quantum computers. QKD achieves this for key distribution because its security is derived from the laws of quantum physics rather than mathematical hardness assumptions.",
+    technicalNote:
+      'Distinguished from computational security (used by PQC), which assumes the adversary has bounded computational resources. Information-theoretic security means that even with unlimited computing power, an attacker cannot break the scheme.',
+    relatedModule: '/learn/qkd',
+    complexity: 'advanced',
+    category: 'concept',
+  },
 ]

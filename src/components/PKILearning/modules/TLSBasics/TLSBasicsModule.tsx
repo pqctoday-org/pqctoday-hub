@@ -286,7 +286,7 @@ export const TLSBasicsModule: React.FC = () => {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="learn">Learn</TabsTrigger>
-          <TabsTrigger value="simulate">Simulate</TabsTrigger>
+          <TabsTrigger value="simulate">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
         </TabsList>
@@ -348,6 +348,21 @@ export const TLSBasicsModule: React.FC = () => {
             <div className="mt-6">
               <TLSComparisonTable />
             </div>
+
+            {/* Complete Module — shown after a successful simulation */}
+            {results?.status === 'success' && (
+              <div className="flex justify-end">
+                <button
+                  onClick={() => {
+                    markStepComplete(MODULE_ID, 'workshop')
+                    updateModuleProgress(MODULE_ID, { status: 'completed' })
+                  }}
+                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+                >
+                  Complete Module ✓
+                </button>
+              </div>
+            )}
           </div>
         </TabsContent>
 

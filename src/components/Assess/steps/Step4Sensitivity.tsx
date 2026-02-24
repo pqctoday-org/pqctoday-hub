@@ -10,6 +10,8 @@ import { InlineTooltip } from '../../ui/InlineTooltip'
 
 import clsx from 'clsx'
 
+import { PersonaHint } from './PersonaHint'
+
 const Step4Sensitivity = () => {
   const {
     dataSensitivity,
@@ -59,6 +61,8 @@ const Step4Sensitivity = () => {
         <InlineTooltip term="HNDL">&ldquo;Harvest Now, Decrypt Later&rdquo; (HNDL)</InlineTooltip>{' '}
         attacks. Select all that apply — your risk is assessed against the highest level present.
       </p>
+
+      <PersonaHint stepKey="sensitivity" />
 
       <div className="glass-panel p-4 border-l-4 border-l-warning mb-4">
         <div className="flex items-start gap-2">

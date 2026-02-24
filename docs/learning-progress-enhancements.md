@@ -402,9 +402,12 @@ loadProgress() → Zustand state
 
 ### Future-Proof
 
-- ✅ Forward migration system in place (v1 → v2+)
-- ✅ Version tracking in all persisted stores
+- ✅ Forward migration system in place (v1 → v2+) — all stores now have `migrate()` functions
+- ✅ Version tracking in all persisted stores — explicit `version` field in persist config
 - ✅ Migration template for breaking changes
+- ✅ `onRehydrateStorage` crash guard on all stores — corrupted localStorage never crashes the app
+- ✅ Assessment store schema migration (v1 string → v2 array for dataSensitivity/dataRetention)
+- ✅ Persona store field-default migration — prevents `undefined` when new fields are added
 
 ---
 

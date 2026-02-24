@@ -14,6 +14,8 @@ import { InlineTooltip } from '../../ui/InlineTooltip'
 
 import clsx from 'clsx'
 
+import { PersonaHint } from './PersonaHint'
+
 const Step8DataRetention = () => {
   const { dataRetention, toggleDataRetention, retentionUnknown, setRetentionUnknown, industry } =
     useAssessmentStore()
@@ -40,6 +42,8 @@ const Step8DataRetention = () => {
         Select all categories that apply — <InlineTooltip term="HNDL">HNDL</InlineTooltip> risk is
         assessed against the longest period.
       </p>
+
+      <PersonaHint stepKey="retention" />
 
       <div className="glass-panel p-4 border-l-4 border-l-warning mb-4">
         <div className="flex items-start gap-2">

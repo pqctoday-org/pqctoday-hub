@@ -22,6 +22,8 @@ export type QuizCategory =
   | 'email-signing'
   | 'key-management'
   | 'entropy-randomness'
+  | 'merkle-tree-certs'
+  | 'qkd'
 
 export interface QuizOption {
   id: string
@@ -45,6 +47,8 @@ export interface QuizQuestion {
   learnMorePath?: string
   /** Personas that this question is relevant for */
   personas: string[]
+  /** Industries this question is relevant to (empty = industry-agnostic, always included) */
+  industries: string[]
 }
 
 export interface QuizCategoryMeta {

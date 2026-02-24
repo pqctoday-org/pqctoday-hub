@@ -4,13 +4,15 @@ test.describe('Compliance Table Sorting', () => {
   test('should sort by Product Name', async ({ page }) => {
     // Go to compliance page
     await page.goto('/compliance')
+    // Switch to table tab
+    await page.getByText('All Records').click()
 
     // Wait for table to load
     await page.waitForSelector('table tbody tr')
 
     // Click "Product Name" header to sort ASC
     await page.getByRole('button', { name: 'Product Name' }).click()
-
+    await page.waitForTimeout(500)
     // Get all product names
     const namesAsc = await page
       .locator('tbody tr td:nth-child(4) > div:first-child')
@@ -33,6 +35,8 @@ test.describe('Compliance Table Sorting', () => {
 
   test('should sort by Date', async ({ page }) => {
     await page.goto('/compliance')
+    // Switch to table tab
+    await page.getByText('All Records').click()
     await page.waitForSelector('table tbody tr')
 
     // Default might be desc, click to toggle

@@ -329,6 +329,11 @@ system_default = system_default_sect
         serverMessage: state.serverMessage,
         // Exclude: results, isSimulating, commands, sessionStatus (ephemeral)
       }),
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) {
+          console.error('TLS store rehydration failed:', error)
+        }
+      },
     }
   )
 )

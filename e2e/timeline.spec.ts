@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import AxeBuilder from 'axe-playwright'
+import { injectAxe, checkA11y } from 'axe-playwright'
 
 test.describe('Timeline View', () => {
   test.beforeEach(async ({ page }) => {
@@ -105,13 +105,16 @@ test.describe('Timeline View', () => {
     await expect(page.getByText('Loading...')).not.toBeVisible({ timeout: 10000 })
 
     // Run axe accessibility audit
-    const results = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-      .exclude('.lucide') // Exclude icon library decorative elements
-      .analyze()
-
-    // Assert no violations
-    expect(results.violations).toEqual([])
+    await injectAxe(page)
+    await checkA11y(
+      page,
+      { exclude: ['.lucide'] },
+      {
+        axeOptions: {
+          runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] },
+        },
+      }
+    )
   })
 
   test('passes accessibility audit with popover open', async ({ page }) => {
@@ -126,13 +129,16 @@ test.describe('Timeline View', () => {
     await expect(page.getByText('Start', { exact: true })).toBeVisible()
 
     // Run accessibility audit with popover open
-    const results = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-      .exclude('.lucide')
-      .analyze()
-
-    // Assert no violations
-    expect(results.violations).toEqual([])
+    await injectAxe(page)
+    await checkA11y(
+      page,
+      { exclude: ['.lucide'] },
+      {
+        axeOptions: {
+          runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] },
+        },
+      }
+    )
   })
 
   test('passes accessibility audit (mobile viewport)', async ({ page }) => {
@@ -147,12 +153,15 @@ test.describe('Timeline View', () => {
     await expect(page.getByText('Loading...')).not.toBeVisible({ timeout: 10000 })
 
     // Run accessibility audit on mobile
-    const results = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-      .exclude('.lucide')
-      .analyze()
-
-    // Assert no violations
-    expect(results.violations).toEqual([])
+    await injectAxe(page)
+    await checkA11y(
+      page,
+      { exclude: ['.lucide'] },
+      {
+        axeOptions: {
+          runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] },
+        },
+      }
+    )
   })
 })

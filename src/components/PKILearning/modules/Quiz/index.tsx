@@ -68,19 +68,32 @@ export const QuizModule: React.FC = () => {
   } | null
 
   const { updateModuleProgress, markStepComplete, modules } = useModuleStore()
-  const { selectedPersona } = usePersonaStore()
+  const { selectedPersona, selectedIndustry: storeIndustry } = usePersonaStore()
+  const [industryFilter, setIndustryFilter] = useState<string | null>(storeIndustry)
   const persona = selectedPersona ? PERSONAS[selectedPersona] : null
   const [view, setView] = useState<'intro' | 'quiz' | 'results'>('intro')
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
   const [completionData, setCompletionData] = useState<QuizCompletionData | null>(null)
   const [lastMode, setLastMode] = useState<QuizMode>('quick')
   const [lastCategories, setLastCategories] = useState<QuizCategory[]>([])
+  const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([
+    'beginner',
+    'intermediate',
+    'advanced',
+  ])
   const startTimeRef = useRef(0)
 
   const filteredQuestions = useMemo(() => {
-    if (!selectedPersona) return QUIZ_QUESTIONS
-    return QUIZ_QUESTIONS.filter((q) => q.personas.includes(selectedPersona))
-  }, [selectedPersona])
+    let pool = QUIZ_QUESTIONS
+    if (selectedPersona) {
+      pool = pool.filter((q) => q.personas.includes(selectedPersona))
+    }
+    pool = pool.filter((q) => selectedDifficulties.includes(q.difficulty))
+    if (industryFilter) {
+      pool = pool.filter((q) => q.industries.length === 0 || q.industries.includes(industryFilter))
+    }
+    return pool
+  }, [selectedPersona, selectedDifficulties, industryFilter])
 
   const filteredCategories = useMemo(() => {
     const counts = new Map<QuizCategory, number>()
@@ -198,6 +211,18 @@ export const QuizModule: React.FC = () => {
               : undefined)
           }
           personaLabel={checkpointState?.checkpointLabel ?? persona?.label}
+          industryFilter={industryFilter}
+          onClearIndustryFilter={() => setIndustryFilter(null)}
+          selectedDifficulties={selectedDifficulties}
+          onToggleDifficulty={(diff: string) => {
+            setSelectedDifficulties((prev) =>
+              prev.includes(diff)
+                ? prev.length > 1
+                  ? prev.filter((d) => d !== diff)
+                  : prev
+                : [...prev, diff]
+            )
+          }}
         />
       )}
       {view === 'quiz' && (

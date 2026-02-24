@@ -64,10 +64,6 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
             </ul>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground mt-3 italic">
-          Sources: Bitcoin whitepaper (Nakamoto, 2008) &sect;2, Ethereum Yellow Paper (Wood, 2014)
-          &sect;4
-        </p>
       </section>
 
       {/* Section 2: Elliptic Curves */}
@@ -112,10 +108,6 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
             </p>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground mt-3 italic">
-          Sources: SEC 2 v2 (Certicom Research, 2010), RFC 8032 &mdash; Edwards-Curve Digital
-          Signature Algorithm (Josefsson &amp; Liusvaara, 2017)
-        </p>
       </section>
 
       {/* Section 3: Address Derivation */}
@@ -158,10 +150,6 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
           encoding. Ethereum uses Keccak-256 (note: this is the original Keccak submission, not the
           NIST SHA3-256 standard — they differ in padding). Solana is the simplest: the 32-byte
           Ed25519 public key is directly Base58-encoded as the address.
-        </p>
-        <p className="text-xs text-muted-foreground mt-1 italic">
-          Sources: Bitcoin Wiki &mdash; Technical background of addresses, EIP-55 (Buterin, 2016),
-          Solana Documentation &mdash; Account Model
         </p>
       </section>
 
@@ -212,10 +200,6 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
             </span>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground mt-3 italic">
-          Sources: FIPS 186-5 &mdash; Digital Signature Standard (NIST, 2023), RFC 8032 &mdash;
-          EdDSA (IETF, 2017), EIP-155 &mdash; Simple Replay Attack Protection (Buterin, 2016)
-        </p>
       </section>
 
       {/* Section 5: HD Wallets */}
@@ -276,10 +260,6 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
             </tbody>
           </table>
         </div>
-        <p className="text-xs text-muted-foreground mt-3 italic">
-          Sources: BIP-32 (Wuille, 2012), BIP-39 (Palatinus et al., 2013), BIP-44 (Palatinus &amp;
-          Rusnak, 2014), SLIP-0010 (SatoshiLabs)
-        </p>
       </section>
 
       {/* Section 6: PQC Threats */}
@@ -303,147 +283,6 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
           >
             Try It in the Workshop <ArrowRight size={16} />
           </button>
-        </div>
-      </section>
-
-      {/* References */}
-      <section className="glass-panel p-6">
-        <h2 className="text-lg font-bold text-foreground mb-3">References</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-muted-foreground">
-          <div>
-            <h3 className="font-semibold text-foreground text-sm mb-2">
-              Standards & Specifications
-            </h3>
-            <ul className="space-y-1">
-              <li>
-                <a
-                  href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  BIP-32: Hierarchical Deterministic Wallets
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  BIP-39: Mnemonic Code for Deterministic Keys
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  BIP-44: Multi-Account Hierarchy
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/satoshilabs/slips/blob/master/slip-0010.md"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  SLIP-0010: Universal Ed25519 HD Derivation
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://eips.ethereum.org/EIPS/eip-55"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  EIP-55: Mixed-case Checksum Address Encoding
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://eips.ethereum.org/EIPS/eip-155"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  EIP-155: Simple Replay Attack Protection
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold text-foreground text-sm mb-2">
-              Cryptographic Standards & Documentation
-            </h3>
-            <ul className="space-y-1">
-              <li>
-                <a
-                  href="https://www.secg.org/sec2-v2.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  SEC 2 v2: Recommended Elliptic Curve Parameters (secp256k1)
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://datatracker.ietf.org/doc/html/rfc8032"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  RFC 8032: Edwards-Curve Digital Signature Algorithm (EdDSA)
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://csrc.nist.gov/pubs/fips/186-5/final"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  FIPS 186-5: Digital Signature Standard (NIST, 2023)
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://ethereum.github.io/yellowpaper/paper.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  Ethereum Yellow Paper (Wood, 2014)
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://bitcoin.org/bitcoin.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  Bitcoin: A Peer-to-Peer Electronic Cash System (Nakamoto, 2008)
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.openssl.org/docs/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  OpenSSL 3.x Documentation
-                </a>
-              </li>
-            </ul>
-          </div>
         </div>
       </section>
 

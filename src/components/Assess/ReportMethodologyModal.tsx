@@ -102,8 +102,10 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                       A composite score derived from four weighted categories. Higher means more
                       urgent action is needed. Each industry uses tailored category weights &mdash;
                       for example, government and finance weight regulatory pressure higher, while
-                      telecom and energy weight migration complexity higher. Compliance frameworks
-                      with nearer deadlines contribute more to regulatory pressure.
+                      telecom and energy weight migration complexity higher. Education and
+                      healthcare weight regulatory pressure proportionally to their compliance
+                      burden (FERPA, HIPAA). Compliance frameworks with nearer deadlines contribute
+                      more to regulatory pressure.
                     </p>
                   </div>
                 </div>
@@ -165,8 +167,12 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                     <p className="text-xs text-muted-foreground leading-relaxed mb-2">
                       When you select &ldquo;I don&apos;t know&rdquo; for any question, the report
                       applies{' '}
-                      <span className="font-medium text-foreground">conservative defaults</span> to
-                      avoid underestimating your risk. For example:
+                      <span className="font-medium text-foreground">conservative defaults</span>{' '}
+                      that are{' '}
+                      <span className="font-medium text-foreground">
+                        softer than confirmed worst-case
+                      </span>{' '}
+                      answers, to avoid over-penalizing honest uncertainty. For example:
                     </p>
                     <ul className="text-xs text-muted-foreground space-y-1 ml-4 list-disc">
                       <li>
@@ -186,7 +192,13 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                       </li>
                       <li>
                         Unknown vendor dependency &rarr; assumes{' '}
-                        <span className="font-medium text-foreground">heavy vendor</span> reliance
+                        <span className="font-medium text-foreground">~80% of worst-case</span>{' '}
+                        vendor reliance (less punitive than confirmed heavy dependency)
+                      </li>
+                      <li>
+                        Unknown crypto agility &rarr; assumes{' '}
+                        <span className="font-medium text-foreground">~83% of worst-case</span>{' '}
+                        complexity (less punitive than confirmed hardcoded)
                       </li>
                       <li>
                         Unknown infrastructure &rarr; assumes{' '}
@@ -194,6 +206,13 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                         complexity
                       </li>
                     </ul>
+                    <p className="text-xs text-muted-foreground leading-relaxed mt-2">
+                      <span className="font-medium text-foreground">Executive persona:</span>{' '}
+                      technical questions (crypto algorithms, agility, infrastructure) apply an
+                      additional reduction because executives are not expected to know these
+                      details. The wizard also auto-suggests &ldquo;I don&apos;t know&rdquo; on
+                      these steps.
+                    </p>
                     <p className="text-xs text-muted-foreground leading-relaxed mt-2">
                       Each &ldquo;I don&apos;t know&rdquo; also generates a specific{' '}
                       <span className="font-medium text-foreground">awareness-gap action</span>{' '}
@@ -203,8 +222,47 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                 </div>
               </div>
 
+              {/* Persona-Aware Reports */}
+              <div className="mb-6">
+                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+                  Persona-Aware Reports
+                </p>
+                <div className="flex items-start gap-3">
+                  <HelpCircle size={16} className="text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-2">
+                      If you selected a persona, the report narrative and recommendations are
+                      tailored to your role:
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-1 ml-4 list-disc">
+                      <li>
+                        <span className="font-medium text-foreground">Executive</span> &mdash;
+                        business/risk language, budget and competitive framing, no algorithm names
+                      </li>
+                      <li>
+                        <span className="font-medium text-foreground">Developer</span> &mdash;
+                        algorithm migration paths with FIPS references, library recommendations
+                      </li>
+                      <li>
+                        <span className="font-medium text-foreground">Architect</span> &mdash;
+                        system topology analysis, infrastructure layer breakdown, dependency mapping
+                      </li>
+                      <li>
+                        <span className="font-medium text-foreground">Researcher</span> &mdash;
+                        scoring formula, category weights, HNDL/HNFL math, NIST standard references
+                      </li>
+                    </ul>
+                    <p className="text-xs text-muted-foreground leading-relaxed mt-2">
+                      An <span className="font-medium text-foreground">Assessment Profile</span>{' '}
+                      summary shows what you selected, giving readers context without scrolling
+                      through the wizard.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* How Actions Are Prioritized */}
-              <div className="mb-4">
+              <div className="mb-6">
                 <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
                   How Actions Are Prioritized
                 </p>
@@ -219,6 +277,28 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                       <span className="font-medium text-foreground">Short-term</span>, or{' '}
                       <span className="font-medium text-foreground">Long-term</span> based on
                       urgency and estimated effort.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cross-Module References */}
+              <div className="mb-4">
+                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+                  Cross-Module References
+                </p>
+                <div className="flex items-start gap-3">
+                  <ArrowRight size={16} className="text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      The report links to other modules for deeper exploration. Compliance
+                      frameworks show linked{' '}
+                      <span className="font-medium text-foreground">NIST standards</span> from the
+                      Library and{' '}
+                      <span className="font-medium text-foreground">country timelines</span>.
+                      Recommended actions that involve migration show matching{' '}
+                      <span className="font-medium text-foreground">software products</span> from
+                      the Migrate catalog.
                     </p>
                   </div>
                 </div>

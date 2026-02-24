@@ -35,6 +35,7 @@ import { useMemo } from 'react'
 import { SIGNING_ALGORITHMS } from './assessmentData'
 import type {
   AssessmentInput,
+  AssessmentProfile,
   ComplianceImpact,
   CategoryScores,
   CategoryDrivers,
@@ -135,11 +136,16 @@ function computeQuantumExposure(input: AssessmentInput, vulnerableCount: number)
 }
 
 function computeMigrationComplexity(input: AssessmentInput): number {
-  const agilityFactor = AGILITY_COMPLEXITY[input.cryptoAgility ?? 'unknown'] ?? 0.7
+  const isExec = input.persona === 'executive'
+  let agilityFactor = AGILITY_COMPLEXITY[input.cryptoAgility ?? 'unknown'] ?? 0.7
+  // Executives aren't expected to know technical details — reduce unknown penalty
+  if (isExec && (input.cryptoAgility === 'unknown' || !input.cryptoAgility)) {
+    agilityFactor *= 0.85
+  }
   const agilityScore = agilityFactor * 40
   let infraScore = 0
   if (input.infrastructureUnknown) {
-    infraScore = 15 // not knowing infrastructure is worse than the moderate default
+    infraScore = isExec ? 12 : 15 // executive penalty softened — they delegate this
   } else if (input.infrastructure?.length) {
     const totalInfra = input.infrastructure.reduce((sum, item) => {
       // eslint-disable-next-line security/detect-object-injection
@@ -153,7 +159,7 @@ function computeMigrationComplexity(input: AssessmentInput): number {
   const scale = SYSTEM_SCALE[input.systemCount ?? '11-50'] ?? 1.3
   const scaleScore = Math.min(15, scale * 7.5)
   const effectiveVendorWeight = input.vendorUnknown
-    ? VENDOR_DEPENDENCY_WEIGHT['heavy-vendor']
+    ? VENDOR_DEPENDENCY_WEIGHT['heavy-vendor'] * 0.8 // conservative but not worst-case
     : (VENDOR_DEPENDENCY_WEIGHT[input.vendorDependency ?? 'mixed'] ?? 10)
   const vendorScore = Math.min(15, effectiveVendorWeight * 0.75)
   return Math.max(
@@ -203,11 +209,12 @@ function computeRegulatoryPressure(
 }
 
 function computeOrganizationalReadiness(input: AssessmentInput): number {
+  const isExec = input.persona === 'executive'
   const statusScores: Record<string, number> = {
     started: 5,
     planning: 20,
     'not-started': 35,
-    unknown: 40,
+    unknown: isExec ? 35 : 40, // executive "unknown" slightly less punitive
   }
   const statusScore = statusScores[input.migrationStatus] ?? 30
   const sysScale = SYSTEM_SCALE[input.systemCount ?? '11-50'] ?? 1.3
@@ -217,7 +224,7 @@ function computeOrganizationalReadiness(input: AssessmentInput): number {
   const agilityFactor = AGILITY_COMPLEXITY[input.cryptoAgility ?? 'unknown'] ?? 0.7
   const readinessAgilityScore = Math.round(agilityFactor * 20)
   const vendorWeight = input.vendorUnknown
-    ? VENDOR_DEPENDENCY_WEIGHT['heavy-vendor']
+    ? VENDOR_DEPENDENCY_WEIGHT['heavy-vendor'] * 0.8 // conservative but not worst-case
     : (VENDOR_DEPENDENCY_WEIGHT[input.vendorDependency ?? 'mixed'] ?? 10)
   const vendorReadiness = Math.min(15, Math.round(vendorWeight * 0.75))
   return Math.max(
@@ -1207,6 +1214,21 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     )
   }
 
+  const personaNarrative = generatePersonaNarrative(
+    input.persona,
+    input,
+    riskScore,
+    riskLevel,
+    vulnerableCount,
+    migrationEffort,
+    categoryScores,
+    hndlRiskWindow,
+    hnflRiskWindow,
+    pqcCompliance.length
+  )
+
+  const assessmentProfile = buildAssessmentProfile(input, hasExtendedInput)
+
   return {
     riskScore,
     riskLevel,
@@ -1221,7 +1243,352 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     hnflRiskWindow,
     migrationEffort,
     executiveSummary,
+    personaNarrative,
+    assessmentProfile,
   }
+}
+
+function buildAssessmentProfile(input: AssessmentInput, hasExtended: boolean): AssessmentProfile {
+  return {
+    industry: input.industry,
+    country: input.country,
+    algorithmsSelected: input.currentCrypto,
+    algorithmUnknown: !!input.currentCryptoUnknown,
+    sensitivityLevels: input.dataSensitivity,
+    sensitivityUnknown: !!input.sensitivityUnknown,
+    complianceFrameworks: input.complianceRequirements,
+    complianceUnknown: !!input.complianceUnknown,
+    migrationStatus: input.migrationStatus,
+    mode: hasExtended ? 'comprehensive' : 'quick',
+    useCases: input.cryptoUseCases,
+    useCasesUnknown: !!input.useCasesUnknown,
+    retentionPeriods: input.dataRetention,
+    retentionUnknown: !!input.retentionUnknown,
+    credentialLifetimes: input.credentialLifetime,
+    credentialLifetimeUnknown: !!input.credentialLifetimeUnknown,
+    infrastructure: input.infrastructure,
+    infrastructureUnknown: !!input.infrastructureUnknown,
+    cryptoAgility: input.cryptoAgility,
+    vendorDependency: input.vendorDependency,
+    vendorUnknown: !!input.vendorUnknown,
+    systemScale: input.systemCount,
+    teamSize: input.teamSize,
+    timelinePressure: input.timelinePressure,
+  }
+}
+
+/** Generate a persona-tailored narrative that reframes the base summary. */
+function generatePersonaNarrative(
+  persona: string | undefined,
+  input: AssessmentInput,
+  riskScore: number,
+  riskLevel: string,
+  vulnerableCount: number,
+  migrationEffort: MigrationEffortItem[] | undefined,
+  categoryScores: CategoryScores | undefined,
+  hndl: HNDLRiskWindow | undefined,
+  hnfl: HNFLRiskWindow | undefined,
+  pqcFrameworkCount: number
+): string | undefined {
+  if (!persona) return undefined
+
+  switch (persona) {
+    case 'executive':
+      return generateExecNarrative(
+        input,
+        riskScore,
+        riskLevel,
+        vulnerableCount,
+        migrationEffort,
+        pqcFrameworkCount,
+        hndl,
+        hnfl
+      )
+    case 'developer':
+      return generateDevNarrative(input, riskScore, riskLevel, vulnerableCount, migrationEffort)
+    case 'architect':
+      return generateArchitectNarrative(
+        input,
+        riskScore,
+        riskLevel,
+        vulnerableCount,
+        migrationEffort,
+        categoryScores
+      )
+    case 'researcher':
+      return generateResearcherNarrative(
+        input,
+        riskScore,
+        riskLevel,
+        vulnerableCount,
+        migrationEffort,
+        categoryScores,
+        hndl,
+        hnfl,
+        pqcFrameworkCount
+      )
+    default:
+      return undefined
+  }
+}
+
+function generateExecNarrative(
+  input: AssessmentInput,
+  riskScore: number,
+  riskLevel: string,
+  vulnerableCount: number,
+  migrationEffort: MigrationEffortItem[] | undefined,
+  pqcFrameworkCount: number,
+  hndl: HNDLRiskWindow | undefined,
+  hnfl: HNFLRiskWindow | undefined
+): string {
+  const parts: string[] = []
+  parts.push(
+    `Your ${input.industry} organization carries a ${riskLevel} quantum risk rating (${riskScore}/100).`
+  )
+
+  if (pqcFrameworkCount > 0) {
+    parts.push(
+      `${pqcFrameworkCount} compliance framework${pqcFrameworkCount > 1 ? 's' : ''} mandate${pqcFrameworkCount === 1 ? 's' : ''} post-quantum cryptography adoption — delays risk regulatory penalties and audit findings.`
+    )
+  }
+
+  if (vulnerableCount > 0 && migrationEffort) {
+    const majorProjects = migrationEffort.filter(
+      (m) => m.estimatedScope === 'major-project' || m.estimatedScope === 'multi-year'
+    ).length
+    if (majorProjects > 0) {
+      parts.push(
+        `${majorProjects} migration${majorProjects > 1 ? 's' : ''} will require significant investment in engineering resources and vendor coordination.`
+      )
+    } else {
+      parts.push('Most algorithm migrations are manageable in scope with existing resources.')
+    }
+  }
+
+  if (hndl?.isAtRisk) {
+    parts.push(
+      `Sensitive data remains exposed for ${hndl.riskWindowYears} year${hndl.riskWindowYears !== 1 ? 's' : ''} beyond the quantum threat horizon — adversaries may already be harvesting encrypted data for future decryption.`
+    )
+  }
+
+  if (hnfl?.isAtRisk) {
+    parts.push(
+      `Digital signatures and credentials remain trusted ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} past the quantum threat horizon — certificate and signing key migration should begin now.`
+    )
+  }
+
+  if (input.country) {
+    const effectiveThreatYear = getEffectiveThreatYear(input.country)
+    if (effectiveThreatYear < ESTIMATED_QUANTUM_THREAT_YEAR) {
+      parts.push(
+        `${input.country} targets PQC readiness by ${effectiveThreatYear}, which sets the planning horizon for regulatory compliance.`
+      )
+    }
+  }
+
+  const statusMsg: Record<string, string> = {
+    started: 'Your team has begun migration, which is a competitive advantage.',
+    planning: 'Planning is underway — the priority now is to convert plans into execution.',
+    'not-started':
+      'Migration has not started. The board should prioritize funding a cryptographic assessment and migration roadmap.',
+    unknown:
+      'Migration status is unclear. The first step is commissioning a cryptographic baseline assessment.',
+  }
+  parts.push(statusMsg[input.migrationStatus] ?? '')
+  return parts.filter(Boolean).join(' ')
+}
+
+function generateDevNarrative(
+  input: AssessmentInput,
+  riskScore: number,
+  riskLevel: string,
+  vulnerableCount: number,
+  migrationEffort: MigrationEffortItem[] | undefined
+): string {
+  const parts: string[] = []
+  parts.push(`Quantum risk assessment: ${riskLevel} (${riskScore}/100).`)
+
+  if (input.currentCryptoUnknown) {
+    parts.push(
+      'Algorithms are unspecified. Run a dependency audit to identify crypto libraries: check for OpenSSL, BoringSSL, libsodium, or platform crypto APIs in your dependency tree.'
+    )
+  } else if (vulnerableCount > 0) {
+    const vulnAlgos = input.currentCrypto.filter((a) => ALGORITHM_DB[a]?.quantumVulnerable) // eslint-disable-line security/detect-object-injection
+    const replacements = vulnAlgos.map((a) => {
+      const info = ALGORITHM_DB[a] // eslint-disable-line security/detect-object-injection
+      return `${a} → ${info?.replacement ?? 'review manually'}`
+    })
+    parts.push(`Migration paths: ${replacements.join('; ')}.`)
+  }
+
+  if (migrationEffort) {
+    const quickWins = migrationEffort.filter((m) => m.estimatedScope === 'quick-win')
+    if (quickWins.length > 0) {
+      parts.push(
+        `Quick wins: ${quickWins.map((q) => q.algorithm).join(', ')} can be migrated with minimal refactoring.`
+      )
+    }
+    const hardMigrations = migrationEffort.filter(
+      (m) => m.estimatedScope === 'major-project' || m.estimatedScope === 'multi-year'
+    )
+    if (hardMigrations.length > 0) {
+      parts.push(
+        `Complex migrations: ${hardMigrations.map((m) => `${m.algorithm} (${m.rationale})`).join('; ')}.`
+      )
+    }
+  }
+
+  if (input.cryptoAgility === 'hardcoded') {
+    parts.push(
+      'Crypto is hardcoded — consider introducing an abstraction layer (provider pattern or KEM/DSA factory) before per-algorithm migration.'
+    )
+  } else if (input.cryptoAgility === 'partially-abstracted') {
+    parts.push(
+      'Partial crypto abstraction detected. Extend your abstraction layer to cover all algorithm references before migrating.'
+    )
+  }
+
+  const statusMsg: Record<string, string> = {
+    started:
+      'Migration is active. Focus on completing in-progress algorithm swaps and testing hybrid configurations.',
+    planning:
+      'Planning phase. Start with a proof-of-concept: migrate one TLS endpoint or signing path to a hybrid PQC configuration.',
+    'not-started':
+      'Not started. Begin with a cryptographic asset inventory: grep your codebase for algorithm identifiers and audit dependency crypto.',
+    unknown: 'Status unknown. Run a dependency-level crypto audit to establish a baseline.',
+  }
+  parts.push(statusMsg[input.migrationStatus] ?? '')
+  return parts.filter(Boolean).join(' ')
+}
+
+function generateArchitectNarrative(
+  input: AssessmentInput,
+  riskScore: number,
+  riskLevel: string,
+  vulnerableCount: number,
+  migrationEffort: MigrationEffortItem[] | undefined,
+  categoryScores: CategoryScores | undefined
+): string {
+  const parts: string[] = []
+  parts.push(`System-level quantum risk: ${riskLevel} (${riskScore}/100).`)
+
+  if (categoryScores) {
+    parts.push(
+      `Risk breakdown — Quantum Exposure: ${categoryScores.quantumExposure}/100, Migration Complexity: ${categoryScores.migrationComplexity}/100, Regulatory Pressure: ${categoryScores.regulatoryPressure}/100, Organizational Readiness: ${categoryScores.organizationalReadiness}/100.`
+    )
+  }
+
+  if (vulnerableCount > 0) {
+    parts.push(
+      `${vulnerableCount} algorithm${vulnerableCount !== 1 ? 's' : ''} across the dependency graph require migration.`
+    )
+  }
+
+  const infraCount = input.infrastructure?.length ?? 0
+  if (infraCount > 0 || input.infrastructureUnknown) {
+    parts.push(
+      input.infrastructureUnknown
+        ? 'Infrastructure dependencies are unmapped — conduct a topology review to identify all crypto touchpoints (HSMs, KMS, PKI, legacy systems).'
+        : `Migration touches ${infraCount} infrastructure layer${infraCount !== 1 ? 's' : ''}. Prioritize the trust root (PKI/HSM) before leaf services.`
+    )
+  }
+
+  if (input.cryptoAgility === 'hardcoded') {
+    parts.push(
+      'Architecture requires a crypto-agility layer before migration. Design a provider abstraction that supports hybrid (classical + PQC) algorithm negotiation.'
+    )
+  } else if (input.cryptoAgility === 'fully-abstracted') {
+    parts.push(
+      'Crypto-agility layer is in place — migration can proceed per-service without architectural changes.'
+    )
+  }
+
+  if (migrationEffort) {
+    const multiYear = migrationEffort.filter((m) => m.estimatedScope === 'multi-year')
+    if (multiYear.length > 0) {
+      parts.push(
+        `${multiYear.length} migration${multiYear.length !== 1 ? 's' : ''} require multi-year planning due to ${multiYear.map((m) => m.rationale).join('; ')}.`
+      )
+    }
+  }
+
+  const statusMsg: Record<string, string> = {
+    started:
+      'Migration is underway. Ensure hybrid mode is the default for all new protocol negotiations.',
+    planning:
+      'In planning phase. Design the migration architecture: define abstraction boundaries, hybrid protocol support, and rollback strategies.',
+    'not-started':
+      'Not started. Begin with a system topology mapping: identify all crypto protocol endpoints, key management flows, and certificate chains.',
+    unknown:
+      'Status unknown. Commission a cryptographic architecture review across all system boundaries.',
+  }
+  parts.push(statusMsg[input.migrationStatus] ?? '')
+  return parts.filter(Boolean).join(' ')
+}
+
+function generateResearcherNarrative(
+  input: AssessmentInput,
+  riskScore: number,
+  riskLevel: string,
+  vulnerableCount: number,
+  migrationEffort: MigrationEffortItem[] | undefined,
+  categoryScores: CategoryScores | undefined,
+  hndl: HNDLRiskWindow | undefined,
+  hnfl: HNFLRiskWindow | undefined,
+  pqcFrameworkCount: number
+): string {
+  const parts: string[] = []
+
+  const w = INDUSTRY_COMPOSITE_WEIGHTS[input.industry] ?? DEFAULT_COMPOSITE_WEIGHTS
+  if (categoryScores) {
+    parts.push(
+      `Composite risk: ${riskScore}/100 (${riskLevel}). Category scores — QE: ${categoryScores.quantumExposure}, MC: ${categoryScores.migrationComplexity}, RP: ${categoryScores.regulatoryPressure}, OR: ${categoryScores.organizationalReadiness}. Industry weights (${input.industry}): QE=${w.qe}, MC=${w.mc}, RP=${w.rp}, OR=${w.or}.`
+    )
+  } else {
+    parts.push(
+      `Additive risk score: ${riskScore}/100 (${riskLevel}). Quick assessment mode — extended category scoring not available.`
+    )
+  }
+
+  if (vulnerableCount > 0) {
+    const vulnAlgos = input.currentCrypto.filter((a) => ALGORITHM_DB[a]?.quantumVulnerable) // eslint-disable-line security/detect-object-injection
+    parts.push(
+      `${vulnerableCount} quantum-vulnerable algorithm${vulnerableCount !== 1 ? 's' : ''}: ${vulnAlgos.join(', ')}. All broken by Shor's algorithm (polynomial-time factoring/ECDLP).`
+    )
+    if (migrationEffort) {
+      const scopeCounts = {
+        'quick-win': migrationEffort.filter((m) => m.estimatedScope === 'quick-win').length,
+        moderate: migrationEffort.filter((m) => m.estimatedScope === 'moderate').length,
+        'major-project': migrationEffort.filter((m) => m.estimatedScope === 'major-project').length,
+        'multi-year': migrationEffort.filter((m) => m.estimatedScope === 'multi-year').length,
+      }
+      parts.push(
+        `Migration effort distribution: ${scopeCounts['quick-win']} quick-win, ${scopeCounts.moderate} moderate, ${scopeCounts['major-project']} major, ${scopeCounts['multi-year']} multi-year.`
+      )
+    }
+  }
+
+  if (hndl) {
+    const effectiveThreatYear = getEffectiveThreatYear(input.country)
+    parts.push(
+      `HNDL analysis: ${hndl.dataRetentionYears}yr retention, CRQC ~${effectiveThreatYear}, risk window = ${hndl.riskWindowYears}yr${hndl.isAtRisk ? ' (AT RISK)' : ' (safe)'}${hndl.isEstimated ? ' (estimated)' : ''}.`
+    )
+  }
+
+  if (hnfl) {
+    parts.push(
+      `HNFL analysis: ${hnfl.credentialLifetimeYears}yr credential lifetime, signing algos: ${hnfl.hasSigningAlgorithms ? 'present' : 'none detected'}, risk window = ${hnfl.riskWindowYears}yr${hnfl.isAtRisk ? ' (AT RISK)' : ' (safe)'}. High-risk use cases: ${hnfl.hnflRelevantUseCases.length > 0 ? hnfl.hnflRelevantUseCases.join(', ') : 'none'}.`
+    )
+  }
+
+  if (pqcFrameworkCount > 0) {
+    parts.push(
+      `${pqcFrameworkCount} PQC-mandating framework${pqcFrameworkCount > 1 ? 's' : ''} selected. NIST FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA) are the primary replacement standards.`
+    )
+  }
+
+  return parts.filter(Boolean).join(' ')
 }
 
 function generateNarrative(

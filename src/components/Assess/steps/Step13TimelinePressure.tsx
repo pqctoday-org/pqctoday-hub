@@ -8,6 +8,8 @@ import { timelineData, transformToGanttData } from '../../../data/timelineData'
 
 import clsx from 'clsx'
 
+import { PersonaHint } from './PersonaHint'
+
 const Step13TimelinePressure = () => {
   const { country, timelinePressure, setTimelinePressure } = useAssessmentStore()
 
@@ -67,8 +69,11 @@ const Step13TimelinePressure = () => {
         Timeline pressure affects how aggressively migration must be prioritized.
       </p>
 
+      <PersonaHint stepKey="timeline" />
+
       {hasCountryDeadlines ? (
         <>
+          {unknownButton}
           <div className="glass-panel p-4 border-l-4 border-l-primary mb-2">
             <div className="flex items-start gap-2">
               <Info size={16} className="text-primary shrink-0 mt-0.5" />
@@ -78,7 +83,15 @@ const Step13TimelinePressure = () => {
             </div>
           </div>
 
-          <div className="space-y-3" role="radiogroup" aria-label="Migration deadline">
+          <div
+            className={clsx(
+              'space-y-3 transition-opacity',
+              timelinePressure === 'unknown' && 'opacity-40 pointer-events-none'
+            )}
+            role="radiogroup"
+            aria-label="Migration deadline"
+            aria-disabled={timelinePressure === 'unknown'}
+          >
             {countryDeadlines.map((phase) => {
               const derived = deriveTimelinePressure(phase.endYear)
               const isSelected = timelinePressure === derived
@@ -134,11 +147,19 @@ const Step13TimelinePressure = () => {
                 ))}
             </div>
           </div>
-          {unknownButton}
         </>
       ) : (
         <>
-          <div className="space-y-3" role="radiogroup" aria-label="Migration timeline pressure">
+          {unknownButton}
+          <div
+            className={clsx(
+              'space-y-3 transition-opacity',
+              timelinePressure === 'unknown' && 'opacity-40 pointer-events-none'
+            )}
+            role="radiogroup"
+            aria-label="Migration timeline pressure"
+            aria-disabled={timelinePressure === 'unknown'}
+          >
             {staticOptions.map((opt) => (
               <button
                 key={opt.value}
@@ -157,7 +178,6 @@ const Step13TimelinePressure = () => {
               </button>
             ))}
           </div>
-          {unknownButton}
         </>
       )}
     </div>

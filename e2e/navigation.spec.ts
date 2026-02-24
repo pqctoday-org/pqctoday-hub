@@ -20,7 +20,7 @@ test.describe('Navigation', () => {
   })
 
   test('should navigate to Migrate page when clicking the link', async ({ page }) => {
-    await page.getByRole('link', { name: 'Migrate' }).click()
+    await page.getByRole('link', { name: 'Migrate', exact: true }).click()
     await expect(page).toHaveURL(/\/migrate/)
     await expect(page.getByRole('heading', { name: 'PQC Software Migration Guide' })).toBeVisible()
   })

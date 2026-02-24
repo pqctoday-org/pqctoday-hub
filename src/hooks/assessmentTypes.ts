@@ -33,6 +33,8 @@ export interface AssessmentInput {
   useCasesUnknown?: boolean
   /** When true, user indicated they don't know their infrastructure. */
   infrastructureUnknown?: boolean
+  /** Active persona at assessment time — drives narrative framing and scoring adjustments. */
+  persona?: 'executive' | 'developer' | 'architect' | 'researcher'
 }
 
 export interface AlgorithmMigration {
@@ -105,6 +107,34 @@ export interface CategoryDrivers {
   organizationalReadiness: string
 }
 
+/** Summary of user selections for report context. */
+export interface AssessmentProfile {
+  industry: string
+  country?: string
+  algorithmsSelected: string[]
+  algorithmUnknown: boolean
+  sensitivityLevels: string[]
+  sensitivityUnknown: boolean
+  complianceFrameworks: string[]
+  complianceUnknown: boolean
+  migrationStatus: string
+  mode: 'quick' | 'comprehensive'
+  useCases?: string[]
+  useCasesUnknown: boolean
+  retentionPeriods?: string[]
+  retentionUnknown: boolean
+  credentialLifetimes?: string[]
+  credentialLifetimeUnknown: boolean
+  infrastructure?: string[]
+  infrastructureUnknown: boolean
+  cryptoAgility?: string
+  vendorDependency?: string
+  vendorUnknown: boolean
+  systemScale?: string
+  teamSize?: string
+  timelinePressure?: string
+}
+
 export interface AssessmentResult {
   riskScore: number
   riskLevel: 'low' | 'medium' | 'high' | 'critical'
@@ -119,4 +149,8 @@ export interface AssessmentResult {
   hnflRiskWindow?: HNFLRiskWindow
   migrationEffort?: MigrationEffortItem[]
   executiveSummary?: string
+  /** Persona-tailored narrative (falls back to executiveSummary when no persona). */
+  personaNarrative?: string
+  /** Summary of user's assessment inputs for report context. */
+  assessmentProfile?: AssessmentProfile
 }

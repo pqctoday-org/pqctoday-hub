@@ -10,6 +10,7 @@ import {
   Globe,
   ArrowRight,
   BarChart3,
+  Satellite,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
@@ -201,7 +202,154 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
         </p>
       </section>
 
-      {/* Section 4: Limitations & NIST Position */}
+      {/* Section 4: Satellite QKD */}
+      <section className="glass-panel p-6">
+        <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
+          <Satellite size={20} /> Satellite QKD
+        </h2>
+        <p className="text-foreground/80 leading-relaxed mb-4">
+          Fiber-based QKD is limited to roughly 100 km per link due to exponential photon loss in
+          optical fiber. <InlineTooltip term="Trusted Node">Trusted node</InlineTooltip> chains can
+          extend range, but each relay is a potential point of compromise. Satellite QKD bypasses
+          this fundamental constraint: free-space optical links through vacuum suffer no fiber
+          absorption, and the atmosphere is thin (~10–20 km), meaning a low-Earth-orbit satellite
+          pass traverses a relatively short atmospheric path. This makes satellites the leading
+          approach for intercontinental and trans-oceanic quantum key distribution — including
+          Earth-to-satellite, satellite-to-ground, and inter-satellite links.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-sm font-bold text-primary mb-2">Trusted-Node Satellite Relay</div>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>Satellite acts as a moving trusted node between ground stations</li>
+              <li>Generates separate keys with each ground station, then relays</li>
+              <li>Demonstrated by Micius (China–Austria, 7,600 km, 2017)</li>
+              <li>Simpler to implement with current technology</li>
+              <li>Satellite must be physically secured (compromise exposes keys)</li>
+            </ul>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-sm font-bold text-success mb-2">
+              Entanglement-Based Satellite QKD
+            </div>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>
+                Satellite distributes <InlineTooltip term="Entanglement">entangled</InlineTooltip>{' '}
+                photon pairs to two ground stations
+              </li>
+              <li>No key material ever exists on the satellite itself</li>
+              <li>Eliminates the trusted-node vulnerability entirely</li>
+              <li>Demonstrated by Micius over 1,120 km (2020)</li>
+              <li>More technically demanding; requires high-fidelity photon sources</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 className="text-sm font-bold text-foreground mb-2">Key Satellite QKD Initiatives</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left p-2 text-muted-foreground font-medium">Program</th>
+                <th className="text-left p-2 text-muted-foreground font-medium">Country</th>
+                <th className="text-left p-2 text-muted-foreground font-medium">Operator</th>
+                <th className="text-left p-2 text-muted-foreground font-medium">Status</th>
+                <th className="text-left p-2 text-muted-foreground font-medium hidden sm:table-cell">
+                  Key Achievement
+                </th>
+              </tr>
+            </thead>
+            <tbody className="text-foreground/80">
+              <tr className="border-b border-border/50">
+                <td className="p-2 font-medium">Micius (QUESS)</td>
+                <td className="p-2">China</td>
+                <td className="p-2 text-xs">CAS / USTC</td>
+                <td className="p-2">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-success/10 text-success border border-success/20">
+                    Operational
+                  </span>
+                </td>
+                <td className="p-2 text-xs hidden sm:table-cell">
+                  First satellite QKD; intercontinental key exchange (2017)
+                </td>
+              </tr>
+              <tr className="border-b border-border/50">
+                <td className="p-2 font-medium">EAGLE-1 / EuroQCI</td>
+                <td className="p-2">EU</td>
+                <td className="p-2 text-xs">ESA / SES</td>
+                <td className="p-2">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-warning/10 text-warning border border-warning/20">
+                    Planned
+                  </span>
+                </td>
+                <td className="p-2 text-xs hidden sm:table-cell">
+                  Pan-European satellite + terrestrial QKD infrastructure
+                </td>
+              </tr>
+              <tr className="border-b border-border/50">
+                <td className="p-2 font-medium">QEYSSat</td>
+                <td className="p-2">Canada</td>
+                <td className="p-2 text-xs">CSA / U. Waterloo IQC</td>
+                <td className="p-2">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-warning/10 text-warning border border-warning/20">
+                    Planned
+                  </span>
+                </td>
+                <td className="p-2 text-xs hidden sm:table-cell">
+                  Microsatellite QKD demonstrator
+                </td>
+              </tr>
+              <tr className="border-b border-border/50">
+                <td className="p-2 font-medium">SOCRATES</td>
+                <td className="p-2">Japan</td>
+                <td className="p-2 text-xs">NICT</td>
+                <td className="p-2">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                    Completed
+                  </span>
+                </td>
+                <td className="p-2 text-xs hidden sm:table-cell">
+                  Microsatellite; space-to-ground quantum communication (2016)
+                </td>
+              </tr>
+              <tr className="border-b border-border/50">
+                <td className="p-2 font-medium">SpooQy-1</td>
+                <td className="p-2">Singapore</td>
+                <td className="p-2 text-xs">NUS CQT</td>
+                <td className="p-2">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                    Completed
+                  </span>
+                </td>
+                <td className="p-2 text-xs hidden sm:table-cell">
+                  CubeSat; entangled photon pairs generated in orbit (2019)
+                </td>
+              </tr>
+              <tr>
+                <td className="p-2 font-medium">QKDSat</td>
+                <td className="p-2">UK</td>
+                <td className="p-2 text-xs">ESA / Craft Prospect</td>
+                <td className="p-2">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-warning/10 text-warning border border-warning/20">
+                    Planned
+                  </span>
+                </td>
+                <td className="p-2 text-xs hidden sm:table-cell">
+                  UK industry satellite QKD mission
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p className="text-xs text-muted-foreground mt-3">
+          Explore all satellite and terrestrial deployments interactively in the Workshop tab (Part
+          3: Global Deployments).
+        </p>
+      </section>
+
+      {/* Section 5: Limitations & NIST Position */}
       <section className="glass-panel p-6 border-l-4 border-l-warning">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <AlertTriangle size={20} /> Limitations &amp; NIST Position
@@ -263,7 +411,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
         </div>
       </section>
 
-      {/* Section 5: QKD + Classical KEM */}
+      {/* Section 6: QKD + Classical KEM */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Key size={20} /> QKD + PQC KEM Integration
@@ -302,7 +450,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
         </div>
       </section>
 
-      {/* Section 6: QKD + HSM */}
+      {/* Section 7: QKD + HSM */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Server size={20} /> QKD + HSM Integration
@@ -359,7 +507,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
         </p>
       </section>
 
-      {/* Section 7: Telecom & Government Adoption */}
+      {/* Section 8: Telecom & Government Adoption */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Globe size={20} /> Telecom &amp; Government Adoption
@@ -372,7 +520,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-            <div className="text-2xl font-bold text-primary">12+</div>
+            <div className="text-2xl font-bold text-primary">15+</div>
             <div className="text-xs text-muted-foreground">Major Deployments Worldwide</div>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">

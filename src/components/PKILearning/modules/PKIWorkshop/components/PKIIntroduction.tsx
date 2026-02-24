@@ -10,6 +10,8 @@ import {
   Mail,
   FileCheck,
   BookOpen,
+  GitBranch,
+  TreePine,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { PKICertificateLifecycleDiagram } from './PKICertificateLifecycleDiagram'
@@ -250,10 +252,108 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
         </button>
       </section>
 
+      {/* Section 7: Merkle Tree Certificates */}
+      <section className="glass-panel p-6">
+        <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
+          <TreePine size={20} /> Merkle Tree Certificates: Solving PQC Certificate Bloat
+        </h2>
+        <p className="text-foreground/80 leading-relaxed mb-3">
+          Post-quantum signatures are dramatically larger than their classical counterparts:{' '}
+          <InlineTooltip term="ML-DSA">ML-DSA-44</InlineTooltip> signatures are{' '}
+          <strong>2,420 bytes</strong> compared to just <strong>64 bytes</strong> for ECDSA P-256
+          &mdash; a <strong>37&times;</strong> increase. A typical TLS certificate chain with three
+          PQ signatures, public keys, and Certificate Transparency SCTs can add{' '}
+          <strong>18&ndash;36 KB</strong> to every handshake, breaking constrained clients and
+          degrading performance.
+        </p>
+        <p className="text-foreground/80 leading-relaxed mb-4">
+          <strong>Merkle Tree Certificates (MTCs)</strong>, proposed in IETF{' '}
+          <em>draft-davidben-tls-merkle-tree-certs</em> by Google and Cloudflare, offer an elegant
+          solution: instead of signing each certificate individually, a Merkle Tree CA (MTCA)
+          batches thousands of certificates as leaves in a{' '}
+          <InlineTooltip term="Merkle Tree">Merkle tree</InlineTooltip>, signs only the root hash,
+          and distributes compact <strong>inclusion proofs</strong> (~736 bytes) that let any
+          relying party verify a certificate belongs to the signed batch. This replaces three
+          separate PQ signatures with a single root signature plus a hash-based proof.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20">
+            <div className="text-sm font-bold text-destructive mb-1">Traditional PQC Chain</div>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>
+                3 ML-DSA-44 signatures: <strong>7,260 B</strong>
+              </li>
+              <li>
+                3 public keys: <strong>3,936 B</strong>
+              </li>
+              <li>
+                4 CT SCTs: <strong>476 B</strong>
+              </li>
+              <li className="font-bold text-foreground">Total: ~12.3 KB per handshake</li>
+            </ul>
+          </div>
+          <div className="bg-success/5 rounded-lg p-3 border border-success/20">
+            <div className="text-sm font-bold text-success mb-1">MTC Approach</div>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>
+                1 root signature: <strong>2,420 B</strong>
+              </li>
+              <li>
+                1 root public key: <strong>1,312 B</strong>
+              </li>
+              <li>
+                Inclusion proof: <strong>736 B</strong>
+              </li>
+              <li className="font-bold text-foreground">Total: ~4.5 KB per handshake</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="bg-muted/50 rounded-lg p-3 border border-border mb-4">
+          <div className="flex items-start gap-2">
+            <GitBranch size={16} className="text-primary mt-0.5 shrink-0" />
+            <p className="text-xs text-muted-foreground">
+              <strong className="text-foreground">Tradeoff:</strong> MTC clients must periodically
+              fetch transparency service updates (similar to CRLite). This trades per-handshake size
+              for background data synchronization &mdash; a favorable tradeoff for high-traffic
+              servers and constrained IoT devices.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={onNavigateToWorkshop}
+            className="btn btn-primary flex items-center gap-2 px-4 py-2"
+          >
+            Try MTC Comparison in Workshop <ArrowRight size={16} />
+          </button>
+          <Link
+            to="/learn/merkle-tree-certs"
+            className="btn btn-secondary flex items-center gap-2 px-4 py-2"
+          >
+            <TreePine size={14} /> Full MTC Workshop Module
+          </Link>
+        </div>
+      </section>
+
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
         <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/learn/merkle-tree-certs"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <TreePine size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Merkle Tree Certificates</div>
+              <div className="text-xs text-muted-foreground">
+                Interactive MTC builder, inclusion proofs, and PQC size comparison
+              </div>
+            </div>
+          </Link>
           <Link
             to="/learn/key-management"
             className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"

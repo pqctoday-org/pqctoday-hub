@@ -74,7 +74,7 @@ export const LAYERS = [
     label: 'Operating System',
     icon: Monitor,
     description: 'Windows, Linux, macOS, iOS, Android',
-    color: 'from-orange-500/20 to-amber-500/20',
+    color: 'from-warning/20 to-warning/10',
     borderColor: 'border-orange-500/50',
     activeColor: 'bg-orange-500/30 border-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.5)]',
     iconColor: 'text-warning',

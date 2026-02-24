@@ -6,6 +6,8 @@ import { InlineTooltip } from '../../ui/InlineTooltip'
 
 import clsx from 'clsx'
 
+import { PersonaHint } from './PersonaHint'
+
 const Step12VendorDependency = () => {
   const { vendorDependency, setVendorDependency, vendorUnknown, setVendorUnknown } =
     useAssessmentStore()
@@ -42,6 +44,9 @@ const Step12VendorDependency = () => {
         Vendor dependencies affect your control over migration timelines. Heavy vendor reliance
         means you depend on their <InlineTooltip term="PQC">PQC</InlineTooltip> roadmap.
       </p>
+
+      <PersonaHint stepKey="vendors" />
+
       {/* I don't know escape hatch */}
       <button
         aria-pressed={vendorUnknown}

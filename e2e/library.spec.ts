@@ -119,27 +119,27 @@ test.describe('Library Feature', () => {
     await expect(popup.getByText('Updated:')).toBeVisible()
 
     // Verify 2-column grid layout for metadata
-    await expect(popup.locator('.grid.grid-cols-2')).toBeVisible()
+    await expect(popup.locator('.grid.sm\\:grid-cols-2')).toBeVisible()
 
     // Close popup
     await page.keyboard.press('Escape')
     await expect(popup).not.toBeVisible()
   })
 
-  test('should filter by Region', async ({ page }) => {
-    // Verify Region dropdown exists
-    const regionDropdown = page.getByRole('button', { name: /Region/i })
-    await expect(regionDropdown).toBeVisible()
+  test('should filter by Industry', async ({ page }) => {
+    // Verify Industry dropdown exists
+    const industryDropdown = page.getByRole('button', { name: /Industry/i })
+    await expect(industryDropdown).toBeVisible()
 
     // Click to open
-    await regionDropdown.click()
+    await industryDropdown.click()
 
     // Select the second option (first is likely All)
     const option = page.getByRole('option').nth(1)
     const optionText = await option.textContent()
     await option.click()
 
-    // The dropdown label changes to the selected region name
+    // The dropdown label changes to the selected industry name
     const updatedDropdown = page.getByRole('button', { name: optionText?.trim() })
     await expect(updatedDropdown).toBeVisible({ timeout: 10000 })
   })

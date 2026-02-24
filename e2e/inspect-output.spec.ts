@@ -3,7 +3,8 @@ import { test, expect } from '@playwright/test'
 
 test('inspect output after execution', async ({ page }) => {
   await page.goto('/learn/5g-security')
-  await expect(page.getByRole('heading', { name: '5G Security' })).toBeVisible()
+  const heading = page.getByRole('heading', { name: '5G Security Architecture', exact: true })
+  await expect(heading).toBeVisible()
 
   await page.evaluate(() => {
     // @ts-ignore
@@ -23,6 +24,11 @@ MC4CAQAwBQYDK2VuBCIEIKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
   })
 
   await page.waitForTimeout(1000)
+
+  // Navigate to Workshop Tab
+  await page.getByText('Workshop', { exact: true }).click()
+  await expect(page.locator('button[data-testid="profile-a-btn"]')).toBeVisible({ timeout: 10000 })
+
   await page.click('button[data-testid="profile-a-btn"]')
   await page.waitForTimeout(500)
 

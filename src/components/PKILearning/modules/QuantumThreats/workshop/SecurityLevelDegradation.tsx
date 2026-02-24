@@ -1,5 +1,10 @@
 import React, { useState, useMemo } from 'react'
-import { ALGORITHM_SECURITY_DATA, type AlgorithmSecurityData } from '../data/quantumConstants'
+import { Cpu } from 'lucide-react'
+import {
+  ALGORITHM_SECURITY_DATA,
+  CURRENT_QUANTUM_COMPUTERS,
+  type AlgorithmSecurityData,
+} from '../data/quantumConstants'
 
 interface SecurityLevelDegradationProps {
   initialAlgorithm?: string
@@ -233,6 +238,140 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
             </div>
             <p className="text-xs text-muted-foreground mt-2">{algorithmData.notes}</p>
           </div>
+
+          {/* Panel A — Qubit gap: required logical vs. today's physical */}
+          {algorithmData.estimatedQubits && (
+            <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
+              <div className="flex items-center gap-2">
+                <Cpu className="h-4 w-4 text-primary" />
+                <h4 className="text-sm font-semibold text-foreground">
+                  Qubit Gap: Required vs. Today&apos;s Hardware
+                </h4>
+              </div>
+
+              {/* Required — full-width reference bar */}
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-muted-foreground">Required to break (logical qubits)</span>
+                  <span className="font-bold text-destructive">
+                    ~{algorithmData.estimatedQubits.toLocaleString()}
+                  </span>
+                </div>
+                <div className="h-4 bg-muted/30 rounded-full overflow-hidden">
+                  <div className="h-full bg-destructive/70 rounded-full w-full" />
+                </div>
+              </div>
+
+              {/* One bar per machine — physical qubits scaled against required logical */}
+              {CURRENT_QUANTUM_COMPUTERS.map((qc) => {
+                const pct = Math.min(
+                  (qc.physicalQubits / algorithmData.estimatedQubits!) * 100,
+                  100
+                )
+                return (
+                  <div key={`${qc.vendor}-${qc.name}`}>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-muted-foreground">
+                        {qc.vendor} {qc.name} ({qc.year}) — physical
+                      </span>
+                      <span className="font-bold text-primary">
+                        {qc.physicalQubits.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="h-3 bg-muted/30 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary/60 rounded-full transition-all duration-500"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+
+              <p className="text-xs text-muted-foreground">
+                Physical qubits (blue) are not interchangeable with logical qubits (red) — see the
+                error-correction overhead breakdown below.
+              </p>
+            </div>
+          )}
+
+          {/* Panel B — Physical/logical ratio per machine */}
+          {algorithmData.estimatedQubits && (
+            <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
+              <div className="flex items-center gap-2">
+                <Cpu className="h-4 w-4 text-primary" />
+                <h4 className="text-sm font-semibold text-foreground">
+                  Physical → Logical Overhead
+                </h4>
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                Fault-tolerant computation requires many noisy physical qubits to produce one
+                reliable logical qubit. The ratio depends on gate fidelity and error-correction
+                scheme. The last column shows how many physical qubits this attack would need at
+                each machine&apos;s current ratio.
+              </p>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-border/50">
+                      <th className="text-left py-1 pr-2 text-muted-foreground font-medium">
+                        Machine
+                      </th>
+                      <th className="text-right py-1 px-2 text-muted-foreground font-medium">
+                        Physical
+                      </th>
+                      <th className="text-right py-1 px-2 text-muted-foreground font-medium">
+                        Logical*
+                      </th>
+                      <th className="text-right py-1 px-2 text-muted-foreground font-medium">
+                        Ratio
+                      </th>
+                      <th className="text-right py-1 pl-2 text-muted-foreground font-medium">
+                        Physical needed
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {CURRENT_QUANTUM_COMPUTERS.map((qc) => {
+                      const ratio = Math.round(qc.physicalQubits / qc.estimatedLogicalQubits)
+                      const physicalNeeded = algorithmData.estimatedQubits! * ratio
+                      return (
+                        <tr
+                          key={`ratio-${qc.vendor}-${qc.name}`}
+                          className="border-b border-border/30"
+                        >
+                          <td className="py-1.5 pr-2 text-foreground">
+                            {qc.vendor} {qc.name}
+                          </td>
+                          <td className="py-1.5 px-2 text-right text-primary">
+                            {qc.physicalQubits.toLocaleString()}
+                          </td>
+                          <td className="py-1.5 px-2 text-right text-success">
+                            ~{qc.estimatedLogicalQubits}
+                          </td>
+                          <td className="py-1.5 px-2 text-right text-warning">
+                            {ratio.toLocaleString()}:1
+                          </td>
+                          <td className="py-1.5 pl-2 text-right text-destructive font-medium">
+                            ~{physicalNeeded.toLocaleString()}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              <p className="text-[10px] text-muted-foreground">
+                * Estimated logical qubits based on published experimental results. Full
+                fault-tolerant operation for cryptographic attacks is projected to require ~1,000:1
+                physical-to-logical at scale. &quot;Physical needed&quot; = required logical qubits
+                × this machine&apos;s current ratio.
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>

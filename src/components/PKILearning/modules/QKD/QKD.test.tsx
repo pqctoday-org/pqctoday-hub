@@ -67,6 +67,7 @@ describe('QKDModule', () => {
     renderModule()
     expect(screen.getByText('The BB84 Protocol')).toBeInTheDocument()
     expect(screen.getByText('State of the Art')).toBeInTheDocument()
+    expect(screen.getByText('Satellite QKD')).toBeInTheDocument()
     expect(screen.getByText('Limitations & NIST Position')).toBeInTheDocument()
   })
 
