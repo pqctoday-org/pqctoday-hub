@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { glossaryTerms } from '../../data/glossaryData'
 import { Link } from 'react-router-dom'
 import { ExternalLink } from 'lucide-react'
@@ -19,9 +20,11 @@ interface InlineTooltipProps {
   children?: React.ReactNode
 }
 
+type TooltipStyle = { top: number; left: number } | { bottom: number; left: number }
+
 export const InlineTooltip: React.FC<InlineTooltipProps> = ({ term, children }) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [position, setPosition] = useState<'above' | 'below'>('below')
+  const [tooltipStyle, setTooltipStyle] = useState<TooltipStyle | null>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const popoverRef = useRef<HTMLDivElement>(null)
 
@@ -32,12 +35,17 @@ export const InlineTooltip: React.FC<InlineTooltipProps> = ({ term, children }) 
   const open = useCallback(() => {
     if (triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect()
-      setPosition(window.innerHeight - rect.bottom < 220 ? 'above' : 'below')
+      const centerX = rect.left + rect.width / 2
+      if (window.innerHeight - rect.bottom >= 220) {
+        setTooltipStyle({ top: rect.bottom + 6, left: centerX })
+      } else {
+        setTooltipStyle({ bottom: window.innerHeight - rect.top + 6, left: centerX })
+      }
     }
     setIsOpen(true)
   }, [])
 
-  // Close on Escape key; close on outside tap for touch devices
+  // Close on Escape, outside click, or scroll (scroll would misplace the fixed tooltip)
   useEffect(() => {
     if (!isOpen) return
     const handleKey = (e: KeyboardEvent) => {
@@ -51,18 +59,21 @@ export const InlineTooltip: React.FC<InlineTooltipProps> = ({ term, children }) 
         return
       close()
     }
+    const handleScroll = () => close()
     document.addEventListener('keydown', handleKey)
     document.addEventListener('mousedown', handleOutsideTap)
+    window.addEventListener('scroll', handleScroll, { capture: true })
     return () => {
       document.removeEventListener('keydown', handleKey)
       document.removeEventListener('mousedown', handleOutsideTap)
+      window.removeEventListener('scroll', handleScroll, { capture: true })
     }
   }, [isOpen, close])
 
   if (!entry) return <>{children ?? term}</>
 
   return (
-    <span className="relative inline print:contents">
+    <>
       <button
         ref={triggerRef}
         onMouseEnter={open}
@@ -79,34 +90,42 @@ export const InlineTooltip: React.FC<InlineTooltipProps> = ({ term, children }) 
       >
         {children ?? term}
       </button>
-      {isOpen && (
-        <div
-          ref={popoverRef}
-          role="tooltip"
-          className={clsx(
-            'absolute left-1/2 -translate-x-1/2 z-50 w-72 p-3 rounded-lg border border-border bg-background shadow-lg print:hidden',
-            position === 'below' ? 'top-full mt-1.5' : 'bottom-full mb-1.5'
-          )}
-        >
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="font-semibold text-sm text-foreground">{entry.term}</span>
-            {entry.acronym && (
-              <span className="text-[10px] font-mono text-muted-foreground">({entry.acronym})</span>
+      {isOpen &&
+        tooltipStyle &&
+        createPortal(
+          <div
+            ref={popoverRef}
+            role="tooltip"
+            style={{
+              position: 'fixed',
+              zIndex: 9999,
+              transform: 'translateX(-50%)',
+              ...tooltipStyle,
+            }}
+            className="w-72 p-3 rounded-lg border border-border bg-background shadow-lg print:hidden"
+          >
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-semibold text-sm text-foreground">{entry.term}</span>
+              {entry.acronym && (
+                <span className="text-[10px] font-mono text-muted-foreground">
+                  ({entry.acronym})
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">{entry.definition}</p>
+            {entry.relatedModule && (
+              <Link
+                to={entry.relatedModule}
+                className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline mt-2"
+                onClick={close}
+              >
+                <ExternalLink size={9} />
+                Learn more →
+              </Link>
             )}
-          </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">{entry.definition}</p>
-          {entry.relatedModule && (
-            <Link
-              to={entry.relatedModule}
-              className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline mt-2"
-              onClick={close}
-            >
-              <ExternalLink size={9} />
-              Learn more →
-            </Link>
-          )}
-        </div>
-      )}
-    </span>
+          </div>,
+          document.body
+        )}
+    </>
   )
 }

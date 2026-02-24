@@ -154,6 +154,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Category filters, A-Z index, full-text search
   - Complexity badges (Beginner, Intermediate, Advanced)
   - Cross-references to learning modules
+  - **Inline tooltips** on key terms throughout all 16 learning modules — portal-rendered with
+    `position: fixed` so they always appear above overflow-constrained containers (modals,
+    scrollable panels, diagram wrappers)
 - **Personalization System**: Role, region, and industry picker on the home page that adapts the
   entire application to the user's context
   - **Role picker**: Executive/CISO, Developer/Engineer, Security Architect, Researcher/Academic —

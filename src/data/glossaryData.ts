@@ -2299,6 +2299,17 @@ export const glossaryTerms: GlossaryTerm[] = [
 
   // === Merkle Tree Certificates ===
   {
+    term: 'SCT',
+    acronym: 'SCT',
+    definition:
+      'Signed Certificate Timestamp — a cryptographic proof from a Certificate Transparency log server that a certificate has been submitted and will be publicly logged. Required by Chrome for all TLS certificates since 2018.',
+    technicalNote:
+      "SCTs are embedded in certificates (via a TLS extension or OCSP stapling) and signed by the CT log's private key. In the Merkle Tree Certificate (MTC) design, SCTs are replaced by Merkle inclusion proofs, which also prove CT log membership without a separate signature.",
+    relatedModule: '/learn/merkle-tree-certs',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
     term: 'Merkle Tree Certificate',
     acronym: 'MTC',
     definition:

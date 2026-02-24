@@ -4,6 +4,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.32.0] - 2026-02-24
+
+### Fixed
+
+- **Glossary tooltip overflow clipping** (`InlineTooltip`, all 16 learning modules): Tooltips
+  were silently clipped inside any container with `overflow: hidden` or `overflow-y: auto`
+  (TLS panel glass-panels, PKIWorkshop modal bodies, DigitalID scroll container, FiveG diagram
+  wrappers, DigitalAssets step wizard). Fixed by switching from `position: absolute` (relative
+  to nearest positioned ancestor) to `ReactDOM.createPortal()` rendering into `document.body`
+  with `position: fixed` coordinates computed from `getBoundingClientRect()`. Z-index raised to
+  `9999` via inline style. A scroll event listener (window capture phase) closes the tooltip
+  when the page scrolls, preventing stale-position display.
+
+- **DigitalAssets `InfoTooltip` and local `InlineTooltip` clipping** (`modules/DigitalAssets`):
+  Applied the same portal + fixed positioning fix to both exported components in the module-local
+  `InfoTooltip.tsx`. Arrow decorations removed since they don't work with fixed positioning.
+
+- **DigitalID `InfoTooltip` clipping** (`modules/DigitalID`): Applied portal + fixed positioning
+  fix. Added above/below smart positioning (the original always rendered below regardless of
+  viewport space).
+
+### Added
+
+- **`SCT` glossary term** (`glossaryData.ts`): Signed Certificate Timestamp was used in the
+  Merkle Tree Certs module (`<InlineTooltip term="SCT">`) but had no glossary entry, causing
+  the tooltip to silently render as plain text. Added with a complete definition covering CT log
+  membership proofs and the relationship to MTC inclusion proofs.
+
 ## [1.31.0] - 2026-02-23
 
 ### Added
