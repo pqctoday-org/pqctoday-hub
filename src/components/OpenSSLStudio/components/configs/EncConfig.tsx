@@ -117,7 +117,7 @@ export const EncConfig: React.FC<EncConfigProps> = ({
           className="text-xs text-muted-foreground flex items-center gap-1"
         >
           Passphrase (
-          <InlineTooltip content={CRYPTO_TOOLTIPS.pbkdf2.description} align="left">
+          <InlineTooltip content={CRYPTO_TOOLTIPS.pbkdf2.description}>
             <span className="text-primary hover:underline cursor-help">PBKDF2</span>
           </InlineTooltip>
           Seed)
