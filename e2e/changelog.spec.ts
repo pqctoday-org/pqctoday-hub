@@ -13,8 +13,8 @@ test.describe('Changelog View', () => {
     // Verify page title
     await expect(page.getByRole('heading', { name: 'Changelog' }).first()).toBeVisible()
 
-    // Verify version is displayed
-    await expect(page.getByText(/v\d+\.\d+\.\d+/)).toBeVisible()
+    // Verify version is displayed (use first() — multiple version strings may exist on the page)
+    await expect(page.getByText(/v\d+\.\d+\.\d+/).first()).toBeVisible()
   })
 
   test('displays filter buttons', async ({ page }) => {

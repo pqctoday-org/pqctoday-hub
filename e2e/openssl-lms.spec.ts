@@ -6,8 +6,10 @@ test.describe('OpenSSL Studio - LMS (HSS) Operations', () => {
     await page.goto('/')
     // Navigate to OpenSSL Studio
     await page.getByRole('button', { name: /OpenSSL/ }).click()
-    // Wait for WASM to load
-    await expect(page.getByText(/OpenSSL/)).toBeVisible({ timeout: 20000 })
+    // Wait for OpenSSL Studio page heading to confirm navigation completed
+    await expect(page.getByRole('heading', { name: /OpenSSL Studio/i })).toBeVisible({
+      timeout: 20000,
+    })
   })
 
   test('shows LMS category button with mode tabs', async ({ page }) => {

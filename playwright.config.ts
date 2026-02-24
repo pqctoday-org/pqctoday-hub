@@ -1,11 +1,15 @@
 import { defineConfig, devices } from '@playwright/test'
 
+const isCI = !!process.env.CI
+
 export default defineConfig({
   testDir: './e2e',
+  // Exclude one-off debug/inspection scripts — not real CI tests
+  testIgnore: ['**/debug-*.spec.ts', '**/inspect-*.spec.ts', '**/tls-raw-config-debug.spec.ts'],
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  forbidOnly: isCI,
+  retries: isCI ? 1 : 0,
+  workers: isCI ? 1 : undefined,
   reporter: 'html',
   // Increase test timeout for WASM operations
   timeout: 60000,
@@ -33,9 +37,11 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev -- --port 5175',
+    // In CI the build is already done — use the fast preview server (static dist/).
+    // Locally, reuse the dev server if already running.
+    command: isCI ? 'npm run preview -- --port 5175' : 'npm run dev -- --port 5175',
     url: 'http://localhost:5175',
-    reuseExistingServer: true,
+    reuseExistingServer: !isCI,
     timeout: 120 * 1000,
   },
 })
