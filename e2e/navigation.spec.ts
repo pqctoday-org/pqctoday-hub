@@ -11,7 +11,7 @@ test.describe('Navigation', () => {
     // Playwright default viewport is 1280x720, so they should be visible.
 
     // Check "Migrate" specifically is present
-    await expect(page.getByRole('link', { name: 'Migrate' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Migrate view' })).toBeVisible()
 
     // Optionally check exact order if critical
     // const texts = await buttons.allInnerTexts();
@@ -20,8 +20,8 @@ test.describe('Navigation', () => {
   })
 
   test('should navigate to Migrate page when clicking the link', async ({ page }) => {
-    await page.getByRole('link', { name: 'Migrate', exact: true }).click()
+    await page.getByRole('link', { name: 'Migrate view' }).click()
     await expect(page).toHaveURL(/\/migrate/)
-    await expect(page.getByRole('heading', { name: 'PQC Software Migration Guide' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'PQC Migration Guide' })).toBeVisible()
   })
 })

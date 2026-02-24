@@ -104,3 +104,24 @@ certs/
 !certs/README.md
 dist
 !public/lms-sample/*
+
+# One-off scratch scripts
+add_personas.py
+split_wizard.js
+test_parse.mjs
+test_parse_2.mjs
+test_personas.mjs
+pqctoday_nextsteps_*.md
+scripts/fix_*.mjs
+scripts/recover_data*.mjs
+scripts/remove_duplicates*.mjs
+scripts/split_hook.mjs
+scripts/split_wizard.js
+scripts/check_gaps.mjs
+scripts/clean_utils_linter.mjs
+scripts/export_all_data.mjs
+scripts/inject_utils_imports.mjs
+scripts/original_hook.ts
+
+# Playwright local state
+e2e/playwright-state.json
