@@ -40,14 +40,14 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium --with-deps
+
       - name: Build
         run: npm run build
 
       - name: Test
         run: npm run test
-
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium --with-deps
 
       - name: Run E2E Tests (Sharded)
         run: npx playwright test --project=chromium --shard=${{ matrix.shard }}/${{ strategy.job-total }}
