@@ -27,6 +27,7 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
+    "test:external": "playwright test e2e/production.spec.ts e2e/compliance-sources.spec.ts",
     "coverage": "vitest run --coverage",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

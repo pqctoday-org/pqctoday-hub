@@ -5,7 +5,16 @@ const isCI = !!process.env.CI
 export default defineConfig({
   testDir: './e2e',
   // Exclude one-off debug/inspection scripts — not real CI tests
-  testIgnore: ['**/debug-*.spec.ts', '**/inspect-*.spec.ts', '**/tls-raw-config-debug.spec.ts'],
+  testIgnore: [
+    // One-off debug/inspection scripts — not real CI tests
+    '**/debug-*.spec.ts',
+    '**/inspect-*.spec.ts',
+    '**/tls-raw-config-debug.spec.ts',
+    // External-service tests — hit live prod or government sites; not testing local build
+    // Run manually via: npx playwright test e2e/production.spec.ts e2e/compliance-sources.spec.ts
+    '**/production.spec.ts',
+    '**/compliance-sources.spec.ts',
+  ],
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 1 : 0,
