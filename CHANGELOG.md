@@ -4,6 +4,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.31.0] - 2026-02-23
+
+### Added
+
+- **Full SEO overhaul**: Per-route metadata for all 31 pages — unique titles, descriptions,
+  canonical URLs, Open Graph tags, and Twitter Card tags dynamically rendered using React 19's
+  native document metadata hoisting. No external dependency required.
+
+- **Playwright-based prerendering**: All 31 routes now generate static HTML at build time via
+  `scripts/prerender.mjs`. Crawlers receive real rendered content (navigation, headings, page text)
+  without executing JavaScript, solving the SPA indexing problem. WASM-heavy interactive content
+  still loads client-side after hydration.
+
+- **Expanded sitemap** (`public/sitemap.xml`): Grew from 13 to 31 URLs, now covering all 16
+  learning modules (`/learn/pqc-101`, `/learn/quantum-threats`, etc.), `/assess`, `/learn/quiz`,
+  and all main routes — each with `<lastmod>` dates for accurate crawl scheduling.
+
+- **Enhanced structured data** (`index.html`, `src/seo/routeMeta.ts`): Homepage now declares a
+  `@graph` with `WebSite` (including `SearchAction` for sitelinks search), `Organization` (with
+  logo and GitHub sameAs), and `WebApplication` schemas. Individual routes inject page-specific
+  JSON-LD: `Course` for the learning hub, `LearningResource` per module, `Dataset` for compliance
+  and timeline data, `ItemList` for the algorithm explorer.
+
+- **Journey-oriented descriptions**: Homepage and 5 key pages (`/learn`, `/assess`, `/migrate`,
+  `/compliance`, `/timeline`) now carry elevated, mission-driven descriptions that convey the
+  end-to-end guided PQC transformation journey — education → risk assessment → migration →
+  regulatory compliance alignment.
+
+- **CI prerender support** (`.github/workflows/deploy.yml`): Playwright Chromium is now installed
+  before the build step so `scripts/prerender.mjs` runs correctly in the GitHub Actions deploy
+  pipeline.
+
+- **`robots.txt` crawl-delay**: Added `Crawl-delay: 1` directive to pace crawler traffic.
+
 ## [1.30.0] - 2026-02-22
 
 ### Added
