@@ -32,7 +32,7 @@ test.describe('Quantum Threat Mechanics Module', () => {
 
     // Verify default calculations
     // default data lifetime: 25, migration: 5, crqc: 2035 -> 2005
-    await expect(page.getByText('2035 − 2025 − 5 = 2005', { exact: false })).toBeVisible()
+    await expect(page.getByText('2035 − 25 − 5 = 2005', { exact: false })).toBeVisible()
 
     // Adjust migration time slider to 10
     await migrationTimeSlider.fill('10')
