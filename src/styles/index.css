@@ -401,6 +401,10 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
 
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
   .glass-panel {
     @apply bg-card/80 backdrop-blur-md border border-border rounded-2xl shadow-2xl;
   }

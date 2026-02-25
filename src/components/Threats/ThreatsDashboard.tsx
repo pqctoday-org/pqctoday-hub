@@ -255,7 +255,7 @@ export const ThreatsDashboard: React.FC = () => {
         </div>
 
         <span className="hidden md:inline text-muted-foreground px-2">Search:</span>
-        <div className="hidden md:flex relative flex-1 min-w-[200px]">
+        <div className="flex relative w-full md:flex-1 md:min-w-[200px]">
           <Search
             size={16}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"

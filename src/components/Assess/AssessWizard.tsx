@@ -241,7 +241,6 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
 
         <Button
           variant="ghost"
-          size="sm"
           onClick={reset}
           className="text-xs text-muted-foreground hover:text-destructive"
           title="Clear all answers and start over"

@@ -97,7 +97,7 @@ export const ChangelogView = () => {
           </div>
           <Link
             to="/"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
           >
             <ArrowLeft size={16} />
             <span className="hidden sm:inline">Back to App</span>
@@ -112,52 +112,54 @@ export const ChangelogView = () => {
         transition={{ delay: 0.1 }}
         className="glass-panel p-4 mb-6"
       >
-        <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="text-muted-foreground mr-2">Filter:</span>
-          <button
-            onClick={() => toggleFilter('added')}
-            className={clsx(
-              'flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all',
-              filters.added
-                ? 'bg-success/20 border-success/50 text-success'
-                : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
-            )}
-          >
-            <Plus size={14} />
-            <span>New Features</span>
-          </button>
-          <button
-            onClick={() => toggleFilter('changed')}
-            className={clsx(
-              'flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all',
-              filters.changed
-                ? 'bg-primary/20 border-primary/50 text-primary'
-                : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
-            )}
-          >
-            <Sparkles size={14} />
-            <span>Enhancements</span>
-          </button>
-          <button
-            onClick={() => toggleFilter('fixed')}
-            className={clsx(
-              'flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all',
-              filters.fixed
-                ? 'bg-warning/20 border-warning/50 text-warning'
-                : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
-            )}
-          >
-            <Bug size={14} />
-            <span>Bug Fixes</span>
-          </button>
-          {!allFiltersActive && (
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm">
+          <span className="text-muted-foreground">Filter:</span>
+          <div className="flex flex-wrap items-center gap-2">
             <button
-              onClick={() => setFilters({ added: true, changed: true, fixed: true })}
-              className="ml-2 text-xs text-muted-foreground hover:text-foreground underline"
+              onClick={() => toggleFilter('added')}
+              className={clsx(
+                'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
+                filters.added
+                  ? 'bg-success/20 border-success/50 text-success'
+                  : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
+              )}
             >
-              Show all
+              <Plus size={14} />
+              <span>New Features</span>
             </button>
-          )}
+            <button
+              onClick={() => toggleFilter('changed')}
+              className={clsx(
+                'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
+                filters.changed
+                  ? 'bg-primary/20 border-primary/50 text-primary'
+                  : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <Sparkles size={14} />
+              <span>Enhancements</span>
+            </button>
+            <button
+              onClick={() => toggleFilter('fixed')}
+              className={clsx(
+                'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
+                filters.fixed
+                  ? 'bg-warning/20 border-warning/50 text-warning'
+                  : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <Bug size={14} />
+              <span>Bug Fixes</span>
+            </button>
+            {!allFiltersActive && (
+              <button
+                onClick={() => setFilters({ added: true, changed: true, fixed: true })}
+                className="ml-2 text-xs text-muted-foreground hover:text-foreground underline"
+              >
+                Show all
+              </button>
+            )}
+          </div>
         </div>
       </motion.div>
 

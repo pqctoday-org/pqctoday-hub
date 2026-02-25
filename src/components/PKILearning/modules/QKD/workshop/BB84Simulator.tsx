@@ -121,7 +121,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
                 disabled={!isIdle}
                 value={eveRate}
                 onChange={handleEveRateChange}
-                className="w-16 sm:w-24 accent-destructive disabled:opacity-50"
+                className="w-24 sm:w-32 accent-destructive disabled:opacity-50"
                 aria-label="Eavesdropper interception rate"
                 aria-valuenow={eveRate}
               />
@@ -166,8 +166,8 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
 
       {/* Qubit Grid Visualization */}
       {state.aliceQubits.length > 0 && (
-        <div className="bg-muted/30 rounded-lg p-4 border border-border">
-          <div className="grid grid-cols-1 gap-4">
+        <div className="bg-muted/30 rounded-lg p-4 border border-border overflow-x-auto">
+          <div className="grid grid-cols-1 gap-4 min-w-max">
             {/* Header row */}
             <div
               className={`grid gap-2 text-xs font-bold text-muted-foreground`}

@@ -70,7 +70,7 @@ export function ScoringModal({ isOpen, onClose, totalSteps, totalQuestions }: Sc
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="glass-panel p-6 max-w-lg w-full max-h-[85vh] overflow-y-auto"
+              className="glass-panel p-6 max-w-lg w-full max-h-[85dvh] overflow-y-auto"
               role="dialog"
               aria-modal="true"
               aria-labelledby="scoring-modal-title"

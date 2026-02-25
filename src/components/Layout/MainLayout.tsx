@@ -57,7 +57,7 @@ export const MainLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0">
       <header
-        className="m-4 sticky top-4 z-50 transition-all duration-300 print:hidden"
+        className="m-4 sticky top-[max(1rem,env(safe-area-inset-top))] z-50 transition-all duration-300 print:hidden"
         role="banner"
       >
         <div className="glass-panel p-2 lg:p-4 flex w-full justify-center lg:justify-between items-center relative">
@@ -119,7 +119,7 @@ export const MainLayout = () => {
         {/* Suspense boundary for route-level code splitting */}
         <React.Suspense
           fallback={
-            <div className="flex h-[50vh] w-full items-center justify-center">
+            <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
               <div className="flex flex-col items-center gap-4">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
                 <p className="text-muted-foreground animate-pulse">Loading...</p>

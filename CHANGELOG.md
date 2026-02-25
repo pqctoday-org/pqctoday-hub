@@ -4,6 +4,58 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.35.0] - 2026-02-25
+
+### Fixed
+
+- **Global mobile UX audit — touch targets** (41 files): Comprehensive WCAG 2.1 AA remediation
+  across every page and component. All interactive elements now meet the 44×44px minimum touch
+  target requirement. Key changes: `min-h-[44px]` added to filter buttons in `ChangelogView`,
+  phase dots in `MobileTimelineList`, answer buttons in `QuestionCard`, link buttons in
+  `LeaderCard`, the `FilterDropdown` trigger, and the `SourcesModal` close button. Button
+  component `sm` size increased from `h-9` (36px) to `h-10` (40px); `icon` size from
+  `h-10 w-10` to `h-11 w-11` (44px) globally via `button-variants.ts`.
+
+- **Dynamic viewport height for modals** (`ScoringModal`, `SourcesModal`,
+  `ReportMethodologyModal`): Changed `max-h-[85vh]` → `max-h-[85dvh]` so modals remain fully
+  scrollable in landscape mode on phones where the browser address bar reduces available height.
+  Suspense fallback in `MainLayout` likewise changed from `h-[50vh]` → `min-h-[200px] h-[50dvh]`.
+
+- **Safe-area inset support** (`MainLayout.tsx`, `src/styles/index.css`): Sticky app header now
+  uses `top-[max(1rem,env(safe-area-inset-top))]` to clear iPhone notch / Dynamic Island. New
+  `.safe-top` CSS utility added for reuse.
+
+- **Tabs overflow on all Learn modules** (`src/components/ui/tabs.tsx`): `TabsList` gained
+  `overflow-x-auto no-scrollbar w-full`; `TabsTrigger` gained `shrink-0`. Fixes tab bar
+  compression/overflow on all 16 learning module pages.
+
+- **Module workshop landscape mode** (18 module files): Content panels changed from
+  `min-h-[600px]` → `min-h-[400px] md:min-h-[600px]` so workshop areas remain usable on
+  landscape phones where viewport height can be as low as 320px.
+
+- **QKD BB84 Simulator** (`modules/QKD/workshop/BB84Simulator.tsx`): Qubit grid wrapped in
+  `overflow-x-auto` with `min-w-max` on the inner grid to prevent clipping on narrow screens;
+  Eve interception slider widened from `w-16` → `w-24` for easier finger dragging.
+
+- **Report page** (`ReportContent.tsx`, `ReportThreatsAppendix.tsx`): Risk gauge SVG scaled
+  down on mobile (`w-32 h-20 md:w-48 md:h-28`). Threat Landscape table minimum width reduced
+  from `min-w-[560px]` → `min-w-[400px]`; "Crypto at Risk" column hidden on mobile
+  (`hidden md:table-cell`) to reduce horizontal scroll distance.
+
+- **Threats page** (`ThreatsDashboard.tsx`, `MobileThreatsList.tsx`): Search bar changed from
+  `hidden md:flex` to always-visible (`flex w-full md:flex-1`) so mobile users can filter
+  threats. Stat chip grid changed from `grid-cols-2` → `grid-cols-1 min-[360px]:grid-cols-2`
+  to prevent overflow on sub-360px devices.
+
+- **Compliance dropdowns** (`ComplianceTable.tsx`): Source, Category, and Vendor filter menus
+  gained `max-w-[calc(100vw-2rem)]` so they cannot overflow off-screen on 320–375px viewports.
+
+- **Misc layout fixes**: `SoftwareTable` expanded row label column changed from
+  `grid-cols-[120px_1fr]` → `grid-cols-[100px_1fr] sm:grid-cols-[120px_1fr]`; `Changelog`
+  filter row changed from `flex-wrap` → `flex-col sm:flex-row` so buttons stack cleanly on
+  mobile; `MobileTimelineList` phase indicator dots enlarged to 44×44px touch target; Landing
+  page journey step rail gained a right-edge fade gradient scroll affordance.
+
 ## [1.34.0] - 2026-02-25
 
 ### Added

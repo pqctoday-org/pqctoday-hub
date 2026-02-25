@@ -106,7 +106,7 @@ const ThreatRow: React.FC<{
       <td className="py-2.5 pr-3 text-xs text-foreground leading-relaxed max-w-xs">
         {threat.description}
       </td>
-      <td className="py-2.5 pr-3 text-xs text-muted-foreground max-w-[160px]">
+      <td className="py-2.5 pr-3 text-xs text-muted-foreground max-w-[160px] hidden md:table-cell">
         {threat.cryptoAtRisk}
       </td>
       <td className="py-2.5 text-xs text-primary max-w-[160px]">{threat.pqcReplacement}</td>
@@ -150,7 +150,7 @@ export const ReportThreatsAppendix: React.FC<ReportThreatsAppendixProps> = ({
 
   return (
     <div className="space-y-4 overflow-x-auto print:overflow-visible">
-      <div className="min-w-[560px] print:min-w-0">
+      <div className="min-w-[400px] print:min-w-0">
         {industryThreats.length > 0 ? (
           <table className="w-full text-sm">
             <thead>
@@ -159,7 +159,7 @@ export const ReportThreatsAppendix: React.FC<ReportThreatsAppendixProps> = ({
                 <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">Threat ID</th>
                 <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">Criticality</th>
                 <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">Description</th>
-                <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">
+                <th className="py-2 pr-3 text-muted-foreground font-medium text-xs hidden md:table-cell">
                   Crypto at Risk
                 </th>
                 <th className="py-2 text-muted-foreground font-medium text-xs">PQC Replacement</th>

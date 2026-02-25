@@ -265,7 +265,7 @@ export const DigitalIDModule: React.FC = () => {
             </div>
 
             {/* Content Area */}
-            <div className="glass-panel p-4 animate-fade-in min-h-[600px] overflow-y-auto">
+            <div className="glass-panel p-4 animate-fade-in min-h-[400px] md:min-h-[600px] overflow-y-auto">
               {currentStepComponent}
             </div>
 

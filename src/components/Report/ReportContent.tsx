@@ -205,7 +205,7 @@ const RiskGauge = ({ score, level }: { score: number; level: AssessmentResult['r
     <div className="flex flex-col items-center">
       <svg
         viewBox="0 0 200 120"
-        className="w-48 h-28"
+        className="w-32 h-20 md:w-48 md:h-28"
         role="img"
         aria-label={`Risk score: ${score} out of 100, rated ${config.label}`}
       >

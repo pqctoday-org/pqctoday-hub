@@ -277,15 +277,15 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                               Capability Details
                             </h4>
                             <div className="space-y-2">
-                              <div className="grid grid-cols-[120px_1fr] gap-2">
+                              <div className="grid grid-cols-[100px_1fr] sm:grid-cols-[120px_1fr] gap-2">
                                 <span className="text-muted-foreground">Platforms:</span>
                                 <span className="text-foreground">{item.primaryPlatforms}</span>
                               </div>
-                              <div className="grid grid-cols-[120px_1fr] gap-2">
+                              <div className="grid grid-cols-[100px_1fr] sm:grid-cols-[120px_1fr] gap-2">
                                 <span className="text-muted-foreground">Industries:</span>
                                 <span className="text-foreground">{item.targetIndustries}</span>
                               </div>
-                              <div className="grid grid-cols-[120px_1fr] gap-2">
+                              <div className="grid grid-cols-[100px_1fr] sm:grid-cols-[120px_1fr] gap-2">
                                 <span className="text-muted-foreground">Migration Priority:</span>
                                 <span
                                   className={`font-medium ${

@@ -77,25 +77,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">3 new Learn modules</strong> &mdash; Code
-                    Signing (Sigstore, Secure Boot), API Security &amp; JWT (PQC tokens, ML-KEM
-                    JWE), and IoT &amp; OT Security (constrained devices, SCADA migration)
+                    <strong className="text-foreground">Mobile UX overhaul</strong> &mdash; every
+                    page audited for portrait &amp; landscape usability; all buttons now meet
+                    44&times;44px touch targets
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Smarter assessments</strong> &mdash;
-                    algorithm compare links, 20+ country regulatory data, hybrid PQC
-                    recommendations, and contextual report actions
+                    <strong className="text-foreground">Safe-area &amp; dvh support</strong> &mdash;
+                    notch-aware sticky header, modals use dynamic viewport height, landscape mode
+                    fixed across all 16 Learn modules
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Tools &amp; Products tab</strong> &mdash;
-                    every Learn module now links to relevant PQC-ready products from the Migrate
-                    catalog, grouped by infrastructure layer
+                    <strong className="text-foreground">Threats &amp; Report polish</strong> &mdash;
+                    mobile-visible search, responsive risk gauge, narrower threat table with hidden
+                    column on small screens
                   </span>
                 </li>
               </ul>

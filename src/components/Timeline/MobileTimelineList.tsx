@@ -156,7 +156,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                           [country.countryName]: i,
                         }))
                       }
-                      className="flex items-center justify-center min-w-[28px] min-h-[28px] transition-all"
+                      className="flex items-center justify-center min-w-[44px] min-h-[44px] transition-all"
                       aria-label={`Go to phase ${i + 1}: ${p.phase}`}
                     >
                       <div
