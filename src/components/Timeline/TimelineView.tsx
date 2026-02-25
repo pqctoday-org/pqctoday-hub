@@ -17,6 +17,11 @@ export const TimelineView = () => {
   const { selectedRegion } = usePersonaStore()
 
   const [selectedCountry, setSelectedCountry] = useState<string>(() => {
+    // URL ?country= param takes priority (e.g. from Report deep link)
+    const countryParam = new URLSearchParams(window.location.search).get('country')
+    if (countryParam && timelineData?.some((d) => d.countryName === countryParam)) {
+      return countryParam
+    }
     const region = usePersonaStore.getState().selectedRegion
     if (!region || region === 'global') return 'All'
     return `region:${region}`

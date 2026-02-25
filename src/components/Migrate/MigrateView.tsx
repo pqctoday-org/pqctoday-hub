@@ -25,6 +25,11 @@ export const MigrateView: React.FC = () => {
     stepId: string
   } | null>(null)
 
+  // Support ?industry= deep link from Report
+  const [industryFilter, setIndustryFilter] = useState<string | null>(
+    () => searchParams.get('industry') ?? null
+  )
+
   // Persisted store: hidden products + active layer/sub-category
   const {
     hiddenProducts,
@@ -77,6 +82,11 @@ export const MigrateView: React.FC = () => {
           // Layer filter
           const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
           if (!itemLayers.includes(layer.id)) return false
+          // Industry filter (from ?industry= deep link)
+          if (industryFilter) {
+            const q = industryFilter.toLowerCase()
+            if (!item.targetIndustries?.toLowerCase().includes(q)) return false
+          }
           // Search filter
           if (filterText) {
             const q = filterText.toLowerCase()
@@ -92,7 +102,7 @@ export const MigrateView: React.FC = () => {
       },
       {} as Record<string, (typeof softwareData)[number][]>
     )
-  }, [stepFilter, filterText])
+  }, [stepFilter, filterText, industryFilter])
 
   // Layer product counts (for badges on collapsed layer rows)
   const layerProductCounts = useMemo(
@@ -218,6 +228,23 @@ export const MigrateView: React.FC = () => {
 
       {/* Migration Workflow Hero */}
       <MigrationWorkflow onViewSoftware={handleViewSoftware} />
+
+      {/* Industry filter banner (from ?industry= deep link) */}
+      {industryFilter && (
+        <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2">
+          <span>
+            Showing products relevant to <strong>{industryFilter}</strong>
+          </span>
+          <button
+            onClick={() => setIndustryFilter(null)}
+            className="ml-auto flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Clear industry filter"
+          >
+            <X size={12} />
+            Clear
+          </button>
+        </div>
+      )}
 
       {/* Step filter banner */}
       {stepFilter && (

@@ -37,6 +37,20 @@ All notable changes to this project will be documented in this file.
   explaining the app's privacy model — no server-side data collection, localStorage-only
   persistence, BYOK API key handling, and educational-use crypto disclaimer.
 
+### Fixed
+
+- **Broken deep links from Assessment Report**: Report → Library used `?search=` but Library reads
+  `?q=` (param name mismatch, links landed with empty search). Report → Timeline sent `?country=`
+  but TimelineView never consumed it (country not pre-selected). Report → Migrate sent `?industry=`
+  but MigrateView ignored it (no industry filtering applied).
+
+- **Timeline `?country=` deep link** (`TimelineView.tsx`): URL param now pre-selects the country
+  dropdown, validated against available timeline data before applying.
+
+- **Migrate `?industry=` deep link** (`MigrateView.tsx`): New `industryFilter` state filters
+  products by `targetIndustries` field. Dismissible banner shows the active industry filter,
+  following the existing step-filter pattern.
+
 ## [1.35.0] - 2026-02-25
 
 ### Fixed
