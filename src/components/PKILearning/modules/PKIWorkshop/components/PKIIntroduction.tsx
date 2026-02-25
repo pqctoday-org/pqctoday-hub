@@ -12,6 +12,7 @@ import {
   BookOpen,
   GitBranch,
   TreePine,
+  Fingerprint,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { PKICertificateLifecycleDiagram } from './PKICertificateLifecycleDiagram'
@@ -399,6 +400,18 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
               <div className="text-sm font-medium text-foreground">Standards Library</div>
               <div className="text-xs text-muted-foreground">
                 FIPS, RFC, and ISO PQC standards reference
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/digital-id"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Fingerprint size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Digital Identity</div>
+              <div className="text-xs text-muted-foreground">
+                EUDI Wallet, eIDAS 2.0 &amp; PQC credential issuance
               </div>
             </div>
           </Link>

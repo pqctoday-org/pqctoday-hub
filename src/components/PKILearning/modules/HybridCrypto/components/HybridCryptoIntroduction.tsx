@@ -10,6 +10,8 @@ import {
   Library,
   Terminal,
   FlaskConical,
+  KeyRound,
+  PackageCheck,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
@@ -345,6 +347,30 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <div className="text-sm font-medium text-foreground">Quantum Threats</div>
               <div className="text-xs text-muted-foreground">
                 Why hybrid? Understand the quantum threat first
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/api-security-jwt"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <KeyRound size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">API Security &amp; JWT</div>
+              <div className="text-xs text-muted-foreground">
+                Hybrid JOSE tokens with ML-DSA signing &amp; ML-KEM encryption
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/code-signing"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <PackageCheck size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Code Signing</div>
+              <div className="text-xs text-muted-foreground">
+                Hybrid &amp; composite signatures for software supply chain
               </div>
             </div>
           </Link>

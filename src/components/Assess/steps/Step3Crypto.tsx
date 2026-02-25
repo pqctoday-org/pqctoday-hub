@@ -1,10 +1,19 @@
 import { useEffect, useState } from 'react'
 
-import { AlertTriangle, ArrowLeftRight, Hash, Info, Pen, ShieldCheck } from 'lucide-react'
+import {
+  AlertTriangle,
+  ArrowLeftRight,
+  ArrowRight,
+  Hash,
+  Info,
+  Pen,
+  ShieldCheck,
+} from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 import clsx from 'clsx'
 
+import { Link } from 'react-router-dom'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { ALGORITHM_DB } from '../../../hooks/assessmentData'
 import { loadAlgorithmsData } from '../../../data/algorithmsData'
@@ -253,9 +262,20 @@ const Step3Crypto = () => {
         </div>
       )}
 
-      <p className="text-xs text-muted-foreground flex items-center gap-1">
-        <AlertTriangle size={12} className="text-warning" />= Quantum-vulnerable algorithm
-      </p>
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-muted-foreground flex items-center gap-1">
+          <AlertTriangle size={12} className="text-warning" />= Quantum-vulnerable algorithm
+        </p>
+        <Link
+          to="/algorithms"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-primary hover:underline flex items-center gap-1"
+        >
+          <ArrowRight size={12} />
+          Compare algorithms
+        </Link>
+      </div>
     </div>
   )
 }

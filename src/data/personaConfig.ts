@@ -101,13 +101,22 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
   'email-signing': ['Healthcare', 'Government & Defense', 'Finance & Banking'],
   'pki-workshop': ['Government & Defense', 'Finance & Banking', 'Healthcare'],
   'key-management': ['Finance & Banking', 'Government & Defense', 'Healthcare', 'Technology'],
-  'stateful-signatures': ['Government & Defense', 'Aerospace'],
-  'digital-assets': ['Finance & Banking', 'Retail & E-Commerce'],
+  'stateful-signatures': ['Government & Defense', 'Aerospace', 'Technology'],
+  'merkle-tree-certs': ['Technology', 'Finance & Banking', 'Government & Defense'],
+  'digital-assets': ['Finance & Banking', 'Retail & E-Commerce', 'Technology'],
   '5g-security': ['Telecommunications', 'Government & Defense'],
-  'digital-id': ['Government & Defense', 'Healthcare', 'Finance & Banking'],
+  'digital-id': ['Government & Defense', 'Healthcare', 'Finance & Banking', 'Retail & E-Commerce'],
   'entropy-randomness': null,
+  qkd: ['Government & Defense', 'Telecommunications', 'Finance & Banking', 'Energy & Utilities'],
   'code-signing': ['Technology', 'Government & Defense', 'Finance & Banking'],
   'api-security-jwt': ['Technology', 'Finance & Banking', 'Healthcare', 'Retail & E-Commerce'],
+  'iot-ot-pqc': [
+    'Energy & Utilities',
+    'Automotive',
+    'Telecommunications',
+    'Government & Defense',
+    'Healthcare',
+  ],
 }
 
 /** Nav paths that are always shown regardless of persona. */

@@ -1,53 +1,60 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, BarChart3, KeyRound, PenLine, Shapes } from 'lucide-react'
+import { Trash2, Cpu, FileCode, Network, Link2, Factory } from 'lucide-react'
+import { IoTOTIntroduction } from './components/IoTOTIntroduction'
+import { IoTOTExercises, type WorkshopConfig } from './components/IoTOTExercises'
+import { ConstrainedAlgorithmExplorer } from './workshop/ConstrainedAlgorithmExplorer'
+import { FirmwareSigningSimulator } from './workshop/FirmwareSigningSimulator'
+import { DTLSHandshakeVisualizer } from './workshop/DTLSHandshakeVisualizer'
+import { CertChainBloatAnalyzer } from './workshop/CertChainBloatAnalyzer'
+import { SCADAMigrationPlanner } from './workshop/SCADAMigrationPlanner'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { PQC101Module } from './PQC101Module'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
-import { AlgorithmFamilyWorkshop } from './AlgorithmFamilyWorkshop'
-import { AlgorithmComparisonTable } from './AlgorithmComparisonTable'
-import { KeyGenWorkshop } from './KeyGenWorkshop'
-import { SignatureDemo } from './SignatureDemo'
-import { PQC101Exercises, type WorkshopConfig } from './PQC101Exercises'
 
-const MODULE_ID = 'pqc-101'
+const MODULE_ID = 'iot-ot-pqc'
 
 const PARTS = [
   {
-    id: 'algorithm-families',
-    title: 'Step 1: Why PQC Works',
+    id: 'constrained-algorithm',
+    title: 'Step 1: Algorithm Explorer',
+    description: 'Compare PQC algorithm resource requirements against device class constraints.',
+    icon: Cpu,
+  },
+  {
+    id: 'firmware-signing',
+    title: 'Step 2: Firmware Signing',
+    description: 'Sign and verify a firmware image using LMS, XMSS, or ML-DSA.',
+    icon: FileCode,
+  },
+  {
+    id: 'dtls-handshake',
+    title: 'Step 3: DTLS Handshake',
+    description: 'Simulate a CoAP/DTLS 1.3 handshake with PQC and measure overhead.',
+    icon: Network,
+  },
+  {
+    id: 'cert-chain-bloat',
+    title: 'Step 4: Chain Bloat',
+    description: 'Analyze PQC certificate chain sizes and their impact on constrained TLS.',
+    icon: Link2,
+  },
+  {
+    id: 'scada-assessment',
+    title: 'Step 5: SCADA Planner',
     description:
-      'Explore why lattice, hash-based, and code-based algorithms resist quantum computers.',
-    icon: Shapes,
-  },
-  {
-    id: 'algorithm-comparison',
-    title: 'Step 2: Algorithm Comparison',
-    description: 'Compare classical and post-quantum algorithms side-by-side.',
-    icon: BarChart3,
-  },
-  {
-    id: 'key-generation',
-    title: 'Step 3: Key Generation',
-    description: 'Generate a real key pair with OpenSSL and observe size differences.',
-    icon: KeyRound,
-  },
-  {
-    id: 'signature-demo',
-    title: 'Step 4: Signature Demo',
-    description: 'Sign a message and see how digital signatures prove authenticity.',
-    icon: PenLine,
+      'Assess a SCADA/ICS environment and plan PQC migration across Purdue model layers.',
+    icon: Factory,
   },
 ]
 
-export const Module1: React.FC = () => {
-  const { markStepComplete, updateModuleProgress } = useModuleStore()
+export const IoTOTModule: React.FC = () => {
   const [activeTab, setActiveTab] = useState('learn')
   const [currentPart, setCurrentPart] = useState(0)
   const [configKey, setConfigKey] = useState(0)
   const startTimeRef = useRef(0)
+  const { updateModuleProgress, markStepComplete } = useModuleStore()
 
   useEffect(() => {
     startTimeRef.current = Date.now()
@@ -57,13 +64,12 @@ export const Module1: React.FC = () => {
     })
 
     return () => {
-      const elapsedMins = (Date.now() - startTimeRef.current) / 60000
-      if (elapsedMins > 0) {
-        const current = useModuleStore.getState().modules[MODULE_ID]
-        updateModuleProgress(MODULE_ID, {
-          timeSpent: (current?.timeSpent || 0) + elapsedMins,
-        })
-      }
+      const elapsedMs = Date.now() - startTimeRef.current
+      const elapsed = elapsedMs / 60000
+      const current = useModuleStore.getState().modules[MODULE_ID]
+      updateModuleProgress(MODULE_ID, {
+        timeSpent: (current?.timeSpent || 0) + elapsed,
+      })
     }
   }, [updateModuleProgress])
 
@@ -97,7 +103,7 @@ export const Module1: React.FC = () => {
   )
 
   const handleReset = () => {
-    if (confirm('Restart PQC 101 Module?')) {
+    if (confirm('Restart IoT & OT Security Module?')) {
       setCurrentPart(0)
       setConfigKey((prev) => prev + 1)
       startTimeRef.current = Date.now()
@@ -113,10 +119,10 @@ export const Module1: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gradient">PQC 101: Introduction</h1>
+          <h1 className="text-3xl font-bold text-gradient">IoT &amp; OT Security</h1>
           <p className="text-muted-foreground mt-2">
-            Understand the quantum threat, explore NIST PQC standards, and compare classical vs
-            post-quantum cryptography.
+            PQC for constrained devices &mdash; algorithm selection, firmware signing, protocol
+            impacts, and SCADA migration.
           </p>
         </div>
       </div>
@@ -130,23 +136,12 @@ export const Module1: React.FC = () => {
           <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
-        {/* Learn Tab */}
         <TabsContent value="learn">
-          <PQC101Module />
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={navigateToWorkshop}
-              className="px-6 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              Go to Workshop &rarr;
-            </button>
-          </div>
+          <IoTOTIntroduction onNavigateToWorkshop={navigateToWorkshop} />
         </TabsContent>
 
-        {/* Workshop Tab */}
         <TabsContent value="workshop">
           <div className="max-w-7xl mx-auto space-y-6">
-            {/* Reset button */}
             <div className="flex justify-end">
               <button
                 onClick={handleReset}
@@ -198,24 +193,12 @@ export const Module1: React.FC = () => {
                 <p className="text-muted-foreground">{PARTS[currentPart].description}</p>
               </div>
               {currentPart === 0 && (
-                <AlgorithmFamilyWorkshop
-                  key={`families-${configKey}`}
-                  onComplete={() => markStepComplete(MODULE_ID, 'algorithm-families')}
-                />
+                <ConstrainedAlgorithmExplorer key={`constrained-${configKey}`} />
               )}
-              {currentPart === 1 && <AlgorithmComparisonTable key={`comparison-${configKey}`} />}
-              {currentPart === 2 && (
-                <KeyGenWorkshop
-                  key={`keygen-${configKey}`}
-                  onComplete={() => markStepComplete(MODULE_ID, 'key-generation')}
-                />
-              )}
-              {currentPart === 3 && (
-                <SignatureDemo
-                  key={`sigdemo-${configKey}`}
-                  onComplete={() => markStepComplete(MODULE_ID, 'signature-demo')}
-                />
-              )}
+              {currentPart === 1 && <FirmwareSigningSimulator key={`firmware-${configKey}`} />}
+              {currentPart === 2 && <DTLSHandshakeVisualizer key={`dtls-${configKey}`} />}
+              {currentPart === 3 && <CertChainBloatAnalyzer key={`cert-chain-${configKey}`} />}
+              {currentPart === 4 && <SCADAMigrationPlanner key={`scada-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}
@@ -232,7 +215,7 @@ export const Module1: React.FC = () => {
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
                   className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
                 >
-                  Complete Module ✓
+                  Complete Module
                 </button>
               ) : (
                 <button
@@ -246,20 +229,16 @@ export const Module1: React.FC = () => {
           </div>
         </TabsContent>
 
-        {/* Exercises Tab */}
         <TabsContent value="exercises">
-          <PQC101Exercises
+          <IoTOTExercises
             onNavigateToWorkshop={navigateToWorkshop}
             onSetWorkshopConfig={handleSetWorkshopConfig}
           />
         </TabsContent>
 
-        {/* References Tab */}
         <TabsContent value="references">
-          <ModuleReferencesTab moduleId="introduction" />
+          <ModuleReferencesTab moduleId="iot-ot-pqc" />
         </TabsContent>
-
-        {/* Tools & Products Tab */}
         <TabsContent value="tools">
           <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>

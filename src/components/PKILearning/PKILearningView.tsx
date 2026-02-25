@@ -74,6 +74,11 @@ const APISecurityJWTModule = lazyWithRetry(() =>
     default: module.APISecurityJWTModule,
   }))
 )
+const IoTOTModule = lazyWithRetry(() =>
+  import('./modules/IoTOT').then((module) => ({
+    default: module.IoTOTModule,
+  }))
+)
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -128,6 +133,7 @@ export const PKILearningView: React.FC = () => {
           <Route path="merkle-tree-certs" element={<MerkleTreeCertsModule />} />
           <Route path="code-signing" element={<CodeSigningModule />} />
           <Route path="api-security-jwt" element={<APISecurityJWTModule />} />
+          <Route path="iot-ot-pqc" element={<IoTOTModule />} />
         </Routes>
       </Suspense>
     </div>

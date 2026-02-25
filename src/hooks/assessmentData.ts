@@ -36,18 +36,21 @@ export const ALGORITHM_DB: Record<
   },
   'ECDH P-256': {
     quantumVulnerable: true,
-    replacement: 'ML-KEM-768',
-    notes: "ECDH on P-256 curve. Key agreement vulnerable to Shor's algorithm.",
+    replacement: 'ML-KEM-768 (hybrid: ML-KEM-768 + X25519)',
+    notes:
+      "ECDH on P-256 curve. Key agreement vulnerable to Shor's algorithm. NIST recommends hybrid key exchange during transition.",
   },
   'ECDH P-384': {
     quantumVulnerable: true,
-    replacement: 'ML-KEM-768',
-    notes: "ECDH on P-384 curve. Key agreement vulnerable to Shor's algorithm.",
+    replacement: 'ML-KEM-768 (hybrid: ML-KEM-768 + X25519)',
+    notes:
+      "ECDH on P-384 curve. Key agreement vulnerable to Shor's algorithm. NIST recommends hybrid key exchange during transition.",
   },
   'ECDH P-521': {
     quantumVulnerable: true,
-    replacement: 'ML-KEM-1024',
-    notes: "ECDH on P-521 curve. Key agreement vulnerable to Shor's algorithm.",
+    replacement: 'ML-KEM-1024 (hybrid: ML-KEM-1024 + X448)',
+    notes:
+      "ECDH on P-521 curve. Key agreement vulnerable to Shor's algorithm. NIST recommends hybrid key exchange during transition.",
   },
   Ed25519: {
     quantumVulnerable: true,
@@ -61,8 +64,9 @@ export const ALGORITHM_DB: Record<
   },
   'DH (Diffie-Hellman)': {
     quantumVulnerable: true,
-    replacement: 'ML-KEM-768',
-    notes: 'Classic key exchange. Fully broken by quantum computers.',
+    replacement: 'ML-KEM-768 (hybrid: ML-KEM-768 + X25519)',
+    notes:
+      'Classic key exchange. Fully broken by quantum computers. NIST recommends hybrid key exchange during transition.',
   },
   'AES-128': {
     quantumVulnerable: false,
@@ -106,18 +110,76 @@ export const ALGORITHM_DB: Record<
   },
   X25519: {
     quantumVulnerable: true,
-    replacement: 'ML-KEM-768',
-    notes: "Curve25519 key exchange. Vulnerable to Shor's algorithm.",
+    replacement: 'ML-KEM-768 (hybrid: ML-KEM-768 + X25519)',
+    notes:
+      "Curve25519 key exchange. Vulnerable to Shor's algorithm. Widely used in TLS 1.3; hybrid mode already deployed in Chrome/Firefox.",
   },
   X448: {
     quantumVulnerable: true,
-    replacement: 'ML-KEM-1024',
+    replacement: 'ML-KEM-1024 (hybrid: ML-KEM-1024 + X448)',
     notes: "Curve448 key exchange. Vulnerable to Shor's algorithm.",
   },
   secp256k1: {
     quantumVulnerable: true,
     replacement: 'ML-DSA-44',
     notes: 'Used in Bitcoin/Ethereum. Vulnerable to quantum attack.',
+  },
+  // ── NIST PQC Standards (FIPS 203/204/205) — quantum-safe ──
+  'ML-KEM-512': {
+    quantumVulnerable: false,
+    replacement: 'No change needed',
+    notes: 'FIPS 203 (2024). NIST Level 1 KEM. Quantum-safe key encapsulation.',
+  },
+  'ML-KEM-768': {
+    quantumVulnerable: false,
+    replacement: 'No change needed',
+    notes: 'FIPS 203 (2024). NIST Level 3 KEM. Recommended default for most applications.',
+  },
+  'ML-KEM-1024': {
+    quantumVulnerable: false,
+    replacement: 'No change needed',
+    notes: 'FIPS 203 (2024). NIST Level 5 KEM. Highest security level.',
+  },
+  'ML-DSA-44': {
+    quantumVulnerable: false,
+    replacement: 'No change needed',
+    notes: 'FIPS 204 (2024). NIST Level 2 digital signature. Replaces ECDSA P-256 / Ed25519.',
+  },
+  'ML-DSA-65': {
+    quantumVulnerable: false,
+    replacement: 'No change needed',
+    notes: 'FIPS 204 (2024). NIST Level 3 digital signature. Replaces ECDSA P-384 / RSA-3072.',
+  },
+  'ML-DSA-87': {
+    quantumVulnerable: false,
+    replacement: 'No change needed',
+    notes: 'FIPS 204 (2024). NIST Level 5 digital signature. Replaces RSA-4096.',
+  },
+  'SLH-DSA-128': {
+    quantumVulnerable: false,
+    replacement: 'No change needed',
+    notes: 'FIPS 205 (2024). Stateless hash-based signature. Conservative fallback to ML-DSA.',
+  },
+  'SLH-DSA-192': {
+    quantumVulnerable: false,
+    replacement: 'No change needed',
+    notes: 'FIPS 205 (2024). NIST Level 3 hash-based signature.',
+  },
+  'SLH-DSA-256': {
+    quantumVulnerable: false,
+    replacement: 'No change needed',
+    notes: 'FIPS 205 (2024). NIST Level 5 hash-based signature.',
+  },
+  'LMS/HSS': {
+    quantumVulnerable: false,
+    replacement: 'No change needed',
+    notes:
+      'SP 800-208 (2020). Stateful hash-based signature for firmware/boot. Requires strict state management.',
+  },
+  'XMSS/XMSS^MT': {
+    quantumVulnerable: false,
+    replacement: 'No change needed',
+    notes: 'RFC 8391 (2018). Stateful hash-based signature. Used in specialized firmware signing.',
   },
 }
 export const VULNERABLE_ALGORITHMS = new Set(
@@ -168,18 +230,24 @@ export const AVAILABLE_TEAM_SIZES: AssessmentInput['teamSize'][] = [
   '51-200',
   '200-plus',
 ]
+/**
+ * Industry quantum-threat base scores (0–30).
+ * Derived from CISA critical infrastructure designations, sector-specific HNDL/HNFL
+ * exposure profiles, and regulatory urgency timelines.
+ * Sources: CISA Critical Infrastructure Sectors, NIST CNSA 2.0 (2022), EU NIS2 Directive (2022).
+ */
 export const INDUSTRY_THREAT: Record<string, number> = {
-  'Finance & Banking': 25,
-  'Government & Defense': 30,
-  Healthcare: 20,
-  Telecommunications: 20,
-  Technology: 15,
-  'Energy & Utilities': 20,
-  Automotive: 15,
-  Aerospace: 25,
-  'Retail & E-Commerce': 10,
-  Education: 5,
-  Other: 10,
+  'Finance & Banking': 25, // PCI DSS, SWIFT, DORA; high HNDL (transaction records) + HNFL (code signing)
+  'Government & Defense': 30, // CNSA 2.0, CISA; highest: classified data HNDL + national security
+  Healthcare: 20, // HIPAA, long patient data retention; high HNDL
+  Telecommunications: 20, // 5G/SIM provisioning, NIS2; high infrastructure complexity
+  Technology: 15, // Broad but less regulated; agile migration capability
+  'Energy & Utilities': 20, // SCADA/OT, NERC CIP, NIS2; long-lived embedded systems
+  Automotive: 15, // V2X, ECU secure boot; 15+ year vehicle lifetime HNFL
+  Aerospace: 25, // 40+ year asset lifetime; extreme HNDL/HNFL exposure
+  'Retail & E-Commerce': 10, // PCI DSS; shorter data retention, faster migration cycles
+  Education: 5, // Low regulatory pressure; limited crypto-dependent infrastructure
+  Other: 10, // Baseline default
 }
 export const ALGORITHM_WEIGHTS: Record<string, number> = {
   'RSA-2048': 10,
@@ -313,44 +381,68 @@ export const TIMELINE_URGENCY: Record<string, number> = {
   'no-deadline': 1.0,
   unknown: 1.2, // not knowing is worse than no deadline — assume near-term pressure
 }
-/** Country-specific regulatory urgency scores (0-12) for risk scoring. */
+/**
+ * Country-specific regulatory urgency scores (0–12) for risk scoring.
+ * Based on published national PQC mandates, advisory timelines, and regulatory frameworks.
+ * Sources: NSA CNSA 2.0 (Sept 2022), ANSSI Avis (Jan 2024), BSI TR-02102 (2023),
+ * INCD Advisory (2024), NCSC White Paper (2023), ASD ISM (2024), CCCS ITSAP.00.017 (2023),
+ * OSCCA NGCC Program (2023), MAS Circular (2024), CRYPTREC PQC Report (2023),
+ * MSIT/KpqC Roadmap (2024), EU NIS2 Directive (2022), EU DORA (2023).
+ */
 export const COUNTRY_REGULATORY_URGENCY: Record<string, number> = {
-  'United States': 12, // CNSA 2.0, FedRAMP, FIPS 140-3
-  France: 10, // ANSSI 2025 mandate
-  Germany: 8, // BSI PQC guidance, NIS2
-  Israel: 7, // INCD PQC guidance, BOI directive (2025 deadlines)
-  Netherlands: 7, // NIS2, EU financial regulation
-  'United Kingdom': 7, // NCSC PQC guidance
-  Australia: 6, // ASD guidance
-  Canada: 6, // CCCS guidance
-  China: 6, // OSCCA NGCC program (2027-2030)
+  'United States': 12, // CNSA 2.0 mandates, FedRAMP, FIPS 140-3, OMB M-23-02
+  France: 10, // ANSSI 2025 PQC readiness mandate, hybrid TLS requirement
+  Germany: 8, // BSI TR-02102 PQC guidance, NIS2 transposition
+  Israel: 10, // INCD 2027 planning deadline, BOI directive — urgency matches early horizon
+  Netherlands: 7, // NIS2, AIVD quantum threat advisory (2023)
+  'United Kingdom': 7, // NCSC PQC White Paper (Nov 2023)
+  Australia: 6, // ASD ISM PQC controls (2024)
+  Canada: 6, // CCCS ITSAP.00.017, CCCS-2023 PQC guidance
+  China: 6, // OSCCA NGCC program (2027-2030 financial sector)
   'New Zealand': 6, // NZISM v3.9, Five Eyes aligned
-  Singapore: 6, // MAS PQC circular
-  Spain: 6, // NIS2
-  Italy: 6, // NIS2
-  Belgium: 6, // NIS2
-  Sweden: 6, // NIS2
-  Japan: 5, // CRYPTREC guidance
-  'South Korea': 5, // KpqC standardization, MSIT roadmap
-  Denmark: 5, // NIS2
-  'Czech Republic': 6, // NIS2, DORA, eIDAS, EU-REC-2024-1101
+  Singapore: 6, // MAS PQC advisory circular (2024)
+  Spain: 6, // NIS2 transposition
+  Italy: 6, // NIS2 transposition
+  Belgium: 6, // NIS2 transposition
+  Sweden: 6, // NIS2 transposition
+  Japan: 5, // CRYPTREC PQC evaluation report (2023)
+  'South Korea': 5, // KpqC standardization, MSIT roadmap (2024)
+  Denmark: 5, // NIS2 transposition
+  'Czech Republic': 6, // NIS2, DORA, eIDAS 2.0, EU-REC-2024-1101
+  India: 4, // DSCI/CERT-In PQC awareness, no formal mandate yet
+  Brazil: 3, // ITI/ICP-Brasil PQC study group, early stage
+  'United Arab Emirates': 4, // NESA guidance, financial sector PQC pilot
+  Switzerland: 6, // NCSC-CH PQC recommendations, aligned with EU NIS2
+  Norway: 6, // NIS2 transposition via EEA
+  Finland: 6, // NIS2 transposition
+  Austria: 6, // NIS2 transposition
+  Poland: 5, // NIS2 transposition, early adoption
+  Taiwan: 5, // NICS PQC study, semiconductor supply chain focus
 }
 export const ESTIMATED_QUANTUM_THREAT_YEAR = 2035
-/** Country-specific regulatory planning horizons (earliest hard deadline year). */
+/**
+ * Country-specific regulatory planning horizons (earliest hard deadline year).
+ * Sources same as COUNTRY_REGULATORY_URGENCY above.
+ */
 export const COUNTRY_PLANNING_HORIZON: Record<string, number> = {
-  'United States': 2030, // CNSA 2.0 software deprecation
+  'United States': 2030, // CNSA 2.0 software deprecation by 2030
   Israel: 2027, // INCD inventory & planning phase ends 2027
-  France: 2030, // ANSSI mandate
-  Canada: 2030, // CCCS effective 2025
+  France: 2030, // ANSSI hybrid TLS mandate effective 2025, full migration by 2030
+  Canada: 2030, // CCCS targets 2030 alignment with US CNSA 2.0
   China: 2030, // NGCC financial sector migration estimate
-  'New Zealand': 2030, // NZISM transition phase target
-  Singapore: 2030, // MAS advisory alignment
+  'New Zealand': 2030, // NZISM transition phase target, Five Eyes aligned
+  Singapore: 2030, // MAS advisory alignment with US/UK timelines
+  'Czech Republic': 2030, // NIS2/DORA effective, EU critical systems deadline
+  Switzerland: 2030, // Aligned with EU NIS2 critical systems
+  Norway: 2030, // NIS2 via EEA, aligned with EU critical systems
   'South Korea': 2035, // KpqC full migration roadmap
   Germany: 2035, // BSI guidance
   'United Kingdom': 2035, // NCSC
   Australia: 2035, // ASD ISM
   Japan: 2035, // CRYPTREC guidelines
-  'Czech Republic': 2030, // NIS2/DORA effective, EU critical systems deadline
+  Finland: 2030, // NIS2 critical infrastructure
+  Austria: 2030, // NIS2 critical infrastructure
+  Taiwan: 2035, // NICS study ongoing, no hard deadline yet
 }
 /** Industry-specific composite score weights (must sum to 1.0). */
 export const INDUSTRY_COMPOSITE_WEIGHTS: Record<

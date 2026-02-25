@@ -186,7 +186,13 @@ function computeRegulatoryPressure(
   for (const fw of pqcCompliance) {
     const deadlineYear = parseDeadlineYear(fw.deadline)
     if (!deadlineYear) {
-      frameworkScore += 10 // ongoing/unknown → moderate
+      // Ongoing/unknown/malformed deadline → moderate score
+      if (fw.deadline && !['Ongoing', 'TBD', 'N/A', 'Unknown'].includes(fw.deadline)) {
+        console.warn(
+          `[Assess] Could not parse deadline year from "${fw.deadline}" for framework "${fw.framework}"`
+        )
+      }
+      frameworkScore += 10
     } else {
       const yearsUntil = deadlineYear - currentYear
       if (yearsUntil <= 0)
@@ -201,7 +207,7 @@ function computeRegulatoryPressure(
   frameworkScore = Math.min(45, frameworkScore)
 
   const industryBase = INDUSTRY_THREAT[input.industry] ?? 10
-  const industryRegScore = Math.min(25, industryBase * 0.85)
+  const industryRegScore = Math.min(30, industryBase * 0.85) // cap at 30 to preserve ranking between top industries
   const countryUrgency = COUNTRY_REGULATORY_URGENCY[input.country ?? ''] ?? 0
   const timelineMul = TIMELINE_URGENCY[input.timelinePressure ?? 'unknown'] ?? 1.1
   const raw = (frameworkScore + industryRegScore + countryUrgency) * timelineMul
@@ -240,15 +246,24 @@ function computeCompositeScore(categoryScores: CategoryScores, input: Assessment
     categoryScores.migrationComplexity * w.mc +
     categoryScores.regulatoryPressure * w.rp +
     categoryScores.organizationalReadiness * w.or
+
+  // Situational risk multipliers — each adds an increment, capped at 1.20x total to
+  // prevent compound stacking from producing surprising score jumps.
+  // Rationale: these conditions represent compounding risk factors that warrant a
+  // moderate uplift, but the base category scores already capture most of the signal.
+  let boostFactor = 1.0
+
+  // Critical sensitivity + long retention + not yet migrating → HNDL urgency
   if (
     input.dataSensitivity.includes('critical') &&
     input.dataRetention?.length &&
     getMaxRetentionYears(input.dataRetention) > 10 &&
     input.migrationStatus !== 'started'
   ) {
-    composite *= 1.15
+    boostFactor += 0.08
   }
 
+  // Signing algos + long credential lifetime + not yet migrating → HNFL urgency
   const hasSigningAlgos = (input.currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a))
   if (
     hasSigningAlgos &&
@@ -256,23 +271,27 @@ function computeCompositeScore(categoryScores: CategoryScores, input: Assessment
     Math.max(...input.credentialLifetime.map((v) => CREDENTIAL_LIFETIME_YEARS[v] ?? 0)) > 10 && // eslint-disable-line security/detect-object-injection
     input.migrationStatus !== 'started'
   ) {
-    composite *= 1.1
+    boostFactor += 0.06
   }
 
+  // Gov & Defense + CNSA 2.0 compliance + not yet migrating → regulatory urgency
   if (
     input.industry === 'Government & Defense' &&
     input.complianceRequirements.includes('CNSA 2.0') &&
     input.migrationStatus !== 'started'
   ) {
-    composite *= 1.1
+    boostFactor += 0.04
   }
 
+  // Hardcoded crypto + HSM/Legacy infra → migration inertia
   if (
     input.cryptoAgility === 'hardcoded' &&
     input.infrastructure?.some((i) => i.includes('HSM') || i.includes('Legacy'))
   ) {
-    composite *= 1.08
+    boostFactor += 0.04
   }
+
+  composite *= Math.min(1.2, boostFactor)
 
   return Math.max(0, Math.min(100, Math.round(composite)))
 }
@@ -804,6 +823,15 @@ function generateExtendedActions(
         relatedModule: '/compliance',
       },
     ],
+    Education: [
+      {
+        action:
+          'Assess research data repositories and student records systems for long-term encryption — FERPA-protected data has multi-decade retention requirements.',
+        category: 'short-term',
+        effort: 'low',
+        relatedModule: buildThreatsUrl('Education'),
+      },
+    ],
   }
   const industryActions = INDUSTRY_ACTIONS[input.industry]
   if (industryActions) {
@@ -982,10 +1010,11 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
         if (!info) {
           return {
             classical: algo,
-            quantumVulnerable: false,
+            quantumVulnerable: true, // conservative: unknown algorithms treated as vulnerable
             replacement: 'Unknown — review manually',
-            urgency: 'long-term' as const,
-            notes: 'Algorithm not in database. Manual review recommended.',
+            urgency: 'immediate' as const,
+            notes:
+              'Algorithm not in assessment database. Treated as quantum-vulnerable (conservative). Manual review recommended.',
           }
         }
         return {

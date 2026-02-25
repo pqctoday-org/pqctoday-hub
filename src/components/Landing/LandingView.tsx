@@ -15,8 +15,11 @@ import { Button } from '../ui/button'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONA_RECOMMENDED_PATHS, PERSONA_NAV_PATHS } from '@/data/personaConfig'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { PersonalizationSection } from './PersonalizationSection'
 import { ScoreCard } from './ScoreCard'
+
+const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -75,7 +78,7 @@ const JOURNEY_STEPS: JourneyStep[] = [
     icon: GraduationCap,
     color: 'text-secondary',
     description:
-      '15 interactive modules + 340-question quiz — from PQC fundamentals to advanced protocols',
+      '19 interactive modules + 380-question quiz — from PQC fundamentals to advanced protocols',
     paths: ['/learn'],
   },
   {
@@ -115,7 +118,7 @@ const JOURNEY_STEPS: JourneyStep[] = [
     icon: ArrowRightLeft,
     color: 'text-primary',
     description:
-      '193 verified PQC-ready tools across 7 infrastructure layers — from cloud KMS to hardware security modules',
+      '220+ verified PQC-ready tools across 7 infrastructure layers — from cloud KMS to hardware security modules',
     paths: ['/migrate'],
   },
   {
@@ -277,7 +280,7 @@ export const LandingView = () => {
               value: libraryCount !== null ? String(libraryCount) : '...',
               label: 'Standards Tracked',
             },
-            { value: '15', label: 'Learning Modules' },
+            { value: String(MODULE_COUNT), label: 'Learning Modules' },
           ].map((stat) => (
             <div key={stat.label} className="glass-panel p-4">
               <div className="text-2xl md:text-3xl font-bold text-gradient">{stat.value}</div>

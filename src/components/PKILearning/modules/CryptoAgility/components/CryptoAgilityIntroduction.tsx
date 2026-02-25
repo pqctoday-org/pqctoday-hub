@@ -10,6 +10,7 @@ import {
   ClipboardCheck,
   BookOpen,
   FlaskConical,
+  PackageCheck,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
@@ -331,6 +332,18 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
               <div className="text-sm font-medium text-foreground">Quantum Threats</div>
               <div className="text-xs text-muted-foreground">
                 Why migration matters &mdash; the quantum threat explained
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/code-signing"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <PackageCheck size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Code Signing</div>
+              <div className="text-xs text-muted-foreground">
+                Agile supply chain security with ML-DSA &amp; Sigstore
               </div>
             </div>
           </Link>

@@ -77,17 +77,17 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">2 new Learn modules</strong> &mdash; Code
-                    Signing (Sigstore, ML-DSA packages) and API Security &amp; JWT (PQC tokens,
-                    ML-KEM JWE)
+                    <strong className="text-foreground">3 new Learn modules</strong> &mdash; Code
+                    Signing (Sigstore, Secure Boot), API Security &amp; JWT (PQC tokens, ML-KEM
+                    JWE), and IoT &amp; OT Security (constrained devices, SCADA migration)
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Belt-rank Learning Journey</strong> &mdash;
-                    earn judo belts from White to Black across knowledge, breadth, practice &amp;
-                    consistency
+                    <strong className="text-foreground">Smarter assessments</strong> &mdash;
+                    algorithm compare links, 20+ country regulatory data, hybrid PQC
+                    recommendations, and contextual report actions
                   </span>
                 </li>
                 <li className="flex items-start gap-2">

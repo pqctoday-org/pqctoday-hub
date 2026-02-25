@@ -26,6 +26,7 @@ export type QuizCategory =
   | 'qkd'
   | 'code-signing'
   | 'api-security-jwt'
+  | 'iot-ot-pqc'
 
 export interface QuizOption {
   id: string

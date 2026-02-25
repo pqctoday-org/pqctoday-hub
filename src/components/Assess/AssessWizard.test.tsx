@@ -1,3 +1,4 @@
+import React from 'react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import { AssessWizard } from './AssessWizard'
@@ -8,6 +9,15 @@ vi.mock(
   'framer-motion',
   async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
 )
+
+// Mock react-router-dom Link — wizard steps use Link for contextual exploration links
+vi.mock('react-router-dom', () => ({
+  Link: ({ children, to, ...props }: { children: React.ReactNode; to: string }) => (
+    <a href={to} {...props}>
+      {children}
+    </a>
+  ),
+}))
 
 // Mock algorithmsData so Step3Crypto renders without actual CSV loading
 vi.mock('../../data/algorithmsData', () => ({

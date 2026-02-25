@@ -38,7 +38,7 @@ export const MobileAboutView = () => {
           <h2 className="text-lg font-bold">Our Mission</h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          PQC Today brings together 15 learning modules, hands-on cryptographic labs, a risk
+          PQC Today brings together 19 learning modules, hands-on cryptographic labs, a risk
           assessment wizard, migration planning tools, and global compliance tracking &mdash; tuned
           to your role and organization.
         </p>

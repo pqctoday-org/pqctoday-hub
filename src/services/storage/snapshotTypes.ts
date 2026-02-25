@@ -26,6 +26,7 @@ export interface AssessmentData {
   industry: string
   country: string
   currentCrypto: string[]
+  currentCryptoCategories: string[]
   cryptoUnknown: boolean
   dataSensitivity: string[]
   sensitivityUnknown: boolean
@@ -43,9 +44,11 @@ export interface AssessmentData {
   cryptoAgility: NonNullable<AssessmentInput['cryptoAgility']> | ''
   infrastructure: string[]
   infrastructureUnknown: boolean
+  infrastructureSubCategories: Record<string, string[]>
   vendorDependency: NonNullable<AssessmentInput['vendorDependency']> | ''
   vendorUnknown: boolean
   timelinePressure: NonNullable<AssessmentInput['timelinePressure']> | ''
+  hiddenThreats: string[]
   assessmentStatus: AssessmentStatus
   lastResult: AssessmentResult | null
   lastWizardUpdate: string | null

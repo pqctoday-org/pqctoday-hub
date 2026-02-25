@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 
-import { Info } from 'lucide-react'
+import { ArrowRight, Info } from 'lucide-react'
 
+import { Link } from 'react-router-dom'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 
 import { AVAILABLE_COMPLIANCE } from '../../../hooks/assessmentData'
@@ -220,10 +221,21 @@ const Step5Compliance = () => {
           </div>
         )}
 
-        <p className="text-xs text-muted-foreground">
-          Don&apos;t see your framework? Skip this step — it won&apos;t affect your risk score
-          significantly.
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">
+            Don&apos;t see your framework? Skip this step — it won&apos;t affect your risk score
+            significantly.
+          </p>
+          <Link
+            to="/compliance"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-primary hover:underline flex items-center gap-1 shrink-0 ml-2"
+          >
+            <ArrowRight size={12} />
+            Explore frameworks
+          </Link>
+        </div>
       </div>
     </div>
   )

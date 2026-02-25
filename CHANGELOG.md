@@ -18,12 +18,14 @@ All notable changes to this project will be documented in this file.
   section surfaces curated software products directly from the Migrate catalog.
 
 - **Code Signing module** (`/learn/code-signing`, `src/components/PKILearning/modules/CodeSigning/`):
-  New 4-step workshop covering PQC supply chain security. **Step 1 – Binary Signing**: sign/verify
+  New 5-step workshop covering PQC supply chain security. **Step 1 – Binary Signing**: sign/verify
   arbitrary payloads with ML-DSA-87 and compare classical ECDSA P-384 byte overhead. **Step 2 –
   Certificate Chain**: build a PQC certificate hierarchy (root CA → intermediate → leaf) with
   ML-DSA. **Step 3 – Package Signing**: RPM-style hybrid package signing with ML-DSA-87 + Ed448
   dual signatures. **Step 4 – Sigstore Flow**: keyless signing via Sigstore transparency-log
-  workflow including inclusion proof visualization.
+  workflow including inclusion proof visualization. **Step 5 – Secure Boot Chain**: interactive
+  4-stage boot chain visualization comparing LMS, XMSS, and ML-DSA firmware signing algorithms
+  with stateful signature counter tracking and CNSA 2.0 mandate timelines.
 
 - **API Security & JWT module** (`/learn/api-security-jwt`,
   `src/components/PKILearning/modules/APISecurityJWT/`): New 5-step workshop covering JWT/JWS/JWE
@@ -34,6 +36,15 @@ All notable changes to this project will be documented in this file.
   migration tokens. **Step 4 – JWE Encryption**: encrypt JWT payloads with ML-KEM-768 key
   agreement. **Step 5 – Token Size Analyzer**: side-by-side header/payload/signature byte
   breakdown for RS256, ES256, ML-DSA-44/65/87.
+
+- **IoT & OT Security module** (`/learn/iot-ot-pqc`,
+  `src/components/PKILearning/modules/IoTOT/`): New 5-step workshop covering PQC challenges for
+  constrained devices. **Step 1 – Constrained Algorithm Explorer**: algorithm selection for
+  RFC 7228 Class 0/1/2 devices with memory and compute constraints. **Step 2 – Firmware Signing
+  Simulator**: LMS/XMSS stateful signature signing with state counter tracking. **Step 3 – DTLS
+  Handshake Visualizer**: DTLS 1.3 protocol visualization with PQC impact analysis. **Step 4 –
+  SCADA Migration Planner**: ICS migration strategy across Purdue Model levels. **Step 5 – Cert
+  Chain Bloat Analyzer**: certificate size impact analysis for constrained device environments.
 
 - **Belt-ranked Learning Journey scorecard** (`src/components/Landing/ScoreCard.tsx`): Replaced
   linear progress display with a 7-tier judo belt ranking system (White → Yellow → Orange → Green
@@ -69,13 +80,25 @@ All notable changes to this project will be documented in this file.
   library (20+ templates covering cloud, container, API gateway, microservice, and IoT stacks),
   per-asset migration effort scoring, and CSV/JSON export of the bill of materials.
 
-- **Tools & Products tab** in 16 learning modules: New "Tools & Products" tab next to References
+- **Tools & Products tab** in all learning modules: New "Tools & Products" tab next to References
   surfaces PQC-ready products from the Migrate catalog that are relevant to each module. Products are
   grouped by infrastructure layer with compact cards showing PQC support badge, FIPS validation
   status, license type, product brief, and a "View in Migrate" deep-link that pre-selects the
   matching layer. Powered by a new `learning_modules` column in the migrate CSV (177/223 products
   tagged across 34 categories) and a shared `ModuleMigrateTab` component. Multi-layer products
   appear in all matching layer sections.
+
+- **Report contextual actions** (`src/components/Report/ReportContent.tsx`): Algorithm replacement
+  rows now include "Learn" links to relevant modules (ML-KEM/ML-DSA → PKI Workshop, SLH-DSA/LMS →
+  Stateful Signatures, Hybrid → Hybrid Crypto). Timeline section links to country-filtered
+  timeline view. Footer actions link to full algorithm comparison and compliance explorer pages.
+
+- **Module cross-navigation** in 10 learning module introductions: "Explore Related Topics" cards
+  linking to related modules (e.g., Hybrid Crypto → API Security & JWT, MTC → TLS Basics,
+  PQC 101 → Entropy & Randomness, Quantum Threats → Digital Assets, TLS → 5G Security).
+
+- **Glossary expansion**: 6 new IoT/OT terms (MQTT, LoRaWAN, Matter, SUIT/RFC 9019, RFC 7228,
+  Purdue Model) plus UEFI for Secure Boot. Existing SCADA and DTLS entries relinked to IoT module.
 
 - **Updated algorithm + software CSVs**: Refreshed `algorithms_transitions_02252026.csv` and
   `algorithms_transitions_02262026.csv` (RSA → ML-KEM, ECDSA → ML-DSA, ECDH → HQC deprecation
@@ -84,6 +107,11 @@ All notable changes to this project will be documented in this file.
   New `quantum_safe_cryptographic_software_reference_02272026.csv` and `_02282026.csv` featuring
   BTQ Bitcoin Quantum (ML-DSA), Hitachi DoMobile (FIPS 203 ML-KEM), Solana PQC testnet, SEALSQ
   Quantum Shield, QuSecure, SandboxAQ, and 01 Quantum IronCAP.
+
+- **Library catalog refresh** (`library_02252026.csv`): Korean PQC Competition finalists
+  (HAETAE, AIMer, SMAUG-T, NTRU+), NIST FIPS 140-3 PQC implementation guidance, 3GPP PQC study,
+  TPM 2.0 PQC specification, 10+ new IETF RFCs (9629, 9708, 9802, 9810, 9814, 9858, 9881, 9882),
+  ETSI hybrid key exchange and migration specs, NSA CNSA 2.0 policy with implementation timelines.
 
 ### Changed
 
@@ -109,8 +137,34 @@ All notable changes to this project will be documented in this file.
   computed from filtered software data.
 
 - **Learn module tracks reorganized** (`src/components/PKILearning/moduleData.ts`): `code-signing`
-  added to the Applications track; `api-security-jwt` added to the Protocols track. Module step
-  counts table updated for both new modules (4 and 5 steps respectively).
+  and `iot-ot-pqc` added to the Applications track; `api-security-jwt` added to the Protocols
+  track. Module step counts table updated for all new modules.
+
+- **Assessment wizard Step 3 refactored** (`src/components/Assess/steps/Step3Crypto.tsx`):
+  Switched from `pqcAlgorithmsData` to the algorithms transition table. Chips now display
+  classical → PQC replacement pairs with category-aware grouping. Added "Compare algorithms" link
+  to the full algorithm database at `/algorithms`.
+
+- **Assessment scoring engine expanded** (`src/hooks/assessmentData.ts`, `assessmentUtils.ts`):
+  Algorithm DB now includes 9 quantum-safe PQC algorithms (ML-KEM, ML-DSA, SLH-DSA, LMS/HSS,
+  XMSS) with hybrid recommendations. Country regulatory urgency expanded from 10 to 20+ countries
+  with source citations. Composite score boost factors refactored from multiplicative stacking to
+  additive increments capped at 1.2x. Unknown algorithms now treated as quantum-vulnerable.
+
+- **Persona learning paths expanded** (`src/data/learningPersonas.ts`): All four personas updated
+  with new modules (merkle-tree-certs, digital-id, iot-ot-pqc) and expanded checkpoints.
+  Developer duration 705→855 min, Architect 765→1095 min, Researcher 1080→1230 min.
+
+- **Library view layout** (`src/components/Library/LibraryView.tsx`): Category sidebar refactored
+  from vertical sticky sidebar to horizontal pill layout for better mobile/desktop responsiveness.
+  Grid breakpoints expanded to 4-column layout at xl.
+
+- **Store persistence hardened**: Added explicit `version`, `migrate()`, and `onRehydrateStorage`
+  crash guards to OpenSSL Studio, TLS Learning, Theme, and Version stores. Assessment store
+  migrations reordered and extended (v5–v7) for infrastructure validation and algorithm renaming.
+
+- **Landing page dynamic counts** (`src/components/Landing/LandingView.tsx`): Module count,
+  quiz question count, and tool count now derived from data sources instead of hardcoded values.
 
 ## [1.33.0] - 2026-02-24
 

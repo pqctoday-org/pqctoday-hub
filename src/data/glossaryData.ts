@@ -971,7 +971,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     acronym: 'SCADA',
     definition:
       'Supervisory Control and Data Acquisition, industrial control systems used in power grids, water treatment, and manufacturing. Quantum-vulnerable via legacy crypto.',
-    relatedModule: '/threats',
+    relatedModule: '/learn/iot-ot-pqc',
     complexity: 'intermediate',
     category: 'concept',
   },
@@ -1396,7 +1396,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     acronym: 'DTLS',
     definition:
       'Datagram Transport Layer Security, the UDP equivalent of TLS. Used in IoT (CoAP), WebRTC, and VPN protocols. DTLS 1.3 adds PQC support.',
-    relatedModule: '/library',
+    relatedModule: '/learn/iot-ot-pqc',
     complexity: 'intermediate',
     category: 'protocol',
   },
@@ -2436,6 +2436,57 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Distinguished from computational security (used by PQC), which assumes the adversary has bounded computational resources. Information-theoretic security means that even with unlimited computing power, an attacker cannot break the scheme.',
     relatedModule: '/learn/qkd',
     complexity: 'advanced',
+    category: 'concept',
+  },
+  // === IoT & OT Security ===
+  {
+    term: 'MQTT',
+    acronym: 'MQTT',
+    definition:
+      'Message Queuing Telemetry Transport, a lightweight publish/subscribe messaging protocol for IoT. MQTT 5.0 supports TLS 1.3 transport security.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'LoRaWAN',
+    definition:
+      'Long Range Wide Area Network, a low-power WAN protocol for IoT. Uses AES-128 pre-shared keys. Maximum payload of 222 bytes makes PQC KEM infeasible inline.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'Matter',
+    definition:
+      'Smart home interoperability standard (formerly Project CHIP). Uses the CASE protocol with ECDSA P-256 for device attestation. PQC migration requires protocol specification update.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'SUIT',
+    acronym: 'SUIT',
+    definition:
+      'Software Updates for Internet of Things (RFC 9019). A CBOR-based manifest format for secure firmware updates, providing metadata, conditions, and signature verification for OTA delivery.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'RFC 7228',
+    definition:
+      'Terminology for Constrained-Node Networks. Defines device Class 0/1/2 based on RAM and Flash memory constraints, used to categorize IoT device capabilities for protocol selection.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'Purdue Model',
+    definition:
+      'Reference architecture for industrial control system (ICS) networks. Defines 6 levels from physical process (Level 0) to enterprise network (Level 5), guiding security zone segmentation and PQC migration priority.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
     category: 'concept',
   },
 ]

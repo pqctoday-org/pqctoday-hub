@@ -1,6 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Shield, Key, Lock, Zap, ArrowRight, BarChart3, Terminal } from 'lucide-react'
+import {
+  Shield,
+  Key,
+  Lock,
+  Zap,
+  ArrowRight,
+  BarChart3,
+  Terminal,
+  KeyRound,
+  Radio,
+} from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { TLSHandshakeDiagram } from './TLSHandshakeDiagram'
 
@@ -275,6 +285,30 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
               <div className="text-sm font-medium text-foreground">Threat Dashboard</div>
               <div className="text-xs text-muted-foreground">
                 Industry-specific quantum risks &amp; PQC replacements
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/api-security-jwt"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <KeyRound size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">API Security &amp; JWT</div>
+              <div className="text-xs text-muted-foreground">
+                PQC tokens &amp; OAuth 2.0 migration over TLS
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/5g-security"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Radio size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">5G Security</div>
+              <div className="text-xs text-muted-foreground">
+                SUCI, 5G-AKA &amp; PQC transport in mobile networks
               </div>
             </div>
           </Link>

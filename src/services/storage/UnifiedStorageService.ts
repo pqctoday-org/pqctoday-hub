@@ -64,6 +64,7 @@ function getAssessmentData(): AssessmentData {
     industry: state.industry,
     country: state.country,
     currentCrypto: state.currentCrypto,
+    currentCryptoCategories: state.currentCryptoCategories,
     cryptoUnknown: state.cryptoUnknown,
     dataSensitivity: state.dataSensitivity,
     sensitivityUnknown: state.sensitivityUnknown,
@@ -81,9 +82,11 @@ function getAssessmentData(): AssessmentData {
     cryptoAgility: state.cryptoAgility,
     infrastructure: state.infrastructure,
     infrastructureUnknown: state.infrastructureUnknown,
+    infrastructureSubCategories: state.infrastructureSubCategories,
     vendorDependency: state.vendorDependency,
     vendorUnknown: state.vendorUnknown,
     timelinePressure: state.timelinePressure,
+    hiddenThreats: state.hiddenThreats,
     assessmentStatus: state.assessmentStatus,
     lastResult: state.lastResult,
     lastWizardUpdate: state.lastWizardUpdate,
@@ -320,6 +323,9 @@ export class UnifiedStorageService {
         industry: a.industry ?? '',
         country: a.country ?? '',
         currentCrypto: Array.isArray(a.currentCrypto) ? a.currentCrypto : [],
+        currentCryptoCategories: Array.isArray(a.currentCryptoCategories)
+          ? a.currentCryptoCategories
+          : [],
         cryptoUnknown: a.cryptoUnknown ?? false,
         dataSensitivity: Array.isArray(a.dataSensitivity) ? a.dataSensitivity : [],
         sensitivityUnknown: a.sensitivityUnknown ?? false,
@@ -339,9 +345,16 @@ export class UnifiedStorageService {
         cryptoAgility: a.cryptoAgility ?? '',
         infrastructure: Array.isArray(a.infrastructure) ? a.infrastructure : [],
         infrastructureUnknown: a.infrastructureUnknown ?? false,
+        infrastructureSubCategories:
+          typeof a.infrastructureSubCategories === 'object' &&
+          a.infrastructureSubCategories !== null &&
+          !Array.isArray(a.infrastructureSubCategories)
+            ? a.infrastructureSubCategories
+            : {},
         vendorDependency: a.vendorDependency ?? '',
         vendorUnknown: a.vendorUnknown ?? false,
         timelinePressure: a.timelinePressure ?? '',
+        hiddenThreats: Array.isArray(a.hiddenThreats) ? a.hiddenThreats : [],
         assessmentStatus: a.assessmentStatus ?? 'not-started',
         lastResult: a.lastResult ?? null,
         lastWizardUpdate: a.lastWizardUpdate ?? null,

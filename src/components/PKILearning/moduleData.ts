@@ -125,6 +125,13 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
       'JWT/JWS/JWE with post-quantum algorithms: ML-DSA signing, ML-KEM key agreement, hybrid tokens, and OAuth 2.0 migration.',
     duration: '90 min',
   },
+  'iot-ot-pqc': {
+    id: 'iot-ot-pqc',
+    title: 'IoT & OT Security',
+    description:
+      'PQC challenges for constrained devices: algorithm selection for limited memory/compute, firmware signing, CoAP/DTLS protocol impacts, certificate chain bloat, and SCADA/ICS migration.',
+    duration: '90 min',
+  },
   quiz: {
     id: 'quiz',
     title: 'PQC Quiz',
@@ -154,6 +161,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   qkd: 3,
   'code-signing': 5,
   'api-security-jwt': 5,
+  'iot-ot-pqc': 5,
   quiz: 1,
   assess: 1, // Assessment wizard completion
 }
@@ -201,6 +209,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['5g-security'],
       MODULE_CATALOG['digital-id'],
       MODULE_CATALOG['code-signing'],
+      MODULE_CATALOG['iot-ot-pqc'],
     ],
   },
 ]

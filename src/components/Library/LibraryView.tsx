@@ -425,105 +425,99 @@ export const LibraryView: React.FC = () => {
       {/* Zone 1: Activity Feed */}
       <ActivityFeed items={activityItems} onSelect={openDetail} />
 
-      {/* Zone 2 + Zone 3: Sidebar + Main Content */}
-      <div className="flex gap-6 items-start">
-        {/* Zone 2: Category Sidebar (desktop) */}
-        <CategorySidebar
-          categories={categoryInfo}
-          active={activeCategory}
-          onSelect={handleCategorySelect}
-          totalCount={libraryData.length}
-          totalHasUpdates={totalHasUpdates}
-        />
+      {/* Category pills (desktop) */}
+      <CategorySidebar
+        categories={categoryInfo}
+        active={activeCategory}
+        onSelect={handleCategorySelect}
+        totalCount={libraryData.length}
+        totalHasUpdates={totalHasUpdates}
+      />
 
-        {/* Zone 3: Main Content */}
-        <div className="flex-1 min-w-0 space-y-4">
-          {/* Controls Bar */}
-          <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-col md:flex-row items-center gap-3">
-            {/* Mobile: Category dropdown (hidden on lg where sidebar shows) */}
-            <div className="flex items-center gap-2 w-full lg:hidden text-xs">
-              <div className="flex-1 min-w-[150px]">
-                <FilterDropdown
-                  items={categoryTabs}
-                  selectedId={activeCategory}
-                  onSelect={handleCategorySelect}
-                  defaultLabel="Category"
-                  noContainer
-                  opaque
-                  className="mb-0 w-full"
-                />
-              </div>
-            </div>
+      {/* Controls Bar */}
+      <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-col md:flex-row items-center gap-3">
+        {/* Mobile: Category dropdown (hidden on lg where pills show) */}
+        <div className="flex items-center gap-2 w-full lg:hidden text-xs">
+          <div className="flex-1 min-w-[150px]">
+            <FilterDropdown
+              items={categoryTabs}
+              selectedId={activeCategory}
+              onSelect={handleCategorySelect}
+              defaultLabel="Category"
+              noContainer
+              opaque
+              className="mb-0 w-full"
+            />
+          </div>
+        </div>
 
-            {/* Org + Search + Sort + ViewToggle */}
-            <div className="flex items-center gap-2 w-full text-xs">
-              <div className="min-w-[140px]">
-                <FilterDropdown
-                  items={orgs}
-                  selectedId={activeOrg}
-                  onSelect={(org) => {
-                    setActiveOrg(org)
-                    logEvent('Library', 'Filter Org', org)
-                  }}
-                  defaultLabel="Organization"
-                  noContainer
-                  opaque
-                  className="mb-0 w-full"
-                />
-              </div>
-
-              <div className="min-w-[140px]">
-                <FilterDropdown
-                  items={industries}
-                  selectedId={activeIndustry}
-                  onSelect={(ind) => {
-                    setActiveIndustry(ind)
-                    logEvent('Library', 'Filter Industry', ind)
-                  }}
-                  defaultLabel="Industry"
-                  noContainer
-                  opaque
-                  className="mb-0 w-full"
-                />
-              </div>
-
-              <div className="relative flex-1 min-w-[140px]">
-                <Search
-                  size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                  aria-hidden="true"
-                />
-                <input
-                  type="text"
-                  id="library-search"
-                  placeholder="Search standards..."
-                  aria-label="Search PQC standards library"
-                  value={inputValue}
-                  onChange={handleSearchChange}
-                  className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
-                />
-              </div>
-
-              {viewMode === 'cards' && <SortControl value={sortBy} onChange={setSortBy} />}
-
-              <ViewToggle mode={viewMode} onChange={setViewMode} />
-            </div>
+        {/* Org + Search + Sort + ViewToggle */}
+        <div className="flex items-center gap-2 w-full text-xs">
+          <div className="min-w-[140px]">
+            <FilterDropdown
+              items={orgs}
+              selectedId={activeOrg}
+              onSelect={(org) => {
+                setActiveOrg(org)
+                logEvent('Library', 'Filter Org', org)
+              }}
+              defaultLabel="Organization"
+              noContainer
+              opaque
+              className="mb-0 w-full"
+            />
           </div>
 
-          {/* Results count */}
-          <p className="text-xs text-muted-foreground">
-            {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}
-            {activeCategory !== 'All' && ` in ${activeCategory}`}
-          </p>
+          <div className="min-w-[140px]">
+            <FilterDropdown
+              items={industries}
+              selectedId={activeIndustry}
+              onSelect={(ind) => {
+                setActiveIndustry(ind)
+                logEvent('Library', 'Filter Industry', ind)
+              }}
+              defaultLabel="Industry"
+              noContainer
+              opaque
+              className="mb-0 w-full"
+            />
+          </div>
 
-          {/* Content area */}
-          {viewMode === 'cards' ? (
-            <DocumentCardGrid items={sortedItems} onViewDetails={openDetail} />
-          ) : (
-            renderTableView()
-          )}
+          <div className="relative flex-1 min-w-[140px]">
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <input
+              type="text"
+              id="library-search"
+              placeholder="Search standards..."
+              aria-label="Search PQC standards library"
+              value={inputValue}
+              onChange={handleSearchChange}
+              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+            />
+          </div>
+
+          {viewMode === 'cards' && <SortControl value={sortBy} onChange={setSortBy} />}
+
+          <ViewToggle mode={viewMode} onChange={setViewMode} />
         </div>
       </div>
+
+      {/* Results count */}
+      <p className="text-xs text-muted-foreground">
+        {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}
+        {activeCategory !== 'All' && ` in ${activeCategory}`}
+      </p>
+
+      {/* Content area */}
+      {viewMode === 'cards' ? (
+        <DocumentCardGrid items={sortedItems} onViewDetails={openDetail} />
+      ) : (
+        renderTableView()
+      )}
 
       {/* Detail Popover */}
       <LibraryDetailPopover

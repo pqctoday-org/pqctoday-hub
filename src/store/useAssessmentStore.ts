@@ -491,6 +491,29 @@ export const useAssessmentStore = create<AssessmentState>()(
         state.cryptoAgility = state.cryptoAgility ?? ''
         state.infrastructure = Array.isArray(state.infrastructure) ? state.infrastructure : []
         state.infrastructureUnknown = state.infrastructureUnknown ?? false
+        // v4 → v5: clear old free-text infra strings; add infrastructureSubCategories
+        if (version <= 4) {
+          const validLayerIds = [
+            'Cloud',
+            'Network',
+            'Application',
+            'Database',
+            'Security Stack',
+            'OS',
+            'Hardware',
+          ]
+          state.infrastructure = state.infrastructure.filter((id: string) =>
+            validLayerIds.includes(id)
+          )
+        }
+
+        // v5 → v6: rename 'ECDH' to 'ECDH P-256' in currentCrypto
+        if (version <= 5 && Array.isArray(state.currentCrypto)) {
+          state.currentCrypto = state.currentCrypto.map((a: string) =>
+            a === 'ECDH' ? 'ECDH P-256' : a
+          )
+        }
+
         // v6 → v7: derive currentCryptoCategories from existing currentCrypto selections
         if (version <= 6) {
           const familyMap: Record<string, string> = {
@@ -525,29 +548,6 @@ export const useAssessmentStore = create<AssessmentState>()(
                 ),
               ]
             : []
-        }
-
-        // v5 → v6: rename 'ECDH' to 'ECDH P-256' in currentCrypto
-        if (version <= 5 && Array.isArray(state.currentCrypto)) {
-          state.currentCrypto = state.currentCrypto.map((a: string) =>
-            a === 'ECDH' ? 'ECDH P-256' : a
-          )
-        }
-
-        // v4 → v5: clear old free-text infra strings; add infrastructureSubCategories
-        if (version <= 4) {
-          const validLayerIds = [
-            'Cloud',
-            'Network',
-            'Application',
-            'Database',
-            'Security Stack',
-            'OS',
-            'Hardware',
-          ]
-          state.infrastructure = state.infrastructure.filter((id: string) =>
-            validLayerIds.includes(id)
-          )
         }
         state.infrastructureSubCategories =
           typeof state.infrastructureSubCategories === 'object' &&

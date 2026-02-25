@@ -329,6 +329,39 @@ system_default = system_default_sect
         serverMessage: state.serverMessage,
         // Exclude: results, isSimulating, commands, sessionStatus (ephemeral)
       }),
+      migrate: (persistedState: unknown) => {
+        const state =
+          typeof persistedState === 'object' && persistedState !== null
+            ? (persistedState as Record<string, unknown>)
+            : {}
+
+        // Ensure all persisted fields exist with safe defaults
+        if (!state.clientConfig || typeof state.clientConfig !== 'object') {
+          state.clientConfig = undefined // will fall back to store default
+        }
+        if (!state.serverConfig || typeof state.serverConfig !== 'object') {
+          state.serverConfig = undefined
+        }
+        state.clientMessage =
+          typeof state.clientMessage === 'string' ? state.clientMessage : 'Hello Server (Encrypted)'
+        state.serverMessage =
+          typeof state.serverMessage === 'string' ? state.serverMessage : 'Hello Client (Encrypted)'
+
+        // Revive Date objects in runHistory (JSON serializes Date as ISO string)
+        if (Array.isArray(state.runHistory)) {
+          state.runHistory = (state.runHistory as TLSRunRecord[]).map((record) => ({
+            ...record,
+            timestamp:
+              record.timestamp instanceof Date
+                ? record.timestamp
+                : new Date(record.timestamp as unknown as string),
+          }))
+        } else {
+          state.runHistory = []
+        }
+
+        return state
+      },
       onRehydrateStorage: () => (_state, error) => {
         if (error) {
           console.error('TLS store rehydration failed:', error)

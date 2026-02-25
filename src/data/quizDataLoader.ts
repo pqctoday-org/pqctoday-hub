@@ -279,6 +279,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'JWT/JWS/JWE with PQC algorithms, JOSE header changes, ML-DSA token signing, ML-KEM key agreement, and OAuth 2.0 migration.',
       icon: 'KeyRound',
     },
+    'iot-ot-pqc': {
+      label: 'IoT & OT Security',
+      description:
+        'PQC for constrained devices, RFC 7228 device classes, firmware signing, DTLS 1.3, certificate chain bloat, and SCADA migration.',
+      icon: 'Cpu',
+    },
   }
 
 // Compute question counts dynamically from loaded data

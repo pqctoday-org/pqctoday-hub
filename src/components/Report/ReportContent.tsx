@@ -51,6 +51,23 @@ import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
 
+/** Maps PQC replacement algorithm names to relevant Learn module paths. */
+const ALGO_LEARN_LINKS: Record<string, { path: string; label: string }> = {
+  'ML-KEM': { path: '/learn/pki-workshop', label: 'PKI Workshop' },
+  'ML-DSA': { path: '/learn/pki-workshop', label: 'PKI Workshop' },
+  'SLH-DSA': { path: '/learn/stateful-signatures', label: 'Signatures' },
+  LMS: { path: '/learn/stateful-signatures', label: 'Signatures' },
+  hybrid: { path: '/learn/hybrid-crypto', label: 'Hybrid Crypto' },
+}
+function getLearnLink(replacement: string): { path: string; label: string } | null {
+  if (replacement.includes('hybrid') || replacement.includes('Hybrid'))
+    return ALGO_LEARN_LINKS['hybrid']
+  for (const [key, value] of Object.entries(ALGO_LEARN_LINKS)) {
+    if (replacement.includes(key)) return value
+  }
+  return null
+}
+
 export function SectionInfoTip({ text }: { text: string }) {
   const [open, setOpen] = useState(false)
   return (
@@ -1119,6 +1136,15 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                     infoTip="Shows PQC migration phases and regulatory deadlines for your selected country from the Timeline database."
                   >
                     <ReportTimelineStrip countryName={country} />
+                    <Link
+                      to={
+                        country ? `/timeline?country=${encodeURIComponent(country)}` : '/timeline'
+                      }
+                      className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
+                    >
+                      <ArrowRight size={12} />
+                      View full {country ? `${country} ` : ''}timeline
+                    </Link>
                   </CollapsibleSection>
                 )}
 
@@ -1330,14 +1356,32 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                                       <span>{algo.replacement}</span>
                                       {algo.quantumVulnerable &&
                                         !algo.replacement.includes('No change') && (
-                                          <Link
-                                            to="/playground"
-                                            className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
-                                            title="Try in Playground"
-                                          >
-                                            <FlaskConical size={10} />
-                                            <span className="hidden lg:inline">Try</span>
-                                          </Link>
+                                          <>
+                                            <Link
+                                              to="/playground"
+                                              className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
+                                              title="Try in Playground"
+                                            >
+                                              <FlaskConical size={10} />
+                                              <span className="hidden lg:inline">Try</span>
+                                            </Link>
+                                            {(() => {
+                                              const learnLink = getLearnLink(algo.replacement)
+                                              if (!learnLink) return null
+                                              return (
+                                                <Link
+                                                  to={learnLink.path}
+                                                  className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
+                                                  title={`Learn about ${learnLink.label}`}
+                                                >
+                                                  <BookOpen size={10} />
+                                                  <span className="hidden lg:inline">
+                                                    {learnLink.label}
+                                                  </span>
+                                                </Link>
+                                              )
+                                            })()}
+                                          </>
                                         )}
                                     </div>
                                   </td>
@@ -1390,6 +1434,26 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                             })}
                           </tbody>
                         </table>
+                        <div className="flex items-center gap-4 mt-3 print:hidden">
+                          <Link
+                            to={`/algorithms${
+                              result.algorithmMigrations
+                                .filter((a) => a.quantumVulnerable)
+                                .map((a) => a.classical).length > 0
+                                ? `?highlight=${encodeURIComponent(
+                                    result.algorithmMigrations
+                                      .filter((a) => a.quantumVulnerable)
+                                      .map((a) => a.classical)
+                                      .join(',')
+                                  )}`
+                                : ''
+                            }`}
+                            className="flex items-center gap-1.5 text-xs text-primary hover:underline"
+                          >
+                            <ArrowRight size={12} />
+                            Compare algorithms
+                          </Link>
+                        </div>
                       </div>
                     </CollapsibleSection>
                   )}
@@ -1477,6 +1541,13 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                             })()}
                           </div>
                         ))}
+                        <Link
+                          to="/compliance"
+                          className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
+                        >
+                          <ArrowRight size={12} />
+                          Explore all compliance frameworks
+                        </Link>
                       </div>
                     </CollapsibleSection>
                   )}

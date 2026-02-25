@@ -190,20 +190,45 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
 
     {
       name: 'openssl-studio-storage',
+      version: 1,
       partialize: (state) => ({
         files: state.files,
         structuredLogs: state.structuredLogs,
       }),
+      migrate: (persistedState: unknown, version: number) => {
+        const state =
+          typeof persistedState === 'object' && persistedState !== null
+            ? (persistedState as Record<string, unknown>)
+            : {}
+
+        if (version < 1) {
+          state.files = Array.isArray(state.files) ? state.files : []
+          state.structuredLogs = Array.isArray(state.structuredLogs) ? state.structuredLogs : []
+        }
+
+        return state as { files: VirtualFile[]; structuredLogs: StructuredLogEntry[] }
+      },
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) {
+          console.error('OpenSSL Studio store rehydration failed:', error)
+        }
+      },
       storage: {
         getItem: (name) => {
-          const str = localStorage.getItem(name)
-          if (!str) return null
-          return JSON.parse(str, (_key, value) => {
-            if (value && value.type === 'Buffer' && Array.isArray(value.data)) {
-              return new Uint8Array(value.data)
-            }
-            return value
-          })
+          try {
+            const str = localStorage.getItem(name)
+            if (!str) return null
+            return JSON.parse(str, (_key, value) => {
+              if (value && value.type === 'Buffer' && Array.isArray(value.data)) {
+                return new Uint8Array(value.data)
+              }
+              return value
+            })
+          } catch {
+            console.error('OpenSSL Studio: failed to parse stored data, resetting')
+            localStorage.removeItem(name)
+            return null
+          }
         },
         setItem: (name, value) => {
           const str = JSON.stringify(value, (_key, val) => {

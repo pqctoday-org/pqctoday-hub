@@ -4,6 +4,8 @@ import { persist } from 'zustand/middleware'
 import type { LearningProgress } from '../services/storage/types'
 import { logModuleStart, logStepComplete, logArtifactGenerated } from '../utils/analytics'
 
+const MODULE_STORE_VERSION = 4
+
 interface ModuleState extends LearningProgress {
   // Actions
   updateModuleProgress: (
@@ -237,7 +239,7 @@ export const useModuleStore = create<ModuleState>()(
     }),
     {
       name: 'pki-module-storage',
-      version: 4,
+      version: MODULE_STORE_VERSION,
       // Migration function for handling state version upgrades
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -317,7 +319,7 @@ if (typeof window !== 'undefined') {
     try {
       const state = useModuleStore.getState()
       const progress = state.getFullProgress()
-      const persistData = { state: progress, version: 4 }
+      const persistData = { state: progress, version: MODULE_STORE_VERSION }
       localStorage.setItem('pki-module-storage', JSON.stringify(persistData))
     } catch (error) {
       // Handle QuotaExceededError and other storage errors

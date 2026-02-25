@@ -13,6 +13,7 @@ import {
   GraduationCap,
   Lightbulb,
   ChevronRight,
+  Dice5,
 } from 'lucide-react'
 
 const MODULE_ID = 'pqc-101'
@@ -716,6 +717,18 @@ export const PQC101Module: React.FC = () => {
               <div className="text-sm font-medium text-foreground">Risk Assessment</div>
               <div className="text-xs text-muted-foreground">
                 Assess your organisation&apos;s quantum readiness
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/entropy-randomness"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Dice5 size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Entropy &amp; Randomness</div>
+              <div className="text-xs text-muted-foreground">
+                NIST SP 800-90 DRBGs &amp; entropy sources for PQC key generation
               </div>
             </div>
           </Link>
