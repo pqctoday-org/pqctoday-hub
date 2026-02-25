@@ -55,7 +55,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ sender, content, isStr
                         onClick={(e) => {
                           e.preventDefault()
                           setOpen(false)
-                          navigate(href)
+                          if (href) navigate(href)
                         }}
                       >
                         {children}
