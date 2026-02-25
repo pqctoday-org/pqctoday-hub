@@ -19,7 +19,7 @@ test.describe('Quantum Threat Mechanics Module', () => {
     await page.getByRole('button', { name: 'Next Step →' }).click()
     await page.getByRole('button', { name: 'Next Step →' }).click()
     await page.getByRole('button', { name: 'Next Step →' }).click()
-    await expect(page.getByRole('heading', { name: '4. HNDL Timeline', level: 2 })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'HNDL Timeline Calculator' })).toBeVisible()
 
     // Verify sliders exist
     const dataLifetimeSlider = page.locator('input#data-lifetime-slider')
