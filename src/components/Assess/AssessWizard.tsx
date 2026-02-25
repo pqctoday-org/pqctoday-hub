@@ -71,7 +71,7 @@ const ALL_STEPS = [
     key: 'crypto',
     component: <Step3Crypto />,
     canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      s.currentCrypto.length > 0 || s.cryptoUnknown,
+      s.currentCryptoCategories.length > 0 || s.cryptoUnknown,
   },
   {
     key: 'sensitivity',
@@ -170,7 +170,12 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
     const s = useAssessmentStore.getState()
     // eslint-disable-next-line security/detect-object-injection
     const stepKey = steps[currentStep]?.key
-    if (stepKey === 'crypto' && s.currentCrypto.length === 0 && !s.cryptoUnknown) {
+    if (
+      stepKey === 'crypto' &&
+      s.currentCryptoCategories.length === 0 &&
+      s.currentCrypto.length === 0 &&
+      !s.cryptoUnknown
+    ) {
       s.setCryptoUnknown(true)
     } else if (stepKey === 'agility' && !s.cryptoAgility) {
       s.setCryptoAgility('unknown')
@@ -198,8 +203,13 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <StepIndicator current={currentStep} total={steps.length} titles={stepTitles} />
+    <div>
+      <StepIndicator
+        current={currentStep}
+        total={steps.length}
+        titles={stepTitles}
+        onStepClick={(step) => setStep(step)}
+      />
 
       <div className="glass-panel p-6 md:p-8">
         <AnimatePresence mode="wait">

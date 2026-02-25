@@ -4,6 +4,106 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.34.0] - 2026-02-25
+
+### Added
+
+- **Standalone Report view** (`/report`, `src/components/Report/`): Extracted the PQC Risk
+  Assessment report from `AssessView` into its own dedicated route. `ReportView` accepts URL
+  query parameters to auto-hydrate and auto-complete assessments, enabling fully shareable report
+  links. `ReportContent` consolidates all report sections — Risk Score gauge (SVG needle),
+  Category Breakdown, HNDL/HNFL risk windows, Algorithm Migration priorities, Compliance Impact,
+  Recommended Actions, Migration Roadmap, and Threat Landscape — into a single 1 700-line
+  component with persona-aware section visibility and print/PDF support. `MigrationToolkit`
+  section surfaces curated software products directly from the Migrate catalog.
+
+- **Code Signing module** (`/learn/code-signing`, `src/components/PKILearning/modules/CodeSigning/`):
+  New 4-step workshop covering PQC supply chain security. **Step 1 – Binary Signing**: sign/verify
+  arbitrary payloads with ML-DSA-87 and compare classical ECDSA P-384 byte overhead. **Step 2 –
+  Certificate Chain**: build a PQC certificate hierarchy (root CA → intermediate → leaf) with
+  ML-DSA. **Step 3 – Package Signing**: RPM-style hybrid package signing with ML-DSA-87 + Ed448
+  dual signatures. **Step 4 – Sigstore Flow**: keyless signing via Sigstore transparency-log
+  workflow including inclusion proof visualization.
+
+- **API Security & JWT module** (`/learn/api-security-jwt`,
+  `src/components/PKILearning/modules/APISecurityJWT/`): New 5-step workshop covering JWT/JWS/JWE
+  with post-quantum algorithms. **Step 1 – JWT Inspector**: decode and inspect any JWT with
+  algorithm vulnerability analysis (flags RS256/HS256 as quantum-vulnerable). **Step 2 – PQC JWT
+  Signing**: sign JWTs with ML-DSA-87 and compare to RS256 signature byte sizes. **Step 3 –
+  Hybrid JWT**: dual-sign with classical (Ed25519) + PQC (ML-DSA-87) for backward-compatible
+  migration tokens. **Step 4 – JWE Encryption**: encrypt JWT payloads with ML-KEM-768 key
+  agreement. **Step 5 – Token Size Analyzer**: side-by-side header/payload/signature byte
+  breakdown for RS256, ES256, ML-DSA-44/65/87.
+
+- **Belt-ranked Learning Journey scorecard** (`src/components/Landing/ScoreCard.tsx`): Replaced
+  linear progress display with a 7-tier judo belt ranking system (White → Yellow → Orange → Green
+  → Blue → Brown → Black). Composite 0–100 score is computed across 4 weighted dimensions:
+  Knowledge 40% (quiz accuracy), Breadth 30% (step completion %), Practice 20% (artifacts
+  created), Consistency 10% (time + day streak). Threshold gating prevents belt advancement
+  without meeting all dimension minimums. Streak tracking with 2–7 day flame badge. Cloud sync
+  UI surface (upload/download via Google Drive) with last-synced timestamp.
+
+- **Awareness Score hook** (`src/hooks/useAwarenessScore.ts`): New 490-line hook computing the
+  belt-rank score. Returns `AwarenessScoreResult` with score, belt rank, next-belt gap, 4-
+  dimension breakdown (raw + weighted), track-level progress, and streak data. Persona-scoped —
+  filters modules/questions to the active persona's learning path. Cumulative quiz mastery tracks
+  correct question IDs across sessions; streak inferred from `sessionTracking` daily-visit log.
+
+- **Google Drive cloud sync** (`src/services/storage/GoogleDriveService.ts`,
+  `src/services/storage/UnifiedStorageService.ts`, `src/store/useCloudSyncStore.ts`): Privacy-
+  first cloud persistence layer. `GoogleDriveService` uses Google Identity Services implicit flow
+  with `drive.appdata` scope — stores access tokens in-memory only (never written to
+  localStorage). Progress saved to a single JSON file in Google Drive's hidden `appDataFolder`
+  (invisible to the user's Drive file list). `UnifiedStorageService` aggregates all Zustand stores
+  into a typed `AppSnapshot` (version 1.0) with Uint8Array serialization, and exports/imports
+  JSON snapshots. `useCloudSyncStore` (version 1, persisted) tracks sync state: enabled, provider,
+  `lastSyncedAt`, `lastSyncDirection`.
+
+- **Persistent Migrate layer/subcategory filters** (`src/store/useMigrateSelectionStore.ts`):
+  Version bump to v2 adds `activeLayer` and `activeSubCategory` fields. Selected infrastructure
+  layer and sub-category now survive page reloads. `MigrateView` reads/writes via the store;
+  migration guard in `migrate()` provides safe defaults for existing v1 persisted state.
+
+- **CBOM Scanner enhancements** (`CBOMScanner.tsx`, `cbomTemplates.ts`): Major expansion of the
+  Crypto Agility module's CBOM tooling. New dependency graph visualization, expanded template
+  library (20+ templates covering cloud, container, API gateway, microservice, and IoT stacks),
+  per-asset migration effort scoring, and CSV/JSON export of the bill of materials.
+
+- **Updated algorithm + software CSVs**: Refreshed `algorithms_transitions_02252026.csv` and
+  `algorithms_transitions_02262026.csv` (RSA → ML-KEM, ECDSA → ML-DSA, ECDH → HQC deprecation
+  dates). New `pqc_complete_algorithm_reference_02252026.csv` with 15-column algorithm reference
+  including performance benchmarks (keygen/sign/verify cycles) and stack RAM per security level.
+  New `quantum_safe_cryptographic_software_reference_02272026.csv` and `_02282026.csv` featuring
+  BTQ Bitcoin Quantum (ML-DSA), Hitachi DoMobile (FIPS 203 ML-KEM), Solana PQC testnet, SEALSQ
+  Quantum Shield, QuSecure, SandboxAQ, and 01 Quantum IronCAP.
+
+### Changed
+
+- **`AssessView` simplified** (`src/components/Assess/AssessView.tsx`): Report rendering removed
+  from AssessView; on completion the wizard navigates to `/report` instead of showing an inline
+  report. Assessment mode selection (Quick vs Comprehensive) and resume banner retained. Reduces
+  `AssessView` from ~650 to ~400 lines.
+
+- **`StepIndicator` redesigned** (`src/components/Assess/steps/StepIndicator.tsx`): Overhauled
+  step navigation rail with improved active/completed state styling, mobile-responsive step labels,
+  and per-step metadata badges.
+
+- **`ScoringModal` updated** (`src/components/Landing/ScoringModal.tsx`): Now explains the 4-
+  dimension belt-rank scoring breakdown with threshold gating details and a per-belt requirements
+  table.
+
+- **`PersonalizationSection` updated** (`src/components/Landing/PersonalizationSection.tsx`):
+  Refreshed layout to accommodate the new ScoreCard belt display and cloud sync status indicator.
+
+- **`MigrateView` refactored** (`src/components/Migrate/MigrateView.tsx`): Layer and sub-category
+  filter state moved from local `useState` to `useMigrateSelectionStore` for persistence.
+  `InfrastructureStack` click handler now dispatches to the store. Per-layer product counts
+  computed from filtered software data.
+
+- **Learn module tracks reorganized** (`src/components/PKILearning/moduleData.ts`): `code-signing`
+  added to the Applications track; `api-security-jwt` added to the Protocols track. Module step
+  counts table updated for both new modules (4 and 5 steps respectively).
+
 ## [1.33.0] - 2026-02-24
 
 ### Added

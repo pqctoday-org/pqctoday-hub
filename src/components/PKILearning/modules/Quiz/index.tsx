@@ -67,7 +67,8 @@ export const QuizModule: React.FC = () => {
     checkpointLabel?: string
   } | null
 
-  const { updateModuleProgress, markStepComplete, modules } = useModuleStore()
+  const { updateModuleProgress, markStepComplete, mergeCorrectQuestionIds, modules } =
+    useModuleStore()
   const { selectedPersona, selectedIndustry: storeIndustry } = usePersonaStore()
   const [industryFilter, setIndustryFilter] = useState<string | null>(storeIndustry)
   const persona = selectedPersona ? PERSONAS[selectedPersona] : null
@@ -174,8 +175,14 @@ export const QuizModule: React.FC = () => {
 
       updateModuleProgress(MODULE_ID, { quizScores: scores, status: 'completed' })
       markStepComplete(MODULE_ID, 'quiz-completed')
+
+      // Merge correctly-answered question IDs into cumulative mastery
+      const correctIds = Object.entries(data.results)
+        .filter(([, isCorrect]) => isCorrect)
+        .map(([questionId]) => questionId)
+      if (correctIds.length > 0) mergeCorrectQuestionIds(correctIds)
     },
-    [updateModuleProgress, markStepComplete, previousScores]
+    [updateModuleProgress, markStepComplete, mergeCorrectQuestionIds, previousScores]
   )
 
   const handleRetake = useCallback(() => {

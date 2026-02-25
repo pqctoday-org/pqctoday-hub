@@ -5,6 +5,7 @@ import type { AssessmentResult } from '../hooks/assessmentTypes'
 import { usePersonaStore } from './usePersonaStore'
 
 export type AssessmentMode = 'quick' | 'comprehensive'
+export type AssessmentStatus = 'not-started' | 'in-progress' | 'complete'
 
 interface AssessmentState {
   currentStep: number
@@ -12,6 +13,7 @@ interface AssessmentState {
   industry: string
   country: string
   currentCrypto: string[]
+  currentCryptoCategories: string[]
   cryptoUnknown: boolean
   dataSensitivity: string[]
   sensitivityUnknown: boolean
@@ -30,19 +32,26 @@ interface AssessmentState {
   cryptoAgility: NonNullable<AssessmentInput['cryptoAgility']> | ''
   infrastructure: string[]
   infrastructureUnknown: boolean
+  infrastructureSubCategories: Record<string, string[]>
   vendorDependency: NonNullable<AssessmentInput['vendorDependency']> | ''
   vendorUnknown: boolean
   timelinePressure: NonNullable<AssessmentInput['timelinePressure']> | ''
+  // Report preferences
+  hiddenThreats: string[]
   // Control state
-  isComplete: boolean
+  assessmentStatus: AssessmentStatus
   lastResult: AssessmentResult | null
   lastWizardUpdate: string | null
+  completedAt: string | null
+  lastModifiedAt: string | null
+  previousRiskScore: number | null
   // Actions
   setStep: (step: number) => void
   setAssessmentMode: (mode: AssessmentMode) => void
   setIndustry: (industry: string) => void
   setCountry: (country: string) => void
   toggleCrypto: (algo: string) => void
+  toggleCryptoCategory: (cat: string) => void
   setCryptoUnknown: (val: boolean) => void
   toggleDataSensitivity: (level: string) => void
   setSensitivityUnknown: (val: boolean) => void
@@ -60,9 +69,13 @@ interface AssessmentState {
   setCryptoAgility: (agility: NonNullable<AssessmentInput['cryptoAgility']>) => void
   toggleInfrastructure: (item: string) => void
   setInfrastructureUnknown: (val: boolean) => void
+  setInfrastructureSubCategory: (layer: string, cats: string[]) => void
   setVendorDependency: (dep: NonNullable<AssessmentInput['vendorDependency']>) => void
   setVendorUnknown: (val: boolean) => void
   setTimelinePressure: (pressure: NonNullable<AssessmentInput['timelinePressure']>) => void
+  hideThreat: (threatId: string) => void
+  restoreThreat: (threatId: string) => void
+  restoreAllThreats: () => void
   markComplete: () => void
   setResult: (result: AssessmentResult) => void
   editFromStep: (step: number) => void
@@ -76,6 +89,7 @@ const INITIAL_STATE = {
   industry: '',
   country: '',
   currentCrypto: [] as string[],
+  currentCryptoCategories: [] as string[],
   cryptoUnknown: false,
   dataSensitivity: [] as string[],
   sensitivityUnknown: false,
@@ -93,12 +107,17 @@ const INITIAL_STATE = {
   cryptoAgility: '' as NonNullable<AssessmentInput['cryptoAgility']> | '',
   infrastructure: [] as string[],
   infrastructureUnknown: false,
+  infrastructureSubCategories: {} as Record<string, string[]>,
   vendorDependency: '' as NonNullable<AssessmentInput['vendorDependency']> | '',
   vendorUnknown: false,
   timelinePressure: '' as NonNullable<AssessmentInput['timelinePressure']> | '',
-  isComplete: false,
+  hiddenThreats: [] as string[],
+  assessmentStatus: 'not-started' as AssessmentStatus,
   lastResult: null as AssessmentResult | null,
   lastWizardUpdate: null as string | null,
+  completedAt: null as string | null,
+  lastModifiedAt: null as string | null,
+  previousRiskScore: null as number | null,
 }
 
 export const useAssessmentStore = create<AssessmentState>()(
@@ -109,7 +128,11 @@ export const useAssessmentStore = create<AssessmentState>()(
       setStep: (step) => set({ currentStep: step, lastWizardUpdate: new Date().toISOString() }),
 
       setAssessmentMode: (mode) =>
-        set({ assessmentMode: mode, lastWizardUpdate: new Date().toISOString() }),
+        set({
+          assessmentMode: mode,
+          assessmentStatus: 'in-progress' as const,
+          lastWizardUpdate: new Date().toISOString(),
+        }),
 
       setIndustry: (industry) =>
         set({
@@ -136,11 +159,21 @@ export const useAssessmentStore = create<AssessmentState>()(
           lastWizardUpdate: new Date().toISOString(),
         })),
 
+      toggleCryptoCategory: (cat) =>
+        set((state) => ({
+          cryptoUnknown: false,
+          currentCryptoCategories: state.currentCryptoCategories.includes(cat)
+            ? state.currentCryptoCategories.filter((c) => c !== cat)
+            : [...state.currentCryptoCategories, cat],
+          lastWizardUpdate: new Date().toISOString(),
+        })),
+
       setCryptoUnknown: (val) => {
         if (val) {
           set({
             cryptoUnknown: true,
             currentCrypto: [],
+            currentCryptoCategories: [],
             lastWizardUpdate: new Date().toISOString(),
           })
         } else {
@@ -265,25 +298,39 @@ export const useAssessmentStore = create<AssessmentState>()(
         set({ cryptoAgility: agility, lastWizardUpdate: new Date().toISOString() }),
 
       toggleInfrastructure: (item) =>
-        set((state) => ({
-          infrastructureUnknown: false,
-          infrastructure: state.infrastructure.includes(item)
+        set((state) => {
+          const alreadySelected = state.infrastructure.includes(item)
+          const newInfra = alreadySelected
             ? state.infrastructure.filter((i) => i !== item)
-            : [...state.infrastructure, item],
-          lastWizardUpdate: new Date().toISOString(),
-        })),
+            : [...state.infrastructure, item]
+          const newSubCats = { ...state.infrastructureSubCategories }
+          if (alreadySelected) delete newSubCats[item]
+          return {
+            infrastructureUnknown: false,
+            infrastructure: newInfra,
+            infrastructureSubCategories: newSubCats,
+            lastWizardUpdate: new Date().toISOString(),
+          }
+        }),
 
       setInfrastructureUnknown: (val) => {
         if (val) {
           set({
             infrastructureUnknown: true,
             infrastructure: [],
+            infrastructureSubCategories: {},
             lastWizardUpdate: new Date().toISOString(),
           })
         } else {
           set({ infrastructureUnknown: false, lastWizardUpdate: new Date().toISOString() })
         }
       },
+
+      setInfrastructureSubCategory: (layer, cats) =>
+        set((state) => ({
+          infrastructureSubCategories: { ...state.infrastructureSubCategories, [layer]: cats },
+          lastWizardUpdate: new Date().toISOString(),
+        })),
 
       setVendorDependency: (dep) =>
         set({
@@ -307,11 +354,33 @@ export const useAssessmentStore = create<AssessmentState>()(
       setTimelinePressure: (pressure) =>
         set({ timelinePressure: pressure, lastWizardUpdate: new Date().toISOString() }),
 
-      markComplete: () => set({ isComplete: true }),
+      hideThreat: (threatId) =>
+        set((state) => ({
+          hiddenThreats: state.hiddenThreats.includes(threatId)
+            ? state.hiddenThreats
+            : [...state.hiddenThreats, threatId],
+        })),
+
+      restoreThreat: (threatId) =>
+        set((state) => ({
+          hiddenThreats: state.hiddenThreats.filter((id) => id !== threatId),
+        })),
+
+      restoreAllThreats: () => set({ hiddenThreats: [] }),
+
+      markComplete: () => {
+        const now = new Date().toISOString()
+        set((state) => ({
+          assessmentStatus: 'complete' as const,
+          completedAt: state.completedAt ?? now,
+          lastModifiedAt: now,
+          previousRiskScore: state.lastResult?.riskScore ?? state.previousRiskScore,
+        }))
+      },
 
       setResult: (result) => set({ lastResult: result }),
 
-      editFromStep: (step) => set({ isComplete: false, currentStep: step, lastResult: null }),
+      editFromStep: (step) => set({ assessmentStatus: 'in-progress' as const, currentStep: step }),
 
       reset: () => set(INITIAL_STATE),
 
@@ -365,7 +434,7 @@ export const useAssessmentStore = create<AssessmentState>()(
     {
       name: 'pqc-assessment',
       storage: createJSONStorage(() => localStorage),
-      version: 2,
+      version: 7,
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -380,12 +449,27 @@ export const useAssessmentStore = create<AssessmentState>()(
           }
         }
 
+        // v2 → v3: Replace isComplete boolean with assessmentStatus enum, add tracking fields
+        if (version <= 2) {
+          if (state.isComplete === true) {
+            state.assessmentStatus = 'complete'
+          } else if (state.industry || state.currentStep > 0) {
+            state.assessmentStatus = 'in-progress'
+          } else {
+            state.assessmentStatus = 'not-started'
+          }
+          delete state.isComplete
+        }
+
         // Ensure all expected fields exist with safe defaults
         state.currentStep = state.currentStep ?? 0
         state.assessmentMode = state.assessmentMode ?? null
         state.industry = state.industry ?? ''
         state.country = state.country ?? ''
         state.currentCrypto = Array.isArray(state.currentCrypto) ? state.currentCrypto : []
+        state.currentCryptoCategories = Array.isArray(state.currentCryptoCategories)
+          ? state.currentCryptoCategories
+          : []
         state.cryptoUnknown = state.cryptoUnknown ?? false
         state.dataSensitivity = Array.isArray(state.dataSensitivity) ? state.dataSensitivity : []
         state.sensitivityUnknown = state.sensitivityUnknown ?? false
@@ -407,12 +491,80 @@ export const useAssessmentStore = create<AssessmentState>()(
         state.cryptoAgility = state.cryptoAgility ?? ''
         state.infrastructure = Array.isArray(state.infrastructure) ? state.infrastructure : []
         state.infrastructureUnknown = state.infrastructureUnknown ?? false
+        // v6 → v7: derive currentCryptoCategories from existing currentCrypto selections
+        if (version <= 6) {
+          const familyMap: Record<string, string> = {
+            'RSA-2048': 'Key Exchange',
+            'RSA-3072': 'Key Exchange',
+            'RSA-4096': 'Key Exchange',
+            'ECDH P-256': 'Key Exchange',
+            'ECDH P-384': 'Key Exchange',
+            'ECDH P-521': 'Key Exchange',
+            X25519: 'Key Exchange',
+            X448: 'Key Exchange',
+            'DH (Diffie-Hellman)': 'Key Exchange',
+            'ECDSA P-256': 'Signatures',
+            'ECDSA P-384': 'Signatures',
+            'ECDSA P-521': 'Signatures',
+            Ed25519: 'Signatures',
+            Ed448: 'Signatures',
+            secp256k1: 'Signatures',
+            'AES-128': 'Symmetric Encryption',
+            'AES-192': 'Symmetric Encryption',
+            'AES-256': 'Symmetric Encryption',
+            '3DES': 'Symmetric Encryption',
+            'ChaCha20-Poly1305': 'Symmetric Encryption',
+            'SHA-256': 'Hash & MAC',
+            'SHA-3': 'Hash & MAC',
+            'HMAC-SHA256': 'Hash & MAC',
+          }
+          state.currentCryptoCategories = Array.isArray(state.currentCrypto)
+            ? [
+                ...new Set(
+                  (state.currentCrypto as string[]).map((a) => familyMap[a]).filter(Boolean)
+                ),
+              ]
+            : []
+        }
+
+        // v5 → v6: rename 'ECDH' to 'ECDH P-256' in currentCrypto
+        if (version <= 5 && Array.isArray(state.currentCrypto)) {
+          state.currentCrypto = state.currentCrypto.map((a: string) =>
+            a === 'ECDH' ? 'ECDH P-256' : a
+          )
+        }
+
+        // v4 → v5: clear old free-text infra strings; add infrastructureSubCategories
+        if (version <= 4) {
+          const validLayerIds = [
+            'Cloud',
+            'Network',
+            'Application',
+            'Database',
+            'Security Stack',
+            'OS',
+            'Hardware',
+          ]
+          state.infrastructure = state.infrastructure.filter((id: string) =>
+            validLayerIds.includes(id)
+          )
+        }
+        state.infrastructureSubCategories =
+          typeof state.infrastructureSubCategories === 'object' &&
+          !Array.isArray(state.infrastructureSubCategories) &&
+          state.infrastructureSubCategories !== null
+            ? state.infrastructureSubCategories
+            : {}
         state.vendorDependency = state.vendorDependency ?? ''
         state.vendorUnknown = state.vendorUnknown ?? false
         state.timelinePressure = state.timelinePressure ?? ''
-        state.isComplete = state.isComplete ?? false
+        state.hiddenThreats = Array.isArray(state.hiddenThreats) ? state.hiddenThreats : []
+        state.assessmentStatus = state.assessmentStatus ?? 'not-started'
         state.lastResult = state.lastResult ?? null
         state.lastWizardUpdate = state.lastWizardUpdate ?? null
+        state.completedAt = state.completedAt ?? null
+        state.lastModifiedAt = state.lastModifiedAt ?? null
+        state.previousRiskScore = state.previousRiskScore ?? null
 
         return state
       },
@@ -423,6 +575,7 @@ export const useAssessmentStore = create<AssessmentState>()(
         industry: state.industry,
         country: state.country,
         currentCrypto: state.currentCrypto,
+        currentCryptoCategories: state.currentCryptoCategories,
         cryptoUnknown: state.cryptoUnknown,
         dataSensitivity: state.dataSensitivity,
         sensitivityUnknown: state.sensitivityUnknown,
@@ -440,11 +593,16 @@ export const useAssessmentStore = create<AssessmentState>()(
         cryptoAgility: state.cryptoAgility,
         infrastructure: state.infrastructure,
         infrastructureUnknown: state.infrastructureUnknown,
+        infrastructureSubCategories: state.infrastructureSubCategories,
         vendorDependency: state.vendorDependency,
         vendorUnknown: state.vendorUnknown,
         timelinePressure: state.timelinePressure,
-        isComplete: state.isComplete,
+        hiddenThreats: state.hiddenThreats,
+        assessmentStatus: state.assessmentStatus,
         lastWizardUpdate: state.lastWizardUpdate,
+        completedAt: state.completedAt,
+        lastModifiedAt: state.lastModifiedAt,
+        previousRiskScore: state.previousRiskScore,
       }),
       onRehydrateStorage: () => (_state, error) => {
         if (error) {

@@ -8,7 +8,7 @@ test.describe('Library Feature', () => {
 
   test('should navigate to library page and show dashboard layout', async ({ page }) => {
     // Page heading
-    await expect(page.getByText('PQC Standards Library')).toBeVisible()
+    await expect(page.getByText('PQC Library')).toBeVisible()
 
     // Activity feed section
     await expect(page.getByText('Recent Updates')).toBeVisible()

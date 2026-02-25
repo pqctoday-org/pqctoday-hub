@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { softwareData, softwareMetadata } from '../../data/migrateData'
 import { useSearchParams } from 'react-router-dom'
 
 import { SoftwareTable } from './SoftwareTable'
 import { MigrationWorkflow } from './MigrationWorkflow'
 import { InfrastructureStack, LAYERS, type InfrastructureLayerType } from './InfrastructureStack'
-import { FilterDropdown } from '../common/FilterDropdown'
 import { Search, AlertTriangle, X, ArrowRightLeft } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
@@ -13,47 +12,33 @@ import type { MigrationStep } from '../../types/MigrateTypes'
 import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
-import { useAssessmentStore } from '../../store/useAssessmentStore'
-import { usePersonaStore } from '../../store/usePersonaStore'
+import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
 
 export const MigrateView: React.FC = () => {
   const [searchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<string>('All')
-  const [activePqcSupport, setActivePqcSupport] = useState<string>('All')
-  const [activeInfrastructureLayer, setActiveInfrastructureLayer] =
-    useState<InfrastructureLayerType>('All')
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
 
-  // Industry filter — initialized from URL param, assessment store, or persona store
-  const assessIndustry = useAssessmentStore((s) => s.industry)
-  const personaIndustry = usePersonaStore((s) => s.selectedIndustry)
-  const [activeIndustry, setActiveIndustry] = useState<string>(() => {
-    const urlIndustry = searchParams.get('industry')
-    if (urlIndustry) return urlIndustry
-    if (assessIndustry) return assessIndustry
-    if (personaIndustry) return personaIndustry
-    return 'All'
-  })
-
-  // Scroll to software table when navigated here with a pre-set query
-  const softwareTableRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const q = searchParams.get('q')
-    if (q && softwareTableRef.current) {
-      setTimeout(
-        () => softwareTableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-        300
-      )
-    }
-    // Only run on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
   const [stepFilter, setStepFilter] = useState<{
     stepNumber: number
     stepTitle: string
     stepId: string
   } | null>(null)
+
+  // Persisted store: hidden products + active layer/sub-category
+  const {
+    hiddenProducts,
+    hideProduct,
+    restoreLayerProducts,
+    activeLayer,
+    activeSubCategory,
+    setActiveLayer,
+    setActiveSubCategory,
+  } = useMigrateSelectionStore()
+
+  const activeInfrastructureLayer = activeLayer as InfrastructureLayerType
+  const activeTab = activeSubCategory
+  const hiddenSet = useMemo(() => new Set(hiddenProducts), [hiddenProducts])
 
   // Debounced search
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,149 +55,120 @@ export const MigrateView: React.FC = () => {
     debouncedSetFilter(e.target.value)
   }
 
-  // Base data filtered by infrastructure layer (used to derive contextual dropdown options)
-  const layerFilteredData = useMemo(() => {
-    if (activeInfrastructureLayer === 'All') return softwareData
-    return softwareData.filter((item) => {
-      const layers = item.infrastructureLayer.split(',').map((l) => l.trim())
-      return layers.includes(activeInfrastructureLayer)
-    })
-  }, [activeInfrastructureLayer])
+  // Per-layer data: products scoped by global filters (search, step)
+  const perLayerData = useMemo(() => {
+    return LAYERS.reduce(
+      (acc, layer) => {
+        acc[layer.id] = softwareData.filter((item) => {
+          // Step filter
+          if (stepFilter) {
+            const phases = item.migrationPhases?.split(',').map((p) => p.trim()) ?? []
+            if (!phases.includes(stepFilter.stepId)) return false
+          }
+          // Layer filter
+          const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
+          if (!itemLayers.includes(layer.id)) return false
+          // Search filter
+          if (filterText) {
+            const q = filterText.toLowerCase()
+            return (
+              item.softwareName.toLowerCase().includes(q) ||
+              item.pqcCapabilityDescription?.toLowerCase().includes(q) ||
+              item.license?.toLowerCase().includes(q)
+            )
+          }
+          return true
+        })
+        return acc
+      },
+      {} as Record<string, (typeof softwareData)[number][]>
+    )
+  }, [stepFilter, filterText])
 
-  // Normalize PQC support values to broad groups
-  const normalizePqcSupport = useCallback((pqcSupport: string): string => {
-    if (!pqcSupport) return 'Unknown'
-    const lower = pqcSupport.toLowerCase()
-    if (lower.startsWith('yes')) return 'Yes'
-    if (lower.startsWith('limited')) return 'Limited'
-    if (lower.startsWith('planned')) return 'Planned'
-    if (lower.startsWith('no')) return 'No'
-    return 'Unknown'
-  }, [])
+  // Layer product counts (for badges on collapsed layer rows)
+  const layerProductCounts = useMemo(
+    () =>
+      LAYERS.reduce(
+        (acc, layer) => {
+          acc[layer.id as InfrastructureLayerType] = perLayerData[layer.id]?.length ?? 0
+          return acc
+        },
+        {} as Partial<Record<InfrastructureLayerType, number>>
+      ),
+    [perLayerData]
+  )
 
-  // Extract unique categories — scoped to active layer + PQC support filters
-  const categories = useMemo(() => {
-    const source =
-      activePqcSupport === 'All'
-        ? layerFilteredData
-        : layerFilteredData.filter(
-            (item) => normalizePqcSupport(item.pqcSupport) === activePqcSupport
+  // Layer product keys (for restore-layer action)
+  const layerProductKeys = useMemo(
+    () =>
+      LAYERS.reduce(
+        (acc, layer) => {
+          acc[layer.id as InfrastructureLayerType] = (perLayerData[layer.id] ?? []).map(
+            (item) => `${item.softwareName}::${item.categoryId}`
           )
+          return acc
+        },
+        {} as Partial<Record<InfrastructureLayerType, string[]>>
+      ),
+    [perLayerData]
+  )
+
+  // Layer hidden counts (for restore badges)
+  const layerHiddenCounts = useMemo(
+    () =>
+      LAYERS.reduce(
+        (acc, layer) => {
+          const keys = new Set(layerProductKeys[layer.id as InfrastructureLayerType] ?? [])
+          acc[layer.id as InfrastructureLayerType] = hiddenProducts.filter((k) =>
+            keys.has(k)
+          ).length
+          return acc
+        },
+        {} as Partial<Record<InfrastructureLayerType, number>>
+      ),
+    [layerProductKeys, hiddenProducts]
+  )
+
+  // Sub-categories for the active layer (scoped to perLayerData)
+  const categories = useMemo(() => {
+    if (activeInfrastructureLayer === 'All') return []
     const cats = new Set<string>()
-    source.forEach((item) => {
+    // eslint-disable-next-line security/detect-object-injection
+    ;(perLayerData[activeInfrastructureLayer] ?? []).forEach((item) => {
       if (item.categoryName) cats.add(item.categoryName)
     })
     return Array.from(cats).sort()
-  }, [layerFilteredData, activePqcSupport, normalizePqcSupport])
+  }, [perLayerData, activeInfrastructureLayer])
 
-  const tabs = ['All', ...categories]
+  // Active layer table data (further scoped by sub-category)
+  const activeLayerTableData = useMemo(() => {
+    if (activeInfrastructureLayer === 'All') return []
+    // eslint-disable-next-line security/detect-object-injection
+    const layerData = perLayerData[activeInfrastructureLayer] ?? []
+    if (activeTab === 'All') return layerData
+    return layerData.filter((item) => item.categoryName === activeTab)
+  }, [perLayerData, activeInfrastructureLayer, activeTab])
 
-  // Extract PQC support options — scoped to active layer + category filters
-  const pqcSupportOptions = useMemo(() => {
-    const source =
-      activeTab === 'All'
-        ? layerFilteredData
-        : layerFilteredData.filter((item) => item.categoryName === activeTab)
-    const groups = new Set<string>()
-    source.forEach((item) => {
-      groups.add(normalizePqcSupport(item.pqcSupport))
-    })
-    // Fixed order: Yes, Limited, Planned, No
-    const order = ['Yes', 'Limited', 'Planned', 'No', 'Unknown']
-    return ['All', ...order.filter((g) => groups.has(g))]
-  }, [layerFilteredData, activeTab, normalizePqcSupport])
-
-  // Reset category/PQC support if current selection is no longer available
+  // Reset sub-category if no longer available in active layer
   useEffect(() => {
     if (activeTab !== 'All' && !categories.includes(activeTab)) {
-      setActiveTab('All')
+      setActiveSubCategory('All')
     }
-  }, [categories, activeTab])
+  }, [categories, activeTab, setActiveSubCategory])
 
-  useEffect(() => {
-    if (activePqcSupport !== 'All' && !pqcSupportOptions.includes(activePqcSupport)) {
-      setActivePqcSupport('All')
-    }
-  }, [pqcSupportOptions, activePqcSupport])
-
-  // Extract unique target industries from software data
-  const industryOptions = useMemo(() => {
-    const industries = new Set<string>()
-    softwareData.forEach((item) => {
-      if (item.targetIndustries) {
-        item.targetIndustries.split(',').forEach((ind) => {
-          const trimmed = ind.trim()
-          if (trimmed) industries.add(trimmed)
-        })
-      }
-    })
-    return ['All', ...Array.from(industries).sort()]
-  }, [])
-
-  // Reset industry filter if current selection is no longer available
-  useEffect(() => {
-    if (activeIndustry !== 'All' && !industryOptions.includes(activeIndustry)) {
-      setActiveIndustry('All')
-    }
-  }, [industryOptions, activeIndustry])
-
-  const handleViewSoftware = useCallback((step: MigrationStep) => {
-    setStepFilter({
-      stepNumber: step.stepNumber,
-      stepTitle: step.title,
-      stepId: step.id,
-    })
-    setActiveTab('All')
-    logMigrateAction('View Related Software', step.title)
-    softwareTableRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
-
-  const filteredData = useMemo(() => {
-    return softwareData.filter((item) => {
-      // Step filter (per-product phase matching from "View Related Products")
-      if (stepFilter) {
-        const phases = item.migrationPhases?.split(',').map((p) => p.trim()) ?? []
-        if (!phases.includes(stepFilter.stepId)) return false
-      } else if (activeTab !== 'All' && item.categoryName !== activeTab) {
-        // Manual single-category tab filter
-        return false
-      }
-
-      // PQC Support Filter
-      if (activePqcSupport !== 'All') {
-        if (normalizePqcSupport(item.pqcSupport) !== activePqcSupport) return false
-      }
-
-      // Infrastructure Layer Filter (supports comma-separated multi-layer values)
-      if (activeInfrastructureLayer !== 'All') {
-        const layers = item.infrastructureLayer.split(',').map((l) => l.trim())
-        if (!layers.includes(activeInfrastructureLayer)) return false
-      }
-
-      // Industry Filter
-      if (activeIndustry !== 'All') {
-        const industries = item.targetIndustries?.split(',').map((ind) => ind.trim().toLowerCase())
-        if (!industries?.includes(activeIndustry.toLowerCase())) return false
-      }
-
-      // Search Filter
-      if (!filterText) return true
-      const searchLower = filterText.toLowerCase()
-      return (
-        item.softwareName.toLowerCase().includes(searchLower) ||
-        item.pqcCapabilityDescription?.toLowerCase().includes(searchLower) ||
-        item.license?.toLowerCase().includes(searchLower)
-      )
-    })
-  }, [
-    activeTab,
-    stepFilter,
-    activePqcSupport,
-    normalizePqcSupport,
-    activeInfrastructureLayer,
-    activeIndustry,
-    filterText,
-  ])
+  const handleViewSoftware = useCallback(
+    (step: MigrationStep) => {
+      setStepFilter({
+        stepNumber: step.stepNumber,
+        stepTitle: step.title,
+        stepId: step.id,
+      })
+      setActiveSubCategory('All')
+      logMigrateAction('View Related Software', step.title)
+      // No scroll needed — stack is above the fold; user selects a layer to see step products
+    },
+    [setActiveSubCategory]
+  )
 
   if (!softwareData || softwareData.length === 0) {
     return (
@@ -226,6 +182,7 @@ export const MigrateView: React.FC = () => {
 
   return (
     <div className="space-y-8">
+      {/* Page Header */}
       <div className="text-center mb-2 md:mb-12">
         <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient flex items-center justify-center gap-2 md:gap-3">
           <ArrowRightLeft className="w-5 h-5 md:w-9 md:h-9 text-primary" aria-hidden="true" />
@@ -253,81 +210,15 @@ export const MigrateView: React.FC = () => {
       {/* Migration Workflow Hero */}
       <MigrationWorkflow onViewSoftware={handleViewSoftware} />
 
-      {/* Infrastructure Stack */}
-      <div className="py-8">
-        <InfrastructureStack
-          activeLayer={activeInfrastructureLayer}
-          onSelectLayer={(layer) => {
-            setActiveInfrastructureLayer(layer)
-            setStepFilter(null)
-            setActiveTab('All')
-            if (layer !== 'All') {
-              setTimeout(
-                () =>
-                  softwareTableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-                100
-              )
-            }
-          }}
-        />
-      </div>
-
-      {/* Software Catalog */}
-      <div ref={softwareTableRef} className="pt-4">
-        <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4">
-          Reference Catalog
-        </h3>
-      </div>
-
-      {/* Active layer banner */}
-      {activeInfrastructureLayer !== 'All' && (
-        <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2 mb-2">
-          <span>
-            Filtering by layer:{' '}
-            <strong>
-              {LAYERS.find((l) => l.id === activeInfrastructureLayer)?.label ??
-                activeInfrastructureLayer}
-            </strong>{' '}
-            &middot; {filteredData.length} {filteredData.length === 1 ? 'product' : 'products'}
-          </span>
-          <button
-            onClick={() => setActiveInfrastructureLayer('All')}
-            className="ml-auto flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Clear layer filter"
-          >
-            <X size={12} />
-            Clear
-          </button>
-        </div>
-      )}
-
-      {/* Industry filter banner */}
-      {activeIndustry !== 'All' && (
-        <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2 mb-2">
-          <span>
-            Filtered for industry: <strong>{activeIndustry}</strong> &middot; {filteredData.length}{' '}
-            {filteredData.length === 1 ? 'product' : 'products'}
-          </span>
-          <button
-            onClick={() => setActiveIndustry('All')}
-            className="ml-auto flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Clear industry filter"
-          >
-            <X size={12} />
-            Clear
-          </button>
-        </div>
-      )}
-
       {/* Step filter banner */}
       {stepFilter && (
-        <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2 mb-2">
+        <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2">
           <span>
             Showing products for{' '}
             <strong>
               Step {stepFilter.stepNumber}: {stepFilter.stepTitle}
             </strong>{' '}
-            &middot; {filteredData.length} {filteredData.length === 1 ? 'product' : 'products'}
+            — select a layer below to view matching products
           </span>
           <button
             onClick={() => setStepFilter(null)}
@@ -340,62 +231,9 @@ export const MigrateView: React.FC = () => {
         </div>
       )}
 
-      {/* Controls Container */}
-      <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-8 flex flex-col md:flex-row items-center gap-4">
-        {/* Mobile: Filters on one row */}
-        <div className="flex items-center gap-2 w-full md:w-auto text-xs">
-          {/* Category Dropdown */}
-          <div className="flex-1 min-w-[150px]">
-            <FilterDropdown
-              items={tabs}
-              selectedId={activeTab}
-              onSelect={(tab) => {
-                setActiveTab(tab)
-                setStepFilter(null)
-                logMigrateAction('Filter Category', tab)
-              }}
-              defaultLabel="Category"
-              noContainer
-              opaque
-              className="mb-0 w-full"
-            />
-          </div>
-
-          {/* PQC Support Dropdown */}
-          <div className="flex-1 min-w-[120px]">
-            <FilterDropdown
-              items={pqcSupportOptions}
-              selectedId={activePqcSupport}
-              onSelect={(pqc) => {
-                setActivePqcSupport(pqc)
-                logMigrateAction('Filter PQC Support', pqc)
-              }}
-              defaultLabel="PQC Support"
-              noContainer
-              opaque
-              className="mb-0 w-full"
-            />
-          </div>
-
-          {/* Industry Dropdown */}
-          <div className="flex-1 min-w-[140px]">
-            <FilterDropdown
-              items={industryOptions}
-              selectedId={activeIndustry}
-              onSelect={(ind) => {
-                setActiveIndustry(ind)
-                logMigrateAction('Filter Industry', ind)
-              }}
-              defaultLabel="Industry"
-              noContainer
-              opaque
-              className="mb-0 w-full"
-            />
-          </div>
-        </div>
-
-        <span className="hidden md:inline text-muted-foreground px-2">Search:</span>
-        <div className="relative flex-1 min-w-[200px] w-full">
+      {/* Global filter controls — above the stack */}
+      <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex items-center">
+        <div className="relative flex-1 w-full">
           <Search
             size={16}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -413,19 +251,41 @@ export const MigrateView: React.FC = () => {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="space-y-4">
-        {filteredData.length > 0 ? (
-          <SoftwareTable
-            key={`${activeInfrastructureLayer}-${activeTab}-${activePqcSupport}-${activeIndustry}-${stepFilter?.stepId ?? 'none'}`}
-            data={filteredData}
-            defaultSort={{ key: 'softwareName', direction: 'asc' }}
-          />
-        ) : (
-          <div className="text-center py-12 text-muted-foreground italic bg-muted/5 rounded-lg border border-white/5">
-            No software found matching your filters.
-          </div>
-        )}
+      {/* Infrastructure Stack with inline foldable product tables */}
+      <div className="py-4">
+        <InfrastructureStack
+          activeLayer={activeInfrastructureLayer}
+          onSelectLayer={(layer) => {
+            setActiveLayer(layer)
+          }}
+          subCategories={activeInfrastructureLayer !== 'All' ? categories : []}
+          activeSubCategory={activeTab}
+          onSelectSubCategory={(cat) => {
+            setActiveSubCategory(cat)
+            logMigrateAction('Filter Category', cat)
+          }}
+          layerProductCounts={layerProductCounts}
+          layerHiddenCounts={layerHiddenCounts}
+          layerProductKeys={layerProductKeys}
+          onRestoreLayer={(keys) => restoreLayerProducts(keys)}
+          expandedContent={
+            activeInfrastructureLayer !== 'All' ? (
+              activeLayerTableData.length > 0 ? (
+                <SoftwareTable
+                  key={`${activeInfrastructureLayer}-${activeTab}-${stepFilter?.stepId ?? 'none'}`}
+                  data={activeLayerTableData}
+                  defaultSort={{ key: 'softwareName', direction: 'asc' }}
+                  hiddenProducts={hiddenSet}
+                  onHideProduct={hideProduct}
+                />
+              ) : (
+                <div className="text-center py-8 text-muted-foreground italic text-sm">
+                  No products match the current filters.
+                </div>
+              )
+            ) : undefined
+          }
+        />
       </div>
     </div>
   )

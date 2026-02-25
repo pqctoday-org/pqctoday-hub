@@ -9,6 +9,11 @@ export const ALGORITHM_DB: Record<
     replacement: 'ML-KEM-768 / ML-DSA-65',
     notes: "Broken by Shor's algorithm. NIST targets deprecation by 2030.",
   },
+  'RSA-3072': {
+    quantumVulnerable: true,
+    replacement: 'ML-KEM-768 / ML-DSA-65',
+    notes: "Broken by Shor's algorithm. Extended deprecation timeline over RSA-2048.",
+  },
   'RSA-4096': {
     quantumVulnerable: true,
     replacement: 'ML-KEM-1024 / ML-DSA-87',
@@ -24,15 +29,35 @@ export const ALGORITHM_DB: Record<
     replacement: 'ML-DSA-65',
     notes: "Broken by Shor's algorithm.",
   },
-  ECDH: {
+  'ECDSA P-521': {
+    quantumVulnerable: true,
+    replacement: 'ML-DSA-87',
+    notes: "Broken by Shor's algorithm. Highest NIST curve.",
+  },
+  'ECDH P-256': {
     quantumVulnerable: true,
     replacement: 'ML-KEM-768',
-    notes: "Key agreement vulnerable to Shor's. Replace with KEM-based approach.",
+    notes: "ECDH on P-256 curve. Key agreement vulnerable to Shor's algorithm.",
+  },
+  'ECDH P-384': {
+    quantumVulnerable: true,
+    replacement: 'ML-KEM-768',
+    notes: "ECDH on P-384 curve. Key agreement vulnerable to Shor's algorithm.",
+  },
+  'ECDH P-521': {
+    quantumVulnerable: true,
+    replacement: 'ML-KEM-1024',
+    notes: "ECDH on P-521 curve. Key agreement vulnerable to Shor's algorithm.",
   },
   Ed25519: {
     quantumVulnerable: true,
     replacement: 'ML-DSA-44',
     notes: 'Used in SSH, Solana. Vulnerable to quantum attack.',
+  },
+  Ed448: {
+    quantumVulnerable: true,
+    replacement: 'ML-DSA-65',
+    notes: 'EdDSA on Curve448. Vulnerable to quantum attack.',
   },
   'DH (Diffie-Hellman)': {
     quantumVulnerable: true,
@@ -43,6 +68,11 @@ export const ALGORITHM_DB: Record<
     quantumVulnerable: false,
     replacement: 'AES-256 (recommended upgrade)',
     notes: "Grover's algorithm reduces security to ~64-bit. Upgrade to AES-256.",
+  },
+  'AES-192': {
+    quantumVulnerable: false,
+    replacement: 'No change needed',
+    notes: "Grover's reduces to ~96-bit — provides good quantum margin.",
   },
   'AES-256': {
     quantumVulnerable: false,
@@ -79,6 +109,11 @@ export const ALGORITHM_DB: Record<
     replacement: 'ML-KEM-768',
     notes: "Curve25519 key exchange. Vulnerable to Shor's algorithm.",
   },
+  X448: {
+    quantumVulnerable: true,
+    replacement: 'ML-KEM-1024',
+    notes: "Curve448 key exchange. Vulnerable to Shor's algorithm.",
+  },
   secp256k1: {
     quantumVulnerable: true,
     replacement: 'ML-DSA-44',
@@ -93,10 +128,13 @@ export const VULNERABLE_ALGORITHMS = new Set(
 /** Signature algorithms vulnerable to Shor's algorithm (HNFL targets). */
 export const SIGNING_ALGORITHMS = new Set([
   'RSA-2048',
+  'RSA-3072',
   'RSA-4096',
   'ECDSA P-256',
   'ECDSA P-384',
+  'ECDSA P-521',
   'Ed25519',
+  'Ed448',
   'secp256k1',
 ])
 // Compliance data now comes from the dedicated compliance CSV (single source of truth)
@@ -145,10 +183,13 @@ export const INDUSTRY_THREAT: Record<string, number> = {
 }
 export const ALGORITHM_WEIGHTS: Record<string, number> = {
   'RSA-2048': 10,
+  'RSA-3072': 9,
   'RSA-4096': 8,
   'ECDSA P-256': 10,
   'ECDSA P-384': 6,
-  ECDH: 10,
+  'ECDH P-256': 10,
+  'ECDH P-384': 8,
+  'ECDH P-521': 6,
   Ed25519: 6,
   'DH (Diffie-Hellman)': 4,
   X25519: 8,
@@ -239,13 +280,13 @@ export const AGILITY_COMPLEXITY: Record<string, number> = {
   unknown: 0.75, // conservative but not worst-case — softer than confirmed hardcoded
 }
 export const INFRA_COMPLEXITY: Record<string, number> = {
-  'HSM / Hardware security modules': 15,
-  'Cloud KMS (AWS, Azure, GCP)': 5,
-  'On-premise PKI': 12,
-  'Third-party certificate authorities': 8,
-  'Legacy systems (10+ years old)': 14,
-  'Embedded / IoT devices': 13,
-  'Mobile applications': 6,
+  Hardware: 15, // HSMs, Smart Cards, QRNG, Secure Boot — hardest to migrate
+  'Security Stack': 12, // PKI, KMS, IAM, CLM
+  OS: 11, // Operating Systems, Network OS
+  Network: 10, // VPN, IPsec, 5G
+  Application: 8, // TLS/SSL, SSH, PQC libraries, email, code signing
+  Cloud: 6, // Cloud KMS/HSM — vendor-managed, easier path
+  Database: 6, // Database encryption software
 }
 export const SYSTEM_SCALE: Record<string, number> = {
   '1-10': 1.0,
@@ -277,27 +318,39 @@ export const COUNTRY_REGULATORY_URGENCY: Record<string, number> = {
   'United States': 12, // CNSA 2.0, FedRAMP, FIPS 140-3
   France: 10, // ANSSI 2025 mandate
   Germany: 8, // BSI PQC guidance, NIS2
+  Israel: 7, // INCD PQC guidance, BOI directive (2025 deadlines)
   Netherlands: 7, // NIS2, EU financial regulation
   'United Kingdom': 7, // NCSC PQC guidance
   Australia: 6, // ASD guidance
   Canada: 6, // CCCS guidance
-  Japan: 5, // NISC guidance
-  'South Korea': 5, // KISA guidance
+  China: 6, // OSCCA NGCC program (2027-2030)
+  'New Zealand': 6, // NZISM v3.9, Five Eyes aligned
+  Singapore: 6, // MAS PQC circular
   Spain: 6, // NIS2
   Italy: 6, // NIS2
   Belgium: 6, // NIS2
   Sweden: 6, // NIS2
+  Japan: 5, // CRYPTREC guidance
+  'South Korea': 5, // KpqC standardization, MSIT roadmap
   Denmark: 5, // NIS2
+  'Czech Republic': 6, // NIS2, DORA, eIDAS, EU-REC-2024-1101
 }
 export const ESTIMATED_QUANTUM_THREAT_YEAR = 2035
 /** Country-specific regulatory planning horizons (earliest hard deadline year). */
 export const COUNTRY_PLANNING_HORIZON: Record<string, number> = {
   'United States': 2030, // CNSA 2.0 software deprecation
+  Israel: 2027, // INCD inventory & planning phase ends 2027
   France: 2030, // ANSSI mandate
+  Canada: 2030, // CCCS effective 2025
+  China: 2030, // NGCC financial sector migration estimate
+  'New Zealand': 2030, // NZISM transition phase target
+  Singapore: 2030, // MAS advisory alignment
+  'South Korea': 2035, // KpqC full migration roadmap
   Germany: 2035, // BSI guidance
   'United Kingdom': 2035, // NCSC
   Australia: 2035, // ASD ISM
-  Canada: 2030, // CCCS effective 2025
+  Japan: 2035, // CRYPTREC guidelines
+  'Czech Republic': 2030, // NIS2/DORA effective, EU critical systems deadline
 }
 /** Industry-specific composite score weights (must sum to 1.0). */
 export const INDUSTRY_COMPOSITE_WEIGHTS: Record<

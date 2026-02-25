@@ -6,10 +6,13 @@ function StepIndicator({
   current,
   total,
   titles,
+  onStepClick,
 }: {
   current: number
   total: number
   titles: string[]
+  /** Called when user clicks a completed step to jump back to it. */
+  onStepClick?: (step: number) => void
 }) {
   const activeRef = useRef<HTMLDivElement>(null)
 
@@ -38,48 +41,59 @@ function StepIndicator({
         role="group"
         aria-label="Assessment progress"
       >
-        {Array.from({ length: total }, (_, i) => (
-          <div
-            key={i}
-            ref={i === current ? activeRef : undefined}
-            className="flex items-center gap-1 md:gap-2"
-          >
-            <div className="flex flex-col items-center gap-1">
-              <div
-                aria-current={i === current ? 'step' : undefined}
-                // eslint-disable-next-line security/detect-object-injection
-                aria-label={`Step ${i + 1}: ${titles[i] ?? ''}${i < current ? ' (completed)' : i === current ? ' (current)' : ''}`}
-                className={clsx(
-                  'w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold border-2 transition-colors',
-                  i === current
-                    ? 'border-primary text-primary bg-primary/10'
-                    : i < current
-                      ? 'border-success text-success bg-success/10'
-                      : 'border-border text-muted-foreground'
-                )}
-              >
-                {i < current ? '✓' : i + 1}
+        {Array.from({ length: total }, (_, i) => {
+          const isCompleted = i < current
+          const isCurrent = i === current
+          const isClickable = isCompleted && onStepClick
+
+          return (
+            <div
+              key={i}
+              ref={isCurrent ? activeRef : undefined}
+              className="flex items-center gap-1 md:gap-2"
+            >
+              <div className="flex flex-col items-center gap-1">
+                <button
+                  type="button"
+                  disabled={!isClickable}
+                  onClick={() => isClickable && onStepClick(i)}
+                  aria-current={isCurrent ? 'step' : undefined}
+                  // eslint-disable-next-line security/detect-object-injection
+                  aria-label={`Step ${i + 1}: ${titles[i] ?? ''}${isCompleted ? ' (completed — click to edit)' : isCurrent ? ' (current)' : ''}`}
+                  className={clsx(
+                    'w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold border-2 transition-colors',
+                    isCurrent
+                      ? 'border-primary text-primary bg-primary/10'
+                      : isCompleted
+                        ? 'border-success text-success bg-success/10'
+                        : 'border-border text-muted-foreground',
+                    isClickable &&
+                      'cursor-pointer hover:bg-success/20 hover:border-success/80 hover:scale-110 transition-transform'
+                  )}
+                >
+                  {isCompleted ? '✓' : i + 1}
+                </button>
+                <span
+                  className={clsx(
+                    'text-[9px] md:text-[10px] font-medium transition-colors whitespace-nowrap',
+                    isCurrent ? 'text-foreground' : 'text-muted-foreground'
+                  )}
+                >
+                  {/* eslint-disable-next-line security/detect-object-injection */}
+                  {titles[i]}
+                </span>
               </div>
-              <span
-                className={clsx(
-                  'text-[9px] md:text-[10px] font-medium transition-colors whitespace-nowrap',
-                  i === current ? 'text-foreground' : 'text-muted-foreground'
-                )}
-              >
-                {/* eslint-disable-next-line security/detect-object-injection */}
-                {titles[i]}
-              </span>
+              {i < total - 1 && (
+                <div
+                  className={clsx(
+                    'w-4 md:w-8 h-0.5 self-start mt-3.5',
+                    isCompleted ? 'bg-success' : 'bg-border'
+                  )}
+                />
+              )}
             </div>
-            {i < total - 1 && (
-              <div
-                className={clsx(
-                  'w-4 md:w-8 h-0.5 self-start mt-3.5',
-                  i < current ? 'bg-success' : 'bg-border'
-                )}
-              />
-            )}
-          </div>
-        ))}
+          )
+        })}
       </div>
     </>
   )

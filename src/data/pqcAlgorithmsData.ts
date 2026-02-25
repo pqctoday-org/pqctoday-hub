@@ -14,7 +14,13 @@ export interface AlgorithmDetail {
   optimizationTarget: string
   fipsStandard: string
   useCaseNotes: string
-  type: 'KEM' | 'Signature' | 'Classical KEM' | 'Classical Sig'
+  type:
+    | 'KEM'
+    | 'Signature'
+    | 'Classical KEM'
+    | 'Classical Sig'
+    | 'Classical Symmetric'
+    | 'Classical Hash'
 }
 
 // Import CSV data dynamically
@@ -105,7 +111,13 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
         optimizationTarget: values[12],
         fipsStandard: values[13],
         useCaseNotes: values[14] || '',
-        type: values[0] as 'KEM' | 'Signature' | 'Classical KEM' | 'Classical Sig',
+        type: values[0] as
+          | 'KEM'
+          | 'Signature'
+          | 'Classical KEM'
+          | 'Classical Sig'
+          | 'Classical Symmetric'
+          | 'Classical Hash',
       })
     }
   }
@@ -142,7 +154,12 @@ export function isPQC(algo: AlgorithmDetail): boolean {
 }
 
 export function isClassical(algo: AlgorithmDetail): boolean {
-  return algo.family === 'Classical KEM' || algo.family === 'Classical Sig'
+  return (
+    algo.family === 'Classical KEM' ||
+    algo.family === 'Classical Sig' ||
+    algo.family === 'Classical Symmetric' ||
+    algo.family === 'Classical Hash'
+  )
 }
 
 export function getPerformanceCategory(cycles: string): 'Fast' | 'Moderate' | 'Slow' {

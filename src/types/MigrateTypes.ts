@@ -55,6 +55,19 @@ export interface MigrationStep {
   estimatedDuration: string
 }
 
+export interface CertificationXref {
+  softwareName: string
+  certType: 'FIPS 140-3' | 'ACVP' | 'Common Criteria'
+  certId: string
+  certVendor: string
+  certProduct: string
+  pqcAlgorithms: string
+  certificationLevel: string
+  status: string
+  certDate: string
+  certLink: string
+}
+
 export interface SoftwareCategoryGap {
   categoryId: string
   categoryName: string

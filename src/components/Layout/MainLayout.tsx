@@ -15,6 +15,7 @@ import {
   ArrowRightLeft,
   Home,
   ClipboardCheck,
+  FileBarChart,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
@@ -32,6 +33,7 @@ export const MainLayout = () => {
   const navItems = [
     { path: '/', label: 'Home', icon: Home, end: true },
     { path: '/assess', label: 'Assess', icon: ClipboardCheck },
+    { path: '/report', label: 'Report', icon: FileBarChart },
     { path: '/learn', label: 'Learn', icon: GraduationCap },
     { path: '/timeline', label: 'Timeline', icon: Globe },
     { path: '/threats', label: 'Threats', icon: AlertTriangle },

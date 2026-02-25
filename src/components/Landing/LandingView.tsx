@@ -86,7 +86,7 @@ const JOURNEY_STEPS: JourneyStep[] = [
     color: 'text-primary',
     description:
       '13-step quantum risk wizard — crypto inventory, sensitivity, compliance gaps, and personalized risk score',
-    paths: ['/assess'],
+    paths: ['/assess', '/report'],
   },
   {
     id: 'explore',

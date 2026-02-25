@@ -4,9 +4,40 @@ import { Info } from 'lucide-react'
 
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 
-import { AVAILABLE_COMPLIANCE, COMPLIANCE_DESCRIPTIONS } from '../../../hooks/assessmentData'
+import { AVAILABLE_COMPLIANCE } from '../../../hooks/assessmentData'
 
 import { industryComplianceConfigs, getIndustryConfigs } from '../../../data/industryAssessConfig'
+
+// EU member states: frameworks listing "European Union" apply to users in any of these countries
+const EU_MEMBER_COUNTRIES = new Set([
+  'European Union',
+  'France',
+  'Germany',
+  'Italy',
+  'Spain',
+  'Czech Republic',
+  'Netherlands',
+  'Belgium',
+  'Sweden',
+  'Denmark',
+  'Finland',
+  'Ireland',
+  'Portugal',
+  'Austria',
+  'Poland',
+  'Hungary',
+  'Romania',
+  'Bulgaria',
+  'Croatia',
+  'Estonia',
+  'Latvia',
+  'Lithuania',
+  'Luxembourg',
+  'Malta',
+  'Slovakia',
+  'Slovenia',
+  'Cyprus',
+])
 
 import clsx from 'clsx'
 
@@ -25,12 +56,15 @@ const Step5Compliance = () => {
   // Build set of labels that match the selected country
   const countryMatchingLabels = useMemo(() => {
     if (!country || country === 'Global') return null // no filter
+    const isEuMember = EU_MEMBER_COUNTRIES.has(country)
     const set = new Set<string>()
     for (const cfg of industryComplianceConfigs) {
       if (
         cfg.countries.length === 0 ||
         cfg.countries.includes('Global') ||
-        cfg.countries.includes(country)
+        cfg.countries.includes(country) ||
+        // EU-wide frameworks (listed as "European Union" only) apply to all EU member states
+        (isEuMember && cfg.countries.includes('European Union'))
       ) {
         set.add(cfg.label)
       }
@@ -45,6 +79,12 @@ const Step5Compliance = () => {
     }
     return configs
   }, [industry, countryMatchingLabels])
+  // Description lookup by label — used to show consistent short descriptions for all frameworks
+  const descriptionByLabel = useMemo(
+    () => new Map(industryComplianceConfigs.map((cfg) => [cfg.label, cfg.description])),
+    []
+  )
+
   const industryLabelSet = useMemo(
     () => new Set(industryFrameworks.map((f) => f.label)),
     [industryFrameworks]
@@ -169,11 +209,9 @@ const Step5Compliance = () => {
                   )}
                 >
                   <span>{fw}</span>
-                  {/* eslint-disable-next-line security/detect-object-injection */}
-                  {COMPLIANCE_DESCRIPTIONS[fw] && (
+                  {descriptionByLabel.get(fw) && (
                     <p className="text-xs mt-1 opacity-80 font-normal leading-snug">
-                      {/* eslint-disable-next-line security/detect-object-injection */}
-                      {COMPLIANCE_DESCRIPTIONS[fw].notes}
+                      {descriptionByLabel.get(fw)}
                     </p>
                   )}
                 </button>

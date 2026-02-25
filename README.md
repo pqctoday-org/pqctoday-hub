@@ -97,6 +97,17 @@ Test your PQC readiness with this interactive web application visualizing the gl
       Networking (CQN) and Chicago Quantum Exchange (CQE) 111 km fiber network
   - **Merkle Tree Certificates**:
     - Build Merkle trees interactively, generate inclusion proofs, and compare MTC vs traditional PKI for post-quantum TLS
+  - **Code Signing** (4-step workshop):
+    - Binary signing with ML-DSA-87 vs ECDSA P-384 with real byte-size comparison
+    - PQC certificate chain builder (root CA → intermediate → leaf) with ML-DSA
+    - Hybrid package signing (RPM-style, ML-DSA-87 + Ed448 dual signatures)
+    - Keyless Sigstore flow with transparency-log inclusion proof visualization
+  - **API Security & JWT** (5-step workshop):
+    - JWT Inspector: decode and flag quantum-vulnerable algorithms (RS256/HS256)
+    - PQC JWT Signing with ML-DSA-87 vs RS256 signature byte size comparison
+    - Hybrid JWT: dual-sign with Ed25519 + ML-DSA-87 for backward-compatible migration tokens
+    - JWE Encryption with ML-KEM-768 key agreement
+    - Token Size Analyzer: side-by-side header/payload/signature breakdown for RS256, ES256, ML-DSA-44/65/87
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
   - **Reference Catalog**: 186 verified PQC-relevant product entries across 7 infrastructure layers
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
@@ -110,7 +121,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Reference Panel**: Curated authoritative migration resources
   - **Change Tracking**: "New" and "Updated" indicators for recent PQC landscape changes
   - **Filtering**: Contextual cascading filters by category, PQC support status, and infrastructure
-    layer with search
+    layer with search; selected layer and sub-category persist across sessions
 - **PQC Risk Assessment** (`/assess`): Comprehensive 13-step quantum risk evaluation wizard
   - **Country/Jurisdiction Picker**: select your regulatory jurisdiction to align deadlines with the PQC timeline
   - **Multi-select Sensitivity & Retention**: pick all applicable levels; scoring uses worst-case HNDL risk
@@ -151,11 +162,18 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Industry-aware wizard: compliance, crypto, use-case, and infrastructure steps prioritize industry-relevant options
   - Country compliance filtering: frameworks filtered by selected jurisdiction
   - PDF/print support: downloadable report with header/footer, page numbers, and section-aware page breaks
+- **Standalone Report** (`/report`): Dedicated shareable report page extracted from the assessment
+  wizard. Accepts URL query parameters to auto-hydrate and auto-complete assessments from a shared
+  link. Includes all report sections: Risk Score gauge, Category Breakdown, HNDL/HNFL risk windows,
+  Algorithm Migration priorities, Recommended Actions, Migration Roadmap (with MigrationToolkit
+  product suggestions), and Threat Landscape. Google Drive cloud sync enables uploading/downloading
+  full-app progress snapshots to the Drive `appDataFolder` (hidden from the user's file list,
+  access-token stored in-memory only).
 - **PQC Glossary**: Global floating glossary with 100+ PQC terms
   - Category filters, A-Z index, full-text search
   - Complexity badges (Beginner, Intermediate, Advanced)
   - Cross-references to learning modules
-  - **Inline tooltips** on key terms throughout all 16 learning modules — portal-rendered with
+  - **Inline tooltips** on key terms throughout all 18 learning modules — portal-rendered with
     `position: fixed` so they always appear above overflow-constrained containers (modals,
     scrollable panels, diagram wrappers)
 - **Personalization System**: Role, region, and industry picker on the home page that adapts the

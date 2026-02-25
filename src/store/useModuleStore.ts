@@ -19,6 +19,7 @@ interface ModuleState extends LearningProgress {
   addKey: (key: LearningProgress['artifacts']['keys'][0]) => void
   addCertificate: (cert: LearningProgress['artifacts']['certificates'][0]) => void
   addCSR: (csr: LearningProgress['artifacts']['csrs'][0]) => void
+  mergeCorrectQuestionIds: (ids: string[]) => void
   trackDailyVisit: () => void
 }
 
@@ -47,6 +48,7 @@ const INITIAL_STATE: LearningProgress = {
   },
   notes: {},
   sessionTracking: undefined,
+  quizMastery: { correctQuestionIds: [] },
 }
 
 export const useModuleStore = create<ModuleState>()(
@@ -133,6 +135,16 @@ export const useModuleStore = create<ModuleState>()(
         }))
       },
 
+      mergeCorrectQuestionIds: (ids) =>
+        set((state) => {
+          const existing = new Set(state.quizMastery?.correctQuestionIds ?? [])
+          for (const id of ids) existing.add(id)
+          return {
+            quizMastery: { correctQuestionIds: [...existing] },
+            timestamp: Date.now(),
+          }
+        }),
+
       saveProgress: () => {
         const progress = get().getFullProgress()
         const dataStr = JSON.stringify(progress, null, 2)
@@ -151,6 +163,8 @@ export const useModuleStore = create<ModuleState>()(
           ...progress,
           // Preserve sessionTracking from live state if imported file predates v3
           sessionTracking: progress.sessionTracking ?? state.sessionTracking,
+          // Preserve quizMastery from live state if imported file predates v4
+          quizMastery: progress.quizMastery ?? state.quizMastery,
         })),
 
       resetProgress: () => set(INITIAL_STATE),
@@ -223,7 +237,7 @@ export const useModuleStore = create<ModuleState>()(
     }),
     {
       name: 'pki-module-storage',
-      version: 3,
+      version: 4,
       // Migration function for handling state version upgrades
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -277,6 +291,15 @@ export const useModuleStore = create<ModuleState>()(
           state.timestamp = Date.now()
         }
 
+        // Version 3 → Version 4: Add quizMastery for cumulative quiz tracking
+        if (version <= 3) {
+          if (!state.quizMastery || !Array.isArray(state.quizMastery?.correctQuestionIds)) {
+            state.quizMastery = { correctQuestionIds: [] }
+          }
+          state.version = '4.0.0'
+          state.timestamp = Date.now()
+        }
+
         return state
       },
       onRehydrateStorage: () => (_state, error) => {
@@ -294,7 +317,7 @@ if (typeof window !== 'undefined') {
     try {
       const state = useModuleStore.getState()
       const progress = state.getFullProgress()
-      const persistData = { state: progress, version: 3 }
+      const persistData = { state: progress, version: 4 }
       localStorage.setItem('pki-module-storage', JSON.stringify(persistData))
     } catch (error) {
       // Handle QuotaExceededError and other storage errors

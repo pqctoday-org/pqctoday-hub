@@ -96,7 +96,7 @@ describe('LibraryView', () => {
   describe('Page header', () => {
     it('renders the main heading', () => {
       render(<LibraryView />)
-      expect(screen.getByText(/PQC Standards Library/i)).toBeInTheDocument()
+      expect(screen.getByText(/PQC Library/i)).toBeInTheDocument()
     })
 
     it('renders the description', () => {

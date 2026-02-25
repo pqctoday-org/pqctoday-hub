@@ -157,9 +157,10 @@ describe('AlgorithmsView', () => {
           <AlgorithmsView />
         </MemoryRouter>
       )
+      // Full-width — shell (MainLayout) provides the max-w-7xl constraint; no inner cap
       // eslint-disable-next-line testing-library/no-node-access
       const mainDiv = container.firstChild as HTMLElement
-      expect(mainDiv).toHaveClass('max-w-7xl', 'mx-auto', 'px-4')
+      expect(mainDiv).toBeInTheDocument()
     })
   })
 })

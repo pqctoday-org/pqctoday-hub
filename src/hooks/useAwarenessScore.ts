@@ -1,6 +1,9 @@
 /* eslint-disable security/detect-object-injection */
 import { useMemo } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { PERSONAS } from '@/data/learningPersonas'
+import { quizPersonaCounts, quizPersonaQuestionIds } from '@/data/quizDataLoader'
 import { MODULE_STEP_COUNTS, MODULE_TRACKS } from '@/components/PKILearning/moduleData'
 
 export interface BeltThresholds {
@@ -25,7 +28,7 @@ export const BELT_RANKS: BeltRank[] = [
   {
     name: 'White Belt',
     minScore: 0,
-    maxScore: 12,
+    maxScore: 14,
     color: '#F5F5F5',
     textColor: '#374151',
     tagline: 'Beginning the journey',
@@ -33,91 +36,91 @@ export const BELT_RANKS: BeltRank[] = [
   },
   {
     name: 'Yellow Belt',
-    minScore: 13,
-    maxScore: 25,
+    minScore: 15,
+    maxScore: 29,
     color: '#EAB308',
     textColor: '#1C1917',
     tagline: 'Learning the basics',
     thresholds: {
-      minQuizPct: 10,
-      minStepsPct: 5,
+      minQuizPct: 15,
+      minStepsPct: 10,
       minArtifacts: 0,
-      minTimeMinutes: 10,
+      minTimeMinutes: 15,
       minStreak: 0,
     },
   },
   {
     name: 'Orange Belt',
-    minScore: 26,
-    maxScore: 40,
+    minScore: 30,
+    maxScore: 44,
     color: '#F97316',
     textColor: '#1C1917',
     tagline: 'Exploring foundations',
     thresholds: {
-      minQuizPct: 25,
-      minStepsPct: 15,
-      minArtifacts: 1,
-      minTimeMinutes: 30,
+      minQuizPct: 30,
+      minStepsPct: 25,
+      minArtifacts: 2,
+      minTimeMinutes: 45,
       minStreak: 0,
     },
   },
   {
     name: 'Green Belt',
-    minScore: 41,
-    maxScore: 55,
+    minScore: 45,
+    maxScore: 59,
     color: '#16A34A',
     textColor: '#F0FDF4',
     tagline: 'Solid fundamentals developing',
     thresholds: {
-      minQuizPct: 40,
-      minStepsPct: 30,
-      minArtifacts: 2,
-      minTimeMinutes: 60,
-      minStreak: 2,
-    },
-  },
-  {
-    name: 'Blue Belt',
-    minScore: 56,
-    maxScore: 70,
-    color: '#1D4ED8',
-    textColor: '#EFF6FF',
-    tagline: 'Building depth consistently',
-    thresholds: {
-      minQuizPct: 55,
-      minStepsPct: 50,
-      minArtifacts: 4,
-      minTimeMinutes: 120,
+      minQuizPct: 45,
+      minStepsPct: 40,
+      minArtifacts: 3,
+      minTimeMinutes: 90,
       minStreak: 3,
     },
   },
   {
+    name: 'Blue Belt',
+    minScore: 60,
+    maxScore: 74,
+    color: '#1D4ED8',
+    textColor: '#EFF6FF',
+    tagline: 'Building depth consistently',
+    thresholds: {
+      minQuizPct: 60,
+      minStepsPct: 60,
+      minArtifacts: 5,
+      minTimeMinutes: 180,
+      minStreak: 4,
+    },
+  },
+  {
     name: 'Brown Belt',
-    minScore: 71,
-    maxScore: 84,
+    minScore: 75,
+    maxScore: 87,
     color: '#78350F',
     textColor: '#FEF3C7',
     tagline: 'Strong practitioner',
     thresholds: {
-      minQuizPct: 70,
-      minStepsPct: 70,
-      minArtifacts: 6,
-      minTimeMinutes: 240,
+      minQuizPct: 75,
+      minStepsPct: 80,
+      minArtifacts: 7,
+      minTimeMinutes: 300,
       minStreak: 5,
     },
   },
   {
     name: 'Black Belt',
-    minScore: 85,
+    minScore: 88,
     maxScore: 100,
     color: '#111827',
     textColor: '#F9FAFB',
     tagline: 'PQC mastery achieved',
     thresholds: {
-      minQuizPct: 85,
-      minStepsPct: 90,
-      minArtifacts: 8,
-      minTimeMinutes: 480,
+      minQuizPct: 90,
+      minStepsPct: 95,
+      minArtifacts: 10,
+      minTimeMinutes: 600,
       minStreak: 7,
     },
   },
@@ -161,9 +164,13 @@ export interface AwarenessScoreResult {
   }
   totalMinutes: number
   artifactCount: number
+  totalPersonaSteps: number
+  totalPersonaQuestions: number
 }
 
-const TOTAL_STEPS = Object.values(MODULE_STEP_COUNTS).reduce((a, b) => a + b, 0)
+// Exclude quiz and assess — they are not learning-track modules and would
+// create a hidden 2-step gap between the breadth display and track breakdown.
+const BREADTH_EXCLUDED = new Set(['quiz', 'assess'])
 const TIME_CAP = 600
 const STREAK_CAP = 7
 
@@ -171,9 +178,31 @@ export function useAwarenessScore(): AwarenessScoreResult {
   const modules = useModuleStore((s) => s.modules)
   const artifacts = useModuleStore((s) => s.artifacts)
   const sessionTracking = useModuleStore((s) => s.sessionTracking)
+  const quizMastery = useModuleStore((s) => s.quizMastery)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 
   return useMemo(() => {
     const allModuleIds = Object.keys(MODULE_STEP_COUNTS)
+
+    // ── Persona-scoped module IDs and step total ────────────────────────────
+    const personaModuleIds = selectedPersona
+      ? PERSONAS[selectedPersona].pathItems
+          .filter((item): item is { type: 'module'; moduleId: string } => item.type === 'module')
+          .map((item) => item.moduleId)
+          .filter((id) => !BREADTH_EXCLUDED.has(id))
+      : allModuleIds.filter((id) => !BREADTH_EXCLUDED.has(id))
+
+    const personaTotalSteps = personaModuleIds.reduce(
+      (sum, id) => sum + (MODULE_STEP_COUNTS[id] ?? 0),
+      0
+    )
+
+    // ── Persona-scoped quiz question total ──────────────────────────────────
+    const personaKey = selectedPersona ?? 'all'
+    const totalPersonaQuestions = quizPersonaCounts[personaKey] ?? 0
+    const personaIdSet = quizPersonaQuestionIds[personaKey]
+
+    const personaModuleIdSet = new Set(personaModuleIds)
 
     const hasStarted = allModuleIds.some(
       (id) => modules[id]?.status === 'in-progress' || modules[id]?.status === 'completed'
@@ -217,46 +246,76 @@ export function useAwarenessScore(): AwarenessScoreResult {
             detail: 'Spend time learning and return daily',
           },
         },
-        trackProgress: MODULE_TRACKS.map((t) => ({
-          track: t.track,
-          completedModules: 0,
-          totalModules: t.modules.length,
-          completedSteps: 0,
-          totalSteps: t.modules.reduce((s, m) => s + (MODULE_STEP_COUNTS[m.id] ?? 0), 0),
-          percentComplete: 0,
-        })),
+        trackProgress: MODULE_TRACKS.map((t) => {
+          const relevantModules = t.modules.filter((m) => personaModuleIdSet.has(m.id))
+          if (relevantModules.length === 0) return null
+          return {
+            track: t.track,
+            completedModules: 0,
+            totalModules: relevantModules.length,
+            completedSteps: 0,
+            totalSteps: relevantModules.reduce((s, m) => s + (MODULE_STEP_COUNTS[m.id] ?? 0), 0),
+            percentComplete: 0,
+          }
+        }).filter((t): t is TrackProgress => t !== null),
         streak: { current: 0, longest: 0, totalSessions: 0 },
         totalMinutes: 0,
         artifactCount: 0,
+        totalPersonaSteps: personaTotalSteps,
+        totalPersonaQuestions,
       }
     }
 
-    // ── Knowledge (40%) ──────────────────────────────────────────────────────
+    // ── Knowledge (40%) — cumulative mastery or legacy fallback ──────────────
+    const correctIds = quizMastery?.correctQuestionIds ?? []
+    const hasCumulative = correctIds.length > 0
+    const personaCorrectCount = personaIdSet
+      ? correctIds.filter((id) => personaIdSet.has(id)).length
+      : correctIds.length
+
+    // Legacy per-session fallback values
     const quizMod = modules['quiz']
     const quizOverall = quizMod?.quizScores?.['overall'] ?? 0
     const categoryCount = Object.keys(quizMod?.quizScores ?? {}).filter(
       (k) => k !== 'overall'
     ).length
     const categoryBonus = Math.min(20, categoryCount * 1.5)
-    const knowledgeRaw = Math.min(100, quizOverall * 0.8 + categoryBonus)
 
+    let knowledgeRaw: number
     let knowledgeDetail: string
-    if (quizOverall === 0) {
+
+    if (hasCumulative) {
+      knowledgeRaw =
+        totalPersonaQuestions > 0
+          ? Math.round((personaCorrectCount / totalPersonaQuestions) * 100)
+          : 0
+      knowledgeDetail = `${personaCorrectCount} / ${totalPersonaQuestions} questions mastered`
+    } else if (quizOverall === 0) {
+      knowledgeRaw = 0
       knowledgeDetail = 'Take the quiz to measure your knowledge'
     } else {
+      knowledgeRaw = Math.min(100, quizOverall * 0.8 + categoryBonus)
       knowledgeDetail = `${Math.round(quizOverall)}% overall${categoryCount > 0 ? ` · ${categoryCount} categor${categoryCount === 1 ? 'y' : 'ies'}` : ''}`
     }
 
-    // ── Breadth (30%) ────────────────────────────────────────────────────────
+    // Quiz metric for threshold gates (cumulative mastery or legacy per-session)
+    const quizMetric = hasCumulative
+      ? totalPersonaQuestions > 0
+        ? (personaCorrectCount / totalPersonaQuestions) * 100
+        : 0
+      : quizOverall
+
+    // ── Breadth (30%) — persona-scoped ──────────────────────────────────────
     let totalCompletedSteps = 0
-    for (const id of allModuleIds) {
+    for (const id of personaModuleIds) {
       const mod = modules[id]
       if (mod) {
         totalCompletedSteps += Math.min(mod.completedSteps.length, MODULE_STEP_COUNTS[id] ?? 0)
       }
     }
-    const breadthRaw = Math.round((totalCompletedSteps / TOTAL_STEPS) * 100)
-    const breadthDetail = `${totalCompletedSteps} / ${TOTAL_STEPS} steps`
+    const breadthRaw =
+      personaTotalSteps > 0 ? Math.round((totalCompletedSteps / personaTotalSteps) * 100) : 0
+    const breadthDetail = `${totalCompletedSteps} / ${personaTotalSteps} steps`
 
     // ── Practice (20%) ───────────────────────────────────────────────────────
     const keyCount = artifacts.keys.length
@@ -307,7 +366,7 @@ export function useAwarenessScore(): AwarenessScoreResult {
     )
 
     // ── Belt Assignment (with threshold gating) ───────────────────────────────
-    const stepsPct = (totalCompletedSteps / TOTAL_STEPS) * 100
+    const stepsPct = personaTotalSteps > 0 ? (totalCompletedSteps / personaTotalSteps) * 100 : 0
 
     let earnedBelt = BELT_RANKS[0]
     let cappedByThreshold: string | null = null
@@ -316,7 +375,7 @@ export function useAwarenessScore(): AwarenessScoreResult {
       if (score < belt.minScore) break
 
       const t = belt.thresholds
-      const quizOk = quizOverall >= t.minQuizPct
+      const quizOk = quizMetric >= t.minQuizPct
       const stepsOk = stepsPct >= t.minStepsPct
       const artifactsOk = artifactCount >= t.minArtifacts
       const timeOk = totalMinutes >= t.minTimeMinutes
@@ -327,10 +386,15 @@ export function useAwarenessScore(): AwarenessScoreResult {
       } else {
         // Identify the first unmet threshold for the next belt
         if (!cappedByThreshold) {
-          if (!quizOk)
-            cappedByThreshold = `Need ${Math.ceil(t.minQuizPct - quizOverall)}% more on the quiz for ${belt.name}`
-          else if (!stepsOk)
-            cappedByThreshold = `Need ${Math.ceil((t.minStepsPct / 100) * TOTAL_STEPS) - totalCompletedSteps} more steps for ${belt.name}`
+          if (!quizOk) {
+            const needed = hasCumulative
+              ? Math.ceil((t.minQuizPct / 100) * totalPersonaQuestions) - personaCorrectCount
+              : Math.ceil(t.minQuizPct - quizOverall)
+            cappedByThreshold = hasCumulative
+              ? `Need ${needed} more correct question${needed > 1 ? 's' : ''} for ${belt.name}`
+              : `Need ${needed}% more on the quiz for ${belt.name}`
+          } else if (!stepsOk)
+            cappedByThreshold = `Need ${Math.ceil((t.minStepsPct / 100) * personaTotalSteps) - totalCompletedSteps} more steps for ${belt.name}`
           else if (!artifactsOk)
             cappedByThreshold = `Need ${t.minArtifacts - artifactCount} more artifact${t.minArtifacts - artifactCount > 1 ? 's' : ''} for ${belt.name}`
           else if (!timeOk)
@@ -346,13 +410,19 @@ export function useAwarenessScore(): AwarenessScoreResult {
     const nextBelt = nextBeltIdx < BELT_RANKS.length ? BELT_RANKS[nextBeltIdx] : null
     const pointsToNextBelt = nextBelt ? Math.max(0, nextBelt.minScore - score) : 0
 
-    // ── Track Progress ────────────────────────────────────────────────────────
+    // ── Track Progress (persona-scoped) ────────────────────────────────────────
     const trackProgress: TrackProgress[] = MODULE_TRACKS.map((t) => {
-      const trackStepTotal = t.modules.reduce((s, m) => s + (MODULE_STEP_COUNTS[m.id] ?? 0), 0)
+      const relevantModules = t.modules.filter((m) => personaModuleIdSet.has(m.id))
+      if (relevantModules.length === 0) return null
+
+      const trackStepTotal = relevantModules.reduce(
+        (s, m) => s + (MODULE_STEP_COUNTS[m.id] ?? 0),
+        0
+      )
       let trackStepsDone = 0
       let completedModules = 0
 
-      for (const m of t.modules) {
+      for (const m of relevantModules) {
         const mod = modules[m.id]
         if (mod) {
           trackStepsDone += Math.min(mod.completedSteps.length, MODULE_STEP_COUNTS[m.id] ?? 0)
@@ -363,13 +433,13 @@ export function useAwarenessScore(): AwarenessScoreResult {
       return {
         track: t.track,
         completedModules,
-        totalModules: t.modules.length,
+        totalModules: relevantModules.length,
         completedSteps: trackStepsDone,
         totalSteps: trackStepTotal,
         percentComplete:
           trackStepTotal > 0 ? Math.round((trackStepsDone / trackStepTotal) * 100) : 0,
       }
-    })
+    }).filter((t): t is TrackProgress => t !== null)
 
     return {
       hasStarted,
@@ -412,6 +482,8 @@ export function useAwarenessScore(): AwarenessScoreResult {
       streak: { current: currentStreak, longest: longestStreak, totalSessions },
       totalMinutes,
       artifactCount,
+      totalPersonaSteps: personaTotalSteps,
+      totalPersonaQuestions,
     }
-  }, [modules, artifacts, sessionTracking])
+  }, [modules, artifacts, sessionTracking, quizMastery, selectedPersona])
 }

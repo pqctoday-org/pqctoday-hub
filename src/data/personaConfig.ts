@@ -7,10 +7,19 @@ import type { Region } from '../store/usePersonaStore'
  * null = show all (researcher / no persona)
  */
 export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
-  executive: ['/assess', '/leaders', '/library', '/compliance', '/migrate'],
-  developer: ['/assess', '/algorithms', '/library', '/migrate', '/playground', '/openssl'],
+  executive: ['/assess', '/report', '/leaders', '/library', '/compliance', '/migrate'],
+  developer: [
+    '/assess',
+    '/report',
+    '/algorithms',
+    '/library',
+    '/migrate',
+    '/playground',
+    '/openssl',
+  ],
   architect: [
     '/assess',
+    '/report',
     '/algorithms',
     '/library',
     '/migrate',
@@ -38,7 +47,7 @@ export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {
  */
 export const REGION_COUNTRY_MAP: Record<Region, string | null> = {
   americas: 'United States',
-  eu: 'France',
+  eu: null,
   apac: 'Japan',
   global: null,
 }
@@ -58,6 +67,10 @@ export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
     'United Kingdom',
     'Czech Republic',
     'Israel',
+    'United Arab Emirates',
+    'Saudi Arabia',
+    'Bahrain',
+    'Jordan',
   ],
   apac: [
     'Japan',
@@ -68,6 +81,8 @@ export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
     'India',
     'China',
     'New Zealand',
+    'Hong Kong',
+    'Malaysia',
   ],
   global: ['Global', 'International', 'G7', 'NATO', 'BIS', 'GSMA'],
 }
@@ -91,6 +106,8 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
   '5g-security': ['Telecommunications', 'Government & Defense'],
   'digital-id': ['Government & Defense', 'Healthcare', 'Finance & Banking'],
   'entropy-randomness': null,
+  'code-signing': ['Technology', 'Government & Defense', 'Finance & Banking'],
+  'api-security-jwt': ['Technology', 'Finance & Banking', 'Healthcare', 'Retail & E-Commerce'],
 }
 
 /** Nav paths that are always shown regardless of persona. */
@@ -113,4 +130,92 @@ export const INDUSTRY_TO_THREATS_MAP: Record<string, string | null> = {
   'Retail & E-Commerce': 'Retail / E-Commerce',
   Education: null,
   Other: null,
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Report section configuration — per-persona open/collapsed/hidden states
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+export type SectionState = 'open' | 'collapsed' | 'hidden'
+
+export type ReportSectionId =
+  | 'countryTimeline'
+  | 'riskScore'
+  | 'keyFindings'
+  | 'riskBreakdown'
+  | 'executiveSummary'
+  | 'assessmentProfile'
+  | 'hndlHnfl'
+  | 'algorithmMigration'
+  | 'complianceImpact'
+  | 'recommendedActions'
+  | 'migrationRoadmap'
+  | 'migrationToolkit'
+  | 'threatLandscape'
+
+export interface ReportSectionConfig {
+  state: SectionState
+  /** Max items to show in summary mode (e.g., top 5 actions for executives). */
+  maxItems?: number
+}
+
+/** Default section states when no persona is selected. */
+const REPORT_SECTION_DEFAULTS: Record<ReportSectionId, ReportSectionConfig> = {
+  countryTimeline: { state: 'collapsed' },
+  riskScore: { state: 'open' },
+  keyFindings: { state: 'open' },
+  riskBreakdown: { state: 'open' },
+  executiveSummary: { state: 'open' },
+  assessmentProfile: { state: 'collapsed' },
+  hndlHnfl: { state: 'open' },
+  algorithmMigration: { state: 'open' },
+  complianceImpact: { state: 'open' },
+  recommendedActions: { state: 'open' },
+  migrationRoadmap: { state: 'open' },
+  migrationToolkit: { state: 'open' },
+  threatLandscape: { state: 'collapsed' },
+}
+
+/** Per-persona overrides — only differences from defaults. */
+export const PERSONA_REPORT_CONFIG: Record<
+  PersonaId,
+  Partial<Record<ReportSectionId, ReportSectionConfig>>
+> = {
+  executive: {
+    hndlHnfl: { state: 'hidden' },
+    algorithmMigration: { state: 'hidden' },
+    migrationRoadmap: { state: 'collapsed' },
+    migrationToolkit: { state: 'collapsed' },
+    recommendedActions: { state: 'open', maxItems: 5 },
+  },
+  developer: {},
+  architect: {
+    assessmentProfile: { state: 'open' },
+    threatLandscape: { state: 'open' },
+  },
+  researcher: {
+    assessmentProfile: { state: 'open' },
+    threatLandscape: { state: 'open' },
+  },
+}
+
+/**
+ * Resolve the effective section config for a given persona.
+ * When `showFullReport` is true, hidden sections become collapsed instead.
+ */
+export function getReportSectionConfig(
+  personaId: PersonaId | null,
+  sectionId: ReportSectionId,
+  showFullReport = false
+): ReportSectionConfig {
+  // eslint-disable-next-line security/detect-object-injection
+  const defaults = REPORT_SECTION_DEFAULTS[sectionId]
+  if (!personaId) return defaults
+  // eslint-disable-next-line security/detect-object-injection
+  const overrides = PERSONA_REPORT_CONFIG[personaId]?.[sectionId]
+  const resolved = overrides ? { ...defaults, ...overrides } : defaults
+  if (showFullReport && resolved.state === 'hidden') {
+    return { ...resolved, state: 'collapsed' }
+  }
+  return resolved
 }

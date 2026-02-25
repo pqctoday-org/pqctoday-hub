@@ -84,6 +84,8 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'crypto-agility',
       'pki-workshop',
       'email-signing',
+      'code-signing',
+      'api-security-jwt',
       'quiz',
     ],
     pathItems: [
@@ -120,9 +122,17 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
         label: 'PKI & Signing',
         categories: ['pki-infrastructure', 'email-signing', 'crypto-operations'],
       },
+      { type: 'module', moduleId: 'code-signing' },
+      { type: 'module', moduleId: 'api-security-jwt' },
+      {
+        type: 'checkpoint',
+        id: 'dev-cp-5',
+        label: 'Supply Chain & API Security',
+        categories: ['code-signing', 'api-security-jwt'],
+      },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 555,
+    estimatedMinutes: 705,
     quizDescription:
       'Test your knowledge on quantum threats, TLS, VPN/SSH, PKI, hybrid cryptography, crypto agility, and protocol integration.',
     quizCategories: [
@@ -137,6 +147,8 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'crypto-operations',
       'vpn-ssh-pqc',
       'email-signing',
+      'code-signing',
+      'api-security-jwt',
     ],
   },
   architect: {
@@ -157,6 +169,8 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'key-management',
       'stateful-signatures',
       'pki-workshop',
+      'api-security-jwt',
+      'code-signing',
       'quiz',
     ],
     pathItems: [
@@ -193,9 +207,17 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
         label: 'Infrastructure & Protocols',
         categories: ['tls-basics', 'key-management', 'stateful-signatures', 'pki-infrastructure'],
       },
+      { type: 'module', moduleId: 'api-security-jwt' },
+      { type: 'module', moduleId: 'code-signing' },
+      {
+        type: 'checkpoint',
+        id: 'arch-cp-4',
+        label: 'API & Supply Chain Security',
+        categories: ['api-security-jwt', 'code-signing'],
+      },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 615,
+    estimatedMinutes: 765,
     quizDescription:
       'Test your knowledge on crypto agility, TLS, key management, stateful signatures, and architecture patterns.',
     quizCategories: [
@@ -208,6 +230,8 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'algorithm-families',
       'nist-standards',
       'hybrid-crypto',
+      'api-security-jwt',
+      'code-signing',
     ],
   },
   researcher: {
@@ -227,12 +251,14 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'tls-basics',
       'vpn-ssh-pqc',
       'email-signing',
+      'api-security-jwt',
       'pki-workshop',
       'key-management',
       'stateful-signatures',
       'digital-assets',
       '5g-security',
       'digital-id',
+      'code-signing',
       'quiz',
     ],
     pathItems: [
@@ -257,11 +283,18 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'tls-basics' },
       { type: 'module', moduleId: 'vpn-ssh-pqc' },
       { type: 'module', moduleId: 'email-signing' },
+      { type: 'module', moduleId: 'api-security-jwt' },
       {
         type: 'checkpoint',
         id: 'res-cp-3',
         label: 'Protocols',
-        categories: ['tls-basics', 'protocol-integration', 'vpn-ssh-pqc', 'email-signing'],
+        categories: [
+          'tls-basics',
+          'protocol-integration',
+          'vpn-ssh-pqc',
+          'email-signing',
+          'api-security-jwt',
+        ],
       },
       { type: 'module', moduleId: 'pki-workshop' },
       { type: 'module', moduleId: 'key-management' },
@@ -275,15 +308,16 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'digital-assets' },
       { type: 'module', moduleId: '5g-security' },
       { type: 'module', moduleId: 'digital-id' },
+      { type: 'module', moduleId: 'code-signing' },
       {
         type: 'checkpoint',
         id: 'res-cp-5',
         label: 'Applications',
-        categories: ['digital-assets', '5g-security', 'industry-threats'],
+        categories: ['digital-assets', '5g-security', 'industry-threats', 'code-signing'],
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 930,
+    estimatedMinutes: 1080,
     quizDescription:
       'Full assessment across all PQC categories — algorithms, protocols, standards, compliance, and applications.',
     quizCategories: [], // empty = all categories shown (full coverage for researcher)
@@ -295,7 +329,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
  * Returns null if the assessment isn't complete or there's not enough signal.
  */
 export function inferPersonaFromAssessment(assessment: {
-  isComplete: boolean
+  assessmentStatus: 'not-started' | 'in-progress' | 'complete'
   teamSize: string
   migrationStatus: string
   cryptoAgility: string
@@ -304,7 +338,7 @@ export function inferPersonaFromAssessment(assessment: {
   cryptoUseCases?: string[]
   infrastructure?: string[]
 }): PersonaId | null {
-  if (!assessment.isComplete) return null
+  if (assessment.assessmentStatus !== 'complete') return null
 
   const cryptoCount = assessment.currentCrypto?.length ?? 0
   const complianceCount = assessment.complianceRequirements?.length ?? 0

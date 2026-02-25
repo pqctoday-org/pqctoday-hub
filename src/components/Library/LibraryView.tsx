@@ -402,9 +402,7 @@ export const LibraryView: React.FC = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <div className="text-center mb-2 md:mb-8">
-        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
-          PQC Standards Library
-        </h2>
+        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">PQC Library</h2>
         <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
           Explore the latest Post-Quantum Cryptography standards, drafts, and related documents.
         </p>
@@ -416,7 +414,7 @@ export const LibraryView: React.FC = () => {
             </p>
             <SourcesButton viewType="Library" />
             <ShareButton
-              title="PQC Standards Library — NIST, IETF, ETSI & More"
+              title="PQC Library — NIST, IETF, ETSI & More"
               text="Explore post-quantum cryptography standards, drafts, and key documents from NIST, IETF, ETSI, and other organizations."
             />
             <GlossaryButton />

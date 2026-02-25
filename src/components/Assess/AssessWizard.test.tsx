@@ -9,6 +9,57 @@ vi.mock(
   async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
 )
 
+// Mock pqcAlgorithmsData so Step3Crypto renders without actual CSV loading
+vi.mock('../../data/pqcAlgorithmsData', () => ({
+  loadPQCAlgorithmsData: vi.fn().mockResolvedValue([
+    {
+      family: 'Classical KEM',
+      name: 'RSA-2048',
+      securityLevel: null,
+      type: 'Classical KEM',
+      aesEquivalent: '~112-bit',
+      publicKeySize: 270,
+      privateKeySize: 1190,
+      signatureCiphertextSize: 256,
+      sharedSecretSize: 256,
+      keyGenCycles: 'Baseline',
+      signEncapsCycles: 'Baseline Sign',
+      verifyDecapsCycles: 'Baseline Verify',
+      stackRAM: 2000,
+      optimizationTarget: 'N/A',
+      fipsStandard: 'SP 800-56B',
+      useCaseNotes: '',
+    },
+    {
+      family: 'Classical Sig',
+      name: 'ECDSA P-256',
+      securityLevel: null,
+      type: 'Classical Sig',
+      aesEquivalent: '~128-bit',
+      publicKeySize: 64,
+      privateKeySize: 32,
+      signatureCiphertextSize: 64,
+      sharedSecretSize: null,
+      keyGenCycles: '0.1x',
+      signEncapsCycles: '0.3x Sign',
+      verifyDecapsCycles: '0.4x Verify',
+      stackRAM: 500,
+      optimizationTarget: 'N/A',
+      fipsStandard: 'FIPS 186',
+      useCaseNotes: '',
+    },
+  ]),
+  isClassical: (algo: { family: string }) =>
+    ['Classical KEM', 'Classical Sig', 'Classical Symmetric', 'Classical Hash'].includes(
+      algo.family
+    ),
+  isPQC: vi.fn().mockReturnValue(false),
+  isHash: vi.fn().mockReturnValue(false),
+  getPerformanceCategory: vi.fn().mockReturnValue('Moderate'),
+  getSecurityLevelColor: vi.fn().mockReturnValue(''),
+  getPerformanceColor: vi.fn().mockReturnValue(''),
+}))
+
 // Mock timelineData so country step renders without CSV loading issues
 vi.mock('../../data/timelineData', () => ({
   timelineData: [
@@ -78,6 +129,7 @@ const mockStore = {
   industry: '',
   country: '',
   currentCrypto: [] as string[],
+  currentCryptoCategories: [] as string[],
   cryptoUnknown: false,
   dataSensitivity: [] as string[],
   sensitivityUnknown: false,
@@ -95,17 +147,22 @@ const mockStore = {
   cryptoAgility: '' as string,
   infrastructure: [] as string[],
   infrastructureUnknown: false,
+  infrastructureSubCategories: {} as Record<string, string[]>,
   vendorDependency: '' as string,
   vendorUnknown: false,
   timelinePressure: '' as string,
-  isComplete: false,
+  assessmentStatus: 'not-started' as const,
   lastResult: null,
   lastWizardUpdate: null,
+  completedAt: null,
+  lastModifiedAt: null,
+  previousRiskScore: null,
   setStep: vi.fn(),
   setAssessmentMode: vi.fn(),
   setIndustry: vi.fn(),
   setCountry: vi.fn(),
   toggleCrypto: vi.fn(),
+  toggleCryptoCategory: vi.fn(),
   setCryptoUnknown: vi.fn(),
   toggleDataSensitivity: vi.fn(),
   setSensitivityUnknown: vi.fn(),
@@ -123,6 +180,7 @@ const mockStore = {
   setCryptoAgility: vi.fn(),
   toggleInfrastructure: vi.fn(),
   setInfrastructureUnknown: vi.fn(),
+  setInfrastructureSubCategory: vi.fn(),
   setVendorDependency: vi.fn(),
   setVendorUnknown: vi.fn(),
   setTimelinePressure: vi.fn(),
@@ -176,6 +234,7 @@ describe('AssessWizard', () => {
     mockStore.cryptoAgility = ''
     mockStore.infrastructure = []
     mockStore.infrastructureUnknown = false
+    mockStore.infrastructureSubCategories = {}
     mockStore.vendorDependency = ''
     mockStore.vendorUnknown = false
     mockStore.timelinePressure = ''
@@ -293,25 +352,27 @@ describe('AssessWizard', () => {
       mockStore.currentStep = 2
     })
 
-    it('renders algorithm selection', () => {
+    it('renders category selection', () => {
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByText('What cryptography do you use today?')).toBeInTheDocument()
-      expect(screen.getByRole('group', { name: 'Algorithm selection' })).toBeInTheDocument()
+      expect(
+        screen.getByRole('group', { name: 'Algorithm category selection' })
+      ).toBeInTheDocument()
     })
 
-    it('calls toggleCrypto when an algorithm is clicked', () => {
+    it('calls toggleCryptoCategory when a category is clicked', () => {
       render(<AssessWizard onComplete={onComplete} />)
-      fireEvent.click(screen.getByRole('button', { name: /RSA-2048/ }))
-      expect(mockStore.toggleCrypto).toHaveBeenCalledWith('RSA-2048')
+      fireEvent.click(screen.getByRole('button', { name: /Key Exchange/ }))
+      expect(mockStore.toggleCryptoCategory).toHaveBeenCalledWith('Key Exchange')
     })
 
-    it('disables Next when no algorithms selected', () => {
+    it('disables Next when no categories selected', () => {
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByRole('button', { name: /Next/ })).toBeDisabled()
     })
 
-    it('enables Next when algorithms are selected', () => {
-      mockStore.currentCrypto = ['RSA-2048']
+    it('enables Next when a category is selected', () => {
+      mockStore.currentCryptoCategories = ['Signatures']
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByRole('button', { name: /Next/ })).toBeEnabled()
     })
@@ -622,10 +683,10 @@ describe('AssessWizard', () => {
       expect(screen.getByRole('button', { name: /Next/ })).toBeEnabled()
     })
 
-    it('calls toggleInfrastructure when an option is clicked', () => {
+    it('calls toggleInfrastructure when a layer card is clicked', () => {
       render(<AssessWizard onComplete={onComplete} />)
-      fireEvent.click(screen.getByRole('button', { name: /^Cloud KMS/ }))
-      expect(mockStore.toggleInfrastructure).toHaveBeenCalledWith('Cloud KMS (AWS, Azure, GCP)')
+      fireEvent.click(screen.getByRole('button', { name: 'Cloud' }))
+      expect(mockStore.toggleInfrastructure).toHaveBeenCalledWith('Cloud')
     })
   })
 

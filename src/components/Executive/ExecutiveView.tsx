@@ -89,7 +89,7 @@ export const ExecutiveView: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 animate-fade-in max-w-5xl print:max-w-none">
+    <div className="max-w-5xl mx-auto animate-fade-in print:max-w-none">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}

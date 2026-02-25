@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Download, Upload, Trash2, Save } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { ProgressService } from '../../services/storage/ProgressService'
+import { UnifiedStorageService } from '../../services/storage/UnifiedStorageService'
 import { useModuleStore } from '../../store/useModuleStore'
 
 // Helper function to format time ago
@@ -17,7 +18,7 @@ const formatTimeAgo = (date: Date): string => {
 }
 
 export const SaveRestorePanel: React.FC = () => {
-  const { loadProgress, resetProgress, getFullProgress } = useModuleStore()
+  const { loadProgress, resetProgress } = useModuleStore()
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
   const [storageHealth, setStorageHealth] = useState<{
     available: boolean
@@ -46,13 +47,10 @@ export const SaveRestorePanel: React.FC = () => {
 
   const handleExport = () => {
     try {
-      const progress = getFullProgress()
-      ProgressService.exportToFile(progress)
-      toast.success('Progress exported successfully!')
+      UnifiedStorageService.downloadSnapshot()
+      toast.success('Full backup exported successfully!')
     } catch (error) {
-      toast.error(
-        `Failed to export progress: ${error instanceof Error ? error.message : 'Unknown error'}`
-      )
+      toast.error(`Failed to export: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
@@ -63,9 +61,21 @@ export const SaveRestorePanel: React.FC = () => {
     const loadingToast = toast.loading('Restoring progress...')
 
     try {
+      // Try unified snapshot format first
+      try {
+        const snapshot = await UnifiedStorageService.importSnapshot(file)
+        UnifiedStorageService.restoreSnapshot(snapshot)
+        toast.success('Full backup restored successfully!', { id: loadingToast })
+        e.target.value = ''
+        return
+      } catch {
+        // Fall through to legacy format
+      }
+
+      // Fallback: legacy module-only format
       const progress = await ProgressService.importFromFile(file)
       loadProgress(progress)
-      toast.success('Progress restored successfully!', { id: loadingToast })
+      toast.success('Learning progress restored successfully!', { id: loadingToast })
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message, { id: loadingToast })

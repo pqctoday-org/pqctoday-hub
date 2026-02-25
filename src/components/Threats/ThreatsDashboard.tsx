@@ -192,7 +192,7 @@ export const ThreatsDashboard: React.FC = () => {
   }, [selectedIndustries, selectedCriticality, searchQuery, sortField, sortDirection])
 
   return (
-    <div className="max-w-7xl mx-auto px-4">
+    <div>
       <div className="text-center mb-2 md:mb-12">
         <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
           Quantum Threats

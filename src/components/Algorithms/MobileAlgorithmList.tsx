@@ -1,5 +1,5 @@
 import type { AlgorithmTransition } from '../../data/algorithmsData'
-import { FileSignature, Lock, ArrowRight } from 'lucide-react'
+import { FileSignature, Lock, Hash, Key, ArrowRight } from 'lucide-react'
 import clsx from 'clsx'
 
 interface MobileAlgorithmListProps {
@@ -26,11 +26,17 @@ export const MobileAlgorithmList = ({ data }: MobileAlgorithmListProps) => {
                 'p-2 rounded-full',
                 algo.function.includes('Signature')
                   ? 'bg-primary/10 text-primary'
-                  : 'bg-accent/10 text-accent'
+                  : algo.function === 'Hash' || algo.function === 'Symmetric'
+                    ? 'bg-secondary/10 text-secondary'
+                    : 'bg-accent/10 text-accent'
               )}
             >
               {algo.function.includes('Signature') ? (
                 <FileSignature size={20} />
+              ) : algo.function === 'Hash' ? (
+                <Hash size={20} />
+              ) : algo.function === 'Symmetric' ? (
+                <Key size={20} />
               ) : (
                 <Lock size={20} />
               )}

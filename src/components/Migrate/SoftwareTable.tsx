@@ -10,18 +10,28 @@ import {
   Info,
   CheckCircle,
   ShieldAlert,
+  EyeOff,
+  Award,
 } from 'lucide-react'
 import { LAYERS } from './InfrastructureStack'
+import { certsByProduct } from '../../data/certificationXrefData'
 
 interface SoftwareTableProps {
   data: SoftwareItem[]
   defaultSort?: { key: SortKey; direction: SortDirection }
+  hiddenProducts?: Set<string>
+  onHideProduct?: (key: string) => void
 }
 
 type SortDirection = 'asc' | 'desc' | null
 type SortKey = keyof SoftwareItem
 
-export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort }) => {
+export const SoftwareTable: React.FC<SoftwareTableProps> = ({
+  data,
+  defaultSort,
+  hiddenProducts,
+  onHideProduct,
+}) => {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>(
     defaultSort || { key: 'softwareName', direction: 'asc' }
@@ -123,12 +133,21 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
     { key: 'fipsValidated', label: 'FIPS' },
   ]
 
+  const visibleData = useMemo(
+    () =>
+      hiddenProducts ? sortedData.filter((item) => !hiddenProducts.has(rowKey(item))) : sortedData,
+    [sortedData, hiddenProducts]
+  )
+
+  const totalCols = 8 // hide + expand + 6 data columns
+
   return (
     <div className="glass-panel overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-border bg-muted/20">
+              <th className="p-4 w-8"></th> {/* Hide toggle */}
               <th className="p-4 w-10"></th> {/* Expand toggle */}
               {headers.map((header) => (
                 <th
@@ -160,7 +179,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
             </tr>
           </thead>
           <tbody>
-            {sortedData.map((item) => {
+            {visibleData.map((item) => {
               const key = rowKey(item)
               const isExpanded = expandedIds.has(key)
               return (
@@ -169,6 +188,21 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
                     className="border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
                     onClick={() => toggleExpand(key)}
                   >
+                    <td className="p-2 w-8">
+                      {onHideProduct && (
+                        <button
+                          type="button"
+                          aria-label="Hide this product"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onHideProduct(key)
+                          }}
+                          className="p-1 rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        >
+                          <EyeOff size={14} />
+                        </button>
+                      )}
+                    </td>
                     <td className="p-4">
                       {isExpanded ? (
                         <ChevronDown size={16} className="text-muted-foreground" />
@@ -229,7 +263,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
                   </tr>
                   {isExpanded && (
                     <tr className="bg-muted/10 border-b border-border">
-                      <td colSpan={7} className="p-0">
+                      <td colSpan={totalCols} className="p-0">
                         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                           <div>
                             <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
@@ -284,6 +318,70 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({ data, defaultSort 
                                 <p>Source Type: {item.sourceType}</p>
                               </div>
                             </div>
+
+                            {(() => {
+                              const certs = certsByProduct.get(item.softwareName)
+                              if (!certs || certs.length === 0) return null
+                              return (
+                                <div>
+                                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                                    <Award size={14} /> PQC Certifications
+                                  </h4>
+                                  <div className="space-y-2">
+                                    {certs.map((cert) => {
+                                      const badgeClass =
+                                        cert.certType === 'FIPS 140-3'
+                                          ? 'bg-status-success text-status-success'
+                                          : cert.certType === 'ACVP'
+                                            ? 'bg-primary/10 text-primary border-primary/20'
+                                            : 'bg-status-warning text-status-warning'
+                                      const levelShort =
+                                        cert.certificationLevel
+                                          ?.split(',')[0]
+                                          ?.replace('FIPS 140-3 ', '')
+                                          ?.trim() || ''
+                                      return (
+                                        <a
+                                          key={cert.certId}
+                                          href={cert.certLink}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="flex items-center gap-2 text-xs group hover:bg-muted/30 rounded-md p-1.5 -mx-1.5 transition-colors"
+                                        >
+                                          <span
+                                            className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border whitespace-nowrap ${badgeClass}`}
+                                          >
+                                            {cert.certType === 'Common Criteria'
+                                              ? 'CC'
+                                              : cert.certType}
+                                          </span>
+                                          <span className="text-muted-foreground truncate">
+                                            {cert.certProduct.length > 40
+                                              ? cert.certProduct.slice(0, 40) + '...'
+                                              : cert.certProduct}
+                                          </span>
+                                          {cert.pqcAlgorithms &&
+                                            !cert.pqcAlgorithms.startsWith('Potentially') && (
+                                              <span className="text-foreground font-medium whitespace-nowrap">
+                                                {cert.pqcAlgorithms}
+                                              </span>
+                                            )}
+                                          {levelShort && (
+                                            <span className="text-muted-foreground whitespace-nowrap">
+                                              {levelShort}
+                                            </span>
+                                          )}
+                                          <ExternalLink
+                                            size={10}
+                                            className="text-muted-foreground/50 group-hover:text-primary shrink-0"
+                                          />
+                                        </a>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
+                              )
+                            })()}
 
                             <div className="pt-2 flex flex-col gap-2">
                               {item.repositoryUrl && (

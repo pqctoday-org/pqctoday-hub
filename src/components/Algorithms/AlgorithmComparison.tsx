@@ -5,6 +5,8 @@ import {
   Shield,
   Lock,
   FileSignature,
+  Hash,
+  Key,
   ArrowRight,
   ArrowUpDown,
   ArrowUp,
@@ -351,6 +353,10 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                           <div className="flex items-center gap-2 text-primary font-medium text-sm">
                             {algo.function.includes('Signature') ? (
                               <FileSignature size={24} className="flex-shrink-0" />
+                            ) : algo.function === 'Hash' ? (
+                              <Hash size={24} className="flex-shrink-0" />
+                            ) : algo.function === 'Symmetric' ? (
+                              <Key size={24} className="flex-shrink-0" />
                             ) : (
                               <Lock size={24} className="flex-shrink-0" />
                             )}

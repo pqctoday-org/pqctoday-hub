@@ -64,6 +64,16 @@ const MerkleTreeCertsModule = lazyWithRetry(() =>
     default: module.MerkleTreeCertsModule,
   }))
 )
+const CodeSigningModule = lazyWithRetry(() =>
+  import('./modules/CodeSigning').then((module) => ({
+    default: module.CodeSigningModule,
+  }))
+)
+const APISecurityJWTModule = lazyWithRetry(() =>
+  import('./modules/APISecurityJWT').then((module) => ({
+    default: module.APISecurityJWTModule,
+  }))
+)
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -71,7 +81,7 @@ export const PKILearningView: React.FC = () => {
   const isDashboard = location.pathname === '/learn' || location.pathname === '/learn/'
 
   return (
-    <div className="container mx-auto p-4 animate-fade-in">
+    <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         {!isDashboard ? (
           <button
@@ -116,6 +126,8 @@ export const PKILearningView: React.FC = () => {
           <Route path="qkd" element={<QKDModule />} />
           <Route path="entropy-randomness" element={<EntropyModule />} />
           <Route path="merkle-tree-certs" element={<MerkleTreeCertsModule />} />
+          <Route path="code-signing" element={<CodeSigningModule />} />
+          <Route path="api-security-jwt" element={<APISecurityJWTModule />} />
         </Routes>
       </Suspense>
     </div>

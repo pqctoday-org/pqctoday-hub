@@ -24,6 +24,8 @@ export type QuizCategory =
   | 'entropy-randomness'
   | 'merkle-tree-certs'
   | 'qkd'
+  | 'code-signing'
+  | 'api-security-jwt'
 
 export interface QuizOption {
   id: string

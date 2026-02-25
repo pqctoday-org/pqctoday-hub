@@ -616,7 +616,15 @@ function generateExtendedActions(
 
   if (input.cryptoUseCases?.includes('TLS/HTTPS') && vulnerableCount > 0) {
     const tlsAlgos = vulnerableAlgoNames.filter((a) =>
-      ['ECDH', 'X25519', 'DH (Diffie-Hellman)', 'RSA-2048', 'RSA-4096'].includes(a)
+      [
+        'ECDH P-256',
+        'ECDH P-384',
+        'ECDH P-521',
+        'X25519',
+        'DH (Diffie-Hellman)',
+        'RSA-2048',
+        'RSA-4096',
+      ].includes(a)
     )
     actions.push({
       priority: priority++,
@@ -988,15 +996,22 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
           notes: info.notes,
         }
       })
-  // Filter compliance requirements to only include frameworks relevant to the user's industry
+  // Filter compliance requirements to only include frameworks relevant to the user's industry AND country
   const filteredCompliance = input.complianceRequirements.filter((fw) => {
     const framework = industryComplianceConfigs.find((f) => f.label === fw)
-    // Keep if: not in DB (don't silently drop unknowns), matches industry, or universal (3+ industries)
-    return (
-      !framework ||
-      framework.industries.includes(input.industry) ||
-      framework.industries.length >= 3
-    )
+    if (!framework) return true // don't silently drop unknowns
+
+    const industryMatch =
+      framework.industries.includes(input.industry) || framework.industries.length >= 3
+
+    const countryMatch =
+      !input.country ||
+      input.country === 'Global' ||
+      framework.countries.length === 0 ||
+      framework.countries.includes('Global') ||
+      framework.countries.includes(input.country)
+
+    return industryMatch && countryMatch
   })
   const complianceImpacts: ComplianceImpact[] = filteredCompliance.map((fw) => {
     // eslint-disable-next-line security/detect-object-injection
@@ -1229,6 +1244,14 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
 
   const assessmentProfile = buildAssessmentProfile(input, hasExtendedInput)
 
+  const keyFindings = generateKeyFindings(
+    input,
+    algorithmMigrations,
+    complianceImpacts,
+    hndlRiskWindow,
+    hnflRiskWindow
+  )
+
   return {
     riskScore,
     riskLevel,
@@ -1245,6 +1268,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     executiveSummary,
     personaNarrative,
     assessmentProfile,
+    keyFindings,
   }
 }
 
@@ -1648,6 +1672,65 @@ function generateNarrative(
   }
 
   return parts.filter(Boolean).join(' ')
+}
+
+/**
+ * Generates 3-5 key findings from the assessment — the most important takeaways.
+ */
+function generateKeyFindings(
+  input: AssessmentInput,
+  algorithmMigrations: AlgorithmMigration[],
+  complianceImpacts: ComplianceImpact[],
+  hndlRiskWindow?: HNDLRiskWindow,
+  hnflRiskWindow?: HNFLRiskWindow
+): string[] {
+  const findings: string[] = []
+
+  // 1. Overall risk posture
+  const vulnCount = algorithmMigrations.filter((a) => a.quantumVulnerable).length
+  if (vulnCount > 0) {
+    findings.push(
+      `Your organization uses ${vulnCount} quantum-vulnerable algorithm${vulnCount > 1 ? 's' : ''} that ${vulnCount > 1 ? 'require' : 'requires'} migration to post-quantum alternatives.`
+    )
+  }
+
+  // 2. HNDL risk
+  if (hndlRiskWindow?.isAtRisk) {
+    findings.push(
+      `Harvest-Now-Decrypt-Later risk detected: your data retention period extends ${hndlRiskWindow.riskWindowYears} years beyond the estimated quantum threat horizon${hndlRiskWindow.isEstimated ? ' (conservative estimate)' : ''}.`
+    )
+  }
+
+  // 3. HNFL risk
+  if (hnflRiskWindow?.isAtRisk && hnflRiskWindow.hasSigningAlgorithms) {
+    findings.push(
+      `Harvest-Now-Forge-Later risk: signing credentials may remain trusted past the quantum threat year, exposing ${hnflRiskWindow.hnflRelevantUseCases.length} use case${hnflRiskWindow.hnflRelevantUseCases.length !== 1 ? 's' : ''} to forgery attacks.`
+    )
+  }
+
+  // 4. Compliance urgency
+  const urgentCompliance = complianceImpacts.filter(
+    (c) => c.requiresPQC && c.deadline.match(/202[5-9]|203[0-2]/)
+  )
+  if (urgentCompliance.length > 0) {
+    const names = urgentCompliance.map((c) => c.framework).join(', ')
+    findings.push(
+      `${urgentCompliance.length} compliance framework${urgentCompliance.length > 1 ? 's' : ''} (${names}) ${urgentCompliance.length > 1 ? 'have' : 'has'} near-term PQC migration deadlines.`
+    )
+  }
+
+  // 5. Migration status
+  if (input.migrationStatus === 'not-started') {
+    findings.push(
+      `PQC migration has not yet started. Beginning with a cryptographic inventory and pilot project would significantly reduce your risk exposure.`
+    )
+  } else if (input.migrationStatus === 'planning') {
+    findings.push(
+      `Migration planning is underway. Prioritize quantum-vulnerable algorithms in your highest-sensitivity systems to maximize risk reduction.`
+    )
+  }
+
+  return findings.slice(0, 5)
 }
 
 export function useAssessmentEngine(input: AssessmentInput | null): AssessmentResult | null {

@@ -119,7 +119,7 @@ export const ComplianceView = () => {
       : null
 
   return (
-    <div className="space-y-6 max-w-[1400px] mx-auto animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       {/* Header Section */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">

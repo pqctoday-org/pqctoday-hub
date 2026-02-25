@@ -77,25 +77,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC Live Demo in Digital Assets</strong>{' '}
-                    &mdash; run real ML-DSA-65 and secp256k1 crypto side-by-side in your browser via
-                    OpenSSL WASM
+                    <strong className="text-foreground">2 new Learn modules</strong> &mdash; Code
+                    Signing (Sigstore, ML-DSA packages) and API Security &amp; JWT (PQC tokens,
+                    ML-KEM JWE)
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">~46× signature size difference</strong>{' '}
-                    &mdash; see the real byte overhead driving Bitcoin&apos;s BIP-360 witness data
-                    cost, computed from your own generated keys
+                    <strong className="text-foreground">Belt-rank Learning Journey</strong> &mdash;
+                    earn judo belts from White to Black across knowledge, breadth, practice &amp;
+                    consistency
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">BIP-360 overhead calculator</strong> &mdash;
-                    Part 5 of the PQC Defense flow computes the witness data ratio using your actual
-                    key and signature sizes
+                    <strong className="text-foreground">Standalone Report page</strong> &mdash;
+                    shareable assessment reports via URL at{' '}
+                    <code className="font-mono">/report</code> with Google Drive cloud sync
                   </span>
                 </li>
               </ul>

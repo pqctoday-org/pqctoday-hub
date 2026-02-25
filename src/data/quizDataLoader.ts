@@ -267,6 +267,18 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'BB84 protocol, QBER eavesdropper detection, sifted keys, privacy amplification, satellite QKD, and QKD + PQC hybrid integration.',
       icon: 'Atom',
     },
+    'code-signing': {
+      label: 'Code Signing & Supply Chain',
+      description:
+        'Code signing certificate chains, ML-DSA package signing, Sigstore keyless signing, and supply chain integrity.',
+      icon: 'Package',
+    },
+    'api-security-jwt': {
+      label: 'API Security & JWT',
+      description:
+        'JWT/JWS/JWE with PQC algorithms, JOSE header changes, ML-DSA token signing, ML-KEM key agreement, and OAuth 2.0 migration.',
+      icon: 'KeyRound',
+    },
   }
 
 // Compute question counts dynamically from loaded data
@@ -282,3 +294,17 @@ export const quizCategories: QuizCategoryMeta[] = (
   ...CATEGORY_CONFIG[id],
   questionCount: categoryCounts.get(id) || 0,
 }))
+
+// ─── Persona question counts (precomputed for awareness score) ───
+
+export const quizPersonaCounts: Record<string, number> = {}
+export const quizPersonaQuestionIds: Record<string, Set<string>> = {}
+
+for (const persona of ['executive', 'developer', 'architect', 'researcher']) {
+  const matching = questions.filter((q) => q.personas.length === 0 || q.personas.includes(persona))
+  quizPersonaCounts[persona] = matching.length
+  quizPersonaQuestionIds[persona] = new Set(matching.map((q) => q.id))
+}
+// Fallback for no persona selected
+quizPersonaCounts['all'] = questions.length
+quizPersonaQuestionIds['all'] = new Set(questions.map((q) => q.id))

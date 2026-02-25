@@ -103,7 +103,7 @@ export const LearningPath = () => {
   const navigate = useNavigate()
   const { selectedPersona, clearPersona } = usePersonaStore()
   const { modules } = useModuleStore()
-  const assessmentComplete = useAssessmentStore((s) => s.isComplete)
+  const assessmentComplete = useAssessmentStore((s) => s.assessmentStatus === 'complete')
   const [showAllExpanded, setShowAllExpanded] = useState(false)
 
   if (!selectedPersona) return null

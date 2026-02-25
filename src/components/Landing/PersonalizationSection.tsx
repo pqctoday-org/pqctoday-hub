@@ -69,12 +69,12 @@ export const PersonalizationSection = () => {
   const {
     setCountry,
     setIndustry: setAssessIndustry,
-    isComplete,
+    assessmentStatus,
     editFromStep,
   } = useAssessmentStore()
 
   const suggestedPersona = inferPersonaFromAssessment({
-    isComplete,
+    assessmentStatus,
     teamSize: useAssessmentStore.getState().teamSize,
     migrationStatus: useAssessmentStore.getState().migrationStatus,
     cryptoAgility: useAssessmentStore.getState().cryptoAgility,
@@ -96,18 +96,16 @@ export const PersonalizationSection = () => {
   const handleRegion = (id: Region) => {
     const next = id === selectedRegion ? null : id
     setRegion(next)
-    if (next) {
-      const country = REGION_COUNTRY_MAP[next]
-      setCountry(country ?? '')
-      if (isComplete) editFromStep(0)
-    }
+    const country = next ? REGION_COUNTRY_MAP[next] : null
+    setCountry(country ?? '')
+    if (next && assessmentStatus === 'complete') editFromStep(0)
   }
 
   const handleIndustry = (industry: string) => {
     const next = selectedIndustries[0] === industry ? [] : [industry]
     setIndustries(next)
     setAssessIndustry(next[0] ?? '')
-    if (isComplete) editFromStep(0)
+    if (assessmentStatus === 'complete') editFromStep(0)
   }
 
   const handleClear = () => {
