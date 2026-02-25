@@ -53,7 +53,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
             'OpenSSL WASM Studio',
             'PQC Migration Planning',
             'Compliance Tracker (NIST, ANSSI, Common Criteria)',
-            '16 Hands-on Learning Modules',
+            '19 Hands-on Learning Modules',
             'PQC Risk Assessment Wizard',
             'Migration Software Catalog',
           ],
@@ -213,19 +213,19 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   // --- Learning modules ---
 
   '/learn': {
-    title: 'Learn Post-Quantum Cryptography — 16 Interactive Modules | PQC Today',
+    title: 'Learn Post-Quantum Cryptography — 19 Interactive Modules | PQC Today',
     description:
-      'Begin your post-quantum transformation with 16 guided learning modules. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
+      'Begin your post-quantum transformation with 19 guided learning modules. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
     canonical: `${BASE_URL}/learn`,
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'Course',
       name: 'Post-Quantum Cryptography Learning Path',
       description:
-        '16 interactive modules covering PQC fundamentals, protocols, infrastructure, and applications with real cryptographic operations.',
+        '19 interactive modules covering PQC fundamentals, protocols, infrastructure, and applications with real cryptographic operations.',
       provider: { '@type': 'Organization', name: 'PQC Today', url: BASE_URL },
       isAccessibleForFree: true,
-      numberOfCredits: 16,
+      numberOfCredits: 19,
       hasCourseInstance: {
         '@type': 'CourseInstance',
         courseMode: 'online',
@@ -364,6 +364,14 @@ export const ROUTE_META: Record<string, RouteMeta> = {
       'Explore QKD fundamentals: BB84 protocol simulation with Eve interception, classical post-processing, hybrid key derivation, and real-world QKD network data.',
     canonical: `${BASE_URL}/learn/qkd`,
     structuredData: buildModuleSchema('Quantum Key Distribution', 'PT150M', 'Advanced'),
+  },
+
+  '/learn/iot-ot-pqc': {
+    title: 'IoT & OT Security — PQC for Constrained Devices & SCADA | PQC Today',
+    description:
+      'Master PQC challenges for IoT and OT: algorithm selection for constrained devices, firmware signing with LMS/XMSS, CoAP/DTLS protocol impacts, certificate chain bloat, and SCADA/ICS migration planning.',
+    canonical: `${BASE_URL}/learn/iot-ot-pqc`,
+    structuredData: buildModuleSchema('IoT & OT Security', 'PT90M', 'Advanced'),
   },
 
   '/learn/quiz': {

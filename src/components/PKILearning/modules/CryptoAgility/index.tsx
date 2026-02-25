@@ -6,9 +6,10 @@ import { CryptoAgilityExercises, type WorkshopConfig } from './components/Crypto
 import { AbstractionLayerDemo } from './workshop/AbstractionLayerDemo'
 import { CBOMScanner } from './workshop/CBOMScanner'
 import { MigrationPlanningExercise } from './workshop/MigrationPlanningExercise'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 
 const MODULE_ID = 'crypto-agility'
 
@@ -124,6 +125,7 @@ export const CryptoAgilityModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -177,7 +179,7 @@ export const CryptoAgilityModule: React.FC = () => {
             </div>
 
             {/* Content Area */}
-            <div className="glass-panel p-8 min-h-[600px] animate-fade-in">
+            <div className="glass-panel p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
               <div className="mb-6 border-b border-border pb-4">
                 <h2 className="text-2xl font-bold text-foreground">{PARTS[currentPart].title}</h2>
                 <p className="text-muted-foreground">{PARTS[currentPart].description}</p>
@@ -229,6 +231,9 @@ export const CryptoAgilityModule: React.FC = () => {
         {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId="crypto-agility" />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

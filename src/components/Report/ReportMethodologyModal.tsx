@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Button } from '../ui/button'
 import {
   X,
   ShieldAlert,
@@ -70,7 +71,7 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="glass-panel p-6 max-w-lg w-full max-h-[85vh] overflow-y-auto"
+              className="glass-panel p-6 max-w-lg w-full max-h-[85dvh] overflow-y-auto"
               role="dialog"
               aria-modal="true"
               aria-labelledby="methodology-modal-title"
@@ -81,13 +82,14 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                 <h2 id="methodology-modal-title" className="text-lg font-bold text-foreground">
                   How This Report Works
                 </h2>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={onClose}
-                  className="p-2 rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors"
+                  className="p-2 h-auto w-auto rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground"
                   aria-label="Close"
                 >
                   <X size={18} />
-                </button>
+                </Button>
               </div>
 
               {/* Risk Score */}

@@ -85,4 +85,9 @@ export interface LearningProgress {
     longestStreak: number // all-time best streak
     visitDates: string[] // last 30 YYYY-MM-DD strings (sliding window)
   }
+
+  // Cumulative quiz mastery — union of correctly-answered question IDs across all sessions
+  quizMastery?: {
+    correctQuestionIds: string[]
+  }
 }

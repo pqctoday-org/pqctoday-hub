@@ -8,6 +8,8 @@ import { industrySensitivityConfigs, getIndustryConfigs } from '../../../data/in
 
 import { InlineTooltip } from '../../ui/InlineTooltip'
 
+import { Button } from '../../ui/button'
+
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
@@ -76,19 +78,20 @@ const Step4Sensitivity = () => {
       </div>
 
       {/* ── "I don't know" escape hatch ── */}
-      <button
+      <Button
+        variant="ghost"
         aria-pressed={sensitivityUnknown}
         onClick={() => setSensitivityUnknown(!sensitivityUnknown)}
         className={clsx(
-          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',
           sensitivityUnknown
-            ? 'border-muted-foreground bg-muted/20 text-foreground'
-            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+            ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
       >
         <Info size={14} className="shrink-0" />I don&apos;t know / Not sure about our data
         sensitivity
-      </button>
+      </Button>
 
       <div className={clsx('space-y-4', sensitivityUnknown && 'opacity-40 pointer-events-none')}>
         {/* ── Industry-specific data types ── */}
@@ -114,18 +117,19 @@ const Step4Sensitivity = () => {
                 const badge = SENSITIVITY_BADGE_STYLES[level]
                 const isSelected = dataSensitivity.includes(level)
                 return (
-                  <button
+                  <Button
                     key={item.id}
+                    variant="ghost"
                     aria-pressed={isSelected}
                     onClick={() => toggleDataSensitivity(level)}
                     className={clsx(
-                      'w-full p-4 rounded-lg border text-left transition-colors',
+                      'w-full h-auto p-4 flex-col items-start whitespace-normal border',
                       isSelected
-                        ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-border text-muted-foreground hover:border-primary/30'
+                        ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                        : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-transparent'
                     )}
                   >
-                    <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center justify-between gap-2 w-full">
                       <span className="font-bold text-sm">{item.label}</span>
                       {badge && (
                         <span
@@ -140,7 +144,7 @@ const Step4Sensitivity = () => {
                       )}
                     </div>
                     <p className="text-xs mt-1 opacity-80">{item.description}</p>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -158,20 +162,21 @@ const Step4Sensitivity = () => {
           )}
           <div className="space-y-3" role="group" aria-label="Data sensitivity levels">
             {universalLevels.map((level) => (
-              <button
+              <Button
                 key={level.value}
+                variant="ghost"
                 aria-pressed={dataSensitivity.includes(level.value)}
                 onClick={() => toggleDataSensitivity(level.value)}
                 className={clsx(
-                  'w-full p-4 rounded-lg border text-left transition-colors',
+                  'w-full h-auto p-4 flex-col items-start whitespace-normal border',
                   dataSensitivity.includes(level.value)
-                    ? level.color
-                    : 'border-border text-muted-foreground hover:border-primary/30'
+                    ? `${level.color} hover:bg-transparent`
+                    : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-transparent'
                 )}
               >
                 <span className="font-bold text-sm">{level.label}</span>
                 <p className="text-xs mt-1 opacity-80">{level.description}</p>
-              </button>
+              </Button>
             ))}
           </div>
         </div>

@@ -9,6 +9,7 @@ import {
   Globe,
   Hash,
   Scale,
+  Lock,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
@@ -280,6 +281,13 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
           >
             <Shield size={14} className="text-primary" />
             PKI Workshop
+          </Link>
+          <Link
+            to="/learn/tls-basics"
+            className="flex items-center gap-2 px-3 py-2 bg-muted/50 border border-border rounded-lg hover:border-primary/30 transition-colors text-sm text-foreground"
+          >
+            <Lock size={14} className="text-primary" />
+            TLS Basics &amp; PQC
           </Link>
         </div>
       </section>

@@ -13,9 +13,18 @@ import {
   Brain,
   GraduationCap,
   Info,
+  Cloud,
+  CloudOff,
+  Upload,
+  Download,
+  Loader2,
 } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { Button } from '../ui/button'
 import { ScoringModal } from './ScoringModal'
+import { useCloudSyncStore } from '@/store/useCloudSyncStore'
+import { UnifiedStorageService } from '@/services/storage/UnifiedStorageService'
+import { GoogleDriveService } from '@/services/storage/GoogleDriveService'
 import {
   useAwarenessScore,
   BELT_RANKS,
@@ -211,6 +220,246 @@ function BeltLadder({ currentBelt }: { currentBelt: BeltRank }) {
   )
 }
 
+// ── CloudSyncSection ─────────────────────────────────────────────────────────
+
+function CloudSyncSection() {
+  const { enabled, lastSyncedAt, setEnabled, recordSync, disconnect } = useCloudSyncStore()
+  const [syncing, setSyncing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const isGoogleConfigured = GoogleDriveService.isConfigured()
+  const isAuthenticated = enabled && GoogleDriveService.isAuthenticated()
+
+  const formatSyncTime = (iso: string | null) => {
+    if (!iso) return null
+    const diff = Date.now() - new Date(iso).getTime()
+    const mins = Math.floor(diff / 60000)
+    if (mins < 1) return 'just now'
+    if (mins < 60) return `${mins} min ago`
+    const hours = Math.floor(mins / 60)
+    if (hours < 24) return `${hours}h ago`
+    return `${Math.floor(hours / 24)}d ago`
+  }
+
+  const handleToggle = async () => {
+    if (!isGoogleConfigured) return
+
+    if (enabled) {
+      GoogleDriveService.disconnect()
+      disconnect()
+      setError(null)
+      return
+    }
+
+    try {
+      setSyncing(true)
+      setError(null)
+      await GoogleDriveService.authenticate()
+      setEnabled(true)
+      toast.success('Connected to Google Drive')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Authentication failed')
+    } finally {
+      setSyncing(false)
+    }
+  }
+
+  const handleSave = async () => {
+    try {
+      setSyncing(true)
+      setError(null)
+      const snapshot = UnifiedStorageService.exportSnapshot('google-drive')
+      await GoogleDriveService.saveSnapshot(snapshot)
+      recordSync('upload')
+      toast.success('Progress saved to Google Drive')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Save failed'
+      setError(msg)
+      toast.error(msg)
+    } finally {
+      setSyncing(false)
+    }
+  }
+
+  const handleLoad = async () => {
+    try {
+      setSyncing(true)
+      setError(null)
+      const result = await GoogleDriveService.loadSnapshot()
+      if (!result) {
+        toast('No cloud backup found. Save your progress first.', { icon: 'ℹ️' })
+        return
+      }
+      UnifiedStorageService.restoreSnapshot(result.snapshot)
+      recordSync('download')
+      toast.success('Progress loaded from Google Drive')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Load failed'
+      setError(msg)
+      toast.error(msg)
+    } finally {
+      setSyncing(false)
+    }
+  }
+
+  const handleReAuth = async () => {
+    try {
+      setSyncing(true)
+      setError(null)
+      await GoogleDriveService.authenticate()
+      toast.success('Signed in again')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Authentication failed')
+    } finally {
+      setSyncing(false)
+    }
+  }
+
+  // Manual file import handler (fallback when Google is not configured)
+  const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const loadingToast = toast.loading('Restoring progress...')
+    try {
+      const snapshot = await UnifiedStorageService.importSnapshot(file)
+      UnifiedStorageService.restoreSnapshot(snapshot)
+      toast.success('Progress restored from backup!', { id: loadingToast })
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to restore', { id: loadingToast })
+    }
+    e.target.value = ''
+  }
+
+  // Status line (Google Drive mode only)
+  let statusText = 'Saved to browser only'
+  if (error) statusText = error
+  else if (syncing) statusText = 'Syncing...'
+  else if (enabled && !isAuthenticated) statusText = 'Session expired'
+  else if (enabled && lastSyncedAt) statusText = `Last synced: ${formatSyncTime(lastSyncedAt)}`
+  else if (enabled) statusText = 'Connected — no cloud backup yet'
+
+  return (
+    <div className="pt-3 mt-3 border-t border-border">
+      {isGoogleConfigured ? (
+        <>
+          {/* Google Drive toggle row */}
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center gap-2">
+              {enabled ? (
+                <Cloud size={14} className="text-primary" />
+              ) : (
+                <CloudOff size={14} className="text-muted-foreground" />
+              )}
+              <span className="text-xs font-medium text-foreground">Cloud Sync</span>
+              <button
+                onClick={handleToggle}
+                disabled={syncing}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                  enabled ? 'bg-primary' : 'bg-muted'
+                }`}
+                role="switch"
+                aria-checked={enabled}
+                aria-label="Toggle cloud sync"
+              >
+                <span
+                  className={`inline-block h-3.5 w-3.5 rounded-full bg-white transition-transform ${
+                    enabled ? 'translate-x-4.5' : 'translate-x-0.5'
+                  }`}
+                />
+              </button>
+            </div>
+            <span className={`text-xs ${error ? 'text-status-error' : 'text-muted-foreground'}`}>
+              {statusText}
+            </span>
+          </div>
+
+          {/* Google Drive actions */}
+          {enabled && (
+            <div className="flex items-center gap-2 mt-2">
+              {isAuthenticated ? (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSave}
+                    disabled={syncing}
+                    className="text-xs h-7"
+                  >
+                    {syncing ? (
+                      <Loader2 size={12} className="mr-1 animate-spin" />
+                    ) : (
+                      <Upload size={12} className="mr-1" />
+                    )}
+                    Save to Drive
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleLoad}
+                    disabled={syncing}
+                    className="text-xs h-7"
+                  >
+                    <Download size={12} className="mr-1" />
+                    Load from Drive
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleReAuth}
+                  disabled={syncing}
+                  className="text-xs h-7"
+                >
+                  {syncing ? (
+                    <Loader2 size={12} className="mr-1 animate-spin" />
+                  ) : (
+                    <Cloud size={12} className="mr-1" />
+                  )}
+                  Sign in again
+                </Button>
+              )}
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          {/* Manual backup (no Google Drive configured) */}
+          <div className="flex items-center gap-2 mb-2">
+            <Download size={14} className="text-muted-foreground" />
+            <span className="text-xs font-medium text-foreground">Backup Progress</span>
+            <span className="text-xs text-muted-foreground">· saved to browser only</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => UnifiedStorageService.downloadSnapshot()}
+              className="text-xs h-7"
+            >
+              <Download size={12} className="mr-1" />
+              Export Backup
+            </Button>
+            <label className="cursor-pointer">
+              <span className="inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-md text-xs font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground h-7 px-3">
+                <Upload size={12} />
+                Import Backup
+              </span>
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleFileImport}
+                className="hidden"
+                aria-label="Import backup file"
+              />
+            </label>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 // ── ScoreCard ────────────────────────────────────────────────────────────────
 
 export function ScoreCard() {
@@ -259,9 +508,18 @@ export function ScoreCard() {
             <span className="text-xs text-muted-foreground font-mono">White → Black</span>
           </div>
           <div className="flex-1 text-center sm:text-left">
-            <p className="text-xs font-mono uppercase tracking-widest text-primary mb-1">
-              Learning Journey
-            </p>
+            <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
+              <p className="text-xs font-mono uppercase tracking-widest text-primary">
+                Learning Journey
+              </p>
+              <button
+                onClick={() => setShowScoring(true)}
+                className="p-0.5 rounded text-muted-foreground hover:text-primary transition-colors"
+                aria-label="How scoring works"
+              >
+                <Info size={13} />
+              </button>
+            </div>
             <h2 id="scorecard-heading" className="text-lg font-bold mb-1.5">
               Earn your first belt
             </h2>
@@ -278,6 +536,12 @@ export function ScoreCard() {
             </Link>
           </div>
         </div>
+        <ScoringModal
+          isOpen={showScoring}
+          onClose={() => setShowScoring(false)}
+          totalSteps={result.totalPersonaSteps}
+          totalQuestions={result.totalPersonaQuestions}
+        />
       </motion.section>
     )
   }
@@ -423,13 +687,21 @@ export function ScoreCard() {
                     </Button>
                   </Link>
                 </div>
+
+                {/* ── Cloud Sync ─────────────────────────────────────── */}
+                <CloudSyncSection />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      <ScoringModal isOpen={showScoring} onClose={() => setShowScoring(false)} />
+      <ScoringModal
+        isOpen={showScoring}
+        onClose={() => setShowScoring(false)}
+        totalSteps={result.totalPersonaSteps}
+        totalQuestions={result.totalPersonaQuestions}
+      />
     </motion.section>
   )
 }

@@ -1,12 +1,13 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Trash2, FilePlus, Shield, FileCheck, FileSearch, XCircle, GitBranch } from 'lucide-react'
-import { useModuleStore } from '../../../../store/useModuleStore'
-import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
+import { useModuleStore } from '@/store/useModuleStore'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PKIIntroduction } from './components/PKIIntroduction'
 import { PKIExercises } from './components/PKIExercises'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { CSRGenerator } from './CSRGenerator'
 import { RootCAGenerator } from './RootCAGenerator'
 import { CertSigner } from './CertSigner'
@@ -149,6 +150,7 @@ export const PKIWorkshop: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         {/* Learn Tab */}
@@ -205,7 +207,7 @@ export const PKIWorkshop: React.FC = () => {
             </div>
 
             {/* Content Area */}
-            <div className="glass-panel p-8 min-h-[600px] animate-fade-in">
+            <div className="glass-panel p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
               <div className="mb-6 border-b border-border pb-4">
                 <h2 className="text-2xl font-bold text-foreground">{PARTS[currentStep].title}</h2>
                 <p className="text-muted-foreground">{PARTS[currentStep].description}</p>
@@ -270,6 +272,9 @@ export const PKIWorkshop: React.FC = () => {
         {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId={MODULE_ID} />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

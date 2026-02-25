@@ -116,7 +116,7 @@ export const LeaderCard = ({ leader }: LeaderCardProps) => {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Visit ${leader.name}'s website (opens in new window)`}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40 text-primary text-xs font-medium transition-all group"
+              className="flex items-center gap-2 px-3 py-2 min-h-[44px] rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40 text-primary text-xs font-medium transition-all group"
             >
               <svg
                 width="14"
@@ -144,7 +144,7 @@ export const LeaderCard = ({ leader }: LeaderCardProps) => {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Visit ${leader.name}'s LinkedIn profile (opens in new window)`}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-info hover:bg-primary/20 border-status-info/50 hover:border-primary/40 text-status-info text-xs font-medium transition-all group"
+              className="flex items-center gap-2 px-3 py-2 min-h-[44px] rounded-lg bg-status-info hover:bg-primary/20 border-status-info/50 hover:border-primary/40 text-status-info text-xs font-medium transition-all group"
             >
               <svg
                 width="14"

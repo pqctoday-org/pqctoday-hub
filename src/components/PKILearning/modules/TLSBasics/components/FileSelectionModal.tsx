@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react'
 import { X, FileText } from 'lucide-react'
-import { useOpenSSLStore } from '../../../../OpenSSLStudio/store'
-import type { VirtualFile } from '../../../../OpenSSLStudio/store'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
+import type { VirtualFile } from '@/components/OpenSSLStudio/store'
 import { motion } from 'framer-motion'
+import { Input } from '@/components/ui/input'
 
 interface Props {
   isOpen: boolean
@@ -64,10 +65,10 @@ export const FileSelectionModal: React.FC<Props> = ({
         </div>
 
         <div className="p-4 border-b border-border">
-          <input
+          <Input
             type="text"
             placeholder="Search files..."
-            className="w-full bg-muted border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-primary/50"
+            className="w-full text-sm"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

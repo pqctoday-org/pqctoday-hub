@@ -1,8 +1,8 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Play } from 'lucide-react'
-import { useTLSStore } from '../../../../store/tls-learning.store'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useTLSStore } from '@/store/tls-learning.store'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { TLSClientPanel } from './TLSClientPanel'
 import { TLSServerPanel } from './TLSServerPanel'
@@ -11,7 +11,7 @@ import { TLSComparisonTable } from './components/TLSComparisonTable'
 import { TLSIntroduction } from './components/TLSIntroduction'
 import { TLSExercises } from './components/TLSExercises'
 import { TLSSummary } from './components/TLSSummary'
-import { openSSLService } from '../../../../services/crypto/OpenSSLService'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from './utils/configGenerator'
 
 import {
@@ -28,6 +28,7 @@ import {
   DEFAULT_MLDSA87_CLIENT_CERT,
 } from './utils/defaultCertificates'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 
 const MODULE_ID = 'tls-basics'
 
@@ -289,6 +290,7 @@ export const TLSBasicsModule: React.FC = () => {
           <TabsTrigger value="simulate">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         {/* Learn Tab */}
@@ -373,6 +375,9 @@ export const TLSBasicsModule: React.FC = () => {
         {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId="tls-basics" />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

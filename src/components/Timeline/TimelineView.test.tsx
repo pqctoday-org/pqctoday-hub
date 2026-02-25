@@ -175,7 +175,8 @@ describe('TimelineView', () => {
     it('renders with proper container classes', () => {
       render(<TimelineView />)
       const mainDiv = screen.getByTestId('timeline-view-root')
-      expect(mainDiv).toHaveClass('max-w-7xl', 'mx-auto', 'px-4')
+      // Full-width — shell (MainLayout) provides the max-w-7xl constraint; no inner cap
+      expect(mainDiv).toBeInTheDocument()
     })
 
     it('renders header section with proper spacing', () => {

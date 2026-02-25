@@ -1,22 +1,22 @@
 import { renderHook, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { useKeyGeneration } from '../useKeyGeneration'
-import { openSSLService } from '../../../../../../services/crypto/OpenSSLService'
-import { useOpenSSLStore } from '../../../../../OpenSSLStudio/store'
-import { extractKeyFromOpenSSLOutput } from '../../../../../../utils/cryptoUtils'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
+import { extractKeyFromOpenSSLOutput } from '@/utils/cryptoUtils'
 
 // Mocks
-vi.mock('../../../../../../services/crypto/OpenSSLService', () => ({
+vi.mock('@/services/crypto/OpenSSLService', () => ({
   openSSLService: {
     execute: vi.fn(),
   },
 }))
 
-vi.mock('../../../../../OpenSSLStudio/store', () => ({
+vi.mock('@/components/OpenSSLStudio/store', () => ({
   useOpenSSLStore: vi.fn(),
 }))
 
-vi.mock('../../../../../../utils/cryptoUtils', () => ({
+vi.mock('@/utils/cryptoUtils', () => ({
   extractKeyFromOpenSSLOutput: vi.fn(),
 }))
 

@@ -77,25 +77,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC Live Demo in Digital Assets</strong>{' '}
-                    &mdash; run real ML-DSA-65 and secp256k1 crypto side-by-side in your browser via
-                    OpenSSL WASM
+                    <strong className="text-foreground">Mobile UX overhaul</strong> &mdash; every
+                    page audited for portrait &amp; landscape usability; all buttons now meet
+                    44&times;44px touch targets
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">~46× signature size difference</strong>{' '}
-                    &mdash; see the real byte overhead driving Bitcoin&apos;s BIP-360 witness data
-                    cost, computed from your own generated keys
+                    <strong className="text-foreground">Safe-area &amp; dvh support</strong> &mdash;
+                    notch-aware sticky header, modals use dynamic viewport height, landscape mode
+                    fixed across all 16 Learn modules
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">BIP-360 overhead calculator</strong> &mdash;
-                    Part 5 of the PQC Defense flow computes the witness data ratio using your actual
-                    key and signature sizes
+                    <strong className="text-foreground">Threats &amp; Report polish</strong> &mdash;
+                    mobile-visible search, responsive risk gauge, narrower threat table with hidden
+                    column on small screens
                   </span>
                 </li>
               </ul>

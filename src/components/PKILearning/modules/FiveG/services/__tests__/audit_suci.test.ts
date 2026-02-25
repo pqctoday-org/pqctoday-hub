@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { fiveGService } from '../FiveGService'
-import { openSSLService } from '../../../../../../services/crypto/OpenSSLService'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { WasmAdapter } from './WasmAdapter'
 
 // Mock OpenSSLService to use WasmAdapter
-vi.mock('../../../../../../services/crypto/OpenSSLService', () => {
+vi.mock('@/services/crypto/OpenSSLService', () => {
   return {
     openSSLService: {
       execute: vi.fn(),

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { AssessReport } from './AssessReport'
+import { ReportContent } from './ReportContent'
 import '@testing-library/jest-dom'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 
@@ -18,7 +18,18 @@ vi.mock('./ReportTimelineStrip', () => ({
 
 vi.mock('./ReportThreatsAppendix', () => ({
   ReportThreatsAppendix: () => <div data-testid="report-threats-appendix" />,
+  ASSESS_TO_THREATS_INDUSTRY: { Technology: ['IT Industry / Software'] },
 }))
+
+vi.mock('./MigrationToolkit', () => ({
+  MigrationToolkit: () => <div data-testid="migration-toolkit" />,
+}))
+
+const mockNavigate = vi.fn()
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom')
+  return { ...actual, useNavigate: () => mockNavigate }
+})
 
 const mockStore = {
   reset: vi.fn(),
@@ -30,6 +41,17 @@ const mockStore = {
     complianceRequirements: ['FIPS 140-3'],
     migrationStatus: 'not-started' as const,
   })),
+  previousRiskScore: null as number | null,
+  lastModifiedAt: null as string | null,
+  industry: 'Technology',
+  country: 'United States',
+  dataSensitivity: ['high'],
+  currentCrypto: ['RSA-2048'],
+  cryptoUnknown: false,
+  infrastructure: [] as string[],
+  hiddenThreats: [] as string[],
+  hideThreat: vi.fn(),
+  restoreAllThreats: vi.fn(),
 }
 
 vi.mock('../../store/useAssessmentStore', () => ({
@@ -104,11 +126,11 @@ const baseResult: AssessmentResult = {
 const renderReport = (result = baseResult) =>
   render(
     <MemoryRouter>
-      <AssessReport result={result} />
+      <ReportContent result={result} />
     </MemoryRouter>
   )
 
-describe('AssessReport', () => {
+describe('ReportContent', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     Object.defineProperty(navigator, 'clipboard', {
@@ -126,7 +148,6 @@ describe('AssessReport', () => {
 
     it('renders the generated date from result', () => {
       renderReport()
-      // UTC midnight renders as local date — just check that the date element exists
       expect(screen.getByText(/Generated on.*2026/)).toBeInTheDocument()
     })
   })
@@ -168,7 +189,7 @@ describe('AssessReport', () => {
   describe('algorithm migration table', () => {
     it('renders the section heading', () => {
       renderReport()
-      expect(screen.getByText('Algorithm Migration Priority')).toBeInTheDocument()
+      expect(screen.getAllByText('Algorithm Migration Priority').length).toBeGreaterThanOrEqual(1)
     })
 
     it('shows algorithm names', () => {
@@ -201,7 +222,7 @@ describe('AssessReport', () => {
   describe('compliance impact', () => {
     it('renders the section heading', () => {
       renderReport()
-      expect(screen.getByText('Compliance Impact')).toBeInTheDocument()
+      expect(screen.getAllByText('Compliance Impact').length).toBeGreaterThanOrEqual(1)
     })
 
     it('shows framework names', () => {
@@ -222,7 +243,7 @@ describe('AssessReport', () => {
 
     it('shows deadline information', () => {
       renderReport()
-      expect(screen.getByText(/2030/)).toBeInTheDocument()
+      expect(screen.getAllByText(/2030/).length).toBeGreaterThanOrEqual(1)
     })
 
     it('hides section when no compliance impacts', () => {
@@ -234,12 +255,11 @@ describe('AssessReport', () => {
   describe('recommended actions', () => {
     it('renders the section heading', () => {
       renderReport()
-      expect(screen.getByText('Recommended Actions')).toBeInTheDocument()
+      expect(screen.getAllByText('Recommended Actions').length).toBeGreaterThanOrEqual(1)
     })
 
     it('renders all actions', () => {
       renderReport()
-      // Actions appear in both Recommended Actions section and Migration Roadmap
       expect(screen.getAllByText(/quantum-vulnerable/).length).toBeGreaterThanOrEqual(1)
       expect(screen.getAllByText(/hybrid PQC/).length).toBeGreaterThanOrEqual(1)
       expect(screen.getAllByText(/awareness/).length).toBeGreaterThanOrEqual(1)
@@ -307,16 +327,18 @@ describe('AssessReport', () => {
       expect(url).toContain('m=not-started')
     })
 
-    it('calls editFromStep(0) when Edit Answers is clicked', () => {
+    it('calls editFromStep(0) and navigates to /assess when Edit Answers is clicked', () => {
       renderReport()
       fireEvent.click(screen.getByText('Edit Answers'))
       expect(mockStore.editFromStep).toHaveBeenCalledWith(0)
+      expect(mockNavigate).toHaveBeenCalledWith('/assess')
     })
 
-    it('calls reset when Start Over is clicked', () => {
+    it('calls reset and navigates to /assess when Start Over is clicked', () => {
       renderReport()
       fireEvent.click(screen.getByText('Start Over'))
       expect(mockStore.reset).toHaveBeenCalledOnce()
+      expect(mockNavigate).toHaveBeenCalledWith('/assess')
     })
   })
 })

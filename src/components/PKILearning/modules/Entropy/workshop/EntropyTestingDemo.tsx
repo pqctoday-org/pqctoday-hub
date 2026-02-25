@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { BarChart3, Play, AlertTriangle, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { runAllTests, type TestResult } from '../utils/entropyTests'
 import { formatHex, binnedFrequency } from '../utils/outputFormatters'
@@ -135,12 +136,12 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
         {/* Paste hex input */}
         {showPasteInput && (
           <div className="mt-3 flex gap-2">
-            <input
+            <Input
               type="text"
               value={pasteHex}
               onChange={(e) => setPasteHex(e.target.value)}
               placeholder="e.g. deadbeef01020304..."
-              className="flex-1 bg-muted border border-border rounded px-3 py-2 text-sm text-foreground font-mono placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+              className="flex-1 font-mono"
             />
             <Button
               variant="outline"

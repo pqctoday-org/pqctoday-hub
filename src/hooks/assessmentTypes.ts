@@ -1,6 +1,7 @@
 export interface AssessmentInput {
   industry: string
   currentCrypto: string[]
+  currentCryptoCategories?: string[]
   /** When true, user indicated they don't know their cryptographic algorithms. */
   currentCryptoUnknown?: boolean
   /** One or more sensitivity levels — risk scored against the highest selected. */
@@ -153,4 +154,6 @@ export interface AssessmentResult {
   personaNarrative?: string
   /** Summary of user's assessment inputs for report context. */
   assessmentProfile?: AssessmentProfile
+  /** 3-5 key findings summarizing the most critical insights. */
+  keyFindings?: string[]
 }

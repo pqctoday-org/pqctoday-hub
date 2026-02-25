@@ -38,7 +38,7 @@ export const MobileAboutView = () => {
           <h2 className="text-lg font-bold">Our Mission</h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          PQC Today brings together 15 learning modules, hands-on cryptographic labs, a risk
+          PQC Today brings together 19 learning modules, hands-on cryptographic labs, a risk
           assessment wizard, migration planning tools, and global compliance tracking &mdash; tuned
           to your role and organization.
         </p>
@@ -98,7 +98,7 @@ export const MobileAboutView = () => {
               key={t}
               onClick={() => setTheme(t)}
               className={clsx(
-                'px-3 py-1.5 rounded-md text-xs font-medium transition-colors capitalize flex items-center gap-1.5',
+                'px-3 py-1.5 min-h-[44px] rounded-md text-xs font-medium transition-colors capitalize flex items-center gap-1.5',
                 theme === t
                   ? 'bg-primary/20 text-primary border border-primary/20'
                   : 'text-muted-foreground hover:text-foreground hover:bg-muted/10'

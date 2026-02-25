@@ -1,6 +1,6 @@
 import React from 'react'
-import { useTLSStore } from '../../../../../store/tls-learning.store'
-import type { TLSRunRecord } from '../../../../../store/tls-learning.store'
+import { useTLSStore } from '@/store/tls-learning.store'
+import type { TLSRunRecord } from '@/store/tls-learning.store'
 import { Trash2 } from 'lucide-react'
 
 export const TLSComparisonTable: React.FC = () => {

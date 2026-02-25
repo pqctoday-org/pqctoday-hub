@@ -53,7 +53,8 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 - **Never edit a CSV in place** — copy to a new file with today's date (`MMDDYYYY`). Loaders auto-discover the latest via `import.meta.glob`. Example: to update `library_02212026.csv` on Feb 22, copy it to `library_02222026.csv` and make edits there.
 - **Keep 2 versions** in `src/data/` for status tracking (`New`/`Updated` badges). Archive older files to `src/data/archive/`.
 - **ID fields are sacred** — never change a record's ID value (`referenceId`, `threatId`, `name`, `softwareName`, etc.). This breaks status tracking and cross-references.
-- **Cross-references** — before deleting any record, grep all CSVs for its ID (see `CSVmaintenance.md §5` for full dependency map). Key links: `compliance.libraryRefs → library.referenceId`, `compliance.timelineRefs → timeline events`, `library.dependencies → library.referenceId`.
+- **Cross-references** — before deleting any record, grep all CSVs for its ID (see `CSVmaintenance.md §5` for full dependency map). Key links: `compliance.libraryRefs → library.referenceId`, `compliance.timelineRefs → timeline events`, `library.dependencies → library.referenceId`, `migrate_certification_xref.software_name → migrate.software_name`, `migrate_certification_xref.cert_id → compliance-data.json record IDs`.
+- **Certification cross-reference CSV** (`migrate_certification_xref_MMDDYYYY.csv`) — links migrate products to PQC certifications (FIPS/ACVP/CC) from `public/data/compliance-data.json`. Regenerate with `python3 scripts/match_certifications.py` after updating either the migrate CSV or running the compliance scraper. The script uses a manual mapping table in `MATCH_RULES` — add new entries when new products gain certifications. Loader: `src/data/certificationXrefData.ts`. Type: `CertificationXref` in `src/types/MigrateTypes.ts`. UI: certifications shown in `SoftwareTable.tsx` expanded row.
 - **Format changes** (add/remove/rename columns) require updating the loader's TypeScript interface AND parse function. Follow the checklist in `CSVmaintenance.md §3.4`.
 - **Web source updates** — when refreshing data from external sources, follow the 6-step workflow in `CSVmaintenance.md §8.2`: verify source → identify changes → record context in commit → apply to all affected CSVs → update changelog → verify.
 - **Verify after changes**: `npm run build && npm run test`, then visually check the affected view + browser console.
@@ -98,6 +99,37 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 - **Unit**: Vitest + @testing-library/react. Prefer accessible queries (`getByRole`, `getByLabelText`) over `getByTestId`. Coverage thresholds: 70% lines/functions/statements, 60% branches.
 - **E2E**: Playwright in `e2e/`. 60s test timeout (WASM loading). Runs against Chromium, Firefox, WebKit. Accessibility tested with axe-playwright.
 - **Mocking**: WASM modules and external dependencies should be mocked in unit tests. `VITE_USE_MOCK_DATA` env var enables mock data.
+
+### E2E Validation Protocol — MANDATORY
+
+**Never push E2E fixes to CI without first validating each spec file individually and locally.** Pushing broken tests to CI wastes 15–45 minutes per run and burns CI resources.
+
+**Required workflow for any E2E change:**
+
+1. **Fix one spec at a time** — identify the failing spec, read it, read the component source, understand the mismatch.
+2. **Run that spec alone locally** before touching anything else:
+
+   ```bash
+   npx playwright test e2e/my-spec.spec.ts --project=chromium
+   ```
+
+3. **Only move to the next spec after the current one passes.**
+4. **After all individual specs pass**, run the full shard locally as a final check:
+
+   ```bash
+   npx playwright test --project=chromium --shard=2/2
+   ```
+
+5. **Only then commit and push** — never push speculatively hoping CI will reveal issues.
+
+**Common E2E pitfalls in this codebase:**
+
+- Nav buttons use `aria-label="X view"` — always use `{ name: 'X view' }` not `{ name: 'X' }`
+- `tabs.tsx` is a custom component (NOT Radix UI) — no `role="tab"` on elements; use `getByRole('button', { name: 'Workshop', exact: true }).first()`
+- All PKI modules default to the `learn` tab — click Workshop tab in `beforeEach` before interacting with simulation UI
+- The `WhatsNew` toast (`role="alertdialog"`, `z-[100]`) intercepts clicks — suppress via `page.addInitScript` that seeds `pqc-version-storage` with `{ state: { lastSeenVersion: '1.33.0' }, version: 0 }`
+- Desktop + mobile empty states both exist in DOM simultaneously — use `.first()` or `.last()` deliberately; verify which is visible
+- Playwright `getByText` and `getByRole` do substring/partial matching — be specific; use `{ exact: true }` when needed
 
 **ESLint**: Flat config (v9) in `eslint.config.js`. `@typescript-eslint/no-explicit-any: error`. `no-console: error` (only `warn`/`error` allowed) except PKILearning components and data-loading services where `console.log` is permitted. Includes `eslint-plugin-security`, `jsx-a11y`, and `testing-library` plugins.
 

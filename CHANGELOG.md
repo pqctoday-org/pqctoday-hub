@@ -4,6 +4,220 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.35.0] - 2026-02-25
+
+### Fixed
+
+- **Global mobile UX audit — touch targets** (41 files): Comprehensive WCAG 2.1 AA remediation
+  across every page and component. All interactive elements now meet the 44×44px minimum touch
+  target requirement. Key changes: `min-h-[44px]` added to filter buttons in `ChangelogView`,
+  phase dots in `MobileTimelineList`, answer buttons in `QuestionCard`, link buttons in
+  `LeaderCard`, the `FilterDropdown` trigger, and the `SourcesModal` close button. Button
+  component `sm` size increased from `h-9` (36px) to `h-10` (40px); `icon` size from
+  `h-10 w-10` to `h-11 w-11` (44px) globally via `button-variants.ts`.
+
+- **Dynamic viewport height for modals** (`ScoringModal`, `SourcesModal`,
+  `ReportMethodologyModal`): Changed `max-h-[85vh]` → `max-h-[85dvh]` so modals remain fully
+  scrollable in landscape mode on phones where the browser address bar reduces available height.
+  Suspense fallback in `MainLayout` likewise changed from `h-[50vh]` → `min-h-[200px] h-[50dvh]`.
+
+- **Safe-area inset support** (`MainLayout.tsx`, `src/styles/index.css`): Sticky app header now
+  uses `top-[max(1rem,env(safe-area-inset-top))]` to clear iPhone notch / Dynamic Island. New
+  `.safe-top` CSS utility added for reuse.
+
+- **Tabs overflow on all Learn modules** (`src/components/ui/tabs.tsx`): `TabsList` gained
+  `overflow-x-auto no-scrollbar w-full`; `TabsTrigger` gained `shrink-0`. Fixes tab bar
+  compression/overflow on all 16 learning module pages.
+
+- **Module workshop landscape mode** (18 module files): Content panels changed from
+  `min-h-[600px]` → `min-h-[400px] md:min-h-[600px]` so workshop areas remain usable on
+  landscape phones where viewport height can be as low as 320px.
+
+- **QKD BB84 Simulator** (`modules/QKD/workshop/BB84Simulator.tsx`): Qubit grid wrapped in
+  `overflow-x-auto` with `min-w-max` on the inner grid to prevent clipping on narrow screens;
+  Eve interception slider widened from `w-16` → `w-24` for easier finger dragging.
+
+- **Report page** (`ReportContent.tsx`, `ReportThreatsAppendix.tsx`): Risk gauge SVG scaled
+  down on mobile (`w-32 h-20 md:w-48 md:h-28`). Threat Landscape table minimum width reduced
+  from `min-w-[560px]` → `min-w-[400px]`; "Crypto at Risk" column hidden on mobile
+  (`hidden md:table-cell`) to reduce horizontal scroll distance.
+
+- **Threats page** (`ThreatsDashboard.tsx`, `MobileThreatsList.tsx`): Search bar changed from
+  `hidden md:flex` to always-visible (`flex w-full md:flex-1`) so mobile users can filter
+  threats. Stat chip grid changed from `grid-cols-2` → `grid-cols-1 min-[360px]:grid-cols-2`
+  to prevent overflow on sub-360px devices.
+
+- **Compliance dropdowns** (`ComplianceTable.tsx`): Source, Category, and Vendor filter menus
+  gained `max-w-[calc(100vw-2rem)]` so they cannot overflow off-screen on 320–375px viewports.
+
+- **Misc layout fixes**: `SoftwareTable` expanded row label column changed from
+  `grid-cols-[120px_1fr]` → `grid-cols-[100px_1fr] sm:grid-cols-[120px_1fr]`; `Changelog`
+  filter row changed from `flex-wrap` → `flex-col sm:flex-row` so buttons stack cleanly on
+  mobile; `MobileTimelineList` phase indicator dots enlarged to 44×44px touch target; Landing
+  page journey step rail gained a right-edge fade gradient scroll affordance.
+
+## [1.34.0] - 2026-02-25
+
+### Added
+
+- **Standalone Report view** (`/report`, `src/components/Report/`): Extracted the PQC Risk
+  Assessment report from `AssessView` into its own dedicated route. `ReportView` accepts URL
+  query parameters to auto-hydrate and auto-complete assessments, enabling fully shareable report
+  links. `ReportContent` consolidates all report sections — Risk Score gauge (SVG needle),
+  Category Breakdown, HNDL/HNFL risk windows, Algorithm Migration priorities, Compliance Impact,
+  Recommended Actions, Migration Roadmap, and Threat Landscape — into a single 1 700-line
+  component with persona-aware section visibility and print/PDF support. `MigrationToolkit`
+  section surfaces curated software products directly from the Migrate catalog.
+
+- **Code Signing module** (`/learn/code-signing`, `src/components/PKILearning/modules/CodeSigning/`):
+  New 5-step workshop covering PQC supply chain security. **Step 1 – Binary Signing**: sign/verify
+  arbitrary payloads with ML-DSA-87 and compare classical ECDSA P-384 byte overhead. **Step 2 –
+  Certificate Chain**: build a PQC certificate hierarchy (root CA → intermediate → leaf) with
+  ML-DSA. **Step 3 – Package Signing**: RPM-style hybrid package signing with ML-DSA-87 + Ed448
+  dual signatures. **Step 4 – Sigstore Flow**: keyless signing via Sigstore transparency-log
+  workflow including inclusion proof visualization. **Step 5 – Secure Boot Chain**: interactive
+  4-stage boot chain visualization comparing LMS, XMSS, and ML-DSA firmware signing algorithms
+  with stateful signature counter tracking and CNSA 2.0 mandate timelines.
+
+- **API Security & JWT module** (`/learn/api-security-jwt`,
+  `src/components/PKILearning/modules/APISecurityJWT/`): New 5-step workshop covering JWT/JWS/JWE
+  with post-quantum algorithms. **Step 1 – JWT Inspector**: decode and inspect any JWT with
+  algorithm vulnerability analysis (flags RS256/HS256 as quantum-vulnerable). **Step 2 – PQC JWT
+  Signing**: sign JWTs with ML-DSA-87 and compare to RS256 signature byte sizes. **Step 3 –
+  Hybrid JWT**: dual-sign with classical (Ed25519) + PQC (ML-DSA-87) for backward-compatible
+  migration tokens. **Step 4 – JWE Encryption**: encrypt JWT payloads with ML-KEM-768 key
+  agreement. **Step 5 – Token Size Analyzer**: side-by-side header/payload/signature byte
+  breakdown for RS256, ES256, ML-DSA-44/65/87.
+
+- **IoT & OT Security module** (`/learn/iot-ot-pqc`,
+  `src/components/PKILearning/modules/IoTOT/`): New 5-step workshop covering PQC challenges for
+  constrained devices. **Step 1 – Constrained Algorithm Explorer**: algorithm selection for
+  RFC 7228 Class 0/1/2 devices with memory and compute constraints. **Step 2 – Firmware Signing
+  Simulator**: LMS/XMSS stateful signature signing with state counter tracking. **Step 3 – DTLS
+  Handshake Visualizer**: DTLS 1.3 protocol visualization with PQC impact analysis. **Step 4 –
+  SCADA Migration Planner**: ICS migration strategy across Purdue Model levels. **Step 5 – Cert
+  Chain Bloat Analyzer**: certificate size impact analysis for constrained device environments.
+
+- **Belt-ranked Learning Journey scorecard** (`src/components/Landing/ScoreCard.tsx`): Replaced
+  linear progress display with a 7-tier judo belt ranking system (White → Yellow → Orange → Green
+  → Blue → Brown → Black). Composite 0–100 score is computed across 4 weighted dimensions:
+  Knowledge 40% (quiz accuracy), Breadth 30% (step completion %), Practice 20% (artifacts
+  created), Consistency 10% (time + day streak). Threshold gating prevents belt advancement
+  without meeting all dimension minimums. Streak tracking with 2–7 day flame badge. Cloud sync
+  UI surface (upload/download via Google Drive) with last-synced timestamp.
+
+- **Awareness Score hook** (`src/hooks/useAwarenessScore.ts`): New 490-line hook computing the
+  belt-rank score. Returns `AwarenessScoreResult` with score, belt rank, next-belt gap, 4-
+  dimension breakdown (raw + weighted), track-level progress, and streak data. Persona-scoped —
+  filters modules/questions to the active persona's learning path. Cumulative quiz mastery tracks
+  correct question IDs across sessions; streak inferred from `sessionTracking` daily-visit log.
+
+- **Google Drive cloud sync** (`src/services/storage/GoogleDriveService.ts`,
+  `src/services/storage/UnifiedStorageService.ts`, `src/store/useCloudSyncStore.ts`): Privacy-
+  first cloud persistence layer. `GoogleDriveService` uses Google Identity Services implicit flow
+  with `drive.appdata` scope — stores access tokens in-memory only (never written to
+  localStorage). Progress saved to a single JSON file in Google Drive's hidden `appDataFolder`
+  (invisible to the user's Drive file list). `UnifiedStorageService` aggregates all Zustand stores
+  into a typed `AppSnapshot` (version 1.0) with Uint8Array serialization, and exports/imports
+  JSON snapshots. `useCloudSyncStore` (version 1, persisted) tracks sync state: enabled, provider,
+  `lastSyncedAt`, `lastSyncDirection`.
+
+- **Persistent Migrate layer/subcategory filters** (`src/store/useMigrateSelectionStore.ts`):
+  Version bump to v2 adds `activeLayer` and `activeSubCategory` fields. Selected infrastructure
+  layer and sub-category now survive page reloads. `MigrateView` reads/writes via the store;
+  migration guard in `migrate()` provides safe defaults for existing v1 persisted state.
+
+- **CBOM Scanner enhancements** (`CBOMScanner.tsx`, `cbomTemplates.ts`): Major expansion of the
+  Crypto Agility module's CBOM tooling. New dependency graph visualization, expanded template
+  library (20+ templates covering cloud, container, API gateway, microservice, and IoT stacks),
+  per-asset migration effort scoring, and CSV/JSON export of the bill of materials.
+
+- **Tools & Products tab** in all learning modules: New "Tools & Products" tab next to References
+  surfaces PQC-ready products from the Migrate catalog that are relevant to each module. Products are
+  grouped by infrastructure layer with compact cards showing PQC support badge, FIPS validation
+  status, license type, product brief, and a "View in Migrate" deep-link that pre-selects the
+  matching layer. Powered by a new `learning_modules` column in the migrate CSV (177/223 products
+  tagged across 34 categories) and a shared `ModuleMigrateTab` component. Multi-layer products
+  appear in all matching layer sections.
+
+- **Report contextual actions** (`src/components/Report/ReportContent.tsx`): Algorithm replacement
+  rows now include "Learn" links to relevant modules (ML-KEM/ML-DSA → PKI Workshop, SLH-DSA/LMS →
+  Stateful Signatures, Hybrid → Hybrid Crypto). Timeline section links to country-filtered
+  timeline view. Footer actions link to full algorithm comparison and compliance explorer pages.
+
+- **Module cross-navigation** in 10 learning module introductions: "Explore Related Topics" cards
+  linking to related modules (e.g., Hybrid Crypto → API Security & JWT, MTC → TLS Basics,
+  PQC 101 → Entropy & Randomness, Quantum Threats → Digital Assets, TLS → 5G Security).
+
+- **Glossary expansion**: 6 new IoT/OT terms (MQTT, LoRaWAN, Matter, SUIT/RFC 9019, RFC 7228,
+  Purdue Model) plus UEFI for Secure Boot. Existing SCADA and DTLS entries relinked to IoT module.
+
+- **Updated algorithm + software CSVs**: Refreshed `algorithms_transitions_02252026.csv` and
+  `algorithms_transitions_02262026.csv` (RSA → ML-KEM, ECDSA → ML-DSA, ECDH → HQC deprecation
+  dates). New `pqc_complete_algorithm_reference_02252026.csv` with 15-column algorithm reference
+  including performance benchmarks (keygen/sign/verify cycles) and stack RAM per security level.
+  New `quantum_safe_cryptographic_software_reference_02272026.csv` and `_02282026.csv` featuring
+  BTQ Bitcoin Quantum (ML-DSA), Hitachi DoMobile (FIPS 203 ML-KEM), Solana PQC testnet, SEALSQ
+  Quantum Shield, QuSecure, SandboxAQ, and 01 Quantum IronCAP.
+
+- **Library catalog refresh** (`library_02252026.csv`): Korean PQC Competition finalists
+  (HAETAE, AIMer, SMAUG-T, NTRU+), NIST FIPS 140-3 PQC implementation guidance, 3GPP PQC study,
+  TPM 2.0 PQC specification, 10+ new IETF RFCs (9629, 9708, 9802, 9810, 9814, 9858, 9881, 9882),
+  ETSI hybrid key exchange and migration specs, NSA CNSA 2.0 policy with implementation timelines.
+
+### Changed
+
+- **`AssessView` simplified** (`src/components/Assess/AssessView.tsx`): Report rendering removed
+  from AssessView; on completion the wizard navigates to `/report` instead of showing an inline
+  report. Assessment mode selection (Quick vs Comprehensive) and resume banner retained. Reduces
+  `AssessView` from ~650 to ~400 lines.
+
+- **`StepIndicator` redesigned** (`src/components/Assess/steps/StepIndicator.tsx`): Overhauled
+  step navigation rail with improved active/completed state styling, mobile-responsive step labels,
+  and per-step metadata badges.
+
+- **`ScoringModal` updated** (`src/components/Landing/ScoringModal.tsx`): Now explains the 4-
+  dimension belt-rank scoring breakdown with threshold gating details and a per-belt requirements
+  table.
+
+- **`PersonalizationSection` updated** (`src/components/Landing/PersonalizationSection.tsx`):
+  Refreshed layout to accommodate the new ScoreCard belt display and cloud sync status indicator.
+
+- **`MigrateView` refactored** (`src/components/Migrate/MigrateView.tsx`): Layer and sub-category
+  filter state moved from local `useState` to `useMigrateSelectionStore` for persistence.
+  `InfrastructureStack` click handler now dispatches to the store. Per-layer product counts
+  computed from filtered software data.
+
+- **Learn module tracks reorganized** (`src/components/PKILearning/moduleData.ts`): `code-signing`
+  and `iot-ot-pqc` added to the Applications track; `api-security-jwt` added to the Protocols
+  track. Module step counts table updated for all new modules.
+
+- **Assessment wizard Step 3 refactored** (`src/components/Assess/steps/Step3Crypto.tsx`):
+  Switched from `pqcAlgorithmsData` to the algorithms transition table. Chips now display
+  classical → PQC replacement pairs with category-aware grouping. Added "Compare algorithms" link
+  to the full algorithm database at `/algorithms`.
+
+- **Assessment scoring engine expanded** (`src/hooks/assessmentData.ts`, `assessmentUtils.ts`):
+  Algorithm DB now includes 9 quantum-safe PQC algorithms (ML-KEM, ML-DSA, SLH-DSA, LMS/HSS,
+  XMSS) with hybrid recommendations. Country regulatory urgency expanded from 10 to 20+ countries
+  with source citations. Composite score boost factors refactored from multiplicative stacking to
+  additive increments capped at 1.2x. Unknown algorithms now treated as quantum-vulnerable.
+
+- **Persona learning paths expanded** (`src/data/learningPersonas.ts`): All four personas updated
+  with new modules (merkle-tree-certs, digital-id, iot-ot-pqc) and expanded checkpoints.
+  Developer duration 705→855 min, Architect 765→1095 min, Researcher 1080→1230 min.
+
+- **Library view layout** (`src/components/Library/LibraryView.tsx`): Category sidebar refactored
+  from vertical sticky sidebar to horizontal pill layout for better mobile/desktop responsiveness.
+  Grid breakpoints expanded to 4-column layout at xl.
+
+- **Store persistence hardened**: Added explicit `version`, `migrate()`, and `onRehydrateStorage`
+  crash guards to OpenSSL Studio, TLS Learning, Theme, and Version stores. Assessment store
+  migrations reordered and extended (v5–v7) for infrastructure validation and algorithm renaming.
+
+- **Landing page dynamic counts** (`src/components/Landing/LandingView.tsx`): Module count,
+  quiz question count, and tool count now derived from data sources instead of hardcoded values.
+
 ## [1.33.0] - 2026-02-24
 
 ### Added

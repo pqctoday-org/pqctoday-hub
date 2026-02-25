@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react'
 import { PenTool, Loader2, Info, X } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { openSSLService } from '../../../../services/crypto/OpenSSLService'
-import { useModuleStore } from '../../../../store/useModuleStore'
-import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
-import { KNOWN_OIDS } from '../../../../services/crypto/oidMapping'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
+import { useModuleStore } from '@/store/useModuleStore'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
+import { KNOWN_OIDS } from '@/services/crypto/oidMapping'
 
-import { useCertProfile } from '../../../../hooks/useCertProfile'
+import { useCertProfile } from '@/hooks/useCertProfile'
 import { AttributeTable } from '../../common/AttributeTable'
 import type { X509Attribute } from '../../common/types'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Input } from '@/components/ui/input'
 
 // Import profile documentation
 const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.md', {
@@ -360,22 +362,18 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="csr-select" className="text-sm text-muted-foreground">
-              Certificate Signing Request
-            </label>
-            <select
-              id="csr-select"
-              value={selectedCsrId}
-              onChange={(e) => handleCsrSelect(e.target.value)}
-              className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
-            >
-              <option value="">-- Select CSR --</option>
-              {csrs.map((csr) => (
-                <option key={csr.id} value={csr.id}>
-                  {csr.name}
-                </option>
-              ))}
-            </select>
+            <FilterDropdown
+              label="Certificate Signing Request"
+              items={csrs.map((csr) => ({
+                id: csr.id,
+                label: csr.name,
+              }))}
+              selectedId={selectedCsrId}
+              onSelect={handleCsrSelect}
+              defaultLabel="-- Select CSR --"
+              noContainer
+              className="w-full"
+            />
             {csrs.length === 0 && (
               <p className="text-xs text-destructive">No CSRs found. Generate one in Step 1.</p>
             )}
@@ -398,9 +396,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="profile-select" className="text-sm text-muted-foreground">
-                  Certificate Profile
-                </label>
+                <span className="text-sm text-muted-foreground">Certificate Profile</span>
                 {selectedProfile && (
                   <button
                     type="button"
@@ -413,19 +409,17 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
                   </button>
                 )}
               </div>
-              <select
-                id="profile-select"
-                value={selectedProfile}
-                onChange={(e) => handleProfileSelect(e.target.value)}
-                className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
-              >
-                <option value="">-- Select a Profile --</option>
-                {availableProfiles.map((profile) => (
-                  <option key={profile} value={profile}>
-                    {profile.replace('Cert-', '').replace('.csv', '')}
-                  </option>
-                ))}
-              </select>
+              <FilterDropdown
+                items={availableProfiles.map((profile) => ({
+                  id: profile,
+                  label: profile.replace('Cert-', '').replace('.csv', ''),
+                }))}
+                selectedId={selectedProfile}
+                onSelect={handleProfileSelect}
+                defaultLabel="-- Select a Profile --"
+                noContainer
+                className="w-full"
+              />
             </div>
 
             {profileMetadata && (
@@ -483,33 +477,28 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="ca-key-select" className="text-sm text-muted-foreground">
-                Signing CA Key
-              </label>
-              <select
-                id="ca-key-select"
-                value={selectedKeyId}
-                onChange={(e) => setSelectedKeyId(e.target.value)}
-                className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
-              >
-                <option value="">-- Select CA Key --</option>
-                {rootKeys.map((key) => (
-                  <option key={key.id} value={key.id}>
-                    {key.name}
-                  </option>
-                ))}
-              </select>
+              <FilterDropdown
+                label="Signing CA Key"
+                items={rootKeys.map((key) => ({
+                  id: key.id,
+                  label: key.name,
+                }))}
+                selectedId={selectedKeyId}
+                onSelect={setSelectedKeyId}
+                defaultLabel="-- Select CA Key --"
+                noContainer
+                className="w-full"
+              />
             </div>
             <div className="space-y-2">
               <label htmlFor="validity-input" className="text-sm text-muted-foreground">
                 Validity (Days)
               </label>
-              <input
+              <Input
                 id="validity-input"
                 type="number"
                 value={validityDays}
                 onChange={(e) => setValidityDays(e.target.value)}
-                className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-accent-foreground text-sm focus:outline-none focus:border-primary/50"
               />
             </div>
             <button

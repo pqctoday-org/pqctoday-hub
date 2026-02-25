@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, EyeOff } from 'lucide-react'
 import { threatsData } from '../../data/threatsData'
 import type { ThreatData } from '../../data/threatsData'
+import { Button } from '../ui/button'
 import clsx from 'clsx'
 
 /** Maps assess-module industry names to threats CSV industry column values. */
-const ASSESS_TO_THREATS_INDUSTRY: Record<string, string[]> = {
+export const ASSESS_TO_THREATS_INDUSTRY: Record<string, string[]> = {
   'Finance & Banking': [
     'Financial Services / Banking',
     'Cryptocurrency / Blockchain',
@@ -46,10 +47,11 @@ const criticalityConfig: Record<ThreatData['criticality'], { label: string; clas
   Low: { label: 'Low', className: 'bg-success/10 text-success' },
 }
 
-const ThreatRow: React.FC<{ threat: ThreatData; isRelevant?: boolean }> = ({
-  threat,
-  isRelevant,
-}) => {
+const ThreatRow: React.FC<{
+  threat: ThreatData
+  isRelevant?: boolean
+  onHide?: (threatId: string) => void
+}> = ({ threat, isRelevant, onHide }) => {
   const crit = criticalityConfig[threat.criticality] ?? criticalityConfig['Medium']
 
   return (
@@ -59,6 +61,22 @@ const ThreatRow: React.FC<{ threat: ThreatData; isRelevant?: boolean }> = ({
         isRelevant && 'bg-primary/5 border-l-2 border-l-primary'
       )}
     >
+      <td className="p-2 w-8 print:hidden">
+        {onHide && (
+          <Button
+            variant="ghost"
+            type="button"
+            aria-label="Hide this threat"
+            onClick={(e) => {
+              e.stopPropagation()
+              onHide(threat.threatId)
+            }}
+            className="p-1 h-auto w-auto rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10"
+          >
+            <EyeOff size={14} />
+          </Button>
+        )}
+      </td>
       <td className="py-2.5 pr-3 font-mono text-xs text-muted-foreground whitespace-nowrap">
         {threat.sourceUrl ? (
           <a
@@ -88,7 +106,7 @@ const ThreatRow: React.FC<{ threat: ThreatData; isRelevant?: boolean }> = ({
       <td className="py-2.5 pr-3 text-xs text-foreground leading-relaxed max-w-xs">
         {threat.description}
       </td>
-      <td className="py-2.5 pr-3 text-xs text-muted-foreground max-w-[160px]">
+      <td className="py-2.5 pr-3 text-xs text-muted-foreground max-w-[160px] hidden md:table-cell">
         {threat.cryptoAtRisk}
       </td>
       <td className="py-2.5 text-xs text-primary max-w-[160px]">{threat.pqcReplacement}</td>
@@ -100,6 +118,8 @@ interface ReportThreatsAppendixProps {
   industry: string
   /** User's selected algorithms — rows matching these get highlighted. */
   userAlgorithms?: string[]
+  hiddenThreatIds: string[]
+  onHideThreat: (id: string) => void
 }
 
 /** Check if a threat's cryptoAtRisk field mentions any of the user's algorithms. */
@@ -115,24 +135,31 @@ function threatMatchesAlgorithms(cryptoAtRisk: string, algorithms: string[]): bo
 export const ReportThreatsAppendix: React.FC<ReportThreatsAppendixProps> = ({
   industry,
   userAlgorithms,
+  hiddenThreatIds,
+  onHideThreat,
 }) => {
+  const hiddenSet = useMemo(() => new Set(hiddenThreatIds), [hiddenThreatIds])
+
   const industryThreats = useMemo(() => {
     // eslint-disable-next-line security/detect-object-injection
     const threatIndustryNames = ASSESS_TO_THREATS_INDUSTRY[industry] ?? []
-    return threatsData.filter((t) => threatIndustryNames.includes(t.industry))
-  }, [industry])
+    return threatsData.filter(
+      (t) => threatIndustryNames.includes(t.industry) && !hiddenSet.has(t.threatId)
+    )
+  }, [industry, hiddenSet])
 
   return (
     <div className="space-y-4 overflow-x-auto print:overflow-visible">
-      <div className="min-w-[560px] print:min-w-0">
+      <div className="min-w-[400px] print:min-w-0">
         {industryThreats.length > 0 ? (
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border text-left">
+                <th className="w-8 print:hidden" />
                 <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">Threat ID</th>
                 <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">Criticality</th>
                 <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">Description</th>
-                <th className="py-2 pr-3 text-muted-foreground font-medium text-xs">
+                <th className="py-2 pr-3 text-muted-foreground font-medium text-xs hidden md:table-cell">
                   Crypto at Risk
                 </th>
                 <th className="py-2 text-muted-foreground font-medium text-xs">PQC Replacement</th>
@@ -148,6 +175,7 @@ export const ReportThreatsAppendix: React.FC<ReportThreatsAppendixProps> = ({
                       ? threatMatchesAlgorithms(t.cryptoAtRisk, userAlgorithms)
                       : false
                   }
+                  onHide={onHideThreat}
                 />
               ))}
             </tbody>

@@ -2,13 +2,13 @@ import type { Step } from '../../components/StepWizard'
 import { InfoTooltip } from '../../components/InfoTooltip'
 import { useArtifactManagement } from '../../hooks/useArtifactManagement'
 import { useFileRetrieval } from '../../hooks/useFileRetrieval'
-import { openSSLService } from '../../../../../../services/crypto/OpenSSLService'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { secp256k1 } from '@noble/curves/secp256k1.js'
 import { keccak_256 } from '@noble/hashes/sha3.js'
 import { bytesToHex } from '@noble/hashes/utils.js'
 import type { EthereumFlowState } from './types'
 import { toChecksumAddress } from './utils'
-import { extractKeyFromOpenSSLOutput } from '../../../../../../utils/cryptoUtils'
+import { extractKeyFromOpenSSLOutput } from '@/utils/cryptoUtils'
 
 interface UseEthereumVerificationProps {
   artifacts: ReturnType<typeof useArtifactManagement>

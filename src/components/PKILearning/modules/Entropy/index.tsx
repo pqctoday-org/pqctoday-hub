@@ -8,9 +8,10 @@ import { EntropyTestingDemo } from './workshop/EntropyTestingDemo'
 import { ESVWalkthroughDemo } from './workshop/ESVWalkthroughDemo'
 import { QRNGDemo } from './workshop/QRNGDemo'
 import { SourceCombiningDemo } from './workshop/SourceCombiningDemo'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 
 const MODULE_ID = 'entropy-randomness'
 
@@ -134,6 +135,7 @@ export const EntropyModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -187,7 +189,7 @@ export const EntropyModule: React.FC = () => {
             </div>
 
             {/* Content Area */}
-            <div className="glass-panel p-8 min-h-[600px] animate-fade-in">
+            <div className="glass-panel p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
               <div className="mb-6 border-b border-border pb-4">
                 <h2 className="text-2xl font-bold text-foreground">{PARTS[currentPart].title}</h2>
                 <p className="text-muted-foreground">{PARTS[currentPart].description}</p>
@@ -241,6 +243,9 @@ export const EntropyModule: React.FC = () => {
 
         <TabsContent value="references">
           <ModuleReferencesTab moduleId="entropy-randomness" />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

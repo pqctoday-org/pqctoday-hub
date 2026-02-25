@@ -3,7 +3,7 @@
 
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import { sha256 } from '@noble/hashes/sha2.js'
-import { openSSLService } from '../../../../../services/crypto/OpenSSLService'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 
 /**
  * Browser-compatible base64url encoding

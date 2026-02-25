@@ -35,9 +35,19 @@ export const useVersionStore = create<VersionState>()(
     }),
     {
       name: 'pqc-version-storage',
+      version: 1,
       storage: createJSONStorage(() => localStorage),
       // Only persist lastSeenVersion, not the current version
       partialize: (state) => ({ lastSeenVersion: state.lastSeenVersion }),
+      migrate: (persistedState: unknown) => {
+        const state =
+          typeof persistedState === 'object' && persistedState !== null
+            ? (persistedState as Record<string, unknown>)
+            : {}
+        state.lastSeenVersion =
+          typeof state.lastSeenVersion === 'string' ? state.lastSeenVersion : null
+        return state as { lastSeenVersion: string | null }
+      },
       onRehydrateStorage: () => (_state, error) => {
         if (error) {
           console.error('Version store rehydration failed:', error)

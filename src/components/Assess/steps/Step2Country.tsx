@@ -4,6 +4,8 @@ import { useAssessmentStore } from '../../../store/useAssessmentStore'
 
 import { timelineData } from '../../../data/timelineData'
 
+import { Button } from '../../ui/button'
+
 import clsx from 'clsx'
 
 import { usePersonaStore } from '../../../store/usePersonaStore'
@@ -44,16 +46,17 @@ const Step2Country = () => {
         aria-label="Country selection"
       >
         {countries.map((c) => (
-          <button
+          <Button
             key={c.name}
+            variant="ghost"
             role="radio"
             aria-checked={country === c.name}
             onClick={() => setCountry(c.name)}
             className={clsx(
-              'p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+              'h-auto p-3 justify-start gap-2 border',
               country === c.name
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
             )}
           >
             <img
@@ -68,7 +71,7 @@ const Step2Country = () => {
               }}
             />
             {c.name}
-          </button>
+          </Button>
         ))}
       </div>
     </div>

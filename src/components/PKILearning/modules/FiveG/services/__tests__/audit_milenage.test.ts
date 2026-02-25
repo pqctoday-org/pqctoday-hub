@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { MilenageService } from '../MilenageService'
-import { bytesToHex } from '../../../../../../services/crypto/FileUtils'
+import { bytesToHex } from '@/services/crypto/FileUtils'
 
 // Helper to hex string to Uint8Array
 const hex = (h: string) => new Uint8Array(h.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))

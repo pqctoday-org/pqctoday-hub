@@ -18,24 +18,24 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: 'theme-storage-v1',
+      version: 1,
       storage: createJSONStorage(() => localStorage),
-      // Migration: handle old data formats
-      migrate: (persistedState: unknown) => {
-        // Safe check for object type
+      migrate: (persistedState: unknown, version: number) => {
         const state =
           typeof persistedState === 'object' && persistedState !== null
             ? (persistedState as Record<string, unknown>)
             : {}
 
-        // If user has old localStorage format without hasSetPreference
-        if ('theme' in state && !('hasSetPreference' in state)) {
-          return {
-            ...state,
-            hasSetPreference: true,
-          } as ThemeState
+        if (version < 1) {
+          // v0 → v1: ensure hasSetPreference exists
+          if ('theme' in state && !('hasSetPreference' in state)) {
+            state.hasSetPreference = true
+          }
+          state.hasSetPreference = state.hasSetPreference ?? false
+          state.theme = state.theme ?? 'light'
         }
 
-        return persistedState as ThemeState
+        return state as unknown as ThemeState
       },
       onRehydrateStorage: () => (_state, error) => {
         if (error) {

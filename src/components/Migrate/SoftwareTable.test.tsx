@@ -30,6 +30,7 @@ const baseSoftwareItem: SoftwareItem = {
   verificationStatus: 'Verified',
   lastVerifiedDate: '2026-02-13',
   migrationPhases: 'prepare,test,migrate',
+  learningModules: '',
 }
 
 function makeItem(overrides: Partial<SoftwareItem> = {}): SoftwareItem {

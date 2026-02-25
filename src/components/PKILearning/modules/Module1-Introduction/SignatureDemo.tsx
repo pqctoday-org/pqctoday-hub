@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { PenTool, Loader2 } from 'lucide-react'
-import { openSSLService } from '../../../../services/crypto/OpenSSLService'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { CLASSICAL_SIG_ALGOS, PQC_SIG_ALGOS } from './algorithmConfig'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 interface SignatureDemoProps {
   onComplete: () => void
@@ -161,24 +162,14 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
           </span>
 
           <div>
-            <label
-              htmlFor="classical-sig-algo"
-              className="block text-sm text-muted-foreground mb-1"
-            >
-              Algorithm
-            </label>
-            <select
-              id="classical-sig-algo"
-              value={classicalAlgo}
-              onChange={(e) => setClassicalAlgo(e.target.value)}
-              className="w-full bg-muted border border-border rounded px-3 py-2 text-foreground"
-            >
-              {CLASSICAL_SIG_ALGOS.map((a) => (
-                <option key={a.value} value={a.value}>
-                  {a.label}
-                </option>
-              ))}
-            </select>
+            <FilterDropdown
+              label="Algorithm"
+              items={CLASSICAL_SIG_ALGOS.map((a) => ({ id: a.value, label: a.label }))}
+              selectedId={classicalAlgo}
+              onSelect={setClassicalAlgo}
+              noContainer
+              className="w-full"
+            />
           </div>
 
           <button
@@ -219,21 +210,14 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
           </span>
 
           <div>
-            <label htmlFor="pqc-sig-algo" className="block text-sm text-muted-foreground mb-1">
-              Algorithm
-            </label>
-            <select
-              id="pqc-sig-algo"
-              value={pqcAlgo}
-              onChange={(e) => setPqcAlgo(e.target.value)}
-              className="w-full bg-muted border border-border rounded px-3 py-2 text-foreground"
-            >
-              {PQC_SIG_ALGOS.map((a) => (
-                <option key={a.value} value={a.value}>
-                  {a.label}
-                </option>
-              ))}
-            </select>
+            <FilterDropdown
+              label="Algorithm"
+              items={PQC_SIG_ALGOS.map((a) => ({ id: a.value, label: a.label }))}
+              selectedId={pqcAlgo}
+              onSelect={setPqcAlgo}
+              noContainer
+              className="w-full"
+            />
           </div>
 
           <button

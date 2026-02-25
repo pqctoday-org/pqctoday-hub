@@ -83,7 +83,7 @@ export const TimelineView = () => {
   // Early return if data isn't loaded yet to prevent blank screen
   if (!timelineData || timelineData.length === 0 || ganttData.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="py-8">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Loading Timeline Data...</h2>
           <p className="text-muted-foreground">Please wait while we load the migration timeline.</p>
@@ -93,7 +93,7 @@ export const TimelineView = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4" data-testid="timeline-view-root">
+    <div data-testid="timeline-view-root">
       <div className="text-center mb-2 md:mb-12" data-testid="timeline-header">
         <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
           Global Migration Timeline

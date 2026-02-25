@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { Trash2, Shield, FileText, PenTool, Building2, CheckSquare } from 'lucide-react'
-import { useModuleStore } from '../../../../store/useModuleStore'
-import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
+import { useModuleStore } from '@/store/useModuleStore'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { WalletComponent } from './components/Wallet/WalletComponent'
 import { PIDIssuerComponent } from './components/PIDIssuer/PIDIssuerComponent'
 import { AttestationIssuerComponent } from './components/AttestationIssuer/AttestationIssuerComponent'
@@ -10,6 +10,7 @@ import { RelyingPartyComponent } from './components/RelyingParty/RelyingPartyCom
 import { OverviewComponent } from './components/Overview/OverviewComponent'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import type { WalletInstance, CryptoKey, VerifiableCredential } from './types'
 
 const MODULE_ID = 'digital-id'
@@ -206,6 +207,7 @@ export const DigitalIDModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         {/* Learn Tab */}
@@ -263,7 +265,7 @@ export const DigitalIDModule: React.FC = () => {
             </div>
 
             {/* Content Area */}
-            <div className="glass-panel p-4 animate-fade-in min-h-[600px] overflow-y-auto">
+            <div className="glass-panel p-4 animate-fade-in min-h-[400px] md:min-h-[600px] overflow-y-auto">
               {currentStepComponent}
             </div>
 
@@ -355,6 +357,9 @@ export const DigitalIDModule: React.FC = () => {
         {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId={MODULE_ID} />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

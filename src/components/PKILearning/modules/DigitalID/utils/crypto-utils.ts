@@ -1,4 +1,4 @@
-import { openSSLService } from '../../../../../services/crypto/OpenSSLService'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 import type { CryptoKey, KeyAlgorithm, KeyCurve } from '../types'
 
 export const bytesToBase64 = (bytes: Uint8Array): string => {

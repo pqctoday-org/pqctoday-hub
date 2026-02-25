@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { FileSignature, Loader2, Info, X } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { openSSLService } from '../../../../services/crypto/OpenSSLService'
-import { useModuleStore } from '../../../../store/useModuleStore'
-import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
-import { KNOWN_OIDS } from '../../../../services/crypto/oidMapping'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
+import { useModuleStore } from '@/store/useModuleStore'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
+import { KNOWN_OIDS } from '@/services/crypto/oidMapping'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Input } from '@/components/ui/input'
 
 // Import CSR profiles using Vite's glob import
 const csrProfiles = import.meta.glob('../../../../data/x509_profiles/CSR*.csv', {
@@ -595,32 +597,23 @@ distinguished_name = dn
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="key-select" className="text-sm text-muted-foreground">
-              Private Key Source
-            </label>
-            <select
-              id="key-select"
-              value={selectedKeyId}
-              onChange={(e) => setSelectedKeyId(e.target.value)}
-              className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
-            >
-              <optgroup label="Generate New Key">
-                {ALGORITHMS.map((algo) => (
-                  <option key={`new-${algo.id}`} value={`new-${algo.id}`}>
-                    Generate New {algo.name}
-                  </option>
-                ))}
-              </optgroup>
-              {availableKeys.length > 0 && (
-                <optgroup label="Existing Keys">
-                  {availableKeys.map((k) => (
-                    <option key={k.id} value={k.id}>
-                      {k.name} ({k.algorithm})
-                    </option>
-                  ))}
-                </optgroup>
-              )}
-            </select>
+            <FilterDropdown
+              label="Private Key Source"
+              items={[
+                ...ALGORITHMS.map((algo) => ({
+                  id: `new-${algo.id}`,
+                  label: `Generate New ${algo.name}`,
+                })),
+                ...availableKeys.map((k) => ({
+                  id: k.id,
+                  label: `${k.name} (${k.algorithm})`,
+                })),
+              ]}
+              selectedId={selectedKeyId}
+              onSelect={setSelectedKeyId}
+              noContainer
+              className="w-full"
+            />
           </div>
         </div>
 
@@ -640,9 +633,7 @@ distinguished_name = dn
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="profile-select" className="text-sm text-muted-foreground">
-                  CSR Profile
-                </label>
+                <span className="text-sm text-muted-foreground">CSR Profile</span>
                 {selectedProfile && (
                   <button
                     type="button"
@@ -655,19 +646,17 @@ distinguished_name = dn
                   </button>
                 )}
               </div>
-              <select
-                id="profile-select"
-                value={selectedProfile}
-                onChange={(e) => handleProfileSelect(e.target.value)}
-                className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
-              >
-                <option value="">-- Select a Profile --</option>
-                {availableProfiles.map((profile) => (
-                  <option key={profile} value={profile}>
-                    {profile.replace('CSR-', '').replace('.csv', '')}
-                  </option>
-                ))}
-              </select>
+              <FilterDropdown
+                items={availableProfiles.map((profile) => ({
+                  id: profile,
+                  label: profile.replace('CSR-', '').replace('.csv', ''),
+                }))}
+                selectedId={selectedProfile}
+                onSelect={handleProfileSelect}
+                defaultLabel="-- Select a Profile --"
+                noContainer
+                className="w-full"
+              />
             </div>
 
             {profileMetadata && (
@@ -740,13 +729,12 @@ distinguished_name = dn
                     </div>
                   </td>
                   <td className="p-3">
-                    <input
+                    <Input
                       type="text"
                       value={attr.value}
                       onChange={(e) => handleAttributeChange(attr.id, 'value', e.target.value)}
                       placeholder={attr.placeholder}
                       disabled={!attr.enabled}
-                      className="w-full bg-muted border border-border rounded px-2 py-1.5 text-sm text-accent-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </td>
                   <td className="p-3 text-muted-foreground text-xs max-w-[200px]">

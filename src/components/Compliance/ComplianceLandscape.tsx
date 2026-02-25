@@ -20,29 +20,34 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 // ── Deadline helpers ────────────────────────────────────────────────────
 
+const CURRENT_YEAR = new Date().getFullYear()
+
 /** Extract a numeric year from a deadline string, e.g. "2025 (software)" → 2025 */
 function extractYear(deadline: string): number | null {
   const match = deadline.match(/\b(20\d{2})\b/)
   return match ? parseInt(match[1], 10) : null
 }
 
-/** Classify urgency: imminent (≤2025), near (2026-2028), future (2029+), ongoing */
-function deadlineUrgency(deadline: string): 'imminent' | 'near' | 'future' | 'ongoing' {
+/** Classify urgency relative to the current year */
+function deadlineUrgency(deadline: string): 'overdue' | 'imminent' | 'near' | 'future' | 'ongoing' {
   const year = extractYear(deadline)
   if (!year) return 'ongoing'
-  if (year <= 2025) return 'imminent'
-  if (year <= 2028) return 'near'
+  if (year < CURRENT_YEAR) return 'overdue'
+  if (year <= CURRENT_YEAR + 2) return 'imminent'
+  if (year <= CURRENT_YEAR + 4) return 'near'
   return 'future'
 }
 
 function urgencyColor(urgency: ReturnType<typeof deadlineUrgency>) {
   switch (urgency) {
-    case 'imminent':
+    case 'overdue':
       return 'text-status-error'
-    case 'near':
+    case 'imminent':
       return 'text-status-warning'
-    case 'future':
+    case 'near':
       return 'text-status-success'
+    case 'future':
+      return 'text-muted-foreground'
     case 'ongoing':
       return 'text-muted-foreground'
   }
@@ -50,12 +55,13 @@ function urgencyColor(urgency: ReturnType<typeof deadlineUrgency>) {
 
 function urgencyBgColor(urgency: ReturnType<typeof deadlineUrgency>) {
   switch (urgency) {
-    case 'imminent':
+    case 'overdue':
       return 'bg-status-error'
-    case 'near':
+    case 'imminent':
       return 'bg-status-warning'
-    case 'future':
+    case 'near':
       return 'bg-status-success'
+    case 'future':
     case 'ongoing':
       return 'bg-muted-foreground'
   }
@@ -85,6 +91,10 @@ function countryChip(country: string): string {
     'South Korea': 'KR',
     'United Kingdom': 'UK',
     Israel: 'IL',
+    Italy: 'IT',
+    Spain: 'ES',
+    'New Zealand': 'NZ',
+    China: 'CN',
     Global: 'Global',
   }
   // eslint-disable-next-line security/detect-object-injection
@@ -192,13 +202,16 @@ function DeadlineTimeline({ frameworks }: { frameworks: ComplianceFramework[] })
           {/* Legend */}
           <div className="flex gap-4 text-xs text-muted-foreground mt-1 px-1">
             <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-status-error inline-block" /> Imminent
+              <span className="w-2 h-2 rounded-full bg-status-error inline-block" /> Overdue
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-status-warning inline-block" /> Near-term
+              <span className="w-2 h-2 rounded-full bg-status-warning inline-block" /> Imminent
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-status-success inline-block" /> Future
+              <span className="w-2 h-2 rounded-full bg-status-success inline-block" /> Near-term
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-muted-foreground inline-block" /> Future
             </span>
             <span className="flex items-center gap-1">
               <span className="w-0.5 h-3 bg-foreground/40 inline-block" /> Today
@@ -247,7 +260,9 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
       {/* Deadline */}
       <div className={`flex items-center gap-1.5 text-xs ${urgencyColor(urgency)}`}>
         <Clock size={12} />
-        <span className="font-medium">{fw.deadline}</span>
+        <span className="font-medium">
+          {urgency === 'overdue' ? `${fw.deadline} — Overdue` : fw.deadline}
+        </span>
       </div>
 
       {/* Description */}

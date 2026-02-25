@@ -1,12 +1,46 @@
 import { useMemo } from 'react'
 
-import { Info } from 'lucide-react'
+import { ArrowRight, Info } from 'lucide-react'
 
+import { Link } from 'react-router-dom'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 
-import { AVAILABLE_COMPLIANCE, COMPLIANCE_DESCRIPTIONS } from '../../../hooks/assessmentData'
+import { AVAILABLE_COMPLIANCE } from '../../../hooks/assessmentData'
 
 import { industryComplianceConfigs, getIndustryConfigs } from '../../../data/industryAssessConfig'
+
+// EU member states: frameworks listing "European Union" apply to users in any of these countries
+const EU_MEMBER_COUNTRIES = new Set([
+  'European Union',
+  'France',
+  'Germany',
+  'Italy',
+  'Spain',
+  'Czech Republic',
+  'Netherlands',
+  'Belgium',
+  'Sweden',
+  'Denmark',
+  'Finland',
+  'Ireland',
+  'Portugal',
+  'Austria',
+  'Poland',
+  'Hungary',
+  'Romania',
+  'Bulgaria',
+  'Croatia',
+  'Estonia',
+  'Latvia',
+  'Lithuania',
+  'Luxembourg',
+  'Malta',
+  'Slovakia',
+  'Slovenia',
+  'Cyprus',
+])
+
+import { Button } from '../../ui/button'
 
 import clsx from 'clsx'
 
@@ -25,12 +59,15 @@ const Step5Compliance = () => {
   // Build set of labels that match the selected country
   const countryMatchingLabels = useMemo(() => {
     if (!country || country === 'Global') return null // no filter
+    const isEuMember = EU_MEMBER_COUNTRIES.has(country)
     const set = new Set<string>()
     for (const cfg of industryComplianceConfigs) {
       if (
         cfg.countries.length === 0 ||
         cfg.countries.includes('Global') ||
-        cfg.countries.includes(country)
+        cfg.countries.includes(country) ||
+        // EU-wide frameworks (listed as "European Union" only) apply to all EU member states
+        (isEuMember && cfg.countries.includes('European Union'))
       ) {
         set.add(cfg.label)
       }
@@ -45,6 +82,12 @@ const Step5Compliance = () => {
     }
     return configs
   }, [industry, countryMatchingLabels])
+  // Description lookup by label — used to show consistent short descriptions for all frameworks
+  const descriptionByLabel = useMemo(
+    () => new Map(industryComplianceConfigs.map((cfg) => [cfg.label, cfg.description])),
+    []
+  )
+
   const industryLabelSet = useMemo(
     () => new Set(industryFrameworks.map((f) => f.label)),
     [industryFrameworks]
@@ -82,19 +125,20 @@ const Step5Compliance = () => {
       <PersonaHint stepKey="compliance" />
 
       {/* None apply / I don't know — Step 3 model (toggleable, dismissable, dims content) */}
-      <button
+      <Button
+        variant="ghost"
         aria-pressed={complianceUnknown}
         onClick={() => setComplianceUnknown(!complianceUnknown)}
         className={clsx(
-          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',
           complianceUnknown
-            ? 'border-muted-foreground bg-muted/20 text-foreground'
-            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+            ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
       >
         <Info size={14} className="shrink-0" />
         None apply / I don&apos;t know
-      </button>
+      </Button>
 
       <div className={clsx('space-y-4', complianceUnknown && 'opacity-40 pointer-events-none')}>
         {industryFrameworks.length > 0 && (
@@ -121,15 +165,16 @@ const Step5Compliance = () => {
               aria-label={`${industry} compliance frameworks`}
             >
               {industryFrameworks.map((fw) => (
-                <button
+                <Button
                   key={fw.id}
+                  variant="ghost"
                   aria-pressed={complianceRequirements.includes(fw.label)}
                   onClick={() => toggleCompliance(fw.label)}
                   className={clsx(
-                    'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                    'h-auto p-3 flex-col items-start whitespace-normal border',
                     complianceRequirements.includes(fw.label)
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                      ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
                   )}
                 >
                   <span>{fw.label}</span>
@@ -138,7 +183,7 @@ const Step5Compliance = () => {
                       {fw.description}
                     </p>
                   )}
-                </button>
+                </Button>
               ))}
             </div>
           </>
@@ -157,35 +202,45 @@ const Step5Compliance = () => {
               aria-label="Universal compliance frameworks"
             >
               {universalFrameworks.map((fw) => (
-                <button
+                <Button
                   key={fw}
+                  variant="ghost"
                   aria-pressed={complianceRequirements.includes(fw)}
                   onClick={() => toggleCompliance(fw)}
                   className={clsx(
-                    'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                    'h-auto p-3 flex-col items-start whitespace-normal border',
                     complianceRequirements.includes(fw)
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                      ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
                   )}
                 >
                   <span>{fw}</span>
-                  {/* eslint-disable-next-line security/detect-object-injection */}
-                  {COMPLIANCE_DESCRIPTIONS[fw] && (
+                  {descriptionByLabel.get(fw) && (
                     <p className="text-xs mt-1 opacity-80 font-normal leading-snug">
-                      {/* eslint-disable-next-line security/detect-object-injection */}
-                      {COMPLIANCE_DESCRIPTIONS[fw].notes}
+                      {descriptionByLabel.get(fw)}
                     </p>
                   )}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
         )}
 
-        <p className="text-xs text-muted-foreground">
-          Don&apos;t see your framework? Skip this step — it won&apos;t affect your risk score
-          significantly.
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">
+            Don&apos;t see your framework? Skip this step — it won&apos;t affect your risk score
+            significantly.
+          </p>
+          <Link
+            to="/compliance"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-primary hover:underline flex items-center gap-1 shrink-0 ml-2"
+          >
+            <ArrowRight size={12} />
+            Explore frameworks
+          </Link>
+        </div>
       </div>
     </div>
   )

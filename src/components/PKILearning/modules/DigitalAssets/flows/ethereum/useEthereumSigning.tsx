@@ -1,16 +1,16 @@
 import type { Step } from '../../components/StepWizard'
 import { useKeyGeneration } from '../../hooks/useKeyGeneration'
-import { SignatureError } from '../../../../../../lib/errors/CryptoError'
+import { SignatureError } from '@/lib/errors/CryptoError'
 import { useArtifactManagement } from '../../hooks/useArtifactManagement'
 import { useFileRetrieval } from '../../hooks/useFileRetrieval'
-import { openSSLService } from '../../../../../../services/crypto/OpenSSLService'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 /* eslint-disable security/detect-object-injection */
 import { secp256k1 } from '@noble/curves/secp256k1.js'
 import { keccak_256 } from '@noble/hashes/sha3.js'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import type { EthereumFlowState, EthereumFlowActions } from './types'
 import { toChecksumAddress } from './utils'
-import { extractKeyFromOpenSSLOutput } from '../../../../../../utils/cryptoUtils'
+import { extractKeyFromOpenSSLOutput } from '@/utils/cryptoUtils'
 
 interface UseEthereumSigningProps {
   keyGen: ReturnType<typeof useKeyGeneration>

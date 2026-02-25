@@ -10,6 +10,7 @@ import {
   ArrowRight,
   AlertTriangle,
   Calendar,
+  Key,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
@@ -342,6 +343,30 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
               <div className="text-sm font-medium text-foreground">Threat Dashboard</div>
               <div className="text-xs text-muted-foreground">
                 Industry-specific quantum risks &amp; PQC replacements
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/pki-workshop"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Shield size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">PKI Workshop</div>
+              <div className="text-xs text-muted-foreground">
+                X.509 certificates, CA chains &amp; PQC credential foundations
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/key-management"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Key size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Key Management</div>
+              <div className="text-xs text-muted-foreground">
+                Wallet key lifecycle, HSM operations &amp; PQC rotation
               </div>
             </div>
           </Link>

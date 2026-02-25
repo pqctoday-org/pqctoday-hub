@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react'
+import { Button } from '../ui/button'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
@@ -71,7 +72,7 @@ const ALL_STEPS = [
     key: 'crypto',
     component: <Step3Crypto />,
     canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      s.currentCrypto.length > 0 || s.cryptoUnknown,
+      s.currentCryptoCategories.length > 0 || s.cryptoUnknown,
   },
   {
     key: 'sensitivity',
@@ -170,7 +171,12 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
     const s = useAssessmentStore.getState()
     // eslint-disable-next-line security/detect-object-injection
     const stepKey = steps[currentStep]?.key
-    if (stepKey === 'crypto' && s.currentCrypto.length === 0 && !s.cryptoUnknown) {
+    if (
+      stepKey === 'crypto' &&
+      s.currentCryptoCategories.length === 0 &&
+      s.currentCrypto.length === 0 &&
+      !s.cryptoUnknown
+    ) {
       s.setCryptoUnknown(true)
     } else if (stepKey === 'agility' && !s.cryptoAgility) {
       s.setCryptoAgility('unknown')
@@ -198,8 +204,13 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <StepIndicator current={currentStep} total={steps.length} titles={stepTitles} />
+    <div>
+      <StepIndicator
+        current={currentStep}
+        total={steps.length}
+        titles={stepTitles}
+        onStepClick={(step) => setStep(step)}
+      />
 
       <div className="glass-panel p-6 md:p-8">
         <AnimatePresence mode="wait">
@@ -218,28 +229,30 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
 
       {/* Navigation */}
       <div className="flex justify-between items-center mt-6">
-        <button
+        <Button
+          variant="outline"
           onClick={() => setStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
-          className="flex items-center gap-1 px-5 py-2 rounded-lg border border-border hover:bg-muted/10 disabled:opacity-50 transition-colors text-foreground text-sm"
+          className="gap-1"
         >
           <ChevronLeft size={16} />
           Previous
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="ghost"
           onClick={reset}
-          className="flex items-center gap-1 px-3 py-2 text-xs text-muted-foreground hover:text-destructive transition-colors"
+          className="text-xs text-muted-foreground hover:text-destructive"
           title="Clear all answers and start over"
         >
           <RotateCcw size={13} />
           Reset
-        </button>
+        </Button>
 
-        <button
+        <Button
           onClick={handleNext}
           disabled={!canProceed() || isGenerating}
-          className="flex items-center gap-1 px-5 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors text-sm"
+          className="gap-1 font-bold"
         >
           {isGenerating ? (
             <>
@@ -254,7 +267,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
               <ChevronRight size={16} />
             </>
           )}
-        </button>
+        </Button>
       </div>
     </div>
   )

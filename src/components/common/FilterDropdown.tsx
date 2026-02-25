@@ -207,7 +207,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       aria-expanded={isOpen}
       aria-labelledby={labelId}
       className={clsx(
-        'flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full min-w-[80px] md:min-w-[120px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground overflow-hidden',
+        'flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full min-w-[80px] md:min-w-[120px] min-h-[44px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground overflow-hidden',
         variant === 'default' ? 'bg-muted/30 hover:bg-muted/50' : 'hover:bg-muted/50'
       )}
     >

@@ -20,6 +20,7 @@ export interface SoftwareItem {
   verificationStatus: string
   lastVerifiedDate: string
   migrationPhases: string
+  learningModules: string
   status?: 'New' | 'Updated' | 'Deleted'
 }
 
@@ -53,6 +54,19 @@ export interface MigrationStep {
   relevantSoftwareCategories: string[]
   nsaTimeline?: string
   estimatedDuration: string
+}
+
+export interface CertificationXref {
+  softwareName: string
+  certType: 'FIPS 140-3' | 'ACVP' | 'Common Criteria'
+  certId: string
+  certVendor: string
+  certProduct: string
+  pqcAlgorithms: string
+  certificationLevel: string
+  status: string
+  certDate: string
+  certLink: string
 }
 
 export interface SoftwareCategoryGap {

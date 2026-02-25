@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Input } from '@/components/ui/input'
 
 export interface TraceEvent {
   side: string
@@ -349,10 +350,10 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
                   className="text-muted-foreground group-focus-within:text-primary transition-colors"
                 />
               </div>
-              <input
+              <Input
                 type="text"
                 placeholder="Find (Hex)..."
-                className="block w-full pl-7 pr-2 py-1 bg-muted border border-border rounded text-[10px] text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary transition-colors font-mono h-6"
+                className="block w-full pl-7 pr-2 py-1 text-[10px] font-mono h-6"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />

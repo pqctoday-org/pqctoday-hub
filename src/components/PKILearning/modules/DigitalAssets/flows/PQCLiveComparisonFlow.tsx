@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import { CheckCircle, ShieldCheck, Cpu, AlertCircle } from 'lucide-react'
 import { StepWizard } from '../components/StepWizard'
 import { useStepWizard } from '../hooks/useStepWizard'
-import { openSSLService } from '../../../../../services/crypto/OpenSSLService'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { DIGITAL_ASSETS_CONSTANTS } from '../constants'
 
 interface PQCLiveComparisonFlowProps {

@@ -36,11 +36,12 @@ export function AboutView() {
           </div>
           <div className="prose prose-invert max-w-none">
             <p className="text-lg text-muted-foreground">
-              PQC Today is an interactive platform for the post-quantum transition. Sixteen learning
-              modules, hands-on cryptographic labs powered by OpenSSL WASM and liboqs, a 13-step
-              risk assessment wizard with persona-aware reporting, an industry-filtered migration
-              catalog, and global compliance tracking give developers, architects, executives, and
-              researchers everything they need to understand, plan, and act &mdash; at their level.
+              PQC Today is an interactive platform for the post-quantum transition. Nineteen
+              learning modules, hands-on cryptographic labs powered by OpenSSL WASM and liboqs, a
+              13-step risk assessment wizard with persona-aware reporting, an industry-filtered
+              migration catalog, and global compliance tracking give developers, architects,
+              executives, and researchers everything they need to understand, plan, and act &mdash;
+              at their level.
             </p>
             <p className="text-muted-foreground mt-4">
               Our mission is to make PQC adoption actionable for everyone &mdash; whether
@@ -83,47 +84,47 @@ export function AboutView() {
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">UI Frameworks & Libraries</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React</span>
                   <span className="text-xs text-muted-foreground/60">v19.2.4</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Framer Motion</span>
                   <span className="text-xs text-muted-foreground/60">v12.34.2</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Lucide React</span>
                   <span className="text-xs text-muted-foreground/60">v0.562.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Tailwind CSS</span>
                   <span className="text-xs text-muted-foreground/60">v4.2.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">clsx</span>
                   <span className="text-xs text-muted-foreground/60">v2.1.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">tailwind-merge</span>
                   <span className="text-xs text-muted-foreground/60">v3.5.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">class-variance-authority</span>
                   <span className="text-xs text-muted-foreground/60">v0.7.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React Router</span>
                   <span className="text-xs text-muted-foreground/60">v7.13.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React Markdown</span>
                   <span className="text-xs text-muted-foreground/60">v10.1.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">remark-gfm</span>
                   <span className="text-xs text-muted-foreground/60">v4.0.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React Focus Lock</span>
                   <span className="text-xs text-muted-foreground/60">v2.13.7</span>
                 </li>
@@ -132,23 +133,23 @@ export function AboutView() {
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">Utilities</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">localforage</span>
                   <span className="text-xs text-muted-foreground/60">v1.10.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">jszip</span>
                   <span className="text-xs text-muted-foreground/60">v3.10.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">file-saver</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.5</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">papaparse</span>
                   <span className="text-xs text-muted-foreground/60">v5.5.3</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">pdf-parse</span>
                   <span className="text-xs text-muted-foreground/60">v2.4.5</span>
                 </li>
@@ -157,43 +158,43 @@ export function AboutView() {
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">Cryptography & PQC</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">OpenSSL WASM</span>
                   <span className="text-xs text-muted-foreground/60">v3.6.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Web Crypto API (X25519, P-256)</span>
                   <span className="text-xs text-muted-foreground/60">Native</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@openforge-sh/liboqs</span>
                   <span className="text-xs text-muted-foreground/60">v0.14.3</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@noble/hashes</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@noble/curves</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@scure/bip32</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@scure/bip39</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@scure/base</span>
                   <span className="text-xs text-muted-foreground/60">v2.0.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">micro-eth-signer</span>
                   <span className="text-xs text-muted-foreground/60">v0.18.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">ed25519-hd-key</span>
                   <span className="text-xs text-muted-foreground/60">v1.3.0</span>
                 </li>
@@ -202,11 +203,11 @@ export function AboutView() {
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">State Management</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Zustand</span>
                   <span className="text-xs text-muted-foreground/60">v5.0.11</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Immer</span>
                   <span className="text-xs text-muted-foreground/60">v11.1.3</span>
                 </li>
@@ -215,7 +216,7 @@ export function AboutView() {
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">Analytics</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React GA4</span>
                   <span className="text-xs text-muted-foreground/60">v2.1.0</span>
                 </li>
@@ -224,7 +225,7 @@ export function AboutView() {
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">Notifications</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React Hot Toast</span>
                   <span className="text-xs text-muted-foreground/60">v2.6.0</span>
                 </li>
@@ -233,27 +234,27 @@ export function AboutView() {
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">Build & Development</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Vite</span>
                   <span className="text-xs text-muted-foreground/60">v7.3.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">TypeScript</span>
                   <span className="text-xs text-muted-foreground/60">v5.9.3</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">tsx</span>
                   <span className="text-xs text-muted-foreground/60">v4.21.0</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">ESLint</span>
                   <span className="text-xs text-muted-foreground/60">v9.39.2</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Prettier</span>
                   <span className="text-xs text-muted-foreground/60">v3.8.1</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Husky</span>
                   <span className="text-xs text-muted-foreground/60">v9.1.7</span>
                 </li>
@@ -262,19 +263,19 @@ export function AboutView() {
             <div className="break-inside-avoid">
               <h3 className="text-lg font-semibold text-primary mb-3">Testing</h3>
               <ul className="space-y-2">
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Vitest</span>
                   <span className="text-xs text-muted-foreground/60">v4.0.18</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Playwright</span>
                   <span className="text-xs text-muted-foreground/60">v1.58.2</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Testing Library (React)</span>
                   <span className="text-xs text-muted-foreground/60">v16.3.2</span>
                 </li>
-                <li className="flex justify-between items-center text-sm border-b border-border pb-1">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">axe-playwright (Accessibility)</span>
                   <span className="text-xs text-muted-foreground/60">v2.2.2</span>
                 </li>
@@ -458,7 +459,7 @@ export function AboutView() {
                 key={t}
                 onClick={() => setTheme(t)}
                 className={clsx(
-                  'px-4 py-2 rounded-md text-sm font-medium transition-colors capitalize flex items-center gap-2',
+                  'px-4 py-2 min-h-[44px] rounded-md text-sm font-medium transition-colors capitalize flex items-center gap-2',
                   theme === t
                     ? 'bg-primary/20 text-primary border border-primary/20'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/10'

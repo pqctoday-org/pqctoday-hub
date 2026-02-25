@@ -954,7 +954,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'An X.509 certificate containing both classical and PQC keys/signatures, enabling backward compatibility while providing post-quantum security.',
     technicalNote:
       'Defined in IETF drafts: composite ML-KEM (draft-ietf-lamps-pq-composite-kem) and composite ML-DSA (draft-ietf-lamps-pq-composite-sigs).',
-    relatedModule: '/library',
+    relatedModule: '/learn/hybrid-crypto',
     complexity: 'advanced',
     category: 'concept',
   },
@@ -971,7 +971,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     acronym: 'SCADA',
     definition:
       'Supervisory Control and Data Acquisition, industrial control systems used in power grids, water treatment, and manufacturing. Quantum-vulnerable via legacy crypto.',
-    relatedModule: '/threats',
+    relatedModule: '/learn/iot-ot-pqc',
     complexity: 'intermediate',
     category: 'concept',
   },
@@ -1035,7 +1035,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Code Signing',
     definition:
       'Digitally signing software executables and scripts to verify their authenticity and integrity. PQC migration replaces RSA/ECDSA signatures with ML-DSA or SLH-DSA.',
-    relatedModule: '/migrate',
+    relatedModule: '/learn/code-signing',
     complexity: 'intermediate',
     category: 'concept',
   },
@@ -1043,7 +1043,16 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Secure Boot',
     definition:
       'A hardware-enforced chain of trust that verifies each component in the boot process is signed by a trusted authority. Requires PQC-capable signature verification.',
-    relatedModule: '/migrate',
+    relatedModule: '/learn/code-signing',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'UEFI',
+    acronym: 'UEFI',
+    definition:
+      'Unified Extensible Firmware Interface — the modern firmware interface between hardware and OS. UEFI Secure Boot enforces signature verification on bootloaders and drivers before execution.',
+    relatedModule: '/learn/code-signing',
     complexity: 'intermediate',
     category: 'concept',
   },
@@ -1387,7 +1396,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     acronym: 'DTLS',
     definition:
       'Datagram Transport Layer Security, the UDP equivalent of TLS. Used in IoT (CoAP), WebRTC, and VPN protocols. DTLS 1.3 adds PQC support.',
-    relatedModule: '/library',
+    relatedModule: '/learn/iot-ot-pqc',
     complexity: 'intermediate',
     category: 'protocol',
   },
@@ -1479,9 +1488,186 @@ export const glossaryTerms: GlossaryTerm[] = [
       'JSON Web Token, a compact token format for securely transmitting claims between parties. Widely used in API authentication and OAuth 2.0.',
     technicalNote:
       'JWTs typically use RSA or ECDSA signatures which are quantum-vulnerable. PQC JWT support (ML-DSA) is being standardized via JOSE working group.',
-    relatedModule: '/library',
+    relatedModule: '/learn/api-security-jwt',
     complexity: 'intermediate',
     category: 'protocol',
+  },
+
+  // === API Security / JOSE ===
+  {
+    term: 'JSON Web Signature',
+    acronym: 'JWS',
+    definition:
+      'A standard (RFC 7515) for digitally signing JSON payloads. JWS is the mechanism that makes JWTs tamper-proof — the signature covers the JOSE header and payload.',
+    technicalNote:
+      'PQC migration requires new JWS algorithm identifiers (e.g., ML-DSA-44, ML-DSA-65) registered via the IETF JOSE PQC draft. Signature sizes grow from 64 bytes (ES256) to ~2,420 bytes (ML-DSA-44).',
+    relatedModule: '/learn/api-security-jwt',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'JSON Web Encryption',
+    acronym: 'JWE',
+    definition:
+      'A standard (RFC 7516) for encrypting JSON payloads. JWE provides confidentiality for JWT claims using a two-layer encryption model: a Key Encryption Key (KEK) wraps a Content Encryption Key (CEK).',
+    technicalNote:
+      'PQC migration replaces ECDH-ES key agreement with ML-KEM encapsulation. The KEM ciphertext replaces the encrypted key in JWE compact serialization.',
+    relatedModule: '/learn/api-security-jwt',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'JOSE',
+    definition:
+      'JSON Object Signing and Encryption, the IETF framework encompassing JWS, JWE, JWK, and JWA specifications. JOSE defines how to sign, encrypt, and represent cryptographic keys in JSON format.',
+    technicalNote:
+      'The IETF JOSE working group is standardizing PQC algorithm identifiers (ML-DSA, ML-KEM, SLH-DSA) for use in JOSE headers. The framework was designed for algorithm agility — only the "alg" header value changes.',
+    relatedModule: '/learn/api-security-jwt',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'OpenID Connect',
+    acronym: 'OIDC',
+    definition:
+      'An identity layer built on OAuth 2.0 that provides authentication via ID tokens (JWTs). Widely used for single sign-on across web and mobile applications.',
+    technicalNote:
+      'OIDC ID tokens are signed JWTs. PQC migration requires authorization servers to sign ID tokens with ML-DSA and clients to verify PQC signatures. JWKS endpoints must serve PQC public keys.',
+    relatedModule: '/learn/api-security-jwt',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'Demonstrating Proof-of-Possession',
+    acronym: 'DPoP',
+    definition:
+      'An OAuth 2.0 extension (RFC 9449) that binds access tokens to a specific client by requiring a proof-of-possession JWT with each API request, preventing token theft and replay attacks.',
+    technicalNote:
+      "Each DPoP proof is a JWS signed with the client's key. With PQC, every API request includes a ~4 KB ML-DSA signature in addition to the access token, potentially exceeding HTTP header size limits.",
+    relatedModule: '/learn/api-security-jwt',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'JSON Web Key Set',
+    acronym: 'JWKS',
+    definition:
+      'A JSON document (RFC 7517) containing a set of public keys used to verify JWTs. Authorization servers publish JWKS endpoints so resource servers can fetch signing keys.',
+    technicalNote:
+      'ML-DSA public keys are ~2 KB each (vs 32 bytes for EC). JWKS payloads grow significantly during PQC migration, especially with key rotation maintaining multiple active keys.',
+    relatedModule: '/learn/api-security-jwt',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  // === Code Signing (additional) ===
+  {
+    term: 'Root CA',
+    definition:
+      'The top-level Certificate Authority in a PKI trust hierarchy. A Root CA issues a self-signed certificate that serves as the trust anchor — all certificates in the chain ultimately derive their trust from it.',
+    technicalNote:
+      'Root CAs are installed in OS and browser trust stores. PQC migration for Root CAs is highest priority since a compromised root breaks the entire chain. CNSA 2.0 requires Root CAs to use ML-DSA-87 by 2030.',
+    relatedModule: '/learn/code-signing',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  {
+    term: 'Sigstore',
+    definition:
+      'An open-source project (Linux Foundation) for keyless code signing. Developers authenticate with their existing identity (GitHub, Google) and receive short-lived certificates, eliminating long-term key management.',
+    technicalNote:
+      'Sigstore centralizes crypto in two services: Fulcio (CA) and Rekor (transparency log). Upgrading these to ML-DSA automatically provides PQC protection to all downstream ecosystems (npm, PyPI, Kubernetes).',
+    relatedModule: '/learn/code-signing',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Fulcio',
+    definition:
+      'The Certificate Authority component of Sigstore. Fulcio issues short-lived (~20 minute) X.509 certificates that bind an OIDC identity to an ephemeral signing key.',
+    technicalNote:
+      'Fulcio is the primary PQC upgrade point in the Sigstore ecosystem. Migrating Fulcio to ML-DSA certificates automatically protects all downstream consumers without developer intervention.',
+    relatedModule: '/learn/code-signing',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Rekor',
+    definition:
+      'The transparency log component of Sigstore. Rekor is an immutable, append-only log that records every signing event — signature, certificate, and artifact hash — for public auditability.',
+    technicalNote:
+      'PQC migration increases Rekor entry sizes significantly (~200 bytes for ECDSA vs ~3,600 bytes for ML-DSA-65). Storage overhead is the primary cost of PQC migration in Sigstore.',
+    relatedModule: '/learn/code-signing',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Keyless Signing',
+    definition:
+      'A code signing approach where no long-term private keys are managed by the developer. Identity-based trust (via OIDC) replaces key-based trust, with ephemeral keys generated per-signing event.',
+    relatedModule: '/learn/code-signing',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Time Stamping Authority',
+    acronym: 'TSA',
+    definition:
+      'A trusted service (RFC 3161) that proves a digital signature was created at a specific time. Essential for code signing, where signatures must remain valid after certificate expiration.',
+    technicalNote:
+      'PQC migration requires TSAs to issue timestamps signed with quantum-safe algorithms. A quantum-vulnerable timestamp means an attacker could backdate forged signatures.',
+    relatedModule: '/learn/code-signing',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Extended Key Usage',
+    acronym: 'EKU',
+    definition:
+      'An X.509 certificate extension that restricts the purposes for which a certificate can be used — for example, Code Signing (OID 1.3.6.1.5.5.7.3.3), Server Authentication, or Client Authentication.',
+    relatedModule: '/learn/code-signing',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+
+  // === Supply Chain Security ===
+  {
+    term: 'Software Supply Chain',
+    definition:
+      'The entire pipeline from source code to deployed software, including dependencies, build systems, artifact registries, signing infrastructure, and distribution channels. Every link in this chain is a potential attack surface.',
+    relatedModule: '/learn/code-signing',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  {
+    term: 'SLSA',
+    acronym: 'SLSA',
+    definition:
+      'Supply-chain Levels for Software Artifacts \u2014 a security framework (originally from Google) that defines increasing levels of supply chain integrity guarantees, from basic build provenance to fully hermetic, reproducible builds.',
+    technicalNote:
+      'SLSA levels depend on cryptographic attestations signed during the build process. If those signatures use quantum-vulnerable algorithms (ECDSA, RSA), the entire SLSA guarantee collapses once quantum computers can forge attestations.',
+    relatedModule: '/learn/code-signing',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'in-toto',
+    definition:
+      'An open-source framework for securing the integrity of software supply chains by defining and cryptographically verifying each step of the build and release process. Each step produces a signed attestation (a "link") forming a verifiable chain.',
+    technicalNote:
+      "in-toto link metadata is signed with the functionary's private key. PQC migration requires upgrading all functionary keys to ML-DSA to prevent quantum forgery of supply chain attestations.",
+    relatedModule: '/learn/code-signing',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Build Provenance',
+    definition:
+      'A cryptographically signed attestation documenting how a software artifact was built \u2014 including the source repository, build system, entry point, and build parameters. Answers the question "who built this and how?"',
+    technicalNote:
+      'Build provenance is a core requirement of SLSA Level 1+. Without quantum-safe signatures on provenance attestations, an adversary with a quantum computer could forge provenance for malicious artifacts.',
+    relatedModule: '/learn/code-signing',
+    complexity: 'intermediate',
+    category: 'concept',
   },
 
   // === Standards (additional) ===
@@ -2427,6 +2613,111 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Distinguished from computational security (used by PQC), which assumes the adversary has bounded computational resources. Information-theoretic security means that even with unlimited computing power, an attacker cannot break the scheme.',
     relatedModule: '/learn/qkd',
     complexity: 'advanced',
+    category: 'concept',
+  },
+  // === IoT & OT Security ===
+  {
+    term: 'MQTT',
+    acronym: 'MQTT',
+    definition:
+      'Message Queuing Telemetry Transport, a lightweight publish/subscribe messaging protocol for IoT. MQTT 5.0 supports TLS 1.3 transport security.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'LoRaWAN',
+    definition:
+      'Long Range Wide Area Network, a low-power WAN protocol for IoT. Uses AES-128 pre-shared keys. Maximum payload of 222 bytes makes PQC KEM infeasible inline.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'Matter',
+    definition:
+      'Smart home interoperability standard (formerly Project CHIP). Uses the CASE protocol with ECDSA P-256 for device attestation. PQC migration requires protocol specification update.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'SUIT',
+    acronym: 'SUIT',
+    definition:
+      'Software Updates for Internet of Things (RFC 9019). A CBOR-based manifest format for secure firmware updates, providing metadata, conditions, and signature verification for OTA delivery.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'RFC 7228',
+    definition:
+      'Terminology for Constrained-Node Networks. Defines device Class 0/1/2 based on RAM and Flash memory constraints, used to categorize IoT device capabilities for protocol selection.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'Purdue Model',
+    definition:
+      'Reference architecture for industrial control system (ICS) networks. Defines 6 levels from physical process (Level 0) to enterprise network (Level 5), guiding security zone segmentation and PQC migration priority.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'CoAP',
+    acronym: 'CoAP',
+    definition:
+      'Constrained Application Protocol, a lightweight RESTful protocol designed for IoT devices. Runs over UDP with DTLS for security. Maximum payload of ~1,024 bytes makes PQC key exchange challenging.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'NB-IoT',
+    acronym: 'NB-IoT',
+    definition:
+      'Narrowband IoT, a cellular connectivity standard for low-power wide-area (LPWA) devices. Offers 62.5 kbps uplink bandwidth, making PQC handshake overhead a significant concern.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'Programmable Logic Controller',
+    acronym: 'PLC',
+    definition:
+      'An industrial computer that controls manufacturing processes, assembly lines, and infrastructure equipment. PLCs sit at Purdue Level 1 and typically use pre-shared keys or DNP3-SA for authentication.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Remote Terminal Unit',
+    acronym: 'RTU',
+    definition:
+      'A microprocessor-controlled device that interfaces field devices (sensors, actuators) to a SCADA system. RTUs sit at Purdue Level 1 with asset lifecycles of 15\u201325 years.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Human-Machine Interface',
+    acronym: 'HMI',
+    definition:
+      'A user interface panel or software application that allows operators to monitor and control industrial processes. HMIs sit at Purdue Level 2, typically using RSA-2048 or TLS 1.2.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Electronic Control Unit',
+    acronym: 'ECU',
+    definition:
+      'An embedded computer in a vehicle that controls one or more electrical systems (engine, brakes, infotainment). Automotive ECUs communicate via CAN bus and face PQC migration challenges for V2X and firmware signing.',
+    relatedModule: '/learn/iot-ot-pqc',
+    complexity: 'intermediate',
     category: 'concept',
   },
 ]

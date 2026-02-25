@@ -74,7 +74,7 @@ export const SourcesModal = ({ isOpen, onClose, viewType }: SourcesModalProps) =
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="glass-panel p-6 max-w-4xl w-full max-h-[85vh] overflow-y-auto"
+              className="glass-panel p-6 max-w-4xl w-full max-h-[85dvh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -87,7 +87,7 @@ export const SourcesModal = ({ isOpen, onClose, viewType }: SourcesModalProps) =
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors"
+                  className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors"
                   aria-label="Close modal"
                 >
                   <X size={20} />

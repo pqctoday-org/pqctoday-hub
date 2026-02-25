@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import type { Step } from '../components/StepWizard'
 import { StepWizard } from '../components/StepWizard'
-import { openSSLService } from '../../../../../services/crypto/OpenSSLService'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { entropyToMnemonic, mnemonicToSeedSync } from '@scure/bip39'
 import { wordlist } from '@scure/bip39/wordlists/english.js'
 import { HDKey } from '@scure/bip32'

@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { Shield, Loader2, Info, X } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { openSSLService } from '../../../../services/crypto/OpenSSLService'
-import { useModuleStore } from '../../../../store/useModuleStore'
-import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
-import { KNOWN_OIDS } from '../../../../services/crypto/oidMapping'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
+import { useModuleStore } from '@/store/useModuleStore'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
+import { KNOWN_OIDS } from '@/services/crypto/oidMapping'
 
-import { useCertProfile } from '../../../../hooks/useCertProfile'
+import { useCertProfile } from '@/hooks/useCertProfile'
 import { AttributeTable } from '../../common/AttributeTable'
 import type { X509Attribute } from '../../common/types'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 // Import profile documentation
 const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.md', {
@@ -453,32 +454,23 @@ x509_extensions = v3_ca
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="key-type-select" className="text-sm text-muted-foreground">
-                Key Type
-              </label>
-              <select
-                id="key-type-select"
-                value={selectedKeyId}
-                onChange={(e) => setSelectedKeyId(e.target.value)}
-                className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
-              >
-                <optgroup label="Generate New Key">
-                  {ALGORITHMS.map((algo) => (
-                    <option key={`new-${algo.id}`} value={`new-${algo.id}`}>
-                      {algo.name} ({algo.keySizeLabel})
-                    </option>
-                  ))}
-                </optgroup>
-                {availableKeys.length > 0 && (
-                  <optgroup label="Existing Keys">
-                    {availableKeys.map((k) => (
-                      <option key={k.id} value={k.id}>
-                        {k.name} ({k.algorithm})
-                      </option>
-                    ))}
-                  </optgroup>
-                )}
-              </select>
+              <FilterDropdown
+                label="Key Type"
+                items={[
+                  ...ALGORITHMS.map((algo) => ({
+                    id: `new-${algo.id}`,
+                    label: `${algo.name} (${algo.keySizeLabel})`,
+                  })),
+                  ...availableKeys.map((k) => ({
+                    id: k.id,
+                    label: `${k.name} (${k.algorithm})`,
+                  })),
+                ]}
+                selectedId={selectedKeyId}
+                onSelect={setSelectedKeyId}
+                noContainer
+                className="w-full"
+              />
             </div>
             <p className="text-xs text-muted-foreground">
               Root CAs typically use larger key sizes for long-term security.
@@ -502,9 +494,7 @@ x509_extensions = v3_ca
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="profile-select" className="text-sm text-muted-foreground">
-                  Certificate Profile
-                </label>
+                <span className="text-sm text-muted-foreground">Certificate Profile</span>
                 {selectedProfile && (
                   <button
                     type="button"
@@ -517,19 +507,17 @@ x509_extensions = v3_ca
                   </button>
                 )}
               </div>
-              <select
-                id="profile-select"
-                value={selectedProfile}
-                onChange={(e) => handleProfileSelect(e.target.value)}
-                className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
-              >
-                <option value="">-- Select a Profile --</option>
-                {availableProfiles.map((profile) => (
-                  <option key={profile} value={profile}>
-                    {profile.replace('Cert-', '').replace('.csv', '')}
-                  </option>
-                ))}
-              </select>
+              <FilterDropdown
+                items={availableProfiles.map((profile) => ({
+                  id: profile,
+                  label: profile.replace('Cert-', '').replace('.csv', ''),
+                }))}
+                selectedId={selectedProfile}
+                onSelect={handleProfileSelect}
+                defaultLabel="-- Select a Profile --"
+                noContainer
+                className="w-full"
+              />
             </div>
 
             {profileMetadata && (

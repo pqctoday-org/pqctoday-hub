@@ -12,6 +12,7 @@ import {
   Target,
   Calendar,
   ClipboardCheck,
+  Coins,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
@@ -456,6 +457,18 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
               <div className="text-sm font-medium text-foreground">Risk Assessment</div>
               <div className="text-xs text-muted-foreground">
                 Assess your organization&apos;s quantum readiness
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/digital-assets"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Coins size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Digital Assets</div>
+              <div className="text-xs text-muted-foreground">
+                Blockchain &amp; cryptocurrency quantum vulnerabilities
               </div>
             </div>
           </Link>

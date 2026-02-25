@@ -15,8 +15,11 @@ import { Button } from '../ui/button'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONA_RECOMMENDED_PATHS, PERSONA_NAV_PATHS } from '@/data/personaConfig'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { PersonalizationSection } from './PersonalizationSection'
 import { ScoreCard } from './ScoreCard'
+
+const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -75,7 +78,7 @@ const JOURNEY_STEPS: JourneyStep[] = [
     icon: GraduationCap,
     color: 'text-secondary',
     description:
-      '15 interactive modules + 340-question quiz — from PQC fundamentals to advanced protocols',
+      '19 interactive modules + 380-question quiz — from PQC fundamentals to advanced protocols',
     paths: ['/learn'],
   },
   {
@@ -86,7 +89,7 @@ const JOURNEY_STEPS: JourneyStep[] = [
     color: 'text-primary',
     description:
       '13-step quantum risk wizard — crypto inventory, sensitivity, compliance gaps, and personalized risk score',
-    paths: ['/assess'],
+    paths: ['/assess', '/report'],
   },
   {
     id: 'explore',
@@ -115,7 +118,7 @@ const JOURNEY_STEPS: JourneyStep[] = [
     icon: ArrowRightLeft,
     color: 'text-primary',
     description:
-      '193 verified PQC-ready tools across 7 infrastructure layers — from cloud KMS to hardware security modules',
+      '220+ verified PQC-ready tools across 7 infrastructure layers — from cloud KMS to hardware security modules',
     paths: ['/migrate'],
   },
   {
@@ -277,11 +280,11 @@ export const LandingView = () => {
               value: libraryCount !== null ? String(libraryCount) : '...',
               label: 'Standards Tracked',
             },
-            { value: '15', label: 'Learning Modules' },
+            { value: String(MODULE_COUNT), label: 'Learning Modules' },
           ].map((stat) => (
-            <div key={stat.label} className="glass-panel p-4">
+            <div key={stat.label} className="glass-panel p-4 text-center">
               <div className="text-2xl md:text-3xl font-bold text-gradient">{stat.value}</div>
-              <div className="text-xs text-muted-foreground mt-1">{stat.label}</div>
+              <div className="text-xs text-muted-foreground mt-1 leading-tight">{stat.label}</div>
             </div>
           ))}
         </motion.div>
@@ -311,39 +314,46 @@ export const LandingView = () => {
         </motion.div>
 
         {/* Step Rail */}
-        <div className="flex items-start justify-between mb-8 overflow-x-auto pb-2 gap-1">
-          {JOURNEY_STEPS.map((step, idx) => {
-            const accessible = isAccessible(step)
-            const recommended = isRecommendedStep(step)
-            return (
-              <div key={step.id} className="flex items-start flex-1 min-w-0">
-                <div
-                  className={`flex flex-col items-center flex-shrink-0 transition-opacity ${accessible ? 'opacity-100' : 'opacity-35'}`}
-                >
+        <div className="relative mb-8">
+          <div className="flex items-start justify-between overflow-x-auto pb-2 gap-1">
+            {JOURNEY_STEPS.map((step, idx) => {
+              const accessible = isAccessible(step)
+              const recommended = isRecommendedStep(step)
+              return (
+                <div key={step.id} className="flex items-start flex-1 min-w-0">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors ${
-                      accessible
-                        ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-border bg-muted text-muted-foreground'
-                    }`}
+                    className={`flex flex-col items-center flex-shrink-0 transition-opacity ${accessible ? 'opacity-100' : 'opacity-35'}`}
                   >
-                    {step.step}
-                  </div>
-                  <span className="text-[11px] mt-1 text-muted-foreground font-medium whitespace-nowrap">
-                    {step.label}
-                  </span>
-                  {recommended && (
-                    <span className="text-[9px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1 py-0.5 mt-0.5">
-                      For you
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors ${
+                        accessible
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-border bg-muted text-muted-foreground'
+                      }`}
+                    >
+                      {step.step}
+                    </div>
+                    <span className="text-[11px] mt-1 text-muted-foreground font-medium whitespace-nowrap">
+                      {step.label}
                     </span>
+                    {recommended && (
+                      <span className="text-[9px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1 py-0.5 mt-0.5">
+                        For you
+                      </span>
+                    )}
+                  </div>
+                  {idx < JOURNEY_STEPS.length - 1 && (
+                    <div className="h-0.5 flex-1 min-w-[8px] mx-1 sm:mx-2 bg-border mt-4" />
                   )}
                 </div>
-                {idx < JOURNEY_STEPS.length - 1 && (
-                  <div className="h-0.5 flex-1 min-w-[8px] mx-1 sm:mx-2 bg-border mt-4" />
-                )}
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
+          {/* Right-edge fade — visual affordance that rail can scroll on narrow viewports */}
+          <div
+            className="pointer-events-none absolute right-0 top-0 bottom-2 w-10 bg-gradient-to-l from-background to-transparent"
+            aria-hidden="true"
+          />
         </div>
 
         {/* Journey Step Cards */}

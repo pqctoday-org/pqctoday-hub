@@ -25,7 +25,7 @@ export const PersonaPicker = () => {
   const assessment = useAssessmentStore()
 
   const suggestedPersona = inferPersonaFromAssessment({
-    isComplete: assessment.isComplete,
+    assessmentStatus: assessment.assessmentStatus,
     teamSize: assessment.teamSize,
     migrationStatus: assessment.migrationStatus,
     cryptoAgility: assessment.cryptoAgility,

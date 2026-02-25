@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   Printer,
   Share2,
@@ -20,15 +20,24 @@ import {
   Info,
 } from 'lucide-react'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
+import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
-import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
+import {
+  PERSONA_NAV_PATHS,
+  ALWAYS_VISIBLE_PATHS,
+  getReportSectionConfig,
+} from '../../data/personaConfig'
+import type { ReportSectionId } from '../../data/personaConfig'
 import { PERSONAS } from '../../data/learningPersonas'
 import { complianceFrameworks } from '../../data/complianceData'
 import { softwareData } from '../../data/migrateData'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
-import { ReportThreatsAppendix } from './ReportThreatsAppendix'
+import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
+import { threatsData } from '../../data/threatsData'
 import { MigrationRoadmap } from './MigrationRoadmap'
+import { MigrationToolkit } from './MigrationToolkit'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
+import { Button } from '../ui/button'
 import clsx from 'clsx'
 import type {
   AssessmentResult,
@@ -43,37 +52,89 @@ import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
 
+/** Maps PQC replacement algorithm names to relevant Learn module paths. */
+const ALGO_LEARN_LINKS: Record<string, { path: string; label: string }> = {
+  'ML-KEM': { path: '/learn/pki-workshop', label: 'PKI Workshop' },
+  'ML-DSA': { path: '/learn/pki-workshop', label: 'PKI Workshop' },
+  'SLH-DSA': { path: '/learn/stateful-signatures', label: 'Signatures' },
+  LMS: { path: '/learn/stateful-signatures', label: 'Signatures' },
+  hybrid: { path: '/learn/hybrid-crypto', label: 'Hybrid Crypto' },
+}
+function getLearnLink(replacement: string): { path: string; label: string } | null {
+  if (replacement.includes('hybrid') || replacement.includes('Hybrid'))
+    return ALGO_LEARN_LINKS['hybrid']
+  for (const [key, value] of Object.entries(ALGO_LEARN_LINKS)) {
+    if (replacement.includes(key)) return value
+  }
+  return null
+}
+
+export function SectionInfoTip({ text }: { text: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <span className="relative inline-flex print:hidden">
+      <Button
+        variant="ghost"
+        onClick={(e) => {
+          e.stopPropagation()
+          setOpen((o) => !o)
+        }}
+        className="p-1 h-auto w-auto rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground"
+        aria-label="Section info"
+      >
+        <Info size={14} />
+      </Button>
+      {open && (
+        <div className="absolute left-0 top-full mt-1 z-50 w-64 p-3 rounded-lg bg-card border border-border shadow-lg text-xs text-muted-foreground leading-relaxed">
+          {text}
+        </div>
+      )}
+    </span>
+  )
+}
+
 function CollapsibleSection({
   title,
   icon,
   children,
   defaultOpen = false,
+  infoTip,
+  className,
+  headerExtra,
 }: {
   title: string
   icon: React.ReactNode
   children: React.ReactNode
   defaultOpen?: boolean
+  infoTip?: string
+  className?: string
+  headerExtra?: React.ReactNode
 }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <div className="glass-panel p-6 print:border print:border-gray-300">
-      <button
+    <div className={clsx('glass-panel p-6 print:border print:border-gray-300', className)}>
+      <Button
+        variant="ghost"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between print:hidden"
+        className="flex w-full h-auto items-center justify-between print:hidden"
         aria-expanded={open}
       >
         <div className="flex items-center gap-2 font-semibold text-foreground">
           {icon}
           {title}
+          {infoTip && <SectionInfoTip text={infoTip} />}
         </div>
-        <ChevronDown
-          size={18}
-          className={clsx(
-            'text-muted-foreground transition-transform duration-200',
-            open && 'rotate-180'
-          )}
-        />
-      </button>
+        <div className="flex items-center gap-2">
+          {headerExtra}
+          <ChevronDown
+            size={18}
+            className={clsx(
+              'text-muted-foreground transition-transform duration-200',
+              open && 'rotate-180'
+            )}
+          />
+        </div>
+      </Button>
       {/* Print-only static title (no button/chevron) */}
       <div className="hidden print:flex items-center gap-2 font-semibold text-foreground">
         {icon}
@@ -144,7 +205,7 @@ const RiskGauge = ({ score, level }: { score: number; level: AssessmentResult['r
     <div className="flex flex-col items-center">
       <svg
         viewBox="0 0 200 120"
-        className="w-48 h-28"
+        className="w-32 h-20 md:w-48 md:h-28"
         role="img"
         aria-label={`Risk score: ${score} out of 100, rated ${config.label}`}
       >
@@ -203,9 +264,11 @@ const RiskGauge = ({ score, level }: { score: number; level: AssessmentResult['r
 const CategoryBreakdown = ({
   scores,
   drivers,
+  defaultOpen = true,
 }: {
   scores: CategoryScores
   drivers?: CategoryDrivers
+  defaultOpen?: boolean
 }) => {
   const categories = [
     { label: 'Quantum Exposure', key: 'quantumExposure' as const },
@@ -227,11 +290,12 @@ const CategoryBreakdown = ({
   }
 
   return (
-    <div className="glass-panel p-6 print:border print:border-gray-300">
-      <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-        <BarChart3 className="text-primary" size={20} />
-        Risk Breakdown
-      </h3>
+    <CollapsibleSection
+      title="Risk Breakdown"
+      icon={<BarChart3 className="text-primary" size={20} />}
+      defaultOpen={defaultOpen}
+      infoTip="Four risk categories — Quantum Exposure, Migration Complexity, Regulatory Pressure, and Organizational Readiness — each scored from your wizard inputs with industry-tuned weights."
+    >
       <div className="space-y-4">
         {categories.map(({ label, key }) => {
           // eslint-disable-next-line security/detect-object-injection
@@ -267,7 +331,7 @@ const CategoryBreakdown = ({
           )
         })}
       </div>
-    </div>
+    </CollapsibleSection>
   )
 }
 
@@ -512,14 +576,19 @@ const ProfileField = ({ label, value }: { label: string; value: string | undefin
   )
 }
 
-const AssessmentProfileSummary = ({ profile }: { profile: AssessmentProfile }) => {
-  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-
+const AssessmentProfileSummary = ({
+  profile,
+  defaultOpen = false,
+}: {
+  profile: AssessmentProfile
+  defaultOpen?: boolean
+}) => {
   return (
     <CollapsibleSection
       title="Assessment Profile"
       icon={<Briefcase className="text-primary" size={20} />}
-      defaultOpen={selectedPersona === 'architect' || selectedPersona === 'researcher'}
+      defaultOpen={defaultOpen}
+      infoTip="Direct summary of the selections you made in the assessment wizard."
     >
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <ProfileField label="Industry" value={profile.industry} />
@@ -627,7 +696,15 @@ interface AssessReportProps {
   result: AssessmentResult
 }
 
-const HNDLHNFLSection = ({ hndl, hnfl }: { hndl?: HNDLRiskWindow; hnfl?: HNFLRiskWindow }) => {
+const HNDLHNFLSection = ({
+  hndl,
+  hnfl,
+  defaultOpen = true,
+}: {
+  hndl?: HNDLRiskWindow
+  hnfl?: HNFLRiskWindow
+  defaultOpen?: boolean
+}) => {
   if (!hndl && !hnfl) return null
 
   const ref = hndl ?? hnfl!
@@ -694,12 +771,12 @@ const HNDLHNFLSection = ({ hndl, hnfl }: { hndl?: HNDLRiskWindow; hnfl?: HNFLRis
   }
 
   return (
-    <div className="glass-panel p-6 print:border print:border-gray-300">
-      <h3 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2">
-        <Clock className="text-primary" size={20} />
-        Harvest-Now Attack Risk Windows
-      </h3>
-
+    <CollapsibleSection
+      title="Harvest-Now Attack Risk Windows"
+      icon={<Clock className="text-primary" size={20} />}
+      defaultOpen={defaultOpen}
+      infoTip="Risk windows computed from your data sensitivity, retention period, country regulatory deadlines, and signing algorithm selections."
+    >
       {/* Key milestones */}
       <div className="mb-6">
         <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">
@@ -753,12 +830,15 @@ const HNDLHNFLSection = ({ hndl, hnfl }: { hndl?: HNDLRiskWindow; hnfl?: HNFLRis
           <HNFLTimelineBar hnfl={hnfl} />
         </div>
       )}
-    </div>
+    </CollapsibleSection>
   )
 }
 
-export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
+export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
+  const navigate = useNavigate()
   const { reset, editFromStep } = useAssessmentStore()
+  const previousRiskScore = useAssessmentStore((s) => s.previousRiskScore)
+  const lastModifiedAt = useAssessmentStore((s) => s.lastModifiedAt)
   const industry = useAssessmentStore((s) => s.industry)
   const country = useAssessmentStore((s) => s.country)
   const dataSensitivity = useAssessmentStore((s) => s.dataSensitivity)
@@ -767,17 +847,61 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
   const hasSigningAlgos =
     (currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a)) || cryptoUnknown
   const infrastructure = useAssessmentStore((s) => s.infrastructure)
+  const infrastructureSubCategories = useAssessmentStore((s) => s.infrastructureSubCategories)
+  const hiddenThreats = useAssessmentStore((s) => s.hiddenThreats)
+  const hideThreat = useAssessmentStore((s) => s.hideThreat)
+  const restoreAllThreats = useAssessmentStore((s) => s.restoreAllThreats)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const isExecutive = selectedPersona === 'executive'
+  const hiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
+
+  const hiddenForIndustryCount = useMemo(() => {
+    if (!hiddenThreats.length || !industry) return 0
+    // eslint-disable-next-line security/detect-object-injection
+    const threatIndustryNames = ASSESS_TO_THREATS_INDUSTRY[industry] ?? []
+    const industryThreatIds = new Set(
+      threatsData.filter((t) => threatIndustryNames.includes(t.industry)).map((t) => t.threatId)
+    )
+    return hiddenThreats.filter((id) => industryThreatIds.has(id)).length
+  }, [industry, hiddenThreats])
+
   const [showFullReport, setShowFullReport] = useState(false)
   const [methodologyOpen, setMethodologyOpen] = useState(false)
+
+  /** Config-driven section state resolver. */
+  const cfg = (sectionId: ReportSectionId) =>
+    getReportSectionConfig(selectedPersona, sectionId, showFullReport)
+
+  /** Whether the current persona has any hidden sections (enables summary/full toggle). */
+  const hasSummaryMode = useMemo(() => {
+    if (!selectedPersona) return false
+    const sectionIds: ReportSectionId[] = [
+      'countryTimeline',
+      'riskScore',
+      'keyFindings',
+      'riskBreakdown',
+      'executiveSummary',
+      'assessmentProfile',
+      'hndlHnfl',
+      'algorithmMigration',
+      'complianceImpact',
+      'recommendedActions',
+      'migrationRoadmap',
+      'migrationToolkit',
+      'threatLandscape',
+    ]
+    return sectionIds.some((id) => getReportSectionConfig(selectedPersona, id).state === 'hidden')
+  }, [selectedPersona])
 
   /** Top migrate catalog products relevant to this assessment's industry + infrastructure. */
   const relevantSoftware = useMemo(() => {
     if (!industry || !softwareData?.length) return []
     const industryLower = industry.toLowerCase()
+    const hiddenSet = new Set(hiddenProducts)
     return softwareData
       .filter((item) => {
+        // Respect migrate page selections
+        const key = `${item.softwareName}::${item.categoryId}`
+        if (hiddenSet.has(key)) return false
         const industryMatch = item.targetIndustries.toLowerCase().includes(industryLower)
         const infraMatch = (infrastructure ?? []).some((i) =>
           item.infrastructureLayer.toLowerCase().includes(i.toLowerCase().split(' ')[0])
@@ -790,7 +914,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
         return (order[a.pqcMigrationPriority] ?? 3) - (order[b.pqcMigrationPriority] ?? 3)
       })
       .slice(0, 5)
-  }, [industry, infrastructure])
+  }, [industry, infrastructure, hiddenProducts])
 
   /** Check if a given route is visible for the current persona's nav */
   const isPathVisible = (path: string): boolean => {
@@ -909,7 +1033,7 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
   const assessUrl = `${window.location.origin}/assess`
 
   return (
-    <div className="assess-report max-w-3xl mx-auto print:max-w-none">
+    <div className="assess-report print:max-w-none">
       {/* Print-only repeating header (position:fixed in CSS repeats on every page) */}
       <div className="hidden print-header" aria-hidden="true">
         <span style={{ fontWeight: 600 }}>PQC Today — v{APP_VERSION}</span>
@@ -949,13 +1073,14 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                     <h2 className="text-3xl font-bold text-gradient mb-2 print:text-black">
                       Your PQC Risk Assessment Report
                     </h2>
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={() => setMethodologyOpen(true)}
-                      className="p-1.5 rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors print:hidden mb-2"
+                      className="p-1.5 h-auto w-auto rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground print:hidden mb-2"
                       aria-label="How this report works"
                     >
                       <Info size={18} />
-                    </button>
+                    </Button>
                   </div>
                   <p className="text-sm text-muted-foreground print:text-gray-600">
                     Generated on {generatedDate}
@@ -972,90 +1097,169 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                   </span>
                 </div>
 
-                {/* Executive view toggle */}
-                {isExecutive && !showFullReport && (
+                {/* Summary / full report toggle (shown when persona hides sections) */}
+                {hasSummaryMode && !showFullReport && (
                   <div className="glass-panel p-3 flex items-center justify-between print:hidden">
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5">
                       <Briefcase size={14} className="text-primary" />
-                      Showing executive summary
+                      Showing summary view
                     </span>
-                    <button
+                    <Button
+                      variant="link"
                       onClick={() => setShowFullReport(true)}
-                      className="text-xs text-primary hover:underline"
+                      className="text-xs p-0 h-auto"
                     >
                       View full technical report
-                    </button>
+                    </Button>
                   </div>
                 )}
-                {isExecutive && showFullReport && (
+                {hasSummaryMode && showFullReport && (
                   <div className="glass-panel p-3 flex items-center justify-between print:hidden">
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5">
                       <Briefcase size={14} className="text-primary" />
                       Showing full technical report
                     </span>
-                    <button
+                    <Button
+                      variant="link"
                       onClick={() => setShowFullReport(false)}
-                      className="text-xs text-primary hover:underline"
+                      className="text-xs p-0 h-auto"
                     >
-                      Switch to executive summary
-                    </button>
+                      Switch to summary view
+                    </Button>
                   </div>
                 )}
 
                 {/* Country PQC Migration Timeline */}
-                <CollapsibleSection
-                  title={
-                    country ? `${country} PQC Migration Timeline` : 'Country PQC Migration Timeline'
-                  }
-                  icon={<Calendar className="text-primary" size={20} />}
-                >
-                  <ReportTimelineStrip countryName={country} />
-                </CollapsibleSection>
+                {cfg('countryTimeline').state !== 'hidden' && (
+                  <CollapsibleSection
+                    title={
+                      country
+                        ? `${country} PQC Migration Timeline`
+                        : 'Country PQC Migration Timeline'
+                    }
+                    icon={<Calendar className="text-primary" size={20} />}
+                    defaultOpen={cfg('countryTimeline').state === 'open'}
+                    infoTip="Shows PQC migration phases and regulatory deadlines for your selected country from the Timeline database."
+                  >
+                    <ReportTimelineStrip countryName={country} />
+                    <Link
+                      to={
+                        country ? `/timeline?country=${encodeURIComponent(country)}` : '/timeline'
+                      }
+                      className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
+                    >
+                      <ArrowRight size={12} />
+                      View full {country ? `${country} ` : ''}timeline
+                    </Link>
+                  </CollapsibleSection>
+                )}
 
                 {/* Risk Score */}
-                <div
-                  className={clsx(
-                    'glass-panel p-6 border-l-4',
-                    config.border,
-                    'print:border print:border-gray-300'
-                  )}
+                <CollapsibleSection
+                  title="Risk Score"
+                  icon={<ShieldAlert className={config.color} size={20} />}
+                  defaultOpen={cfg('riskScore').state === 'open'}
+                  className={clsx('border-l-4', config.border)}
+                  infoTip="Composite score (0\u2013100) computed from four weighted categories based on your assessment inputs. Industry-specific weights prioritize the most relevant risk factors."
                 >
                   <RiskGauge score={result.riskScore} level={result.riskLevel} />
+                  {previousRiskScore !== null && previousRiskScore !== result.riskScore && (
+                    <div className="flex items-center justify-center gap-2 mt-2 print:hidden">
+                      <span
+                        className={clsx(
+                          'text-xs font-mono px-2 py-0.5 rounded-full',
+                          result.riskScore < previousRiskScore
+                            ? 'bg-success/10 text-success'
+                            : 'bg-destructive/10 text-destructive'
+                        )}
+                      >
+                        {result.riskScore < previousRiskScore ? '' : '+'}
+                        {result.riskScore - previousRiskScore} since last assessment
+                      </span>
+                    </div>
+                  )}
+                  {lastModifiedAt && (
+                    <p className="text-[10px] text-muted-foreground/60 text-center mt-1 font-mono print:hidden">
+                      Last updated:{' '}
+                      {new Date(lastModifiedAt).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                  )}
                   <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-gray-600">
                     {result.personaNarrative ?? result.narrative}
                   </p>
-                </div>
+                </CollapsibleSection>
+
+                {/* Key Findings */}
+                {result.keyFindings &&
+                  result.keyFindings.length > 0 &&
+                  cfg('keyFindings').state !== 'hidden' && (
+                    <CollapsibleSection
+                      title="Key Findings"
+                      icon={<AlertTriangle className="text-warning" size={20} />}
+                      defaultOpen={cfg('keyFindings').state === 'open'}
+                      className="border-l-4 border-l-warning"
+                      infoTip="Automatically identified from your assessment: vulnerable algorithms, compliance gaps, and migration blockers."
+                    >
+                      <ul className="space-y-2">
+                        {result.keyFindings.map((finding, i) => (
+                          <li
+                            key={i}
+                            className="flex gap-2 text-sm text-muted-foreground leading-relaxed"
+                          >
+                            <span className="text-warning font-bold shrink-0">{i + 1}.</span>
+                            {finding}
+                          </li>
+                        ))}
+                      </ul>
+                    </CollapsibleSection>
+                  )}
 
                 {/* Category Score Breakdown */}
-                {result.categoryScores && (
+                {result.categoryScores && cfg('riskBreakdown').state !== 'hidden' && (
                   <CategoryBreakdown
                     scores={result.categoryScores}
                     drivers={result.categoryDrivers}
+                    defaultOpen={cfg('riskBreakdown').state === 'open'}
                   />
                 )}
 
                 {/* Executive Summary */}
-                {result.executiveSummary && (
-                  <div className="glass-panel p-6 border-l-4 border-l-primary print:border print:border-gray-300">
-                    <h3 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
-                      <Briefcase className="text-primary" size={20} />
-                      Executive Summary
-                    </h3>
+                {result.executiveSummary && cfg('executiveSummary').state !== 'hidden' && (
+                  <CollapsibleSection
+                    title="Executive Summary"
+                    icon={<Briefcase className="text-primary" size={20} />}
+                    defaultOpen={cfg('executiveSummary').state === 'open'}
+                    className="border-l-4 border-l-primary"
+                    infoTip="Persona-tailored narrative summarizing key risks and recommended priorities based on your assessment inputs."
+                  >
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       {result.executiveSummary}
                     </p>
-                  </div>
+                  </CollapsibleSection>
                 )}
 
                 {/* Assessment Profile */}
-                {result.assessmentProfile && (
-                  <AssessmentProfileSummary profile={result.assessmentProfile} />
+                {result.assessmentProfile && cfg('assessmentProfile').state !== 'hidden' && (
+                  <AssessmentProfileSummary
+                    profile={result.assessmentProfile}
+                    defaultOpen={cfg('assessmentProfile').state === 'open'}
+                  />
                 )}
 
                 {/* Consolidated HNDL / HNFL Risk Windows */}
                 {(result.hndlRiskWindow || result.hnflRiskWindow) &&
-                  (!isExecutive || showFullReport) && (
-                    <HNDLHNFLSection hndl={result.hndlRiskWindow} hnfl={result.hnflRiskWindow} />
+                  cfg('hndlHnfl').state !== 'hidden' && (
+                    <HNDLHNFLSection
+                      hndl={result.hndlRiskWindow}
+                      hnfl={result.hnflRiskWindow}
+                      defaultOpen={cfg('hndlHnfl').state === 'open'}
+                    />
                   )}
 
                 {/* HNDL warning for quick assessments with high sensitivity */}
@@ -1097,318 +1301,412 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
                 )}
 
                 {/* Algorithm Migration Matrix */}
-                {result.algorithmMigrations.length > 0 && (!isExecutive || showFullReport) && (
-                  <div className="glass-panel p-6 print:border print:border-gray-300 print:break-inside-auto">
-                    <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                      <ShieldAlert className="text-primary" size={20} />
-                      Algorithm Migration Priority
-                    </h3>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b border-border text-left">
-                            <th className="py-2 pr-3 text-muted-foreground font-medium">Current</th>
-                            <th className="py-2 pr-3 text-muted-foreground font-medium">
-                              Vulnerable?
-                            </th>
-                            <th className="py-2 pr-3 text-muted-foreground font-medium">
-                              PQC Replacement
-                            </th>
-                            {result.migrationEffort && (
-                              <>
-                                <th className="py-2 pr-3 text-muted-foreground font-medium">
-                                  Effort
-                                </th>
-                                <th className="py-2 pr-3 text-muted-foreground font-medium">
-                                  Scope
-                                </th>
-                              </>
-                            )}
-                            <th className="py-2 text-muted-foreground font-medium">Notes</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {result.algorithmMigrations.map((algo) => {
-                            const effort = result.migrationEffort?.find(
-                              (e) => e.algorithm === algo.classical
-                            )
-                            return (
-                              <tr key={algo.classical} className="border-b border-border/50">
-                                <td className="py-2.5 pr-3 font-medium text-foreground">
-                                  {algo.classical}
-                                </td>
-                                <td className="py-2.5 pr-3">
-                                  {algo.quantumVulnerable ? (
-                                    <span className="flex items-center gap-1 text-destructive">
-                                      <AlertTriangle size={14} /> Yes
-                                    </span>
-                                  ) : (
-                                    <span className="flex items-center gap-1 text-success">
-                                      <CheckCircle size={14} /> No
-                                    </span>
+                {result.algorithmMigrations.length > 0 &&
+                  cfg('algorithmMigration').state !== 'hidden' && (
+                    <CollapsibleSection
+                      title="Algorithm Migration Priority"
+                      icon={<ShieldAlert className="text-primary" size={20} />}
+                      defaultOpen={cfg('algorithmMigration').state === 'open'}
+                      className="print:break-inside-auto"
+                      infoTip="Maps your current algorithms to NIST-recommended PQC replacements with migration effort estimates."
+                    >
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border text-left">
+                              <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                Current
+                              </th>
+                              <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                Vulnerable?
+                              </th>
+                              <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                PQC Replacement
+                              </th>
+                              {result.migrationEffort && (
+                                <>
+                                  <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                    Effort
+                                  </th>
+                                  <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                    Scope
+                                  </th>
+                                </>
+                              )}
+                              <th className="py-2 text-muted-foreground font-medium">Notes</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {result.algorithmMigrations.map((algo) => {
+                              const effort = result.migrationEffort?.find(
+                                (e) => e.algorithm === algo.classical
+                              )
+                              return (
+                                <tr key={algo.classical} className="border-b border-border/50">
+                                  <td className="py-2.5 pr-3 font-medium text-foreground">
+                                    {algo.classical}
+                                  </td>
+                                  <td className="py-2.5 pr-3">
+                                    {algo.quantumVulnerable ? (
+                                      <span className="flex items-center gap-1 text-destructive">
+                                        <AlertTriangle size={14} /> Yes
+                                      </span>
+                                    ) : (
+                                      <span className="flex items-center gap-1 text-success">
+                                        <CheckCircle size={14} /> No
+                                      </span>
+                                    )}
+                                  </td>
+                                  <td className="py-2.5 pr-3 text-primary">
+                                    <div className="flex items-center gap-2">
+                                      <span>{algo.replacement}</span>
+                                      {algo.quantumVulnerable &&
+                                        !algo.replacement.includes('No change') && (
+                                          <>
+                                            <Link
+                                              to="/playground"
+                                              className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
+                                              title="Try in Playground"
+                                            >
+                                              <FlaskConical size={10} />
+                                              <span className="hidden lg:inline">Try</span>
+                                            </Link>
+                                            {(() => {
+                                              const learnLink = getLearnLink(algo.replacement)
+                                              if (!learnLink) return null
+                                              return (
+                                                <Link
+                                                  to={learnLink.path}
+                                                  className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
+                                                  title={`Learn about ${learnLink.label}`}
+                                                >
+                                                  <BookOpen size={10} />
+                                                  <span className="hidden lg:inline">
+                                                    {learnLink.label}
+                                                  </span>
+                                                </Link>
+                                              )
+                                            })()}
+                                          </>
+                                        )}
+                                    </div>
+                                  </td>
+                                  {result.migrationEffort && (
+                                    <>
+                                      <td className="py-2.5 pr-3">
+                                        {effort ? (
+                                          <span
+                                            className={clsx(
+                                              'text-xs font-bold px-2 py-0.5 rounded-full',
+
+                                              complexityConfig[effort.complexity]?.bg ?? 'bg-muted',
+
+                                              complexityConfig[effort.complexity]?.color ??
+                                                'text-muted-foreground'
+                                            )}
+                                          >
+                                            {effort.complexity}
+                                          </span>
+                                        ) : (
+                                          <span className="text-xs text-muted-foreground">—</span>
+                                        )}
+                                      </td>
+                                      <td className="py-2.5 pr-3">
+                                        {effort ? (
+                                          <span
+                                            className={clsx(
+                                              'text-xs font-bold px-2 py-0.5 rounded-full',
+
+                                              scopeConfig[effort.estimatedScope]?.bg ?? 'bg-muted',
+
+                                              scopeConfig[effort.estimatedScope]?.color ??
+                                                'text-muted-foreground'
+                                            )}
+                                          >
+                                            {scopeConfig[effort.estimatedScope]?.label ??
+                                              effort.estimatedScope}
+                                          </span>
+                                        ) : (
+                                          <span className="text-xs text-muted-foreground">—</span>
+                                        )}
+                                      </td>
+                                    </>
                                   )}
-                                </td>
-                                <td className="py-2.5 pr-3 text-primary">
-                                  <div className="flex items-center gap-2">
-                                    <span>{algo.replacement}</span>
-                                    {algo.quantumVulnerable &&
-                                      !algo.replacement.includes('No change') && (
-                                        <Link
-                                          to="/playground"
-                                          className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
-                                          title="Try in Playground"
-                                        >
-                                          <FlaskConical size={10} />
-                                          <span className="hidden lg:inline">Try</span>
-                                        </Link>
-                                      )}
-                                  </div>
-                                </td>
-                                {result.migrationEffort && (
-                                  <>
-                                    <td className="py-2.5 pr-3">
-                                      {effort ? (
-                                        <span
-                                          className={clsx(
-                                            'text-xs font-bold px-2 py-0.5 rounded-full',
-
-                                            complexityConfig[effort.complexity]?.bg ?? 'bg-muted',
-
-                                            complexityConfig[effort.complexity]?.color ??
-                                              'text-muted-foreground'
-                                          )}
-                                        >
-                                          {effort.complexity}
-                                        </span>
-                                      ) : (
-                                        <span className="text-xs text-muted-foreground">—</span>
-                                      )}
-                                    </td>
-                                    <td className="py-2.5 pr-3">
-                                      {effort ? (
-                                        <span
-                                          className={clsx(
-                                            'text-xs font-bold px-2 py-0.5 rounded-full',
-
-                                            scopeConfig[effort.estimatedScope]?.bg ?? 'bg-muted',
-
-                                            scopeConfig[effort.estimatedScope]?.color ??
-                                              'text-muted-foreground'
-                                          )}
-                                        >
-                                          {scopeConfig[effort.estimatedScope]?.label ??
-                                            effort.estimatedScope}
-                                        </span>
-                                      ) : (
-                                        <span className="text-xs text-muted-foreground">—</span>
-                                      )}
-                                    </td>
-                                  </>
-                                )}
-                                <td className="py-2.5 text-muted-foreground text-xs">
-                                  {algo.notes}
-                                </td>
-                              </tr>
-                            )
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
+                                  <td className="py-2.5 text-muted-foreground text-xs">
+                                    {algo.notes}
+                                  </td>
+                                </tr>
+                              )
+                            })}
+                          </tbody>
+                        </table>
+                        <div className="flex items-center gap-4 mt-3 print:hidden">
+                          <Link
+                            to={`/algorithms${
+                              result.algorithmMigrations
+                                .filter((a) => a.quantumVulnerable)
+                                .map((a) => a.classical).length > 0
+                                ? `?highlight=${encodeURIComponent(
+                                    result.algorithmMigrations
+                                      .filter((a) => a.quantumVulnerable)
+                                      .map((a) => a.classical)
+                                      .join(',')
+                                  )}`
+                                : ''
+                            }`}
+                            className="flex items-center gap-1.5 text-xs text-primary hover:underline"
+                          >
+                            <ArrowRight size={12} />
+                            Compare algorithms
+                          </Link>
+                        </div>
+                      </div>
+                    </CollapsibleSection>
+                  )}
 
                 {/* Compliance Impact */}
-                {result.complianceImpacts.length > 0 && (
-                  <div className="glass-panel p-6 print:border print:border-gray-300 print:break-inside-auto">
-                    <h3 className="text-lg font-bold text-foreground mb-4">Compliance Impact</h3>
-                    <div className="space-y-3">
-                      {result.complianceImpacts.map((c) => (
-                        <div
-                          key={c.framework}
-                          className={clsx(
-                            'p-3 rounded-lg border text-sm',
-                            c.requiresPQC === true
-                              ? 'border-warning/30 bg-warning/5'
-                              : c.requiresPQC === null
-                                ? 'border-muted/50 bg-muted/5'
-                                : 'border-border'
-                          )}
-                        >
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="font-semibold text-foreground">{c.framework}</span>
-                            <span
-                              className={clsx(
-                                'text-xs font-bold px-2 py-0.5 rounded-full',
-                                c.requiresPQC === true
-                                  ? 'bg-warning/10 text-warning'
-                                  : c.requiresPQC === null
-                                    ? 'bg-muted/20 text-muted-foreground'
-                                    : 'bg-muted text-muted-foreground'
-                              )}
-                            >
-                              {c.requiresPQC === true
-                                ? 'PQC Required'
-                                : c.requiresPQC === null
-                                  ? 'Status unknown'
-                                  : 'No PQC mandate yet'}
-                            </span>
-                          </div>
-                          <p className="text-xs text-muted-foreground">
-                            <strong>Deadline:</strong> {c.deadline}
-                          </p>
-                          <p className="text-xs text-muted-foreground">{c.notes}</p>
-                          {(() => {
-                            const fullFw = complianceFrameworks.find((f) => f.label === c.framework)
-                            if (!fullFw) return null
-                            const hasRefs =
-                              fullFw.libraryRefs.length > 0 || fullFw.timelineRefs.length > 0
-                            if (!hasRefs) return null
-                            return (
-                              <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
-                                {fullFw.libraryRefs.map((ref) => (
-                                  <Link
-                                    to={`/library?search=${encodeURIComponent(ref)}`}
-                                    key={ref}
-                                    className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
-                                    title={`View ${ref} in Library`}
-                                  >
-                                    <BookOpen size={8} />
-                                    {ref}
-                                  </Link>
-                                ))}
-                                {fullFw.timelineRefs.map((ref) => (
-                                  <Link
-                                    to="/timeline"
-                                    key={ref}
-                                    className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
-                                    title={`${ref} in Timeline`}
-                                  >
-                                    <Calendar size={8} />
-                                    {ref}
-                                  </Link>
-                                ))}
-                              </div>
-                            )
-                          })()}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Recommended Actions */}
-                <div className="glass-panel p-6 print:border print:border-gray-300 print:break-inside-auto">
-                  <h3 className="text-lg font-bold text-foreground mb-4">
-                    Recommended Actions
-                    {isExecutive && !showFullReport && (
-                      <span className="text-xs font-normal text-muted-foreground ml-2">
-                        (Top 5)
-                      </span>
-                    )}
-                  </h3>
-                  <div className="space-y-3">
-                    {result.recommendedActions
-                      .slice(0, isExecutive && !showFullReport ? 5 : undefined)
-                      .map((action) => (
-                        <div
-                          key={action.priority}
-                          className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
-                        >
+                {result.complianceImpacts.length > 0 &&
+                  cfg('complianceImpact').state !== 'hidden' && (
+                    <CollapsibleSection
+                      title="Compliance Impact"
+                      icon={<CheckCircle className="text-primary" size={20} />}
+                      defaultOpen={cfg('complianceImpact').state === 'open'}
+                      className="print:break-inside-auto"
+                      infoTip="Shows PQC mandates and deadlines for the compliance frameworks you selected in the assessment."
+                    >
+                      <div className="space-y-3">
+                        {result.complianceImpacts.map((c) => (
                           <div
+                            key={c.framework}
                             className={clsx(
-                              'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-2',
-                              action.category === 'immediate'
-                                ? 'border-destructive text-destructive'
-                                : action.category === 'short-term'
-                                  ? 'border-warning text-warning'
-                                  : 'border-border text-muted-foreground'
+                              'p-3 rounded-lg border text-sm',
+                              c.requiresPQC === true
+                                ? 'border-warning/30 bg-warning/5'
+                                : c.requiresPQC === null
+                                  ? 'border-muted/50 bg-muted/5'
+                                  : 'border-border'
                             )}
                           >
-                            {action.priority}
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm text-foreground">{action.action}</p>
-                            <div className="flex items-center gap-3 mt-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="font-semibold text-foreground">{c.framework}</span>
                               <span
                                 className={clsx(
-                                  'text-[10px] font-bold uppercase',
-                                  action.category === 'immediate'
-                                    ? 'text-destructive'
-                                    : action.category === 'short-term'
-                                      ? 'text-warning'
-                                      : 'text-muted-foreground'
+                                  'text-xs font-bold px-2 py-0.5 rounded-full',
+                                  c.requiresPQC === true
+                                    ? 'bg-warning/10 text-warning'
+                                    : c.requiresPQC === null
+                                      ? 'bg-muted/20 text-muted-foreground'
+                                      : 'bg-muted text-muted-foreground'
                                 )}
                               >
-                                {action.category}
+                                {c.requiresPQC === true
+                                  ? 'PQC Required'
+                                  : c.requiresPQC === null
+                                    ? 'Status unknown'
+                                    : 'No PQC mandate yet'}
                               </span>
-                              {action.effort && (
-                                <span
-                                  className={clsx(
-                                    'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded',
-
-                                    effortConfig[action.effort]?.bg ?? 'bg-muted',
-
-                                    effortConfig[action.effort]?.color ?? 'text-muted-foreground'
-                                  )}
-                                >
-                                  {effortConfig[action.effort]?.label ?? action.effort} effort
-                                </span>
-                              )}
-                              {isPathVisible(action.relatedModule) && (
-                                <Link
-                                  to={
-                                    action.relatedModule.startsWith('/migrate') && industry
-                                      ? `${action.relatedModule}${action.relatedModule.includes('?') ? '&' : '?'}industry=${encodeURIComponent(industry)}`
-                                      : action.relatedModule
-                                  }
-                                  className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
-                                >
-                                  <ArrowRight size={10} />
-                                  Explore
-                                </Link>
-                              )}
                             </div>
-                            {action.relatedModule.startsWith('/migrate') &&
-                              relevantSoftware.length > 0 && (
+                            <p className="text-xs text-muted-foreground">
+                              <strong>Deadline:</strong> {c.deadline}
+                            </p>
+                            <p className="text-xs text-muted-foreground">{c.notes}</p>
+                            {(() => {
+                              const fullFw = complianceFrameworks.find(
+                                (f) => f.label === c.framework
+                              )
+                              if (!fullFw) return null
+                              const hasRefs =
+                                fullFw.libraryRefs.length > 0 || fullFw.timelineRefs.length > 0
+                              if (!hasRefs) return null
+                              return (
                                 <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
-                                  <span className="text-[10px] text-muted-foreground/70">
-                                    Tools:
-                                  </span>
-                                  {relevantSoftware.slice(0, 2).map((sw) => (
+                                  {fullFw.libraryRefs.map((ref) => (
                                     <Link
-                                      to={`/migrate?industry=${encodeURIComponent(industry)}`}
-                                      key={sw.softwareName}
-                                      className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
+                                      to={`/library?search=${encodeURIComponent(ref)}`}
+                                      key={ref}
+                                      className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
+                                      title={`View ${ref} in Library`}
                                     >
-                                      {sw.softwareName}
+                                      <BookOpen size={8} />
+                                      {ref}
+                                    </Link>
+                                  ))}
+                                  {fullFw.timelineRefs.map((ref) => (
+                                    <Link
+                                      to="/timeline"
+                                      key={ref}
+                                      className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
+                                      title={`${ref} in Timeline`}
+                                    >
+                                      <Calendar size={8} />
+                                      {ref}
                                     </Link>
                                   ))}
                                 </div>
-                              )}
+                              )
+                            })()}
                           </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
+                        ))}
+                        <Link
+                          to="/compliance"
+                          className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
+                        >
+                          <ArrowRight size={12} />
+                          Explore all compliance frameworks
+                        </Link>
+                      </div>
+                    </CollapsibleSection>
+                  )}
+
+                {/* Recommended Actions */}
+                {cfg('recommendedActions').state !== 'hidden' && (
+                  <CollapsibleSection
+                    title={`Recommended Actions${cfg('recommendedActions').maxItems ? ` (Top ${cfg('recommendedActions').maxItems})` : ''}`}
+                    icon={<ArrowRight className="text-primary" size={20} />}
+                    defaultOpen={cfg('recommendedActions').state === 'open'}
+                    className="print:break-inside-auto"
+                    infoTip="Prioritized action items generated from your specific algorithms, infrastructure, compliance, and migration status."
+                  >
+                    <div className="space-y-3">
+                      {result.recommendedActions
+                        .slice(0, cfg('recommendedActions').maxItems)
+                        .map((action) => (
+                          <div
+                            key={action.priority}
+                            className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
+                          >
+                            <div
+                              className={clsx(
+                                'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-2',
+                                action.category === 'immediate'
+                                  ? 'border-destructive text-destructive'
+                                  : action.category === 'short-term'
+                                    ? 'border-warning text-warning'
+                                    : 'border-border text-muted-foreground'
+                              )}
+                            >
+                              {action.priority}
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm text-foreground">{action.action}</p>
+                              <div className="flex items-center gap-3 mt-1">
+                                <span
+                                  className={clsx(
+                                    'text-[10px] font-bold uppercase',
+                                    action.category === 'immediate'
+                                      ? 'text-destructive'
+                                      : action.category === 'short-term'
+                                        ? 'text-warning'
+                                        : 'text-muted-foreground'
+                                  )}
+                                >
+                                  {action.category}
+                                </span>
+                                {action.effort && (
+                                  <span
+                                    className={clsx(
+                                      'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded',
+
+                                      effortConfig[action.effort]?.bg ?? 'bg-muted',
+
+                                      effortConfig[action.effort]?.color ?? 'text-muted-foreground'
+                                    )}
+                                  >
+                                    {effortConfig[action.effort]?.label ?? action.effort} effort
+                                  </span>
+                                )}
+                                {isPathVisible(action.relatedModule) && (
+                                  <Link
+                                    to={
+                                      action.relatedModule.startsWith('/migrate') && industry
+                                        ? `${action.relatedModule}${action.relatedModule.includes('?') ? '&' : '?'}industry=${encodeURIComponent(industry)}`
+                                        : action.relatedModule
+                                    }
+                                    className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
+                                  >
+                                    <ArrowRight size={10} />
+                                    Explore
+                                  </Link>
+                                )}
+                              </div>
+                              {action.relatedModule.startsWith('/migrate') &&
+                                relevantSoftware.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
+                                    <span className="text-[10px] text-muted-foreground/70">
+                                      Tools:
+                                    </span>
+                                    {relevantSoftware.slice(0, 2).map((sw) => (
+                                      <Link
+                                        to={`/migrate?industry=${encodeURIComponent(industry)}`}
+                                        key={sw.softwareName}
+                                        className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
+                                      >
+                                        {sw.softwareName}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </CollapsibleSection>
+                )}
 
                 {/* Migration Roadmap */}
-                <MigrationRoadmap
-                  actions={result.recommendedActions}
-                  countryName={country || undefined}
-                />
+                {cfg('migrationRoadmap').state !== 'hidden' && (
+                  <MigrationRoadmap
+                    actions={result.recommendedActions}
+                    countryName={country || undefined}
+                    defaultOpen={cfg('migrationRoadmap').state === 'open'}
+                  />
+                )}
+
+                {/* Migration Toolkit — products from Migrate catalog */}
+                {cfg('migrationToolkit').state !== 'hidden' && (
+                  <MigrationToolkit
+                    assessmentInfrastructure={infrastructure}
+                    assessmentSubCategories={infrastructureSubCategories}
+                    assessmentIndustry={industry}
+                    defaultOpen={cfg('migrationToolkit').state === 'open'}
+                  />
+                )}
 
                 {/* Industry Threat Landscape */}
-                <div className="print:break-before-page print:break-inside-auto">
-                  <CollapsibleSection
-                    title={industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'}
-                    icon={<ShieldAlert className="text-destructive" size={20} />}
-                    defaultOpen={
-                      selectedPersona === 'researcher' || selectedPersona === 'architect'
-                    }
-                  >
-                    <ReportThreatsAppendix industry={industry} userAlgorithms={currentCrypto} />
-                  </CollapsibleSection>
-                </div>
+                {cfg('threatLandscape').state !== 'hidden' && (
+                  <div className="print:break-before-page print:break-inside-auto">
+                    <CollapsibleSection
+                      title={
+                        industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'
+                      }
+                      icon={<ShieldAlert className="text-destructive" size={20} />}
+                      defaultOpen={cfg('threatLandscape').state === 'open'}
+                      infoTip="Industry-specific quantum threats matched against your current algorithms from the Threats database."
+                      headerExtra={
+                        hiddenForIndustryCount > 0 ? (
+                          <Button
+                            variant="ghost"
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              restoreAllThreats()
+                            }}
+                            className="text-xs px-2.5 py-1 h-auto rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 print:hidden"
+                          >
+                            {hiddenForIndustryCount} hidden · Restore
+                          </Button>
+                        ) : undefined
+                      }
+                    >
+                      <ReportThreatsAppendix
+                        industry={industry}
+                        userAlgorithms={currentCrypto}
+                        hiddenThreatIds={hiddenThreats}
+                        onHideThreat={hideThreat}
+                      />
+                    </CollapsibleSection>
+                  </div>
+                )}
 
                 {/* Cross-view CTA: Continue to Learning Path */}
                 {selectedPersona && PERSONAS[selectedPersona] && (
@@ -1435,41 +1733,52 @@ export const AssessReport: React.FC<AssessReportProps> = ({ result }) => {
 
                 <div className="flex flex-col items-center gap-2 print:hidden">
                   <div className="flex flex-wrap items-center justify-center gap-3">
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={handlePrint}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
                     >
                       <Printer size={16} />
                       Download PDF
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
                       onClick={handleCSVExport}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
                     >
                       <Download size={16} />
                       Export CSV
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
                       onClick={handleShare}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
                     >
                       <Share2 size={16} />
                       Share
-                    </button>
-                    <button
-                      onClick={() => editFromStep(0)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        editFromStep(0)
+                        navigate('/assess')
+                      }}
+                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
                     >
                       <Pencil size={16} />
                       Edit Answers
-                    </button>
-                    <button
-                      onClick={reset}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        reset()
+                        navigate('/assess')
+                      }}
+                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
                     >
                       <RotateCcw size={16} />
                       Start Over
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

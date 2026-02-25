@@ -2,7 +2,7 @@ import React from 'react'
 import { clsx } from 'clsx'
 import { Key, Shield, Lock, HelpCircle, Eye } from 'lucide-react'
 import type { TraceEvent } from './CryptoLogDisplay'
-import type { TLSConfig } from '../../../../../store/tls-learning.store'
+import type { TLSConfig } from '@/store/tls-learning.store'
 
 interface KeyColumnProps {
   title: string

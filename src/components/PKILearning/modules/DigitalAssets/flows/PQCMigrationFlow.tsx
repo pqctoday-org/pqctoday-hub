@@ -695,7 +695,7 @@ export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack }) =>
 
       {/* Content area */}
       {currentPart < 4 ? (
-        <div className="glass-panel p-6 min-h-[600px]">
+        <div className="glass-panel p-6 min-h-[400px] md:min-h-[600px]">
           <div className="mb-6 border-b border-border pb-4">
             <h2 className="text-2xl font-bold text-foreground">{PARTS[currentPart].title}</h2>
           </div>

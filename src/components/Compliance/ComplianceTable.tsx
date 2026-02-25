@@ -540,7 +540,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                             onClick={() => setShowSourceMenu(false)}
                             aria-hidden="true"
                           />
-                          <div className="absolute left-0 top-full mt-1 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
+                          <div className="absolute left-0 top-full mt-1 w-48 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
                             <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
                               Select Source
                             </div>
@@ -659,7 +659,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                             onClick={() => setShowCategoryMenu(false)}
                             aria-hidden="true"
                           />
-                          <div className="absolute left-0 top-full mt-1 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                          <div className="absolute left-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
                             <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
                               Product Categories
                             </div>
@@ -745,7 +745,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                             onClick={() => setShowVendorMenu(false)}
                             aria-hidden="true"
                           />
-                          <div className="absolute left-0 top-full mt-1 w-64 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto flex flex-col">
+                          <div className="absolute left-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto flex flex-col">
                             <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
                               Select Vendor
                             </div>

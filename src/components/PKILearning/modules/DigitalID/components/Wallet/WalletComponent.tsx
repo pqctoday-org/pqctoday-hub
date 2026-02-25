@@ -1,8 +1,8 @@
 import React from 'react'
 import type { WalletInstance } from '../../types'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../../../ui/card'
-import { Button } from '../../../../../ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../../ui/tabs'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Shield, Key, FileText, Plus, Smartphone } from 'lucide-react'
 
 interface WalletComponentProps {

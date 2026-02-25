@@ -8,6 +8,8 @@ import { AVAILABLE_USE_CASES } from '../../../hooks/assessmentData'
 
 import { industryUseCaseConfigs, getIndustryConfigs } from '../../../data/industryAssessConfig'
 
+import { Button } from '../../ui/button'
+
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
@@ -54,18 +56,19 @@ const Step7UseCases = () => {
       <PersonaHint stepKey="use-cases" />
 
       {/* I don't know — Step 3 model */}
-      <button
+      <Button
+        variant="ghost"
         aria-pressed={useCasesUnknown}
         onClick={() => setUseCasesUnknown(!useCasesUnknown)}
         className={clsx(
-          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',
           useCasesUnknown
-            ? 'border-muted-foreground bg-muted/20 text-foreground'
-            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+            ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
       >
         <Info size={14} className="shrink-0" />I don&apos;t know / None of these
-      </button>
+      </Button>
 
       <div className={clsx('space-y-4', useCasesUnknown && 'opacity-40 pointer-events-none')}>
         {industryUseCases.length > 0 && (
@@ -85,19 +88,20 @@ const Step7UseCases = () => {
               aria-label={`${industry} use cases`}
             >
               {industryUseCases.map((uc) => (
-                <button
+                <Button
                   key={uc.id}
+                  variant="ghost"
                   aria-pressed={cryptoUseCases.includes(uc.label)}
                   onClick={() => toggleCryptoUseCase(uc.label)}
                   className={clsx(
-                    'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                    'h-auto p-3 justify-start border',
                     cryptoUseCases.includes(uc.label)
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                      ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
                   )}
                 >
                   {uc.label}
-                </button>
+                </Button>
               ))}
             </div>
           </>
@@ -114,19 +118,20 @@ const Step7UseCases = () => {
               aria-label="General cryptographic use cases"
             >
               {universalUseCases.map((uc) => (
-                <button
+                <Button
                   key={uc}
+                  variant="ghost"
                   aria-pressed={cryptoUseCases.includes(uc)}
                   onClick={() => toggleCryptoUseCase(uc)}
                   className={clsx(
-                    'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                    'h-auto p-3 justify-start border',
                     cryptoUseCases.includes(uc)
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                      ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
                   )}
                 >
                   {uc}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
