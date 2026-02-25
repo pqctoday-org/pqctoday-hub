@@ -90,9 +90,7 @@ test.describe('Threats Dashboard', () => {
       await page.waitForTimeout(300)
 
       // Verify empty state message
-      await expect(
-        page.locator('text=No threats found matching your filters').first()
-      ).toBeVisible()
+      await expect(page.locator('text=No threats found matching your filters').last()).toBeVisible()
     }
   })
 

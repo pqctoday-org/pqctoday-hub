@@ -11,7 +11,7 @@ test.describe('TLS 1.3 Basics Module', () => {
     // Wait for page to load
     await expect(page.getByRole('heading', { name: 'TLS 1.3 Basics' })).toBeVisible()
     // Module defaults to the "Learn" (intro) tab; navigate to Workshop where the simulation UI lives
-    await page.getByRole('tab', { name: 'Workshop' }).click()
+    await page.getByRole('button', { name: 'Workshop', exact: true }).first().click()
     await expect(page.getByRole('button', { name: 'Start Full Interaction' })).toBeVisible()
   })
 

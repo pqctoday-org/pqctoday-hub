@@ -10,7 +10,7 @@ test.describe('Quantum Threat Mechanics Module', () => {
       page.getByRole('heading', { name: 'Quantum Threat Mechanics', level: 1 })
     ).toBeVisible()
     // Module defaults to "Learn" tab; navigate to Workshop where the simulation UI lives
-    await page.getByRole('tab', { name: 'Workshop' }).click()
+    await page.getByRole('button', { name: 'Workshop', exact: true }).first().click()
   })
 
   test('Verify HNDL Timeline Calculator with Migration Time slider', async ({ page }) => {
