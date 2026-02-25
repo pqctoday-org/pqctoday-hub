@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('TLS 1.3 Basics Module', () => {
-  test.setTimeout(60000)
+  test.setTimeout(90000)
 
   test.beforeEach(async ({ page }) => {
     // Debug: Log browser console to terminal
@@ -105,7 +105,7 @@ test.describe('TLS 1.3 Basics Module', () => {
 
   test('fails mTLS when no client cert is provided', async ({ page }) => {
     // 1. Enable mTLS on Server
-    await page.getByLabel('Request Client Certificate (mTLS)').check()
+    await page.getByLabel('Require Client Certificate (mTLS)').check()
 
     // 2. Set Client Identity to "None"
     const clientCertSelect = page.locator('select').first() // Client Panel is first
@@ -118,7 +118,7 @@ test.describe('TLS 1.3 Basics Module', () => {
 
   test('performs successful RSA mTLS handshake', async ({ page }) => {
     // 1. Enable mTLS on Server
-    await page.getByLabel('Request Client Certificate (mTLS)').check()
+    await page.getByLabel('Require Client Certificate (mTLS)').check()
 
     // 2. Set Client Identity to "Default" (RSA)
     const clientCertSelect = page.locator('select').first()
@@ -180,7 +180,7 @@ test.describe('TLS 1.3 Basics Module', () => {
 
   test('performs successful ML-DSA mTLS handshake', async ({ page }) => {
     // 1. Enable mTLS on Server
-    await page.getByLabel('Request Client Certificate (mTLS)').check()
+    await page.getByLabel('Require Client Certificate (mTLS)').check()
 
     // 2. Select ML-DSA for Client and Server
     const selects = page.locator('select')

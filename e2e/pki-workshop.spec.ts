@@ -14,6 +14,9 @@ test.describe('PKI Workshop Module', () => {
 
     // Verify we are in the workshop
     await expect(page.getByRole('heading', { name: 'PKI Workshop', level: 1 })).toBeVisible()
+    // Module defaults to "Learn" tab; navigate to Workshop where the step UI lives
+    await page.getByRole('tab', { name: 'Workshop' }).click()
+    await expect(page.getByText('Step 1: Generate CSR')).toBeVisible()
   })
 
   test('Complete PKI Lifecycle (CSR -> Root CA -> Sign -> Parse)', async ({

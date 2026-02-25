@@ -4,24 +4,16 @@ test.describe('Quantum Threat Mechanics Module', () => {
   test.setTimeout(60000)
 
   test.beforeEach(async ({ page }) => {
-    // Navigate to Learn module
-    await page.goto('/learn')
-
-    // Select Quantum Threats from dashboard
-    const card = page.getByRole('heading', { name: 'Quantum Threats', exact: true })
-    await expect(card).toBeVisible({ timeout: 30000 })
-    await card.click()
-
-    // Verify we are in the module
+    // Navigate directly to the module
+    await page.goto('/learn/quantum-threats')
     await expect(
       page.getByRole('heading', { name: 'Quantum Threat Mechanics', level: 1 })
     ).toBeVisible()
+    // Module defaults to "Learn" tab; navigate to Workshop where the simulation UI lives
+    await page.getByRole('tab', { name: 'Workshop' }).click()
   })
 
   test('Verify HNDL Timeline Calculator with Migration Time slider', async ({ page }) => {
-    // Navigate to Workshop tab
-    await page.getByRole('tab', { name: 'Workshop' }).click()
-
     // Navigate to Step 4: HNDL Timeline
     await page.getByText('Step 4: HNDL Timeline').first().click()
     await expect(page.getByRole('heading', { name: '4. HNDL Timeline', level: 2 })).toBeVisible()
