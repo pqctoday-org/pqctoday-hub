@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Button } from '../../../../../ui/button'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../../../ui/card'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import type { WalletInstance, CryptoKey, VerifiableCredential } from '../../types'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { generateKeyPair, signData } from '../../utils/crypto-utils'

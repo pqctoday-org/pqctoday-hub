@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react'
+import { Button } from '../ui/button'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
@@ -228,28 +229,31 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
 
       {/* Navigation */}
       <div className="flex justify-between items-center mt-6">
-        <button
+        <Button
+          variant="outline"
           onClick={() => setStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
-          className="flex items-center gap-1 px-5 py-2 rounded-lg border border-border hover:bg-muted/10 disabled:opacity-50 transition-colors text-foreground text-sm"
+          className="gap-1"
         >
           <ChevronLeft size={16} />
           Previous
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={reset}
-          className="flex items-center gap-1 px-3 py-2 text-xs text-muted-foreground hover:text-destructive transition-colors"
+          className="text-xs text-muted-foreground hover:text-destructive"
           title="Clear all answers and start over"
         >
           <RotateCcw size={13} />
           Reset
-        </button>
+        </Button>
 
-        <button
+        <Button
           onClick={handleNext}
           disabled={!canProceed() || isGenerating}
-          className="flex items-center gap-1 px-5 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors text-sm"
+          className="gap-1 font-bold"
         >
           {isGenerating ? (
             <>
@@ -264,7 +268,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
               <ChevronRight size={16} />
             </>
           )}
-        </button>
+        </Button>
       </div>
     </div>
   )

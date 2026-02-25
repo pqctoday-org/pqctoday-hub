@@ -1,4 +1,4 @@
-import type { TLSConfig } from '../../../../../store/tls-learning.store'
+import type { TLSConfig } from '@/store/tls-learning.store'
 
 export const generateOpenSSLConfig = (config: TLSConfig, side: 'client' | 'server'): string => {
   // If user is in raw mode, use their custom config directly

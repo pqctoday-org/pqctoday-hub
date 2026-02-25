@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { Cpu } from 'lucide-react'
+import { FilterDropdown, type FilterDropdownItem } from '@/components/common/FilterDropdown'
 import {
   ALGORITHM_SECURITY_DATA,
   CURRENT_QUANTUM_COMPUTERS,
@@ -21,6 +22,30 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
     () => ALGORITHM_SECURITY_DATA.find((a) => a.name === selectedAlgorithm),
     [selectedAlgorithm]
   )
+
+  const algorithmItems: FilterDropdownItem[] = useMemo(() => {
+    const groups = [
+      {
+        label: 'Classical Asymmetric',
+        items: ALGORITHM_SECURITY_DATA.filter(
+          (a) => a.type === 'classical' && a.category === 'asymmetric'
+        ),
+      },
+      {
+        label: 'Symmetric',
+        items: ALGORITHM_SECURITY_DATA.filter((a) => a.category === 'symmetric'),
+      },
+      {
+        label: 'Hash Functions',
+        items: ALGORITHM_SECURITY_DATA.filter((a) => a.category === 'hash'),
+      },
+      {
+        label: 'Post-Quantum',
+        items: ALGORITHM_SECURITY_DATA.filter((a) => a.type === 'pqc'),
+      },
+    ]
+    return groups.flatMap((group) => group.items.map((a) => ({ id: a.name, label: `${a.name}` })))
+  }, [])
 
   const maxBits = 256
 
@@ -69,49 +94,14 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
       {/* Algorithm selector */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label
-            htmlFor="degradation-algorithm-select"
-            className="block text-xs font-medium text-muted-foreground mb-1"
-          >
-            Select Algorithm
-          </label>
-          <select
-            id="degradation-algorithm-select"
-            value={selectedAlgorithm}
-            onChange={(e) => setSelectedAlgorithm(e.target.value)}
-            className="w-full bg-background border border-border rounded px-3 py-2 text-sm text-foreground"
-          >
-            <optgroup label="Classical Asymmetric">
-              {ALGORITHM_SECURITY_DATA.filter(
-                (a) => a.type === 'classical' && a.category === 'asymmetric'
-              ).map((a) => (
-                <option key={a.name} value={a.name}>
-                  {a.name}
-                </option>
-              ))}
-            </optgroup>
-            <optgroup label="Symmetric">
-              {ALGORITHM_SECURITY_DATA.filter((a) => a.category === 'symmetric').map((a) => (
-                <option key={a.name} value={a.name}>
-                  {a.name}
-                </option>
-              ))}
-            </optgroup>
-            <optgroup label="Hash Functions">
-              {ALGORITHM_SECURITY_DATA.filter((a) => a.category === 'hash').map((a) => (
-                <option key={a.name} value={a.name}>
-                  {a.name}
-                </option>
-              ))}
-            </optgroup>
-            <optgroup label="Post-Quantum">
-              {ALGORITHM_SECURITY_DATA.filter((a) => a.type === 'pqc').map((a) => (
-                <option key={a.name} value={a.name}>
-                  {a.name}
-                </option>
-              ))}
-            </optgroup>
-          </select>
+          <FilterDropdown
+            label="Select Algorithm"
+            items={algorithmItems}
+            selectedId={selectedAlgorithm}
+            onSelect={setSelectedAlgorithm}
+            noContainer
+            className="w-full"
+          />
         </div>
 
         {algorithmData && (

@@ -40,6 +40,8 @@ const EU_MEMBER_COUNTRIES = new Set([
   'Cyprus',
 ])
 
+import { Button } from '../../ui/button'
+
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
@@ -123,19 +125,20 @@ const Step5Compliance = () => {
       <PersonaHint stepKey="compliance" />
 
       {/* None apply / I don't know — Step 3 model (toggleable, dismissable, dims content) */}
-      <button
+      <Button
+        variant="ghost"
         aria-pressed={complianceUnknown}
         onClick={() => setComplianceUnknown(!complianceUnknown)}
         className={clsx(
-          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',
           complianceUnknown
-            ? 'border-muted-foreground bg-muted/20 text-foreground'
-            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+            ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
       >
         <Info size={14} className="shrink-0" />
         None apply / I don&apos;t know
-      </button>
+      </Button>
 
       <div className={clsx('space-y-4', complianceUnknown && 'opacity-40 pointer-events-none')}>
         {industryFrameworks.length > 0 && (
@@ -162,15 +165,16 @@ const Step5Compliance = () => {
               aria-label={`${industry} compliance frameworks`}
             >
               {industryFrameworks.map((fw) => (
-                <button
+                <Button
                   key={fw.id}
+                  variant="ghost"
                   aria-pressed={complianceRequirements.includes(fw.label)}
                   onClick={() => toggleCompliance(fw.label)}
                   className={clsx(
-                    'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                    'h-auto p-3 flex-col items-start whitespace-normal border',
                     complianceRequirements.includes(fw.label)
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                      ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
                   )}
                 >
                   <span>{fw.label}</span>
@@ -179,7 +183,7 @@ const Step5Compliance = () => {
                       {fw.description}
                     </p>
                   )}
-                </button>
+                </Button>
               ))}
             </div>
           </>
@@ -198,15 +202,16 @@ const Step5Compliance = () => {
               aria-label="Universal compliance frameworks"
             >
               {universalFrameworks.map((fw) => (
-                <button
+                <Button
                   key={fw}
+                  variant="ghost"
                   aria-pressed={complianceRequirements.includes(fw)}
                   onClick={() => toggleCompliance(fw)}
                   className={clsx(
-                    'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+                    'h-auto p-3 flex-col items-start whitespace-normal border',
                     complianceRequirements.includes(fw)
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                      ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                      : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
                   )}
                 >
                   <span>{fw}</span>
@@ -215,7 +220,7 @@ const Step5Compliance = () => {
                       {descriptionByLabel.get(fw)}
                     </p>
                   )}
-                </button>
+                </Button>
               ))}
             </div>
           </div>

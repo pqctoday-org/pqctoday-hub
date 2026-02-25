@@ -8,6 +8,7 @@ import type { AssessmentMode } from '../../store/useAssessmentStore'
 import { metadata } from '../../data/industryAssessConfig'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
+import { Button } from '../ui/button'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
 
@@ -30,9 +31,10 @@ const STEP_LABELS = [
 const ModeSelector: React.FC<{ onSelect: (mode: AssessmentMode) => void }> = ({ onSelect }) => (
   <div>
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <button
+      <Button
+        variant="ghost"
         onClick={() => onSelect('quick')}
-        className="glass-panel p-6 text-left hover:border-primary/40 transition-colors group"
+        className="glass-panel h-auto p-6 flex-col items-start whitespace-normal hover:bg-transparent hover:border-primary/40 group"
       >
         <div className="flex items-center gap-3 mb-3">
           <div className="p-2 rounded-full bg-warning/10 group-hover:bg-warning/20 transition-colors">
@@ -44,11 +46,12 @@ const ModeSelector: React.FC<{ onSelect: (mode: AssessmentMode) => void }> = ({ 
           6 questions covering your industry, crypto stack, data sensitivity, and migration status.
         </p>
         <span className="text-xs font-mono text-muted-foreground/60">~2 minutes</span>
-      </button>
+      </Button>
 
-      <button
+      <Button
+        variant="ghost"
         onClick={() => onSelect('comprehensive')}
-        className="glass-panel p-6 text-left hover:border-primary/40 transition-colors group"
+        className="glass-panel h-auto p-6 flex-col items-start whitespace-normal hover:bg-transparent hover:border-primary/40 group"
       >
         <div className="flex items-center gap-3 mb-3">
           <div className="p-2 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
@@ -61,7 +64,7 @@ const ModeSelector: React.FC<{ onSelect: (mode: AssessmentMode) => void }> = ({ 
           dependencies for detailed migration planning.
         </p>
         <span className="text-xs font-mono text-muted-foreground/60">~5 minutes</span>
-      </button>
+      </Button>
     </div>
   </div>
 )
@@ -167,13 +170,14 @@ export const AssessView: React.FC = () => {
                 Your assessment is complete. View your personalized report or update your answers
                 below.
               </p>
-              <button
+              <Button
+                size="sm"
                 onClick={() => navigate('/report')}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors shrink-0"
+                className="gap-1.5 text-xs font-semibold shrink-0"
               >
                 <FileBarChart size={12} />
                 View Report
-              </button>
+              </Button>
             </div>
           </div>
         </motion.div>
@@ -203,23 +207,26 @@ export const AssessView: React.FC = () => {
                 </p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <button
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => {
                     reset()
                     setShowResumeBanner(false)
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-muted-foreground hover:text-destructive border border-border rounded-lg transition-colors"
+                  className="gap-1.5 text-xs text-muted-foreground hover:text-destructive"
                 >
                   <RotateCcw size={12} />
                   Start Over
-                </button>
-                <button
+                </Button>
+                <Button
+                  size="sm"
                   onClick={() => setShowResumeBanner(false)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-primary text-black rounded-lg hover:bg-primary/90 transition-colors"
+                  className="gap-1.5 text-xs font-semibold"
                 >
                   <PlayCircle size={12} />
                   Continue
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -234,5 +241,3 @@ export const AssessView: React.FC = () => {
     </div>
   )
 }
-
-export default AssessView

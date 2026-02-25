@@ -6,7 +6,7 @@ import { VPNSSHExercises, type SimulationConfig } from './components/VPNSSHExerc
 import { IKEv2HandshakeSimulator } from './simulate/IKEv2HandshakeSimulator'
 import { SSHKeyExchangeSimulator } from './simulate/SSHKeyExchangeSimulator'
 import { ProtocolComparisonTable } from './simulate/ProtocolComparisonTable'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import type { IKEv2Mode } from './data/ikev2Constants'
 import type { SSHKexAlgorithm } from './data/sshConstants'

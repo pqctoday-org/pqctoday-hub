@@ -71,6 +71,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                 className={`h-1.5 w-6 rounded-full transition-colors ${
                   idx <= currentStepIndex ? 'bg-primary' : 'bg-muted'
                 }`}
+                {...(idx === currentStepIndex ? { 'aria-current': 'step' as const } : {})}
               />
             ))}
           </div>
@@ -127,6 +128,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
           <button
             onClick={onBack}
             disabled={isExecuting}
+            aria-label="Go to previous step"
             className="px-4 py-3 min-h-[44px] min-w-[44px] rounded-lg border border-border text-foreground hover:bg-muted/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <ChevronLeft size={16} />
@@ -157,6 +159,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                 disabled={currentStepIndex === steps.length - 1 || isExecuting}
                 className="px-4 py-3 min-h-[44px] min-w-[44px] rounded-lg border border-border text-foreground hover:bg-muted/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 title="Skip this step"
+                aria-label="Proceed to next step"
               >
                 <span className="hidden sm:inline">Skip</span>
                 <ChevronRight size={16} />
@@ -195,6 +198,8 @@ export const StepWizard: React.FC<StepWizardProps> = ({
         <div
           className="p-4 overflow-x-auto overflow-y-auto min-h-[150px] max-h-[250px] font-mono text-sm"
           ref={outputRef}
+          aria-live="polite"
+          aria-label="Command output"
         >
           {output ? (
             <OutputFormatter output={output} />

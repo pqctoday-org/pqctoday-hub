@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
 
+import { Button } from '../../ui/button'
+
 import clsx from 'clsx'
 
 function StepIndicator({
@@ -53,7 +55,8 @@ function StepIndicator({
               className="flex items-center gap-1 md:gap-2"
             >
               <div className="flex flex-col items-center gap-1">
-                <button
+                <Button
+                  variant="ghost"
                   type="button"
                   disabled={!isClickable}
                   onClick={() => isClickable && onStepClick(i)}
@@ -61,18 +64,18 @@ function StepIndicator({
                   // eslint-disable-next-line security/detect-object-injection
                   aria-label={`Step ${i + 1}: ${titles[i] ?? ''}${isCompleted ? ' (completed — click to edit)' : isCurrent ? ' (current)' : ''}`}
                   className={clsx(
-                    'w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold border-2 transition-colors',
+                    'w-7 h-7 md:w-8 md:h-8 rounded-full p-0 border-2',
                     isCurrent
-                      ? 'border-primary text-primary bg-primary/10'
+                      ? 'border-primary text-primary bg-primary/10 hover:bg-primary/10'
                       : isCompleted
-                        ? 'border-success text-success bg-success/10'
-                        : 'border-border text-muted-foreground',
+                        ? 'border-success text-success bg-success/10 hover:bg-success/10'
+                        : 'border-border text-muted-foreground hover:bg-transparent',
                     isClickable &&
                       'cursor-pointer hover:bg-success/20 hover:border-success/80 hover:scale-110 transition-transform'
                   )}
                 >
                   {isCompleted ? '✓' : i + 1}
-                </button>
+                </Button>
                 <span
                   className={clsx(
                     'text-[9px] md:text-[10px] font-medium transition-colors whitespace-nowrap',

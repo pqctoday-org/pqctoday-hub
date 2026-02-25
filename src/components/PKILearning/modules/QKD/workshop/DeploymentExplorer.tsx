@@ -1,6 +1,7 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useMemo } from 'react'
 import { Globe, ChevronDown, ChevronUp, ExternalLink, Filter, MapPin } from 'lucide-react'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   QKD_DEPLOYMENTS,
   QKD_REGIONS,
@@ -97,29 +98,37 @@ export const DeploymentExplorer: React.FC = () => {
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <Filter size={14} className="text-muted-foreground" />
-        <FilterSelect
+        <FilterDropdown
           label="Region"
-          value={regionFilter}
-          options={['All', ...QKD_REGIONS]}
-          onChange={(v) => setRegionFilter(v as QKDRegion | 'All')}
+          items={['All', ...QKD_REGIONS]}
+          selectedId={regionFilter}
+          onSelect={(v) => setRegionFilter(v as QKDRegion | 'All')}
+          noContainer
+          variant="ghost"
         />
-        <FilterSelect
+        <FilterDropdown
           label="Type"
-          value={typeFilter}
-          options={['All', ...QKD_OPERATOR_TYPES]}
-          onChange={(v) => setTypeFilter(v as QKDOperatorType | 'All')}
+          items={['All', ...QKD_OPERATOR_TYPES]}
+          selectedId={typeFilter}
+          onSelect={(v) => setTypeFilter(v as QKDOperatorType | 'All')}
+          noContainer
+          variant="ghost"
         />
-        <FilterSelect
+        <FilterDropdown
           label="Technology"
-          value={techFilter}
-          options={['All', ...QKD_TECHNOLOGIES]}
-          onChange={(v) => setTechFilter(v as QKDTechnology | 'All')}
+          items={['All', ...QKD_TECHNOLOGIES]}
+          selectedId={techFilter}
+          onSelect={(v) => setTechFilter(v as QKDTechnology | 'All')}
+          noContainer
+          variant="ghost"
         />
-        <FilterSelect
+        <FilterDropdown
           label="Status"
-          value={statusFilter}
-          options={['All', ...QKD_STATUSES]}
-          onChange={(v) => setStatusFilter(v as QKDStatus | 'All')}
+          items={['All', ...QKD_STATUSES]}
+          selectedId={statusFilter}
+          onSelect={(v) => setStatusFilter(v as QKDStatus | 'All')}
+          noContainer
+          variant="ghost"
         />
       </div>
 
@@ -185,35 +194,6 @@ export const DeploymentExplorer: React.FC = () => {
         Showing {filtered.length} of {stats.total} deployments. Data from publicly documented
         sources — click any row to see details and references.
       </p>
-    </div>
-  )
-}
-
-function FilterSelect({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string
-  value: string
-  options: string[]
-  onChange: (v: string) => void
-}) {
-  return (
-    <div className="flex items-center gap-1.5">
-      <label className="text-xs text-muted-foreground">{label}:</label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="text-xs bg-muted border border-border rounded px-2 py-1 text-foreground"
-      >
-        {options.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
     </div>
   )
 }

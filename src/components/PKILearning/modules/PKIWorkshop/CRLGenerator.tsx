@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { ShieldAlert, Loader2 } from 'lucide-react'
-import { openSSLService } from '../../../../services/crypto/OpenSSLService'
-import { useModuleStore } from '../../../../store/useModuleStore'
-import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
+import { useModuleStore } from '@/store/useModuleStore'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 interface CRLGeneratorProps {
   onComplete: () => void
@@ -127,22 +128,18 @@ preserve = no
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="ca-key-select" className="text-sm text-muted-foreground">
-              Select Root CA Key
-            </label>
-            <select
-              id="ca-key-select"
-              value={selectedKeyId}
-              onChange={(e) => setSelectedKeyId(e.target.value)}
-              className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
-            >
-              <option value="">-- Select CA Key --</option>
-              {rootKeys.map((key) => (
-                <option key={key.id} value={key.id}>
-                  {key.name}
-                </option>
-              ))}
-            </select>
+            <FilterDropdown
+              label="Select Root CA Key"
+              items={rootKeys.map((key) => ({
+                id: key.id,
+                label: key.name,
+              }))}
+              selectedId={selectedKeyId}
+              onSelect={setSelectedKeyId}
+              defaultLabel="-- Select CA Key --"
+              noContainer
+              className="w-full"
+            />
           </div>
 
           <button

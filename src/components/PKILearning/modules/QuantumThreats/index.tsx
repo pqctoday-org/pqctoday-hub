@@ -8,7 +8,7 @@ import { AlgorithmVulnerabilityMatrix } from './workshop/AlgorithmVulnerabilityM
 import { KeySizeAnalyzer } from './workshop/KeySizeAnalyzer'
 import { HNDLTimeline } from './workshop/HNDLTimeline'
 import { HNFLTimeline } from './workshop/HNFLTimeline'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'

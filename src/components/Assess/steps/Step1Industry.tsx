@@ -2,6 +2,8 @@ import { useAssessmentStore } from '../../../store/useAssessmentStore'
 
 import { AVAILABLE_INDUSTRIES } from '../../../hooks/assessmentData'
 
+import { Button } from '../../ui/button'
+
 import clsx from 'clsx'
 
 const Step1Industry = () => {
@@ -20,20 +22,21 @@ const Step1Industry = () => {
         aria-label="Industry selection"
       >
         {AVAILABLE_INDUSTRIES.map((ind) => (
-          <button
+          <Button
             key={ind}
+            variant="ghost"
             role="radio"
             aria-checked={industry === ind}
             onClick={() => setIndustry(ind)}
             className={clsx(
-              'p-3 rounded-lg border text-left text-sm font-medium transition-colors',
+              'h-auto p-3 justify-start border',
               industry === ind
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
             )}
           >
             {ind}
-          </button>
+          </Button>
         ))}
       </div>
     </div>

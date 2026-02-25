@@ -3,6 +3,7 @@ import { Map, ChevronDown, Info } from 'lucide-react'
 import clsx from 'clsx'
 import { timelineData, transformToGanttData } from '../../data/timelineData'
 import type { RecommendedAction } from '../../hooks/assessmentTypes'
+import { Button } from '../ui/button'
 
 interface MigrationRoadmapProps {
   actions: RecommendedAction[]
@@ -157,25 +158,27 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
 
   return (
     <div className="glass-panel p-6 print:border print:border-gray-300 print:break-inside-auto">
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between print:hidden"
+        className="flex w-full h-auto items-center justify-between print:hidden"
         aria-expanded={open}
       >
         <div className="flex items-center gap-2 font-semibold text-foreground">
           <Map className="text-primary" size={20} />
           Migration Roadmap
           <span className="relative inline-flex print:hidden">
-            <button
+            <Button
+              variant="ghost"
               onClick={(e) => {
                 e.stopPropagation()
                 setInfoOpen((o) => !o)
               }}
-              className="p-1 rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors"
+              className="p-1 h-auto w-auto rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground"
               aria-label="Section info"
             >
               <Info size={14} />
-            </button>
+            </Button>
             {infoOpen && (
               <div className="absolute left-0 top-full mt-1 z-50 w-64 p-3 rounded-lg bg-card border border-border shadow-lg text-xs text-muted-foreground leading-relaxed">
                 Groups recommended actions into Immediate, Short-term, and Long-term swim lanes
@@ -198,7 +201,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
             )}
           />
         </div>
-      </button>
+      </Button>
       {/* Print-only static title */}
       <div className="hidden print:flex items-center justify-between">
         <div className="flex items-center gap-2 font-semibold text-foreground">

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ALGORITHM_SECURITY_DATA } from '../data/quantumConstants'
 
 interface KeySizeAnalyzerProps {
@@ -54,44 +55,24 @@ export const KeySizeAnalyzer: React.FC<KeySizeAnalyzerProps> = ({
       {/* Selectors */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label
-            htmlFor="algorithm-a-select"
-            className="block text-xs font-medium text-muted-foreground mb-1"
-          >
-            Algorithm A
-          </label>
-          <select
-            id="algorithm-a-select"
-            value={algorithmA}
-            onChange={(e) => setAlgorithmA(e.target.value)}
-            className="w-full bg-background border border-border rounded px-3 py-2 text-sm text-foreground"
-          >
-            {algorithmNames.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </select>
+          <FilterDropdown
+            label="Algorithm A"
+            items={algorithmNames}
+            selectedId={algorithmA}
+            onSelect={setAlgorithmA}
+            noContainer
+            className="w-full"
+          />
         </div>
         <div>
-          <label
-            htmlFor="algorithm-b-select"
-            className="block text-xs font-medium text-muted-foreground mb-1"
-          >
-            Algorithm B
-          </label>
-          <select
-            id="algorithm-b-select"
-            value={algorithmB}
-            onChange={(e) => setAlgorithmB(e.target.value)}
-            className="w-full bg-background border border-border rounded px-3 py-2 text-sm text-foreground"
-          >
-            {algorithmNames.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </select>
+          <FilterDropdown
+            label="Algorithm B"
+            items={algorithmNames}
+            selectedId={algorithmB}
+            onSelect={setAlgorithmB}
+            noContainer
+            className="w-full"
+          />
         </div>
       </div>
 

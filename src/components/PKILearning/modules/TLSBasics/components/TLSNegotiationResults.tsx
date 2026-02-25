@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lock, FileText, Check, Copy, Activity } from 'lucide-react'
-import { useTLSStore } from '../../../../../store/tls-learning.store'
+import { useTLSStore } from '@/store/tls-learning.store'
 import { CryptoLogDisplay } from './CryptoLogDisplay'
 import type { TraceEvent } from './CryptoLogDisplay'
 import { KeyColumn } from './KeyOverview'
@@ -277,7 +277,7 @@ export const TLSNegotiationResults: React.FC = () => {
 
         {/* Certificate Error Details */}
         {hasCertError && (
-          <div className="mt-1 text-xs font-mono bg-black/30 rounded p-2 text-destructive">
+          <div className="mt-1 text-xs font-mono bg-muted rounded p-2 text-destructive">
             {clientCertVerifyError && <div>Client: {clientCertVerifyError.details}</div>}
             {serverCertVerifyError && <div>Server: {serverCertVerifyError.details}</div>}
           </div>

@@ -6,7 +6,7 @@ import { HybridCryptoExercises, type WorkshopConfig } from './components/HybridC
 import { HybridKeyGeneration } from './workshop/HybridKeyGeneration'
 import { HybridEncryptionDemo } from './workshop/HybridEncryptionDemo'
 import { CompositeCertificateViewer } from './workshop/CompositeCertificateViewer'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'

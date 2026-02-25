@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Link } from 'react-router-dom'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
@@ -293,7 +293,7 @@ const Step3Timeline: React.FC = () => {
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 bg-background z-10 shrink-0 ${
                   i <= 3
                     ? 'border-status-success text-status-success'
-                    : 'border-amber-500 text-amber-400'
+                    : 'border-status-warning text-status-warning'
                 }`}
               >
                 {i <= 3 ? '✓' : '!'}
@@ -312,11 +312,11 @@ const Step3Timeline: React.FC = () => {
         </div>
       </div>
 
-      <div className="glass-panel p-4 border-l-4 border-l-amber-500">
+      <div className="glass-panel p-4 border-l-4 border-l-status-warning">
         <p className="text-sm text-muted-foreground">
-          <strong className="text-amber-400">Key takeaway:</strong> With NIST targeting 2030 for RSA
-          deprecation, organizations have roughly 4 years to migrate. Many compliance frameworks are
-          already requiring PQC readiness assessments.
+          <strong className="text-status-warning">Key takeaway:</strong> With NIST targeting 2030
+          for RSA deprecation, organizations have roughly 4 years to migrate. Many compliance
+          frameworks are already requiring PQC readiness assessments.
         </p>
       </div>
 
@@ -353,20 +353,20 @@ const Step4WhoNeedsToAct: React.FC = () => {
       name: 'Healthcare',
       urgency: 'High',
       reason: 'Patient records must be protected for 50+ years. HIPAA compliance will require PQC.',
-      color: 'text-amber-400',
+      color: 'text-status-warning',
     },
     {
       name: 'Telecommunications',
       urgency: 'High',
       reason: '5G infrastructure uses ECC for subscriber identity protection (SUCI).',
-      color: 'text-amber-400',
+      color: 'text-status-warning',
     },
     {
       name: 'Blockchain & Crypto',
       urgency: 'High',
       reason:
         'Bitcoin (secp256k1) and Ethereum (ECDSA) are directly vulnerable to quantum attacks.',
-      color: 'text-amber-400',
+      color: 'text-status-warning',
     },
     {
       name: 'IoT & Automotive',

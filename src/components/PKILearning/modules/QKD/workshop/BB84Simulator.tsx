@@ -122,6 +122,8 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
                 value={eveRate}
                 onChange={handleEveRateChange}
                 className="w-16 sm:w-24 accent-destructive disabled:opacity-50"
+                aria-label="Eavesdropper interception rate"
+                aria-valuenow={eveRate}
               />
               <span className="text-destructive font-mono w-9 text-right">
                 {Math.round(eveRate * 100)}%
@@ -132,7 +134,14 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
       </div>
 
       {/* Phase Progress Bar */}
-      <div className="flex items-center gap-1 overflow-x-auto pb-2">
+      <div
+        className="flex items-center gap-1 overflow-x-auto pb-2"
+        role="progressbar"
+        aria-label="BB84 protocol progress"
+        aria-valuenow={currentPhaseIndex + 1}
+        aria-valuemin={1}
+        aria-valuemax={BB84_PHASES.length}
+      >
         {BB84_PHASES.map((phase, idx) => (
           <div key={phase} className="flex items-center gap-1">
             <div
@@ -357,6 +366,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
           <button
             onClick={handleAdvance}
             className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
+            aria-label="Start BB84 protocol simulation"
           >
             <Play size={16} /> Start Protocol
           </button>
@@ -372,6 +382,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
           <button
             onClick={handleReset}
             className="px-6 py-3 rounded-lg border border-border hover:bg-muted transition-colors flex items-center gap-2 text-foreground"
+            aria-label="Reset simulation"
           >
             <RotateCcw size={16} /> Reset
           </button>

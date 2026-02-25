@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Package, ArrowRight, ChevronDown, Info, EyeOff } from 'lucide-react'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
 import { softwareData } from '../../data/migrateData'
+import { Button } from '../ui/button'
 import clsx from 'clsx'
 
 const priorityConfig = {
@@ -105,16 +106,17 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
       <Package className="text-primary" size={20} />
       Your Migration Toolkit
       <span className="relative inline-flex print:hidden">
-        <button
+        <Button
+          variant="ghost"
           onClick={(e) => {
             e.stopPropagation()
             setInfoOpen((o) => !o)
           }}
-          className="p-1 rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors"
+          className="p-1 h-auto w-auto rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground"
           aria-label="Section info"
         >
           <Info size={14} />
-        </button>
+        </Button>
         {infoOpen && (
           <div className="absolute left-0 top-full mt-1 z-50 w-64 p-3 rounded-lg bg-card border border-border shadow-lg text-xs text-muted-foreground leading-relaxed">
             Products from the Migrate catalog filtered by your assessment infrastructure and
@@ -151,24 +153,26 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
 
   return (
     <div className="glass-panel p-6 print:border print:border-gray-300">
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between print:hidden"
+        className="flex w-full h-auto items-center justify-between print:hidden"
         aria-expanded={open}
       >
         {titleRow}
         <div className="flex items-center gap-2">
           {hiddenProducts.length > 0 && (
-            <button
+            <Button
+              variant="ghost"
               type="button"
               onClick={(e) => {
                 e.stopPropagation()
                 restoreAll()
               }}
-              className="text-xs px-2.5 py-1 rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors print:hidden"
+              className="text-xs px-2.5 py-1 h-auto rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 print:hidden"
             >
               {hiddenProducts.length} hidden · Restore
-            </button>
+            </Button>
           )}
           <span className="text-xs text-muted-foreground">
             {selectedProducts.length} product{selectedProducts.length !== 1 ? 's' : ''}
@@ -181,7 +185,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
             )}
           />
         </div>
-      </button>
+      </Button>
       {/* Print-only static title */}
       <div className="hidden print:flex items-center justify-between">
         <div className="flex items-center gap-2 font-semibold text-foreground">
@@ -237,17 +241,18 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
                       className="border-b border-border/50 last:border-b-0"
                     >
                       <td className="p-2 w-8 print:hidden">
-                        <button
+                        <Button
+                          variant="ghost"
                           type="button"
                           aria-label="Hide this product"
                           onClick={(e) => {
                             e.stopPropagation()
                             hideProduct(`${item.softwareName}::${item.categoryId}`)
                           }}
-                          className="p-1 rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                          className="p-1 h-auto w-auto rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10"
                         >
                           <EyeOff size={14} />
-                        </button>
+                        </Button>
                       </td>
                       <td className="py-2 pr-3">
                         <span className="font-medium text-foreground">{item.softwareName}</span>

@@ -6,7 +6,7 @@ import { CryptoAgilityExercises, type WorkshopConfig } from './components/Crypto
 import { AbstractionLayerDemo } from './workshop/AbstractionLayerDemo'
 import { CBOMScanner } from './workshop/CBOMScanner'
 import { MigrationPlanningExercise } from './workshop/MigrationPlanningExercise'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import type { Step } from '../components/StepWizard'
 import { StepWizard } from '../components/StepWizard'
-import { openSSLService } from '../../../../../services/crypto/OpenSSLService'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { sha256 } from '@noble/hashes/sha2.js'
 import { ripemd160 } from '@noble/hashes/legacy.js'
 import { createBase58check } from '@scure/base'

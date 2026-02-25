@@ -6,7 +6,7 @@ import { EmailSigningExercises, type WorkshopConfig } from './components/EmailSi
 import { SMIMECertViewer } from './workshop/SMIMECertViewer'
 import { CMSSigningDemo } from './workshop/CMSSigningDemo'
 import { CMSEncryptionDemo } from './workshop/CMSEncryptionDemo'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'

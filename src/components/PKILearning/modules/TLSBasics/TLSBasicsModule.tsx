@@ -1,8 +1,8 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Play } from 'lucide-react'
-import { useTLSStore } from '../../../../store/tls-learning.store'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useTLSStore } from '@/store/tls-learning.store'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { TLSClientPanel } from './TLSClientPanel'
 import { TLSServerPanel } from './TLSServerPanel'
@@ -11,7 +11,7 @@ import { TLSComparisonTable } from './components/TLSComparisonTable'
 import { TLSIntroduction } from './components/TLSIntroduction'
 import { TLSExercises } from './components/TLSExercises'
 import { TLSSummary } from './components/TLSSummary'
-import { openSSLService } from '../../../../services/crypto/OpenSSLService'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from './utils/configGenerator'
 
 import {

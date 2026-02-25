@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { ExternalLink, EyeOff } from 'lucide-react'
 import { threatsData } from '../../data/threatsData'
 import type { ThreatData } from '../../data/threatsData'
+import { Button } from '../ui/button'
 import clsx from 'clsx'
 
 /** Maps assess-module industry names to threats CSV industry column values. */
@@ -62,17 +63,18 @@ const ThreatRow: React.FC<{
     >
       <td className="p-2 w-8 print:hidden">
         {onHide && (
-          <button
+          <Button
+            variant="ghost"
             type="button"
             aria-label="Hide this threat"
             onClick={(e) => {
               e.stopPropagation()
               onHide(threat.threatId)
             }}
-            className="p-1 rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
+            className="p-1 h-auto w-auto rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10"
           >
             <EyeOff size={14} />
-          </button>
+          </Button>
         )}
       </td>
       <td className="py-2.5 pr-3 font-mono text-xs text-muted-foreground whitespace-nowrap">

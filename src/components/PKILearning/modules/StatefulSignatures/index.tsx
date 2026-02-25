@@ -6,7 +6,7 @@ import { StatefulSigsExercises, type WorkshopConfig } from './components/Statefu
 import { LMSKeyGenDemo } from './workshop/LMSKeyGenDemo'
 import { XMSSKeyGenDemo } from './workshop/XMSSKeyGenDemo'
 import { StateManagementVisualizer } from './workshop/StateManagementVisualizer'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'

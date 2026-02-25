@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { Button } from '../../../../../ui/button'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../../../ui/card'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import type { WalletInstance } from '../../types'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { sha256Hash } from '../../utils/crypto-utils'
 import { Loader2, FileSignature, UploadCloud, CheckCircle, PenTool, Lock } from 'lucide-react'
-import { Input } from '../../../../../ui/input'
-import { Label } from '../../../../../ui/label'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
 interface QESProviderComponentProps {

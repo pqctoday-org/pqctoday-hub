@@ -1,7 +1,7 @@
 import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { useTLSStore } from '../../../../../store/tls-learning.store'
+import { useTLSStore } from '@/store/tls-learning.store'
 import {
   DEFAULT_SERVER_CERT,
   DEFAULT_SERVER_KEY,

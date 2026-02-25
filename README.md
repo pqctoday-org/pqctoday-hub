@@ -97,17 +97,24 @@ Test your PQC readiness with this interactive web application visualizing the gl
       Networking (CQN) and Chicago Quantum Exchange (CQE) 111 km fiber network
   - **Merkle Tree Certificates**:
     - Build Merkle trees interactively, generate inclusion proofs, and compare MTC vs traditional PKI for post-quantum TLS
-  - **Code Signing** (4-step workshop):
+  - **Code Signing** (5-step workshop):
     - Binary signing with ML-DSA-87 vs ECDSA P-384 with real byte-size comparison
     - PQC certificate chain builder (root CA → intermediate → leaf) with ML-DSA
     - Hybrid package signing (RPM-style, ML-DSA-87 + Ed448 dual signatures)
     - Keyless Sigstore flow with transparency-log inclusion proof visualization
+    - Secure Boot Chain: 4-stage firmware signing comparison (LMS vs XMSS vs ML-DSA) with stateful signature counter tracking and CNSA 2.0 mandate timelines
   - **API Security & JWT** (5-step workshop):
     - JWT Inspector: decode and flag quantum-vulnerable algorithms (RS256/HS256)
     - PQC JWT Signing with ML-DSA-87 vs RS256 signature byte size comparison
     - Hybrid JWT: dual-sign with Ed25519 + ML-DSA-87 for backward-compatible migration tokens
     - JWE Encryption with ML-KEM-768 key agreement
     - Token Size Analyzer: side-by-side header/payload/signature breakdown for RS256, ES256, ML-DSA-44/65/87
+  - **IoT & OT Security** (5-step workshop):
+    - Constrained Algorithm Explorer: algorithm selection for RFC 7228 Class 0/1/2 devices with memory and compute constraints
+    - Firmware Signing Simulator: LMS/XMSS stateful signatures with state counter tracking
+    - DTLS 1.3 Handshake Visualizer: protocol visualization with PQC impact analysis
+    - SCADA Migration Planner: ICS migration strategy across Purdue Model levels with priority scoring
+    - Cert Chain Bloat Analyzer: certificate size impact analysis for constrained device environments
   - **Tools & Products Tab**: Every module includes a "Tools & Products" tab surfacing PQC-ready
     products from the Migrate catalog, grouped by infrastructure layer with PQC/FIPS badges,
     license info, and deep-links to the Migrate view

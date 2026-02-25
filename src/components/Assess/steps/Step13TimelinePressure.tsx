@@ -6,6 +6,7 @@ import { useAssessmentStore } from '../../../store/useAssessmentStore'
 
 import { timelineData, transformToGanttData } from '../../../data/timelineData'
 
+import { Button } from '../../ui/button'
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
@@ -48,18 +49,19 @@ const Step13TimelinePressure = () => {
   const hasCountryDeadlines = countryDeadlines.length > 0
 
   const unknownButton = (
-    <button
+    <Button
+      variant="ghost"
       aria-pressed={timelinePressure === 'unknown'}
       onClick={() => setTimelinePressure('unknown')}
       className={clsx(
-        'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+        'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',
         timelinePressure === 'unknown'
-          ? 'border-muted-foreground bg-muted/20 text-foreground'
-          : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+          ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
+          : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
       )}
     >
       <Info size={14} className="shrink-0" />I don&apos;t know / Not sure about our deadlines
-    </button>
+    </Button>
   )
 
   return (
@@ -96,19 +98,20 @@ const Step13TimelinePressure = () => {
               const derived = deriveTimelinePressure(phase.endYear)
               const isSelected = timelinePressure === derived
               return (
-                <button
+                <Button
                   key={phase.title}
+                  variant="ghost"
                   role="radio"
                   aria-checked={isSelected}
                   onClick={() => setTimelinePressure(derived)}
                   className={clsx(
-                    'w-full p-4 rounded-lg border text-left transition-colors',
+                    'w-full h-auto p-4 flex-col items-start whitespace-normal border',
                     isSelected
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border text-muted-foreground hover:border-primary/30'
+                      ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                      : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-transparent'
                   )}
                 >
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between gap-2 w-full">
                     <span className="font-bold text-sm">{phase.title}</span>
                     <span className="text-xs font-mono bg-muted/40 px-2 py-0.5 rounded shrink-0">
                       {phase.startYear === phase.endYear
@@ -119,7 +122,7 @@ const Step13TimelinePressure = () => {
                   {phase.description && (
                     <p className="text-xs mt-1 opacity-80 line-clamp-2">{phase.description}</p>
                   )}
-                </button>
+                </Button>
               )
             })}
 
@@ -129,21 +132,22 @@ const Step13TimelinePressure = () => {
               {staticOptions
                 .filter((o) => o.value === 'no-deadline')
                 .map((opt) => (
-                  <button
+                  <Button
                     key={opt.value}
+                    variant="ghost"
                     role="radio"
                     aria-checked={timelinePressure === opt.value}
                     onClick={() => setTimelinePressure(opt.value)}
                     className={clsx(
-                      'w-full p-4 rounded-lg border text-left transition-colors',
+                      'w-full h-auto p-4 flex-col items-start whitespace-normal border',
                       timelinePressure === opt.value
-                        ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-border text-muted-foreground hover:border-primary/30'
+                        ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                        : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-transparent'
                     )}
                   >
                     <span className="font-bold text-sm">{opt.label}</span>
                     <p className="text-xs mt-1 opacity-80">{opt.description}</p>
-                  </button>
+                  </Button>
                 ))}
             </div>
           </div>
@@ -161,21 +165,22 @@ const Step13TimelinePressure = () => {
             aria-disabled={timelinePressure === 'unknown'}
           >
             {staticOptions.map((opt) => (
-              <button
+              <Button
                 key={opt.value}
+                variant="ghost"
                 role="radio"
                 aria-checked={timelinePressure === opt.value}
                 onClick={() => setTimelinePressure(opt.value)}
                 className={clsx(
-                  'w-full p-4 rounded-lg border text-left transition-colors',
+                  'w-full h-auto p-4 flex-col items-start whitespace-normal border',
                   timelinePressure === opt.value
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:border-primary/30'
+                    ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                    : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-transparent'
                 )}
               >
                 <span className="font-bold text-sm">{opt.label}</span>
                 <p className="text-xs mt-1 opacity-80">{opt.description}</p>
-              </button>
+              </Button>
             ))}
           </div>
         </>

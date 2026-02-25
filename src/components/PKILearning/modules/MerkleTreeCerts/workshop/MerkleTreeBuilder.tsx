@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { Plus, TreePine, Loader2, Trash2 } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { buildMerkleTree, type MerkleNode, type CertLeaf } from '../utils/merkleTree'
 import { SAMPLE_CERTS, truncateHash } from '../data/mtcConstants'
 
@@ -111,35 +113,25 @@ export const MerkleTreeBuilder: React.FC = () => {
             >
               Subject CN
             </label>
-            <input
+            <Input
               id="mtc-subject-cn"
               type="text"
               value={newSubject}
               onChange={(e) => setNewSubject(e.target.value)}
               placeholder="e.g. app.example.com"
-              className="w-full px-2 py-1.5 text-xs bg-background border border-border rounded text-foreground placeholder:text-muted-foreground"
+              className="w-full px-2 py-1.5 text-xs h-auto"
               onKeyDown={(e) => e.key === 'Enter' && handleAddCert()}
             />
           </div>
           <div className="min-w-[120px]">
-            <label
-              htmlFor="mtc-algo-select"
-              className="text-[10px] text-muted-foreground block mb-1"
-            >
-              Algorithm
-            </label>
-            <select
-              id="mtc-algo-select"
-              value={newAlgo}
-              onChange={(e) => setNewAlgo(e.target.value)}
-              className="w-full px-2 py-1.5 text-xs bg-background border border-border rounded text-foreground"
-            >
-              {algos.map((a) => (
-                <option key={a.value} value={a.value}>
-                  {a.value}
-                </option>
-              ))}
-            </select>
+            <FilterDropdown
+              label="Algorithm"
+              items={algos.map((a) => ({ id: a.value, label: a.value }))}
+              selectedId={newAlgo}
+              onSelect={setNewAlgo}
+              noContainer
+              className="w-full"
+            />
           </div>
           <button
             onClick={handleAddCert}

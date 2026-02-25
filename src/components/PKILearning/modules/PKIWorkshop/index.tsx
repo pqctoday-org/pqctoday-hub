@@ -1,8 +1,8 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Trash2, FilePlus, Shield, FileCheck, FileSearch, XCircle, GitBranch } from 'lucide-react'
-import { useModuleStore } from '../../../../store/useModuleStore'
-import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
+import { useModuleStore } from '@/store/useModuleStore'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PKIIntroduction } from './components/PKIIntroduction'
 import { PKIExercises } from './components/PKIExercises'

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Button } from '../../../../../ui/button'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../../../ui/card'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Landmark, CheckCircle, Loader2, Eye } from 'lucide-react'
 import type { WalletInstance } from '../../types'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { AlertTriangle } from 'lucide-react'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   CERT_ALGORITHM_OPTIONS,
   CERT_BASE_OVERHEAD,
@@ -277,18 +278,17 @@ function AlgoSelector({
 }) {
   return (
     <div className="glass-panel p-4">
-      <div className="text-sm font-bold text-foreground mb-2">{label}</div>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm text-foreground"
-      >
-        {CERT_ALGORITHM_OPTIONS.map((opt) => (
-          <option key={opt.id} value={opt.id}>
-            {opt.name} ({opt.category})
-          </option>
-        ))}
-      </select>
+      <FilterDropdown
+        label={label}
+        items={CERT_ALGORITHM_OPTIONS.map((opt) => ({
+          id: opt.id,
+          label: `${opt.name} (${opt.category})`,
+        }))}
+        selectedId={value}
+        onSelect={onChange}
+        noContainer
+        className="w-full"
+      />
       <div className="mt-2 text-xs text-muted-foreground">
         Cert size:{' '}
         <span className="font-mono text-foreground">{(certSize / 1024).toFixed(1)} KB</span>

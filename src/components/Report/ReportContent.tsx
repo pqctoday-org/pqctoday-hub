@@ -37,6 +37,7 @@ import { threatsData } from '../../data/threatsData'
 import { MigrationRoadmap } from './MigrationRoadmap'
 import { MigrationToolkit } from './MigrationToolkit'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
+import { Button } from '../ui/button'
 import clsx from 'clsx'
 import type {
   AssessmentResult,
@@ -72,16 +73,17 @@ export function SectionInfoTip({ text }: { text: string }) {
   const [open, setOpen] = useState(false)
   return (
     <span className="relative inline-flex print:hidden">
-      <button
+      <Button
+        variant="ghost"
         onClick={(e) => {
           e.stopPropagation()
           setOpen((o) => !o)
         }}
-        className="p-1 rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors"
+        className="p-1 h-auto w-auto rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground"
         aria-label="Section info"
       >
         <Info size={14} />
-      </button>
+      </Button>
       {open && (
         <div className="absolute left-0 top-full mt-1 z-50 w-64 p-3 rounded-lg bg-card border border-border shadow-lg text-xs text-muted-foreground leading-relaxed">
           {text}
@@ -111,9 +113,10 @@ function CollapsibleSection({
   const [open, setOpen] = useState(defaultOpen)
   return (
     <div className={clsx('glass-panel p-6 print:border print:border-gray-300', className)}>
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between print:hidden"
+        className="flex w-full h-auto items-center justify-between print:hidden"
         aria-expanded={open}
       >
         <div className="flex items-center gap-2 font-semibold text-foreground">
@@ -131,7 +134,7 @@ function CollapsibleSection({
             )}
           />
         </div>
-      </button>
+      </Button>
       {/* Print-only static title (no button/chevron) */}
       <div className="hidden print:flex items-center gap-2 font-semibold text-foreground">
         {icon}
@@ -1070,13 +1073,14 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                     <h2 className="text-3xl font-bold text-gradient mb-2 print:text-black">
                       Your PQC Risk Assessment Report
                     </h2>
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={() => setMethodologyOpen(true)}
-                      className="p-1.5 rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors print:hidden mb-2"
+                      className="p-1.5 h-auto w-auto rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground print:hidden mb-2"
                       aria-label="How this report works"
                     >
                       <Info size={18} />
-                    </button>
+                    </Button>
                   </div>
                   <p className="text-sm text-muted-foreground print:text-gray-600">
                     Generated on {generatedDate}
@@ -1100,12 +1104,13 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                       <Briefcase size={14} className="text-primary" />
                       Showing summary view
                     </span>
-                    <button
+                    <Button
+                      variant="link"
                       onClick={() => setShowFullReport(true)}
-                      className="text-xs text-primary hover:underline"
+                      className="text-xs p-0 h-auto"
                     >
                       View full technical report
-                    </button>
+                    </Button>
                   </div>
                 )}
                 {hasSummaryMode && showFullReport && (
@@ -1114,12 +1119,13 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                       <Briefcase size={14} className="text-primary" />
                       Showing full technical report
                     </span>
-                    <button
+                    <Button
+                      variant="link"
                       onClick={() => setShowFullReport(false)}
-                      className="text-xs text-primary hover:underline"
+                      className="text-xs p-0 h-auto"
                     >
                       Switch to summary view
-                    </button>
+                    </Button>
                   </div>
                 )}
 
@@ -1678,16 +1684,17 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                       infoTip="Industry-specific quantum threats matched against your current algorithms from the Threats database."
                       headerExtra={
                         hiddenForIndustryCount > 0 ? (
-                          <button
+                          <Button
+                            variant="ghost"
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation()
                               restoreAllThreats()
                             }}
-                            className="text-xs px-2.5 py-1 rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors print:hidden"
+                            className="text-xs px-2.5 py-1 h-auto rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 print:hidden"
                           >
                             {hiddenForIndustryCount} hidden · Restore
-                          </button>
+                          </Button>
                         ) : undefined
                       }
                     >
@@ -1726,47 +1733,52 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
 
                 <div className="flex flex-col items-center gap-2 print:hidden">
                   <div className="flex flex-wrap items-center justify-center gap-3">
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={handlePrint}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
                     >
                       <Printer size={16} />
                       Download PDF
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
                       onClick={handleCSVExport}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
                     >
                       <Download size={16} />
                       Export CSV
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
                       onClick={handleShare}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
                     >
                       <Share2 size={16} />
                       Share
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
                       onClick={() => {
                         editFromStep(0)
                         navigate('/assess')
                       }}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
                     >
                       <Pencil size={16} />
                       Edit Answers
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
                       onClick={() => {
                         reset()
                         navigate('/assess')
                       }}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
                     >
                       <RotateCcw size={16} />
                       Start Over
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

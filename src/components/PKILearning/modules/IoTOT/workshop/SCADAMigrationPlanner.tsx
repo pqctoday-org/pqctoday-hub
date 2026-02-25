@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { Shield, AlertTriangle, CheckCircle } from 'lucide-react'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { PURDUE_LAYERS } from '../constants'
 
 type CryptoPosture = 'none' | 'psk' | 'rsa-2048' | 'ecdsa-p256' | 'tls-1.3' | 'pqc-hybrid'
@@ -145,17 +146,13 @@ export const SCADAMigrationPlanner: React.FC = () => {
                   <p className="text-xs text-muted-foreground mt-0.5">{layer.description}</p>
                 </div>
 
-                <select
-                  value={posture}
-                  onChange={(e) => handlePostureChange(key, e.target.value as CryptoPosture)}
-                  className="bg-muted border border-border rounded-lg px-3 py-2 text-sm text-foreground min-w-[200px]"
-                >
-                  {POSTURE_OPTIONS.map((opt) => (
-                    <option key={opt.id} value={opt.id}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <FilterDropdown
+                  items={POSTURE_OPTIONS.map((opt) => ({ id: opt.id, label: opt.label }))}
+                  selectedId={posture}
+                  onSelect={(id) => handlePostureChange(key, id as CryptoPosture)}
+                  noContainer
+                  className="min-w-[200px]"
+                />
               </div>
 
               {/* Migration score bar */}

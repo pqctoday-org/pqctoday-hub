@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   Cpu,
   Shield,
+  Boxes,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { CODE_SIGNING_ALGORITHMS, PACKAGE_MANAGERS, SIGSTORE_STEPS } from '../constants'
@@ -87,7 +88,144 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
         </div>
       </section>
 
-      {/* Section 2: Classical vs PQC Code Signing */}
+      {/* Section 2: Supply Chain Risk & the Quantum Amplifier */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-secondary/10">
+            <Boxes size={24} className="text-secondary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">
+            Supply Chain Risk &amp; the Quantum Amplifier
+          </h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            The attacks above are symptoms of deeper structural problems in modern{' '}
+            <InlineTooltip term="Software Supply Chain">software supply chains</InlineTooltip>. As
+            software composition grows more complex, the attack surface expands &mdash; and quantum
+            computing threatens to break the cryptographic foundations that hold it together.
+          </p>
+
+          {/* Part A: Supply Chain Attack Surface */}
+          <div className="text-xs font-bold text-foreground uppercase tracking-wide">
+            The Software Supply Chain Attack Surface
+          </div>
+          <div className="space-y-2">
+            {[
+              {
+                t: 'Dependency Sprawl',
+                d: 'The average enterprise application pulls in 200\u2013500 transitive dependencies. Each dependency is a link in the trust chain \u2014 and each link is only as strong as its maintainer\u2019s signing practices.',
+              },
+              {
+                t: 'The Transitive Trust Problem',
+                d: 'You audit your direct dependencies, but do you audit their dependencies? A malicious package five levels deep in the dependency tree can execute arbitrary code in your application. The 3CX attack exploited exactly this pattern.',
+              },
+              {
+                t: 'CI/CD Pipeline as Attack Surface',
+                d: 'Build systems, artifact registries, and deployment pipelines are high-value targets. The Codecov bash uploader attack demonstrates that unsigned CI scripts can be silently replaced. Every step from source code to deployed binary is an attack surface.',
+              },
+              {
+                t: 'Build Provenance & SBOM',
+                d: 'An SBOM documents what goes into a build, but build provenance answers how it was built and who built it. Without cryptographically signed provenance, an attacker can substitute a tampered artifact that passes all hash checks.',
+              },
+              {
+                t: 'Verification Frameworks',
+                d: 'Frameworks like SLSA and in-toto provide structured approaches to supply chain verification \u2014 defining security levels based on how much of the build pipeline is cryptographically attested. Their guarantees depend entirely on the strength of the underlying signatures.',
+              },
+            ].map((challenge) => (
+              <div key={challenge.t} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
+                <AlertTriangle size={14} className="text-warning shrink-0 mt-0.5" />
+                <div>
+                  <div className="text-sm font-medium text-foreground">{challenge.t}</div>
+                  <p className="text-xs text-muted-foreground">{challenge.d}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Part B: How Quantum Computing Changes the Equation */}
+          <div className="text-xs font-bold text-foreground uppercase tracking-wide mt-6">
+            How Quantum Computing Changes the Equation
+          </div>
+
+          <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
+            <blockquote className="text-sm italic text-foreground/90">
+              &ldquo;Today, a supply chain attacker must steal a signing key. Tomorrow, a
+              quantum-capable adversary can forge any signature without stealing anything.&rdquo;
+            </blockquote>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-primary mb-1">
+                Key Theft &rarr; Key Forgery
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Today&apos;s supply chain attacks require compromising a specific publisher&apos;s
+                signing key. A quantum attacker running{' '}
+                <InlineTooltip term="Shor's Algorithm">Shor&apos;s algorithm</InlineTooltip> could
+                derive <em>any</em> publisher&apos;s private key from their public certificate
+                &mdash; no infiltration, no social engineering, no insider threat required.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-primary mb-1">
+                HNDL Applied to Signed Artifacts
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Adversaries can harvest signed binaries and code signing certificates today. Once
+                quantum computers arrive, they could forge new signatures that chain to existing
+                certificates, or create fake artifacts that appear legitimately signed by any
+                publisher. This is the{' '}
+                <InlineTooltip term="HNDL">harvest-now-decrypt-later</InlineTooltip> threat applied
+                to code integrity.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-warning mb-1">Cascading Trust Breakdown</div>
+              <p className="text-xs text-muted-foreground">
+                A quantum-compromised <InlineTooltip term="Root CA">Root CA</InlineTooltip> key
+                would let an attacker sign software as <em>any</em> publisher in that CA&apos;s
+                trust hierarchy. Unlike a stolen intermediate key (scoped to one publisher),
+                breaking the Root CA&apos;s algorithm affects the entire ecosystem simultaneously.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-warning mb-1">Scale: One Key vs All Keys</div>
+              <p className="text-xs text-muted-foreground">
+                A stolen signing key compromises one publisher. A quantum break of{' '}
+                <InlineTooltip term="ECDSA">ECDSA</InlineTooltip> or{' '}
+                <InlineTooltip term="RSA">RSA</InlineTooltip> compromises{' '}
+                <em>every publisher simultaneously</em> &mdash; every code signing certificate using
+                that algorithm becomes forgeable. This is a systemic, not isolated, risk.
+              </p>
+            </div>
+          </div>
+
+          {/* Full-width long-lived software card */}
+          <div className="bg-muted/50 rounded-lg p-4 border border-destructive/20">
+            <div className="text-xs font-bold text-destructive mb-1">
+              Long-Lived Software in the Field
+            </div>
+            <p className="text-xs text-muted-foreground">
+              SCADA controllers, medical devices, avionics, and industrial infrastructure deployed
+              today with classical signatures will still be operating 15&ndash;25 years from now.
+              These systems cannot be easily patched and will be running in a post-quantum threat
+              environment. Their classical signatures will offer zero protection against firmware
+              forgery.
+            </p>
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            This is why PQC migration for code signing is not just about upgrading algorithms
+            &mdash; it requires rethinking the entire supply chain trust model, from{' '}
+            <InlineTooltip term="Build Provenance">build provenance</InlineTooltip> to signature
+            verification to certificate chain management.
+          </p>
+        </div>
+      </section>
+
+      {/* Section 3: Classical vs PQC Code Signing */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
@@ -187,7 +325,7 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
         </div>
       </section>
 
-      {/* Section 3: Code Signing Certificate Chains */}
+      {/* Section 4: Code Signing Certificate Chains */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
@@ -239,14 +377,17 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             <p className="text-xs text-muted-foreground">
               Code signing certificates expire, but signed software must remain valid long after.{' '}
               <strong>Timestamping</strong> (RFC 3161) proves the signature was created while the
-              certificate was still valid. PQC timestamping requires PQC-capable Time Stamping
-              Authorities (TSAs) &mdash; a critical dependency for migration.
+              certificate was still valid. PQC timestamping requires PQC-capable{' '}
+              <InlineTooltip term="Time Stamping Authority">
+                Time Stamping Authorities (TSAs)
+              </InlineTooltip>{' '}
+              &mdash; a critical dependency for migration.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Section 4: Package Manager Signing */}
+      {/* Section 5: Package Manager Signing */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
@@ -305,7 +446,7 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
         </div>
       </section>
 
-      {/* Section 5: Sigstore & Keyless Signing */}
+      {/* Section 6: Sigstore & Keyless Signing */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
@@ -315,10 +456,13 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            <strong>Sigstore</strong> is an open-source project that eliminates the need for
-            long-term signing key management. Instead of distributing and protecting private keys,
-            developers authenticate with their existing identity (GitHub, Google) and receive
-            short-lived certificates. All signatures are recorded in a public transparency log.
+            <strong>
+              <InlineTooltip term="Sigstore">Sigstore</InlineTooltip>
+            </strong>{' '}
+            is an open-source project that eliminates the need for long-term signing key management.
+            Instead of distributing and protecting private keys, developers authenticate with their
+            existing identity (GitHub, Google) and receive short-lived certificates. All signatures
+            are recorded in a public transparency log.
           </p>
 
           {/* Sigstore Flow Steps */}
@@ -348,16 +492,18 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">PQC Migration Path</div>
               <p className="text-xs text-muted-foreground">
-                Sigstore&apos;s architecture centralizes cryptographic operations in Fulcio (CA) and
-                Rekor (transparency log). Upgrading these two services to ML-DSA automatically
-                provides PQC protection to all downstream consumers (npm, PyPI, etc.).
+                Sigstore&apos;s architecture centralizes cryptographic operations in{' '}
+                <InlineTooltip term="Fulcio">Fulcio</InlineTooltip> (CA) and{' '}
+                <InlineTooltip term="Rekor">Rekor</InlineTooltip> (transparency log). Upgrading
+                these two services to ML-DSA automatically provides PQC protection to all downstream
+                consumers (npm, PyPI, etc.).
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Section 6: Secure Boot & Firmware Signing */}
+      {/* Section 7: Secure Boot & Firmware Signing */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">

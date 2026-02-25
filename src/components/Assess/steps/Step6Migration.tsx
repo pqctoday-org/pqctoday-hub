@@ -4,6 +4,8 @@ import { useAssessmentStore } from '../../../store/useAssessmentStore'
 
 import { InlineTooltip } from '../../ui/InlineTooltip'
 
+import { Button } from '../../ui/button'
+
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
@@ -41,19 +43,20 @@ const Step6Migration = () => {
       <PersonaHint stepKey="migration" />
 
       {/* I don't know escape hatch */}
-      <button
+      <Button
+        variant="ghost"
         aria-pressed={migrationStatus === 'unknown'}
         onClick={() => setMigrationStatus('unknown')}
         className={clsx(
-          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',
           migrationStatus === 'unknown'
-            ? 'border-muted-foreground bg-muted/20 text-foreground'
-            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+            ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
       >
         <Info size={14} className="shrink-0" />I don&apos;t know / Not sure about our migration
         status
-      </button>
+      </Button>
       <div
         className={clsx(
           'space-y-3 transition-opacity',
@@ -64,21 +67,22 @@ const Step6Migration = () => {
         aria-disabled={migrationStatus === 'unknown'}
       >
         {statuses.map((s) => (
-          <button
+          <Button
             key={s.value}
+            variant="ghost"
             role="radio"
             aria-checked={migrationStatus === s.value}
             onClick={() => setMigrationStatus(s.value)}
             className={clsx(
-              'w-full p-4 rounded-lg border text-left transition-colors',
+              'w-full h-auto p-4 flex-col items-start whitespace-normal border',
               migrationStatus === s.value
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border text-muted-foreground hover:border-primary/30'
+                ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                : 'border-border text-muted-foreground hover:border-primary/30 hover:bg-transparent'
             )}
           >
             <span className="font-bold text-sm">{s.label}</span>
             <p className="text-xs mt-1 opacity-80">{s.description}</p>
-          </button>
+          </Button>
         ))}
       </div>
     </div>

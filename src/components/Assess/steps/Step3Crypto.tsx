@@ -11,6 +11,8 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
+import { Button } from '../../ui/button'
+
 import clsx from 'clsx'
 
 import { Link } from 'react-router-dom'
@@ -169,18 +171,19 @@ const Step3Crypto = () => {
       <PersonaHint stepKey="crypto" />
 
       {/* I don't know escape hatch */}
-      <button
+      <Button
+        variant="ghost"
         aria-pressed={cryptoUnknown}
         onClick={() => setCryptoUnknown(!cryptoUnknown)}
         className={clsx(
-          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',
           cryptoUnknown
-            ? 'border-muted-foreground bg-muted/20 text-foreground'
-            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+            ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
       >
         <Info size={14} className="shrink-0" />I don&apos;t know / Not sure what algorithms we use
-      </button>
+      </Button>
 
       {/* Category cards — multi-select */}
       <div
@@ -196,22 +199,23 @@ const Step3Crypto = () => {
           const Icon = cat.icon
           const isSelected = currentCryptoCategories.includes(cat.id)
           return (
-            <button
+            <Button
               key={cat.id}
+              variant="ghost"
               aria-pressed={isSelected}
               onClick={() => handleCategoryToggle(cat)}
               className={clsx(
-                'p-3 rounded-lg border text-left text-sm font-medium transition-colors flex flex-col gap-1.5',
+                'h-auto p-3 flex-col items-start gap-1.5 border',
                 isSelected
-                  ? `${cat.borderColor} bg-primary/10 text-primary`
-                  : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                  ? `${cat.borderColor} bg-primary/10 text-primary hover:bg-primary/10`
+                  : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
               )}
             >
               <span className={clsx('flex items-center gap-1.5', isSelected && cat.iconColor)}>
                 <Icon size={15} />
                 <span className="font-semibold text-xs">{cat.label}</span>
               </span>
-            </button>
+            </Button>
           )
         })}
       </div>
@@ -236,22 +240,23 @@ const Step3Crypto = () => {
                       const isActive = currentCrypto.includes(algo.storedKey)
                       const isVulnerable = ALGORITHM_DB[algo.storedKey]?.quantumVulnerable ?? false
                       return (
-                        <button
+                        <Button
                           key={algo.storedKey}
+                          variant="ghost"
                           type="button"
                           onClick={() => toggleCrypto(algo.storedKey)}
                           className={clsx(
-                            'text-xs px-2.5 py-1 rounded-full border transition-colors flex items-center gap-1',
+                            'h-auto text-xs px-2.5 py-1 rounded-full border gap-1',
                             isActive
-                              ? 'bg-primary/10 text-primary border-primary/40 font-medium'
-                              : 'bg-background/30 text-muted-foreground border-border/40 hover:border-border hover:text-foreground'
+                              ? 'bg-primary/10 text-primary border-primary/40 font-medium hover:bg-primary/10'
+                              : 'bg-background/30 text-muted-foreground border-border/40 hover:border-border hover:text-foreground hover:bg-transparent'
                           )}
                         >
                           {algo.displayLabel}
                           {isVulnerable && (
                             <AlertTriangle size={10} className="text-warning shrink-0" />
                           )}
-                        </button>
+                        </Button>
                       )
                     })}
                   </div>

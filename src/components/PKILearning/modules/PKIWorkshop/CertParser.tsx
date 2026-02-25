@@ -13,9 +13,10 @@ import {
   Code,
   ShieldCheck,
 } from 'lucide-react'
-import { openSSLService } from '../../../../services/crypto/OpenSSLService'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
+import { useModuleStore } from '@/store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 interface CertParserProps {
   onComplete: () => void
@@ -422,47 +423,28 @@ AL9... (truncated for brevity) ...
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label htmlFor="artifact-select" className="text-sm text-muted-foreground">
-              Select a Certificate or CSR to inspect:
-            </label>
-            <select
-              id="artifact-select"
-              value={selectedArtifactId}
-              onChange={(e) => handleArtifactSelect(e.target.value)}
-              className="w-full bg-muted/30 border border-border rounded px-3 py-2 text-foreground text-sm focus:outline-none focus:border-primary/50"
-            >
-              <option value="">-- Select from Workshop --</option>
-
-              {csrs.length > 0 && (
-                <optgroup label="Certificate Signing Requests (CSR)">
-                  {csrs.map((csr) => (
-                    <option key={csr.id} value={csr.id}>
-                      {csr.name}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
-
-              {rootCAs.length > 0 && (
-                <optgroup label="Root CA Certificates">
-                  {rootCAs.map((ca) => (
-                    <option key={ca.id} value={ca.id}>
-                      {ca.name}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
-
-              {certificates.length > 0 && (
-                <optgroup label="Signed Certificates">
-                  {certificates.map((cert) => (
-                    <option key={cert.id} value={cert.id}>
-                      {cert.name}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
-            </select>
+            <FilterDropdown
+              label="Select a Certificate or CSR to inspect"
+              items={[
+                ...csrs.map((csr) => ({
+                  id: csr.id,
+                  label: csr.name,
+                })),
+                ...rootCAs.map((ca) => ({
+                  id: ca.id,
+                  label: ca.name,
+                })),
+                ...certificates.map((cert) => ({
+                  id: cert.id,
+                  label: cert.name,
+                })),
+              ]}
+              selectedId={selectedArtifactId}
+              onSelect={handleArtifactSelect}
+              defaultLabel="-- Select from Workshop --"
+              noContainer
+              className="w-full"
+            />
           </div>
           <div className="flex items-end">
             <button

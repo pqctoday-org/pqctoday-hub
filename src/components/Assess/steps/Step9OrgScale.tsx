@@ -1,5 +1,7 @@
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 
+import { Button } from '../../ui/button'
+
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
@@ -34,20 +36,21 @@ const Step9OrgScale = () => {
         <h4 className="text-sm font-semibold text-foreground">Systems using cryptography</h4>
         <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Number of systems">
           {systemOptions.map((opt) => (
-            <button
+            <Button
               key={opt.value}
+              variant="ghost"
               role="radio"
               aria-checked={systemCount === opt.value}
               onClick={() => setSystemCount(opt.value)}
               className={clsx(
-                'p-3 rounded-lg border text-center text-sm font-medium transition-colors',
+                'h-auto p-3 border',
                 systemCount === opt.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                  ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                  : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
               )}
             >
               {opt.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -56,20 +59,21 @@ const Step9OrgScale = () => {
         <h4 className="text-sm font-semibold text-foreground">Engineering team size</h4>
         <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Team size">
           {teamOptions.map((opt) => (
-            <button
+            <Button
               key={opt.value}
+              variant="ghost"
               role="radio"
               aria-checked={teamSize === opt.value}
               onClick={() => setTeamSize(opt.value)}
               className={clsx(
-                'p-3 rounded-lg border text-center text-sm font-medium transition-colors',
+                'h-auto p-3 border',
                 teamSize === opt.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                  ? 'border-primary bg-primary/10 text-primary hover:bg-primary/10'
+                  : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
               )}
             >
               {opt.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

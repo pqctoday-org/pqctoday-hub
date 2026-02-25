@@ -6,7 +6,7 @@ import { KeyManagementExercises, type WorkshopConfig } from './components/KeyMan
 import { KeyLifecycleDemo } from './workshop/KeyLifecycleDemo'
 import { HSMSimulator } from './workshop/HSMSimulator'
 import { KeyRotationPlanner } from './workshop/KeyRotationPlanner'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'

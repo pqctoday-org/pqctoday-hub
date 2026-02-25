@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Settings, FileText, Check, Shield, Key, Import, Copy, Eye } from 'lucide-react'
 import { clsx } from 'clsx'
-import { useTLSStore } from '../../../../store/tls-learning.store'
+import { useTLSStore } from '@/store/tls-learning.store'
 import { FileSelectionModal } from './components/FileSelectionModal'
 import { CertificateInspector } from './components/CertificateInspector'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Input } from '@/components/ui/input'
 import {
   DEFAULT_SERVER_CERT,
   DEFAULT_SERVER_KEY,
@@ -143,7 +145,7 @@ export const TLSServerPanel: React.FC = () => {
             </span>
           )}
         </h2>
-        <div className="flex bg-muted/50 rounded-lg p-1">
+        <div role="tablist" className="flex bg-muted/50 rounded-lg p-1">
           <button
             onClick={() => {
               setActiveTab('ui')
@@ -156,6 +158,9 @@ export const TLSServerPanel: React.FC = () => {
                 : 'text-muted-foreground hover:text-foreground'
             )}
             disabled={isConnected}
+            role="tab"
+            aria-selected={activeTab === 'ui'}
+            aria-controls="server-tab-panel"
           >
             <Settings size={14} /> UI
           </button>
@@ -171,13 +176,16 @@ export const TLSServerPanel: React.FC = () => {
                 : 'text-muted-foreground hover:text-foreground'
             )}
             disabled={isConnected}
+            role="tab"
+            aria-selected={activeTab === 'raw'}
+            aria-controls="server-tab-panel"
           >
             <FileText size={14} /> Config File
           </button>
         </div>
       </div>
 
-      <div className="p-6 flex-grow overflow-auto min-h-[400px]">
+      <div id="server-tab-panel" className="p-6 flex-grow overflow-auto min-h-[400px]">
         {activeTab === 'ui' ? (
           <div className="space-y-6">
             {/* Messages Section */}
@@ -194,9 +202,9 @@ export const TLSServerPanel: React.FC = () => {
                 >
                   Message to Send (in Full Flow)
                 </label>
-                <input
+                <Input
                   id="server-message"
-                  className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-tertiary transition-colors"
+                  className="w-full text-sm"
                   value={serverMessage}
                   onChange={(e) => setServerMessage(e.target.value)}
                   placeholder="Enter message..."
@@ -207,7 +215,7 @@ export const TLSServerPanel: React.FC = () => {
               <div className="mt-4 pt-4 border-t border-border">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-muted-foreground">Received from Client</span>
-                  <div className="flex bg-muted rounded p-0.5 border border-border">
+                  <div role="tablist" className="flex bg-muted rounded p-0.5 border border-border">
                     <button
                       onClick={() => setMessageView('text')}
                       className={clsx(
@@ -216,6 +224,8 @@ export const TLSServerPanel: React.FC = () => {
                           ? 'bg-tertiary/20 text-tertiary'
                           : 'text-muted-foreground hover:text-tertiary'
                       )}
+                      role="tab"
+                      aria-selected={messageView === 'text'}
                     >
                       TXT
                     </button>
@@ -227,6 +237,8 @@ export const TLSServerPanel: React.FC = () => {
                           ? 'bg-tertiary/20 text-tertiary'
                           : 'text-muted-foreground hover:text-tertiary'
                       )}
+                      role="tab"
+                      aria-selected={messageView === 'hex'}
                     >
                       HEX
                     </button>
@@ -259,6 +271,7 @@ export const TLSServerPanel: React.FC = () => {
                               onClick={() => navigator.clipboard.writeText(display)}
                               className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                               title="Copy"
+                              aria-label="Copy to clipboard"
                             >
                               <Copy size={12} />
                             </button>
@@ -278,18 +291,14 @@ export const TLSServerPanel: React.FC = () => {
                 <Shield size={14} /> Server Identity
               </span>
               <div className="flex gap-2">
-                <select
-                  aria-label="Server Identity"
-                  className="flex-grow bg-muted border border-border rounded-lg p-3 text-sm focus:outline-none focus:border-tertiary"
-                  value={certSelection}
-                  onChange={(e) => setCertSelection(e.target.value)}
-                >
-                  {CERTS.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
+                <FilterDropdown
+                  label="Server Identity"
+                  items={CERTS.map((c) => ({ id: c.id, label: c.label }))}
+                  selectedId={certSelection}
+                  onSelect={setCertSelection}
+                  noContainer
+                  className="flex-grow"
+                />
                 {serverConfig.certificates.certPem && (
                   <button
                     onClick={() =>
@@ -300,6 +309,7 @@ export const TLSServerPanel: React.FC = () => {
                     }
                     className="p-3 bg-muted hover:bg-muted/80 rounded-lg border border-border text-tertiary transition-colors"
                     title="Inspect Identity Certificate"
+                    aria-label="Inspect certificate"
                   >
                     <Eye size={18} />
                   </button>
@@ -394,6 +404,7 @@ export const TLSServerPanel: React.FC = () => {
                           }
                           className="text-[10px] text-tertiary hover:text-tertiary/80 flex items-center gap-1 uppercase font-bold"
                           title="Inspect Root CA"
+                          aria-label="Inspect root CA certificate"
                         >
                           <Eye size={10} className="mr-1" /> Inspect
                         </button>
@@ -444,6 +455,7 @@ export const TLSServerPanel: React.FC = () => {
                         toggleCipher(cipher)
                       }
                     }}
+                    aria-pressed={serverConfig.cipherSuites.includes(cipher)}
                     className={clsx(
                       'flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all',
                       serverConfig.cipherSuites.includes(cipher)

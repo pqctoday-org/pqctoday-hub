@@ -1,4 +1,4 @@
-import { useOpenSSLStore } from '../../../../OpenSSLStudio/store'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 
 export interface FileData {
   name: string

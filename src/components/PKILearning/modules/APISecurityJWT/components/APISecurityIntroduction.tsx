@@ -71,8 +71,9 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Header</div>
               <p className="text-xs text-muted-foreground">
-                JOSE header with <code className="text-foreground/70">alg</code> (signing algorithm)
-                and <code className="text-foreground/70">typ</code> (token type). Base64url-encoded
+                <InlineTooltip term="JOSE">JOSE</InlineTooltip> header with{' '}
+                <code className="text-foreground/70">alg</code> (signing algorithm) and{' '}
+                <code className="text-foreground/70">typ</code> (token type). Base64url-encoded
                 JSON.
               </p>
             </div>
@@ -289,9 +290,10 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            Migrating to PQC requires updating the JOSE header&apos;s{' '}
-            <code className="text-foreground/70">alg</code> field. The rest of the JWT structure
-            remains identical &mdash; the JOSE framework was designed for algorithm agility.
+            Migrating to PQC requires updating the <InlineTooltip term="JOSE">JOSE</InlineTooltip>{' '}
+            header&apos;s <code className="text-foreground/70">alg</code> field. The rest of the JWT
+            structure remains identical &mdash; the JOSE framework was designed for algorithm
+            agility.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -513,7 +515,8 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             <div>
               <div className="text-sm font-medium text-foreground">Key Management</div>
               <div className="text-xs text-muted-foreground">
-                JWKS key rotation and lifecycle for PQC keys
+                <InlineTooltip term="JWKS">JWKS</InlineTooltip> key rotation and lifecycle for PQC
+                keys
               </div>
             </div>
           </Link>

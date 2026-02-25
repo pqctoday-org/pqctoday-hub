@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Play, Loader2, ArrowLeftRight } from 'lucide-react'
-import { openSSLService } from '../../../../services/crypto/OpenSSLService'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { CLASSICAL_SIG_ALGOS, PQC_SIG_ALGOS } from './algorithmConfig'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 interface KeyGenWorkshopProps {
   onComplete: () => void
@@ -181,30 +182,17 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
           </span>
 
           <div>
-            <label htmlFor="classical-algo" className="block text-sm text-muted-foreground mb-1">
-              Algorithm
-            </label>
-            <select
-              id="classical-algo"
-              value={classicalAlgo}
-              onChange={(e) => setClassicalAlgo(e.target.value)}
-              className="w-full bg-muted border border-border rounded px-3 py-2 text-foreground"
-            >
-              <optgroup label="Signature">
-                {CLASSICAL_SIG_ALGOS.map((a) => (
-                  <option key={a.value} value={a.value}>
-                    {a.label}
-                  </option>
-                ))}
-              </optgroup>
-              <optgroup label="Key Exchange / Encryption">
-                {CLASSICAL_KEM_ALGOS.map((a) => (
-                  <option key={a.value} value={a.value}>
-                    {a.label}
-                  </option>
-                ))}
-              </optgroup>
-            </select>
+            <FilterDropdown
+              label="Algorithm"
+              items={[
+                ...CLASSICAL_SIG_ALGOS.map((a) => ({ id: a.value, label: a.label })),
+                ...CLASSICAL_KEM_ALGOS.map((a) => ({ id: a.value, label: a.label })),
+              ]}
+              selectedId={classicalAlgo}
+              onSelect={setClassicalAlgo}
+              noContainer
+              className="w-full"
+            />
           </div>
 
           <button
@@ -255,30 +243,17 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
           </span>
 
           <div>
-            <label htmlFor="pqc-algo" className="block text-sm text-muted-foreground mb-1">
-              Algorithm
-            </label>
-            <select
-              id="pqc-algo"
-              value={pqcAlgo}
-              onChange={(e) => setPqcAlgo(e.target.value)}
-              className="w-full bg-muted border border-border rounded px-3 py-2 text-foreground"
-            >
-              <optgroup label="Signature (FIPS 204 / 205)">
-                {PQC_SIG_ALGOS.map((a) => (
-                  <option key={a.value} value={a.value}>
-                    {a.label}
-                  </option>
-                ))}
-              </optgroup>
-              <optgroup label="Key Encapsulation (FIPS 203)">
-                {PQC_KEM_ALGOS.map((a) => (
-                  <option key={a.value} value={a.value}>
-                    {a.label}
-                  </option>
-                ))}
-              </optgroup>
-            </select>
+            <FilterDropdown
+              label="Algorithm"
+              items={[
+                ...PQC_SIG_ALGOS.map((a) => ({ id: a.value, label: a.label })),
+                ...PQC_KEM_ALGOS.map((a) => ({ id: a.value, label: a.label })),
+              ]}
+              selectedId={pqcAlgo}
+              onSelect={setPqcAlgo}
+              noContainer
+              className="w-full"
+            />
           </div>
 
           <button

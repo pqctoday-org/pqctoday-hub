@@ -1,10 +1,10 @@
 import { renderHook, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { useArtifactManagement } from '../useArtifactManagement'
-import { useOpenSSLStore } from '../../../../../OpenSSLStudio/store'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 
 // Mock store
-vi.mock('../../../../../OpenSSLStudio/store', () => ({
+vi.mock('@/components/OpenSSLStudio/store', () => ({
   useOpenSSLStore: vi.fn(),
 }))
 

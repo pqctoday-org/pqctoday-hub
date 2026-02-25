@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   RefreshCw,
 } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 
 /* ------------------------------------------------------------------ */
 /*  Shared helpers                                                     */
@@ -41,6 +42,8 @@ const FamilySection: React.FC<FamilySectionProps> = ({
     <button
       onClick={onToggle}
       className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/30 transition-colors"
+      aria-expanded={isExpanded}
+      aria-controls={`family-${title.replace(/\s+/g, '-').toLowerCase()}`}
     >
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-full border-2 border-border flex items-center justify-center bg-background">
@@ -67,6 +70,7 @@ const FamilySection: React.FC<FamilySectionProps> = ({
     <AnimatePresence>
       {isExpanded && (
         <motion.div
+          id={`family-${title.replace(/\s+/g, '-').toLowerCase()}`}
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
@@ -316,6 +320,10 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
               onInteract()
             }}
             className="w-full accent-primary"
+            aria-label="Noise level"
+            aria-valuemin={0}
+            aria-valuemax={1}
+            aria-valuenow={noiseLevel}
           />
         </div>
       </div>
@@ -446,14 +454,14 @@ const HashBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
         <p className="text-xs text-muted-foreground">
           Change even one character and the entire hash transforms:
         </p>
-        <input
+        <Input
           type="text"
           value={hashInput}
           onChange={(e) => {
             setHashInput(e.target.value)
             onInteract()
           }}
-          className="w-full px-3 py-2 rounded border border-border bg-background text-foreground text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/50"
+          className="w-full text-sm font-mono"
           placeholder="Type anything..."
         />
         <motion.div
@@ -550,6 +558,7 @@ const HashBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
                 }}
                 className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 flex items-center justify-center text-[9px] sm:text-[10px] font-medium transition-colors cursor-pointer hover:bg-muted/50 ${getNodeClass(isOnPath(`leaf-${i}`) ? `leaf-${i}` : isOnPath(`sibling-${i}`) ? `sibling-${i}` : '')}`}
                 aria-label={`Signature leaf ${i + 1}`}
+                aria-pressed={selectedLeaf === i}
               >
                 {label}
               </button>
@@ -772,6 +781,8 @@ const CodeBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
                     onInteract()
                   }}
                   className="flex-1 accent-primary"
+                  aria-label="Error injection count"
+                  aria-valuenow={errorCount}
                 />
                 <span
                   className={`text-sm font-bold ${canDecode ? 'text-success' : 'text-destructive'}`}

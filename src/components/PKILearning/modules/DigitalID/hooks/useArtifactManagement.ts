@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useOpenSSLStore } from '../../../../OpenSSLStudio/store'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 
 export interface ArtifactFilenames {
   trans?: string

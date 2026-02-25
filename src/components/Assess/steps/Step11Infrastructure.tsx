@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Info } from 'lucide-react'
+import { Button } from '../../ui/button'
 import clsx from 'clsx'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { InlineTooltip } from '../../ui/InlineTooltip'
@@ -58,19 +59,20 @@ const Step11Infrastructure = () => {
       </div>
 
       {/* None / I don't know escape hatch */}
-      <button
+      <Button
+        variant="ghost"
         aria-pressed={isDisabled}
         onClick={() => setInfrastructureUnknown(!isDisabled)}
         className={clsx(
-          'w-full p-3 rounded-lg border text-left text-sm font-medium transition-colors flex items-center gap-2',
+          'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',
           isDisabled
-            ? 'border-muted-foreground bg-muted/20 text-foreground'
-            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground'
+            ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
       >
         <Info size={14} className="shrink-0" />
         None of these / I don&apos;t know
-      </button>
+      </Button>
 
       {/* Layer cards — multi-select */}
       <div
@@ -86,22 +88,23 @@ const Step11Infrastructure = () => {
           const Icon = layer.icon
           const isSelected = selectedLayers.includes(layer.id)
           return (
-            <button
+            <Button
               key={layer.id}
+              variant="ghost"
               aria-pressed={isSelected}
               onClick={() => toggleInfrastructure(layer.id)}
               className={clsx(
-                'p-3 rounded-lg border text-left text-sm font-medium transition-colors flex flex-col gap-1.5',
+                'h-auto p-3 flex-col items-start gap-1.5 border',
                 isSelected
-                  ? `${layer.borderColor} bg-primary/10 text-primary`
-                  : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                  ? `${layer.borderColor} bg-primary/10 text-primary hover:bg-primary/10`
+                  : 'border-border text-muted-foreground hover:border-primary/30 hover:text-foreground hover:bg-transparent'
               )}
             >
               <span className={clsx('flex items-center gap-1.5', isSelected && layer.iconColor)}>
                 <Icon size={15} />
                 <span className="font-semibold text-xs">{layer.label}</span>
               </span>
-            </button>
+            </Button>
           )
         })}
       </div>
@@ -127,8 +130,9 @@ const Step11Infrastructure = () => {
                   {cats.map((cat) => {
                     const isActive = selectedCats.includes(cat)
                     return (
-                      <button
+                      <Button
                         key={cat}
+                        variant="ghost"
                         type="button"
                         onClick={() => {
                           const next = isActive
@@ -137,14 +141,14 @@ const Step11Infrastructure = () => {
                           setInfrastructureSubCategory(layerId, next)
                         }}
                         className={clsx(
-                          'text-xs px-2.5 py-1 rounded-full border transition-colors',
+                          'h-auto text-xs px-2.5 py-1 rounded-full border gap-1',
                           isActive
-                            ? 'bg-primary/10 text-primary border-primary/40 font-medium'
-                            : 'bg-background/30 text-muted-foreground border-border/40 hover:border-border hover:text-foreground'
+                            ? 'bg-primary/10 text-primary border-primary/40 font-medium hover:bg-primary/10'
+                            : 'bg-background/30 text-muted-foreground border-border/40 hover:border-border hover:text-foreground hover:bg-transparent'
                         )}
                       >
                         {cat}
-                      </button>
+                      </Button>
                     )
                   })}
                 </div>

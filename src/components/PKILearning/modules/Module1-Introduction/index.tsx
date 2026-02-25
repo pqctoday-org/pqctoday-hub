@@ -1,7 +1,7 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Trash2, BarChart3, KeyRound, PenLine, Shapes } from 'lucide-react'
-import { useModuleStore } from '../../../../store/useModuleStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PQC101Module } from './PQC101Module'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
