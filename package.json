@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "1.35.0",
+  "version": "1.36.0",
   "license": "GPL-3.0",
   "type": "module",
   "engines": {
@@ -18,6 +18,7 @@
     "predev": "cp -r node_modules/@openforge-sh/liboqs/dist public/dist",
     "dev": "vite",
     "scrape": "npx tsx scripts/scrape-compliance.ts",
+    "generate-corpus": "npx tsx scripts/generate-rag-corpus.ts",
     "prebuild": "npm run scrape",
     "build": "cp -r node_modules/@openforge-sh/liboqs/dist public/dist && tsc -b && vite build && cp dist/index.html dist/404.html && node scripts/prerender.mjs",
     "prerender": "node scripts/prerender.mjs",
@@ -56,6 +57,7 @@
     "localforage": "^1.10.0",
     "lucide-react": "^0.562.0",
     "micro-eth-signer": "^0.18.1",
+    "minisearch": "^7.2.0",
     "papaparse": "^5.5.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
-import { Users, Globe } from 'lucide-react'
+import { Users, Globe, Lock } from 'lucide-react'
 import clsx from 'clsx'
+import { StudyPackCard } from './StudyPackCard'
 import { useTheme } from '../../hooks/useTheme'
 import { getCurrentVersion } from '../../store/useVersionStore'
 
@@ -62,6 +63,34 @@ export const MobileAboutView = () => {
           collaboration to solve the PQC challenge.
         </p>
       </motion.div>
+
+      {/* Data Privacy Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="glass-panel p-4"
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-2 rounded-full bg-primary/10 text-primary">
+            <Lock size={20} />
+          </div>
+          <h2 className="text-lg font-bold">Data Privacy</h2>
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          PQC Today is a fully static website with no backend, no database, and no user accounts. We
+          do not collect, store, or transmit any personal data.
+        </p>
+        <ul className="mt-3 space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
+          <li>No cookies, no tracking pixels, no server-side logging</li>
+          <li>All preferences and progress stored locally in your browser</li>
+          <li>Cryptographic operations run entirely client-side via WASM</li>
+          <li>No external API calls at runtime</li>
+        </ul>
+      </motion.div>
+
+      {/* Study Pack Export */}
+      <StudyPackCard />
 
       {/* Connect Section */}
       <motion.div

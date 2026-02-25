@@ -255,6 +255,15 @@ export const GuidedTour: React.FC = () => {
     localStorage.setItem(TOUR_STORAGE_KEY, 'true')
   }, [])
 
+  // Document-level Escape key listener (works regardless of focus state, including Safari)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') dismiss()
+    }
+    if (isActive) document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [isActive, dismiss])
+
   const next = () => {
     if (currentStep < visibleSteps.length - 1) {
       setCurrentStep((s) => s + 1)
@@ -283,12 +292,8 @@ export const GuidedTour: React.FC = () => {
               content remains tappable; the card's own Skip/Get Started buttons handle dismissal) */}
           <div
             className="fixed inset-0 z-50 bg-black/50 pointer-events-none md:pointer-events-auto"
-            role="button"
-            tabIndex={-1}
             onClick={dismiss}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') dismiss()
-            }}
+            aria-hidden="true"
           />
 
           {/* Desktop: anchored tooltip */}
@@ -306,7 +311,7 @@ export const GuidedTour: React.FC = () => {
                 <h3 className="font-bold text-foreground text-sm">{step.title}</h3>
                 <button
                   onClick={dismiss}
-                  className="p-0.5 rounded hover:bg-muted/50 text-muted-foreground transition-colors"
+                  className="p-1.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded hover:bg-muted/50 text-muted-foreground transition-colors"
                   aria-label="Dismiss tour"
                 >
                   <X size={14} />
@@ -392,13 +397,13 @@ export const GuidedTour: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <button
                     onClick={dismiss}
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors py-2 px-1"
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors py-2 px-3 min-h-[44px]"
                   >
                     Skip
                   </button>
                   <button
                     onClick={next}
-                    className="flex items-center gap-1 px-4 py-2 rounded-lg bg-primary text-black text-sm font-bold hover:bg-primary/90 transition-colors"
+                    className="flex items-center gap-1 px-4 py-2 min-h-[44px] rounded-lg bg-primary text-black text-sm font-bold hover:bg-primary/90 transition-colors"
                   >
                     {currentStep === visibleSteps.length - 1 ? 'Get Started' : 'Next'}
                     {currentStep < visibleSteps.length - 1 && <ChevronRight size={16} />}

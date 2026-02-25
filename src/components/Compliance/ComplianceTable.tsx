@@ -25,6 +25,7 @@ interface ComplianceTableProps {
   isRefreshing?: boolean
   lastUpdated?: Date | null
   onEnrich?: (r: ComplianceRecord) => void
+  initialFilter?: string
 }
 
 type SortDirection = 'asc' | 'desc'
@@ -237,8 +238,9 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   isRefreshing,
   lastUpdated,
   onEnrich,
+  initialFilter,
 }) => {
-  const [filterText, setFilterText] = useState('')
+  const [filterText, setFilterText] = useState(initialFilter ?? '')
   const [pqcFilters, setPqcFilters] = useState<string[]>([])
   const [categoryFilters, setCategoryFilters] = useState<string[]>([])
   const [sourceFilters, setSourceFilters] = useState<string[]>([])

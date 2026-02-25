@@ -1522,7 +1522,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                                 <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
                                   {fullFw.libraryRefs.map((ref) => (
                                     <Link
-                                      to={`/library?search=${encodeURIComponent(ref)}`}
+                                      to={`/library?q=${encodeURIComponent(ref)}`}
                                       key={ref}
                                       className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
                                       title={`View ${ref} in Library`}

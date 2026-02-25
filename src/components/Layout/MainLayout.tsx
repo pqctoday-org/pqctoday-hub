@@ -20,12 +20,19 @@ import {
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
 import { GuidedTour } from '../common/GuidedTour'
+import { ChatFAB } from '../Chat/ChatFAB'
+import { useChatStore } from '../../store/useChatStore'
+
+const ChatPanel = React.lazy(() =>
+  import('../Chat/ChatPanel').then((m) => ({ default: m.ChatPanel }))
+)
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
 
 export const MainLayout = () => {
   const location = useLocation()
   const { selectedPersona } = usePersonaStore()
+  const isChatOpen = useChatStore((s) => s.isOpen)
 
   // Build timestamp - set at compile time
   const buildTime = __BUILD_TIMESTAMP__
@@ -148,6 +155,10 @@ export const MainLayout = () => {
 
       {/* First-visit Guided Tour */}
       <GuidedTour />
+
+      {/* PQC Assistant Chatbot */}
+      <ChatFAB />
+      <React.Suspense fallback={null}>{isChatOpen && <ChatPanel />}</React.Suspense>
     </div>
   )
 }

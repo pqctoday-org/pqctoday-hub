@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   libraryData,
   libraryMetadata,
@@ -176,12 +177,13 @@ const INDUSTRY_CANONICAL_MAP: Record<string, string> = {
 }
 
 export const LibraryView: React.FC = () => {
+  const [searchParams] = useSearchParams()
   const { selectedIndustry: storeIndustry } = usePersonaStore()
   const [activeCategory, setActiveCategory] = useState<string>('All')
   const [activeOrg, setActiveOrg] = useState<string>('All')
   const [activeIndustry, setActiveIndustry] = useState<string>(storeIndustry ?? 'All')
-  const [filterText, setFilterText] = useState('')
-  const [inputValue, setInputValue] = useState('')
+  const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
+  const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
   const [viewMode, setViewMode] = useState<ViewMode>('cards')
   const [sortBy, setSortBy] = useState<SortOption>('newest')
   const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(null)

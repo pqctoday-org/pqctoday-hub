@@ -15,9 +15,12 @@ export const WhatsNewToast = () => {
       resetForTesting()
     }
 
-    // Small delay to avoid flash on initial load
+    // Small delay to avoid flash on initial load.
+    // Don't show while guided tour is still pending — both appearing
+    // simultaneously causes z-index conflicts that block tour dismissal.
     const timer = setTimeout(() => {
-      if (!hasSeenCurrentVersion()) {
+      const tourCompleted = localStorage.getItem('pqc-tour-completed')
+      if (!hasSeenCurrentVersion() && tourCompleted) {
         setIsVisible(true)
       }
     }, 1000)
@@ -77,25 +80,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Mobile UX overhaul</strong> &mdash; every
-                    page audited for portrait &amp; landscape usability; all buttons now meet
-                    44&times;44px touch targets
+                    <strong className="text-foreground">PQC Assistant</strong> &mdash; AI chatbot
+                    powered by Gemini 2.5 Flash with RAG retrieval from 1,700+ data chunks across
+                    all app content
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Safe-area &amp; dvh support</strong> &mdash;
-                    notch-aware sticky header, modals use dynamic viewport height, landscape mode
-                    fixed across all 16 Learn modules
+                    <strong className="text-foreground">Deep-linking</strong> &mdash; chatbot
+                    responses link directly to products, algorithms, threats, library docs, and more
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Threats &amp; Report polish</strong> &mdash;
-                    mobile-visible search, responsive risk gauge, narrower threat table with hidden
-                    column on small screens
+                    <strong className="text-foreground">Study Pack</strong> &mdash; download all PQC
+                    Today content as a ZIP for Google NotebookLM
                   </span>
                 </li>
               </ul>

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Search, Briefcase, Building2, School } from 'lucide-react'
 
 import { leadersData, leadersMetadata } from '../../data/leadersData'
@@ -11,9 +12,10 @@ import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
 
 export const LeadersGrid = () => {
+  const [searchParams] = useSearchParams()
   const [selectedCountry, setSelectedCountry] = useState<string>('All')
   const [selectedSector, setSelectedSector] = useState<string>('All')
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
 
   // Extract unique countries
   const countryItems = useMemo(() => {

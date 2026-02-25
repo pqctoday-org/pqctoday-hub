@@ -4,6 +4,39 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.36.0] - 2026-02-25
+
+### Added
+
+- **PQC Assistant chatbot** (`src/components/Chat/`, `src/services/chat/`): Gemini 2.5 Flash-powered
+  conversational AI with client-side RAG retrieval. Three-phase search (entity matching → query
+  expansion → keyword with source diversity) draws from 1,725 chunks across 17 data sources
+  (glossary, algorithms, threats, timeline, library, compliance, migrate catalog, leaders, quiz,
+  assessment, certifications, priority matrix, authoritative sources, documentation, and all 19
+  learning modules). Streaming markdown responses with SPA-aware internal link navigation. Floating
+  action button + slide-in panel. BYOK model — users provide their own Gemini API key.
+
+- **Deep-linking across all pages**: Library, Compliance, Timeline, and Leaders views now accept
+  `?q=` search params to pre-filter on load. Chatbot system prompt instructs the model to deep-link
+  all mentioned items: products via `/migrate?q=`, algorithms via `/algorithms?highlight=`,
+  industry threats via `/threats?industry=`, library docs via `/library?q=`, compliance frameworks
+  via `/compliance?q=`, timeline countries via `/timeline?q=`, and leaders via `/leaders?q=`.
+
+- **RAG corpus generators** (`scripts/generate-rag-corpus.ts`): 4 new CSV processors — quiz Q&A
+  (138 chunks from 380 questions grouped by category), assessment config (3 chunks), migration
+  priority matrix (4 chunks), and certification cross-references (3 chunks). Combined with learning
+  module content extraction (258 chunks) and markdown documentation (70 chunks), the corpus grew
+  from 1,249 to 1,725 chunks (1.44 MB).
+
+- **Study Pack for NotebookLM** (`src/services/export/StudyPackService.ts`,
+  `src/components/About/StudyPackCard.tsx`): Downloadable ZIP file containing all PQC Today content
+  (glossary, algorithms, library, threats, compliance, migrate catalog, leaders, timeline, learning
+  modules) as structured markdown files for use with Google NotebookLM.
+
+- **Data Privacy section** (`AboutView.tsx`, `MobileAboutView.tsx`): New section on the About page
+  explaining the app's privacy model — no server-side data collection, localStorage-only
+  persistence, BYOK API key handling, and educational-use crypto disclaimer.
+
 ## [1.35.0] - 2026-02-25
 
 ### Fixed

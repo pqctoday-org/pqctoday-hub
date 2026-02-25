@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable } from './ComplianceTable'
 import { ComplianceLandscape } from './ComplianceLandscape'
@@ -103,6 +104,8 @@ function MobileViewToggle({ data }: { data: import('./types').ComplianceRecord[]
 }
 
 export const ComplianceView = () => {
+  const [searchParams] = useSearchParams()
+  const initialFilter = searchParams.get('q') ?? undefined
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
   const { selectedIndustries, selectedRegion } = usePersonaStore()
 
@@ -251,6 +254,7 @@ export const ComplianceView = () => {
               isRefreshing={loading}
               lastUpdated={lastUpdated}
               onEnrich={enrichRecord}
+              initialFilter={initialFilter}
             />
           </TabsContent>
 
@@ -260,6 +264,7 @@ export const ComplianceView = () => {
               onRefresh={refresh}
               isRefreshing={loading}
               lastUpdated={lastUpdated}
+              initialFilter={initialFilter}
             />
           </TabsContent>
 
@@ -270,6 +275,7 @@ export const ComplianceView = () => {
               isRefreshing={loading}
               lastUpdated={lastUpdated}
               onEnrich={enrichRecord}
+              initialFilter={initialFilter}
             />
           </TabsContent>
 
@@ -285,6 +291,7 @@ export const ComplianceView = () => {
               onRefresh={refresh}
               isRefreshing={loading}
               lastUpdated={lastUpdated}
+              initialFilter={initialFilter}
             />
           </TabsContent>
         </Tabs>

@@ -1,8 +1,9 @@
-import { Info, Shield, GithubIcon, ShieldCheck, ShieldAlert } from 'lucide-react'
+import { Info, Shield, GithubIcon, ShieldCheck, ShieldAlert, Lock } from 'lucide-react'
 
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 import { MobileAboutView } from './MobileAboutView'
+import { StudyPackCard } from './StudyPackCard'
 import { useTheme } from '../../hooks/useTheme'
 import { getCurrentVersion } from '../../store/useVersionStore'
 
@@ -68,6 +69,9 @@ export function AboutView() {
             </p>
           </div>
         </motion.div>
+
+        {/* Study Pack Export */}
+        <StudyPackCard />
 
         {/* SBOM Section */}
         <motion.div
@@ -379,6 +383,59 @@ export function AboutView() {
                 </tbody>
               </table>
             </div>
+          </div>
+        </motion.div>
+
+        {/* Data Privacy Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.33 }}
+          className="glass-panel p-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <Lock className="text-primary" size={24} />
+            <h2 className="text-xl font-bold">Data Privacy</h2>
+          </div>
+          <div className="prose prose-invert max-w-none">
+            <p className="text-muted-foreground">
+              PQC Today is a fully static website &mdash; there is no backend server, no database,
+              and no user accounts. We do not collect, store, or transmit any personal data.
+            </p>
+            <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc list-inside">
+              <li>
+                <strong className="text-foreground">No data collection</strong> &mdash; no cookies,
+                no tracking pixels, no form submissions, and no server-side logging.
+              </li>
+              <li>
+                <strong className="text-foreground">Local-only persistence</strong> &mdash; all user
+                preferences, assessment results, learning progress, and saved state are stored
+                exclusively in your browser&apos;s localStorage. Nothing leaves your device.
+              </li>
+              <li>
+                <strong className="text-foreground">Client-side cryptography</strong> &mdash; all
+                cryptographic operations run entirely in your browser via WebAssembly (OpenSSL,
+                liboqs). No keys or data are ever sent to a server.
+              </li>
+              <li>
+                <strong className="text-foreground">No third-party services</strong> &mdash; no
+                external APIs are called at runtime. The site is served as static files from GitHub
+                Pages.
+              </li>
+              <li>
+                <strong className="text-foreground">Full transparency</strong> &mdash; the entire
+                source code is{' '}
+                <a
+                  href="https://github.com/pqctoday/pqc-timeline-app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  publicly available
+                </a>{' '}
+                for inspection under GPLv3.
+              </li>
+            </ul>
           </div>
         </motion.div>
 

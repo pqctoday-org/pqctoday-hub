@@ -39,6 +39,7 @@ interface SimpleGanttChartProps {
   selectedCountry: string
   onCountrySelect: (id: string) => void
   countryItems: Array<{ id: string; label: string; icon: React.ReactNode | null }>
+  initialFilter?: string
 }
 
 const START_YEAR = 2024
@@ -61,8 +62,9 @@ export const SimpleGanttChart = ({
   selectedCountry,
   onCountrySelect,
   countryItems,
+  initialFilter,
 }: SimpleGanttChartProps) => {
-  const [filterText, setFilterText] = useState('')
+  const [filterText, setFilterText] = useState(initialFilter ?? '')
   const [sortField, setSortField] = useState<'country' | 'organization'>('country')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)

@@ -211,6 +211,17 @@ Test your PQC readiness with this interactive web application visualizing the gl
 - **Guided Tour**: Interactive first-visit onboarding overlay
   - Filters tour steps to only show features visible in the active persona's navigation
   - Remembers completion status; re-trigger with `?tour` query parameter
+- **PQC Assistant**: AI-powered chatbot for post-quantum cryptography questions
+  - Powered by Google Gemini 2.5 Flash with BYOK (Bring Your Own Key)
+  - Client-side RAG retrieval using MiniSearch over 1,700+ content chunks from 17 data sources
+  - Three-phase search: entity matching, query expansion, keyword search with source diversity
+  - Streaming markdown responses with deep-linked references to app pages
+  - SPA-aware navigation: internal links close the chat panel and navigate via React Router
+  - Covers: glossary, algorithms, threats, timeline, library, compliance, migrate catalog, leaders,
+    quiz content, assessment config, certifications, priority matrix, and all 19 learning modules
+- **Study Pack for NotebookLM**: Download all PQC Today content as a structured ZIP file for use
+  with Google NotebookLM — includes glossary, algorithms, library, threats, compliance, migrate
+  catalog, leaders, timeline, and learning module summaries
 - **Compliance Module**: Real-time compliance tracking and standards monitoring
   - **Compliance Landscape**: Interactive 2024–2036 deadline timeline with urgency color-coding
     (imminent/near-term/future), region/industry filters, and persona-aware pre-filtering

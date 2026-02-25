@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
@@ -12,6 +13,7 @@ import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
 
 export const TimelineView = () => {
+  const [searchParams] = useSearchParams()
   const { selectedRegion } = usePersonaStore()
 
   const [selectedCountry, setSelectedCountry] = useState<string>(() => {
@@ -126,6 +128,7 @@ export const TimelineView = () => {
             selectedCountry={selectedCountry}
             onCountrySelect={handleCountrySelect}
             countryItems={countryItems}
+            initialFilter={searchParams.get('q') ?? undefined}
           />
         </div>
 
