@@ -3,6 +3,13 @@ import { test, expect } from '@playwright/test'
 test.describe('PKI Workshop Module', () => {
   test.setTimeout(120000)
   test.beforeEach(async ({ page }) => {
+    // Pre-seed localStorage to suppress "What's New" toast (z-[100] overlay can block clicks)
+    await page.addInitScript(() => {
+      window.localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '1.33.0' }, version: 0 })
+      )
+    })
     await page.goto('/')
     // Navigate to Learn module
     await page.getByRole('button', { name: 'Learn view' }).click()

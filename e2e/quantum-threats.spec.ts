@@ -14,8 +14,11 @@ test.describe('Quantum Threat Mechanics Module', () => {
   })
 
   test('Verify HNDL Timeline Calculator with Migration Time slider', async ({ page }) => {
-    // Navigate to Step 4: HNDL Timeline
-    await page.getByText('Step 4: HNDL Timeline').first().click()
+    // Navigate to Step 4: HNDL Timeline by clicking "Next Step →" 3 times (step 1→2→3→4).
+    // The step titles are only shown as the h2 heading when on that step, not as nav buttons.
+    await page.getByRole('button', { name: 'Next Step →' }).click()
+    await page.getByRole('button', { name: 'Next Step →' }).click()
+    await page.getByRole('button', { name: 'Next Step →' }).click()
     await expect(page.getByRole('heading', { name: '4. HNDL Timeline', level: 2 })).toBeVisible()
 
     // Verify sliders exist

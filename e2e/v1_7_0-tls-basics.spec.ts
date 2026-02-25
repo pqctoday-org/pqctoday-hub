@@ -154,10 +154,10 @@ test.describe('TLS 1.3 Basics Module', () => {
     // The panel structure uses selects. Let's rely on label if possible or order.
     // Client Panel is left (first). Server Panel is right (last or second).
     const selects = page.locator('select')
-    await selects.first().selectOption('mldsa') // Value for "Default (ML-DSA)"
+    await selects.first().selectOption('mldsa44') // Value for "Default (ML-DSA-44)"
 
     // 2. Select ML-DSA for Server
-    await selects.nth(1).selectOption('mldsa')
+    await selects.nth(1).selectOption('mldsa44')
 
     // 3. Run Handshake
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()
@@ -184,8 +184,8 @@ test.describe('TLS 1.3 Basics Module', () => {
 
     // 2. Select ML-DSA for Client and Server
     const selects = page.locator('select')
-    await selects.first().selectOption('mldsa') // Client
-    await selects.nth(1).selectOption('mldsa') // Server
+    await selects.first().selectOption('mldsa44') // Client
+    await selects.nth(1).selectOption('mldsa44') // Server
 
     // 3. Run Handshake
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()
