@@ -69,6 +69,14 @@ All notable changes to this project will be documented in this file.
   library (20+ templates covering cloud, container, API gateway, microservice, and IoT stacks),
   per-asset migration effort scoring, and CSV/JSON export of the bill of materials.
 
+- **Tools & Products tab** in 16 learning modules: New "Tools & Products" tab next to References
+  surfaces PQC-ready products from the Migrate catalog that are relevant to each module. Products are
+  grouped by infrastructure layer with compact cards showing PQC support badge, FIPS validation
+  status, license type, product brief, and a "View in Migrate" deep-link that pre-selects the
+  matching layer. Powered by a new `learning_modules` column in the migrate CSV (177/223 products
+  tagged across 34 categories) and a shared `ModuleMigrateTab` component. Multi-layer products
+  appear in all matching layer sections.
+
 - **Updated algorithm + software CSVs**: Refreshed `algorithms_transitions_02252026.csv` and
   `algorithms_transitions_02262026.csv` (RSA → ML-KEM, ECDSA → ML-DSA, ECDH → HQC deprecation
   dates). New `pqc_complete_algorithm_reference_02252026.csv` with 15-column algorithm reference

@@ -115,8 +115,8 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     id: 'code-signing',
     title: 'Code Signing',
     description:
-      'Protect software distribution — from classical code signing to post-quantum ML-DSA package integrity and Sigstore keyless signing.',
-    duration: '60 min',
+      'Protect software distribution — from classical code signing to post-quantum ML-DSA package integrity, Sigstore keyless signing, and secure boot firmware verification.',
+    duration: '75 min',
   },
   'api-security-jwt': {
     id: 'api-security-jwt',
@@ -152,7 +152,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'entropy-randomness': 5,
   'merkle-tree-certs': 6,
   qkd: 3,
-  'code-signing': 4,
+  'code-signing': 5,
   'api-security-jwt': 5,
   quiz: 1,
   assess: 1, // Assessment wizard completion

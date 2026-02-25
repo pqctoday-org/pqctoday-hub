@@ -93,9 +93,9 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Standalone Report page</strong> &mdash;
-                    shareable assessment reports via URL at{' '}
-                    <code className="font-mono">/report</code> with Google Drive cloud sync
+                    <strong className="text-foreground">Tools &amp; Products tab</strong> &mdash;
+                    every Learn module now links to relevant PQC-ready products from the Migrate
+                    catalog, grouped by infrastructure layer
                   </span>
                 </li>
               </ul>

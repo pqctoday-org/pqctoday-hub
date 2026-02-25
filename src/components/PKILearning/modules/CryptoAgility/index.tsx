@@ -9,6 +9,7 @@ import { MigrationPlanningExercise } from './workshop/MigrationPlanningExercise'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 
 const MODULE_ID = 'crypto-agility'
 
@@ -124,6 +125,7 @@ export const CryptoAgilityModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -229,6 +231,9 @@ export const CryptoAgilityModule: React.FC = () => {
         {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId="crypto-agility" />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

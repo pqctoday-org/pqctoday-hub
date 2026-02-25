@@ -12,6 +12,8 @@ import {
   Library,
   Layers,
   AlertTriangle,
+  Cpu,
+  Shield,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { CODE_SIGNING_ALGORITHMS, PACKAGE_MANAGERS, SIGSTORE_STEPS } from '../constants'
@@ -355,6 +357,133 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
         </div>
       </section>
 
+      {/* Section 6: Secure Boot & Firmware Signing */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Cpu size={24} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">Secure Boot &amp; Firmware Signing</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            Every platform depends on a <strong>chain of trust</strong> that starts at an immutable{' '}
+            <InlineTooltip term="Root of Trust">root of trust</InlineTooltip> and extends through
+            bootloaders, the OS kernel, and runtime firmware. Each link in the chain verifies a
+            cryptographic signature before passing execution to the next stage. If any signature
+            fails, the boot process halts.
+          </p>
+          <p>
+            Firmware signing is a critical PQC migration target because firmware keys have
+            10&ndash;20 year lifetimes, and devices deployed today will still be in the field when
+            cryptographically relevant quantum computers arrive. An attacker who harvests firmware
+            update signatures today could forge malicious firmware updates in the future.
+          </p>
+
+          {/* Boot Chain Visualization */}
+          <div className="space-y-3">
+            {[
+              {
+                level: 'Root of Trust (ROM / TPM)',
+                desc: 'Immutable hardware anchor. Public key burned into OTP fuses or stored in TPM NVRAM. If compromised, the entire chain collapses.',
+                color: 'border-primary/50 bg-primary/5',
+              },
+              {
+                level: 'Bootloader Verification (UEFI Secure Boot)',
+                desc: 'UEFI firmware verifies the bootloader signature against keys in the Secure Boot database before allowing execution.',
+                color: 'border-secondary/50 bg-secondary/5',
+              },
+              {
+                level: 'OS Kernel & Driver Loading',
+                desc: 'Kernel signature verified. Signed drivers loaded into protected memory. Measured boot extends TPM PCR registers for remote attestation.',
+                color: 'border-success/50 bg-success/5',
+              },
+              {
+                level: 'Runtime Firmware (NIC, GPU, BMC)',
+                desc: 'Device firmware verified before execution. Over-the-air updates require re-verification against the trust chain before flashing.',
+                color: 'border-warning/50 bg-warning/5',
+              },
+            ].map((item, idx) => (
+              <React.Fragment key={item.level}>
+                {idx > 0 && (
+                  <div className="flex justify-center text-muted-foreground text-lg">&darr;</div>
+                )}
+                <div className={`rounded-lg p-4 border ${item.color}`}>
+                  <div className="text-sm font-bold text-foreground mb-1">{item.level}</div>
+                  <p className="text-xs text-muted-foreground">{item.desc}</p>
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* CNSA 2.0 Callout */}
+          <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
+            <div className="text-xs font-bold text-primary mb-2">CNSA 2.0 Mandate</div>
+            <p className="text-xs text-muted-foreground mb-2">
+              The NSA&apos;s <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> guidance
+              mandates stateful hash-based signatures (
+              <InlineTooltip term="LMS/HSS">LMS/HSS</InlineTooltip> or{' '}
+              <InlineTooltip term="XMSS">XMSS</InlineTooltip>) for firmware and software signing in
+              National Security Systems &mdash; ahead of{' '}
+              <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> for general use.
+            </p>
+            <div className="space-y-1">
+              {[
+                {
+                  year: '2025',
+                  text: 'New software/firmware should support and prefer CNSA 2.0 algorithms',
+                },
+                { year: '2030', text: 'All deployed NSS must use CNSA 2.0 signatures' },
+                { year: '2033\u201335', text: 'Full quantum-resistant enforcement' },
+              ].map((m) => (
+                <div key={m.year} className="flex items-start gap-2">
+                  <span className="text-[10px] font-bold text-primary bg-primary/10 rounded px-1.5 py-0.5 shrink-0">
+                    {m.year}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">{m.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* LMS vs ML-DSA Tradeoff */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-muted/50 rounded-lg p-3 border border-warning/20">
+              <div className="text-xs font-bold text-warning mb-1">
+                Why Stateful (LMS) for Firmware?
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Compact signatures (2.5 KB) and tiny public keys (56 bytes) &mdash; ideal for
+                hardware-constrained boot ROM. Fast verification (~0.1 ms). CNSA 2.0 compliant.
+                Security derives solely from hash functions (minimal cryptographic assumptions).
+                Trade-off: requires a monotonic state counter managed in an HSM or TPM.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-success/20">
+              <div className="text-xs font-bold text-success mb-1">ML-DSA Alternative</div>
+              <p className="text-xs text-muted-foreground">
+                Fully stateless &mdash; no counter, no state management burden. Simpler operations
+                for environments where maintaining state is impractical (distributed build systems,
+                CI/CD pipelines). Trade-off: larger signatures (3.3 KB) and public keys (1.9 KB).
+                Not mandated by CNSA 2.0 for firmware signing.
+              </p>
+            </div>
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            For a deep dive into LMS/XMSS parameter selection, Merkle tree mechanics, and the state
+            management challenge, see the{' '}
+            <Link
+              to="/learn/stateful-signatures"
+              className="text-primary hover:underline font-bold"
+            >
+              Stateful Hash Signatures module
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
         <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
@@ -407,6 +536,18 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
               </div>
             </div>
           </Link>
+          <Link
+            to="/learn/stateful-signatures"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Shield size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Stateful Hash Signatures</div>
+              <div className="text-xs text-muted-foreground">
+                LMS/XMSS deep dive, state management, and CNSA 2.0 timelines
+              </div>
+            </div>
+          </Link>
         </div>
       </section>
 
@@ -419,7 +560,8 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
           Try it in the Workshop <ArrowRight size={18} />
         </button>
         <p className="text-xs text-muted-foreground mt-2">
-          Sign binaries, build certificate chains, and explore Sigstore keyless signing.
+          Sign binaries, build certificate chains, explore Sigstore keyless signing, and verify
+          secure boot trust chains.
         </p>
       </div>
     </div>

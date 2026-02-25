@@ -10,6 +10,7 @@ import { SizeComparison } from './workshop/SizeComparison'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 
 const MODULE_ID = 'merkle-tree-certs'
 
@@ -126,6 +127,7 @@ export const MerkleTreeCertsModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -228,6 +230,9 @@ export const MerkleTreeCertsModule: React.FC = () => {
 
         <TabsContent value="references">
           <ModuleReferencesTab moduleId={MODULE_ID} />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

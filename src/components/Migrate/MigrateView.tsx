@@ -36,6 +36,15 @@ export const MigrateView: React.FC = () => {
     setActiveSubCategory,
   } = useMigrateSelectionStore()
 
+  // Support ?layer= deep link from Tools & Products tab
+  useEffect(() => {
+    const layerParam = searchParams.get('layer')
+    if (layerParam && LAYERS.some((l) => l.id === layerParam)) {
+      setActiveLayer(layerParam)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const activeInfrastructureLayer = activeLayer as InfrastructureLayerType
   const activeTab = activeSubCategory
   const hiddenSet = useMemo(() => new Set(hiddenProducts), [hiddenProducts])

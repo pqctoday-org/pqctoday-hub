@@ -9,6 +9,7 @@ import { CMSEncryptionDemo } from './workshop/CMSEncryptionDemo'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 
 const MODULE_ID = 'email-signing'
 
@@ -120,6 +121,7 @@ export const EmailSigningModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -220,6 +222,9 @@ export const EmailSigningModule: React.FC = () => {
         {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId="email-signing" />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

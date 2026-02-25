@@ -9,6 +9,7 @@ import { KeyRotationPlanner } from './workshop/KeyRotationPlanner'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 
 const MODULE_ID = 'key-management'
 
@@ -117,6 +118,7 @@ export const KeyManagementModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -217,6 +219,9 @@ export const KeyManagementModule: React.FC = () => {
         {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId="key-management" />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

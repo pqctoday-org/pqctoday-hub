@@ -9,50 +9,64 @@ vi.mock(
   async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
 )
 
-// Mock pqcAlgorithmsData so Step3Crypto renders without actual CSV loading
-vi.mock('../../data/pqcAlgorithmsData', () => ({
-  loadPQCAlgorithmsData: vi.fn().mockResolvedValue([
+// Mock algorithmsData so Step3Crypto renders without actual CSV loading
+vi.mock('../../data/algorithmsData', () => ({
+  loadAlgorithmsData: vi.fn().mockResolvedValue([
     {
-      family: 'Classical KEM',
-      name: 'RSA-2048',
-      securityLevel: null,
-      type: 'Classical KEM',
-      aesEquivalent: '~112-bit',
-      publicKeySize: 270,
-      privateKeySize: 1190,
-      signatureCiphertextSize: 256,
-      sharedSecretSize: 256,
-      keyGenCycles: 'Baseline',
-      signEncapsCycles: 'Baseline Sign',
-      verifyDecapsCycles: 'Baseline Verify',
-      stackRAM: 2000,
-      optimizationTarget: 'N/A',
-      fipsStandard: 'SP 800-56B',
-      useCaseNotes: '',
+      classical: 'RSA',
+      keySize: '2048-bit',
+      pqc: 'ML-KEM-512',
+      function: 'Encryption/KEM',
+      deprecationDate: '2030',
+      standardizationDate: '2024',
     },
     {
-      family: 'Classical Sig',
-      name: 'ECDSA P-256',
-      securityLevel: null,
-      type: 'Classical Sig',
-      aesEquivalent: '~128-bit',
-      publicKeySize: 64,
-      privateKeySize: 32,
-      signatureCiphertextSize: 64,
-      sharedSecretSize: null,
-      keyGenCycles: '0.1x',
-      signEncapsCycles: '0.3x Sign',
-      verifyDecapsCycles: '0.4x Verify',
-      stackRAM: 500,
-      optimizationTarget: 'N/A',
-      fipsStandard: 'FIPS 186',
-      useCaseNotes: '',
+      classical: 'ECDH (P-256)',
+      keySize: '256-bit',
+      pqc: 'ML-KEM-512',
+      function: 'Encryption/KEM',
+      deprecationDate: '2035',
+      standardizationDate: '2024',
+    },
+    {
+      classical: 'ECDSA (P-256)',
+      keySize: '256-bit',
+      pqc: 'ML-DSA-44',
+      function: 'Signature',
+      deprecationDate: '2035',
+      standardizationDate: '2024',
+    },
+    {
+      classical: 'Ed25519',
+      keySize: '256-bit',
+      pqc: 'ML-DSA-44',
+      function: 'Signature',
+      deprecationDate: '2035',
+      standardizationDate: '2024',
+    },
+    {
+      classical: 'AES-128',
+      keySize: '128-bit',
+      pqc: 'AES-256',
+      function: 'Symmetric',
+      deprecationDate: '2030',
+      standardizationDate: '2001',
+    },
+    {
+      classical: 'SHA-256',
+      keySize: '256-bit',
+      pqc: 'SHA3-256',
+      function: 'Hash',
+      deprecationDate: 'N/A',
+      standardizationDate: '2015',
     },
   ]),
-  isClassical: (algo: { family: string }) =>
-    ['Classical KEM', 'Classical Sig', 'Classical Symmetric', 'Classical Hash'].includes(
-      algo.family
-    ),
+}))
+
+// Mock pqcAlgorithmsData for any remaining imports in the wizard and other steps
+vi.mock('../../data/pqcAlgorithmsData', () => ({
+  loadPQCAlgorithmsData: vi.fn().mockResolvedValue([]),
+  isClassical: vi.fn().mockReturnValue(false),
   isPQC: vi.fn().mockReturnValue(false),
   isHash: vi.fn().mockReturnValue(false),
   getPerformanceCategory: vi.fn().mockReturnValue('Moderate'),

@@ -72,6 +72,17 @@ export const CodeSigningExercises: React.FC<CodeSigningExercisesProps> = ({
         'The key advantage of Sigstore is that no long-term private keys exist. The ephemeral ML-DSA-65 keypair lives for ~20 minutes, and the transparency log (Rekor) serves as the permanent verification anchor.',
       config: { step: 3 },
     },
+    {
+      id: 'secure-boot-chain',
+      title: '5. Walk through the secure boot trust chain and compare firmware signing algorithms',
+      description:
+        'In the Secure Boot Chain workshop, step through all 4 stages of the boot trust chain. Toggle between LMS, XMSS, and ML-DSA to see how signature sizes and state management requirements differ. Run the firmware signing simulation and observe the state counter behavior for stateful algorithms.',
+      badge: 'Firmware',
+      badgeColor: 'bg-primary/20 text-primary border-primary/50',
+      observe:
+        'LMS signatures (2,512 bytes) are smaller than ML-DSA (3,309 bytes), but require a monotonic state counter that must never be reset or cloned. CNSA 2.0 mandates LMS/XMSS for firmware signing in national security systems by 2030, despite the state management burden.',
+      config: { step: 4 },
+    },
   ]
 
   const handleLoadAndRun = (scenario: Scenario) => {

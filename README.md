@@ -108,6 +108,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - Hybrid JWT: dual-sign with Ed25519 + ML-DSA-87 for backward-compatible migration tokens
     - JWE Encryption with ML-KEM-768 key agreement
     - Token Size Analyzer: side-by-side header/payload/signature breakdown for RS256, ES256, ML-DSA-44/65/87
+  - **Tools & Products Tab**: Every module includes a "Tools & Products" tab surfacing PQC-ready
+    products from the Migrate catalog, grouped by infrastructure layer with PQC/FIPS badges,
+    license info, and deep-links to the Migrate view
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
   - **Reference Catalog**: 186 verified PQC-relevant product entries across 7 infrastructure layers
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,

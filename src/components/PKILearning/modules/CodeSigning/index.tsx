@@ -1,15 +1,17 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, PenLine, ShieldCheck, Package, Globe } from 'lucide-react'
+import { Trash2, PenLine, ShieldCheck, Package, Globe, Cpu } from 'lucide-react'
 import { CodeSigningIntroduction } from './components/CodeSigningIntroduction'
 import { CodeSigningExercises, type WorkshopConfig } from './components/CodeSigningExercises'
 import { BinarySigning } from './workshop/BinarySigning'
 import { CertChainBuilder } from './workshop/CertChainBuilder'
 import { PackageSigning } from './workshop/PackageSigning'
 import { SigstoreFlow } from './workshop/SigstoreFlow'
+import { SecureBootChain } from './workshop/SecureBootChain'
 import { useModuleStore } from '../../../../store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 
 const MODULE_ID = 'code-signing'
 
@@ -37,6 +39,12 @@ const PARTS = [
     title: 'Step 4: Sigstore Flow',
     description: 'Walk through keyless signing and transparency logs.',
     icon: Globe,
+  },
+  {
+    id: 'secure-boot',
+    title: 'Step 5: Secure Boot Chain',
+    description: 'Explore firmware signing trust chain with LMS, XMSS, and ML-DSA.',
+    icon: Cpu,
   },
 ]
 
@@ -126,6 +134,7 @@ export const CodeSigningModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -188,6 +197,7 @@ export const CodeSigningModule: React.FC = () => {
               {currentPart === 1 && <CertChainBuilder key={`cert-chain-${configKey}`} />}
               {currentPart === 2 && <PackageSigning key={`package-signing-${configKey}`} />}
               {currentPart === 3 && <SigstoreFlow key={`sigstore-flow-${configKey}`} />}
+              {currentPart === 4 && <SecureBootChain key={`secure-boot-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}
@@ -228,6 +238,9 @@ export const CodeSigningModule: React.FC = () => {
         {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId="code-signing" />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

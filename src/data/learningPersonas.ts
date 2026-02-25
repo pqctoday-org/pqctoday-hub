@@ -84,8 +84,8 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'crypto-agility',
       'pki-workshop',
       'email-signing',
-      'code-signing',
       'api-security-jwt',
+      'code-signing',
       'quiz',
     ],
     pathItems: [
@@ -122,8 +122,8 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
         label: 'PKI & Signing',
         categories: ['pki-infrastructure', 'email-signing', 'crypto-operations'],
       },
-      { type: 'module', moduleId: 'code-signing' },
       { type: 'module', moduleId: 'api-security-jwt' },
+      { type: 'module', moduleId: 'code-signing' },
       {
         type: 'checkpoint',
         id: 'dev-cp-5',

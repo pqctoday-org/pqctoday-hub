@@ -10,6 +10,7 @@ import { RelyingPartyComponent } from './components/RelyingParty/RelyingPartyCom
 import { OverviewComponent } from './components/Overview/OverviewComponent'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import type { WalletInstance, CryptoKey, VerifiableCredential } from './types'
 
 const MODULE_ID = 'digital-id'
@@ -206,6 +207,7 @@ export const DigitalIDModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         {/* Learn Tab */}
@@ -355,6 +357,9 @@ export const DigitalIDModule: React.FC = () => {
         {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId={MODULE_ID} />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

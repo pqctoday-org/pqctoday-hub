@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PKIIntroduction } from './components/PKIIntroduction'
 import { PKIExercises } from './components/PKIExercises'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { CSRGenerator } from './CSRGenerator'
 import { RootCAGenerator } from './RootCAGenerator'
 import { CertSigner } from './CertSigner'
@@ -149,6 +150,7 @@ export const PKIWorkshop: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         {/* Learn Tab */}
@@ -270,6 +272,9 @@ export const PKIWorkshop: React.FC = () => {
         {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId={MODULE_ID} />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

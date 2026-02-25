@@ -96,6 +96,7 @@ interface RawSoftwareItem {
   verification_status: string
   last_verified_date: string
   migration_phases: string
+  learning_modules: string
 }
 
 function parseSoftwareCSV(csvContent: string): SoftwareItem[] {
@@ -127,5 +128,16 @@ function parseSoftwareCSV(csvContent: string): SoftwareItem[] {
     verificationStatus: row.verification_status,
     lastVerifiedDate: row.last_verified_date,
     migrationPhases: row.migration_phases || '',
+    learningModules: row.learning_modules || '',
   }))
+}
+
+export function getMigrateItemsForModule(moduleId: string): SoftwareItem[] {
+  return softwareData.filter((item) => {
+    if (!item.learningModules) return false
+    return item.learningModules
+      .split(';')
+      .map((m) => m.trim())
+      .includes(moduleId)
+  })
 }

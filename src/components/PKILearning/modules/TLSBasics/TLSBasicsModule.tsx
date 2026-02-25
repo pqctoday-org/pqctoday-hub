@@ -28,6 +28,7 @@ import {
   DEFAULT_MLDSA87_CLIENT_CERT,
 } from './utils/defaultCertificates'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 
 const MODULE_ID = 'tls-basics'
 
@@ -289,6 +290,7 @@ export const TLSBasicsModule: React.FC = () => {
           <TabsTrigger value="simulate">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         {/* Learn Tab */}
@@ -373,6 +375,9 @@ export const TLSBasicsModule: React.FC = () => {
         {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId="tls-basics" />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

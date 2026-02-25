@@ -10,6 +10,7 @@ import { EthereumFlow } from './flows/EthereumFlow'
 import { SolanaFlow } from './flows/SolanaFlow'
 import { HDWalletFlow } from './flows/HDWalletFlow'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { PQCMigrationFlow } from './flows/PQCMigrationFlow'
 
 const MODULE_ID = 'digital-assets'
@@ -140,6 +141,7 @@ export const DigitalAssetsModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
         {/* Learn Tab */}
@@ -244,6 +246,9 @@ export const DigitalAssetsModule: React.FC = () => {
         {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId="digital-assets" />
+        </TabsContent>
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

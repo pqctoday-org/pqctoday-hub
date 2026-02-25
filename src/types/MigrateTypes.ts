@@ -20,6 +20,7 @@ export interface SoftwareItem {
   verificationStatus: string
   lastVerifiedDate: string
   migrationPhases: string
+  learningModules: string
   status?: 'New' | 'Updated' | 'Deleted'
 }
 

@@ -7,15 +7,14 @@ import clsx from 'clsx'
 
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { ALGORITHM_DB } from '../../../hooks/assessmentData'
-import { isClassical, loadPQCAlgorithmsData } from '../../../data/pqcAlgorithmsData'
-import type { AlgorithmDetail } from '../../../data/pqcAlgorithmsData'
+import { loadAlgorithmsData } from '../../../data/algorithmsData'
+import type { AlgorithmTransition } from '../../../data/algorithmsData'
 
 import { PersonaHint } from './PersonaHint'
 
 interface CryptoCategory {
   id: string
   label: string
-  family: string
   icon: LucideIcon
   borderColor: string
   iconColor: string
@@ -25,7 +24,6 @@ const CRYPTO_CATEGORIES: CryptoCategory[] = [
   {
     id: 'Key Exchange',
     label: 'Key Exchange',
-    family: 'Classical KEM',
     icon: ArrowLeftRight,
     borderColor: 'border-primary',
     iconColor: 'text-primary',
@@ -33,7 +31,6 @@ const CRYPTO_CATEGORIES: CryptoCategory[] = [
   {
     id: 'Signatures',
     label: 'Signatures',
-    family: 'Classical Sig',
     icon: Pen,
     borderColor: 'border-accent',
     iconColor: 'text-accent',
@@ -41,7 +38,6 @@ const CRYPTO_CATEGORIES: CryptoCategory[] = [
   {
     id: 'Symmetric Encryption',
     label: 'Symmetric Encryption',
-    family: 'Classical Symmetric',
     icon: ShieldCheck,
     borderColor: 'border-success',
     iconColor: 'text-success',
@@ -49,12 +45,60 @@ const CRYPTO_CATEGORIES: CryptoCategory[] = [
   {
     id: 'Hash & MAC',
     label: 'Hash & MAC',
-    family: 'Classical Hash',
     icon: Hash,
     borderColor: 'border-warning',
     iconColor: 'text-warning',
   },
 ]
+
+/** Maps transition CSV `function` values to category IDs */
+const FUNCTION_TO_CATEGORY: Record<AlgorithmTransition['function'], string> = {
+  'Encryption/KEM': 'Key Exchange',
+  'Hybrid KEM': 'Key Exchange',
+  Signature: 'Signatures',
+  Symmetric: 'Symmetric Encryption',
+  Hash: 'Hash & MAC',
+}
+
+interface TransitionChip {
+  /** Label shown on the button — e.g. "RSA (2048-bit)", "ECDH (P-256)" */
+  displayLabel: string
+  /** Key stored in currentCrypto and used for ALGORITHM_DB lookup — e.g. "RSA-2048", "ECDH P-256" */
+  storedKey: string
+}
+
+/**
+ * Convert a transition CSV (classical, keySize) pair to an ALGORITHM_DB-compatible key.
+ * "RSA" + "2048-bit"  → "RSA-2048"
+ * "ECDH (P-256)"      → "ECDH P-256"   (paren stripped; "256" already in name, no suffix)
+ * "Ed25519"           → "Ed25519"       (exact match, no change)
+ */
+function transitionToAlgoKey(classical: string, keySize?: string): string {
+  // Strip "(X)" groups: "ECDH (P-256)" → "ECDH P-256"
+  const base = classical
+    .replace(/\s*\(([^)]+)\)/g, ' $1')
+    .replace(/\s+/g, ' ')
+    .trim()
+  if (keySize && keySize !== 'N/A') {
+    const numeric = keySize.replace(/[^0-9]/g, '')
+    // Only append key-size suffix when it is not already encoded in the base name
+    if (numeric && !base.includes(numeric)) return `${base}-${numeric}`
+  }
+  return base
+}
+
+/**
+ * Build the chip display label.
+ * Appends key size in parens only when it adds information not already in the classical name.
+ * "RSA" + "2048-bit" → "RSA (2048-bit)"
+ * "ECDH (P-256)"     → "ECDH (P-256)"   (256 already present — skip)
+ */
+function makeDisplayLabel(classical: string, keySize?: string): string {
+  if (!keySize || keySize === 'N/A') return classical
+  const numeric = keySize.replace(/[^0-9]/g, '')
+  if (numeric && classical.includes(numeric)) return classical
+  return `${classical} (${keySize})`
+}
 
 const Step3Crypto = () => {
   const {
@@ -66,14 +110,26 @@ const Step3Crypto = () => {
     setCryptoUnknown,
   } = useAssessmentStore()
 
-  const [algosByCategory, setAlgosByCategory] = useState<Record<string, AlgorithmDetail[]>>({})
+  const [algosByCategory, setAlgosByCategory] = useState<Record<string, TransitionChip[]>>({})
 
   useEffect(() => {
-    loadPQCAlgorithmsData().then((algos) => {
-      const classical = algos.filter(isClassical)
-      const grouped: Record<string, AlgorithmDetail[]> = {}
-      for (const cat of CRYPTO_CATEGORIES) {
-        grouped[cat.family] = classical.filter((a) => a.family === cat.family)
+    loadAlgorithmsData().then((transitions) => {
+      const grouped: Record<string, TransitionChip[]> = {}
+      for (const cat of CRYPTO_CATEGORIES) grouped[cat.id] = []
+
+      const seen = new Set<string>()
+      for (const t of transitions) {
+        // Skip generic placeholder rows ("Any (Stateless)", "Any (Firmware Signing)")
+        if (t.classical.startsWith('Any ')) continue
+        const catId = FUNCTION_TO_CATEGORY[t.function]
+        if (!catId) continue
+        const storedKey = transitionToAlgoKey(t.classical, t.keySize)
+        if (seen.has(storedKey)) continue
+        seen.add(storedKey)
+        grouped[catId].push({
+          displayLabel: makeDisplayLabel(t.classical, t.keySize),
+          storedKey,
+        })
       }
       setAlgosByCategory(grouped)
     })
@@ -84,9 +140,9 @@ const Step3Crypto = () => {
     toggleCryptoCategory(cat.id)
     if (alreadySelected) {
       // Clear specific algos belonging to this category
-      const algosInCat = algosByCategory[cat.family] ?? []
+      const algosInCat = algosByCategory[cat.id] ?? []
       algosInCat.forEach((a) => {
-        if (currentCrypto.includes(a.name)) toggleCrypto(a.name)
+        if (currentCrypto.includes(a.storedKey)) toggleCrypto(a.storedKey)
       })
     }
   }
@@ -156,7 +212,7 @@ const Step3Crypto = () => {
         <div className="space-y-3 pt-2">
           {CRYPTO_CATEGORIES.filter((cat) => currentCryptoCategories.includes(cat.id)).map(
             (cat) => {
-              const algos = algosByCategory[cat.family] ?? []
+              const algos = algosByCategory[cat.id] ?? []
               if (algos.length === 0) return null
               return (
                 <div key={cat.id} className="glass-panel p-3 space-y-2">
@@ -168,13 +224,13 @@ const Step3Crypto = () => {
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {algos.map((algo) => {
-                      const isActive = currentCrypto.includes(algo.name)
-                      const isVulnerable = ALGORITHM_DB[algo.name]?.quantumVulnerable ?? false
+                      const isActive = currentCrypto.includes(algo.storedKey)
+                      const isVulnerable = ALGORITHM_DB[algo.storedKey]?.quantumVulnerable ?? false
                       return (
                         <button
-                          key={algo.name}
+                          key={algo.storedKey}
                           type="button"
-                          onClick={() => toggleCrypto(algo.name)}
+                          onClick={() => toggleCrypto(algo.storedKey)}
                           className={clsx(
                             'text-xs px-2.5 py-1 rounded-full border transition-colors flex items-center gap-1',
                             isActive
@@ -182,7 +238,7 @@ const Step3Crypto = () => {
                               : 'bg-background/30 text-muted-foreground border-border/40 hover:border-border hover:text-foreground'
                           )}
                         >
-                          {algo.name}
+                          {algo.displayLabel}
                           {isVulnerable && (
                             <AlertTriangle size={10} className="text-warning shrink-0" />
                           )}

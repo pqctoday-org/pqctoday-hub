@@ -1048,6 +1048,15 @@ export const glossaryTerms: GlossaryTerm[] = [
     category: 'concept',
   },
   {
+    term: 'UEFI',
+    acronym: 'UEFI',
+    definition:
+      'Unified Extensible Firmware Interface — the modern firmware interface between hardware and OS. UEFI Secure Boot enforces signature verification on bootloaders and drivers before execution.',
+    relatedModule: '/learn/code-signing',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
     term: 'QKD',
     acronym: 'QKD',
     definition:
