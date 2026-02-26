@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Search, Briefcase, Building2, School } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Search, Briefcase, Building2, School, AlertCircle } from 'lucide-react'
 
 import { leadersData, leadersMetadata } from '../../data/leadersData'
 import { logEvent } from '../../utils/analytics'
@@ -24,6 +25,7 @@ export const LeadersGrid = () => {
   const [highlightedLeader, setHighlightedLeader] = useState<string | null>(() =>
     searchParams.get('leader')
   )
+  const [notFoundMessage, setNotFoundMessage] = useState<string | null>(null)
   const gridRef = useRef<HTMLDivElement>(null)
 
   // Sync URL params on same-route navigations (e.g. chatbot deep links)
@@ -55,12 +57,25 @@ export const LeadersGrid = () => {
       const el = document.getElementById(id)
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        // Remove highlight after 3 seconds
         setTimeout(() => setHighlightedLeader(null), 3000)
+      } else {
+        // Check if leader exists in unfiltered data but is hidden by filters
+        const existsUnfiltered = leadersData.some((l) => l.name === highlightedLeader)
+        if (existsUnfiltered) {
+          // Clear filters so the card becomes visible, then re-trigger scroll
+          setSelectedCountry('All')
+          setSelectedSector('All')
+          setSearchQuery('')
+        } else {
+          // Leader doesn't exist in database at all
+          setNotFoundMessage(`"${highlightedLeader}" was not found in the leaders database.`)
+          setHighlightedLeader(null)
+          setTimeout(() => setNotFoundMessage(null), 4000)
+        }
       }
-    }, 300) // small delay for render
+    }, 300)
     return () => clearTimeout(timer)
-  }, [highlightedLeader])
+  }, [highlightedLeader, selectedCountry, selectedSector, searchQuery])
 
   // Extract unique countries
   const countryItems = useMemo(() => {
@@ -235,6 +250,20 @@ export const LeadersGrid = () => {
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {notFoundMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="glass-panel border-l-4 border-l-status-warning p-3 flex items-center gap-3 mb-4"
+          >
+            <AlertCircle size={18} className="text-status-warning shrink-0" />
+            <p className="text-sm text-muted-foreground">{notFoundMessage}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div
         ref={gridRef}
