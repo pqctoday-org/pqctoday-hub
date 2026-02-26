@@ -78,7 +78,7 @@ const JOURNEY_STEPS: JourneyStep[] = [
     icon: GraduationCap,
     color: 'text-secondary',
     description:
-      '19 interactive modules + 380-question quiz — from PQC fundamentals to advanced protocols',
+      '25 interactive modules across 6 tracks + 440-question quiz — from PQC fundamentals to executive decision-making',
     paths: ['/learn'],
   },
   {

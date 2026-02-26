@@ -108,7 +108,7 @@ export const MobileAboutView = () => {
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           Ask questions about post-quantum cryptography using our RAG-powered chatbot. It searches
-          1,725 curated knowledge chunks and uses Gemini 2.5 Flash to deliver grounded answers with
+          1,800 curated knowledge chunks and uses Gemini 2.5 Flash to deliver grounded answers with
           deep links to relevant pages.
         </p>
       </motion.div>
@@ -165,7 +165,7 @@ export const MobileAboutView = () => {
       {/* Disclaimer */}
       <div className="text-center px-4">
         <p className="text-[10px] text-muted-foreground/60">
-          © 2025 PQC Timeline App. All rights reserved.
+          © 2026 PQC Timeline App. All rights reserved.
         </p>
       </div>
     </div>
