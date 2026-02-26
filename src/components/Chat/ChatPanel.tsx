@@ -179,7 +179,7 @@ export const ChatPanel: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 bottom-0 z-[60] w-full md:w-[80vw] bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden"
+            className="fixed right-0 top-0 bottom-0 z-[60] w-full md:w-[60vw] bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden"
             role="dialog"
             aria-label="PQC Assistant"
             aria-modal="true"
