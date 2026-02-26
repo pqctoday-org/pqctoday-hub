@@ -4,6 +4,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.38.0] - 2026-02-26
+
+### Added
+
+- **RAG retrieval optimization** (Rounds 2–5): Multi-turn conversation context injects last 3 user
+  messages as supplementary search terms. Intent-aware diversity caps (60% for comparison/catalog/
+  country queries). Source boost tuning — transitions 3× for comparisons, documentation 1.5× for
+  recommendations, library 1.2× for country queries, leaders 1.5× for definitions. System prompt
+  optimized (47 → 17 guideline lines, ~400 tokens reclaimed). Corpus expanded from 1,712 to 1,727
+  chunks: 13 assessment guide, 3 getting-started, 4 playground guide, 3 OpenSSL Studio guide, and
+  certifications expanded from 3 to 13 vendor-level chunks.
+
+- **Source attribution UI** (`ChatMessage.tsx`, `ChatPanel.tsx`, `ChatTypes.ts`): Assistant messages
+  now show a collapsible source list with deep-linked titles. Click any source to navigate directly
+  to the relevant page. Sources are deduplicated by title.
+
+- **Follow-up question suggestions** (`ChatMessage.tsx`): Entity-aware follow-up chips appear below
+  the last assistant response. Regex-based extraction detects algorithm names, FIPS standards,
+  vendor/product names, and learning module topics, then maps them to contextual follow-up templates.
+  Capped at 3 suggestions.
+
+- **Curated suggested questions** (`usePageContext.ts`): All 18 learning modules now have hand-written
+  suggested questions (previously 10/18 used generic templates). Added: VPN & SSH, Email Signing, PKI
+  Workshop, Merkle Tree Certs, API Security & JWT, Code Signing, Digital Identity, IoT & OT Security.
+
+- **Clear conversation confirmation** (`ChatPanel.tsx`): Trash button now requires `confirm()` before
+  clearing messages. Matches existing `window.confirm()` pattern used across the codebase.
+
+- **40 golden query tests** (`golden-queries.test.ts`): Expanded from 21 to 40 regression tests
+  covering definitions, comparisons, catalog lookups, country queries, recommendations, and
+  cross-intent queries. Metrics: 100% Intent Accuracy, 93.1% Recall@5, 100% Recall@15, 94.9%
+  Source Coverage, 0% Noise Rate.
+
+### Fixed
+
+- **ChatFAB mobile position** (`ChatFAB.tsx`): Fixed Tailwind class ordering — mobile-first
+  `bottom-20 right-4` with `md:bottom-6 md:right-6` override. Previous classes had conflicting
+  order that was accidentally working.
+
+- **Streaming accessibility** (`ChatPanel.tsx`): Added `aria-live="polite" aria-atomic="false"`
+  to the messages container so screen readers announce streaming text progressively.
+
 ## [1.37.0] - 2026-02-25
 
 ### Added

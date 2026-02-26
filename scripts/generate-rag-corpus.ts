@@ -837,6 +837,8 @@ function processModuleContent(): RAGChunk[] {
       const flushChunk = () => {
         if (currentChunk.length === 0) return
         const content = currentChunk.join('\n')
+        // Skip undersized chunks — they're typically caption fragments or template vars
+        if (content.length < 200) return
         chunks.push({
           id: `mc-${moduleDir.name}-${componentName}-${chunkIdx}`.toLowerCase(),
           source: 'module-content',
@@ -895,7 +897,11 @@ function processModuleContent(): RAGChunk[] {
       if (texts.length === 0) continue
 
       const dataName = path.basename(file, '.ts')
-      const content = texts.join('\n')
+      const MAX_DATA_CHUNK_CHARS = 3000
+      let content = texts.join('\n')
+      if (content.length > MAX_DATA_CHUNK_CHARS) {
+        content = content.slice(0, MAX_DATA_CHUNK_CHARS) + '\n...(truncated)'
+      }
 
       chunks.push({
         id: `mc-data-${moduleDir.name}-${dataName}`.toLowerCase(),
@@ -1143,6 +1149,243 @@ function processAssessmentConfig(): RAGChunk[] {
 }
 
 // ---------------------------------------------------------------------------
+// Assessment guide (step-by-step wizard explanation)
+// ---------------------------------------------------------------------------
+
+function processAssessmentGuide(): RAGChunk[] {
+  const steps: Array<{ id: string; title: string; content: string; step: number }> = [
+    {
+      id: 'industry',
+      title: 'Industry Selection',
+      step: 0,
+      content:
+        'The Industry Selection step determines which compliance frameworks, threat scenarios, and migration priorities are relevant to your organization. Different industries face varying levels of quantum risk — for example, Financial Services and Government/Defense face the highest urgency due to long-lived data and regulatory mandates.',
+    },
+    {
+      id: 'country',
+      title: 'Country Selection',
+      step: 1,
+      content:
+        'The Country Selection step identifies which national PQC mandates and deadlines apply. Countries like the United States (CNSA 2.0), France (ANSSI), and Germany (BSI) have specific PQC migration timelines. This selection also filters compliance frameworks to show only relevant regulations.',
+    },
+    {
+      id: 'crypto',
+      title: 'Current Cryptographic Usage',
+      step: 2,
+      content:
+        'The Current Cryptographic Usage step identifies which classical algorithms your organization uses (RSA, ECDSA, ECDH, AES, SHA-2, etc.). This determines which PQC replacements are needed — RSA/ECDSA require ML-DSA or SLH-DSA for signatures, while ECDH requires ML-KEM for key exchange.',
+    },
+    {
+      id: 'sensitivity',
+      title: 'Data Sensitivity',
+      step: 3,
+      content:
+        'Data Sensitivity drives urgency assessment. Organizations handling Top Secret, classified, financial, or health data face higher HNDL (Harvest Now, Decrypt Later) risk because adversaries may already be collecting encrypted data for future quantum decryption. Multiple sensitivity levels can be selected — the highest level determines the risk score.',
+    },
+    {
+      id: 'compliance',
+      title: 'Compliance Frameworks',
+      step: 4,
+      content:
+        'The Compliance step identifies which regulatory frameworks apply to your organization (CNSA 2.0, NIST guidelines, ANSSI requirements, BSI recommendations, etc.). Frameworks are filtered by your selected industry and country. Each framework has different PQC adoption deadlines and requirements.',
+    },
+    {
+      id: 'migration',
+      title: 'Migration Status',
+      step: 5,
+      content:
+        'The Migration Status step assesses how far along your organization is in the PQC transition: Not Started, Planning, Pilot/Testing, Partial Deployment, or Fully Migrated. Organizations in earlier stages receive higher urgency scores to encourage action.',
+    },
+    {
+      id: 'use-cases',
+      title: 'Use Cases',
+      step: 6,
+      content:
+        'The Use Cases step identifies specific cryptographic applications in your organization: TLS/HTTPS, VPN/IPsec, email signing, code signing, PKI/certificates, IoT device authentication, database encryption, etc. Each use case maps to specific PQC algorithms and migration complexity.',
+    },
+    {
+      id: 'retention',
+      title: 'Data Retention',
+      step: 7,
+      content:
+        'Data Retention periods directly impact HNDL risk exposure. Data that must remain confidential for 10+ years (e.g., health records, state secrets, financial archives) faces the highest quantum threat since quantum computers could decrypt it within its retention window. Multiple retention levels can be selected.',
+    },
+    {
+      id: 'scale',
+      title: 'Organization Scale',
+      step: 8,
+      content:
+        'Organization Scale affects migration complexity and timeline. Large enterprises with thousands of endpoints, multiple data centers, and complex supply chains require longer migration timelines and more comprehensive crypto-agility frameworks than smaller organizations.',
+    },
+    {
+      id: 'agility',
+      title: 'Crypto Agility',
+      step: 9,
+      content:
+        "Crypto Agility measures your organization's ability to quickly swap cryptographic algorithms. Organizations with centralized key management, automated certificate rotation, and modular crypto libraries can migrate faster. Low agility increases migration risk and timeline.",
+    },
+    {
+      id: 'infrastructure',
+      title: 'Infrastructure Assessment',
+      step: 10,
+      content:
+        'The Infrastructure step evaluates which systems need PQC upgrades: HSMs, load balancers, firewalls, certificate authorities, databases, cloud services, IoT devices. Hardware-bound systems (HSMs, embedded devices) require longer migration timelines due to firmware/hardware replacement cycles.',
+    },
+    {
+      id: 'vendors',
+      title: 'Vendor Dependencies',
+      step: 11,
+      content:
+        'Vendor Dependencies identifies third-party products and services in your cryptographic supply chain. Organizations dependent on vendor timelines for PQC support face additional risk. The Migrate Catalog can help identify PQC-ready alternatives.',
+    },
+    {
+      id: 'timeline',
+      title: 'Target Timeline',
+      step: 12,
+      content:
+        "The Target Timeline step sets your organization's PQC migration deadline based on regulatory requirements, risk tolerance, and industry benchmarks. Country-aligned options show relevant national deadlines (e.g., CNSA 2.0 2030/2033 milestones, ANSSI 2025 hybrid requirement).",
+    },
+  ]
+
+  return steps.map((s) => ({
+    id: `assess-guide-${s.id}`,
+    source: 'assessment',
+    title: `Assessment: ${s.title}`,
+    content: `PQC Assessment Wizard — Step ${s.step + 1}: ${s.title}\n\n${s.content}`,
+    category: 'assessment-guide',
+    metadata: { step: String(s.step), stepName: s.id },
+    deepLink: `/assess?step=${s.step}`,
+  }))
+}
+
+// ---------------------------------------------------------------------------
+// Getting started guides
+// ---------------------------------------------------------------------------
+
+function processGettingStarted(): RAGChunk[] {
+  return [
+    {
+      id: 'getting-started-developers',
+      source: 'documentation',
+      title: 'Getting Started for Developers',
+      content:
+        'Getting Started with PQC for Developers\n\nStart with the PQC 101 module to understand the quantum threat and why migration matters. Then explore ML-KEM key generation in the Playground — you can generate real PQC keypairs in your browser. The TLS Basics module shows how ML-KEM integrates with TLS 1.3 handshakes. For hands-on practice, OpenSSL Studio provides a full WASM-based OpenSSL 3.6 terminal for generating PQC keys and certificates. The Algorithm Reference page compares all NIST-standardized algorithms with performance benchmarks.',
+      category: 'getting-started',
+      metadata: { audience: 'developers' },
+      deepLink: '/learn/pqc-101',
+    },
+    {
+      id: 'getting-started-organizations',
+      source: 'documentation',
+      title: 'Getting Started for Organizations',
+      content:
+        "Getting Started with PQC for Organizations\n\nBegin with the Assessment wizard to evaluate your organization's quantum risk posture — it analyzes industry, data sensitivity, compliance requirements, and infrastructure to generate a prioritized migration plan. Review the Compliance page for regulatory frameworks (CNSA 2.0, ANSSI, BSI guidelines) and their deadlines. The Migrate Catalog lists PQC-ready products across 7 infrastructure layers, including HSMs, TLS libraries, and certificate authorities. The Threat Landscape page shows industry-specific quantum risks to help build the business case.",
+      category: 'getting-started',
+      metadata: { audience: 'organizations' },
+      deepLink: '/assess',
+    },
+    {
+      id: 'getting-started-learners',
+      source: 'documentation',
+      title: 'Getting Started for Learners',
+      content:
+        "Getting Started with PQC for Learners\n\nThe Learn section has 19 modules covering PQC fundamentals to advanced topics. Start with PQC 101 for an overview, then Quantum Threats to understand Shor's and Grover's algorithms. Key modules include: Hybrid Cryptography (transition strategy), Crypto Agility (algorithm flexibility), TLS Basics (web security), and Key Management (enterprise practices). Each module includes interactive demonstrations and a Workshop tab for hands-on exercises. Test your knowledge with the Quiz covering all 19 module topics. The Glossary provides definitions for 100+ PQC terms.",
+      category: 'getting-started',
+      metadata: { audience: 'learners' },
+      deepLink: '/learn',
+    },
+  ]
+}
+
+// ---------------------------------------------------------------------------
+// Playground guide
+// ---------------------------------------------------------------------------
+
+function processPlaygroundGuide(): RAGChunk[] {
+  return [
+    {
+      id: 'playground-overview',
+      source: 'documentation',
+      title: 'PQC Playground — Interactive Crypto Demos',
+      content:
+        'PQC Playground Overview\n\nThe PQC Playground is an interactive browser-based tool for generating real post-quantum cryptographic keys, encrypting data, and signing messages. All operations run locally in the browser using WebAssembly (WASM) — no data leaves your machine. Available operations: Key Generation, Encryption/Decryption (KEM), and Digital Signatures.\n\nSupported algorithms: ML-KEM-512/768/1024 (key encapsulation), ML-DSA-44/65/87 (digital signatures), SLH-DSA-SHA2-128s/192s/256s (hash-based signatures), X25519 (classical ECDH), P-256 (classical ECDSA), RSA-2048/4096 (classical). All generated keys are for educational purposes only — not for production use.',
+      category: 'playground',
+      metadata: { feature: 'overview' },
+      deepLink: '/playground',
+    },
+    {
+      id: 'playground-keygen',
+      source: 'documentation',
+      title: 'Playground — Key Generation',
+      content:
+        'Key Generation in the PQC Playground\n\nSelect any algorithm to generate a keypair instantly in your browser. The playground shows public key size, private key size, and generation time for each algorithm. Compare PQC key sizes with classical equivalents — ML-KEM-768 public keys are 1,184 bytes vs RSA-2048 at 256 bytes, while ML-DSA-65 public keys are 1,952 bytes vs ECDSA P-256 at 64 bytes. Use the algorithm selector dropdown to switch between algorithms, or use the URL parameter: /playground?algo=ML-KEM.',
+      category: 'playground',
+      metadata: { feature: 'keygen' },
+      deepLink: '/playground',
+    },
+    {
+      id: 'playground-kem',
+      source: 'documentation',
+      title: 'Playground — Key Encapsulation (KEM)',
+      content:
+        'Key Encapsulation in the PQC Playground\n\nML-KEM (FIPS 203) key encapsulation generates a shared secret between two parties. The playground demonstrates: 1) Generate a keypair, 2) Encapsulate — create a ciphertext + shared secret using the public key, 3) Decapsulate — recover the shared secret using the private key. Compare ciphertext sizes: ML-KEM-768 produces 1,088-byte ciphertexts vs X25519 at 32 bytes. The shared secret is always 32 bytes regardless of parameter set.',
+      category: 'playground',
+      metadata: { feature: 'kem' },
+      deepLink: '/playground?algo=ML-KEM',
+    },
+    {
+      id: 'playground-signatures',
+      source: 'documentation',
+      title: 'Playground — Digital Signatures',
+      content:
+        'Digital Signatures in the PQC Playground\n\nML-DSA (FIPS 204) and SLH-DSA (FIPS 205) digital signatures can be generated and verified in the playground. Enter a message, sign it with a private key, then verify the signature with the public key. Compare signature sizes: ML-DSA-65 signatures are 3,309 bytes, SLH-DSA-SHA2-128s signatures are 7,856 bytes, vs ECDSA P-256 at 64 bytes. ML-DSA is faster but SLH-DSA is based on hash functions only (conservative security assumption).',
+      category: 'playground',
+      metadata: { feature: 'signatures' },
+      deepLink: '/playground?algo=ML-DSA',
+    },
+  ]
+}
+
+// ---------------------------------------------------------------------------
+// OpenSSL Studio guide
+// ---------------------------------------------------------------------------
+
+function processOpenSSLStudioGuide(): RAGChunk[] {
+  return [
+    {
+      id: 'openssl-studio-overview',
+      source: 'documentation',
+      title: 'OpenSSL Studio — Browser-Based WASM Terminal',
+      content:
+        'OpenSSL Studio Overview\n\nOpenSSL Studio provides a full OpenSSL 3.6.0 terminal running in the browser via WebAssembly (WASM). It supports PQC algorithms through the OQS provider, enabling hands-on practice with post-quantum key generation, certificate creation, and cryptographic operations without installing anything. All operations execute locally in the browser with SharedArrayBuffer support.',
+      category: 'openssl-studio',
+      metadata: { feature: 'overview' },
+      deepLink: '/openssl',
+    },
+    {
+      id: 'openssl-studio-keygen',
+      source: 'documentation',
+      title: 'OpenSSL Studio — PQC Key Generation Commands',
+      content:
+        'PQC Key Generation with OpenSSL Studio\n\nGenerate PQC keys using modern OpenSSL 3.x commands:\n- ML-KEM: openssl genpkey -algorithm mlkem768 -out mlkem768_key.pem\n- ML-DSA: openssl genpkey -algorithm mldsa65 -out mldsa65_key.pem\n- SLH-DSA: openssl genpkey -algorithm slhdsa-sha2-128s -out slhdsa_key.pem\n- Extract public key: openssl pkey -in key.pem -pubout -out pub.pem\n\nUse genpkey (not genrsa/ecparam) — modern OpenSSL commands support all PQC algorithms through the OQS provider.',
+      category: 'openssl-studio',
+      metadata: { feature: 'keygen' },
+      deepLink: '/openssl',
+    },
+    {
+      id: 'openssl-studio-certs',
+      source: 'documentation',
+      title: 'OpenSSL Studio — PQC Certificate Operations',
+      content:
+        'PQC Certificate Operations with OpenSSL Studio\n\nCreate PQC certificates and CSRs:\n- Self-signed cert: openssl req -x509 -new -key mldsa65_key.pem -out cert.pem -days 365 -subj "/CN=PQC Test"\n- CSR: openssl req -new -key mldsa65_key.pem -out csr.pem -subj "/CN=PQC Test"\n- Verify cert: openssl x509 -in cert.pem -text -noout\n- Sign data: openssl pkeyutl -sign -inkey mldsa65_key.pem -in data.txt -out sig.bin\n- Verify signature: openssl pkeyutl -verify -pubin -inkey pub.pem -in data.txt -sigfile sig.bin\n\nAll certificates use ML-DSA-65 or other PQC algorithms for signing, demonstrating post-quantum PKI workflows.',
+      category: 'openssl-studio',
+      metadata: { feature: 'certificates' },
+      deepLink: '/openssl',
+    },
+  ]
+}
+
+// ---------------------------------------------------------------------------
 // Priority matrix (migration gap analysis)
 // ---------------------------------------------------------------------------
 
@@ -1201,7 +1444,7 @@ function processCertificationXref(): RAGChunk[] {
   const records = readCSVWithHeaders(file)
   const chunks: RAGChunk[] = []
 
-  // Group by cert_type
+  // --- Group by cert_type (original 3 chunks) ---
   const byType = new Map<string, typeof records>()
   for (const r of records) {
     const certType = sanitize(r.cert_type) || 'Other'
@@ -1224,7 +1467,6 @@ function processCertificationXref(): RAGChunk[] {
         .join('\n')
     )
 
-    // Use first cert_id for deep link (certifications are grouped by type)
     const firstCertId = sanitize(certs[0]?.cert_id)
     chunks.push({
       id: `cert-${certType.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
@@ -1237,6 +1479,49 @@ function processCertificationXref(): RAGChunk[] {
         certCount: String(certs.length),
       },
       ...(firstCertId ? { deepLink: `/compliance?cert=${encodeParam(firstCertId)}` } : {}),
+    })
+  }
+
+  // --- Group by vendor (additional chunks for better retrieval) ---
+  const byVendor = new Map<string, typeof records>()
+  for (const r of records) {
+    const vendor = sanitize(r.cert_vendor) || sanitize(r.software_name) || 'Unknown'
+    const existing = byVendor.get(vendor) ?? []
+    existing.push(r)
+    byVendor.set(vendor, existing)
+  }
+
+  for (const [vendor, certs] of byVendor) {
+    const rows = certs.map((r) =>
+      [
+        `- ${sanitize(r.cert_type)}: ${sanitize(r.cert_product)}`,
+        `  Cert ID: ${sanitize(r.cert_id)}`,
+        `  PQC Algorithms: ${sanitize(r.pqc_algorithms)}`,
+        sanitize(r.certification_level) ? `  Level: ${sanitize(r.certification_level)}` : '',
+        `  Status: ${sanitize(r.status)} | Date: ${sanitize(r.cert_date)}`,
+      ]
+        .filter(Boolean)
+        .join('\n')
+    )
+
+    const firstCertId = sanitize(certs[0]?.cert_id)
+    const softwareName = sanitize(certs[0]?.software_name)
+    chunks.push({
+      id: `cert-vendor-${vendor.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+      source: 'certifications',
+      title: `${vendor} — PQC Certifications`,
+      content: `Vendor: ${vendor}\nProduct: ${softwareName}\nCertifications:\n\n${rows.join('\n\n')}`,
+      category: 'certification',
+      metadata: {
+        vendor,
+        softwareName,
+        certCount: String(certs.length),
+      },
+      ...(firstCertId
+        ? { deepLink: `/compliance?cert=${encodeParam(firstCertId)}` }
+        : softwareName
+          ? { deepLink: `/migrate?q=${encodeParam(softwareName)}` }
+          : {}),
     })
   }
 
@@ -1267,6 +1552,10 @@ async function main() {
     { name: 'Documentation', fn: processMarkdownDocs },
     { name: 'Quiz Questions', fn: processQuizQuestions },
     { name: 'Assessment Config', fn: processAssessmentConfig },
+    { name: 'Assessment Guide', fn: processAssessmentGuide },
+    { name: 'Getting Started', fn: processGettingStarted },
+    { name: 'Playground Guide', fn: processPlaygroundGuide },
+    { name: 'OpenSSL Studio Guide', fn: processOpenSSLStudioGuide },
     { name: 'Priority Matrix', fn: processPriorityMatrix },
     { name: 'Certification Xref', fn: processCertificationXref },
   ]

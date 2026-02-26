@@ -19,17 +19,24 @@ export interface PageContext {
   page: string
   moduleId?: string
   relevantSources: string[]
+  conversationContext?: string[]
 }
 
 /**
  * Source boost multipliers per intent — used to re-rank MiniSearch results.
  */
 const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
-  definition: { glossary: 3, algorithms: 2, modules: 1.5, 'module-content': 1.5 },
-  comparison: { algorithms: 2, transitions: 2, glossary: 1.5 },
+  definition: { glossary: 3, algorithms: 2, modules: 1.5, 'module-content': 1.5, leaders: 1.5 },
+  comparison: { algorithms: 2, transitions: 3, glossary: 1.5 },
   catalog_lookup: { migrate: 3, certifications: 2, 'priority-matrix': 1.5 },
-  recommendation: { assessment: 2, 'priority-matrix': 2, compliance: 1.5, migrate: 1.5 },
-  country_query: { timeline: 3, compliance: 2, leaders: 1.5 },
+  recommendation: {
+    assessment: 2,
+    'priority-matrix': 2,
+    compliance: 1.5,
+    migrate: 1.5,
+    documentation: 1.5,
+  },
+  country_query: { timeline: 3, compliance: 2, leaders: 1.5, library: 1.2 },
   general: {},
 }
 
@@ -54,6 +61,25 @@ const COUNTRY_KEYS = new Set([
   'europe',
   'enisa',
   'etsi',
+  // Added countries from corpus
+  'spain',
+  'ccn',
+  'israel',
+  'italy',
+  'czech republic',
+  'czech',
+  'new zealand',
+  'taiwan',
+  'hong kong',
+  'malaysia',
+  'uae',
+  'united arab emirates',
+  'saudi arabia',
+  'bahrain',
+  'jordan',
+  'nato',
+  'g7',
+  'sweden',
 ])
 
 /**
@@ -184,6 +210,25 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
   europe: ['European Union', 'ENISA', 'ETSI', 'EU PQC'],
   enisa: ['ENISA', 'European Union', 'EU PQC'],
   etsi: ['ETSI', 'European Union', 'EU PQC'],
+  // Added countries from corpus
+  spain: ['Spain', 'CCN', 'Spanish PQC'],
+  ccn: ['CCN', 'Spain', 'Centro Criptológico'],
+  israel: ['Israel', 'Israeli PQC', 'Bank of Israel'],
+  italy: ['Italy', 'Italian PQC', 'ACN'],
+  'czech republic': ['Czech Republic', 'Czech PQC', 'NUKIB'],
+  czech: ['Czech Republic', 'Czech PQC', 'NUKIB'],
+  'new zealand': ['New Zealand', 'GCSB', 'NZ PQC'],
+  taiwan: ['Taiwan', 'Taiwanese PQC'],
+  'hong kong': ['Hong Kong', 'HKMA', 'Hong Kong PQC'],
+  malaysia: ['Malaysia', 'Malaysian PQC', 'CyberSecurity Malaysia'],
+  uae: ['United Arab Emirates', 'UAE PQC'],
+  'united arab emirates': ['United Arab Emirates', 'UAE PQC'],
+  'saudi arabia': ['Saudi Arabia', 'Saudi PQC', 'NCA'],
+  bahrain: ['Bahrain', 'Bahraini PQC'],
+  jordan: ['Jordan', 'Jordanian PQC'],
+  nato: ['NATO', 'North Atlantic Treaty Organization', 'NATO PQC'],
+  g7: ['G7', 'Group of Seven'],
+  sweden: ['Sweden', 'Swedish PQC'],
 }
 
 /**
@@ -200,11 +245,10 @@ export function classifyIntent(query: string): QueryIntent {
     )
   )
     return 'catalog_lookup'
-  if (/\b(show|list|which)\b.*\b(validated|certified|certifications?)\b/.test(q))
+  if (/\b(what|show|list|which)\b.*\b(validated|certified|certifications?)\b/.test(q))
     return 'catalog_lookup'
-  if (/\b(should|recommend|best|how to|migrate|strategy|plan)\b/.test(q)) return 'recommendation'
 
-  // Country detection
+  // Country detection — check before recommendation since country names are more specific
   const tokens = q.split(/\s+/)
   for (const token of tokens) {
     if (COUNTRY_KEYS.has(token)) return 'country_query'
@@ -212,6 +256,9 @@ export function classifyIntent(query: string): QueryIntent {
   for (const key of COUNTRY_KEYS) {
     if (key.includes(' ') && q.includes(key)) return 'country_query'
   }
+
+  if (/\b(should|recommend|best|how to|how do i|how can i|migrate|strategy|plan)\b/.test(q))
+    return 'recommendation'
 
   return 'general'
 }
@@ -412,6 +459,25 @@ class RetrievalService {
       }
     }
 
+    // For country_query intent, keep only country-specific expansions to prevent
+    // generic terms (timeline→roadmap/deadline/phase) from diluting country results
+    if (intent === 'country_query') {
+      const countryTerms = new Set<string>()
+      for (const token of queryTokens) {
+        if (COUNTRY_KEYS.has(token)) {
+          const expansions = QUERY_EXPANSIONS[token]
+          if (expansions) for (const t of expansions) countryTerms.add(t)
+        }
+      }
+      for (const key of Object.keys(QUERY_EXPANSIONS)) {
+        if (key.includes(' ') && COUNTRY_KEYS.has(key) && queryLower.includes(key)) {
+          for (const t of QUERY_EXPANSIONS[key]) countryTerms.add(t)
+        }
+      }
+      expandedTerms.clear()
+      for (const t of countryTerms) expandedTerms.add(t)
+    }
+
     // Disambiguation: "library" without software context → also include reference docs
     if (
       queryLower.includes('library') &&
@@ -436,6 +502,42 @@ class RetrievalService {
     }
 
     // --- Phase 3: MiniSearch keyword search with intent-aware boosting ---
+    // Incorporate conversation context (prior user messages) for multi-turn queries
+    if (pageContext?.conversationContext?.length) {
+      const stopWords = new Set([
+        'what',
+        'about',
+        'with',
+        'this',
+        'that',
+        'from',
+        'have',
+        'does',
+        'tell',
+        'show',
+        'more',
+        'also',
+        'then',
+        'them',
+        'they',
+        'their',
+        'there',
+        'these',
+        'those',
+        'been',
+        'being',
+        'would',
+        'could',
+      ])
+      const contextTerms = pageContext.conversationContext
+        .join(' ')
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((t) => t.length > 3 && !stopWords.has(t))
+      const uniqueTerms = [...new Set(contextTerms)].slice(0, 5)
+      for (const term of uniqueTerms) expandedTerms.add(term)
+    }
+
     const expandedQuery =
       expandedTerms.size > 0 ? `${query} ${[...expandedTerms].join(' ')}` : query
 
@@ -464,10 +566,10 @@ class RetrievalService {
       sourceCounts.set(chunk.source, (sourceCounts.get(chunk.source) ?? 0) + 1)
     }
 
-    // Intent-aware diversity cap: catalog/country queries allow more from primary source
+    // Intent-aware diversity cap: catalog/country/comparison queries allow more from primary source
     const maxPerSource =
-      intent === 'catalog_lookup' || intent === 'country_query'
-        ? Math.ceil(effectiveLimit / 2)
+      intent === 'catalog_lookup' || intent === 'country_query' || intent === 'comparison'
+        ? Math.ceil(effectiveLimit * 0.6)
         : Math.ceil(effectiveLimit / 3)
 
     for (const r of boostedResults) {
@@ -484,11 +586,18 @@ class RetrievalService {
       sourceCounts.set(chunk.source, count + 1)
     }
 
-    // Backfill if diversity caps left gaps
+    // Backfill if diversity caps left gaps — use relaxed cap (1.5×) to avoid single-source dominance
     if (selected.length < effectiveLimit) {
+      const relaxedMax = Math.ceil(maxPerSource * 1.5)
       for (const r of boostedResults) {
         if (selected.length >= effectiveLimit) break
-        if (!selectedIds.has(r.id)) addChunk(r.id)
+        if (selectedIds.has(r.id)) continue
+        const chunk = this.corpusById.get(r.id)
+        if (!chunk) continue
+        const count = sourceCounts.get(chunk.source) ?? 0
+        if (count >= relaxedMax) continue
+        addChunk(r.id)
+        sourceCounts.set(chunk.source, count + 1)
       }
     }
 

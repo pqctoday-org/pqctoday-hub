@@ -80,23 +80,22 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Precision Deep Links</strong> &mdash; 8
-                    views now accept URL params for direct chatbot-to-page navigation
+                    <strong className="text-foreground">Source Attribution</strong> &mdash;
+                    assistant messages show collapsible, deep-linked source references
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">RAG Deep Links</strong> &mdash; 95% of
-                    knowledge chunks include pre-computed URLs for more accurate chatbot links
+                    <strong className="text-foreground">Follow-up Suggestions</strong> &mdash;
+                    entity-aware question chips appear after each response
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Sample Questions</strong> &mdash;{' '}
-                    <span className="font-mono">?</span> button in chat header shows a categorized
-                    question bank with copy-to-clipboard
+                    <strong className="text-foreground">RAG Optimization</strong> &mdash; 40 golden
+                    queries, multi-turn context, intent-tuned retrieval
                   </span>
                 </li>
               </ul>

@@ -226,6 +226,12 @@ Test your PQC readiness with this interactive web application visualizing the gl
     system prompt prioritizes these for more precise navigation links in responses
   - **Sample Questions**: `?` button in chat header opens categorized question bank (22 questions
     across 11 categories) with copy-to-clipboard
+  - **Source attribution**: Collapsible source references with deep-linked titles on assistant messages
+  - **Follow-up suggestions**: Entity-aware follow-up question chips after each response
+  - **Multi-turn context**: Conversation history (last 3 queries) improves retrieval for follow-up
+    questions
+  - **40 golden query tests**: Regression suite covering definitions, comparisons, catalog lookups,
+    country queries, recommendations, and cross-intent queries
 - **Study Pack for NotebookLM**: Download all PQC Today content as a structured ZIP file for use
   with Google NotebookLM — includes glossary, algorithms, library, threats, compliance, migrate
   catalog, leaders, timeline, and learning module summaries

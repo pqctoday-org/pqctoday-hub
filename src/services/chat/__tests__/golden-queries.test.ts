@@ -193,6 +193,169 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedSources: ['compliance'],
     minTop5Hits: 1,
   },
+
+  // === ROUND 2: Country coverage, module content, cross-intent ===
+
+  // --- New country queries (countries added in round 2) ---
+  {
+    query: 'PQC timeline for France',
+    expectedIntent: 'country_query',
+    mustInclude: ['timeline-'],
+    expectedSources: ['timeline'],
+    minTop5Hits: 1,
+  },
+  {
+    query: 'PQC timeline for Spain',
+    expectedIntent: 'country_query',
+    mustInclude: ['timeline-'],
+    expectedSources: ['timeline'],
+    minTop5Hits: 1,
+  },
+  {
+    query: 'PQC timeline for Israel',
+    expectedIntent: 'country_query',
+    mustInclude: ['timeline-'],
+    expectedSources: ['timeline'],
+    minTop5Hits: 1,
+  },
+  {
+    query: 'Hong Kong quantum roadmap',
+    expectedIntent: 'country_query',
+    mustInclude: ['timeline-'],
+    expectedSources: ['timeline'],
+    minTop5Hits: 1,
+  },
+  {
+    query: 'ANSSI PQC position paper',
+    expectedIntent: 'country_query',
+    mustInclude: ['timeline-'],
+    expectedSources: ['timeline'],
+    minTop5Hits: 1,
+  },
+
+  // --- Module content queries ---
+  {
+    query: 'TLS 1.3 post-quantum handshake',
+    expectedIntent: 'general',
+    mustInclude: [],
+    expectedSources: ['modules', 'module-content', 'module-summaries', 'glossary'],
+    minTop5Hits: 0,
+  },
+  {
+    query: 'What is crypto agility?',
+    expectedIntent: 'definition',
+    mustInclude: ['glossary-'],
+    expectedSources: ['glossary', 'modules', 'module-summaries'],
+    minTop5Hits: 1,
+  },
+  {
+    query: 'Bitcoin quantum threat',
+    expectedIntent: 'general',
+    mustInclude: [],
+    expectedSources: ['module-content', 'module-summaries', 'glossary', 'threats'],
+    minTop5Hits: 0,
+  },
+
+  // --- Comparison queries ---
+  {
+    query: 'LMS vs XMSS stateful signatures',
+    expectedIntent: 'comparison',
+    mustInclude: [],
+    expectedSources: ['glossary', 'algorithms', 'module-summaries'],
+    minTop5Hits: 0,
+  },
+
+  // --- Catalog queries ---
+  {
+    query: 'Show all hash-based signature schemes',
+    expectedIntent: 'general',
+    mustInclude: [],
+    expectedSources: ['algorithms', 'glossary'],
+    minTop5Hits: 0,
+  },
+
+  // --- Cross-intent queries ---
+  {
+    query: 'What are the PQC leaders from Germany?',
+    expectedIntent: 'definition',
+    mustInclude: ['leader-'],
+    expectedSources: ['leaders'],
+    minTop5Hits: 0, // definition intent doesn't boost leaders, but keyword match should find some
+  },
+  {
+    query: 'United Arab Emirates PQC strategy',
+    expectedIntent: 'country_query',
+    mustInclude: ['timeline-'],
+    expectedSources: ['timeline'],
+    minTop5Hits: 1,
+  },
+
+  // === ROUND 3: Assessment, getting-started, cross-source ===
+
+  // --- Assessment guide ---
+  {
+    query: 'What is the PQC Assessment wizard?',
+    expectedIntent: 'definition',
+    mustInclude: ['assess-guide-'],
+    expectedSources: ['assessment'],
+    minTop5Hits: 1,
+  },
+
+  // --- Getting started ---
+  {
+    query: 'How do I get started with PQC?',
+    expectedIntent: 'recommendation', // "how do i" now matches recommendation pattern
+    mustInclude: ['getting-started-'],
+    expectedSources: ['documentation'],
+    minTop5Hits: 0,
+  },
+
+  // --- Cross-source: cert + migrate ---
+  {
+    query: 'What certifications does Thales Luna have?',
+    expectedIntent: 'catalog_lookup', // "what certifications" now matches certification pattern
+    mustInclude: [],
+    expectedSources: ['migrate', 'certifications'],
+    minTop5Hits: 0,
+  },
+
+  // --- Module content: 5G ---
+  {
+    query: 'Tell me about 5G PQC security',
+    expectedIntent: 'definition',
+    mustInclude: [],
+    expectedSources: ['modules', 'module-content', 'module-summaries'],
+    minTop5Hits: 0,
+  },
+
+  // --- Module content: TLS + algorithms ---
+  {
+    query: 'Show me TLS handshake with ML-KEM',
+    expectedIntent: 'general', // "show me" + "handshake" doesn't match catalog product patterns
+    mustInclude: [],
+    expectedSources: ['module-content', 'module-summaries', 'algorithms'],
+    minTop5Hits: 0,
+  },
+
+  // === ROUND 4: Playground, OpenSSL Studio ===
+
+  // --- Playground ---
+  {
+    query: 'What algorithms can I test in the PQC playground?',
+    expectedIntent: 'general', // "what algorithms" doesn't match "what is/what are" definition patterns
+    mustInclude: ['playground-'],
+    expectedSources: ['documentation'],
+    minTop5Hits: 1,
+  },
+
+  // --- OpenSSL Studio ---
+  {
+    query: 'How do I generate PQC keys with OpenSSL Studio?',
+    expectedIntent: 'recommendation', // "how do i" → recommendation
+    mustInclude: ['openssl-studio-'],
+    expectedSources: ['documentation'],
+    minTop5Hits: 0,
+  },
 ]
 
 let service: RetrievalService

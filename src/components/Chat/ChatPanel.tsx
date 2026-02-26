@@ -9,7 +9,7 @@ import { useChatStore } from '@/store/useChatStore'
 import { retrievalService } from '@/services/chat/RetrievalService'
 import { streamResponse } from '@/services/chat/GeminiService'
 import { usePageContext } from '@/hooks/usePageContext'
-import type { ChatMessage as ChatMessageType } from '@/types/ChatTypes'
+import type { ChatMessage as ChatMessageType, ChatSourceRef } from '@/types/ChatTypes'
 
 export const ChatPanel: React.FC = () => {
   const {
@@ -86,12 +86,17 @@ export const ChatPanel: React.FC = () => {
     setError(null)
 
     try {
-      // Retrieve relevant context with page awareness
+      // Retrieve relevant context with page awareness + conversation history
       await retrievalService.initialize()
+      const recentQueries = messages
+        .filter((m) => m.role === 'user')
+        .slice(-3)
+        .map((m) => m.content)
       const chunks = retrievalService.search(trimmed, undefined, {
         page: pageContext.page,
         moduleId: pageContext.moduleId,
         relevantSources: pageContext.relevantSources,
+        conversationContext: recentQueries,
       })
 
       // Build conversation for API
@@ -106,6 +111,15 @@ export const ChatPanel: React.FC = () => {
 
       let fullContent = ''
       const sourceIds = chunks.map((c) => c.id)
+
+      // Build deduplicated source references for attribution
+      const seenTitles = new Set<string>()
+      const sourceRefs: ChatSourceRef[] = []
+      for (const c of chunks) {
+        if (seenTitles.has(c.title)) continue
+        seenTitles.add(c.title)
+        sourceRefs.push({ title: c.title, source: c.source, deepLink: c.deepLink })
+      }
 
       for await (const chunk of streamResponse(
         apiKey,
@@ -126,6 +140,7 @@ export const ChatPanel: React.FC = () => {
         content: fullContent,
         timestamp: Date.now(),
         sources: sourceIds,
+        sourceRefs,
       }
       addMessage(assistantMessage)
     } catch (err) {
@@ -133,6 +148,9 @@ export const ChatPanel: React.FC = () => {
 
       const errorMsg = err instanceof Error ? err.message : 'An unexpected error occurred.'
       setError(errorMsg)
+
+      // Restore the query so the user can retry by clicking Send
+      setInput(trimmed)
 
       // If API key is invalid, clear it
       if (errorMsg.includes('Invalid API key')) {
@@ -210,7 +228,10 @@ export const ChatPanel: React.FC = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={clearMessages}
+                        onClick={() => {
+                          if (messages.length === 0) return
+                          if (confirm('Clear all messages? This cannot be undone.')) clearMessages()
+                        }}
                         className="min-h-[44px] min-w-[44px] p-2"
                         aria-label="Clear conversation"
                       >
@@ -247,7 +268,11 @@ export const ChatPanel: React.FC = () => {
               <>
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-4 md:p-6 md:px-12">
-                  <div className="max-w-4xl mx-auto space-y-4">
+                  <div
+                    className="max-w-4xl mx-auto space-y-4"
+                    aria-live="polite"
+                    aria-atomic="false"
+                  >
                     {messages.length === 0 && !isStreaming && (
                       <div className="text-center py-12 space-y-4">
                         <Bot size={40} className="text-muted-foreground mx-auto opacity-40" />
@@ -270,8 +295,18 @@ export const ChatPanel: React.FC = () => {
                       </div>
                     )}
 
-                    {messages.map((msg) => (
-                      <ChatMessage key={msg.id} sender={msg.role} content={msg.content} />
+                    {messages.map((msg, idx) => (
+                      <ChatMessage
+                        key={msg.id}
+                        sender={msg.role}
+                        content={msg.content}
+                        sourceRefs={msg.sourceRefs}
+                        onFollowUp={
+                          msg.role === 'assistant' && idx === messages.length - 1 && !isStreaming
+                            ? sendQuery
+                            : undefined
+                        }
+                      />
                     ))}
 
                     {isStreaming && streamingContent && (

@@ -8,10 +8,17 @@ export interface RAGChunk {
   deepLink?: string
 }
 
+export interface ChatSourceRef {
+  title: string
+  source: string
+  deepLink?: string
+}
+
 export interface ChatMessage {
   id: string
   role: 'user' | 'assistant'
   content: string
   timestamp: number
   sources?: string[]
+  sourceRefs?: ChatSourceRef[]
 }
