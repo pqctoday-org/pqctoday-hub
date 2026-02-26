@@ -44,7 +44,7 @@ export const StudyPackCard: React.FC = () => {
       </p>
 
       <ul className="text-sm text-muted-foreground space-y-1 mb-5 ml-4 list-disc">
-        <li>700+ glossary terms and definitions</li>
+        <li>280+ glossary terms and definitions</li>
         <li>Algorithm specifications and performance metrics</li>
         <li>Classical-to-PQC transition roadmap</li>
         <li>Global migration timeline by country</li>
@@ -54,6 +54,8 @@ export const StudyPackCard: React.FC = () => {
         <li>PQC-ready software catalog</li>
         <li>Industry leaders and organizations</li>
         <li>Learning module summaries</li>
+        <li>380+ quiz questions with explanations</li>
+        <li>Authoritative sources and provenance</li>
       </ul>
 
       <Button

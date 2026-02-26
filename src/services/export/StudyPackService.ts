@@ -11,6 +11,7 @@ import { authoritativeSources } from '@/data/authoritativeSourcesData'
 import { loadAlgorithmsData } from '@/data/algorithmsData'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { MODULE_CATALOG, MODULE_TRACKS } from '@/components/PKILearning/moduleData'
+import { quizQuestions, quizCategories } from '@/data/quizDataLoader'
 
 function header(title: string, description: string): string {
   return `# ${title}\n\n${description}\n\n---\n\n`
@@ -117,7 +118,9 @@ function generateThreats(): string {
       md += `- **Criticality:** ${t.criticality}\n`
       md += `- **Cryptography at Risk:** ${t.cryptoAtRisk}\n`
       md += `- **PQC Replacement:** ${t.pqcReplacement}\n`
-      md += `- **Source:** ${t.mainSource}\n\n`
+      md += `- **Source:** ${t.mainSource}\n`
+      if (t.sourceUrl) md += `- **Source URL:** ${t.sourceUrl}\n`
+      md += '\n'
     }
   }
   return md
@@ -137,6 +140,8 @@ function generateCompliance(): string {
     md += `- **Deadline:** ${fw.deadline || 'N/A'}\n`
     md += `- **Enforcement Body:** ${fw.enforcementBody}\n`
     if (fw.notes) md += `- **Notes:** ${fw.notes}\n`
+    if (fw.libraryRefs.length) md += `- **Library References:** ${fw.libraryRefs.join(', ')}\n`
+    if (fw.timelineRefs.length) md += `- **Timeline References:** ${fw.timelineRefs.join(', ')}\n`
     md += '\n'
   }
   return md
@@ -182,6 +187,12 @@ function generateMigrate(): string {
       md += `- **Version:** ${s.latestVersion}\n`
       md += `- **License:** ${s.licenseType}\n`
       if (s.pqcCapabilityDescription) md += `- **Capabilities:** ${s.pqcCapabilityDescription}\n`
+      if (s.productBrief) md += `- **Product Brief:** ${s.productBrief}\n`
+      if (s.targetIndustries) md += `- **Target Industries:** ${s.targetIndustries}\n`
+      if (s.migrationPhases) md += `- **Migration Phases:** ${s.migrationPhases}\n`
+      if (s.primaryPlatforms) md += `- **Platforms:** ${s.primaryPlatforms}\n`
+      if (s.releaseDate) md += `- **Release Date:** ${s.releaseDate}\n`
+      if (s.repositoryUrl) md += `- **Repository:** ${s.repositoryUrl}\n`
       md += '\n'
     }
   }
@@ -202,10 +213,14 @@ function generateLeaders(): string {
     md += `## ${cat}\n\n`
     for (const l of leaders) {
       md += `### ${l.name}\n\n`
+      if (l.title) md += `- **Title:** ${l.title}\n`
       md += `- **Country:** ${l.country}\n`
       md += `- **Organizations:** ${l.organizations.join(', ')}\n`
       md += `- **Type:** ${l.type}\n`
-      md += `- **Contribution:** ${l.bio}\n\n`
+      md += `- **Contribution:** ${l.bio}\n`
+      if (l.websiteUrl) md += `- **Website:** ${l.websiteUrl}\n`
+      if (l.keyResourceUrl) md += `- **Key Resource:** ${l.keyResourceUrl}\n`
+      md += '\n'
     }
   }
   return md
@@ -223,6 +238,73 @@ function generateModules(): string {
       md += `${mod.description}\n\n`
       md += `- **Duration:** ${mod.duration}\n`
       md += `- **URL:** https://pqctoday.com/learn/${mod.id}\n\n`
+    }
+  }
+  return md
+}
+
+function generateQuiz(): string {
+  let md = header(
+    'PQC Quiz Question Bank',
+    `${quizQuestions.length} questions across ${quizCategories.length} categories for self-assessment and study.`
+  )
+  const catLabelMap: Record<string, string> = {}
+  for (const c of quizCategories) {
+    catLabelMap[c.id] = c.label
+  }
+  const grouped: Record<string, typeof quizQuestions> = {}
+  for (const q of quizQuestions) {
+    const cat = q.category
+    if (!grouped[cat]) grouped[cat] = []
+    grouped[cat].push(q)
+  }
+  for (const [cat, questions] of Object.entries(grouped)) {
+    md += `## ${catLabelMap[cat] || cat}\n\n`
+    for (const q of questions) {
+      md += `### ${q.question}\n\n`
+      md += `*Difficulty:* ${q.difficulty} | *Type:* ${q.type}\n\n`
+      for (const opt of q.options) {
+        const isCorrect = Array.isArray(q.correctAnswer)
+          ? q.correctAnswer.includes(opt.id)
+          : q.correctAnswer === opt.id
+        md += `- ${opt.id.toUpperCase()}) ${opt.text}${isCorrect ? ' **[correct]**' : ''}\n`
+      }
+      md += `\n**Explanation:** ${q.explanation}\n`
+      if (q.learnMorePath) md += `\n*Learn more:* https://pqctoday.com${q.learnMorePath}\n`
+      md += '\n'
+    }
+  }
+  return md
+}
+
+function generateAuthoritativeSources(): string {
+  let md = header(
+    'Authoritative Sources',
+    `${authoritativeSources.length} verified organizations and institutions sourcing PQC Today data.`
+  )
+  const grouped: Record<string, typeof authoritativeSources> = {}
+  for (const s of authoritativeSources) {
+    const type = s.sourceType
+    if (!grouped[type]) grouped[type] = []
+    grouped[type].push(s)
+  }
+  for (const [type, sources] of Object.entries(grouped)) {
+    md += `## ${type}\n\n`
+    for (const s of sources) {
+      md += `### ${s.sourceName}\n\n`
+      md += `${s.description}\n\n`
+      md += `- **Region:** ${s.region}\n`
+      md += `- **URL:** ${s.primaryUrl}\n`
+      const feeds: string[] = []
+      if (s.leadersCsv) feeds.push('Leaders')
+      if (s.libraryCsv) feeds.push('Library')
+      if (s.algorithmCsv) feeds.push('Algorithms')
+      if (s.threatsCsv) feeds.push('Threats')
+      if (s.timelineCsv) feeds.push('Timeline')
+      if (s.complianceCsv) feeds.push('Compliance')
+      if (s.migrateCsv) feeds.push('Migrate')
+      if (feeds.length) md += `- **Data Feeds:** ${feeds.join(', ')}\n`
+      md += `- **Last Verified:** ${s.lastVerifiedDate}\n\n`
     }
   }
   return md
@@ -255,6 +337,8 @@ Generated on ${date} from [PQC Today](https://pqctoday.com).
 | 08-migrate-catalog.md | PQC-ready software products |
 | 09-leaders.md | Industry leaders and organizations |
 | 10-learning-modules.md | Interactive learning module summaries |
+| 11-quiz-questions.md | ${quizQuestions.length}+ quiz questions with explanations |
+| 12-authoritative-sources.md | ${authoritativeSources.length}+ verified data sources |
 
 ## Sources
 
@@ -283,6 +367,8 @@ export async function generateStudyPack(): Promise<void> {
   zip.file('08-migrate-catalog.md', generateMigrate())
   zip.file('09-leaders.md', generateLeaders())
   zip.file('10-learning-modules.md', generateModules())
+  zip.file('11-quiz-questions.md', generateQuiz())
+  zip.file('12-authoritative-sources.md', generateAuthoritativeSources())
   zip.file('README.md', generateReadme())
 
   const blob = await zip.generateAsync({ type: 'blob' })
