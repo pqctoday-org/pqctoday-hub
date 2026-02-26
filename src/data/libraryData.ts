@@ -299,8 +299,11 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
       .filter((d) => d)
 
     deps.forEach((depId) => {
+      if (depId === item.referenceId) return // skip self-reference
       const parent = itemMap.get(depId)
       if (parent) {
+        // Prevent mutual cycle: don't add as child if parent is already item's child
+        if (item.children?.some((c) => c.referenceId === depId)) return
         parent.children = parent.children || []
         if (!parent.children.includes(item)) {
           parent.children.push(item)

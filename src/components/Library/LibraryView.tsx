@@ -177,11 +177,17 @@ const INDUSTRY_CANONICAL_MAP: Record<string, string> = {
 }
 
 /** Find a library item by referenceId, searching top-level and nested children */
-function findByRef(items: LibraryItem[], refId: string): LibraryItem | null {
+function findByRef(
+  items: LibraryItem[],
+  refId: string,
+  visited = new Set<string>()
+): LibraryItem | null {
   for (const item of items) {
+    if (visited.has(item.referenceId)) continue
+    visited.add(item.referenceId)
     if (item.referenceId === refId) return item
     if (item.children) {
-      const found = findByRef(item.children, refId)
+      const found = findByRef(item.children, refId, visited)
       if (found) return found
     }
   }
