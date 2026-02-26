@@ -3,6 +3,11 @@ import { render, screen } from '@testing-library/react'
 import { TimelineView } from './TimelineView'
 import '@testing-library/jest-dom'
 
+// Mock react-router-dom — component uses useSearchParams for deep linking
+vi.mock('react-router-dom', () => ({
+  useSearchParams: () => [new URLSearchParams(), vi.fn()],
+}))
+
 // Mock the child components
 vi.mock('./SimpleGanttChart', () => ({
   SimpleGanttChart: ({

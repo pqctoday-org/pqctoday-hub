@@ -1,4 +1,15 @@
-import { Info, Shield, GithubIcon, ShieldCheck, ShieldAlert, Lock } from 'lucide-react'
+import {
+  Info,
+  Shield,
+  GithubIcon,
+  ShieldCheck,
+  ShieldAlert,
+  Lock,
+  BrainCircuit,
+  Database,
+  Link2,
+  Sparkles,
+} from 'lucide-react'
 
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
@@ -480,6 +491,105 @@ export function AboutView() {
                 View GitHub Repository
               </a>
             </div>
+          </div>
+        </motion.div>
+
+        {/* RAG & Gemini Flash 2.5 Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.37 }}
+          className="glass-panel p-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <BrainCircuit className="text-primary" size={24} />
+            <div>
+              <h2 className="text-xl font-bold">PQC Assistant</h2>
+              <p className="text-xs text-muted-foreground">RAG + Gemini 2.5 Flash</p>
+            </div>
+          </div>
+
+          <div className="prose prose-invert max-w-none">
+            <p className="text-muted-foreground">
+              The PQC Assistant chatbot uses{' '}
+              <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong> to
+              deliver grounded, sourced answers about post-quantum cryptography. When you ask a
+              question, it searches a curated corpus of ~1,725 PQC knowledge chunks &mdash; covering
+              algorithms, standards, threats, compliance certifications, migration products,
+              leaders, and learning modules &mdash; retrieves the top-5 most relevant passages, and
+              injects them as context into a{' '}
+              <strong className="text-foreground">Gemini 2.5 Flash</strong> prompt. The result is an
+              answer grounded in platform data, enriched with deep links to the exact page or
+              section being discussed.
+            </p>
+            <p className="text-muted-foreground mt-3">
+              To use the PQC Assistant, you need to provide your own{' '}
+              <a
+                href="https://aistudio.google.com/apikey"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                Google AI Studio API key
+              </a>
+              . Your key is stored only in your browser&apos;s localStorage and is never sent to any
+              server other than Google&apos;s Gemini API. You can obtain a free API key from Google
+              AI Studio in seconds.
+            </p>
+          </div>
+
+          {/* Capability Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-5">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/20 border border-border">
+              <Database className="text-primary mt-0.5 shrink-0" size={18} />
+              <div>
+                <p className="text-sm font-semibold text-foreground">Grounded Answers</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Responses cite specific data from the platform&apos;s curated corpus &mdash;
+                  algorithm specs, NIST standards, threat scenarios, compliance certs, and more.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/20 border border-border">
+              <Link2 className="text-primary mt-0.5 shrink-0" size={18} />
+              <div>
+                <p className="text-sm font-semibold text-foreground">Deep Linking</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Answers include clickable links that navigate directly to the relevant page
+                  &mdash; a specific algorithm, cert record, learning module, or workshop tab.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/20 border border-border">
+              <Sparkles className="text-primary mt-0.5 shrink-0" size={18} />
+              <div>
+                <p className="text-sm font-semibold text-foreground">PQC Domain Expertise</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Gemini Flash supplements RAG context with broad PQC knowledge from its training
+                  data for topics not fully covered in the corpus.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Limitations */}
+          <div className="mt-5">
+            <h3 className="text-sm font-semibold text-muted-foreground mb-2">Limitations</h3>
+            <ul className="space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
+              <li>
+                Knowledge is bounded by the curated corpus (~1,725 chunks) &mdash; niche or very
+                recent topics may lack coverage
+              </li>
+              <li>
+                Requires a user-provided Gemini API key (BYOK) &mdash; no keys are stored
+                server-side
+              </li>
+              <li>Cannot perform actions &mdash; read-only Q&A, no write operations</li>
+              <li>
+                General LLM caveats apply &mdash; may occasionally hallucinate details outside its
+                context window
+              </li>
+            </ul>
           </div>
         </motion.div>
 

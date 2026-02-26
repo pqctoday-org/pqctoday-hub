@@ -1,9 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bot, X, Send, Trash2, KeyRound } from 'lucide-react'
+import { Bot, X, Send, Trash2, KeyRound, HelpCircle } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ChatMessage } from './ChatMessage'
 import { ApiKeySetup } from './ApiKeySetup'
+import { SampleQuestionsModal } from '../About/SampleQuestionsModal'
 import { useChatStore } from '@/store/useChatStore'
 import { retrievalService } from '@/services/chat/RetrievalService'
 import { streamResponse } from '@/services/chat/GeminiService'
@@ -31,6 +32,7 @@ export const ChatPanel: React.FC = () => {
   } = useChatStore()
 
   const [input, setInput] = useState('')
+  const [showSampleQuestions, setShowSampleQuestions] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const abortRef = useRef<AbortController | null>(null)
@@ -187,6 +189,15 @@ export const ChatPanel: React.FC = () => {
                       <Button
                         variant="ghost"
                         size="sm"
+                        onClick={() => setShowSampleQuestions(true)}
+                        className="min-h-[44px] min-w-[44px] p-2"
+                        aria-label="Sample questions"
+                      >
+                        <HelpCircle size={16} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={clearMessages}
                         className="min-h-[44px] min-w-[44px] p-2"
                         aria-label="Clear conversation"
@@ -295,6 +306,11 @@ export const ChatPanel: React.FC = () => {
               </>
             )}
           </motion.div>
+
+          <SampleQuestionsModal
+            isOpen={showSampleQuestions}
+            onClose={() => setShowSampleQuestions(false)}
+          />
         </>
       )}
     </AnimatePresence>

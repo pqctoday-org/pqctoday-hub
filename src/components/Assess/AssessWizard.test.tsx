@@ -10,13 +10,14 @@ vi.mock(
   async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
 )
 
-// Mock react-router-dom Link — wizard steps use Link for contextual exploration links
+// Mock react-router-dom Link + useSearchParams — wizard steps use Link for contextual exploration links
 vi.mock('react-router-dom', () => ({
   Link: ({ children, to, ...props }: { children: React.ReactNode; to: string }) => (
     <a href={to} {...props}>
       {children}
     </a>
   ),
+  useSearchParams: () => [new URLSearchParams(), vi.fn()],
 }))
 
 // Mock algorithmsData so Step3Crypto renders without actual CSV loading

@@ -3,6 +3,11 @@ import { render, screen, fireEvent, act } from '@testing-library/react'
 import { LibraryView } from './LibraryView'
 import '@testing-library/jest-dom'
 
+// Mock react-router-dom — component uses useSearchParams for deep linking
+vi.mock('react-router-dom', () => ({
+  useSearchParams: () => [new URLSearchParams(), vi.fn()],
+}))
+
 // Mock framer-motion to avoid animation issues in tests
 vi.mock(
   'framer-motion',

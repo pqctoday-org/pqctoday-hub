@@ -72,7 +72,7 @@ export function AlgorithmsView() {
       </motion.div>
 
       {/* View Tabs */}
-      <Tabs defaultValue="transition">
+      <Tabs defaultValue={highlightAlgorithms ? 'detailed' : 'transition'}>
         <TabsList className="mb-6 bg-muted/50 border border-border">
           <TabsTrigger value="transition" className="flex items-center gap-2">
             <ArrowRight size={18} />
@@ -100,7 +100,7 @@ export function AlgorithmsView() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <AlgorithmDetailedComparison />
+            <AlgorithmDetailedComparison highlightAlgorithms={highlightAlgorithms} />
           </motion.div>
         </TabsContent>
       </Tabs>

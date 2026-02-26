@@ -56,7 +56,10 @@ const CHAINS: ChainOption[] = [
 ]
 
 export const DigitalAssetsModule: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('learn')
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = new URLSearchParams(window.location.search).get('tab')
+    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
+  })
   const [activeChain, setActiveChain] = useState<string | null>(null)
   const [hasExploredAnyChain, setHasExploredAnyChain] = useState(false)
   const [configKey, setConfigKey] = useState(0)

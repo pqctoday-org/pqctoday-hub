@@ -5,9 +5,30 @@ import { SettingsContext } from './SettingsContext'
 import type { ExecutionMode, SortColumn, SortDirection, ClassicalAlgorithm } from './types'
 
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // State definitions
-  const [algorithm, setAlgorithm] = useState<string>('ML-KEM')
-  const [keySize, setKeySize] = useState<string>('768')
+  // State definitions — ?algo= deep link pre-selects algorithm on mount
+  const [algorithm, setAlgorithm] = useState<string>(() => {
+    const algoParam = new URLSearchParams(window.location.search).get('algo')
+    if (algoParam) {
+      // Normalize: accept 'ML-KEM-768' → 'ML-KEM', 'ML-DSA-65' → 'ML-DSA', etc.
+      const base = algoParam.replace(/-\d+$/, '')
+      if (['ML-KEM', 'ML-DSA', 'SLH-DSA', 'FN-DSA'].includes(base)) return base
+      if (algoParam === 'ML-KEM' || algoParam === 'ML-DSA') return algoParam
+    }
+    return 'ML-KEM'
+  })
+  const [keySize, setKeySize] = useState<string>(() => {
+    const algoParam = new URLSearchParams(window.location.search).get('algo')
+    if (algoParam) {
+      // Extract key size suffix: 'ML-KEM-1024' → '1024', 'ML-DSA-44' → '44'
+      const sizeMatch = algoParam.match(/-(\d+)$/)
+      if (sizeMatch) return sizeMatch[1]
+      // Default sizes per algorithm family
+      const base = algoParam.replace(/-\d+$/, '')
+      if (base === 'ML-KEM') return '768'
+      return '65'
+    }
+    return '768'
+  })
   const [executionMode, setExecutionMode] = useState<ExecutionMode>(() => {
     const isWasmSupported = typeof WebAssembly === 'object'
     if (!isWasmSupported) return 'mock'

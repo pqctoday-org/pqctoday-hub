@@ -219,6 +219,13 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - SPA-aware navigation: internal links close the chat panel and navigate via React Router
   - Covers: glossary, algorithms, threats, timeline, library, compliance, migrate catalog, leaders,
     quiz content, assessment config, certifications, priority matrix, and all 19 learning modules
+  - **Precision deep links**: 8 views accept URL params for direct navigation — Library `?ref=`,
+    Threats `?id=`, Learn `?tab=`, Algorithms `?highlight=`, Compliance `?cert=`, Assess `?step=`,
+    Playground `?algo=`, Leaders `?leader=`/`?sector=`/`?country=`
+  - **RAG deep-link integration**: 95% of corpus chunks carry pre-computed `deepLink` URLs;
+    system prompt prioritizes these for more precise navigation links in responses
+  - **Sample Questions**: `?` button in chat header opens categorized question bank (22 questions
+    across 11 categories) with copy-to-clipboard
 - **Study Pack for NotebookLM**: Download all PQC Today content as a structured ZIP file for use
   with Google NotebookLM — includes glossary, algorithms, library, threats, compliance, migrate
   catalog, leaders, timeline, and learning module summaries

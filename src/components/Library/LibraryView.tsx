@@ -176,6 +176,18 @@ const INDUSTRY_CANONICAL_MAP: Record<string, string> = {
   Mobile: 'All',
 }
 
+/** Find a library item by referenceId, searching top-level and nested children */
+function findByRef(items: LibraryItem[], refId: string): LibraryItem | null {
+  for (const item of items) {
+    if (item.referenceId === refId) return item
+    if (item.children) {
+      const found = findByRef(item.children, refId)
+      if (found) return found
+    }
+  }
+  return null
+}
+
 export const LibraryView: React.FC = () => {
   const [searchParams] = useSearchParams()
   const { selectedIndustry: storeIndustry } = usePersonaStore()
@@ -186,10 +198,19 @@ export const LibraryView: React.FC = () => {
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
   const [viewMode, setViewMode] = useState<ViewMode>('cards')
   const [sortBy, setSortBy] = useState<SortOption>('newest')
-  const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(null)
+  const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(() => {
+    const ref = searchParams.get('ref')
+    return ref ? findByRef(libraryData, ref) : null
+  })
 
-  // Sync ?q= param on same-route navigations (e.g. chatbot deep links)
+  // Sync ?q= and ?ref= params on same-route navigations (e.g. chatbot deep links)
   useEffect(() => {
+    const ref = searchParams.get('ref')
+    if (ref) {
+      const found = findByRef(libraryData, ref)
+      if (found) setSelectedItem(found)
+      return // ?ref= takes priority over ?q=
+    }
     const q = searchParams.get('q')
     if (q !== null) {
       setFilterText(q)

@@ -80,14 +80,25 @@ export const ThreatsDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [sortField, setSortField] = useState<SortField>('industry')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
-  const [selectedThreat, setSelectedThreat] = useState<ThreatItem | null>(null)
+  const [selectedThreat, setSelectedThreat] = useState<ThreatItem | null>(() => {
+    const idParam = searchParams.get('id')
+    if (idParam) {
+      return threatsData.find((t) => t.threatId === idParam) ?? null
+    }
+    return null
+  })
 
-  // Sync ?industry= param on same-route navigations (e.g. chatbot deep links)
+  // Sync ?industry= and ?id= params on same-route navigations (e.g. chatbot deep links)
   useEffect(() => {
     const param = searchParams.get('industry')
     if (param) {
       const match = threatsData.find((d) => d.industry.toLowerCase() === param.toLowerCase())
       if (match) setSelectedIndustries([match.industry]) // eslint-disable-line react-hooks/set-state-in-effect -- URL is external state
+    }
+    const idParam = searchParams.get('id')
+    if (idParam) {
+      const found = threatsData.find((t) => t.threatId === idParam)
+      if (found) setSelectedThreat(found)
     }
   }, [searchParams])
 

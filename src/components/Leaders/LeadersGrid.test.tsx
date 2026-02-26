@@ -4,6 +4,11 @@ import { LeadersGrid } from './LeadersGrid'
 import type { Leader } from '../../data/leadersData'
 import '@testing-library/jest-dom'
 
+// Mock react-router-dom — component uses useSearchParams for deep linking
+vi.mock('react-router-dom', () => ({
+  useSearchParams: () => [new URLSearchParams(), vi.fn()],
+}))
+
 // Mock dependencies
 vi.mock('../../data/leadersData', () => ({
   leadersData: [

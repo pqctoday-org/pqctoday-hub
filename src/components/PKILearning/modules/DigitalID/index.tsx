@@ -68,7 +68,10 @@ export const DigitalIDModule: React.FC = () => {
   const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
   const markStepComplete = useModuleStore((state) => state.markStepComplete)
 
-  const [activeTab, setActiveTab] = useState('learn')
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = new URLSearchParams(window.location.search).get('tab')
+    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
+  })
   const [currentStep, setCurrentStep] = useState(0)
   const [wallet, setWallet] = useState<WalletInstance>(INITIAL_WALLET)
   const prevStepRef = useRef<number | null>(null)

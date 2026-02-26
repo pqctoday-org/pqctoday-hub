@@ -37,7 +37,10 @@ const PARTS = [
 ]
 
 export const VPNSSHModule: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('learn')
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = new URLSearchParams(window.location.search).get('tab')
+    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
+  })
   const [currentPart, setCurrentPart] = useState(0)
   const [initialIKEv2Mode, setInitialIKEv2Mode] = useState<IKEv2Mode | undefined>(undefined)
   const [initialSSHKex, setInitialSSHKex] = useState<SSHKexAlgorithm | undefined>(undefined)

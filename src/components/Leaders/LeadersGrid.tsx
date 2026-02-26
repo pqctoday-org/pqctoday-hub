@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Search, Briefcase, Building2, School } from 'lucide-react'
 
@@ -13,15 +13,54 @@ import { GlossaryButton } from '../ui/GlossaryButton'
 
 export const LeadersGrid = () => {
   const [searchParams] = useSearchParams()
-  const [selectedCountry, setSelectedCountry] = useState<string>('All')
-  const [selectedSector, setSelectedSector] = useState<string>('All')
+  const [selectedCountry, setSelectedCountry] = useState<string>(() => {
+    return searchParams.get('country') ?? 'All'
+  })
+  const [selectedSector, setSelectedSector] = useState<string>(() => {
+    const sector = searchParams.get('sector')
+    return sector && ['Public', 'Private', 'Academic'].includes(sector) ? sector : 'All'
+  })
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
+  const [highlightedLeader, setHighlightedLeader] = useState<string | null>(() =>
+    searchParams.get('leader')
+  )
+  const gridRef = useRef<HTMLDivElement>(null)
 
-  // Sync ?q= param on same-route navigations (e.g. chatbot deep links)
+  // Sync URL params on same-route navigations (e.g. chatbot deep links)
   useEffect(() => {
     const q = searchParams.get('q')
     if (q !== null) setSearchQuery(q) // eslint-disable-line react-hooks/set-state-in-effect -- URL is external state
+
+    const sector = searchParams.get('sector')
+    if (sector && ['Public', 'Private', 'Academic'].includes(sector)) {
+      setSelectedSector(sector)
+    }
+
+    const country = searchParams.get('country')
+    if (country) {
+      setSelectedCountry(country)
+    }
+
+    const leader = searchParams.get('leader')
+    if (leader) {
+      setHighlightedLeader(leader)
+    }
   }, [searchParams])
+
+  // Scroll to highlighted leader after render
+  useEffect(() => {
+    if (!highlightedLeader || !gridRef.current) return
+    const timer = setTimeout(() => {
+      const id = `leader-${highlightedLeader.replace(/\s+/g, '-')}`
+      const el = document.getElementById(id)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        // Remove highlight after 3 seconds
+        setTimeout(() => setHighlightedLeader(null), 3000)
+      }
+    }, 300) // small delay for render
+    return () => clearTimeout(timer)
+  }, [highlightedLeader])
 
   // Extract unique countries
   const countryItems = useMemo(() => {
@@ -197,9 +236,22 @@ export const LeadersGrid = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div
+        ref={gridRef}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+      >
         {filteredLeaders.map((leader) => (
-          <LeaderCard key={leader.id} leader={leader} />
+          <div
+            key={leader.id}
+            id={`leader-${leader.name.replace(/\s+/g, '-')}`}
+            className={
+              highlightedLeader === leader.name
+                ? 'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
+                : ''
+            }
+          >
+            <LeaderCard leader={leader} />
+          </div>
         ))}
       </div>
     </div>

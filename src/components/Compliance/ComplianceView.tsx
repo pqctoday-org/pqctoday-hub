@@ -106,6 +106,7 @@ function MobileViewToggle({ data }: { data: import('./types').ComplianceRecord[]
 export const ComplianceView = () => {
   const [searchParams] = useSearchParams()
   const initialFilter = searchParams.get('q') ?? undefined
+  const certParam = searchParams.get('cert') ?? undefined
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
   const { selectedIndustries, selectedRegion } = usePersonaStore()
 
@@ -231,7 +232,7 @@ export const ComplianceView = () => {
       {/* Desktop: full tabbed table */}
       <div className="hidden md:block">
         <Tabs
-          defaultValue="landscape"
+          defaultValue={certParam ? 'all' : 'landscape'}
           className="w-full"
           onValueChange={(tab) => logComplianceFilter('Tab', tab)}
         >
@@ -255,6 +256,7 @@ export const ComplianceView = () => {
               lastUpdated={lastUpdated}
               onEnrich={enrichRecord}
               initialFilter={initialFilter}
+              initialSelectedId={certParam}
             />
           </TabsContent>
 

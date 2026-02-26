@@ -33,7 +33,10 @@ import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 const MODULE_ID = 'tls-basics'
 
 export const TLSBasicsModule: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('learn')
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = new URLSearchParams(window.location.search).get('tab')
+    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
+  })
   const startTimeRef = useRef(Date.now())
   const { updateModuleProgress, markStepComplete } = useModuleStore()
 

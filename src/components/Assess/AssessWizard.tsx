@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -140,10 +141,24 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
   onComplete,
   mode = 'comprehensive',
 }) => {
+  const [searchParams] = useSearchParams()
   const store = useAssessmentStore()
   const { currentStep, setStep, markComplete, reset } = store
 
   const [isGenerating, setIsGenerating] = useState(false)
+
+  // Deep link: ?step=<n> jumps to a specific wizard step (0-based index)
+  useEffect(() => {
+    const stepParam = searchParams.get('step')
+    if (stepParam !== null) {
+      const steps =
+        mode === 'quick' ? ALL_STEPS.filter((s) => QUICK_STEP_KEYS.has(s.key)) : ALL_STEPS
+      const parsed = parseInt(stepParam, 10)
+      if (!isNaN(parsed) && parsed >= 0 && parsed < steps.length) {
+        setStep(parsed)
+      }
+    }
+  }, [searchParams, setStep, mode])
 
   // Pre-fill industry and country from persona store when fields are blank
   const personaIndustry = usePersonaStore((s) => s.selectedIndustry)

@@ -57,7 +57,10 @@ const PARTS = [
 ]
 
 export const PKIWorkshop: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('learn')
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = new URLSearchParams(window.location.search).get('tab')
+    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
+  })
   const [currentStep, setCurrentStep] = useState(0)
   const startTimeRef = useRef(0)
   const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()

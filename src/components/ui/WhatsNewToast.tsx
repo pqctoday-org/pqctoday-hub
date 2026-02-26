@@ -80,23 +80,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC Assistant</strong> &mdash; AI chatbot
-                    powered by Gemini 2.5 Flash with RAG retrieval from 1,700+ data chunks across
-                    all app content
+                    <strong className="text-foreground">Precision Deep Links</strong> &mdash; 8
+                    views now accept URL params for direct chatbot-to-page navigation
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Deep-linking</strong> &mdash; chatbot
-                    responses link directly to products, algorithms, threats, library docs, and more
+                    <strong className="text-foreground">RAG Deep Links</strong> &mdash; 95% of
+                    knowledge chunks include pre-computed URLs for more accurate chatbot links
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Study Pack</strong> &mdash; download all PQC
-                    Today content as a ZIP for Google NotebookLM
+                    <strong className="text-foreground">Sample Questions</strong> &mdash;{' '}
+                    <span className="font-mono">?</span> button in chat header shows a categorized
+                    question bank with copy-to-clipboard
                   </span>
                 </li>
               </ul>

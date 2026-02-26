@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Users, Globe, Lock } from 'lucide-react'
+import { Users, Globe, Lock, BrainCircuit } from 'lucide-react'
 import clsx from 'clsx'
 import { StudyPackCard } from './StudyPackCard'
 import { useTheme } from '../../hooks/useTheme'
@@ -91,6 +91,26 @@ export const MobileAboutView = () => {
 
       {/* Study Pack Export */}
       <StudyPackCard />
+
+      {/* PQC Assistant Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.18 }}
+        className="glass-panel p-4"
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-2 rounded-full bg-primary/10 text-primary">
+            <BrainCircuit size={20} />
+          </div>
+          <h2 className="text-lg font-bold">PQC Assistant</h2>
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Ask questions about post-quantum cryptography using our RAG-powered chatbot. It searches
+          1,725 curated knowledge chunks and uses Gemini 2.5 Flash to deliver grounded answers with
+          deep links to relevant pages.
+        </p>
+      </motion.div>
 
       {/* Connect Section */}
       <motion.div

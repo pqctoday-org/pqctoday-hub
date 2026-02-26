@@ -5,6 +5,7 @@ export interface RAGChunk {
   content: string
   category: string
   metadata: Record<string, string>
+  deepLink?: string
 }
 
 export interface ChatMessage {

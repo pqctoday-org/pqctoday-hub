@@ -26,6 +26,7 @@ interface ComplianceTableProps {
   lastUpdated?: Date | null
   onEnrich?: (r: ComplianceRecord) => void
   initialFilter?: string
+  initialSelectedId?: string
 }
 
 type SortDirection = 'asc' | 'desc'
@@ -37,10 +38,12 @@ const ComplianceRow = ({
   record,
   index,
   onEnrich,
+  autoOpen,
 }: {
   record: ComplianceRecord
   index: number
   onEnrich?: (record: ComplianceRecord) => void
+  autoOpen?: boolean
 }) => {
   const rowRef = React.useRef<HTMLTableRowElement>(null)
 
@@ -68,7 +71,7 @@ const ComplianceRow = ({
     return () => observer.disconnect()
   }, [record, onEnrich])
 
-  const [showDetailsPopup, setShowDetailsPopup] = useState(false)
+  const [showDetailsPopup, setShowDetailsPopup] = useState(autoOpen === true)
   const [showPqcTooltip, setShowPqcTooltip] = useState(false)
   const [showClassicalTooltip, setShowClassicalTooltip] = useState(false)
 
@@ -239,6 +242,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   lastUpdated,
   onEnrich,
   initialFilter,
+  initialSelectedId,
 }) => {
   const [filterText, setFilterText] = useState(initialFilter ?? '')
   const [pqcFilters, setPqcFilters] = useState<string[]>([])
@@ -900,7 +904,13 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
             </thead>
             <tbody>
               {paginatedData.map((record, index) => (
-                <ComplianceRow key={record.id} record={record} index={index} onEnrich={onEnrich} />
+                <ComplianceRow
+                  key={record.id}
+                  record={record}
+                  index={index}
+                  onEnrich={onEnrich}
+                  autoOpen={record.id === initialSelectedId}
+                />
               ))}
               {filteredAndSortedData.length === 0 && (
                 <tr>

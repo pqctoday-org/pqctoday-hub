@@ -18,6 +18,7 @@ interface RAGChunk {
   content: string
   category: string
   metadata: Record<string, string>
+  deepLink?: string
 }
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'data')
@@ -62,6 +63,42 @@ function readCSVWithHeaders(filePath: string): Record<string, string>[] {
 
 function sanitize(s: string | undefined | null): string {
   return (s ?? '').trim()
+}
+
+/** URL-encode a parameter value for deep links */
+function encodeParam(s: string): string {
+  return encodeURIComponent(s.trim())
+}
+
+/** Slugify an algorithm name for ?highlight= parameter */
+function algoSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+/** Map module directory names to route IDs */
+const MODULE_DIR_TO_ID: Record<string, string> = {
+  'Module1-Introduction': 'pqc-101',
+  QuantumThreats: 'quantum-threats',
+  HybridCrypto: 'hybrid-crypto',
+  CryptoAgility: 'crypto-agility',
+  TLSBasics: 'tls-basics',
+  VPNSSHModule: 'vpn-ssh-pqc',
+  EmailSigning: 'email-signing',
+  PKIWorkshop: 'pki-workshop',
+  KeyManagement: 'key-management',
+  StatefulSignatures: 'stateful-signatures',
+  DigitalAssets: 'digital-assets',
+  FiveG: '5g-security',
+  DigitalID: 'digital-id',
+  Entropy: 'entropy-randomness',
+  MerkleTreeCerts: 'merkle-tree-certs',
+  QKD: 'qkd',
+  APISecurityJWT: 'api-security-jwt',
+  CodeSigning: 'code-signing',
+  IoTOT: 'iot-ot-pqc',
 }
 
 // ---------------------------------------------------------------------------
@@ -114,6 +151,7 @@ function processGlossary(): RAGChunk[] {
             complexity: currentTerm.complexity || 'beginner',
             relatedModule: currentTerm.relatedModule || '',
           },
+          ...(currentTerm.relatedModule ? { deepLink: currentTerm.relatedModule } : {}),
         })
       }
       inObject = false
@@ -181,6 +219,7 @@ function processTimeline(): RAGChunk[] {
         org: sanitize(orgName),
         sourceUrl: sanitize(sourceUrl),
       },
+      deepLink: `/timeline?country=${encodeParam(country)}`,
     })
   }
 
@@ -242,6 +281,7 @@ function processLibrary(): RAGChunk[] {
         url: sanitize(url),
         algorithmFamily: sanitize(algorithmFamily),
       },
+      ...(sanitize(refId) ? { deepLink: `/library?ref=${encodeParam(refId)}` } : {}),
     })
   }
 
@@ -308,6 +348,7 @@ function processAlgorithms(): RAGChunk[] {
         fipsStandard: sanitize(fipsStandard),
         securityLevel: sanitize(securityLevel),
       },
+      deepLink: `/algorithms?highlight=${algoSlug(name)}`,
     })
   }
 
@@ -345,6 +386,7 @@ function processAlgorithmTransitions(): RAGChunk[] {
         classical: sanitize(classical),
         pqc: sanitize(pqc),
       },
+      deepLink: `/algorithms?highlight=${algoSlug(classical)}`,
     })
   }
 
@@ -393,6 +435,9 @@ function processThreats(): RAGChunk[] {
         threatId: sanitize(threatId),
         sourceUrl: sanitize(sourceUrl),
       },
+      ...(sanitize(threatId)
+        ? { deepLink: `/threats?id=${encodeParam(threatId)}&industry=${encodeParam(industry)}` }
+        : {}),
     })
   }
 
@@ -446,6 +491,7 @@ function processCompliance(): RAGChunk[] {
         deadline: sanitize(deadline),
         requiresPQC: sanitize(requiresPQC),
       },
+      deepLink: `/compliance?q=${encodeParam(label)}`,
     })
   }
 
@@ -491,6 +537,7 @@ function processMigrateSoftware(): RAGChunk[] {
         fipsValidated: sanitize(r.fips_validated),
         repositoryUrl: sanitize(r.repository_url),
       },
+      deepLink: `/migrate?q=${encodeParam(name)}`,
     })
   }
 
@@ -529,6 +576,7 @@ function processLeaders(): RAGChunk[] {
         country: sanitize(country),
         type: sanitize(type),
       },
+      deepLink: `/leaders?leader=${encodeParam(name)}`,
     })
   }
 
@@ -566,6 +614,7 @@ function processModules(): RAGChunk[] {
       content,
       category: 'learning',
       metadata: { moduleId: id, duration },
+      deepLink: `/learn/${id}`,
     })
   }
 
@@ -603,6 +652,7 @@ function processAuthoritativeSources(): RAGChunk[] {
         region: sanitize(region),
         url: sanitize(primaryUrl),
       },
+      ...(sanitize(primaryUrl) ? { deepLink: sanitize(primaryUrl) } : {}),
     })
   }
 
@@ -768,6 +818,10 @@ function processModuleContent(): RAGChunk[] {
             component: componentName,
             filePath: relativePath,
           },
+
+          ...(MODULE_DIR_TO_ID[moduleDir.name]
+            ? { deepLink: `/learn/${MODULE_DIR_TO_ID[moduleDir.name]}` }
+            : {}),
         })
         chunkIdx++
         currentChunk = []
@@ -824,6 +878,10 @@ function processModuleContent(): RAGChunk[] {
           component: dataName,
           filePath: path.relative(MODULES_DIR, file),
         },
+
+        ...(MODULE_DIR_TO_ID[moduleDir.name]
+          ? { deepLink: `/learn/${MODULE_DIR_TO_ID[moduleDir.name]}` }
+          : {}),
       })
     }
   }
@@ -964,6 +1022,7 @@ function processQuizQuestions(): RAGChunk[] {
           quizCategory: category,
           questionCount: String(currentContent.length),
         },
+        deepLink: '/learn/quiz',
       })
       chunkIdx++
       currentContent = []
@@ -1046,6 +1105,7 @@ function processAssessmentConfig(): RAGChunk[] {
         assessCategory: category,
         itemCount: String(items.length),
       },
+      deepLink: '/assess',
     })
   }
 
@@ -1093,6 +1153,7 @@ function processPriorityMatrix(): RAGChunk[] {
         priorityLevel: priority,
         categoryCount: String(items.length),
       },
+      deepLink: '/migrate',
     })
   }
 
@@ -1133,6 +1194,8 @@ function processCertificationXref(): RAGChunk[] {
         .join('\n')
     )
 
+    // Use first cert_id for deep link (certifications are grouped by type)
+    const firstCertId = sanitize(certs[0]?.cert_id)
     chunks.push({
       id: `cert-${certType.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
       source: 'certifications',
@@ -1143,6 +1206,7 @@ function processCertificationXref(): RAGChunk[] {
         certType,
         certCount: String(certs.length),
       },
+      ...(firstCertId ? { deepLink: `/compliance?cert=${encodeParam(firstCertId)}` } : {}),
     })
   }
 

@@ -36,7 +36,10 @@ const PARTS = [
 ]
 
 export const FiveGModule: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('learn')
+  const [activeTab, setActiveTab] = useState(() => {
+    const tab = new URLSearchParams(window.location.search).get('tab')
+    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
+  })
   const [currentPart, setCurrentPart] = useState(0)
   const [initialProfile, setInitialProfile] = useState<'A' | 'B' | 'C' | undefined>(undefined)
   const [initialPqcMode, setInitialPqcMode] = useState<'hybrid' | 'pure' | undefined>(undefined)

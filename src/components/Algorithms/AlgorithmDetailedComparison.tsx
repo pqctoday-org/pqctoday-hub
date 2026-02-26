@@ -50,7 +50,13 @@ function getPerformanceMultiplier(cycles: string): number {
   return match ? parseFloat(match[1]) : 1
 }
 
-export const AlgorithmDetailedComparison = () => {
+interface AlgorithmDetailedComparisonProps {
+  highlightAlgorithms?: Set<string>
+}
+
+export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonProps> = ({
+  highlightAlgorithms,
+}) => {
   const [algorithms, setAlgorithms] = useState<AlgorithmDetail[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [filterType, setFilterType] = useState('All')
@@ -192,7 +198,10 @@ export const AlgorithmDetailedComparison = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <PerformanceView algorithms={filteredAlgorithms} />
+            <PerformanceView
+              algorithms={filteredAlgorithms}
+              highlightAlgorithms={highlightAlgorithms}
+            />
           </motion.div>
         </TabsContent>
 
@@ -202,7 +211,10 @@ export const AlgorithmDetailedComparison = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <SecurityView algorithms={filteredAlgorithms} />
+            <SecurityView
+              algorithms={filteredAlgorithms}
+              highlightAlgorithms={highlightAlgorithms}
+            />
           </motion.div>
         </TabsContent>
 
@@ -212,7 +224,7 @@ export const AlgorithmDetailedComparison = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <SizesView algorithms={filteredAlgorithms} />
+            <SizesView algorithms={filteredAlgorithms} highlightAlgorithms={highlightAlgorithms} />
           </motion.div>
         </TabsContent>
 
@@ -222,7 +234,10 @@ export const AlgorithmDetailedComparison = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <UseCasesView algorithms={filteredAlgorithms} />
+            <UseCasesView
+              algorithms={filteredAlgorithms}
+              highlightAlgorithms={highlightAlgorithms}
+            />
           </motion.div>
         </TabsContent>
       </Tabs>
@@ -240,8 +255,22 @@ const EmptyState = () => (
   </div>
 )
 
+interface DetailViewProps {
+  algorithms: AlgorithmDetail[]
+  highlightAlgorithms?: Set<string>
+}
+
+function isHighlighted(algo: AlgorithmDetail, highlights?: Set<string>): boolean {
+  if (!highlights) return false
+  return Array.from(highlights).some(
+    (h) =>
+      algo.name.toLowerCase().includes(h.toLowerCase()) ||
+      h.toLowerCase().includes(algo.name.toLowerCase())
+  )
+}
+
 // Performance View Component
-const PerformanceView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
+const PerformanceView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDir, setSortDir] = useState<SortDir>('asc')
 
@@ -356,13 +385,18 @@ const PerformanceView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
               const keyGenPerf = getPerformanceCategory(algo.keyGenCycles)
               const signPerf = getPerformanceCategory(algo.signEncapsCycles)
               const verifyPerf = getPerformanceCategory(algo.verifyDecapsCycles)
+              const highlighted = isHighlighted(algo, highlightAlgorithms)
 
               return (
                 <tr
                   key={`${algo.name}-${index}`}
                   className={clsx(
                     'transition-colors hover:bg-primary/10',
-                    index % 2 === 0 ? 'bg-card/50' : 'bg-muted/20'
+                    highlighted
+                      ? 'bg-primary/15 ring-1 ring-inset ring-primary/30'
+                      : index % 2 === 0
+                        ? 'bg-card/50'
+                        : 'bg-muted/20'
                   )}
                 >
                   <td className="p-4">
@@ -531,7 +565,7 @@ const PerformanceView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
 }
 
 // Security View Component
-const SecurityView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
+const SecurityView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
   if (algorithms.length === 0) return <EmptyState />
 
   const groupedByLevel = algorithms.reduce(
@@ -575,7 +609,12 @@ const SecurityView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
               {algos.map((algo, index) => (
                 <div
                   key={`${algo.name}-${index}`}
-                  className="bg-muted/30 border border-border rounded-lg p-4 hover:border-primary/50 transition-colors"
+                  className={clsx(
+                    'border border-border rounded-lg p-4 hover:border-primary/50 transition-colors',
+                    isHighlighted(algo, highlightAlgorithms)
+                      ? 'bg-primary/15 ring-1 ring-inset ring-primary/30'
+                      : 'bg-muted/30'
+                  )}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h5 className="font-semibold text-foreground">{algo.name}</h5>
@@ -611,7 +650,7 @@ const SecurityView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
 }
 
 // Sizes View Component
-const SizesView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
+const SizesView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
   if (algorithms.length === 0) return <EmptyState />
 
   const maxPubKey = Math.max(...algorithms.map((a) => a.publicKeySize))
@@ -624,7 +663,11 @@ const SizesView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
         {algorithms.map((algo, index) => (
           <div
             key={`${algo.name}-${index}`}
-            className="border-b border-border/50 last:border-0 pb-6 last:pb-0"
+            className={clsx(
+              'border-b border-border/50 last:border-0 pb-6 last:pb-0',
+              isHighlighted(algo, highlightAlgorithms) &&
+                'bg-primary/15 ring-1 ring-inset ring-primary/30 rounded-lg p-4'
+            )}
           >
             <div className="flex items-center justify-between mb-3">
               <h5 className="font-semibold text-foreground">{algo.name}</h5>
@@ -704,7 +747,7 @@ const SizesView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
 }
 
 // Use Cases View Component
-const UseCasesView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
+const UseCasesView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
   if (algorithms.length === 0) return <EmptyState />
 
   return (
@@ -725,7 +768,12 @@ const UseCasesView = ({ algorithms }: { algorithms: AlgorithmDetail[] }) => {
           {algorithms.map((algo, index) => (
             <div
               key={`${algo.name}-${index}`}
-              className="bg-muted/30 border border-border rounded-lg p-5 hover:border-primary/50 transition-colors"
+              className={clsx(
+                'border border-border rounded-lg p-5 hover:border-primary/50 transition-colors',
+                isHighlighted(algo, highlightAlgorithms)
+                  ? 'bg-primary/15 ring-1 ring-inset ring-primary/30'
+                  : 'bg-muted/30'
+              )}
             >
               <div className="flex items-start justify-between mb-3">
                 <h5 className="font-semibold text-foreground text-lg">{algo.name}</h5>

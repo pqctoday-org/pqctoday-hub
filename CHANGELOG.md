@@ -4,6 +4,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.37.0] - 2026-02-25
+
+### Added
+
+- **Precision deep-link entry points** (8 views): Library `?ref=`, Threats `?id=`, Learn modules
+  `?tab=workshop`, Algorithms `?highlight=` (highlights in both Overview and Detailed Comparison
+  tabs), Compliance `?cert=`, Assess `?step=`, Playground `?algo=`, Leaders
+  `?leader=`/`?sector=`/`?country=`. All entry points include `useEffect` sync for same-route
+  navigations (chatbot deep links).
+
+- **RAG deep-link integration** (`scripts/generate-rag-corpus.ts`, `GeminiService.ts`): 95% of RAG
+  corpus chunks (1,643/1,725) now carry pre-computed `deepLink` URLs. Gemini system prompt guideline
+  #4 instructs the model to always use the deep link from context chunks, producing more precise
+  navigation links in chatbot responses.
+
+- **PQC Assistant section in About page** (`AboutView.tsx`, `MobileAboutView.tsx`): New section
+  explaining the RAG architecture, Gemini 2.5 Flash integration, BYOK API key requirement
+  (with link to Google AI Studio), three capability cards (Grounded Answers, Deep Linking, PQC
+  Domain Expertise), and four limitations.
+
+- **Sample Questions modal** (`SampleQuestionsModal.tsx`, `ChatPanel.tsx`): `?` button in the chat
+  panel header opens a categorized question bank (22 questions across 11 categories — Library,
+  Threats, Learn, Algorithms, Compliance, Assessment, Playground, Leaders, Timeline, Migrate,
+  Cross-cutting). Click any question to copy it to clipboard for pasting into the chatbot.
+
+### Fixed
+
+- **3 pre-existing test failures** (`LeadersGrid.test.tsx`, `LibraryView.test.tsx`,
+  `TimelineView.test.tsx`): Added missing `useSearchParams` mocks to fix 49 tests that were failing
+  before this release.
+
 ## [1.36.0] - 2026-02-25
 
 ### Added
