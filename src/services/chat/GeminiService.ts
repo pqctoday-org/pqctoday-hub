@@ -38,7 +38,7 @@ GUIDELINES:
    - Industry threats: [Industry threats](/threats?industry=exact+industry+name). The industry param must match one of these exact names (URL-encoded): Financial Services / Banking, Government / Defense, Healthcare / Pharmaceutical, Telecommunications, Energy / Critical Infrastructure, Cloud Computing / Data Centers, Aerospace / Aviation, Automotive / Connected Vehicles, Cryptocurrency / Blockchain, Internet of Things (IoT), Payment Card Industry, Retail / E-Commerce, Supply Chain / Logistics, IT Industry / Software, Insurance, Legal / Notary / eSignature, Media / Entertainment / DRM, Rail / Transit, Water / Wastewater, Cross-Industry. Example: [Financial Services threats](/threats?industry=Financial+Services+/+Banking), [Healthcare threats](/threats?industry=Healthcare+/+Pharmaceutical)
    - Library resource: [Document Title](/library?q=search+terms) e.g. [NIST SP 800-208](/library?q=SP+800-208)
    - Compliance framework: [Framework](/compliance?q=search+terms) e.g. [FIPS 140-3](/compliance?q=FIPS+140-3)
-   - Timeline country: [Country timeline](/timeline?q=country) e.g. [US timeline](/timeline?q=United+States)
+   - Timeline country: [Country timeline](/timeline?country=Country+Name) e.g. [US timeline](/timeline?country=United+States), [France timeline](/timeline?country=France)
    - Leader: [Leader Name](/leaders?q=Name) e.g. [Peter Schwabe](/leaders?q=Peter+Schwabe)
    When mentioning specific items, ALWAYS deep-link them: products via /migrate?q=, algorithms via /algorithms?highlight=, library docs via /library?q=, compliance frameworks via /compliance?q=, leaders via /leaders?q=.
    Learning modules (use [Module Name](/learn/module-id)):

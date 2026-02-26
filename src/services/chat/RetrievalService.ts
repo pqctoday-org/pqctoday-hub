@@ -73,6 +73,31 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
   readiness: ['readiness', 'gap analysis', 'priority matrix', 'migration priority'],
   'gap analysis': ['gap analysis', 'readiness', 'urgency score', 'priority matrix'],
   priority: ['migration priority', 'urgency', 'priority matrix', 'readiness'],
+
+  // Timeline & country queries
+  timeline: ['migration timeline', 'roadmap', 'deadline', 'phase', 'milestone'],
+  roadmap: ['migration timeline', 'roadmap', 'phase', 'milestone', 'deadline'],
+  deadline: ['deadline', 'migration timeline', 'deprecation', 'disallowed'],
+  france: ['France', 'ANSSI', 'French PQC', 'Agence nationale'],
+  anssi: ['ANSSI', 'France', 'Agence nationale', 'French PQC'],
+  germany: ['Germany', 'BSI', 'German PQC', 'Bundesamt'],
+  bsi: ['BSI', 'Germany', 'Bundesamt', 'German PQC'],
+  'united states': ['United States', 'NIST', 'NSA', 'CNSA', 'CISA'],
+  usa: ['United States', 'NIST', 'NSA', 'CNSA', 'CISA'],
+  'united kingdom': ['United Kingdom', 'NCSC', 'UK PQC', 'British'],
+  uk: ['United Kingdom', 'NCSC', 'UK PQC'],
+  china: ['China', 'Chinese PQC', 'OSCCA'],
+  japan: ['Japan', 'CRYPTREC', 'Japanese PQC'],
+  australia: ['Australia', 'ASD', 'Australian PQC'],
+  canada: ['Canada', 'CCCS', 'Canadian PQC'],
+  'south korea': ['South Korea', 'Korean PQC', 'KISA'],
+  korea: ['South Korea', 'Korean PQC', 'KISA'],
+  india: ['India', 'Indian PQC'],
+  singapore: ['Singapore', 'CSA', 'Singaporean PQC'],
+  eu: ['European Union', 'ENISA', 'ETSI', 'EU PQC'],
+  europe: ['European Union', 'ENISA', 'ETSI', 'EU PQC'],
+  enisa: ['ENISA', 'European Union', 'EU PQC'],
+  etsi: ['ETSI', 'European Union', 'EU PQC'],
 }
 
 class RetrievalService {
@@ -126,6 +151,8 @@ class RetrievalService {
       'assessment',
       'certifications',
       'priority-matrix',
+      'timeline',
+      'threats',
     ])
     for (const chunk of this.corpus) {
       if (!prioritySources.has(chunk.source)) continue
@@ -158,6 +185,20 @@ class RetrievalService {
         const aExisting = this.entityIndex.get(acronymLower) ?? []
         aExisting.push(chunk.id)
         this.entityIndex.set(acronymLower, aExisting)
+      }
+
+      // Index metadata country and org for timeline/threats chunks
+      if (chunk.metadata?.country) {
+        const countryLower = chunk.metadata.country.toLowerCase()
+        const cExisting = this.entityIndex.get(countryLower) ?? []
+        cExisting.push(chunk.id)
+        this.entityIndex.set(countryLower, cExisting)
+      }
+      if (chunk.metadata?.org) {
+        const orgLower = chunk.metadata.org.toLowerCase()
+        const oExisting = this.entityIndex.get(orgLower) ?? []
+        oExisting.push(chunk.id)
+        this.entityIndex.set(orgLower, oExisting)
       }
     }
 
