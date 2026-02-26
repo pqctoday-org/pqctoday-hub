@@ -99,6 +99,12 @@ const MODULE_DIR_TO_ID: Record<string, string> = {
   APISecurityJWT: 'api-security-jwt',
   CodeSigning: 'code-signing',
   IoTOT: 'iot-ot-pqc',
+  PQCRiskManagement: 'pqc-risk-management',
+  PQCBusinessCase: 'pqc-business-case',
+  PQCGovernance: 'pqc-governance',
+  ComplianceStrategy: 'compliance-strategy',
+  MigrationProgram: 'migration-program',
+  VendorRisk: 'vendor-risk',
 }
 
 // ---------------------------------------------------------------------------
@@ -758,6 +764,12 @@ const MODULE_NAME_MAP: Record<string, string> = {
   APISecurityJWT: 'API Security & JWT',
   CodeSigning: 'Code Signing',
   IoTOT: 'IoT & OT Security',
+  PQCRiskManagement: 'PQC Risk Management',
+  PQCBusinessCase: 'PQC Business Case',
+  PQCGovernance: 'PQC Governance & Policy',
+  ComplianceStrategy: 'Compliance & Regulatory Strategy',
+  MigrationProgram: 'Migration Program Management',
+  VendorRisk: 'Vendor & Supply Chain Risk',
 }
 
 /**
@@ -829,6 +841,19 @@ function processModuleContent(): RAGChunk[] {
       const componentName = path.basename(file, '.tsx')
       const relativePath = path.relative(MODULES_DIR, file)
 
+      // Detect workshop-related components for deep-link targeting
+      const isWorkshop =
+        relativePath.includes('/workshop/') ||
+        /Workshop|Simulator|Generator|Analyzer|Calculator|Flow|Handshake|Negotiation/i.test(
+          componentName
+        )
+      const moduleId = MODULE_DIR_TO_ID[moduleDir.name]
+      const workshopDeepLink = moduleId
+        ? isWorkshop
+          ? `/learn/${moduleId}?tab=workshop`
+          : `/learn/${moduleId}`
+        : undefined
+
       // Chunk the extracted texts into groups of ~MAX_CHUNK_CHARS
       let currentChunk: string[] = []
       let currentLen = 0
@@ -851,9 +876,7 @@ function processModuleContent(): RAGChunk[] {
             filePath: relativePath,
           },
 
-          ...(MODULE_DIR_TO_ID[moduleDir.name]
-            ? { deepLink: `/learn/${MODULE_DIR_TO_ID[moduleDir.name]}` }
-            : {}),
+          ...(workshopDeepLink ? { deepLink: workshopDeepLink } : {}),
         })
         chunkIdx++
         currentChunk = []

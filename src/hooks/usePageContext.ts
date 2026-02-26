@@ -1,9 +1,12 @@
 import { useLocation } from 'react-router-dom'
 import { useMemo } from 'react'
+import { getModuleDeepLink } from './useModuleDeepLink'
 
 export interface PageContext {
   page: string
   moduleId?: string
+  tab?: string
+  step?: number
   relevantSources: string[]
   suggestedQuestions: string[]
 }
@@ -149,6 +152,12 @@ const MODULE_NAMES: Record<string, string> = {
   'api-security-jwt': 'API Security & JWT',
   'code-signing': 'Code Signing',
   'iot-ot-pqc': 'IoT & OT Security',
+  'pqc-risk-management': 'PQC Risk Management',
+  'pqc-business-case': 'PQC Business Case',
+  'pqc-governance': 'PQC Governance & Policy',
+  'vendor-risk': 'Vendor & Supply Chain Risk',
+  'migration-program': 'Migration Program Management',
+  'compliance-strategy': 'Compliance & Regulatory Strategy',
 }
 
 /** Module-specific suggested questions — curated for top modules, others use generic template */
@@ -248,6 +257,36 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'How does PQC migration differ for OT/industrial systems?',
     'What are the key challenges of PQC in embedded systems?',
   ],
+  'pqc-risk-management': [
+    'How do I build a quantum threat risk register?',
+    'What is the relationship between CRQC timelines and business risk?',
+    'How do I create a PQC risk heatmap?',
+  ],
+  'pqc-business-case': [
+    'How do I calculate ROI for PQC migration?',
+    'What are the cost categories in a PQC business case?',
+    'How do I present PQC risks to the board?',
+  ],
+  'pqc-governance': [
+    'What roles belong in a PQC RACI matrix?',
+    'How do I draft a PQC cryptographic policy?',
+    'Which KPIs should I track for PQC migration?',
+  ],
+  'vendor-risk': [
+    'How do I score vendor PQC readiness?',
+    'What contract clauses protect against quantum risk?',
+    'How do I assess supply chain cryptographic dependencies?',
+  ],
+  'migration-program': [
+    'What are the phases of a PQC migration program?',
+    'How do I build a PQC migration roadmap?',
+    'What stakeholder communication is needed for PQC migration?',
+  ],
+  'compliance-strategy': [
+    'Which PQC compliance frameworks apply to my organization?',
+    'How do I prepare for a PQC compliance audit?',
+    'How do CNSA 2.0 and ETSI timelines differ?',
+  ],
 }
 
 const DEFAULT_CONTEXT: PageContext = {
@@ -273,9 +312,12 @@ export function usePageContext(): PageContext {
 
       if (moduleName) {
         const moduleQuestions = MODULE_SUGGESTED_QUESTIONS[moduleId]
+        const { initialTab, initialStep } = getModuleDeepLink()
         return {
           page: `Learn: ${moduleName}`,
           moduleId,
+          tab: initialTab,
+          step: initialStep,
           relevantSources: [
             'modules',
             'module-content',

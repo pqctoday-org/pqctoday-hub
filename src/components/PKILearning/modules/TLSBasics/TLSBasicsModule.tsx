@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Play } from 'lucide-react'
 import { useTLSStore } from '@/store/tls-learning.store'
 import { useModuleStore } from '@/store/useModuleStore'
+import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { TLSClientPanel } from './TLSClientPanel'
 import { TLSServerPanel } from './TLSServerPanel'
@@ -34,8 +35,9 @@ const MODULE_ID = 'tls-basics'
 
 export const TLSBasicsModule: React.FC = () => {
   const [activeTab, setActiveTab] = useState(() => {
-    const tab = new URLSearchParams(window.location.search).get('tab')
-    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
+    const { initialTab } = getModuleDeepLink({ validTabs: ['learn', 'workshop', 'simulate'] })
+    // Map external 'workshop' URL param to internal 'simulate' tab value
+    return initialTab === 'workshop' ? 'simulate' : initialTab
   })
   const startTimeRef = useRef(Date.now())
   const { updateModuleProgress, markStepComplete } = useModuleStore()

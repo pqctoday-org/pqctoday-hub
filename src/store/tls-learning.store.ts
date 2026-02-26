@@ -1,6 +1,7 @@
 /* eslint-disable security/detect-object-injection */
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useHistoryStore } from './useHistoryStore'
 
 export interface TLSConfig {
   cipherSuites: string[]
@@ -304,7 +305,7 @@ system_default = system_default_sect
         }),
 
       // Comparison Actions
-      addRunToHistory: (record) =>
+      addRunToHistory: (record) => {
         set((state) => ({
           runHistory: [
             ...state.runHistory,
@@ -314,7 +315,19 @@ system_default = system_default_sect
               timestamp: new Date(),
             },
           ],
-        })),
+        }))
+        try {
+          useHistoryStore.getState().addEvent({
+            type: 'tls_simulation',
+            timestamp: Date.now(),
+            title: 'TLS handshake simulation',
+            detail: record.cipher ? `Cipher: ${record.cipher}` : undefined,
+            route: '/learn/tls-basics?tab=workshop',
+          })
+        } catch {
+          /* store not ready */
+        }
+      },
       clearRunHistory: () => set({ runHistory: [] }),
     }),
     {

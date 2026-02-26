@@ -1,8 +1,9 @@
 import type { ChatMessage, RAGChunk } from '@/types/ChatTypes'
+import type { PageContext } from '@/hooks/usePageContext'
 
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models'
 
-function buildSystemPrompt(chunks: RAGChunk[], currentPage?: string): string {
+function buildSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext): string {
   const contextBlocks = chunks
     .map((c) => {
       const header = `--- Source: ${c.source} | ${c.title} ---`
@@ -11,9 +12,14 @@ function buildSystemPrompt(chunks: RAGChunk[], currentPage?: string): string {
     })
     .join('\n\n')
 
-  const pageNote = currentPage
-    ? `\nThe user is currently viewing the ${currentPage} page. Tailor your response accordingly when relevant.\n`
-    : ''
+  let pageNote = ''
+  if (pageContext?.page) {
+    const tabInfo =
+      pageContext.tab && pageContext.tab !== 'learn'
+        ? ` (${pageContext.tab} tab${pageContext.step ? `, step ${pageContext.step + 1}` : ''})`
+        : ''
+    pageNote = `\nThe user is currently viewing the ${pageContext.page} page${tabInfo}. Tailor your response accordingly when relevant.\n`
+  }
 
   return `You are PQC Today Assistant, an expert in post-quantum cryptography (PQC). You help users understand PQC concepts, standards, migration strategies, and the quantum threat landscape.
 ${pageNote}
@@ -26,7 +32,8 @@ GUIDELINES:
    - /algorithms?highlight=<slug>, /timeline?country=<name>, /library?ref=<id>
    - /migrate?q=<name>, /leaders?leader=<name>, /compliance?cert=<id>
    - /threats?id=<threatId>&industry=<industry>, /playground?algo=<name>
-   - /learn/<module-id>, /learn/<module>?tab=workshop, /assess?step=<n>
+   - /learn/<module-id> (learning content), /learn/<module-id>?tab=workshop (hands-on workshop/simulation)
+   - /learn/<module-id>?tab=workshop&step=<n> (specific workshop step), /assess?step=<n>
    Every named item (product, leader, document, algorithm, threat) MUST be a markdown link. Never output bare names or paths.
 4. Main pages: [Algorithms](/algorithms), [Timeline](/timeline), [Library](/library), [Threats](/threats), [Leaders](/leaders), [Compliance](/compliance), [Migrate](/migrate), [Assessment](/assess), [Report](/report), [Playground](/playground), [OpenSSL Studio](/openssl), [Learn](/learn), [Quiz](/learn/quiz)
 5. Learning modules: [PQC 101](/learn/pqc-101), [Quantum Threats](/learn/quantum-threats), [Hybrid Crypto](/learn/hybrid-crypto), [Crypto Agility](/learn/crypto-agility), [TLS Basics](/learn/tls-basics), [VPN & SSH](/learn/vpn-ssh-pqc), [Email Signing](/learn/email-signing), [PKI Workshop](/learn/pki-workshop), [Key Management](/learn/key-management), [Stateful Signatures](/learn/stateful-signatures), [Digital Assets](/learn/digital-assets), [5G Security](/learn/5g-security), [Digital Identity](/learn/digital-id), [Entropy & Randomness](/learn/entropy-randomness), [Merkle Tree Certs](/learn/merkle-tree-certs), [QKD](/learn/qkd), [Code Signing](/learn/code-signing), [API Security & JWT](/learn/api-security-jwt), [IoT & OT Security](/learn/iot-ot-pqc)
@@ -61,9 +68,9 @@ export async function* streamResponse(
   contextChunks: RAGChunk[],
   model = 'gemini-2.5-flash',
   signal?: AbortSignal,
-  currentPage?: string
+  pageContext?: PageContext
 ): AsyncGenerator<string> {
-  const systemPrompt = buildSystemPrompt(contextChunks, currentPage)
+  const systemPrompt = buildSystemPrompt(contextChunks, pageContext)
   const formattedMessages = formatMessages(messages)
 
   const response = await fetch(

@@ -33,6 +33,32 @@ export interface StoredCSR {
   keyPairId?: string
 }
 
+export type ExecutiveDocumentType =
+  | 'roi-model'
+  | 'risk-register'
+  | 'raci-matrix'
+  | 'vendor-scorecard'
+  | 'policy-draft'
+  | 'roadmap'
+  | 'compliance-checklist'
+  | 'audit-checklist'
+  | 'compliance-timeline'
+  | 'board-deck'
+  | 'contract-clause'
+  | 'kpi-dashboard'
+  | 'migration-roadmap'
+  | 'stakeholder-comms'
+  | 'kpi-tracker'
+
+export interface ExecutiveDocument {
+  id: string
+  moduleId: string
+  type: ExecutiveDocumentType
+  title: string
+  data: string
+  createdAt: number
+}
+
 export interface LearningProgress {
   version: string // Format version for compatibility
   timestamp: number // Last save timestamp
@@ -48,11 +74,12 @@ export interface LearningProgress {
     }
   }
 
-  // Generated artifacts (keys, certs, CSRs)
+  // Generated artifacts (keys, certs, CSRs, executive documents)
   artifacts: {
     keys: StoredKeyPair[]
     certificates: StoredCertificate[]
     csrs: StoredCSR[]
+    executiveDocuments?: ExecutiveDocument[]
   }
 
   // EJBCA connections (if used)

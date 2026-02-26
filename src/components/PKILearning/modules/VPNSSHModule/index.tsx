@@ -7,6 +7,7 @@ import { IKEv2HandshakeSimulator } from './simulate/IKEv2HandshakeSimulator'
 import { SSHKeyExchangeSimulator } from './simulate/SSHKeyExchangeSimulator'
 import { ProtocolComparisonTable } from './simulate/ProtocolComparisonTable'
 import { useModuleStore } from '@/store/useModuleStore'
+import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import type { IKEv2Mode } from './data/ikev2Constants'
 import type { SSHKexAlgorithm } from './data/sshConstants'
@@ -37,11 +38,12 @@ const PARTS = [
 ]
 
 export const VPNSSHModule: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(() => {
-    const tab = new URLSearchParams(window.location.search).get('tab')
-    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
+  const deepLink = getModuleDeepLink({
+    validTabs: ['learn', 'simulate'],
+    maxStep: PARTS.length - 1,
   })
-  const [currentPart, setCurrentPart] = useState(0)
+  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
+  const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
   const [initialIKEv2Mode, setInitialIKEv2Mode] = useState<IKEv2Mode | undefined>(undefined)
   const [initialSSHKex, setInitialSSHKex] = useState<SSHKexAlgorithm | undefined>(undefined)
   const [configKey, setConfigKey] = useState(0)
@@ -101,7 +103,7 @@ export const VPNSSHModule: React.FC = () => {
     (newPart: number) => {
       const partIds = PARTS.map((p) => p.id)
       if (newPart > currentPart) {
-        markStepComplete(MODULE_ID, partIds[currentPart])
+        markStepComplete(MODULE_ID, partIds[currentPart], currentPart)
       }
       setCurrentPart(newPart)
     },

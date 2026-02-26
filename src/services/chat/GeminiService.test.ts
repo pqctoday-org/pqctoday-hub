@@ -187,14 +187,11 @@ describe('streamResponse', () => {
     const mockFetch = vi.fn().mockResolvedValue(mockSSE(['ok']))
     vi.stubGlobal('fetch', mockFetch)
 
-    const gen = streamResponse(
-      'key',
-      MOCK_MESSAGES,
-      MOCK_CHUNKS,
-      'gemini-2.5-flash',
-      undefined,
-      'Algorithms'
-    )
+    const gen = streamResponse('key', MOCK_MESSAGES, MOCK_CHUNKS, 'gemini-2.5-flash', undefined, {
+      page: 'Algorithms',
+      relevantSources: [],
+      suggestedQuestions: [],
+    })
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for await (const _ of gen) {
       /* consume */

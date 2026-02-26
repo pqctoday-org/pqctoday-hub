@@ -9,7 +9,6 @@ interface ChatState {
   model: string
 
   // Transient
-  isOpen: boolean
   isLoading: boolean
   isStreaming: boolean
   error: string | null
@@ -18,8 +17,6 @@ interface ChatState {
   // Actions
   setApiKey: (key: string | null) => void
   addMessage: (message: ChatMessage) => void
-  setOpen: (open: boolean) => void
-  toggleOpen: () => void
   setLoading: (loading: boolean) => void
   setStreaming: (streaming: boolean) => void
   setError: (error: string | null) => void
@@ -37,7 +34,6 @@ export const useChatStore = create<ChatState>()(
       apiKey: null,
       messages: [],
       model: 'gemini-2.5-flash',
-      isOpen: false,
       isLoading: false,
       isStreaming: false,
       error: null,
@@ -50,8 +46,6 @@ export const useChatStore = create<ChatState>()(
           messages: [...state.messages, message].slice(-MAX_PERSISTED_MESSAGES),
         })),
 
-      setOpen: (open) => set({ isOpen: open }),
-      toggleOpen: () => set((state) => ({ isOpen: !state.isOpen })),
       setLoading: (loading) => set({ isLoading: loading }),
       setStreaming: (streaming) => set({ isStreaming: streaming }),
       setError: (error) => set({ error }),

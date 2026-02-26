@@ -2720,4 +2720,44 @@ export const glossaryTerms: GlossaryTerm[] = [
     complexity: 'intermediate',
     category: 'concept',
   },
+
+  // === Concepts (Executive / Governance) ===
+  {
+    term: 'Key Performance Indicator',
+    acronym: 'KPI',
+    definition:
+      'A quantifiable metric used to measure progress toward organizational objectives. In PQC programs, KPIs track inventory completion, migration progress, vendor readiness, compliance gaps, and budget utilization.',
+    relatedModule: '/learn/pqc-governance',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  {
+    term: 'RACI Matrix',
+    acronym: 'RACI',
+    definition:
+      'A responsibility assignment matrix (Responsible, Accountable, Consulted, Informed) used in project governance to clarify roles and decision rights across stakeholders. Essential for cross-functional PQC migration programs.',
+    technicalNote:
+      'In PQC governance, a typical RACI covers activities like crypto inventory, algorithm selection, vendor assessment, testing, and deployment across roles such as CISO, CTO, Enterprise Architect, and Compliance Officer.',
+    relatedModule: '/learn/pqc-governance',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Total Cost of Ownership',
+    acronym: 'TCO',
+    definition:
+      'The complete cost of a technology investment over its lifetime, including acquisition, deployment, training, maintenance, and operational expenses. Critical for PQC migration business case development.',
+    relatedModule: '/learn/pqc-business-case',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  {
+    term: 'Return on Investment',
+    acronym: 'ROI',
+    definition:
+      'A financial metric measuring the benefit generated relative to costs invested. For PQC migration, calculated as breach avoidance savings, compliance penalty avoidance, and operational efficiency gains minus migration costs.',
+    relatedModule: '/learn/pqc-business-case',
+    complexity: 'beginner',
+    category: 'concept',
+  },
 ]

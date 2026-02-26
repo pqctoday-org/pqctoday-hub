@@ -27,6 +27,12 @@ export type QuizCategory =
   | 'code-signing'
   | 'api-security-jwt'
   | 'iot-ot-pqc'
+  | 'pqc-risk-management'
+  | 'pqc-business-case'
+  | 'pqc-governance'
+  | 'compliance-strategy'
+  | 'migration-program'
+  | 'vendor-risk'
 
 export interface QuizOption {
   id: string
@@ -86,4 +92,4 @@ export interface QuizScoreSummary {
   timeSpentSeconds: number
 }
 
-export type QuizMode = 'quick' | 'full' | 'category'
+export type QuizMode = 'timed' | 'category'

@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { Trash2, Shield, FileText, PenTool, Building2, CheckSquare } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
+import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { WalletComponent } from './components/Wallet/WalletComponent'
 import { PIDIssuerComponent } from './components/PIDIssuer/PIDIssuerComponent'
@@ -68,11 +69,9 @@ export const DigitalIDModule: React.FC = () => {
   const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
   const markStepComplete = useModuleStore((state) => state.markStepComplete)
 
-  const [activeTab, setActiveTab] = useState(() => {
-    const tab = new URLSearchParams(window.location.search).get('tab')
-    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
-  })
-  const [currentStep, setCurrentStep] = useState(0)
+  const deepLink = getModuleDeepLink({ maxStep: WORKSHOP_STEPS.length - 1 })
+  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
+  const [currentStep, setCurrentStep] = useState(deepLink.initialStep)
   const [wallet, setWallet] = useState<WalletInstance>(INITIAL_WALLET)
   const prevStepRef = useRef<number | null>(null)
   const startTimeRef = useRef(0)
@@ -115,7 +114,7 @@ export const DigitalIDModule: React.FC = () => {
   useEffect(() => {
     if (prevStepRef.current !== null) {
       const prevId = WORKSHOP_STEPS[prevStepRef.current]?.id
-      if (prevId) markStepComplete(MODULE_ID, prevId)
+      if (prevId) markStepComplete(MODULE_ID, prevId, prevStepRef.current)
     }
     prevStepRef.current = currentStep
   }, [currentStep, markStepComplete])

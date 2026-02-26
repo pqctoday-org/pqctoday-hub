@@ -12,8 +12,9 @@ import { QuizResults } from './QuizResults'
 import type { QuizCategory, QuizMode, QuizQuestion } from './types'
 
 const MODULE_ID = 'quiz'
-const QUICK_QUIZ_COUNT = 20
-const FULL_QUIZ_COUNT = 80
+const SECONDS_PER_QUESTION = 45
+const QUICK_POOL_THRESHOLD_MIN = 15
+const DEFAULT_TIME_MIN = 15
 const MIN_PER_CATEGORY = 2
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -26,8 +27,10 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 /**
- * Sample questions with guaranteed coverage of all categories.
- * Takes at least MIN_PER_CATEGORY from each category, fills remaining slots randomly.
+ * Sample questions with adaptive category spread.
+ * Phase 1: Take 1 per category (shuffled) for maximum breadth — works even for small counts.
+ * Phase 2: If room and count allows, add a second question per category.
+ * Phase 3: Fill remaining slots randomly.
  */
 function sampleQuestions(questions: QuizQuestion[], count: number): QuizQuestion[] {
   const byCategory = new Map<QuizCategory, QuizQuestion[]>()
@@ -40,17 +43,32 @@ function sampleQuestions(questions: QuizQuestion[], count: number): QuizQuestion
   const sampled: QuizQuestion[] = []
   const usedIds = new Set<string>()
 
-  // Phase 1: Guarantee minimum coverage per category
-  for (const [, categoryQuestions] of byCategory.entries()) {
+  // Phase 1: Take 1 per category for breadth (shuffled category order)
+  const shuffledCategories = shuffleArray([...byCategory.entries()])
+  for (const [, categoryQuestions] of shuffledCategories) {
+    if (sampled.length >= count) break
     const shuffled = shuffleArray(categoryQuestions)
-    const toTake = Math.min(MIN_PER_CATEGORY, shuffled.length)
-    for (let i = 0; i < toTake; i++) {
-      sampled.push(shuffled[i])
-      usedIds.add(shuffled[i].id)
+    sampled.push(shuffled[0])
+    usedIds.add(shuffled[0].id)
+  }
+
+  // Phase 2: If room, add up to MIN_PER_CATEGORY per category
+  if (sampled.length < count) {
+    const minPerCat = Math.min(MIN_PER_CATEGORY, Math.floor(count / byCategory.size))
+    if (minPerCat >= 2) {
+      for (const [, categoryQuestions] of shuffledCategories) {
+        if (sampled.length >= count) break
+        const unused = shuffleArray(categoryQuestions.filter((q) => !usedIds.has(q.id)))
+        const toTake = Math.min(minPerCat - 1, unused.length, count - sampled.length)
+        for (let i = 0; i < toTake; i++) {
+          sampled.push(unused[i])
+          usedIds.add(unused[i].id)
+        }
+      }
     }
   }
 
-  // Phase 2: Fill remaining slots randomly from unused questions
+  // Phase 3: Fill remaining slots randomly from unused questions
   const remaining = count - sampled.length
   if (remaining > 0) {
     const unused = shuffleArray(questions.filter((q) => !usedIds.has(q.id)))
@@ -75,7 +93,8 @@ export const QuizModule: React.FC = () => {
   const [view, setView] = useState<'intro' | 'quiz' | 'results'>('intro')
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
   const [completionData, setCompletionData] = useState<QuizCompletionData | null>(null)
-  const [lastMode, setLastMode] = useState<QuizMode>('quick')
+  const [lastMode, setLastMode] = useState<QuizMode>('timed')
+  const [lastTimeMin, setLastTimeMin] = useState(DEFAULT_TIME_MIN)
   const [lastCategories, setLastCategories] = useState<QuizCategory[]>([])
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([
     'beginner',
@@ -128,23 +147,20 @@ export const QuizModule: React.FC = () => {
   }, [modules])
 
   const handleStart = useCallback(
-    (mode: QuizMode, categories: QuizCategory[]) => {
+    (mode: QuizMode, categories: QuizCategory[], timeMinutes?: number) => {
       setLastMode(mode)
       setLastCategories(categories)
+      const time = timeMinutes ?? DEFAULT_TIME_MIN
+      setLastTimeMin(time)
 
       let selected: QuizQuestion[]
-      if (mode === 'quick') {
-        // Quick quiz: draw from 'quick' + 'both' pool, sample with guaranteed category coverage
-        const pool = filteredQuestions.filter(
-          (q) => q.quizMode === 'quick' || q.quizMode === 'both'
-        )
-        selected = sampleQuestions(pool, QUICK_QUIZ_COUNT)
-      } else if (mode === 'full') {
-        // Full assessment: sample 80 randomly from all available questions with guaranteed category coverage
-        selected = sampleQuestions(
-          filteredQuestions,
-          Math.min(FULL_QUIZ_COUNT, filteredQuestions.length)
-        )
+      if (mode === 'timed') {
+        const questionCount = Math.round((time * 60) / SECONDS_PER_QUESTION)
+        const useQuickPool = time <= QUICK_POOL_THRESHOLD_MIN
+        const pool = useQuickPool
+          ? filteredQuestions.filter((q) => q.quizMode === 'quick' || q.quizMode === 'both')
+          : filteredQuestions
+        selected = sampleQuestions(pool, Math.min(questionCount, pool.length))
       } else {
         // Category mode: filter by selected categories, use all questions
         const filtered = filteredQuestions.filter((q) => categories.includes(q.category))
@@ -186,8 +202,8 @@ export const QuizModule: React.FC = () => {
   )
 
   const handleRetake = useCallback(() => {
-    handleStart(lastMode, lastCategories)
-  }, [handleStart, lastMode, lastCategories])
+    handleStart(lastMode, lastCategories, lastTimeMin)
+  }, [handleStart, lastMode, lastCategories, lastTimeMin])
 
   const handleChangeTopics = useCallback(() => {
     setView('intro')
@@ -205,7 +221,6 @@ export const QuizModule: React.FC = () => {
           previousScores={previousScores}
           onStart={handleStart}
           quizMetadata={quizMetadata}
-          totalQuestions={Math.min(FULL_QUIZ_COUNT, filteredQuestions.length)}
           totalPoolSize={filteredQuestions.length}
           quickPoolSize={
             filteredQuestions.filter((q) => q.quizMode === 'quick' || q.quizMode === 'both').length

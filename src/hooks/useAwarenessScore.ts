@@ -321,20 +321,23 @@ export function useAwarenessScore(): AwarenessScoreResult {
     const keyCount = artifacts.keys.length
     const certCount = artifacts.certificates.length
     const csrCount = artifacts.csrs.length
-    const artifactCount = keyCount + certCount + csrCount
+    const execDocCount = artifacts.executiveDocuments?.length ?? 0
+    const artifactCount = keyCount + certCount + csrCount + execDocCount
     const keyScore = Math.min(40, keyCount * 8)
     const certScore = Math.min(35, certCount * 7)
     const csrScore = Math.min(25, csrCount * 5)
-    const practiceRaw = Math.min(100, keyScore + certScore + csrScore)
+    const execDocScore = Math.min(30, execDocCount * 5)
+    const practiceRaw = Math.min(100, keyScore + certScore + csrScore + execDocScore)
 
     let practiceDetail: string
     if (artifactCount === 0) {
-      practiceDetail = 'Generate keys and certificates in modules'
+      practiceDetail = 'Generate keys, certificates, or documents in modules'
     } else {
       const parts: string[] = []
       if (keyCount > 0) parts.push(`${keyCount} key${keyCount > 1 ? 's' : ''}`)
       if (certCount > 0) parts.push(`${certCount} cert${certCount > 1 ? 's' : ''}`)
       if (csrCount > 0) parts.push(`${csrCount} CSR${csrCount > 1 ? 's' : ''}`)
+      if (execDocCount > 0) parts.push(`${execDocCount} doc${execDocCount > 1 ? 's' : ''}`)
       practiceDetail = parts.join(' · ')
     }
 

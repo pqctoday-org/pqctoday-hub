@@ -4,11 +4,11 @@ import remarkGfm from 'remark-gfm'
 import { useNavigate } from 'react-router-dom'
 import { Bot, User, Copy, Check, FileText, ChevronDown, ChevronRight } from 'lucide-react'
 import clsx from 'clsx'
-import { useChatStore } from '@/store/useChatStore'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
 import type { ChatSourceRef } from '@/types/ChatTypes'
 
 /** Extract entity names from assistant response and generate follow-up questions. */
-function generateFollowUps(content: string): string[] {
+function generateFollowUps(content: string, tab?: string): string[] {
   const followUps: string[] = []
   const seen = new Set<string>()
 
@@ -62,6 +62,11 @@ function generateFollowUps(content: string): string[] {
     }
   }
 
+  // Workshop-aware follow-up
+  if (tab && tab !== 'learn' && followUps.length < 3) {
+    followUps.push('What should I try next in the workshop?')
+  }
+
   return followUps.slice(0, 3)
 }
 
@@ -71,6 +76,7 @@ interface ChatMessageProps {
   isStreaming?: boolean
   sourceRefs?: ChatSourceRef[]
   onFollowUp?: (question: string) => void
+  activeTab?: string
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({
@@ -79,10 +85,11 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   isStreaming,
   sourceRefs,
   onFollowUp,
+  activeTab,
 }) => {
   const isUser = sender === 'user'
   const navigate = useNavigate()
-  const setOpen = useChatStore((s) => s.setOpen)
+  const closePanel = useRightPanelStore((s) => s.close)
   const [copied, setCopied] = useState(false)
   const [showSources, setShowSources] = useState(false)
 
@@ -129,7 +136,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
                         className="text-primary underline"
                         onClick={(e) => {
                           e.preventDefault()
-                          setOpen(false)
+                          closePanel()
                           if (href) navigate(href)
                         }}
                       >
@@ -192,7 +199,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
                         className="text-primary/80 hover:text-primary hover:underline cursor-pointer"
                         onClick={(e) => {
                           e.preventDefault()
-                          setOpen(false)
+                          closePanel()
                           navigate(ref.deepLink!)
                         }}
                       >
@@ -214,7 +221,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           !isStreaming &&
           onFollowUp &&
           (() => {
-            const followUps = generateFollowUps(content)
+            const followUps = generateFollowUps(content, activeTab)
             if (followUps.length === 0) return null
             return (
               <div className="mt-2 flex flex-wrap gap-1.5">

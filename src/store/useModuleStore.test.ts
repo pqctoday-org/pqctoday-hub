@@ -3,6 +3,7 @@ import { useModuleStore } from './useModuleStore'
 import * as analytics from '../utils/analytics'
 vi.mock('../utils/analytics', () => ({
   logModuleStart: vi.fn(),
+  logModuleComplete: vi.fn(),
   logStepComplete: vi.fn(),
   logArtifactGenerated: vi.fn(),
 }))
@@ -56,7 +57,7 @@ describe('useModuleStore', () => {
     useModuleStore.getState().markStepComplete('module-1', 'step-1')
     const state = useModuleStore.getState()
     expect(state.modules['module-1'].completedSteps).toContain('step-1')
-    expect(analytics.logStepComplete).toHaveBeenCalledWith('module-1', 0)
+    expect(analytics.logStepComplete).toHaveBeenCalledWith('module-1', 0, undefined)
   })
 
   it('does not duplicate completed steps', () => {
@@ -126,40 +127,66 @@ describe('useModuleStore', () => {
     expect(global.URL.revokeObjectURL).toHaveBeenCalledWith('blob:test')
   })
 
-  it('migrates from version 0 to current (4), initializing all fields', () => {
+  it('migrates from version 0 to current (5), initializing all fields', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v0State = { timestamp: 123 }
     const migrated = migrate(v0State, 0)
-    expect(migrated.version).toBe('4.0.0')
+    expect(migrated.version).toBe('5.0.0')
     expect(migrated.artifacts).toBeDefined()
+    expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.sessionTracking).toBeDefined()
     expect(migrated.quizMastery).toBeDefined()
     expect(migrated.quizMastery.correctQuestionIds).toEqual([])
     expect(migrated.timestamp).toEqual(expect.any(Number))
   })
 
-  it('migrates from version 1 to current (4), converting ms to min', () => {
+  it('migrates from version 1 to current (5), converting ms to min', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v1State = {
       version: '1.0.0',
       modules: { 'mod-1': { timeSpent: 120000 } },
+      artifacts: { keys: [], certificates: [], csrs: [] },
     }
     const migrated = migrate(v1State, 1)
-    expect(migrated.version).toBe('4.0.0')
+    expect(migrated.version).toBe('5.0.0')
     expect(migrated.modules['mod-1'].timeSpent).toBe(2)
     expect(migrated.sessionTracking).toBeDefined()
     expect(migrated.quizMastery).toBeDefined()
+    expect(migrated.artifacts.executiveDocuments).toEqual([])
   })
 
-  it('migrates from version 2/3 to current (4), adding quizMastery', () => {
+  it('migrates from version 3 to current (5), adding quizMastery and executiveDocuments', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
-    const v3State = { version: '3.0.0' }
+    const v3State = { version: '3.0.0', artifacts: { keys: [], certificates: [], csrs: [] } }
     const migrated = migrate(v3State, 3)
-    expect(migrated.version).toBe('4.0.0')
+    expect(migrated.version).toBe('5.0.0')
     expect(migrated.quizMastery).toEqual({ correctQuestionIds: [] })
+    expect(migrated.artifacts.executiveDocuments).toEqual([])
+  })
+
+  it('migrates from version 4 to current (5), adding executiveDocuments', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
+    const migrate = (useModuleStore.persist.getOptions() as any).migrate
+    const v4State = {
+      version: '4.0.0',
+      artifacts: { keys: [], certificates: [], csrs: [] },
+      quizMastery: { correctQuestionIds: ['q1'] },
+    }
+    const migrated = migrate(v4State, 4)
+    expect(migrated.version).toBe('5.0.0')
+    expect(migrated.artifacts.executiveDocuments).toEqual([])
+    expect(migrated.quizMastery.correctQuestionIds).toEqual(['q1'])
+  })
+
+  it('adds an executive document artifact', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
+    const doc = { id: 'doc1', type: 'risk-register', title: 'Test', createdAt: Date.now() } as any
+    useModuleStore.getState().addExecutiveDocument(doc)
+    expect(useModuleStore.getState().artifacts.executiveDocuments).toContain(doc)
+    expect(analytics.logArtifactGenerated).toHaveBeenCalledWith('learning', 'executive-document')
   })
 
   it('handles beforeunload event to save to localStorage', () => {

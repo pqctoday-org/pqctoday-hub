@@ -285,6 +285,42 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'PQC for constrained devices, RFC 7228 device classes, firmware signing, DTLS 1.3, certificate chain bloat, and SCADA migration.',
       icon: 'Cpu',
     },
+    'pqc-risk-management': {
+      label: 'PQC Risk Management',
+      description:
+        'Risk quantification, CRQC timeline planning, risk registers, and quantum threat-based risk assessment.',
+      icon: 'AlertTriangle',
+    },
+    'pqc-business-case': {
+      label: 'PQC Business Case',
+      description:
+        'ROI modeling, breach cost analysis, budget frameworks, and executive communication for PQC investment.',
+      icon: 'TrendingUp',
+    },
+    'pqc-governance': {
+      label: 'PQC Governance & Policy',
+      description:
+        'RACI matrices, PQC policies, governance models, board reporting, and organizational accountability.',
+      icon: 'Building2',
+    },
+    'compliance-strategy': {
+      label: 'Compliance Strategy',
+      description:
+        'Multi-jurisdiction mapping, audit readiness, regulatory horizon scanning, and compliance planning.',
+      icon: 'Scale',
+    },
+    'migration-program': {
+      label: 'Migration Program',
+      description:
+        'Roadmap construction, phase-gating, resource planning, stakeholder communications, and KPI tracking.',
+      icon: 'Route',
+    },
+    'vendor-risk': {
+      label: 'Vendor & Supply Chain',
+      description:
+        'Vendor PQC scorecards, contract requirements, SBOM/CBOM evaluation, and third-party risk assessment.',
+      icon: 'Package',
+    },
   }
 
 // Compute question counts dynamically from loaded data

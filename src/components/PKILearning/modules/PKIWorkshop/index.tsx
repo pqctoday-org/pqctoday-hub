@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Trash2, FilePlus, Shield, FileCheck, FileSearch, XCircle, GitBranch } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
+import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PKIIntroduction } from './components/PKIIntroduction'
@@ -57,11 +58,9 @@ const PARTS = [
 ]
 
 export const PKIWorkshop: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(() => {
-    const tab = new URLSearchParams(window.location.search).get('tab')
-    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
-  })
-  const [currentStep, setCurrentStep] = useState(0)
+  const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
+  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
+  const [currentStep, setCurrentStep] = useState(deepLink.initialStep)
   const startTimeRef = useRef(0)
   const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
   const { resetStore } = useOpenSSLStore()
@@ -108,7 +107,7 @@ export const PKIWorkshop: React.FC = () => {
   const handlePartChange = useCallback(
     (newStep: number) => {
       if (newStep > currentStep) {
-        markStepComplete(MODULE_ID, PARTS[currentStep].id)
+        markStepComplete(MODULE_ID, PARTS[currentStep].id, currentStep)
       }
       setCurrentStep(newStep)
     },
@@ -128,7 +127,7 @@ export const PKIWorkshop: React.FC = () => {
   }
 
   const handleComplete = () => {
-    markStepComplete(MODULE_ID, PARTS[currentStep].id)
+    markStepComplete(MODULE_ID, PARTS[currentStep].id, currentStep)
     updateModuleProgress(MODULE_ID, { status: 'completed' })
   }
 
@@ -217,22 +216,22 @@ export const PKIWorkshop: React.FC = () => {
               </div>
 
               {currentStep === 0 && (
-                <CSRGenerator onComplete={() => markStepComplete(MODULE_ID, 'csr')} />
+                <CSRGenerator onComplete={() => markStepComplete(MODULE_ID, 'csr', 0)} />
               )}
               {currentStep === 1 && (
-                <RootCAGenerator onComplete={() => markStepComplete(MODULE_ID, 'root-ca')} />
+                <RootCAGenerator onComplete={() => markStepComplete(MODULE_ID, 'root-ca', 1)} />
               )}
               {currentStep === 2 && (
-                <CertSigner onComplete={() => markStepComplete(MODULE_ID, 'sign')} />
+                <CertSigner onComplete={() => markStepComplete(MODULE_ID, 'sign', 2)} />
               )}
               {currentStep === 3 && (
-                <CertParser onComplete={() => markStepComplete(MODULE_ID, 'parse')} />
+                <CertParser onComplete={() => markStepComplete(MODULE_ID, 'parse', 3)} />
               )}
               {currentStep === 4 && (
-                <CRLGenerator onComplete={() => markStepComplete(MODULE_ID, 'revoke')} />
+                <CRLGenerator onComplete={() => markStepComplete(MODULE_ID, 'revoke', 4)} />
               )}
               {currentStep === 5 && (
-                <MTCComparison onComplete={() => markStepComplete(MODULE_ID, 'mtc')} />
+                <MTCComparison onComplete={() => markStepComplete(MODULE_ID, 'mtc', 5)} />
               )}
             </div>
 

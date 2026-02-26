@@ -1,0 +1,397 @@
+import React, { useState, useMemo } from 'react'
+import { Clock, AlertTriangle, ShieldAlert, ShieldCheck, Calendar, TrendingUp } from 'lucide-react'
+import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+
+interface AlgorithmImpact {
+  name: string
+  type: 'asymmetric' | 'symmetric' | 'hash'
+  breakYear: number | null
+  replacement: string
+  notes: string
+}
+
+const ALGORITHMS: AlgorithmImpact[] = [
+  {
+    name: 'RSA-2048',
+    type: 'asymmetric',
+    breakYear: 0, // breaks when CRQC arrives
+    replacement: 'ML-KEM-768 / ML-DSA-65',
+    notes: 'Vulnerable to Shor\u2019s algorithm. Immediate migration priority.',
+  },
+  {
+    name: 'RSA-3072',
+    type: 'asymmetric',
+    breakYear: 0,
+    replacement: 'ML-KEM-1024 / ML-DSA-87',
+    notes: 'Larger keys do not protect against quantum attack. Same urgency as RSA-2048.',
+  },
+  {
+    name: 'RSA-4096',
+    type: 'asymmetric',
+    breakYear: 0,
+    replacement: 'ML-KEM-1024 / ML-DSA-87',
+    notes: 'Still vulnerable to Shor\u2019s algorithm regardless of key size.',
+  },
+  {
+    name: 'ECDSA P-256',
+    type: 'asymmetric',
+    breakYear: 0,
+    replacement: 'ML-DSA-44 / SLH-DSA',
+    notes: 'Elliptic curve cryptography broken by Shor\u2019s algorithm.',
+  },
+  {
+    name: 'ECDSA P-384',
+    type: 'asymmetric',
+    breakYear: 0,
+    replacement: 'ML-DSA-65 / SLH-DSA',
+    notes: 'Larger curves do not help against quantum attack.',
+  },
+  {
+    name: 'ECDH / X25519',
+    type: 'asymmetric',
+    breakYear: 0,
+    replacement: 'ML-KEM-768 / X25519MLKEM768',
+    notes: 'Key exchange vulnerable to Shor\u2019s algorithm. Hybrid mode available now.',
+  },
+  {
+    name: 'DH-2048',
+    type: 'asymmetric',
+    breakYear: 0,
+    replacement: 'ML-KEM-768',
+    notes: 'Classic Diffie-Hellman broken by Shor\u2019s algorithm.',
+  },
+  {
+    name: 'AES-128',
+    type: 'symmetric',
+    breakYear: null,
+    replacement: 'AES-256 (recommended)',
+    notes:
+      'Grover\u2019s algorithm reduces effective security to 64-bit. Upgrade to AES-256 recommended.',
+  },
+  {
+    name: 'AES-256',
+    type: 'symmetric',
+    breakYear: null,
+    replacement: 'No change needed',
+    notes:
+      'Grover\u2019s reduces to 128-bit effective security, still considered safe. CNSA 2.0 approved.',
+  },
+  {
+    name: 'SHA-256',
+    type: 'hash',
+    breakYear: null,
+    replacement: 'No change needed',
+    notes:
+      'Grover\u2019s reduces collision resistance but pre-image remains strong. Considered quantum-safe.',
+  },
+]
+
+const COMPLIANCE_DEADLINES = [
+  { framework: 'CNSA 2.0 \u2014 Software/Firmware', year: 2030 },
+  { framework: 'CNSA 2.0 \u2014 Networking (TLS/IPsec)', year: 2030 },
+  { framework: 'CNSA 2.0 \u2014 Legacy Infrastructure', year: 2033 },
+  { framework: 'NIST \u2014 RSA/ECC Deprecation', year: 2030 },
+  { framework: 'NIST \u2014 RSA/ECC Disallowed', year: 2035 },
+  { framework: 'EU/ANSSI \u2014 PQC Guidance', year: 2030 },
+]
+
+export const CRQCScenarioPlanner: React.FC = () => {
+  const [crqcYear, setCrqcYear] = useState(2035)
+  const { migrationDeadlineYear, industry, country } = useExecutiveModuleData()
+
+  const currentYear = new Date().getFullYear()
+
+  const affectedAlgorithms = useMemo(() => {
+    return ALGORITHMS.filter((algo) => {
+      if (algo.type === 'asymmetric') return true // all break at CRQC
+      return false
+    })
+  }, [])
+
+  const safeAlgorithms = useMemo(() => {
+    return ALGORITHMS.filter((algo) => algo.breakYear === null)
+  }, [])
+
+  const missedDeadlines = useMemo(() => {
+    return COMPLIANCE_DEADLINES.filter((d) => d.year <= crqcYear)
+  }, [crqcYear])
+
+  const yearsRemaining = crqcYear - currentYear
+  const urgencyLevel =
+    yearsRemaining <= 3
+      ? 'critical'
+      : yearsRemaining <= 6
+        ? 'high'
+        : yearsRemaining <= 10
+          ? 'medium'
+          : 'low'
+
+  const urgencyColor =
+    urgencyLevel === 'critical'
+      ? 'text-status-error'
+      : urgencyLevel === 'high'
+        ? 'text-status-warning'
+        : urgencyLevel === 'medium'
+          ? 'text-primary'
+          : 'text-status-success'
+
+  const urgencyBgColor =
+    urgencyLevel === 'critical'
+      ? 'bg-status-error/10 border-status-error/30'
+      : urgencyLevel === 'high'
+        ? 'bg-status-warning/10 border-status-warning/30'
+        : urgencyLevel === 'medium'
+          ? 'bg-primary/10 border-primary/30'
+          : 'bg-status-success/10 border-status-success/30'
+
+  return (
+    <div className="space-y-6">
+      {/* CRQC Year Slider */}
+      <div className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Clock size={20} className="text-primary" />
+          <h3 className="text-lg font-semibold text-foreground">CRQC Arrival Year</h3>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          Adjust the slider to model when a cryptographically relevant quantum computer might
+          arrive. See the cascading impacts on algorithms, compliance, and data exposure.
+        </p>
+
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">2028</span>
+            <span className={`text-3xl font-bold ${urgencyColor}`}>{crqcYear}</span>
+            <span className="text-sm text-muted-foreground">2045</span>
+          </div>
+          <input
+            type="range"
+            min={2028}
+            max={2045}
+            value={crqcYear}
+            onChange={(e) => setCrqcYear(Number(e.target.value))}
+            className="w-full accent-primary"
+          />
+          <div className="flex items-center justify-center gap-2">
+            <span className={`text-sm font-medium ${urgencyColor}`}>
+              {yearsRemaining} years remaining
+            </span>
+            <span
+              className={`text-xs px-2 py-0.5 rounded-full border ${urgencyBgColor} ${urgencyColor}`}
+            >
+              {urgencyLevel.toUpperCase()} URGENCY
+            </span>
+          </div>
+        </div>
+
+        {/* Context from assessment */}
+        {(industry || country || migrationDeadlineYear) && (
+          <div className="mt-4 p-3 bg-muted/50 rounded-lg border border-border">
+            <p className="text-xs font-medium text-muted-foreground mb-1">From your assessment:</p>
+            <div className="flex flex-wrap gap-2 text-xs">
+              {industry && (
+                <span className="px-2 py-0.5 bg-primary/10 text-primary rounded">{industry}</span>
+              )}
+              {country && (
+                <span className="px-2 py-0.5 bg-secondary/10 text-secondary rounded">
+                  {country}
+                </span>
+              )}
+              {migrationDeadlineYear && (
+                <span className="px-2 py-0.5 bg-status-warning/10 text-status-warning rounded">
+                  Deadline: {migrationDeadlineYear}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Impact Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className={`glass-panel p-4 border ${urgencyBgColor}`}>
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle size={16} className="text-status-error" />
+            <span className="text-xs font-medium text-muted-foreground">Algorithms Broken</span>
+          </div>
+          <div className="text-2xl font-bold text-foreground">{affectedAlgorithms.length}</div>
+          <p className="text-xs text-muted-foreground mt-1">
+            asymmetric algorithms vulnerable to Shor&apos;s
+          </p>
+        </div>
+        <div className="glass-panel p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <ShieldCheck size={16} className="text-status-success" />
+            <span className="text-xs font-medium text-muted-foreground">Quantum-Safe</span>
+          </div>
+          <div className="text-2xl font-bold text-foreground">{safeAlgorithms.length}</div>
+          <p className="text-xs text-muted-foreground mt-1">
+            algorithms unaffected by quantum attack
+          </p>
+        </div>
+        <div className="glass-panel p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Calendar size={16} className="text-status-warning" />
+            <span className="text-xs font-medium text-muted-foreground">Deadlines Missed</span>
+          </div>
+          <div className="text-2xl font-bold text-foreground">{missedDeadlines.length}</div>
+          <p className="text-xs text-muted-foreground mt-1">
+            compliance deadlines before CRQC arrives
+          </p>
+        </div>
+        <div className="glass-panel p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <TrendingUp size={16} className="text-primary" />
+            <span className="text-xs font-medium text-muted-foreground">HNDL Window</span>
+          </div>
+          <div className="text-2xl font-bold text-foreground">{yearsRemaining} yr</div>
+          <p className="text-xs text-muted-foreground mt-1">
+            data captured today decryptable in {crqcYear}
+          </p>
+        </div>
+      </div>
+
+      {/* Algorithms Breakdown */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Vulnerable Algorithms */}
+        <div className="glass-panel p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <ShieldAlert size={18} className="text-status-error" />
+            <h3 className="text-base font-semibold text-foreground">
+              Algorithms Broken at {crqcYear}
+            </h3>
+          </div>
+          <div className="space-y-2 max-h-[300px] overflow-y-auto">
+            {affectedAlgorithms.map((algo) => (
+              <div
+                key={algo.name}
+                className="p-3 bg-status-error/5 rounded-lg border border-status-error/20"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-foreground">{algo.name}</span>
+                  <span className="text-xs px-2 py-0.5 rounded bg-status-error/10 text-status-error">
+                    Broken
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">{algo.notes}</p>
+                <p className="text-xs text-primary mt-1">
+                  Replace with: <strong>{algo.replacement}</strong>
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Compliance Deadlines */}
+        <div className="glass-panel p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Calendar size={18} className="text-status-warning" />
+            <h3 className="text-base font-semibold text-foreground">Compliance Deadlines</h3>
+          </div>
+          <div className="space-y-2 max-h-[300px] overflow-y-auto">
+            {COMPLIANCE_DEADLINES.map((deadline) => {
+              const isMissed = deadline.year <= crqcYear
+              const isPast = deadline.year <= currentYear
+              return (
+                <div
+                  key={deadline.framework}
+                  className={`p-3 rounded-lg border ${
+                    isPast
+                      ? 'bg-status-error/5 border-status-error/20'
+                      : isMissed
+                        ? 'bg-status-warning/5 border-status-warning/20'
+                        : 'bg-muted/50 border-border'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-foreground">
+                      {deadline.framework}
+                    </span>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded ${
+                        isPast
+                          ? 'bg-status-error/10 text-status-error'
+                          : isMissed
+                            ? 'bg-status-warning/10 text-status-warning'
+                            : 'bg-status-success/10 text-status-success'
+                      }`}
+                    >
+                      {deadline.year}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {isPast
+                      ? 'Already in effect \u2014 non-compliance risk is active'
+                      : isMissed
+                        ? `Due before CRQC arrival (${crqcYear - deadline.year} years before)`
+                        : `Due after estimated CRQC (${deadline.year - crqcYear} years after)`}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* HNDL Exposure Analysis */}
+      <div className="glass-panel p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <ShieldAlert size={18} className="text-primary" />
+          <h3 className="text-base font-semibold text-foreground">HNDL Exposure Window</h3>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          Data encrypted today with quantum-vulnerable algorithms can be stored by adversaries and
+          decrypted when a CRQC arrives. The table below shows exposure for different data retention
+          periods.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="p-2 text-left text-xs font-medium text-muted-foreground">
+                  Data Retention
+                </th>
+                <th className="p-2 text-left text-xs font-medium text-muted-foreground">
+                  Data Captured Today
+                </th>
+                <th className="p-2 text-left text-xs font-medium text-muted-foreground">
+                  Still Valid At
+                </th>
+                <th className="p-2 text-left text-xs font-medium text-muted-foreground">
+                  CRQC Arrives
+                </th>
+                <th className="p-2 text-left text-xs font-medium text-muted-foreground">
+                  At Risk?
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {[1, 3, 5, 7, 10, 15, 25].map((years) => {
+                const validUntil = currentYear + years
+                const atRisk = validUntil >= crqcYear
+                return (
+                  <tr key={years} className="border-b border-border/50">
+                    <td className="p-2 text-foreground">{years} years</td>
+                    <td className="p-2 text-foreground">{currentYear}</td>
+                    <td className="p-2 text-foreground">{validUntil}</td>
+                    <td className="p-2 text-foreground">{crqcYear}</td>
+                    <td className="p-2">
+                      {atRisk ? (
+                        <span className="text-xs px-2 py-0.5 rounded bg-status-error/10 text-status-error font-medium">
+                          AT RISK
+                        </span>
+                      ) : (
+                        <span className="text-xs px-2 py-0.5 rounded bg-status-success/10 text-status-success font-medium">
+                          Safe
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  )
+}

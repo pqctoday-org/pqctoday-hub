@@ -1,10 +1,15 @@
 /* eslint-disable security/detect-object-injection */
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { LearningProgress } from '../services/storage/types'
-import { logModuleStart, logStepComplete, logArtifactGenerated } from '../utils/analytics'
+import type { LearningProgress, ExecutiveDocument } from '../services/storage/types'
+import {
+  logModuleStart,
+  logModuleComplete,
+  logStepComplete,
+  logArtifactGenerated,
+} from '../utils/analytics'
 
-const MODULE_STORE_VERSION = 4
+const MODULE_STORE_VERSION = 5
 
 interface ModuleState extends LearningProgress {
   // Actions
@@ -12,7 +17,7 @@ interface ModuleState extends LearningProgress {
     moduleId: string,
     updates: Partial<LearningProgress['modules'][string]>
   ) => void
-  markStepComplete: (moduleId: string, stepId: string) => void
+  markStepComplete: (moduleId: string, stepId: string, workshopStep?: number) => void
   saveProgress: () => void
   loadProgress: (progress: LearningProgress) => void
   resetProgress: () => void
@@ -21,6 +26,7 @@ interface ModuleState extends LearningProgress {
   addKey: (key: LearningProgress['artifacts']['keys'][0]) => void
   addCertificate: (cert: LearningProgress['artifacts']['certificates'][0]) => void
   addCSR: (csr: LearningProgress['artifacts']['csrs'][0]) => void
+  addExecutiveDocument: (doc: ExecutiveDocument) => void
   mergeCorrectQuestionIds: (ids: string[]) => void
   trackDailyVisit: () => void
 }
@@ -72,6 +78,10 @@ export const useModuleStore = create<ModuleState>()(
             logModuleStart(moduleId)
           }
 
+          if (updates.status === 'completed' && currentModule.status !== 'completed') {
+            logModuleComplete(moduleId)
+          }
+
           return {
             modules: {
               ...state.modules,
@@ -85,11 +95,11 @@ export const useModuleStore = create<ModuleState>()(
           }
         }),
 
-      markStepComplete: (moduleId, stepId) =>
+      markStepComplete: (moduleId, stepId, workshopStep?) =>
         set((state) => {
           const module = state.modules[moduleId]
           if (module && !module.completedSteps.includes(stepId)) {
-            logStepComplete(moduleId, module.completedSteps.length)
+            logStepComplete(moduleId, module.completedSteps.length, workshopStep)
             return {
               modules: {
                 ...state.modules,
@@ -132,6 +142,17 @@ export const useModuleStore = create<ModuleState>()(
           artifacts: {
             ...state.artifacts,
             csrs: [...state.artifacts.csrs, csr],
+          },
+          timestamp: Date.now(),
+        }))
+      },
+
+      addExecutiveDocument: (doc) => {
+        logArtifactGenerated('learning', 'executive-document')
+        set((state) => ({
+          artifacts: {
+            ...state.artifacts,
+            executiveDocuments: [...(state.artifacts.executiveDocuments ?? []), doc],
           },
           timestamp: Date.now(),
         }))
@@ -299,6 +320,15 @@ export const useModuleStore = create<ModuleState>()(
             state.quizMastery = { correctQuestionIds: [] }
           }
           state.version = '4.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 4 → Version 5: Add executiveDocuments to artifacts
+        if (version <= 4) {
+          if (state.artifacts && !Array.isArray(state.artifacts.executiveDocuments)) {
+            state.artifacts.executiveDocuments = []
+          }
+          state.version = '5.0.0'
           state.timestamp = Date.now()
         }
 

@@ -4,6 +4,78 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2026-02-26
+
+### Added
+
+- **Executive Learning Track** — 6 new modules for CISOs and business leaders: PQC Risk Management
+  (risk registers, CRQC heatmaps), PQC Business Case (ROI models, breach cost simulators, board
+  decks), PQC Governance & Policy (RACI matrices, KPI dashboards), Compliance & Regulatory Strategy
+  (multi-jurisdiction audit checklists), Migration Program Management (roadmaps with country
+  deadlines), and Vendor & Supply Chain Risk (vendor scorecards, contract clause generators). Each
+  module includes interactive artifact builders with CSV/Markdown export.
+
+- **Executive component library** (`src/components/PKILearning/common/executive/`): Reusable
+  ArtifactBuilder, BreachCostModel, DataDrivenScorecard, TimelinePlanner, HeatmapGrid, and
+  ExportableArtifact components shared across all executive modules.
+
+- **Right Panel system** (`src/components/RightPanel/`): Multi-tab sidebar with Chat (RAG chatbot)
+  and History (day-grouped activity timeline with module starts, completions, artifact generation,
+  assessments, and belt progression). Replaces standalone ChatFAB with unified RightPanelFAB.
+
+- **Activity history tracking** (`useHistoryStore`): Persisted event log (max 500 events, 16 event
+  types) with automatic seeding from existing module, assessment, TLS, and persona stores on first
+  launch.
+
+- **Time-based quiz selection**: Replaced fixed Quick Quiz (20 questions) and Full Assessment (80
+  questions) with an adjustable time slider (5–45 min, default 15 min). System calculates question
+  count at ~45 sec/question. Quick Pick button for 5-minute quizzes. Adaptive category spread
+  ensures topic breadth even for short quizzes.
+
+- **6 new quiz categories**: `pqc-risk-management`, `pqc-business-case`, `pqc-governance`,
+  `compliance-strategy`, `migration-program`, `vendor-risk` — matching the new executive modules.
+
+- **Module deep linking** (`useModuleDeepLink`): URL parameter support for `?tab=learn|workshop` and
+  `?step=<n>` across all learning modules. Chatbot responses now link directly to specific workshop
+  steps.
+
+- **Executive document storage**: 15 artifact types (ROI model, risk register, RACI matrix, vendor
+  scorecard, policy draft, etc.) persisted in module store with history tracking.
+
+- **Glossary expansion**: Added KPI, RACI Matrix, TCO, and ROI terms for executive audiences.
+
+### Changed
+
+- **Persona paths**: Executive persona learning path expanded from 180 to 270+ minutes with 5
+  checkpoints covering all 6 new executive modules.
+
+- **Module catalog**: Expanded to 23 modules across 6 tracks (new Executive track added). Centralized
+  MODULE_CATALOG, MODULE_TRACKS, and MODULE_STEP_COUNTS in `moduleData.ts`.
+
+- **GeminiService**: `streamResponse()` now accepts `PageContext` object (page, tab, step) instead of
+  plain string, enabling workshop-step-aware chatbot responses.
+
+- **Analytics**: Module start/complete and artifact generation events now auto-log to history store.
+  `logStepComplete()` accepts optional `workshopStep` for accurate deep link generation.
+
+- **Module store v5**: Added `executiveDocuments` array to artifacts with auto-migration from v4.
+
+- **ScoreCard**: Simplified layout, removed cloud sync UI, focused on judo belt progression.
+
+- **Data updates**: Library CSV and quantum-safe software reference CSV updated with latest NIST
+  FIPS 140-3 PQC guidance and vendor certification statuses.
+
+### Fixed
+
+- **Quiz question selection**: Quick Quiz was too long at 20 questions (~15 min). New time slider
+  lets users choose exactly how much time they have, starting from 5-minute quick picks.
+
+- **Storage rehydration guards**: Assessment and persona stores now properly handle corrupted
+  localStorage without crashing.
+
+- **Workshop deep links**: Chatbot now generates `?tab=workshop&step=N` links instead of generic
+  module links.
+
 ## [1.38.0] - 2026-02-26
 
 ### Added

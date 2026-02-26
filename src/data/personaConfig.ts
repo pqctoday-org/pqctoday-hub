@@ -117,6 +117,24 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
     'Government & Defense',
     'Healthcare',
   ],
+  'pqc-risk-management': null,
+  'pqc-business-case': null,
+  'pqc-governance': null,
+  'vendor-risk': [
+    'Finance & Banking',
+    'Government & Defense',
+    'Healthcare',
+    'Technology',
+    'Energy & Utilities',
+  ],
+  'migration-program': null,
+  'compliance-strategy': [
+    'Finance & Banking',
+    'Government & Defense',
+    'Healthcare',
+    'Telecommunications',
+    'Energy & Utilities',
+  ],
 }
 
 /** Nav paths that are always shown regardless of persona. */

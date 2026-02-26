@@ -80,22 +80,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Source Attribution</strong> &mdash;
-                    assistant messages show collapsible, deep-linked source references
+                    <strong className="text-foreground">Executive Learning Track</strong> &mdash; 6
+                    new modules for CISOs: risk management, business case, governance, compliance,
+                    migration, and vendor risk
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Follow-up Suggestions</strong> &mdash;
-                    entity-aware question chips appear after each response
+                    <strong className="text-foreground">Activity History</strong> &mdash; new
+                    History tab tracks learning progress, artifacts, and belt milestones
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">RAG Optimization</strong> &mdash; 40 golden
-                    queries, multi-turn context, intent-tuned retrieval
+                    <strong className="text-foreground">Smarter Quiz</strong> &mdash; time slider
+                    replaces fixed modes &mdash; pick 5 to 45 minutes and we choose the right
+                    questions
                   </span>
                 </li>
               </ul>

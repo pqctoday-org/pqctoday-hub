@@ -6,15 +6,16 @@ import { ChatMessage } from './ChatMessage'
 import { ApiKeySetup } from './ApiKeySetup'
 import { SampleQuestionsModal } from '../About/SampleQuestionsModal'
 import { useChatStore } from '@/store/useChatStore'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { retrievalService } from '@/services/chat/RetrievalService'
 import { streamResponse } from '@/services/chat/GeminiService'
 import { usePageContext } from '@/hooks/usePageContext'
 import type { ChatMessage as ChatMessageType, ChatSourceRef } from '@/types/ChatTypes'
 
 export const ChatPanel: React.FC = () => {
+  const isOpen = useRightPanelStore((s) => s.isOpen)
+  const setOpen = useRightPanelStore((s) => s.close)
   const {
-    isOpen,
-    setOpen,
     apiKey,
     setApiKey,
     messages,
@@ -63,7 +64,7 @@ export const ChatPanel: React.FC = () => {
   // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false)
+      if (e.key === 'Escape') setOpen()
     }
     if (isOpen) window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
@@ -127,7 +128,7 @@ export const ChatPanel: React.FC = () => {
         chunks,
         model,
         controller.signal,
-        pageContext.page
+        pageContext
       )) {
         fullContent += chunk
         appendStreamingContent(chunk)
@@ -175,7 +176,7 @@ export const ChatPanel: React.FC = () => {
 
   const handleClose = () => {
     if (abortRef.current) abortRef.current.abort()
-    setOpen(false)
+    setOpen()
   }
 
   return (

@@ -132,6 +132,48 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
       'PQC challenges for constrained devices: algorithm selection for limited memory/compute, firmware signing, CoAP/DTLS protocol impacts, certificate chain bloat, and SCADA/ICS migration.',
     duration: '90 min',
   },
+  'pqc-risk-management': {
+    id: 'pqc-risk-management',
+    title: 'PQC Risk Management',
+    description:
+      'Quantify quantum risk, build risk registers, model CRQC timeline scenarios, and generate risk heatmaps from real threat data.',
+    duration: '45 min',
+  },
+  'pqc-business-case': {
+    id: 'pqc-business-case',
+    title: 'PQC Business Case',
+    description:
+      'Build ROI models, simulate breach costs, and create board-ready pitch decks for PQC investment.',
+    duration: '45 min',
+  },
+  'pqc-governance': {
+    id: 'pqc-governance',
+    title: 'PQC Governance & Policy',
+    description:
+      'Create RACI matrices, draft PQC policies, and design KPI dashboards for board reporting.',
+    duration: '45 min',
+  },
+  'vendor-risk': {
+    id: 'vendor-risk',
+    title: 'Vendor & Supply Chain Risk',
+    description:
+      'Score vendor PQC readiness from real product data, generate contract requirements, and map supply chain risk.',
+    duration: '45 min',
+  },
+  'migration-program': {
+    id: 'migration-program',
+    title: 'Migration Program Mgmt',
+    description:
+      'Build migration roadmaps with real country deadlines, plan stakeholder communications, and track KPIs.',
+    duration: '45 min',
+  },
+  'compliance-strategy': {
+    id: 'compliance-strategy',
+    title: 'Compliance & Regulatory Strategy',
+    description:
+      'Map multi-jurisdiction requirements, build audit checklists, and construct compliance timelines from live framework data.',
+    duration: '45 min',
+  },
   quiz: {
     id: 'quiz',
     title: 'PQC Quiz',
@@ -162,6 +204,12 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'code-signing': 5,
   'api-security-jwt': 5,
   'iot-ot-pqc': 5,
+  'pqc-risk-management': 3,
+  'pqc-business-case': 3,
+  'pqc-governance': 3,
+  'vendor-risk': 3,
+  'migration-program': 3,
+  'compliance-strategy': 3,
   quiz: 1,
   assess: 1, // Assessment wizard completion
 }
@@ -210,6 +258,17 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['digital-id'],
       MODULE_CATALOG['code-signing'],
       MODULE_CATALOG['iot-ot-pqc'],
+    ],
+  },
+  {
+    track: 'Executive',
+    modules: [
+      MODULE_CATALOG['pqc-risk-management'],
+      MODULE_CATALOG['pqc-business-case'],
+      MODULE_CATALOG['pqc-governance'],
+      MODULE_CATALOG['vendor-risk'],
+      MODULE_CATALOG['migration-program'],
+      MODULE_CATALOG['compliance-strategy'],
     ],
   },
 ]

@@ -6,6 +6,7 @@ import { Suspense } from 'react'
 import { MainLayout } from './components/Layout/MainLayout'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { useModuleStore } from './store/useModuleStore'
+import { seedHistoryFromStores } from './services/history/seedHistory'
 import { lazyWithRetry } from './utils/lazyWithRetry'
 import { PageMeta } from './seo/PageMeta'
 
@@ -95,12 +96,20 @@ function DailyVisitTracker() {
   return null
 }
 
+function HistorySeeder() {
+  useEffect(() => {
+    seedHistoryFromStores()
+  }, [])
+  return null
+}
+
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
       <AnalyticsTracker />
       <DailyVisitTracker />
+      <HistorySeeder />
       <PageMeta />
       <Suspense
         fallback={

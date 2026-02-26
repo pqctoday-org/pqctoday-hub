@@ -20,11 +20,11 @@ import {
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
 import { GuidedTour } from '../common/GuidedTour'
-import { ChatFAB } from '../Chat/ChatFAB'
-import { useChatStore } from '../../store/useChatStore'
+import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
+import { useRightPanelStore } from '../../store/useRightPanelStore'
 
-const ChatPanel = React.lazy(() =>
-  import('../Chat/ChatPanel').then((m) => ({ default: m.ChatPanel }))
+const RightPanel = React.lazy(() =>
+  import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
 )
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
@@ -32,7 +32,7 @@ import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfi
 export const MainLayout = () => {
   const location = useLocation()
   const { selectedPersona } = usePersonaStore()
-  const isChatOpen = useChatStore((s) => s.isOpen)
+  const isPanelOpen = useRightPanelStore((s) => s.isOpen)
 
   // Build timestamp - set at compile time
   const buildTime = __BUILD_TIMESTAMP__
@@ -156,9 +156,9 @@ export const MainLayout = () => {
       {/* First-visit Guided Tour */}
       <GuidedTour />
 
-      {/* PQC Assistant Chatbot */}
-      <ChatFAB />
-      <React.Suspense fallback={null}>{isChatOpen && <ChatPanel />}</React.Suspense>
+      {/* Right Panel (PQC Assistant + Journey History) */}
+      <RightPanelFAB />
+      <React.Suspense fallback={null}>{isPanelOpen && <RightPanel />}</React.Suspense>
     </div>
   )
 }

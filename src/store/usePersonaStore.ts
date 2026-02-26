@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { PersonaId } from '../data/learningPersonas'
+import { useHistoryStore } from './useHistoryStore'
 
 export type Region = 'americas' | 'eu' | 'apac' | 'global'
 
@@ -30,12 +31,31 @@ export const usePersonaStore = create<PersonaState>()(
       selectedIndustries: [],
       suppressSuggestion: false,
 
-      setPersona: (persona) =>
+      setPersona: (persona) => {
         set({
           selectedPersona: persona,
           hasSeenPersonaPicker: persona !== null,
           suppressSuggestion: true,
-        }),
+        })
+        if (persona) {
+          const labels: Record<string, string> = {
+            executive: 'Executive / CISO',
+            developer: 'Developer / Engineer',
+            architect: 'Security Architect',
+            researcher: 'Researcher / Academic',
+          }
+          try {
+            useHistoryStore.getState().addEvent({
+              type: 'persona_set',
+              timestamp: Date.now(),
+              title: `Selected persona: ${labels[persona] ?? persona}`,
+              route: '/',
+            })
+          } catch {
+            /* store not ready */
+          }
+        }
+      },
 
       clearPersona: () => set({ selectedPersona: null, hasSeenPersonaPicker: false }),
 

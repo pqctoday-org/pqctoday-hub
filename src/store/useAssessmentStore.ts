@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import type { AssessmentInput } from '../hooks/assessmentTypes'
 import type { AssessmentResult } from '../hooks/assessmentTypes'
 import { usePersonaStore } from './usePersonaStore'
+import { useHistoryStore } from './useHistoryStore'
 
 export type AssessmentMode = 'quick' | 'comprehensive'
 export type AssessmentStatus = 'not-started' | 'in-progress' | 'complete'
@@ -127,12 +128,23 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       setStep: (step) => set({ currentStep: step, lastWizardUpdate: new Date().toISOString() }),
 
-      setAssessmentMode: (mode) =>
+      setAssessmentMode: (mode) => {
         set({
           assessmentMode: mode,
           assessmentStatus: 'in-progress' as const,
           lastWizardUpdate: new Date().toISOString(),
-        }),
+        })
+        try {
+          useHistoryStore.getState().addEvent({
+            type: 'assessment_started',
+            timestamp: Date.now(),
+            title: `Started ${mode} risk assessment`,
+            route: '/assess',
+          })
+        } catch {
+          /* store not ready */
+        }
+      },
 
       setIndustry: (industry) =>
         set({
@@ -376,6 +388,18 @@ export const useAssessmentStore = create<AssessmentState>()(
           lastModifiedAt: now,
           previousRiskScore: state.lastResult?.riskScore ?? state.previousRiskScore,
         }))
+        try {
+          const result = get().lastResult
+          useHistoryStore.getState().addEvent({
+            type: 'assessment_completed',
+            timestamp: Date.now(),
+            title: 'Completed risk assessment',
+            detail: result ? `Risk score: ${result.riskScore}` : undefined,
+            route: '/assess',
+          })
+        } catch {
+          /* store not ready */
+        }
       },
 
       setResult: (result) => set({ lastResult: result }),

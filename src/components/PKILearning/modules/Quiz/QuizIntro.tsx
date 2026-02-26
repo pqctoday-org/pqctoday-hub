@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Brain, Zap, BookOpen, Sparkles, Building2, X } from 'lucide-react'
+import { Brain, Zap, Clock, Sparkles, Building2, X } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { TopicSelector } from './components/TopicSelector'
 import type { QuizCategory, QuizMode, QuizCategoryMeta } from './types'
+
+const SECONDS_PER_QUESTION = 45
+const QUICK_POOL_THRESHOLD_MIN = 15
 
 const DIFFICULTY_OPTIONS = [
   { id: 'beginner', label: 'Beginner', color: 'text-status-success', bg: 'bg-status-success' },
@@ -19,9 +22,8 @@ const DIFFICULTY_OPTIONS = [
 
 interface QuizIntroProps {
   previousScores?: Record<string, number>
-  onStart: (mode: QuizMode, categories: QuizCategory[]) => void
+  onStart: (mode: QuizMode, categories: QuizCategory[], timeMinutes?: number) => void
   quizMetadata?: { filename: string; lastUpdate: Date } | null
-  totalQuestions?: number
   totalPoolSize?: number
   quickPoolSize?: number
   categories: QuizCategoryMeta[]
@@ -40,7 +42,6 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   previousScores,
   onStart,
   quizMetadata,
-  totalQuestions,
   totalPoolSize,
   quickPoolSize,
   categories,
@@ -54,6 +55,11 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   const [selectedCategories, setSelectedCategories] = useState<QuizCategory[]>(
     initialCategories ?? []
   )
+  const [timeMinutes, setTimeMinutes] = useState(15)
+
+  const questionCount = Math.round((timeMinutes * 60) / SECONDS_PER_QUESTION)
+  const isQuickPool = timeMinutes <= QUICK_POOL_THRESHOLD_MIN
+  const activePoolSize = isQuickPool ? quickPoolSize || 0 : totalPoolSize || 0
 
   const handleToggleCategory = (categoryId: QuizCategory) => {
     setSelectedCategories((prev) =>
@@ -61,20 +67,17 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
     )
   }
 
-  const handleStartQuick = () => {
-    onStart('quick', [])
+  const handleStartTimed = () => {
+    onStart('timed', [], timeMinutes)
   }
 
-  const handleStartFull = () => {
-    onStart('full', [])
+  const handleQuickPick = () => {
+    setTimeMinutes(5)
   }
 
   const handleStartCategory = () => {
     onStart('category', selectedCategories)
   }
-
-  const fullCount = totalQuestions || 80
-  const fullTimeMin = Math.round(fullCount * 0.56)
 
   return (
     <div className="space-y-8">
@@ -119,62 +122,71 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
         </motion.div>
       )}
 
-      {/* All Topics modes */}
+      {/* Time-based quiz selection */}
       <div>
         <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">
           All Topics
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.2 }}
-            className="glass-panel p-5 flex flex-col"
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                <Zap size={20} />
-              </div>
-              <div>
-                <h4 className="font-bold text-foreground">Quick Quiz</h4>
-                <p className="text-xs text-muted-foreground">
-                  20 questions from {quickPoolSize || '~120'} pool, ~15 min
-                </p>
-              </div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.2 }}
+          className="glass-panel p-5"
+        >
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              <Clock size={20} />
             </div>
-            <p className="text-sm text-muted-foreground mb-4 flex-grow">
-              A random sample across all categories with guaranteed topic coverage.
-            </p>
-            <Button variant="gradient" className="w-full" onClick={handleStartQuick}>
-              Start Quick Quiz
-            </Button>
-          </motion.div>
+            <div>
+              <h4 className="font-bold text-foreground">How much time do you have?</h4>
+              <p className="text-xs text-muted-foreground">
+                We&apos;ll pick the right number of questions
+              </p>
+            </div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.2, delay: 0.05 }}
-            className="glass-panel p-5 flex flex-col"
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
-                <BookOpen size={20} />
-              </div>
-              <div>
-                <h4 className="font-bold text-foreground">Full Assessment</h4>
-                <p className="text-xs text-muted-foreground">
-                  {fullCount} from {totalPoolSize || 340} pool, ~{fullTimeMin} min
-                </p>
-              </div>
+          {/* Time slider */}
+          <div className="mb-4">
+            <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+              <span>5 min</span>
+              <span className="text-sm font-semibold text-foreground">{timeMinutes} min</span>
+              <span>45 min</span>
             </div>
-            <p className="text-sm text-muted-foreground mb-4 flex-grow">
-              A broad random sample across all PQC topics with guaranteed category coverage.
-            </p>
-            <Button variant="outline" className="w-full" onClick={handleStartFull}>
-              Start Full Assessment
+            <input
+              type="range"
+              min={5}
+              max={45}
+              step={5}
+              value={timeMinutes}
+              onChange={(e) => setTimeMinutes(Number(e.target.value))}
+              className="w-full accent-primary h-2 rounded-lg cursor-pointer"
+              aria-label="Quiz duration in minutes"
+              aria-valuemin={5}
+              aria-valuemax={45}
+              aria-valuenow={timeMinutes}
+              aria-valuetext={`${timeMinutes} minutes, ${questionCount} questions`}
+            />
+          </div>
+
+          {/* Live readout */}
+          <p className="text-sm text-muted-foreground mb-5 text-center">
+            <span className="font-semibold text-foreground">{questionCount} questions</span>
+            {' from '}
+            {activePoolSize > 0 ? activePoolSize : '...'} pool
+          </p>
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="sm" onClick={handleQuickPick} className="gap-1.5">
+              <Zap size={14} />
+              Quick Pick (5 min)
             </Button>
-          </motion.div>
-        </div>
+            <div className="flex-grow" />
+            <Button variant="gradient" onClick={handleStartTimed}>
+              Start Quiz
+            </Button>
+          </div>
+        </motion.div>
       </div>
 
       {/* Difficulty filter */}

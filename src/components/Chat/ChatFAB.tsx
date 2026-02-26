@@ -2,10 +2,12 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { MessageCircle } from 'lucide-react'
 import { Button } from '../ui/button'
-import { useChatStore } from '@/store/useChatStore'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
 
 export const ChatFAB: React.FC = () => {
-  const { isOpen, toggleOpen } = useChatStore()
+  const isOpen = useRightPanelStore((s) => s.isOpen)
+  const toggle = useRightPanelStore((s) => s.toggle)
+  const toggleOpen = () => toggle()
 
   if (isOpen) return null
 

@@ -1,4 +1,7 @@
 import ReactGA from 'react-ga4'
+import { useHistoryStore } from '@/store/useHistoryStore'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import type { HistoryEventType } from '@/types/HistoryTypes'
 
 // Helper to check if running on localhost
 const isLocalhost = () => {
@@ -50,22 +53,73 @@ export const logEvent = (category: string, action: string, label?: string) => {
   }
 }
 
+// --- History event helper ---
+
+function addHistoryEvent(
+  type: HistoryEventType,
+  title: string,
+  opts?: { detail?: string; moduleId?: string; route?: string }
+) {
+  try {
+    useHistoryStore.getState().addEvent({
+      type,
+      timestamp: Date.now(),
+      title,
+      ...opts,
+    })
+  } catch {
+    // Store may not be initialized yet during SSR/test — silently skip
+  }
+}
+
+function getModuleTitle(moduleId: string): string {
+  return MODULE_CATALOG[moduleId]?.title ?? moduleId
+}
+
 // Engagement event helpers for key user journeys
 
 export const logModuleStart = (moduleId: string) => {
   logEvent('Learning', 'Module Start', moduleId)
+  addHistoryEvent('module_started', `Started ${getModuleTitle(moduleId)}`, {
+    moduleId,
+    route: `/learn/${moduleId}`,
+  })
 }
 
 export const logModuleComplete = (moduleId: string) => {
   logEvent('Learning', 'Module Complete', moduleId)
+  addHistoryEvent('module_completed', `Completed ${getModuleTitle(moduleId)}`, {
+    moduleId,
+    route: `/learn/${moduleId}`,
+  })
 }
 
-export const logStepComplete = (moduleId: string, stepIndex: number) => {
+export const logStepComplete = (moduleId: string, stepIndex: number, workshopStep?: number) => {
   logEvent('Learning', 'Step Complete', `${moduleId}:step-${stepIndex}`)
+  const route =
+    workshopStep !== undefined
+      ? `/learn/${moduleId}?tab=workshop&step=${workshopStep}`
+      : `/learn/${moduleId}`
+  addHistoryEvent('step_completed', `Completed step in ${getModuleTitle(moduleId)}`, {
+    detail: `Step ${stepIndex + 1}`,
+    moduleId,
+    route,
+  })
 }
 
 export const logArtifactGenerated = (moduleId: string, artifactType: string) => {
   logEvent('Learning', 'Artifact Generated', `${moduleId}:${artifactType}`)
+  const typeMap: Record<string, HistoryEventType> = {
+    key: 'artifact_key',
+    certificate: 'artifact_cert',
+    csr: 'artifact_csr',
+    'executive-document': 'artifact_executive',
+  }
+  const isExecutive = artifactType === 'executive-document'
+  addHistoryEvent(typeMap[artifactType] ?? 'artifact_key', `Generated ${artifactType}`, {
+    moduleId,
+    route: isExecutive ? `/learn/${moduleId}?tab=workshop` : '/openssl',
+  })
 }
 
 export const logAlgorithmView = (algorithmName: string) => {

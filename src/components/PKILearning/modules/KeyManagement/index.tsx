@@ -7,6 +7,7 @@ import { KeyLifecycleDemo } from './workshop/KeyLifecycleDemo'
 import { HSMSimulator } from './workshop/HSMSimulator'
 import { KeyRotationPlanner } from './workshop/KeyRotationPlanner'
 import { useModuleStore } from '@/store/useModuleStore'
+import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
@@ -35,11 +36,9 @@ const PARTS = [
 ]
 
 export const KeyManagementModule: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(() => {
-    const tab = new URLSearchParams(window.location.search).get('tab')
-    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
-  })
-  const [currentPart, setCurrentPart] = useState(0)
+  const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
+  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
+  const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
   const [configKey, setConfigKey] = useState(0)
   const startTimeRef = useRef(0)
   const { updateModuleProgress, markStepComplete } = useModuleStore()
@@ -83,7 +82,7 @@ export const KeyManagementModule: React.FC = () => {
     (newPart: number) => {
       const partIds = PARTS.map((p) => p.id)
       if (newPart > currentPart) {
-        markStepComplete(MODULE_ID, partIds[currentPart])
+        markStepComplete(MODULE_ID, partIds[currentPart], currentPart)
       }
       setCurrentPart(newPart)
     },

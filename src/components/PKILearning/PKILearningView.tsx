@@ -79,6 +79,36 @@ const IoTOTModule = lazyWithRetry(() =>
     default: module.IoTOTModule,
   }))
 )
+const PQCRiskManagementModule = lazyWithRetry(() =>
+  import('./modules/PQCRiskManagement').then((module) => ({
+    default: module.PQCRiskManagementModule,
+  }))
+)
+const PQCBusinessCaseModule = lazyWithRetry(() =>
+  import('./modules/PQCBusinessCase').then((module) => ({
+    default: module.PQCBusinessCaseModule,
+  }))
+)
+const PQCGovernanceModule = lazyWithRetry(() =>
+  import('./modules/PQCGovernance').then((module) => ({
+    default: module.PQCGovernanceModule,
+  }))
+)
+const VendorRiskModule = lazyWithRetry(() =>
+  import('./modules/VendorRisk').then((module) => ({
+    default: module.VendorRiskModule,
+  }))
+)
+const MigrationProgramModule = lazyWithRetry(() =>
+  import('./modules/MigrationProgram').then((module) => ({
+    default: module.MigrationProgramModule,
+  }))
+)
+const ComplianceStrategyModule = lazyWithRetry(() =>
+  import('./modules/ComplianceStrategy').then((module) => ({
+    default: module.ComplianceStrategyModule,
+  }))
+)
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -134,6 +164,12 @@ export const PKILearningView: React.FC = () => {
           <Route path="code-signing" element={<CodeSigningModule />} />
           <Route path="api-security-jwt" element={<APISecurityJWTModule />} />
           <Route path="iot-ot-pqc" element={<IoTOTModule />} />
+          <Route path="pqc-risk-management" element={<PQCRiskManagementModule />} />
+          <Route path="pqc-business-case" element={<PQCBusinessCaseModule />} />
+          <Route path="pqc-governance" element={<PQCGovernanceModule />} />
+          <Route path="vendor-risk" element={<VendorRiskModule />} />
+          <Route path="migration-program" element={<MigrationProgramModule />} />
+          <Route path="compliance-strategy" element={<ComplianceStrategyModule />} />
         </Routes>
       </Suspense>
     </div>
