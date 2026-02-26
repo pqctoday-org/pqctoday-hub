@@ -18,7 +18,11 @@ import {
   FlaskConical,
   BookOpen,
   Info,
+  Package,
+  Terminal,
+  Layers,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -26,8 +30,9 @@ import {
   PERSONA_NAV_PATHS,
   ALWAYS_VISIBLE_PATHS,
   getReportSectionConfig,
+  PERSONA_REPORT_CTAS,
 } from '../../data/personaConfig'
-import type { ReportSectionId } from '../../data/personaConfig'
+import type { ReportSectionId, ReportCTA } from '../../data/personaConfig'
 import { PERSONAS } from '../../data/learningPersonas'
 import { complianceFrameworks } from '../../data/complianceData'
 import { softwareData } from '../../data/migrateData'
@@ -51,6 +56,18 @@ import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
+
+/** Resolves icon name string to LucideIcon component for report CTAs. */
+const CTA_ICONS: Record<string, LucideIcon> = {
+  Share2,
+  Calendar,
+  BookOpen,
+  FlaskConical,
+  Package,
+  BarChart3,
+  Terminal,
+  Layers,
+}
 
 /** Maps PQC replacement algorithm names to relevant Learn module paths. */
 const ALGO_LEARN_LINKS: Record<string, { path: string; label: string }> = {
@@ -1708,26 +1725,44 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                   </div>
                 )}
 
-                {/* Cross-view CTA: Continue to Learning Path */}
+                {/* Cross-view CTAs: Persona-specific next steps */}
                 {selectedPersona && PERSONAS[selectedPersona] && (
-                  <div className="glass-panel p-4 flex items-center justify-between gap-4 print:hidden">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground">
-                        Continue your PQC journey
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        Start the {PERSONAS[selectedPersona].label} learning path —{' '}
-                        {PERSONAS[selectedPersona].recommendedPath.length - 1} modules, ~
-                        {Math.round(PERSONAS[selectedPersona].estimatedMinutes / 60)} hours
-                      </p>
+                  <div className="glass-panel p-4 print:hidden">
+                    <p className="text-sm font-medium text-foreground mb-3">
+                      Continue your PQC journey
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      {(PERSONA_REPORT_CTAS[selectedPersona] ?? []).map((cta: ReportCTA) => {
+                        const Icon = CTA_ICONS[cta.icon] ?? BookOpen
+                        if (cta.isShareAction) {
+                          return (
+                            <button
+                              key={cta.label}
+                              onClick={handleShare}
+                              className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                            >
+                              <Icon size={16} className="shrink-0" />
+                              {cta.label}
+                            </button>
+                          )
+                        }
+                        return (
+                          <Link
+                            key={cta.label}
+                            to={cta.path}
+                            className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                          >
+                            <Icon size={16} className="shrink-0" />
+                            {cta.label}
+                          </Link>
+                        )
+                      })}
                     </div>
-                    <Link
-                      to="/learn"
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0"
-                    >
-                      <BookOpen size={16} />
-                      Start Learning
-                    </Link>
+                    <p className="text-xs text-muted-foreground/60 mt-2">
+                      {PERSONAS[selectedPersona].label} learning path —{' '}
+                      {PERSONAS[selectedPersona].recommendedPath.length - 1} modules, ~
+                      {Math.round(PERSONAS[selectedPersona].estimatedMinutes / 60)} hours
+                    </p>
                   </div>
                 )}
 

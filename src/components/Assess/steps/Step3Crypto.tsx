@@ -17,9 +17,11 @@ import clsx from 'clsx'
 
 import { Link } from 'react-router-dom'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
+import { usePersonaStore } from '../../../store/usePersonaStore'
 import { ALGORITHM_DB } from '../../../hooks/assessmentData'
 import { loadAlgorithmsData } from '../../../data/algorithmsData'
 import type { AlgorithmTransition } from '../../../data/algorithmsData'
+import { getPersonaStepContent } from '../../../data/personaWizardHints'
 
 import { PersonaHint } from './PersonaHint'
 
@@ -121,6 +123,9 @@ const Step3Crypto = () => {
     setCryptoUnknown,
   } = useAssessmentStore()
 
+  const persona = usePersonaStore((s) => s.selectedPersona)
+  const stepContent = getPersonaStepContent(persona, 'crypto')
+
   const [algosByCategory, setAlgosByCategory] = useState<Record<string, TransitionChip[]>>({})
 
   useEffect(() => {
@@ -162,10 +167,12 @@ const Step3Crypto = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">What cryptography do you use today?</h3>
+      <h3 className="text-xl font-bold text-foreground">
+        {stepContent.title ?? 'What cryptography do you use today?'}
+      </h3>
       <p className="text-sm text-muted-foreground">
-        Select the algorithm categories your systems use. Optionally narrow to specific algorithms
-        within each category.
+        {stepContent.description ??
+          'Select the algorithm categories your systems use. Optionally narrow to specific algorithms within each category.'}
       </p>
 
       <PersonaHint stepKey="crypto" />

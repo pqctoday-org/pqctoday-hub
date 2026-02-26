@@ -1,5 +1,6 @@
 import type { PersonaId } from './learningPersonas'
 import type { Region } from '../store/usePersonaStore'
+import type { AssessmentMode } from '../store/useAssessmentStore'
 
 /**
  * Nav paths shown per persona (on top of always-visible pages).
@@ -38,6 +39,17 @@ export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {
   developer: ['/playground', '/openssl', '/algorithms'],
   architect: ['/assess', '/compliance', '/timeline'],
   researcher: ['/algorithms', '/openssl', '/playground'],
+}
+
+/**
+ * Recommended assessment mode per persona.
+ * Executives benefit from the quick path; technical personas from comprehensive.
+ */
+export const PERSONA_RECOMMENDED_MODE: Record<PersonaId, AssessmentMode> = {
+  executive: 'quick',
+  developer: 'comprehensive',
+  architect: 'comprehensive',
+  researcher: 'comprehensive',
 }
 
 /**
@@ -245,4 +257,48 @@ export function getReportSectionConfig(
     return { ...resolved, state: 'collapsed' }
   }
   return resolved
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Report CTAs — persona-specific next-step actions shown at the bottom of report
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+export interface ReportCTA {
+  label: string
+  path: string
+  /** lucide-react icon name (resolved in the component) */
+  icon:
+    | 'Share2'
+    | 'Calendar'
+    | 'BookOpen'
+    | 'FlaskConical'
+    | 'Package'
+    | 'BarChart3'
+    | 'Terminal'
+    | 'Layers'
+  /** If true, triggers the share handler instead of navigating */
+  isShareAction?: boolean
+}
+
+export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
+  executive: [
+    { label: 'Share with your board', path: '', icon: 'Share2', isShareAction: true },
+    { label: 'View compliance deadlines', path: '/compliance', icon: 'Calendar' },
+    { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
+  ],
+  developer: [
+    { label: 'Try algorithms in Playground', path: '/playground', icon: 'FlaskConical' },
+    { label: 'Browse PQC libraries', path: '/migrate', icon: 'Package' },
+    { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
+  ],
+  architect: [
+    { label: 'View migration catalog', path: '/migrate', icon: 'Package' },
+    { label: 'Explore infrastructure layers', path: '/migrate', icon: 'Layers' },
+    { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
+  ],
+  researcher: [
+    { label: 'Compare algorithms', path: '/algorithms', icon: 'BarChart3' },
+    { label: 'Explore in OpenSSL', path: '/openssl', icon: 'Terminal' },
+    { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
+  ],
 }

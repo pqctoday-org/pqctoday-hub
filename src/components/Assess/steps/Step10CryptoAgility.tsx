@@ -10,7 +10,11 @@ import clsx from 'clsx'
 import { PersonaHint } from './PersonaHint'
 
 import { usePersonaStore } from '../../../store/usePersonaStore'
-import { PERSONA_STEP_HINTS } from '../../../data/personaWizardHints'
+import {
+  PERSONA_STEP_HINTS,
+  getPersonaStepContent,
+  getPersonaOptionDescriptions,
+} from '../../../data/personaWizardHints'
 
 const Step10CryptoAgility = () => {
   const { cryptoAgility, setCryptoAgility } = useAssessmentStore()
@@ -18,33 +22,44 @@ const Step10CryptoAgility = () => {
   const recommendedOptions = persona
     ? PERSONA_STEP_HINTS[persona]?.agility?.recommendedOptions // eslint-disable-line security/detect-object-injection
     : undefined
+  const stepContent = getPersonaStepContent(persona, 'agility')
+  const optionDescs = getPersonaOptionDescriptions(persona, 'agility')
 
   const options = [
     {
       value: 'fully-abstracted' as const,
       label: 'Fully Abstracted',
-      description: 'Crypto library wrappers or config-driven — easy to swap algorithms.',
+      description:
+        optionDescs['fully-abstracted'] ??
+        'Crypto library wrappers or config-driven — easy to swap algorithms.',
     },
     {
       value: 'partially-abstracted' as const,
       label: 'Partially Abstracted',
-      description: 'Some systems use wrappers, others have algorithms hardcoded.',
+      description:
+        optionDescs['partially-abstracted'] ??
+        'Some systems use wrappers, others have algorithms hardcoded.',
     },
     {
       value: 'hardcoded' as const,
       label: 'Hardcoded Throughout',
-      description: 'Algorithms are embedded directly in application code.',
+      description:
+        optionDescs['hardcoded'] ?? 'Algorithms are embedded directly in application code.',
     },
   ]
 
   return (
     <div className="space-y-4">
       <h3 className="text-xl font-bold text-foreground">
-        How easily can you swap cryptographic algorithms?
+        {stepContent.title ?? 'How easily can you swap cryptographic algorithms?'}
       </h3>
       <p className="text-sm text-muted-foreground">
-        <InlineTooltip term="Crypto Agility">Crypto agility</InlineTooltip> is a major factor in
-        migration complexity. Abstracted implementations are far easier to migrate.
+        {stepContent.description ?? (
+          <>
+            <InlineTooltip term="Crypto Agility">Crypto agility</InlineTooltip> is a major factor in
+            migration complexity. Abstracted implementations are far easier to migrate.
+          </>
+        )}
       </p>
 
       <PersonaHint stepKey="agility" />

@@ -1,6 +1,7 @@
 import { Info } from 'lucide-react'
 
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
+import { usePersonaStore } from '../../../store/usePersonaStore'
 
 import { InlineTooltip } from '../../ui/InlineTooltip'
 
@@ -8,42 +9,59 @@ import { Button } from '../../ui/button'
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
+import {
+  getPersonaStepContent,
+  getPersonaOptionDescriptions,
+} from '../../../data/personaWizardHints'
 
 const Step12VendorDependency = () => {
   const { vendorDependency, setVendorDependency, vendorUnknown, setVendorUnknown } =
     useAssessmentStore()
+  const persona = usePersonaStore((s) => s.selectedPersona)
+  const stepContent = getPersonaStepContent(persona, 'vendors')
+  const optionDescs = getPersonaOptionDescriptions(persona, 'vendors')
 
   const options = [
     {
       value: 'heavy-vendor' as const,
       label: 'Heavy Vendor Dependency',
-      description: 'We rely primarily on vendor-provided crypto (SaaS, SDK, managed services).',
+      description:
+        optionDescs['heavy-vendor'] ??
+        'We rely primarily on vendor-provided crypto (SaaS, SDK, managed services).',
     },
     {
       value: 'open-source' as const,
       label: 'Open Source Libraries',
-      description: 'We use open-source crypto libraries that we control and can update.',
+      description:
+        optionDescs['open-source'] ??
+        'We use open-source crypto libraries that we control and can update.',
     },
     {
       value: 'mixed' as const,
       label: 'Mixed',
-      description: 'Combination of vendor-provided and self-managed crypto libraries.',
+      description:
+        optionDescs['mixed'] ?? 'Combination of vendor-provided and self-managed crypto libraries.',
     },
     {
       value: 'in-house' as const,
       label: 'In-House Implementations',
-      description: 'We build and maintain our own cryptographic implementations.',
+      description:
+        optionDescs['in-house'] ?? 'We build and maintain our own cryptographic implementations.',
     },
   ]
 
   return (
     <div className="space-y-4">
       <h3 className="text-xl font-bold text-foreground">
-        How do you manage cryptographic dependencies?
+        {stepContent.title ?? 'How do you manage cryptographic dependencies?'}
       </h3>
       <p className="text-sm text-muted-foreground">
-        Vendor dependencies affect your control over migration timelines. Heavy vendor reliance
-        means you depend on their <InlineTooltip term="PQC">PQC</InlineTooltip> roadmap.
+        {stepContent.description ?? (
+          <>
+            Vendor dependencies affect your control over migration timelines. Heavy vendor reliance
+            means you depend on their <InlineTooltip term="PQC">PQC</InlineTooltip> roadmap.
+          </>
+        )}
       </p>
 
       <PersonaHint stepKey="vendors" />

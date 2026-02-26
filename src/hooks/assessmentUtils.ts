@@ -992,6 +992,146 @@ function generateQuickSummary(
   return parts.filter(Boolean).join(' ')
 }
 
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Persona-specific action reframing (presentation only — scoring untouched)
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+interface ActionReframing {
+  /** Substring to match in the original action text */
+  pattern: string
+  /** Persona-specific replacement text */
+  reframings: Partial<Record<string, string>>
+}
+
+const ACTION_REFRAMINGS: ActionReframing[] = [
+  {
+    pattern:
+      'Conduct a cryptographic asset inventory to identify all algorithms in use across systems, services, and dependencies.',
+    reframings: {
+      executive:
+        'Commission a cryptographic asset inventory across your organization — this is the foundation for migration planning and budget estimation.',
+      developer:
+        'Run a dependency-level crypto audit: scan for algorithm identifiers in your codebase and audit transitive crypto library dependencies.',
+      architect:
+        'Map all cryptographic assets across your system topology — protocol endpoints, key stores, certificate chains, and embedded crypto.',
+    },
+  },
+  {
+    pattern:
+      'Conduct cryptographic asset inventory to identify all systems using vulnerable algorithms.',
+    reframings: {
+      executive:
+        'Commission a cryptographic asset inventory to determine which business systems require migration investment.',
+      developer:
+        'Scan your codebase and dependency tree for quantum-vulnerable algorithm usage before planning migration.',
+      architect:
+        'Map all systems consuming cryptographic services — direct and transitive — to scope the migration effort.',
+    },
+  },
+  {
+    pattern: 'Conduct a data classification exercise',
+    reframings: {
+      executive:
+        'Commission a data classification exercise to understand which business data requires quantum-safe protection — this drives your HNDL risk exposure.',
+      developer:
+        'Audit the data sensitivity levels your code handles — PII, financial, and health data in long-lived stores drive HNDL risk.',
+    },
+  },
+  {
+    pattern: 'Refactor cryptographic implementations to use abstraction layers',
+    reframings: {
+      executive:
+        'Invest in crypto-agility infrastructure — abstracting encryption from business logic reduces the cost of future algorithm transitions.',
+      developer:
+        'Introduce a provider/factory pattern for all crypto operations to enable algorithm-agnostic migration paths.',
+      architect:
+        'Design a crypto abstraction layer that supports algorithm negotiation and hybrid schemes across the infrastructure.',
+    },
+  },
+  {
+    pattern: 'Build PQC awareness across engineering and leadership teams.',
+    reframings: {
+      executive:
+        'Brief the board and senior leadership on quantum risk and the PQC migration investment timeline.',
+      developer:
+        'Complete PQC learning modules relevant to your stack and share findings with your engineering team.',
+      architect:
+        'Conduct architecture review workshops focused on PQC migration patterns and hybrid deployment strategies.',
+    },
+  },
+  {
+    pattern: 'Evaluate PQC-ready libraries and tools for your technology stack.',
+    reframings: {
+      executive:
+        'Direct your engineering leads to evaluate quantum-safe encryption libraries and estimate integration costs.',
+      developer:
+        'Benchmark PQC library candidates (liboqs, OpenSSL 3.5+, BoringSSL) against your performance and compatibility requirements.',
+      architect:
+        'Evaluate PQC-ready libraries for compatibility with your infrastructure topology, HSM integrations, and deployment pipeline.',
+    },
+  },
+  {
+    pattern: 'Migrate TLS endpoints to hybrid PQC key exchange',
+    reframings: {
+      executive:
+        'Prioritize TLS migration to hybrid quantum-safe encryption — this protects data in transit immediately and demonstrates compliance progress.',
+      developer:
+        'Configure hybrid ML-KEM + X25519 key exchange on your TLS endpoints — start with non-critical services to validate performance.',
+      architect:
+        'Plan TLS migration as a phased rollout: hybrid ML-KEM + X25519 at edge gateways first, then propagate to internal service mesh.',
+    },
+  },
+  {
+    pattern: 'Evaluate HSM vendor PQC firmware roadmap',
+    reframings: {
+      executive:
+        'Engage your HSM vendor about PQC firmware upgrade timelines and budget — HSMs are typically the highest-cost migration item.',
+      architect:
+        'Evaluate HSM vendor PQC firmware roadmap and plan trust root migration sequence — HSMs constrain the entire certificate chain.',
+    },
+  },
+  {
+    pattern: 'Implement hybrid PQC encryption for data-at-rest',
+    reframings: {
+      executive:
+        'Prioritize hybrid quantum-safe encryption for your most sensitive stored data — this mitigates the Harvest-Now-Decrypt-Later threat immediately.',
+      developer:
+        'Implement hybrid PQC encryption (ML-KEM + AES) for data-at-rest in your highest-sensitivity data stores.',
+      architect:
+        'Design a hybrid PQC encryption layer for data-at-rest that integrates with your KMS topology and key rotation policies.',
+    },
+  },
+  {
+    pattern: 'Engage SaaS and SDK vendors for PQC migration timelines',
+    reframings: {
+      executive:
+        'Request PQC migration roadmaps from your SaaS and SDK vendors — their timelines may constrain your own migration schedule.',
+      developer:
+        'Check your vendor SDKs and SaaS APIs for PQC support — file feature requests and track their migration roadmaps.',
+    },
+  },
+]
+
+/** Post-process recommended actions to use persona-appropriate language. */
+function reframeActionsForPersona(
+  actions: RecommendedAction[],
+  persona: string
+): RecommendedAction[] {
+  return actions.map((action) => {
+    for (const reframing of ACTION_REFRAMINGS) {
+      if (action.action.includes(reframing.pattern)) {
+        // eslint-disable-next-line security/detect-object-injection
+        const replacement = reframing.reframings[persona]
+        if (replacement) {
+          return { ...action, action: replacement }
+        }
+        break
+      }
+    }
+    return action
+  })
+}
+
 export function computeAssessment(input: AssessmentInput): AssessmentResult {
   const algorithmMigrations: AlgorithmMigration[] = input.currentCryptoUnknown
     ? [
@@ -1226,6 +1366,11 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
       category: 'long-term',
       relatedModule: '/learn',
     })
+  }
+
+  // Apply persona-specific action framing (presentation only — prioritization unchanged)
+  if (input.persona) {
+    recommendedActions = reframeActionsForPersona(recommendedActions, input.persona)
   }
 
   const riskLevel: AssessmentResult['riskLevel'] =
@@ -1714,20 +1859,46 @@ function generateKeyFindings(
   hnflRiskWindow?: HNFLRiskWindow
 ): string[] {
   const findings: string[] = []
+  const p = input.persona
 
   // 1. Overall risk posture
   const vulnCount = algorithmMigrations.filter((a) => a.quantumVulnerable).length
   if (vulnCount > 0) {
-    findings.push(
-      `Your organization uses ${vulnCount} quantum-vulnerable algorithm${vulnCount > 1 ? 's' : ''} that ${vulnCount > 1 ? 'require' : 'requires'} migration to post-quantum alternatives.`
-    )
+    if (p === 'executive') {
+      findings.push(
+        `Your organization relies on ${vulnCount} encryption method${vulnCount > 1 ? 's' : ''} that quantum computers will break — board-level migration planning should begin.`
+      )
+    } else if (p === 'developer') {
+      findings.push(
+        `${vulnCount} algorithm${vulnCount > 1 ? 's' : ''} in your dependency chain ${vulnCount > 1 ? 'are' : 'is'} quantum-vulnerable and need${vulnCount === 1 ? 's' : ''} replacement with NIST-standardized PQC alternatives.`
+      )
+    } else if (p === 'architect') {
+      findings.push(
+        `${vulnCount} quantum-vulnerable algorithm${vulnCount > 1 ? 's' : ''} span${vulnCount === 1 ? 's' : ''} your dependency graph — migration must be sequenced from trust roots (PKI/HSM) to leaf services.`
+      )
+    } else {
+      findings.push(
+        `Your organization uses ${vulnCount} quantum-vulnerable algorithm${vulnCount > 1 ? 's' : ''} that ${vulnCount > 1 ? 'require' : 'requires'} migration to post-quantum alternatives.`
+      )
+    }
   }
 
   // 2. HNDL risk
   if (hndlRiskWindow?.isAtRisk) {
-    findings.push(
-      `Harvest-Now-Decrypt-Later risk detected: your data retention period extends ${hndlRiskWindow.riskWindowYears} years beyond the estimated quantum threat horizon${hndlRiskWindow.isEstimated ? ' (conservative estimate)' : ''}.`
-    )
+    const suffix = hndlRiskWindow.isEstimated ? ' (conservative estimate)' : ''
+    if (p === 'executive') {
+      findings.push(
+        `Sensitive data remains exposed for ${hndlRiskWindow.riskWindowYears} years beyond the quantum horizon — adversaries may already be harvesting encrypted data for future decryption${suffix}.`
+      )
+    } else if (p === 'developer') {
+      findings.push(
+        `Data-at-rest encryption uses quantum-vulnerable algorithms with ${hndlRiskWindow.riskWindowYears} years of exposure beyond estimated CRQC arrival${suffix}.`
+      )
+    } else {
+      findings.push(
+        `Harvest-Now-Decrypt-Later risk detected: your data retention period extends ${hndlRiskWindow.riskWindowYears} years beyond the estimated quantum threat horizon${suffix}.`
+      )
+    }
   }
 
   // 3. HNFL risk
@@ -1743,20 +1914,46 @@ function generateKeyFindings(
   )
   if (urgentCompliance.length > 0) {
     const names = urgentCompliance.map((c) => c.framework).join(', ')
-    findings.push(
-      `${urgentCompliance.length} compliance framework${urgentCompliance.length > 1 ? 's' : ''} (${names}) ${urgentCompliance.length > 1 ? 'have' : 'has'} near-term PQC migration deadlines.`
-    )
+    if (p === 'executive') {
+      findings.push(
+        `${urgentCompliance.length} compliance deadline${urgentCompliance.length > 1 ? 's' : ''} (${names}) require${urgentCompliance.length === 1 ? 's' : ''} board attention — non-compliance risks regulatory penalties and audit findings.`
+      )
+    } else if (p === 'developer') {
+      findings.push(
+        `${urgentCompliance.length} compliance framework${urgentCompliance.length > 1 ? 's' : ''} (${names}) mandate${urgentCompliance.length === 1 ? 's' : ''} PQC adoption — check framework-specific algorithm requirements for your stack.`
+      )
+    } else {
+      findings.push(
+        `${urgentCompliance.length} compliance framework${urgentCompliance.length > 1 ? 's' : ''} (${names}) ${urgentCompliance.length > 1 ? 'have' : 'has'} near-term PQC migration deadlines.`
+      )
+    }
   }
 
   // 5. Migration status
   if (input.migrationStatus === 'not-started') {
-    findings.push(
-      `PQC migration has not yet started. Beginning with a cryptographic inventory and pilot project would significantly reduce your risk exposure.`
-    )
+    if (p === 'executive') {
+      findings.push(
+        `Migration not yet started — early movers gain compliance advantages and spread costs over more budget cycles.`
+      )
+    } else if (p === 'developer') {
+      findings.push(
+        `No PQC migration started — begin with quick-win algorithm swaps in non-critical services to build experience.`
+      )
+    } else {
+      findings.push(
+        `PQC migration has not yet started. Beginning with a cryptographic inventory and pilot project would significantly reduce your risk exposure.`
+      )
+    }
   } else if (input.migrationStatus === 'planning') {
-    findings.push(
-      `Migration planning is underway. Prioritize quantum-vulnerable algorithms in your highest-sensitivity systems to maximize risk reduction.`
-    )
+    if (p === 'executive') {
+      findings.push(
+        `Migration planning is underway — ensure budget and staffing are allocated for the first phase of implementation.`
+      )
+    } else {
+      findings.push(
+        `Migration planning is underway. Prioritize quantum-vulnerable algorithms in your highest-sensitivity systems to maximize risk reduction.`
+      )
+    }
   }
 
   return findings.slice(0, 5)

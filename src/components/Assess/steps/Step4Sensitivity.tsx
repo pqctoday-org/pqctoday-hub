@@ -3,8 +3,10 @@ import { useMemo } from 'react'
 import { Info } from 'lucide-react'
 
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
+import { usePersonaStore } from '../../../store/usePersonaStore'
 
 import { industrySensitivityConfigs, getIndustryConfigs } from '../../../data/industryAssessConfig'
+import { getPersonaStepContent } from '../../../data/personaWizardHints'
 
 import { InlineTooltip } from '../../ui/InlineTooltip'
 
@@ -22,6 +24,9 @@ const Step4Sensitivity = () => {
     setSensitivityUnknown,
     industry,
   } = useAssessmentStore()
+
+  const persona = usePersonaStore((s) => s.selectedPersona)
+  const stepContent = getPersonaStepContent(persona, 'sensitivity')
 
   const industrySensitivities = useMemo(
     () => getIndustryConfigs(industrySensitivityConfigs, industry),
@@ -57,11 +62,20 @@ const Step4Sensitivity = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">How sensitive is your data?</h3>
+      <h3 className="text-xl font-bold text-foreground">
+        {stepContent.title ?? 'How sensitive is your data?'}
+      </h3>
       <p className="text-sm text-muted-foreground">
-        Data sensitivity determines your exposure to{' '}
-        <InlineTooltip term="HNDL">&ldquo;Harvest Now, Decrypt Later&rdquo; (HNDL)</InlineTooltip>{' '}
-        attacks. Select all that apply — your risk is assessed against the highest level present.
+        {stepContent.description ?? (
+          <>
+            Data sensitivity determines your exposure to{' '}
+            <InlineTooltip term="HNDL">
+              &ldquo;Harvest Now, Decrypt Later&rdquo; (HNDL)
+            </InlineTooltip>{' '}
+            attacks. Select all that apply — your risk is assessed against the highest level
+            present.
+          </>
+        )}
       </p>
 
       <PersonaHint stepKey="sensitivity" />

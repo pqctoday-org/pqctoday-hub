@@ -1,6 +1,7 @@
 import { Info } from 'lucide-react'
 
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
+import { usePersonaStore } from '../../../store/usePersonaStore'
 
 import { InlineTooltip } from '../../ui/InlineTooltip'
 
@@ -9,35 +10,51 @@ import { Button } from '../../ui/button'
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
+import {
+  getPersonaStepContent,
+  getPersonaOptionDescriptions,
+} from '../../../data/personaWizardHints'
 
 const Step6Migration = () => {
   const { migrationStatus, setMigrationStatus } = useAssessmentStore()
+  const persona = usePersonaStore((s) => s.selectedPersona)
+  const stepContent = getPersonaStepContent(persona, 'migration')
+  const optionDescs = getPersonaOptionDescriptions(persona, 'migration')
 
   const statuses = [
     {
       value: 'started' as const,
       label: 'Already Started',
-      description: 'We have begun implementing PQC algorithms in production or testing.',
+      description:
+        optionDescs['started'] ??
+        'We have begun implementing PQC algorithms in production or testing.',
     },
     {
       value: 'planning' as const,
       label: 'Planning to Start',
-      description: "We have a roadmap or budget allocated but haven't started implementation.",
+      description:
+        optionDescs['planning'] ??
+        "We have a roadmap or budget allocated but haven't started implementation.",
     },
     {
       value: 'not-started' as const,
       label: 'Not Started',
-      description: 'We have not begun any PQC migration activities.',
+      description: optionDescs['not-started'] ?? 'We have not begun any PQC migration activities.',
     },
   ]
 
   return (
     <div className="space-y-4">
       <h3 className="text-xl font-bold text-foreground">
-        What is your <InlineTooltip term="PQC">PQC</InlineTooltip> migration status?
+        {stepContent.title ?? (
+          <>
+            What is your <InlineTooltip term="PQC">PQC</InlineTooltip> migration status?
+          </>
+        )}
       </h3>
       <p className="text-sm text-muted-foreground">
-        Understanding where you are in the migration journey helps prioritize recommendations.
+        {stepContent.description ??
+          'Understanding where you are in the migration journey helps prioritize recommendations.'}
       </p>
 
       <PersonaHint stepKey="migration" />

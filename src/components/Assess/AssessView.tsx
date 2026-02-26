@@ -7,7 +7,7 @@ import { useAssessmentStore } from '../../store/useAssessmentStore'
 import type { AssessmentMode } from '../../store/useAssessmentStore'
 import { metadata } from '../../data/industryAssessConfig'
 import { usePersonaStore } from '../../store/usePersonaStore'
-import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
+import { REGION_COUNTRIES_MAP, PERSONA_RECOMMENDED_MODE } from '../../data/personaConfig'
 import { Button } from '../ui/button'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
@@ -28,7 +28,10 @@ const STEP_LABELS = [
   'Timeline',
 ]
 
-const ModeSelector: React.FC<{ onSelect: (mode: AssessmentMode) => void }> = ({ onSelect }) => (
+const ModeSelector: React.FC<{
+  onSelect: (mode: AssessmentMode) => void
+  recommendedMode: AssessmentMode | null
+}> = ({ onSelect, recommendedMode }) => (
   <div>
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <Button
@@ -41,6 +44,11 @@ const ModeSelector: React.FC<{ onSelect: (mode: AssessmentMode) => void }> = ({ 
             <Zap className="text-warning" size={20} />
           </div>
           <h3 className="text-lg font-bold text-foreground">Quick</h3>
+          {recommendedMode === 'quick' && (
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/15 text-primary">
+              Recommended for you
+            </span>
+          )}
         </div>
         <p className="text-sm text-muted-foreground mb-3">
           6 questions covering your industry, crypto stack, data sensitivity, and migration status.
@@ -58,6 +66,11 @@ const ModeSelector: React.FC<{ onSelect: (mode: AssessmentMode) => void }> = ({ 
             <ClipboardList className="text-primary" size={20} />
           </div>
           <h3 className="text-lg font-bold text-foreground">Comprehensive</h3>
+          {recommendedMode === 'comprehensive' && (
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/15 text-primary">
+              Recommended for you
+            </span>
+          )}
         </div>
         <p className="text-sm text-muted-foreground mb-3">
           13 questions including infrastructure, team capacity, crypto agility, and vendor
@@ -80,6 +93,8 @@ export const AssessView: React.FC = () => {
     assessmentMode,
     setAssessmentMode,
   } = useAssessmentStore()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const recommendedMode = selectedPersona ? PERSONA_RECOMMENDED_MODE[selectedPersona] : null
   const seededRef = useRef(false)
   const [showResumeBanner, setShowResumeBanner] = useState(false)
 
@@ -234,7 +249,7 @@ export const AssessView: React.FC = () => {
       )}
 
       {!assessmentMode ? (
-        <ModeSelector onSelect={handleModeSelect} />
+        <ModeSelector onSelect={handleModeSelect} recommendedMode={recommendedMode} />
       ) : (
         <AssessWizard onComplete={handleComplete} mode={assessmentMode} />
       )}

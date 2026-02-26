@@ -3,7 +3,9 @@ import { Info } from 'lucide-react'
 import { Button } from '../../ui/button'
 import clsx from 'clsx'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
+import { usePersonaStore } from '../../../store/usePersonaStore'
 import { InlineTooltip } from '../../ui/InlineTooltip'
+import { getPersonaStepContent } from '../../../data/personaWizardHints'
 import { PersonaHint } from './PersonaHint'
 import { LAYERS } from '../../Migrate/InfrastructureStack'
 import { softwareData } from '../../../data/migrateData'
@@ -17,6 +19,9 @@ const Step11Infrastructure = () => {
     infrastructureSubCategories,
     setInfrastructureSubCategory,
   } = useAssessmentStore()
+
+  const persona = usePersonaStore((s) => s.selectedPersona)
+  const stepContent = getPersonaStepContent(persona, 'infra')
 
   // Compute sub-categories per layer from the live catalog
   const subCatsByLayer = useMemo(() => {
@@ -38,11 +43,11 @@ const Step11Infrastructure = () => {
   return (
     <div className="space-y-4">
       <h3 className="text-xl font-bold text-foreground">
-        What infrastructure affects your cryptography?
+        {stepContent.title ?? 'What infrastructure affects your cryptography?'}
       </h3>
       <p className="text-sm text-muted-foreground">
-        Select the infrastructure layers that handle cryptography in your environment. Optionally
-        narrow by sub-category within each layer.
+        {stepContent.description ??
+          'Select the infrastructure layers that handle cryptography in your environment. Optionally narrow by sub-category within each layer.'}
       </p>
 
       <PersonaHint stepKey="infra" />
