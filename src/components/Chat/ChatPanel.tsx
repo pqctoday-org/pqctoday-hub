@@ -8,6 +8,7 @@ import { SampleQuestionsModal } from '../About/SampleQuestionsModal'
 import { useChatStore } from '@/store/useChatStore'
 import { retrievalService } from '@/services/chat/RetrievalService'
 import { streamResponse } from '@/services/chat/GeminiService'
+import { usePageContext } from '@/hooks/usePageContext'
 import type { ChatMessage as ChatMessageType } from '@/types/ChatTypes'
 
 export const ChatPanel: React.FC = () => {
@@ -36,6 +37,7 @@ export const ChatPanel: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const abortRef = useRef<AbortController | null>(null)
+  const pageContext = usePageContext()
 
   // Initialize retrieval service on first open
   useEffect(() => {
@@ -67,8 +69,8 @@ export const ChatPanel: React.FC = () => {
     return () => window.removeEventListener('keydown', handler)
   }, [isOpen, setOpen])
 
-  const handleSend = async () => {
-    const trimmed = input.trim()
+  const sendQuery = async (queryText: string) => {
+    const trimmed = queryText.trim()
     if (!trimmed || !apiKey || isLoading || isStreaming) return
 
     const userMessage: ChatMessageType = {
@@ -84,9 +86,13 @@ export const ChatPanel: React.FC = () => {
     setError(null)
 
     try {
-      // Retrieve relevant context
+      // Retrieve relevant context with page awareness
       await retrievalService.initialize()
-      const chunks = retrievalService.search(trimmed, 15)
+      const chunks = retrievalService.search(trimmed, undefined, {
+        page: pageContext.page,
+        moduleId: pageContext.moduleId,
+        relevantSources: pageContext.relevantSources,
+      })
 
       // Build conversation for API
       const allMessages = [...messages, userMessage]
@@ -106,7 +112,8 @@ export const ChatPanel: React.FC = () => {
         allMessages,
         chunks,
         model,
-        controller.signal
+        controller.signal,
+        pageContext.page
       )) {
         fullContent += chunk
         appendStreamingContent(chunk)
@@ -139,6 +146,8 @@ export const ChatPanel: React.FC = () => {
     }
   }
 
+  const handleSend = () => sendQuery(input)
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
@@ -164,24 +173,27 @@ export const ChatPanel: React.FC = () => {
             onClick={handleClose}
           />
 
-          {/* Panel */}
+          {/* Panel — 80% width on desktop, full on mobile */}
           <motion.div
-            initial={{ opacity: 0, x: 300 }}
+            initial={{ opacity: 0, x: '100%' }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 300 }}
+            exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 bottom-0 z-[60] w-full max-w-lg bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden"
+            className="fixed right-0 top-0 bottom-0 z-[60] w-full md:w-[80vw] bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden"
             role="dialog"
             aria-label="PQC Assistant"
             aria-modal="true"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="p-4 border-b border-border shrink-0">
-              <div className="flex items-center justify-between">
+            <div className="p-4 md:px-12 border-b border-border shrink-0">
+              <div className="flex items-center justify-between max-w-4xl mx-auto">
                 <div className="flex items-center gap-2">
                   <Bot size={20} className="text-primary" />
                   <h2 className="text-lg font-semibold text-foreground">PQC Assistant</h2>
+                  <span className="text-xs text-muted-foreground hidden sm:inline">
+                    — {pageContext.page}
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
                   {apiKey && (
@@ -234,52 +246,66 @@ export const ChatPanel: React.FC = () => {
             ) : (
               <>
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                  {messages.length === 0 && !isStreaming && (
-                    <div className="text-center py-12 space-y-3">
-                      <Bot size={40} className="text-muted-foreground mx-auto opacity-40" />
-                      <p className="text-sm text-muted-foreground">
-                        Ask me anything about post-quantum cryptography, algorithms, compliance, or
-                        migration strategies.
-                      </p>
-                    </div>
-                  )}
-
-                  {messages.map((msg) => (
-                    <ChatMessage key={msg.id} sender={msg.role} content={msg.content} />
-                  ))}
-
-                  {isStreaming && streamingContent && (
-                    <ChatMessage sender="assistant" content={streamingContent} isStreaming />
-                  )}
-
-                  {isLoading && !isStreaming && (
-                    <div className="flex gap-2">
-                      <div className="shrink-0 w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center">
-                        <Bot size={14} className="text-accent" />
-                      </div>
-                      <div className="glass-panel rounded-lg px-3 py-2">
-                        <div className="flex gap-1">
-                          <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce" />
-                          <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0.15s]" />
-                          <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0.3s]" />
+                <div className="flex-1 overflow-y-auto p-4 md:p-6 md:px-12">
+                  <div className="max-w-4xl mx-auto space-y-4">
+                    {messages.length === 0 && !isStreaming && (
+                      <div className="text-center py-12 space-y-4">
+                        <Bot size={40} className="text-muted-foreground mx-auto opacity-40" />
+                        <p className="text-sm text-muted-foreground">
+                          Ask me anything about post-quantum cryptography, algorithms, compliance,
+                          or migration strategies.
+                        </p>
+                        {/* Page-contextual suggested questions */}
+                        <div className="flex flex-wrap gap-2 justify-center mt-4">
+                          {pageContext.suggestedQuestions.map((q) => (
+                            <button
+                              key={q}
+                              onClick={() => sendQuery(q)}
+                              className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted/30 text-muted-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
+                            >
+                              {q}
+                            </button>
+                          ))}
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {error && (
-                    <div className="text-sm text-status-error bg-status-error/10 rounded-lg p-3">
-                      {error}
-                    </div>
-                  )}
+                    {messages.map((msg) => (
+                      <ChatMessage key={msg.id} sender={msg.role} content={msg.content} />
+                    ))}
 
-                  <div ref={messagesEndRef} />
+                    {isStreaming && streamingContent && (
+                      <ChatMessage sender="assistant" content={streamingContent} isStreaming />
+                    )}
+
+                    {isLoading && !isStreaming && (
+                      <div className="flex gap-2">
+                        <div className="shrink-0 w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center">
+                          <Bot size={14} className="text-accent" />
+                        </div>
+                        <div className="glass-panel rounded-lg px-3 py-2">
+                          <div className="flex gap-1">
+                            <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce" />
+                            <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0.15s]" />
+                            <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0.3s]" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {error && (
+                      <div className="text-sm text-status-error bg-status-error/10 rounded-lg p-3">
+                        {error}
+                      </div>
+                    )}
+
+                    <div ref={messagesEndRef} />
+                  </div>
                 </div>
 
                 {/* Input */}
-                <div className="p-4 border-t border-border shrink-0">
-                  <div className="flex gap-2">
+                <div className="p-4 md:px-12 border-t border-border shrink-0">
+                  <div className="max-w-4xl mx-auto flex gap-2">
                     <input
                       ref={inputRef}
                       type="text"

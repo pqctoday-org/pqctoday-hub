@@ -61,17 +61,17 @@ function readCSVWithHeaders(filePath: string): Record<string, string>[] {
   return result.data
 }
 
-function sanitize(s: string | undefined | null): string {
+export function sanitize(s: string | undefined | null): string {
   return (s ?? '').trim()
 }
 
 /** URL-encode a parameter value for deep links */
-function encodeParam(s: string): string {
+export function encodeParam(s: string): string {
   return encodeURIComponent(s.trim())
 }
 
 /** Slugify an algorithm name for ?highlight= parameter */
-function algoSlug(name: string): string {
+export function algoSlug(name: string): string {
   return name
     .toLowerCase()
     .replace(/[^a-z0-9-]+/g, '-')
@@ -105,71 +105,47 @@ const MODULE_DIR_TO_ID: Record<string, string> = {
 // Source processors
 // ---------------------------------------------------------------------------
 
-function processGlossary(): RAGChunk[] {
-  // glossaryData.ts exports a TS array — import it dynamically via tsx
-  // Since tsx supports TS imports, we can use dynamic import
-  const filePath = path.join(process.cwd(), 'src', 'data', 'glossaryData.ts')
-  const raw = fs.readFileSync(filePath, 'utf-8')
+async function processGlossary(): Promise<RAGChunk[]> {
+  // Dynamic import via tsx — avoids fragile regex parsing of multi-line TS values
+  const { glossaryTerms } = await import('../src/data/glossaryData')
 
-  // Extract terms from the TS source using a simple regex approach
-  // Each term is an object literal in the glossaryTerms array
-  const chunks: RAGChunk[] = []
+  return glossaryTerms.map(
+    (
+      term: {
+        term: string
+        acronym?: string
+        definition: string
+        technicalNote?: string
+        relatedModule?: string
+        complexity: string
+        category: string
+      },
+      i: number
+    ) => {
+      const content = [
+        `Term: ${term.term}${term.acronym ? ` (${term.acronym})` : ''}`,
+        `Definition: ${term.definition}`,
+        term.technicalNote ? `Technical Note: ${term.technicalNote}` : '',
+        `Category: ${term.category} | Complexity: ${term.complexity}`,
+      ]
+        .filter(Boolean)
+        .join('\n')
 
-  // Use a line-by-line state machine (regex approach is fragile with complex strings)
-  let currentTerm: Record<string, string> = {}
-  let inObject = false
-  let termIndex = 0
-
-  for (const line of raw.split('\n')) {
-    const trimmed = line.trim()
-
-    if (trimmed === '{' || (trimmed.startsWith('{') && !trimmed.includes('export'))) {
-      inObject = true
-      currentTerm = {}
-      continue
+      return {
+        id: `glossary-${i}`,
+        source: 'glossary',
+        title: term.term,
+        content,
+        category: term.category || 'concept',
+        metadata: {
+          acronym: term.acronym || '',
+          complexity: term.complexity || 'beginner',
+          relatedModule: term.relatedModule || '',
+        },
+        ...(term.relatedModule ? { deepLink: term.relatedModule } : {}),
+      } as RAGChunk
     }
-
-    if (trimmed === '},' || trimmed === '}') {
-      if (inObject && currentTerm.term) {
-        const content = [
-          `Term: ${currentTerm.term}${currentTerm.acronym ? ` (${currentTerm.acronym})` : ''}`,
-          `Definition: ${currentTerm.definition}`,
-          currentTerm.technicalNote ? `Technical Note: ${currentTerm.technicalNote}` : '',
-          `Category: ${currentTerm.category || 'concept'} | Complexity: ${currentTerm.complexity || 'beginner'}`,
-        ]
-          .filter(Boolean)
-          .join('\n')
-
-        chunks.push({
-          id: `glossary-${termIndex++}`,
-          source: 'glossary',
-          title: currentTerm.term,
-          content,
-          category: currentTerm.category || 'concept',
-          metadata: {
-            acronym: currentTerm.acronym || '',
-            complexity: currentTerm.complexity || 'beginner',
-            relatedModule: currentTerm.relatedModule || '',
-          },
-          ...(currentTerm.relatedModule ? { deepLink: currentTerm.relatedModule } : {}),
-        })
-      }
-      inObject = false
-      continue
-    }
-
-    if (inObject) {
-      // Parse key-value pairs from TS object literals
-      const kvMatch = trimmed.match(/^(\w+):\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)")/)
-      if (kvMatch) {
-        const key = kvMatch[1]
-        const value = (kvMatch[2] ?? kvMatch[3] ?? '').replace(/\\'/g, "'")
-        currentTerm[key] = value
-      }
-    }
-  }
-
-  return chunks
+  )
 }
 
 function processTimeline(): RAGChunk[] {
@@ -666,7 +642,7 @@ function processAuthoritativeSources(): RAGChunk[] {
 const MODULES_DIR = path.join(process.cwd(), 'src', 'components', 'PKILearning', 'modules')
 
 /** Strip JSX/HTML tags, React entities, and noise from TSX source to extract readable text */
-function extractTextFromTSX(source: string): string[] {
+export function extractTextFromTSX(source: string): string[] {
   const texts: string[] = []
 
   // Strategy 1: Extract text content between JSX tags: >text content<
@@ -689,10 +665,15 @@ function extractTextFromTSX(source: string): string[] {
       .trim()
     // Skip code-like strings (React/TS fragments that leaked through)
     if (
-      text.length >= 30 &&
+      text.length >= 60 &&
       !/^(?:void|const|export|import|return|function|interface|type)\s/.test(text) &&
       !/React\.FC/.test(text) &&
-      !/className[=]/.test(text)
+      !/className[=]/.test(text) &&
+      !/useRef|useState|useEffect|useCallback|useMemo/.test(text) &&
+      !/^\)/.test(text) &&
+      !/\?\s*[('"]/.test(text) &&
+      !/===\s*\w+\.length/.test(text) &&
+      !/border-\w+\s+bg-/.test(text)
     ) {
       texts.push(text)
     }
@@ -712,12 +693,17 @@ function extractTextFromTSX(source: string): string[] {
     if (text.length >= 30) texts.push(text)
   }
 
-  // Deduplicate
-  return [...new Set(texts)]
+  // Deduplicate and filter short fragments with insufficient real words
+  return [...new Set(texts)].filter((t) => {
+    if (t.length >= 120) return true
+    // For shorter texts, require at least 3 real words (4+ chars each)
+    const realWords = t.split(/\s+/).filter((w) => w.replace(/[^a-zA-Z]/g, '').length >= 4)
+    return realWords.length >= 3
+  })
 }
 
 /** Extract string values from TS data/constants files */
-function extractTextFromDataFile(source: string): string[] {
+export function extractTextFromDataFile(source: string): string[] {
   const texts: string[] = []
   // Match any string property value >= 40 chars
   const stringPropRegex =
@@ -772,6 +758,50 @@ const MODULE_NAME_MAP: Record<string, string> = {
   APISecurityJWT: 'API Security & JWT',
   CodeSigning: 'Code Signing',
   IoTOT: 'IoT & OT Security',
+}
+
+/**
+ * Process rag-summary.md files from each module directory.
+ * These are purpose-built educational summaries optimized for RAG retrieval,
+ * providing cleaner context than TSX extraction.
+ */
+function processModuleRAGSummaries(): RAGChunk[] {
+  if (!fs.existsSync(MODULES_DIR)) return []
+
+  const chunks: RAGChunk[] = []
+  const moduleDirs = fs
+    .readdirSync(MODULES_DIR, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && d.name !== 'Quiz')
+
+  for (const moduleDir of moduleDirs) {
+    const summaryPath = path.join(MODULES_DIR, moduleDir.name, 'rag-summary.md')
+    if (!fs.existsSync(summaryPath)) continue
+
+    const content = fs.readFileSync(summaryPath, 'utf-8').trim()
+    if (!content) continue
+
+    const moduleId = MODULE_DIR_TO_ID[moduleDir.name]
+    const moduleName = MODULE_NAME_MAP[moduleDir.name] ?? moduleDir.name
+
+    // Extract title from first heading or use module name
+    const titleMatch = content.match(/^#\s+(.+)/m)
+    const title = titleMatch ? titleMatch[1].trim() : `${moduleName} — Overview`
+
+    chunks.push({
+      id: `module-summary-${moduleId ?? moduleDir.name.toLowerCase()}`,
+      source: 'module-summaries',
+      title,
+      content,
+      category: 'learning-module',
+      metadata: {
+        moduleId: moduleId ?? '',
+        moduleName,
+      },
+      ...(moduleId ? { deepLink: `/learn/${moduleId}` } : {}),
+    } as RAGChunk)
+  }
+
+  return chunks
 }
 
 function processModuleContent(): RAGChunk[] {
@@ -1217,10 +1247,10 @@ function processCertificationXref(): RAGChunk[] {
 // Main
 // ---------------------------------------------------------------------------
 
-function main() {
+async function main() {
   console.log('🔍 Generating RAG corpus...\n')
 
-  const processors = [
+  const processors: Array<{ name: string; fn: () => RAGChunk[] | Promise<RAGChunk[]> }> = [
     { name: 'Glossary', fn: processGlossary },
     { name: 'Timeline', fn: processTimeline },
     { name: 'Library', fn: processLibrary },
@@ -1231,6 +1261,7 @@ function main() {
     { name: 'Migrate Software', fn: processMigrateSoftware },
     { name: 'Leaders', fn: processLeaders },
     { name: 'Learning Modules', fn: processModules },
+    { name: 'Module RAG Summaries', fn: processModuleRAGSummaries },
     { name: 'Module Content', fn: processModuleContent },
     { name: 'Authoritative Sources', fn: processAuthoritativeSources },
     { name: 'Documentation', fn: processMarkdownDocs },
@@ -1244,7 +1275,7 @@ function main() {
 
   for (const { name, fn } of processors) {
     try {
-      const chunks = fn()
+      const chunks = await fn()
       console.log(`  ✓ ${name}: ${chunks.length} chunks`)
       corpus.push(...chunks)
     } catch (err) {

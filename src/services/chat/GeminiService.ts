@@ -2,7 +2,7 @@ import type { ChatMessage, RAGChunk } from '@/types/ChatTypes'
 
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models'
 
-function buildSystemPrompt(chunks: RAGChunk[]): string {
+function buildSystemPrompt(chunks: RAGChunk[], currentPage?: string): string {
   const contextBlocks = chunks
     .map((c) => {
       const header = `--- Source: ${c.source} | ${c.title} ---`
@@ -11,8 +11,12 @@ function buildSystemPrompt(chunks: RAGChunk[]): string {
     })
     .join('\n\n')
 
-  return `You are PQC Today Assistant, an expert in post-quantum cryptography (PQC). You help users understand PQC concepts, standards, migration strategies, and the quantum threat landscape.
+  const pageNote = currentPage
+    ? `\nThe user is currently viewing the ${currentPage} page. Tailor your response accordingly when relevant.\n`
+    : ''
 
+  return `You are PQC Today Assistant, an expert in post-quantum cryptography (PQC). You help users understand PQC concepts, standards, migration strategies, and the quantum threat landscape.
+${pageNote}
 Answer based ONLY on the provided context from the PQC Today database. Do not invent, guess, or supplement with people, products, documents, certifications, or data items that are not present in the context below. If the context does not contain enough information, say so honestly rather than fabricating entries. You may use your general knowledge only to explain concepts, provide definitions, or give background — never to list specific people, products, standards, or data records.
 
 GUIDELINES:
@@ -88,9 +92,10 @@ export async function* streamResponse(
   messages: ChatMessage[],
   contextChunks: RAGChunk[],
   model = 'gemini-2.5-flash',
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  currentPage?: string
 ): AsyncGenerator<string> {
-  const systemPrompt = buildSystemPrompt(contextChunks)
+  const systemPrompt = buildSystemPrompt(contextChunks, currentPage)
   const formattedMessages = formatMessages(messages)
 
   const response = await fetch(

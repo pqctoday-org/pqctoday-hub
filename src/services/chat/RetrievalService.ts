@@ -2,6 +2,61 @@ import MiniSearch from 'minisearch'
 import type { RAGChunk } from '@/types/ChatTypes'
 
 /**
+ * Query intent — determines source boosting and diversity strategy.
+ */
+export type QueryIntent =
+  | 'definition'
+  | 'comparison'
+  | 'catalog_lookup'
+  | 'recommendation'
+  | 'country_query'
+  | 'general'
+
+/**
+ * Optional page context for boosting results relevant to the user's current view.
+ */
+export interface PageContext {
+  page: string
+  moduleId?: string
+  relevantSources: string[]
+}
+
+/**
+ * Source boost multipliers per intent — used to re-rank MiniSearch results.
+ */
+const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
+  definition: { glossary: 3, algorithms: 2, modules: 1.5, 'module-content': 1.5 },
+  comparison: { algorithms: 2, transitions: 2, glossary: 1.5 },
+  catalog_lookup: { migrate: 3, certifications: 2, 'priority-matrix': 1.5 },
+  recommendation: { assessment: 2, 'priority-matrix': 2, compliance: 1.5, migrate: 1.5 },
+  country_query: { timeline: 3, compliance: 2, leaders: 1.5 },
+  general: {},
+}
+
+const COUNTRY_KEYS = new Set([
+  'france',
+  'anssi',
+  'germany',
+  'bsi',
+  'united states',
+  'usa',
+  'united kingdom',
+  'uk',
+  'china',
+  'japan',
+  'australia',
+  'canada',
+  'south korea',
+  'korea',
+  'india',
+  'singapore',
+  'eu',
+  'europe',
+  'enisa',
+  'etsi',
+])
+
+/**
  * Query expansion: maps natural-language concepts to technical terms
  * so that "quantum signing algorithm" retrieves ML-DSA chunks.
  */
@@ -32,10 +87,16 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
   'harvest now': ['harvest now decrypt later', 'HNDL', 'SNDL'],
   hndl: ['harvest now decrypt later', 'HNDL'],
   migration: ['crypto agility', 'migration', 'transition', 'migration priority'],
+  replacement: ['transition', 'migration', 'post-quantum alternative', 'upgrade'],
+  replace: ['transition', 'migration', 'post-quantum alternative', 'upgrade'],
+  replacing: ['transition', 'migration', 'post-quantum alternative', 'upgrade'],
   'crypto agility': ['crypto agility', 'agility', 'hybrid cryptography'],
   hybrid: ['hybrid cryptography', 'hybrid key exchange', 'composite'],
   quantum: ['post-quantum cryptography', 'quantum computing', 'Q-Day'],
   'quantum threat': ['quantum computing', 'Q-Day', 'harvest now decrypt later'],
+  threat: ['vulnerability', 'risk', 'attack', 'quantum threat'],
+  threats: ['vulnerability', 'risk', 'attack', 'quantum threat'],
+  financial: ['Financial Services', 'Banking', 'payment', 'SWIFT'],
   tls: ['TLS', 'hybrid key exchange', 'ML-KEM', 'transport layer security', 'OpenSSL'],
   pki: ['public key infrastructure', 'certificate', 'X.509'],
   certificate: ['X.509', 'certificate authority', 'PKI', 'certificate signing request'],
@@ -125,6 +186,52 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
   etsi: ['ETSI', 'European Union', 'EU PQC'],
 }
 
+/**
+ * Classify user query intent via pattern matching.
+ */
+export function classifyIntent(query: string): QueryIntent {
+  const q = query.toLowerCase()
+
+  if (/^(what is|define|explain|what does|what are|tell me about)\b/.test(q)) return 'definition'
+  if (/\b(compare|comparison|difference|vs\.?|versus|better)\b/.test(q)) return 'comparison'
+  if (
+    /\b(which|list|show|what)\b.*\b(products?|software|tools?|hsms?|libraries|vendors?|browsers?)\b/.test(
+      q
+    )
+  )
+    return 'catalog_lookup'
+  if (/\b(show|list|which)\b.*\b(validated|certified|certifications?)\b/.test(q))
+    return 'catalog_lookup'
+  if (/\b(should|recommend|best|how to|migrate|strategy|plan)\b/.test(q)) return 'recommendation'
+
+  // Country detection
+  const tokens = q.split(/\s+/)
+  for (const token of tokens) {
+    if (COUNTRY_KEYS.has(token)) return 'country_query'
+  }
+  for (const key of COUNTRY_KEYS) {
+    if (key.includes(' ') && q.includes(key)) return 'country_query'
+  }
+
+  return 'general'
+}
+
+/**
+ * Get the recommended chunk limit for a given intent.
+ */
+function getLimitForIntent(intent: QueryIntent): number {
+  switch (intent) {
+    case 'definition':
+      return 10
+    case 'comparison':
+      return 15
+    case 'catalog_lookup':
+      return 20
+    default:
+      return 15
+  }
+}
+
 class RetrievalService {
   private static instance: RetrievalService | null = null
   private index: MiniSearch<RAGChunk> | null = null
@@ -142,12 +249,23 @@ class RetrievalService {
     return RetrievalService.instance
   }
 
+  /** Reset singleton — for testing only */
+  static resetInstance(): void {
+    RetrievalService.instance = null
+  }
+
   async initialize(): Promise<void> {
     if (this.index) return
     if (this.initPromise) return this.initPromise
 
     this.initPromise = this.load()
     return this.initPromise
+  }
+
+  /** Initialize with a pre-loaded corpus — for testing */
+  initializeWithCorpus(corpus: RAGChunk[]): void {
+    this.corpus = corpus
+    this.buildIndex()
   }
 
   private async load(): Promise<void> {
@@ -157,36 +275,20 @@ class RetrievalService {
     }
 
     this.corpus = await response.json()
+    this.buildIndex()
+  }
 
+  private buildIndex(): void {
     // Build fast lookup by ID
+    this.corpusById.clear()
+    this.entityIndex.clear()
+
     for (const chunk of this.corpus) {
       this.corpusById.set(chunk.id, chunk)
     }
 
     // Build entity index for direct title matching
-    // Priority sources get indexed: algorithms, glossary, transitions, modules
-    const prioritySources = new Set([
-      'algorithms',
-      'glossary',
-      'transitions',
-      'modules',
-      'module-content',
-      'documentation',
-      'quiz',
-      'assessment',
-      'certifications',
-      'priority-matrix',
-      'timeline',
-      'threats',
-      'leaders',
-      'library',
-      'compliance',
-      'migrate',
-      'authoritative-sources',
-    ])
     for (const chunk of this.corpus) {
-      if (!prioritySources.has(chunk.source)) continue
-
       const titleLower = chunk.title.toLowerCase()
       const existing = this.entityIndex.get(titleLower) ?? []
       existing.push(chunk.id)
@@ -253,8 +355,11 @@ class RetrievalService {
     this.index.addAll(this.corpus)
   }
 
-  search(query: string, limit = 10): RAGChunk[] {
+  search(query: string, limit?: number, pageContext?: PageContext): RAGChunk[] {
     if (!this.index) return []
+
+    const intent = classifyIntent(query)
+    const effectiveLimit = limit ?? getLimitForIntent(intent)
 
     const selectedIds = new Set<string>()
     const selected: RAGChunk[] = []
@@ -269,7 +374,6 @@ class RetrievalService {
     }
 
     // --- Phase 1: Direct entity matching ---
-    // Extract potential entity names from the query
     const queryLower = query.toLowerCase()
     const queryTokens = queryLower.split(/\s+/)
 
@@ -294,7 +398,6 @@ class RetrievalService {
     }
 
     // --- Phase 2: Query expansion ---
-    // Find matching expansions and run additional searches
     const expandedTerms = new Set<string>()
     for (const token of queryTokens) {
       const expansions = QUERY_EXPANSIONS[token]
@@ -307,6 +410,16 @@ class RetrievalService {
       if (key.includes(' ') && queryLower.includes(key)) {
         for (const term of QUERY_EXPANSIONS[key]) expandedTerms.add(term)
       }
+    }
+
+    // Disambiguation: "library" without software context → also include reference docs
+    if (
+      queryLower.includes('library') &&
+      !/\b(crypto|openssl|botan|software|product|migrate)\b/.test(queryLower)
+    ) {
+      expandedTerms.add('reference documents')
+      expandedTerms.add('publications')
+      expandedTerms.add('standards')
     }
 
     // Search expanded terms and add entity matches
@@ -322,22 +435,43 @@ class RetrievalService {
       }
     }
 
-    // --- Phase 3: MiniSearch keyword search with source diversity ---
+    // --- Phase 3: MiniSearch keyword search with intent-aware boosting ---
     const expandedQuery =
       expandedTerms.size > 0 ? `${query} ${[...expandedTerms].join(' ')}` : query
 
-    const results = this.index.search(expandedQuery)
+    const rawResults = this.index.search(expandedQuery)
+
+    // Apply intent-based and page-context source boost multipliers to scores
+    const boosts = INTENT_BOOSTS[intent]
+    const boostedResults = rawResults.map((r) => {
+      const chunk = this.corpusById.get(r.id)
+      if (!chunk) return { ...r, boostedScore: r.score }
+
+      let multiplier = boosts[chunk.source] ?? 1
+      // Page context boost: 1.5× for sources matching current page
+      if (pageContext?.relevantSources.includes(chunk.source)) {
+        multiplier *= 1.5
+      }
+      return { ...r, boostedScore: r.score * multiplier }
+    })
+
+    // Sort by boosted score
+    boostedResults.sort((a, b) => b.boostedScore - a.boostedScore)
 
     // Source-diverse fill for remaining slots
     const sourceCounts = new Map<string, number>()
-    // Count already-selected sources
     for (const chunk of selected) {
       sourceCounts.set(chunk.source, (sourceCounts.get(chunk.source) ?? 0) + 1)
     }
-    const maxPerSource = Math.ceil(limit / 3)
 
-    for (const r of results) {
-      if (selected.length >= limit) break
+    // Intent-aware diversity cap: catalog/country queries allow more from primary source
+    const maxPerSource =
+      intent === 'catalog_lookup' || intent === 'country_query'
+        ? Math.ceil(effectiveLimit / 2)
+        : Math.ceil(effectiveLimit / 3)
+
+    for (const r of boostedResults) {
+      if (selected.length >= effectiveLimit) break
       if (selectedIds.has(r.id)) continue
 
       const chunk = this.corpusById.get(r.id)
@@ -351,9 +485,9 @@ class RetrievalService {
     }
 
     // Backfill if diversity caps left gaps
-    if (selected.length < limit) {
-      for (const r of results) {
-        if (selected.length >= limit) break
+    if (selected.length < effectiveLimit) {
+      for (const r of boostedResults) {
+        if (selected.length >= effectiveLimit) break
         if (!selectedIds.has(r.id)) addChunk(r.id)
       }
     }
@@ -367,3 +501,4 @@ class RetrievalService {
 }
 
 export const retrievalService = RetrievalService.getInstance()
+export { RetrievalService }
