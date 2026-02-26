@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useNavigate } from 'react-router-dom'
-import { Bot, User } from 'lucide-react'
+import { Bot, User, Copy, Check } from 'lucide-react'
 import clsx from 'clsx'
 import { useChatStore } from '@/store/useChatStore'
 
@@ -16,6 +16,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ sender, content, isStr
   const isUser = sender === 'user'
   const navigate = useNavigate()
   const setOpen = useChatStore((s) => s.setOpen)
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(content)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <div className={clsx('flex gap-2', isUser ? 'flex-row-reverse' : 'flex-row')}>
@@ -34,7 +41,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ sender, content, isStr
 
       <div
         className={clsx(
-          'max-w-[85%] rounded-lg px-3 py-2 text-sm',
+          'group relative max-w-[85%] rounded-lg px-3 py-2 text-sm',
           isUser ? 'bg-primary/15 text-foreground' : 'glass-panel'
         )}
       >
@@ -81,6 +88,18 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ sender, content, isStr
               <span className="inline-block w-1.5 h-4 bg-primary/70 animate-pulse ml-0.5 align-text-bottom" />
             )}
           </div>
+        )}
+
+        {/* Copy button — assistant messages only */}
+        {!isUser && !isStreaming && (
+          <button
+            onClick={handleCopy}
+            className="absolute bottom-1 right-1 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+            aria-label="Copy response"
+            title={copied ? 'Copied!' : 'Copy'}
+          >
+            {copied ? <Check size={12} className="text-status-success" /> : <Copy size={12} />}
+          </button>
         )}
       </div>
     </div>

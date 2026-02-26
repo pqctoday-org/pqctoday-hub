@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   libraryData,
@@ -187,6 +187,15 @@ export const LibraryView: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('cards')
   const [sortBy, setSortBy] = useState<SortOption>('newest')
   const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(null)
+
+  // Sync ?q= param on same-route navigations (e.g. chatbot deep links)
+  useEffect(() => {
+    const q = searchParams.get('q')
+    if (q !== null) {
+      setFilterText(q)
+      setInputValue(q)
+    }
+  }, [searchParams])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSetFilter = useCallback(

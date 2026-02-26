@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   Search,
   AlertTriangle,
@@ -81,6 +81,15 @@ export const ThreatsDashboard: React.FC = () => {
   const [sortField, setSortField] = useState<SortField>('industry')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const [selectedThreat, setSelectedThreat] = useState<ThreatItem | null>(null)
+
+  // Sync ?industry= param on same-route navigations (e.g. chatbot deep links)
+  useEffect(() => {
+    const param = searchParams.get('industry')
+    if (param) {
+      const match = threatsData.find((d) => d.industry.toLowerCase() === param.toLowerCase())
+      if (match) setSelectedIndustries([match.industry]) // eslint-disable-line react-hooks/set-state-in-effect -- URL is external state
+    }
+  }, [searchParams])
 
   // Extract unique industries for filter
   const industryItems = useMemo(() => {

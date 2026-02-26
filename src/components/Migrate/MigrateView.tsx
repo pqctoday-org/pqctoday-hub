@@ -41,14 +41,23 @@ export const MigrateView: React.FC = () => {
     setActiveSubCategory,
   } = useMigrateSelectionStore()
 
-  // Support ?layer= deep link from Tools & Products tab
+  // Sync URL params on same-route navigations (e.g. chatbot deep links)
   useEffect(() => {
     const layerParam = searchParams.get('layer')
     if (layerParam && LAYERS.some((l) => l.id === layerParam)) {
       setActiveLayer(layerParam)
     }
+    const q = searchParams.get('q')
+    if (q !== null) {
+      setFilterText(q)
+      setInputValue(q)
+    }
+    const industry = searchParams.get('industry')
+    if (industry !== null) {
+      setIndustryFilter(industry)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [searchParams])
 
   const activeInfrastructureLayer = activeLayer as InfrastructureLayerType
   const activeTab = activeSubCategory

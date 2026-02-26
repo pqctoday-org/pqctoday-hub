@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -26,6 +26,14 @@ export const TimelineView = () => {
     if (!region || region === 'global') return 'All'
     return `region:${region}`
   })
+
+  // Sync ?country= param on same-route navigations (e.g. chatbot deep links)
+  useEffect(() => {
+    const countryParam = searchParams.get('country')
+    if (countryParam && timelineData?.some((d) => d.countryName === countryParam)) {
+      setSelectedCountry(countryParam) // eslint-disable-line react-hooks/set-state-in-effect -- URL is external state
+    }
+  }, [searchParams])
 
   // Always call hooks first (React rules)
   const ganttData = useMemo(() => {

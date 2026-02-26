@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Search, Briefcase, Building2, School } from 'lucide-react'
 
@@ -16,6 +16,12 @@ export const LeadersGrid = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>('All')
   const [selectedSector, setSelectedSector] = useState<string>('All')
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
+
+  // Sync ?q= param on same-route navigations (e.g. chatbot deep links)
+  useEffect(() => {
+    const q = searchParams.get('q')
+    if (q !== null) setSearchQuery(q) // eslint-disable-line react-hooks/set-state-in-effect -- URL is external state
+  }, [searchParams])
 
   // Extract unique countries
   const countryItems = useMemo(() => {
