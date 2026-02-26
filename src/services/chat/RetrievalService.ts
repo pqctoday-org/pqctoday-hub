@@ -153,6 +153,11 @@ class RetrievalService {
       'priority-matrix',
       'timeline',
       'threats',
+      'leaders',
+      'library',
+      'compliance',
+      'migrate',
+      'authoritative-sources',
     ])
     for (const chunk of this.corpus) {
       if (!prioritySources.has(chunk.source)) continue
