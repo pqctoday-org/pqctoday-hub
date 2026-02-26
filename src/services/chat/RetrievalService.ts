@@ -36,7 +36,7 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
   hybrid: ['hybrid cryptography', 'hybrid key exchange', 'composite'],
   quantum: ['post-quantum cryptography', 'quantum computing', 'Q-Day'],
   'quantum threat': ['quantum computing', 'Q-Day', 'harvest now decrypt later'],
-  tls: ['TLS', 'hybrid key exchange', 'ML-KEM', 'transport layer security'],
+  tls: ['TLS', 'hybrid key exchange', 'ML-KEM', 'transport layer security', 'OpenSSL'],
   pki: ['public key infrastructure', 'certificate', 'X.509'],
   certificate: ['X.509', 'certificate authority', 'PKI', 'certificate signing request'],
 
@@ -82,6 +82,17 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
   industry: ['Private', 'Industry', 'vendor', 'company', 'PQC leader'],
   government: ['Public', 'Government', 'agency', 'PQC leader'],
   organization: ['organization', 'company', 'agency', 'institution', 'PQC leader'],
+
+  // Software products & catalog
+  library: ['Cryptographic Libraries', 'software', 'product', 'OpenSSL', 'Botan'],
+  libraries: ['Cryptographic Libraries', 'software', 'product', 'OpenSSL', 'Botan'],
+  software: ['software', 'product', 'Cryptographic Libraries', 'migrate'],
+  product: ['software', 'product', 'Cryptographic Libraries', 'migrate'],
+  products: ['software', 'product', 'Cryptographic Libraries', 'migrate'],
+  tool: ['software', 'product', 'tool', 'Cryptographic Libraries'],
+  tools: ['software', 'product', 'tool', 'Cryptographic Libraries'],
+  ready: ['PQC Support', 'Yes', 'software', 'product', 'migrate'],
+  'pqc-ready': ['PQC Support', 'Yes', 'software', 'product', 'migrate'],
 
   // Migration readiness
   readiness: ['readiness', 'gap analysis', 'priority matrix', 'migration priority'],
@@ -204,6 +215,14 @@ class RetrievalService {
         const aExisting = this.entityIndex.get(acronymLower) ?? []
         aExisting.push(chunk.id)
         this.entityIndex.set(acronymLower, aExisting)
+      }
+
+      // Index metadata categoryName for migrate/software chunks
+      if (chunk.metadata?.categoryName) {
+        const catLower = chunk.metadata.categoryName.toLowerCase()
+        const catExisting = this.entityIndex.get(catLower) ?? []
+        catExisting.push(chunk.id)
+        this.entityIndex.set(catLower, catExisting)
       }
 
       // Index metadata country and org for timeline/threats chunks
