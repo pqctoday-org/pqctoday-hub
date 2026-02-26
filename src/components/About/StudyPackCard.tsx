@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { BookDown, ExternalLink, Loader2 } from 'lucide-react'
 import { Button } from '../ui/button'
+import { buttonVariants } from '../ui/button-variants'
 import { generateStudyPack } from '@/services/export/StudyPackService'
 
 export const StudyPackCard: React.FC = () => {
@@ -77,16 +78,15 @@ export const StudyPackCard: React.FC = () => {
             </>
           )}
         </Button>
-        <Button variant="outline" className="w-full sm:w-auto" asChild>
-          <a
-            href="https://notebooklm.google.com/notebook/26267ecf-8c93-48c2-91c1-899759bc789b"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ExternalLink size={16} />
-            Open in NotebookLM
-          </a>
-        </Button>
+        <a
+          href="https://notebooklm.google.com/notebook/26267ecf-8c93-48c2-91c1-899759bc789b"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={buttonVariants({ variant: 'outline', className: 'w-full sm:w-auto gap-2' })}
+        >
+          <ExternalLink size={16} />
+          Open in NotebookLM
+        </a>
       </div>
     </motion.div>
   )
