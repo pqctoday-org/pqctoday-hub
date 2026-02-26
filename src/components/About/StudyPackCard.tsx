@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { BookDown, Loader2 } from 'lucide-react'
+import { BookDown, ExternalLink, Loader2 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { generateStudyPack } from '@/services/export/StudyPackService'
 
@@ -58,24 +58,36 @@ export const StudyPackCard: React.FC = () => {
         <li>Authoritative sources and provenance</li>
       </ul>
 
-      <Button
-        variant="gradient"
-        onClick={handleDownload}
-        disabled={isGenerating}
-        className="w-full sm:w-auto"
-      >
-        {isGenerating ? (
-          <>
-            <Loader2 size={16} className="animate-spin" />
-            Generating...
-          </>
-        ) : (
-          <>
-            <BookDown size={16} />
-            Download Study Pack
-          </>
-        )}
-      </Button>
+      <div className="flex flex-wrap gap-3">
+        <Button
+          variant="gradient"
+          onClick={handleDownload}
+          disabled={isGenerating}
+          className="w-full sm:w-auto"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 size={16} className="animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <BookDown size={16} />
+              Download Study Pack
+            </>
+          )}
+        </Button>
+        <Button variant="outline" className="w-full sm:w-auto" asChild>
+          <a
+            href="https://notebooklm.google.com/notebook/26267ecf-8c93-48c2-91c1-899759bc789b"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ExternalLink size={16} />
+            Open in NotebookLM
+          </a>
+        </Button>
+      </div>
     </motion.div>
   )
 }

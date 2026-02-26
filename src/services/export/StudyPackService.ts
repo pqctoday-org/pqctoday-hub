@@ -32,6 +32,7 @@ function generateGlossary(): string {
     md += `## ${cat.charAt(0).toUpperCase() + cat.slice(1)}\n\n`
     for (const t of terms) {
       md += `### ${t.term}${t.acronym ? ` (${t.acronym})` : ''}\n\n`
+      md += `- **Category:** ${cat.charAt(0).toUpperCase() + cat.slice(1)}\n\n`
       md += `${t.definition}\n\n`
       if (t.technicalNote) md += `*Technical Note:* ${t.technicalNote}\n\n`
       md += `*Complexity:* ${t.complexity}\n\n`
@@ -115,6 +116,7 @@ function generateThreats(): string {
     md += `## ${industry}\n\n`
     for (const t of threats) {
       md += `### ${t.description}\n\n`
+      md += `- **Industry:** ${industry}\n`
       md += `- **Criticality:** ${t.criticality}\n`
       md += `- **Cryptography at Risk:** ${t.cryptoAtRisk}\n`
       md += `- **PQC Replacement:** ${t.pqcReplacement}\n`
@@ -181,6 +183,7 @@ function generateMigrate(): string {
     md += `## ${layer}\n\n`
     for (const s of products) {
       md += `### ${s.softwareName}\n\n`
+      md += `- **Infrastructure Layer:** ${layer}\n`
       md += `- **Category:** ${s.categoryName}\n`
       md += `- **PQC Support:** ${s.pqcSupport}\n`
       md += `- **FIPS Validated:** ${s.fipsValidated}\n`
@@ -213,6 +216,7 @@ function generateLeaders(): string {
     md += `## ${cat}\n\n`
     for (const l of leaders) {
       md += `### ${l.name}\n\n`
+      md += `- **Leader Category:** ${cat}\n`
       if (l.title) md += `- **Title:** ${l.title}\n`
       md += `- **Country:** ${l.country}\n`
       md += `- **Organizations:** ${l.organizations.join(', ')}\n`
@@ -262,7 +266,7 @@ function generateQuiz(): string {
     md += `## ${catLabelMap[cat] || cat}\n\n`
     for (const q of questions) {
       md += `### ${q.question}\n\n`
-      md += `*Difficulty:* ${q.difficulty} | *Type:* ${q.type}\n\n`
+      md += `*Category:* ${catLabelMap[cat] || cat} | *Difficulty:* ${q.difficulty} | *Type:* ${q.type}\n\n`
       for (const opt of q.options) {
         const isCorrect = Array.isArray(q.correctAnswer)
           ? q.correctAnswer.includes(opt.id)

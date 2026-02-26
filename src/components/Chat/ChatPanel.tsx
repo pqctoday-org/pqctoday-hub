@@ -86,7 +86,7 @@ export const ChatPanel: React.FC = () => {
     try {
       // Retrieve relevant context
       await retrievalService.initialize()
-      const chunks = retrievalService.search(trimmed, 5)
+      const chunks = retrievalService.search(trimmed, 15)
 
       // Build conversation for API
       const allMessages = [...messages, userMessage]

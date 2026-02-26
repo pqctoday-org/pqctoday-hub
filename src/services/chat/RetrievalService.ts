@@ -23,7 +23,7 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
   'code-based': ['HQC', 'Classic-McEliece', 'code-based'],
 
   // Standards
-  fips: ['FIPS 203', 'FIPS 204', 'FIPS 205', 'ML-KEM', 'ML-DSA', 'SLH-DSA'],
+  fips: ['FIPS 203', 'FIPS 204', 'FIPS 205', 'FIPS 140-3', 'ML-KEM', 'ML-DSA', 'SLH-DSA'],
   nist: ['FIPS 203', 'FIPS 204', 'FIPS 205', 'NIST', 'ML-KEM', 'ML-DSA', 'SLH-DSA'],
   standard: ['FIPS 203', 'FIPS 204', 'FIPS 205', 'standardization'],
   standardization: ['FIPS 203', 'FIPS 204', 'FIPS 205', 'NIST'],
@@ -66,8 +66,22 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
 
   // Certification & compliance
   certification: ['FIPS 140-3', 'ACVP', 'Common Criteria', 'certification', 'validated'],
+  validated: ['FIPS 140-3', 'ACVP', 'Common Criteria', 'certification', 'validated'],
+  certified: ['FIPS 140-3', 'ACVP', 'Common Criteria', 'certification', 'validated'],
+  module: ['cryptographic module', 'FIPS 140-3', 'HSM', 'certification'],
+  'fips 140': ['FIPS 140-3', 'cryptographic module', 'certification', 'validated', 'ACVP'],
+  'fips 140-3': ['FIPS 140-3', 'cryptographic module', 'certification', 'validated', 'ACVP'],
   acvp: ['ACVP', 'algorithm validation', 'CAVP'],
   'common criteria': ['Common Criteria', 'certification', 'protection profile'],
+
+  // Leaders & organizations
+  leader: ['leader', 'contributor', 'researcher', 'organization', 'PQC leader'],
+  leaders: ['leader', 'contributor', 'researcher', 'organization', 'PQC leader'],
+  academic: ['Academic', 'university', 'researcher', 'professor', 'PQC leader'],
+  researcher: ['researcher', 'Academic', 'professor', 'university', 'PQC leader'],
+  industry: ['Private', 'Industry', 'vendor', 'company', 'PQC leader'],
+  government: ['Public', 'Government', 'agency', 'PQC leader'],
+  organization: ['organization', 'company', 'agency', 'institution', 'PQC leader'],
 
   // Migration readiness
   readiness: ['readiness', 'gap analysis', 'priority matrix', 'migration priority'],
