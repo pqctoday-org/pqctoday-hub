@@ -14,11 +14,11 @@ function formatCurrency(amount: number): string {
 // Average per-product migration cost estimates by complexity
 const AVG_MIGRATION_COST_PER_PRODUCT = 75_000
 
-// Industry breach cost baselines (aligned with BreachCostModel)
+// Industry breach cost baselines — IBM Cost of a Data Breach Report 2024
 const INDUSTRY_BREACH_BASELINES: Record<string, number> = {
-  'Finance & Banking': 5_900_000,
-  Healthcare: 10_930_000,
-  'Government & Defense': 4_150_000,
+  'Finance & Banking': 6_080_000,
+  Healthcare: 9_770_000,
+  'Government & Defense': 2_760_000,
   Technology: 4_970_000,
   Telecommunications: 4_290_000,
   'Energy & Utilities': 4_780_000,
@@ -26,7 +26,7 @@ const INDUSTRY_BREACH_BASELINES: Record<string, number> = {
   Aerospace: 4_560_000,
   Automotive: 3_850_000,
   Education: 2_730_000,
-  Other: 4_350_000,
+  Other: 4_880_000,
 }
 
 export const ROICalculator: React.FC = () => {
@@ -234,15 +234,20 @@ export const ROICalculator: React.FC = () => {
             {formatCurrency(
               INDUSTRY_BREACH_BASELINES[data.industry] ?? INDUSTRY_BREACH_BASELINES['Other']
             )}
-            ) multiplied by a 2.5x quantum amplification factor, scaled by your breach avoidance
-            score.
+            , source: IBM Cost of a Data Breach Report 2024) multiplied by a 2.5&times; quantum
+            amplification factor, scaled by your breach avoidance score. The 2.5&times; multiplier
+            reflects the combined effect of HNDL exposure (retroactive decryption of
+            already-harvested data), increased attacker sophistication once a CRQC is available, and
+            extended breach detection timelines. This is an illustrative educational estimate;
+            actual multipliers depend on data sensitivity, retention periods, and threat actor
+            capabilities.
           </p>
           <p>
             <strong>Compliance savings:</strong> Based on average regulatory penalty exposure of
             $2M, scaled by applicable framework coverage.
           </p>
           <p>
-            <strong>ROI:</strong> (3-year total benefit - migration cost) / migration cost.
+            <strong>ROI:</strong> (3-year total benefit &minus; migration cost) / migration cost.
           </p>
           <p className="text-xs italic mt-2">
             Note: These are educational estimates for planning purposes. Actual costs vary

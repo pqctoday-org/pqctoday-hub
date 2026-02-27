@@ -113,7 +113,6 @@ function industryChip(industry: string): string {
     Automotive: 'Auto',
     Aerospace: 'Aero',
     'Retail & E-Commerce': 'Retail',
-    Education: 'Edu',
   }
   // eslint-disable-next-line security/detect-object-injection
   return map[industry] ?? industry

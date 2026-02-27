@@ -823,15 +823,6 @@ function generateExtendedActions(
         relatedModule: '/compliance',
       },
     ],
-    Education: [
-      {
-        action:
-          'Assess research data repositories and student records systems for long-term encryption — FERPA-protected data has multi-decade retention requirements.',
-        category: 'short-term',
-        effort: 'low',
-        relatedModule: buildThreatsUrl('Education'),
-      },
-    ],
   }
   const industryActions = INDUSTRY_ACTIONS[input.industry]
   if (industryActions) {

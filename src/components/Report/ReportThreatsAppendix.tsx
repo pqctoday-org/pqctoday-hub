@@ -22,6 +22,7 @@ export const ASSESS_TO_THREATS_INDUSTRY: Record<string, string[]> = {
     'IT Industry / Software',
     'Internet of Things (IoT)',
     'Media / Entertainment / DRM',
+    'Supply Chain / Logistics',
   ],
   'Energy & Utilities': [
     'Energy / Critical Infrastructure',
@@ -30,12 +31,7 @@ export const ASSESS_TO_THREATS_INDUSTRY: Record<string, string[]> = {
   ],
   Automotive: ['Automotive / Connected Vehicles'],
   Aerospace: ['Aerospace / Aviation'],
-  'Retail & E-Commerce': [
-    'Retail / E-Commerce',
-    'Payment Card Industry',
-    'Supply Chain / Logistics',
-  ],
-  Education: [],
+  'Retail & E-Commerce': ['Retail / E-Commerce', 'Payment Card Industry'],
   Other: [],
 }
 

@@ -80,22 +80,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Chatbot hardening</strong> &mdash; timeout
-                    errors now surface clearly; oversized inputs are capped at 1,000 characters
+                    <strong className="text-foreground">Threats × Learn links</strong> &mdash; every
+                    threat card now shows &ldquo;Learn More&rdquo; chips linking to relevant modules
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Data refresh</strong> &mdash; library,
-                    compliance, and quantum-safe software catalogs updated for March 2026
+                    <strong className="text-foreground">Industry coverage expanded</strong> &mdash;
+                    Cloud, IoT, PCI, Insurance, Supply Chain, Rail, and 4 more threat sectors now
+                    reachable from the landing page industry filter
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">CSV integrity checks</strong> &mdash; new
-                    validator ensures compliance ↔ library cross-references stay accurate
+                    <strong className="text-foreground">Source quality upgrade</strong> &mdash; 27
+                    threat references upgraded to specific document pages; executive module data
+                    refreshed from 2024 sources
                   </span>
                 </li>
               </ul>

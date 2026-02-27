@@ -69,8 +69,7 @@ export const ThreatsDashboard: React.FC = () => {
     return (
       storeIndustries
         // eslint-disable-next-line security/detect-object-injection
-        .map((ind) => INDUSTRY_TO_THREATS_MAP[ind])
-        .filter((v): v is string => v !== null)
+        .flatMap((ind) => INDUSTRY_TO_THREATS_MAP[ind] ?? [])
         .filter((mapped) => threatsData.some((d) => d.industry === mapped))
     )
   }, [searchParams, storeIndustries])

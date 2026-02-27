@@ -78,7 +78,7 @@ const JOURNEY_STEPS: JourneyStep[] = [
     icon: GraduationCap,
     color: 'text-secondary',
     description:
-      '25 interactive modules across 6 tracks + 440-question quiz — from PQC fundamentals to executive decision-making',
+      '25 interactive modules across 6 tracks + 470-question quiz — from PQC fundamentals to executive decision-making',
     paths: ['/learn'],
   },
   {
@@ -236,7 +236,8 @@ export const LandingView = () => {
           className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
         >
           Explore global migration timelines, test real PQC algorithms in your browser, assess your
-          risk, and build a roadmap — all from a single open-source platform.
+          risk, and get instant answers from our AI assistant — all from a single open-source
+          platform.
         </motion.p>
 
         <motion.div

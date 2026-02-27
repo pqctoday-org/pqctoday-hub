@@ -19,6 +19,8 @@ Government,GOV-001,Simple description,High,RSA,ML-DSA,Source 2`
       pqcReplacement: 'ML-KEM',
       mainSource: 'Source 1',
       sourceUrl: '',
+      accuracyPct: undefined,
+      relatedModules: [],
     })
     expect(result[1]).toEqual({
       industry: 'Government',
@@ -29,6 +31,8 @@ Government,GOV-001,Simple description,High,RSA,ML-DSA,Source 2`
       pqcReplacement: 'ML-DSA',
       mainSource: 'Source 2',
       sourceUrl: '',
+      accuracyPct: undefined,
+      relatedModules: [],
     })
   })
 

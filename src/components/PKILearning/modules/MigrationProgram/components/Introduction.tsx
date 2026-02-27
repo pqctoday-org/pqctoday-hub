@@ -43,13 +43,13 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             continuous stakeholder alignment.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-            <blockquote className="text-sm italic text-foreground/90">
-              &ldquo;Migrating to post-quantum cryptography is as much an organizational challenge
-              as it is a technical one. Agencies should establish a dedicated migration program with
-              clear governance, milestones, and reporting structures.&rdquo;
-            </blockquote>
+            <p className="text-sm text-foreground/90">
+              Migrating to post-quantum cryptography is as much an organizational challenge as it is
+              a technical one. Agencies and enterprises should establish a dedicated migration
+              program with clear governance, milestones, and reporting structures.
+            </p>
             <p className="text-xs text-muted-foreground mt-2">
-              &mdash; CISA Post-Quantum Cryptography Initiative, 2024
+              Aligned with CISA Post-Quantum Cryptography Initiative guidance (cisa.gov/pqc)
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

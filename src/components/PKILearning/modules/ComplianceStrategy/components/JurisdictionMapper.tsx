@@ -104,7 +104,7 @@ function detectConflicts(
   if (hasUS && hasEU) {
     conflicts.push({
       description:
-        'CNSA 2.0 specifies ML-KEM-1024 and ML-DSA-87 minimum levels, while ANSSI/BSI recommend hybrid classical+PQC approaches. Ensure your deployment satisfies both the algorithm-level and hybrid requirements.',
+        'CNSA 2.0 requires ML-KEM-1024 and ML-DSA-87 minimum security levels for U.S. NSS. ANSSI/BSI recommend a hybrid classical+PQC approach during transition. These requirements are compatible: deploy hybrid mode at CNSA 2.0 minimum security levels to satisfy both.',
       jurisdictions: ['United States', 'EU/ANSSI/BSI'],
       severity: 'medium',
     })

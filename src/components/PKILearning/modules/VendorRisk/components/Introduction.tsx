@@ -92,7 +92,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">Key Dimensions</div>
               <ul className="text-xs text-muted-foreground space-y-1">
-                <li>&bull; PQC algorithm support (ML-KEM, ML-DSA, SLH-DSA)</li>
+                <li>
+                  &bull; PQC algorithm support (ML-KEM/FIPS&nbsp;203, ML-DSA/FIPS&nbsp;204,
+                  SLH-DSA/FIPS&nbsp;205)
+                </li>
                 <li>&bull; FIPS 140-3 validation status</li>
                 <li>&bull; Published PQC migration roadmap</li>
                 <li>&bull; Crypto agility capability</li>

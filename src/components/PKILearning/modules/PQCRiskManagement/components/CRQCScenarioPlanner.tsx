@@ -82,17 +82,17 @@ const ALGORITHMS: AlgorithmImpact[] = [
     breakYear: null,
     replacement: 'No change needed',
     notes:
-      'Grover\u2019s reduces collision resistance but pre-image remains strong. Considered quantum-safe.',
+      'Grover\u2019s reduces preimage resistance from 2\u00b2\u2075\u2076 to \u223c2\u00b9\u00b2\u2078 and collision resistance to \u223c2\u2078\u2075. NIST considers this sufficient; SHA-256 is quantum-safe per NIST IR 8547.',
   },
 ]
 
 const COMPLIANCE_DEADLINES = [
-  { framework: 'CNSA 2.0 \u2014 Software/Firmware', year: 2030 },
-  { framework: 'CNSA 2.0 \u2014 Networking (TLS/IPsec)', year: 2030 },
-  { framework: 'CNSA 2.0 \u2014 Legacy Infrastructure', year: 2033 },
-  { framework: 'NIST \u2014 RSA/ECC Deprecation', year: 2030 },
-  { framework: 'NIST \u2014 RSA/ECC Disallowed', year: 2035 },
-  { framework: 'EU/ANSSI \u2014 PQC Guidance', year: 2030 },
+  { framework: 'CNSA 2.0 \u2014 Software/Firmware Signing', year: 2025, advisory: false },
+  { framework: 'CNSA 2.0 \u2014 Web/Cloud/Networking (TLS/IPsec)', year: 2030, advisory: false },
+  { framework: 'CNSA 2.0 \u2014 Legacy Infrastructure', year: 2033, advisory: false },
+  { framework: 'NIST \u2014 RSA/ECC Deprecation (NIST IR 8547)', year: 2030, advisory: false },
+  { framework: 'NIST \u2014 RSA/ECC Disallowed (NIST IR 8547)', year: 2035, advisory: false },
+  { framework: 'EU/ANSSI \u2014 PQC Guidance (advisory)', year: 2030, advisory: true },
 ]
 
 export const CRQCScenarioPlanner: React.FC = () => {
@@ -295,35 +295,41 @@ export const CRQCScenarioPlanner: React.FC = () => {
                 <div
                   key={deadline.framework}
                   className={`p-3 rounded-lg border ${
-                    isPast
-                      ? 'bg-status-error/5 border-status-error/20'
-                      : isMissed
-                        ? 'bg-status-warning/5 border-status-warning/20'
-                        : 'bg-muted/50 border-border'
+                    deadline.advisory
+                      ? 'bg-muted/30 border-dashed border-border/60'
+                      : isPast
+                        ? 'bg-status-error/5 border-status-error/20'
+                        : isMissed
+                          ? 'bg-status-warning/5 border-status-warning/20'
+                          : 'bg-muted/50 border-border'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2">
                     <span className="text-sm font-medium text-foreground">
                       {deadline.framework}
                     </span>
                     <span
-                      className={`text-xs px-2 py-0.5 rounded ${
-                        isPast
-                          ? 'bg-status-error/10 text-status-error'
-                          : isMissed
-                            ? 'bg-status-warning/10 text-status-warning'
-                            : 'bg-status-success/10 text-status-success'
+                      className={`text-xs px-2 py-0.5 rounded shrink-0 ${
+                        deadline.advisory
+                          ? 'bg-muted text-muted-foreground'
+                          : isPast
+                            ? 'bg-status-error/10 text-status-error'
+                            : isMissed
+                              ? 'bg-status-warning/10 text-status-warning'
+                              : 'bg-status-success/10 text-status-success'
                       }`}
                     >
                       {deadline.year}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {isPast
-                      ? 'Already in effect \u2014 non-compliance risk is active'
-                      : isMissed
-                        ? `Due before CRQC arrival (${crqcYear - deadline.year} years before)`
-                        : `Due after estimated CRQC (${deadline.year - crqcYear} years after)`}
+                    {deadline.advisory
+                      ? 'Non-binding guidance \u2014 no legislative mandate'
+                      : isPast
+                        ? 'Already in effect \u2014 non-compliance risk is active'
+                        : isMissed
+                          ? `Due before CRQC arrival (${crqcYear - deadline.year} years before)`
+                          : `Due after estimated CRQC (${deadline.year - crqcYear} years after)`}
                   </p>
                 </div>
               )

@@ -99,7 +99,10 @@ function buildSections(
                 { value: 'ML-KEM-768', label: 'ML-KEM-768 (FIPS 203)' },
                 { value: 'ML-KEM-1024', label: 'ML-KEM-1024 (FIPS 203)' },
                 { value: 'X25519MLKEM768', label: 'X25519MLKEM768 (Hybrid)' },
-                { value: 'FrodoKEM-1344', label: 'FrodoKEM-1344-SHAKE (conservative)' },
+                {
+                  value: 'FrodoKEM-1344',
+                  label: 'FrodoKEM-1344-SHAKE (NIST IR 8413 candidate — pre-standard)',
+                },
               ],
               defaultValue: ['ML-KEM-768', 'ML-KEM-1024'],
             },
@@ -122,21 +125,42 @@ function buildSections(
         {
           id: 'prohibited-algorithms',
           title: 'Prohibited Algorithms',
-          description: 'Algorithms that must be migrated away from.',
+          description:
+            'Algorithms disallowed for new deployments. Existing uses must be migrated according to the timeline policy.',
           fields: [
             {
               id: 'prohibited-list',
-              label: 'Prohibited for New Deployments',
+              label: 'Prohibited for New Deployments (quantum-vulnerable)',
               type: 'checklist',
               options: [
                 { value: 'RSA-2048', label: 'RSA < 3072 bits' },
-                { value: 'ECDSA', label: 'ECDSA (all curves)' },
-                { value: 'ECDH', label: 'ECDH (all curves)' },
+                {
+                  value: 'ECDSA',
+                  label: 'ECDSA (all curves) — vulnerable to Shor\u2019s algorithm',
+                },
+                { value: 'ECDH', label: 'ECDH (all curves) — vulnerable to Shor\u2019s algorithm' },
                 { value: 'DH', label: 'Diffie-Hellman (finite field)' },
-                { value: 'Ed25519', label: 'Ed25519 / Ed448' },
                 { value: 'DSA', label: 'DSA' },
               ],
               defaultValue: ['RSA-2048', 'DSA'],
+            },
+            {
+              id: 'migration-required',
+              label:
+                'Quantum-Vulnerable \u2014 Migration Required (FIPS-approved but not quantum-safe)',
+              type: 'checklist',
+              options: [
+                {
+                  value: 'Ed25519',
+                  label:
+                    'Ed25519 (FIPS 186-5 approved, but vulnerable to Shor\u2019s algorithm \u2014 must migrate before CRQC)',
+                },
+                {
+                  value: 'Ed448',
+                  label:
+                    'Ed448 (FIPS 186-5 approved, but vulnerable to Shor\u2019s algorithm \u2014 must migrate before CRQC)',
+                },
+              ],
             },
           ],
         },

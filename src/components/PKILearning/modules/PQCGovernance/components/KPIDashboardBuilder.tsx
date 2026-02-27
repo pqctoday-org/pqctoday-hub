@@ -44,7 +44,8 @@ export const KPIDashboardBuilder: React.FC = () => {
       {
         id: 'compliance-gaps',
         label: 'Compliance Gaps Closed',
-        description: 'Percentage of identified compliance gaps addressed (FIPS, CMMC, ANSSI, BSI).',
+        description:
+          'Percentage of identified compliance requirements addressed (FIPS, CMMC) and agency guidance recommendations followed (ANSSI, BSI).',
         weight: 0.2,
         autoScore: 0,
         userOverride: true,

@@ -100,8 +100,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 The Commercial National Security Algorithm Suite 2.0 mandates PQC adoption for
                 National Security Systems. Key deadlines: software/firmware signing by 2025,
                 web/cloud/networking by 2030, legacy systems by 2033. Requires{' '}
-                <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>-1024 and{' '}
-                <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>-87 as minimum security levels.
+                <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>-1024 (FIPS&nbsp;203) and{' '}
+                <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>-87 (FIPS&nbsp;204) as minimum
+                security levels.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -124,9 +125,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               </div>
               <p className="text-xs text-muted-foreground">
                 European bodies have published PQC migration guidance. ANSSI recommends hybrid
-                cryptography combining classical and PQC algorithms. BSI endorses ML-KEM and ML-DSA
-                with specific parameter recommendations. ETSI provides interoperability guidance for
-                hybrid key exchanges.
+                cryptography combining classical and PQC algorithms. BSI endorses ML-KEM
+                (FIPS&nbsp;203) and ML-DSA (FIPS&nbsp;204) with specific parameter recommendations.
+                ETSI provides interoperability guidance for hybrid key exchanges.
               </p>
             </div>
           </div>
@@ -193,23 +194,23 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             {[
               {
                 year: '2025',
-                event: 'CNSA 2.0 software/firmware signing',
+                event: 'CNSA 2.0 software/firmware signing for NSS',
                 source: 'NSA',
               },
               {
-                year: '2027',
-                event: 'NIST begins deprecating RSA/ECC in new standards',
+                year: '2024',
+                event: 'NIST IR 8547 published — official PQC transition guidance',
                 source: 'NIST',
               },
               {
-                year: '2028',
-                event: 'ANSSI hybrid mandate for government systems',
-                source: 'ANSSI',
+                year: '2030',
+                event: 'CNSA 2.0 web/cloud/networking; NIST RSA/ECC deprecated (NIST IR 8547)',
+                source: 'NSA/NIST',
               },
               {
                 year: '2030',
-                event: 'CNSA 2.0 web/cloud/networking; NIST RSA/ECC deprecated',
-                source: 'NSA/NIST',
+                event: 'ANSSI recommends full PQC migration for sensitive government systems',
+                source: 'ANSSI (advisory)',
               },
               {
                 year: '2033',
@@ -218,7 +219,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               },
               {
                 year: '2035',
-                event: 'NIST RSA/ECC disallowed',
+                event: 'NIST RSA/ECC disallowed (NIST IR 8547)',
                 source: 'NIST',
               },
             ].map((item) => (

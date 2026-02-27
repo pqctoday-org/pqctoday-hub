@@ -143,7 +143,7 @@ export const RoadmapBuilder: React.FC = () => {
         title="PQC Migration Roadmap"
         initialMilestones={DEFAULT_MILESTONES}
         deadlines={externalDeadlines}
-        yearRange={[2025, 2036]}
+        yearRange={[2025, Math.max(2036, new Date().getFullYear() + 10)] as [number, number]}
         categories={DEFAULT_CATEGORIES}
         onMilestonesChange={setCurrentMilestones}
       />

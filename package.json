@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "2.0.1",
+  "version": "2.1.0",
   "license": "GPL-3.0",
   "type": "module",
   "engines": {
@@ -39,7 +39,9 @@
     "validate:references": "tsx scripts/validate-references.ts",
     "validate:csv-refs": "tsx scripts/validate-csv-refs.ts",
     "download:timeline": "node scripts/download-timeline.js",
-    "download:timeline:dry": "node scripts/download-timeline.js --dry-run"
+    "download:timeline:dry": "node scripts/download-timeline.js --dry-run",
+    "download:threats": "node scripts/download-threats.js",
+    "download:threats:dry": "node scripts/download-threats.js --dry-run"
   },
   "dependencies": {
     "@noble/curves": "^2.0.1",

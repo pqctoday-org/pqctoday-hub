@@ -1,7 +1,8 @@
 import React from 'react'
-import { ShieldAlert, X, Lock, Cpu, ExternalLink } from 'lucide-react'
+import { ShieldAlert, X, Lock, Cpu, ExternalLink, BookOpen } from 'lucide-react'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
+import { MODULE_CATALOG } from '../PKILearning/moduleData'
 
 interface ThreatDetailDialogProps {
   threat: ThreatItem
@@ -101,6 +102,30 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                 <ExternalLink size={14} />
                 {threat.mainSource || 'View Source'}
               </a>
+            </div>
+          )}
+
+          {threat.relatedModules && threat.relatedModules.length > 0 && (
+            <div className="pt-4 border-t border-border">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+                <BookOpen size={14} /> Learn More
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {threat.relatedModules.map((slug) => {
+                  const mod = MODULE_CATALOG[slug]
+                  if (!mod) return null
+                  return (
+                    <a
+                      key={slug}
+                      href={`/learn/${slug}`}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+                    >
+                      <BookOpen size={11} />
+                      {mod.title}
+                    </a>
+                  )
+                })}
+              </div>
             </div>
           )}
         </div>

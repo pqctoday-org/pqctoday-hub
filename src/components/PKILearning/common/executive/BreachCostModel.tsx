@@ -13,7 +13,6 @@ const INDUSTRY_BREACH_COSTS: Record<string, { perRecord: number; avgTotal: numbe
   'Retail & E-Commerce': { perRecord: 165, avgTotal: 3280000 },
   Aerospace: { perRecord: 198, avgTotal: 4560000 },
   Automotive: { perRecord: 175, avgTotal: 3850000 },
-  Education: { perRecord: 155, avgTotal: 2730000 },
   Other: { perRecord: 165, avgTotal: 4350000 },
 }
 

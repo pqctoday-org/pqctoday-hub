@@ -155,20 +155,31 @@ export const ALWAYS_VISIBLE_PATHS = ['/', '/learn', '/timeline', '/threats', '/a
 /**
  * Maps AVAILABLE_INDUSTRIES names (used in Assessment + store) to the
  * exact industry strings used in the threats CSV data.
- * null = no matching threat category.
+ * Empty array = no matching threat category.
+ * Multiple values = fold those CSV industries under this landing-page category.
  */
-export const INDUSTRY_TO_THREATS_MAP: Record<string, string | null> = {
-  'Finance & Banking': 'Financial Services / Banking',
-  'Government & Defense': 'Government / Defense',
-  Healthcare: 'Healthcare / Pharmaceutical',
-  Telecommunications: 'Telecommunications',
-  Technology: 'IT Industry / Software',
-  'Energy & Utilities': 'Energy / Critical Infrastructure',
-  Automotive: 'Automotive / Connected Vehicles',
-  Aerospace: 'Aerospace / Aviation',
-  'Retail & E-Commerce': 'Retail / E-Commerce',
-  Education: null,
-  Other: null,
+export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
+  'Finance & Banking': [
+    'Financial Services / Banking',
+    'Insurance',
+    'Payment Card Industry',
+    'Cryptocurrency / Blockchain',
+  ],
+  'Government & Defense': ['Government / Defense', 'Legal / Notary / eSignature'],
+  Healthcare: ['Healthcare / Pharmaceutical'],
+  Telecommunications: ['Telecommunications'],
+  Technology: [
+    'IT Industry / Software',
+    'Cloud Computing / Data Centers',
+    'Internet of Things (IoT)',
+    'Media / Entertainment / DRM',
+    'Supply Chain / Logistics',
+  ],
+  'Energy & Utilities': ['Energy / Critical Infrastructure', 'Water / Wastewater'],
+  Automotive: ['Automotive / Connected Vehicles', 'Rail / Transit'],
+  Aerospace: ['Aerospace / Aviation'],
+  'Retail & E-Commerce': ['Retail / E-Commerce'],
+  Other: [],
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────

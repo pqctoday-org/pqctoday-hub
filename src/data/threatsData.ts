@@ -8,6 +8,7 @@ export interface ThreatData {
   mainSource: string
   sourceUrl: string
   accuracyPct?: number
+  relatedModules: string[]
   status?: 'New' | 'Updated'
 }
 
@@ -102,7 +103,8 @@ export function parseThreatsCSV(csvContent: string): ThreatData[] {
     }
 
     return dataLines.map((line) => {
-      // Columns: industry,threat_id,threat_description,criticality,crypto_at_risk,pqc_replacement,main_source,source_url,accuracy_pct
+      // Columns: industry,threat_id,threat_description,criticality,crypto_at_risk,
+      //          pqc_replacement,main_source,source_url,accuracy_pct,related_modules
       const [
         industry,
         threatId,
@@ -113,6 +115,7 @@ export function parseThreatsCSV(csvContent: string): ThreatData[] {
         mainSource,
         sourceUrl,
         accuracyPct,
+        relatedModulesRaw,
       ] = parseLine(line)
 
       return {
@@ -125,6 +128,13 @@ export function parseThreatsCSV(csvContent: string): ThreatData[] {
         mainSource: mainSource?.replace(/^"|"$/g, '') || '',
         sourceUrl: sourceUrl?.replace(/^"|"$/g, '') || '',
         accuracyPct: accuracyPct ? parseInt(accuracyPct.replace(/^"|"$/g, '')) : undefined,
+        relatedModules: relatedModulesRaw
+          ? relatedModulesRaw
+              .replace(/^"|"$/g, '')
+              .split('|')
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : [],
       }
     })
   } catch (error) {

@@ -4,6 +4,61 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2026-02-27
+
+### Added
+
+- **Threats × Learn cross-reference**: Each threat card now shows "Learn More" module chips
+  linking directly to relevant learning modules. All 79 threats mapped to 1–4 module slugs via
+  new `related_modules` column in the threats CSV.
+
+- **Full industry threat coverage**: `INDUSTRY_TO_THREATS_MAP` expanded from `string | null`
+  to `string[]`, folding 10 previously invisible threat industries (Cloud Computing, IoT,
+  Insurance, Payment Card Industry, Legal/eSignature, Media/DRM, Supply Chain, Rail/Transit,
+  Cryptocurrency/Blockchain, Water/Wastewater) into existing landing-page categories. Selecting
+  "Finance & Banking" now surfaces PCI, Insurance, and Crypto threats; "Technology" surfaces
+  Cloud, IoT, Media, and Supply Chain threats; "Energy & Utilities" surfaces Water/Wastewater
+  threats; "Automotive" surfaces Rail/Transit threats.
+
+- **Threats reference downloader** (`scripts/download-threats.js`): New Node.js script mirrors
+  the library and timeline downloaders — reads `source_url` from the latest threats CSV, skips
+  generic portals and paywalls, caches to `public/threats/`, writes `manifest.json`. Run via
+  `npm run download:threats` (or `download:threats:dry` for a dry run).
+
+### Changed
+
+- **Threat source references upgraded**: 27 threats upgraded from generic organization homepage
+  URLs to specific document/standard pages (e.g., `rtca.org` → `rtca.org/security/`,
+  `dcsa.org` → `dcsa.org/standards/bill-of-lading`). `accuracy_pct` raised from 70% to
+  75–80% for all 27 entries. New CSV: `quantum_threats_hsm_industries_02282026.csv`.
+
+- **Threat source URL corrections** (accuracy verification pass): Fixed TELCO-002 GSMA URL,
+  CROSS-001/003 IBM IBV report URL, MEDIA-003 DVB CA standards URL, CLOUD-004 CSRC URL format,
+  IOT-004 source title mismatch.
+
+- **Education removed from all touchpoints**: Industry option removed from the landing page
+  personalization panel, assessment wizard, compliance abbreviation map, breach cost model, and
+  scenario simulator. It had no matching threat data and produced empty report sections.
+
+- **Executive module accuracy improvements**:
+  - ROI Calculator breach cost baselines refreshed from IBM Cost of Data Breach Report 2024
+    (Healthcare: $10.93M → $9.77M; Finance: $5.9M → $6.08M; Government: $4.15M → $2.76M).
+  - Policy Template Generator: FrodoKEM label corrected to "(NIST IR 8413 candidate —
+    pre-standard)"; Ed25519/Ed448 moved from "prohibited" to "migration required" with
+    FIPS 186-5 + Shor's algorithm notes.
+  - CRQC Scenario Planner: SHA-256 Grover analysis expanded with precise bit-security figures
+    citing NIST IR 8547; compliance deadline array updated with 2025 CNSA 2.0 software/firmware
+    entry and advisory flags for EU/ANSSI guidance.
+  - Vendor Risk contract clause deadline options revised to match CNSA 2.0 timeline accurately.
+  - Compliance Strategy Introduction: FIPS numbers added to CNSA 2.0 and BSI descriptions;
+    key dates table updated (2024 NIST IR 8547, 2030 ANSSI advisory).
+  - Migration Program Introduction: CISA quote converted to attributed prose.
+
+- **ComplianceTimelineBuilder + RoadmapBuilder**: Year range upper bound now dynamic
+  (`Math.max(2036, currentYear + 10)`) — always extends at least 10 years into the future.
+
+- **Quiz question count**: Landing page learn step updated to reflect 470 questions.
+
 ## [2.0.1] - 2026-03-26
 
 ### Added

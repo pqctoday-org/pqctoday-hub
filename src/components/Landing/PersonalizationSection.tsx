@@ -6,8 +6,8 @@ import {
   Code,
   Cpu,
   Factory,
-  GraduationCap,
   Globe,
+  GraduationCap,
   HeartPulse,
   Landmark,
   Layers,
@@ -44,7 +44,6 @@ const INDUSTRY_ICONS: Record<string, LucideIcon> = {
   Automotive: Car,
   Aerospace: Plane,
   'Retail & E-Commerce': ShoppingCart,
-  Education: GraduationCap,
   Other: Layers,
 }
 

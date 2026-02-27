@@ -168,7 +168,7 @@ export const ComplianceTimelineBuilder: React.FC = () => {
         title="Compliance Timeline"
         initialMilestones={[]}
         deadlines={externalDeadlines}
-        yearRange={[2025, 2036]}
+        yearRange={[2025, Math.max(2036, new Date().getFullYear() + 10)] as [number, number]}
         categories={['Assessment', 'Remediation', 'Certification', 'Reporting', 'Renewal']}
         onMilestonesChange={handleMilestonesChange}
       />
