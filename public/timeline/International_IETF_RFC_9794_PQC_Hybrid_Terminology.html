@@ -1,0 +1,2226 @@
+
+<!DOCTYPE html>
+<html lang="en" class="RFC">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>RFC 9794: Terminology for Post-Quantum Traditional Hybrid Schemes</title>
+<meta content="Florence Driscoll" name="author">
+<meta content="Michael Parsons" name="author">
+<meta content="Britta Hale" name="author">
+<meta content="
+       One aspect of the transition to post-quantum algorithms in
+      cryptographic protocols is the development of hybrid schemes that
+      incorporate both post-quantum and traditional asymmetric algorithms.
+      This document defines terminology for such schemes.  It is intended to
+      be used as a reference and, hopefully, to ensure consistency and clarity
+      across different protocols, standards, and organisations. 
+    " name="description">
+<meta content="xml2rfc 3.28.1" name="generator">
+<meta content="cryptography" name="keyword">
+<meta content="quantum-safe" name="keyword">
+<meta content="pqc" name="keyword">
+<meta content="composite" name="keyword">
+<meta content="9794" name="rfc.number">
+<!-- Generator version information:
+  xml2rfc 3.28.1
+    Python 3.9.15
+    ConfigArgParse 1.5.3
+    google-i18n-address 3.0.0
+    intervaltree 3.1.0
+    Jinja2 3.1.2
+    lxml 5.3.0
+    platformdirs 3.8.0
+    pycountry 22.3.5
+    PyYAML 6.0
+    requests 2.28.0
+    setuptools 44.1.1
+    six 1.16.0
+    wcwidth 0.2.5
+    weasyprint 65.0
+-->
+<link href="rfc9794.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">/*
+
+  NOTE: Changes at the bottom of this file overrides some earlier settings.
+
+  Once the style has stabilized and has been adopted as an official RFC style,
+  this can be consolidated so that style settings occur only in one place, but
+  for now the contents of this file consists first of the initial CSS work as
+  provided to the RFC Formatter (xml2rfc) work, followed by itemized and
+  commented changes found necessary during the development of the v3
+  formatters.
+
+*/
+
+/* fonts */
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans'); /* Sans-serif */
+@import url('https://fonts.googleapis.com/css?family=Noto+Serif'); /* Serif (print) */
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono'); /* Monospace */
+
+:root {
+  --font-sans: 'Noto Sans', Arial, Helvetica, sans-serif;
+  --font-serif: 'Noto Serif', 'Times', 'Times New Roman', serif;
+  --font-mono: 'Roboto Mono', Courier, 'Courier New', monospace;
+}
+
+@viewport {
+  zoom: 1.0;
+}
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1.0;
+}
+/* general and mobile first */
+html {
+}
+body {
+  max-width: 90%;
+  margin: 1.5em auto;
+  color: #222;
+  background-color: #fff;
+  font-size: 14px;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  scroll-behavior: smooth;
+  overflow-wrap: break-word;
+}
+.ears {
+  display: none;
+}
+
+/* headings */
+#title, h1, h2, h3, h4, h5, h6 {
+  margin: 1em 0 0.5em;
+  font-weight: bold;
+  line-height: 1.3;
+}
+#title {
+  clear: both;
+  border-bottom: 1px solid #ddd;
+  margin: 0 0 0.5em 0;
+  padding: 1em 0 0.5em;
+}
+.author {
+  padding-bottom: 4px;
+}
+h1 {
+  font-size: 26px;
+  margin: 1em 0;
+}
+h2 {
+  font-size: 22px;
+  margin-top: -20px;  /* provide offset for in-page anchors */
+  padding-top: 33px;
+}
+h3 {
+  font-size: 18px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h4 {
+  font-size: 16px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h5, h6 {
+  font-size: 14px;
+}
+#n-copyright-notice {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+/* general structure */
+p {
+  padding: 0;
+  margin: 0 0 1em 0;
+  text-align: left;
+}
+div, span {
+  position: relative;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+svg[font-family~="serif" i], svg [font-family~="serif" i] {
+  font-family: var(--font-serif);
+}
+svg[font-family~="sans-serif" i], svg [font-family~="sans-serif" i] {
+  font-family: var(--font-sans);
+}
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  display: table;
+  border: none;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 1em 2em;
+}
+ol ol, ul ul, ol ul, ul ol {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+ul.ulBare, li.ulBare {
+  margin-left: 0em !important;
+}
+ul.compact, .ulCompact,
+ol.compact, .olCompact {
+  line-height: 100%;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+}
+/* 
+dl.nohang > dt {
+  float: none;
+}
+*/
+dl > dd {
+  margin-bottom: .8em;
+  min-height: 1.3em;
+}
+dl.compact > dd, .dlCompact > dd {
+  margin-bottom: 0em;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
+
+/* links */
+a {
+  text-decoration: none;
+}
+a[href] {
+  color: #22e; /* Arlen: WCAG 2019 */
+}
+a[href]:hover {
+  background-color: #f2f2f2;
+}
+figcaption a[href],
+a[href].selfRef {
+  color: #222;
+}
+/* XXX probably not this:
+a.selfRef:hover {
+  background-color: transparent;
+  cursor: default;
+} */
+
+/* Figures */
+tt, code, pre {
+  background-color: #f9f9f9;
+  font-family: var(--font-mono);
+}
+pre {
+  border: 1px solid #eee;
+  margin: 0;
+  padding: 1em;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption {
+  font-style: italic;
+  margin: 0 0 1em 0;
+}
+@media screen {
+  pre {
+    overflow-x: auto;
+    max-width: 100%;
+    max-width: calc(100% - 22px);
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 1.2em 2em;
+}
+blockquote {
+  background-color: #f9f9f9;
+  color: #111; /* Arlen: WCAG 2019 */
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin: 1em 0;
+}
+blockquote > *:last-child {
+  margin-bottom: 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+.xref {
+  overflow-wrap: normal;
+}
+
+/* tables */
+table {
+  width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5em 0.75em;
+}
+th {
+  text-align: left;
+  background-color: #e9e9e9;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f5f5f5;
+}
+table caption {
+  font-style: italic;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+table p {
+  /* XXX to avoid bottom margin on table row signifiers. If paragraphs should
+     be allowed within tables more generally, it would be far better to select on a class. */
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  color: #666; /* Arlen: AHDJ 2019 */
+  text-decoration: none;
+  visibility: hidden;
+  user-select: none;
+  -ms-user-select: none;
+  -o-user-select:none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+@media screen {
+  aside:hover > a.pilcrow,
+  p:hover > a.pilcrow,
+  blockquote:hover > a.pilcrow,
+  div:hover > a.pilcrow,
+  li:hover > a.pilcrow,
+  pre:hover > a.pilcrow {
+    visibility: visible;
+  }
+  a.pilcrow:hover {
+    background-color: transparent;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+}
+.bcp14 {
+  font-variant: small-caps;
+}
+
+.role {
+  font-variant: all-small-caps;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: 0.9em;
+}
+#identifiers dt {
+  width: 3em;
+  clear: left;
+}
+#identifiers dd {
+  float: left;
+  margin-bottom: 0;
+}
+/* Fix PDF info block run off issue */
+@media print {
+  #identifiers dd {
+    max-width: 100%;
+  }
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #666; /* Arlen: WCAG 2019 */
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc  {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+nav.toc ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+nav.toc li {
+  line-height: 1.3em;
+  margin: 0.75em 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 7em;
+}
+.references dd {
+  margin-left: 8em;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.refSubseries {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+.index ul {
+  margin: 0 0 0 1em;
+  padding: 0;
+  list-style: none;
+}
+.index ul ul {
+  margin: 0;
+}
+.index li {
+  margin: 0;
+  text-indent: -2em;
+  padding-left: 2em;
+  padding-bottom: 5px;
+}
+.indexIndex {
+  margin: 0.5em 0 1em;
+}
+.index a {
+  font-weight: 700;
+}
+/* make the index two-column on all but the smallest screens */
+@media (min-width: 600px) {
+  .index ul {
+    -moz-column-count: 2;
+    -moz-column-gap: 20px;
+  }
+  .index ul ul {
+    -moz-column-count: 1;
+    -moz-column-gap: 0;
+  }
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  font-family: var(--font-sans);
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+
+/* temporary notes */
+.rfcEditorRemove::before {
+  position: absolute;
+  top: 0.2em;
+  right: 0.2em;
+  padding: 0.2em;
+  content: "The RFC Editor will remove this note";
+  color: #9e2a00; /* Arlen: WCAG 2019 */
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+}
+.rfcEditorRemove {
+  position: relative;
+  padding-top: 1.8em;
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  border-radius: 3px;
+}
+.cref {
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 1023px) {
+  body {
+    padding-top: 2em;
+  }
+  #title {
+    padding: 1em 0;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: -18px;  /* provide offset for in-page anchors */
+    padding-top: 38px;
+  }
+  #identifiers dd {
+    max-width: 60%;
+  }
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    background-color: inherit;
+    border-bottom: 1px solid #ccc;
+  }
+  #toc h2 {
+    margin: -1px 0 0 0;
+    padding: 4px 0 4px 6px;
+    padding-right: 1em;
+    min-width: 190px;
+    font-size: 1.1em;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 6px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 1024px) {
+  body {
+    max-width: 724px;
+    margin: 42px auto;
+    padding-left: 1.5em;
+    padding-right: 29em;
+  }
+  #toc {
+    position: fixed;
+    top: 42px;
+    right: 42px;
+    width: 25%;
+    margin: 0;
+    padding: 0 1em;
+    z-index: 1;
+  }
+  #toc h2 {
+    border-top: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 1em;
+    font-weight: normal;
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 0;
+    overflow: auto;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre {
+    page-break-inside: avoid;
+  }
+  figure {
+    overflow: scroll;
+  }
+  .breakable pre {
+    break-inside: auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  h2+*, h3+*, h4+*, h5+*, h6+* {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+/* This is commented out here, as the string-set: doesn't
+   pass W3C validation currently */
+/*
+.ears thead .left {
+  string-set: ears-top-left content();
+}
+
+.ears thead .center {
+  string-set: ears-top-center content();
+}
+
+.ears thead .right {
+  string-set: ears-top-right content();
+}
+
+.ears tfoot .left {
+  string-set: ears-bottom-left content();
+}
+
+.ears tfoot .center {
+  string-set: ears-bottom-center content();
+}
+
+.ears tfoot .right {
+  string-set: ears-bottom-right content();
+}
+*/
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+  /* The following is commented out here, but set appropriately by in code, as
+     the content depends on the document */
+  /*
+  @top-left {
+    content: 'Internet-Draft';
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-left {
+    content: string(ears-top-left);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-center {
+    content: string(ears-top-center);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-right {
+    content: string(ears-top-right);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @bottom-left {
+    content: string(ears-bottom-left);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-center {
+    content: string(ears-bottom-center);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-right {
+      content: '[Page ' counter(page) ']';
+      vertical-align: top;
+      border-top: solid 1px #ccc;
+  }
+  */
+
+}
+
+/* Changes introduced to fix issues found during implementation */
+/* Make sure links are clickable even if overlapped by following H* */
+a {
+  z-index: 2;
+}
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Leave room in document info to show Internet-Draft on one line */
+#identifiers dt {
+  width: 8em;
+}
+
+/* Don't waste quite as much whitespace between label and value in doc info */
+#identifiers dd {
+  margin-left: 1em;
+}
+
+/* Give floating toc a background color (needed when it's a div inside section */
+#toc {
+  background-color: white;
+}
+
+/* Make the collapsed ToC header render white on gray also when it's a link */
+@media screen and (max-width: 1023px) {
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+}
+
+/* Give the bottom of the ToC some whitespace */
+@media screen and (min-width: 1024px) {
+  #toc {
+    padding: 0 0 1em 1em;
+  }
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* prevent monospace from becoming overly large */
+tt, code, pre {
+  font-size: 95%;
+}
+
+/* Fix the height/width aspect for ascii art*/
+.sourcecode pre,
+.art-text pre {
+  line-height: 1.12;
+}
+
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin-right: 0.5em;
+}
+
+/* Fix the dl styling to match the RFC 7992 attributes */
+dl > dt,
+dl.dlParallel > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+
+/* Provide styling for table cell text alignment */
+table td.text-left,
+table th.text-left {
+  text-align: left;
+}
+table td.text-center,
+table th.text-center {
+  text-align: center;
+}
+table td.text-right,
+table th.text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 30em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Provide table alignment support.  We can't use the alignX classes above
+   since they do unwanted things with caption and other styling. */
+table.right {
+ margin-left: auto;
+ margin-right: 0;
+}
+table.center {
+ margin-left: auto;
+ margin-right: auto;
+}
+table.left {
+ margin-left: 0;
+ margin-right: auto;
+}
+
+/* Give the table caption label the same styling as the figcaption */
+caption a[href] {
+  color: #222;
+}
+
+@media print {
+  .toplink {
+    display: none;
+  }
+
+  /* avoid overwriting the top border line with the ToC header */
+  #toc {
+    padding-top: 1px;
+  }
+
+  /* Avoid page breaks inside dl and author address entries */
+  .vcard {
+    page-break-inside: avoid;
+  }
+
+}
+/* Tweak the bcp14 keyword presentation */
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+/* Tweak the invisible space above H* in order not to overlay links in text above */
+ h2 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 31px;
+ }
+ h3 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+ h4 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+/* Float artwork pilcrow to the right */
+@media screen {
+  .artwork a.pilcrow {
+    display: block;
+    line-height: 0.7;
+    margin-top: 0.15em;
+  }
+}
+/* Make pilcrows on dd visible */
+@media screen {
+  dd:hover > a.pilcrow {
+    visibility: visible;
+  }
+}
+/* Make the placement of figcaption match that of a table's caption
+   by removing the figure's added bottom margin */
+.alignLeft.art-text,
+.alignCenter.art-text,
+.alignRight.art-text {
+   margin-bottom: 0;
+}
+.alignLeft,
+.alignCenter,
+.alignRight {
+  margin: 1em 0 0 0;
+}
+/* In print, the pilcrow won't show on hover, so prevent it from taking up space,
+   possibly even requiring a new line */
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+/* Styling for the external metadata */
+div#external-metadata {
+  background-color: #eee;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  display: none;
+}
+div#internal-metadata {
+  padding: 0.5em;                       /* to match the external-metadata padding */
+}
+/* Styling for title RFC Number */
+h1#rfcnum {
+  clear: both;
+  margin: 0 0 -1em;
+  padding: 1em 0 0 0;
+}
+/* Make .olPercent look the same as <ol><li> */
+dl.olPercent > dd {
+  margin-bottom: 0.25em;
+  min-height: initial;
+}
+/* Give aside some styling to set it apart */
+aside {
+  border-left: 1px solid #ddd;
+  margin: 1em 0 1em 2em;
+  padding: 0.2em 2em;
+}
+aside > dl,
+aside > ol,
+aside > ul,
+aside > table,
+aside > p {
+  margin-bottom: 0.5em;
+}
+/* Additional page break settings */
+@media print {
+  figcaption, table caption {
+    page-break-before: avoid;
+  }
+}
+/* Font size adjustments for print */
+@media print {
+  body  { font-size: 10pt;      line-height: normal; max-width: 96%; }
+  h1    { font-size: 1.72em;    padding-top: 1.5em; } /* 1*1.2*1.2*1.2 */
+  h2    { font-size: 1.44em;    padding-top: 1.5em; } /* 1*1.2*1.2 */
+  h3    { font-size: 1.2em;     padding-top: 1.5em; } /* 1*1.2 */
+  h4    { font-size: 1em;       padding-top: 1.5em; }
+  h5, h6 { font-size: 1em;      margin: initial; padding: 0.5em 0 0.3em; }
+}
+/* Sourcecode margin in print, when there's no pilcrow */
+@media print {
+  .artwork,
+  .artwork > pre,
+  .sourcecode {
+    margin-bottom: 1em;
+  }
+}
+/* Avoid narrow tables forcing too narrow table captions, which may render badly */
+table {
+  min-width: 20em;
+}
+/* ol type a */
+ol.type-a { list-style-type: lower-alpha; }
+ol.type-A { list-style-type: upper-alpha; }
+ol.type-i { list-style-type: lower-roman; }
+ol.type-I { list-style-type: upper-roman; }
+/* Apply the print table and row borders in general, on request from the RPC,
+and increase the contrast between border and odd row background slightly */
+table {
+  border: 1px solid #ddd;
+}
+td {
+  border-top: 1px solid #ddd;
+}
+tr {
+  break-inside: avoid;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f8f8f8;
+}
+/* Use style rules to govern display of the TOC. */
+@media screen and (max-width: 1023px) {
+  #toc nav { display: none; }
+  #toc.active nav { display: block; }
+}
+/* Add support for keepWithNext */
+.keepWithNext {
+  break-after: avoid-page;
+  break-after: avoid-page;
+}
+/* Add support for keepWithPrevious */
+.keepWithPrevious {
+  break-before: avoid-page;
+}
+/* Change the approach to avoiding breaks inside artwork etc. */
+figure, pre, table, .artwork, .sourcecode  {
+  break-before: auto;
+  break-after: auto;
+}
+/* Avoid breaks between <dt> and <dd> */
+dl {
+  break-before: auto;
+  break-inside: auto;
+}
+dt {
+  break-before: auto;
+  break-after: avoid-page;
+}
+dd {
+  break-before: avoid-page;
+  break-after: auto;
+  orphans: 3;
+  widows: 3
+}
+span.break, dd.break {
+  margin-bottom: 0;
+  min-height: 0;
+  break-before: auto;
+  break-inside: auto;
+  break-after: auto;
+}
+/* Undo break-before ToC */
+@media print {
+  #toc {
+    break-before: auto;
+  }
+}
+/* Text in compact lists should not get extra bottom margin space,
+   since that would makes the list not compact */
+ul.compact p, .ulCompact p,
+ol.compact p, .olCompact p {
+ margin: 0;
+}
+/* But the list as a whole needs the extra space at the end */
+section ul.compact,
+section .ulCompact,
+section ol.compact,
+section .olCompact {
+  margin-bottom: 1em;                    /* same as p not within ul.compact etc. */
+}
+/* The tt and code background above interferes with for instance table cell
+   backgrounds.  Changed to something a bit more selective. */
+tt, code {
+  background-color: transparent;
+}
+p tt, p code, li tt, li code, dt tt, dt code {
+  background-color: #f8f8f8;
+}
+/* Tweak the pre margin -- 0px doesn't come out well */
+pre {
+   margin-top: 0.5px;
+}
+/* Tweak the compact list text */
+ul.compact, .ulCompact,
+ol.compact, .olCompact,
+dl.compact, .dlCompact {
+  line-height: normal;
+}
+/* Don't add top margin for nested lists */
+li > ul, li > ol, li > dl,
+dd > ul, dd > ol, dd > dl,
+dl > dd > dl {
+  margin-top: initial;
+}
+/* Elements that should not be rendered on the same line as a <dt> */
+/* This should match the element list in writer.text.TextWriter.render_dl() */
+dd > div.artwork:first-child,
+dd > aside:first-child,
+dd > figure:first-child,
+dd > ol:first-child,
+dd > div.sourcecode:first-child,
+dd > table:first-child,
+dd > ul:first-child {
+  clear: left;
+}
+/* fix for weird browser behaviour when <dd/> is empty */
+dt+dd:empty::before{
+  content: "\00a0";
+}
+/* Make paragraph spacing inside <li> smaller than in body text, to fit better within the list */
+li > p {
+  margin-bottom: 0.5em
+}
+/* Don't let p margin spill out from inside list items */
+li > p:last-of-type:only-child {
+  margin-bottom: 0;
+}
+</style>
+<link href="rfc-local.css" rel="stylesheet" type="text/css">
+<link href="https://datatracker.ietf.org/doc/draft-ietf-pquip-pqt-hybrid-terminology-06" rel="prev">
+  <link href="https://dx.doi.org/10.17487/rfc9794" rel="alternate">
+  <link href="urn:issn:2070-1721" rel="alternate">
+  </head>
+<body class="xml2rfc">
+<script src="https://www.rfc-editor.org/js/metadata.min.js"></script>
+<table class="ears">
+<thead><tr>
+<td class="left">RFC 9794</td>
+<td class="center">PQ/T Hybrid Terminology</td>
+<td class="right">June 2025</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Driscoll, et al.</td>
+<td class="center">Informational</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-stream">Stream:</dt>
+<dd class="stream">Internet Engineering Task Force (IETF)</dd>
+<dt class="label-rfc">RFC:</dt>
+<dd class="rfc"><a href="https://www.rfc-editor.org/rfc/rfc9794" class="eref">9794</a></dd>
+<dt class="label-category">Category:</dt>
+<dd class="category">Informational</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2025-06" class="published">June 2025</time>
+    </dd>
+<dt class="label-issn">ISSN:</dt>
+<dd class="issn">2070-1721</dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">F. Driscoll</div>
+<div class="org">UK National Cyber Security Centre</div>
+</div>
+<div class="author">
+      <div class="author-name">M. Parsons</div>
+<div class="org">UK National Cyber Security Centre</div>
+</div>
+<div class="author">
+      <div class="author-name">B. Hale</div>
+<div class="org">Naval Postgraduate School</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="rfcnum">RFC 9794</h1>
+<h1 id="title">Terminology for Post-Quantum Traditional Hybrid Schemes</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">One aspect of the transition to post-quantum algorithms in
+      cryptographic protocols is the development of hybrid schemes that
+      incorporate both post-quantum and traditional asymmetric algorithms.
+      This document defines terminology for such schemes.  It is intended to
+      be used as a reference and, hopefully, to ensure consistency and clarity
+      across different protocols, standards, and organisations.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+            This document is not an Internet Standards Track specification; it is
+            published for informational purposes.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+            This document is a product of the Internet Engineering Task Force
+            (IETF).  It represents the consensus of the IETF community.  It has
+            received public review and has been approved for publication by the
+            Internet Engineering Steering Group (IESG).  Not all documents
+            approved by the IESG are candidates for any level of Internet
+            Standard; see Section 2 of RFC 7841.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+            Information about the current status of this document, any
+            errata, and how to provide feedback on it may be obtained at
+            <span><a href="https://www.rfc-editor.org/info/rfc9794">https://www.rfc-editor.org/info/rfc9794</a></span>.<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2025 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-primitives" class="internal xref">Primitives</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-cryptographic-elements" class="internal xref">Cryptographic Elements</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-protocols" class="internal xref">Protocols</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-properties" class="internal xref">Properties</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-certificates" class="internal xref">Certificates</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">The mathematical problems of integer factorisation and discrete
+      logarithms over finite fields or elliptic curves underpin most of the
+      asymmetric algorithms used for key establishment and digital signatures
+      on the Internet.  These problems, and hence the algorithms based on
+      them, will be vulnerable to attacks using Shor's Algorithm on a
+      sufficiently large general-purpose quantum computer, known as a
+      Cryptographically Relevant Quantum Computer (CRQC).  Current predictions
+      vary on when, or if, such a device will exist.  However, it is necessary
+      to anticipate and prepare to defend against such a development.  Data
+      encrypted today (in 2025) with an algorithm vulnerable to a quantum
+      computer can be stored for decryption by a future attacker with a CRQC.
+      Signing algorithms in products that are expected to be in use for many
+      years, and that cannot be updated or replaced, are also at risk if a
+      CRQC is developed during the operational lifetime of that product.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">Ongoing responses to the potential development of a CRQC include
+      modifying established (or standardised) protocols to use asymmetric
+      algorithms that are designed to be secure against quantum computers as
+      well as today's classical computers.  These algorithms are called
+      "post-quantum", while algorithms based on integer factorisation,
+      finite-field discrete logarithms, or elliptic-curve discrete logarithms
+      are called "traditional cryptographic algorithms". In this document,
+      "traditional algorithm" is also used to refer to this class of
+      algorithms.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">At the time of publication, the term "post-quantum" is generally used
+      to describe cryptographic algorithms that are designed to be secure
+      against an adversary with access to a CRQC. Post-quantum algorithms can
+      also be referred to as "quantum-resistant" or "quantum-safe"
+      algorithms. There are merits to the different terms. For example, some
+      prefer to use the terms quantum-resistant or quantum-safe to explicitly
+      indicate that these algorithms are designed to be secure against quantum
+      computers. Others disagree and prefer to use the term post-quantum, in case
+      of compromises against such algorithms that could make the terms
+      quantum-resistant or quantum-safe misleading. Similarly, some prefer to
+      refer specifically to Shor's Algorithm or to the mathematical problem
+      that is being used to prevent attacks. Post-Quantum Cryptography (PQC) is
+      commonly used amongst the cryptography community, and so it will be used
+      throughout this document. Similarly, the term "traditional algorithm"
+      will be used throughout the document as, at the time of publication, it
+      is widely used in the community, though other terms, including
+      classical, pre-quantum, or quantum-vulnerable, are preferred by some.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">To mitigate risks, there may be a requirement for protocols that 
+      use both algorithm types, either during the transition from traditional 
+      to post-quantum algorithms or as a general solution.
+      When the risk of deploying new algorithms is above the accepted
+      threshold for their use case, a designer may combine a post-quantum
+      algorithm with a traditional algorithm, with the goal of adding
+      protection against an attacker with a CRQC to the security properties
+      provided by the traditional algorithm.  They may also implement a
+      post-quantum algorithm alongside a traditional algorithm for ease of
+      migration from an ecosystem where only traditional algorithms are
+      implemented and used, to one that only uses post-quantum
+      algorithms. Examples of solutions that could use both types of algorithm
+      include, but are not limited to, <span>[<a href="#RFC9370" class="cite xref">RFC9370</a>]</span>, <span>[<a href="#I-D.ietf-tls-hybrid-design" class="cite xref">HYBRID-TLS</a>]</span>, <span>[<a href="#I-D.ietf-lamps-pq-composite-kem" class="cite xref">COMPOSITE-KEM</a>]</span>, and <span>[<a href="#RFC9763" class="cite xref">RFC9763</a>]</span>.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">Schemes that combine post-quantum and traditional algorithms for key
+      establishment or digital signatures are often called "hybrids". For
+      example:<a href="#section-1-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1-6.1">
+          <p id="section-1-6.1.1">The National Institute of Standards and Technology (NIST) defines
+          hybrid key establishment to be a "scheme that is a combination of
+          two or more components that are themselves cryptographic
+          key-establishment schemes" <span>[<a href="#NIST_PQC_FAQ" class="cite xref">NIST_PQC_FAQ</a>]</span>.<a href="#section-1-6.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-1-6.2">
+          <p id="section-1-6.2.1">The European Telecommunications Standards Institute (ETSI)
+          defines hybrid key exchanges to be "constructions that combine a
+          traditional key exchange ... with a post-quantum key exchange
+          ... into a single key exchange" <span>[<a href="#ETSI_TS103774" class="cite xref">ETSI_TS103774</a>]</span>.<a href="#section-1-6.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-1-7">The word "hybrid" is also used in cryptography to describe encryption
+      schemes that combine asymmetric and symmetric algorithms <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>, so using it in the post-quantum context overloads it
+      and risks misunderstandings.  However, this terminology is
+      well-established amongst the Post-Quantum Cryptography (PQC)
+      community. Therefore, an attempt to move away from its use for PQC could
+      lead to multiple definitions for the same concept, resulting in
+      confusion and lack of clarity.  At the time of publication, hybrid is
+      generally used for schemes that combine post-quantum and traditional
+      algorithms; it will be so used throughout this document, though some
+      have alternative preferences such as double-algorithm or
+      multi-algorithm.<a href="#section-1-7" class="pilcrow">¶</a></p>
+<p id="section-1-8">This document provides language for constructions that combine
+      traditional and post-quantum algorithms. Specific solutions for enabling
+      the use of multiple asymmetric algorithms in cryptographic schemes may be
+      more general than this, allowing the use of solely traditional or solely
+      post-quantum algorithms.  However, where relevant, we focus on
+      post-quantum traditional combinations as these are the motivation for
+      the wider work in the IETF.  This document is intended as a reference
+      terminology guide for other documents, in order to add clarity and consistency
+      across different protocols, standards, and organisations.  Additionally, this document aims to reduce 
+   misunderstandings about the use of the word "hybrid" and to define a 
+   shared language for different types of post-quantum and traditional 
+   hybrid constructions.<a href="#section-1-8" class="pilcrow">¶</a></p>
+<p id="section-1-9">In this document, a "cryptographic algorithm" is defined, as in <span>[<a href="#NIST_SP_800-152" class="cite xref">NIST_SP_800-152</a>]</span>, to be a "well-defined computational
+      procedure that takes variable inputs, often including a cryptographic
+      key, and produces an output".  Examples include RSA, Elliptic Curve
+      Diffie-Hellman (ECDH), Module-Lattice-Based Key-Encapsulation Mechanism
+      (ML-KEM) (formerly known as Kyber), and Module-Lattice-Based Digital
+      Signature Algorithm (ML-DSA) (formerly known as Dilithium).  The
+      expression "cryptographic scheme" is used to refer to a construction
+      that uses a cryptographic algorithm or a group of cryptographic
+      algorithms to achieve a particular cryptographic outcome, e.g., key
+      agreement.  A cryptographic scheme may be made up of a number of
+      functions. For example, a Key Encapsulation Mechanism (KEM) is a
+      cryptographic scheme consisting of three functions: Key Generation,
+      Encapsulation, and Decapsulation.  A cryptographic protocol incorporates
+      one or more cryptographic schemes.  For example, TLS <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span> is a cryptographic protocol that includes schemes for
+      key agreement, record layer encryption, and server authentication.<a href="#section-1-9" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="primitives">
+<section id="section-2">
+      <h2 id="name-primitives">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-primitives" class="section-name selfRef">Primitives</a>
+      </h2>
+<p id="section-2-1">This section introduces terminology related to cryptographic
+      algorithms and to hybrid constructions for cryptographic schemes.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-2-2">
+        <dt id="section-2-2.1">Traditional asymmetric cryptographic algorithm:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-2.2">
+          <p id="section-2-2.2.1">An asymmetric cryptographic algorithm based on integer
+          factorisation, finite field discrete logarithms, elliptic curve
+          discrete logarithms, or related mathematical problems.<a href="#section-2-2.2.1" class="pilcrow">¶</a></p>
+<p id="section-2-2.2.2">A related mathematical problem is one that can be solved by
+          solving the integer factorisation, finite field discrete logarithm,
+          or elliptic curve discrete logarithm problem.<a href="#section-2-2.2.2" class="pilcrow">¶</a></p>
+<p id="section-2-2.2.3">Where there is little risk of confusion, traditional asymmetric
+          cryptographic algorithms can also be referred to as "traditional
+          algorithms" for brevity.  Traditional algorithms can also be called
+          "classical" or "conventional" algorithms.<a href="#section-2-2.2.3" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-2.3">Post-quantum asymmetric cryptographic algorithm:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-2.4">
+          <p id="section-2-2.4.1">An asymmetric cryptographic algorithm that is intended to be
+          secure against attacks using quantum computers as well as classical
+          computers.<a href="#section-2-2.4.1" class="pilcrow">¶</a></p>
+<p id="section-2-2.4.2">Where there is little risk of confusion, post-quantum asymmetric
+          cryptographic algorithms can also be referred to as "post-quantum
+          algorithms" for brevity. Post-quantum algorithms can also be called
+          "quantum-resistant" or "quantum-safe" algorithms.<a href="#section-2-2.4.2" class="pilcrow">¶</a></p>
+<p id="section-2-2.4.3">As with all cryptography, it always remains the case that
+          attacks, either quantum or classical, may be found against
+          post-quantum algorithms. Therefore, it should not be assumed that an 
+          algorithm will not be compromised just because it is designed to provide 
+          post-quantum cryptography. Should an attack be found
+          against a post-quantum algorithm, it is commonly still referred to
+          as a "post-quantum algorithm", as they were designed to protect against
+          an adversary with access to a CRQC, and the labels are referring to
+          the designed or desired properties.<a href="#section-2-2.4.3" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-2-3">There may be asymmetric cryptographic constructions that are neither
+      post-quantum nor asymmetric traditional algorithms according to the
+      definitions above. These are out of scope of this document.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-2-4">
+        <dt id="section-2-4.1">Component asymmetric algorithm:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-4.2">
+          <p id="section-2-4.2.1">Each cryptographic algorithm that forms part of a cryptographic
+          scheme.<a href="#section-2-4.2.1" class="pilcrow">¶</a></p>
+<p id="section-2-4.2.2">An asymmetric component algorithm operates on the input of the
+          cryptographic operation and produces a cryptographic output that can
+          be used by itself or jointly to complete the operation. Where there
+          is little risk of confusion, component asymmetric algorithms can
+          also be referred to as "component algorithms" for brevity, as is done
+          in the following definitions.<a href="#section-2-4.2.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-4.3">Single-algorithm scheme:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-4.4">
+          <p id="section-2-4.4.1">A cryptographic scheme with one component algorithm.<a href="#section-2-4.4.1" class="pilcrow">¶</a></p>
+<p id="section-2-4.4.2">A single-algorithm scheme could use either a traditional
+          algorithm or a post-quantum algorithm.<a href="#section-2-4.4.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-4.5">Multi-algorithm scheme:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-4.6">
+          <p id="section-2-4.6.1">A cryptographic scheme that incorporates more than one component
+          algorithm, where the component algorithms have the same
+          cryptographic purpose as each other and as the multi-algorithm
+          scheme.<a href="#section-2-4.6.1" class="pilcrow">¶</a></p>
+<p id="section-2-4.6.2">For example, a multi-algorithm signature scheme may include
+          multiple signature algorithms, or a multi-algorithm Public Key
+          Encryption (PKE) scheme may include multiple PKE
+          algorithms. Component algorithms could be all traditional, all
+          post-quantum, or a mixture of the two.<a href="#section-2-4.6.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-4.7">Post-Quantum Traditional (PQ/T) hybrid scheme:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-4.8">
+          <p id="section-2-4.8.1">A multi-algorithm scheme where at least one component algorithm
+          is a post-quantum algorithm and at least one is a traditional
+          algorithm.<a href="#section-2-4.8.1" class="pilcrow">¶</a></p>
+<p id="section-2-4.8.2">Components of a PQ/T hybrid scheme operate on the same input
+          message and their output is used together to complete the
+          cryptographic operation either serially or in parallel. PQ/T hybrid
+          scheme design is aimed at requiring successful breaking of all
+          component algorithms to break the PQ/T hybrid scheme's security
+          properties.<a href="#section-2-4.8.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-4.9">PQ/T hybrid Key Encapsulation Mechanism (KEM):</dt>
+        <dd style="margin-left: 1.5em" id="section-2-4.10">
+          <p id="section-2-4.10.1">A multi-algorithm KEM made up of two or more component algorithms
+          where at least one is a post-quantum algorithm and at least one is a
+          traditional algorithm.  The component algorithms could be KEMs or
+          other key establishment algorithms.<a href="#section-2-4.10.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-4.11">PQ/T hybrid Public Key Encryption (PKE):</dt>
+        <dd style="margin-left: 1.5em" id="section-2-4.12">
+          <p id="section-2-4.12.1">A multi-algorithm PKE scheme made up of two or more component
+          algorithms where at least one is a post-quantum algorithm and at
+          least one is a traditional algorithm.  The component algorithms
+          could be PKE algorithms or other key establishment algorithms.<a href="#section-2-4.12.1" class="pilcrow">¶</a></p>
+<p id="section-2-4.12.2">The standard security property for a PKE scheme is
+          indistinguishability under chosen-plaintext attack
+          (IND-CPA) <span>[<a href="#BDPR" class="cite xref">BDPR</a>]</span>. IND-CPA security is not sufficient for secure
+          communication in the presence of an active attacker.  Therefore, in
+          general, PKE schemes are not appropriate for use on the Internet,
+          and KEMs, which provide indistinguishability under chosen-ciphertext
+          attack (IND-CCA) <span>[<a href="#BDPR" class="cite xref">BDPR</a>]</span>, are required.<a href="#section-2-4.12.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-4.13">PQ/T hybrid digital signature:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-4.14">
+          <p id="section-2-4.14.1">A multi-algorithm digital signature scheme made up of two or more
+          component digital signature algorithms where at least one is a
+          post-quantum algorithm and at least one is a traditional algorithm.<a href="#section-2-4.14.1" class="pilcrow">¶</a></p>
+<p id="section-2-4.14.2">Note that there are many possible ways of constructing a PQ/T
+          hybrid digital signature. Examples include parallel signatures,
+          composite signatures, or nested signatures.<a href="#section-2-4.14.2" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-2-5">PQ/T hybrid KEMs, PQ/T hybrid PKE, and PQ/T hybrid digital signatures
+      are all examples of PQ/T hybrid schemes.<a href="#section-2-5" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-2-6">
+        <dt id="section-2-6.1">Post-Quantum Traditional (PQ/T) hybrid composite scheme:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-6.2">
+          <p id="section-2-6.2.1">A multi-algorithm scheme where at least one component algorithm
+          is a post-quantum algorithm and at least one is a traditional
+          algorithm, and where the resulting composite scheme is exposed as a
+          singular interface of the same type as the component algorithms.<a href="#section-2-6.2.1" class="pilcrow">¶</a></p>
+<p id="section-2-6.2.2">A PQ/T hybrid composite can be referred to as a "PQ/T
+          composite". An example of a PQ/T hybrid composite is a single KEM
+          algorithm comprised of a PQ KEM component and a traditional KEM
+          component, for which the result presents as a KEM output.<a href="#section-2-6.2.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-6.3">PQ/T hybrid combiner:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-6.4">
+          <p id="section-2-6.4.1">A method that takes two or more component algorithms and combines them to form a PQ/T hybrid scheme.<a href="#section-2-6.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-6.5">PQ/PQ hybrid scheme:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-6.6">
+          <p id="section-2-6.6.1">A multi-algorithm scheme where all components are post-quantum
+          algorithms.<a href="#section-2-6.6.1" class="pilcrow">¶</a></p>
+<p id="section-2-6.6.2">The definitions for types of PQ/T hybrid schemes can be adapted
+          to define types of PQ/PQ hybrid schemes, which are multi-algorithm
+          schemes where all component algorithms are post-quantum
+          algorithms. These are designed to mitigate risks when the two
+          post-quantum algorithms are based on different mathematical
+          problems. Some prefer to refer to these as PQ/PQ multi-algorithm
+          schemes, and reserve the term "hybrid" for PQ/T hybrids.<a href="#section-2-6.6.2" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-2-7">In cases where there is little chance of confusion between other
+      types of hybrid cryptography (e.g., as defined in <span>[<a href="#RFC4949" class="cite xref">RFC4949</a>]</span>) and where the component algorithms of a
+      multi-algorithm scheme could be either post-quantum or traditional, it
+      may be appropriate to use the phrase "hybrid scheme" without PQ/T or
+      PQ/PQ preceding it.<a href="#section-2-7" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-2-8">
+        <dt id="section-2-8.1">Component scheme:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-8.2">
+          <p id="section-2-8.2.1">Each cryptographic scheme that makes up a PQ/T hybrid scheme or PQ/T hybrid protocol.<a href="#section-2-8.2.1" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="cryptographic-elements">
+<section id="section-3">
+      <h2 id="name-cryptographic-elements">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-cryptographic-elements" class="section-name selfRef">Cryptographic Elements</a>
+      </h2>
+<p id="section-3-1">This section introduces terminology related to cryptographic elements
+      and their inclusion in hybrid schemes.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-3-2">
+        <dt id="section-3-2.1">Cryptographic element:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.2">
+          <p id="section-3-2.2.1">Any data type (private or public) that contains an input or
+          output value for a cryptographic algorithm or for a function making
+          up a cryptographic algorithm.<a href="#section-3-2.2.1" class="pilcrow">¶</a></p>
+<p id="section-3-2.2.2">Types of cryptographic elements include public keys, private
+          keys, plaintexts, ciphertexts, shared secrets, and signature
+          values.<a href="#section-3-2.2.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.3">Component cryptographic element:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.4">
+          <p id="section-3-2.4.1">A cryptographic element of a component algorithm in a
+          multi-algorithm scheme.<a href="#section-3-2.4.1" class="pilcrow">¶</a></p>
+<p id="section-3-2.4.2">For example, in <span>[<a href="#I-D.ietf-tls-hybrid-design" class="cite xref">HYBRID-TLS</a>]</span>, the
+          client's keyshare contains two component public keys: one for a
+          post-quantum algorithm and one for a traditional algorithm.<a href="#section-3-2.4.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.5">Composite cryptographic element:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.6">
+          <p id="section-3-2.6.1">A cryptographic element that incorporates multiple component
+          cryptographic elements of the same type for use in a multi-algorithm
+          scheme, such that the resulting composite cryptographic element is
+          exposed as a singular interface of the same type as the component
+          cryptographic elements.<a href="#section-3-2.6.1" class="pilcrow">¶</a></p>
+<p id="section-3-2.6.2">For example, a composite cryptographic public key is made up of
+          two component public keys.<a href="#section-3-2.6.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.7">PQ/T hybrid composite cryptographic element:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.8">
+          <p id="section-3-2.8.1">A cryptographic element that incorporates multiple component
+          cryptographic elements of the same type for use in a multi-algorithm
+          scheme, such that the resulting composite cryptographic element is
+          exposed as a singular interface of the same type as the component
+          cryptographic elements, where at least one component cryptographic
+          element is post-quantum and at least one is traditional.<a href="#section-3-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.9">Cryptographic element combiner:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.10">
+          <p id="section-3-2.10.1">A method that takes two or more component cryptographic elements
+          of the same type and combines them to form a composite cryptographic
+          element.<a href="#section-3-2.10.1" class="pilcrow">¶</a></p>
+<p id="section-3-2.10.2">A cryptographic element combiner could be concatenation, such as
+          where two component public keys are concatenated to form a composite
+          public key as in <span>[<a href="#I-D.ietf-tls-hybrid-design" class="cite xref">HYBRID-TLS</a>]</span>, or
+          something more involved such as the dualPRF defined in <span>[<a href="#BINDEL" class="cite xref">BINDEL</a>]</span>.<a href="#section-3-2.10.2" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="protocols">
+<section id="section-4">
+      <h2 id="name-protocols">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-protocols" class="section-name selfRef">Protocols</a>
+      </h2>
+<p id="section-4-1">This section introduces terminology related to the use of
+      post-quantum and traditional algorithms together in protocols.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-4-2">
+        <dt id="section-4-2.1">PQ/T hybrid protocol:</dt>
+        <dd style="margin-left: 1.5em" id="section-4-2.2">
+          <p id="section-4-2.2.1">A protocol that uses two or more component algorithms providing
+          the same cryptographic functionality, where at least one is a
+          post-quantum algorithm and at least one is a traditional algorithm.<a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
+<p id="section-4-2.2.2">For example, a PQ/T hybrid protocol providing confidentiality
+          could use a PQ/T hybrid KEM such as in <span>[<a href="#I-D.ietf-tls-hybrid-design" class="cite xref">HYBRID-TLS</a>]</span>, or it could combine the
+          output of a post-quantum KEM and a traditional KEM at the protocol
+          level to generate a single shared secret, such as in <span>[<a href="#RFC9370" class="cite xref">RFC9370</a>]</span>.  Similarly, a PQ/T hybrid protocol providing
+          authentication could use a PQ/T hybrid digital signature scheme, or
+          it could include both post-quantum and traditional single-algorithm
+          digital signature schemes.<a href="#section-4-2.2.2" class="pilcrow">¶</a></p>
+<p id="section-4-2.2.3">A protocol that can negotiate the use of either a traditional
+          algorithm or a post-quantum algorithm, but not the use of both types of
+          algorithm, is not a PQ/T hybrid protocol.  Protocols that use two or
+          more component algorithms but with different cryptographic
+          functionalities, for example, a post-quantum KEM and a Pre-Shared Key
+          (PSK), are also not PQ/T hybrid protocols.<a href="#section-4-2.2.3" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-4-2.3">PQ/T hybrid protocol with composite key establishment:</dt>
+        <dd style="margin-left: 1.5em" id="section-4-2.4">
+          <p id="section-4-2.4.1">A PQ/T hybrid protocol that incorporates a PQ/T hybrid composite
+          scheme to achieve key establishment, in such a way that the protocol
+          fields and message flow are the same as those in a version of the
+          protocol that uses a single-algorithm scheme.<a href="#section-4-2.4.1" class="pilcrow">¶</a></p>
+<p id="section-4-2.4.2">For example, a PQ/T hybrid protocol with composite key
+          establishment could include a single PQ/T hybrid KEM, such as in
+          <span>[<a href="#I-D.ietf-tls-hybrid-design" class="cite xref">HYBRID-TLS</a>]</span>.<a href="#section-4-2.4.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-4-2.5">PQ/T hybrid protocol with composite data authentication:</dt>
+        <dd style="margin-left: 1.5em" id="section-4-2.6">
+          <p id="section-4-2.6.1">A PQ/T hybrid protocol that incorporates a PQ/T hybrid composite
+          scheme to achieve data authentication, in such a way that the
+          protocol fields and message flow are the same as those in a version
+          of the protocol that uses a single-algorithm scheme.<a href="#section-4-2.6.1" class="pilcrow">¶</a></p>
+<p id="section-4-2.6.2">For example, a PQ/T hybrid protocol with composite data
+          authentication could include data authentication through the use of a
+          PQ/T composite hybrid digital signature, exposed as a single
+          interface for PQ signature and traditional signature components.<a href="#section-4-2.6.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-4-2.7">PQ/T hybrid protocol with composite entity authentication:</dt>
+        <dd style="margin-left: 1.5em" id="section-4-2.8">
+          <p id="section-4-2.8.1">A PQ/T hybrid protocol that incorporates a PQ/T hybrid composite
+          scheme to achieve entity authentication, in such a way that the
+          protocol fields and message flow are the same as those in a version
+          of the protocol that uses a single-algorithm scheme.<a href="#section-4-2.8.1" class="pilcrow">¶</a></p>
+<p id="section-4-2.8.2">For example, a PQ/T hybrid protocol with composite entity
+          authentication could include entity authentication through the use of
+          PQ/T Composite Hybrid certificates.<a href="#section-4-2.8.2" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-4-3">In a PQ/T hybrid protocol with a composite construction, changes are
+      primarily made to the formats of the cryptographic elements, while the
+      protocol fields and message flow remain largely unchanged.  In
+      implementations, most changes are likely to be made to the cryptographic
+      libraries, with minimal changes to the protocol libraries.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-4-4">
+        <dt id="section-4-4.1">PQ/T hybrid protocol with non-composite key establishment:</dt>
+        <dd style="margin-left: 1.5em" id="section-4-4.2">
+          <p id="section-4-4.2.1">A PQ/T hybrid protocol that incorporates multiple
+          single-algorithm schemes to achieve key establishment, where at
+          least one uses a post-quantum algorithm and at least one uses a
+          traditional algorithm, in such a way that the formats of the
+          component cryptographic elements are the same as when they are used
+          as a part of a single-algorithm scheme.<a href="#section-4-4.2.1" class="pilcrow">¶</a></p>
+<p id="section-4-4.2.2">For example, a PQ/T hybrid protocol with non-composite key
+          establishment could include a traditional key exchange scheme and a
+          post-quantum KEM. A construction like this for the Internet Key
+          Exchange Protocol Version 2 (IKEv2) is enabled by <span>[<a href="#RFC9370" class="cite xref">RFC9370</a>]</span>.<a href="#section-4-4.2.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-4-4.3">PQ/T hybrid protocol with non-composite authentication:</dt>
+        <dd style="margin-left: 1.5em" id="section-4-4.4">
+          <p id="section-4-4.4.1">A PQ/T hybrid protocol that incorporates multiple
+          single-algorithm schemes to achieve authentication, where at least
+          one uses a post-quantum algorithm and at least one uses a
+          traditional algorithm, in such a way that the formats of the
+          component cryptographic elements are the same as when they are used
+          as part of a single-algorithm scheme.<a href="#section-4-4.4.1" class="pilcrow">¶</a></p>
+<p id="section-4-4.4.2">For example, a PQ/T hybrid protocol with non-composite
+          authentication could use a PQ/T parallel PKI with one traditional
+          certificate chain and one post-quantum certificate chain.<a href="#section-4-4.4.2" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-4-5">In a PQ/T hybrid protocol with a non-composite construction, changes
+      are primarily made to the protocol fields, the message flow, or both,
+      while changes to cryptographic elements are minimised.  In
+      implementations, most changes are likely to be made to the protocol
+      libraries, with minimal changes to the cryptographic libraries.<a href="#section-4-5" class="pilcrow">¶</a></p>
+<p id="section-4-6">It is possible for a PQ/T hybrid protocol to be designed with both
+      composite and non-composite constructions.  For example, a protocol that
+      offers both confidentiality and authentication could have composite key
+      agreement and non-composite authentication.  Similarly, it is possible
+      for a PQ/T hybrid protocol to achieve certain cryptographic outcomes in
+      a non-hybrid manner.  For example, <span>[<a href="#I-D.ietf-tls-hybrid-design" class="cite xref">HYBRID-TLS</a>]</span> describes a PQ/T hybrid protocol
+      with composite key agreement, but with single-algorithm
+      authentication.<a href="#section-4-6" class="pilcrow">¶</a></p>
+<p id="section-4-7">PQ/T hybrid protocols may not specify non-composite aspects, but can
+      choose to do so for clarity, in particular, if including both composite
+      and non-composite aspects.<a href="#section-4-7" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-4-8">
+        <dt id="section-4-8.1">PQ/T hybrid composite protocol:</dt>
+        <dd style="margin-left: 1.5em" id="section-4-8.2">
+          <p id="section-4-8.2.1">A PQ/T hybrid protocol that only uses composite constructions can
+          be referred to as a "PQ/T hybrid composite protocol".<a href="#section-4-8.2.1" class="pilcrow">¶</a></p>
+<p id="section-4-8.2.2">An example of this is a protocol that only provides entity
+          authentication, and achieves this using PQ/T hybrid composite entity
+          authentication. Similarly, another example is a protocol that offers both key
+          establishment and data authentication, and achieves this using both
+          PQ/T hybrid composite key establishment and PQ/T hybrid composite
+          data authentication.<a href="#section-4-8.2.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-4-8.3">PQ/T hybrid non-composite protocol:</dt>
+        <dd style="margin-left: 1.5em" id="section-4-8.4">
+          <p id="section-4-8.4.1">A PQ/T hybrid protocol that does not use only composite
+          constructions can be referred to as a "PQ/T hybrid non-composite
+          protocol".<a href="#section-4-8.4.1" class="pilcrow">¶</a></p>
+<p id="section-4-8.4.2">For example, a PQ/T hybrid protocol that offers both
+          confidentiality and authentication and uses composite key agreement
+          and non-composite authentication would be referred to as a "PQ/T
+          hybrid non-composite protocol".<a href="#section-4-8.4.2" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="properties">
+<section id="section-5">
+      <h2 id="name-properties">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-properties" class="section-name selfRef">Properties</a>
+      </h2>
+<p id="section-5-1">This section describes some properties that may be desired from or
+      achieved by a PQ/T hybrid scheme or a PQ/T hybrid protocol.  Properties of
+      PQ/T hybrid schemes are still an active area of research and
+      development, e.g., in <span>[<a href="#BINDELHALE" class="cite xref">BINDELHALE</a>]</span>. This section does not
+      attempt to be comprehensive, but rather covers a basic set of
+      properties.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">It is not possible for one PQ/T hybrid scheme or PQ/T hybrid protocol
+      to achieve all of the properties in this section. To understand what
+      properties are required, a designer or implementer will think about why
+      they are using a PQ/T hybrid scheme. For example, a scheme that is
+      designed for implementation security will likely require PQ/T hybrid
+      confidentiality or PQ/T hybrid authentication, while a scheme for
+      interoperability will require PQ/T hybrid interoperability.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-5-3">
+        <dt id="section-5-3.1">PQ/T hybrid confidentiality:</dt>
+        <dd style="margin-left: 1.5em" id="section-5-3.2">
+          <p id="section-5-3.2.1">The property that confidentiality is achieved by a PQ/T hybrid
+          scheme or a PQ/T hybrid protocol as long as at least one component
+          algorithm that aims to provide this property remains secure.<a href="#section-5-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-5-3.3">PQ/T hybrid authentication:</dt>
+        <dd style="margin-left: 1.5em" id="section-5-3.4">
+          <p id="section-5-3.4.1">The property that authentication is achieved by a PQ/T hybrid
+          scheme or a PQ/T hybrid protocol as long as at least one component
+          algorithm that aims to provide this property remains secure.<a href="#section-5-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-5-4">The security properties of a PQ/T hybrid scheme or protocol depend on
+      the security of its component algorithms, the choice of PQ/T hybrid
+      combiner, and the capability of an attacker. Changes to the security of
+      a component algorithm can impact the security properties of a PQ/T
+      hybrid scheme providing hybrid confidentiality or hybrid authentication.
+      For example, if the post-quantum component algorithm of a PQ/T hybrid
+      scheme is broken, the scheme will remain secure against an attacker with
+      a classical computer, but will be vulnerable to an attacker with a
+      CRQC.<a href="#section-5-4" class="pilcrow">¶</a></p>
+<p id="section-5-5">PQ/T hybrid protocols that offer both confidentiality and
+      authentication do not necessarily offer both hybrid confidentiality and
+      hybrid authentication.  For example, <span>[<a href="#I-D.ietf-tls-hybrid-design" class="cite xref">HYBRID-TLS</a>]</span> provides hybrid confidentiality
+      but does not address hybrid authentication.  Therefore, if the design in
+      <span>[<a href="#I-D.ietf-tls-hybrid-design" class="cite xref">HYBRID-TLS</a>]</span> is used with
+      single-algorithm X.509 certificates as defined in <span>[<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>, only authentication with a single algorithm is
+      achieved.<a href="#section-5-5" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-5-6">
+        <dt id="section-5-6.1">PQ/T hybrid interoperability:</dt>
+        <dd style="margin-left: 1.5em" id="section-5-6.2">
+          <p id="section-5-6.2.1">The property that a PQ/T hybrid scheme or a PQ/T hybrid protocol
+          can be completed successfully provided that both parties share
+          support for at least one component algorithm.<a href="#section-5-6.2.1" class="pilcrow">¶</a></p>
+<p id="section-5-6.2.2">For example, a PQ/T hybrid digital signature might achieve hybrid
+          interoperability if the signature can be verified by either
+          verifying the traditional or the post-quantum component, such as the
+          approach defined in Section 7.2.2 of <span>[<a href="#ITU-T-X509-2019" class="cite xref">ITU-T-X509-2019</a>]</span>.  In this example, a verifier that has
+          migrated to support post-quantum algorithms is required to verify
+          only the post-quantum signature, while a verifier that has not
+          migrated will verify only the traditional signature.<a href="#section-5-6.2.2" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-5-7">In the case of a protocol that aims to achieve both authentication
+      and confidentiality, PQ/T hybrid interoperability requires that at least
+      one component authentication algorithm and at least one component
+      algorithm for confidentiality is supported by both parties.<a href="#section-5-7" class="pilcrow">¶</a></p>
+<p id="section-5-8">It is not possible for a PQ/T hybrid scheme to achieve both PQ/T
+      hybrid interoperability and PQ/T hybrid confidentiality without
+      additional functionality at a protocol level.  For PQ/T hybrid
+      interoperability, a scheme needs to work whenever one component algorithm
+      is supported by both parties, while to achieve PQ/T hybrid
+      confidentiality, all component algorithms need to be used.  However, both
+      properties can be achieved in a PQ/T hybrid protocol by building in
+      downgrade protection external to the cryptographic schemes.  For
+      example, in <span>[<a href="#I-D.ietf-tls-hybrid-design" class="cite xref">HYBRID-TLS</a>]</span>, the client uses
+      the TLS supported groups extension to advertise support for a PQ/T
+      hybrid scheme, and the server can select this group if it supports the
+      scheme.  This is protected using TLS's existing downgrade protection, so it
+      achieves PQ/T hybrid confidentiality, but the connection can still be
+      made if either the client or server does not support the PQ/T hybrid
+      scheme, so PQ/T hybrid interoperability is achieved.<a href="#section-5-8" class="pilcrow">¶</a></p>
+<p id="section-5-9">The same is true for PQ/T hybrid interoperability and PQ/T hybrid
+      authentication.  It is not possible to achieve both with a PQ/T hybrid
+      scheme alone, but it is possible with a PQ/T hybrid protocol that has
+      appropriate downgrade protection.<a href="#section-5-9" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-5-10">
+        <dt id="section-5-10.1">PQ/T hybrid backwards compatibility:</dt>
+        <dd style="margin-left: 1.5em" id="section-5-10.2">
+          <p id="section-5-10.2.1">The property that a PQ/T hybrid scheme or a PQ/T hybrid protocol
+          can be completed successfully provided that both parties support the
+          traditional component algorithm, while also using both algorithms if
+          both are supported by both parties.<a href="#section-5-10.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-5-10.3">PQ/T hybrid forwards compatibility:</dt>
+        <dd style="margin-left: 1.5em" id="section-5-10.4">
+          <p id="section-5-10.4.1">The property that a PQ/T hybrid scheme or a PQ/T hybrid protocol
+          can be completed successfully using a post-quantum component
+          algorithm provided that both parties support it, while also having
+          the option to use both post-quantum and traditional algorithms if
+          both are supported by both parties.<a href="#section-5-10.4.1" class="pilcrow">¶</a></p>
+<p id="section-5-10.4.2">Note that PQ/T hybrid forwards compatibility is a protocol or scheme property only.<a href="#section-5-10.4.2" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="certificates">
+<section id="section-6">
+      <h2 id="name-certificates">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-certificates" class="section-name selfRef">Certificates</a>
+      </h2>
+<p id="section-6-1">This section introduces terminology related to the use of
+      certificates in hybrid schemes.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-6-2">
+        <dt id="section-6-2.1">PQ/T hybrid certificate:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-2.2">
+          <p id="section-6-2.2.1">A digital certificate that contains public keys for two or more
+          component algorithms where at least one is a traditional algorithm
+          and at least one is a post-quantum algorithm.<a href="#section-6-2.2.1" class="pilcrow">¶</a></p>
+<p id="section-6-2.2.2">A PQ/T hybrid certificate could be used to facilitate a PQ/T
+          hybrid authentication protocol.  However, a PQ/T hybrid
+          authentication protocol does not need to use a PQ/T hybrid
+          certificate; separate certificates could be used for individual
+          component algorithms.<a href="#section-6-2.2.2" class="pilcrow">¶</a></p>
+<p id="section-6-2.2.3">The component public keys in a PQ/T hybrid certificate could be
+          included as a composite public key or as individual component public
+          keys.<a href="#section-6-2.2.3" class="pilcrow">¶</a></p>
+<p id="section-6-2.2.4">The use of a PQ/T hybrid certificate does not necessarily achieve
+          hybrid authentication of the identity of the sender; this is
+          determined by properties of the chain of trust. For example, an
+          end-entity certificate that contains a composite public key, but
+          which is signed using a single-algorithm digital signature scheme,
+          could be used to provide hybrid authentication of the source of a
+          message, but would not achieve hybrid authentication of the identity
+          of the sender.<a href="#section-6-2.2.4" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-6-2.3">Post-quantum certificate:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-2.4">
+          <p id="section-6-2.4.1">A digital certificate that contains a single public key for a
+          post-quantum digital signature algorithm.<a href="#section-6-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-6-2.5">Traditional certificate:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-2.6">
+          <p id="section-6-2.6.1">A digital certificate that contains a single public key for a
+          traditional digital signature algorithm.<a href="#section-6-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-6-3">X.509 certificates as defined in <span>[<a href="#RFC5280" class="cite xref">RFC5280</a>]</span> could be
+      either traditional or post-quantum certificates depending on the
+      algorithm in the Subject Public Key Info.  For example, a certificate
+      containing a ML-DSA public key, as defined in <span>[<a href="#I-D.ietf-lamps-dilithium-certificates" class="cite xref">ML-DSA</a>]</span>, would be a
+      post-quantum certificate.<a href="#section-6-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-6-4">
+        <dt id="section-6-4.1">Post-quantum certificate chain:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-4.2">
+          <p id="section-6-4.2.1">A certificate chain where all certificates include a public key
+          for a post-quantum algorithm and are signed using a post-quantum
+          digital signature scheme.<a href="#section-6-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-6-4.3">Traditional certificate chain:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-4.4">
+          <p id="section-6-4.4.1">A certificate chain where all certificates include a public key
+          for a traditional algorithm and are signed using a traditional
+          digital signature scheme.<a href="#section-6-4.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-6-4.5">PQ/T hybrid certificate chain:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-4.6">
+          <p id="section-6-4.6.1">A certificate chain where all certificates are PQ/T hybrid
+          certificates and each certificate is signed with two or more
+          component algorithms with at least one being a traditional algorithm
+          and at least one being a post-quantum algorithm.<a href="#section-6-4.6.1" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-6-5">A PQ/T hybrid certificate chain is one way of achieving hybrid
+      authentication of the identity of a sender in a protocol, but it is not the
+      only way. An alternative is to use a PQ/T parallel PKI as defined
+      below.<a href="#section-6-5" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-6-6">
+        <dt id="section-6-6.1">PQ/T mixed certificate chain:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-6.2">
+          <p id="section-6-6.2.1">A certificate chain containing at least two of the three
+          certificate types defined in this document (PQ/T hybrid certificates,
+          post-quantum certificates, and traditional certificates).<a href="#section-6-6.2.1" class="pilcrow">¶</a></p>
+<p id="section-6-6.2.2">For example, a traditional end-entity certificate could be signed
+          by a post-quantum intermediate certificate, which in turn could be
+          signed by a post-quantum root certificate. This may be desirable due
+          to the lifetimes of the certificates, the relative difficulty of
+          rotating keys, or for efficiency reasons. The security properties of
+          a certificate chain that mixes post-quantum and traditional
+          algorithms would need to be analysed on a case-by-case basis.<a href="#section-6-6.2.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-6-6.3">PQ/T parallel PKI:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-6.4">
+          <p id="section-6-6.4.1">Two certificate chains, one that is a post-quantum certificate chain and
+          one that is a traditional certificate chain, and that are used together in a
+          protocol.<a href="#section-6-6.4.1" class="pilcrow">¶</a></p>
+<p id="section-6-6.4.2">A PQ/T parallel PKI might be used to achieve hybrid authentication
+          or hybrid interoperability depending on the protocol
+          implementation.<a href="#section-6-6.4.2" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-6-6.5">Multi-certificate authentication:</dt>
+        <dd style="margin-left: 1.5em" id="section-6-6.6">
+          <p id="section-6-6.6.1">Authentication that uses two or more end-entity certificates.<a href="#section-6-6.6.1" class="pilcrow">¶</a></p>
+<p id="section-6-6.6.2">For example, multi-certificate authentication may be achieved
+          using a PQ/T parallel PKI.<a href="#section-6-6.6.2" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-7">
+      <h2 id="name-security-considerations">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-7-1">This document defines security-relevant terminology to be used in
+      documents specifying PQ/T hybrid protocols and schemes.  However, the
+      document itself does not have a security impact on Internet protocols.
+      The security considerations for each PQ/T hybrid protocol are specific
+      to that protocol and should be discussed in the relevant specification
+      documents. More general guidance about the security considerations,
+      timelines, and benefits and drawbacks of the use of PQ/T hybrids is also out
+      of scope of this document.<a href="#section-7-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-8">
+      <h2 id="name-iana-considerations">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-8-1">This document has no IANA actions.<a href="#section-8-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-9">
+      <h2 id="name-informative-references">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+      </h2>
+<dl class="references">
+<dt id="BDPR">[BDPR]</dt>
+      <dd>
+<span class="refAuthor">Bellare, M.</span>, <span class="refAuthor">Desai, A.</span>, <span class="refAuthor">Pointcheval, D.</span>, and <span class="refAuthor">P. Rogaway</span>, <span class="refTitle">"Relations Among Notions of Security for Public-Key Encryption Schemes"</span>, <time datetime="2001-06" class="refDate">June 2001</time>, <span>&lt;<a href="https://www.cs.ucdavis.edu/~rogaway/papers/relations.pdf">https://www.cs.ucdavis.edu/~rogaway/papers/relations.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="BINDEL">[BINDEL]</dt>
+      <dd>
+<span class="refAuthor">Bindel, N.</span>, <span class="refAuthor">Brendel, J.</span>, <span class="refAuthor">Fischlin, M.</span>, <span class="refAuthor">Goncalves, B.</span>, and <span class="refAuthor">D. Stebila</span>, <span class="refTitle">"Hybrid Key Encapsulation Mechanisms and Authenticated Key Exchange"</span>, <span class="refContent">Post-Quantum Cryptography, PQCrypto 2019, Lecture Notes in Computer Science, vol. 11505, pp. 206-226</span>, <span class="seriesInfo">DOI 10.1007/978-3-030-25510-7_12</span>, <time datetime="2019-07" class="refDate">July 2019</time>, <span>&lt;<a href="https://doi.org/10.1007/978-3-030-25510-7_12">https://doi.org/10.1007/978-3-030-25510-7_12</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="BINDELHALE">[BINDELHALE]</dt>
+      <dd>
+<span class="refAuthor">Bindel, N.</span> and <span class="refAuthor">B. Hale</span>, <span class="refTitle">"A Note on Hybrid Signature Schemes"</span>, <span class="refContent">Cryptology ePrint Archive, Paper 2023/423</span>, <time datetime="2023-07-23" class="refDate">23 July 2023</time>, <span>&lt;<a href="https://eprint.iacr.org/2023/423.pdf">https://eprint.iacr.org/2023/423.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-lamps-pq-composite-kem">[COMPOSITE-KEM]</dt>
+      <dd>
+<span class="refAuthor">Ounsworth, M.</span>, <span class="refAuthor">Gray, J.</span>, <span class="refAuthor">Pala, M.</span>, <span class="refAuthor">Klaussner, J.</span>, and <span class="refAuthor">S. Fluhrer</span>, <span class="refTitle">"Composite ML-KEM for use in X.509 Public Key Infrastructure and CMS"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-lamps-pq-composite-kem-06</span>, <time datetime="2025-03-18" class="refDate">18 March 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-lamps-pq-composite-kem-06">https://datatracker.ietf.org/doc/html/draft-ietf-lamps-pq-composite-kem-06</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="ETSI_TS103774">[ETSI_TS103774]</dt>
+      <dd>
+<span class="refAuthor">European Telecommunications Standards Institute (ETSI)</span>, <span class="refTitle">"CYBER; Quantum-safe Hybrid Key Exchanges"</span>, <span class="refContent">ETSI TS 103 744 v1.1.1</span>, <time datetime="2020-12" class="refDate">December 2020</time>, <span>&lt;<a href="https://www.etsi.org/deliver/etsi_ts/103700_103799/103744/01.01.01_60/ts_103744v010101p.pdf">https://www.etsi.org/deliver/etsi_ts/103700_103799/103744/01.01.01_60/ts_103744v010101p.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-tls-hybrid-design">[HYBRID-TLS]</dt>
+      <dd>
+<span class="refAuthor">Stebila, D.</span>, <span class="refAuthor">Fluhrer, S.</span>, and <span class="refAuthor">S. Gueron</span>, <span class="refTitle">"Hybrid key exchange in TLS 1.3"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-tls-hybrid-design-12</span>, <time datetime="2025-01-14" class="refDate">14 January 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-tls-hybrid-design-12">https://datatracker.ietf.org/doc/html/draft-ietf-tls-hybrid-design-12</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="ITU-T-X509-2019">[ITU-T-X509-2019]</dt>
+      <dd>
+<span class="refAuthor">ITU-T</span>, <span class="refTitle">"Information Technology - Open Systems Interconnection - The Directory: Public-key and attribute certificate frameworks"</span>, <span class="seriesInfo">ITU-T Recommendation X.509</span>, <time datetime="2019-10" class="refDate">October 2019</time>, <span>&lt;<a href="https://www.itu.int/rec/T-REC-X.509-201910-I">https://www.itu.int/rec/T-REC-X.509-201910-I</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-lamps-dilithium-certificates">[ML-DSA]</dt>
+      <dd>
+<span class="refAuthor">Massimo, J.</span>, <span class="refAuthor">Kampanakis, P.</span>, <span class="refAuthor">Turner, S.</span>, and <span class="refAuthor">B. E. Westerbaan</span>, <span class="refTitle">"Internet X.509 Public Key Infrastructure - Algorithm Identifiers for Module-Lattice-Based Digital Signature Algorithm (ML-DSA)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-lamps-dilithium-certificates-11</span>, <time datetime="2025-05-22" class="refDate">22 May 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-lamps-dilithium-certificates-11">https://datatracker.ietf.org/doc/html/draft-ietf-lamps-dilithium-certificates-11</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="NIST_PQC_FAQ">[NIST_PQC_FAQ]</dt>
+      <dd>
+<span class="refAuthor">NIST</span>, <span class="refTitle">"Post-Quantum Cryptography (PQC) FAQs"</span>, <time datetime="2025-01-31" class="refDate">31 January 2025</time>, <span>&lt;<a href="https://csrc.nist.gov/Projects/post-quantum-cryptography/faqs">https://csrc.nist.gov/Projects/post-quantum-cryptography/faqs</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="NIST_SP_800-152">[NIST_SP_800-152]</dt>
+      <dd>
+<span class="refAuthor">Barker, E.</span>, <span class="refAuthor">Smid, M.</span>, and <span class="refAuthor">D. Branstad</span>, <span class="refTitle">"A Profile for U. S. Federal Cryptographic Key Management Systems"</span>, <span class="seriesInfo">NIST SP 800-152</span>, <span class="seriesInfo">DOI 10.6028/NIST.SP.800-15</span>, <time datetime="2015-10" class="refDate">October 2015</time>, <span>&lt;<a href="https://doi.org/10.6028/NIST.SP.800-152">https://doi.org/10.6028/NIST.SP.800-152</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC4949">[RFC4949]</dt>
+      <dd>
+<span class="refAuthor">Shirey, R.</span>, <span class="refTitle">"Internet Security Glossary, Version 2"</span>, <span class="seriesInfo">FYI 36</span>, <span class="seriesInfo">RFC 4949</span>, <span class="seriesInfo">DOI 10.17487/RFC4949</span>, <time datetime="2007-08" class="refDate">August 2007</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc4949">https://www.rfc-editor.org/info/rfc4949</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5280">[RFC5280]</dt>
+      <dd>
+<span class="refAuthor">Cooper, D.</span>, <span class="refAuthor">Santesson, S.</span>, <span class="refAuthor">Farrell, S.</span>, <span class="refAuthor">Boeyen, S.</span>, <span class="refAuthor">Housley, R.</span>, and <span class="refAuthor">W. Polk</span>, <span class="refTitle">"Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile"</span>, <span class="seriesInfo">RFC 5280</span>, <span class="seriesInfo">DOI 10.17487/RFC5280</span>, <time datetime="2008-05" class="refDate">May 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc5280">https://www.rfc-editor.org/info/rfc5280</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8446">[RFC8446]</dt>
+      <dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="seriesInfo">RFC 8446</span>, <span class="seriesInfo">DOI 10.17487/RFC8446</span>, <time datetime="2018-08" class="refDate">August 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8446">https://www.rfc-editor.org/info/rfc8446</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9180">[RFC9180]</dt>
+      <dd>
+<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Bhargavan, K.</span>, <span class="refAuthor">Lipp, B.</span>, and <span class="refAuthor">C. Wood</span>, <span class="refTitle">"Hybrid Public Key Encryption"</span>, <span class="seriesInfo">RFC 9180</span>, <span class="seriesInfo">DOI 10.17487/RFC9180</span>, <time datetime="2022-02" class="refDate">February 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9180">https://www.rfc-editor.org/info/rfc9180</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9370">[RFC9370]</dt>
+      <dd>
+<span class="refAuthor">Tjhai, CJ.</span>, <span class="refAuthor">Tomlinson, M.</span>, <span class="refAuthor">Bartlett, G.</span>, <span class="refAuthor">Fluhrer, S.</span>, <span class="refAuthor">Van Geest, D.</span>, <span class="refAuthor">Garcia-Morchon, O.</span>, and <span class="refAuthor">V. Smyslov</span>, <span class="refTitle">"Multiple Key Exchanges in the Internet Key Exchange Protocol Version 2 (IKEv2)"</span>, <span class="seriesInfo">RFC 9370</span>, <span class="seriesInfo">DOI 10.17487/RFC9370</span>, <time datetime="2023-05" class="refDate">May 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9370">https://www.rfc-editor.org/info/rfc9370</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9763">[RFC9763]</dt>
+    <dd>
+<span class="refAuthor">Becker, A.</span>, <span class="refAuthor">Guthrie, R.</span>, and <span class="refAuthor">M. Jenkins</span>, <span class="refTitle">"Related Certificates for Use in Multiple Authentications within a Protocol"</span>, <span class="seriesInfo">RFC 9763</span>, <span class="seriesInfo">DOI 10.17487/RFC9763</span>, <time datetime="2025-06" class="refDate">June 2025</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9763">https://www.rfc-editor.org/info/rfc9763</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="appendix-A">
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="appendix-A-1">This document is the product of numerous fruitful discussions in the
+      IETF PQUIP group.  Thank you in particular to <span class="contact-name">Mike       Ounsworth</span>, <span class="contact-name">John Gray</span>, <span class="contact-name">Tim       Hollebeek</span>, <span class="contact-name">Wang Guilin</span>, <span class="contact-name">Rebecca Guthrie</span>, <span class="contact-name">Stephen Farrell</span>,
+      <span class="contact-name">Paul Hoffman</span>, and <span class="contact-name">Sofía Celi</span>
+      for their contributions.  This document is inspired by many others from
+      the IETF and elsewhere.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-B">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Florence Driscoll</span></div>
+<div dir="auto" class="left"><span class="org">UK National Cyber Security Centre</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:florence.d@ncsc.gov.uk" class="email">florence.d@ncsc.gov.uk</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Michael Parsons</span></div>
+<div dir="auto" class="left"><span class="org">UK National Cyber Security Centre</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:michael.p1@ncsc.gov.uk" class="email">michael.p1@ncsc.gov.uk</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Britta Hale</span></div>
+<div dir="auto" class="left"><span class="org">Naval Postgraduate School</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:britta.hale@nps.edu" class="email">britta.hale@nps.edu</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
+

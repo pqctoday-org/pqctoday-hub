@@ -1,0 +1,42 @@
+{
+  "https://www.sdxcentral.com/articles/analysis/china-russia-to-adopt-slightly-different-pqc-standards-from-us/2022/10/": {
+    "label": "China:CACR — CACR PQC Competition Results",
+    "reason": "forbidden",
+    "date": "2026-02-27T04:18:47.211Z"
+  },
+  "https://www.gsma.com/solutions-and-impact/technologies/security/gsma_resources/post-quantum-cryptography-guidelines-for-telecom-use-cases-pq-03-2/": {
+    "label": "International:GSMA — PQ.03 v2.0 Guidelines",
+    "reason": "forbidden",
+    "date": "2026-02-27T04:19:06.844Z"
+  },
+  "https://www.gov.il/en/departments/incd/govil-landing-page": {
+    "label": "Israel:INCD — National Cybersecurity Strategy 2025-2028",
+    "reason": "forbidden",
+    "date": "2026-02-27T04:19:20.397Z"
+  },
+  "https://www.congress.gov/bill/117th-congress/house-bill/7535": {
+    "label": "United States:Congress — Quantum Computing Cybersecurity Preparedness Act",
+    "reason": "forbidden",
+    "date": "2026-02-27T04:19:46.382Z"
+  },
+  "https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF": {
+    "label": "United States:NSA — CNSA 2.0 Published",
+    "reason": "forbidden",
+    "date": "2026-02-27T04:19:47.107Z"
+  },
+  "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF": {
+    "label": "United States:NSA — CNSA 2.0 Algorithms Revised",
+    "reason": "forbidden",
+    "date": "2026-02-27T04:19:50.593Z"
+  },
+  "https://www.nccoe.nist.gov/crypto-agility-considerations-migrating-post-quantum-cryptographic-algorithms": {
+    "label": "United States:NIST NCCoE — PQC Interoperability Testing",
+    "reason": "forbidden",
+    "date": "2026-02-27T04:19:59.968Z"
+  },
+  "https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF": {
+    "label": "United States:NSA — NSS Acquisitions CNSA 2.0 Required",
+    "reason": "forbidden",
+    "date": "2026-02-27T04:20:00.655Z"
+  }
+}

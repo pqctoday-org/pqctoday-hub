@@ -1,0 +1,733 @@
+<!doctype html>
+<html class="no-js gumby-no-touch" lang="en-GB">
+<head>
+	<base href="https://www.ncsc.govt.nz/"><!--[if lte IE 6]></base><![endif]-->
+	
+	<title>NZISM v3.9 Release </title>
+
+	
+	
+
+
+
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+
+
+
+
+	
+		
+	        <meta name="description" content="The New Zealand Information Security Manual (NZISM) has released an update (v3.9), which includes updates to chapter 16, chapter 7, section 11.8 and section 18.2" />
+	    
+	
+
+
+
+
+
+	<meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0" />
+
+    <!-- Fallback favicons (used if prefers-color-scheme not supported) -->
+    <link rel="icon" type="image/svg+xml" href="/resources/themes/cert/dist/images/favicons/favicon.svg?m=1770912998">
+    <link rel="alternate icon" sizes="48x48" href="/resources/themes/cert/dist/images/favicons/favicon.ico?m=1770912998">
+
+    <!-- Light mode favicon -->
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        sizes="any"
+        href="/resources/themes/cert/dist/images/favicons/favicon-light.svg?m=1770912998"
+        media="(prefers-color-scheme: light)"
+    >
+
+    <!-- Dark mode favicon -->
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        sizes="any"
+        href="/resources/themes/cert/dist/images/favicons/favicon-dark.svg?m=1770912998"
+        media="(prefers-color-scheme: dark)"
+    >
+
+	
+<meta property="og:type" content="website">
+<meta property="og:title" content="NZISM v3.9 Release" data-react-helmet="true">
+<meta property="og:url" content="https://www.ncsc.govt.nz/news/nzism-v3-9-release/" data-react-helmet="true">
+<meta property="og:site_name" content="NCSC NZ">
+<meta property="og:locale" content="en_GB">
+
+
+    
+        <meta property="og:description" content="The New Zealand Information Security Manual (NZISM) has released an update (v3.9), which includes updates to chapter 16, chapter 7, section 11.8 and section 18.2" data-react-helmet="true">
+    
+
+    
+        <meta property="og:image" content="https://www.ncsc.govt.nz/assets/uploads/cardimages/Standard-webcard.png">
+        <meta property="og:image:secure_url" content="https://www.ncsc.govt.nz/assets/uploads/cardimages/Standard-webcard.png" />
+        <meta property="og:image:type" content="image/png">
+        <meta name="twitter:image" content="https://www.ncsc.govt.nz/assets/uploads/cardimages/Standard-webcard.png">
+        <meta name="twitter:image:alt" content="NCSC NZ">
+    
+
+
+<meta name="twitter:card" content="summary_large_image">
+
+
+<link rel="stylesheet" type="text/css" href="/resources/themes/cert/dist/vendor.9f8947dcc65e5b5ebfa7.bundle.css?m=1770912998">
+<link rel="stylesheet" type="text/css" href="/resources/themes/cert/dist/main.5b672e3da80aa41f1c48.bundle.css?m=1770912998">
+</head>
+
+<body data-spy="scroll" class="theme--light-forest">
+    <div class="banners">
+        
+    </div>
+
+    <div class="NewsPage">
+
+        <!-- SKIP LINKS for accessibility -->
+<a href="/news/nzism-v3-9-release/#main" class="sr-only-focusable sr-only link-skiplink">Skip to main content</a>
+
+
+        <header class="menu">
+    <section class="menu__secondary">
+        <div class="menu__secondary-wrapper">
+            <div class="menu__logo-wrap">
+                <a href="/" class="menu__logo">
+                    <span class="sr-only">Return to homepage</span>
+                </a>
+            </div>
+
+
+            
+                
+                    <a class="menu__bordered menu__news" href="/news/">
+                        News
+                    </a>
+                
+            
+
+            <a class="menu__bordered menu__oyo" rel="noopener" href="https://www.ownyouronline.govt.nz/" target="_blank">
+                Own Your Online
+                <span class="nonvisual-indicator"><span class="sr-only">External Link</span><span class="aria-hidden"><span class="nonvisual-indicator__icon" role="presentation"></span></span></span>
+
+            </a>
+
+            
+            <a class="menu__subscribe subscription-trigger" href="/home/subscribe/">
+                Subscribe for updates
+            </a>
+            
+
+            
+                <a class="menu__reporting button button--hero" href="https://www.ncsc.govt.nz/report/">
+                    <span>Report</span><span class="menu__tool-button"> it</span>
+                </a>
+            
+
+            <button type="button"
+                class="menu__toggle"
+                :aria-expanded="menuOpen ? 'true' : 'false'"
+                aria-controls="menu-primary"
+                @click="menuButtonClick">
+                <span class="sr-only">{{ menuOpen ? 'Close' : 'Open'}} menu</span>
+            </button>
+
+            <div class="searchform searchform-wrap--menu"
+    :class="{'searchform--expanded': searchOpen}"
+    >
+    <form action="https://www.ncsc.govt.nz/search"
+        class="searchform--menu"
+        role="search"
+        @submit="searchSubmit">
+        <div class="searchform--menu-holder">
+            <label for="searchterm" class="sr-only">Enter your search term</label>
+            <input type="search"
+                id="searchterm"
+                name="searchterm"
+                class="searchform-input"
+                :class="{'searchform-input--expanded': searchOpen}"
+                value=""
+                placeholder="Enter your search term"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                @focus="searchOpen = true"
+                @blur="searchInputBlur"
+                data-search-securityid="4a628d64d23b384f05e66a5972253764a21520a8"
+                :aria-hidden="searchOpen"
+                ref="searchInput"
+            />
+            <button type="submit"
+                aria-label="Search Cert"
+                class="searchform-submitbutton"
+                ref="searchButton">
+                <span class="sr-only">Search</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+        </div>
+    </section>
+
+    <transition name="menu__primary" appear>
+        <section class="menu__primary menu__primary--open"
+            id="menu-primary"
+            v-if="menuDisplayed"
+            data-scroll-lock-scrollable
+        >
+            <div class="menu__primary-wrapper">
+                <a href="/" tabindex="1" class="menu__logo">
+                    <span class="sr-only">Return to homepage</span>
+                </a>
+                <nav class="nav" @mouseleave="handleMouseLeave()">
+                    <div class="searchform searchform-wrap--desktop"
+    :class="{'searchform--expanded': searchOpen}"
+    >
+    <form action="https://www.ncsc.govt.nz/search"
+        class="searchform--desktop"
+        role="search"
+        @submit="searchSubmit">
+        <div class="searchform--menu-holder">
+            <label for="searchterm" class="sr-only">Enter your search term</label>
+            <input type="search"
+                id="searchterm"
+                name="searchterm"
+                class="searchform-input"
+                :class="{'searchform-input--expanded': searchOpen}"
+                value=""
+                placeholder="Enter your search term"
+                autocapitalize="off"
+                autocomplete="off"
+                autocorrect="off"
+                @focus="searchOpen = true"
+                @blur="searchInputBlur"
+                
+                :aria-hidden="searchOpen"
+                ref="searchInput"
+            />
+            <button type="submit"
+                aria-label="Search Cert"
+                class="searchform-submitbutton"
+                ref="searchButton">
+                <span class="sr-only">Search</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+                    <ul class="nav__list">
+                        
+                            
+                                <li class="nav__item nav__item--section">
+                                    <a href="/who-we-are/"
+                                        class="nav__link nav__link--link "
+                                        @mouseenter="handleMouseEnter('submenu1886')"
+                                    >
+                                        <span class="nav__item-tereo">Mō mātou</span>
+                                        <span class="nav__item-title">Who we are</span>
+                                        
+                                    </a>
+
+                                    
+                                        <button
+                                            aria-label="show submenu for Who we are"
+                                            aria-expanded="false"
+                                            class="nav__submenu-button nav__submenu-button--submenu"
+                                            aria-controls="submenu1886"
+                                            @mouseenter="handleMouseEnter('submenu1886')"
+                                            @click="toggleSubmenu('submenu1886')"
+                                            data-target="submenu1886"
+                                        >
+                                            <span class="sr-only">Open the submenu for Who we are</span>
+                                        </button>
+
+                                        <div class="nav__submenu" id="submenu1886" aria-hidden="true"
+                                            @mouseleave="handleMouseLeave()"
+                                        >
+                                            <div class="nav__submenu-inner">
+                                                <ul class="nav__submenu-list">
+                                                    
+                                                        <li class="nav__submenu-item nav__submenu-item--link">
+                                                            <a href="/who-we-are/our-partners/" class="nav__submenu-link">Our partners</a>
+                                                        </li>
+                                                    
+                                                        <li class="nav__submenu-item nav__submenu-item--link">
+                                                            <a href="/who-we-are/gciso/" class="nav__submenu-link">Government Chief Information Security Officer (GCISO)</a>
+                                                        </li>
+                                                    
+                                                        <li class="nav__submenu-item nav__submenu-item--link">
+                                                            <a href="/who-we-are/work-for-us/" class="nav__submenu-link">Work for us</a>
+                                                        </li>
+                                                    
+                                                        <li class="nav__submenu-item nav__submenu-item--link">
+                                                            <a href="/who-we-are/contact-us/" class="nav__submenu-link">Contact us </a>
+                                                        </li>
+                                                    
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    
+                                </li>
+                            
+                        
+                            
+                                <li class="nav__item nav__item--section">
+                                    <a href="/what-we-do/"
+                                        class="nav__link nav__link--link "
+                                        @mouseenter="handleMouseEnter('submenu1922')"
+                                    >
+                                        <span class="nav__item-tereo">Ā mātou mahi</span>
+                                        <span class="nav__item-title">What we do</span>
+                                        
+                                    </a>
+
+                                    
+                                        <button
+                                            aria-label="show submenu for What we do"
+                                            aria-expanded="false"
+                                            class="nav__submenu-button nav__submenu-button--submenu"
+                                            aria-controls="submenu1922"
+                                            @mouseenter="handleMouseEnter('submenu1922')"
+                                            @click="toggleSubmenu('submenu1922')"
+                                            data-target="submenu1922"
+                                        >
+                                            <span class="sr-only">Open the submenu for What we do</span>
+                                        </button>
+
+                                        <div class="nav__submenu" id="submenu1922" aria-hidden="true"
+                                            @mouseleave="handleMouseLeave()"
+                                        >
+                                            <div class="nav__submenu-inner">
+                                                <ul class="nav__submenu-list">
+                                                    
+                                                        <li class="nav__submenu-item nav__submenu-item--link">
+                                                            <a href="/what-we-do/services-we-offer/" class="nav__submenu-link">Our services</a>
+                                                        </li>
+                                                    
+                                                        <li class="nav__submenu-item nav__submenu-item--link">
+                                                            <a href="/what-we-do/regulations-and-standards/" class="nav__submenu-link">Regulations and standards</a>
+                                                        </li>
+                                                    
+                                                        <li class="nav__submenu-item nav__submenu-item--link">
+                                                            <a href="/what-we-do/promote-cyber-resilience/" class="nav__submenu-link">Promoting cyber resilience</a>
+                                                        </li>
+                                                    
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    
+                                </li>
+                            
+                        
+                            
+                                <li class="nav__item nav__item--link">
+                                    <a href="/alerts/"
+                                        class="nav__link nav__link--link "
+                                        @mouseenter="handleMouseEnter('submenu21')"
+                                    >
+                                        <span class="nav__item-tereo">Ngā whakatūpatotanga</span>
+                                        <span class="nav__item-title">Alerts</span>
+                                        
+                                            <span class="nav__submenu-button"></span>
+                                        
+                                    </a>
+
+                                    
+                                </li>
+                            
+                        
+                            
+                                <li class="nav__item nav__item--link">
+                                    <a href="/protect-your-organisation/"
+                                        class="nav__link nav__link--link "
+                                        @mouseenter="handleMouseEnter('submenu85')"
+                                    >
+                                        <span class="nav__item-tereo">Tiakina tō whakahaere</span>
+                                        <span class="nav__item-title">Protect your organisation</span>
+                                        
+                                            <span class="nav__submenu-button"></span>
+                                        
+                                    </a>
+
+                                    
+                                </li>
+                            
+                        
+                            
+                                <li class="nav__item nav__item--section">
+                                    <a href="/insights-and-research/"
+                                        class="nav__link nav__link--link "
+                                        @mouseenter="handleMouseEnter('submenu1818')"
+                                    >
+                                        <span class="nav__item-tereo">Ngā Tirohanga</span>
+                                        <span class="nav__item-title">Insights</span>
+                                        
+                                    </a>
+
+                                    
+                                        <button
+                                            aria-label="show submenu for Insights"
+                                            aria-expanded="false"
+                                            class="nav__submenu-button nav__submenu-button--submenu"
+                                            aria-controls="submenu1818"
+                                            @mouseenter="handleMouseEnter('submenu1818')"
+                                            @click="toggleSubmenu('submenu1818')"
+                                            data-target="submenu1818"
+                                        >
+                                            <span class="sr-only">Open the submenu for Insights</span>
+                                        </button>
+
+                                        <div class="nav__submenu" id="submenu1818" aria-hidden="true"
+                                            @mouseleave="handleMouseLeave()"
+                                        >
+                                            <div class="nav__submenu-inner">
+                                                <ul class="nav__submenu-list">
+                                                    
+                                                        <li class="nav__submenu-item nav__submenu-item--link">
+                                                            <a href="/insights-and-research/insights-reports/" class="nav__submenu-link">Quarterly Cyber Security Insights</a>
+                                                        </li>
+                                                    
+                                                        <li class="nav__submenu-item nav__submenu-item--link">
+                                                            <a href="/insights-and-research/cyber-threat-reports/" class="nav__submenu-link">Cyber Threat Reports </a>
+                                                        </li>
+                                                    
+                                                        <li class="nav__submenu-item nav__submenu-item--link">
+                                                            <a href="/insights-and-research/cyber-security-behavioural-research/" class="nav__submenu-link">Behavioural research</a>
+                                                        </li>
+                                                    
+                                                        <li class="nav__submenu-item nav__submenu-item--link">
+                                                            <a href="/insights-and-research/glossary/" class="nav__submenu-link">Glossary</a>
+                                                        </li>
+                                                    
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    
+                                </li>
+                            
+                        
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="menu__secondary-mobile">
+                
+                <a class="menu__subscribe subscription-trigger" href="/home/subscribe/">
+                    Subscribe for updates
+                </a>
+                
+
+                
+                    
+                        <a class="menu__news" href="">
+                            News
+                        </a>
+                    
+                
+
+                <a class="menu__oyo" rel="noopener" href="https://www.ownyouronline.govt.nz/" target="_blank">
+                    Own Your Online <span class="nonvisual-indicator"><span class="sr-only">External Link</span><span class="aria-hidden"><span class="nonvisual-indicator__icon" role="presentation"></span></span></span>
+
+                </a>
+
+            </div>
+        </section>
+    </transition>
+</header>
+
+
+        <main class="layout">
+            
+    <header class="
+    content-intro
+    
+    
+">
+    <div class="content-intro__inner-wrapper content-wrap">
+    <div class="content-intro__inner">
+        
+            <div class="content-intro__breadcrumbs">
+                <ol class="breadcrumbs" aria-label="Breadcrumbs">
+    <li class="breadcrumbs__item">
+        
+            <a class="breadcrumbs__link breadcrumbs__link--home" href="https://www.ncsc.govt.nz/">
+                <span class="sr-only">Welcome to the National Cyber Security Centre</span>
+            </a>
+        
+    </li>
+    
+        <li class="breadcrumbs__item">
+            <a class="breadcrumbs__link" href="https://www.ncsc.govt.nz/news/">News</a>
+        </li>
+    
+        <li class="breadcrumbs__item">
+            <a class="breadcrumbs__link" href="https://www.ncsc.govt.nz/news/nzism-v3-9-release/">NZISM v3.9 Release</a>
+        </li>
+    
+</ol>
+
+            </div>
+        
+
+        <div id="inner-target" class="content-intro__info typography">
+            
+            <h1 class="content-intro__title">
+                
+                <span class="content-intro__title--eng">NZISM v3.9 Release</span>
+            </h1>
+
+            
+                <p class="content-intro__text">The New Zealand Information Security Manual (NZISM) has released an update (v3.9), which includes updates to chapter 16, chapter 7, section 11.8 and section 18.2</p>
+            
+
+            
+
+            
+    <div class="content-intro__link typography">
+        
+            <a href="https://nzism.gcsb.govt.nz/ism-document"  class="button button--secondary">
+                Read and download the latest version of the NZISM
+                
+                <span class="nonvisual-indicator"><span class="sr-only">External Link</span><span class="aria-hidden"><span class="nonvisual-indicator__icon" role="presentation"></span></span></span>
+
+            </a>
+        
+    </div>
+
+
+            
+        </div>
+
+        
+    </div>
+    
+    </div>
+
+    
+</header>
+
+
+
+
+
+
+
+<div class="contentblock-wrap contentblock--full">
+    <div class="contentblock contentblock-- content">
+        <article class="main typography content-wrap" id="main">
+            
+    <header class="element content__details">
+        
+            <p class="content__detail content__detail--date">
+                 9 May 2025
+            </p>
+        
+        
+        
+    </header>
+
+
+
+            
+                <p>Chapter 16, Authentication and Access Controls, formerly Access Controls and Passwords, has had the most change, including a name change. More key changes include updating controls for passwords to align with industry standards including NIST. Passwordless authentication has been introduced alongside the inclusion of phishing-resistant multi-factor authentication and extending logging and auditing to include event monitoring. This work stemmed from the advancement of standards and technologies, which have significantly advanced since previous review of this chapter. Most changes in this chapter are in sections 16.1 and 16.7.</p>
+<p>Chapter 7 has been updated to improve guidance for detecting and managing security incidents and establishing clearer reporting expectations for GCISO-mandated agencies to report incidents. Increased reporting from mandated agencies will help build a consolidated picture of the operating environment. This update ensures the NZISM aligns with industry guidance and practices.</p>
+<p>Section 11.8 has updated a new control, which says agencies who choose to monitor their printing at TS, S and CTS, S and C should centrally log the use of multifunction devices for printing, scanning, and copying. This means the logs can only be accessed or modified by authorised and authenticated users.</p>
+<p>Section 18.2 has been updated to introduce Wi-Fi Protected Access 3 (WPA3), which provides equivalent or greater security than WPA2 and WPA, and there are also several new controls included. Wireless local area networks are used by every NZ Government agency, which is why this work was done; this work ensures that our guidance is up to date, relevant, and in line with our partners as well as the latest standards.</p>
+<p><span>If you would like to participate in the development of the next NZISM update, please reach out to the team:&nbsp;</span><a rel="noopener noreferrer" href="mailto:nzism@gcsb.govt.nz" target="_blank">nzism@gcsb.govt.nz</a><span>&nbsp;</span></p>
+            
+
+            
+
+            
+        </article>
+    </div>
+    
+</div>
+
+        </main>
+    </div>
+
+    
+    <footer class="footer">
+  <div class="footer__top">
+    <div class="container container--dynamic">
+      <div class="footer__top-inner">
+        
+        <nav class="footer__primary" aria-labelledby="footer-label-1">
+          <h2 id="footer-label-1" class="footer__primary-title h4">Contact</h2>
+          <ul class="footer__primary-items">
+            
+            <li class="footer__primary-item">
+              <a class="footer__primary-link" href="/who-we-are/contact-us/">Contact us</a>
+            </li>
+            
+            <li class="footer__primary-item">
+              <a class="footer__primary-link" href="https://www.linkedin.com/company/ownyouronline">Follow Own Your Online on LinkedIn</a>
+            </li>
+            
+            
+            <li class="footer__primary-item">
+                <a class="footer__primary-subscribe footer__primary-link" href="/home/subscribe/">
+                    Subscribe for updates
+                </a>
+            </li>
+            
+          </ul>
+          
+          <h3 class="footer__social-title">Follow us</h3>
+          <ul class="footer__social">
+            
+            
+            
+            <li class="footer__social-item">
+              <a class="footer__social-link" href="https://www.linkedin.com/company/ncsc-nz/" target="_blank" rel="noopener"><span class="sr-only">on LinkedIN</span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" class="svg svg-linked-in"><path fill="#fff" fill-rule="evenodd" d="M17.683 1C18.41 1 19 1.577 19 2.288v15.395c0 .71-.59 1.288-1.317 1.288L2.317 19C1.589 19 1 18.423 1 17.712V2.317c0-.71.59-1.288 1.317-1.288L17.683 1zM6.58 8H3.862v8.125H6.58V8zm6.597-.142c-1.395 0-2.043.734-2.41 1.28l-.036.053V8.047H8.02c.01.215.014.953.015 1.901v1.919c-.004 1.76-.011 3.568-.014 4.1v.147l-.001.011h2.713v-4.51c0-.241.018-.483.09-.655.195-.482.641-.982 1.39-.982.982 0 1.374.74 1.374 1.826v4.321H16.3v-4.63c0-2.482-1.338-3.636-3.123-3.636zM5.239 4.084c-.93 0-1.539.607-1.539 1.403 0 .78.59 1.404 1.503 1.404h.018c.949 0 1.539-.623 1.539-1.403-.018-.797-.59-1.404-1.521-1.404z" clip-rule="evenodd"></path></svg>
+</a>
+            </li>
+          
+          </ul>
+          
+          
+          <a class="button button--hero footer__button" href="https://www.ncsc.govt.nz/report/">
+            Report it
+          </a>
+          
+        </nav>
+        
+        
+        <nav class="footer__secondary" aria-labelledby="footer-label-2">
+          <h2 id="footer-label-2" class="footer__secondary-title">NZIC websites</h2>
+          <ul class="footer__secondary-items">
+            
+            <li class="footer__secondary-item">
+              <a class="footer__secondary-link" href="https://www.ownyouronline.govt.nz/">Own Your Online</a>
+            </li>
+            
+            <li class="footer__secondary-item">
+              <a class="footer__secondary-link" href="https://www.gcsb.govt.nz/">Government Communications Security Bureau (GCSB)</a>
+            </li>
+            
+            <li class="footer__secondary-item">
+              <a class="footer__secondary-link" href="https://nzism.gcsb.govt.nz/">New Zealand Information Security Manual (NZISM)</a>
+            </li>
+            
+            <li class="footer__secondary-item">
+              <a class="footer__secondary-link" href="https://www.nzic.govt.nz/">New Zealand Intelligence Community (NZIC)</a>
+            </li>
+            
+            <li class="footer__secondary-item">
+              <a class="footer__secondary-link" href="https://protectivesecurity.govt.nz/">Protective Security Requirements (PSR)</a>
+            </li>
+            
+            <li class="footer__secondary-item">
+              <a class="footer__secondary-link" href="https://www.nzsis.govt.nz/">New Zealand Security Intelligence Service (NZSIS)</a>
+            </li>
+            
+            <li class="footer__secondary-item">
+              <a class="footer__secondary-link" href="https://beyondordinary.nzic.govt.nz/">Beyond Ordinary Careers</a>
+            </li>
+            
+          </ul>
+        </nav>
+        
+      </div>
+    </div>
+  </div>
+  <div class="footer__logo">
+    <div class="container container--dynamic">
+      <ul class="footer__logo-items">
+        <li class="footer__logo-item">
+          <a href="https://www.gcsb.govt.nz/" class="footer__logo-link footer__logo-link--gcsb" aria-labelledby="gcsb-logo-label">
+            <span class="sr-only" id="gcsb-logo-label"><span lang="mi">Te Tira Tiaki</span> Government Communications Security Bureau</span>
+          </a>
+        </li>
+        <li class="footer__logo-item">
+          <a href="https://www.rainbowtick.co.nz/" class="footer__logo-link footer__logo-link--rainbow" aria-labelledby="rainbow-logo-label">
+            <span class="sr-only" id="rainbow-logo-label">Rainbow tick certified</span>
+          </a>
+        </li>
+        <li class="footer__logo-item">
+          <a href="https://www.govt.nz/" class="footer__logo-link footer__logo-link--gov" aria-labelledby="nz-govt-logo-label">
+            <span class="sr-only" id="nz-govt-logo-label"><span lang="mi">Te Kāwanatanga o Aotearoa</span> New Zealand Government</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  <nav class="footer__utility" aria-label="Utilities">
+    <div class="container container--dynamic">
+      <ul class="footer__utility-items">
+        
+        <li class="footer__utility-item">
+          <a class="footer__utility-link" href="/legal-privacy-and-copyright/">Legal, privacy and copyright</a>
+        </li>
+        
+        <li class="footer__utility-item">
+          <a class="footer__utility-link" href="/ncsc-responsible-disclosure-guidelines/">NCSC Responsible disclosure guidelines</a>
+        </li>
+        
+      </ul>
+    </div>
+  </nav>
+  
+</footer>
+
+    <section class="modal fade" id="glossaryterm-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body" tabindex="0">
+                <div class="modal-bodywrap">
+                    <button class="pure-button pure-button--link modal-close modal-button" aria-label="Close" data-closemodal>
+                        <svg class="modal-close modal-svg" viewBox="0 0 35 35" aria-hidden="true">
+                            <path d="M1.35,1.35,34.45,34.45" stroke="#072933"></path>
+                            <path d="M34.65,1.35,1.55,34.45" stroke="#072933"></path>
+                        </svg>
+                    </button>
+                    <div class="modal-container container">
+                        <div class="intro">
+                            <h2 class="hero-title h1" data-modal-term>>Glossary Term</h2>
+                        </div>
+
+                        <div class="intro-separator"></div>
+
+                        <div data-modal-description></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+	
+        
+<!-- Matomo -->
+<script type="text/javascript" nonce=6cb8478ba542dac9dcd53b63168aee90b8ac5d95>
+  var _paq = window._paq = window._paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://certnz.matomo.cloud/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', 8]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code -->
+
+	
+
+    <script nonce="6cb8478ba542dac9dcd53b63168aee90b8ac5d95" type="application/javascript">//<![CDATA[
+        (function() {
+        var gr = document.createElement('script'); gr.type = 'text/javascript'; gr.async = true; gr.defer = true;
+        gr.src = ('https:' == document.location.protocol ? "https://www" : "http://www") + ".google.com/recaptcha/api.js?render=6LeJ8F0qAAAAAABoY7xgEF-e9ZYSbmXFCL8XOHcZ&hl=en";
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gr, s);
+        })();
+    //]]></script>
+
+<script type="application/javascript" src="/resources/themes/cert/dist/vendor.5a219f220892f48c1c4a.bundle.js?m=1770912998"></script>
+<script type="application/javascript" src="/resources/themes/cert/dist/main.165666f961c22965bc8a.bundle.js?m=1770912998"></script>
+<script type="text/javascript" src="/_Incapsula_Resource?SWJIYLWA=719d34d31c8e3a6e6fffd425f7e032f3&ns=1&cb=1337189952" async></script></body>
+</html>

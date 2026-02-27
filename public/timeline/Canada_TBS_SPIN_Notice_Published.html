@@ -1,0 +1,604 @@
+<!doctype html>
+
+
+<html class="no-js" dir="ltr" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head prefix="og: http://ogp.me/ns#">
+    
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta charset="utf-8"/>
+<title>Migrating the Government of Canada to Post-Quantum Cryptography: Security Policy Implementation Notice - Canada.ca</title>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+
+
+	<link rel="schema.dcterms" href="http://purl.org/dc/terms/"/>
+	<link rel="canonical" href="https://www.canada.ca/en/government/system/digital-government/policies-standards/spin/migrating-government-canada-post-quantum-cryptography.html"/>
+    <link rel="alternate" hreflang="en" href="https://www.canada.ca/en/government/system/digital-government/policies-standards/spin/migrating-government-canada-post-quantum-cryptography.html"/>
+	
+        <link rel="alternate" hreflang="fr" href="https://www.canada.ca/fr/gouvernement/systeme/gouvernement-numerique/politiques-normes/amops/migration-cryptographie-post-quantique-gouvernement-canada.html"/>
+	
+	
+	
+	
+		<meta name="author" content="Treasury Board of Canada Secretariat"/>
+	
+	
+		<meta name="dcterms.title" content="Migrating the Government of Canada to Post-Quantum Cryptography: Security Policy Implementation Notice"/>
+	
+	
+	
+		<meta name="dcterms.creator" content="Treasury Board of Canada Secretariat"/>
+	
+	
+	
+		<meta name="dcterms.language" title="ISO639-2/T" content="eng"/>
+	
+	
+	
+		<meta name="dcterms.issued" title="W3CDTF" content="2025-10-09"/>
+	
+	
+		<meta name="dcterms.modified" title="W3CDTF" content="2025-10-09"/>
+	
+	
+	
+		<meta name="dcterms.spatial" content="Canada"/>
+	
+	
+	
+	
+	
+	
+		<meta name="dcterms.identifier" content="Treasury_Board_of_Canada_Secretariat"/>
+	
+	
+	
+        
+
+
+
+	<meta prefix="fb: https://www.facebook.com/2008/fbml" property="fb:pages" content="378967748836213, 160339344047502, 184605778338568, 237796269600506, 10860597051, 14498271095, 209857686718, 160504807323251, 111156792247197, 113429762015861, 502566449790031, 312292485564363, 1471831713076413, 22724568071, 17294463927, 1442463402719857, 247990812241506, 730097607131117, 1142481292546228, 1765602380419601, 131514060764735, 307780276294187, 427238637642566, 525934210910141, 1016214671785090, 192657607776229, 586856208161152, 1146080748799944, 408143085978521, 490290084411688, 163828286987751, 565688503775086, 460123390028, 318424514044, 632493333805962, 370233926766473, 173004244677, 1562729973959056, 362400293941960, 769857139754987, 167891083224996, 466882737009651, 126404198009505, 135409166525475, 664638680273646, 169011506491295, 217171551640146, 182842831756930, 1464645710444681, 218822426028, 218740415905, 123326971154939, 125058490980757, 1062292210514762, 1768389106741505, 310939332270090, 285960408117397, 985916134909087, 655533774808209, 1522633664630497, 686814348097821, 230798677012118, 320520588000085, 103201203106202, 273375356172196, 61263506236, 353102841161, 1061339807224729, 1090791104267764, 395867780593657, 1597876400459657, 388427768185631, 937815283021844, 207409132619743, 1952090675003143, 206529629372368, 218566908564369, 175257766291975, 118472908172897, 767088219985590, 478573952173735, 465264530180856, 317418191615817, 428040827230778, 222493134493922, 196833853688656, 194633827256676, 252002641498535, 398018420213195, 265626156847421, 202442683196210, 384350631577399, 385499078129720, 178433945604162, 398240836869162, 326182960762584, 354672164565195, 375081249171867, 333050716732105, 118996871563050, 240349086055056, 119579301504003, 185184131584797, 333647780005544, 306255172770146, 369589566399283, 117461228379000, 349774478396157, 201995959908210, 307017162692056, 145928592172074, 122656527842056">
+
+
+	
+
+
+    
+
+
+	<script src="//assets.adobedtm.com/be5dfd287373/abb618326704/launch-3eac5e076135.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous"/>
+<script blocking="render" src="/etc/designs/canada/wet-boew/js/gcdsloader.min.js"></script>
+<link rel="stylesheet" href="/etc/designs/canada/wet-boew/css/theme.min.css"/>
+<link href="/etc/designs/canada/wet-boew/assets/favicon.ico" rel="icon" type="image/x-icon"/>
+<noscript><link rel="stylesheet" href="/etc/designs/canada/wet-boew/css/noscript.min.css"/></noscript>
+
+
+
+
+
+
+
+                              <script>!function(a){var e="https://s.go-mpulse.net/boomerang/",t="addEventListener";if("False"=="True")a.BOOMR_config=a.BOOMR_config||{},a.BOOMR_config.PageParams=a.BOOMR_config.PageParams||{},a.BOOMR_config.PageParams.pci=!0,e="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="KBFUZ-C9D7G-RB8SX-GRGEN-HGMC9",function(){function n(e){a.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!a.BOOMR||!a.BOOMR.version&&!a.BOOMR.snippetExecuted){a.BOOMR=a.BOOMR||{},a.BOOMR.snippetExecuted=!0;var i,_,o,r=document.createElement("iframe");if(a[t])a[t]("load",n,!1);else if(a.attachEvent)a.attachEvent("onload",n);r.src="javascript:void(0)",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="width:0;height:0;border:0;display:none;",o=document.getElementsByTagName("script")[0],o.parentNode.insertBefore(r,o);try{_=r.contentWindow.document}catch(O){i=document.domain,r.src="javascript:var d=document.open();d.domain='"+i+"';void(0);",_=r.contentWindow.document}_.open()._l=function(){var a=this.createElement("script");if(i)this.domain=i;a.id="boomr-if-as",a.src=e+"KBFUZ-C9D7G-RB8SX-GRGEN-HGMC9",BOOMR_lstart=(new Date).getTime(),this.body.appendChild(a)},_.write("<bo"+'dy onload="document._l();">'),_.close()}}(),"".length>0)if(a&&"performance"in a&&a.performance&&"function"==typeof a.performance.setResourceTimingBufferSize)a.performance.setResourceTimingBufferSize();!function(){if(BOOMR=a.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var e=""=="true"?1:0,t="",n="eybybabaaacfqjqacqcbeaalqbu2cgzf-f-12b0498f4-clienttons-s.akamaihd.net",i="false"=="true"?2:1,_={"ak.v":"39","ak.cp":"368225","ak.ai":parseInt("231651",10),"ak.ol":"0","ak.cr":25,"ak.ipv":6,"ak.proto":"http/1.1","ak.rid":"4bd18a77","ak.r":51140,"ak.a2":e,"ak.m":"dscb","ak.n":"essl","ak.bpcip":"2603:8080:2000:458::","ak.cport":53992,"ak.gh":"23.38.164.4","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1772165925","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==FcB5A1r6y+2hX1zaPGNFixEX6rWN2y86lrqauA9JSjf3WsffudQ1/X2U59rbYzJpHeEBy0dvNR9sZdKX3T6TfFr1JPi7yPDuDD4q/XqN1J7S5+rUlQ/aBD+l+espATIt3lbR5DaMQWMY+ppauRH2EQJWUlceeP39oEQCuS2h0ifS+ELQN7EW2Ez2oKr/vftSNvykeMPsVXBcBRRZc3TRJvXskcFNncYaNkqXao/b8oeSK0rI1bMFEZig3NkT059dXO7waI6F75XOL/qVQbvBPy9svPPBKnJOoQS9XedRnJQf5JL08VJY0KVljdkWUOtGGdr9Lcaf3PlMZpqVhmJG5h5Idc8V+ODD0BWxygPF7oxtkAWGJBpYxee7QOUCE5QWNet9cjs6vHSO1zc+hql8YtTj1k0Io2skPxOFnSys9AU=","ak.pv":"824","ak.dpoabenc":"","ak.tf":i};if(""!==t)_["ak.ruds"]=t;var o={i:!1,av:function(e){var t="http.initiator";if(e&&(!e[t]||"spa_hard"===e[t]))_["ak.feo"]=void 0!==a.aFeoApplied?1:0,BOOMR.addVar(_)},rv:function(){var a=["ak.bpcip","ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(a)}};BOOMR.plugins.AK={akVars:_,akDNSPreFetchDomain:n,init:function(){if(!o.i){var a=BOOMR.subscribe;a("before_beacon",o.av,null,null),a("onbeacon",o.rv,null,null),o.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+
+<body vocab="http://schema.org/" typeof="WebPage" resource="#wb-webpage" class="">
+
+    
+
+
+
+
+    
+        
+        
+        <div class="newpar new section">
+
+</div>
+
+    
+        
+        
+        <div class="par iparys_inherited">
+
+    
+    
+    
+    
+        
+        
+        <div class="global-header"><nav><ul id="wb-tphp">
+	<li class="wb-slc"><a class="wb-sl" href="#wb-cont">Skip to main content</a></li>
+	<li class="wb-slc"><a class="wb-sl" href="#wb-info">Skip to &#34;About government&#34;</a></li>
+	
+</ul></nav>
+
+<header>
+	<div id="wb-bnr" class="container">
+		<div class="row">
+			
+			<section id="wb-lng" class="col-xs-3 col-sm-12 pull-right text-right">
+    <h2 class="wb-inv">Language selection</h2>
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="list-inline mrgn-bttm-0">
+                <li>
+                    <a lang="fr" href="/fr/gouvernement/systeme/gouvernement-numerique/politiques-normes/amops/migration-cryptographie-post-quantique-gouvernement-canada.html">
+                        
+                            <span class="hidden-xs" translate="no">Fran&ccedil;ais</span>
+                            <abbr title="Fran&ccedil;ais" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase" translate="no">fr</abbr>
+                        
+                        
+                    </a>
+                </li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</section>
+				<div class="brand col-xs-9 col-sm-5 col-md-4" property="publisher" resource="#wb-publisher" typeof="GovernmentOrganization">
+					
+                    
+					
+						
+						<a href="/en.html" property="url">
+							<img src="/etc/designs/canada/wet-boew/assets/sig-blk-en.svg" alt="Government of Canada" property="logo"/>
+							<span class="wb-inv"> /
+								
+								<span lang="fr">Gouvernement du Canada</span>
+							</span>
+						</a>
+					
+					<meta property="name" content="Government of Canada"/>
+					<meta property="areaServed" typeof="Country" content="Canada"/>
+					<link property="logo" href="/etc/designs/canada/wet-boew/assets/wmms-blk.svg"/>
+				</div>
+				<section id="wb-srch" class="col-lg-offset-4 col-md-offset-4 col-sm-offset-2 col-xs-12 col-sm-5 col-md-4">
+					<h2>Search</h2>
+					
+<form action="/en/sr/srb.html" method="get" name="cse-search-box" role="search">
+	<div class="form-group wb-srch-qry">
+		
+		    <label for="wb-srch-q" class="wb-inv">Search Canada.ca</label>
+			<input id="wb-srch-q" list="wb-srch-q-ac" class="wb-srch-q form-control" name="q" type="search" value="" size="34" maxlength="170" placeholder="Search Canada.ca"/>
+		    
+		
+
+		<datalist id="wb-srch-q-ac">
+		</datalist>
+	</div>
+	<div class="form-group submit">
+	<button type="submit" id="wb-srch-sub" class="btn btn-primary btn-small" name="wb-srch-sub"><span class="glyphicon-search glyphicon"></span><span class="wb-inv">Search</span></button>
+	</div>
+</form>
+
+				</section>
+		</div>
+	</div>
+	<hr/>
+	
+	<div class="container"><div class="row">
+		
+        <div class="col-md-8">
+        <nav class="gcweb-menu" typeof="SiteNavigationElement">
+		<h2 class="wb-inv">Menu</h2>
+		<button type="button" aria-haspopup="true" aria-expanded="false"><span class="wb-inv">Main </span>Menu <span class="expicon glyphicon glyphicon-chevron-down"></span></button>
+<ul role="menu" aria-orientation="vertical" data-ajax-replace="/content/dam/canada/sitemenu/sitemenu-v2-en.html">
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/jobs.html">Jobs and the workplace</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/immigration-citizenship.html">Immigration and citizenship</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://travel.gc.ca/">Travel and tourism</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/business.html">Business and industry</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/benefits.html">Benefits</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/health.html">Health</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/taxes.html">Taxes</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/environment.html">Environment and natural resources</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/defence.html">National security and defence</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/culture.html">Culture, history and sport</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/policing.html">Policing, justice and emergencies</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/transport.html">Transport and infrastructure</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.international.gc.ca/world-monde/index.aspx?lang=eng">Canada and the world</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/finance.html">Money and finances</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/science.html">Science and innovation</a></li>
+	<li role="presentation"><a role="menuitem" tabindex="-1" href="https://www.canada.ca/en/services/life-events.html">Manage life events</a></li>
+</ul>
+
+		
+        </nav>   
+        </div>
+		
+		
+		
+    </div></div>
+	
+		<nav id="wb-bc" property="breadcrumb"><h2 class="wb-inv">You are here:</h2><div class="container"><ol class="breadcrumb">
+<li><a href='/en.html'>Canada.ca</a></li>
+<li><a href='/en/government/system.html'>About government</a></li>
+<li><a href='/en/government/system/digital-government.html'>Government in a digital age</a></li>
+<li><a href='/en/government/system/digital-government/policies-standards.html'>Strategic plans, policies, standards and guidelines related to government digital services</a></li>
+<li><a href='/en/government/system/digital-government/policies-standards/spin.html'>Security Policy Implementation Notice (SPIN)</a></li>
+</ol></div></nav>
+
+
+	
+
+  
+</header>
+</div>
+
+    
+
+</div>
+
+    
+
+
+
+
+	
+
+
+
+    
+    
+
+    
+    
+        <main property="mainContentOfPage" resource="#wb-main" typeof="WebPageElement" class="container">
+            
+            <div class="mwstitle section">
+
+    <h1 property="name" id="wb-cont" dir="ltr">
+Migrating the Government of Canada to Post-Quantum Cryptography: Security Policy Implementation Notice</h1>
+	</div>
+<div class="mwsgeneric-base-html parbase section">
+
+
+
+    <section id="page-nav">
+    <h2 id="toc">On this page</h2>
+    <ul>
+        <li><a href="#toc1">1. Effective date</a></li>
+        <li><a href="#toc2">2. Purpose</a></li>
+        <li><a href="#toc3">3. Scope</a></li>
+        <li><a href="#toc4">4. Application</a></li>
+        <li><a href="#toc5">5. Context</a></li>
+        <li><a href="#toc6">6. Direction</a></li>
+        <li><a href="#toc10">7. Compliance monitoring</a></li>
+        <li><a href="#toc11">8. Enquiries</a></li>
+    </ul>
+</section>
+<section>
+    <h2 id="toc1">1. Effective date</h2>
+    <p>This Security Policy Implementation Notice (SPIN) is effective as of October 9, 2025.</p>
+</section>
+<section>
+    <h2 id="toc2">2. Purpose</h2>
+    <p>The purpose of this SPIN is to reinforce requirements under the <a href="https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=16578"><em>Policy on Government Security</em></a> and the <a href="https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=32603"><em>Policy on Service and Digital</em></a> to:</p>
+    <ul>
+        <li>mitigate the risks that quantum computers pose to the security of the cryptography used in Government of Canada (GC) services, systems and devices</li>
+        <li>make measurable progress toward migration to post-quantum cryptography (PQC) within the GC</li>
+    </ul>
+</section>
+<section>
+    <h2 id="toc3">3. Scope</h2>
+    <p>This SPIN is applicable to any GC information system (departmental or enterprise) that employs cryptography. Systems that use cryptography include network services, operating systems, applications, code development pipelines and all physical information technology (IT) assets.</p>
+</section>
+<section>
+    <h2 id="toc4">4. Application</h2>
+    <p>This SPIN applies to the organizations listed in section&nbsp;6 of the <a href="https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=16578"><em>Policy on Government Security</em></a>.</p>
+</section>
+<section>
+    <h2 id="toc5">5. Context</h2>
+    <p>The GC, like all other government and private sector organizations around the world, faces the threat of a future quantum computer that is powerful enough to break modern cryptographic algorithms (often called a cryptographically relevant quantum computer (CRQC)). A CRQC, when used by malicious actors, will be able to break many of the cryptographic algorithms that underlie the GC’s IT infrastructure.</p>
+    <p>To address this risk, cryptographic algorithms that are not vulnerable to quantum-enabled attacks have been designed and standardized. These algorithms make up what is called PQC. As outlined in the Canadian Centre for Cyber Security’s (Cyber Centre’s) <a href="https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001"><em>Roadmap for the Migration to Post-Quantum Cryptography for the Government of Canada (ITSM.40.001)</em></a>, every organization that manages IT systems must migrate cyber security components to become quantum-safe in order to protect against the cryptographic threat of a future quantum computer.</p>
+    <p>To that end, migration to PQC is critical to ensure that GC systems remain secure against future threats posed by quantum computing. Migrating the current cryptography to PQC across the GC to protect the GC’s communications and data is a significant technological change that will take careful planning and execution over a period of years. Delaying the process could result in failure to meet the migration timeline, thereby increasing the risk of exposure for sensitive data entrusted to the GC.</p>
+    <p>All departments and agencies play a critical role in ensuring the confidentiality, integrity and availability of the GC’s information and networks. According to the <a href="https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=32611"><em>Directive on Security Management</em></a>, deputy heads have a responsibility to implement security controls to protect information systems under their organization’s custody or control. These responsibilities include:</p>
+    <ul>
+        <li>safeguarding the confidentiality, integrity and availability of GC information and IT assets</li>
+        <li>implementing measures for the protection of personal information</li>
+    </ul>
+    <p>Departments and agencies must understand their cryptography usage and analyze their information systems and system components, including supporting hardware and software, across the entire organization. As Shared Services Canada (SSC) manages IT infrastructure and services on behalf of many departments and agencies across the GC, it plays a key role in supporting the migration to PQC. Within this shared responsibility model, there are interdependencies between SSC infrastructure and the applications that are delivered by departmental programs and services. Collaboration across departments and agencies is thus essential for the transition to PQC.</p>
+</section>
+<section>
+    <h2 id="toc6">6. Direction</h2>
+    <details id="sec-nav-toc6">
+        <summary class="wb-toggle" data-toggle="{&quot;print&quot;:&quot;on&quot;}">In this section</summary>
+        <ul>
+            <li><a href="#toc6-1">6.1 Phase 1: Preparation</a></li>
+            <li><a href="#toc6-2">6.2 Phase 2: Identification</a></li>
+            <li><a href="#toc6-3">6.3 Phase 3: Transition</a></li>
+        </ul>
+    </details>
+    <p>To ensure that the GC remains resilient in the face of emerging quantum threats, the GC must proactively safeguard its digital infrastructure by migrating to quantum-safe cryptography. As set out in Appendix B of the <a href="https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=32611"><em>Directive on Security Management</em></a>, and to ensure that cyber security risks to the GC are reduced according to section&nbsp;4.4.17 of the <a href="https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=32603"><em>Policy on Service and Digital</em></a>, departments and agencies are expected to:</p>
+    <ul>
+        <li>implement measures to protect information systems, their components and the information they process and transmit (section&nbsp;B.2.3.6 of the <a href="https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=32611"><em>Directive on Security Management</em></a>)</li>
+        <li>maintain reasonable confidence of the IT supply chain (section&nbsp;B.2.5 of the <a href="https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=32611"><em>Directive on Security Management</em></a>), including ensuring that security controls are implemented to protect information systems that are used to electronically process or transmit sensitive information or that are relied on to produce or deliver the goods or services being procured (section&nbsp;F.2.3 of the <a href="https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=32611"><em>Directive on Security Management</em></a>)</li>
+    </ul>
+    <p>The establishment of a migration plan is a key component to support the transition to PQC. Following are the three phases of the migration plan:</p>
+    <ul class="lst-spcd">
+        <li><strong>Phase&nbsp;1: Preparation</strong>, which focuses on establishing an initial plan to help clarify the roles and responsibilities involved in developing and migrating systems to use PQC within a department, with consideration of financial requirements and updates to contract clauses to support PQC as part of departmental procurement activities</li>
+        <li><strong>Phase&nbsp;2: Identification</strong>, which focuses on cryptographic discovery needs to determine where cryptography is used in IT systems, and the creation of an inventory of systems that need to be transitioned, including identification of high-priority systems for migrating to PQC</li>
+        <li><strong>Phase&nbsp;3: Transition</strong>, which focuses on the implementation activities required to migrate IT systems to PQC, based on priorities</li>
+    </ul>
+    <p>The scope of the migration plan is for information systems that store and process up to and including Protected&nbsp;B information. For classified systems and systems that handle Protected&nbsp;C information, departments must contact the Cyber Centre.</p>
+    <p>The following subsections outline key milestones and activities in keeping with this SPIN.</p>
+    <section>
+        <h3 id="toc6-1">6.1 Phase 1: Preparation</h3>
+        <p><strong>By <time class="nowrap" datetime="2026-04-01">April 1, 2026</time>, departments and agencies will:</strong></p>
+        <ul class="lst-spcd list-unstyled">
+            <li>6.1.1 Develop a high-level departmental PQC migration plan that guides Phase&nbsp;1 of the PQC migration of systems that use cryptography for which the department is responsible; and</li>
+            <li>6.1.2 Begin reporting on the PQC migration progress on an annual basis, with incremental updates to the departmental PQC migration plan, in accordance with section&nbsp;4.1.7 of the <a href="https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=32603"><em>Policy on Service and Digital</em></a>.</li>
+        </ul>
+        <p><strong>By <time class="nowrap" datetime="2026-04-01">April 1, 2026</time>, SSC will:</strong></p>
+        <ul class="lst-spcd list-unstyled">
+            <li>6.1.3 Develop a high-level PQC migration plan to guide Phase&nbsp;1 of the PQC migration of systems that use cryptography for which SSC is responsible. The SSC PQC migration will be shared with departments and agencies to support departmental migration plans and account for potential dependencies and interoperability considerations; and</li>
+            <li>6.1.4 Begin reporting on the PQC migration progress on an annual basis, with incremental updates to the departmental PQC migration plan, in accordance with section&nbsp;4.1.7 of the <a href="https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=32603"><em>Policy on Service and Digital</em></a>.</li>
+        </ul>
+    </section>
+    <section>
+        <h3 id="toc6-2">6.2 Phase 2: Identification</h3>
+        <p><strong>By <time class="nowrap" datetime="2027-04-01">April 1, 2027</time>, departments and agencies will:</strong></p>
+        <ul class="list-unstyled">
+            <li>6.2.1 Update the high-level departmental PQC migration plan to guide Phase&nbsp;2 of the PQC migration of systems that use cryptography for which the department is responsible.</li>
+        </ul>
+        <p><strong>By <time class="nowrap" datetime="2027-04-01">April 1, 2027</time>, SSC will:</strong></p>
+        <ul class="list-unstyled">
+            <li>6.2.2 Update the high-level PQC migration plan to guide Phase&nbsp;2 of the PQC migration of systems for which they are responsible.</li>
+        </ul>
+        <p><strong>By <time class="nowrap" datetime="2028-04-01">April 1, 2028</time>, departments and agencies, including SSC, will:</strong></p>
+        <ul class="lst-spcd list-unstyled">
+            <li>
+                <p>6.2.3 Update departmental records of IT systems captured in the Treasury Board of Canada Secretariat’s (TBS’s) <a href="https://tbs-clarity.ssc-spc.gc.ca/niku/nu">Application Portfolio Management (APM) tool</a> (accessible only on the GC network) of the Office of the Chief Information Officer, or a comparable tool, to ensure that system information includes, at a minimum:</p>
+                <p><strong>System architecture and cryptographic details</strong></p>
+                <ul>
+                    <li>System components that employ cryptography</li>
+                    <li>Location of system components (for example, external-facing, internal)</li>
+                    <li>Current cryptographic algorithms and protocols employed</li>
+                    <li>Hosting platform</li>
+                    <li>System dependencies</li>
+                </ul>
+                <p><strong>Vendor and life-cycle information</strong></p>
+                <ul>
+                    <li>Vendor and product version for each of the components</li>
+                    <li>Relevant service contracts and expiry dates</li>
+                    <li>Expected refresh year for the system or its components</li>
+                </ul>
+                <p><strong>Migration planning and oversight</strong></p>
+                <ul>
+                    <li>Responsible departmental point of contact</li>
+                    <li>Priority for migration</li>
+                    <li>Migration status</li>
+                </ul>
+            </li>
+            <li>6.2.4 Identify systems that are a high priority for migrating to PQC, such as those that are susceptible to a “harvest now, decrypt later” (HNDL) threat (for example, systems that protect the confidentiality of information in transit over public network zones) or custom applications; and</li>
+            <li>6.2.5 Engage with SSC via the SSC client executive to review plans (for example, upgrades versus replacement) to implement PQC for the services provided by SSC for the department.</li>
+        </ul>
+    </section>
+    <section>
+        <h3 id="toc6-3">6.3 Phase 3: Transition</h3>
+        <p><strong>By <time class="nowrap" datetime="2026-04-01">April 1, 2026</time>, departments and agencies, including SSC, will:</strong></p>
+        <ul class="lst-spcd list-unstyled">
+            <li>6.3.1 Ensure that all contracts that have a digital component entered into after this date include procurement clauses for IT systems, aligned with the <a href="https://www.cyber.gc.ca/en/guidance/recommended-contract-clauses-cryptography-itsm00501"><em>Cyber Centre’s recommendation on PQC procurement clauses</em></a> , that support:
+                <ul>
+                    <li>PQC that is compliant with Cyber Centre recommendations in <a href="https://www.cyber.gc.ca/en/guidance/cryptographic-algorithms-unclassified-protected-protected-b-information-itsp40111"><em>Cryptographic Algorithms for Unclassified, Protected&nbsp;A, and Protected&nbsp;B Information: ITSP.40.111</em></a></li>
+                    <li>cryptographic modules that have been certified by the <a href="https://www.cyber.gc.ca/en/tools-services/cryptographic-module-validation-program-cmvp">Cryptographic Module Validation Program (CMVP)</a></li>
+                    <li><a href="https://www.cyber.gc.ca/en/guidance/guidance-becoming-cryptographically-agile-itsap40018">cryptographic agility</a> to allow for future configuration changes</li>
+                </ul>
+            </li>
+        </ul>
+        <p><strong>By <time class="nowrap" datetime="2028-04-01">April 1, 2028</time>, departments and agencies will:</strong></p>
+        <ul class="lst-spcd list-unstyled">
+            <li>6.3.2 Update the high-level departmental PQC migration plan to guide Phase&nbsp;3 of the PQC migration, including prioritization of systems for migration; and</li>
+            <li>6.3.3 Begin transitioning systems for which the department is responsible to quantum-safe cryptography.</li>
+        </ul>
+        <p><strong>By <time class="nowrap" datetime="2028-04-01">April 1, 2028</time>, SSC will:</strong></p>
+        <ul class="lst-spcd list-unstyled">
+            <li>6.3.4 Update the high-level PQC migration plan to guide Phase&nbsp;3 of the PQC migration, including prioritization of systems for migration; and</li>
+            <li>6.3.5 Begin transitioning systems for which SSC is responsible to quantum-safe cryptography.</li>
+        </ul>
+        <p><strong>By the end of 2031, departments and agencies, including SSC, will:</strong></p>
+        <ul class="list-unstyled">
+            <li>6.3.6 Complete the PQC migration of high-priority systems.</li>
+        </ul>
+        <p><strong>By the end of 2035,</strong> <strong>departments and agencies, including SSC, will</strong></p>
+        <ul class="list-unstyled">
+            <li>6.3.7 Complete the PQC migration of remaining systems.</li>
+        </ul>
+    </section>
+</section>
+<section>
+    <h2 id="toc10">7. Compliance monitoring</h2>
+    <p>For an outline of the consequences of non-compliance, refer to the <a href="https://www.tbs-sct.canada.ca/pol/doc-eng.aspx?id=17151">Framework for the Management of Compliance</a> (Appendix&nbsp;C: Consequences for Institutions and Appendix&nbsp;D: Consequences for Individuals).</p>
+    <p>TBS will monitor departmental progress and will engage departmental senior officials, such as the chief information officer (CIO), chief security officer (CSO), designated official for cyber security (DOCS), and designated official for procurement, as necessary and appropriate, when the department has not met the direction (required actions) deadlines specified above.</p>
+    <p>SSC will provide periodic updates to the IT Security Tripartite on progress for the PQC migration plan as it relates to the infrastructure and network components under SSC’s management.</p>
+</section>
+<section>
+    <h2 id="toc11">8. Enquiries</h2>
+    <p>For additional information or clarification regarding this SPIN, address enquiries to TBS Cyber Security at <a href="mailto:zztbscybers@tbs-sct.gc.ca">zztbscybers@tbs-sct.gc.ca</a>.</p>
+</section>
+
+
+</div>
+
+
+            <section class="pagedetails">
+    <h2 class="wb-inv">Page details</h2>
+
+    
+
+    <div class="row">
+        <div class="col-sm-8 col-md-9 col-lg-9">
+            <div class="wb-disable-allow" data-ajax-replace="/etc/designs/canada/wet-boew/assets/feedback/page-feedback-en.html">
+            </div>
+        </div>
+	</div>
+    
+<gcds-date-modified>
+	2025-10-09
+</gcds-date-modified>
+
+
+</section>
+        </main>
+    
+
+
+
+    
+
+
+
+
+    
+        
+        
+        <div class="newpar new section">
+
+</div>
+
+    
+        
+        
+        <div class="par iparys_inherited">
+
+    
+    
+    
+    
+
+</div>
+
+    
+
+
+
+
+    
+
+
+
+
+    
+        
+        
+        <div class="newpar new section">
+
+</div>
+
+    
+        
+        
+        <div class="par iparys_inherited">
+
+    
+    
+    
+    
+        
+        
+        <div class="global-footer">
+    <footer id="wb-info">
+	    <h2 class="wb-inv">About this site</h2>
+    		
+        <div class="gc-main-footer">
+			<div class="container">
+	<nav>
+	<h3>Government of Canada</h3>
+	<ul class="list-col-xs-1 list-col-sm-2 list-col-md-3">
+		<li><a href="/en/contact.html">All contacts</a></li>
+		<li><a href="/en/government/dept.html">Departments and agencies</a></li>
+		<li><a href="/en/government/system.html">About government</a></li>
+	</ul>
+	<h4><span class="wb-inv">Themes and topics</span></h4>
+	<ul class="list-unstyled colcount-sm-2 colcount-md-3">			
+		<li><a href="/en/services/jobs.html">Jobs</a></li>
+		<li><a href="/en/services/immigration-citizenship.html">Immigration and citizenship</a></li>
+		<li><a href="https://travel.gc.ca/">Travel and tourism</a></li>
+		<li><a href="/en/services/business.html">Business</a></li>
+		<li><a href="/en/services/benefits.html">Benefits</a></li>
+		<li><a href="/en/services/health.html">Health</a></li>
+		<li><a href="/en/services/taxes.html">Taxes</a></li>
+		<li><a href="/en/services/environment.html">Environment and natural resources</a></li>
+		<li><a href="/en/services/defence.html">National security and defence</a></li>
+		<li><a href="/en/services/culture.html">Culture, history and sport</a></li>
+		<li><a href="/en/services/policing.html">Policing, justice and emergencies</a></li>
+		<li><a href="/en/services/transport.html">Transport and infrastructure</a></li>
+		<li><a href="https://www.international.gc.ca/world-monde/index.aspx?lang=eng">Canada and the world</a></li>
+		<li><a href="/en/services/finance.html">Money and finances</a></li>
+		<li><a href="/en/services/science.html">Science and innovation</a></li>
+		<li><a href="/en/services/indigenous-peoples.html">Indigenous Peoples</a></li>
+		<li><a href="/en/services/veterans-military.html">Veterans and military</a></li>
+		<li><a href="/en/services/youth.html">Youth</a></li>
+		<li><a href="/en/services/life-events.html">Manage life events</a></li>		
+	</ul>
+	</nav>
+</div>
+	
+        </div>
+        <div class="gc-sub-footer">
+            <div class="container d-flex align-items-center">
+            <nav>
+                <h3 class="wb-inv">Government of Canada Corporate</h3>
+                <ul>
+                
+                    		<li><a href="https://www.canada.ca/en/social.html">Social media</a></li>
+		<li><a href="https://www.canada.ca/en/mobile.html">Mobile applications</a></li>
+		<li><a href="https://www.canada.ca/en/government/about-canada-ca.html">About Canada.ca</a></li>
+                
+                <li><a href="/en/transparency/terms.html">Terms and conditions</a></li>
+                <li><a href="/en/transparency/privacy.html">Privacy</a></li>
+                </ul>
+            </nav>
+                <div class="wtrmrk align-self-end">
+                    <img src="/etc/designs/canada/wet-boew/assets/wmms-blk.svg" alt="Symbol of the Government of Canada"/>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+    
+
+</div>
+
+    
+
+
+
+
+    
+
+
+
+
+
+
+
+    <script type="text/javascript">_satellite.pageBottom();</script>
+
+
+
+
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script src="/etc/designs/canada/wet-boew/js/ep-pp.min.js"></script>
+<script src="/etc/designs/canada/wet-boew/js/wet-boew.min.js"></script>
+<script src="/etc/designs/canada/wet-boew/js/theme.min.js"></script>
+
+
+
+
+</body>
+</html>

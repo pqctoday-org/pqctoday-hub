@@ -1,0 +1,782 @@
+{
+  "generated": "2026-02-27T05:10:40.426Z",
+  "source": "src/data/timeline_02262026.csv",
+  "summary": {
+    "downloaded": 0,
+    "skipped": 109,
+    "failed": 1,
+    "persisted_skip": 0
+  },
+  "entries": [
+    {
+      "label": "European Union:EU Horizon — QARC Project Execution",
+      "url": "https://cordis.europa.eu/project/id/101225691",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/European_Union_EU_Horizon_QARC_Project_Execution.html"
+    },
+    {
+      "label": "Global:IBM — Quantum Safe Explorer Launched",
+      "url": "https://www.ibm.com/new/product-blog/empowering-cios-to-accelerate-crypto-agility-with-ibm-quantum-safe-explorer",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Global_IBM_Quantum_Safe_Explorer_Launched.html"
+    },
+    {
+      "label": "Global:IBM — IBM Heron R2 Processor Available",
+      "url": "https://www.ibm.com/quantum/blog/qdc-2024",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Global_IBM_IBM_Heron_R2_Processor_Available.html"
+    },
+    {
+      "label": "Global:Microsoft — Quantum Safe Program Launch",
+      "url": "https://www.microsoft.com/en-us/security/blog/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Global_Microsoft_Quantum_Safe_Program_Launch.html"
+    },
+    {
+      "label": "Global:Microsoft — Majorana 1 Quantum Chip",
+      "url": "https://azure.microsoft.com/en-us/blog/quantum/2025/02/19/microsoft-unveils-majorana-1-the-worlds-first-quantum-processor-powered-by-topological-qubits/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Global_Microsoft_Majorana_1_Quantum_Chip.html"
+    },
+    {
+      "label": "Global:PQShield — UltraPQ-Suite Launched",
+      "url": "https://pqshield.com/pqshield-launches-ultrapq-suite-for-deeply-specialized-implementations-of-post-quantum-cryptography/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Global_PQShield_UltraPQ-Suite_Launched.html"
+    },
+    {
+      "label": "Global:PQShield — 100th Research Paper Milestone",
+      "url": "https://pqshield.com/pqshield-hits-100-research-papers-pushing-post-quantum-cryptography-from-theory-to-reality/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Global_PQShield_100th_Research_Paper_Milestone.html"
+    },
+    {
+      "label": "Global:PQShield — Carahsoft Government Partnership",
+      "url": "https://pqshield.com/pqshield-and-carahsoft-partner-to-make-powerful-post-quantum-cryptography-solutions-available-to-government-agencies/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Global_PQShield_Carahsoft_Government_Partnership.html"
+    },
+    {
+      "label": "United States:SandboxAQ — AQtive Guard Pentagon 5-Year Agreement",
+      "url": "https://www.sandboxaq.com/press/sandboxaq-and-dow-cio-partner-to-strengthen-us-defenses-against-quantum-and-ai-driven-cyber-threats",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_SandboxAQ_AQtive_Guard_Pentagon_5-Year_Agreement.html"
+    },
+    {
+      "label": "United States:SandboxAQ — AQtive Guard FedRAMP Ready",
+      "url": "https://www.sandboxaq.com/press/sandboxaq-achieves-fedramp-ready-status-powering-enterprise-readiness-across-the-defense-and-public-sector",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_SandboxAQ_AQtive_Guard_FedRAMP_Ready.html"
+    },
+    {
+      "label": "United States:SandboxAQ/MITRE/LF — RWPQC 2025 Conference",
+      "url": "https://www.sandboxaq.com/press/rwpqc-2025-brings-together-industry-leaders-to-advance-cybersecurity-and-quantum-innovation",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_SandboxAQ_MITRE_LF_RWPQC_2025_Conference.html"
+    },
+    {
+      "label": "Australia:ASD — Initial PQC Planning Guide",
+      "url": "https://www.cyber.gov.au/business-government/secure-design/planning-for-post-quantum-cryptography",
+      "status": "failed",
+      "reason": "network-error: The operation was aborted due to timeout",
+      "persistent": false
+    },
+    {
+      "label": "Australia:ASD — ISM December 2024 Update",
+      "url": "https://www.cyber.gov.au/sites/default/files/2024-12/22.%20ISM%20-%20Guidelines%20for%20Cryptography%20(December%202024).pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Australia_ASD_ISM_December_2024_Update.pdf"
+    },
+    {
+      "label": "International:BIS — Paper 158 Quantum Roadmap",
+      "url": "https://www.bis.org/publ/bppdf/bispap158.htm",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/International_BIS_Paper_158_Quantum_Roadmap.html"
+    },
+    {
+      "label": "Canada:CCCS — PQC Best Practices Published",
+      "url": "https://ised-isde.canada.ca/site/spectrum-management-telecommunications/sites/default/files/attachments/2023/cfdir-quantum-readiness-best-practices-v03.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Canada_CCCS_PQC_Best_Practices_Published.pdf"
+    },
+    {
+      "label": "Canada:CCCS — PQC Migration Roadmap Published",
+      "url": "https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Canada_CCCS_PQC_Migration_Roadmap_Published.html"
+    },
+    {
+      "label": "Canada:TBS — SPIN Notice Published",
+      "url": "https://www.canada.ca/en/government/system/digital-government/policies-standards/spin/migrating-government-canada-post-quantum-cryptography.html",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Canada_TBS_SPIN_Notice_Published.html"
+    },
+    {
+      "label": "China:CACR — CACR PQC Competition Results",
+      "url": "https://en.qapp.tech/help/cacr",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/China_CACR_CACR_PQC_Competition_Results.html"
+    },
+    {
+      "label": "China:ICCS — NGCC Program Launched",
+      "url": "https://thequantuminsider.com/2025/02/18/china-launches-its-own-quantum-resistant-encryption-standard-bypassing-us-efforts/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/China_ICCS_NGCC_Program_Launched.html"
+    },
+    {
+      "label": "China:China Telecom — Hybrid Quantum-Safe System Launched",
+      "url": "https://thequantuminsider.com/2025/05/20/china-telecom-launches-hybrid-quantum-safe-encryption-system-completes-1000-kilometer-secure-call/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/China_China_Telecom_Hybrid_Quantum-Safe_System_Launched.html"
+    },
+    {
+      "label": "Czech Republic:NUKIB — Cryptographic Recommendations",
+      "url": "https://nukib.gov.cz/download/publications_en/Minimum%20Requirements%20for%20Cryptographic%20Algorithms.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Czech_Republic_NUKIB_Cryptographic_Recommendations.pdf"
+    },
+    {
+      "label": "Czech Republic:NUKIB — Key Establishment Migration",
+      "url": "https://www.gsma.com/newsroom/wp-content/uploads//Post-Quantum-Government-Initiatives-by-Country-and-Region-02-Mar-2025-Clean.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Czech_Republic_NUKIB_Key_Establishment_Migration.pdf"
+    },
+    {
+      "label": "European Union:ENISA — PQC Integration Study",
+      "url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-integration-study",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/European_Union_ENISA_PQC_Integration_Study.html"
+    },
+    {
+      "label": "European Union:EC — EU PQC Recommendation Published",
+      "url": "https://digital-strategy.ec.europa.eu/en/library/recommendation-coordinated-implementation-roadmap-transition-post-quantum-cryptography",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/European_Union_EC_EU_PQC_Recommendation_Published.html"
+    },
+    {
+      "label": "European Union:EC — Critical Infrastructure Migration",
+      "url": "https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/European_Union_EC_Critical_Infrastructure_Migration.html"
+    },
+    {
+      "label": "European Union:Europol — QSFF Call to Action",
+      "url": "https://www.europol.europa.eu/publications-events/publications/quantum-safe-financial-forum-call-to-action",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/European_Union_Europol_QSFF_Call_to_Action.html"
+    },
+    {
+      "label": "European Union:NIS CG — EU PQC Survey Launched",
+      "url": "https://digital-strategy.ec.europa.eu/en/news/survey-eu-roadmap-post-quantum-cryptography",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/European_Union_NIS_CG_EU_PQC_Survey_Launched.html"
+    },
+    {
+      "label": "European Union:ECCG — Agreed Cryptographic Algorithms v2",
+      "url": "https://pqshield.com/pqc-transition-roadmaps-and-guidance/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/European_Union_ECCG_Agreed_Cryptographic_Algorithms_v2.html"
+    },
+    {
+      "label": "France:ANSSI — Initial PQC Position Paper",
+      "url": "https://cyber.gouv.fr/en/publications/anssi-views-post-quantum-cryptography-transition",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/France_ANSSI_Initial_PQC_Position_Paper.html"
+    },
+    {
+      "label": "France:ANSSI — PQC Position Paper Follow-up",
+      "url": "https://cyber.gouv.fr/sites/default/files/document/follow_up_position_paper_on_post_quantum_cryptography.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/France_ANSSI_PQC_Position_Paper_Follow-up.pdf"
+    },
+    {
+      "label": "France:ANSSI/BSI/NLNCSA/SE — Joint QKD Position Paper",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/Quantum_Positionspapier.pdf?__blob=publicationFile&v=4",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/France_ANSSI_BSI_NLNCSA_SE_Joint_QKD_Position_Paper.pdf"
+    },
+    {
+      "label": "France:ANSSI — PQC Market Studies Published",
+      "url": "https://cyber.gouv.fr/actualites/lanssi-partage-deux-etudes-de-marche-sur-la-cryptographie-post-quantique-menees-aupres",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/France_ANSSI_PQC_Market_Studies_Published.html"
+    },
+    {
+      "label": "France:ANSSI — Cryptographic Accreditation Doctrine Updated",
+      "url": "https://cyber.gouv.fr/actualites/premiers-visas-de-securite-incluant-de-la-cryptographie-post-quantique",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/France_ANSSI_Cryptographic_Accreditation_Doctrine_Updated.html"
+    },
+    {
+      "label": "France:ANSSI — PQC FAQ Published",
+      "url": "https://cyber.gouv.fr/cryptographie-post-quantique-faq",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/France_ANSSI_PQC_FAQ_Published.html"
+    },
+    {
+      "label": "International:GSMA — PQ.03 v2.0 Guidelines",
+      "url": "https://www.gsma.com/newsroom/wp-content/uploads//PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-Cases-v2.0-2.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/International_GSMA_PQ.03_v2.0_Guidelines.pdf"
+    },
+    {
+      "label": "Germany:BSI — EU Joint Statement on PQC",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/PQC-joint-statement.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Germany_BSI_EU_Joint_Statement_on_PQC.pdf"
+    },
+    {
+      "label": "Germany:BSI — TR-02102-1 PQC Update",
+      "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/Quantentechnologien-und-Post-Quanten-Kryptografie/quantentechnologien-und-post-quanten-kryptografie.html",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Germany_BSI_TR-02102-1_PQC_Update.html"
+    },
+    {
+      "label": "Germany:BSI/Bundesdruckerei — Quantum-Secure ID Card Demonstrator",
+      "url": "https://www.gi-de.com/en/about-us/press/press-releases/germany-sets-new-standards-for-secure-id-documents-in-the-quantum-computing-era",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Germany_BSI_Bundesdruckerei_Quantum-Secure_ID_Card_Demonstrator.html"
+    },
+    {
+      "label": "Germany:BSI/DLR — QUANTITY Initiative Launched",
+      "url": "https://www.postquantumcryptography.de/publications/bsi-compliant-pqc.html",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Germany_BSI_DLR_QUANTITY_Initiative_Launched.html"
+    },
+    {
+      "label": "India:TEC — TEC Technical Report Published",
+      "url": "https://www.tec.gov.in/pdf/TR/Final%20technical%20report%20on%20migration%20to%20PQC%2028-03-25.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/India_TEC_TEC_Technical_Report_Published.pdf"
+    },
+    {
+      "label": "India:CERT-In — BOM Guidelines Expanded",
+      "url": "https://www.cert-in.org.in/PDF/TechnicalGuidelines-on-SBOM,QBOM&CBOM,AIBOM_and_HBOM_ver2.0.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/India_CERT-In_BOM_Guidelines_Expanded.pdf"
+    },
+    {
+      "label": "International:PQCC — PQC Migration Roadmap Published",
+      "url": "https://pqcc.org/post-quantum-cryptography-migration-roadmap/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/International_PQCC_PQC_Migration_Roadmap_Published.html"
+    },
+    {
+      "label": "Israel:INCD — National Cybersecurity Strategy 2025-2028",
+      "url": "https://www.gov.il/BlobFolder/news/cyber_strategy_2025/en/israel_national_cybersecurity_strategy_feb2025.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Israel_INCD_National_Cybersecurity_Strategy_2025-2028.pdf"
+    },
+    {
+      "label": "Israel:BOI — Banking PQC Directive",
+      "url": "https://www.boi.org.il/en/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Israel_BOI_Banking_PQC_Directive.html"
+    },
+    {
+      "label": "Israel:INCD — Government Threat Assessment",
+      "url": "https://www.ynetnews.com/business/article/h1srzlgqkl",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Israel_INCD_Government_Threat_Assessment.html"
+    },
+    {
+      "label": "Japan:CRYPTREC — PQC Guideline GL-2004-2022",
+      "url": "https://www.cryptrec.go.jp/en/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Japan_CRYPTREC_PQC_Guideline_GL-2004-2022.html"
+    },
+    {
+      "label": "Japan:NEDO — K Program PQC Research",
+      "url": "https://pqshield.com/pqshield-announces-participation-in-nedo-program-to-implement-post-quantum-cryptography-across-japan/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Japan_NEDO_K_Program_PQC_Research.html"
+    },
+    {
+      "label": "Japan:METI/NISC — Cybersecurity Industry Policy Package",
+      "url": "https://itbusinesstoday.com/tech/cybersecurity/japans-national-cyber-defense-push-preparing-for-quantum-driven-threats/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Japan_METI_NISC_Cybersecurity_Industry_Policy_Package.html"
+    },
+    {
+      "label": "NATO:NATO — Quantum Technologies Strategy",
+      "url": "https://www.nato.int/cps/en/natohq/news_221601.htm",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/NATO_NATO_Quantum_Technologies_Strategy.html"
+    },
+    {
+      "label": "New Zealand:GCSB/NCSC — NZISM v3.9 Published",
+      "url": "https://www.ncsc.govt.nz/news/nzism-v3-9-release/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/New_Zealand_GCSB_NCSC_NZISM_v3.9_Published.html"
+    },
+    {
+      "label": "Singapore:CSA/MAS — Financial Sector Planning",
+      "url": "https://www.mas.gov.sg/regulation/circulars/advisory-on-addressing-the-cybersecurity-risks-associated-with-quantum",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Singapore_CSA_MAS_Financial_Sector_Planning.html"
+    },
+    {
+      "label": "Singapore:CSA/GovTech/IMDA — Quantum-Safe Handbook and Quantum Readiness Index ",
+      "url": "https://isomer-user-content.by.gov.sg/36/11227d39-4350-4ded-9046-d62f99f561ab/Draft%20for%20Public%20Consultation%20-%20Quantum-Safe%20Handbook%20(Oct%202025).pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Singapore_CSA_GovTech_IMDA_Quantum-Safe_Handbook_and_Quantum_Readiness_Index_Released.pdf"
+    },
+    {
+      "label": "Singapore:MAS — Financial Sector QKD Sandbox Completed",
+      "url": "https://www.mas.gov.sg/news/media-releases/2025/mas-and-industry-partners-publish-technical-report-on-proof-of-concept-sandbox",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Singapore_MAS_Financial_Sector_QKD_Sandbox_Completed.html"
+    },
+    {
+      "label": "South Korea:NIS/KISA — KpqC Competition Results",
+      "url": "https://www.kpqc.or.kr/competition_02.html",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/South_Korea_NIS_KISA_KpqC_Competition_Results.html"
+    },
+    {
+      "label": "United Kingdom:NCSC — PQC White Paper Updated",
+      "url": "https://www.ncsc.gov.uk/whitepaper/next-steps-preparing-for-post-quantum-cryptography",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_Kingdom_NCSC_PQC_White_Paper_Updated.html"
+    },
+    {
+      "label": "United Kingdom:NCSC — PQC Migration Roadmap Published",
+      "url": "https://www.ncsc.gov.uk/guidance/pqc-migration-timelines",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_Kingdom_NCSC_PQC_Migration_Roadmap_Published.html"
+    },
+    {
+      "label": "United Kingdom:CMORG — Financial Sector PQC Guidance",
+      "url": "https://www.cmorg.org.uk/sites/default/files/2025-06/CMORG%20-%20Guidance%20for%20Post-Quantum%20Cryptography%20-%20April%202025%20-%20TLP%20CLEAR%20(1).pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_Kingdom_CMORG_Financial_Sector_PQC_Guidance.pdf"
+    },
+    {
+      "label": "United Kingdom:DSIT — CNI Perspectives Report",
+      "url": "https://www.gov.uk/government/publications/perspectives-on-the-plan-for-pqc-transition",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_Kingdom_DSIT_CNI_Perspectives_Report.html"
+    },
+    {
+      "label": "United States:White House — NSM-10 Published",
+      "url": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-while-mitigating-risks-to-vulnerable-cryptographic-systems/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_White_House_NSM-10_Published.html"
+    },
+    {
+      "label": "United States:OMB — M-23-02 Cryptographic Inventory",
+      "url": "https://www.whitehouse.gov/wp-content/uploads/2022/11/M-23-02-M-Memo-on-Migrating-to-Post-Quantum-Cryptography.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_OMB_M-23-02_Cryptographic_Inventory.pdf"
+    },
+    {
+      "label": "United States:Congress — Quantum Computing Cybersecurity Preparedness Act",
+      "url": "https://www.govinfo.gov/content/pkg/PLAW-117publ260/pdf/PLAW-117publ260.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_Congress_Quantum_Computing_Cybersecurity_Preparedness_Act.pdf"
+    },
+    {
+      "label": "United States:NSA — CNSA 2.0 Published",
+      "url": "https://www.quantum.gov/nsa-releases-future-quantum-resistant-algorithm-requirements-for-national-security-systems/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_NSA_CNSA_2.0_Published.html"
+    },
+    {
+      "label": "United States:NIST — FIPS 203, 204, 205 Published",
+      "url": "https://csrc.nist.gov/pubs/fips/203/final",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_NIST_FIPS_203_204_205_Published.html"
+    },
+    {
+      "label": "United States:NIST — NIST IR 8547 Transition Guidance (Draft)",
+      "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_NIST_NIST_IR_8547_Transition_Guidance_Draft_.html"
+    },
+    {
+      "label": "United States:White House — PQC Report to Congress",
+      "url": "https://bidenwhitehouse.archives.gov/wp-content/uploads/2024/07/REF_PQC-Report_FINAL_Send.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_White_House_PQC_Report_to_Congress.pdf"
+    },
+    {
+      "label": "United States:NSA — CNSA 2.0 Algorithms Revised",
+      "url": "https://pqshield.com/nsa-releases-update-to-cnsa-2-0/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_NSA_CNSA_2.0_Algorithms_Revised.html"
+    },
+    {
+      "label": "United States:CISA — Automated PQC Discovery Strategy",
+      "url": "https://www.cisa.gov/sites/default/files/2024-09/Strategy-for-Migrating-to-Automated-PQC-Discovery-and-Inventory-Tools.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_CISA_Automated_PQC_Discovery_Strategy.pdf"
+    },
+    {
+      "label": "United States:CISA — PQC Considerations for OT",
+      "url": "https://www.cisa.gov/sites/default/files/2024-10/Post-Quantum%20Considerations%20for%20Operational%20Technology%20(508).pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_CISA_PQC_Considerations_for_OT.pdf"
+    },
+    {
+      "label": "United States:NIST — HQC Selected as Fifth Algorithm",
+      "url": "https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_NIST_HQC_Selected_as_Fifth_Algorithm.html"
+    },
+    {
+      "label": "United States:White House — Executive Order 14144",
+      "url": "https://www.federalregister.gov/documents/2025/01/17/2025-01470/strengthening-and-promoting-innovation-in-the-nations-cybersecurity",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_White_House_Executive_Order_14144.html"
+    },
+    {
+      "label": "United States:White House — Executive Order 14306 Issued",
+      "url": "https://www.whitehouse.gov/presidential-actions/2025/06/sustaining-select-efforts-to-strengthen-the-nations-cybersecurity-and-amending-executive-order-13694-and-executive-order-14144/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_White_House_Executive_Order_14306_Issued.html"
+    },
+    {
+      "label": "United States:NIST — IR 8547 Public Comments Published",
+      "url": "https://csrc.nist.gov/files/pubs/ir/8547/ipd/docs/nist-ir-8547-ipd-comments-received.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_NIST_IR_8547_Public_Comments_Published.pdf"
+    },
+    {
+      "label": "United States:NIST — FIPS 206 (FN-DSA) Draft Submitted",
+      "url": "https://www.digicert.com/blog/quantum-ready-fndsa-nears-draft-approval-from-nist",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_NIST_FIPS_206_FN-DSA_Draft_Submitted.html"
+    },
+    {
+      "label": "United States:NIST — Sixth PQC Standardization Conference",
+      "url": "https://csrc.nist.gov/presentations/2025/fips-206-fn-dsa-falcon",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_NIST_Sixth_PQC_Standardization_Conference.html"
+    },
+    {
+      "label": "United States:NIST NCCoE — CSWP 48 PQC Migration Mappings Draft",
+      "url": "https://www.nist.gov/news-events/news/2025/09/new-draft-white-paper-pqc-migration-mappings-risk-framework-docs",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_NIST_NCCoE_CSWP_48_PQC_Migration_Mappings_Draft.html"
+    },
+    {
+      "label": "United States:NIST NCCoE — PQC Interoperability Testing",
+      "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_NIST_NCCoE_PQC_Interoperability_Testing.html"
+    },
+    {
+      "label": "United States:NSA — NSS Acquisitions CNSA 2.0 Required",
+      "url": "https://pqshield.com/what-is-cnsa-2-0-the-nsas-post-quantum-roadmap/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_NSA_NSS_Acquisitions_CNSA_2.0_Required.html"
+    },
+    {
+      "label": "United States:CISA — CISA PQC Product Category List Publication",
+      "url": "https://www.cisa.gov/quantum",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_CISA_CISA_PQC_Product_Category_List_Publication.html"
+    },
+    {
+      "label": "International:PKI Consortium — PKI Consortium PQC Conference 2025 Conclusions",
+      "url": "https://pkic.org/2025/11/04/post-quantum-cryptography-conference-2025-concludes-with-urgent-call-for-global-migration-to-quantum-resistant-encryption-systems/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/International_PKI_Consortium_PKI_Consortium_PQC_Conference_2025_Conclusions.html"
+    },
+    {
+      "label": "United States:SEALSQ — US Post-Quantum Root of Trust Service Launch",
+      "url": "https://quantumcomputingreport.com/news/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_SEALSQ_US_Post-Quantum_Root_of_Trust_Service_Launch.html"
+    },
+    {
+      "label": "International:Samsung/Thales — ML-KEM Embedded Secure Element Breakthrough",
+      "url": "https://www.asdnews.com/news/defense/2026/01/06/thales-powers-ceswinning-postquantum-chip-samsung-electronics",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/International_Samsung_Thales_ML-KEM_Embedded_Secure_Element_Breakthrough.html"
+    },
+    {
+      "label": "International:IETF — RFC 9794 PQC Hybrid Terminology",
+      "url": "https://www.rfc-editor.org/rfc/rfc9794.html",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/International_IETF_RFC_9794_PQC_Hybrid_Terminology.html"
+    },
+    {
+      "label": "International:PQCC — PQC Inventory Workbook Published",
+      "url": "https://pqcc.org/pqc-inventory-workbook/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/International_PQCC_PQC_Inventory_Workbook_Published.html"
+    },
+    {
+      "label": "Global:Quantinuum — Helios Quantum Computer Commercial Launch",
+      "url": "https://www.quantinuum.com/press-releases/quantinuum-announces-commercial-launch-of-new-helios-quantum-computer-that-offers-unprecedented-accuracy-to-enable-generative-quantum-ai-genqai",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Global_Quantinuum_Helios_Quantum_Computer_Commercial_Launch.html"
+    },
+    {
+      "label": "United States:Congress — National Quantum Initiative Reauthorization Act",
+      "url": "https://www.commerce.senate.gov/2026/1/cantwell-young-colleagues-introduce-bipartisan-national-quantum-initiative-reauthorization-act",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_Congress_National_Quantum_Initiative_Reauthorization_Act.html"
+    },
+    {
+      "label": "G7:G7 CEG — Financial Sector PQC Roadmap",
+      "url": "https://home.treasury.gov/news/press-releases/sb0355",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/G7_G7_CEG_Financial_Sector_PQC_Roadmap.html"
+    },
+    {
+      "label": "United States:CISA — Federal PQC Procurement Guidance",
+      "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_CISA_Federal_PQC_Procurement_Guidance.html"
+    },
+    {
+      "label": "Global:Ethereum Foundation — Post-Quantum Security Top Priority",
+      "url": "https://www.coindesk.com/tech/2026/01/24/ethereum-foundation-makes-post-quantum-security-a-top-priority-as-new-team-forms",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Global_Ethereum_Foundation_Post-Quantum_Security_Top_Priority.html"
+    },
+    {
+      "label": "Singapore:Quantinuum/NQO — Helios Quantum Computer Singapore Deployment",
+      "url": "https://www.quantinuum.com/press-releases/singapores-national-quantum-office-and-quantinuum-forge-strategic-partnership-to-accelerate-quantum-computing",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Singapore_Quantinuum_NQO_Helios_Quantum_Computer_Singapore_Deployment.html"
+    },
+    {
+      "label": "International:ETSI/IQC — ETSI/IQC QSC Conference 2026",
+      "url": "https://www.etsi.org/events/2592-etsi-iqc-qsc-conference-2026",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/International_ETSI_IQC_ETSI_IQC_QSC_Conference_2026.html"
+    },
+    {
+      "label": "Hong Kong:LegCo — Critical Infrastructure Cybersecurity Ordinance",
+      "url": "https://www.info.gov.hk/gia/general/202506/27/P2025062700238.htm",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Hong_Kong_LegCo_Critical_Infrastructure_Cybersecurity_Ordinance.html"
+    },
+    {
+      "label": "Hong Kong:HKMA — HKMA Fintech Adoption Report: PQC Commitment",
+      "url": "https://www.hkma.gov.hk/eng/news-and-media/speeches/2025/07/20250716-1/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Hong_Kong_HKMA_HKMA_Fintech_Adoption_Report_PQC_Commitment.html"
+    },
+    {
+      "label": "Hong Kong:HKMA — Fintech 2030 Strategy: PQC Resilience Pillar",
+      "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2025/11/20251103-3/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Hong_Kong_HKMA_Fintech_2030_Strategy_PQC_Resilience_Pillar.html"
+    },
+    {
+      "label": "Hong Kong:HKMA — Fintech Promotion Blueprint: Quantum Preparedness ",
+      "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/02/20260203-3/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Hong_Kong_HKMA_Fintech_Promotion_Blueprint_Quantum_Preparedness_Index.html"
+    },
+    {
+      "label": "Hong Kong:HKMA — Fintech Promotion Blueprint Published",
+      "url": "https://www.hkma.gov.hk/media/eng/doc/key-information/press-release/2026/20260203e3a1.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Hong_Kong_HKMA_Fintech_Promotion_Blueprint_Published.pdf"
+    },
+    {
+      "label": "Singapore:IMDA — NQSN+ Launched",
+      "url": "https://www.imda.gov.sg/about-imda/emerging-technologies-and-research/quantum-safe-technologies",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Singapore_IMDA_NQSN_Launched.html"
+    },
+    {
+      "label": "Singapore:MAS/BdF — Cross-Border PQC Experiment",
+      "url": "https://www.mas.gov.sg/news/media-releases/2024/bdf-and-mas-conduct-groundbreaking-post-quantum-cryptography-experiment",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Singapore_MAS_BdF_Cross-Border_PQC_Experiment.html"
+    },
+    {
+      "label": "India:DST/NQM — National Quantum-Safe Roadmap Published",
+      "url": "https://dst.gov.in/sites/default/files/Report_TaskForce_PQMigration_4Feb26%20(v1).pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/India_DST_NQM_National_Quantum-Safe_Roadmap_Published.pdf"
+    },
+    {
+      "label": "Japan:NCO — Government PQC Transition Deadline",
+      "url": "https://pqshield.com/2035-japans-nco-sets-the-timeline-for-quantum-security/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Japan_NCO_Government_PQC_Transition_Deadline.html"
+    },
+    {
+      "label": "Malaysia:NACSA — National PQC Migration",
+      "url": "https://pkic.org/2025/10/27/global-leaders-converge-in-kuala-lumpur-to-drive-quantum-safe-future-at-worlds-largest-post-quantum-cryptography-conference/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Malaysia_NACSA_National_PQC_Migration.html"
+    },
+    {
+      "label": "United Arab Emirates:TII — NIST Additional Signatures Round 2 Contributions",
+      "url": "https://www.tii.ae/news/tii-researchers-contribute-nist-post-quantum-cryptography-standardization",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_Arab_Emirates_TII_NIST_Additional_Signatures_Round_2_Contributions.html"
+    },
+    {
+      "label": "United Arab Emirates:DESC — Dubai PQC Guideline Launched",
+      "url": "https://www.desc.gov.ae/dubai-electronic-security-center-launches-new-innovative-projects-at-gisec-global-2025/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_Arab_Emirates_DESC_Dubai_PQC_Guideline_Launched.html"
+    },
+    {
+      "label": "United Arab Emirates:ADGM/TII — Quantum-Secure Communications Testbed",
+      "url": "https://www.zawya.com/en/business/technology-and-telecom/uaes-first-quantum-secure-communications-testbed-launched-in-abu-dhabi-o2g1yxt7",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_Arab_Emirates_ADGM_TII_Quantum-Secure_Communications_Testbed.html"
+    },
+    {
+      "label": "United Arab Emirates:UAE CSC — National Encryption Policy Approved",
+      "url": "https://pqshield.com/uae-establishes-requirements-for-cryptographic-controls-and-migration-planning/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_Arab_Emirates_UAE_CSC_National_Encryption_Policy_Approved.html"
+    },
+    {
+      "label": "United Arab Emirates:UAE CSC — National PQC Migration Program",
+      "url": "https://www.atrc.gov.ae/news/uae-cybersecurity-council-advances-national-readiness-future-quantum-threats-atrcs-quantumgate",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_Arab_Emirates_UAE_CSC_National_PQC_Migration_Program.html"
+    },
+    {
+      "label": "Saudi Arabia:NCA — ECC-2:2024 Cybersecurity Controls",
+      "url": "https://www.twobirds.com/en/insights/2025/united-arab-emirates/saudi-arabia-national-cybersecurity-authority-regulations-2024",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Saudi_Arabia_NCA_ECC-2_2024_Cybersecurity_Controls.html"
+    },
+    {
+      "label": "Saudi Arabia:C4IR — Quantum Economy Landscape Report",
+      "url": "https://www.c4irsaudiarabia.org/docs/Quantum%20Economy%20Landscape%20in%20Saudi%20Arabia%20%20(23).pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Saudi_Arabia_C4IR_Quantum_Economy_Landscape_Report.pdf"
+    },
+    {
+      "label": "Saudi Arabia:Aramco/Pasqal — First Quantum Computer in KSA",
+      "url": "https://www.aramco.com/en/news-media/news/2025/aramco-and-pasqal-make-history-with-saudi-arabias-first-quantum-computer",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Saudi_Arabia_Aramco_Pasqal_First_Quantum_Computer_in_KSA.html"
+    },
+    {
+      "label": "Bahrain:NCSC — National Quantum-Safe Deployment",
+      "url": "https://www.sandboxaq.com/press/bahrain-government-takes-definitive-step-toward-building-a-quantum-safe-economy-through-strategic-partnership-with-sandboxaq",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Bahrain_NCSC_National_Quantum-Safe_Deployment.html"
+    },
+    {
+      "label": "Jordan:CBJ — Financial Sector PQC Roadmap",
+      "url": "https://thequantuminsider.com/2026/01/05/central-bank-of-jordan-releases-road-map-to-prepare-for-quantum-transition/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Jordan_CBJ_Financial_Sector_PQC_Roadmap.html"
+    }
+  ]
+}

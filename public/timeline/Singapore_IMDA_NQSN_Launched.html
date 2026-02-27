@@ -1,0 +1,1368 @@
+
+
+
+
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <link rel="alternate" href="https://www.imda.gov.sg/about-imda/emerging-technologies-and-research/quantum-safe-technologies" hreflang="en-sg" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+            <title>Quantum-Safe Technologies | IMDA</title>
+            <meta name="description" content="Learn how we are building a quantum-safe Singapore through the National Quantum-Safe Network Plus (NQSN+) for secure connectivity and the Quantum-Safe Handbook to guide businesses in safeguarding their critical data.">
+
+        <link rel="canonical" href="https://www.imda.gov.sg/about-imda/emerging-technologies-and-research/quantum-safe-technologies">
+        <meta name="robots" content="follow">
+    <meta name="author" content="">
+    <meta name="copyright" content="">
+    <meta name="keywords" content="SG Digital Transformation, SG Tech Innovation, Singapore telecommunications, Emerging technologies in SG, Cybersecurity SG, Digital Connectivity Blueprint, quantum computing, quantum physics, atx, quantum safe, national quantum safe network plus, quantum safe communications, asia tech x singapore, quantum safe, quantum technologies, interoperable, quantum-safe network, quantum key distribution, post quantum cryptography, NQSN+, quantum cryptography, Quantum-Safe Technologies">
+    <meta property="og:title" content="Quantum-Safe Technologies - Infocomm Media Development Authority">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://www.imda.gov.sg/about-imda/emerging-technologies-and-research/quantum-safe-technologies">
+    <meta property="og:image" content="https://www.imda.gov.sg/-/media/imda/images/socialmedia/metaimage.webp">
+        <meta property="og:image:width" content="600">
+        <meta property="og:image:height" content="315">
+    <meta property="og:description" content="Quantum computing is an emerging technology that uses principles of quantum physics to unlock innovations and advance industries. With increased adoption of this technology, security risks may be introduced to Singapore’s digital infrastructure. Learn how IMDA supports the development of quantum-safe technologies and networks to help businesses safeguard critical data, and shape a resilient and future-ready Singapore.">
+    <meta property="og:site_name" content="Infocomm Media Development Authority">
+    <meta name="twitter:creator" content="">
+    <meta name="twitter:url" content="https://www.imda.gov.sg/about-imda/emerging-technologies-and-research/quantum-safe-technologies">
+    <meta name="twitter:title" content="Quantum-Safe Technologies - Infocomm Media Development Authority">
+    <meta name="twitter:description" content="Quantum computing is an emerging technology that uses principles of quantum physics to unlock innovations and advance industries. With increased adoption of this technology, security risks may be introduced to Singapore’s digital infrastructure. Learn how IMDA supports the development of quantum-safe technologies and networks to help businesses safeguard critical data, and shape a resilient and future-ready Singapore.">
+    <meta name="twitter:image" content="https://www.imda.gov.sg/-/media/imda/images/socialmedia/metaimage.webp">
+
+    <link rel="stylesheet" href="/Cwp/assets/imda/styles/main.css?v=4.2.0">
+    <link href="/favicon.ico" rel="icon">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/png" sizes="192x192">
+
+    <link href="/favicon.ico" rel="icon" type="image/png">
+    <link href="/favicon.ico" rel="icon" type="image/png" sizes="32x32">
+    <link href="/favicon.ico" rel="icon" type="image/png" sizes="128x128">
+    <link href="/favicon.ico" rel="icon" type="image/png" sizes="152x152">
+    <link href="/favicon.ico" rel="icon" type="image/png" sizes="167x167">
+    <link href="/favicon.ico" rel="icon" type="image/png" sizes="180x180">
+    <link href="/favicon.ico" rel="icon" type="image/png" sizes="192x192">
+    <link href="/favicon.ico" rel="icon" type="image/png" sizes="512x512">
+
+    <link href="/favicon.ico" rel="apple-touch-icon" type="image/png" sizes="128x128">
+    <link href="/favicon.ico" rel="apple-touch-icon" type="image/png" sizes="152x152">
+    <link href="/favicon.ico" rel="apple-touch-icon" type="image/png" sizes="167x167">
+    <link href="/favicon.ico" rel="apple-touch-icon" type="image/png" sizes="180x180">
+
+    <script src="//embed.typeform.com/next/embed.js" defer></script>
+
+    <script>
+        function loadDeferredStylesheet(href) {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        var head = document.getElementsByTagName('head')[0];
+        head.appendChild(link);
+        }
+
+        window.addEventListener('load', function() {
+            loadDeferredStylesheet('https://cdn.jsdelivr.net/npm/@govtechsg/sgds-masthead/dist/sgds-masthead/sgds-masthead.css');
+        });
+    </script>
+
+    <script src="https://assets.wogaa.sg/scripts/wogaa.js" async></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        dataLayer.push({
+            'event': 'page_content',
+            'content_type': 'Programme',
+            'content_group': ''
+
+        });
+    </script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        dataLayer.push({
+            'event': 'UserData',
+            'imda_profile': getCookie('imda_profile') ? getCookie('imda_profile') : 'profile0'
+        })
+
+        function getCookie(name) {
+            // Add the = sign
+            name = name + '=';
+
+            // Get the decoded cookie
+            const decodedCookie = decodeURIComponent(document.cookie);
+
+            // Get all cookies, split on ; sign
+            const cookies = decodedCookie.split(';');
+
+            // Loop over the cookies
+            for (let i = 0; i < cookies.length; i++) {
+                // Define the single cookie, and remove whitespace
+                const cookie = cookies[i].trim();
+
+                // If this cookie has the name of what we are searching
+                if (cookie.indexOf(name) == 0) {
+                    // Return everything after the cookies name
+                    return cookie.substring(name.length, cookie.length);
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Tag Manager -->
+        <script>
+            (function (w, d, s, l, i) {
+                w[l] = w[l] || []; w[l].push({
+                    'gtm.start':
+                        new Date().getTime(), event: 'gtm.js'
+                }); var f = d.getElementsByTagName(s)[0],
+                    j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                        'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+            })(window, document, 'script', 'dataLayer', 'GTM-M53ZPTB');
+        </script>
+    <!-- End Google Tag Manager -->
+    <!-- Structured data-->
+    <script type='application/ld+json'>
+        {
+        "@context": "http://www.schema.org",
+        "@type": "GovernmentOrganization",
+        "name": "Infocomm Media Development Authority",
+        "url": "https://www.imda.gov.sg",
+        "sameAs": [
+           "https://www.linkedin.com/company/imdasg",
+           "https://www.facebook.com/IMDAsg",
+           "https://www.instagram.com/imdasg",
+           "https://www.youtube.com/user/MDAsingapore",
+           "https://www.twitter.com/IMDAsg"
+        ],
+        "logo": "https://www.imda.gov.sg/html/imda/img/ui/logo.svg",
+        "contactPoint": {
+           "@type": "ContactPoint",
+           "telephone": "+65 6377 3800",
+           "contactType": "customer service"
+        }
+        }
+    </script>
+
+
+
+
+
+    
+<script type="application/ld+json">
+        {
+        "@context": "https://www.schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+           {
+               "type": "ListItem",
+               "position": 1 ,
+               "item": {
+                   "@id": "https://www.imda.gov.sg/",
+                   "name": "Architects of SG's Digital Future"
+               }
+            },           {
+               "type": "ListItem",
+               "position": 2 ,
+               "item": {
+                   "@id": "https://www.imda.gov.sg/about-imda",
+                   "name": "About IMDA"
+               }
+            },           {
+               "type": "ListItem",
+               "position": 3 ,
+               "item": {
+                   "@id": "https://www.imda.gov.sg/about-imda/emerging-technologies-and-research",
+                   "name": "Emerging Technologies"
+               }
+            },           {
+               "type": "ListItem",
+               "position": 4 ,
+               "item": {
+                   "@id": "https://www.imda.gov.sg/about-imda/emerging-technologies-and-research/quantum-safe-technologies",
+                   "name": "Quantum-Safe Technologies"
+               }
+            }
+         ]
+         }
+</script>
+
+    <!-- End Structured data-->
+    
+    <!-- preconnect script-->
+    <link rel="preconnect" href="//va.ecitizen.gov.sg/CFP/Script/Jquery/jquery.min.js">
+    <link rel="dns-prefetch" href="//va.ecitizen.gov.sg/CFP/Script/Jquery/jquery.min.js">
+
+    <link rel="preconnect" href="//va.ecitizen.gov.sg/CFP/VA/imda/js/custom_widget.js">
+    <link rel="dns-prefetch" href="//va.ecitizen.gov.sg/CFP/VA/imda/js/custom_widget.js">
+
+    <link rel="preconnect" href="//va.ecitizen.gov.sg/CFP/VA/global_va.js">
+    <link rel="dns-prefetch" href="//va.ecitizen.gov.sg/CFP/VA/global_va.js">
+
+    <link rel="preconnect" href="//va.ecitizen.gov.sg/CFP/VA/IMDA/js/jquery.scrollIntoView.js">
+    <link rel="dns-prefetch" href="//va.ecitizen.gov.sg/CFP/VA/IMDA/js/jquery.scrollIntoView.js">
+
+    <link rel="preconnect" href="//va.ecitizen.gov.sg/CFP/VA/IMDA/js/va_src.js">
+    <link rel="dns-prefetch" href="//va.ecitizen.gov.sg/CFP/VA/IMDA/js/va_src.js">
+    <!-- preconnect script-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=646dda4b8b790100199498aa&product=sop' defer></script>
+    <script async src="https://www.tiktok.com/embed.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+
+
+
+</head>
+
+
+<body class="" onload="lateLoadChatFile();">
+    <!-- Google Tag Manager (noscript) -->
+        <noscript>
+            <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M53ZPTB" height="0" width="0" style="display: none; visibility: hidden"></iframe>
+        </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+
+    <header class="site-header site-header--top">
+        <sgds-masthead></sgds-masthead>
+
+    <a class="sr-only" href="#mainContent">Skip to main content </a>
+
+
+
+
+    <script id="navData" type="application/json">
+    [{"nav":[{"name":"About IMDA","image":null,"url":"/about-imda/who-we-are","description":"Learn how we as the Infocomm Media Development Authority (IMDA) drive Singapore’s digital transformation by building a vibrant digital economy and an inclusive digital society.","children":[{"name":"Who We Are","image":"/-/media/imda/images/revamp-2022-home/who-we-are.webp","url":"/about-imda/who-we-are","description":"Our Identity, Leadership and Accolades"},{"name":"Research & Statistics","image":"/-/media/imda/images/revamp-2022-home/infocomm-media-lanscape.webp","url":"/about-imda/research-and-statistics","description":"Singapore’s Digital Economy and Society, in numbers"},{"name":"Business Innovation","image":"/-/media/imda/images/revamp-2022-home/business-innovation.webp","url":"/about-imda/who-we-are/innovation","description":"Discover innovation opportunities and the different programmes we offer"},{"name":"Emerging Technologies & Research","image":"/-/media/imda/images/revamp-2022-home/emerging-technologies-and-research.webp","url":"/about-imda/emerging-technologies-and-research","description":"Enabling businesses and academia with new technologies"},{"name":"Corporate Publications","image":"/-/media/imda/images/revamp-2022-home/corporate-publications.webp","url":"/about-imda/corporate-publications","description":"Our key highlights and results for the past year"},{"name":"International Relations","image":"/-/media/imda/images/revamp-2022-home/international-relatoins.webp","url":"/about-imda/international-relations","description":"Our efforts to shape international rules and norms in the digital domain "},{"name":"Data Protection","image":"/-/media/imda/images/revamp-2022-home/data-protection.webp","url":"/about-imda/data-protection","description":"Our efforts to build Singapore as a trusted Data Hub"},{"name":"Careers at IMDA","image":"/-/media/imda/images/revamp-2022-home/careers.webp","url":"/about-imda/careers-at-imda","description":"Learn more about IMDA’s career opportunities and join us as Architects of Singapore’s Digital Future"},{"name":"Media Sector","image":"/-/media/imda/images/revamp-2022-home/gettyimages.jpg","url":"/about-imda/research-and-statistics/support-for-industry-sectors/media","description":"Spearheading the transformation of Singapore’s media landscape"}]},{"name":"Programmes & Grants","image":null,"url":"/how-we-can-help?keyword=&category=all&support=organisations&orgType=all&industry=all&persona=all&page=1","description":"","children":null},{"name":"Regulations & Licences","image":null,"url":"/regulations-and-licensing-listing","description":"As a regulator, we seek a vibrant business environment where businesses thrive and consumer interests are protected.","children":[{"name":"Regulations","image":"/-/media/imda/images/home/banner/2019/thumbnails/two-professionals-in-a-discussion.webp","url":"/regulations-and-licences/regulations","description":"IMDA has put in place a number of guidelines, acts, and codes of practices to bring clarity to the industry as well as provide more informed choices for consumers."},{"name":"Licences","image":"/-/media/imda/images/home/banner/2019/thumbnails/two-business-professionals-walk-and-chat.webp","url":"/regulations-and-licences/licensing","description":"IMDA administers various licences, creating a level playing field for the various industry players and licensees."}]},{"name":"Proposal Submission","image":"/-/media/imda/images/home/banner/2019/thumbnails/collaboration-and-partnership_thumbnail-image.jpg","url":"/proposal-submission","description":"IMDA actively engages various stakeholders in collaborative efforts and initiatives to ensure that our work is closely aligned with the needs of the infocomm media industry, business sectors and end-user communities.","children":null},{"name":"Activities","image":null,"url":"/activities","description":"Find out where and when the Infocomm Development Authority of Singapore's next activity is coming up.","children":null},{"name":"Resources","image":null,"url":"/resources","description":"Read shareworthy content and our latest news","children":[{"name":"Blog","image":"/-/media/imda/images/revamp-2022-home/content-hub.webp","url":"/resources/blog","description":"Success stories and exclusive thought leadership content by IMDA"},{"name":"Press Releases, Factsheets & Speeches","image":"/-/media/imda/images/imda-speeches-image.webp","url":"/resources/press-releases-factsheets-and-speeches","description":"Stay up-to-date with our latest press announcements and speeches"},{"name":"Innovative Tech Companies Directory","image":"/-/media/imda/images/revamp-2022-home/innovative-tech-companies-2.webp","url":"/resources/innovative-tech-companies-directory","description":"Read about the companies that have been enrolled under IMDA"}]}]},{"nav":[{"name":"About IMDA","image":null,"url":"/about-imda/who-we-are","description":"Learn how we as the Infocomm Media Development Authority (IMDA) drive Singapore’s digital transformation by building a vibrant digital economy and an inclusive digital society.","children":[{"name":"Who We Are","image":"/-/media/imda/images/revamp-2022-home/who-we-are.webp","url":"/about-imda/who-we-are","description":"Our Identity, Leadership and Accolades"},{"name":"Research & Statistics","image":"/-/media/imda/images/revamp-2022-home/infocomm-media-lanscape.webp","url":"/about-imda/research-and-statistics","description":"Singapore’s Digital Economy and Society, in numbers"},{"name":"Business Innovation","image":"/-/media/imda/images/revamp-2022-home/business-innovation.webp","url":"/about-imda/who-we-are/innovation","description":"Discover innovation opportunities and the different programmes we offer"},{"name":"Emerging Technologies & Research","image":"/-/media/imda/images/revamp-2022-home/emerging-technologies-and-research.webp","url":"/about-imda/emerging-technologies-and-research","description":"Enabling businesses and academia with new technologies"},{"name":"Corporate Publications","image":"/-/media/imda/images/revamp-2022-home/corporate-publications.webp","url":"/about-imda/corporate-publications","description":"Our key highlights and results for the past year"},{"name":"International Relations","image":"/-/media/imda/images/revamp-2022-home/international-relatoins.webp","url":"/about-imda/international-relations","description":"Our efforts to shape international rules and norms in the digital domain "},{"name":"Data Protection","image":"/-/media/imda/images/revamp-2022-home/data-protection.webp","url":"/about-imda/data-protection","description":"Our efforts to build Singapore as a trusted Data Hub"},{"name":"Careers at IMDA","image":"/-/media/imda/images/revamp-2022-home/careers.webp","url":"/about-imda/careers-at-imda","description":"Learn more about IMDA’s career opportunities and join us as Architects of Singapore’s Digital Future"},{"name":"Media Sector","image":"/-/media/imda/images/revamp-2022-home/gettyimages.jpg","url":"/about-imda/research-and-statistics/support-for-industry-sectors/media","description":"Spearheading the transformation of Singapore’s media landscape"}]},{"name":"Our Programmes","image":null,"url":null,"description":"Discover our programmes and initiatives","children":[{"name":"Technology Programmes","image":"/-/media/imda/images/revamp-2022-home/students/students-highlight4.webp","url":"/how-we-can-help?keyword=technology&category=Programmes%7CProgrammes&support=students&orgType=MNC&industry=all&persona=all&page=1","description":"Explore our technology programmes"},{"name":"Media Programmes","image":"/-/media/imda/images/revamp-2022-home/students/business-column-4-400x264.webp","url":"/how-we-can-help?keyword=media&category=Programmes%7CProgrammes&support=students&orgType=MNC&industry=all&persona=all&page=1","description":"Browse our media programmes"}]},{"name":"Activities","image":null,"url":"/activities","description":"Find out where and when the Infocomm Development Authority of Singapore's next activity is coming up.","children":null},{"name":"Resources","image":null,"url":"/resources","description":"Read shareworthy content and explore useful resources","children":[{"name":"Blog","image":"/-/media/imda/images/revamp-2022-home/content-hub.webp","url":"/resources/blog","description":"Success stories and exclusive thought leadership content by IMDA"},{"name":"Press Releases, Factsheets & Speeches","image":"/-/media/imda/images/imda-speeches-image.webp","url":"/resources/press-releases-factsheets-and-speeches","description":"Stay up-to-date with our latest press announcements and speeches"},{"name":"Skills Framework","image":"/-/media/imda/images/revamp-2022-home/students/students-column-4-400x264.webp","url":"/resources/skills-framework","description":"Learn more about the Skills Framework for Infocomm Technology and media"},{"name":"Innovative Tech Companies Directory","image":"/-/media/imda/images/revamp-2022-home/innovative-tech-companies-2.webp","url":"/resources/innovative-tech-companies-directory","description":"Read about the companies that have been enrolled under IMDA"}]}]},{"nav":[{"name":"About IMDA","image":null,"url":"/about-imda/who-we-are","description":"Learn how we as the Infocomm Media Development Authority (IMDA) drive Singapore’s digital transformation by building a vibrant digital economy and an inclusive digital society.","children":[{"name":"Who We Are","image":"/-/media/imda/images/revamp-2022-home/who-we-are.webp","url":"/about-imda/who-we-are","description":"Our Identity, Leadership and Accolades"},{"name":"Research & Statistics","image":"/-/media/imda/images/revamp-2022-home/infocomm-media-lanscape.webp","url":"/about-imda/research-and-statistics","description":"Singapore’s Digital Economy and Society, in numbers"},{"name":"Business Innovation","image":"/-/media/imda/images/revamp-2022-home/business-innovation.webp","url":"/about-imda/who-we-are/innovation","description":"Discover innovation opportunities and the different programmes we offer"},{"name":"Emerging Technologies & Research","image":"/-/media/imda/images/revamp-2022-home/emerging-technologies-and-research.webp","url":"/about-imda/emerging-technologies-and-research","description":"Enabling businesses and academia with new technologies"},{"name":"Corporate Publications","image":"/-/media/imda/images/revamp-2022-home/corporate-publications.webp","url":"/about-imda/corporate-publications","description":"Our key highlights and results for the past year"},{"name":"International Relations","image":"/-/media/imda/images/revamp-2022-home/international-relatoins.webp","url":"/about-imda/international-relations","description":"Our efforts to shape international rules and norms in the digital domain "},{"name":"Data Protection","image":"/-/media/imda/images/revamp-2022-home/data-protection.webp","url":"/about-imda/data-protection","description":"Our efforts to build Singapore as a trusted Data Hub"},{"name":"Careers at IMDA","image":"/-/media/imda/images/revamp-2022-home/careers.webp","url":"/about-imda/careers-at-imda","description":"Learn more about IMDA’s career opportunities and join us as Architects of Singapore’s Digital Future"},{"name":"Media Sector","image":"/-/media/imda/images/revamp-2022-home/gettyimages.jpg","url":"/about-imda/research-and-statistics/support-for-industry-sectors/media","description":"Spearheading the transformation of Singapore’s media landscape"}]},{"name":"Initiatives & Funding","image":null,"url":"/how-we-can-help?keyword=&category=all&support=individuals&orgType=SME%2FStartups%7CMNC&industry=all&persona=undefined&page=1","description":"","children":null},{"name":"User & Set Up Guides","image":"/-/media/imda/images/home/banner/2019/thumbnails/connectivity-guides.jpg","url":"/user-and-set-up-guides","description":"IMDA complied a series of connectivity guides to help consumers understand their issues relating to their use of mobile and broadband services.","children":null},{"name":"Infocomm Regulation & Guides","image":"/-/media/imda/images/home/banner/2019/thumbnails/content-regulation-and-guides.jpg","url":"/infocomm-regulation-and-guides","description":"IMDA regularly review content regulation and guidelines to ensure they remain in step with social norms and values.","children":null},{"name":"Activities","image":null,"url":"/activities","description":"Find out where and when the Infocomm Development Authority of Singapore's next activity is coming up.","children":null},{"name":"Resources","image":null,"url":"/resources","description":"Read shareworthy content and our latest news","children":[{"name":"Blog","image":"/-/media/imda/images/revamp-2022-home/content-hub.webp","url":"/resources/blog","description":"Success stories and exclusive thought leadership content by IMDA"},{"name":"Press Releases, Factsheets & Speeches","image":"/-/media/imda/images/imda-speeches-image.webp","url":"/resources/press-releases-factsheets-and-speeches","description":"Stay up-to-date with our latest press announcements and speeches"},{"name":"Innovative Tech Companies Directory","image":"/-/media/imda/images/revamp-2022-home/innovative-tech-companies-2.webp","url":"/resources/innovative-tech-companies-directory","description":"Read about the companies that have been enrolled under IMDA"}]}]}]
+
+    </script>
+<div class="site-header__main">
+    <div class="container">
+        <a class="site-logo" href="/" title="IMDA" loading="lazy">
+            <img class="site-logo--top" src="/-/media/imda/images/home/imda-logo/imda-logo-white.svg" alt="The IMDA logo represents the government&#39;s commitment to SMEs go digital, driving digital solutions, data protection and more" loading="lazy">
+            <img class="site-logo--default" src="/-/media/imda/images/home/imda-logo/imda-logo.webp " alt="The IMDA logo represents the government&#39;s commitment to SMEs go digital, driving digital solutions, data protection and more" loading="lazy">
+        </a>
+        <div class="site-header__inner">
+            <div class="site-header__profile">
+                <div class="container">
+                    <button type="button">
+                        <div class="profile-icon">
+                        </div>
+                        <span>Businesses</span>
+                        <span class="icon icon-angle-down"></span>
+                    </button>
+                    <div class="spacer"></div>
+                    <nav aria-label="Persona navigation">
+                        <ul>
+                            <li class="label">Select a profile  </li>
+                            <li class="purple">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" fill="none" viewBox="0 0 24 20">
+                                    <path stroke="#702F8A" stroke-linecap="round" stroke-miterlimit="10" d="M22.305 9.894v8.601c0 .368-.267.658-.597.658H2.293c-.33 0-.598-.295-.598-.658V9.894"></path>
+                                    <path stroke="#702F8A" stroke-linecap="round" stroke-miterlimit="10" d="M10.985 13.028 1.531 9.894C1.217 9.786 1 9.47 1 9.102V4.717c0-.362.268-.657.597-.657H22.4c.333 0 .601.29.601.657v4.385c0 .363-.217.684-.531.792l-9.452 3.134M7.61 4.06l.852-2.407c.14-.393.484-.653.867-.653h5.34c.386 0 .73.26.868.653l.85 2.407"></path>
+                                    <path stroke="#702F8A" stroke-linecap="round" stroke-miterlimit="10" d="M11.998 11.439c.527 0 .958.475.958 1.056v1.397c0 .581-.431 1.056-.958 1.056-.527 0-.959-.475-.959-1.056v-1.397c0-.58.431-1.056.959-1.056Z"></path>
+                                </svg>
+                                <a class="purple" href="#profile1">Businesses</a>
+                            </li>
+                            <li class="maroon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="21" fill="none" viewBox="0 0 28 21">
+                                    <path d="m27.28 7.247-13.139 6.247L1 7.247 14.139 1 27.28 7.247Z" stroke="#9E1B64" stroke-linecap="round" stroke-linejoin="round"> </path>
+                                    <path d="M22.798 9.548v6.657l-8.331 3.864-8.334-3.864V9.877M2.281 7.576v10.52" stroke="#9E1B64" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                                <a class="maroon" href="#profile2">Students &amp; Professionals</a>
+                            </li>
+                            <li class="turquoise">
+                                <svg svg="" xmlns="http://www.w3.org/2000/svg" width="26" height="20" fill="none" viewBox="0 0 26 20">
+                                    <path stroke="#008672" stroke-linejoin="round" d="M1.004 19.343v-2.71c-.023-1.069 0-2.536 1.336-4.612.257-.34.913-1.099 1.475-1.409a9.425 9.425 0 0 1 1.195-.563c-.855-.692-2.425-2.464-2.179-4.787.288-2.719 2.46-4.189 4.638-4.26 2.179-.07 4.252 1.162 4.849 3.239.344 1.197.632 3.098-1.054 4.929l-.773.88c.831.445 2.593 1.689 3.127 3.097.668 1.76.703 2.64.738 3.485.028.676.011 1.913 0 2.71"> </path>
+                                    <path stroke="#008672" stroke-linejoin="round" d="M14.027 14.226c.035-.104.122-.835 1.424-1.984.868-.766 1.435-.855 1.575-.906-.728-.594-2.065-2.115-1.855-4.108.245-2.333 2.094-3.594 3.95-3.654 1.855-.06 3.62.996 4.129 2.778.293 1.027.538 2.659-.898 4.23l-.652.754c.709.383 2.12 1.516 2.674 2.682.611 1.288.582 2.242.611 2.967.024.58.01 1.501 0 2.186"></path>
+                                </svg>
+                                <a class="turquoise" href="#profile3">Public &amp; Seniors</a>
+                            </li>
+                            <li>
+                                <span class="icon icon-angle-up close-btn"></span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            
+            
+            <div class="site-search">
+                <div class="container">
+                    <div class="site-search__form" data-action="/search-results" data-endpoint="/api/IMDARevamp/getXSearchSuggestion">
+                        <div>
+                            <div class="site-search__icons">
+                                <span class="icon icon-search" aria-hidden="true"></span>
+                                <button class="btn btn-back" type="button" aria-label="Cancel search"><span class="sr-only">Cancel search</span><span class="icon icon-arrow-left" aria-hidden="true"></span></button>
+                                <button class="btn btn-cancel" type="button" aria-label="Clear search"><span class="sr-only">Clear search</span><span class="icon icon-close" aria-hidden="true"></span></button>
+                            </div>
+                            <input class="site-search__input" type="search" placeholder="Search for something" name="keyword" required>
+                        </div>
+                        <button class="btn btn-search" type="submit"><span class="label">Search</span></button>
+                    </div>
+                    <div class="site-search__results">
+                        <div class="site-search__results__popular">
+                            <span>Popular searches</span>
+                            <ul></ul>
+                        </div>
+                        <div class="site-search__results__suggestions"></div>
+                        <div class="site-search__results__no-results">
+                            <p>Sorry, we couldn't find any matches for <strong class="search-term">'innnnn'</strong></p>
+                            <div class="rte">
+                                <p><strong>Try the following:</strong></p>
+                                <ul>
+                                    <li>Double check your spelling for typos</li>
+                                    <li>Search again using more general terms</li>
+                                    <li>
+                                        Try popular keywords
+                                        <ul class="site-search__results__no-results__popular"></ul>
+                                    </li>
+                                    <li>
+                                        <span>Explore by category</span>
+                                        <div class="site-search__results__categories"></div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script id="globalSearchPopularTemplate" type="text/x-dot-template">
+              {{? it.length}}
+              {{~ it :item:index}}
+              <li><a href="{{=item.url}}"><span class="icon-search-thin"></span><span>{{=item.title}}</span></a></li>{{~}}
+              {{?}}
+                </script>
+                <script id="globalSearchCategoriesTemplate" type="text/x-dot-template">
+              {{? it.length}}
+              {{~ it :item:index}}<a class="btn btn-primary" href="{{=item.url}}">{{=item.title}}</a>{{~}}
+              {{?}}
+                </script>
+                <script id="globalSearchSuggestionsTemplate" type="text/x-dot-template">
+{{? it.items.length}}
+              <ul>{{~ it.items :item:index}}
+                <li><a href="{{=item.url}}"><span class="icon-{{=item.iconclass}}"></span>
+                    <div><span class="title">{{=item.title}}</span><span class="type">{{=item.type}}</span></div></a></li>{{~}}
+              </ul>
+              <div>
+                    <a class="btn btn-primary">Show all results
+                  <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                    </a>
+              </div>{{??}}
+              <p>Sorry, we didn't find any matches for<strong>'{{=it.keyword}}'</strong></p>{{?}}
+                </script>
+                <script id="popularSearchTermsData" type="application/json">
+                    {"profile0":{"popularSearch":[{"title":"Services-Based Operations (SBO) Licence","url":"/search-results?keyword=Services-Based Operations (SBO) Licence","value":"Services-Based Operations (SBO) Licence"},{"title":"DigitalAccess@Home","url":"/search-results?keyword=DigitalAccess@Home","value":"DigitalAccess@Home"},{"title":"Arts Entertainment","url":"/search-results?keyword=Arts Entertainment","value":"Arts Entertainment"},{"title":"Data Protection Trustmark (DPTM) Certification","url":"/search-results?keyword=Data Protection Trustmark (DPTM) Certification","value":"Data Protection Trustmark (DPTM) Certification"},{"title":"Equipment Registration","url":"/search-results?keyword=Equipment Registration","value":"Equipment Registration"}],"categories":[{"title":"Programme","url":"/search-results?support=Programme","value":"Programme"},{"title":"Grant","url":"/search-results?support=Grant","value":"Grant"},{"title":"Digital Solution","url":"/search-results?support=Digital Solution","value":"Digital Solution"},{"title":"Industry Digital Plan","url":"/search-results?support=Industry Digital Plan","value":"Industry Digital Plan"},{"title":"Certification","url":"/search-results?support=Certification","value":"Certification"},{"title":"Roadmap","url":"/search-results?support=Roadmap","value":"Roadmap"},{"title":"Regulations","url":"/search-results?support=Regulations","value":"Regulations"},{"title":"Licenses","url":"/search-results?support=Licenses","value":"Licenses"},{"title":"Blog","url":"/search-results?support=Blog","value":"Blog"}]},"profile1":{"popularSearch":[{"title":"Public Consultation on Proposed Consolidation Between SIMBA Telecom Pte. Ltd. and M1 Limited","url":"/search-results?keyword=Public Consultation on Proposed Consolidation Between SIMBA Telecom Pte. Ltd. and M1 Limited","value":"Public Consultation on Proposed Consolidation Between SIMBA Telecom Pte. Ltd. and M1 Limited"},{"title":"Data Protection Trustmark (DPTM) Certification","url":"/search-results?keyword=Data Protection Trustmark (DPTM) Certification","value":"Data Protection Trustmark (DPTM) Certification"},{"title":"Equipment Registration","url":"/search-results?keyword=Equipment Registration","value":"Equipment Registration"},{"title":"Telecommunication Dealer's Class Licence","url":"/search-results?keyword=Telecommunication Dealer's Class Licence","value":"Telecommunication Dealer's Class Licence"},{"title":"InvoiceNow","url":"/search-results?keyword=InvoiceNow","value":"InvoiceNow"}],"categories":[{"title":"Programme","url":"/search-results?support=Programme","value":"Programme"},{"title":"Grant","url":"/search-results?support=Grant","value":"Grant"},{"title":"Digital Solution","url":"/search-results?support=Digital Solution","value":"Digital Solution"},{"title":"Industry Digital Plan","url":"/search-results?support=Industry Digital Plan","value":"Industry Digital Plan"},{"title":"Certification","url":"/search-results?support=Certification","value":"Certification"},{"title":"Roadmap","url":"/search-results?support=Roadmap","value":"Roadmap"},{"title":"Regulations","url":"/search-results?support=Regulations","value":"Regulations"},{"title":"Licenses","url":"/search-results?support=Licenses","value":"Licenses"},{"title":"Blog","url":"/search-results?support=Blog","value":"Blog"}]},"profile2":{"popularSearch":[{"title":"DigitalAccess@Home","url":"/search-results?keyword=DigitalAccess@Home","value":"DigitalAccess@Home"}],"categories":[{"title":"Programme","url":"/search-results?support=Programme","value":"Programme"},{"title":"Grant","url":"/search-results?support=Grant","value":"Grant"},{"title":"Scholarship","url":"/search-results?support=Scholarship","value":"Scholarship"},{"title":"Career Development","url":"/search-results?support=Career Development","value":"Career Development"},{"title":"Internship","url":"/search-results?support=Internship","value":"Internship"},{"title":"Blog","url":"/search-results?support=Blog","value":"Blog"}]},"profile3":{"popularSearch":[{"title":"DigitalAccess@Home","url":"/search-results?keyword=DigitalAccess@Home","value":"DigitalAccess@Home"},{"title":"Digital Access","url":"/search-results?keyword=Digital Access","value":"Digital Access"},{"title":"Mobile Access for Seniors ","url":"/search-results?keyword=Mobile Access for Seniors ","value":"Mobile Access for Seniors "},{"title":" Mobile Plans","url":"/search-results?keyword= Mobile Plans","value":" Mobile Plans"},{"title":"Digital Connectivity Blueprint (DCB)","url":"/search-results?keyword=Digital Connectivity Blueprint (DCB)","value":"Digital Connectivity Blueprint (DCB)"},{"title":"Home Access","url":"/search-results?keyword=Home Access","value":"Home Access"}],"categories":[{"title":"Public Initiative","url":"/search-results?support=Public Initiative","value":"Public Initiative"},{"title":"Subsidy","url":"/search-results?support=Subsidy","value":"Subsidy"},{"title":"User and Set Up Guide","url":"/search-results?support=User and Set Up Guide","value":"User and Set Up Guide"},{"title":"Blog","url":"/search-results?support=Blog","value":"Blog"}]}}
+                </script>
+                
+            </div>
+            <nav class="site-nav" aria-label="Site Navigation">
+                <ul class="site-nav__lvl1">
+                            <li class="with-child current">
+                                <a role="button">About IMDA</a>
+                                <button class="icon icon-chevron-right" type="button"><span class="sr-only">Next level</span></button>
+
+
+
+                                <div class="site-nav__lvl2 container">
+                                    <div class="container">
+                                        <div class="site-nav__lvl2__intro">
+                                            <div class="site-nav__lvl2__intro__bg">
+                                                <svg class="no-desktop" width="215" height="154" viewBox="0 0 215 154" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M172 81.1783L172 -376.689L327 -446.406L327 152.537L172 81.1783Z" stroke="#E2D5E8" stroke-width="1.5" stroke-miterlimit="10"></path>
+                                                    <path d="M192.5 -89.1953L3.5 -15.0989L192.5 59.0323L192.5 -89.1953Z" stroke="#ECD1E0" stroke-width="2" stroke-miterlimit="10"></path>
+                                                </svg>
+                                                <svg class="desktop-only" width="336" height="274" viewBox="0 0 336 274" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M456 319.82V1582.7L89 1775V123L456 319.82Z" stroke="#ECD1E0" stroke-width="2" stroke-miterlimit="10"></path>
+                                                    <path d="M-74 1039H341V-6L-74 1039Z" stroke="#E2D5E8" stroke-width="2" stroke-miterlimit="10"></path>
+                                                </svg>
+                                            </div>
+                                            <button class="btn-back" type="button"><span class="icon icon-chevron-left" aria-hidden="true"></span><span class="label">Back</span></button>
+                                            <div class="site-nav__lvl2__intro__content">
+                                                <div class="site-nav__lvl2__intro__content__text">
+                                                    <strong>About IMDA</strong>
+                                                    <p>Learn how we as the Infocomm Media Development Authority (IMDA) drive Singapore’s digital transformation by building a vibrant digital economy and an inclusive digital society.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="site-nav__lvl2__nav">
+                                            <ul>
+                                                    <li>
+                                                        <a href="/about-imda/who-we-are" aria-label="Who We Are">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/revamp-2022-home/who-we-are.webp">
+                                                                        <img src="/-/media/imda/images/revamp-2022-home/who-we-are.webp" alt="A stunning cityscape capturing lightning-fast connectivity and speed for seamless traffic flow, thanks to 5G in Singapore" loading="lazy" height="85" width="130">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Who We Are</span>
+                                                                <p>Our Identity, Leadership and Accolades</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/about-imda/research-and-statistics" aria-label="Research &amp; Statistics">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/revamp-2022-home/infocomm-media-lanscape.webp">
+                                                                        <img src="/-/media/imda/images/revamp-2022-home/infocomm-media-lanscape.webp" alt="A highly developed urban landscape of a city, indicating a digitally-enabled society with innovative digital solutions, supported by IMDA" loading="lazy" height="85" width="130">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Research &amp; Statistics</span>
+                                                                <p>Singapore’s Digital Economy and Society, in numbers</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/about-imda/who-we-are/innovation" aria-label="Business Innovation">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/revamp-2022-home/business-innovation.webp">
+                                                                        <img src="/-/media/imda/images/revamp-2022-home/business-innovation.webp" alt="A pair of hands illustrating 3D growth stats and graphs" loading="lazy" height="85" width="130">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Business Innovation</span>
+                                                                <p>Discover innovation opportunities and the different programmes we offer</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/about-imda/emerging-technologies-and-research" aria-label="Emerging Technologies &amp; Research">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/revamp-2022-home/emerging-technologies-and-research.webp">
+                                                                        <img src="/-/media/imda/images/revamp-2022-home/emerging-technologies-and-research.webp" alt="A network of technology branches, highlights IMDA&#39;s role to drive the adoption of 5G in Singapore, and its expertise to help SMEs go digital" loading="lazy" height="85" width="130">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Emerging Technologies &amp; Research</span>
+                                                                <p>Enabling businesses and academia with new technologies</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/about-imda/corporate-publications" aria-label="Corporate Publications">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/revamp-2022-home/corporate-publications.webp">
+                                                                        <img src="/-/media/imda/images/revamp-2022-home/corporate-publications.webp" alt="Our key highlights and results for the past year." loading="lazy" height="85" width="130">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Corporate Publications</span>
+                                                                <p>Our key highlights and results for the past year</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/about-imda/international-relations" aria-label="International Relations">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/revamp-2022-home/international-relatoins.webp">
+                                                                        <img src="/-/media/imda/images/revamp-2022-home/international-relatoins.webp" alt="Experience IMDA&#39;s 5G innovation programme in Singapore to benefit from the transformative impact that 5G enables" loading="lazy" height="85" width="130">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>International Relations</span>
+                                                                <p>Our efforts to shape international rules and norms in the digital domain </p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/about-imda/data-protection" aria-label="Data Protection">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/revamp-2022-home/data-protection.webp">
+                                                                        <img src="/-/media/imda/images/revamp-2022-home/data-protection.webp" alt="Our efforts to build Singapore as a trusted Data Hub" loading="lazy" height="84" width="130">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Data Protection</span>
+                                                                <p>Our efforts to build Singapore as a trusted Data Hub</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/about-imda/careers-at-imda" aria-label="Careers at IMDA">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/revamp-2022-home/careers.webp">
+                                                                        <img src="/-/media/imda/images/revamp-2022-home/careers.webp" alt="Learn more about IMDA’s career opportunities and join us as Architects of Singapore’s Digital Future" loading="lazy" height="85" width="130">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Careers at IMDA</span>
+                                                                <p>Learn more about IMDA’s career opportunities and join us as Architects of Singapore’s Digital Future</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/about-imda/research-and-statistics/support-for-industry-sectors/media" aria-label="Media Sector">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/revamp-2022-home/gettyimages.jpg">
+                                                                        <img src="/-/media/imda/images/revamp-2022-home/gettyimages.jpg" alt="Spearheading the transformation of Singapore’s media landscape" loading="lazy" height="5773" width="8660">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Media Sector</span>
+                                                                <p>Spearheading the transformation of Singapore’s media landscape</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </li>
+                            <li class="current"><a href="/how-we-can-help?keyword=&amp;category=all&amp;support=organisations&amp;orgType=all&amp;industry=all&amp;persona=all&amp;page=1">Programmes &amp; Grants</a></li>
+                            <li class="with-child current">
+                                <a role="button">Regulations &amp; Licences</a>
+                                <button class="icon icon-chevron-right" type="button"><span class="sr-only">Next level</span></button>
+
+
+
+                                <div class="site-nav__lvl2 container">
+                                    <div class="container">
+                                        <div class="site-nav__lvl2__intro">
+                                            <div class="site-nav__lvl2__intro__bg">
+                                                <svg class="no-desktop" width="215" height="154" viewBox="0 0 215 154" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M172 81.1783L172 -376.689L327 -446.406L327 152.537L172 81.1783Z" stroke="#E2D5E8" stroke-width="1.5" stroke-miterlimit="10"></path>
+                                                    <path d="M192.5 -89.1953L3.5 -15.0989L192.5 59.0323L192.5 -89.1953Z" stroke="#ECD1E0" stroke-width="2" stroke-miterlimit="10"></path>
+                                                </svg>
+                                                <svg class="desktop-only" width="336" height="274" viewBox="0 0 336 274" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M456 319.82V1582.7L89 1775V123L456 319.82Z" stroke="#ECD1E0" stroke-width="2" stroke-miterlimit="10"></path>
+                                                    <path d="M-74 1039H341V-6L-74 1039Z" stroke="#E2D5E8" stroke-width="2" stroke-miterlimit="10"></path>
+                                                </svg>
+                                            </div>
+                                            <button class="btn-back" type="button"><span class="icon icon-chevron-left" aria-hidden="true"></span><span class="label">Back</span></button>
+                                            <div class="site-nav__lvl2__intro__content">
+                                                <div class="site-nav__lvl2__intro__content__text">
+                                                    <strong>Regulations &amp; Licences</strong>
+                                                    <p>As a regulator, we seek a vibrant business environment where businesses thrive and consumer interests are protected.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="site-nav__lvl2__nav">
+                                            <ul>
+                                                    <li>
+                                                        <a href="/regulations-and-licences/regulations" aria-label="Regulations">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/home/banner/2019/thumbnails/two-professionals-in-a-discussion.webp">
+                                                                        <img src="/-/media/imda/images/home/banner/2019/thumbnails/two-professionals-in-a-discussion.webp" alt="In a meeting room, two professionals discuss the latest data protection trustmark and open innovation platform from IMDA" loading="lazy" height="158" width="300">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Regulations</span>
+                                                                <p>IMDA has put in place a number of guidelines, acts, and codes of practices to bring clarity to the industry as well as provide more informed choices for consumers.</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/regulations-and-licences/licensing" aria-label="Licences">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/home/banner/2019/thumbnails/two-business-professionals-walk-and-chat.webp">
+                                                                        <img src="/-/media/imda/images/home/banner/2019/thumbnails/two-business-professionals-walk-and-chat.webp" alt="Two business professionals walk and chat" loading="lazy" height="158" width="300">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Licences</span>
+                                                                <p>IMDA administers various licences, creating a level playing field for the various industry players and licensees.</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </li>
+                            <li class="current"><a href="/proposal-submission">Proposal Submission</a></li>
+                            <li class="current"><a href="/activities">Activities</a></li>
+                            <li class="with-child current">
+                                <a role="button">Resources</a>
+                                <button class="icon icon-chevron-right" type="button"><span class="sr-only">Next level</span></button>
+
+
+
+                                <div class="site-nav__lvl2 container">
+                                    <div class="container">
+                                        <div class="site-nav__lvl2__intro">
+                                            <div class="site-nav__lvl2__intro__bg">
+                                                <svg class="no-desktop" width="215" height="154" viewBox="0 0 215 154" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M172 81.1783L172 -376.689L327 -446.406L327 152.537L172 81.1783Z" stroke="#E2D5E8" stroke-width="1.5" stroke-miterlimit="10"></path>
+                                                    <path d="M192.5 -89.1953L3.5 -15.0989L192.5 59.0323L192.5 -89.1953Z" stroke="#ECD1E0" stroke-width="2" stroke-miterlimit="10"></path>
+                                                </svg>
+                                                <svg class="desktop-only" width="336" height="274" viewBox="0 0 336 274" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M456 319.82V1582.7L89 1775V123L456 319.82Z" stroke="#ECD1E0" stroke-width="2" stroke-miterlimit="10"></path>
+                                                    <path d="M-74 1039H341V-6L-74 1039Z" stroke="#E2D5E8" stroke-width="2" stroke-miterlimit="10"></path>
+                                                </svg>
+                                            </div>
+                                            <button class="btn-back" type="button"><span class="icon icon-chevron-left" aria-hidden="true"></span><span class="label">Back</span></button>
+                                            <div class="site-nav__lvl2__intro__content">
+                                                <div class="site-nav__lvl2__intro__content__text">
+                                                    <strong>Resources</strong>
+                                                    <p>Read shareworthy content and our latest news</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="site-nav__lvl2__nav">
+                                            <ul>
+                                                    <li>
+                                                        <a href="/resources/blog" aria-label="Blog">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/revamp-2022-home/content-hub.webp">
+                                                                        <img src="/-/media/imda/images/revamp-2022-home/content-hub.webp" alt="Our think pieces and exclusive content   " loading="lazy" height="264" width="400">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Blog</span>
+                                                                <p>Success stories and exclusive thought leadership content by IMDA</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/resources/press-releases-factsheets-and-speeches" aria-label="Press Releases, Factsheets &amp; Speeches">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/imda-speeches-image.webp">
+                                                                        <img src="/-/media/imda/images/imda-speeches-image.webp" alt="IMDA Speeches Image" loading="lazy" height="1867" width="2800">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Press Releases, Factsheets &amp; Speeches</span>
+                                                                <p>Stay up-to-date with our latest press announcements and speeches</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/resources/innovative-tech-companies-directory" aria-label="Innovative Tech Companies Directory">
+                                                                <div class="nav-item__image">
+                                                                    <picture>
+                                                                        <source srcset="/-/media/imda/images/revamp-2022-home/innovative-tech-companies-2.webp">
+                                                                        <img src="/-/media/imda/images/revamp-2022-home/innovative-tech-companies-2.webp" alt="A man wearing a VR headset, experiencing the high-speed of 5G connections in Singapore" loading="lazy" height="264" width="400">
+                                                                    </picture>
+                                                                </div>
+                                                            <div class="nav-item__text">
+                                                                <span>Innovative Tech Companies Directory</span>
+                                                                <p>Read about the companies that have been enrolled under IMDA</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </li>
+                </ul>
+            </nav>
+        </div>
+        <button class="btn-toggle-search desktop-only" type="button"><span class="vh">Toggle search bar</span><span class="icon icon-search" aria-hidden="true"></span></button>
+        <div class="site-header__mobile-ui">
+            <div class="profile-icon">
+            </div>
+            <button class="btn profile-indicator" aria-label="Profile Indicator"></button>
+            <span class="icon icon-angle-down"></span>
+            <span class="placeholder-angle-down hide">
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" fill="none" viewBox="0 0 11 6">
+                    <path stroke="#fff" stroke-width="1.3" fill="#fff" d="M9.919 0 5.352 4.462.79 0 0 .772 5.351 6 10.703.772 9.918 0Z"></path>
+                </svg>
+            </span>
+            <div class="mobile-angle-up">
+                <svg width="14" height="7" viewBox="0 0 14 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.02539 7L6.99938 1.79402L12.9665 7L14 6.09946L10.5 3.04973L7 -1.35479e-07L1.07389e-08 6.09946L1.02539 7Z" fill="#262626" />
+                </svg>
+            </div>
+            <button class="btn-toggle-menu no-desktop" type="button"><span class="vh">Toggle mobile menu</span><span class="line" aria-hidden="true"></span><span class="line" aria-hidden="true"></span><span class="line" aria-hidden="true"></span><span class="line" aria-hidden="true"></span></button>
+        </div>
+    </div>
+</div>
+<script id="navTemplate" type="text/x-dot-template">
+{{? it.nav}}
+      <ul class="site-nav__lvl1">
+        {{~ it.nav :level1}}
+        {{var liClass = level1.children ? "with-child current" : "current";}}
+        <li class="{{=liClass}}"><a href="{{=level1.url}}">{{=level1.name}}</a>{{? level1.children}}
+          <button class="icon icon-chevron-right" type="button"><span class="sr-only">Next level</span></button>{{?}}
+          {{? level1.children}}
+          <div class="site-nav__lvl2 container">
+            <div class="container">
+              <div class="site-nav__lvl2__intro">
+                <div class="site-nav__lvl2__intro__bg">
+                  <svg class="no-desktop" width="215" height="154" viewBox="0 0 215 154" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M172 81.1783L172 -376.689L327 -446.406L327 152.537L172 81.1783Z" stroke="#E2D5E8" stroke-width="1.5" stroke-miterlimit="10"></path>
+                    <path d="M192.5 -89.1953L3.5 -15.0989L192.5 59.0323L192.5 -89.1953Z" stroke="#ECD1E0" stroke-width="2" stroke-miterlimit="10"></path>
+                  </svg>
+                  <svg class="desktop-only" width="336" height="274" viewBox="0 0 336 274" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M456 319.82V1582.7L89 1775V123L456 319.82Z" stroke="#ECD1E0" stroke-width="2" stroke-miterlimit="10"></path>
+                    <path d="M-74 1039H341V-6L-74 1039Z" stroke="#E2D5E8" stroke-width="2" stroke-miterlimit="10"></path>
+                  </svg>
+                </div>
+                <button class="btn-back" type="button"><span class="icon icon-chevron-left" aria-hidden="true"></span><span class="label">Back</span></button>
+                <div class="site-nav__lvl2__intro__content">
+                  <div class="site-nav__lvl2__intro__content__text"><strong>{{=level1.name}}</strong>{{? level1.description}}
+                    <p>{{=level1.description}}</p>{{?}}
+                  </div>
+                </div>
+              </div>
+              <div class="site-nav__lvl2__nav">
+                <ul>{{~ level1.children :level2}}
+                  <li><a href="{{=level2.url}}" aria-label="{{=level2.name}}">
+                      <div class="nav-item__image">
+                        <picture>
+                          <source srcset="{{=level2.image}}"><img src="{{=level2.image}}" alt="{{=level2.image.alt}}" loading="lazy" height="{{=level2.image.height}}" width="{{=level2.image.width}}">
+                        </picture>
+                      </div>
+                      <div class="nav-item__text"><span>{{=level2.name}}</span>{{? level2.description}}
+                        <p>{{=level2.description}}</p>{{?}}
+                      </div></a></li>{{~}}
+                </ul>
+              </div>
+            </div>
+          </div>{{?}}
+        </li>{{~}}
+      </ul>{{?}}
+</script>
+
+    </header>
+    <main class="main-content" id="mainContent">
+        
+    <div class="announcement-banners">
+            <div class="announcement-banner-item">
+                <div class="announcement-banner-item__ui">
+                    <button class="announcement-banner__close" type="button"><span class="sr-only">Close</span><span class="icon-close" aria-hidden="true"></span></button>
+                </div>
+                <div class="announcement-banner-item__content">
+                    <div class="announcement-banner-item__icon">
+                        <svg width="22" height="29" viewBox="0 0 22 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19.8053 22.893L17.7795 19.1469V15.2464C17.7795 11.352 14.6164 8.18372 10.7284 8.18372C6.84048 8.18372 3.67739 11.352 3.67739 15.2464V19.1469L1.65151 22.893C1.55964 23.0629 1.5134 23.2537 1.51732 23.4469C1.52124 23.64 1.5752 23.8288 1.67389 23.9948C1.77259 24.1608 1.91264 24.2983 2.08032 24.3937C2.24801 24.4892 2.43757 24.5394 2.63044 24.5393H6.66323C6.65219 24.6618 6.6462 24.7856 6.6462 24.9111C6.6462 25.9955 7.07629 27.0355 7.84185 27.8024C8.60741 28.5692 9.64573 29 10.7284 29C11.8111 29 12.8494 28.5692 13.6149 27.8024C14.3805 27.0355 14.8106 25.9955 14.8106 24.9111C14.8106 24.7856 14.8046 24.6618 14.7936 24.5393H18.8263C19.0192 24.5393 19.2087 24.4891 19.3764 24.3937C19.5441 24.2982 19.6841 24.1607 19.7828 23.9948C19.8814 23.8288 19.9354 23.64 19.9393 23.4469C19.9432 23.2537 19.897 23.0629 19.8051 22.893H19.8053ZM13.3262 24.9111C13.3265 25.2686 13.2532 25.6225 13.1109 25.9504C12.9686 26.2783 12.7603 26.5734 12.4991 26.8171C12.2379 27.0609 11.9293 27.248 11.5927 27.367C11.256 27.486 10.8985 27.5341 10.5424 27.5085C10.1863 27.4829 9.83933 27.3841 9.52309 27.2182C9.20685 27.0522 8.92815 26.8228 8.70438 26.5442C8.4806 26.2656 8.31656 25.9438 8.22249 25.5988C8.12842 25.2539 8.10635 24.8932 8.15764 24.5393H13.2992C13.317 24.6624 13.3261 24.7867 13.3262 24.9111ZM3.25349 23.0525L5.16182 19.5237V15.2464C5.16182 13.7676 5.7483 12.3494 6.79224 11.3037C7.83619 10.258 9.25208 9.67059 10.7284 9.67059C12.2048 9.67059 13.6207 10.258 14.6646 11.3037C15.7086 12.3494 16.2951 13.7676 16.2951 15.2464V19.5237L18.2033 23.0525H3.25349Z" fill="black"></path>
+                            <path d="M21.2501 10.0834C21.2501 13.2375 18.6977 15.7923 15.5518 15.7923C12.4059 15.7923 9.85352 13.2375 9.85352 10.0834C9.85352 6.92931 12.4059 4.37451 15.5518 4.37451C18.6977 4.37451 21.2501 6.92931 21.2501 10.0834Z" fill="white" stroke="#702F8A" stroke-width="1.5"></path>
+                            <line x1="15.75" y1="9.75" x2="15.75" y2="13.25" stroke="#702F8A" stroke-width="1.5" stroke-linecap="round"></line>
+                            <line x1="15.75" y1="7.75" x2="15.75" y2="7.25" stroke="#702F8A" stroke-width="1.5" stroke-linecap="round"></line>
+                            <line x1="0.75" y1="-0.75" x2="4.68247" y2="-0.75" transform="matrix(0.907697 0.419627 -0.41849 0.908221 0 7.04395)" stroke="#702F8A" stroke-width="1.5" stroke-linecap="round"></line>
+                            <line x1="0.75" y1="-0.75" x2="4.68569" y2="-0.75" transform="matrix(0.680926 0.732352 -0.731234 0.682126 2.51123 3.15381)" stroke="#702F8A" stroke-width="1.5" stroke-linecap="round"></line>
+                            <line x1="0.75" y1="-0.75" x2="4.68981" y2="-0.75" transform="matrix(0.0583034 0.998299 -0.998288 0.0584949 7.7002 1)" stroke="#702F8A" stroke-width="1.5" stroke-linecap="round"></line>
+                        </svg>
+                    </div>
+                    <div class="announcement-banner-item__text rte">
+                        <p>Be aware of scammers impersonating as IMDA officers or misrepresenting our policies. Government officials will NEVER call you to transfer money, verify refunds, disclose bank log-in details or request for your personal information. For scam-related advice, please call the ScamShield Helpline at 1799 or go to <a class=" link__external" aria-label="ScamShield link" rel="noopener noreferrer" href="https://www.ScamShield.gov.sg"target="_blank">www.ScamShield.gov.sg</a>.</p>
+                    </div>
+                </div>
+            </div>
+        
+    </div>
+        
+
+
+    <div class="hero-banner">
+        <picture class="hero-banner__image">
+            <source srcset="/-/media/imda/images/content/banners/national-quantum-safe-network-plus/national-quantum-safe-network-plus-banner-mobile-(1).webp" media="(max-width: 1023px)">
+            <source srcset="/-/media/imda/images/content/banners/national-quantum-safe-network-plus/national-quantum-safe-network-plus-banner.webp">
+            <img src="/-/media/imda/images/content/banners/national-quantum-safe-network-plus/national-quantum-safe-network-plus-banner.webp" alt="National Quantum Safe Network Plus Banner" fetchpriority="high" height="284" width="1199">
+        </picture>
+        <div class="container">
+            
+<div class="breadcrumbs">
+    <ol>
+        
+                <li><a href="/">Architects of SG&#39;s Digital Future</a></li>
+                <li><a href="/about-imda">About IMDA</a></li>
+                <li><a href="/about-imda/emerging-technologies-and-research">Emerging Technologies</a></li>
+                <li><span href="/about-imda/emerging-technologies-and-research/quantum-safe-technologies">Quantum-Safe Technologies</span></li>
+    </ol>
+</div>
+        </div>
+
+        <div class="hero-banner__text">
+            <div class="container">
+                <h1>Quantum-Safe Technologies</h1>
+                <p>Learn how we are building a quantum-safe Singapore through the National Quantum-Safe Network Plus (NQSN+) for secure connectivity and the Quantum-Safe Handbook to guide businesses in safeguarding their critical data.</p>
+
+
+                <div class="hero-banner__ctas">
+                                        
+                </div>
+            </div>
+        </div>
+    </div>
+
+<section class="detail-wrapper">
+        <nav class="anchor-nav anchor-nav--main" aria-label="Anchor Navigation">
+            <div class="container">
+                
+                <div>
+                    <header class="no-desktop">
+                        <div>On this page</div>
+                        <button aria-controls="anchorLinks" aria-label="Expand anchor links">
+                            <div><span class="label--default">Jump to</span></div><span class="icon icon-plus"></span>
+                        </button>
+                    </header>
+                    <ul class="anchor-nav__list" id="anchorLinks">
+                            <li><a href="#a8802adf-9a40-42e4-82a2-a72416c84d07">About</a></li>
+                            <li><a href="#bc00a2d4-a134-4b43-9dcd-a73e4d0f7f23">National Quantum Safe Network Plus</a></li>
+                            <li><a href="#a75f6d28-d28a-4eaa-b4eb-d21223ca0b2a">Standardisation of Quantum security technologies</a></li>
+                            <li><a href="#aa78f38b-3389-4f07-a8f1-2b6dc046202e">Quantum-safe SG in 10 years</a></li>
+                            <li><a href="#ad7f8089-0bfd-4a99-8c78-cde5c97092ba">Contact us</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </nav>
+    
+<article class="detail-content">
+                    <section class="detail-section" id="a8802adf-9a40-42e4-82a2-a72416c84d07">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10">
+                                    <h2 class="detail-section__title">About</h2>
+                                <div class="detail-section__content">
+                                        <div class="rte">
+                                            <p>Quantum computing is an emerging technology that uses principles of quantum physics to solve problems too complex for classical computers. Quantum computers can unlock unprecedented advancements in raw computing power, simulation, and optimisation that will potentially revolutionise industries and spur innovation.</p>
+<p>However, this also means that quantum computers may introduce new security risks as they can break many encryption algorithms we rely on today. Singapore needs to be ready to adopt quantum-safe technologies to strengthen our digital infrastructure and build resistance against quantum attacks, as we strive towards a quantum-safe Singapore.</p>
+                                        </div>
+                                                                    </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                    </div>
+                </section>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-10">
+                            <div class="cta-banner">
+    <div class="cta-banner__image">
+        <picture>
+            <source srcset="/-/media/imda/images/content/banners/national-quantum-safe-network-plus/quantum-safe-handbook-cover.webp" media="(max-width: 1023px)">
+            <source srcset="/-/media/imda/images/content/banners/national-quantum-safe-network-plus/quantum-safe-handbook-cover.webp">
+            <img src="/-/media/imda/images/content/banners/national-quantum-safe-network-plus/quantum-safe-handbook-cover.webp" alt="quantum safe handbook cover" loading="lazy" height="804" width="620">
+        </picture>
+        
+    </div>
+    <div class="cta-banner__content">
+        <div class="cta-banner__bg">
+            <svg class="svg-line" width="389" height="515" viewBox="0 0 389 515" xmlns="http://www.w3.org/2000/svg">
+                <path d="M387 1003H-10V4L387 1003Z" stroke="#ECD1E0" stroke-width="1.5" stroke-miterlimit="10"></path>
+            </svg>
+            <svg class="shape-with-fill" width="150" height="217" viewBox="0 0 150 217" xmlns="http://www.w3.org/2000/svg">
+                <path d="M101.641 27.4301V190.601L148.9 215.447V2L101.641 27.4301Z" stroke-width="1.5" stroke-miterlimit="10"></path>
+                <path d="M1 215.558L48.259 190.713V27.5415L1 2.11133V215.558Z" stroke-width="1.5" stroke-miterlimit="10"></path>
+            </svg>
+        </div>
+        <div class="cta-banner__text">
+            <h3 class="cta-banner__title">Quantum-Safe Handbook</h3>
+            <p class="cta-banner__desc"><p>Jointly developed by IMDA, the Cyber Security Agency of Singapore (CSA), and the Government Technology Agency of Singapore (GovTech), in collaboration with leading technology companies, cybersecurity consultancies and professional associations, the quantum-safe handbook provides guidance for organisations, in particular Critical Information Infrastructure (CII) owners and government agencies, in preparing for the quantum-safe transition. It explains what is at stake, highlights key areas of focus, and sets out practical considerations and resources for organisations to begin building readiness.</p></p>
+                <a class="btn btn-factsheet"
+                   href="https://www.csa.gov.sg/resources/publications/quantum-safe-handbook-and-quantum-readiness-index/"
+                   target="_blank"
+                   title="Quantum-Safe Handbook">
+                    Dive deeper
+                    <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                </a>
+        </div>
+    </div>
+</div>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                </div>
+                <section class="detail-section" id="bc00a2d4-a134-4b43-9dcd-a73e4d0f7f23">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10">
+                                    <h2 class="detail-section__title">National Quantum Safe Network Plus (NQSN+)</h2>
+                                <div class="detail-section__content">
+                                        <div class="rte">
+                                            
+                                        </div>
+                                    
+
+<section class="image-text-layout ">
+        <div class="image-text-layout__image">
+            <picture>
+                <source srcset="/-/media/imda/images/content/banners/national-quantum-safe-network-plus/dpm-heng-(1).webp" media="(max-width: 1023px)">
+                <source srcset="/-/media/imda/images/content/banners/national-quantum-safe-network-plus/dpm-heng-(1).webp">
+                <img src="/-/media/imda/images/content/banners/national-quantum-safe-network-plus/dpm-heng-(1).webp" alt="DPM Heng (1)" loading="lazy" height="516" width="916">
+            </picture>
+                <p class="image-text-layout__image__caption">Singapore’s Deputy Prime Minister, Mr Heng Swee Keat at ATxSG 2023&#39;s ATxSummit Social, announcing the launch of the NQSN+, which aims to deliver islandwide quantum-safe communications.</p>
+        </div>
+    <div class="image-rte__content">
+        <div class="rte">
+            <p>National Quantum-Safe Network Plus (NQSN+) was launched by Singapore&rsquo;s Deputy Prime Minister, Mr Heng Swee Keat, at Asia Tech x Singapore (ATxSG) 2023. The NQSN+ is part of Singapore&rsquo;s Digital Connectivity Blueprint, which outlines the next bound of Singapore&rsquo;s digital connectivity to 2030. Beyond Singapore&rsquo;s strategic priorities, the NQSN+ is one of the early moves made by the IMDA to enhance the resilience and security of businesses in Singapore&rsquo;s digital economy.</p>
+        </div>
+    </div>
+</section>                                </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                    </div>
+                </section>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-10">
+                                <div class="rte">
+                                    <p>Building on more than 10 years of quantum research efforts from the Centre for Quantum Technologies (CQT), hosted by the National University of Singapore, the <a class=" link__external" rel="noopener noreferrer" href="https://www.nqsn.sg/"target="_blank">National Quantum-Safe Network (NQSN)</a> was launched in 2022 to conduct nationwide trials of quantum-safe communications technologies to enhance network security. Collaborating with universities, companies and government agencies, NQSN has demonstrated the technical feasibility of deploying quantum-safe technologies, such as Quantum Key Distribution (QKD), to protect against quantum computing risks.</p>
+<p>Following the successful NQSN testbed trials, IMDA&rsquo;s NQSN+   will support network operators to deploy quantum-safe networks nationwide, granting businesses easy access to quantum-safe solutions that safeguard their critical data. The NQSN+ will start with two network operators, <a class=" link__external" rel="noopener noreferrer" href="https://www.singtel.com/business/products-services/quantumsafenetwork"target="_blank">Singtel</a> and <a class=" link__external" rel="noopener noreferrer" href="https://sptel.com/our-technology/quantum-safe-network/"target="_blank">SPTel</a>, together with SpeQtral. Each will build a nationwide, interoperable   quantum-safe network that can serve all businesses. Businesses can work with NQSN+ operators to integrate quantum-safe solutions such as Quantum Key Distribution (QKD) and Post-Quantum Cryptography (PQC) and be secure in the quantum age.</p>
+<p>NQSN+ will work towards integration with quantum-ready networks from like-minded countries, allowing enterprises to deploy quantum-safe solutions across global markets.</p>
+                                </div>
+                            
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                </div>
+                <section class="detail-section" id="a75f6d28-d28a-4eaa-b4eb-d21223ca0b2a">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10">
+                                    <h2 class="detail-section__title">Supporting the standardisation of quantum security technologies</h2>
+                                <div class="detail-section__content">
+                                        <div class="rte">
+                                            <p>As part of Singapore&rsquo;s efforts to push the next bound of interoperable quantum-safe networks, IMDA together with the CQT-NQSN team, are co-leading efforts with Japan to establish <a class=" link__external" rel="noopener noreferrer" href="https://www.itu.int/itu-t/workprog/wp_item.aspx?isn=18760"target="_blank">a QKD protocol framework   at the International Telecommunication Union (ITU)</a>. We have also worked with the industry to release a <a class=" link__pdf" href="/-/media/imda/files/regulation-licensing-and-consultations/ict-standards/telecommunication-standards/reference-spec/imda-rs-qkdn-final.pdf"target="_blank">QKD reference specification (1.22MB)</a>, which guides telcos and users keen to deploy QKD-based networks in Singapore. Singapore will continue supporting international standardisation efforts to realise an interoperable, quantum-secure global communications network.</p>
+                                        </div>
+                                                                    </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                    </div>
+                </section>
+                <section class="detail-section" id="aa78f38b-3389-4f07-a8f1-2b6dc046202e">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10">
+                                    <h2 class="detail-section__title">Moving towards a quantum-safe Singapore in 10 years</h2>
+                                <div class="detail-section__content">
+                                        <div class="rte">
+                                            <p>While Singapore steadily invests in and pilots new quantum technologies, our nation&rsquo;s key digital infrastructure must remain secure. To do so, we will advance Critical Information Infrastructures (CII) in key sectors    with quantum-safe solutions so that organisations can remain resilient and secure. Supported with strong research capabilities and a pervasive nationwide fibre network, Singapore is well-positioned to use quantum technology to further enhance network security for CIIs and enterprises handling sensitive data.</p>
+                                        </div>
+                                                                    </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                    </div>
+                </section>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-10">
+                                <div class="rte">
+                                        <h2 class="detail-section__title">
+                                            NQSN+ operators
+                                        </h2>
+                                    <table style="width: 100%;">
+    <tbody>
+        <tr>
+            <td style="text-align: center; width:25%;">&nbsp;<img src="/-/media/imda/images/content/banners/national-quantum-safe-network-plus/singtel-logo.webp" alt="Singapore Telecommunications" class="responsive" width="190px" height="auto" /></td>
+            <td><a class=" link__external" rel="noopener noreferrer" href="https://www.singtel.com/business/products-services/quantumsafenetwork"target="_blank">Singapore Telecommunications (Singtel)</a></td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">&nbsp;<img src="/-/media/imda/images/content/banners/national-quantum-safe-network-plus/sp-telecommunications.webp" alt="SP Telecommunications" class="responsive" width="190px" height="auto" /><br style="text-align: center;" />
+            <img src="/-/media/imda/images/content/banners/national-quantum-safe-network-plus/speqtral-logo.jpg" alt="SpeQtral" class="responsive" width="190px" height="auto" /></td>
+            <td>
+            <p><a class=" link__external" rel="noopener noreferrer" href="https://sptel.com/our-technology/quantum-safe-network/"target="_blank">SPTel</a></p>
+            <p>SpeQtral</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+                                </div>
+                            
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                </div>
+                <section class="detail-section" id="ad7f8089-0bfd-4a99-8c78-cde5c97092ba">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10">
+                                    <h2 class="detail-section__title">Contact us</h2>
+                                <div class="detail-section__content">
+                                        <div class="rte">
+                                            <p>Companies keen to learn more about NQSN+ and Singapore&rsquo;s efforts in shaping a quantum-safe future can write to us at <a href="mailto:info@imda.gov.sg">info@imda.gov.sg</a>.</p>
+                                        </div>
+                                                                    </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                    </div>
+                </section>
+        <div class="container">
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                
+                <footer class="detail-content__footer">
+                        <p class="detail-content__last-update">
+                            LAST UPDATED:  05 FEB 2026
+                        </p>
+                                    </footer>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+</article></section>    <div class="purplebg-section-wrapper">
+        <div class="purplebg-section-wrapper__box-wrapper">
+            <h2>Explore more</h2>
+            <div class="purplebg-section-wrapper__bg">
+                <svg class="trapezium" width="54" height="238" viewBox="0 0 54 238" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M-91 236L53 159.291V-344.486L-91 -423V236Z" stroke="#ECD1E0" stroke-width="1.5" stroke-miterlimit="10"></path>
+                </svg>
+                <svg class="triangle" width="188" height="105" viewBox="0 0 188 105" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M284 317L143.033 3.00001L1.99997 317L284 317Z" stroke="#E2D5E8" stroke-width="2" stroke-miterlimit="10"></path>
+                </svg>
+            </div>
+            <div class="purplebg-section-wrapper__content">
+                    <section class="related-posts">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-header__header-wrapper">
+                    <h3 class="section-header__title">Related Programmes</h3>
+                </div>
+            </div>
+            <div class="row" data-carousel>
+                    <div class="col-md-4">
+                        <div class="teaser-card teaser-card--multiple-categories">
+                            <a class="teaser-card__link" href="/how-we-can-help/10g-nbn-grant"><span class="vh">10Gbps Nationwide Broadband Network (10G NBN) Grant</span></a>
+                            <div class="teaser-card__header">
+                                <div>
+                                    <span class="category">Programme</span>
+                                </div>
+                            </div>
+                            <div class="teaser-card__content">
+                                <div class="teaser-card__title">
+                                    <h3>10Gbps Nationwide Broadband Network (10G NBN) Grant</h3>
+                                </div>
+                                <p class="teaser-card__desc">IMDA offers grants to support the development of Singapore&#39;s 10G Next-Generation Broadband Network, preparing the nation for...</p>
+                                <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="teaser-card teaser-card--multiple-categories">
+                            <a class="teaser-card__link" href="/how-we-can-help/5g-innovation/5g-grant"><span class="vh">5G Grant | 5G Innovation Programme</span></a>
+                            <div class="teaser-card__header">
+                                <div>
+                                    <span class="category">Programme</span>
+                                        <span class="other-categories">
+                                            <span>+1</span>
+                                            <div>
+                                                <ul>
+                                                        <li>Grant</li>
+                                                </ul>
+                                            </div>
+                                        </span>
+                                </div>
+                            </div>
+                            <div class="teaser-card__content">
+                                <div class="teaser-card__title">
+                                    <h3>5G Grant | 5G Innovation Programme</h3>
+                                </div>
+                                <p class="teaser-card__desc">IMDA is looking to support 5G use cases in the four strategic clusters of (i) Maritime Operations; (ii) Urban Mobility; (iii...</p>
+                                <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="teaser-card teaser-card--multiple-categories">
+                            <a class="teaser-card__link" href="/how-we-can-help/5g-innovation"><span class="vh">5G Innovation</span></a>
+                            <div class="teaser-card__header">
+                                <div>
+                                    <span class="category">Digital Solution</span>
+                                        <span class="other-categories">
+                                            <span>+1</span>
+                                            <div>
+                                                <ul>
+                                                        <li>Programme</li>
+                                                </ul>
+                                            </div>
+                                        </span>
+                                </div>
+                            </div>
+                            <div class="teaser-card__content">
+                                <div class="teaser-card__title">
+                                    <h3>5G Innovation</h3>
+                                </div>
+                                <p class="teaser-card__desc">Globally acknowledged to be the next big leap in mobile and wireless communications, 5G technology is widely touted to enable...</p>
+                                <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="imda-carousel__controls imda-carousel__controls--dotsbar">
+                <div class="desktop-only" data-carousel-arrows></div>
+                <div data-carousel-dots></div>
+            </div>
+            <div class="cta">
+                <a class="btn btn-primary" href="/how-we-can-help">
+                    View all programmes
+                    <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+            </div>
+        </div>
+    </div>
+
+        <section class="newsletter">
+    <div class="newsletter__bg">
+        <svg class="imda-logo" width="236" height="134" viewBox="0 0 236 134" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_7114_174)">
+                <path class="left" d="M103.673 168.511L71.4209 151.447V36.4943L103.673 19.0116V168.511Z" stroke="#ECD1E0"></path>
+                <path class="left" d="M32.7524 151.447L0.5 168.511V19.0116L32.7524 36.4943V151.447Z" stroke="#ECD1E0"></path>
+                <path class="right" d="M179.609 168.844H142.319V74.8639L179.609 168.844Z" stroke="#E2D5E8"></path>
+                <path class="right" d="M236.672 74.8639V168.844H199.383L236.672 74.8639Z" stroke="#E2D5E8"></path>
+                <path class="right" d="M189.491 92.4495L156.684 18.7051H222.308L189.491 92.4495Z" stroke="#E2D5E8"></path>
+            </g>
+            <defs>
+                <clipPath id="clip0_7114_174">
+                    <rect width="237" height="134" fill="white"></rect>
+                </clipPath>
+            </defs>
+        </svg>
+    </div>
+
+    <div class="container">
+        <div class="newsletter__content">
+            <div class="newsletter__image">
+                <picture>
+                    <source media="(max-width: 1023px)">
+                    <source srcset="/-/media/imda/images/microsoftteams-image-(6).webp">
+                    <img src="/-/media/imda/images/microsoftteams-image-(6).webp" alt="newsletter" loading="lazy" height="110" width="110"
+                         data-profile1 = "/-/media/imda/images/microsoftteams-image-(6).webp" 
+                         data-profile2 = "/-/media/imda/images/maroon-icon_newsletter_1.webp" 
+                         data-profile3 = "/-/media/imda/images/subscribe-(1).webp" >
+
+                </picture>
+            </div>
+            <div class="newsletter__text">
+                <h2>Stay tuned for our newsletter</h2>
+                <p></p>
+            </div>
+        </div>
+        <div class="newsletter__cta">
+            <a class="btn btn-primary" href="https://form.gov.sg/607ffa95b4ea9c00126a47c3"
+               target="_blank">
+                Subscribe now
+                <span class="icon icon-chevron-right" aria-hidden="true"></span>
+            </a>
+        </div>
+    </div>
+</section>
+
+    </main>
+    <button class="back-to-top">
+    <span class="sr-only">Back to top</span>
+    <svg width="31" height="27" viewBox="0 0 31 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14.8312 26.0768C14.3293 26.0768 13.9266 25.6762 13.9266 25.1769V4.9804C13.9266 4.48118 14.3293 4.08058 14.8312 4.08058C15.333 4.08058 15.7357 4.48118 15.7357 4.9804V25.1708C15.7357 25.67 15.333 26.0706 14.8312 26.0706V26.0768Z" fill="white"></path>
+        <path d="M8.16489 10.978C7.93566 10.978 7.70023 10.8917 7.52676 10.7129C7.17362 10.3616 7.17362 9.79463 7.52676 9.44333L14.1807 2.82414C14.5339 2.47284 15.1038 2.47284 15.457 2.82414L22.111 9.44333C22.4641 9.79463 22.4641 10.3616 22.111 10.7129C21.7578 11.0642 21.1878 11.0642 20.8347 10.7129L14.8189 4.72855L8.80303 10.7129C8.62956 10.8917 8.39413 10.978 8.16489 10.978Z" fill="white"></path>
+        <path d="M29.0535 0.476196H1.14283C0.577351 0.476196 0.119019 0.886912 0.119019 1.38691C0.119019 1.88691 0.577351 2.29763 1.14283 2.29763H29.0476C29.6131 2.29763 30.0714 1.88691 30.0714 1.38691C30.0714 0.886912 29.6131 0.476196 29.0476 0.476196H29.0535Z" fill="white"></path>
+    </svg>
+</button>
+<footer class="site-footer">
+    <div class="cookie-message">
+        <div class="container">
+            <div class="cookie-message__content" data-token="202507151024">
+                <p style="text-align: center;"><span style="color: #000000;">To offer you a better experience, this site uses cookies. Read more about cookies in our <a href="/privacy-statement" target="_blank"><span style="color: #036aaa;">Privacy Statement.</span></a></span></p>
+                <button class="btn btn-close" type="button"><span class="label">Close</span></button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2 class="site-footer__header">Infocomm Media Development Authority</h2>
+        <div class="site-footer__row1">
+            <nav aria-label="Contact navigation">
+                <ul>
+                            <li>
+                                <a href="/about-imda" target="">About IMDA</a>
+                            </li>
+                            <li>
+                                <a href="/about-imda/careers-at-imda" target="">Careers at IMDA</a>
+                            </li>
+                            <li>
+                                <a href="/about-imda/contact-us" target="">Contact us</a>
+                            </li>
+                            <li>
+                                <a href="https://go.gov.sg/imda-feedback" target="_blank">Feedback<span class="icon-external-link"></span> </a>
+                            </li>
+                            <li>
+                                <a href="/faq" target="">FAQs</a>
+                            </li>
+                            <li>
+                                <a href="/sitemap" target="">Sitemap</a>
+                            </li>
+                            <li>
+                                <a href="https://form.gov.sg/#!/607ffa95b4ea9c00126a47c3" target="_blank">Subscribe to Newsletter<span class="icon-external-link"></span> </a>
+                            </li>
+                </ul>
+            </nav>
+            <nav aria-label="Social media navigation">
+                <ul>
+                        <li><a class="linkedin" href="https://www.linkedin.com/company/imdasg/" title="IMDA LinkedIn" target="_blank"><span class="sr-only">Linked In</span><span class="icon-linkedin"></span></a></li>
+                                            <li><a class="facebook" href="https://www.facebook.com/IMDAsg/" title="IMDA Facebook" target="_blank"><span class="sr-only">Facebook</span><span class="icon-facebook"></span></a></li>
+                                            <li><a class="instagram" href="https://www.instagram.com/imdasg/" title="IMDA Instagram" target="_blank"><span class="sr-only">Instagram</span><span class="icon-instagram"></span></a></li>
+                                                                <li><a class="youtube" href="https://www.youtube.com/user/MDAsingapore" title="IMDA Youtube Channel" target="_blank"><span class="sr-only">Youtube</span><span class="icon-youtube"></span></a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="site-footer__row2">
+            <nav aria-label="Sub-navigation">
+                <ul>
+                            <li>
+                                <a href="https://www.tech.gov.sg/report_vulnerability" target="_blank">Report Vulnerability<span class="icon-external-link"></span></a>
+                            </li>
+                            <li>
+                                <a href="/privacy-statement" target="">Privacy Statement</a>
+                            </li>
+                            <li>
+                                <a href="/terms-of-use" target="">Terms of Use</a>
+                            </li>
+                            <li>
+                                <a href="https://www.reach.gov.sg/" target="_blank">Reach<span class="icon-external-link"></span></a>
+                            </li>
+
+                </ul>
+            </nav>
+            <div class="site-footer__end-note"><small class="copyright"> </small><small class="last-update"></small></div>
+            <div>
+                <div class="copyright">&copy; 2026, Government of Singapore </div>
+                <div class="last-updated">Last updated 05 FEB 2026</div>
+            </div>
+        </div>
+    </div>
+</footer>
+    <script async type="text/javascript">
+    var IMDA_Personalise = {"industries":[],"categories":[{"value":"Programme"}],"topics":[]}
+</script>
+
+
+
+
+
+    <script src="/Cwp/assets/imda/scripts/main.js?v=4.2.0"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@govtechsg/sgds-masthead/dist/sgds-masthead/sgds-masthead.js"></script>
+
+
+
+
+    
+        <script>
+            const steps = [
+                {
+                    element: ".site-header__profile",
+                    content: "<p>Click here to select which profile you belong to. You can change this profile anytime!</p>",
+                    position: "s"
+                }
+            ];
+            const mobileSteps = [
+                {
+                    element: ".profile-indicator",
+                    content: "<p>Click here to select which profile you belong to. You can change this profile anytime!</p>",
+                    position: "s"
+                }
+            ];
+        </script>
+
+
+
+        <div id="webchat"
+             app-id="imda-ask-imda"
+             app-name="Chat with CODI"
+             app-color="#262626"
+             app-icon="/-/media/imda/images/icons/codi.webp"
+             app-base-font-size="16"
+             app-auto-launch="false"
+             app-bot-response-trigger-event="true"
+             app-enable-auto-complete="true"
+             app-foreground-color1=#FFFFFF
+             app-foreground-color-2=#262626
+             app-background-color2=#FFFFFF
+             app-canvas-background-color=#F2F2F2
+             app-button-border-color=#702F8A
+             app-quick-reply-button-background-color=#D9DADA
+             app-auto-complete-background-color=#702F8A
+             app-auto-complete-foreground-color=#FFFFFF
+             app-auto-complete-hover-color=#4C2B5D
+             app-auto-complete-divider-color=#FFFFFF
+             app-recommendations-background-color=#FFFFFF
+             app-recommendations-foreground-color=#262626
+             app-recommendations-hover-color=#D9DADA
+             app-font-family="Montserrat, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif">
+        </div>
+
+
+    <script>
+        window.addEventListener('load', function lateLoadChatFile() {
+            setTimeout(() => {
+                const bodyTag = document.getElementsByTagName("body")[0]; // Create link element to import chat.css file and append it on the body element
+                let linkTag = document.createElement("link");
+                linkTag.href = "https://webchat.vica.gov.sg/static/css/chat.css";
+                linkTag.type = "text/css";
+                linkTag.rel = "stylesheet";
+                linkTag.referrerPolicy = "origin";
+                bodyTag.appendChild(linkTag); // Create script element to import chat.js file and append it on the body element
+                let scriptTag = document.createElement("script");
+                scriptTag.src = "https://webchat.vica.gov.sg/static/js/chat.js";
+                scriptTag.type = "text/javascript";
+                scriptTag.referrerPolicy = "origin";
+                scriptTag.defer = true;
+                bodyTag.appendChild(scriptTag);
+                window.removeEventListener('load', lateLoadChatFile);
+            }, 5000);
+        });
+    </script>
+
+
+    <!--Start of Zendesk Chat Script-->
+    <script type="text/javascript">
+        window.$zopim || (function (d, s) {
+            var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
+                d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
+                    z.set.
+                        _.push(o)
+                }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute("charset", "utf-8");
+            $.src = "https://v2.zopim.com/?5zvn15pCQBZ4T1nmjWyU05TP3LfvlFU3"; z.t = +new Date; $.
+                type = "text/javascript"; e.parentNode.insertBefore($, e)
+        })(document, "script");
+        $zopim(function () {
+            $zopim.livechat.setOnConnected(function () {
+                $zopim.livechat.setOnStatus(callback);
+                function callback(status) {
+                    if (status == 'online') {
+                        $zopim.livechat.button.show();
+                    } else {
+                        $zopim.livechat.hideAll();
+                    }
+                }
+            });
+        });
+    </script>
+
+
+    <!--End of Zendesk Chat Script-->
+    
+    
+    
+</body>
+</html>
