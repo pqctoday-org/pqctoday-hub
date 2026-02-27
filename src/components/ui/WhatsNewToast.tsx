@@ -80,24 +80,22 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Executive Learning Track</strong> &mdash; 6
-                    new modules for CISOs: risk management, business case, governance, compliance,
-                    migration, and vendor risk
+                    <strong className="text-foreground">Chatbot hardening</strong> &mdash; timeout
+                    errors now surface clearly; oversized inputs are capped at 1,000 characters
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Activity History</strong> &mdash; new
-                    History tab tracks learning progress, artifacts, and belt milestones
+                    <strong className="text-foreground">Data refresh</strong> &mdash; library,
+                    compliance, and quantum-safe software catalogs updated for March 2026
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Smarter Quiz</strong> &mdash; time slider
-                    replaces fixed modes &mdash; pick 5 to 45 minutes and we choose the right
-                    questions
+                    <strong className="text-foreground">CSV integrity checks</strong> &mdash; new
+                    validator ensures compliance ↔ library cross-references stay accurate
                   </span>
                 </li>
               </ul>

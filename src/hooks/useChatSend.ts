@@ -7,6 +7,7 @@ import { parseFollowUps } from '@/services/chat/parseFollowUps'
 import type { ChatMessage, ChatSourceRef } from '@/types/ChatTypes'
 
 const STREAM_TIMEOUT_MS = 60_000
+const MAX_INPUT_LENGTH = 1_000
 
 /**
  * Shared hook encapsulating RAG retrieval → Gemini streaming → follow-up parsing.
@@ -33,7 +34,7 @@ export function useChatSend() {
 
   const sendQuery = useCallback(
     async (queryText: string, onInputRestore?: (text: string) => void) => {
-      const trimmed = queryText.trim()
+      const trimmed = queryText.trim().slice(0, MAX_INPUT_LENGTH)
       if (!trimmed || !apiKey || isLoading || isStreaming) return
 
       const userMessage: ChatMessage = {
@@ -48,6 +49,7 @@ export function useChatSend() {
       setError(null)
 
       let timeoutId: ReturnType<typeof setTimeout> | undefined
+      let timedOut = false
 
       try {
         // Retrieve relevant context with page awareness + conversation history
@@ -69,7 +71,10 @@ export function useChatSend() {
         // Stream response with safety timeout
         const controller = new AbortController()
         abortRef.current = controller
-        timeoutId = setTimeout(() => controller.abort(), STREAM_TIMEOUT_MS)
+        timeoutId = setTimeout(() => {
+          timedOut = true
+          controller.abort()
+        }, STREAM_TIMEOUT_MS)
 
         setStreaming(true)
         setStreamingContent('')
@@ -114,7 +119,10 @@ export function useChatSend() {
         }
         addMessage(assistantMessage)
       } catch (err) {
-        if (err instanceof Error && err.name === 'AbortError') return
+        if (err instanceof Error && err.name === 'AbortError') {
+          if (timedOut) setError('Request timed out. Please try again.')
+          return
+        }
 
         const errorMsg = err instanceof Error ? err.message : 'An unexpected error occurred.'
         setError(errorMsg)

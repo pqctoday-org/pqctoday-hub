@@ -244,6 +244,12 @@ async function main() {
       local_file: row.local_file ?? '',
     }
 
+    // Skip rows already fully cached on disk — avoid re-downloading 100+ existing files
+    if (row.local_file && existsSync(join(ROOT, row.local_file))) {
+      updatedRows.push(newRow)
+      continue
+    }
+
     if (!refId || !url) {
       newRow.downloadable = 'no-missing-data'
       manifest.entries.push({ refId, url, status: 'skipped', reason: 'missing-data' })
@@ -359,12 +365,18 @@ async function main() {
     // Write updated skip list
     writeFileSync(SKIP_LIST_PATH, JSON.stringify(skipList, null, 2))
 
-    // Write updated CSV (same file — adds downloadable + local_file columns)
+    // Write to a new dated CSV — never edit in place (CLAUDE.md rule)
     const updatedCSV = serializeCSV(newHeaders, updatedRows)
-    writeFileSync(csvPath, updatedCSV)
-    console.log(`\nUpdated CSV: ${csvPath.replace(ROOT + '/', '')}`)
-    console.log(`Manifest:    public/library/manifest.json`)
-    console.log(`Skip list:   public/library/skip-list.json`)
+    const today = new Date()
+    const mm = String(today.getMonth() + 1).padStart(2, '0')
+    const dd = String(today.getDate()).padStart(2, '0')
+    const yyyy = today.getFullYear()
+    const newCsvName = `library_${mm}${dd}${yyyy}.csv`
+    const newCsvPath = join(DATA_DIR, newCsvName)
+    writeFileSync(newCsvPath, updatedCSV)
+    console.log(`\nWrote new CSV: src/data/${newCsvName}`)
+    console.log(`Manifest:      public/library/manifest.json`)
+    console.log(`Skip list:     public/library/skip-list.json`)
   }
 
   console.log('\n──────────────────────────────────────────────────')

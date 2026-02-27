@@ -427,13 +427,61 @@ describe('useChatSend', () => {
         await queryPromise
       })
 
-      // AbortError should be silently caught — no error set
-      const errorCalls = mockSetError.mock.calls.filter((c) => c[0] !== null)
-      expect(errorCalls).toHaveLength(0)
+      // Timeout AbortError should set a user-visible error message
+      expect(mockSetError).toHaveBeenCalledWith('Request timed out. Please try again.')
 
       // State should be cleaned up via finally block
       const streamingCalls = mockSetStreaming.mock.calls.map((c) => c[0])
       expect(streamingCalls[streamingCalls.length - 1]).toBe(false)
+    })
+  })
+
+  // ==================== Input length cap ====================
+
+  describe('input length cap', () => {
+    it('truncates input to 1,000 characters before sending', async () => {
+      setupStream(['Answer.'])
+      const { useChatSend } = await import('./useChatSend')
+      const { result } = renderHook(() => useChatSend())
+
+      const longInput = 'A'.repeat(1500)
+
+      await act(async () => {
+        await result.current.sendQuery(longInput)
+      })
+
+      // User message content should be truncated to 1000 chars
+      const userMsg = mockAddMessage.mock.calls[0][0] as ChatMessage
+      expect(userMsg.content).toHaveLength(1000)
+      expect(userMsg.content).toBe('A'.repeat(1000))
+    })
+
+    it('passes truncated query to retrievalService.search', async () => {
+      setupStream(['Answer.'])
+      const { useChatSend } = await import('./useChatSend')
+      const { result } = renderHook(() => useChatSend())
+
+      const longInput = 'B'.repeat(2000)
+
+      await act(async () => {
+        await result.current.sendQuery(longInput)
+      })
+
+      const [searchQuery] = mockSearch.mock.calls[0] as [string]
+      expect(searchQuery).toHaveLength(1000)
+    })
+
+    it('does not truncate input under 1,000 characters', async () => {
+      setupStream(['Answer.'])
+      const { useChatSend } = await import('./useChatSend')
+      const { result } = renderHook(() => useChatSend())
+
+      await act(async () => {
+        await result.current.sendQuery('What is ML-KEM?')
+      })
+
+      const userMsg = mockAddMessage.mock.calls[0][0] as ChatMessage
+      expect(userMsg.content).toBe('What is ML-KEM?')
     })
   })
 })

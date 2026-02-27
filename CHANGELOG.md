@@ -4,6 +4,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.1] - 2026-03-26
+
+### Added
+
+- **CSV cross-reference validator** (`scripts/validate-csv-refs.ts`): New TypeScript script that
+  validates `compliance.library_refs → library.reference_id`, `compliance.timeline_refs →
+Country:OrgName pairs`, and `library.dependencies → library.reference_id`. Exits non-zero on
+  broken compliance↔library/timeline links. Run via `npm run validate:csv-refs`.
+
+- **Timeline download scripts**: `npm run download:timeline` and `npm run download:timeline:dry`
+  added to `package.json` for downloading timeline reference documents.
+
+### Changed
+
+- **`useChatSend`** (`src/hooks/useChatSend.ts`): Input truncated to 1,000 characters before
+  submission, preventing large-paste denial-of-service. Timeout error now surfaces as
+  `'Request timed out. Please try again.'` instead of silently failing.
+
+- **`download-library.js`**: Skips re-downloading documents already cached on disk. Now writes
+  output to a new date-stamped CSV file (e.g., `library_MMDDYYYY.csv`) rather than editing the
+  source file in place, per CSV maintenance policy.
+
+- **RAG corpus** (`public/data/rag-corpus.json`): Regenerated with refreshed retrieval sources.
+
+- **Data refresh**: Library, compliance, and quantum-safe software reference CSVs updated to
+  March 2026 versions. Older versions archived to `src/data/archive/`.
+
+### Fixed
+
+- **Chatbot timeout UX**: Users now see an explicit error message when the 60-second RAG
+  request window expires, rather than the request silently failing.
+
+- **Input validation**: Oversized inputs (>1,000 chars) are now truncated before being sent
+  to the retrieval service, preventing unexpected API failures.
+
 ## [2.0.0] - 2026-02-26
 
 ### Added
