@@ -202,6 +202,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'HQC',
     definition:
       'Hamming Quasi-Cyclic, a code-based KEM selected by NIST as an additional standard. Uses error-correcting codes for security.',
+    relatedModule: '/learn/pqc-101',
     complexity: 'advanced',
     category: 'algorithm',
   },
@@ -209,6 +210,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Classic McEliece',
     definition:
       'A code-based KEM with very large public keys but extremely conservative security assumptions. One of the oldest post-quantum proposals.',
+    relatedModule: '/learn/pqc-101',
     complexity: 'advanced',
     category: 'algorithm',
   },
@@ -219,7 +221,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'eXtended Merkle Signature Scheme, a stateful hash-based digital signature algorithm standardized in RFC 8391 and NIST SP 800-208.',
     technicalNote:
       'Like LMS, XMSS is stateful and each key can only sign a limited number of messages. Required by CNSA 2.0 for firmware and software signing.',
-    relatedModule: '/library',
+    relatedModule: '/learn/stateful-signatures',
     complexity: 'advanced',
     category: 'algorithm',
   },
@@ -247,15 +249,19 @@ export const glossaryTerms: GlossaryTerm[] = [
   },
   {
     term: "Shor's Algorithm",
+    acronym: 'Shor',
     definition:
       'A quantum algorithm that can efficiently factor large numbers and compute discrete logarithms, breaking RSA and ECC.',
+    relatedModule: '/learn/quantum-threats',
     complexity: 'intermediate',
     category: 'algorithm',
   },
   {
     term: "Grover's Algorithm",
+    acronym: 'Grover',
     definition:
       'A quantum algorithm that speeds up brute-force searches, effectively halving the security level of symmetric ciphers and hash functions.',
+    relatedModule: '/learn/quantum-threats',
     complexity: 'intermediate',
     category: 'algorithm',
   },
@@ -603,7 +609,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'NIST Internal Report establishing the PQC transition timeline: deprecation of classical asymmetric crypto by 2030, disallowment by 2035.',
     technicalNote:
       'Covers RSA, ECDSA, ECDH, EdDSA, DH, and DSA. The most authoritative U.S. government PQC migration deadline document.',
-    relatedModule: '/library',
+    relatedModule: '/learn/compliance-strategy',
     complexity: 'intermediate',
     category: 'standard',
   },
@@ -1137,7 +1143,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Cryptographic Inventory',
     definition:
       'A comprehensive catalog of all cryptographic algorithms, protocols, keys, and certificates in an organization, essential for planning PQC migration.',
-    relatedModule: '/assess',
+    relatedModule: '/learn/migration-program',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -1164,7 +1170,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     acronym: 'SBOM',
     definition:
       'Software Bill of Materials, a formal inventory of all components in a software product. Increasingly required alongside CBOM for security compliance.',
-    relatedModule: '/threats',
+    relatedModule: '/learn/vendor-risk',
     complexity: 'intermediate',
     category: 'concept',
   },
@@ -1311,6 +1317,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'A legacy symmetric cipher that applies DES three times to each block. Being phased out in favor of AES due to its small 64-bit block size.',
     technicalNote:
       'Still found in legacy payment systems (DUKPT) and some government systems. NIST deprecated 3DES after December 31, 2023.',
+    relatedModule: '/learn/pqc-101',
     complexity: 'intermediate',
     category: 'algorithm',
   },
@@ -1832,7 +1839,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Cryptographically Relevant Quantum Computer, a hypothetical future quantum computer powerful enough to break RSA, ECC, and other classical public-key cryptography.',
     technicalNote:
       'Estimates vary, but a CRQC would need thousands of stable logical qubits. Most timelines estimate 2030-2040 for CRQC capability.',
-    relatedModule: '/learn/quantum-threats',
+    relatedModule: '/learn/pqc-risk-management',
     complexity: 'beginner',
     category: 'concept',
   },
@@ -2085,7 +2092,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       "The automated process of scanning an organization's systems to identify all cryptographic algorithms, keys, certificates, and protocols in use. The first step in PQC migration.",
     technicalNote:
       'Tools like SandboxAQ AQtive Guard and IBM Guardium automate crypto discovery to build a Cryptographic Bill of Materials (CBOM).',
-    relatedModule: '/assess',
+    relatedModule: '/learn/migration-program',
     complexity: 'beginner',
     category: 'concept',
   },
