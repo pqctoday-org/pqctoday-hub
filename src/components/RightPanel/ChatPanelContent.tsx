@@ -6,28 +6,18 @@ import { ApiKeySetup } from '../Chat/ApiKeySetup'
 import { SampleQuestionsModal } from '../About/SampleQuestionsModal'
 import { useChatStore } from '@/store/useChatStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
-import { retrievalService } from '@/services/chat/RetrievalService'
-import { streamResponse } from '@/services/chat/GeminiService'
-import { usePageContext } from '@/hooks/usePageContext'
-import type { ChatMessage as ChatMessageType, ChatSourceRef } from '@/types/ChatTypes'
+import { useChatSend } from '@/hooks/useChatSend'
 
 export const ChatPanelContent: React.FC = () => {
   const {
     apiKey,
     setApiKey,
     messages,
-    addMessage,
     isLoading,
-    setLoading,
     isStreaming,
-    setStreaming,
     streamingContent,
-    setStreamingContent,
-    appendStreamingContent,
     error,
-    setError,
     clearMessages,
-    model,
   } = useChatStore()
 
   const isOpen = useRightPanelStore((s) => s.isOpen)
@@ -36,14 +26,16 @@ export const ChatPanelContent: React.FC = () => {
   const [showSampleQuestions, setShowSampleQuestions] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const abortRef = useRef<AbortController | null>(null)
-  const pageContext = usePageContext()
+
+  const { sendQuery, pageContext } = useChatSend()
 
   // Initialize retrieval service on first open
   useEffect(() => {
     if (isOpen && apiKey) {
-      retrievalService.initialize().catch((err) => {
-        console.error('Failed to initialize retrieval service:', err)
+      import('@/services/chat/RetrievalService').then(({ retrievalService }) => {
+        retrievalService.initialize().catch((err) => {
+          console.error('Failed to initialize retrieval service:', err)
+        })
       })
     }
   }, [isOpen, apiKey])
@@ -60,102 +52,11 @@ export const ChatPanelContent: React.FC = () => {
     }
   }, [isOpen, apiKey])
 
-  const sendQuery = async (queryText: string) => {
-    const trimmed = queryText.trim()
-    if (!trimmed || !apiKey || isLoading || isStreaming) return
-
-    const userMessage: ChatMessageType = {
-      id: `user-${Date.now()}`,
-      role: 'user',
-      content: trimmed,
-      timestamp: Date.now(),
-    }
-
-    addMessage(userMessage)
+  const handleSend = () => {
+    const text = input
     setInput('')
-    setLoading(true)
-    setError(null)
-
-    try {
-      // Retrieve relevant context with page awareness + conversation history
-      await retrievalService.initialize()
-      const recentQueries = messages
-        .filter((m) => m.role === 'user')
-        .slice(-3)
-        .map((m) => m.content)
-      const chunks = retrievalService.search(trimmed, undefined, {
-        page: pageContext.page,
-        moduleId: pageContext.moduleId,
-        relevantSources: pageContext.relevantSources,
-        conversationContext: recentQueries,
-      })
-
-      // Build conversation for API
-      const allMessages = [...messages, userMessage]
-
-      // Stream response
-      const controller = new AbortController()
-      abortRef.current = controller
-      setStreaming(true)
-      setStreamingContent('')
-      setLoading(false)
-
-      let fullContent = ''
-      const sourceIds = chunks.map((c) => c.id)
-
-      // Build deduplicated source references for attribution
-      const seenTitles = new Set<string>()
-      const sourceRefs: ChatSourceRef[] = []
-      for (const c of chunks) {
-        if (seenTitles.has(c.title)) continue
-        seenTitles.add(c.title)
-        sourceRefs.push({ title: c.title, source: c.source, deepLink: c.deepLink })
-      }
-
-      for await (const chunk of streamResponse(
-        apiKey,
-        allMessages,
-        chunks,
-        model,
-        controller.signal,
-        pageContext
-      )) {
-        fullContent += chunk
-        appendStreamingContent(chunk)
-      }
-
-      // Finalize message
-      const assistantMessage: ChatMessageType = {
-        id: `assistant-${Date.now()}`,
-        role: 'assistant',
-        content: fullContent,
-        timestamp: Date.now(),
-        sources: sourceIds,
-        sourceRefs,
-      }
-      addMessage(assistantMessage)
-    } catch (err) {
-      if (err instanceof Error && err.name === 'AbortError') return
-
-      const errorMsg = err instanceof Error ? err.message : 'An unexpected error occurred.'
-      setError(errorMsg)
-
-      // Restore the query so the user can retry by clicking Send
-      setInput(trimmed)
-
-      // If API key is invalid, clear it
-      if (errorMsg.includes('Invalid API key')) {
-        setApiKey(null)
-      }
-    } finally {
-      setStreaming(false)
-      setStreamingContent('')
-      setLoading(false)
-      abortRef.current = null
-    }
+    sendQuery(text, (restored) => setInput(restored))
   }
-
-  const handleSend = () => sendQuery(input)
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {

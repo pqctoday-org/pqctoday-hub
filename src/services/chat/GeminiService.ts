@@ -3,7 +3,7 @@ import type { PageContext } from '@/hooks/usePageContext'
 
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models'
 
-function buildSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext): string {
+export function buildSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext): string {
   const contextBlocks = chunks
     .map((c) => {
       const header = `--- Source: ${c.source} | ${c.title} ---`
@@ -21,8 +21,56 @@ function buildSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext): strin
     pageNote = `\nThe user is currently viewing the ${pageContext.page} page${tabInfo}. Tailor your response accordingly when relevant.\n`
   }
 
+  // Persona-specific response style
+  const PERSONA_DEPTH: Record<string, string> = {
+    executive:
+      'Lead with business impact, timelines, and risk. Avoid deep technical jargon. Use ROI framing.',
+    developer: 'Include technical details, code examples, and implementation specifics.',
+    architect:
+      'Emphasize integration patterns, architecture decisions, and system-level trade-offs.',
+    researcher: 'Include mathematical foundations, algorithm comparisons, and academic references.',
+  }
+  let personaSection = ''
+  if (pageContext?.persona) {
+    const depth = PERSONA_DEPTH[pageContext.persona as string]
+    if (depth) personaSection = `\nRESPONSE STYLE: ${depth}\n`
+  }
+
+  // User profile (industry + region)
+  const REGION_LABELS: Record<string, string> = {
+    americas: 'Americas',
+    eu: 'Europe',
+    apac: 'Asia-Pacific',
+    global: 'Global',
+  }
+  const profileLines: string[] = []
+  if (pageContext?.industry) profileLines.push(`Industry: ${pageContext.industry}`)
+  if (pageContext?.region) {
+    const label = REGION_LABELS[pageContext.region as string] ?? pageContext.region
+    profileLines.push(`Region: ${label}`)
+  }
+  const profileSection =
+    profileLines.length > 0 ? `\nUSER PROFILE:\n  ${profileLines.join('\n  ')}\n` : ''
+
+  // Assessment context
+  let assessmentSection = ''
+  if (pageContext?.assessmentComplete && pageContext.riskScore !== undefined) {
+    const lines: string[] = [
+      `Risk Score: ${pageContext.riskScore}/100 (${pageContext.riskLevel ?? 'Unknown'})`,
+    ]
+    if (pageContext.complianceFrameworks && pageContext.complianceFrameworks.length > 0)
+      lines.push(`Compliance: ${pageContext.complianceFrameworks.join(', ')}`)
+    if (pageContext.infrastructure && pageContext.infrastructure.length > 0)
+      lines.push(`Infrastructure: ${pageContext.infrastructure.join(', ')}`)
+    if (pageContext.migrationStatus) lines.push(`Migration Status: ${pageContext.migrationStatus}`)
+    if (pageContext.timelinePressure)
+      lines.push(`Timeline Pressure: ${pageContext.timelinePressure}`)
+    if (pageContext.cryptoAgility) lines.push(`Crypto Agility: ${pageContext.cryptoAgility}`)
+    assessmentSection = `\nUser's PQC Assessment:\n  ${lines.join('\n  ')}\n`
+  }
+
   return `You are PQC Today Assistant, an expert in post-quantum cryptography (PQC). You help users understand PQC concepts, standards, migration strategies, and the quantum threat landscape.
-${pageNote}
+${pageNote}${personaSection}${profileSection}${assessmentSection}
 Answer based ONLY on the provided context from the PQC Today database. Do not invent or supplement with people, products, documents, certifications, or data not present below. Say so honestly if the context is insufficient. You may use general knowledge only to explain concepts or give background — never to list specific items.
 
 GUIDELINES:
@@ -38,6 +86,13 @@ GUIDELINES:
 4. Main pages: [Algorithms](/algorithms), [Timeline](/timeline), [Library](/library), [Threats](/threats), [Leaders](/leaders), [Compliance](/compliance), [Migrate](/migrate), [Assessment](/assess), [Report](/report), [Playground](/playground), [OpenSSL Studio](/openssl), [Learn](/learn), [Quiz](/learn/quiz)
 5. Learning modules: [PQC 101](/learn/pqc-101), [Quantum Threats](/learn/quantum-threats), [Hybrid Crypto](/learn/hybrid-crypto), [Crypto Agility](/learn/crypto-agility), [TLS Basics](/learn/tls-basics), [VPN & SSH](/learn/vpn-ssh-pqc), [Email Signing](/learn/email-signing), [PKI Workshop](/learn/pki-workshop), [Key Management](/learn/key-management), [Stateful Signatures](/learn/stateful-signatures), [Digital Assets](/learn/digital-assets), [5G Security](/learn/5g-security), [Digital Identity](/learn/digital-id), [Entropy & Randomness](/learn/entropy-randomness), [Merkle Tree Certs](/learn/merkle-tree-certs), [QKD](/learn/qkd), [Code Signing](/learn/code-signing), [API Security & JWT](/learn/api-security-jwt), [IoT & OT Security](/learn/iot-ot-pqc)
 6. Keep answers concise but thorough. Use markdown formatting. This is an educational assistant — never provide production security advice.
+
+FOLLOW-UP SUGGESTIONS:
+After your response, append 2–3 follow-up questions in a \`\`\`followups code fence (one per line, no numbering). Example:
+\`\`\`followups
+What are the performance trade-offs of ML-KEM-768 vs ML-KEM-1024?
+Which HSMs currently support ML-KEM?
+\`\`\`
 
 CONTEXT FROM PQC TODAY DATABASE:
 ${contextBlocks}`

@@ -1,6 +1,8 @@
 import { useLocation } from 'react-router-dom'
 import { useMemo } from 'react'
 import { getModuleDeepLink } from './useModuleDeepLink'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { useAssessmentStore } from '@/store/useAssessmentStore'
 
 export interface PageContext {
   page: string
@@ -9,6 +11,19 @@ export interface PageContext {
   step?: number
   relevantSources: string[]
   suggestedQuestions: string[]
+  // Persona context
+  persona?: string | null
+  industry?: string | null
+  region?: string | null
+  // Assessment context (only populated when assessment is complete)
+  assessmentComplete?: boolean
+  riskScore?: number
+  riskLevel?: string
+  complianceFrameworks?: string[]
+  infrastructure?: string[]
+  migrationStatus?: string
+  timelinePressure?: string
+  cryptoAgility?: string
 }
 
 const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'moduleId'>> = {
@@ -301,9 +316,40 @@ const DEFAULT_CONTEXT: PageContext = {
 
 export function usePageContext(): PageContext {
   const location = useLocation()
+  const { selectedPersona, selectedIndustry, selectedRegion } = usePersonaStore()
+  const {
+    assessmentStatus,
+    lastResult,
+    complianceRequirements,
+    infrastructure,
+    migrationStatus,
+    timelinePressure,
+    cryptoAgility,
+  } = useAssessmentStore()
 
   return useMemo(() => {
     const { pathname } = location
+
+    // Persona fields — always included (may be null)
+    const personaFields = {
+      persona: selectedPersona,
+      industry: selectedIndustry,
+      region: selectedRegion,
+    }
+
+    // Assessment fields — only when complete with a result
+    const assessmentFields: Partial<PageContext> = {}
+    if (assessmentStatus === 'complete' && lastResult) {
+      assessmentFields.assessmentComplete = true
+      assessmentFields.riskScore = lastResult.riskScore
+      assessmentFields.riskLevel = lastResult.riskLevel
+      if (complianceRequirements.length > 0)
+        assessmentFields.complianceFrameworks = complianceRequirements
+      if (infrastructure.length > 0) assessmentFields.infrastructure = infrastructure
+      if (migrationStatus) assessmentFields.migrationStatus = migrationStatus
+      if (timelinePressure) assessmentFields.timelinePressure = timelinePressure
+      if (cryptoAgility) assessmentFields.cryptoAgility = cryptoAgility
+    }
 
     // Handle /learn/* module routes
     if (pathname.startsWith('/learn/')) {
@@ -330,17 +376,32 @@ export function usePageContext(): PageContext {
             `How does ${moduleName} relate to PQC migration?`,
             'What other modules should I explore?',
           ],
+          ...personaFields,
+          ...assessmentFields,
         }
       }
     }
 
     // Match exact routes
     const ctx = PAGE_CONTEXTS[pathname]
-    if (ctx) return { ...ctx }
+    if (ctx) return { ...ctx, ...personaFields, ...assessmentFields }
 
     // Fallback for /learn (without sub-path) or unknown routes
-    if (pathname.startsWith('/learn')) return { ...PAGE_CONTEXTS['/learn'] }
+    if (pathname.startsWith('/learn'))
+      return { ...PAGE_CONTEXTS['/learn'], ...personaFields, ...assessmentFields }
 
-    return { ...DEFAULT_CONTEXT }
-  }, [location])
+    return { ...DEFAULT_CONTEXT, ...personaFields, ...assessmentFields }
+  }, [
+    location,
+    selectedPersona,
+    selectedIndustry,
+    selectedRegion,
+    assessmentStatus,
+    lastResult,
+    complianceRequirements,
+    infrastructure,
+    migrationStatus,
+    timelinePressure,
+    cryptoAgility,
+  ])
 }

@@ -5,70 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import { Bot, User, Copy, Check, FileText, ChevronDown, ChevronRight } from 'lucide-react'
 import clsx from 'clsx'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
+import { generateFollowUps } from './generateFollowUps'
 import type { ChatSourceRef } from '@/types/ChatTypes'
-
-/** Extract entity names from assistant response and generate follow-up questions. */
-function generateFollowUps(content: string, tab?: string): string[] {
-  const followUps: string[] = []
-  const seen = new Set<string>()
-
-  // Match PQC algorithm names
-  const algoMatches = content.match(
-    /\b(ML-KEM(?:-\d+)?|ML-DSA(?:-\d+)?|SLH-DSA(?:-\d+)?|FN-DSA|FrodoKEM|HQC|Classic.?McEliece|LMS|XMSS|SPHINCS\+?)\b/gi
-  )
-  if (algoMatches) {
-    const algo = algoMatches[0].replace(/-\d+$/, '') // strip parameter set
-    const key = `algo-${algo.toLowerCase()}`
-    if (!seen.has(key)) {
-      seen.add(key)
-      followUps.push(`What are the performance characteristics of ${algo}?`)
-    }
-  }
-
-  // Match FIPS/CNSA standards
-  const stdMatches = content.match(/\b(FIPS\s*20[345]|FIPS\s*140-3|CNSA\s*2\.0)\b/gi)
-  if (stdMatches && followUps.length < 3) {
-    const std = stdMatches[0]
-    const key = `std-${std.toLowerCase()}`
-    if (!seen.has(key)) {
-      seen.add(key)
-      followUps.push(`Which products have ${std} certification?`)
-    }
-  }
-
-  // Match product/vendor names
-  const productMatches = content.match(
-    /\b(OpenSSL|Botan|BouncyCastle|Bouncy Castle|Thales|Entrust|Fortanix|Marvell|SafeNet|wolfSSL|GnuTLS)\b/gi
-  )
-  if (productMatches && followUps.length < 3) {
-    const product = productMatches[0]
-    const key = `prod-${product.toLowerCase()}`
-    if (!seen.has(key)) {
-      seen.add(key)
-      followUps.push(`What PQC algorithms does ${product} support?`)
-    }
-  }
-
-  // Match learning module topics
-  const moduleMatches = content.match(
-    /\b(TLS\s*1\.3|hybrid key exchange|crypto agility|digital assets|blockchain|QKD|key management|PKI|5G|IoT)\b/gi
-  )
-  if (moduleMatches && followUps.length < 3) {
-    const topic = moduleMatches[0]
-    const key = `mod-${topic.toLowerCase()}`
-    if (!seen.has(key)) {
-      seen.add(key)
-      followUps.push(`Tell me more about ${topic} and PQC`)
-    }
-  }
-
-  // Workshop-aware follow-up
-  if (tab && tab !== 'learn' && followUps.length < 3) {
-    followUps.push('What should I try next in the workshop?')
-  }
-
-  return followUps.slice(0, 3)
-}
 
 interface ChatMessageProps {
   sender: 'user' | 'assistant'
@@ -77,6 +15,7 @@ interface ChatMessageProps {
   sourceRefs?: ChatSourceRef[]
   onFollowUp?: (question: string) => void
   activeTab?: string
+  followUps?: string[]
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({
@@ -86,6 +25,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   sourceRefs,
   onFollowUp,
   activeTab,
+  followUps,
 }) => {
   const isUser = sender === 'user'
   const navigate = useNavigate()
@@ -216,16 +156,18 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           </div>
         )}
 
-        {/* Follow-up question suggestions — last assistant message only */}
+        {/* Follow-up question suggestions — assistant messages only */}
         {!isUser &&
           !isStreaming &&
           onFollowUp &&
           (() => {
-            const followUps = generateFollowUps(content, activeTab)
-            if (followUps.length === 0) return null
+            // Use LLM-generated follow-ups if provided; fall back to regex extraction
+            const displayFollowUps =
+              followUps && followUps.length > 0 ? followUps : generateFollowUps(content, activeTab)
+            if (displayFollowUps.length === 0) return null
             return (
               <div className="mt-2 flex flex-wrap gap-1.5">
-                {followUps.map((q) => (
+                {displayFollowUps.map((q) => (
                   <button
                     key={q}
                     onClick={() => onFollowUp(q)}

@@ -21,4 +21,5 @@ export interface ChatMessage {
   timestamp: number
   sources?: string[]
   sourceRefs?: ChatSourceRef[]
+  followUps?: string[]
 }
