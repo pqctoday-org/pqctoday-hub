@@ -48,7 +48,7 @@ function ExercisesTab() {
     {
       title: 'Scenario: Multi-Vendor FIPS Validation Gap',
       prompt:
-        'Your compliance team discovered that several vendors claim "FIPS compliance" but only have FIPS 140-2 validation (not 140-3). With NIST\'s transition timeline requiring FIPS 140-3 by 2026, you need to audit your vendor portfolio. Score at least 3 vendors using the Vendor Scorecard and generate contract clauses that distinguish between FIPS 140-2 and 140-3 requirements.',
+        'Your compliance team discovered that several vendors claim "FIPS compliance" but only have FIPS 140-2 validation (not 140-3). NIST stopped accepting new FIPS 140-2 validation requests in September 2021, making FIPS 140-3 the only path for new CMVP certifications. You need to audit your vendor portfolio and replace FIPS 140-2-only products in critical roles. Score at least 3 vendors using the Vendor Scorecard and generate contract clauses that distinguish between FIPS 140-2 and 140-3 requirements.',
     },
   ]
 
