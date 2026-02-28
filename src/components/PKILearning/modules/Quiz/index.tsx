@@ -1,6 +1,6 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS } from '@/data/learningPersonas'
@@ -78,16 +78,32 @@ function sampleQuestions(questions: QuizQuestion[], count: number): QuizQuestion
   return shuffleArray(sampled)
 }
 
+/** Parse and validate ?category= comma-separated URL param */
+function parseCategoryParam(param: string | null): QuizCategory[] | null {
+  if (!param) return null
+  const validIds = new Set<string>(QUIZ_CATEGORIES.map((c) => c.id))
+  const parsed = param
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => validIds.has(s)) as QuizCategory[]
+  return parsed.length > 0 ? parsed : null
+}
+
 export const QuizModule: React.FC = () => {
   const location = useLocation()
+  const [searchParams] = useSearchParams()
   const checkpointState = location.state as {
     checkpointCategories?: QuizCategory[]
     checkpointLabel?: string
   } | null
+  const urlCategories = useMemo(
+    () => parseCategoryParam(searchParams.get('category')),
+    [searchParams]
+  )
 
   const { updateModuleProgress, markStepComplete, mergeCorrectQuestionIds, modules } =
     useModuleStore()
-  const { selectedPersona, selectedIndustry: storeIndustry } = usePersonaStore()
+  const { selectedPersona, selectedIndustry: storeIndustry, experienceLevel } = usePersonaStore()
   const [industryFilter, setIndustryFilter] = useState<string | null>(storeIndustry)
   const persona = selectedPersona ? PERSONAS[selectedPersona] : null
   const [view, setView] = useState<'intro' | 'quiz' | 'results'>('intro')
@@ -96,11 +112,11 @@ export const QuizModule: React.FC = () => {
   const [lastMode, setLastMode] = useState<QuizMode>('timed')
   const [lastTimeMin, setLastTimeMin] = useState(DEFAULT_TIME_MIN)
   const [lastCategories, setLastCategories] = useState<QuizCategory[]>([])
-  const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([
-    'beginner',
-    'intermediate',
-    'advanced',
-  ])
+  const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(() => {
+    if (experienceLevel === 'new') return ['beginner']
+    if (experienceLevel === 'basics') return ['beginner', 'intermediate']
+    return ['beginner', 'intermediate', 'advanced']
+  })
   const startTimeRef = useRef(0)
 
   const filteredQuestions = useMemo(() => {
@@ -227,6 +243,7 @@ export const QuizModule: React.FC = () => {
           }
           categories={filteredCategories}
           initialCategories={
+            urlCategories ??
             checkpointState?.checkpointCategories ??
             (persona && persona.quizCategories.length > 0
               ? (persona.quizCategories as QuizCategory[])

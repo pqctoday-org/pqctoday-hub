@@ -16,10 +16,12 @@ export const ModuleCard = ({
   module,
   onSelectModule,
   isRelevant,
+  isAboveLevel,
 }: {
   module: ModuleItem
   onSelectModule: (moduleId: string) => void
   isRelevant?: boolean
+  isAboveLevel?: boolean
 }) => {
   const { modules } = useModuleStore()
   const status = modules[module.id]?.status || 'not-started'
@@ -33,7 +35,7 @@ export const ModuleCard = ({
     <motion.article
       layout
       initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
+      animate={{ opacity: isAboveLevel && status !== 'completed' ? 0.4 : 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.2 }}
       className="glass-panel p-6 flex flex-col h-full transition-colors hover:border-secondary/50 cursor-pointer"

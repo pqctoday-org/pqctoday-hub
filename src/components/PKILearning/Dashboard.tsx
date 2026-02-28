@@ -5,9 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   BookOpen,
   Brain,
+  CheckCircle,
   ChevronDown,
   ChevronRight,
+  Circle,
   Home,
+  Rocket,
   Save,
   Upload,
   PlayCircle,
@@ -17,7 +20,7 @@ import { usePersonaStore } from '../../store/usePersonaStore'
 import { MODULE_INDUSTRY_RELEVANCE } from '../../data/personaConfig'
 import { Button } from '../ui/button'
 import { ModuleCard } from './ModuleCard'
-import { MODULE_TRACKS, MODULE_STEP_COUNTS } from './moduleData'
+import { MODULE_CATALOG, MODULE_TRACKS, MODULE_STEP_COUNTS } from './moduleData'
 import { LearningPath } from './LearningPath'
 
 const SaveRestorePanel = () => {
@@ -77,7 +80,7 @@ const SaveRestorePanel = () => {
           <p className="text-sm text-muted-foreground text-center mb-4 flex-grow">
             Download your current learning progress as a JSON file for backup or transfer.
           </p>
-          <div className="pt-4 border-t border-white/5 text-center">
+          <div className="pt-4 border-t border-border text-center">
             <span className="text-xs text-muted-foreground">Click to download</span>
           </div>
         </motion.div>
@@ -98,12 +101,213 @@ const SaveRestorePanel = () => {
           <p className="text-sm text-muted-foreground text-center mb-4 flex-grow">
             Upload a previously saved progress file to continue your learning journey.
           </p>
-          <div className="pt-4 border-t border-white/5 text-center">
+          <div className="pt-4 border-t border-border text-center">
             <span className="text-xs text-muted-foreground">Click to upload</span>
           </div>
         </motion.div>
       </div>
     </div>
+  )
+}
+
+type LevelKey = 'new' | 'basics' | 'expert' | '_default'
+
+const EXPERIENCE_PATHS: Record<LevelKey, { id: string; subtitle: string }[]> = {
+  _default: [
+    { id: 'pqc-101', subtitle: 'Understand the quantum threat in 15 minutes' },
+    { id: 'quantum-threats', subtitle: 'Go deeper on how quantum computers break encryption' },
+    {
+      id: 'hybrid-crypto',
+      subtitle: 'Learn how old and new encryption work together during the transition',
+    },
+    {
+      id: 'crypto-agility',
+      subtitle: 'Design systems that can switch algorithms as standards evolve',
+    },
+  ],
+  new: [
+    {
+      id: 'pqc-101',
+      subtitle: 'Understand the quantum threat — no prior crypto knowledge needed',
+    },
+    {
+      id: 'quantum-threats',
+      subtitle: "Shor's and Grover's algorithms and the HNDL/HNFL threat",
+    },
+    {
+      id: 'pqc-risk-management',
+      subtitle: 'Quantify quantum risk and build your first risk register',
+    },
+    { id: 'pqc-business-case', subtitle: 'Translate risk to ROI for leadership buy-in' },
+    { id: 'pqc-governance', subtitle: 'Set up policies, RACI matrices, and KPI dashboards' },
+    {
+      id: 'compliance-strategy',
+      subtitle: 'Map your multi-jurisdiction regulatory requirements',
+    },
+  ],
+  basics: [
+    {
+      id: 'hybrid-crypto',
+      subtitle: 'Combine classical and PQC algorithms during the transition',
+    },
+    { id: 'tls-basics', subtitle: 'Master TLS 1.3 handshakes before adding PQC' },
+    { id: 'pki-workshop', subtitle: 'Build certificate chains hands-on, then migrate to PQC' },
+    {
+      id: 'key-management',
+      subtitle: 'Lifecycle management, HSMs, and enterprise key rotation',
+    },
+    {
+      id: 'email-signing',
+      subtitle: 'S/MIME and CMS with KEM-based PQC encryption (RFC 9629)',
+    },
+    { id: 'code-signing', subtitle: 'From ML-DSA package integrity to Sigstore keyless signing' },
+    { id: 'api-security-jwt', subtitle: 'JWT/JWS/JWE with ML-DSA signing and hybrid tokens' },
+    {
+      id: 'crypto-agility',
+      subtitle: 'Design systems that can switch algorithms as standards evolve',
+    },
+    {
+      id: 'digital-assets',
+      subtitle: 'Cryptographic foundations of Bitcoin, Ethereum, and Solana',
+    },
+    {
+      id: 'vendor-risk',
+      subtitle: 'Score vendor PQC readiness and map supply chain exposure',
+    },
+    {
+      id: 'migration-program',
+      subtitle: 'Build migration roadmaps with real country deadlines',
+    },
+  ],
+  expert: [
+    { id: 'vpn-ssh-pqc', subtitle: 'IKEv2 and SSH with ML-KEM, WireGuard Rosenpass' },
+    {
+      id: 'stateful-signatures',
+      subtitle: 'LMS/HSS and XMSS: Merkle tree signatures and critical state management',
+    },
+    {
+      id: 'merkle-tree-certs',
+      subtitle: 'Build Merkle trees, generate inclusion proofs, compare MTC vs PKI',
+    },
+    {
+      id: 'entropy-randomness',
+      subtitle: 'NIST SP 800-90, DRBG, TRNG vs QRNG — defense in depth',
+    },
+    {
+      id: '5g-security',
+      subtitle: '3GPP architecture: SUCI deconcealment, 5G-AKA, provisioning',
+    },
+    {
+      id: 'iot-ot-pqc',
+      subtitle: 'PQC for constrained devices: CoAP/DTLS, SCADA/ICS migration',
+    },
+    { id: 'digital-id', subtitle: 'EUDI Wallet: PID issuance, QES, attestations at scale' },
+    {
+      id: 'qkd',
+      subtitle: 'BB84, classical post-processing, hybrid key derivation — 150 min deep dive',
+    },
+  ],
+}
+
+const EXPERIENCE_PATH_META: Record<LevelKey, { title: string; subtitle: string }> = {
+  _default: {
+    title: 'Start Here',
+    subtitle:
+      'New to post-quantum cryptography? Follow these 4 modules in order to build a solid foundation.',
+  },
+  new: {
+    title: 'Start Here',
+    subtitle: 'No prior cryptography knowledge required — 6 modules to build your PQC foundation.',
+  },
+  basics: {
+    title: 'Your Learning Path',
+    subtitle: 'Build on the basics with 11 protocol and infrastructure implementation modules.',
+  },
+  expert: {
+    title: 'Deep Dives',
+    subtitle:
+      'Advanced workshops covering protocol internals, novel algorithms, and specialized domain applications.',
+  },
+}
+
+const ExperienceLevelPath: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => {
+  const { modules } = useModuleStore()
+  const { experienceLevel } = usePersonaStore()
+
+  const levelKey: LevelKey = experienceLevel ?? '_default'
+  const steps = EXPERIENCE_PATHS[levelKey]
+  const meta = EXPERIENCE_PATH_META[levelKey]
+
+  const allCompleted = steps.every((step) => modules[step.id]?.status === 'completed')
+  if (allCompleted) return null
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="mb-4">
+        <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
+          <Rocket className="text-primary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
+          {meta.title}
+        </h2>
+        <p className="text-muted-foreground text-sm">{meta.subtitle}</p>
+      </div>
+
+      <div className="glass-panel p-4 md:p-6">
+        <div className="space-y-0">
+          {steps.map((step, i) => {
+            const mod = MODULE_CATALOG[step.id]
+            const status = modules[step.id]?.status || 'not-started'
+            const isLast = i === steps.length - 1
+
+            return (
+              <div key={step.id} className="flex gap-3 md:gap-4">
+                {/* Timeline connector */}
+                <div className="flex flex-col items-center">
+                  {status === 'completed' ? (
+                    <CheckCircle className="text-status-success shrink-0" size={22} />
+                  ) : (
+                    <Circle
+                      className={`shrink-0 ${status === 'in-progress' ? 'text-primary' : 'text-muted-foreground'}`}
+                      size={22}
+                    />
+                  )}
+                  {!isLast && (
+                    <div
+                      className={`w-px flex-1 min-h-[24px] ${status === 'completed' ? 'bg-status-success/40' : 'bg-border'}`}
+                    />
+                  )}
+                </div>
+
+                {/* Content */}
+                <button onClick={() => navigate(step.id)} className="flex-1 text-left pb-4 group">
+                  <div className="flex items-baseline gap-2 mb-0.5">
+                    <span className="text-xs font-mono text-muted-foreground">{i + 1}</span>
+                    <span className="font-bold group-hover:text-primary transition-colors">
+                      {mod.title}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{mod.duration}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed pl-5">
+                    {step.subtitle}
+                  </p>
+                </button>
+              </div>
+            )
+          })}
+        </div>
+
+        <p className="text-xs text-muted-foreground mt-2 pt-3 border-t border-border">
+          Then explore by track below, or select a role on the{' '}
+          <button onClick={() => navigate('/')} className="text-primary hover:underline">
+            home page
+          </button>{' '}
+          for a personalized path.
+        </p>
+      </div>
+    </motion.section>
   )
 }
 
@@ -169,6 +373,9 @@ export const Dashboard: React.FC = () => {
           </div>
         </motion.div>
       )}
+
+      {/* Experience level path — shown when no persona is selected */}
+      {!showLearningPath && <ExperienceLevelPath navigate={navigate} />}
 
       {/* Learning Path — shown when persona is selected (set from the home page) */}
       {showLearningPath && <LearningPath />}
@@ -245,12 +452,21 @@ const ModuleTracksGrid = ({
   navigate: (path: string) => void
   onGoHome?: () => void
 }) => {
-  const { selectedIndustry } = usePersonaStore()
+  const { selectedIndustry, experienceLevel } = usePersonaStore()
 
   const isModuleRelevant = (moduleId: string): boolean => {
     if (!selectedIndustry) return false
     const relevant = MODULE_INDUSTRY_RELEVANCE[moduleId]
     return relevant === null || (relevant?.includes(selectedIndustry) ?? false)
+  }
+
+  const isModuleAboveLevel = (moduleId: string): boolean => {
+    if (!experienceLevel) return false
+    const mod = MODULE_CATALOG[moduleId]
+    if (!mod?.difficulty) return false
+    if (experienceLevel === 'new') return mod.difficulty !== 'beginner'
+    if (experienceLevel === 'basics') return mod.difficulty === 'advanced'
+    return false // expert: nothing dimmed
   }
 
   return (
@@ -284,6 +500,7 @@ const ModuleTracksGrid = ({
                   module={module}
                   onSelectModule={(id) => navigate(id)}
                   isRelevant={isModuleRelevant(module.id)}
+                  isAboveLevel={isModuleAboveLevel(module.id)}
                 />
               ))}
             </AnimatePresence>
