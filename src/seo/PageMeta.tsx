@@ -21,13 +21,16 @@ export function PageMeta() {
       <meta property="og:url" content={meta.canonical} />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="PQC Today" />
-      <meta property="og:image" content={meta.ogImage ?? 'https://pqctoday.com/og-image.png'} />
+      <meta property="og:image" content={meta.ogImage ?? 'https://www.pqctoday.com/og-image.png'} />
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={meta.title} />
       <meta name="twitter:description" content={meta.description} />
-      <meta name="twitter:image" content={meta.ogImage ?? 'https://pqctoday.com/og-image.png'} />
+      <meta
+        name="twitter:image"
+        content={meta.ogImage ?? 'https://www.pqctoday.com/og-image.png'}
+      />
 
       {/* Structured Data */}
       {meta.structuredData && (

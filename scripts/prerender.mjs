@@ -50,6 +50,15 @@ const ROUTES = [
   '/learn/digital-id',
   '/learn/entropy-randomness',
   '/learn/qkd',
+  '/learn/vendor-risk',
+  '/learn/compliance-strategy',
+  '/learn/migration-program',
+  '/learn/pqc-risk-management',
+  '/learn/pqc-business-case',
+  '/learn/pqc-governance',
+  '/learn/code-signing',
+  '/learn/api-security-jwt',
+  '/learn/iot-ot-pqc',
   '/learn/quiz',
 ]
 

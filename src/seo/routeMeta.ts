@@ -53,7 +53,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
             'OpenSSL WASM Studio',
             'PQC Migration Planning',
             'Compliance Tracker (NIST, ANSSI, Common Criteria)',
-            '19 Hands-on Learning Modules',
+            '25 Hands-on Learning Modules',
             'PQC Risk Assessment Wizard',
             'Migration Software Catalog',
           ],
@@ -213,19 +213,19 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   // --- Learning modules ---
 
   '/learn': {
-    title: 'Learn Post-Quantum Cryptography — 19 Interactive Modules | PQC Today',
+    title: 'Learn Post-Quantum Cryptography — 25 Interactive Modules | PQC Today',
     description:
-      'Begin your post-quantum transformation with 19 guided learning modules. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
+      'Begin your post-quantum transformation with 25 guided learning modules. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
     canonical: `${BASE_URL}/learn`,
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'Course',
       name: 'Post-Quantum Cryptography Learning Path',
       description:
-        '19 interactive modules covering PQC fundamentals, protocols, infrastructure, and applications with real cryptographic operations.',
+        '25 interactive modules covering PQC fundamentals, protocols, infrastructure, and applications with real cryptographic operations.',
       provider: { '@type': 'Organization', name: 'PQC Today', url: BASE_URL },
       isAccessibleForFree: true,
-      numberOfCredits: 19,
+      numberOfCredits: 25,
       hasCourseInstance: {
         '@type': 'CourseInstance',
         courseMode: 'online',
@@ -364,6 +364,73 @@ export const ROUTE_META: Record<string, RouteMeta> = {
       'Explore QKD fundamentals: BB84 protocol simulation with Eve interception, classical post-processing, hybrid key derivation, and real-world QKD network data.',
     canonical: `${BASE_URL}/learn/qkd`,
     structuredData: buildModuleSchema('Quantum Key Distribution', 'PT150M', 'Advanced'),
+  },
+
+  '/learn/vendor-risk': {
+    title: 'Vendor & Supply Chain PQC Risk — Scorecards, CBOM & Contract Clauses | PQC Today',
+    description:
+      "Evaluate your supply chain's quantum readiness. Build PQC vendor scorecards across 6 dimensions, demand CycloneDX CBOM inventories, generate contract clauses, and map cryptographic risk across infrastructure layers.",
+    canonical: `${BASE_URL}/learn/vendor-risk`,
+    structuredData: buildModuleSchema('Vendor & Supply Chain PQC Risk', 'PT90M', 'Advanced'),
+  },
+
+  '/learn/compliance-strategy': {
+    title:
+      'PQC Compliance Strategy — CNSA 2.0, NIST IR 8547, Multi-Jurisdiction Planning | PQC Today',
+    description:
+      'Build a multi-jurisdiction PQC compliance strategy. Map CNSA 2.0, NIST IR 8547, ANSSI, and BSI requirements across your operating regions, build audit readiness checklists, and construct compliance timelines for key deadlines through 2035.',
+    canonical: `${BASE_URL}/learn/compliance-strategy`,
+    structuredData: buildModuleSchema('PQC Compliance & Regulatory Strategy', 'PT90M', 'Advanced'),
+  },
+
+  '/learn/migration-program': {
+    title:
+      'PQC Migration Program Management — 7-Phase Roadmap, KPIs & Stakeholder Planning | PQC Today',
+    description:
+      'Structure your enterprise PQC migration as a multi-year program. Apply the 7-phase CISA/NIST framework — from discovery and CBOM to validation — with roadmap builder, stakeholder communications planner, and KPI tracker.',
+    canonical: `${BASE_URL}/learn/migration-program`,
+    structuredData: buildModuleSchema('PQC Migration Program Management', 'PT90M', 'Advanced'),
+  },
+
+  '/learn/pqc-risk-management': {
+    title: 'PQC Risk Management — CRQC Scenarios, Risk Register & Heatmap | PQC Today',
+    description:
+      "Quantify your organization's quantum risk exposure. Model CRQC arrival scenarios, build a cryptographic risk register with likelihood × impact scoring, and visualize migration priorities on a 5×5 risk heatmap.",
+    canonical: `${BASE_URL}/learn/pqc-risk-management`,
+    structuredData: buildModuleSchema('PQC Risk Management', 'PT60M', 'Intermediate'),
+  },
+
+  '/learn/pqc-business-case': {
+    title:
+      'Building the PQC Business Case — ROI Calculator, Breach Modeling & Board Pitch | PQC Today',
+    description:
+      'Make the financial case for PQC migration. Calculate risk-adjusted ROI, model HNDL breach costs with industry data, quantify compliance penalty exposure, and generate a board-ready investment memo with executive summary.',
+    canonical: `${BASE_URL}/learn/pqc-business-case`,
+    structuredData: buildModuleSchema('Building the PQC Business Case', 'PT60M', 'Intermediate'),
+  },
+
+  '/learn/pqc-governance': {
+    title: 'PQC Governance & Policy — RACI Matrix, Policy Templates & KPI Dashboard | PQC Today',
+    description:
+      'Establish enterprise governance for your PQC transition. Build RACI matrices for migration responsibilities, generate cryptographic policy templates across 4 layers, choose a governance model, and design a KPI dashboard for board reporting.',
+    canonical: `${BASE_URL}/learn/pqc-governance`,
+    structuredData: buildModuleSchema('PQC Governance & Policy', 'PT90M', 'Advanced'),
+  },
+
+  '/learn/code-signing': {
+    title: 'Code Signing & Supply Chain Security — PQC ML-DSA, Sigstore & Secure Boot | PQC Today',
+    description:
+      'Post-quantum code signing: sign binaries and packages with ML-DSA, build PQC certificate chains, simulate Sigstore keyless signing, and explore secure boot firmware trust chains with LMS/XMSS vs ML-DSA trade-offs.',
+    canonical: `${BASE_URL}/learn/code-signing`,
+    structuredData: buildModuleSchema('Code Signing & Supply Chain Security', 'PT90M', 'Advanced'),
+  },
+
+  '/learn/api-security-jwt': {
+    title: 'API Security & PQC JWT — ML-DSA Signing, ML-KEM JWE & OAuth 2.0 Migration | PQC Today',
+    description:
+      'Migrate API authentication to post-quantum cryptography. Decode JWTs, replace RS256/ES256 with ML-DSA signing, swap ECDH-ES for ML-KEM key agreement in JWE, analyze PQC token size impacts, and plan OAuth 2.0/OIDC migration.',
+    canonical: `${BASE_URL}/learn/api-security-jwt`,
+    structuredData: buildModuleSchema('API Security & JWT with PQC', 'PT90M', 'Advanced'),
   },
 
   '/learn/iot-ot-pqc': {

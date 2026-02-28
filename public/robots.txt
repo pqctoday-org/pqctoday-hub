@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Crawl-delay: 1
 
-Sitemap: https://pqctoday.com/sitemap.xml
+Sitemap: https://www.pqctoday.com/sitemap.xml
