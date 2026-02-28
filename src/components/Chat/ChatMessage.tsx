@@ -2,7 +2,17 @@ import React, { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useNavigate } from 'react-router-dom'
-import { Bot, User, Copy, Check, FileText, ChevronDown, ChevronRight } from 'lucide-react'
+import {
+  Bot,
+  User,
+  Copy,
+  Check,
+  FileText,
+  ChevronDown,
+  ChevronRight,
+  ThumbsUp,
+  ThumbsDown,
+} from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '../ui/button'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
@@ -18,6 +28,10 @@ interface ChatMessageProps {
   activeTab?: string
   followUps?: string[]
   persona?: string | null
+  feedback?: 'helpful' | 'unhelpful'
+  onFeedback?: (feedback: 'helpful' | 'unhelpful' | undefined) => void
+  onRetry?: () => void
+  onEdit?: (newContent: string) => void
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({
@@ -29,12 +43,18 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   activeTab,
   followUps,
   persona,
+  feedback,
+  onFeedback,
+  onRetry,
+  onEdit,
 }) => {
   const isUser = sender === 'user'
   const navigate = useNavigate()
   const closePanel = useRightPanelStore((s) => s.close)
   const [copied, setCopied] = useState(false)
   const [showSources, setShowSources] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editText, setEditText] = useState(content)
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(content)
@@ -64,7 +84,47 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
         )}
       >
         {isUser ? (
-          <p className="whitespace-pre-wrap">{content}</p>
+          isEditing && onEdit ? (
+            <div className="space-y-2">
+              <textarea
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+                className="w-full bg-muted/30 border border-border rounded-md px-2 py-1.5 text-sm text-foreground resize-none focus:outline-none focus:border-primary/50"
+                rows={Math.min(editText.split('\n').length + 1, 6)}
+                // eslint-disable-next-line jsx-a11y/no-autofocus
+                autoFocus
+              />
+              <div className="flex gap-1.5 justify-end">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setIsEditing(false)
+                    setEditText(content)
+                  }}
+                  className="text-xs px-2 py-1 h-auto min-h-0"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="gradient"
+                  size="sm"
+                  onClick={() => {
+                    if (editText.trim() && editText.trim() !== content) {
+                      onEdit(editText.trim())
+                    }
+                    setIsEditing(false)
+                  }}
+                  disabled={!editText.trim() || editText.trim() === content}
+                  className="text-xs px-2 py-1 h-auto min-h-0"
+                >
+                  Save & Resend
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <p className="whitespace-pre-wrap">{content}</p>
+          )
         ) : (
           <div className="prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-primary prose-code:bg-muted/30 prose-code:px-1 prose-code:rounded">
             <ReactMarkdown
@@ -103,23 +163,130 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
               {content}
             </ReactMarkdown>
             {isStreaming && (
-              <span className="inline-block w-1.5 h-4 bg-primary/70 animate-pulse ml-0.5 align-text-bottom" />
+              <>
+                <span
+                  className="inline-block w-1.5 h-4 bg-primary/70 animate-pulse ml-0.5 align-text-bottom"
+                  aria-hidden="true"
+                />
+                <span className="sr-only" role="status">
+                  Response in progress
+                </span>
+              </>
             )}
           </div>
         )}
 
-        {/* Copy button — assistant messages only */}
+        {/* Action buttons — assistant messages */}
         {!isUser && !isStreaming && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCopy}
-            className="absolute bottom-1 right-1 p-1 h-auto min-h-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
-            aria-label="Copy response"
-            title={copied ? 'Copied!' : 'Copy'}
+          <div
+            className={clsx(
+              'flex items-center gap-0.5 mt-1',
+              !feedback &&
+                '[@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 transition-opacity'
+            )}
           >
-            {copied ? <Check size={12} className="text-status-success" /> : <Copy size={12} />}
-          </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCopy}
+              className="p-1 h-auto min-h-0 text-muted-foreground hover:text-foreground"
+              aria-label="Copy response"
+              title={copied ? 'Copied!' : 'Copy'}
+            >
+              {copied ? <Check size={12} className="text-status-success" /> : <Copy size={12} />}
+            </Button>
+            {onFeedback && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onFeedback(feedback === 'helpful' ? undefined : 'helpful')}
+                  className={clsx(
+                    'p-1 h-auto min-h-0',
+                    feedback === 'helpful'
+                      ? 'text-status-success'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                  aria-label="Helpful"
+                  title="Helpful"
+                >
+                  <ThumbsUp size={12} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onFeedback(feedback === 'unhelpful' ? undefined : 'unhelpful')}
+                  className={clsx(
+                    'p-1 h-auto min-h-0',
+                    feedback === 'unhelpful'
+                      ? 'text-status-error'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                  aria-label="Not helpful"
+                  title="Not helpful"
+                >
+                  <ThumbsDown size={12} />
+                </Button>
+              </>
+            )}
+            {onRetry && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onRetry}
+                className="p-1 h-auto min-h-0 text-muted-foreground hover:text-foreground"
+                aria-label="Retry"
+                title="Retry"
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 2v6h-6" />
+                  <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+                  <path d="M3 22v-6h6" />
+                  <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+                </svg>
+              </Button>
+            )}
+          </div>
+        )}
+
+        {/* Edit button — user messages only */}
+        {isUser && !isStreaming && onEdit && !isEditing && (
+          <div className="flex items-center gap-0.5 mt-1 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 transition-opacity">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setEditText(content)
+                setIsEditing(true)
+              }}
+              className="p-1 h-auto min-h-0 text-muted-foreground hover:text-foreground"
+              aria-label="Edit message"
+              title="Edit"
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                <path d="m15 5 4 4" />
+              </svg>
+            </Button>
+          </div>
         )}
 
         {/* Source attribution — assistant messages only */}
@@ -147,8 +314,12 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
                         className="text-primary/80 hover:text-primary hover:underline cursor-pointer"
                         onClick={(e) => {
                           e.preventDefault()
-                          closePanel()
-                          navigate(ref.deepLink!)
+                          if (ref.deepLink!.startsWith('http')) {
+                            window.open(ref.deepLink!, '_blank', 'noopener,noreferrer')
+                          } else {
+                            closePanel()
+                            navigate(ref.deepLink!)
+                          }
                         }}
                       >
                         {ref.title}

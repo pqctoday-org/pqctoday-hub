@@ -45,7 +45,7 @@ export const ModuleCard = ({
             <BookOpen size={24} />
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap justify-end">
           {isRelevant && (
             <span className="text-[10px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1.5 py-0.5">
               Relevant

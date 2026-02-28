@@ -177,7 +177,7 @@ export const ConversationMenu: React.FC = () => {
                         const md = conversationToMarkdown(conv)
                         downloadMarkdown(md, `${conv.title.replace(/[^a-z0-9]/gi, '-')}.md`)
                       }}
-                      className="p-0.5 h-auto min-h-0 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-primary transition-opacity"
+                      className="p-0.5 [@media(pointer:coarse)]:p-1.5 h-auto min-h-0 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 text-muted-foreground hover:text-primary transition-opacity"
                       aria-label={`Export conversation: ${conv.title}`}
                     >
                       <Download size={11} />
@@ -196,7 +196,7 @@ export const ConversationMenu: React.FC = () => {
                           setSearchTerm('')
                         }
                       }}
-                      className="p-0.5 h-auto min-h-0 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-status-error transition-opacity"
+                      className="p-0.5 [@media(pointer:coarse)]:p-1.5 h-auto min-h-0 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 text-muted-foreground hover:text-status-error transition-opacity"
                       aria-label={`Delete conversation: ${conv.title}`}
                     >
                       <Trash2 size={11} />

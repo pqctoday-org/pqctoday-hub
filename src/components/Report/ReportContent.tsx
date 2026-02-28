@@ -103,7 +103,7 @@ export function SectionInfoTip({ text }: { text: string }) {
         <Info size={14} />
       </Button>
       {open && (
-        <div className="absolute left-0 top-full mt-1 z-50 w-64 p-3 rounded-lg bg-card border border-border shadow-lg text-xs text-muted-foreground leading-relaxed">
+        <div className="absolute left-0 top-full mt-1 z-50 w-64 max-w-[calc(100vw-2rem)] p-3 rounded-lg bg-card border border-border shadow-lg text-xs text-muted-foreground leading-relaxed">
           {text}
         </div>
       )}

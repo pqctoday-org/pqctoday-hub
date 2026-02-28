@@ -110,7 +110,7 @@ export const LeaderCard = ({ leader }: LeaderCardProps) => {
       )}
 
       {(leader.websiteUrl || leader.linkedinUrl) && (
-        <div className="flex gap-3 mt-auto pt-4 border-t border-border">
+        <div className="flex flex-wrap gap-3 mt-auto pt-4 border-t border-border">
           {leader.websiteUrl && (
             <a
               href={leader.websiteUrl}

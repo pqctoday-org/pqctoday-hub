@@ -44,7 +44,7 @@ export const AskAssistantButton: React.FC<AskAssistantButtonProps> = ({
       variant="ghost"
       size="sm"
       onClick={handleClick}
-      className={`p-1 h-auto min-h-0 text-muted-foreground hover:text-primary transition-colors ${className ?? ''}`}
+      className={`p-1 h-auto min-h-0 [@media(pointer:coarse)]:min-h-[32px] [@media(pointer:coarse)]:min-w-[32px] text-muted-foreground hover:text-primary transition-colors ${className ?? ''}`}
       aria-label={label}
       title={label}
     >
