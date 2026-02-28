@@ -165,4 +165,25 @@ How does this compare?
     expect(cleanContent).toBe(original)
     expect(followUps).toEqual([])
   })
+
+  it('strips incomplete followups block when response is truncated mid-fence', () => {
+    const input = `Here is the full answer about ML-KEM.
+
+\`\`\`followups
+What are the performance trade-offs`
+
+    const { cleanContent, followUps } = parseFollowUps(input)
+    expect(cleanContent).toBe('Here is the full answer about ML-KEM.')
+    expect(followUps).toEqual([])
+  })
+
+  it('strips followups fence with no content after it', () => {
+    const input = `Answer content here.
+
+\`\`\`followups`
+
+    const { cleanContent, followUps } = parseFollowUps(input)
+    expect(cleanContent).toBe('Answer content here.')
+    expect(followUps).toEqual([])
+  })
 })

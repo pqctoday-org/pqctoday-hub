@@ -185,7 +185,7 @@ export async function* streamResponse(
         contents: formattedMessages,
         generationConfig: {
           temperature: 0.3,
-          maxOutputTokens: 2048,
+          maxOutputTokens: 8192,
           topP: 0.9,
         },
         safetySettings: SAFETY_SETTINGS,
@@ -229,6 +229,14 @@ export async function* streamResponse(
           const parsed = JSON.parse(json)
           const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text
           if (text) yield text
+          const finishReason = parsed.candidates?.[0]?.finishReason
+          if (finishReason === 'MAX_TOKENS') {
+            yield '\n\n*(Response truncated — try asking a more specific question.)*'
+          } else if (finishReason === 'SAFETY') {
+            yield '\n\n*(Response blocked by content safety filters. Try rephrasing your question.)*'
+          } else if (finishReason === 'RECITATION') {
+            yield '\n\n*(Response stopped due to potential copyright concerns. Try a more specific question.)*'
+          }
         } catch {
           // Skip malformed SSE chunks
         }

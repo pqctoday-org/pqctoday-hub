@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { Bot, Send, Trash2, KeyRound, HelpCircle } from 'lucide-react'
 import { Button } from '../ui/button'
+import { Input } from '../ui/input'
 import { ChatMessage } from '../Chat/ChatMessage'
 import { ApiKeySetup } from '../Chat/ApiKeySetup'
 import { SampleQuestionsModal } from '../About/SampleQuestionsModal'
@@ -24,10 +25,11 @@ export const ChatPanelContent: React.FC = () => {
 
   const [input, setInput] = useState('')
   const [showSampleQuestions, setShowSampleQuestions] = useState(false)
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { sendQuery, pageContext } = useChatSend()
+  const { sendQuery, abort, pageContext } = useChatSend()
 
   // Initialize retrieval service on first open
   useEffect(() => {
@@ -51,6 +53,11 @@ export const ChatPanelContent: React.FC = () => {
       setTimeout(() => inputRef.current?.focus(), 200)
     }
   }, [isOpen, apiKey])
+
+  // Abort any in-flight Gemini stream when the panel closes
+  useEffect(() => {
+    if (!isOpen) abort()
+  }, [isOpen, abort])
 
   const handleSend = () => {
     const text = input
@@ -88,18 +95,45 @@ export const ChatPanelContent: React.FC = () => {
               >
                 <HelpCircle size={16} />
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  if (messages.length === 0) return
-                  if (confirm('Clear all messages? This cannot be undone.')) clearMessages()
-                }}
-                className="min-h-[44px] min-w-[44px] p-2"
-                aria-label="Clear conversation"
-              >
-                <Trash2 size={16} />
-              </Button>
+              {showClearConfirm ? (
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">
+                    Clear all?
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      clearMessages()
+                      setShowClearConfirm(false)
+                    }}
+                    className="min-h-[44px] px-2 text-status-error hover:text-status-error"
+                    aria-label="Confirm clear conversation"
+                  >
+                    Clear
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowClearConfirm(false)}
+                    className="min-h-[44px] px-2"
+                    aria-label="Cancel clear conversation"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowClearConfirm(true)}
+                  disabled={messages.length === 0}
+                  className="min-h-[44px] min-w-[44px] p-2"
+                  aria-label="Clear conversation"
+                >
+                  <Trash2 size={16} />
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 size="sm"
@@ -132,13 +166,15 @@ export const ChatPanelContent: React.FC = () => {
                   {/* Page-contextual suggested questions */}
                   <div className="flex flex-wrap gap-2 justify-center mt-4">
                     {pageContext.suggestedQuestions.map((q) => (
-                      <button
+                      <Button
                         key={q}
+                        variant="ghost"
+                        size="sm"
                         onClick={() => sendQuery(q)}
-                        className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted/30 text-muted-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
+                        className="text-xs px-3 py-1.5 h-auto rounded-full border border-border bg-muted/30 text-muted-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
                       >
                         {q}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -161,7 +197,7 @@ export const ChatPanelContent: React.FC = () => {
                 />
               ))}
 
-              {isStreaming && streamingContent && (
+              {isStreaming && (
                 <ChatMessage sender="assistant" content={streamingContent} isStreaming />
               )}
 
@@ -193,14 +229,14 @@ export const ChatPanelContent: React.FC = () => {
           {/* Input */}
           <div className="p-4 md:px-12 border-t border-border shrink-0">
             <div className="max-w-4xl mx-auto flex gap-2">
-              <input
+              <Input
                 ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Ask about PQC..."
-                className="flex-1 bg-muted/30 border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary/50 transition-colors text-foreground placeholder:text-muted-foreground"
+                className="flex-1 bg-muted/30 border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
                 disabled={isLoading || isStreaming}
                 aria-label="Message input"
               />

@@ -64,7 +64,7 @@ test.describe('PQC Assistant Chatbot', () => {
     // Panel should appear
     const panel = page.getByRole('dialog', { name: 'PQC Assistant' })
     await expect(panel).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'PQC Assistant' })).toBeVisible()
+    await expect(page.getByText('PQC Assistant')).toBeVisible()
 
     // FAB should disappear when panel is open
     await expect(fab).not.toBeVisible()
@@ -150,7 +150,7 @@ test.describe('PQC Assistant Chatbot', () => {
         'pqc-chat-storage',
         JSON.stringify({
           state: { apiKey: 'test-key', messages: [], model: 'gemini-2.5-flash' },
-          version: 0,
+          version: 2,
         })
       )
     })
@@ -171,7 +171,7 @@ test.describe('PQC Assistant Chatbot', () => {
         'pqc-chat-storage',
         JSON.stringify({
           state: { apiKey: 'test-key', messages: [], model: 'gemini-2.5-flash' },
-          version: 0,
+          version: 2,
         })
       )
     })
@@ -227,7 +227,7 @@ test.describe('PQC Assistant Chatbot', () => {
             ],
             model: 'gemini-2.5-flash',
           },
-          version: 0,
+          version: 2,
         })
       )
     })
@@ -239,8 +239,9 @@ test.describe('PQC Assistant Chatbot', () => {
     await expect(page.getByText('Test message')).toBeVisible({ timeout: 5000 })
     await expect(page.getByText('Test response')).toBeVisible()
 
-    // Clear messages
+    // Clear messages — inline confirm requires two clicks
     await page.getByRole('button', { name: 'Clear conversation' }).click()
+    await page.getByRole('button', { name: 'Confirm clear conversation' }).click()
 
     // Messages should be gone
     await expect(page.getByText('Test message')).not.toBeVisible()
@@ -257,7 +258,7 @@ test.describe('PQC Assistant Chatbot', () => {
         'pqc-chat-storage',
         JSON.stringify({
           state: { apiKey: 'test-key', messages: [], model: 'gemini-2.5-flash' },
-          version: 0,
+          version: 2,
         })
       )
     })
@@ -282,7 +283,7 @@ test.describe('PQC Assistant Chatbot', () => {
         'pqc-chat-storage',
         JSON.stringify({
           state: { apiKey: 'test-key', messages: [], model: 'gemini-2.5-flash' },
-          version: 0,
+          version: 2,
         })
       )
     })
@@ -320,7 +321,7 @@ test.describe('PQC Assistant Chatbot', () => {
         'pqc-chat-storage',
         JSON.stringify({
           state: { apiKey: 'test-key', messages: [], model: 'gemini-2.5-flash' },
-          version: 0,
+          version: 2,
         })
       )
     })

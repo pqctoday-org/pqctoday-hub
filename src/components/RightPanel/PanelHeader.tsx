@@ -18,7 +18,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({ activeTab, onTabChange
   return (
     <div className="px-4 md:px-12 pt-4 pb-0 border-b border-border shrink-0">
       <div className="flex items-center justify-between max-w-4xl mx-auto">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1" role="tablist">
           {tabs.map((tab) => (
             <button
               key={tab.id}

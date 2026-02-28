@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm'
 import { useNavigate } from 'react-router-dom'
 import { Bot, User, Copy, Check, FileText, ChevronDown, ChevronRight } from 'lucide-react'
 import clsx from 'clsx'
+import { Button } from '../ui/button'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { generateFollowUps } from './generateFollowUps'
 import type { ChatSourceRef } from '@/types/ChatTypes'
@@ -109,27 +110,32 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
 
         {/* Copy button — assistant messages only */}
         {!isUser && !isStreaming && (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleCopy}
-            className="absolute bottom-1 right-1 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+            className="absolute bottom-1 right-1 p-1 h-auto min-h-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
             aria-label="Copy response"
             title={copied ? 'Copied!' : 'Copy'}
           >
             {copied ? <Check size={12} className="text-status-success" /> : <Copy size={12} />}
-          </button>
+          </Button>
         )}
 
         {/* Source attribution — assistant messages only */}
         {!isUser && !isStreaming && sourceRefs && sourceRefs.length > 0 && (
           <div className="mt-2 pt-2 border-t border-border/50">
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setShowSources(!showSources)}
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              aria-expanded={showSources}
+              className="flex items-center gap-1 p-0 h-auto min-h-0 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               <FileText size={11} />
               {showSources ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
               {sourceRefs.length} source{sourceRefs.length !== 1 ? 's' : ''}
-            </button>
+            </Button>
             {showSources && (
               <ul className="mt-1.5 space-y-0.5">
                 {sourceRefs.map((ref, i) => (
@@ -172,13 +178,15 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
             return (
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {displayFollowUps.map((q) => (
-                  <button
+                  <Button
                     key={q}
+                    variant="ghost"
+                    size="sm"
                     onClick={() => onFollowUp(q)}
-                    className="text-xs px-2.5 py-1 rounded-full border border-border bg-muted/20 text-muted-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
+                    className="text-xs px-2.5 py-1 h-auto min-h-0 rounded-full border border-border bg-muted/20 text-muted-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
                   >
                     {q}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )

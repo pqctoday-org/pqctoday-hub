@@ -11,7 +11,7 @@ const MAX_INPUT_LENGTH = 1_000
 
 /**
  * Shared hook encapsulating RAG retrieval → Gemini streaming → follow-up parsing.
- * Used by both ChatPanel (modal) and ChatPanelContent (right panel).
+ * Used by ChatPanelContent (right panel).
  */
 export function useChatSend() {
   const {
@@ -50,6 +50,9 @@ export function useChatSend() {
 
       let timeoutId: ReturnType<typeof setTimeout> | undefined
       let timedOut = false
+      let fullContent = ''
+      let sourceIds: string[] = []
+      const sourceRefs: ChatSourceRef[] = []
 
       try {
         // Retrieve relevant context with page awareness + conversation history
@@ -80,12 +83,10 @@ export function useChatSend() {
         setStreamingContent('')
         setLoading(false)
 
-        let fullContent = ''
-        const sourceIds = chunks.map((c) => c.id)
+        sourceIds = chunks.map((c) => c.id)
 
         // Build deduplicated source references for attribution
         const seenTitles = new Set<string>()
-        const sourceRefs: ChatSourceRef[] = []
         for (const c of chunks) {
           if (seenTitles.has(c.title)) continue
           seenTitles.add(c.title)
@@ -120,7 +121,26 @@ export function useChatSend() {
         addMessage(assistantMessage)
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
-          if (timedOut) setError('Request timed out. Please try again.')
+          if (timedOut) {
+            if (fullContent.trim()) {
+              // Save partial content instead of discarding on timeout
+              const { cleanContent, followUps } = parseFollowUps(fullContent)
+              const assistantMessage: ChatMessage = {
+                id: `assistant-${Date.now()}`,
+                role: 'assistant',
+                content:
+                  cleanContent.trimEnd() +
+                  '\n\n*(Response timed out — the above may be incomplete.)*',
+                timestamp: Date.now(),
+                sources: sourceIds,
+                sourceRefs,
+                followUps,
+              }
+              addMessage(assistantMessage)
+            } else {
+              setError('Request timed out. Please try again.')
+            }
+          }
           return
         }
 

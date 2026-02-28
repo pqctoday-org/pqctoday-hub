@@ -9,7 +9,17 @@ export function parseFollowUps(content: string): {
   followUps: string[]
 } {
   const match = content.match(/```followups\n([\s\S]*?)```\s*$/)
-  if (!match) return { cleanContent: content, followUps: [] }
+  if (!match) {
+    // Strip incomplete ```followups block if response was truncated mid-fence
+    const incompleteMatch = content.match(/```followups[\s\S]*$/)
+    if (incompleteMatch) {
+      return {
+        cleanContent: content.slice(0, incompleteMatch.index).trimEnd(),
+        followUps: [],
+      }
+    }
+    return { cleanContent: content, followUps: [] }
+  }
 
   const followUps = match[1]
     .trim()

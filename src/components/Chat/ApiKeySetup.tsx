@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Key, ExternalLink, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import { Button } from '../ui/button'
+import { Input } from '../ui/input'
 import { useChatStore } from '@/store/useChatStore'
 import { validateApiKey } from '@/services/chat/GeminiService'
 
@@ -60,7 +61,7 @@ export const ApiKeySetup: React.FC = () => {
         </a>
 
         <form onSubmit={handleSubmit} className="space-y-3">
-          <input
+          <Input
             type="password"
             value={keyInput}
             onChange={(e) => {
@@ -68,7 +69,7 @@ export const ApiKeySetup: React.FC = () => {
               if (validationState === 'error') setValidationState('idle')
             }}
             placeholder="Paste your API key here"
-            className="w-full bg-muted/30 border border-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary/50 transition-colors text-foreground placeholder:text-muted-foreground"
+            className="w-full bg-muted/30 border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
             autoComplete="off"
             aria-label="Gemini API key"
           />

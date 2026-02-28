@@ -51,7 +51,7 @@ test.describe('PQC Assistant — Persona & Context', () => {
         'pqc-chat-storage',
         JSON.stringify({
           state: { apiKey: 'test-key', messages: [], model: 'gemini-2.5-flash' },
-          version: 0,
+          version: 2,
         })
       )
     })
@@ -118,14 +118,14 @@ test.describe('PQC Assistant — Persona & Context', () => {
     // Set persona to executive
     await page.addInitScript(() => {
       window.localStorage.setItem(
-        'pqc-persona-storage',
+        'pqc-learning-persona',
         JSON.stringify({
           state: {
-            activePersona: 'executive',
-            industry: 'Financial Services',
-            region: 'United States',
+            selectedPersona: 'executive',
+            selectedIndustry: 'Financial Services',
+            selectedRegion: 'americas',
           },
-          version: 0,
+          version: 1,
         })
       )
     })
@@ -175,7 +175,7 @@ test.describe('PQC Assistant — Persona & Context', () => {
               complianceFrameworks: ['CNSA 2.0', 'NIST SP 800-208'],
             },
           },
-          version: 0,
+          version: 7,
         })
       )
     })
