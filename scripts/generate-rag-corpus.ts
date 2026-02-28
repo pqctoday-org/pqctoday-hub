@@ -1312,7 +1312,7 @@ function processGettingStarted(): RAGChunk[] {
       source: 'documentation',
       title: 'Getting Started for Learners',
       content:
-        "Getting Started with PQC for Learners\n\nThe Learn section has 19 modules covering PQC fundamentals to advanced topics. Start with PQC 101 for an overview, then Quantum Threats to understand Shor's and Grover's algorithms. Key modules include: Hybrid Cryptography (transition strategy), Crypto Agility (algorithm flexibility), TLS Basics (web security), and Key Management (enterprise practices). Each module includes interactive demonstrations and a Workshop tab for hands-on exercises. Test your knowledge with the Quiz covering all 19 module topics. The Glossary provides definitions for 100+ PQC terms.",
+        "Getting Started with PQC for Learners\n\nThe Learn section has 25 modules covering PQC fundamentals to advanced topics. Start with PQC 101 for an overview, then Quantum Threats to understand Shor's and Grover's algorithms. Key modules include: Hybrid Cryptography (transition strategy), Crypto Agility (algorithm flexibility), TLS Basics (web security), Key Management (enterprise practices), and an executive track (Governance, Business Case, Risk Management, Compliance Strategy, Migration Program). Each module includes interactive demonstrations and a Workshop tab for hands-on exercises. Test your knowledge with the Quiz covering 470 questions across 32 categories. The Glossary provides definitions for 100+ PQC terms.",
       category: 'getting-started',
       metadata: { audience: 'learners' },
       deepLink: '/learn',
@@ -1552,6 +1552,125 @@ function processCertificationXref(): RAGChunk[] {
 }
 
 // ---------------------------------------------------------------------------
+// Page-level guides (non-learn pages)
+// ---------------------------------------------------------------------------
+
+function processPageGuides(): RAGChunk[] {
+  return [
+    // --- Landing Page ---
+    {
+      id: 'page-guide-landing',
+      source: 'documentation',
+      title: 'Landing Page — Platform Overview & Persona Selection',
+      content:
+        'PQC Today Landing Page\n\nThe landing page introduces the PQC adoption lifecycle through a 7-step journey: Learn → Assess → Explore → Test → Deploy → Ramp Up → Stay Agile. Users select a persona (Executive, Developer, Architect, or Researcher) to personalize their experience — each persona sees "For you" badges on recommended journey steps and receives tailored recommendations throughout the platform.\n\nKey statistics displayed: 25 interactive learning modules, 470 quiz questions, 40+ algorithms catalogued, 220+ PQC-ready tools tracked, 13-step quantum risk assessment wizard, and compliance deadlines spanning 2024–2036.\n\nThe ScoreCard tracks learning progress using a judo belt grading system (White through Black belt) based on module completions and quiz performance. Three paths are always visible regardless of persona: Learn, Timeline, and Threats.\n\nPQC Today is open source (GPL-3.0) and runs entirely in the browser — all cryptographic operations use WebAssembly (OpenSSL v3.6.0 + liboqs-js v0.15.1), with no backend or data collection.',
+      category: 'page-guide',
+      metadata: { page: 'landing' },
+      deepLink: '/',
+    },
+    // --- Timeline Page ---
+    {
+      id: 'page-guide-timeline',
+      source: 'documentation',
+      title: 'Timeline Page — Global PQC Migration Milestones',
+      content:
+        "Timeline Page Overview\n\nThe Timeline page displays a Gantt chart of global PQC migration milestones for 50+ countries from 2024 to 2035. Events are categorized into 10 phase types: Discovery (cryptographic inventory), Testing (pilot deployments), POC (proof of concept), Migration (live deployment), Standardization (new PQC standards), Guidance (advisories), Policy (regulations enacted), Regulation (compliance enforcement), Research (ongoing development), and Deadline (hard cutoff dates).\n\nEvent categories: Milestones (singular achievements like a standard publication) and Phases (multi-year transitions like a country's migration period).\n\nFilter by: text search, country selection, phase type, event type, and region (Americas, EMEA, Asia-Pacific, Global/International). When a specific country is selected, a DocumentTable appears below the Gantt chart showing detailed entries with organization, phase badge, type, title, period, description, and source link.\n\nKey deadlines: Australia 2030 (most aggressive), Canada 2026/2031/2035, UK 2028 (3-phase), Czech Republic 2027 (first EU-specific), EU 2030/2035, Israel 2025, Taiwan 2027, Germany 2030 (QUANTITY initiative), G7 2034 (financial sector), CNSA 2.0 2030 exclusive/2035 full.",
+      category: 'page-guide',
+      metadata: { page: 'timeline' },
+      deepLink: '/timeline',
+    },
+    // --- Algorithms Page ---
+    {
+      id: 'page-guide-algorithms',
+      source: 'documentation',
+      title: 'Algorithms Page — Transition Guide & Detailed Comparison',
+      content:
+        "Algorithms Page Overview\n\nThe Algorithms page has two tabs: Transition Guide (default) shows classical → PQC migration paths (e.g., RSA-2048 → ML-KEM-768 + ML-DSA-65), and Detailed Comparison provides full specs for 45+ algorithms side by side.\n\nPQC algorithm families: ML-KEM (FIPS 203, lattice-based KEM — 512/768/1024 parameter sets), ML-DSA (FIPS 204, lattice-based signatures — 44/65/87), SLH-DSA (FIPS 205, stateless hash-based signatures — 12 variants), FN-DSA (FIPS 206, compact lattice signatures — 512/1024), HQC (code-based KEM, NIST Round 4 backup), FrodoKEM (conservative LWE, not standardized), Classic McEliece (large keys, impractical), LMS/XMSS (SP 800-208, stateful hash-based, firmware signing).\n\nClassical algorithms shown as deprecated: RSA (all sizes), ECDSA (P-256/384/521), ECDH (X25519/X448), EdDSA — all vulnerable to Shor's algorithm.\n\nNIST Security Levels: L1 (AES-128), L2 (SHA-256 collision), L3 (AES-192), L4 (SHA-384 collision), L5 (AES-256). Data per algorithm: security level, AES equivalent, public/private key sizes, signature/ciphertext size, performance benchmarks, stack RAM, FIPS status, use case notes.\n\nUse ?highlight= to deep-link to specific algorithms (e.g., /algorithms?highlight=ML-KEM-768).",
+      category: 'page-guide',
+      metadata: { page: 'algorithms' },
+      deepLink: '/algorithms',
+    },
+    // --- Library Page ---
+    {
+      id: 'page-guide-library',
+      source: 'documentation',
+      title: 'Library Page — Standards, RFCs & Reference Documents',
+      content:
+        'Library Page Overview\n\nThe Library catalogs 100+ technical standards, RFCs, and reference documents for PQC. Documents are organized across 16 categories (Standards, RFCs, Compliance, Protocols, PKI/Certificates, Firmware & Code Signing, etc.) and filterable by organization (NIST, IETF, ETSI, NSA, ANSSI, BSI, ASD, CCCS) and industry (Government, Finance, Telecom, Healthcare, Technology).\n\nKey standards: FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA), NIST IR 8547 (transition guidance, deprecate 2030/disallow 2035), SP 800-208 (LMS/XMSS).\n\nRecent RFCs: RFC 9629 (KEM in CMS), RFC 9708 (HSS/LMS in CMS), RFC 9802 (HSS/XMSS in X.509), RFC 9814 (SLH-DSA in CMS), RFC 9881/9882 (ML-DSA in X.509 and CMS), RFC 8784 (PQC PSK for IKEv2).\n\nRegional standards: ETSI TS 103 744 (EU hybrid KEM), BSI TR-02102 (Germany), ANSSI Position Paper (France hybrid mandate), CCCS ITSM.40.001 (Canada), ASD ISM-1917 (Australia).\n\nCross-reference system: Library documents link to compliance frameworks (via libraryRefs), timeline events (via timelineRefs), and inter-document dependencies. Use ?ref= to deep-link (e.g., /library?ref=FIPS-203).',
+      category: 'page-guide',
+      metadata: { page: 'library' },
+      deepLink: '/library',
+    },
+    // --- Threats Page ---
+    {
+      id: 'page-guide-threats',
+      source: 'documentation',
+      title: 'Threats Page — Industry-Specific Quantum Risk Dashboard',
+      content:
+        'Threats Page Overview\n\nThe Threats dashboard shows 50+ industry-specific quantum threat scenarios across 15+ industries: Aerospace, Automotive, Cloud Computing, Cryptocurrency/Blockchain, Cross-Industry, Energy/Critical Infrastructure, Financial Services, Government/Defense, Healthcare, Insurance, IoT, Telecommunications, and more.\n\nThreat severity levels: Critical (immediate action required), High (1–3 year timeline), Medium-High, Medium, and Low.\n\nKey concepts:\n- HNDL (Harvest Now, Decrypt Later): Adversaries intercept and store encrypted data today to decrypt when quantum computers arrive. Primary near-term threat.\n- HNFL (Harvest Now, Forge Later): Adversaries plan to forge digital signatures (code signing, certificates, legal documents) once quantum computers break ECDSA/RSA.\n- CRQC (Cryptographically Relevant Quantum Computer): Global Risk Institute 2024 estimates 19–34% probability within 10 years.\n\nEach threat entry includes: threat ID, industry, detailed description, criticality level, crypto at risk, PQC replacement recommendation, regulation/source, confidence percentage, and related learning modules.\n\nFilter by industry using ?industry= (e.g., /threats?industry=finance) or open specific threats with ?id= (e.g., /threats?id=FIN-001).',
+      category: 'page-guide',
+      metadata: { page: 'threats' },
+      deepLink: '/threats',
+    },
+    // --- Compliance Page ---
+    {
+      id: 'page-guide-compliance',
+      source: 'documentation',
+      title: 'Compliance Page — Regulatory Frameworks & Deadline Tracking',
+      content:
+        'Compliance Page Overview\n\nThe Compliance page tracks 48+ regulatory frameworks, certifications, and mandates affecting PQC migration.\n\nFramework types:\n- Cryptographic Module Validation: FIPS 140-3 (US/CMVP), KCMVP (Korea)\n- Algorithm Validation: ACVP (NIST test vectors)\n- International Evaluation: Common Criteria (ISO/IEC 15408), EUCC v2.0\n- Government Mandates: CNSA 2.0 (NSA), ASD ISM (Australia), CCCS (Canada), NCSC (UK), NZISM (NZ)\n- EU Regulations: EU Recommendation 2024/1101, eIDAS 2.0 (digital identity wallets 2027+), DORA (financial resilience, enforced Jan 2025), NIS2 (transposition Oct 2024)\n- Regional Standards: ANSSI (France, phased 2025–2030), BSI TR-02102 (Germany), CRYPTREC (Japan), KpqC (Korea, 2029/2035), OSCCA NGCC (China)\n- Industry-Specific: PCI-DSS (payments), HIPAA (healthcare), GSMA NG.116 (mobile 2026–2028), NERC-CIP (power grid), IEC 62443 (industrial), DO-326A (aviation), ISO/SAE 21434 (automotive)\n\nCNSA 2.0 key deadlines: software/firmware signing preferred 2025, exclusive 2030; networking equipment preferred 2026; NSS acquisitions exclusive 2027; web/cloud exclusive 2033; full transition 2035.\n\nEach framework entry shows: ID, description, industries affected, countries/regions, PQC required status, deadline, enforcement body, and cross-references to Library standards and Timeline events.',
+      category: 'page-guide',
+      metadata: { page: 'compliance' },
+      deepLink: '/compliance',
+    },
+    // --- Migrate Page ---
+    {
+      id: 'page-guide-migrate',
+      source: 'documentation',
+      title: 'Migrate Page — 7-Phase Framework & Software Catalog',
+      content:
+        'Migrate Page Overview\n\nThe Migrate page provides a 7-phase PQC migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance:\n1. Assess — Build Cryptographic Bill of Materials (CBOM), identify quantum-vulnerable algorithms\n2. Plan — Classify data by confidentiality lifetime, map regulatory deadlines, create migration priority matrix\n3. Prepare — Select PQC libraries (OpenSSL 3.5+, AWS-LC, BoringSSL), upgrade HSM firmware, engage vendor roadmaps\n4. Test — Pilot hybrid TLS/SSH with ML-KEM + X25519, test VPN PQC tunnels, measure performance impact\n5. Migrate — Deploy hybrid certificates, migrate code signing to ML-DSA/SLH-DSA, update key management\n6. Launch — Complete disk/database encryption migration, update secure boot chains, re-encrypt archived data (HNDL counter-measures)\n7. Ramp Up — Deploy continuous crypto monitoring, deprecate legacy algorithms, optimize performance\n\nSoftware catalog: 220+ PQC-ready products organized across 7 infrastructure layers (Operating Systems, Databases, VPN/Network, Code Signing, Cryptographic Libraries, Devices/IoT, Other) plus Web Browsers (Chrome, Edge, Firefox, Safari with ML-KEM TLS 1.3).\n\nThree-tier FIPS badge system: Validated (green, FIPS 140-3), Partial (amber, FedRAMP/WebTrust/FIPS-mode claims), No (gray). Certification cross-reference links products to FIPS/ACVP/Common Criteria certifications.\n\nFilter by: industry (?industry=), infrastructure layer (?layer=), text search (?q=), and migration phase.',
+      category: 'page-guide',
+      metadata: { page: 'migrate' },
+      deepLink: '/migrate',
+    },
+    // --- Assess Page ---
+    {
+      id: 'page-guide-assess',
+      source: 'documentation',
+      title: 'Assess Page — 13-Step Quantum Risk Assessment Wizard',
+      content:
+        'Assess Page Overview\n\nThe Assess page provides a personalized PQC risk assessment with two modes: Quick (6 steps, ~2 min) for rapid baseline, and Comprehensive (13 steps, ~5 min) for detailed migration planning.\n\n13 comprehensive steps: Industry → Country → Crypto Stack → Data Sensitivity → Compliance → Migration Status → Use Cases → Data Retention → Credential Lifetime → Organization Scale → Crypto Agility → Infrastructure → Vendor Dependencies → Timeline Pressure.\n\nKey features:\n- Country selection drives compliance deadline alignment and framework filtering\n- Data Sensitivity and Data Retention are multi-select with worst-case (max) scoring for HNDL risk\n- HNDL window = data retention period minus estimated time to CRQC\n- Industry selection filters compliance frameworks to show only relevant regulations\n- Persona-aware report recommendations (Executive/Developer/Architect/Researcher)\n\nFour risk categories scored: Strategic Risk (long-term quantum exposure), Operational Risk (system complexity), Compliance Risk (regulatory deadline pressure), Vendor Risk (third-party dependency control).\n\nReport includes deep links to Migrate products, Timeline events, Compliance frameworks, and Learn modules tailored to your results. Supports Print/PDF output. Progress auto-saves to localStorage with resume capability.\n\nUse ?step= to deep-link to specific steps (e.g., /assess?step=3 for Data Sensitivity).',
+      category: 'page-guide',
+      metadata: { page: 'assess' },
+      deepLink: '/assess',
+    },
+    // --- Leaders Page ---
+    {
+      id: 'page-guide-leaders',
+      source: 'documentation',
+      title: 'Leaders Page — Global PQC Visionaries & Organizations',
+      content:
+        'Leaders Page Overview\n\nThe Leaders page profiles 50+ global PQC visionaries and organizations driving post-quantum cryptography adoption and standardization.\n\nLeader categories:\n- Government Leaders: NIST (Dustin Moody, Lily Chen), NCSC UK (Ollie Whitehouse), ANSSI France (Vincent Strubel), BSI Germany (Claudia Plattner), ENISA, CISA\n- Algorithm Inventors: Vadim Lyubashevsky (ML-KEM/ML-DSA at IBM), Léo Ducas (Kyber/Dilithium at CWI/Leiden)\n- Industry Vendors: SandboxAQ (Jack Hidary), PQShield, CryptoNext, QuSecure; HSM vendors (Thales, Entrust, Utimaco); PKI vendors (DigiCert, ISARA)\n- Standards Bodies: IETF (PQUIP, LAMPS), ETSI QSC, PQC Alliance\n- Industry Adopters: Google, AWS (Panos Kampanakis), Cloudflare (Bas Westerbaan — 38%+ HTTPS PQC-protected), Signal, Vodafone, IBM, JPMorgan Chase\n- Academic Researchers: Universities conducting PQC cryptanalysis and lattice cryptography research\n\nFilter by: country (15+ countries), sector (Public/Private/Academic), and text search across name, organization, and bio. Use ?leader= to highlight a specific person, ?country= for country filter, ?sector= for sector filter.',
+      category: 'page-guide',
+      metadata: { page: 'leaders' },
+      deepLink: '/leaders',
+    },
+    // --- About Page ---
+    {
+      id: 'page-guide-about',
+      source: 'documentation',
+      title: 'About Page — Platform Details, SBOM, Privacy & Licensing',
+      content:
+        "About Page Overview\n\nThe About page provides comprehensive platform information:\n\nSoftware Bill of Materials (SBOM): React v19, Tailwind CSS v4, Framer Motion (animations), Lucide React (icons), React Router v7. Crypto stack: OpenSSL WASM v3.6.0 (primary), @oqs/liboqs-js v0.15.1 (PQC algorithms), @noble/curves and @scure/* (blockchain crypto), Web Crypto API (X25519, P-256). State management: Zustand with localStorage persistence. Data: PapaParse (CSV), Recharts (visualization). Testing: Vitest + Playwright + axe-playwright (accessibility). Build: Vite + TypeScript strict mode.\n\nSecurity Audit: 0 production vulnerabilities. Dev-only findings are ESLint toolchain ReDoS (minimatch, ajv) — don't affect deployed app.\n\nData Privacy: Static site with no backend or database. No data collection, no cookies, no tracking, no third-party services. All persistence is localStorage only. All cryptography runs client-side via WASM.\n\nPQC Assistant: RAG (Retrieval-Augmented Generation) with ~1,900 corpus chunks from 22 data sources, powered by Gemini 2.5 Flash. Requires user-provided Google API key (BYOK). Three capabilities: Grounded Answers, Deep Linking, PQC Domain Expertise.\n\nLicense: GPL-3.0 (GNU General Public License v3.0). Created by Eric Amador. AI tools acknowledged: Google Antigravity, ChatGPT, Claude AI, Perplexity, Gemini Pro.",
+      category: 'page-guide',
+      metadata: { page: 'about' },
+      deepLink: '/about',
+    },
+  ]
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -1581,6 +1700,7 @@ async function main() {
     { name: 'OpenSSL Studio Guide', fn: processOpenSSLStudioGuide },
     { name: 'Priority Matrix', fn: processPriorityMatrix },
     { name: 'Certification Xref', fn: processCertificationXref },
+    { name: 'Page Guides', fn: processPageGuides },
   ]
 
   const corpus: RAGChunk[] = []
