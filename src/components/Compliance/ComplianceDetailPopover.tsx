@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import type { ComplianceRecord, ComplianceStatus } from './types'
 import clsx from 'clsx'
+import { AskAssistantButton } from '../ui/AskAssistantButton'
 
 interface ComplianceDetailPopoverProps {
   isOpen: boolean
@@ -116,14 +117,19 @@ export const ComplianceDetailPopover = ({
                 <StatusBadge status={record.status} />
                 <span className="text-xs text-muted-foreground font-mono">{record.id}</span>
               </div>
-              <button
-                ref={closeButtonRef}
-                onClick={onClose}
-                className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded"
-                aria-label="Close"
-              >
-                <X size={16} />
-              </button>
+              <div className="flex items-center gap-1">
+                <AskAssistantButton
+                  question={`What does ${record.productName} require for PQC compliance?`}
+                />
+                <button
+                  ref={closeButtonRef}
+                  onClick={onClose}
+                  className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded"
+                  aria-label="Close"
+                >
+                  <X size={16} />
+                </button>
+              </div>
             </div>
             <h3 id="popover-title" className="text-lg font-bold text-foreground leading-tight pr-8">
               {record.productName}

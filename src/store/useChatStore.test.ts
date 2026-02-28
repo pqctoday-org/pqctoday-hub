@@ -17,12 +17,15 @@ describe('useChatStore', () => {
     // Reset store to initial state
     useChatStore.setState({
       apiKey: null,
+      conversations: [],
+      activeConversationId: null,
       messages: [],
       model: 'gemini-2.5-flash',
       isLoading: false,
       isStreaming: false,
       error: null,
       streamingContent: '',
+      pendingQuestion: null,
     })
   })
 
@@ -74,13 +77,16 @@ describe('useChatStore', () => {
   })
 
   describe('clearMessages', () => {
-    it('empties messages and streamingContent', () => {
+    it('empties messages and streamingContent of active conversation', () => {
       useChatStore.getState().addMessage(createMessage())
       useChatStore.setState({ streamingContent: 'partial response' })
       useChatStore.getState().clearMessages()
       const state = useChatStore.getState()
       expect(state.messages).toEqual([])
       expect(state.streamingContent).toBe('')
+      // Conversation still exists but is empty
+      expect(state.conversations.length).toBe(1)
+      expect(state.conversations[0].messages).toEqual([])
     })
   })
 
@@ -115,7 +121,7 @@ describe('useChatStore', () => {
 
   describe('migration', () => {
     it('migrates gemini-2.0-flash to gemini-2.5-flash for version < 2', () => {
-      // Simulate v1 persisted state
+      // Simulate v1 persisted state — migration runs through v1→v2→v3→v4
       const migratedState = useChatStore.persist.getOptions().migrate?.(
         {
           apiKey: 'key',
@@ -125,6 +131,8 @@ describe('useChatStore', () => {
         1
       )
       expect(migratedState).toHaveProperty('model', 'gemini-2.5-flash')
+      expect(migratedState).toHaveProperty('conversations', [])
+      expect(migratedState).toHaveProperty('activeConversationId', null)
     })
 
     it('preserves gemini-2.5-flash for version >= 2', () => {
@@ -142,8 +150,27 @@ describe('useChatStore', () => {
     it('handles null/undefined persisted state safely', () => {
       const migratedState = useChatStore.persist.getOptions().migrate?.(null, 0)
       expect(migratedState).toHaveProperty('apiKey', null)
-      expect(migratedState).toHaveProperty('messages', [])
+      expect(migratedState).toHaveProperty('conversations', [])
+      expect(migratedState).toHaveProperty('activeConversationId', null)
       expect(migratedState).toHaveProperty('model', 'gemini-2.5-flash')
+    })
+
+    it('wraps existing messages into a conversation for version < 4', () => {
+      const msgs = [
+        { id: 'u1', role: 'user', content: 'Hello', timestamp: 1000 },
+        { id: 'a1', role: 'assistant', content: 'Hi there', timestamp: 2000 },
+      ]
+      const migratedState = useChatStore.persist.getOptions().migrate?.(
+        { apiKey: 'key', messages: msgs, model: 'gemini-2.5-flash' },
+        3
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ) as any
+      expect(migratedState.conversations).toHaveLength(1)
+      expect(migratedState.conversations[0].id).toBe('conv-migrated')
+      expect(migratedState.conversations[0].title).toBe('Hello')
+      expect(migratedState.conversations[0].messages).toHaveLength(2)
+      expect(migratedState.activeConversationId).toBe('conv-migrated')
+      expect(migratedState.messages).toBeUndefined()
     })
   })
 })

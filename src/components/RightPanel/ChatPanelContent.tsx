@@ -1,13 +1,16 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { Bot, Send, Trash2, KeyRound, HelpCircle } from 'lucide-react'
 import { Button } from '../ui/button'
-import { Input } from '../ui/input'
+import { Textarea } from '../ui/textarea'
 import { ChatMessage } from '../Chat/ChatMessage'
 import { ApiKeySetup } from '../Chat/ApiKeySetup'
 import { SampleQuestionsModal } from '../About/SampleQuestionsModal'
+import { CorpusFreshnessBadge } from '../Chat/CorpusFreshnessBadge'
+import { ConversationMenu } from '../Chat/ConversationMenu'
 import { useChatStore } from '@/store/useChatStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useChatSend } from '@/hooks/useChatSend'
+import { logChatFeedback } from '@/utils/analytics'
 
 export const ChatPanelContent: React.FC = () => {
   const {
@@ -19,6 +22,9 @@ export const ChatPanelContent: React.FC = () => {
     streamingContent,
     error,
     clearMessages,
+    setMessageFeedback,
+    pendingQuestion,
+    setPendingQuestion,
   } = useChatStore()
 
   const isOpen = useRightPanelStore((s) => s.isOpen)
@@ -27,9 +33,9 @@ export const ChatPanelContent: React.FC = () => {
   const [showSampleQuestions, setShowSampleQuestions] = useState(false)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
-  const { sendQuery, abort, pageContext } = useChatSend()
+  const { sendQuery, abort, pageContext, retryLastQuery, editAndResend } = useChatSend()
 
   // Initialize retrieval service on first open
   useEffect(() => {
@@ -59,9 +65,28 @@ export const ChatPanelContent: React.FC = () => {
     if (!isOpen) abort()
   }, [isOpen, abort])
 
+  // Auto-send pending question from Ask Assistant buttons
+  useEffect(() => {
+    if (pendingQuestion && apiKey && isOpen && !isLoading && !isStreaming) {
+      const question = pendingQuestion
+      setPendingQuestion(null)
+      const timer = setTimeout(() => sendQuery(question), 300)
+      return () => clearTimeout(timer)
+    }
+  }, [pendingQuestion, apiKey, isOpen, isLoading, isStreaming, setPendingQuestion, sendQuery])
+
+  // Auto-resize textarea (up to ~4 lines)
+  useEffect(() => {
+    const textarea = inputRef.current
+    if (!textarea) return
+    textarea.style.height = 'auto'
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`
+  }, [input])
+
   const handleSend = () => {
     const text = input
     setInput('')
+    if (inputRef.current) inputRef.current.style.height = 'auto'
     sendQuery(text, (restored) => setInput(restored))
   }
 
@@ -153,6 +178,7 @@ export const ChatPanelContent: React.FC = () => {
         <ApiKeySetup />
       ) : (
         <>
+          <ConversationMenu />
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 md:p-6 md:px-12">
             <div className="max-w-4xl mx-auto space-y-4" aria-live="polite" aria-atomic="false">
@@ -163,6 +189,7 @@ export const ChatPanelContent: React.FC = () => {
                     Ask me anything about post-quantum cryptography, algorithms, compliance, or
                     migration strategies.
                   </p>
+                  <CorpusFreshnessBadge />
                   {/* Page-contextual suggested questions */}
                   <div className="flex flex-wrap gap-2 justify-center mt-4">
                     {pageContext.suggestedQuestions.map((q) => (
@@ -180,44 +207,91 @@ export const ChatPanelContent: React.FC = () => {
                 </div>
               )}
 
-              {messages.map((msg, idx) => (
-                <ChatMessage
-                  key={msg.id}
-                  sender={msg.role}
-                  content={msg.content}
-                  sourceRefs={msg.sourceRefs}
-                  activeTab={pageContext.tab}
-                  followUps={msg.followUps}
-                  persona={pageContext.persona}
-                  onFollowUp={
-                    msg.role === 'assistant' && idx === messages.length - 1 && !isStreaming
-                      ? sendQuery
-                      : undefined
-                  }
-                />
-              ))}
+              {messages.map((msg, idx) => {
+                const isLastAssistant =
+                  msg.role === 'assistant' && idx === messages.length - 1 && !isStreaming
+                const isLastUser =
+                  msg.role === 'user' &&
+                  idx ===
+                    messages.length -
+                      1 -
+                      (messages.length > 0 && messages[messages.length - 1].role === 'assistant'
+                        ? 1
+                        : 0) &&
+                  !isStreaming
+                return (
+                  <ChatMessage
+                    key={msg.id}
+                    sender={msg.role}
+                    content={msg.content}
+                    sourceRefs={msg.sourceRefs}
+                    activeTab={pageContext.tab}
+                    followUps={msg.followUps}
+                    persona={pageContext.persona}
+                    onFollowUp={isLastAssistant ? sendQuery : undefined}
+                    feedback={msg.feedback}
+                    onFeedback={
+                      msg.role === 'assistant'
+                        ? (fb) => {
+                            setMessageFeedback(msg.id, fb)
+                            if (fb) {
+                              const precedingUser = messages
+                                .slice(0, idx)
+                                .reverse()
+                                .find((m) => m.role === 'user')
+                              logChatFeedback(
+                                fb,
+                                precedingUser?.content ?? '',
+                                msg.sourceRefs?.length ?? 0
+                              )
+                            }
+                          }
+                        : undefined
+                    }
+                    onRetry={isLastAssistant && !isLoading ? retryLastQuery : undefined}
+                    onEdit={
+                      isLastUser && !isLoading
+                        ? (newContent) => editAndResend(msg.id, newContent)
+                        : undefined
+                    }
+                  />
+                )
+              })}
 
               {isStreaming && (
                 <ChatMessage sender="assistant" content={streamingContent} isStreaming />
               )}
 
               {isLoading && !isStreaming && (
-                <div className="flex gap-2">
+                <div className="flex gap-2" role="status" aria-label="Searching for answer">
                   <div className="shrink-0 w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center">
                     <Bot size={14} className="text-accent" />
                   </div>
                   <div className="glass-panel rounded-lg px-3 py-2">
                     <div className="flex gap-1">
-                      <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce" />
-                      <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0.15s]" />
-                      <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0.3s]" />
+                      <span
+                        className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"
+                        aria-hidden="true"
+                      />
+                      <span
+                        className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0.15s]"
+                        aria-hidden="true"
+                      />
+                      <span
+                        className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0.3s]"
+                        aria-hidden="true"
+                      />
                     </div>
+                    <span className="sr-only">Searching for answer</span>
                   </div>
                 </div>
               )}
 
               {error && (
-                <div className="text-sm text-status-error bg-status-error/10 rounded-lg p-3">
+                <div
+                  role="alert"
+                  className="text-sm text-status-error bg-status-error/10 rounded-lg p-3"
+                >
                   {error}
                 </div>
               )}
@@ -229,16 +303,16 @@ export const ChatPanelContent: React.FC = () => {
           {/* Input */}
           <div className="p-4 md:px-12 border-t border-border shrink-0">
             <div className="max-w-4xl mx-auto flex gap-2">
-              <Input
+              <Textarea
                 ref={inputRef}
-                type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Ask about PQC..."
-                className="flex-1 bg-muted/30 border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
+                className="flex-1 bg-muted/30 border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary/50 text-foreground placeholder:text-muted-foreground min-h-[44px] max-h-[120px]"
                 disabled={isLoading || isStreaming}
                 aria-label="Message input"
+                rows={1}
               />
               <Button
                 variant="gradient"

@@ -4,7 +4,10 @@ import { usePageContext } from '@/hooks/usePageContext'
 import { retrievalService } from '@/services/chat/RetrievalService'
 import { streamResponse } from '@/services/chat/GeminiService'
 import { parseFollowUps } from '@/services/chat/parseFollowUps'
+import { checkGrounding } from '@/services/chat/groundingCheck'
 import type { ChatMessage, ChatSourceRef } from '@/types/ChatTypes'
+import { logChatQuery, logChatRetry, logChatChunksUsed, logChatCacheHit } from '@/utils/analytics'
+import { getCached, setCache } from '@/services/chat/responseCache'
 
 const STREAM_TIMEOUT_MS = 60_000
 const MAX_INPUT_LENGTH = 1_000
@@ -27,6 +30,7 @@ export function useChatSend() {
     appendStreamingContent,
     setError,
     model,
+    deleteMessagesFrom,
   } = useChatStore()
 
   const pageContext = usePageContext()
@@ -36,6 +40,8 @@ export function useChatSend() {
     async (queryText: string, onInputRestore?: (text: string) => void) => {
       const trimmed = queryText.trim().slice(0, MAX_INPUT_LENGTH)
       if (!trimmed || !apiKey || isLoading || isStreaming) return
+
+      logChatQuery(pageContext.page)
 
       const userMessage: ChatMessage = {
         id: `user-${Date.now()}`,
@@ -47,6 +53,24 @@ export function useChatSend() {
       addMessage(userMessage)
       setLoading(true)
       setError(null)
+
+      // Check response cache before RAG retrieval
+      const cached = getCached(trimmed, pageContext.page)
+      if (cached) {
+        logChatCacheHit(pageContext.page)
+        const cachedMessage: ChatMessage = {
+          id: `assistant-${Date.now()}`,
+          role: 'assistant',
+          content: cached.content,
+          timestamp: Date.now(),
+          sources: cached.sourceIds,
+          sourceRefs: cached.sourceRefs,
+          followUps: cached.followUps,
+        }
+        addMessage(cachedMessage)
+        setLoading(false)
+        return
+      }
 
       let timeoutId: ReturnType<typeof setTimeout> | undefined
       let timedOut = false
@@ -84,13 +108,25 @@ export function useChatSend() {
         setLoading(false)
 
         sourceIds = chunks.map((c) => c.id)
+        logChatChunksUsed(
+          pageContext.page,
+          chunks.map((c) => c.source),
+          chunks.length
+        )
 
         // Build deduplicated source references for attribution
         const seenTitles = new Set<string>()
         for (const c of chunks) {
           if (seenTitles.has(c.title)) continue
           seenTitles.add(c.title)
-          sourceRefs.push({ title: c.title, source: c.source, deepLink: c.deepLink })
+          sourceRefs.push({
+            title: c.title,
+            source:
+              c.source === 'document-enrichment'
+                ? (c.metadata?.collection ?? 'document')
+                : c.source,
+            deepLink: c.deepLink,
+          })
         }
 
         for await (const chunk of streamResponse(
@@ -108,17 +144,32 @@ export function useChatSend() {
         // Parse follow-ups from response and strip the block from displayed content
         const { cleanContent, followUps } = parseFollowUps(fullContent)
 
+        // Check if response references entities not found in RAG context
+        const grounding = checkGrounding(cleanContent, chunks)
+        const finalContent = grounding.hasWarning
+          ? cleanContent.trimEnd() +
+            '\n\n> *Note: Some details may extend beyond the PQC Today database.*'
+          : cleanContent
+
         // Finalize message
         const assistantMessage: ChatMessage = {
           id: `assistant-${Date.now()}`,
           role: 'assistant',
-          content: cleanContent,
+          content: finalContent,
           timestamp: Date.now(),
           sources: sourceIds,
           sourceRefs,
           followUps,
         }
         addMessage(assistantMessage)
+
+        // Cache successful response for deduplication
+        setCache(trimmed, pageContext.page, {
+          content: finalContent,
+          sourceIds,
+          sourceRefs,
+          followUps,
+        })
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
           if (timedOut) {
@@ -183,5 +234,31 @@ export function useChatSend() {
     abortRef.current?.abort()
   }, [])
 
-  return { sendQuery, abort, pageContext }
+  const retryLastQuery = useCallback(() => {
+    logChatRetry('retry')
+    // Find the last user message, delete the assistant response after it, and re-send
+    const lastUserIdx = [...messages].reverse().findIndex((m) => m.role === 'user')
+    if (lastUserIdx === -1) return
+    const lastUser = messages[messages.length - 1 - lastUserIdx]
+    const query = lastUser.content
+
+    // Delete from the assistant response onward (message after last user)
+    const nextIdx = messages.length - lastUserIdx
+    if (nextIdx < messages.length) {
+      deleteMessagesFrom(messages[nextIdx].id)
+    }
+
+    sendQuery(query)
+  }, [messages, deleteMessagesFrom, sendQuery])
+
+  const editAndResend = useCallback(
+    (messageId: string, newContent: string) => {
+      logChatRetry('edit')
+      deleteMessagesFrom(messageId)
+      sendQuery(newContent)
+    },
+    [deleteMessagesFrom, sendQuery]
+  )
+
+  return { sendQuery, abort, pageContext, retryLastQuery, editAndResend }
 }

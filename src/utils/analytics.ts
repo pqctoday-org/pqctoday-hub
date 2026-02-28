@@ -149,3 +149,50 @@ export const logLibraryDownload = (fileName: string) => {
 export const logExternalLink = (category: string, url: string) => {
   logEvent(category, 'External Link', url)
 }
+
+// Scrub PII (emails, URLs) before sending query strings to GA4
+function sanitizeQuery(q: string): string {
+  return q
+    .replace(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi, '[email]')
+    .replace(/https?:\/\/\S+/gi, '[url]')
+    .slice(0, 80)
+}
+
+// --- Chat / RAG quality tracking ---
+
+export const logChatFeedback = (
+  feedback: 'helpful' | 'unhelpful',
+  query: string,
+  sourceCount: number
+) => {
+  logEvent(
+    'Chat',
+    `Feedback ${feedback === 'helpful' ? 'Helpful' : 'Unhelpful'}`,
+    sanitizeQuery(query)
+  )
+  logEvent('Chat', 'Feedback Sources', String(sourceCount))
+}
+
+export const logChatQuery = (page: string) => {
+  logEvent('Chat', 'Query', page)
+}
+
+export const logChatRetry = (type: 'retry' | 'edit') => {
+  logEvent('Chat', type === 'retry' ? 'Retry' : 'Edit & Resend')
+}
+
+export const logChatChunksUsed = (page: string, sources: string[], count: number) => {
+  logEvent('Chat', 'RAG Chunks', `${page}:${count}`)
+  const unique = [...new Set(sources)]
+  unique.slice(0, 5).forEach((src) => logEvent('Chat', 'RAG Source', src))
+}
+
+export const logChatCacheHit = (page: string) => {
+  logEvent('Chat', 'Cache Hit', page)
+}
+
+// --- Page accuracy feedback ---
+
+export const logAccuracyFeedback = (vote: 'accurate' | 'inaccurate', pagePath: string) => {
+  logEvent('Accuracy', vote, pagePath)
+}

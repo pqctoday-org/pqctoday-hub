@@ -43,6 +43,7 @@ import { MigrationRoadmap } from './MigrationRoadmap'
 import { MigrationToolkit } from './MigrationToolkit'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
 import { Button } from '../ui/button'
+import { AskAssistantButton } from '../ui/AskAssistantButton'
 import clsx from 'clsx'
 import type {
   AssessmentResult,
@@ -282,10 +283,12 @@ const CategoryBreakdown = ({
   scores,
   drivers,
   defaultOpen = true,
+  headerExtra,
 }: {
   scores: CategoryScores
   drivers?: CategoryDrivers
   defaultOpen?: boolean
+  headerExtra?: React.ReactNode
 }) => {
   const categories = [
     { label: 'Quantum Exposure', key: 'quantumExposure' as const },
@@ -311,6 +314,7 @@ const CategoryBreakdown = ({
       title="Risk Breakdown"
       icon={<BarChart3 className="text-primary" size={20} />}
       defaultOpen={defaultOpen}
+      headerExtra={headerExtra}
       infoTip="Four risk categories — Quantum Exposure, Migration Complexity, Regulatory Pressure, and Organizational Readiness — each scored from your wizard inputs with industry-tuned weights."
     >
       <div className="space-y-4">
@@ -717,10 +721,12 @@ const HNDLHNFLSection = ({
   hndl,
   hnfl,
   defaultOpen = true,
+  headerExtra,
 }: {
   hndl?: HNDLRiskWindow
   hnfl?: HNFLRiskWindow
   defaultOpen?: boolean
+  headerExtra?: React.ReactNode
 }) => {
   if (!hndl && !hnfl) return null
 
@@ -792,6 +798,7 @@ const HNDLHNFLSection = ({
       title="Harvest-Now Attack Risk Windows"
       icon={<Clock className="text-primary" size={20} />}
       defaultOpen={defaultOpen}
+      headerExtra={headerExtra}
       infoTip="Risk windows computed from your data sensitivity, retention period, country regulatory deadlines, and signing algorithm selections."
     >
       {/* Key milestones */}
@@ -1243,6 +1250,12 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                     scores={result.categoryScores}
                     drivers={result.categoryDrivers}
                     defaultOpen={cfg('riskBreakdown').state === 'open'}
+                    headerExtra={
+                      <AskAssistantButton
+                        question={`Explain my PQC risk score of ${result.riskScore}/100 (${result.riskLevel}) for ${industry}`}
+                        className="print:hidden"
+                      />
+                    }
                   />
                 )}
 
@@ -1276,6 +1289,12 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                       hndl={result.hndlRiskWindow}
                       hnfl={result.hnflRiskWindow}
                       defaultOpen={cfg('hndlHnfl').state === 'open'}
+                      headerExtra={
+                        <AskAssistantButton
+                          question="Explain Harvest Now Decrypt Later risk for my organization"
+                          className="print:hidden"
+                        />
+                      }
                     />
                   )}
 
@@ -1326,6 +1345,12 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                       defaultOpen={cfg('algorithmMigration').state === 'open'}
                       className="print:break-inside-auto"
                       infoTip="Maps your current algorithms to NIST-recommended PQC replacements with migration effort estimates."
+                      headerExtra={
+                        <AskAssistantButton
+                          question={`What are the recommended PQC algorithm migrations for ${industry}?`}
+                          className="print:hidden"
+                        />
+                      }
                     >
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
@@ -1490,6 +1515,12 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                       defaultOpen={cfg('complianceImpact').state === 'open'}
                       className="print:break-inside-auto"
                       infoTip="Shows PQC mandates and deadlines for the compliance frameworks you selected in the assessment."
+                      headerExtra={
+                        <AskAssistantButton
+                          question={`What PQC compliance requirements apply to ${industry} in ${country}?`}
+                          className="print:hidden"
+                        />
+                      }
                     >
                       <div className="space-y-3">
                         {result.complianceImpacts.map((c) => (
@@ -1583,6 +1614,12 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                     defaultOpen={cfg('recommendedActions').state === 'open'}
                     className="print:break-inside-auto"
                     infoTip="Prioritized action items generated from your specific algorithms, infrastructure, compliance, and migration status."
+                    headerExtra={
+                      <AskAssistantButton
+                        question={`What should I prioritize for PQC migration in ${industry}?`}
+                        className="print:hidden"
+                      />
+                    }
                   >
                     <div className="space-y-3">
                       {result.recommendedActions

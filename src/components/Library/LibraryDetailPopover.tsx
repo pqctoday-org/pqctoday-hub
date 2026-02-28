@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import type { LibraryItem } from '../../data/libraryData'
 import { useEffect, useRef, useState } from 'react'
 import FocusLock from 'react-focus-lock'
+import { AskAssistantButton } from '../ui/AskAssistantButton'
 
 interface LibraryDetailPopoverProps {
   isOpen: boolean
@@ -90,13 +91,18 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
               {item.documentTitle?.trim()}
             </h3>
           </div>
-          <button
-            onClick={onClose}
-            aria-label="Close details"
-            className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors flex-shrink-0"
-          >
-            <X size={18} aria-hidden="true" />
-          </button>
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <AskAssistantButton
+              question={`Summarize ${item.documentTitle?.trim()} and its significance for PQC`}
+            />
+            <button
+              onClick={onClose}
+              aria-label="Close details"
+              className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+            >
+              <X size={18} aria-hidden="true" />
+            </button>
+          </div>
         </div>
 
         {/* Scrollable Content */}

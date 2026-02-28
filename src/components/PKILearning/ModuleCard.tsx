@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { BookOpen, CheckCircle, Circle, Clock } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
+import { AskAssistantButton } from '../ui/AskAssistantButton'
 
 export interface ModuleItem {
   id: string
@@ -8,6 +9,7 @@ export interface ModuleItem {
   description: string
   duration: string
   workInProgress?: boolean
+  difficulty?: 'beginner' | 'intermediate' | 'advanced'
 }
 
 export const ModuleCard = ({
@@ -83,12 +85,31 @@ export const ModuleCard = ({
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Clock size={14} />
           {durationDisplay}
+          {module.difficulty && (
+            <span
+              className={
+                'px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ' +
+                (module.difficulty === 'beginner'
+                  ? 'bg-status-success/15 text-status-success'
+                  : module.difficulty === 'intermediate'
+                    ? 'bg-status-warning/15 text-status-warning'
+                    : 'bg-status-error/15 text-status-error')
+              }
+            >
+              {module.difficulty}
+            </span>
+          )}
         </div>
-        {status === 'completed' ? (
-          <CheckCircle className="text-status-success" size={20} />
-        ) : (
-          <Circle className="text-muted-foreground" size={20} />
-        )}
+        <div className="flex items-center gap-2">
+          <AskAssistantButton
+            question={`Tell me about the ${module.title} module — what will I learn and why does it matter for PQC migration?`}
+          />
+          {status === 'completed' ? (
+            <CheckCircle className="text-status-success" size={20} aria-hidden="true" />
+          ) : (
+            <Circle className="text-muted-foreground" size={20} aria-hidden="true" />
+          )}
+        </div>
       </div>
     </motion.article>
   )

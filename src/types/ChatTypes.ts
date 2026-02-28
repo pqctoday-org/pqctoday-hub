@@ -22,4 +22,13 @@ export interface ChatMessage {
   sources?: string[]
   sourceRefs?: ChatSourceRef[]
   followUps?: string[]
+  feedback?: 'helpful' | 'unhelpful'
+}
+
+export interface Conversation {
+  id: string
+  title: string
+  messages: ChatMessage[]
+  createdAt: number
+  updatedAt: number
 }

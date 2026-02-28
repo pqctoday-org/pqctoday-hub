@@ -13,6 +13,7 @@ import {
   ArrowDown,
   Wrench,
 } from 'lucide-react'
+import { AskAssistantButton } from '../ui/AskAssistantButton'
 import clsx from 'clsx'
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
@@ -388,6 +389,11 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                               <Wrench size={11} />
                               Find tools
                             </Link>
+                            <AskAssistantButton
+                              variant="text"
+                              label="Ask about this"
+                              question={`Tell me about ${algo.pqc} — how does it compare to ${algo.classical}?`}
+                            />
                           </div>
                         </td>
                         <td

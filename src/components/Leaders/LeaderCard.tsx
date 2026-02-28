@@ -4,6 +4,7 @@ import { User, Building2, Briefcase } from 'lucide-react'
 import type { Leader } from '../../data/leadersData'
 import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
+import { AskAssistantButton } from '../ui/AskAssistantButton'
 
 interface LeaderCardProps {
   leader: Leader
@@ -160,6 +161,12 @@ export const LeaderCard = ({ leader }: LeaderCardProps) => {
               LinkedIn
             </a>
           )}
+          <AskAssistantButton
+            variant="text"
+            label="Ask about"
+            question={`What are ${leader.name}'s contributions to PQC?`}
+            className="ml-auto"
+          />
         </div>
       )}
     </motion.article>

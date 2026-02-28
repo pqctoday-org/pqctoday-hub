@@ -17,7 +17,9 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONA_RECOMMENDED_PATHS, PERSONA_NAV_PATHS } from '@/data/personaConfig'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { PersonalizationSection } from './PersonalizationSection'
+import { PQCExplainer } from './PQCExplainer'
 import { ScoreCard } from './ScoreCard'
+import { AskAssistantButton } from '../ui/AskAssistantButton'
 
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 
@@ -85,7 +87,7 @@ function buildJourneySteps(
       icon: GraduationCap,
       color: 'text-secondary',
       description:
-        '25 interactive modules across 6 tracks + 470-question quiz — from PQC fundamentals to executive decision-making',
+        'Start from zero or go deep — 25 hands-on modules covering the quantum threat, new encryption standards, and what your organization needs to do',
       paths: ['/learn'],
     },
     {
@@ -95,7 +97,7 @@ function buildJourneySteps(
       icon: ClipboardCheck,
       color: 'text-primary',
       description:
-        '13-step quantum risk wizard — crypto inventory, sensitivity, compliance gaps, and personalized risk score',
+        'Answer a few questions about your organization and get a personalized readiness score with concrete next steps',
       paths: ['/assess', '/report'],
     },
     {
@@ -104,7 +106,7 @@ function buildJourneySteps(
       label: 'Explore',
       icon: Globe,
       color: 'text-accent',
-      description: `Migration timelines, ${algoLabel} algorithm comparisons, and a standards library of PQC drafts and specs`,
+      description: `See when governments require action, compare ${algoLabel} encryption algorithms, and browse the standards driving the transition`,
       paths: ['/timeline', '/algorithms', '/library'],
     },
     {
@@ -114,7 +116,7 @@ function buildJourneySteps(
       icon: FlaskConical,
       color: 'text-secondary',
       description:
-        'Real in-browser PQC operations — key generation, encapsulation, and signing via Playground and OpenSSL Studio',
+        'Generate quantum-resistant keys and test new encryption algorithms right in your browser — no setup required',
       paths: ['/playground', '/openssl'],
     },
     {
@@ -123,7 +125,7 @@ function buildJourneySteps(
       label: 'Deploy',
       icon: ArrowRightLeft,
       color: 'text-primary',
-      description: `${migrateLabel} verified PQC-ready tools across 7 infrastructure layers — from cloud KMS to hardware security modules`,
+      description: `${migrateLabel} tested, production-ready tools for upgrading your infrastructure — from cloud services to hardware`,
       paths: ['/migrate'],
     },
     {
@@ -133,7 +135,7 @@ function buildJourneySteps(
       icon: ShieldCheck,
       color: 'text-accent',
       description:
-        'Track compliance deadlines from 2024 to 2036 — FIPS, CNSA 2.0, ETSI, and more with persona-aware filtering',
+        'Track regulatory deadlines from 2024 to 2036 — know exactly when your industry must comply',
       paths: ['/compliance'],
     },
     {
@@ -143,7 +145,7 @@ function buildJourneySteps(
       icon: Activity,
       color: 'text-primary',
       description:
-        'Monitor quantum threat evolution by industry and track organizations leading the PQC transition',
+        'Stay current on evolving threats by industry and see which organizations are leading the transition',
       paths: ['/threats', '/leaders'],
     },
   ]
@@ -225,7 +227,7 @@ export const LandingView = () => {
       <section className="text-center pt-8 md:pt-16">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
           <p className="text-sm font-mono uppercase tracking-widest text-primary mb-4">
-            Your PQC Transformation
+            Prepare for the Quantum Era
           </p>
         </motion.div>
 
@@ -255,7 +257,18 @@ export const LandingView = () => {
           platform.
         </motion.p>
 
-        {/* Personalization Section moved up */}
+        {/* PQC Explainer for non-experts */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          custom={2.3}
+          className="mb-6"
+        >
+          <PQCExplainer />
+        </motion.div>
+
+        {/* Personalization Section */}
         <motion.div
           initial="hidden"
           animate="visible"
@@ -284,6 +297,21 @@ export const LandingView = () => {
               {heroCta.secondary.label}
             </Button>
           </Link>
+          <AskAssistantButton
+            variant="text"
+            label="Ask the PQC Assistant"
+            question={
+              selectedPersona === 'developer'
+                ? 'How do I start integrating post-quantum cryptography into my applications?'
+                : selectedPersona === 'architect'
+                  ? 'What are the architectural considerations for migrating to post-quantum cryptography?'
+                  : selectedPersona === 'executive'
+                    ? 'What are the business risks and compliance deadlines for post-quantum cryptography?'
+                    : selectedPersona === 'researcher'
+                      ? 'What are the mathematical foundations of the NIST-standardized PQC algorithms?'
+                      : 'What should I know about post-quantum cryptography?'
+            }
+          />
         </motion.div>
 
         {/* Stats bar */}

@@ -37,6 +37,11 @@ vi.mock('../About/SampleQuestionsModal', () => ({
     isOpen ? <div data-testid="sample-questions-modal">Sample Questions</div> : null,
 }))
 
+// Mock ConversationMenu
+vi.mock('../Chat/ConversationMenu', () => ({
+  ConversationMenu: () => null,
+}))
+
 // --- Controllable store and hook mocks ---
 
 let mockRightPanelState = { isOpen: true }
@@ -62,6 +67,11 @@ const defaultChatState = {
   streamingContent: '',
   error: null as string | null,
   clearMessages: vi.fn(),
+  setMessageFeedback: vi.fn(),
+  pendingQuestion: null as string | null,
+  setPendingQuestion: vi.fn(),
+  conversations: [],
+  activeConversationId: null as string | null,
 }
 
 let mockChatState = { ...defaultChatState }
@@ -87,6 +97,8 @@ vi.mock('@/hooks/useChatSend', () => ({
     sendQuery: mockSendQuery,
     abort: vi.fn(),
     pageContext: mockPageContext,
+    retryLastQuery: vi.fn(),
+    editAndResend: vi.fn(),
   }),
 }))
 

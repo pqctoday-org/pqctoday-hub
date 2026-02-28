@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "2.3.0",
+  "version": "2.4.0",
   "license": "GPL-3.0",
   "type": "module",
   "engines": {
@@ -41,7 +41,9 @@
     "download:timeline": "node scripts/download-timeline.js",
     "download:timeline:dry": "node scripts/download-timeline.js --dry-run",
     "download:threats": "node scripts/download-threats.js",
-    "download:threats:dry": "node scripts/download-threats.js --dry-run"
+    "download:threats:dry": "node scripts/download-threats.js --dry-run",
+    "enrich:docs": "python3 scripts/enrich-public-docs.py",
+    "enrich:docs:dry": "python3 scripts/enrich-public-docs.py --dry-run"
   },
   "dependencies": {
     "@noble/curves": "^2.0.1",

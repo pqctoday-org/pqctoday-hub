@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { LAYERS } from './InfrastructureStack'
 import { certsByProduct } from '../../data/certificationXrefData'
+import { AskAssistantButton } from '../ui/AskAssistantButton'
 
 interface SoftwareTableProps {
   data: SoftwareItem[]
@@ -408,6 +409,11 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                   <ExternalLink size={12} /> Authoritative Source
                                 </a>
                               )}
+                              <AskAssistantButton
+                                variant="text"
+                                label="Ask about PQC capabilities"
+                                question={`Tell me about ${item.softwareName}'s PQC capabilities`}
+                              />
                             </div>
                           </div>
                         </div>

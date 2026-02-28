@@ -4,6 +4,7 @@ import type { TimelinePhase, Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
 import { useEffect, useRef } from 'react'
 import { StatusBadge } from '../common/StatusBadge'
+import { AskAssistantButton } from '../ui/AskAssistantButton'
 
 interface GanttDetailPopoverProps {
   isOpen: boolean
@@ -145,6 +146,12 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
             </div>
           </div>
         </div>
+
+        <AskAssistantButton
+          variant="text"
+          label="Ask about this"
+          question={`Tell me about the ${phase.title} (${phase.phase} phase, ${phase.startYear}–${phase.endYear})`}
+        />
       </div>
     </div>
   )

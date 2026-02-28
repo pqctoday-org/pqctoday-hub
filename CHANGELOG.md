@@ -4,6 +4,55 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.4.0] - 2026-02-28
+
+### Added
+
+- **PQC Assistant: multi-conversation history**: Up to 10 concurrent conversations persisted
+  across sessions. Conversation switcher menu in the chat panel header with auto-titling from
+  the first message. Zustand store migrated from v3 flat messages to v4 conversation-keyed
+  shape with full migration guard.
+
+- **PQC Assistant: conversation keyboard navigation**: Arrow Up / Down cycles through
+  conversation list; Escape closes the menu; ArrowDown from search input moves focus to
+  first conversation. Full ARIA listbox/option role mapping.
+
+- **PQC Assistant: conversation search**: Live search filter appears when 3+ conversations
+  exist. Searches both conversation titles and message content.
+
+- **PQC Assistant: conversation export**: Download button (hover-revealed) on each
+  conversation exports the full history as formatted Markdown with timestamps and role labels.
+
+- **PQC Assistant: Ask Assistant buttons on 14 surfaces**: Contextual "Ask about this" buttons
+  across the app — Algorithm Comparison, Threat Detail, Leader Cards, Compliance Detail,
+  Library Detail, Software Catalog, Landing hero, Timeline Gantt popover, and 5 Assessment
+  Report sections (Risk Breakdown, HNDL/HNFL, Algorithm Migration, Compliance Impact,
+  Recommended Actions). All 25 Learn module cards also get icon-variant Ask buttons.
+
+- **PQC Assistant: response caching**: In-memory LRU cache (20 entries, 5-minute TTL) deduplicates
+  identical queries within a session — bypasses RAG retrieval and Gemini API entirely on cache hit.
+  True LRU eviction via Map re-insertion on access.
+
+- **PQC Assistant: corpus staleness indicator**: CorpusFreshnessBadge shows an amber warning
+  when the RAG corpus is older than 30 days, prompting users to check for data updates.
+
+- **PQC Assistant: persona-aware landing question**: The "Ask the PQC Assistant" button on the
+  landing page generates a question tailored to the active persona — developers get integration
+  guidance, architects get migration architecture advice, executives get compliance deadlines,
+  researchers get mathematical foundations.
+
+- **PQC Assistant: RAG telemetry**: GA4 events for chunk count per query (`RAG Chunks`),
+  source diversity (`RAG Source`), and cache hits (`Cache Hit`) — enables measurement of
+  retrieval quality and deduplication effectiveness.
+
+### Changed
+
+- **PQC Assistant: PII-safe analytics**: `logChatFeedback` now strips email addresses and URLs
+  from query strings before sending to GA4, and truncates to 80 characters. GDPR/CCPA safer.
+
+- **PQC Assistant: error announcements**: Chat panel error container now carries `role="alert"`
+  so screen readers announce errors immediately (WCAG 2.1 SC 4.1.3).
+
 ## [2.3.0] - 2026-02-27
 
 ### Added

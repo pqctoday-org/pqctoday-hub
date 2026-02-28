@@ -85,25 +85,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Compliance Strategy expanded</strong>{' '}
-                    &mdash; 24 jurisdictions, country deadline table, eIDAS 2.0 / DORA / CBOM
-                    dependency sections
+                    <strong className="text-foreground">Multi-conversation history</strong> &mdash;
+                    up to 10 chats, keyboard navigation, search, and Markdown export
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">IoT/OT deepened</strong> &mdash; energy
-                    budget, Ascon callout, chain bloat exercise, 3 new protocols, color-coded speed
-                    badges
+                    <strong className="text-foreground">Ask buttons everywhere</strong> &mdash; 14
+                    new surfaces including all 25 Learn modules, Assessment Report, Timeline, and
+                    Algorithms
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC Governance upgraded</strong> &mdash;
-                    4-level escalation framework, click-to-cycle RACI (10 activities), expanded
-                    policy templates
+                    <strong className="text-foreground">Smarter assistant</strong> &mdash; response
+                    caching, persona-aware questions, RAG telemetry, and corpus freshness indicator
                   </span>
                 </li>
               </ul>

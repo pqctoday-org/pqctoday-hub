@@ -3,6 +3,7 @@ import { ShieldAlert, X, Lock, Cpu, ExternalLink, BookOpen } from 'lucide-react'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { MODULE_CATALOG } from '../PKILearning/moduleData'
+import { AskAssistantButton } from '../ui/AskAssistantButton'
 
 interface ThreatDetailDialogProps {
   threat: ThreatItem
@@ -93,15 +94,22 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                 Reference Source
               </h3>
-              <a
-                href={threat.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-primary hover:underline text-sm truncate"
-              >
-                <ExternalLink size={14} />
-                {threat.mainSource || 'View Source'}
-              </a>
+              <div className="flex items-center gap-3">
+                <a
+                  href={threat.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-primary hover:underline text-sm truncate"
+                >
+                  <ExternalLink size={14} />
+                  {threat.mainSource || 'View Source'}
+                </a>
+                <AskAssistantButton
+                  variant="text"
+                  label="Ask about mitigations"
+                  question={`What are the mitigation strategies for ${threat.threatId} (${threat.industry})?`}
+                />
+              </div>
             </div>
           )}
 
