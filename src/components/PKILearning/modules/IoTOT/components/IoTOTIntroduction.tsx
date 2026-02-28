@@ -58,6 +58,10 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
                 t: 'Update Difficulty',
                 d: 'Many OT devices are air-gapped, physically inaccessible, or lack OTA update capability. Crypto-agility must be designed in from the start \u2014 it cannot be retrofitted.',
               },
+              {
+                t: 'Energy Budget',
+                d: 'PQC operations consume significantly more energy than classical crypto. For battery-powered devices with multi-year targets, this overhead must be budgeted \u2014 favoring session resumption (PSK) over repeated PQC handshakes.',
+              },
             ].map((item) => (
               <div key={item.t} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
                 <AlertTriangle size={14} className="text-warning shrink-0 mt-0.5" />
@@ -102,6 +106,19 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* Ascon Callout */}
+          <div className="bg-muted/50 rounded-lg p-3 border border-primary/20">
+            <div className="text-xs font-bold text-primary mb-1">
+              Lightweight Symmetric Crypto: Ascon
+            </div>
+            <p className="text-xs text-muted-foreground">
+              NIST selected <InlineTooltip term="Ascon">Ascon</InlineTooltip> as the lightweight
+              authenticated encryption standard (2023), specifically designed for constrained IoT
+              environments. While Ascon addresses symmetric-key AEAD, PQC algorithms address the
+              asymmetric-key challenge &mdash; both are needed for comprehensive IoT security.
+            </p>
           </div>
         </div>
       </section>
@@ -192,9 +209,10 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
             </div>
             <p className="text-[10px] text-muted-foreground mt-2">
               <InlineTooltip term="FN-DSA">FN-DSA-512</InlineTooltip> (FIPS 206, draft) produces the
-              most compact PQC signature at just 666 bytes &mdash; ideal for bandwidth-constrained
-              IoT. <InlineTooltip term="LMS/HSS">LMS</InlineTooltip> has the smallest verifier (0.5
-              KB RAM, 56-byte public key) but requires stateful key management.
+              most compact PQC signature (~666 bytes average, 690 max) &mdash; ideal for
+              bandwidth-constrained IoT. <InlineTooltip term="LMS/HSS">LMS</InlineTooltip> has the
+              smallest verifier (0.5 KB RAM, 56-byte public key) but requires stateful key
+              management.
             </p>
           </div>
         </div>
@@ -290,7 +308,8 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
 
           <p>
             <InlineTooltip term="LMS/HSS">LMS/HSS</InlineTooltip> is the leading choice for firmware
-            signing: 56-byte public key, 2.5 KB signature, ~0.1 ms verification. Its stateful nature
+            signing: 56-byte public key, 2.5 KB signature, and the fastest PQC verifier on
+            constrained MCUs (~4&times; faster than XMSS on Cortex-M4). Its stateful nature
             (monotonic counter in TPM) is acceptable for firmware signing servers that sign
             infrequently. The <InlineTooltip term="SUIT">SUIT manifest</InlineTooltip> (RFC 9019)
             wraps the firmware image with metadata, conditions, and signatures for secure OTA
@@ -517,9 +536,21 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
               <p className="text-xs text-muted-foreground">
                 Devices with 50+ KB RAM can run hybrid key exchanges natively. The KEM shared secret
                 is derived from both classical and PQC components &mdash; security holds as long as
-                either algorithm is unbroken.
+                both algorithms remain unbroken.
               </p>
             </div>
+          </div>
+
+          {/* Secure Element Callout */}
+          <div className="bg-muted/50 rounded-lg p-3 border border-primary/20">
+            <div className="text-xs font-bold text-primary mb-1">Hardware Acceleration</div>
+            <p className="text-xs text-muted-foreground">
+              Secure elements (ARM TrustZone-M, Infineon OPTIGA TPM, Microchip ATECC608) can offload
+              PQC operations from the main MCU, enabling PQC on devices that otherwise lack
+              sufficient RAM or processing power. Industry leaders including Samsung and Thales are
+              developing ML-KEM support for embedded secure elements, enabling quantum-safe security
+              for smart cards and constrained IoT devices.
+            </p>
           </div>
 
           <p className="text-xs text-muted-foreground">

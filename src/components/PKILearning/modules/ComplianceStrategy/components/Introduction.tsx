@@ -11,8 +11,11 @@ import {
   BookOpen,
   ClipboardCheck,
   Building2,
+  MapPin,
+  Lock,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { Button } from '@/components/ui/button'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -41,11 +44,13 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
-              &ldquo;Federal agencies must identify and prioritize the migration of vulnerable
-              cryptographic systems to quantum-resistant standards.&rdquo;
+              &ldquo;The United States must prioritize the timely and equitable transition of
+              cryptographic systems to quantum-resistant cryptography, with the goal of mitigating
+              as much of the quantum risk as is feasible by 2035.&rdquo;
             </blockquote>
             <p className="text-xs text-muted-foreground mt-2">
-              &mdash; NSM-10, National Security Memorandum on Quantum Computing (2022)
+              &mdash; NSM-10, Section 3(a), National Security Memorandum on Promoting United States
+              Leadership in Quantum Computing (May 2022)
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -98,11 +103,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               </div>
               <p className="text-xs text-muted-foreground">
                 The Commercial National Security Algorithm Suite 2.0 mandates PQC adoption for
-                National Security Systems. Key deadlines: software/firmware signing by 2025,
-                web/cloud/networking by 2030, legacy systems by 2033. Requires{' '}
-                <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>-1024 (FIPS&nbsp;203) and{' '}
-                <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>-87 (FIPS&nbsp;204) as minimum
-                security levels.
+                National Security Systems. Key deadlines: software/firmware signing preferred by
+                2025, exclusive by 2030; new networking equipment by 2026; web/cloud/servers and all
+                remaining NSS by 2033. Requires <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>
+                -1024 (FIPS&nbsp;203) and <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>-87
+                (FIPS&nbsp;204) as minimum security levels.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -113,9 +118,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">
-                NIST&apos;s transition guidance for post-quantum cryptography standards. Recommends
-                deprecating RSA and ECC by 2030 and disallowing them after 2035. Emphasizes
-                cryptographic agility and hybrid approaches during the transition period.
+                NIST&apos;s transition guidance for post-quantum cryptography standards (draft
+                November 2024, finalized March 2025). Recommends deprecating RSA, ECC, and other
+                classical public-key algorithms by 2030 and disallowing them entirely after 2035.
+                Emphasizes cryptographic agility and hybrid approaches during the transition period.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -193,33 +199,40 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           <div className="space-y-2">
             {[
               {
-                year: '2025',
-                event: 'CNSA 2.0 software/firmware signing for NSS',
-                source: 'NSA',
-              },
-              {
                 year: '2024',
-                event: 'NIST IR 8547 published — official PQC transition guidance',
+                event: 'NIST IR 8547 draft published — PQC transition guidance (finalized 2025)',
                 source: 'NIST',
               },
               {
+                year: '2025',
+                event: 'CNSA 2.0 software/firmware signing preferred for NSS',
+                source: 'NSA',
+              },
+              {
+                year: '2026',
+                event: 'CNSA 2.0 new networking equipment must support PQC',
+                source: 'NSA',
+              },
+              {
                 year: '2030',
-                event: 'CNSA 2.0 web/cloud/networking; NIST RSA/ECC deprecated (NIST IR 8547)',
+                event:
+                  'CNSA 2.0 software/firmware signing exclusive; legacy networking replaced; NIST RSA/ECC deprecated',
                 source: 'NSA/NIST',
               },
               {
                 year: '2030',
-                event: 'ANSSI recommends full PQC migration for sensitive government systems',
-                source: 'ANSSI (advisory)',
+                event:
+                  'ANSSI Phase 3 begins — standalone PQC optional; may become mandatory for long-term security products',
+                source: 'ANSSI',
               },
               {
                 year: '2033',
-                event: 'CNSA 2.0 all legacy NSS systems',
+                event: 'CNSA 2.0 web/cloud/servers exclusive; all remaining NSS systems',
                 source: 'NSA',
               },
               {
                 year: '2035',
-                event: 'NIST RSA/ECC disallowed (NIST IR 8547)',
+                event: 'NIST RSA/ECC disallowed entirely (NIST IR 8547)',
                 source: 'NIST',
               },
             ].map((item) => (
@@ -240,7 +253,214 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
       </section>
 
-      {/* Section 5: Workshop Preview */}
+      {/* Section 5: Country-Specific Deadlines */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <MapPin size={24} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">Country-Specific Deadlines</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            Beyond the major US and EU frameworks, individual countries are setting their own PQC
+            transition deadlines. Organizations operating internationally must track these
+            jurisdiction-specific requirements.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-2 px-2 font-bold text-muted-foreground">Country</th>
+                  <th className="text-left py-2 px-2 font-bold text-muted-foreground">Agency</th>
+                  <th className="text-left py-2 px-2 font-bold text-muted-foreground">
+                    Key Deadline
+                  </th>
+                  <th className="text-left py-2 px-2 font-bold text-muted-foreground">Details</th>
+                </tr>
+              </thead>
+              <tbody className="text-muted-foreground">
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium text-foreground">Australia</td>
+                  <td className="py-2 px-2">ASD</td>
+                  <td className="py-2 px-2 font-mono text-primary">2030</td>
+                  <td className="py-2 px-2">
+                    Prohibit traditional asymmetric cryptography &mdash; one of the most aggressive
+                    global deadlines, 5 years ahead of US/UK full transition
+                  </td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium text-foreground">Canada</td>
+                  <td className="py-2 px-2">CCCS</td>
+                  <td className="py-2 px-2 font-mono text-primary">2026</td>
+                  <td className="py-2 px-2">
+                    Federal departments submit PQC migration plans by April 2026; high-priority
+                    systems by 2031; full transition by 2035
+                  </td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium text-foreground">United Kingdom</td>
+                  <td className="py-2 px-2">NCSC</td>
+                  <td className="py-2 px-2 font-mono text-primary">2028</td>
+                  <td className="py-2 px-2">
+                    Three-phase roadmap: discovery (2025&ndash;2028), priority migration
+                    (2028&ndash;2031), full migration (2031&ndash;2035)
+                  </td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium text-foreground">Czech Republic</td>
+                  <td className="py-2 px-2">NUKIB</td>
+                  <td className="py-2 px-2 font-mono text-primary">2027</td>
+                  <td className="py-2 px-2">
+                    First EU member state to set a specific encryption migration deadline &mdash;
+                    ahead of the broader EU coordinated roadmap
+                  </td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium text-foreground">European Union</td>
+                  <td className="py-2 px-2">EC</td>
+                  <td className="py-2 px-2 font-mono text-primary">2030</td>
+                  <td className="py-2 px-2">
+                    Coordinated Implementation Roadmap (v1.1, June 2025): high-risk systems by 2030,
+                    full transition by 2035 &mdash; aligned with NIST timelines
+                  </td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium text-foreground">Israel</td>
+                  <td className="py-2 px-2">INCD</td>
+                  <td className="py-2 px-2 font-mono text-primary">2025</td>
+                  <td className="py-2 px-2">
+                    Quantum threat assessments completed by end of 2025; PQC required in new
+                    contracts
+                  </td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium text-foreground">Taiwan</td>
+                  <td className="py-2 px-2">NICS</td>
+                  <td className="py-2 px-2 font-mono text-primary">2027</td>
+                  <td className="py-2 px-2">
+                    PQC migration target for critical semiconductor and technology sectors
+                  </td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium text-foreground">Germany</td>
+                  <td className="py-2 px-2">BSI/DLR</td>
+                  <td className="py-2 px-2 font-mono text-primary">2030</td>
+                  <td className="py-2 px-2">
+                    QUANTITY initiative (March 2025) for quantum cryptanalysis; critical
+                    applications PQC-protected by end of 2030
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-2 px-2 font-medium text-foreground">G7</td>
+                  <td className="py-2 px-2">CEG</td>
+                  <td className="py-2 px-2 font-mono text-primary">2034</td>
+                  <td className="py-2 px-2">
+                    Cyber Expert Group (January 2026): financial sector PQC migration by 2034 with
+                    phased preparation from 2025
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <p className="text-xs text-muted-foreground">
+              <strong className="text-foreground">Key takeaway:</strong> Organizations must meet the{' '}
+              <em>earliest</em> deadline across all jurisdictions where they operate. A company in
+              Australia and the EU faces a 2030 hard deadline, not the EU&apos;s 2035 full
+              transition target.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 6: Compliance Dependencies */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-secondary/10">
+            <Lock size={24} className="text-secondary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">Compliance Dependencies</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            Several cross-cutting compliance requirements affect PQC migration timelines regardless
+            of jurisdiction.
+          </p>
+          <div className="space-y-3">
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="text-sm font-bold text-foreground mb-1">
+                <InlineTooltip term="FIPS 140-3">FIPS 140-3</InlineTooltip> &amp;{' '}
+                <InlineTooltip term="CMVP">CMVP</InlineTooltip>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                The Cryptographic Module Validation Program certifies cryptographic implementations
+                for government use. PQC algorithm implementations (FIPS 203/204/205) must undergo
+                CMVP validation before deployment in federal systems. Validation exists on a
+                spectrum: full CMVP validation (gold standard), modules in process, FIPS-mode
+                operation, and partial compliance (FedRAMP, WebTrust). This certification backlog is
+                a key dependency in migration timelines.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="text-sm font-bold text-foreground mb-1">
+                <InlineTooltip term="eIDAS">eIDAS 2.0</InlineTooltip> (EU Digital Identity)
+              </div>
+              <p className="text-xs text-muted-foreground">
+                The updated EU regulation for electronic identification mandates European Digital
+                Identity (EUDI) wallets with deployments starting 2027+. While eIDAS 2.0 does not
+                yet mandate PQC specifically, these wallets will need quantum-safe cryptography for
+                long-term trust. ENISA identifies wallet providers as high-impact entities for early
+                PQC adoption.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="text-sm font-bold text-foreground mb-1">
+                Executive Order 14306 &amp; CISA Procurement Guidance
+              </div>
+              <p className="text-xs text-muted-foreground">
+                EO 14306 (June 2025) sustains PQC migration provisions. CISA subsequently issued
+                federal procurement guidance (January 2026) requiring PQC capabilities in new
+                product and service acquisitions, driving market demand for PQC-capable solutions.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="text-sm font-bold text-foreground mb-1">
+                <InlineTooltip term="DORA">DORA</InlineTooltip> (EU Digital Operational Resilience)
+              </div>
+              <p className="text-xs text-muted-foreground">
+                The EU&apos;s Digital Operational Resilience Act (enforcement January 2025) requires
+                financial institutions to implement robust ICT risk management including
+                cryptographic controls. While not PQC-specific yet, organizations subject to DORA
+                must demonstrate encryption resilience planning that will inevitably encompass
+                quantum threats.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="text-sm font-bold text-foreground mb-1">
+                <InlineTooltip term="CBOM">CBOM</InlineTooltip> (Cryptographic Bill of Materials)
+              </div>
+              <p className="text-xs text-muted-foreground">
+                A CBOM is a comprehensive inventory of all cryptographic assets in an
+                organization&apos;s systems &mdash; algorithms, key sizes, protocols, certificates,
+                and their locations. Generating a CBOM is a critical first step for PQC compliance
+                because you cannot migrate what you haven&apos;t inventoried. Studies show 70% of
+                organizations lack a complete cryptographic inventory.
+              </p>
+            </div>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3 border border-status-warning/20">
+            <p className="text-xs text-muted-foreground">
+              <AlertTriangle size={12} className="inline text-status-warning mr-1" />
+              <strong className="text-foreground">Europol finding:</strong> 86% of executives are
+              unprepared for quantum threats (February 2025), highlighting a significant gap between
+              the urgency of PQC compliance and organizational readiness.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 7: Workshop Preview */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
@@ -350,12 +570,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
       {/* CTA */}
       <div className="text-center">
-        <button
-          onClick={onNavigateToWorkshop}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
-        >
+        <Button variant="gradient" size="lg" onClick={onNavigateToWorkshop}>
           Start Workshop <ArrowRight size={18} />
-        </button>
+        </Button>
         <p className="text-xs text-muted-foreground mt-2">
           Map jurisdictions, build audit checklists, and construct compliance timelines.
         </p>

@@ -1,6 +1,7 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Trash2, Users, FileText, BarChart3 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Introduction } from './components/Introduction'
 import { RACIBuilder } from './components/RACIBuilder'
 import { PolicyTemplateGenerator } from './components/PolicyTemplateGenerator'
@@ -210,13 +211,10 @@ export const PQCGovernanceModule: React.FC = () => {
         <TabsContent value="workshop">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex justify-end">
-              <button
-                onClick={handleReset}
-                className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
-              >
+              <Button variant="destructive" size="sm" onClick={handleReset} className="gap-2">
                 <Trash2 size={16} />
                 Reset
-              </button>
+              </Button>
             </div>
 
             {/* Part Progress Steps */}
@@ -266,27 +264,29 @@ export const PQCGovernanceModule: React.FC = () => {
 
             {/* Part Navigation */}
             <div className="flex flex-col sm:flex-row justify-between gap-3">
-              <button
+              <Button
+                variant="outline"
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
                 disabled={currentPart === 0}
-                className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
+                className="px-6 py-3 min-h-[44px]"
               >
                 &larr; Previous Step
-              </button>
+              </Button>
               {currentPart === PARTS.length - 1 ? (
-                <button
+                <Button
+                  variant="gradient"
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
-                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+                  className="px-6 py-3 min-h-[44px]"
                 >
                   Complete Module
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
                   onClick={() => handlePartChange(currentPart + 1)}
-                  className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+                  className="px-6 py-3 min-h-[44px]"
                 >
                   Next Step &rarr;
-                </button>
+                </Button>
               )}
             </div>
           </div>

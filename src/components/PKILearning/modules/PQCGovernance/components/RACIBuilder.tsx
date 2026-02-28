@@ -1,6 +1,6 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useMemo } from 'react'
-import { Download, Copy, Check } from 'lucide-react'
+import { Download, Copy, Check, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useModuleStore } from '@/store/useModuleStore'
 
@@ -14,6 +14,9 @@ const ACTIVITIES = [
   'Testing & Validation',
   'Deployment',
   'Monitoring & Compliance',
+  'Training & Awareness',
+  'Compliance Auditing',
+  'Stakeholder Communications',
 ] as const
 
 const ROLES = [
@@ -25,13 +28,12 @@ const ROLES = [
   'Procurement',
 ] as const
 
-const RACI_OPTIONS: { value: RACIValue; label: string }[] = [
-  { value: '', label: '\u2014' },
-  { value: 'R', label: 'R' },
-  { value: 'A', label: 'A' },
-  { value: 'C', label: 'C' },
-  { value: 'I', label: 'I' },
-]
+const RACI_CYCLE: RACIValue[] = ['', 'R', 'A', 'C', 'I']
+
+function cycleRACIValue(current: RACIValue): RACIValue {
+  const idx = RACI_CYCLE.indexOf(current)
+  return RACI_CYCLE[(idx + 1) % RACI_CYCLE.length]
+}
 
 function getRACIColor(value: RACIValue): string {
   switch (value) {
@@ -65,6 +67,13 @@ export const RACIBuilder: React.FC = () => {
   const [matrix, setMatrix] = useState<MatrixState>(buildInitialMatrix)
   const [copied, setCopied] = useState(false)
   const { addExecutiveDocument } = useModuleStore()
+
+  const activitiesMissingAccountable = useMemo(() => {
+    return ACTIVITIES.filter((activity) => {
+      const row = matrix[activity]
+      return !ROLES.some((role) => row?.[role] === 'A')
+    })
+  }, [matrix])
 
   const handleCellChange = useCallback((activity: string, role: string, value: RACIValue) => {
     setMatrix((prev) => ({
@@ -169,19 +178,14 @@ export const RACIBuilder: React.FC = () => {
                   const value = matrix[activity]?.[role] || ''
                   return (
                     <td key={role} className="p-1 border-b border-border text-center">
-                      <select
-                        value={value}
-                        onChange={(e) =>
-                          handleCellChange(activity, role, e.target.value as RACIValue)
-                        }
-                        className={`w-full text-center text-xs font-bold rounded border px-1 py-1.5 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 ${getRACIColor(value)}`}
+                      <button
+                        type="button"
+                        onClick={() => handleCellChange(activity, role, cycleRACIValue(value))}
+                        aria-label={`${activity} \u2014 ${role}: ${value || 'empty'}. Click to cycle.`}
+                        className={`w-full text-center text-xs font-bold rounded border px-1 py-1.5 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[32px] ${getRACIColor(value)}`}
                       >
-                        {RACI_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
+                        {value || '\u2014'}
+                      </button>
                     </td>
                   )
                 })}
@@ -190,6 +194,20 @@ export const RACIBuilder: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Validation Warning */}
+      {activitiesMissingAccountable.length > 0 && (
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-status-warning/10 border border-status-warning/30 text-sm">
+          <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-foreground">Missing Accountable assignment</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Each activity should have exactly one &quot;A&quot; (Accountable). Missing:{' '}
+              {activitiesMissingAccountable.join(', ')}.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Legend */}
       <div className="flex flex-wrap gap-4 text-xs">

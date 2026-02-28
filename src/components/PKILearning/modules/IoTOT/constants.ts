@@ -153,11 +153,11 @@ export const CONSTRAINED_ALGORITHMS: ConstrainedAlgorithm[] = [
     type: 'Signature',
     ramKB: 1.5,
     publicKeyBytes: 897,
-    ciphertextOrSigBytes: 666,
+    ciphertextOrSigBytes: 690,
     nistLevel: 1,
     quantumSafe: true,
     suitableForClass: [1, 2, 3],
-    notes: 'Most compact PQC signature (666 bytes). FIPS 206 (draft).',
+    notes: 'Most compact PQC signature (~666 avg, 690 max). FIPS 206 (draft).',
   },
   {
     name: 'ML-DSA-44',
@@ -228,6 +228,32 @@ export const IOT_PROTOCOLS: IoTProtocol[] = [
     handshakeRoundTrips: 3,
     pqcFeasibility: 'challenging',
     notes: 'CASE protocol uses ECDSA P-256. PQC migration requires protocol specification update.',
+  },
+  {
+    name: 'LwM2M + DTLS 1.2/1.3',
+    transport: 'UDP',
+    maxPayloadBytes: 1024,
+    handshakeRoundTrips: 2,
+    pqcFeasibility: 'challenging',
+    notes: 'OMA lightweight M2M device management. Same DTLS fragmentation challenge as CoAP.',
+  },
+  {
+    name: 'BLE Mesh',
+    transport: 'BLE',
+    maxPayloadBytes: 384,
+    handshakeRoundTrips: 0,
+    pqcFeasibility: 'problematic',
+    notes:
+      'Provisioning-time key exchange. PQC requires out-of-band provisioning or secure element support.',
+  },
+  {
+    name: 'OPC UA',
+    transport: 'TCP',
+    maxPayloadBytes: 65535,
+    handshakeRoundTrips: 1,
+    pqcFeasibility: 'good',
+    notes:
+      'Industrial automation standard. TCP transport handles PQC handshake sizes. Certificate-based security profile needs PQC cert support.',
   },
 ]
 
@@ -564,7 +590,7 @@ export interface IoTFirmwareAlgorithm {
   signatureBytes: number
   publicKeyBytes: number
   stateful: boolean
-  verifyTimeMs: number
+  verifySpeed: 'fastest' | 'fast' | 'moderate'
   notes: string
 }
 
@@ -575,8 +601,9 @@ export const IOT_FIRMWARE_ALGORITHMS: IoTFirmwareAlgorithm[] = [
     signatureBytes: 2512,
     publicKeyBytes: 56,
     stateful: true,
-    verifyTimeMs: 0.1,
-    notes: 'Smallest verifier. Requires monotonic counter in TPM or secure element.',
+    verifySpeed: 'fastest',
+    notes:
+      'Fastest PQC verifier (~4\u00d7 faster than XMSS on Cortex-M4). Requires monotonic counter in TPM or secure element.',
   },
   {
     id: 'xmss',
@@ -584,8 +611,8 @@ export const IOT_FIRMWARE_ALGORITHMS: IoTFirmwareAlgorithm[] = [
     signatureBytes: 2500,
     publicKeyBytes: 68,
     stateful: true,
-    verifyTimeMs: 0.3,
-    notes: 'Forward secrecy. BSI-preferred. Requires HSM for state persistence.',
+    verifySpeed: 'moderate',
+    notes: 'Forward secrecy. BSI-preferred. ~4\u00d7 slower than LMS on constrained MCUs.',
   },
   {
     id: 'ml-dsa-44',
@@ -593,8 +620,8 @@ export const IOT_FIRMWARE_ALGORITHMS: IoTFirmwareAlgorithm[] = [
     signatureBytes: 2420,
     publicKeyBytes: 1312,
     stateful: false,
-    verifyTimeMs: 0.2,
-    notes: 'Stateless. Larger public key but no state management overhead.',
+    verifySpeed: 'fast',
+    notes: 'Stateless. Faster than XMSS but slower than LMS on Cortex-M4.',
   },
   {
     id: 'ml-dsa-65',
@@ -602,8 +629,8 @@ export const IOT_FIRMWARE_ALGORITHMS: IoTFirmwareAlgorithm[] = [
     signatureBytes: 3309,
     publicKeyBytes: 1952,
     stateful: false,
-    verifyTimeMs: 0.3,
-    notes: 'NIST Level 3 stateless. Suitable for gateways and Class 3+ devices.',
+    verifySpeed: 'moderate',
+    notes: 'NIST Level 3 stateless. Comparable to XMSS on constrained hardware.',
   },
 ]
 

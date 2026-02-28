@@ -48,6 +48,14 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 
 **Data Sources**: Static JSON/CSV files in `src/data/`. Compliance data scraped at build time via `npm run scrape` from NIST, ANSSI, and Common Criteria. CSV files use versioned naming (e.g., `leaders_01192026.csv`). Dev server proxies requests to NIST, BSI, ANSSI, and Common Criteria APIs (configured in `vite.config.ts`). Authoritative sources CSV (`pqc_authoritative_sources_reference_*.csv`) uses 13 columns with `lastVerifiedDate` at index 12; `AuthoritativeSource` type has `complianceCsv` and `migrateCsv` boolean fields; `ViewType` includes `'Compliance'` and `'Migrate'`.
 
+**Reference Document Cache**: Three `public/` directories contain archived HTML/PDF copies of source documents referenced by CSV data. Use these to verify claims, check standard details, or understand source content without leaving the codebase:
+
+- `public/timeline/` — government PQC milestone documents (named `{Country}_{Org}_{Title}.{html|pdf}`)
+- `public/threats/` — industry threat/compliance framework documents (named `{INDUSTRY_CODE}-{NUMBER}.{html|pdf}`)
+- `public/library/` — technical standards, RFCs, and specs (named by standard ID or title)
+
+Each directory has a `manifest.json` (download history) and `skip-list.json` (paywalled/inaccessible URLs). Populated by download scripts: `npm run download:library`, `npm run download:timeline`, `npm run download:threats` (append `:dry` for dry run). `public/data/rag-corpus.json` is a unified search index aggregating 22 data sources, generated at build time via `npm run generate-corpus`.
+
 **CSV Management** — MUST read and follow `docs/CSVmaintenance.md` before ANY CSV operation (record insert, update, delete, format change, or web source refresh). This is mandatory, not optional. Key rules:
 
 - **Never edit a CSV in place** — copy to a new file with today's date (`MMDDYYYY`). Loaders auto-discover the latest via `import.meta.glob`. Example: to update `library_02212026.csv` on Feb 22, copy it to `library_02222026.csv` and make edits there.

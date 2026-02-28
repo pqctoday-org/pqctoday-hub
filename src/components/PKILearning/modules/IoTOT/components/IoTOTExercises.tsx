@@ -36,7 +36,7 @@ export const IoTOTExercises: React.FC<IoTOTExercisesProps> = ({
       badge: 'Algorithms',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'ML-KEM-512 requires ~3 KB stack RAM and fits comfortably in a Class 1 device. FrodoKEM-640 requires ~180 KB \u2014 impossible for Class 0/1 devices. For signatures, LMS requires only ~0.5 KB RAM with a 56-byte public key, making it ideal for boot-time verification on microcontrollers.',
+        'ML-KEM-512 requires ~3 KB stack RAM and fits within Class 1 constraints (~3 KB of ~10 KB total RAM). FrodoKEM-640 requires ~180 KB \u2014 impossible for Class 0/1 devices. For signatures, LMS requires only ~0.5 KB RAM with a 56-byte public key, making it ideal for boot-time verification on microcontrollers.',
       config: { step: 0 },
     },
     {
@@ -62,8 +62,19 @@ export const IoTOTExercises: React.FC<IoTOTExercisesProps> = ({
       config: { step: 2 },
     },
     {
+      id: 'cert-chain',
+      title: '4. Build a PQC certificate chain for a Class 2 industrial gateway',
+      description:
+        'In the Certificate Chain Bloat Analyzer, set all three levels (Root, Intermediate, End Entity) to ML-DSA-65. Observe how the total chain size compares to device RAM. Then adjust the RAM budget slider to a Class 1 device (10 KB) and enable the Merkle Tree Certificates and Certificate Compression mitigations.',
+      badge: 'Certificates',
+      badgeColor: 'bg-status-info/20 text-status-info border-status-info/50',
+      observe:
+        'An ML-DSA-65 certificate chain totals ~22 KB \u2014 exceeding a Class 1 device\u2019s entire 10 KB RAM. With Merkle Tree Certificates (85% reduction) and compression (30%), the combined mitigations bring the chain down to ~3 KB, making it feasible even for constrained devices.',
+      config: { step: 3 },
+    },
+    {
       id: 'scada-plan',
-      title: '4. Assess a power grid SCADA system and prioritize PQC migration layers',
+      title: '5. Assess a power grid SCADA system and prioritize PQC migration layers',
       description:
         'In the SCADA Migration Planner, the default configuration approximates a typical power grid. Review the generated migration priority matrix and timeline. Then try setting the DMZ to "PQC Hybrid" and observe how the priority matrix changes.',
       badge: 'SCADA',

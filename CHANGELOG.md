@@ -4,6 +4,78 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.0] - 2026-02-27
+
+### Added
+
+- **Compliance Strategy: country deadlines table**: Ten countries/regions with specific PQC
+  migration deadlines — Australia (2030), Canada (2026/2031/2035), UK (2028), Czech Republic
+  (2027), EU (2030 Coordinated Roadmap v1.1), Israel (2025), Taiwan (2027), Germany (2030
+  QUANTITY initiative), G7 (2034 financial sector). Sourced from finalized 2024–2025 standards.
+
+- **Compliance Strategy: compliance dependencies section**: Five dependency areas — CMVP/FIPS
+  140-3 validation backlog, eIDAS 2.0 quantum-safe wallet requirements, Executive Order 14306
+  and CISA procurement guidance (January 2026), DORA enforcement (January 2025), and CBOM
+  inventory gaps (Europol: 86% of executives unprepared).
+
+- **Compliance Strategy: 13 new jurisdictions**: JurisdictionMapper expanded from ~12 to 24
+  jurisdictions — adds Czech Republic, Italy, Spain, New Zealand, China, India, Taiwan, Hong
+  Kong, Malaysia, Israel, UAE, Saudi Arabia, Bahrain, and Jordan. China conflict detection warns
+  about OSCCA/NGCC dual-algorithm requirements; early-deadline countries (AU/TW/CZ) flagged
+  against US/EU timelines.
+
+- **IoT/OT: energy budget challenge**: New constraint card — PQC consumes significantly more
+  energy; recommends PSK session resumption over repeated full handshakes for battery-constrained
+  devices.
+
+- **IoT/OT: Ascon lightweight crypto callout**: Contextualizes NIST's 2023 Ascon selection for
+  IoT symmetric-key AEAD as complementary to PQC asymmetric algorithms.
+
+- **IoT/OT: Certificate Chain Bloat Analyzer (Exercise 4)**: New interactive exercise — sets
+  full ML-DSA-65 chain (Root + Intermediate + End Entity ≈ 22 KB), then demonstrates Merkle
+  Tree Certificates + compression reducing chain to ~3 KB. Total exercises now 5.
+
+- **IoT/OT: three new protocols**: LwM2M + DTLS 1.2/1.3 (1,024 B max, challenging feasibility),
+  BLE Mesh (384 B max, problematic for PQC), OPC UA (65,535 B, TCP, good for industrial
+  automation).
+
+- **PQC Governance: escalation & conflict resolution framework**: Four-level escalation path —
+  Working Group (5 days) → Steering Committee (10 days) → CISO/CTO (5 days) → Board/Risk
+  Committee for enterprise risk acceptance.
+
+- **PQC Governance: three new RACI activities**: Training & Awareness, Compliance Auditing,
+  Stakeholder Communications added — RACI matrix now covers 10 activities (was 7).
+
+### Changed
+
+- **Compliance Strategy: regulatory content updated**: NSM-10 quote updated to Section 3(a)
+  language; CNSA 2.0 timelines distinguish preferred (2025) vs exclusive (2030) for signing;
+  NIST IR 8547 reflects draft (November 2024) and finalized (March 2025) versions.
+
+- **IoT/OT: accuracy corrections**: FN-DSA-512 signature size corrected to ~666 avg / 690 max
+  bytes; LMS verification speed quantified (~4× faster than XMSS on Cortex-M4). Secure elements
+  section added (ARM TrustZone-M, Infineon OPTIGA TPM, Microchip ATECC608).
+
+- **IoT/OT: FirmwareSigningSimulator**: Color-coded verification speed badges (Fastest / Fast /
+  Moderate) with semantic status colors replace raw millisecond display.
+
+- **PQC Governance: PolicyTemplateGenerator expanded**: ML-KEM-512 (Category 1), ML-DSA-44
+  (Category 2), FN-DSA-512/1024, and HQC-128 (NIST Round 4, draft pending) added to algorithm
+  selections. RSA ≥ 3072 clarified in prohibited algorithms list.
+
+- **PQC Governance: RACI cell interaction redesigned**: Click-to-cycle buttons replace select
+  dropdowns — cycles R → A → C → I → empty. Validation warning shown when any activity lacks
+  an Accountable assignment.
+
+- **PQC Governance: button consistency**: All raw `<button>` elements replaced with `<Button>`
+  component variants (destructive / outline / gradient) across Introduction and module nav.
+
+### Fixed
+
+- **Private browsing compatibility**: `localStorage` access in GuidedTour and WhatsNewToast
+  wrapped in try-catch — prevents crash when storage is unavailable (Safari private mode,
+  hardened browsers). Graceful fallback: tour re-shows, toast suppressed.
+
 ## [2.2.1] - 2026-02-27
 
 ### Changed

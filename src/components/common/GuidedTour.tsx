@@ -170,10 +170,15 @@ export const GuidedTour: React.FC = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.has('tour')) {
-      localStorage.removeItem(TOUR_STORAGE_KEY)
+    let completed = false
+    try {
+      if (params.has('tour')) {
+        localStorage.removeItem(TOUR_STORAGE_KEY)
+      }
+      completed = !!localStorage.getItem(TOUR_STORAGE_KEY)
+    } catch {
+      // localStorage unavailable (private browsing) — show tour
     }
-    const completed = localStorage.getItem(TOUR_STORAGE_KEY)
     if (!completed) {
       timerRef.current = setTimeout(() => setIsActive(true), 2000)
     }
@@ -252,7 +257,11 @@ export const GuidedTour: React.FC = () => {
 
   const dismiss = useCallback(() => {
     setIsActive(false)
-    localStorage.setItem(TOUR_STORAGE_KEY, 'true')
+    try {
+      localStorage.setItem(TOUR_STORAGE_KEY, 'true')
+    } catch {
+      // localStorage unavailable (private browsing) — tour will re-show next visit
+    }
   }, [])
 
   // Document-level Escape key listener (works regardless of focus state, including Safari)

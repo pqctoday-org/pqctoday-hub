@@ -96,12 +96,27 @@ function buildSections(
               label: 'Approved Key Encapsulation Mechanisms',
               type: 'checklist',
               options: [
-                { value: 'ML-KEM-768', label: 'ML-KEM-768 (FIPS 203)' },
-                { value: 'ML-KEM-1024', label: 'ML-KEM-1024 (FIPS 203)' },
+                {
+                  value: 'ML-KEM-512',
+                  label: 'ML-KEM-512 (FIPS 203 \u2014 Category 1, 128-bit security)',
+                },
+                {
+                  value: 'ML-KEM-768',
+                  label: 'ML-KEM-768 (FIPS 203 \u2014 Category 3, 192-bit security)',
+                },
+                {
+                  value: 'ML-KEM-1024',
+                  label: 'ML-KEM-1024 (FIPS 203 \u2014 Category 5, 256-bit security)',
+                },
                 { value: 'X25519MLKEM768', label: 'X25519MLKEM768 (Hybrid)' },
                 {
                   value: 'FrodoKEM-1344',
-                  label: 'FrodoKEM-1344-SHAKE (NIST IR 8413 candidate — pre-standard)',
+                  label:
+                    'FrodoKEM-1344-SHAKE (NIST PQC alternate candidate \u2014 not standardized)',
+                },
+                {
+                  value: 'HQC-128',
+                  label: 'HQC-128 (NIST PQC Round 4 selection \u2014 draft standard pending)',
                 },
               ],
               defaultValue: ['ML-KEM-768', 'ML-KEM-1024'],
@@ -111,8 +126,26 @@ function buildSections(
               label: 'Approved Signature Algorithms',
               type: 'checklist',
               options: [
-                { value: 'ML-DSA-65', label: 'ML-DSA-65 (FIPS 204)' },
-                { value: 'ML-DSA-87', label: 'ML-DSA-87 (FIPS 204)' },
+                {
+                  value: 'ML-DSA-44',
+                  label: 'ML-DSA-44 (FIPS 204 \u2014 Category 2, 128-bit security)',
+                },
+                {
+                  value: 'ML-DSA-65',
+                  label: 'ML-DSA-65 (FIPS 204 \u2014 Category 3, 192-bit security)',
+                },
+                {
+                  value: 'ML-DSA-87',
+                  label: 'ML-DSA-87 (FIPS 204 \u2014 Category 5, 256-bit security)',
+                },
+                {
+                  value: 'FN-DSA-512',
+                  label: 'FN-DSA-512 (FIPS 206 draft \u2014 compact lattice signatures)',
+                },
+                {
+                  value: 'FN-DSA-1024',
+                  label: 'FN-DSA-1024 (FIPS 206 draft \u2014 Category 5 security)',
+                },
                 { value: 'SLH-DSA-SHA2-128s', label: 'SLH-DSA-SHA2-128s (FIPS 205)' },
                 { value: 'SLH-DSA-SHA2-256s', label: 'SLH-DSA-SHA2-256s (FIPS 205)' },
                 { value: 'LMS', label: 'LMS/HSS (NIST SP 800-208)' },
@@ -159,6 +192,11 @@ function buildSections(
                   value: 'Ed448',
                   label:
                     'Ed448 (FIPS 186-5 approved, but vulnerable to Shor\u2019s algorithm \u2014 must migrate before CRQC)',
+                },
+                {
+                  value: 'RSA-3072+',
+                  label:
+                    'RSA \u2265 3072 bits (FIPS-approved but vulnerable to Shor\u2019s algorithm \u2014 must migrate before CRQC)',
                 },
               ],
             },

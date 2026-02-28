@@ -119,8 +119,23 @@ export const FirmwareSigningSimulator: React.FC = () => {
               <div className="text-[10px] text-muted-foreground mt-1">
                 Sig: {a.signatureBytes.toLocaleString()} B &middot; Key: {a.publicKeyBytes} B
               </div>
-              <div className="text-[10px] text-muted-foreground">
-                {a.stateful ? 'Stateful' : 'Stateless'} &middot; ~{a.verifyTimeMs} ms verify
+              <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                {a.stateful ? 'Stateful' : 'Stateless'} &middot;{' '}
+                <span
+                  className={`font-bold ${
+                    a.verifySpeed === 'fastest'
+                      ? 'text-success'
+                      : a.verifySpeed === 'fast'
+                        ? 'text-primary'
+                        : 'text-warning'
+                  }`}
+                >
+                  {a.verifySpeed === 'fastest'
+                    ? 'Fastest'
+                    : a.verifySpeed === 'fast'
+                      ? 'Fast'
+                      : 'Moderate'}
+                </span>
               </div>
             </button>
           ))}
@@ -181,7 +196,11 @@ export const FirmwareSigningSimulator: React.FC = () => {
             label="4. Verify signature"
             active={phase === 'verifying'}
             done={phase === 'done'}
-            detail={phase === 'done' ? `Verified in ~${algo.verifyTimeMs} ms` : undefined}
+            detail={
+              phase === 'done'
+                ? `Verified \u2014 ${algo.verifySpeed === 'fastest' ? 'Fastest PQC verifier on constrained MCUs' : algo.verifySpeed === 'fast' ? 'Fast verification on constrained MCUs' : 'Moderate verification speed on constrained MCUs'}`
+                : undefined
+            }
           />
         </div>
       )}

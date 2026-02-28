@@ -13,16 +13,34 @@ interface JurisdictionConfig {
 }
 
 const JURISDICTIONS: JurisdictionConfig[] = [
+  // North America
   { id: 'us', label: 'United States', region: 'North America', countryNames: ['United States'] },
+  { id: 'ca', label: 'Canada', region: 'North America', countryNames: ['Canada'] },
+  // Europe
   { id: 'eu', label: 'European Union', region: 'Europe', countryNames: ['European Union'] },
   { id: 'uk', label: 'United Kingdom', region: 'Europe', countryNames: ['United Kingdom'] },
   { id: 'fr', label: 'France', region: 'Europe', countryNames: ['France'] },
   { id: 'de', label: 'Germany', region: 'Europe', countryNames: ['Germany'] },
+  { id: 'cz', label: 'Czech Republic', region: 'Europe', countryNames: ['Czech Republic'] },
+  { id: 'it', label: 'Italy', region: 'Europe', countryNames: ['Italy'] },
+  { id: 'es', label: 'Spain', region: 'Europe', countryNames: ['Spain'] },
+  // Asia Pacific
   { id: 'jp', label: 'Japan', region: 'Asia Pacific', countryNames: ['Japan'] },
   { id: 'kr', label: 'South Korea', region: 'Asia Pacific', countryNames: ['South Korea'] },
   { id: 'au', label: 'Australia', region: 'Asia Pacific', countryNames: ['Australia'] },
   { id: 'sg', label: 'Singapore', region: 'Asia Pacific', countryNames: ['Singapore'] },
-  { id: 'ca', label: 'Canada', region: 'North America', countryNames: ['Canada'] },
+  { id: 'nz', label: 'New Zealand', region: 'Asia Pacific', countryNames: ['New Zealand'] },
+  { id: 'cn', label: 'China', region: 'Asia Pacific', countryNames: ['China'] },
+  { id: 'in', label: 'India', region: 'Asia Pacific', countryNames: ['India'] },
+  { id: 'tw', label: 'Taiwan', region: 'Asia Pacific', countryNames: ['Taiwan'] },
+  { id: 'hk', label: 'Hong Kong', region: 'Asia Pacific', countryNames: ['Hong Kong'] },
+  { id: 'my', label: 'Malaysia', region: 'Asia Pacific', countryNames: ['Malaysia'] },
+  // Middle East
+  { id: 'il', label: 'Israel', region: 'Middle East', countryNames: ['Israel'] },
+  { id: 'ae', label: 'UAE', region: 'Middle East', countryNames: ['United Arab Emirates'] },
+  { id: 'sa', label: 'Saudi Arabia', region: 'Middle East', countryNames: ['Saudi Arabia'] },
+  { id: 'bh', label: 'Bahrain', region: 'Middle East', countryNames: ['Bahrain'] },
+  { id: 'jo', label: 'Jordan', region: 'Middle East', countryNames: ['Jordan'] },
 ]
 
 function getEarliestDeadline(country: CountryData): number | null {
@@ -99,7 +117,10 @@ function detectConflicts(
     selectedIds.includes('eu') ||
     selectedIds.includes('fr') ||
     selectedIds.includes('de') ||
-    selectedIds.includes('uk')
+    selectedIds.includes('uk') ||
+    selectedIds.includes('cz') ||
+    selectedIds.includes('it') ||
+    selectedIds.includes('es')
 
   if (hasUS && hasEU) {
     conflicts.push({
@@ -110,7 +131,7 @@ function detectConflicts(
     })
   }
 
-  // Check for algorithm preference differences
+  // Check for algorithm preference differences (hybrid vs pure PQC)
   const frOrDe = selectedIds.includes('fr') || selectedIds.includes('de')
   if (hasUS && frOrDe) {
     conflicts.push({
@@ -118,6 +139,36 @@ function detectConflicts(
         'ANSSI (France) and BSI (Germany) emphasize hybrid mode as mandatory during transition, while NSA CNSA 2.0 focuses on pure PQC adoption. Plan for hybrid deployments that satisfy both.',
       jurisdictions: ['United States', 'France/Germany'],
       severity: 'low',
+    })
+  }
+
+  // Check for China's divergent algorithm ecosystem
+  const hasCN = selectedIds.includes('cn')
+  if (hasCN && (hasUS || hasEU)) {
+    conflicts.push({
+      description:
+        "China's OSCCA/NGCC program may standardize domestic PQC algorithms (e.g., Aigis-Sig, Aigis-Enc) alongside NIST algorithms. Organizations operating in both jurisdictions may need to support dual algorithm sets. Monitor NGCC standardization progress.",
+      jurisdictions: ['China', hasUS ? 'United States' : 'EU'],
+      severity: 'medium',
+    })
+  }
+
+  // Check for aggressive early deadlines
+  const hasAU = selectedIds.includes('au')
+  const hasTW = selectedIds.includes('tw')
+  const hasCZ = selectedIds.includes('cz')
+  const earlyDeadlineCountries = [
+    hasAU && 'Australia (2030)',
+    hasTW && 'Taiwan (2027)',
+    hasCZ && 'Czech Republic (2027)',
+  ].filter(Boolean)
+
+  if (earlyDeadlineCountries.length > 0 && (hasUS || hasEU)) {
+    const latestTarget = hasUS ? 'US full transition (2033-2035)' : 'EU full transition (2035)'
+    conflicts.push({
+      description: `${earlyDeadlineCountries.join(', ')} have deadlines significantly earlier than ${latestTarget}. Your migration plan must meet the earliest deadline across all jurisdictions.`,
+      jurisdictions: [...earlyDeadlineCountries, hasUS ? 'United States' : 'EU'] as string[],
+      severity: 'high',
     })
   }
 
@@ -249,7 +300,7 @@ export const JurisdictionMapper: React.FC = () => {
         <p className="text-sm text-muted-foreground">
           Check each jurisdiction where your organization operates or must comply with regulations.
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {Array.from(regions.entries()).map(([region, jurs]) => (
             <div key={region} className="space-y-2">
               <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">

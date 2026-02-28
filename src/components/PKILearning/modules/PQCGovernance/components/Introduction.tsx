@@ -6,6 +6,7 @@ import {
   FileText,
   BarChart3,
   ArrowRight,
+  ArrowUpRight,
   Building2,
   Scale,
   Network,
@@ -13,6 +14,7 @@ import {
   BookOpen,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { Button } from '@/components/ui/button'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -40,13 +42,14 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             organizations risk fragmented migration efforts, missed deadlines, and security gaps.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-            <blockquote className="text-sm italic text-foreground/90">
-              &ldquo;Organizations should establish a governance structure that assigns clear roles
-              and responsibilities for the cryptographic transition, including executive
-              sponsorship.&rdquo;
-            </blockquote>
+            <p className="text-sm text-foreground/90">
+              OMB Memorandum M-23-02 directs federal agencies to establish governance structures
+              with clear roles, responsibilities, and executive sponsorship for their cryptographic
+              transition to post-quantum algorithms &mdash; a model that applies equally to
+              private-sector organizations managing complex PQC migrations.
+            </p>
             <p className="text-xs text-muted-foreground mt-2">
-              &mdash; NIST IR 8547, Transition to Post-Quantum Cryptography Standards
+              &mdash; OMB M-23-02, Migrating to Post-Quantum Cryptography (2022)
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -239,6 +242,53 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
       </section>
 
+      {/* Section 4.5: Escalation & Conflict Resolution */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <ArrowUpRight size={24} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">Escalation &amp; Conflict Resolution</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            PQC migration inevitably creates conflicts: business units resist migration timelines,
+            vendors miss readiness deadlines, and teams disagree on algorithm choices. A defined
+            escalation path prevents these conflicts from stalling the program.
+          </p>
+          <div className="space-y-2">
+            {[
+              {
+                level: 'Level 1: Working Group Resolution',
+                desc: 'Technical disagreements resolved within the PQC working group (e.g., algorithm selection, testing methodology). Timeframe: 5 business days.',
+              },
+              {
+                level: 'Level 2: Steering Committee',
+                desc: 'Cross-functional conflicts (timeline vs. resource constraints, vendor exceptions) escalated to the PQC steering committee. Timeframe: 10 business days.',
+              },
+              {
+                level: 'Level 3: Executive Sponsor (CISO/CTO)',
+                desc: 'Unresolved steering committee issues or budget-impacting decisions escalated to executive sponsor. Timeframe: 5 business days.',
+              },
+              {
+                level: 'Level 4: Board / Risk Committee',
+                desc: 'Enterprise-level risk acceptance decisions (e.g., accepting quantum vulnerability for a critical system beyond deadline). Requires formal risk acceptance documentation.',
+              },
+            ].map((step, idx) => (
+              <div key={idx} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
+                <span className="text-sm font-bold text-primary shrink-0 w-6 text-center">
+                  {idx + 1}
+                </span>
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-foreground">{step.level}</div>
+                  <p className="text-xs text-muted-foreground">{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Section 5: KPI Tracking */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
@@ -333,12 +383,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
       {/* CTA */}
       <div className="text-center">
-        <button
-          onClick={onNavigateToWorkshop}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
-        >
+        <Button variant="gradient" onClick={onNavigateToWorkshop} className="gap-2">
           Start Workshop <ArrowRight size={18} />
-        </button>
+        </Button>
         <p className="text-xs text-muted-foreground mt-2">
           Build a RACI matrix, generate PQC policies, and design a governance KPI dashboard.
         </p>

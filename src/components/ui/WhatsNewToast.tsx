@@ -19,7 +19,12 @@ export const WhatsNewToast = () => {
     // Don't show while guided tour is still pending — both appearing
     // simultaneously causes z-index conflicts that block tour dismissal.
     const timer = setTimeout(() => {
-      const tourCompleted = localStorage.getItem('pqc-tour-completed')
+      let tourCompleted = false
+      try {
+        tourCompleted = !!localStorage.getItem('pqc-tour-completed')
+      } catch {
+        // localStorage unavailable — assume tour not completed, suppress toast
+      }
       if (!hasSeenCurrentVersion() && tourCompleted) {
         setIsVisible(true)
       }
@@ -80,24 +85,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC Assistant hardened</strong> &mdash; all
-                    25 modules in system prompt, persona-aware follow-ups, expanded country
-                    detection, retry logic
+                    <strong className="text-foreground">Compliance Strategy expanded</strong>{' '}
+                    &mdash; 24 jurisdictions, country deadline table, eIDAS 2.0 / DORA / CBOM
+                    dependency sections
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Smarter retrieval</strong> &mdash; module vs
-                    FIPS disambiguation, 80K char prompt guard, safety settings for cybersecurity
-                    content
+                    <strong className="text-foreground">IoT/OT deepened</strong> &mdash; energy
+                    budget, Ascon callout, chain bloat exercise, 3 new protocols, color-coded speed
+                    badges
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Better follow-ups</strong> &mdash;
-                    LLM-generated suggestions now render; persona-specific fallbacks active
+                    <strong className="text-foreground">PQC Governance upgraded</strong> &mdash;
+                    4-level escalation framework, click-to-cycle RACI (10 activities), expanded
+                    policy templates
                   </span>
                 </li>
               </ul>
