@@ -56,7 +56,7 @@ export const FileManager = () => {
   const getIcon = (type: string) => {
     switch (type) {
       case 'key':
-        return <FileKey size={16} className="text-amber-400" />
+        return <FileKey size={16} className="text-status-warning" />
       case 'cert':
         return <FileCode size={16} className="text-primary" />
       default:

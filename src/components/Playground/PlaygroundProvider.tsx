@@ -2,25 +2,21 @@ import React, { useEffect } from 'react'
 import { SettingsProvider } from './contexts/SettingsProvider'
 import { KeyStoreProvider } from './contexts/KeyStoreProvider'
 import { OperationsProvider } from './contexts/OperationsProvider'
-import { openSSLService } from '../../services/crypto/OpenSSLService'
 import * as MLKEM from '../../wasm/liboqs_kem'
 import * as MLDSA from '../../wasm/liboqs_dsa'
 import * as LIBOQS_SIG from '../../wasm/liboqs_sig'
 
 export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Pre-load OpenSSL and Cleanup on unmount
+  // Cleanup WASM instance caches on unmount to free ~2-3MB
   useEffect(() => {
-    // Start initialization immediately
-    openSSLService.init().catch(console.error)
-
     return () => {
-      // Terminate OpenSSL worker to free resources
-      openSSLService.terminate()
-
-      // Clear WASM instance caches to free ~2-3MB
-      MLKEM.clearInstanceCache()
-      MLDSA.clearInstanceCache()
-      LIBOQS_SIG.clearInstanceCache()
+      try {
+        MLKEM.clearInstanceCache()
+        MLDSA.clearInstanceCache()
+        LIBOQS_SIG.clearInstanceCache()
+      } catch (e) {
+        console.error('WASM cleanup error:', e)
+      }
     }
   }, [])
 

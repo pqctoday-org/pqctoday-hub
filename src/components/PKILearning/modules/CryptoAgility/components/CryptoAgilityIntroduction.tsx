@@ -46,7 +46,7 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
               cryptography by designing systems with cryptographic agility.&rdquo;
             </blockquote>
             <p className="text-xs text-muted-foreground mt-2">
-              &mdash; NIST IR 8547 (Draft), November 2024
+              &mdash; NIST IR 8547, November 2024
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

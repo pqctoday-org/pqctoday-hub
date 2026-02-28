@@ -20,13 +20,12 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
         options: [
           {
             value: '2025',
-            label: '2025 — CNSA 2.0 cryptographic hardware & networking products (NSS)',
+            label: '2025 — CNSA 2.0 software/firmware signing (NSS)',
           },
           { value: '2027', label: '2027 — Internal target (between major standards deadlines)' },
           {
             value: '2030',
-            label:
-              '2030 — CNSA 2.0 software/firmware/web/cloud (NSS); NIST IR 8547 RSA/ECC deprecation',
+            label: '2030 — CNSA 2.0 web/cloud/networking (NSS); NIST IR 8547 RSA/ECC deprecation',
           },
           { value: '2033', label: '2033 — CNSA 2.0 legacy NSS systems (final deadline)' },
         ],

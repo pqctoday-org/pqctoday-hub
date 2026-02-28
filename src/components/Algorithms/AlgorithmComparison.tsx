@@ -196,12 +196,12 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
       ) : (
         <>
           {/* Mobile View */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <MobileAlgorithmList data={sortedData} />
           </div>
 
           {/* Desktop View */}
-          <div className="hidden md:block glass-panel overflow-hidden">
+          <div className="hidden lg:block glass-panel overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse table-fixed">
                 <caption className="sr-only">

@@ -1,6 +1,5 @@
 import {
   Play,
-  Settings,
   Database,
   Activity,
   Lock,
@@ -16,7 +15,6 @@ import { PlaygroundProvider } from './PlaygroundProvider'
 import { useSettingsContext } from './contexts/SettingsContext'
 import { useKeyStoreContext } from './contexts/KeyStoreContext'
 import { ACVPTesting } from '../ACVP/ACVPTesting'
-import { SettingsTab } from './tabs/SettingsTab'
 import { DataTab } from './tabs/DataTab'
 import { KemOpsTab } from './tabs/KemOpsTab'
 import { SymmetricTab } from './tabs/SymmetricTab'
@@ -27,20 +25,12 @@ import { LogsTab } from './tabs/LogsTab'
 import { logEvent } from '../../utils/analytics'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
-import { MobilePlaygroundView } from './MobilePlaygroundView'
 
 export const InteractivePlayground = () => {
   return (
-    <>
-      <div className="md:hidden px-4 py-4">
-        <MobilePlaygroundView />
-      </div>
-      <div className="hidden md:block">
-        <PlaygroundProvider>
-          <PlaygroundContent />
-        </PlaygroundProvider>
-      </div>
-    </>
+    <PlaygroundProvider>
+      <PlaygroundContent />
+    </PlaygroundProvider>
   )
 }
 
@@ -179,19 +169,6 @@ const PlaygroundContent = () => {
           <ShieldCheck size={16} className="mr-2" /> ACVP
         </Button>
         <Button
-          onClick={() => handleTabChange('settings')}
-          variant="ghost"
-          size="sm"
-          className={clsx(
-            'whitespace-nowrap',
-            activeTab === 'settings'
-              ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-          )}
-        >
-          <Settings size={16} className="mr-2" /> Settings
-        </Button>
-        <Button
           onClick={() => handleTabChange('logs')}
           variant="ghost"
           size="sm"
@@ -208,7 +185,6 @@ const PlaygroundContent = () => {
 
       {/* Content Area */}
       <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-6 relative">
-        {activeTab === 'settings' && <SettingsTab />}
         {activeTab === 'data' && <DataTab />}
         {activeTab === 'kem_ops' && <KemOpsTab />}
         {activeTab === 'symmetric' && <SymmetricTab />}

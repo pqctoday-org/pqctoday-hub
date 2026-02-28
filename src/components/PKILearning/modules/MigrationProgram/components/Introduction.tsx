@@ -78,21 +78,19 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
       </section>
 
-      {/* Section 2: NIST IR 8547 7-Phase Framework */}
+      {/* Section 2: 7-Phase Migration Framework */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <Route size={24} className="text-secondary" />
           </div>
-          <h2 className="text-xl font-bold text-gradient">
-            NIST IR 8547: 7-Phase Migration Framework
-          </h2>
+          <h2 className="text-xl font-bold text-gradient">PQC Migration Framework (7 Phases)</h2>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            <InlineTooltip term="NIST IR 8547">NIST IR 8547</InlineTooltip> defines a structured
-            approach to PQC migration that serves as the foundation for enterprise migration
-            programs. Each phase builds on the previous and has clear deliverables.
+            Aligned with CISA and <InlineTooltip term="NIST IR 8547">NIST</InlineTooltip> migration
+            guidance, this structured framework serves as the foundation for enterprise PQC
+            migration programs. Each phase builds on the previous and has clear deliverables.
           </p>
           <div className="space-y-2">
             {[

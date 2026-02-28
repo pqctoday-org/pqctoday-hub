@@ -27,8 +27,8 @@ export const generateKey = async (
     const genRes = await openSSLService.execute(
       `openssl genpkey -algorithm ${algoName} -out ${privName}`
     )
-    if (genRes.stderr && genRes.stderr.toLowerCase().includes('error')) {
-      throw new Error(`OpenSSL genpkey failed for ${algoName}: ${genRes.stderr}`)
+    if (genRes.error || (genRes.stderr && genRes.stderr.toLowerCase().includes('error'))) {
+      throw new Error(`OpenSSL genpkey failed for ${algoName}: ${genRes.stderr || genRes.error}`)
     }
 
     // Retrieve generated private key from result files
@@ -42,8 +42,8 @@ export const generateKey = async (
       `openssl pkey -in ${privName} -pubout -out ${pubName}`,
       [privKeyFile]
     )
-    if (pubRes.stderr && pubRes.stderr.toLowerCase().includes('error'))
-      throw new Error(`Pubout failed: ${pubRes.stderr}`)
+    if (pubRes.error || (pubRes.stderr && pubRes.stderr.toLowerCase().includes('error')))
+      throw new Error(`Pubout failed: ${pubRes.stderr || pubRes.error}`)
 
     const pubKeyFile = pubRes.files.find((f) => f.name === pubName)
     if (!pubKeyFile) {
@@ -128,6 +128,10 @@ export const verify = async (
         { name: sigName, data: signature },
       ]
     )
+
+    if (verRes.error || (verRes.stderr && verRes.stderr.toLowerCase().includes('error'))) {
+      throw new Error(`Verify failed: ${verRes.stderr || verRes.error}`)
+    }
 
     // OpenSSL pkeyutl -verify prints "Signature Verified Successfully" to stdout
     if (verRes.stdout.includes('Signature Verified Successfully')) {

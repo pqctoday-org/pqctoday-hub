@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   Download,
   Trash2,
@@ -32,6 +32,13 @@ export const WorkbenchFileManager: React.FC = () => {
   const [sortBy, setSortBy] = useState<'timestamp' | 'type' | 'name' | 'size'>('timestamp')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [confirmClear, setConfirmClear] = useState(false)
+  const clearTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (clearTimeoutRef.current) clearTimeout(clearTimeoutRef.current)
+    }
+  }, [])
 
   const formatBytes = (bytes: number) => {
     if (bytes === 0) return '0 B'
@@ -209,7 +216,8 @@ export const WorkbenchFileManager: React.FC = () => {
               } else {
                 setConfirmClear(true)
                 // Reset after 3 seconds
-                setTimeout(() => {
+                if (clearTimeoutRef.current) clearTimeout(clearTimeoutRef.current)
+                clearTimeoutRef.current = setTimeout(() => {
                   setConfirmClear(false)
                 }, 3000)
               }

@@ -240,6 +240,17 @@ export const LandingView = () => {
           platform.
         </motion.p>
 
+        {/* Personalization Section moved up */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          custom={2.5}
+          className="mb-8"
+        >
+          <PersonalizationSection />
+        </motion.div>
+
         <motion.div
           initial="hidden"
           animate="visible"
@@ -285,14 +296,13 @@ export const LandingView = () => {
           ].map((stat) => (
             <div key={stat.label} className="glass-panel p-4 text-center">
               <div className="text-2xl md:text-3xl font-bold text-gradient">{stat.value}</div>
-              <div className="text-xs text-muted-foreground mt-1 leading-tight">{stat.label}</div>
+              <div className="text-xs sm:text-sm text-muted-foreground mt-1 leading-tight">
+                {stat.label}
+              </div>
             </div>
           ))}
         </motion.div>
       </section>
-
-      {/* Personalization Section */}
-      <PersonalizationSection />
 
       {/* Learning Journey Scorecard */}
       <ScoreCard />
@@ -314,49 +324,6 @@ export const LandingView = () => {
           </motion.p>
         </motion.div>
 
-        {/* Step Rail */}
-        <div className="relative mb-8">
-          <div className="flex items-start justify-between overflow-x-auto pb-2 gap-1">
-            {JOURNEY_STEPS.map((step, idx) => {
-              const accessible = isAccessible(step)
-              const recommended = isRecommendedStep(step)
-              return (
-                <div key={step.id} className="flex items-start flex-1 min-w-0">
-                  <div
-                    className={`flex flex-col items-center flex-shrink-0 transition-opacity ${accessible ? 'opacity-100' : 'opacity-35'}`}
-                  >
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors ${
-                        accessible
-                          ? 'border-primary bg-primary/10 text-primary'
-                          : 'border-border bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {step.step}
-                    </div>
-                    <span className="text-[11px] mt-1 text-muted-foreground font-medium whitespace-nowrap">
-                      {step.label}
-                    </span>
-                    {recommended && (
-                      <span className="text-[9px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1 py-0.5 mt-0.5">
-                        For you
-                      </span>
-                    )}
-                  </div>
-                  {idx < JOURNEY_STEPS.length - 1 && (
-                    <div className="h-0.5 flex-1 min-w-[8px] mx-1 sm:mx-2 bg-border mt-4" />
-                  )}
-                </div>
-              )
-            })}
-          </div>
-          {/* Right-edge fade — visual affordance that rail can scroll on narrow viewports */}
-          <div
-            className="pointer-events-none absolute right-0 top-0 bottom-2 w-10 bg-gradient-to-l from-background to-transparent"
-            aria-hidden="true"
-          />
-        </div>
-
         {/* Journey Step Cards */}
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
@@ -371,27 +338,29 @@ export const LandingView = () => {
               <motion.div
                 key={step.id}
                 variants={fadeUp}
-                className={accessible ? '' : 'opacity-40'}
+                className={`flex h-full ${accessible ? '' : 'opacity-40'}`}
               >
-                <Link to={step.paths[0]} className="block h-full">
-                  <div className="glass-panel p-6 h-full hover:border-primary/30 transition-colors group">
-                    <div className="flex items-start justify-between gap-2 mb-3">
+                <Link to={step.paths[0]} className="block w-full group">
+                  <div className="glass-panel p-4 h-full border-border/50 hover:border-primary/30 transition-all duration-300 flex flex-col">
+                    <div className="flex items-start justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono text-muted-foreground w-4">
+                        <span className="text-xs font-mono text-muted-foreground w-4 underline underline-offset-4 decoration-primary/30">
                           {step.step}
                         </span>
-                        <step.icon className={step.color} size={24} />
+                        <step.icon className={step.color} size={18} />
                       </div>
                       {recommended && (
-                        <span className="text-xs font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1.5 py-0.5 shrink-0">
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1.5 py-0.5 shrink-0 bg-primary/5">
                           For you
                         </span>
                       )}
                     </div>
-                    <h3 className="text-base font-semibold mb-2 group-hover:text-primary transition-colors">
+                    <h3 className="text-sm font-bold mb-1 group-hover:text-primary transition-colors tracking-tight">
                       {step.label}
                     </h3>
-                    <p className="text-sm text-muted-foreground">{step.description}</p>
+                    <p className="text-xs text-muted-foreground leading-snug flex-1">
+                      {step.description}
+                    </p>
                     <div className="flex flex-wrap gap-1 mt-3">
                       {step.paths.map((p) => (
                         <span

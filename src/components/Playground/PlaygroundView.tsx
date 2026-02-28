@@ -15,7 +15,7 @@ export const PlaygroundView = () => {
       {/* Desktop View */}
       <div className="hidden md:block">
         <div className="mb-2 md:mb-8">
-          <h2 className="text-xl md:text-3xl font-bold text-gradient mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
+          <h2 className="text-xl md:text-4xl font-bold text-gradient mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
             <FlaskConical className="text-secondary w-5 h-5 md:w-8 md:h-8" aria-hidden="true" />
             Interactive Playground
           </h2>

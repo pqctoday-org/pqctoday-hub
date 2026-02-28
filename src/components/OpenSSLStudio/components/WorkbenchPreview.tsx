@@ -49,7 +49,7 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, sk
             </a>
 
             {category === 'lms' ? (
-              <span className="text-xs text-amber-500 px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded">
+              <span className="text-xs text-status-warning px-4 py-1.5 bg-status-warning/10 border border-status-warning/20 rounded">
                 Use WASM buttons in config panel ↑
               </span>
             ) : (

@@ -7,16 +7,8 @@ import type {
   SortColumn,
   SortDirection,
   ClassicalAlgorithm,
-  EnabledAlgorithms,
 } from './types'
-export type {
-  SettingsContextType,
-  ExecutionMode,
-  SortColumn,
-  SortDirection,
-  ClassicalAlgorithm,
-  EnabledAlgorithms,
-}
+export type { SettingsContextType, ExecutionMode, SortColumn, SortDirection, ClassicalAlgorithm }
 
 export const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
 

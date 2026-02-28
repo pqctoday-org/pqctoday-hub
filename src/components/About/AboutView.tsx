@@ -11,16 +11,18 @@ import {
   Sparkles,
 } from 'lucide-react'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 import { MobileAboutView } from './MobileAboutView'
-import { StudyPackCard } from './StudyPackCard'
+import { CareerJourneyModal } from './CareerJourneyModal'
 import { useTheme } from '../../hooks/useTheme'
 import { getCurrentVersion } from '../../store/useVersionStore'
 
 export function AboutView() {
   const { theme, setTheme } = useTheme()
   const version = getCurrentVersion()
+  const [isJourneyModalOpen, setIsJourneyModalOpen] = useState(false)
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -41,7 +43,7 @@ export function AboutView() {
             <div className="flex items-center gap-3">
               <Info className="text-primary" size={24} />
               <div>
-                <h2 className="text-2xl font-bold">About PQC Today</h2>
+                <h2 className="text-2xl font-semibold">About PQC Today</h2>
                 <p className="text-xs text-muted-foreground font-mono">v{version}</p>
               </div>
             </div>
@@ -63,17 +65,29 @@ export function AboutView() {
               crypto-agile systems, an executive tracking regulatory deadlines, or a researcher
               exploring quantum key distribution and entropy sources.
             </p>
-            <p className="text-muted-foreground mt-4">
-              Connect with me on LinkedIn:{' '}
-              <a
-                href="https://www.linkedin.com/in/eric-amador-971850a"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4">
+              <p className="text-muted-foreground">
+                Connect with me on LinkedIn:{' '}
+                <a
+                  href="https://www.linkedin.com/in/eric-amador-971850a"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Eric Amador
+                </a>
+              </p>
+              <span className="hidden sm:inline text-muted-foreground/30">•</span>
+              <button
+                onClick={() => setIsJourneyModalOpen(true)}
+                className="inline-flex items-center gap-2 text-accent hover:text-accent/80 transition-colors group"
               >
-                Eric Amador
-              </a>
-            </p>
+                <Sparkles size={18} className="group-hover:animate-pulse" />
+                <span className="font-semibold underline decoration-2 underline-offset-4">
+                  View My Career Journey
+                </span>
+              </button>
+            </div>
             <p className="text-muted-foreground mt-4">
               See the latest updates:{' '}
               <a href="/changelog" className="text-primary hover:underline">
@@ -82,9 +96,6 @@ export function AboutView() {
             </p>
           </div>
         </motion.div>
-
-        {/* Study Pack Export */}
-        <StudyPackCard />
 
         {/* SBOM Section */}
         <motion.div
@@ -95,7 +106,7 @@ export function AboutView() {
         >
           <div className="flex items-center gap-3 mb-6">
             <Info className="text-primary" size={24} />
-            <h2 className="text-xl font-bold">Software Bill of Materials (SBOM)</h2>
+            <h2 className="text-xl font-semibold">Software Bill of Materials (SBOM)</h2>
           </div>
           <div className="columns-1 md:columns-3 gap-6 space-y-6">
             <div className="break-inside-avoid">
@@ -184,8 +195,8 @@ export function AboutView() {
                   <span className="text-xs text-muted-foreground/60">Native</span>
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
-                  <span className="text-muted-foreground">@openforge-sh/liboqs</span>
-                  <span className="text-xs text-muted-foreground/60">v0.14.3</span>
+                  <span className="text-muted-foreground">@oqs/liboqs-js</span>
+                  <span className="text-xs text-muted-foreground/60">v0.15.1</span>
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">@noble/hashes</span>
@@ -311,8 +322,8 @@ export function AboutView() {
           <div className="flex items-center gap-3 mb-6">
             <ShieldCheck className="text-primary" size={24} />
             <div>
-              <h2 className="text-xl font-bold">Security Audit</h2>
-              <p className="text-xs text-muted-foreground">Last audited: February 26, 2026</p>
+              <h2 className="text-xl font-semibold">Security Audit</h2>
+              <p className="text-xs text-muted-foreground">Last audited: February 27, 2026</p>
             </div>
           </div>
 
@@ -408,7 +419,7 @@ export function AboutView() {
         >
           <div className="flex items-center gap-3 mb-4">
             <Lock className="text-primary" size={24} />
-            <h2 className="text-xl font-bold">Data Privacy</h2>
+            <h2 className="text-xl font-semibold">Data Privacy</h2>
           </div>
           <div className="prose prose-invert max-w-none">
             <p className="text-muted-foreground">
@@ -461,7 +472,7 @@ export function AboutView() {
         >
           <div className="flex items-center gap-3 mb-4">
             <Shield className="text-secondary" size={24} />
-            <h2 className="text-xl font-bold">Open Source License</h2>
+            <h2 className="text-xl font-semibold">Open Source License</h2>
           </div>
           <div className="prose prose-invert max-w-none">
             <p className="text-muted-foreground">
@@ -506,7 +517,7 @@ export function AboutView() {
           <div className="flex items-center gap-3 mb-4">
             <BrainCircuit className="text-primary" size={24} />
             <div>
-              <h2 className="text-xl font-bold">PQC Assistant</h2>
+              <h2 className="text-xl font-semibold">PQC Assistant</h2>
               <p className="text-xs text-muted-foreground">RAG + Gemini 2.5 Flash</p>
             </div>
           </div>
@@ -602,7 +613,7 @@ export function AboutView() {
           transition={{ delay: 0.4 }}
           className="glass-panel p-6 text-center"
         >
-          <h3 className="text-lg font-bold mb-2">AI Technology Acknowledgment</h3>
+          <h3 className="text-lg font-semibold mb-2">AI Technology Acknowledgment</h3>
           <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
             This site is developed, documented, validated and deployed using advanced AI
             technologies including Google Antigravity, ChatGPT, Claude AI, Perplexity, and Gemini
@@ -618,7 +629,7 @@ export function AboutView() {
           transition={{ delay: 0.45 }}
           className="glass-panel p-6 flex flex-col items-center justify-center gap-4"
         >
-          <h3 className="text-lg font-bold">Appearance</h3>
+          <h3 className="text-lg font-semibold">Appearance</h3>
           <p className="text-sm text-muted-foreground text-center max-w-md">
             Choose your preferred color scheme.
           </p>
@@ -642,6 +653,10 @@ export function AboutView() {
           </div>
         </motion.div>
       </div>
+      <CareerJourneyModal
+        isOpen={isJourneyModalOpen}
+        onClose={() => setIsJourneyModalOpen(false)}
+      />
     </div>
   )
 }

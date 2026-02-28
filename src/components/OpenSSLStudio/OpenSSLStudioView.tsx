@@ -34,7 +34,7 @@ export const OpenSSLStudioView = () => {
   return (
     <div className="h-full flex flex-col animate-fade-in">
       <div className="mb-6 shrink-0">
-        <h2 className="text-3xl font-bold text-gradient mb-2 flex items-center gap-3">
+        <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-2 flex items-center gap-3">
           <Terminal className="text-primary" aria-hidden="true" />
           OpenSSL Studio
         </h2>

@@ -8,6 +8,7 @@ export const useOpenSSL = () => {
     addLog,
     clearTerminalLogs,
     setIsProcessing,
+    isProcessing,
     addFile,
     files,
     command: currentCommand,
@@ -63,7 +64,11 @@ export const useOpenSSL = () => {
         case 'ERROR':
           addLog('error', `System Error: ${event.data.error} `)
           setIsProcessing(false)
-          setIsReady(false)
+          // Only mark service as not-ready for global/init-level errors (no requestId).
+          // Per-command errors (with requestId) are normal failures — the worker stays alive.
+          if (!event.data.requestId) {
+            setIsReady(false)
+          }
           break
         case 'DONE':
           setIsProcessing(false)
@@ -147,7 +152,7 @@ export const useOpenSSL = () => {
   const executeCommand = useCallback(
     async (cmdOverride?: string) => {
       const commandToExecute = cmdOverride || currentCommand
-      if (!commandToExecute) return
+      if (!commandToExecute || isProcessing) return
 
       commandRef.current = commandToExecute
       setIsProcessing(true)
@@ -198,7 +203,15 @@ export const useOpenSSL = () => {
         } as WorkerMessage)
       }
     },
-    [currentCommand, setIsProcessing, clearTerminalLogs, addLog, files, setLastExecutionTime]
+    [
+      currentCommand,
+      isProcessing,
+      setIsProcessing,
+      clearTerminalLogs,
+      addLog,
+      files,
+      setLastExecutionTime,
+    ]
   )
 
   const executeSkey = useCallback(

@@ -30,8 +30,6 @@ const createMockContext = (overrides: Partial<SettingsContextType> = {}): Settin
     wasmLoaded: true,
     classicalAlgorithm: 'X25519',
     setClassicalAlgorithm: vi.fn(),
-    enabledAlgorithms: { kem: {}, signature: {}, symmetric: {}, hash: {} },
-    toggleAlgorithm: vi.fn(),
     handleAlgorithmChange: vi.fn(),
     activeTab: 'logs',
     setActiveTab: vi.fn(),

@@ -65,16 +65,16 @@ export const LeaderCard = ({ leader }: LeaderCardProps) => {
       </div>
 
       <h3 className="text-xl font-bold mb-1">{leader.name}</h3>
-      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-        <Briefcase size={14} aria-hidden="true" />
-        <span>{leader.title}</span>
+      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 overflow-hidden">
+        <Briefcase size={14} aria-hidden="true" className="shrink-0" />
+        <span className="truncate">{leader.title}</span>
       </div>
 
       <div className="flex flex-col gap-1 text-sm font-bold text-primary mb-4">
         {leader.organizations.map((org, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <Building2 size={14} aria-hidden="true" />
-            <span>{org}</span>
+          <div key={i} className="flex items-center gap-2 overflow-hidden">
+            <Building2 size={14} aria-hidden="true" className="shrink-0" />
+            <span className="truncate">{org}</span>
           </div>
         ))}
       </div>

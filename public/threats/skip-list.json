@@ -1,0 +1,37 @@
+{
+  "https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF": {
+    "threatId": "AERO-002",
+    "reason": "forbidden",
+    "date": "2026-02-27T06:40:06.018Z"
+  },
+  "https://unece.org/transport/vehicle-regulations": {
+    "threatId": "AUTO-003",
+    "reason": "forbidden",
+    "date": "2026-02-27T06:40:09.592Z"
+  },
+  "https://www.utoronto.ca/news/u-t-researcher-leads-effort-protect-power-utilities-quantum-attacks": {
+    "threatId": "ENERGY-003",
+    "reason": "forbidden",
+    "date": "2026-02-27T06:41:03.384Z"
+  },
+  "https://www.hhs.gov/hipaa/for-professionals/security/index.html": {
+    "threatId": "HLTH-001",
+    "reason": "forbidden",
+    "date": "2026-02-27T06:41:22.061Z"
+  },
+  "https://www.gs1.org/standards": {
+    "threatId": "RETAIL-003",
+    "reason": "forbidden",
+    "date": "2026-02-27T06:41:58.283Z"
+  },
+  "https://www.gsma.com/solutions-and-impact/technologies/security/": {
+    "threatId": "TELCO-001",
+    "reason": "forbidden",
+    "date": "2026-02-27T06:42:06.011Z"
+  },
+  "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-telco-network-task-force/": {
+    "threatId": "TELCO-002",
+    "reason": "forbidden",
+    "date": "2026-02-27T06:42:06.714Z"
+  }
+}

@@ -43,7 +43,7 @@ SHA-256,256-bit,SHA3-256 (FIPS 202),Hash,"Grover reduces to ~128-bit — still q
 HMAC-MD5,128-bit,HMAC-SHA256 (FIPS 198-1),Hash,"Disallowed — classically broken; migrate immediately",2002 (FIPS 198-1)
 SHA-1 (HMAC),160-bit,HMAC-SHA256 (FIPS 198-1),Hash,"Deprecated 2011 / Disallowed 2030",2002 (FIPS 198-1)
 AES-256,256-bit,AES-256 (FIPS 197),Symmetric,"Safe beyond 2030 — Grover reduces to ~128-bit; remains quantum-resistant for symmetric encryption",2001 (FIPS 197)
-AES-128,128-bit,AES-256 (FIPS 197),Symmetric,"Deprecated for new systems — Grover reduces to ~64-bit; upgrade required by 2030",2001 (FIPS 197)
+AES-128,128-bit,AES-256 (FIPS 197),Symmetric,"Not deprecated by NIST — Grover's theoretically halves security but deemed impractical (NIST 2024); CNSA 2.0 recommends AES-256 for national security systems",2001 (FIPS 197)
 AES-192,192-bit,AES-256 (FIPS 197),Symmetric,"Grover reduces to ~96-bit quantum security — upgrade recommended",2001 (FIPS 197)
 3DES,112-bit effective,AES-256 (FIPS 197),Symmetric,"Disallowed Jan 2024 — Grover reduces to ~56-bit; migrate immediately",2001 (FIPS 197)
 DES,56-bit,AES-256 (FIPS 197),Symmetric,"Disallowed — broken classically and by Grover",2001 (FIPS 197)

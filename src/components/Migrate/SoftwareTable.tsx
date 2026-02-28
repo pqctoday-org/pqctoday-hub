@@ -124,12 +124,12 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
     )
   }
 
-  const headers: { key: SortKey; label: string }[] = [
+  const headers: { key: SortKey; label: string; mobileHidden?: boolean }[] = [
     { key: 'softwareName', label: 'Product' },
     { key: 'infrastructureLayer', label: 'Layer' },
-    { key: 'categoryName', label: 'Category' },
+    { key: 'categoryName', label: 'Category', mobileHidden: true },
     { key: 'pqcSupport', label: 'PQC Support' },
-    { key: 'license', label: 'License' },
+    { key: 'license', label: 'License', mobileHidden: true },
     { key: 'fipsValidated', label: 'FIPS' },
   ]
 
@@ -152,7 +152,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
               {headers.map((header) => (
                 <th
                   key={header.key}
-                  className="p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
+                  className={`p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors${header.mobileHidden ? ' hidden md:table-cell' : ''}`}
                   onClick={() => handleSort(header.key)}
                   aria-sort={
                     sortConfig.key === header.key
@@ -256,9 +256,13 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                         .map((id) => LAYERS.find((l) => l.id === id)?.label ?? id)
                         .join(', ')}
                     </td>
-                    <td className="p-4 text-sm text-muted-foreground">{item.categoryName}</td>
+                    <td className="p-4 text-sm text-muted-foreground hidden md:table-cell">
+                      {item.categoryName}
+                    </td>
                     <td className="p-4 text-sm">{renderPqcSupport(item.pqcSupport)}</td>
-                    <td className="p-4 text-sm text-muted-foreground">{item.license}</td>
+                    <td className="p-4 text-sm text-muted-foreground hidden md:table-cell">
+                      {item.license}
+                    </td>
                     <td className="p-4 text-sm">{renderFipsStatus(item.fipsValidated)}</td>
                   </tr>
                   {isExpanded && (

@@ -155,19 +155,24 @@ export const KeyStoreProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       contents.forEach((relativePath, zipEntry) => {
         if (!zipEntry.dir && relativePath.endsWith('.txt')) {
           promises.push(
-            zipEntry.async('string').then((content) => {
-              const keyName = relativePath.replace('.txt', '').replace(/_/g, ' ')
-              const newKey: Key = {
-                id: `imported-${Date.now()}-${importedCount}`,
-                name: keyName,
-                type: 'private', // Default to private for imported keys
-                value: content,
-                algorithm: 'Imported',
-                timestamp: Date.now(),
-              }
-              newKeys.push(newKey)
-              importedCount++
-            })
+            zipEntry
+              .async('string')
+              .then((content) => {
+                const keyName = relativePath.replace('.txt', '').replace(/_/g, ' ')
+                const newKey: Key = {
+                  id: `imported-${Date.now()}-${importedCount}`,
+                  name: keyName,
+                  type: 'private', // Default to private for imported keys
+                  value: content,
+                  algorithm: 'Imported',
+                  timestamp: Date.now(),
+                }
+                newKeys.push(newKey)
+                importedCount++
+              })
+              .catch((entryError) => {
+                console.error(`Failed to read ${relativePath} from ZIP:`, entryError)
+              })
           )
         }
       })
@@ -178,7 +183,7 @@ export const KeyStoreProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       addLog({
         keyLabel: 'System',
         operation: 'Restore Keys',
-        result: `Imported ${importedCount} key(s) from ${file.name}`,
+        result: `Imported ${newKeys.length} key(s) from ${file.name}`,
         executionTime: 0,
       })
 

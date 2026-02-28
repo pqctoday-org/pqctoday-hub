@@ -71,7 +71,8 @@ export const ALGORITHM_DB: Record<
   'AES-128': {
     quantumVulnerable: false,
     replacement: 'AES-256 (recommended upgrade)',
-    notes: "Grover's algorithm reduces security to ~64-bit. Upgrade to AES-256.",
+    notes:
+      "Grover's theoretically reduces to ~64-bit but deemed impractical by NIST (2024). CNSA 2.0 recommends AES-256 for national security systems.",
   },
   'AES-192': {
     quantumVulnerable: false,

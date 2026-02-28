@@ -1,0 +1,706 @@
+{
+  "generated": "2026-02-27T06:40:04.420Z",
+  "source": "src/data/quantum_threats_hsm_industries_02282026.csv",
+  "summary": {
+    "downloaded": 66,
+    "skipped": 4,
+    "failed": 9,
+    "persisted_skip": 3
+  },
+  "entries": [
+    {
+      "threatId": "AERO-001",
+      "title": "RTCA DO-326A / DO-356A Airworthiness Security",
+      "url": "https://www.rtca.org/security/",
+      "status": "downloaded",
+      "file": "public/threats/AERO-001.html",
+      "sizeBytes": 118286,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "AERO-002",
+      "title": "NSA CNSA 2.0 Cybersecurity Advisory",
+      "url": "https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF",
+      "status": "failed",
+      "reason": "forbidden",
+      "persistent": true
+    },
+    {
+      "threatId": "AERO-003",
+      "title": "ICAO Assembly Resolution A41-19",
+      "url": "https://www.icao.int/events/a41/resolutions",
+      "status": "downloaded",
+      "file": "public/threats/AERO-003.html",
+      "sizeBytes": 81344,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "AUTO-001",
+      "title": "ISO/SAE 21434 Road Vehicle Cybersecurity",
+      "url": "https://www.iso.org/standard/70918.html",
+      "status": "downloaded",
+      "file": "public/threats/AUTO-001.html",
+      "sizeBytes": 78891,
+      "contentType": "text/html;charset=UTF-8"
+    },
+    {
+      "threatId": "AUTO-002",
+      "title": "SAE J3061 / ISO/SAE 21434 Vehicle Cybersecurity",
+      "url": "https://www.sae.org/standards/content/j3061_202112/",
+      "status": "downloaded",
+      "file": "public/threats/AUTO-002.html",
+      "sizeBytes": 15025,
+      "contentType": "text/html"
+    },
+    {
+      "threatId": "AUTO-003",
+      "title": "UNECE WP.29 Regulations R155/R156",
+      "url": "https://unece.org/transport/vehicle-regulations",
+      "status": "failed",
+      "reason": "forbidden",
+      "persistent": true
+    },
+    {
+      "threatId": "AUTO-004",
+      "title": "ISO/SAE 21434 Road Vehicle Cybersecurity",
+      "url": "https://www.iso.org/standard/70918.html",
+      "status": "downloaded",
+      "file": "public/threats/AUTO-004.html",
+      "sizeBytes": 78891,
+      "contentType": "text/html;charset=UTF-8"
+    },
+    {
+      "threatId": "CLOUD-001",
+      "title": "Cloud Security Alliance Quantum-Safe Guidelines",
+      "url": "https://cloudsecurityalliance.org/research/working-groups/quantum-safe-security",
+      "status": "downloaded",
+      "file": "public/threats/CLOUD-001.html",
+      "sizeBytes": 80636,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "CLOUD-002",
+      "title": "Cloud Security Alliance Quantum-Safe Security",
+      "url": "https://cloudsecurityalliance.org/research/working-groups/quantum-safe-security",
+      "status": "downloaded",
+      "file": "public/threats/CLOUD-002.html",
+      "sizeBytes": 80636,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "CLOUD-003",
+      "title": "NIST IR 8547 / NIST SP 800-210",
+      "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
+      "status": "downloaded",
+      "file": "public/threats/CLOUD-003.html",
+      "sizeBytes": 45265,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "CLOUD-004",
+      "title": "NIST SP 800-210 Cloud Access Control",
+      "url": "https://csrc.nist.gov/pubs/sp/800/210/final",
+      "status": "downloaded",
+      "file": "public/threats/CLOUD-004.html",
+      "sizeBytes": 45912,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "CROSS-001",
+      "title": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
+      "url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
+      "status": "downloaded",
+      "file": "public/threats/CROSS-001.html",
+      "sizeBytes": 525032,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "CROSS-002",
+      "title": "NIST IR 8547 Transition to Post-Quantum Cryptography Standards",
+      "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
+      "status": "downloaded",
+      "file": "public/threats/CROSS-002.html",
+      "sizeBytes": 45265,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "CROSS-003",
+      "title": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
+      "url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
+      "status": "downloaded",
+      "file": "public/threats/CROSS-003.html",
+      "sizeBytes": 525032,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "CROSS-004",
+      "title": "Global Risk Institute Quantum Threat Timeline",
+      "url": "https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2024/",
+      "status": "downloaded",
+      "file": "public/threats/CROSS-004.html",
+      "sizeBytes": 222042,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "CROSS-005",
+      "title": "NIST FIPS 206 FN-DSA Status",
+      "url": "https://csrc.nist.gov/presentations/2025/fips-206-fn-dsa-falcon",
+      "status": "downloaded",
+      "file": "public/threats/CROSS-005.html",
+      "sizeBytes": 37044,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "CROSS-006",
+      "title": "NIST Post-Quantum Cryptography Standardization",
+      "url": "https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption",
+      "status": "downloaded",
+      "file": "public/threats/CROSS-006.html",
+      "sizeBytes": 93652,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "CROSS-007",
+      "title": "European Commission Digital Strategy — PQC Roadmap",
+      "url": "https://digital-strategy.ec.europa.eu/en/news/eu-reinforces-its-cybersecurity-post-quantum-cryptography",
+      "status": "downloaded",
+      "file": "public/threats/CROSS-007.html",
+      "sizeBytes": 47886,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "CROSS-008",
+      "title": "NIST SP 800-227 Recommendations for KEMs",
+      "url": "https://csrc.nist.gov/pubs/sp/800/227/final",
+      "status": "downloaded",
+      "file": "public/threats/CROSS-008.html",
+      "sizeBytes": 44194,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "CRYPTO-001",
+      "title": "Federal Reserve HNDL Paper",
+      "url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
+      "status": "downloaded",
+      "file": "public/threats/CRYPTO-001.html",
+      "sizeBytes": 87943,
+      "contentType": "text/html"
+    },
+    {
+      "threatId": "CRYPTO-002",
+      "title": "Ethereum Foundation PQC Program",
+      "url": "https://ethereum.org/en/roadmap/future-proofing/",
+      "status": "downloaded",
+      "file": "public/threats/CRYPTO-002.html",
+      "sizeBytes": 546931,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "CRYPTO-003",
+      "title": "Federal Reserve Board FEDS Paper September 2025",
+      "url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
+      "status": "downloaded",
+      "file": "public/threats/CRYPTO-003.html",
+      "sizeBytes": 87943,
+      "contentType": "text/html"
+    },
+    {
+      "threatId": "CRYPTO-004",
+      "title": "Cryptocurrency Security Standard (CCSS)",
+      "url": "https://cryptoconsortium.org/standards-2/",
+      "status": "downloaded",
+      "file": "public/threats/CRYPTO-004.html",
+      "sizeBytes": 211152,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "ENERGY-001",
+      "title": "IEC 62351 Power Systems Security Standards",
+      "url": "https://webstore.iec.ch/publication/6912",
+      "status": "downloaded",
+      "file": "public/threats/ENERGY-001.html",
+      "sizeBytes": 427968,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "ENERGY-002",
+      "title": "NRC Cybersecurity Requirements (10 CFR 73.54)",
+      "url": "https://www.nrc.gov/security/cyber-security.html",
+      "status": "failed",
+      "reason": "network-error: The operation was aborted due to timeout",
+      "persistent": false
+    },
+    {
+      "threatId": "ENERGY-003",
+      "title": "University of Toronto Smart Grid Security Research",
+      "url": "https://www.utoronto.ca/news/u-t-researcher-leads-effort-protect-power-utilities-quantum-attacks",
+      "status": "failed",
+      "reason": "forbidden",
+      "persistent": true
+    },
+    {
+      "threatId": "ENERGY-004",
+      "title": "IEC 62443 Industrial Automation Security",
+      "url": "https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards",
+      "status": "downloaded",
+      "file": "public/threats/ENERGY-004.html",
+      "sizeBytes": 93074,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "FIN-001",
+      "title": "Bank for International Settlements Project Leap Phase 2",
+      "url": "https://www.bis.org/publ/othp107.htm",
+      "status": "downloaded",
+      "file": "public/threats/FIN-001.html",
+      "sizeBytes": 26352,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "FIN-002",
+      "title": "Federal Reserve Board FEDS Paper September 2025",
+      "url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
+      "status": "downloaded",
+      "file": "public/threats/FIN-002.html",
+      "sizeBytes": 87943,
+      "contentType": "text/html"
+    },
+    {
+      "threatId": "FIN-003",
+      "title": "G7 Cyber Expert Group Statement (U.S. Treasury)",
+      "url": "https://home.treasury.gov/news/press-releases/sb0355",
+      "status": "downloaded",
+      "file": "public/threats/FIN-003.html",
+      "sizeBytes": 110427,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "FIN-004",
+      "title": "NIST SP 800-227 KEM Recommendations",
+      "url": "https://csrc.nist.gov/pubs/sp/800/227/final",
+      "status": "downloaded",
+      "file": "public/threats/FIN-004.html",
+      "sizeBytes": 44194,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "FIN-005",
+      "title": "FS-ISAC — The Timeline for Post Quantum Cryptographic Migration",
+      "url": "https://www.fsisac.com/newsroom/fs-isac-urges-global-coordination-for-migration-to-post-quantum-cryptography-in-financial-services",
+      "status": "downloaded",
+      "file": "public/threats/FIN-005.html",
+      "sizeBytes": 49468,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "GOV-001",
+      "title": "NSA CNSA 2.0 Cybersecurity Advisory",
+      "url": "https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
+    },
+    {
+      "threatId": "GOV-002",
+      "title": "NSA CNSA 2.0 Guidance",
+      "url": "https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
+    },
+    {
+      "threatId": "GOV-003",
+      "title": "CISA Product Categories for PQC Technologies",
+      "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
+      "status": "downloaded",
+      "file": "public/threats/GOV-003.html",
+      "sizeBytes": 71975,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "GOV-004",
+      "title": "Federal PKI Policy Authority",
+      "url": "https://www.idmanagement.gov/fpki/",
+      "status": "downloaded",
+      "file": "public/threats/GOV-004.html",
+      "sizeBytes": 154412,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "GOV-005",
+      "title": "NSA CNSA 2.0 Cybersecurity Advisory",
+      "url": "https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
+    },
+    {
+      "threatId": "HLTH-001",
+      "title": "HHS HIPAA Security Rule",
+      "url": "https://www.hhs.gov/hipaa/for-professionals/security/index.html",
+      "status": "failed",
+      "reason": "forbidden",
+      "persistent": true
+    },
+    {
+      "threatId": "HLTH-002",
+      "title": "Thales 2025 Data Threat Report Healthcare Edition",
+      "url": "https://cpl.thalesgroup.com/healthcare-lifesciences-data-threat-report",
+      "status": "downloaded",
+      "file": "public/threats/HLTH-002.html",
+      "sizeBytes": 245950,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "HLTH-003",
+      "title": "FDA Premarket Cybersecurity Guidance 2023",
+      "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/cybersecurity-medical-devices-quality-system-considerations-and-content-premarket-submissions",
+      "status": "downloaded",
+      "file": "public/threats/HLTH-003.html",
+      "sizeBytes": 36112,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "HLTH-004",
+      "title": "FDA Cybersecurity for Medical Devices",
+      "url": "https://www.fda.gov/medical-devices/digital-health-center-excellence/cybersecurity",
+      "status": "downloaded",
+      "file": "public/threats/HLTH-004.html",
+      "sizeBytes": 96732,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "HLTH-005",
+      "title": "FDA Drug Supply Chain Security Act (DSCSA)",
+      "url": "https://www.fda.gov/drugs/drug-supply-chain-integrity/drug-supply-chain-security-act-dscsa",
+      "status": "downloaded",
+      "file": "public/threats/HLTH-005.html",
+      "sizeBytes": 46769,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "INS-001",
+      "title": "NAIC Insurance Data Security Model Law (MDL-668)",
+      "url": "https://content.naic.org/sites/default/files/model-law-668.pdf",
+      "status": "downloaded",
+      "file": "public/threats/INS-001.pdf",
+      "sizeBytes": 238211,
+      "contentType": "application/pdf"
+    },
+    {
+      "threatId": "INS-002",
+      "title": "NY DFS Cybersecurity Regulation (23 NYCRR 500)",
+      "url": "https://www.dfs.ny.gov/industry_guidance/cybersecurity",
+      "status": "downloaded",
+      "file": "public/threats/INS-002.html",
+      "sizeBytes": 205091,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "INS-003",
+      "title": "Geneva Association Systemic Cyber Risk Research",
+      "url": "https://www.genevaassociation.org/research-topics/cyber",
+      "status": "downloaded",
+      "file": "public/threats/INS-003.html",
+      "sizeBytes": 94037,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "IOT-001",
+      "title": "Forescout Device Risk Research",
+      "url": "https://www.forescout.com/research-labs/",
+      "status": "downloaded",
+      "file": "public/threats/IOT-001.html",
+      "sizeBytes": 346532,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "IOT-002",
+      "title": "IEC 62443 Industrial Automation Security",
+      "url": "https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards",
+      "status": "downloaded",
+      "file": "public/threats/IOT-002.html",
+      "sizeBytes": 93074,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "IOT-003",
+      "title": "IETF SUIT Working Group (RFC 9019)",
+      "url": "https://datatracker.ietf.org/wg/suit/",
+      "status": "downloaded",
+      "file": "public/threats/IOT-003.html",
+      "sizeBytes": 64170,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "IOT-004",
+      "title": "ISO/IEC 30182 Smart City Concept Model",
+      "url": "https://www.iso.org/standard/53302.html",
+      "status": "downloaded",
+      "file": "public/threats/IOT-004.html",
+      "sizeBytes": 67922,
+      "contentType": "text/html;charset=UTF-8"
+    },
+    {
+      "threatId": "IT-001",
+      "title": "OpenSSL PQC Integration",
+      "url": "https://openssl-library.org/post/2025-04-08-openssl-35-final-release/",
+      "status": "downloaded",
+      "file": "public/threats/IT-001.html",
+      "sizeBytes": 33749,
+      "contentType": "text/html"
+    },
+    {
+      "threatId": "IT-002",
+      "title": "CA/Browser Forum PKI Standards",
+      "url": "https://cabforum.org/working-groups/server/baseline-requirements/documents/",
+      "status": "downloaded",
+      "file": "public/threats/IT-002.html",
+      "sizeBytes": 43442,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "IT-003",
+      "title": "NIST FIPS 203/204/205 Post-Quantum Cryptography Standards",
+      "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
+      "status": "downloaded",
+      "file": "public/threats/IT-003.html",
+      "sizeBytes": 61302,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "IT-004",
+      "title": "SLSA Supply Chain Security Framework (OpenSSF)",
+      "url": "https://slsa.dev/spec/v1.0/",
+      "status": "downloaded",
+      "file": "public/threats/IT-004.html",
+      "sizeBytes": 16583,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "IT-005",
+      "title": "FIDO Alliance PQC Roadmap",
+      "url": "https://fidoalliance.org/white-paper-addressing-fido-alliances-technologies-in-post-quantum-world/",
+      "status": "downloaded",
+      "file": "public/threats/IT-005.html",
+      "sizeBytes": 258018,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "LEG-001",
+      "title": "EU Regulation 910/2014 (eIDAS)",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014R0910",
+      "status": "downloaded",
+      "file": "public/threats/LEG-001.html",
+      "sizeBytes": 613920,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "LEG-002",
+      "title": "EU Regulation 2024/1183 (eIDAS 2.0)",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1183",
+      "status": "downloaded",
+      "file": "public/threats/LEG-002.html",
+      "sizeBytes": 835982,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "LEG-003",
+      "title": "ETSI EN 319 422 Qualified Timestamp Policy",
+      "url": "https://www.etsi.org/deliver/etsi_en/319400_319499/319422/01.01.01_60/en_319422v010101p.pdf",
+      "status": "downloaded",
+      "file": "public/threats/LEG-003.pdf",
+      "sizeBytes": 70119,
+      "contentType": "application/pdf"
+    },
+    {
+      "threatId": "LEG-004",
+      "title": "NIST SP 800-86 Guide to Integrating Forensic Techniques",
+      "url": "https://csrc.nist.gov/pubs/sp/800/86/final",
+      "status": "downloaded",
+      "file": "public/threats/LEG-004.html",
+      "sizeBytes": 45973,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "MEDIA-001",
+      "title": "AACS Licensing Administrator Specifications",
+      "url": "https://aacsla.com/aacs-specifications/",
+      "status": "downloaded",
+      "file": "public/threats/MEDIA-001.html",
+      "sizeBytes": 33942,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "MEDIA-002",
+      "title": "AACS / Content Protection Standards",
+      "url": "https://aacsla.com/aacs-specifications/",
+      "status": "downloaded",
+      "file": "public/threats/MEDIA-002.html",
+      "sizeBytes": 33942,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "MEDIA-003",
+      "title": "DVB Project — Conditional Access System Standards",
+      "url": "https://dvb.org/solutions/security/",
+      "status": "downloaded",
+      "file": "public/threats/MEDIA-003.html",
+      "sizeBytes": 91247,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "PCI-001",
+      "title": "EMVCo Book 2 Security and Key Management",
+      "url": "https://www.emvco.com/specifications/",
+      "status": "downloaded",
+      "file": "public/threats/PCI-001.html",
+      "sizeBytes": 176409,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "PCI-002",
+      "title": "PCI Security Standards Council DSS 4.0.1",
+      "url": "https://www.pcisecuritystandards.org/document_library/",
+      "status": "downloaded",
+      "file": "public/threats/PCI-002.html",
+      "sizeBytes": 394999,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "PCI-003",
+      "title": "PCI PIN Security Requirements",
+      "url": "https://www.pcisecuritystandards.org/document_library/",
+      "status": "downloaded",
+      "file": "public/threats/PCI-003.html",
+      "sizeBytes": 394999,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "RAIL-001",
+      "title": "EN 50159 Railway Communication Security / ERA",
+      "url": "https://www.era.europa.eu/domains/infrastructure/european-rail-traffic-management-system-ertms_en",
+      "status": "downloaded",
+      "file": "public/threats/RAIL-001.html",
+      "sizeBytes": 60840,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "RAIL-002",
+      "title": "ISO/IEC 14443 Contactless Card Standards",
+      "url": "https://www.iso.org/standard/73598.html",
+      "status": "downloaded",
+      "file": "public/threats/RAIL-002.html",
+      "sizeBytes": 79453,
+      "contentType": "text/html;charset=UTF-8"
+    },
+    {
+      "threatId": "RETAIL-001",
+      "title": "PCI Security Standards Council",
+      "url": "https://www.pcisecuritystandards.org/document_library/",
+      "status": "downloaded",
+      "file": "public/threats/RETAIL-001.html",
+      "sizeBytes": 394999,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "RETAIL-002",
+      "title": "NIST Cybersecurity Framework",
+      "url": "https://www.nist.gov/cyberframework",
+      "status": "downloaded",
+      "file": "public/threats/RETAIL-002.html",
+      "sizeBytes": 88726,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "threatId": "RETAIL-003",
+      "title": "GS1 Global Standards",
+      "url": "https://www.gs1.org/standards",
+      "status": "failed",
+      "reason": "forbidden",
+      "persistent": true
+    },
+    {
+      "threatId": "SUPPLY-001",
+      "title": "IMO Maritime Cyber Risk Management Guidelines",
+      "url": "https://www.imo.org/en/OurWork/Security/Pages/Cyber-security.aspx",
+      "status": "downloaded",
+      "file": "public/threats/SUPPLY-001.html",
+      "sizeBytes": 57115,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "SUPPLY-002",
+      "title": "DCSA Electronic Bill of Lading Standards",
+      "url": "https://dcsa.org/standards/bill-of-lading",
+      "status": "downloaded",
+      "file": "public/threats/SUPPLY-002.html",
+      "sizeBytes": 294609,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "SUPPLY-003",
+      "title": "WCO SAFE Framework of Standards",
+      "url": "https://www.wcoomd.org/en/topics/facilitation/instrument-and-tools/frameworks-of-standards/safe_package.aspx",
+      "status": "downloaded",
+      "file": "public/threats/SUPPLY-003.html",
+      "sizeBytes": 63051,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "TELCO-001",
+      "title": "GSMA Security Guidelines",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/",
+      "status": "failed",
+      "reason": "forbidden",
+      "persistent": true
+    },
+    {
+      "threatId": "TELCO-002",
+      "title": "GSMA Post-Quantum Telco Network Taskforce",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-telco-network-task-force/",
+      "status": "failed",
+      "reason": "forbidden",
+      "persistent": true
+    },
+    {
+      "threatId": "TELCO-003",
+      "title": "3GPP TS 33.501 5G Security Architecture",
+      "url": "https://www.3gpp.org/specifications-technologies/specifications-by-series",
+      "status": "downloaded",
+      "file": "public/threats/TELCO-003.html",
+      "sizeBytes": 202108,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "TELCO-004",
+      "title": "GSMA eSIM Specification (SGP.22)",
+      "url": "https://www.gsma.com/esim/",
+      "status": "skipped",
+      "reason": "generic-portal"
+    },
+    {
+      "threatId": "TELCO-005",
+      "title": "ETSI ISG Quantum-Safe Cryptography / 3GPP",
+      "url": "https://www.etsi.org/technologies/quantum-safe-cryptography",
+      "status": "downloaded",
+      "file": "public/threats/TELCO-005.html",
+      "sizeBytes": 25184,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "threatId": "WATER-001",
+      "title": "EPA America's Water Infrastructure Act (AWIA) 2018 / CISA",
+      "url": "https://www.epa.gov/waterresilience/americas-water-infrastructure-act-2018-risk-assessments-and-emergency-response",
+      "status": "failed",
+      "reason": "http-404",
+      "persistent": false
+    },
+    {
+      "threatId": "WATER-002",
+      "title": "AWWA Cybersecurity Guidance for Water Utilities",
+      "url": "https://www.awwa.org/resource/cybersecurity-guidance/",
+      "status": "downloaded",
+      "file": "public/threats/WATER-002.html",
+      "sizeBytes": 494255,
+      "contentType": "text/html; charset=UTF-8"
+    }
+  ]
+}

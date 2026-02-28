@@ -165,7 +165,7 @@ export const PersonalizationSection = () => {
                 <Icon size={15} className="shrink-0" />
                 <span className="truncate">{persona.label}</span>
                 {isSuggested && !isActive && (
-                  <span className="absolute -top-2 -right-1 text-[9px] font-bold uppercase tracking-wide bg-secondary text-secondary-foreground px-1.5 py-0.5 rounded-full leading-none">
+                  <span className="absolute -top-2 -right-1 text-[10px] font-bold uppercase tracking-wide bg-secondary text-secondary-foreground px-1.5 py-0.5 rounded-full leading-none">
                     For you
                   </span>
                 )}

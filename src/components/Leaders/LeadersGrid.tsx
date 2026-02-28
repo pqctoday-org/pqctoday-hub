@@ -197,7 +197,7 @@ export const LeadersGrid = () => {
           {/* Mobile: Filters on one row */}
           <div className="flex items-center gap-2 w-full md:w-auto text-xs">
             {/* Sector Filter */}
-            <div className="flex-1 min-w-[120px]">
+            <div className="flex-1 min-w-[100px] sm:min-w-[120px]">
               <FilterDropdown
                 items={sectorItems}
                 selectedId={selectedSector}
@@ -213,7 +213,7 @@ export const LeadersGrid = () => {
             </div>
 
             {/* Region Filter */}
-            <div className="flex-1 min-w-[120px]">
+            <div className="flex-1 min-w-[100px] sm:min-w-[120px]">
               <FilterDropdown
                 items={countryItems}
                 selectedId={selectedCountry}

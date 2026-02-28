@@ -38,7 +38,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     name: 'RSA-4096',
     type: 'classical',
     category: 'asymmetric',
-    classicalBits: 152,
+    classicalBits: 140,
     quantumBits: 0,
     quantumAttack: 'shor',
     estimatedQubits: 8194,

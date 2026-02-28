@@ -21,9 +21,54 @@ export const FileViewer: React.FC = () => {
   useEffect(() => {
     if (!viewingFile) return
 
+    let cancelled = false
+
     if (isCertificate || isCSR) {
       setViewMode('tree')
-      parseCertificate()
+
+      const doParse = async () => {
+        setIsParsing(true)
+        setError(null)
+        setParsedOutput(null)
+
+        try {
+          const content =
+            typeof viewingFile.content === 'string'
+              ? new TextEncoder().encode(viewingFile.content)
+              : viewingFile.content
+
+          const inputFile = { name: viewingFile.name, data: content }
+
+          let command = isCSR
+            ? `openssl req -in ${viewingFile.name} -text -noout`
+            : `openssl x509 -in ${viewingFile.name} -text -noout`
+
+          let result = await openSSLService.execute(command, [inputFile])
+          if (cancelled) return
+
+          // If x509 failed and it's a PEM/KEY file, try parsing as Key
+          if (
+            result.error &&
+            (viewingFile.name.endsWith('.pem') || viewingFile.name.endsWith('.key'))
+          ) {
+            command = `openssl pkey -in ${viewingFile.name} -text -noout`
+            result = await openSSLService.execute(command, [inputFile])
+            if (cancelled) return
+          }
+
+          if (result.error) {
+            setError(result.error)
+          } else {
+            setParsedOutput(result.stdout)
+          }
+        } catch (err) {
+          if (cancelled) return
+          setError(err instanceof Error ? err.message : 'Failed to parse file')
+        } finally {
+          if (!cancelled) setIsParsing(false)
+        }
+      }
+      doParse()
     } else {
       // Default to text if content is string, otherwise hex
       setViewMode(typeof viewingFile.content === 'string' ? 'text' : 'hex')
@@ -33,59 +78,12 @@ export const FileViewer: React.FC = () => {
     if (viewerRef.current) {
       viewerRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     }
+
+    return () => {
+      cancelled = true
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewingFile])
-
-  const parseCertificate = async () => {
-    if (!viewingFile) return
-
-    setIsParsing(true)
-    setError(null)
-    setParsedOutput(null)
-
-    try {
-      const content =
-        typeof viewingFile.content === 'string'
-          ? new TextEncoder().encode(viewingFile.content)
-          : viewingFile.content
-
-      const inputFile = {
-        name: viewingFile.name,
-        data: content,
-      }
-
-      let command = isCSR
-        ? `openssl req -in ${viewingFile.name} -text -noout`
-        : `openssl x509 -in ${viewingFile.name} -text -noout`
-
-      let result = await openSSLService.execute(command, [inputFile])
-      // console.log('OpenSSL Result (First Attempt):', result)
-
-      // If x509 failed and it's a PEM/KEY file, try parsing as Key
-      if (
-        result.error &&
-        (viewingFile.name.endsWith('.pem') || viewingFile.name.endsWith('.key'))
-      ) {
-        // console.log('x509 parsing failed, trying as pkey...')
-        command = `openssl pkey -in ${viewingFile.name} -text -noout`
-        result = await openSSLService.execute(command, [inputFile])
-        // console.log('OpenSSL Result (Second Attempt):', result)
-      }
-
-      if (result.error) {
-        // console.error('OpenSSL Error:', result.error)
-        setError(result.error)
-      } else {
-        // console.log('OpenSSL Output:', result.stdout)
-        setParsedOutput(result.stdout)
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to parse file'
-      setError(errorMessage)
-    } finally {
-      setIsParsing(false)
-    }
-  }
 
   // Tree node component
   const TreeNode: React.FC<{

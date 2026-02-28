@@ -1,4 +1,4 @@
-// Wrapper for Falcon (FN-DSA) and SLH-DSA using @openforge-sh/liboqs
+// Wrapper for Falcon (FN-DSA) and SLH-DSA using @oqs/liboqs-js
 /* eslint-disable */
 import {
   // Falcon (FN-DSA)
@@ -18,7 +18,7 @@ import {
   createSlhDsaShake192s,
   createSlhDsaShake256f,
   createSlhDsaShake256s,
-} from '@openforge-sh/liboqs/sig'
+} from '@oqs/liboqs-js/sig'
 import { createLogger } from '../utils/logger'
 
 const logger = createLogger('liboqs_sig')

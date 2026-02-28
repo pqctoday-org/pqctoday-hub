@@ -231,7 +231,7 @@ var injectEntropy = (module: EmscriptenModule, requestId?: string) => {
   }
 }
 
-var configureEnvironment = (module: EmscriptenModule, requestId?: string) => {
+var configureEnvironment = (module: EmscriptenModule, _requestId?: string) => {
   try {
     try {
       module.FS.mkdir('/ssl')
@@ -275,7 +275,8 @@ distinguished_name = req_distinguished_name
     module.FS.writeFile('/openssl-wasm/openssl.cnf', cnfBytes)
     module.FS.writeFile('/openssl.cnf', cnfBytes) // Also at root
 
-    self.postMessage({ type: 'FILE_CREATED', name: 'openssl.cnf', data: cnfBytes, requestId })
+    // openssl.cnf is written to the WASM FS for OpenSSL to find, but NOT sent
+    // to the main thread — it's an internal config, not a user-facing artifact.
     // @ts-ignore
     if (module.ENV) {
       // @ts-ignore
@@ -347,9 +348,23 @@ var scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>, reques
             self.postMessage({ type: 'FILE_CREATED', name: file, data: content, requestId })
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        self.postMessage({
+          type: 'LOG',
+          stream: 'stderr',
+          message: `Failed to read output file ${file}: ${(e as Error).message}`,
+          requestId,
+        })
+      }
     }
-  } catch (e) {}
+  } catch (e) {
+    self.postMessage({
+      type: 'LOG',
+      stream: 'stderr',
+      message: `Failed to scan output directory: ${(e as Error).message}`,
+      requestId,
+    })
+  }
 }
 
 // ----------------------------------------------------------------------------

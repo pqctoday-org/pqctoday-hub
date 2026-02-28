@@ -148,7 +148,7 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
               ...entry,
             },
             ...state.structuredLogs,
-          ],
+          ].slice(0, 500),
         })),
       clearStructuredLogs: () => set({ structuredLogs: [] }),
 
@@ -237,7 +237,14 @@ export const useOpenSSLStore = create<OpenSSLStudioState>()(
             }
             return val
           })
-          localStorage.setItem(name, str)
+          try {
+            localStorage.setItem(name, str)
+          } catch (e) {
+            console.warn(
+              '[OpenSSL Studio] localStorage quota exceeded — session data not persisted',
+              e
+            )
+          }
         },
         removeItem: (name) => localStorage.removeItem(name),
       },

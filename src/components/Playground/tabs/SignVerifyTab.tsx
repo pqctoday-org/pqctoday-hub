@@ -105,20 +105,13 @@ export const SignVerifyTab: React.FC = () => {
   // But for simplicity, let's assume we convert everything to Hex for the `EditableDataDisplay` prop, and convert back.
 
   const messageHex = (() => {
-    let hex = ''
-    for (let i = 0; i < dataToSign.length; i++) {
-      hex += dataToSign.charCodeAt(i).toString(16).padStart(2, '0')
-    }
-    return hex
+    const bytes = new TextEncoder().encode(dataToSign)
+    return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
   })()
 
   const handleMessageChange = (newHex: string) => {
-    // Convert hex back to string for context
-    let str = ''
-    for (let i = 0; i < newHex.length; i += 2) {
-      str += String.fromCharCode(parseInt(newHex.substr(i, 2), 16))
-    }
-    setDataToSign(str)
+    const bytes = new Uint8Array((newHex.match(/.{1,2}/g) ?? []).map((h) => parseInt(h, 16)))
+    setDataToSign(new TextDecoder().decode(bytes))
   }
 
   return (

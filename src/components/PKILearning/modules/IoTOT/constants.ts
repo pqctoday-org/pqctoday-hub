@@ -12,9 +12,10 @@ export const DEVICE_CLASSES: DeviceClass[] = [
   {
     id: 'class-0',
     name: 'Class 0',
-    ramKB: 10,
-    flashKB: 100,
-    description: 'Extremely constrained. Too limited for direct internet communication.',
+    ramKB: 2,
+    flashKB: 25,
+    description:
+      'Extremely constrained (≪10 KiB RAM, ≪100 KiB Flash per RFC 7228). Too limited for direct internet communication.',
     examples: ['Sensor tags', 'RFID sensors', 'Asset trackers'],
   },
   {

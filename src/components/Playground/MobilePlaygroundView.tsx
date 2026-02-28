@@ -13,9 +13,7 @@ export const MobilePlaygroundView = () => {
         <div className="inline-flex p-3 rounded-full bg-secondary/10 text-secondary mb-3">
           <FlaskConical size={24} />
         </div>
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent mb-2">
-          PQC Playground
-        </h1>
+        <h1 className="text-2xl font-bold text-gradient mb-2">PQC Playground</h1>
         <p className="text-sm text-muted-foreground">
           Explore Post-Quantum algorithms (ML-KEM, ML-DSA).
         </p>
@@ -28,7 +26,7 @@ export const MobilePlaygroundView = () => {
         transition={{ delay: 0.1 }}
         className="glass-panel p-4"
       >
-        <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
           <Cpu size={18} className="text-primary" />
           What is this?
         </h2>
@@ -55,7 +53,7 @@ export const MobilePlaygroundView = () => {
         transition={{ delay: 0.2 }}
         className="glass-panel p-4 border-l-4 border-l-secondary"
       >
-        <h3 className="font-bold text-foreground mb-2">Desktop Required</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-2">Desktop Required</h3>
         <p className="text-sm text-muted-foreground">
           The interactive playground requires complex parameter configuration and keyboard input.
           Please visit on a desktop computer to run the algorithms.

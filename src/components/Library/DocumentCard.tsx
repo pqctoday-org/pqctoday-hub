@@ -40,7 +40,7 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
       <div className="flex items-center gap-2 mb-3">
         <span
           className={clsx(
-            'inline-flex self-start items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider',
+            'inline-flex self-start items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider',
             'bg-status-info text-status-info border border-status-info/50'
           )}
         >
@@ -48,7 +48,7 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
         </span>
         {item.localFile && (
           <span
-            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20"
+            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20"
             title="Rich summary and preview available"
           >
             <Eye size={10} aria-hidden="true" />
@@ -65,7 +65,7 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
       {item.migrationUrgency && (
         <span
           className={clsx(
-            'inline-flex self-start items-center px-2 py-0.5 rounded text-[10px] font-medium border mb-2',
+            'inline-flex self-start items-center px-2 py-0.5 rounded text-xs font-medium border mb-2',
             URGENCY_COLORS[item.migrationUrgency] ??
               'bg-muted/20 text-muted-foreground border-border'
           )}
@@ -79,7 +79,7 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
           {item.regionScope.split(',').map((region) => (
             <span
               key={region.trim()}
-              className="px-1.5 py-0.5 rounded text-[10px] bg-muted/30 text-muted-foreground border border-border"
+              className="px-1.5 py-0.5 rounded text-xs bg-muted/30 text-muted-foreground border border-border"
             >
               {region.trim()}
             </span>

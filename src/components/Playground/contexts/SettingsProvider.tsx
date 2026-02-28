@@ -32,8 +32,12 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [executionMode, setExecutionMode] = useState<ExecutionMode>(() => {
     const isWasmSupported = typeof WebAssembly === 'object'
     if (!isWasmSupported) return 'mock'
-    const savedMode = sessionStorage.getItem('playground-execution-mode')
-    return savedMode === 'wasm' || savedMode === 'mock' ? savedMode : 'wasm'
+    try {
+      const savedMode = sessionStorage.getItem('playground-execution-mode')
+      return savedMode === 'wasm' || savedMode === 'mock' ? savedMode : 'wasm'
+    } catch {
+      return 'wasm'
+    }
   })
   const [wasmLoaded, setWasmLoaded] = useState(false)
   const [logs, setLogs] = useState<LogEntry[]>([])
@@ -57,77 +61,15 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const resizeStartX = useRef<number>(0)
   const resizeStartWidth = useRef<number>(0)
   const [activeTab, setActiveTab] = useState<
-    | 'settings'
-    | 'data'
-    | 'kem_ops'
-    | 'sign_verify'
-    | 'keystore'
-    | 'logs'
-    | 'acvp'
-    | 'symmetric'
-    | 'hashing'
+    'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'acvp' | 'symmetric' | 'hashing'
   >('keystore')
   const [classicalAlgorithm, setClassicalAlgorithm] = useState<ClassicalAlgorithm>('RSA-2048')
-  const [enabledAlgorithms, setEnabledAlgorithms] = useState(() => {
-    const saved = sessionStorage.getItem('playground-enabled-algorithms')
-    if (saved) {
-      try {
-        return JSON.parse(saved)
-      } catch {
-        // Corrupted sessionStorage data, return defaults
-      }
-    }
-    return {
-      kem: {
-        'ML-KEM-512': true,
-        'ML-KEM-768': true,
-        'ML-KEM-1024': true,
-        X25519: true,
-        'P-256': true,
-      },
-      signature: {
-        'ML-DSA-44': true,
-        'ML-DSA-65': true,
-        'ML-DSA-87': true,
-        // SLH-DSA (FIPS 205)
-        'SLH-DSA-SHA2-128f': true,
-        'SLH-DSA-SHA2-128s': true,
-        'SLH-DSA-SHAKE-128f': true,
-        // FN-DSA (Falcon) - Draft FIPS 206
-        'FN-DSA-512': true,
-        'FN-DSA-1024': true,
-        // Classical
-        'RSA-2048': true,
-        'RSA-3072': true,
-        'RSA-4096': true,
-        'ECDSA-P256': true,
-        Ed25519: true,
-      },
-      symmetric: { 'AES-128-GCM': true, 'AES-256-GCM': true },
-      hash: { 'SHA-256': true, 'SHA-384': true, 'SHA3-256': false },
-    }
-  })
 
   // --- Helpers (stable callbacks) ---
   const handleAlgorithmChange = useCallback((newAlgorithm: string) => {
     setAlgorithm(newAlgorithm)
     setKeySize(newAlgorithm === 'ML-KEM' ? '768' : '65')
   }, [])
-
-  const toggleAlgorithm = useCallback(
-    (category: 'kem' | 'signature' | 'symmetric' | 'hash', algoName: string) => {
-      setEnabledAlgorithms((prev: Record<string, Record<string, boolean>>) => ({
-        ...prev,
-        [category]: {
-          // eslint-disable-next-line security/detect-object-injection
-          ...prev[category],
-          // eslint-disable-next-line security/detect-object-injection
-          [algoName]: !prev[category][algoName as keyof (typeof prev)[typeof category]],
-        },
-      }))
-    },
-    []
-  )
 
   const addLog = useCallback((entry: Omit<LogEntry, 'id' | 'timestamp'>) => {
     const newEntry: LogEntry = {
@@ -202,11 +144,12 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [executionMode, wasmLoaded, addLog])
 
   useEffect(() => {
-    sessionStorage.setItem('playground-execution-mode', executionMode)
+    try {
+      sessionStorage.setItem('playground-execution-mode', executionMode)
+    } catch {
+      // sessionStorage unavailable (private browsing, iframe restrictions)
+    }
   }, [executionMode])
-  useEffect(() => {
-    sessionStorage.setItem('playground-enabled-algorithms', JSON.stringify(enabledAlgorithms))
-  }, [enabledAlgorithms])
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -278,8 +221,6 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       sortedLogs,
       classicalAlgorithm,
       setClassicalAlgorithm,
-      enabledAlgorithms,
-      toggleAlgorithm,
       handleAlgorithmChange,
       activeTab,
       setActiveTab,
@@ -301,12 +242,10 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       resizingColumn,
       sortedLogs,
       classicalAlgorithm,
-      enabledAlgorithms,
       activeTab,
       startResize,
       handleSort,
       handleAlgorithmChange,
-      toggleAlgorithm,
       addLog,
       clearLogs,
     ]

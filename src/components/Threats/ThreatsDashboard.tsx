@@ -213,7 +213,7 @@ export const ThreatsDashboard: React.FC = () => {
   return (
     <div>
       <div className="text-center mb-2 md:mb-12">
-        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
+        <h2 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
           Quantum Threats
         </h2>
         <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">

@@ -153,7 +153,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
               const bytes = clean.length / 2
               if (clean.length === 0) return <span>Empty input</span>
               if (clean.length % 2 !== 0)
-                return <span className="text-amber-500">Invalid odd-length hex string</span>
+                return <span className="text-status-warning">Invalid odd-length hex string</span>
               return (
                 <span>
                   Binary Size: <span className="text-primary font-mono">{bytes} bytes</span> (fed as

@@ -159,7 +159,7 @@ const VulnerabilityLandscape: React.FC = () => (
               <td className="p-2 text-right text-muted-foreground">baseline</td>
             </tr>
             <tr className="border-b border-border/50">
-              <td className="p-2 font-medium text-foreground">FALCON-512</td>
+              <td className="p-2 font-medium text-foreground">FN-DSA-512</td>
               <td className="p-2 text-right font-mono">897 B</td>
               <td className="p-2 text-right font-mono">~666 B</td>
               <td className="p-2 text-right">
@@ -207,7 +207,7 @@ const BitcoinP2QRH: React.FC = () => (
           <div>
             <p className="text-sm font-medium text-foreground">Generate a PQC keypair</p>
             <p className="text-xs text-muted-foreground">
-              Use ML-DSA-65 (CRYSTALS-Dilithium) or FALCON-512 instead of secp256k1. Both are
+              Use ML-DSA-65 (FIPS 204) or FN-DSA-512 (FIPS 206) instead of secp256k1. Both are
               NIST-standardised PQC signature schemes.
             </p>
           </div>

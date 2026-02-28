@@ -80,24 +80,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Threats × Learn links</strong> &mdash; every
-                    threat card now shows &ldquo;Learn More&rdquo; chips linking to relevant modules
+                    <strong className="text-foreground">Career Journey</strong> &mdash; interactive
+                    career path visualization on the About page
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Industry coverage expanded</strong> &mdash;
-                    Cloud, IoT, PCI, Insurance, Supply Chain, Rail, and 4 more threat sectors now
-                    reachable from the landing page industry filter
+                    <strong className="text-foreground">Playground upgraded</strong> &mdash; all 12
+                    SLH-DSA variants, liboqs migrated to @oqs/liboqs-js, Settings tab removed
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Source quality upgrade</strong> &mdash; 27
-                    threat references upgraded to specific document pages; executive module data
-                    refreshed from 2024 sources
+                    <strong className="text-foreground">Accuracy &amp; hardening</strong> &mdash;
+                    learning module data corrections, OpenSSL Studio memory safety, semantic token
+                    compliance
                   </span>
                 </li>
               </ul>

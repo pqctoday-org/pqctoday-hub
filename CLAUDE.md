@@ -41,7 +41,7 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 **Crypto Stack** (layered, strict priority):
 
 1. **OpenSSL WASM** (`src/services/crypto/OpenSSLService.ts`) — primary for all standard operations
-2. **liboqs** (`@openforge-sh/liboqs`) — PQC algorithms not in OpenSSL (FrodoKEM, HQC, Classic McEliece)
+2. **liboqs** (`@oqs/liboqs-js`) — PQC algorithms not in OpenSSL (FrodoKEM, HQC, Classic McEliece, SLH-DSA, Falcon)
 3. **WASM wrappers** (`src/wasm/`) — ML-KEM, ML-DSA, LMS/HSS bindings
 4. **@noble/\*, @scure/\*** — blockchain crypto (secp256k1, Ed25519, BIP32/39/44, Ethereum)
 5. **Web Crypto API** (`src/utils/webCrypto.ts`) — X25519, P-256, ECDH
@@ -92,7 +92,7 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 
 **Imports**: Use `@/` path alias (maps to `src/`). Group: std lib → 3rd party → local components → styles/types.
 
-**Crypto operations**: OpenSSL first for all standard operations. Use modern commands (`genpkey`, `pkey`) over deprecated ones (`ec`, `ecparam`). Do NOT install new crypto libraries without explicit permission. Only these are allowed (installed or pre-approved): `@openforge-sh/liboqs` (deprecated — migration to `@oqs/liboqs-js` planned), `@noble/*`, `@scure/*`, `ed25519-hd-key`, `micro-eth-signer`.
+**Crypto operations**: OpenSSL first for all standard operations. Use modern commands (`genpkey`, `pkey`) over deprecated ones (`ec`, `ecparam`). Do NOT install new crypto libraries without explicit permission. Only these are allowed (installed or pre-approved): `@oqs/liboqs-js`, `@noble/*`, `@scure/*`, `ed25519-hd-key`, `micro-eth-signer`.
 
 ## Testing
 

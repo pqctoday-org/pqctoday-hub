@@ -15,13 +15,6 @@ export type ClassicalAlgorithm =
   | 'AES-128'
   | 'AES-256'
 
-export interface EnabledAlgorithms {
-  kem: Record<string, boolean>
-  signature: Record<string, boolean>
-  symmetric: Record<string, boolean>
-  hash: Record<string, boolean>
-}
-
 export interface SettingsContextType {
   // Algorithm Settings
   algorithm: string
@@ -37,13 +30,10 @@ export interface SettingsContextType {
   setClassicalAlgorithm: (algo: ClassicalAlgorithm) => void
 
   // Config
-  enabledAlgorithms: EnabledAlgorithms
-  toggleAlgorithm: (category: 'kem' | 'signature' | 'symmetric' | 'hash', algorithm: string) => void
   handleAlgorithmChange: (newAlgorithm: string) => void
 
   // UI State
   activeTab:
-    | 'settings'
     | 'data'
     | 'kem_ops'
     | 'sign_verify'
@@ -53,16 +43,7 @@ export interface SettingsContextType {
     | 'symmetric'
     | 'hashing'
   setActiveTab: (
-    tab:
-      | 'settings'
-      | 'data'
-      | 'kem_ops'
-      | 'sign_verify'
-      | 'keystore'
-      | 'logs'
-      | 'acvp'
-      | 'symmetric'
-      | 'hashing'
+    tab: 'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'acvp' | 'symmetric' | 'hashing'
   ) => void
   loading: boolean
   setLoading: (loading: boolean) => void

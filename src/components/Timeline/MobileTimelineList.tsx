@@ -129,7 +129,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                       )}
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-foreground block">
+                          <span className="text-xs font-semibold text-foreground block">
                             {currentPhase.phase}
                           </span>
                           <StatusBadge status={currentPhase.status} size="sm" />

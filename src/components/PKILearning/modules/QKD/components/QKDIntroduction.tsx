@@ -394,9 +394,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
           </div>
         </div>
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
-          <div className="text-sm font-bold text-foreground mb-1">
-            NIST Position (NIST IR 8301, 2018)
-          </div>
+          <div className="text-sm font-bold text-foreground mb-1">NIST Position on QKD</div>
           <p className="text-xs text-muted-foreground italic">
             &quot;NIST does not generally recommend QKD &hellip; QKD addresses only the key
             distribution problem &hellip; it requires special-purpose equipment &hellip; [and] is

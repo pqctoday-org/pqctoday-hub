@@ -309,11 +309,10 @@ export const StatefulSigsIntroduction: React.FC<StatefulSigsIntroductionProps> =
           </div>
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
             <div className="text-xs font-bold text-warning mb-1">
-              SP 800-208 Operational Requirement
+              SP 800-208 Operational Recommendation
             </div>
             <p className="text-xs text-muted-foreground">
-              NIST SP 800-208 originally required that key generation and signing be performed
-              inside a{' '}
+              NIST SP 800-208 recommends that key generation and signing be performed inside a{' '}
               <strong>
                 <InlineTooltip term="FIPS 140-3">FIPS 140-validated</InlineTooltip> hardware
                 cryptographic module

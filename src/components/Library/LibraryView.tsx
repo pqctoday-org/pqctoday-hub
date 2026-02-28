@@ -440,7 +440,7 @@ export const LibraryView: React.FC = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <div className="text-center mb-2 md:mb-8">
-        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">PQC Library</h2>
+        <h2 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 text-gradient">PQC Library</h2>
         <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
           Explore the latest Post-Quantum Cryptography standards, drafts, and related documents.
         </p>
@@ -554,7 +554,12 @@ export const LibraryView: React.FC = () => {
       {viewMode === 'cards' ? (
         <DocumentCardGrid items={sortedItems} onViewDetails={openDetail} />
       ) : (
-        renderTableView()
+        <>
+          <div className="hidden md:block">{renderTableView()}</div>
+          <div className="md:hidden">
+            <DocumentCardGrid items={sortedItems} onViewDetails={openDetail} />
+          </div>
+        </>
       )}
 
       {/* Detail Popover */}

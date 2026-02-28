@@ -302,7 +302,16 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
               <optgroup label="SLH-DSA (Hash-Based Signatures)">
                 <option value="SLH-DSA-SHA2-128f">SLH-DSA-SHA2-128f (Level 1, Fast)</option>
                 <option value="SLH-DSA-SHA2-128s">SLH-DSA-SHA2-128s (Level 1, Small)</option>
+                <option value="SLH-DSA-SHA2-192f">SLH-DSA-SHA2-192f (Level 3, Fast)</option>
+                <option value="SLH-DSA-SHA2-192s">SLH-DSA-SHA2-192s (Level 3, Small)</option>
+                <option value="SLH-DSA-SHA2-256f">SLH-DSA-SHA2-256f (Level 5, Fast)</option>
+                <option value="SLH-DSA-SHA2-256s">SLH-DSA-SHA2-256s (Level 5, Small)</option>
                 <option value="SLH-DSA-SHAKE-128f">SLH-DSA-SHAKE-128f (Level 1, Fast)</option>
+                <option value="SLH-DSA-SHAKE-128s">SLH-DSA-SHAKE-128s (Level 1, Small)</option>
+                <option value="SLH-DSA-SHAKE-192f">SLH-DSA-SHAKE-192f (Level 3, Fast)</option>
+                <option value="SLH-DSA-SHAKE-192s">SLH-DSA-SHAKE-192s (Level 3, Small)</option>
+                <option value="SLH-DSA-SHAKE-256f">SLH-DSA-SHAKE-256f (Level 5, Fast)</option>
+                <option value="SLH-DSA-SHAKE-256s">SLH-DSA-SHAKE-256s (Level 5, Small)</option>
               </optgroup>
               <optgroup label="FN-DSA / Falcon (Signatures)">
                 <option value="FN-DSA-512">FN-DSA-512 / Falcon-512 (Level 1)</option>

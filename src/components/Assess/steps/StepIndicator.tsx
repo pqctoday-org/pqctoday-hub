@@ -78,7 +78,7 @@ function StepIndicator({
                 </Button>
                 <span
                   className={clsx(
-                    'text-[10px] md:text-xs font-medium transition-colors whitespace-nowrap',
+                    'text-[10px] md:text-xs font-medium transition-colors whitespace-nowrap overflow-hidden text-ellipsis max-w-[3.5rem] sm:max-w-none sm:overflow-visible',
                     isCurrent ? 'text-foreground' : 'text-muted-foreground'
                   )}
                 >

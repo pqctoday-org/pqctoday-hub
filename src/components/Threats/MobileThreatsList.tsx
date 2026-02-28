@@ -73,7 +73,7 @@ export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) =
             {/* Crypto at risk + PQC replacement */}
             <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 pt-2 border-t border-border">
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
                   At Risk
                 </p>
                 <p className="text-xs font-mono text-muted-foreground leading-snug">
@@ -81,7 +81,7 @@ export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) =
                 </p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
                   PQC Replacement
                 </p>
                 <p className="text-xs font-mono text-foreground leading-snug">

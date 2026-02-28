@@ -14,7 +14,7 @@ export const CODE_SIGNING_ALGORITHMS: {
   classical: [
     { name: 'RSA-2048', sigBytes: 256, keyBytes: 256, type: 'classical', broken: true },
     { name: 'RSA-4096', sigBytes: 512, keyBytes: 512, type: 'classical', broken: true },
-    { name: 'ECDSA P-256', sigBytes: 64, keyBytes: 32, type: 'classical', broken: true },
+    { name: 'ECDSA P-256', sigBytes: 64, keyBytes: 64, type: 'classical', broken: true },
     { name: 'Ed25519', sigBytes: 64, keyBytes: 32, type: 'classical', broken: true },
     { name: 'Ed448', sigBytes: 114, keyBytes: 57, type: 'classical', broken: true },
   ],

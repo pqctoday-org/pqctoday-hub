@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { FileText, Plus, Sparkles, Bug, ArrowLeft } from 'lucide-react'
+import { FileText, Plus, Sparkles, Bug, ArrowLeft, ChevronDown, ChevronUp } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { getCurrentVersion } from '../../store/useVersionStore'
@@ -10,6 +10,9 @@ import { getCurrentVersion } from '../../store/useVersionStore'
 // Import CHANGELOG.md as raw text
 import changelogContent from '../../../CHANGELOG.md?raw'
 
+// ── Types ────────────────────────────────────────────────────────────────────
+
+type SectionType = 'added' | 'changed' | 'fixed' | 'other'
 type FilterType = 'added' | 'changed' | 'fixed'
 
 interface FilterState {
@@ -17,6 +20,134 @@ interface FilterState {
   changed: boolean
   fixed: boolean
 }
+
+interface Entry {
+  title: string
+  body: string
+}
+
+interface Section {
+  type: SectionType
+  entries: Entry[]
+}
+
+interface ChangelogVersion {
+  version: string
+  date: string
+  sections: Section[]
+}
+
+// ── Section display config ────────────────────────────────────────────────────
+
+const SECTION_CONFIG = {
+  added: {
+    label: 'New Features',
+    Icon: Plus,
+    borderClass: 'border-success',
+    bgClass: 'bg-success/10',
+    textClass: 'text-success',
+  },
+  changed: {
+    label: 'Improvements',
+    Icon: Sparkles,
+    borderClass: 'border-primary',
+    bgClass: 'bg-primary/10',
+    textClass: 'text-primary',
+  },
+  fixed: {
+    label: 'Bug Fixes',
+    Icon: Bug,
+    borderClass: 'border-warning',
+    bgClass: 'bg-warning/10',
+    textClass: 'text-warning',
+  },
+  other: {
+    label: 'Other',
+    Icon: FileText,
+    borderClass: 'border-border',
+    bgClass: 'bg-muted/10',
+    textClass: 'text-muted-foreground',
+  },
+} as const
+
+// ── Parser ────────────────────────────────────────────────────────────────────
+
+function parseEntry(raw: string): Entry {
+  const boldMatch = raw.match(/^\*\*([^*]+)\*\*/)
+  if (boldMatch) {
+    const title = boldMatch[1]
+    const body = raw.slice(boldMatch[0].length).replace(/^:\s*/, '').trim()
+    return { title, body }
+  }
+  return { title: raw.trim(), body: '' }
+}
+
+function parseChangelog(content: string): ChangelogVersion[] {
+  const versions: ChangelogVersion[] = []
+  // Split at each '## [' version header
+  const versionBlocks = content.split(/\n(?=## \[)/)
+
+  for (const block of versionBlocks) {
+    const headerMatch = block.match(/^## \[([^\]]+)\] - (\S+)/)
+    if (!headerMatch) continue
+
+    const version = headerMatch[1]
+    const date = headerMatch[2]
+    const sections: Section[] = []
+
+    // Split at each '### ' section header
+    const sectionBlocks = block.split(/\n(?=### )/)
+
+    for (const sectionBlock of sectionBlocks) {
+      const sectionHeaderMatch = sectionBlock.match(/^### (.+)/)
+      if (!sectionHeaderMatch) continue
+
+      const sectionName = sectionHeaderMatch[1].toLowerCase()
+      const type: SectionType = sectionName.startsWith('add')
+        ? 'added'
+        : sectionName.startsWith('change')
+          ? 'changed'
+          : sectionName.startsWith('fix')
+            ? 'fixed'
+            : 'other'
+
+      // Collect list items; continuation lines are indented with 2+ spaces
+      const lines = sectionBlock.split('\n').slice(1)
+      const entries: Entry[] = []
+      let currentLines: string[] | null = null
+
+      for (const line of lines) {
+        if (line.startsWith('- ')) {
+          if (currentLines !== null) {
+            entries.push(parseEntry(currentLines.join('\n').trim()))
+          }
+          currentLines = [line.slice(2)]
+        } else if (currentLines !== null) {
+          // Strip leading 2-space indent from continuation lines
+          currentLines.push(line.replace(/^ {2}/, ''))
+        }
+      }
+      if (currentLines !== null) {
+        entries.push(parseEntry(currentLines.join('\n').trim()))
+      }
+
+      if (entries.length > 0) {
+        sections.push({ type, entries })
+      }
+    }
+
+    if (sections.length > 0) {
+      versions.push({ version, date, sections })
+    }
+  }
+
+  return versions
+}
+
+// Parse once at module level — content is a static import
+const ALL_VERSIONS = parseChangelog(changelogContent)
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export const ChangelogView = () => {
   const version = getCurrentVersion()
@@ -26,50 +157,26 @@ export const ChangelogView = () => {
     changed: true,
     fixed: true,
   })
+  const [showDetails, setShowDetails] = useState(false)
 
   const toggleFilter = (type: FilterType) => {
-    // eslint-disable-next-line security/detect-object-injection
-    setFilters((prev) => ({ ...prev, [type]: !prev[type] }))
+    setFilters((prev) => ({
+      ...prev,
+      [type]: !prev[type as keyof FilterState],
+    }))
   }
 
-  // Filter the changelog content based on active filters
-  const filteredContent = useMemo(() => {
-    const lines = changelogContent.split('\n')
-    const result: string[] = []
-    let skipSection = false
-
-    for (const line of lines) {
-      // Detect section headers
-      if (line.startsWith('### Added')) {
-        skipSection = !filters.added
-        if (!skipSection) result.push(line)
-      } else if (line.startsWith('### Changed')) {
-        skipSection = !filters.changed
-        if (!skipSection) result.push(line)
-      } else if (line.startsWith('### Fixed')) {
-        skipSection = !filters.fixed
-        if (!skipSection) result.push(line)
-      } else if (line.startsWith('### ')) {
-        // Other sections like Documentation - always show
-        skipSection = false
-        result.push(line)
-      } else if (line.startsWith('## ')) {
-        // Version headers - always show
-        skipSection = false
-        result.push(line)
-      } else if (line.startsWith('# ')) {
-        // Main title - always show
-        skipSection = false
-        result.push(line)
-      } else {
-        // Content lines
-        if (!skipSection) {
-          result.push(line)
-        }
-      }
-    }
-
-    return result.join('\n')
+  const filteredVersions = useMemo(() => {
+    return ALL_VERSIONS.map((v) => ({
+      ...v,
+      sections: v.sections.filter((s) => {
+        if (s.type === 'other') return true
+        if (s.type === 'added') return filters.added
+        if (s.type === 'changed') return filters.changed
+        if (s.type === 'fixed') return filters.fixed
+        return true
+      }),
+    })).filter((v) => v.sections.length > 0)
   }, [filters])
 
   const allFiltersActive = filters.added && filters.changed && filters.fixed
@@ -88,7 +195,7 @@ export const ChangelogView = () => {
               <FileText className="text-primary" size={24} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Changelog</h1>
+              <h1 className="text-2xl font-bold text-gradient">Changelog</h1>
               <p className="text-sm text-muted-foreground">
                 Current version:{' '}
                 <span className="font-mono text-primary font-bold">v{version}</span>
@@ -105,16 +212,16 @@ export const ChangelogView = () => {
         </div>
       </motion.div>
 
-      {/* Filter Buttons */}
+      {/* Filter Bar */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
         className="glass-panel p-4 mb-6"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm">
-          <span className="text-muted-foreground">Filter:</span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
           <div className="flex flex-wrap items-center gap-2">
+            <span className="text-muted-foreground">Filter:</span>
             <button
               onClick={() => toggleFilter('added')}
               className={clsx(
@@ -137,7 +244,7 @@ export const ChangelogView = () => {
               )}
             >
               <Sparkles size={14} />
-              <span>Enhancements</span>
+              <span>Improvements</span>
             </button>
             <button
               onClick={() => toggleFilter('fixed')}
@@ -160,6 +267,18 @@ export const ChangelogView = () => {
               </button>
             )}
           </div>
+          <button
+            onClick={() => setShowDetails((prev) => !prev)}
+            className={clsx(
+              'flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all text-sm whitespace-nowrap',
+              showDetails
+                ? 'bg-muted/30 border-border text-foreground'
+                : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
+            )}
+          >
+            {showDetails ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            <span>{showDetails ? 'Hide details' : 'Show details'}</span>
+          </button>
         </div>
       </motion.div>
 
@@ -168,11 +287,77 @@ export const ChangelogView = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="glass-panel p-6"
+        className="space-y-4"
       >
-        <article className="prose prose-invert max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-a:text-primary prose-strong:text-foreground prose-code:text-primary prose-code:bg-muted/50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-h2:border-b prose-h2:border-border prose-h2:pb-2 prose-h2:mt-8 prose-h3:text-lg prose-h3:text-primary">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{filteredContent}</ReactMarkdown>
-        </article>
+        {filteredVersions.map((v) => (
+          <div key={v.version} className="glass-panel p-6">
+            {/* Version header */}
+            <div className="flex items-baseline gap-3 mb-4 pb-3 border-b border-border">
+              <h2 className="text-xl font-semibold text-foreground">v{v.version}</h2>
+              <span className="text-sm text-muted-foreground">{v.date}</span>
+            </div>
+
+            {/* Sections */}
+            <div className="space-y-4">
+              {v.sections.map((section) => {
+                const config = SECTION_CONFIG[section.type]
+                const { Icon } = config
+                return (
+                  <div key={section.type}>
+                    {/* Category band */}
+                    <div
+                      className={clsx(
+                        'flex items-center gap-2 px-3 py-2 rounded-r-lg border-l-4 mb-2',
+                        config.borderClass,
+                        config.bgClass
+                      )}
+                    >
+                      <Icon size={14} className={config.textClass} />
+                      <span className={clsx('text-sm font-semibold', config.textClass)}>
+                        {config.label}
+                      </span>
+                      <span
+                        className={clsx(
+                          'text-xs ml-auto tabular-nums opacity-70',
+                          config.textClass
+                        )}
+                      >
+                        {section.entries.length}
+                      </span>
+                    </div>
+
+                    {/* Entry list */}
+                    <ul className="space-y-0.5 pl-1">
+                      {section.entries.map((entry, ei) => (
+                        <li key={ei}>
+                          <div className="py-1.5 px-2 rounded hover:bg-muted/20 transition-colors">
+                            <div className="flex items-start gap-2">
+                              <span className={clsx('mt-0.5 shrink-0 text-sm', config.textClass)}>
+                                ›
+                              </span>
+                              <div className="flex-1 min-w-0">
+                                <span className="font-semibold text-sm text-foreground">
+                                  {entry.title}
+                                </span>
+                                {showDetails && entry.body && (
+                                  <div className="mt-1 prose prose-sm prose-invert max-w-none prose-p:text-muted-foreground prose-p:my-0.5 prose-li:text-muted-foreground prose-code:text-primary prose-code:bg-muted/50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-a:text-primary">
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                      {entry.body}
+                                    </ReactMarkdown>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        ))}
       </motion.div>
     </div>
   )

@@ -1,13 +1,15 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Users, Globe, Lock, BrainCircuit } from 'lucide-react'
+import { Users, Globe, Lock, BrainCircuit, Sparkles } from 'lucide-react'
 import clsx from 'clsx'
-import { StudyPackCard } from './StudyPackCard'
+import { CareerJourneyModal } from './CareerJourneyModal'
 import { useTheme } from '../../hooks/useTheme'
 import { getCurrentVersion } from '../../store/useVersionStore'
 
 export const MobileAboutView = () => {
   const { theme, setTheme } = useTheme()
   const version = getCurrentVersion()
+  const [isJourneyModalOpen, setIsJourneyModalOpen] = useState(false)
   return (
     <div className="flex flex-col gap-6 pb-8">
       {/* Header */}
@@ -16,9 +18,7 @@ export const MobileAboutView = () => {
         animate={{ opacity: 1, y: 0 }}
         className="text-center"
       >
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
-          About PQC Today
-        </h1>
+        <h1 className="text-2xl font-bold text-gradient mb-2">About PQC Today</h1>
         <p className="text-sm text-muted-foreground">
           Learn, assess, explore, and act on the post-quantum transition.
         </p>
@@ -36,7 +36,7 @@ export const MobileAboutView = () => {
           <div className="p-2 rounded-full bg-primary/10 text-primary">
             <Globe size={20} />
           </div>
-          <h2 className="text-lg font-bold">Our Mission</h2>
+          <h2 className="text-lg font-semibold">Our Mission</h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           PQC Today brings together 25 learning modules &mdash; including a dedicated executive
@@ -57,7 +57,7 @@ export const MobileAboutView = () => {
           <div className="p-2 rounded-full bg-secondary/10 text-secondary">
             <Users size={20} />
           </div>
-          <h2 className="text-lg font-bold">Community Driven</h2>
+          <h2 className="text-lg font-semibold">Community Driven</h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           This project is open source and community maintained. We believe in transparency and
@@ -76,7 +76,7 @@ export const MobileAboutView = () => {
           <div className="p-2 rounded-full bg-primary/10 text-primary">
             <Lock size={20} />
           </div>
-          <h2 className="text-lg font-bold">Data Privacy</h2>
+          <h2 className="text-lg font-semibold">Data Privacy</h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           PQC Today is a fully static website with no backend, no database, and no user accounts. We
@@ -90,9 +90,6 @@ export const MobileAboutView = () => {
         </ul>
       </motion.div>
 
-      {/* Study Pack Export */}
-      <StudyPackCard />
-
       {/* PQC Assistant Card */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -104,7 +101,7 @@ export const MobileAboutView = () => {
           <div className="p-2 rounded-full bg-primary/10 text-primary">
             <BrainCircuit size={20} />
           </div>
-          <h2 className="text-lg font-bold">PQC Assistant</h2>
+          <h2 className="text-lg font-semibold">PQC Assistant</h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           Ask questions about post-quantum cryptography using our RAG-powered chatbot. It searches
@@ -118,20 +115,29 @@ export const MobileAboutView = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.22 }}
-        className="glass-panel p-4 text-center"
+        className="glass-panel p-4 text-center space-y-3"
       >
         <p className="text-sm text-muted-foreground">
           Created by <span className="font-bold text-foreground">Eric Amador</span>
         </p>
-        <a
-          href="https://www.linkedin.com/in/eric-amador-971850a"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 mt-2 text-primary hover:underline text-sm"
-        >
-          <Users size={16} />
-          Connect on LinkedIn
-        </a>
+        <div className="flex flex-col items-center gap-3">
+          <a
+            href="https://www.linkedin.com/in/eric-amador-971850a"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-primary hover:underline text-sm"
+          >
+            <Users size={16} />
+            Connect on LinkedIn
+          </a>
+          <button
+            onClick={() => setIsJourneyModalOpen(true)}
+            className="inline-flex items-center gap-2 text-accent font-semibold text-sm hover:underline group"
+          >
+            <Sparkles size={16} className="group-hover:animate-pulse" />
+            View My Career Journey
+          </button>
+        </div>
       </motion.div>
 
       {/* Appearance Section */}
@@ -141,7 +147,7 @@ export const MobileAboutView = () => {
         transition={{ delay: 0.25 }}
         className="glass-panel p-4 flex flex-col items-center justify-center gap-3"
       >
-        <h3 className="text-sm font-bold">Appearance</h3>
+        <h3 className="text-sm font-semibold">Appearance</h3>
         <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-lg border border-border">
           {(['light', 'dark'] as const).map((t) => (
             <button
@@ -164,10 +170,14 @@ export const MobileAboutView = () => {
 
       {/* Disclaimer */}
       <div className="text-center px-4">
-        <p className="text-[10px] text-muted-foreground/60">
+        <p className="text-xs text-muted-foreground/60">
           © 2026 PQC Timeline App. All rights reserved.
         </p>
       </div>
+      <CareerJourneyModal
+        isOpen={isJourneyModalOpen}
+        onClose={() => setIsJourneyModalOpen(false)}
+      />
     </div>
   )
 }

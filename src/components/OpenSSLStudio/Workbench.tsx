@@ -361,7 +361,6 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
         const inP12 = p12File || 'bundle.p12'
         const outPem = 'restored.pem'
         cmd += ` pkcs12 -in ${inP12} -out ${outPem} -passin pass:${p12Pass} -nodes`
-        cmd += ` pkcs12 -in ${inP12} -out ${outPem} -passin pass:${p12Pass} -nodes`
       }
     } else if (category === 'lms') {
       // LMS operations are now handled by WASM in LmsConfig, not CLI

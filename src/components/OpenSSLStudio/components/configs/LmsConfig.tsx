@@ -8,9 +8,9 @@ import { useOpenSSLStore } from '../../store'
 // Helper to construct DER Length
 const encodeLen = (len: number): number[] => {
   if (len < 128) return [len]
-  const hex = len.toString(16)
-  if (hex.length % 2 !== 0) hex.padStart(hex.length + 1, '0') // Ensure even
-  const bytes = []
+  let hex = len.toString(16)
+  if (hex.length % 2 !== 0) hex = hex.padStart(hex.length + 1, '0') // Ensure even
+  const bytes: number[] = []
   for (let i = 0; i < hex.length; i += 2) bytes.push(parseInt(hex.slice(i, i + 2), 16))
   return [0x80 | bytes.length, ...bytes]
 }
@@ -28,7 +28,7 @@ const toSPKI = (pubKey: Uint8Array): string => {
   const spki = [0x30, ...encodeLen(algoId.length + bitString.length), ...algoId, ...bitString]
 
   const b64 = btoa(String.fromCharCode(...spki))
-  return `-----BEGIN PUBLIC KEY-----\n${b64.match(/.{1,64}/g)?.join('\n')}\n-----END PUBLIC KEY-----`
+  return `-----BEGIN PUBLIC KEY-----\n${(b64.match(/.{1,64}/g) ?? []).join('\n')}\n-----END PUBLIC KEY-----`
 }
 
 const toPKCS8 = (privKey: Uint8Array): string => {
@@ -52,7 +52,7 @@ const toPKCS8 = (privKey: Uint8Array): string => {
   ]
 
   const b64 = btoa(String.fromCharCode(...pkcs8))
-  return `-----BEGIN PRIVATE KEY-----\n${b64.match(/.{1,64}/g)?.join('\n')}\n-----END PRIVATE KEY-----`
+  return `-----BEGIN PRIVATE KEY-----\n${(b64.match(/.{1,64}/g) ?? []).join('\n')}\n-----END PRIVATE KEY-----`
 }
 
 const fromPEM = (pem: string | Uint8Array): Uint8Array => {
@@ -532,7 +532,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
                 ))}
             </select>
             {!lmsKeyFile && (
-              <div className="text-[10px] text-amber-500">
+              <div className="text-[10px] text-status-warning">
                 Please generate or select a private key.
               </div>
             )}
@@ -608,13 +608,13 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
             className={`w-full py-2 text-xs font-bold rounded border transition-colors uppercase tracking-wider ${
               lmsDataFile && lmsKeyFile
                 ? 'bg-primary/10 hover:bg-primary/20 text-primary border-primary/30'
-                : 'bg-gray-500/10 text-gray-500 border-gray-500/20 cursor-not-allowed'
+                : 'bg-muted text-muted-foreground border-border cursor-not-allowed'
             }`}
           >
             Sign Selected Data File
           </button>
           {!lmsDataFile && (
-            <p className="text-[10px] text-amber-500 text-center">
+            <p className="text-[10px] text-status-warning text-center">
               Select a Data File below to sign.
             </p>
           )}
@@ -672,13 +672,13 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
             className={`w-full py-2 text-xs font-bold rounded border transition-colors uppercase tracking-wider ${
               lmsKeyFile && lmsSigFile && lmsDataFile
                 ? 'bg-secondary/20 hover:bg-secondary/30 text-secondary border-secondary/30'
-                : 'bg-gray-500/10 text-gray-500 border-gray-500/20 cursor-not-allowed'
+                : 'bg-muted text-muted-foreground border-border cursor-not-allowed'
             }`}
           >
             Verify (WASM)
           </button>
           {(!lmsKeyFile || !lmsSigFile || !lmsDataFile) && (
-            <p className="text-[10px] text-amber-500 text-center">
+            <p className="text-[10px] text-status-warning text-center">
               Select Key, Signature, and Data below.
             </p>
           )}
@@ -710,7 +710,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
               ))}
           </select>
           {files.length === 0 && (
-            <div className="text-[10px] text-amber-500">
+            <div className="text-[10px] text-status-warning">
               No files available. Use "Files" tab to import or create files.
             </div>
           )}

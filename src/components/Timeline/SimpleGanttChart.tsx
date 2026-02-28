@@ -338,7 +338,7 @@ export const SimpleGanttChart = ({
                     style={{ color: colors.start, fill: colors.start }}
                   />
                   <span
-                    className="absolute left-full ml-1 text-[9px] font-semibold whitespace-nowrap select-none pointer-events-none z-20 drop-shadow-md"
+                    className="absolute left-full ml-1 text-[10px] font-semibold whitespace-nowrap select-none pointer-events-none z-20 drop-shadow-md"
                     style={{ color: colors.start }}
                   >
                     {phaseData.phase}

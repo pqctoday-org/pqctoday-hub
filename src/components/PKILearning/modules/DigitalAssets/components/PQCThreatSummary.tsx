@@ -126,7 +126,7 @@ export const PQCThreatSummary: React.FC = () => {
             <p className="text-xs text-muted-foreground leading-relaxed">
               Hunter Beast&apos;s proposal introduces a new SegWit v3 output type (
               <code className="font-mono">bc1r…</code>) using post-quantum signatures (ML-DSA or
-              FALCON-512). Requires a soft fork. Removes the quantum-vulnerable key-spend path from
+              FN-DSA-512). Requires a soft fork. Removes the quantum-vulnerable key-spend path from
               Taproot.
             </p>
             <a

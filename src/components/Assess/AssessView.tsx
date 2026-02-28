@@ -221,7 +221,7 @@ export const AssessView: React.FC = () => {
                   .
                 </p>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="sm"

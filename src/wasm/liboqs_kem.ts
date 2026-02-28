@@ -1,4 +1,4 @@
-// Wrapper for @openforge-sh/liboqs (ML-KEM)
+// Wrapper for @oqs/liboqs-js (ML-KEM)
 /* eslint-disable */
 import {
   createMLKEM512,
@@ -15,7 +15,7 @@ import {
   createClassicMcEliece6688128,
   createClassicMcEliece6960119,
   createClassicMcEliece8192128,
-} from '@openforge-sh/liboqs'
+} from '@oqs/liboqs-js'
 import { createLogger } from '../utils/logger'
 
 const logger = createLogger('liboqs_kem')

@@ -175,17 +175,21 @@ export class LmsService {
         m.HEAPU8.subarray(privPtr, privPtr + PRIV_LEN)
       ).slice()
 
-      // Capture signature and trim trailing zeros
-      // The C code doesn't return actual signature length, so we find it by trimming zeros
+      // Capture signature and trim trailing zeros.
+      // NOTE: This heuristic is imperfect — SHA-256 hash values can legitimately end in 0x00.
+      // TODO: modify WASM _sign_message_wasm to write actual length via an output pointer
+      //       so we can read it directly instead of guessing from the buffer contents.
       const fullSig = new Uint8Array(m.HEAPU8.subarray(sigPtr, sigPtr + SIG_MAX_LEN))
       let actualLen = SIG_MAX_LEN
       // Find last non-zero byte (LMS sigs don't end with many zeros)
       while (actualLen > 0 && fullSig[actualLen - 1] === 0) {
         actualLen--
       }
-      // Safety: ensure we have at least some data
-      if (actualLen < 100) {
-        console.warn('LMS signature unexpectedly short, using full buffer')
+      // Safety: the smallest valid LMS-SHA256 signature (any practical parameter set)
+      // is at least ~500 bytes. If trimming yields less, the buffer is likely miscalculated
+      // or the WASM zeroed beyond the real signature — fall back to the full buffer.
+      if (actualLen < 500) {
+        console.warn('LMS signature unexpectedly short after zero-trim, using full buffer')
         actualLen = SIG_MAX_LEN
       }
       const signature = fullSig.slice(0, actualLen)

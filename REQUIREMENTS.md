@@ -8,51 +8,52 @@ The goal is to build a high-end, visually stunning web application that visualiz
 
 The application is divided into the following main modules. Detailed requirements for each are linked below:
 
-1.  **[Migration Timeline](requirements/timeline.md)**: Visualization of global regulatory recommendations and migration phases.
-2.  **[Quantum Threat Impacts](requirements/impacts.md)**: Dashboard showing specific risks to 20 industries (80 verified threats).
-3.  **[Algorithms Transition](requirements/algorithms.md)**: Comparison table showing the shift from Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) standards.
-4.  **[Standards Library](requirements/library.md)**: Comprehensive PQC standards repository with categorized documents.
-5.  **[Learning Platform](requirements/learn.md)**: 15 interactive educational modules with 340-question quiz:
-    - **[PKI Workshop](requirements/learn.md#module-1-pki-workshop-implemented)**: 4-step certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing) with CSV-based X.509 profiles
-    - **[Digital Assets Program](requirements/digital_assets.md)**: Blockchain cryptography for Bitcoin (secp256k1, P2PKH/SegWit, ECDSA), Ethereum (Keccak-256, EIP-55, EIP-1559), Solana (Ed25519), and HD Wallet (BIP32/39/44)
-    - **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment (Profiles A/B/C with ML-KEM-768) and 5G-AKA authentication with MILENAGE (f1–f5)
-    - **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: EUDI Wallet ecosystem with Remote HSM architecture, OpenID4VCI/OpenID4VP flows, QEAA, Remote QES
-    - **[TLS 1.3 Basics](requirements/learn_openssltls13_requirement.md)**: Interactive TLS 1.3 handshake simulation with PQC support (ML-KEM, ML-DSA), certificate inspector
-    - **PQC 101 Introduction**: Quantum threats, Shor's algorithm, at-risk sectors, HNDL and HNFL attacks
-    - **Quantum Threats**: Threat actor profiles, attack timelines, industry risk mapping
-    - **Hybrid Cryptography**: Hybrid KEM via X25519 ECDH + ML-KEM-768 + HKDF, migration patterns
-    - **Crypto Agility & Architecture**: Macro architecture patterns for crypto-agile systems
-    - **Stateful Hash Signatures**: LMS/HSS overview and operational considerations
-    - **Email & Document Signing**: S/MIME, PDF signing, PQC migration paths
-    - **VPN/IPsec & SSH**: PQC integration in network protocols
-    - **Key Management & HSM**: HSM roles, key lifecycle, PQC readiness
-    - **Entropy & Randomness**: SP 800-90 A/B/C coverage, `EntropyTestingDemo`, NIST DRBG analysis
-    - **Quantum Key Distribution (QKD)**: BB84 with configurable Eve interception rate slider, real-world deployment data
-    - **[PQC Quiz](requirements/learn.md#module-7-pqc-quiz-implemented)**: 340+ questions across 9 categories; persona-filtered mode; per-category score tracking; judo belt grading via `ScoreCard`; InlineTooltip glossary links in all module introductions
-6.  **[Migrate Module](requirements/Migrate_Module_Requirements.md)**: 186+ verified PQC-relevant product entries across 8 infrastructure categories:
-    - 7 infrastructure layers (OS, Libraries, Network, HSM, PKI, Cloud, Containers) + Web Browsers (Chrome, Edge, Firefox, Safari)
-    - Three-tier FIPS badge: Validated (FIPS 140/203 certified) / Partial (FedRAMP, WebTrust, FIPS-mode) / No
-    - `migration_phases` column for phase-based filtering (Crypto Discovery, migrate, launch, etc.)
-    - Infrastructure stack visualization (`InfrastructureStack.tsx`)
-    - Change tracking with "New" and "Updated" indicators
-    - Full header cluster: SourcesButton, ShareButton, GlossaryButton
-7.  **[Interactive Playground](requirements/playground.md)**: Hands-on testing environment for PQC cryptographic operations.
-    - KEM Operations: Classical (X25519, P-256), PQC (ML-KEM), and Hybrid modes with HKDF-Extract normalization
-    - Key Store with sortable/resizable columns
-    - ACVP Testing against NIST test vectors
-8.  **[OpenSSL Studio](requirements/opensslstudio.md)**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly.
-    - 13 operation types: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
-    - Full PQC support: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 variants), LMS/HSS
-    - Classical algorithms: RSA, EC (P-256/384/521, secp256k1), Ed25519, X25519, Ed448, X448
-    - Virtual File System: upload, edit, download, backup/restore with ZIP
-    - ShareButton and GlossaryButton in desktop header
-9.  **[Compliance Module](requirements/Compliance_Module_Requirements.md)**: Real-time compliance tracking and standards monitoring.
-    - NIST FIPS document tracking (203, 204, 205), ANSSI recommendations, Common Criteria certifications
-    - Compliance Landscape Dashboard tab with industry-specific hints
-    - Automated data scraping at build time; SourcesButton, ShareButton, GlossaryButton in header
-    - Industry-aware filtering: frameworks filtered to match selected industry
+1. **[Migration Timeline](requirements/timeline.md)**: Visualization of global regulatory recommendations and migration phases.
+2. **[Quantum Threat Impacts](requirements/impacts.md)**: Dashboard showing specific risks to 20 industries (80 verified threats).
+3. **[Algorithms Transition](requirements/algorithms.md)**: Comparison table showing the shift from Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) standards.
+4. **[Standards Library](requirements/library.md)**: Comprehensive PQC standards repository with categorized documents.
+5. **[Learning Platform](requirements/learn.md)**: 15 interactive educational modules with 340-question quiz:
+   - **[PKI Workshop](requirements/learn.md#module-1-pki-workshop-implemented)**: 4-step certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing) with CSV-based X.509 profiles
+   - **[Digital Assets Program](requirements/digital_assets.md)**: Blockchain cryptography for Bitcoin (secp256k1, P2PKH/SegWit, ECDSA), Ethereum (Keccak-256, EIP-55, EIP-1559), Solana (Ed25519), and HD Wallet (BIP32/39/44)
+   - **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment (Profiles A/B/C with ML-KEM-768) and 5G-AKA authentication with MILENAGE (f1–f5)
+   - **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: EUDI Wallet ecosystem with Remote HSM architecture, OpenID4VCI/OpenID4VP flows, QEAA, Remote QES
+   - **[TLS 1.3 Basics](requirements/learn_openssltls13_requirement.md)**: Interactive TLS 1.3 handshake simulation with PQC support (ML-KEM, ML-DSA), certificate inspector
+   - **PQC 101 Introduction**: Quantum threats, Shor's algorithm, at-risk sectors, HNDL and HNFL attacks
+   - **Quantum Threats**: Threat actor profiles, attack timelines, industry risk mapping
+   - **Hybrid Cryptography**: Hybrid KEM via X25519 ECDH + ML-KEM-768 + HKDF, migration patterns
+   - **Crypto Agility & Architecture**: Macro architecture patterns for crypto-agile systems
+   - **Stateful Hash Signatures**: LMS/HSS overview and operational considerations
+   - **Email & Document Signing**: S/MIME, PDF signing, PQC migration paths
+   - **VPN/IPsec & SSH**: PQC integration in network protocols
+   - **Key Management & HSM**: HSM roles, key lifecycle, PQC readiness
+   - **Entropy & Randomness**: SP 800-90 A/B/C coverage, `EntropyTestingDemo`, NIST DRBG analysis
+   - **Quantum Key Distribution (QKD)**: BB84 with configurable Eve interception rate slider, real-world deployment data
+   - **[PQC Quiz](requirements/learn.md#module-7-pqc-quiz-implemented)**: 340+ questions across 9 categories; persona-filtered mode; per-category score tracking; judo belt grading via `ScoreCard`; InlineTooltip glossary links in all module introductions
+6. **[Migrate Module](requirements/Migrate_Module_Requirements.md)**: 186+ verified PQC-relevant product entries across 8 infrastructure categories:
+   - 7 infrastructure layers (OS, Libraries, Network, HSM, PKI, Cloud, Containers) + Web Browsers (Chrome, Edge, Firefox, Safari)
+   - Three-tier FIPS badge: Validated (FIPS 140/203 certified) / Partial (FedRAMP, WebTrust, FIPS-mode) / No
+   - `migration_phases` column for phase-based filtering (Crypto Discovery, migrate, launch, etc.)
+   - Infrastructure stack visualization (`InfrastructureStack.tsx`)
+   - Change tracking with "New" and "Updated" indicators
+   - Full header cluster: SourcesButton, ShareButton, GlossaryButton
+7. **[Interactive Playground](requirements/playground.md)**: Hands-on testing environment for PQC cryptographic operations.
+   - KEM Operations: Classical (X25519, P-256), PQC (ML-KEM), and Hybrid modes with HKDF-Extract normalization
+   - Key Store with sortable/resizable columns
+   - ACVP Testing against NIST test vectors
+8. **[OpenSSL Studio](requirements/opensslstudio.md)**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly.
+   - 13 operation types: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
+   - Full PQC support: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 variants), LMS/HSS
+   - Classical algorithms: RSA, EC (P-256/384/521, secp256k1), Ed25519, X25519, Ed448, X448
+   - Virtual File System: upload, edit, download, backup/restore with ZIP
+   - ShareButton and GlossaryButton in desktop header
+9. **[Compliance Module](requirements/Compliance_Module_Requirements.md)**: Real-time compliance tracking and standards monitoring.
+   - NIST FIPS document tracking (203, 204, 205), ANSSI recommendations, Common Criteria certifications
+   - Compliance Landscape Dashboard tab with industry-specific hints
+   - Automated data scraping at build time; SourcesButton, ShareButton, GlossaryButton in header
+   - Industry-aware filtering: frameworks filtered to match selected industry
 10. **[Transformation Leaders](requirements/leaders.md)**: 100+ verified profiles of key public and private figures driving the PQC transition.
 11. **[About & Feedback](requirements/about.md)**: Project information, feedback mechanisms, Software Bill of Materials (SBOM), and security audit summary.
+    - **Career Journey**: 6-panel interactive comic-style modal showcasing the creator's professional transition to PQC with custom artwork.
 12. **PQC Risk Assessment** (`/assess`): Comprehensive 13-step quantum risk evaluation wizard.
     - **Wizard steps** (in order): Industry → Country → Crypto → Sensitivity → Compliance → Migration → Use Cases → Retention → Scale → Agility → Infra → Vendors → Timeline
     - **4 risk dimensions**: Quantum Exposure, Migration Complexity, Regulatory Pressure, Organizational Readiness

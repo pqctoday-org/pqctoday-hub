@@ -5,6 +5,38 @@ import { bytesToHex, hexToBytes } from '../../../utils/dataInputUtils'
 import type { ExecutionMode } from '../PlaygroundContext'
 import { hkdfExtract } from '../../../utils/webCrypto'
 
+// ML-KEM public key sizes → algorithm name
+const ML_KEM_PUBLIC_KEY_SIZES: Record<number, string> = {
+  800: 'ML-KEM-512',
+  1184: 'ML-KEM-768',
+  1568: 'ML-KEM-1024',
+}
+
+// ML-KEM private key sizes → algorithm name
+const ML_KEM_PRIVATE_KEY_SIZES: Record<number, string> = {
+  1632: 'ML-KEM-512',
+  2400: 'ML-KEM-768',
+  3168: 'ML-KEM-1024',
+}
+
+/**
+ * Infer the full ML-KEM algorithm name from a key's algorithm label and data length.
+ * For non-ML-KEM algorithms (HQC, FrodoKEM, McEliece), returns the algorithm as-is.
+ */
+const inferKemAlgorithm = (
+  algorithm: string,
+  dataLength: number,
+  keyType: 'public' | 'private',
+  fallbackKeySize: string
+): string => {
+  if (algorithm !== 'ML-KEM' && !algorithm.startsWith('ML-KEM')) return algorithm
+  // Already fully qualified (e.g. 'ML-KEM-768')
+  if (algorithm !== 'ML-KEM') return algorithm
+  const sizeMap = keyType === 'public' ? ML_KEM_PUBLIC_KEY_SIZES : ML_KEM_PRIVATE_KEY_SIZES
+  // eslint-disable-next-line security/detect-object-injection
+  return sizeMap[dataLength] ?? `ML-KEM-${fallbackKeySize}`
+}
+
 interface UseKemOperationsProps {
   keyStore: Key[]
   selectedEncKeyId: string
@@ -138,10 +170,12 @@ export const useKemOperations = ({
           let matches = false
           if (sharedSecret) {
             const originalSecretBytes = hexToBytes(sharedSecret)
-            matches = finalSecret.every(
-              // eslint-disable-next-line security/detect-object-injection
-              (byte, i) => byte === originalSecretBytes[i]
-            )
+            if (finalSecret.length === originalSecretBytes.length) {
+              matches = finalSecret.every(
+                // eslint-disable-next-line security/detect-object-injection
+                (byte, i) => byte === originalSecretBytes[i]
+              )
+            }
           }
 
           setDecapsulatedSecret(bytesToHex(finalSecret))
@@ -189,14 +223,7 @@ export const useKemOperations = ({
         if (!pqcKey.data || !(pqcKey.data instanceof Uint8Array))
           throw new Error('Invalid PQC key data')
 
-        // Determine algo name (same logic as pure WASM)
-        let algoName = pqcKey.algorithm
-        if (algoName === 'ML-KEM' || algoName.startsWith('ML-KEM')) {
-          if (pqcKey.data.length === 800) algoName = 'ML-KEM-512'
-          else if (pqcKey.data.length === 1184) algoName = 'ML-KEM-768'
-          else if (pqcKey.data.length === 1568) algoName = 'ML-KEM-1024'
-          else algoName = `ML-KEM-${keySize}`
-        }
+        const algoName = inferKemAlgorithm(pqcKey.algorithm, pqcKey.data.length, 'public', keySize)
 
         const { ciphertext: pqcCiphertext, sharedKey: pqcSecret } = await MLKEM.encapsulateBits(
           { name: algoName },
@@ -237,10 +264,11 @@ export const useKemOperations = ({
 
         if (!pqcKey) throw new Error('Please select a PQC Private Key')
         if (!classicalKey) throw new Error('Please select a Classical Private Key')
-        if (!ciphertext || !ciphertext.includes('|'))
+        const ctParts = ciphertext ? ciphertext.split('|') : []
+        if (ctParts.length !== 2 || !ctParts[0] || !ctParts[1])
           throw new Error('Invalid hybrid ciphertext format')
 
-        const [pqcCtHex, classicalCtHex] = ciphertext.split('|')
+        const [pqcCtHex, classicalCtHex] = ctParts
 
         // 1. Classical Decapsulation
         if (!classicalKey.data || !(classicalKey.data instanceof CryptoKey))
@@ -262,14 +290,7 @@ export const useKemOperations = ({
         if (!pqcKey.data || !(pqcKey.data instanceof Uint8Array))
           throw new Error('Invalid PQC key data')
 
-        // Determine algo name
-        let algoName = pqcKey.algorithm
-        if (algoName === 'ML-KEM') {
-          if (pqcKey.data.length === 1632) algoName = 'ML-KEM-512'
-          else if (pqcKey.data.length === 2400) algoName = 'ML-KEM-768'
-          else if (pqcKey.data.length === 3168) algoName = 'ML-KEM-1024'
-          else algoName = `ML-KEM-${keySize}`
-        }
+        const algoName = inferKemAlgorithm(pqcKey.algorithm, pqcKey.data.length, 'private', keySize)
 
         const pqcSecret = await MLKEM.decapsulateBits(
           { name: algoName },
@@ -328,20 +349,7 @@ export const useKemOperations = ({
           if (!key.data || !(key.data instanceof Uint8Array))
             throw new Error('Selected key has invalid data format (expected Uint8Array)')
 
-          let algoName = key.algorithm
-          // ML-KEM inference for legacy keys (if size matches)
-          if (algoName === 'ML-KEM' || algoName.startsWith('ML-KEM')) {
-            const len = key.data.length
-            // Check legacy pure 'ML-KEM' cases or confirm size match
-            if (algoName === 'ML-KEM') {
-              if (len === 800) algoName = 'ML-KEM-512'
-              else if (len === 1184) algoName = 'ML-KEM-768'
-              else if (len === 1568) algoName = 'ML-KEM-1024'
-              else algoName = `ML-KEM-${keySize}` // Fallback
-            }
-          }
-          // For other algorithms (HQC, Frodo, McEliece), key.algorithm IS the full name (e.g. 'HQC-128')
-          // So we can pass key.algorithm directly to the WASM wrapper.
+          const algoName = inferKemAlgorithm(key.algorithm, key.data.length, 'public', keySize)
           const { ciphertext, sharedKey } = await MLKEM.encapsulateBits(
             { name: algoName },
             key.data
@@ -372,15 +380,7 @@ export const useKemOperations = ({
             throw new Error('Selected key has invalid data format (expected Uint8Array)')
           if (!ciphertext) throw new Error('No ciphertext available. Run Encapsulate first.')
 
-          let algoName = key.algorithm
-          if (algoName === 'ML-KEM') {
-            // Infer from key size for legacy keys
-            const len = key.data.length
-            if (len === 1632) algoName = 'ML-KEM-512'
-            else if (len === 2400) algoName = 'ML-KEM-768'
-            else if (len === 3168) algoName = 'ML-KEM-1024'
-            else algoName = `ML-KEM-${keySize}` // Fallback
-          }
+          const algoName = inferKemAlgorithm(key.algorithm, key.data.length, 'private', keySize)
           const recoveredSecret = await MLKEM.decapsulateBits(
             { name: algoName },
             key.data,

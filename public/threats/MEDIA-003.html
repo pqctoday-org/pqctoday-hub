@@ -1,0 +1,986 @@
+ <!doctype html>
+<!--[if lt IE 7]><html class="no-js ie ie6 lt-ie9 lt-ie8 lt-ie7" lang="en-US"> <![endif]-->
+<!--[if IE 7]><html class="no-js ie ie7 lt-ie9 lt-ie8" lang="en-US"> <![endif]-->
+<!--[if IE 8]><html class="no-js ie ie8 lt-ie9" lang="en-US"> <![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" lang="en-US"> <!--<![endif]-->
+<head>
+    <meta charset="UTF-8" />
+        <title>   
+                            Security - DVB
+                    </title>
+    <meta name="description" content="The global standard for digital television">
+    <link rel="stylesheet" href="https://dvb.org/wp-content/themes/dvb-theme/style.css" type="text/css" media="screen" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="author" href="https://dvb.org/wp-content/themes/dvb-theme/humans.txt" />
+    <link rel="pingback" href="https://dvb.org/xmlrpc.php" />
+    <link rel="icon"
+      href="https://dvb.org/wp-content/themes/dvb-theme/favicon.ico?v=1">
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,900&display=swap" rel="stylesheet">
+    <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+
+	<!-- This site is optimized with the Yoast SEO plugin v27.0 - https://yoast.com/product/yoast-seo-wordpress/ -->
+	<link rel="canonical" href="https://dvb.org/solutions/security/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Security - DVB" />
+	<meta property="og:description" content="Knowing how important pay TV would be for the roll-out of digital broadcasting, DVB focused on Conditional Access (CA) over broadcast-only networks right from the outset. The DVB Simulcrypt specification allows two or more CA systems to be used by the same receiver population, particularly important when a pay TV provider wants to switch to [&hellip;]" />
+	<meta property="og:url" content="https://dvb.org/solutions/security/" />
+	<meta property="og:site_name" content="DVB" />
+	<meta property="article:modified_time" content="2020-06-05T08:08:09+00:00" />
+	<meta property="og:image" content="https://dvb.org/wp-content/uploads/2019/12/DVB-CI-e1575636137872.png" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:label1" content="Est. reading time" />
+	<meta name="twitter:data1" content="2 minutes" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://dvb.org/solutions/security/","url":"https://dvb.org/solutions/security/","name":"Security - DVB","isPartOf":{"@id":"https://dvb.org/#website"},"primaryImageOfPage":{"@id":"https://dvb.org/solutions/security/#primaryimage"},"image":{"@id":"https://dvb.org/solutions/security/#primaryimage"},"thumbnailUrl":"https://dvb.org/wp-content/uploads/2019/12/DVB-CI-e1575636137872.png","datePublished":"2019-12-05T14:21:44+00:00","dateModified":"2020-06-05T08:08:09+00:00","breadcrumb":{"@id":"https://dvb.org/solutions/security/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://dvb.org/solutions/security/"]}]},{"@type":"ImageObject","inLanguage":"en-US","@id":"https://dvb.org/solutions/security/#primaryimage","url":"https://dvb.org/wp-content/uploads/2019/12/DVB-CI-e1575636137872.png","contentUrl":"https://dvb.org/wp-content/uploads/2019/12/DVB-CI-e1575636137872.png","width":116,"height":30},{"@type":"BreadcrumbList","@id":"https://dvb.org/solutions/security/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://dvb.org/"},{"@type":"ListItem","position":2,"name":"Solutions","item":"https://dvb.org/solutions/"},{"@type":"ListItem","position":3,"name":"Security"}]},{"@type":"WebSite","@id":"https://dvb.org/#website","url":"https://dvb.org/","name":"DVB","description":"The global standard for digital television","publisher":{"@id":"https://dvb.org/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://dvb.org/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https://dvb.org/#organization","name":"DVB","url":"https://dvb.org/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https://dvb.org/#/schema/logo/image/","url":"https://dvb.org/wp-content/uploads/2019/12/DVB-logo-blue.png","contentUrl":"https://dvb.org/wp-content/uploads/2019/12/DVB-logo-blue.png","width":1000,"height":429,"caption":"DVB"},"image":{"@id":"https://dvb.org/#/schema/logo/image/"}}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://dvb.org/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fdvb.org%2Fsolutions%2Fsecurity%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://dvb.org/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fdvb.org%2Fsolutions%2Fsecurity%2F&#038;format=xml" />
+		<style>
+			.lazyload,
+			.lazyloading {
+				max-width: 100%;
+			}
+		</style>
+		<style id='wp-img-auto-sizes-contain-inline-css' type='text/css'>
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<link rel='stylesheet' id='formidable-css' href='https://dvb.org/wp-content/plugins/formidable/css/formidableforms.css?ver=217941' type='text/css' media='all' />
+<style id='wp-emoji-styles-inline-css' type='text/css'>
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+/*# sourceURL=wp-emoji-styles-inline-css */
+</style>
+<style id='wp-block-library-inline-css' type='text/css'>
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}.has-text-align-center{text-align:center}.has-text-align-left{text-align:left}.has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;word-wrap:normal!important}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style*=border-top-color]){border-top-style:solid}html :where([style*=border-right-color]){border-right-style:solid}html :where([style*=border-bottom-color]){border-bottom-style:solid}html :where([style*=border-left-color]){border-left-style:solid}html :where([style*=border-width]){border-style:solid}html :where([style*=border-top-width]){border-top-style:solid}html :where([style*=border-right-width]){border-right-style:solid}html :where([style*=border-bottom-width]){border-bottom-style:solid}html :where([style*=border-left-width]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+
+/*# sourceURL=wp-block-library-inline-css */
+</style>
+<style id='wp-block-image-inline-css' type='text/css'>
+.wp-block-image>a,.wp-block-image>figure>a{display:inline-block}.wp-block-image img{box-sizing:border-box;height:auto;max-width:100%;vertical-align:bottom}@media not (prefers-reduced-motion){.wp-block-image img.hide{visibility:hidden}.wp-block-image img.show{animation:show-content-image .4s}}.wp-block-image[style*=border-radius] img,.wp-block-image[style*=border-radius]>a{border-radius:inherit}.wp-block-image.has-custom-border img{box-sizing:border-box}.wp-block-image.aligncenter{text-align:center}.wp-block-image.alignfull>a,.wp-block-image.alignwide>a{width:100%}.wp-block-image.alignfull img,.wp-block-image.alignwide img{height:auto;width:100%}.wp-block-image .aligncenter,.wp-block-image .alignleft,.wp-block-image .alignright,.wp-block-image.aligncenter,.wp-block-image.alignleft,.wp-block-image.alignright{display:table}.wp-block-image .aligncenter>figcaption,.wp-block-image .alignleft>figcaption,.wp-block-image .alignright>figcaption,.wp-block-image.aligncenter>figcaption,.wp-block-image.alignleft>figcaption,.wp-block-image.alignright>figcaption{caption-side:bottom;display:table-caption}.wp-block-image .alignleft{float:left;margin:.5em 1em .5em 0}.wp-block-image .alignright{float:right;margin:.5em 0 .5em 1em}.wp-block-image .aligncenter{margin-left:auto;margin-right:auto}.wp-block-image :where(figcaption){margin-bottom:1em;margin-top:.5em}.wp-block-image.is-style-circle-mask img{border-radius:9999px}@supports ((-webkit-mask-image:none) or (mask-image:none)) or (-webkit-mask-image:none){.wp-block-image.is-style-circle-mask img{border-radius:0;-webkit-mask-image:url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50"/></svg>');mask-image:url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50"/></svg>');mask-mode:alpha;-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:contain;mask-size:contain}}:root :where(.wp-block-image.is-style-rounded img,.wp-block-image .is-style-rounded img){border-radius:9999px}.wp-block-image figure{margin:0}.wp-lightbox-container{display:flex;flex-direction:column;position:relative}.wp-lightbox-container img{cursor:zoom-in}.wp-lightbox-container img:hover+button{opacity:1}.wp-lightbox-container button{align-items:center;backdrop-filter:blur(16px) saturate(180%);background-color:#5a5a5a40;border:none;border-radius:4px;cursor:zoom-in;display:flex;height:20px;justify-content:center;opacity:0;padding:0;position:absolute;right:16px;text-align:center;top:16px;width:20px;z-index:100}@media not (prefers-reduced-motion){.wp-lightbox-container button{transition:opacity .2s ease}}.wp-lightbox-container button:focus-visible{outline:3px auto #5a5a5a40;outline:3px auto -webkit-focus-ring-color;outline-offset:3px}.wp-lightbox-container button:hover{cursor:pointer;opacity:1}.wp-lightbox-container button:focus{opacity:1}.wp-lightbox-container button:focus,.wp-lightbox-container button:hover,.wp-lightbox-container button:not(:hover):not(:active):not(.has-background){background-color:#5a5a5a40;border:none}.wp-lightbox-overlay{box-sizing:border-box;cursor:zoom-out;height:100vh;left:0;overflow:hidden;position:fixed;top:0;visibility:hidden;width:100%;z-index:100000}.wp-lightbox-overlay .close-button{align-items:center;cursor:pointer;display:flex;justify-content:center;min-height:40px;min-width:40px;padding:0;position:absolute;right:calc(env(safe-area-inset-right) + 16px);top:calc(env(safe-area-inset-top) + 16px);z-index:5000000}.wp-lightbox-overlay .close-button:focus,.wp-lightbox-overlay .close-button:hover,.wp-lightbox-overlay .close-button:not(:hover):not(:active):not(.has-background){background:none;border:none}.wp-lightbox-overlay .lightbox-image-container{height:var(--wp--lightbox-container-height);left:50%;overflow:hidden;position:absolute;top:50%;transform:translate(-50%,-50%);transform-origin:top left;width:var(--wp--lightbox-container-width);z-index:9999999999}.wp-lightbox-overlay .wp-block-image{align-items:center;box-sizing:border-box;display:flex;height:100%;justify-content:center;margin:0;position:relative;transform-origin:0 0;width:100%;z-index:3000000}.wp-lightbox-overlay .wp-block-image img{height:var(--wp--lightbox-image-height);min-height:var(--wp--lightbox-image-height);min-width:var(--wp--lightbox-image-width);width:var(--wp--lightbox-image-width)}.wp-lightbox-overlay .wp-block-image figcaption{display:none}.wp-lightbox-overlay button{background:none;border:none}.wp-lightbox-overlay .scrim{background-color:#fff;height:100%;opacity:.9;position:absolute;width:100%;z-index:2000000}.wp-lightbox-overlay.active{visibility:visible}@media not (prefers-reduced-motion){.wp-lightbox-overlay.active{animation:turn-on-visibility .25s both}.wp-lightbox-overlay.active img{animation:turn-on-visibility .35s both}.wp-lightbox-overlay.show-closing-animation:not(.active){animation:turn-off-visibility .35s both}.wp-lightbox-overlay.show-closing-animation:not(.active) img{animation:turn-off-visibility .25s both}.wp-lightbox-overlay.zoom.active{animation:none;opacity:1;visibility:visible}.wp-lightbox-overlay.zoom.active .lightbox-image-container{animation:lightbox-zoom-in .4s}.wp-lightbox-overlay.zoom.active .lightbox-image-container img{animation:none}.wp-lightbox-overlay.zoom.active .scrim{animation:turn-on-visibility .4s forwards}.wp-lightbox-overlay.zoom.show-closing-animation:not(.active){animation:none}.wp-lightbox-overlay.zoom.show-closing-animation:not(.active) .lightbox-image-container{animation:lightbox-zoom-out .4s}.wp-lightbox-overlay.zoom.show-closing-animation:not(.active) .lightbox-image-container img{animation:none}.wp-lightbox-overlay.zoom.show-closing-animation:not(.active) .scrim{animation:turn-off-visibility .4s forwards}}@keyframes show-content-image{0%{visibility:hidden}99%{visibility:hidden}to{visibility:visible}}@keyframes turn-on-visibility{0%{opacity:0}to{opacity:1}}@keyframes turn-off-visibility{0%{opacity:1;visibility:visible}99%{opacity:0;visibility:visible}to{opacity:0;visibility:hidden}}@keyframes lightbox-zoom-in{0%{transform:translate(calc((-100vw + var(--wp--lightbox-scrollbar-width))/2 + var(--wp--lightbox-initial-left-position)),calc(-50vh + var(--wp--lightbox-initial-top-position))) scale(var(--wp--lightbox-scale))}to{transform:translate(-50%,-50%) scale(1)}}@keyframes lightbox-zoom-out{0%{transform:translate(-50%,-50%) scale(1);visibility:visible}99%{visibility:visible}to{transform:translate(calc((-100vw + var(--wp--lightbox-scrollbar-width))/2 + var(--wp--lightbox-initial-left-position)),calc(-50vh + var(--wp--lightbox-initial-top-position))) scale(var(--wp--lightbox-scale));visibility:hidden}}
+/*# sourceURL=https://dvb.org/wp-includes/blocks/image/style.min.css */
+</style>
+<style id='wp-block-columns-inline-css' type='text/css'>
+.wp-block-columns{box-sizing:border-box;display:flex;flex-wrap:wrap!important}@media (min-width:782px){.wp-block-columns{flex-wrap:nowrap!important}}.wp-block-columns{align-items:normal!important}.wp-block-columns.are-vertically-aligned-top{align-items:flex-start}.wp-block-columns.are-vertically-aligned-center{align-items:center}.wp-block-columns.are-vertically-aligned-bottom{align-items:flex-end}@media (max-width:781px){.wp-block-columns:not(.is-not-stacked-on-mobile)>.wp-block-column{flex-basis:100%!important}}@media (min-width:782px){.wp-block-columns:not(.is-not-stacked-on-mobile)>.wp-block-column{flex-basis:0;flex-grow:1}.wp-block-columns:not(.is-not-stacked-on-mobile)>.wp-block-column[style*=flex-basis]{flex-grow:0}}.wp-block-columns.is-not-stacked-on-mobile{flex-wrap:nowrap!important}.wp-block-columns.is-not-stacked-on-mobile>.wp-block-column{flex-basis:0;flex-grow:1}.wp-block-columns.is-not-stacked-on-mobile>.wp-block-column[style*=flex-basis]{flex-grow:0}:where(.wp-block-columns){margin-bottom:1.75em}:where(.wp-block-columns.has-background){padding:1.25em 2.375em}.wp-block-column{flex-grow:1;min-width:0;overflow-wrap:break-word;word-break:break-word}.wp-block-column.is-vertically-aligned-top{align-self:flex-start}.wp-block-column.is-vertically-aligned-center{align-self:center}.wp-block-column.is-vertically-aligned-bottom{align-self:flex-end}.wp-block-column.is-vertically-aligned-stretch{align-self:stretch}.wp-block-column.is-vertically-aligned-bottom,.wp-block-column.is-vertically-aligned-center,.wp-block-column.is-vertically-aligned-top{width:100%}
+/*# sourceURL=https://dvb.org/wp-includes/blocks/columns/style.min.css */
+</style>
+<style id='wp-block-group-inline-css' type='text/css'>
+.wp-block-group{box-sizing:border-box}:where(.wp-block-group.wp-block-group-is-layout-constrained){position:relative}
+/*# sourceURL=https://dvb.org/wp-includes/blocks/group/style.min.css */
+</style>
+<style id='wp-block-separator-inline-css' type='text/css'>
+@charset "UTF-8";.wp-block-separator{border:none;border-top:2px solid}:root :where(.wp-block-separator.is-style-dots){height:auto;line-height:1;text-align:center}:root :where(.wp-block-separator.is-style-dots):before{color:currentColor;content:"···";font-family:serif;font-size:1.5em;letter-spacing:2em;padding-left:2em}.wp-block-separator.is-style-dots{background:none!important;border:none!important}
+/*# sourceURL=https://dvb.org/wp-includes/blocks/separator/style.min.css */
+</style>
+
+<style id='classic-theme-styles-inline-css' type='text/css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+<style id='global-styles-inline-css' type='text/css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link rel='stylesheet' id='contact-form-7-css' href='https://dvb.org/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=6.1.5' type='text/css' media='all' />
+<link rel='stylesheet' id='cookie-law-info-css' href='https://dvb.org/wp-content/plugins/cookie-law-info/legacy/public/css/cookie-law-info-public.css?ver=3.4.0' type='text/css' media='all' />
+<link rel='stylesheet' id='cookie-law-info-gdpr-css' href='https://dvb.org/wp-content/plugins/cookie-law-info/legacy/public/css/cookie-law-info-gdpr.css?ver=3.4.0' type='text/css' media='all' />
+<link rel='stylesheet' id='baguettebox-css-css' href='https://dvb.org/wp-content/plugins/gallery-block-lightbox/dist/baguetteBox.min.css?ver=1.12.0' type='text/css' media='all' />
+<link rel='stylesheet' id='style-css' href='https://dvb.org/wp-content/themes/dvb-theme/dist/main.css?ver=1.0.0' type='text/css' media='all' />
+<link rel='stylesheet' id='searchwp-live-search-css' href='https://dvb.org/wp-content/plugins/searchwp-live-ajax-search/assets/styles/style.min.css?ver=1.8.7' type='text/css' media='all' />
+<style id='searchwp-live-search-inline-css' type='text/css'>
+.searchwp-live-search-result .searchwp-live-search-result--title a {
+  font-size: 16px;
+}
+.searchwp-live-search-result .searchwp-live-search-result--price {
+  font-size: 14px;
+}
+.searchwp-live-search-result .searchwp-live-search-result--add-to-cart .button {
+  font-size: 14px;
+}
+
+/*# sourceURL=searchwp-live-search-inline-css */
+</style>
+<style id='kadence-blocks-global-variables-inline-css' type='text/css'>
+:root {--global-kb-font-size-sm:clamp(0.8rem, 0.73rem + 0.217vw, 0.9rem);--global-kb-font-size-md:clamp(1.1rem, 0.995rem + 0.326vw, 1.25rem);--global-kb-font-size-lg:clamp(1.75rem, 1.576rem + 0.543vw, 2rem);--global-kb-font-size-xl:clamp(2.25rem, 1.728rem + 1.63vw, 3rem);--global-kb-font-size-xxl:clamp(2.5rem, 1.456rem + 3.26vw, 4rem);--global-kb-font-size-xxxl:clamp(2.75rem, 0.489rem + 7.065vw, 6rem);}:root {--global-palette1: #3182CE;--global-palette2: #2B6CB0;--global-palette3: #1A202C;--global-palette4: #2D3748;--global-palette5: #4A5568;--global-palette6: #718096;--global-palette7: #EDF2F7;--global-palette8: #F7FAFC;--global-palette9: #ffffff;}
+/*# sourceURL=kadence-blocks-global-variables-inline-css */
+</style>
+<link rel='stylesheet' id='wp-block-paragraph-css' href='https://dvb.org/wp-includes/blocks/paragraph/style.min.css?ver=21611cd6dcf623f37080bd3b51ecc912' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-block-heading-css' href='https://dvb.org/wp-includes/blocks/heading/style.min.css?ver=21611cd6dcf623f37080bd3b51ecc912' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-block-list-css' href='https://dvb.org/wp-includes/blocks/list/style.min.css?ver=21611cd6dcf623f37080bd3b51ecc912' type='text/css' media='all' />
+<script type="text/javascript" src="https://dvb.org/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script>
+<script type="text/javascript" src="https://dvb.org/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1" id="jquery-migrate-js"></script>
+<script type="text/javascript" id="cookie-law-info-js-extra">
+/* <![CDATA[ */
+var Cli_Data = {"nn_cookie_ids":["VISITOR_PRIVACY_METADATA","CookieLawInfoConsent","cookielawinfo-checkbox-necessary","cookielawinfo-checkbox-functional","cookielawinfo-checkbox-performance","cookielawinfo-checkbox-analytics","cookielawinfo-checkbox-advertisement","cookielawinfo-checkbox-others","_GRECAPTCHA","YSC","VISITOR_INFO1_LIVE","yt-remote-device-id","yt-remote-connected-devices","yt.innertube::requests","yt.innertube::nextId","CONSENT"],"cookielist":[],"non_necessary_cookies":{"necessary":["CookieLawInfoConsent","_GRECAPTCHA"],"analytics":["CONSENT"],"advertisement":["YSC","VISITOR_INFO1_LIVE","yt-remote-device-id","yt-remote-connected-devices","yt.innertube::requests","yt.innertube::nextId"],"others":["VISITOR_PRIVACY_METADATA"]},"ccpaEnabled":"","ccpaRegionBased":"","ccpaBarEnabled":"","strictlyEnabled":["necessary","obligatoire"],"ccpaType":"gdpr","js_blocking":"","custom_integration":"","triggerDomRefresh":"","secure_cookies":""};
+var cli_cookiebar_settings = {"animate_speed_hide":"500","animate_speed_show":"500","background":"#FFF","border":"#b1a6a6c2","border_on":"","button_1_button_colour":"#000","button_1_button_hover":"#000000","button_1_link_colour":"#fff","button_1_as_button":"1","button_1_new_win":"","button_2_button_colour":"#333","button_2_button_hover":"#292929","button_2_link_colour":"#444","button_2_as_button":"","button_2_hidebar":"","button_3_button_colour":"#000","button_3_button_hover":"#000000","button_3_link_colour":"#fff","button_3_as_button":"1","button_3_new_win":"","button_4_button_colour":"#000","button_4_button_hover":"#000000","button_4_link_colour":"#62a329","button_4_as_button":"","button_7_button_colour":"#61a229","button_7_button_hover":"#4e8221","button_7_link_colour":"#fff","button_7_as_button":"1","button_7_new_win":"","font_family":"inherit","header_fix":"","notify_animate_hide":"1","notify_animate_show":"","notify_div_id":"#cookie-law-info-bar","notify_position_horizontal":"right","notify_position_vertical":"bottom","scroll_close":"","scroll_close_reload":"","accept_close_reload":"","reject_close_reload":"","showagain_tab":"1","showagain_background":"#fff","showagain_border":"#000","showagain_div_id":"#cookie-law-info-again","showagain_x_position":"100px","text":"#000","show_once_yn":"","show_once":"10000","logging_on":"","as_popup":"","popup_overlay":"1","bar_heading_text":"","cookie_bar_as":"banner","popup_showagain_position":"bottom-right","widget_position":"left"};
+var log_object = {"ajax_url":"https://dvb.org/wp-admin/admin-ajax.php"};
+//# sourceURL=cookie-law-info-js-extra
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://dvb.org/wp-content/plugins/cookie-law-info/legacy/public/js/cookie-law-info-public.js?ver=3.4.0" id="cookie-law-info-js"></script>
+<link rel="https://api.w.org/" href="https://dvb.org/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://dvb.org/wp-json/wp/v2/pages/6224" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://dvb.org/xmlrpc.php?rsd" />
+
+<link rel='shortlink' href='https://dvb.org/?p=6224' />
+<script>document.documentElement.className += " js";</script>
+		<script>
+			document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+		</script>
+				<style>
+			.no-js img.lazyload {
+				display: none;
+			}
+
+			figure.wp-block-image img.lazyloading {
+				min-width: 150px;
+			}
+
+			.lazyload,
+			.lazyloading {
+				--smush-placeholder-width: 100px;
+				--smush-placeholder-aspect-ratio: 1/1;
+				width: var(--smush-image-width, var(--smush-placeholder-width)) !important;
+				aspect-ratio: var(--smush-image-aspect-ratio, var(--smush-placeholder-aspect-ratio)) !important;
+			}
+
+						.lazyload, .lazyloading {
+				opacity: 0;
+			}
+
+			.lazyloaded {
+				opacity: 1;
+				transition: opacity 400ms;
+				transition-delay: 0ms;
+			}
+
+					</style>
+				<style type="text/css" id="wp-custom-css">
+			/* Hide main title on DVB-DASH fact sheet - temp solution */
+
+	
+.page-id-18580 h1.article-h1  {
+display: none;
+}
+
+
+figcaption {
+    color: #262626;
+    font-style: italic;
+    font-size: 14px
+}
+
+/* Highlighter pen background */
+
+.highlight-bg {
+  background-color: #ffea00;
+}		</style>
+		
+        <script> var _ctct_m = "a8bea9fbc66abbeb6d7c7b1656c5cc9e"; </script>
+    <script id="signupScript" src="//static.ctctcdn.com/js/signup-form-widget/current/signup-form-widget.min.js" async defer></script>
+    
+        <script
+        type="module"
+        src="https://cdn.jsdelivr.net/npm/friendly-challenge@0.9.9/widget.module.min.js"
+        async
+        defer
+        ></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/friendly-challenge@0.9.9/widget.min.js" async defer></script>
+
+
+<!-- Google tag (gtag.js) --> 
+<script 
+    async 
+    src=" https://www.googletagmanager.com/gtag/js?id=G-V3BZ35G75K">
+</script>
+<script> 
+window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-V3BZ35G75K');
+</script>  <style id='core-block-supports-inline-css' type='text/css'>
+.wp-container-core-columns-is-layout-9d6595d7{flex-wrap:nowrap;}
+/*# sourceURL=core-block-supports-inline-css */
+</style>
+<link rel='stylesheet' id='cookie-law-info-table-css' href='https://dvb.org/wp-content/plugins/cookie-law-info/legacy/public/css/cookie-law-info-table.css?ver=3.4.0' type='text/css' media='all' />
+
+</head>
+
+<body class="wp-singular page-template-default page page-id-6224 page-child parent-pageid-71 wp-embed-responsive wp-theme-dvb-theme" data-template="base.twig">
+  <header class="header">
+  <div class="topbar shadow">
+    <div class="container">
+      <div class="topbar__inner">
+                  <a href="https://dvb-i.tv/" class="topbar__link topbar__link--external menu-item menu-item-type-custom menu-item-object-custom menu-item-24060">DVB-I</a>
+                  <a href="https://www.dvbworld.org/" class="topbar__link topbar__link--external menu-item menu-item-type-custom menu-item-object-custom menu-item-19">DVB World</a>
+                  <a href="https://www.dvbservices.com/" class="topbar__link topbar__link--external menu-item menu-item-type-custom menu-item-object-custom menu-item-20">DVB Services</a>
+                  <a href="https://member.dvb.org" class="topbar__link topbar__link--login menu-item menu-item-type-custom menu-item-object-custom menu-item-21">Member Login</a>
+              </div>
+    </div>
+  </div>
+  <nav class="navbar fixed-top navbar-expand-lg justify-content-between shadow">
+    <div class="container">
+      <a class="navbar-brand" href="/"><img data-src="https://dvb.org/wp-content/themes/dvb-theme/src/assets/jpg/dvb-logo.png" alt="DVB Logo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==" class="lazyload" style="--smush-placeholder-width: 114px; --smush-placeholder-aspect-ratio: 114/49;" /></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <ul class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+                    <li class="nav-item  menu-item menu-item-type-post_type menu-item-object-page current-page-ancestor current-menu-ancestor current-menu-parent current-page-parent current_page_parent current_page_ancestor menu-item-75 menu-item-has-children">
+            <a
+              class="nav-link"
+              href="https://dvb.org/solutions/">
+              Solutions
+            </a>
+                        <a href="#0" class="sub-menu-toggler"></a>
+              <ul class="sub-menu">
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6231">
+                    <a href="https://dvb.org/solutions/coding-transport/">Coding &#038; Transport</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6230">
+                    <a href="https://dvb.org/solutions/service-discovery-metadata/">Service Discovery &#038; Metadata</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-6224 current_page_item menu-item-6229">
+                    <a href="https://dvb.org/solutions/security/">Security</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6228">
+                    <a href="https://dvb.org/solutions/interactivity-personalization/">Interactivity &#038; Personalization</a>
+                  </li>
+                              </ul>
+                      </li>
+                    <li class="nav-item  menu-item menu-item-type-post_type menu-item-object-page menu-item-17 menu-item-has-children">
+            <a
+              class="nav-link"
+              href="https://dvb.org/specifications/">
+              Specifications
+            </a>
+                        <a href="#0" class="sub-menu-toggler"></a>
+              <ul class="sub-menu">
+                                  <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-16818">
+                    <a href="/specifications/">Standards & BlueBooks</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2579">
+                    <a href="https://dvb.org/specifications/verification-validation/">Verification &#038; Validation</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2587">
+                    <a href="https://dvb.org/metadata/">Metadata</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-16817">
+                    <a href="https://dvb.org/specifications/white-papers/">White Papers</a>
+                  </li>
+                              </ul>
+                      </li>
+                    <li class="nav-item  menu-item menu-item-type-post_type menu-item-object-page menu-item-4662 menu-item-has-children">
+            <a
+              class="nav-link"
+              href="https://dvb.org/membership/">
+              Membership
+            </a>
+                        <a href="#0" class="sub-menu-toggler"></a>
+              <ul class="sub-menu">
+                                  <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-16845">
+                    <a href="/membership/">Our Members</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2580">
+                    <a href="https://dvb.org/membership/join-dvb/">Join DVB</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2578">
+                    <a href="https://dvb.org/membership/liaisons/">Liaisons</a>
+                  </li>
+                              </ul>
+                      </li>
+                    <li class="nav-item  menu-item menu-item-type-post_type menu-item-object-page menu-item-2568 menu-item-has-children">
+            <a
+              class="nav-link"
+              href="https://dvb.org/groups/">
+              How we work
+            </a>
+                        <a href="#0" class="sub-menu-toggler"></a>
+              <ul class="sub-menu">
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4694">
+                    <a href="https://dvb.org/groups/ga/">General Assembly</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4761">
+                    <a href="https://dvb.org/groups/sb/">Steering Board</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4760">
+                    <a href="https://dvb.org/groups/cm/">Commercial Module</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-5183">
+                    <a href="https://dvb.org/groups/tm/">Technical Module</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4803">
+                    <a href="https://dvb.org/groups/pcm/">Promotion & Comms Module</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4804">
+                    <a href="https://dvb.org/groups/iprm/">IPR Module</a>
+                  </li>
+                              </ul>
+                      </li>
+                    <li class="nav-item  menu-item menu-item-type-post_type menu-item-object-page menu-item-79 menu-item-has-children">
+            <a
+              class="nav-link"
+              href="https://dvb.org/news-events/">
+              News &#038; events
+            </a>
+                        <a href="#0" class="sub-menu-toggler"></a>
+              <ul class="sub-menu">
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2607">
+                    <a href="https://dvb.org/news-events/news/">News</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2606">
+                    <a href="https://dvb.org/news-events/events/">Events</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4844">
+                    <a href="https://dvb.org/news-events/webinars/">Webinars</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4667">
+                    <a href="https://dvb.org/dvb-scene/">DVB Scene</a>
+                  </li>
+                              </ul>
+                      </li>
+                    <li class="nav-item  menu-item menu-item-type-post_type menu-item-object-page menu-item-16 menu-item-has-children">
+            <a
+              class="nav-link"
+              href="https://dvb.org/about/">
+              About
+            </a>
+                        <a href="#0" class="sub-menu-toggler"></a>
+              <ul class="sub-menu">
+                                  <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-16846">
+                    <a href="/about/">About DVB</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6026">
+                    <a href="https://dvb.org/about/policies-procedures/">Policies &#038; Procedures</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-6024">
+                    <a href="https://dvb.org/about/policies-procedures/licensing-programmes/">Licensing Programmes</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4812">
+                    <a href="https://dvb.org/about/history/">History</a>
+                  </li>
+                                  <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2605">
+                    <a href="https://dvb.org/about/contact/">Contact</a>
+                  </li>
+                              </ul>
+                      </li>
+                  </ul>
+        <div class="display-inline nav-item no-hover navbar-search-wrapper">
+          <div id="navbar-search-form">
+            <span class="navbar-search-form__close-btn">
+              &times;
+            </span>
+            <form method="get" id="searchform" action="https://dvb.org/">
+    <label for="s" class="assistive-text">Search</label>
+    <input type="text" class="field" name="s" data-swplive="true" data-swpengine="default" data-swpconfig="default" id="s" placeholder="DVB-I, Joining DVB, test streams, etc" />
+    <input type="submit" class="submit" name="submit" id="searchsubmit" value="Search" />
+</form>
+          </div>
+          <a id="navbar-search-form__toggle" class="nav-link icon-link icon-link--search" href="/?s=" title="Search DVB">Search</a>
+        </div>
+      </ul>
+    </div>
+  </nav>
+</header>  
+  
+  
+  <div class="container-fluid p-0">
+          </div>
+
+  <section id="content" role="main" class="content-wrapper">
+    <div class="container">
+            <div class="wrapper ">
+        <article class="post-type-page" id="post-6224">
+  <section class="main-page-content">
+        <h1 class="article-h1">Security</h1>
+        <div class="article-body">
+      
+<div class="wp-block-columns is-layout-flex wp-container-core-columns-is-layout-9d6595d7 wp-block-columns-is-layout-flex">
+<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:66.66%">
+<p>Knowing how important pay TV would be for the roll-out of digital broadcasting, DVB focused on Conditional Access (CA) over broadcast-only networks right from the outset. The DVB Simulcrypt specification allows two or more CA systems to be used by the same receiver population, particularly important when a pay TV provider wants to switch to another CA system. The Simulcrypt approach is based on DVB’s toolbox of <a href="#dvbcsa">Common Scrambling Algorithms (CSA)</a> combined with the necessary signalling.</p>
+
+
+
+<p>There is an impressive ecosystem of CA solutions providers whose products are based on DVB specifications. About 50% of all DVB receivers worldwide have DVB CA solutions integrated. It is fair to say that DVB technology has enabled the pay TV broadcast market.</p>
+</div>
+
+
+
+<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:33.33%"></div>
+</div>
+
+
+
+<div class="wp-block-columns is-layout-flex wp-container-core-columns-is-layout-9d6595d7 wp-block-columns-is-layout-flex">
+<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:66.66%">
+<hr class="wp-block-separator is-style-wide"/>
+
+
+
+<div class="wp-block-group" id="dvbci"><div class="wp-block-group__inner-container is-layout-flow wp-block-group-is-layout-flow">
+<figure class="wp-block-image size-large"><img decoding="async" width="116" height="30" data-src="https://dvb.org/wp-content/uploads/2019/12/DVB-CI-e1575636137872.png" alt="" class="wp-image-6286 lazyload" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==" style="--smush-placeholder-width: 116px; --smush-placeholder-aspect-ratio: 116/30;" /></figure>
+</div></div>
+
+
+
+<h2 class="wp-block-heading">Common Interface</h2>
+</div>
+
+
+
+<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:33.33%"></div>
+</div>
+
+
+
+<div class="wp-block-columns is-layout-flex wp-container-core-columns-is-layout-9d6595d7 wp-block-columns-is-layout-flex">
+<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:66.66%">
+<p>The DVB-CI specification describes the interface between a Conditional Access Module (CAM) and the host, which is typically a TV set. All the conditional access functionality is provided by the CAM whereas the host provides the necessary tuning functionality and presents audio and video. </p>
+
+
+
+<p>In the first DVB-CI version the content was transferred in the clear between the module and the host. This security loophole was resolved with the introduction of CI Plus, originally developed by&nbsp;<a href="http://www.ci-plus.com/">CI Plus LLP</a>. It provides common methods for mutual authentication of the CICAM and host,  and link encryption over the return interface from the CICAM to the host. Being mandated by a European Directive, CI Plus slots are present in basically all TV sets sold in Europe.</p>
+
+
+
+<p>DVB has, since 2014, published extensions to CI Plus V1.3, which was produced and continues to be published by CI Plus LLP. The overt watermarking feature that was added in 2019 is an optional feature that provides a secure protocol to display a line of text over video from a scrambled service. Its main purpose would be to display subscriber identity over the video. The solution is supported for both broadcast and IP-delivered content. </p>
+
+
+
+<p>The original DVB-CI specification is implemented using the PCMCIA slot. The second generation specification, introducing a USB form factor, was published in 2018.  While the use of DVB-CI is widespread in Europe, the costs associated with adding a PC Card slot mean that its implementation in the rest of the world has been limited. Since virtually all new TV sets support USB, the cost implications of implementing DVB-CI in future will relate mostly to software integration. </p>
+</div>
+
+
+
+<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:33.33%">
+<h4 class="wp-block-heading">Specifications</h4>
+
+
+
+<ul class="wp-block-list"><li><a href="https://dvb.org/?standard=second-generation-common-interface-implementation-using-the-universal-serial-bus-usb">Second Generation DVB Common Interface (DVB-CI USB)</a></li><li><a href="https://dvb.org/?standard=dvb-extensions-to-the-ci-plus-specification">DVB Extensions to the CI Plus specification (DVB-CI Plus)</a> </li></ul>
+
+
+
+<h4 class="wp-block-heading">Resources</h4>
+
+
+
+<ul class="wp-block-list"><li> <a href="http://www.ci-plus.com/" target="_blank" rel="noreferrer noopener" aria-label=" (opens in a new tab)">CI Plus LLP</a> </li></ul>
+</div>
+</div>
+
+
+
+<div class="wp-block-columns is-layout-flex wp-container-core-columns-is-layout-9d6595d7 wp-block-columns-is-layout-flex">
+<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:66.66%">
+<hr class="wp-block-separator is-style-wide"/>
+
+
+
+<div class="wp-block-group" id="dvbcsa"><div class="wp-block-group__inner-container is-layout-flow wp-block-group-is-layout-flow">
+<figure class="wp-block-image size-large"><img decoding="async" width="167" height="30" data-src="https://dvb.org/wp-content/uploads/2019/12/DVB-CSA3-e1575636151638.png" alt="" class="wp-image-6287 lazyload" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==" style="--smush-placeholder-width: 167px; --smush-placeholder-aspect-ratio: 167/30;" /></figure>
+</div></div>
+
+
+
+<h2 class="wp-block-heading">Common Scrambling Algorithm</h2>
+
+
+
+<p></p>
+</div>
+
+
+
+<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:33.33%"></div>
+</div>
+
+
+
+<div class="wp-block-columns is-layout-flex wp-container-core-columns-is-layout-9d6595d7 wp-block-columns-is-layout-flex">
+<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:66.66%">
+<p>The Common Scrambling Algorithm (CSA) is the encryption algorithm used for encrypting video streams in DVB television services.</p>
+
+
+
+<p>CSA is comprised of the Common Descrambling System and Scrambling Technology. The specification for each is distributed separately by a custodian on behalf of the companies which have developed the Common Scrambling Algorithm.</p>
+
+
+
+<p>The latest version, CSA3, is based on a combination of 128-bit AES and a confidential block cipher, XRC.</p>
+
+
+
+<p></p>
+</div>
+
+
+
+<div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:33.33%">
+<h4 class="wp-block-heading">Specifications</h4>
+
+
+
+<ul class="wp-block-list"><li><a href="https://dvb.org/?standard=support-for-use-of-the-dvb-scrambling-algorithm-version-3-within-digital-broadcasting-systems">DVB-CSA3 (Third generation Common Scrambling Algorithm)</a></li><li><a href="https://dvb.org/?standard=content-scrambling-algorithms-for-dvb-iptv-services-using-mpeg2-transport-streams">DVB-CSA for DVB-IPTV (Common Scrambling Algorithm)</a></li></ul>
+
+
+
+<h4 class="wp-block-heading">Resources</h4>
+</div>
+</div>
+
+    </div>
+  </section>
+</article>
+
+                  
+              </div>
+          </div>
+  </section>
+
+  <div class="container-fluid p-0">
+          </div>
+
+   <footer class="footer">
+  <div class="footer__main">
+    <div class="container">
+      <div class="footer__main__inner">
+        <ul class="footer__menu">
+                      <li class="footer__menu__list-item ">
+              <a class="footer__menu__list-item__link" href="https://dvb.org/solutions/">
+                Solutions
+              </a>
+                              <ul class="footer__menu__sub-menu">
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/solutions/coding-transport/">Coding &#038; Transport</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/solutions/service-discovery-metadata/">Service Discovery &#038; Metadata</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/solutions/security/">Security</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/solutions/interactivity-personalization/">Interactivity &#038; Personalization</a>
+                    </li>
+                                  </ul>
+                          </li>
+                      <li class="footer__menu__list-item ">
+              <a class="footer__menu__list-item__link" href="https://dvb.org/specifications/">
+                Specifications
+              </a>
+                              <ul class="footer__menu__sub-menu">
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="/specifications/">Standards & BlueBooks</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/specifications/verification-validation/">Verification &#038; Validation</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/metadata/">Metadata</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/specifications/white-papers/">White Papers</a>
+                    </li>
+                                  </ul>
+                          </li>
+                      <li class="footer__menu__list-item ">
+              <a class="footer__menu__list-item__link" href="https://dvb.org/membership/">
+                Membership
+              </a>
+                              <ul class="footer__menu__sub-menu">
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="/membership/">Our Members</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/membership/join-dvb/">Join DVB</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/membership/liaisons/">Liaisons</a>
+                    </li>
+                                  </ul>
+                          </li>
+                      <li class="footer__menu__list-item ">
+              <a class="footer__menu__list-item__link" href="https://dvb.org/groups/">
+                How we work
+              </a>
+                              <ul class="footer__menu__sub-menu">
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/groups/ga/">General Assembly</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/groups/sb/">Steering Board</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/groups/cm/">Commercial Module</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/groups/tm/">Technical Module</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/groups/pcm/">Promotion & Comms Module</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/groups/iprm/">IPR Module</a>
+                    </li>
+                                  </ul>
+                          </li>
+                      <li class="footer__menu__list-item ">
+              <a class="footer__menu__list-item__link" href="https://dvb.org/news-events/">
+                News &#038; events
+              </a>
+                              <ul class="footer__menu__sub-menu">
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/news-events/news/">News</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/news-events/events/">Events</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/news-events/webinars/">Webinars</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/dvb-scene/">DVB Scene</a>
+                    </li>
+                                  </ul>
+                          </li>
+                      <li class="footer__menu__list-item ">
+              <a class="footer__menu__list-item__link" href="https://dvb.org/about/">
+                About
+              </a>
+                              <ul class="footer__menu__sub-menu">
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="/about/">About DVB</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/about/policies-procedures/">Policies &#038; Procedures</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/about/policies-procedures/licensing-programmes/">Licensing Programmes</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/about/history/">History</a>
+                    </li>
+                                      <li class="footer__menu__sub-menu__list-item">
+                      <a class="footer__menu__sub-menu__list-item__link" href="https://dvb.org/about/contact/">Contact</a>
+                    </li>
+                                  </ul>
+                          </li>
+                  </ul>
+        <div class="footer__contact-info__wrapper">
+          <a class="footer__brand" href="/">
+            <img class="mb-3 lazyload" data-src="https://dvb.org/wp-content/themes/dvb-theme/src/assets/png/DVB-logo-white.png" alt="DVB Logo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==" style="--smush-placeholder-width: 600px; --smush-placeholder-aspect-ratio: 600/258;" />
+          </a>
+          <div class="footer__social-links mb-3">
+            <a href="https://github.com/DVBProject" title="Github Profile"><img data-src="https://dvb.org/wp-content/themes/dvb-theme/src/assets/svg/github.svg" alt="Github social icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==" class="lazyload" /></a>
+            <a href="https://www.linkedin.com/company/dvb-project" title="LinkedIn Profile"><img data-src="https://dvb.org/wp-content/themes/dvb-theme/src/assets/svg/linkedin.svg" alt="LinkedIn social icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==" class="lazyload" /></a>
+            <a href="https://www.youtube.com/c/dvbproject" title="YouTube Profile"><img data-src="https://dvb.org/wp-content/themes/dvb-theme/src/assets/svg/youtube.svg" alt="YouTube social icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==" class="lazyload" /></a>
+            <a href="https://twitter.com/DVB_Project" title="Twitter Profile"><img data-src="https://dvb.org/wp-content/themes/dvb-theme/src/assets/svg/twitter.svg" alt="Twitter social icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==" class="lazyload" /></a>
+          </div>
+
+          <div class="footer__contact-info">
+            <h5>DVB Project Office</h5>
+            <p>17a Ancienne Route CH-1218 Grand Saconnex, Geneva</p>
+            <p>
+              <img class="icon icon--img mr-2 lazyload" data-src="https://dvb.org/wp-content/themes/dvb-theme/src/assets/svg/envelope.svg" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==" />
+              <a href="mailto:dvb@dvb.org">dvb@dvb.org</a>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottombar">
+    <div class="container">
+      <div class="bottombar__inner">
+        <div class="footer-bar-menu">
+                      <a href="https://dvb.org/terms-of-use/" class="footer-bar-menu__link">Privacy Notice</a>
+          
+        </div>
+        <span class="separator"></span>
+        <div class="text-center">
+          DVB
+          &copy;
+          2026
+          <span class="separator"></span>
+          DVB and the DVB logos are trademarks of the DVB Project.
+        </div>
+      </div>
+    </div>
+  </div>
+</footer> <script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/dvb-theme/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<!--googleoff: all--><div id="cookie-law-info-bar" data-nosnippet="true"><span>This website uses cookies to improve your experience. We'll assume you're ok with this, but you can opt-out if you wish. <a role='button' class="cli_settings_button" style="margin:5px 20px 5px 20px">Cookie settings</a><a role='button' data-cli_action="accept" id="cookie_action_close_header" class="medium cli-plugin-button cli-plugin-main-button cookie_action_close_header cli_action_button wt-cli-accept-btn" style="margin:5px">ACCEPT</a></span></div><div id="cookie-law-info-again" data-nosnippet="true"><span id="cookie_hdr_showagain">Privacy &amp; Cookies Policy</span></div><div class="cli-modal" data-nosnippet="true" id="cliSettingsPopup" tabindex="-1" role="dialog" aria-labelledby="cliSettingsPopup" aria-hidden="true">
+  <div class="cli-modal-dialog" role="document">
+	<div class="cli-modal-content cli-bar-popup">
+		  <button type="button" class="cli-modal-close" id="cliModalClose">
+			<svg class="" viewBox="0 0 24 24"><path d="M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z"></path><path d="M0 0h24v24h-24z" fill="none"></path></svg>
+			<span class="wt-cli-sr-only">Close</span>
+		  </button>
+		  <div class="cli-modal-body">
+			<div class="cli-container-fluid cli-tab-container">
+	<div class="cli-row">
+		<div class="cli-col-12 cli-align-items-stretch cli-px-0">
+			<div class="cli-privacy-overview">
+				<h4>Privacy Overview</h4>				<div class="cli-privacy-content">
+					<div class="cli-privacy-content-text">This website uses cookies to improve your experience while you navigate through the website. Out of these cookies, the cookies that are categorized as necessary are stored on your browser as they are essential for the working of basic functionalities of the website. We also use third-party cookies that help us analyse and understand how you use this website. These cookies will be stored in your browser only with your consent. You also have the option to opt-out of these cookies. But opting out of some of these cookies may have an effect on your browsing experience. Our full Privacy Policy is <a href="/terms-of-use/" target="_blank" rel="noopener">available here</a>.</div>
+				</div>
+				<a class="cli-privacy-readmore" aria-label="Show more" role="button" data-readmore-text="Show more" data-readless-text="Show less"></a>			</div>
+		</div>
+		<div class="cli-col-12 cli-align-items-stretch cli-px-0 cli-tab-section-container">
+												<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="necessary" data-toggle="cli-toggle-tab">
+								Necessary							</a>
+															<div class="wt-cli-necessary-checkbox">
+									<input type="checkbox" class="cli-user-preference-checkbox"  id="wt-cli-checkbox-necessary" data-id="checkbox-necessary" checked="checked"  />
+									<label class="form-check-label" for="wt-cli-checkbox-necessary">Necessary</label>
+								</div>
+								<span class="cli-necessary-caption">Always Enabled</span>
+													</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="necessary">
+								<div class="wt-cli-cookie-description">
+									Necessary cookies are absolutely essential for the website to function properly. This category only includes cookies that ensures basic functionalities and security features of the website. These cookies do not store any personal information.								</div>
+							</div>
+						</div>
+					</div>
+																	<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="functional" data-toggle="cli-toggle-tab">
+								Functional							</a>
+															<div class="cli-switch">
+									<input type="checkbox" id="wt-cli-checkbox-functional" class="cli-user-preference-checkbox"  data-id="checkbox-functional" />
+									<label for="wt-cli-checkbox-functional" class="cli-slider" data-cli-enable="Enabled" data-cli-disable="Disabled"><span class="wt-cli-sr-only">Functional</span></label>
+								</div>
+													</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="functional">
+								<div class="wt-cli-cookie-description">
+									Functional cookies help to perform certain functionalities like sharing the content of the website on social media platforms, collect feedbacks, and other third-party features.
+								</div>
+							</div>
+						</div>
+					</div>
+																	<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="performance" data-toggle="cli-toggle-tab">
+								Performance							</a>
+															<div class="cli-switch">
+									<input type="checkbox" id="wt-cli-checkbox-performance" class="cli-user-preference-checkbox"  data-id="checkbox-performance" />
+									<label for="wt-cli-checkbox-performance" class="cli-slider" data-cli-enable="Enabled" data-cli-disable="Disabled"><span class="wt-cli-sr-only">Performance</span></label>
+								</div>
+													</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="performance">
+								<div class="wt-cli-cookie-description">
+									Performance cookies are used to understand and analyze the key performance indexes of the website which helps in delivering a better user experience for the visitors.
+								</div>
+							</div>
+						</div>
+					</div>
+																	<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="analytics" data-toggle="cli-toggle-tab">
+								Analytics							</a>
+															<div class="cli-switch">
+									<input type="checkbox" id="wt-cli-checkbox-analytics" class="cli-user-preference-checkbox"  data-id="checkbox-analytics" />
+									<label for="wt-cli-checkbox-analytics" class="cli-slider" data-cli-enable="Enabled" data-cli-disable="Disabled"><span class="wt-cli-sr-only">Analytics</span></label>
+								</div>
+													</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="analytics">
+								<div class="wt-cli-cookie-description">
+									Analytical cookies are used to understand how visitors interact with the website. These cookies help provide information on metrics the number of visitors, bounce rate, traffic source, etc.
+<table class="cookielawinfo-row-cat-table cookielawinfo-winter"><thead><tr><th class="cookielawinfo-column-1">Cookie</th><th class="cookielawinfo-column-3">Duration</th><th class="cookielawinfo-column-4">Description</th></tr></thead><tbody><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">CONSENT</td><td class="cookielawinfo-column-3">2 years</td><td class="cookielawinfo-column-4">YouTube sets this cookie via embedded YouTube videos and registers anonymous statistical data.</td></tr></tbody></table>								</div>
+							</div>
+						</div>
+					</div>
+																	<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="advertisement" data-toggle="cli-toggle-tab">
+								Advertisement							</a>
+															<div class="cli-switch">
+									<input type="checkbox" id="wt-cli-checkbox-advertisement" class="cli-user-preference-checkbox"  data-id="checkbox-advertisement" />
+									<label for="wt-cli-checkbox-advertisement" class="cli-slider" data-cli-enable="Enabled" data-cli-disable="Disabled"><span class="wt-cli-sr-only">Advertisement</span></label>
+								</div>
+													</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="advertisement">
+								<div class="wt-cli-cookie-description">
+									Advertisement cookies are used to provide visitors with relevant ads and marketing campaigns. These cookies track visitors across websites and collect information to provide customized ads.
+<table class="cookielawinfo-row-cat-table cookielawinfo-winter"><thead><tr><th class="cookielawinfo-column-1">Cookie</th><th class="cookielawinfo-column-3">Duration</th><th class="cookielawinfo-column-4">Description</th></tr></thead><tbody><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">VISITOR_INFO1_LIVE</td><td class="cookielawinfo-column-3">5 months 27 days</td><td class="cookielawinfo-column-4">YouTube sets this cookie to measure bandwidth, determining whether the user gets the new or old player interface.</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">YSC</td><td class="cookielawinfo-column-3">session</td><td class="cookielawinfo-column-4">Youtube sets this cookie to track the views of embedded videos on Youtube pages.</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">yt-remote-connected-devices</td><td class="cookielawinfo-column-3">never</td><td class="cookielawinfo-column-4">YouTube sets this cookie to store the user's video preferences using embedded YouTube videos.</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">yt-remote-device-id</td><td class="cookielawinfo-column-3">never</td><td class="cookielawinfo-column-4">YouTube sets this cookie to store the user's video preferences using embedded YouTube videos.</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">yt.innertube::nextId</td><td class="cookielawinfo-column-3">never</td><td class="cookielawinfo-column-4">YouTube sets this cookie to register a unique ID to store data on what videos from YouTube the user has seen.</td></tr><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">yt.innertube::requests</td><td class="cookielawinfo-column-3">never</td><td class="cookielawinfo-column-4">YouTube sets this cookie to register a unique ID to store data on what videos from YouTube the user has seen.</td></tr></tbody></table>								</div>
+							</div>
+						</div>
+					</div>
+																	<div class="cli-tab-section">
+						<div class="cli-tab-header">
+							<a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="others" data-toggle="cli-toggle-tab">
+								Others							</a>
+															<div class="cli-switch">
+									<input type="checkbox" id="wt-cli-checkbox-others" class="cli-user-preference-checkbox"  data-id="checkbox-others" />
+									<label for="wt-cli-checkbox-others" class="cli-slider" data-cli-enable="Enabled" data-cli-disable="Disabled"><span class="wt-cli-sr-only">Others</span></label>
+								</div>
+													</div>
+						<div class="cli-tab-content">
+							<div class="cli-tab-pane cli-fade" data-id="others">
+								<div class="wt-cli-cookie-description">
+									Other uncategorized cookies are those that are being analyzed and have not been classified into a category as yet.
+<table class="cookielawinfo-row-cat-table cookielawinfo-winter"><thead><tr><th class="cookielawinfo-column-1">Cookie</th><th class="cookielawinfo-column-3">Duration</th><th class="cookielawinfo-column-4">Description</th></tr></thead><tbody><tr class="cookielawinfo-row"><td class="cookielawinfo-column-1">VISITOR_PRIVACY_METADATA</td><td class="cookielawinfo-column-3">5 months 27 days</td><td class="cookielawinfo-column-4">Description is currently not available.</td></tr></tbody></table>								</div>
+							</div>
+						</div>
+					</div>
+										</div>
+	</div>
+</div>
+		  </div>
+		  <div class="cli-modal-footer">
+			<div class="wt-cli-element cli-container-fluid cli-tab-container">
+				<div class="cli-row">
+					<div class="cli-col-12 cli-align-items-stretch cli-px-0">
+						<div class="cli-tab-footer wt-cli-privacy-overview-actions">
+						
+															<a id="wt-cli-privacy-save-btn" role="button" tabindex="0" data-cli-action="accept" class="wt-cli-privacy-btn cli_setting_save_button wt-cli-privacy-accept-btn cli-btn">SAVE &amp; ACCEPT</a>
+													</div>
+												<div class="wt-cli-ckyes-footer-section">
+							<div class="wt-cli-ckyes-brand-logo">Powered by <a href="https://www.cookieyes.com/"><img data-src="https://dvb.org/wp-content/plugins/cookie-law-info/legacy/public/images/logo-cookieyes.svg" alt="CookieYes Logo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==" class="lazyload"></a></div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+  </div>
+</div>
+<div class="cli-modal-backdrop cli-fade cli-settings-overlay"></div>
+<div class="cli-modal-backdrop cli-fade cli-popupbar-overlay"></div>
+<!--googleon: all-->        <style>
+            .searchwp-live-search-results {
+                opacity: 0;
+                transition: opacity .25s ease-in-out;
+                -moz-transition: opacity .25s ease-in-out;
+                -webkit-transition: opacity .25s ease-in-out;
+                height: 0;
+                overflow: hidden;
+                z-index: 9999995; /* Exceed SearchWP Modal Search Form overlay. */
+                position: absolute;
+                display: none;
+            }
+
+            .searchwp-live-search-results-showing {
+                display: block;
+                opacity: 1;
+                height: auto;
+                overflow: auto;
+            }
+
+            .searchwp-live-search-no-results {
+                padding: 3em 2em 0;
+                text-align: center;
+            }
+
+            .searchwp-live-search-no-min-chars:after {
+                content: "Continue typing";
+                display: block;
+                text-align: center;
+                padding: 2em 2em 0;
+            }
+        </style>
+                <script>
+            var _SEARCHWP_LIVE_AJAX_SEARCH_BLOCKS = true;
+            var _SEARCHWP_LIVE_AJAX_SEARCH_ENGINE = 'default';
+            var _SEARCHWP_LIVE_AJAX_SEARCH_CONFIG = 'default';
+        </script>
+        <script type="text/javascript" src="https://dvb.org/wp-content/plugins/add-to-calendar-button/lib/atcb.min.js?ver=2.13.5" id="add-to-calendar-button-js" async="async" data-wp-strategy="async"></script>
+<script type="text/javascript" src="https://dvb.org/wp-includes/js/dist/hooks.min.js?ver=dd5603f07f9220ed27f1" id="wp-hooks-js"></script>
+<script type="text/javascript" src="https://dvb.org/wp-includes/js/dist/i18n.min.js?ver=c26c3dc7bed366793375" id="wp-i18n-js"></script>
+<script type="text/javascript" id="wp-i18n-js-after">
+/* <![CDATA[ */
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+//# sourceURL=wp-i18n-js-after
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://dvb.org/wp-content/plugins/contact-form-7/includes/swv/js/index.js?ver=6.1.5" id="swv-js"></script>
+<script type="text/javascript" id="contact-form-7-js-before">
+/* <![CDATA[ */
+var wpcf7 = {
+    "api": {
+        "root": "https:\/\/dvb.org\/wp-json\/",
+        "namespace": "contact-form-7\/v1"
+    }
+};
+//# sourceURL=contact-form-7-js-before
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://dvb.org/wp-content/plugins/contact-form-7/includes/js/index.js?ver=6.1.5" id="contact-form-7-js"></script>
+<script type="text/javascript" src="https://dvb.org/wp-content/plugins/gallery-block-lightbox/dist/baguetteBox.min.js?ver=1.12.0" id="baguettebox-js"></script>
+<script type="text/javascript" id="baguettebox-js-after">
+/* <![CDATA[ */
+window.addEventListener('load', function() {baguetteBox.run('.wp-block-gallery,:not(.wp-block-gallery)>.wp-block-image,.wp-block-media-text__media,.gallery,.wp-block-coblocks-gallery-masonry,.wp-block-coblocks-gallery-stacked,.wp-block-coblocks-gallery-collage,.wp-block-coblocks-gallery-offset,.wp-block-coblocks-gallery-stacked,.mgl-gallery,.gb-block-image',{captions:function(t){var e=t.parentElement.classList.contains("wp-block-image")||t.parentElement.classList.contains("wp-block-media-text__media")?t.parentElement.querySelector("figcaption"):t.parentElement.parentElement.querySelector("figcaption,dd");return!!e&&e.innerHTML},filter:/.+\.(gif|jpe?g|png|webp|svg|avif|heif|heic|tif?f|)($|\?)/i,ignoreClass:'no-lightbox',animation:'slideIn'});});
+//# sourceURL=baguettebox-js-after
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://dvb.org/wp-content/themes/dvb-theme/dist/bundle.js?ver=1.0.0" id="bundle-js"></script>
+<script type="text/javascript" src="https://dvb.org/wp-content/themes/dvb-theme/dist/accordion-links.js?ver=1.0.0" id="accordion-links-js"></script>
+<script type="text/javascript" id="swp-live-search-client-js-extra">
+/* <![CDATA[ */
+var searchwp_live_search_params = [];
+searchwp_live_search_params = {"ajaxurl":"https:\/\/dvb.org\/wp-admin\/admin-ajax.php","origin_id":6224,"config":{"default":{"engine":"default","input":{"delay":300,"min_chars":3},"results":{"position":"bottom","width":"auto","offset":{"x":0,"y":5}},"spinner":{"lines":12,"length":8,"width":3,"radius":8,"scale":1,"corners":1,"color":"#424242","fadeColor":"transparent","speed":1,"rotate":0,"animation":"searchwp-spinner-line-fade-quick","direction":1,"zIndex":2000000000,"className":"spinner","top":"50%","left":"50%","shadow":"0 0 1px transparent","position":"absolute"}}},"msg_no_config_found":"No valid SearchWP Live Search configuration found!","aria_instructions":"When autocomplete results are available use up and down arrows to review and enter to go to the desired page. Touch device users, explore by touch or with swipe gestures."};;
+//# sourceURL=swp-live-search-client-js-extra
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://dvb.org/wp-content/plugins/searchwp-live-ajax-search/assets/javascript/dist/script.min.js?ver=1.8.7" id="swp-live-search-client-js"></script>
+<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?render=6LfHgtsqAAAAABvXfICqq7VzXLdlgayye4TmXv-I&amp;ver=3.0" id="google-recaptcha-js"></script>
+<script type="text/javascript" src="https://dvb.org/wp-includes/js/dist/vendor/wp-polyfill.min.js?ver=3.15.0" id="wp-polyfill-js"></script>
+<script type="text/javascript" id="wpcf7-recaptcha-js-before">
+/* <![CDATA[ */
+var wpcf7_recaptcha = {
+    "sitekey": "6LfHgtsqAAAAABvXfICqq7VzXLdlgayye4TmXv-I",
+    "actions": {
+        "homepage": "homepage",
+        "contactform": "contactform"
+    }
+};
+//# sourceURL=wpcf7-recaptcha-js-before
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://dvb.org/wp-content/plugins/contact-form-7/modules/recaptcha/index.js?ver=6.1.5" id="wpcf7-recaptcha-js"></script>
+<script type="text/javascript" id="smush-lazy-load-js-before">
+/* <![CDATA[ */
+var smushLazyLoadOptions = {"autoResizingEnabled":false,"autoResizeOptions":{"precision":5,"skipAutoWidth":true}};
+//# sourceURL=smush-lazy-load-js-before
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://dvb.org/wp-content/plugins/wp-smushit/app/assets/js/smush-lazy-load.min.js?ver=3.24.0" id="smush-lazy-load-js"></script>
+<script id="wp-emoji-settings" type="application/json">
+{"baseUrl":"https://s.w.org/images/core/emoji/17.0.2/72x72/","ext":".png","svgUrl":"https://s.w.org/images/core/emoji/17.0.2/svg/","svgExt":".svg","source":{"concatemoji":"https://dvb.org/wp-includes/js/wp-emoji-release.min.js?ver=21611cd6dcf623f37080bd3b51ecc912"}}
+</script>
+<script type="module">
+/* <![CDATA[ */
+/*! This file is auto-generated */
+const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(window._wpemojiSettings=a,"wpEmojiSettingsSupports"),s=["flag","emoji"];function i(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(o,JSON.stringify(t))}catch(e){}}function c(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0);const a=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);return t.every((e,t)=>e===a[t])}function p(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var n=e.getImageData(16,16,1,1);for(let e=0;e<n.data.length;e++)if(0!==n.data[e])return!1;return!0}function u(e,t,n,a){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!a(e,"\ud83e\u1fac8")}return!1}function f(e,t,n,a){let r;const o=(r="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):document.createElement("canvas")).getContext("2d",{willReadFrequently:!0}),s=(o.textBaseline="top",o.font="600 32px Arial",{});return e.forEach(e=>{s[e]=t(o,e,n,a)}),s}function r(e){var t=document.createElement("script");t.src=e,t.defer=!0,document.head.appendChild(t)}a.supports={everything:!0,everythingExceptFlag:!0},new Promise(t=>{let n=function(){try{var e=JSON.parse(sessionStorage.getItem(o));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+f.toString()+"("+[JSON.stringify(s),u.toString(),c.toString(),p.toString()].join(",")+"));",a=new Blob([e],{type:"text/javascript"});const r=new Worker(URL.createObjectURL(a),{name:"wpTestEmojiSupports"});return void(r.onmessage=e=>{i(n=e.data),r.terminate(),t(n)})}catch(e){}i(n=f(s,u,c,p))}t(n)}).then(e=>{for(const n in e)a.supports[n]=e[n],a.supports.everything=a.supports.everything&&a.supports[n],"flag"!==n&&(a.supports.everythingExceptFlag=a.supports.everythingExceptFlag&&a.supports[n]);var t;a.supports.everythingExceptFlag=a.supports.everythingExceptFlag&&!a.supports.flag,a.supports.everything||((t=a.source||{}).concatemoji?r(t.concatemoji):t.wpemoji&&t.twemoji&&(r(t.twemoji),r(t.wpemoji)))});
+//# sourceURL=https://dvb.org/wp-includes/js/wp-emoji-loader.min.js
+/* ]]> */
+</script>
+ </body>
+
+
+  <script data-host="https://microanalytics.io" data-dnt="false" src="https://microanalytics.io/js/script.js" id="ZwSg9rf6GA" async defer></script>
+
+</html>

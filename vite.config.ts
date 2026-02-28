@@ -167,7 +167,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    exclude: ['@openforge-sh/liboqs'],
+    exclude: ['@oqs/liboqs-js'],
   },
   build: {
     rollupOptions: {
@@ -175,7 +175,7 @@ export default defineConfig({
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-ui': ['framer-motion', 'lucide-react', 'clsx'],
-          'vendor-pqc': ['@openforge-sh/liboqs', '@noble/hashes'],
+          'vendor-pqc': ['@oqs/liboqs-js', '@noble/hashes'],
           'vendor-zip': ['jszip'],
           'vendor-csv': ['papaparse'],
           'vendor-markdown': ['react-markdown', 'remark-gfm'],

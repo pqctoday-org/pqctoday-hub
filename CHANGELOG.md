@@ -4,6 +4,79 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.0] - 2026-02-27
+
+### Added
+
+- **Career Journey modal**: New interactive career path visualization on the About page,
+  replacing the Study Pack ZIP export (StudyPackService and StudyPackCard deleted).
+
+- **Full SLH-DSA coverage**: Playground key store now exposes all 12 FIPS 205 signature
+  variants (was 3 — SHA2/SHAKE × 128/192/256 × f/s).
+
+- **Changelog UI redesign**: Structured card layout with category filters (New Features /
+  Improvements / Bug Fixes), expandable detail view, and color-coded section bands — replaces
+  raw markdown rendering.
+
+### Changed
+
+- **liboqs package migration**: `@openforge-sh/liboqs` v0.14.3 → `@oqs/liboqs-js` v0.15.1
+  (same API, new maintainer package). Build scripts and Vite config updated accordingly.
+
+- **Playground dead code removal**: Settings tab and `enabledAlgorithms` state deleted — never
+  read by KEM or Sign tabs. Mobile/desktop branching in InteractivePlayground simplified to a
+  single render path.
+
+- **ML-KEM algorithm inference refactored**: 4 duplicate inline blocks consolidated into single
+  `inferKemAlgorithm()` helper with constant key-size maps for public and private keys.
+
+- **OpenSSL Studio hardening**: FileViewer abort/cleanup pattern prevents stale state updates,
+  timeout ref cleanup on unmount in WorkbenchFileManager, structured log cap (500 entries),
+  localStorage quota error handling, per-command vs global error distinction in worker, and
+  empty catch blocks now surface errors via stderr log.
+
+- **Learning module accuracy corrections**: ES256/ECC P-256 key sizes (32→64/65 bytes), ML-DSA
+  signature size (3293→3309), RSA-4096 security bits (152→140), AES-128 deprecation status
+  aligned with NIST 2024 assessment, IoT Class 0 specs aligned to RFC 7228, FALCON-512 renamed
+  to FN-DSA-512, NIST IR 8547 "Draft" label removed (finalized), CNSA 2.0 milestone
+  descriptions corrected.
+
+- **Standards references updated**: RFC 9701 (Token Status List), RFC 9370 (IKEv2 Additional
+  Key Exchange), RFC 7228 (IoT device classes), RFC 8784 (PQC PSK for IKEv2).
+
+- **Software catalog refresh**: Go crypto/mlkem timeline corrected (Go 1.24 initial release),
+  Apple PQ3/iOS 17.4 baseline clarified, Android 16 status revised to Pending Verification,
+  OpenSSH v10.0 hybrid default, Cisco IOS XE and Juniper Junos OS PQC capabilities updated.
+
+- **Semantic token compliance**: Hardcoded colors (amber, gray) replaced with design system
+  tokens (`text-status-warning`, `bg-muted`, `border-border`) across OpenSSL Studio,
+  Playground, and Migrate components.
+
+- **Responsive breakpoints**: Algorithm comparison shifted from `md:` to `lg:` breakpoint for
+  better desktop experience.
+
+- **Typography normalization**: `font-bold` → `font-semibold` across component headings for
+  consistent visual hierarchy.
+
+- **RAG corpus regenerated**: Reduced and refreshed to match current content.
+
+### Fixed
+
+- **Playground sessionStorage crash**: Try-catch wrapping prevents errors in private browsing
+  and sandboxed iframe environments.
+
+- **KEM ciphertext validation**: Safer split + length checks prevent IndexError on malformed
+  hybrid ciphertexts; secret comparison now checks array length before comparing.
+
+- **ZIP key import resilience**: Per-file error handling prevents a single corrupt file from
+  aborting the entire import; import count now uses actual array length.
+
+- **OpenSSL worker silent failures**: Empty catch blocks now surface error messages via stderr
+  log for file read and directory scan failures.
+
+- **Command race condition**: `isProcessing` guard prevents double-submission in OpenSSL
+  Studio's `executeCommand`.
+
 ## [2.1.0] - 2026-02-27
 
 ### Added

@@ -56,8 +56,8 @@ export const IKE_V2_MODES: IKEv2ModeConfig[] = [
     id: 'pure-pqc',
     label: 'Pure PQC (ML-KEM-768)',
     description:
-      'Pure post-quantum IKEv2 using only ML-KEM for key exchange. No classical DH component.',
-    dhGroup: 'ML-KEM-768 (Transform Type 4)',
+      'Pure post-quantum IKEv2 using ML-KEM for key exchange via Additional Key Exchange (RFC 9370).',
+    dhGroup: 'ML-KEM-768 (AKE, Transform Type 6)',
     encAlgorithm: 'AES-256-GCM',
     integrityAlgorithm: 'SHA-256 (built into GCM)',
     prfAlgorithm: 'PRF-HMAC-SHA-256',

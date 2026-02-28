@@ -161,7 +161,6 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setDecryptedData('')
     setSignature('')
     setVerificationResult(null)
-    setVerificationResult(null)
     setKemDecapsulationResult(null)
     setDecapsulatedSecret('')
     setSymOutput('')

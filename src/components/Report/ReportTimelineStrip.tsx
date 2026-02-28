@@ -54,7 +54,7 @@ export const ReportTimelineStrip: React.FC<ReportTimelineStripProps> = ({ countr
               style={{ left: `${left}%`, transform }}
             >
               <div className="w-px h-2 bg-border" />
-              <span className="text-[9px] text-muted-foreground font-mono mt-0.5">{yr}</span>
+              <span className="text-[10px] text-muted-foreground font-mono mt-0.5">{yr}</span>
             </div>
           )
         })}
@@ -100,7 +100,7 @@ export const ReportTimelineStrip: React.FC<ReportTimelineStripProps> = ({ countr
 
               {/* Year range label */}
               <div className="w-20 shrink-0">
-                <span className="text-[9px] text-muted-foreground font-mono">
+                <span className="text-[10px] text-muted-foreground font-mono">
                   {phase.startYear}–{phase.endYear}
                 </span>
               </div>
@@ -127,7 +127,7 @@ export const ReportTimelineStrip: React.FC<ReportTimelineStripProps> = ({ countr
         )
           .filter((p) => phases.some((ph) => ph.phase === p))
           .map((p) => (
-            <span key={p} className="flex items-center gap-1 text-[9px] text-muted-foreground">
+            <span key={p} className="flex items-center gap-1 text-[10px] text-muted-foreground">
               <span
                 className="inline-block w-3 h-2 rounded-sm"
                 // eslint-disable-next-line security/detect-object-injection

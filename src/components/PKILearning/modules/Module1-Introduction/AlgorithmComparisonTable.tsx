@@ -19,7 +19,7 @@ const ALGO_DATA = [
     type: 'KEM + Sig',
     quantumSafe: false,
     nistStd: 'FIPS 186-5',
-    pubKeyB: 64,
+    pubKeyB: 65,
     privKeyB: 32,
     outputB: 64,
     level: 'Classical',
@@ -43,7 +43,7 @@ const ALGO_DATA = [
     nistStd: 'FIPS 204',
     pubKeyB: 1952,
     privKeyB: 4032,
-    outputB: 3293,
+    outputB: 3309,
     level: 'L3 (AES-192)',
     note: 'Lattice-based signature. Drop-in replacement for ECDSA in certificates and code signing.',
   },
@@ -145,7 +145,7 @@ export const AlgorithmComparisonTable: React.FC = () => {
       <div className="glass-panel p-4 border-l-4 border-l-primary bg-primary/5">
         <p className="text-sm text-foreground">
           <span className="font-semibold">Exercise 5 preview:</span> ECC P-256 has a{' '}
-          <span className="font-mono font-bold text-primary">{fmt(64)}</span> public key. ML-KEM-768
+          <span className="font-mono font-bold text-primary">{fmt(65)}</span> public key. ML-KEM-768
           has a <span className="font-mono font-bold text-success">{fmt(1184)}</span> public key —
           roughly <span className="font-bold">18× larger</span>. This size increase is the main
           migration cost of PQC.

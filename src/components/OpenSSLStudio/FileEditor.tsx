@@ -79,6 +79,10 @@ export const FileEditor = () => {
     addFile({
       ...editingFile,
       content: finalContent,
+      size:
+        finalContent instanceof Uint8Array
+          ? finalContent.byteLength
+          : new TextEncoder().encode(finalContent).length,
       timestamp: Date.now(),
     })
     setEditingFile(null)

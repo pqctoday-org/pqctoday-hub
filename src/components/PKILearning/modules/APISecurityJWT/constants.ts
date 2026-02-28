@@ -27,7 +27,7 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     jose: 'ES256',
     type: 'classical',
     category: 'signing',
-    keyBytes: 32,
+    keyBytes: 64,
     sigBytes: 64,
     broken: true,
   },
