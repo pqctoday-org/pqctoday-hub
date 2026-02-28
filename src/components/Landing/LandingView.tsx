@@ -70,78 +70,84 @@ interface JourneyStep {
   color: string
 }
 
-const JOURNEY_STEPS: JourneyStep[] = [
-  {
-    id: 'learn',
-    step: 1,
-    label: 'Learn',
-    icon: GraduationCap,
-    color: 'text-secondary',
-    description:
-      '25 interactive modules across 6 tracks + 470-question quiz — from PQC fundamentals to executive decision-making',
-    paths: ['/learn'],
-  },
-  {
-    id: 'assess',
-    step: 2,
-    label: 'Assess',
-    icon: ClipboardCheck,
-    color: 'text-primary',
-    description:
-      '13-step quantum risk wizard — crypto inventory, sensitivity, compliance gaps, and personalized risk score',
-    paths: ['/assess', '/report'],
-  },
-  {
-    id: 'explore',
-    step: 3,
-    label: 'Explore',
-    icon: Globe,
-    color: 'text-accent',
-    description:
-      'Migration timelines, 40+ algorithm comparisons, and a standards library of PQC drafts and specs',
-    paths: ['/timeline', '/algorithms', '/library'],
-  },
-  {
-    id: 'test',
-    step: 4,
-    label: 'Test',
-    icon: FlaskConical,
-    color: 'text-secondary',
-    description:
-      'Real in-browser PQC operations — key generation, encapsulation, and signing via Playground and OpenSSL Studio',
-    paths: ['/playground', '/openssl'],
-  },
-  {
-    id: 'deploy',
-    step: 5,
-    label: 'Deploy',
-    icon: ArrowRightLeft,
-    color: 'text-primary',
-    description:
-      '220+ verified PQC-ready tools across 7 infrastructure layers — from cloud KMS to hardware security modules',
-    paths: ['/migrate'],
-  },
-  {
-    id: 'ramp',
-    step: 6,
-    label: 'Ramp Up',
-    icon: ShieldCheck,
-    color: 'text-accent',
-    description:
-      'Track compliance deadlines from 2024 to 2036 — FIPS, CNSA 2.0, ETSI, and more with persona-aware filtering',
-    paths: ['/compliance'],
-  },
-  {
-    id: 'maintain',
-    step: 7,
-    label: 'Stay Agile',
-    icon: Activity,
-    color: 'text-primary',
-    description:
-      'Monitor quantum threat evolution by industry and track organizations leading the PQC transition',
-    paths: ['/threats', '/leaders'],
-  },
-]
+function buildJourneySteps(
+  algorithmCount: number | null,
+  migrateCount: number | null
+): JourneyStep[] {
+  const algoLabel = algorithmCount !== null ? `${algorithmCount}` : '40+'
+  const migrateLabel = migrateCount !== null ? `${migrateCount}` : '220+'
+
+  return [
+    {
+      id: 'learn',
+      step: 1,
+      label: 'Learn',
+      icon: GraduationCap,
+      color: 'text-secondary',
+      description:
+        '25 interactive modules across 6 tracks + 470-question quiz — from PQC fundamentals to executive decision-making',
+      paths: ['/learn'],
+    },
+    {
+      id: 'assess',
+      step: 2,
+      label: 'Assess',
+      icon: ClipboardCheck,
+      color: 'text-primary',
+      description:
+        '13-step quantum risk wizard — crypto inventory, sensitivity, compliance gaps, and personalized risk score',
+      paths: ['/assess', '/report'],
+    },
+    {
+      id: 'explore',
+      step: 3,
+      label: 'Explore',
+      icon: Globe,
+      color: 'text-accent',
+      description: `Migration timelines, ${algoLabel} algorithm comparisons, and a standards library of PQC drafts and specs`,
+      paths: ['/timeline', '/algorithms', '/library'],
+    },
+    {
+      id: 'test',
+      step: 4,
+      label: 'Test',
+      icon: FlaskConical,
+      color: 'text-secondary',
+      description:
+        'Real in-browser PQC operations — key generation, encapsulation, and signing via Playground and OpenSSL Studio',
+      paths: ['/playground', '/openssl'],
+    },
+    {
+      id: 'deploy',
+      step: 5,
+      label: 'Deploy',
+      icon: ArrowRightLeft,
+      color: 'text-primary',
+      description: `${migrateLabel} verified PQC-ready tools across 7 infrastructure layers — from cloud KMS to hardware security modules`,
+      paths: ['/migrate'],
+    },
+    {
+      id: 'ramp',
+      step: 6,
+      label: 'Ramp Up',
+      icon: ShieldCheck,
+      color: 'text-accent',
+      description:
+        'Track compliance deadlines from 2024 to 2036 — FIPS, CNSA 2.0, ETSI, and more with persona-aware filtering',
+      paths: ['/compliance'],
+    },
+    {
+      id: 'maintain',
+      step: 7,
+      label: 'Stay Agile',
+      icon: Activity,
+      color: 'text-primary',
+      description:
+        'Monitor quantum threat evolution by industry and track organizations leading the PQC transition',
+      paths: ['/threats', '/leaders'],
+    },
+  ]
+}
 
 const SECTION_HEADING: Record<string, { title: string; sub: string }> = {
   executive: {
@@ -176,6 +182,7 @@ export const LandingView = () => {
   const [algorithmCount, setAlgorithmCount] = useState<number | null>(null)
   const [timelineEventCount, setTimelineEventCount] = useState<number | null>(null)
   const [libraryCount, setLibraryCount] = useState<number | null>(null)
+  const [migrateCount, setMigrateCount] = useState<number | null>(null)
 
   useEffect(() => {
     loadPQCAlgorithmsData().then((data) => setAlgorithmCount(data.length))
@@ -185,7 +192,15 @@ export const LandingView = () => {
     import('@/data/libraryData').then(({ libraryData }) => {
       setLibraryCount(libraryData.length)
     })
+    import('@/data/migrateData').then(({ softwareData }) => {
+      setMigrateCount(softwareData.length)
+    })
   }, [])
+
+  const journeySteps = useMemo(
+    () => buildJourneySteps(algorithmCount, migrateCount),
+    [algorithmCount, migrateCount]
+  )
 
   // Set of paths accessible to the current persona
   const accessiblePaths = useMemo((): Set<string> => {
@@ -331,7 +346,7 @@ export const LandingView = () => {
           animate="visible"
           variants={{ visible: { transition: { delayChildren: 0.5, staggerChildren: 0.07 } } }}
         >
-          {JOURNEY_STEPS.map((step) => {
+          {journeySteps.map((step) => {
             const accessible = isAccessible(step)
             const recommended = isRecommendedStep(step)
             return (
