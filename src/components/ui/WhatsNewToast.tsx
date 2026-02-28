@@ -80,23 +80,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Career Journey</strong> &mdash; interactive
-                    career path visualization on the About page
+                    <strong className="text-foreground">PQC Assistant hardened</strong> &mdash; all
+                    25 modules in system prompt, persona-aware follow-ups, expanded country
+                    detection, retry logic
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Playground upgraded</strong> &mdash; all 12
-                    SLH-DSA variants, liboqs migrated to @oqs/liboqs-js, Settings tab removed
+                    <strong className="text-foreground">Smarter retrieval</strong> &mdash; module vs
+                    FIPS disambiguation, 80K char prompt guard, safety settings for cybersecurity
+                    content
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Accuracy &amp; hardening</strong> &mdash;
-                    learning module data corrections, OpenSSL Studio memory safety, semantic token
-                    compliance
+                    <strong className="text-foreground">Better follow-ups</strong> &mdash;
+                    LLM-generated suggestions now render; persona-specific fallbacks active
                   </span>
                 </li>
               </ul>

@@ -203,6 +203,9 @@ export const ChatPanel: React.FC = () => {
                         sender={msg.role}
                         content={msg.content}
                         sourceRefs={msg.sourceRefs}
+                        activeTab={pageContext.tab}
+                        followUps={msg.followUps}
+                        persona={pageContext.persona}
                         onFollowUp={
                           msg.role === 'assistant' && idx === messages.length - 1 && !isStreaming
                             ? sendQuery

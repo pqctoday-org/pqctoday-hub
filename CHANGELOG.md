@@ -4,6 +4,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.1] - 2026-02-27
+
+### Changed
+
+- **PQC Assistant: full module coverage**: System prompt now lists all 25 learning modules
+  (was 19 — missing Vendor Risk, Compliance Strategy, Migration Program, PQC Risk Management,
+  PQC Business Case, PQC Governance). Prevents hallucinated module links.
+
+- **PQC Assistant: persona-aware follow-ups**: LLM-generated follow-up suggestions and
+  persona-specific fallbacks (executive/developer/architect/researcher) now render correctly.
+  Previously `followUps` and `persona` were never passed to `ChatMessage`.
+
+- **PQC Assistant: module query disambiguation**: "Which module covers TLS?" now correctly
+  retrieves learning modules instead of FIPS cryptographic module content.
+
+- **PQC Assistant: country detection expanded**: 16 adjectival country forms (French, Korean,
+  German, etc.) now trigger `country_query` intent classification and query expansion.
+
+- **PQC Assistant: prompt size guard**: RAG context blocks capped at 80K characters to prevent
+  Gemini API input limit errors on large catalog or quiz result sets.
+
+- **PQC Assistant: safety settings**: Gemini API calls now include explicit safety thresholds
+  (`BLOCK_ONLY_HIGH` for harassment/dangerous content) so legitimate cybersecurity discussions
+  aren't blocked.
+
+- **PQC Assistant: retry on server errors**: Transient 5xx API errors now retry up to 2 times
+  with linear backoff instead of immediately failing.
+
 ## [2.2.0] - 2026-02-27
 
 ### Added

@@ -3,14 +3,29 @@ import type { PageContext } from '@/hooks/usePageContext'
 
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models'
 
+/**
+ * Approximate character budget for RAG context blocks in the system prompt.
+ * Gemini 2.5 Flash supports ~1M tokens; we reserve ~80K chars (~20K tokens)
+ * for context to leave ample room for system instructions + conversation history.
+ */
+const MAX_CONTEXT_CHARS = 80_000
+
 export function buildSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext): string {
-  const contextBlocks = chunks
-    .map((c) => {
-      const header = `--- Source: ${c.source} | ${c.title} ---`
-      const deepLinkLine = c.deepLink ? `Deep Link: ${c.deepLink}` : ''
-      return [header, deepLinkLine, c.content, '---'].filter(Boolean).join('\n')
-    })
-    .join('\n\n')
+  // Build context blocks with size guard — drop lowest-priority chunks if over budget
+  const allBlocks: string[] = []
+  let totalChars = 0
+
+  for (const c of chunks) {
+    const header = `--- Source: ${c.source} | ${c.title} ---`
+    const deepLinkLine = c.deepLink ? `Deep Link: ${c.deepLink}` : ''
+    const block = [header, deepLinkLine, c.content, '---'].filter(Boolean).join('\n')
+
+    if (totalChars + block.length > MAX_CONTEXT_CHARS) break
+    allBlocks.push(block)
+    totalChars += block.length
+  }
+
+  const contextBlocks = allBlocks.join('\n\n')
 
   let pageNote = ''
   if (pageContext?.page) {
@@ -84,7 +99,7 @@ GUIDELINES:
    - /learn/<module-id>?tab=workshop&step=<n> (specific workshop step), /assess?step=<n>
    Every named item (product, leader, document, algorithm, threat) MUST be a markdown link. Never output bare names or paths.
 4. Main pages: [Algorithms](/algorithms), [Timeline](/timeline), [Library](/library), [Threats](/threats), [Leaders](/leaders), [Compliance](/compliance), [Migrate](/migrate), [Assessment](/assess), [Report](/report), [Playground](/playground), [OpenSSL Studio](/openssl), [Learn](/learn), [Quiz](/learn/quiz)
-5. Learning modules: [PQC 101](/learn/pqc-101), [Quantum Threats](/learn/quantum-threats), [Hybrid Crypto](/learn/hybrid-crypto), [Crypto Agility](/learn/crypto-agility), [TLS Basics](/learn/tls-basics), [VPN & SSH](/learn/vpn-ssh-pqc), [Email Signing](/learn/email-signing), [PKI Workshop](/learn/pki-workshop), [Key Management](/learn/key-management), [Stateful Signatures](/learn/stateful-signatures), [Digital Assets](/learn/digital-assets), [5G Security](/learn/5g-security), [Digital Identity](/learn/digital-id), [Entropy & Randomness](/learn/entropy-randomness), [Merkle Tree Certs](/learn/merkle-tree-certs), [QKD](/learn/qkd), [Code Signing](/learn/code-signing), [API Security & JWT](/learn/api-security-jwt), [IoT & OT Security](/learn/iot-ot-pqc)
+5. Learning modules: [PQC 101](/learn/pqc-101), [Quantum Threats](/learn/quantum-threats), [Hybrid Crypto](/learn/hybrid-crypto), [Crypto Agility](/learn/crypto-agility), [TLS Basics](/learn/tls-basics), [VPN & SSH](/learn/vpn-ssh-pqc), [Email Signing](/learn/email-signing), [PKI Workshop](/learn/pki-workshop), [Key Management](/learn/key-management), [Stateful Signatures](/learn/stateful-signatures), [Digital Assets](/learn/digital-assets), [5G Security](/learn/5g-security), [Digital Identity](/learn/digital-id), [Entropy & Randomness](/learn/entropy-randomness), [Merkle Tree Certs](/learn/merkle-tree-certs), [QKD](/learn/qkd), [Code Signing](/learn/code-signing), [API Security & JWT](/learn/api-security-jwt), [IoT & OT Security](/learn/iot-ot-pqc), [Vendor & Supply Chain Risk](/learn/vendor-risk), [Compliance & Regulatory Strategy](/learn/compliance-strategy), [Migration Program Management](/learn/migration-program), [PQC Risk Management](/learn/pqc-risk-management), [PQC Business Case](/learn/pqc-business-case), [PQC Governance & Policy](/learn/pqc-governance)
 6. Keep answers concise but thorough. Use markdown formatting. This is an educational assistant — never provide production security advice.
 
 FOLLOW-UP SUGGESTIONS:
@@ -117,6 +132,38 @@ export async function validateApiKey(apiKey: string): Promise<boolean> {
   }
 }
 
+/**
+ * Safety settings — lower thresholds for cybersecurity content so legitimate
+ * PQC discussions (cryptanalysis, attack vectors, algorithm weaknesses) aren't blocked.
+ */
+const SAFETY_SETTINGS = [
+  { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_ONLY_HIGH' },
+  { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_ONLY_HIGH' },
+  { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+  { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_ONLY_HIGH' },
+]
+
+const MAX_RETRIES = 2
+const RETRY_DELAY_MS = 1_000
+
+async function fetchWithRetry(
+  url: string,
+  init: RequestInit,
+  retries = MAX_RETRIES
+): Promise<Response> {
+  const response = await fetch(url, init)
+
+  // Only retry on transient server errors (5xx), not client errors
+  if (response.status >= 500 && retries > 0) {
+    await new Promise((resolve) =>
+      setTimeout(resolve, RETRY_DELAY_MS * (MAX_RETRIES - retries + 1))
+    )
+    return fetchWithRetry(url, init, retries - 1)
+  }
+
+  return response
+}
+
 export async function* streamResponse(
   apiKey: string,
   messages: ChatMessage[],
@@ -128,7 +175,7 @@ export async function* streamResponse(
   const systemPrompt = buildSystemPrompt(contextChunks, pageContext)
   const formattedMessages = formatMessages(messages)
 
-  const response = await fetch(
+  const response = await fetchWithRetry(
     `${GEMINI_BASE}/${model}:streamGenerateContent?key=${apiKey}&alt=sse`,
     {
       method: 'POST',
@@ -141,6 +188,7 @@ export async function* streamResponse(
           maxOutputTokens: 2048,
           topP: 0.9,
         },
+        safetySettings: SAFETY_SETTINGS,
       }),
       signal,
     }

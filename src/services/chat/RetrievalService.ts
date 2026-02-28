@@ -80,6 +80,23 @@ const COUNTRY_KEYS = new Set([
   'nato',
   'g7',
   'sweden',
+  // Adjectival forms
+  'french',
+  'german',
+  'american',
+  'british',
+  'chinese',
+  'japanese',
+  'australian',
+  'canadian',
+  'korean',
+  'indian',
+  'singaporean',
+  'european',
+  'spanish',
+  'israeli',
+  'italian',
+  'swedish',
 ])
 
 /**
@@ -229,6 +246,23 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
   nato: ['NATO', 'North Atlantic Treaty Organization', 'NATO PQC'],
   g7: ['G7', 'Group of Seven'],
   sweden: ['Sweden', 'Swedish PQC'],
+  // Adjectival country forms
+  french: ['France', 'ANSSI', 'French PQC'],
+  german: ['Germany', 'BSI', 'German PQC'],
+  american: ['United States', 'NIST', 'NSA', 'CNSA', 'CISA'],
+  british: ['United Kingdom', 'NCSC', 'UK PQC'],
+  chinese: ['China', 'Chinese PQC', 'OSCCA'],
+  japanese: ['Japan', 'CRYPTREC', 'Japanese PQC'],
+  australian: ['Australia', 'ASD', 'Australian PQC'],
+  canadian: ['Canada', 'CCCS', 'Canadian PQC'],
+  korean: ['South Korea', 'Korean PQC', 'KISA'],
+  indian: ['India', 'Indian PQC'],
+  singaporean: ['Singapore', 'CSA', 'Singaporean PQC'],
+  european: ['European Union', 'ENISA', 'ETSI', 'EU PQC'],
+  spanish: ['Spain', 'CCN', 'Spanish PQC'],
+  israeli: ['Israel', 'Israeli PQC', 'Bank of Israel'],
+  italian: ['Italy', 'Italian PQC', 'ACN'],
+  swedish: ['Sweden', 'Swedish PQC'],
 }
 
 /**
@@ -486,6 +520,22 @@ class RetrievalService {
       expandedTerms.add('reference documents')
       expandedTerms.add('publications')
       expandedTerms.add('standards')
+    }
+
+    // Disambiguation: "module" with learning context → learning modules, not FIPS modules
+    if (
+      queryLower.includes('module') &&
+      /\b(learn|course|tutorial|covers?|teach|lesson|study|training|quiz)\b/.test(queryLower)
+    ) {
+      // Remove FIPS-oriented expansions added by the 'module' key
+      expandedTerms.delete('cryptographic module')
+      expandedTerms.delete('FIPS 140-3')
+      expandedTerms.delete('HSM')
+      expandedTerms.delete('certification')
+      // Add learning-oriented terms
+      expandedTerms.add('learning module')
+      expandedTerms.add('PQC 101')
+      expandedTerms.add('workshop')
     }
 
     // Search expanded terms and add entity matches

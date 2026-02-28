@@ -16,6 +16,7 @@ interface ChatMessageProps {
   onFollowUp?: (question: string) => void
   activeTab?: string
   followUps?: string[]
+  persona?: string | null
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({
@@ -26,6 +27,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   onFollowUp,
   activeTab,
   followUps,
+  persona,
 }) => {
   const isUser = sender === 'user'
   const navigate = useNavigate()
@@ -163,7 +165,9 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
           (() => {
             // Use LLM-generated follow-ups if provided; fall back to regex extraction
             const displayFollowUps =
-              followUps && followUps.length > 0 ? followUps : generateFollowUps(content, activeTab)
+              followUps && followUps.length > 0
+                ? followUps
+                : generateFollowUps(content, activeTab, persona)
             if (displayFollowUps.length === 0) return null
             return (
               <div className="mt-2 flex flex-wrap gap-1.5">
