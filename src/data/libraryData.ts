@@ -155,8 +155,12 @@ function getLatestLibraryFiles(): {
     return { current: null, previous: null }
   }
 
-  // Sort by date descending (latest first)
-  files.sort((a, b) => b.date.getTime() - a.date.getTime())
+  // Sort by date descending (latest first); on same date, sort by path descending so _r1 > _r0 > base
+  files.sort((a, b) => {
+    const dateDiff = b.date.getTime() - a.date.getTime()
+    if (dateDiff !== 0) return dateDiff
+    return b.path.localeCompare(a.path)
+  })
 
   console.log(`Loading latest library data from: ${files[0].path}`)
   if (files.length > 1) {

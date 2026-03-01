@@ -415,23 +415,29 @@ public/library/ (HTML/PDF) doc-enrichments/*_MMDDYYYY.md  EnrichmentLookup map
 
 **Stage 1 — Download**: `npm run download:library`, `download:timeline`, `download:threats` fetch HTML/PDF copies of source documents into `public/{library|timeline|threats}/`. Each directory has a `manifest.json` (download log) and `skip-list.json` (paywalled URLs).
 
-**Stage 2 — Extract**: `python3 scripts/enrich-public-docs.py` reads the downloaded documents and extracts **11 semantic dimensions** via regex pattern matching:
+**Stage 2 — Extract**: Use **Claude Haiku** to read each downloaded document and extract the **11 semantic dimensions**. Haiku produces significantly higher-quality enrichments than regex-based alternatives by understanding context, resolving abbreviations, and identifying implicit references across the full document.
 
-| #   | Dimension              | Matching Strategy                                  | Scale                                        |
-| --- | ---------------------- | -------------------------------------------------- | -------------------------------------------- |
-| 1   | Main Topic             | Free-form summary from document text               | —                                            |
-| 2   | PQC Algorithms         | 21 algorithm families + FIPS standards             | ML-KEM, ML-DSA, SLH-DSA, FN-DSA, etc.        |
-| 3   | Quantum Threats        | 11 threat concepts                                 | CRQC, HNDL, HNFL, Shor's, Grover's           |
-| 4   | Migration Timeline     | Year (2020–2039) + keyword within 120 chars        | Contextual milestone phrases                 |
-| 5   | Regions & Bodies       | 12 countries + 11 regulatory bodies                | US, EU, AU + NIST, IETF, NSA                 |
-| 6   | Leaders Mentioned      | Fuzzy match against `leaders_*.csv` names          | 2+ word names                                |
-| 7   | PQC Products           | Exact match against `migrate_*.csv` software names | 5+ char names                                |
-| 8   | Protocols              | 24 protocol/standard patterns                      | TLS 1.3, X.509, SSH, IPsec, QUIC             |
-| 9   | Infrastructure Layers  | 24 infrastructure categories                       | HSM, TPM, PKI, CA, IoT, Cloud                |
-| 10  | Standardization Bodies | 25 organizations                                   | NIST, ISO/IEC, IETF, ETSI, W3C               |
-| 11  | Compliance Frameworks  | 29 frameworks                                      | FIPS 140-3, Common Criteria, eIDAS 2.0, NIS2 |
+> ⚠️ **Do NOT use the regex parser (`enrich-public-docs.py`) as the primary extraction method.** The regex script is a bulk fallback only. For any new additions, always use Claude Haiku to generate enrichments.
 
-Text extraction limits: HTML first 20K characters, PDF first 1000 lines. Output: date-stamped markdown files in `src/data/doc-enrichments/`.
+The 11 dimensions to extract per document:
+
+| #   | Dimension              | What to extract                                   | Scale                                        |
+| --- | ---------------------- | ------------------------------------------------- | -------------------------------------------- |
+| 1   | Main Topic             | Free-form summary sentence (≤250 chars)           | —                                            |
+| 2   | PQC Algorithms         | All PQC algorithm families explicitly covered     | ML-KEM, ML-DSA, SLH-DSA, FN-DSA, etc.        |
+| 3   | Quantum Threats        | Threat models addressed                           | CRQC, HNDL, HNFL, Shor's, Grover's           |
+| 4   | Migration Timeline     | Dates + contextual milestone phrases (≤120 chars) | "2027: agencies must complete PQC inventory" |
+| 5   | Regions & Bodies       | Countries and regulatory bodies explicitly cited  | US, EU, AU + NIST, IETF, NSA                 |
+| 6   | Leaders Mentioned      | Named individuals with contributions              | 2+ word names                                |
+| 7   | PQC Products           | Commercial or open-source PQC tools mentioned     | OpenSSL, liboqs, AWS-LC, etc.                |
+| 8   | Protocols              | Cryptographic protocols covered                   | TLS 1.3, X.509, SSH, IPsec, QUIC             |
+| 9   | Infrastructure Layers  | Infrastructure categories addressed               | HSM, TPM, PKI, CA, IoT, Cloud                |
+| 10  | Standardization Bodies | Standards organizations referenced                | NIST, ISO/IEC, IETF, ETSI, W3C               |
+| 11  | Compliance Frameworks  | Regulatory/compliance frameworks cited            | FIPS 140-3, Common Criteria, eIDAS 2.0, NIS2 |
+
+**Extraction prompt for Haiku**: provide the downloaded document text (HTML or PDF), the 11 dimensions, and the required output format (the markdown section format used in `library_doc_enrichments_MMDDYYYY.md`). Append the output to the enrichment file.
+
+**Fallback — regex parser**: `python3 scripts/enrich-public-docs.py` can bulk-process all downloaded documents via pattern matching. Use only when Haiku extraction is not feasible for a large batch. Output format is identical. Text extraction limits: HTML first 20K characters, PDF first 1000 lines.
 
 **Stage 3 — Load**: `src/data/libraryEnrichmentData.ts` auto-discovers the latest enrichment markdown via `import.meta.glob('./doc-enrichments/library_doc_enrichments_*.md')`, parses `## ReferenceID` sections into a `LibraryEnrichment` object per document, and exports the lookup map.
 

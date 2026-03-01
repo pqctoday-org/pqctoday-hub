@@ -52,7 +52,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     library: 1.2,
     'document-enrichment': 1.5,
   },
-  general: {},
+  general: { leaders: 1.5 },
 }
 
 const COUNTRY_KEYS = new Set([

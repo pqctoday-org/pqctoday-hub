@@ -165,7 +165,7 @@ describe('LeadersGrid', () => {
     expect(screen.getAllByRole('article')).toHaveLength(3)
 
     // Filter to USA
-    const dropdown = screen.getByTestId('filter-Region') // label="Region"
+    const dropdown = screen.getByTestId('filter-Country') // label="Country"
     fireEvent.click(within(dropdown).getByText('USA'))
 
     // Should behave like filter
@@ -208,7 +208,7 @@ describe('LeadersGrid', () => {
     expect(screen.getAllByRole('article')).toHaveLength(3)
 
     // Filter to USA
-    const dropdown = screen.getByTestId('filter-Region') // label="Region"
+    const dropdown = screen.getByTestId('filter-Country') // label="Country"
     fireEvent.click(within(dropdown).getByText('USA'))
     expect(screen.getAllByRole('article')).toHaveLength(1)
 
@@ -248,8 +248,8 @@ describe('LeadersGrid', () => {
     expect(screen.getByText('Bob Cyber')).toBeInTheDocument()
 
     // Filter to UK (Bob matches)
-    const regionDropdown = screen.getByTestId('filter-Region')
-    fireEvent.click(within(regionDropdown).getByText('UK'))
+    const countryDropdown = screen.getByTestId('filter-Country')
+    fireEvent.click(within(countryDropdown).getByText('UK'))
     expect(screen.getAllByRole('article')).toHaveLength(1)
 
     // Search for "Securing" (matches Bob's bio)
@@ -258,7 +258,7 @@ describe('LeadersGrid', () => {
     expect(screen.getAllByRole('article')).toHaveLength(1)
     expect(screen.getByText('Bob Cyber')).toBeInTheDocument()
 
-    // Search for "Quantum" (Alice, but filtered out by Sector/Region)
+    // Search for "Quantum" (Alice, but filtered out by Sector/Country)
     fireEvent.change(searchInput, { target: { value: 'Quantum' } })
     expect(screen.queryByRole('article')).not.toBeInTheDocument()
   })

@@ -232,9 +232,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
   GA4 analytics logging; resets on navigation
 - **PQC Assistant**: AI-powered chatbot for post-quantum cryptography questions
   - Powered by Google Gemini 2.5 Flash with BYOK (Bring Your Own Key)
-  - Client-side RAG retrieval using MiniSearch over 2,100+ content chunks from 24 data sources
+  - Client-side RAG retrieval using MiniSearch over 2,350+ content chunks from 24 data sources
   - Three-phase search: entity matching, query expansion, keyword search with source diversity
-  - **Document enrichment**: 220+ archived HTML/PDF documents enriched with 11 structured
+  - **Document enrichment**: 230+ archived HTML/PDF documents enriched with 11 structured
     dimensions (algorithms, threats, protocols, infrastructure layers, compliance frameworks,
     etc.) and fed into the RAG corpus
   - **Entity inventory**: Extracted entity list injected into the system prompt to prevent
@@ -275,9 +275,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - ANSSI recommendations
   - Common Criteria certifications
   - Automated data scraping and visualization
-- **Standards Library**: Comprehensive PQC standards repository
+- **Standards Library**: Comprehensive PQC standards repository (231 entries)
   - NIST FIPS documents (203, 204, 205)
   - Protocol specifications (TLS, SSH, IKEv2)
+  - Government guidance: ANSSI, NATO, NSA CNSA 2.0, UK NCSC, G7, CISA, GSMA, SG MAS, AU ASD, and more
   - **Dynamic Tree Visualization**: Interactive dependency hierarchy (Standards → Profiles → Guidelines)
   - **Advanced Filtering**: Organization-based scoping (NIST, IETF, ETSI, ISO, etc.) and category grouping
 - **Quantum Threat Impacts**: Industry-specific quantum threat analysis

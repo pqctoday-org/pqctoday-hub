@@ -2,7 +2,7 @@
 """
 scripts/enrich-public-docs.py
 
-Extracts 9 structured dimensions from downloaded HTML/PDF documents in
+Extracts 11 structured dimensions from downloaded HTML/PDF documents in
 public/library/, public/timeline/, and public/threats/.
 
 Writes date-stamped enrichment markdown files to src/data/doc-enrichments/:

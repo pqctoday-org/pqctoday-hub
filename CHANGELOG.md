@@ -4,6 +4,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.6.1] - 2026-03-01
+
+### Added
+
+- **Timeline ↔ Library coverage audit**: Audited all 116 unique `SourceUrl` values in
+  `timeline_02282026.csv` against the library's `download_url` column. Coverage rose from 23
+  matches (20%) to 55 (47%) after adding 32 new entries.
+
+- **32 new library entries** (`library_03012026.csv` — 231 total) covering Tier 1 official
+  government and standards-body documents identified as timeline source gaps:
+  ANSSI PQC position paper and FAQ, EC Recommendation 2024/1101, G7 CEG Financial PQC Roadmap,
+  Canada TBS SPIN notice and CFDIR best practices, ENISA PQC Integration Study, Europol QSFF
+  call to action, UK NCSC white paper and migration timelines, UK DSIT CNI perspectives, UK CMORG
+  financial guidance, NATO Quantum Technologies Strategy, NSA CNSA 2.0 canonical page, US QCCPA
+  2022, US CISA Automated PQC Discovery strategy and OT considerations, EU-BSI 21-nation joint
+  statement, BSI-ANSSI-NLNCSA QKD position paper, SG MAS quantum advisory and QKD sandbox report,
+  SG Quantum-Safe Handbook, AU ASD ISM Guidelines for Cryptography, GSMA PQ.03 v2.0 and
+  country-by-country survey, CZ NUKIB minimum crypto requirements, IL INCD Cybersecurity Strategy,
+  IN CERT-In QBOM guidelines and TEC PQC migration report. PQCC Migration Roadmap and Inventory
+  Workbook URLs updated to specific pages.
+
+- **`library_doc_enrichments_03012026.md`**: 195 enriched documents (was 163) — 32 new sections
+  added via Haiku extraction agents covering all newly added library entries. Document Enrichments
+  RAG source grows to 370 chunks.
+
+### Fixed
+
+- **Library enrichment — Migration Timeline parser**: `parseTimeline()` now handles the Haiku
+  extraction format (`"year: description; year: description"`, semicolon-separated, no prefix)
+  alongside the legacy `Milestones: A | B | C` pipe-separated format. Also correctly suppresses
+  `"None detected (...)"` variants. Migration Timeline dimension now visible in Library detail
+  views for all 32 new documents.
+
+- **PQC Assistant — leaders retrieval**: Added `leaders: 1.5` boost to the `general` intent in
+  `INTENT_BOOSTS` so leader chunks are not outranked by document enrichments for leader-focused
+  queries (e.g. "PQC leaders and researchers").
+
+- **LeadersGrid tests**: Country filter tests updated to use `filter-Country` testId — the
+  component's Region and Country dropdowns are separate since the Region/Country filter split in
+  v2.5.x.
+
 ## [2.6.0] - 2026-02-28
 
 ### Added

@@ -86,24 +86,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC Assistant in detail views</strong>{' '}
-                    &mdash; context-aware AI help added to Algorithms, Compliance, Leaders, Library,
-                    Migrate, Threats, and Timeline detail panels
+                    <strong className="text-foreground">32 new library documents</strong> &mdash;
+                    ANSSI, NATO, NSA CNSA 2.0, UK NCSC, G7, CISA, GSMA, SG MAS, and more &mdash;
+                    timeline source coverage rising from 20% to 47%
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Interactive algorithm table</strong> &mdash;
-                    sortable columns, drag-to-resize, and deep-links to matching migration tools
+                    <strong className="text-foreground">Migration Timeline dimension fixed</strong>{' '}
+                    &mdash; Library detail panels now show migration deadlines for all new documents
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Data maintenance</strong> &mdash;
-                    date-shifted CSVs removed; algorithms transitions dataset and expanded
-                    certification cross-references added
+                    <strong className="text-foreground">PQC Assistant improvements</strong> &mdash;
+                    leader chunks now correctly surface for researcher/contributor queries
                   </span>
                 </li>
               </ul>

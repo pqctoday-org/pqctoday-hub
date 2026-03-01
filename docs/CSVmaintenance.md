@@ -28,19 +28,26 @@ Each CSV has a dedicated loader in `src/data/`. Loaders use Vite's `import.meta.
 
 Keep at least **2 versions** in `src/data/` for status comparison. Move older files to `src/data/archive/`.
 
-### Same-Day Revision Suffix (quiz CSV only)
+### Same-Day Revision Suffix
 
-The `pqcquiz_*` loader regex supports an optional revision suffix: `pqcquiz_{MMDDYYYY}_{suffix}.csv`. Use this when the most-advanced date is already used and a second update is needed on the same day:
+When the most-advanced date is already used and a second update is needed on the same day, append a revision suffix (`_r1`, `_r2`, `_r3`, …) **while keeping today's date**:
 
 ```text
-pqcquiz_03242026.csv      ← first update on March 24
-pqcquiz_03242026_r2.csv   ← second update, same day
-pqcquiz_03242026_r3.csv   ← third update, same day
+library_02282026.csv      ← first file for Feb 28
+library_02282026_r1.csv   ← first revision, same day
+library_02282026_r2.csv   ← second revision, same day
 ```
 
-The loader picks the lexicographically last match for a given date, so `_r3 > _r2 > (none)`.
+**MANDATORY RULE**: Always keep today's date stamp (`MMDDYYYY`). Never use tomorrow's date to work around a same-day conflict. Use the `_r1`/`_r2`/`_r3` suffix instead.
 
-**This suffix pattern is only supported by `quizDataLoader.ts`.** Other loaders (compliance, assessment, library, etc.) use strict regex that rejects suffixed filenames — never apply this pattern to other CSV types.
+The loader picks the lexicographically last match for a given date, so `_r2 > _r1 > (none)`.
+
+**Supported loaders:**
+
+- `libraryData.ts` — supports `library_{MMDDYYYY}(?:_[^.]*)?\.csv`
+- `quizDataLoader.ts` — supports `pqcquiz_{MMDDYYYY}(?:_[^.]*)?\.csv`
+
+Other loaders (compliance, assessment, leaders, migrate, etc.) use strict date-only regex — do not apply this suffix pattern to those CSV types.
 
 ---
 

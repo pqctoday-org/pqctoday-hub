@@ -26,12 +26,13 @@ function splitList(val: string | undefined): string[] {
 
 /**
  * Parse migration timeline info into an array of milestone phrases.
- * New format: "Milestones: phrase1 | phrase2 | phrase3"
- * Legacy format: "Years mentioned: 2024, 2026; Keywords: deprecat, mandate"
+ * Format 1: "Milestones: phrase1 | phrase2 | phrase3"  (legacy extractor)
+ * Format 2: "year: description; year: description"     (Haiku extractor, semicolon-separated)
+ * Legacy:   "Years mentioned: 2024, 2026; Keywords: …"
  */
 function parseTimeline(val: string | undefined): string[] | null {
-  if (!val || val === 'None detected') return null
-  // New format: pipe-separated contextual milestone phrases
+  if (!val || val.startsWith('None detected')) return null
+  // Format 1: pipe-separated milestone phrases with "Milestones:" prefix
   const milestonesMatch = val.match(/^Milestones:\s*(.+)$/)
   if (milestonesMatch) {
     const items = milestonesMatch[1]
@@ -40,13 +41,18 @@ function parseTimeline(val: string | undefined): string[] | null {
       .filter(Boolean)
     return items.length > 0 ? items : null
   }
-  // Legacy fallback: extract years as simple milestone phrases
+  // Legacy: "Years mentioned: X, Y; Keywords: Z"
   const yearsMatch = val.match(/Years mentioned:\s*([^;]+)/)
   if (yearsMatch) {
     const years = splitList(yearsMatch[1])
     return years.length > 0 ? years.map((y) => `Year: ${y}`) : null
   }
-  return null
+  // Haiku extraction format: freeform semicolon-separated milestone phrases
+  const items = val
+    .split(';')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  return items.length > 0 ? items : null
 }
 
 /**
