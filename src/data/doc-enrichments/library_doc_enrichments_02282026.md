@@ -1,7 +1,7 @@
 ---
 generated: 2026-02-28
 collection: library
-documents_processed: 161
+documents_processed: 162
 ---
 
 ## BIP-32
@@ -3135,20 +3135,20 @@ documents_processed: 161
 - **Reference ID**: UK NCSC PQC Guidance
 - **Title**: Preparing for Quantum-Safe Cryptography
 - **Authors**: UK NCSC
-- **Publication Date**: 2024-11-01
-- **Last Updated**: 2024-11-01
-- **Document Status**: White Paper
-- **Main Topic**: UK National Cyber Security Centre guidance document outlining the threat from cryptographically relevant quantum computers and the need for organizations to migrate to quantum-safe cryptography. Establishes UK government's 2035 target for complete migration of government systems, recommends prioritizing harvest-now-decrypt-later risk mitigation for long-lived sensitive data, and endorses NIST PQC standards as the basis for UK transition.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
-- **Quantum Threats Addressed**: CRQC, Harvest Now Decrypt Later (HNDL)
-- **Migration Timeline Info**: 2035 target for full UK government transition; immediate action required for long-lived sensitive data
+- **Publication Date**: 2020-11-11
+- **Last Updated**: 2020-11-11
+- **Document Status**: White Paper (v2.0)
+- **Main Topic**: UK National Cyber Security Centre whitepaper setting out the NCSC position on mitigating the cryptographic threat posed by quantum computing. Explains that CRQCs would break all widely-used public-key cryptography (RSA, ECC, Diffie-Hellman), while symmetric cryptography (AES) is minimally impacted. Recommends adopting quantum-safe cryptography (QSC) following NIST standardisation outcomes, cautions against early adoption of non-standardised QSC, explicitly rejects QKD for government or military applications as it requires specialist hardware and does not cover digital signatures, and advises large organisations to plan QSC transition into long-term infrastructure roadmaps. Intended for technical policymakers.
+- **PQC Algorithms Covered**: XMSS, LMS (stateful hash-based signatures, noted for niche uses like firmware signing only; NIST general-purpose algorithms not yet finalised at time of writing)
+- **Quantum Threats Addressed**: CRQC, Harvest Now Decrypt Later (HNDL) for key agreement, quantum signature forgery for long-lived root keys
+- **Migration Timeline Info**: No specific deadline set; NIST standards expected 2022–24; major products expected to transition once standards and protocol updates (IPSec, TLS) are available; recommends planning period with hybrid conventional + QSC operation
 - **Applicable Regions / Bodies**: Regions: United Kingdom; Bodies: NCSC, NIST, ETSI
 - **Leaders Contributions Mentioned**: UK NCSC cryptography team
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS, PKI, SSH, IPsec
-- **Infrastructure Layers**: Government IT, Critical Infrastructure, Defence
+- **Protocols Covered**: TLS, IPsec (mentioned as protocols requiring QSC updates)
+- **Infrastructure Layers**: Government IT, Critical National Infrastructure, Enterprise, Internet communications
 - **Standardization Bodies**: NCSC, NIST, ETSI
-- **Compliance Frameworks Referenced**: UK Cyber Essentials, UK Government Security Policy Framework
+- **Compliance Frameworks Referenced**: None detected
 
 ---
 
@@ -3589,5 +3589,27 @@ documents_processed: 161
 - **Infrastructure Layers**: Enterprise IT, Federal IT, Critical Infrastructure, OT/ICS/SCADA
 - **Standardization Bodies**: NIST, CISA
 - **Compliance Frameworks Referenced**: FISMA, OMB M-23-02, NSM-10, FedRAMP
+
+---
+
+## Japan CRYPTREC Report 2024
+
+- **Reference ID**: Japan CRYPTREC Report 2024
+- **Title**: CRYPTREC Cryptographic Technology Guidelines (Post-Quantum Cryptography) FY2024 Edition
+- **Authors**: CRYPTREC Cryptographic Technology Investigation Working Group (Post-Quantum Cryptography)
+- **Publication Date**: 2025-03-01
+- **Last Updated**: 2025-03-01
+- **Document Status**: Technical Report (covers research through September 30, 2024)
+- **Main Topic**: Comprehensive Japanese government evaluation of post-quantum cryptography algorithms for potential adoption into the CRYPTREC e-Government recommended cipher list. Analyzes five PQC algorithm families (lattice-based, code-based, multivariate, isogeny-based, hash-based signatures), covering security foundations, parameter sets, and implementation considerations. Traces the NIST PQC standardisation process (FIPS 203/204/205/206), presents Mosca's inequality (X+Y > Z) as the framework for migration urgency, reviews international standardisation activity (NIST, ETSI, IETF, KpqC Korea, ISO/IEC), and recommends crypto agility and hybrid classical+PQC configurations as migration approach. Reflects quantum hardware roadmaps from IBM and Fujitsu to establish CRQC risk window estimates.
+- **PQC Algorithms Covered**: ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), FN-DSA/FALCON (FIPS 206), HQC (NIST selected March 2025), FrodoKEM, Streamlined NTRU Prime, CRYSTALS-Dilithium (predecessor to ML-DSA), Classic McEliece, BIKE (code-based), multivariate schemes, isogeny-based schemes
+- **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Harvest Now Decrypt Later (HNDL), Shor's algorithm breaking RSA/ECC/DH/ECDH, Grover's algorithm halving symmetric key effective length, Mosca's inequality X+Y > Z migration urgency framework
+- **Migration Timeline Info**: US NSM-10 2035 target for full PQC transition; IBM 2029 roadmap (100M executable gates), Fujitsu 2026 (1000 physical qubits); Japanese e-Government cipher list update under consideration; NIST NCCoE SP 1800-38A/B/C migration guidance; historical pattern suggests 10-year migration cycles
+- **Applicable Regions / Bodies**: Regions: Japan, United States, Korea, Europe; Bodies: CRYPTREC, NIST, NSA, KpqC (Korea), ISO/IEC, IETF, ETSI, BSI, ANSSI, NCSC
+- **Leaders Contributions Mentioned**: CRYPTREC working group members (Japanese academia and government); IBM Quantum roadmap (2023); Fujitsu quantum roadmap; Michele Mosca (Mosca's inequality)
+- **PQC Products Mentioned**: OpenSSH (Streamlined NTRU Prime implementation referenced)
+- **Protocols Covered**: SSH (OpenSSH with Streamlined NTRU Prime), PKI, e-Government digital signature systems, TLS (implied via IETF coverage)
+- **Infrastructure Layers**: Government IT (e-Government), PKI/Digital Signatures, Internet Communications, Enterprise IT
+- **Standardization Bodies**: CRYPTREC, NIST, ISO/IEC, IETF, KpqC (Korea), ETSI, BSI, ANSSI, NCSC, NSA
+- **Compliance Frameworks Referenced**: CNSA 2.0, NSM-10, NIST SP 800-208, NIST SP 1800-38 series, CRYPTREC e-Government Recommended Cipher List
 
 ---

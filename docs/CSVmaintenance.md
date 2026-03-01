@@ -28,6 +28,20 @@ Each CSV has a dedicated loader in `src/data/`. Loaders use Vite's `import.meta.
 
 Keep at least **2 versions** in `src/data/` for status comparison. Move older files to `src/data/archive/`.
 
+### Same-Day Revision Suffix (quiz CSV only)
+
+The `pqcquiz_*` loader regex supports an optional revision suffix: `pqcquiz_{MMDDYYYY}_{suffix}.csv`. Use this when the most-advanced date is already used and a second update is needed on the same day:
+
+```text
+pqcquiz_03242026.csv      ← first update on March 24
+pqcquiz_03242026_r2.csv   ← second update, same day
+pqcquiz_03242026_r3.csv   ← third update, same day
+```
+
+The loader picks the lexicographically last match for a given date, so `_r3 > _r2 > (none)`.
+
+**This suffix pattern is only supported by `quizDataLoader.ts`.** Other loaders (compliance, assessment, library, etc.) use strict regex that rejects suffixed filenames — never apply this pattern to other CSV types.
+
 ---
 
 ## 2. CSV Inventory
