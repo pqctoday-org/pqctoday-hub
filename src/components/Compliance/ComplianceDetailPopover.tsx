@@ -120,7 +120,7 @@ export const ComplianceDetailPopover = ({
               </div>
               <div className="flex items-center gap-1">
                 <AskAssistantButton
-                  question={`What does ${record.productName} require for PQC compliance?`}
+                  question={`What PQC compliance requirements does ${record.productName}${record.vendor ? ` by ${record.vendor}` : ''} enforce under ${record.type}${record.source ? ` (${record.source})` : ''}${record.certificationLevel ? `, level: ${record.certificationLevel}` : ''}?`}
                 />
                 <button
                   ref={closeButtonRef}

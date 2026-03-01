@@ -413,7 +413,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                               <AskAssistantButton
                                 variant="text"
                                 label="Ask about PQC capabilities"
-                                question={`Tell me about ${item.softwareName}'s PQC capabilities`}
+                                question={`What PQC algorithms does ${item.softwareName} support${item.categoryName ? ` (${item.categoryName})` : ''}?${item.pqcCapabilityDescription ? ` Capabilities: ${item.pqcCapabilityDescription}` : ''}${item.fipsValidated && item.fipsValidated !== 'No' ? ` FIPS status: ${item.fipsValidated}.` : ''}`}
                               />
                             </div>
                           </div>

@@ -1,0 +1,87 @@
+Source_Name,Source_Type,Region,Primary_URL,Description,Leaders_CSV,Library_CSV,Algorithm_CSV,Threats_CSV,Timeline_CSV,Last_Verified_Date
+Carnegie Mellon CyLab,Academic,Americas,https://www.cylab.cmu.edu/,Advanced PQC research including vulnerability analysis of NIST algorithms and quantum-safe protocol development,Yes,Yes,Yes,Yes,No,2026-01-19
+UC Berkeley BQIC,Academic,Americas,https://bqic.berkeley.edu/,Berkeley Quantum Information & Computation Center focusing on quantum cryptography and algorithm research,Yes,Yes,Yes,No,No,2026-01-19
+Ruhr University Bochum Cryptography,Academic,EMEA,https://www.crypto.rub.de/,Leading European PQC research; developers of NIST-selected CRYSTALS algorithms,Yes,Yes,Yes,No,No,2026-01-19
+Max Planck Institute Security and Privacy,Academic,EMEA,https://www.mpi-sp.org/,German research institute contributing to NIST PQC standardization efforts,Yes,Yes,Yes,No,No,2026-01-19
+Brno University of Technology,Academic,EMEA,https://www.vut.cz/en/,Coordinator of EU Horizon QARC project for quantum-resistant cryptography in practice (2026-2029),Yes,Yes,Yes,No,Yes,2026-01-19
+Duke University Quantum Center,Academic,Americas,https://quantum.duke.edu/,Interdisciplinary quantum research including quantum-safe cryptography foundations,Yes,Yes,Yes,No,No,2026-01-19
+Yale University Quantum Institute,Academic,Americas,https://quantuminstitute.yale.edu/,Collaborative quantum research across physics engineering and computer science,Yes,Yes,Yes,No,No,2026-01-19
+Virginia Tech Cybersecurity,Academic,Americas,https://cyber.vt.edu/,Lattice-based cryptographic algorithm evaluation for NIST standardization,Yes,Yes,Yes,No,No,2026-01-19
+George Mason University Crypto,Academic,Americas,https://csis.gmu.edu/,Hardware implementation and security analysis of PQC candidates,Yes,Yes,Yes,No,No,2026-01-19
+University of San Diego Crypto Group,Academic,Americas,https://www.sandiego.edu/,PQC research publications and algorithm development,Yes,Yes,Yes,No,No,2026-01-19
+IBM Research Quantum-Safe,Industry Workgroup,Global,https://www.ibm.com/quantum/quantum-safe,Leading contributor to NIST PQC standards (ML-KEM ML-DSA SLH-DSA); crypto-agility solutions,Yes,Yes,Yes,Yes,Yes,2026-01-19
+Quantum-Safe 360 Alliance,Industry Workgroup,Global,https://www.ibm.com/consulting,Alliance of IBM Consulting Keyfactor Quantinuum and Thales for PQC migration services,Yes,Yes,No,Yes,Yes,2026-01-19
+RESQUE Consortium,Industry Workgroup,EMEA,https://www.thalesgroup.com/,French consortium (Thales TheGreenBow CryptoExperts CryptoNext ANSSI Inria) for secure communications,Yes,Yes,Yes,No,Yes,2026-01-19
+PQShield,Industry Workgroup,Global,https://pqshield.com/,Commercial PQC solutions provider; quantum-resistant semiconductor IP and cryptography,Yes,Yes,Yes,Yes,Yes,2026-01-19
+SandboxAQ,Industry Workgroup,Americas,https://www.sandboxaq.com/,Enterprise quantum-safe cryptography solutions; PQCA founding member,Yes,Yes,Yes,Yes,Yes,2026-01-19
+QuSecure,Industry Workgroup,Americas,https://qusecure.com/,Quantum-resistant security solutions; PQCA founding member,Yes,Yes,No,Yes,Yes,2026-01-19
+Qrypt,Industry Workgroup,Americas,https://www.qrypt.com/,Quantum-secure encryption company; PKI Consortium member since 2024,Yes,Yes,Yes,Yes,Yes,2026-01-19
+01 Quantum,Industry Workgroup,Global,https://01quantum.com/,Early-stage quantum-safe security leader focusing on agile PQC deployment,Yes,Yes,No,Yes,Yes,2026-01-19
+CryptoNext Security,Industry Workgroup,EMEA,https://www.cryptonext-security.com/,French quantum-safe cryptography vendor; RESQUE consortium member,Yes,Yes,Yes,No,Yes,2026-01-19
+CryptoExperts,Industry Workgroup,EMEA,https://www.cryptoexperts.com/,Cryptography R&D consultancy; RESQUE consortium member,Yes,Yes,Yes,No,No,2026-01-19
+Quantinuum,Industry Workgroup,Global,https://www.quantinuum.com/,Quantum computing and quantum-safe solutions; Quantum-Safe 360 Alliance member,Yes,Yes,Yes,Yes,Yes,2026-01-19
+Kudelski IoT,Industry Workgroup,EMEA,https://www.kudelski-iot.com/,IoT security with PQC implementation; PQCA founding member,No,Yes,Yes,Yes,Yes,2026-01-19
+IntellectEU,Industry Workgroup,EMEA,https://www.intellecteu.com/,Enterprise blockchain and quantum-safe solutions; PQCA founding member,No,Yes,No,Yes,Yes,2026-01-19
+Crypto Quantique,Industry Workgroup,EMEA,https://www.cryptoquantique.com/,Quantum-driven security for IoT devices,No,Yes,Yes,Yes,Yes,2026-01-19
+Xiphera,Industry Workgroup,EMEA,https://www.xiphera.com/,Hardware cryptographic IP cores including PQC implementations,No,Yes,Yes,No,Yes,2026-01-19
+ResQuant,Industry Workgroup,EMEA,https://resquant.com/,Quantum risk assessment and PQC migration planning services,Yes,Yes,No,Yes,Yes,2026-01-19
+Sixscape Communications,Industry Workgroup,Americas,https://www.sixscape.com/,IPv6 and quantum-safe network security solutions,No,Yes,No,Yes,Yes,2026-01-19
+Archon Security,Industry Workgroup,Global,https://www.archon.com/,Quantum-safe cryptographic solutions and consulting,Yes,Yes,No,Yes,No,2026-01-19
+McGill University Cryptography,Academic,Americas,https://crypto.cs.mcgill.ca/,PQCrypto steering committee member; advanced cryptographic research,Yes,Yes,Yes,No,No,2026-01-19
+University of Cincinnati Crypto,Academic,Americas,https://homepages.uc.edu/~coudtj/,PQCrypto steering committee representation; lattice cryptography research,Yes,Yes,Yes,No,No,2026-01-19
+Norwegian University of Science and Technology,Academic,EMEA,https://www.ntnu.edu/,PQCrypto steering committee member; Nordic PQC research leadership,Yes,Yes,Yes,No,No,2026-01-19
+Pennsylvania State University Crypto,Academic,Americas,https://www.cse.psu.edu/,PQCrypto steering committee; code-based cryptography research,Yes,Yes,Yes,No,No,2026-01-19
+University of Ryukyu,Academic,APAC,https://www.u-ryukyu.ac.jp/en/,Japanese PQCrypto research; regional PQC standardization collaboration,Yes,Yes,Yes,No,No,2026-01-19
+University of Limoges XLIM,Academic,EMEA,https://www.xlim.fr/en,French research institute; PQCrypto steering committee member,Yes,Yes,Yes,No,No,2026-01-19
+Indian Institute of Information Technology Kurnool,Academic,APAC,https://www.iiitk.ac.in/,MeitY-sponsored PQC research projects (2025-2026),Yes,Yes,Yes,No,No,2026-01-19
+NIST Computer Security Resource Center,Government,Americas,https://csrc.nist.gov/projects/post-quantum-cryptography,Primary PQC standardization authority; FIPS standards and technical specifications,Yes,Yes,Yes,Yes,Yes,2025-12-15
+NIST News & Events,Government,Americas,https://www.nist.gov/news-events,Official NIST announcements for PQC milestones and algorithm selections,Yes,Yes,Yes,No,Yes,2025-12-15
+NSA Cybersecurity Advisory,Government,Americas,https://www.nsa.gov/Press-Room/Cybersecurity-Advisories-Guidance/,CNSA 2.0 guidance and National Security System requirements,Yes,Yes,No,Yes,Yes,2025-12-15
+NSA Media Defense Portal,Government,Americas,https://media.defense.gov/,Official NSA/DoD technical documentation and FAQ releases,No,Yes,No,Yes,Yes,2025-12-15
+CISA Quantum Page,Government,Americas,https://www.cisa.gov/quantum,Federal PQC product categories and procurement guidance,Yes,Yes,No,Yes,Yes,2025-12-15
+BSI Post-Quantum Cryptography,Government,EMEA,https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/Quantentechnologien-und-Post-Quanten-Kryptografie/quantentechnologien-und-post-quanten-kryptografie_node.html,German Federal Office for Information Security PQC guidance and migration strategies,Yes,Yes,No,Yes,Yes,2025-12-15
+ANSSI Cryptography Guidelines,Government,EMEA,https://www.ssi.gouv.fr/en/,French cybersecurity agency quantum transition recommendations,Yes,Yes,No,Yes,Yes,2025-12-15
+NCSC UK Quantum Security,Government,EMEA,https://www.ncsc.gov.uk/collection/quantum,UK National Cyber Security Centre quantum threat guidance,Yes,Yes,No,Yes,Yes,2025-12-15
+ENISA Post-Quantum Cryptography,Government,EMEA,https://www.enisa.europa.eu/topics/quantum-computing,EU cybersecurity agency PQC recommendations and threat analysis,Yes,Yes,No,Yes,Yes,2025-12-15
+ACSC Australian Signals Directorate,Government,APAC,https://www.cyber.gov.au/,Australian Cyber Security Centre quantum security guidance,Yes,Yes,No,Yes,Yes,2025-12-15
+CSE Canadian Centre for Cyber Security,Government,Americas,https://cyber.gc.ca/en/,Canadian cybersecurity guidance on quantum threats and PQC migration,Yes,Yes,No,Yes,Yes,2025-12-15
+Federal Reserve Economic Research,Government,Americas,https://www.federalreserve.gov/econres/feds/,Economic and security analysis including HNDL threats to financial systems,No,No,No,Yes,Yes,2025-12-15
+IETF Datatracker,Industry Workgroup,Global,https://datatracker.ietf.org/,Internet protocol standards including TLS and PKI PQC specifications,Yes,Yes,Yes,No,Yes,2025-12-15
+ISO/IEC JTC 1 SC 27,Industry Workgroup,Global,https://www.iso.org/committee/45306.html,International cryptography standards development,No,Yes,Yes,No,Yes,2025-12-15
+ETSI Cyber Security,Industry Workgroup,EMEA,https://www.etsi.org/technologies/quantum-safe-cryptography,European telecommunications standards for quantum-safe protocols,No,Yes,Yes,Yes,Yes,2025-12-15
+IEEE Standards Association,Industry Workgroup,Global,https://standards.ieee.org/,Technical standards for quantum-safe implementations,No,Yes,Yes,No,Yes,2025-12-15
+PKI Consortium,Industry Workgroup,Global,https://pkic.org/,Public key infrastructure industry coordination and PQC conferences,Yes,Yes,No,No,Yes,2025-12-15
+Post-Quantum Cryptography Alliance,Industry Workgroup,Global,https://pqcrypto.org/,Research consortium coordinating PQC development and analysis,Yes,Yes,Yes,No,Yes,2025-12-15
+PQCA (Post-Quantum Cryptography Alliance),Industry Workgroup,Americas,https://www.pqca.org/,Industry alliance for PQC adoption and standards harmonization,Yes,Yes,No,Yes,Yes,2025-12-15
+Trusted Computing Group,Industry Workgroup,Global,https://trustedcomputinggroup.org/,Hardware security standards including TPM PQC specifications,No,Yes,Yes,Yes,Yes,2025-12-15
+FS-ISAC Financial Services,Industry Workgroup,Global,https://www.fs-isac.com/,Financial sector threat intelligence and PQC migration guidance,Yes,Yes,No,Yes,Yes,2025-12-15
+MIT CSAIL Cryptography Group,Academic,Americas,https://dci.mit.edu/,Post-quantum algorithm research and cryptanalysis,Yes,Yes,Yes,No,No,2025-12-15
+Stanford Applied Crypto Group,Academic,Americas,https://crypto.stanford.edu/,PQC protocol design and security analysis research,Yes,Yes,Yes,No,No,2025-12-15
+University of Waterloo IQC,Academic,Americas,https://uwaterloo.ca/institute-for-quantum-computing/,Quantum computing and post-quantum cryptography research institute,Yes,Yes,Yes,No,Yes,2025-12-15
+ETH Zurich Cryptography Group,Academic,EMEA,https://crypto.ethz.ch/,European PQC algorithm development and analysis,Yes,Yes,Yes,No,No,2025-12-15
+INRIA France Cryptography,Academic,EMEA,https://www.inria.fr/en,French national research institute for PQC algorithms,Yes,Yes,Yes,No,No,2025-12-15
+TU Eindhoven Coding Theory,Academic,EMEA,https://www.tue.nl/en/research/research-groups/coding-theory-and-cryptology,Code-based and lattice-based PQC research,Yes,Yes,Yes,No,No,2025-12-15
+KU Leuven COSIC,Academic,EMEA,https://www.esat.kuleuven.be/cosic/,Belgian cryptography and security research center,Yes,Yes,Yes,No,No,2025-12-15
+University of Toronto Smart Grid Security,Academic,Americas,https://www.utoronto.ca/,Critical infrastructure quantum threat research,No,No,No,Yes,Yes,2025-12-15
+Tsinghua University Quantum Lab,Academic,APAC,https://www.tsinghua.edu.cn/en/,Chinese quantum computing and PQC research,Yes,Yes,Yes,No,No,2025-12-15
+National University of Singapore CQT,Academic,APAC,https://www.quantumlah.org/,Centre for Quantum Technologies PQC research,Yes,Yes,Yes,No,No,2025-12-15
+University of Tokyo Quantum,Academic,APAC,https://www.u-tokyo.ac.jp/en/,Japanese quantum security research programs,Yes,Yes,Yes,No,No,2025-12-15
+ABI Research Technology Analysis,Industry Workgroup,Global,https://www.abiresearch.com/,Industry technology forecasting including HSM and PQC adoption analysis,No,No,No,Yes,Yes,2025-12-15
+Thales Data Threat Reports,Industry Workgroup,Global,https://cpl.thalesgroup.com/resources,Annual cybersecurity threat assessments including quantum risks,No,No,No,Yes,Yes,2025-12-15
+Cloud Security Alliance,Industry Workgroup,Global,https://cloudsecurityalliance.org/,Cloud security standards including quantum-safe guidance,No,Yes,No,Yes,Yes,2025-12-15
+OWASP Quantum,Industry Workgroup,Global,https://owasp.org/,Application security guidance for quantum-safe development,No,Yes,No,Yes,No,2025-12-15
+Linux Foundation QSC,Industry Workgroup,Global,https://www.linuxfoundation.org/,Open source quantum-safe cryptography implementations,No,Yes,Yes,No,Yes,2025-12-15
+Open Quantum Safe Project,Academic,Global,https://openquantumsafe.org/,Open-source PQC library development and testing,No,Yes,Yes,No,Yes,2025-12-15
+NIST IR Publications,Government,Americas,https://csrc.nist.gov/publications/search,Implementation guidance and technical reports (IR 8413, IR 8547),No,Yes,Yes,Yes,Yes,2025-12-15
+CMVP Cryptographic Module Validation,Government,Americas,https://csrc.nist.gov/projects/cryptographic-module-validation-program,FIPS 140-3 validation for PQC implementations,No,Yes,Yes,No,Yes,2025-12-15
+NCSC Netherlands Post-Quantum,Government,EMEA,https://www.ncsc.nl/,Dutch cybersecurity center quantum transition guidance,Yes,Yes,No,Yes,Yes,2025-12-15
+CCCS Canadian Crypto Standards,Government,Americas,https://www.cyber.gc.ca/en/guidance/cryptographic-algorithms-unclassified-protected-protected-b-information-itsp40111,Canadian cryptographic algorithm guidance including PQC,No,Yes,Yes,No,Yes,2025-12-15
+Japan CRYPTREC,Government,APAC,https://www.cryptrec.go.jp/en/,Japanese cryptographic standards evaluation project,Yes,Yes,Yes,No,Yes,2025-12-15
+Korea KISA,Government,APAC,https://www.kisa.or.kr/eng/,Korean Internet & Security Agency PQC initiatives,Yes,Yes,No,Yes,Yes,2025-12-15
+Singapore CSA Cybersecurity,Government,APAC,https://www.csa.gov.sg/,Singapore Cyber Security Agency quantum readiness,Yes,Yes,No,Yes,Yes,2025-12-15
+ATARC Federal Technology,Industry Workgroup,Americas,https://www.atarc.org/,Advanced Technology Academic Research Center supporting CISA PQC initiatives,Yes,Yes,No,Yes,Yes,2025-12-15
+FIPS Standards Repository,Government,Americas,https://csrc.nist.gov/publications/fips,Official FIPS 203/204/205/206 standards documentation,No,Yes,Yes,No,Yes,2025-12-15
+arXiv Cryptography,Academic,Global,https://arxiv.org/list/cs.CR/recent,Pre-print repository for cutting-edge PQC research papers,Yes,Yes,Yes,No,No,2025-12-15
+IACR Cryptology ePrint,Academic,Global,https://eprint.iacr.org/,International Association for Cryptologic Research preprint archive,Yes,Yes,Yes,No,No,2025-12-15
+Bundesdruckerei Quantum ID,Government,EMEA,https://www.bundesdruckerei.de/en,German government printer developing quantum-secure ID systems,Yes,No,No,No,Yes,2025-12-15
+Quantum Computing Report,Industry Workgroup,Global,https://quantumcomputingreport.com/,Industry news aggregator covering PQC implementations and vendor announcements,No,No,No,No,Yes,2025-12-15

@@ -95,24 +95,25 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                 Reference Source
               </h3>
-              <div className="flex items-center gap-3">
-                <a
-                  href={threat.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-primary hover:underline text-sm truncate"
-                >
-                  <ExternalLink size={14} />
-                  {threat.mainSource || 'View Source'}
-                </a>
-                <AskAssistantButton
-                  variant="text"
-                  label="Ask about mitigations"
-                  question={`What are the mitigation strategies for ${threat.threatId} (${threat.industry})?`}
-                />
-              </div>
+              <a
+                href={threat.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-primary hover:underline text-sm truncate"
+              >
+                <ExternalLink size={14} />
+                {threat.mainSource || 'View Source'}
+              </a>
             </div>
           )}
+
+          <div className="pt-4 border-t border-border mt-4 flex justify-end">
+            <AskAssistantButton
+              variant="text"
+              label="Ask about mitigations"
+              question={`What are the recommended PQC mitigations for ${threat.threatId} in the ${threat.industry} sector? Criticality: ${threat.criticality}. Crypto at risk: ${threat.cryptoAtRisk}. Recommended replacement: ${threat.pqcReplacement}.`}
+            />
+          </div>
 
           {threat.relatedModules && threat.relatedModules.length > 0 && (
             <div className="pt-4 border-t border-border">

@@ -241,7 +241,9 @@ describe('corpus integration', () => {
     // Corpus should exist
     expect(fs.existsSync(corpusPath)).toBe(true)
 
-    const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
+    // rag-corpus.json is now { generatedAt, chunkCount, chunks: [...] }
+    const parsed = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
+    const corpus = parsed.chunks ?? parsed
 
     // Should have chunks
     expect(corpus.length).toBeGreaterThan(100)
@@ -268,7 +270,8 @@ describe('corpus integration', () => {
     const fs = await import('fs')
     const path = await import('path')
     const corpusPath = path.join(process.cwd(), 'public', 'data', 'rag-corpus.json')
-    const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
+    const parsed = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
+    const corpus = parsed.chunks ?? parsed
 
     const glossaryChunks = corpus.filter((c: { source: string }) => c.source === 'glossary')
     expect(glossaryChunks.length).toBeGreaterThan(200)
@@ -283,7 +286,8 @@ describe('corpus integration', () => {
     const fs = await import('fs')
     const path = await import('path')
     const corpusPath = path.join(process.cwd(), 'public', 'data', 'rag-corpus.json')
-    const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
+    const parsed = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
+    const corpus = parsed.chunks ?? parsed
 
     const moduleContent = corpus.filter((c: { source: string }) => c.source === 'module-content')
     const noiseChunks = moduleContent.filter(
@@ -298,7 +302,8 @@ describe('corpus integration', () => {
     const fs = await import('fs')
     const path = await import('path')
     const corpusPath = path.join(process.cwd(), 'public', 'data', 'rag-corpus.json')
-    const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
+    const parsed = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
+    const corpus = parsed.chunks ?? parsed
 
     const sources = new Set(corpus.map((c: { source: string }) => c.source))
     const expectedSources = [
@@ -327,7 +332,8 @@ describe('corpus integration', () => {
     const fs = await import('fs')
     const path = await import('path')
     const corpusPath = path.join(process.cwd(), 'public', 'data', 'rag-corpus.json')
-    const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
+    const parsed = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
+    const corpus = parsed.chunks ?? parsed
 
     // Algorithm chunks should have deep links
     const algoChunks = corpus.filter((c: { source: string }) => c.source === 'algorithms')

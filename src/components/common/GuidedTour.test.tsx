@@ -3,6 +3,32 @@ import { render, screen, fireEvent, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { GuidedTour } from './GuidedTour'
 
+// Mock framer-motion so AnimatePresence transitions are synchronous in tests.
+// Without this, AnimatePresence mode="wait" holds exiting elements in the DOM
+// until RAF-driven animations complete, which never happens in the jsdom environment.
+vi.mock('framer-motion', () => ({
+  motion: {
+    div: ({
+      children,
+      className,
+      onClick,
+      style,
+    }: {
+      children?: React.ReactNode
+      className?: string
+      onClick?: React.MouseEventHandler
+      style?: React.CSSProperties
+      [key: string]: unknown
+    }) => (
+      // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+      <div className={className} onClick={onClick} style={style}>
+        {children}
+      </div>
+    ),
+  },
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}))
+
 const TOUR_STORAGE_KEY = 'pqc-tour-completed'
 
 /** Advance past the intro slides (3) and click through the knowledge gate */

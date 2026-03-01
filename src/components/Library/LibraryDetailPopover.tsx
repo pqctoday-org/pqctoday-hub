@@ -96,7 +96,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
             <AskAssistantButton
-              question={`Summarize ${item.documentTitle?.trim()} and its significance for PQC`}
+              question={`What is the significance of "${item.documentTitle?.trim()}"${item.authorsOrOrganization ? ` by ${item.authorsOrOrganization}` : ''}${item.documentType ? ` (${item.documentType})` : ''} for PQC migration?${item.shortDescription ? ` Summary: ${item.shortDescription}` : ''}`}
             />
             <button
               onClick={onClose}

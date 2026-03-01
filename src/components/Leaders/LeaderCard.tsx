@@ -111,7 +111,7 @@ export const LeaderCard = ({ leader }: LeaderCardProps) => {
       )}
 
       {(leader.websiteUrl || leader.linkedinUrl) && (
-        <div className="flex flex-wrap gap-3 mt-auto pt-4 border-t border-border">
+        <div className="flex flex-wrap gap-3 pt-4 border-t border-border">
           {leader.websiteUrl && (
             <a
               href={leader.websiteUrl}
@@ -162,14 +162,20 @@ export const LeaderCard = ({ leader }: LeaderCardProps) => {
               LinkedIn
             </a>
           )}
-          <AskAssistantButton
-            variant="text"
-            label="Ask about"
-            question={`What are ${leader.name}'s contributions to PQC?`}
-            className="ml-auto"
-          />
         </div>
       )}
+      <div
+        className={clsx(
+          'flex justify-end mt-auto',
+          leader.websiteUrl || leader.linkedinUrl ? 'pt-2' : 'pt-4 border-t border-border'
+        )}
+      >
+        <AskAssistantButton
+          variant="text"
+          label={`Ask about ${leader.name}`}
+          question={`What is ${leader.name}'s role in post-quantum cryptography? They are ${leader.title} at ${leader.organizations.join(' and ')}${leader.bio ? `. Background: ${leader.bio}` : ''}`}
+        />
+      </div>
     </motion.article>
   )
 }

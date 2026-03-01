@@ -86,24 +86,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Library Document Analysis</strong> &mdash;
-                    expandable enrichment panel per document showing algorithms, threats, protocols,
-                    and compliance frameworks
+                    <strong className="text-foreground">PQC Assistant in detail views</strong>{' '}
+                    &mdash; context-aware AI help added to Algorithms, Compliance, Leaders, Library,
+                    Migrate, Threats, and Timeline detail panels
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Timeline refresh</strong> &mdash; Feb 2026
-                    snapshot with EU QARC, IBM Heron R2, Microsoft Majorana 1, and QSP roadmap
-                    updates
+                    <strong className="text-foreground">Interactive algorithm table</strong> &mdash;
+                    sortable columns, drag-to-resize, and deep-links to matching migration tools
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Open-source compliance</strong> &mdash; SPDX
-                    GPL-3.0-only headers across all 500+ source files
+                    <strong className="text-foreground">Data maintenance</strong> &mdash;
+                    date-shifted CSVs removed; algorithms transitions dataset and expanded
+                    certification cross-references added
                   </span>
                 </li>
               </ul>

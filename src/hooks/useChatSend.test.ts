@@ -90,6 +90,12 @@ vi.mock('@/services/chat/GeminiService', () => ({
   streamResponse: (...args: unknown[]) => mockStreamResponse(...args),
 }))
 
+vi.mock('@/services/chat/responseCache', () => ({
+  getCached: vi.fn().mockReturnValue(null),
+  setCache: vi.fn(),
+  clearCache: vi.fn(),
+}))
+
 vi.mock('@/services/chat/parseFollowUps', () => ({
   parseFollowUps: (content: string) => {
     const match = content.match(/```followups\n([\s\S]*?)```\s*$/)

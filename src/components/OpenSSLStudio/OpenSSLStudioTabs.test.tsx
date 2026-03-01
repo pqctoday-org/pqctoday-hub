@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
+import { MemoryRouter } from 'react-router-dom'
 import { OpenSSLStudioView } from './OpenSSLStudioView'
 
 // Mock the sub-components to isolate the view logic
@@ -14,7 +15,11 @@ vi.mock('./FileEditor', () => ({ FileEditor: () => <div>FileEditor</div> }))
 
 describe('OpenSSLStudioView Tabs', () => {
   it('renders the correct header based on active tab', () => {
-    render(<OpenSSLStudioView />)
+    render(
+      <MemoryRouter>
+        <OpenSSLStudioView />
+      </MemoryRouter>
+    )
 
     // Default is Terminal
     expect(screen.getByText('Terminal Output')).toBeInTheDocument()

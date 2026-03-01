@@ -393,7 +393,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             <AskAssistantButton
                               variant="text"
                               label="Ask about this"
-                              question={`Tell me about ${algo.pqc} — how does it compare to ${algo.classical}?`}
+                              question={`How does ${algo.pqc} compare to ${algo.classical} in terms of security and performance, and why should organizations migrate?`}
                             />
                           </div>
                         </td>

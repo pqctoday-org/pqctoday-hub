@@ -151,7 +151,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
         <AskAssistantButton
           variant="text"
           label="Ask about this"
-          question={`Tell me about the ${phase.title} (${phase.phase} phase, ${phase.startYear}–${phase.endYear})`}
+          question={`How did the "${phase.title}" ${phase.phase} phase (${phase.startYear}–${phase.endYear}) advance PQC adoption?${phase.description ? ` Context: ${phase.description}` : ''}`}
         />
       </div>
     </div>

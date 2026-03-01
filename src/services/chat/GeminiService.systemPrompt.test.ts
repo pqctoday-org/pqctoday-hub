@@ -55,9 +55,11 @@ describe('buildSystemPrompt', () => {
       const result = buildSystemPrompt([mockChunk])
       const contextHeader = 'CONTEXT FROM PQC TODAY DATABASE:'
       expect(result).toContain(contextHeader)
-      // The context block content should appear after the header
+      // The context block separator should appear after the header.
+      // Use the full "--- Source:" marker — the bare title also appears in the entity
+      // inventory section which is inserted before the context header.
       const headerIdx = result.indexOf(contextHeader)
-      const chunkIdx = result.indexOf('ML-KEM Overview')
+      const chunkIdx = result.indexOf('--- Source: algorithms | ML-KEM Overview ---')
       expect(headerIdx).toBeLessThan(chunkIdx)
     })
   })

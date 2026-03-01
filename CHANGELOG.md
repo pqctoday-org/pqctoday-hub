@@ -4,6 +4,59 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.6.0] - 2026-02-28
+
+### Added
+
+- **PQC Assistant integration — detail views**: `AskAssistantButton` added to all seven detail
+  panels: AlgorithmComparison, ComplianceDetailPopover, LeaderCard, LibraryDetailPopover,
+  SoftwareTable, ThreatDetailDialog, and GanttDetailPopover. Each button carries context-aware
+  prompt templates (e.g., classical↔PQC migration rationale, threat mitigations by industry,
+  timeline phase significance).
+
+- **AlgorithmComparison interactive table**: 3-way column sorting (asc → desc → none) on all
+  four columns; drag-to-resize column separators; "Find tools" deep-links from PQC algorithm
+  cells to `/migrate?q=<algo>`; separate `MobileAlgorithmList` for `lg:hidden` with accessible
+  `aria-sort` attributes and `<caption>` on the desktop table.
+
+- **SoftwareTable — PQC certifications in expanded rows**: Per-product certifications badge
+  panel (FIPS 140-3 green, ACVP blue, Common Criteria amber) pulled from
+  `migrate_certification_xref_02282026.csv`. Three-tier FIPS badge (`Validated` / `Partial` / `No`)
+  with icon indicators replaces prior boolean display.
+
+- **ThreatDetailDialog — related modules**: Pill-style links to `/learn/<slug>` with BookOpen
+  icon when `threat.relatedModules` is populated; AI button asks about PQC mitigations by
+  industry and criticality.
+
+- **GuidedTour — comprehensive test suite**: Full lifecycle coverage — localStorage persistence,
+  intro slides, knowledge-gate branching (learning/basics/expert paths), feature nav, and
+  dismissal. `vi.useFakeTimers()` and `AnimatePresence` sync mock used throughout.
+
+- **Chat system — extensive test coverage**: `useChatSend.test.ts` covers happy-path streaming,
+  guards (empty query, null API key, active loading), error handling (generic, invalid key,
+  AbortError, 60s timeout), and 1000-char input length cap. `GeminiService.systemPrompt.test.ts`
+  covers identity, knowledge boundary, page context, persona depth (executive/developer/architect/
+  researcher), and assessment context injection.
+
+- **New data: algorithms_transitions CSVs** — three snapshots (`02222026`, `02272026`,
+  `02282026`) added to `src/data/` providing algorithm transition timeline data.
+
+### Changed
+
+- **Data maintenance — CSV date correction**: Removed date-shifted future files
+  (`library_03212026.csv`, `library_03222026.csv`, `pqcquiz_03232026.csv`,
+  `pqcquiz_03242026.csv`, `quantum_safe_cryptographic_software_reference_03182026.csv`,
+  `quantum_safe_cryptographic_software_reference_03262026.csv`, `timeline_03012026.csv`).
+  Correct Feb 2026–dated snapshots now active; `shift-csv-dates.py` script added for future
+  maintenance.
+
+- **LeaderCard accessibility**: `AskAssistantButton` at bottom-right; `StatusBadge` in
+  top-right corner; `min-h-[44px]` touch targets on external links (WCAG AA); LinkedIn button
+  uses `.bg-status-info` semantic token.
+
+- **RAG corpus**: Regenerated (`public/data/rag-corpus.json`) to incorporate enriched document
+  metadata from new datasets.
+
 ## [2.5.1] - 2026-02-28
 
 ### Added
