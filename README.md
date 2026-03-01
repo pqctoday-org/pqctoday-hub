@@ -9,6 +9,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Document table: select a country to see all its phases/milestones in a structured table
     with organization, phase type, title, period, description, and source links
 - **Algorithm Comparison**: Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) transition table
+  - Interactive table with 3-way column sorting (asc → desc → none) and drag-to-resize columns
+  - "Find tools" deep-links from each PQC algorithm cell to pre-filtered `/migrate` catalog
+  - Mobile-responsive layout with accessible `aria-sort` attributes; separate mobile list view
+  - AI-powered context button on each row for classical↔PQC migration rationale
 - **Interactive Playground**: Hands-on cryptographic testing environment
   - Real WASM-powered cryptography (`@oqs/liboqs-js`)
   - **KEM Operations**: Classical (X25519, P-256), PQC (ML-KEM), and Hybrid modes
@@ -130,6 +134,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Gap Analysis**: Coverage assessment with priority matrix
   - **Reference Panel**: Curated authoritative migration resources
   - **Change Tracking**: "New" and "Updated" indicators for recent PQC landscape changes
+  - **PQC Certifications**: Expanded product rows show per-product FIPS 140-3, ACVP, and Common
+    Criteria certification badges pulled from a certification cross-reference dataset
+  - **Three-tier FIPS badge**: `Validated` (green) / `Partial` (amber, covers FedRAMP/WebTrust/FIPS-mode
+    claims) / `No` (gray) with icon indicators on every catalog row
   - **Filtering**: Contextual cascading filters by category, PQC support status, and infrastructure
     layer with search; selected layer and sub-category persist across sessions
 - **PQC Risk Assessment** (`/assess`): Comprehensive 14-step quantum risk evaluation wizard
@@ -252,6 +260,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
     questions
   - **40 golden query tests**: Regression suite covering definitions, comparisons, catalog lookups,
     country queries, recommendations, and cross-intent queries
+  - **Detail-view AI buttons**: Context-aware `Ask Assistant` buttons embedded in all seven detail
+    panels (Algorithms, Compliance, Leaders, Library, Migrate, Threats, Timeline) — each pre-fills
+    a relevant question using the current item's context
 - **Study Pack for NotebookLM**: Download all PQC Today content as a structured ZIP file for use
   with Google NotebookLM — includes glossary, algorithms, library, threats, compliance, migrate
   catalog, leaders, timeline, and learning module summaries
