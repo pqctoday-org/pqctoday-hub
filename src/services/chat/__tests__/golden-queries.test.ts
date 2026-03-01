@@ -366,7 +366,11 @@ beforeAll(() => {
   if (!fs.existsSync(corpusPath)) {
     throw new Error(`RAG corpus not found at ${corpusPath}. Run 'npm run generate-corpus' first.`)
   }
-  const corpus: RAGChunk[] = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
+  const data: unknown = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
+  // Support both legacy flat-array and new wrapper format { generatedAt, chunkCount, chunks }
+  const corpus: RAGChunk[] = Array.isArray(data)
+    ? data
+    : ((data as { chunks?: RAGChunk[] }).chunks ?? [])
   service = new RetrievalService()
   service.initializeWithCorpus(corpus)
 })
