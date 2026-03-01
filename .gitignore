@@ -168,6 +168,7 @@ docs/googledriveenablement.md
 docs/learning-progress-enhancements.md
 docs/refactoring-guide.md
 docs/newstoread-*
+docs/repomanagement.md
 
 # LLM enrichment scripts
 scripts/enrich-*.py
