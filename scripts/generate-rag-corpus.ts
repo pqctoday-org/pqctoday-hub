@@ -571,13 +571,13 @@ function processModules(): RAGChunk[] {
   const raw = fs.readFileSync(filePath, 'utf-8')
 
   const chunks: RAGChunk[] = []
-  // Match module entries: 'module-id': { id: '...', title: '...', description: '...', duration: '...' }
+  // Match module entries: 'module-id': { ... } or module-id: { ... } (unquoted keys are valid JS)
   const moduleRegex =
-    /['"]([^'"]+)['"]\s*:\s*\{\s*id:\s*['"]([^'"]+)['"]\s*,\s*title:\s*['"]([^'"]+)['"]\s*,\s*description:\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)")\s*,\s*duration:\s*['"]([^'"]+)['"]/g
+    /(?:['"]([^'"]+)['"]|([\w-]+))\s*:\s*\{\s*id:\s*['"]([^'"]+)['"]\s*,\s*title:\s*['"]([^'"]+)['"]\s*,\s*description:\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)")\s*,\s*duration:\s*['"]([^'"]+)['"]/g
 
   let match
   while ((match = moduleRegex.exec(raw)) !== null) {
-    const [, , id, title, desc1, desc2, duration] = match
+    const [, , , id, title, desc1, desc2, duration] = match
     const description = (desc1 ?? desc2 ?? '').replace(/\\'/g, "'")
 
     if (id === 'quiz' || id === 'assess') continue // skip non-learning modules

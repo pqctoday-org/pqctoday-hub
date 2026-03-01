@@ -96,6 +96,21 @@ chunks }` wrapper. RetrievalService handles both legacy and new formats; exposes
 - **QandA document**: Updated assessment references from 13-step to 14-step; corpus size
   ~2,100 chunks from 24 data sources; new Q7 on document enrichment dimensions.
 
+### Fixed
+
+- **PQC Assistant module count**: Assistant was answering "9 learning modules" instead of 25.
+  Root cause: the entity inventory (dynamically built from retrieved RAG chunks, capped at 30
+  total entities) was including a truncated subset of modules and the LLM trusted that count
+  over the static list in the system prompt. Fix: `modules`, `module-content`, and
+  `module-summaries` sources excluded from entity inventory — the hardcoded canonical list
+  at system prompt guideline 5 is the authoritative source. System prompt updated to state
+  "25 total" explicitly.
+
+- **RAG corpus generator — unquoted object keys**: `processModules()` regex in
+  `generate-rag-corpus.ts` required quoted keys (`'module-id':`) but Prettier formats valid
+  JS identifiers without quotes (`qkd:`), silently dropping the QKD module from the corpus
+  on every regeneration. Regex updated to accept both quoted and unquoted key formats.
+
 ## [2.4.0] - 2026-02-28
 
 ### Added
