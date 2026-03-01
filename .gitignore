@@ -87,6 +87,9 @@ screenshot-*.png
 # Audit Reports
 docs/audits/
 
+# Requirements Documentation (BRDs, PRDs, competitive analysis)
+docs/requirements/
+
 # Temp HTML
 pqc_today_clean_icons.html
 
@@ -128,3 +131,78 @@ scripts/original_hook.ts
 
 # Playwright local state
 e2e/playwright-state.json
+
+# === Private development files (synced to pqc-timeline-app-priv) ===
+
+# AI / Agent config
+CLAUDE.md
+.claude/
+.cursorrules
+.agent/
+
+# Requirements & planning
+requirements/
+REQUIREMENTS.md
+QandA_pqctoday.md
+walkthrough.md
+pqctoday1.21.0.md
+
+# Audit reports (additional — docs/audits/ already above)
+docs/assessment*.md
+docs/MAINTAINABILITY_AUDIT.md
+docs/REACT_AUDIT.md
+docs/TIMELINE_AUDIT.md
+docs/dependency-audit-report.txt
+docs/skipped_tests.md
+docs/webkit-rendering-investigation.md
+docs/phase-color-validation.md
+data/security_audit_report_*.md
+
+# Internal docs
+docs/CSVmaintenance.md
+docs/maintenance-guide.md
+docs/ux-standard.md
+docs/ux-gap-analysis.md
+docs/globalpersistence.md
+docs/googledriveenablement.md
+docs/learning-progress-enhancements.md
+docs/refactoring-guide.md
+docs/newstoread-*
+
+# LLM enrichment scripts
+scripts/enrich-*.py
+scripts/summarize-library.py
+scripts/generate-notebooklm.ts
+
+# Data archive & analysis
+src/data/archive/
+src/data/PQC_Software_Category_Strategic_Analysis.md
+src/data/quantum_safe_software_comprehensive_guide.md
+
+# Planning & process
+csv_updates_jan2026/
+reference/
+tasks/
+demo-recordings/
+
+# Media & prototypes
+animation.html
+explainer.html
+generate_animation.py
+platform_map_with_labels_*.png
+# Root-level PDFs only — public/timeline/*.pdf and public/threats/*.pdf MUST remain tracked
+/*.pdf
+
+# One-off scripts
+update_threats_csv.py
+validate_urls.py
+accessibility-audit.cjs
+analyze_failures.cjs
+test-improvements.cjs
+test-openssl-hash.sh
+validate-hash-vectors.mjs
+run_opt_200.exp
+
+# Private sync tooling
+sync-private.sh
+splitpqctodayrepopubandpriv.md
