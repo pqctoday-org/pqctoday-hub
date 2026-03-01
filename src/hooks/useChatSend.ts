@@ -196,6 +196,24 @@ export function useChatSend() {
           return
         }
 
+        // If content was streamed before the error, save it rather than discarding it
+        if (fullContent.trim()) {
+          const { cleanContent, followUps } = parseFollowUps(fullContent)
+          const assistantMessage: ChatMessage = {
+            id: `assistant-${Date.now()}`,
+            role: 'assistant',
+            content:
+              cleanContent.trimEnd() +
+              '\n\n*(Connection interrupted — response may be incomplete.)*',
+            timestamp: Date.now(),
+            sources: sourceIds,
+            sourceRefs,
+            followUps,
+          }
+          addMessage(assistantMessage)
+          return
+        }
+
         const errorMsg = err instanceof Error ? err.message : 'An unexpected error occurred.'
         setError(errorMsg)
 
