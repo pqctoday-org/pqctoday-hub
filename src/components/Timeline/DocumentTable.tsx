@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { ArrowDown, ArrowUp, ArrowUpDown, ExternalLink, Flag, Info, Sparkles } from 'lucide-react'
 import clsx from 'clsx'
