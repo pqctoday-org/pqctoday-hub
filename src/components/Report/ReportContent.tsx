@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
+import { flushSync } from 'react-dom'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   Printer,
@@ -43,6 +44,10 @@ import { threatsData } from '../../data/threatsData'
 import { MigrationRoadmap } from './MigrationRoadmap'
 import { MigrationToolkit } from './MigrationToolkit'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
+import { ROICalculatorSection } from './ROICalculatorSection'
+import type { ROISummary } from './ROICalculatorSection'
+import { KPITrendingSection } from './KPITrendingSection'
+import { BoardBriefSection } from './BoardBriefSection'
 import { Button } from '../ui/button'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import clsx from 'clsx'
@@ -112,7 +117,7 @@ export function SectionInfoTip({ text }: { text: string }) {
   )
 }
 
-function CollapsibleSection({
+export function CollapsibleSection({
   title,
   icon,
   children,
@@ -864,6 +869,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
   const { reset, editFromStep } = useAssessmentStore()
   const previousRiskScore = useAssessmentStore((s) => s.previousRiskScore)
   const lastModifiedAt = useAssessmentStore((s) => s.lastModifiedAt)
+  const assessmentHistory = useAssessmentStore((s) => s.assessmentHistory)
   const industry = useAssessmentStore((s) => s.industry)
   const country = useAssessmentStore((s) => s.country)
   const dataSensitivity = useAssessmentStore((s) => s.dataSensitivity)
@@ -891,6 +897,8 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
 
   const [showFullReport, setShowFullReport] = useState(false)
   const [methodologyOpen, setMethodologyOpen] = useState(false)
+  const [showBoardBrief, setShowBoardBrief] = useState(false)
+  const [roiSummary, setRoiSummary] = useState<ROISummary | null>(null)
 
   /** Config-driven section state resolver. */
   const cfg = (sectionId: ReportSectionId) =>
@@ -1058,7 +1066,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
   const assessUrl = `${window.location.origin}/assess`
 
   return (
-    <div className="assess-report print:max-w-none">
+    <div className={clsx('assess-report print:max-w-none', showBoardBrief && 'exec-brief-mode')}>
       {/* Print-only repeating header (position:fixed in CSS repeats on every page) */}
       <div className="hidden print-header" aria-hidden="true">
         <span style={{ fontWeight: 600 }}>PQC Today — v{APP_VERSION}</span>
@@ -1091,770 +1099,813 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
         <tbody>
           <tr className="print:break-inside-auto">
             <td style={{ padding: 0 }}>
-              <div className="space-y-6 print:space-y-4">
-                {/* Header */}
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-2">
-                    <h2 className="text-3xl font-bold text-gradient mb-2 print:text-black">
-                      Your PQC Risk Assessment Report
-                    </h2>
-                    <Button
-                      variant="ghost"
-                      onClick={() => setMethodologyOpen(true)}
-                      className="p-1.5 h-auto w-auto rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground print:hidden mb-2"
-                      aria-label="How this report works"
-                    >
-                      <Info size={18} />
-                    </Button>
-                  </div>
-                  <p className="text-sm text-muted-foreground print:text-gray-600">
-                    Generated on {generatedDate}
-                  </p>
-                  <span
-                    className={clsx(
-                      'inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border mt-2',
-                      result.categoryScores
-                        ? 'border-primary/30 bg-primary/10 text-primary'
-                        : 'border-border bg-muted/20 text-muted-foreground'
-                    )}
-                  >
-                    {result.categoryScores ? 'Comprehensive Assessment' : 'Quick Assessment'}
-                  </span>
-                </div>
-
-                {/* Summary / full report toggle (shown when persona hides sections) */}
-                {hasSummaryMode && !showFullReport && (
-                  <div className="glass-panel p-3 flex items-center justify-between print:hidden">
-                    <span className="text-xs text-muted-foreground flex items-center gap-1.5">
-                      <Briefcase size={14} className="text-primary" />
-                      Showing summary view
-                    </span>
-                    <Button
-                      variant="link"
-                      onClick={() => setShowFullReport(true)}
-                      className="text-xs p-0 h-auto"
-                    >
-                      View full technical report
-                    </Button>
-                  </div>
-                )}
-                {hasSummaryMode && showFullReport && (
-                  <div className="glass-panel p-3 flex items-center justify-between print:hidden">
-                    <span className="text-xs text-muted-foreground flex items-center gap-1.5">
-                      <Briefcase size={14} className="text-primary" />
-                      Showing full technical report
-                    </span>
-                    <Button
-                      variant="link"
-                      onClick={() => setShowFullReport(false)}
-                      className="text-xs p-0 h-auto"
-                    >
-                      Switch to summary view
-                    </Button>
-                  </div>
-                )}
-
-                {/* Country PQC Migration Timeline */}
-                {cfg('countryTimeline').state !== 'hidden' && (
-                  <CollapsibleSection
-                    title={
-                      country
-                        ? `${country} PQC Migration Timeline`
-                        : 'Country PQC Migration Timeline'
-                    }
-                    icon={<Calendar className="text-primary" size={20} />}
-                    defaultOpen={cfg('countryTimeline').state === 'open'}
-                    infoTip="Shows PQC migration phases and regulatory deadlines for your selected country from the Timeline database."
-                  >
-                    <ReportTimelineStrip countryName={country} />
-                    <Link
-                      to={
-                        country ? `/timeline?country=${encodeURIComponent(country)}` : '/timeline'
-                      }
-                      className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
-                    >
-                      <ArrowRight size={12} />
-                      View full {country ? `${country} ` : ''}timeline
-                    </Link>
-                  </CollapsibleSection>
-                )}
-
-                {/* Risk Score */}
-                <CollapsibleSection
-                  title="Risk Score"
-                  icon={<ShieldAlert className={config.color} size={20} />}
-                  defaultOpen={cfg('riskScore').state === 'open'}
-                  className={clsx('border-l-4', config.border)}
-                  infoTip="Composite score (0\u2013100) computed from four weighted categories based on your assessment inputs. Industry-specific weights prioritize the most relevant risk factors."
-                >
-                  <RiskGauge score={result.riskScore} level={result.riskLevel} />
-                  {previousRiskScore !== null && previousRiskScore !== result.riskScore && (
-                    <div className="flex items-center justify-center gap-2 mt-2 print:hidden">
-                      <span
-                        className={clsx(
-                          'text-xs font-mono px-2 py-0.5 rounded-full',
-                          result.riskScore < previousRiskScore
-                            ? 'bg-success/10 text-success'
-                            : 'bg-destructive/10 text-destructive'
-                        )}
+              <div className="assess-report-full-content">
+                <div className="space-y-6 print:space-y-4">
+                  {/* Header */}
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-2">
+                      <h2 className="text-3xl font-bold text-gradient mb-2 print:text-black">
+                        Your PQC Risk Assessment Report
+                      </h2>
+                      <Button
+                        variant="ghost"
+                        onClick={() => setMethodologyOpen(true)}
+                        className="p-1.5 h-auto w-auto rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground print:hidden mb-2"
+                        aria-label="How this report works"
                       >
-                        {result.riskScore < previousRiskScore ? '' : '+'}
-                        {result.riskScore - previousRiskScore} since last assessment
+                        <Info size={18} />
+                      </Button>
+                    </div>
+                    <p className="text-sm text-muted-foreground print:text-gray-600">
+                      Generated on {generatedDate}
+                    </p>
+                    <span
+                      className={clsx(
+                        'inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border mt-2',
+                        result.categoryScores
+                          ? 'border-primary/30 bg-primary/10 text-primary'
+                          : 'border-border bg-muted/20 text-muted-foreground'
+                      )}
+                    >
+                      {result.categoryScores ? 'Comprehensive Assessment' : 'Quick Assessment'}
+                    </span>
+                  </div>
+
+                  {/* Summary / full report toggle (shown when persona hides sections) */}
+                  {hasSummaryMode && !showFullReport && (
+                    <div className="glass-panel p-3 flex items-center justify-between print:hidden">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                        <Briefcase size={14} className="text-primary" />
+                        Showing summary view
                       </span>
+                      <Button
+                        variant="link"
+                        onClick={() => setShowFullReport(true)}
+                        className="text-xs p-0 h-auto"
+                      >
+                        View full technical report
+                      </Button>
                     </div>
                   )}
-                  {lastModifiedAt && (
-                    <p className="text-[10px] text-muted-foreground/60 text-center mt-1 font-mono print:hidden">
-                      Last updated:{' '}
-                      {new Date(lastModifiedAt).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                      })}
-                    </p>
+                  {hasSummaryMode && showFullReport && (
+                    <div className="glass-panel p-3 flex items-center justify-between print:hidden">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                        <Briefcase size={14} className="text-primary" />
+                        Showing full technical report
+                      </span>
+                      <Button
+                        variant="link"
+                        onClick={() => setShowFullReport(false)}
+                        className="text-xs p-0 h-auto"
+                      >
+                        Switch to summary view
+                      </Button>
+                    </div>
                   )}
-                  <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-gray-600">
-                    {result.personaNarrative ?? result.narrative}
-                  </p>
-                </CollapsibleSection>
 
-                {/* Key Findings */}
-                {result.keyFindings &&
-                  result.keyFindings.length > 0 &&
-                  cfg('keyFindings').state !== 'hidden' && (
+                  {/* Country PQC Migration Timeline */}
+                  {cfg('countryTimeline').state !== 'hidden' && (
                     <CollapsibleSection
-                      title="Key Findings"
-                      icon={<AlertTriangle className="text-warning" size={20} />}
-                      defaultOpen={cfg('keyFindings').state === 'open'}
-                      className="border-l-4 border-l-warning"
-                      infoTip="Automatically identified from your assessment: vulnerable algorithms, compliance gaps, and migration blockers."
+                      title={
+                        country
+                          ? `${country} PQC Migration Timeline`
+                          : 'Country PQC Migration Timeline'
+                      }
+                      icon={<Calendar className="text-primary" size={20} />}
+                      defaultOpen={cfg('countryTimeline').state === 'open'}
+                      infoTip="Shows PQC migration phases and regulatory deadlines for your selected country from the Timeline database."
                     >
-                      <ul className="space-y-2">
-                        {result.keyFindings.map((finding, i) => (
-                          <li
-                            key={i}
-                            className="flex gap-2 text-sm text-muted-foreground leading-relaxed"
-                          >
-                            <span className="text-warning font-bold shrink-0">{i + 1}.</span>
-                            {finding}
-                          </li>
-                        ))}
-                      </ul>
+                      <ReportTimelineStrip countryName={country} />
+                      <Link
+                        to={
+                          country ? `/timeline?country=${encodeURIComponent(country)}` : '/timeline'
+                        }
+                        className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
+                      >
+                        <ArrowRight size={12} />
+                        View full {country ? `${country} ` : ''}timeline
+                      </Link>
                     </CollapsibleSection>
                   )}
 
-                {/* Category Score Breakdown */}
-                {result.categoryScores && cfg('riskBreakdown').state !== 'hidden' && (
-                  <CategoryBreakdown
-                    scores={result.categoryScores}
-                    drivers={result.categoryDrivers}
-                    defaultOpen={cfg('riskBreakdown').state === 'open'}
-                    headerExtra={
-                      <AskAssistantButton
-                        question={`Explain my PQC risk score of ${result.riskScore}/100 (${result.riskLevel}) for ${industry}`}
-                        className="print:hidden"
-                      />
-                    }
-                  />
-                )}
-
-                {/* Executive Summary */}
-                {result.executiveSummary && cfg('executiveSummary').state !== 'hidden' && (
+                  {/* Risk Score */}
                   <CollapsibleSection
-                    title="Executive Summary"
-                    icon={<Briefcase className="text-primary" size={20} />}
-                    defaultOpen={cfg('executiveSummary').state === 'open'}
-                    className="border-l-4 border-l-primary"
-                    infoTip="Persona-tailored narrative summarizing key risks and recommended priorities based on your assessment inputs."
+                    title="Risk Score"
+                    icon={<ShieldAlert className={config.color} size={20} />}
+                    defaultOpen={cfg('riskScore').state === 'open'}
+                    className={clsx('border-l-4', config.border)}
+                    infoTip="Composite score (0\u2013100) computed from four weighted categories based on your assessment inputs. Industry-specific weights prioritize the most relevant risk factors."
                   >
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {result.executiveSummary}
+                    <RiskGauge score={result.riskScore} level={result.riskLevel} />
+                    {previousRiskScore !== null && previousRiskScore !== result.riskScore && (
+                      <div className="flex items-center justify-center gap-2 mt-2 print:hidden">
+                        <span
+                          className={clsx(
+                            'text-xs font-mono px-2 py-0.5 rounded-full',
+                            result.riskScore < previousRiskScore
+                              ? 'bg-success/10 text-success'
+                              : 'bg-destructive/10 text-destructive'
+                          )}
+                        >
+                          {result.riskScore < previousRiskScore ? '' : '+'}
+                          {result.riskScore - previousRiskScore} since last assessment
+                        </span>
+                      </div>
+                    )}
+                    {lastModifiedAt && (
+                      <p className="text-[10px] text-muted-foreground/60 text-center mt-1 font-mono print:hidden">
+                        Last updated:{' '}
+                        {new Date(lastModifiedAt).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                          hour: 'numeric',
+                          minute: '2-digit',
+                        })}
+                      </p>
+                    )}
+                    <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-gray-600">
+                      {result.personaNarrative ?? result.narrative}
                     </p>
                   </CollapsibleSection>
-                )}
 
-                {/* Assessment Profile */}
-                {result.assessmentProfile && cfg('assessmentProfile').state !== 'hidden' && (
-                  <AssessmentProfileSummary
-                    profile={result.assessmentProfile}
-                    defaultOpen={cfg('assessmentProfile').state === 'open'}
-                  />
-                )}
+                  {/* Key Findings */}
+                  {result.keyFindings &&
+                    result.keyFindings.length > 0 &&
+                    cfg('keyFindings').state !== 'hidden' && (
+                      <CollapsibleSection
+                        title="Key Findings"
+                        icon={<AlertTriangle className="text-warning" size={20} />}
+                        defaultOpen={cfg('keyFindings').state === 'open'}
+                        className="border-l-4 border-l-warning"
+                        infoTip="Automatically identified from your assessment: vulnerable algorithms, compliance gaps, and migration blockers."
+                      >
+                        <ul className="space-y-2">
+                          {result.keyFindings.map((finding, i) => (
+                            <li
+                              key={i}
+                              className="flex gap-2 text-sm text-muted-foreground leading-relaxed"
+                            >
+                              <span className="text-warning font-bold shrink-0">{i + 1}.</span>
+                              {finding}
+                            </li>
+                          ))}
+                        </ul>
+                      </CollapsibleSection>
+                    )}
 
-                {/* Consolidated HNDL / HNFL Risk Windows */}
-                {(result.hndlRiskWindow || result.hnflRiskWindow) &&
-                  cfg('hndlHnfl').state !== 'hidden' && (
-                    <HNDLHNFLSection
-                      hndl={result.hndlRiskWindow}
-                      hnfl={result.hnflRiskWindow}
-                      defaultOpen={cfg('hndlHnfl').state === 'open'}
+                  {/* Category Score Breakdown */}
+                  {result.categoryScores && cfg('riskBreakdown').state !== 'hidden' && (
+                    <CategoryBreakdown
+                      scores={result.categoryScores}
+                      drivers={result.categoryDrivers}
+                      defaultOpen={cfg('riskBreakdown').state === 'open'}
                       headerExtra={
                         <AskAssistantButton
-                          question="Explain Harvest Now Decrypt Later risk for my organization"
+                          question={`Explain my PQC risk score of ${result.riskScore}/100 (${result.riskLevel}) for ${industry}`}
                           className="print:hidden"
                         />
                       }
                     />
                   )}
 
-                {/* HNDL warning for quick assessments with high sensitivity */}
-                {!result.categoryScores &&
-                  !result.hndlRiskWindow &&
-                  ((dataSensitivity ?? []).includes('critical') ||
-                    (dataSensitivity ?? []).includes('high')) && (
-                    <div className="glass-panel p-4 border-l-4 border-l-warning flex items-start gap-3">
-                      <AlertTriangle size={18} className="text-warning shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">
-                          HNDL Risk Not Quantified
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          This quick assessment did not include data retention information.
-                          Harvest-Now-Decrypt-Later risk cannot be calculated. For sensitive
-                          long-lived data, run a Comprehensive Assessment to quantify this exposure.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                {/* HNFL warning for quick assessments with signing algorithms */}
-                {!result.categoryScores && !result.hnflRiskWindow && hasSigningAlgos && (
-                  <div className="glass-panel p-4 border-l-4 border-l-destructive flex items-start gap-3">
-                    <AlertTriangle size={18} className="text-destructive shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">
-                        HNFL Risk Not Quantified
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Your assessment includes signature algorithms vulnerable to Shor&apos;s
-                        algorithm. Harvest-Now-Forge-Later risk cannot be calculated without
-                        credential lifetime data. Run a Comprehensive Assessment to quantify
-                        signature key exposure.
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Algorithm Migration Matrix */}
-                {result.algorithmMigrations.length > 0 &&
-                  cfg('algorithmMigration').state !== 'hidden' && (
+                  {/* Executive Summary */}
+                  {result.executiveSummary && cfg('executiveSummary').state !== 'hidden' && (
                     <CollapsibleSection
-                      title="Algorithm Migration Priority"
-                      icon={<ShieldAlert className="text-primary" size={20} />}
-                      defaultOpen={cfg('algorithmMigration').state === 'open'}
-                      className="print:break-inside-auto"
-                      infoTip="Maps your current algorithms to NIST-recommended PQC replacements with migration effort estimates."
-                      headerExtra={
-                        <AskAssistantButton
-                          question={`What are the recommended PQC algorithm migrations for ${industry}?`}
-                          className="print:hidden"
-                        />
-                      }
+                      title="Executive Summary"
+                      icon={<Briefcase className="text-primary" size={20} />}
+                      defaultOpen={cfg('executiveSummary').state === 'open'}
+                      className="border-l-4 border-l-primary"
+                      infoTip="Persona-tailored narrative summarizing key risks and recommended priorities based on your assessment inputs."
                     >
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="border-b border-border text-left">
-                              <th className="py-2 pr-3 text-muted-foreground font-medium">
-                                Current
-                              </th>
-                              <th className="py-2 pr-3 text-muted-foreground font-medium">
-                                Vulnerable?
-                              </th>
-                              <th className="py-2 pr-3 text-muted-foreground font-medium">
-                                PQC Replacement
-                              </th>
-                              {result.migrationEffort && (
-                                <>
-                                  <th className="py-2 pr-3 text-muted-foreground font-medium">
-                                    Effort
-                                  </th>
-                                  <th className="py-2 pr-3 text-muted-foreground font-medium">
-                                    Scope
-                                  </th>
-                                </>
-                              )}
-                              <th className="py-2 text-muted-foreground font-medium">Notes</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {result.algorithmMigrations.map((algo) => {
-                              const effort = result.migrationEffort?.find(
-                                (e) => e.algorithm === algo.classical
-                              )
-                              return (
-                                <tr key={algo.classical} className="border-b border-border/50">
-                                  <td className="py-2.5 pr-3 font-medium text-foreground">
-                                    {algo.classical}
-                                  </td>
-                                  <td className="py-2.5 pr-3">
-                                    {algo.quantumVulnerable ? (
-                                      <span className="flex items-center gap-1 text-destructive">
-                                        <AlertTriangle size={14} /> Yes
-                                      </span>
-                                    ) : (
-                                      <span className="flex items-center gap-1 text-success">
-                                        <CheckCircle size={14} /> No
-                                      </span>
-                                    )}
-                                  </td>
-                                  <td className="py-2.5 pr-3 text-primary">
-                                    <div className="flex items-center gap-2">
-                                      <span>{algo.replacement}</span>
-                                      {algo.quantumVulnerable &&
-                                        !algo.replacement.includes('No change') && (
-                                          <>
-                                            <Link
-                                              to="/playground"
-                                              className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
-                                              title="Try in Playground"
-                                            >
-                                              <FlaskConical size={10} />
-                                              <span className="hidden lg:inline">Try</span>
-                                            </Link>
-                                            {(() => {
-                                              const learnLink = getLearnLink(algo.replacement)
-                                              if (!learnLink) return null
-                                              return (
-                                                <Link
-                                                  to={learnLink.path}
-                                                  className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
-                                                  title={`Learn about ${learnLink.label}`}
-                                                >
-                                                  <BookOpen size={10} />
-                                                  <span className="hidden lg:inline">
-                                                    {learnLink.label}
-                                                  </span>
-                                                </Link>
-                                              )
-                                            })()}
-                                          </>
-                                        )}
-                                    </div>
-                                  </td>
-                                  {result.migrationEffort && (
-                                    <>
-                                      <td className="py-2.5 pr-3">
-                                        {effort ? (
-                                          <span
-                                            className={clsx(
-                                              'text-xs font-bold px-2 py-0.5 rounded-full',
-
-                                              complexityConfig[effort.complexity]?.bg ?? 'bg-muted',
-
-                                              complexityConfig[effort.complexity]?.color ??
-                                                'text-muted-foreground'
-                                            )}
-                                          >
-                                            {effort.complexity}
-                                          </span>
-                                        ) : (
-                                          <span className="text-xs text-muted-foreground">—</span>
-                                        )}
-                                      </td>
-                                      <td className="py-2.5 pr-3">
-                                        {effort ? (
-                                          <span
-                                            className={clsx(
-                                              'text-xs font-bold px-2 py-0.5 rounded-full',
-
-                                              scopeConfig[effort.estimatedScope]?.bg ?? 'bg-muted',
-
-                                              scopeConfig[effort.estimatedScope]?.color ??
-                                                'text-muted-foreground'
-                                            )}
-                                          >
-                                            {scopeConfig[effort.estimatedScope]?.label ??
-                                              effort.estimatedScope}
-                                          </span>
-                                        ) : (
-                                          <span className="text-xs text-muted-foreground">—</span>
-                                        )}
-                                      </td>
-                                    </>
-                                  )}
-                                  <td className="py-2.5 text-muted-foreground text-xs">
-                                    {algo.notes}
-                                  </td>
-                                </tr>
-                              )
-                            })}
-                          </tbody>
-                        </table>
-                        <div className="flex items-center gap-4 mt-3 print:hidden">
-                          <Link
-                            to={`/algorithms${
-                              result.algorithmMigrations
-                                .filter((a) => a.quantumVulnerable)
-                                .map((a) => a.classical).length > 0
-                                ? `?highlight=${encodeURIComponent(
-                                    result.algorithmMigrations
-                                      .filter((a) => a.quantumVulnerable)
-                                      .map((a) => a.classical)
-                                      .join(',')
-                                  )}`
-                                : ''
-                            }`}
-                            className="flex items-center gap-1.5 text-xs text-primary hover:underline"
-                          >
-                            <ArrowRight size={12} />
-                            Compare algorithms
-                          </Link>
-                        </div>
-                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {result.executiveSummary}
+                      </p>
                     </CollapsibleSection>
                   )}
 
-                {/* Compliance Impact */}
-                {result.complianceImpacts.length > 0 &&
-                  cfg('complianceImpact').state !== 'hidden' && (
+                  {/* Assessment Profile */}
+                  {result.assessmentProfile && cfg('assessmentProfile').state !== 'hidden' && (
+                    <AssessmentProfileSummary
+                      profile={result.assessmentProfile}
+                      defaultOpen={cfg('assessmentProfile').state === 'open'}
+                    />
+                  )}
+
+                  {/* Consolidated HNDL / HNFL Risk Windows */}
+                  {(result.hndlRiskWindow || result.hnflRiskWindow) &&
+                    cfg('hndlHnfl').state !== 'hidden' && (
+                      <HNDLHNFLSection
+                        hndl={result.hndlRiskWindow}
+                        hnfl={result.hnflRiskWindow}
+                        defaultOpen={cfg('hndlHnfl').state === 'open'}
+                        headerExtra={
+                          <AskAssistantButton
+                            question="Explain Harvest Now Decrypt Later risk for my organization"
+                            className="print:hidden"
+                          />
+                        }
+                      />
+                    )}
+
+                  {/* HNDL warning for quick assessments with high sensitivity */}
+                  {!result.categoryScores &&
+                    !result.hndlRiskWindow &&
+                    ((dataSensitivity ?? []).includes('critical') ||
+                      (dataSensitivity ?? []).includes('high')) && (
+                      <div className="glass-panel p-4 border-l-4 border-l-warning flex items-start gap-3">
+                        <AlertTriangle size={18} className="text-warning shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">
+                            HNDL Risk Not Quantified
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            This quick assessment did not include data retention information.
+                            Harvest-Now-Decrypt-Later risk cannot be calculated. For sensitive
+                            long-lived data, run a Comprehensive Assessment to quantify this
+                            exposure.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                  {/* HNFL warning for quick assessments with signing algorithms */}
+                  {!result.categoryScores && !result.hnflRiskWindow && hasSigningAlgos && (
+                    <div className="glass-panel p-4 border-l-4 border-l-destructive flex items-start gap-3">
+                      <AlertTriangle size={18} className="text-destructive shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          HNFL Risk Not Quantified
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Your assessment includes signature algorithms vulnerable to Shor&apos;s
+                          algorithm. Harvest-Now-Forge-Later risk cannot be calculated without
+                          credential lifetime data. Run a Comprehensive Assessment to quantify
+                          signature key exposure.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Algorithm Migration Matrix */}
+                  {result.algorithmMigrations.length > 0 &&
+                    cfg('algorithmMigration').state !== 'hidden' && (
+                      <CollapsibleSection
+                        title="Algorithm Migration Priority"
+                        icon={<ShieldAlert className="text-primary" size={20} />}
+                        defaultOpen={cfg('algorithmMigration').state === 'open'}
+                        className="print:break-inside-auto"
+                        infoTip="Maps your current algorithms to NIST-recommended PQC replacements with migration effort estimates."
+                        headerExtra={
+                          <AskAssistantButton
+                            question={`What are the recommended PQC algorithm migrations for ${industry}?`}
+                            className="print:hidden"
+                          />
+                        }
+                      >
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="border-b border-border text-left">
+                                <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                  Current
+                                </th>
+                                <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                  Vulnerable?
+                                </th>
+                                <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                  PQC Replacement
+                                </th>
+                                {result.migrationEffort && (
+                                  <>
+                                    <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                      Effort
+                                    </th>
+                                    <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                      Scope
+                                    </th>
+                                  </>
+                                )}
+                                <th className="py-2 text-muted-foreground font-medium">Notes</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {result.algorithmMigrations.map((algo) => {
+                                const effort = result.migrationEffort?.find(
+                                  (e) => e.algorithm === algo.classical
+                                )
+                                return (
+                                  <tr key={algo.classical} className="border-b border-border/50">
+                                    <td className="py-2.5 pr-3 font-medium text-foreground">
+                                      {algo.classical}
+                                    </td>
+                                    <td className="py-2.5 pr-3">
+                                      {algo.quantumVulnerable ? (
+                                        <span className="flex items-center gap-1 text-destructive">
+                                          <AlertTriangle size={14} /> Yes
+                                        </span>
+                                      ) : (
+                                        <span className="flex items-center gap-1 text-success">
+                                          <CheckCircle size={14} /> No
+                                        </span>
+                                      )}
+                                    </td>
+                                    <td className="py-2.5 pr-3 text-primary">
+                                      <div className="flex items-center gap-2">
+                                        <span>{algo.replacement}</span>
+                                        {algo.quantumVulnerable &&
+                                          !algo.replacement.includes('No change') && (
+                                            <>
+                                              <Link
+                                                to="/playground"
+                                                className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
+                                                title="Try in Playground"
+                                              >
+                                                <FlaskConical size={10} />
+                                                <span className="hidden lg:inline">Try</span>
+                                              </Link>
+                                              {(() => {
+                                                const learnLink = getLearnLink(algo.replacement)
+                                                if (!learnLink) return null
+                                                return (
+                                                  <Link
+                                                    to={learnLink.path}
+                                                    className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors whitespace-nowrap print:hidden"
+                                                    title={`Learn about ${learnLink.label}`}
+                                                  >
+                                                    <BookOpen size={10} />
+                                                    <span className="hidden lg:inline">
+                                                      {learnLink.label}
+                                                    </span>
+                                                  </Link>
+                                                )
+                                              })()}
+                                            </>
+                                          )}
+                                      </div>
+                                    </td>
+                                    {result.migrationEffort && (
+                                      <>
+                                        <td className="py-2.5 pr-3">
+                                          {effort ? (
+                                            <span
+                                              className={clsx(
+                                                'text-xs font-bold px-2 py-0.5 rounded-full',
+
+                                                complexityConfig[effort.complexity]?.bg ??
+                                                  'bg-muted',
+
+                                                complexityConfig[effort.complexity]?.color ??
+                                                  'text-muted-foreground'
+                                              )}
+                                            >
+                                              {effort.complexity}
+                                            </span>
+                                          ) : (
+                                            <span className="text-xs text-muted-foreground">—</span>
+                                          )}
+                                        </td>
+                                        <td className="py-2.5 pr-3">
+                                          {effort ? (
+                                            <span
+                                              className={clsx(
+                                                'text-xs font-bold px-2 py-0.5 rounded-full',
+
+                                                scopeConfig[effort.estimatedScope]?.bg ??
+                                                  'bg-muted',
+
+                                                scopeConfig[effort.estimatedScope]?.color ??
+                                                  'text-muted-foreground'
+                                              )}
+                                            >
+                                              {scopeConfig[effort.estimatedScope]?.label ??
+                                                effort.estimatedScope}
+                                            </span>
+                                          ) : (
+                                            <span className="text-xs text-muted-foreground">—</span>
+                                          )}
+                                        </td>
+                                      </>
+                                    )}
+                                    <td className="py-2.5 text-muted-foreground text-xs">
+                                      {algo.notes}
+                                    </td>
+                                  </tr>
+                                )
+                              })}
+                            </tbody>
+                          </table>
+                          <div className="flex items-center gap-4 mt-3 print:hidden">
+                            <Link
+                              to={`/algorithms${
+                                result.algorithmMigrations
+                                  .filter((a) => a.quantumVulnerable)
+                                  .map((a) => a.classical).length > 0
+                                  ? `?highlight=${encodeURIComponent(
+                                      result.algorithmMigrations
+                                        .filter((a) => a.quantumVulnerable)
+                                        .map((a) => a.classical)
+                                        .join(',')
+                                    )}`
+                                  : ''
+                              }`}
+                              className="flex items-center gap-1.5 text-xs text-primary hover:underline"
+                            >
+                              <ArrowRight size={12} />
+                              Compare algorithms
+                            </Link>
+                          </div>
+                        </div>
+                      </CollapsibleSection>
+                    )}
+
+                  {/* Compliance Impact */}
+                  {result.complianceImpacts.length > 0 &&
+                    cfg('complianceImpact').state !== 'hidden' && (
+                      <CollapsibleSection
+                        title="Compliance Impact"
+                        icon={<CheckCircle className="text-primary" size={20} />}
+                        defaultOpen={cfg('complianceImpact').state === 'open'}
+                        className="print:break-inside-auto"
+                        infoTip="Shows PQC mandates and deadlines for the compliance frameworks you selected in the assessment."
+                        headerExtra={
+                          <AskAssistantButton
+                            question={`What PQC compliance requirements apply to ${industry} in ${country}?`}
+                            className="print:hidden"
+                          />
+                        }
+                      >
+                        <div className="space-y-3">
+                          {result.complianceImpacts.map((c) => (
+                            <div
+                              key={c.framework}
+                              className={clsx(
+                                'p-3 rounded-lg border text-sm',
+                                c.requiresPQC === true
+                                  ? 'border-warning/30 bg-warning/5'
+                                  : c.requiresPQC === null
+                                    ? 'border-muted/50 bg-muted/5'
+                                    : 'border-border'
+                              )}
+                            >
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="font-semibold text-foreground">{c.framework}</span>
+                                <span
+                                  className={clsx(
+                                    'text-xs font-bold px-2 py-0.5 rounded-full',
+                                    c.requiresPQC === true
+                                      ? 'bg-warning/10 text-warning'
+                                      : c.requiresPQC === null
+                                        ? 'bg-muted/20 text-muted-foreground'
+                                        : 'bg-muted text-muted-foreground'
+                                  )}
+                                >
+                                  {c.requiresPQC === true
+                                    ? 'PQC Required'
+                                    : c.requiresPQC === null
+                                      ? 'Status unknown'
+                                      : 'No PQC mandate yet'}
+                                </span>
+                              </div>
+                              <p className="text-xs text-muted-foreground">
+                                <strong>Deadline:</strong> {c.deadline}
+                              </p>
+                              <p className="text-xs text-muted-foreground">{c.notes}</p>
+                              {(() => {
+                                const fullFw = complianceFrameworks.find(
+                                  (f) => f.label === c.framework
+                                )
+                                if (!fullFw) return null
+                                const hasRefs =
+                                  fullFw.libraryRefs.length > 0 || fullFw.timelineRefs.length > 0
+                                if (!hasRefs) return null
+                                return (
+                                  <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
+                                    {fullFw.libraryRefs.map((ref) => (
+                                      <Link
+                                        to={`/library?q=${encodeURIComponent(ref)}`}
+                                        key={ref}
+                                        className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
+                                        title={`View ${ref} in Library`}
+                                      >
+                                        <BookOpen size={8} />
+                                        {ref}
+                                      </Link>
+                                    ))}
+                                    {fullFw.timelineRefs.map((ref) => (
+                                      <Link
+                                        to="/timeline"
+                                        key={ref}
+                                        className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
+                                        title={`${ref} in Timeline`}
+                                      >
+                                        <Calendar size={8} />
+                                        {ref}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )
+                              })()}
+                            </div>
+                          ))}
+                          <Link
+                            to="/compliance"
+                            className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
+                          >
+                            <ArrowRight size={12} />
+                            Explore all compliance frameworks
+                          </Link>
+                        </div>
+                      </CollapsibleSection>
+                    )}
+
+                  {/* Recommended Actions */}
+                  {cfg('recommendedActions').state !== 'hidden' && (
                     <CollapsibleSection
-                      title="Compliance Impact"
-                      icon={<CheckCircle className="text-primary" size={20} />}
-                      defaultOpen={cfg('complianceImpact').state === 'open'}
+                      title={`Recommended Actions${cfg('recommendedActions').maxItems ? ` (Top ${cfg('recommendedActions').maxItems})` : ''}`}
+                      icon={<ArrowRight className="text-primary" size={20} />}
+                      defaultOpen={cfg('recommendedActions').state === 'open'}
                       className="print:break-inside-auto"
-                      infoTip="Shows PQC mandates and deadlines for the compliance frameworks you selected in the assessment."
+                      infoTip="Prioritized action items generated from your specific algorithms, infrastructure, compliance, and migration status."
                       headerExtra={
                         <AskAssistantButton
-                          question={`What PQC compliance requirements apply to ${industry} in ${country}?`}
+                          question={`What should I prioritize for PQC migration in ${industry}?`}
                           className="print:hidden"
                         />
                       }
                     >
                       <div className="space-y-3">
-                        {result.complianceImpacts.map((c) => (
-                          <div
-                            key={c.framework}
-                            className={clsx(
-                              'p-3 rounded-lg border text-sm',
-                              c.requiresPQC === true
-                                ? 'border-warning/30 bg-warning/5'
-                                : c.requiresPQC === null
-                                  ? 'border-muted/50 bg-muted/5'
-                                  : 'border-border'
-                            )}
-                          >
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="font-semibold text-foreground">{c.framework}</span>
-                              <span
+                        {result.recommendedActions
+                          .slice(0, cfg('recommendedActions').maxItems)
+                          .map((action) => (
+                            <div
+                              key={action.priority}
+                              className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
+                            >
+                              <div
                                 className={clsx(
-                                  'text-xs font-bold px-2 py-0.5 rounded-full',
-                                  c.requiresPQC === true
-                                    ? 'bg-warning/10 text-warning'
-                                    : c.requiresPQC === null
-                                      ? 'bg-muted/20 text-muted-foreground'
-                                      : 'bg-muted text-muted-foreground'
+                                  'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-2',
+                                  action.category === 'immediate'
+                                    ? 'border-destructive text-destructive'
+                                    : action.category === 'short-term'
+                                      ? 'border-warning text-warning'
+                                      : 'border-border text-muted-foreground'
                                 )}
                               >
-                                {c.requiresPQC === true
-                                  ? 'PQC Required'
-                                  : c.requiresPQC === null
-                                    ? 'Status unknown'
-                                    : 'No PQC mandate yet'}
-                              </span>
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                              <strong>Deadline:</strong> {c.deadline}
-                            </p>
-                            <p className="text-xs text-muted-foreground">{c.notes}</p>
-                            {(() => {
-                              const fullFw = complianceFrameworks.find(
-                                (f) => f.label === c.framework
-                              )
-                              if (!fullFw) return null
-                              const hasRefs =
-                                fullFw.libraryRefs.length > 0 || fullFw.timelineRefs.length > 0
-                              if (!hasRefs) return null
-                              return (
-                                <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
-                                  {fullFw.libraryRefs.map((ref) => (
-                                    <Link
-                                      to={`/library?q=${encodeURIComponent(ref)}`}
-                                      key={ref}
-                                      className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
-                                      title={`View ${ref} in Library`}
+                                {action.priority}
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-sm text-foreground">{action.action}</p>
+                                <div className="flex items-center gap-3 mt-1">
+                                  <span
+                                    className={clsx(
+                                      'text-[10px] font-bold uppercase',
+                                      action.category === 'immediate'
+                                        ? 'text-destructive'
+                                        : action.category === 'short-term'
+                                          ? 'text-warning'
+                                          : 'text-muted-foreground'
+                                    )}
+                                  >
+                                    {action.category}
+                                  </span>
+                                  {action.effort && (
+                                    <span
+                                      className={clsx(
+                                        'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded',
+
+                                        effortConfig[action.effort]?.bg ?? 'bg-muted',
+
+                                        effortConfig[action.effort]?.color ??
+                                          'text-muted-foreground'
+                                      )}
                                     >
-                                      <BookOpen size={8} />
-                                      {ref}
-                                    </Link>
-                                  ))}
-                                  {fullFw.timelineRefs.map((ref) => (
+                                      {effortConfig[action.effort]?.label ?? action.effort} effort
+                                    </span>
+                                  )}
+                                  {isPathVisible(action.relatedModule) && (
                                     <Link
-                                      to="/timeline"
-                                      key={ref}
-                                      className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
-                                      title={`${ref} in Timeline`}
+                                      to={
+                                        action.relatedModule.startsWith('/migrate') && industry
+                                          ? `${action.relatedModule}${action.relatedModule.includes('?') ? '&' : '?'}industry=${encodeURIComponent(industry)}`
+                                          : action.relatedModule
+                                      }
+                                      className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
                                     >
-                                      <Calendar size={8} />
-                                      {ref}
+                                      <ArrowRight size={10} />
+                                      Explore
                                     </Link>
-                                  ))}
+                                  )}
                                 </div>
-                              )
-                            })()}
-                          </div>
-                        ))}
-                        <Link
-                          to="/compliance"
-                          className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
-                        >
-                          <ArrowRight size={12} />
-                          Explore all compliance frameworks
-                        </Link>
+                                {action.relatedModule.startsWith('/migrate') &&
+                                  relevantSoftware.length > 0 && (
+                                    <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
+                                      <span className="text-[10px] text-muted-foreground/70">
+                                        Tools:
+                                      </span>
+                                      {relevantSoftware.slice(0, 2).map((sw) => (
+                                        <Link
+                                          to={`/migrate?industry=${encodeURIComponent(industry)}`}
+                                          key={sw.softwareName}
+                                          className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
+                                        >
+                                          {sw.softwareName}
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  )}
+                              </div>
+                            </div>
+                          ))}
                       </div>
                     </CollapsibleSection>
                   )}
 
-                {/* Recommended Actions */}
-                {cfg('recommendedActions').state !== 'hidden' && (
-                  <CollapsibleSection
-                    title={`Recommended Actions${cfg('recommendedActions').maxItems ? ` (Top ${cfg('recommendedActions').maxItems})` : ''}`}
-                    icon={<ArrowRight className="text-primary" size={20} />}
-                    defaultOpen={cfg('recommendedActions').state === 'open'}
-                    className="print:break-inside-auto"
-                    infoTip="Prioritized action items generated from your specific algorithms, infrastructure, compliance, and migration status."
-                    headerExtra={
-                      <AskAssistantButton
-                        question={`What should I prioritize for PQC migration in ${industry}?`}
-                        className="print:hidden"
-                      />
-                    }
-                  >
-                    <div className="space-y-3">
-                      {result.recommendedActions
-                        .slice(0, cfg('recommendedActions').maxItems)
-                        .map((action) => (
-                          <div
-                            key={action.priority}
-                            className="flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 transition-colors"
-                          >
-                            <div
-                              className={clsx(
-                                'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 border-2',
-                                action.category === 'immediate'
-                                  ? 'border-destructive text-destructive'
-                                  : action.category === 'short-term'
-                                    ? 'border-warning text-warning'
-                                    : 'border-border text-muted-foreground'
-                              )}
+                  {/* Migration Roadmap */}
+                  {cfg('migrationRoadmap').state !== 'hidden' && (
+                    <MigrationRoadmap
+                      actions={result.recommendedActions}
+                      countryName={country || undefined}
+                      defaultOpen={cfg('migrationRoadmap').state === 'open'}
+                    />
+                  )}
+
+                  {/* Migration Toolkit — products from Migrate catalog */}
+                  {cfg('migrationToolkit').state !== 'hidden' && (
+                    <MigrationToolkit
+                      assessmentInfrastructure={infrastructure}
+                      assessmentSubCategories={infrastructureSubCategories}
+                      assessmentIndustry={industry}
+                      defaultOpen={cfg('migrationToolkit').state === 'open'}
+                    />
+                  )}
+
+                  {/* ROI Calculator */}
+                  <ROICalculatorSection
+                    result={result}
+                    industry={industry}
+                    defaultOpen={false}
+                    onSummaryChange={setRoiSummary}
+                  />
+
+                  {/* KPI Trending */}
+                  {result.categoryScores && (
+                    <KPITrendingSection
+                      history={assessmentHistory}
+                      currentResult={result}
+                      defaultOpen={false}
+                    />
+                  )}
+
+                  {/* Industry Threat Landscape */}
+                  {cfg('threatLandscape').state !== 'hidden' && (
+                    <div className="print:break-before-page print:break-inside-auto">
+                      <CollapsibleSection
+                        title={
+                          industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'
+                        }
+                        icon={<ShieldAlert className="text-destructive" size={20} />}
+                        defaultOpen={cfg('threatLandscape').state === 'open'}
+                        infoTip="Industry-specific quantum threats matched against your current algorithms from the Threats database."
+                        headerExtra={
+                          hiddenForIndustryCount > 0 ? (
+                            <Button
+                              variant="ghost"
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                restoreAllThreats()
+                              }}
+                              className="text-xs px-2.5 py-1 h-auto rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 print:hidden"
                             >
-                              {action.priority}
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-sm text-foreground">{action.action}</p>
-                              <div className="flex items-center gap-3 mt-1">
-                                <span
-                                  className={clsx(
-                                    'text-[10px] font-bold uppercase',
-                                    action.category === 'immediate'
-                                      ? 'text-destructive'
-                                      : action.category === 'short-term'
-                                        ? 'text-warning'
-                                        : 'text-muted-foreground'
-                                  )}
-                                >
-                                  {action.category}
-                                </span>
-                                {action.effort && (
-                                  <span
-                                    className={clsx(
-                                      'text-[10px] font-bold uppercase px-1.5 py-0.5 rounded',
-
-                                      effortConfig[action.effort]?.bg ?? 'bg-muted',
-
-                                      effortConfig[action.effort]?.color ?? 'text-muted-foreground'
-                                    )}
-                                  >
-                                    {effortConfig[action.effort]?.label ?? action.effort} effort
-                                  </span>
-                                )}
-                                {isPathVisible(action.relatedModule) && (
-                                  <Link
-                                    to={
-                                      action.relatedModule.startsWith('/migrate') && industry
-                                        ? `${action.relatedModule}${action.relatedModule.includes('?') ? '&' : '?'}industry=${encodeURIComponent(industry)}`
-                                        : action.relatedModule
-                                    }
-                                    className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
-                                  >
-                                    <ArrowRight size={10} />
-                                    Explore
-                                  </Link>
-                                )}
-                              </div>
-                              {action.relatedModule.startsWith('/migrate') &&
-                                relevantSoftware.length > 0 && (
-                                  <div className="flex flex-wrap gap-1 mt-1.5 print:hidden">
-                                    <span className="text-[10px] text-muted-foreground/70">
-                                      Tools:
-                                    </span>
-                                    {relevantSoftware.slice(0, 2).map((sw) => (
-                                      <Link
-                                        to={`/migrate?industry=${encodeURIComponent(industry)}`}
-                                        key={sw.softwareName}
-                                        className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
-                                      >
-                                        {sw.softwareName}
-                                      </Link>
-                                    ))}
-                                  </div>
-                                )}
-                            </div>
-                          </div>
-                        ))}
+                              {hiddenForIndustryCount} hidden · Restore
+                            </Button>
+                          ) : undefined
+                        }
+                      >
+                        <ReportThreatsAppendix
+                          industry={industry}
+                          userAlgorithms={currentCrypto}
+                          hiddenThreatIds={hiddenThreats}
+                          onHideThreat={hideThreat}
+                        />
+                      </CollapsibleSection>
                     </div>
-                  </CollapsibleSection>
-                )}
+                  )}
 
-                {/* Migration Roadmap */}
-                {cfg('migrationRoadmap').state !== 'hidden' && (
-                  <MigrationRoadmap
-                    actions={result.recommendedActions}
-                    countryName={country || undefined}
-                    defaultOpen={cfg('migrationRoadmap').state === 'open'}
-                  />
-                )}
-
-                {/* Migration Toolkit — products from Migrate catalog */}
-                {cfg('migrationToolkit').state !== 'hidden' && (
-                  <MigrationToolkit
-                    assessmentInfrastructure={infrastructure}
-                    assessmentSubCategories={infrastructureSubCategories}
-                    assessmentIndustry={industry}
-                    defaultOpen={cfg('migrationToolkit').state === 'open'}
-                  />
-                )}
-
-                {/* Industry Threat Landscape */}
-                {cfg('threatLandscape').state !== 'hidden' && (
-                  <div className="print:break-before-page print:break-inside-auto">
-                    <CollapsibleSection
-                      title={
-                        industry ? `${industry} Threat Landscape` : 'Industry Threat Landscape'
-                      }
-                      icon={<ShieldAlert className="text-destructive" size={20} />}
-                      defaultOpen={cfg('threatLandscape').state === 'open'}
-                      infoTip="Industry-specific quantum threats matched against your current algorithms from the Threats database."
-                      headerExtra={
-                        hiddenForIndustryCount > 0 ? (
-                          <Button
-                            variant="ghost"
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              restoreAllThreats()
-                            }}
-                            className="text-xs px-2.5 py-1 h-auto rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 print:hidden"
-                          >
-                            {hiddenForIndustryCount} hidden · Restore
-                          </Button>
-                        ) : undefined
-                      }
-                    >
-                      <ReportThreatsAppendix
-                        industry={industry}
-                        userAlgorithms={currentCrypto}
-                        hiddenThreatIds={hiddenThreats}
-                        onHideThreat={hideThreat}
-                      />
-                    </CollapsibleSection>
-                  </div>
-                )}
-
-                {/* Cross-view CTAs: Persona-specific next steps */}
-                {selectedPersona && PERSONAS[selectedPersona] && (
-                  <div className="glass-panel p-4 print:hidden">
-                    <p className="text-sm font-medium text-foreground mb-3">
-                      Continue your PQC journey
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                      {(PERSONA_REPORT_CTAS[selectedPersona] ?? []).map((cta: ReportCTA) => {
-                        const Icon = CTA_ICONS[cta.icon] ?? BookOpen
-                        if (cta.isShareAction) {
+                  {/* Cross-view CTAs: Persona-specific next steps */}
+                  {selectedPersona && PERSONAS[selectedPersona] && (
+                    <div className="glass-panel p-4 print:hidden">
+                      <p className="text-sm font-medium text-foreground mb-3">
+                        Continue your PQC journey
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        {(PERSONA_REPORT_CTAS[selectedPersona] ?? []).map((cta: ReportCTA) => {
+                          const Icon = CTA_ICONS[cta.icon] ?? BookOpen
+                          if (cta.isShareAction) {
+                            return (
+                              <button
+                                key={cta.label}
+                                onClick={handleShare}
+                                className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                              >
+                                <Icon size={16} className="shrink-0" />
+                                {cta.label}
+                              </button>
+                            )
+                          }
                           return (
-                            <button
+                            <Link
                               key={cta.label}
-                              onClick={handleShare}
+                              to={cta.path}
                               className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
                             >
                               <Icon size={16} className="shrink-0" />
                               {cta.label}
-                            </button>
+                            </Link>
                           )
-                        }
-                        return (
-                          <Link
-                            key={cta.label}
-                            to={cta.path}
-                            className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
-                          >
-                            <Icon size={16} className="shrink-0" />
-                            {cta.label}
-                          </Link>
-                        )
-                      })}
+                        })}
+                      </div>
+                      <p className="text-xs text-muted-foreground/60 mt-2">
+                        {PERSONAS[selectedPersona].label} learning path —{' '}
+                        {PERSONAS[selectedPersona].recommendedPath.length - 1} modules, ~
+                        {Math.round(PERSONAS[selectedPersona].estimatedMinutes / 60)} hours
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground/60 mt-2">
-                      {PERSONAS[selectedPersona].label} learning path —{' '}
-                      {PERSONAS[selectedPersona].recommendedPath.length - 1} modules, ~
-                      {Math.round(PERSONAS[selectedPersona].estimatedMinutes / 60)} hours
-                    </p>
-                  </div>
-                )}
+                  )}
 
-                <div className="flex flex-col items-center gap-2 print:hidden">
-                  <div className="flex flex-wrap items-center justify-center gap-3">
-                    <Button
-                      variant="ghost"
-                      onClick={handlePrint}
-                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
-                    >
-                      <Printer size={16} />
-                      Download PDF
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={handleCSVExport}
-                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
-                    >
-                      <Download size={16} />
-                      Export CSV
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={handleShare}
-                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
-                    >
-                      <Share2 size={16} />
-                      Share
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={() => {
-                        editFromStep(0)
-                        navigate('/assess')
-                      }}
-                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
-                    >
-                      <Pencil size={16} />
-                      Edit Answers
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={() => {
-                        reset()
-                        navigate('/assess')
-                      }}
-                      className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
-                    >
-                      <RotateCcw size={16} />
-                      Start Over
-                    </Button>
+                  <div className="flex flex-col items-center gap-2 print:hidden">
+                    <div className="flex flex-wrap items-center justify-center gap-3">
+                      <Button
+                        variant="ghost"
+                        onClick={handlePrint}
+                        className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
+                      >
+                        <Printer size={16} />
+                        Download PDF
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          flushSync(() => setShowBoardBrief(true))
+                          window.print()
+                          setShowBoardBrief(false)
+                        }}
+                        className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
+                      >
+                        <Briefcase size={16} />
+                        Print Executive Brief
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={handleCSVExport}
+                        className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
+                      >
+                        <Download size={16} />
+                        Export CSV
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={handleShare}
+                        className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
+                      >
+                        <Share2 size={16} />
+                        Share
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          editFromStep(0)
+                          navigate('/assess')
+                        }}
+                        className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
+                      >
+                        <Pencil size={16} />
+                        Edit Answers
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          reset()
+                          navigate('/assess')
+                        }}
+                        className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
+                      >
+                        <RotateCcw size={16} />
+                        Start Over
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
+              <BoardBriefSection
+                result={result}
+                industry={industry}
+                country={country}
+                roiSummary={roiSummary}
+                generatedAt={result.generatedAt}
+                visible={showBoardBrief}
+              />
             </td>
           </tr>
         </tbody>

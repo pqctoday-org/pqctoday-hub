@@ -1,25 +1,61 @@
-# Contributing to PQC Timeline App
+# Contributing to PQC Today
 
-Thank you for your interest in contributing to the PQC Timeline App! We welcome contributions from the community to help visualize the transition to Post-Quantum Cryptography.
+Thank you for your interest in contributing to PQC Today! The project welcomes two kinds of involvement: **knowledge contributions** (no coding required) and **code contributions**.
 
 ## Code of Conduct
 
 By participating in this project, you agree to abide by our [Code of Conduct](CODE_OF_CONDUCT.md).
 
-## How to Contribute
+---
+
+## How the Project Works
+
+PQC Today is maintained by a single maintainer who reviews and merges all changes. The community's role is to surface knowledge — corrections, missing data, case studies, vendor experiences — and the maintainer's role is to validate sources and implement the changes.
+
+**This means you never need to write code or edit CSV files to contribute valuable information.**
+
+---
+
+## Contributing Knowledge (No Coding Required)
+
+### Suggesting a Data Change
+
+If you spot a missing record, outdated entry, or incorrect information in any dataset (Library, Timeline, Migrate catalog, Threats, Leaders):
+
+1. [Open a Data Suggestion issue](https://github.com/pqctoday/pqc-timeline-app/issues/new?template=data_suggestion.yml)
+2. Fill in the suggestion type, dataset, source URL, and description
+3. The maintainer validates the source and implements the change
+4. You'll be credited in the release notes when it ships
+
+**What makes a good suggestion:**
+
+- A publicly accessible source URL (government document, NIST standard, official vendor page, RFC)
+- Specific description of what's wrong or missing
+- Source published within the last 2 years, or a stable standard
+
+### Joining Discussions
+
+[GitHub Discussions](https://github.com/pqctoday/pqc-timeline-app/discussions) is the place to:
+
+- **Share case studies** — real-world PQC migration experiences (anonymized or public)
+- **Post implementation guides** — how you configured TLS 1.3 with ML-KEM, migrated HSMs, etc.
+- **Review vendors** — community experience with PQC-ready products
+- **Ask questions** — anything PQC-related
+- **Validate data** — help verify information others have suggested
 
 ### Reporting Bugs
 
-1.  Check the [Issues](https://github.com/pqctoday/pqc-timeline-app/issues) to see if the bug has already been reported.
-2.  If not, open a new issue with a clear title and description.
-3.  Include steps to reproduce, expected behavior, and screenshots if applicable.
+1. Check [Issues](https://github.com/pqctoday/pqc-timeline-app/issues) to see if it's already reported
+2. Open a [Bug Report](https://github.com/pqctoday/pqc-timeline-app/issues/new?template=bug_report.yml)
+3. Include steps to reproduce, expected behavior, and screenshots if applicable
 
-### Suggesting Enhancements
+### Suggesting Features
 
-1.  Open a new issue with the "enhancement" label.
-2.  Describe the feature you would like to see and why it would be useful.
+Open a [Feature Request](https://github.com/pqctoday/pqc-timeline-app/issues/new?template=feature_request.yml) describing the problem you'd like solved and why it would be useful.
 
-## Development
+---
+
+## Contributing Code
 
 ### Prerequisites
 
@@ -40,42 +76,40 @@ npm run dev
 
 ### Linting and Formatting
 
-We use ESLint for linting and Prettier for formatting.
-
 ```bash
-# Run linting
 npm run lint
-
-# Run formatting check
 npm run format:check
-
-# Fix formatting issues
-npm run format
+npm run format       # auto-fix
 ```
 
 ### Testing
 
 ```bash
-# Run unit tests
-npm run test
-
-# Run e2e tests
-npm run test:e2e
+npm run test         # unit tests
+npm run test:e2e     # end-to-end tests
 ```
 
 ### Pull Requests
 
-1.  **Fork the repository** and create your branch from `main`.
-2.  **Create a feature branch**: use `feat/your-feature-name` for new features or `fix/your-fix-name` for bug fixes.
-3.  **Make your changes**. Ensure code style is consistent.
-4.  **Open a Pull Request** targeting the `main` branch.
-5.  Fill out the Pull Request Template with details about your changes.
+1. **Fork the repository** and create your branch from `main`
+2. **Branch naming**: `feat/your-feature` for features, `fix/your-fix` for bug fixes
+3. **Make your changes** — keep the diff minimal and focused
+4. **Open a Pull Request** targeting `main` and fill out the PR template
+5. All CI checks must pass and the maintainer must approve before merge
 
-## Development Guidelines
+### Development Guidelines
 
-- **Tech Stack**: React, TypeScript, Vite, Tailwind CSS (via vanilla CSS/utility classes), Vitest, Playwright.
-- **Styling**: We use Tailwind CSS v4 with semantic tokens (`text-primary`, `text-foreground`, `bg-background`, `bg-card`, `border-border`). Use `.glass-panel` for card containers and `.text-gradient` for headings. Never use hardcoded colors (e.g., `text-cyan-400`). See `TESTING.md` and `WEB_CRYPTO_IMPLEMENTATION.md` for additional technical standards.
-- **Cryptography**: Use `OpenSSLService` (primary) or `liboqs` wrappers for cryptographic operations. Crypto stack priority: OpenSSL WASM → liboqs → WASM wrappers → @noble/\* → Web Crypto API. Do not install new crypto libraries without explicit permission.
+- **Tech Stack**: React, TypeScript, Vite, Tailwind CSS v4, Vitest, Playwright
+- **Styling**: Use semantic tokens only (`text-primary`, `text-foreground`, `bg-background`, `bg-card`, `border-border`). Use `.glass-panel` for card containers and `.text-gradient` for headings. Never use hardcoded palette colors (e.g., `text-cyan-400`)
+- **Cryptography**: Use `OpenSSLService` (primary) or `liboqs` wrappers. Crypto stack priority: OpenSSL WASM → liboqs → WASM wrappers → @noble/\* → Web Crypto API. Do not install new crypto libraries without explicit permission
+
+---
+
+## Recognition
+
+All contributors — whether via code PRs or data suggestions — are credited by name in the GitHub release notes for the version that includes their contribution.
+
+---
 
 ## License
 

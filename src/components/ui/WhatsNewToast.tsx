@@ -86,24 +86,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Timeline document cards</strong> &mdash;
-                    country documents now shown as rich cards with detail popovers, AI enrichment,
-                    and cards/table view toggle
+                    <strong className="text-foreground">Executive Board Brief</strong> &mdash;
+                    printable 2-page C-suite summary with risk gauge, priority actions, and
+                    financial case
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">8 new glossary terms</strong> &mdash; DSA,
-                    PQXDH, RFC 8446, NIS2 Directive, NIST SP 800-131A, Certificate Transparency,
-                    HPKE, and more
+                    <strong className="text-foreground">ROI Calculator</strong> &mdash; model your
+                    PQC migration financial case with industry baselines and adjustable parameters
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Chat overflow fixes</strong> &mdash; wide
-                    code blocks and tables in AI responses no longer expand the chat panel
+                    <strong className="text-foreground">Risk Score Trending</strong> &mdash; track
+                    assessment history with line and radar charts across all four risk categories
                   </span>
                 </li>
               </ul>

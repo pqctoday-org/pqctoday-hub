@@ -857,4 +857,398 @@ enrichment_method: ollama-qwen3:14b
 - **Standardization Bodies**: None detected
 - **Compliance Frameworks Referenced**: None detected
 
+-## United States:White House — Executive Order 14306 Issued
+
+- **Reference ID**: United States:White House — Executive Order 14306 Issued
+- **Title**: Executive Order 14306 Issued
+- **Authors**: Executive Office of the President
+- **Publication Date**: 2025-06-06
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: Executive Order 14306 amending cybersecurity policies with post-quantum cryptographic migration requirements.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: CRQC, Shor's Algorithm
+- **Migration Timeline Info**: Milestones: 2030: PQC required for federal systems | 2025: Complete inventory
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, NSA, CISA
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.3
+- **Infrastructure Layers**: PKI, Key Management
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## United States:NIST — FIPS 206 (FN-DSA) Draft Submitted
+
+- **Reference ID**: United States:NIST — FIPS 206 (FN-DSA) Draft Submitted
+- **Title**: FIPS 206 (FN-DSA) Draft Submitted
+- **Authors**: National Institute of Standards and Technology
+- **Publication Date**: 2025-08-28
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: NIST submits draft standard for FN-DSA (FIPS 206) based on FALCON algorithm for approval.
+- **PQC Algorithms Covered**: FN-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## United States:NSA — NSS Acquisitions CNSA 2.0 Required
+
+- **Reference ID**: United States:NSA — NSS Acquisitions CNSA 2.0 Required
+- **Title**: NSS Acquisitions CNSA 2.0 Required
+- **Authors**: National Security Agency
+- **Publication Date**: 2024-12-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: None detected
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## International:PKI Consortium — PKI Consortium PQC Conference 2025 Conclusions
+
+- **Reference ID**: International:PKI Consortium — PKI Consortium PQC Conference 2025 Conclusions
+- **Title**: PKI Consortium PQC Conference 2025 Conclusions
+- **Authors**: Public Key Infrastructure Consortium
+- **Publication Date**: 2025-11-03
+- **Last Updated**: Not specified
+- **Document Status**: Completed
+- **Main Topic**: World's largest PQC conference concluded in Kuala Lumpur with 2500+ delegates from 30+ countries. Issued urgent global call for immediate action on PQC migration.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Shor's Algorithm, Harvest Now Decrypt Later
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: ASEAN; Bodies: Ministry of Digital Malaysia, National Cyber Security Agency (NACSA)
+- **Leaders Contributions Mentioned**: Paul van Brouwershaven (Chair of PKI Consortium and PQC Working Group), Chris Bailey (Board and Executive Council Chair of PKI Consortium)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI, Key Management
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## International:Samsung/Thales — ML-KEM Embedded Secure Element Breakthrough
+
+- **Reference ID**: International:Samsung/Thales — ML-KEM Embedded Secure Element Breakthrough
+- **Title**: ML-KEM Embedded Secure Element Breakthrough
+- **Authors**: Samsung System LSI and Thales
+- **Publication Date**: 2026-01-06
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: Samsung System LSI and Thales announce breakthrough in embedded security with ML-KEM quantum-resistant capabilities for IoT and embedded systems.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: Harvest Now Decrypt Later
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Eva Rudin (Thales), Hwa Yeal Yu (Samsung Electronics)
+- **PQC Products Mentioned**: S3SSE2A (industry’s first PQC total solution)
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## International:IETF — RFC 9794 PQC Hybrid Terminology
+
+- **Reference ID**: International:IETF — RFC 9794 PQC Hybrid Terminology
+- **Title**: RFC 9794 PQC Hybrid Terminology
+- **Authors**: Internet Engineering Task Force
+- **Publication Date**: 2025-06-01
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: IETF publishes RFC 9794 to standardize terminology for hybrid post-quantum and traditional cryptographic schemes.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA
+- **Quantum Threats Addressed**: CRQC, Shor's Algorithm
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, UK National Cyber Security Centre, Naval Postgraduate School
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## International:PQCC — PQC Inventory Workbook Published
+
+- **Reference ID**: International:PQCC — PQC Inventory Workbook Published
+- **Title**: PQC Inventory Workbook Published
+- **Authors**: Post-Quantum Cryptography Coalition
+- **Publication Date**: 2025-06-12
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: PQCC publishes PQC Inventory Workbook to assist organizations in creating centralized inventory for tracking cryptographic migration efforts.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Milestones: 2025: Complete inventory
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IBM, Microsoft, MITRE, PQShield, SandboxAQ
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## United States:Congress — National Quantum Initiative Reauthorization Act
+
+- **Reference ID**: United States:Congress — National Quantum Initiative Reauthorization Act
+- **Title**: National Quantum Initiative Reauthorization Act
+- **Authors**: United States Congress
+- **Publication Date**: 2026-01-08
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: None detected
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## Hong Kong:LegCo — Critical Infrastructure Cybersecurity Ordinance
+
+- **Reference ID**: Hong Kong:LegCo — Critical Infrastructure Cybersecurity Ordinance
+- **Title**: Critical Infrastructure Cybersecurity Ordinance
+- **Authors**: Legislative Council of Hong Kong
+- **Publication Date**: 2025-06-27
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: Protection of Critical Infrastructures (Computer Systems) Ordinance passed by Legislative Council on March 19, 2025, effective January 1, 2026.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Hong Kong; Bodies: Legislative Council, Secretary for Security
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## Hong Kong:HKMA — HKMA Fintech Adoption Report: PQC Commitment
+
+- **Reference ID**: Hong Kong:HKMA — HKMA Fintech Adoption Report: PQC Commitment
+- **Title**: HKMA Fintech Adoption Report: PQC Commitment
+- **Authors**: Hong Kong Monetary Authority
+- **Publication Date**: 2025-07-16
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: HKMA publishes Fintech Adoption: Progress and Future Directions report, highlighting low engagement with quantum computing (7% of Hong Kong banks) and commitment to promoting post-quantum cryptography (PQC) as the primary quantum-safety mechanism.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Hong Kong; Bodies: Hong Kong Monetary Authority (HKMA)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## Hong Kong:HKMA — Fintech 2030 Strategy: PQC Resilience Pillar
+
+- **Reference ID**: Hong Kong:HKMA — Fintech 2030 Strategy: PQC Resilience Pillar
+- **Title**: Fintech 2030 Strategy: PQC Resilience Pillar
+- **Authors**: Hong Kong Monetary Authority
+- **Publication Date**: 2025-11-03
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: HKMA unveils Fintech 2030 strategy with PQC Resilience pillar
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Hong Kong; Bodies: Hong Kong Monetary Authority (HKMA)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## Hong Kong:HKMA — Fintech Promotion Blueprint: Quantum Preparedness
+
+- **Reference ID**: Hong Kong:HKMA — Fintech Promotion Blueprint: Quantum Preparedness
+- **Title**: Fintech Promotion Blueprint: Quantum Preparedness
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Not specified
+- **Main Topic**: Hong Kong Monetary Authority (HKMA) unveils Fintech Promotion Blueprint: From adoption to advancement
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Hong Kong; Bodies: Hong Kong Monetary Authority (HKMA)
+- **Leaders Contributions Mentioned**: Arthur Yuen, Deputy Chief Executive of the HKMA
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## Singapore:IMDA — NQSN+ Launched
+
+- **Reference ID**: Singapore:IMDA — NQSN+ Launched
+- **Title**: NQSN+ Launched
+- **Authors**: Infocomm Media Development Authority
+- **Publication Date**: 2023-06-01
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: Deputy PM Heng Swee Keat launches National Quantum-Safe Network Plus (NQSN+) at ATxSG 2023.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Singapore; Bodies: IMDA, Centre for Quantum Technologies (CQT), Singtel, SPTel, SpeQtral, International Telecommunication Union (ITU)
+- **Leaders Contributions Mentioned**: Deputy PM Heng Swee Keat
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IMDA, Centre for Quantum Technologies (CQT), International Telecommunication Union (ITU)
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## Japan:NCO — Government PQC Transition Deadline
+
+- **Reference ID**: Japan:NCO — Government PQC Transition Deadline
+- **Title**: Government PQC Transition Deadline
+- **Authors**: National Cyber Command Office
+- **Publication Date**: 2025-10-01
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: Japan's National Cyber Command Office sets 2035 as deadline for government agencies to complete PQC transition, aligning with US, UK, and Canada timelines.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Harvest Now Decrypt Later (HNDL)
+- **Migration Timeline Info**: Deadline: 2035 for government agencies to complete PQC transition. Implementation roadmap planned for FY2026.
+- **Applicable Regions / Bodies**: Regions: Japan, United States, United Kingdom, Canada; Bodies: Japan's National Cyber Command Office (NCO), CRYPTREC, AIST, NEDO
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI, Key Management
+- **Standardization Bodies**: NIST, CRYPTREC
+- **Compliance Frameworks Referenced**: FIPS 140-3
+
+---
+
+## Malaysia:NACSA — National PQC Migration
+
+- **Reference ID**: Malaysia:NACSA — National PQC Migration
+- **Title**: National PQC Migration
+- **Authors**: National Cyber Security Agency of Malaysia
+- **Publication Date**: 2025-10-28
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: None detected
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Malaysia, ASEAN; Bodies: PKI Consortium, Ministry of Digital (Malaysia), NACSA
+- **Leaders Contributions Mentioned**: Paul van Brouwershaven, Chair of the PKI Consortium and its Post-Quantum Cryptography Working Group
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI, Key Management
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## United Arab Emirates:DESC — Dubai PQC Guideline Launched
+
+- **Reference ID**: United Arab Emirates:DESC — Dubai PQC Guideline Launched
+- **Title**: Dubai PQC Guideline Launched
+- **Authors**: Dubai Electronic Security Center
+- **Publication Date**: 2025-05-01
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: Dubai Electronic Security Center (DESC) launches Post-Quantum Cryptography (PQC) Guideline to prepare Dubai’s digital infrastructure against quantum threats.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United Arab Emirates (UAE); Bodies: Dubai Electronic Security Center (DESC)
+- **Leaders Contributions Mentioned**: H.E. Yousuf Hamad Al Shaibani, Chief Executive of DESC
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## United Arab Emirates:UAE CSC — National Encryption Policy Approved
+
+- **Reference ID**: United Arab Emirates:UAE CSC — National Encryption Policy Approved
+- **Title**: National Encryption Policy Approved
+- **Authors**: UAE Cybersecurity Council
+- **Publication Date**: 2025-11-26
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: UAE Cybersecurity Council approves National Encryption Policy and Executive Regulation.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Milestones: 2026: Submit migration roadmaps
+- **Applicable Regions / Bodies**: Regions: United Arab Emirates; Bodies: UAE Cybersecurity Council
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: PQMicroLib-Core, PQCryptoLib-Core, PQCryptoLib-SDK, PQPlatform-CoPro, PQPlatform-TrustSys, PQPerform-Flare, PQPerform-Inferno, PQPerform-Flex
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## Jordan:CBJ — Financial Sector PQC Roadmap
+
+- **Reference ID**: Jordan:CBJ — Financial Sector PQC Roadmap
+- **Title**: Financial Sector PQC Roadmap
+- **Authors**: Central Bank of Jordan
+- **Publication Date**: 2026-01-05
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: Central Bank of Jordan publishes sector-wide roadmap for transitioning banks to quantum-resistant encryption.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Shor's Algorithm
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Jordan; Bodies: Central Bank of Jordan
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
 ---

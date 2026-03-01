@@ -1,0 +1,66 @@
+name: 💡 Suggest a Data Change
+description: Propose a new record, correction, or update to a dataset. No coding required — the maintainer implements all changes.
+title: "[Data] "
+labels: ["data: suggestion", "needs-verification"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping keep PQC Today accurate. Share what you know and a source — the maintainer will validate and implement the change. You'll be credited in the release notes.
+
+  - type: dropdown
+    id: suggestion_type
+    attributes:
+      label: Type of suggestion
+      options:
+        - New record (something that's missing)
+        - Correction to an existing entry
+        - Outdated entry (information has changed)
+        - Missing vendor or product
+    validations:
+      required: true
+
+  - type: dropdown
+    id: dataset
+    attributes:
+      label: Which dataset?
+      options:
+        - Library (standards, RFCs, technical documents)
+        - Timeline (government milestones and regulatory deadlines)
+        - Migrate catalog (PQC-ready software and products)
+        - Threats (industry threat landscape)
+        - Leaders (researchers, contributors, organizations)
+        - Other / Not sure
+    validations:
+      required: true
+
+  - type: input
+    id: source_url
+    attributes:
+      label: Source URL
+      description: A publicly accessible link to verify this information (government doc, standards body, official vendor page, peer-reviewed publication).
+      placeholder: https://
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What should change and why?
+      description: Be as specific as possible. If correcting an existing entry, describe what's wrong and what the accurate information is.
+      placeholder: |
+        Example: NIST published SP 800-227 in January 2026 covering ML-KEM key encapsulation. It should be added to the Library dataset with referenceId "SP-800-227".
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: verification
+    attributes:
+      label: Before submitting
+      options:
+        - label: I've verified this source is publicly accessible
+          required: true
+        - label: The source is current (published within the last 2 years, or is a stable standard)
+          required: true
+        - label: I've searched existing issues to avoid duplicates
+          required: true

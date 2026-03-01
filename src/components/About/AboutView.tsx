@@ -56,16 +56,16 @@ export function AboutView() {
               learning modules &mdash; including a dedicated executive track for CISOs covering risk
               management, business cases, governance, compliance strategy, migration programs, and
               vendor risk &mdash; hands-on cryptographic labs powered by OpenSSL WASM and liboqs, a
-              13-step risk assessment wizard with persona-aware reporting, an industry-filtered
-              migration catalog, and global compliance tracking give developers, architects,
-              executives, and researchers everything they need to understand, plan, and act &mdash;
-              at their level.
+              14-step risk assessment wizard with persona-aware reporting, ROI modelling, risk score
+              trending, and printable executive board briefs, an industry-filtered migration
+              catalog, and global compliance tracking give developers, architects, executives, and
+              researchers everything they need to understand, plan, and act &mdash; at their level.
             </p>
             <p className="text-muted-foreground mt-4">
               Our mission is to make PQC adoption actionable for everyone &mdash; whether
               you&apos;re a developer integrating ML-KEM and ML-DSA, an architect designing
-              crypto-agile systems, an executive tracking regulatory deadlines, or a researcher
-              exploring quantum key distribution and entropy sources.
+              crypto-agile systems, an executive building the financial case for migration, or a
+              researcher exploring quantum key distribution and entropy sources.
             </p>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4">
               <p className="text-muted-foreground">
@@ -589,7 +589,7 @@ export function AboutView() {
               The PQC Assistant chatbot uses{' '}
               <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong> to
               deliver grounded, sourced answers about post-quantum cryptography. When you ask a
-              question, it searches a curated corpus of ~1,900 PQC knowledge chunks &mdash; covering
+              question, it searches a curated corpus of ~2,100 PQC knowledge chunks &mdash; covering
               algorithms, standards, threats, compliance certifications, migration products,
               leaders, and learning modules &mdash; retrieves the 10&ndash;20 most relevant passages
               (adaptive per query intent), and injects them as context into a{' '}

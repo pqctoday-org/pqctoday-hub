@@ -1,13 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import type { AssessmentInput } from '../hooks/assessmentTypes'
+import type { AssessmentInput, CategoryScores } from '../hooks/assessmentTypes'
 import type { AssessmentResult } from '../hooks/assessmentTypes'
 import { usePersonaStore } from './usePersonaStore'
 import { useHistoryStore } from './useHistoryStore'
 
 export type AssessmentMode = 'quick' | 'comprehensive'
 export type AssessmentStatus = 'not-started' | 'in-progress' | 'complete'
+
+export interface AssessmentSnapshot {
+  completedAt: string
+  riskScore: number
+  categoryScores: CategoryScores
+  riskLevel: 'low' | 'medium' | 'high' | 'critical'
+  industry: string
+}
 
 interface AssessmentState {
   currentStep: number
@@ -47,6 +55,7 @@ interface AssessmentState {
   completedAt: string | null
   lastModifiedAt: string | null
   previousRiskScore: number | null
+  assessmentHistory: AssessmentSnapshot[]
   // Actions
   setStep: (step: number) => void
   setAssessmentMode: (mode: AssessmentMode) => void
@@ -80,6 +89,7 @@ interface AssessmentState {
   restoreAllThreats: () => void
   markComplete: () => void
   setResult: (result: AssessmentResult) => void
+  pushSnapshot: (snapshot: AssessmentSnapshot) => void
   editFromStep: (step: number) => void
   reset: () => void
   getInput: () => AssessmentInput | null
@@ -120,6 +130,7 @@ const INITIAL_STATE = {
   completedAt: null as string | null,
   lastModifiedAt: null as string | null,
   previousRiskScore: null as number | null,
+  assessmentHistory: [] as AssessmentSnapshot[],
 }
 
 export const useAssessmentStore = create<AssessmentState>()(
@@ -405,6 +416,13 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       setResult: (result) => set({ lastResult: result }),
 
+      pushSnapshot: (snapshot) =>
+        set((state) => {
+          const existing = Array.isArray(state.assessmentHistory) ? state.assessmentHistory : []
+          if (existing.some((s) => s.completedAt === snapshot.completedAt)) return {}
+          return { assessmentHistory: [...existing, snapshot].slice(-5) }
+        }),
+
       editFromStep: (step) => set({ assessmentStatus: 'in-progress' as const, currentStep: step }),
 
       reset: () => set(INITIAL_STATE),
@@ -459,7 +477,7 @@ export const useAssessmentStore = create<AssessmentState>()(
     {
       name: 'pqc-assessment',
       storage: createJSONStorage(() => localStorage),
-      version: 7,
+      version: 8,
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -590,6 +608,9 @@ export const useAssessmentStore = create<AssessmentState>()(
         state.completedAt = state.completedAt ?? null
         state.lastModifiedAt = state.lastModifiedAt ?? null
         state.previousRiskScore = state.previousRiskScore ?? null
+        state.assessmentHistory = Array.isArray(state.assessmentHistory)
+          ? state.assessmentHistory
+          : []
 
         return state
       },
@@ -628,6 +649,7 @@ export const useAssessmentStore = create<AssessmentState>()(
         completedAt: state.completedAt,
         lastModifiedAt: state.lastModifiedAt,
         previousRiskScore: state.previousRiskScore,
+        assessmentHistory: state.assessmentHistory,
       }),
       onRehydrateStorage: () => (_state, error) => {
         if (error) {

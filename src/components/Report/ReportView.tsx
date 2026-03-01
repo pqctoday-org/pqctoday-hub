@@ -169,6 +169,16 @@ export const ReportView: React.FC = () => {
     if (result && !persistedRef.current) {
       persistedRef.current = true
       setResult(result)
+      if (assessmentStatus === 'complete' && result.categoryScores) {
+        const store = useAssessmentStore.getState()
+        store.pushSnapshot({
+          completedAt: result.generatedAt,
+          riskScore: result.riskScore,
+          categoryScores: result.categoryScores,
+          riskLevel: result.riskLevel,
+          industry: store.industry,
+        })
+      }
     }
   }, [assessmentStatus, result, setResult])
 

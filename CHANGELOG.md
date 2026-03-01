@@ -4,45 +4,96 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.7.0] - 2026-03-01
+
+### Added
+
+- **Executive Board Brief** (`BoardBriefSection.tsx`): New printable 2-page C-suite summary
+  triggered from the report toolbar. Page 1 covers risk gauge, category breakdown (2×2 grid),
+  top-3 priority actions, and Harvest-Now-Decrypt-Later alerts. Page 2 presents the financial
+  case with ROI table, mandated compliance frameworks, and key findings.
+  [persona:executive] [view:/assess]
+
+- **ROI Calculator** (`ROICalculatorSection.tsx`, `roiBaselines.ts`): New collapsible report
+  section for modelling the PQC migration financial case. Four adjustable parameters (migration
+  budget, breach probability, compliance penalty, planning horizon) are auto-seeded from
+  assessment inputs. Outputs include avoided breach cost, compliance savings, net ROI (%), and
+  payback period, plus a bar-chart breakdown. Industry baselines sourced from IBM Cost of a Data
+  Breach Report 2024 (11 sectors). ROI summary exports to the Board Brief.
+  [persona:executive] [persona:architect] [view:/assess]
+
+- **Risk Score Trending** (`KPITrendingSection.tsx`): New report section showing historical
+  risk score progression (line chart) and a radar chart comparing current vs. previous category
+  scores across Quantum Exposure, Migration Complexity, Regulatory Pressure, and Org Readiness.
+  Activates when 2+ assessment snapshots are present. [persona:executive] [persona:architect] [view:/assess]
+
+- **Assessment history persistence** (`useAssessmentStore.ts`): New `assessmentHistory`
+  array and `pushSnapshot()` action persisted to localStorage. Each `AssessmentSnapshot` records
+  timestamp, risk score, risk level, category scores, and industry — enabling the trending section
+  and future comparison views. [persona:developer]
+
+- **Assessment URL sharing** (`ReportView.tsx`): Share button now encodes full assessment
+  state into URL parameters (industry, country, algorithms, data sensitivity, frameworks,
+  migration status, use cases, retention, scale, agility, infrastructure, vendors, timeline
+  pressure). Opening the URL auto-hydrates the store for instant report replay.
+  [persona:executive] [persona:architect] [view:/assess]
+
+- **`recharts` dependency**: Added Recharts v3.7.0 for the ROI bar chart and KPI trending
+  line/radar charts. [persona:developer]
+
+- **GitHub: FUNDING.yml**: Added GitHub Sponsors funding configuration.
+
+- **GitHub: data_suggestion.yml**: New issue template for users to suggest data updates,
+  corrections, or new entries across the library, migrate catalog, compliance, or timeline.
+
+### Changed
+
+- **Report section visibility** (`ReportContent.tsx`): Sections now support `'open'`,
+  `'closed'`, or `'hidden'` visibility states per persona. A summary/full-report toggle appears
+  when sections are hidden for a persona. Affected sections: risk score, key findings, assessment
+  profile, HNDL/HNFL, algorithm migration, compliance impact, recommended actions, migration
+  roadmap, toolkit, ROI calculator, KPI trending, threat landscape, country timeline, risk
+  breakdown, executive summary. [persona:developer]
+
 ## [2.6.2] - 2026-03-01
 
 ### Added
 
 - **Timeline document cards view**: `DocumentTable` redesigned with a cards/table view toggle
   (`ViewToggle`). Card grid shows phase badge, org, period, description preview, enrichment
-  sparkle indicator, source link, and a "View Details" action.
+  sparkle indicator, source link, and a "View Details" action. [persona:researcher] [persona:developer] [view:/timeline]
 
 - **`TimelineDocumentCard`**: New animated card component (Framer Motion `popLayout`) rendering
   one timeline document row with enrichment awareness — shows a `Sparkles` badge when AI
-  enrichment is available.
+  enrichment is available. [persona:developer] [view:/timeline]
 
 - **`TimelineDocumentDetailPopover`**: New accessible portal popover (FocusLock + `createPortal`)
   for timeline document detail. Shows full metadata, enrichment analysis panel
   (`DocumentAnalysis` reuse), phase-coloured header, and an `AskAssistantButton` pre-seeded with
-  document context.
+  document context. [persona:developer] [view:/timeline]
 
 - **`timelineEnrichmentData.ts`**: New data module that discovers and loads
   `doc-enrichments/timeline_doc_enrichments_*.md` via `import.meta.glob`, picks the latest by
   embedded date, parses enrichment sections, and exports `getTimelineEnrichmentKey()` and
-  `hasSubstantiveEnrichment()` helpers.
+  `hasSubstantiveEnrichment()` helpers. [persona:developer]
 
 - **Table view: sortable columns** — clicking any column header in table mode cycles `asc`/`desc`
-  with chevron indicators. Default sort: Period ascending.
+  with chevron indicators. Default sort: Period ascending. [persona:researcher] [persona:executive] [view:/timeline]
 
 - **Org name from event data**: `DocumentTable` now reads `phase.events[0]?.orgName` as the
   primary org label, falling back to country bodies, improving specificity for multi-body
-  countries.
+  countries. [persona:researcher] [view:/timeline]
 
 - **New npm scripts**: `enrich:timeline` / `enrich:timeline:dry` (Haiku enrichment pipeline for
   timeline documents) and `notebooklm` (`tsx scripts/generate-notebooklm.ts` for NotebookLM
-  package generation). `notebooklm/` output directory added to `.gitignore`.
+  package generation). `notebooklm/` output directory added to `.gitignore`. [persona:developer]
 
 - **Glossary — 8 new terms**: DSA (Digital Signature Algorithm with NIST IR 8547 deprecation
   context), PQXDH (Signal's post-quantum key agreement, Signal Sep 2023 deployment), RFC 8446
   (TLS 1.3 standard with PQC extension context), NIS2 Directive (EU 2022/2555, ENISA PQC link),
   NIST SP 800-131A (algorithm transition guidance), Certificate Transparency (RFC 9162 + MTC
   connection), HPKE (RFC 9180, TLS ECH / MLS / PQC drafts), and a dedicated PQXDH entry
-  separated from the Signal Protocol term.
+  separated from the Signal Protocol term. [persona:researcher] [persona:developer] [view:/learn]
 
 ### Changed
 
@@ -50,18 +101,18 @@ All notable changes to this project will be documented in this file.
   2025–2026" to "published October 2024". Removed incorrect `acronym` fields from Shor's
   Algorithm, Grover's Algorithm, BIP-360, and Signal Protocol. Sigstore, SLSA, and in-toto
   categories corrected (`concept` → `organization` / `standard`). Added `relatedModule` links to
-  FrodoKEM, SHAKE, ChaCha20-Poly1305, Ascon, FHE, and ZKP entries.
+  FrodoKEM, SHAKE, ChaCha20-Poly1305, Ascon, FHE, and ZKP entries. [persona:researcher] [view:/learn]
 
 - **`libraryEnrichmentData.parseTimeline()`**: Now merges extracted keywords alongside year
   entries when processing the Haiku extraction format, ensuring keyword-tagged milestones appear
-  in the Migration Timeline dimension.
+  in the Migration Timeline dimension. [persona:developer]
 
 ### Fixed
 
 - **Chat panel — horizontal overflow**: `ChatPanelContent` message list gains `overflow-x-hidden`;
   `ChatMessage` bubble gains `min-w-0`. Markdown `<pre>` blocks wrap in a scrollable
   `overflow-x-auto` div; Markdown `<table>` elements wrap in a scrollable container, preventing
-  wide AI responses from expanding the panel beyond the viewport.
+  wide AI responses from expanding the panel beyond the viewport. [persona:developer] [persona:researcher] [persona:architect]
 
 ## [2.6.1] - 2026-03-01
 
