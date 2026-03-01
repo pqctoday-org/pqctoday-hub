@@ -41,6 +41,11 @@ All notable changes to this project will be documented in this file.
 - **`recharts` dependency**: Added Recharts v3.7.0 for the ROI bar chart and KPI trending
   line/radar charts. [persona:developer]
 
+- **Community section on About page** (`AboutView.tsx`): New GitHub Discussions panel listing
+  11 topic-specific channels — Contribute, PQC News, Ideas, Q&A, Algorithms, Learn Modules,
+  Leaders, References, Timeline, Threats, Products. Each card links directly to its discussion
+  thread with an icon and description. [persona:researcher] [persona:developer] [view:/about]
+
 - **GitHub: FUNDING.yml**: Added GitHub Sponsors funding configuration.
 
 - **GitHub: data_suggestion.yml**: New issue template for users to suggest data updates,
