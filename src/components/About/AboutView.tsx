@@ -11,6 +11,17 @@ import {
   Link2,
   Sparkles,
   BarChart2,
+  MessageSquare,
+  Users,
+  Globe,
+  Lightbulb,
+  HelpCircle,
+  Cpu,
+  BookOpen,
+  Trophy,
+  FileText,
+  CalendarDays,
+  Package,
 } from 'lucide-react'
 
 import { useState } from 'react'
@@ -20,6 +31,46 @@ import { MobileAboutView } from './MobileAboutView'
 import { CareerJourneyModal } from './CareerJourneyModal'
 import { useTheme } from '../../hooks/useTheme'
 import { getCurrentVersion } from '../../store/useVersionStore'
+
+const DISCUSSIONS_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions/'
+const DISCUSSIONS = [
+  {
+    number: 108,
+    icon: Users,
+    label: 'Contribute',
+    description: 'I need your help to improve pqctoday.com',
+  },
+  {
+    number: 109,
+    icon: Globe,
+    label: 'PQC News',
+    description: 'Share general information about PQC',
+  },
+  { number: 110, icon: Lightbulb, label: 'Ideas', description: 'Post your ideas for improvements' },
+  { number: 111, icon: HelpCircle, label: 'Q&A', description: 'Ask questions — answered ASAP' },
+  { number: 113, icon: Cpu, label: 'Algorithms', description: 'Update or add a new algorithm' },
+  {
+    number: 115,
+    icon: BookOpen,
+    label: 'Learn Modules',
+    description: 'Update or add a new learning module',
+  },
+  { number: 116, icon: Trophy, label: 'Leaders', description: 'Update or add a new leader' },
+  {
+    number: 117,
+    icon: FileText,
+    label: 'References',
+    description: 'Update or add a reference document',
+  },
+  {
+    number: 118,
+    icon: CalendarDays,
+    label: 'Timeline',
+    description: 'Change or add a new timeline',
+  },
+  { number: 119, icon: ShieldAlert, label: 'Threats', description: 'Change or add a new threat' },
+  { number: 120, icon: Package, label: 'Products', description: 'Change or add a new product' },
+]
 
 export function AboutView() {
   const { theme, setTheme } = useTheme()
@@ -96,6 +147,43 @@ export function AboutView() {
                 View Changelog
               </a>
             </p>
+          </div>
+        </motion.div>
+
+        {/* Community Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="glass-panel p-6"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <MessageSquare className="text-primary shrink-0" size={24} />
+            <div>
+              <h2 className="text-xl font-semibold">Community</h2>
+              <p className="text-xs text-muted-foreground">
+                Join the conversation on GitHub Discussions
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+            {DISCUSSIONS.map(({ number, icon: Icon, label, description }) => (
+              <a
+                key={number}
+                href={`${DISCUSSIONS_BASE}${number}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
+              >
+                <Icon className="text-primary shrink-0 mt-0.5" size={18} />
+                <div>
+                  <p className="text-sm font-medium group-hover:text-primary transition-colors">
+                    {label}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+                </div>
+              </a>
+            ))}
           </div>
         </motion.div>
 

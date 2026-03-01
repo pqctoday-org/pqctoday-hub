@@ -1,7 +1,64 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Users, Globe, Lock, BrainCircuit, Sparkles, BarChart2 } from 'lucide-react'
+import {
+  Users,
+  Globe,
+  Lock,
+  BrainCircuit,
+  Sparkles,
+  BarChart2,
+  MessageSquare,
+  Lightbulb,
+  HelpCircle,
+  Cpu,
+  BookOpen,
+  Trophy,
+  FileText,
+  CalendarDays,
+  ShieldAlert,
+  Package,
+} from 'lucide-react'
+
+const DISCUSSIONS_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions/'
+const DISCUSSIONS = [
+  {
+    number: 108,
+    icon: Users,
+    label: 'Contribute',
+    description: 'I need your help to improve pqctoday.com',
+  },
+  {
+    number: 109,
+    icon: Globe,
+    label: 'PQC News',
+    description: 'Share general information about PQC',
+  },
+  { number: 110, icon: Lightbulb, label: 'Ideas', description: 'Post your ideas for improvements' },
+  { number: 111, icon: HelpCircle, label: 'Q&A', description: 'Ask questions — answered ASAP' },
+  { number: 113, icon: Cpu, label: 'Algorithms', description: 'Update or add a new algorithm' },
+  {
+    number: 115,
+    icon: BookOpen,
+    label: 'Learn Modules',
+    description: 'Update or add a new learning module',
+  },
+  { number: 116, icon: Trophy, label: 'Leaders', description: 'Update or add a new leader' },
+  {
+    number: 117,
+    icon: FileText,
+    label: 'References',
+    description: 'Update or add a reference document',
+  },
+  {
+    number: 118,
+    icon: CalendarDays,
+    label: 'Timeline',
+    description: 'Change or add a new timeline',
+  },
+  { number: 119, icon: ShieldAlert, label: 'Threats', description: 'Change or add a new threat' },
+  { number: 120, icon: Package, label: 'Products', description: 'Change or add a new product' },
+]
 import clsx from 'clsx'
 import { CareerJourneyModal } from './CareerJourneyModal'
 import { useTheme } from '../../hooks/useTheme'
@@ -55,15 +112,37 @@ export const MobileAboutView = () => {
         className="glass-panel p-4"
       >
         <div className="flex items-center gap-3 mb-3">
-          <div className="p-2 rounded-full bg-secondary/10 text-secondary">
-            <Users size={20} />
+          <div className="p-2 rounded-full bg-primary/10 text-primary">
+            <MessageSquare size={20} />
           </div>
-          <h2 className="text-lg font-semibold">Community Driven</h2>
+          <div>
+            <h2 className="text-lg font-semibold">Community</h2>
+            <p className="text-xs text-muted-foreground">GitHub Discussions</p>
+          </div>
         </div>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          This project is open source and community maintained. We believe in transparency and
-          collaboration to solve the PQC challenge.
+        <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+          This project is open source and community maintained. Join the conversation — ask
+          questions, share ideas, or request new content.
         </p>
+        <div className="grid grid-cols-1 gap-2">
+          {DISCUSSIONS.map(({ number, icon: Icon, label, description }) => (
+            <a
+              key={number}
+              href={`${DISCUSSIONS_BASE}${number}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-2.5 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
+            >
+              <Icon className="text-primary shrink-0" size={16} />
+              <div className="min-w-0">
+                <p className="text-xs font-medium group-hover:text-primary transition-colors">
+                  {label}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">{description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
       </motion.div>
 
       {/* Data Privacy Card */}
