@@ -4,6 +4,65 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.6.2] - 2026-03-01
+
+### Added
+
+- **Timeline document cards view**: `DocumentTable` redesigned with a cards/table view toggle
+  (`ViewToggle`). Card grid shows phase badge, org, period, description preview, enrichment
+  sparkle indicator, source link, and a "View Details" action.
+
+- **`TimelineDocumentCard`**: New animated card component (Framer Motion `popLayout`) rendering
+  one timeline document row with enrichment awareness — shows a `Sparkles` badge when AI
+  enrichment is available.
+
+- **`TimelineDocumentDetailPopover`**: New accessible portal popover (FocusLock + `createPortal`)
+  for timeline document detail. Shows full metadata, enrichment analysis panel
+  (`DocumentAnalysis` reuse), phase-coloured header, and an `AskAssistantButton` pre-seeded with
+  document context.
+
+- **`timelineEnrichmentData.ts`**: New data module that discovers and loads
+  `doc-enrichments/timeline_doc_enrichments_*.md` via `import.meta.glob`, picks the latest by
+  embedded date, parses enrichment sections, and exports `getTimelineEnrichmentKey()` and
+  `hasSubstantiveEnrichment()` helpers.
+
+- **Table view: sortable columns** — clicking any column header in table mode cycles `asc`/`desc`
+  with chevron indicators. Default sort: Period ascending.
+
+- **Org name from event data**: `DocumentTable` now reads `phase.events[0]?.orgName` as the
+  primary org label, falling back to country bodies, improving specificity for multi-body
+  countries.
+
+- **New npm scripts**: `enrich:timeline` / `enrich:timeline:dry` (Haiku enrichment pipeline for
+  timeline documents) and `notebooklm` (`tsx scripts/generate-notebooklm.ts` for NotebookLM
+  package generation). `notebooklm/` output directory added to `.gitignore`.
+
+- **Glossary — 8 new terms**: DSA (Digital Signature Algorithm with NIST IR 8547 deprecation
+  context), PQXDH (Signal's post-quantum key agreement, Signal Sep 2023 deployment), RFC 8446
+  (TLS 1.3 standard with PQC extension context), NIS2 Directive (EU 2022/2555, ENISA PQC link),
+  NIST SP 800-131A (algorithm transition guidance), Certificate Transparency (RFC 9162 + MTC
+  connection), HPKE (RFC 9180, TLS ECH / MLS / PQC drafts), and a dedicated PQXDH entry
+  separated from the Signal Protocol term.
+
+### Changed
+
+- **Glossary corrections**: FIPS 206 and FN-DSA definitions updated from "draft / expected
+  2025–2026" to "published October 2024". Removed incorrect `acronym` fields from Shor's
+  Algorithm, Grover's Algorithm, BIP-360, and Signal Protocol. Sigstore, SLSA, and in-toto
+  categories corrected (`concept` → `organization` / `standard`). Added `relatedModule` links to
+  FrodoKEM, SHAKE, ChaCha20-Poly1305, Ascon, FHE, and ZKP entries.
+
+- **`libraryEnrichmentData.parseTimeline()`**: Now merges extracted keywords alongside year
+  entries when processing the Haiku extraction format, ensuring keyword-tagged milestones appear
+  in the Migration Timeline dimension.
+
+### Fixed
+
+- **Chat panel — horizontal overflow**: `ChatPanelContent` message list gains `overflow-x-hidden`;
+  `ChatMessage` bubble gains `min-w-0`. Markdown `<pre>` blocks wrap in a scrollable
+  `overflow-x-auto` div; Markdown `<table>` elements wrap in a scrollable container, preventing
+  wide AI responses from expanding the panel beyond the viewport.
+
 ## [2.6.1] - 2026-03-01
 
 ### Added

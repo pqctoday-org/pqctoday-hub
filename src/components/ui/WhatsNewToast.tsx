@@ -86,23 +86,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">32 new library documents</strong> &mdash;
-                    ANSSI, NATO, NSA CNSA 2.0, UK NCSC, G7, CISA, GSMA, SG MAS, and more &mdash;
-                    timeline source coverage rising from 20% to 47%
+                    <strong className="text-foreground">Timeline document cards</strong> &mdash;
+                    country documents now shown as rich cards with detail popovers, AI enrichment,
+                    and cards/table view toggle
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Migration Timeline dimension fixed</strong>{' '}
-                    &mdash; Library detail panels now show migration deadlines for all new documents
+                    <strong className="text-foreground">8 new glossary terms</strong> &mdash; DSA,
+                    PQXDH, RFC 8446, NIS2 Directive, NIST SP 800-131A, Certificate Transparency,
+                    HPKE, and more
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC Assistant improvements</strong> &mdash;
-                    leader chunks now correctly surface for researcher/contributor queries
+                    <strong className="text-foreground">Chat overflow fixes</strong> &mdash; wide
+                    code blocks and tables in AI responses no longer expand the chat panel
                   </span>
                 </li>
               </ul>

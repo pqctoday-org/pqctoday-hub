@@ -80,7 +80,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
 
       <div
         className={clsx(
-          'group relative max-w-[85%] rounded-lg px-3 py-2 text-sm',
+          'group relative min-w-0 max-w-[85%] rounded-lg px-3 py-2 text-sm',
           isUser ? 'bg-primary/15 text-foreground' : 'glass-panel'
         )}
       >
@@ -127,10 +127,20 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
             <p className="whitespace-pre-wrap">{content}</p>
           )
         ) : (
-          <div className="prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-primary prose-code:bg-muted/30 prose-code:px-1 prose-code:rounded">
+          <div className="prose prose-sm max-w-none break-words md:break-normal text-foreground prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-primary prose-code:bg-muted/30 prose-code:px-1 prose-code:rounded">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
+                pre: ({ children }) => (
+                  <div className="overflow-x-auto rounded-md my-2">
+                    <pre>{children}</pre>
+                  </div>
+                ),
+                table: ({ children }) => (
+                  <div className="overflow-x-auto">
+                    <table>{children}</table>
+                  </div>
+                ),
                 a: ({ href, children }) => {
                   const isInternal = href?.startsWith('/')
                   if (isInternal) {

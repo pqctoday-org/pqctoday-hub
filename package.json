@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "2.6.1",
+  "version": "2.6.2",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -43,7 +43,10 @@
     "download:threats": "node scripts/download-threats.js",
     "download:threats:dry": "node scripts/download-threats.js --dry-run",
     "enrich:docs": "python3 scripts/enrich-public-docs.py",
-    "enrich:docs:dry": "python3 scripts/enrich-public-docs.py --dry-run"
+    "enrich:docs:dry": "python3 scripts/enrich-public-docs.py --dry-run",
+    "enrich:timeline": "python3 scripts/enrich-timeline-haiku.py",
+    "enrich:timeline:dry": "python3 scripts/enrich-timeline-haiku.py --dry-run",
+    "notebooklm": "npx tsx scripts/generate-notebooklm.ts"
   },
   "dependencies": {
     "@noble/curves": "^2.0.1",

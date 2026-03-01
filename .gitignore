@@ -12,6 +12,9 @@ node_modules
 dist
 dist-ssr
 public/dist/
+
+# Generated NotebookLM package (run: npm run notebooklm)
+notebooklm/
 *.local
 
 # WASM build artifacts and source code

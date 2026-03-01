@@ -45,7 +45,10 @@ function parseTimeline(val: string | undefined): string[] | null {
   const yearsMatch = val.match(/Years mentioned:\s*([^;]+)/)
   if (yearsMatch) {
     const years = splitList(yearsMatch[1])
-    return years.length > 0 ? years.map((y) => `Year: ${y}`) : null
+    const keywordsMatch = val.match(/Keywords:\s*(.+)$/)
+    const keywords = keywordsMatch ? splitList(keywordsMatch[1]) : []
+    const items = [...years.map((y) => `Year: ${y}`), ...keywords]
+    return items.length > 0 ? items : null
   }
   // Haiku extraction format: freeform semicolon-separated milestone phrases
   const items = val

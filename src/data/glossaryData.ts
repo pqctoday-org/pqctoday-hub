@@ -143,6 +143,17 @@ export const glossaryTerms: GlossaryTerm[] = [
     category: 'algorithm',
   },
   {
+    term: 'DSA',
+    acronym: 'DSA',
+    definition:
+      'Digital Signature Algorithm, a classical FIPS 186 signature scheme based on discrete logarithms. Deprecated by NIST IR 8547 alongside RSA and ECDSA due to quantum vulnerability.',
+    technicalNote:
+      "Broken by Shor's algorithm. Common key sizes: 1024–3072 bits. No longer approved for new systems after 2030 per NIST IR 8547.",
+    relatedModule: '/algorithms',
+    complexity: 'beginner',
+    category: 'algorithm',
+  },
+  {
     term: 'Elliptic Curve Cryptography',
     acronym: 'ECC',
     definition:
@@ -185,7 +196,7 @@ export const glossaryTerms: GlossaryTerm[] = [
   {
     term: 'FN-DSA',
     definition:
-      'FFT over NTRU-Lattice-Based Digital Signature Algorithm (formerly Falcon), a compact PQC signature scheme. Defined in the draft FIPS 206.',
+      'FFT over NTRU-Lattice-Based Digital Signature Algorithm (formerly Falcon), a compact PQC signature scheme. Defined in FIPS 206, published October 2024.',
     technicalNote:
       'Variants: FN-DSA-512 (Level 1) and FN-DSA-1024 (Level 5). Known for very small signatures but requires careful floating-point implementation.',
     relatedModule: '/algorithms',
@@ -196,6 +207,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'FrodoKEM',
     definition:
       'A conservative lattice-based KEM algorithm based on the "plain" Learning With Errors problem, offering strong security guarantees at the cost of larger key sizes.',
+    relatedModule: '/algorithms',
     complexity: 'advanced',
     category: 'algorithm',
   },
@@ -250,7 +262,6 @@ export const glossaryTerms: GlossaryTerm[] = [
   },
   {
     term: "Shor's Algorithm",
-    acronym: 'Shor',
     definition:
       'A quantum algorithm that can efficiently factor large numbers and compute discrete logarithms, breaking RSA and ECC.',
     relatedModule: '/learn/quantum-threats',
@@ -259,7 +270,6 @@ export const glossaryTerms: GlossaryTerm[] = [
   },
   {
     term: "Grover's Algorithm",
-    acronym: 'Grover',
     definition:
       'A quantum algorithm that speeds up brute-force searches, effectively halving the security level of symmetric ciphers and hash functions.',
     relatedModule: '/learn/quantum-threats',
@@ -498,9 +508,19 @@ export const glossaryTerms: GlossaryTerm[] = [
   },
   {
     term: 'Signal Protocol',
-    acronym: 'PQXDH',
     definition:
       'The encryption protocol used by Signal, WhatsApp, and other messengers. Updated with PQXDH to add ML-KEM-1024 for post-quantum security.',
+    relatedModule: '/migrate',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'PQXDH',
+    acronym: 'PQXDH',
+    definition:
+      'Post-Quantum Extended Diffie-Hellman, the post-quantum key agreement protocol used by Signal (and optionally WhatsApp). Combines X25519 with ML-KEM-1024 to establish session keys.',
+    technicalNote:
+      'Deployed by Signal in September 2023. The shared secret is derived from both the classical X25519 exchange and an ML-KEM-1024 encapsulation, ensuring security if either algorithm is broken.',
     relatedModule: '/migrate',
     complexity: 'intermediate',
     category: 'protocol',
@@ -515,6 +535,16 @@ export const glossaryTerms: GlossaryTerm[] = [
   },
 
   // === Standards ===
+  {
+    term: 'RFC 8446',
+    definition:
+      'The IETF standard defining TLS version 1.3, published August 2018. TLS 1.3 removed legacy cipher suites, mandated forward secrecy, and reduced the handshake to 1 round-trip.',
+    technicalNote:
+      'TLS 1.3 is the foundation for PQC key exchange integration. RFC 8446 defines the "key_share" extension that hybrid PQC groups (e.g., X25519MLKEM768) plug into without protocol changes.',
+    relatedModule: '/learn/tls-basics',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
   {
     term: 'FIPS 203',
     definition:
@@ -572,6 +602,16 @@ export const glossaryTerms: GlossaryTerm[] = [
     category: 'standard',
   },
   {
+    term: 'NIS2 Directive',
+    definition:
+      'The EU Network and Information Security Directive 2 (Directive 2022/2555), requiring operators of essential services and digital service providers to implement strong cryptographic controls. Transposed into national law across EU member states by October 2024.',
+    technicalNote:
+      'NIS2 mandates risk-based security measures including encryption and cryptographic key management. ENISA guidance links NIS2 obligations directly to PQC migration timelines, making it a key compliance driver for EU organisations.',
+    relatedModule: '/compliance',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
     term: 'ACVP',
     acronym: 'ACVP',
     definition:
@@ -591,7 +631,7 @@ export const glossaryTerms: GlossaryTerm[] = [
   {
     term: 'FIPS 206',
     definition:
-      'The draft NIST standard defining FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm, formerly Falcon). Expected finalization in 2025-2026.',
+      'The NIST standard defining FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm, formerly Falcon), published October 2024.',
     relatedModule: '/library',
     complexity: 'intermediate',
     category: 'standard',
@@ -610,6 +650,16 @@ export const glossaryTerms: GlossaryTerm[] = [
       'NIST Internal Report establishing the PQC transition timeline: deprecation of classical asymmetric crypto by 2030, disallowment by 2035.',
     technicalNote:
       'Covers RSA, ECDSA, ECDH, EdDSA, DH, and DSA. The most authoritative U.S. government PQC migration deadline document.',
+    relatedModule: '/learn/compliance-strategy',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'NIST SP 800-131A',
+    definition:
+      'NIST Special Publication providing guidance on transitioning the use of cryptographic algorithms and key lengths. Defines which algorithms are approved, deprecated, or disallowed for federal use.',
+    technicalNote:
+      'Revision 3 (2019) deprecated SHA-1 and 2TDEA. A future revision is expected to align with NIST IR 8547 timelines, formally disallowing RSA, ECDSA, and DH after 2035.',
     relatedModule: '/learn/compliance-strategy',
     complexity: 'intermediate',
     category: 'standard',
@@ -1289,6 +1339,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Extendable-Output Functions from the SHA-3 family (SHAKE128, SHAKE256). Unlike fixed-length hashes, SHAKE can produce output of any desired length.',
     technicalNote:
       'Used in SLH-DSA-SHAKE parameter sets and as a key derivation mechanism in several PQC algorithms.',
+    relatedModule: '/algorithms',
     complexity: 'intermediate',
     category: 'algorithm',
   },
@@ -1308,6 +1359,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'A modern authenticated encryption with associated data (AEAD) cipher combining the ChaCha20 stream cipher with the Poly1305 authenticator. Quantum-safe at current key sizes.',
     technicalNote:
       'Widely used in TLS 1.3, WireGuard, and SSH as an alternative to AES-GCM. Efficient in software without hardware AES acceleration.',
+    relatedModule: '/learn/tls-basics',
     complexity: 'intermediate',
     category: 'algorithm',
   },
@@ -1346,6 +1398,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Ascon',
     definition:
       'A lightweight authenticated encryption cipher selected by NIST as the standard for constrained environments (IoT, embedded devices). Very low resource requirements.',
+    relatedModule: '/learn/iot-ot-pqc',
     complexity: 'advanced',
     category: 'algorithm',
   },
@@ -1586,7 +1639,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Sigstore centralizes crypto in two services: Fulcio (CA) and Rekor (transparency log). Upgrading these to ML-DSA automatically provides PQC protection to all downstream ecosystems (npm, PyPI, Kubernetes).',
     relatedModule: '/learn/code-signing',
     complexity: 'intermediate',
-    category: 'concept',
+    category: 'organization',
   },
   {
     term: 'Fulcio',
@@ -1655,7 +1708,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'SLSA levels depend on cryptographic attestations signed during the build process. If those signatures use quantum-vulnerable algorithms (ECDSA, RSA), the entire SLSA guarantee collapses once quantum computers can forge attestations.',
     relatedModule: '/learn/code-signing',
     complexity: 'intermediate',
-    category: 'concept',
+    category: 'standard',
   },
   {
     term: 'in-toto',
@@ -1665,7 +1718,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       "in-toto link metadata is signed with the functionary's private key. PQC migration requires upgrading all functionary keys to ML-DSA to prevent quantum forgery of supply chain attestations.",
     relatedModule: '/learn/code-signing',
     complexity: 'advanced',
-    category: 'concept',
+    category: 'standard',
   },
   {
     term: 'Build Provenance',
@@ -1995,6 +2048,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'An encryption scheme that allows computations to be performed on ciphertext, producing encrypted results that match operations on the plaintext.',
     technicalNote:
       'FHE is lattice-based and believed to be quantum-safe. Used for privacy-preserving cloud computing, but remains computationally expensive.',
+    relatedModule: '/algorithms',
     complexity: 'advanced',
     category: 'concept',
   },
@@ -2005,6 +2059,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'A cryptographic method where one party proves knowledge of a value without revealing the value itself. Used in privacy-preserving authentication and blockchain.',
     technicalNote:
       'PQC-compatible ZKP constructions (e.g., lattice-based, hash-based) are active areas of research for quantum-safe privacy systems.',
+    relatedModule: '/algorithms',
     complexity: 'advanced',
     category: 'concept',
   },
@@ -2491,6 +2546,30 @@ export const glossaryTerms: GlossaryTerm[] = [
     category: 'standard',
   },
 
+  // === TLS Infrastructure ===
+  {
+    term: 'Certificate Transparency',
+    acronym: 'CT',
+    definition:
+      'An open framework (RFC 9162) that requires all publicly-trusted TLS certificates to be logged in publicly auditable logs, enabling detection of misissued certificates.',
+    technicalNote:
+      'CT logs are Merkle trees of certificate records. The Merkle Tree Certificate (MTC) design builds directly on CT infrastructure, replacing individual certificate signatures with batch Merkle inclusion proofs.',
+    relatedModule: '/learn/merkle-tree-certs',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'Hybrid Public Key Encryption',
+    acronym: 'HPKE',
+    definition:
+      'A standardized framework (RFC 9180) for hybrid public-key encryption that combines a KEM, a key derivation function, and an AEAD cipher into a composable primitive.',
+    technicalNote:
+      'HPKE is used in TLS ECH (Encrypted Client Hello), MLS messaging, and several IETF PQC drafts. It can be instantiated with ML-KEM for post-quantum security by substituting the KEM component.',
+    relatedModule: '/library',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+
   // === Merkle Tree Certificates ===
   {
     term: 'SCT',
@@ -2582,7 +2661,6 @@ export const glossaryTerms: GlossaryTerm[] = [
   // === Digital Assets PQC Migration ===
   {
     term: 'BIP-360',
-    acronym: 'P2QRH',
     definition:
       'Pay to Quantum Resistant Hash, a proposed Bitcoin soft fork that introduces a new native SegWit v3 output type using NIST PQC signature algorithms (ML-DSA or FN-DSA) instead of secp256k1 ECDSA. Proposed by Hunter Beast in 2024.',
     technicalNote:
