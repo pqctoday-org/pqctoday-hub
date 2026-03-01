@@ -13,8 +13,70 @@ import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
 
+const REGION_LABELS: Record<string, string> = {
+  americas: 'Americas',
+  eu: 'Europe',
+  apac: 'Asia-Pacific',
+}
+
+/** Maps region IDs to the country name values used in the leaders CSV. */
+const LEADERS_REGION_COUNTRIES: Record<string, string[]> = {
+  americas: ['USA', 'Canada', 'USA/Canada', 'USA/Switzerland', 'USA/Germany', 'France/USA'],
+  eu: [
+    'UK',
+    'France',
+    'Germany',
+    'Switzerland',
+    'Belgium',
+    'Portugal',
+    'Estonia/EU',
+    'Netherlands',
+    'Sweden',
+    'Russia',
+    'Spain',
+    'Italy',
+    'France/Netherlands',
+    'Germany/Netherlands',
+    'Israel',
+  ],
+  apac: ['Singapore', 'Japan', 'South Korea', 'Australia', 'India', 'China'],
+}
+
+const FLAG_CODE_MAP: Record<string, string> = {
+  USA: 'us',
+  UK: 'gb',
+  France: 'fr',
+  Germany: 'de',
+  Switzerland: 'ch',
+  Canada: 'ca',
+  Singapore: 'sg',
+  Japan: 'jp',
+  'South Korea': 'kr',
+  Australia: 'au',
+  Israel: 'il',
+  Belgium: 'be',
+  Portugal: 'pt',
+  Netherlands: 'nl',
+  Sweden: 'se',
+  Spain: 'es',
+  Italy: 'it',
+  India: 'in',
+  China: 'cn',
+  Russia: 'ru',
+  'Estonia/EU': 'eu',
+  'USA/Switzerland': 'us',
+  'USA/Germany': 'us',
+  'USA/Canada': 'us',
+  'France/Netherlands': 'fr',
+  'Germany/Netherlands': 'de',
+  'France/USA': 'fr',
+}
+
 export const LeadersGrid = () => {
   const [searchParams] = useSearchParams()
+  const [selectedRegion, setSelectedRegion] = useState<string>(() => {
+    return searchParams.get('region') ?? 'All'
+  })
   const [selectedCountry, setSelectedCountry] = useState<string>(() => {
     return searchParams.get('country') ?? 'All'
   })
@@ -38,6 +100,9 @@ export const LeadersGrid = () => {
     if (sector && ['Public', 'Private', 'Academic'].includes(sector)) {
       setSelectedSector(sector)
     }
+
+    const region = searchParams.get('region')
+    if (region) setSelectedRegion(region)
 
     const country = searchParams.get('country')
     if (country) {
@@ -64,6 +129,7 @@ export const LeadersGrid = () => {
         const existsUnfiltered = leadersData.some((l) => l.name === highlightedLeader)
         if (existsUnfiltered) {
           // Clear filters so the card becomes visible, then re-trigger scroll
+          setSelectedRegion('All')
           setSelectedCountry('All')
           setSelectedSector('All')
           setSearchQuery('')
@@ -78,46 +144,36 @@ export const LeadersGrid = () => {
     return () => clearTimeout(timer)
   }, [highlightedLeader, selectedCountry, selectedSector, searchQuery])
 
-  // Extract unique countries
+  // Region items
+  const regionItems = useMemo(
+    () => [
+      { id: 'All', label: 'All Regions' },
+      ...Object.entries(REGION_LABELS).map(([id, label]) => ({ id, label })),
+    ],
+    []
+  )
+
+  // Country items scoped by selected region
   const countryItems = useMemo(() => {
     const unique = new Set(leadersData.map((l) => l.country))
-    const sortedCountries = Array.from(unique).sort()
+    let countries = Array.from(unique).sort()
 
-    // Helper to get flag code from country name (simple mapping)
-    const getFlagCode = (country: string) => {
-      const map: Record<string, string> = {
-        USA: 'us',
-        UK: 'gb',
-        France: 'fr',
-        Germany: 'de',
-        Switzerland: 'ch',
-        Canada: 'ca',
-        Singapore: 'sg',
-        Japan: 'jp',
-        'South Korea': 'kr',
-        Australia: 'au',
-        Israel: 'il',
-        Belgium: 'be',
-        Portugal: 'pt',
-        'Estonia/EU': 'eu',
-        'USA/Switzerland': 'us',
-        'France/Netherlands': 'fr',
-        'Germany/Netherlands': 'de',
-        'USA/Germany': 'us',
-      }
+    if (selectedRegion !== 'All') {
       // eslint-disable-next-line security/detect-object-injection
-      return map[country] || 'un' // default to UN flag or similar if needed
+      const regionSet = new Set(LEADERS_REGION_COUNTRIES[selectedRegion] ?? [])
+      countries = countries.filter((c) => regionSet.has(c))
     }
 
     return [
       { id: 'All', label: 'All Countries', icon: null },
-      ...sortedCountries.map((c) => ({
+      ...countries.map((c) => ({
         id: c,
         label: c,
-        icon: <CountryFlag code={getFlagCode(c)} width={20} height={12} />,
+        // eslint-disable-next-line security/detect-object-injection
+        icon: <CountryFlag code={FLAG_CODE_MAP[c] ?? 'un'} width={20} height={12} />,
       })),
     ]
-  }, [])
+  }, [selectedRegion])
 
   // Sector items
   const sectorItems = useMemo(() => {
@@ -147,6 +203,10 @@ export const LeadersGrid = () => {
 
     if (selectedCountry !== 'All') {
       result = result.filter((l) => l.country === selectedCountry)
+    } else if (selectedRegion !== 'All') {
+      // eslint-disable-next-line security/detect-object-injection
+      const regionSet = new Set(LEADERS_REGION_COUNTRIES[selectedRegion] ?? [])
+      result = result.filter((l) => regionSet.has(l.country))
     }
 
     if (selectedSector !== 'All') {
@@ -166,7 +226,7 @@ export const LeadersGrid = () => {
     }
 
     return result
-  }, [selectedCountry, selectedSector, searchQuery])
+  }, [selectedRegion, selectedCountry, selectedSector, searchQuery])
 
   return (
     <div className="space-y-6">
@@ -216,13 +276,30 @@ export const LeadersGrid = () => {
             {/* Region Filter */}
             <div className="flex-1 min-w-[100px] sm:min-w-[120px]">
               <FilterDropdown
+                items={regionItems}
+                selectedId={selectedRegion}
+                onSelect={(id) => {
+                  setSelectedRegion(id)
+                  setSelectedCountry('All')
+                  logEvent('Leaders', 'Filter Region', id)
+                }}
+                defaultLabel="Region"
+                opaque
+                className="mb-0 w-full"
+                noContainer
+              />
+            </div>
+
+            {/* Country Filter */}
+            <div className="flex-1 min-w-[100px] sm:min-w-[140px]">
+              <FilterDropdown
                 items={countryItems}
                 selectedId={selectedCountry}
                 onSelect={(id) => {
                   setSelectedCountry(id)
                   logEvent('Leaders', 'Filter Country', id)
                 }}
-                defaultLabel="Region"
+                defaultLabel="Country"
                 opaque
                 className="mb-0 w-full"
                 noContainer
