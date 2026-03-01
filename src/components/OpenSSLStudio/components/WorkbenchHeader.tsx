@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Settings } from 'lucide-react'
 import { useOpenSSLStore } from '../store'

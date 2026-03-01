@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Logger utility for development and production environments
  * In production, logs are disabled by default to prevent sensitive data exposure

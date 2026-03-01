@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useState, useEffect } from 'react'
 import type { LucideIcon } from 'lucide-react'

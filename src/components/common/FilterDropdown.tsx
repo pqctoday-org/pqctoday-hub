@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useRef, useEffect } from 'react'
 import clsx from 'clsx'
 import { ChevronDown, Globe, Check } from 'lucide-react'

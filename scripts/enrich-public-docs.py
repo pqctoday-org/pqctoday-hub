@@ -42,14 +42,21 @@ OUTPUT_DIR = DATA_DIR / 'doc-enrichments'
 # ---------------------------------------------------------------------------
 
 class HTMLTextExtractor(HTMLParser):
+    # Void HTML elements that never have closing tags — must NOT
+    # increment skip depth or the counter gets stuck permanently.
+    _VOID_ELEMENTS = frozenset({
+        'area', 'base', 'br', 'col', 'embed', 'hr', 'img',
+        'input', 'link', 'meta', 'param', 'source', 'track', 'wbr',
+    })
+
     def __init__(self):
         super().__init__()
         self.text = []
-        self.skip_tags = {'script', 'style', 'meta', 'noscript', 'head'}
+        self.skip_tags = {'script', 'style', 'noscript', 'head'}
         self._skip_depth = 0
 
     def handle_starttag(self, tag, attrs):
-        if tag in self.skip_tags:
+        if tag in self.skip_tags and tag not in self._VOID_ELEMENTS:
             self._skip_depth += 1
 
     def handle_endtag(self, tag):
@@ -299,11 +306,68 @@ _REG_BODIES: list[tuple[str, list[str]]] = [
 ]
 
 
-def extract_migration_timeline(text: str) -> tuple[list[str], list[str], list[str]]:
-    """Return (dates_found, keywords_found, regions_and_bodies).
+def _extract_milestone_phrases(text: str) -> list[str]:
+    """Extract concise contextual phrases where a migration keyword appears
+    near a year (within ~120 chars).  Returns deduplicated, cleaned phrases
+    capped at 120 characters each, max 10 results."""
+    lower = text.lower()
+    seen: set[str] = set()
+    results: list[str] = []
+
+    # Build regex for any migration keyword
+    kw_pattern = '|'.join(re.escape(kw) for kw in _MIGRATION_KW)
+
+    # Find all year mentions (2020–2039)
+    for m in re.finditer(r'\b(20[23][0-9])\b', text):
+        year = m.group(1)
+        # Grab a window around the year: 80 chars before, 80 after
+        start = max(0, m.start() - 80)
+        end = min(len(text), m.end() + 80)
+        window = text[start:end]
+        window_lower = window.lower()
+
+        # Check if any migration keyword appears in this window
+        kw_match = re.search(kw_pattern, window_lower)
+        if not kw_match:
+            continue
+
+        # Extract the sentence or clause containing both
+        # Try to find sentence boundaries (. ! ? or newline)
+        # within the window, then trim to just that sentence
+        sentences = re.split(r'[.!?\n]', window)
+        best = None
+        for sent in sentences:
+            sent_lower = sent.lower()
+            if year in sent and re.search(kw_pattern, sent_lower):
+                best = sent.strip()
+                break
+
+        if not best:
+            best = window.strip()
+
+        # Clean up: collapse whitespace, cap length
+        best = re.sub(r'\s+', ' ', best).strip(' ,;:')
+        if len(best) > 120:
+            best = best[:117] + '...'
+
+        # Deduplicate by (year, keyword)
+        dedup_key = f'{year}:{kw_match.group()}'
+        if dedup_key not in seen and best:
+            seen.add(dedup_key)
+            results.append(best)
+
+        if len(results) >= 10:
+            break
+
+    return results
+
+
+def extract_migration_timeline(text: str) -> tuple[list[str], list[str], list[str], list[str]]:
+    """Return (dates_found, keywords_found, regions_and_bodies, milestone_phrases).
 
     Regions and bodies are listed independently to avoid false cross-attribution.
-    Format: ["Regions: X, Y", "Regulatory Bodies: A, B"]
+    milestone_phrases are contextual excerpts where a year + migration keyword
+    appear together.
     """
     lower = text.lower()
 
@@ -312,6 +376,9 @@ def extract_migration_timeline(text: str) -> tuple[list[str], list[str], list[st
 
     # Migration keywords
     kw_found = [kw for kw in _MIGRATION_KW if kw in lower]
+
+    # Contextual milestone phrases (year + keyword in context)
+    milestones = _extract_milestone_phrases(text)
 
     # Regions/countries mentioned — independent of body detection
     regions: list[str] = [
@@ -333,7 +400,7 @@ def extract_migration_timeline(text: str) -> tuple[list[str], list[str], list[st
     if bodies:
         regions_and_bodies.append(f'Bodies: {", ".join(bodies)}')
 
-    return dates, kw_found, regions_and_bodies
+    return dates, kw_found, regions_and_bodies, milestones
 
 
 # ---------------------------------------------------------------------------
@@ -579,17 +646,21 @@ def build_section(
     infra: list[str],
     std_bodies: list[str],
     compliance_frameworks: list[str],
+    milestones: list[str] | None = None,
 ) -> str:
     def fmt(items: list[str]) -> str:
         return ', '.join(items) if items else 'None detected'
 
-    # Migration timeline info — combine dates and keywords
-    migration_parts: list[str] = []
-    if dates:
-        migration_parts.append(f'Years mentioned: {", ".join(dates)}')
-    if migration_kw:
-        migration_parts.append(f'Keywords: {", ".join(set(migration_kw))}')
-    migration_info = '; '.join(migration_parts) if migration_parts else 'None detected'
+    # Migration timeline info — prefer contextual milestones, fall back to dates+keywords
+    if milestones:
+        migration_info = 'Milestones: ' + ' | '.join(milestones)
+    else:
+        migration_parts: list[str] = []
+        if dates:
+            migration_parts.append(f'Years mentioned: {", ".join(dates)}')
+        if migration_kw:
+            migration_parts.append(f'Keywords: {", ".join(set(migration_kw))}')
+        migration_info = '; '.join(migration_parts) if migration_parts else 'None detected'
 
     applicable_regions = fmt(regions)
 
@@ -663,6 +734,28 @@ def process_collection(
         if e.get('status') == 'downloaded'
         or (e.get('status') == 'skipped' and e.get('reason', '') in include_skipped_reasons)
     ]
+
+    # For library collection: also include CSV records with local_file that
+    # aren't tracked in the manifest (e.g. files from prior download runs).
+    if csv_rows and csv_id_col:
+        manifest_ref_ids = {e.get(manifest_id_field, '').strip() for e in entries}
+        for ref_id, row in csv_rows.items():
+            if ref_id in manifest_ref_ids:
+                continue
+            local_file = row.get('local_file', '').strip()
+            if not local_file:
+                continue
+            file_path = ROOT / local_file
+            if not file_path.exists():
+                continue
+            # Synthesize a manifest-like entry for this CSV record
+            entries.append({
+                manifest_id_field: ref_id,
+                manifest_title_field: row.get(csv_title_col, '').strip() or ref_id,
+                manifest_file_field: str(file_path),
+                '_from_csv': True,  # marker for path resolution below
+            })
+
     print(f'  📁 {collection}: {len(entries)} documents to process')
 
     sections: list[str] = []
@@ -675,8 +768,14 @@ def process_collection(
         if not file_value:
             continue
 
-        # Resolve file path: either ROOT-relative or relative to public_subdir
-        doc_path = (ROOT / file_value) if file_path_is_relative else (public_subdir / file_value)
+        # Resolve file path: entries from CSV have absolute paths, others use
+        # ROOT-relative or public_subdir-relative resolution.
+        if entry.get('_from_csv'):
+            doc_path = Path(file_value)
+        elif file_path_is_relative:
+            doc_path = ROOT / file_value
+        else:
+            doc_path = public_subdir / file_value
         if not doc_path.exists():
             print(f'  ⚠  File not found: {file_value}')
             continue
@@ -705,7 +804,7 @@ def process_collection(
         # Run all 11 dimension extractors
         algorithms = extract_algorithms(text)
         threats = extract_threats(text)
-        dates, migration_kw, regions = extract_migration_timeline(text)
+        dates, migration_kw, regions, milestones = extract_migration_timeline(text)
         leaders = extract_leaders(text, leader_names)
         products = extract_products(text, software_names)
         protocols = extract_protocols(text)
@@ -733,6 +832,7 @@ def process_collection(
             infra=infra,
             std_bodies=std_bodies,
             compliance_frameworks=compliance,
+            milestones=milestones,
         )
         sections.append(section)
         processed += 1

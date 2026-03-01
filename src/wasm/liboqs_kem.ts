@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Wrapper for @oqs/liboqs-js (ML-KEM)
 /* eslint-disable */
 import {

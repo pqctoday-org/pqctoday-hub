@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
 import { ShieldCheck, Eye, EyeOff } from 'lucide-react'
 import { CERT_FIELD_COMPARISON, SMIME_CERT_EXTENSIONS } from '../data/emailSigningConstants'

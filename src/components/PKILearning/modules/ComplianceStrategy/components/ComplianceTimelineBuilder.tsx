@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo, useState } from 'react'
 import { AlertTriangle, CheckCircle2, Clock, TrendingUp } from 'lucide-react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'

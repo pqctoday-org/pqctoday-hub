@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ALGORITHM_SECURITY_DATA } from '../data/quantumConstants'

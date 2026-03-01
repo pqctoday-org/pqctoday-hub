@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
 import { threatsData, type ThreatData } from '@/data/threatsData'
 import { softwareData } from '@/data/migrateData'

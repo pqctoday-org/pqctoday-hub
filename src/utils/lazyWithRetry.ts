@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { lazy, type ComponentType } from 'react'
 
 const RELOAD_KEY = 'chunk-reload-attempted'

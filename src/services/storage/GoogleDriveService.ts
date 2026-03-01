@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Client-side Google Drive service using Google Identity Services (GIS).
  * Uses the `drive.appdata` scope to read/write a single JSON file in the

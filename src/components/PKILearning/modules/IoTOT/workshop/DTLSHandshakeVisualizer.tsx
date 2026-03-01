@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { HANDSHAKE_KEM_OPTIONS, HANDSHAKE_SIG_OPTIONS, calculateHandshakeSizes } from '../constants'

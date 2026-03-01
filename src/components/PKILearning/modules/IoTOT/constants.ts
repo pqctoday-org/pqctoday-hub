@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // ── RFC 7228 Constrained Device Classes ──────────────────────────────────────
 export interface DeviceClass {
   id: string

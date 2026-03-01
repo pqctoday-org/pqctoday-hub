@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback } from 'react'
 import { Loader2, Play, CheckCircle, XCircle, Lock, PenTool } from 'lucide-react'
 import { hybridCryptoService, type HybridKemResult } from '../services/HybridCryptoService'

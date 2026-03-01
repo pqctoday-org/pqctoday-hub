@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { test, expect } from '@playwright/test'
 
 test('verify hd wallet flow', async ({ page }) => {

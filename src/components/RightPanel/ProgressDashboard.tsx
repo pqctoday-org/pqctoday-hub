@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo } from 'react'
 import { Award, Key, FileCheck, FileText, Zap, ClipboardCheck } from 'lucide-react'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'

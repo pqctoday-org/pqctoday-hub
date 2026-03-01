@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Users, Globe, Lock, BrainCircuit, Sparkles, BarChart2 } from 'lucide-react'

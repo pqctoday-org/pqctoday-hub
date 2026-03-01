@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import type { SoftwareItem } from '../../types/MigrateTypes'
 import {

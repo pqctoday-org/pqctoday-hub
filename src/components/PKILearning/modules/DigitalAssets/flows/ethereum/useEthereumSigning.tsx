@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { Step } from '../../components/StepWizard'
 import { useKeyGeneration } from '../../hooks/useKeyGeneration'
 import { SignatureError } from '@/lib/errors/CryptoError'

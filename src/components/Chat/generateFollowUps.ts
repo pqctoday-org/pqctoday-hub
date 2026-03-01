@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /** Extract entity names from assistant response and generate follow-up questions (fallback). */
 export function generateFollowUps(
   content: string,

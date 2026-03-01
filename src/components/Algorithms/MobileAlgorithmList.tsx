@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { AlgorithmTransition } from '../../data/algorithmsData'
 import { FileSignature, Lock, Hash, Key, ArrowRight } from 'lucide-react'
 import clsx from 'clsx'

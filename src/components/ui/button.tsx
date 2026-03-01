@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import * as React from 'react'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'

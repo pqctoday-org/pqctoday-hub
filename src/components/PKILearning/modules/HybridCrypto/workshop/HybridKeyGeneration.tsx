@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
 import { Loader2, Play, BarChart3 } from 'lucide-react'
 import { HYBRID_ALGORITHMS } from '../constants'

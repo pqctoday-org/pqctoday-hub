@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -10,6 +11,8 @@ import {
   Terminal,
   KeyRound,
   Radio,
+  TreePine,
+  ExternalLink,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { TLSHandshakeDiagram } from './TLSHandshakeDiagram'
@@ -234,6 +237,77 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
         >
           Try It in the Simulator <ArrowRight size={16} />
         </button>
+      </section>
+
+      {/* Merkle Tree Certificates */}
+      <section className="glass-panel p-6">
+        <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
+          <TreePine size={20} /> Merkle Tree Certificates: Scaling PQC for HTTPS
+        </h2>
+        <p className="text-foreground/80 leading-relaxed mb-3">
+          PQC signatures are significantly larger than classical ones — an ML-DSA certificate chain
+          can add several kilobytes to every TLS handshake. For the web, where billions of
+          connections happen daily, this overhead is a serious scalability concern. Google&apos;s{' '}
+          <strong>Merkle Tree Certificates (MTC)</strong> program (announced February 2027) proposes
+          a solution.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-sm font-bold text-status-warning mb-1">
+              Problem: X.509 Certificate Chains
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Traditional TLS uses a chain of X.509 certificates, each containing a public key and a
+              signature from the issuing CA. With PQC signatures (~2.4 KB for ML-DSA-65), a typical
+              2-certificate chain adds ~5 KB+ to the handshake — a substantial bandwidth increase.
+            </p>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-sm font-bold text-status-success mb-1">
+              Solution: Merkle Tree Proofs
+            </div>
+            <p className="text-xs text-muted-foreground">
+              MTCs replace the serialized signature chain with a compact Merkle inclusion proof. A
+              single CA-signed &quot;Tree Head&quot; represents potentially millions of
+              certificates. Browsers receive a lightweight proof-of-inclusion rather than full
+              certificate chains.
+            </p>
+          </div>
+        </div>
+        <div className="bg-muted/50 rounded-lg p-4 border border-border">
+          <h4 className="text-sm font-bold text-foreground mb-2">Deployment Roadmap</h4>
+          <div className="space-y-2 text-xs text-muted-foreground">
+            <div className="flex items-start gap-2">
+              <span className="text-status-success font-bold shrink-0">Phase 1 (Now)</span>
+              <span>
+                Feasibility testing with Cloudflare on live traffic; all MTC connections backed by
+                traditional X.509 certificates as fallback
+              </span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-primary font-bold shrink-0">Phase 2 (Q1 2027)</span>
+              <span>
+                Inviting Certificate Transparency log operators to bootstrap public MTC
+                infrastructure
+              </span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-warning font-bold shrink-0">Phase 3 (Q3 2027)</span>
+              <span>
+                Establishing Chrome Quantum-resistant Root Store (CQRS) with new requirements for
+                MTC Certificate Authorities
+              </span>
+            </div>
+          </div>
+        </div>
+        <a
+          href="https://security.googleblog.com/2026/02/cultivating-robust-and-efficient.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-3"
+        >
+          Google Security Blog: Quantum-safe HTTPS <ExternalLink size={11} />
+        </a>
       </section>
 
       {/* Related Resources */}

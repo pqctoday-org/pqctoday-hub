@@ -1,9 +1,12 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { ExternalLink, Calendar, X } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import type { LibraryItem } from '../../data/libraryData'
 import { useEffect, useRef, useState } from 'react'
 import FocusLock from 'react-focus-lock'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { libraryEnrichments } from '../../data/libraryEnrichmentData'
+import { DocumentAnalysis } from './DocumentAnalysis'
 
 interface LibraryDetailPopoverProps {
   isOpen: boolean
@@ -221,6 +224,11 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                 Open Document
               </a>
             </div>
+          )}
+
+          {/* Document Analysis — enriched dimensions */}
+          {libraryEnrichments[item.referenceId] && (
+            <DocumentAnalysis enrichment={libraryEnrichments[item.referenceId]} />
           )}
         </div>
       </div>

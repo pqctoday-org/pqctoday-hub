@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { QuizCategory } from '@/components/PKILearning/modules/Quiz/types'
 
 export type PersonaId = 'executive' | 'developer' | 'architect' | 'researcher'

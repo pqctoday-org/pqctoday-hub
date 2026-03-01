@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { ExternalLink, BookOpen } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getLibraryItemsForModule } from '@/data/libraryData'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 
 import { logPageView } from './utils/analytics'

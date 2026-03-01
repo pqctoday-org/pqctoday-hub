@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef } from 'react'
 
 const FOCUSABLE_SELECTOR = [

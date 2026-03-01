@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useMemo, useState } from 'react'
 import {
   Search,

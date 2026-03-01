@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import type { CryptoKey, KeyAlgorithm, KeyCurve } from '../types'
 

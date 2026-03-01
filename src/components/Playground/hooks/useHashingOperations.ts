@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { sha256, sha384, sha512 } from '@noble/hashes/sha2.js'
 import { sha3_256, keccak_256 } from '@noble/hashes/sha3.js'
 import { ripemd160 } from '@noble/hashes/legacy.js'

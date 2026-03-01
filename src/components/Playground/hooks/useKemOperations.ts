@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { Key, LogEntry } from '../../../types'
 import * as MLKEM from '../../../wasm/liboqs_kem'
 import * as WebCrypto from '../../../utils/webCrypto'

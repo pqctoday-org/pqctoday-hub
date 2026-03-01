@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo, useState } from 'react'
 import { MigrationStepIndicator } from './MigrationStepIndicator'
 import { MigrationStepCard } from './MigrationStepCard'

@@ -4,6 +4,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.5.1] - 2026-02-28
+
+### Added
+
+- **Library Document Analysis panel**: Collapsible `<DocumentAnalysis>` component in Library view
+  shows AI-extracted enrichment metadata per document — main topic, PQC algorithms, quantum
+  threats, migration timelines, regions, protocols, infrastructure layers, standardization bodies,
+  and compliance frameworks. Powered by `src/data/libraryEnrichmentData.ts` parser.
+
+- **Maintenance guide**: `docs/maintenance-guide.md` — comprehensive reference for all page data
+  sources, update procedures, cross-page connections, RAG pipeline, and Zustand store inventory.
+
+### Changed
+
+- **Timeline data**: Fresh `timeline_02282026.csv` snapshot (Feb 28, 2026) covering EU QARC
+  project launch, IBM Heron R2 quantum chip, Microsoft Majorana 1 topological qubit announcement,
+  and updated QSP roadmap milestones.
+
+- **RAG corpus**: Regenerated with full enrichment metadata from 220+ enriched documents;
+  cross-references between threats↔compliance, leaders↔algorithms, and library↔algorithms
+  now included in all chunk metadata.
+
+- **Open-source compliance**: SPDX `GPL-3.0-only` license identifiers added to all 500+ source
+  files; `package.json` `license` field normalized to SPDX-compliant value.
+
 ## [2.5.0] - 2026-02-28
 
 ### Added

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { ModuleItem } from './ModuleCard'
 
 /** All module metadata keyed by module ID */

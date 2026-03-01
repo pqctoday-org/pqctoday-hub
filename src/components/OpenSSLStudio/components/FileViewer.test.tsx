@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { FileViewer } from './FileViewer'

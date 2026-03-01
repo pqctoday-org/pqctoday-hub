@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { MilenageService } from '../MilenageService'
 import { bytesToHex } from '@/services/crypto/FileUtils'

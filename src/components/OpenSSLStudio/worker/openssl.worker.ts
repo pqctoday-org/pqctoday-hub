@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable */
 console.log('[Debug] OpenSSL Worker file executing...')
 // import type { WorkerMessage } from './types' // REMOVED to avoid Module syntax

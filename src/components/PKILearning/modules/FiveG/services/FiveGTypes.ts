@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export interface FiveGTestVectors {
   profileA?: { hnPriv: string; ephPriv: string; zEcdh?: string }
   profileB?: { hnPriv: string; ephPriv: string; zEcdh?: string }

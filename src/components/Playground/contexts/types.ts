@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { LogEntry, Key } from '../../../types'
 
 // Settings Context Types

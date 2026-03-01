@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import MiniSearch from 'minisearch'
 import type { RAGChunk } from '@/types/ChatTypes'
 

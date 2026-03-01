@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
 import { Info } from 'lucide-react'
 import { Button } from '../../ui/button'

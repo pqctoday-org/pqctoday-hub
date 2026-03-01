@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useMemo } from 'react'
 import { Plus, Trash2, Download, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'

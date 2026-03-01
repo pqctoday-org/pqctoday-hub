@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export class CryptoError extends Error {
   public readonly code: string
   public readonly originalError?: unknown

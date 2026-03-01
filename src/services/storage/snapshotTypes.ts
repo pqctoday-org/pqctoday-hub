@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { LearningProgress } from './types'
 import type { TLSConfig, TLSRunRecord } from '@/store/tls-learning.store'
 import type { VirtualFile, StructuredLogEntry } from '@/components/OpenSSLStudio/store'

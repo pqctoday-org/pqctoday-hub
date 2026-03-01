@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { motion } from 'framer-motion'
 import { loadAlgorithmsData, type AlgorithmTransition } from '../../data/algorithmsData'

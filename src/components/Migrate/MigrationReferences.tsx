@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { ExternalLink, Landmark, Building2 } from 'lucide-react'
 import type { MigrationReference } from '../../types/MigrateTypes'

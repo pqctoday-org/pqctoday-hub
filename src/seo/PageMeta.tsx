@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useLocation } from 'react-router-dom'
 import { getRouteMeta } from './routeMeta'
 

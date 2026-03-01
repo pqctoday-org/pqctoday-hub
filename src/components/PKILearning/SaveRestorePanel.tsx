@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect } from 'react'
 import { Download, Upload, Trash2, Save } from 'lucide-react'
 import toast from 'react-hot-toast'

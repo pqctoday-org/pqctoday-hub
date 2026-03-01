@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable */
 import { test, expect, Page } from '@playwright/test'
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useState, useEffect, useCallback } from 'react'
 import type { ComplianceRecord } from './types'
 import { NIST_SNAPSHOT } from './nistSnapshot'

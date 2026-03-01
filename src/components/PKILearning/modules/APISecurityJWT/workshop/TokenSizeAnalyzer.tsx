@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { BarChart3, AlertTriangle } from 'lucide-react'
 import { JOSE_SIGNING_ALGORITHMS, SAMPLE_JWT_PAYLOAD } from '../constants'

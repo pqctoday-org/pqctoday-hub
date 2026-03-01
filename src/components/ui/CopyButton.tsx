@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useState, useRef, useEffect } from 'react'
 import { Copy, Check } from 'lucide-react'
 

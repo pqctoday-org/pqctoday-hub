@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Constants for the Entropy & Randomness module.
  * Pre-fetched QRNG data from ANU Quantum Random Number Generator (qrng.anu.edu.au).

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { Cpu } from 'lucide-react'
 import { FilterDropdown, type FilterDropdownItem } from '@/components/common/FilterDropdown'

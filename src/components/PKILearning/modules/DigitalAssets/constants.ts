@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export const DIGITAL_ASSETS_CONSTANTS = {
   // Helper to generate dynamic filenames
   getFilenames: (prefix: string) => {

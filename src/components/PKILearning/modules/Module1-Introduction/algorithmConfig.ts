@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Shared algorithm definitions for Workshop Step 3 (KeyGenWorkshop) and Step 4 (SignatureDemo).
 // Keeping them in one place ensures the same labels, values, and groupings appear in both steps.
 

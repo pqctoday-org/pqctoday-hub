@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Hash, Info } from 'lucide-react'
 import { DataInput } from '../DataInput'

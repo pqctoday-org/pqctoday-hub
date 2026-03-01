@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Shared utility functions for handling file operations in crypto services.
  * Extracts common logic for reading OpenSSL output files and converting formats.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { transformToGanttData, timelineData, timelineMetadata } from './timelineData'
 import type { CountryData, TimelineEvent } from '../types/timeline'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { useTLSStore } from '@/store/tls-learning.store'
 import type { TLSRunRecord } from '@/store/tls-learning.store'

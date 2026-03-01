@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect } from 'react'
 import { FileSignature, Loader2, Info, X } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'

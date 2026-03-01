@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useMemo } from 'react'
 import { Play, RotateCcw, Shield, ShieldAlert, Eye } from 'lucide-react'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useRef } from 'react'
 import { ChevronRight, ChevronLeft, Play, CheckCircle, AlertCircle } from 'lucide-react'
 import { OutputFormatter } from './OutputFormatter'

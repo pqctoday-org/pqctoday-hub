@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { TLSConfig } from '@/store/tls-learning.store'
 
 export const generateOpenSSLConfig = (config: TLSConfig, side: 'client' | 'server'): string => {

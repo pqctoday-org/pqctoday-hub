@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { usePersonaStore } from '../../../store/usePersonaStore'
 import { PERSONA_STEP_HINTS } from '../../../data/personaWizardHints'
 import { Info } from 'lucide-react'

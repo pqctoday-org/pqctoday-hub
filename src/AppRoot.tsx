@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { StrictMode, Suspense, lazy } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { ErrorBoundary } from './components/ErrorBoundary'

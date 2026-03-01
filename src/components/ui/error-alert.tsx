@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { Button } from './button'
 
 interface ErrorAlertProps {

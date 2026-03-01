@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { createRequire } from 'module'
 import { JSDOM } from 'jsdom'
 import { ComplianceRecord } from './types.js'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { CryptoKey, CredentialAttribute } from '../types'
 import { signData, sha256Hash, bytesToBase64 } from './crypto-utils'
 

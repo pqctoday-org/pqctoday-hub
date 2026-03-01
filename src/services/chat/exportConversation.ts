@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { Conversation } from '@/types/ChatTypes'
 
 export function conversationToMarkdown(conv: Conversation): string {

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
 import clsx from 'clsx'
 import type { LibraryItem } from '../../data/libraryData'
@@ -10,9 +11,11 @@ import {
   ArrowDown,
   Eye,
   Info,
+  Sparkles,
 } from 'lucide-react'
 import { LibraryDetailPopover } from './LibraryDetailPopover'
 import { StatusBadge } from '../common/StatusBadge'
+import { libraryEnrichments } from '../../data/libraryEnrichmentData'
 
 interface LibraryTreeTableProps {
   data: LibraryItem[]
@@ -197,25 +200,36 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
           </td>
           <td className="p-4 text-sm">
             <div className="flex items-center gap-1">
-              <button
-                onClick={(e) => handleDetailsClick(item, e)}
-                className={clsx(
-                  'p-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary',
-                  item.localFile
-                    ? 'text-primary hover:text-primary/80 hover:bg-primary/10'
-                    : 'text-muted-foreground hover:text-primary hover:bg-primary/10'
-                )}
-                title={
-                  item.localFile ? 'View details (summary + preview available)' : 'View details'
-                }
-                aria-label={`View details for ${item.documentTitle}`}
-              >
-                {item.localFile ? (
-                  <Eye size={16} aria-hidden="true" />
-                ) : (
-                  <Info size={16} aria-hidden="true" />
-                )}
-              </button>
+              {(() => {
+                const enriched = !!libraryEnrichments[item.referenceId]
+                return (
+                  <button
+                    onClick={(e) => handleDetailsClick(item, e)}
+                    className={clsx(
+                      'p-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary',
+                      enriched || item.localFile
+                        ? 'text-primary hover:text-primary/80 hover:bg-primary/10'
+                        : 'text-muted-foreground hover:text-primary hover:bg-primary/10'
+                    )}
+                    title={
+                      enriched
+                        ? 'View details (document analysis available)'
+                        : item.localFile
+                          ? 'View details (summary + preview available)'
+                          : 'View details'
+                    }
+                    aria-label={`View details for ${item.documentTitle}`}
+                  >
+                    {enriched ? (
+                      <Sparkles size={16} aria-hidden="true" />
+                    ) : item.localFile ? (
+                      <Eye size={16} aria-hidden="true" />
+                    ) : (
+                      <Info size={16} aria-hidden="true" />
+                    )}
+                  </button>
+                )
+              })()}
             </div>
           </td>
         </tr>,

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export type QuestionType = 'multiple-choice' | 'true-false' | 'multi-select'
 
 export type QuizCategory =

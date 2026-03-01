@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Determines the NIST Security Level (1, 3, or 5) based on the filename.
  * Used for displaying security badges in the UI.

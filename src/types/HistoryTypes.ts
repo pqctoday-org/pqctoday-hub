@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export type HistoryEventType =
   | 'module_started'
   | 'module_completed'

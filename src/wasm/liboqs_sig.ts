@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Wrapper for Falcon (FN-DSA) and SLH-DSA using @oqs/liboqs-js
 /* eslint-disable */
 import {

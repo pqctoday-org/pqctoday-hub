@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo } from 'react'
 import { HeatmapGrid } from '../../../common/executive'
 import type { HeatmapCell } from '../../../common/executive'

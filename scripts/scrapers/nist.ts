@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { JSDOM } from 'jsdom'
 import { ComplianceRecord } from './types.js'
 import { fetchWithRetry, extractAlgorithms, PQC_PATTERNS, CLASSICAL_PATTERNS } from './utils.js'

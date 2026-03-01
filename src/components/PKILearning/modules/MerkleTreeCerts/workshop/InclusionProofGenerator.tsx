@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback, useMemo } from 'react'
 import { Search, TreePine, Loader2, Copy, Check } from 'lucide-react'
 import {

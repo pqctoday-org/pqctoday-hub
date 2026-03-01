@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
 import {
   ShieldAlert,
@@ -423,25 +424,76 @@ const EthereumPQC: React.FC = () => (
       </a>
     </div>
 
-    {/* Long-term protocol */}
+    {/* Long-term protocol — Vitalik's Feb 2026 Roadmap */}
     <div className="glass-panel p-4 border-l-4 border-l-accent">
       <h4 className="font-semibold text-foreground mb-2">
-        Long-term: Protocol-Level PQC Replacement
+        Vitalik&apos;s PQ Defense Roadmap (Feb 2026)
       </h4>
-      <p className="text-sm text-muted-foreground leading-relaxed">
-        The Ethereum Foundation&apos;s dedicated PQC research team (funded 2024–2025) is evaluating
-        STARK-based and lattice-based signature schemes as replacements for the base-layer BLS and
-        ECDSA schemes. An &quot;emergency quantum fork&quot; path has been outlined for use if a
-        CRQC appears before a planned migration is complete.
+      <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+        In February 2026, Vitalik Buterin published a detailed roadmap identifying four
+        quantum-vulnerable components and proposing specific solutions for each:
       </p>
-      <a
-        href="https://ethresear.ch/t/tasklist-for-post-quantum-eth/21296"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
-      >
-        Ethereum Foundation PQC tasklist (ethresear.ch) <ExternalLink size={11} />
-      </a>
+      <div className="space-y-2 text-xs">
+        <div className="flex items-start gap-2">
+          <span className="w-5 h-5 rounded-full bg-accent/20 text-accent text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+            1
+          </span>
+          <span className="text-muted-foreground">
+            <strong className="text-foreground">BLS consensus signatures</strong> — replace with
+            hash-based alternatives (Winternitz variants), using STARK proofs for aggregation
+          </span>
+        </div>
+        <div className="flex items-start gap-2">
+          <span className="w-5 h-5 rounded-full bg-accent/20 text-accent text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+            2
+          </span>
+          <span className="text-muted-foreground">
+            <strong className="text-foreground">KZG data availability</strong> — transition to
+            STARK-based systems with one-dimensional sampling via PeerDAS
+          </span>
+        </div>
+        <div className="flex items-start gap-2">
+          <span className="w-5 h-5 rounded-full bg-accent/20 text-accent text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+            3
+          </span>
+          <span className="text-muted-foreground">
+            <strong className="text-foreground">EOA ECDSA wallets</strong> — EIP-8141 native account
+            abstraction enabling PQ signature migration (~200k gas for hash-based sigs)
+          </span>
+        </div>
+        <div className="flex items-start gap-2">
+          <span className="w-5 h-5 rounded-full bg-accent/20 text-accent text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+            4
+          </span>
+          <span className="text-muted-foreground">
+            <strong className="text-foreground">ZK proofs (Groth16)</strong> — recursive STARK
+            aggregation at the mempool layer, batching verification across transactions
+          </span>
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground mt-3">
+        EIP-8141 &quot;validation frames&quot; would allow bundling many signatures into a single
+        compressed proof, keeping costs manageable. Targeted for the{' '}
+        <strong className="text-foreground">Hegota upgrade (H2 2026)</strong>.
+      </p>
+      <div className="flex flex-wrap gap-2 mt-3">
+        <a
+          href="https://www.coindesk.com/tech/2026/02/26/vitalik-buterin-unveils-ethereum-roadmap-to-counter-quantum-computing-threat/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+        >
+          CoinDesk coverage <ExternalLink size={11} />
+        </a>
+        <a
+          href="https://ethresear.ch/t/tasklist-for-post-quantum-eth/21296"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+        >
+          Ethereum Foundation PQC tasklist <ExternalLink size={11} />
+        </a>
+      </div>
     </div>
 
     {/* Why Ethereum is better positioned */}
@@ -620,7 +672,7 @@ const SolanaHardProblem: React.FC = () => (
           <tr className="border-b border-border/50">
             <td className="p-3 font-medium text-foreground">Official PQC proposal?</td>
             <td className="p-3 text-status-success font-medium">
-              Multiple EIPs active (4337, 7702)
+              Multiple EIPs active (4337, 7702, 8141)
             </td>
             <td className="p-3 text-status-warning">Community discussion only</td>
           </tr>

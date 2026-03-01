@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { test, expect } from '@playwright/test'
 import { injectAxe, checkA11y } from 'axe-playwright'
 

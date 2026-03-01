@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Output formatting utilities for the Entropy & Randomness module.
  */

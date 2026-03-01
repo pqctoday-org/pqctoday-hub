@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { MigrationStep, MigrationReference, SoftwareCategoryGap } from '../types/MigrateTypes'
 import { softwareData } from './migrateData'
 import Papa from 'papaparse'

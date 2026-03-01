@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
 import type { Key } from '../../../types'
 import { KeyStoreContext } from './KeyStoreContext'

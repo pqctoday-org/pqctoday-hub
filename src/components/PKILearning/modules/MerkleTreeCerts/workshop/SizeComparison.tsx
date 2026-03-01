@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { BarChart3, Info } from 'lucide-react'
 import { ALGORITHM_SIZES, getSizeBreakdown, formatBytes } from '../data/mtcConstants'

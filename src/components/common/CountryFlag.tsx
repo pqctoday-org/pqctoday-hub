@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import clsx from 'clsx'
 import { useState } from 'react'
 

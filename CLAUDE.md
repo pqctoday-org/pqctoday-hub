@@ -56,6 +56,8 @@ Run a single E2E test: `npx playwright test e2e/my-test.spec.ts`
 
 Each directory has a `manifest.json` (download history) and `skip-list.json` (paywalled/inaccessible URLs). Populated by download scripts: `npm run download:library`, `npm run download:timeline`, `npm run download:threats` (append `:dry` for dry run). `public/data/rag-corpus.json` is a unified search index aggregating 22 data sources, generated at build time via `npm run generate-corpus`.
 
+**App Maintenance Guide** — `docs/maintenance-guide.md` documents every page's data sources, how to update them, cross-page connections, the RAG pipeline, and all Zustand stores. Consult it before any maintenance task (data updates, adding features, modifying stores, or extending the RAG corpus).
+
 **CSV Management** — MUST read and follow `docs/CSVmaintenance.md` before ANY CSV operation (record insert, update, delete, format change, or web source refresh). This is mandatory, not optional. Key rules:
 
 - **Never edit a CSV in place** — copy to a new file with today's date (`MMDDYYYY`). Loaders auto-discover the latest via `import.meta.glob`. Example: to update `library_02212026.csv` on Feb 22, copy it to `library_02222026.csv` and make edits there.

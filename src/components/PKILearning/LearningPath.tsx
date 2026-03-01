@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'

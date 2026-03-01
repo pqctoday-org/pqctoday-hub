@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { renderHook, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { useKeyGeneration } from '../useKeyGeneration'

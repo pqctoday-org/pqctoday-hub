@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { ExternalLink, Flag } from 'lucide-react'
 import type { GanttCountryData, Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'

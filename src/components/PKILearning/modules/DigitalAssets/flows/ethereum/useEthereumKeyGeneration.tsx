@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { Step } from '../../components/StepWizard'
 import { EthereumFlowDiagram } from '../../components/CryptoFlowDiagram'
 import { InfoTooltip } from '../../components/InfoTooltip'

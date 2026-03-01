@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi } from 'vitest'
 import { extractKeyFromOpenSSLOutput } from './cryptoUtils'
 import { openSSLService } from '../services/crypto/OpenSSLService'

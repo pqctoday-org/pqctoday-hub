@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { Key, LogEntry } from '../../../types'
 import * as MLDSA from '../../../wasm/liboqs_dsa'
 import * as LIBOQS_SIG from '../../../wasm/liboqs_sig'

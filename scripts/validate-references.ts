@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Validates that PQC standard document references found in PKILearning modules
  * exist as entries in the library CSV.

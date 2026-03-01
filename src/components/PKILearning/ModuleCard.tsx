@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
 import { BookOpen, CheckCircle, Circle, Clock } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'

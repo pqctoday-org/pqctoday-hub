@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
@@ -12,26 +13,45 @@ import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
 
+const REGION_LABELS: Record<string, string> = {
+  americas: 'Americas',
+  eu: 'EU',
+  apac: 'APAC',
+  global: 'Global',
+}
+
 export const TimelineView = () => {
   const [searchParams] = useSearchParams()
-  const { selectedRegion } = usePersonaStore()
 
-  const [selectedCountry, setSelectedCountry] = useState<string>(() => {
-    // URL ?country= param takes priority (e.g. from Report deep link)
+  // Region filter — preset from persona preference
+  const [regionFilter, setRegionFilter] = useState<string>(() => {
+    // URL ?country= deep-link → don't preset region
+    const countryParam = new URLSearchParams(window.location.search).get('country')
+    if (countryParam && timelineData?.some((d) => d.countryName === countryParam)) return 'All'
+    const region = usePersonaStore.getState().selectedRegion
+    return region ?? 'All'
+  })
+
+  // Country filter — preset from URL ?country= param if present
+  const [countryFilter, setCountryFilter] = useState<string>(() => {
     const countryParam = new URLSearchParams(window.location.search).get('country')
     if (countryParam && timelineData?.some((d) => d.countryName === countryParam)) {
       return countryParam
     }
-    const region = usePersonaStore.getState().selectedRegion
-    if (!region || region === 'global') return 'All'
-    return `region:${region}`
+    return 'All'
   })
+
+  // Changing region resets country selection
+  const handleRegionChange = (region: string) => {
+    setRegionFilter(region)
+    setCountryFilter('All')
+  }
 
   // Sync ?country= param on same-route navigations (e.g. chatbot deep links)
   useEffect(() => {
     const countryParam = searchParams.get('country')
     if (countryParam && timelineData?.some((d) => d.countryName === countryParam)) {
-      setSelectedCountry(countryParam) // eslint-disable-line react-hooks/set-state-in-effect -- URL is external state
+      setCountryFilter(countryParam) // eslint-disable-line react-hooks/set-state-in-effect -- URL is external state
     }
   }, [searchParams])
 
@@ -43,36 +63,40 @@ export const TimelineView = () => {
 
   // Mobile: filter ganttData to the selected region's countries (mirrors desktop Gantt behaviour)
   const mobileGanttData = useMemo(() => {
-    if (!selectedRegion || selectedRegion === 'global') return ganttData
-    // eslint-disable-next-line security/detect-object-injection
-    const allowed = new Set(REGION_COUNTRIES_MAP[selectedRegion])
+    if (regionFilter === 'All' || regionFilter === 'global') return ganttData
+    const allowed = new Set(REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP])
     return ganttData.filter((d) => allowed.has(d.country.countryName))
-  }, [ganttData, selectedRegion])
+  }, [ganttData, regionFilter])
 
+  // Region filter items
+  const regionItems = useMemo(
+    () => [
+      { id: 'All', label: 'All Regions' },
+      ...Object.entries(REGION_LABELS).map(([id, label]) => ({ id, label })),
+    ],
+    []
+  )
+
+  // Country filter items — scoped by selected region, each with flag icon
   const countryItems = useMemo(() => {
     if (!timelineData || timelineData.length === 0) return []
 
-    const allRegionGroups = [
-      { id: 'region:americas', label: 'Americas (all)' },
-      { id: 'region:eu', label: 'EMEA (all)' },
-      { id: 'region:apac', label: 'Asia-Pacific (all)' },
-      { id: 'region:global', label: 'Global / International (all)' },
-    ].map((r) => ({ ...r, icon: null }))
-
     const allCountries = Array.from(new Set(timelineData.map((d) => d.countryName))).sort()
 
-    // When a specific region is selected on the home page, restrict to that region's countries
-    const isFiltered = selectedRegion && selectedRegion !== 'global'
-    // eslint-disable-next-line security/detect-object-injection
-    const allowedCountries = isFiltered ? new Set(REGION_COUNTRIES_MAP[selectedRegion]) : null
+    // If a region is selected, only show countries in that region
+    let countries: string[]
+    if (regionFilter !== 'All') {
+      const regionCountries = new Set(
+        REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP] ?? []
+      )
+      countries = allCountries.filter((c) => regionCountries.has(c))
+    } else {
+      countries = allCountries
+    }
 
-    const regionGroups = isFiltered
-      ? allRegionGroups.filter((r) => r.id === `region:${selectedRegion}`)
-      : allRegionGroups
-
-    const countryEntries = allCountries
-      .filter((c) => !allowedCountries || allowedCountries.has(c))
-      .map((c) => {
+    return [
+      { id: 'All', label: 'All Countries', icon: null },
+      ...countries.map((c) => {
         const countryData = timelineData.find((d) => d.countryName === c)
         return {
           id: c,
@@ -86,14 +110,9 @@ export const TimelineView = () => {
             />
           ),
         }
-      })
-
-    return [...regionGroups, ...countryEntries]
-  }, [selectedRegion])
-
-  const handleCountrySelect = (id: string) => {
-    setSelectedCountry(id)
-  }
+      }),
+    ]
+  }, [regionFilter])
 
   // Early return if data isn't loaded yet to prevent blank screen
   if (!timelineData || timelineData.length === 0 || ganttData.length === 0) {
@@ -138,8 +157,11 @@ export const TimelineView = () => {
         <div className="hidden md:block" data-testid="desktop-view-container">
           <SimpleGanttChart
             data={ganttData}
-            selectedCountry={selectedCountry}
-            onCountrySelect={handleCountrySelect}
+            regionFilter={regionFilter}
+            onRegionSelect={handleRegionChange}
+            regionItems={regionItems}
+            selectedCountry={countryFilter}
+            onCountrySelect={setCountryFilter}
             countryItems={countryItems}
             initialFilter={searchParams.get('q') ?? undefined}
           />
@@ -147,11 +169,14 @@ export const TimelineView = () => {
 
         {/* Mobile View: Simplified List */}
         <div className="md:hidden" data-testid="mobile-view-container">
-          {selectedRegion && selectedRegion !== 'global' && (
+          {regionFilter !== 'All' && regionFilter !== 'global' && (
             <p className="text-xs text-primary/90 mb-3">
               Filtered:{' '}
-              {{ americas: 'Americas', eu: 'Europe', apac: 'Asia-Pacific' }[selectedRegion]} (
-              {mobileGanttData.length} countries)
+              {
+                // eslint-disable-next-line security/detect-object-injection
+                REGION_LABELS[regionFilter] ?? regionFilter
+              }{' '}
+              ({mobileGanttData.length} countries)
             </p>
           )}
           <MobileTimelineList data={mobileGanttData} />

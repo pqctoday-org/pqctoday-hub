@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useMemo } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { ArtifactBuilder } from '../../../common/executive'

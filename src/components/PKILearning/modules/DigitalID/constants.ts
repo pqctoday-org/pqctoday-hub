@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // EUDI Wallet Educational Module Constants
 // Based on EUDI Wallet Architecture Reference Framework (ARF). Educational simulation.
 

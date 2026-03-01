@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useReducer, useMemo } from 'react'
 import type { EthereumFlowState, EthereumFlowActions } from '../flows/ethereum/types'
 

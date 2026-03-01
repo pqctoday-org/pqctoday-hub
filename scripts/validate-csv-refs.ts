@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Validates cross-references between the compliance, library, and timeline CSVs.
  *

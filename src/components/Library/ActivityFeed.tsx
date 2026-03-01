@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
 import { Calendar, Clock } from 'lucide-react'
 import type { LibraryItem } from '../../data/libraryData'

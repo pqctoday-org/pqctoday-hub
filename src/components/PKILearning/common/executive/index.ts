@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export { ArtifactBuilder } from './ArtifactBuilder'
 export type { ArtifactSection, ArtifactField } from './ArtifactBuilder'
 

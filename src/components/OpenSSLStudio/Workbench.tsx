@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useState, useEffect } from 'react'
 import { useOpenSSLStore } from './store'
 import { WorkbenchToolbar } from './components/WorkbenchToolbar'

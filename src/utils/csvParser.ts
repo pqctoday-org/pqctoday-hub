@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { CountryData, Phase, TimelineEvent, EventType } from '../types/timeline'
 
 export function parseTimelineCSV(csvContent: string): CountryData[] {

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { SimpleGanttChart } from './SimpleGanttChart'
@@ -116,6 +117,15 @@ const mockCountryItems = [
 describe('SimpleGanttChart', () => {
   const defaultProps = {
     data: mockData,
+    regionFilter: 'All',
+    onRegionSelect: vi.fn(),
+    regionItems: [
+      { id: 'All', label: 'All Regions' },
+      { id: 'americas', label: 'Americas' },
+      { id: 'eu', label: 'EU' },
+      { id: 'apac', label: 'APAC' },
+      { id: 'global', label: 'Global' },
+    ],
     selectedCountry: 'All',
     onCountrySelect: vi.fn(),
     countryItems: mockCountryItems,
@@ -208,12 +218,12 @@ describe('SimpleGanttChart', () => {
     expect(screen.getByText('Popover: PQC Research')).toBeInTheDocument()
   })
 
-  it('updates parent filter when region dropdown is used', () => {
+  it('updates parent filter when country dropdown is used', () => {
     render(<SimpleGanttChart {...defaultProps} />)
 
     const dropdowns = screen.getAllByTestId('filter-dropdown')
-    const regionDropdown = dropdowns[0] // First dropdown is the region filter
-    const button = within(regionDropdown).getByText('Canada')
+    const countryDropdown = dropdowns[1] // Second dropdown is the country filter
+    const button = within(countryDropdown).getByText('Canada')
 
     fireEvent.click(button)
     expect(defaultProps.onCountrySelect).toHaveBeenCalledWith('Canada')
@@ -223,15 +233,15 @@ describe('SimpleGanttChart', () => {
     it('renders phase type and event type filter dropdowns', () => {
       render(<SimpleGanttChart {...defaultProps} />)
       const dropdowns = screen.getAllByTestId('filter-dropdown')
-      // 3 dropdowns: region, phase type, event type
-      expect(dropdowns).toHaveLength(3)
+      // 4 dropdowns: region, country, phase type, event type
+      expect(dropdowns).toHaveLength(4)
     })
 
     it('filters by phase type when phase dropdown is used', () => {
       render(<SimpleGanttChart {...defaultProps} />)
 
       const dropdowns = screen.getAllByTestId('filter-dropdown')
-      const phaseDropdown = dropdowns[1]
+      const phaseDropdown = dropdowns[2]
 
       // Click "Research" to filter only Research phases
       fireEvent.click(within(phaseDropdown).getByText('Research'))
@@ -247,7 +257,7 @@ describe('SimpleGanttChart', () => {
       render(<SimpleGanttChart {...defaultProps} />)
 
       const dropdowns = screen.getAllByTestId('filter-dropdown')
-      const eventDropdown = dropdowns[2]
+      const eventDropdown = dropdowns[3]
 
       // Click "Milestones" to filter only milestones
       fireEvent.click(within(eventDropdown).getByText('Milestones'))
@@ -263,7 +273,7 @@ describe('SimpleGanttChart', () => {
       render(<SimpleGanttChart {...defaultProps} />)
 
       const dropdowns = screen.getAllByTestId('filter-dropdown')
-      const eventDropdown = dropdowns[2]
+      const eventDropdown = dropdowns[3]
 
       // Click "Phases" to filter only phase-type events
       fireEvent.click(within(eventDropdown).getByText('Phases'))
@@ -294,8 +304,8 @@ describe('SimpleGanttChart', () => {
 
       const dropdowns = screen.getAllByTestId('filter-dropdown')
 
-      // Filter by Research phase type
-      fireEvent.click(within(dropdowns[1]).getByText('Research'))
+      // Filter by Research phase type (index 2 = phase type dropdown)
+      fireEvent.click(within(dropdowns[2]).getByText('Research'))
 
       // Also filter by region (search for US)
       const searchInput = screen.getByPlaceholderText(/Filter by country.../i)

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -17,6 +18,7 @@ import { complianceFrameworks, type ComplianceFramework } from '@/data/complianc
 import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
 import { usePersonaStore, type Region } from '@/store/usePersonaStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { CountryFlag } from '@/components/common/CountryFlag'
 
 // ── Deadline helpers ────────────────────────────────────────────────────
 
@@ -74,6 +76,27 @@ const REGION_LABELS: Record<string, string> = {
   eu: 'EU',
   apac: 'APAC',
   global: 'Global',
+}
+
+/** Map compliance CSV country names → ISO flag codes (matching public/flags/*.svg) */
+const COUNTRY_FLAG_CODE: Record<string, string> = {
+  'United States': 'us',
+  Canada: 'ca',
+  Australia: 'au',
+  'European Union': 'eu',
+  France: 'fr',
+  Germany: 'de',
+  'Czech Republic': 'cz',
+  Italy: 'it',
+  Spain: 'es',
+  'United Kingdom': 'gb',
+  Japan: 'jp',
+  Singapore: 'sg',
+  'South Korea': 'kr',
+  'New Zealand': 'nz',
+  Israel: 'il',
+  China: 'cn',
+  Global: 'un',
 }
 
 /** Abbreviate country names for chips */
@@ -389,13 +412,26 @@ export function ComplianceLandscape() {
 
   // Filters — initialize from persona if set
   const [regionFilter, setRegionFilter] = useState<string>(selectedRegion ?? 'All')
+  const [countryFilter, setCountryFilter] = useState<string>('All')
   const [industryFilter, setIndustryFilter] = useState<string>(selectedIndustries[0] ?? 'All')
+
+  // Changing region resets country selection
+  const handleRegionChange = (region: string) => {
+    setRegionFilter(region)
+    setCountryFilter('All')
+  }
 
   // Apply filters
   const filteredFrameworks = useMemo(() => {
     let result = [...complianceFrameworks]
 
-    if (regionFilter !== 'All') {
+    if (countryFilter !== 'All') {
+      // Specific country selected — filter to frameworks that include this country (or Global)
+      result = result.filter((fw) =>
+        fw.countries.some((c) => c === countryFilter || c === 'Global')
+      )
+    } else if (regionFilter !== 'All') {
+      // No specific country, but region selected — expand region to countries
       const regionCountries = REGION_COUNTRIES_MAP[regionFilter as Region] ?? []
       result = result.filter((fw) =>
         fw.countries.some(
@@ -418,7 +454,7 @@ export function ComplianceLandscape() {
     })
 
     return result
-  }, [regionFilter, industryFilter])
+  }, [regionFilter, countryFilter, industryFilter])
 
   // Stats
   const totalCount = filteredFrameworks.length
@@ -430,6 +466,43 @@ export function ComplianceLandscape() {
     { id: 'All', label: 'All Regions' },
     ...Object.entries(REGION_LABELS).map(([id, label]) => ({ id, label })),
   ]
+
+  // Country filter items — scoped by selected region
+  const countryItems = useMemo(() => {
+    // Collect all unique countries from framework data
+    const allCountries = new Set<string>()
+    for (const fw of complianceFrameworks) {
+      for (const c of fw.countries) allCountries.add(c)
+    }
+
+    // If a region is selected, only show countries in that region
+    let countries: string[]
+    if (regionFilter !== 'All') {
+      const regionCountries = new Set(REGION_COUNTRIES_MAP[regionFilter as Region] ?? [])
+      countries = [...allCountries].filter((c) => regionCountries.has(c))
+    } else {
+      countries = [...allCountries]
+    }
+
+    countries.sort((a, b) => a.localeCompare(b))
+
+    return [
+      { id: 'All', label: 'All Countries' },
+      ...countries.map((c) => ({
+        id: c,
+        label: c,
+        // eslint-disable-next-line security/detect-object-injection
+        icon: COUNTRY_FLAG_CODE[c] ? (
+          <CountryFlag
+            code={COUNTRY_FLAG_CODE[c]}
+            width={16}
+            height={12}
+            className="rounded-[1px]"
+          />
+        ) : undefined,
+      })),
+    ]
+  }, [regionFilter])
 
   // Industry filter items
   const industryItems = [
@@ -467,9 +540,17 @@ export function ComplianceLandscape() {
         <FilterDropdown
           items={regionItems}
           selectedId={regionFilter}
-          onSelect={setRegionFilter}
+          onSelect={handleRegionChange}
           label="Region"
           defaultLabel="All Regions"
+          noContainer
+        />
+        <FilterDropdown
+          items={countryItems}
+          selectedId={countryFilter}
+          onSelect={setCountryFilter}
+          label="Country"
+          defaultLabel="All Countries"
           noContainer
         />
         <FilterDropdown

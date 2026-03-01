@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { User, Building2, Briefcase } from 'lucide-react'

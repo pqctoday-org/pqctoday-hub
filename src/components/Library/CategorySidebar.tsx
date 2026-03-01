@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { PenTool, Key, ShieldCheck, Network, BookOpen, Library } from 'lucide-react'
 import type { LibraryCategory } from '../../data/libraryData'
 import clsx from 'clsx'

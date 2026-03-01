@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Merkle tree utilities for the MTC workshop module.
  *

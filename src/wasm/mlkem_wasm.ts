@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Wrapper replacement: Adapting mlkem-wasm API to OpenSSLService
 // This preserves Playground functionality while removing the npm package dependency.
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import clsx from 'clsx'
 import type { CategoryScore, QuizCategory } from '../types'

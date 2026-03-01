@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useRef } from 'react'
 import { X, FileText, ChevronDown, ChevronRight, ArrowRightLeft } from 'lucide-react'
 import { openSSLService } from '../../../services/crypto/OpenSSLService'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { WorkerMessage, WorkerResponse } from '../../components/OpenSSLStudio/worker/types'
 
 export interface OpenSSLCommandResult {

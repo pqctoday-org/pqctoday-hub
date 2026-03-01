@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback } from 'react'
 import { FileCode, CheckCircle, Loader2, ArrowDown } from 'lucide-react'
 import {

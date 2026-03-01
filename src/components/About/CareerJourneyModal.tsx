@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState, useEffect } from 'react'

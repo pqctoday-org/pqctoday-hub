@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useState, useEffect, useCallback } from 'react'
 import { Share2, Check, Link2 } from 'lucide-react'
 import { Button } from './button'

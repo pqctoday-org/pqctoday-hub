@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo, useState } from 'react'
 import { X, FileText } from 'lucide-react'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback } from 'react'
 import { Loader2, Play, FileText, ExternalLink } from 'lucide-react'
 import { hybridCryptoService, type CertResult } from '../services/HybridCryptoService'

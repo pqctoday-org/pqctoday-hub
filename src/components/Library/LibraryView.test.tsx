@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import { LibraryView } from './LibraryView'
@@ -35,6 +36,26 @@ vi.mock('./LibraryDetailPopover', () => ({
         Popover
       </button>
     ) : null,
+}))
+
+// Mock enrichment data
+vi.mock('../../data/libraryEnrichmentData', () => ({
+  libraryEnrichments: {
+    'NIST-001': {
+      mainTopic: 'Test topic',
+      pqcAlgorithms: ['ML-KEM'],
+      quantumThreats: [],
+      migrationTimeline: null,
+      regionsAndBodies: null,
+      leadersContributions: [],
+      pqcProducts: [],
+      protocols: [],
+      infrastructureLayers: [],
+      standardizationBodies: ['NIST'],
+      complianceFrameworks: [],
+    },
+  },
+  hasSubstantiveEnrichment: () => true,
 }))
 
 // Mock library data

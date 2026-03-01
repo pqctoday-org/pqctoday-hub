@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export const MOCK_CSV_CONTENT = `Country,FlagCode,OrgName,OrgFullName,OrgLogoUrl,Type,Category,StartYear,EndYear,Title,Description,SourceUrl,SourceDate,Status
 Test Country,US,Test Org,Test Organization,,Milestone,Guidance,2024,2024,Test Event,Test Description,https://example.com,2024-01-01,Completed
 United States,US,NIST,National Institute of Standards and Technology,,Phase,Discovery,2024,2025,Discovery Phase,Research and discovery phase.,https://nist.gov,2024-01-01,In Progress

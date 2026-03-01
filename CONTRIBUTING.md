@@ -79,4 +79,4 @@ npm run test:e2e
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the GPL-3.0 License.
+By contributing, you agree that your contributions will be licensed under **GPL-3.0-only** (inbound = outbound). There is no CLA. Add `Signed-off-by: Your Name <email>` to commits (DCO) if your organization requires it.

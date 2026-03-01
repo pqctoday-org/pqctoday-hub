@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { motion } from 'framer-motion'
 import { Briefcase, Code, ShieldCheck, GraduationCap, Sparkles } from 'lucide-react'

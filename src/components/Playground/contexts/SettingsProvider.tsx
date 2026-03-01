@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import type { LogEntry } from '../../../types'
 import * as MLDSA from '../../../wasm/liboqs_dsa'

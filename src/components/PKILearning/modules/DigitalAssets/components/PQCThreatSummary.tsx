@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { ShieldAlert, ExternalLink, Bitcoin, Hexagon, Zap } from 'lucide-react'

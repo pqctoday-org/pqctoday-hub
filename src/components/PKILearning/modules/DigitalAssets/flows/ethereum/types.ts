@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export interface EthereumFlowState {
   rawPubKey: Uint8Array | null
   txHash: string | null

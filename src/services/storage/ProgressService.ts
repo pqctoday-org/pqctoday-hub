@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { saveAs } from 'file-saver'
 import type { LearningProgress } from './types'
 

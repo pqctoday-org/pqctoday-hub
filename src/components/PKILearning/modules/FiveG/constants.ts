@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export const FIVE_G_CONSTANTS = {
   SUCI_STEPS_A: [
     {

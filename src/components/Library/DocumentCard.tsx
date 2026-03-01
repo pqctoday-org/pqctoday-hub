@@ -1,6 +1,8 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { Calendar, Eye, ExternalLink, Info } from 'lucide-react'
+import { Calendar, Eye, ExternalLink, Info, Sparkles } from 'lucide-react'
 import type { LibraryItem } from '../../data/libraryData'
+import { libraryEnrichments } from '../../data/libraryEnrichmentData'
 import { StatusBadge } from '../common/StatusBadge'
 import clsx from 'clsx'
 
@@ -18,6 +20,8 @@ const URGENCY_COLORS: Record<string, string> = {
 }
 
 export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardProps) => {
+  const isEnriched = !!libraryEnrichments[item.referenceId]
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 10 }}
@@ -46,7 +50,15 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
         >
           {item.documentStatus}
         </span>
-        {item.localFile && (
+        {isEnriched ? (
+          <span
+            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20"
+            title="AI-analyzed document with enriched metadata"
+          >
+            <Sparkles size={10} aria-hidden="true" />
+            Enriched
+          </span>
+        ) : item.localFile ? (
           <span
             className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20"
             title="Rich summary and preview available"
@@ -54,7 +66,7 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
             <Eye size={10} aria-hidden="true" />
             Preview
           </span>
-        )}
+        ) : null}
       </div>
 
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">

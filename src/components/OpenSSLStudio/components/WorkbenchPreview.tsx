@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Play, Settings, Copy, Terminal, BookOpen } from 'lucide-react'
 import { useOpenSSLStore } from '../store'

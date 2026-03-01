@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 
 import { AVAILABLE_INDUSTRIES } from '../../../hooks/assessmentData'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { createRoot } from 'react-dom/client'
 import './styles/index.css'
 import AppRoot from './AppRoot'

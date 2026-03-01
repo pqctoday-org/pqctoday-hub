@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useRef, useEffect } from 'react'
 import { Plus, ChevronDown, Trash2, MessageSquare, Download } from 'lucide-react'
 import { Button } from '../ui/button'

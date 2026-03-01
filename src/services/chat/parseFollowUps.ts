@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Parse LLM-generated follow-up questions from a fenced ```followups block
  * at the end of an assistant response.

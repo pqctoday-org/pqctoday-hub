@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /// <reference types="vitest" />
 import { defineConfig, configDefaults } from 'vitest/config'
 import type { Plugin } from 'vite'

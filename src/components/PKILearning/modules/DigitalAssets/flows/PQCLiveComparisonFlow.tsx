@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useRef, useState } from 'react'
 import { CheckCircle, ShieldCheck, Cpu, AlertCircle } from 'lucide-react'
 import { StepWizard } from '../components/StepWizard'

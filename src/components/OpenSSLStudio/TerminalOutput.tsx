@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef, useState } from 'react'
 import { useOpenSSLStore } from './store'
 import { Trash2 } from 'lucide-react'

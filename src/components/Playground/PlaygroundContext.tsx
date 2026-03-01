@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useSettingsContext } from './contexts/SettingsContext'
 import { useKeyStoreContext } from './contexts/KeyStoreContext'
 import { useOperationsContext } from './contexts/OperationsContext'

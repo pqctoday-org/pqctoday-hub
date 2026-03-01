@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { Key, LogEntry } from '../../../types'
 import * as WebCrypto from '../../../utils/webCrypto'
 import { bytesToHex, hexToBytes } from '../../../utils/dataInputUtils'

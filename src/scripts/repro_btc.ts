@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 const output = `read EC key
 Private-Key: (256 bit)
 priv:

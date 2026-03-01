@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export type ProtocolName = 'IKEv2' | 'SSH' | 'WireGuard' | 'TLS 1.3'
 export type CryptoMode = 'classical' | 'hybrid' | 'pure-pqc'
 

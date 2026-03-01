@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export interface UserProfile {
   legalName: string
   birthDate: string // ISO 8601

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { bytesToHex } from '@/services/crypto/FileUtils'

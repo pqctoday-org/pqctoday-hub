@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export interface VulnerabilityEntry {
   algorithm: string
   shorsImpact: 'broken' | 'n/a'

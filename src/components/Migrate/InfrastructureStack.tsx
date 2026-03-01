@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Server, Monitor, Database, Laptop, Cloud, ShieldCheck, Network } from 'lucide-react'
 import { logMigrateAction } from '../../utils/analytics'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Bot, Clock, X } from 'lucide-react'
 import { Button } from '../ui/button'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import type { ReactNode, HTMLAttributes, ImgHTMLAttributes } from 'react'
 

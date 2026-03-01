@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -85,24 +86,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Personalized onboarding</strong> &mdash;
-                    4-step wizard (Experience, Role, Region, Industry) with knowledge-gated guided
-                    tour
+                    <strong className="text-foreground">Library Document Analysis</strong> &mdash;
+                    expandable enrichment panel per document showing algorithms, threats, protocols,
+                    and compliance frameworks
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Smarter Assistant</strong> &mdash; 220+
-                    document enrichments, entity inventory to reduce hallucination, and cross-domain
-                    linking
+                    <strong className="text-foreground">Timeline refresh</strong> &mdash; Feb 2026
+                    snapshot with EU QARC, IBM Heron R2, Microsoft Majorana 1, and QSP roadmap
+                    updates
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Content accuracy feedback</strong> &mdash;
-                    thumbs up/down voting on every content page with analytics tracking
+                    <strong className="text-foreground">Open-source compliance</strong> &mdash; SPDX
+                    GPL-3.0-only headers across all 500+ source files
                   </span>
                 </li>
               </ul>

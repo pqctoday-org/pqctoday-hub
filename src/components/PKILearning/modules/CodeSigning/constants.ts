@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // ── Code Signing Algorithm Comparison ───────────────────────────────────────
 export interface CodeSigningAlgorithm {
   name: string

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { softwareData, softwareMetadata } from '../../data/migrateData'
 import { useSearchParams } from 'react-router-dom'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo } from 'react'
 import { timelineData, transformToGanttData, phaseColors } from '../../data/timelineData'
 import type { Phase } from '../../data/timelineData'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { openSSLService } from './OpenSSLService'

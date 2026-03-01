@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { AnimatePresence } from 'framer-motion'
 import type { LibraryItem } from '../../data/libraryData'
 import { DocumentCard } from './DocumentCard'

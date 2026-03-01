@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback } from 'react'
 import { Combine, Play, ArrowRight, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'

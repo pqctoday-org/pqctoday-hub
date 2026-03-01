@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import { OpenSSLStudioView } from './OpenSSLStudioView'

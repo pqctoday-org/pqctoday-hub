@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 const BASE_URL = 'https://www.pqctoday.com'
 
 export interface RouteMeta {

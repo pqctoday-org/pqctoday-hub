@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import type { WalletInstance } from '../../types'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'

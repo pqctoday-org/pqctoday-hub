@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Interface for the Emscripten module
 interface LmsModule {
   _generate_keypair_wasm: (

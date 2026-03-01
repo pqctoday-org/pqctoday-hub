@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useCallback, useRef, Fragment } from 'react'
 import {
   ArrowUpDown,
@@ -36,6 +37,9 @@ const FilterChip = ({ label, onClear }: { label: string; onClear: () => void }) 
 
 interface SimpleGanttChartProps {
   data: GanttCountryData[]
+  regionFilter: string
+  onRegionSelect: (id: string) => void
+  regionItems: Array<{ id: string; label: string }>
   selectedCountry: string
   onCountrySelect: (id: string) => void
   countryItems: Array<{ id: string; label: string; icon: React.ReactNode | null }>
@@ -59,6 +63,9 @@ const PHASE_ORDER = [
 
 export const SimpleGanttChart = ({
   data,
+  regionFilter,
+  onRegionSelect,
+  regionItems,
   selectedCountry,
   onCountrySelect,
   countryItems,
@@ -128,15 +135,14 @@ export const SimpleGanttChart = ({
         d.country.countryName.toLowerCase().includes(filterText.toLowerCase()) ||
         d.country.bodies.some((b) => b.name.toLowerCase().includes(filterText.toLowerCase()))
       let matchesRegion: boolean
-      if (selectedCountry === 'All') {
-        matchesRegion = true
-      } else if (selectedCountry.startsWith('region:')) {
-        const regionKey = selectedCountry.slice(7) as keyof typeof REGION_COUNTRIES_MAP
-        // eslint-disable-next-line security/detect-object-injection
-        const regionCountries = REGION_COUNTRIES_MAP[regionKey] ?? []
+      if (selectedCountry !== 'All') {
+        matchesRegion = d.country.countryName === selectedCountry
+      } else if (regionFilter !== 'All') {
+        const regionCountries =
+          REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP] ?? []
         matchesRegion = regionCountries.includes(d.country.countryName)
       } else {
-        matchesRegion = d.country.countryName === selectedCountry
+        matchesRegion = true
       }
       return matchesSearch && matchesRegion
     })
@@ -181,6 +187,7 @@ export const SimpleGanttChart = ({
     filterText,
     sortField,
     sortDirection,
+    regionFilter,
     selectedCountry,
     selectedPhaseType,
     selectedEventType,
@@ -192,6 +199,7 @@ export const SimpleGanttChart = ({
   )
 
   const hasActiveFilters =
+    regionFilter !== 'All' ||
     selectedCountry !== 'All' ||
     selectedPhaseType !== 'All' ||
     selectedEventType !== 'All' ||
@@ -201,8 +209,9 @@ export const SimpleGanttChart = ({
     setFilterText('')
     setSelectedPhaseType('All')
     setSelectedEventType('All')
+    onRegionSelect('All')
     onCountrySelect('All')
-  }, [onCountrySelect])
+  }, [onRegionSelect, onCountrySelect])
 
   const handleExportCSV = useCallback(() => {
     if (processedData.length === 0) return
@@ -376,6 +385,19 @@ export const SimpleGanttChart = ({
       {/* Controls */}
       <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-2 flex flex-col md:flex-row items-center gap-4 relative z-40">
         <div className="flex items-center gap-2 w-full md:w-auto text-xs">
+          <div className="flex-1 min-w-[120px]">
+            <FilterDropdown
+              items={regionItems}
+              selectedId={regionFilter}
+              onSelect={onRegionSelect}
+              defaultLabel="Region"
+              opaque
+              className="mb-0 w-full"
+              noContainer
+            />
+          </div>
+        </div>
+        <div className="flex items-center gap-2 w-full md:w-auto text-xs">
           <div className="flex-1 min-w-[150px]">
             <FilterDropdown
               items={countryItems}
@@ -467,6 +489,9 @@ export const SimpleGanttChart = ({
       {/* Active filter chips + result count */}
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2 px-1">
+          {regionFilter !== 'All' && (
+            <FilterChip label={regionFilter} onClear={() => onRegionSelect('All')} />
+          )}
           {selectedCountry !== 'All' && (
             <FilterChip label={selectedCountry} onClear={() => onCountrySelect('All')} />
           )}

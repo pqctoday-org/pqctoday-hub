@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import type { MigrationStep } from '../../types/MigrateTypes'
 import { STEP_PHASE_COLORS } from '../../data/migrationWorkflowData'

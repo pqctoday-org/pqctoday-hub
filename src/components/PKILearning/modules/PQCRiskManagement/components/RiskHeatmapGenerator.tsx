@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo, useState, useCallback } from 'react'
 import { Grid3X3, Info } from 'lucide-react'
 import { HeatmapGrid, type HeatmapCell } from '@/components/PKILearning/common/executive'

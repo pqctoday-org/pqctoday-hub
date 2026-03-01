@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export interface IKEv2Transform {
   type: string
   id: string

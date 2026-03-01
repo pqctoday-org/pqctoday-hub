@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect } from 'react'
 import { SettingsProvider } from './contexts/SettingsProvider'
 import { KeyStoreProvider } from './contexts/KeyStoreProvider'

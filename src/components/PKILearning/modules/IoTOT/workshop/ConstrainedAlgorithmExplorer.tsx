@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
 import { DEVICE_CLASSES, CONSTRAINED_ALGORITHMS, type DeviceClass } from '../constants'

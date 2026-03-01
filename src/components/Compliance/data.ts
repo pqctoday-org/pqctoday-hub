@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { ComplianceRecord } from './types'
 
 export const mockComplianceData: ComplianceRecord[] = [

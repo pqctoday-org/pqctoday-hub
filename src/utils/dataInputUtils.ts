@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Convert Uint8Array to Hex String
 export const bytesToHex = (bytes: Uint8Array): string => {
   return Array.from(bytes)

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import {

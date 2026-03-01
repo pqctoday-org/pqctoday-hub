@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import type { AssessmentInput } from './assessmentTypes'
 
 export const ALGORITHM_DB: Record<

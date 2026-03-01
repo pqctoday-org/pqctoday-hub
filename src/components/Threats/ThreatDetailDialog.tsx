@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { ShieldAlert, X, Lock, Cpu, ExternalLink, BookOpen } from 'lucide-react'
 import type { ThreatItem } from '../../data/threatsData'

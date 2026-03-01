@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 
 // Mock the CSV imports and softwareData before importing the module

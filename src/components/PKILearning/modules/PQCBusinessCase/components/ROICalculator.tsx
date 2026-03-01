@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { TrendingUp, DollarSign, Clock, Info } from 'lucide-react'
 import { DataDrivenScorecard } from '@/components/PKILearning/common/executive'

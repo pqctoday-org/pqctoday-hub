@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Wrapper for ML-DSA using OpenSSL Service (replacing @openforge-sh/liboqs)
 /* eslint-disable */
 import { openSSLService } from '../services/crypto/OpenSSLService'

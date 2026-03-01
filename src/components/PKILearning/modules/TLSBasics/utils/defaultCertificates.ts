@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Default TLS Certificates - Generated 2025-12-14 with OpenSSL 3.6.0
 // RSA Root CA signs both Server and Client certs for mTLS support
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo } from 'react'
 import { ExternalLink, EyeOff } from 'lucide-react'
 import { threatsData } from '../../data/threatsData'

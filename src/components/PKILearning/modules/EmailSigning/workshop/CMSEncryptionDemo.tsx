@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback } from 'react'
 import { ChevronRight, ChevronDown, Lock, Key, Shuffle } from 'lucide-react'

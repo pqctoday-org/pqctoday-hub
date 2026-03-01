@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { RAGChunk, ChatMessage } from '@/types/ChatTypes'
 import { validateApiKey, streamResponse } from './GeminiService'

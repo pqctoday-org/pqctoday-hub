@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { ModuleMigrateTab } from './ModuleMigrateTab'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { ExternalLink, Calendar } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import type { TimelinePhase, Phase } from '../../types/timeline'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // ── JOSE Algorithm Data ─────────────────────────────────────────────────────
 
 export interface JOSEAlgorithm {

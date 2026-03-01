@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { TestTubes, Eye, Atom, Shield, Layers, ArrowRight, BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui/button'

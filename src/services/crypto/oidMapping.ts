@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 export const KNOWN_OIDS: Record<string, string> = {
   '2.5.4.3': 'commonName',
   '2.5.4.6': 'countryName',

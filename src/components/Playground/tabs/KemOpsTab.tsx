@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Activity, Lock, Key as KeyIcon, CheckCircle, XCircle } from 'lucide-react'
 import { useSettingsContext } from '../contexts/SettingsContext'

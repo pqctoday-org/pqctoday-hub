@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { initGA, logPageView, logEvent } from './analytics'
 import ReactGA from 'react-ga4'

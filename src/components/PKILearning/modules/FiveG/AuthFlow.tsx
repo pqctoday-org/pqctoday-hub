@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import type { Step } from '../DigitalAssets/components/StepWizard'
 import { StepWizard } from '../DigitalAssets/components/StepWizard'

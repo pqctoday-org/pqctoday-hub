@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { CheckCircle, XCircle } from 'lucide-react'
 import type { TraceEvent } from './CryptoLogDisplay'

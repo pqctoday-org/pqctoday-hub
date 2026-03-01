@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Package, ArrowRight, ChevronDown, Info, EyeOff } from 'lucide-react'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Simplified educational implementations of entropy tests.
  * These are NOT full NIST SP 800-90B implementations — production entropy

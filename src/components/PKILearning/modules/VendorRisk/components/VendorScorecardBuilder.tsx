@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useMemo } from 'react'
 import { DataDrivenScorecard } from '../../../common/executive'
 import type { ScorecardDimension } from '../../../common/executive'

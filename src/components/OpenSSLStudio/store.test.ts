@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
 import { useOpenSSLStore } from './store'
 import type { VirtualFile } from './store'

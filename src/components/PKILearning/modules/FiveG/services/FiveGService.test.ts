@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { FiveGService } from './FiveGService'
 import { openSSLService } from '@/services/crypto/OpenSSLService'

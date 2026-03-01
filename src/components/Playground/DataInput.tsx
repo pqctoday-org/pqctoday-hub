@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect } from 'react'
 import { clsx } from 'clsx'
 import { FileText, Binary } from 'lucide-react'

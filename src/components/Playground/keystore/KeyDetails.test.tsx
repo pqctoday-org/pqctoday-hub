@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { KeyDetails } from './KeyDetails'

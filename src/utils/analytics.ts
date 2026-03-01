@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 import ReactGA from 'react-ga4'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Parses ?tab= and ?step= from the current URL for module deep-linking.
  * Called inside useState initializers — runs once per mount.

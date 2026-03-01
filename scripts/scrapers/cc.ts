@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Papa from 'papaparse'
 import { createRequire } from 'module'
