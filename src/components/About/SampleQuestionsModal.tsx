@@ -1,32 +1,23 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Copy, Check } from 'lucide-react'
-import { useState } from 'react'
+import { Button } from '../ui/button'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
+import { SAMPLE_QUESTIONS } from '@/data/sampleQuestions'
 
 interface SampleQuestionsModalProps {
   isOpen: boolean
   onClose: () => void
+  onSendQuestion?: (question: string) => void
 }
 
-const SAMPLE_QUESTIONS: Record<string, string[]> = {
-  Library: ['What is FIPS 203?', "Show me NIST's post-quantum standards"],
-  Threats: ['What are quantum threats to aerospace?', 'Explain harvest-now-decrypt-later'],
-  Learn: ['How does hybrid cryptography work?', 'Take me to the PKI Workshop hands-on lab'],
-  Algorithms: ['Compare ML-KEM key sizes', 'What is the difference between ML-DSA and SLH-DSA?'],
-  Compliance: ['Show FIPS 140-3 validated modules with PQC', 'What is ACVP?'],
-  Assessment: ['How do I start a PQC risk assessment?', 'What factors affect my risk score?'],
-  Playground: ['Let me try ML-DSA in the playground', 'How do I generate ML-KEM keys?'],
-  Leaders: ['Who are the academic PQC leaders?', 'Show me PQC leaders from France'],
-  Timeline: ["What is France's PQC migration timeline?", 'When do US agencies need to migrate?'],
-  Migrate: ['What HSMs support ML-KEM?', 'Show PQC-ready TLS libraries'],
-  'Cross-cutting': [
-    "What's the difference between KEM and digital signature?",
-    'Explain crypto agility',
-  ],
-}
-
-export const SampleQuestionsModal = ({ isOpen, onClose }: SampleQuestionsModalProps) => {
+export const SampleQuestionsModal = ({
+  isOpen,
+  onClose,
+  onSendQuestion,
+}: SampleQuestionsModalProps) => {
   const [copiedQuestion, setCopiedQuestion] = useState<string | null>(null)
+  const focusTrapRef = useFocusTrap(isOpen)
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -48,6 +39,13 @@ export const SampleQuestionsModal = ({ isOpen, onClose }: SampleQuestionsModalPr
     }
   }
 
+  const handleDoubleClick = (question: string) => {
+    if (onSendQuestion) {
+      onSendQuestion(question)
+      onClose()
+    }
+  }
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -62,6 +60,10 @@ export const SampleQuestionsModal = ({ isOpen, onClose }: SampleQuestionsModalPr
 
           <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
             <motion.div
+              ref={focusTrapRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Sample questions"
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -72,16 +74,18 @@ export const SampleQuestionsModal = ({ isOpen, onClose }: SampleQuestionsModalPr
                 <div>
                   <h2 className="text-2xl font-bold">Sample Questions</h2>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Click any question to copy it, then paste into the PQC Assistant chatbot.
+                    Click to copy &middot; Double-click to send directly to chat
                   </p>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={onClose}
-                  className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors"
+                  className="min-h-[44px] min-w-[44px] p-2"
                   aria-label="Close modal"
                 >
                   <X size={20} />
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-5">
@@ -90,10 +94,13 @@ export const SampleQuestionsModal = ({ isOpen, onClose }: SampleQuestionsModalPr
                     <h3 className="text-sm font-semibold text-primary mb-2">{category}</h3>
                     <div className="flex flex-wrap gap-2">
                       {questions.map((q) => (
-                        <button
+                        <Button
                           key={q}
+                          variant="ghost"
                           onClick={() => handleCopy(q)}
-                          className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-muted/30 hover:bg-primary/10 border border-border hover:border-primary/30 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                          onDoubleClick={() => handleDoubleClick(q)}
+                          title="Click to copy, double-click to send"
+                          className="group inline-flex items-center gap-1.5 px-3 py-1.5 h-auto rounded-full text-xs bg-muted/30 hover:bg-primary/10 border border-border hover:border-primary/30 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                         >
                           <span>{q}</span>
                           {copiedQuestion === q ? (
@@ -104,7 +111,7 @@ export const SampleQuestionsModal = ({ isOpen, onClose }: SampleQuestionsModalPr
                               className="shrink-0 opacity-0 group-hover:opacity-60 transition-opacity"
                             />
                           )}
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   </div>

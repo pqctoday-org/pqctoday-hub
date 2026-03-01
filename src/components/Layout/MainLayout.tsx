@@ -22,6 +22,7 @@ import { WhatsNewToast } from '../ui/WhatsNewToast'
 import { GuidedTour } from '../common/GuidedTour'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
+import { PageAccuracyFeedback } from '../ui/PageAccuracyFeedback'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -149,6 +150,9 @@ export const MainLayout = () => {
       <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden safe-bottom">
         <p>© 2025 PQC Today. Data sourced from the public internet resources.</p>
       </footer>
+
+      {/* Page accuracy feedback widget */}
+      <PageAccuracyFeedback />
 
       {/* What's New Toast Notification */}
       <WhatsNewToast />

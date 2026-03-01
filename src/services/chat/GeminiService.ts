@@ -9,6 +9,93 @@ const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models'
  * for context to leave ample room for system instructions + conversation history.
  */
 const MAX_CONTEXT_CHARS = 80_000
+const MAX_INVENTORY_ENTITIES = 30
+
+/** Display labels for entity inventory grouping */
+const ENTITY_CATEGORY_LABELS: Record<string, string> = {
+  algorithms: 'Algorithms',
+  transitions: 'Algorithm Transitions',
+  migrate: 'Products',
+  certifications: 'Certifications',
+  leaders: 'Leaders',
+  threats: 'Threats',
+  compliance: 'Compliance Frameworks',
+  library: 'Standards & Documents',
+  'authoritative-sources': 'Standards & Documents',
+  glossary: 'Glossary Terms',
+  timeline: 'Timeline Events',
+  modules: 'Learning Modules',
+  'module-content': 'Learning Modules',
+  'module-summaries': 'Learning Modules',
+  'document-enrichment': 'Document Analysis',
+}
+
+/** Sources that don't produce meaningful entity names for the inventory */
+const SKIP_SOURCES = new Set([
+  'assessment',
+  'quiz',
+  'documentation',
+  'priority-matrix',
+  'modules',
+  'module-content',
+  'module-summaries',
+])
+
+/**
+ * Extracts a compact entity inventory from retrieved chunks.
+ * Groups unique entity names by display category for hallucination prevention.
+ */
+export function extractEntityInventory(chunks: RAGChunk[]): string {
+  const groups = new Map<string, Set<string>>()
+
+  for (const c of chunks) {
+    if (SKIP_SOURCES.has(c.source)) continue
+
+    const label = ENTITY_CATEGORY_LABELS[c.source]
+    if (!label) continue
+
+    // Extract the best entity name for this chunk
+    let name: string | null = null
+    switch (c.source) {
+      case 'threats':
+        name = c.metadata?.threatId ?? c.title
+        break
+      case 'timeline':
+        name = c.metadata?.country ? `${c.metadata.country}/${c.metadata.org ?? ''}` : c.title
+        break
+      default:
+        name = c.title
+    }
+
+    if (!name || name.length < 2) continue
+    // Truncate long names
+    if (name.length > 50) name = name.slice(0, 47) + '...'
+
+    const existing = groups.get(label)
+    if (existing) {
+      existing.add(name)
+    } else {
+      groups.set(label, new Set([name]))
+    }
+  }
+
+  // Flatten and cap total entities
+  const lines: string[] = []
+  let totalCount = 0
+
+  for (const [label, names] of groups) {
+    if (totalCount >= MAX_INVENTORY_ENTITIES) break
+    const remaining = MAX_INVENTORY_ENTITIES - totalCount
+    const nameArr = [...names].slice(0, remaining)
+    if (nameArr.length === 0) continue
+    lines.push(`${label} (${nameArr.length}): ${nameArr.join(', ')}`)
+    totalCount += nameArr.length
+  }
+
+  if (lines.length === 0) return ''
+
+  return `\nENTITY INVENTORY (reference ONLY items from this list):\n${lines.join('\n')}\n\nIf the user asks about an item not in this inventory, say it is not in the current database and suggest the closest match from the inventory.\n`
+}
 
 export function buildSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext): string {
   // Build context blocks with size guard — drop lowest-priority chunks if over budget
@@ -84,22 +171,26 @@ export function buildSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext)
     assessmentSection = `\nUser's PQC Assessment:\n  ${lines.join('\n  ')}\n`
   }
 
+  const inventorySection = extractEntityInventory(chunks)
+
   return `You are PQC Today Assistant, an expert in post-quantum cryptography (PQC). You help users understand PQC concepts, standards, migration strategies, and the quantum threat landscape.
 ${pageNote}${personaSection}${profileSection}${assessmentSection}
 Answer based ONLY on the provided context from the PQC Today database. Do not invent or supplement with people, products, documents, certifications, or data not present below. Say so honestly if the context is insufficient. You may use general knowledge only to explain concepts or give background — never to list specific items.
-
+${inventorySection}
 GUIDELINES:
 1. Prioritize "algorithms" and "glossary" sources for algorithm/standard/definition questions. Use "threats" data only for threat/industry-impact questions.
-2. When listing items (leaders, products, documents, algorithms), ONLY include items from the context. Never fabricate entries.
+2. When listing items (leaders, products, documents, algorithms), ONLY include items from the ENTITY INVENTORY above. Never fabricate entries.
 3. **Linking**: When a context chunk has a "Deep Link:" field, ALWAYS use that URL. Otherwise construct links using these patterns:
    - /algorithms?highlight=<slug>, /timeline?country=<name>, /library?ref=<id>
    - /migrate?q=<name>, /leaders?leader=<name>, /compliance?cert=<id>
    - /threats?id=<threatId>&industry=<industry>, /playground?algo=<name>
    - /learn/<module-id> (learning content), /learn/<module-id>?tab=workshop (hands-on workshop/simulation)
    - /learn/<module-id>?tab=workshop&step=<n> (specific workshop step), /assess?step=<n>
+   - /openssl?cmd=<category> (genpkey, req, x509, enc, dgst, hash, rand, kem, pkcs12, lms, kdf)
+   - /learn/quiz?category=<id> (comma-separated quiz categories, e.g. ?category=pqc-fundamentals,nist-standards)
    Every named item (product, leader, document, algorithm, threat) MUST be a markdown link. Never output bare names or paths.
 4. Main pages: [Algorithms](/algorithms), [Timeline](/timeline), [Library](/library), [Threats](/threats), [Leaders](/leaders), [Compliance](/compliance), [Migrate](/migrate), [Assessment](/assess), [Report](/report), [Playground](/playground), [OpenSSL Studio](/openssl), [Learn](/learn), [Quiz](/learn/quiz)
-5. Learning modules: [PQC 101](/learn/pqc-101), [Quantum Threats](/learn/quantum-threats), [Hybrid Crypto](/learn/hybrid-crypto), [Crypto Agility](/learn/crypto-agility), [TLS Basics](/learn/tls-basics), [VPN & SSH](/learn/vpn-ssh-pqc), [Email Signing](/learn/email-signing), [PKI Workshop](/learn/pki-workshop), [Key Management](/learn/key-management), [Stateful Signatures](/learn/stateful-signatures), [Digital Assets](/learn/digital-assets), [5G Security](/learn/5g-security), [Digital Identity](/learn/digital-id), [Entropy & Randomness](/learn/entropy-randomness), [Merkle Tree Certs](/learn/merkle-tree-certs), [QKD](/learn/qkd), [Code Signing](/learn/code-signing), [API Security & JWT](/learn/api-security-jwt), [IoT & OT Security](/learn/iot-ot-pqc), [Vendor & Supply Chain Risk](/learn/vendor-risk), [Compliance & Regulatory Strategy](/learn/compliance-strategy), [Migration Program Management](/learn/migration-program), [PQC Risk Management](/learn/pqc-risk-management), [PQC Business Case](/learn/pqc-business-case), [PQC Governance & Policy](/learn/pqc-governance)
+5. Learning modules (25 total): [PQC 101](/learn/pqc-101), [Quantum Threats](/learn/quantum-threats), [Hybrid Crypto](/learn/hybrid-crypto), [Crypto Agility](/learn/crypto-agility), [TLS Basics](/learn/tls-basics), [VPN & SSH](/learn/vpn-ssh-pqc), [Email Signing](/learn/email-signing), [PKI Workshop](/learn/pki-workshop), [Key Management](/learn/key-management), [Stateful Signatures](/learn/stateful-signatures), [Digital Assets](/learn/digital-assets), [5G Security](/learn/5g-security), [Digital Identity](/learn/digital-id), [Entropy & Randomness](/learn/entropy-randomness), [Merkle Tree Certs](/learn/merkle-tree-certs), [QKD](/learn/qkd), [Code Signing](/learn/code-signing), [API Security & JWT](/learn/api-security-jwt), [IoT & OT Security](/learn/iot-ot-pqc), [Vendor & Supply Chain Risk](/learn/vendor-risk), [Compliance & Regulatory Strategy](/learn/compliance-strategy), [Migration Program Management](/learn/migration-program), [PQC Risk Management](/learn/pqc-risk-management), [PQC Business Case](/learn/pqc-business-case), [PQC Governance & Policy](/learn/pqc-governance)
 6. Keep answers concise but thorough. Use markdown formatting. This is an educational assistant — never provide production security advice.
 
 FOLLOW-UP SUGGESTIONS:

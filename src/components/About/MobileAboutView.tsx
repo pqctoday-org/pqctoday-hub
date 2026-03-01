@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Users, Globe, Lock, BrainCircuit, Sparkles } from 'lucide-react'
+import { Users, Globe, Lock, BrainCircuit, Sparkles, BarChart2 } from 'lucide-react'
 import clsx from 'clsx'
 import { CareerJourneyModal } from './CareerJourneyModal'
 import { useTheme } from '../../hooks/useTheme'
@@ -83,11 +83,32 @@ export const MobileAboutView = () => {
           do not collect, store, or transmit any personal data.
         </p>
         <ul className="mt-3 space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
-          <li>No cookies, no tracking pixels, no server-side logging</li>
+          <li>No personal data — no names, emails, cookies, or server-side logging</li>
           <li>All preferences and progress stored locally in your browser</li>
-          <li>Cryptographic operations run entirely client-side via WASM</li>
+          <li>Cryptographic keys and certificates never leave your device</li>
           <li>No external API calls at runtime</li>
         </ul>
+        <div className="mt-4 pt-4 border-t border-border">
+          <div className="flex items-center gap-2 mb-2">
+            <BarChart2 size={13} className="text-primary flex-shrink-0" />
+            <span className="text-xs font-semibold text-foreground">Anonymous usage analytics</span>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            We use <strong className="text-foreground">Google Analytics 4</strong> to collect
+            anonymous behavioral signals (page views, feature interactions, accuracy votes, learning
+            milestones). No personal identifiers are ever transmitted. Analytics are disabled on
+            localhost.{' '}
+            <a
+              href="https://tools.google.com/dlpage/gaoptout"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Opt out
+            </a>
+            .
+          </p>
+        </div>
       </motion.div>
 
       {/* PQC Assistant Card */}

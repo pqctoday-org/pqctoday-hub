@@ -10,7 +10,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     with organization, phase type, title, period, description, and source links
 - **Algorithm Comparison**: Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) transition table
 - **Interactive Playground**: Hands-on cryptographic testing environment
-  - Real WASM-powered cryptography (`@openforge-sh/liboqs`)
+  - Real WASM-powered cryptography (`@oqs/liboqs-js`)
   - **KEM Operations**: Classical (X25519, P-256), PQC (ML-KEM), and Hybrid modes
     - Separate encapsulation/decapsulation flows with state isolation
     - HKDF-Extract normalization for variable-sized secrets
@@ -52,10 +52,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
   - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attacks
-  - **PQC Quiz**: Interactive knowledge assessment with 340+ questions across 9 categories
+  - **PQC Quiz**: Interactive knowledge assessment with 470 questions across 32 categories
     - **3 Modes**: Quick (20 questions, guaranteed category coverage), Full Assessment (80 questions randomly sampled), Custom (by topic)
     - **CSV-Driven**: Questions loaded from date-stamped CSV (`pqcquiz_MMDDYYYY.csv`) via `import.meta.glob`, with smart sampling guaranteeing ≥2 per category (Quick) / ≥10 per category (Full)
-    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, **Entropy & Randomness** (SP 800-90 A/B/C, DRBGs, TRNG vs QRNG, min-entropy estimation)
+    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, and 23 additional topic categories covering all 25 learning modules
     - **Score Tracking**: Per-category highest scores persisted across sessions
   - **Quantum Threats**:
     - Analyzes security level degradation and algorithm vulnerability matrices
@@ -132,7 +132,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Change Tracking**: "New" and "Updated" indicators for recent PQC landscape changes
   - **Filtering**: Contextual cascading filters by category, PQC support status, and infrastructure
     layer with search; selected layer and sub-category persist across sessions
-- **PQC Risk Assessment** (`/assess`): Comprehensive 13-step quantum risk evaluation wizard
+- **PQC Risk Assessment** (`/assess`): Comprehensive 14-step quantum risk evaluation wizard
   - **Country/Jurisdiction Picker**: select your regulatory jurisdiction to align deadlines with the PQC timeline
   - **Multi-select Sensitivity & Retention**: pick all applicable levels; scoring uses worst-case HNDL risk
   - **Country-aligned Deadlines**: Timeline step surfaces real regulatory deadline phases from the Gantt data
@@ -186,8 +186,13 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Inline tooltips** on key terms throughout all 19 learning modules — portal-rendered with
     `position: fixed` so they always appear above overflow-constrained containers (modals,
     scrollable panels, diagram wrappers)
-- **Personalization System**: Role, region, and industry picker on the home page that adapts the
-  entire application to the user's context
+- **Personalization System**: 4-step onboarding wizard on the home page that adapts the entire
+  application to the user's context
+  - **4-step wizard**: Experience → Role → Region → Industry with animated stepper, info modals
+    explaining how each choice shapes the experience, `PersonalizedAvatar` live preview, and
+    embedded `ScoreCard`
+  - **Experience level**: New/Basics/Expert — adjusts guided tour length, learning paths, and
+    quiz difficulty filtering
   - **Role picker**: Executive/CISO, Developer/Engineer, Security Architect, Researcher/Academic —
     ordered by access breadth; unified order across home page and Learn page
   - **Persona-driven navigation**: irrelevant pages hidden from nav; always-visible pages (Home,
@@ -208,20 +213,35 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Industry pre-seeding**: pre-seeds Assessment industry, pre-filters Threats and Library,
     highlights relevant Learn modules with "Relevant" badges
   - Selections persist across sessions via localStorage; "Clear all" fully resets to no selection
-- **Guided Tour**: Interactive first-visit onboarding overlay
-  - Filters tour steps to only show features visible in the active persona's navigation
+  - **PQC Explainer**: Dismissible "Why does this matter?" component with 3 educational cards
+    for newcomers; persistent dismissal via localStorage
+- **Guided Tour**: Interactive first-visit onboarding with 3-phase design
+  - Phase 1 — Intro (3 slides explaining why PQC matters)
+  - Phase 2 — Knowledge Gate: adjusts tour length based on experience level
+  - Phase 3 — Feature tour (up to 13 persona-filtered slides) with swipeable cards
   - Remembers completion status; re-trigger with `?tour` query parameter
+- **Page Accuracy Feedback**: Fixed bottom-left thumbs-up/down widget on content pages;
+  GA4 analytics logging; resets on navigation
 - **PQC Assistant**: AI-powered chatbot for post-quantum cryptography questions
   - Powered by Google Gemini 2.5 Flash with BYOK (Bring Your Own Key)
-  - Client-side RAG retrieval using MiniSearch over 1,700+ content chunks from 17 data sources
+  - Client-side RAG retrieval using MiniSearch over 2,100+ content chunks from 24 data sources
   - Three-phase search: entity matching, query expansion, keyword search with source diversity
+  - **Document enrichment**: 220+ archived HTML/PDF documents enriched with 11 structured
+    dimensions (algorithms, threats, protocols, infrastructure layers, compliance frameworks,
+    etc.) and fed into the RAG corpus
+  - **Entity inventory**: Extracted entity list injected into the system prompt to prevent
+    hallucination — model says "not in the current database" for unlisted items
+  - **Cross-domain linking**: Post-processing adds links between threats↔compliance,
+    leaders↔algorithms, library↔algorithms, and compliance↔timeline
   - Streaming markdown responses with deep-linked references to app pages
   - SPA-aware navigation: internal links close the chat panel and navigate via React Router
   - Covers: glossary, algorithms, threats, timeline, library, compliance, migrate catalog, leaders,
-    quiz content, assessment config, certifications, priority matrix, and all 19 learning modules
-  - **Precision deep links**: 8 views accept URL params for direct navigation — Library `?ref=`,
+    quiz content, assessment config, certifications, priority matrix, document enrichments, and
+    all 25 learning modules
+  - **Precision deep links**: 10 views accept URL params for direct navigation — Library `?ref=`,
     Threats `?id=`, Learn `?tab=`, Algorithms `?highlight=`, Compliance `?cert=`, Assess `?step=`,
-    Playground `?algo=`, Leaders `?leader=`/`?sector=`/`?country=`
+    Playground `?algo=`, Leaders `?leader=`/`?sector=`/`?country=`, OpenSSL `?cmd=`,
+    Quiz `?category=`
   - **RAG deep-link integration**: 95% of corpus chunks carry pre-computed `deepLink` URLs;
     system prompt prioritizes these for more precise navigation links in responses
   - **Sample Questions**: `?` button in chat header opens categorized question bank (22 questions
@@ -267,7 +287,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
 - **Frontend**: React 19 + TypeScript + Vite 7.3.1
 - **Cryptography**:
   - OpenSSL WASM v3.6.0 (with native ML-KEM, ML-DSA, and LMS/HSS support)
-  - `@openforge-sh/liboqs` for additional PQC algorithms (FrodoKEM, HQC, Classic McEliece)
+  - `@oqs/liboqs-js` for additional PQC algorithms (FrodoKEM, HQC, Classic McEliece)
   - Web Crypto API for classical algorithms (X25519, P-256, ECDH)
   - `@noble/curves` and `@noble/hashes` for blockchain operations
   - `@scure/bip32`, `@scure/bip39`, `@scure/base` for HD wallet
@@ -373,8 +393,8 @@ The application is structured into several key components:
 - **`src/components/Playground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
 - **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
-- **`src/components/PKILearning`**: Educational platform with 15 modules including hybrid crypto, agility, stateful signatures and more.
-- **`src/components/Assess`**: 13-step industry-aware risk assessment wizard with compound scoring engine, consolidated HNDL/HNFL risk analysis, and PDF print support.
+- **`src/components/PKILearning`**: Educational platform with 25 modules including hybrid crypto, agility, stateful signatures, code signing, API security, IoT/OT, and more.
+- **`src/components/Assess`**: 14-step industry-aware risk assessment wizard with compound scoring engine, consolidated HNDL/HNFL risk analysis, and PDF print support.
 - **`src/components/Migrate`**: Comprehensive PQC migration planning module with verified software database and workflow guidance.
 - **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.
 - **`src/components/common/GuidedTour.tsx`**: Interactive first-visit onboarding tour.
@@ -401,7 +421,7 @@ The application is structured into several key components:
 │   │   ├── About/           # About page and feedback forms
 │   │   ├── ACVP/            # Automated Cryptographic Validation Protocol testing
 │   │   ├── Algorithms/      # Algorithm comparison table
-│   │   ├── Assess/          # 13-step PQC risk assessment with compound scoring
+│   │   ├── Assess/          # 14-step PQC risk assessment with compound scoring
 │   │   ├── Changelog/       # Changelog view
 │   │   ├── Compliance/      # Compliance tracking and visualization
 │   │   ├── ErrorBoundary.tsx # Global error boundary component
@@ -412,7 +432,7 @@ The application is structured into several key components:
 │   │   ├── Library/         # PQC standards library
 │   │   ├── Migrate/         # PQC migration planning with verified software database
 │   │   ├── OpenSSLStudio/   # OpenSSL v3.6.0 workbench (WASM)
-│   │   ├── PKILearning/     # Learning platform with 16 modules
+│   │   ├── PKILearning/     # Learning platform with 25 modules
 │   │   │   ├── modules/
 │   │   │   │   ├── Introduction/         # PQC 101 Introduction module
 │   │   │   │   ├── PKIWorkshop/          # 4-step PKI lifecycle
@@ -422,6 +442,9 @@ The application is structured into several key components:
 │   │   │   │   ├── TLSBasics/            # TLS 1.3 handshake simulation
 │   │   │   │   ├── MerkleTreeCerts/      # Merkle Tree Certificates for PQC TLS
 │   │   │   │   ├── QKD/                  # Quantum Key Distribution (BB84, post-processing, deployments)
+│   │   │   │   ├── CodeSigning/          # Code & firmware signing with PQC
+│   │   │   │   ├── APISecurityJWT/       # JWT/JWE with PQC algorithms
+│   │   │   │   ├── IoTOT/               # IoT/OT constrained device security
 │   │   │   │   └── Quiz/                 # PQC knowledge assessment quiz
 │   │   ├── Playground/      # Interactive cryptography playground
 │   │   ├── Router/          # Routing utilities (ScrollToTop)
@@ -431,11 +454,12 @@ The application is structured into several key components:
 │   │   └── ui/              # Reusable UI components (Button, Card, etc.)
 │   ├── data/                # Static data (timelines, test vectors, profiles, personaConfig)
 │   │   ├── acvp/            # NIST ACVP test vectors (ML-KEM, ML-DSA)
+│   │   ├── doc-enrichments/ # Enriched document metadata for RAG corpus
 │   │   └── x509_profiles/   # CSV-based certificate profiles (3GPP, CAB Forum, ETSI)
 │   ├── hooks/               # Custom React hooks
 │   ├── lib/                 # Utility libraries and helpers
 │   ├── services/            # OpenSSL service and WASM integration
-│   ├── store/               # Zustand state management stores (5 persisted stores)
+│   ├── store/               # Zustand state management stores (6 persisted stores)
 │   ├── styles/              # Global CSS and design system
 │   ├── test/                # Test setup and utilities
 │   ├── types/               # Module-specific type definitions
@@ -446,7 +470,7 @@ The application is structured into several key components:
 
 ## Security
 
-Last audited: February 23, 2026
+Last audited: February 28, 2026
 
 | Severity | Production | Dev-only |
 | -------- | ---------- | -------- |

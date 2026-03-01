@@ -9,6 +9,7 @@ import {
   Database,
   Link2,
   Sparkles,
+  BarChart2,
 } from 'lucide-react'
 
 import { useState } from 'react'
@@ -428,8 +429,9 @@ export function AboutView() {
             </p>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc list-inside">
               <li>
-                <strong className="text-foreground">No data collection</strong> &mdash; no cookies,
-                no tracking pixels, no form submissions, and no server-side logging.
+                <strong className="text-foreground">No personal data collection</strong> &mdash; no
+                names, email addresses, cookies, tracking pixels, form submissions, or server-side
+                logging of any kind.
               </li>
               <li>
                 <strong className="text-foreground">Local-only persistence</strong> &mdash; all user
@@ -439,12 +441,12 @@ export function AboutView() {
               <li>
                 <strong className="text-foreground">Client-side cryptography</strong> &mdash; all
                 cryptographic operations run entirely in your browser via WebAssembly (OpenSSL,
-                liboqs). No keys or data are ever sent to a server.
+                liboqs). No keys or certificates are ever sent to a server.
               </li>
               <li>
-                <strong className="text-foreground">No third-party services</strong> &mdash; no
-                external APIs are called at runtime. The site is served as static files from GitHub
-                Pages.
+                <strong className="text-foreground">No third-party services at runtime</strong>
+                &mdash; no external APIs are called at runtime. The site is served as static files
+                from GitHub Pages.
               </li>
               <li>
                 <strong className="text-foreground">Full transparency</strong> &mdash; the entire
@@ -460,6 +462,65 @@ export function AboutView() {
                 for inspection under GPLv3.
               </li>
             </ul>
+
+            {/* Anonymous analytics disclosure */}
+            <div className="mt-6 pt-5 border-t border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <BarChart2 size={16} className="text-primary flex-shrink-0" />
+                <h3 className="text-sm font-semibold text-foreground">Anonymous usage analytics</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                To improve content accuracy and usability, PQC Today uses{' '}
+                <strong className="text-foreground">Google Analytics 4</strong> to collect
+                anonymous, aggregated behavioral signals. No personal identifiers are ever
+                transmitted. Specifically, we collect:
+              </p>
+              <ul className="space-y-1.5 text-sm text-muted-foreground list-disc list-inside">
+                <li>
+                  <strong className="text-foreground">Page navigation</strong> &mdash; which
+                  sections of the site are visited.
+                </li>
+                <li>
+                  <strong className="text-foreground">Feature interactions</strong> &mdash; searches
+                  performed, filters applied, algorithms and compliance items viewed.
+                </li>
+                <li>
+                  <strong className="text-foreground">Content accuracy signals</strong> &mdash;
+                  thumbs-up / thumbs-down votes on content pages (page path and vote only).
+                </li>
+                <li>
+                  <strong className="text-foreground">Learning milestones</strong> &mdash; module
+                  started / completed events and artifact generation (key type only, never the key
+                  itself).
+                </li>
+                <li>
+                  <strong className="text-foreground">Assistant feedback</strong> &mdash; helpful /
+                  unhelpful votes on PQC Assistant responses.
+                </li>
+              </ul>
+              <p className="text-sm text-muted-foreground mt-3">
+                Analytics are <strong className="text-foreground">disabled on localhost</strong>.
+                Google Analytics 4 anonymizes IP addresses by default &mdash;{' '}
+                <a
+                  href="https://policies.google.com/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Google&apos;s Privacy Policy
+                </a>{' '}
+                applies. You may opt out at any time via the{' '}
+                <a
+                  href="https://tools.google.com/dlpage/gaoptout"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Google Analytics opt-out browser extension
+                </a>
+                .
+              </p>
+            </div>
           </div>
         </motion.div>
 

@@ -85,23 +85,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Multi-conversation history</strong> &mdash;
-                    up to 10 chats, keyboard navigation, search, and Markdown export
+                    <strong className="text-foreground">Personalized onboarding</strong> &mdash;
+                    4-step wizard (Experience, Role, Region, Industry) with knowledge-gated guided
+                    tour
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Ask buttons everywhere</strong> &mdash; 14
-                    new surfaces including all 25 Learn modules, Assessment Report, Timeline, and
-                    Algorithms
+                    <strong className="text-foreground">Smarter Assistant</strong> &mdash; 220+
+                    document enrichments, entity inventory to reduce hallucination, and cross-domain
+                    linking
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Smarter assistant</strong> &mdash; response
-                    caching, persona-aware questions, RAG telemetry, and corpus freshness indicator
+                    <strong className="text-foreground">Content accuracy feedback</strong> &mdash;
+                    thumbs up/down voting on every content page with analytics tracking
                   </span>
                 </li>
               </ul>

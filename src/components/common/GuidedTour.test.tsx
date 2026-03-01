@@ -4,17 +4,33 @@ import { GuidedTour } from './GuidedTour'
 
 const TOUR_STORAGE_KEY = 'pqc-tour-completed'
 
+/** Advance past the intro slides (3) and click through the knowledge gate */
+function advancePastIntro(gateChoice: 'learning' | 'basics' | 'expert' = 'learning') {
+  // 3 intro slides — click Next 3 times to reach the gate
+  for (let i = 0; i < 3; i++) {
+    const nextBtns = screen.getAllByRole('button', { name: /Next/i })
+    fireEvent.click(nextBtns[0])
+  }
+
+  // Knowledge gate — click the appropriate choice
+  const labels: Record<string, RegExp> = {
+    learning: /I'm just learning/i,
+    basics: /I know the basics/i,
+    expert: /I'm an expert/i,
+  }
+  const choiceBtn = screen.getByText(labels[gateChoice])
+  fireEvent.click(choiceBtn)
+}
+
 describe('GuidedTour', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     localStorage.clear()
-    // Mock window location search
     Object.defineProperty(window, 'location', {
       value: { search: '' },
       writable: true,
     })
 
-    // Create dummy elements for all tour targets
     const dummyTargets = [
       'a[href="/assess"]',
       'a[href="/learn"]',
@@ -60,17 +76,18 @@ describe('GuidedTour', () => {
       vi.advanceTimersByTime(3000)
     })
 
-    expect(screen.queryByText('Risk Assessment')).not.toBeInTheDocument()
+    expect(screen.queryByText('Everything runs on encryption')).not.toBeInTheDocument()
   })
 
-  it('shows automatically if not completed', () => {
+  it('shows intro slides automatically if not completed', () => {
     render(<GuidedTour />)
 
     act(() => {
       vi.advanceTimersByTime(2500)
     })
 
-    expect(screen.queryAllByText('Risk Assessment').length).toBeGreaterThan(0)
+    // First intro slide should be visible
+    expect(screen.queryAllByText('Everything runs on encryption').length).toBeGreaterThan(0)
   })
 
   it('forces show if ?tour query param is present', () => {
@@ -83,33 +100,105 @@ describe('GuidedTour', () => {
       vi.advanceTimersByTime(2500)
     })
 
-    expect(screen.queryAllByText('Risk Assessment').length).toBeGreaterThan(0)
+    expect(screen.queryAllByText('Everything runs on encryption').length).toBeGreaterThan(0)
     expect(localStorage.getItem(TOUR_STORAGE_KEY)).toBeNull()
   })
 
-  it('can navigate through steps using next/prev buttons', () => {
+  it('navigates through intro slides to knowledge gate', () => {
     render(<GuidedTour />)
 
     act(() => {
       vi.advanceTimersByTime(2500)
     })
 
-    // Step 1: Risk Assessment
-    expect(screen.queryAllByText('Risk Assessment').length).toBeGreaterThan(0)
+    // Intro slide 1
+    expect(screen.queryAllByText('Everything runs on encryption').length).toBeGreaterThan(0)
 
-    // Click next (select one of the next buttons, since there's desktop and mobile)
+    // Next → slide 2
+    const nextBtns1 = screen.getAllByRole('button', { name: /Next/i })
+    fireEvent.click(nextBtns1[0])
+    expect(screen.queryAllByText('Quantum computers change everything').length).toBeGreaterThan(0)
+
+    // Next → slide 3
+    const nextBtns2 = screen.getAllByRole('button', { name: /Next/i })
+    fireEvent.click(nextBtns2[0])
+    expect(screen.queryAllByText(/The solution exists/).length).toBeGreaterThan(0)
+
+    // Next → knowledge gate
+    const nextBtns3 = screen.getAllByRole('button', { name: /Next/i })
+    fireEvent.click(nextBtns3[0])
+    expect(screen.queryAllByText(/How familiar are you/).length).toBeGreaterThan(0)
+  })
+
+  it('shows full feature tour after "I\'m just learning" gate choice', () => {
+    render(<GuidedTour />)
+
+    act(() => {
+      vi.advanceTimersByTime(2500)
+    })
+
+    advancePastIntro('learning')
+
+    // Should now show first feature step: Learning Modules
+    expect(screen.queryAllByText('Learning Modules').length).toBeGreaterThan(0)
+  })
+
+  it('shows shortened tour after "I know the basics" gate choice', () => {
+    render(<GuidedTour />)
+
+    act(() => {
+      vi.advanceTimersByTime(2500)
+    })
+
+    advancePastIntro('basics')
+
+    // Should show Learning Modules (first essential slide)
+    expect(screen.queryAllByText('Learning Modules').length).toBeGreaterThan(0)
+
+    // Navigate through essential steps (5: learn, assess, timeline, assistant, glossary)
+    const nextBtns1 = screen.getAllByRole('button', { name: /Next/i })
+    fireEvent.click(nextBtns1[0])
+    expect(screen.queryAllByText('Risk Assessment').length).toBeGreaterThan(0)
+  })
+
+  it('dismisses tour when "I\'m an expert" is chosen', () => {
+    render(<GuidedTour />)
+
+    act(() => {
+      vi.advanceTimersByTime(2500)
+    })
+
+    advancePastIntro('expert')
+
+    expect(screen.queryByText('Risk Assessment')).not.toBeInTheDocument()
+    expect(localStorage.getItem(TOUR_STORAGE_KEY)).toBe('true')
+  })
+
+  it('can navigate through feature steps using next/prev buttons', () => {
+    render(<GuidedTour />)
+
+    act(() => {
+      vi.advanceTimersByTime(2500)
+    })
+
+    advancePastIntro('learning')
+
+    // Step 1: Learning Modules
+    expect(screen.queryAllByText('Learning Modules').length).toBeGreaterThan(0)
+
+    // Click next
     const nextBtns = screen.getAllByRole('button', { name: /Next/i })
     fireEvent.click(nextBtns[0])
 
-    // Step 2: Learning Modules
-    expect(screen.queryAllByText('Learning Modules').length).toBeGreaterThan(0)
+    // Step 2: Risk Assessment
+    expect(screen.queryAllByText('Risk Assessment').length).toBeGreaterThan(0)
 
     // Click prev
-    const prevBtns = screen.getAllByRole('button', { name: /Previous step/i })
+    const prevBtns = screen.getAllByRole('button', { name: /Previous/i })
     fireEvent.click(prevBtns[0])
 
     // Back to Step 1
-    expect(screen.queryAllByText('Risk Assessment').length).toBeGreaterThan(0)
+    expect(screen.queryAllByText('Learning Modules').length).toBeGreaterThan(0)
   })
 
   it('dismisses the tour and sets localStorage item', () => {
@@ -122,20 +211,21 @@ describe('GuidedTour', () => {
     const dismissBtns = screen.getAllByRole('button', { name: /Dismiss tour/i })
     fireEvent.click(dismissBtns[0])
 
-    expect(screen.queryByText('Risk Assessment')).not.toBeInTheDocument()
+    expect(screen.queryByText('Everything runs on encryption')).not.toBeInTheDocument()
     expect(localStorage.getItem(TOUR_STORAGE_KEY)).toBe('true')
   })
 
-  it('finishes the tour on the last step', () => {
+  it('finishes the full feature tour on the last step', () => {
     render(<GuidedTour />)
 
     act(() => {
       vi.advanceTimersByTime(2500)
     })
 
-    // Navigate to the final step
-    // There are 12 steps, so click next 11 times.
-    for (let i = 0; i < 11; i++) {
+    advancePastIntro('learning')
+
+    // Navigate to the final step — 13 feature steps, click next 12 times
+    for (let i = 0; i < 12; i++) {
       const nextBtns = screen.getAllByRole('button', { name: /Next/i })
       fireEvent.click(nextBtns[0])
     }

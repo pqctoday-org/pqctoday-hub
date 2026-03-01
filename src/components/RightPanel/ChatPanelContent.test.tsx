@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { ChatPanelContent } from './ChatPanelContent'
 import '@testing-library/jest-dom'
 
@@ -33,8 +33,18 @@ vi.mock('../Chat/ApiKeySetup', () => ({
 
 // Mock SampleQuestionsModal
 vi.mock('../About/SampleQuestionsModal', () => ({
-  SampleQuestionsModal: ({ isOpen }: { isOpen: boolean }) =>
-    isOpen ? <div data-testid="sample-questions-modal">Sample Questions</div> : null,
+  SampleQuestionsModal: ({
+    isOpen,
+    onSendQuestion,
+  }: {
+    isOpen: boolean
+    onSendQuestion?: (q: string) => void
+  }) =>
+    isOpen ? (
+      <div data-testid="sample-questions-modal">
+        <button onClick={() => onSendQuestion?.('Test question from modal')}>Send Test</button>
+      </div>
+    ) : null,
 }))
 
 // Mock ConversationMenu
@@ -200,5 +210,17 @@ describe('ChatPanelContent', () => {
     render(<ChatPanelContent />)
 
     expect(screen.getByText('Something went wrong.')).toBeInTheDocument()
+  })
+
+  it('sends question via SampleQuestionsModal onSendQuestion', () => {
+    render(<ChatPanelContent />)
+
+    // Open sample questions modal
+    fireEvent.click(screen.getByLabelText('Sample questions'))
+    expect(screen.getByTestId('sample-questions-modal')).toBeInTheDocument()
+
+    // Click the send button in the mock
+    fireEvent.click(screen.getByText('Send Test'))
+    expect(mockSendQuery).toHaveBeenCalledWith('Test question from modal')
   })
 })

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react'
-import { Bot, Send, Trash2, KeyRound, HelpCircle } from 'lucide-react'
+import { Bot, Send, Trash2, KeyRound, HelpCircle, Download } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
 import { ChatMessage } from '../Chat/ChatMessage'
@@ -11,6 +11,7 @@ import { useChatStore } from '@/store/useChatStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useChatSend } from '@/hooks/useChatSend'
 import { logChatFeedback } from '@/utils/analytics'
+import { conversationToMarkdown, downloadMarkdown } from '@/services/chat/exportConversation'
 
 export const ChatPanelContent: React.FC = () => {
   const {
@@ -25,6 +26,8 @@ export const ChatPanelContent: React.FC = () => {
     setMessageFeedback,
     pendingQuestion,
     setPendingQuestion,
+    conversations,
+    activeConversationId,
   } = useChatStore()
 
   const isOpen = useRightPanelStore((s) => s.isOpen)
@@ -111,6 +114,23 @@ export const ChatPanelContent: React.FC = () => {
           </div>
           {apiKey && (
             <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  const conv = conversations.find((c) => c.id === activeConversationId)
+                  if (conv) {
+                    const md = conversationToMarkdown(conv)
+                    downloadMarkdown(md, `${conv.title.replace(/[^a-z0-9]/gi, '-')}.md`)
+                  }
+                }}
+                disabled={messages.length === 0}
+                className="min-h-[44px] min-w-[44px] p-2"
+                aria-label="Export conversation"
+                title="Export conversation"
+              >
+                <Download size={16} />
+              </Button>
               <Button
                 variant="ghost"
                 size="sm"
@@ -332,6 +352,7 @@ export const ChatPanelContent: React.FC = () => {
       <SampleQuestionsModal
         isOpen={showSampleQuestions}
         onClose={() => setShowSampleQuestions(false)}
+        onSendQuestion={(q) => sendQuery(q)}
       />
     </>
   )

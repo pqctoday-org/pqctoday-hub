@@ -18,7 +18,6 @@ import { PERSONA_RECOMMENDED_PATHS, PERSONA_NAV_PATHS } from '@/data/personaConf
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { PersonalizationSection } from './PersonalizationSection'
 import { PQCExplainer } from './PQCExplainer'
-import { ScoreCard } from './ScoreCard'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
@@ -252,9 +251,8 @@ export const LandingView = () => {
           custom={2}
           className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
         >
-          Explore global migration timelines, test real PQC algorithms in your browser, assess your
-          risk, and get instant answers from our AI assistant — all from a single open-source
-          platform.
+          Quantum computers will break today's encryption. This free platform walks you from
+          understanding the threat to deploying quantum-resistant cryptography — step by step.
         </motion.p>
 
         {/* PQC Explainer for non-experts */}
@@ -347,9 +345,6 @@ export const LandingView = () => {
         </motion.div>
       </section>
 
-      {/* Learning Journey Scorecard */}
-      <ScoreCard />
-
       {/* Journey Section */}
       <section>
         {/* Persona-aware heading */}
@@ -419,49 +414,6 @@ export const LandingView = () => {
               </motion.div>
             )
           })}
-        </motion.div>
-      </section>
-
-      {/* CTA */}
-      <section className="text-center pb-8">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          className="glass-panel p-8 md:p-12"
-          variants={{ visible: { transition: { delayChildren: 0.9, staggerChildren: 0.1 } } }}
-        >
-          <motion.h2 variants={fadeUp} custom={0} className="text-2xl md:text-3xl font-bold mb-4">
-            Open source. <span className="text-gradient">Free forever.</span>
-          </motion.h2>
-          <motion.p
-            variants={fadeUp}
-            custom={1}
-            className="text-muted-foreground max-w-lg mx-auto mb-6"
-          >
-            PQC Today is GPL-3.0 licensed. Contribute on GitHub, report issues, or just start
-            learning.
-          </motion.p>
-          <motion.div
-            variants={fadeUp}
-            custom={2}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Link to="/learn">
-              <Button variant="gradient" size="lg" className="w-full sm:w-auto">
-                Start Learning
-                <GraduationCap className="ml-2" size={18} />
-              </Button>
-            </Link>
-            <a
-              href="https://github.com/pqctoday/pqc-timeline-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                View on GitHub
-              </Button>
-            </a>
-          </motion.div>
         </motion.div>
       </section>
     </div>

@@ -1081,7 +1081,7 @@ function processQuizQuestions(): RAGChunk[] {
           quizCategory: category,
           questionCount: String(currentContent.length),
         },
-        deepLink: '/learn/quiz',
+        deepLink: `/learn/quiz?category=${category}`,
       })
       chunkIdx++
       currentContent = []
@@ -1393,7 +1393,7 @@ function processOpenSSLStudioGuide(): RAGChunk[] {
         'PQC Key Generation with OpenSSL Studio\n\nGenerate PQC keys using modern OpenSSL 3.x commands:\n- ML-KEM: openssl genpkey -algorithm mlkem768 -out mlkem768_key.pem\n- ML-DSA: openssl genpkey -algorithm mldsa65 -out mldsa65_key.pem\n- SLH-DSA: openssl genpkey -algorithm slhdsa-sha2-128s -out slhdsa_key.pem\n- Extract public key: openssl pkey -in key.pem -pubout -out pub.pem\n\nUse genpkey (not genrsa/ecparam) — modern OpenSSL commands support all PQC algorithms through the OQS provider.',
       category: 'openssl-studio',
       metadata: { feature: 'keygen' },
-      deepLink: '/openssl',
+      deepLink: '/openssl?cmd=genpkey',
     },
     {
       id: 'openssl-studio-certs',
@@ -1403,7 +1403,7 @@ function processOpenSSLStudioGuide(): RAGChunk[] {
         'PQC Certificate Operations with OpenSSL Studio\n\nCreate PQC certificates and CSRs:\n- Self-signed cert: openssl req -x509 -new -key mldsa65_key.pem -out cert.pem -days 365 -subj "/CN=PQC Test"\n- CSR: openssl req -new -key mldsa65_key.pem -out csr.pem -subj "/CN=PQC Test"\n- Verify cert: openssl x509 -in cert.pem -text -noout\n- Sign data: openssl pkeyutl -sign -inkey mldsa65_key.pem -in data.txt -out sig.bin\n- Verify signature: openssl pkeyutl -verify -pubin -inkey pub.pem -in data.txt -sigfile sig.bin\n\nAll certificates use ML-DSA-65 or other PQC algorithms for signing, demonstrating post-quantum PKI workflows.',
       category: 'openssl-studio',
       metadata: { feature: 'certificates' },
-      deepLink: '/openssl',
+      deepLink: '/openssl?cmd=x509',
     },
   ]
 }
@@ -1552,6 +1552,97 @@ function processCertificationXref(): RAGChunk[] {
 }
 
 // ---------------------------------------------------------------------------
+// Document enrichments — extracted dimensions from public/ HTML/PDF files
+// ---------------------------------------------------------------------------
+
+function processDocumentEnrichments(): RAGChunk[] {
+  const enrichmentsDir = path.join(DATA_DIR, 'doc-enrichments')
+  if (!fs.existsSync(enrichmentsDir)) return []
+
+  const chunks: RAGChunk[] = []
+  const collections = ['library', 'timeline', 'threats'] as const
+
+  for (const collection of collections) {
+    const prefix = `${collection}_doc_enrichments_`
+    const files = fs
+      .readdirSync(enrichmentsDir)
+      .filter((f) => f.startsWith(prefix) && f.endsWith('.md'))
+    if (files.length === 0) continue
+
+    // Sort by embedded date (MMDDYYYY), pick latest
+    const withDates = files.map((f) => {
+      const match = f.match(/(\d{2})(\d{2})(\d{4})\.md$/)
+      if (!match) return { file: f, date: 0 }
+      const [, mm, dd, yyyy] = match
+      return { file: f, date: parseInt(yyyy + mm + dd) }
+    })
+    withDates.sort((a, b) => b.date - a.date)
+    const latestFile = path.join(enrichmentsDir, withDates[0].file)
+
+    const raw = fs.readFileSync(latestFile, 'utf-8')
+
+    // Split by ## headings — each is one document
+    const sections = raw.split(/\n(?=## )/).filter((s) => s.trimStart().startsWith('## '))
+
+    for (const section of sections) {
+      const lines = section.split('\n')
+      const refId = lines[0].replace(/^##\s*/, '').trim()
+      if (!refId || refId === '---') continue
+
+      // Parse bullet fields: - **Field**: value
+      const fields: Record<string, string> = {}
+      for (const line of lines.slice(1)) {
+        const m = line.match(/^-\s+\*\*([^*]+)\*\*:\s*(.+)$/)
+        if (m) fields[m[1].trim()] = m[2].trim()
+      }
+
+      const title = fields['Title'] || refId
+      if (title === '---') continue
+
+      const contentParts: string[] = [`Title: ${title}`]
+      const fieldOrder = [
+        'Authors',
+        'Publication Date',
+        'Last Updated',
+        'Document Status',
+        'Main Topic',
+        'PQC Algorithms Covered',
+        'Quantum Threats Addressed',
+        'Migration Timeline Info',
+        'Applicable Regions / Bodies',
+        'Leaders Contributions Mentioned',
+        'PQC Products Mentioned',
+        'Protocols Covered',
+        'Infrastructure Layers',
+        'Standardization Bodies',
+        'Compliance Frameworks Referenced',
+      ]
+      for (const key of fieldOrder) {
+        const val = fields[key]
+        if (val && val !== 'None detected' && val !== 'Not specified')
+          contentParts.push(`${key}: ${val}`)
+      }
+
+      chunks.push({
+        id: `doc-enrichment-${sanitize(refId)}`,
+        source: 'document-enrichment',
+        title: `${title} — Document Analysis`,
+        content: contentParts.join('\n'),
+        category: 'document-enrichment',
+        metadata: { refId: sanitize(refId), collection },
+        ...(collection === 'library' && refId
+          ? { deepLink: `/library?ref=${encodeParam(refId)}` }
+          : collection === 'threats' && refId
+            ? { deepLink: `/threats?id=${encodeParam(refId)}` }
+            : {}),
+      })
+    }
+  }
+
+  return chunks
+}
+
+// ---------------------------------------------------------------------------
 // Page-level guides (non-learn pages)
 // ---------------------------------------------------------------------------
 
@@ -1671,6 +1762,108 @@ function processPageGuides(): RAGChunk[] {
 }
 
 // ---------------------------------------------------------------------------
+// Cross-domain linking — enriches chunks with related items from other sources
+// ---------------------------------------------------------------------------
+
+const MAX_CROSS_REFS = 3
+
+/**
+ * Enriches corpus chunks with cross-domain references.
+ * Mutates chunk `content` strings in-place — no new fields or schema changes.
+ */
+function enrichWithCrossReferences(corpus: RAGChunk[]): number {
+  // Build lookup indexes by source
+  const bySource = new Map<string, RAGChunk[]>()
+  for (const c of corpus) {
+    const group = bySource.get(c.source) ?? []
+    group.push(c)
+    bySource.set(c.source, group)
+  }
+
+  let linkCount = 0
+
+  // 1. Threats → Compliance: match threat industry against compliance chunk content
+  const complianceChunks = bySource.get('compliance') ?? []
+  for (const threat of bySource.get('threats') ?? []) {
+    const industry = threat.metadata?.industry?.toLowerCase()
+    if (!industry) continue
+    const matches = complianceChunks
+      .filter((c) => c.content.toLowerCase().includes(industry))
+      .slice(0, MAX_CROSS_REFS)
+    if (matches.length > 0) {
+      const links = matches.map((c) => `[${c.title}](${c.deepLink ?? '/compliance'})`).join(', ')
+      threat.content += `\nRelated Compliance: ${links}`
+      linkCount += matches.length
+    }
+  }
+
+  // 2. Leaders → Algorithms: match leader content against algorithm titles
+  const algorithmChunks = bySource.get('algorithms') ?? []
+  for (const leader of bySource.get('leaders') ?? []) {
+    const contentLower = leader.content.toLowerCase()
+    const matches = algorithmChunks
+      .filter((a) => {
+        const name = a.title.toLowerCase()
+        return contentLower.includes(name)
+      })
+      .slice(0, MAX_CROSS_REFS)
+    if (matches.length > 0) {
+      const links = matches.map((a) => `[${a.title}](${a.deepLink ?? '/algorithms'})`).join(', ')
+      leader.content += `\nRelated Algorithms: ${links}`
+      linkCount += matches.length
+    }
+  }
+
+  // 3. Library → Algorithms: match FIPS/standard references against algorithm fipsStandard
+  for (const lib of bySource.get('library') ?? []) {
+    const contentLower = lib.content.toLowerCase()
+    const matches = algorithmChunks
+      .filter((a) => {
+        const fips = a.metadata?.fipsStandard
+        return fips && contentLower.includes(fips.toLowerCase())
+      })
+      .slice(0, MAX_CROSS_REFS)
+    if (matches.length > 0) {
+      const links = matches.map((a) => `[${a.title}](${a.deepLink ?? '/algorithms'})`).join(', ')
+      lib.content += `\nRelated Algorithms: ${links}`
+      linkCount += matches.length
+    }
+  }
+
+  // 4. Compliance → Timeline: match compliance content countries against timeline countries
+  const timelineChunks = bySource.get('timeline') ?? []
+  const timelineByCountry = new Map<string, RAGChunk>()
+  for (const t of timelineChunks) {
+    const country = t.metadata?.country
+    if (country && !timelineByCountry.has(country)) {
+      timelineByCountry.set(country, t)
+    }
+  }
+  for (const comp of complianceChunks) {
+    const contentLower = comp.content.toLowerCase()
+    const matches: RAGChunk[] = []
+    for (const [country, chunk] of timelineByCountry) {
+      if (matches.length >= MAX_CROSS_REFS) break
+      if (contentLower.includes(country.toLowerCase())) {
+        matches.push(chunk)
+      }
+    }
+    if (matches.length > 0) {
+      const links = matches
+        .map((t) => {
+          const country = t.metadata?.country ?? 'Unknown'
+          return `[${country} Timeline](${t.deepLink ?? `/timeline?country=${country}`})`
+        })
+        .join(', ')
+      comp.content += `\nRelated Timeline: ${links}`
+      linkCount += matches.length
+    }
+  }
+
+  return linkCount
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -1700,6 +1893,7 @@ async function main() {
     { name: 'OpenSSL Studio Guide', fn: processOpenSSLStudioGuide },
     { name: 'Priority Matrix', fn: processPriorityMatrix },
     { name: 'Certification Xref', fn: processCertificationXref },
+    { name: 'Document Enrichments', fn: processDocumentEnrichments },
     { name: 'Page Guides', fn: processPageGuides },
   ]
 
@@ -1715,12 +1909,21 @@ async function main() {
     }
   }
 
+  // Cross-domain linking
+  const crossRefCount = enrichWithCrossReferences(corpus)
+  console.log(`\n  🔗 Cross-references added: ${crossRefCount} links`)
+
   // Ensure output directory exists
   if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true })
   }
 
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(corpus), 'utf-8')
+  const output = {
+    generatedAt: new Date().toISOString(),
+    chunkCount: corpus.length,
+    chunks: corpus,
+  }
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output), 'utf-8')
 
   const sizeKB = (fs.statSync(OUTPUT_FILE).size / 1024).toFixed(1)
   console.log(`\n✅ Corpus generated: ${corpus.length} chunks (${sizeKB} KB)`)

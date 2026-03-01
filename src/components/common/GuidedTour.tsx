@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   X,
@@ -16,255 +16,320 @@ import {
   ShieldCheck,
   Users,
   Search,
+  Lock,
+  Cpu,
+  MessageCircle,
 } from 'lucide-react'
 
+import { Button } from '../ui/button'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
 
 const TOUR_STORAGE_KEY = 'pqc-tour-completed'
 
-interface TourStep {
-  target: string // CSS selector for highlight + desktop anchor
+type Phase = 'intro' | 'gate' | 'features'
+
+interface Slide {
+  icon: React.FC<{ size?: number; className?: string }>
   title: string
   description: string
-  position: 'bottom' | 'top' | 'left' | 'right'
-  icon: React.FC<{ size?: number; className?: string }>
+  route?: string // displayed as a chip (feature cards only)
+  essential?: boolean // show in the shortened "I know the basics" tour
+  path?: string // used for persona filtering
 }
 
-// Steps ordered left-to-right matching the nav bar layout
-const tourSteps: TourStep[] = [
+// ── Phase 1: Why PQC? (educational) ─────────────────────────────────────────
+
+const introSlides: Slide[] = [
   {
-    target: 'a[href="/assess"]',
-    title: 'Risk Assessment',
+    icon: Lock,
+    title: 'Everything runs on encryption',
     description:
-      "Evaluate your organization's PQC readiness with a guided 13-step wizard. Get a scored report with tailored recommendations.",
-    position: 'bottom',
-    icon: ClipboardCheck,
+      'Every bank transfer, medical record, government secret, and software update depends on encryption algorithms (RSA, ECC) designed decades ago.',
   },
   {
-    target: 'a[href="/learn"]',
-    title: 'Learning Modules',
+    icon: Cpu,
+    title: 'Quantum computers change everything',
     description:
-      'New to PQC? Start with "PQC 101" for a beginner-friendly introduction, then explore hands-on workshops and quizzes.',
-    position: 'bottom',
-    icon: GraduationCap,
+      'A powerful enough quantum computer could break these algorithms in hours. Some adversaries are already collecting encrypted data today to decrypt later \u2014 a strategy called \u201CHarvest Now, Decrypt Later.\u201D',
   },
   {
-    target: 'a[href="/timeline"]',
-    title: 'Migration Timeline',
-    description:
-      'Track global PQC migration deadlines and regulatory milestones from 40+ countries on an interactive Gantt chart.',
-    position: 'bottom',
-    icon: Globe,
-  },
-  {
-    target: 'a[href="/threats"]',
-    title: 'Threat Landscape',
-    description:
-      'Explore the quantum threat landscape — harvest-now-decrypt-later attacks, crypto-agility gaps, and risk timelines.',
-    position: 'bottom',
-    icon: AlertTriangle,
-  },
-  {
-    target: 'a[href="/algorithms"]',
-    title: 'Algorithm Explorer',
-    description:
-      'Compare post-quantum algorithms by type, security level, performance, and standardization status.',
-    position: 'bottom',
-    icon: Shield,
-  },
-  {
-    target: 'a[href="/library"]',
-    title: 'Standards Library',
-    description:
-      'Browse 165+ PQC standards, drafts, and guidance documents from NIST, IETF, ETSI, and more.',
-    position: 'bottom',
-    icon: BookOpen,
-  },
-  {
-    target: 'a[href="/migrate"]',
-    title: 'Migration Planner',
-    description:
-      'Plan your migration with step-by-step guidance for transitioning your systems to post-quantum cryptography.',
-    position: 'bottom',
-    icon: ArrowRightLeft,
-  },
-  {
-    target: 'a[href="/playground"]',
-    title: 'Crypto Playground',
-    description:
-      'Run real ML-KEM and ML-DSA operations in your browser via WASM. Available on desktop.',
-    position: 'bottom',
-    icon: FlaskConical,
-  },
-  {
-    target: 'a[href="/openssl"]',
-    title: 'OpenSSL Studio',
-    description:
-      'Run OpenSSL commands in your browser via WASM — generate keys, sign certificates, and test PQC algorithms. Available on desktop.',
-    position: 'bottom',
-    icon: Activity,
-  },
-  {
-    target: 'a[href="/compliance"]',
-    title: 'Compliance Tracker',
-    description:
-      'Track compliance requirements across NIST, ANSSI, BSI, and Common Criteria frameworks.',
-    position: 'bottom',
     icon: ShieldCheck,
-  },
-  {
-    target: 'a[href="/leaders"]',
-    title: 'Industry Leaders',
+    title: 'The solution exists \u2014 the race is on',
     description:
-      'See which organizations and countries are leading the post-quantum cryptography transition.',
-    position: 'bottom',
-    icon: Users,
-  },
-  {
-    target: 'button[aria-label="Open glossary"]',
-    title: 'Glossary',
-    description:
-      "Don't know a term? Open the glossary anytime to look up PQC concepts, algorithms, and standards.",
-    position: 'top',
-    icon: Search,
+      'NIST published new quantum-resistant encryption standards in 2024. Governments are mandating migration by 2030\u20132035. This platform helps you understand the threat, assess your readiness, and plan your transition.',
   },
 ]
 
-const TOOLTIP_WIDTH = 320
+// ── Phase 2: Feature tour (centered cards, no nav highlighting) ───────────────
 
-const getTooltipPosition = (rect: DOMRect, position: TourStep['position']) => {
-  const gap = 12
-  switch (position) {
-    case 'bottom':
-      return { top: rect.bottom + gap, left: rect.left + rect.width / 2 }
-    case 'top':
-      return { top: rect.top - gap, left: rect.left + rect.width / 2 }
-    case 'left':
-      return { top: rect.top + rect.height / 2, left: rect.left - gap }
-    case 'right':
-      return { top: rect.top + rect.height / 2, left: rect.right + gap }
-  }
+const featureSlides: Slide[] = [
+  {
+    icon: GraduationCap,
+    title: 'Learning Modules',
+    description:
+      '25 modules from \u201CWhat is PQC?\u201D to migration planning \u2014 follow a guided path or explore at your own pace.',
+    route: '/learn',
+    path: '/learn',
+    essential: true,
+  },
+  {
+    icon: ClipboardCheck,
+    title: 'Risk Assessment',
+    description:
+      'Answer questions about your organization and get a scored readiness report with prioritized next steps.',
+    route: '/assess',
+    path: '/assess',
+    essential: true,
+  },
+  {
+    icon: Globe,
+    title: 'Migration Timeline',
+    description:
+      'See exactly when your country mandates quantum-resistant encryption, with every government deadline on one chart.',
+    route: '/timeline',
+    path: '/timeline',
+    essential: true,
+  },
+  {
+    icon: MessageCircle,
+    title: 'PQC Assistant',
+    description:
+      'Ask any question about quantum risk, algorithms, or migration — and get answers grounded in NIST standards and real-world guidance. Available on every page.',
+    essential: true,
+  },
+  {
+    icon: AlertTriangle,
+    title: 'Threat Landscape',
+    description:
+      'Understand which attacks are real now \u2014 including why data encrypted today is already at risk of future exposure.',
+    route: '/threats',
+    path: '/threats',
+  },
+  {
+    icon: Shield,
+    title: 'Algorithm Explorer',
+    description:
+      'Compare the new encryption algorithms replacing RSA and ECC by performance, security level, and adoption status.',
+    route: '/algorithms',
+    path: '/algorithms',
+  },
+  {
+    icon: BookOpen,
+    title: 'Standards Library',
+    description:
+      'Every NIST, IETF, and ETSI document driving the transition \u2014 searchable, filterable, always up to date.',
+    route: '/library',
+    path: '/library',
+  },
+  {
+    icon: ArrowRightLeft,
+    title: 'Migrate Catalog',
+    description:
+      '220+ tools and products verified for PQC support, organized by the infrastructure layer you\u2019re upgrading.',
+    route: '/migrate',
+    path: '/migrate',
+  },
+  {
+    icon: FlaskConical,
+    title: 'Crypto Playground',
+    description:
+      'Run real quantum-resistant key generation and encryption in your browser \u2014 no install, no setup.',
+    route: '/playground',
+    path: '/playground',
+  },
+  {
+    icon: Activity,
+    title: 'OpenSSL Studio',
+    description:
+      'Use OpenSSL WASM directly in your browser \u2014 generate certificates, test PQC algorithms, inspect key material.',
+    route: '/openssl',
+    path: '/openssl',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Compliance Tracker',
+    description:
+      'Track deadlines and requirements from FIPS, CNSA 2.0, ETSI, and 10+ frameworks in one filterable view.',
+    route: '/compliance',
+    path: '/compliance',
+  },
+  {
+    icon: Users,
+    title: 'Industry Leaders',
+    description:
+      'See which organizations are already deploying PQC \u2014 and what they\u2019ve shipped.',
+    route: '/leaders',
+    path: '/leaders',
+  },
+  {
+    icon: Search,
+    title: 'Glossary',
+    description: '170+ terms explained in plain English, one click away from anywhere in the app.',
+    essential: true,
+  },
+]
+
+// ── Shared card renderer ─────────────────────────────────────────────────────
+
+const TourCard: React.FC<{
+  slide: Slide
+  slideIndex: number
+  totalSlides: number
+  onNext: () => void
+  onPrev: () => void
+  onDismiss: () => void
+  isLastSlide: boolean
+  lastLabel?: string
+}> = ({
+  slide,
+  slideIndex,
+  totalSlides,
+  onNext,
+  onPrev,
+  onDismiss,
+  isLastSlide,
+  lastLabel = 'Done',
+}) => {
+  const Icon = slide.icon
+  return (
+    <motion.div
+      key={slideIndex}
+      drag="x"
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.2}
+      onDragEnd={(_, info) => {
+        if (info.offset.x < -50) onNext()
+        else if (info.offset.x > 50) onPrev()
+      }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.2 }}
+      className="glass-panel p-6 w-full max-w-md shadow-2xl border-primary/30 pointer-events-auto cursor-grab active:cursor-grabbing"
+    >
+      {/* Header */}
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-full bg-primary/10 text-primary shrink-0">
+            <Icon size={22} />
+          </div>
+          {slide.route && (
+            <span className="text-[10px] font-mono text-muted-foreground bg-muted rounded px-1.5 py-0.5">
+              {slide.route}
+            </span>
+          )}
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onDismiss}
+          className="min-h-[44px] min-w-[44px] shrink-0"
+          aria-label="Dismiss tour"
+        >
+          <X size={14} />
+        </Button>
+      </div>
+
+      {/* Content */}
+      <h3 className="font-bold text-foreground text-lg mb-2">{slide.title}</h3>
+      <p className="text-sm text-muted-foreground leading-relaxed mb-6">{slide.description}</p>
+
+      {/* Dot indicators */}
+      <div className="flex gap-1.5 justify-center mb-5">
+        {Array.from({ length: totalSlides }).map((_, i) => (
+          <div
+            key={i}
+            className={`rounded-full transition-all ${
+              i === slideIndex ? 'w-6 h-1.5 bg-primary' : 'w-1.5 h-1.5 bg-muted-foreground/30'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Navigation */}
+      <div className="flex items-center justify-between">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onDismiss}
+          className="text-xs text-muted-foreground hover:text-foreground min-h-[44px]"
+        >
+          Skip
+        </Button>
+        <div className="flex items-center gap-1">
+          {slideIndex > 0 && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onPrev}
+              className="min-h-[44px] min-w-[44px]"
+              aria-label="Previous"
+            >
+              <ChevronLeft size={16} />
+            </Button>
+          )}
+          <Button
+            onClick={onNext}
+            className="flex items-center gap-1 px-4 min-h-[44px] text-black font-bold"
+          >
+            {isLastSlide ? lastLabel : 'Next'}
+            {!isLastSlide && <ChevronRight size={14} />}
+          </Button>
+        </div>
+      </div>
+    </motion.div>
+  )
 }
+
+// ── Main component ───────────────────────────────────────────────────────────
 
 export const GuidedTour: React.FC = () => {
   const [isActive, setIsActive] = useState(false)
+  const [phase, setPhase] = useState<Phase>('intro')
+  const [introStep, setIntroStep] = useState(0)
   const [currentStep, setCurrentStep] = useState(0)
-  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({})
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [essentialOnly, setEssentialOnly] = useState(false)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 
-  // Filter tour steps to only include features visible for the current persona
-  const visibleSteps = useMemo(() => {
+  // Filter feature slides to match what's accessible for this persona
+  const visibleFeatures = useMemo(() => {
+    // eslint-disable-next-line security/detect-object-injection
     const personaPaths = selectedPersona ? PERSONA_NAV_PATHS[selectedPersona] : null
-    if (personaPaths === null) return tourSteps // researcher or no persona: show all
+    const allVisible =
+      personaPaths === null ? null : new Set([...ALWAYS_VISIBLE_PATHS, ...personaPaths])
 
-    const allVisible = new Set([...ALWAYS_VISIBLE_PATHS, ...personaPaths])
-    return tourSteps.filter((step) => {
-      // Extract path from CSS selector like 'a[href="/assess"]'
-      const match = step.target.match(/href="([^"]+)"/)
-      if (!match) return true // non-nav steps (e.g., glossary button) always shown
-      return allVisible.has(match[1])
+    return featureSlides.filter((slide) => {
+      if (allVisible && slide.path && !allVisible.has(slide.path)) return false
+      if (essentialOnly && !slide.essential) return false
+      return true
     })
-  }, [selectedPersona])
+  }, [selectedPersona, essentialOnly])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     let completed = false
     try {
-      if (params.has('tour')) {
-        localStorage.removeItem(TOUR_STORAGE_KEY)
-      }
+      if (params.has('tour')) localStorage.removeItem(TOUR_STORAGE_KEY)
       completed = !!localStorage.getItem(TOUR_STORAGE_KEY)
     } catch {
-      // localStorage unavailable (private browsing) — show tour
+      // localStorage unavailable
     }
     if (!completed) {
-      timerRef.current = setTimeout(() => setIsActive(true), 2000)
-    }
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current)
+      const timer = setTimeout(() => setIsActive(true), 2000)
+      return () => clearTimeout(timer)
     }
   }, [])
-
-  // Highlight the target nav element and scroll it into view
-  useEffect(() => {
-    if (!isActive) return
-
-    // eslint-disable-next-line security/detect-object-injection
-    const step = visibleSteps[currentStep]
-    if (!step) return
-
-    const el = document.querySelector(step.target) as HTMLElement | null
-    if (!el) return
-
-    // Save original cssText so we can restore it cleanly
-    const savedCssText = el.style.cssText
-
-    // Apply highlight — element pops above the z-50 overlay
-    el.style.cssText = `${savedCssText}; position: relative; z-index: 51; box-shadow: 0 0 0 3px hsl(var(--primary) / 0.6), 0 0 16px hsl(var(--primary) / 0.3); border-radius: 0.5rem; transition: box-shadow 0.3s ease;`
-
-    // Scroll the nav bar so the highlighted icon is visible
-    el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
-
-    return () => {
-      el.style.cssText = savedCssText
-    }
-  }, [isActive, currentStep, visibleSteps])
-
-  // Desktop-only: compute tooltip position anchored to target element
-  const updatePosition = useCallback(() => {
-    if (!isActive) return
-    // eslint-disable-next-line security/detect-object-injection
-    const step = visibleSteps[currentStep]
-    if (!step) return
-
-    const el = document.querySelector(step.target)
-    if (el) {
-      const rect = el.getBoundingClientRect()
-      const pos = getTooltipPosition(rect, step.position)
-      const vw = document.documentElement.clientWidth
-      const vh = window.visualViewport?.height ?? window.innerHeight
-      // Clamp so the full tooltip width stays within [8px, vw - 8px]
-      const idealLeft = pos.left - TOOLTIP_WIDTH / 2
-      const clampedLeft = Math.max(8, Math.min(idealLeft, vw - TOOLTIP_WIDTH - 8))
-      setTooltipStyle({
-        position: 'fixed',
-        top: step.position === 'top' ? undefined : pos.top,
-        bottom: step.position === 'top' ? `${vh - rect.top + 12}px` : undefined,
-        left: clampedLeft,
-        transform:
-          step.position === 'left'
-            ? 'translateX(-100%) translateY(-50%)'
-            : step.position === 'right'
-              ? 'translateY(-50%)'
-              : undefined,
-        zIndex: 60,
-      })
-    }
-  }, [isActive, currentStep, visibleSteps])
-
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => updatePosition())
-    window.addEventListener('resize', updatePosition)
-    window.addEventListener('orientationchange', updatePosition)
-    return () => {
-      cancelAnimationFrame(frame)
-      window.removeEventListener('resize', updatePosition)
-      window.removeEventListener('orientationchange', updatePosition)
-    }
-  }, [updatePosition])
 
   const dismiss = useCallback(() => {
     setIsActive(false)
     try {
       localStorage.setItem(TOUR_STORAGE_KEY, 'true')
     } catch {
-      // localStorage unavailable (private browsing) — tour will re-show next visit
+      // localStorage unavailable
     }
   }, [])
 
-  // Document-level Escape key listener (works regardless of focus state, including Safari)
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') dismiss()
@@ -273,8 +338,37 @@ export const GuidedTour: React.FC = () => {
     return () => document.removeEventListener('keydown', handler)
   }, [isActive, dismiss])
 
+  // ── Intro navigation ────────────────────────────────────────────────────────
+
+  const introNext = () => {
+    if (introStep < introSlides.length - 1) {
+      setIntroStep((s) => s + 1)
+    } else {
+      setPhase('gate')
+    }
+  }
+
+  const introPrev = () => {
+    if (introStep > 0) setIntroStep((s) => s - 1)
+  }
+
+  // ── Knowledge gate ──────────────────────────────────────────────────────────
+
+  const handleGateChoice = (choice: 'learning' | 'basics' | 'expert') => {
+    usePersonaStore.getState().setExperienceLevel(choice === 'learning' ? 'new' : choice)
+    if (choice === 'expert') {
+      dismiss()
+    } else {
+      setEssentialOnly(choice === 'basics')
+      setCurrentStep(0)
+      setPhase('features')
+    }
+  }
+
+  // ── Features navigation ─────────────────────────────────────────────────────
+
   const next = () => {
-    if (currentStep < visibleSteps.length - 1) {
+    if (currentStep < visibleFeatures.length - 1) {
       setCurrentStep((s) => s + 1)
     } else {
       dismiss()
@@ -282,147 +376,137 @@ export const GuidedTour: React.FC = () => {
   }
 
   const prev = () => {
-    if (currentStep > 0) {
-      setCurrentStep((s) => s - 1)
-    }
+    if (currentStep > 0) setCurrentStep((s) => s - 1)
   }
 
   if (!isActive) return null
 
-  // eslint-disable-next-line security/detect-object-injection
-  const step = visibleSteps[currentStep]
-  const StepIcon = step.icon
+  // ── Shared layout helpers (inlined to avoid static-components lint error) ──
 
-  return (
-    <AnimatePresence>
-      {isActive && (
-        <div className="print:hidden">
-          {/* Overlay — desktop: click-to-dismiss; mobile: visual only (pointer-events-none so background
-              content remains tappable; the card's own Skip/Get Started buttons handle dismissal) */}
-          <div
-            className="fixed inset-0 z-50 bg-black/50 pointer-events-none md:pointer-events-auto"
-            onClick={dismiss}
-            aria-hidden="true"
+  const overlay = (
+    <div className="fixed inset-0 z-50 bg-black/50" onClick={dismiss} aria-hidden="true" />
+  )
+
+  const wrapCard = (children: React.ReactNode) => (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 pointer-events-none">
+      <AnimatePresence mode="wait">{children}</AnimatePresence>
+    </div>
+  )
+
+  // ── Phase: intro ───────────────────────────────────────────────────────────
+
+  if (phase === 'intro') {
+    // eslint-disable-next-line security/detect-object-injection
+    const slide = introSlides[introStep]
+    if (!slide) {
+      setPhase('gate')
+      return null
+    }
+    return (
+      <div className="print:hidden">
+        {overlay}
+        {wrapCard(
+          <TourCard
+            slide={slide}
+            slideIndex={introStep}
+            totalSlides={introSlides.length}
+            onNext={introNext}
+            onPrev={introPrev}
+            onDismiss={dismiss}
+            isLastSlide={introStep === introSlides.length - 1}
+            lastLabel="Next"
           />
+        )}
+      </div>
+    )
+  }
 
-          {/* Desktop: anchored tooltip */}
+  // ── Phase: gate ────────────────────────────────────────────────────────────
+
+  if (phase === 'gate') {
+    return (
+      <div className="print:hidden">
+        {overlay}
+        {wrapCard(
           <motion.div
-            key={`desktop-${currentStep}`}
-            initial={{ opacity: 0, y: step.position === 'top' ? 10 : -10 }}
-            animate={{ opacity: 1, y: 0 }}
+            key="gate"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            style={tooltipStyle}
-            className="hidden md:block w-80 max-w-[calc(100vw-2rem)]"
+            className="glass-panel p-6 w-full max-w-md shadow-2xl border-primary/30 pointer-events-auto"
           >
-            <div className="glass-panel p-4 shadow-2xl border-primary/30">
-              <div className="flex items-start justify-between mb-2">
-                <h3 className="font-bold text-foreground text-sm">{step.title}</h3>
-                <button
-                  onClick={dismiss}
-                  className="p-1.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded hover:bg-muted/50 text-muted-foreground transition-colors"
-                  aria-label="Dismiss tour"
+            <h3 className="font-bold text-foreground text-base mb-1">
+              How familiar are you with quantum computing and cryptography?
+            </h3>
+            <p className="text-xs text-muted-foreground mb-5">
+              This helps us tailor the tour to your level.
+            </p>
+            <div className="flex flex-col gap-2">
+              {(
+                [
+                  {
+                    id: 'learning',
+                    label: "I'm just learning",
+                    sub: 'Show me everything this platform offers',
+                  },
+                  {
+                    id: 'basics',
+                    label: 'I know the basics',
+                    sub: 'Just show me the key features',
+                  },
+                  {
+                    id: 'expert',
+                    label: "I'm an expert",
+                    sub: "Skip the tour — I'll explore on my own",
+                  },
+                ] as const
+              ).map(({ id, label, sub }) => (
+                <Button
+                  key={id}
+                  variant="outline"
+                  onClick={() => handleGateChoice(id)}
+                  className="w-full justify-start text-left px-4 py-3 h-auto rounded-lg hover:border-primary/30 hover:bg-primary/5"
                 >
-                  <X size={14} />
-                </button>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-                {step.description}
-              </p>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] text-muted-foreground">
-                  {currentStep + 1} / {visibleSteps.length}
-                </span>
-                <div className="flex items-center gap-1">
-                  {currentStep > 0 && (
-                    <button
-                      onClick={prev}
-                      className="p-1 rounded hover:bg-muted/50 text-muted-foreground transition-colors"
-                      aria-label="Previous step"
-                    >
-                      <ChevronLeft size={16} />
-                    </button>
-                  )}
-                  <button
-                    onClick={next}
-                    className="flex items-center gap-1 px-3 py-1 rounded-lg bg-primary text-black text-xs font-bold hover:bg-primary/90 transition-colors"
-                  >
-                    {currentStep === visibleSteps.length - 1 ? 'Done' : 'Next'}
-                    {currentStep < visibleSteps.length - 1 && <ChevronRight size={14} />}
-                  </button>
-                </div>
-              </div>
+                  <span className="font-bold text-sm block">{label}</span>
+                  <span className="text-xs text-muted-foreground">{sub}</span>
+                </Button>
+              ))}
             </div>
           </motion.div>
+        )}
+      </div>
+    )
+  }
 
-          {/* Mobile: full-screen swipeable card carousel.
-              Container is pointer-events-none so taps outside the card reach the page;
-              the card itself restores pointer-events-auto for drag + buttons. */}
-          <div className="md:hidden fixed inset-0 z-[60] flex items-center justify-center p-6 pointer-events-none">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`mobile-${currentStep}`}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={(_, info) => {
-                  if (info.offset.x < -50) next()
-                  else if (info.offset.x > 50) prev()
-                }}
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.2 }}
-                className="glass-panel p-6 w-full max-w-sm text-center shadow-2xl border-primary/30 cursor-grab active:cursor-grabbing pointer-events-auto"
-              >
-                {/* Icon */}
-                <div className="inline-flex p-3 rounded-full bg-primary/10 text-primary mb-4">
-                  <StepIcon size={28} />
-                </div>
+  // ── Phase: features ─────────────────────────────────────────────────────────
 
-                {/* Title */}
-                <h3 className="font-bold text-foreground text-lg mb-2">{step.title}</h3>
+  if (visibleFeatures.length === 0) {
+    dismiss()
+    return null
+  }
+  // eslint-disable-next-line security/detect-object-injection
+  const feature = visibleFeatures[currentStep]
+  if (!feature) {
+    dismiss()
+    return null
+  }
 
-                {/* Description */}
-                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                  {step.description}
-                </p>
-
-                {/* Dot indicators */}
-                <div className="flex gap-1.5 justify-center mb-5">
-                  {visibleSteps.map((_, i) => (
-                    <div
-                      key={i}
-                      className={`rounded-full transition-all ${
-                        i === currentStep
-                          ? 'w-6 h-1.5 bg-primary'
-                          : 'w-1.5 h-1.5 bg-muted-foreground/30'
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                {/* Navigation */}
-                <div className="flex items-center justify-between">
-                  <button
-                    onClick={dismiss}
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors py-2 px-3 min-h-[44px]"
-                  >
-                    Skip
-                  </button>
-                  <button
-                    onClick={next}
-                    className="flex items-center gap-1 px-4 py-2 min-h-[44px] rounded-lg bg-primary text-black text-sm font-bold hover:bg-primary/90 transition-colors"
-                  >
-                    {currentStep === visibleSteps.length - 1 ? 'Get Started' : 'Next'}
-                    {currentStep < visibleSteps.length - 1 && <ChevronRight size={16} />}
-                  </button>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
+  return (
+    <div className="print:hidden">
+      {overlay}
+      {wrapCard(
+        <TourCard
+          slide={feature}
+          slideIndex={currentStep}
+          totalSlides={visibleFeatures.length}
+          onNext={next}
+          onPrev={prev}
+          onDismiss={dismiss}
+          isLastSlide={currentStep === visibleFeatures.length - 1}
+          lastLabel="Get Started"
+        />
       )}
-    </AnimatePresence>
+    </div>
   )
 }

@@ -4,6 +4,98 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.5.0] - 2026-02-28
+
+### Added
+
+- **Personalization wizard**: 4-step onboarding (Experience → Role → Region → Industry) with
+  animated stepper, info modals explaining how each choice shapes the experience,
+  `PersonalizedAvatar` live preview, and embedded `ScoreCard`. Replaces the previous 3-row
+  inline form.
+
+- **Experience level personalization**: New `ExperienceLevel` type (`new` / `basics` / `expert`)
+  in `usePersonaStore` v2. Wired through guided tour knowledge gate, personalization wizard,
+  and learning experience difficulty filtering.
+
+- **Guided tour rewrite**: 3-phase centered card design replacing nav-anchored tooltips.
+  Phase 1 — Intro (3 slides explaining why PQC matters). Phase 2 — Knowledge Gate
+  ("How familiar are you?") adjusts tour length: "Just learning" → full 13-feature tour,
+  "Know the basics" → essential-only 5 slides, "Expert" → dismisses tour. Phase 3 — Feature
+  cards (up to 13, persona-filtered) with swipeable drag interaction and dot indicators.
+
+- **PQC Explainer**: Dismissible "Why does this matter?" component on the landing page with
+  3 educational cards (modern encryption → quantum threat → new standards). Persistent
+  dismissal via localStorage; CTA links to PQC 101 module.
+
+- **Page accuracy feedback**: Fixed bottom-left thumbs-up/down widget on 8 content routes
+  (`/learn`, `/timeline`, `/leaders`, `/algorithms`, `/library`, `/compliance`, `/threats`,
+  `/migrate`). Logs votes via GA4 `logAccuracyFeedback()`; resets on page navigation.
+
+- **Document enrichment pipeline**: `scripts/enrich-public-docs.py` extracts 11 structured
+  dimensions (algorithms, threats, protocols, infrastructure layers, compliance frameworks,
+  standardization bodies, etc.) from 220+ archived HTML/PDF documents. Outputs date-stamped
+  markdown to `src/data/doc-enrichments/`, consumed by the RAG corpus generator.
+
+- **RAG cross-references**: Post-processing pass in `generate-rag-corpus.ts` adds cross-domain
+  links between threats↔compliance, leaders↔algorithms, library↔algorithms, and
+  compliance↔timeline. Capped at 3 cross-refs per chunk.
+
+- **Entity inventory**: `extractEntityInventory()` in GeminiService builds a compact entity list
+  from retrieved RAG chunks (max 30), injected into the system prompt as a hallucination guard —
+  the model is instructed to say "not in the current database" for items not in the inventory.
+
+- **OpenSSL Studio deep linking**: `?cmd=` query parameter with user-friendly aliases
+  (`keygen` → `genpkey`, `cert` → `x509`, `sign` → `dgst`, `enc` → `enc`, `hash` → `dgst`).
+
+- **Quiz deep links**: RAG corpus chunks now link to `/learn/quiz?category=<id>` instead of
+  the generic `/learn/quiz` path.
+
+- **Module difficulty levels**: All 25 learning modules tagged `beginner`, `intermediate`, or
+  `advanced` in `moduleData.ts` (6 beginner, 10 intermediate, 9 advanced).
+
+- **Chat panel export button**: Download icon in the right-panel chat header exports the active
+  conversation as formatted Markdown with timestamps and role labels.
+
+- **Textarea UI component**: New shared `<Textarea>` component in `src/components/ui/textarea.tsx`
+  with semantic tokens (`border-input`, `bg-muted`, `text-foreground`), focus ring, and
+  ref forwarding.
+
+- **Document enrichment RAG source**: `document-enrichment` source type in RetrievalService
+  with intent-based boost multipliers (definition: 1.2, recommendation: 1.3, country_query: 1.5).
+
+### Changed
+
+- **Landing page**: Hero subtitle rewritten from feature list to problem-solution framing
+  ("Quantum computers will break today's encryption..."). Removed the bottom "Open source.
+  Free forever." CTA section. `ScoreCard` moved from standalone to embedded inside
+  `PersonalizationSection`.
+
+- **ScoreCard**: New `embedded` prop (default `false`) — when true, renders without `motion.section`
+  wrapper or `glass-panel` styling for inline embedding.
+
+- **ConversationMenu**: Export and delete buttons are now always visible (removed hover-only
+  `opacity-0 group-hover:opacity-100` classes) for better touch device UX.
+
+- **SampleQuestionsModal**: Added `useFocusTrap` hook, `role="dialog"`, `aria-modal="true"`,
+  `aria-label="Sample questions"`; replaced raw `<button>` elements with `<Button>` component.
+
+- **About page**: Privacy language refined ("No personal data collection" with specific items);
+  new "Anonymous usage analytics" section disclosing GA4 tracking (page navigation, feature
+  interactions, accuracy signals, learning milestones, assistant feedback) with opt-out link.
+
+- **RAG corpus format**: Output changed from bare JSON array to `{ generatedAt, chunkCount,
+chunks }` wrapper. RetrievalService handles both legacy and new formats; exposes `corpusDate`
+  getter for freshness tracking.
+
+- **Sitemap**: 9 new learning module URLs added (compliance-strategy, pqc-risk-management,
+  pqc-business-case, pqc-governance, vendor-risk, migration-program, code-signing,
+  api-security-jwt, iot-ot-pqc); all `<lastmod>` dates updated to 2026-02-28.
+
+- **Compliance data**: Refreshed from NIST, ANSSI, and Common Criteria scrapers.
+
+- **QandA document**: Updated assessment references from 13-step to 14-step; corpus size
+  ~2,100 chunks from 24 data sources; new Q7 on document enrichment dimensions.
+
 ## [2.4.0] - 2026-02-28
 
 ### Added

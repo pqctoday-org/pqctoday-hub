@@ -4,6 +4,7 @@ import type { PersonaId } from '../data/learningPersonas'
 import { useHistoryStore } from './useHistoryStore'
 
 export type Region = 'americas' | 'eu' | 'apac' | 'global'
+export type ExperienceLevel = 'new' | 'basics' | 'expert'
 
 interface PersonaState {
   selectedPersona: PersonaId | null
@@ -12,12 +13,14 @@ interface PersonaState {
   selectedIndustry: string | null
   selectedIndustries: string[]
   suppressSuggestion: boolean
+  experienceLevel: ExperienceLevel | null
   setPersona: (persona: PersonaId | null) => void
   clearPersona: () => void
   markPickerSeen: () => void
   setRegion: (region: Region | null) => void
   setIndustry: (industry: string | null) => void
   setIndustries: (industries: string[]) => void
+  setExperienceLevel: (level: ExperienceLevel | null) => void
   clearPreferences: () => void
 }
 
@@ -30,6 +33,7 @@ export const usePersonaStore = create<PersonaState>()(
       selectedIndustry: null,
       selectedIndustries: [],
       suppressSuggestion: false,
+      experienceLevel: null,
 
       setPersona: (persona) => {
         set({
@@ -68,6 +72,8 @@ export const usePersonaStore = create<PersonaState>()(
       setIndustries: (industries) =>
         set({ selectedIndustries: industries, selectedIndustry: industries[0] ?? null }),
 
+      setExperienceLevel: (level) => set({ experienceLevel: level }),
+
       clearPreferences: () =>
         set({
           selectedPersona: null,
@@ -75,12 +81,13 @@ export const usePersonaStore = create<PersonaState>()(
           selectedIndustry: null,
           selectedIndustries: [],
           suppressSuggestion: true,
+          experienceLevel: null,
         }),
     }),
     {
       name: 'pqc-learning-persona',
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
       migrate: (persistedState: unknown) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -94,6 +101,7 @@ export const usePersonaStore = create<PersonaState>()(
           ? state.selectedIndustries
           : []
         state.suppressSuggestion = state.suppressSuggestion ?? false
+        state.experienceLevel = state.experienceLevel ?? null
 
         return state
       },

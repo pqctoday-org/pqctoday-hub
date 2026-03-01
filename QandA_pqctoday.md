@@ -342,7 +342,7 @@
 **A3:** **Validated** (green) = FIPS 140-3 validated module. **Partial** (amber) = FedRAMP, WebTrust, or FIPS-mode claims without full CMVP validation. **No** (gray) = no FIPS certification. Filter by FIPS status at [Migrate](/migrate).
 
 **Q4:** What phase should you start if you haven't begun PQC migration?
-**A4:** Start with the **Assess** phase — build a Cryptographic Bill of Materials (CBOM), map certificate chains, and identify quantum-vulnerable algorithms. The [Assess wizard](/assess?step=0) automates this with a 13-step questionnaire. Then explore relevant products at [Migrate](/migrate).
+**A4:** Start with the **Assess** phase — build a Cryptographic Bill of Materials (CBOM), map certificate chains, and identify quantum-vulnerable algorithms. The [Assess wizard](/assess?step=0) automates this with a 14-step questionnaire. Then explore relevant products at [Migrate](/migrate).
 
 **Q5:** What does the "Prepare" migration phase involve?
 **A5:** The Prepare phase involves selecting PQC libraries (OpenSSL 3.5+, AWS-LC, BoringSSL), upgrading **HSM firmware** (Thales, Entrust, Utimaco), setting up hybrid certificate infrastructure, and engaging vendor PQC roadmaps. See [Migrate](/migrate).
@@ -381,11 +381,11 @@
 
 ## 8. Assess (`/assess`)
 
-**Q1:** What are the 13 steps of the comprehensive assessment wizard?
-**A1:** The 13 steps are: **Industry** → **Country** → **Crypto Stack** → **Data Sensitivity** → **Compliance** → **Migration Status** → **Use Cases** → **Data Retention** → **Credential Lifetime** → **Organization Scale** → **Crypto Agility** → **Infrastructure** → **Vendor Dependencies** → **Timeline Pressure**. Start at [Assess](/assess).
+**Q1:** What are the 14 steps of the comprehensive assessment wizard?
+**A1:** The 14 steps are: **Industry** → **Country** → **Crypto Stack** → **Data Sensitivity** → **Compliance** → **Migration Status** → **Use Cases** → **Data Retention** → **Credential Lifetime** → **Organization Scale** → **Crypto Agility** → **Infrastructure** → **Vendor Dependencies** → **Timeline Pressure**. Start at [Assess](/assess).
 
 **Q2:** How does the quick assessment mode differ from comprehensive?
-**A2:** **Quick mode** covers 6 steps (~2 minutes) for a rapid baseline, while **comprehensive mode** covers all 13 steps (~5 minutes) for detailed migration planning with full risk scoring. Both are available at [Assess](/assess).
+**A2:** **Quick mode** covers 6 steps (~2 minutes) for a rapid baseline, while **comprehensive mode** covers all 14 steps (~5 minutes) for detailed migration planning with full risk scoring. Both are available at [Assess](/assess).
 
 **Q3:** What four risk categories does the assessment report generate?
 **A3:** The report scores four categories: **Strategic Risk** (long-term quantum exposure), **Operational Risk** (system complexity and migration effort), **Compliance Risk** (regulatory deadline pressure), and **Vendor Risk** (third-party dependency control). View your results at [Report](/report).
@@ -421,7 +421,7 @@
 **A13:** The [Infrastructure step](/assess?step=11) classifies your stack as **On-premise**, **Cloud-hybrid**, or **Cloud-native**. Cloud-native environments may migrate faster (vendor-managed crypto updates), while on-premise requires more manual effort.
 
 **Q14:** What is the purpose of the Timeline Pressure step?
-**A14:** The [Timeline Pressure step](/assess?step=12) maps your organization to specific compliance deadlines (CNSA 2.0 2027–2030 prefer windows, country-specific deadlines). Higher pressure increases Compliance Risk scoring.
+**A14:** The [Timeline Pressure step](/assess?step=13) maps your organization to specific compliance deadlines (CNSA 2.0 2027–2030 prefer windows, country-specific deadlines). Higher pressure increases Compliance Risk scoring.
 
 **Q15:** Can the assessment report be printed or saved as PDF?
 **A15:** Yes, the [Report](/report) supports **Print/PDF** with a formatted header (PQC Today version, Industry, Country, DateTime) and footer. CollapsibleSections auto-expand, and action buttons are hidden for clean output.
@@ -609,19 +609,22 @@
 **A4:** PQC Today is licensed under **GPL-3.0** (GNU General Public License v3.0). The full license and source code are linked from the [About page](/about).
 
 **Q5:** How does the PQC Assistant work?
-**A5:** The PQC Assistant uses **RAG (Retrieval-Augmented Generation)** with a corpus of ~1,900 chunks aggregated from 22 data sources, combined with **Gemini 2.5 Flash** for response generation. It requires a user-provided Google API key (BYOK model). See [About](/about).
+**A5:** The PQC Assistant uses **RAG (Retrieval-Augmented Generation)** with a corpus of ~2,100 chunks aggregated from 24 data sources, combined with **Gemini 2.5 Flash** for response generation. It requires a user-provided Google API key (BYOK model). See [About](/about).
 
 **Q6:** What are the PQC Assistant's three core capabilities?
 **A6:** **Grounded Answers** (responses backed by retrieved corpus data), **Deep Linking** (every named item links to the exact app page/tab/step), and **PQC Domain Expertise** (trained on the full platform content). See [About](/about).
 
-**Q7:** What testing frameworks does PQC Today use?
-**A7:** **Vitest** for unit tests (with @testing-library/react), **Playwright** for E2E tests (Chromium, Firefox, WebKit), and **axe-playwright** for accessibility testing. Coverage thresholds are 70% lines/functions/statements and 60% branches. See [About](/about).
+**Q7:** What is document enrichment and how does it improve the PQC Assistant?
+**A7:** Document enrichment extracts **11 structured dimensions** from 220+ archived HTML/PDF documents across [Library](/library), [Timeline](/timeline), and [Threats](/threats) collections. Dimensions include: authors, publication date, document status, main topic, PQC algorithms covered, quantum threats addressed, migration timeline info, applicable regions/bodies, leaders mentioned, PQC products mentioned, protocols covered, infrastructure layers, standardization bodies, and compliance frameworks. These enrichment chunks improve the assistant's ability to answer detailed questions about specific standards, country migration timelines, and protocol coverage. See [About](/about).
 
-**Q8:** What UI framework and version does PQC Today use?
-**A8:** PQC Today uses **React v19** with **Tailwind CSS v4** for styling, **Framer Motion** for animations, **Lucide React** for icons, and **React Router v7** for client-side routing. Full SBOM at [About](/about).
+**Q8:** What testing frameworks does PQC Today use?
+**A8:** **Vitest** for unit tests (with @testing-library/react), **Playwright** for E2E tests (Chromium, Firefox, WebKit), and **axe-playwright** for accessibility testing. Coverage thresholds are 70% lines/functions/statements and 60% branches. See [About](/about).
 
-**Q9:** What AI tools were used in developing PQC Today?
-**A9:** The [About page](/about) acknowledges use of **Google Antigravity**, **ChatGPT**, **Claude AI**, **Perplexity**, and **Gemini Pro** in the development process.
+**Q9:** What UI framework and version does PQC Today use?
+**A9:** PQC Today uses **React v19** with **Tailwind CSS v4** for styling, **Framer Motion** for animations, **Lucide React** for icons, and **React Router v7** for client-side routing. Full SBOM at [About](/about).
 
-**Q10:** What build tools does PQC Today use?
-**A10:** PQC Today uses **Vite** as the build tool with **TypeScript** in strict mode, **ESLint v9** (flat config with security plugin), and **Prettier** for formatting. Pre-commit hooks via **Husky + lint-staged** auto-format staged files. See [About](/about).
+**Q10:** What AI tools were used in developing PQC Today?
+**A10:** The [About page](/about) acknowledges use of **Google Antigravity**, **ChatGPT**, **Claude AI**, **Perplexity**, and **Gemini Pro** in the development process.
+
+**Q11:** What build tools does PQC Today use?
+**A11:** PQC Today uses **Vite** as the build tool with **TypeScript** in strict mode, **ESLint v9** (flat config with security plugin), and **Prettier** for formatting. Pre-commit hooks via **Husky + lint-staged** auto-format staged files. See [About](/about).

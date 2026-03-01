@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Workbench } from './Workbench'
 import { WorkbenchFileManager } from './components/WorkbenchFileManager'
 import { TerminalOutput } from './TerminalOutput'
@@ -11,24 +12,66 @@ import { GlossaryButton } from '../ui/GlossaryButton'
 
 import { useOpenSSLStore } from './store'
 
+type OpenSSLCategory =
+  | 'genpkey'
+  | 'req'
+  | 'x509'
+  | 'enc'
+  | 'dgst'
+  | 'hash'
+  | 'rand'
+  | 'version'
+  | 'files'
+  | 'kem'
+  | 'pkcs12'
+  | 'lms'
+  | 'configutl'
+  | 'kdf'
+
+/** Alias map for user-friendly ?cmd= values */
+const CMD_ALIASES: Record<string, OpenSSLCategory> = {
+  keygen: 'genpkey',
+  sign: 'dgst',
+  cert: 'x509',
+  csr: 'req',
+  encrypt: 'enc',
+  decrypt: 'enc',
+  digest: 'dgst',
+  random: 'rand',
+  certificate: 'x509',
+  key: 'genpkey',
+}
+
+const VALID_CATEGORIES = new Set<string>([
+  'genpkey',
+  'req',
+  'x509',
+  'enc',
+  'dgst',
+  'hash',
+  'rand',
+  'version',
+  'files',
+  'kem',
+  'pkcs12',
+  'lms',
+  'configutl',
+  'kdf',
+])
+
+function resolveCmd(param: string | null): OpenSSLCategory {
+  if (!param) return 'genpkey'
+  const lower = param.toLowerCase()
+  if (VALID_CATEGORIES.has(lower)) return lower as OpenSSLCategory
+  return CMD_ALIASES[lower] ?? 'genpkey'
+}
+
 export const OpenSSLStudioView = () => {
+  const [searchParams] = useSearchParams()
   const [showTerminal, setShowTerminal] = useState(true)
-  const [category, setCategory] = useState<
-    | 'genpkey'
-    | 'req'
-    | 'x509'
-    | 'enc'
-    | 'dgst'
-    | 'hash'
-    | 'rand'
-    | 'version'
-    | 'files'
-    | 'kem'
-    | 'pkcs12'
-    | 'lms'
-    | 'configutl'
-    | 'kdf'
-  >('genpkey')
+  const [category, setCategory] = useState<OpenSSLCategory>(() =>
+    resolveCmd(searchParams.get('cmd'))
+  )
   const { editingFile, activeTab } = useOpenSSLStore()
 
   return (

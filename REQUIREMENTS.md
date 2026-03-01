@@ -12,7 +12,7 @@ The application is divided into the following main modules. Detailed requirement
 2. **[Quantum Threat Impacts](requirements/impacts.md)**: Dashboard showing specific risks to 20 industries (80 verified threats).
 3. **[Algorithms Transition](requirements/algorithms.md)**: Comparison table showing the shift from Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) standards.
 4. **[Standards Library](requirements/library.md)**: Comprehensive PQC standards repository with categorized documents.
-5. **[Learning Platform](requirements/learn.md)**: 15 interactive educational modules with 340-question quiz:
+5. **[Learning Platform](requirements/learn.md)**: 25 interactive educational modules with 470-question quiz:
    - **[PKI Workshop](requirements/learn.md#module-1-pki-workshop-implemented)**: 4-step certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing) with CSV-based X.509 profiles
    - **[Digital Assets Program](requirements/digital_assets.md)**: Blockchain cryptography for Bitcoin (secp256k1, P2PKH/SegWit, ECDSA), Ethereum (Keccak-256, EIP-55, EIP-1559), Solana (Ed25519), and HD Wallet (BIP32/39/44)
    - **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment (Profiles A/B/C with ML-KEM-768) and 5G-AKA authentication with MILENAGE (f1–f5)
@@ -28,7 +28,7 @@ The application is divided into the following main modules. Detailed requirement
    - **Key Management & HSM**: HSM roles, key lifecycle, PQC readiness
    - **Entropy & Randomness**: SP 800-90 A/B/C coverage, `EntropyTestingDemo`, NIST DRBG analysis
    - **Quantum Key Distribution (QKD)**: BB84 with configurable Eve interception rate slider, real-world deployment data
-   - **[PQC Quiz](requirements/learn.md#module-7-pqc-quiz-implemented)**: 340+ questions across 9 categories; persona-filtered mode; per-category score tracking; judo belt grading via `ScoreCard`; InlineTooltip glossary links in all module introductions
+   - **[PQC Quiz](requirements/learn.md#module-7-pqc-quiz-implemented)**: 470 questions across 32 categories; persona-filtered mode; per-category score tracking; judo belt grading via `ScoreCard`; InlineTooltip glossary links in all module introductions; deep links via `?category=`
 6. **[Migrate Module](requirements/Migrate_Module_Requirements.md)**: 186+ verified PQC-relevant product entries across 8 infrastructure categories:
    - 7 infrastructure layers (OS, Libraries, Network, HSM, PKI, Cloud, Containers) + Web Browsers (Chrome, Edge, Firefox, Safari)
    - Three-tier FIPS badge: Validated (FIPS 140/203 certified) / Partial (FedRAMP, WebTrust, FIPS-mode) / No
@@ -45,6 +45,7 @@ The application is divided into the following main modules. Detailed requirement
    - Full PQC support: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 variants), LMS/HSS
    - Classical algorithms: RSA, EC (P-256/384/521, secp256k1), Ed25519, X25519, Ed448, X448
    - Virtual File System: upload, edit, download, backup/restore with ZIP
+   - Deep linking via `?cmd=` query parameter with aliases (keygen→genpkey, cert→x509, sign→dgst)
    - ShareButton and GlossaryButton in desktop header
 9. **[Compliance Module](requirements/Compliance_Module_Requirements.md)**: Real-time compliance tracking and standards monitoring.
    - NIST FIPS document tracking (203, 204, 205), ANSSI recommendations, Common Criteria certifications
@@ -54,8 +55,8 @@ The application is divided into the following main modules. Detailed requirement
 10. **[Transformation Leaders](requirements/leaders.md)**: 100+ verified profiles of key public and private figures driving the PQC transition.
 11. **[About & Feedback](requirements/about.md)**: Project information, feedback mechanisms, Software Bill of Materials (SBOM), and security audit summary.
     - **Career Journey**: 6-panel interactive comic-style modal showcasing the creator's professional transition to PQC with custom artwork.
-12. **PQC Risk Assessment** (`/assess`): Comprehensive 13-step quantum risk evaluation wizard.
-    - **Wizard steps** (in order): Industry → Country → Crypto → Sensitivity → Compliance → Migration → Use Cases → Retention → Scale → Agility → Infra → Vendors → Timeline
+12. **PQC Risk Assessment** (`/assess`): Comprehensive 14-step quantum risk evaluation wizard.
+    - **Wizard steps** (in order): Industry → Country → Crypto → Sensitivity → Compliance → Migration → Use Cases → Retention → Credential → Scale → Agility → Infra → Vendors → Timeline
     - **4 risk dimensions**: Quantum Exposure, Migration Complexity, Regulatory Pressure, Organizational Readiness
     - **Scoring features**:
       - Industry-weighted composite scoring (government/finance boost regulatory pressure, telecom/energy boost migration complexity)
@@ -82,8 +83,14 @@ The application is divided into the following main modules. Detailed requirement
     - `ALWAYS_VISIBLE_PATHS`: `/learn`, `/timeline`, `/threats` (never dimmed)
     - Learning Journey `ScoreCard` with judo belt grading
 14. **PQC Glossary**: Global floating glossary with 100+ PQC terms; accessible from any page via `GlossaryButton`; `InlineTooltip` links in learning module introductions.
-15. **Personalization System**: Persona picker (Executive/CISO, Developer/Engineer, Architect, Researcher); `usePersonaStore` (Zustand, persisted); drives nav visibility, landing CTAs, and journey step prominence.
-16. **Guided Tour**: Interactive first-visit onboarding overlay; persona-filtered step visibility.
+15. **Personalization System**: 4-step onboarding wizard (Experience → Role → Region → Industry) with `PersonalizedAvatar` preview, info modals, and embedded `ScoreCard`. `usePersonaStore` v2 (Zustand, persisted) with `ExperienceLevel` (new/basics/expert). Drives nav visibility, landing CTAs, journey step prominence, and learning difficulty filtering.
+    - **PQC Explainer**: Dismissible "Why does this matter?" landing component with 3 educational cards; persistent dismissal via localStorage.
+    - **Page Accuracy Feedback**: Fixed bottom-left thumbs-up/down widget on 8 content routes; GA4 logging.
+16. **Guided Tour**: Interactive first-visit onboarding with 3-phase centered card design.
+    - Phase 1 — Intro (3 slides on why PQC matters)
+    - Phase 2 — Knowledge Gate (adjusts tour length by experience level)
+    - Phase 3 — Feature tour (up to 13 persona-filtered slides); swipeable cards
+17. **Document Enrichment Pipeline**: `scripts/enrich-public-docs.py` extracts 11 structured dimensions from 220+ archived docs; outputs to `src/data/doc-enrichments/`; consumed by RAG corpus generator. Cross-domain linking and entity inventory for hallucination prevention.
 
 ## 3. Non-Functional Requirements
 
@@ -111,7 +118,7 @@ See **[Accessibility Requirements](requirements/accessibility.md)**.
 - **Styling**: Tailwind CSS 4.2.0 — theme defined inline in `src/styles/index.css` via `@theme` block (no separate config file)
 - **Cryptography**:
   - OpenSSL WASM v3.6.0 (primary — ML-KEM, ML-DSA, SLH-DSA, LMS/HSS, RSA, EC, Ed25519, X25519)
-  - `@openforge-sh/liboqs` (FrodoKEM, HQC, Classic McEliece)
+  - `@oqs/liboqs-js` (FrodoKEM, HQC, Classic McEliece)
   - WASM wrappers in `src/wasm/` (ML-KEM, ML-DSA, LMS/HSS bindings)
   - `@noble/curves`, `@noble/hashes`, `@scure/bip32`, `@scure/bip39`, `@scure/base` (blockchain crypto)
   - `micro-eth-signer`, `ed25519-hd-key` (Ethereum/Solana)

@@ -8,6 +8,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Start here! A beginner-friendly introduction to the quantum threat and post-quantum cryptography.',
     duration: '15 min',
+    difficulty: 'beginner',
   },
   'quantum-threats': {
     id: 'quantum-threats',
@@ -15,6 +16,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       "Understand how Shor's and Grover's algorithms break cryptography, CRQC timelines, and HNDL/HNFL attack mechanics.",
     duration: '60 min',
+    difficulty: 'beginner',
   },
   'hybrid-crypto': {
     id: 'hybrid-crypto',
@@ -22,6 +24,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Combine classical and PQC algorithms: hybrid KEMs, composite signatures, and side-by-side certificate comparison.',
     duration: '60 min',
+    difficulty: 'intermediate',
   },
   'crypto-agility': {
     id: 'crypto-agility',
@@ -29,12 +32,14 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Design crypto-agile architectures: abstraction layers, CBOM scanning, and the 7-phase migration framework.',
     duration: '60 min',
+    difficulty: 'intermediate',
   },
   'tls-basics': {
     id: 'tls-basics',
     title: 'TLS Basics',
     description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',
     duration: '60 min',
+    difficulty: 'intermediate',
   },
   'vpn-ssh-pqc': {
     id: 'vpn-ssh-pqc',
@@ -42,6 +47,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'IKEv2 and SSH key exchange with PQC: hybrid ML-KEM integration, WireGuard Rosenpass, and protocol size comparison.',
     duration: '90 min',
+    difficulty: 'advanced',
   },
   'email-signing': {
     id: 'email-signing',
@@ -49,6 +55,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'S/MIME and CMS: signing workflows, KEM-based encryption (RFC 9629), and PQC migration for email security.',
     duration: '60 min',
+    difficulty: 'intermediate',
   },
   'pki-workshop': {
     id: 'pki-workshop',
@@ -56,6 +63,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.',
     duration: '60 min',
+    difficulty: 'intermediate',
   },
   'key-management': {
     id: 'key-management',
@@ -63,6 +71,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Key lifecycle management, HSM operations via PKCS#11, and enterprise PQC key rotation planning.',
     duration: '60 min',
+    difficulty: 'intermediate',
   },
   'stateful-signatures': {
     id: 'stateful-signatures',
@@ -70,18 +79,21 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Master LMS/HSS and XMSS/XMSS^MT: Merkle tree signatures, parameter trade-offs, and critical state management.',
     duration: '60 min',
+    difficulty: 'advanced',
   },
   'digital-assets': {
     id: 'digital-assets',
     title: 'Digital Assets',
     description: 'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana using OpenSSL.',
     duration: '60 min',
+    difficulty: 'intermediate',
   },
   '5g-security': {
     id: '5g-security',
     title: '5G Security',
     description: 'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
     duration: '90 min',
+    difficulty: 'advanced',
   },
   'digital-id': {
     id: 'digital-id',
@@ -89,6 +101,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
     duration: '120 min',
+    difficulty: 'advanced',
   },
   'entropy-randomness': {
     id: 'entropy-randomness',
@@ -96,6 +109,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Master entropy sources, DRBG mechanisms, and quantum randomness — NIST SP 800-90 standards, entropy testing, TRNG vs QRNG, and combining sources for defense-in-depth.',
     duration: '60 min',
+    difficulty: 'advanced',
   },
   'merkle-tree-certs': {
     id: 'merkle-tree-certs',
@@ -103,6 +117,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Build Merkle trees interactively, generate inclusion proofs, and compare MTC vs traditional PKI for post-quantum TLS.',
     duration: '60 min',
+    difficulty: 'advanced',
   },
   qkd: {
     id: 'qkd',
@@ -110,6 +125,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Explore QKD fundamentals: BB84 protocol, classical post-processing, hybrid key derivation, global deployments, protocol integration, and HSM key derivation.',
     duration: '150 min',
+    difficulty: 'advanced',
   },
   'code-signing': {
     id: 'code-signing',
@@ -117,6 +133,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Protect software distribution — from classical code signing to post-quantum ML-DSA package integrity, Sigstore keyless signing, and secure boot firmware verification.',
     duration: '75 min',
+    difficulty: 'intermediate',
   },
   'api-security-jwt': {
     id: 'api-security-jwt',
@@ -124,6 +141,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'JWT/JWS/JWE with post-quantum algorithms: ML-DSA signing, ML-KEM key agreement, hybrid tokens, and OAuth 2.0 migration.',
     duration: '90 min',
+    difficulty: 'intermediate',
   },
   'iot-ot-pqc': {
     id: 'iot-ot-pqc',
@@ -131,6 +149,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'PQC challenges for constrained devices: algorithm selection for limited memory/compute, firmware signing, CoAP/DTLS protocol impacts, certificate chain bloat, and SCADA/ICS migration.',
     duration: '90 min',
+    difficulty: 'advanced',
   },
   'pqc-risk-management': {
     id: 'pqc-risk-management',
@@ -138,6 +157,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Quantify quantum risk, build risk registers, model CRQC timeline scenarios, and generate risk heatmaps from real threat data.',
     duration: '45 min',
+    difficulty: 'beginner',
   },
   'pqc-business-case': {
     id: 'pqc-business-case',
@@ -145,6 +165,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Build ROI models, simulate breach costs, and create board-ready pitch decks for PQC investment.',
     duration: '45 min',
+    difficulty: 'beginner',
   },
   'pqc-governance': {
     id: 'pqc-governance',
@@ -152,6 +173,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Create RACI matrices, draft PQC policies, and design KPI dashboards for board reporting.',
     duration: '45 min',
+    difficulty: 'beginner',
   },
   'vendor-risk': {
     id: 'vendor-risk',
@@ -159,6 +181,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Score vendor PQC readiness from real product data, generate contract requirements, and map supply chain risk.',
     duration: '45 min',
+    difficulty: 'intermediate',
   },
   'migration-program': {
     id: 'migration-program',
@@ -166,6 +189,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Build migration roadmaps with real country deadlines, plan stakeholder communications, and track KPIs.',
     duration: '45 min',
+    difficulty: 'intermediate',
   },
   'compliance-strategy': {
     id: 'compliance-strategy',
@@ -173,6 +197,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     description:
       'Map multi-jurisdiction requirements, build audit checklists, and construct compliance timelines from live framework data.',
     duration: '45 min',
+    difficulty: 'beginner',
   },
   quiz: {
     id: 'quiz',

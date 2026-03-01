@@ -112,22 +112,28 @@ function BeltLadder({ currentBelt }: { currentBelt: BeltRank }) {
 
 // ── ScoreCard ────────────────────────────────────────────────────────────────
 
-export function ScoreCard() {
+export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
   const result = useAwarenessScore()
   const [showScoring, setShowScoring] = useState(false)
 
   const { hasStarted, score, belt, nextBelt, pointsToNextBelt, cappedByThreshold, streak } = result
 
+  const scoringModal = (
+    <ScoringModal
+      isOpen={showScoring}
+      onClose={() => setShowScoring(false)}
+      totalSteps={result.totalPersonaSteps}
+      totalQuestions={result.totalPersonaQuestions}
+    />
+  )
+
   // ── Teaser state for new users ──────────────────────────────────────────────
   if (!hasStarted) {
-    return (
-      <motion.section
-        initial="hidden"
-        animate="visible"
-        variants={fadeUp}
-        aria-labelledby="scorecard-heading"
-      >
-        <div className="glass-panel p-6 flex flex-col sm:flex-row items-center gap-6">
+    const teaserContent = (
+      <>
+        <div
+          className={`flex flex-col sm:flex-row items-center gap-6 ${embedded ? '' : 'glass-panel p-6'}`}
+        >
           <div className="flex flex-col items-center gap-2 shrink-0">
             <div className="flex gap-1.5 items-end">
               {BELT_RANKS.map((b) => (
@@ -175,25 +181,28 @@ export function ScoreCard() {
             </Link>
           </div>
         </div>
-        <ScoringModal
-          isOpen={showScoring}
-          onClose={() => setShowScoring(false)}
-          totalSteps={result.totalPersonaSteps}
-          totalQuestions={result.totalPersonaQuestions}
-        />
+        {scoringModal}
+      </>
+    )
+
+    if (embedded) return teaserContent
+
+    return (
+      <motion.section
+        initial="hidden"
+        animate="visible"
+        variants={fadeUp}
+        aria-labelledby="scorecard-heading"
+      >
+        {teaserContent}
       </motion.section>
     )
   }
 
   // ── Active scorecard (compact) ─────────────────────────────────────────────
-  return (
-    <motion.section
-      initial="hidden"
-      animate="visible"
-      variants={fadeUp}
-      aria-labelledby="scorecard-heading"
-    >
-      <div className="glass-panel p-6">
+  const activeContent = (
+    <>
+      <div className={embedded ? '' : 'glass-panel p-6'}>
         {/* ── Header row ─────────────────────────────────────────────────── */}
         <div className="flex items-center gap-4">
           <BeltSwatch belt={belt} size="md" />
@@ -259,13 +268,20 @@ export function ScoreCard() {
           </Link>
         </div>
       </div>
+      {scoringModal}
+    </>
+  )
 
-      <ScoringModal
-        isOpen={showScoring}
-        onClose={() => setShowScoring(false)}
-        totalSteps={result.totalPersonaSteps}
-        totalQuestions={result.totalPersonaQuestions}
-      />
+  if (embedded) return activeContent
+
+  return (
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={fadeUp}
+      aria-labelledby="scorecard-heading"
+    >
+      {activeContent}
     </motion.section>
   )
 }

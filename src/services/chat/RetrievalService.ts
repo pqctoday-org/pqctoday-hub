@@ -26,7 +26,14 @@ export interface PageContext {
  * Source boost multipliers per intent — used to re-rank MiniSearch results.
  */
 const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
-  definition: { glossary: 3, algorithms: 2, modules: 1.5, 'module-content': 1.5, leaders: 1.5 },
+  definition: {
+    glossary: 3,
+    algorithms: 2,
+    modules: 1.5,
+    'module-content': 1.5,
+    leaders: 1.5,
+    'document-enrichment': 1.2,
+  },
   comparison: { algorithms: 2, transitions: 3, glossary: 1.5 },
   catalog_lookup: { migrate: 3, certifications: 2, 'priority-matrix': 1.5 },
   recommendation: {
@@ -35,8 +42,15 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     compliance: 1.5,
     migrate: 1.5,
     documentation: 1.5,
+    'document-enrichment': 1.3,
   },
-  country_query: { timeline: 3, compliance: 2, leaders: 1.5, library: 1.2 },
+  country_query: {
+    timeline: 3,
+    compliance: 2,
+    leaders: 1.5,
+    library: 1.2,
+    'document-enrichment': 1.5,
+  },
   general: {},
 }
 
@@ -319,6 +333,7 @@ class RetrievalService {
   private corpus: RAGChunk[] = []
   private corpusById = new Map<string, RAGChunk>()
   private initPromise: Promise<void> | null = null
+  private generatedAt: string | null = null
 
   // Pre-built entity lookup: lowercased title → chunk IDs
   private entityIndex = new Map<string, string[]>()
@@ -349,13 +364,27 @@ class RetrievalService {
     this.buildIndex()
   }
 
+  /** Timestamp when the corpus was generated (ISO string), or null for legacy format */
+  get corpusDate(): string | null {
+    return this.generatedAt
+  }
+
   private async load(): Promise<void> {
     const response = await fetch('/data/rag-corpus.json')
     if (!response.ok) {
       throw new Error(`Failed to load RAG corpus: ${response.status}`)
     }
 
-    this.corpus = await response.json()
+    const data = await response.json()
+
+    // Support both legacy flat-array and new wrapper format
+    if (Array.isArray(data)) {
+      this.corpus = data
+    } else {
+      this.corpus = data.chunks ?? []
+      this.generatedAt = data.generatedAt ?? null
+    }
+
     this.buildIndex()
   }
 
