@@ -815,6 +815,46 @@ enrichment_method: ollama-qwen3:14b
 - **Protocols Covered**: None detected
 - **Infrastructure Layers**: None detected
 - **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: CNSA 2.0
+- \*\*Compliance Fra## United States:NSA — CNSA 2.0 Algorithms Revised
+
+- **Reference ID**: United States:NSA — CNSA 2.0 Algorithms Revised
+- **Title**: CNSA 2.0 Algorithms Revised
+- **Authors**: National Security Agency
+- **Publication Date**: 2025-05-30
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: None detected
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+
+---
+
+## United States:White House — Executive Order 14144
+
+- **Reference ID**: United States:White House — Executive Order 14144
+- **Title**: Executive Order 14144
+- **Authors**: Executive Office of the President
+- **Publication Date**: 2025-01-16
+- **Last Updated**: Not specified
+- **Document Status**: New
+- **Main Topic**: None detected
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
 
 ---
