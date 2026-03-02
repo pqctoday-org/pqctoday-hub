@@ -158,7 +158,7 @@ preserve = no
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-foreground">Console Output</h3>
         <div className="bg-muted rounded-lg p-4 font-mono text-xs h-[300px] overflow-y-auto custom-scrollbar border border-border">
-          <pre className="text-accent-foreground whitespace-pre-wrap break-all break-words max-w-full">
+          <pre className="text-foreground whitespace-pre-wrap break-all break-words max-w-full">
             {output}
           </pre>
           {crlContent && (
