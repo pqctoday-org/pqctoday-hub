@@ -4,6 +4,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.8.2] - 2026-03-01
+
+### Fixed
+
+- **PQC Risk Management — heatmap UX** (`RiskHeatmapGenerator.tsx`): Three discoverability fixes
+  in the Step 3 Risk Heatmap workshop. (1) Click hint replaced from invisible muted text to a
+  prominent bordered pill with `MousePointer2` icon so users know cells are interactive.
+  (2) Inherent/Residual Risk toggle is now always visible on load instead of being hidden until
+  the first treatment is assigned — Residual button is disabled with a tooltip until at least one
+  treatment exists. (3) Heatmap automatically switches to Residual view when the first treatment
+  strategy is assigned, making the risk reduction immediately visible. [view:/learn]
+
 ## [2.8.1] - 2026-03-01
 
 ### Fixed

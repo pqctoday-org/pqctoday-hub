@@ -13,6 +13,7 @@ import {
   ArrowRightLeft,
   Ban,
   BookOpen,
+  MousePointer2,
 } from 'lucide-react'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -596,7 +597,11 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
   const selectedScore = selectedCell ? (5 - selectedCell.row) * (selectedCell.col + 1) : null
 
   const handleDecisionChange = useCallback((id: string, decision: TreatmentDecision) => {
-    setTreatmentDecisions((prev) => ({ ...prev, [id]: decision }))
+    setTreatmentDecisions((prev) => {
+      const next = { ...prev, [id]: decision }
+      if (Object.keys(prev).length === 0) setViewMode('residual')
+      return next
+    })
   }, [])
 
   const handleResidualChange = useCallback((id: string, override: ResidualOverride) => {
@@ -728,38 +733,41 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
       <EducationalGuide open={guideOpen} onToggle={() => setGuideOpen(!guideOpen)} />
 
       {/* 2. View Toggle + Delta Summary */}
-      {hasTreatments && (
-        <div className="glass-panel p-4 space-y-3">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <div className="flex rounded-lg border border-border overflow-hidden">
-              <button
-                onClick={() => setViewMode('inherent')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
-                  viewMode === 'inherent'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-background text-muted-foreground hover:bg-muted'
-                }`}
-              >
-                Inherent Risk
-              </button>
-              <button
-                onClick={() => setViewMode('residual')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
-                  viewMode === 'residual'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-background text-muted-foreground hover:bg-muted'
-                }`}
-              >
-                Residual Risk
-              </button>
-            </div>
-            <span className="text-xs text-muted-foreground">
-              {treatmentProgress}% treated ({Object.keys(treatmentDecisions).length} of{' '}
-              {riskEntries.length})
-            </span>
+      <div className="glass-panel p-4 space-y-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <div className="flex rounded-lg border border-border overflow-hidden">
+            <button
+              onClick={() => setViewMode('inherent')}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
+                viewMode === 'inherent'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-background text-muted-foreground hover:bg-muted'
+              }`}
+            >
+              Inherent Risk
+            </button>
+            <button
+              onClick={() => hasTreatments && setViewMode('residual')}
+              disabled={!hasTreatments}
+              title={!hasTreatments ? 'Assign at least one treatment strategy first' : undefined}
+              className={`px-4 py-2 text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                viewMode === 'residual'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-background text-muted-foreground hover:bg-muted'
+              }`}
+            >
+              Residual Risk
+            </button>
           </div>
+          <span className="text-xs text-muted-foreground">
+            {hasTreatments
+              ? `${treatmentProgress}% treated (${Object.keys(treatmentDecisions).length} of ${riskEntries.length})`
+              : 'No treatments assigned yet — click a cell to start'}
+          </span>
+        </div>
 
-          {/* Delta strip */}
+        {/* Delta strip — only meaningful once treatments exist */}
+        {hasTreatments && (
           <div className="flex flex-wrap gap-4 text-xs">
             {(
               [
@@ -777,8 +785,8 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
               </span>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* 3. Heatmap Grid */}
       <div className="glass-panel p-6">
@@ -819,9 +827,12 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground mt-3 text-center">
-          Click any cell to view details and assign treatment strategies.
-        </p>
+        <div className="flex items-center justify-center gap-2 mt-4 px-4 py-2 bg-muted/40 border border-border rounded-lg w-fit mx-auto">
+          <MousePointer2 size={14} className="text-primary shrink-0" />
+          <span className="text-sm font-medium text-foreground">
+            Click any cell to assign a treatment strategy
+          </span>
+        </div>
       </div>
 
       {/* 4. Cell Detail Panel with Treatment Selectors */}
