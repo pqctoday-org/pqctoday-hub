@@ -417,7 +417,7 @@ AL9... (truncated for brevity) ...
   return (
     <div className="space-y-6">
       {/* Artifact Selection */}
-      <div className="glass-panel p-5 border border-border">
+      <div className="bg-card/80 border border-border rounded-2xl p-5">
         <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
           <Search className="text-primary" size={20} />
           Inspect Generated Artifacts

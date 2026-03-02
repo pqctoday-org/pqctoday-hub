@@ -350,7 +350,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       {/* Row 1: Step 1 & Step 2 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Step 1: CSR Selection */}
-        <div className="glass-panel p-5 border border-border">
+        <div className="bg-card/80 border border-border rounded-2xl p-5">
           <div className="mb-4 border-b border-border pb-3">
             <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
               <span className="text-primary font-mono text-xl">01</span>
@@ -382,7 +382,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         </div>
 
         {/* Step 2: Profile Selection */}
-        <div className="glass-panel p-5 border border-border">
+        <div className="bg-card/80 border border-border rounded-2xl p-5">
           <div className="mb-4 border-b border-border pb-3">
             <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
               <span className="text-primary font-mono text-xl">02</span>
@@ -440,7 +440,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       </div>
 
       {/* Row 2: Step 3 (Attributes) */}
-      <div className="glass-panel p-5 border border-border">
+      <div className="bg-card/80 border border-border rounded-2xl p-5">
         <div className="mb-4 border-b border-border pb-3">
           <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
             <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold">
@@ -463,7 +463,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       {/* Row 3: Step 4 & Output */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Step 4: Signing */}
-        <div className="glass-panel p-5 border border-border h-fit">
+        <div className="bg-card/80 border border-border rounded-2xl p-5 h-fit">
           <div className="mb-4 border-b border-border pb-3">
             <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
               <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold">

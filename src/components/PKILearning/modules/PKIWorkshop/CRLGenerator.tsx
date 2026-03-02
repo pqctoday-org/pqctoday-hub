@@ -115,7 +115,7 @@ preserve = no
 
   return (
     <div className="space-y-8">
-      <div className="glass-panel p-5 border border-border">
+      <div className="bg-card/80 border border-border rounded-2xl p-5">
         <div className="mb-4 border-b border-border pb-3">
           <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
             <span className="text-primary font-mono text-xl">01</span>
