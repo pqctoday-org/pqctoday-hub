@@ -207,7 +207,7 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
     if (!filename) return
 
     try {
-      setOutput(`Loading profile: ${filename}...\n`)
+      setOutput((prev) => prev + `Loading profile: ${filename}...\n`)
 
       // Find the path matching the filename
       const path = Object.keys(csrProfiles).find((p) => p.endsWith(filename))
