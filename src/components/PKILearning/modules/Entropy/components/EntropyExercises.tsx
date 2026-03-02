@@ -1,6 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { TestTubes, Eye, Atom, Shield, Layers, ArrowRight, BookOpen } from 'lucide-react'
+import {
+  TestTubes,
+  Eye,
+  Atom,
+  Shield,
+  Layers,
+  ArrowRight,
+  BookOpen,
+  Grid3x3,
+  ToggleLeft,
+  Activity,
+  ShieldAlert,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 
@@ -95,6 +107,58 @@ export const EntropyExercises: React.FC<EntropyExercisesProps> = ({
       observe:
         'The final DRBG output should have near-perfect statistical properties. Each stage of the pipeline contributes to the quality of the output.',
       config: { step: 4 },
+    },
+    {
+      id: 'visual-pattern-recognition',
+      title: '6. Visual Pattern Recognition',
+      description:
+        'Load each bad sample (zeros, repeating, incrementing) and observe the Bit Matrix visualization. Compare what your eyes can detect vs what statistical tests catch.',
+      badge: 'Visual',
+      badgeColor: 'bg-primary/20 text-primary border-primary/50',
+      borderColor: 'border-primary',
+      icon: Grid3x3,
+      observe:
+        'All-zeros produces a solid block. The repeating pattern shows clear stripes in the bit matrix. The incrementing pattern shows a diagonal gradient. Random data looks like TV static. The lag plot reveals correlations invisible in the histogram.',
+      config: { step: 1, sampleType: 'bad-pattern' },
+    },
+    {
+      id: 'bad-rng-challenge',
+      title: '7. Bad RNG Challenge',
+      description:
+        'Enable all 4 RNG sources (Web Crypto, OpenSSL, Math.random, LCG) and generate data. Use the LCG prediction feature to prove determinism. Compare test results across all sources.',
+      badge: 'Security',
+      badgeColor: 'bg-warning/20 text-warning border-warning/50',
+      borderColor: 'border-warning',
+      icon: ShieldAlert,
+      observe:
+        'Math.random() output looks random and may pass some tests at small sample sizes, but it is fully deterministic. The LCG prediction demo proves this by correctly predicting future output.',
+      config: { step: 0 },
+    },
+    {
+      id: 'bit-corruption-threshold',
+      title: '8. Bit Corruption Threshold',
+      description:
+        'Switch to Bit Flipper mode in the testing step. Start with random data, then flip bits one at a time or in batches. Discover how many corruptions it takes before each test fails.',
+      badge: 'Interactive',
+      badgeColor: 'bg-success/20 text-success border-success/50',
+      borderColor: 'border-success',
+      icon: ToggleLeft,
+      observe:
+        'A few random flips rarely trigger failures. The frequency test fails when bit balance shifts significantly (~10% bias). The runs test catches systematic flipping first. Try "All Zeros" to see instant total failure.',
+      config: { step: 1 },
+    },
+    {
+      id: 'live-degradation',
+      title: '9. Live Degradation',
+      description:
+        'Switch to Live Monitor mode. Start streaming with Web Crypto (good source), then switch to "All Zeros" or "Repeating Pattern" mid-stream. Watch how quickly the gauges react.',
+      badge: 'Real-time',
+      badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
+      borderColor: 'border-secondary',
+      icon: Activity,
+      observe:
+        'The min-entropy and repetition count gauges respond immediately to bad data. The chi-squared test may take 1-2 samples to show the full impact. This demonstrates why continuous health monitoring is mandatory in SP 800-90B.',
+      config: { step: 1 },
     },
   ]
 

@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback } from 'react'
-import { BarChart3, Play, AlertTriangle, CheckCircle, XCircle } from 'lucide-react'
+import {
+  BarChart3,
+  Play,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  ToggleLeft,
+  Activity,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { getRandomBytes } from '@/utils/webCrypto'
@@ -11,8 +19,13 @@ import {
   BAD_SAMPLE_PATTERN,
   BAD_SAMPLE_INCREMENT,
 } from '../utils/entropyConstants'
+import { BitMatrixGrid } from '../components/BitMatrixGrid'
+import { LagPlot } from '../components/LagPlot'
+import { BitFlipExperiment } from '../components/BitFlipExperiment'
+import { StreamingEntropyMonitor } from '../components/StreamingEntropyMonitor'
 
 type SampleType = 'good' | 'bad-zeros' | 'bad-pattern' | 'bad-increment'
+type TestingMode = 'static' | 'bitflip' | 'streaming'
 
 interface EntropyTestingDemoProps {
   initialSampleType?: SampleType
@@ -33,6 +46,7 @@ function resolveInitialSample(type?: SampleType): { data: Uint8Array; label: str
 }
 
 export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialSampleType }) => {
+  const [mode, setMode] = useState<TestingMode>('static')
   const [sampleData, setSampleData] = useState<Uint8Array | null>(
     () => resolveInitialSample(initialSampleType)?.data ?? null
   )
@@ -93,8 +107,30 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
   const bins = sampleData ? binnedFrequency(sampleData, 16) : null
   const maxBinCount = bins ? Math.max(...bins) : 0
 
+  // Render alternate modes
+  if (mode === 'bitflip') {
+    return (
+      <div className="space-y-6">
+        <ModeSelector mode={mode} onChange={setMode} />
+        <BitFlipExperiment />
+      </div>
+    )
+  }
+
+  if (mode === 'streaming') {
+    return (
+      <div className="space-y-6">
+        <ModeSelector mode={mode} onChange={setMode} />
+        <StreamingEntropyMonitor />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
+      {/* Mode selector */}
+      <ModeSelector mode={mode} onChange={setMode} />
+
       {/* Header */}
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Entropy Testing Dashboard</h3>
@@ -156,22 +192,28 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
         )}
       </div>
 
-      {/* Hex data display */}
+      {/* Hex data display + Bit Matrix */}
       {sampleData && (
-        <div className="glass-panel p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              Sample Data
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="glass-panel p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                Sample Data
+              </div>
+              <span className="text-xs text-primary font-medium">{sampleLabel}</span>
             </div>
-            <span className="text-xs text-primary font-medium">{sampleLabel}</span>
+            <div className="bg-muted rounded-lg p-3 border border-border overflow-x-auto">
+              <pre className="text-xs font-mono text-foreground whitespace-pre-wrap break-all leading-relaxed">
+                {formatHex(sampleData, 4)}
+              </pre>
+            </div>
+            <div className="text-[10px] text-muted-foreground mt-1.5">
+              {sampleData.length} bytes ({sampleData.length * 8} bits)
+            </div>
           </div>
-          <div className="bg-muted rounded-lg p-3 border border-border overflow-x-auto">
-            <pre className="text-xs font-mono text-foreground whitespace-pre-wrap break-all leading-relaxed">
-              {formatHex(sampleData, 4)}
-            </pre>
-          </div>
-          <div className="text-[10px] text-muted-foreground mt-1.5">
-            {sampleData.length} bytes ({sampleData.length * 8} bits)
+
+          <div className="glass-panel p-4">
+            <BitMatrixGrid data={sampleData} />
           </div>
         </div>
       )}
@@ -279,50 +321,61 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
         </div>
       )}
 
-      {/* Byte Frequency Histogram */}
+      {/* Visualizations side by side */}
       {sampleData && bins && (
-        <div className="glass-panel p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <BarChart3 size={16} className="text-primary" />
-            <span className="text-sm font-bold text-foreground">
-              Byte Frequency Distribution (16 bins)
-            </span>
-          </div>
-          <div className="flex items-end gap-1 h-32">
-            {bins.map((count, i) => {
-              const height = maxBinCount > 0 ? (count / maxBinCount) * 100 : 0
-              const rangeStart = i * 16
-              const rangeEnd = rangeStart + 15
-              return (
-                <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group">
-                  {/* Bar */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Byte Frequency Histogram */}
+          <div className="glass-panel p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <BarChart3 size={16} className="text-primary" />
+              <span className="text-sm font-bold text-foreground">
+                Byte Frequency Distribution (16 bins)
+              </span>
+            </div>
+            <div className="flex items-end gap-1 h-32">
+              {bins.map((count, i) => {
+                const height = maxBinCount > 0 ? (count / maxBinCount) * 100 : 0
+                const rangeStart = i * 16
+                const rangeEnd = rangeStart + 15
+                return (
                   <div
-                    className="w-full rounded-t bg-primary/70 group-hover:bg-primary transition-colors relative"
-                    style={{ height: `${Math.max(height, 2)}%` }}
-                    title={`Bin ${i} (0x${rangeStart.toString(16).padStart(2, '0')}-0x${rangeEnd.toString(16).padStart(2, '0')}): ${count}`}
+                    key={i}
+                    className="flex-1 flex flex-col items-center justify-end h-full group"
                   >
-                    {/* Count label on hover */}
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[8px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                      {count}
+                    {/* Bar */}
+                    <div
+                      className="w-full rounded-t bg-primary/70 group-hover:bg-primary transition-colors relative"
+                      style={{ height: `${Math.max(height, 2)}%` }}
+                      title={`Bin ${i} (0x${rangeStart.toString(16).padStart(2, '0')}-0x${rangeEnd.toString(16).padStart(2, '0')}): ${count}`}
+                    >
+                      {/* Count label on hover */}
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[8px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        {count}
+                      </div>
                     </div>
                   </div>
+                )
+              })}
+            </div>
+            {/* Bin labels */}
+            <div className="flex gap-1 mt-1">
+              {bins.map((_, i) => (
+                <div
+                  key={i}
+                  className="flex-1 text-center text-[7px] text-muted-foreground font-mono"
+                >
+                  {(i * 16).toString(16).padStart(2, '0')}
                 </div>
-              )
-            })}
+              ))}
+            </div>
+            <div className="text-[10px] text-muted-foreground mt-2 text-center">
+              Byte value range (hex) — uniform distribution indicates good randomness
+            </div>
           </div>
-          {/* Bin labels */}
-          <div className="flex gap-1 mt-1">
-            {bins.map((_, i) => (
-              <div
-                key={i}
-                className="flex-1 text-center text-[7px] text-muted-foreground font-mono"
-              >
-                {(i * 16).toString(16).padStart(2, '0')}
-              </div>
-            ))}
-          </div>
-          <div className="text-[10px] text-muted-foreground mt-2 text-center">
-            Byte value range (hex) — uniform distribution indicates good randomness
+
+          {/* Lag Plot */}
+          <div className="glass-panel p-4">
+            <LagPlot data={sampleData} />
           </div>
         </div>
       )}
@@ -349,3 +402,44 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
     </div>
   )
 }
+
+/** Mode selector tabs */
+const ModeSelector: React.FC<{
+  mode: TestingMode
+  onChange: (mode: TestingMode) => void
+}> = ({ mode, onChange }) => (
+  <div className="glass-panel p-2">
+    <div className="flex gap-1">
+      <Button
+        variant={mode === 'static' ? 'secondary' : 'ghost'}
+        size="sm"
+        onClick={() => onChange('static')}
+        className="gap-1.5 flex-1"
+      >
+        <BarChart3 size={14} />
+        <span className="hidden sm:inline">Static Tests</span>
+        <span className="sm:hidden">Tests</span>
+      </Button>
+      <Button
+        variant={mode === 'bitflip' ? 'secondary' : 'ghost'}
+        size="sm"
+        onClick={() => onChange('bitflip')}
+        className="gap-1.5 flex-1"
+      >
+        <ToggleLeft size={14} />
+        <span className="hidden sm:inline">Bit Flipper</span>
+        <span className="sm:hidden">Flip</span>
+      </Button>
+      <Button
+        variant={mode === 'streaming' ? 'secondary' : 'ghost'}
+        size="sm"
+        onClick={() => onChange('streaming')}
+        className="gap-1.5 flex-1"
+      >
+        <Activity size={14} />
+        <span className="hidden sm:inline">Live Monitor</span>
+        <span className="sm:hidden">Live</span>
+      </Button>
+    </div>
+  </div>
+)

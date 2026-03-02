@@ -10,9 +10,13 @@ import {
   CheckCircle,
   ArrowRight,
   ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Cpu,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ESV_STEPS } from '../utils/entropyConstants'
+import { DRBGSimulator } from '../components/DRBGSimulator'
 
 const STEP_ICONS = [FileText, Activity, Database, Settings, Layers]
 
@@ -58,6 +62,7 @@ const MOCK_RAW_OUTPUT = [
 
 export const ESVWalkthroughDemo: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0)
+  const [showDRBG, setShowDRBG] = useState(false)
 
   const goToStep = (step: number) => {
     if (step >= 0 && step < ESV_STEPS.length) {
@@ -474,6 +479,34 @@ export const ESVWalkthroughDemo: React.FC = () => {
           <ExternalLink size={14} className="mr-2" />
           Visit NIST ESV Program
         </Button>
+      </div>
+
+      {/* DRBG Simulator — collapsible */}
+      <div className="glass-panel overflow-hidden">
+        <button
+          onClick={() => setShowDRBG(!showDRBG)}
+          className="w-full flex items-center justify-between p-4 hover:bg-muted/30 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <Cpu size={18} className="text-primary" />
+            <div className="text-left">
+              <span className="text-sm font-semibold text-foreground block">DRBG Simulator</span>
+              <span className="text-xs text-muted-foreground">
+                See how a DRBG uses the validated entropy source
+              </span>
+            </div>
+          </div>
+          {showDRBG ? (
+            <ChevronUp size={16} className="text-muted-foreground" />
+          ) : (
+            <ChevronDown size={16} className="text-muted-foreground" />
+          )}
+        </button>
+        {showDRBG && (
+          <div className="border-t border-border p-4">
+            <DRBGSimulator />
+          </div>
+        )}
       </div>
     </div>
   )

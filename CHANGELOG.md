@@ -4,6 +4,56 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.9.0] - 2026-03-01
+
+### Added
+
+- **Entropy workshop — Bit Matrix Grid** (`BitMatrixGrid.tsx`): New shared visualization component
+  renders byte data as a pixel grid where each bit maps to a colored cell. Random data appears as TV
+  static; patterns show visible structure. Supports bit-level and byte-level view modes, interactive
+  click-to-toggle for the Bit Flipper, and flipped-bit highlighting. Used across Steps 1, 2, and 4.
+  [view:/learn]
+
+- **Entropy workshop — Lag Plot** (`LagPlot.tsx`): SVG autocorrelation scatter plot of
+  `(byte[i], byte[i+k])` pairs. Random data fills the square uniformly; incrementing data produces
+  a diagonal line; repeating patterns create dot clusters. Configurable lag selector (k=1,2,4,8)
+  reveals sequential correlations invisible to histograms. [view:/learn]
+
+- **Entropy workshop — Bad RNG comparison** (`RandomGenerationDemo.tsx`): Step 1 now supports 4
+  sources: Web Crypto, OpenSSL WASM, `Math.random()`, and a timestamp-seeded LCG. Side-by-side
+  display with BitMatrixGrid, histogram, and lag plot for each source. LCG prediction demo proves
+  determinism by correctly predicting future output bytes. Cross-source test comparison table.
+  [view:/learn]
+
+- **Entropy workshop — Bit Flipper** (`BitFlipExperiment.tsx`): New interactive mode in Step 2.
+  Start with random data, click individual bits to toggle them, watch all 5 test results update in
+  real time. Quick actions (Flip 5%/10%/25%, All Zeros, Reset). Corruption counter with progress
+  bar. Teaches which tests break first under different degradation patterns. [view:/learn]
+
+- **Entropy workshop — Streaming Monitor** (`StreamingEntropyMonitor.tsx`, `EntropyGauge.tsx`):
+  Live dashboard mode in Step 2 with continuous byte generation and 5 animated radial gauge arcs
+  with sparkline history. Switch sources mid-stream to watch gauges swing from green to red.
+  Configurable speed (200ms–2s) and source selection. [view:/learn]
+
+- **Entropy workshop — DRBG Simulator** (`DRBGSimulator.tsx`): Interactive CTR_DRBG state machine
+  added as collapsible panel in Step 3 (ESV Walkthrough). Step through Instantiate → Generate →
+  Reseed lifecycle with visible internal state (V, Key, counter), pipeline flow visualization, and
+  forced reseed interval. Connects ESV validation to practical DRBG usage. [view:/learn]
+
+- **Entropy workshop — 4 new exercises** (`EntropyExercises.tsx`): Visual Pattern Recognition, Bad
+  RNG Challenge, Bit Corruption Threshold, and Live Degradation exercises (6–9) guide users through
+  the new interactive features. [view:/learn]
+
+### Changed
+
+- **Entropy workshop — Step 2 modes** (`EntropyTestingDemo.tsx`): Testing step now has three modes
+  via tab selector: Static Tests (original flow enhanced with BitMatrixGrid + LagPlot), Bit Flipper,
+  and Live Monitor. [view:/learn]
+
+- **Entropy workshop — Step 4 visualizations** (`QRNGDemo.tsx`): QRNG vs TRNG comparison now
+  includes side-by-side BitMatrixGrid and LagPlot visualizations alongside existing histograms.
+  [view:/learn]
+
 ## [2.8.2] - 2026-03-01
 
 ### Fixed

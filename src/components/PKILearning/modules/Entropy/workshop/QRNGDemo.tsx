@@ -6,6 +6,8 @@ import { getRandomBytes } from '@/utils/webCrypto'
 import { runAllTests, type TestResult } from '../utils/entropyTests'
 import { formatHex, binnedFrequency } from '../utils/outputFormatters'
 import { QRNG_SAMPLE_64, QRNG_SAMPLE_128 } from '../utils/entropyConstants'
+import { BitMatrixGrid } from '../components/BitMatrixGrid'
+import { LagPlot } from '../components/LagPlot'
 
 type SampleSize = 64 | 128
 
@@ -191,6 +193,34 @@ export const QRNGDemo: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Bit Structure Comparison */}
+      {trngData && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="glass-panel p-4">
+            <p className="text-xs font-medium text-foreground mb-2">QRNG Bit Structure</p>
+            <BitMatrixGrid data={qrngSample} compact />
+          </div>
+          <div className="glass-panel p-4">
+            <p className="text-xs font-medium text-foreground mb-2">TRNG Bit Structure</p>
+            <BitMatrixGrid data={trngData} compact />
+          </div>
+        </div>
+      )}
+
+      {/* Lag Plot Comparison */}
+      {trngData && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="glass-panel p-4">
+            <p className="text-xs font-medium text-foreground mb-2">QRNG Autocorrelation</p>
+            <LagPlot data={qrngSample} size={180} />
+          </div>
+          <div className="glass-panel p-4">
+            <p className="text-xs font-medium text-foreground mb-2">TRNG Autocorrelation</p>
+            <LagPlot data={trngData} size={180} />
+          </div>
+        </div>
+      )}
 
       {/* Compare Button */}
       <div className="flex justify-center">
