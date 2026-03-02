@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, ClipboardCheck, ScrollText, Network } from 'lucide-react'
+import { Trash2, ClipboardCheck, ScrollText, Network, Package } from 'lucide-react'
 import { Introduction } from './components/Introduction'
+import { InfrastructureSelector } from './components/InfrastructureSelector'
 import { VendorScorecardBuilder } from './components/VendorScorecardBuilder'
 import { ContractClauseGenerator } from './components/ContractClauseGenerator'
 import { SupplyChainRiskMatrix } from './components/SupplyChainRiskMatrix'
@@ -15,20 +16,26 @@ const MODULE_ID = 'vendor-risk'
 
 const PARTS = [
   {
+    id: 'infrastructure-selector',
+    title: 'Step 1: Your Infrastructure',
+    description: 'Select the products in your infrastructure from the Migrate catalog.',
+    icon: Package,
+  },
+  {
     id: 'vendor-scorecard',
-    title: 'Step 1: Vendor Scorecard',
+    title: 'Step 2: Vendor Scorecard',
     description: 'Score your vendors on PQC readiness dimensions.',
     icon: ClipboardCheck,
   },
   {
     id: 'contract-clauses',
-    title: 'Step 2: Contract Clauses',
+    title: 'Step 3: Contract Clauses',
     description: 'Generate PQC-ready contract clauses for vendor agreements.',
     icon: ScrollText,
   },
   {
     id: 'supply-chain-matrix',
-    title: 'Step 3: Supply Chain Matrix',
+    title: 'Step 4: Supply Chain Matrix',
     description: 'Map vendor dependencies across your infrastructure layers.',
     icon: Network,
   },
@@ -223,9 +230,10 @@ export const VendorRiskModule: React.FC = () => {
                 <h2 className="text-2xl font-bold text-foreground">{PARTS[currentPart].title}</h2>
                 <p className="text-muted-foreground">{PARTS[currentPart].description}</p>
               </div>
-              {currentPart === 0 && <VendorScorecardBuilder key={`scorecard-${configKey}`} />}
-              {currentPart === 1 && <ContractClauseGenerator key={`contract-${configKey}`} />}
-              {currentPart === 2 && <SupplyChainRiskMatrix key={`matrix-${configKey}`} />}
+              {currentPart === 0 && <InfrastructureSelector key={`selector-${configKey}`} />}
+              {currentPart === 1 && <VendorScorecardBuilder key={`scorecard-${configKey}`} />}
+              {currentPart === 2 && <ContractClauseGenerator key={`contract-${configKey}`} />}
+              {currentPart === 3 && <SupplyChainRiskMatrix key={`matrix-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

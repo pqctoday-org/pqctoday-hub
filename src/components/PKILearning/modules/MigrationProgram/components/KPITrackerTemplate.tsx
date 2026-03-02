@@ -117,7 +117,7 @@ export const KPITrackerTemplate: React.FC = () => {
     return md
   }, [dimensions, currentScores, pqcReadyCount, totalProducts, riskScore])
 
-  const handleExportToStore = useCallback(() => {
+  const handleExport = useCallback(() => {
     addExecutiveDocument({
       id: `kpi-tracker-${Date.now()}`,
       moduleId: MODULE_ID,
@@ -171,18 +171,11 @@ export const KPITrackerTemplate: React.FC = () => {
         exportData={exportMarkdown}
         filename="pqc-kpi-tracker"
         formats={['markdown', 'csv']}
+        onExport={handleExport}
       >
-        <div className="space-y-3">
-          <p className="text-sm text-muted-foreground">
-            Export your KPI tracker with current scores and data sources.
-          </p>
-          <button
-            onClick={handleExportToStore}
-            className="px-4 py-2 text-sm rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
-          >
-            Save to Learning Portfolio
-          </button>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Export your KPI tracker with current scores and data sources.
+        </p>
       </ExportableArtifact>
     </div>
   )

@@ -50,6 +50,7 @@ export type ExecutiveDocumentType =
   | 'migration-roadmap'
   | 'stakeholder-comms'
   | 'kpi-tracker'
+  | 'risk-treatment-plan'
 
 export interface ExecutiveDocument {
   id: string

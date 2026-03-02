@@ -50,6 +50,8 @@ interface WorkbenchConfigProps {
   setKemInFile: (value: string) => void
   kemOutFile: string
   setKemOutFile: (value: string) => void
+  kemSecretFile: string
+  setKemSecretFile: (value: string) => void
   p12Action: 'export' | 'import'
   setP12Action: (value: 'export' | 'import') => void
   p12CertFile: string
@@ -197,6 +199,8 @@ export const WorkbenchConfig: React.FC<WorkbenchConfigProps> = (props) => {
           setKemInFile={props.setKemInFile}
           kemOutFile={props.kemOutFile}
           setKemOutFile={props.setKemOutFile}
+          kemSecretFile={props.kemSecretFile}
+          setKemSecretFile={props.setKemSecretFile}
         />
       )
     case 'pkcs12':

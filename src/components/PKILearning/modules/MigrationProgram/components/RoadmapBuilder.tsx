@@ -72,7 +72,6 @@ export const RoadmapBuilder: React.FC = () => {
         return true
       })
       .sort((a, b) => a.year - b.year)
-      .slice(0, 15) // Limit to 15 most relevant deadlines for readability
   }, [countryDeadlines])
 
   const [currentMilestones, setCurrentMilestones] = React.useState<Milestone[]>(DEFAULT_MILESTONES)
@@ -114,7 +113,7 @@ export const RoadmapBuilder: React.FC = () => {
     return md
   }, [externalDeadlines, currentMilestones])
 
-  const handleExportToStore = useCallback(() => {
+  const handleExport = useCallback(() => {
     addExecutiveDocument({
       id: `migration-roadmap-${Date.now()}`,
       moduleId: MODULE_ID,
@@ -131,12 +130,12 @@ export const RoadmapBuilder: React.FC = () => {
         <div className="flex items-center gap-2 mb-2">
           <div className="w-2 h-2 rounded-full bg-primary" />
           <p className="text-sm font-medium text-foreground">
-            {externalDeadlines.length} regulatory deadlines loaded from Timeline data
+            {externalDeadlines.length} regulatory deadlines available from Timeline data
           </p>
         </div>
         <p className="text-xs text-muted-foreground">
-          Add your organization&apos;s milestones below. They will be overlaid on external
-          regulatory deadlines so you can see how your plan aligns with compliance requirements.
+          Select the deadlines relevant to your organization, then add your milestones to see how
+          your plan aligns with compliance requirements.
         </p>
       </div>
 
@@ -154,18 +153,11 @@ export const RoadmapBuilder: React.FC = () => {
         exportData={exportMarkdown}
         filename="pqc-migration-roadmap"
         formats={['markdown', 'csv']}
+        onExport={handleExport}
       >
-        <div className="space-y-3">
-          <p className="text-sm text-muted-foreground">
-            Export your migration roadmap with milestones and regulatory deadlines.
-          </p>
-          <button
-            onClick={handleExportToStore}
-            className="px-4 py-2 text-sm rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
-          >
-            Save to Learning Portfolio
-          </button>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Export your migration roadmap with milestones and regulatory deadlines.
+        </p>
       </ExportableArtifact>
     </div>
   )

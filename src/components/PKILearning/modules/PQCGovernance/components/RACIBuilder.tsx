@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useMemo } from 'react'
-import { Download, Copy, Check, AlertTriangle } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { AlertTriangle } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
+import { ExportableArtifact } from '../../../common/executive'
 
 type RACIValue = 'R' | 'A' | 'C' | 'I' | ''
 
@@ -66,7 +66,6 @@ function buildInitialMatrix(): MatrixState {
 
 export const RACIBuilder: React.FC = () => {
   const [matrix, setMatrix] = useState<MatrixState>(buildInitialMatrix)
-  const [copied, setCopied] = useState(false)
   const { addExecutiveDocument } = useModuleStore()
 
   const activitiesMissingAccountable = useMemo(() => {
@@ -116,23 +115,7 @@ export const RACIBuilder: React.FC = () => {
     return md
   }, [matrix])
 
-  const handleCopy = useCallback(async () => {
-    await navigator.clipboard.writeText(exportMarkdown)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }, [exportMarkdown])
-
-  const handleDownload = useCallback(() => {
-    const blob = new Blob([exportMarkdown], { type: 'text/markdown' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'pqc-raci-matrix.md'
-    link.click()
-    URL.revokeObjectURL(url)
-  }, [exportMarkdown])
-
-  const handleExportAndSave = useCallback(() => {
+  const handleExport = useCallback(() => {
     addExecutiveDocument({
       id: `raci-${Date.now()}`,
       moduleId: 'pqc-governance',
@@ -141,8 +124,7 @@ export const RACIBuilder: React.FC = () => {
       data: exportMarkdown,
       createdAt: Date.now(),
     })
-    handleDownload()
-  }, [addExecutiveDocument, exportMarkdown, handleDownload])
+  }, [addExecutiveDocument, exportMarkdown])
 
   return (
     <div className="space-y-6">
@@ -238,20 +220,16 @@ export const RACIBuilder: React.FC = () => {
         </div>
       </div>
 
-      {/* Export Actions */}
-      <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-border">
-        <Button variant="outline" size="sm" onClick={handleCopy}>
-          {copied ? <Check size={14} /> : <Copy size={14} />}
-          <span className="ml-1.5">{copied ? 'Copied' : 'Copy Markdown'}</span>
-        </Button>
-        <Button variant="outline" size="sm" onClick={handleExportAndSave}>
-          <Download size={14} />
-          <span className="ml-1.5">Export &amp; Save</span>
-        </Button>
-        <span className="text-xs text-muted-foreground">
-          Exports as Markdown and saves to your learning artifacts.
-        </span>
-      </div>
+      {/* Export */}
+      <ExportableArtifact
+        title="RACI Matrix Export"
+        exportData={exportMarkdown}
+        filename="pqc-raci-matrix"
+        formats={['markdown']}
+        onExport={handleExport}
+      >
+        <p className="text-sm text-muted-foreground">Export your RACI matrix as Markdown.</p>
+      </ExportableArtifact>
     </div>
   )
 }

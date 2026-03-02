@@ -4,6 +4,111 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.8.0] - 2026-03-01
+
+### Added
+
+- **My Products tracking** (`MigrateView.tsx`, `SoftwareTable.tsx`, `useMigrateSelectionStore.ts`):
+  Checkbox column in the Migrate catalog lets users mark products as "My Products" for cross-module
+  analysis. Infrastructure stack badges show selected count per layer. Store upgraded v2 to v3 with
+  `myProducts` array, `toggleMyProduct`, and `clearMyProducts` actions.
+  [persona:architect] [persona:executive] [view:/migrate]
+
+- **Compliance Gantt chart** (`ComplianceGantt.tsx`): New Gantt-style timeline for the Compliance
+  Strategy module. Renders compliance deadlines grouped by jurisdiction with interactive phase bars,
+  status indicators (completed/on-track/at-risk), and user-defined milestone markers with
+  category-based colour coding.
+  [persona:executive] [persona:architect] [view:/learn]
+
+- **Infrastructure Selector** (`InfrastructureSelector.tsx`): New Step 1 in the Vendor Risk module
+  workshop — select infrastructure products from the Migrate catalog with FIPS and PQC support
+  badges. Selected products feed into the Vendor Scorecard, Contract Clauses, and Supply Chain
+  Matrix. [persona:architect] [view:/learn]
+
+- **`risk-treatment-plan` document type** (`types.ts`): New executive document type for persisting
+  risk treatment artifacts from the Risk Heatmap Generator. [persona:developer]
+
+### Changed
+
+- **Risk Heatmap Generator** (`RiskHeatmapGenerator.tsx`): Complete rewrite with 5x5
+  likelihood-vs-impact matrix, four risk treatment strategies (mitigate, accept, transfer, avoid)
+  with contextual guidance, residual risk overrides per entry, and before/after heatmap comparison.
+  Exports to markdown via ExportableArtifact.
+  [persona:executive] [persona:architect] [view:/learn]
+
+- **ROI Calculator** (`ROICalculator.tsx`): Shifted from 5-dimension scorecard to direct financial
+  modelling with editable inputs (products to migrate, cost per product, breach probability,
+  applicable frameworks, penalty per incident, planning horizon). Auto-seeds from assessment data
+  and Migrate catalog via `useExecutiveModuleData`. Outputs total migration cost, avoided breach
+  cost, compliance savings, net ROI, and payback period.
+  [persona:executive] [persona:architect] [view:/learn]
+
+- **Breach Cost Model** (`BreachCostModel.tsx`): Quantum threat assumptions (quantum multiplier,
+  HNDL exposure factor, regulatory multiplier) are now user-configurable via sliders instead of
+  hardcoded values, enabling scenario modelling.
+  [persona:executive] [view:/learn]
+
+- **Vendor Scorecard Builder** (`VendorScorecardBuilder.tsx`): Redesigned to score products from
+  the Migrate catalog. Six weighted dimensions (PQC algorithm support, FIPS validation, PQC
+  roadmap, crypto agility, SBOM/CBOM, hybrid mode) with auto-detection of PQC support and FIPS
+  status from product data. [persona:architect] [view:/learn]
+
+- **Compliance Timeline Builder** (`ComplianceTimelineBuilder.tsx`): Integrated ComplianceGantt
+  visualization, auto-grouping framework deadlines by jurisdiction, gap analysis with at-risk /
+  on-track / completed status indicators, and detail popovers for individual phases.
+  [persona:executive] [persona:architect] [view:/learn]
+
+- **Jurisdiction Mapper** (`JurisdictionMapper.tsx`): Enhanced with product preview cards showing
+  selected Migrate catalog products, conflict detection between overlapping jurisdiction
+  requirements, and deep links to the Migrate view.
+  [persona:architect] [view:/learn]
+
+- **Vendor Risk module** (`VendorRisk/index.tsx`): Restructured workshop from 3 steps to 4 — new
+  Step 1 (Your Infrastructure) precedes Vendor Scorecard (Step 2), Contract Clauses (Step 3), and
+  Supply Chain Matrix (Step 4). [persona:architect] [view:/learn]
+
+- **`useExecutiveModuleData`** (`useExecutiveModuleData.ts`): Accepts optional `selectedProductKeys`
+  parameter to filter metrics to user-selected products, with smart layer splitting for products
+  spanning multiple infrastructure layers. [persona:developer]
+
+- **Executive artifacts** (`ArtifactBuilder.tsx`, `ExportableArtifact.tsx`, `TimelinePlanner.tsx`):
+  Refined layout, styling, and export formatting across shared executive workshop components.
+  [persona:developer]
+
+### Data
+
+- **Compliance CSV rotation**: Deleted 3 stale snapshots (`compliance_02222026.csv`,
+  `compliance_02242026.csv`, `compliance_02262026.csv`), added fresh `compliance_03012026.csv`.
+
+- **RAG corpus**: Regenerated `public/data/rag-corpus.json` to reflect all data and module changes.
+
+### Fixed
+
+- **CBOM Scanner** (`CBOMScanner.tsx`): Minor layout and styling fixes in the Crypto Agility
+  workshop. [persona:developer] [view:/learn]
+
+- **MTC module** (`MTCIntroduction.tsx`, `MTCExercises.tsx`, `mtcConstants.ts`,
+  `SizeComparison.tsx`): Minor content corrections and data constant updates.
+  [persona:developer] [view:/learn]
+
+- **KPI Tracker Template** (`KPITrackerTemplate.tsx`): Layout refinements in the Migration Program
+  module. [persona:developer] [view:/learn]
+
+- **Roadmap Builder** (`RoadmapBuilder.tsx`): Styling adjustments in the Migration Program module.
+  [persona:developer] [view:/learn]
+
+- **RACI Builder** (`RACIBuilder.tsx`): Styling and interaction fixes in the PQC Governance module.
+  [persona:developer] [view:/learn]
+
+- **CRL Generator** (`CRLGenerator.tsx`): Minor fixes in the PKI Workshop.
+  [persona:developer] [view:/learn]
+
+- **OpenSSL Worker** (`openssl.worker.ts`): Minor worker-side adjustment.
+  [persona:developer] [view:/openssl]
+
+- **Chat panel** (`ChatPanelContent.tsx`): Additional overflow guard.
+  [persona:developer]
+
 ## [2.7.0] - 2026-03-01
 
 ### Added

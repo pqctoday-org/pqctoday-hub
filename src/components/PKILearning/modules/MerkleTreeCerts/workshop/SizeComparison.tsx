@@ -186,8 +186,8 @@ export const SizeComparison: React.FC = () => {
             <strong className="text-foreground">Key insight:</strong> The MTC inclusion proof size
             (~736 bytes) is <em>constant</em> regardless of the signature algorithm &mdash; it
             depends only on the tree depth (number of certificates in the batch). This means the
-            savings grow proportionally with signature size: MTCs provide a modest 43% reduction for
-            ECDSA but a dramatic 74% reduction for SLH-DSA-128s.
+            savings grow proportionally with signature size: MTCs provide a modest 27% reduction for
+            ECDSA but a dramatic 64% reduction for SLH-DSA-128s and ML-DSA.
           </div>
         </div>
       </div>

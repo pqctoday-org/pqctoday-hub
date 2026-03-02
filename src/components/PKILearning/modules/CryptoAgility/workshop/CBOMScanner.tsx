@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
-import { Shield, AlertTriangle, CheckCircle, Code, X } from 'lucide-react'
+import React, { useState, useMemo } from 'react'
+import { Link } from 'react-router-dom'
+import { Shield, AlertTriangle, CheckCircle, Code, X, ArrowRight } from 'lucide-react'
 import { SAMPLE_CBOM, CBOM_CYCLONEDX_SAMPLE, type CBOMEntry } from '../data/cbomTemplates'
 import { LAYERS } from '@/components/Migrate/InfrastructureStack'
 import type { InfrastructureLayerType } from '@/components/Migrate/InfrastructureStack'
+import { softwareData } from '@/data/migrateData'
 
 type LayerFilter = Exclude<InfrastructureLayerType, 'All'> | 'all'
 
@@ -30,7 +32,10 @@ const statusBadge = (status: CBOMEntry['quantumStatus']) => {
   }
 }
 
-const EntryCard: React.FC<{ entry: CBOMEntry }> = ({ entry }) => (
+const EntryCard: React.FC<{ entry: CBOMEntry; pqcToolCount?: number }> = ({
+  entry,
+  pqcToolCount,
+}) => (
   <div
     className={`glass-panel p-4 border-l-4 ${
       entry.quantumStatus === 'vulnerable'
@@ -62,6 +67,15 @@ const EntryCard: React.FC<{ entry: CBOMEntry }> = ({ entry }) => (
           <Shield size={10} className="text-primary shrink-0 mt-0.5" />
           <p className="text-[10px] text-primary">{entry.recommendation}</p>
         </div>
+        {(pqcToolCount ?? 0) > 0 && (
+          <Link
+            to={`/migrate?layer=${encodeURIComponent(entry.infrastructureLayer)}`}
+            className="mt-1.5 flex items-center gap-1 text-[10px] font-medium text-primary hover:underline"
+          >
+            <ArrowRight size={10} />
+            Browse {pqcToolCount} PQC-capable tools in {entry.infrastructureLayer}
+          </Link>
+        )}
       </div>
     )}
   </div>
@@ -71,6 +85,18 @@ export const CBOMScanner: React.FC = () => {
   const [showJson, setShowJson] = useState(false)
   const [filter, setFilter] = useState<'all' | 'vulnerable' | 'safe' | 'weakened'>('all')
   const [activeLayer, setActiveLayer] = useState<LayerFilter>('all')
+
+  const pqcCountsByLayer = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const item of softwareData) {
+      if (!item.pqcSupport || item.pqcSupport === 'None' || item.pqcSupport === 'No') continue
+      const layers = item.infrastructureLayer.split(',').map((l) => l.trim())
+      for (const layer of layers) {
+        counts.set(layer, (counts.get(layer) || 0) + 1)
+      }
+    }
+    return counts
+  }, [])
 
   const filtered = SAMPLE_CBOM.filter((e) => {
     const statusMatch = filter === 'all' || e.quantumStatus === filter
@@ -253,7 +279,11 @@ export const CBOMScanner: React.FC = () => {
       {activeLayer !== 'all' ? (
         <div className="space-y-2">
           {filtered.map((entry) => (
-            <EntryCard key={entry.id} entry={entry} />
+            <EntryCard
+              key={entry.id}
+              entry={entry}
+              pqcToolCount={pqcCountsByLayer.get(entry.infrastructureLayer)}
+            />
           ))}
         </div>
       ) : (
@@ -280,10 +310,23 @@ export const CBOMScanner: React.FC = () => {
                     {' / '}
                     {layerEntries.length} asset{layerEntries.length !== 1 ? 's' : ''}
                   </span>
+                  {(pqcCountsByLayer.get(layer.id) ?? 0) > 0 && (
+                    <Link
+                      to={`/migrate?layer=${encodeURIComponent(layer.id)}`}
+                      className="ml-2 text-[10px] font-medium text-primary hover:underline flex items-center gap-0.5 shrink-0"
+                    >
+                      {pqcCountsByLayer.get(layer.id)} tools
+                      <ArrowRight size={9} />
+                    </Link>
+                  )}
                 </div>
                 <div className="space-y-2">
                   {layerEntries.map((entry) => (
-                    <EntryCard key={entry.id} entry={entry} />
+                    <EntryCard
+                      key={entry.id}
+                      entry={entry}
+                      pqcToolCount={pqcCountsByLayer.get(entry.infrastructureLayer)}
+                    />
                   ))}
                 </div>
               </div>

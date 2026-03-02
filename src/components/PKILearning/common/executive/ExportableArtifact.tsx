@@ -9,6 +9,7 @@ interface ExportableArtifactProps {
   exportData: string
   filename?: string
   formats?: ('markdown' | 'json' | 'csv')[]
+  onExport?: () => void
 }
 
 export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
@@ -17,14 +18,24 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   exportData,
   filename = 'export',
   formats = ['markdown'],
+  onExport,
 }) => {
   const [copied, setCopied] = React.useState(false)
+  const savedRef = React.useRef(false)
+
+  const triggerSave = useCallback(() => {
+    if (onExport && !savedRef.current) {
+      savedRef.current = true
+      onExport()
+    }
+  }, [onExport])
 
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(exportData)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
-  }, [exportData])
+    triggerSave()
+  }, [exportData, triggerSave])
 
   const handleDownload = useCallback(
     (format: string) => {
@@ -41,13 +52,15 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
       link.download = `${filename}.${ext}`
       link.click()
       URL.revokeObjectURL(url)
+      triggerSave()
     },
-    [exportData, filename]
+    [exportData, filename, triggerSave]
   )
 
   const handlePrint = useCallback(() => {
     window.print()
-  }, [])
+    triggerSave()
+  }, [triggerSave])
 
   return (
     <div className="glass-panel p-6 space-y-4">

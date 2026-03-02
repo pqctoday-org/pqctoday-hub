@@ -42,7 +42,7 @@ export interface ExecutiveModuleData {
   migrationDeadlineYear: number | null
 }
 
-export function useExecutiveModuleData(): ExecutiveModuleData {
+export function useExecutiveModuleData(selectedProductKeys?: string[]): ExecutiveModuleData {
   const industry = useAssessmentStore((s) => s.industry)
   const country = useAssessmentStore((s) => s.country)
   const complianceSelections = useAssessmentStore((s) => s.complianceRequirements)
@@ -75,20 +75,36 @@ export function useExecutiveModuleData(): ExecutiveModuleData {
       : []
 
     // ── Software / Vendors ────────────────────────────────────────────────
+    const filteredSoftware =
+      selectedProductKeys && selectedProductKeys.length > 0
+        ? (() => {
+            const keySet = new Set(selectedProductKeys)
+            return softwareData.filter((s) => keySet.has(`${s.softwareName}::${s.categoryId}`))
+          })()
+        : softwareData
+
     const vendorsByLayer = new Map<string, SoftwareItem[]>()
     let fipsValidatedCount = 0
     let pqcReadyCount = 0
 
-    for (const s of softwareData) {
-      const layer = s.infrastructureLayer || 'Other'
-      const existing = vendorsByLayer.get(layer)
-      if (existing) {
-        existing.push(s)
-      } else {
-        vendorsByLayer.set(layer, [s])
+    for (const s of filteredSoftware) {
+      // Split comma-separated layers so products appear in each layer
+      const layers = (s.infrastructureLayer || 'Other').split(',').map((l) => l.trim())
+      for (const layer of layers) {
+        const existing = vendorsByLayer.get(layer)
+        if (existing) {
+          existing.push(s)
+        } else {
+          vendorsByLayer.set(layer, [s])
+        }
       }
 
-      if (s.fipsValidated === 'Yes' || s.fipsValidated === 'Validated') {
+      const fipsLower = (s.fipsValidated || '').toLowerCase()
+      if (
+        fipsLower.includes('fips 140') ||
+        fipsLower.includes('fips 203') ||
+        fipsLower === 'validated'
+      ) {
         fipsValidatedCount++
       }
       if (s.pqcSupport && s.pqcSupport !== 'None' && s.pqcSupport !== 'No') {
@@ -132,7 +148,7 @@ export function useExecutiveModuleData(): ExecutiveModuleData {
       vendorsByLayer,
       fipsValidatedCount,
       pqcReadyCount,
-      totalProducts: softwareData.length,
+      totalProducts: filteredSoftware.length,
       frameworks: complianceFrameworks,
       frameworksByIndustry,
       countryDeadlines: timelineData,
@@ -152,5 +168,6 @@ export function useExecutiveModuleData(): ExecutiveModuleData {
     lastResult,
     assessmentStatus,
     personaIndustry,
+    selectedProductKeys,
   ])
 }

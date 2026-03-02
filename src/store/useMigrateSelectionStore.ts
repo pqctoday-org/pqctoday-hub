@@ -15,6 +15,10 @@ interface MigrateSelectionState {
   activeSubCategory: string
   setActiveLayer: (layer: string) => void
   setActiveSubCategory: (cat: string) => void
+  /** Row keys ('softwareName::categoryId') the user has marked as "My Products" */
+  myProducts: string[]
+  toggleMyProduct: (key: string) => void
+  clearMyProducts: () => void
 }
 
 export const useMigrateSelectionStore = create<MigrateSelectionState>()(
@@ -23,6 +27,7 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
       hiddenProducts: [],
       activeLayer: 'All',
       activeSubCategory: 'All',
+      myProducts: [],
 
       hideProduct: (key) =>
         set((state) => ({
@@ -41,11 +46,20 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
       setActiveLayer: (layer) => set({ activeLayer: layer, activeSubCategory: 'All' }),
 
       setActiveSubCategory: (cat) => set({ activeSubCategory: cat }),
+
+      toggleMyProduct: (key) =>
+        set((state) => ({
+          myProducts: state.myProducts.includes(key)
+            ? state.myProducts.filter((k) => k !== key)
+            : [...state.myProducts, key],
+        })),
+
+      clearMyProducts: () => set({ myProducts: [] }),
     }),
     {
       name: 'pqc-migrate-selection',
       storage: createJSONStorage(() => localStorage),
-      version: 2,
+      version: 3,
       migrate: (persistedState: unknown) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -53,6 +67,8 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
         state.hiddenProducts = Array.isArray(state.hiddenProducts) ? state.hiddenProducts : []
         if (!state.activeLayer) state.activeLayer = 'All'
         if (!state.activeSubCategory) state.activeSubCategory = 'All'
+        // v2 → v3: add myProducts
+        state.myProducts = Array.isArray(state.myProducts) ? state.myProducts : []
         return state
       },
       onRehydrateStorage: () => (_state, error) => {

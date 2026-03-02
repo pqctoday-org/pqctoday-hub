@@ -30,7 +30,8 @@ const PARTS = [
   {
     id: 'risk-heatmap',
     title: 'Step 3: Risk Heatmap',
-    description: 'Visualize your quantum risk exposure across likelihood and impact dimensions.',
+    description:
+      'Assign risk treatments, model residual risk, and prioritize your PQC migration order.',
     icon: Grid3X3,
   },
 ]

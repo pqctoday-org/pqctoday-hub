@@ -92,6 +92,7 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
   const [kemKeyFile, setKemKeyFile] = useState('')
   const [kemInFile, setKemInFile] = useState('') // For decap (ciphertext)
   const [kemOutFile, setKemOutFile] = useState('') // For encap (ciphertext) or decap (secret)
+  const [kemSecretFile, setKemSecretFile] = useState('') // For encap (shared secret output)
 
   // PKCS#12 State
   const [p12Action, setP12Action] = useState<'export' | 'import'>('export')
@@ -346,7 +347,8 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
 
       if (kemAction === 'encap') {
         const ctFile = kemOutFile || 'ciphertext.bin'
-        cmd += ` pkeyutl -encap -inkey ${key} -pubin -out ${ctFile} -secret secret.bin`
+        const secretFile = kemSecretFile || 'secret.bin'
+        cmd += ` pkeyutl -encap -inkey ${key} -pubin -out ${ctFile} -secret ${secretFile}`
       } else {
         const inFile = kemInFile || 'ciphertext.bin'
         const outFile = kemOutFile || 'secret.bin'
@@ -446,6 +448,7 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
     kemKeyFile,
     kemInFile,
     kemOutFile,
+    kemSecretFile,
     p12Action,
     p12CertFile,
     p12KeyFile,
@@ -524,6 +527,8 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
             setKemInFile={setKemInFile}
             kemOutFile={kemOutFile}
             setKemOutFile={setKemOutFile}
+            kemSecretFile={kemSecretFile}
+            setKemSecretFile={setKemSecretFile}
             p12Action={p12Action}
             setP12Action={setP12Action}
             p12CertFile={p12CertFile}

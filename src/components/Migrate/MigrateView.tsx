@@ -6,7 +6,7 @@ import { useSearchParams } from 'react-router-dom'
 import { SoftwareTable } from './SoftwareTable'
 import { MigrationWorkflow } from './MigrationWorkflow'
 import { InfrastructureStack, LAYERS, type InfrastructureLayerType } from './InfrastructureStack'
-import { Search, AlertTriangle, X, ArrowRightLeft } from 'lucide-react'
+import { Search, AlertTriangle, X, ArrowRightLeft, CheckSquare } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
 import type { MigrationStep } from '../../types/MigrateTypes'
@@ -40,6 +40,8 @@ export const MigrateView: React.FC = () => {
     activeSubCategory,
     setActiveLayer,
     setActiveSubCategory,
+    myProducts,
+    toggleMyProduct,
   } = useMigrateSelectionStore()
 
   // Sync URL params on same-route navigations (e.g. chatbot deep links)
@@ -63,6 +65,7 @@ export const MigrateView: React.FC = () => {
   const activeInfrastructureLayer = activeLayer as InfrastructureLayerType
   const activeTab = activeSubCategory
   const hiddenSet = useMemo(() => new Set(hiddenProducts), [hiddenProducts])
+  const myProductsSet = useMemo(() => new Set(myProducts), [myProducts])
 
   // Debounced search
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -140,6 +143,20 @@ export const MigrateView: React.FC = () => {
         {} as Partial<Record<InfrastructureLayerType, string[]>>
       ),
     [perLayerData]
+  )
+
+  // Layer selected counts (for "My Products" badges)
+  const layerSelectedCounts = useMemo(
+    () =>
+      LAYERS.reduce(
+        (acc, layer) => {
+          const keys = new Set(layerProductKeys[layer.id as InfrastructureLayerType] ?? [])
+          acc[layer.id as InfrastructureLayerType] = myProducts.filter((k) => keys.has(k)).length
+          return acc
+        },
+        {} as Partial<Record<InfrastructureLayerType, number>>
+      ),
+    [layerProductKeys, myProducts]
   )
 
   // Layer hidden counts (for restore badges)
@@ -226,6 +243,12 @@ export const MigrateView: React.FC = () => {
               Data Source: {softwareMetadata.filename} • Updated:{' '}
               {softwareMetadata.lastUpdate.toLocaleDateString()}
             </p>
+            {myProducts.length > 0 && (
+              <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-sans">
+                <CheckSquare size={12} />
+                {myProducts.length} selected
+              </span>
+            )}
             <SourcesButton viewType="Migrate" />
             <ShareButton
               title="PQC Migration Guide — 7-Phase Framework for Post-Quantum Readiness"
@@ -314,6 +337,7 @@ export const MigrateView: React.FC = () => {
           layerHiddenCounts={layerHiddenCounts}
           layerProductKeys={layerProductKeys}
           onRestoreLayer={(keys) => restoreLayerProducts(keys)}
+          layerSelectedCounts={layerSelectedCounts}
           expandedContent={
             activeInfrastructureLayer !== 'All' ? (
               activeLayerTableData.length > 0 ? (
@@ -323,6 +347,8 @@ export const MigrateView: React.FC = () => {
                   defaultSort={{ key: 'softwareName', direction: 'asc' }}
                   hiddenProducts={hiddenSet}
                   onHideProduct={hideProduct}
+                  selectedProducts={myProductsSet}
+                  onToggleProduct={toggleMyProduct}
                 />
               ) : (
                 <div className="text-center py-8 text-muted-foreground italic text-sm">

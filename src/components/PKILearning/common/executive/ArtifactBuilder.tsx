@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useRef } from 'react'
 import { Eye, Edit3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ExportableArtifact } from './ExportableArtifact'
@@ -33,6 +33,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
   title,
   description,
   sections,
+  onExport,
   exportFilename = 'artifact',
   renderPreview,
 }) => {
@@ -76,6 +77,21 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
     })
   }, [])
 
+  const exportedRef = useRef(false)
+
+  // Reset the save guard when switching back to edit mode
+  const handleSetMode = useCallback((m: 'edit' | 'preview') => {
+    if (m === 'edit') exportedRef.current = false
+    setMode(m)
+  }, [])
+
+  const handleExport = useCallback(() => {
+    if (onExport && !exportedRef.current) {
+      exportedRef.current = true
+      onExport(formData)
+    }
+  }, [onExport, formData])
+
   const exportMarkdown = useMemo(() => {
     if (renderPreview) return renderPreview(formData)
 
@@ -110,7 +126,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
         <Button
           variant={mode === 'edit' ? 'secondary' : 'ghost'}
           size="sm"
-          onClick={() => setMode('edit')}
+          onClick={() => handleSetMode('edit')}
         >
           <Edit3 size={14} />
           <span className="ml-1.5">Edit</span>
@@ -118,7 +134,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
         <Button
           variant={mode === 'preview' ? 'secondary' : 'ghost'}
           size="sm"
-          onClick={() => setMode('preview')}
+          onClick={() => handleSetMode('preview')}
         >
           <Eye size={14} />
           <span className="ml-1.5">Preview</span>
@@ -209,6 +225,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
           exportData={exportMarkdown}
           filename={exportFilename}
           formats={['markdown', 'json']}
+          onExport={handleExport}
         >
           <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap font-mono text-sm text-foreground bg-muted/50 rounded-lg p-4 max-h-[600px] overflow-y-auto">
             {exportMarkdown}

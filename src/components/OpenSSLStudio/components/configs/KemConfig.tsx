@@ -12,6 +12,8 @@ interface KemConfigProps {
   setKemInFile: (value: string) => void
   kemOutFile: string
   setKemOutFile: (value: string) => void
+  kemSecretFile: string
+  setKemSecretFile: (value: string) => void
 }
 
 export const KemConfig: React.FC<KemConfigProps> = ({
@@ -23,6 +25,8 @@ export const KemConfig: React.FC<KemConfigProps> = ({
   setKemInFile,
   kemOutFile,
   setKemOutFile,
+  kemSecretFile,
+  setKemSecretFile,
 }) => {
   const { files } = useOpenSSLStore()
 
@@ -60,9 +64,28 @@ export const KemConfig: React.FC<KemConfigProps> = ({
         </div>
       </div>
 
+      {/* KEM flow hint */}
+      <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 border border-border">
+        {kemAction === 'encap' ? (
+          <>
+            <span className="font-semibold text-foreground">Encapsulate:</span> Takes a{' '}
+            <span className="font-medium">public key</span> and produces a{' '}
+            <span className="font-medium">ciphertext</span> +{' '}
+            <span className="font-medium">shared secret</span>.
+          </>
+        ) : (
+          <>
+            <span className="font-semibold text-foreground">Decapsulate:</span> Takes a{' '}
+            <span className="font-medium">private key</span> + the{' '}
+            <span className="font-medium">ciphertext</span> from encapsulation and recovers the{' '}
+            <span className="font-medium">shared secret</span>.
+          </>
+        )}
+      </div>
+
       <div className="space-y-3">
         <label htmlFor="kem-key-select" className="text-xs text-muted-foreground block">
-          Key File
+          {kemAction === 'encap' ? 'Public Key' : 'Private Key'}
         </label>
         <select
           id="kem-key-select"
@@ -71,12 +94,15 @@ export const KemConfig: React.FC<KemConfigProps> = ({
           className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="">
-            {kemAction === 'encap' ? 'Select Public Key...' : 'Select Private Key...'}
+            {kemAction === 'encap' ? 'Select Public Key (.pub)...' : 'Select Private Key (.key)...'}
           </option>
           {files
-            .filter(
-              (f) => f.name.endsWith('.key') || f.name.endsWith('.pem') || f.name.endsWith('.pub')
-            )
+            .filter((f) => {
+              if (kemAction === 'encap') {
+                return f.name.endsWith('.pub') || f.name.endsWith('.pem')
+              }
+              return f.name.endsWith('.key') || f.name.endsWith('.pem')
+            })
             .map((f) => (
               <option key={f.name} value={f.name}>
                 {f.name}
@@ -85,40 +111,76 @@ export const KemConfig: React.FC<KemConfigProps> = ({
         </select>
       </div>
 
-      {kemAction === 'decap' && (
-        <div className="space-y-3">
-          <label htmlFor="kem-infile-select" className="text-xs text-muted-foreground block">
-            Ciphertext File (Input)
-          </label>
-          <select
-            id="kem-infile-select"
-            value={kemInFile}
-            onChange={(e) => setKemInFile(e.target.value)}
-            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-          >
-            <option value="">Select Ciphertext...</option>
-            {files.map((f) => (
-              <option key={f.name} value={f.name}>
-                {f.name}
-              </option>
-            ))}
-          </select>
-        </div>
+      {kemAction === 'encap' && (
+        <>
+          <div className="space-y-3">
+            <label htmlFor="kem-outfile-input" className="text-xs text-muted-foreground block">
+              Ciphertext Output
+            </label>
+            <input
+              id="kem-outfile-input"
+              type="text"
+              value={kemOutFile}
+              onChange={(e) => setKemOutFile(e.target.value)}
+              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+              placeholder="ciphertext.bin"
+            />
+          </div>
+
+          <div className="space-y-3">
+            <label htmlFor="kem-secretfile-input" className="text-xs text-muted-foreground block">
+              Shared Secret Output
+            </label>
+            <input
+              id="kem-secretfile-input"
+              type="text"
+              value={kemSecretFile}
+              onChange={(e) => setKemSecretFile(e.target.value)}
+              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+              placeholder="secret.bin"
+            />
+          </div>
+        </>
       )}
 
-      <div className="space-y-3">
-        <label htmlFor="kem-outfile-input" className="text-xs text-muted-foreground block">
-          Output File (Optional)
-        </label>
-        <input
-          id="kem-outfile-input"
-          type="text"
-          value={kemOutFile}
-          onChange={(e) => setKemOutFile(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-          placeholder={kemAction === 'encap' ? 'ciphertext.bin' : 'secret.bin'}
-        />
-      </div>
+      {kemAction === 'decap' && (
+        <>
+          <div className="space-y-3">
+            <label htmlFor="kem-infile-select" className="text-xs text-muted-foreground block">
+              Ciphertext Input
+            </label>
+            <select
+              id="kem-infile-select"
+              value={kemInFile}
+              onChange={(e) => setKemInFile(e.target.value)}
+              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+            >
+              <option value="">Select Ciphertext (from encapsulation)...</option>
+              {files
+                .filter((f) => !f.name.endsWith('.key') && !f.name.endsWith('.pub'))
+                .map((f) => (
+                  <option key={f.name} value={f.name}>
+                    {f.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <div className="space-y-3">
+            <label htmlFor="kem-outfile-input" className="text-xs text-muted-foreground block">
+              Shared Secret Output
+            </label>
+            <input
+              id="kem-outfile-input"
+              type="text"
+              value={kemOutFile}
+              onChange={(e) => setKemOutFile(e.target.value)}
+              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+              placeholder="secret.bin"
+            />
+          </div>
+        </>
+      )}
     </div>
   )
 }

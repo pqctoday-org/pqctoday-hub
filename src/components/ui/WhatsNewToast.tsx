@@ -86,23 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Executive Board Brief</strong> &mdash;
-                    printable 2-page C-suite summary with risk gauge, priority actions, and
-                    financial case
+                    <strong className="text-foreground">My Products Tracking</strong> &mdash; mark
+                    products in the Migrate catalog and carry selections into Vendor Risk,
+                    Compliance, and ROI modules
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">ROI Calculator</strong> &mdash; model your
-                    PQC migration financial case with industry baselines and adjustable parameters
+                    <strong className="text-foreground">Risk Heatmap Generator</strong> &mdash;
+                    5&times;5 likelihood-vs-impact matrix with risk treatment strategies and
+                    residual risk modelling
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Risk Score Trending</strong> &mdash; track
-                    assessment history with line and radar charts across all four risk categories
+                    <strong className="text-foreground">ROI Calculator</strong> &mdash; direct
+                    financial modelling with editable inputs, auto-seeded from your assessment and
+                    product selections
                   </span>
                 </li>
               </ul>

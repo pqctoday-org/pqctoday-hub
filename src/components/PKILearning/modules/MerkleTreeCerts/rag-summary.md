@@ -1,6 +1,6 @@
 # Merkle Tree Certificates Module
 
-This module addresses the certificate bloat problem created by post-quantum digital signatures and teaches how Merkle Tree Certificates (MTCs) solve it. PQC signatures are dramatically larger than classical ones: an ECDSA P-256 signature is 64 bytes while ML-DSA-44 is 2,420 bytes, a 37x increase. A typical PQC TLS certificate chain adds 18-36 KB of overhead, breaking constrained clients and degrading connection setup times. MTCs replace individual per-certificate signatures with a batch-signing approach using Merkle trees, achieving 63-74% size reduction for ML-DSA chains.
+This module addresses the certificate bloat problem created by post-quantum digital signatures and teaches how Merkle Tree Certificates (MTCs) solve it. PQC signatures are dramatically larger than classical ones: an ECDSA P-256 signature is 64 bytes while ML-DSA-44 is 2,420 bytes, a 37x increase. A typical PQC TLS certificate chain adds 18-36 KB of overhead, breaking constrained clients and degrading connection setup times. MTCs replace individual per-certificate signatures with a batch-signing approach using Merkle trees, achieving 27–64% size reduction depending on algorithm (62–64% for ML-DSA chains).
 
 ## Key Concepts
 

@@ -343,7 +343,8 @@ var scanOutputFiles = (module: EmscriptenModule, inputFiles: Set<string>, reques
             file.endsWith('.enc') ||
             file.endsWith('.der') ||
             file.endsWith('.p7b') ||
-            file.endsWith('.skey')
+            file.endsWith('.skey') ||
+            file.endsWith('.crl')
           ) {
             const content = module.FS.readFile('/' + file)
             self.postMessage({ type: 'FILE_CREATED', name: file, data: content, requestId })
@@ -555,6 +556,20 @@ var executeCommand = async (
 
     // Scan for output files
     scanOutputFiles(openSSLModule, writtenFiles, requestId)
+
+    // Inform user about encap outputs
+    if (command === 'pkeyutl' && args.includes('-encap')) {
+      const secretIdx = args.indexOf('-secret')
+      const outIdx = args.indexOf('-out')
+      const ctFile = outIdx >= 0 && args[outIdx + 1] ? args[outIdx + 1] : 'ciphertext.bin'
+      const secretFile = secretIdx >= 0 && args[secretIdx + 1] ? args[secretIdx + 1] : 'secret.bin'
+      self.postMessage({
+        type: 'LOG',
+        stream: 'stdout',
+        message: `\n💡 Encapsulation outputs:\n   Ciphertext: ${ctFile}  ←  use this as input to decapsulate\n   Shared secret: ${secretFile}`,
+        requestId,
+      })
+    }
 
     // Inform user about public key extraction for genpkey
     if (command === 'genpkey') {

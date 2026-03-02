@@ -81,7 +81,7 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
                   placeholder={attr.placeholder}
                   disabled={!attr.enabled || (showSource && attr.source === 'CSR')}
                   aria-label={attr.label}
-                  className="w-full bg-muted border border-border rounded px-2 py-1.5 text-sm text-accent-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-muted border border-border rounded px-2 py-1.5 text-sm text-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </td>
               <td className="p-3 text-muted-foreground text-xs max-w-[200px]">

@@ -44,7 +44,7 @@ export const CRLGenerator: React.FC<CRLGeneratorProps> = ({ onComplete }) => {
       const indexFile = { name: 'index.txt', data: new TextEncoder().encode('') }
 
       // 2. Prepare crlnumber file (start with 1000)
-      const crlNumberFile = { name: 'crlnumber', data: new TextEncoder().encode('1000\\n') }
+      const crlNumberFile = { name: 'crlnumber', data: new TextEncoder().encode('1000\n') }
 
       // 3. Prepare config file for CA
       const configContent = `
@@ -67,7 +67,7 @@ preserve = no
       const crlName = `pkiworkshop_crl_${timestamp}.crl`
 
       const cmd = `openssl ca -gencrl -keyfile "${caKey.name}" -cert "${caCert.name}" -out "${crlName}" -config crl.conf`
-      setOutput((prev) => prev + `$ ${cmd}\\n\\n`)
+      setOutput((prev) => prev + `$ ${cmd}\n\n`)
 
       const result = await openSSLService.execute(cmd, [
         keyFile,
@@ -101,13 +101,13 @@ preserve = no
       setOutput(
         (prev) =>
           prev +
-          `CRL Generated successfully!\\nNote: This is an empty CRL (no certificates revoked). To parse it, use "openssl crl -in ${crlName} -text -noout" in the OpenSSL Studio.\\n`
+          `CRL Generated successfully!\nNote: This is an empty CRL (no certificates revoked). To parse it, use "openssl crl -in ${crlName} -text -noout" in the OpenSSL Studio.\n`
       )
 
       onComplete()
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      setOutput((prev) => prev + `Error: ${errorMessage}\\n`)
+      setOutput((prev) => prev + `Error: ${errorMessage}\n`)
     } finally {
       setIsGenerating(false)
     }

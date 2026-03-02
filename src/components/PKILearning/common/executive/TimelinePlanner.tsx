@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback, useMemo } from 'react'
-import { Plus, X, GripVertical } from 'lucide-react'
+import { Plus, X, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ExportableArtifact } from './ExportableArtifact'
 
@@ -42,6 +42,44 @@ export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
   const [newYear, setNewYear] = useState(yearRange[0])
   const [newCategory, setNewCategory] = useState(categories[0])
 
+  // Deadline selection state — empty by default (user opts in)
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(() => new Set())
+  const [pickerOpen, setPickerOpen] = useState(deadlines.length > 0)
+
+  const deadlineKey = useCallback((d: ExternalDeadline) => `${d.label}-${d.year}`, [])
+
+  const visibleDeadlines = useMemo(
+    () => deadlines.filter((d) => selectedKeys.has(deadlineKey(d))),
+    [deadlines, selectedKeys, deadlineKey]
+  )
+
+  const deadlinesBySource = useMemo(() => {
+    const map = new Map<string, ExternalDeadline[]>()
+    for (const d of deadlines) {
+      const existing = map.get(d.source) ?? []
+      existing.push(d)
+      map.set(d.source, existing)
+    }
+    return map
+  }, [deadlines])
+
+  const toggleDeadline = useCallback((key: string) => {
+    setSelectedKeys((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+  }, [])
+
+  const selectAllDeadlines = useCallback(() => {
+    setSelectedKeys(new Set(deadlines.map(deadlineKey)))
+  }, [deadlines, deadlineKey])
+
+  const clearAllDeadlines = useCallback(() => {
+    setSelectedKeys(new Set())
+  }, [])
+
   const years = useMemo(() => {
     const arr: number[] = []
     for (let y = yearRange[0]; y <= yearRange[1]; y++) arr.push(y)
@@ -75,11 +113,11 @@ export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
     let md = `# ${title}\n\n`
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
 
-    if (deadlines.length > 0) {
+    if (visibleDeadlines.length > 0) {
       md += '## External Deadlines\n\n'
       md += '| Year | Deadline | Source |\n'
       md += '|------|----------|--------|\n'
-      for (const d of deadlines) {
+      for (const d of visibleDeadlines) {
         md += `| ${d.year} | ${d.label} | ${d.source} |\n`
       }
       md += '\n'
@@ -92,11 +130,77 @@ export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
       md += `| ${m.year}${m.quarter ? ` Q${m.quarter}` : ''} | ${m.label} | ${m.category || ''} |\n`
     }
     return md
-  }, [title, milestones, deadlines])
+  }, [title, milestones, visibleDeadlines])
 
   return (
     <div className="space-y-6">
       {title && <h3 className="text-lg font-semibold text-foreground">{title}</h3>}
+
+      {/* Deadline picker */}
+      {deadlines.length > 0 && (
+        <div className="glass-panel p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-foreground">Regulatory Deadlines</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                {selectedKeys.size} / {deadlines.length} selected
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="sm" onClick={selectAllDeadlines}>
+                All
+              </Button>
+              <Button variant="ghost" size="sm" onClick={clearAllDeadlines}>
+                None
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setPickerOpen((p) => !p)}
+                aria-expanded={pickerOpen}
+                aria-controls="deadline-picker"
+              >
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform ${pickerOpen ? 'rotate-180' : ''}`}
+                />
+              </Button>
+            </div>
+          </div>
+          {pickerOpen && (
+            <div id="deadline-picker" className="mt-3 max-h-56 overflow-y-auto space-y-3 pr-1">
+              {Array.from(deadlinesBySource.entries()).map(([source, items]) => (
+                <div key={source}>
+                  <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                    {source}
+                  </div>
+                  <div className="space-y-0.5">
+                    {items.map((d) => {
+                      const key = deadlineKey(d)
+                      return (
+                        <label
+                          key={key}
+                          className="flex items-center gap-2 cursor-pointer hover:bg-muted/30 rounded px-1 py-0.5"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedKeys.has(key)}
+                            onChange={() => toggleDeadline(key)}
+                            className="accent-primary"
+                            aria-label={`${d.label} (${d.year})`}
+                          />
+                          <span className="text-xs font-mono text-primary shrink-0">{d.year}</span>
+                          <span className="text-xs text-foreground truncate">{d.label}</span>
+                        </label>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Timeline visualization */}
       <div className="glass-panel p-6 overflow-x-auto">
@@ -113,58 +217,62 @@ export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
             ))}
           </div>
 
-          {/* External deadlines row */}
-          {deadlines.length > 0 && (
-            <div className="relative h-10 mb-3">
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 text-xs text-muted-foreground w-20 truncate">
-                Deadlines
-              </div>
-              <div className="ml-20 relative h-full">
-                {deadlines.map((d, i) => {
-                  const pos = ((d.year - yearRange[0]) / (yearRange[1] - yearRange[0])) * 100
-                  return (
-                    <div
-                      key={`${d.label}-${i}`}
-                      className="absolute top-0 flex flex-col items-center"
-                      style={{ left: `${Math.min(95, Math.max(0, pos))}%` }}
-                      title={`${d.label} (${d.source})`}
-                    >
-                      <div className="w-0.5 h-10 bg-status-error/60" />
-                      <span className="text-[10px] text-status-error font-medium whitespace-nowrap mt-0.5 max-w-[80px] truncate">
-                        {d.label}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* User milestones row */}
-          <div className="relative h-10 mb-2">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 text-xs text-muted-foreground w-20 truncate">
-              Plan
-            </div>
-            <div className="ml-20 relative h-full bg-muted/30 rounded">
-              {milestones.map((m) => {
-                const pos = ((m.year - yearRange[0]) / (yearRange[1] - yearRange[0])) * 100
+          {/* External deadlines — one row per deadline */}
+          {visibleDeadlines.length > 0 && (
+            <div className="mb-3 space-y-0.5">
+              {visibleDeadlines.map((d, i) => {
+                const pos = ((d.year - yearRange[0]) / (yearRange[1] - yearRange[0])) * 100
                 return (
                   <div
-                    key={m.id}
-                    className="absolute top-0 flex flex-col items-center group"
-                    style={{ left: `${Math.min(95, Math.max(0, pos))}%` }}
-                    title={`${m.label} — ${m.category || ''}`}
+                    key={`${d.label}-${i}`}
+                    className="flex items-center"
+                    style={{ height: '24px' }}
                   >
-                    <div className="w-3 h-3 rounded-full bg-primary border-2 border-background shadow-sm cursor-grab">
-                      <GripVertical size={8} className="hidden" />
+                    <div className="w-20 shrink-0 text-xs text-muted-foreground truncate">
+                      {i === 0 ? 'Deadlines' : ''}
                     </div>
-                    <span className="text-[10px] text-primary font-medium whitespace-nowrap mt-0.5 max-w-[80px] truncate">
-                      {m.label}
-                    </span>
+                    <div className="flex-1 relative h-full">
+                      <div
+                        className="absolute top-1/2 -translate-y-1/2 flex items-center gap-1"
+                        style={{ left: `${Math.min(95, Math.max(0, pos))}%` }}
+                        title={`${d.label} (${d.source})`}
+                      >
+                        <div className="w-1.5 h-4 bg-status-error/60 rounded-sm shrink-0" />
+                        <span className="text-[10px] text-status-error font-medium whitespace-nowrap">
+                          {d.label}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 )
               })}
             </div>
+          )}
+
+          {/* User milestones — one row per milestone */}
+          <div className="mb-2 space-y-0.5">
+            {milestones.map((m, i) => {
+              const pos = ((m.year - yearRange[0]) / (yearRange[1] - yearRange[0])) * 100
+              return (
+                <div key={m.id} className="flex items-center" style={{ height: '24px' }}>
+                  <div className="w-20 shrink-0 text-xs text-muted-foreground truncate">
+                    {i === 0 ? 'Plan' : ''}
+                  </div>
+                  <div className="flex-1 relative h-full bg-muted/30 rounded">
+                    <div
+                      className="absolute top-1/2 -translate-y-1/2 flex items-center gap-1"
+                      style={{ left: `${Math.min(95, Math.max(0, pos))}%` }}
+                      title={`${m.label} — ${m.category || ''}`}
+                    >
+                      <div className="w-3 h-3 rounded-full bg-primary border-2 border-background shadow-sm shrink-0" />
+                      <span className="text-[10px] text-primary font-medium whitespace-nowrap">
+                        {m.label}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>

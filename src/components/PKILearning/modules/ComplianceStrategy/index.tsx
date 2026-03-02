@@ -88,6 +88,8 @@ export const ComplianceStrategyModule: React.FC = () => {
   })
   const [currentPart, setCurrentPart] = useState(0)
   const [configKey, setConfigKey] = useState(0)
+  const [selectedJurisdictions, setSelectedJurisdictions] = useState<string[]>([])
+  const [dismissedFrameworks, setDismissedFrameworks] = useState<Set<string>>(new Set())
   const startTimeRef = useRef(0)
   const { updateModuleProgress, markStepComplete } = useModuleStore()
 
@@ -136,6 +138,8 @@ export const ComplianceStrategyModule: React.FC = () => {
     if (confirm('Restart Compliance & Regulatory Strategy Module?')) {
       setCurrentPart(0)
       setConfigKey((prev) => prev + 1)
+      setSelectedJurisdictions([])
+      setDismissedFrameworks(new Set())
       startTimeRef.current = Date.now()
       updateModuleProgress(MODULE_ID, {
         status: 'in-progress',
@@ -222,9 +226,23 @@ export const ComplianceStrategyModule: React.FC = () => {
                 <h2 className="text-2xl font-bold text-foreground">{PARTS[currentPart].title}</h2>
                 <p className="text-muted-foreground">{PARTS[currentPart].description}</p>
               </div>
-              {currentPart === 0 && <JurisdictionMapper key={`jurisdiction-${configKey}`} />}
+              {currentPart === 0 && (
+                <JurisdictionMapper
+                  key={`jurisdiction-${configKey}`}
+                  selectedJurisdictions={selectedJurisdictions}
+                  onJurisdictionsChange={setSelectedJurisdictions}
+                  dismissedFrameworks={dismissedFrameworks}
+                  onDismissedFrameworksChange={setDismissedFrameworks}
+                />
+              )}
               {currentPart === 1 && <AuditReadinessChecklist key={`audit-${configKey}`} />}
-              {currentPart === 2 && <ComplianceTimelineBuilder key={`timeline-${configKey}`} />}
+              {currentPart === 2 && (
+                <ComplianceTimelineBuilder
+                  key={`timeline-${configKey}`}
+                  selectedJurisdictions={selectedJurisdictions}
+                  dismissedFrameworkIds={dismissedFrameworks}
+                />
+              )}
             </div>
 
             {/* Part Navigation */}

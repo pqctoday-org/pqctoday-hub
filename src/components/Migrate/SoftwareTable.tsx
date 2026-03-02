@@ -13,6 +13,8 @@ import {
   ShieldAlert,
   EyeOff,
   Award,
+  CheckSquare,
+  Square,
 } from 'lucide-react'
 import { LAYERS } from './InfrastructureStack'
 import { certsByProduct } from '../../data/certificationXrefData'
@@ -23,6 +25,10 @@ interface SoftwareTableProps {
   defaultSort?: { key: SortKey; direction: SortDirection }
   hiddenProducts?: Set<string>
   onHideProduct?: (key: string) => void
+  /** Keys of products the user has marked as "My Products" */
+  selectedProducts?: Set<string>
+  /** Toggle a product's "My Products" selection */
+  onToggleProduct?: (key: string) => void
 }
 
 type SortDirection = 'asc' | 'desc' | null
@@ -33,6 +39,8 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
   defaultSort,
   hiddenProducts,
   onHideProduct,
+  selectedProducts,
+  onToggleProduct,
 }) => {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>(
@@ -141,7 +149,8 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
     [sortedData, hiddenProducts]
   )
 
-  const totalCols = 8 // hide + expand + 6 data columns
+  const hasSelection = !!(selectedProducts && onToggleProduct)
+  const totalCols = hasSelection ? 9 : 8 // checkbox? + hide + expand + 6 data columns
 
   return (
     <div className="glass-panel overflow-hidden">
@@ -149,6 +158,11 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-border bg-muted/20">
+              {hasSelection && (
+                <th className="p-2 w-8 text-center text-xs text-muted-foreground font-medium">
+                  My
+                </th>
+              )}
               <th className="p-4 w-8"></th> {/* Hide toggle */}
               <th className="p-4 w-10"></th> {/* Expand toggle */}
               {headers.map((header) => (
@@ -190,6 +204,33 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                     className="border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
                     onClick={() => toggleExpand(key)}
                   >
+                    {hasSelection && (
+                      <td className="p-2 w-8 text-center">
+                        <button
+                          type="button"
+                          aria-label={
+                            selectedProducts.has(key)
+                              ? 'Remove from My Products'
+                              : 'Add to My Products'
+                          }
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onToggleProduct(key)
+                          }}
+                          className={`p-1 rounded transition-colors ${
+                            selectedProducts.has(key)
+                              ? 'text-primary hover:text-primary/80'
+                              : 'text-muted-foreground/40 hover:text-primary'
+                          }`}
+                        >
+                          {selectedProducts.has(key) ? (
+                            <CheckSquare size={16} />
+                          ) : (
+                            <Square size={16} />
+                          )}
+                        </button>
+                      </td>
+                    )}
                     <td className="p-2 w-8">
                       {onHideProduct && (
                         <button

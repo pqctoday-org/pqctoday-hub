@@ -1,7 +1,7 @@
 name: 💡 Suggest a Data Change
 description: Propose a new record, correction, or update to a dataset. No coding required — the maintainer implements all changes.
-title: "[Data] "
-labels: ["data: suggestion", "needs-verification"]
+title: '[Data] '
+labels: ['data: suggestion', 'needs-verification']
 body:
   - type: markdown
     attributes:

@@ -13,6 +13,7 @@ import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useChatSend } from '@/hooks/useChatSend'
 import { logChatFeedback } from '@/utils/analytics'
 import { conversationToMarkdown, downloadMarkdown } from '@/services/chat/exportConversation'
+import { clearCache } from '@/services/chat/responseCache'
 
 export const ChatPanelContent: React.FC = () => {
   const {
@@ -151,6 +152,7 @@ export const ChatPanelContent: React.FC = () => {
                     size="sm"
                     onClick={() => {
                       clearMessages()
+                      clearCache()
                       setShowClearConfirm(false)
                     }}
                     className="min-h-[44px] px-2 text-status-error hover:text-status-error"

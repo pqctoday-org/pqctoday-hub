@@ -82,7 +82,7 @@ export const MTC_INCLUSION_PROOF_BYTES = 736
 /**
  * Calculate total traditional TLS handshake authentication size.
  *
- * Components: Root CA sig + Intermediate CA sig + EE cert sig + 2 SCTs
+ * Components: Root CA sig + Intermediate CA sig + EE cert sig + 4 SCTs (2 per non-root cert)
  * + Root CA pubkey + Intermediate CA pubkey + EE pubkey + cert metadata × 3
  */
 export function traditionalChainSize(algo: AlgorithmSizes): number {

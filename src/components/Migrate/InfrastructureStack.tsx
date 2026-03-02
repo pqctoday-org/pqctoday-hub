@@ -24,6 +24,8 @@ interface InfrastructureStackProps {
   layerHiddenCounts?: Partial<Record<InfrastructureLayerType, number>>
   onRestoreLayer?: (keysToRestore: string[]) => void
   layerProductKeys?: Partial<Record<InfrastructureLayerType, string[]>>
+  /** Count of "My Products" selected per layer */
+  layerSelectedCounts?: Partial<Record<InfrastructureLayerType, number>>
 }
 
 export const LAYERS = [
@@ -115,6 +117,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
   layerHiddenCounts,
   onRestoreLayer,
   layerProductKeys,
+  layerSelectedCounts,
 }) => {
   const handleSelect = (layerId: InfrastructureLayerType) => {
     // Toggle off if clicking the already active layer
@@ -207,6 +210,11 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                   {layerProductCounts !== undefined && (
                     <span className="text-xs px-2.5 py-1 rounded-full bg-background/50 text-muted-foreground border border-border/40 tabular-nums">
                       {layerProductCounts[layer.id as InfrastructureLayerType] ?? 0} products
+                    </span>
+                  )}
+                  {(layerSelectedCounts?.[layer.id as InfrastructureLayerType] ?? 0) > 0 && (
+                    <span className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/30 tabular-nums">
+                      {layerSelectedCounts?.[layer.id as InfrastructureLayerType]} selected
                     </span>
                   )}
                   {(layerHiddenCounts?.[layer.id as InfrastructureLayerType] ?? 0) > 0 && (

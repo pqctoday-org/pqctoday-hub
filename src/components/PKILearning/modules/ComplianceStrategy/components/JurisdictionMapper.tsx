@@ -1,10 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { Globe, AlertTriangle, CheckCircle2, Clock } from 'lucide-react'
+import {
+  Globe,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  X,
+  Eye,
+  Calendar,
+  ChevronDown,
+  ChevronRight,
+  ExternalLink,
+  Package,
+} from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ExportableArtifact } from '../../../common/executive'
+import { Button } from '@/components/ui/button'
+import { softwareData } from '@/data/migrateData'
 import type { ComplianceFramework } from '@/data/complianceData'
 import type { CountryData } from '@/data/timelineData'
+import type { SoftwareItem } from '@/types/MigrateTypes'
 
 interface JurisdictionConfig {
   id: string
@@ -59,8 +75,12 @@ function getEarliestDeadline(country: CountryData): number | null {
 }
 
 function getDeadlineYear(framework: ComplianceFramework): number | null {
-  const match = framework.deadline.match(/(\d{4})/)
-  return match ? parseInt(match[1]) : null
+  // Skip "Ongoing" deadlines with no target year
+  if (/^ongoing/i.test(framework.deadline.trim())) return null
+  // Match 4-digit years >= 2000, ignoring control numbers like ISM-1917 or STANAG-4774
+  const matches = framework.deadline.match(/\b(2\d{3})\b/g)
+  if (!matches) return null
+  return Math.min(...matches.map(Number))
 }
 
 function getDeadlineStatus(year: number | null): { label: string; color: string } {
@@ -176,14 +196,83 @@ function detectConflicts(
   return conflicts
 }
 
-export const JurisdictionMapper: React.FC = () => {
+function ProductPreviewCard({ product }: { product: SoftwareItem }) {
+  const support = product.pqcSupport.toLowerCase()
+  const isFullPqc = support.startsWith('yes')
+  const isLimited = support.startsWith('limited')
+
+  const fipsLower = (product.fipsValidated || '').toLowerCase()
+  const isFips = fipsLower.includes('fips 140') || fipsLower.includes('fips 203')
+  const isFipsPartial = !isFips && fipsLower.startsWith('yes')
+
+  return (
+    <div className="p-3 rounded-lg border border-border bg-background/50 space-y-1.5">
+      <div className="flex items-start justify-between gap-2">
+        <span className="text-sm font-medium text-foreground line-clamp-1">
+          {product.softwareName}
+        </span>
+        <div className="flex items-center gap-1 shrink-0">
+          {isFullPqc && (
+            <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-status-success/15 text-status-success font-medium">
+              <CheckCircle2 size={10} /> PQC
+            </span>
+          )}
+          {isLimited && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-status-warning/15 text-status-warning font-medium">
+              Limited
+            </span>
+          )}
+          {isFips && (
+            <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-status-success/15 text-status-success font-medium">
+              FIPS
+            </span>
+          )}
+          {isFipsPartial && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-status-warning/15 text-status-warning font-medium">
+              FIPS Partial
+            </span>
+          )}
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground line-clamp-2">{product.productBrief}</p>
+      <div className="text-[10px] text-muted-foreground">{product.infrastructureLayer}</div>
+    </div>
+  )
+}
+
+interface JurisdictionMapperProps {
+  selectedJurisdictions: string[]
+  onJurisdictionsChange: (jurisdictions: string[]) => void
+  dismissedFrameworks: Set<string>
+  onDismissedFrameworksChange: (dismissed: Set<string>) => void
+}
+
+export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
+  selectedJurisdictions,
+  onJurisdictionsChange,
+  dismissedFrameworks,
+  onDismissedFrameworksChange,
+}) => {
   const { frameworks, countryDeadlines } = useExecutiveModuleData()
-  const [selectedJurisdictions, setSelectedJurisdictions] = useState<string[]>([])
+  const navigate = useNavigate()
+  const [expandedFramework, setExpandedFramework] = useState<string | null>(null)
 
   const toggleJurisdiction = (id: string) => {
-    setSelectedJurisdictions((prev) =>
-      prev.includes(id) ? prev.filter((j) => j !== id) : [...prev, id]
+    onJurisdictionsChange(
+      selectedJurisdictions.includes(id)
+        ? selectedJurisdictions.filter((j) => j !== id)
+        : [...selectedJurisdictions, id]
     )
+  }
+
+  const dismissFramework = (id: string) => {
+    const next = new Set(dismissedFrameworks)
+    next.add(id)
+    onDismissedFrameworksChange(next)
+  }
+
+  const restoreAllFrameworks = () => {
+    onDismissedFrameworksChange(new Set())
   }
 
   // Map each jurisdiction ID to matching compliance frameworks
@@ -228,8 +317,8 @@ export const JurisdictionMapper: React.FC = () => {
     [selectedJurisdictions, frameworkMap, countryDeadlineMap]
   )
 
-  // All frameworks across selected jurisdictions (deduplicated)
-  const selectedFrameworks = useMemo(() => {
+  // All frameworks across selected jurisdictions (deduplicated, excluding dismissed)
+  const allMatchedFrameworks = useMemo(() => {
     const seen = new Set<string>()
     const result: (ComplianceFramework & { jurisdictionLabels: string[] })[] = []
     for (const id of selectedJurisdictions) {
@@ -256,6 +345,33 @@ export const JurisdictionMapper: React.FC = () => {
       return 0
     })
   }, [selectedJurisdictions, frameworkMap])
+
+  const selectedFrameworks = useMemo(
+    () => allMatchedFrameworks.filter((fw) => !dismissedFrameworks.has(fw.id)),
+    [allMatchedFrameworks, dismissedFrameworks]
+  )
+
+  const dismissedCount = allMatchedFrameworks.length - selectedFrameworks.length
+
+  // Match PQC-ready products to frameworks by industry overlap
+  const productsForFramework = useMemo(() => {
+    const map = new Map<string, SoftwareItem[]>()
+    for (const fw of selectedFrameworks) {
+      if (!fw.requiresPQC) {
+        map.set(fw.id, [])
+        continue
+      }
+      const fwIndustries = new Set(fw.industries.map((i) => i.toLowerCase()))
+      const matching = softwareData.filter((p) => {
+        const support = p.pqcSupport.toLowerCase()
+        if (!support.startsWith('yes') && !support.startsWith('limited')) return false
+        const pIndustries = p.targetIndustries.split(';').map((i) => i.trim().toLowerCase())
+        return pIndustries.some((pi) => fwIndustries.has(pi) || pi === 'global')
+      })
+      map.set(fw.id, matching)
+    }
+    return map
+  }, [selectedFrameworks])
 
   const exportMarkdown = useMemo(() => {
     let md = '# Jurisdiction Compliance Map\n\n'
@@ -389,15 +505,24 @@ export const JurisdictionMapper: React.FC = () => {
       {/* Framework Deadline Table */}
       {selectedJurisdictions.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-lg font-semibold text-foreground">
-            Applicable Frameworks &amp; Deadlines
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-foreground">
+              Applicable Frameworks &amp; Deadlines
+            </h3>
+            {dismissedCount > 0 && (
+              <Button variant="ghost" size="sm" onClick={restoreAllFrameworks}>
+                <Eye size={14} className="mr-1" />
+                Show {dismissedCount} hidden
+              </Button>
+            )}
+          </div>
           {selectedFrameworks.length === 0 ? (
             <div className="glass-panel p-6 text-center">
               <Globe size={32} className="mx-auto text-muted-foreground mb-2" />
               <p className="text-sm text-muted-foreground">
-                No matching frameworks found for the selected jurisdictions. This may mean
-                country-specific compliance data is not yet available.
+                {dismissedCount > 0
+                  ? `All ${dismissedCount} frameworks have been hidden. Click "Show hidden" to restore them.`
+                  : 'No matching frameworks found for the selected jurisdictions. This may mean country-specific compliance data is not yet available.'}
               </p>
             </div>
           ) : (
@@ -420,47 +545,144 @@ export const JurisdictionMapper: React.FC = () => {
                     <th className="text-left py-2 px-3 text-xs font-bold text-muted-foreground">
                       PQC Required
                     </th>
+                    <th className="py-2 px-2 w-16" />
                   </tr>
                 </thead>
                 <tbody>
                   {selectedFrameworks.map((fw) => {
                     const deadlineYear = getDeadlineYear(fw)
                     const status = getDeadlineStatus(deadlineYear)
+                    const timelineCountry =
+                      fw.timelineRefs.length > 0 ? fw.timelineRefs[0].split(':')[0] : null
+                    const isExpanded = expandedFramework === fw.id
+                    const products = productsForFramework.get(fw.id) ?? []
+                    const previewProducts = products.slice(0, 5)
                     return (
-                      <tr key={fw.id} className="border-b border-border/50 hover:bg-muted/30">
-                        <td className="py-2 px-3">
-                          <div className="font-medium text-foreground">{fw.label}</div>
-                          <div className="text-xs text-muted-foreground line-clamp-1">
-                            {fw.description}
-                          </div>
-                        </td>
-                        <td className="py-2 px-3 text-muted-foreground">
-                          {fw.jurisdictionLabels.join(', ')}
-                        </td>
-                        <td className="py-2 px-3 font-mono text-foreground">
-                          {fw.deadline || 'TBD'}
-                        </td>
-                        <td className="py-2 px-3">
-                          <span className={`text-xs font-medium ${status.color}`}>
-                            {deadlineYear ? (
-                              <span className="flex items-center gap-1">
-                                {status.label === 'Active' && <CheckCircle2 size={12} />}
-                                {status.label === 'Imminent' && <Clock size={12} />}
-                                {status.label}
-                              </span>
-                            ) : (
-                              status.label
-                            )}
-                          </span>
-                        </td>
-                        <td className="py-2 px-3">
-                          <span
-                            className={`text-xs font-medium ${fw.requiresPQC ? 'text-status-error' : 'text-muted-foreground'}`}
-                          >
-                            {fw.requiresPQC ? 'Yes' : 'No'}
-                          </span>
-                        </td>
-                      </tr>
+                      <React.Fragment key={fw.id}>
+                        <tr
+                          className={`border-b border-border/50 hover:bg-muted/30 group cursor-pointer ${isExpanded ? 'bg-muted/20' : ''}`}
+                          onClick={() => setExpandedFramework(isExpanded ? null : fw.id)}
+                        >
+                          <td className="py-2 px-3">
+                            <div className="flex items-center gap-2">
+                              {isExpanded ? (
+                                <ChevronDown size={14} className="text-primary shrink-0" />
+                              ) : (
+                                <ChevronRight
+                                  size={14}
+                                  className="text-muted-foreground shrink-0"
+                                />
+                              )}
+                              <div>
+                                <div className="font-medium text-foreground">{fw.label}</div>
+                                <div className="text-xs text-muted-foreground line-clamp-1">
+                                  {fw.description}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-2 px-3 text-muted-foreground">
+                            {fw.jurisdictionLabels.join(', ')}
+                          </td>
+                          <td className="py-2 px-3 font-mono text-foreground">
+                            {fw.deadline || 'TBD'}
+                          </td>
+                          <td className="py-2 px-3">
+                            <span className={`text-xs font-medium ${status.color}`}>
+                              {deadlineYear ? (
+                                <span className="flex items-center gap-1">
+                                  {status.label === 'Active' && <CheckCircle2 size={12} />}
+                                  {status.label === 'Imminent' && <Clock size={12} />}
+                                  {status.label}
+                                </span>
+                              ) : (
+                                status.label
+                              )}
+                            </span>
+                          </td>
+                          <td className="py-2 px-3">
+                            <span
+                              className={`text-xs font-medium ${fw.requiresPQC ? 'text-status-error' : 'text-muted-foreground'}`}
+                            >
+                              {fw.requiresPQC ? 'Yes' : 'No'}
+                            </span>
+                          </td>
+                          <td className="py-2 px-2">
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              {timelineCountry && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    navigate(
+                                      `/timeline?country=${encodeURIComponent(timelineCountry)}`
+                                    )
+                                  }}
+                                  className="p-1 rounded text-muted-foreground hover:text-primary transition-colors"
+                                  title={`View ${timelineCountry} timeline`}
+                                >
+                                  <Calendar size={14} />
+                                </button>
+                              )}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  dismissFramework(fw.id)
+                                }}
+                                className="p-1 rounded text-muted-foreground hover:text-status-error transition-colors"
+                                title="Remove from list"
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                        {isExpanded && (
+                          <tr>
+                            <td colSpan={6} className="px-3 py-4 bg-muted/10">
+                              {!fw.requiresPQC ? (
+                                <div className="text-sm text-muted-foreground text-center py-2">
+                                  This framework does not currently require PQC.
+                                </div>
+                              ) : products.length === 0 ? (
+                                <div className="text-sm text-muted-foreground text-center py-2">
+                                  <Package
+                                    size={20}
+                                    className="mx-auto text-muted-foreground mb-1"
+                                  />
+                                  No PQC-ready products found for {fw.industries.join(', ')}{' '}
+                                  industries.
+                                </div>
+                              ) : (
+                                <div className="space-y-3">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs font-medium text-muted-foreground">
+                                      {products.length > 5
+                                        ? `Showing 5 of ${products.length} PQC-ready products`
+                                        : `${products.length} PQC-ready product${products.length !== 1 ? 's' : ''}`}
+                                    </span>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        navigate('/migrate')
+                                      }}
+                                    >
+                                      <ExternalLink size={12} className="mr-1" />
+                                      Browse Migrate Catalog
+                                    </Button>
+                                  </div>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                                    {previewProducts.map((p) => (
+                                      <ProductPreviewCard key={p.softwareName} product={p} />
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
                     )
                   })}
                 </tbody>

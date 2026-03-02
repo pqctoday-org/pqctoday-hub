@@ -191,7 +191,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
           <div className="bg-success/5 rounded-lg p-3 border border-success/20">
             <div className="text-sm font-bold text-success mb-2">Advantages</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>&bull; Massive size reduction (63&ndash;74% for ML-DSA)</li>
+              <li>&bull; Massive size reduction (62&ndash;64% for ML-DSA)</li>
               <li>&bull; Single CA signing operation covers millions of certificates</li>
               <li>&bull; Inclusion proof is pure hash computation &mdash; fast to verify</li>
               <li>&bull; Inherent certificate transparency (batch = public log)</li>
