@@ -4,6 +4,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.8.1] - 2026-03-01
+
+### Fixed
+
+- **ML-KEM decapsulate** (`KemConfig.tsx`, `Workbench.tsx`): Resolved "Public Key operation error"
+  caused by unclear file selection after encapsulation. Key file dropdown now filters to `.pub`
+  files for encap and `.key` files for decap. Ciphertext input dropdown excludes key files.
+  Encapsulate now shows separate "Ciphertext Output" and "Shared Secret Output" fields so filenames
+  are explicit and cannot collide. [view:/openssl]
+
+### Changed
+
+- **OpenSSL Studio — KEM config** (`KemConfig.tsx`, `openssl.worker.ts`): Added configurable
+  `-secret` output filename (was hardcoded to `secret.bin`). Post-encap terminal hint now shows
+  which file is the ciphertext and which is the shared secret, with a reminder to use the ciphertext
+  as input to decapsulate. [view:/openssl]
+
+- **OpenSSL Studio — educational flow hints** (`DgstConfig.tsx`, `EncConfig.tsx`, `LmsConfig.tsx`,
+  `Pkcs12Config.tsx`): Consistent context-aware hint box added below the action toggle in every
+  dual-mode operation panel. Each hint explains the inputs, outputs, and key type required for
+  the selected mode:
+  - **Sign/Verify**: private key + data → signature; public key + data + signature → valid/invalid
+  - **Encrypt/Decrypt**: plaintext + passphrase (PBKDF2) → ciphertext; reverse to recover plaintext
+  - **LMS Generate/Sign/Verify**: stateful keypair creation; private key mutates on each signature
+  - **PKCS#12 Export/Import**: bundle cert + key into password-protected .p12; extract with same password
+    [view:/openssl]
+
 ## [2.8.0] - 2026-03-01
 
 ### Added
