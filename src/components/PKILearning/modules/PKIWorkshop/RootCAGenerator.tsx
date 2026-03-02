@@ -108,11 +108,12 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
   const [showProfileInfo, setShowProfileInfo] = useState(false)
   const [profileDocContent, setProfileDocContent] = useState<string>('')
   const [isKeyGenerating, setIsKeyGenerating] = useState(false)
-  const [keyGenerationError, setKeyGenerationError] = useState<string | null>(null)
   const [generatedKeyInfo, setGeneratedKeyInfo] = useState<{
     id: string
     name: string
     algorithm: string
+    log: string
+    error?: boolean
   } | null>(null)
 
   const filterProfileName = React.useCallback((name: string) => name.startsWith('Cert-RootCA'), [])
@@ -175,7 +176,6 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
   const handleKeySourceSelect = async (id: string) => {
     setSelectedKeyId(id)
     setGeneratedKeyInfo(null)
-    setKeyGenerationError(null)
     if (!id.startsWith('new-')) return
 
     const algoId = id.replace('new-', '')
@@ -183,13 +183,12 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
     if (!algo) return
 
     setIsKeyGenerating(true)
-    setOutput('')
-    try {
-      const timestamp = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14)
-      const keyName = `pkiworkshop_ca_${timestamp}.key`
-      const keyCmd = algo.genCommand + ` -out ${keyName}`
-      setOutput(`$ ${keyCmd}\n`)
+    const timestamp = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14)
+    const keyName = `pkiworkshop_ca_${timestamp}.key`
+    const keyCmd = algo.genCommand + ` -out ${keyName}`
+    setOutput(`$ ${keyCmd}\n`)
 
+    try {
       const keyResult = await openSSLService.execute(keyCmd)
       if (keyResult.error) throw new Error(keyResult.error)
 
@@ -220,11 +219,22 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
 
       setOutput((prev) => prev + 'Root CA private key generated and saved.\n')
       setSelectedKeyId(keyId)
-      setGeneratedKeyInfo({ id: keyId, name: keyName, algorithm: algo.name })
+      setGeneratedKeyInfo({
+        id: keyId,
+        name: keyName,
+        algorithm: algo.name,
+        log: `$ ${keyCmd}\nRoot CA private key generated and saved.`,
+      })
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Unknown error'
-      setKeyGenerationError(msg)
       setOutput((prev) => prev + `Error generating key: ${msg}\n`)
+      setGeneratedKeyInfo({
+        id: '',
+        name: keyName,
+        algorithm: algo.name,
+        log: `$ ${keyCmd}\nError: ${msg}`,
+        error: true,
+      })
     } finally {
       setIsKeyGenerating(false)
     }
@@ -546,18 +556,17 @@ x509_extensions = v3_ca
               </div>
             )}
             {generatedKeyInfo && !isKeyGenerating && (
-              <div className="mt-3 p-3 bg-muted/30 rounded-lg border border-border/30 text-xs space-y-1">
-                <div className="flex items-center gap-2 text-status-success font-medium">
-                  <CheckCircle2 size={14} /> Key ready
+              <div className="mt-3 p-3 bg-muted/30 rounded-lg border border-border/30 text-xs space-y-2">
+                <div
+                  className={`flex items-center gap-2 font-medium ${generatedKeyInfo.error ? 'text-status-error' : 'text-status-success'}`}
+                >
+                  <CheckCircle2 size={14} />{' '}
+                  {generatedKeyInfo.error ? 'Key generation failed' : 'Key ready'}
                 </div>
-                <div className="text-muted-foreground font-mono truncate">
-                  {generatedKeyInfo.name}
-                </div>
-                <div className="text-muted-foreground">{generatedKeyInfo.algorithm}</div>
+                <pre className="text-muted-foreground font-mono whitespace-pre-wrap break-all">
+                  {generatedKeyInfo.log}
+                </pre>
               </div>
-            )}
-            {keyGenerationError && (
-              <div className="mt-3 text-xs text-status-error">{keyGenerationError}</div>
             )}
 
             <p className="text-xs text-muted-foreground">
