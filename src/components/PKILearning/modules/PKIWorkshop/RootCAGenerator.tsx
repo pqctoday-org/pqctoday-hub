@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect } from 'react'
-import { Shield, Loader2, Info, X } from 'lucide-react'
+import { Shield, Loader2, Info, X, CheckCircle2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
@@ -107,6 +107,13 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
   const [caCert, setCaCert] = useState<string | null>(null)
   const [showProfileInfo, setShowProfileInfo] = useState(false)
   const [profileDocContent, setProfileDocContent] = useState<string>('')
+  const [isKeyGenerating, setIsKeyGenerating] = useState(false)
+  const [keyGenerationError, setKeyGenerationError] = useState<string | null>(null)
+  const [generatedKeyInfo, setGeneratedKeyInfo] = useState<{
+    id: string
+    name: string
+    algorithm: string
+  } | null>(null)
 
   const filterProfileName = React.useCallback((name: string) => name.startsWith('Cert-RootCA'), [])
 
@@ -165,9 +172,67 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
     }
   }
 
+  const handleKeySourceSelect = async (id: string) => {
+    setSelectedKeyId(id)
+    setGeneratedKeyInfo(null)
+    setKeyGenerationError(null)
+    if (!id.startsWith('new-')) return
+
+    const algoId = id.replace('new-', '')
+    const algo = ALGORITHMS.find((a) => a.id === algoId)
+    if (!algo) return
+
+    setIsKeyGenerating(true)
+    setOutput('')
+    try {
+      const timestamp = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14)
+      const keyName = `pkiworkshop_ca_${timestamp}.key`
+      const keyCmd = algo.genCommand + ` -out ${keyName}`
+      setOutput(`$ ${keyCmd}\n`)
+
+      const keyResult = await openSSLService.execute(keyCmd)
+      if (keyResult.error) throw new Error(keyResult.error)
+
+      const generatedKeyFile = keyResult.files.find((f) => f.name === keyName)
+      if (!generatedKeyFile) throw new Error('Failed to generate root CA key')
+
+      const keyContent = new TextDecoder().decode(generatedKeyFile.data)
+      const keyId = `root-key-${Date.now()}`
+
+      addKey({
+        id: keyId,
+        name: keyName,
+        algorithm: algo.name,
+        keySize: parseInt(algo.keySizeLabel) || 0,
+        created: Date.now(),
+        publicKey: '',
+        privateKey: keyContent,
+        description: 'Root CA Private Key',
+      })
+
+      addFile({
+        name: keyName,
+        type: 'key',
+        content: generatedKeyFile.data,
+        size: generatedKeyFile.data.length,
+        timestamp: Date.now(),
+      })
+
+      setOutput((prev) => prev + 'Root CA private key generated and saved.\n')
+      setSelectedKeyId(keyId)
+      setGeneratedKeyInfo({ id: keyId, name: keyName, algorithm: algo.name })
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'Unknown error'
+      setKeyGenerationError(msg)
+      setOutput((prev) => prev + `Error generating key: ${msg}\n`)
+    } finally {
+      setIsKeyGenerating(false)
+    }
+  }
+
   const handleGenerate = async () => {
     setIsGenerating(true)
-    setOutput('')
+    setOutput((prev) => (prev ? prev + '\n--- Generating Root CA Certificate ---\n' : ''))
     setCaCert(null)
 
     try {
@@ -468,11 +533,33 @@ x509_extensions = v3_ca
                   })),
                 ]}
                 selectedId={selectedKeyId}
-                onSelect={setSelectedKeyId}
+                onSelect={handleKeySourceSelect}
                 noContainer
                 className="w-full"
               />
             </div>
+
+            {isKeyGenerating && (
+              <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
+                <Loader2 size={14} className="animate-spin text-primary" />
+                Generating key…
+              </div>
+            )}
+            {generatedKeyInfo && !isKeyGenerating && (
+              <div className="mt-3 p-3 bg-muted/30 rounded-lg border border-border/30 text-xs space-y-1">
+                <div className="flex items-center gap-2 text-status-success font-medium">
+                  <CheckCircle2 size={14} /> Key ready
+                </div>
+                <div className="text-muted-foreground font-mono truncate">
+                  {generatedKeyInfo.name}
+                </div>
+                <div className="text-muted-foreground">{generatedKeyInfo.algorithm}</div>
+              </div>
+            )}
+            {keyGenerationError && (
+              <div className="mt-3 text-xs text-status-error">{keyGenerationError}</div>
+            )}
+
             <p className="text-xs text-muted-foreground">
               Root CAs typically use larger key sizes for long-term security.
             </p>
