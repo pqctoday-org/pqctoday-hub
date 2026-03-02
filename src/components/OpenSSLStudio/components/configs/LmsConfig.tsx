@@ -374,6 +374,30 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
         </button>
       </div>
 
+      {/* LMS flow hint */}
+      <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 border border-border">
+        {mode === 'generate' ? (
+          <>
+            <span className="font-semibold text-foreground">Generate:</span> Creates a{' '}
+            <span className="font-medium">stateful keypair</span>. LMS private keys change after
+            each signature — never revert to an old key state.
+          </>
+        ) : mode === 'sign' ? (
+          <>
+            <span className="font-semibold text-foreground">Sign:</span> Takes a{' '}
+            <span className="font-medium">private key</span> + data and produces a{' '}
+            <span className="font-medium">signature</span>. The private key state is updated after
+            each signature (stateful).
+          </>
+        ) : (
+          <>
+            <span className="font-semibold text-foreground">Verify:</span> Takes a{' '}
+            <span className="font-medium">public key</span> + data +{' '}
+            <span className="font-medium">signature</span> and confirms authenticity.
+          </>
+        )}
+      </div>
+
       <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
         <div className="flex gap-2 text-primary mb-1">
           <Info size={16} className="shrink-0 mt-0.5" />

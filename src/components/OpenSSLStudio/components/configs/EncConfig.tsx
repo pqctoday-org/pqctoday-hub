@@ -74,6 +74,24 @@ export const EncConfig: React.FC<EncConfigProps> = ({
         </div>
       </div>
 
+      {/* Encrypt/Decrypt flow hint */}
+      <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 border border-border">
+        {encAction === 'encrypt' ? (
+          <>
+            <span className="font-semibold text-foreground">Encrypt:</span> Takes a{' '}
+            <span className="font-medium">plaintext</span> file + cipher + passphrase and produces{' '}
+            <span className="font-medium">ciphertext</span>. The passphrase is derived into a key
+            via PBKDF2.
+          </>
+        ) : (
+          <>
+            <span className="font-semibold text-foreground">Decrypt:</span> Takes{' '}
+            <span className="font-medium">ciphertext</span> + the same cipher + passphrase and
+            recovers the <span className="font-medium">original plaintext</span>.
+          </>
+        )}
+      </div>
+
       <div className="space-y-3">
         <label htmlFor="enc-cipher-select" className="text-xs text-muted-foreground block">
           Cipher

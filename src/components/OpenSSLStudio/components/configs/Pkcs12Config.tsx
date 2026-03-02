@@ -64,6 +64,24 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
         </div>
       </div>
 
+      {/* PKCS#12 flow hint */}
+      <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 border border-border">
+        {p12Action === 'export' ? (
+          <>
+            <span className="font-semibold text-foreground">Export:</span> Bundles a{' '}
+            <span className="font-medium">certificate</span> +{' '}
+            <span className="font-medium">private key</span> into a password-protected{' '}
+            <span className="font-medium">.p12</span> container.
+          </>
+        ) : (
+          <>
+            <span className="font-semibold text-foreground">Import:</span> Extracts the certificate
+            and key from a <span className="font-medium">.p12</span> file using the same{' '}
+            <span className="font-medium">password</span>.
+          </>
+        )}
+      </div>
+
       {p12Action === 'export' ? (
         <>
           <div className="space-y-3">

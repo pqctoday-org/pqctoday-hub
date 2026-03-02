@@ -93,6 +93,23 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
         </div>
       </div>
 
+      {/* Sign/Verify flow hint */}
+      <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 border border-border">
+        {signAction === 'sign' ? (
+          <>
+            <span className="font-semibold text-foreground">Sign:</span> Takes a{' '}
+            <span className="font-medium">private key</span> + data file and produces a{' '}
+            <span className="font-medium">signature</span> file.
+          </>
+        ) : (
+          <>
+            <span className="font-semibold text-foreground">Verify:</span> Takes a{' '}
+            <span className="font-medium">public key</span> + data file +{' '}
+            <span className="font-medium">signature</span> file and confirms authenticity.
+          </>
+        )}
+      </div>
+
       <div className="space-y-3">
         <label htmlFor="hash-select" className="text-xs text-muted-foreground block">
           Hash Algorithm
