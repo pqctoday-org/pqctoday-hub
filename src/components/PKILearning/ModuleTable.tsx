@@ -21,11 +21,12 @@ const STATUS_ORDER: Record<string, number> = { 'in-progress': 0, 'not-started': 
 
 export type ModuleTableItem =
   | { kind: 'module'; module: ModuleItem; track: string }
-  | { kind: 'checkpoint'; id: string; label: string; categoryCount: number }
+  | { kind: 'checkpoint'; id: string; label: string; categoryCount: number; categories: string[] }
 
 interface ModuleTableProps {
   items: ModuleTableItem[]
   navigate: (id: string) => void
+  navigateToQuiz: (categories: string[]) => void
   isModuleRelevant: (id: string) => boolean
   isModuleAboveLevel: (id: string) => boolean
 }
@@ -74,6 +75,7 @@ const SortHeader = ({
 export const ModuleTable = ({
   items,
   navigate,
+  navigateToQuiz,
   isModuleRelevant,
   isModuleAboveLevel,
 }: ModuleTableProps) => {
@@ -165,7 +167,7 @@ export const ModuleTable = ({
                 <tr key={item.id} className="border-b border-border last:border-0">
                   <td colSpan={7} className="px-4 py-3">
                     <button
-                      onClick={() => navigate('quiz')}
+                      onClick={() => navigateToQuiz(item.categories)}
                       className="w-full flex items-center gap-3 text-left group"
                     >
                       <ClipboardCheck

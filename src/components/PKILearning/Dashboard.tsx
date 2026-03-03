@@ -316,6 +316,7 @@ const ModuleTracksGrid = ({
           id: item.id,
           label: item.label,
           categoryCount: item.categories.length,
+          categories: item.categories,
         }
       })
     }
@@ -604,7 +605,7 @@ const ModuleTracksGrid = ({
                     return (
                       <button
                         key={item.id}
-                        onClick={() => navigate('quiz')}
+                        onClick={() => navigateToQuiz(item.categories)}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-secondary/40 hover:border-secondary/70 hover:bg-secondary/5 transition-all text-left group"
                       >
                         <span className="text-xs font-mono uppercase tracking-widest text-secondary">
@@ -664,6 +665,7 @@ const ModuleTracksGrid = ({
             <ModuleTable
               items={filteredItems}
               navigate={navigate}
+              navigateToQuiz={navigateToQuiz}
               isModuleRelevant={isModuleRelevant}
               isModuleAboveLevel={isModuleAboveLevel}
             />

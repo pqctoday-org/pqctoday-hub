@@ -361,7 +361,7 @@ export const quizCategories: QuizCategoryMeta[] = (
 export const quizPersonaCounts: Record<string, number> = {}
 export const quizPersonaQuestionIds: Record<string, Set<string>> = {}
 
-for (const persona of ['executive', 'developer', 'architect', 'researcher']) {
+for (const persona of ['executive', 'developer', 'architect', 'researcher', 'ops']) {
   const matching = questions.filter((q) => q.personas.length === 0 || q.personas.includes(persona))
   quizPersonaCounts[persona] = matching.length
   quizPersonaQuestionIds[persona] = new Set(matching.map((q) => q.id))

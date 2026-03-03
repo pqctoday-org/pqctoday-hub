@@ -4,6 +4,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.11.1] - 2026-03-03
+
+### Fixed
+
+- **Quiz filtering for IT Ops persona** (`pqcquiz_03032026.csv`, `quizDataLoader.ts`): The `ops`
+  persona added in v2.11.0 had zero quiz questions tagged — persona filter eliminated all 520
+  questions, showing an empty quiz. Added `ops` to 172 questions across 12 relevant categories
+  (pqc-fundamentals, quantum-threats, tls-basics, vpn-ssh-pqc, pki-infrastructure,
+  protocol-integration, kms-pqc, hsm-pqc, crypto-agility, migration-program, migration-planning,
+  iot-ot-pqc). Also added `ops` to persona counts loop for awareness score calculations. [persona:ops]
+
+- **Checkpoint quiz navigation** (`Dashboard.tsx`, `ModuleTable.tsx`): Checkpoint buttons in cards
+  and table view modes navigated to quiz without pre-selecting categories. Now passes checkpoint
+  categories via URL params, matching the stack mode behavior. [view:/learn]
+
 ## [2.11.0] - 2026-03-02
 
 ### Added
