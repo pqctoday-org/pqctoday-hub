@@ -13,6 +13,7 @@ import {
   FlaskConical,
   KeyRound,
   PackageCheck,
+  Globe,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
@@ -46,7 +47,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             </strong>{' '}
             solves this by combining classical and PQC algorithms together.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">
                 <InlineTooltip term="ANSSI">ANSSI</InlineTooltip> Mandate
@@ -68,6 +69,16 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-primary mb-1">
+                <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> (NSA)
+              </div>
+              <p className="text-xs text-muted-foreground">
+                NSA&apos;s Commercial National Security Algorithm Suite 2.0 mandates PQC adoption
+                for national security systems by 2030 &mdash; with hybrid key exchange required
+                during the transition window.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">Defense in Depth</div>
               <p className="text-xs text-muted-foreground">
                 If either the classical or PQC component is broken, the other still provides
@@ -75,6 +86,12 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </p>
             </div>
           </div>
+          <p className="text-[10px] text-muted-foreground/70 italic">
+            <strong>RFC 9794</strong> standardizes terminology for hybrid schemes &mdash;
+            distinguishing &ldquo;composite&rdquo; (single OID, both-must-verify) from
+            &ldquo;non-composite&rdquo; (parallel independent algorithms) and establishing naming
+            conventions such as &ldquo;PQ/T&rdquo; (Post-Quantum / Traditional).
+          </p>
         </div>
       </section>
 
@@ -110,8 +127,9 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </div>
               <p className="text-xs text-muted-foreground">
                 Standard single-algorithm X.509 using a PQC signature. ML-DSA OIDs are standardized
-                in <strong>RFC 9881</strong>; SLH-DSA/LMS OIDs in <strong>RFC 9802</strong>.
-                Quantum-safe but requires all verifiers to support the PQC algorithm.
+                in <strong>RFC 9881</strong>; SLH-DSA OIDs in <strong>RFC 9909</strong>; LMS/XMSS
+                OIDs in <strong>RFC 9802</strong>. Quantum-safe but requires all verifiers to
+                support the PQC algorithm.
               </p>
             </div>
             {/* Composite */}
@@ -125,15 +143,15 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
                 <div className="text-muted-foreground">{`Certificate {`}</div>
                 <div className="text-primary pl-3">{`algorithm: id-MLDSA65-ECDSA-P256`}</div>
-                <div className="text-primary pl-3">{`  OID: 2.16.840.1.114027.80.8.1.6`}</div>
+                <div className="text-primary pl-3">{`  OID: 1.3.6.1.5.5.7.6.45`}</div>
                 <div className="text-foreground pl-3">{`publicKey: ML-DSA-65-key || ECDSA-key`}</div>
                 <div className="text-foreground pl-3">{`signature: ML-DSA-65-sig || ECDSA-sig`}</div>
                 <div className="text-muted-foreground">{`}`}</div>
               </div>
               <p className="text-xs text-muted-foreground">
                 A single composite OID identifies the algorithm pair. Both signatures must verify.
-                Defined in <strong>draft-ietf-lamps-pq-composite-sigs-14</strong>. Not yet in
-                OpenSSL production builds — strongest security model.
+                Defined in <strong>draft-ietf-lamps-pq-composite-sigs</strong>. Not yet in OpenSSL
+                production builds — strongest security model.
               </p>
             </div>
             {/* Parallel/Concatenated */}
@@ -146,17 +164,19 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </div>
               <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
                 <div className="text-muted-foreground">{`Certificate {`}</div>
-                <div className="text-secondary pl-3">{`algorithm: id-ml-dsa-65`}</div>
+                <div className="text-secondary pl-3">{`algorithm: ecdsa-with-SHA256`}</div>
                 <div className="text-foreground pl-3">{`extensions {`}</div>
-                <div className="text-foreground pl-6">{`AltSigAlg (2.5.29.73): ECDSA-P256`}</div>
-                <div className="text-foreground pl-6">{`AltSigValue (2.5.29.74): ECDSA-sig`}</div>
+                <div className="text-foreground pl-6">{`AltPubKey (2.5.29.72): ML-DSA-65`}</div>
+                <div className="text-foreground pl-6">{`AltSigAlg (2.5.29.73): ML-DSA-65`}</div>
+                <div className="text-foreground pl-6">{`AltSigValue (2.5.29.74): ML-DSA-sig`}</div>
                 <div className="text-foreground pl-3">{`}`}</div>
                 <div className="text-muted-foreground">{`}`}</div>
               </div>
               <p className="text-xs text-muted-foreground">
-                PQC primary signature with classical key/sig in X.509 extension fields (OIDs
-                2.5.29.73/74). Legacy verifiers validate the primary PQC sig and ignore extensions.
-                Maximizes backward compatibility at the cost of complexity.
+                Classical primary signature with PQC key/sig in X.509 extension fields (OIDs
+                2.5.29.72/73/74). Legacy verifiers validate the classical ECDSA sig and ignore
+                extensions; PQC-aware verifiers check both. Either direction is valid, but
+                classical-primary is typical for backward compatibility.
               </p>
             </div>
           </div>
@@ -242,7 +262,85 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
         </div>
       </section>
 
-      {/* Section 4: Composite Signatures */}
+      {/* Section 4: Hybrid KEMs in TLS 1.3 */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Globe size={24} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">Hybrid KEMs in TLS 1.3</h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            In TLS 1.3 (<InlineTooltip term="TLS">RFC 8446</InlineTooltip>), hybrid KEMs integrate
+            into the handshake via the <code className="text-xs">key_share</code> extension. The
+            client and server exchange hybrid key material just as they would for classical ECDH
+            &mdash; but with larger payloads:
+          </p>
+          <div className="bg-muted/50 rounded-lg p-4 border border-border">
+            <div className="font-mono text-[10px] space-y-1.5">
+              <div className="flex items-start gap-3">
+                <span className="text-primary font-bold shrink-0 w-20">Client</span>
+                <span className="text-muted-foreground">&rarr;</span>
+                <span>
+                  <strong>ClientHello</strong>{' '}
+                  <span className="text-muted-foreground">
+                    supported_groups: [X25519MLKEM768, X25519]
+                  </span>
+                </span>
+              </div>
+              <div className="pl-24 text-muted-foreground">
+                key_share: X25519MLKEM768 public key (1,216 bytes)
+              </div>
+              <div className="flex items-start gap-3 mt-1.5">
+                <span className="text-success font-bold shrink-0 w-20">Server</span>
+                <span className="text-muted-foreground">&rarr;</span>
+                <span>
+                  <strong>ServerHello</strong>{' '}
+                  <span className="text-muted-foreground">selected_group: X25519MLKEM768</span>
+                </span>
+              </div>
+              <div className="pl-24 text-muted-foreground">
+                key_share: ciphertext (1,120 bytes) = X25519 ct || ML-KEM ct
+              </div>
+              <div className="flex items-start gap-3 mt-1.5">
+                <span className="text-foreground font-bold shrink-0 w-20">Both</span>
+                <span className="text-muted-foreground">&rarr;</span>
+                <span>
+                  <strong>HKDF</strong>(X25519_ss || ML-KEM_ss) &rarr; handshake keys
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">Size Impact</div>
+              <p className="text-xs text-muted-foreground">
+                Classical X25519 ClientHello key_share is 32 bytes. X25519MLKEM768 is 1,216 bytes
+                &mdash; a 38&times; increase. This can push the ClientHello beyond a single TCP
+                packet (~1,460 bytes), requiring an extra round trip on some networks.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">Performance</div>
+              <p className="text-xs text-muted-foreground">
+                ML-KEM-768 encap/decap adds ~0.1&ndash;0.3 ms per handshake. The dominant cost is
+                the larger key_share payload, not computation. Real-world measurements (Chrome,
+                Cloudflare) show &lt;1% latency increase at the P50.
+              </p>
+            </div>
+          </div>
+          <p className="text-[10px] text-muted-foreground/70 italic">
+            For a full interactive TLS 1.3 handshake simulation with hybrid KEM negotiation, see the{' '}
+            <Link to="/learn/tls-basics" className="text-primary hover:underline">
+              TLS Basics
+            </Link>{' '}
+            module.
+          </p>
+        </div>
+      </section>
+
+      {/* Section 5: Composite Signatures */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
@@ -348,6 +446,18 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <div className="text-sm font-medium text-foreground">Quantum Threats</div>
               <div className="text-xs text-muted-foreground">
                 Why hybrid? Understand the quantum threat first
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/tls-basics"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Globe size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">TLS Basics</div>
+              <div className="text-xs text-muted-foreground">
+                Interactive TLS 1.3 handshake simulator with hybrid KEM negotiation
               </div>
             </div>
           </Link>

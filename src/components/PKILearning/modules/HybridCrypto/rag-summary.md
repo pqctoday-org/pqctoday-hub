@@ -9,14 +9,17 @@ The Hybrid Cryptography module teaches how to combine classical and post-quantum
 - **Hybrid cryptography** combines classical and PQC algorithms so that security holds even if one component is broken
 - **ANSSI mandate** requires hybrid mode during the PQC transition; PQC-only is not acceptable until algorithms mature (exception: hash-based signatures like SLH-DSA, LMS, XMSS may be standalone)
 - **NIST SP 800-227** recommends hybrid key exchange for TLS and other protocols during the transition
+- **CNSA 2.0** (NSA) mandates PQC adoption for national security systems by 2030, with hybrid key exchange required during the transition window
+- **RFC 9794** standardizes terminology for hybrid schemes — "composite" (single OID, both-must-verify) vs "non-composite" (parallel independent algorithms); establishes "PQ/T" (Post-Quantum / Traditional) naming
 - **Three certificate format approaches**:
-  - **Pure PQC** — standard single-algorithm X.509 using PQC signatures; ML-DSA OIDs standardized in RFC 9881, SLH-DSA/LMS in RFC 9802; ready today in OpenSSL 3.x
-  - **Composite (dual-algorithm)** — single composite OID identifies the algorithm pair; both signatures must verify; defined in draft-ietf-lamps-pq-composite-sigs-14; strongest security model
+  - **Pure PQC** — standard single-algorithm X.509 using PQC signatures; ML-DSA OIDs standardized in RFC 9881, SLH-DSA in RFC 9909, LMS/XMSS in RFC 9802; ready today in OpenSSL 3.x
+  - **Composite (dual-algorithm)** — single composite OID identifies the algorithm pair; both signatures must verify; defined in draft-ietf-lamps-pq-composite-sigs (v15 as of Feb 2026); strongest security model
   - **Parallel (alt-sig)** — PQC primary signature with classical key/signature in X.509 extensions (OIDs 2.5.29.73/74); maximizes backward compatibility
 - **X25519MLKEM768** — the leading hybrid KEM combining Curve25519 ECDH with ML-KEM-768; already deployed in Chrome, Cloudflare, and AWS; combined shared secret derived via KDF(X25519_ss || ML-KEM_ss)
 - **Other hybrid KEM variants**: SecP256r1MLKEM768 (P-256 + ML-KEM-768, FIPS-approved classical curve), SecP384r1MLKEM1024 (P-384 + ML-KEM-1024, NIST Level 5)
 - **Composite signatures** combine ML-DSA with ECDSA or Ed25519 in a single operation; both must verify; single OID simplifies handling; prevents downgrade attacks
 - **Size trade-offs**: composite signatures are approximately 3.4 KB versus 72 bytes for ECDSA alone
+- **Hybrid KEMs in TLS 1.3**: X25519MLKEM768 integrates via the key_share extension; ClientHello key_share grows from 32 bytes (X25519) to 1,216 bytes (38× increase); may push ClientHello beyond a single TCP packet; ML-KEM-768 encap/decap adds ~0.1–0.3 ms per handshake; real-world measurements show <1% latency increase at P50
 
 ## Workshop / Interactive Activities
 
@@ -40,12 +43,15 @@ The Certificate Inspector (Step 5) includes a toggle to view real DER-encoded hy
 ## Related Standards
 
 - RFC 9881 (ML-DSA OIDs in X.509)
-- RFC 9802 (SLH-DSA and LMS OIDs in X.509)
+- RFC 9802 (LMS/XMSS stateful hash-based signature OIDs in X.509)
+- RFC 9909 (SLH-DSA stateless hash-based signature OIDs in X.509)
 - RFC 9763 (Related Certificates for PKI)
 - draft-ietf-lamps-pq-composite-sigs (Composite Signatures)
 - draft-ietf-lamps-cert-binding-for-multi-auth (Catalyst / alt-sig)
 - draft-bonnell-lamps-chameleon-certs (Chameleon Certificates)
+- RFC 9794 (Terminology for Post-Quantum Traditional Hybrid Schemes)
 - NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms)
+- CNSA 2.0 (NSA Commercial National Security Algorithm Suite 2.0)
 - FIPS 203 (ML-KEM)
 - FIPS 204 (ML-DSA)
 - ANSSI Hybrid Cryptography Guidance

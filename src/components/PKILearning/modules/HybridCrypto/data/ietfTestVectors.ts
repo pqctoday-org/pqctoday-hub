@@ -21,6 +21,12 @@ export interface IETFCertVector {
   algorithmOID: string
   algorithmLabel: string
   sizeBytes: number
+  /**
+   * Certificate mechanism type.
+   * 'catalyst' = alt-sig extensions (2.5.29.72-74), distinct from RFC 9763's
+   * RelatedCertificate binding hash. Both aim for backward compatibility but
+   * use different X.509 mechanisms.
+   */
   certType: 'composite' | 'catalyst' | 'pure-pqc' | 'chameleon'
   specialExtensions?: IETFCertSpecialExt[]
   /** DER-encoded certificate in Base64 (no line breaks) */
@@ -45,7 +51,7 @@ export const IETF_CERT_VECTORS: IETFCertVector[] = [
   {
     id: 'ietf-catalyst-ecdsa-p256-mldsa44',
     formatId: 'related-certs',
-    label: 'Catalyst: ECDSA-P256 primary + ML-DSA-44 alt-sig',
+    label: 'Alt-Sig (Catalyst): ECDSA-P256 primary + ML-DSA-44 in extensions',
     provider: 'Bouncy Castle',
     providerUrl: 'https://github.com/IETF-Hackathon/pqc-certificates/tree/master/providers/bc',
     hackathonRef: 'IETF Hackathon pqc-certificates r5',

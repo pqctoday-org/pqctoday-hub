@@ -180,7 +180,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     label: 'Composite (ML-DSA-65 + ECDSA)',
     shortLabel: 'Composite',
     approach: 'Single composite OID',
-    standard: 'draft-ietf-lamps-pq-composite-sigs-14',
+    standard: 'draft-ietf-lamps-pq-composite-sigs',
     standardUrl: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
     oids: ['1.3.6.1.5.5.7.6.45'],
     status: 'IETF Last Call',
@@ -247,7 +247,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'success', indent: 0 },
     ],
     educationalNote:
-      'The "catalyst" approach (RFC 9763, developed by NSA) — each certificate is independently valid. Legacy systems validate the classical cert; PQC-aware systems verify both and check the binding hash. This provides backward compatibility without modifying existing PKI infrastructure.',
+      'RFC 9763 (Related Certificates) — informally known as the "catalyst" approach (NSA). Each certificate is independently valid. Legacy systems validate the classical cert; PQC-aware systems verify both and check the binding hash. This provides backward compatibility without modifying existing PKI infrastructure.',
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },
@@ -282,7 +282,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'success', indent: 0 },
     ],
     educationalNote:
-      'Chameleon certificates (backed by DigiCert and Entrust) are more space-efficient than related certs — only one certificate is transmitted. PQC-aware clients use the primary ML-DSA cert directly. Legacy clients extract the DeltaCertificateDescriptor extension and reconstruct the classical ECDSA cert from it.',
+      'Chameleon certificates (backed by DigiCert and Entrust) are more space-efficient than related certs — only one certificate is transmitted. Either direction is valid: the diagram shows a PQC-primary cert with classical deltas, but the IETF reference certificate (and typical backward-compatible deployment) uses classical (ECDSA) as the outer/primary cert with PQC in the delta extension. Legacy clients use the outer classical cert; PQC-aware clients reconstruct the primary from the delta.',
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },
