@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable } from './ComplianceTable'
@@ -10,8 +10,12 @@ import { ShieldCheck, FileCheck, Server, GlobeLock, Building2, Info } from 'luci
 import { logComplianceFilter } from '../../utils/analytics'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { ExportButton } from '../ui/ExportButton'
 import { SourcesButton } from '../ui/SourcesButton'
+import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
+import { COMPLIANCE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 
 // Maps industry → recommended certification type and a short rationale
 const INDUSTRY_COMPLIANCE_HINT: Record<string, { tab: string; rationale: string }> = {
@@ -105,6 +109,7 @@ function MobileViewToggle({ data }: { data: import('./types').ComplianceRecord[]
 }
 
 export const ComplianceView = () => {
+  useWorkflowPhaseTracker('comply')
   const [searchParams] = useSearchParams()
   const initialFilter = searchParams.get('q') ?? undefined
   const certParam = searchParams.get('cert') ?? undefined
@@ -122,6 +127,11 @@ export const ComplianceView = () => {
     : selectedRegion === 'eu'
       ? 'EU region'
       : null
+
+  const handleExportCsv = useCallback(() => {
+    const csv = generateCsv(data, COMPLIANCE_CSV_COLUMNS)
+    downloadCsv(csv, csvFilename('pqc-compliance'))
+  }, [data])
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -145,6 +155,7 @@ export const ComplianceView = () => {
             text="Track PQC compliance certifications: FIPS 140-3, ACVP algorithm validation, and Common Criteria with PQC readiness status."
           />
           <GlossaryButton />
+          <ExportButton onExport={handleExportCsv} />
         </div>
       </div>
 

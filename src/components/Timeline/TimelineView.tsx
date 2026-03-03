@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -12,6 +12,10 @@ import { CountryFlag } from '../common/CountryFlag'
 import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { ExportButton } from '../ui/ExportButton'
+import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
+import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
+import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
@@ -21,6 +25,7 @@ const REGION_LABELS: Record<string, string> = {
 }
 
 export const TimelineView = () => {
+  useWorkflowPhaseTracker('timeline')
   const [searchParams] = useSearchParams()
 
   // Region filter — preset from persona preference
@@ -67,6 +72,12 @@ export const TimelineView = () => {
     const allowed = new Set(REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP])
     return ganttData.filter((d) => allowed.has(d.country.countryName))
   }, [ganttData, regionFilter])
+
+  const handleExportCsv = useCallback(() => {
+    const flatEvents = ganttData.flatMap((gcd) => gcd.phases.flatMap((phase) => phase.events))
+    const csv = generateCsv(flatEvents, TIMELINE_CSV_COLUMNS)
+    downloadCsv(csv, csvFilename('pqc-timeline'))
+  }, [ganttData])
 
   // Region filter items
   const regionItems = useMemo(
@@ -148,6 +159,7 @@ export const TimelineView = () => {
               text="Compare PQC migration timelines across nations — track phases from discovery to full migration."
             />
             <GlossaryButton />
+            <ExportButton onExport={handleExportCsv} />
           </div>
         )}
       </div>

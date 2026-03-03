@@ -25,7 +25,11 @@ import type { MigrationStep, SoftwareItem } from '../../types/MigrateTypes'
 import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { ExportButton } from '../ui/ExportButton'
+import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
+import { MIGRATE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
+import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 
 const PRIORITY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -35,6 +39,7 @@ const PRIORITY_ORDER: Record<string, number> = {
 }
 
 export const MigrateView: React.FC = () => {
+  useWorkflowPhaseTracker('migrate')
   const [searchParams] = useSearchParams()
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
@@ -351,6 +356,11 @@ export const MigrateView: React.FC = () => {
       : items.length
   }, [viewMode, sortedFlatProducts, allFilteredProducts, hiddenSet])
 
+  const handleExportCsv = useCallback(() => {
+    const csv = generateCsv(allFilteredProducts, MIGRATE_CSV_COLUMNS)
+    downloadCsv(csv, csvFilename('pqc-migrate-catalog'))
+  }, [allFilteredProducts])
+
   const handleViewSoftware = useCallback(
     (step: MigrationStep) => {
       setStepFilter({
@@ -394,6 +404,7 @@ export const MigrateView: React.FC = () => {
             text="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance. Explore software readiness and migration steps."
           />
           <GlossaryButton />
+          <ExportButton onExport={handleExportCsv} />
         </div>
         {softwareMetadata && (
           <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
@@ -413,6 +424,7 @@ export const MigrateView: React.FC = () => {
               text="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance. Explore software readiness and migration steps."
             />
             <GlossaryButton />
+            <ExportButton onExport={handleExportCsv} />
           </div>
         )}
       </div>

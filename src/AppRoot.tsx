@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { StrictMode, Suspense, lazy } from 'react'
+import { MotionConfig } from 'framer-motion'
 import { Toaster } from 'react-hot-toast'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
@@ -10,21 +11,23 @@ export default function AppRoot() {
   return (
     <StrictMode>
       <ErrorBoundary>
-        <Suspense
-          fallback={
-            <main
-              role="main"
-              className="min-h-screen flex items-center justify-center bg-background text-foreground"
-            >
-              <div className="text-center" role="status" aria-label="Loading application">
-                <h1 className="text-xl font-bold mb-2">PQC Today</h1>
-                <p className="text-muted-foreground">Initializing application modules...</p>
-              </div>
-            </main>
-          }
-        >
-          <App />
-        </Suspense>
+        <MotionConfig reducedMotion="user">
+          <Suspense
+            fallback={
+              <main
+                role="main"
+                className="min-h-screen flex items-center justify-center bg-background text-foreground"
+              >
+                <div className="text-center" role="status" aria-label="Loading application">
+                  <h1 className="text-xl font-bold mb-2">PQC Today</h1>
+                  <p className="text-muted-foreground">Initializing application modules...</p>
+                </div>
+              </main>
+            }
+          >
+            <App />
+          </Suspense>
+        </MotionConfig>
         <Toaster
           position="top-right"
           toastOptions={{

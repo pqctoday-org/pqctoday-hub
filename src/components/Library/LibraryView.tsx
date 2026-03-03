@@ -22,6 +22,9 @@ import { Search, AlertTriangle } from 'lucide-react'
 import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { ExportButton } from '../ui/ExportButton'
+import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
+import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import debounce from 'lodash/debounce'
 import { logLibrarySearch, logEvent } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -362,6 +365,11 @@ export const LibraryView: React.FC = () => {
     }
   }, [filteredItems, sortBy])
 
+  const handleExportCsv = useCallback(() => {
+    const csv = generateCsv(sortedItems, LIBRARY_CSV_COLUMNS)
+    downloadCsv(csv, csvFilename('pqc-library'))
+  }, [sortedItems])
+
   // Grouped data for table view (preserves tree structure)
   const groupedData = useMemo(() => {
     const groups = new Map<string, LibraryItem[]>(LIBRARY_CATEGORIES.map((cat) => [cat, []]))
@@ -457,6 +465,7 @@ export const LibraryView: React.FC = () => {
               text="Explore post-quantum cryptography standards, drafts, and key documents from NIST, IETF, ETSI, and other organizations."
             />
             <GlossaryButton />
+            <ExportButton onExport={handleExportCsv} />
           </div>
         )}
       </div>

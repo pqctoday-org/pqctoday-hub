@@ -9,6 +9,7 @@ import { EnvelopeEncryptionDemo } from './workshop/EnvelopeEncryptionDemo'
 import { HybridKeyWrapping } from './workshop/HybridKeyWrapping'
 import { KmsRotationPlanner } from './workshop/KmsRotationPlanner'
 import { KmipProtocolExplorer } from './workshop/KmipProtocolExplorer'
+import { KmsMigrationRunbook } from './workshop/KmsMigrationRunbook'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -200,7 +201,14 @@ export const KmsPqcModule: React.FC = () => {
               {currentPart === 1 && <EnvelopeEncryptionDemo key={`envelope-${configKey}`} />}
               {currentPart === 2 && <HybridKeyWrapping key={`hybrid-${configKey}`} />}
               {currentPart === 3 && <KmsRotationPlanner key={`rotation-${configKey}`} />}
-              {currentPart === 4 && <KmipProtocolExplorer key={`kmip-${configKey}`} />}
+              {currentPart === 4 && (
+                <>
+                  <KmipProtocolExplorer key={`kmip-${configKey}`} />
+                  <div className="mt-8">
+                    <KmsMigrationRunbook />
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Part Navigation */}

@@ -1,16 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
 import { AlgorithmDetailedComparison } from './AlgorithmDetailedComparison'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ArrowRight, BarChart3 } from 'lucide-react'
-import { loadPQCAlgorithmsData, loadedFileMetadata } from '../../data/pqcAlgorithmsData'
+import {
+  loadPQCAlgorithmsData,
+  loadedFileMetadata,
+  type AlgorithmDetail,
+} from '../../data/pqcAlgorithmsData'
 import { loadAlgorithmsData, loadedTransitionMetadata } from '../../data/algorithmsData'
 import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { ExportButton } from '../ui/ExportButton'
+import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
+import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
 
 export function AlgorithmsView() {
   const [searchParams] = useSearchParams()
@@ -30,15 +37,22 @@ export function AlgorithmsView() {
     filename: string
     date: Date | null
   } | null>(null)
+  const [algorithmData, setAlgorithmData] = useState<AlgorithmDetail[]>([])
 
   useEffect(() => {
-    loadPQCAlgorithmsData().then(() => {
+    loadPQCAlgorithmsData().then((data) => {
       setMetadata(loadedFileMetadata)
+      setAlgorithmData(data)
     })
     loadAlgorithmsData().then(() => {
       setTransitionMetadata(loadedTransitionMetadata)
     })
   }, [])
+
+  const handleExportCsv = useCallback(() => {
+    const csv = generateCsv(algorithmData, ALGORITHM_CSV_COLUMNS)
+    downloadCsv(csv, csvFilename('pqc-algorithms'))
+  }, [algorithmData])
 
   return (
     <div>
@@ -69,6 +83,7 @@ export function AlgorithmsView() {
             text="Compare 42 post-quantum cryptographic algorithms side-by-side — security levels, key sizes, and performance."
           />
           <GlossaryButton />
+          <ExportButton onExport={handleExportCsv} />
         </div>
       </motion.div>
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useRef, useState, useMemo } from 'react'
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Briefcase, Building2, School, AlertCircle } from 'lucide-react'
@@ -12,6 +12,9 @@ import { LeaderCard } from './LeaderCard'
 import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { ExportButton } from '../ui/ExportButton'
+import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
+import { LEADERS_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
@@ -228,6 +231,11 @@ export const LeadersGrid = () => {
     return result
   }, [selectedRegion, selectedCountry, selectedSector, searchQuery])
 
+  const handleExportCsv = useCallback(() => {
+    const csv = generateCsv(filteredLeaders, LEADERS_CSV_COLUMNS)
+    downloadCsv(csv, csvFilename('pqc-leaders'))
+  }, [filteredLeaders])
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-2 md:mb-8">
@@ -250,6 +258,7 @@ export const LeadersGrid = () => {
               text="Meet the visionaries and organizations driving the global transition to post-quantum cryptography."
             />
             <GlossaryButton />
+            <ExportButton onExport={handleExportCsv} />
           </div>
         )}
 

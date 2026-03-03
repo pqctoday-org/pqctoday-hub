@@ -24,6 +24,7 @@ import { GuidedTour } from '../common/GuidedTour'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
 import { PageAccuracyFeedback } from '../ui/PageAccuracyFeedback'
+import { WorkflowBanner } from '../common/WorkflowBanner'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -65,6 +66,14 @@ export const MainLayout = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0">
+      {/* Skip-to-main link — visible only on keyboard focus */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-4 focus:left-4 focus:bg-background focus:text-foreground focus:p-4 focus:rounded-md focus:ring-2 focus:ring-primary focus:shadow-lg print:hidden"
+      >
+        Skip to main content
+      </a>
+
       <header
         className="m-4 sticky top-[max(1rem,env(safe-area-inset-top))] z-50 transition-all duration-300 print:hidden"
         role="banner"
@@ -123,7 +132,10 @@ export const MainLayout = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-grow container py-4 px-2 md:py-8 md:px-8" role="main">
+      <main id="main-content" className="flex-grow container py-4 px-2 md:py-8 md:px-8" role="main">
+        {/* Migration planning workflow progress banner */}
+        <WorkflowBanner />
+
         {/* Removed AnimatePresence to fix blank screen navigation bug */}
         {/* Suspense boundary for route-level code splitting */}
         <React.Suspense

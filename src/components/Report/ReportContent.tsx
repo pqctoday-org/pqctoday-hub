@@ -23,10 +23,12 @@ import {
   Package,
   Terminal,
   Layers,
+  Compass,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
+import { useMigrationWorkflowStore } from '../../store/useMigrationWorkflowStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import {
   PERSONA_NAV_PATHS,
@@ -867,6 +869,8 @@ const HNDLHNFLSection = ({
 export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
   const navigate = useNavigate()
   const { reset, editFromStep } = useAssessmentStore()
+  const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
+  const { workflowActive, startWorkflow } = useMigrationWorkflowStore()
   const previousRiskScore = useAssessmentStore((s) => s.previousRiskScore)
   const lastModifiedAt = useAssessmentStore((s) => s.lastModifiedAt)
   const assessmentHistory = useAssessmentStore((s) => s.assessmentHistory)
@@ -1831,6 +1835,25 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                         {PERSONAS[selectedPersona].recommendedPath.length - 1} modules, ~
                         {Math.round(PERSONAS[selectedPersona].estimatedMinutes / 60)} hours
                       </p>
+                    </div>
+                  )}
+
+                  {/* Migration Workflow activation CTA */}
+                  {!workflowActive && assessmentStatus === 'complete' && (
+                    <div className="glass-panel p-4 print:hidden">
+                      <div className="mt-0 pt-0 border-t border-border">
+                        <Button
+                          variant="gradient"
+                          onClick={startWorkflow}
+                          className="w-full sm:w-auto"
+                        >
+                          <Compass size={16} className="mr-2" />
+                          Start Migration Planning Workflow
+                        </Button>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          Guided 4-step workflow: Assess → Comply → Migrate → Timeline
+                        </p>
+                      </div>
                     </div>
                   )}
 

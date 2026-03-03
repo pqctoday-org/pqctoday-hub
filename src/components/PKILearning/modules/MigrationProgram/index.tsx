@@ -6,6 +6,7 @@ import { Introduction } from './components/Introduction'
 import { RoadmapBuilder } from './components/RoadmapBuilder'
 import { StakeholderCommsPlanner } from './components/StakeholderCommsPlanner'
 import { KPITrackerTemplate } from './components/KPITrackerTemplate'
+import { DeploymentPlaybook } from './components/DeploymentPlaybook'
 import { useModuleStore } from '@/store/useModuleStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
@@ -76,6 +77,9 @@ function ExercisesTab() {
           ))}
         </div>
       </div>
+
+      {/* Deployment Playbook */}
+      <DeploymentPlaybook />
     </div>
   )
 }

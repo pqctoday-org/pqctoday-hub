@@ -7,6 +7,7 @@ import { ReportContent } from './ReportContent'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { computeAssessment } from '../../hooks/assessmentUtils'
 import { useModuleStore } from '../../store/useModuleStore'
+import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 import {
   AVAILABLE_INDUSTRIES,
@@ -40,6 +41,7 @@ const VALID_COUNTRIES = new Set(Object.values(REGION_COUNTRIES_MAP).flat())
 
 export const ReportView: React.FC = () => {
   const { assessmentStatus, getInput, setResult } = useAssessmentStore()
+  useWorkflowPhaseTracker('assess')
   const input = getInput()
   const result =
     (assessmentStatus === 'complete' || assessmentStatus === 'in-progress') && input

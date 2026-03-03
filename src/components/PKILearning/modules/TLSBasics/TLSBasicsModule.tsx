@@ -12,6 +12,7 @@ import { TLSNegotiationResults } from './components/TLSNegotiationResults'
 import { TLSComparisonTable } from './components/TLSComparisonTable'
 import { TLSIntroduction } from './components/TLSIntroduction'
 import { TLSExercises } from './components/TLSExercises'
+import { TLSConfigGenerator } from './components/TLSConfigGenerator'
 import { TLSSummary } from './components/TLSSummary'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from './utils/configGenerator'
@@ -377,6 +378,9 @@ export const TLSBasicsModule: React.FC = () => {
         {/* Exercises Tab */}
         <TabsContent value="exercises">
           <TLSExercises onNavigateToSimulate={navigateToSimulate} />
+          <div className="mt-6">
+            <TLSConfigGenerator />
+          </div>
         </TabsContent>
         {/* References Tab */}
         <TabsContent value="references">

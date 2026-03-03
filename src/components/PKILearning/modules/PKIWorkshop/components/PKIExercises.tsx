@@ -2,6 +2,7 @@
 import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { CertRotationChecklist } from './CertRotationChecklist'
 
 interface PKIExercisesProps {
   onNavigateToWorkshop: () => void
@@ -138,6 +139,9 @@ export const PKIExercises: React.FC<PKIExercisesProps> = ({
           </div>
         ))}
       </div>
+
+      {/* Certificate Rotation Checklist */}
+      <CertRotationChecklist />
 
       {/* Quiz Link */}
       <div className="glass-panel p-6 border-primary/20">

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Trash2, Shield, Terminal, GitCompareArrows } from 'lucide-react'
 import { VPNSSHIntroduction } from './components/VPNSSHIntroduction'
 import { VPNSSHExercises, type SimulationConfig } from './components/VPNSSHExercises'
+import { SSHConfigGenerator } from './components/SSHConfigGenerator'
 import { IKEv2HandshakeSimulator } from './simulate/IKEv2HandshakeSimulator'
 import { SSHKeyExchangeSimulator } from './simulate/SSHKeyExchangeSimulator'
 import { ProtocolComparisonTable } from './simulate/ProtocolComparisonTable'
@@ -252,6 +253,9 @@ export const VPNSSHModule: React.FC = () => {
             onNavigateToSimulate={navigateToSimulate}
             onSetSimulationConfig={setSimulationConfig}
           />
+          <div className="mt-6">
+            <SSHConfigGenerator />
+          </div>
         </TabsContent>
         {/* References Tab */}
         <TabsContent value="references">
