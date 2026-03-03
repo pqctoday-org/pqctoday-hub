@@ -6,6 +6,7 @@ import {
   Globe,
   Lock,
   BrainCircuit,
+  Database,
   Sparkles,
   BarChart2,
   MessageSquare,
@@ -97,11 +98,50 @@ export const MobileAboutView = () => {
           <h2 className="text-lg font-semibold">Our Mission</h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          PQC Today brings together 25 learning modules &mdash; including a dedicated executive
-          track for CISOs &mdash; hands-on cryptographic labs, a risk assessment wizard, migration
-          planning tools, and global compliance tracking &mdash; tuned to your role and
-          organization.
+          PQC Today brings together 27 learning modules &mdash; including an executive track and
+          expanded hybrid crypto labs &mdash; 520+ quiz questions, hands-on cryptographic labs, a
+          risk assessment wizard, migration planning tools, and global compliance tracking &mdash;
+          tuned to your role as a developer, architect, operations professional, executive, or
+          researcher.
         </p>
+      </motion.div>
+
+      {/* Data Foundation Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.12 }}
+        className="glass-panel p-4"
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-2 rounded-full bg-primary/10 text-primary">
+            <Database size={20} />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">Platform Data</h2>
+            <p className="text-xs text-muted-foreground">Curated and updated weekly</p>
+          </div>
+        </div>
+        <div className="text-center mb-3">
+          <span className="text-3xl font-bold text-gradient">1,550+</span>
+          <p className="text-xs text-muted-foreground mt-1">curated records across 10 datasets</p>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            { label: 'Timeline Events', value: '187' },
+            { label: 'Migrate Products', value: '223' },
+            { label: 'Library Resources', value: '236' },
+            { label: 'Quiz Questions', value: '520' },
+          ].map((s) => (
+            <div
+              key={s.label}
+              className="p-2 rounded-lg border border-border bg-muted/30 text-center"
+            >
+              <div className="text-sm font-bold text-foreground">{s.value}</div>
+              <div className="text-[10px] text-muted-foreground">{s.label}</div>
+            </div>
+          ))}
+        </div>
       </motion.div>
 
       {/* Community Card */}
@@ -206,7 +246,7 @@ export const MobileAboutView = () => {
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           Ask questions about post-quantum cryptography using our RAG-powered chatbot. It searches
-          1,900 curated knowledge chunks and uses Gemini 2.5 Flash to deliver grounded answers with
+          ~2,200 curated knowledge chunks and uses Gemini 2.5 Flash to deliver grounded answers with
           deep links to relevant pages.
         </p>
       </motion.div>

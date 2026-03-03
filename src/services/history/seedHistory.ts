@@ -221,10 +221,11 @@ function seedPersonaEvents(out: Omit<HistoryEvent, 'id'>[]) {
 
   if (personaState.selectedPersona) {
     const labels: Record<string, string> = {
-      executive: 'Executive / CISO',
+      executive: 'Executive / GRC',
       developer: 'Developer / Engineer',
       architect: 'Security Architect',
       researcher: 'Researcher / Academic',
+      ops: 'IT Ops / DevOps',
     }
     out.push({
       type: 'persona_set',

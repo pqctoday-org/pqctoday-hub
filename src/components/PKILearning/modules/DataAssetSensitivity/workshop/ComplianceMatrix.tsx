@@ -17,7 +17,7 @@ import {
   type ComplianceMandate,
   type ComplianceRegion,
 } from '../data/industryComplianceData'
-import { AVAILABLE_INDUSTRIES } from '../data/sensitivityConstants'
+import { AVAILABLE_INDUSTRIES, CURRENT_YEAR } from '../data/sensitivityConstants'
 
 type StatusValue = 'not-started' | 'in-progress' | 'compliant'
 
@@ -36,20 +36,29 @@ interface ComplianceMatrixProps {
 
 function DeadlineChip({ year }: { year: number | null }) {
   if (!year) return <span className="text-xs text-muted-foreground italic">Ongoing</span>
-  const isUrgent = year <= 2027
-  const isSoon = year > 2027 && year <= 2030
+  const isPast = year < CURRENT_YEAR
+  const isUrgent = !isPast && year <= CURRENT_YEAR + 2
+  const isSoon = !isPast && year > CURRENT_YEAR + 2 && year <= 2030
   return (
     <span
       className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded font-bold border ${
-        isUrgent
-          ? 'text-status-error bg-status-error/10 border-status-error/30'
-          : isSoon
-            ? 'text-status-warning bg-status-warning/10 border-status-warning/30'
-            : 'text-status-success bg-status-success/10 border-status-success/30'
+        isPast
+          ? 'text-status-warning bg-status-warning/10 border-status-warning/30'
+          : isUrgent
+            ? 'text-status-error bg-status-error/10 border-status-error/30'
+            : isSoon
+              ? 'text-status-warning bg-status-warning/10 border-status-warning/30'
+              : 'text-status-success bg-status-success/10 border-status-success/30'
       }`}
     >
-      {isUrgent && <AlertTriangle size={9} />}
-      {year}
+      {isPast ? (
+        `In effect since ${year}`
+      ) : (
+        <>
+          {isUrgent && <AlertTriangle size={9} />}
+          {year}
+        </>
+      )}
     </span>
   )
 }
@@ -236,19 +245,33 @@ export const ComplianceMatrix: React.FC<ComplianceMatrixProps> = ({
       {earliestDeadline.year && (
         <div
           className={`flex items-center gap-3 p-3 rounded-lg border text-sm ${
-            earliestDeadline.year <= 2027
-              ? 'bg-status-error/10 border-status-error/30 text-status-error'
-              : earliestDeadline.year <= 2030
-                ? 'bg-status-warning/10 border-status-warning/30 text-status-warning'
-                : 'bg-status-success/10 border-status-success/30 text-status-success'
+            earliestDeadline.year < CURRENT_YEAR
+              ? 'bg-status-warning/10 border-status-warning/30 text-status-warning'
+              : earliestDeadline.year <= CURRENT_YEAR + 2
+                ? 'bg-status-error/10 border-status-error/30 text-status-error'
+                : earliestDeadline.year <= 2030
+                  ? 'bg-status-warning/10 border-status-warning/30 text-status-warning'
+                  : 'bg-status-success/10 border-status-success/30 text-status-success'
           }`}
         >
           <Clock size={16} />
           <span>
-            Earliest binding deadline:{' '}
-            <strong>
-              {earliestDeadline.year} ({earliestDeadline.name})
-            </strong>
+            {earliestDeadline.year < CURRENT_YEAR ? (
+              <>
+                Already in effect since{' '}
+                <strong>
+                  {earliestDeadline.year} ({earliestDeadline.name})
+                </strong>{' '}
+                — compliance required now
+              </>
+            ) : (
+              <>
+                Earliest binding deadline:{' '}
+                <strong>
+                  {earliestDeadline.year} ({earliestDeadline.name})
+                </strong>
+              </>
+            )}
           </span>
         </div>
       )}

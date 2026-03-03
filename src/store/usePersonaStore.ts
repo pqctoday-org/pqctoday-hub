@@ -44,10 +44,11 @@ export const usePersonaStore = create<PersonaState>()(
         })
         if (persona) {
           const labels: Record<string, string> = {
-            executive: 'Executive / CISO',
+            executive: 'Executive / GRC',
             developer: 'Developer / Engineer',
             architect: 'Security Architect',
             researcher: 'Researcher / Academic',
+            ops: 'IT Ops / DevOps',
           }
           try {
             useHistoryStore.getState().addEvent({

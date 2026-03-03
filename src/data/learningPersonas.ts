@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { QuizCategory } from '@/components/PKILearning/modules/Quiz/types'
 
-export type PersonaId = 'executive' | 'developer' | 'architect' | 'researcher'
+export type PersonaId = 'executive' | 'developer' | 'architect' | 'researcher' | 'ops'
 
 export type PathItem =
   | { type: 'module'; moduleId: string }
@@ -16,7 +16,7 @@ export interface LearningPersona {
   id: PersonaId
   label: string
   subtitle: string
-  icon: 'Briefcase' | 'Code' | 'ShieldCheck' | 'GraduationCap'
+  icon: 'Briefcase' | 'Code' | 'ShieldCheck' | 'GraduationCap' | 'Server'
   description: string
   /** Ordered module IDs — first = start here, sequence matters */
   recommendedPath: string[]
@@ -32,11 +32,11 @@ export interface LearningPersona {
 export const PERSONAS: Record<PersonaId, LearningPersona> = {
   executive: {
     id: 'executive',
-    label: 'Executive / CISO',
-    subtitle: 'Risk & strategy focus',
+    label: 'Executive / GRC',
+    subtitle: 'Risk, governance & compliance focus',
     icon: 'Briefcase',
     description:
-      'Understand the quantum threat, build a business case, establish governance, and plan a comprehensive migration strategy.',
+      'Understand the quantum threat, build a business case, establish governance, track compliance deadlines, and plan a comprehensive migration strategy.',
     recommendedPath: [
       'pqc-101',
       'quantum-threats',
@@ -460,6 +460,81 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'Full assessment across all PQC categories — algorithms, protocols, standards, compliance, and applications.',
     quizCategories: [], // empty = all categories shown (full coverage for researcher)
   },
+  ops: {
+    id: 'ops',
+    label: 'IT Ops / DevOps',
+    subtitle: 'Deploy & operate focus',
+    icon: 'Server',
+    description:
+      'Deploy PQC across production infrastructure — certificate rollouts, key lifecycle management, TLS configurations, and system-wide crypto inventory.',
+    recommendedPath: [
+      'pqc-101',
+      'quantum-threats',
+      'tls-basics',
+      'vpn-ssh-pqc',
+      'pki-workshop',
+      'kms-pqc',
+      'hsm-pqc',
+      'crypto-agility',
+      'migration-program',
+      'iot-ot-pqc',
+      'quiz',
+    ],
+    pathItems: [
+      { type: 'module', moduleId: 'pqc-101' },
+      { type: 'module', moduleId: 'quantum-threats' },
+      {
+        type: 'checkpoint',
+        id: 'ops-cp-1',
+        label: 'Foundations',
+        categories: ['pqc-fundamentals', 'quantum-threats'],
+      },
+      { type: 'module', moduleId: 'tls-basics' },
+      { type: 'module', moduleId: 'vpn-ssh-pqc' },
+      { type: 'module', moduleId: 'pki-workshop' },
+      {
+        type: 'checkpoint',
+        id: 'ops-cp-2',
+        label: 'Protocol Operations',
+        categories: ['tls-basics', 'vpn-ssh-pqc', 'pki-infrastructure', 'protocol-integration'],
+      },
+      { type: 'module', moduleId: 'kms-pqc' },
+      { type: 'module', moduleId: 'hsm-pqc' },
+      {
+        type: 'checkpoint',
+        id: 'ops-cp-3',
+        label: 'Key Infrastructure',
+        categories: ['kms-pqc', 'hsm-pqc'],
+      },
+      { type: 'module', moduleId: 'crypto-agility' },
+      { type: 'module', moduleId: 'migration-program' },
+      { type: 'module', moduleId: 'iot-ot-pqc' },
+      {
+        type: 'checkpoint',
+        id: 'ops-cp-4',
+        label: 'Migration & Fleet',
+        categories: ['crypto-agility', 'migration-program', 'migration-planning', 'iot-ot-pqc'],
+      },
+      { type: 'module', moduleId: 'quiz' },
+    ],
+    estimatedMinutes: 705,
+    quizDescription:
+      'Test your knowledge on TLS operations, VPN/SSH configuration, PKI certificate management, KMS and HSM operations, and infrastructure migration planning.',
+    quizCategories: [
+      'pqc-fundamentals',
+      'quantum-threats',
+      'tls-basics',
+      'vpn-ssh-pqc',
+      'pki-infrastructure',
+      'protocol-integration',
+      'kms-pqc',
+      'hsm-pqc',
+      'crypto-agility',
+      'migration-program',
+      'migration-planning',
+      'iot-ot-pqc',
+    ],
+  },
 }
 
 /**
@@ -498,6 +573,15 @@ export function inferPersonaFromAssessment(assessment: {
     infraCount <= 2
   ) {
     return 'executive'
+  }
+
+  // Ops: deep infrastructure involvement + actively migrating + hands-on (not fully abstracted)
+  if (
+    infraCount >= 3 &&
+    (assessment.migrationStatus === 'started' || assessment.migrationStatus === 'planning') &&
+    assessment.cryptoAgility !== 'fully-abstracted'
+  ) {
+    return 'ops'
   }
 
   // Architect: deep infrastructure involvement or crypto-agile design focus

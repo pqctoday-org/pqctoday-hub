@@ -2,6 +2,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
+export type MigrateViewMode = 'stack' | 'cards' | 'table'
+
 interface MigrateSelectionState {
   /** Row keys ('softwareName::categoryId') that the user has hidden */
   hiddenProducts: string[]
@@ -19,6 +21,12 @@ interface MigrateSelectionState {
   myProducts: string[]
   toggleMyProduct: (key: string) => void
   clearMyProducts: () => void
+  /** Active view mode for the migrate catalog */
+  viewMode: MigrateViewMode
+  setViewMode: (mode: MigrateViewMode) => void
+  /** Whether the MigrationWorkflow hero section is collapsed */
+  workflowCollapsed: boolean
+  setWorkflowCollapsed: (collapsed: boolean) => void
 }
 
 export const useMigrateSelectionStore = create<MigrateSelectionState>()(
@@ -28,6 +36,8 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
       activeLayer: 'All',
       activeSubCategory: 'All',
       myProducts: [],
+      viewMode: 'stack' as MigrateViewMode,
+      workflowCollapsed: false,
 
       hideProduct: (key) =>
         set((state) => ({
@@ -55,11 +65,14 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
         })),
 
       clearMyProducts: () => set({ myProducts: [] }),
+
+      setViewMode: (mode) => set({ viewMode: mode }),
+      setWorkflowCollapsed: (collapsed) => set({ workflowCollapsed: collapsed }),
     }),
     {
       name: 'pqc-migrate-selection',
       storage: createJSONStorage(() => localStorage),
-      version: 3,
+      version: 4,
       migrate: (persistedState: unknown) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -69,6 +82,11 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
         if (!state.activeSubCategory) state.activeSubCategory = 'All'
         // v2 → v3: add myProducts
         state.myProducts = Array.isArray(state.myProducts) ? state.myProducts : []
+        // v3 → v4: add viewMode + workflowCollapsed
+        if (!state.viewMode || !['stack', 'cards', 'table'].includes(state.viewMode)) {
+          state.viewMode = 'stack'
+        }
+        state.workflowCollapsed = state.workflowCollapsed ?? false
         return state
       },
       onRehydrateStorage: () => (_state, error) => {

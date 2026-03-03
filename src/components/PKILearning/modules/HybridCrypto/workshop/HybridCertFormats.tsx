@@ -30,11 +30,35 @@ export const HybridCertFormats: React.FC = () => {
     const start = performance.now()
 
     try {
-      if (formatId === 'pure-pqc' || formatId === 'pure-pqc-slh') {
-        const algName = formatId === 'pure-pqc' ? 'ML-DSA-65' : 'SLH-DSA-128s'
-        const rawPrefix = formatId === 'pure-pqc' ? 'pure_pqc' : 'pure_pqc_slh'
-
-        const keyResult = await hybridCryptoService.generateKey(algName, `${rawPrefix}_key.pem`)
+      if (formatId === 'pure-pqc-slh') {
+        // SLH-DSA-128s: OpenSSL WASM does not support this algorithm.
+        // Route through liboqs via the dedicated service method which builds
+        // a real DER-encoded X.509 certificate using the pure-TypeScript ASN.1 builder.
+        const certResult = await hybridCryptoService.generateSelfSignedCertSLHDSA(
+          '/CN=Pure PQC (SLH-DSA-128s) Demo/O=PQC Today/OU=Hybrid Certificate Sandbox'
+        )
+        setResults((prev) => ({
+          ...prev,
+          [formatId]: {
+            formatId,
+            certs: certResult.error
+              ? []
+              : [
+                  {
+                    label: 'SLH-DSA-128s Certificate',
+                    pem: certResult.pem,
+                    parsed: certResult.parsed,
+                    type: 'pqc',
+                  },
+                ],
+            timingMs: certResult.timingMs,
+            error: certResult.error,
+          },
+        }))
+        setGenerating(null)
+        return
+      } else if (formatId === 'pure-pqc') {
+        const keyResult = await hybridCryptoService.generateKey('ML-DSA-65', 'pure_pqc_key.pem')
         if (keyResult.error) {
           setResults((prev) => ({
             ...prev,
@@ -50,9 +74,9 @@ export const HybridCertFormats: React.FC = () => {
         }
 
         const certResult = await hybridCryptoService.generateSelfSignedCert(
-          `${rawPrefix}_key.pem`,
-          `${rawPrefix}_cert.pem`,
-          `/CN=Pure PQC (${algName}) Demo/O=PQC Today/OU=Hybrid Certificate Sandbox`,
+          'pure_pqc_key.pem',
+          'pure_pqc_cert.pem',
+          '/CN=Pure PQC (ML-DSA-65) Demo/O=PQC Today/OU=Hybrid Certificate Sandbox',
           keyResult.fileData
         )
         setResults((prev) => ({
@@ -61,7 +85,7 @@ export const HybridCertFormats: React.FC = () => {
             formatId,
             certs: [
               {
-                label: `${algName} Certificate`,
+                label: 'ML-DSA-65 Certificate',
                 pem: certResult.pem,
                 parsed: certResult.parsed,
                 type: 'pqc',
@@ -250,7 +274,7 @@ export const HybridCertFormats: React.FC = () => {
       </button>
 
       {/* Format cards */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {HYBRID_CERT_FORMATS.map((fmt) => {
           const result = results[fmt.id]
           const isGeneratingThis = generating === fmt.id || (generating === 'all' && !result)
@@ -393,7 +417,7 @@ export const HybridCertFormats: React.FC = () => {
                             <div className="flex gap-2">
                               <button
                                 onClick={() => toggleView(viewKey, 'parsed')}
-                                className={`text-[10px] px-2 py-1 rounded transition-colors ${
+                                className={`text-[10px] px-2 py-1.5 rounded transition-colors ${
                                   currentView === 'parsed'
                                     ? 'bg-primary/20 text-primary border border-primary/50'
                                     : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
@@ -403,7 +427,7 @@ export const HybridCertFormats: React.FC = () => {
                               </button>
                               <button
                                 onClick={() => toggleView(viewKey, 'pem')}
-                                className={`text-[10px] px-2 py-1 rounded transition-colors ${
+                                className={`text-[10px] px-2 py-1.5 rounded transition-colors ${
                                   currentView === 'pem'
                                     ? 'bg-primary/20 text-primary border border-primary/50'
                                     : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'

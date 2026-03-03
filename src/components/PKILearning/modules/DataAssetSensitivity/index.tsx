@@ -17,6 +17,7 @@ import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import {
   DEFAULT_ASSETS,
   AVAILABLE_INDUSTRIES,
+  ESTIMATED_CRQC_YEAR,
   type DataAsset,
   type ScoredAsset,
 } from './data/sensitivityConstants'
@@ -73,6 +74,7 @@ export const DataAssetSensitivityModule: React.FC = () => {
   const [selectedIndustry, setSelectedIndustry] = useState(AVAILABLE_INDUSTRIES[0])
   const [selectedMandates, setSelectedMandates] = useState<string[]>([])
   const [scoredAssets, setScoredAssets] = useState<ScoredAsset[]>([])
+  const [crqcYear, setCrqcYear] = useState(ESTIMATED_CRQC_YEAR)
 
   // ── Time tracking ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -130,6 +132,7 @@ export const DataAssetSensitivityModule: React.FC = () => {
       setSelectedIndustry(AVAILABLE_INDUSTRIES[0])
       setSelectedMandates([])
       setScoredAssets([])
+      setCrqcYear(ESTIMATED_CRQC_YEAR)
       setCurrentPart(0)
       setConfigKey((prev) => prev + 1)
       startTimeRef.current = Date.now()
@@ -228,6 +231,8 @@ export const DataAssetSensitivityModule: React.FC = () => {
                   key={`inventory-${configKey}`}
                   assets={assets}
                   onAssetsChange={setAssets}
+                  crqcYear={crqcYear}
+                  onCrqcYearChange={setCrqcYear}
                 />
               )}
               {currentPart === 1 && (
@@ -248,6 +253,7 @@ export const DataAssetSensitivityModule: React.FC = () => {
                   assets={assets}
                   selectedMandates={selectedMandates}
                   onScoredAssetsChange={setScoredAssets}
+                  crqcYear={crqcYear}
                 />
               )}
               {currentPart === 4 && (

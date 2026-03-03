@@ -4,6 +4,74 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.11.0] - 2026-03-02
+
+### Added
+
+- **IT Ops / DevOps persona** (`learningPersonas.ts`, `personaConfig.ts`): 5th persona role
+  targeting infrastructure operators. Tailored learning path (11 modules, 705 min), assessment
+  wizard hints for all 14 steps, landing page CTAs ("Explore Migration Catalog", "Try OpenSSL
+  Studio"), persona-aware navigation (Migrate, OpenSSL, Library, Playground), and inference
+  from assessment results. Integrated across GeminiService, PersonalizedAvatar, PersonaPicker,
+  seedHistory, and personaWizardHints. [persona:ops]
+
+- **Multi-view Migrate catalog** (`MigrateView.tsx`, `MigrateViewToggle.tsx`,
+  `MigrateSortControl.tsx`, `SoftwareCard.tsx`, `SoftwareCardGrid.tsx`, `migrateHelpers.tsx`):
+  Three view modes — Stack (existing infrastructure layers), Cards (responsive grid), and Table
+  (sortable columns) — with a persistent view toggle. Four sort options (Name, PQC Support,
+  Migration Priority, FIPS Status) and flat-mode filters (layer dropdown, category dropdown,
+  search bar). Store upgraded v3→v4 with `viewMode` persistence. [view:/migrate]
+
+- **Multi-view Learn dashboard** (`Dashboard.tsx`, `LearnViewToggle.tsx`, `LearnTrackStack.tsx`,
+  `ModuleTable.tsx`): Three view modes — Stack (track-grouped accordion), Cards (existing
+  ModuleCard grid), and Table (sortable columns with expand). Six sort modes (Default, Name,
+  Difficulty, Duration, Recently visited, Status) with persona, track, difficulty, status, and
+  search filters. Six learning tracks (Foundations, Strategy, Protocols, Infrastructure,
+  Applications, Executive). ModuleCard enhanced with progress bars and step tracking. [view:/learn]
+
+- **Unified progress backup/restore** (`LandingView.tsx`, `UnifiedStorageService.ts`,
+  `snapshotTypes.ts`): Export and import buttons on the landing page. Full-app snapshot covers
+  learning progress, assessment state, persona, theme, OpenSSL files, TLS configs, migrate
+  selections, and chat history. API keys excluded from export for security. [view:/]
+
+- **Pure TypeScript X.509 DER cert builder** (`certBuilder.ts`): Standalone certificate builder
+  with ASN.1 DER encoding primitives, DN parsing, v3 extensions, and PEM armoring. Supports
+  arbitrary signer functions (e.g., liboqs SLH-DSA) for algorithms not yet in OpenSSL WASM.
+  Used by HybridCASetup and HybridCertFormats workshops. [view:/learn]
+
+- **5 new glossary terms** (`glossaryData.ts`): Composite Certificate, Related Certificate
+  (RFC 9763), Chameleon Certificate, TBSCertificate, AlgorithmIdentifier — supporting the
+  expanded Hybrid Crypto module. [view:/learn]
+
+- **6 hybrid crypto sample questions** (`sampleQuestions.ts`): Composite vs Related certificates,
+  SLH-DSA signature sizes, ANSSI hybrid policy, Chameleon certs, DER inspector usage, and IETF
+  Hackathon pqc-certificates reference certs.
+
+### Changed
+
+- **PersonaPicker order** (`PersonaPicker.tsx`): Updated to Executive, Developer, Architect,
+  IT Ops / DevOps, Researcher — IT Ops inserted between Architect and Researcher. [view:/learn]
+
+- **GeminiService persona prompts** (`GeminiService.ts`): Added ops persona system prompt
+  focusing on deployment steps, infrastructure configs, CLI commands, and rollback guidance.
+  [persona:ops]
+
+- **Quiz data loader** (`quizDataLoader.ts`): Fixed `_r1` suffix sorting to use codepoint
+  comparison instead of `localeCompare`, resolving a macOS locale ordering bug where `_r1`
+  files were ranked below the base file. [persona:developer]
+
+### Data
+
+- **Quiz CSV** (`pqcquiz_03022026_r1.csv`): 520 questions across 33 categories (was 440/32).
+  New coverage for kms-pqc, hsm-pqc, and data-asset-sensitivity modules.
+
+- **Library CSV** (`library_03022026_r1.csv`): 236 entries. Additions include Korean PQC
+  Competition results (HAETAE, AIMer, SMAUG-T, NTRU+), FIPS 140-3 IG self-test guidance for
+  FIPS 203/204/205, 3GPP PQC study, liboqs v0.15.0, TPM 2.0 hybrid PQC, and FIPS 206 (FN-DSA).
+
+- **RAG corpus** (`rag-corpus.json`): Regenerated with all data and module changes (~2,200
+  knowledge chunks).
+
 ## [2.10.0] - 2026-03-02
 
 ### Added

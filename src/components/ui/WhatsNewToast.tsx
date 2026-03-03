@@ -86,25 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">KMS-PQC &amp; HSM-PQC Modules</strong>{' '}
-                    &mdash; two new advanced learn modules covering PQC key management systems and
-                    hardware security modules (PKCS#11 v3.2, FIPS 140-3, vendor comparison)
+                    <strong className="text-foreground">IT Ops / DevOps Persona</strong> &mdash; 5th
+                    role with tailored learning path (11 modules), assessment hints, and landing
+                    CTAs for infrastructure operators
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Data Asset Sensitivity Module</strong>{' '}
-                    &mdash; classify assets, map GDPR/HIPAA/DORA compliance obligations, and
-                    generate a PQC migration priority map
+                    <strong className="text-foreground">Multi-View Migrate &amp; Learn</strong>{' '}
+                    &mdash; stack, cards, and table views with sort and filter on both the migration
+                    catalog and learning dashboard
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Hybrid Cert Inspector</strong> &mdash;
-                    compare all four X.509 hybrid approaches with IETF Hackathon reference
-                    certificates (Composite, Catalyst, Pure ML-DSA-65, Chameleon)
+                    <strong className="text-foreground">Progress Backup/Restore</strong> &mdash;
+                    export and import all app progress from the landing page, including learning,
+                    assessment, chat, and persona data
                   </span>
                 </li>
               </ul>

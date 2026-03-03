@@ -35,7 +35,13 @@ function getLatestQuizFile(): { content: string; filename: string; date: Date } 
     return null
   }
 
-  files.sort((a, b) => b.date.getTime() - a.date.getTime())
+  // Sort by date descending; on same date, sort by path descending so _r1 > _r0 > base.
+  // Use codepoint comparison (not localeCompare) — macOS localeCompare treats '_' < '.'
+  files.sort((a, b) => {
+    const dateDiff = b.date.getTime() - a.date.getTime()
+    if (dateDiff !== 0) return dateDiff
+    return b.path < a.path ? -1 : b.path > a.path ? 1 : 0
+  })
   console.log(`Loading quiz data from: ${files[0].path}`)
 
   return {

@@ -8,6 +8,7 @@ import { useVersionStore } from '@/store/useVersionStore'
 import { useTLSStore } from '@/store/tls-learning.store'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { useChatStore } from '@/store/useChatStore'
 import {
   SNAPSHOT_FORMAT,
   SNAPSHOT_VERSION,
@@ -20,6 +21,7 @@ import {
   type TLSData,
   type OpenSSLData,
   type MigrateData,
+  type ChatData,
 } from './snapshotTypes'
 
 declare const __APP_VERSION__: string
@@ -144,6 +146,15 @@ function getMigrateData(): MigrateData {
   }
 }
 
+function getChatData(): ChatData {
+  const state = useChatStore.getState()
+  return {
+    conversations: state.conversations,
+    activeConversationId: state.activeConversationId,
+    model: state.model,
+  }
+}
+
 // ── Validation helpers ───────────────────────────────────────────────────────
 
 interface ValidationResult {
@@ -211,6 +222,7 @@ export class UnifiedStorageService {
         tlsLearning: getTLSData(),
         opensslStudio: getOpenSSLData(),
         migrate: getMigrateData(),
+        chat: getChatData(),
       },
     }
   }
@@ -400,6 +412,21 @@ export class UnifiedStorageService {
         activeSubCategory: m.activeSubCategory ?? 'All',
       })
     }
+
+    // 9. Chat conversations (no apiKey — credentials stay local)
+    if (stores.chat) {
+      const c = stores.chat
+      const conversations = Array.isArray(c.conversations) ? c.conversations : []
+      const activeConversationId =
+        typeof c.activeConversationId === 'string' ? c.activeConversationId : null
+      const activeConv = conversations.find((conv) => conv.id === activeConversationId)
+      useChatStore.setState({
+        conversations,
+        activeConversationId,
+        model: typeof c.model === 'string' ? c.model : 'gemini-2.5-flash',
+        messages: activeConv?.messages ?? [],
+      })
+    }
   }
 
   /**
@@ -424,6 +451,7 @@ export class UnifiedStorageService {
       'tlsLearning',
       'opensslStudio',
       'migrate',
+      'chat',
     ]
     for (const key of storeKeys) {
       if (!(key in stores)) {

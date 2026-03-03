@@ -45,6 +45,14 @@ describe('buildSystemPrompt — persona-specific instructions', () => {
     expect(result).toContain('mathematical foundations')
   })
 
+  // P4b: Ops persona includes "deployment steps" and "infrastructure configs"
+  it('ops persona includes "deployment steps" and "infrastructure configs"', () => {
+    const ctx = makePageContext({ persona: 'ops' })
+    const result = buildSystemPrompt([], ctx)
+    expect(result).toContain('deployment steps')
+    expect(result).toContain('infrastructure configs')
+  })
+
   // P5: No persona (null) omits RESPONSE STYLE section
   it('no persona (null) omits RESPONSE STYLE section', () => {
     const ctxNull = makePageContext({ persona: null })
@@ -54,9 +62,9 @@ describe('buildSystemPrompt — persona-specific instructions', () => {
     expect(buildSystemPrompt([])).not.toContain('RESPONSE STYLE')
   })
 
-  // P6: All four personas produce different personaDepth text
-  it('all four personas produce different personaDepth text', () => {
-    const personas = ['executive', 'developer', 'architect', 'researcher'] as const
+  // P6: All five personas produce different personaDepth text
+  it('all five personas produce different personaDepth text', () => {
+    const personas = ['executive', 'developer', 'architect', 'researcher', 'ops'] as const
     const results = personas.map((p) => {
       const ctx = makePageContext({ persona: p })
       return buildSystemPrompt([], ctx)
@@ -73,9 +81,9 @@ describe('buildSystemPrompt — persona-specific instructions', () => {
       expect(style).not.toBe('')
     }
 
-    // All four should be distinct from each other
+    // All five should be distinct from each other
     const uniqueStyles = new Set(responseStyles)
-    expect(uniqueStyles.size).toBe(4)
+    expect(uniqueStyles.size).toBe(5)
   })
 
   // P7: Executive + Financial Services + eu combination includes all three

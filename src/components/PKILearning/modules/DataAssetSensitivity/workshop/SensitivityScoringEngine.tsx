@@ -17,6 +17,7 @@ interface SensitivityScoringEngineProps {
   assets: DataAsset[]
   selectedMandates: string[]
   onScoredAssetsChange?: (scored: ScoredAsset[]) => void
+  crqcYear?: number
 }
 
 function clampWeights(
@@ -72,7 +73,15 @@ function ScoreBar({
   )
 }
 
-function AssetScoreRow({ scored, rank }: { scored: ScoredAsset; rank: number }) {
+function AssetScoreRow({
+  scored,
+  rank,
+  weights,
+}: {
+  scored: ScoredAsset
+  rank: number
+  weights: ScoringWeights
+}) {
   const [expanded, setExpanded] = useState(false)
   const band = getPriorityBand(scored.compositeScore)
   const tierConfig = SENSITIVITY_TIERS.find((t) => t.id === scored.sensitivityTier)
@@ -136,11 +145,19 @@ function AssetScoreRow({ scored, rank }: { scored: ScoredAsset; rank: number }) 
               <p className="text-[10px] text-muted-foreground">Sensitivity</p>
               <p className="text-lg font-bold text-foreground">{scored.sensitivityScore}</p>
               <p className="text-[9px] text-muted-foreground">{tierConfig?.label}</p>
+              <p className="text-[9px] text-primary font-semibold">
+                +{Math.round(scored.sensitivityScore * (weights.sensitivity / 100))} pts (
+                {weights.sensitivity}%)
+              </p>
             </div>
             <div className="bg-muted/30 rounded p-2 text-center">
               <p className="text-[10px] text-muted-foreground">Retention</p>
               <p className="text-lg font-bold text-foreground">{scored.retentionScore}</p>
               <p className="text-[9px] text-muted-foreground">{retConfig?.label}</p>
+              <p className="text-[9px] text-primary font-semibold">
+                +{Math.round(scored.retentionScore * (weights.retention / 100))} pts (
+                {weights.retention}%)
+              </p>
             </div>
             <div className="bg-muted/30 rounded p-2 text-center">
               <p className="text-[10px] text-muted-foreground">Compliance</p>
@@ -148,18 +165,27 @@ function AssetScoreRow({ scored, rank }: { scored: ScoredAsset; rank: number }) 
               <p className="text-[9px] text-muted-foreground">
                 {scored.complianceFlags.length} framework(s)
               </p>
+              <p className="text-[9px] text-primary font-semibold">
+                +{Math.round(scored.complianceScore * (weights.compliance / 100))} pts (
+                {weights.compliance}%)
+              </p>
             </div>
             <div className="bg-muted/30 rounded p-2 text-center">
               <p className="text-[10px] text-muted-foreground">HNDL Window</p>
               <p className="text-lg font-bold text-foreground">{scored.hndlScore}</p>
               <p className="text-[9px] text-muted-foreground">{scored.industry}</p>
+              <p className="text-[9px] text-primary font-semibold">
+                +{Math.round(scored.hndlScore * (weights.hndlWindow / 100))} pts (
+                {weights.hndlWindow}%)
+              </p>
             </div>
           </div>
 
           <div className="bg-muted/20 rounded p-3 text-xs text-muted-foreground border border-border">
-            <strong className="text-foreground">Composite formula: </strong>
-            sensitivityScore × w<sub>S</sub> + retentionScore × w<sub>R</sub> + complianceScore × w
-            <sub>C</sub> + hndlScore × w<sub>H</sub>={' '}
+            <strong className="text-foreground">Composite: </strong>
+            {scored.sensitivityScore}×{weights.sensitivity}% + {scored.retentionScore}×
+            {weights.retention}% + {scored.complianceScore}×{weights.compliance}% +{' '}
+            {scored.hndlScore}×{weights.hndlWindow}% ={' '}
             <span className="text-primary font-bold">{scored.compositeScore}</span>
           </div>
         </div>
@@ -172,6 +198,7 @@ export const SensitivityScoringEngine: React.FC<SensitivityScoringEngineProps> =
   assets,
   selectedMandates,
   onScoredAssetsChange,
+  crqcYear,
 }) => {
   const [weights, setWeights] = useState<ScoringWeights>(DEFAULT_SCORING_WEIGHTS)
   const [sortDescending, setSortDescending] = useState(true)
@@ -186,13 +213,13 @@ export const SensitivityScoringEngine: React.FC<SensitivityScoringEngineProps> =
   )
 
   const scored = useMemo(() => {
-    const results = assetsWithFlags.map((a) => scoreAsset(a, weights))
+    const results = assetsWithFlags.map((a) => scoreAsset(a, weights, crqcYear))
     const sorted = [...results].sort((a, b) =>
       sortDescending ? b.compositeScore - a.compositeScore : a.compositeScore - b.compositeScore
     )
     onScoredAssetsChange?.(sorted)
     return sorted
-  }, [assetsWithFlags, weights, sortDescending, onScoredAssetsChange])
+  }, [assetsWithFlags, weights, sortDescending, onScoredAssetsChange, crqcYear])
 
   const weightTotal = Object.values(weights).reduce((sum, v) => sum + v, 0)
   const isBalanced = weightTotal === 100
@@ -301,7 +328,7 @@ export const SensitivityScoringEngine: React.FC<SensitivityScoringEngineProps> =
       </div>
 
       {/* Band summary */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {(
           [
             {
@@ -360,7 +387,7 @@ export const SensitivityScoringEngine: React.FC<SensitivityScoringEngineProps> =
         </div>
 
         {scored.map((s, i) => (
-          <AssetScoreRow key={s.id} scored={s} rank={i + 1} />
+          <AssetScoreRow key={s.id} scored={s} rank={i + 1} weights={weights} />
         ))}
       </div>
     </div>

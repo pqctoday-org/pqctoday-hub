@@ -32,6 +32,19 @@ import { CareerJourneyModal } from './CareerJourneyModal'
 import { useTheme } from '../../hooks/useTheme'
 import { getCurrentVersion } from '../../store/useVersionStore'
 
+const DATA_FOUNDATION = [
+  { dataset: 'Timeline Events', records: 187, sources: '80+ orgs, 50+ countries' },
+  { dataset: 'Library Resources', records: 236, sources: '30+ standards bodies' },
+  { dataset: 'Algorithm Reference', records: 45, sources: 'FIPS 203/204/205/206' },
+  { dataset: 'Compliance Frameworks', records: 46, sources: 'NIST, ACVP, CC, ANSSI' },
+  { dataset: 'Migrate Products', records: 223, sources: '7 infrastructure layers' },
+  { dataset: 'Threat Landscape', records: 79, sources: '8+ industry sectors' },
+  { dataset: 'Industry Leaders', records: 101, sources: 'Public, Private, Academic' },
+  { dataset: 'Quiz Questions', records: 520, sources: 'All PQC topic areas' },
+  { dataset: 'Authoritative Sources', records: 89, sources: 'Gov, Academic, Industry' },
+  { dataset: 'Learning Modules', records: 27, sources: '2,000+ min of content' },
+]
+
 const DISCUSSIONS_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions/'
 const DISCUSSIONS = [
   {
@@ -103,14 +116,15 @@ export function AboutView() {
           </div>
           <div className="prose prose-invert max-w-none">
             <p className="text-lg text-muted-foreground">
-              PQC Today is an interactive platform for the post-quantum transition. Twenty-five
-              learning modules &mdash; including a dedicated executive track for CISOs covering risk
-              management, business cases, governance, compliance strategy, migration programs, and
-              vendor risk &mdash; hands-on cryptographic labs powered by OpenSSL WASM and liboqs, a
-              14-step risk assessment wizard with persona-aware reporting, ROI modelling, risk score
-              trending, and printable executive board briefs, an industry-filtered migration
-              catalog, and global compliance tracking give developers, architects, executives, and
-              researchers everything they need to understand, plan, and act &mdash; at their level.
+              PQC Today is an interactive platform for the post-quantum transition. Twenty-seven
+              learning modules &mdash; including a dedicated executive track covering risk
+              management, business cases, governance, and compliance strategy, plus expanded hybrid
+              crypto labs with IETF Hackathon reference certs &mdash; 520+ quiz questions, hands-on
+              cryptographic labs powered by OpenSSL WASM and liboqs, a 14-step risk assessment
+              wizard with persona-aware reporting, ROI modelling, risk score trending, and printable
+              executive board briefs, an industry-filtered migration catalog, and global compliance
+              tracking give developers, architects, operations teams, executives, and researchers
+              everything they need to understand, plan, and act &mdash; at their level.
             </p>
             <p className="text-muted-foreground mt-4">
               Our mission is to make PQC adoption actionable for everyone &mdash; whether
@@ -184,6 +198,43 @@ export function AboutView() {
                 </div>
               </a>
             ))}
+          </div>
+        </motion.div>
+
+        {/* Data Foundation Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.22 }}
+          className="glass-panel p-6"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <Database className="text-primary shrink-0" size={24} />
+            <div>
+              <h2 className="text-xl font-semibold">Platform Data</h2>
+              <p className="text-xs text-muted-foreground">Curated datasets powering every page</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-4">
+            {DATA_FOUNDATION.map(({ dataset, records, sources }) => (
+              <div
+                key={dataset}
+                className="p-3 rounded-lg border border-border bg-muted/30 text-center"
+              >
+                <div className="text-lg font-bold text-gradient">{records}</div>
+                <div className="text-xs font-medium text-foreground mt-1">{dataset}</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">{sources}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 flex items-center justify-between">
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-gradient">1,550+</span>
+              <span className="text-sm text-muted-foreground">total curated records</span>
+            </div>
+            <span className="text-xs text-muted-foreground">Compliance data refreshed weekly</span>
           </div>
         </motion.div>
 
@@ -324,10 +375,6 @@ export function AboutView() {
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Zustand</span>
                   <span className="text-xs text-muted-foreground/60">v5.0.11</span>
-                </li>
-                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
-                  <span className="text-muted-foreground">Immer</span>
-                  <span className="text-xs text-muted-foreground/60">v11.1.3</span>
                 </li>
               </ul>
             </div>
@@ -677,7 +724,7 @@ export function AboutView() {
               The PQC Assistant chatbot uses{' '}
               <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong> to
               deliver grounded, sourced answers about post-quantum cryptography. When you ask a
-              question, it searches a curated corpus of ~2,100 PQC knowledge chunks &mdash; covering
+              question, it searches a curated corpus of ~2,200 PQC knowledge chunks &mdash; covering
               algorithms, standards, threats, compliance certifications, migration products,
               leaders, and learning modules &mdash; retrieves the 10&ndash;20 most relevant passages
               (adaptive per query intent), and injects them as context into a{' '}
@@ -740,7 +787,7 @@ export function AboutView() {
             <h3 className="text-sm font-semibold text-muted-foreground mb-2">Limitations</h3>
             <ul className="space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
               <li>
-                Knowledge is bounded by the curated corpus (~1,900 chunks) &mdash; niche or very
+                Knowledge is bounded by the curated corpus (~2,200 chunks) &mdash; niche or very
                 recent topics may lack coverage
               </li>
               <li>

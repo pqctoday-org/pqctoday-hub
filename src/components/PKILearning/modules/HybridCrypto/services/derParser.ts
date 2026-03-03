@@ -17,6 +17,10 @@ export interface CertInfo {
   signatureSizeBytes: number
   /** subjectPublicKeyInfo BIT STRING byte count (excluding unused-bits byte) */
   publicKeySizeBytes: number
+  /** Raw bytes of the signature */
+  signatureBytes?: Uint8Array
+  /** Raw bytes of the public key */
+  publicKeyBytes?: Uint8Array
 }
 
 // ---------------------------------------------------------------------------
@@ -206,6 +210,7 @@ export function parseCertificateInfo(der: Uint8Array): CertInfo {
       const sigTLV = readTLV(der, pos)
       // BIT STRING: first byte is unused-bit count; rest is the actual signature
       result.signatureSizeBytes = Math.max(0, sigTLV.valueEnd - sigTLV.valueStart - 1)
+      result.signatureBytes = der.slice(sigTLV.valueStart + 1, sigTLV.valueEnd)
     }
 
     // --- Parse TBSCertificate internals ---
@@ -275,6 +280,7 @@ function parseTBS(der: Uint8Array, start: number, end: number, result: CertInfo)
     if (spkiInner < spkiEnd && der[spkiInner] === TAG_BIT_STRING) {
       const bsTLV = readTLV(der, spkiInner)
       result.publicKeySizeBytes = Math.max(0, bsTLV.valueEnd - bsTLV.valueStart - 1)
+      result.publicKeyBytes = der.slice(bsTLV.valueStart + 1, bsTLV.valueEnd)
     }
 
     pos = spkiTLV.nextOffset

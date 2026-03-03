@@ -78,7 +78,7 @@ export const VendorComparison: React.FC = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <div className="glass-panel p-3 text-center">
           <div className="text-2xl font-bold text-foreground">{stats.total}</div>
           <div className="text-xs text-muted-foreground">Total Vendors</div>

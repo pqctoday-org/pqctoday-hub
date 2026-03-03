@@ -30,6 +30,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
   ],
   researcher: null,
+  ops: ['/assess', '/report', '/migrate', '/openssl', '/library', '/playground'],
 }
 
 /**
@@ -40,6 +41,7 @@ export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {
   developer: ['/playground', '/openssl', '/algorithms'],
   architect: ['/assess', '/compliance', '/timeline'],
   researcher: ['/algorithms', '/openssl', '/playground'],
+  ops: ['/migrate', '/openssl', '/learn'],
 }
 
 /**
@@ -51,6 +53,7 @@ export const PERSONA_RECOMMENDED_MODE: Record<PersonaId, AssessmentMode> = {
   developer: 'comprehensive',
   architect: 'comprehensive',
   researcher: 'comprehensive',
+  ops: 'comprehensive',
 }
 
 /**
@@ -258,6 +261,12 @@ export const PERSONA_REPORT_CONFIG: Record<
     assessmentProfile: { state: 'open' },
     threatLandscape: { state: 'open' },
   },
+  ops: {
+    hndlHnfl: { state: 'hidden' },
+    migrationRoadmap: { state: 'open' },
+    migrationToolkit: { state: 'open' },
+    algorithmMigration: { state: 'open' },
+  },
 }
 
 /**
@@ -321,6 +330,11 @@ export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
   researcher: [
     { label: 'Compare algorithms', path: '/algorithms', icon: 'BarChart3' },
     { label: 'Explore in OpenSSL', path: '/openssl', icon: 'Terminal' },
+    { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
+  ],
+  ops: [
+    { label: 'Browse migration catalog', path: '/migrate', icon: 'Package' },
+    { label: 'Try OpenSSL Studio', path: '/openssl', icon: 'Terminal' },
     { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
   ],
 }

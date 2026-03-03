@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateX25519KeyPair, deriveSharedSecret, hkdfExtract } from '@/utils/webCrypto'
+import * as LIBOQS_SIG from '@/wasm/liboqs_sig'
+import {
+  buildSelfSignedX509,
+  derToPem,
+  SLH_DSA_SHA2_128S_OID,
+  buildParsedText,
+} from './certBuilder'
 
 export interface KeyGenResult {
   algorithm: string
@@ -582,6 +589,40 @@ export class HybridCryptoService {
         parsed: '',
         timingMs: performance.now() - start,
         error: e instanceof Error ? e.message : 'Certificate generation failed',
+      }
+    }
+  }
+  /**
+   * Generates a real self-signed X.509 certificate for SLH-DSA-128s using liboqs.
+   * OpenSSL WASM does not support SLH-DSA key generation, so this method bypasses it
+   * and builds a valid DER-encoded certificate directly with a pure-TypeScript ASN.1 builder.
+   *
+   * @param subject OpenSSL slash-format DN e.g. `/CN=.../O=.../OU=...`
+   */
+  async generateSelfSignedCertSLHDSA(subject: string): Promise<CertResult> {
+    const start = performance.now()
+    const notBefore = new Date()
+    const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
+    try {
+      const { publicKey, secretKey } = await LIBOQS_SIG.generateKey({ name: 'SLH-DSA-SHA2-128s' })
+
+      const derBytes = await buildSelfSignedX509(
+        publicKey,
+        (tbs) => LIBOQS_SIG.sign(tbs, secretKey, 'SLH-DSA-SHA2-128s'),
+        SLH_DSA_SHA2_128S_OID,
+        subject
+      )
+
+      const pem = derToPem(derBytes, 'CERTIFICATE')
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter)
+
+      return { pem, parsed, timingMs: performance.now() - start }
+    } catch (e) {
+      return {
+        pem: '',
+        parsed: '',
+        timingMs: performance.now() - start,
+        error: e instanceof Error ? e.message : 'SLH-DSA certificate generation failed',
       }
     }
   }

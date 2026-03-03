@@ -486,7 +486,7 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             Multi-Cloud PQC Key Architecture
           </div>
           <div className="space-y-2 text-center">
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <div className="p-2 rounded bg-primary/10 text-primary text-[10px] font-bold">
                 Applications
               </div>
@@ -502,7 +502,7 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               Enterprise KMS Orchestrator (KMIP + policy engine)
             </div>
             <div className="text-muted-foreground text-xs">&darr; Provider APIs &darr;</div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <div className="p-2 rounded bg-success/10 text-success text-[10px] font-bold">
                 AWS KMS
               </div>
@@ -514,7 +514,7 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               </div>
             </div>
             <div className="text-muted-foreground text-xs">&darr; HSM-backed &darr;</div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div className="p-2 rounded bg-warning/10 text-warning text-[10px] font-bold">
                 On-Prem HSM (Thales / Entrust)
               </div>

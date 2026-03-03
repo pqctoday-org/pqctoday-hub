@@ -1,334 +1,156 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState } from 'react'
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  BookOpen,
-  Brain,
-  CheckCircle,
-  ChevronDown,
-  ChevronRight,
-  Circle,
-  Home,
-  Rocket,
-  Save,
-  Upload,
-  PlayCircle,
-} from 'lucide-react'
+import { ArrowUpDown, BookOpen, Home, PlayCircle, Search, X } from 'lucide-react'
+import clsx from 'clsx'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { MODULE_INDUSTRY_RELEVANCE } from '../../data/personaConfig'
+import { PERSONAS, type PersonaId } from '../../data/learningPersonas'
 import { Button } from '../ui/button'
+import { Input } from '../ui/input'
+import { EmptyState } from '../ui/empty-state'
+import { FilterDropdown } from '../common/FilterDropdown'
 import { ModuleCard } from './ModuleCard'
-import { MODULE_CATALOG, MODULE_TRACKS, MODULE_STEP_COUNTS } from './moduleData'
-import { LearningPath } from './LearningPath'
+import { LearnViewToggle, type LearnViewMode } from './LearnViewToggle'
+import { LearnTrackStack } from './LearnTrackStack'
+import { ModuleTable, type ModuleTableItem } from './ModuleTable'
+import { MODULE_CATALOG, MODULE_TRACKS, MODULE_STEP_COUNTS, MODULE_TO_TRACK } from './moduleData'
 
-const SaveRestorePanel = () => {
-  const { saveProgress, loadProgress } = useModuleStore()
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
-  const handleSave = () => {
-    saveProgress()
-  }
+type LearnSortMode = 'default' | 'alpha' | 'difficulty' | 'duration' | 'recently' | 'status'
 
-  const handleRestore = () => {
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.accept = '.json'
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0]
-      if (file) {
-        const reader = new FileReader()
-        reader.onload = (event) => {
-          try {
-            const data = JSON.parse(event.target?.result as string)
-            loadProgress(data)
-          } catch (error) {
-            console.error('Failed to load progress:', error)
-          }
-        }
-        reader.readAsText(file)
-      }
+const DIFFICULTY_ORDER: Record<string, number> = { beginner: 0, intermediate: 1, advanced: 2 }
+const STATUS_ORDER: Record<string, number> = { 'in-progress': 0, 'not-started': 1, completed: 2 }
+
+const SORT_OPTIONS: { id: LearnSortMode; label: string }[] = [
+  { id: 'default', label: 'Default order' },
+  { id: 'alpha', label: 'Name A–Z' },
+  { id: 'difficulty', label: 'Difficulty' },
+  { id: 'duration', label: 'Duration (shortest first)' },
+  { id: 'recently', label: 'Recently visited' },
+  { id: 'status', label: 'Status (in progress first)' },
+]
+
+const PERSONA_FILTER_ITEMS = [
+  { id: 'All', label: 'All Roles' },
+  { id: 'executive', label: 'Executive / GRC' },
+  { id: 'developer', label: 'Developer / Engineer' },
+  { id: 'architect', label: 'Security Architect' },
+  { id: 'ops', label: 'IT Ops / DevOps' },
+  { id: 'researcher', label: 'Researcher' },
+]
+
+const TRACK_FILTER_ITEMS = ['All', ...MODULE_TRACKS.map((t) => t.track)]
+
+const DIFFICULTY_FILTER_ITEMS = ['All', 'beginner', 'intermediate', 'advanced']
+const STATUS_FILTER_ITEMS = ['All', 'not-started', 'in-progress', 'completed']
+
+const STATUS_LABELS: Record<string, string> = {
+  'not-started': 'Not Started',
+  'in-progress': 'In Progress',
+  completed: 'Completed',
+}
+
+// ---------------------------------------------------------------------------
+// LearnSortControl
+// ---------------------------------------------------------------------------
+
+const LearnSortControl = ({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: LearnSortMode
+  onChange: (v: LearnSortMode) => void
+  disabled?: boolean
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: Event) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setIsOpen(false)
     }
-    input.click()
-  }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('touchstart', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [isOpen])
+
+  const selected = SORT_OPTIONS.find((o) => o.id === value)
 
   return (
-    <div>
-      <div className="mb-4 md:mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
-          <Save className="text-secondary w-8 h-8 md:w-8 md:h-8" size={32} />
-          Progress Management
-        </h2>
-        <p className="hidden md:block text-muted-foreground">
-          Save your learning progress to continue later or transfer between devices.
-        </p>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.2 }}
-          className="glass-panel p-6 flex flex-col h-full hover:border-primary/50 transition-colors cursor-pointer"
-          onClick={handleSave}
-        >
-          <div className="flex items-center justify-center mb-4">
-            <div className="p-4 rounded-full bg-primary/10 text-primary">
-              <Save size={32} />
-            </div>
-          </div>
-          <h3 className="text-xl font-bold mb-2 text-center">Save Progress</h3>
-          <p className="text-sm text-muted-foreground text-center mb-4 flex-grow">
-            Download your current learning progress as a JSON file for backup or transfer.
-          </p>
-          <div className="pt-4 border-t border-border text-center">
-            <span className="text-xs text-muted-foreground">Click to download</span>
-          </div>
-        </motion.div>
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        disabled={disabled}
+        title={disabled ? 'Sort unavailable in this mode' : undefined}
+        className={clsx(
+          'flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium transition-colors',
+          disabled
+            ? 'bg-muted/10 text-muted-foreground/40 cursor-not-allowed'
+            : 'bg-muted/30 hover:bg-muted/50 text-muted-foreground hover:text-foreground'
+        )}
+      >
+        <ArrowUpDown size={14} aria-hidden="true" />
+        <span className="hidden sm:inline">{selected?.label ?? 'Sort'}</span>
+      </button>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.2, delay: 0.1 }}
-          className="glass-panel p-6 flex flex-col h-full hover:border-secondary/50 transition-colors cursor-pointer"
-          onClick={handleRestore}
+      {isOpen && !disabled && (
+        <div
+          role="listbox"
+          aria-label="Sort by"
+          className="absolute top-full right-0 mt-1 w-52 bg-popover border border-border rounded-lg shadow-xl overflow-hidden z-50"
         >
-          <div className="flex items-center justify-center mb-4">
-            <div className="p-4 rounded-full bg-secondary/10 text-secondary">
-              <Upload size={32} />
-            </div>
-          </div>
-          <h3 className="text-xl font-bold mb-2 text-center">Restore Progress</h3>
-          <p className="text-sm text-muted-foreground text-center mb-4 flex-grow">
-            Upload a previously saved progress file to continue your learning journey.
-          </p>
-          <div className="pt-4 border-t border-border text-center">
-            <span className="text-xs text-muted-foreground">Click to upload</span>
-          </div>
-        </motion.div>
-      </div>
+          {SORT_OPTIONS.map((option) => (
+            <button
+              key={option.id}
+              role="option"
+              aria-selected={value === option.id}
+              onClick={() => {
+                onChange(option.id)
+                setIsOpen(false)
+              }}
+              className={clsx(
+                'w-full text-left px-3 py-2 text-xs hover:bg-muted/50 transition-colors border-b border-border last:border-0',
+                value === option.id ? 'text-primary bg-muted/30' : 'text-muted-foreground'
+              )}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
 
-type LevelKey = 'new' | 'basics' | 'expert' | '_default'
-
-const EXPERIENCE_PATHS: Record<LevelKey, { id: string; subtitle: string }[]> = {
-  _default: [
-    { id: 'pqc-101', subtitle: 'Understand the quantum threat in 15 minutes' },
-    { id: 'quantum-threats', subtitle: 'Go deeper on how quantum computers break encryption' },
-    {
-      id: 'hybrid-crypto',
-      subtitle: 'Learn how old and new encryption work together during the transition',
-    },
-    {
-      id: 'crypto-agility',
-      subtitle: 'Design systems that can switch algorithms as standards evolve',
-    },
-  ],
-  new: [
-    {
-      id: 'pqc-101',
-      subtitle: 'Understand the quantum threat — no prior crypto knowledge needed',
-    },
-    {
-      id: 'quantum-threats',
-      subtitle: "Shor's and Grover's algorithms and the HNDL/HNFL threat",
-    },
-    {
-      id: 'pqc-risk-management',
-      subtitle: 'Quantify quantum risk and build your first risk register',
-    },
-    { id: 'pqc-business-case', subtitle: 'Translate risk to ROI for leadership buy-in' },
-    { id: 'pqc-governance', subtitle: 'Set up policies, RACI matrices, and KPI dashboards' },
-    {
-      id: 'compliance-strategy',
-      subtitle: 'Map your multi-jurisdiction regulatory requirements',
-    },
-  ],
-  basics: [
-    {
-      id: 'hybrid-crypto',
-      subtitle: 'Combine classical and PQC algorithms during the transition',
-    },
-    { id: 'tls-basics', subtitle: 'Master TLS 1.3 handshakes before adding PQC' },
-    { id: 'pki-workshop', subtitle: 'Build certificate chains hands-on, then migrate to PQC' },
-    {
-      id: 'kms-pqc',
-      subtitle: 'ML-KEM envelope encryption, hybrid wrapping, and rotation planning',
-    },
-    {
-      id: 'hsm-pqc',
-      subtitle: 'PKCS#11 v3.2, vendor comparison, firmware migration, FIPS 140-3',
-    },
-    {
-      id: 'email-signing',
-      subtitle: 'S/MIME and CMS with KEM-based PQC encryption (RFC 9629)',
-    },
-    { id: 'code-signing', subtitle: 'From ML-DSA package integrity to Sigstore keyless signing' },
-    { id: 'api-security-jwt', subtitle: 'JWT/JWS/JWE with ML-DSA signing and hybrid tokens' },
-    {
-      id: 'crypto-agility',
-      subtitle: 'Design systems that can switch algorithms as standards evolve',
-    },
-    {
-      id: 'digital-assets',
-      subtitle: 'Cryptographic foundations of Bitcoin, Ethereum, and Solana',
-    },
-    {
-      id: 'vendor-risk',
-      subtitle: 'Score vendor PQC readiness and map supply chain exposure',
-    },
-    {
-      id: 'migration-program',
-      subtitle: 'Build migration roadmaps with real country deadlines',
-    },
-  ],
-  expert: [
-    { id: 'vpn-ssh-pqc', subtitle: 'IKEv2 and SSH with ML-KEM, WireGuard Rosenpass' },
-    {
-      id: 'stateful-signatures',
-      subtitle: 'LMS/HSS and XMSS: Merkle tree signatures and critical state management',
-    },
-    {
-      id: 'merkle-tree-certs',
-      subtitle: 'Build Merkle trees, generate inclusion proofs, compare MTC vs PKI',
-    },
-    {
-      id: 'entropy-randomness',
-      subtitle: 'NIST SP 800-90, DRBG, TRNG vs QRNG — defense in depth',
-    },
-    {
-      id: '5g-security',
-      subtitle: '3GPP architecture: SUCI deconcealment, 5G-AKA, provisioning',
-    },
-    {
-      id: 'iot-ot-pqc',
-      subtitle: 'PQC for constrained devices: CoAP/DTLS, SCADA/ICS migration',
-    },
-    { id: 'digital-id', subtitle: 'EUDI Wallet: PID issuance, QES, attestations at scale' },
-    {
-      id: 'qkd',
-      subtitle: 'BB84, classical post-processing, hybrid key derivation — 150 min deep dive',
-    },
-  ],
-}
-
-const EXPERIENCE_PATH_META: Record<LevelKey, { title: string; subtitle: string }> = {
-  _default: {
-    title: 'Start Here',
-    subtitle:
-      'New to post-quantum cryptography? Follow these 4 modules in order to build a solid foundation.',
-  },
-  new: {
-    title: 'Start Here',
-    subtitle: 'No prior cryptography knowledge required — 6 modules to build your PQC foundation.',
-  },
-  basics: {
-    title: 'Your Learning Path',
-    subtitle: 'Build on the basics with 11 protocol and infrastructure implementation modules.',
-  },
-  expert: {
-    title: 'Deep Dives',
-    subtitle:
-      'Advanced workshops covering protocol internals, novel algorithms, and specialized domain applications.',
-  },
-}
-
-const ExperienceLevelPath: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => {
-  const { modules } = useModuleStore()
-  const { experienceLevel } = usePersonaStore()
-
-  const levelKey: LevelKey = experienceLevel ?? '_default'
-  const steps = EXPERIENCE_PATHS[levelKey]
-  const meta = EXPERIENCE_PATH_META[levelKey]
-
-  const allCompleted = steps.every((step) => modules[step.id]?.status === 'completed')
-  if (allCompleted) return null
-
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="mb-4">
-        <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
-          <Rocket className="text-primary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
-          {meta.title}
-        </h2>
-        <p className="text-muted-foreground text-sm">{meta.subtitle}</p>
-      </div>
-
-      <div className="glass-panel p-4 md:p-6">
-        <div className="space-y-0">
-          {steps.map((step, i) => {
-            const mod = MODULE_CATALOG[step.id]
-            const status = modules[step.id]?.status || 'not-started'
-            const isLast = i === steps.length - 1
-
-            return (
-              <div key={step.id} className="flex gap-3 md:gap-4">
-                {/* Timeline connector */}
-                <div className="flex flex-col items-center">
-                  {status === 'completed' ? (
-                    <CheckCircle className="text-status-success shrink-0" size={22} />
-                  ) : (
-                    <Circle
-                      className={`shrink-0 ${status === 'in-progress' ? 'text-primary' : 'text-muted-foreground'}`}
-                      size={22}
-                    />
-                  )}
-                  {!isLast && (
-                    <div
-                      className={`w-px flex-1 min-h-[24px] ${status === 'completed' ? 'bg-status-success/40' : 'bg-border'}`}
-                    />
-                  )}
-                </div>
-
-                {/* Content */}
-                <button onClick={() => navigate(step.id)} className="flex-1 text-left pb-4 group">
-                  <div className="flex items-baseline gap-2 mb-0.5">
-                    <span className="text-xs font-mono text-muted-foreground">{i + 1}</span>
-                    <span className="font-bold group-hover:text-primary transition-colors">
-                      {mod.title}
-                    </span>
-                    <span className="text-xs text-muted-foreground">{mod.duration}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed pl-5">
-                    {step.subtitle}
-                  </p>
-                </button>
-              </div>
-            )
-          })}
-        </div>
-
-        <p className="text-xs text-muted-foreground mt-2 pt-3 border-t border-border">
-          Then explore by track below, or select a role on the{' '}
-          <button onClick={() => navigate('/')} className="text-primary hover:underline">
-            home page
-          </button>{' '}
-          for a personalized path.
-        </p>
-      </div>
-    </motion.section>
-  )
-}
+// ---------------------------------------------------------------------------
+// Dashboard
+// ---------------------------------------------------------------------------
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate()
   const { modules } = useModuleStore()
-  const { selectedPersona } = usePersonaStore()
-  const [gridExpanded, setGridExpanded] = useState(false)
 
   const activeModules = MODULE_TRACKS.flatMap((t) => t.modules)
 
-  // Find most recently visited in-progress module
+  // Single most-recently-visited in-progress module
   const inProgressModules = activeModules
     .filter((m) => modules[m.id]?.status === 'in-progress')
     .sort((a, b) => (modules[b.id]?.lastVisited || 0) - (modules[a.id]?.lastVisited || 0))
-
   const resumeModule = inProgressModules[0]
 
   const getProgressPercentage = (moduleId: string): number => {
@@ -338,14 +160,9 @@ export const Dashboard: React.FC = () => {
     return Math.min(100, Math.round((module.completedSteps.length / totalSteps) * 100))
   }
 
-  // Show learning path if user has selected a persona (set from the home page)
-  const showLearningPath = !!selectedPersona
-  // Show full grid when no persona selected — persona is now set from the home page
-  const showFullGrid = !selectedPersona
-
   return (
     <div className="space-y-8">
-      {/* Continue Learning Section */}
+      {/* Continue Learning — single most-recent in-progress module */}
       {resumeModule && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -361,7 +178,7 @@ export const Dashboard: React.FC = () => {
               </div>
               <p className="text-lg text-foreground font-semibold mb-1">{resumeModule.title}</p>
               <p className="text-sm text-muted-foreground mb-3">{resumeModule.description}</p>
-              <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-4 text-sm mb-3">
                 <span className="text-muted-foreground">
                   Progress: {getProgressPercentage(resumeModule.id)}%
                 </span>
@@ -369,87 +186,34 @@ export const Dashboard: React.FC = () => {
                   Time spent: {Math.floor(modules[resumeModule.id]?.timeSpent || 0)} min
                 </span>
               </div>
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all"
+                  style={{ width: `${getProgressPercentage(resumeModule.id)}%` }}
+                  role="progressbar"
+                  aria-valuenow={getProgressPercentage(resumeModule.id)}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                />
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="gradient" onClick={() => navigate(resumeModule.id)}>
-                Resume Module
-              </Button>
-            </div>
+            <Button variant="gradient" onClick={() => navigate(resumeModule.id)}>
+              Resume Module
+            </Button>
           </div>
         </motion.div>
       )}
 
-      {/* Experience level path — shown when no persona is selected */}
-      {!showLearningPath && <ExperienceLevelPath navigate={navigate} />}
-
-      {/* Learning Path — shown when persona is selected (set from the home page) */}
-      {showLearningPath && <LearningPath />}
-
-      {/* Module Tracks Grid */}
-      {showLearningPath ? (
-        /* When learning path is active, show grid as collapsible */
-        <div>
-          <button
-            onClick={() => setGridExpanded((prev) => !prev)}
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-          >
-            {gridExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-            Browse all workshops by track
-          </button>
-
-          <AnimatePresence>
-            {gridExpanded && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.25 }}
-                className="overflow-hidden"
-              >
-                <ModuleTracksGrid navigate={navigate} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      ) : (
-        /* When no persona, show full grid directly */
-        showFullGrid && <ModuleTracksGrid navigate={navigate} onGoHome={() => navigate('/')} />
-      )}
-
-      {/* Knowledge Check Section — hidden when learning path is active (quiz is included in the path) */}
-      {!showLearningPath && (
-        <div>
-          <div className="mb-4 md:mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
-              <Brain className="text-secondary w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
-              Knowledge Check
-            </h2>
-            <p className="hidden lg:block text-muted-foreground">
-              Test your understanding of post-quantum cryptography concepts.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            <ModuleCard
-              module={{
-                id: 'quiz',
-                title: 'PQC Quiz',
-                description:
-                  'Test your knowledge across all PQC topics — algorithms, standards, compliance, migration, and more.',
-                duration: '15 min',
-              }}
-              onSelectModule={() => navigate('quiz')}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Progress Management Section */}
-      <SaveRestorePanel />
+      {/* Module Tracks Grid — always visible */}
+      <ModuleTracksGrid navigate={navigate} onGoHome={() => navigate('/')} />
     </div>
   )
 }
 
-/** The existing module grid organized by track */
+// ---------------------------------------------------------------------------
+// ModuleTracksGrid — 3-mode view: Stack / Cards / Table
+// ---------------------------------------------------------------------------
+
 const ModuleTracksGrid = ({
   navigate,
   onGoHome,
@@ -457,25 +221,222 @@ const ModuleTracksGrid = ({
   navigate: (path: string) => void
   onGoHome?: () => void
 }) => {
-  const { selectedIndustry, experienceLevel } = usePersonaStore()
+  const { modules } = useModuleStore()
+  const { selectedIndustry, experienceLevel, selectedPersona, setPersona } = usePersonaStore()
 
-  const isModuleRelevant = (moduleId: string): boolean => {
-    if (!selectedIndustry) return false
-    const relevant = MODULE_INDUSTRY_RELEVANCE[moduleId]
-    return relevant === null || (relevant?.includes(selectedIndustry) ?? false)
+  // Filter state
+  const [searchText, setSearchText] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [selectedTrack, setSelectedTrack] = useState('All')
+  const [selectedDifficulty, setSelectedDifficulty] = useState('All')
+  const [selectedStatus, setSelectedStatus] = useState('All')
+  // Initialize from persona store so selecting a persona on the home page pre-selects the dropdown
+  const [selectedPersonaFilter, setSelectedPersonaFilter] = useState<string>(
+    selectedPersona ?? 'All'
+  )
+  const [sortBy, setSortBy] = useState<LearnSortMode>('default')
+  const [viewMode, setViewMode] = useState<LearnViewMode>('stack')
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchText), 150)
+    return () => clearTimeout(timer)
+  }, [searchText])
+
+  // Dropdown → store: changing role in the grid updates the persona store
+  const handlePersonaFilterChange = useCallback(
+    (id: string) => {
+      setSelectedPersonaFilter(id)
+      setPersona(id === 'All' ? null : (id as PersonaId))
+    },
+    [setPersona]
+  )
+
+  const isModuleRelevant = useCallback(
+    (moduleId: string): boolean => {
+      if (!selectedIndustry) return false
+      const relevant = MODULE_INDUSTRY_RELEVANCE[moduleId]
+      return relevant === null || (relevant?.includes(selectedIndustry) ?? false)
+    },
+    [selectedIndustry]
+  )
+
+  const isModuleAboveLevel = useCallback(
+    (moduleId: string): boolean => {
+      if (!experienceLevel) return false
+      const mod = MODULE_CATALOG[moduleId]
+      if (!mod?.difficulty) return false
+      if (experienceLevel === 'new') return mod.difficulty !== 'beginner'
+      if (experienceLevel === 'basics') return mod.difficulty === 'advanced'
+      return false
+    },
+    [experienceLevel]
+  )
+
+  const allModules = useMemo(() => MODULE_TRACKS.flatMap((t) => t.modules), [])
+  const completedCount = allModules.filter((m) => modules[m.id]?.status === 'completed').length
+  const inProgressCount = allModules.filter((m) => modules[m.id]?.status === 'in-progress').length
+  const touchedCount = completedCount + inProgressCount
+
+  const personaFilterActive = selectedPersonaFilter !== 'All'
+
+  const filtersActive =
+    debouncedSearch !== '' ||
+    selectedTrack !== 'All' ||
+    selectedDifficulty !== 'All' ||
+    selectedStatus !== 'All' ||
+    personaFilterActive ||
+    sortBy !== 'default'
+
+  const clearFilters = () => {
+    setSearchText('')
+    setSelectedTrack('All')
+    setSelectedDifficulty('All')
+    setSelectedStatus('All')
+    setSelectedPersonaFilter('All')
+    setPersona(null)
+    setSortBy('default')
   }
 
-  const isModuleAboveLevel = (moduleId: string): boolean => {
-    if (!experienceLevel) return false
-    const mod = MODULE_CATALOG[moduleId]
-    if (!mod?.difficulty) return false
-    if (experienceLevel === 'new') return mod.difficulty !== 'beginner'
-    if (experienceLevel === 'basics') return mod.difficulty === 'advanced'
-    return false // expert: nothing dimmed
-  }
+  // Build flat item list (for Cards and Table modes)
+  const flatItems = useMemo<ModuleTableItem[]>(() => {
+    if (personaFilterActive) {
+      const persona = PERSONAS[selectedPersonaFilter as PersonaId]
+      if (!persona) return []
+      return persona.pathItems.map((item) => {
+        if (item.type === 'module') {
+          const mod = MODULE_CATALOG[item.moduleId]
+          return {
+            kind: 'module' as const,
+            module: mod,
+            track: MODULE_TO_TRACK[item.moduleId] ?? '',
+          }
+        }
+        return {
+          kind: 'checkpoint' as const,
+          id: item.id,
+          label: item.label,
+          categoryCount: item.categories.length,
+        }
+      })
+    }
+    return MODULE_TRACKS.flatMap(({ track, modules: mods }) =>
+      mods.map((module) => ({ kind: 'module' as const, module, track }))
+    )
+  }, [personaFilterActive, selectedPersonaFilter])
+
+  // Apply filters and sort to module items
+  const filteredItems = useMemo<ModuleTableItem[]>(() => {
+    const needle = debouncedSearch.toLowerCase()
+
+    let filtered = flatItems.filter((item) => {
+      if (item.kind === 'checkpoint') return true
+      const { module, track } = item
+      if (needle && !`${module.title} ${module.description}`.toLowerCase().includes(needle))
+        return false
+      if (selectedTrack !== 'All' && track !== selectedTrack) return false
+      if (selectedDifficulty !== 'All' && (module.difficulty ?? '') !== selectedDifficulty)
+        return false
+      if (selectedStatus !== 'All') {
+        const s = modules[module.id]?.status ?? 'not-started'
+        if (s !== selectedStatus) return false
+      }
+      return true
+    })
+
+    if (!personaFilterActive && sortBy !== 'default') {
+      const moduleItems = filtered.filter((i) => i.kind === 'module') as Extract<
+        ModuleTableItem,
+        { kind: 'module' }
+      >[]
+      moduleItems.sort((a, b) => {
+        switch (sortBy) {
+          case 'alpha':
+            return a.module.title.localeCompare(b.module.title)
+          case 'difficulty':
+            return (
+              (DIFFICULTY_ORDER[a.module.difficulty ?? ''] ?? 99) -
+              (DIFFICULTY_ORDER[b.module.difficulty ?? ''] ?? 99)
+            )
+          case 'duration':
+            return parseInt(a.module.duration) - parseInt(b.module.duration)
+          case 'recently':
+            return (
+              (modules[b.module.id]?.lastVisited ?? 0) - (modules[a.module.id]?.lastVisited ?? 0)
+            )
+          case 'status': {
+            const sa = modules[a.module.id]?.status ?? 'not-started'
+            const sb = modules[b.module.id]?.status ?? 'not-started'
+            return (STATUS_ORDER[sa] ?? 99) - (STATUS_ORDER[sb] ?? 99)
+          }
+          default:
+            return 0
+        }
+      })
+      filtered = moduleItems
+    }
+
+    return filtered
+  }, [
+    flatItems,
+    debouncedSearch,
+    selectedTrack,
+    selectedDifficulty,
+    selectedStatus,
+    sortBy,
+    personaFilterActive,
+    modules,
+  ])
+
+  // For stack mode: which module IDs pass the current filters
+  const filteredModuleIds = useMemo<Set<string>>(() => {
+    const needle = debouncedSearch.toLowerCase()
+    return new Set(
+      allModules
+        .filter((m) => {
+          if (needle && !`${m.title} ${m.description}`.toLowerCase().includes(needle)) return false
+          if (selectedDifficulty !== 'All' && (m.difficulty ?? '') !== selectedDifficulty)
+            return false
+          if (selectedStatus !== 'All') {
+            const s = modules[m.id]?.status ?? 'not-started'
+            if (s !== selectedStatus) return false
+          }
+          if (personaFilterActive) {
+            const persona = PERSONAS[selectedPersonaFilter as PersonaId]
+            if (persona && !persona.recommendedPath.includes(m.id)) return false
+          }
+          return true
+        })
+        .map((m) => m.id)
+    )
+  }, [
+    debouncedSearch,
+    selectedDifficulty,
+    selectedStatus,
+    personaFilterActive,
+    selectedPersonaFilter,
+    allModules,
+    modules,
+  ])
+
+  const moduleItemCount = filteredItems.filter((i) => i.kind === 'module').length
+  const totalModuleCount = allModules.length
+
+  // Navigate to quiz with pre-selected categories
+  const navigateToQuiz = useCallback(
+    (categories: string[]) => {
+      navigate(`/learn/quiz?category=${categories.join(',')}`)
+    },
+    [navigate]
+  )
+
+  // In stack mode, Track filter is hidden (the stack itself is the track navigator)
+  const showTrackFilter = viewMode !== 'stack'
+  // Sort is disabled in stack mode and when persona filter active
+  const sortDisabled = viewMode === 'stack' || personaFilterActive
 
   return (
-    <div className="space-y-8 pt-4">
+    <div className="space-y-6 pt-4">
+      {/* Header */}
       <div className="mb-2 md:mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient flex items-center gap-2">
@@ -494,24 +455,221 @@ const ModuleTracksGrid = ({
         )}
       </div>
 
-      {MODULE_TRACKS.map((group) => (
-        <div key={group.track}>
-          <h3 className="text-lg font-bold text-foreground mb-3 pl-1">{group.track}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            <AnimatePresence mode="popLayout">
-              {group.modules.map((module) => (
-                <ModuleCard
-                  key={module.id}
-                  module={module}
-                  onSelectModule={(id) => navigate(id)}
-                  isRelevant={isModuleRelevant(module.id)}
-                  isAboveLevel={isModuleAboveLevel(module.id)}
-                />
-              ))}
-            </AnimatePresence>
-          </div>
+      {/* Progress overview strip */}
+      {touchedCount > 0 && (
+        <p className="text-xs text-muted-foreground flex items-center gap-1.5 flex-wrap">
+          <BookOpen size={12} aria-hidden="true" />
+          <span>{totalModuleCount} modules</span>
+          <span className="text-border">·</span>
+          <span className="text-status-success">{completedCount} completed</span>
+          <span className="text-border">·</span>
+          <span className="text-status-info">{inProgressCount} in progress</span>
+          <span className="text-border">·</span>
+          <span>{totalModuleCount - touchedCount} not started</span>
+        </p>
+      )}
+
+      {/* Controls bar */}
+      <div className="flex flex-wrap items-center gap-2">
+        {/* Search */}
+        <div className="relative flex-1 min-w-[160px]">
+          <Search
+            size={14}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <Input
+            type="search"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Search modules…"
+            aria-label="Search modules"
+            className="pl-8 h-9 text-xs"
+          />
         </div>
-      ))}
+
+        {/* Track filter — hidden in stack mode */}
+        {showTrackFilter && (
+          <FilterDropdown
+            items={TRACK_FILTER_ITEMS}
+            selectedId={selectedTrack}
+            onSelect={setSelectedTrack}
+            defaultLabel="All Tracks"
+            noContainer
+          />
+        )}
+
+        {/* Difficulty */}
+        <FilterDropdown
+          items={DIFFICULTY_FILTER_ITEMS.map((d) => ({
+            id: d,
+            label: d === 'All' ? 'All Levels' : d.charAt(0).toUpperCase() + d.slice(1),
+          }))}
+          selectedId={selectedDifficulty}
+          onSelect={setSelectedDifficulty}
+          defaultLabel="All Levels"
+          noContainer
+        />
+
+        {/* Status */}
+        <FilterDropdown
+          items={STATUS_FILTER_ITEMS.map((s) => ({
+            id: s,
+            label: s === 'All' ? 'All Statuses' : (STATUS_LABELS[s] ?? s),
+          }))}
+          selectedId={selectedStatus}
+          onSelect={setSelectedStatus}
+          defaultLabel="All Statuses"
+          noContainer
+        />
+
+        {/* Persona / Role */}
+        <FilterDropdown
+          items={PERSONA_FILTER_ITEMS}
+          selectedId={selectedPersonaFilter}
+          onSelect={handlePersonaFilterChange}
+          defaultLabel="All Roles"
+          noContainer
+        />
+
+        {/* Sort — hidden in stack mode, disabled when persona active */}
+        {viewMode !== 'stack' && (
+          <LearnSortControl value={sortBy} onChange={setSortBy} disabled={sortDisabled} />
+        )}
+
+        {/* View toggle */}
+        <LearnViewToggle mode={viewMode} onChange={setViewMode} />
+      </div>
+
+      {/* Results count + clear (only in cards/table modes or when filters active in stack) */}
+      {filtersActive && (
+        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+          {viewMode !== 'stack' && (
+            <span>
+              Showing <span className="font-semibold text-foreground">{moduleItemCount}</span> of{' '}
+              <span className="font-semibold">{totalModuleCount}</span> modules
+              {personaFilterActive && (
+                <span className="text-secondary ml-1">
+                  · {PERSONA_FILTER_ITEMS.find((p) => p.id === selectedPersonaFilter)?.label} path
+                </span>
+              )}
+            </span>
+          )}
+          <button
+            onClick={clearFilters}
+            className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors font-medium"
+          >
+            <X size={12} aria-hidden="true" />
+            Clear filters
+          </button>
+        </div>
+      )}
+
+      {/* Empty state (cards/table only) */}
+      {viewMode !== 'stack' && moduleItemCount === 0 && (
+        <EmptyState
+          icon={<Search size={32} />}
+          title="No modules match your filters"
+          description="Try adjusting the search text or filter criteria."
+          action={{ label: 'Clear filters', onClick: clearFilters }}
+        />
+      )}
+
+      {/* ── Stack mode ── */}
+      {viewMode === 'stack' && (
+        <LearnTrackStack
+          navigate={navigate}
+          navigateToQuiz={navigateToQuiz}
+          filteredModuleIds={filteredModuleIds}
+          isModuleRelevant={isModuleRelevant}
+          isModuleAboveLevel={isModuleAboveLevel}
+          onClearFilters={clearFilters}
+        />
+      )}
+
+      {/* ── Cards mode ── */}
+      {viewMode === 'cards' && moduleItemCount > 0 && (
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key="cards"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {personaFilterActive ? (
+              /* Persona path with interleaved checkpoints */
+              <div className="space-y-4">
+                {filteredItems.map((item, idx) => {
+                  if (item.kind === 'checkpoint') {
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => navigate('quiz')}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-secondary/40 hover:border-secondary/70 hover:bg-secondary/5 transition-all text-left group"
+                      >
+                        <span className="text-xs font-mono uppercase tracking-widest text-secondary">
+                          Quiz Checkpoint
+                        </span>
+                        <span className="text-sm font-semibold text-foreground group-hover:text-secondary transition-colors">
+                          {item.label}
+                        </span>
+                        <span className="text-xs text-muted-foreground ml-auto">
+                          {item.categoryCount} topics
+                        </span>
+                      </button>
+                    )
+                  }
+                  return (
+                    <ModuleCard
+                      key={`${item.module.id}-${idx}`}
+                      module={item.module}
+                      onSelectModule={(id) => navigate(id)}
+                      isRelevant={isModuleRelevant(item.module.id)}
+                      isAboveLevel={isModuleAboveLevel(item.module.id)}
+                    />
+                  )
+                })}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                {(
+                  filteredItems.filter((i) => i.kind === 'module') as Extract<
+                    ModuleTableItem,
+                    { kind: 'module' }
+                  >[]
+                ).map((item) => (
+                  <ModuleCard
+                    key={item.module.id}
+                    module={item.module}
+                    onSelectModule={(id) => navigate(id)}
+                    isRelevant={isModuleRelevant(item.module.id)}
+                    isAboveLevel={isModuleAboveLevel(item.module.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      )}
+
+      {/* ── Table mode ── */}
+      {viewMode === 'table' && moduleItemCount > 0 && (
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key="table"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <ModuleTable
+              items={filteredItems}
+              navigate={navigate}
+              isModuleRelevant={isModuleRelevant}
+              isModuleAboveLevel={isModuleAboveLevel}
+            />
+          </motion.div>
+        </AnimatePresence>
+      )}
     </div>
   )
 }

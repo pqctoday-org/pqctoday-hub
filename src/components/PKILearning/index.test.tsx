@@ -30,8 +30,15 @@ describe('PKILearning', () => {
     // Simulate picker already dismissed so the module grid is visible
     usePersonaStore.setState({ selectedPersona: null, hasSeenPersonaPicker: true })
   })
+
+  const switchToCardsView = () => {
+    // Default view is 'stack' (collapsed tracks); switch to 'cards' to see all modules
+    fireEvent.click(screen.getByRole('radio', { name: /cards/i }))
+  }
+
   it('renders the header and module navigation cards', () => {
     renderWithRouter()
+    switchToCardsView()
 
     expect(screen.getByText('Learning Workshops')).toBeInTheDocument()
     expect(screen.getByText(/Interactive hands-on workshops/)).toBeInTheDocument()
@@ -43,6 +50,7 @@ describe('PKILearning', () => {
 
   it('navigates to Digital Assets module on click', async () => {
     renderWithRouter()
+    switchToCardsView()
 
     // Find button/link for Digital Assets
     const title = screen.getByText('Digital Assets')
@@ -54,6 +62,7 @@ describe('PKILearning', () => {
 
   it('navigates to PKI Workshop module on click', async () => {
     renderWithRouter()
+    switchToCardsView()
 
     const title = screen.getByText('PKI') // Title is "PKI"
     fireEvent.click(title)
@@ -63,6 +72,7 @@ describe('PKILearning', () => {
 
   it('allows navigating back from a module', async () => {
     renderWithRouter()
+    switchToCardsView()
 
     // Enter module
     fireEvent.click(screen.getByText('Digital Assets'))

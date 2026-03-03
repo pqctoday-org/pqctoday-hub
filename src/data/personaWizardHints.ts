@@ -254,4 +254,51 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
       hint: 'Timeline pressure is a multiplier (1.0-1.3) applied to the regulatory pressure score. Country-specific deadlines from the timeline CSV are shown.',
     },
   },
+  ops: {
+    crypto: {
+      hint: 'List algorithms in your production configs — TLS cipher suites, VPN settings, KMS policies, and certificate signing algorithms.',
+      title: 'What algorithms are active in your production environment?',
+      description: 'Check TLS configs, VPN settings, and KMS policies.',
+    },
+    sensitivity: {
+      hint: 'Consider the data flowing through your systems — production databases, backup archives, inter-service traffic, and monitoring logs.',
+    },
+    compliance: {
+      hint: 'Check with your GRC or compliance team about which frameworks apply. Focus on frameworks that affect your infrastructure — FedRAMP, SOC 2, PCI DSS.',
+    },
+    migration: {
+      hint: 'Have you deployed any PQC changes to production? Hybrid TLS configs, certificate re-keying, or KMS updates all count.',
+      title: 'Have you deployed any PQC changes to production?',
+      description: 'Hybrid TLS, cert re-keying, or KMS updates all count.',
+    },
+    'use-cases': {
+      hint: 'Think about where crypto runs in your infrastructure: TLS termination, database encryption at rest, backup encryption, service mesh mTLS, SSH key management.',
+    },
+    retention: {
+      hint: 'Consider the longest-lived data in your systems — backups, archives, cold storage. These drive your HNDL risk window.',
+    },
+    credential: {
+      hint: 'Check your CA certificate validity, TLS cert rotation schedules, SSH key rotation policies, and code signing cert lifetimes.',
+    },
+    scale: {
+      hint: 'Count production systems: servers, containers, IoT devices, network appliances, and HSMs that use crypto operations.',
+    },
+    agility: {
+      hint: 'Evaluate your infrastructure automation: can you rotate algorithms via config management (Ansible, Terraform) or does it require manual changes per system?',
+      title: 'How automated is your crypto configuration management?',
+      description: 'Can you change algorithms via config management, or is it manual?',
+    },
+    infra: {
+      hint: 'Map your full crypto infrastructure: load balancers with TLS termination, HSMs, cloud KMS, internal CAs, config management systems, and container registries.',
+      title: 'Map your crypto infrastructure footprint',
+      description:
+        'Load balancers, HSMs, cloud KMS, internal CAs, config management, container registries.',
+    },
+    vendors: {
+      hint: 'Consider infrastructure vendors: cloud providers, CDN, DNS, load balancer vendors, HSM manufacturers, and certificate authorities.',
+    },
+    timeline: {
+      hint: 'If your organization has a compliance deadline, select it. Otherwise, align with industry peers — check the timeline view for your sector.',
+    },
+  },
 }

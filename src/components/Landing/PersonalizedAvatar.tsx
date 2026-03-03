@@ -15,6 +15,7 @@ import {
   Layers,
   Plane,
   Radio,
+  Server,
   Shield,
   ShieldCheck,
   ShoppingCart,
@@ -37,6 +38,7 @@ const PERSONA_ICONS: Record<string, LucideIcon> = {
   Code,
   ShieldCheck,
   GraduationCap,
+  Server,
 }
 
 const INDUSTRY_ICONS: Record<string, LucideIcon> = {

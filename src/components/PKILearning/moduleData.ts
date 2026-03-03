@@ -234,7 +234,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'digital-id': 6,
   'tls-basics': 3,
   'quantum-threats': 5,
-  'hybrid-crypto': 3,
+  'hybrid-crypto': 5,
   'crypto-agility': 3,
   'stateful-signatures': 3,
   'email-signing': 3,
@@ -256,6 +256,16 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'data-asset-sensitivity': 5,
   quiz: 1,
   assess: 1, // Assessment wizard completion
+}
+
+/** Track badge colors (semantic tokens only) */
+export const TRACK_COLORS: Record<string, string> = {
+  Foundations: 'bg-primary/10 text-primary',
+  Strategy: 'bg-secondary/10 text-secondary',
+  Protocols: 'bg-status-info/15 text-status-info',
+  Infrastructure: 'bg-status-warning/15 text-status-warning',
+  Applications: 'bg-status-success/15 text-status-success',
+  Executive: 'bg-status-error/15 text-status-error',
 }
 
 /** Module tracks for the grid display */
@@ -318,3 +328,8 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
     ],
   },
 ]
+
+/** Reverse lookup: module ID → track name (derived from MODULE_TRACKS) */
+export const MODULE_TO_TRACK: Record<string, string> = Object.fromEntries(
+  MODULE_TRACKS.flatMap(({ track, modules }) => modules.map((m) => [m.id, track]))
+)

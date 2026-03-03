@@ -94,7 +94,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       <div className="space-y-4">
         {scenarios.map((scenario) => (
           <div key={scenario.id} className="glass-panel p-5">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-lg font-bold text-foreground">{scenario.title}</h3>
@@ -113,7 +113,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
               </div>
               <button
                 onClick={() => handleLoadAndRun(scenario)}
-                className="btn btn-primary flex items-center gap-2 px-4 py-2 shrink-0"
+                className="btn btn-primary flex items-center gap-2 px-4 py-2 shrink-0 self-start"
               >
                 <Play size={14} fill="currentColor" /> Load &amp; Run
               </button>
@@ -124,9 +124,9 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
 
       {/* Quiz Link */}
       <div className="glass-panel p-6 border-primary/20">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <BookOpen size={24} className="text-primary" />
+            <BookOpen size={24} className="text-primary shrink-0" />
             <div>
               <h3 className="font-bold text-foreground">Test Your Knowledge</h3>
               <p className="text-sm text-muted-foreground">
@@ -137,7 +137,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
           </div>
           <button
             onClick={() => navigate('/learn/quiz')}
-            className="btn btn-secondary flex items-center gap-2 px-4 py-2"
+            className="btn btn-secondary flex items-center gap-2 px-4 py-2 shrink-0"
           >
             Take Quiz <ArrowRight size={14} />
           </button>

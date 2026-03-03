@@ -26,12 +26,14 @@ import {
   Pencil,
   Plane,
   Radio,
+  Server,
   Shield,
   ShieldCheck,
   ShoppingCart,
   Star,
   Sun,
   User,
+  Wrench,
   X,
   Zap,
 } from 'lucide-react'
@@ -50,19 +52,21 @@ type ActiveModal = 'experience' | 'role' | 'region' | 'industry' | null
 
 // ─── Static data ──────────────────────────────────────────────────────────────
 
-const PERSONA_ORDER: PersonaId[] = ['executive', 'developer', 'architect', 'researcher']
+const PERSONA_ORDER: PersonaId[] = ['executive', 'developer', 'architect', 'ops', 'researcher']
 
 const PERSONA_ICONS = {
   Briefcase,
   Code,
   ShieldCheck,
   GraduationCap,
+  Server,
 } as const
 
 const PERSONA_CORNER_ICONS: Record<PersonaId, LucideIcon> = {
   executive: User,
   developer: Code2,
   architect: Compass,
+  ops: Wrench,
   researcher: Database,
 }
 
@@ -286,6 +290,16 @@ const ROLE_ADAPTATIONS: {
       'Hero CTA changes to "Explore the Timeline"',
       'Journey steps Explore, Deploy, and Assess are featured',
       'Headings and descriptions focus on migration blueprints and system design',
+    ],
+  },
+  {
+    id: 'ops',
+    icon: Server,
+    color: 'text-secondary',
+    highlights: [
+      'Hero CTA changes to "Explore Migration Catalog"',
+      'Journey steps Deploy, Test, and Learn are featured',
+      'Headings and descriptions focus on infrastructure deployment and operations',
     ],
   },
   {
@@ -805,7 +819,7 @@ export const PersonalizationSection = () => {
                           <Info size={12} /> How does this adapt content?
                         </button>
                       </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                         {PERSONA_ORDER.map((id) => {
                           const persona = PERSONAS[id]
                           const Icon = PERSONA_ICONS[persona.icon]

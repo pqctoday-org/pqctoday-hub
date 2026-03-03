@@ -36,7 +36,7 @@ export interface AssessmentInput {
   /** When true, user indicated they don't know their infrastructure. */
   infrastructureUnknown?: boolean
   /** Active persona at assessment time — drives narrative framing and scoring adjustments. */
-  persona?: 'executive' | 'developer' | 'architect' | 'researcher'
+  persona?: 'executive' | 'developer' | 'architect' | 'researcher' | 'ops'
 }
 
 export interface AlgorithmMigration {

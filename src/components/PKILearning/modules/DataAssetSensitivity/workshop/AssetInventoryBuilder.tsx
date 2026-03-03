@@ -12,6 +12,7 @@ import {
   DEFAULT_ASSETS,
   computeHndlRiskYear,
   CURRENT_YEAR,
+  ESTIMATED_CRQC_YEAR,
   type DataAsset,
   type SensitivityTier,
   type AssetType,
@@ -21,6 +22,8 @@ import {
 interface AssetInventoryBuilderProps {
   assets: DataAsset[]
   onAssetsChange: (assets: DataAsset[]) => void
+  crqcYear?: number
+  onCrqcYearChange?: (year: number) => void
 }
 
 function SensitivityBadge({ tier }: { tier: SensitivityTier }) {
@@ -38,8 +41,14 @@ function SensitivityBadge({ tier }: { tier: SensitivityTier }) {
   )
 }
 
-function HndlIndicator({ retentionPeriod }: { retentionPeriod: RetentionPeriod }) {
-  const riskYear = computeHndlRiskYear(retentionPeriod)
+function HndlIndicator({
+  retentionPeriod,
+  crqcYear = ESTIMATED_CRQC_YEAR,
+}: {
+  retentionPeriod: RetentionPeriod
+  crqcYear?: number
+}) {
+  const riskYear = computeHndlRiskYear(retentionPeriod, crqcYear)
   const isAtRisk = riskYear <= CURRENT_YEAR
   return (
     <span
@@ -65,6 +74,8 @@ function HndlIndicator({ retentionPeriod }: { retentionPeriod: RetentionPeriod }
 export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
   assets,
   onAssetsChange,
+  crqcYear = ESTIMATED_CRQC_YEAR,
+  onCrqcYearChange,
 }) => {
   const [name, setName] = useState('')
   const [assetType, setAssetType] = useState<AssetType>('data-store')
@@ -115,6 +126,44 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* CRQC Year Scenario Slider */}
+      {onCrqcYearChange && (
+        <div className="glass-panel p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold text-foreground">
+              CRQC Arrival Scenario: <span className="text-primary">{crqcYear}</span>
+            </span>
+            {crqcYear !== ESTIMATED_CRQC_YEAR && (
+              <button
+                onClick={() => onCrqcYearChange(ESTIMATED_CRQC_YEAR)}
+                className="text-xs text-muted-foreground hover:text-foreground underline"
+              >
+                Reset to {ESTIMATED_CRQC_YEAR}
+              </button>
+            )}
+          </div>
+          <input
+            type="range"
+            min={2028}
+            max={2042}
+            step={1}
+            value={crqcYear}
+            onChange={(e) => onCrqcYearChange(Number(e.target.value))}
+            className="w-full accent-primary"
+            aria-label="Assumed CRQC arrival year"
+          />
+          <div className="flex justify-between text-[10px] text-muted-foreground">
+            <span>2028 (optimistic)</span>
+            <span>2034 (consensus)</span>
+            <span>2042 (conservative)</span>
+          </div>
+          <p className="text-[10px] text-muted-foreground">
+            Drag to explore how CRQC timing changes your HNDL risk exposure. The HNDL Risk Year
+            column updates live for each asset.
+          </p>
+        </div>
+      )}
+
       {/* Add Asset Form */}
       <div className="glass-panel p-5 space-y-4">
         <h3 className="text-base font-semibold text-foreground">Add Data Asset</h3>
@@ -260,7 +309,10 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
                         {retConfig?.label ?? asset.retentionPeriod}
                       </td>
                       <td className="py-3 pr-4">
-                        <HndlIndicator retentionPeriod={asset.retentionPeriod} />
+                        <HndlIndicator
+                          retentionPeriod={asset.retentionPeriod}
+                          crqcYear={crqcYear}
+                        />
                       </td>
                       <td className="py-3 pr-4 text-muted-foreground text-xs">{asset.industry}</td>
                       <td className="py-3 pr-4 text-muted-foreground text-xs font-mono">
@@ -286,10 +338,11 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
 
         {assets.length > 0 && (
           <div className="bg-muted/30 rounded-lg p-3 border border-border text-xs text-muted-foreground">
-            <strong className="text-foreground">HNDL Risk Year</strong> = {CURRENT_YEAR}&apos;s
-            median CRQC estimate ({2034}) − data retention years. Assets showing{' '}
-            <span className="text-status-error font-bold">at risk</span> were collected before the
-            HNDL threshold and may already be in adversary archives.
+            <strong className="text-foreground">HNDL Risk Year</strong> = assumed CRQC year (
+            <span className="font-mono text-primary">{crqcYear}</span>) − data retention years.
+            Assets showing <span className="text-status-error font-bold">at risk</span> were
+            collected before the HNDL threshold and may already be in adversary archives. Use the
+            scenario slider above to explore how CRQC timing shifts your exposure window.
           </div>
         )}
       </div>

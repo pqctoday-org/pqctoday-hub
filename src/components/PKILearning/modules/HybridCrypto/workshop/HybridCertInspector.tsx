@@ -15,7 +15,6 @@ import {
 } from 'lucide-react'
 import { hybridCryptoService } from '../services/HybridCryptoService'
 import { HYBRID_CERT_FORMATS } from '../constants'
-import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { parseCertificateInfo, oidToLabel, type CertInfo } from '../services/derParser'
 import {
   IETF_CERT_VECTORS,
@@ -55,6 +54,11 @@ function parseCertText(text: string): ParsedField[] {
   for (const line of lines) {
     if (!line.trim()) continue
 
+    // Skip lines that have binary/control characters (e.g., OpenSSL unparsed octet strings)
+    // We allow standard ASCII printable (0x20-0x7E) plus tab
+    // eslint-disable-next-line no-control-regex
+    if (/[^\x09\x20-\x7E]/.test(line)) continue
+
     const indent = line.search(/\S/)
     const trimmed = line.trim()
 
@@ -85,6 +89,62 @@ function parseCertText(text: string): ParsedField[] {
   }
 
   return result
+}
+
+function generateIETFText(vector: IETFCertVector, certInfo: CertInfo): string {
+  const algLabel = certInfo.algorithmOID ? oidToLabel(certInfo.algorithmOID) : vector.algorithmLabel
+  const pubLabel = certInfo.publicKeyOID ? oidToLabel(certInfo.publicKeyOID) : algLabel
+
+  const extLines: string[] = []
+  if (certInfo.extensionOIDs.length > 0) {
+    extLines.push('        X509v3 extensions:')
+    for (const ext of certInfo.extensionOIDs) {
+      extLines.push(`            ${oidToLabel(ext)}: present`)
+    }
+  }
+
+  const specialExtLines: string[] = []
+  if (vector.specialExtensions && vector.specialExtensions.length > 0) {
+    specialExtLines.push('        Special Hybrid Extensions:')
+    for (const ext of vector.specialExtensions) {
+      specialExtLines.push(`            ${ext.oid} (${ext.label}):`)
+      specialExtLines.push(`                ${ext.description}`)
+    }
+  }
+
+  const formatHexBlock = (bytes: Uint8Array | undefined, indent: number): string => {
+    if (!bytes || bytes.length === 0) return ''
+    const hexStr = Array.from(bytes).map((b) => b.toString(16).padStart(2, '0'))
+    const lines: string[] = []
+    const spaces = ' '.repeat(indent)
+    for (let i = 0; i < hexStr.length; i += 15) {
+      lines.push(spaces + hexStr.slice(i, i + 15).join(':') + (i + 15 < hexStr.length ? ':' : ''))
+    }
+    return '\n' + lines.join('\n')
+  }
+
+  const pubKeyHex = formatHexBlock(certInfo.publicKeyBytes, 20)
+  const sigHex = formatHexBlock(certInfo.signatureBytes, 8)
+
+  return [
+    'Certificate:',
+    '    Data:',
+    '        Version: 3 (0x2)',
+    `        Serial Number: (omitted in simplified view)`,
+    `    Signature Algorithm: ${algLabel}`,
+    `    Issuer: CN=${vector.provider} Test Root`,
+    '    Validity',
+    `        Not Before: (omitted)`,
+    `        Not After : (omitted)`,
+    `    Subject: CN=${vector.label}`,
+    '    Subject Public Key Info:',
+    `        Public Key Algorithm: ${pubLabel}`,
+    `            Public-Key: (${certInfo.publicKeySizeBytes * 8} bit)${pubKeyHex}`,
+    ...extLines,
+    ...specialExtLines,
+    `    Signature Algorithm: ${algLabel}`,
+    `    Signature Value: (${certInfo.signatureSizeBytes} bytes)${sigHex}`,
+  ].join('\n')
 }
 
 const TreeNode: React.FC<{
@@ -302,18 +362,10 @@ export const HybridCertInspector: React.FC = () => {
 
       const der = decodeDer(vector.derBase64)
       const certInfo = parseCertificateInfo(der)
-      const fileName = `${vector.id}.der`
 
-      let openSSLText = ''
-      try {
-        const result = await openSSLService.execute(
-          `openssl x509 -inform DER -in ${fileName} -text -noout`,
-          [{ name: fileName, data: der }]
-        )
-        openSSLText = result.stdout || result.stderr || '(no output)'
-      } catch {
-        openSSLText = '(OpenSSL parse unavailable)'
-      }
+      // Use our custom formatted text view instead of OpenSSL
+      // because OpenSSL WASM fails to parse some PQC signatures/extensions cleanly
+      const openSSLText = generateIETFText(vector, certInfo)
 
       setIETFParsed((prev) => ({
         ...prev,
@@ -419,7 +471,7 @@ export const HybridCertInspector: React.FC = () => {
           )}
 
           {certs.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Cert selector - left panel */}
               <div className="space-y-2">
                 <h4 className="text-sm font-bold text-foreground mb-2">Select Certificate</h4>
@@ -464,11 +516,11 @@ export const HybridCertInspector: React.FC = () => {
                 {selected ? (
                   <>
                     {/* View mode tabs */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => setViewMode('tree')}
-                          className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs transition-colors ${
+                          className={`flex items-center gap-1 px-3 py-2 rounded text-xs transition-colors ${
                             viewMode === 'tree'
                               ? 'bg-primary/20 text-primary border border-primary/50'
                               : 'bg-muted/50 text-muted-foreground border border-border'
@@ -479,7 +531,7 @@ export const HybridCertInspector: React.FC = () => {
                         </button>
                         <button
                           onClick={() => setViewMode('raw')}
-                          className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs transition-colors ${
+                          className={`flex items-center gap-1 px-3 py-2 rounded text-xs transition-colors ${
                             viewMode === 'raw'
                               ? 'bg-primary/20 text-primary border border-primary/50'
                               : 'bg-muted/50 text-muted-foreground border border-border'
@@ -490,7 +542,7 @@ export const HybridCertInspector: React.FC = () => {
                         </button>
                         <button
                           onClick={() => setViewMode('size')}
-                          className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs transition-colors ${
+                          className={`flex items-center gap-1 px-3 py-2 rounded text-xs transition-colors ${
                             viewMode === 'size'
                               ? 'bg-primary/20 text-primary border border-primary/50'
                               : 'bg-muted/50 text-muted-foreground border border-border'
@@ -502,7 +554,7 @@ export const HybridCertInspector: React.FC = () => {
                       </div>
                       <button
                         onClick={handleDownload}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded text-xs bg-muted/50 text-muted-foreground border border-border hover:border-primary/30 transition-colors"
+                        className="flex items-center gap-1 px-3 py-2 rounded text-xs bg-muted/50 text-muted-foreground border border-border hover:border-primary/30 transition-colors"
                       >
                         <Download size={12} />
                         Export PEM
@@ -712,7 +764,7 @@ export const HybridCertInspector: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* IETF cert selector - left panel */}
             <div className="space-y-2">
               <h4 className="text-sm font-bold text-foreground mb-2">Reference Certificates</h4>
@@ -751,8 +803,8 @@ export const HybridCertInspector: React.FC = () => {
             {/* IETF inspector - right panel */}
             <div className="lg:col-span-2 space-y-4">
               {/* View mode tabs + export */}
-              <div className="flex items-center justify-between">
-                <div className="flex gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-wrap gap-2">
                   {(['tree', 'raw', 'size'] as const).map((mode) => {
                     const Icon = mode === 'tree' ? Search : mode === 'raw' ? FileText : BarChart3
                     const label =
@@ -765,7 +817,7 @@ export const HybridCertInspector: React.FC = () => {
                       <button
                         key={mode}
                         onClick={() => setIETFViewMode(mode)}
-                        className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs transition-colors ${
+                        className={`flex items-center gap-1 px-3 py-2 rounded text-xs transition-colors ${
                           ietfViewMode === mode
                             ? 'bg-primary/20 text-primary border border-primary/50'
                             : 'bg-muted/50 text-muted-foreground border border-border'
@@ -779,7 +831,7 @@ export const HybridCertInspector: React.FC = () => {
                 </div>
                 <button
                   onClick={() => handleIETFDownload(selectedIETFVector)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded text-xs bg-muted/50 text-muted-foreground border border-border hover:border-primary/30 transition-colors"
+                  className="flex items-center gap-1 px-3 py-2 rounded text-xs bg-muted/50 text-muted-foreground border border-border hover:border-primary/30 transition-colors"
                 >
                   <Download size={12} />
                   Export PEM

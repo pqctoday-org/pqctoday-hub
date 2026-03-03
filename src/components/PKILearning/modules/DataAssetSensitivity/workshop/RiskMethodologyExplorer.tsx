@@ -340,42 +340,47 @@ export const RiskMethodologyExplorer: React.FC<RiskMethodologyExplorerProps> = (
             {/* 5×5 Risk Matrix */}
             <div className="glass-panel p-4">
               <h4 className="text-sm font-bold text-foreground mb-3">Risk Matrix (5×5)</h4>
-              <div className="grid gap-1" style={{ gridTemplateColumns: 'auto repeat(5,1fr)' }}>
-                <div className="text-[9px] text-muted-foreground text-center p-1">Like →</div>
-                {[1, 2, 3, 4, 5].map((c) => (
-                  <div key={c} className="text-[9px] text-muted-foreground text-center p-1">
-                    {c}
-                  </div>
-                ))}
-                {[5, 4, 3, 2, 1].map((row) => (
-                  <React.Fragment key={row}>
-                    <div className="text-[9px] text-muted-foreground text-right pr-1 flex items-center justify-end">
-                      {row}
+              <div className="overflow-x-auto">
+                <div
+                  className="grid gap-1 min-w-[280px]"
+                  style={{ gridTemplateColumns: 'auto repeat(5,1fr)' }}
+                >
+                  <div className="text-[9px] text-muted-foreground text-center p-1">Like →</div>
+                  {[1, 2, 3, 4, 5].map((c) => (
+                    <div key={c} className="text-[9px] text-muted-foreground text-center p-1">
+                      {c}
                     </div>
-                    {[1, 2, 3, 4, 5].map((col) => {
-                      const product = row * col
-                      const isActive = row === iso.consequenceScore && col === iso.likelihoodScore
-                      return (
-                        <div
-                          key={col}
-                          className={`h-8 rounded flex items-center justify-center text-[9px] font-bold border transition-all ${
-                            isActive ? 'ring-2 ring-primary scale-110' : ''
-                          } ${
-                            product >= 15
-                              ? 'bg-status-error/20 text-status-error border-status-error/30'
-                              : product >= 10
-                                ? 'bg-status-warning/20 text-status-warning border-status-warning/30'
-                                : product >= 6
-                                  ? 'bg-status-info/20 text-status-info border-status-info/30'
-                                  : 'bg-status-success/10 text-status-success border-status-success/20'
-                          }`}
-                        >
-                          {product}
-                        </div>
-                      )
-                    })}
-                  </React.Fragment>
-                ))}
+                  ))}
+                  {[5, 4, 3, 2, 1].map((row) => (
+                    <React.Fragment key={row}>
+                      <div className="text-[9px] text-muted-foreground text-right pr-1 flex items-center justify-end">
+                        {row}
+                      </div>
+                      {[1, 2, 3, 4, 5].map((col) => {
+                        const product = row * col
+                        const isActive = row === iso.consequenceScore && col === iso.likelihoodScore
+                        return (
+                          <div
+                            key={col}
+                            className={`h-8 rounded flex items-center justify-center text-[9px] font-bold border transition-all ${
+                              isActive ? 'ring-2 ring-primary scale-110' : ''
+                            } ${
+                              product >= 15
+                                ? 'bg-status-error/20 text-status-error border-status-error/30'
+                                : product >= 10
+                                  ? 'bg-status-warning/20 text-status-warning border-status-warning/30'
+                                  : product >= 6
+                                    ? 'bg-status-info/20 text-status-info border-status-info/30'
+                                    : 'bg-status-success/10 text-status-success border-status-success/20'
+                            }`}
+                          >
+                            {product}
+                          </div>
+                        )
+                      })}
+                    </React.Fragment>
+                  ))}
+                </div>
               </div>
               <div className="mt-3 flex flex-wrap gap-3">
                 <div

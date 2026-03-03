@@ -9,8 +9,6 @@ import {
   ArrowUp,
   ArrowDown,
   Info,
-  CheckCircle,
-  ShieldAlert,
   EyeOff,
   Award,
   CheckSquare,
@@ -19,6 +17,7 @@ import {
 import { LAYERS } from './InfrastructureStack'
 import { certsByProduct } from '../../data/certificationXrefData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { renderFipsStatus, renderPqcSupport } from './migrateHelpers'
 
 interface SoftwareTableProps {
   data: SoftwareItem[]
@@ -82,57 +81,6 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
         : bString.localeCompare(aString)
     })
   }, [data, sortConfig])
-
-  // Helper to render FIPS badge (three-tier)
-  const renderFipsStatus = (status: string) => {
-    const lower = (status || '').toLowerCase()
-    const isFipsCertified = lower.includes('fips 140') || lower.includes('fips 203')
-    const isPartial = !isFipsCertified && lower.startsWith('yes')
-
-    if (isFipsCertified) {
-      return (
-        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-status-success text-status-success">
-          <CheckCircle size={10} /> Validated
-        </span>
-      )
-    }
-    if (isPartial) {
-      return (
-        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-status-warning text-status-warning">
-          <ShieldAlert size={10} /> Partial
-        </span>
-      )
-    }
-    return (
-      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-muted/50 text-muted-foreground border border-border">
-        <span className="w-2 h-2 rounded-full bg-muted-foreground/50" /> No
-      </span>
-    )
-  }
-
-  // Helper to render PQC Support badge with level-specific colors
-  const renderPqcSupport = (support: string) => {
-    const lower = (support || '').toLowerCase()
-    let badgeClass: string
-    if (lower.startsWith('yes')) {
-      badgeClass = 'bg-status-success text-status-success'
-    } else if (lower.startsWith('limited')) {
-      badgeClass = 'bg-status-warning text-status-warning'
-    } else if (lower.startsWith('planned')) {
-      badgeClass = 'bg-primary/10 text-primary border-primary/20'
-    } else if (lower.startsWith('no')) {
-      badgeClass = 'bg-destructive/10 text-destructive border-destructive/20'
-    } else {
-      badgeClass = 'bg-muted/50 text-muted-foreground border-border'
-    }
-    return (
-      <span
-        className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${badgeClass}`}
-      >
-        {support || 'Unknown'}
-      </span>
-    )
-  }
 
   const headers: { key: SortKey; label: string; mobileHidden?: boolean }[] = [
     { key: 'softwareName', label: 'Product' },

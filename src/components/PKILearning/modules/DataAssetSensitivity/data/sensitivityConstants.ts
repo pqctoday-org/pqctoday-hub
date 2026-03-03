@@ -463,19 +463,19 @@ export const PQC_ALGORITHM_MAP: Record<SensitivityTier, Record<AssetType, PQCRec
     communication: {
       kem: 'ML-KEM-512 (FIPS 203)',
       signature: 'ML-DSA-44 (FIPS 204)',
-      hybrid: 'X25519+ML-KEM-768',
+      hybrid: 'X25519+ML-KEM-512',
       rationale: 'Lightweight hybrid TLS for non-sensitive channels',
     },
     credential: {
       kem: 'ML-KEM-512 (FIPS 203)',
       signature: 'ML-DSA-44 (FIPS 204)',
-      hybrid: 'X25519+ML-KEM-768',
+      hybrid: 'X25519+ML-KEM-512',
       rationale: 'Minimum PQC for credential systems',
     },
     'code-artifact': {
       kem: null,
       signature: 'ML-DSA-44 (FIPS 204)',
-      hybrid: 'ML-DSA-44',
+      hybrid: 'ML-DSA-44 + ECDSA P-256',
       rationale: 'Lightweight signing for non-critical artifacts',
     },
   },
@@ -503,13 +503,20 @@ export const RELATED_MODULE_MAP: Record<AssetType, { id: string; title: string }
 
 // ── Scoring Logic ─────────────────────────────────────────────────────────────
 
-export function computeHndlRiskYear(retentionPeriod: RetentionPeriod): number {
+export function computeHndlRiskYear(
+  retentionPeriod: RetentionPeriod,
+  crqcYear: number = ESTIMATED_CRQC_YEAR
+): number {
   const config = RETENTION_CONFIGS.find((r) => r.id === retentionPeriod)
   const years = config?.years ?? 0
-  return Math.round(ESTIMATED_CRQC_YEAR - years)
+  return Math.round(crqcYear - years)
 }
 
-export function scoreAsset(asset: DataAsset, weights: ScoringWeights): ScoredAsset {
+export function scoreAsset(
+  asset: DataAsset,
+  weights: ScoringWeights,
+  crqcYear: number = ESTIMATED_CRQC_YEAR
+): ScoredAsset {
   const tierConfig = SENSITIVITY_TIERS.find((t) => t.id === asset.sensitivityTier)
   const retConfig = RETENTION_CONFIGS.find((r) => r.id === asset.retentionPeriod)
 
@@ -524,13 +531,13 @@ export function scoreAsset(asset: DataAsset, weights: ScoringWeights): ScoredAss
   const complianceScore = Math.min(baseCompliance + (hasUrgentDeadline ? 20 : 0), 80)
 
   // HNDL window score
-  const hndlYear = computeHndlRiskYear(asset.retentionPeriod)
+  const hndlYear = computeHndlRiskYear(asset.retentionPeriod, crqcYear)
   let hndlScore: number
   if (hndlYear <= CURRENT_YEAR) {
     hndlScore = 100
   } else {
     const remainingYears = hndlYear - CURRENT_YEAR
-    const totalWindow = ESTIMATED_CRQC_YEAR - CURRENT_YEAR
+    const totalWindow = crqcYear - CURRENT_YEAR
     hndlScore = Math.max(0, Math.round((1 - remainingYears / totalWindow) * 100))
   }
 

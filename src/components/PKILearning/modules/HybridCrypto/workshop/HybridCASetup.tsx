@@ -136,7 +136,7 @@ export const HybridCASetup: React.FC<HybridCASetupProps> = ({ onCAGenerated }) =
 
             {!ca.error && (
               <>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="text-center bg-muted/50 rounded-lg p-3">
                     <div className="text-lg font-bold text-foreground">{ca.pem.length}</div>
                     <div className="text-[10px] text-muted-foreground">Cert PEM chars</div>

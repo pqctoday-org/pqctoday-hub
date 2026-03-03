@@ -6,6 +6,7 @@ import type { Region } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'
 import type { AssessmentMode, AssessmentStatus } from '@/store/useAssessmentStore'
 import type { AssessmentInput, AssessmentResult } from '@/hooks/assessmentTypes'
+import type { Conversation } from '@/types/ChatTypes'
 
 /** Magic string identifying a valid PQC Today snapshot file. */
 export const SNAPSHOT_FORMAT = 'pqc-today-snapshot' as const
@@ -115,6 +116,15 @@ export interface MigrateData {
 }
 
 /**
+ * Persisted slice of useChatStore (excludes apiKey for security).
+ */
+export interface ChatData {
+  conversations: Conversation[]
+  activeConversationId: string | null
+  model: string
+}
+
+/**
  * Unified snapshot envelope containing all persisted store data.
  */
 export interface AppSnapshot {
@@ -133,5 +143,6 @@ export interface AppSnapshot {
     tlsLearning: TLSData
     opensslStudio: OpenSSLData
     migrate: MigrateData
+    chat?: ChatData
   }
 }

@@ -43,6 +43,19 @@ describe('AboutView', () => {
     expect(screen.getByText('Tailwind CSS')).toBeInTheDocument()
   })
 
+  it('renders the Data Foundation section', () => {
+    render(<AboutView />)
+    const headings = screen.getAllByText('Platform Data')
+    expect(headings.length).toBeGreaterThan(0)
+    expect(screen.getAllByText('1,550+').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Timeline Events').length).toBeGreaterThan(0)
+  })
+
+  it('does not list Immer in SBOM', () => {
+    render(<AboutView />)
+    expect(screen.queryByText('Immer')).not.toBeInTheDocument()
+  })
+
   it('verifies License section link', () => {
     render(<AboutView />)
     const licenseLink = screen.getByRole('link', { name: /View Full License/i })

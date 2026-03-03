@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { BookOpen, CheckCircle, Circle, Clock } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { MODULE_STEP_COUNTS } from './moduleData'
 
 export interface ModuleItem {
   id: string
@@ -25,9 +26,13 @@ export const ModuleCard = ({
   isAboveLevel?: boolean
 }) => {
   const { modules } = useModuleStore()
-  const status = modules[module.id]?.status || 'not-started'
-  const timeSpentRaw = modules[module.id]?.timeSpent || 0
+  const moduleState = modules[module.id]
+  const status = moduleState?.status || 'not-started'
+  const timeSpentRaw = moduleState?.timeSpent || 0
   const timeSpentFloored = Math.floor(timeSpentRaw)
+  const completedSteps = moduleState?.completedSteps?.length ?? 0
+  const totalSteps = MODULE_STEP_COUNTS[module.id] ?? 4
+  const progressPct = Math.min(100, Math.round((completedSteps / totalSteps) * 100))
 
   const durationDisplay =
     status === 'not-started' ? module.duration : `${module.duration} / ${timeSpentFloored} min`
@@ -114,6 +119,19 @@ export const ModuleCard = ({
           )}
         </div>
       </div>
+
+      {status === 'in-progress' && (
+        <div className="mt-3 h-1 rounded-full bg-muted overflow-hidden">
+          <div
+            className="h-full bg-primary rounded-full transition-all"
+            style={{ width: `${progressPct}%` }}
+            role="progressbar"
+            aria-valuenow={progressPct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          />
+        </div>
+      )}
     </motion.article>
   )
 }

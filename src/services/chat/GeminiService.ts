@@ -132,6 +132,7 @@ export function buildSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext)
     architect:
       'Emphasize integration patterns, architecture decisions, and system-level trade-offs.',
     researcher: 'Include mathematical foundations, algorithm comparisons, and academic references.',
+    ops: 'Focus on deployment steps, infrastructure configs, and operational procedures. Include CLI commands, config examples, and rollback guidance.',
   }
   let personaSection = ''
   if (pageContext?.persona) {

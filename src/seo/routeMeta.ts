@@ -54,7 +54,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
             'OpenSSL WASM Studio',
             'PQC Migration Planning',
             'Compliance Tracker (NIST, ANSSI, Common Criteria)',
-            '25 Hands-on Learning Modules',
+            '27 Hands-on Learning Modules',
             'PQC Risk Assessment Wizard',
             'Migration Software Catalog',
           ],
@@ -166,7 +166,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   '/assess': {
     title: 'PQC Risk Assessment — Quantum Readiness Score for Your Organization | PQC Today',
     description:
-      'Understand your quantum risk exposure with a 13-step guided assessment. Get a personalized migration roadmap aligned with your industry, country, and applicable compliance mandates — NIST, ANSSI, BSI, and more.',
+      'Understand your quantum risk exposure with a 14-step guided assessment. Get a personalized migration roadmap aligned with your industry, country, and applicable compliance mandates — NIST, ANSSI, BSI, and more.',
     canonical: `${BASE_URL}/assess`,
   },
 
@@ -214,23 +214,23 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   // --- Learning modules ---
 
   '/learn': {
-    title: 'Learn Post-Quantum Cryptography — 25 Interactive Modules | PQC Today',
+    title: 'Learn Post-Quantum Cryptography — 27 Interactive Modules | PQC Today',
     description:
-      'Begin your post-quantum transformation with 25 guided learning modules. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
+      'Begin your post-quantum transformation with 27 guided learning modules. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
     canonical: `${BASE_URL}/learn`,
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'Course',
       name: 'Post-Quantum Cryptography Learning Path',
       description:
-        '25 interactive modules covering PQC fundamentals, protocols, infrastructure, and applications with real cryptographic operations.',
+        '27 interactive modules covering PQC fundamentals, protocols, infrastructure, and applications with real cryptographic operations.',
       provider: { '@type': 'Organization', name: 'PQC Today', url: BASE_URL },
       isAccessibleForFree: true,
-      numberOfCredits: 25,
+      numberOfCredits: 27,
       hasCourseInstance: {
         '@type': 'CourseInstance',
         courseMode: 'online',
-        courseWorkload: 'PT16H',
+        courseWorkload: 'PT34H',
       },
     },
   },

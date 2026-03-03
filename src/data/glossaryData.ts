@@ -1008,9 +1008,50 @@ export const glossaryTerms: GlossaryTerm[] = [
   {
     term: 'Composite Certificate',
     definition:
-      'An X.509 certificate containing both classical and PQC keys/signatures, enabling backward compatibility while providing post-quantum security.',
+      'An X.509 certificate encoding both a classical and a PQC key/signature under a single composite OID. Both signatures must verify. Requires all relying parties to support the composite OID — legacy-incompatible.',
     technicalNote:
-      'Defined in IETF drafts: composite ML-KEM (draft-ietf-lamps-pq-composite-kem) and composite ML-DSA (draft-ietf-lamps-pq-composite-sigs).',
+      'Defined in IETF drafts: composite ML-KEM (draft-ietf-lamps-pq-composite-kem) and composite ML-DSA (draft-ietf-lamps-pq-composite-sigs). OpenSSL 3.6 does not yet support composite OIDs natively.',
+    relatedModule: '/learn/hybrid-crypto',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Related Certificate',
+    acronym: 'RFC 9763',
+    definition:
+      'A binding mechanism (RFC 9763) that links two independent X.509 certificates — one classical, one PQC — to the same end entity via a SHA-256 hash. Also known as the NSA "catalyst" approach. Legacy systems only process the classical cert; PQC-aware verifiers check the binding.',
+    technicalNote:
+      'The RelatedCertificate extension (OID 1.3.6.1.5.5.7.1.35) carries a hash of the related cert and a pointer. Each certificate is individually valid, enabling backward compatibility — unlike composite certificates which require composite OID support.',
+    relatedModule: '/learn/hybrid-crypto',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Chameleon Certificate',
+    definition:
+      'A single X.509 certificate that encodes a classical "delta" variant inside a DeltaCertificateDescriptor extension (OID 2.16.840.1.114027.80.6.1). PQC-aware verifiers reconstruct the classical certificate from the delta; legacy systems see a standard classical cert.',
+    technicalNote:
+      'Defined in draft-bonnell-lamps-chameleon-certs (DigiCert, Entrust). More bandwidth-efficient than related certs (RFC 9763) because only one certificate is transmitted. However, as a draft standard, adoption is still emerging.',
+    relatedModule: '/learn/hybrid-crypto',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'TBSCertificate',
+    definition:
+      '"To Be Signed" certificate — the core unsigned structure inside an X.509 certificate containing version, serial number, issuer/subject DNs, validity period, SubjectPublicKeyInfo, and extensions. The CA signs this structure to produce the final certificate.',
+    technicalNote:
+      'In DER encoding, TBSCertificate is a SEQUENCE. The outer Certificate SEQUENCE wraps TBSCertificate + signatureAlgorithm + signatureValue. PQC algorithms like ML-DSA and SLH-DSA are specified in the outer signatureAlgorithm AlgorithmIdentifier.',
+    relatedModule: '/learn/hybrid-crypto',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'AlgorithmIdentifier',
+    definition:
+      'An ASN.1 SEQUENCE containing an OID that identifies a cryptographic algorithm, plus optional parameters. Appears in X.509 certificates to specify signature algorithms (signatureAlgorithm field) and public key algorithms (SubjectPublicKeyInfo.algorithm).',
+    technicalNote:
+      'PQC algorithms defined in FIPS 203/204/205 use absent parameters (no NULL) per their respective X.509 profile RFCs (RFC 9881, RFC 9909). The OID for ML-DSA-65 is 2.16.840.1.101.3.4.3.18; SLH-DSA-SHA2-128s is 2.16.840.1.101.3.4.3.20.',
     relatedModule: '/learn/hybrid-crypto',
     complexity: 'advanced',
     category: 'concept',

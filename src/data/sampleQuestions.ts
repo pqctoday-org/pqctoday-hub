@@ -207,6 +207,12 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What does the Vendor Risk module assess?',
     'How many exercises does the IoT/OT module now have?',
     'What learning progression system does PQC Today use?',
+    'What is the difference between a composite certificate and an RFC 9763 related certificate?',
+    'How large is an SLH-DSA-SHA2-128s certificate signature compared to ML-DSA-65?',
+    'Why does ANSSI permit standalone SLH-DSA certificates without a classical hybrid?',
+    'What is a chameleon certificate and how does it differ from related certs?',
+    'How do I read X.509 DER structure in the Hybrid Cert Inspector?',
+    'What are the IETF Hackathon pqc-certificates reference certs and why do they matter?',
   ],
   About: [
     "What cryptographic libraries does PQC Today's SBOM list?",

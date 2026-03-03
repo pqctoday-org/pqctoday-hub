@@ -155,11 +155,13 @@ function getLatestLibraryFiles(): {
     return { current: null, previous: null }
   }
 
-  // Sort by date descending (latest first); on same date, sort by path descending so _r1 > _r0 > base
+  // Sort by date descending (latest first); on same date, sort by path descending so _r1 > _r0 > base.
+  // Use codepoint comparison (not localeCompare) because localeCompare on macOS treats '_' < '.'
+  // which would incorrectly rank _r1 files below the base file.
   files.sort((a, b) => {
     const dateDiff = b.date.getTime() - a.date.getTime()
     if (dateDiff !== 0) return dateDiff
-    return b.path.localeCompare(a.path)
+    return b.path < a.path ? -1 : b.path > a.path ? 1 : 0
   })
 
   console.log(`Loading latest library data from: ${files[0].path}`)

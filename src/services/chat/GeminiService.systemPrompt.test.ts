@@ -123,6 +123,13 @@ describe('buildSystemPrompt', () => {
       expect(result).toContain('mathematical foundations, algorithm comparisons')
     })
 
+    it('ops persona: includes "deployment steps" and "infrastructure configs"', () => {
+      const ctx = makePageContext({ persona: 'ops' })
+      const result = buildSystemPrompt([], ctx)
+      expect(result).toContain('deployment steps')
+      expect(result).toContain('infrastructure configs')
+    })
+
     it('no persona (null/undefined): omits "RESPONSE STYLE" section entirely', () => {
       const ctxNull = makePageContext({ persona: null })
       expect(buildSystemPrompt([], ctxNull)).not.toContain('RESPONSE STYLE')

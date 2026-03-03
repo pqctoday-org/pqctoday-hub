@@ -28,7 +28,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     region: 'US Federal',
     scope: 'US National Security Systems',
     pqcRequirement:
-      'ML-KEM-1024 and ML-DSA-87 required. Software signing exclusive by 2030; all NSS by 2033.',
+      'Three-phase rollout: (1) 2025 — begin PQC transition planning; (2) 2027 — software and firmware signing must support PQC alongside classical algorithms; (3) 2030 — software/firmware signing exclusively PQC (classical algorithms no longer accepted); (4) 2033 — all NSS communications exclusively PQC. Required algorithms: ML-KEM-1024 (FIPS 203) for key establishment, ML-DSA-87 (FIPS 204) for digital signatures.',
     hardDeadline: '2030',
     deadlineYear: 2030,
     pqcMandatoryNow: true,
@@ -138,7 +138,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     id: 'CCPA-CPRA',
     name: 'CCPA/CPRA',
     fullName: 'California Consumer Privacy Act / California Privacy Rights Act',
-    region: 'US Federal',
+    region: 'Industry-Specific',
     scope: 'Personal information of California residents',
     pqcRequirement:
       'Reasonable security measures implied by statute. FTC guidance on "reasonable security" will evolve as NIST standards finalize.',
@@ -160,7 +160,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     deadlineYear: null,
     pqcMandatoryNow: false,
     relevantArticles: ['A.8.24', 'ISO 27005 risk assessment'],
-    url: 'https://www.iso.org/standard/27001',
+    url: 'https://www.iso.org/standard/27001.html',
   },
 ]
 

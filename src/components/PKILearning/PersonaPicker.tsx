@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { motion } from 'framer-motion'
-import { Briefcase, Code, ShieldCheck, GraduationCap, Sparkles } from 'lucide-react'
+import { Briefcase, Code, Server, ShieldCheck, GraduationCap, Sparkles } from 'lucide-react'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import {
@@ -17,9 +17,10 @@ const ICON_MAP = {
   Code,
   ShieldCheck,
   GraduationCap,
+  Server,
 } as const
 
-const PERSONA_ORDER: PersonaId[] = ['executive', 'developer', 'architect', 'researcher']
+const PERSONA_ORDER: PersonaId[] = ['executive', 'developer', 'architect', 'ops', 'researcher']
 
 export const PersonaPicker = () => {
   const { setPersona, markPickerSeen } = usePersonaStore()

@@ -973,11 +973,22 @@ function processMarkdownDocs(): RAGChunk[] {
     mdFiles.push(...x509Files)
   }
 
+  const deepLinkByFile: Record<string, string> = {
+    PQC_Software_Category_Strategic_Analysis: '/migrate',
+    quantum_safe_software_comprehensive_guide: '/migrate',
+    security_audit_report_12022025: '/library',
+    '3GPP_TS_33.310_NDS_AF_Certificate_Overview': '/library',
+    CAB_Forum_TLS_Baseline_Requirements_Overview: '/library',
+    'ETSI_EN_319_412-2_Certificate_Overview': '/library',
+    X509_Profile_Review_Report: '/library',
+  }
+
   for (const filePath of mdFiles) {
     if (!fs.existsSync(filePath)) continue
 
     const raw = fs.readFileSync(filePath, 'utf-8')
     const fileName = path.basename(filePath, '.md')
+    const deepLink = deepLinkByFile[fileName]
 
     // Split by ## headings into sections
     const sections = raw.split(/^##\s+/m)
@@ -1008,6 +1019,7 @@ function processMarkdownDocs(): RAGChunk[] {
           fileName,
           filePath: path.relative(process.cwd(), filePath),
         },
+        ...(deepLink ? { deepLink } : {}),
       })
     }
   }
@@ -1420,7 +1432,33 @@ function processPriorityMatrix(): RAGChunk[] {
   const records = readCSVWithHeaders(filePath)
   const chunks: RAGChunk[] = []
 
-  // Group by priority level
+  // Per-category chunks (one per CSV row) for precise RAG retrieval
+  for (const r of records) {
+    chunks.push({
+      id: `priority-cat-${sanitize(r.category_id)}`,
+      source: 'priority-matrix',
+      title: `${sanitize(r.category_name)} — PQC Migration Priority`,
+      content: [
+        `Category: ${sanitize(r.category_name)} (${sanitize(r.category_id)})`,
+        `Priority: ${sanitize(r.pqc_priority)}`,
+        `PQC Readiness: ${sanitize(r.readiness_percentage)}% (${sanitize(r.pqc_ready_products)}/${sanitize(r.total_software_products)} products)`,
+        `Urgency Score: ${sanitize(r.urgency_score)}/100`,
+        `Timeline Pressure: ${sanitize(r.timeline_pressure)}`,
+        `Recommended Action: ${sanitize(r.recommended_action_timeline)}`,
+        `Industries Affected: ${sanitize(r.industries_affected)}`,
+      ].join('\n'),
+      category: 'migration',
+      metadata: {
+        categoryId: sanitize(r.category_id),
+        categoryName: sanitize(r.category_name),
+        priorityLevel: sanitize(r.pqc_priority),
+        readinessPercentage: sanitize(r.readiness_percentage),
+      },
+      deepLink: '/migrate',
+    })
+  }
+
+  // Group by priority level (summary chunks)
   const byPriority = new Map<string, typeof records>()
   for (const r of records) {
     const priority = sanitize(r.pqc_priority) || 'Unknown'
@@ -1635,7 +1673,14 @@ function processDocumentEnrichments(): RAGChunk[] {
           ? { deepLink: `/library?ref=${encodeParam(refId)}` }
           : collection === 'threats' && refId
             ? { deepLink: `/threats?id=${encodeParam(refId)}` }
-            : {}),
+            : collection === 'timeline' && refId
+              ? (() => {
+                  const country = refId.split(':')[0]?.trim() ?? ''
+                  return country && country !== 'Global'
+                    ? { deepLink: `/timeline?country=${encodeParam(country)}` }
+                    : { deepLink: '/timeline' }
+                })()
+              : {}),
       })
     }
   }

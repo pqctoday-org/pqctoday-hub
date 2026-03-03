@@ -13,7 +13,7 @@ import {
   Check,
   ClipboardCheck,
 } from 'lucide-react'
-import { Briefcase, Code, ShieldCheck, GraduationCap } from 'lucide-react'
+import { Briefcase, Code, ShieldCheck, GraduationCap, Server } from 'lucide-react'
 import { PERSONAS } from '../../data/learningPersonas'
 import type { PathItem } from '../../data/learningPersonas'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -28,6 +28,7 @@ const ICON_MAP = {
   Code,
   ShieldCheck,
   GraduationCap,
+  Server,
 } as const
 
 // ── Module node marker ──────────────────────────────────────────────────────
