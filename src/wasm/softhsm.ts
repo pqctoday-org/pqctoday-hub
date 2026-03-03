@@ -288,6 +288,16 @@ const CKA_PARAMETER_SET = 0x0000061d
 const CKA_ENCAPSULATE = 0x00000633
 const CKA_DECAPSULATE = 0x00000634
 
+// ML-DSA pre-hash mechanisms (CKM_HASH_ML_DSA_*, PKCS#11 v3.2)
+const CKM_HASH_ML_DSA_SHA256 = 0x00000024
+const CKM_HASH_ML_DSA_SHA512 = 0x00000026
+const CKM_HASH_ML_DSA_SHA3_256 = 0x00000028
+
+// Hedge types (PKCS#11 v3.2)
+const CKH_HEDGE_PREFERRED = 0x00000000
+const CKH_HEDGE_REQUIRED = 0x00000001
+const CKH_DETERMINISTIC_REQUIRED = 0x00000002
+
 // Parameter sets
 const CKP_ML_KEM_512 = 0x1
 const CKP_ML_KEM_768 = 0x2
@@ -711,17 +721,82 @@ export const hsm_generateMLDSAKeyPair = (
   }
 }
 
-/** C_MessageSignInit(ML-DSA) + C_SignMessage → sigBytes (PKCS#11 v3.0 one-shot) */
+/**
+ * ML-DSA sign/verify options (PKCS#11 v3.2 context string + hedging + pre-hash).
+ * All fields optional — defaults to pure ML-DSA with hedge-preferred, no context.
+ */
+export interface MLDSASignOptions {
+  hedging?: 'preferred' | 'required' | 'deterministic'
+  context?: Uint8Array // 0-255 bytes (FIPS 204 max context length)
+  preHash?: 'sha256' | 'sha512' | 'sha3-256' // common subset for Playground UI
+}
+
+// Map preHash option to CKM mechanism constant
+const PREHASH_MECH: Record<string, number> = {
+  sha256: CKM_HASH_ML_DSA_SHA256,
+  sha512: CKM_HASH_ML_DSA_SHA512,
+  'sha3-256': CKM_HASH_ML_DSA_SHA3_256,
+}
+
+/**
+ * Allocate CK_SIGN_ADDITIONAL_CONTEXT in WASM memory.
+ * Layout (WASM32, 12 bytes):
+ *   offset 0: CK_HEDGE_TYPE hedgeVariant  (4 bytes)
+ *   offset 4: CK_BYTE_PTR  pContext       (4 bytes pointer)
+ *   offset 8: CK_ULONG     ulContextLen   (4 bytes)
+ * Returns { paramPtr, paramLen, allocPtrs } — caller must free allocPtrs.
+ */
+const buildSignContext = (
+  M: SoftHSMModule,
+  opts: MLDSASignOptions
+): { paramPtr: number; paramLen: number; allocPtrs: number[] } => {
+  const allocPtrs: number[] = []
+  const paramPtr = M._malloc(12)
+  allocPtrs.push(paramPtr)
+
+  // Hedge variant
+  const hedge =
+    opts.hedging === 'required'
+      ? CKH_HEDGE_REQUIRED
+      : opts.hedging === 'deterministic'
+        ? CKH_DETERMINISTIC_REQUIRED
+        : CKH_HEDGE_PREFERRED
+  M.setValue(paramPtr, hedge, 'i32')
+
+  // Context string
+  if (opts.context && opts.context.length > 0) {
+    const ctxPtr = M._malloc(opts.context.length)
+    M.HEAPU8.set(opts.context, ctxPtr)
+    allocPtrs.push(ctxPtr)
+    M.setValue(paramPtr + 4, ctxPtr, 'i32')
+    M.setValue(paramPtr + 8, opts.context.length, 'i32')
+  } else {
+    M.setValue(paramPtr + 4, 0, 'i32') // pContext = NULL
+    M.setValue(paramPtr + 8, 0, 'i32') // ulContextLen = 0
+  }
+
+  return { paramPtr, paramLen: 12, allocPtrs }
+}
+
+/** C_MessageSignInit(ML-DSA) + C_SignMessage → sigBytes (PKCS#11 v3.2 one-shot) */
 export const hsm_sign = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  message: string
+  message: string,
+  opts?: MLDSASignOptions
 ): Uint8Array => {
+  // Determine mechanism: pure ML-DSA or pre-hash variant
+  const mechType = opts?.preHash ? (PREHASH_MECH[opts.preHash] ?? CKM_ML_DSA) : CKM_ML_DSA
+
+  // Build CK_SIGN_ADDITIONAL_CONTEXT if hedging or context specified
+  const hasParams = opts && (opts.hedging || (opts.context && opts.context.length > 0))
+  const ctxAlloc = hasParams ? buildSignContext(M, opts) : null
+
   const mech = M._malloc(12)
-  M.setValue(mech, CKM_ML_DSA, 'i32')
-  M.setValue(mech + 4, 0, 'i32')
-  M.setValue(mech + 8, 0, 'i32')
+  M.setValue(mech, mechType, 'i32')
+  M.setValue(mech + 4, ctxAlloc ? ctxAlloc.paramPtr : 0, 'i32') // pParameter
+  M.setValue(mech + 8, ctxAlloc ? ctxAlloc.paramLen : 0, 'i32') // ulParameterLen
 
   checkRV(M._C_MessageSignInit(hSession, mech, privHandle), 'C_MessageSignInit')
 
@@ -750,21 +825,29 @@ export const hsm_sign = (
     M._free(msgPtr)
     M._free(sigLenPtr)
     M._free(sigPtr)
+    if (ctxAlloc) ctxAlloc.allocPtrs.forEach((p) => M._free(p))
   }
 }
 
-/** C_MessageVerifyInit(ML-DSA) + C_VerifyMessage → boolean (PKCS#11 v3.0 one-shot) */
+/** C_MessageVerifyInit(ML-DSA) + C_VerifyMessage → boolean (PKCS#11 v3.2 one-shot) */
 export const hsm_verify = (
   M: SoftHSMModule,
   hSession: number,
   pubHandle: number,
   message: string,
-  sigBytes: Uint8Array
+  sigBytes: Uint8Array,
+  opts?: MLDSASignOptions
 ): boolean => {
+  // Determine mechanism: must match the mechanism used during signing
+  const mechType = opts?.preHash ? (PREHASH_MECH[opts.preHash] ?? CKM_ML_DSA) : CKM_ML_DSA
+
+  const hasParams = opts && (opts.hedging || (opts.context && opts.context.length > 0))
+  const ctxAlloc = hasParams ? buildSignContext(M, opts) : null
+
   const mech = M._malloc(12)
-  M.setValue(mech, CKM_ML_DSA, 'i32')
-  M.setValue(mech + 4, 0, 'i32')
-  M.setValue(mech + 8, 0, 'i32')
+  M.setValue(mech, mechType, 'i32')
+  M.setValue(mech + 4, ctxAlloc ? ctxAlloc.paramPtr : 0, 'i32')
+  M.setValue(mech + 8, ctxAlloc ? ctxAlloc.paramLen : 0, 'i32')
 
   checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit')
 
@@ -783,6 +866,7 @@ export const hsm_verify = (
     M._free(mech)
     M._free(msgPtr)
     M._free(sigPtr)
+    if (ctxAlloc) ctxAlloc.allocPtrs.forEach((p) => M._free(p))
   }
 }
 
