@@ -103,8 +103,118 @@ const fmtTime = (): string => {
 }
 
 /**
+ * PKCS#11 v3.2 parameter names per function (positional, first N params shown).
+ * Sources: PKCS#11 v3.2 CSD01 §5, §6; FIPS 203/204 mechanism appendices.
+ */
+const PKCS11_PARAMS: Record<string, string[]> = {
+  // Session management
+  C_Initialize: ['pInitArgs'],
+  C_Finalize: ['pReserved'],
+  C_GetInfo: ['pInfo'],
+  C_GetSlotList: ['tokenPresent', 'pSlotList', 'pulCount'],
+  C_GetSlotInfo: ['slotID', 'pInfo'],
+  C_GetTokenInfo: ['slotID', 'pInfo'],
+  C_GetMechanismList: ['slotID', 'pMechanismList', 'pulCount'],
+  C_GetMechanismInfo: ['slotID', 'type', 'pInfo'],
+  C_InitToken: ['slotID', 'pPin', 'ulPinLen', 'pLabel'],
+  C_InitPIN: ['hSession', 'pPin', 'ulPinLen'],
+  C_SetPIN: ['hSession', 'pOldPin', 'ulOldLen', 'pNewPin'],
+  C_OpenSession: ['slotID', 'flags', 'pApp', 'Notify', 'phSession'],
+  C_CloseSession: ['hSession'],
+  C_CloseAllSessions: ['slotID'],
+  C_GetSessionInfo: ['hSession', 'pInfo'],
+  C_Login: ['hSession', 'userType', 'pPin', 'ulPinLen'],
+  C_Logout: ['hSession'],
+  // Object management
+  C_CreateObject: ['hSession', 'pTemplate', 'ulCount', 'phObject'],
+  C_DestroyObject: ['hSession', 'hObject'],
+  C_GetObjectSize: ['hSession', 'hObject', 'pulSize'],
+  C_GetAttributeValue: ['hSession', 'hObject', 'pTemplate', 'ulCount'],
+  C_SetAttributeValue: ['hSession', 'hObject', 'pTemplate', 'ulCount'],
+  C_FindObjectsInit: ['hSession', 'pTemplate', 'ulCount'],
+  C_FindObjects: ['hSession', 'phObject', 'ulMax', 'pulCount'],
+  C_FindObjectsFinal: ['hSession'],
+  // Key generation
+  C_GenerateKey: ['hSession', 'pMechanism', 'pTemplate', 'ulCount'],
+  C_GenerateKeyPair: ['hSession', 'pMechanism', 'pPubTemplate', 'ulPubCount'],
+  C_WrapKey: ['hSession', 'pMechanism', 'hWrappingKey', 'hKey'],
+  C_UnwrapKey: ['hSession', 'pMechanism', 'hUnwrappingKey', 'pWrapped'],
+  C_DeriveKey: ['hSession', 'pMechanism', 'hBaseKey', 'pTemplate'],
+  // Encryption
+  C_EncryptInit: ['hSession', 'pMechanism', 'hKey'],
+  C_Encrypt: ['hSession', 'pData', 'ulDataLen', 'pOut'],
+  C_EncryptUpdate: ['hSession', 'pPart', 'ulPartLen', 'pOut'],
+  C_EncryptFinal: ['hSession', 'pOut', 'pulOutLen'],
+  C_DecryptInit: ['hSession', 'pMechanism', 'hKey'],
+  C_Decrypt: ['hSession', 'pEncData', 'ulEncDataLen', 'pOut'],
+  C_DecryptUpdate: ['hSession', 'pEncPart', 'ulEncPartLen', 'pOut'],
+  C_DecryptFinal: ['hSession', 'pOut', 'pulOutLen'],
+  // Digest
+  C_DigestInit: ['hSession', 'pMechanism'],
+  C_Digest: ['hSession', 'pData', 'ulDataLen', 'pDigest'],
+  C_DigestUpdate: ['hSession', 'pPart', 'ulPartLen'],
+  C_DigestFinal: ['hSession', 'pDigest', 'pulDigestLen'],
+  // Sign / Verify
+  C_SignInit: ['hSession', 'pMechanism', 'hKey'],
+  C_Sign: ['hSession', 'pData', 'ulDataLen', 'pSignature'],
+  C_SignUpdate: ['hSession', 'pPart', 'ulPartLen'],
+  C_SignFinal: ['hSession', 'pSignature', 'pulSignatureLen'],
+  C_VerifyInit: ['hSession', 'pMechanism', 'hKey'],
+  C_Verify: ['hSession', 'pData', 'ulDataLen', 'pSignature'],
+  C_VerifyUpdate: ['hSession', 'pPart', 'ulPartLen'],
+  C_VerifyFinal: ['hSession', 'pSignature', 'ulSignatureLen'],
+  // PKCS#11 v3.2 — PQC KEM (FIPS 203)
+  C_EncapsulateKey: [
+    'hSession',
+    'pMechanism',
+    'hPublicKey',
+    'pTemplate',
+    'ulAttributeCount',
+    'pCiphertext',
+    'pulCiphertextLen',
+    'phKey',
+  ],
+  C_DecapsulateKey: [
+    'hSession',
+    'pMechanism',
+    'hPrivateKey',
+    'pTemplate',
+    'ulAttributeCount',
+    'pCiphertext',
+    'ulCiphertextLen',
+    'phKey',
+  ],
+  // PKCS#11 v3.2 — Async / session ops
+  C_SessionCancel: ['hSession', 'flags'],
+  C_GetInterfaceList: ['pInterfacesList', 'pulCount'],
+  C_GetInterface: ['pInterfaceName', 'pVersion', 'ppInterface', 'flags'],
+}
+
+const fmtArg = (v: unknown): string =>
+  typeof v === 'number'
+    ? v === 0
+      ? '0'
+      : v < 0x10000
+        ? `0x${v.toString(16)}`
+        : `0x${(v >>> 0).toString(16)}`
+    : String(v)
+
+const fmtArgs = (fnName: string, args: unknown[]): string => {
+  const names = PKCS11_PARAMS[fnName]
+  if (!names) return args.slice(0, 4).map(fmtArg).join(', ')
+  // Show up to 4 named params for readability; append '…' if more
+  const shown = Math.min(4, args.length)
+  const parts = Array.from(
+    { length: shown },
+    (_, i) => `${names[i] ?? `arg${i}`}=${fmtArg(args[i])}`
+  )
+  if (args.length > 4) parts.push('…')
+  return parts.join(', ')
+}
+
+/**
  * Wraps a SoftHSMModule with a Proxy that intercepts all `_C_*` method calls,
- * records them into a log array (via `onLog`), and returns the result unchanged.
+ * logs them with PKCS#11 v3.2-spec parameter names, and returns the result unchanged.
  */
 export const createLoggingProxy = (
   M: SoftHSMModule,
@@ -114,6 +224,8 @@ export const createLoggingProxy = (
     get(target, prop: string | symbol) {
       const val = (target as unknown as Record<string | symbol, unknown>)[prop]
       if (typeof prop === 'string' && prop.startsWith('_C_') && typeof val === 'function') {
+        // Strip leading '_' to match the PKCS#11 v3.2 spec function name
+        const specName = prop.slice(1) // e.g. 'C_EncapsulateKey'
         return (...args: unknown[]) => {
           const t0 = performance.now()
           const rv = (val as (...a: unknown[]) => number).apply(target, args)
@@ -123,13 +235,8 @@ export const createLoggingProxy = (
           onLog({
             id: ++_logId,
             timestamp: fmtTime(),
-            fn: prop,
-            args: args
-              .slice(0, 4)
-              .map((a) =>
-                typeof a === 'number' ? (a === 0 ? '0' : `0x${a.toString(16)}`) : String(a)
-              )
-              .join(', '),
+            fn: specName,
+            args: fmtArgs(specName, args),
             rvHex: `0x${rvUnsigned.toString(16).padStart(8, '0')}`,
             rvName: rvName(rvUnsigned),
             ms,
@@ -153,8 +260,8 @@ const CKU_USER = 1
 const CKO_PUBLIC_KEY = 0x02
 const CKO_PRIVATE_KEY = 0x03
 const CKO_SECRET_KEY = 0x04
-const CKK_ML_KEM = 0x23
-const CKK_ML_DSA = 0x21
+const CKK_ML_KEM = 0x49 // PKCS#11 v3.2
+const CKK_ML_DSA = 0x47 // PKCS#11 v3.2
 const CKM_ML_KEM_KEY_PAIR_GEN = 0x0000000f
 const CKM_ML_KEM = 0x00000017
 const CKM_ML_DSA_KEY_PAIR_GEN = 0x0000001c
@@ -420,12 +527,15 @@ export const hsm_generateMLKEMKeyPair = (
   }
 }
 
-/** C_EncapsulateKey → {ciphertextBytes, secretHandle} */
+/** C_EncapsulateKey → {ciphertextBytes, secretHandle}
+ * variant is used to validate the returned ciphertext length. */
 export const hsm_encapsulate = (
   M: SoftHSMModule,
   hSession: number,
-  pubHandle: number
+  pubHandle: number,
+  variant: 512 | 768 | 1024
 ): { ciphertextBytes: Uint8Array; secretHandle: number } => {
+  const expectedCtLen: Record<number, number> = { 512: 768, 768: 1088, 1024: 1568 }
   const mech = M._malloc(12)
   M.setValue(mech, CKM_ML_KEM, 'i32')
   M.setValue(mech + 4, 0, 'i32')
@@ -445,6 +555,11 @@ export const hsm_encapsulate = (
     'C_EncapsulateKey(size)'
   )
   const ctLen = readUlong(M, ctLenPtr)
+  if (ctLen !== expectedCtLen[variant]) {
+    throw new Error(
+      `ML-KEM-${variant}: unexpected ciphertext length ${ctLen} (expected ${expectedCtLen[variant]})`
+    )
+  }
   const ctPtr = M._malloc(ctLen)
 
   // Second call: actual encapsulation
@@ -465,13 +580,21 @@ export const hsm_encapsulate = (
   }
 }
 
-/** C_DecapsulateKey → secretHandle */
+/** C_DecapsulateKey → secretHandle
+ * variant is used to validate the ciphertext length before calling into WASM. */
 export const hsm_decapsulate = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  ciphertextBytes: Uint8Array
+  ciphertextBytes: Uint8Array,
+  variant: 512 | 768 | 1024
 ): number => {
+  const expectedCtLen: Record<number, number> = { 512: 768, 768: 1088, 1024: 1568 }
+  if (ciphertextBytes.length !== expectedCtLen[variant]) {
+    throw new Error(
+      `ML-KEM-${variant}: ciphertext length ${ciphertextBytes.length} does not match expected ${expectedCtLen[variant]}`
+    )
+  }
   const mech = M._malloc(12)
   M.setValue(mech, CKM_ML_KEM, 'i32')
   M.setValue(mech + 4, 0, 'i32')

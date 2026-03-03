@@ -491,7 +491,8 @@ export const SoftHsmTab = () => {
         const { ciphertextBytes, secretHandle } = hsm_encapsulate(
           M,
           hSessionRef.current,
-          kemHandles!.pub
+          kemHandles!.pub,
+          kemVariant
         )
         const ss1 = hsm_extractKeyValue(M, hSessionRef.current, secretHandle)
         setCiphertext(ciphertextBytes)
@@ -507,7 +508,13 @@ export const SoftHsmTab = () => {
       setSecret2(null)
       try {
         const M = getM()
-        const secretHandle2 = hsm_decapsulate(M, hSessionRef.current, kemHandles!.priv, ciphertext!)
+        const secretHandle2 = hsm_decapsulate(
+          M,
+          hSessionRef.current,
+          kemHandles!.priv,
+          ciphertext!,
+          kemVariant
+        )
         const ss2 = hsm_extractKeyValue(M, hSessionRef.current, secretHandle2)
         setSecret2(ss2)
       } catch (e) {
