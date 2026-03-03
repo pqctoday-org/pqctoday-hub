@@ -184,6 +184,13 @@ const PKCS11_PARAMS: Record<string, string[]> = {
     'ulCiphertextLen',
     'phKey',
   ],
+  // PKCS#11 v3.0 — One-shot message signing (ML-DSA, SLH-DSA)
+  C_MessageSignInit: ['hSession', 'pMechanism', 'hKey'],
+  C_SignMessage: ['hSession', 'pParameter', 'ulParameterLen', 'pData'],
+  C_MessageSignFinal: ['hSession'],
+  C_MessageVerifyInit: ['hSession', 'pMechanism', 'hKey'],
+  C_VerifyMessage: ['hSession', 'pParameter', 'ulParameterLen', 'pData'],
+  C_MessageVerifyFinal: ['hSession'],
   // PKCS#11 v3.2 — Async / session ops
   C_SessionCancel: ['hSession', 'flags'],
   C_GetInterfaceList: ['pInterfacesList', 'pulCount'],
@@ -704,7 +711,7 @@ export const hsm_generateMLDSAKeyPair = (
   }
 }
 
-/** C_SignInit(ML-DSA) + C_Sign → sigBytes */
+/** C_MessageSignInit(ML-DSA) + C_SignMessage → sigBytes (PKCS#11 v3.0 one-shot) */
 export const hsm_sign = (
   M: SoftHSMModule,
   hSession: number,
@@ -716,21 +723,27 @@ export const hsm_sign = (
   M.setValue(mech + 4, 0, 'i32')
   M.setValue(mech + 8, 0, 'i32')
 
-  checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit')
+  checkRV(M._C_MessageSignInit(hSession, mech, privHandle), 'C_MessageSignInit')
 
   const msgBytes = new TextEncoder().encode(message)
   const msgPtr = M._malloc(msgBytes.length)
   M.HEAPU8.set(msgBytes, msgPtr)
 
   const sigLenPtr = allocUlong(M)
-  // First call: get signature length
-  checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, 0, sigLenPtr), 'C_Sign(len)')
+  // First call: get signature length (pSignature = 0)
+  checkRV(
+    M._C_SignMessage(hSession, 0, 0, msgPtr, msgBytes.length, 0, sigLenPtr),
+    'C_SignMessage(len)'
+  )
   const sigLen = readUlong(M, sigLenPtr)
   const sigPtr = M._malloc(sigLen)
 
   try {
     writeUlong(M, sigLenPtr, sigLen)
-    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, sigPtr, sigLenPtr), 'C_Sign')
+    checkRV(
+      M._C_SignMessage(hSession, 0, 0, msgPtr, msgBytes.length, sigPtr, sigLenPtr),
+      'C_SignMessage'
+    )
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
     M._free(mech)
@@ -740,7 +753,7 @@ export const hsm_sign = (
   }
 }
 
-/** C_VerifyInit(ML-DSA) + C_Verify → boolean */
+/** C_MessageVerifyInit(ML-DSA) + C_VerifyMessage → boolean (PKCS#11 v3.0 one-shot) */
 export const hsm_verify = (
   M: SoftHSMModule,
   hSession: number,
@@ -753,7 +766,7 @@ export const hsm_verify = (
   M.setValue(mech + 4, 0, 'i32')
   M.setValue(mech + 8, 0, 'i32')
 
-  checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit')
+  checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit')
 
   const msgBytes = new TextEncoder().encode(message)
   const msgPtr = M._malloc(msgBytes.length)
@@ -763,7 +776,8 @@ export const hsm_verify = (
   M.HEAPU8.set(sigBytes, sigPtr)
 
   try {
-    const rv = M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
+    const rv =
+      M._C_VerifyMessage(hSession, 0, 0, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
     return rv === 0
   } finally {
     M._free(mech)
