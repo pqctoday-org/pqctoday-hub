@@ -1689,6 +1689,49 @@ function processDocumentEnrichments(): RAGChunk[] {
 }
 
 // ---------------------------------------------------------------------------
+// Changelog
+// ---------------------------------------------------------------------------
+
+function processChangelog(): RAGChunk[] {
+  const changelogPath = path.join(process.cwd(), 'CHANGELOG.md')
+  if (!fs.existsSync(changelogPath)) return []
+
+  const raw = fs.readFileSync(changelogPath, 'utf-8')
+  const chunks: RAGChunk[] = []
+
+  // Split by version headings: ## [X.Y.Z] - YYYY-MM-DD
+  const versionPattern = /^## \[([^\]]+)\]\s*-\s*(\S+)/gm
+  const matches = [...raw.matchAll(versionPattern)]
+
+  for (let i = 0; i < matches.length; i++) {
+    const version = matches[i][1]
+    const date = matches[i][2]
+    const startIdx = matches[i].index! + matches[i][0].length
+    const endIdx = i + 1 < matches.length ? matches[i + 1].index! : raw.length
+    let body = raw.slice(startIdx, endIdx).trim()
+
+    // Strip implementation noise: file references in parens, [view:...]/[persona:...] tags
+    body = body.replace(/\s*\([^)]*\.[a-z]{2,4}[^)]*\)/g, '')
+    body = body.replace(/\s*\[(?:view|persona):[^\]]*\]/g, '')
+
+    // Truncate to avoid oversized chunks
+    if (body.length > 2000) body = body.slice(0, 2000) + '\u2026'
+
+    chunks.push({
+      id: `changelog-${version}`,
+      source: 'changelog',
+      title: `PQC Today v${version} \u2014 Release Notes (${date})`,
+      content: `Version ${version} released ${date}.\n\n${body}`,
+      category: 'changelog',
+      metadata: { version, date },
+      deepLink: '/changelog',
+    })
+  }
+
+  return chunks
+}
+
+// ---------------------------------------------------------------------------
 // Page-level guides (non-learn pages)
 // ---------------------------------------------------------------------------
 
@@ -1941,6 +1984,7 @@ async function main() {
     { name: 'Certification Xref', fn: processCertificationXref },
     { name: 'Document Enrichments', fn: processDocumentEnrichments },
     { name: 'Page Guides', fn: processPageGuides },
+    { name: 'Changelog', fn: processChangelog },
   ]
 
   const corpus: RAGChunk[] = []
