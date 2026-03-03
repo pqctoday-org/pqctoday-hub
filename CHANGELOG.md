@@ -4,6 +4,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.12.1] - 2026-03-03
+
+### Added
+
+- **Skip-to-main keyboard navigation** (`MainLayout.tsx`): Visually hidden skip link rendered
+  before the navigation header. Activates on keyboard focus (`Tab`) to jump directly to
+  `#main-content`. Follows WCAG 2.1 SC 2.4.1. [view:/]
+
+- **prefers-reduced-motion support** (`AppRoot.tsx`, `src/styles/index.css`): framer-motion
+  `MotionConfig reducedMotion="user"` applied globally — all 60+ animated components
+  automatically skip animations when the OS reduced-motion setting is enabled. CSS media query
+  in `index.css` covers `animate-spin`, `animate-pulse`, and all Tailwind transition utilities.
+  [view:/]
+
+- **CSV export for 6 data views** (`csvExport.ts`, `csvExportConfigs.ts`, `ExportButton.tsx`):
+  RFC 4180-compliant CSV download with UTF-8 BOM (Excel-compatible). ExportButton added to
+  header clusters of Migrate, Library, Algorithms, Timeline, Compliance, and Leaders views.
+  Exports respect current filters and sort order. [view:/migrate] [view:/library]
+  [view:/algorithms] [view:/timeline] [view:/compliance] [view:/leaders]
+
+- **IT Ops config generators** (`OpsConfigGenerator.tsx`, `TLSConfigGenerator.tsx`,
+  `SSHConfigGenerator.tsx`, `KmsMigrationRunbook.tsx`): Interactive PQC config snippet
+  generators for nginx/Apache/HAProxy/Caddy TLS (TLS Basics module), sshd_config/ssh_config
+  with PQC KexAlgorithms (VPN/SSH module), and AWS/Azure/GCP/Vault KMS CLI configs (KMS-PQC
+  module). Dropdowns select server type, algorithm mode, and provider; output updates live in
+  a CodeBlock with a one-click copy button. [view:/learn] [persona:ops]
+
+- **IT Ops deployment checklists** (`OpsChecklist.tsx`, `CertRotationChecklist.tsx`,
+  `DeploymentPlaybook.tsx`, `KmsMigrationRunbook.tsx`): Procedural checklists with progress
+  tracking and copy-to-markdown export. CertRotationChecklist (19 items — pre/during/post/
+  rollback) in PKI Workshop; DeploymentPlaybook (20 items — feature flags, canary, rollback)
+  in Migration Program; KMS migration runbook (11 items) in KMS-PQC Step 5. [view:/learn]
+  [persona:ops]
+
+- **Migration Planning Workflow** (`useMigrationWorkflowStore.ts`,
+  `useWorkflowPhaseTracker.ts`, `WorkflowBanner.tsx`): Guided 4-phase cross-view banner
+  (Assess → Comply → Migrate → Timeline) with phase progress dots and auto-completion
+  detection. Assessment status, MyProducts count, and 10-second engagement timers drive
+  completion. Activated from the Report page when assessment is complete. Persisted via
+  Zustand with version migration. [view:/report] [view:/compliance] [view:/migrate]
+  [view:/timeline]
+
 ## [2.11.1] - 2026-03-03
 
 ### Fixed

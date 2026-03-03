@@ -86,25 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">IT Ops / DevOps Persona</strong> &mdash; 5th
-                    role with tailored learning path (11 modules), assessment hints, and landing
-                    CTAs for infrastructure operators
+                    <strong className="text-foreground">Guided Migration Workflow</strong> &mdash;
+                    4-phase planning banner (Assess &rarr; Comply &rarr; Migrate &rarr; Timeline)
+                    with auto-completion; start from your Report page
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Multi-View Migrate &amp; Learn</strong>{' '}
-                    &mdash; stack, cards, and table views with sort and filter on both the migration
-                    catalog and learning dashboard
+                    <strong className="text-foreground">CSV Export</strong> &mdash; download
+                    filtered data from 6 views (Migrate, Library, Algorithms, Timeline, Compliance,
+                    Leaders) with one click
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Progress Backup/Restore</strong> &mdash;
-                    export and import all app progress from the landing page, including learning,
-                    assessment, chat, and persona data
+                    <strong className="text-foreground">IT Ops Config Generators</strong> &mdash;
+                    live PQC config builders for nginx, Apache, sshd, and cloud KMS providers inside
+                    TLS, VPN/SSH, and KMS-PQC modules
                   </span>
                 </li>
               </ul>

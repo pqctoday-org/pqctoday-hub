@@ -122,9 +122,11 @@ export function AboutView() {
               crypto labs with IETF Hackathon reference certs &mdash; 520+ quiz questions, hands-on
               cryptographic labs powered by OpenSSL WASM and liboqs, a 14-step risk assessment
               wizard with persona-aware reporting, ROI modelling, risk score trending, and printable
-              executive board briefs, an industry-filtered migration catalog, and global compliance
-              tracking give developers, architects, operations teams, executives, and researchers
-              everything they need to understand, plan, and act &mdash; at their level.
+              executive board briefs, a guided 4-phase migration planning workflow, CSV export
+              across 6 data views, IT Ops config generators and deployment checklists, an
+              industry-filtered migration catalog, and global compliance tracking give developers,
+              architects, operations teams, executives, and researchers everything they need to
+              understand, plan, and act &mdash; at their level.
             </p>
             <p className="text-muted-foreground mt-4">
               Our mission is to make PQC adoption actionable for everyone &mdash; whether
@@ -322,6 +324,14 @@ export function AboutView() {
                   <span className="text-muted-foreground">pdf-parse</span>
                   <span className="text-xs text-muted-foreground/60">v2.4.5</span>
                 </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">minisearch</span>
+                  <span className="text-xs text-muted-foreground/60">v7.2.0</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">recharts</span>
+                  <span className="text-xs text-muted-foreground/60">v3.7.0</span>
+                </li>
               </ul>
             </div>
             <div className="break-inside-avoid">
@@ -366,6 +376,25 @@ export function AboutView() {
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">ed25519-hd-key</span>
                   <span className="text-xs text-muted-foreground/60">v1.3.0</span>
+                </li>
+                <li className="flex flex-col gap-1 border-b border-border pb-2 text-sm">
+                  <div className="flex justify-between items-baseline gap-2 flex-wrap">
+                    <a
+                      href="https://github.com/pqctoday/softhsmv3"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline flex items-center gap-1"
+                    >
+                      @pqctoday/softhsm-wasm
+                      <Link2 size={12} aria-hidden="true" />
+                    </a>
+                    <span className="text-xs text-muted-foreground/60">local</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground/70 leading-relaxed">
+                    In-house fork of SoftHSMv2 — upgraded to PKCS#11 v3.2 with native ML-KEM and
+                    ML-DSA support, compiled to WebAssembly via Emscripten. Powers the PKCS#11 tab
+                    in the Playground (Phase 6 of the softhsmv3 roadmap).
+                  </p>
                 </li>
               </ul>
             </div>
