@@ -13,12 +13,15 @@ import {
   ClipboardCheck,
   Save,
   Upload,
+  Compass,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { UnifiedStorageService } from '@/services/storage/UnifiedStorageService'
 import { PERSONA_RECOMMENDED_PATHS, PERSONA_NAV_PATHS } from '@/data/personaConfig'
+import { useMigrationWorkflowStore } from '@/store/useMigrationWorkflowStore'
+import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { PersonalizationSection } from './PersonalizationSection'
 import { PQCExplainer } from './PQCExplainer'
@@ -94,7 +97,7 @@ function buildJourneySteps(
       icon: GraduationCap,
       color: 'text-secondary',
       description:
-        'Start from zero or go deep — 25 hands-on modules covering the quantum threat, new encryption standards, and what your organization needs to do',
+        'Start from zero or go deep — 27 hands-on modules covering the quantum threat, new encryption standards, and what your organization needs to do',
       paths: ['/learn'],
     },
     {
@@ -191,6 +194,9 @@ export const LandingView = () => {
   const recommendedPaths = selectedPersona ? PERSONA_RECOMMENDED_PATHS[selectedPersona] : []
   // eslint-disable-next-line security/detect-object-injection
   const heroCta = (selectedPersona && PERSONA_HERO_CTA[selectedPersona]) || DEFAULT_HERO_CTA
+  const { workflowActive, startWorkflow } = useMigrationWorkflowStore()
+  const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
+  const showWorkflowCta = assessmentStatus === 'complete' && !workflowActive
 
   const [algorithmCount, setAlgorithmCount] = useState<number | null>(null)
   const [timelineEventCount, setTimelineEventCount] = useState<number | null>(null)
@@ -319,7 +325,9 @@ export const LandingView = () => {
                     ? 'What are the business risks and compliance deadlines for post-quantum cryptography?'
                     : selectedPersona === 'researcher'
                       ? 'What are the mathematical foundations of the NIST-standardized PQC algorithms?'
-                      : 'What should I know about post-quantum cryptography?'
+                      : selectedPersona === 'ops'
+                        ? 'What are the best infrastructure tools and configurations for deploying post-quantum cryptography?'
+                        : 'What should I know about post-quantum cryptography?'
             }
           />
         </motion.div>
@@ -373,6 +381,25 @@ export const LandingView = () => {
             {heading.sub}
           </motion.p>
         </motion.div>
+
+        {/* Guided workflow CTA — shown after assessment is complete */}
+        {showWorkflowCta && (
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            className="mb-6 flex justify-center"
+          >
+            <Button
+              variant="outline"
+              onClick={() => startWorkflow()}
+              className="inline-flex items-center gap-2"
+            >
+              <Compass size={16} aria-hidden="true" />
+              Start Guided Migration Planning
+            </Button>
+          </motion.div>
+        )}
 
         {/* Journey Step Cards */}
         <motion.div
