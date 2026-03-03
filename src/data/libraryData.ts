@@ -20,6 +20,7 @@ export interface LibraryItem {
   localFile?: string // e.g. "public/library/FIPS_203.pdf"
   manualCategory?: string
   moduleIds?: string[] // e.g. ['pki-workshop', 'email-signing']
+  miscInfo?: string // Informal context terms with no library referenceId (e.g. algorithm family names, generic standards)
   children?: LibraryItem[]
   categories: string[] // Multi-category support
   status?: 'New' | 'Updated'
@@ -263,6 +264,7 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
               .map((s) => s.trim())
               .filter(Boolean)
           : undefined,
+      miscInfo: values[22]?.trim() || undefined,
       children: [],
       categories: [], // Will be populated below
     }
