@@ -509,12 +509,12 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             </div>
           </Link>
           <Link
-            to="/learn/key-management"
+            to="/learn/kms-pqc"
             className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
             <Lock size={18} className="text-primary shrink-0" />
             <div>
-              <div className="text-sm font-medium text-foreground">Key Management</div>
+              <div className="text-sm font-medium text-foreground">KMS & PQC Key Management</div>
               <div className="text-xs text-muted-foreground">
                 <InlineTooltip term="JWKS">JWKS</InlineTooltip> key rotation and lifecycle for PQC
                 keys

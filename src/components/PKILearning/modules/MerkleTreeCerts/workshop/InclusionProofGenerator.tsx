@@ -9,6 +9,14 @@ import {
 } from '../utils/merkleTree'
 import { SAMPLE_CERTS, truncateHash, formatBytes } from '../data/mtcConstants'
 
+type PathNodeType = 'selected' | 'computed' | 'provided' | 'root'
+
+interface PathAnnotation {
+  type: PathNodeType
+  order: number
+  label: string
+}
+
 export const InclusionProofGenerator: React.FC = () => {
   const [levels, setLevels] = useState<MerkleNode[][] | null>(null)
   const [isBuilding, setIsBuilding] = useState(false)
@@ -61,6 +69,46 @@ export const InclusionProofGenerator: React.FC = () => {
     return hashes
   }, [proof, levels])
 
+  // Path annotations: distinguish selected, computed, provided, and root nodes
+  const pathAnnotations = useMemo(() => {
+    if (!proof || !levels) return new Map<string, PathAnnotation>()
+    const annotations = new Map<string, PathAnnotation>()
+
+    // Selected leaf
+    annotations.set(`0-${proof.leafIndex}`, {
+      type: 'selected',
+      order: 0,
+      label: 'Start',
+    })
+
+    let idx = proof.leafIndex
+    for (let lvl = 0; lvl < proof.siblings.length; lvl++) {
+      const siblingIdx = idx % 2 === 0 ? idx + 1 : idx - 1
+      const parentIdx = Math.floor(idx / 2)
+
+      // Sibling is "provided" (part of the proof)
+      annotations.set(`${lvl}-${siblingIdx}`, {
+        type: 'provided',
+        order: lvl + 1,
+        label: 'Provided',
+      })
+
+      // Parent is "computed" (hash of current + sibling)
+      const isRoot = lvl + 1 === levels.length - 1
+      if (lvl + 1 < levels.length) {
+        annotations.set(`${lvl + 1}-${parentIdx}`, {
+          type: isRoot ? 'root' : 'computed',
+          order: lvl + 1,
+          label: isRoot ? 'Root' : `Step ${lvl + 1}`,
+        })
+      }
+
+      idx = parentIdx
+    }
+
+    return annotations
+  }, [proof, levels])
+
   const handleCopyProof = useCallback(async () => {
     if (!proof) return
     const text = JSON.stringify(proof, null, 2)
@@ -69,14 +117,15 @@ export const InclusionProofGenerator: React.FC = () => {
     setTimeout(() => setCopied(false), 2000)
   }, [proof])
 
+  const circledNumbers = ['\u2460', '\u2461', '\u2462', '\u2463', '\u2464', '\u2465']
+
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Inclusion Proof Generator</h3>
         <p className="text-sm text-muted-foreground">
           Build a tree with 8 sample certificates, then click any leaf to generate its inclusion
-          proof. The authentication path (sibling hashes needed for verification) highlights in the
-          tree.
+          proof. The authentication path highlights in the tree with numbered verification steps.
         </p>
       </div>
 
@@ -104,9 +153,31 @@ export const InclusionProofGenerator: React.FC = () => {
             <p className="text-xs text-foreground">
               <Search size={12} className="inline mr-1" />
               <strong>Click a leaf certificate</strong> below to generate its inclusion proof. The
-              authentication path will highlight in the tree.
+              authentication path will highlight in the tree with numbered verification steps.
             </p>
           </div>
+
+          {/* Legend */}
+          {proof && (
+            <div className="flex flex-wrap gap-3 text-[10px]">
+              <span className="flex items-center gap-1">
+                <span className="w-3 h-3 rounded bg-primary/30 border-2 border-primary inline-block" />
+                Selected leaf
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-3 h-3 rounded bg-warning/20 border-2 border-dashed border-warning inline-block" />
+                Provided sibling
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-3 h-3 rounded bg-success/20 border-2 border-success inline-block" />
+                Computed parent
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-3 h-3 rounded bg-accent/20 border-2 border-double border-accent inline-block" />
+                Verified root
+              </span>
+            </div>
+          )}
 
           {/* Tree visualization with highlighting */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border overflow-x-auto">
@@ -124,23 +195,69 @@ export const InclusionProofGenerator: React.FC = () => {
                       {level.map((node) => {
                         const isOnPath = authPathHashes.has(node.hash)
                         const isSelected = isLeaf && selectedLeaf === node.index
+                        const annotation = pathAnnotations.get(`${levelIdx}-${node.index}`)
+
+                        // Determine border style based on annotation type
+                        let borderClass = ''
+                        if (annotation) {
+                          switch (annotation.type) {
+                            case 'selected':
+                              borderClass =
+                                'bg-primary/30 text-primary border-2 border-primary ring-2 ring-primary'
+                              break
+                            case 'provided':
+                              borderClass =
+                                'bg-warning/15 text-warning border-2 border-dashed border-warning shadow-md'
+                              break
+                            case 'computed':
+                              borderClass =
+                                'bg-success/20 text-success border-2 border-success shadow-md'
+                              break
+                            case 'root':
+                              borderClass =
+                                'bg-accent/20 text-accent border-[3px] border-double border-accent shadow-lg'
+                              break
+                          }
+                        } else if (isSelected) {
+                          borderClass =
+                            'bg-primary/30 text-primary border-primary ring-2 ring-primary'
+                        } else if (isOnPath) {
+                          borderClass = 'bg-success/20 text-success border-success/50 shadow-md'
+                        } else if (isRoot) {
+                          borderClass = 'bg-accent/20 text-accent border-accent/50'
+                        } else if (isLeaf) {
+                          borderClass =
+                            'bg-primary/10 text-primary border-primary/30 hover:bg-primary/20 cursor-pointer'
+                        } else {
+                          borderClass = 'bg-muted text-foreground border-border'
+                        }
+
                         return (
                           <button
                             key={`${levelIdx}-${node.index}`}
                             onClick={() => isLeaf && handleSelectLeaf(node.index)}
-                            className={`px-2 py-1.5 rounded text-[10px] font-mono border transition-all ${
-                              isSelected
-                                ? 'bg-primary/30 text-primary border-primary ring-2 ring-primary'
-                                : isOnPath
-                                  ? 'bg-success/20 text-success border-success/50 shadow-md'
-                                  : isRoot
-                                    ? 'bg-accent/20 text-accent border-accent/50'
-                                    : isLeaf
-                                      ? 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/20 cursor-pointer'
-                                      : 'bg-muted text-foreground border-border'
-                            }`}
+                            className={`relative px-2 py-1.5 rounded text-[10px] font-mono border transition-all ${borderClass}`}
                             disabled={!isLeaf}
                           >
+                            {/* Annotation badge */}
+                            {annotation && (
+                              <span
+                                className={`absolute -top-2 -right-2 w-4 h-4 rounded-full text-[8px] font-bold flex items-center justify-center ${
+                                  annotation.type === 'selected'
+                                    ? 'bg-primary text-black'
+                                    : annotation.type === 'provided'
+                                      ? 'bg-warning text-black'
+                                      : annotation.type === 'root'
+                                        ? 'bg-accent text-black'
+                                        : 'bg-success text-black'
+                                }`}
+                                title={annotation.label}
+                              >
+                                {annotation.order < circledNumbers.length
+                                  ? circledNumbers[annotation.order]
+                                  : annotation.order}
+                              </span>
+                            )}
                             <div className="text-[9px] text-muted-foreground mb-0.5">
                               {node.label}
                             </div>
@@ -148,6 +265,20 @@ export const InclusionProofGenerator: React.FC = () => {
                             {isLeaf && node.index < certs.length && (
                               <div className="text-[8px] mt-0.5 text-muted-foreground">
                                 {certs[node.index].subject}
+                              </div>
+                            )}
+                            {/* Type label for annotated nodes */}
+                            {annotation && annotation.type !== 'selected' && (
+                              <div
+                                className={`text-[8px] mt-0.5 font-bold ${
+                                  annotation.type === 'provided'
+                                    ? 'text-warning'
+                                    : annotation.type === 'root'
+                                      ? 'text-accent'
+                                      : 'text-success'
+                                }`}
+                              >
+                                {annotation.label}
                               </div>
                             )}
                           </button>
@@ -193,8 +324,11 @@ export const InclusionProofGenerator: React.FC = () => {
                   {proof.siblings.map((s, i) => (
                     <div
                       key={i}
-                      className="flex items-center gap-2 bg-background rounded p-2 border border-border"
+                      className="flex items-center gap-2 bg-background rounded p-2 border border-warning/30"
                     >
+                      <span className="text-[10px] font-bold text-warning w-4 shrink-0">
+                        {circledNumbers[i + 1] ?? i + 1}
+                      </span>
                       <span
                         className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                           s.position === 'left'

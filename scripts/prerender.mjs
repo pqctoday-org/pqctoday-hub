@@ -42,7 +42,8 @@ const ROUTES = [
   '/learn/vpn-ssh-pqc',
   '/learn/email-signing',
   '/learn/pki-workshop',
-  '/learn/key-management',
+  '/learn/kms-pqc',
+  '/learn/hsm-pqc',
   '/learn/stateful-signatures',
   '/learn/merkle-tree-certs',
   '/learn/digital-assets',
@@ -59,6 +60,7 @@ const ROUTES = [
   '/learn/code-signing',
   '/learn/api-security-jwt',
   '/learn/iot-ot-pqc',
+  '/learn/data-asset-sensitivity',
   '/learn/quiz',
 ]
 

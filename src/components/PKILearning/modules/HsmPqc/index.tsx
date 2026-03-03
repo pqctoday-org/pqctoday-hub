@@ -1,42 +1,49 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, KeyRound, Server, CalendarClock } from 'lucide-react'
-import { KeyManagementIntroduction } from './components/KeyManagementIntroduction'
-import { KeyManagementExercises, type WorkshopConfig } from './components/KeyManagementExercises'
-import { KeyLifecycleDemo } from './workshop/KeyLifecycleDemo'
-import { HSMSimulator } from './workshop/HSMSimulator'
-import { KeyRotationPlanner } from './workshop/KeyRotationPlanner'
+import { Trash2, Server, BarChart3, Route, Shield } from 'lucide-react'
+import { HsmPqcIntroduction } from './components/HsmPqcIntroduction'
+import { HsmPqcExercises, type WorkshopConfig } from './components/HsmPqcExercises'
+import { Pkcs11Simulator } from './workshop/Pkcs11Simulator'
+import { VendorComparison } from './workshop/VendorComparison'
+import { HsmMigrationPlanner } from './workshop/HsmMigrationPlanner'
+import { FipsValidationTracker } from './workshop/FipsValidationTracker'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 
-const MODULE_ID = 'key-management'
+const MODULE_ID = 'hsm-pqc'
 
 const PARTS = [
   {
-    id: 'key-lifecycle',
-    title: 'Step 1: Key Lifecycle',
-    description: 'Walk through all 7 stages of the key lifecycle with PQC impact analysis.',
-    icon: KeyRound,
-  },
-  {
-    id: 'hsm-simulator',
-    title: 'Step 2: HSM Simulator',
-    description: 'Step through simulated PKCS#11 operations for PQC key management.',
+    id: 'pkcs11-simulator',
+    title: 'Step 1: PKCS#11 Simulator',
+    description: 'Step through 8 PKCS#11 PQC operations with on-prem vs cloud comparison.',
     icon: Server,
   },
   {
-    id: 'rotation-planner',
-    title: 'Step 3: Rotation Planner',
-    description: 'Plan PQC key rotation for a fictional enterprise with 500 certificates.',
-    icon: CalendarClock,
+    id: 'vendor-comparison',
+    title: 'Step 2: Vendor Comparison',
+    description: 'Compare 8 HSM vendors by PQC maturity, algorithms, and FIPS validation.',
+    icon: BarChart3,
+  },
+  {
+    id: 'migration-planner',
+    title: 'Step 3: Migration Planner',
+    description: 'Plan HSM firmware migration from classical to PQC with dual-partition strategy.',
+    icon: Route,
+  },
+  {
+    id: 'fips-tracker',
+    title: 'Step 4: FIPS Tracker',
+    description: 'Track CMVP/CAVP PQC validation status across HSM vendors.',
+    icon: Shield,
   },
 ]
 
-export const KeyManagementModule: React.FC = () => {
+export const HsmPqcModule: React.FC = () => {
   const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
   const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
@@ -91,7 +98,7 @@ export const KeyManagementModule: React.FC = () => {
   )
 
   const handleReset = () => {
-    if (confirm('Restart Key Management & HSM Module?')) {
+    if (confirm('Restart HSM & PQC Operations Module?')) {
       setCurrentPart(0)
       setConfigKey((prev) => prev + 1)
       startTimeRef.current = Date.now()
@@ -107,10 +114,10 @@ export const KeyManagementModule: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gradient">Key Management &amp; HSM</h1>
+          <h1 className="text-3xl font-bold text-gradient">HSM &amp; PQC Operations</h1>
           <p className="text-muted-foreground mt-2">
-            Master key lifecycle management, HSM operations, and PQC migration planning for
-            enterprise cryptographic infrastructure.
+            Deep dive into Hardware Security Modules: PKCS#11 v3.2 PQC mechanisms, vendor
+            comparison, firmware migration, and FIPS 140-3 validation.
           </p>
         </div>
       </div>
@@ -121,11 +128,11 @@ export const KeyManagementModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
-          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
+          <TabsTrigger value="tools">Tools &amp; Products</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
-          <KeyManagementIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+          <HsmPqcIntroduction onNavigateToWorkshop={navigateToWorkshop} />
         </TabsContent>
 
         <TabsContent value="workshop">
@@ -180,9 +187,10 @@ export const KeyManagementModule: React.FC = () => {
                 <h2 className="text-2xl font-bold text-foreground">{PARTS[currentPart].title}</h2>
                 <p className="text-muted-foreground">{PARTS[currentPart].description}</p>
               </div>
-              {currentPart === 0 && <KeyLifecycleDemo key={`lifecycle-${configKey}`} />}
-              {currentPart === 1 && <HSMSimulator key={`hsm-${configKey}`} />}
-              {currentPart === 2 && <KeyRotationPlanner key={`rotation-${configKey}`} />}
+              {currentPart === 0 && <Pkcs11Simulator key={`pkcs11-sim-${configKey}`} />}
+              {currentPart === 1 && <VendorComparison key={`vendor-cmp-${configKey}`} />}
+              {currentPart === 2 && <HsmMigrationPlanner key={`migration-${configKey}`} />}
+              {currentPart === 3 && <FipsValidationTracker key={`fips-tracker-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}
@@ -199,7 +207,7 @@ export const KeyManagementModule: React.FC = () => {
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
                   className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
                 >
-                  Complete Module ✓
+                  Complete Module
                 </button>
               ) : (
                 <button
@@ -214,14 +222,15 @@ export const KeyManagementModule: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="exercises">
-          <KeyManagementExercises
+          <HsmPqcExercises
             onNavigateToWorkshop={navigateToWorkshop}
             onSetWorkshopConfig={handleSetWorkshopConfig}
           />
         </TabsContent>
+
         {/* References Tab */}
         <TabsContent value="references">
-          <ModuleReferencesTab moduleId="key-management" />
+          <ModuleReferencesTab moduleId="hsm-pqc" />
         </TabsContent>
         <TabsContent value="tools">
           <ModuleMigrateTab moduleId={MODULE_ID} />

@@ -80,6 +80,16 @@ export const CERT_METADATA_BYTES = 200
 export const MTC_INCLUSION_PROOF_BYTES = 736
 
 /**
+ * Compute inclusion proof size for a given batch size (number of certificates).
+ * Per draft-ietf-plants-merkle-tree-certs: proof = ⌈log₂(batchSize)⌉ hashes × 32 bytes.
+ * Examples: 8 certs → 3 × 32 = 96 B; 4.4M certs → 23 × 32 = 736 B.
+ */
+export function computeProofBytes(batchSize: number): number {
+  if (batchSize < 2) return 32 // height 1 → 1 sibling × 32 bytes
+  return Math.ceil(Math.log2(batchSize)) * 32
+}
+
+/**
  * Calculate total traditional TLS handshake authentication size.
  *
  * Components: Root CA sig + Intermediate CA sig + EE cert sig + 4 SCTs (2 per non-root cert)
@@ -112,7 +122,8 @@ export interface SizeBreakdown {
   reductionPercent: number
 }
 
-export function getSizeBreakdown(algo: AlgorithmSizes): SizeBreakdown {
+export function getSizeBreakdown(algo: AlgorithmSizes, proofBytes?: number): SizeBreakdown {
+  const proof = proofBytes ?? MTC_INCLUSION_PROOF_BYTES
   const traditional = [
     { component: 'Root CA signature', bytes: algo.signatureBytes },
     { component: 'Root CA public key', bytes: algo.publicKeyBytes },
@@ -126,7 +137,7 @@ export function getSizeBreakdown(algo: AlgorithmSizes): SizeBreakdown {
   const mtc = [
     { component: 'Root signature (batch)', bytes: algo.signatureBytes },
     { component: 'Root public key', bytes: algo.publicKeyBytes },
-    { component: 'Inclusion proof', bytes: MTC_INCLUSION_PROOF_BYTES },
+    { component: 'Inclusion proof', bytes: proof },
     { component: 'Certificate metadata', bytes: CERT_METADATA_BYTES },
   ]
 

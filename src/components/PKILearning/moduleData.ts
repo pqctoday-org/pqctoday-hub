@@ -66,13 +66,21 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     duration: '60 min',
     difficulty: 'intermediate',
   },
-  'key-management': {
-    id: 'key-management',
-    title: 'Key Management & HSM',
+  'kms-pqc': {
+    id: 'kms-pqc',
+    title: 'KMS & PQC Key Management',
     description:
-      'Key lifecycle management, HSM operations via PKCS#11, and enterprise PQC key rotation planning.',
-    duration: '60 min',
+      'PQC key management patterns: envelope encryption with ML-KEM, hybrid key wrapping, multi-provider rotation planning.',
+    duration: '90 min',
     difficulty: 'intermediate',
+  },
+  'hsm-pqc': {
+    id: 'hsm-pqc',
+    title: 'HSM & PQC Operations',
+    description:
+      'Hardware Security Module operations for PQC: PKCS#11 v3.2, vendor comparison, firmware migration, and FIPS 140-3 validation.',
+    duration: '90 min',
+    difficulty: 'advanced',
   },
   'stateful-signatures': {
     id: 'stateful-signatures',
@@ -200,6 +208,14 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     duration: '45 min',
     difficulty: 'beginner',
   },
+  'data-asset-sensitivity': {
+    id: 'data-asset-sensitivity',
+    title: 'Data & Asset Sensitivity',
+    description:
+      'Classify organizational data assets, map compliance obligations (GDPR, HIPAA, DORA, NIS2), apply NIST RMF/ISO 27005/FAIR risk methodologies, and generate a PQC migration priority map.',
+    duration: '75 min',
+    difficulty: 'intermediate',
+  },
   quiz: {
     id: 'quiz',
     title: 'PQC Quiz',
@@ -223,7 +239,8 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'stateful-signatures': 3,
   'email-signing': 3,
   'vpn-ssh-pqc': 3,
-  'key-management': 3,
+  'kms-pqc': 5,
+  'hsm-pqc': 4,
   'entropy-randomness': 5,
   'merkle-tree-certs': 6,
   qkd: 3,
@@ -236,6 +253,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'vendor-risk': 3,
   'migration-program': 3,
   'compliance-strategy': 3,
+  'data-asset-sensitivity': 5,
   quiz: 1,
   assess: 1, // Assessment wizard completion
 }
@@ -255,6 +273,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
     modules: [
       MODULE_CATALOG['hybrid-crypto'],
       MODULE_CATALOG['crypto-agility'],
+      MODULE_CATALOG['data-asset-sensitivity'],
       MODULE_CATALOG['qkd'],
     ],
   },
@@ -271,7 +290,8 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
     track: 'Infrastructure',
     modules: [
       MODULE_CATALOG['pki-workshop'],
-      MODULE_CATALOG['key-management'],
+      MODULE_CATALOG['kms-pqc'],
+      MODULE_CATALOG['hsm-pqc'],
       MODULE_CATALOG['stateful-signatures'],
       MODULE_CATALOG['merkle-tree-certs'],
     ],

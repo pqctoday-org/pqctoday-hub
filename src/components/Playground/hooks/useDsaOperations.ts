@@ -5,6 +5,9 @@ import * as LIBOQS_SIG from '../../../wasm/liboqs_sig'
 import * as WebCrypto from '../../../utils/webCrypto'
 import { bytesToHex, hexToBytes } from '../../../utils/dataInputUtils'
 import type { ExecutionMode } from '../PlaygroundContext'
+import { openSSLService } from '../../../services/crypto/OpenSSLService'
+import { secp256k1 } from '@noble/curves/secp256k1.js'
+import { sha256 } from '@noble/hashes/sha2.js'
 
 // Helper to detect which signing module to use
 const isLiboqsSigAlgorithm = (algo: string): boolean =>
@@ -50,14 +53,105 @@ export const useDsaOperations = ({
       if (type === 'sign') selectedKey = keyStore.find((k) => k.id === selectedSignKeyId)
       else if (type === 'verify') selectedKey = keyStore.find((k) => k.id === selectedVerifyKeyId)
 
-      // 2. Check if Classical Algorithm
-      const isClassical =
+      // 2. Check algorithm category
+      const isWebCryptoClassical =
         selectedKey &&
         (selectedKey.algorithm.startsWith('RSA') ||
           selectedKey.algorithm.startsWith('ECDSA') ||
           selectedKey.algorithm === 'Ed25519')
+      const isOpenSSLClassical = selectedKey && selectedKey.algorithm === 'Ed448'
+      const isNobleClassical = selectedKey && selectedKey.algorithm === 'secp256k1'
 
-      if (isClassical && selectedKey) {
+      if (isNobleClassical && selectedKey) {
+        // --- secp256k1 OPERATIONS (@noble/curves) ---
+        const messageBytes = new TextEncoder().encode(dataToSign)
+        const msgHash = sha256(messageBytes)
+
+        if (type === 'sign') {
+          if (!selectedKey.data || !(selectedKey.data instanceof Uint8Array))
+            throw new Error('Invalid key data for secp256k1 operation')
+
+          const sigBytes = secp256k1.sign(msgHash, selectedKey.data)
+
+          const end = performance.now()
+          setSignature(bytesToHex(sigBytes))
+          addLog({
+            keyLabel: selectedKey.name,
+            operation: 'Sign (secp256k1)',
+            result: `Signature: ${sigBytes.length} bytes`,
+            executionTime: end - start,
+          })
+        } else if (type === 'verify') {
+          if (!selectedKey.data || !(selectedKey.data instanceof Uint8Array))
+            throw new Error('Invalid key data for secp256k1 operation')
+          if (!signature) throw new Error('No signature available. Run Sign first.')
+
+          const sigBytes = hexToBytes(signature)
+          const isValid = secp256k1.verify(sigBytes, msgHash, selectedKey.data)
+
+          const end = performance.now()
+          setVerificationResult(isValid)
+          addLog({
+            keyLabel: selectedKey.name,
+            operation: 'Verify (secp256k1)',
+            result: isValid ? '✓ VALID' : '✗ INVALID',
+            executionTime: end - start,
+          })
+        }
+      } else if (isOpenSSLClassical && selectedKey) {
+        // --- Ed448 OPERATIONS (OpenSSL WASM) ---
+        const messageBytes = new TextEncoder().encode(dataToSign)
+
+        if (type === 'sign') {
+          if (!selectedKey.data || !(selectedKey.data instanceof Uint8Array))
+            throw new Error('Invalid key data for Ed448 operation')
+
+          await openSSLService.init()
+          const result = await openSSLService.execute(
+            'pkeyutl -sign -inkey priv.pem -rawin -in msg.bin -out sig.bin',
+            [
+              { name: 'priv.pem', data: selectedKey.data },
+              { name: 'msg.bin', data: messageBytes },
+            ]
+          )
+          const sigFile = result.files.find((f) => f.name === 'sig.bin')
+          if (!sigFile) throw new Error('Ed448 signing failed — no signature output')
+
+          const end = performance.now()
+          setSignature(bytesToHex(sigFile.data))
+          addLog({
+            keyLabel: selectedKey.name,
+            operation: 'Sign (Ed448 OpenSSL)',
+            result: `Signature: ${sigFile.data.length} bytes`,
+            executionTime: end - start,
+          })
+        } else if (type === 'verify') {
+          if (!selectedKey.data || !(selectedKey.data instanceof Uint8Array))
+            throw new Error('Invalid key data for Ed448 operation')
+          if (!signature) throw new Error('No signature available. Run Sign first.')
+
+          await openSSLService.init()
+          const sigBytes = hexToBytes(signature)
+          const result = await openSSLService.execute(
+            'pkeyutl -verify -pubin -inkey pub.pem -rawin -in msg.bin -sigfile sig.bin',
+            [
+              { name: 'pub.pem', data: selectedKey.data },
+              { name: 'msg.bin', data: messageBytes },
+              { name: 'sig.bin', data: sigBytes },
+            ]
+          )
+          const isValid = result.stdout.includes('Signature Verified Successfully')
+
+          const end = performance.now()
+          setVerificationResult(isValid)
+          addLog({
+            keyLabel: selectedKey.name,
+            operation: 'Verify (Ed448 OpenSSL)',
+            result: isValid ? '✓ VALID' : '✗ INVALID',
+            executionTime: end - start,
+          })
+        }
+      } else if (isWebCryptoClassical && selectedKey) {
         // --- CLASSICAL OPERATIONS (Web Crypto) ---
         if (type === 'sign') {
           if (!selectedKey.data || !(selectedKey.data instanceof CryptoKey))
@@ -122,8 +216,14 @@ export const useDsaOperations = ({
           const messageBytes = new TextEncoder().encode(dataToSign)
           let signatureBytes: Uint8Array
 
-          // Use liboqs_sig for SLH-DSA and FN-DSA, MLDSA for ML-DSA
-          if (isLiboqsSigAlgorithm(key.algorithm)) {
+          if (key.algorithm.startsWith('LMS-')) {
+            // LMS via dedicated LMS WASM module (stateful — private key updates)
+            const { lmsService } = await import('../../../wasm/LmsService')
+            const result = await lmsService.sign(key.data, messageBytes)
+            signatureBytes = result.signature
+            // Update the private key in keystore (LMS is stateful)
+            key.data = result.updatedPrivateKey
+          } else if (isLiboqsSigAlgorithm(key.algorithm)) {
             signatureBytes = await LIBOQS_SIG.sign(messageBytes, key.data, key.algorithm)
           } else {
             signatureBytes = await MLDSA.sign(messageBytes, key.data)
@@ -135,7 +235,7 @@ export const useDsaOperations = ({
 
           addLog({
             keyLabel: key.name,
-            operation: `Sign (${isLiboqsSigAlgorithm(key.algorithm) ? 'liboqs' : 'WASM'})`,
+            operation: `Sign (${key.algorithm.startsWith('LMS-') ? 'LMS WASM' : isLiboqsSigAlgorithm(key.algorithm) ? 'liboqs' : 'WASM'})`,
             result: `Signature: ${signatureBytes.length} bytes`,
             executionTime: end - start,
           })
@@ -150,8 +250,11 @@ export const useDsaOperations = ({
           const messageBytes = new TextEncoder().encode(dataToSign)
           let isValid: boolean
 
-          // Use liboqs_sig for SLH-DSA and FN-DSA, MLDSA for ML-DSA
-          if (isLiboqsSigAlgorithm(key.algorithm)) {
+          if (key.algorithm.startsWith('LMS-')) {
+            // LMS verify via dedicated WASM module
+            const { lmsService } = await import('../../../wasm/LmsService')
+            isValid = await lmsService.verify(key.data, messageBytes, hexToBytes(signature))
+          } else if (isLiboqsSigAlgorithm(key.algorithm)) {
             isValid = await LIBOQS_SIG.verify(
               hexToBytes(signature),
               messageBytes,

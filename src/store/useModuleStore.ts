@@ -10,7 +10,7 @@ import {
   logArtifactGenerated,
 } from '../utils/analytics'
 
-const MODULE_STORE_VERSION = 5
+const MODULE_STORE_VERSION = 6
 
 interface ModuleState extends LearningProgress {
   // Actions
@@ -330,6 +330,34 @@ export const useModuleStore = create<ModuleState>()(
             state.artifacts.executiveDocuments = []
           }
           state.version = '5.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 5 → Version 6: Split key-management into kms-pqc and hsm-pqc
+        if (version <= 5) {
+          if (state.modules && state.modules['key-management']) {
+            const oldProgress = state.modules['key-management']
+            if (!state.modules['kms-pqc']) {
+              state.modules['kms-pqc'] = {
+                status: oldProgress.status ?? 'not-started',
+                lastVisited: oldProgress.lastVisited ?? Date.now(),
+                timeSpent: oldProgress.timeSpent ?? 0,
+                completedSteps: [],
+                quizScores: oldProgress.quizScores ?? {},
+              }
+            }
+            if (!state.modules['hsm-pqc']) {
+              state.modules['hsm-pqc'] = {
+                status: oldProgress.status ?? 'not-started',
+                lastVisited: oldProgress.lastVisited ?? Date.now(),
+                timeSpent: oldProgress.timeSpent ?? 0,
+                completedSteps: [],
+                quizScores: oldProgress.quizScores ?? {},
+              }
+            }
+            delete state.modules['key-management']
+          }
+          state.version = '6.0.0'
           state.timestamp = Date.now()
         }
 

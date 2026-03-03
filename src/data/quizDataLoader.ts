@@ -250,6 +250,18 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'Key lifecycle (NIST SP 800-57), HSM FIPS 140-3, PKCS#11 operations, and PQC key rotation planning.',
       icon: 'KeyRound',
     },
+    'kms-pqc': {
+      label: 'KMS & PQC Key Management',
+      description:
+        'Envelope encryption with ML-KEM, hybrid key wrapping, multi-provider rotation planning.',
+      icon: 'KeyRound',
+    },
+    'hsm-pqc': {
+      label: 'HSM & PQC Operations',
+      description:
+        'PKCS#11 v3.2, HSM vendor comparison, firmware migration, and FIPS 140-3 validation.',
+      icon: 'HardDrive',
+    },
     'entropy-randomness': {
       label: 'Entropy & Randomness',
       description:

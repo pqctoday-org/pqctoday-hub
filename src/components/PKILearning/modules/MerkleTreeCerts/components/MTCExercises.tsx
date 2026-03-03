@@ -66,7 +66,7 @@ export const MTCExercises: React.FC<MTCExercisesProps> = ({
       badge: 'Analysis',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'The inclusion proof size (~100 bytes for this demo, ~736 bytes for production batches of 4.4M certs) is constant regardless of the signature algorithm. This means MTC savings grow proportionally: from ~27% for ECDSA to ~64% for SLH-DSA-128s. For ML-DSA-44 (the most likely PQC deployment), the reduction is ~62%.',
+        'The inclusion proof size (~96 bytes for this demo, ~736 bytes for production batches of 4.4M certs) is constant regardless of the signature algorithm. This means MTC savings grow proportionally: from ~27% for ECDSA to ~64% for SLH-DSA-128s. For ML-DSA-44 (the most likely PQC deployment), the reduction is ~62%.',
       workshopStep: 3,
     },
   ]

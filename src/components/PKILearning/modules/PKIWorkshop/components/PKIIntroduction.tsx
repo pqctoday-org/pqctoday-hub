@@ -357,14 +357,14 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
             </div>
           </Link>
           <Link
-            to="/learn/key-management"
+            to="/learn/kms-pqc"
             className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
           >
             <Key size={16} className="text-primary shrink-0" />
             <div>
-              <div className="text-sm font-medium text-foreground">Key Management</div>
+              <div className="text-sm font-medium text-foreground">KMS & PQC Key Management</div>
               <div className="text-xs text-muted-foreground">
-                Enterprise key lifecycle and HSM operations
+                Enterprise key lifecycle and PQC rotation planning
               </div>
             </div>
           </Link>

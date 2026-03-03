@@ -1,16 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback } from 'react'
-import { Plus, TreePine, Loader2, Trash2 } from 'lucide-react'
+import React, { useState, useCallback, useMemo, useRef } from 'react'
+import { Plus, TreePine, Loader2, Trash2, Info } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { buildMerkleTree, type MerkleNode, type CertLeaf } from '../utils/merkleTree'
-import { SAMPLE_CERTS, truncateHash } from '../data/mtcConstants'
+import { SAMPLE_CERTS, truncateHash, formatBytes } from '../data/mtcConstants'
+
+const SPEED_OPTIONS = [
+  { label: 'Slow', ms: 800 },
+  { label: 'Normal', ms: 400 },
+  { label: 'Fast', ms: 150 },
+  { label: 'Instant', ms: 0 },
+]
 
 export const MerkleTreeBuilder: React.FC = () => {
   const [certs, setCerts] = useState<CertLeaf[]>(SAMPLE_CERTS.slice(0, 4))
   const [levels, setLevels] = useState<MerkleNode[][] | null>(null)
   const [isBuilding, setIsBuilding] = useState(false)
   const [hoveredNode, setHoveredNode] = useState<string | null>(null)
+
+  // Animation state
+  const [animationLevel, setAnimationLevel] = useState<number | null>(null)
+  const [speedIdx, setSpeedIdx] = useState(1) // default: Normal
+  const abortRef = useRef(false)
 
   // Form state for adding a cert
   const [newSubject, setNewSubject] = useState('')
@@ -37,30 +49,60 @@ export const MerkleTreeBuilder: React.FC = () => {
     setCerts((prev) => [...prev, cert])
     setNewSubject('')
     setLevels(null)
+    setAnimationLevel(null)
   }, [newSubject, newAlgo, certs.length])
 
   const handleRemoveCert = useCallback((id: number) => {
     setCerts((prev) => prev.filter((c) => c.id !== id))
     setLevels(null)
+    setAnimationLevel(null)
   }, [])
 
   const handleLoadSample = useCallback(() => {
     setCerts([...SAMPLE_CERTS])
     setLevels(null)
+    setAnimationLevel(null)
   }, [])
 
   const handleBuildTree = useCallback(async () => {
     if (certs.length < 2) return
+    abortRef.current = true // cancel any running animation
     setIsBuilding(true)
+    setAnimationLevel(null)
     try {
       const result = await buildMerkleTree(certs)
       setLevels(result.levels)
+
+      const speed = SPEED_OPTIONS[speedIdx].ms
+      if (speed > 0) {
+        // Animated: reveal levels bottom-up
+        abortRef.current = false
+        for (let lvl = 0; lvl < result.levels.length; lvl++) {
+          if (abortRef.current) break
+          setAnimationLevel(lvl)
+          await new Promise((resolve) => setTimeout(resolve, speed))
+        }
+        if (!abortRef.current) {
+          setAnimationLevel(null) // show all
+        }
+      }
     } finally {
       setIsBuilding(false)
     }
-  }, [certs])
+  }, [certs, speedIdx])
 
   const treeHeight = levels ? levels.length - 1 : 0
+  const isAnimating = animationLevel !== null
+
+  // Live stats (#3) — computed from existing levels state
+  const stats = useMemo(() => {
+    if (!levels) return null
+    const depth = levels.length - 1
+    const proofBytes = depth * 32
+    const chainSigBytes = 2420 * 3 // 3× ML-DSA-44 signatures
+    const reductionPercent = Math.round(((chainSigBytes - proofBytes) / chainSigBytes) * 100)
+    return { depth, leafCount: levels[0].length, proofBytes, chainSigBytes, reductionPercent }
+  }, [levels])
 
   return (
     <div className="space-y-6">
@@ -144,8 +186,8 @@ export const MerkleTreeBuilder: React.FC = () => {
         </div>
       </div>
 
-      {/* Build button */}
-      <div className="flex items-center gap-3">
+      {/* Build controls */}
+      <div className="flex flex-wrap items-center gap-4">
         <button
           onClick={handleBuildTree}
           disabled={certs.length < 2 || isBuilding}
@@ -164,6 +206,26 @@ export const MerkleTreeBuilder: React.FC = () => {
         {certs.length < 2 && (
           <span className="text-xs text-muted-foreground">Add at least 2 certificates</span>
         )}
+
+        {/* Animation speed selector */}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-muted-foreground">Build speed:</span>
+          <div className="flex gap-1">
+            {SPEED_OPTIONS.map((opt, idx) => (
+              <button
+                key={opt.label}
+                onClick={() => setSpeedIdx(idx)}
+                className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
+                  speedIdx === idx
+                    ? 'bg-primary/20 text-primary border border-primary/50'
+                    : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Tree visualization */}
@@ -184,8 +246,13 @@ export const MerkleTreeBuilder: React.FC = () => {
               const levelIdx = levels.length - 1 - reversedIdx
               const isRoot = levelIdx === levels.length - 1
               const isLeaf = levelIdx === 0
+              // During animation, only show levels up to animationLevel
+              const isVisible = !isAnimating || levelIdx <= animationLevel!
               return (
-                <div key={levelIdx}>
+                <div
+                  key={levelIdx}
+                  className={`transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                >
                   <div className="text-[10px] text-muted-foreground mb-1">
                     {isRoot ? 'Root' : isLeaf ? 'Leaves' : `Level ${levelIdx}`}
                   </div>
@@ -235,6 +302,68 @@ export const MerkleTreeBuilder: React.FC = () => {
               covers all {certs.length} certificates in the batch.
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Live proof size stats (#3) */}
+      {stats && !isAnimating && (
+        <div className="bg-muted/50 rounded-lg p-4 border border-border">
+          <div className="flex items-start gap-2 mb-3">
+            <Info size={14} className="text-primary mt-0.5 shrink-0" />
+            <h4 className="text-sm font-bold text-foreground">Tree Statistics</h4>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+            <div className="bg-background rounded-lg p-3 border border-border text-center">
+              <div className="text-lg font-bold text-foreground">{stats.depth}</div>
+              <div className="text-[10px] text-muted-foreground">Tree Height</div>
+            </div>
+            <div className="bg-background rounded-lg p-3 border border-border text-center">
+              <div className="text-lg font-bold text-foreground">{stats.leafCount}</div>
+              <div className="text-[10px] text-muted-foreground">Leaves</div>
+            </div>
+            <div className="bg-background rounded-lg p-3 border border-success/30 text-center">
+              <div className="text-lg font-bold text-success">{formatBytes(stats.proofBytes)}</div>
+              <div className="text-[10px] text-muted-foreground">Inclusion Proof</div>
+            </div>
+            <div className="bg-background rounded-lg p-3 border border-destructive/30 text-center">
+              <div className="text-lg font-bold text-destructive">
+                {formatBytes(stats.chainSigBytes)}
+              </div>
+              <div className="text-[10px] text-muted-foreground">3&times; ML-DSA-44 Sigs</div>
+            </div>
+          </div>
+
+          {/* Comparison bar */}
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-muted-foreground w-20 shrink-0">MTC Proof</span>
+              <div className="flex-1 bg-muted rounded-full h-2.5 overflow-hidden">
+                <div
+                  className="h-full bg-success/60 rounded-full transition-all duration-500"
+                  style={{ width: `${(stats.proofBytes / stats.chainSigBytes) * 100}%` }}
+                />
+              </div>
+              <span className="text-[10px] font-mono text-muted-foreground w-12 text-right shrink-0">
+                {formatBytes(stats.proofBytes)}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-muted-foreground w-20 shrink-0">X.509 Sigs</span>
+              <div className="flex-1 bg-muted rounded-full h-2.5 overflow-hidden">
+                <div className="h-full bg-destructive/60 rounded-full" style={{ width: '100%' }} />
+              </div>
+              <span className="text-[10px] font-mono text-muted-foreground w-12 text-right shrink-0">
+                {formatBytes(stats.chainSigBytes)}
+              </span>
+            </div>
+          </div>
+
+          <p className="text-[10px] text-muted-foreground mt-2">
+            This inclusion proof replaces 3 PQ signatures in the TLS handshake &mdash;{' '}
+            <strong className="text-success">{stats.reductionPercent}% smaller</strong> than a
+            traditional certificate chain.
+          </p>
         </div>
       )}
     </div>

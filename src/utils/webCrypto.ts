@@ -13,7 +13,7 @@
 // ============================================================================
 
 export type RSAKeySize = 2048 | 3072 | 4096
-export type AESKeySize = 128 | 256
+export type AESKeySize = 128 | 192 | 256
 export type HashAlgorithm = 'SHA-256' | 'SHA-384'
 
 export interface KeyPairResult {
@@ -99,18 +99,35 @@ export async function verifyRSA(
 }
 
 // ============================================================================
-// ECDSA P-256 (Signature Algorithm)
+// ECDSA (Signature Algorithm) — P-256, P-384, P-521
 // ============================================================================
 
+export type ECDSACurve = 'P-256' | 'P-384' | 'P-521'
+
 /**
- * Generate ECDSA P-256 key pair
+ * Get appropriate hash algorithm for ECDSA curve
+ */
+function getECDSAHash(curve: ECDSACurve): string {
+  switch (curve) {
+    case 'P-256':
+      return 'SHA-256'
+    case 'P-384':
+      return 'SHA-384'
+    case 'P-521':
+      return 'SHA-512'
+  }
+}
+
+/**
+ * Generate ECDSA key pair for a given curve
+ * @param curve - NIST curve name (P-256, P-384, or P-521)
  * @returns Key pair with hex-encoded keys
  */
-export async function generateECDSAKeyPair(): Promise<KeyPairResult> {
+export async function generateECDSAKeyPair(curve: ECDSACurve = 'P-256'): Promise<KeyPairResult> {
   const keyPair = (await crypto.subtle.generateKey(
     {
       name: 'ECDSA',
-      namedCurve: 'P-256',
+      namedCurve: curve,
     },
     true, // extractable
     ['sign', 'verify']
@@ -129,16 +146,17 @@ export async function generateECDSAKeyPair(): Promise<KeyPairResult> {
 }
 
 /**
- * Sign data using ECDSA P-256
+ * Sign data using ECDSA
  * @param privateKey - ECDSA private key
  * @param data - Data to sign
  * @returns Signature as Uint8Array
  */
 export async function signECDSA(privateKey: CryptoKey, data: Uint8Array): Promise<Uint8Array> {
+  const curve = (privateKey.algorithm as EcKeyAlgorithm).namedCurve as ECDSACurve
   const signature = await crypto.subtle.sign(
     {
       name: 'ECDSA',
-      hash: 'SHA-256',
+      hash: getECDSAHash(curve),
     },
     privateKey,
     data as BufferSource
@@ -159,10 +177,11 @@ export async function verifyECDSA(
   signature: Uint8Array,
   data: Uint8Array
 ): Promise<boolean> {
+  const curve = (publicKey.algorithm as EcKeyAlgorithm).namedCurve as ECDSACurve
   return await crypto.subtle.verify(
     {
       name: 'ECDSA',
-      hash: 'SHA-256',
+      hash: getECDSAHash(curve),
     },
     publicKey,
     signature as BufferSource,
@@ -243,15 +262,18 @@ export async function verifyEd25519(
 // ECDH (Key Exchange)
 // ============================================================================
 
+export type ECDHCurve = 'P-256' | 'P-384' | 'P-521'
+
 /**
- * Generate ECDH P-256 key pair for key exchange
+ * Generate ECDH key pair for key exchange
+ * @param curve - NIST curve name (P-256, P-384, or P-521)
  * @returns Key pair with hex-encoded keys
  */
-export async function generateECDHKeyPair(): Promise<KeyPairResult> {
+export async function generateECDHKeyPair(curve: ECDHCurve = 'P-256'): Promise<KeyPairResult> {
   const keyPair = (await crypto.subtle.generateKey(
     {
       name: 'ECDH',
-      namedCurve: 'P-256',
+      namedCurve: curve,
     },
     true, // extractable
     ['deriveKey', 'deriveBits']
@@ -306,13 +328,21 @@ export async function deriveSharedSecret(
 ): Promise<Uint8Array> {
   const algorithm = privateKey.algorithm.name as 'ECDH' | 'X25519'
 
+  // Determine bit length based on curve
+  let bitLength = 256
+  if (algorithm === 'ECDH') {
+    const curve = (privateKey.algorithm as EcKeyAlgorithm).namedCurve
+    if (curve === 'P-384') bitLength = 384
+    else if (curve === 'P-521') bitLength = 528 // P-521 yields 66 bytes (528 bits)
+  }
+
   const sharedBits = await crypto.subtle.deriveBits(
     {
       name: algorithm,
       public: publicKey,
     },
     privateKey,
-    256 // 256 bits = 32 bytes
+    bitLength
   )
 
   return new Uint8Array(sharedBits)

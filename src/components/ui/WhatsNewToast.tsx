@@ -86,25 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">My Products Tracking</strong> &mdash; mark
-                    products in the Migrate catalog and carry selections into Vendor Risk,
-                    Compliance, and ROI modules
+                    <strong className="text-foreground">KMS-PQC &amp; HSM-PQC Modules</strong>{' '}
+                    &mdash; two new advanced learn modules covering PQC key management systems and
+                    hardware security modules (PKCS#11 v3.2, FIPS 140-3, vendor comparison)
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Risk Heatmap Generator</strong> &mdash;
-                    5&times;5 likelihood-vs-impact matrix with risk treatment strategies and
-                    residual risk modelling
+                    <strong className="text-foreground">Data Asset Sensitivity Module</strong>{' '}
+                    &mdash; classify assets, map GDPR/HIPAA/DORA compliance obligations, and
+                    generate a PQC migration priority map
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">ROI Calculator</strong> &mdash; direct
-                    financial modelling with editable inputs, auto-seeded from your assessment and
-                    product selections
+                    <strong className="text-foreground">Hybrid Cert Inspector</strong> &mdash;
+                    compare all four X.509 hybrid approaches with IETF Hackathon reference
+                    certificates (Composite, Catalyst, Pure ML-DSA-65, Chameleon)
                   </span>
                 </li>
               </ul>

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   TreePine,
@@ -11,6 +11,8 @@ import {
   Hash,
   Scale,
   Lock,
+  ChevronDown,
+  Layers,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 
@@ -19,6 +21,7 @@ interface MTCIntroductionProps {
 }
 
 export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWorkshop }) => {
+  const [showSignatureless, setShowSignatureless] = useState(false)
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Section 1: The Certificate Bloat Problem */}
@@ -46,7 +49,12 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
             <div className="text-2xl font-bold text-destructive">18&ndash;36 KB</div>
-            <div className="text-xs text-muted-foreground">PQC TLS chain overhead</div>
+            <div className="text-xs text-muted-foreground">
+              PQC TLS chain overhead
+              <span className="block text-[10px] mt-0.5 opacity-70">
+                (incl. cert body, SANs, extensions)
+              </span>
+            </div>
           </div>
         </div>
         <p className="text-foreground/80 leading-relaxed">
@@ -90,8 +98,11 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <div>
               <div className="text-sm font-bold text-foreground">Sign the Root</div>
               <p className="text-xs text-muted-foreground">
-                Only the tree&apos;s root hash is signed with the CA&apos;s private key. One single
-                PQ signature covers the entire batch &mdash; potentially millions of certificates.
+                One CA signing operation covers the entire batch &mdash; potentially millions of
+                certificates. Depending on the relying party&apos;s cosigner policy, additional
+                external witnesses may also co-sign the subtree to guarantee public transparency.
+                For <strong>signatureless certificates</strong>, no embedded signatures are needed
+                at all (relying parties use predistributed trusted subtrees instead).
               </p>
             </div>
           </div>
@@ -156,24 +167,28 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
-            <div className="text-sm font-bold text-primary mb-1">MTCA</div>
+            <div className="text-sm font-bold text-primary mb-1">MTCA (CA)</div>
             <p className="text-xs text-muted-foreground">
-              <strong>Merkle Tree CA</strong> &mdash; Collects certificate assertions, builds the
-              Merkle tree, signs the root hash, and distributes inclusion proofs to subscribers.
+              Operates the issuance log, builds the Merkle tree, signs subtrees, requests
+              cosignatures from external witnesses, and assembles certificates with inclusion
+              proofs.
             </p>
           </div>
           <div className="bg-success/5 rounded-lg p-3 border border-success/20">
             <div className="text-sm font-bold text-success mb-1">Transparency Service</div>
             <p className="text-xs text-muted-foreground">
-              Publishes signed tree roots so clients can periodically sync. Analogous to CT logs but
-              with batch-level granularity rather than individual certificate entries.
+              Serves the per-certificate log to monitors and relying parties. Analogous to CT logs
+              &mdash; each certificate is an individual log entry &mdash; but signing is per-batch:
+              one cosigner signature covers a subtree of millions of entries.
             </p>
           </div>
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
-            <div className="text-sm font-bold text-warning mb-1">Subscribers</div>
+            <div className="text-sm font-bold text-warning mb-1">
+              Authenticating Parties (TLS Servers)
+            </div>
             <p className="text-xs text-muted-foreground">
-              TLS servers that receive their certificate assertion + inclusion proof from the MTCA
-              and present them during the TLS handshake for client verification.
+              TLS servers that receive their certificate assertion + inclusion proof from the CA and
+              present them during the TLS handshake for client verification.
             </p>
           </div>
         </div>
@@ -218,6 +233,121 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
         </div>
       </section>
 
+      {/* Section 4.5: Advanced — Signatureless Certificates */}
+      <section className="glass-panel">
+        <button
+          onClick={() => setShowSignatureless((v) => !v)}
+          className="w-full p-6 flex items-center justify-between text-left"
+          aria-expanded={showSignatureless}
+        >
+          <h2 className="text-xl font-bold text-gradient flex items-center gap-2">
+            <Layers size={20} /> Advanced: Signatureless Certificates &amp; Landmarks
+          </h2>
+          <ChevronDown
+            size={20}
+            className={`text-muted-foreground transition-transform shrink-0 ${showSignatureless ? 'rotate-180' : ''}`}
+          />
+        </button>
+        {showSignatureless && (
+          <div className="px-6 pb-6 space-y-4">
+            <p className="text-foreground/80 leading-relaxed">
+              The spec defines a more aggressive optimization beyond standard MTC:{' '}
+              <strong>signatureless certificates</strong> carry <em>zero</em> embedded signatures.
+              Instead of embedding a CA cosignature in every certificate, relying parties pre-sync
+              large hourly &ldquo;landmark&rdquo; subtrees out-of-band, then verify inclusion proofs
+              against their cached landmark root &mdash; no signature transmitted in the TLS
+              handshake at all.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="bg-muted/50 rounded-lg p-3 border border-border">
+                <div className="text-xs font-bold text-primary mb-1">1. Landmark issuance</div>
+                <p className="text-xs text-muted-foreground">
+                  The MTCA mints large batches on a regular schedule (e.g., every hour), covering
+                  millions of certificates. The resulting Merkle subtree root is the{' '}
+                  <strong>landmark</strong>, signed once by the CA and cosigners.
+                </p>
+              </div>
+              <div className="bg-muted/50 rounded-lg p-3 border border-border">
+                <div className="text-xs font-bold text-success mb-1">2. Background pre-sync</div>
+                <p className="text-xs text-muted-foreground">
+                  Browsers and OS clients periodically download and cache signed landmark subtrees
+                  from the Transparency Service &mdash; similar to certificate revocation syncs
+                  today. No online step required during the TLS handshake.
+                </p>
+              </div>
+              <div className="bg-muted/50 rounded-lg p-3 border border-border">
+                <div className="text-xs font-bold text-warning mb-1">3. Proof-only handshake</div>
+                <p className="text-xs text-muted-foreground">
+                  The TLS server presents only the certificate assertion + 23-hash inclusion proof
+                  (736 B). The client verifies against its cached landmark root. Total per-handshake
+                  overhead for ML-DSA-44: <strong>~936 bytes</strong>.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-muted/50 rounded-lg p-4 border border-border overflow-x-auto">
+              <h4 className="text-sm font-bold text-foreground mb-3">
+                ML-DSA-44 Handshake Size Comparison
+              </h4>
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-muted-foreground border-b border-border">
+                    <th className="text-left py-2 pr-3">Mode</th>
+                    <th className="text-right py-2 px-2">Sigs + Keys</th>
+                    <th className="text-right py-2 px-2">Proof</th>
+                    <th className="text-right py-2 px-2">Total</th>
+                    <th className="text-right py-2 pl-2">Savings</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-3 font-medium text-foreground">Traditional X.509</td>
+                    <td className="text-right py-2 px-2 font-mono">11,196 B</td>
+                    <td className="text-right py-2 px-2 font-mono text-muted-foreground">—</td>
+                    <td className="text-right py-2 px-2 font-mono text-destructive font-bold">
+                      12,272 B
+                    </td>
+                    <td className="text-right py-2 pl-2 text-muted-foreground">baseline</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 pr-3 font-medium text-foreground">Full MTC</td>
+                    <td className="text-right py-2 px-2 font-mono">3,732 B</td>
+                    <td className="text-right py-2 px-2 font-mono">736 B</td>
+                    <td className="text-right py-2 px-2 font-mono text-primary font-bold">
+                      4,668 B
+                    </td>
+                    <td className="text-right py-2 pl-2 text-success font-bold">62%</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-3 font-medium text-foreground">
+                      Signatureless MTC <span className="text-[10px] text-success">(landmark)</span>
+                    </td>
+                    <td className="text-right py-2 px-2 font-mono text-success font-bold">0 B</td>
+                    <td className="text-right py-2 px-2 font-mono">736 B</td>
+                    <td className="text-right py-2 px-2 font-mono text-success font-bold">936 B</td>
+                    <td className="text-right py-2 pl-2 text-success font-bold">92%</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p className="text-[10px] text-muted-foreground mt-2">
+                Traditional: 3 sigs (7,260 B) + 3 keys (3,936 B) + 4 SCTs (476 B) + metadata (600
+                B). Full MTC: 1 sig (2,420 B) + 1 key (1,312 B) + 736 B proof + 200 B metadata.
+                Signatureless: 736 B proof + 200 B metadata only — client has landmark cached.
+              </p>
+            </div>
+
+            <div className="bg-warning/5 rounded-lg p-3 border border-warning/20 text-xs text-muted-foreground">
+              <strong className="text-warning">Tradeoff:</strong> Signatureless certificates require
+              relying parties to pre-sync landmark subtrees regularly (e.g., every few hours).
+              Clients that miss a sync window cannot verify newer certificates without an update
+              &mdash; acceptable for always-online clients (browsers, mobile) but unsuitable for
+              air-gapped or intermittently-connected devices.
+            </div>
+          </div>
+        )}
+      </section>
+
       {/* Section 5: IETF Standardization */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
@@ -235,7 +365,13 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>&bull; March 2023: Initial draft published (draft-00)</li>
               <li>&bull; October 2025: Cloudflare + Chrome experiment announced</li>
-              <li>&bull; January 2026: draft-10 published; IETF PLANTS WG adoption</li>
+              <li>
+                &bull; January 2026: <code>draft-davidben-tls-merkle-tree-certs-10</code> submitted;
+                adopted by IETF PLANTS WG as <code>draft-ietf-plants-merkle-tree-certs-00</code>
+              </li>
+              <li>
+                &bull; February 2026: <code>draft-ietf-plants-merkle-tree-certs-01</code> published
+              </li>
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -258,8 +394,9 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
         <p className="text-foreground/80 leading-relaxed mb-3">
           Merkle trees are fundamental to post-quantum cryptography beyond MTCs.{' '}
           <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip> (SPHINCS+, FIPS 205) uses nested
-          Merkle trees internally (a hyper-tree of FORS trees) for quantum-resistant signatures.
-          Stateful hash-based schemes like <InlineTooltip term="LMS">LMS</InlineTooltip> and{' '}
+          Merkle trees internally (a hyper-tree of XMSS trees, with FORS one-time signing at the
+          leaves) for quantum-resistant signatures. Stateful hash-based schemes like{' '}
+          <InlineTooltip term="LMS">LMS</InlineTooltip> and{' '}
           <InlineTooltip term="XMSS">XMSS</InlineTooltip> use Merkle trees to organize pools of
           one-time signing keys.
         </p>

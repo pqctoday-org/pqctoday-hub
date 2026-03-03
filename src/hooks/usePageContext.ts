@@ -157,7 +157,8 @@ const MODULE_NAMES: Record<string, string> = {
   'vpn-ssh-pqc': 'VPN & SSH',
   'email-signing': 'Email Signing',
   'pki-workshop': 'PKI Workshop',
-  'key-management': 'Key Management',
+  'kms-pqc': 'KMS & PQC Key Management',
+  'hsm-pqc': 'HSM & PQC Operations',
   'stateful-signatures': 'Stateful Signatures',
   'digital-assets': 'Digital Assets',
   '5g-security': '5G Security',
@@ -213,10 +214,15 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'Which blockchain signature schemes need PQC upgrades?',
     'What is the Ethereum quantum migration roadmap?',
   ],
-  'key-management': [
-    'How do PQC key sizes affect key management?',
-    'What HSMs support ML-KEM and ML-DSA?',
-    'Best practices for PQC certificate lifecycle management',
+  'kms-pqc': [
+    'How does ML-KEM envelope encryption differ from RSA-OAEP?',
+    'Which cloud KMS providers support PQC algorithms?',
+    'Best practices for PQC key rotation planning',
+  ],
+  'hsm-pqc': [
+    'What PKCS#11 v3.2 mechanisms support PQC algorithms?',
+    'Which HSM vendors have FIPS 140-3 PQC validation?',
+    'How does HSM firmware migration work for PQC?',
   ],
   'stateful-signatures': [
     'Compare LMS and XMSS stateful signature schemes',

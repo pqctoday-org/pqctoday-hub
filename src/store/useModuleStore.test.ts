@@ -128,12 +128,12 @@ describe('useModuleStore', () => {
     expect(global.URL.revokeObjectURL).toHaveBeenCalledWith('blob:test')
   })
 
-  it('migrates from version 0 to current (5), initializing all fields', () => {
+  it('migrates from version 0 to current (6), initializing all fields', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v0State = { timestamp: 123 }
     const migrated = migrate(v0State, 0)
-    expect(migrated.version).toBe('5.0.0')
+    expect(migrated.version).toBe('6.0.0')
     expect(migrated.artifacts).toBeDefined()
     expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.sessionTracking).toBeDefined()
@@ -142,7 +142,7 @@ describe('useModuleStore', () => {
     expect(migrated.timestamp).toEqual(expect.any(Number))
   })
 
-  it('migrates from version 1 to current (5), converting ms to min', () => {
+  it('migrates from version 1 to current (6), converting ms to min', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v1State = {
@@ -151,24 +151,24 @@ describe('useModuleStore', () => {
       artifacts: { keys: [], certificates: [], csrs: [] },
     }
     const migrated = migrate(v1State, 1)
-    expect(migrated.version).toBe('5.0.0')
+    expect(migrated.version).toBe('6.0.0')
     expect(migrated.modules['mod-1'].timeSpent).toBe(2)
     expect(migrated.sessionTracking).toBeDefined()
     expect(migrated.quizMastery).toBeDefined()
     expect(migrated.artifacts.executiveDocuments).toEqual([])
   })
 
-  it('migrates from version 3 to current (5), adding quizMastery and executiveDocuments', () => {
+  it('migrates from version 3 to current (6), adding quizMastery and executiveDocuments', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v3State = { version: '3.0.0', artifacts: { keys: [], certificates: [], csrs: [] } }
     const migrated = migrate(v3State, 3)
-    expect(migrated.version).toBe('5.0.0')
+    expect(migrated.version).toBe('6.0.0')
     expect(migrated.quizMastery).toEqual({ correctQuestionIds: [] })
     expect(migrated.artifacts.executiveDocuments).toEqual([])
   })
 
-  it('migrates from version 4 to current (5), adding executiveDocuments', () => {
+  it('migrates from version 4 to current (6), adding executiveDocuments', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v4State = {
@@ -177,9 +177,45 @@ describe('useModuleStore', () => {
       quizMastery: { correctQuestionIds: ['q1'] },
     }
     const migrated = migrate(v4State, 4)
-    expect(migrated.version).toBe('5.0.0')
+    expect(migrated.version).toBe('6.0.0')
     expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.quizMastery.correctQuestionIds).toEqual(['q1'])
+  })
+
+  it('migrates from version 5 to current (6), splitting key-management into kms-pqc and hsm-pqc', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
+    const migrate = (useModuleStore.persist.getOptions() as any).migrate
+    const v5State = {
+      version: '5.0.0',
+      modules: {
+        'key-management': {
+          status: 'in-progress',
+          lastVisited: 1000,
+          timeSpent: 45,
+          completedSteps: ['step-1', 'step-2'],
+          quizScores: { attempt1: 80 },
+        },
+        'pqc-101': { status: 'completed', lastVisited: 500, timeSpent: 30, completedSteps: [] },
+      },
+      artifacts: { keys: [], certificates: [], csrs: [], executiveDocuments: [] },
+      quizMastery: { correctQuestionIds: ['q1'] },
+    }
+    const migrated = migrate(v5State, 5)
+    expect(migrated.version).toBe('6.0.0')
+    // key-management should be removed
+    expect(migrated.modules['key-management']).toBeUndefined()
+    // kms-pqc should inherit status, timeSpent, quizScores but reset completedSteps
+    expect(migrated.modules['kms-pqc']).toBeDefined()
+    expect(migrated.modules['kms-pqc'].status).toBe('in-progress')
+    expect(migrated.modules['kms-pqc'].timeSpent).toBe(45)
+    expect(migrated.modules['kms-pqc'].completedSteps).toEqual([])
+    // hsm-pqc should inherit status, timeSpent, quizScores but reset completedSteps
+    expect(migrated.modules['hsm-pqc']).toBeDefined()
+    expect(migrated.modules['hsm-pqc'].status).toBe('in-progress')
+    expect(migrated.modules['hsm-pqc'].timeSpent).toBe(45)
+    expect(migrated.modules['hsm-pqc'].completedSteps).toEqual([])
+    // Other modules should be untouched
+    expect(migrated.modules['pqc-101'].status).toBe('completed')
   })
 
   it('adds an executive document artifact', () => {

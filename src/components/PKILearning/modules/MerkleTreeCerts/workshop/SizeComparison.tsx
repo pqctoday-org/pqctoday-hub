@@ -1,18 +1,49 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { BarChart3, Info } from 'lucide-react'
-import { ALGORITHM_SIZES, getSizeBreakdown, formatBytes } from '../data/mtcConstants'
+import {
+  ALGORITHM_SIZES,
+  getSizeBreakdown,
+  formatBytes,
+  computeProofBytes,
+} from '../data/mtcConstants'
+
+const BATCH_MARKS = [
+  { exp: 3, label: 'Demo (8)' },
+  { exp: 12, label: 'Small CA (4K)' },
+  { exp: 16, label: 'Mid CA (65K)' },
+  { exp: 20, label: 'Large CA (1M)' },
+  { exp: 23, label: 'Production (~4.4M)' },
+  { exp: 24, label: 'Max (16.7M)' },
+]
+
+function formatBatchSize(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
+  if (n >= 1_000) return `${(n / 1_000).toFixed(n >= 10_000 ? 0 : 1)}K`
+  return n.toLocaleString()
+}
 
 export const SizeComparison: React.FC = () => {
   const [selectedAlgo, setSelectedAlgo] = useState<string>(ALGORITHM_SIZES[2].shortName)
+  const [batchExponent, setBatchExponent] = useState(23) // height 23 → 736 B proof (matches spec's ~4.4M cert benchmark)
+
+  const batchSize = useMemo(() => Math.pow(2, batchExponent), [batchExponent])
+  const proofBytes = useMemo(() => computeProofBytes(batchSize), [batchSize])
+  const treeHeight = useMemo(
+    () => (batchSize < 2 ? 1 : Math.ceil(Math.log2(batchSize))),
+    [batchSize]
+  )
 
   const algo = useMemo(
     () => ALGORITHM_SIZES.find((a) => a.shortName === selectedAlgo) ?? ALGORITHM_SIZES[2],
     [selectedAlgo]
   )
 
-  const breakdown = useMemo(() => getSizeBreakdown(algo), [algo])
-  const allBreakdowns = useMemo(() => ALGORITHM_SIZES.map(getSizeBreakdown), [])
+  const breakdown = useMemo(() => getSizeBreakdown(algo, proofBytes), [algo, proofBytes])
+  const allBreakdowns = useMemo(
+    () => ALGORITHM_SIZES.map((a) => getSizeBreakdown(a, proofBytes)),
+    [proofBytes]
+  )
   const globalMax = useMemo(
     () => Math.max(...allBreakdowns.map((b) => b.traditionalTotal)),
     [allBreakdowns]
@@ -26,9 +57,51 @@ export const SizeComparison: React.FC = () => {
         </h3>
         <p className="text-sm text-muted-foreground">
           Compare the total authentication data transmitted during a TLS handshake using traditional
-          X.509 certificate chains versus Merkle Tree Certificates. Select different algorithms to
-          see how PQ signature sizes impact both approaches.
+          X.509 certificate chains versus Merkle Tree Certificates. Adjust the batch size to see how
+          proof size scales logarithmically.
         </p>
+      </div>
+
+      {/* Batch size slider */}
+      <div className="bg-muted/50 rounded-lg p-4 border border-border">
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="text-sm font-bold text-foreground">Certificate Batch Size</h4>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-mono text-foreground">
+              {formatBatchSize(batchSize)} certs
+            </span>
+            <span className="text-[10px] px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/30">
+              Height {treeHeight} &rarr; Proof {formatBytes(proofBytes)}
+            </span>
+          </div>
+        </div>
+
+        <input
+          type="range"
+          min={3}
+          max={24}
+          step={1}
+          value={batchExponent}
+          onChange={(e) => setBatchExponent(Number(e.target.value))}
+          className="w-full accent-primary"
+          aria-label="Batch size (logarithmic)"
+        />
+
+        <div className="flex justify-between mt-1">
+          {BATCH_MARKS.map((mark) => (
+            <button
+              key={mark.exp}
+              onClick={() => setBatchExponent(mark.exp)}
+              className={`text-[9px] transition-colors ${
+                batchExponent === mark.exp
+                  ? 'text-primary font-bold'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {mark.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Algorithm selector */}
@@ -183,11 +256,12 @@ export const SizeComparison: React.FC = () => {
         <div className="flex items-start gap-2">
           <Info size={16} className="text-primary mt-0.5 shrink-0" />
           <div className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Key insight:</strong> The MTC inclusion proof size
-            (~736 bytes) is <em>constant</em> regardless of the signature algorithm &mdash; it
-            depends only on the tree depth (number of certificates in the batch). This means the
-            savings grow proportionally with signature size: MTCs provide a modest 27% reduction for
-            ECDSA but a dramatic 64% reduction for SLH-DSA-128s and ML-DSA.
+            <strong className="text-foreground">Key insight:</strong> The MTC inclusion proof size (
+            {formatBytes(proofBytes)} for {formatBatchSize(batchSize)} certs) grows{' '}
+            <em>logarithmically</em> with batch size &mdash; doubling the batch adds only 32 bytes
+            to the proof. Traditional X.509 chain size is unaffected by batch size, so MTC savings
+            grow proportionally with signature size: from ~{allBreakdowns[0].reductionPercent}% for
+            ECDSA to ~{allBreakdowns[allBreakdowns.length - 1].reductionPercent}% for SLH-DSA-128s.
           </div>
         </div>
       </div>
@@ -209,7 +283,7 @@ export const SizeComparison: React.FC = () => {
           </thead>
           <tbody>
             {ALGORITHM_SIZES.map((a) => {
-              const b = getSizeBreakdown(a)
+              const b = getSizeBreakdown(a, proofBytes)
               return (
                 <tr
                   key={a.shortName}

@@ -42,7 +42,7 @@ test.describe('PQC Assistant Chatbot', () => {
     await page.addInitScript(() => {
       window.localStorage.setItem(
         'pqc-version-storage',
-        JSON.stringify({ state: { lastSeenVersion: '1.33.0' }, version: 0 })
+        JSON.stringify({ state: { lastSeenVersion: '2.9.0' }, version: 1 })
       )
     })
 
@@ -85,7 +85,15 @@ test.describe('PQC Assistant Chatbot', () => {
 
   test('close button closes chat panel', async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.evaluate(() => {
+      window.localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '2.9.0' }, version: 1 })
+      )
+    })
+    const fab = page.getByRole('button', { name: 'Open PQC Assistant' })
+    await expect(fab).toBeVisible({ timeout: 5000 })
+    await fab.click()
     await expect(page.getByRole('dialog', { name: 'PQC Assistant' })).toBeVisible()
 
     await page.getByRole('button', { name: 'Close assistant' }).click()
@@ -112,7 +120,15 @@ test.describe('PQC Assistant Chatbot', () => {
     })
 
     await page.goto('/')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.evaluate(() => {
+      window.localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '2.9.0' }, version: 1 })
+      )
+    })
+    const fab = page.getByRole('button', { name: 'Open PQC Assistant' })
+    await expect(fab).toBeVisible({ timeout: 5000 })
+    await fab.click()
 
     // Enter a key and submit
     await page.getByPlaceholder('Paste your API key here').fill('test-key-12345')

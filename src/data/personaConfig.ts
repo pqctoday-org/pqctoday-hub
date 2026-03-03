@@ -113,7 +113,8 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
   'vpn-ssh-pqc': ['Technology', 'Government & Defense', 'Energy & Utilities'],
   'email-signing': ['Healthcare', 'Government & Defense', 'Finance & Banking'],
   'pki-workshop': ['Government & Defense', 'Finance & Banking', 'Healthcare'],
-  'key-management': ['Finance & Banking', 'Government & Defense', 'Healthcare', 'Technology'],
+  'kms-pqc': ['Finance & Banking', 'Government & Defense', 'Healthcare', 'Technology'],
+  'hsm-pqc': ['Finance & Banking', 'Government & Defense', 'Healthcare', 'Technology'],
   'stateful-signatures': ['Government & Defense', 'Aerospace', 'Technology'],
   'merkle-tree-certs': ['Technology', 'Finance & Banking', 'Government & Defense'],
   'digital-assets': ['Finance & Banking', 'Retail & E-Commerce', 'Technology'],
@@ -147,6 +148,15 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
     'Healthcare',
     'Telecommunications',
     'Energy & Utilities',
+  ],
+  'data-asset-sensitivity': [
+    'Finance & Banking',
+    'Government & Defense',
+    'Healthcare',
+    'Technology',
+    'Telecommunications',
+    'Energy & Utilities',
+    'Retail & E-Commerce',
   ],
 }
 

@@ -252,7 +252,8 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                   val.startsWith('FrodoKEM-') ||
                   val.startsWith('Classic-McEliece-') ||
                   val.startsWith('SLH-DSA-') ||
-                  val.startsWith('FN-DSA-')
+                  val.startsWith('FN-DSA-') ||
+                  val.startsWith('LMS-')
                 ) {
                   // HQC, FrodoKEM, Classic McEliece, SLH-DSA, or FN-DSA - pass the full algorithm name
                   if (onUnifiedChange) {
@@ -318,6 +319,16 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                 <option value="FN-DSA-512">FN-DSA-512 / Falcon-512 (Level 1)</option>
                 <option value="FN-DSA-1024">FN-DSA-1024 / Falcon-1024 (Level 5)</option>
               </optgroup>
+              <optgroup label="LMS/HSS (Stateful Hash-Based Signatures)">
+                <option value="LMS-SHA256-H10">LMS SHA-256 H=10 (1,024 sigs)</option>
+                <option value="LMS-SHA256-H15">LMS SHA-256 H=15 (32,768 sigs)</option>
+                <option value="LMS-SHA256-H20">LMS SHA-256 H=20 (1,048,576 sigs)</option>
+              </optgroup>
+              <optgroup label="XMSS (Learn Only)">
+                <option value="" disabled>
+                  XMSS — see Stateful Signatures module (no browser WASM)
+                </option>
+              </optgroup>
             </select>
           </div>
 
@@ -371,14 +382,23 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                 <option value="RSA-3072">RSA-3072 (3072 bits)</option>
                 <option value="RSA-4096">RSA-4096 (4096 bits)</option>
                 <option value="ECDSA-P256">ECDSA P-256 (NIST)</option>
+                <option value="ECDSA-P384">ECDSA P-384 (NIST)</option>
+                <option value="ECDSA-P521">ECDSA P-521 (NIST)</option>
                 <option value="Ed25519">Ed25519 (Curve25519)</option>
+                <option value="Ed448">Ed448 (Curve448)</option>
+                <option value="secp256k1">secp256k1 (Bitcoin/Ethereum)</option>
               </optgroup>
               <optgroup label="Key Exchange">
                 <option value="X25519">X25519 (Curve25519)</option>
+                <option value="X448">X448 (Curve448)</option>
                 <option value="P-256">P-256 ECDH (NIST)</option>
+                <option value="P-384">P-384 ECDH (NIST)</option>
+                <option value="P-521">P-521 ECDH (NIST)</option>
+                <option value="DH-2048">DH-2048 (Deprecated)</option>
               </optgroup>
               <optgroup label="Symmetric Encryption">
                 <option value="AES-128">AES-128-GCM</option>
+                <option value="AES-192">AES-192-GCM</option>
                 <option value="AES-256">AES-256-GCM</option>
               </optgroup>
             </select>

@@ -303,12 +303,20 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     structuredData: buildModuleSchema('PKI Workshop', 'PT60M', 'Intermediate'),
   },
 
-  '/learn/key-management': {
-    title: 'Key Management & HSM — PKCS#11 and PQC Key Rotation | PQC Today',
+  '/learn/kms-pqc': {
+    title: 'KMS & PQC Key Management — Envelope Encryption, Hybrid Wrapping & Rotation | PQC Today',
     description:
-      'Master key lifecycle management with HSMs. PKCS#11 operations, enterprise key rotation planning, and PQC key migration strategies.',
-    canonical: `${BASE_URL}/learn/key-management`,
-    structuredData: buildModuleSchema('Key Management & HSM', 'PT60M', 'Advanced'),
+      'Master PQC key management patterns: ML-KEM envelope encryption, hybrid key wrapping combiners, multi-provider rotation planning across AWS, Google, Azure, and on-prem KMS.',
+    canonical: `${BASE_URL}/learn/kms-pqc`,
+    structuredData: buildModuleSchema('KMS & PQC Key Management', 'PT75M', 'Intermediate'),
+  },
+
+  '/learn/hsm-pqc': {
+    title: 'HSM & PQC Operations — PKCS#11 v3.2, Firmware Migration & FIPS 140-3 | PQC Today',
+    description:
+      'Deep dive into Hardware Security Modules for PQC: PKCS#11 v3.2 mechanisms, vendor comparison, firmware migration planning, and FIPS 140-3 validation tracking.',
+    canonical: `${BASE_URL}/learn/hsm-pqc`,
+    structuredData: buildModuleSchema('HSM & PQC Operations', 'PT90M', 'Advanced'),
   },
 
   '/learn/stateful-signatures': {
@@ -440,6 +448,18 @@ export const ROUTE_META: Record<string, RouteMeta> = {
       'Master PQC challenges for IoT and OT: algorithm selection for constrained devices, firmware signing with LMS/XMSS, CoAP/DTLS protocol impacts, certificate chain bloat, and SCADA/ICS migration planning.',
     canonical: `${BASE_URL}/learn/iot-ot-pqc`,
     structuredData: buildModuleSchema('IoT & OT Security', 'PT90M', 'Advanced'),
+  },
+
+  '/learn/data-asset-sensitivity': {
+    title: 'Data & Asset Sensitivity Assessment — NIST RMF, ISO 27005, FAIR, DORA | PQC Today',
+    description:
+      'Classify organizational data assets, map GDPR/HIPAA/NIS2/DORA compliance obligations, apply NIST RMF, ISO 27005, and FAIR risk methodologies, and generate a PQC migration priority map for your most sensitive assets.',
+    canonical: `${BASE_URL}/learn/data-asset-sensitivity`,
+    structuredData: buildModuleSchema(
+      'Data & Asset Sensitivity Assessment',
+      'PT75M',
+      'Intermediate'
+    ),
   },
 
   '/learn/quiz': {

@@ -499,8 +499,8 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
         </div>
         <p className="text-xs text-muted-foreground mt-3">
           Learn more about HSM operations and PKCS#11 workflows in the{' '}
-          <Link to="/learn/key-management" className="text-primary hover:underline">
-            Key Management &amp; HSM module
+          <Link to="/learn/hsm-pqc" className="text-primary hover:underline">
+            HSM & PQC Operations module
           </Link>
           .
         </p>
@@ -554,14 +554,14 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
             </p>
           </Link>
           <Link
-            to="/learn/key-management"
+            to="/learn/hsm-pqc"
             className="bg-muted/50 rounded-lg p-3 border border-border hover:border-primary/30 transition-colors group"
           >
             <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
-              Key Management &amp; HSM <ArrowRight size={14} />
+              HSM & PQC Operations <ArrowRight size={14} />
             </div>
             <p className="text-xs text-muted-foreground">
-              Deep dive into HSM PKCS#11 operations and enterprise key lifecycle management.
+              Deep dive into HSM PKCS#11 v3.2 operations and PQC firmware migration.
             </p>
           </Link>
           <Link

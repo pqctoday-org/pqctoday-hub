@@ -7,7 +7,7 @@ export interface WorkshopConfig {
   step: number
 }
 
-interface KeyManagementExercisesProps {
+interface KmsPqcExercisesProps {
   onNavigateToWorkshop: () => void
   onSetWorkshopConfig?: (config: WorkshopConfig) => void
 }
@@ -22,7 +22,7 @@ interface Scenario {
   config: WorkshopConfig
 }
 
-export const KeyManagementExercises: React.FC<KeyManagementExercisesProps> = ({
+export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
   onNavigateToWorkshop,
   onSetWorkshopConfig,
 }) => {
@@ -30,59 +30,59 @@ export const KeyManagementExercises: React.FC<KeyManagementExercisesProps> = ({
 
   const scenarios: Scenario[] = [
     {
-      id: 'lifecycle-generation',
-      title: '1. Key Generation: Classical vs PQC',
+      id: 'key-hierarchy-design',
+      title: '1. Key Hierarchy Design',
       description:
-        'Walk through the Generation stage of the key lifecycle. Compare RSA-2048 key generation (256-byte public key) with ML-KEM-768 (1,184-byte public key) and ML-DSA-65 (1,952-byte public key). Observe how the HSM handles larger key material.',
-      badge: 'Lifecycle',
+        'Design a 3-level PQC key hierarchy for a multi-cloud enterprise. Select algorithm modes (Classical, Hybrid, or PQC-only) for each level — Root KEK, Zone KEK, and DEK — and observe how key material sizes and storage requirements change.',
+      badge: 'Hierarchy',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'ML-KEM-768 public keys are 4.6x larger than RSA-2048. This directly impacts certificate sizes, TLS handshakes, and HSM storage capacity. The key generation process itself is comparable in speed.',
+        'Switching from Classical to PQC-only at the Root KEK level increases the public key from 256 bytes (RSA-4096) to 1,568 bytes (ML-KEM-1024). The tree visualization shows how mode choices cascade through the hierarchy.',
       config: { step: 0 },
     },
     {
-      id: 'hsm-keygen-wrap',
-      title: '2. HSM Key Generation & Wrapping',
+      id: 'envelope-encryption',
+      title: '2. Envelope Encryption Walkthrough',
       description:
-        'Step through the first three PKCS#11 operations: generate an ML-KEM-768 key pair inside the HSM, export the public key, and use encapsulation to wrap an AES-256 session key.',
-      badge: 'HSM',
+        'Step through the 5-step ML-KEM envelope encryption flow side-by-side with classical RSA-OAEP. Observe the extra KDF step that PQC requires and compare artifact sizes at each stage.',
+      badge: 'Encryption',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'The private key never leaves the HSM boundary (CKA_SENSITIVE=TRUE). ML-KEM encapsulation replaces RSA-OAEP for key wrapping, producing 1,088-byte ciphertexts instead of 256 bytes.',
+        'RSA-OAEP wraps the DEK in one step (256 bytes). ML-KEM requires encapsulate → KDF → AES-KW wrap, producing 1,128 bytes total — a 4.4x increase. The extra complexity is inherent to the KEM paradigm.',
       config: { step: 1 },
     },
     {
-      id: 'hsm-sign-verify',
-      title: '3. ML-DSA Signing in the HSM',
+      id: 'hybrid-pqc-wrapping',
+      title: '3. Hybrid vs PQC-Only Wrapping',
       description:
-        'Complete the HSM operation flow: sign data with ML-DSA-65 and verify the signature. Compare the 3,309-byte ML-DSA signature with a 64-byte ECDSA P-256 signature.',
-      badge: 'Signatures',
+        'Compare four hybrid combiner modes: X25519+ML-KEM-768, P-256+ML-KEM-768, X25519+ML-KEM-1024, and X-Wing. Examine the combiner formula, wire overhead, and recommended use case for each.',
+      badge: 'Hybrid',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'ML-DSA-65 signatures are 51x larger than ECDSA P-256. This has major implications for certificate chains, CRLs, OCSP responses, and any protocol that transmits signatures.',
-      config: { step: 1 },
-    },
-    {
-      id: 'rotation-inventory',
-      title: '4. Enterprise Key Inventory',
-      description:
-        'Examine the key inventory for Quantum Financial Services Corp: 500 certificates across 5 categories, 10 HSMs. Identify which keys are quantum-vulnerable and calculate the storage impact of PQC migration.',
-      badge: 'Planning',
-      badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
-      observe:
-        'Of 500 certificates, 400 use quantum-vulnerable algorithms (RSA, ECDSA). Only the 100 AES-256 data encryption keys are already quantum-safe. Total public key storage increases by approximately 7x after migration.',
+        'X-Wing (used by Google Cloud KMS) has the same wire overhead as X25519+ML-KEM-768 (1,120 bytes) but provides a standardized single-construction hybrid KEM. FIPS-compliant environments should prefer P-256+ML-KEM-768.',
       config: { step: 2 },
     },
     {
-      id: 'rotation-compliance',
-      title: '5. Compliance-Driven Rotation Schedule',
+      id: 'provider-api-mapping',
+      title: '4. Provider API Mapping',
       description:
-        'Plan a rotation schedule aligned with CNSA 2.0 (2025–2033 phased timeline), NIST IR 8547 (draft: deprecate by 2030, disallow by 2035), PCI DSS v4.0, and DORA. Calculate the bandwidth impact of rotating 500 certificates to PQC algorithms.',
+        'Map the same PQC key wrapping operation across three cloud KMS providers (AWS KMS, Google Cloud KMS, Azure Key Vault). See how each provider exposes PQC capabilities through their API and CLI.',
+      badge: 'Multi-Cloud',
+      badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
+      observe:
+        'AWS KMS is the only provider with GA PQC signing (ML-DSA). Google Cloud KMS has the broadest algorithm preview (ML-KEM, X-Wing, ML-DSA, SLH-DSA). Azure Key Vault lacks native PQC key types but SymCrypt supports ML-KEM/ML-DSA internally.',
+      config: { step: 2 },
+    },
+    {
+      id: 'compliance-rotation',
+      title: '5. Compliance-Driven Rotation',
+      description:
+        'Plan a key rotation schedule for 500 certificates aligned with CNSA 2.0 (2027-2033), NIST IR 8547 (2030/2035), and provider-specific rotation capabilities. Calculate storage and bandwidth impact across three migration phases.',
       badge: 'Compliance',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'The compliance deadlines create a clear migration timeline: PCI DSS crypto inventory required by 2025 (Req. 12.3.3), DORA ICT risk framework effective January 2025, CNSA 2.0 phased from 2025 (prefer PQC) to 2033 (exclusively PQC for all NSS), and NIST IR 8547 proposing classical deprecation by 2030. Rotation schedules must account for larger certificates and signatures.',
-      config: { step: 2 },
+        'CNSA 2.0 requires all new NSS acquisitions to be PQC-compliant by 2027 and exclusively PQC by 2033. The storage impact multiplier ranges from 1.0x (AES-256 DEKs) to 30.0x (ECDSA → ML-DSA-65 code signing keys).',
+      config: { step: 3 },
     },
   ]
 
@@ -96,9 +96,9 @@ export const KeyManagementExercises: React.FC<KeyManagementExercisesProps> = ({
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient mb-2">Guided Exercises</h2>
         <p className="text-muted-foreground text-sm">
-          Work through these scenarios to understand key lifecycle management, HSM operations, and
-          PQC migration planning. Each exercise pre-configures the Workshop &mdash; click &quot;Load
-          &amp; Run&quot; to begin.
+          Work through these scenarios to master PQC key management patterns, envelope encryption,
+          hybrid wrapping, and compliance-driven rotation planning. Each exercise pre-configures the
+          Workshop &mdash; click &quot;Load &amp; Run&quot; to begin.
         </p>
       </div>
 
@@ -139,7 +139,7 @@ export const KeyManagementExercises: React.FC<KeyManagementExercisesProps> = ({
             <div>
               <h3 className="font-bold text-foreground">Test Your Knowledge</h3>
               <p className="text-sm text-muted-foreground">
-                Take the PQC quiz to test what you&apos;ve learned about key management and HSMs.
+                Take the PQC quiz to test what you&apos;ve learned about KMS and PQC key management.
               </p>
             </div>
           </div>

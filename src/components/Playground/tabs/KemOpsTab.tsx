@@ -44,9 +44,10 @@ export const KemOpsTab: React.FC = () => {
     algo.startsWith('HQC') ||
     algo.startsWith('FrodoKEM') ||
     algo.startsWith('Classic-McEliece') ||
-    ['X25519', 'P-256'].includes(algo)
+    ['X25519', 'X448', 'P-256', 'P-384', 'P-521', 'DH-2048'].includes(algo)
 
-  const isClassical = (algo: string) => ['X25519', 'P-256'].includes(algo)
+  const isClassical = (algo: string) =>
+    ['X25519', 'X448', 'P-256', 'P-384', 'P-521', 'DH-2048'].includes(algo)
   const isPQC = (algo: string) => isKEM(algo) && !isClassical(algo)
 
   const kemPublicKeys = keyStore.filter((k) => k.type === 'public' && isKEM(k.algorithm))

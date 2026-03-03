@@ -4,6 +4,72 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.10.0] - 2026-03-02
+
+### Added
+
+- **KMS-PQC module** (`kms-pqc`): New 5-step intermediate module (90 min) — PQC Key Management
+  Systems. Covers envelope encryption with ML-KEM-768, hybrid key wrapping, multi-provider key
+  hierarchy design, KMS rotation planner, and a KMIP Protocol Explorer (Operations, Key Types,
+  Cross-Provider Sync, Readiness Checklist). Split from the legacy key-management module.
+  [view:/learn] [persona:architect] [persona:developer]
+
+- **HSM-PQC module** (`hsm-pqc`): New 4-step advanced module (90 min) — Hardware Security
+  Modules for PQC. Features a PKCS#11 v3.2 simulator, vendor comparison matrix, HSM migration
+  planner, and FIPS 140-3 validation tracker. Split from the legacy key-management module.
+  [view:/learn] [persona:architect] [persona:developer]
+
+- **Data Asset Sensitivity module** (`data-asset-sensitivity`): New 5-step intermediate module
+  (75 min) — classify organizational data assets, map compliance obligations (GDPR, HIPAA, DORA,
+  NIS2), apply NIST RMF / ISO 27005 / FAIR risk methodologies, and generate a PQC migration
+  priority map. [view:/learn] [persona:executive] [persona:architect]
+
+- **Hybrid Crypto — Hybrid CA Setup** (`HybridCASetup.tsx`, Step 3): Interactive workshop to
+  configure and generate classical (ECDSA) and PQC (ML-DSA-65) root CAs. Demonstrates the
+  dual-key hierarchy required for transitional hybrid PKI deployments. [view:/learn]
+  [persona:developer] [persona:architect]
+
+- **Hybrid Crypto — Hybrid Cert Formats** (`HybridCertFormats.tsx`, Step 4): Side-by-side
+  generator and comparison of all four X.509 hybrid certificate approaches — Pure PQC (ML-DSA-65,
+  SLH-DSA-128s), Composite (draft-ietf-lamps-pq-composite-sigs-14, OID 1.3.6.1.5.5.7.6.45),
+  Related Certificates (RFC 9763), and Chameleon Certificates. Each entry shows OID, IETF status,
+  backward-compatibility notes, and ASN.1 structure. [view:/learn]
+
+- **Hybrid Crypto — Hybrid Cert Inspector** (`HybridCertInspector.tsx`, Step 5): Deep-dive
+  certificate structure viewer with Tree, Raw, and Size views. Ships with four IETF Hackathon
+  reference certificates (r5 release): Composite ML-DSA65-ECDSA-P256-SHA512, Catalyst
+  ECDSA-P256 + ML-DSA-44, Pure ML-DSA-65 (FIPS 204 reference), and Chameleon ECDSA-P256 +
+  ML-DSA-44. [view:/learn]
+
+- **Merkle Tree Certs — Signatureless Certificates section** (`MTCIntroduction.tsx`): New
+  collapsible "Advanced: Signatureless Certificates & Landmarks" section explaining landmark
+  subtrees, pre-sync windows, and signatureless TLS handshakes. Includes ML-DSA-44 size analysis
+  table (0 B signature + 736 B inclusion proof vs 2480 B per-connection ML-DSA-44 signature —
+  ~94% handshake reduction). [view:/learn]
+
+### Changed
+
+- **Hybrid Crypto module** (`HybridCrypto/`): Expanded from 3 to 5 steps. Steps 3–5 replace
+  the old `CompositeCertificateViewer` with the new HybridCASetup → HybridCertFormats →
+  HybridCertInspector workshop sequence. RAG summary updated with RFC 9763, Catalyst binding
+  draft, Chameleon certs draft, and IETF Hackathon pqc-certificates repository. [view:/learn]
+
+- **Key Management split** (`useModuleStore` v5→v6): The `key-management` module has been split
+  into `kms-pqc` (Key Management Systems, 5 steps) and `hsm-pqc` (Hardware Security Modules,
+  4 steps). Store migration automatically copies legacy progress into both new modules and removes
+  the old key. [view:/learn]
+
+- **Merkle Tree Certs workshops** (`MerkleTreeBuilder.tsx`, `InclusionProofGenerator.tsx`,
+  `ProofVerifier.tsx`, `SizeComparison.tsx`): Refactored with advanced metrics and clearer size
+  analysis. Proof size reference updated from ~100 B to ~96 B (ML-DSA-44 benchmark). [view:/learn]
+
+- **Playground — Key Generation** (`KeyGenerationSection.tsx`, `useKeyGeneration.ts`): Enhanced
+  key generation UI supporting additional algorithm variants and improved validation.
+  [view:/playground]
+
+- **Playground — DSA Operations** (`useDsaOperations.ts`, `SignVerifyTab.tsx`): Extended
+  algorithm selection and inline validation for the sign/verify workflow. [view:/playground]
+
 ## [2.9.0] - 2026-03-01
 
 ### Added

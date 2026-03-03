@@ -154,8 +154,12 @@ const EXPERIENCE_PATHS: Record<LevelKey, { id: string; subtitle: string }[]> = {
     { id: 'tls-basics', subtitle: 'Master TLS 1.3 handshakes before adding PQC' },
     { id: 'pki-workshop', subtitle: 'Build certificate chains hands-on, then migrate to PQC' },
     {
-      id: 'key-management',
-      subtitle: 'Lifecycle management, HSMs, and enterprise key rotation',
+      id: 'kms-pqc',
+      subtitle: 'ML-KEM envelope encryption, hybrid wrapping, and rotation planning',
+    },
+    {
+      id: 'hsm-pqc',
+      subtitle: 'PKCS#11 v3.2, vendor comparison, firmware migration, FIPS 140-3',
     },
     {
       id: 'email-signing',

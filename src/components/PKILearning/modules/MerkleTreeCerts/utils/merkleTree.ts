@@ -186,8 +186,8 @@ export function getInclusionProof(levels: MerkleNode[][], leafIndex: number): In
   }
 
   const root = levels[levels.length - 1][0]
-  // Each sibling hash is 32 bytes; proof also carries the leaf index (4 bytes)
-  const proofSizeBytes = siblings.length * 32 + 4
+  // Each sibling hash is 32 bytes (per draft-ietf-plants-merkle-tree-certs: N hashes × 32 bytes)
+  const proofSizeBytes = siblings.length * 32
 
   return {
     leafHash: levels[0][leafIndex].hash,

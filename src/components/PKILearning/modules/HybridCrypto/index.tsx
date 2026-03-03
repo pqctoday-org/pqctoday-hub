@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Key, Lock, FileCheck } from 'lucide-react'
+import { Trash2, Key, Lock, Shield, Layers, Search } from 'lucide-react'
 import { HybridCryptoIntroduction } from './components/HybridCryptoIntroduction'
 import { HybridCryptoExercises, type WorkshopConfig } from './components/HybridCryptoExercises'
 import { HybridKeyGeneration } from './workshop/HybridKeyGeneration'
 import { HybridEncryptionDemo } from './workshop/HybridEncryptionDemo'
-import { CompositeCertificateViewer } from './workshop/CompositeCertificateViewer'
+import { HybridCASetup } from './workshop/HybridCASetup'
+import { HybridCertFormats } from './workshop/HybridCertFormats'
+import { HybridCertInspector } from './workshop/HybridCertInspector'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -29,10 +31,22 @@ const PARTS = [
     icon: Lock,
   },
   {
-    id: 'composite-certs',
-    title: 'Step 3: Certificate Formats',
-    description: 'Compare classical, pure PQC (RFC 9881), and composite certificate formats.',
-    icon: FileCheck,
+    id: 'ca-setup',
+    title: 'Step 3: CA Setup',
+    description: 'Generate classical and PQC root CAs for the certificate sandbox.',
+    icon: Shield,
+  },
+  {
+    id: 'hybrid-formats',
+    title: 'Step 4: Hybrid Formats',
+    description: 'Generate and compare all four hybrid X.509 certificate approaches.',
+    icon: Layers,
+  },
+  {
+    id: 'inspect-compare',
+    title: 'Step 5: Inspect & Compare',
+    description: 'Deep-dive into certificate structures with IETF reference artifacts.',
+    icon: Search,
   },
 ]
 
@@ -194,12 +208,9 @@ export const HybridCryptoModule: React.FC = () => {
               {currentPart === 1 && (
                 <HybridEncryptionDemo key={`enc-${configKey}`} initialMode={workshopConfig?.mode} />
               )}
-              {currentPart === 2 && (
-                <CompositeCertificateViewer
-                  key={`cert-${configKey}`}
-                  initialAlgorithm={workshopConfig?.algorithm}
-                />
-              )}
+              {currentPart === 2 && <HybridCASetup key={`ca-${configKey}`} />}
+              {currentPart === 3 && <HybridCertFormats key={`formats-${configKey}`} />}
+              {currentPart === 4 && <HybridCertInspector key={`inspect-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

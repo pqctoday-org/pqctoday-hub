@@ -91,9 +91,12 @@ export const SignVerifyTab: React.FC = () => {
     algo.startsWith('ML-DSA') ||
     algo.startsWith('SLH-DSA') ||
     algo.startsWith('FN-DSA') ||
+    algo.startsWith('LMS-') ||
     algo.startsWith('RSA') ||
     algo.startsWith('ECDSA') ||
-    algo === 'Ed25519'
+    algo === 'Ed25519' ||
+    algo === 'Ed448' ||
+    algo === 'secp256k1'
   const signPrivateKeys = keyStore.filter((k) => k.type === 'private' && isSign(k.algorithm))
   const signPublicKeys = keyStore.filter((k) => k.type === 'public' && isSign(k.algorithm))
 
@@ -157,15 +160,29 @@ export const SignVerifyTab: React.FC = () => {
                 } else if (key.algorithm.startsWith('FN-DSA')) {
                   scheme = 'FN-DSA / Falcon'
                   hash = 'SHAKE-256'
+                } else if (key.algorithm.startsWith('LMS-')) {
+                  scheme = 'LMS/HSS (Stateful)'
+                  hash = 'SHA-256'
                 } else if (key.algorithm.startsWith('RSA')) {
                   scheme = 'RSA-PSS'
                   hash = 'SHA-256'
                 } else if (key.algorithm.startsWith('ECDSA')) {
                   scheme = 'ECDSA'
-                  hash = 'SHA-256'
+                  hash =
+                    key.algorithm.includes('P384') || key.algorithm.includes('P-384')
+                      ? 'SHA-384'
+                      : key.algorithm.includes('P521') || key.algorithm.includes('P-521')
+                        ? 'SHA-512'
+                        : 'SHA-256'
                 } else if (key.algorithm === 'Ed25519') {
                   scheme = 'EdDSA'
                   hash = 'SHA-512'
+                } else if (key.algorithm === 'Ed448') {
+                  scheme = 'EdDSA'
+                  hash = 'SHAKE-256'
+                } else if (key.algorithm === 'secp256k1') {
+                  scheme = 'ECDSA (secp256k1)'
+                  hash = 'SHA-256'
                 }
 
                 return (
@@ -249,15 +266,29 @@ export const SignVerifyTab: React.FC = () => {
                 } else if (key.algorithm.startsWith('FN-DSA')) {
                   scheme = 'FN-DSA / Falcon'
                   hash = 'SHAKE-256'
+                } else if (key.algorithm.startsWith('LMS-')) {
+                  scheme = 'LMS/HSS (Stateful)'
+                  hash = 'SHA-256'
                 } else if (key.algorithm.startsWith('RSA')) {
                   scheme = 'RSA-PSS'
                   hash = 'SHA-256'
                 } else if (key.algorithm.startsWith('ECDSA')) {
                   scheme = 'ECDSA'
-                  hash = 'SHA-256'
+                  hash =
+                    key.algorithm.includes('P384') || key.algorithm.includes('P-384')
+                      ? 'SHA-384'
+                      : key.algorithm.includes('P521') || key.algorithm.includes('P-521')
+                        ? 'SHA-512'
+                        : 'SHA-256'
                 } else if (key.algorithm === 'Ed25519') {
                   scheme = 'EdDSA'
                   hash = 'SHA-512'
+                } else if (key.algorithm === 'Ed448') {
+                  scheme = 'EdDSA'
+                  hash = 'SHAKE-256'
+                } else if (key.algorithm === 'secp256k1') {
+                  scheme = 'ECDSA (secp256k1)'
+                  hash = 'SHA-256'
                 }
 
                 return (

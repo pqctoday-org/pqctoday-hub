@@ -9,6 +9,8 @@ import * as WebCrypto from '../../../utils/webCrypto'
 import { bytesToHex } from '../../../utils/dataInputUtils'
 import type { ExecutionMode, ClassicalAlgorithm } from '../PlaygroundContext'
 import { useModuleStore } from '../../../store/useModuleStore'
+import { openSSLService } from '../../../services/crypto/OpenSSLService'
+import { secp256k1 } from '@noble/curves/secp256k1.js'
 
 interface UseKeyGenerationProps {
   algorithm: string
@@ -234,6 +236,73 @@ export const useKeyGeneration = ({
             result: `PK: ${keypair.publicKey.length}B, SK: ${keypair.secretKey.length}B`,
             executionTime: end - start,
           })
+        } else if (algorithm.startsWith('LMS-')) {
+          // LMS/HSS via dedicated LMS WASM module
+          algoName = algorithm
+          logger.debug('[Playground] Generating LMS keys...', algoName)
+
+          // Map algorithm name to LMS type parameters
+          // LMS-SHA256-H10 → lmsType=5 (LMS_SHA256_M32_H10), lmotsType=4 (LMOTS_SHA256_N32_W8)
+          // LMS-SHA256-H15 → lmsType=6 (LMS_SHA256_M32_H15)
+          // LMS-SHA256-H20 → lmsType=7 (LMS_SHA256_M32_H20)
+          const lmsTypeMap: Record<string, number> = {
+            'LMS-SHA256-H10': 5,
+            'LMS-SHA256-H15': 6,
+            'LMS-SHA256-H20': 7,
+          }
+          // eslint-disable-next-line security/detect-object-injection
+          const lmsType = lmsTypeMap[algoName] ?? 5
+          const lmotsType = 4 // LMOTS_SHA256_N32_W8
+
+          const { lmsService } = await import('../../../wasm/LmsService')
+          const keypair = await lmsService.generateKeypair(lmsType, lmotsType)
+
+          newKeys = [
+            {
+              id: `pk-${idBase}`,
+              name: `${algoName} Public Key (WASM) [${timestamp}]`,
+              type: 'public',
+              algorithm: algoName,
+              value: bytesToHex(keypair.publicKey),
+              data: keypair.publicKey,
+              dataType: 'binary',
+              timestamp: Date.now(),
+            },
+            {
+              id: `sk-${idBase}`,
+              name: `${algoName} Private Key (WASM) [${timestamp}]`,
+              type: 'private',
+              algorithm: algoName,
+              value: bytesToHex(keypair.privateKey),
+              data: keypair.privateKey,
+              dataType: 'binary',
+              timestamp: Date.now(),
+            },
+          ]
+
+          setKeyStore((prev) => {
+            const newStore = [...prev, ...newKeys]
+            return newStore.length > MAX_KEYS ? newStore.slice(-MAX_KEYS) : newStore
+          })
+          setSelectedSignKeyId(newKeys[1].id)
+          setSelectedVerifyKeyId(newKeys[0].id)
+          useModuleStore.getState().addKey({
+            id: newKeys[1].id,
+            name: algoName,
+            algorithm: algoName,
+            keySize: 0,
+            created: Date.now(),
+            publicKey: '',
+            description: 'Playground',
+          })
+
+          const end = performance.now()
+          addLog({
+            keyLabel: `${algoName} Pair`,
+            operation: 'Key Generation (LMS WASM)',
+            result: `PK: ${keypair.publicKey.length}B, SK: ${keypair.privateKey.length}B`,
+            executionTime: end - start,
+          })
         }
       } else {
         // Mock Mode - Simulated operations
@@ -341,15 +410,21 @@ export const useKeyGeneration = ({
             timestamp: Date.now(),
           },
         ]
-      } else if (classicalAlgorithm === 'ECDSA-P256') {
-        keyPairResult = await WebCrypto.generateECDSAKeyPair()
+      } else if (classicalAlgorithm.startsWith('ECDSA')) {
+        const curve =
+          classicalAlgorithm === 'ECDSA-P256'
+            ? 'P-256'
+            : classicalAlgorithm === 'ECDSA-P384'
+              ? 'P-384'
+              : ('P-521' as WebCrypto.ECDSACurve)
+        keyPairResult = await WebCrypto.generateECDSAKeyPair(curve)
 
         newKeys = [
           {
             id: `pk-${idBase}`,
-            name: `ECDSA P-256 Public Key (WebCrypto) [${timestamp}]`,
+            name: `ECDSA ${curve} Public Key (WebCrypto) [${timestamp}]`,
             type: 'public',
-            algorithm: 'ECDSA-P256',
+            algorithm: classicalAlgorithm,
             value: keyPairResult.publicKeyHex,
             data: keyPairResult.publicKey,
             dataType: 'cryptokey',
@@ -357,9 +432,9 @@ export const useKeyGeneration = ({
           },
           {
             id: `sk-${idBase}`,
-            name: `ECDSA P-256 Private Key (WebCrypto) [${timestamp}]`,
+            name: `ECDSA ${curve} Private Key (WebCrypto) [${timestamp}]`,
             type: 'private',
-            algorithm: 'ECDSA-P256',
+            algorithm: classicalAlgorithm,
             value: keyPairResult.privateKeyHex,
             data: keyPairResult.privateKey,
             dataType: 'cryptokey',
@@ -416,15 +491,21 @@ export const useKeyGeneration = ({
             timestamp: Date.now(),
           },
         ]
-      } else if (classicalAlgorithm === 'P-256') {
-        keyPairResult = await WebCrypto.generateECDHKeyPair()
+      } else if (
+        classicalAlgorithm === 'P-256' ||
+        classicalAlgorithm === 'P-384' ||
+        classicalAlgorithm === 'P-521'
+      ) {
+        keyPairResult = await WebCrypto.generateECDHKeyPair(
+          classicalAlgorithm as WebCrypto.ECDHCurve
+        )
 
         newKeys = [
           {
             id: `pk-${idBase}`,
-            name: `P-256 ECDH Public Key (WebCrypto) [${timestamp}]`,
+            name: `${classicalAlgorithm} ECDH Public Key (WebCrypto) [${timestamp}]`,
             type: 'public',
-            algorithm: 'P-256',
+            algorithm: classicalAlgorithm,
             value: keyPairResult.publicKeyHex,
             data: keyPairResult.publicKey,
             dataType: 'cryptokey',
@@ -432,9 +513,9 @@ export const useKeyGeneration = ({
           },
           {
             id: `sk-${idBase}`,
-            name: `P-256 ECDH Private Key (WebCrypto) [${timestamp}]`,
+            name: `${classicalAlgorithm} ECDH Private Key (WebCrypto) [${timestamp}]`,
             type: 'private',
-            algorithm: 'P-256',
+            algorithm: classicalAlgorithm,
             value: keyPairResult.privateKeyHex,
             data: keyPairResult.privateKey,
             dataType: 'cryptokey',
@@ -455,6 +536,145 @@ export const useKeyGeneration = ({
             value: WebCrypto.arrayBufferToHex(exportedKey),
             data: aesKey,
             dataType: 'cryptokey',
+            timestamp: Date.now(),
+          },
+        ]
+      } else if (classicalAlgorithm === 'Ed448') {
+        // Ed448 via OpenSSL WASM (no Web Crypto browser support)
+        await openSSLService.init()
+        const genResult = await openSSLService.execute(
+          'genpkey -algorithm Ed448 -out ed448_priv.pem'
+        )
+        const privPemFile = genResult.files.find((f) => f.name === 'ed448_priv.pem')
+        if (!privPemFile) throw new Error('Failed to generate Ed448 private key')
+
+        const pubResult = await openSSLService.execute(
+          'pkey -in ed448_priv.pem -pubout -out ed448_pub.pem',
+          [{ name: 'ed448_priv.pem', data: privPemFile.data }]
+        )
+        const pubPemFile = pubResult.files.find((f) => f.name === 'ed448_pub.pem')
+        if (!pubPemFile) throw new Error('Failed to extract Ed448 public key')
+
+        newKeys = [
+          {
+            id: `pk-${idBase}`,
+            name: `Ed448 Public Key (OpenSSL) [${timestamp}]`,
+            type: 'public',
+            algorithm: 'Ed448',
+            value: bytesToHex(pubPemFile.data),
+            data: pubPemFile.data,
+            dataType: 'binary',
+            timestamp: Date.now(),
+          },
+          {
+            id: `sk-${idBase}`,
+            name: `Ed448 Private Key (OpenSSL) [${timestamp}]`,
+            type: 'private',
+            algorithm: 'Ed448',
+            value: bytesToHex(privPemFile.data),
+            data: privPemFile.data,
+            dataType: 'binary',
+            timestamp: Date.now(),
+          },
+        ]
+      } else if (classicalAlgorithm === 'X448') {
+        // X448 via OpenSSL WASM (no Web Crypto browser support)
+        await openSSLService.init()
+        const genResult = await openSSLService.execute('genpkey -algorithm X448 -out x448_priv.pem')
+        const privPemFile = genResult.files.find((f) => f.name === 'x448_priv.pem')
+        if (!privPemFile) throw new Error('Failed to generate X448 private key')
+
+        const pubResult = await openSSLService.execute(
+          'pkey -in x448_priv.pem -pubout -out x448_pub.pem',
+          [{ name: 'x448_priv.pem', data: privPemFile.data }]
+        )
+        const pubPemFile = pubResult.files.find((f) => f.name === 'x448_pub.pem')
+        if (!pubPemFile) throw new Error('Failed to extract X448 public key')
+
+        newKeys = [
+          {
+            id: `pk-${idBase}`,
+            name: `X448 Public Key (OpenSSL) [${timestamp}]`,
+            type: 'public',
+            algorithm: 'X448',
+            value: bytesToHex(pubPemFile.data),
+            data: pubPemFile.data,
+            dataType: 'binary',
+            timestamp: Date.now(),
+          },
+          {
+            id: `sk-${idBase}`,
+            name: `X448 Private Key (OpenSSL) [${timestamp}]`,
+            type: 'private',
+            algorithm: 'X448',
+            value: bytesToHex(privPemFile.data),
+            data: privPemFile.data,
+            dataType: 'binary',
+            timestamp: Date.now(),
+          },
+        ]
+      } else if (classicalAlgorithm === 'secp256k1') {
+        // secp256k1 via @noble/curves
+        const privKeyBytes = secp256k1.utils.randomSecretKey()
+        const pubKeyBytes = secp256k1.getPublicKey(privKeyBytes)
+
+        newKeys = [
+          {
+            id: `pk-${idBase}`,
+            name: `secp256k1 Public Key (@noble) [${timestamp}]`,
+            type: 'public',
+            algorithm: 'secp256k1',
+            value: bytesToHex(pubKeyBytes),
+            data: pubKeyBytes,
+            dataType: 'binary',
+            timestamp: Date.now(),
+          },
+          {
+            id: `sk-${idBase}`,
+            name: `secp256k1 Private Key (@noble) [${timestamp}]`,
+            type: 'private',
+            algorithm: 'secp256k1',
+            value: bytesToHex(privKeyBytes),
+            data: privKeyBytes,
+            dataType: 'binary',
+            timestamp: Date.now(),
+          },
+        ]
+      } else if (classicalAlgorithm === 'DH-2048') {
+        // DH-2048 via OpenSSL WASM (RFC 7919 ffdhe2048 named group)
+        await openSSLService.init()
+        const genResult = await openSSLService.execute(
+          'genpkey -algorithm DH -pkeyopt group:ffdhe2048 -out dh_priv.pem'
+        )
+        const privPemFile = genResult.files.find((f) => f.name === 'dh_priv.pem')
+        if (!privPemFile) throw new Error('Failed to generate DH-2048 private key')
+
+        const pubResult = await openSSLService.execute(
+          'pkey -in dh_priv.pem -pubout -out dh_pub.pem',
+          [{ name: 'dh_priv.pem', data: privPemFile.data }]
+        )
+        const pubPemFile = pubResult.files.find((f) => f.name === 'dh_pub.pem')
+        if (!pubPemFile) throw new Error('Failed to extract DH-2048 public key')
+
+        newKeys = [
+          {
+            id: `pk-${idBase}`,
+            name: `DH-2048 Public Key (OpenSSL) [${timestamp}]`,
+            type: 'public',
+            algorithm: 'DH-2048',
+            value: bytesToHex(pubPemFile.data),
+            data: pubPemFile.data,
+            dataType: 'binary',
+            timestamp: Date.now(),
+          },
+          {
+            id: `sk-${idBase}`,
+            name: `DH-2048 Private Key (OpenSSL) [${timestamp}]`,
+            type: 'private',
+            algorithm: 'DH-2048',
+            value: bytesToHex(privPemFile.data),
+            data: privPemFile.data,
+            dataType: 'binary',
             timestamp: Date.now(),
           },
         ]

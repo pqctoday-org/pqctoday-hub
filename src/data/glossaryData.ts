@@ -2288,22 +2288,22 @@ export const glossaryTerms: GlossaryTerm[] = [
     category: 'protocol',
   },
 
-  // Key Management
+  // Key Management & HSM
   {
     term: 'NIST SP 800-57',
     definition:
       'NIST Special Publication 800-57: Recommendation for Key Management. Defines the seven-stage key lifecycle (pre-operational, operational, post-operational, etc.) and cryptoperiod guidance.',
     complexity: 'intermediate',
     category: 'standard',
-    relatedModule: '/learn/key-management',
+    relatedModule: '/learn/kms-pqc',
   },
   {
     term: 'PKCS#11',
     definition:
       'A standard API (also called Cryptoki) for accessing cryptographic hardware like Hardware Security Modules (HSMs), smart cards, and tokens.',
     technicalNote:
-      'Defines C-language function calls for key generation, signing, encryption, and object management. PQC algorithm support in PKCS#11 is being standardized by OASIS.',
-    relatedModule: '/learn/key-management',
+      'Defines C-language function calls for key generation, signing, encryption, and object management. PKCS#11 v3.2 adds CKM_ML_KEM_* and CKM_ML_DSA_* mechanisms for PQC.',
+    relatedModule: '/learn/hsm-pqc',
     complexity: 'intermediate',
     category: 'standard',
   },
@@ -2313,7 +2313,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'The complete management process for cryptographic keys from creation to destruction, typically comprising 7 stages: generation, storage, activation, rotation, deactivation, compromise response, and destruction.',
     technicalNote:
       'Defined by NIST SP 800-57. PQC migration adds complexity — organizations must plan parallel classical and PQC key lifecycles during the transition period.',
-    relatedModule: '/learn/key-management',
+    relatedModule: '/learn/kms-pqc',
     complexity: 'beginner',
     category: 'concept',
   },

@@ -3,9 +3,15 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Changelog View', () => {
   test.beforeEach(async ({ page }) => {
-    // Clear localStorage to reset version tracking
+    // Clear localStorage and suppress WhatsNew toast
     await page.goto('/')
-    await page.evaluate(() => localStorage.clear())
+    await page.evaluate(() => {
+      window.localStorage.clear()
+      window.localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '2.9.0' }, version: 1 })
+      )
+    })
   })
 
   test('navigates to changelog page', async ({ page }) => {

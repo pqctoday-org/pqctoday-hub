@@ -118,7 +118,7 @@ describe('webCrypto', () => {
 
     it('signs data with ECDSA', async () => {
       mockSubtle.sign.mockResolvedValue(new ArrayBuffer(10))
-      const key = {} as CryptoKey
+      const key = { algorithm: { name: 'ECDSA', namedCurve: 'P-256' } } as unknown as CryptoKey
       const data = new Uint8Array([1, 2, 3])
       const sig = await signECDSA(key, data)
       expect(mockSubtle.sign).toHaveBeenCalledWith(
@@ -131,7 +131,7 @@ describe('webCrypto', () => {
 
     it('verifies ECDSA signature', async () => {
       mockSubtle.verify.mockResolvedValue(true)
-      const key = {} as CryptoKey
+      const key = { algorithm: { name: 'ECDSA', namedCurve: 'P-256' } } as unknown as CryptoKey
       const data = new Uint8Array([1])
       const sig = new Uint8Array([2])
       const isValid = await verifyECDSA(key, sig, data)

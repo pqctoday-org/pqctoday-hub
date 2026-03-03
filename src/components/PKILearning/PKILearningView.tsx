@@ -51,8 +51,11 @@ const EmailSigningModule = lazyWithRetry(() =>
 const VPNSSHModule = lazyWithRetry(() =>
   import('./modules/VPNSSHModule').then((module) => ({ default: module.VPNSSHModule }))
 )
-const KeyManagementModule = lazyWithRetry(() =>
-  import('./modules/KeyManagement').then((module) => ({ default: module.KeyManagementModule }))
+const KmsPqcModule = lazyWithRetry(() =>
+  import('./modules/KmsPqc').then((module) => ({ default: module.KmsPqcModule }))
+)
+const HsmPqcModule = lazyWithRetry(() =>
+  import('./modules/HsmPqc').then((module) => ({ default: module.HsmPqcModule }))
 )
 const QKDModule = lazyWithRetry(() =>
   import('./modules/QKD').then((module) => ({ default: module.QKDModule }))
@@ -110,6 +113,11 @@ const ComplianceStrategyModule = lazyWithRetry(() =>
     default: module.ComplianceStrategyModule,
   }))
 )
+const DataAssetSensitivityModule = lazyWithRetry(() =>
+  import('./modules/DataAssetSensitivity').then((module) => ({
+    default: module.DataAssetSensitivityModule,
+  }))
+)
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -158,7 +166,8 @@ export const PKILearningView: React.FC = () => {
           <Route path="stateful-signatures" element={<StatefulSignaturesModule />} />
           <Route path="email-signing" element={<EmailSigningModule />} />
           <Route path="vpn-ssh-pqc" element={<VPNSSHModule />} />
-          <Route path="key-management" element={<KeyManagementModule />} />
+          <Route path="kms-pqc" element={<KmsPqcModule />} />
+          <Route path="hsm-pqc" element={<HsmPqcModule />} />
           <Route path="qkd" element={<QKDModule />} />
           <Route path="entropy-randomness" element={<EntropyModule />} />
           <Route path="merkle-tree-certs" element={<MerkleTreeCertsModule />} />
@@ -171,6 +180,7 @@ export const PKILearningView: React.FC = () => {
           <Route path="vendor-risk" element={<VendorRiskModule />} />
           <Route path="migration-program" element={<MigrationProgramModule />} />
           <Route path="compliance-strategy" element={<ComplianceStrategyModule />} />
+          <Route path="data-asset-sensitivity" element={<DataAssetSensitivityModule />} />
         </Routes>
       </Suspense>
     </div>

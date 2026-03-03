@@ -22,6 +22,8 @@ export type QuizCategory =
   | 'stateful-signatures'
   | 'email-signing'
   | 'key-management'
+  | 'kms-pqc'
+  | 'hsm-pqc'
   | 'entropy-randomness'
   | 'merkle-tree-certs'
   | 'qkd'

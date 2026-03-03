@@ -11,12 +11,16 @@ import {
   Route,
   AlertTriangle,
   CheckCircle,
+  Cloud,
+  Shield,
+  Info,
 } from 'lucide-react'
-import { ENTERPRISE_SCENARIO, ROTATION_POLICIES } from '../data/keyManagementConstants'
+import { ENTERPRISE_SCENARIO, ROTATION_POLICIES } from '../data/kmsConstants'
+import { KMS_PROVIDERS, KMS_STATUS_LABELS } from '../data/kmsProviderData'
 
 type MigrationPhase = 'inventory' | 'hybrid' | 'full-pqc'
 
-export const KeyRotationPlanner: React.FC = () => {
+export const KmsRotationPlanner: React.FC = () => {
   const [migrationPhase, setMigrationPhase] = useState<MigrationPhase>('inventory')
 
   const scenario = ENTERPRISE_SCENARIO
@@ -30,7 +34,6 @@ export const KeyRotationPlanner: React.FC = () => {
       0
     )
 
-    // Calculate target storage using counts from currentAlgorithms
     const targetKeys = Object.keys(scenario.targetAlgorithms) as Array<
       keyof typeof scenario.targetAlgorithms
     >
@@ -80,7 +83,7 @@ export const KeyRotationPlanner: React.FC = () => {
       inventory: {
         title: 'Phase 1: Inventory & Assessment',
         description:
-          'Catalog all 500 certificates and 10 HSMs. Identify quantum-vulnerable keys and establish baseline storage/bandwidth metrics.',
+          'Catalog all 500 certificates and 10 HSMs. Identify quantum-vulnerable keys and establish baseline storage/bandwidth metrics. Map KMS provider capabilities.',
         tasks: [
           { name: 'Enumerate all 500 certificates by algorithm type', status: 'done' },
           { name: 'Audit 10 HSM firmware versions for PQC readiness', status: 'done' },
@@ -89,18 +92,25 @@ export const KeyRotationPlanner: React.FC = () => {
             status: 'done',
           },
           { name: 'Identify 400 quantum-vulnerable certificates (RSA + ECDSA)', status: 'done' },
-          { name: 'Map compliance deadlines (CNSA 2.0: 2030, NIST: 2030)', status: 'in-progress' },
+          {
+            name: 'Map KMS provider PQC capabilities (AWS: GA, GCP: Preview, Azure: Planned)',
+            status: 'in-progress',
+          },
+          { name: 'Map compliance deadlines (CNSA 2.0: 2027, NIST: 2030)', status: 'in-progress' },
         ],
       },
       hybrid: {
         title: 'Phase 2: Hybrid Deployment',
         description:
-          'Deploy hybrid (classical + PQC) certificates for TLS, upgrade HSM firmware, begin dual-key management.',
+          'Deploy hybrid (classical + PQC) certificates for TLS, upgrade HSM firmware, configure multi-cloud KMS for dual-key management.',
         tasks: [
           { name: 'Upgrade HSM firmware to PQC-capable version (10 HSMs)', status: 'in-progress' },
+          { name: 'Configure AWS KMS ML-DSA signing keys', status: 'in-progress' },
           { name: 'Issue hybrid TLS certificates (300 servers)', status: 'pending' },
+          { name: 'Enable ML-KEM hybrid TLS for AWS KMS API transit', status: 'pending' },
+          { name: 'Configure GCP Cloud KMS X-Wing hybrid keys (preview)', status: 'pending' },
           { name: 'Generate ML-DSA-65 code signing keys (50 keys)', status: 'pending' },
-          { name: 'Configure KMS for dual-key rotation policies', status: 'pending' },
+          { name: 'Configure KMIP cross-provider key sync', status: 'pending' },
           {
             name:
               'Projected storage: ' +
@@ -115,12 +125,14 @@ export const KeyRotationPlanner: React.FC = () => {
       'full-pqc': {
         title: 'Phase 3: Full PQC Migration',
         description:
-          'Remove classical algorithm dependencies. All certificates use PQC or hybrid algorithms. HSMs operate exclusively with post-quantum mechanisms.',
+          'Remove classical algorithm dependencies. All certificates use PQC or hybrid algorithms. KMS providers operate with PQC key types natively.',
         tasks: [
           { name: 'Revoke all pure-classical TLS certificates', status: 'pending' },
           { name: 'Migrate CA intermediate keys to ML-DSA-87', status: 'pending' },
+          { name: 'Migrate Azure Key Vault to native PQC (target 2029)', status: 'pending' },
           { name: 'Update API authentication to ML-DSA-44 (35 services)', status: 'pending' },
-          { name: 'Verify compliance: ANSSI/BSI hybrid recommendations met', status: 'pending' },
+          { name: 'Enable PQC-only wrapping across all KMS providers', status: 'pending' },
+          { name: 'Verify compliance: CNSA 2.0 + ANSSI/BSI requirements met', status: 'pending' },
           { name: 'Decommission classical-only HSM partitions', status: 'pending' },
         ],
       },
@@ -133,11 +145,11 @@ export const KeyRotationPlanner: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-bold text-foreground mb-2">Key Rotation Planner</h3>
+        <h3 className="text-lg font-bold text-foreground mb-2">KMS Rotation Planner</h3>
         <p className="text-sm text-muted-foreground">
           Plan PQC key rotation for <strong>{scenario.name}</strong> &mdash; a fictional financial
           services enterprise with {scenario.totalCertificates} certificates across{' '}
-          {scenario.hsmCount} HSMs.
+          {scenario.hsmCount} HSMs and multiple cloud KMS providers.
         </p>
       </div>
 
@@ -342,6 +354,83 @@ export const KeyRotationPlanner: React.FC = () => {
           Bandwidth increase calculated from public key size deltas during certificate distribution.
           Actual TLS handshake overhead is higher due to signature sizes in certificate chains.
         </p>
+      </div>
+
+      {/* Provider-Specific Rotation */}
+      <div className="glass-panel p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Cloud size={16} className="text-primary" />
+          <h4 className="text-sm font-bold text-foreground">
+            Provider-Specific Rotation Capabilities
+          </h4>
+        </div>
+        <div className="space-y-3">
+          {scenario.kmsProviders.map((provider) => {
+            // Find matching full provider data
+            const fullProvider = KMS_PROVIDERS.find((p) => p.id === provider.id)
+            const status = fullProvider ? KMS_STATUS_LABELS[fullProvider.pqcStatus] : null
+
+            return (
+              <div key={provider.id} className="bg-muted/50 rounded-lg p-4 border border-border">
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <Shield size={14} className="text-primary" />
+                  <span className="text-sm font-bold text-foreground">{provider.name}</span>
+                  {status && (
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded border font-bold ${status.className}`}
+                    >
+                      {status.label}
+                    </span>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <div className="text-[10px] font-bold text-foreground mb-1">Auto-Rotation</div>
+                    <p className="text-xs text-muted-foreground">{provider.rotationFeature}</p>
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-foreground mb-1">PQC Capability</div>
+                    <p className="text-xs text-muted-foreground">{provider.pqcCapability}</p>
+                  </div>
+                </div>
+                {fullProvider && (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {fullProvider.pqcAlgorithms.kem.map((a) => (
+                      <span
+                        key={a.name}
+                        className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20"
+                      >
+                        {a.name}
+                      </span>
+                    ))}
+                    {fullProvider.pqcAlgorithms.sign.map((a) => (
+                      <span
+                        key={a.name}
+                        className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary border border-secondary/20"
+                      >
+                        {a.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* KMIP note */}
+        <div className="bg-muted/50 rounded-lg p-4 border border-border mt-4">
+          <div className="flex items-start gap-2">
+            <Info size={14} className="text-primary shrink-0 mt-0.5" />
+            <p className="text-xs text-foreground/80">
+              <strong>KMIP Cross-Provider Rotation:</strong> For enterprises using multiple KMS
+              providers, KMIP (Key Management Interoperability Protocol) enables centralized
+              rotation scheduling. Thales CipherTrust and HashiCorp Vault both support KMIP server
+              mode, allowing a single rotation policy to propagate across AWS, GCP, and Azure
+              through a unified control plane.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Compliance Deadlines */}

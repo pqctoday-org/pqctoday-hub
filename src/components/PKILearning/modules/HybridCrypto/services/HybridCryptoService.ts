@@ -413,6 +413,136 @@ export class HybridCryptoService {
     }
   }
 
+  async generateCACert(
+    algorithm: string,
+    label: string
+  ): Promise<CertResult & { keyFileData?: { name: string; data: Uint8Array } }> {
+    const start = performance.now()
+    const prefix = algorithm === 'EC' ? 'ca_ec' : 'ca_pqc'
+    try {
+      const keyResult = await this.generateKey(algorithm, `${prefix}_key.pem`)
+      if (keyResult.error || !keyResult.fileData) {
+        return {
+          pem: '',
+          parsed: '',
+          timingMs: performance.now() - start,
+          error: keyResult.error || 'CA key generation failed',
+        }
+      }
+
+      const subj = `/CN=${label} Root CA/O=PQC Today/OU=Hybrid Certificate Sandbox`
+      const certResult = await openSSLService.execute(
+        `openssl req -new -x509 -key ${prefix}_key.pem -out ${prefix}_cert.pem -days 365 -subj "${subj}"`,
+        [keyResult.fileData]
+      )
+      if (certResult.error) {
+        return { pem: '', parsed: '', timingMs: performance.now() - start, error: certResult.error }
+      }
+
+      const certFileData = certResult.files.find((f) => f.name === `${prefix}_cert.pem`)
+      const pem = certFileData ? new TextDecoder().decode(certFileData.data) : ''
+
+      const parsedResult = await openSSLService.execute(
+        `openssl x509 -in ${prefix}_cert.pem -text -noout`,
+        certFileData ? [{ name: `${prefix}_cert.pem`, data: certFileData.data }] : []
+      )
+
+      return {
+        pem,
+        parsed: parsedResult.stdout || parsedResult.stderr || '',
+        timingMs: performance.now() - start,
+        keyFileData: keyResult.fileData,
+      }
+    } catch (e) {
+      return {
+        pem: '',
+        parsed: '',
+        timingMs: performance.now() - start,
+        error: e instanceof Error ? e.message : 'CA certificate generation failed',
+      }
+    }
+  }
+
+  async generateRelatedCertPair(): Promise<{
+    classical: CertResult
+    pqc: CertResult
+    bindingHash: string
+    totalMs: number
+    error?: string
+  }> {
+    const start = performance.now()
+    const empty: CertResult = { pem: '', parsed: '', timingMs: 0 }
+    try {
+      // Generate classical cert
+      const ecKey = await this.generateKey('EC', 'rel_ec_key.pem')
+      if (ecKey.error || !ecKey.fileData) {
+        return {
+          classical: empty,
+          pqc: empty,
+          bindingHash: '',
+          totalMs: performance.now() - start,
+          error: ecKey.error,
+        }
+      }
+      const ecCert = await this.generateSelfSignedCert(
+        'rel_ec_key.pem',
+        'rel_ec_cert.pem',
+        '/CN=Related Cert A (Classical)/O=PQC Today/OU=Hybrid Certificate Sandbox',
+        ecKey.fileData
+      )
+
+      // Generate PQC cert
+      const pqcKey = await this.generateKey('ML-DSA-65', 'rel_pqc_key.pem')
+      if (pqcKey.error || !pqcKey.fileData) {
+        return {
+          classical: empty,
+          pqc: empty,
+          bindingHash: '',
+          totalMs: performance.now() - start,
+          error: pqcKey.error,
+        }
+      }
+      const pqcCert = await this.generateSelfSignedCert(
+        'rel_pqc_key.pem',
+        'rel_pqc_cert.pem',
+        '/CN=Related Cert B (PQC)/O=PQC Today/OU=Hybrid Certificate Sandbox',
+        pqcKey.fileData
+      )
+
+      if (ecCert.error || pqcCert.error) {
+        return {
+          classical: ecCert,
+          pqc: pqcCert,
+          bindingHash: '',
+          totalMs: performance.now() - start,
+          error: ecCert.error || pqcCert.error,
+        }
+      }
+
+      // Simulate binding hash: SHA-256 of the partner cert PEM
+      const encoder = new TextEncoder()
+      const pqcHash = await crypto.subtle.digest('SHA-256', encoder.encode(pqcCert.pem))
+      const bindingHash = Array.from(new Uint8Array(pqcHash))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join(':')
+
+      return {
+        classical: ecCert,
+        pqc: pqcCert,
+        bindingHash,
+        totalMs: performance.now() - start,
+      }
+    } catch (e) {
+      return {
+        classical: empty,
+        pqc: empty,
+        bindingHash: '',
+        totalMs: performance.now() - start,
+        error: e instanceof Error ? e.message : 'Related cert pair generation failed',
+      }
+    }
+  }
+
   async generateSelfSignedCert(
     keyFile: string,
     certFile: string,
