@@ -52,8 +52,18 @@ export interface SettingsContextType {
     | 'acvp'
     | 'symmetric'
     | 'hashing'
+    | 'softhsm'
   setActiveTab: (
-    tab: 'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'acvp' | 'symmetric' | 'hashing'
+    tab:
+      | 'data'
+      | 'kem_ops'
+      | 'sign_verify'
+      | 'keystore'
+      | 'logs'
+      | 'acvp'
+      | 'symmetric'
+      | 'hashing'
+      | 'softhsm'
   ) => void
   loading: boolean
   setLoading: (loading: boolean) => void

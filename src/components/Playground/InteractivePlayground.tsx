@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   AlertCircle,
   Hash,
+  Shield,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { PlaygroundProvider } from './PlaygroundProvider'
@@ -23,6 +24,7 @@ import { HashingTab } from './tabs/HashingTab'
 import { SignVerifyTab } from './tabs/SignVerifyTab'
 import { KeyStoreTab } from './tabs/KeyStoreTab'
 import { LogsTab } from './tabs/LogsTab'
+import { SoftHsmTab } from './tabs/SoftHsmTab'
 import { logEvent } from '../../utils/analytics'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
@@ -182,6 +184,19 @@ const PlaygroundContent = () => {
         >
           <FileText size={16} className="mr-2" /> Logs
         </Button>
+        <Button
+          onClick={() => handleTabChange('softhsm')}
+          variant="ghost"
+          size="sm"
+          className={clsx(
+            'whitespace-nowrap',
+            activeTab === 'softhsm'
+              ? 'bg-primary/20 text-primary shadow-sm'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+          )}
+        >
+          <Shield size={16} className="mr-2" /> PKCS#11
+        </Button>
       </div>
 
       {/* Content Area */}
@@ -198,6 +213,7 @@ const PlaygroundContent = () => {
             <ACVPTesting keyStore={keyStore} setKeyStore={setKeyStore} />
           </div>
         )}
+        {activeTab === 'softhsm' && <SoftHsmTab />}
       </div>
 
       {error && (
