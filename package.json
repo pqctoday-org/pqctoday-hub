@@ -15,12 +15,12 @@
     "**/*.{json,md,css,html}": "prettier --write"
   },
   "scripts": {
-    "predev": "cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/",
+    "predev": "cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/ || true)",
     "dev": "vite",
     "scrape": "npx tsx scripts/scrape-compliance.ts",
     "generate-corpus": "npx tsx scripts/generate-rag-corpus.ts",
     "prebuild": "npm run scrape && npm run generate-corpus",
-    "build": "cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/ && tsc -b && vite build && cp dist/index.html dist/404.html && node scripts/prerender.mjs",
+    "build": "cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/ || true) && tsc -b && vite build && cp dist/index.html dist/404.html && node scripts/prerender.mjs",
     "prerender": "node scripts/prerender.mjs",
     "lint": "eslint src scripts e2e *.ts *.js *.cjs",
     "preview": "vite preview",
