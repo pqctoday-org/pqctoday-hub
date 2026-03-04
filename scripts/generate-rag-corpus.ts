@@ -220,6 +220,9 @@ function processLibrary(): RAGChunk[] {
   const rows = readCSV(file)
   const chunks: RAGChunk[] = []
 
+  // Load merged enrichment fields once for all library documents
+  const enrichLookup = loadEnrichmentFields('library')
+
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i]
     if (row.length < 17) continue
@@ -244,7 +247,7 @@ function processLibrary(): RAGChunk[] {
       migrationUrgency,
     ] = row
 
-    const content = [
+    const contentLines = [
       `Reference: ${sanitize(refId)}`,
       `Title: ${sanitize(title)}`,
       `Description: ${sanitize(description)}`,
@@ -256,13 +259,40 @@ function processLibrary(): RAGChunk[] {
       `Industries: ${sanitize(industries)}`,
       `Region: ${sanitize(regionScope)}`,
       `Published: ${sanitize(pubDate)} | Updated: ${sanitize(updateDate)}`,
-    ].join('\n')
+    ]
+
+    // Augment with LLM-extracted enrichment dimensions when available
+    const enrich = enrichLookup.get(refId) ?? enrichLookup.get(sanitize(refId))
+    if (enrich) {
+      const skip = new Set(['None detected', 'Not specified', 'See document for details.'])
+      const enrichLines: string[] = []
+      const enrichFieldOrder: [string, string][] = [
+        ['Main Topic', 'Main Topic'],
+        ['PQC Algorithms Covered', 'PQC Algorithms'],
+        ['Quantum Threats Addressed', 'Quantum Threats'],
+        ['Protocols Covered', 'Protocols'],
+        ['Infrastructure Layers', 'Infrastructure Layers'],
+        ['Standardization Bodies', 'Standardization Bodies'],
+        ['Compliance Frameworks Referenced', 'Compliance Frameworks'],
+        ['Migration Timeline Info', 'Migration Timeline'],
+        ['Applicable Regions / Bodies', 'Regions / Bodies'],
+        ['PQC Products Mentioned', 'PQC Products'],
+        ['Leaders Contributions Mentioned', 'Leaders'],
+      ]
+      for (const [mdKey, label] of enrichFieldOrder) {
+        const val = enrich[mdKey]
+        if (val && !skip.has(val)) enrichLines.push(`${label}: ${val}`)
+      }
+      if (enrichLines.length > 0) {
+        contentLines.push('', ...enrichLines)
+      }
+    }
 
     chunks.push({
       id: `library-${sanitize(refId) || i}`,
       source: 'library',
       title: sanitize(title),
-      content,
+      content: contentLines.join('\n'),
       category: sanitize(docType),
       metadata: {
         referenceId: sanitize(refId),
@@ -1660,6 +1690,53 @@ function processCertificationXref(): RAGChunk[] {
 // Document enrichments — extracted dimensions from public/ HTML/PDF files
 // ---------------------------------------------------------------------------
 
+/**
+ * Load and merge all enrichment markdown files for a given collection
+ * (library / timeline / threats). Returns a Map<refId, parsed fields>.
+ * Files are sorted oldest → newest so later dates overwrite duplicates.
+ */
+function loadEnrichmentFields(collection: string): Map<string, Record<string, string>> {
+  const enrichmentsDir = path.join(DATA_DIR, 'doc-enrichments')
+  if (!fs.existsSync(enrichmentsDir)) return new Map()
+
+  const prefix = `${collection}_doc_enrichments_`
+  const files = fs
+    .readdirSync(enrichmentsDir)
+    .filter((f) => f.startsWith(prefix) && f.endsWith('.md'))
+  if (files.length === 0) return new Map()
+
+  const withDates = files.map((f) => {
+    const match = f.match(/(\d{2})(\d{2})(\d{4})(_r(\d+))?\.md$/)
+    if (!match) return { file: f, date: 0, rev: 0 }
+    const [, mm, dd, yyyy, , rev] = match
+    return { file: f, date: parseInt(yyyy + mm + dd), rev: rev ? parseInt(rev) : 0 }
+  })
+  withDates.sort((a, b) => a.date - b.date || a.rev - b.rev)
+
+  const mergedSections = new Map<string, string>()
+  for (const { file } of withDates) {
+    const raw = fs.readFileSync(path.join(enrichmentsDir, file), 'utf-8')
+    for (const section of raw.split(/\n(?=## )/).filter((s) => s.trimStart().startsWith('## '))) {
+      const refId = section
+        .split('\n')[0]
+        .replace(/^##\s*/, '')
+        .trim()
+      if (refId && refId !== '---') mergedSections.set(refId, section)
+    }
+  }
+
+  const result = new Map<string, Record<string, string>>()
+  for (const [refId, section] of mergedSections) {
+    const fields: Record<string, string> = {}
+    for (const line of section.split('\n').slice(1)) {
+      const m = line.match(/^-\s+\*\*([^*]+)\*\*:\s*(.+)$/)
+      if (m) fields[m[1].trim()] = m[2].trim()
+    }
+    result.set(refId, fields)
+  }
+  return result
+}
+
 function processDocumentEnrichments(): RAGChunk[] {
   const enrichmentsDir = path.join(DATA_DIR, 'doc-enrichments')
   if (!fs.existsSync(enrichmentsDir)) return []
@@ -1668,47 +1745,10 @@ function processDocumentEnrichments(): RAGChunk[] {
   const collections = ['library', 'timeline', 'threats'] as const
 
   for (const collection of collections) {
-    const prefix = `${collection}_doc_enrichments_`
-    const files = fs
-      .readdirSync(enrichmentsDir)
-      .filter((f) => f.startsWith(prefix) && f.endsWith('.md'))
-    if (files.length === 0) continue
+    const enrichLookup = loadEnrichmentFields(collection)
+    if (enrichLookup.size === 0) continue
 
-    // Sort oldest → newest; merge all files so no enrichments are lost across runs
-    const withDates = files.map((f) => {
-      const match = f.match(/(\d{2})(\d{2})(\d{4})(_r(\d+))?\.md$/)
-      if (!match) return { file: f, date: 0, rev: 0 }
-      const [, mm, dd, yyyy, , rev] = match
-      return { file: f, date: parseInt(yyyy + mm + dd), rev: rev ? parseInt(rev) : 0 }
-    })
-    withDates.sort((a, b) => a.date - b.date || a.rev - b.rev)
-
-    // Merge sections from all files — later dates overwrite earlier for duplicate IDs
-    const mergedSections = new Map<string, string>()
-    for (const { file } of withDates) {
-      const raw = fs.readFileSync(path.join(enrichmentsDir, file), 'utf-8')
-      for (const section of raw.split(/\n(?=## )/).filter((s) => s.trimStart().startsWith('## '))) {
-        const refId = section
-          .split('\n')[0]
-          .replace(/^##\s*/, '')
-          .trim()
-        if (refId && refId !== '---') mergedSections.set(refId, section)
-      }
-    }
-    const sections = Array.from(mergedSections.values())
-
-    for (const section of sections) {
-      const lines = section.split('\n')
-      const refId = lines[0].replace(/^##\s*/, '').trim()
-      if (!refId || refId === '---') continue
-
-      // Parse bullet fields: - **Field**: value
-      const fields: Record<string, string> = {}
-      for (const line of lines.slice(1)) {
-        const m = line.match(/^-\s+\*\*([^*]+)\*\*:\s*(.+)$/)
-        if (m) fields[m[1].trim()] = m[2].trim()
-      }
-
+    for (const [refId, fields] of enrichLookup) {
       const title = fields['Title'] || refId
       if (title === '---') continue
 
