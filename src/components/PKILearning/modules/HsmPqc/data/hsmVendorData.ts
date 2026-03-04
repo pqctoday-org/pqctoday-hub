@@ -142,7 +142,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     supportedPQCAlgorithms: ['ML-DSA-65 (preview)'],
     formFactor: 'cloud',
     notes:
-      'Dedicated managed HSM. ML-DSA key pair generation and signing in preview. Built on AWS-LC — first open-source FIPS 140-3 validated module with ML-KEM. Native PKCS#11 PQC mechanisms not yet in firmware. Multi-AZ redundancy.',
+      'Dedicated managed HSM. ML-DSA key pair generation and signing in preview. Built on AWS-LC, a FIPS 140-3 validated open-source library with ML-KEM and ML-DSA support. Native PKCS#11 PQC mechanisms not yet in firmware. Multi-AZ redundancy.',
     firmwareVersion: 'SDK-dependent',
     pkcs11Version: '2.40 (PQC via SDK)',
     hybridSupport: false,
@@ -244,46 +244,49 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
   {
     id: 'wrap-key',
     step: 3,
-    name: 'Wrap Session Key (Encapsulate)',
-    command: `C_WrapKey(
+    name: 'Encapsulate: Derive Session Key',
+    command: `C_EncapsulateKey(
   hSession,
-  &mechanism,     // CKM_ML_KEM_ENCAPSULATE
-  hPublicKey,     // Wrapping key (ML-KEM public)
-  hSessionKey,    // Key to wrap (AES-256 session key)
-  wrappedKey,     // Output: ciphertext (1,088 bytes)
-  &wrappedKeyLen
+  &mechanism,         // CKM_ML_KEM
+  hPublicKey,         // ML-KEM public key (encapsulation key)
+  sessionTemplate,    // CKA_CLASS=SECRET_KEY, CKA_KEY_TYPE=AES
+  ulAttributeCount,
+  &hSharedSecretKey,  // Handle to new AES key derived from shared secret
+  ciphertext,         // Output: KEM ciphertext (1,088 bytes)
+  &ciphertextLen
 )`,
-    description: 'Use ML-KEM encapsulation to wrap an AES-256 session key.',
+    description: 'Use ML-KEM encapsulation to derive a shared AES session key.',
     detail:
-      'Unlike RSA-OAEP which directly wraps the key, ML-KEM is a two-step process: encapsulation produces a ciphertext and a 32-byte shared secret, then the shared secret is used as a KEK to wrap the session key. PKCS#11 C_WrapKey abstracts both steps. The 1,088-byte ciphertext is sent to the private key holder.',
+      'PKCS#11 v3.2 adds C_EncapsulateKey specifically for KEM operations. Unlike C_WrapKey (which wraps an existing key), C_EncapsulateKey derives a NEW key object from the KEM shared secret and simultaneously outputs the KEM ciphertext. The 1,088-byte ciphertext is sent to the private key holder; the derived AES key stays inside the HSM.',
     output: `CKR_OK
-  Wrapped Key Length: 1,088 bytes
-  Mechanism:         CKM_ML_KEM_ENCAPSULATE
-  KEM Ciphertext:    1,088 bytes
-  Shared Secret:     32 bytes (internal)`,
+  Derived Key Handle: 0x00000044 (AES-256)
+  Mechanism:          CKM_ML_KEM
+  KEM Ciphertext:     1,088 bytes
+  Shared Secret:      32 bytes (derived → AES key, stays in HSM)`,
     classicalEquivalent: 'CKM_RSA_PKCS_OAEP → 256-byte ciphertext (direct encryption)',
     vendorNotes: {
-      onPrem: 'Thales/Entrust: native CKM_ML_KEM_ENCAPSULATE. Utimaco: via Q-safe extension',
+      onPrem:
+        'Thales/Entrust: native CKM_ML_KEM via C_EncapsulateKey. Utimaco: via Q-safe extension',
       cloud: 'No cloud HSM supports native PKCS#11 KEM encapsulation yet',
     },
   },
   {
     id: 'unwrap-key',
     step: 4,
-    name: 'Unwrap Session Key (Decapsulate)',
-    command: `C_UnwrapKey(
+    name: 'Decapsulate: Recover Session Key',
+    command: `C_DecapsulateKey(
   hSession,
-  &mechanism,      // CKM_ML_KEM_DECAPSULATE
-  hPrivateKey,     // Unwrapping key (ML-KEM private)
-  wrappedKey,      // Input: ciphertext from step 3
-  wrappedKeyLen,
-  sessionTemplate, // CKA_CLASS=SECRET_KEY, CKA_KEY_TYPE=AES
-  4,
-  &hRecoveredKey
+  &mechanism,         // CKM_ML_KEM
+  hPrivateKey,        // ML-KEM private key (decapsulation key)
+  sessionTemplate,    // CKA_CLASS=SECRET_KEY, CKA_KEY_TYPE=AES
+  ulAttributeCount,
+  ciphertext,         // Input: KEM ciphertext from step 3
+  ciphertextLen,
+  &hRecoveredKey      // Handle to recovered AES key
 )`,
     description: 'Decapsulate to recover the AES-256 session key.',
     detail:
-      'The private key performs ML-KEM decapsulation inside the HSM boundary. The shared secret is derived, then used to unwrap the session key. The private key handle references a non-extractable object, so the decapsulation operation happens entirely within the HSM.',
+      'PKCS#11 v3.2 C_DecapsulateKey takes the KEM ciphertext, runs ML-KEM decapsulation inside the HSM boundary using the non-extractable private key, and materialises the recovered shared secret as a new key object. The decapsulation happens entirely within the HSM — the shared secret is never exposed.',
     output: `CKR_OK
   Recovered Key Handle: 0x00000044
   Key Type:            CKK_AES
@@ -315,7 +318,7 @@ export const HSM_PKCS11_OPERATIONS: PKCS11Operation[] = [
   Signature Length: 3,309 bytes
   Algorithm:       ML-DSA-65
   NIST Level:      3
-  Hedged Signing:  YES (rnd ≠ 0, per FIPS 204 §3.5.2)
+  Hedged Signing:  YES (rnd ≠ 0, per FIPS 204 §5.2)
   Note:            Hedged mode recommended for side-channel protection`,
     classicalEquivalent: 'CKM_ECDSA with P-256 → 64-byte signature (51x smaller)',
     vendorNotes: {
@@ -369,7 +372,7 @@ C_GenerateKeyPair(hSession,
 // Link via CKA_ID attribute (same ID for both pairs)`,
     description: 'Generate a linked classical + PQC key pair for hybrid operations.',
     detail:
-      'Hybrid keys require two key pairs with the same CKA_ID attribute to link them logically. Applications perform both classical and PQC operations and combine the results. PKCS#11 v3.2 does not yet define a single composite key type — vendors use linked pairs. The Composite ML-DSA draft (FIPS 206) may standardize this.',
+      'Hybrid keys require two key pairs with the same CKA_ID attribute to link them logically. Applications perform both classical and PQC operations and combine the results. PKCS#11 v3.2 does not yet define a single composite key type — vendors use linked pairs. IETF composite signature drafts (draft-ounsworth-pq-composite-sigs) may standardize this.',
     output: `CKR_OK
   EC Public Key:     0x00000050 (65 bytes, P-256)
   EC Private Key:    0x00000051

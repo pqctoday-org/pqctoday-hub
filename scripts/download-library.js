@@ -114,14 +114,16 @@ function serializeCSV(headers, rows) {
 
 // ─── Find the latest library CSV ─────────────────────────────────────────────
 function findLatestLibraryCSV() {
-  const files = readdirSync(DATA_DIR).filter((f) => /^library_\d{8}\.csv$/.test(f))
+  const files = readdirSync(DATA_DIR).filter((f) => /^library_\d{8}(_r\d+)?\.csv$/.test(f))
   if (files.length === 0) throw new Error('No library_MMDDYYYY.csv found in src/data/')
   files.sort((a, b) => {
     const parse = (name) => {
-      const m = name.match(/library_(\d{2})(\d{2})(\d{4})\.csv$/)
-      return new Date(`${m[3]}-${m[1]}-${m[2]}`)
+      const m = name.match(/library_(\d{2})(\d{2})(\d{4})(_r(\d+))?\.csv$/)
+      return { date: new Date(`${m[3]}-${m[1]}-${m[2]}`), rev: m[5] ? parseInt(m[5], 10) : 0 }
     }
-    return parse(b) - parse(a)
+    const pa = parse(a)
+    const pb = parse(b)
+    return pb.date - pa.date || pb.rev - pa.rev
   })
   return join(DATA_DIR, files[0])
 }

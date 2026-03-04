@@ -179,7 +179,8 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             </table>
           </div>
           <p className="text-[10px] text-muted-foreground mt-2">
-            PQC public keys are 4&ndash;8x larger than classical equivalents, impacting HSM storage,
+            PQC keys are significantly larger than classical equivalents &mdash; 4&ndash;10&times;
+            vs RSA baselines, and up to 40&times; vs ECDSA P-256 &mdash; impacting HSM storage,
             certificate sizes, and network bandwidth during key distribution.
           </p>
         </div>

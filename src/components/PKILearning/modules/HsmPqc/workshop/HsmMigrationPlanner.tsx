@@ -77,7 +77,7 @@ const VALIDATION_CHECKLIST: ChecklistItem[] = [
   { id: 'key-zeroization', label: 'Key zeroization on tamper detection verified', required: true },
   {
     id: 'pkcs11-compliance',
-    label: 'PKCS#11 v3.0+ PQC mechanism compliance tested',
+    label: 'PKCS#11 v3.2+ PQC mechanism compliance tested (C_EncapsulateKey/C_DecapsulateKey)',
     required: true,
   },
   {

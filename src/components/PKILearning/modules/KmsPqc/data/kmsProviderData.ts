@@ -51,14 +51,14 @@ aws kms sign \\
   --message fileb://data.bin \\
   --message-type RAW`,
     notes:
-      'Industry-leading PQC KMS: ML-DSA signing GA across all regions. ML-KEM hybrid TLS protects data in transit to KMS, ACM, and Secrets Manager. Built on AWS-LC (first FIPS 140-3 validated module with ML-KEM). No PQC BYOK yet.',
+      'Industry-leading PQC KMS: ML-DSA signing GA across all regions. ML-KEM hybrid TLS protects data in transit to KMS, ACM, and Secrets Manager. Built on AWS-LC, a FIPS 140-3 validated open-source library with ML-KEM and ML-DSA support. No PQC BYOK yet.',
   },
   {
     id: 'gcp-kms',
     name: 'Google Cloud',
     product: 'Cloud KMS',
     type: 'cloud',
-    pqcStatus: 'ga',
+    pqcStatus: 'preview',
     pqcAlgorithms: {
       kem: [
         { name: 'ML-KEM-768', status: 'GA' },
@@ -167,7 +167,7 @@ vault write transit/sign/my-pqc-key \\
       'BYOK/HYOK across AWS/Azure/GCP. Centralized key lifecycle management with Luna HSM as root of trust. ML-KEM TLS for Google Workspace CSE (GA v2.22.0+).',
     autoRotation: true,
     kmipSupport: true,
-    fipsLevel: 'FIPS 140-2 Level 2 (via Luna HSM)',
+    fipsLevel: 'FIPS 140-3 Level 3 (via Luna Network HSM 7)',
     hybridSupport: true,
     apiPattern: `# Thales CipherTrust — multi-cloud key management
 # Key creation with Luna HSM backing

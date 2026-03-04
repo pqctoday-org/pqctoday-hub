@@ -60,7 +60,7 @@ export const KEY_HIERARCHY_LEVELS: KeyHierarchyLevel[] = [
       'Top-level master key stored in HSM. Wraps zone KEKs. Rotated infrequently (5-15 years). Must be the most secure key in the hierarchy.',
     classicalAlgorithm: 'RSA-4096 or AES-256-KW',
     pqcAlgorithm: 'ML-KEM-1024 + HKDF-SHA-256',
-    hybridAlgorithm: 'X25519 + ML-KEM-1024 → HKDF combiner',
+    hybridAlgorithm: 'RSA-4096 + ML-KEM-1024 → HKDF combiner',
     rotationInterval: '5-15 years',
   },
   {
@@ -394,7 +394,7 @@ export const ENTERPRISE_SCENARIO = {
       id: 'gcp-kms',
       name: 'Google Cloud KMS',
       rotationFeature: 'Key versioning with scheduled rotation',
-      pqcCapability: 'ML-KEM-768/1024 preview, X-Wing hybrid, ML-DSA preview',
+      pqcCapability: 'ML-KEM-768/1024 GA, X-Wing GA, ML-DSA preview',
     },
     {
       id: 'azure-kv',
@@ -453,7 +453,7 @@ export const KMIP_OPERATIONS: KmipOperation[] = [
     id: 'create',
     name: 'Create',
     description:
-      'Create a new PQC key object. KMIP 2.1+ supports ML-KEM and ML-DSA via the CryptographicAlgorithm enumeration.',
+      'Create a new PQC key pair. ML-KEM is asymmetric — KMIP 2.1 uses CreateKeyPair with separate public/private key templates. ML-DSA likewise uses CreateKeyPair.',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
@@ -462,23 +462,34 @@ export const KMIP_OPERATIONS: KmipOperation[] = [
     <BatchCount>1</BatchCount>
   </RequestHeader>
   <BatchItem>
-    <Operation>Create</Operation>
+    <Operation>CreateKeyPair</Operation>
     <RequestPayload>
-      <ObjectType>SymmetricKey</ObjectType>
-      <TemplateAttribute>
+      <CommonTemplateAttribute>
         <Attribute>
           <AttributeName>Cryptographic Algorithm</AttributeName>
           <AttributeValue>ML-KEM-768</AttributeValue>
         </Attribute>
+      </CommonTemplateAttribute>
+      <PrivateKeyTemplateAttribute>
         <Attribute>
           <AttributeName>Cryptographic Usage Mask</AttributeName>
-          <AttributeValue>Encrypt Decrypt</AttributeValue>
+          <AttributeValue>Decrypt</AttributeValue>
         </Attribute>
         <Attribute>
           <AttributeName>Name</AttributeName>
-          <AttributeValue>pqc-root-kek-001</AttributeValue>
+          <AttributeValue>pqc-root-kek-001-priv</AttributeValue>
         </Attribute>
-      </TemplateAttribute>
+      </PrivateKeyTemplateAttribute>
+      <PublicKeyTemplateAttribute>
+        <Attribute>
+          <AttributeName>Cryptographic Usage Mask</AttributeName>
+          <AttributeValue>Encrypt</AttributeValue>
+        </Attribute>
+        <Attribute>
+          <AttributeName>Name</AttributeName>
+          <AttributeValue>pqc-root-kek-001-pub</AttributeValue>
+        </Attribute>
+      </PublicKeyTemplateAttribute>
     </RequestPayload>
   </BatchItem>
 </RequestMessage>`,
@@ -490,13 +501,15 @@ export const KMIP_OPERATIONS: KmipOperation[] = [
     <BatchCount>1</BatchCount>
   </ResponseHeader>
   <BatchItem>
-    <Operation>Create</Operation>
+    <Operation>CreateKeyPair</Operation>
     <ResultStatus>Success</ResultStatus>
     <ResponsePayload>
-      <ObjectType>SymmetricKey</ObjectType>
-      <UniqueIdentifier>
+      <PrivateKeyUniqueIdentifier>
         a3b2c1d4-e5f6-7890-abcd-ef1234567890
-      </UniqueIdentifier>
+      </PrivateKeyUniqueIdentifier>
+      <PublicKeyUniqueIdentifier>
+        b4c3d2e5-f6a7-8901-bcde-f12345678901
+      </PublicKeyUniqueIdentifier>
     </ResponsePayload>
   </BatchItem>
 </ResponseMessage>`,
@@ -1093,7 +1106,7 @@ export const KMIP_SYNC_SCENARIO: KmipSyncStep[] = [
     orchestrator: 'Thales CipherTrust',
     targets: ['Primary HSM', 'AWS KMS', 'Google Cloud KMS'],
     kmipSnippet:
-      '<Operation>Create</Operation>\n<CryptographicAlgorithm>ML-KEM-768</CryptographicAlgorithm>',
+      '<Operation>CreateKeyPair</Operation>\n<CryptographicAlgorithm>ML-KEM-768</CryptographicAlgorithm>',
     statuses: { 'Primary HSM': 'success', 'AWS KMS': 'pending', 'Google Cloud KMS': 'pending' },
   },
   {

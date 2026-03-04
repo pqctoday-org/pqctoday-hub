@@ -4,6 +4,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.17.0] - 2026-03-04
+
+### Added
+
+- **PQC-101 Step 5 — Persona profile card** (`PQC101Module.tsx`): The "Next Steps" step now displays the user's saved persona profile (Role, Level, Region, Industry) sourced from `usePersonaStore`, with an "Update profile" / "Set profile" CTA that deep-links to `/?scroll=persona`. If no profile is set, a prompt to set one is shown. [view:/learn/pqc-101]
+
+- **Landing page `?scroll=persona` deep-link** (`PersonalizationSection.tsx`): Visiting `/?scroll=persona` automatically expands the personalization section and smooth-scrolls to the persona heading. The query param is stripped from the URL after navigation. [view:/]
+
+- **Library — NIST CSWP 48** (`library_03032026_r5.csv`): _Mappings of Migration to Post-Quantum Cryptography Project Capabilities to Risk Framework Documents_ (Initial Public Draft, Sep 2025). Maps PQC migration activities to NIST CSF, SP 800-53, and NIST RMF. [view:/library]
+
+- **Compliance — NCSC-CH & NCSC-NL** (`compliance_03042026.csv`): Swiss and Dutch national cybersecurity centre PQC migration guidance now listed as compliance frameworks. [view:/compliance]
+
+### Fixed
+
+- **KMS module — KMIP `CreateKeyPair` correction** (`kmsConstants.ts`): ML-KEM and ML-DSA are asymmetric — KMIP 2.1 requires `CreateKeyPair` with separate `PrivateKeyTemplateAttribute` / `PublicKeyTemplateAttribute`, not `Create` with `SymmetricKey`. XML examples, response payload, and sync scenario snippet all updated.
+
+- **KMS module — data accuracy** (`kmsConstants.ts`, `kmsProviderData.ts`):
+  - Root KEK hybrid algorithm: `X25519 + ML-KEM-1024` → `RSA-4096 + ML-KEM-1024` (X25519 is ECDH, not a root-of-trust KEK mechanism)
+  - GCP Cloud KMS PQC status: `GA` → `preview` (ML-KEM/X-Wing not yet GA as of March 2026)
+  - Thales CipherTrust FIPS level: `FIPS 140-2 Level 2` → `FIPS 140-3 Level 3` (via Luna Network HSM 7)
+  - Key size footnote: `4–8× larger` → `4–10× vs RSA baselines, up to 40× vs ECDSA P-256`
+  - AWS-LC description: removed inaccurate "first open-source" superlative; now "FIPS 140-3 validated open-source library with ML-KEM and ML-DSA support"
+
+- **HSM module — PKCS#11 v3.2 C_EncapsulateKey / C_DecapsulateKey** (`hsmVendorData.ts`): Replace `C_WrapKey` / `C_UnwrapKey` with the correct PKCS#11 v3.2 KEM-specific functions. Updated argument signatures, descriptions, and output blocks to reflect that `C_EncapsulateKey` derives a new key object (rather than wrapping an existing one) and that the shared secret never leaves the HSM boundary.
+
+- **HSM module — FIPS 204 section reference** (`hsmVendorData.ts`, `HsmPqcIntroduction.tsx`): Hedged signing section corrected from `§3.5.2` → `§5.2` to match the published FIPS 204 standard.
+
+- **HSM migration planner checklist** (`HsmMigrationPlanner.tsx`): Updated checklist item from `PKCS#11 v3.0+` to `PKCS#11 v3.2+` and called out `C_EncapsulateKey`/`C_DecapsulateKey` explicitly.
+
+- **Compliance CSV accuracy** (`compliance_03042026.csv`): EU-level framework country fields cleaned up — individual member states (France, Germany, Czech Republic, Italy, Spain) removed from EU-wide entries (eIDAS, DORA, GDPR, NIS2, MiCA, EUCC, EU Rec 2024/1101); BSI TR-02102 scoped to Germany only. FIPS 140-3 deadline clarified with NIST IR 8547 reference; eIDAS 2.0 deadline updated to 2026; FedRAMP status updated; MiCA dates corrected to Dec 2024 GA.
+
+### Data
+
+- **RAG corpus** (`public/data/rag-corpus.json`): About page chunk updated to include creator attribution and LinkedIn profile for better PQC Assistant grounding.
+
 ## [2.16.0] - 2026-03-03
 
 ### Added

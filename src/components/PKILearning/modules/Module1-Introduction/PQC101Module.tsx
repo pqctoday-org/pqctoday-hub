@@ -4,6 +4,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { Link } from 'react-router-dom'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import {
   AlertTriangle,
   ArrowRight,
@@ -16,6 +17,8 @@ import {
   Lightbulb,
   ChevronRight,
   Dice5,
+  UserCircle,
+  Pencil,
 } from 'lucide-react'
 
 const MODULE_ID = 'pqc-101'
@@ -411,7 +414,29 @@ const Step4WhoNeedsToAct: React.FC = () => {
   )
 }
 
+const PERSONA_LABELS: Record<string, string> = {
+  executive: 'Executive / GRC',
+  developer: 'Developer / Engineer',
+  architect: 'Security Architect',
+  researcher: 'Researcher / Academic',
+  ops: 'IT Ops / DevOps',
+}
+const LEVEL_LABELS: Record<string, string> = {
+  new: 'New to PQC',
+  basics: 'Know the Basics',
+  expert: 'Expert',
+}
+const REGION_LABELS: Record<string, string> = {
+  americas: 'Americas',
+  eu: 'Europe',
+  apac: 'Asia-Pacific',
+  global: 'Global',
+}
+
 const Step5NextSteps: React.FC = () => {
+  const { selectedPersona, experienceLevel, selectedRegion, selectedIndustries } = usePersonaStore()
+  const hasProfile = !!(selectedPersona || experienceLevel)
+
   const paths = [
     {
       role: 'Security Engineer',
@@ -457,6 +482,67 @@ const Step5NextSteps: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Persona profile card */}
+      {hasProfile ? (
+        <div className="glass-panel p-5 border border-primary/20 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <UserCircle size={18} className="text-primary" />
+              <span className="font-semibold text-foreground text-sm">Your Profile</span>
+            </div>
+            <Link
+              to="/?scroll=persona"
+              className="flex items-center gap-1.5 text-xs text-primary hover:underline"
+            >
+              <Pencil size={12} />
+              Update profile
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            {selectedPersona && (
+              <div className="flex flex-col gap-0.5">
+                <span className="text-muted-foreground">Role</span>
+                <span className="text-foreground font-medium">
+                  {PERSONA_LABELS[selectedPersona]}
+                </span>
+              </div>
+            )}
+            {experienceLevel && (
+              <div className="flex flex-col gap-0.5">
+                <span className="text-muted-foreground">Level</span>
+                <span className="text-foreground font-medium">{LEVEL_LABELS[experienceLevel]}</span>
+              </div>
+            )}
+            {selectedRegion && selectedRegion !== 'global' && (
+              <div className="flex flex-col gap-0.5">
+                <span className="text-muted-foreground">Region</span>
+                <span className="text-foreground font-medium">{REGION_LABELS[selectedRegion]}</span>
+              </div>
+            )}
+            {selectedIndustries[0] && (
+              <div className="flex flex-col gap-0.5">
+                <span className="text-muted-foreground">Industry</span>
+                <span className="text-foreground font-medium">{selectedIndustries[0]}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="glass-panel p-4 border border-border flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <UserCircle size={16} className="text-muted-foreground" />
+            <span>No profile set — personalise your learning journey</span>
+          </div>
+          <Link
+            to="/?scroll=persona"
+            className="flex items-center gap-1.5 text-xs text-primary hover:underline shrink-0"
+          >
+            <Pencil size={12} />
+            Set profile
+          </Link>
+        </div>
+      )}
+
       <p className="text-muted-foreground leading-relaxed">
         You&apos;ve completed PQC 101! Choose your path based on your role:
       </p>

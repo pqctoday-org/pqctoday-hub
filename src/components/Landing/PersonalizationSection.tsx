@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import type { LucideIcon } from 'lucide-react'
 import {
   Award,
@@ -556,6 +557,24 @@ export const PersonalizationSection = () => {
 
   // Start collapsed if returning visitor with saved prefs
   const [isCompleted, setIsCompleted] = useState(() => hasAnySelection)
+
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  // Handle ?scroll=persona deep-link from PQC-101 "Update profile" CTA
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    if (params.get('scroll') === 'persona') {
+      setIsCompleted(false)
+      setTimeout(() => {
+        document.getElementById('personalization-heading')?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        })
+      }, 100)
+      navigate('/', { replace: true })
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const steps = [
     { id: 'experience', label: 'Experience' },

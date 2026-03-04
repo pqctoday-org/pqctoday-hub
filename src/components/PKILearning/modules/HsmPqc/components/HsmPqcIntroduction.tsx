@@ -495,7 +495,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>
                   PQC delivered via AWS-LC SDK, not HSM firmware change. Zero downtime for SDK
-                  update. AWS-LC is the first open-source FIPS 140-3 validated module with ML-KEM.
+                  update. AWS-LC is a FIPS 140-3 validated open-source library with ML-KEM and
+                  ML-DSA support.
                 </p>
                 <p>
                   <strong>Limitation:</strong> Native PKCS#11 PQC mechanisms not yet in firmware.
@@ -640,7 +641,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <Shield size={16} className="text-primary shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-sm font-bold text-foreground mb-1">
-                  ML-DSA Hedged Signing (FIPS 204 &sect;3.5.2)
+                  ML-DSA Hedged Signing (FIPS 204 &sect;5.2)
                 </h4>
                 <p className="text-xs text-muted-foreground">
                   ML-DSA supports a &quot;hedged&quot; signing mode where the{' '}
