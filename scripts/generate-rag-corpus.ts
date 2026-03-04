@@ -1674,20 +1674,28 @@ function processDocumentEnrichments(): RAGChunk[] {
       .filter((f) => f.startsWith(prefix) && f.endsWith('.md'))
     if (files.length === 0) continue
 
-    // Sort by embedded date (MMDDYYYY), pick latest
+    // Sort oldest → newest; merge all files so no enrichments are lost across runs
     const withDates = files.map((f) => {
-      const match = f.match(/(\d{2})(\d{2})(\d{4})\.md$/)
-      if (!match) return { file: f, date: 0 }
-      const [, mm, dd, yyyy] = match
-      return { file: f, date: parseInt(yyyy + mm + dd) }
+      const match = f.match(/(\d{2})(\d{2})(\d{4})(_r(\d+))?\.md$/)
+      if (!match) return { file: f, date: 0, rev: 0 }
+      const [, mm, dd, yyyy, , rev] = match
+      return { file: f, date: parseInt(yyyy + mm + dd), rev: rev ? parseInt(rev) : 0 }
     })
-    withDates.sort((a, b) => b.date - a.date)
-    const latestFile = path.join(enrichmentsDir, withDates[0].file)
+    withDates.sort((a, b) => a.date - b.date || a.rev - b.rev)
 
-    const raw = fs.readFileSync(latestFile, 'utf-8')
-
-    // Split by ## headings — each is one document
-    const sections = raw.split(/\n(?=## )/).filter((s) => s.trimStart().startsWith('## '))
+    // Merge sections from all files — later dates overwrite earlier for duplicate IDs
+    const mergedSections = new Map<string, string>()
+    for (const { file } of withDates) {
+      const raw = fs.readFileSync(path.join(enrichmentsDir, file), 'utf-8')
+      for (const section of raw.split(/\n(?=## )/).filter((s) => s.trimStart().startsWith('## '))) {
+        const refId = section
+          .split('\n')[0]
+          .replace(/^##\s*/, '')
+          .trim()
+        if (refId && refId !== '---') mergedSections.set(refId, section)
+      }
+    }
+    const sections = Array.from(mergedSections.values())
 
     for (const section of sections) {
       const lines = section.split('\n')

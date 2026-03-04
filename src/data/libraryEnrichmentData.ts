@@ -145,19 +145,23 @@ function loadEnrichments(): EnrichmentLookup {
   const paths = Object.keys(modules)
   if (paths.length === 0) return {}
 
-  // Sort by embedded MMDDYYYY date, pick latest
+  // Sort oldest → newest so later files overwrite earlier ones for duplicate IDs
   const withDates = paths.map((p) => {
-    const match = p.match(/(\d{2})(\d{2})(\d{4})\.md$/)
-    if (!match) return { path: p, date: 0 }
-    const [, mm, dd, yyyy] = match
-    return { path: p, date: parseInt(yyyy + mm + dd) }
+    const match = p.match(/(\d{2})(\d{2})(\d{4})(_r(\d+))?\.md$/)
+    if (!match) return { path: p, date: 0, rev: 0 }
+    const [, mm, dd, yyyy, , rev] = match
+    return { path: p, date: parseInt(yyyy + mm + dd), rev: rev ? parseInt(rev) : 0 }
   })
-  withDates.sort((a, b) => b.date - a.date)
+  withDates.sort((a, b) => a.date - b.date || a.rev - b.rev)
 
-  const raw = modules[withDates[0].path]
-  if (!raw) return {}
-
-  return parseEnrichmentMarkdown(raw)
+  // Merge all files — later dates take precedence for duplicate IDs
+  const merged: EnrichmentLookup = {}
+  for (const { path } of withDates) {
+    const raw = modules[path]
+    if (!raw) continue
+    Object.assign(merged, parseEnrichmentMarkdown(raw))
+  }
+  return merged
 }
 
 export const libraryEnrichments: EnrichmentLookup = loadEnrichments()
