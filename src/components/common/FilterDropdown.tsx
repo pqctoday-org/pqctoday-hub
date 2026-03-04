@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import clsx from 'clsx'
 import { ChevronDown, Globe, Check } from 'lucide-react'
 
@@ -40,8 +41,12 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   onMultiSelect,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number; minWidth: number } | null>(
+    null
+  )
   const dropdownRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const menuPortalRef = useRef<HTMLDivElement>(null)
 
   const isMulti = multiSelectedIds !== undefined && onMultiSelect !== undefined
 
@@ -84,10 +89,13 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
     ? `filter-dropdown-label-${label.replace(/\s+/g, '-').toLowerCase()}`
     : undefined
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking outside (check both trigger and portal menu)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node
+      const inTrigger = dropdownRef.current?.contains(target)
+      const inMenu = menuPortalRef.current?.contains(target)
+      if (!inTrigger && !inMenu) {
         setIsOpen(false)
       }
     }
@@ -101,13 +109,27 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
     }
   }, [isOpen])
 
+  // Close dropdown on scroll so the portal menu doesn't float away from its anchor
+  useEffect(() => {
+    if (!isOpen) return
+    const handleScroll = () => setIsOpen(false)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [isOpen])
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
       setIsOpen(false)
       buttonRef.current?.focus()
     } else if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      setIsOpen(!isOpen)
+      if (!isOpen) {
+        const rect = buttonRef.current?.getBoundingClientRect()
+        if (rect) {
+          setMenuPos({ top: rect.bottom, left: rect.left, minWidth: rect.width })
+        }
+      }
+      setIsOpen((prev) => !prev)
     }
   }
 
@@ -124,85 +146,108 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
     }
   }
 
-  const renderMenu = () => (
-    <div
-      role="listbox"
-      aria-labelledby={labelId}
-      aria-multiselectable={isMulti}
-      className="absolute top-full left-0 mt-2 min-w-full bg-popover border border-border rounded-lg shadow-xl overflow-hidden transform origin-top max-h-60 overflow-y-auto z-50"
-    >
-      {/* All / Clear Option */}
-      <button
-        role="option"
-        aria-selected={isMulti ? multiCount === 0 : isDefaultSelected}
-        onClick={() => {
-          if (isMulti) {
-            handleMultiToggle('All')
-          } else {
-            onSelect('All')
-            setIsOpen(false)
-          }
+  const renderMenu = () => {
+    if (!menuPos) return null
+    return createPortal(
+      <div
+        ref={menuPortalRef}
+        role="listbox"
+        aria-labelledby={labelId}
+        aria-multiselectable={isMulti}
+        style={{
+          position: 'fixed',
+          top: menuPos.top,
+          left: menuPos.left,
+          minWidth: menuPos.minWidth,
+          zIndex: 9999,
         }}
-        onKeyDown={(e) => handleOptionKeyDown(e, 'All')}
-        className={clsx(
-          'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border flex items-center gap-2',
-          (isMulti ? multiCount === 0 : isDefaultSelected)
-            ? 'text-primary bg-muted/30'
-            : 'text-muted-foreground'
-        )}
+        className="bg-popover border border-border rounded-lg shadow-xl overflow-hidden transform origin-top max-h-60 overflow-y-auto"
       >
-        <span className="opacity-50 flex items-center justify-center w-6" aria-hidden="true">
-          {defaultIcon}
-        </span>
-        {defaultLabel}
-        {isMulti && multiCount === 0 && (
-          <Check size={12} className="ml-auto text-primary" aria-hidden="true" />
-        )}
-      </button>
+        {/* All / Clear Option */}
+        <button
+          role="option"
+          aria-selected={isMulti ? multiCount === 0 : isDefaultSelected}
+          onClick={() => {
+            if (isMulti) {
+              handleMultiToggle('All')
+            } else {
+              onSelect('All')
+              setIsOpen(false)
+            }
+          }}
+          onKeyDown={(e) => handleOptionKeyDown(e, 'All')}
+          className={clsx(
+            'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border flex items-center gap-2',
+            (isMulti ? multiCount === 0 : isDefaultSelected)
+              ? 'text-primary bg-muted/30'
+              : 'text-muted-foreground'
+          )}
+        >
+          <span className="opacity-50 flex items-center justify-center w-6" aria-hidden="true">
+            {defaultIcon}
+          </span>
+          {defaultLabel}
+          {isMulti && multiCount === 0 && (
+            <Check size={12} className="ml-auto text-primary" aria-hidden="true" />
+          )}
+        </button>
 
-      {normalizedItems
-        .filter((item) => item.id !== 'All')
-        .map((item) => {
-          const isSelected = isMulti
-            ? (multiSelectedIds?.includes(item.id) ?? false)
-            : selectedId === item.id
-          return (
-            <button
-              key={item.id}
-              role="option"
-              aria-selected={isSelected}
-              onClick={() => {
-                if (isMulti) {
-                  handleMultiToggle(item.id)
-                } else {
-                  onSelect(item.id)
-                  setIsOpen(false)
-                }
-              }}
-              onKeyDown={(e) => handleOptionKeyDown(e, item.id)}
-              className={clsx(
-                'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border last:border-0 flex items-center gap-2',
-                isSelected ? 'text-primary bg-muted/30' : 'text-muted-foreground'
-              )}
-            >
-              <span className="opacity-80 flex items-center justify-center w-6" aria-hidden="true">
-                {item.icon}
-              </span>
-              {item.label}
-              {isMulti && isSelected && (
-                <Check size={12} className="ml-auto text-primary" aria-hidden="true" />
-              )}
-            </button>
-          )
-        })}
-    </div>
-  )
+        {normalizedItems
+          .filter((item) => item.id !== 'All')
+          .map((item) => {
+            const isSelected = isMulti
+              ? (multiSelectedIds?.includes(item.id) ?? false)
+              : selectedId === item.id
+            return (
+              <button
+                key={item.id}
+                role="option"
+                aria-selected={isSelected}
+                onClick={() => {
+                  if (isMulti) {
+                    handleMultiToggle(item.id)
+                  } else {
+                    onSelect(item.id)
+                    setIsOpen(false)
+                  }
+                }}
+                onKeyDown={(e) => handleOptionKeyDown(e, item.id)}
+                className={clsx(
+                  'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border last:border-0 flex items-center gap-2',
+                  isSelected ? 'text-primary bg-muted/30' : 'text-muted-foreground'
+                )}
+              >
+                <span
+                  className="opacity-80 flex items-center justify-center w-6"
+                  aria-hidden="true"
+                >
+                  {item.icon}
+                </span>
+                {item.label}
+                {isMulti && isSelected && (
+                  <Check size={12} className="ml-auto text-primary" aria-hidden="true" />
+                )}
+              </button>
+            )
+          })}
+      </div>,
+      document.body
+    )
+  }
 
   const renderButton = () => (
     <button
       ref={buttonRef}
       data-testid="filter-dropdown"
-      onClick={() => setIsOpen(!isOpen)}
+      onClick={() => {
+        if (!isOpen) {
+          const rect = buttonRef.current?.getBoundingClientRect()
+          if (rect) {
+            setMenuPos({ top: rect.bottom, left: rect.left, minWidth: rect.width })
+          }
+        }
+        setIsOpen((prev) => !prev)
+      }}
       onKeyDown={handleKeyDown}
       aria-haspopup="listbox"
       aria-expanded={isOpen}
