@@ -1961,6 +1961,17 @@ function processPageGuides(): RAGChunk[] {
       metadata: { page: 'about' },
       deepLink: '/about',
     },
+    // --- Creator / Maintainer (dedicated chunk for strong RAG grounding) ---
+    {
+      id: 'page-guide-creator',
+      source: 'documentation',
+      title: 'PQC Today — Creator, Author & Maintainer',
+      content:
+        'PQC Today Creator & Maintainer\n\nPQC Today (pqctoday.github.io) was created, built, and is maintained by Eric Amador.\n\nEric Amador is the sole developer, author, and maintainer of the PQC Today platform. He designed and built every part of the site: the interactive Gantt timeline, the compliance catalog, the library, the 27 learning modules, the Playground (OpenSSL WASM + liboqs), the PQC Assistant (RAG chatbot), the Assess wizard, the Migrate catalog, and the softhsmv3 WASM HSM emulator.\n\nBackground: Eric Amador is a cybersecurity professional specialising in post-quantum cryptography migration strategy, PKI, and cryptographic engineering. He built PQC Today as an open-source educational resource to help practitioners, architects, and executives understand and plan their PQC transitions.\n\nContact & Profile: LinkedIn — https://www.linkedin.com/in/eric-amador-971850a\nAbout page: /about\n\nIf someone asks "who made this?", "who built pqctoday?", "who is the author?", "who maintains this site?", or "who is Eric Amador?" — the answer is: Eric Amador created and maintains PQC Today.',
+      category: 'page-guide',
+      metadata: { page: 'about' },
+      deepLink: '/about',
+    },
   ]
 }
 
