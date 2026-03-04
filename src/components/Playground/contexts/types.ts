@@ -42,6 +42,11 @@ export interface SettingsContextType {
   // Config
   handleAlgorithmChange: (newAlgorithm: string) => void
 
+  // HSM Mode — routes each tab's backend to SoftHSMv3 WASM via PKCS#11
+  hsmMode: boolean
+  setHsmMode: (enabled: boolean) => void
+  toggleHsmMode: () => void
+
   // UI State
   activeTab:
     | 'data'

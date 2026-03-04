@@ -14,13 +14,23 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Mobile-responsive layout with accessible `aria-sort` attributes; separate mobile list view
   - AI-powered context button on each row for classical↔PQC migration rationale
 - **Interactive Playground**: Hands-on cryptographic testing environment
-  - Real WASM-powered cryptography (`@oqs/liboqs-js`)
-  - **KEM Operations**: Classical (X25519, P-256), PQC (ML-KEM), and Hybrid modes
+  - **Software ↔ PKCS#11 HSM mode toggle**: switch all tabs between the software stack and a
+    SoftHSMv3 WASM engine backed by PKCS#11 v3.2 — run ML-KEM and ML-DSA through a real HSM
+    interface in the browser
+  - Real WASM-powered cryptography (`@oqs/liboqs-js`) and SoftHSMv3 PKCS#11 WASM
+  - **KEM Operations**: Classical (X25519, P-256), PQC (ML-KEM), and Hybrid modes in software;
+    ML-KEM-512/768/1024 via `C_GenerateKeyPair` / `C_EncapsulateKey` / `C_DecapsulateKey` in HSM
+    mode — shared-secret match verification, PKCS#11 call log
     - Separate encapsulation/decapsulation flows with state isolation
     - HKDF-Extract normalization for variable-sized secrets
     - Visual comparison of generated vs recovered secrets
-  - Key Store with sortable/resizable columns
-  - ACVP Testing against NIST test vectors
+  - **Sign & Verify**: Classical and PQC in software; ML-DSA-44/65/87 via `C_SignInit + C_Sign` /
+    `C_VerifyInit + C_Verify` in HSM mode — hedging mode, context string, pre-hash options
+  - **HSM Key Store**: session-scoped table of all PKCS#11-generated keys with handle, algorithm,
+    role, variant, and timestamp; software Key Store with sortable/resizable columns
+  - **PKCS#11 call log**: per-session log of all C\_ function calls with return-value decoding,
+    timing, and optional "Show Params" inspect mode
+  - ACVP Testing against NIST test vectors (software mode)
 - **OpenSSL Studio**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly
   - **13 Operation Types**: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
   - **Full PQC Support**: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 variants), LMS/HSS (stateful signatures)

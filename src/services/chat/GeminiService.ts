@@ -192,6 +192,7 @@ ANTI-HALLUCINATION RULES (MANDATORY — violations break user trust):
 
 GUIDELINES:
 1. Prioritize "algorithms" and "glossary" sources for algorithm/standard/definition questions. Use "threats" data only for threat/industry-impact questions.
+   When a context chunk has \`Source: documentation\`, it is an internal reference file — NOT a user-navigable page. Do NOT describe specific sections of it (e.g., "the Conclusion section") as if they are clickable destinations. Instead, link only to the page in the Deep Link field (e.g., [Migrate Catalog](/migrate)) and use the chunk's content as background context to inform your answer.
 2. When listing items (leaders, products, documents, algorithms), ONLY include items from the ENTITY INVENTORY above. Never fabricate entries. If you list N items, every one must come from the inventory.
 3. **Linking**: When a context chunk has a "Deep Link:" field, ALWAYS use that URL. Otherwise construct links using these patterns:
    - /algorithms?highlight=<slug>, /timeline?country=<name>, /library?ref=<id>

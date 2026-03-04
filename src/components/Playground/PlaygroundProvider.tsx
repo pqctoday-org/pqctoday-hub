@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { SettingsProvider } from './contexts/SettingsProvider'
 import { KeyStoreProvider } from './contexts/KeyStoreProvider'
 import { OperationsProvider } from './contexts/OperationsProvider'
+import { HsmProvider } from './hsm/HsmContext'
 import * as MLKEM from '../../wasm/liboqs_kem'
 import * as MLDSA from '../../wasm/liboqs_dsa'
 import * as LIBOQS_SIG from '../../wasm/liboqs_sig'
@@ -24,10 +25,12 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   }, [])
 
   return (
-    <SettingsProvider>
-      <KeyStoreProvider>
-        <OperationsProvider>{children}</OperationsProvider>
-      </KeyStoreProvider>
-    </SettingsProvider>
+    <HsmProvider>
+      <SettingsProvider>
+        <KeyStoreProvider>
+          <OperationsProvider>{children}</OperationsProvider>
+        </KeyStoreProvider>
+      </SettingsProvider>
+    </HsmProvider>
   )
 }

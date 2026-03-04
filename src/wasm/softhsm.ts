@@ -14,6 +14,14 @@
  */
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { buildInspect } from './pkcs11Inspect'
+export type {
+  Pkcs11LogInspect,
+  InspectSection,
+  DecodedMechanism,
+  DecodedAttribute,
+  DecodedValue,
+} from './pkcs11Inspect'
 
 // ── Singleton loader ─────────────────────────────────────────────────────────
 
@@ -69,6 +77,7 @@ export interface Pkcs11LogEntry {
   rvName: string
   ms: number
   ok: boolean
+  inspect?: import('./pkcs11Inspect').Pkcs11LogInspect
 }
 
 let _logId = 0
@@ -81,18 +90,44 @@ const RV_NAMES: Record<number, string> = {
   0x00000005: 'CKR_GENERAL_ERROR',
   0x00000006: 'CKR_FUNCTION_FAILED',
   0x00000007: 'CKR_ARGUMENTS_BAD',
-  0x000000a0: 'CKR_MECHANISM_INVALID',
-  0x000000b0: 'CKR_OBJECT_HANDLE_INVALID',
+  0x00000020: 'CKR_DATA_INVALID',
+  0x00000030: 'CKR_DEVICE_ERROR',
+  0x00000042: 'CKR_AEAD_DECRYPT_FAILED',
+  0x00000054: 'CKR_FUNCTION_NOT_SUPPORTED',
+  0x00000060: 'CKR_KEY_HANDLE_INVALID',
+  0x00000063: 'CKR_KEY_TYPE_INCONSISTENT',
+  0x00000068: 'CKR_KEY_FUNCTION_NOT_PERMITTED',
+  0x00000070: 'CKR_MECHANISM_INVALID',
+  0x00000071: 'CKR_MECHANISM_PARAM_INVALID',
+  0x00000082: 'CKR_OBJECT_HANDLE_INVALID',
+  0x00000090: 'CKR_OPERATION_ACTIVE',
+  0x00000091: 'CKR_OPERATION_NOT_INITIALIZED',
+  0x000000a0: 'CKR_PIN_INCORRECT',
+  0x000000a4: 'CKR_PIN_LOCKED',
+  0x000000b0: 'CKR_SESSION_CLOSED',
+  0x000000b3: 'CKR_SESSION_HANDLE_INVALID',
+  0x000000b5: 'CKR_SESSION_READ_ONLY',
+  0x000000b6: 'CKR_SESSION_EXISTS',
   0x000000c0: 'CKR_SIGNATURE_INVALID',
   0x000000c1: 'CKR_SIGNATURE_LEN_RANGE',
   0x000000d0: 'CKR_TEMPLATE_INCOMPLETE',
   0x000000d1: 'CKR_TEMPLATE_INCONSISTENT',
   0x000000e0: 'CKR_TOKEN_NOT_PRESENT',
-  0x000000f0: 'CKR_USER_NOT_LOGGED_IN',
+  0x000000e2: 'CKR_TOKEN_WRITE_PROTECTED',
+  0x000000f0: 'CKR_UNWRAPPING_KEY_HANDLE_INVALID',
   0x00000100: 'CKR_USER_ALREADY_LOGGED_IN',
-  0x00000150: 'CKR_SESSION_HANDLE_INVALID',
-  0x00000180: 'CKR_KEY_HANDLE_INVALID',
-  0x00000190: 'CKR_BUFFER_TOO_SMALL',
+  0x00000101: 'CKR_USER_NOT_LOGGED_IN',
+  0x00000102: 'CKR_USER_PIN_NOT_INITIALIZED',
+  0x00000103: 'CKR_USER_TYPE_INVALID',
+  0x00000110: 'CKR_WRAPPED_KEY_INVALID',
+  0x00000113: 'CKR_WRAPPING_KEY_HANDLE_INVALID',
+  0x00000130: 'CKR_DOMAIN_PARAMS_INVALID',
+  0x00000140: 'CKR_CURVE_NOT_SUPPORTED',
+  0x00000150: 'CKR_BUFFER_TOO_SMALL',
+  0x00000190: 'CKR_CRYPTOKI_NOT_INITIALIZED',
+  0x00000191: 'CKR_CRYPTOKI_ALREADY_INITIALIZED',
+  0x00000200: 'CKR_FUNCTION_REJECTED',
+  0x00000201: 'CKR_TOKEN_RESOURCE_EXCEEDED',
 }
 
 const rvName = (rv: number): string => RV_NAMES[rv] ?? `0x${rv.toString(16).padStart(8, '0')}`
@@ -195,6 +230,56 @@ const PKCS11_PARAMS: Record<string, string[]> = {
   C_SessionCancel: ['hSession', 'flags'],
   C_GetInterfaceList: ['pInterfacesList', 'pulCount'],
   C_GetInterface: ['pInterfaceName', 'pVersion', 'ppInterface', 'flags'],
+  C_GetSessionValidationFlags: ['hSession', 'flags', 'pulFlags'],
+  // PKCS#11 v3.2 — Session & admin
+  C_LoginUser: ['hSession', 'pPin', 'ulPinLen', 'pUsername'],
+  C_CopyObject: ['hSession', 'hObject', 'pTemplate', 'ulCount'],
+  C_GenerateRandom: ['hSession', 'pRandomData', 'ulRandomLen'],
+  C_SeedRandom: ['hSession', 'pSeed', 'ulSeedLen'],
+  C_GetFunctionList: ['ppFunctionList'],
+  C_GetFunctionStatus: ['hSession'],
+  C_CancelFunction: ['hSession'],
+  C_WaitForSlotEvent: ['flags', 'pSlot', 'pReserved'],
+  C_GetOperationState: ['hSession', 'pOperationState', 'pulOperationStateLen'],
+  C_SetOperationState: ['hSession', 'pOperationState', 'ulOperationStateLen', 'hEncryptionKey'],
+  // PKCS#11 v3.0 — G2: one-shot message signing begin/next
+  C_SignMessageBegin: ['hSession', 'pMechanism', 'hKey'],
+  C_SignMessageNext: ['hSession', 'pParameter', 'ulParameterLen', 'pData'],
+  C_VerifyMessageBegin: ['hSession', 'pMechanism', 'hKey'],
+  C_VerifyMessageNext: ['hSession', 'pParameter', 'ulParameterLen', 'pData'],
+  // PKCS#11 v3.0 — G3: AES-GCM message-based encrypt/decrypt
+  C_MessageEncryptInit: ['hSession', 'pMechanism', 'hKey'],
+  C_EncryptMessage: ['hSession', 'pParameter', 'ulParameterLen', 'pAssociatedData'],
+  C_EncryptMessageBegin: ['hSession', 'pParameter', 'ulParameterLen', 'pAssociatedData'],
+  C_EncryptMessageNext: ['hSession', 'pParameter', 'ulParameterLen', 'pPlaintextPart'],
+  C_MessageEncryptFinal: ['hSession'],
+  C_MessageDecryptInit: ['hSession', 'pMechanism', 'hKey'],
+  C_DecryptMessage: ['hSession', 'pParameter', 'ulParameterLen', 'pAssociatedData'],
+  C_DecryptMessageBegin: ['hSession', 'pParameter', 'ulParameterLen', 'pAssociatedData'],
+  C_DecryptMessageNext: ['hSession', 'pParameter', 'ulParameterLen', 'pCiphertextPart'],
+  C_MessageDecryptFinal: ['hSession'],
+  // PKCS#11 v3.2 — G4: single-shot signature verify
+  C_VerifySignatureInit: ['hSession', 'pMechanism', 'hKey'],
+  C_VerifySignature: ['hSession', 'pData', 'ulDataLen', 'pSignature'],
+  C_VerifySignatureUpdate: ['hSession', 'pPart', 'ulPartLen'],
+  C_VerifySignatureFinal: ['hSession', 'pSignature', 'ulSignatureLen'],
+  // PKCS#11 v3.2 — G5: authenticated key wrap/unwrap (AES-GCM)
+  C_WrapKeyAuthenticated: ['hSession', 'pMechanism', 'hWrappingKey', 'hKey'],
+  C_UnwrapKeyAuthenticated: ['hSession', 'pMechanism', 'hUnwrappingKey', 'pWrappedKey'],
+  // Recover & compound operations
+  C_SignRecover: ['hSession', 'pData', 'ulDataLen', 'pSignature'],
+  C_SignRecoverInit: ['hSession', 'pMechanism', 'hKey'],
+  C_VerifyRecover: ['hSession', 'pSignature', 'ulSignatureLen', 'pData'],
+  C_VerifyRecoverInit: ['hSession', 'pMechanism', 'hKey'],
+  C_DigestKey: ['hSession', 'hKey'],
+  C_DigestEncryptUpdate: ['hSession', 'pPart', 'ulPartLen', 'pEncryptedPart'],
+  C_DecryptDigestUpdate: ['hSession', 'pEncryptedPart', 'ulEncryptedPartLen', 'pPart'],
+  C_SignEncryptUpdate: ['hSession', 'pPart', 'ulPartLen', 'pEncryptedPart'],
+  C_DecryptVerifyUpdate: ['hSession', 'pEncryptedPart', 'ulEncryptedPartLen', 'pPart'],
+  // PKCS#11 v3.2 — Async operations
+  C_AsyncComplete: ['hSession', 'pOperation', 'pResult'],
+  C_AsyncGetID: ['hSession', 'pulID'],
+  C_AsyncJoin: ['hSession', 'pOperation'],
 }
 
 const fmtArg = (v: unknown): string =>
@@ -238,7 +323,8 @@ export const createLoggingProxy = (
           const rv = (val as (...a: unknown[]) => number).apply(target, args)
           const ms = Math.round((performance.now() - t0) * 10) / 10
           const rvUnsigned = rv >>> 0
-          const ok = rvUnsigned === 0 || rvUnsigned === 0x190 // CKR_OK or BUFFER_TOO_SMALL (size query)
+          const ok = rvUnsigned === 0 || rvUnsigned === 0x150 // CKR_OK or CKR_BUFFER_TOO_SMALL (size query)
+          const inspect = buildInspect(target, specName, args as number[], rvUnsigned)
           onLog({
             id: ++_logId,
             timestamp: fmtTime(),
@@ -248,6 +334,7 @@ export const createLoggingProxy = (
             rvName: rvName(rvUnsigned),
             ms,
             ok,
+            inspect,
           })
           return rv
         }
@@ -268,7 +355,7 @@ const CKO_PUBLIC_KEY = 0x02
 const CKO_PRIVATE_KEY = 0x03
 const CKO_SECRET_KEY = 0x04
 const CKK_ML_KEM = 0x49 // PKCS#11 v3.2
-const CKK_ML_DSA = 0x47 // PKCS#11 v3.2
+const CKK_ML_DSA = 0x4a // PKCS#11 v3.2
 const CKM_ML_KEM_KEY_PAIR_GEN = 0x0000000f
 const CKM_ML_KEM = 0x00000017
 const CKM_ML_DSA_KEY_PAIR_GEN = 0x0000001c
@@ -282,6 +369,7 @@ const CKA_SENSITIVE = 0x00000103
 const CKA_SIGN = 0x00000108
 const CKA_VERIFY = 0x0000010a
 const CKA_EXTRACTABLE = 0x00000162
+const CKA_VALUE_LEN = 0x00000161
 const CKA_VALUE = 0x00000011
 const CKA_KEY_TYPE = 0x00000100
 const CKA_PARAMETER_SET = 0x0000061d
@@ -389,15 +477,24 @@ export const hsm_initialize = (M: SoftHSMModule): void => {
   checkRV(M._C_Initialize(0), 'C_Initialize')
 }
 
-/** C_GetSlotList → first slot id */
+/** C_GetSlotList → first slot id (two-step: count then fill) */
 export const hsm_getFirstSlot = (M: SoftHSMModule): number => {
-  const slotPtr = allocUlong(M)
   const countPtr = allocUlong(M)
   try {
-    checkRV(M._C_GetSlotList(0, slotPtr, countPtr), 'C_GetSlotList')
-    return readUlong(M, slotPtr)
+    // Step 1: pSlotList=NULL → get count (required; passing non-NULL with count=0 → CKR_BUFFER_TOO_SMALL)
+    checkRV(M._C_GetSlotList(0, 0, countPtr), 'C_GetSlotList(count)')
+    const count = readUlong(M, countPtr)
+    if (count === 0) throw new Error('C_GetSlotList: no slots available')
+    // Step 2: allocate slot list and fill
+    const slotListPtr = M._malloc(count * 4)
+    writeUlong(M, countPtr, count)
+    try {
+      checkRV(M._C_GetSlotList(0, slotListPtr, countPtr), 'C_GetSlotList')
+      return readUlong(M, slotListPtr)
+    } finally {
+      M._free(slotListPtr)
+    }
   } finally {
-    M._free(slotPtr)
     M._free(countPtr)
   }
 }
@@ -421,14 +518,20 @@ export const hsm_initToken = (
     M._free(pinPtr)
   }
 
-  // Re-enumerate: initialized token appears in a new slot
-  const slotPtr = M._malloc(32) // room for up to 8 slots
+  // Re-enumerate: initialized token appears in a new slot (two-step)
   const countPtr = allocUlong(M)
   try {
-    checkRV(M._C_GetSlotList(1, slotPtr, countPtr), 'C_GetSlotList(initialized)')
-    return readUlong(M, slotPtr)
+    checkRV(M._C_GetSlotList(1, 0, countPtr), 'C_GetSlotList(initialized,count)')
+    const slotCount = readUlong(M, countPtr)
+    const slotListPtr = M._malloc(slotCount * 4)
+    writeUlong(M, countPtr, slotCount)
+    try {
+      checkRV(M._C_GetSlotList(1, slotListPtr, countPtr), 'C_GetSlotList(initialized)')
+      return readUlong(M, slotListPtr)
+    } finally {
+      M._free(slotListPtr)
+    }
   } finally {
-    M._free(slotPtr)
     M._free(countPtr)
   }
 }
@@ -558,8 +661,11 @@ export const hsm_encapsulate = (
   M.setValue(mech + 4, 0, 'i32')
   M.setValue(mech + 8, 0, 'i32')
 
+  // CKA_VALUE_LEN is ck3 (mandatory in OBJECT_OP_GENERATE) for CKK_GENERIC_SECRET.
+  // ML-KEM shared secret is always 32 bytes for all parameter sets (FIPS 203 §7).
   const secretTpl = buildTemplate(M, [
     { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_VALUE_LEN, ulongVal: 32 },
     { type: CKA_SENSITIVE, boolVal: false },
     { type: CKA_EXTRACTABLE, boolVal: true },
   ])
@@ -568,7 +674,7 @@ export const hsm_encapsulate = (
 
   // First call: size query (ctPtr = 0)
   checkRV(
-    M._C_EncapsulateKey(hSession, mech, pubHandle, secretTpl.ptr, 3, 0, ctLenPtr, secretHPtr),
+    M._C_EncapsulateKey(hSession, mech, pubHandle, secretTpl.ptr, 4, 0, ctLenPtr, secretHPtr),
     'C_EncapsulateKey(size)'
   )
   const ctLen = readUlong(M, ctLenPtr)
@@ -583,14 +689,14 @@ export const hsm_encapsulate = (
   try {
     writeUlong(M, ctLenPtr, ctLen)
     checkRV(
-      M._C_EncapsulateKey(hSession, mech, pubHandle, secretTpl.ptr, 3, ctPtr, ctLenPtr, secretHPtr),
+      M._C_EncapsulateKey(hSession, mech, pubHandle, secretTpl.ptr, 4, ctPtr, ctLenPtr, secretHPtr),
       'C_EncapsulateKey'
     )
     const ciphertextBytes = M.HEAPU8.slice(ctPtr, ctPtr + readUlong(M, ctLenPtr))
     return { ciphertextBytes, secretHandle: readUlong(M, secretHPtr) }
   } finally {
     M._free(mech)
-    freeTemplate(M, secretTpl, 3)
+    freeTemplate(M, secretTpl, 4)
     M._free(ctLenPtr)
     M._free(ctPtr)
     M._free(secretHPtr)
@@ -617,8 +723,10 @@ export const hsm_decapsulate = (
   M.setValue(mech + 4, 0, 'i32')
   M.setValue(mech + 8, 0, 'i32')
 
+  // CKA_VALUE_LEN is ck3 (mandatory in OBJECT_OP_GENERATE) for CKK_GENERIC_SECRET.
   const secretTpl = buildTemplate(M, [
     { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_VALUE_LEN, ulongVal: 32 },
     { type: CKA_SENSITIVE, boolVal: false },
     { type: CKA_EXTRACTABLE, boolVal: true },
   ])
@@ -634,7 +742,7 @@ export const hsm_decapsulate = (
         mech,
         privHandle,
         secretTpl.ptr,
-        3,
+        4,
         ctPtr,
         ciphertextBytes.length,
         secretHPtr
@@ -644,7 +752,7 @@ export const hsm_decapsulate = (
     return readUlong(M, secretHPtr)
   } finally {
     M._free(mech)
-    freeTemplate(M, secretTpl, 3)
+    freeTemplate(M, secretTpl, 4)
     M._free(ctPtr)
     M._free(secretHPtr)
   }
@@ -693,6 +801,8 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_VERIFY, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: ps },
   ])
+  // Per spec §6.67.4: CKA_PARAMETER_SET goes in the public key template only.
+  // The mechanism infers the parameter set for the private key from the public key template.
   const prvTpl = buildTemplate(M, [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_ML_DSA },
@@ -701,21 +811,20 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_SENSITIVE, boolVal: false },
     { type: CKA_EXTRACTABLE, boolVal: false },
     { type: CKA_SIGN, boolVal: true },
-    { type: CKA_PARAMETER_SET, ulongVal: ps },
   ])
 
   const pubHPtr = allocUlong(M)
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 8, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 7, pubHPtr, prvHPtr),
       'C_GenerateKeyPair(ML-DSA)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
     freeTemplate(M, pubTpl, 5)
-    freeTemplate(M, prvTpl, 8)
+    freeTemplate(M, prvTpl, 7)
     M._free(pubHPtr)
     M._free(prvHPtr)
   }
@@ -778,7 +887,7 @@ const buildSignContext = (
   return { paramPtr, paramLen: 12, allocPtrs }
 }
 
-/** C_MessageSignInit(ML-DSA) + C_SignMessage → sigBytes (PKCS#11 v3.2 one-shot) */
+/** C_MessageSignInit(ML-DSA) + C_SignMessage + C_MessageSignFinal → sigBytes (PKCS#11 v3.2) */
 export const hsm_sign = (
   M: SoftHSMModule,
   hSession: number,
@@ -798,22 +907,22 @@ export const hsm_sign = (
   M.setValue(mech + 4, ctxAlloc ? ctxAlloc.paramPtr : 0, 'i32') // pParameter
   M.setValue(mech + 8, ctxAlloc ? ctxAlloc.paramLen : 0, 'i32') // ulParameterLen
 
-  checkRV(M._C_MessageSignInit(hSession, mech, privHandle), 'C_MessageSignInit')
-
   const msgBytes = new TextEncoder().encode(message)
   const msgPtr = M._malloc(msgBytes.length)
   M.HEAPU8.set(msgBytes, msgPtr)
-
   const sigLenPtr = allocUlong(M)
-  // First call: get signature length (pSignature = 0)
-  checkRV(
-    M._C_SignMessage(hSession, 0, 0, msgPtr, msgBytes.length, 0, sigLenPtr),
-    'C_SignMessage(len)'
-  )
-  const sigLen = readUlong(M, sigLenPtr)
-  const sigPtr = M._malloc(sigLen)
+  let sigPtr = 0
 
+  // C_MessageSignInit opens a multi-message signing context — MUST be closed with C_MessageSignFinal
+  checkRV(M._C_MessageSignInit(hSession, mech, privHandle), 'C_MessageSignInit')
   try {
+    // First call: size query (pSignature = 0)
+    checkRV(
+      M._C_SignMessage(hSession, 0, 0, msgPtr, msgBytes.length, 0, sigLenPtr),
+      'C_SignMessage(len)'
+    )
+    const sigLen = readUlong(M, sigLenPtr)
+    sigPtr = M._malloc(sigLen)
     writeUlong(M, sigLenPtr, sigLen)
     checkRV(
       M._C_SignMessage(hSession, 0, 0, msgPtr, msgBytes.length, sigPtr, sigLenPtr),
@@ -821,15 +930,16 @@ export const hsm_sign = (
     )
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
+    M._C_MessageSignFinal(hSession, 0, 0, 0, 0) // close multi-message context; ignore RV in cleanup
     M._free(mech)
     M._free(msgPtr)
     M._free(sigLenPtr)
-    M._free(sigPtr)
+    if (sigPtr) M._free(sigPtr)
     if (ctxAlloc) ctxAlloc.allocPtrs.forEach((p) => M._free(p))
   }
 }
 
-/** C_MessageVerifyInit(ML-DSA) + C_VerifyMessage → boolean (PKCS#11 v3.2 one-shot) */
+/** C_MessageVerifyInit(ML-DSA) + C_VerifyMessage + C_MessageVerifyFinal → boolean (PKCS#11 v3.2) */
 export const hsm_verify = (
   M: SoftHSMModule,
   hSession: number,
@@ -849,20 +959,20 @@ export const hsm_verify = (
   M.setValue(mech + 4, ctxAlloc ? ctxAlloc.paramPtr : 0, 'i32')
   M.setValue(mech + 8, ctxAlloc ? ctxAlloc.paramLen : 0, 'i32')
 
-  checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit')
-
   const msgBytes = new TextEncoder().encode(message)
   const msgPtr = M._malloc(msgBytes.length)
   M.HEAPU8.set(msgBytes, msgPtr)
-
   const sigPtr = M._malloc(sigBytes.length)
   M.HEAPU8.set(sigBytes, sigPtr)
 
+  // C_MessageVerifyInit opens a multi-message verify context — MUST be closed with C_MessageVerifyFinal
+  checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit')
   try {
     const rv =
       M._C_VerifyMessage(hSession, 0, 0, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
     return rv === 0
   } finally {
+    M._C_MessageVerifyFinal(hSession) // close multi-message context; ignore RV in cleanup
     M._free(mech)
     M._free(msgPtr)
     M._free(sigPtr)
@@ -881,5 +991,1064 @@ export const hsm_finalize = (M: SoftHSMModule, hSession: number): void => {
     M._C_Finalize(0)
   } catch {
     // ignore
+  }
+}
+
+// ── Additional PKCS#11 constants (exported for HSM panel UI) ─────────────────
+
+// Key types
+export const CKK_RSA = 0x00
+export const CKK_EC = 0x03
+export const CKK_GENERIC_SECRET = 0x10
+export const CKK_AES = 0x1f
+export const CKK_EC_EDWARDS = 0x40
+export const CKK_SLH_DSA = 0x4b
+
+// RSA mechanisms
+export const CKM_RSA_PKCS_KEY_PAIR_GEN = 0x00
+export const CKM_RSA_PKCS_OAEP = 0x09
+export const CKM_SHA256_RSA_PKCS = 0x40
+export const CKM_SHA384_RSA_PKCS = 0x41
+export const CKM_SHA512_RSA_PKCS = 0x42
+export const CKM_SHA256_RSA_PKCS_PSS = 0x43
+export const CKM_SHA384_RSA_PKCS_PSS = 0x44
+export const CKM_SHA512_RSA_PKCS_PSS = 0x45
+
+// EC mechanisms
+export const CKM_EC_KEY_PAIR_GEN = 0x1040
+export const CKM_ECDSA_SHA256 = 0x1044
+export const CKM_ECDSA_SHA384 = 0x1045
+export const CKM_ECDSA_SHA512 = 0x1046
+export const CKM_ECDH1_DERIVE = 0x1050
+export const CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x1055
+export const CKM_EDDSA = 0x1057
+
+// Symmetric / HMAC / digest mechanisms
+export const CKM_GENERIC_SECRET_KEY_GEN = 0x350
+export const CKM_AES_KEY_GEN = 0x1080
+export const CKM_AES_CBC_PAD = 0x1085
+export const CKM_AES_GCM = 0x1087
+export const CKM_AES_CMAC = 0x108a
+export const CKM_AES_KEY_WRAP = 0x2109
+export const CKM_SHA256_HMAC = 0x251
+export const CKM_SHA384_HMAC = 0x261
+export const CKM_SHA512_HMAC = 0x271
+export const CKM_SHA3_256_HMAC = 0x2b1
+export const CKM_SHA3_512_HMAC = 0x2d1
+export const CKM_SHA256 = 0x250
+export const CKM_SHA384 = 0x260
+export const CKM_SHA512 = 0x270
+export const CKM_SHA3_256 = 0x2b0
+export const CKM_SHA3_512 = 0x2d0
+
+// SLH-DSA mechanisms (PKCS#11 v3.2, FIPS 205)
+export const CKM_SLH_DSA_KEY_PAIR_GEN = 0x2d
+export const CKM_SLH_DSA = 0x2e
+export const CKM_HASH_SLH_DSA = 0x2f
+
+// SLH-DSA parameter sets (12 variants)
+export const CKP_SLH_DSA_SHA2_128S = 0x01
+export const CKP_SLH_DSA_SHA2_128F = 0x02
+export const CKP_SLH_DSA_SHA2_192S = 0x03
+export const CKP_SLH_DSA_SHA2_192F = 0x04
+export const CKP_SLH_DSA_SHA2_256S = 0x05
+export const CKP_SLH_DSA_SHA2_256F = 0x06
+export const CKP_SLH_DSA_SHAKE_128S = 0x07
+export const CKP_SLH_DSA_SHAKE_128F = 0x08
+export const CKP_SLH_DSA_SHAKE_192S = 0x09
+export const CKP_SLH_DSA_SHAKE_192F = 0x0a
+export const CKP_SLH_DSA_SHAKE_256S = 0x0b
+export const CKP_SLH_DSA_SHAKE_256F = 0x0c
+
+// Additional attributes
+export const CKA_MODULUS = 0x120
+export const CKA_MODULUS_BITS = 0x121
+export const CKA_PUBLIC_EXPONENT = 0x122
+export const CKA_ENCRYPT = 0x104
+export const CKA_DECRYPT = 0x105
+export const CKA_WRAP = 0x106
+export const CKA_UNWRAP = 0x107
+export const CKA_DERIVE = 0x10c
+export const CKA_EC_PARAMS = 0x180
+
+// SLH-DSA signature and public key sizes (bytes), keyed by CKP_SLH_DSA_* constant
+export const SLH_DSA_SIG_BYTES: Record<number, number> = {
+  0x01: 7856,
+  0x02: 17088, // SHA2-128s/f
+  0x03: 16224,
+  0x04: 35664, // SHA2-192s/f
+  0x05: 29792,
+  0x06: 49856, // SHA2-256s/f
+  0x07: 7856,
+  0x08: 17088, // SHAKE-128s/f
+  0x09: 16224,
+  0x0a: 35664, // SHAKE-192s/f
+  0x0b: 29792,
+  0x0c: 49856, // SHAKE-256s/f
+}
+
+export const SLH_DSA_PUB_BYTES: Record<number, number> = {
+  0x01: 32,
+  0x02: 32,
+  0x07: 32,
+  0x08: 32, // 128-bit security
+  0x03: 48,
+  0x04: 48,
+  0x09: 48,
+  0x0a: 48, // 192-bit security
+  0x05: 64,
+  0x06: 64,
+  0x0b: 64,
+  0x0c: 64, // 256-bit security
+}
+
+/** Human-readable SLH-DSA parameter set descriptors for UI selectors. */
+export const SLH_DSA_PARAM_SETS: Array<{ value: number; label: string; sigBytes: number }> = [
+  { value: 0x01, label: 'SLH-DSA-SHA2-128s', sigBytes: 7856 },
+  { value: 0x02, label: 'SLH-DSA-SHA2-128f', sigBytes: 17088 },
+  { value: 0x03, label: 'SLH-DSA-SHA2-192s', sigBytes: 16224 },
+  { value: 0x04, label: 'SLH-DSA-SHA2-192f', sigBytes: 35664 },
+  { value: 0x05, label: 'SLH-DSA-SHA2-256s', sigBytes: 29792 },
+  { value: 0x06, label: 'SLH-DSA-SHA2-256f', sigBytes: 49856 },
+  { value: 0x07, label: 'SLH-DSA-SHAKE-128s', sigBytes: 7856 },
+  { value: 0x08, label: 'SLH-DSA-SHAKE-128f', sigBytes: 17088 },
+  { value: 0x09, label: 'SLH-DSA-SHAKE-192s', sigBytes: 16224 },
+  { value: 0x0a, label: 'SLH-DSA-SHAKE-192f', sigBytes: 35664 },
+  { value: 0x0b, label: 'SLH-DSA-SHAKE-256s', sigBytes: 29792 },
+  { value: 0x0c, label: 'SLH-DSA-SHAKE-256f', sigBytes: 49856 },
+]
+
+// ── Internal crypto constants ─────────────────────────────────────────────────
+
+// MGF types (RSA-OAEP / PSS)
+const CKG_MGF1_SHA256_NEW = 0x00000002
+const CKG_MGF1_SHA384_NEW = 0x00000003
+const CKG_MGF1_SHA512_NEW = 0x00000004
+const CKZ_DATA_SPECIFIED = 0x00000001
+const CKD_NULL = 0x00000001
+
+// DER-encoded NamedCurve OID bytes used as CKA_EC_PARAMS value
+const EC_OID_P256 = new Uint8Array([0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07])
+const EC_OID_P384 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x22])
+const EC_OID_P521 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x23])
+const EC_OID_ED25519 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x70])
+const EC_OID_ED448 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x71])
+
+// ── Additional WASM memory helpers ───────────────────────────────────────────
+
+/** Allocate and fill a CK_MECHANISM struct (12 bytes) in WASM heap. */
+const buildMech = (M: SoftHSMModule, type: number, paramPtr = 0, paramLen = 0): number => {
+  const mech = M._malloc(12)
+  M.setValue(mech, type, 'i32')
+  M.setValue(mech + 4, paramPtr, 'i32')
+  M.setValue(mech + 8, paramLen, 'i32')
+  return mech
+}
+
+/** Copy bytes into WASM heap; returns pointer. Caller must free. */
+const writeBytes = (M: SoftHSMModule, bytes: Uint8Array): number => {
+  const ptr = M._malloc(bytes.length || 1)
+  if (bytes.length) M.HEAPU8.set(bytes, ptr)
+  return ptr
+}
+
+/** Build CK_RSA_PKCS_OAEP_PARAMS (20 bytes) in WASM heap. */
+const buildOAEPParams = (
+  M: SoftHSMModule,
+  hashAlgo: 'sha256' | 'sha384' | 'sha512'
+): { ptr: number; len: number } => {
+  const hashMech =
+    hashAlgo === 'sha512' ? CKM_SHA512 : hashAlgo === 'sha384' ? CKM_SHA384 : CKM_SHA256
+  const mgf =
+    hashAlgo === 'sha512'
+      ? CKG_MGF1_SHA512_NEW
+      : hashAlgo === 'sha384'
+        ? CKG_MGF1_SHA384_NEW
+        : CKG_MGF1_SHA256_NEW
+  const ptr = M._malloc(20)
+  M.setValue(ptr, hashMech, 'i32') // hashAlg
+  M.setValue(ptr + 4, mgf, 'i32') // mgf
+  M.setValue(ptr + 8, CKZ_DATA_SPECIFIED, 'i32') // source
+  M.setValue(ptr + 12, 0, 'i32') // pSourceData = NULL
+  M.setValue(ptr + 16, 0, 'i32') // ulSourceDataLen = 0
+  return { ptr, len: 20 }
+}
+
+/** Build CK_RSA_PKCS_PSS_PARAMS (12 bytes) in WASM heap. */
+const buildPSSParams = (M: SoftHSMModule, mechType: number): { ptr: number; len: number } => {
+  const isS512 = mechType === CKM_SHA512_RSA_PKCS_PSS
+  const isS384 = mechType === CKM_SHA384_RSA_PKCS_PSS
+  const hashMech = isS512 ? CKM_SHA512 : isS384 ? CKM_SHA384 : CKM_SHA256
+  const mgf = isS512 ? CKG_MGF1_SHA512_NEW : isS384 ? CKG_MGF1_SHA384_NEW : CKG_MGF1_SHA256_NEW
+  const sLen = isS512 ? 64 : isS384 ? 48 : 32
+  const ptr = M._malloc(12)
+  M.setValue(ptr, hashMech, 'i32')
+  M.setValue(ptr + 4, mgf, 'i32')
+  M.setValue(ptr + 8, sLen, 'i32')
+  return { ptr, len: 12 }
+}
+
+/** Build CK_GCM_PARAMS (24 bytes) in WASM heap. All returned allocPtrs must be freed. */
+const buildGCMParams = (
+  M: SoftHSMModule,
+  iv: Uint8Array,
+  aad?: Uint8Array
+): { ptr: number; len: number; allocPtrs: number[] } => {
+  const allocPtrs: number[] = []
+  const ivPtr = writeBytes(M, iv)
+  allocPtrs.push(ivPtr)
+  let aadPtr = 0
+  let aadLen = 0
+  if (aad && aad.length > 0) {
+    aadPtr = writeBytes(M, aad)
+    allocPtrs.push(aadPtr)
+    aadLen = aad.length
+  }
+  const ptr = M._malloc(24)
+  allocPtrs.push(ptr)
+  M.setValue(ptr, ivPtr, 'i32') // pIv
+  M.setValue(ptr + 4, iv.length, 'i32') // ulIvLen
+  M.setValue(ptr + 8, iv.length * 8, 'i32') // ulIvBits
+  M.setValue(ptr + 12, aadPtr, 'i32') // pAAD
+  M.setValue(ptr + 16, aadLen, 'i32') // ulAADLen
+  M.setValue(ptr + 20, 128, 'i32') // ulTagBits = 128
+  return { ptr, len: 24, allocPtrs }
+}
+
+/** Build CK_ECDH1_DERIVE_PARAMS (20 bytes) in WASM heap. All allocPtrs must be freed. */
+const buildECDH1DeriveParams = (
+  M: SoftHSMModule,
+  peerPubBytes: Uint8Array
+): { ptr: number; len: number; allocPtrs: number[] } => {
+  const allocPtrs: number[] = []
+  const pubPtr = writeBytes(M, peerPubBytes)
+  allocPtrs.push(pubPtr)
+  const ptr = M._malloc(20)
+  allocPtrs.push(ptr)
+  M.setValue(ptr, CKD_NULL, 'i32') // kdf
+  M.setValue(ptr + 4, 0, 'i32') // ulSharedDataLen
+  M.setValue(ptr + 8, 0, 'i32') // pSharedData = NULL
+  M.setValue(ptr + 12, peerPubBytes.length, 'i32') // ulPublicDataLen
+  M.setValue(ptr + 16, pubPtr, 'i32') // pPublicData
+  return { ptr, len: 20, allocPtrs }
+}
+
+// ── RSA helpers ───────────────────────────────────────────────────────────────
+
+/** Generate an RSA key pair via CKM_RSA_PKCS_KEY_PAIR_GEN. */
+export const hsm_generateRSAKeyPair = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyBits: 1024 | 2048 | 3072 | 4096
+): { pubHandle: number; privHandle: number } => {
+  const mech = buildMech(M, CKM_RSA_PKCS_KEY_PAIR_GEN)
+  const exp = new Uint8Array([0x01, 0x00, 0x01]) // e=65537
+  const expPtr = writeBytes(M, exp)
+  const pubTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_MODULUS_BITS, ulongVal: keyBits },
+    { type: CKA_PUBLIC_EXPONENT, bytesPtr: expPtr, bytesLen: 3 },
+    { type: CKA_ENCRYPT, boolVal: true },
+    { type: CKA_VERIFY, boolVal: true },
+  ])
+  const prvTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_DECRYPT, boolVal: true },
+    { type: CKA_SIGN, boolVal: true },
+  ])
+  const pubHPtr = allocUlong(M)
+  const prvHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 7, prvTpl.ptr, 8, pubHPtr, prvHPtr),
+      'C_GenerateKeyPair(RSA)'
+    )
+    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
+  } finally {
+    M._free(mech)
+    M._free(expPtr)
+    freeTemplate(M, pubTpl, 7)
+    freeTemplate(M, prvTpl, 8)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/** RSA sign via C_SignInit + C_Sign (PKCS#1 v1.5 or PSS). */
+export const hsm_rsaSign = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  message: string,
+  mechType: number = CKM_SHA256_RSA_PKCS
+): Uint8Array => {
+  const isPSS =
+    mechType === CKM_SHA256_RSA_PKCS_PSS ||
+    mechType === CKM_SHA384_RSA_PKCS_PSS ||
+    mechType === CKM_SHA512_RSA_PKCS_PSS
+  let pssParams: { ptr: number; len: number } | null = null
+  if (isPSS) pssParams = buildPSSParams(M, mechType)
+  const mech = buildMech(M, mechType, pssParams?.ptr ?? 0, pssParams?.len ?? 0)
+  const msgBytes = new TextEncoder().encode(message)
+  const msgPtr = writeBytes(M, msgBytes)
+  const sigLenPtr = allocUlong(M)
+  let sigPtr = 0
+  try {
+    checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(RSA)')
+    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, 0, sigLenPtr), 'C_Sign(RSA,len)')
+    const sigLen = readUlong(M, sigLenPtr)
+    sigPtr = M._malloc(sigLen)
+    writeUlong(M, sigLenPtr, sigLen)
+    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, sigPtr, sigLenPtr), 'C_Sign(RSA)')
+    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigLenPtr)
+    if (sigPtr) M._free(sigPtr)
+    if (pssParams) M._free(pssParams.ptr)
+  }
+}
+
+/** RSA verify via C_VerifyInit + C_Verify. Returns true if valid. */
+export const hsm_rsaVerify = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  message: string,
+  sigBytes: Uint8Array,
+  mechType: number = CKM_SHA256_RSA_PKCS
+): boolean => {
+  const isPSS =
+    mechType === CKM_SHA256_RSA_PKCS_PSS ||
+    mechType === CKM_SHA384_RSA_PKCS_PSS ||
+    mechType === CKM_SHA512_RSA_PKCS_PSS
+  let pssParams: { ptr: number; len: number } | null = null
+  if (isPSS) pssParams = buildPSSParams(M, mechType)
+  const mech = buildMech(M, mechType, pssParams?.ptr ?? 0, pssParams?.len ?? 0)
+  const msgBytes = new TextEncoder().encode(message)
+  const msgPtr = writeBytes(M, msgBytes)
+  const sigPtr = writeBytes(M, sigBytes)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(RSA)')
+    const rv = M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
+    if (pssParams) M._free(pssParams.ptr)
+  }
+}
+
+/** RSA-OAEP encrypt via C_EncryptInit + C_Encrypt. */
+export const hsm_rsaEncrypt = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  plaintext: string,
+  hashAlgo: 'sha256' | 'sha384' | 'sha512' = 'sha256'
+): Uint8Array => {
+  const oaepParams = buildOAEPParams(M, hashAlgo)
+  const mech = buildMech(M, CKM_RSA_PKCS_OAEP, oaepParams.ptr, oaepParams.len)
+  const plain = new TextEncoder().encode(plaintext)
+  const plainPtr = writeBytes(M, plain)
+  const outLenPtr = allocUlong(M)
+  let outPtr = 0
+  try {
+    checkRV(M._C_EncryptInit(hSession, mech, pubHandle), 'C_EncryptInit(RSA-OAEP)')
+    checkRV(M._C_Encrypt(hSession, plainPtr, plain.length, 0, outLenPtr), 'C_Encrypt(RSA-OAEP,len)')
+    const outLen = readUlong(M, outLenPtr)
+    outPtr = M._malloc(outLen)
+    writeUlong(M, outLenPtr, outLen)
+    checkRV(
+      M._C_Encrypt(hSession, plainPtr, plain.length, outPtr, outLenPtr),
+      'C_Encrypt(RSA-OAEP)'
+    )
+    return M.HEAPU8.slice(outPtr, outPtr + readUlong(M, outLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(oaepParams.ptr)
+    M._free(plainPtr)
+    M._free(outLenPtr)
+    if (outPtr) M._free(outPtr)
+  }
+}
+
+/** RSA-OAEP decrypt via C_DecryptInit + C_Decrypt. */
+export const hsm_rsaDecrypt = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  ciphertext: Uint8Array,
+  hashAlgo: 'sha256' | 'sha384' | 'sha512' = 'sha256'
+): Uint8Array => {
+  const oaepParams = buildOAEPParams(M, hashAlgo)
+  const mech = buildMech(M, CKM_RSA_PKCS_OAEP, oaepParams.ptr, oaepParams.len)
+  const ctPtr = writeBytes(M, ciphertext)
+  const outLenPtr = allocUlong(M)
+  let outPtr = 0
+  try {
+    checkRV(M._C_DecryptInit(hSession, mech, privHandle), 'C_DecryptInit(RSA-OAEP)')
+    checkRV(
+      M._C_Decrypt(hSession, ctPtr, ciphertext.length, 0, outLenPtr),
+      'C_Decrypt(RSA-OAEP,len)'
+    )
+    const outLen = readUlong(M, outLenPtr)
+    outPtr = M._malloc(outLen)
+    writeUlong(M, outLenPtr, outLen)
+    checkRV(
+      M._C_Decrypt(hSession, ctPtr, ciphertext.length, outPtr, outLenPtr),
+      'C_Decrypt(RSA-OAEP)'
+    )
+    return M.HEAPU8.slice(outPtr, outPtr + readUlong(M, outLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(oaepParams.ptr)
+    M._free(ctPtr)
+    M._free(outLenPtr)
+    if (outPtr) M._free(outPtr)
+  }
+}
+
+// ── EC / ECDSA / ECDH helpers ─────────────────────────────────────────────────
+
+const ecCurveOID = (curve: 'P-256' | 'P-384' | 'P-521'): Uint8Array => {
+  if (curve === 'P-384') return EC_OID_P384
+  if (curve === 'P-521') return EC_OID_P521
+  return EC_OID_P256
+}
+
+/** Generate an EC key pair (P-256, P-384, or P-521) for ECDSA and ECDH. */
+export const hsm_generateECKeyPair = (
+  M: SoftHSMModule,
+  hSession: number,
+  curve: 'P-256' | 'P-384' | 'P-521'
+): { pubHandle: number; privHandle: number } => {
+  const mech = buildMech(M, CKM_EC_KEY_PAIR_GEN)
+  const oid = ecCurveOID(curve)
+  const oidPtr = writeBytes(M, oid)
+  const pubTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: oid.length },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_ENCRYPT, boolVal: false },
+  ])
+  const prvTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_SIGN, boolVal: true },
+    { type: CKA_DERIVE, boolVal: true },
+  ])
+  const pubHPtr = allocUlong(M)
+  const prvHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 6, prvTpl.ptr, 8, pubHPtr, prvHPtr),
+      'C_GenerateKeyPair(EC)'
+    )
+    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
+  } finally {
+    M._free(mech)
+    M._free(oidPtr)
+    freeTemplate(M, pubTpl, 6)
+    freeTemplate(M, prvTpl, 8)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/** ECDSA sign via C_SignInit + C_Sign. mechType defaults to CKM_ECDSA_SHA256. */
+export const hsm_ecdsaSign = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  message: string,
+  mechType: number = CKM_ECDSA_SHA256
+): Uint8Array => {
+  const mech = buildMech(M, mechType)
+  const msgBytes = new TextEncoder().encode(message)
+  const msgPtr = writeBytes(M, msgBytes)
+  const sigLenPtr = allocUlong(M)
+  let sigPtr = 0
+  try {
+    checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(ECDSA)')
+    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, 0, sigLenPtr), 'C_Sign(ECDSA,len)')
+    const sigLen = readUlong(M, sigLenPtr)
+    sigPtr = M._malloc(sigLen)
+    writeUlong(M, sigLenPtr, sigLen)
+    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, sigPtr, sigLenPtr), 'C_Sign(ECDSA)')
+    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigLenPtr)
+    if (sigPtr) M._free(sigPtr)
+  }
+}
+
+/** ECDSA verify via C_VerifyInit + C_Verify. Returns true if valid. */
+export const hsm_ecdsaVerify = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  message: string,
+  sigBytes: Uint8Array,
+  mechType: number = CKM_ECDSA_SHA256
+): boolean => {
+  const mech = buildMech(M, mechType)
+  const msgBytes = new TextEncoder().encode(message)
+  const msgPtr = writeBytes(M, msgBytes)
+  const sigPtr = writeBytes(M, sigBytes)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(ECDSA)')
+    const rv = M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
+  }
+}
+
+/**
+ * ECDH1 key derivation via C_DeriveKey (CKD_NULL, no KDF).
+ * peerPubBytes: DER-encoded EC point from peer's CKA_EC_POINT attribute.
+ * Returns handle to derived 32-byte generic secret key.
+ */
+export const hsm_ecdhDerive = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  peerPubBytes: Uint8Array
+): number => {
+  const dp = buildECDH1DeriveParams(M, peerPubBytes)
+  const mech = buildMech(M, CKM_ECDH1_DERIVE, dp.ptr, dp.len)
+  const derivedTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_VALUE_LEN, ulongVal: 32 },
+  ])
+  const derivedHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DeriveKey(hSession, mech, privHandle, derivedTpl.ptr, 6, derivedHPtr),
+      'C_DeriveKey(ECDH1)'
+    )
+    return readUlong(M, derivedHPtr)
+  } finally {
+    M._free(mech)
+    dp.allocPtrs.forEach((p) => M._free(p))
+    freeTemplate(M, derivedTpl, 6)
+    M._free(derivedHPtr)
+  }
+}
+
+// ── EdDSA helpers ─────────────────────────────────────────────────────────────
+
+/** Generate an EdDSA key pair (Ed25519 or Ed448). */
+export const hsm_generateEdDSAKeyPair = (
+  M: SoftHSMModule,
+  hSession: number,
+  curve: 'Ed25519' | 'Ed448'
+): { pubHandle: number; privHandle: number } => {
+  const mech = buildMech(M, CKM_EC_EDWARDS_KEY_PAIR_GEN)
+  const oid = curve === 'Ed448' ? EC_OID_ED448 : EC_OID_ED25519
+  const oidPtr = writeBytes(M, oid)
+  const pubTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_EC_EDWARDS },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: oid.length },
+    { type: CKA_VERIFY, boolVal: true },
+  ])
+  const prvTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_EC_EDWARDS },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_SIGN, boolVal: true },
+  ])
+  const pubHPtr = allocUlong(M)
+  const prvHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 7, pubHPtr, prvHPtr),
+      'C_GenerateKeyPair(EdDSA)'
+    )
+    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
+  } finally {
+    M._free(mech)
+    M._free(oidPtr)
+    freeTemplate(M, pubTpl, 5)
+    freeTemplate(M, prvTpl, 7)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/** EdDSA sign via C_SignInit(CKM_EDDSA) + C_Sign. */
+export const hsm_eddsaSign = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  message: string
+): Uint8Array => {
+  const mech = buildMech(M, CKM_EDDSA)
+  const msgBytes = new TextEncoder().encode(message)
+  const msgPtr = writeBytes(M, msgBytes)
+  const sigLenPtr = allocUlong(M)
+  let sigPtr = 0
+  try {
+    checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(EdDSA)')
+    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, 0, sigLenPtr), 'C_Sign(EdDSA,len)')
+    const sigLen = readUlong(M, sigLenPtr)
+    sigPtr = M._malloc(sigLen)
+    writeUlong(M, sigLenPtr, sigLen)
+    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, sigPtr, sigLenPtr), 'C_Sign(EdDSA)')
+    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigLenPtr)
+    if (sigPtr) M._free(sigPtr)
+  }
+}
+
+/** EdDSA verify via C_VerifyInit(CKM_EDDSA) + C_Verify. Returns true if valid. */
+export const hsm_eddsaVerify = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  message: string,
+  sigBytes: Uint8Array
+): boolean => {
+  const mech = buildMech(M, CKM_EDDSA)
+  const msgBytes = new TextEncoder().encode(message)
+  const msgPtr = writeBytes(M, msgBytes)
+  const sigPtr = writeBytes(M, sigBytes)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(EdDSA)')
+    const rv = M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
+  }
+}
+
+// ── AES helpers ───────────────────────────────────────────────────────────────
+
+/** Generate an AES symmetric key (128/192/256 bits). Returns CKO_SECRET_KEY handle. */
+export const hsm_generateAESKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyBits: 128 | 192 | 256
+): number => {
+  const mech = buildMech(M, CKM_AES_KEY_GEN)
+  const tpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_ENCRYPT, boolVal: true },
+    { type: CKA_DECRYPT, boolVal: true },
+    { type: CKA_WRAP, boolVal: true },
+    { type: CKA_UNWRAP, boolVal: true },
+    { type: CKA_VALUE_LEN, ulongVal: keyBits / 8 },
+  ])
+  const hKeyPtr = allocUlong(M)
+  try {
+    checkRV(M._C_GenerateKey(hSession, mech, tpl.ptr, 10, hKeyPtr), 'C_GenerateKey(AES)')
+    return readUlong(M, hKeyPtr)
+  } finally {
+    M._free(mech)
+    freeTemplate(M, tpl, 10)
+    M._free(hKeyPtr)
+  }
+}
+
+/**
+ * AES encrypt (GCM or CBC-PAD). A random IV is generated internally.
+ * GCM output: ciphertext bytes include the 16-byte auth tag appended by SoftHSM.
+ * Returns { ciphertext, iv }.
+ */
+export const hsm_aesEncrypt = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  plaintext: Uint8Array,
+  mode: 'gcm' | 'cbc' = 'gcm'
+): { ciphertext: Uint8Array; iv: Uint8Array } => {
+  const iv = new Uint8Array(mode === 'gcm' ? 12 : 16)
+  crypto.getRandomValues(iv)
+  let mech: number
+  const allocPtrs: number[] = []
+  if (mode === 'gcm') {
+    const gcmP = buildGCMParams(M, iv)
+    gcmP.allocPtrs.forEach((p) => allocPtrs.push(p))
+    mech = buildMech(M, CKM_AES_GCM, gcmP.ptr, gcmP.len)
+  } else {
+    const ivPtr = writeBytes(M, iv)
+    allocPtrs.push(ivPtr)
+    mech = buildMech(M, CKM_AES_CBC_PAD, ivPtr, 16)
+  }
+  const plainPtr = writeBytes(M, plaintext)
+  allocPtrs.push(plainPtr)
+  const outLenPtr = allocUlong(M)
+  let outPtr = 0
+  try {
+    checkRV(M._C_EncryptInit(hSession, mech, keyHandle), 'C_EncryptInit(AES)')
+    checkRV(M._C_Encrypt(hSession, plainPtr, plaintext.length, 0, outLenPtr), 'C_Encrypt(AES,len)')
+    const outLen = readUlong(M, outLenPtr)
+    outPtr = M._malloc(outLen)
+    writeUlong(M, outLenPtr, outLen)
+    checkRV(M._C_Encrypt(hSession, plainPtr, plaintext.length, outPtr, outLenPtr), 'C_Encrypt(AES)')
+    return { ciphertext: M.HEAPU8.slice(outPtr, outPtr + readUlong(M, outLenPtr)), iv }
+  } finally {
+    M._free(mech)
+    M._free(outLenPtr)
+    if (outPtr) M._free(outPtr)
+    allocPtrs.forEach((p) => M._free(p))
+  }
+}
+
+/**
+ * AES decrypt (GCM or CBC-PAD).
+ * For GCM: ciphertext must include the 16-byte auth tag at the end (as returned by hsm_aesEncrypt).
+ */
+export const hsm_aesDecrypt = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  ciphertext: Uint8Array,
+  iv: Uint8Array,
+  mode: 'gcm' | 'cbc' = 'gcm'
+): Uint8Array => {
+  let mech: number
+  const allocPtrs: number[] = []
+  if (mode === 'gcm') {
+    const gcmP = buildGCMParams(M, iv)
+    gcmP.allocPtrs.forEach((p) => allocPtrs.push(p))
+    mech = buildMech(M, CKM_AES_GCM, gcmP.ptr, gcmP.len)
+  } else {
+    const ivPtr = writeBytes(M, iv)
+    allocPtrs.push(ivPtr)
+    mech = buildMech(M, CKM_AES_CBC_PAD, ivPtr, 16)
+  }
+  const ctPtr = writeBytes(M, ciphertext)
+  allocPtrs.push(ctPtr)
+  const outLenPtr = allocUlong(M)
+  let outPtr = 0
+  try {
+    checkRV(M._C_DecryptInit(hSession, mech, keyHandle), 'C_DecryptInit(AES)')
+    checkRV(M._C_Decrypt(hSession, ctPtr, ciphertext.length, 0, outLenPtr), 'C_Decrypt(AES,len)')
+    const outLen = readUlong(M, outLenPtr)
+    outPtr = M._malloc(outLen)
+    writeUlong(M, outLenPtr, outLen)
+    checkRV(M._C_Decrypt(hSession, ctPtr, ciphertext.length, outPtr, outLenPtr), 'C_Decrypt(AES)')
+    return M.HEAPU8.slice(outPtr, outPtr + readUlong(M, outLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(outLenPtr)
+    if (outPtr) M._free(outPtr)
+    allocPtrs.forEach((p) => M._free(p))
+  }
+}
+
+/** AES-CMAC via C_SignInit(CKM_AES_CMAC) + C_Sign. Returns 16-byte MAC. */
+export const hsm_aesCmac = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  data: Uint8Array
+): Uint8Array => {
+  const mech = buildMech(M, CKM_AES_CMAC)
+  const dataPtr = writeBytes(M, data)
+  const macLenPtr = allocUlong(M)
+  let macPtr = 0
+  try {
+    checkRV(M._C_SignInit(hSession, mech, keyHandle), 'C_SignInit(AES-CMAC)')
+    checkRV(M._C_Sign(hSession, dataPtr, data.length, 0, macLenPtr), 'C_Sign(AES-CMAC,len)')
+    const macLen = readUlong(M, macLenPtr)
+    macPtr = M._malloc(macLen)
+    writeUlong(M, macLenPtr, macLen)
+    checkRV(M._C_Sign(hSession, dataPtr, data.length, macPtr, macLenPtr), 'C_Sign(AES-CMAC)')
+    return M.HEAPU8.slice(macPtr, macPtr + readUlong(M, macLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(dataPtr)
+    M._free(macLenPtr)
+    if (macPtr) M._free(macPtr)
+  }
+}
+
+/** Wrap a key with an AES wrapping key via C_WrapKey(CKM_AES_KEY_WRAP). */
+export const hsm_aesWrapKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  wrappingHandle: number,
+  targetHandle: number
+): Uint8Array => {
+  const mech = buildMech(M, CKM_AES_KEY_WRAP)
+  const wrappedLenPtr = allocUlong(M)
+  let wrappedPtr = 0
+  try {
+    checkRV(
+      M._C_WrapKey(hSession, mech, wrappingHandle, targetHandle, 0, wrappedLenPtr),
+      'C_WrapKey(len)'
+    )
+    const wrappedLen = readUlong(M, wrappedLenPtr)
+    wrappedPtr = M._malloc(wrappedLen)
+    writeUlong(M, wrappedLenPtr, wrappedLen)
+    checkRV(
+      M._C_WrapKey(hSession, mech, wrappingHandle, targetHandle, wrappedPtr, wrappedLenPtr),
+      'C_WrapKey'
+    )
+    return M.HEAPU8.slice(wrappedPtr, wrappedPtr + readUlong(M, wrappedLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(wrappedLenPtr)
+    if (wrappedPtr) M._free(wrappedPtr)
+  }
+}
+
+// ── HMAC helpers ──────────────────────────────────────────────────────────────
+
+/** Generate an HMAC key (generic secret). keyBytes defaults to 32 (256-bit). */
+export const hsm_generateHMACKey = (M: SoftHSMModule, hSession: number, keyBytes = 32): number => {
+  const mech = buildMech(M, CKM_GENERIC_SECRET_KEY_GEN)
+  const tpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_SIGN, boolVal: true },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_VALUE_LEN, ulongVal: keyBytes },
+  ])
+  const hKeyPtr = allocUlong(M)
+  try {
+    checkRV(M._C_GenerateKey(hSession, mech, tpl.ptr, 8, hKeyPtr), 'C_GenerateKey(HMAC)')
+    return readUlong(M, hKeyPtr)
+  } finally {
+    M._free(mech)
+    freeTemplate(M, tpl, 8)
+    M._free(hKeyPtr)
+  }
+}
+
+/** Compute HMAC via C_SignInit + C_Sign. mechType: CKM_SHA256_HMAC, etc. */
+export const hsm_hmac = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  data: Uint8Array,
+  mechType: number = CKM_SHA256_HMAC
+): Uint8Array => {
+  const mech = buildMech(M, mechType)
+  const dataPtr = writeBytes(M, data)
+  const macLenPtr = allocUlong(M)
+  let macPtr = 0
+  try {
+    checkRV(M._C_SignInit(hSession, mech, keyHandle), 'C_SignInit(HMAC)')
+    checkRV(M._C_Sign(hSession, dataPtr, data.length, 0, macLenPtr), 'C_Sign(HMAC,len)')
+    const macLen = readUlong(M, macLenPtr)
+    macPtr = M._malloc(macLen)
+    writeUlong(M, macLenPtr, macLen)
+    checkRV(M._C_Sign(hSession, dataPtr, data.length, macPtr, macLenPtr), 'C_Sign(HMAC)')
+    return M.HEAPU8.slice(macPtr, macPtr + readUlong(M, macLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(dataPtr)
+    M._free(macLenPtr)
+    if (macPtr) M._free(macPtr)
+  }
+}
+
+/** Verify HMAC via C_VerifyInit + C_Verify. Returns true if MAC matches. */
+export const hsm_hmacVerify = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  data: Uint8Array,
+  mac: Uint8Array,
+  mechType: number = CKM_SHA256_HMAC
+): boolean => {
+  const mech = buildMech(M, mechType)
+  const dataPtr = writeBytes(M, data)
+  const macPtr = writeBytes(M, mac)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, keyHandle), 'C_VerifyInit(HMAC)')
+    const rv = M._C_Verify(hSession, dataPtr, data.length, macPtr, mac.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(dataPtr)
+    M._free(macPtr)
+  }
+}
+
+// ── SHA digest helper ─────────────────────────────────────────────────────────
+
+/**
+ * Compute a SHA digest via C_DigestInit + C_Digest (two-step: size query then actual).
+ * mechType: CKM_SHA256 | CKM_SHA384 | CKM_SHA512 | CKM_SHA3_256 | CKM_SHA3_512
+ */
+export const hsm_digest = (
+  M: SoftHSMModule,
+  hSession: number,
+  data: Uint8Array,
+  mechType: number = CKM_SHA256
+): Uint8Array => {
+  const mech = buildMech(M, mechType)
+  const dataPtr = writeBytes(M, data)
+  const digestLenPtr = allocUlong(M)
+  let digestPtr = 0
+  try {
+    checkRV(M._C_DigestInit(hSession, mech), 'C_DigestInit')
+    // Size query: pDigest=0 returns required length without advancing state (PKCS#11 §5.2)
+    checkRV(M._C_Digest(hSession, dataPtr, data.length, 0, digestLenPtr), 'C_Digest(len)')
+    const digestLen = readUlong(M, digestLenPtr)
+    digestPtr = M._malloc(digestLen)
+    writeUlong(M, digestLenPtr, digestLen)
+    checkRV(M._C_Digest(hSession, dataPtr, data.length, digestPtr, digestLenPtr), 'C_Digest')
+    return M.HEAPU8.slice(digestPtr, digestPtr + readUlong(M, digestLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(dataPtr)
+    M._free(digestLenPtr)
+    if (digestPtr) M._free(digestPtr)
+  }
+}
+
+// ── SLH-DSA helpers ───────────────────────────────────────────────────────────
+
+/**
+ * Generate an SLH-DSA key pair.
+ * paramSet: one of the CKP_SLH_DSA_* constants (defaults to SHA2-128s).
+ */
+export const hsm_generateSLHDSAKeyPair = (
+  M: SoftHSMModule,
+  hSession: number,
+  paramSet: number = CKP_SLH_DSA_SHA2_128S
+): { pubHandle: number; privHandle: number } => {
+  const mech = buildMech(M, CKM_SLH_DSA_KEY_PAIR_GEN)
+  const pubTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_SLH_DSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_PARAMETER_SET, ulongVal: paramSet },
+  ])
+  const prvTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_SLH_DSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_SIGN, boolVal: true },
+  ])
+  const pubHPtr = allocUlong(M)
+  const prvHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 7, pubHPtr, prvHPtr),
+      'C_GenerateKeyPair(SLH-DSA)'
+    )
+    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
+  } finally {
+    M._free(mech)
+    freeTemplate(M, pubTpl, 5)
+    freeTemplate(M, prvTpl, 7)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/**
+ * SLH-DSA sign via C_MessageSignInit(CKM_SLH_DSA) + C_SignMessage + C_MessageSignFinal.
+ * Uses the same one-shot message signing pattern as ML-DSA (PKCS#11 v3.2).
+ */
+export const hsm_slhdsaSign = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  message: string
+): Uint8Array => {
+  const mech = buildMech(M, CKM_SLH_DSA)
+  const msgBytes = new TextEncoder().encode(message)
+  const msgPtr = writeBytes(M, msgBytes)
+  const sigLenPtr = allocUlong(M)
+  let sigPtr = 0
+  checkRV(M._C_MessageSignInit(hSession, mech, privHandle), 'C_MessageSignInit(SLH-DSA)')
+  try {
+    checkRV(
+      M._C_SignMessage(hSession, 0, 0, msgPtr, msgBytes.length, 0, sigLenPtr),
+      'C_SignMessage(SLH-DSA,len)'
+    )
+    const sigLen = readUlong(M, sigLenPtr)
+    sigPtr = M._malloc(sigLen)
+    writeUlong(M, sigLenPtr, sigLen)
+    checkRV(
+      M._C_SignMessage(hSession, 0, 0, msgPtr, msgBytes.length, sigPtr, sigLenPtr),
+      'C_SignMessage(SLH-DSA)'
+    )
+    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
+  } finally {
+    M._C_MessageSignFinal(hSession, 0, 0, 0, 0) // close multi-message context; ignore RV in cleanup
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigLenPtr)
+    if (sigPtr) M._free(sigPtr)
+  }
+}
+
+/**
+ * SLH-DSA verify via C_MessageVerifyInit(CKM_SLH_DSA) + C_VerifyMessage + C_MessageVerifyFinal.
+ */
+export const hsm_slhdsaVerify = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  message: string,
+  sigBytes: Uint8Array
+): boolean => {
+  const mech = buildMech(M, CKM_SLH_DSA)
+  const msgBytes = new TextEncoder().encode(message)
+  const msgPtr = writeBytes(M, msgBytes)
+  const sigPtr = writeBytes(M, sigBytes)
+  checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit(SLH-DSA)')
+  try {
+    const rv =
+      M._C_VerifyMessage(hSession, 0, 0, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._C_MessageVerifyFinal(hSession) // close multi-message context; ignore RV in cleanup
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
   }
 }

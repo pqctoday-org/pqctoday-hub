@@ -86,25 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC Assistant hardened</strong> &mdash;
-                    stronger anti-hallucination rules, entity inventory expanded to 50 items,
-                    grounding false-positives reduced, 100% Q&amp;A retrieval accuracy
+                    <strong className="text-foreground">PKCS#11 HSM Mode</strong> &mdash; toggle the
+                    Playground into SoftHSMv3 WASM mode; run ML-KEM and ML-DSA operations through a
+                    real PKCS#11 v3.2 interface
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">5G Security: Exercise 6</strong> &mdash; SIM
-                    Key Provisioning Supply Chain — Ki factory-to-operator lifecycle inside an HSM,
-                    never exposed in plaintext
+                    <strong className="text-foreground">ReadingCompleteButton</strong> &mdash; all
+                    27 learning modules now have an inline &ldquo;Mark as Read&rdquo; CTA;
+                    LearnStepper redesigned with numbered steps and progress line
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">28 deep link E2E tests</strong> &mdash; all
-                    major query-parameter routes validated across 10 route groups; library
-                    referenceIds now fully searchable in RAG
+                    <strong className="text-foreground">Milestone History Feed</strong> &mdash;
+                    right panel shows only meaningful milestones; Migrate product selections now
+                    tracked as journey events
                   </span>
                 </li>
               </ul>

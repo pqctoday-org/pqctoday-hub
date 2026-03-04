@@ -15,6 +15,7 @@ export type HistoryEventType =
   | 'daily_visit'
   | 'belt_earned'
   | 'streak_milestone'
+  | 'migrate_product_selection'
 
 export interface HistoryEvent {
   id: string

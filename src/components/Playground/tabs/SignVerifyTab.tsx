@@ -1,10 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
-import { FileSignature, CheckCircle, XCircle } from 'lucide-react'
+import { FileSignature, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { useSettingsContext } from '../contexts/SettingsContext'
 import { useKeyStoreContext } from '../contexts/KeyStoreContext'
 import { useOperationsContext } from '../contexts/OperationsContext'
+import { useHsmContext } from '../hsm/HsmContext'
 import { logEvent } from '../../../utils/analytics'
+import { Button } from '../../ui/button'
+import { Input } from '../../ui/input'
+import { ErrorAlert } from '../../ui/error-alert'
+import {
+  hsm_generateMLDSAKeyPair,
+  hsm_sign,
+  hsm_verify,
+  type MLDSASignOptions,
+} from '../../../wasm/softhsm'
 
 // Helper for Hex/ASCII toggle with editing
 const EditableDataDisplay: React.FC<{
@@ -75,7 +85,292 @@ const EditableDataDisplay: React.FC<{
   )
 }
 
+// ── HSM Sign Panel ────────────────────────────────────────────────────────────
+
+const DSA_SIZES: Record<44 | 65 | 87, { pub: number; sig: number }> = {
+  44: { pub: 1312, sig: 2420 },
+  65: { pub: 1952, sig: 3293 },
+  87: { pub: 2592, sig: 4627 },
+}
+
+const toHexSnippetDsa = (b: Uint8Array) => {
+  const h = Array.from(b)
+    .map((x) => x.toString(16).padStart(2, '0'))
+    .join('')
+  return h.length > 40 ? `${h.slice(0, 20)}…${h.slice(-8)}` : h
+}
+
+const HsmSignPanel: React.FC = () => {
+  const { moduleRef, hSessionRef, isReady, addHsmKey } = useHsmContext()
+
+  const [variant, setVariant] = useState<44 | 65 | 87>(65)
+  const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
+  const [message, setMessage] = useState('Hello, PQC World!')
+  const [signature, setSignature] = useState<Uint8Array | null>(null)
+  const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
+  const [hedging, setHedging] = useState<'preferred' | 'required' | 'deterministic'>('preferred')
+  const [context, setContext] = useState('')
+  const [preHash, setPreHash] = useState<'' | 'sha256' | 'sha512' | 'sha3-256'>('')
+  const [loadingOp, setLoadingOp] = useState<string | null>(null)
+  const [dsaError, setDsaError] = useState<string | null>(null)
+
+  const anyLoading = loadingOp !== null
+
+  const changeVariant = (v: 44 | 65 | 87) => {
+    setVariant(v)
+    setHandles(null)
+    setSignature(null)
+    setVerifyResult(null)
+    setDsaError(null)
+  }
+
+  const withLoading = async (op: string, fn: () => Promise<void>) => {
+    setLoadingOp(op)
+    try {
+      await fn()
+    } finally {
+      setLoadingOp(null)
+    }
+  }
+
+  const buildOpts = (): MLDSASignOptions | undefined => {
+    const opts: MLDSASignOptions = {}
+    if (hedging !== 'preferred') opts.hedging = hedging
+    if (context) opts.context = new TextEncoder().encode(context)
+    if (preHash) opts.preHash = preHash
+    return Object.keys(opts).length > 0 ? opts : undefined
+  }
+
+  const doGenKeyPair = () =>
+    withLoading('gen', async () => {
+      setDsaError(null)
+      setSignature(null)
+      setVerifyResult(null)
+      try {
+        const M = moduleRef.current
+        if (!M) throw new Error('Module not loaded — complete Token Setup first')
+        const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSessionRef.current, variant)
+        setHandles({ pub: pubHandle, priv: privHandle })
+        const ts = new Date().toLocaleTimeString([], {
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        })
+        addHsmKey({
+          handle: pubHandle,
+          family: 'ml-dsa',
+          role: 'public',
+          label: `ML-DSA-${variant} Public Key`,
+          variant: String(variant),
+          generatedAt: ts,
+        })
+        addHsmKey({
+          handle: privHandle,
+          family: 'ml-dsa',
+          role: 'private',
+          label: `ML-DSA-${variant} Private Key`,
+          variant: String(variant),
+          generatedAt: ts,
+        })
+      } catch (e) {
+        setDsaError(String(e))
+      }
+    })
+
+  const doSign = () =>
+    withLoading('sign', async () => {
+      setDsaError(null)
+      setVerifyResult(null)
+      try {
+        const M = moduleRef.current!
+        const sig = hsm_sign(M, hSessionRef.current, handles!.priv, message, buildOpts())
+        setSignature(sig)
+      } catch (e) {
+        setDsaError(String(e))
+      }
+    })
+
+  const doVerify = () =>
+    withLoading('verify', async () => {
+      setDsaError(null)
+      try {
+        const M = moduleRef.current!
+        const ok = hsm_verify(
+          M,
+          hSessionRef.current,
+          handles!.pub,
+          message,
+          signature!,
+          buildOpts()
+        )
+        setVerifyResult(ok)
+      } catch (e) {
+        setDsaError(String(e))
+      }
+    })
+
+  return (
+    <div className={`space-y-4 ${!isReady ? 'opacity-60 pointer-events-none' : ''}`}>
+      {!isReady && (
+        <div className="glass-panel p-3 text-sm text-muted-foreground">
+          Complete Token Setup in the Key Store tab first.
+        </div>
+      )}
+
+      <div className="glass-panel p-4 space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <h3 className="font-semibold text-sm">ML-DSA Sign &amp; Verify (FIPS 204)</h3>
+          <div className="flex gap-1">
+            {([44, 65, 87] as const).map((v) => (
+              <Button
+                key={v}
+                variant="ghost"
+                size="sm"
+                disabled={anyLoading}
+                onClick={() => changeVariant(v)}
+                className={
+                  variant === v
+                    ? 'bg-primary/20 text-primary text-xs px-2 py-1 h-auto'
+                    : 'text-muted-foreground text-xs px-2 py-1 h-auto'
+                }
+              >
+                ML-DSA-{v}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <p className="text-xs text-muted-foreground font-mono">
+          pub: {DSA_SIZES[variant].pub} B · sig: {DSA_SIZES[variant].sig} B
+        </p>
+
+        {/* Message input */}
+        <div className="space-y-1.5">
+          <label htmlFor="hsm-dsa-message" className="text-xs text-muted-foreground">
+            Message
+          </label>
+          <Input
+            id="hsm-dsa-message"
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value)
+              setSignature(null)
+              setVerifyResult(null)
+            }}
+            className="text-sm font-mono"
+            placeholder="Enter message to sign…"
+          />
+        </div>
+
+        {/* Options */}
+        <div className="flex flex-wrap gap-3 text-xs">
+          <div className="flex items-center gap-1.5">
+            <label htmlFor="hsm-dsa-hedging" className="text-muted-foreground">
+              Hedging:
+            </label>
+            <select
+              id="hsm-dsa-hedging"
+              value={hedging}
+              onChange={(e) => setHedging(e.target.value as typeof hedging)}
+              className="bg-muted/40 border border-border rounded px-1.5 py-0.5 text-xs text-foreground outline-none focus:border-primary"
+            >
+              <option value="preferred">Preferred</option>
+              <option value="required">Required</option>
+              <option value="deterministic">Deterministic</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <label htmlFor="hsm-dsa-prehash" className="text-muted-foreground">
+              Pre-hash:
+            </label>
+            <select
+              id="hsm-dsa-prehash"
+              value={preHash}
+              onChange={(e) => setPreHash(e.target.value as typeof preHash)}
+              className="bg-muted/40 border border-border rounded px-1.5 py-0.5 text-xs text-foreground outline-none focus:border-primary"
+            >
+              <option value="">None (pure ML-DSA)</option>
+              <option value="sha256">SHA-256</option>
+              <option value="sha512">SHA-512</option>
+              <option value="sha3-256">SHA3-256</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <label htmlFor="hsm-dsa-context" className="text-muted-foreground">
+              Context:
+            </label>
+            <Input
+              id="hsm-dsa-context"
+              value={context}
+              onChange={(e) => setContext(e.target.value)}
+              placeholder="optional"
+              className="h-6 text-xs px-2 w-28"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" disabled={anyLoading} onClick={doGenKeyPair}>
+            {loadingOp === 'gen' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            {handles ? '✓ Key Pair' : 'Generate Key Pair'}
+          </Button>
+          <Button variant="outline" size="sm" disabled={!handles || anyLoading} onClick={doSign}>
+            {loadingOp === 'sign' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            Sign
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!signature || anyLoading}
+            onClick={doVerify}
+          >
+            {loadingOp === 'verify' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            Verify
+          </Button>
+        </div>
+
+        <div className="space-y-1.5 text-xs font-mono">
+          {handles && (
+            <div className="flex gap-3 text-muted-foreground">
+              <span>pubH={handles.pub}</span>
+              <span>privH={handles.priv}</span>
+            </div>
+          )}
+          {signature && (
+            <div className="flex gap-3 bg-muted rounded px-2 py-1">
+              <span className="text-muted-foreground w-16 shrink-0">Signature</span>
+              <span className="truncate">{toHexSnippetDsa(signature)}</span>
+              <span className="text-muted-foreground shrink-0">{signature.length} B</span>
+            </div>
+          )}
+          {verifyResult !== null && (
+            <div
+              className={`flex items-center gap-2 rounded px-2 py-1 ${verifyResult ? 'bg-status-success/10 text-status-success' : 'bg-status-error/10 text-status-error'}`}
+            >
+              {verifyResult ? <CheckCircle size={13} /> : <XCircle size={13} />}
+              {verifyResult
+                ? 'Signature valid — ML-DSA verify passed'
+                : 'Signature invalid — verification failed'}
+            </div>
+          )}
+        </div>
+
+        {dsaError && <ErrorAlert message={dsaError} />}
+      </div>
+    </div>
+  )
+}
+
+// ── Software Sign Tab ─────────────────────────────────────────────────────────
+
 export const SignVerifyTab: React.FC = () => {
+  const { hsmMode } = useSettingsContext()
+  if (hsmMode) return <HsmSignPanel />
+  return <SignVerifyTabSoftware />
+}
+
+const SignVerifyTabSoftware: React.FC = () => {
   const { loading } = useSettingsContext()
   const {
     keyStore,

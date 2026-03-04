@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { softwareData, softwareMetadata } from '../../data/migrateData'
 import { useSearchParams } from 'react-router-dom'
 
@@ -30,6 +30,7 @@ import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { MIGRATE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
+import { useHistoryStore } from '@/store/useHistoryStore'
 
 const PRIORITY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -40,6 +41,7 @@ const PRIORITY_ORDER: Record<string, number> = {
 
 export const MigrateView: React.FC = () => {
   useWorkflowPhaseTracker('migrate')
+  const addHistoryEvent = useHistoryStore((s) => s.addEvent)
   const [searchParams] = useSearchParams()
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
@@ -98,6 +100,25 @@ export const MigrateView: React.FC = () => {
   const activeTab = activeSubCategory
   const hiddenSet = useMemo(() => new Set(hiddenProducts), [hiddenProducts])
   const myProductsSet = useMemo(() => new Set(myProducts), [myProducts])
+
+  // Fire a history event when the product selection changes meaningfully (debounced)
+  const prevProductCountRef = useRef(myProducts.length)
+  useEffect(() => {
+    const count = myProducts.length
+    if (count === prevProductCountRef.current) return
+    prevProductCountRef.current = count
+    if (count === 0) return
+    const timer = setTimeout(() => {
+      addHistoryEvent({
+        type: 'migrate_product_selection',
+        timestamp: Date.now(),
+        title: 'Updated product selection',
+        detail: `${count} product${count === 1 ? '' : 's'} selected`,
+        route: '/migrate',
+      })
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [myProducts.length, addHistoryEvent])
 
   // Debounced search
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -73,6 +73,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     | 'softhsm'
   >('keystore')
   const [classicalAlgorithm, setClassicalAlgorithm] = useState<ClassicalAlgorithm>('RSA-2048')
+  const [hsmMode, setHsmMode] = useState(false)
+  const toggleHsmMode = useCallback(() => {
+    setHsmMode((m) => !m)
+    setActiveTab('keystore')
+  }, [])
 
   // --- Helpers (stable callbacks) ---
   const handleAlgorithmChange = useCallback((newAlgorithm: string) => {
@@ -235,6 +240,9 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setActiveTab,
       addLog,
       clearLogs,
+      hsmMode,
+      setHsmMode,
+      toggleHsmMode,
     }),
     [
       algorithm,
@@ -257,6 +265,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       handleAlgorithmChange,
       addLog,
       clearLogs,
+      hsmMode,
+      toggleHsmMode,
     ]
   )
 

@@ -15,6 +15,7 @@ import {
   Network,
   UserCircle,
   Calendar,
+  Layers,
   type LucideIcon,
 } from 'lucide-react'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
@@ -36,6 +37,7 @@ const EVENT_CONFIG: Record<HistoryEventType, { icon: LucideIcon; color: string }
   daily_visit: { icon: Calendar, color: 'text-muted-foreground' },
   belt_earned: { icon: Award, color: 'text-status-warning' },
   streak_milestone: { icon: Flame, color: 'text-status-warning' },
+  migrate_product_selection: { icon: Layers, color: 'text-primary' },
 }
 
 interface HistoryEventRowProps {

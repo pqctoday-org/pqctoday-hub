@@ -73,6 +73,7 @@ export interface LearningProgress {
       timeSpent: number // Seconds
       completedSteps: string[]
       quizScores: { [quizId: string]: number }
+      learnSectionChecks?: Record<string, boolean> // sectionId → manually checked by user
     }
   }
 

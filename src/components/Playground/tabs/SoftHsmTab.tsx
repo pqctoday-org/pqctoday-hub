@@ -23,6 +23,9 @@ import {
   type Pkcs11LogEntry,
   type MLDSASignOptions,
 } from '../../../wasm/softhsm'
+import { useSettingsContext } from '../contexts/SettingsContext'
+import { useHsmContext } from '../hsm/HsmContext'
+import { HsmSetupPanel } from '../hsm/HsmSetupPanel'
 
 // ── Static size hints ────────────────────────────────────────────────────────
 
@@ -287,11 +290,19 @@ interface LogPanelProps {
   onClear: () => void
 }
 const LogPanel = ({ log, onClear }: LogPanelProps) => {
+  const [copied, setCopied] = useState(false)
+
   const copyAll = () => {
     const text = log
       .map((e) => `[${e.timestamp}] ${e.fn}(${e.args}) → ${e.rvName} ${e.rvHex} [${e.ms}ms]`)
       .join('\n')
-    navigator.clipboard.writeText(text).catch(() => {})
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      })
+      .catch(() => {})
   }
 
   return (
@@ -302,8 +313,19 @@ const LogPanel = ({ log, onClear }: LogPanelProps) => {
           <span className="text-xs text-muted-foreground font-normal">({log.length} calls)</span>
         </h3>
         <div className="flex gap-2">
-          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={copyAll}>
-            <Copy size={12} className="mr-1" /> Copy
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 text-xs"
+            disabled={log.length === 0}
+            onClick={copyAll}
+          >
+            {copied ? (
+              <CheckCircle size={12} className="mr-1 text-status-success" />
+            ) : (
+              <Copy size={12} className="mr-1" />
+            )}
+            {copied ? 'Copied!' : 'Copy'}
           </Button>
           <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={onClear}>
             <Trash2 size={12} className="mr-1" /> Clear
@@ -353,9 +375,102 @@ const StepBadge = ({ done, label }: StepBadgeProps) => (
   </span>
 )
 
+// ── HSM mode wrapper (PKCS#11 call log from HsmContext) ──────────────────────
+
+const HsmCallLog = () => {
+  const { hsmLog, clearHsmLog, inspectMode, toggleInspect } = useHsmContext()
+  const [copied, setCopied] = useState(false)
+
+  const copyAll = () => {
+    const text = hsmLog
+      .map((e) => `[${e.timestamp}] ${e.fn}(${e.args}) → ${e.rvName} ${e.rvHex} [${e.ms}ms]`)
+      .join('\n')
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      })
+      .catch(() => {})
+  }
+
+  return (
+    <div className="glass-panel p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold text-sm flex items-center gap-2">
+          PKCS#11 Call Log
+          <span className="text-xs text-muted-foreground font-normal">({hsmLog.length} calls)</span>
+        </h3>
+        <div className="flex gap-2">
+          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={toggleInspect}>
+            {inspectMode ? 'Hide Params' : 'Show Params'}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 text-xs"
+            disabled={hsmLog.length === 0}
+            onClick={copyAll}
+          >
+            {copied ? (
+              <CheckCircle size={12} className="mr-1 text-status-success" />
+            ) : (
+              <Copy size={12} className="mr-1" />
+            )}
+            {copied ? 'Copied!' : 'Copy'}
+          </Button>
+          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={clearHsmLog}>
+            <Trash2 size={12} className="mr-1" /> Clear
+          </Button>
+        </div>
+      </div>
+      {hsmLog.length === 0 ? (
+        <p className="text-xs text-muted-foreground italic">
+          No calls yet — complete HSM Setup to start.
+        </p>
+      ) : (
+        <div className="max-h-64 overflow-y-auto custom-scrollbar space-y-0.5">
+          {hsmLog.map((e) => (
+            <div key={e.id} className="flex items-baseline gap-2 text-xs font-mono">
+              <span className="text-muted-foreground shrink-0 w-16">{e.timestamp}</span>
+              <span className="text-foreground shrink-0">{e.fn}</span>
+              <span className="text-muted-foreground truncate">{e.args && `(${e.args})`}</span>
+              <span className="ml-auto shrink-0">→</span>
+              <span
+                className={e.ok ? 'text-status-success shrink-0' : 'text-status-error shrink-0'}
+              >
+                {e.rvName}
+              </span>
+              <span className="text-muted-foreground shrink-0">[{e.ms}ms]</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export const SoftHsmTab = () => {
+  const { hsmMode } = useSettingsContext()
+
+  // When HSM mode is active: show HsmSetupPanel + global PKCS#11 call log
+  if (hsmMode) {
+    return (
+      <div className="space-y-6">
+        <HsmSetupPanel />
+        <HsmCallLog />
+      </div>
+    )
+  }
+
+  return <SoftHsmTabBrowser />
+}
+
+// ── Browser mode (original implementation, unchanged) ────────────────────────
+
+const SoftHsmTabBrowser = () => {
   const [liveMode, setLiveMode] = useState(false)
   const [phase, setPhase] = useState<Phase>('idle')
   const [loadingOp, setLoadingOp] = useState<string | null>(null)
@@ -385,6 +500,9 @@ export const SoftHsmTab = () => {
   )
   const [dsaContext, setDsaContext] = useState('')
   const [dsaPreHash, setDsaPreHash] = useState<'' | 'sha256' | 'sha512' | 'sha3-256'>('')
+
+  // Token created tracking (ref changes don't re-render, so mirror in state)
+  const [tokenCreated, setTokenCreated] = useState(false)
 
   // Call log
   const [log, setLog] = useState<Pkcs11LogEntry[]>([])
@@ -448,6 +566,7 @@ export const SoftHsmTab = () => {
         const slot0 = hsm_getFirstSlot(M)
         const newSlot = hsm_initToken(M, slot0, '12345678', 'SoftHSM3')
         slotRef.current = newSlot
+        setTokenCreated(true)
       } catch (e) {
         setTokenError(String(e))
       }
@@ -639,6 +758,7 @@ export const SoftHsmTab = () => {
             moduleRef.current = null
             hSessionRef.current = 0
             slotRef.current = 0
+            setTokenCreated(false)
             setPhase('idle')
             setKemHandles(null)
             setCiphertext(null)
@@ -685,7 +805,7 @@ export const SoftHsmTab = () => {
           <Button
             variant="outline"
             size="sm"
-            disabled={phase !== 'initialized' || slotRef.current === 0 || anyLoading}
+            disabled={phase !== 'initialized' || !tokenCreated || anyLoading}
             onClick={doOpenSession}
           >
             {isLoading('open_session') && <Loader2 size={13} className="mr-1.5 animate-spin" />}
@@ -695,7 +815,7 @@ export const SoftHsmTab = () => {
 
         <div className="flex gap-4">
           <StepBadge done={phase !== 'idle'} label="Initialized" />
-          <StepBadge done={slotRef.current !== 0} label="Token created" />
+          <StepBadge done={tokenCreated} label="Token created" />
           <StepBadge done={sessionOpen} label="Session open" />
         </div>
 

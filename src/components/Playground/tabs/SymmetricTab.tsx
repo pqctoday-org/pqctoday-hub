@@ -5,11 +5,14 @@ import { DataInput } from '../DataInput'
 import { useSettingsContext } from '../contexts/SettingsContext'
 import { useKeyStoreContext } from '../contexts/KeyStoreContext'
 import { useOperationsContext } from '../contexts/OperationsContext'
+import { HsmSymmetricPanel } from '../hsm/HsmSymmetricPanel'
 
 export const SymmetricTab: React.FC = () => {
-  const { loading } = useSettingsContext()
+  const { loading, hsmMode } = useSettingsContext()
   const { selectedSymKeyId, setSelectedSymKeyId, keyStore } = useKeyStoreContext()
   const { symData, setSymData, symOutput, setSymOutput, runOperation } = useOperationsContext()
+
+  if (hsmMode) return <HsmSymmetricPanel />
 
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">

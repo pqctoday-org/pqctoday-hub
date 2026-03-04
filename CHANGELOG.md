@@ -4,6 +4,117 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.15.0] - 2026-03-03
+
+### Added
+
+- **Playground — PKCS#11 HSM Mode** (`InteractivePlayground.tsx`, `hsm/`): Software ↔ PKCS#11
+  HSM toggle pill in the Playground header. When enabled, all tabs (KEM & Encrypt, Sign & Verify,
+  Symmetric, Hashing) route their backend through the SoftHSMv3 WASM module via PKCS#11 v3.2
+  instead of the software stack. ACVP tab is hidden in HSM mode. [view:/playground]
+
+- **HsmContext / HsmProvider** (`hsm/HsmContext.tsx`, `PlaygroundProvider.tsx`): New React context
+  shared across all Playground tabs when HSM mode is active — holds WASM module ref, PKCS#11
+  session handle, HSM key table (`HsmKey[]`), PKCS#11 call log, and `inspectMode` toggle.
+
+- **HsmKemPanel** (`tabs/KemOpsTab.tsx`): ML-KEM-512/768/1024 PKCS#11 key encapsulation via
+  SoftHSMv3 — Generate Key Pair (`C_GenerateKeyPair`), Encapsulate (`C_EncapsulateKey`),
+  Decapsulate (`C_DecapsulateKey`), with size hints (pub/ct/ss bytes) and shared-secret match
+  verification. Keys registered into the shared HSM key table. [view:/playground]
+
+- **HsmSignPanel** (`tabs/SignVerifyTab.tsx`): ML-DSA-44/65/87 PKCS#11 sign & verify via
+  SoftHSMv3 — Generate Key Pair, Sign (`C_SignInit + C_Sign`), Verify (`C_VerifyInit + C_Verify`)
+  with hedging mode selector, context string, and pre-hash options (SHA-256/512/SHA3-256).
+  [view:/playground]
+
+- **HsmSymmetricPanel / HsmHashingPanel** (`hsm/HsmSymmetricPanel.tsx`,
+  `hsm/HsmHashingPanel.tsx`): HSM-mode panels for symmetric encryption and hashing operations,
+  both routing through the shared PKCS#11 session. [view:/playground]
+
+- **HsmSetupPanel** (`hsm/HsmSetupPanel.tsx`): Token setup flow inside the Key Store tab when HSM
+  mode is active — Initialize → Open Session → Login sequence, with status indicators.
+
+- **HsmKeyTable** (`keystore/HsmKeyTable.tsx`): Sortable table of keys generated via PKCS#11 in
+  the current session, showing handle, algorithm family, role (public/private), variant, and
+  generation timestamp. [view:/playground]
+
+- **Keystore directory refactor** (`keystore/`): Moved `KeyTable.tsx`, `KeyDetails.tsx`,
+  `KeyGenerationSection.tsx` to `src/components/Playground/keystore/` for better organisation.
+
+- **`migrate_product_selection` history event** (`MigrateView.tsx`, `HistoryTypes.ts`): Fires a
+  debounced (1.5 s) milestone event to the History Feed whenever the user's product selection
+  count changes, making Migrate activity visible in the journey timeline. [view:/migrate]
+
+### Improved
+
+- **PKCS#11 error code table** (`wasm/softhsm.ts`): Expanded `RV_NAMES` from 11 to 34 entries
+  covering the full PKCS#11 v3.2 return-value set — including `CKR_AEAD_DECRYPT_FAILED`,
+  `CKR_KEY_FUNCTION_NOT_PERMITTED`, `CKR_OPERATION_NOT_INITIALIZED`, and all session/token/user
+  error codes. Previously unknown codes now show their symbolic name instead of a hex fallback.
+
+- **PKCS#11 function parameter table** (`wasm/softhsm.ts`): Added 20+ entries for PKCS#11 v3.0
+  and v3.2 functions including `C_SignMessageBegin/Next`, `C_VerifyMessageBegin/Next`,
+  `C_MessageEncryptInit/Final`, `C_LoginUser`, `C_CopyObject`, `C_GetOperationState`, and KEM
+  operations (`C_EncapsulateKey`, `C_DecapsulateKey`).
+
+- **`Pkcs11LogEntry.inspect`** (`wasm/softhsm.ts`, `wasm/pkcs11Inspect.ts`): Optional `inspect`
+  field on each log entry carries decoded mechanism, attribute, and parameter data for the new
+  "Show Params" mode in the PKCS#11 call log.
+
+- **Updated SoftHSMv3 WASM binary** (`public/wasm/softhsm.js`, `public/wasm/softhsm.wasm`):
+  Rebuilt with latest softhsmv3 — bug fixes and AES cipher race resolution from the P1 patch.
+
+- **SoftHsmTab copy button** (`tabs/SoftHsmTab.tsx`): Copy button in the PKCS#11 call log now
+  shows a "Copied!" confirmation (green check + 2 s flash) and is disabled when the log is empty.
+  Same improvement applied to the new `HsmCallLog` component.
+
+- **`tokenCreated` state fix** (`tabs/SoftHsmTab.tsx`): Browser-mode HSM tab previously used a
+  stale ref value (`slotRef.current === 0`) to gate the Open Session button. Replaced with a
+  proper `tokenCreated` boolean state that triggers a re-render, preventing the button from
+  staying disabled after a successful `C_InitToken`. Also resets on module teardown.
+
+- **History Feed — milestone-only view** (`RightPanel/HistoryFeed.tsx`, `DayGroup.tsx`): Feed
+  now filters to meaningful milestone events only — module progress, quiz sessions, assessment
+  completions, belt/streak achievements, and Migrate selections. Low-signal events
+  (`daily_visit`, playground key gen) no longer appear. `DayGroup` simplified: collapse/expand
+  and "+N more" removed; all milestones always visible.
+
+- **`learnSectionChecks` field** (`services/storage/types.ts`): Optional
+  `Record<string, boolean>` field on per-module progress tracks section-level manual check
+  state, enabling the `ReadingCompleteButton` to persist per-section completion independently.
+
+## [2.14.0] - 2026-03-03
+
+### Added
+
+- **ReadingCompleteButton** (`PKILearning/ReadingCompleteButton.tsx`): Self-contained "Mark as
+  Read" CTA added to all 21 single-page module Introduction components. Reads `moduleId` from
+  URL params, calls `markAllLearnSectionsComplete`, and transitions to a green "Reading
+  Complete!" success state. [view:/learn]
+
+- **LearnStepper redesign** (`PKILearning/LearnStepper.tsx`): Numbered step circles with ✓ for
+  completed steps and a connecting progress line, replacing the previous small pill dots.
+  Content panel uses `glass-panel p-6 md:p-8 min-h-[400px]`. Final step shows a green ✓ "Mark
+  as Read" button (replaces disabled Next) that fires `markAllLearnSectionsComplete`; after
+  completion, renders an inline green "Reading Complete!" confirmation. [view:/learn]
+
+- **`markAllLearnSectionsComplete` store action** (`store/useModuleStore.ts`): New Zustand
+  action that marks all LEARN_SECTIONS for a module, sets module status to `'completed'`, and
+  fires analytics. Used by both `ReadingCompleteButton` and `LearnStepper`.
+
+- **ModuleProgressHeader / ModuleProgressSidebar / ModuleProgressPie**
+  (`PKILearning/ModuleProgressHeader.tsx`, `ModuleProgressSidebar.tsx`, `ui/ModuleProgressPie.tsx`):
+  Per-module progress visualisation — circular SVG progress pie with percentage, step completion
+  tracker, and time-spent display. [view:/learn]
+
+- **6 module Introduction → LearnStepper conversions**: `stateful-signatures` (3 steps),
+  `ComplianceStrategy` (multi-step), `EmailSigning`, `MigrationProgram`, `PQCBusinessCase`,
+  `PQCGovernance` all converted from long-scroll Introduction pages to paginated LearnStepper
+  format with ReadingCompleteButton on the final step.
+
+- **Quiz results persistence** (`modules/Quiz/QuizResults.tsx`): Quiz result state now survives
+  component remounts via `useModuleStore`.
+
 ## [2.13.0] - 2026-03-03
 
 ### Added

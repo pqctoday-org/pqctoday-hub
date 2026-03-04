@@ -120,13 +120,14 @@ export function AboutView() {
               learning modules &mdash; including a dedicated executive track covering risk
               management, business cases, governance, and compliance strategy, plus expanded hybrid
               crypto labs with IETF Hackathon reference certs &mdash; 530+ quiz questions, hands-on
-              cryptographic labs powered by OpenSSL WASM and liboqs, a 14-step risk assessment
-              wizard with persona-aware reporting, ROI modelling, risk score trending, and printable
-              executive board briefs, a guided 4-phase migration planning workflow, CSV export
-              across 6 data views, IT Ops config generators and deployment checklists, an
-              industry-filtered migration catalog, and global compliance tracking give developers,
-              architects, operations teams, executives, and researchers everything they need to
-              understand, plan, and act &mdash; at their level.
+              cryptographic labs powered by OpenSSL WASM, liboqs, and a SoftHSMv3 PKCS#11 v3.2 WASM
+              engine (run ML-KEM and ML-DSA directly through a hardware-security-module interface in
+              the browser), a 14-step risk assessment wizard with persona-aware reporting, ROI
+              modelling, risk score trending, and printable executive board briefs, a guided 4-phase
+              migration planning workflow, CSV export across 6 data views, IT Ops config generators
+              and deployment checklists, an industry-filtered migration catalog, and global
+              compliance tracking give developers, architects, operations teams, executives, and
+              researchers everything they need to understand, plan, and act &mdash; at their level.
             </p>
             <p className="text-muted-foreground mt-4">
               Our mission is to make PQC adoption actionable for everyone &mdash; whether

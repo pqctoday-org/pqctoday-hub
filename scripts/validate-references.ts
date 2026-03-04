@@ -37,7 +37,6 @@ const SKIP_REFS = new Set([
   'RFC 9052', //  COSE base (pre-PQC)
   'RFC 7515', //  JWS/JOSE base (pre-PQC)
   'RFC 9593', //  IKEv2 identity auth (pre-PQC)
-  'RFC 9798', //  TLS hybrid KEX reference (see draft-ietf-tls-ecdhe-mlkem-04 in library)
   'RFC 9847', //  TLS-related base (pre-PQC)
   'RFC 9580', //  OpenPGP v6 base (pre-PQC)
   'RFC 9901', //  SD-JWT (identity credential protocol, not PQC-specific)

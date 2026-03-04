@@ -965,9 +965,12 @@ function processMarkdownDocs(): RAGChunk[] {
   const chunks: RAGChunk[] = []
 
   // Markdown files in src/data/
+  // Note: quantum_safe_software_comprehensive_guide.md is intentionally excluded —
+  // its product data is already in the migrate catalog CSV (better structured) and its
+  // generic PQC education sections duplicate modules/algorithms corpus sources. Including
+  // it caused the model to reference "Conclusion section" as if /migrate is a doc viewer.
   const mdFiles = [
     path.join(DATA_DIR, 'PQC_Software_Category_Strategic_Analysis.md'),
-    path.join(DATA_DIR, 'quantum_safe_software_comprehensive_guide.md'),
     path.join(DATA_DIR, 'security_audit_report_12022025.md'),
   ]
 
@@ -983,7 +986,6 @@ function processMarkdownDocs(): RAGChunk[] {
 
   const deepLinkByFile: Record<string, string> = {
     PQC_Software_Category_Strategic_Analysis: '/migrate',
-    quantum_safe_software_comprehensive_guide: '/migrate',
     security_audit_report_12022025: '/library',
     '3GPP_TS_33.310_NDS_AF_Certificate_Overview': '/library',
     CAB_Forum_TLS_Baseline_Requirements_Overview: '/library',

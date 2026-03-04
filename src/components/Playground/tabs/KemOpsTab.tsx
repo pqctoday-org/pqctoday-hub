@@ -1,13 +1,263 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React from 'react'
-import { Activity, Lock, Key as KeyIcon, CheckCircle, XCircle } from 'lucide-react'
+import React, { useState } from 'react'
+import { Activity, Lock, Key as KeyIcon, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { useSettingsContext } from '../contexts/SettingsContext'
 import { useKeyStoreContext } from '../contexts/KeyStoreContext'
 import { useOperationsContext } from '../contexts/OperationsContext'
+import { useHsmContext } from '../hsm/HsmContext'
 import { DataInput } from '../DataInput'
 import { logEvent } from '../../../utils/analytics'
+import { Button } from '../../ui/button'
+import { ErrorAlert } from '../../ui/error-alert'
+import {
+  hsm_generateMLKEMKeyPair,
+  hsm_encapsulate,
+  hsm_decapsulate,
+  hsm_extractKeyValue,
+} from '../../../wasm/softhsm'
+
+// ── HSM KEM Panel ─────────────────────────────────────────────────────────────
+
+const KEM_SIZES: Record<512 | 768 | 1024, { pub: number; ct: number; ss: number }> = {
+  512: { pub: 800, ct: 768, ss: 32 },
+  768: { pub: 1184, ct: 1088, ss: 32 },
+  1024: { pub: 1568, ct: 1568, ss: 32 },
+}
+
+const toHexSnippet = (b: Uint8Array) => {
+  const h = Array.from(b)
+    .map((x) => x.toString(16).padStart(2, '0'))
+    .join('')
+  return h.length > 40 ? `${h.slice(0, 20)}…${h.slice(-8)}` : h
+}
+
+const arraysEqual = (a: Uint8Array, b: Uint8Array) => {
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false
+  return true
+}
+
+const HsmKemPanel: React.FC = () => {
+  const { moduleRef, hSessionRef, isReady, addHsmKey } = useHsmContext()
+
+  const [variant, setVariant] = useState<512 | 768 | 1024>(768)
+  const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
+  const [ciphertext, setCiphertext] = useState<Uint8Array | null>(null)
+  const [secret1, setSecret1] = useState<Uint8Array | null>(null)
+  const [secret2, setSecret2] = useState<Uint8Array | null>(null)
+  const [loadingOp, setLoadingOp] = useState<string | null>(null)
+  const [kemError, setKemError] = useState<string | null>(null)
+
+  const anyLoading = loadingOp !== null
+
+  const changeVariant = (v: 512 | 768 | 1024) => {
+    setVariant(v)
+    setHandles(null)
+    setCiphertext(null)
+    setSecret1(null)
+    setSecret2(null)
+    setKemError(null)
+  }
+
+  const withLoading = async (op: string, fn: () => Promise<void>) => {
+    setLoadingOp(op)
+    try {
+      await fn()
+    } finally {
+      setLoadingOp(null)
+    }
+  }
+
+  const doGenKeyPair = () =>
+    withLoading('gen', async () => {
+      setKemError(null)
+      setCiphertext(null)
+      setSecret1(null)
+      setSecret2(null)
+      try {
+        const M = moduleRef.current
+        if (!M) throw new Error('Module not loaded — complete Token Setup first')
+        const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSessionRef.current, variant)
+        setHandles({ pub: pubHandle, priv: privHandle })
+        const ts = new Date().toLocaleTimeString([], {
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        })
+        addHsmKey({
+          handle: pubHandle,
+          family: 'ml-kem',
+          role: 'public',
+          label: `ML-KEM-${variant} Public Key`,
+          variant: String(variant),
+          generatedAt: ts,
+        })
+        addHsmKey({
+          handle: privHandle,
+          family: 'ml-kem',
+          role: 'private',
+          label: `ML-KEM-${variant} Private Key`,
+          variant: String(variant),
+          generatedAt: ts,
+        })
+      } catch (e) {
+        setKemError(String(e))
+      }
+    })
+
+  const doEncapsulate = () =>
+    withLoading('enc', async () => {
+      setKemError(null)
+      setSecret1(null)
+      setSecret2(null)
+      try {
+        const M = moduleRef.current!
+        const { ciphertextBytes, secretHandle } = hsm_encapsulate(
+          M,
+          hSessionRef.current,
+          handles!.pub,
+          variant
+        )
+        const ss = hsm_extractKeyValue(M, hSessionRef.current, secretHandle)
+        setCiphertext(ciphertextBytes)
+        setSecret1(ss)
+      } catch (e) {
+        setKemError(String(e))
+      }
+    })
+
+  const doDecapsulate = () =>
+    withLoading('dec', async () => {
+      setKemError(null)
+      setSecret2(null)
+      try {
+        const M = moduleRef.current!
+        const ssH2 = hsm_decapsulate(M, hSessionRef.current, handles!.priv, ciphertext!, variant)
+        const ss2 = hsm_extractKeyValue(M, hSessionRef.current, ssH2)
+        setSecret2(ss2)
+      } catch (e) {
+        setKemError(String(e))
+      }
+    })
+
+  const secretsMatch = secret1 && secret2 ? arraysEqual(secret1, secret2) : null
+
+  return (
+    <div className={`space-y-4 ${!isReady ? 'opacity-60 pointer-events-none' : ''}`}>
+      {!isReady && (
+        <div className="glass-panel p-3 text-sm text-muted-foreground">
+          Complete Token Setup in the Key Store tab first.
+        </div>
+      )}
+
+      <div className="glass-panel p-4 space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <h3 className="font-semibold text-sm">ML-KEM Key Encapsulation (FIPS 203)</h3>
+          <div className="flex gap-1">
+            {([512, 768, 1024] as const).map((v) => (
+              <Button
+                key={v}
+                variant="ghost"
+                size="sm"
+                disabled={anyLoading}
+                onClick={() => changeVariant(v)}
+                className={
+                  variant === v
+                    ? 'bg-primary/20 text-primary text-xs px-2 py-1 h-auto'
+                    : 'text-muted-foreground text-xs px-2 py-1 h-auto'
+                }
+              >
+                ML-KEM-{v}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <p className="text-xs text-muted-foreground font-mono">
+          pub: {KEM_SIZES[variant].pub} B · ct: {KEM_SIZES[variant].ct} B · ss:{' '}
+          {KEM_SIZES[variant].ss} B
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" disabled={anyLoading} onClick={doGenKeyPair}>
+            {loadingOp === 'gen' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            {handles ? '✓ Key Pair' : 'Generate Key Pair'}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!handles || anyLoading}
+            onClick={doEncapsulate}
+          >
+            {loadingOp === 'enc' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            Encapsulate
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!ciphertext || anyLoading}
+            onClick={doDecapsulate}
+          >
+            {loadingOp === 'dec' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            Decapsulate
+          </Button>
+        </div>
+
+        <div className="space-y-1.5 text-xs font-mono">
+          {handles && (
+            <div className="flex gap-3 text-muted-foreground">
+              <span>pubH={handles.pub}</span>
+              <span>privH={handles.priv}</span>
+            </div>
+          )}
+          {ciphertext && (
+            <div className="flex gap-3 bg-muted rounded px-2 py-1">
+              <span className="text-muted-foreground w-20 shrink-0">Ciphertext</span>
+              <span className="truncate">{toHexSnippet(ciphertext)}</span>
+              <span className="text-muted-foreground shrink-0">{ciphertext.length} B</span>
+            </div>
+          )}
+          {secret1 && (
+            <div className="flex gap-3 bg-muted rounded px-2 py-1">
+              <span className="text-muted-foreground w-20 shrink-0">SS₁ (enc)</span>
+              <span className="truncate">{toHexSnippet(secret1)}</span>
+              <span className="text-muted-foreground shrink-0">{secret1.length} B</span>
+            </div>
+          )}
+          {secret2 && (
+            <div className="flex gap-3 bg-muted rounded px-2 py-1">
+              <span className="text-muted-foreground w-20 shrink-0">SS₂ (dec)</span>
+              <span className="truncate">{toHexSnippet(secret2)}</span>
+              <span className="text-muted-foreground shrink-0">{secret2.length} B</span>
+            </div>
+          )}
+          {secretsMatch !== null && (
+            <div
+              className={`flex items-center gap-2 rounded px-2 py-1 ${secretsMatch ? 'bg-status-success/10 text-status-success' : 'bg-status-error/10 text-status-error'}`}
+            >
+              {secretsMatch ? <CheckCircle size={13} /> : <XCircle size={13} />}
+              {secretsMatch ? 'Shared secrets match — KEM successful' : 'Mismatch — secrets differ'}
+            </div>
+          )}
+        </div>
+
+        {kemError && <ErrorAlert message={kemError} />}
+      </div>
+    </div>
+  )
+}
+
+// ── Software KEM Tab ──────────────────────────────────────────────────────────
 
 export const KemOpsTab: React.FC = () => {
+  const { hsmMode } = useSettingsContext()
+  if (hsmMode) return <HsmKemPanel />
+
+  return <KemOpsTabSoftware />
+}
+
+const KemOpsTabSoftware: React.FC = () => {
   const { loading } = useSettingsContext()
   const { keyStore, selectedEncKeyId, setSelectedEncKeyId, selectedDecKeyId, setSelectedDecKeyId } =
     useKeyStoreContext()
