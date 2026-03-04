@@ -1,0 +1,48 @@
+{
+  "name": "@pqctoday/softhsm-wasm",
+  "version": "1.0.0",
+  "description": "SoftHSMv3 compiled to WebAssembly — PKCS#11 v3.2 token with ML-KEM, ML-DSA, SLH-DSA for browsers and Node.js",
+  "keywords": [
+    "pkcs11",
+    "pqc",
+    "post-quantum",
+    "ml-kem",
+    "ml-dsa",
+    "hsm",
+    "wasm",
+    "cryptography"
+  ],
+  "author": "PQC Today",
+  "license": "BSD-2-Clause",
+  "homepage": "https://github.com/pqctoday/softhsmv3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pqctoday/softhsmv3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pqctoday/softhsmv3/issues"
+  },
+  "files": [
+    "wasm/softhsm.js",
+    "wasm/softhsm.wasm",
+    "index.js",
+    "index.d.ts",
+    "constants.js",
+    "constants.d.ts"
+  ],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": "./index.js",
+    "./constants": "./constants.js",
+    "./wasm/softhsm.js": "./wasm/softhsm.js"
+  },
+  "scripts": {
+    "build": "bash scripts/build-wasm.sh",
+    "test": "node tests/smoke-wasm.mjs",
+    "prepublishOnly": "bash scripts/build-wasm.sh"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

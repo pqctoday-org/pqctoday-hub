@@ -23,7 +23,8 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@pqctoday/softhsm-wasm": ["./src/vendor/softhsm-wasm/index.d.ts"]
     }
   },
   "include": ["src"]

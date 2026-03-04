@@ -10,7 +10,7 @@ import testingLibrary from 'eslint-plugin-testing-library'
 import { defineConfig } from 'eslint/config'
 
 export default defineConfig([
-  { ignores: ['dist', 'public/dist', 'src/wasm', 'public/wasm', '**/*.min.js'] },
+  { ignores: ['dist', 'public/dist', 'src/wasm', 'public/wasm', 'src/vendor', '**/*.min.js'] },
 
   // Base JS rules
   js.configs.recommended,
