@@ -333,3 +333,342 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
 export const MODULE_TO_TRACK: Record<string, string> = Object.fromEntries(
   MODULE_TRACKS.flatMap(({ track, modules }) => modules.map((m) => [m.id, track]))
 )
+
+/**
+ * Learn sections per module — user manually checks each after reading.
+ * These drive the LearnSectionChecklist in the module sidebar and the
+ * pie chart on ModuleCard. Completing all → status: 'completed'.
+ */
+export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
+  'pqc-101': [
+    { id: 'quantum-threat', label: 'The Quantum Threat to Cryptography' },
+    { id: 'algorithms', label: 'NIST-Selected PQC Algorithms' },
+    { id: 'timeline', label: 'Global Migration Timeline' },
+    { id: 'readiness', label: 'Organizational Readiness' },
+    { id: 'next-steps', label: 'Your Next Steps' },
+  ],
+  'quantum-threats': [
+    { id: 'shor', label: "Shor's Algorithm & RSA/ECC Vulnerability" },
+    { id: 'grover', label: "Grover's Algorithm & Symmetric Key Impact" },
+    { id: 'crqc', label: 'CRQC Timeline & Harvest Now Decrypt Later' },
+    { id: 'hndl', label: 'HNDL/HNFL Risk Windows & Prioritization' },
+    { id: 'security-levels', label: 'Post-Quantum Security Levels' },
+  ],
+  'hybrid-crypto': [
+    { id: 'why-hybrid', label: 'Why Hybrid Cryptography?' },
+    { id: 'kem', label: 'Hybrid KEM Construction' },
+    { id: 'composite', label: 'Composite Signatures' },
+    { id: 'cert-formats', label: 'Hybrid Certificate Formats' },
+    { id: 'standards', label: 'IETF Standards & RFC 9763' },
+  ],
+  'crypto-agility': [
+    { id: 'abstraction', label: 'Crypto Abstraction Layers' },
+    { id: 'cbom', label: 'Cryptographic Bill of Materials (CBOM)' },
+    { id: 'migration', label: '7-Phase Migration Framework' },
+  ],
+  'tls-basics': [
+    { id: 'handshake', label: 'TLS 1.3 Handshake Deep Dive' },
+    { id: 'certificates', label: 'Certificate Chains & Trust Anchors' },
+    { id: 'ciphers', label: 'Cipher Suites & Key Exchange' },
+    { id: 'pqc-tls', label: 'PQC in TLS & Hybrid Modes' },
+  ],
+  'vpn-ssh-pqc': [
+    { id: 'ikev2', label: 'IKEv2 & IPsec with ML-KEM' },
+    { id: 'ssh', label: 'SSH PQC Key Exchange (sntrup761, ML-KEM)' },
+    { id: 'wireguard', label: 'WireGuard Rosenpass & Protocol Comparison' },
+  ],
+  'email-signing': [
+    { id: 'smime', label: 'S/MIME & Certificate Fundamentals' },
+    { id: 'cms', label: 'CMS Signing & SignedData Structure' },
+    { id: 'kem-email', label: 'KEM-Based Encryption (RFC 9629)' },
+  ],
+  'pki-workshop': [
+    { id: 'fundamentals', label: 'PKI Fundamentals & Trust Models' },
+    { id: 'cert-structure', label: 'Certificate Structure & Extensions' },
+    { id: 'ca-hierarchy', label: 'CA Hierarchies & Certificate Chains' },
+    { id: 'lifecycle', label: 'Certificate Lifecycle & Revocation' },
+    { id: 'pqc-pki', label: 'PQC PKI Migration Path' },
+  ],
+  'kms-pqc': [
+    { id: 'key-hierarchy', label: 'PQC Key Hierarchy Design' },
+    { id: 'envelope', label: 'ML-KEM Envelope Encryption' },
+    { id: 'hybrid-wrap', label: 'Hybrid Key Wrapping Patterns' },
+    { id: 'rotation', label: 'Key Rotation Planning' },
+    { id: 'kmip', label: 'KMIP Protocol & Cross-Provider Sync' },
+  ],
+  'hsm-pqc': [
+    { id: 'pkcs11', label: 'PKCS#11 v3.2 PQC Mechanisms' },
+    { id: 'vendors', label: 'HSM Vendor Landscape' },
+    { id: 'migration', label: 'Firmware Migration & Dual-Partition Strategy' },
+    { id: 'fips', label: 'FIPS 140-3 Validation & CMVP/CAVP' },
+  ],
+  'stateful-signatures': [
+    { id: 'lms', label: 'LMS/HSS Merkle Tree Signatures' },
+    { id: 'xmss', label: 'XMSS/XMSS^MT Parameter Trade-offs' },
+    { id: 'state', label: 'Critical State Management & Key Exhaustion' },
+  ],
+  'digital-assets': [
+    { id: 'bitcoin', label: 'Bitcoin: secp256k1 & ECDSA' },
+    { id: 'ethereum', label: 'Ethereum: Keccak-256 & Smart Contracts' },
+    { id: 'hd-wallets', label: 'HD Wallets: BIP32/39/44' },
+    { id: 'pqc-blockchain', label: 'PQC Migration for Digital Assets' },
+  ],
+  '5g-security': [
+    { id: 'suci', label: 'SUCI & Subscriber Identity Protection' },
+    { id: 'aka', label: '5G-AKA Authentication Protocol' },
+    { id: 'provisioning', label: 'SIM Key Provisioning & Supply Chain' },
+  ],
+  'digital-id': [
+    { id: 'eidas', label: 'eIDAS 2.0 Framework Overview' },
+    { id: 'wallet', label: 'EUDI Wallet Architecture' },
+    { id: 'pid', label: 'PID Issuance & Attestations' },
+    { id: 'selective-disclosure', label: 'Selective Disclosure & Verifiable Credentials' },
+    { id: 'qes', label: 'Qualified Electronic Signatures (QES)' },
+  ],
+  'entropy-randomness': [
+    { id: 'entropy', label: 'Entropy Sources & Collection' },
+    { id: 'drbg', label: 'NIST SP 800-90 DRBG Mechanisms' },
+    { id: 'testing', label: 'Entropy Testing (SP 800-90B)' },
+    { id: 'qrng', label: 'TRNG vs QRNG Comparison' },
+    { id: 'combining', label: 'Defense-in-Depth: Combining Sources' },
+  ],
+  'merkle-tree-certs': [
+    { id: 'merkle', label: 'Merkle Tree Construction & SHA-256' },
+    { id: 'inclusion', label: 'Inclusion Proofs & Authentication Paths' },
+    { id: 'verification', label: 'Proof Verification Algorithm' },
+    { id: 'comparison', label: 'MTC vs X.509: Size & Performance Trade-offs' },
+  ],
+  qkd: [
+    { id: 'bb84', label: 'BB84 Protocol & Quantum Channel' },
+    { id: 'post-processing', label: 'Error Correction & Privacy Amplification' },
+    { id: 'deployment', label: 'Global QKD Deployments & Infrastructure' },
+    { id: 'integration', label: 'QKD + Classical Protocol Integration' },
+    { id: 'hsm-derivation', label: 'HSM Key Derivation from QKD' },
+  ],
+  'code-signing': [
+    { id: 'classical', label: 'Classical Code Signing Fundamentals' },
+    { id: 'pqc-signing', label: 'ML-DSA Code Signing' },
+    { id: 'packages', label: 'Package Signing & Verification (RPM/APT)' },
+    { id: 'sigstore', label: 'Sigstore Keyless Signing' },
+    { id: 'secure-boot', label: 'Secure Boot & Firmware Trust Chains' },
+  ],
+  'api-security-jwt': [
+    { id: 'jwt', label: 'JWT/JWS/JWE Structure' },
+    { id: 'pqc-sign', label: 'ML-DSA JWT Signing' },
+    { id: 'hybrid-jwt', label: 'Hybrid JWT & Backwards Compatibility' },
+    { id: 'jwe', label: 'ML-KEM JWE Key Agreement' },
+    { id: 'oauth', label: 'OAuth 2.0 PQC Migration' },
+  ],
+  'iot-ot-pqc': [
+    { id: 'constrained', label: 'Constrained Devices & Algorithm Selection' },
+    { id: 'firmware', label: 'Firmware Signing (LMS/XMSS/ML-DSA)' },
+    { id: 'protocols', label: 'CoAP/DTLS 1.3 Protocol Impacts' },
+    { id: 'certs', label: 'Certificate Chain Bloat in IoT' },
+    { id: 'scada', label: 'SCADA/ICS & Purdue Model Migration' },
+  ],
+  'pqc-risk-management': [
+    { id: 'crqc', label: 'CRQC Timeline Modeling' },
+    { id: 'register', label: 'Risk Register & Quantification' },
+    { id: 'heatmap', label: 'Risk Heatmap & Prioritization' },
+  ],
+  'pqc-business-case': [
+    { id: 'roi', label: 'ROI Analysis for PQC Investment' },
+    { id: 'breach', label: 'Quantum Breach Cost Modeling' },
+    { id: 'board', label: 'Board-Level Business Case' },
+  ],
+  'pqc-governance': [
+    { id: 'model', label: 'PQC Governance Model (Centralized vs Federated)' },
+    { id: 'policy', label: 'PQC Policy Drafting & Exception Handling' },
+    { id: 'kpi', label: 'KPI Dashboard & Board Reporting' },
+  ],
+  'vendor-risk': [
+    { id: 'readiness', label: 'Vendor PQC Readiness Assessment' },
+    { id: 'supply-chain', label: 'Supply Chain Cryptographic Dependencies' },
+    { id: 'contracts', label: 'PQC Contract Requirements' },
+    { id: 'risk-matrix', label: 'Layer-wise Risk Matrix' },
+  ],
+  'migration-program': [
+    { id: 'roadmap', label: '3-Year Phased Migration Roadmap' },
+    { id: 'stakeholders', label: 'Stakeholder Communications Plan' },
+    { id: 'kpi', label: 'Migration KPIs & Deployment Playbooks' },
+  ],
+  'compliance-strategy': [
+    { id: 'frameworks', label: 'PQC Compliance Frameworks (CNSA 2.0, ETSI, NIST)' },
+    { id: 'jurisdiction', label: 'Multi-Jurisdiction Requirements' },
+    { id: 'audit', label: 'Audit Readiness & Compliance Timeline' },
+  ],
+  'data-asset-sensitivity': [
+    { id: 'classification', label: 'Data Asset Classification' },
+    { id: 'compliance', label: 'Compliance Mapping (GDPR, HIPAA, DORA, NIS2)' },
+    { id: 'methodology', label: 'Risk Methodology (NIST RMF, ISO 27005, FAIR)' },
+    { id: 'scoring', label: 'PQC Sensitivity Scoring' },
+    { id: 'priority', label: 'Migration Priority Map' },
+  ],
+}
+
+/**
+ * Workshop step IDs per module — auto-checked as user completes each step.
+ * IDs must match exactly what markStepComplete() receives (the PARTS[i].id values).
+ */
+export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
+  'pqc-101': [
+    { id: 'algorithm-families', label: 'Algorithm Families' },
+    { id: 'algorithm-comparison', label: 'Algorithm Comparison' },
+    { id: 'key-generation', label: 'Key Generation' },
+    { id: 'signature-demo', label: 'Signature Demo' },
+  ],
+  'quantum-threats': [
+    { id: 'security-levels', label: 'Security Level Degradation' },
+    { id: 'vulnerability-matrix', label: 'Vulnerability Matrix' },
+    { id: 'key-size-analyzer', label: 'Key Size Analyzer' },
+    { id: 'hndl-timeline', label: 'HNDL Timeline' },
+    { id: 'hnfl-timeline', label: 'HNFL Risk Calculator' },
+  ],
+  'hybrid-crypto': [
+    { id: 'key-generation', label: 'Key Generation' },
+    { id: 'encrypt-sign', label: 'Encrypt & Sign' },
+    { id: 'ca-setup', label: 'CA Setup' },
+    { id: 'hybrid-formats', label: 'Hybrid Formats' },
+    { id: 'inspect-compare', label: 'Inspect & Compare' },
+  ],
+  'crypto-agility': [
+    { id: 'abstraction-layer', label: 'Abstraction Layer' },
+    { id: 'cbom-scanner', label: 'CBOM Scanner' },
+    { id: 'migration-planning', label: 'Migration Planning' },
+  ],
+  'tls-basics': [{ id: 'simulate', label: 'TLS Handshake Simulation' }],
+  'vpn-ssh-pqc': [
+    { id: 'ikev2-handshake', label: 'IKEv2 Handshake' },
+    { id: 'ssh-key-exchange', label: 'SSH Key Exchange' },
+    { id: 'protocol-comparison', label: 'Protocol Comparison' },
+  ],
+  'email-signing': [
+    { id: 'smime-cert', label: 'S/MIME Certificates' },
+    { id: 'cms-signing', label: 'CMS Signing' },
+    { id: 'cms-encryption', label: 'CMS Encryption' },
+  ],
+  'pki-workshop': [
+    { id: 'csr', label: 'Certificate Signing Request' },
+    { id: 'root-ca', label: 'Root CA Setup' },
+    { id: 'sign', label: 'Certificate Signing' },
+    { id: 'parse', label: 'Certificate Parsing' },
+    { id: 'revoke', label: 'Certificate Revocation' },
+    { id: 'mtc', label: 'Merkle Tree Certificates' },
+  ],
+  'kms-pqc': [
+    { id: 'key-hierarchy', label: 'Key Hierarchy' },
+    { id: 'envelope-encryption', label: 'Envelope Encryption' },
+    { id: 'hybrid-wrapping', label: 'Hybrid Wrapping' },
+    { id: 'rotation-planner', label: 'Rotation Planner' },
+    { id: 'kmip-explorer', label: 'KMIP Protocol Explorer' },
+  ],
+  'hsm-pqc': [
+    { id: 'pkcs11-simulator', label: 'PKCS#11 Simulator' },
+    { id: 'vendor-comparison', label: 'Vendor Comparison' },
+    { id: 'migration-planner', label: 'Migration Planner' },
+    { id: 'fips-tracker', label: 'FIPS Tracker' },
+  ],
+  'stateful-signatures': [
+    { id: 'lms-keygen', label: 'LMS Key Generation' },
+    { id: 'xmss-keygen', label: 'XMSS Key Generation' },
+    { id: 'state-management', label: 'State Management' },
+  ],
+  'digital-assets': [
+    { id: 'bitcoin', label: 'Bitcoin Flow' },
+    { id: 'ethereum', label: 'Ethereum Flow' },
+    { id: 'solana', label: 'Solana Flow' },
+    { id: 'hd-wallet', label: 'HD Wallet Flow' },
+    { id: 'pqc-migration', label: 'PQC Defense' },
+  ],
+  '5g-security': [
+    { id: 'suci', label: 'SUCI Deconcealment' },
+    { id: 'auth', label: '5G-AKA Authentication' },
+    { id: 'provisioning', label: 'SIM Key Provisioning' },
+  ],
+  'digital-id': [
+    { id: 'wallet', label: 'EUDI Wallet' },
+    { id: 'pid-issuer', label: 'PID Issuer' },
+    { id: 'attestation', label: 'University Attestation' },
+    { id: 'relying-party', label: 'Relying Party' },
+    { id: 'qes', label: 'Qualified Electronic Signature' },
+  ],
+  'entropy-randomness': [
+    { id: 'random-generation', label: 'Random Byte Generation' },
+    { id: 'entropy-testing', label: 'Entropy Testing' },
+    { id: 'esv-walkthrough', label: 'ESV Validation Walkthrough' },
+    { id: 'qrng-comparison', label: 'QRNG Exploration' },
+    { id: 'source-combining', label: 'Combining Sources' },
+  ],
+  'merkle-tree-certs': [
+    { id: 'build-tree', label: 'Build Tree' },
+    { id: 'inclusion-proof', label: 'Inclusion Proof' },
+    { id: 'verify-proof', label: 'Verify Proof' },
+    { id: 'size-comparison', label: 'Size Comparison' },
+  ],
+  qkd: [
+    { id: 'bb84-simulator', label: 'BB84 Protocol' },
+    { id: 'post-processing', label: 'Post-Processing' },
+    { id: 'deployment-explorer', label: 'Global Deployments' },
+    { id: 'protocol-integration', label: 'Protocol Integration' },
+    { id: 'hsm-derivation', label: 'HSM Key Derivation' },
+  ],
+  'code-signing': [
+    { id: 'binary-signing', label: 'Binary Signing' },
+    { id: 'cert-chain', label: 'Certificate Chain' },
+    { id: 'package-signing', label: 'Package Signing' },
+    { id: 'sigstore-flow', label: 'Sigstore Flow' },
+    { id: 'secure-boot', label: 'Secure Boot Chain' },
+  ],
+  'api-security-jwt': [
+    { id: 'jwt-inspector', label: 'JWT Inspector' },
+    { id: 'pqc-signing', label: 'PQC JWT Signing' },
+    { id: 'hybrid-jwt', label: 'Hybrid JWT' },
+    { id: 'jwe-encryption', label: 'JWE Encryption' },
+    { id: 'size-analyzer', label: 'Token Size Analyzer' },
+  ],
+  'iot-ot-pqc': [
+    { id: 'constrained-algorithm', label: 'Algorithm Explorer' },
+    { id: 'firmware-signing', label: 'Firmware Signing' },
+    { id: 'dtls-handshake', label: 'DTLS Handshake' },
+    { id: 'cert-chain-bloat', label: 'Chain Bloat Analysis' },
+    { id: 'scada-assessment', label: 'SCADA Planner' },
+  ],
+  'pqc-risk-management': [
+    { id: 'crqc-scenario-planner', label: 'CRQC Scenario Planner' },
+    { id: 'risk-register-builder', label: 'Risk Register Builder' },
+    { id: 'risk-heatmap', label: 'Risk Heatmap' },
+  ],
+  'pqc-business-case': [
+    { id: 'roi-calculator', label: 'ROI Calculator' },
+    { id: 'breach-simulator', label: 'Breach Scenario Simulator' },
+    { id: 'board-pitch', label: 'Board Pitch Builder' },
+  ],
+  'pqc-governance': [
+    { id: 'raci-builder', label: 'RACI Matrix' },
+    { id: 'policy-generator', label: 'Policy Generator' },
+    { id: 'kpi-dashboard', label: 'KPI Dashboard' },
+  ],
+  'vendor-risk': [
+    { id: 'infrastructure-selector', label: 'Infrastructure Selector' },
+    { id: 'vendor-scorecard', label: 'Vendor Scorecard' },
+    { id: 'contract-clauses', label: 'Contract Clauses' },
+    { id: 'supply-chain-matrix', label: 'Supply Chain Matrix' },
+  ],
+  'migration-program': [
+    { id: 'roadmap-builder', label: 'Roadmap Builder' },
+    { id: 'stakeholder-comms', label: 'Stakeholder Comms' },
+    { id: 'kpi-tracker', label: 'KPI Tracker' },
+  ],
+  'compliance-strategy': [
+    { id: 'jurisdiction-mapper', label: 'Jurisdiction Mapper' },
+    { id: 'audit-readiness', label: 'Audit Readiness' },
+    { id: 'compliance-timeline', label: 'Compliance Timeline' },
+  ],
+  'data-asset-sensitivity': [
+    { id: 'asset-inventory', label: 'Asset Inventory' },
+    { id: 'compliance-matrix', label: 'Compliance Matrix' },
+    { id: 'risk-methodology', label: 'Risk Methodology' },
+    { id: 'sensitivity-scoring', label: 'Sensitivity Scoring' },
+    { id: 'priority-map', label: 'Priority Map' },
+  ],
+}

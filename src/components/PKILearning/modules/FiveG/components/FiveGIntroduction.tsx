@@ -13,6 +13,7 @@ import {
   Globe,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface FiveGIntroductionProps {
   onNavigateToSimulate: () => void
@@ -389,6 +390,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           </Link>
         </div>
       </section>
+      <ReadingCompleteButton />
     </div>
   )
 }

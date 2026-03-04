@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { Link } from 'react-router-dom'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import {
   AlertTriangle,
   ArrowRight,
@@ -735,6 +736,7 @@ export const PQC101Module: React.FC = () => {
           </Link>
         </div>
       </section>
+      <ReadingCompleteButton />
     </div>
   )
 }

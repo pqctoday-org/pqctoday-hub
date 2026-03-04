@@ -5,6 +5,8 @@ import { Dashboard } from './Dashboard'
 import { ArrowLeft } from 'lucide-react'
 import { GlossaryButton } from '../ui/GlossaryButton'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
+import { ModuleProgressSidebar } from './ModuleProgressSidebar'
+import { ModuleProgressHeader } from './ModuleProgressHeader'
 
 const PKIWorkshop = lazyWithRetry(() =>
   import('./modules/PKIWorkshop').then((module) => ({ default: module.PKIWorkshop }))
@@ -124,6 +126,11 @@ export const PKILearningView: React.FC = () => {
   const location = useLocation()
   const isDashboard = location.pathname === '/learn' || location.pathname === '/learn/'
 
+  // Derive moduleId from URL path (e.g. '/learn/pqc-101' → 'pqc-101')
+  const moduleId = location.pathname.replace(/^\/learn\/?/, '')
+  // Show progress sidebar for module pages (not dashboard, not quiz)
+  const showSidebar = !isDashboard && moduleId !== 'quiz' && moduleId !== ''
+
   return (
     <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-6">
@@ -141,48 +148,62 @@ export const PKILearningView: React.FC = () => {
         <GlossaryButton />
       </div>
 
-      <Suspense
-        fallback={
-          <div className="flex h-64 w-full items-center justify-center">
-            <div className="flex flex-col items-center gap-4">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-              <p className="text-muted-foreground animate-pulse">Loading Module...</p>
-            </div>
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
+        {/* Progress sidebar — mobile accordion (order-first) then desktop aside (order-last) */}
+        {showSidebar && (
+          <div className="order-first lg:order-last w-full lg:w-auto shrink-0">
+            <ModuleProgressSidebar moduleId={moduleId} />
           </div>
-        }
-      >
-        <Routes>
-          <Route index element={<Dashboard />} />
-          <Route path="pki-workshop" element={<PKIWorkshop />} />
-          <Route path="digital-assets" element={<DigitalAssetsModule />} />
-          <Route path="5g-security" element={<FiveGModule />} />
-          <Route path="digital-id" element={<DigitalIDModule />} />
-          <Route path="tls-basics" element={<TLSBasicsModule />} />
-          <Route path="pqc-101" element={<PQC101Module />} />
-          <Route path="quiz" element={<QuizModule />} />
-          <Route path="quantum-threats" element={<QuantumThreatsModule />} />
-          <Route path="hybrid-crypto" element={<HybridCryptoModule />} />
-          <Route path="crypto-agility" element={<CryptoAgilityModule />} />
-          <Route path="stateful-signatures" element={<StatefulSignaturesModule />} />
-          <Route path="email-signing" element={<EmailSigningModule />} />
-          <Route path="vpn-ssh-pqc" element={<VPNSSHModule />} />
-          <Route path="kms-pqc" element={<KmsPqcModule />} />
-          <Route path="hsm-pqc" element={<HsmPqcModule />} />
-          <Route path="qkd" element={<QKDModule />} />
-          <Route path="entropy-randomness" element={<EntropyModule />} />
-          <Route path="merkle-tree-certs" element={<MerkleTreeCertsModule />} />
-          <Route path="code-signing" element={<CodeSigningModule />} />
-          <Route path="api-security-jwt" element={<APISecurityJWTModule />} />
-          <Route path="iot-ot-pqc" element={<IoTOTModule />} />
-          <Route path="pqc-risk-management" element={<PQCRiskManagementModule />} />
-          <Route path="pqc-business-case" element={<PQCBusinessCaseModule />} />
-          <Route path="pqc-governance" element={<PQCGovernanceModule />} />
-          <Route path="vendor-risk" element={<VendorRiskModule />} />
-          <Route path="migration-program" element={<MigrationProgramModule />} />
-          <Route path="compliance-strategy" element={<ComplianceStrategyModule />} />
-          <Route path="data-asset-sensitivity" element={<DataAssetSensitivityModule />} />
-        </Routes>
-      </Suspense>
+        )}
+
+        {/* Main module content */}
+        <div className="flex-1 min-w-0 order-last lg:order-first">
+          {/* Dual progress header bar — above all module tabs */}
+          {showSidebar && <ModuleProgressHeader moduleId={moduleId} />}
+          <Suspense
+            fallback={
+              <div className="flex h-64 w-full items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                  <p className="text-muted-foreground animate-pulse">Loading Module...</p>
+                </div>
+              </div>
+            }
+          >
+            <Routes>
+              <Route index element={<Dashboard />} />
+              <Route path="pki-workshop" element={<PKIWorkshop />} />
+              <Route path="digital-assets" element={<DigitalAssetsModule />} />
+              <Route path="5g-security" element={<FiveGModule />} />
+              <Route path="digital-id" element={<DigitalIDModule />} />
+              <Route path="tls-basics" element={<TLSBasicsModule />} />
+              <Route path="pqc-101" element={<PQC101Module />} />
+              <Route path="quiz" element={<QuizModule />} />
+              <Route path="quantum-threats" element={<QuantumThreatsModule />} />
+              <Route path="hybrid-crypto" element={<HybridCryptoModule />} />
+              <Route path="crypto-agility" element={<CryptoAgilityModule />} />
+              <Route path="stateful-signatures" element={<StatefulSignaturesModule />} />
+              <Route path="email-signing" element={<EmailSigningModule />} />
+              <Route path="vpn-ssh-pqc" element={<VPNSSHModule />} />
+              <Route path="kms-pqc" element={<KmsPqcModule />} />
+              <Route path="hsm-pqc" element={<HsmPqcModule />} />
+              <Route path="qkd" element={<QKDModule />} />
+              <Route path="entropy-randomness" element={<EntropyModule />} />
+              <Route path="merkle-tree-certs" element={<MerkleTreeCertsModule />} />
+              <Route path="code-signing" element={<CodeSigningModule />} />
+              <Route path="api-security-jwt" element={<APISecurityJWTModule />} />
+              <Route path="iot-ot-pqc" element={<IoTOTModule />} />
+              <Route path="pqc-risk-management" element={<PQCRiskManagementModule />} />
+              <Route path="pqc-business-case" element={<PQCBusinessCaseModule />} />
+              <Route path="pqc-governance" element={<PQCGovernanceModule />} />
+              <Route path="vendor-risk" element={<VendorRiskModule />} />
+              <Route path="migration-program" element={<MigrationProgramModule />} />
+              <Route path="compliance-strategy" element={<ComplianceStrategyModule />} />
+              <Route path="data-asset-sensitivity" element={<DataAssetSensitivityModule />} />
+            </Routes>
+          </Suspense>
+        </div>
+      </div>
     </div>
   )
 }

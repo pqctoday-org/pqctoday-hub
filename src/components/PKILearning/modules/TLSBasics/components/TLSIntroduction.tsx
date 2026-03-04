@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { TLSHandshakeDiagram } from './TLSHandshakeDiagram'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface TLSIntroductionProps {
   onNavigateToSimulate: () => void
@@ -248,7 +249,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           PQC signatures are significantly larger than classical ones — an ML-DSA certificate chain
           can add several kilobytes to every TLS handshake. For the web, where billions of
           connections happen daily, this overhead is a serious scalability concern. Google&apos;s{' '}
-          <strong>Merkle Tree Certificates (MTC)</strong> program (announced February 2027) proposes
+          <strong>Merkle Tree Certificates (MTC)</strong> program (announced February 2026) proposes
           a solution.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
@@ -388,6 +389,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           </Link>
         </div>
       </section>
+      <ReadingCompleteButton />
     </div>
   )
 }

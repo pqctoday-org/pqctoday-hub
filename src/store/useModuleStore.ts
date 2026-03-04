@@ -9,8 +9,13 @@ import {
   logStepComplete,
   logArtifactGenerated,
 } from '../utils/analytics'
+import { LEARN_SECTIONS } from '../components/PKILearning/moduleData'
 
-const MODULE_STORE_VERSION = 6
+const MODULE_STORE_VERSION = 7
+
+// Ephemeral session tracker — NOT in Zustand state, intentionally non-persisted.
+// Set when a module mounts, cleared when it unmounts or the page unloads.
+let _activeSession: { moduleId: string; startTime: number } | null = null
 
 interface ModuleState extends LearningProgress {
   // Actions
@@ -19,6 +24,8 @@ interface ModuleState extends LearningProgress {
     updates: Partial<LearningProgress['modules'][string]>
   ) => void
   markStepComplete: (moduleId: string, stepId: string, workshopStep?: number) => void
+  toggleLearnSection: (moduleId: string, sectionId: string) => void
+  markAllLearnSectionsComplete: (moduleId: string) => void
   saveProgress: () => void
   loadProgress: (progress: LearningProgress) => void
   resetProgress: () => void
@@ -67,6 +74,17 @@ export const useModuleStore = create<ModuleState>()(
 
       updateModuleProgress: (moduleId, updates) =>
         set((state) => {
+          // Detect module mount: status='in-progress' set without a timeSpent update.
+          // Every module calls updateModuleProgress(id, { status: 'in-progress', lastVisited })
+          // on mount — this is the reliable signal to start a session.
+          if (updates.status === 'in-progress' && updates.timeSpent === undefined) {
+            _activeSession = { moduleId, startTime: Date.now() }
+          }
+          // Detect unmount time-save: timeSpent present means cleanup fired → session over.
+          if (updates.timeSpent !== undefined) {
+            _activeSession = null
+          }
+
           const currentModule = state.modules[moduleId] || {
             status: 'in-progress',
             lastVisited: Date.now(),
@@ -113,6 +131,90 @@ export const useModuleStore = create<ModuleState>()(
             }
           }
           return state
+        }),
+
+      toggleLearnSection: (moduleId, sectionId) =>
+        set((state) => {
+          const module = state.modules[moduleId] || {
+            status: 'in-progress' as const,
+            lastVisited: Date.now(),
+            timeSpent: 0,
+            completedSteps: [],
+            quizScores: {},
+            learnSectionChecks: {},
+          }
+
+          // Start module if not yet started
+          if (!state.modules[moduleId] || module.status === 'not-started') {
+            logModuleStart(moduleId)
+          }
+
+          const currentChecks = module.learnSectionChecks ?? {}
+          const nowChecked = !currentChecks[sectionId]
+          const updatedChecks = { ...currentChecks, [sectionId]: nowChecked }
+
+          // Determine if all sections are now checked
+          const sections = LEARN_SECTIONS[moduleId] ?? []
+          const allChecked = sections.length > 0 && sections.every((s) => updatedChecks[s.id])
+
+          let newStatus = module.status
+          if (allChecked && module.status !== 'completed') {
+            newStatus = 'completed'
+            logModuleComplete(moduleId)
+          } else if (!allChecked && module.status === 'completed') {
+            newStatus = 'in-progress'
+          } else if (module.status === 'not-started') {
+            newStatus = 'in-progress'
+          }
+
+          return {
+            modules: {
+              ...state.modules,
+              [moduleId]: {
+                ...module,
+                status: newStatus,
+                lastVisited: Date.now(),
+                learnSectionChecks: updatedChecks,
+              },
+            },
+            timestamp: Date.now(),
+          }
+        }),
+
+      markAllLearnSectionsComplete: (moduleId) =>
+        set((state) => {
+          const sections = LEARN_SECTIONS[moduleId] ?? []
+          if (sections.length === 0) return state
+          const module = state.modules[moduleId] || {
+            status: 'in-progress' as const,
+            lastVisited: Date.now(),
+            timeSpent: 0,
+            completedSteps: [],
+            quizScores: {},
+            learnSectionChecks: {},
+          }
+          if (!state.modules[moduleId] || module.status === 'not-started') {
+            logModuleStart(moduleId)
+          }
+          if (module.status !== 'completed') {
+            logModuleComplete(moduleId)
+          }
+          const allChecks: Record<string, boolean> = {}
+          sections.forEach((s) => {
+            allChecks[s.id] = true
+          })
+          return {
+            modules: {
+              ...state.modules,
+              [moduleId]: {
+                ...module,
+                status: 'completed',
+                lastVisited: Date.now(),
+                learnSectionChecks: allChecks,
+              },
+            },
+            timestamp: Date.now(),
+          }
         }),
 
       addKey: (key) => {
@@ -206,6 +308,7 @@ export const useModuleStore = create<ModuleState>()(
                 timeSpent: 0,
                 completedSteps: [],
                 quizScores: {},
+                learnSectionChecks: {},
               },
             },
             timestamp: Date.now(),
@@ -226,6 +329,8 @@ export const useModuleStore = create<ModuleState>()(
           getFullProgress: _getFullProgress,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           trackDailyVisit: _trackDailyVisit,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          toggleLearnSection: _toggleLearnSection,
           ...data
         } = get()
         return data
@@ -361,6 +466,20 @@ export const useModuleStore = create<ModuleState>()(
           state.timestamp = Date.now()
         }
 
+        // Version 6 → Version 7: Add learnSectionChecks to all existing modules
+        if (version <= 6) {
+          if (state.modules) {
+            Object.keys(state.modules).forEach((moduleId) => {
+              const mod = state.modules[moduleId]
+              if (mod && !mod.learnSectionChecks) {
+                mod.learnSectionChecks = {}
+              }
+            })
+          }
+          state.version = '7.0.0'
+          state.timestamp = Date.now()
+        }
+
         return state
       },
       onRehydrateStorage: () => (_state, error) => {
@@ -378,6 +497,21 @@ if (typeof window !== 'undefined') {
     try {
       const state = useModuleStore.getState()
       const progress = state.getFullProgress()
+
+      // Flush in-flight session time: the module cleanup hasn't fired yet
+      // (beforeunload fires before React teardown), so we compute elapsed time here.
+      if (_activeSession) {
+        const { moduleId, startTime } = _activeSession
+        const elapsedMins = (Date.now() - startTime) / 60000
+        if (elapsedMins > 0 && progress.modules[moduleId]) {
+          progress.modules[moduleId] = {
+            ...progress.modules[moduleId],
+            timeSpent: (progress.modules[moduleId].timeSpent || 0) + elapsedMins,
+          }
+        }
+        _activeSession = null
+      }
+
       const persistData = { state: progress, version: MODULE_STORE_VERSION }
       localStorage.setItem('pki-module-storage', JSON.stringify(persistData))
     } catch (error) {

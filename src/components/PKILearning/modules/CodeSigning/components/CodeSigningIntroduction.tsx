@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { CODE_SIGNING_ALGORITHMS, PACKAGE_MANAGERS, SIGSTORE_STEPS } from '../constants'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface CodeSigningIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -711,6 +712,7 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
           secure boot trust chains.
         </p>
       </div>
+      <ReadingCompleteButton />
     </div>
   )
 }

@@ -128,12 +128,12 @@ describe('useModuleStore', () => {
     expect(global.URL.revokeObjectURL).toHaveBeenCalledWith('blob:test')
   })
 
-  it('migrates from version 0 to current (6), initializing all fields', () => {
+  it('migrates from version 0 to current (7), initializing all fields', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v0State = { timestamp: 123 }
     const migrated = migrate(v0State, 0)
-    expect(migrated.version).toBe('6.0.0')
+    expect(migrated.version).toBe('7.0.0')
     expect(migrated.artifacts).toBeDefined()
     expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.sessionTracking).toBeDefined()
@@ -142,7 +142,7 @@ describe('useModuleStore', () => {
     expect(migrated.timestamp).toEqual(expect.any(Number))
   })
 
-  it('migrates from version 1 to current (6), converting ms to min', () => {
+  it('migrates from version 1 to current (7), converting ms to min', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v1State = {
@@ -151,24 +151,24 @@ describe('useModuleStore', () => {
       artifacts: { keys: [], certificates: [], csrs: [] },
     }
     const migrated = migrate(v1State, 1)
-    expect(migrated.version).toBe('6.0.0')
+    expect(migrated.version).toBe('7.0.0')
     expect(migrated.modules['mod-1'].timeSpent).toBe(2)
     expect(migrated.sessionTracking).toBeDefined()
     expect(migrated.quizMastery).toBeDefined()
     expect(migrated.artifacts.executiveDocuments).toEqual([])
   })
 
-  it('migrates from version 3 to current (6), adding quizMastery and executiveDocuments', () => {
+  it('migrates from version 3 to current (7), adding quizMastery and executiveDocuments', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v3State = { version: '3.0.0', artifacts: { keys: [], certificates: [], csrs: [] } }
     const migrated = migrate(v3State, 3)
-    expect(migrated.version).toBe('6.0.0')
+    expect(migrated.version).toBe('7.0.0')
     expect(migrated.quizMastery).toEqual({ correctQuestionIds: [] })
     expect(migrated.artifacts.executiveDocuments).toEqual([])
   })
 
-  it('migrates from version 4 to current (6), adding executiveDocuments', () => {
+  it('migrates from version 4 to current (7), adding executiveDocuments', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v4State = {
@@ -177,12 +177,12 @@ describe('useModuleStore', () => {
       quizMastery: { correctQuestionIds: ['q1'] },
     }
     const migrated = migrate(v4State, 4)
-    expect(migrated.version).toBe('6.0.0')
+    expect(migrated.version).toBe('7.0.0')
     expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.quizMastery.correctQuestionIds).toEqual(['q1'])
   })
 
-  it('migrates from version 5 to current (6), splitting key-management into kms-pqc and hsm-pqc', () => {
+  it('migrates from version 5 to current (7), splitting key-management into kms-pqc and hsm-pqc', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v5State = {
@@ -201,7 +201,7 @@ describe('useModuleStore', () => {
       quizMastery: { correctQuestionIds: ['q1'] },
     }
     const migrated = migrate(v5State, 5)
-    expect(migrated.version).toBe('6.0.0')
+    expect(migrated.version).toBe('7.0.0')
     // key-management should be removed
     expect(migrated.modules['key-management']).toBeUndefined()
     // kms-pqc should inherit status, timeSpent, quizScores but reset completedSteps
@@ -259,5 +259,24 @@ describe('useModuleStore', () => {
     expect(consoleSpy).toHaveBeenCalledWith('Failed to save progress on unload:', expect.any(Error))
     consoleSpy.mockRestore()
     storageSpy.mockRestore()
+  })
+
+  it('markAllLearnSectionsComplete marks all sections and sets status to completed', () => {
+    useModuleStore.getState().markAllLearnSectionsComplete('pqc-101')
+    const mod = useModuleStore.getState().modules['pqc-101']
+    expect(mod.status).toBe('completed')
+    expect(mod.learnSectionChecks!['quantum-threat']).toBe(true)
+    expect(mod.learnSectionChecks!['algorithms']).toBe(true)
+    expect(mod.learnSectionChecks!['timeline']).toBe(true)
+    expect(mod.learnSectionChecks!['readiness']).toBe(true)
+    expect(mod.learnSectionChecks!['next-steps']).toBe(true)
+    expect(analytics.logModuleComplete).toHaveBeenCalledWith('pqc-101')
+  })
+
+  it('markAllLearnSectionsComplete is a no-op for unknown modules (no LEARN_SECTIONS)', () => {
+    useModuleStore.getState().markAllLearnSectionsComplete('no-such-module')
+    // state should be unchanged — no entry created
+    expect(useModuleStore.getState().modules['no-such-module']).toBeUndefined()
+    expect(analytics.logModuleComplete).not.toHaveBeenCalled()
   })
 })

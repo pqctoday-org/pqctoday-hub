@@ -1,7 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Trophy, RotateCcw, ArrowLeft, ChevronDown, ChevronUp } from 'lucide-react'
+import {
+  Trophy,
+  RotateCcw,
+  ArrowLeft,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle,
+  XCircle,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScoreBreakdown } from './components/ScoreBreakdown'
 import { FeedbackPanel } from './components/FeedbackPanel'
@@ -77,6 +85,21 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
         <div className={clsx('text-5xl md:text-6xl font-bold my-4', scoreColor)}>
           {summary.overall.percentage}%
         </div>
+
+        {/* Pass / Fail badge — 80% passing grade */}
+        {summary.overall.percentage >= 80 ? (
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-status-success/15 border border-status-success/30 mb-3">
+            <CheckCircle size={14} className="text-status-success" />
+            <span className="text-sm font-bold text-status-success">PASSED</span>
+          </div>
+        ) : (
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-status-error/15 border border-status-error/30 mb-3">
+            <XCircle size={14} className="text-status-error" />
+            <span className="text-sm font-bold text-status-error">NOT PASSED</span>
+          </div>
+        )}
+        <p className="text-[11px] text-muted-foreground mb-3">Passing grade: 80%</p>
+
         <p className="text-lg text-muted-foreground mb-1">
           {summary.overall.correct} of {summary.overall.total} correct
         </p>

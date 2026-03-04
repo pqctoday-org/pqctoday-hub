@@ -13,6 +13,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import {
   SENSITIVITY_TIERS,
   RETENTION_CONFIGS,
@@ -551,6 +552,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
           </div>
         </div>
       </CollapsibleSection>
+      <ReadingCompleteButton />
     </div>
   )
 }

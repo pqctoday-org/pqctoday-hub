@@ -17,6 +17,7 @@ import { InfoTooltip } from './InfoTooltip'
 import { PQCThreatSummary } from './PQCThreatSummary'
 import { DERIVATION_PATH_EXPLANATIONS } from '../utils/cryptoConstants'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface BlockchainCryptoIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -341,6 +342,7 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
           </Link>
         </div>
       </section>
+      <ReadingCompleteButton />
     </div>
   )
 }

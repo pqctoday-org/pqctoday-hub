@@ -25,6 +25,7 @@ import {
   KEY_SIZE_COMPARISONS,
 } from '../data/hsmConstants'
 import { Button } from '@/components/ui/button'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface HsmPqcIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -842,6 +843,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
           </Link>
         </div>
       </div>
+      <ReadingCompleteButton />
     </div>
   )
 }

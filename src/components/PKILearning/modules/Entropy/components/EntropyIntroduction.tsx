@@ -15,6 +15,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { DRBG_MECHANISMS, RNG_COMPARISON } from '../utils/entropyConstants'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface EntropyIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -447,6 +448,7 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           </Link>
         </div>
       </section>
+      <ReadingCompleteButton />
     </div>
   )
 }

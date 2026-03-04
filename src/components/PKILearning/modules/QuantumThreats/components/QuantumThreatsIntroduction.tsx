@@ -16,6 +16,7 @@ import {
   Coins,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface QuantumThreatsIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -494,6 +495,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
           </button>
         </div>
       </div>
+      <ReadingCompleteButton />
     </div>
   )
 }

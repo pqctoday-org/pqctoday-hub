@@ -14,6 +14,7 @@ import {
   Satellite,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface QKDIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -598,6 +599,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
           <Radio size={18} /> Try the BB84 Simulator
         </button>
       </div>
+      <ReadingCompleteButton />
     </div>
   )
 }

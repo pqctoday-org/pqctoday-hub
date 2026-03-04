@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { BookOpen, CheckCircle, Circle, Clock } from 'lucide-react'
+import { BookOpen, CheckCircle, Circle, Clock, Wrench } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
-import { MODULE_STEP_COUNTS } from './moduleData'
+import { LEARN_SECTIONS, WORKSHOP_STEPS } from './moduleData'
 
 export interface ModuleItem {
   id: string
@@ -30,12 +30,26 @@ export const ModuleCard = ({
   const status = moduleState?.status || 'not-started'
   const timeSpentRaw = moduleState?.timeSpent || 0
   const timeSpentFloored = Math.floor(timeSpentRaw)
-  const completedSteps = moduleState?.completedSteps?.length ?? 0
-  const totalSteps = MODULE_STEP_COUNTS[module.id] ?? 4
-  const progressPct = Math.min(100, Math.round((completedSteps / totalSteps) * 100))
+
+  // Learn-section completion percentage
+  const learnSections = LEARN_SECTIONS[module.id] ?? []
+  const checks = moduleState?.learnSectionChecks ?? {}
+  const checkedCount = learnSections.filter((s) => checks[s.id]).length
+  const learnPct =
+    learnSections.length > 0 ? Math.round((checkedCount / learnSections.length) * 100) : 0
+
+  // Workshop completion percentage
+  const workshopSteps = WORKSHOP_STEPS[module.id] ?? []
+  const completedSteps = moduleState?.completedSteps ?? []
+  const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
+  const workshopPct =
+    workshopSteps.length > 0 ? Math.round((workshopDone / workshopSteps.length) * 100) : 0
+  const hasWorkshop = workshopSteps.length > 0
 
   const durationDisplay =
-    status === 'not-started' ? module.duration : `${module.duration} / ${timeSpentFloored} min`
+    status === 'not-started' || timeSpentFloored < 1
+      ? module.duration
+      : `${module.duration} / ${timeSpentFloored} min`
 
   return (
     <motion.article
@@ -49,8 +63,66 @@ export const ModuleCard = ({
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-full bg-muted text-primary" aria-hidden="true">
-            <BookOpen size={24} />
+          {/* Stacked mini progress bars: Learn + Workshop */}
+          <div className="shrink-0 w-24 space-y-1.5">
+            {/* Learn bar */}
+            <div>
+              <div className="flex justify-between text-[9px] mb-0.5">
+                <span
+                  className={`flex items-center gap-0.5 font-medium ${learnPct === 100 ? 'text-status-success' : 'text-muted-foreground'}`}
+                >
+                  <BookOpen size={8} />
+                  Learn
+                  {learnPct === 100 && (
+                    <CheckCircle size={8} className="text-status-success" aria-hidden="true" />
+                  )}
+                </span>
+                <span
+                  className={
+                    learnPct === 100 ? 'text-status-success font-medium' : 'text-muted-foreground'
+                  }
+                >
+                  {learnPct}%
+                </span>
+              </div>
+              <div className="h-1 rounded-full bg-muted overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-300 ${learnPct === 100 ? 'bg-status-success' : 'bg-primary'}`}
+                  style={{ width: `${learnPct}%` }}
+                />
+              </div>
+            </div>
+            {/* Workshop bar — only for modules with workshop steps */}
+            {hasWorkshop && (
+              <div>
+                <div className="flex justify-between text-[9px] mb-0.5">
+                  <span
+                    className={`flex items-center gap-0.5 font-medium ${workshopPct === 100 ? 'text-status-success' : 'text-muted-foreground'}`}
+                  >
+                    <Wrench size={8} />
+                    Workshop
+                    {workshopPct === 100 && (
+                      <CheckCircle size={8} className="text-status-success" aria-hidden="true" />
+                    )}
+                  </span>
+                  <span
+                    className={
+                      workshopPct === 100
+                        ? 'text-status-success font-medium'
+                        : 'text-muted-foreground'
+                    }
+                  >
+                    {workshopPct}%
+                  </span>
+                </div>
+                <div className="h-1 rounded-full bg-muted overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ${workshopPct === 100 ? 'bg-status-success' : 'bg-accent'}`}
+                    style={{ width: `${workshopPct}%` }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-end">
@@ -119,19 +191,6 @@ export const ModuleCard = ({
           )}
         </div>
       </div>
-
-      {status === 'in-progress' && (
-        <div className="mt-3 h-1 rounded-full bg-muted overflow-hidden">
-          <div
-            className="h-full bg-primary rounded-full transition-all"
-            style={{ width: `${progressPct}%` }}
-            role="progressbar"
-            aria-valuenow={progressPct}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          />
-        </div>
-      )}
     </motion.article>
   )
 }

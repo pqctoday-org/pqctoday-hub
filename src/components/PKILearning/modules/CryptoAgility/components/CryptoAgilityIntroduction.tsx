@@ -14,6 +14,7 @@ import {
   PackageCheck,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface CryptoAgilityIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -363,6 +364,7 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
           Explore abstraction layers, scan a sample CBOM, and plan a PQC migration.
         </p>
       </div>
+      <ReadingCompleteButton />
     </div>
   )
 }

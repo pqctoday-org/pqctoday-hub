@@ -13,6 +13,7 @@ import {
   BookOpen,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -327,6 +328,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           Build vendor scorecards, generate contract clauses, and map supply chain risk.
         </p>
       </div>
+      <ReadingCompleteButton />
     </div>
   )
 }

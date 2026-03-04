@@ -14,6 +14,7 @@ import {
   FlaskConical,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -299,6 +300,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           Model CRQC scenarios, build a risk register, and visualize your exposure on a heatmap.
         </p>
       </div>
+      <ReadingCompleteButton />
     </div>
   )
 }

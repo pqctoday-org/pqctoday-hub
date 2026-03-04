@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { PKICertificateLifecycleDiagram } from './PKICertificateLifecycleDiagram'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface PKIIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -418,6 +419,7 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           </Link>
         </div>
       </section>
+      <ReadingCompleteButton />
     </div>
   )
 }

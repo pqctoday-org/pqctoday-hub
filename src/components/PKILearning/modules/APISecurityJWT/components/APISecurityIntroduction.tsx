@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { VULNERABILITY_TABLE, JOSE_HEADER_COMPARISONS, OAUTH_MIGRATION_ITEMS } from '../constants'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface APISecurityIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -176,10 +177,10 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            The <InlineTooltip term="IETF">IETF</InlineTooltip> JOSE working group has published{' '}
-            <strong>draft-ietf-jose-pqc</strong>, which defines new{' '}
-            <code className="text-foreground/70">alg</code> values for post-quantum algorithms in
-            JWS and JWE. <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> (
+            The <InlineTooltip term="IETF">IETF</InlineTooltip> JOSE working group is developing{' '}
+            <strong>draft-ietf-jose-pqc</strong> (active draft, pending ratification), which defines
+            new <code className="text-foreground/70">alg</code> values for post-quantum algorithms
+            in JWS and JWE. <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> (
             <InlineTooltip term="FIPS 204">FIPS 204</InlineTooltip>) replaces ECDSA and RSA for JWT
             signing.
           </p>
@@ -536,6 +537,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
           Decode JWTs, sign with ML-DSA, create hybrid tokens, and analyze sizes interactively.
         </p>
       </div>
+      <ReadingCompleteButton />
     </div>
   )
 }

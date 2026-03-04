@@ -15,6 +15,7 @@ import {
   Layers,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface MTCIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -446,6 +447,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
           </button>
         </div>
       </section>
+      <ReadingCompleteButton />
     </div>
   )
 }

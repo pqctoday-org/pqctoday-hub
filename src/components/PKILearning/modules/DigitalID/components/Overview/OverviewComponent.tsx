@@ -14,6 +14,7 @@ import {
   Key,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface OverviewComponentProps {
   onNavigateTo: (stepId: string) => void
@@ -373,6 +374,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
           </Link>
         </div>
       </section>
+      <ReadingCompleteButton />
     </div>
   )
 }

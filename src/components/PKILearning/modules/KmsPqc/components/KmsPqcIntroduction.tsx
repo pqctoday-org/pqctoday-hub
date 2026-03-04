@@ -23,6 +23,7 @@ import {
   ENTERPRISE_SCENARIO,
 } from '../data/kmsConstants'
 import { KMS_PROVIDERS, KMS_STATUS_LABELS } from '../data/kmsProviderData'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface KmsPqcIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -643,6 +644,7 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
           Design key hierarchies, visualize envelope encryption, and plan PQC rotation strategies.
         </p>
       </div>
+      <ReadingCompleteButton />
     </div>
   )
 }

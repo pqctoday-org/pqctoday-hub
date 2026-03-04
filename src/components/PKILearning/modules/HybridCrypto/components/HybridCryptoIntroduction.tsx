@@ -16,6 +16,7 @@ import {
   Globe,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
 interface HybridCryptoIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -501,6 +502,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
           <InlineTooltip term="Composite Certificate">composite certificates</InlineTooltip>.
         </p>
       </div>
+      <ReadingCompleteButton />
     </div>
   )
 }
