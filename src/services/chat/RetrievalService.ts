@@ -304,6 +304,20 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
   israeli: ['Israel', 'Israeli PQC', 'Bank of Israel'],
   italian: ['Italy', 'Italian PQC', 'ACN'],
   swedish: ['Sweden', 'Swedish PQC'],
+
+  // Site authorship / identity queries
+  author: ['Eric Amador', 'pqctoday', 'creator', 'maintainer'],
+  authors: ['Eric Amador', 'pqctoday', 'creator', 'maintainer'],
+  maintain: ['Eric Amador', 'pqctoday', 'creator', 'maintainer'],
+  maintains: ['Eric Amador', 'pqctoday', 'creator', 'maintainer'],
+  maintainer: ['Eric Amador', 'pqctoday', 'creator', 'maintainer'],
+  maintaining: ['Eric Amador', 'pqctoday', 'creator', 'maintainer'],
+  creator: ['Eric Amador', 'pqctoday', 'creator', 'maintainer'],
+  built: ['Eric Amador', 'pqctoday', 'creator', 'maintainer'],
+  created: ['Eric Amador', 'pqctoday', 'creator', 'maintainer'],
+  pqctoday: ['Eric Amador', 'pqctoday', 'creator', 'maintainer', 'softhsmv3'],
+  'eric amador': ['Eric Amador', 'pqctoday', 'creator', 'maintainer', 'softhsmv3'],
+  softhsmv3: ['Eric Amador', 'softhsmv3', 'pqctoday', 'creator'],
 }
 
 /**
