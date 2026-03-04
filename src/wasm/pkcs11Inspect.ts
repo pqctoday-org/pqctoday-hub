@@ -86,6 +86,14 @@ const CKA_TABLE: Record<number, ConstEntry> = {
     name: 'CKA_DECAPSULATE',
     description: 'Key can be used for decapsulation (ML-KEM)',
   },
+  0x0000062a: {
+    name: 'CKA_ENCAPSULATE_TEMPLATE',
+    description: 'Template for auto-generated shared-secret key (ML-KEM encapsulate)',
+  },
+  0x0000062b: {
+    name: 'CKA_DECAPSULATE_TEMPLATE',
+    description: 'Template for auto-generated shared-secret key (ML-KEM decapsulate)',
+  },
 }
 
 // CKM_ mechanism types
@@ -118,6 +126,92 @@ const CKM_TABLE: Record<number, ConstEntry> = {
     name: 'CKM_HASH_ML_DSA_SHA3_256',
     description: 'HashML-DSA with SHA3-256 (FIPS 204 Algorithm 4/5)',
   },
+  // ML-DSA hash variants — FIPS 204 Algorithm 4/5 (missing from initial table)
+  0x0000001f: {
+    name: 'CKM_HASH_ML_DSA',
+    description: 'HashML-DSA generic pre-hash (FIPS 204 Algorithm 4/5)',
+  },
+  0x00000023: {
+    name: 'CKM_HASH_ML_DSA_SHA224',
+    description: 'HashML-DSA with SHA-224 (FIPS 204 Algorithm 4/5)',
+  },
+  0x00000025: {
+    name: 'CKM_HASH_ML_DSA_SHA384',
+    description: 'HashML-DSA with SHA-384 (FIPS 204 Algorithm 4/5)',
+  },
+  0x00000027: {
+    name: 'CKM_HASH_ML_DSA_SHA3_224',
+    description: 'HashML-DSA with SHA3-224 (FIPS 204 Algorithm 4/5)',
+  },
+  0x00000029: {
+    name: 'CKM_HASH_ML_DSA_SHA3_384',
+    description: 'HashML-DSA with SHA3-384 (FIPS 204 Algorithm 4/5)',
+  },
+  0x0000002a: {
+    name: 'CKM_HASH_ML_DSA_SHA3_512',
+    description: 'HashML-DSA with SHA3-512 (FIPS 204 Algorithm 4/5)',
+  },
+  0x0000002b: {
+    name: 'CKM_HASH_ML_DSA_SHAKE128',
+    description: 'HashML-DSA with SHAKE128 (FIPS 204 Algorithm 4/5)',
+  },
+  0x0000002c: {
+    name: 'CKM_HASH_ML_DSA_SHAKE256',
+    description: 'HashML-DSA with SHAKE256 (FIPS 204 Algorithm 4/5)',
+  },
+  // SLH-DSA — FIPS 205 (Stateless Hash-Based Digital Signature Standard)
+  0x0000002d: {
+    name: 'CKM_SLH_DSA_KEY_PAIR_GEN',
+    description: 'SLH-DSA key pair generation (FIPS 205)',
+  },
+  0x0000002e: {
+    name: 'CKM_SLH_DSA',
+    description: 'SLH-DSA pure signing / verification (FIPS 205)',
+  },
+  0x00000034: {
+    name: 'CKM_HASH_SLH_DSA',
+    description: 'HashSLH-DSA generic pre-hash (FIPS 205)',
+  },
+  0x00000036: {
+    name: 'CKM_HASH_SLH_DSA_SHA224',
+    description: 'HashSLH-DSA with SHA-224 (FIPS 205)',
+  },
+  0x00000037: {
+    name: 'CKM_HASH_SLH_DSA_SHA256',
+    description: 'HashSLH-DSA with SHA-256 (FIPS 205)',
+  },
+  0x00000038: {
+    name: 'CKM_HASH_SLH_DSA_SHA384',
+    description: 'HashSLH-DSA with SHA-384 (FIPS 205)',
+  },
+  0x00000039: {
+    name: 'CKM_HASH_SLH_DSA_SHA512',
+    description: 'HashSLH-DSA with SHA-512 (FIPS 205)',
+  },
+  0x0000003a: {
+    name: 'CKM_HASH_SLH_DSA_SHA3_224',
+    description: 'HashSLH-DSA with SHA3-224 (FIPS 205)',
+  },
+  0x0000003b: {
+    name: 'CKM_HASH_SLH_DSA_SHA3_256',
+    description: 'HashSLH-DSA with SHA3-256 (FIPS 205)',
+  },
+  0x0000003c: {
+    name: 'CKM_HASH_SLH_DSA_SHA3_384',
+    description: 'HashSLH-DSA with SHA3-384 (FIPS 205)',
+  },
+  0x0000003d: {
+    name: 'CKM_HASH_SLH_DSA_SHA3_512',
+    description: 'HashSLH-DSA with SHA3-512 (FIPS 205)',
+  },
+  0x0000003e: {
+    name: 'CKM_HASH_SLH_DSA_SHAKE128',
+    description: 'HashSLH-DSA with SHAKE128 (FIPS 205)',
+  },
+  0x0000003f: {
+    name: 'CKM_HASH_SLH_DSA_SHAKE256',
+    description: 'HashSLH-DSA with SHAKE256 (FIPS 205)',
+  },
 }
 
 // CKO_ object classes
@@ -135,6 +229,7 @@ const CKK_TABLE: Record<number, ConstEntry> = {
   0x03: { name: 'CKK_EC' },
   0x49: { name: 'CKK_ML_KEM', description: 'ML-KEM (FIPS 203)' },
   0x4a: { name: 'CKK_ML_DSA', description: 'ML-DSA (FIPS 204)' },
+  0x4b: { name: 'CKK_SLH_DSA', description: 'SLH-DSA (FIPS 205)' },
 }
 
 // CKH_ hedging variants
@@ -180,6 +275,46 @@ const CKP_ML_DSA: Record<number, ConstEntry> = {
   0x3: { name: 'CKP_ML_DSA_87', description: 'NIST Level 5 — 4627-byte signature' },
 }
 
+// CKP_ SLH-DSA parameter sets (pkcs11t.h ordering: interleaved SHA2/SHAKE per security level)
+const CKP_SLH_DSA: Record<number, ConstEntry> = {
+  0x1: { name: 'CKP_SLH_DSA_SHA2_128S', description: 'NIST Level 1 — 7856-byte signature, SHA2' },
+  0x2: { name: 'CKP_SLH_DSA_SHAKE_128S', description: 'NIST Level 1 — 7856-byte signature, SHAKE' },
+  0x3: {
+    name: 'CKP_SLH_DSA_SHA2_128F',
+    description: 'NIST Level 1 — 17088-byte signature, SHA2 (fast)',
+  },
+  0x4: {
+    name: 'CKP_SLH_DSA_SHAKE_128F',
+    description: 'NIST Level 1 — 17088-byte signature, SHAKE (fast)',
+  },
+  0x5: { name: 'CKP_SLH_DSA_SHA2_192S', description: 'NIST Level 3 — 16224-byte signature, SHA2' },
+  0x6: {
+    name: 'CKP_SLH_DSA_SHAKE_192S',
+    description: 'NIST Level 3 — 16224-byte signature, SHAKE',
+  },
+  0x7: {
+    name: 'CKP_SLH_DSA_SHA2_192F',
+    description: 'NIST Level 3 — 35664-byte signature, SHA2 (fast)',
+  },
+  0x8: {
+    name: 'CKP_SLH_DSA_SHAKE_192F',
+    description: 'NIST Level 3 — 35664-byte signature, SHAKE (fast)',
+  },
+  0x9: { name: 'CKP_SLH_DSA_SHA2_256S', description: 'NIST Level 5 — 29792-byte signature, SHA2' },
+  0xa: {
+    name: 'CKP_SLH_DSA_SHAKE_256S',
+    description: 'NIST Level 5 — 29792-byte signature, SHAKE',
+  },
+  0xb: {
+    name: 'CKP_SLH_DSA_SHA2_256F',
+    description: 'NIST Level 5 — 49856-byte signature, SHA2 (fast)',
+  },
+  0xc: {
+    name: 'CKP_SLH_DSA_SHAKE_256F',
+    description: 'NIST Level 5 — 49856-byte signature, SHAKE (fast)',
+  },
+}
+
 // CKF_ session flags bitmask (CK_FLAGS)
 const CKF_SESSION_FLAGS: Array<{ bit: number; name: string; description?: string }> = [
   { bit: 0x0002, name: 'CKF_RW_SESSION', description: 'Read/write session' },
@@ -206,11 +341,12 @@ const decodeFlagsBitmask = (flags: number): string => {
 }
 
 /** Determine algo context from mechanism type (for CKP_ dispatch). */
-type AlgoContext = 'ml-kem' | 'ml-dsa' | undefined
+type AlgoContext = 'ml-kem' | 'ml-dsa' | 'slh-dsa' | undefined
 
 const algoFromMechType = (mechType: number): AlgoContext => {
   if (mechType === 0x0000000f || mechType === 0x00000017) return 'ml-kem'
-  if (mechType >= 0x0000001c && mechType <= 0x00000028) return 'ml-dsa'
+  if (mechType >= 0x0000001c && mechType <= 0x0000002c) return 'ml-dsa'
+  if (mechType >= 0x0000002d && mechType <= 0x0000003f) return 'slh-dsa'
   return undefined
 }
 
@@ -233,7 +369,14 @@ const decodeUlongAttr = (attrType: number, v: number, algo: AlgoContext): Decode
       : { kind: 'ulong', display: hex }
   }
   if (attrType === 0x0000061d /* CKA_PARAMETER_SET */) {
-    const table = algo === 'ml-kem' ? CKP_ML_KEM : algo === 'ml-dsa' ? CKP_ML_DSA : null
+    const table =
+      algo === 'ml-kem'
+        ? CKP_ML_KEM
+        : algo === 'ml-dsa'
+          ? CKP_ML_DSA
+          : algo === 'slh-dsa'
+            ? CKP_SLH_DSA
+            : null
     const entry = table ? table[v] : null
     return entry
       ? { kind: 'constant', display: `${entry.name} (${hex})`, description: entry.description }
@@ -488,6 +631,7 @@ const decodeGenerateKeyPair = (M: SoftHSMModule, args: number[], rv: number): Pk
   const algoSpecMap: Record<string, string> = {
     'ml-kem': 'PKCS#11 v3.2 §5.14 · FIPS 203 §4 (ML-KEM key generation)',
     'ml-dsa': 'PKCS#11 v3.2 §5.14 · FIPS 204 §5 (ML-DSA key generation)',
+    'slh-dsa': 'PKCS#11 v3.2 §5.14 · FIPS 205 (SLH-DSA key generation)',
   }
   return {
     inputs,
@@ -716,6 +860,133 @@ const decodeSignFinal = (M: SoftHSMModule, args: number[], rv: number): Pkcs11Lo
   }
 }
 
+// ── Session lifecycle decoders (Gap 1 — previously unhandled) ─────────────
+
+/** C_Initialize(pInitArgs) — §5.1 */
+const decodeInitialize = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
+  inputs: [
+    {
+      label: 'Parameters',
+      primitives: [
+        {
+          name: 'pInitArgs',
+          value: args[0] ? `0x${(args[0] >>> 0).toString(16)}` : 'NULL',
+          note: args[0]
+            ? 'CK_C_INITIALIZE_ARGS pointer'
+            : 'Default initialization (no threading callbacks)',
+        },
+      ],
+    },
+  ],
+  spec: 'PKCS#11 v3.2 §5.1 (C_Initialize)',
+})
+
+/** C_Finalize(pReserved) — §5.2 */
+const decodeFinalize = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
+  inputs: [
+    {
+      label: 'Parameters',
+      primitives: [
+        {
+          name: 'pReserved',
+          value: args[0] ? `0x${(args[0] >>> 0).toString(16)}` : 'NULL',
+          note: 'Must be NULL in PKCS#11 v3.2',
+        },
+      ],
+    },
+  ],
+  spec: 'PKCS#11 v3.2 §5.2 (C_Finalize)',
+})
+
+/** C_GetSlotList(tokenPresent, pSlotList, pulCount) — §5.3 */
+const decodeGetSlotList = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const tokenPresent = args[0] ?? 0
+  const pSlotList = args[1] ?? 0
+  const pulCount = args[2] ?? 0
+
+  const inputs: InspectSection[] = [
+    {
+      label: 'Parameters',
+      primitives: [
+        {
+          name: 'tokenPresent',
+          value: tokenPresent ? 'CK_TRUE' : 'CK_FALSE',
+          note: tokenPresent ? 'Only slots with initialized tokens' : 'All slots',
+        },
+        {
+          name: 'pSlotList',
+          value: pSlotList === 0 ? 'NULL (count query)' : `0x${pSlotList.toString(16)}`,
+          note: pSlotList === 0 ? 'Two-step: call with NULL first to get slot count' : undefined,
+        },
+      ],
+    },
+  ]
+
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if ((rv === 0 || rv === 0x150) && pulCount) {
+    const count = safeRead32(M, pulCount)
+    if (count !== null)
+      outputs.push({ name: '*pulCount', value: String(count), note: 'Number of slots' })
+  }
+  if (rv === 0 && pSlotList) {
+    const firstSlot = safeRead32(M, pSlotList)
+    if (firstSlot !== null) outputs.push({ name: 'pSlotList[0]', value: String(firstSlot) })
+  }
+
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.3 (C_GetSlotList)',
+  }
+}
+
+/** C_CloseSession(hSession) — §5.6 */
+const decodeCloseSession = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
+  inputs: [
+    {
+      label: 'Parameters',
+      primitives: [{ name: 'hSession', value: String(args[0] ?? '?') }],
+    },
+  ],
+  spec: 'PKCS#11 v3.2 §5.6 (C_CloseSession)',
+})
+
+/** C_InitPIN(hSession, pPin, ulPinLen) — §5.8 */
+const decodeInitPIN = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
+  inputs: [
+    {
+      label: 'Parameters',
+      primitives: [
+        { name: 'hSession', value: String(args[0] ?? '?') },
+        { name: 'ulPinLen', value: String(args[2] ?? '?') },
+      ],
+    },
+  ],
+  spec: 'PKCS#11 v3.2 §5.8 (C_InitPIN — sets normal user PIN)',
+})
+
+/** C_Logout(hSession) — §5.10 */
+const decodeLogout = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
+  inputs: [
+    {
+      label: 'Parameters',
+      primitives: [{ name: 'hSession', value: String(args[0] ?? '?') }],
+    },
+  ],
+  spec: 'PKCS#11 v3.2 §5.10 (C_Logout)',
+})
+
+/** C_MessageVerifyFinal(hSession) — §5.21 */
+const decodeVerifyFinal = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
+  inputs: [
+    {
+      label: 'Parameters',
+      primitives: [{ name: 'hSession', value: String(args[0] ?? '?') }],
+    },
+  ],
+  spec: 'PKCS#11 v3.2 §5.21 (C_MessageVerifyFinal — closes multi-message verify context)',
+})
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 /**
@@ -738,20 +1009,37 @@ export const buildInspect = (
 ): Pkcs11LogInspect | undefined => {
   try {
     switch (fn) {
+      // Session lifecycle
+      case 'C_Initialize':
+        return decodeInitialize(M, args)
+      case 'C_Finalize':
+        return decodeFinalize(M, args)
+      case 'C_GetSlotList':
+        return decodeGetSlotList(M, args, rv)
       case 'C_OpenSession':
         return decodeOpenSession(M, args, rv)
+      case 'C_CloseSession':
+        return decodeCloseSession(M, args)
       case 'C_Login':
         return decodeLogin(M, args)
+      case 'C_Logout':
+        return decodeLogout(M, args)
       case 'C_InitToken':
         return decodeInitToken(M, args)
+      case 'C_InitPIN':
+        return decodeInitPIN(M, args)
+      // Key generation
       case 'C_GenerateKeyPair':
         return decodeGenerateKeyPair(M, args, rv)
+      // KEM (FIPS 203)
       case 'C_EncapsulateKey':
         return decodeEncapsulateKey(M, args, rv)
       case 'C_DecapsulateKey':
         return decodeDecapsulateKey(M, args, rv)
+      // Attribute query
       case 'C_GetAttributeValue':
         return decodeGetAttributeValue(M, args)
+      // Message signing / verification (FIPS 204/205)
       case 'C_MessageSignInit':
         return decodeSignVerifyInit(M, args, false)
       case 'C_MessageVerifyInit':
@@ -762,6 +1050,8 @@ export const buildInspect = (
         return decodeVerifyMessage(M, args, rv)
       case 'C_MessageSignFinal':
         return decodeSignFinal(M, args, rv)
+      case 'C_MessageVerifyFinal':
+        return decodeVerifyFinal(M, args)
       default:
         return undefined
     }

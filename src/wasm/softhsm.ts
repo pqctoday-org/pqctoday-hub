@@ -1044,20 +1044,20 @@ export const CKM_SHA3_512 = 0x2d0
 // SLH-DSA mechanisms (PKCS#11 v3.2, FIPS 205)
 export const CKM_SLH_DSA_KEY_PAIR_GEN = 0x2d
 export const CKM_SLH_DSA = 0x2e
-export const CKM_HASH_SLH_DSA = 0x2f
+export const CKM_HASH_SLH_DSA = 0x34 // pkcs11t.h §5.20
 
-// SLH-DSA parameter sets (12 variants)
+// SLH-DSA parameter sets — pkcs11t.h ordering (interleaved SHA2/SHAKE per security level)
 export const CKP_SLH_DSA_SHA2_128S = 0x01
-export const CKP_SLH_DSA_SHA2_128F = 0x02
-export const CKP_SLH_DSA_SHA2_192S = 0x03
-export const CKP_SLH_DSA_SHA2_192F = 0x04
-export const CKP_SLH_DSA_SHA2_256S = 0x05
-export const CKP_SLH_DSA_SHA2_256F = 0x06
-export const CKP_SLH_DSA_SHAKE_128S = 0x07
-export const CKP_SLH_DSA_SHAKE_128F = 0x08
-export const CKP_SLH_DSA_SHAKE_192S = 0x09
-export const CKP_SLH_DSA_SHAKE_192F = 0x0a
-export const CKP_SLH_DSA_SHAKE_256S = 0x0b
+export const CKP_SLH_DSA_SHAKE_128S = 0x02
+export const CKP_SLH_DSA_SHA2_128F = 0x03
+export const CKP_SLH_DSA_SHAKE_128F = 0x04
+export const CKP_SLH_DSA_SHA2_192S = 0x05
+export const CKP_SLH_DSA_SHAKE_192S = 0x06
+export const CKP_SLH_DSA_SHA2_192F = 0x07
+export const CKP_SLH_DSA_SHAKE_192F = 0x08
+export const CKP_SLH_DSA_SHA2_256S = 0x09
+export const CKP_SLH_DSA_SHAKE_256S = 0x0a
+export const CKP_SLH_DSA_SHA2_256F = 0x0b
 export const CKP_SLH_DSA_SHAKE_256F = 0x0c
 
 // Additional attributes
@@ -1072,49 +1072,50 @@ export const CKA_DERIVE = 0x10c
 export const CKA_EC_PARAMS = 0x180
 
 // SLH-DSA signature and public key sizes (bytes), keyed by CKP_SLH_DSA_* constant
+// Ordering follows pkcs11t.h: interleaved SHA2/SHAKE per security level
 export const SLH_DSA_SIG_BYTES: Record<number, number> = {
-  0x01: 7856,
-  0x02: 17088, // SHA2-128s/f
-  0x03: 16224,
-  0x04: 35664, // SHA2-192s/f
-  0x05: 29792,
-  0x06: 49856, // SHA2-256s/f
-  0x07: 7856,
-  0x08: 17088, // SHAKE-128s/f
-  0x09: 16224,
-  0x0a: 35664, // SHAKE-192s/f
-  0x0b: 29792,
-  0x0c: 49856, // SHAKE-256s/f
+  0x01: 7856, // SHA2-128s
+  0x02: 7856, // SHAKE-128s
+  0x03: 17088, // SHA2-128f
+  0x04: 17088, // SHAKE-128f
+  0x05: 16224, // SHA2-192s
+  0x06: 16224, // SHAKE-192s
+  0x07: 35664, // SHA2-192f
+  0x08: 35664, // SHAKE-192f
+  0x09: 29792, // SHA2-256s
+  0x0a: 29792, // SHAKE-256s
+  0x0b: 49856, // SHA2-256f
+  0x0c: 49856, // SHAKE-256f
 }
 
 export const SLH_DSA_PUB_BYTES: Record<number, number> = {
-  0x01: 32,
-  0x02: 32,
-  0x07: 32,
-  0x08: 32, // 128-bit security
-  0x03: 48,
-  0x04: 48,
-  0x09: 48,
-  0x0a: 48, // 192-bit security
-  0x05: 64,
-  0x06: 64,
-  0x0b: 64,
-  0x0c: 64, // 256-bit security
+  0x01: 32, // SHA2-128s
+  0x02: 32, // SHAKE-128s
+  0x03: 32, // SHA2-128f
+  0x04: 32, // SHAKE-128f
+  0x05: 48, // SHA2-192s
+  0x06: 48, // SHAKE-192s
+  0x07: 48, // SHA2-192f
+  0x08: 48, // SHAKE-192f
+  0x09: 64, // SHA2-256s
+  0x0a: 64, // SHAKE-256s
+  0x0b: 64, // SHA2-256f
+  0x0c: 64, // SHAKE-256f
 }
 
 /** Human-readable SLH-DSA parameter set descriptors for UI selectors. */
 export const SLH_DSA_PARAM_SETS: Array<{ value: number; label: string; sigBytes: number }> = [
   { value: 0x01, label: 'SLH-DSA-SHA2-128s', sigBytes: 7856 },
-  { value: 0x02, label: 'SLH-DSA-SHA2-128f', sigBytes: 17088 },
-  { value: 0x03, label: 'SLH-DSA-SHA2-192s', sigBytes: 16224 },
-  { value: 0x04, label: 'SLH-DSA-SHA2-192f', sigBytes: 35664 },
-  { value: 0x05, label: 'SLH-DSA-SHA2-256s', sigBytes: 29792 },
-  { value: 0x06, label: 'SLH-DSA-SHA2-256f', sigBytes: 49856 },
-  { value: 0x07, label: 'SLH-DSA-SHAKE-128s', sigBytes: 7856 },
-  { value: 0x08, label: 'SLH-DSA-SHAKE-128f', sigBytes: 17088 },
-  { value: 0x09, label: 'SLH-DSA-SHAKE-192s', sigBytes: 16224 },
-  { value: 0x0a, label: 'SLH-DSA-SHAKE-192f', sigBytes: 35664 },
-  { value: 0x0b, label: 'SLH-DSA-SHAKE-256s', sigBytes: 29792 },
+  { value: 0x02, label: 'SLH-DSA-SHAKE-128s', sigBytes: 7856 },
+  { value: 0x03, label: 'SLH-DSA-SHA2-128f', sigBytes: 17088 },
+  { value: 0x04, label: 'SLH-DSA-SHAKE-128f', sigBytes: 17088 },
+  { value: 0x05, label: 'SLH-DSA-SHA2-192s', sigBytes: 16224 },
+  { value: 0x06, label: 'SLH-DSA-SHAKE-192s', sigBytes: 16224 },
+  { value: 0x07, label: 'SLH-DSA-SHA2-192f', sigBytes: 35664 },
+  { value: 0x08, label: 'SLH-DSA-SHAKE-192f', sigBytes: 35664 },
+  { value: 0x09, label: 'SLH-DSA-SHA2-256s', sigBytes: 29792 },
+  { value: 0x0a, label: 'SLH-DSA-SHAKE-256s', sigBytes: 29792 },
+  { value: 0x0b, label: 'SLH-DSA-SHA2-256f', sigBytes: 49856 },
   { value: 0x0c, label: 'SLH-DSA-SHAKE-256f', sigBytes: 49856 },
 ]
 

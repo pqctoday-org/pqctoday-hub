@@ -4,6 +4,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.19.0] - 2026-03-04
+
+### Improved
+
+- **PKCS#11 Inspect — full function coverage** (`wasm/pkcs11Inspect.ts`): Added decoders for 7 previously unhandled PKCS#11 functions — `C_Initialize`, `C_Finalize`, `C_GetSlotList`, `C_CloseSession`, `C_InitPIN`, `C_Logout`, and `C_MessageVerifyFinal`. All 19 functions called in live WASM HSM mode now produce expandable inspect data with decoded parameters. [view:/playground]
+
+- **PKCS#11 Inspect — SLH-DSA (FIPS 205) constants** (`wasm/pkcs11Inspect.ts`): Added 13 SLH-DSA mechanisms (`CKM_SLH_DSA_KEY_PAIR_GEN`, `CKM_SLH_DSA`, `CKM_HASH_SLH_DSA`, plus 10 hash-specific variants), `CKK_SLH_DSA` key type, and 12 `CKP_SLH_DSA_*` parameter set constants covering all 3 security levels × 2 hash functions × 2 speed profiles. [view:/playground]
+
+- **PKCS#11 Inspect — ML-DSA hash variant coverage** (`wasm/pkcs11Inspect.ts`): Added 8 missing ML-DSA pre-hash mechanisms (`CKM_HASH_ML_DSA`, SHA-224/384, SHA3-224/384/512, SHAKE-128/256) and 2 ML-KEM template attributes (`CKA_ENCAPSULATE_TEMPLATE`, `CKA_DECAPSULATE_TEMPLATE`). PQC mechanism table expanded from 7 to 28 entries. [view:/playground]
+
+### Fixed
+
+- **SoftHSMv3 PKCS#11 constant alignment** (`wasm/softhsm.ts`, `vendor/softhsm-wasm/constants.js`): Fixed CKP_SLH_DSA parameter set ordering and `CKM_HASH_SLH_DSA` value to match the authoritative `pkcs11t.h` header (compiled into the WASM binary). Previously TypeScript constants grouped SHA2 first then SHAKE, but the C header interleaves them — causing parameter set mismatches at runtime. Also fixed `CKM_HASH_ML_DSA`, `CKM_SLH_DSA_KEY_PAIR_GEN`, `CKM_SLH_DSA` values in vendor constants.
+
 ## [2.18.0] - 2026-03-04
 
 ### Data
