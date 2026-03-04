@@ -376,10 +376,31 @@ const CKA_PARAMETER_SET = 0x0000061d
 const CKA_ENCAPSULATE = 0x00000633
 const CKA_DECAPSULATE = 0x00000634
 
-// ML-DSA pre-hash mechanisms (CKM_HASH_ML_DSA_*, PKCS#11 v3.2)
+// ML-DSA pre-hash mechanisms (CKM_HASH_ML_DSA_*, PKCS#11 v3.2 §6.x, pkcs11t.h:1221-1231)
+const CKM_HASH_ML_DSA = 0x0000001f // generic: hash specified in CK_HASH_SIGN_ADDITIONAL_CONTEXT
+const CKM_HASH_ML_DSA_SHA224 = 0x00000023
 const CKM_HASH_ML_DSA_SHA256 = 0x00000024
+const CKM_HASH_ML_DSA_SHA384 = 0x00000025
 const CKM_HASH_ML_DSA_SHA512 = 0x00000026
+const CKM_HASH_ML_DSA_SHA3_224 = 0x00000027
 const CKM_HASH_ML_DSA_SHA3_256 = 0x00000028
+const CKM_HASH_ML_DSA_SHA3_384 = 0x00000029
+const CKM_HASH_ML_DSA_SHA3_512 = 0x0000002a
+const CKM_HASH_ML_DSA_SHAKE128 = 0x0000002b
+const CKM_HASH_ML_DSA_SHAKE256 = 0x0000002c
+
+// SLH-DSA pre-hash mechanisms (CKM_HASH_SLH_DSA_*, PKCS#11 v3.2 §6.x, pkcs11t.h:1235-1245)
+// CKM_HASH_SLH_DSA (generic) already exported below; fixed-hash variants for inline dispatch
+const CKM_HASH_SLH_DSA_SHA224 = 0x00000036
+const CKM_HASH_SLH_DSA_SHA256 = 0x00000037
+const CKM_HASH_SLH_DSA_SHA384 = 0x00000038
+const CKM_HASH_SLH_DSA_SHA512 = 0x00000039
+const CKM_HASH_SLH_DSA_SHA3_224 = 0x0000003a
+const CKM_HASH_SLH_DSA_SHA3_256 = 0x0000003b
+const CKM_HASH_SLH_DSA_SHA3_384 = 0x0000003c
+const CKM_HASH_SLH_DSA_SHA3_512 = 0x0000003d
+const CKM_HASH_SLH_DSA_SHAKE128 = 0x0000003e
+const CKM_HASH_SLH_DSA_SHAKE256 = 0x0000003f
 
 // Hedge types (PKCS#11 v3.2)
 const CKH_HEDGE_PREFERRED = 0x00000000
@@ -834,17 +855,66 @@ export const hsm_generateMLDSAKeyPair = (
  * ML-DSA sign/verify options (PKCS#11 v3.2 context string + hedging + pre-hash).
  * All fields optional — defaults to pure ML-DSA with hedge-preferred, no context.
  */
+export type MLDSAPreHash =
+  | 'sha224'
+  | 'sha256'
+  | 'sha384'
+  | 'sha512'
+  | 'sha3-224'
+  | 'sha3-256'
+  | 'sha3-384'
+  | 'sha3-512'
+  | 'shake128'
+  | 'shake256'
+
 export interface MLDSASignOptions {
   hedging?: 'preferred' | 'required' | 'deterministic'
   context?: Uint8Array // 0-255 bytes (FIPS 204 max context length)
-  preHash?: 'sha256' | 'sha512' | 'sha3-256' // common subset for Playground UI
+  preHash?: MLDSAPreHash // all PKCS#11 v3.2 CKM_HASH_ML_DSA_* variants
 }
 
-// Map preHash option to CKM mechanism constant
+// Map preHash option to CKM mechanism constant (PKCS#11 v3.2 §6.x, FIPS 204 HashML-DSA)
 const PREHASH_MECH: Record<string, number> = {
+  sha224: CKM_HASH_ML_DSA_SHA224,
   sha256: CKM_HASH_ML_DSA_SHA256,
+  sha384: CKM_HASH_ML_DSA_SHA384,
   sha512: CKM_HASH_ML_DSA_SHA512,
+  'sha3-224': CKM_HASH_ML_DSA_SHA3_224,
   'sha3-256': CKM_HASH_ML_DSA_SHA3_256,
+  'sha3-384': CKM_HASH_ML_DSA_SHA3_384,
+  'sha3-512': CKM_HASH_ML_DSA_SHA3_512,
+  shake128: CKM_HASH_ML_DSA_SHAKE128,
+  shake256: CKM_HASH_ML_DSA_SHAKE256,
+}
+
+export type SLHDSAPreHash =
+  | 'sha224'
+  | 'sha256'
+  | 'sha384'
+  | 'sha512'
+  | 'sha3-224'
+  | 'sha3-256'
+  | 'sha3-384'
+  | 'sha3-512'
+  | 'shake128'
+  | 'shake256'
+
+export interface SLHDSASignOptions {
+  preHash?: SLHDSAPreHash // all PKCS#11 v3.2 CKM_HASH_SLH_DSA_* variants
+}
+
+// Map preHash option to CKM mechanism constant (PKCS#11 v3.2 §6.x, FIPS 205 HashSLH-DSA)
+const SLH_DSA_PREHASH_MECH: Record<string, number> = {
+  sha224: CKM_HASH_SLH_DSA_SHA224,
+  sha256: CKM_HASH_SLH_DSA_SHA256,
+  sha384: CKM_HASH_SLH_DSA_SHA384,
+  sha512: CKM_HASH_SLH_DSA_SHA512,
+  'sha3-224': CKM_HASH_SLH_DSA_SHA3_224,
+  'sha3-256': CKM_HASH_SLH_DSA_SHA3_256,
+  'sha3-384': CKM_HASH_SLH_DSA_SHA3_384,
+  'sha3-512': CKM_HASH_SLH_DSA_SHA3_512,
+  shake128: CKM_HASH_SLH_DSA_SHAKE128,
+  shake256: CKM_HASH_SLH_DSA_SHAKE256,
 }
 
 /**
@@ -1019,13 +1089,27 @@ export const CKM_EC_KEY_PAIR_GEN = 0x1040
 export const CKM_ECDSA_SHA256 = 0x1044
 export const CKM_ECDSA_SHA384 = 0x1045
 export const CKM_ECDSA_SHA512 = 0x1046
+export const CKM_ECDSA_SHA3_224 = 0x1047 // PKCS#11 v3.2 §6.3
+export const CKM_ECDSA_SHA3_256 = 0x1048
+export const CKM_ECDSA_SHA3_384 = 0x1049
+export const CKM_ECDSA_SHA3_512 = 0x104a
 export const CKM_ECDH1_DERIVE = 0x1050
 export const CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x1055
 export const CKM_EDDSA = 0x1057
 
+// PBKDF2 (PKCS#11 v3.2 §5.7.3.1)
+export const CKM_PKCS5_PBKD2 = 0x3b0
+export const CKP_PKCS5_PBKD2_HMAC_SHA1 = 0x01
+export const CKP_PKCS5_PBKD2_HMAC_SHA224 = 0x03
+export const CKP_PKCS5_PBKD2_HMAC_SHA256 = 0x04
+export const CKP_PKCS5_PBKD2_HMAC_SHA384 = 0x05
+export const CKP_PKCS5_PBKD2_HMAC_SHA512 = 0x06
+
 // Symmetric / HMAC / digest mechanisms
 export const CKM_GENERIC_SECRET_KEY_GEN = 0x350
 export const CKM_AES_KEY_GEN = 0x1080
+export const CKM_AES_ECB = 0x1081 // PKCS#11 v3.2 §2.14.1 — MILENAGE f1–f5
+export const CKM_AES_CTR = 0x1086 // PKCS#11 v3.2 §2.14.3 — SUCI MSIN encryption (TS 33.501)
 export const CKM_AES_CBC_PAD = 0x1085
 export const CKM_AES_GCM = 0x1087
 export const CKM_AES_CMAC = 0x108a
@@ -1041,10 +1125,33 @@ export const CKM_SHA512 = 0x270
 export const CKM_SHA3_256 = 0x2b0
 export const CKM_SHA3_512 = 0x2d0
 
-// SLH-DSA mechanisms (PKCS#11 v3.2, FIPS 205)
+// SLH-DSA mechanisms (PKCS#11 v3.2, FIPS 205, pkcs11t.h:1232-1245)
 export const CKM_SLH_DSA_KEY_PAIR_GEN = 0x2d
 export const CKM_SLH_DSA = 0x2e
-export const CKM_HASH_SLH_DSA = 0x34 // pkcs11t.h §5.20
+export const CKM_HASH_SLH_DSA = 0x34 // generic: hash in CK_HASH_SIGN_ADDITIONAL_CONTEXT
+export const CKM_HASH_SLH_DSA_SHA224 = 0x36
+export const CKM_HASH_SLH_DSA_SHA256 = 0x37
+export const CKM_HASH_SLH_DSA_SHA384 = 0x38
+export const CKM_HASH_SLH_DSA_SHA512 = 0x39
+export const CKM_HASH_SLH_DSA_SHA3_224 = 0x3a
+export const CKM_HASH_SLH_DSA_SHA3_256 = 0x3b
+export const CKM_HASH_SLH_DSA_SHA3_384 = 0x3c
+export const CKM_HASH_SLH_DSA_SHA3_512 = 0x3d
+export const CKM_HASH_SLH_DSA_SHAKE128 = 0x3e
+export const CKM_HASH_SLH_DSA_SHAKE256 = 0x3f
+
+// ML-DSA pre-hash mechanisms — exported for Playground UI (PKCS#11 v3.2, pkcs11t.h:1221-1231)
+export const CKM_HASH_ML_DSA = 0x1f
+export const CKM_HASH_ML_DSA_SHA224 = 0x23
+export const CKM_HASH_ML_DSA_SHA256 = 0x24
+export const CKM_HASH_ML_DSA_SHA384 = 0x25
+export const CKM_HASH_ML_DSA_SHA512 = 0x26
+export const CKM_HASH_ML_DSA_SHA3_224 = 0x27
+export const CKM_HASH_ML_DSA_SHA3_256 = 0x28
+export const CKM_HASH_ML_DSA_SHA3_384 = 0x29
+export const CKM_HASH_ML_DSA_SHA3_512 = 0x2a
+export const CKM_HASH_ML_DSA_SHAKE128 = 0x2b
+export const CKM_HASH_ML_DSA_SHAKE256 = 0x2c
 
 // SLH-DSA parameter sets — pkcs11t.h ordering (interleaved SHA2/SHAKE per security level)
 export const CKP_SLH_DSA_SHA2_128S = 0x01
@@ -1127,6 +1234,15 @@ const CKG_MGF1_SHA384_NEW = 0x00000003
 const CKG_MGF1_SHA512_NEW = 0x00000004
 const CKZ_DATA_SPECIFIED = 0x00000001
 const CKD_NULL = 0x00000001
+export const CKD_SHA1_KDF = 0x00000002 // ANSI X9.63 KDF with SHA-1
+export const CKD_SHA256_KDF = 0x00000006 // ANSI X9.63 KDF with SHA-256 (SUCI Profile A/B)
+export const CKD_SHA384_KDF = 0x00000007 // ANSI X9.63 KDF with SHA-384
+export const CKD_SHA512_KDF = 0x00000008 // ANSI X9.63 KDF with SHA-512
+
+// HKDF derive (PKCS#11 v3.0+ §2.43)
+export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.0 §2.43
+export const CKF_HKDF_SALT_NULL = 0x00000001 // No salt
+export const CKF_HKDF_SALT_DATA = 0x00000002 // Salt as explicit bytes
 
 // DER-encoded NamedCurve OID bytes used as CKA_EC_PARAMS value
 const EC_OID_P256 = new Uint8Array([0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07])
@@ -1216,19 +1332,31 @@ const buildGCMParams = (
   return { ptr, len: 24, allocPtrs }
 }
 
-/** Build CK_ECDH1_DERIVE_PARAMS (20 bytes) in WASM heap. All allocPtrs must be freed. */
+/** Build CK_ECDH1_DERIVE_PARAMS (20 bytes) in WASM heap. All allocPtrs must be freed.
+ *  kdf: CKD_NULL (default) or CKD_SHA256_KDF etc. for ANSI X9.63 KDF.
+ *  sharedData: optional SharedInfo bytes (passed as ANSI X9.63 KDF input, e.g. ephemeral public key for SUCI).
+ */
 const buildECDH1DeriveParams = (
   M: SoftHSMModule,
-  peerPubBytes: Uint8Array
+  peerPubBytes: Uint8Array,
+  kdf: number = CKD_NULL,
+  sharedData?: Uint8Array
 ): { ptr: number; len: number; allocPtrs: number[] } => {
   const allocPtrs: number[] = []
   const pubPtr = writeBytes(M, peerPubBytes)
   allocPtrs.push(pubPtr)
+  let sharedPtr = 0
+  let sharedLen = 0
+  if (kdf !== CKD_NULL && sharedData && sharedData.length > 0) {
+    sharedPtr = writeBytes(M, sharedData)
+    allocPtrs.push(sharedPtr)
+    sharedLen = sharedData.length
+  }
   const ptr = M._malloc(20)
   allocPtrs.push(ptr)
-  M.setValue(ptr, CKD_NULL, 'i32') // kdf
-  M.setValue(ptr + 4, 0, 'i32') // ulSharedDataLen
-  M.setValue(ptr + 8, 0, 'i32') // pSharedData = NULL
+  M.setValue(ptr, kdf, 'i32') // kdf
+  M.setValue(ptr + 4, sharedLen, 'i32') // ulSharedDataLen
+  M.setValue(ptr + 8, sharedPtr, 'i32') // pSharedData
   M.setValue(ptr + 12, peerPubBytes.length, 'i32') // ulPublicDataLen
   M.setValue(ptr + 16, pubPtr, 'i32') // pPublicData
   return { ptr, len: 20, allocPtrs }
@@ -1526,17 +1654,23 @@ export const hsm_ecdsaVerify = (
 }
 
 /**
- * ECDH1 key derivation via C_DeriveKey (CKD_NULL, no KDF).
+ * ECDH1 key derivation via C_DeriveKey (PKCS#11 v3.2 §2.3.5).
  * peerPubBytes: DER-encoded EC point from peer's CKA_EC_POINT attribute.
- * Returns handle to derived 32-byte generic secret key.
+ * kdf: CKD_NULL (raw Z, default) or CKD_SHA256_KDF etc. for ANSI X9.63 KDF.
+ * sharedData: optional SharedInfo for X9.63 KDF (e.g. ephemeral public key for SUCI deconcealment).
+ * keyLen: derived key length in bytes (default 32).
+ * Returns handle to derived generic secret key.
  */
 export const hsm_ecdhDerive = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  peerPubBytes: Uint8Array
+  peerPubBytes: Uint8Array,
+  kdf: number = CKD_NULL,
+  sharedData?: Uint8Array,
+  keyLen = 32
 ): number => {
-  const dp = buildECDH1DeriveParams(M, peerPubBytes)
+  const dp = buildECDH1DeriveParams(M, peerPubBytes, kdf, sharedData)
   const mech = buildMech(M, CKM_ECDH1_DERIVE, dp.ptr, dp.len)
   const derivedTpl = buildTemplate(M, [
     { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
@@ -1544,7 +1678,7 @@ export const hsm_ecdhDerive = (
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_SENSITIVE, boolVal: false },
     { type: CKA_EXTRACTABLE, boolVal: true },
-    { type: CKA_VALUE_LEN, ulongVal: 32 },
+    { type: CKA_VALUE_LEN, ulongVal: keyLen },
   ])
   const derivedHPtr = allocUlong(M)
   try {
@@ -1556,6 +1690,148 @@ export const hsm_ecdhDerive = (
   } finally {
     M._free(mech)
     dp.allocPtrs.forEach((p) => M._free(p))
+    freeTemplate(M, derivedTpl, 6)
+    M._free(derivedHPtr)
+  }
+}
+
+// ── PBKDF2 helpers ────────────────────────────────────────────────────────────
+
+/**
+ * PBKDF2 key derivation via C_DeriveKey(CKM_PKCS5_PBKD2) (PKCS#11 v3.2 §5.7.3.1).
+ * prf defaults to CKP_PKCS5_PBKD2_HMAC_SHA512 (BIP39 / SLIP-0010 standard).
+ * Returns a Uint8Array of the derived key bytes.
+ */
+export const hsm_pbkdf2 = (
+  M: SoftHSMModule,
+  hSession: number,
+  password: Uint8Array,
+  salt: Uint8Array,
+  iterations: number,
+  keyLen: number,
+  prf: number = CKP_PKCS5_PBKD2_HMAC_SHA512
+): Uint8Array => {
+  const CKZ_SALT_SPECIFIED = 0x00000001
+  const saltPtr = M._malloc(Math.max(salt.length, 1))
+  if (salt.length > 0) M.HEAPU8.set(salt, saltPtr)
+  const passPtr = M._malloc(Math.max(password.length, 1))
+  if (password.length > 0) M.HEAPU8.set(password, passPtr)
+
+  // CK_PKCS5_PBKD2_PARAMS2: 9 × CK_ULONG/CK_VOID_PTR (4 bytes each) = 36 bytes
+  const params = M._malloc(36)
+  M.setValue(params + 0, CKZ_SALT_SPECIFIED, 'i32') // saltSource
+  M.setValue(params + 4, saltPtr, 'i32') // pSaltSourceData
+  M.setValue(params + 8, salt.length, 'i32') // ulSaltSourceDataLen
+  M.setValue(params + 12, iterations, 'i32') // iterations
+  M.setValue(params + 16, prf, 'i32') // prf
+  M.setValue(params + 20, 0, 'i32') // pPrfData (null)
+  M.setValue(params + 24, 0, 'i32') // ulPrfDataLen
+  M.setValue(params + 28, passPtr, 'i32') // pPassword
+  M.setValue(params + 32, password.length, 'i32') // ulPasswordLen
+
+  const mech = buildMech(M, CKM_PKCS5_PBKD2, params, 36)
+  const derivedTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_VALUE_LEN, ulongVal: keyLen },
+  ])
+  const derivedHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DeriveKey(hSession, mech, 0, derivedTpl.ptr, 6, derivedHPtr),
+      'C_DeriveKey(PBKDF2)'
+    )
+    const keyHandle = readUlong(M, derivedHPtr)
+    return hsm_extractKeyValue(M, hSession, keyHandle)
+  } finally {
+    M._free(mech)
+    M._free(params)
+    M._free(saltPtr)
+    M._free(passPtr)
+    freeTemplate(M, derivedTpl, 6)
+    M._free(derivedHPtr)
+  }
+}
+
+// ── HKDF helpers ──────────────────────────────────────────────────────────────
+
+/**
+ * HKDF key derivation via C_DeriveKey(CKM_HKDF_DERIVE) (PKCS#11 v3.0+ §2.43).
+ *
+ * @param baseKeyHandle  Key handle providing IKM (input key material).
+ * @param prf            Hash mechanism for HMAC PRF: CKM_SHA256 | CKM_SHA384 | CKM_SHA512 | CKM_SHA3_256 | CKM_SHA3_512
+ * @param bExtract       Run HKDF-Extract step (use true for full HKDF or extract-only).
+ * @param bExpand        Run HKDF-Expand step (use true for full HKDF or expand-only).
+ * @param salt           Optional salt bytes (CKF_HKDF_SALT_DATA). Omit for CKF_HKDF_SALT_NULL.
+ * @param info           Optional context/info bytes for HKDF-Expand.
+ * @param keyLen         Output key length in bytes (default 32). Must be ≤ 512.
+ * @returns Derived key bytes (Uint8Array of length keyLen).
+ *
+ * CK_HKDF_PARAMS layout in WASM (32 bytes total, 32-bit pointers):
+ *   +0  CK_BBOOL bExtract        (1 byte, offset 0)
+ *   +1  CK_BBOOL bExpand         (1 byte, offset 1)
+ *   +2  padding                  (2 bytes)
+ *   +4  CK_MECHANISM_TYPE prf    (4 bytes)
+ *   +8  CK_ULONG ulSaltType      (4 bytes)
+ *   +12 CK_BYTE_PTR pSalt        (4 bytes)
+ *   +16 CK_ULONG ulSaltLen       (4 bytes)
+ *   +20 CK_OBJECT_HANDLE hSaltKey(4 bytes)
+ *   +24 CK_BYTE_PTR pInfo        (4 bytes)
+ *   +28 CK_ULONG ulInfoLen       (4 bytes)
+ */
+export const hsm_hkdf = (
+  M: SoftHSMModule,
+  hSession: number,
+  baseKeyHandle: number,
+  prf: number,
+  bExtract: boolean,
+  bExpand: boolean,
+  salt?: Uint8Array,
+  info?: Uint8Array,
+  keyLen = 32
+): Uint8Array => {
+  const saltPtr = salt && salt.length > 0 ? writeBytes(M, salt) : 0
+  const infoPtr = info && info.length > 0 ? writeBytes(M, info) : 0
+  const saltType = saltPtr > 0 ? CKF_HKDF_SALT_DATA : CKF_HKDF_SALT_NULL
+
+  // Allocate and zero the 32-byte CK_HKDF_PARAMS struct
+  const params = M._malloc(32)
+  M.HEAPU8.fill(0, params, params + 32)
+  M.HEAPU8[params + 0] = bExtract ? 1 : 0 // bExtract
+  M.HEAPU8[params + 1] = bExpand ? 1 : 0 // bExpand
+  M.setValue(params + 4, prf, 'i32') // prfHashMechanism
+  M.setValue(params + 8, saltType, 'i32') // ulSaltType
+  M.setValue(params + 12, saltPtr, 'i32') // pSalt
+  M.setValue(params + 16, salt ? salt.length : 0, 'i32') // ulSaltLen
+  M.setValue(params + 20, 0, 'i32') // hSaltKey (unused)
+  M.setValue(params + 24, infoPtr, 'i32') // pInfo
+  M.setValue(params + 28, info ? info.length : 0, 'i32') // ulInfoLen
+
+  const mech = buildMech(M, CKM_HKDF_DERIVE, params, 32)
+  const derivedTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_VALUE_LEN, ulongVal: keyLen },
+  ])
+  const derivedHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DeriveKey(hSession, mech, baseKeyHandle, derivedTpl.ptr, 6, derivedHPtr),
+      'C_DeriveKey(HKDF)'
+    )
+    const keyHandle = readUlong(M, derivedHPtr)
+    return hsm_extractKeyValue(M, hSession, keyHandle)
+  } finally {
+    M._free(mech)
+    M._free(params)
+    if (saltPtr) M._free(saltPtr)
+    if (infoPtr) M._free(infoPtr)
     freeTemplate(M, derivedTpl, 6)
     M._free(derivedHPtr)
   }
@@ -1804,6 +2080,86 @@ export const hsm_aesCmac = (
   }
 }
 
+/**
+ * AES-CTR encrypt via C_EncryptInit(CKM_AES_CTR) + C_Encrypt.
+ * CK_AES_CTR_PARAMS: ulCounterBits (4 bytes) + cb[16] (counter block / IV).
+ * For SUCI (TS 33.501): counterBits=128, ctrIv=16×0x00 (zero IV).
+ */
+export const hsm_aesCtrEncrypt = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  ctrIv: Uint8Array,
+  counterBits: number,
+  data: Uint8Array
+): Uint8Array => {
+  // Build CK_AES_CTR_PARAMS (20 bytes): ulCounterBits[4] + cb[16]
+  const paramsPtr = M._malloc(20)
+  M.setValue(paramsPtr, counterBits, 'i32') // ulCounterBits
+  M.HEAPU8.set(ctrIv.slice(0, 16), paramsPtr + 4) // cb[16]
+  const mech = buildMech(M, CKM_AES_CTR, paramsPtr, 20)
+  const dataPtr = writeBytes(M, data)
+  const outLenPtr = allocUlong(M)
+  let outPtr = 0
+  try {
+    checkRV(M._C_EncryptInit(hSession, mech, keyHandle), 'C_EncryptInit(AES-CTR)')
+    checkRV(M._C_Encrypt(hSession, dataPtr, data.length, 0, outLenPtr), 'C_Encrypt(AES-CTR,len)')
+    const outLen = readUlong(M, outLenPtr)
+    outPtr = M._malloc(outLen)
+    writeUlong(M, outLenPtr, outLen)
+    checkRV(M._C_Encrypt(hSession, dataPtr, data.length, outPtr, outLenPtr), 'C_Encrypt(AES-CTR)')
+    return M.HEAPU8.slice(outPtr, outPtr + readUlong(M, outLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(paramsPtr)
+    M._free(dataPtr)
+    M._free(outLenPtr)
+    if (outPtr) M._free(outPtr)
+  }
+}
+
+/**
+ * AES-CTR decrypt via C_DecryptInit(CKM_AES_CTR) + C_Decrypt.
+ * CTR mode is symmetric — encrypt and decrypt use the same operation.
+ */
+export const hsm_aesCtrDecrypt = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  ctrIv: Uint8Array,
+  counterBits: number,
+  ciphertext: Uint8Array
+): Uint8Array => {
+  const paramsPtr = M._malloc(20)
+  M.setValue(paramsPtr, counterBits, 'i32')
+  M.HEAPU8.set(ctrIv.slice(0, 16), paramsPtr + 4)
+  const mech = buildMech(M, CKM_AES_CTR, paramsPtr, 20)
+  const ctPtr = writeBytes(M, ciphertext)
+  const outLenPtr = allocUlong(M)
+  let outPtr = 0
+  try {
+    checkRV(M._C_DecryptInit(hSession, mech, keyHandle), 'C_DecryptInit(AES-CTR)')
+    checkRV(
+      M._C_Decrypt(hSession, ctPtr, ciphertext.length, 0, outLenPtr),
+      'C_Decrypt(AES-CTR,len)'
+    )
+    const outLen = readUlong(M, outLenPtr)
+    outPtr = M._malloc(outLen)
+    writeUlong(M, outLenPtr, outLen)
+    checkRV(
+      M._C_Decrypt(hSession, ctPtr, ciphertext.length, outPtr, outLenPtr),
+      'C_Decrypt(AES-CTR)'
+    )
+    return M.HEAPU8.slice(outPtr, outPtr + readUlong(M, outLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(paramsPtr)
+    M._free(ctPtr)
+    M._free(outLenPtr)
+    if (outPtr) M._free(outPtr)
+  }
+}
+
 /** Wrap a key with an AES wrapping key via C_WrapKey(CKM_AES_KEY_WRAP). */
 export const hsm_aesWrapKey = (
   M: SoftHSMModule,
@@ -1990,16 +2346,19 @@ export const hsm_generateSLHDSAKeyPair = (
 }
 
 /**
- * SLH-DSA sign via C_MessageSignInit(CKM_SLH_DSA) + C_SignMessage + C_MessageSignFinal.
- * Uses the same one-shot message signing pattern as ML-DSA (PKCS#11 v3.2).
+ * SLH-DSA sign via C_MessageSignInit + C_SignMessage + C_MessageSignFinal (PKCS#11 v3.2).
+ * Supports both pure SLH-DSA (CKM_SLH_DSA) and pre-hash variants (CKM_HASH_SLH_DSA_*).
+ * opts.preHash selects a fixed-hash variant per FIPS 205 HashSLH-DSA; omit for pure mode.
  */
 export const hsm_slhdsaSign = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  message: string
+  message: string,
+  opts?: SLHDSASignOptions
 ): Uint8Array => {
-  const mech = buildMech(M, CKM_SLH_DSA)
+  const mechType = opts?.preHash ? (SLH_DSA_PREHASH_MECH[opts.preHash] ?? CKM_SLH_DSA) : CKM_SLH_DSA
+  const mech = buildMech(M, mechType)
   const msgBytes = new TextEncoder().encode(message)
   const msgPtr = writeBytes(M, msgBytes)
   const sigLenPtr = allocUlong(M)
@@ -2028,16 +2387,19 @@ export const hsm_slhdsaSign = (
 }
 
 /**
- * SLH-DSA verify via C_MessageVerifyInit(CKM_SLH_DSA) + C_VerifyMessage + C_MessageVerifyFinal.
+ * SLH-DSA verify via C_MessageVerifyInit + C_VerifyMessage + C_MessageVerifyFinal (PKCS#11 v3.2).
+ * opts.preHash must match the mechanism used during signing.
  */
 export const hsm_slhdsaVerify = (
   M: SoftHSMModule,
   hSession: number,
   pubHandle: number,
   message: string,
-  sigBytes: Uint8Array
+  sigBytes: Uint8Array,
+  opts?: SLHDSASignOptions
 ): boolean => {
-  const mech = buildMech(M, CKM_SLH_DSA)
+  const mechType = opts?.preHash ? (SLH_DSA_PREHASH_MECH[opts.preHash] ?? CKM_SLH_DSA) : CKM_SLH_DSA
+  const mech = buildMech(M, mechType)
   const msgBytes = new TextEncoder().encode(message)
   const msgPtr = writeBytes(M, msgBytes)
   const sigPtr = writeBytes(M, sigBytes)
