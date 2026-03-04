@@ -326,7 +326,7 @@ documents_processed: 66
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2027
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
 - **Leaders Contributions Mentioned**: Dustin Moody
-- **PQC Products Mentioned**: HQC Algorithm
+- **PQC Products Mentioned**: None detected
 - **Protocols Covered**: HTTPS
 - **Infrastructure Layers**: Email
 - **Standardization Bodies**: NIST
@@ -964,7 +964,7 @@ documents_processed: 66
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2035; Keywords: deprecat
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
 - **Leaders Contributions Mentioned**: Dustin Moody
-- **PQC Products Mentioned**: pqcrypto
+- **PQC Products Mentioned**: None detected
 - **Protocols Covered**: HTTPS
 - **Infrastructure Layers**: Email
 - **Standardization Bodies**: NIST

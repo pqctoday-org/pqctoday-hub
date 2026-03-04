@@ -6,7 +6,7 @@ import { useStepWizard } from '../DigitalAssets/hooks/useStepWizard'
 import { FIVE_G_CONSTANTS } from './constants'
 import { FiveGDiagram } from './components/FiveGDiagram'
 import { fiveGService } from './services/FiveGService'
-import { Shield, Radio } from 'lucide-react'
+import { Shield, Radio, Info } from 'lucide-react'
 import clsx from 'clsx'
 
 interface SuciFlowProps {
@@ -228,6 +228,14 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           </div>
         </div>
       )}
+
+      <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/40 text-xs text-muted-foreground">
+        <Info size={13} className="shrink-0" />
+        <span>
+          All keys and identifiers generated here are for <strong>educational use only</strong> —
+          not for production systems.
+        </span>
+      </div>
 
       <StepWizard
         key={`${profile}-${pqcMode}`} // Force re-mount on profile or mode change

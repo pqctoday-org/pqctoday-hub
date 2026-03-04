@@ -178,6 +178,32 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
   iot: ['IoT', 'OT', 'industrial', 'constrained devices', 'embedded'],
   cbom: ['CBOM', 'cryptographic bill of materials', 'crypto agility'],
 
+  // Data asset sensitivity
+  'data asset': [
+    'data-asset-sensitivity',
+    'classification',
+    'sensitivity',
+    'GDPR',
+    'HIPAA',
+    'DORA',
+    'NIS2',
+  ],
+  sensitivity: [
+    'data-asset-sensitivity',
+    'classification',
+    'data retention',
+    'compliance',
+    'sensitivity scoring',
+  ],
+  classification: [
+    'data-asset-sensitivity',
+    'asset inventory',
+    'sensitivity scoring',
+    'risk methodology',
+  ],
+  'asset inventory': ['data-asset-sensitivity', 'classification', 'data asset', 'CBOM'],
+  'data retention': ['data-asset-sensitivity', 'data retention', 'compliance', 'GDPR'],
+
   // Assessment & quiz
   assessment: ['risk score', 'migration priority', 'HNDL relevance', 'data sensitivity'],
   quiz: ['quiz', 'question', 'answer', 'explanation'],

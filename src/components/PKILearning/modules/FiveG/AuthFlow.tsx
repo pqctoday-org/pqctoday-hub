@@ -6,6 +6,7 @@ import { useStepWizard } from '../DigitalAssets/hooks/useStepWizard'
 import { FIVE_G_CONSTANTS } from './constants'
 import { AuthDiagram } from './components/AuthDiagram'
 import { fiveGService } from './services/FiveGService'
+import { Info } from 'lucide-react'
 
 interface AuthFlowProps {
   onBack: () => void
@@ -76,17 +77,26 @@ Step 2: Executing MILENAGE Functions
   })
 
   return (
-    <StepWizard
-      steps={steps}
-      currentStepIndex={wizard.currentStep}
-      onExecute={() => wizard.execute(executeStep)}
-      output={wizard.output}
-      isExecuting={wizard.isExecuting}
-      error={wizard.error}
-      isStepComplete={wizard.isStepComplete}
-      onNext={wizard.handleNext}
-      onBack={wizard.handleBack}
-      onComplete={onBack}
-    />
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/40 text-xs text-muted-foreground">
+        <Info size={13} className="shrink-0" />
+        <span>
+          All keys and identifiers generated here are for <strong>educational use only</strong> —
+          not for production systems.
+        </span>
+      </div>
+      <StepWizard
+        steps={steps}
+        currentStepIndex={wizard.currentStep}
+        onExecute={() => wizard.execute(executeStep)}
+        output={wizard.output}
+        isExecuting={wizard.isExecuting}
+        error={wizard.error}
+        isStepComplete={wizard.isStepComplete}
+        onNext={wizard.handleNext}
+        onBack={wizard.handleBack}
+        onComplete={onBack}
+      />
+    </div>
   )
 }

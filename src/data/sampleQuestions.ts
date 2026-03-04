@@ -6,7 +6,7 @@
 export const SAMPLE_QUESTIONS: Record<string, string[]> = {
   'Landing Page': [
     'What are the seven journey steps shown on the PQC Today landing page?',
-    'What four persona types does PQC Today support, and how do they affect the experience?',
+    'What five persona types does PQC Today support, and how do they affect the experience?',
     'How many learning modules does PQC Today offer?',
     'How many PQC-ready software products does the platform track?',
     'What is the compliance deadline range covered by PQC Today?',
@@ -71,6 +71,9 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What RFC covers PQC pre-shared keys for IKEv2 VPN?',
     'What is RFC 9701?',
     "What does the Library's cross-reference system connect?",
+    'What is NIST CSWP 39 and why is it relevant to PQC migration?',
+    'What is NIST IR 8105 and its historical significance?',
+    'What are NIST NCCoE SP 1800-38A and 1800-38B?',
   ],
   Threats: [
     'What is a "Harvest Now, Decrypt Later" (HNDL) attack?',
@@ -132,6 +135,8 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'How does the Migrate page connect to the Assess wizard?',
     'What cryptographic libraries should organizations evaluate first?',
     'What is the purpose of the infrastructure stack visualization?',
+    'What view modes does the Migrate catalog support?',
+    'Can you export data from the Migrate catalog?',
   ],
   Assess: [
     'What are the 14 steps of the comprehensive assessment wizard?',
@@ -192,7 +197,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'How many PQC leaders does the platform profile?',
   ],
   Learn: [
-    'How are the 25 learning modules organized?',
+    'How are the 27 learning modules organized?',
     'What tabs does each learning module have?',
     'How many quiz questions are available and how are they organized?',
     "What does the QKD module's BB84 simulator demonstrate?",
@@ -213,6 +218,25 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What is a chameleon certificate and how does it differ from related certs?',
     'How do I read X.509 DER structure in the Hybrid Cert Inspector?',
     'What are the IETF Hackathon pqc-certificates reference certs and why do they matter?',
+    'What is the IT Ops / DevOps learning path?',
+    'What view modes does the Learn dashboard support?',
+    'Can you back up and restore your learning progress?',
+    'What IT Ops config generators are available?',
+    'What deployment checklists does the platform provide?',
+  ],
+  '5G Security': [
+    'What are the three pillars of 5G security covered in the module?',
+    'What are the three SUCI protection profiles, and which is quantum-resistant?',
+    'How does the SUCI concealment process work?',
+    'Why is MILENAGE (5G-AKA) quantum-resistant while SUCI Profile A/B is not?',
+    'What is Profile C hybrid mode, and how does it combine classical and PQC?',
+    'What is the size overhead of Profile C compared to Profile A?',
+    'What does the 5G-AKA authentication flow demonstrate?',
+    'What is the 5G key hierarchy derived from KAUSF?',
+    'What does the SIM provisioning supply chain flow cover?',
+    'What six guided exercises does the 5G module provide?',
+    'What is the "harvest now, decrypt later" threat to 5G subscriber privacy?',
+    'What is the standardization status of SUCI Profile C?',
   ],
   About: [
     "What cryptographic libraries does PQC Today's SBOM list?",
@@ -226,5 +250,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What UI framework and version does PQC Today use?',
     'What AI tools were used in developing PQC Today?',
     'What build tools does PQC Today use?',
+    'What data views support CSV export?',
+    'What accessibility features does PQC Today support?',
   ],
 }

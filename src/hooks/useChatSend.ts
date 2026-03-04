@@ -149,7 +149,7 @@ export function useChatSend() {
         const grounding = checkGrounding(cleanContent, chunks)
         const finalContent = grounding.hasWarning
           ? cleanContent.trimEnd() +
-            '\n\n> *Note: Some details may extend beyond the PQC Today database.*'
+            '\n\n> **Accuracy notice:** This response may reference items not verified in the PQC Today database. Please cross-check specific names, dates, or claims against the source pages linked above.'
           : cleanContent
 
         // Finalize message

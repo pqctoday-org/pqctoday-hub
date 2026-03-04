@@ -86,6 +86,17 @@ export const FiveGExercises: React.FC<FiveGExercisesProps> = ({
         'Watch the MILENAGE algorithm compute all five functions (MAC-A, XRES, CK, IK, AK) from K, OPc, and RAND. Note that MILENAGE uses AES-128 — a symmetric algorithm that is already quantum-resistant.',
       config: { part: 1 },
     },
+    {
+      id: 'sim-provisioning',
+      title: '6. SIM Key Provisioning Supply Chain',
+      description:
+        'Walk through the factory-to-operator Ki lifecycle: generate Ki in a factory HSM using TRNG, compute OPc (unique per SIM), personalize the USIM secure element, encrypt Ki for transport (eKi), and import it at the operator UDM/HSM.',
+      badge: 'Supply Chain',
+      badgeColor: 'bg-muted text-muted-foreground border-border',
+      observe:
+        "Notice how Ki never leaves the HSM in plaintext — it is encrypted as eKi before transit. OPc is unique per SIM because it derives from both Ki and the operator key OP, so leaking one SIM's Ki does not expose the operator key or other SIMs.",
+      config: { part: 2 },
+    },
   ]
 
   const handleLoadAndRun = (scenario: Scenario) => {

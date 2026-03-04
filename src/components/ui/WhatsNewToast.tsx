@@ -86,25 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Guided Migration Workflow</strong> &mdash;
-                    4-phase planning banner (Assess &rarr; Comply &rarr; Migrate &rarr; Timeline)
-                    with auto-completion; start from your Report page
+                    <strong className="text-foreground">PQC Assistant hardened</strong> &mdash;
+                    stronger anti-hallucination rules, entity inventory expanded to 50 items,
+                    grounding false-positives reduced, 100% Q&amp;A retrieval accuracy
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">CSV Export</strong> &mdash; download
-                    filtered data from 6 views (Migrate, Library, Algorithms, Timeline, Compliance,
-                    Leaders) with one click
+                    <strong className="text-foreground">5G Security: Exercise 6</strong> &mdash; SIM
+                    Key Provisioning Supply Chain — Ki factory-to-operator lifecycle inside an HSM,
+                    never exposed in plaintext
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">IT Ops Config Generators</strong> &mdash;
-                    live PQC config builders for nginx, Apache, sshd, and cloud KMS providers inside
-                    TLS, VPN/SSH, and KMS-PQC modules
+                    <strong className="text-foreground">28 deep link E2E tests</strong> &mdash; all
+                    major query-parameter routes validated across 10 route groups; library
+                    referenceIds now fully searchable in RAG
                   </span>
                 </li>
               </ul>

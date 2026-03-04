@@ -4,6 +4,71 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.13.0] - 2026-03-03
+
+### Added
+
+- **Deep link E2E test suite** (`e2e/deep-links.spec.ts`): 28 Playwright tests across 10 route
+  groups validating all major query-parameter deep links — `/timeline?country=`, `/library?ref=`,
+  `/threats?id=`, `/learn/<id>?tab=&step=`, `/leaders?leader=`, `/algorithms?highlight=`,
+  `/migrate?q=`, `/compliance?cert=`, `/openssl?cmd=`, `/learn/quiz?category=`. Tests cover valid
+  params, invalid/fallback behaviour, URL-encoded spaces, and cross-page isolation. All 28 pass on
+  Chromium; no regressions in full shard (146 passing). [view:/]
+
+- **RAG test harness** (`scripts/test-rag-qanda.ts`): 4-phase automated accuracy script — (1)
+  corpus-wide deep link validator, (2) MiniSearch retrieval accuracy against 35 representative
+  Q&A pairs spanning all 18 QandA sections, (3) pass-rate summary, (4) source coverage analysis.
+  Achieves 35/35 (100%) retrieval accuracy after corpus fixes. Exits with code 1 on any failure.
+  [view:/]
+
+- **5G Security — Exercise 6: SIM Key Provisioning Supply Chain**
+  (`FiveGExercises.tsx`): Hands-on walkthrough of the full Ki factory-to-operator lifecycle,
+  demonstrating how subscriber identity keys are generated inside an HSM, encrypted under a
+  customer KEK, and distributed without ever exposing Ki in plaintext. Joins 5 existing 5G
+  exercises (Profile A/B/C, 5G-AKA, SIM Provisioning). [view:/learn/5g-security]
+
+- **5G hybrid mode formula callout** (`FiveGIntroduction.tsx`): Highlighted formula box in the
+  SUCI Profile C section showing `Z = SHA-256(Z_ecdh ‖ Z_kem)` — the explicit combination of
+  X25519 and ML-KEM-768 shared secrets — with byte-length annotations.
+  [view:/learn/5g-security]
+
+### Fixed
+
+- **Library referenceIds now searchable in RAG corpus** (`scripts/generate-rag-corpus.ts`):
+  244 of 254 library chunks had their `referenceId` stored only in `metadata`, making them
+  invisible to MiniSearch. Added `Reference: <refId>` as the first line of every library chunk's
+  `content` field. Queries like "What is NIST CSWP 39?" or "show me RFC 9629" now correctly
+  surface the relevant document. Cross-reference count increased from 497 → 511.
+
+- **Stale documentation corpus counts corrected** (`scripts/generate-rag-corpus.ts`): Multiple
+  internal guidance chunks contained outdated facts — "25 modules", "470 quiz questions",
+  "13-step wizard", "4 personas", "22 sources". All corrected to: 27 modules, 530 questions
+  across 33 categories, 14-step wizard, 5 personas (adding IT Ops/DevOps), 25 data sources,
+  ~2,500 corpus chunks.
+
+### Improved
+
+- **PQC Assistant anti-hallucination hardening** (`GeminiService.ts`): Explicit `NEVER` rules
+  added for fabricating people, products, FIPS/RFC/SP numbers, dates, and certification status.
+  Entity inventory cap raised from 30 → 50 items. Module list updated to all 27 modules.
+
+- **Grounding check false-positive reduction** (`groundingCheck.ts`): Added 30-entry
+  `FALSE_POSITIVE_PHRASES` set (key exchange, digital signature, quantum computing, etc.) to
+  suppress spurious hallucination warnings. Added entity patterns for titled names, product
+  version strings, and deadline claims. Added 6 new metadata fields to the grounded-terms
+  index (`org`, `vendor`, `categoryName`, `moduleName`, `moduleId`, `quizCategory`, `leader`).
+
+- **RAG query expansions for data-asset-sensitivity** (`RetrievalService.ts`): Queries
+  containing "data asset", "sensitivity", "classification", "asset inventory", or "data
+  retention" now automatically include the data-asset-sensitivity module as a boosted source.
+
+- **Accuracy warning message improved** (`useChatSend.ts`): Grounding warning upgraded from a
+  vague notice to an actionable message citing specific cross-check guidance.
+
+- **Doc enrichments updated** (`library_doc_enrichments_03032026.md`,
+  `timeline_doc_enrichments_03032026.md`): Latest batch of 194 library and timeline document
+  enrichments incorporated into the RAG corpus.
+
 ## [2.12.1] - 2026-03-03
 
 ### Added

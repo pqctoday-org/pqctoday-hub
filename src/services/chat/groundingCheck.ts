@@ -50,6 +50,14 @@ const ALWAYS_GROUNDED = new Set([
   'openssl',
   'bouncycastle',
   'liboqs',
+  'sensitivity',
+  'classification',
+  'asset inventory',
+  'data retention',
+  'gdpr',
+  'hipaa',
+  'dora',
+  'nis2',
 ])
 
 /** Patterns that match entity-like references in LLM output */
@@ -60,7 +68,47 @@ const ENTITY_PATTERNS = [
   /\b(ML-KEM|ML-DSA|SLH-DSA|FN-DSA|BIKE|HQC|FrodoKEM|Classic McEliece|CRYSTALS-Kyber|CRYSTALS-Dilithium|SPHINCS\+|Falcon|XMSS|LMS|HSS)[\w-]*/gi,
   // Capitalized multi-word names (likely product/org/person names): "Bouncy Castle", "Dr. Lily Chen"
   /\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3}\b/g,
+  // Titled person names: "Dr. Alice Smith", "Prof. Bob Jones"
+  /\b(?:Dr\.|Prof\.|Mr\.|Ms\.)\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2}\b/g,
+  // Product versions: "OpenSSL 3.6.0", "liboqs v0.15.1", "Botan 3.4"
+  /\b[A-Z][\w-]*\s+v?\d+\.\d+(?:\.\d+)?\b/g,
+  // Specific deadline claims: "by 2030", "before 2028", "deadline 2035"
+  /\b(?:by|before|until|deadline[:\s]+|mandated? (?:by|in))\s*\d{4}\b/gi,
 ]
+
+/** Common phrases that look like entities but aren't — reduce false positives */
+const FALSE_POSITIVE_PHRASES = new Set([
+  'key exchange',
+  'digital signature',
+  'public key',
+  'private key',
+  'key management',
+  'key encapsulation',
+  'post quantum',
+  'quantum safe',
+  'quantum computing',
+  'quantum threat',
+  'quantum resistant',
+  'side channel',
+  'hash based',
+  'code based',
+  'learning modules',
+  'deep link',
+  'best practices',
+  'risk score',
+  'risk level',
+  'common criteria',
+  'security level',
+  'key generation',
+  'key pair',
+  'key size',
+  'key length',
+  'migration timeline',
+  'migration strategy',
+  'migration program',
+  'compliance framework',
+  'infrastructure layer',
+])
 
 /**
  * Checks whether an LLM response is well-grounded in the provided RAG chunks.
@@ -86,18 +134,30 @@ export function checkGrounding(
         'country',
         'fipsStandard',
         'algorithmFamily',
+        'org',
+        'vendor',
+        'categoryName',
+        'moduleName',
+        'moduleId',
+        'quizCategory',
+        'leader',
       ]) {
         const val = c.metadata[key]
         if (val) groundedTerms.add(val.toLowerCase())
       }
     }
 
-    // Also add content keywords (first 200 chars of each chunk for efficiency)
-    const snippet = c.content.slice(0, 200).toLowerCase()
+    // Scan first 500 chars of each chunk for entity references
+    const snippet = c.content.slice(0, 500).toLowerCase()
     // Extract FIPS/RFC/SP references from chunk content
     const contentRefs = snippet.match(/\b(fips|rfc|sp)\s?\d[\d-]+\b/gi)
     if (contentRefs) {
       for (const ref of contentRefs) groundedTerms.add(ref.toLowerCase())
+    }
+    // Extract product/org names from content (capitalized words near "by", "from", "using")
+    const productRefs = c.content.slice(0, 500).match(/\b[A-Z][\w-]+(?:\s+[A-Z][\w-]+){0,2}\b/g)
+    if (productRefs) {
+      for (const ref of productRefs) groundedTerms.add(ref.toLowerCase())
     }
   }
 
@@ -124,6 +184,9 @@ export function checkGrounding(
     // Skip single common words
     if (lower.length < 3) continue
 
+    // Skip common phrases that look like entities but aren't
+    if (FALSE_POSITIVE_PHRASES.has(lower)) continue
+
     // Check exact match
     if (groundedTerms.has(lower)) continue
 
@@ -140,10 +203,9 @@ export function checkGrounding(
     ungroundedEntities.push(entity)
   }
 
-  // Only warn if there are 3+ ungrounded entities — prevents false positives
-  // from minor name variations or common phrases
+  // Warn at 2+ ungrounded entities — catches fabricated names/products/standards
   return {
     ungroundedEntities,
-    hasWarning: ungroundedEntities.length >= 3,
+    hasWarning: ungroundedEntities.length >= 2,
   }
 }

@@ -175,6 +175,7 @@ const MODULE_NAMES: Record<string, string> = {
   'vendor-risk': 'Vendor & Supply Chain Risk',
   'migration-program': 'Migration Program Management',
   'compliance-strategy': 'Compliance & Regulatory Strategy',
+  'data-asset-sensitivity': 'Data & Asset Sensitivity',
 }
 
 /** Module-specific suggested questions — curated for top modules, others use generic template */
@@ -195,9 +196,9 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'Explain hybrid key exchange in TLS',
   ],
   '5g-security': [
-    'How does PQC affect SUCI concealment?',
-    'What is the 5G-AKA authentication flow?',
-    'Which 5G components need PQC upgrades?',
+    'What are the three SUCI protection profiles, and which is quantum-resistant?',
+    'Why is MILENAGE quantum-resistant while SUCI Profile A/B is not?',
+    'How does Profile C hybrid mode combine classical and PQC shared secrets?',
   ],
   'hybrid-crypto': [
     'Why use hybrid cryptography during the PQC transition?',
@@ -308,6 +309,11 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'Which PQC compliance frameworks apply to my organization?',
     'How do I prepare for a PQC compliance audit?',
     'How do CNSA 2.0 and ETSI timelines differ?',
+  ],
+  'data-asset-sensitivity': [
+    'How do I classify data assets for PQC migration priority?',
+    'Which compliance frameworks require data sensitivity assessment?',
+    'What risk methodologies apply to PQC data classification?',
   ],
 }
 

@@ -40,7 +40,7 @@ const DATA_FOUNDATION = [
   { dataset: 'Migrate Products', records: 223, sources: '7 infrastructure layers' },
   { dataset: 'Threat Landscape', records: 79, sources: '8+ industry sectors' },
   { dataset: 'Industry Leaders', records: 101, sources: 'Public, Private, Academic' },
-  { dataset: 'Quiz Questions', records: 520, sources: 'All PQC topic areas' },
+  { dataset: 'Quiz Questions', records: 530, sources: 'All PQC topic areas' },
   { dataset: 'Authoritative Sources', records: 89, sources: 'Gov, Academic, Industry' },
   { dataset: 'Learning Modules', records: 27, sources: '2,000+ min of content' },
 ]
@@ -119,7 +119,7 @@ export function AboutView() {
               PQC Today is an interactive platform for the post-quantum transition. Twenty-seven
               learning modules &mdash; including a dedicated executive track covering risk
               management, business cases, governance, and compliance strategy, plus expanded hybrid
-              crypto labs with IETF Hackathon reference certs &mdash; 520+ quiz questions, hands-on
+              crypto labs with IETF Hackathon reference certs &mdash; 530+ quiz questions, hands-on
               cryptographic labs powered by OpenSSL WASM and liboqs, a 14-step risk assessment
               wizard with persona-aware reporting, ROI modelling, risk score trending, and printable
               executive board briefs, a guided 4-phase migration planning workflow, CSV export
@@ -753,7 +753,7 @@ export function AboutView() {
               The PQC Assistant chatbot uses{' '}
               <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong> to
               deliver grounded, sourced answers about post-quantum cryptography. When you ask a
-              question, it searches a curated corpus of ~2,200 PQC knowledge chunks &mdash; covering
+              question, it searches a curated corpus of ~2,500 PQC knowledge chunks &mdash; covering
               algorithms, standards, threats, compliance certifications, migration products,
               leaders, and learning modules &mdash; retrieves the 10&ndash;20 most relevant passages
               (adaptive per query intent), and injects them as context into a{' '}
@@ -816,7 +816,7 @@ export function AboutView() {
             <h3 className="text-sm font-semibold text-muted-foreground mb-2">Limitations</h3>
             <ul className="space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
               <li>
-                Knowledge is bounded by the curated corpus (~2,200 chunks) &mdash; niche or very
+                Knowledge is bounded by the curated corpus (~2,500 chunks) &mdash; niche or very
                 recent topics may lack coverage
               </li>
               <li>

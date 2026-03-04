@@ -692,9 +692,9 @@ documents_processed: 163
 - **PQC Algorithms Covered**: Falcon (FN-DSA / FIPS-206), SLH-DSA (FIPS-205 / Sphincs-plus), lattice-based schemes, HKDF, Blake3, secp256k1, P-256 (secp256r1)
 - **Quantum Threats Addressed**: Shor's Algorithm, Grover's Algorithm, CRQC (Cryptographically Relevant Quantum Computer)
 - **Migration Timeline Info**: Milestones: Australian ASD prohibition of SHA256, AES-128 after 2030
-- **Applicable Regions / Bodies**: Regions: Australia; Bodies: NIST (PQC standardization), ASD (Australian Signals Directorate), FIDO
+- **Applicable Regions / Bodies**: Regions: International; Bodies: Ethereum Foundation, NIST (referenced for PQC standardization)
 - **Leaders Contributions Mentioned**: Vitalik Buterin, p_m (original poster), WizardOfMenlo, pcaversaccio, rdubois-crypto, frangio
-- **PQC Products Mentioned**: RIP-7212 (P256VERIFY precompile), EIP-7701 (Native Account Abstraction with EOF)
+- **PQC Products Mentioned**: None detected
 - **Protocols Covered**: BIP39, EIP-2333, BIP32, Keccak (KECCAK256), KZG, ZK-rollups, STARKs, Groth16, PLONK, Marlin, BulletProof, node discovery (DevP2P), Discovery v5, Ethereum Node Records (ENR)
 - **Infrastructure Layers**: Consensus layer (signature aggregation), EVM (opcodes, precompiles), Encryption wallets (AES, HMAC), KZG verification (EIP-4844), ZK-rollups
 - **Standardization Bodies**: NIST (PQC), ASD (Australian Cyber Security), FIDO/Passkey standards, FIPS-205, FIPS-206

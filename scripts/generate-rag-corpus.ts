@@ -30,21 +30,22 @@ const OUTPUT_FILE = path.join(OUTPUT_DIR, 'rag-corpus.json')
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Find the latest versioned CSV file matching a prefix pattern */
+/** Find the latest versioned CSV file matching a prefix pattern.
+ *  Handles revision suffixes: prefix_MMDDYYYY.csv, prefix_MMDDYYYY_r1.csv, etc.
+ *  Sorts by date first, then revision (higher revision wins within same date). */
 function findLatestCSV(prefix: string): string | null {
   const files = fs.readdirSync(DATA_DIR).filter((f) => f.startsWith(prefix) && f.endsWith('.csv'))
 
   if (files.length === 0) return null
 
-  // Extract date from filename: prefix_MMDDYYYY.csv
   const withDates = files.map((f) => {
-    const match = f.match(/(\d{2})(\d{2})(\d{4})\.csv$/)
-    if (!match) return { file: f, date: 0 }
-    const [, mm, dd, yyyy] = match
-    return { file: f, date: parseInt(yyyy + mm + dd) }
+    const match = f.match(/(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
+    if (!match) return { file: f, date: 0, rev: 0 }
+    const [, mm, dd, yyyy, rev] = match
+    return { file: f, date: parseInt(yyyy + mm + dd), rev: rev ? parseInt(rev) : 0 }
   })
 
-  withDates.sort((a, b) => b.date - a.date)
+  withDates.sort((a, b) => b.date - a.date || b.rev - a.rev)
   return path.join(DATA_DIR, withDates[0].file)
 }
 
@@ -106,6 +107,9 @@ const MODULE_DIR_TO_ID: Record<string, string> = {
   ComplianceStrategy: 'compliance-strategy',
   MigrationProgram: 'migration-program',
   VendorRisk: 'vendor-risk',
+  DataAssetSensitivity: 'data-asset-sensitivity',
+  KmsPqc: 'kms-pqc',
+  HsmPqc: 'hsm-pqc',
 }
 
 // ---------------------------------------------------------------------------
@@ -241,6 +245,7 @@ function processLibrary(): RAGChunk[] {
     ] = row
 
     const content = [
+      `Reference: ${sanitize(refId)}`,
       `Title: ${sanitize(title)}`,
       `Description: ${sanitize(description)}`,
       `Type: ${sanitize(docType)} | Status: ${sanitize(docStatus)}`,
@@ -771,6 +776,9 @@ const MODULE_NAME_MAP: Record<string, string> = {
   ComplianceStrategy: 'Compliance & Regulatory Strategy',
   MigrationProgram: 'Migration Program Management',
   VendorRisk: 'Vendor & Supply Chain Risk',
+  DataAssetSensitivity: 'Data & Asset Sensitivity',
+  KmsPqc: 'KMS & PQC Key Management',
+  HsmPqc: 'HSM & PQC Operations',
 }
 
 /**
@@ -1072,6 +1080,9 @@ function processQuizQuestions(): RAGChunk[] {
     'code-signing': 'Code Signing',
     'iot-ot': 'IoT & OT Security',
     'migration-strategy': 'Migration Strategy',
+    'data-asset-sensitivity': 'Data & Asset Sensitivity',
+    'kms-pqc': 'KMS & PQC Key Management',
+    'hsm-pqc': 'HSM & PQC Operations',
   }
 
   for (const [category, questions] of byCategory) {
@@ -1325,7 +1336,7 @@ function processGettingStarted(): RAGChunk[] {
       source: 'documentation',
       title: 'Getting Started for Learners',
       content:
-        "Getting Started with PQC for Learners\n\nThe Learn section has 25 modules covering PQC fundamentals to advanced topics. Start with PQC 101 for an overview, then Quantum Threats to understand Shor's and Grover's algorithms. Key modules include: Hybrid Cryptography (transition strategy), Crypto Agility (algorithm flexibility), TLS Basics (web security), Key Management (enterprise practices), and an executive track (Governance, Business Case, Risk Management, Compliance Strategy, Migration Program). Each module includes interactive demonstrations and a Workshop tab for hands-on exercises. Test your knowledge with the Quiz covering 470 questions across 32 categories. The Glossary provides definitions for 100+ PQC terms.",
+        "Getting Started with PQC for Learners\n\nThe Learn section has 27 modules covering PQC fundamentals to advanced topics. Start with PQC 101 for an overview, then Quantum Threats to understand Shor's and Grover's algorithms. Key modules include: Hybrid Cryptography (transition strategy), Crypto Agility (algorithm flexibility), TLS Basics (web security), KMS & PQC, HSM & PQC Operations, Data & Asset Sensitivity, 5G Security, and an executive track (Governance, Business Case, Risk Management, Compliance Strategy, Migration Program). Each module includes interactive demonstrations and a Workshop tab for hands-on exercises. Test your knowledge with the Quiz covering 530 questions across 33 categories. The Glossary provides definitions for 100+ PQC terms.",
       category: 'getting-started',
       metadata: { audience: 'learners' },
       deepLink: '/learn',
@@ -1743,7 +1754,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Landing Page — Platform Overview & Persona Selection',
       content:
-        'PQC Today Landing Page\n\nThe landing page introduces the PQC adoption lifecycle through a 7-step journey: Learn → Assess → Explore → Test → Deploy → Ramp Up → Stay Agile. Users select a persona (Executive, Developer, Architect, or Researcher) to personalize their experience — each persona sees "For you" badges on recommended journey steps and receives tailored recommendations throughout the platform.\n\nKey statistics displayed: 25 interactive learning modules, 470 quiz questions, 40+ algorithms catalogued, 220+ PQC-ready tools tracked, 13-step quantum risk assessment wizard, and compliance deadlines spanning 2024–2036.\n\nThe ScoreCard tracks learning progress using a judo belt grading system (White through Black belt) based on module completions and quiz performance. Three paths are always visible regardless of persona: Learn, Timeline, and Threats.\n\nPQC Today is open source (GPL-3.0) and runs entirely in the browser — all cryptographic operations use WebAssembly (OpenSSL v3.6.0 + liboqs-js v0.15.1), with no backend or data collection.',
+        'PQC Today Landing Page\n\nThe landing page introduces the PQC adoption lifecycle through a 7-step journey: Learn → Assess → Explore → Test → Deploy → Ramp Up → Stay Agile. Users select a persona (Executive, Developer, Architect, Researcher, or IT Ops/DevOps) to personalize their experience — each persona sees "For you" badges on recommended journey steps and receives tailored recommendations throughout the platform.\n\nKey statistics displayed: 27 interactive learning modules, 530 quiz questions, 40+ algorithms catalogued, 230+ PQC-ready tools tracked, 14-step quantum risk assessment wizard, and compliance deadlines spanning 2024–2036.\n\nThe ScoreCard tracks learning progress using a judo belt grading system (White through Black belt) based on module completions and quiz performance. Three paths are always visible regardless of persona: Learn, Timeline, and Threats.\n\nPQC Today is open source (GPL-3.0) and runs entirely in the browser — all cryptographic operations use WebAssembly (OpenSSL v3.6.0 + liboqs-js v0.15.1), with no backend or data collection.',
       category: 'page-guide',
       metadata: { page: 'landing' },
       deepLink: '/',
@@ -1809,7 +1820,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Migrate Page — 7-Phase Framework & Software Catalog',
       content:
-        'Migrate Page Overview\n\nThe Migrate page provides a 7-phase PQC migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance:\n1. Assess — Build Cryptographic Bill of Materials (CBOM), identify quantum-vulnerable algorithms\n2. Plan — Classify data by confidentiality lifetime, map regulatory deadlines, create migration priority matrix\n3. Prepare — Select PQC libraries (OpenSSL 3.5+, AWS-LC, BoringSSL), upgrade HSM firmware, engage vendor roadmaps\n4. Test — Pilot hybrid TLS/SSH with ML-KEM + X25519, test VPN PQC tunnels, measure performance impact\n5. Migrate — Deploy hybrid certificates, migrate code signing to ML-DSA/SLH-DSA, update key management\n6. Launch — Complete disk/database encryption migration, update secure boot chains, re-encrypt archived data (HNDL counter-measures)\n7. Ramp Up — Deploy continuous crypto monitoring, deprecate legacy algorithms, optimize performance\n\nSoftware catalog: 220+ PQC-ready products organized across 7 infrastructure layers (Operating Systems, Databases, VPN/Network, Code Signing, Cryptographic Libraries, Devices/IoT, Other) plus Web Browsers (Chrome, Edge, Firefox, Safari with ML-KEM TLS 1.3).\n\nThree-tier FIPS badge system: Validated (green, FIPS 140-3), Partial (amber, FedRAMP/WebTrust/FIPS-mode claims), No (gray). Certification cross-reference links products to FIPS/ACVP/Common Criteria certifications.\n\nFilter by: industry (?industry=), infrastructure layer (?layer=), text search (?q=), and migration phase.',
+        'Migrate Page Overview\n\nThe Migrate page provides a 7-phase PQC migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance:\n1. Assess — Build Cryptographic Bill of Materials (CBOM), identify quantum-vulnerable algorithms\n2. Plan — Classify data by confidentiality lifetime, map regulatory deadlines, create migration priority matrix\n3. Prepare — Select PQC libraries (OpenSSL 3.5+, AWS-LC, BoringSSL), upgrade HSM firmware, engage vendor roadmaps\n4. Test — Pilot hybrid TLS/SSH with ML-KEM + X25519, test VPN PQC tunnels, measure performance impact\n5. Migrate — Deploy hybrid certificates, migrate code signing to ML-DSA/SLH-DSA, update key management\n6. Launch — Complete disk/database encryption migration, update secure boot chains, re-encrypt archived data (HNDL counter-measures)\n7. Ramp Up — Deploy continuous crypto monitoring, deprecate legacy algorithms, optimize performance\n\nSoftware catalog: 230+ PQC-ready products organized across 7 infrastructure layers (Operating Systems, Databases, VPN/Network, Code Signing, Cryptographic Libraries, Devices/IoT, Other) plus Web Browsers (Chrome, Edge, Firefox, Safari with ML-KEM TLS 1.3).\n\nThree-tier FIPS badge system: Validated (green, FIPS 140-3), Partial (amber, FedRAMP/WebTrust/FIPS-mode claims), No (gray). Certification cross-reference links products to FIPS/ACVP/Common Criteria certifications.\n\nFilter by: industry (?industry=), infrastructure layer (?layer=), text search (?q=), and migration phase.',
       category: 'page-guide',
       metadata: { page: 'migrate' },
       deepLink: '/migrate',
@@ -1818,9 +1829,9 @@ function processPageGuides(): RAGChunk[] {
     {
       id: 'page-guide-assess',
       source: 'documentation',
-      title: 'Assess Page — 13-Step Quantum Risk Assessment Wizard',
+      title: 'Assess Page — 14-Step Quantum Risk Assessment Wizard',
       content:
-        'Assess Page Overview\n\nThe Assess page provides a personalized PQC risk assessment with two modes: Quick (6 steps, ~2 min) for rapid baseline, and Comprehensive (13 steps, ~5 min) for detailed migration planning.\n\n13 comprehensive steps: Industry → Country → Crypto Stack → Data Sensitivity → Compliance → Migration Status → Use Cases → Data Retention → Credential Lifetime → Organization Scale → Crypto Agility → Infrastructure → Vendor Dependencies → Timeline Pressure.\n\nKey features:\n- Country selection drives compliance deadline alignment and framework filtering\n- Data Sensitivity and Data Retention are multi-select with worst-case (max) scoring for HNDL risk\n- HNDL window = data retention period minus estimated time to CRQC\n- Industry selection filters compliance frameworks to show only relevant regulations\n- Persona-aware report recommendations (Executive/Developer/Architect/Researcher)\n\nFour risk categories scored: Strategic Risk (long-term quantum exposure), Operational Risk (system complexity), Compliance Risk (regulatory deadline pressure), Vendor Risk (third-party dependency control).\n\nReport includes deep links to Migrate products, Timeline events, Compliance frameworks, and Learn modules tailored to your results. Supports Print/PDF output. Progress auto-saves to localStorage with resume capability.\n\nUse ?step= to deep-link to specific steps (e.g., /assess?step=3 for Data Sensitivity).',
+        'Assess Page Overview\n\nThe Assess page provides a personalized PQC risk assessment with two modes: Quick (6 steps, ~2 min) for rapid baseline, and Comprehensive (14 steps, ~5 min) for detailed migration planning.\n\n14 comprehensive steps: Industry → Country → Crypto Stack → Data Sensitivity → Compliance → Migration Status → Use Cases → Data Retention → Credential Lifetime → Organization Scale → Crypto Agility → Infrastructure → Vendor Dependencies → Timeline Pressure.\n\nKey features:\n- Country selection drives compliance deadline alignment and framework filtering\n- Data Sensitivity and Data Retention are multi-select with worst-case (max) scoring for HNDL risk\n- HNDL window = data retention period minus estimated time to CRQC\n- Industry selection filters compliance frameworks to show only relevant regulations\n- Persona-aware report recommendations (Executive/Developer/Architect/Researcher/IT Ops)\n\nFour risk categories scored: Strategic Risk (long-term quantum exposure), Operational Risk (system complexity), Compliance Risk (regulatory deadline pressure), Vendor Risk (third-party dependency control).\n\nReport includes deep links to Migrate products, Timeline events, Compliance frameworks, and Learn modules tailored to your results. Supports Print/PDF output. Progress auto-saves to localStorage with resume capability.\n\nUse ?step= to deep-link to specific steps (e.g., /assess?step=3 for Data Sensitivity).',
       category: 'page-guide',
       metadata: { page: 'assess' },
       deepLink: '/assess',
@@ -1842,7 +1853,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'About Page — Platform Details, SBOM, Privacy & Licensing',
       content:
-        "About Page Overview\n\nThe About page provides comprehensive platform information:\n\nSoftware Bill of Materials (SBOM): React v19, Tailwind CSS v4, Framer Motion (animations), Lucide React (icons), React Router v7. Crypto stack: OpenSSL WASM v3.6.0 (primary), @oqs/liboqs-js v0.15.1 (PQC algorithms), @noble/curves and @scure/* (blockchain crypto), Web Crypto API (X25519, P-256). State management: Zustand with localStorage persistence. Data: PapaParse (CSV), Recharts (visualization). Testing: Vitest + Playwright + axe-playwright (accessibility). Build: Vite + TypeScript strict mode.\n\nSecurity Audit: 0 production vulnerabilities. Dev-only findings are ESLint toolchain ReDoS (minimatch, ajv) — don't affect deployed app.\n\nData Privacy: Static site with no backend or database. No data collection, no cookies, no tracking, no third-party services. All persistence is localStorage only. All cryptography runs client-side via WASM.\n\nPQC Assistant: RAG (Retrieval-Augmented Generation) with ~1,900 corpus chunks from 22 data sources, powered by Gemini 2.5 Flash. Requires user-provided Google API key (BYOK). Three capabilities: Grounded Answers, Deep Linking, PQC Domain Expertise.\n\nLicense: GPL-3.0 (GNU General Public License v3.0). Created by Eric Amador. AI tools acknowledged: Google Antigravity, ChatGPT, Claude AI, Perplexity, Gemini Pro.",
+        "About Page Overview\n\nThe About page provides comprehensive platform information:\n\nSoftware Bill of Materials (SBOM): React v19, Tailwind CSS v4, Framer Motion (animations), Lucide React (icons), React Router v7. Crypto stack: OpenSSL WASM v3.6.0 (primary), @oqs/liboqs-js v0.15.1 (PQC algorithms), @noble/curves and @scure/* (blockchain crypto), Web Crypto API (X25519, P-256). State management: Zustand with localStorage persistence. Data: PapaParse (CSV), Recharts (visualization). Testing: Vitest + Playwright + axe-playwright (accessibility). Build: Vite + TypeScript strict mode.\n\nSecurity Audit: 0 production vulnerabilities. Dev-only findings are ESLint toolchain ReDoS (minimatch, ajv) — don't affect deployed app.\n\nData Privacy: Static site with no backend or database. No data collection, no cookies, no tracking, no third-party services. All persistence is localStorage only. All cryptography runs client-side via WASM.\n\nPQC Assistant: RAG (Retrieval-Augmented Generation) with ~2,500 corpus chunks from 25 data sources, powered by Gemini 2.5 Flash. Requires user-provided Google API key (BYOK). Three capabilities: Grounded Answers, Deep Linking, PQC Domain Expertise.\n\nLicense: GPL-3.0 (GNU General Public License v3.0). Created by Eric Amador. AI tools acknowledged: Google Antigravity, ChatGPT, Claude AI, Perplexity, Gemini Pro.",
       category: 'page-guide',
       metadata: { page: 'about' },
       deepLink: '/about',

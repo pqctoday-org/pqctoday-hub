@@ -56,7 +56,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
   - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attacks
-  - **PQC Quiz**: Interactive knowledge assessment with 520 questions across 33 categories
+  - **PQC Quiz**: Interactive knowledge assessment with 530 questions across 33 categories
     - **3 Modes**: Quick (20 questions, guaranteed category coverage), Full Assessment (80 questions randomly sampled), Custom (by topic)
     - **CSV-Driven**: Questions loaded from date-stamped CSV (`pqcquiz_MMDDYYYY.csv`) via `import.meta.glob`, with smart sampling guaranteeing ≥2 per category (Quick) / ≥10 per category (Full)
     - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, and 24 additional topic categories covering all 27 learning modules
@@ -238,7 +238,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   GA4 analytics logging; resets on navigation
 - **PQC Assistant**: AI-powered chatbot for post-quantum cryptography questions
   - Powered by Google Gemini 2.5 Flash with BYOK (Bring Your Own Key)
-  - Client-side RAG retrieval using MiniSearch over 2,350+ content chunks from 24 data sources
+  - Client-side RAG retrieval using MiniSearch over 2,500+ content chunks from 25 data sources
   - Three-phase search: entity matching, query expansion, keyword search with source diversity
   - **Document enrichment**: 230+ archived HTML/PDF documents enriched with 11 structured
     dimensions (algorithms, threats, protocols, infrastructure layers, compliance frameworks,

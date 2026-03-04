@@ -739,8 +739,6 @@ No classic Ephemeral Keypair needed.
                   { name: hnKeyFile, data: hexToBytes(this.state.hnPubEccHex) },
                 ])
 
-                if (res.stderr) console.log('[DEBUG-JIT] stderr:', res.stderr as string)
-
                 const outObj = res.files.find((f) => f.name === secretFile)
                 if (outObj) {
                   zEcdhHex = bytesToHex(outObj.data)
@@ -836,8 +834,7 @@ ${zEcdhHex}
 
           const encCmd = `openssl pkeyutl -encap -inkey ${keyPathToUse} -pubin -out ${ctFile} -secret ${ssFile}`
 
-          const resEnc = await openSSLService.execute(encCmd)
-          if (resEnc.stderr) console.log('[5G-DEBUG] Encapsulate stderr:', resEnc.stderr)
+          await openSSLService.execute(encCmd)
 
           // Check if files exist in worker result or use readFileHex
           // readFileHex is safer as it handles base64 transfer
@@ -845,9 +842,6 @@ ${zEcdhHex}
           zKemHex = await this.readFileHex(ssFile)
 
           if (!ctHex || !zKemHex) {
-            // Try reading via execute if readFileHex (base64) failed silently
-            const dir = await openSSLService.execute('ls -F')
-            console.log('[5G-DEBUG] Files in worker:', dir.stdout)
             throw new Error(`Encapsulation output missing. ct=${!!ctHex}, ss=${!!zKemHex}`)
           }
 

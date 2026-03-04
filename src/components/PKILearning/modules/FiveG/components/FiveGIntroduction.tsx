@@ -308,6 +308,25 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           key agreement with ML-KEM (Kyber) encapsulation, supporting both a hybrid transition mode
           (X25519 + ML-KEM-768) and a pure PQC target mode.
         </p>
+        <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs space-y-1 mb-4">
+          <p className="font-bold text-foreground/80">Hybrid Mode Secret Combination</p>
+          <ul className="text-muted-foreground space-y-0.5 ml-3 list-disc">
+            <li>
+              <code>Z_ecdh</code> — X25519 ECDH shared secret (32 bytes)
+            </li>
+            <li>
+              <code>Z_kem</code> — ML-KEM-768 encapsulated secret (32 bytes)
+            </li>
+            <li>
+              <code>Z = SHA-256(Z_ecdh ‖ Z_kem)</code> — final 32-byte shared secret
+            </li>
+          </ul>
+          <p className="text-muted-foreground mt-1">
+            SHA-256 binds both secrets so that breaking either classical or PQC alone is
+            insufficient to recover Z. SHA3-256 is applied separately inside the ANSI X9.63 KDF.
+            Pure mode sets Z&nbsp;=&nbsp;Z_kem directly (no combination needed).
+          </p>
+        </div>
         <button
           onClick={onNavigateToSimulate}
           className="btn btn-primary flex items-center gap-2 px-4 py-2"
