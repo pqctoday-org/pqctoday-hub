@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { CheckCircle } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { LEARN_SECTIONS } from './moduleData'
@@ -24,7 +24,8 @@ interface LearnStepperProps {
  */
 export const LearnStepper = ({ steps }: LearnStepperProps) => {
   const [current, setCurrent] = useState(0)
-  const { moduleId } = useParams<{ moduleId: string }>()
+  const location = useLocation()
+  const moduleId = location.pathname.replace(/^\/learn\/?/, '') || undefined
   const { modules, markAllLearnSectionsComplete } = useModuleStore()
 
   const sections = moduleId ? (LEARN_SECTIONS[moduleId] ?? []) : []
@@ -62,7 +63,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
               >
                 {idx < current ? '✓' : idx + 1}
               </div>
-              <span className="text-[10px] md:text-xs font-medium max-w-[80px] text-center leading-tight">
+              <span className="text-[10px] sm:text-xs font-medium max-w-[80px] text-center leading-tight">
                 {step.label}
               </span>
             </button>
@@ -77,19 +78,19 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
       </div>
 
       {/* Navigation — Previous | Next or Mark as Read */}
-      <div className="flex justify-between mt-6">
+      <div className="flex flex-col sm:flex-row justify-between mt-6 gap-3">
         <button
           type="button"
           onClick={() => setCurrent((c) => Math.max(0, c - 1))}
           disabled={isFirst}
-          className="px-6 py-2 rounded-lg border border-border hover:bg-muted/10 disabled:opacity-50 transition-colors text-foreground"
+          className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted/10 disabled:opacity-50 transition-colors text-foreground"
         >
           ← Previous
         </button>
 
         {isLast ? (
           allDone ? (
-            <div className="flex items-center gap-2 px-6 py-2 rounded-lg bg-status-success/15 border border-status-success/30 text-status-success text-sm font-semibold">
+            <div className="flex items-center gap-2 px-6 py-3 min-h-[44px] rounded-lg bg-status-success/15 border border-status-success/30 text-status-success text-sm font-semibold">
               <CheckCircle size={16} />
               Reading Complete!
             </div>
@@ -97,7 +98,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
             <button
               type="button"
               onClick={() => moduleId && markAllLearnSectionsComplete(moduleId)}
-              className="px-6 py-2 bg-status-success text-white font-bold rounded-lg hover:bg-status-success/90 transition-colors"
+              className="px-6 py-3 min-h-[44px] bg-status-success text-white font-bold rounded-lg hover:bg-status-success/90 transition-colors"
             >
               ✓ Mark as Read
             </button>
@@ -106,7 +107,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
           <button
             type="button"
             onClick={() => setCurrent((c) => Math.min(steps.length - 1, c + 1))}
-            className="px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+            className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
           >
             Next →
           </button>

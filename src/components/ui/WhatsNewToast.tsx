@@ -86,25 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PKCS#11 HSM Mode</strong> &mdash; toggle the
-                    Playground into SoftHSMv3 WASM mode; run ML-KEM and ML-DSA operations through a
-                    real PKCS#11 v3.2 interface
+                    <strong className="text-foreground">57 new glossary entries</strong> &mdash;
+                    full coverage for the Data Asset Sensitivity module plus 4 previously thin
+                    modules; all 27 modules now have meaningful glossary support
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">ReadingCompleteButton</strong> &mdash; all
-                    27 learning modules now have an inline &ldquo;Mark as Read&rdquo; CTA;
-                    LearnStepper redesigned with numbered steps and progress line
+                    <strong className="text-foreground">PQC Assistant — richer context</strong>{' '}
+                    &mdash; app architecture, RAG pipeline, persona system, and community guides
+                    added to the corpus (35 new chunks)
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Milestone History Feed</strong> &mdash;
-                    right panel shows only meaningful milestones; Migrate product selections now
-                    tracked as journey events
+                    <strong className="text-foreground">Mobile learn improvements</strong> &mdash;
+                    responsive module padding, larger touch targets in LearnStepper, tab scroll fade
+                    indicator
                   </span>
                 </li>
               </ul>

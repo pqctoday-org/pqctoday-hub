@@ -1038,6 +1038,59 @@ function processMarkdownDocs(): RAGChunk[] {
 }
 
 // ---------------------------------------------------------------------------
+// NotebookLM app-guide docs — unique content not covered by other processors
+// ---------------------------------------------------------------------------
+
+function processNotebookLM(): RAGChunk[] {
+  const chunks: RAGChunk[] = []
+  const notebookDir = path.join(process.cwd(), 'notebooklm')
+  if (!fs.existsSync(notebookDir)) return []
+
+  // Only files with genuinely unique content not already indexed by other processors.
+  // Mirror files (03-11) are excluded — their data is covered by CSV processors.
+  // File 12 is excluded — processChangelog() reads CHANGELOG.md directly.
+  // File 01 is excluded — processPageGuides() covers it sufficiently.
+  const FILES: Array<{ file: string; deepLink: string; slug: string }> = [
+    { file: '02-app-architecture.md', deepLink: '/about', slug: 'arch' },
+    { file: '13-chatbot-assistant.md', deepLink: '/', slug: 'assistant' },
+    { file: '14-personalization.md', deepLink: '/', slug: 'personalization' },
+    { file: '15-community.md', deepLink: '/about', slug: 'community' },
+  ]
+
+  for (const { file, deepLink, slug } of FILES) {
+    const filePath = path.join(notebookDir, file)
+    if (!fs.existsSync(filePath)) continue
+
+    const raw = fs.readFileSync(filePath, 'utf-8')
+    const sections = raw.split(/^##\s+/m)
+
+    for (let i = 0; i < sections.length; i++) {
+      const section = sections[i].trim()
+      if (!section || section.length < 50) continue
+
+      const lines = section.split('\n')
+      let sectionTitle = lines[0].replace(/^#+\s*/, '').trim()
+      const body = lines.slice(1).join('\n').trim()
+      if (!sectionTitle) sectionTitle = file.replace(/[_-]/g, ' ').replace('.md', '')
+
+      const content = (body || section).slice(0, 2000)
+
+      chunks.push({
+        id: `notebooklm-${slug}-${i}`,
+        source: 'app-guide',
+        title: sectionTitle,
+        content: `${sectionTitle}\n\n${content}`,
+        category: 'app-guide',
+        metadata: { fileName: file, slug },
+        deepLink,
+      })
+    }
+  }
+
+  return chunks
+}
+
+// ---------------------------------------------------------------------------
 // Quiz questions
 // ---------------------------------------------------------------------------
 
@@ -1997,6 +2050,7 @@ async function main() {
     { name: 'Certification Xref', fn: processCertificationXref },
     { name: 'Document Enrichments', fn: processDocumentEnrichments },
     { name: 'Page Guides', fn: processPageGuides },
+    { name: 'NotebookLM App Guides', fn: processNotebookLM },
     { name: 'Changelog', fn: processChangelog },
   ]
 

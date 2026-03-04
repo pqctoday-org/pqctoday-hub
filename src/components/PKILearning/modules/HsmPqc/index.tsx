@@ -182,7 +182,7 @@ export const HsmPqcModule: React.FC = () => {
             </div>
 
             {/* Content Area */}
-            <div className="glass-panel p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
+            <div className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
               <div className="mb-6 border-b border-border pb-4">
                 <h2 className="text-2xl font-bold text-foreground">{PARTS[currentPart].title}</h2>
                 <p className="text-muted-foreground">{PARTS[currentPart].description}</p>

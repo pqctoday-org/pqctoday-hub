@@ -36,16 +36,59 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
 Tabs.displayName = 'Tabs'
 
 const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        'inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground overflow-x-auto no-scrollbar w-full',
-        className
-      )}
-      {...props}
-    />
-  )
+  ({ className, ...props }, ref) => {
+    const internalRef = React.useRef<HTMLDivElement>(null)
+    const [showFade, setShowFade] = React.useState(false)
+
+    // Merge forwarded ref with internal ref so we can track scroll state
+    const setRef = React.useCallback(
+      (node: HTMLDivElement | null) => {
+        internalRef.current = node
+        if (typeof ref === 'function') ref(node)
+        else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node
+      },
+      [ref]
+    )
+
+    React.useEffect(() => {
+      const el = internalRef.current
+      if (!el) return
+      const update = () => {
+        setShowFade(
+          el.scrollWidth > el.clientWidth + 1 && el.scrollLeft < el.scrollWidth - el.clientWidth - 1
+        )
+      }
+      update()
+      el.addEventListener('scroll', update, { passive: true })
+      const ro = new ResizeObserver(update)
+      ro.observe(el)
+      return () => {
+        el.removeEventListener('scroll', update)
+        ro.disconnect()
+      }
+    }, [])
+
+    return (
+      <div className="relative w-full">
+        <div
+          ref={setRef}
+          className={cn(
+            'inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground overflow-x-auto no-scrollbar w-full',
+            className
+          )}
+          {...props}
+        />
+        {/* Right-edge scroll hint — mobile only, fades out when scrolled to end */}
+        <div
+          className={cn(
+            'pointer-events-none absolute right-0 top-0 h-10 w-10 bg-gradient-to-l from-muted to-transparent rounded-r-md transition-opacity duration-200 sm:hidden',
+            showFade ? 'opacity-100' : 'opacity-0'
+          )}
+          aria-hidden="true"
+        />
+      </div>
+    )
+  }
 )
 TabsList.displayName = 'TabsList'
 

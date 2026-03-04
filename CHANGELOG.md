@@ -4,6 +4,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.16.0] - 2026-03-03
+
+### Added
+
+- **57 new glossary entries** (`src/data/glossaryData.ts`): Full coverage for the `data-asset-sensitivity` module (21 terms: Data Asset Sensitivity, Data Retention Period, CBOM, Sensitivity Scoring, HNDL Risk Window, NIST RMF, ISO 27005, FIPS 199, FAIR Model, TEF, ALE, ePHI, GDPR, PIPL, CCPA, LGPD, PDPA, DORA, Risk Treatment, PQC Migration Priority, Asset Inventory) and targeted additions for four previously thin modules — `crypto-agility` (ECC, Provider Model, Hybrid Migration, CycloneDX), `vendor-risk` (Vendor PQC Readiness, CMVP, Supply Chain Cryptographic Risk), `hsm-pqc` (LMS, Stateful Signature State Management, Hedged Signing, Tamper Resistance, CAVP), and `pqc-risk-management` (Risk Register, Risk Heatmap, Cryptographic Exposure Window). All 27 modules now have meaningful glossary coverage. [view:/learn]
+
+- **RAG corpus: NotebookLM app-guide source** (`scripts/generate-rag-corpus.ts`): New `processNotebookLM()` processor indexes 4 unique app-guide markdown files (`02-app-architecture.md`, `13-chatbot-assistant.md`, `14-personalization.md`, `15-community.md`) from the `notebooklm/` directory as a distinct `source: 'app-guide'` / `category: 'app-guide'` corpus type. Adds 35 chunks covering cross-page connection maps, RAG retrieval pipeline internals, persona system detail, and community/contributing guides — all content absent from the existing 25 processors. Mirror files (03–11) excluded to avoid duplication with CSV-sourced processors. [view:/]
+
+### Improved
+
+- **About page messaging** (`AboutView.tsx`): Refreshed mission statement to emphasise community-driven, open-source nature; simplified softhsmv3 dependency entry. [view:/about]
+
+- **LearnStepper mobile layout** (`LearnStepper.tsx`): Navigation buttons now stack vertically on small screens (`flex-col sm:flex-row`), minimum touch target height added (`min-h-[44px]`, `py-3`). Step labels use `sm:text-xs` breakpoint. [view:/learn]
+
+- **ReadingCompleteButton** (`ReadingCompleteButton.tsx`): Migrated from `useParams` to `useLocation` for module ID resolution — fixes edge cases where `:moduleId` route param was undefined in nested navigation contexts.
+
+- **Tabs scroll fade indicator** (`src/components/ui/tabs.tsx`): `TabsList` now renders a right-edge fade gradient when tab list overflows horizontally, signalling scrollability. Uses `ResizeObserver` + scroll listener; automatically hides when fully scrolled. [view:/learn]
+
+- **Module content padding** (all 27 `modules/*/index.tsx`): Content area padding made fully responsive — `p-4 sm:p-6 md:p-8` replacing the fixed `p-8`. Eliminates edge-to-edge text on small screens. [view:/learn]
+
 ## [2.15.0] - 2026-03-03
 
 ### Added

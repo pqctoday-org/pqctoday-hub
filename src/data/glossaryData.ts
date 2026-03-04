@@ -2887,4 +2887,376 @@ export const glossaryTerms: GlossaryTerm[] = [
     complexity: 'beginner',
     category: 'concept',
   },
+
+  // === Data Asset Sensitivity ===
+  {
+    term: 'Data Asset Sensitivity',
+    definition:
+      'A classification of how much harm would result if a data asset were exposed, altered, or made unavailable. Sensitivity tiers (Low, Medium, High, Critical) drive prioritisation of PQC migration effort and determine which assets face the greatest HNDL risk.',
+    technicalNote:
+      'Sensitivity is distinct from classification labels (e.g. Confidential) — it is a risk-facing score that combines data type, retention period, regulatory scope, and cryptographic exposure.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  {
+    term: 'Data Retention Period',
+    definition:
+      'The duration for which data must remain confidential or legally protected. Combined with the expected CRQC arrival year, the retention period determines the HNDL risk window: assets retained past the CRQC threshold are at immediate harvest risk.',
+    technicalNote:
+      'HNDL Risk Year = CRQC Arrival Year − Retention Period. Assets with HNDL Risk Year ≤ current year are in the critical migration band.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Asset Inventory',
+    definition:
+      'A structured catalog of all data assets, cryptographic dependencies, and communication channels within an organisation. The foundation of any PQC migration programme — you cannot migrate what you cannot see.',
+    technicalNote:
+      "A cryptographic asset inventory (sometimes called a CBOM — Cryptography Bill of Materials) records each asset's type, sensitivity tier, retention period, owning team, and current algorithm so migration priority can be calculated systematically.",
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'CBOM',
+    acronym: 'CBOM',
+    definition:
+      'Cryptography Bill of Materials — a structured inventory of all cryptographic assets, algorithms, keys, certificates, and protocols in use within a system or organisation. Analogous to a software BOM (SBOM) but focused on cryptographic dependencies.',
+    technicalNote:
+      'A CBOM enables automated discovery of quantum-vulnerable algorithms (RSA, ECC, DH) and drives migration roadmap prioritisation. NIST SP 1800-38 and CISA guidance recommend CBOM as the first step in PQC readiness.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Sensitivity Scoring',
+    definition:
+      'A composite scoring method that combines multiple risk dimensions — data type, regulatory scope, cryptographic exposure, and retention period — into a single numeric score used to rank migration urgency across data assets.',
+    technicalNote:
+      'Typical weightings: data type (30%), regulatory requirements (25%), cryptographic exposure (25%), retention period (20%). Scores above the critical threshold trigger immediate PQC migration planning regardless of other factors.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'HNDL Risk Window',
+    definition:
+      "The period during which data harvested today could realistically be decrypted by a future CRQC. Calculated as the gap between the estimated CRQC arrival year and the data's required confidentiality end date.",
+    technicalNote:
+      'Formula: HNDL Risk Year = CRQC Arrival Year − Data Retention Years. If this value is ≤ the current year, data is already inside the risk window. Most guidance uses 2030–2035 as a conservative CRQC bound.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'NIST RMF',
+    acronym: 'RMF',
+    definition:
+      'NIST Risk Management Framework (SP 800-37) — a six-step lifecycle process (Categorise, Select, Implement, Assess, Authorise, Monitor) for managing information security and privacy risk in federal and commercial systems.',
+    technicalNote:
+      'Step 1 (Categorise) uses FIPS 199 impact levels (Low/Moderate/High) to classify systems. For PQC, categorisation directly informs which controls from SP 800-53 apply, including post-quantum cryptographic requirements.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'ISO 27005',
+    definition:
+      'ISO/IEC 27005 — the international standard for information security risk management. Provides a structured methodology for identifying assets, assessing threats and vulnerabilities, evaluating risk, and selecting risk treatment options.',
+    technicalNote:
+      'ISO 27005 uses a likelihood × consequence matrix to produce a risk level. For PQC, the threat is a CRQC; the vulnerability is use of RSA/ECC; the consequence is full plaintext exposure of harvested data. Risk treatment options: mitigate (migrate to PQC), accept, transfer, or avoid.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'FIPS 199',
+    definition:
+      "Federal Information Processing Standard 199 — NIST's standard for categorising federal information and information systems. Defines three impact levels (Low, Moderate, High) for confidentiality, integrity, and availability that drive control selection in the NIST RMF.",
+    technicalNote:
+      'High confidentiality impact (per FIPS 199) triggers the most stringent cryptographic requirements. Under CNSA 2.0, High-impact systems face the earliest PQC migration deadlines.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'FAIR Model',
+    acronym: 'FAIR',
+    definition:
+      'Factor Analysis of Information Risk — a quantitative risk methodology that models cybersecurity risk in financial terms. Decomposes risk into Threat Event Frequency (TEF) and Loss Magnitude to produce Annualized Loss Expectancy (ALE).',
+    technicalNote:
+      'For PQC, FAIR enables CFOs to compare the cost of migrating now versus the expected financial loss from a post-CRQC breach of harvested data. Key inputs: probability of CRQC by year X, value of data at risk, probability of adversary having collected it.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Threat Event Frequency',
+    acronym: 'TEF',
+    definition:
+      "A FAIR model component representing how often a threat agent is likely to act against an asset in a given time period. For quantum threats, TEF reflects the probability of a capable CRQC existing and being wielded against a specific organisation's harvested data.",
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Annualized Loss Expectancy',
+    acronym: 'ALE',
+    definition:
+      'A FAIR and traditional risk management metric representing the expected financial loss from a risk over a one-year period. Calculated as Annual Rate of Occurrence × Single Loss Expectancy. Used in PQC business cases to justify migration investment.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'ePHI',
+    acronym: 'ePHI',
+    definition:
+      'Electronic Protected Health Information — individually identifiable health information in electronic form, regulated by HIPAA. Any encryption of ePHI using RSA or ECC is vulnerable to HNDL attacks, making ePHI datasets a high-priority PQC migration target.',
+    technicalNote:
+      'HIPAA does not mandate specific algorithms, but HHS guidance and NIST SP 800-66 recommend using FIPS-validated cryptography. Once FIPS 140-3 validation for ML-KEM and ML-DSA is available, healthcare organisations should adopt them for ePHI at rest and in transit.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'GDPR',
+    acronym: 'GDPR',
+    definition:
+      'General Data Protection Regulation — EU Regulation 2016/679 requiring appropriate technical and organisational measures to protect personal data. The "appropriate technical measures" clause is interpreted to require state-of-the-art encryption, creating an implicit obligation to migrate to PQC as quantum threats mature.',
+    technicalNote:
+      'GDPR Art. 32 ("Security of processing") obliges controllers and processors to implement encryption commensurate with the risk. As CRQC timelines become clearer, regulators are expected to interpret Art. 32 as mandating PQC readiness for long-retained personal data.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'PIPL',
+    acronym: 'PIPL',
+    definition:
+      "Personal Information Protection Law — China's primary data privacy law (effective November 2021), requiring data processors to adopt security measures protecting personal information. Mandates localisation of certain data and restricts cross-border transfers, making PQC migration relevant for multinational organisations with Chinese data subjects.",
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'CCPA',
+    acronym: 'CCPA',
+    definition:
+      'California Consumer Privacy Act — U.S. state law (effective 2020, amended by CPRA in 2023) granting California residents rights over their personal data. Data breaches of unencrypted personal information trigger mandatory notification, incentivising strong cryptography including PQC for long-retained data.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'beginner',
+    category: 'standard',
+  },
+  {
+    term: 'LGPD',
+    acronym: 'LGPD',
+    definition:
+      "Lei Geral de Proteção de Dados — Brazil's data protection law (Law 13.709/2018), modelled on GDPR. Requires appropriate technical security measures for personal data. Brazilian DPA (ANPD) guidance on cryptographic adequacy is expected to align with global PQC migration timelines.",
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'PDPA',
+    acronym: 'PDPA',
+    definition:
+      "Personal Data Protection Act — Singapore's primary data protection law administered by the PDPC. Requires reasonable security arrangements to protect personal data. Singapore's CSA has published PQC guidance referencing PDPA obligations for organisations managing long-retained personal data.",
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'DORA',
+    acronym: 'DORA',
+    definition:
+      "Digital Operational Resilience Act — EU Regulation 2022/2554, applying to financial entities and their ICT service providers from January 2025. Requires ICT risk management, resilience testing, and third-party risk oversight. PQC migration readiness is expected to be assessed under DORA's ICT risk management chapter.",
+    technicalNote:
+      'DORA Art. 6 mandates a comprehensive ICT risk management framework including cryptographic controls. EBA and ESMA technical standards under DORA are expected to reference ENISA PQC guidance as it matures.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'Risk Treatment',
+    definition:
+      'The process of selecting and implementing options to address an identified risk. ISO 27005 defines four treatment options: Mitigate (implement controls), Accept (tolerate the risk), Transfer (insurance/outsource), Avoid (cease the activity). For quantum risk, "Mitigate" means migrating to PQC; "Accept" is only defensible for non-sensitive, short-lived data.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'PQC Migration Priority',
+    definition:
+      'A ranked ordering of data assets and cryptographic dependencies by urgency of migration to post-quantum algorithms. Priority is computed from sensitivity tier, HNDL risk window, regulatory obligations, and migration effort, enabling organisations to sequence their migration roadmap rationally.',
+    technicalNote:
+      'High-priority assets (Critical sensitivity + current HNDL window + regulatory mandate) should be targeted for PQC migration within 12–18 months. Low-priority assets (Low sensitivity + short retention + no mandate) can follow later roadmap phases.',
+    relatedModule: '/learn/data-asset-sensitivity',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+
+  // === Crypto Agility ===
+  {
+    term: 'ECC',
+    acronym: 'ECC',
+    definition:
+      "Elliptic Curve Cryptography — a public-key cryptosystem based on the algebraic structure of elliptic curves over finite fields. Offers smaller key sizes than RSA for equivalent classical security, but like RSA it is fully broken by Shor's algorithm on a CRQC.",
+    technicalNote:
+      'Common curves: P-256, P-384, P-521 (NIST), Curve25519 (X25519/Ed25519). ECC is used extensively in TLS, SSH, code signing, and PKI. NIST SP 800-186 and CNSA 2.0 mandate migration away from ECC to ML-KEM and ML-DSA before 2030.',
+    relatedModule: '/learn/crypto-agility',
+    complexity: 'intermediate',
+    category: 'algorithm',
+  },
+  {
+    term: 'Provider Model',
+    definition:
+      'A software architecture pattern that abstracts cryptographic operations behind an interchangeable provider interface, enabling algorithm substitution without changing application code. Examples: Java JCA/JCE providers, OpenSSL provider API (3.x), PKCS#11 as an HSM provider.',
+    technicalNote:
+      'The provider model is the primary enabler of crypto agility at the implementation layer. Migrating to PQC in a provider-model architecture requires only a provider swap; migrating in a hard-coded crypto stack requires touching every call site.',
+    relatedModule: '/learn/crypto-agility',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Hybrid Migration',
+    definition:
+      'A PQC transition strategy in which both a classical algorithm and a post-quantum algorithm operate together in the same protocol, providing security even if one algorithm is broken. Hybrid mode is recommended by NIST, ANSSI, BSI, and NCSC for the transition period.',
+    technicalNote:
+      'In TLS 1.3, hybrid key exchange combines X25519 (classical ECDH) with ML-KEM-768 into the X25519MLKEM768 key share. Security is the stronger of the two algorithms — neither alone can break the session.',
+    relatedModule: '/learn/crypto-agility',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'CycloneDX',
+    definition:
+      'An OWASP standard for Software and Cryptography Bills of Materials (SBOM/CBOM). CycloneDX v1.6 introduced the Cryptography Asset type, enabling machine-readable inventory of all cryptographic algorithms, keys, certificates, and protocols in a system.',
+    technicalNote:
+      'CycloneDX CBOM components include: algorithms (name, parameterSets, primitive), certificates (subject, validity, signatureAlgorithm), keys (algorithm, size), and protocols (type, version, cipher suites). Tooling: IBM Quantum Safe Explorer, Keyfactor.',
+    relatedModule: '/learn/crypto-agility',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+
+  // === Vendor Risk ===
+  {
+    term: 'Vendor PQC Readiness',
+    definition:
+      "An assessment of a technology vendor's progress toward supporting post-quantum cryptographic algorithms across their product portfolio. Evaluated across dimensions: algorithm support, FIPS validation status, CBOM availability, migration documentation, SLA commitments, and estimated delivery timeline.",
+    technicalNote:
+      'A vendor readiness scorecard typically weights: PQC algorithm support (30%), FIPS 140-3 validation status (25%), migration tooling (20%), contractual commitments (15%), and timeline certainty (10%). Low vendor readiness is itself a supply chain risk.',
+    relatedModule: '/learn/vendor-risk',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'CMVP',
+    acronym: 'CMVP',
+    definition:
+      'Cryptographic Module Validation Program — a joint NIST and CCCS program that tests cryptographic modules against FIPS 140-3 requirements. Validated modules appear on the NIST CMVP Active Validations list with a certificate number, providing formal assurance of implementation correctness.',
+    technicalNote:
+      'PQC FIPS 140-3 validation for ML-KEM (FIPS 203) and ML-DSA (FIPS 204) modules began in 2024. Validation cycles take 12–18 months; procurement requiring FIPS 140-3 validated PQC must account for this lag. Check: csrc.nist.gov/projects/cmvp.',
+    relatedModule: '/learn/vendor-risk',
+    complexity: 'intermediate',
+    category: 'organization',
+  },
+  {
+    term: 'Supply Chain Cryptographic Risk',
+    definition:
+      "The risk that a third-party component, library, or service introduces quantum-vulnerable cryptography into an organisation's systems. When a vendor's HSM, TLS terminator, or signing service lacks PQC support, the organisation's own migration is blocked regardless of internal readiness.",
+    technicalNote:
+      'Mitigation requires: (1) CBOM from all critical vendors, (2) contractual PQC migration milestones and SLAs, (3) infrastructure layer dependency mapping to identify single points of failure, (4) alternate vendor qualification where PQC timelines are misaligned.',
+    relatedModule: '/learn/vendor-risk',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+
+  // === HSM PQC ===
+  {
+    term: 'LMS',
+    acronym: 'LMS',
+    definition:
+      'Leighton-Micali Signature — a stateful hash-based signature scheme standardised in NIST SP 800-208 and RFC 8554. Based on one-time Lamport signatures aggregated via a Merkle tree. Approved by CNSA 2.0 for firmware and software signing.',
+    technicalNote:
+      'LMS is stateful: each leaf in the Merkle tree can only be used once. An HSM must persist the current leaf index in NVRAM and never reuse it — failure leads to catastrophic key compromise. LMS key sizes: ~1,616 bytes (pub) to 64 bytes (priv). PKCS#11 v3.2 mechanism: CKM_LMS.',
+    relatedModule: '/learn/hsm-pqc',
+    complexity: 'advanced',
+    category: 'algorithm',
+  },
+  {
+    term: 'Stateful Signature State Management',
+    definition:
+      'The operational requirement to persist and atomically update the one-time-key index used by stateful hash-based signature schemes (LMS/HSS, XMSS). If state is lost (power failure, backup restore, HSM cloning) or reused, the signing key is permanently compromised.',
+    technicalNote:
+      'HSMs address this with NVRAM write-ahead logging and strict prohibition on key export. Cloud HSMs introduce additional complexity: multi-replica deployments must use a single authoritative state source, not distributed state. NIST SP 800-208 §6 covers state management requirements.',
+    relatedModule: '/learn/hsm-pqc',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Hedged Signing',
+    definition:
+      'A signing mode for ML-DSA (FIPS 204) that incorporates additional randomness alongside the deterministic component, providing protection against fault injection and side-channel attacks that attempt to recover the private key by manipulating the signing process.',
+    technicalNote:
+      'FIPS 204 §3.5.2 defines both deterministic and hedged signing. Hedged mode uses a random seed r in addition to the message and key. HSM implementations should prefer hedged mode for ML-DSA to protect against physical attack vectors that are in-scope for FIPS 140-3 Level 3/4.',
+    relatedModule: '/learn/hsm-pqc',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Tamper Resistance',
+    definition:
+      'A hardware security property where a device actively detects and responds to physical intrusion attempts by zeroising sensitive key material. Defined at FIPS 140-3 Security Levels 3 and 4. An HSM with tamper resistance destroys keys if the enclosure is breached.',
+    technicalNote:
+      'Level 3: tamper-evident seals plus voltage/temperature attack response. Level 4: full environmental attack protection including X-ray and focused ion beam. PQC keys in Level 3+ HSMs are protected even under sophisticated laboratory attacks.',
+    relatedModule: '/learn/hsm-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'CAVP',
+    acronym: 'CAVP',
+    definition:
+      'Cryptographic Algorithm Validation Program — the NIST/CCCS program that tests algorithm-level correctness of cryptographic implementations using the ACVP protocol. CAVP validation is a prerequisite for FIPS 140-3 module validation under CMVP.',
+    technicalNote:
+      'ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205) algorithm test vectors are available via ACVP since 2024. Vendors must pass CAVP algorithm tests before submitting a module for full CMVP evaluation.',
+    relatedModule: '/learn/hsm-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+
+  // === PQC Risk Management ===
+  {
+    term: 'Risk Register',
+    definition:
+      'A structured document that records identified risks, their likelihood, potential impact, current controls, and treatment decisions. For PQC, the risk register captures each quantum-vulnerable cryptographic asset, the HNDL exposure window, and the planned migration action with owner and deadline.',
+    technicalNote:
+      'A PQC risk register entry typically includes: asset name, algorithm in use, data sensitivity, retention period, HNDL risk year, likelihood score (1–5), impact score (1–5), risk level (L×I), treatment decision, target migration date, and responsible owner.',
+    relatedModule: '/learn/pqc-risk-management',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Risk Heatmap',
+    definition:
+      'A 5×5 grid visualisation plotting risks by likelihood (y-axis) and impact (x-axis). Cells are colour-coded green to red to indicate overall risk level. Used in PQC risk management to communicate prioritisation of quantum-vulnerable assets to executive stakeholders.',
+    technicalNote:
+      'Standard thresholds: Low (1–4), Medium (5–9), High (10–16), Critical (17–25). Quantum risks trend toward high impact (full plaintext exposure) with increasing likelihood as CRQC timelines advance. The heatmap should be reassessed annually as CRQC estimates evolve.',
+    relatedModule: '/learn/pqc-risk-management',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Cryptographic Exposure Window',
+    definition:
+      "The period during which an organisation's classically-encrypted data is at risk of retrospective decryption, spanning from the date of data collection to the date PQC migration is complete. Adversaries exploiting HNDL attacks capture data now to decrypt once a CRQC is available.",
+    technicalNote:
+      'Reducing the exposure window requires either (a) completing PQC migration before the CRQC arrives, or (b) ensuring data reaches end-of-life before the CRQC arrives. Long-lived assets (health records, intellectual property, identity credentials) have the widest windows.',
+    relatedModule: '/learn/pqc-risk-management',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
 ]

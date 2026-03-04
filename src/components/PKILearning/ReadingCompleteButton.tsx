@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { CheckCircle, CheckSquare } from 'lucide-react'
-import { useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useModuleStore } from '../../store/useModuleStore'
 import { LEARN_SECTIONS } from './moduleData'
 import { Button } from '../ui/button'
 
 /**
  * Inline reading completion CTA rendered at the bottom of every Introduction component.
- * Self-contained — resolves moduleId from the URL via useParams.
+ * Self-contained — resolves moduleId from the URL via useLocation (no :moduleId route param).
  *
  * Two states:
  *  - Not complete: "Mark as Read" button with CheckSquare icon
@@ -16,7 +16,8 @@ import { Button } from '../ui/button'
  * Returns null for modules with no LEARN_SECTIONS (e.g. Quiz, dashboard).
  */
 export const ReadingCompleteButton = () => {
-  const { moduleId } = useParams<{ moduleId: string }>()
+  const location = useLocation()
+  const moduleId = location.pathname.replace(/^\/learn\/?/, '') || undefined
   const { modules, markAllLearnSectionsComplete } = useModuleStore()
 
   if (!moduleId) return null
