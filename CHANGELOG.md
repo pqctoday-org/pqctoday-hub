@@ -4,6 +4,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.18.0] - 2026-03-04
+
+### Data
+
+- **Library document enrichments — 54 new entries** (`library_doc_enrichments_03042026.md`): Qwen3:14b (via Ollama) extracted 11 structured dimensions from 54 previously unenriched library documents — covering PQC algorithms, quantum threats, migration timelines, applicable regions/bodies, standardization bodies, compliance frameworks, protocols, infrastructure layers, leaders contributions, and PQC products mentioned. Enriched documents include 12 new RFCs (4251, 4253, 4301, 4303, 5280, 6962, 8017, 8446, 9052, 9580, 9593, 9847), ETSI standards, ENISA guidelines, EU/UK/NATO policy documents, SG-MAS advisories, and NIST IR/NCCoE publications. Best-scoring entries: NIST IR 8309 and CZ-NUKIB-Crypto-Requirements-2023 (10/10 dimensions each). [view:/library]
+
+- **RAG corpus** (`public/data/rag-corpus.json`): Rebuilt with 54 new enrichment entries — Document Enrichments source now contributes 178 chunks (up from ~124). Total corpus: 2,436 chunks. [view:/]
+
 ## [2.17.0] - 2026-03-04
 
 ### Added
