@@ -11,6 +11,9 @@ import {
   AlertCircle,
   Hash,
   Cpu,
+  ArrowLeftRight,
+  Filter,
+  PenLine,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { PlaygroundProvider } from './PlaygroundProvider'
@@ -26,6 +29,9 @@ import { KeyStoreTab } from './tabs/KeyStoreTab'
 import { LogsTab } from './tabs/LogsTab'
 import { HsmSymmetricPanel } from './hsm/HsmSymmetricPanel'
 import { HsmHashingPanel } from './hsm/HsmHashingPanel'
+import { HsmKeyAgreementPanel } from './hsm/HsmKeyAgreementPanel'
+import { HsmKdfPanel } from './hsm/HsmKdfPanel'
+import { HsmClassicalSignPanel } from './hsm/HsmClassicalSignPanel'
 import { logEvent } from '../../utils/analytics'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
@@ -208,6 +214,50 @@ const PlaygroundContent = () => {
           <FileSignature size={16} className="mr-2" /> Sign &amp; Verify
         </Button>
 
+        {hsmMode && (
+          <>
+            <Button
+              onClick={() => handleTabChange('key_agree')}
+              variant="ghost"
+              size="sm"
+              className={clsx(
+                'whitespace-nowrap',
+                activeTab === 'key_agree'
+                  ? 'bg-primary/20 text-primary shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+              )}
+            >
+              <ArrowLeftRight size={16} className="mr-2" /> Key Agree
+            </Button>
+            <Button
+              onClick={() => handleTabChange('key_derive')}
+              variant="ghost"
+              size="sm"
+              className={clsx(
+                'whitespace-nowrap',
+                activeTab === 'key_derive'
+                  ? 'bg-primary/20 text-primary shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+              )}
+            >
+              <Filter size={16} className="mr-2" /> KDF
+            </Button>
+            <Button
+              onClick={() => handleTabChange('classical_sign')}
+              variant="ghost"
+              size="sm"
+              className={clsx(
+                'whitespace-nowrap',
+                activeTab === 'classical_sign'
+                  ? 'bg-primary/20 text-primary shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+              )}
+            >
+              <PenLine size={16} className="mr-2" /> Classical
+            </Button>
+          </>
+        )}
+
         {!hsmMode && (
           <Button
             onClick={() => handleTabChange('acvp')}
@@ -254,6 +304,9 @@ const PlaygroundContent = () => {
         {activeTab === 'symmetric' && (hsmMode ? <HsmSymmetricPanel /> : <SymmetricTab />)}
         {activeTab === 'hashing' && (hsmMode ? <HsmHashingPanel /> : <HashingTab />)}
         {activeTab === 'sign_verify' && <SignVerifyTab />}
+        {activeTab === 'key_agree' && hsmMode && <HsmKeyAgreementPanel />}
+        {activeTab === 'key_derive' && hsmMode && <HsmKdfPanel />}
+        {activeTab === 'classical_sign' && hsmMode && <HsmClassicalSignPanel />}
         {activeTab === 'keystore' && <KeyStoreTab />}
         {activeTab === 'logs' && <LogsTab />}
         {activeTab === 'acvp' && !hsmMode && (

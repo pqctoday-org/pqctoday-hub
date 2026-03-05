@@ -376,31 +376,29 @@ const CKA_PARAMETER_SET = 0x0000061d
 const CKA_ENCAPSULATE = 0x00000633
 const CKA_DECAPSULATE = 0x00000634
 
-// ML-DSA pre-hash mechanisms (CKM_HASH_ML_DSA_*, PKCS#11 v3.2 §6.x, pkcs11t.h:1221-1231)
-const CKM_HASH_ML_DSA = 0x0000001f // generic: hash specified in CK_HASH_SIGN_ADDITIONAL_CONTEXT
-const CKM_HASH_ML_DSA_SHA224 = 0x00000023
-const CKM_HASH_ML_DSA_SHA256 = 0x00000024
-const CKM_HASH_ML_DSA_SHA384 = 0x00000025
-const CKM_HASH_ML_DSA_SHA512 = 0x00000026
-const CKM_HASH_ML_DSA_SHA3_224 = 0x00000027
-const CKM_HASH_ML_DSA_SHA3_256 = 0x00000028
-const CKM_HASH_ML_DSA_SHA3_384 = 0x00000029
-const CKM_HASH_ML_DSA_SHA3_512 = 0x0000002a
-const CKM_HASH_ML_DSA_SHAKE128 = 0x0000002b
-const CKM_HASH_ML_DSA_SHAKE256 = 0x0000002c
+// ML-DSA pre-hash mechanisms (CKM_HASH_ML_DSA_*, PKCS#11 v3.2, pkcs11t.h:1221-1231)
+const CKM_HASH_ML_DSA_SHA224 = 0x23
+const CKM_HASH_ML_DSA_SHA256 = 0x24
+const CKM_HASH_ML_DSA_SHA384 = 0x25
+const CKM_HASH_ML_DSA_SHA512 = 0x26
+const CKM_HASH_ML_DSA_SHA3_224 = 0x27
+const CKM_HASH_ML_DSA_SHA3_256 = 0x28
+const CKM_HASH_ML_DSA_SHA3_384 = 0x29
+const CKM_HASH_ML_DSA_SHA3_512 = 0x2a
+const CKM_HASH_ML_DSA_SHAKE128 = 0x2b
+const CKM_HASH_ML_DSA_SHAKE256 = 0x2c
 
-// SLH-DSA pre-hash mechanisms (CKM_HASH_SLH_DSA_*, PKCS#11 v3.2 §6.x, pkcs11t.h:1235-1245)
-// CKM_HASH_SLH_DSA (generic) already exported below; fixed-hash variants for inline dispatch
-const CKM_HASH_SLH_DSA_SHA224 = 0x00000036
-const CKM_HASH_SLH_DSA_SHA256 = 0x00000037
-const CKM_HASH_SLH_DSA_SHA384 = 0x00000038
-const CKM_HASH_SLH_DSA_SHA512 = 0x00000039
-const CKM_HASH_SLH_DSA_SHA3_224 = 0x0000003a
-const CKM_HASH_SLH_DSA_SHA3_256 = 0x0000003b
-const CKM_HASH_SLH_DSA_SHA3_384 = 0x0000003c
-const CKM_HASH_SLH_DSA_SHA3_512 = 0x0000003d
-const CKM_HASH_SLH_DSA_SHAKE128 = 0x0000003e
-const CKM_HASH_SLH_DSA_SHAKE256 = 0x0000003f
+// SLH-DSA pre-hash mechanisms (CKM_HASH_SLH_DSA_SHA*, PKCS#11 v3.2, pkcs11t.h:1235-1245)
+const CKM_HASH_SLH_DSA_SHA224 = 0x36
+const CKM_HASH_SLH_DSA_SHA256 = 0x37
+const CKM_HASH_SLH_DSA_SHA384 = 0x38
+const CKM_HASH_SLH_DSA_SHA512 = 0x39
+const CKM_HASH_SLH_DSA_SHA3_224 = 0x3a
+const CKM_HASH_SLH_DSA_SHA3_256 = 0x3b
+const CKM_HASH_SLH_DSA_SHA3_384 = 0x3c
+const CKM_HASH_SLH_DSA_SHA3_512 = 0x3d
+const CKM_HASH_SLH_DSA_SHAKE128 = 0x3e
+const CKM_HASH_SLH_DSA_SHAKE256 = 0x3f
 
 // Hedge types (PKCS#11 v3.2)
 const CKH_HEDGE_PREFERRED = 0x00000000
@@ -803,6 +801,34 @@ export const hsm_extractKeyValue = (
   }
 }
 
+/** C_GetAttributeValue(CKA_EC_POINT) → DER-encoded EC point bytes for an EC public key. */
+export const hsm_extractECPoint = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number
+): Uint8Array => {
+  const lenTpl = buildTemplate(M, [{ type: CKA_EC_POINT }])
+  checkRV(
+    M._C_GetAttributeValue(hSession, pubHandle, lenTpl.ptr, 1),
+    'C_GetAttributeValue(EC_POINT,len)'
+  )
+  const len = readUlong(M, lenTpl.ptr + 8)
+  freeTemplate(M, lenTpl, 1)
+
+  const valPtr = M._malloc(len)
+  const valTpl = buildTemplate(M, [{ type: CKA_EC_POINT, bytesPtr: valPtr, bytesLen: len }])
+  try {
+    checkRV(
+      M._C_GetAttributeValue(hSession, pubHandle, valTpl.ptr, 1),
+      'C_GetAttributeValue(EC_POINT)'
+    )
+    return M.HEAPU8.slice(valPtr, valPtr + len)
+  } finally {
+    freeTemplate(M, valTpl, 1)
+    M._free(valPtr)
+  }
+}
+
 /** Generate an ML-DSA key pair. Returns {pubHandle, privHandle}. */
 export const hsm_generateMLDSAKeyPair = (
   M: SoftHSMModule,
@@ -1129,30 +1155,6 @@ export const CKM_SHA3_512 = 0x2d0
 // SLH-DSA mechanisms (PKCS#11 v3.2, FIPS 205, pkcs11t.h:1232-1245)
 export const CKM_SLH_DSA_KEY_PAIR_GEN = 0x2d
 export const CKM_SLH_DSA = 0x2e
-export const CKM_HASH_SLH_DSA = 0x34 // generic: hash in CK_HASH_SIGN_ADDITIONAL_CONTEXT
-export const CKM_HASH_SLH_DSA_SHA224 = 0x36
-export const CKM_HASH_SLH_DSA_SHA256 = 0x37
-export const CKM_HASH_SLH_DSA_SHA384 = 0x38
-export const CKM_HASH_SLH_DSA_SHA512 = 0x39
-export const CKM_HASH_SLH_DSA_SHA3_224 = 0x3a
-export const CKM_HASH_SLH_DSA_SHA3_256 = 0x3b
-export const CKM_HASH_SLH_DSA_SHA3_384 = 0x3c
-export const CKM_HASH_SLH_DSA_SHA3_512 = 0x3d
-export const CKM_HASH_SLH_DSA_SHAKE128 = 0x3e
-export const CKM_HASH_SLH_DSA_SHAKE256 = 0x3f
-
-// ML-DSA pre-hash mechanisms — exported for Playground UI (PKCS#11 v3.2, pkcs11t.h:1221-1231)
-export const CKM_HASH_ML_DSA = 0x1f
-export const CKM_HASH_ML_DSA_SHA224 = 0x23
-export const CKM_HASH_ML_DSA_SHA256 = 0x24
-export const CKM_HASH_ML_DSA_SHA384 = 0x25
-export const CKM_HASH_ML_DSA_SHA512 = 0x26
-export const CKM_HASH_ML_DSA_SHA3_224 = 0x27
-export const CKM_HASH_ML_DSA_SHA3_256 = 0x28
-export const CKM_HASH_ML_DSA_SHA3_384 = 0x29
-export const CKM_HASH_ML_DSA_SHA3_512 = 0x2a
-export const CKM_HASH_ML_DSA_SHAKE128 = 0x2b
-export const CKM_HASH_ML_DSA_SHAKE256 = 0x2c
 
 // SLH-DSA parameter sets — pkcs11t.h ordering (interleaved SHA2/SHAKE per security level)
 export const CKP_SLH_DSA_SHA2_128S = 0x01
@@ -1178,6 +1180,7 @@ export const CKA_WRAP = 0x106
 export const CKA_UNWRAP = 0x107
 export const CKA_DERIVE = 0x10c
 export const CKA_EC_PARAMS = 0x180
+export const CKA_EC_POINT = 0x181 // DER-encoded ECPoint (uncompressed or compressed)
 
 // SLH-DSA signature and public key sizes (bytes), keyed by CKP_SLH_DSA_* constant
 // Ordering follows pkcs11t.h: interleaved SHA2/SHAKE per security level

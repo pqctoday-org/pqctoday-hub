@@ -58,6 +58,9 @@ export interface SettingsContextType {
     | 'symmetric'
     | 'hashing'
     | 'softhsm'
+    | 'key_agree'
+    | 'key_derive'
+    | 'classical_sign'
   setActiveTab: (
     tab:
       | 'data'
@@ -69,6 +72,9 @@ export interface SettingsContextType {
       | 'symmetric'
       | 'hashing'
       | 'softhsm'
+      | 'key_agree'
+      | 'key_derive'
+      | 'classical_sign'
   ) => void
   loading: boolean
   setLoading: (loading: boolean) => void

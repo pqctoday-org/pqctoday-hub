@@ -7,9 +7,14 @@ import {
   CKM_SHA256_HMAC,
   CKM_SHA384_HMAC,
   CKM_SHA512_HMAC,
+  CKM_SHA3_256_HMAC,
+  CKM_SHA3_512_HMAC,
   hsm_generateAESKey,
   hsm_aesEncrypt,
   hsm_aesDecrypt,
+  hsm_aesCtrEncrypt,
+  hsm_aesCtrDecrypt,
+  hsm_aesCmac,
   hsm_generateHMACKey,
   hsm_hmac,
   hsm_hmacVerify,
@@ -19,11 +24,21 @@ import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
 
 // ── Types ───────────────────────────────────────────────────────────────────────
 
-type SymMode = 'aes-gcm' | 'aes-cbc' | 'hmac'
+type SymMode = 'aes-gcm' | 'aes-cbc' | 'aes-ctr' | 'aes-cmac' | 'hmac'
 
 const SYM_MODES: { id: SymMode; label: string; desc: string }[] = [
   { id: 'aes-gcm', label: 'AES-GCM', desc: 'Authenticated encryption (CKM_AES_GCM)' },
   { id: 'aes-cbc', label: 'AES-CBC', desc: 'Cipher Block Chaining + PKCS#7 (CKM_AES_CBC_PAD)' },
+  {
+    id: 'aes-ctr',
+    label: 'AES-CTR',
+    desc: 'Counter mode stream cipher (CKM_AES_CTR, PKCS#11 v3.2 §2.14.3)',
+  },
+  {
+    id: 'aes-cmac',
+    label: 'AES-CMAC',
+    desc: 'Cipher-based MAC per NIST SP 800-38B (CKM_AES_CMAC)',
+  },
   { id: 'hmac', label: 'HMAC', desc: 'Hash-based MAC via C_SignInit/C_VerifyInit' },
 ]
 
@@ -31,6 +46,8 @@ const HMAC_ALGOS = [
   { label: 'HMAC-SHA-256', mech: CKM_SHA256_HMAC, outBytes: 32 },
   { label: 'HMAC-SHA-384', mech: CKM_SHA384_HMAC, outBytes: 48 },
   { label: 'HMAC-SHA-512', mech: CKM_SHA512_HMAC, outBytes: 64 },
+  { label: 'HMAC-SHA3-256', mech: CKM_SHA3_256_HMAC, outBytes: 32 },
+  { label: 'HMAC-SHA3-512', mech: CKM_SHA3_512_HMAC, outBytes: 64 },
 ] as const
 
 // ── AES sub-panel ───────────────────────────────────────────────────────────────
@@ -478,6 +495,398 @@ const HmacPanel = () => {
   )
 }
 
+// ── AES-CTR sub-panel ───────────────────────────────────────────────────────────
+
+const AesCtrPanel = () => {
+  const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
+  const [keyBits, setKeyBits] = useState<128 | 192 | 256>(128)
+  const [keyHandle, setKeyHandle] = useState<number | null>(null)
+  const [plaintext, setPlaintext] = useState('Hello, PQC World!')
+  const [ciphertext, setCiphertext] = useState<Uint8Array | null>(null)
+  const [decrypted, setDecrypted] = useState<string | null>(null)
+  const [loadingOp, setLoadingOp] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const anyLoading = loadingOp !== null
+  const zeroIv = new Uint8Array(16) // all-zero counter block
+
+  const withLoading = async (op: string, fn: () => Promise<void>) => {
+    setLoadingOp(op)
+    setError(null)
+    try {
+      await fn()
+    } catch (e) {
+      setError(String(e))
+    } finally {
+      setLoadingOp(null)
+    }
+  }
+
+  const doGenKey = () =>
+    withLoading('gen', async () => {
+      const M = moduleRef.current!
+      const handle = hsm_generateAESKey(M, hSessionRef.current, keyBits)
+      setKeyHandle(handle)
+      setCiphertext(null)
+      setDecrypted(null)
+      const ts = new Date().toLocaleTimeString([], {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      })
+      addHsmKey({
+        handle,
+        family: 'aes',
+        role: 'secret',
+        label: `AES-${keyBits} Key`,
+        variant: String(keyBits),
+        generatedAt: ts,
+      })
+    })
+
+  const doEncrypt = () =>
+    withLoading('enc', async () => {
+      const M = moduleRef.current!
+      const data = new TextEncoder().encode(plaintext)
+      const ct = hsm_aesCtrEncrypt(M, hSessionRef.current, keyHandle!, zeroIv, 128, data)
+      setCiphertext(ct)
+      setDecrypted(null)
+    })
+
+  const doDecrypt = () =>
+    withLoading('dec', async () => {
+      const M = moduleRef.current!
+      const plain = hsm_aesCtrDecrypt(M, hSessionRef.current, keyHandle!, zeroIv, 128, ciphertext!)
+      setDecrypted(new TextDecoder().decode(plain))
+    })
+
+  return (
+    <div className="space-y-4">
+      <div className="glass-panel p-4 space-y-3">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Key</p>
+        <div className="flex items-center gap-2 flex-wrap">
+          {([128, 192, 256] as const).map((b) => (
+            <Button
+              key={b}
+              variant="ghost"
+              size="sm"
+              disabled={anyLoading}
+              onClick={() => {
+                setKeyBits(b)
+                setKeyHandle(null)
+                setCiphertext(null)
+                setDecrypted(null)
+              }}
+              className={
+                keyBits === b
+                  ? 'bg-primary/20 text-primary text-xs h-7 px-3'
+                  : 'text-muted-foreground text-xs h-7 px-3'
+              }
+            >
+              {b}-bit
+            </Button>
+          ))}
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={anyLoading}
+            onClick={doGenKey}
+            className="ml-auto h-7 text-xs"
+          >
+            {loadingOp === 'gen' && <Loader2 size={12} className="mr-1.5 animate-spin" />}
+            {keyHandle !== null ? `✓ h=${keyHandle}` : 'Generate Key'}
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground font-mono">
+          C_GenerateKey(CKM_AES_KEY_GEN, {keyBits}) → handle · IV: 16×0x00, counterBits=128
+        </p>
+      </div>
+
+      <div className="glass-panel p-4 space-y-3">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+          Plaintext
+        </p>
+        <textarea
+          className="w-full bg-muted border border-input rounded-lg px-3 py-2 text-sm font-mono resize-none focus:outline-none focus:ring-1 focus:ring-ring"
+          rows={2}
+          value={plaintext}
+          onChange={(e) => {
+            setPlaintext(e.target.value)
+            setCiphertext(null)
+            setDecrypted(null)
+          }}
+          placeholder="Enter plaintext…"
+        />
+      </div>
+
+      <div className="flex gap-2">
+        <Button
+          onClick={doEncrypt}
+          disabled={keyHandle === null || anyLoading || !plaintext.length}
+          className="flex-1"
+        >
+          {loadingOp === 'enc' && <Loader2 size={14} className="mr-2 animate-spin" />}
+          <Lock size={14} className="mr-2" /> Encrypt
+        </Button>
+        <Button
+          variant="outline"
+          onClick={doDecrypt}
+          disabled={ciphertext === null || anyLoading}
+          className="flex-1"
+        >
+          {loadingOp === 'dec' && <Loader2 size={14} className="mr-2 animate-spin" />}
+          Decrypt
+        </Button>
+      </div>
+
+      {error && <ErrorAlert message={error} />}
+
+      {(ciphertext || decrypted) && (
+        <div className="glass-panel p-4 space-y-3">
+          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+            Result
+          </p>
+          {ciphertext && (
+            <HsmResultRow
+              label="Ciphertext"
+              value={`${hexSnippet(ciphertext, 24)} (${ciphertext.length} B)`}
+            />
+          )}
+          {decrypted !== null && <HsmResultRow label="Decrypted" value={decrypted} mono={false} />}
+          {ciphertext && (
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">Full ciphertext (hex)</p>
+              <p className="text-xs font-mono bg-muted rounded px-3 py-2 break-all text-foreground/80 select-all">
+                {toHex(ciphertext)}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="glass-panel p-4 space-y-2">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+          PKCS#11 Call Sequence
+        </p>
+        <div className="space-y-1 text-xs font-mono">
+          <div className="text-muted-foreground">
+            <span className="text-foreground">C_EncryptInit</span>(hSession, 0x1086 /* CKM_AES_CTR
+            */, hKey, &params) → <span className="text-status-success">CKR_OK</span>
+          </div>
+          <div className="text-muted-foreground text-[10px] pl-2">
+            params: CK_AES_CTR_PARAMS{' { ulCounterBits=128, cb[16]=0x00…00 }'}
+          </div>
+          <div className="text-muted-foreground">
+            <span className="text-foreground">C_Encrypt</span>(hSession, pPlain, plainLen, pCT,
+            &ctLen) → <span className="text-status-success">CKR_OK</span>
+          </div>
+          <div className="text-muted-foreground">
+            <span className="text-foreground">C_DecryptInit</span>(hSession, 0x1086, hKey, &params)
+            → <span className="text-status-success">CKR_OK</span>
+          </div>
+          <div className="text-muted-foreground">
+            <span className="text-foreground">C_Decrypt</span>(hSession, pCT, ctLen, pPlain,
+            &plainLen) → <span className="text-status-success">CKR_OK</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── AES-CMAC sub-panel ──────────────────────────────────────────────────────────
+
+const AesCmacPanel = () => {
+  const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
+  const [keyBits, setKeyBits] = useState<128 | 192 | 256>(128)
+  const [keyHandle, setKeyHandle] = useState<number | null>(null)
+  const [input, setInput] = useState('Hello, PQC World!')
+  const [mac, setMac] = useState<Uint8Array | null>(null)
+  const [verified, setVerified] = useState<boolean | null>(null)
+  const [loadingOp, setLoadingOp] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const anyLoading = loadingOp !== null
+
+  const withLoading = async (op: string, fn: () => Promise<void>) => {
+    setLoadingOp(op)
+    setError(null)
+    try {
+      await fn()
+    } catch (e) {
+      setError(String(e))
+    } finally {
+      setLoadingOp(null)
+    }
+  }
+
+  const doGenKey = () =>
+    withLoading('gen', async () => {
+      const M = moduleRef.current!
+      const handle = hsm_generateAESKey(M, hSessionRef.current, keyBits)
+      setKeyHandle(handle)
+      setMac(null)
+      setVerified(null)
+      const ts = new Date().toLocaleTimeString([], {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      })
+      addHsmKey({
+        handle,
+        family: 'aes',
+        role: 'secret',
+        label: `AES-${keyBits} CMAC Key`,
+        variant: String(keyBits),
+        generatedAt: ts,
+      })
+    })
+
+  const doComputeMac = () =>
+    withLoading('mac', async () => {
+      const M = moduleRef.current!
+      const data = new TextEncoder().encode(input)
+      const result = hsm_aesCmac(M, hSessionRef.current, keyHandle!, data)
+      setMac(result)
+      setVerified(null)
+    })
+
+  const doVerify = () =>
+    withLoading('verify', async () => {
+      const M = moduleRef.current!
+      const data = new TextEncoder().encode(input)
+      const result = hsm_aesCmac(M, hSessionRef.current, keyHandle!, data)
+      setVerified(toHex(result) === toHex(mac!))
+    })
+
+  return (
+    <div className="space-y-4">
+      <div className="glass-panel p-4 space-y-3">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Key</p>
+        <div className="flex items-center gap-2 flex-wrap">
+          {([128, 192, 256] as const).map((b) => (
+            <Button
+              key={b}
+              variant="ghost"
+              size="sm"
+              disabled={anyLoading}
+              onClick={() => {
+                setKeyBits(b)
+                setKeyHandle(null)
+                setMac(null)
+                setVerified(null)
+              }}
+              className={
+                keyBits === b
+                  ? 'bg-primary/20 text-primary text-xs h-7 px-3'
+                  : 'text-muted-foreground text-xs h-7 px-3'
+              }
+            >
+              {b}-bit
+            </Button>
+          ))}
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={anyLoading}
+            onClick={doGenKey}
+            className="ml-auto h-7 text-xs"
+          >
+            {loadingOp === 'gen' && <Loader2 size={12} className="mr-1.5 animate-spin" />}
+            {keyHandle !== null ? `✓ h=${keyHandle}` : 'Generate Key'}
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground font-mono">
+          Output: 16 bytes (128 bits) · mechanism: 0x108a
+        </p>
+      </div>
+
+      <div className="glass-panel p-4 space-y-3">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+          Input Data
+        </p>
+        <textarea
+          className="w-full bg-muted border border-input rounded-lg px-3 py-2 text-sm font-mono resize-none focus:outline-none focus:ring-1 focus:ring-ring"
+          rows={2}
+          value={input}
+          onChange={(e) => {
+            setInput(e.target.value)
+            setMac(null)
+            setVerified(null)
+          }}
+          placeholder="Enter data to authenticate…"
+        />
+      </div>
+
+      <div className="flex gap-2">
+        <Button
+          onClick={doComputeMac}
+          disabled={keyHandle === null || anyLoading || !input.length}
+          className="flex-1"
+        >
+          {loadingOp === 'mac' && <Loader2 size={14} className="mr-2 animate-spin" />}
+          Compute CMAC
+        </Button>
+        <Button
+          variant="outline"
+          onClick={doVerify}
+          disabled={mac === null || anyLoading}
+          className="flex-1"
+        >
+          {loadingOp === 'verify' && <Loader2 size={14} className="mr-2 animate-spin" />}
+          Verify
+        </Button>
+      </div>
+
+      {error && <ErrorAlert message={error} />}
+
+      {mac && (
+        <div className="glass-panel p-4 space-y-3">
+          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+            MAC Result
+          </p>
+          <HsmResultRow label="CMAC (snippet)" value={hexSnippet(mac, 24)} />
+          <HsmResultRow label="Length" value="16 bytes (128 bits)" mono={false} />
+          {verified !== null && (
+            <div
+              className={`flex items-center gap-2 rounded px-3 py-2 text-xs font-mono ${verified ? 'bg-status-success/10 text-status-success' : 'bg-status-error/10 text-status-error'}`}
+            >
+              {verified ? <CheckCircle size={13} /> : <XCircle size={13} />}
+              {verified
+                ? 'MAC verified — C_Verify returned CKR_OK'
+                : 'MAC invalid — verification failed'}
+            </div>
+          )}
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">Full CMAC (hex)</p>
+            <p className="text-xs font-mono bg-muted rounded px-3 py-2 break-all text-foreground/80 select-all">
+              {toHex(mac)}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div className="glass-panel p-4 space-y-2">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+          PKCS#11 Call Sequence
+        </p>
+        <div className="space-y-1 text-xs font-mono">
+          <div className="text-muted-foreground">
+            <span className="text-foreground">C_SignInit</span>(hSession, 0x108a /* CKM_AES_CMAC */,
+            hKey) → <span className="text-status-success">CKR_OK</span>
+          </div>
+          <div className="text-muted-foreground">
+            <span className="text-foreground">C_Sign</span>(hSession, pData, dataLen, pMAC, &macLen)
+            → <span className="text-status-success">CKR_OK</span> → 16 bytes
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ── Main panel ──────────────────────────────────────────────────────────────────
 
 export const HsmSymmetricPanel = () => {
@@ -518,6 +927,8 @@ export const HsmSymmetricPanel = () => {
         {/* Sub-panel */}
         {mode === 'aes-gcm' && <AesPanel mode="aes-gcm" />}
         {mode === 'aes-cbc' && <AesPanel mode="aes-cbc" />}
+        {mode === 'aes-ctr' && <AesCtrPanel />}
+        {mode === 'aes-cmac' && <AesCmacPanel />}
         {mode === 'hmac' && <HmacPanel />}
       </div>
     </HsmReadyGuard>

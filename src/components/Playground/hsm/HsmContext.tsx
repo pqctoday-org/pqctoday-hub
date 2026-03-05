@@ -14,6 +14,8 @@ export type HsmFamily =
   | 'rsa'
   | 'ecdsa'
   | 'eddsa'
+  | 'ecdh'
+  | 'kdf'
   | 'aes'
   | 'hmac'
   | 'sha'

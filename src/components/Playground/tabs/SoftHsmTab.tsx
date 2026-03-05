@@ -5,6 +5,7 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
 import { ErrorAlert } from '../../ui/error-alert'
+import { FilterDropdown } from '../../common/FilterDropdown'
 import {
   getSoftHSMModule,
   createLoggingProxy,
@@ -19,9 +20,26 @@ import {
   hsm_generateMLDSAKeyPair,
   hsm_sign,
   hsm_verify,
+  hsm_generateSLHDSAKeyPair,
+  hsm_slhdsaSign,
+  hsm_slhdsaVerify,
   hsm_finalize,
   type Pkcs11LogEntry,
   type MLDSASignOptions,
+  type MLDSAPreHash,
+  type SLHDSAPreHash,
+  CKP_SLH_DSA_SHA2_128S,
+  CKP_SLH_DSA_SHAKE_128S,
+  CKP_SLH_DSA_SHA2_128F,
+  CKP_SLH_DSA_SHAKE_128F,
+  CKP_SLH_DSA_SHA2_192S,
+  CKP_SLH_DSA_SHAKE_192S,
+  CKP_SLH_DSA_SHA2_192F,
+  CKP_SLH_DSA_SHAKE_192F,
+  CKP_SLH_DSA_SHA2_256S,
+  CKP_SLH_DSA_SHAKE_256S,
+  CKP_SLH_DSA_SHA2_256F,
+  CKP_SLH_DSA_SHAKE_256F,
 } from '../../../wasm/softhsm'
 import { useSettingsContext } from '../contexts/SettingsContext'
 import { useHsmContext } from '../hsm/HsmContext'
@@ -40,6 +58,36 @@ const DSA_SIZES: Record<44 | 65 | 87, { pub: number; sig: number }> = {
   65: { pub: 1952, sig: 3293 },
   87: { pub: 2592, sig: 4627 },
 }
+
+// Pre-hash options shared by ML-DSA and SLH-DSA (PKCS#11 v3.2 CKM_HASH_*_DSA_* variants)
+const PREHASH_OPTIONS = [
+  { id: 'sha224', label: 'SHA-224' },
+  { id: 'sha256', label: 'SHA-256' },
+  { id: 'sha384', label: 'SHA-384' },
+  { id: 'sha512', label: 'SHA-512' },
+  { id: 'sha3-224', label: 'SHA3-224' },
+  { id: 'sha3-256', label: 'SHA3-256' },
+  { id: 'sha3-384', label: 'SHA3-384' },
+  { id: 'sha3-512', label: 'SHA3-512' },
+  { id: 'shake128', label: 'SHAKE-128' },
+  { id: 'shake256', label: 'SHAKE-256' },
+]
+
+// SLH-DSA parameter sets (FIPS 205 / PKCS#11 v3.2 CKP_SLH_DSA_*)
+const SLH_DSA_PARAM_SET_OPTIONS = [
+  { id: 'sha2-128s', label: 'SHA2-128s', ckp: CKP_SLH_DSA_SHA2_128S, pub: 32, sig: 7856 },
+  { id: 'shake-128s', label: 'SHAKE-128s', ckp: CKP_SLH_DSA_SHAKE_128S, pub: 32, sig: 7856 },
+  { id: 'sha2-128f', label: 'SHA2-128f', ckp: CKP_SLH_DSA_SHA2_128F, pub: 32, sig: 17088 },
+  { id: 'shake-128f', label: 'SHAKE-128f', ckp: CKP_SLH_DSA_SHAKE_128F, pub: 32, sig: 17088 },
+  { id: 'sha2-192s', label: 'SHA2-192s', ckp: CKP_SLH_DSA_SHA2_192S, pub: 48, sig: 16224 },
+  { id: 'shake-192s', label: 'SHAKE-192s', ckp: CKP_SLH_DSA_SHAKE_192S, pub: 48, sig: 16224 },
+  { id: 'sha2-192f', label: 'SHA2-192f', ckp: CKP_SLH_DSA_SHA2_192F, pub: 48, sig: 35664 },
+  { id: 'shake-192f', label: 'SHAKE-192f', ckp: CKP_SLH_DSA_SHAKE_192F, pub: 48, sig: 35664 },
+  { id: 'sha2-256s', label: 'SHA2-256s', ckp: CKP_SLH_DSA_SHA2_256S, pub: 64, sig: 29792 },
+  { id: 'shake-256s', label: 'SHAKE-256s', ckp: CKP_SLH_DSA_SHAKE_256S, pub: 64, sig: 29792 },
+  { id: 'sha2-256f', label: 'SHA2-256f', ckp: CKP_SLH_DSA_SHA2_256F, pub: 64, sig: 49856 },
+  { id: 'shake-256f', label: 'SHAKE-256f', ckp: CKP_SLH_DSA_SHAKE_256F, pub: 64, sig: 49856 },
+] as const
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -499,7 +547,16 @@ const SoftHsmTabBrowser = () => {
     'preferred'
   )
   const [dsaContext, setDsaContext] = useState('')
-  const [dsaPreHash, setDsaPreHash] = useState<'' | 'sha256' | 'sha512' | 'sha3-256'>('')
+  const [dsaPreHash, setDsaPreHash] = useState<'' | MLDSAPreHash>('')
+
+  // SLH-DSA state
+  const [slhdsaParamSetId, setSlhdsaParamSetId] = useState('sha2-128s')
+  const [slhdsaHandles, setSlhdsaHandles] = useState<{ pub: number; priv: number } | null>(null)
+  const [slhdsaMessage, setSlhdsaMessage] = useState('Hello, PQC World!')
+  const [slhdsaSignature, setSlhdsaSignature] = useState<Uint8Array | null>(null)
+  const [slhdsaVerifyResult, setSlhdsaVerifyResult] = useState<boolean | null>(null)
+  const [slhdsaPreHash, setSlhdsaPreHash] = useState<'' | SLHDSAPreHash>('')
+  const [slhdsaError, setSlhdsaError] = useState<string | null>(null)
 
   // Token created tracking (ref changes don't re-render, so mirror in state)
   const [tokenCreated, setTokenCreated] = useState(false)
@@ -707,6 +764,71 @@ const SoftHsmTabBrowser = () => {
       }
     })
 
+  // ── SLH-DSA actions ──────────────────────────────────────────────────────
+
+  const getSlhdsaParamSetCkp = () =>
+    SLH_DSA_PARAM_SET_OPTIONS.find((o) => o.id === slhdsaParamSetId)?.ckp ?? CKP_SLH_DSA_SHA2_128S
+
+  const changeSlhdsaParamSet = (id: string) => {
+    setSlhdsaParamSetId(id)
+    setSlhdsaHandles(null)
+    setSlhdsaSignature(null)
+    setSlhdsaVerifyResult(null)
+    setSlhdsaError(null)
+  }
+
+  const doSlhdsaGenKeyPair = () =>
+    withLoading('slhdsa_gen', async () => {
+      setSlhdsaError(null)
+      setSlhdsaSignature(null)
+      setSlhdsaVerifyResult(null)
+      try {
+        const M = getM()
+        const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(
+          M,
+          hSessionRef.current,
+          getSlhdsaParamSetCkp()
+        )
+        setSlhdsaHandles({ pub: pubHandle, priv: privHandle })
+      } catch (e) {
+        setSlhdsaError(String(e))
+      }
+    })
+
+  const doSlhdsaSign = () =>
+    withLoading('slhdsa_sign', async () => {
+      setSlhdsaError(null)
+      setSlhdsaVerifyResult(null)
+      try {
+        const M = getM()
+        const opts = slhdsaPreHash ? { preHash: slhdsaPreHash } : undefined
+        const sig = hsm_slhdsaSign(M, hSessionRef.current, slhdsaHandles!.priv, slhdsaMessage, opts)
+        setSlhdsaSignature(sig)
+      } catch (e) {
+        setSlhdsaError(String(e))
+      }
+    })
+
+  const doSlhdsaVerify = () =>
+    withLoading('slhdsa_verify', async () => {
+      setSlhdsaError(null)
+      try {
+        const M = getM()
+        const opts = slhdsaPreHash ? { preHash: slhdsaPreHash } : undefined
+        const ok = hsm_slhdsaVerify(
+          M,
+          hSessionRef.current,
+          slhdsaHandles!.pub,
+          slhdsaMessage,
+          slhdsaSignature!,
+          opts
+        )
+        setSlhdsaVerifyResult(ok)
+      } catch (e) {
+        setSlhdsaError(String(e))
+      }
+    })
+
   const isLoading = (op: string) => loadingOp === op
   const anyLoading = loadingOp !== null
   const sessionOpen = phase === 'session_open'
@@ -741,7 +863,7 @@ const SoftHsmTabBrowser = () => {
             Live WASM — PKCS#11 v3.2
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Real in-browser SoftHSM token · OpenSSL 3.6 · FIPS 203 / 204
+            Real in-browser SoftHSM token · OpenSSL 3.6 · FIPS 203 / 204 / 205
           </p>
         </div>
         <Button
@@ -767,6 +889,10 @@ const SoftHsmTabBrowser = () => {
             setDsaHandles(null)
             setSignature(null)
             setVerifyResult(null)
+            setSlhdsaHandles(null)
+            setSlhdsaSignature(null)
+            setSlhdsaVerifyResult(null)
+            setSlhdsaError(null)
             setLog([])
             setLiveMode(false)
           }}
@@ -963,35 +1089,18 @@ const SoftHsmTabBrowser = () => {
 
           <div>
             <span className="text-xs text-muted-foreground block mb-1">Pre-hash</span>
-            <div className="flex gap-1">
-              {(
-                [
-                  ['', 'Pure'],
-                  ['sha256', 'SHA-256'],
-                  ['sha512', 'SHA-512'],
-                  ['sha3-256', 'SHA3-256'],
-                ] as const
-              ).map(([val, label]) => (
-                <Button
-                  key={val}
-                  variant="ghost"
-                  size="sm"
-                  disabled={!sessionOpen || anyLoading}
-                  onClick={() => {
-                    setDsaPreHash(val as '' | 'sha256' | 'sha512' | 'sha3-256')
-                    setSignature(null)
-                    setVerifyResult(null)
-                  }}
-                  className={
-                    dsaPreHash === val
-                      ? 'bg-primary/20 text-primary text-xs px-2 py-1 h-auto'
-                      : 'text-muted-foreground text-xs px-2 py-1 h-auto'
-                  }
-                >
-                  {label}
-                </Button>
-              ))}
-            </div>
+            <FilterDropdown
+              noContainer
+              items={PREHASH_OPTIONS}
+              selectedId={dsaPreHash || 'All'}
+              onSelect={(id) => {
+                setDsaPreHash(id === 'All' ? '' : (id as MLDSAPreHash))
+                setSignature(null)
+                setVerifyResult(null)
+              }}
+              defaultLabel="Pure"
+              defaultIcon={undefined}
+            />
           </div>
 
           <div>
@@ -1070,6 +1179,122 @@ const SoftHsmTabBrowser = () => {
         )}
 
         {dsaError && <ErrorAlert message={dsaError} />}
+      </div>
+
+      {/* ── SLH-DSA ── */}
+      <div className={`glass-panel p-4 space-y-4 ${!sessionOpen ? 'opacity-50' : ''}`}>
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <h3 className="font-semibold text-sm">SLH-DSA Sign & Verify (FIPS 205)</h3>
+          <FilterDropdown
+            noContainer
+            items={SLH_DSA_PARAM_SET_OPTIONS.map((o) => ({ id: o.id, label: o.label }))}
+            selectedId={slhdsaParamSetId}
+            onSelect={(id) => {
+              if (id !== 'All') changeSlhdsaParamSet(id)
+            }}
+            defaultLabel="SHA2-128s"
+            defaultIcon={undefined}
+          />
+        </div>
+
+        {(() => {
+          const ps = SLH_DSA_PARAM_SET_OPTIONS.find((o) => o.id === slhdsaParamSetId)
+          return ps ? (
+            <div className="text-xs text-muted-foreground font-mono">
+              pub: {ps.pub} B &nbsp;·&nbsp; sig: {ps.sig.toLocaleString()} B
+            </div>
+          ) : null
+        })()}
+
+        <div>
+          <label
+            htmlFor="softhsm-slhdsa-message"
+            className="text-xs text-muted-foreground mb-1 block"
+          >
+            Message
+          </label>
+          <Input
+            id="softhsm-slhdsa-message"
+            value={slhdsaMessage}
+            onChange={(e) => {
+              setSlhdsaMessage(e.target.value)
+              setSlhdsaSignature(null)
+              setSlhdsaVerifyResult(null)
+            }}
+            disabled={!sessionOpen || anyLoading}
+            className="font-mono text-xs"
+          />
+        </div>
+
+        <div className="flex items-center gap-4 flex-wrap">
+          <div>
+            <span className="text-xs text-muted-foreground block mb-1">Pre-hash</span>
+            <FilterDropdown
+              noContainer
+              items={PREHASH_OPTIONS}
+              selectedId={slhdsaPreHash || 'All'}
+              onSelect={(id) => {
+                setSlhdsaPreHash(id === 'All' ? '' : (id as SLHDSAPreHash))
+                setSlhdsaSignature(null)
+                setSlhdsaVerifyResult(null)
+              }}
+              defaultLabel="Pure"
+              defaultIcon={undefined}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!sessionOpen || anyLoading}
+            onClick={doSlhdsaGenKeyPair}
+          >
+            {isLoading('slhdsa_gen') && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            {slhdsaHandles ? '✓ Key Pair' : 'Generate Key Pair'}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!sessionOpen || !slhdsaHandles || anyLoading}
+            onClick={doSlhdsaSign}
+          >
+            {isLoading('slhdsa_sign') && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            Sign
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!sessionOpen || !slhdsaSignature || anyLoading}
+            onClick={doSlhdsaVerify}
+          >
+            {isLoading('slhdsa_verify') && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            Verify
+          </Button>
+        </div>
+
+        <div className="space-y-1.5">
+          <ResultRow label="Signature" bytes={slhdsaSignature} />
+        </div>
+
+        {slhdsaVerifyResult !== null && (
+          <div className="flex items-center gap-2 text-sm font-medium">
+            {slhdsaVerifyResult ? (
+              <>
+                <CheckCircle size={16} className="text-status-success" />
+                <span className="text-status-success">Signature valid</span>
+              </>
+            ) : (
+              <>
+                <XCircle size={16} className="text-status-error" />
+                <span className="text-status-error">Signature invalid</span>
+              </>
+            )}
+          </div>
+        )}
+
+        {slhdsaError && <ErrorAlert message={slhdsaError} />}
       </div>
 
       {/* ── Call Log ── */}

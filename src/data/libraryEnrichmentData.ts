@@ -11,6 +11,15 @@ export interface LibraryEnrichment {
   infrastructureLayers: string[]
   standardizationBodies: string[]
   complianceFrameworks: string[]
+  // v2 dimensions
+  classicalAlgorithms: string[]
+  keyTakeaways: string[]
+  securityLevels: string[]
+  hybridApproaches: string[]
+  performanceConsiderations: string[]
+  targetAudience: string[]
+  implementationPrereqs: string[]
+  relevantFeatures: string[]
 }
 
 export type EnrichmentLookup = Record<string, LibraryEnrichment>
@@ -20,6 +29,15 @@ function splitList(val: string | undefined): string[] {
   if (!val || val === 'None detected') return []
   return val
     .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+}
+
+/** Split a semicolon-separated value into trimmed phrases. Used for multi-phrase fields. */
+function parseSemicolonList(val: string | undefined): string[] {
+  if (!val || val === 'None detected') return []
+  return val
+    .split(';')
     .map((s) => s.trim())
     .filter(Boolean)
 }
@@ -108,6 +126,15 @@ export function parseEnrichmentMarkdown(raw: string): EnrichmentLookup {
       infrastructureLayers: splitList(fields['Infrastructure Layers']),
       standardizationBodies: splitList(fields['Standardization Bodies']),
       complianceFrameworks: splitList(fields['Compliance Frameworks Referenced']),
+      // v2 dimensions
+      classicalAlgorithms: splitList(fields['Classical Algorithms Referenced']),
+      keyTakeaways: parseSemicolonList(fields['Key Takeaways']),
+      securityLevels: splitList(fields['Security Levels & Parameters']),
+      hybridApproaches: splitList(fields['Hybrid & Transition Approaches']),
+      performanceConsiderations: parseSemicolonList(fields['Performance & Size Considerations']),
+      targetAudience: splitList(fields['Target Audience']),
+      implementationPrereqs: parseSemicolonList(fields['Implementation Prerequisites']),
+      relevantFeatures: splitList(fields['Relevant PQC Today Features']),
     }
   }
 
@@ -127,7 +154,15 @@ export function hasSubstantiveEnrichment(e: LibraryEnrichment): boolean {
     e.protocols.length ||
     e.infrastructureLayers.length ||
     e.standardizationBodies.length ||
-    e.complianceFrameworks.length
+    e.complianceFrameworks.length ||
+    e.classicalAlgorithms.length ||
+    e.keyTakeaways.length ||
+    e.securityLevels.length ||
+    e.hybridApproaches.length ||
+    e.performanceConsiderations.length ||
+    e.targetAudience.length ||
+    e.implementationPrereqs.length ||
+    e.relevantFeatures.length
   )
 }
 

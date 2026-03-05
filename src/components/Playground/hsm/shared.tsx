@@ -64,6 +64,8 @@ export const makeHsmKeyLabel = (family: HsmFamily, role: HsmKeyRole, variant?: s
     rsa: 'RSA',
     ecdsa: 'ECDSA',
     eddsa: 'EdDSA',
+    ecdh: 'ECDH',
+    kdf: 'KDF',
     aes: 'AES',
     hmac: 'HMAC',
     sha: 'SHA',

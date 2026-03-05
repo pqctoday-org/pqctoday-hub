@@ -27,6 +27,14 @@ documents_processed: 3
 - **Infrastructure Layers**: PKI, Code Signing, Firmware, IoT, Cloud, 5G
 - **Standardization Bodies**: IETF, NCSC
 - **Compliance Frameworks Referenced**: GSMA NG.116
+- **Classical Algorithms Referenced**: RSA, ECDSA
+- **Key Takeaways**: Operators should adopt hybrid TLS by 2026; 5G core requires ML-KEM for key exchange
+- **Security Levels & Parameters**: NIST L1, NIST L3
+- **Hybrid & Transition Approaches**: Hybrid TLS, dual-stack deployment
+- **Performance & Size Considerations**: ML-KEM-768 adds 1088 bytes to TLS handshake
+- **Target Audience**: Security Architect, Developer
+- **Implementation Prerequisites**: OpenSSL 3.5+; 5G core upgrade
+- **Relevant PQC Today Features**: Compliance, tls-basics, 5g-security
 
 ---
 
@@ -167,9 +175,95 @@ describe('parseEnrichmentMarkdown', () => {
       'CCCS ITSM.40.001',
     ])
   })
+
+  // v2 dimension tests
+  it('parses classical algorithms as comma-separated list', () => {
+    expect(lookup['GSMA PQ.03 PQC Guidelines'].classicalAlgorithms).toEqual(['RSA', 'ECDSA'])
+  })
+
+  it('parses key takeaways as semicolon-separated list', () => {
+    expect(lookup['GSMA PQ.03 PQC Guidelines'].keyTakeaways).toEqual([
+      'Operators should adopt hybrid TLS by 2026',
+      '5G core requires ML-KEM for key exchange',
+    ])
+  })
+
+  it('parses security levels as comma-separated list', () => {
+    expect(lookup['GSMA PQ.03 PQC Guidelines'].securityLevels).toEqual(['NIST L1', 'NIST L3'])
+  })
+
+  it('parses hybrid approaches as comma-separated list', () => {
+    expect(lookup['GSMA PQ.03 PQC Guidelines'].hybridApproaches).toEqual([
+      'Hybrid TLS',
+      'dual-stack deployment',
+    ])
+  })
+
+  it('parses performance considerations as semicolon-separated list', () => {
+    expect(lookup['GSMA PQ.03 PQC Guidelines'].performanceConsiderations).toEqual([
+      'ML-KEM-768 adds 1088 bytes to TLS handshake',
+    ])
+  })
+
+  it('parses target audience as comma-separated list', () => {
+    expect(lookup['GSMA PQ.03 PQC Guidelines'].targetAudience).toEqual([
+      'Security Architect',
+      'Developer',
+    ])
+  })
+
+  it('parses implementation prerequisites as semicolon-separated list', () => {
+    expect(lookup['GSMA PQ.03 PQC Guidelines'].implementationPrereqs).toEqual([
+      'OpenSSL 3.5+',
+      '5G core upgrade',
+    ])
+  })
+
+  it('parses relevant features as comma-separated list', () => {
+    expect(lookup['GSMA PQ.03 PQC Guidelines'].relevantFeatures).toEqual([
+      'Compliance',
+      'tls-basics',
+      '5g-security',
+    ])
+  })
+
+  it('returns empty arrays for missing v2 fields (backward compat)', () => {
+    const bip = lookup['BIP-141']
+    expect(bip.classicalAlgorithms).toEqual([])
+    expect(bip.keyTakeaways).toEqual([])
+    expect(bip.securityLevels).toEqual([])
+    expect(bip.hybridApproaches).toEqual([])
+    expect(bip.performanceConsiderations).toEqual([])
+    expect(bip.targetAudience).toEqual([])
+    expect(bip.implementationPrereqs).toEqual([])
+    expect(bip.relevantFeatures).toEqual([])
+  })
+
+  it('returns empty arrays for entries without v2 fields (India)', () => {
+    const india = lookup['India-DST-Quantum-Safe-Roadmap-2026']
+    expect(india.classicalAlgorithms).toEqual([])
+    expect(india.keyTakeaways).toEqual([])
+    expect(india.securityLevels).toEqual([])
+    expect(india.hybridApproaches).toEqual([])
+    expect(india.performanceConsiderations).toEqual([])
+    expect(india.targetAudience).toEqual([])
+    expect(india.implementationPrereqs).toEqual([])
+    expect(india.relevantFeatures).toEqual([])
+  })
 })
 
 describe('hasSubstantiveEnrichment', () => {
+  const EMPTY_V2 = {
+    classicalAlgorithms: [] as string[],
+    keyTakeaways: [] as string[],
+    securityLevels: [] as string[],
+    hybridApproaches: [] as string[],
+    performanceConsiderations: [] as string[],
+    targetAudience: [] as string[],
+    implementationPrereqs: [] as string[],
+    relevantFeatures: [] as string[],
+  }
+
   it('returns true when mainTopic is set', () => {
     const result = hasSubstantiveEnrichment({
       mainTopic: 'Something useful',
@@ -183,6 +277,7 @@ describe('hasSubstantiveEnrichment', () => {
       infrastructureLayers: [],
       standardizationBodies: [],
       complianceFrameworks: [],
+      ...EMPTY_V2,
     })
     expect(result).toBe(true)
   })
@@ -200,6 +295,7 @@ describe('hasSubstantiveEnrichment', () => {
       infrastructureLayers: [],
       standardizationBodies: [],
       complianceFrameworks: [],
+      ...EMPTY_V2,
     })
     expect(result).toBe(true)
   })
@@ -217,7 +313,33 @@ describe('hasSubstantiveEnrichment', () => {
       infrastructureLayers: [],
       standardizationBodies: [],
       complianceFrameworks: [],
+      ...EMPTY_V2,
     })
     expect(result).toBe(false)
+  })
+
+  it('returns true when only v2 dimensions have items', () => {
+    const result = hasSubstantiveEnrichment({
+      mainTopic: '',
+      pqcAlgorithms: [],
+      quantumThreats: [],
+      migrationTimeline: null,
+      regionsAndBodies: null,
+      leadersContributions: [],
+      pqcProducts: [],
+      protocols: [],
+      infrastructureLayers: [],
+      standardizationBodies: [],
+      complianceFrameworks: [],
+      classicalAlgorithms: ['RSA'],
+      keyTakeaways: [],
+      securityLevels: [],
+      hybridApproaches: [],
+      performanceConsiderations: [],
+      targetAudience: [],
+      implementationPrereqs: [],
+      relevantFeatures: [],
+    })
+    expect(result).toBe(true)
   })
 })
