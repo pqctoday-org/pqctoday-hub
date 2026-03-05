@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Filter, Loader2 } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
@@ -64,6 +64,15 @@ const KBKDF_PRFS = [
   { label: 'HMAC-SHA-512', value: CKM_SHA512 },
   { label: 'AES-CMAC', value: CKM_AES_CMAC },
 ]
+
+// OpenSSL KBKDF requires the feedback IV to be exactly h bytes (MAC output size).
+// PROV_R_INVALID_SEED_LENGTH is raised if iv_len != 0 && iv_len != h.
+const PRF_SEED_BYTES: Record<number, number> = {
+  [CKM_SHA256]: 32,
+  [CKM_SHA384]: 48,
+  [CKM_SHA512]: 64,
+  [CKM_AES_CMAC]: 16,
+}
 
 const OUTPUT_LENS = [16, 24, 32] as const
 
@@ -424,7 +433,13 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
   const [prf, setPrf] = useState(CKM_SHA256)
   const [label, setLabel] = useState('pqc-key-derivation')
   const [context, setContext] = useState(() => randomHex(8))
-  const [iv, setIv] = useState(() => randomHex(16))
+  // IV must be exactly h bytes (MAC output size) or absent — OpenSSL enforces this
+  const [iv, setIv] = useState(() => randomHex(PRF_SEED_BYTES[CKM_SHA256] ?? 32))
+
+  // Keep IV length in sync with selected PRF
+  useEffect(() => {
+    if (feedback) setIv(randomHex(PRF_SEED_BYTES[prf] ?? 32))
+  }, [prf, feedback])
   const [outLen, setOutLen] = useState<16 | 24 | 32>(32)
   const [baseKeyHandle, setBaseKeyHandle] = useState<number | null>(null)
   const [derived, setDerived] = useState<Uint8Array | null>(null)
