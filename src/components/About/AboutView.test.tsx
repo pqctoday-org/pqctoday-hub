@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { AboutView } from './AboutView'
 import '@testing-library/jest-dom'
 
@@ -17,6 +17,8 @@ vi.mock('framer-motion', () => ({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  AnimatePresence: ({ children }: any) => <>{children}</>,
 }))
 
 // Mock window.location.href for mailto links
@@ -43,10 +45,10 @@ describe('AboutView', () => {
     expect(titles.length).toBeGreaterThan(0)
     expect(titles[0]).toBeInTheDocument()
 
-    expect(screen.getAllByText('Submit Change Request').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Give Kudos').length).toBeGreaterThan(0)
-    expect(screen.getByText('Software Bill of Materials (SBOM)')).toBeInTheDocument()
-    expect(screen.getByText('Open Source License')).toBeInTheDocument()
+    expect(screen.getAllByText('Community').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Platform Data').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Software Bill of Materials (SBOM)').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Open Source License').length).toBeGreaterThan(0)
   })
 
   it('renders the SBOM list correctly', () => {
@@ -59,47 +61,34 @@ describe('AboutView', () => {
     expect(screen.getByText('Tailwind CSS')).toBeInTheDocument()
   })
 
-  it('handles Change Request form submission', () => {
+  it('renders community discussion links', () => {
     render(<AboutView />)
 
-    // Fill out form
-    const featureSelect = screen.getByLabelText('Feature')
-    fireEvent.change(featureSelect, { target: { value: 'Timeline' } })
+    expect(screen.getAllByText('Community').length).toBeGreaterThan(0)
+    expect(
+      screen.getAllByText('Join the conversation on GitHub Discussions').length
+    ).toBeGreaterThan(0)
 
-    const descInput = screen.getByLabelText('Description')
-    fireEvent.change(descInput, { target: { value: 'Test request' } })
+    // Discussion category labels from DISCUSSIONS constant (mobile+desktop duplicated)
+    expect(screen.getAllByText('Contribute').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Ideas').length).toBeGreaterThan(0)
 
-    const submitBtn = screen.getByText('Send Request')
-    fireEvent.click(submitBtn)
-
-    // Check if mailto link was triggered
-    expect(window.location.href).toContain('mailto:submitchangerequest@pqctoday.com')
-    expect(window.location.href).toContain('Test%20request')
+    // All community links should open in a new tab
+    const communityLinks = screen
+      .getAllByRole('link')
+      .filter((l) => l.getAttribute('href')?.includes('github.com/pqctoday'))
+    expect(communityLinks.length).toBeGreaterThan(0)
+    communityLinks.forEach((link) => {
+      expect(link).toHaveAttribute('target', '_blank')
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+    })
   })
 
-  it('handles Kudos form interactions', () => {
+  it('renders platform data section', () => {
     render(<AboutView />)
 
-    // Toggle a like
-    // We need to find the specific checkbox or label. The labels contain the text.
-    // The structure is label > input[type=checkbox] + span.
-    // We can click the text.
-
-    // Find "Timeline" under "What do you like?"
-    // Since there are multiple "Timeline" texts (in features list, in change request, etc), be specific.
-    // The Kudos section has specific headings.
-
-    const likeTimeline = screen.getAllByText('Timeline')[1] // Crude index access, but effective given the structure
-    fireEvent.click(likeTimeline)
-
-    const msgInput = screen.getByLabelText('Message')
-    fireEvent.change(msgInput, { target: { value: 'Great job!' } })
-
-    const sendBtn = screen.getByText('Send Kudos')
-    fireEvent.click(sendBtn)
-
-    expect(window.location.href).toContain('mailto:kudos@pqctoday.com')
-    expect(window.location.href).toContain('Great%20job!')
+    expect(screen.getAllByText('Platform Data').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Curated datasets powering every page').length).toBeGreaterThan(0)
   })
 
   it('verifies License section link', () => {
