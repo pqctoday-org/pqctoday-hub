@@ -9396,3 +9396,33 @@ enrichment_method: ollama-qwen3.5:27b
 - **Relevant PQC Today Features**: Assess, Migrate, Compliance, Algorithms, hsm-pqc, tls-basics, vpn-ssh-pqc, pqc-risk-management
 
 ---
+
+## RFC 9420
+
+- **Reference ID**: RFC 9420
+- **Title**: The Messaging Layer Security (MLS) Protocol
+- **Authors**: IETF MLS
+- **Publication Date**: 2023-07-01
+- **Last Updated**: 2023-07-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: Specification of the Messaging Layer Security (MLS) protocol for efficient asynchronous group key establishment with forward secrecy and post-compromise security.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: R. Barnes; B. Beurdouche; R. Robert; J. Millican; E. Omara; K. Cohn-Gordon
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: MLS; HPKE; TLS; Double Ratchet; Signal
+- **Infrastructure Layers**: Authentication Service; Delivery Service; Key Management
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); IESG
+- **Compliance Frameworks Referenced**: BCP 78; BCP 14; RFC2119; RFC8174; Revised BSD License
+- **Classical Algorithms Referenced**: HMAC; AEAD; SHA-256
+- **Key Takeaways**: MLS enables asynchronous group key establishment with costs scaling logarithmically with group size; The protocol provides forward secrecy and post-compromise security for groups ranging from two to thousands of members; MLS uses a tree-based key encapsulation mechanism (TreeKEM) based on HPKE; Group state evolves through epochs where each epoch depends on its predecessor; Implementations must handle variable-size vector length headers using specific integer encodings.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: hybrid public key encryption (HPKE); GREASE approach for extensibility
+- **Performance & Size Considerations**: Costs scale as the log of the group size; Vector lengths up to 2^30 bytes; Integers encoded in 1, 2, or 4 bytes representing 6-, 14-, or 30-bit values
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: Support for TLS presentation language; Variable-length integer encoding based on RFC9000; Authentication Service and Delivery Service infrastructure
+- **Relevant PQC Today Features**: Algorithms, hybrid-crypto, crypto-agility, tls-basics, merkle-tree-certs
+
+---
