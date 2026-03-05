@@ -175,6 +175,26 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     keySize: 'Variable (1–512 bytes)',
     pkcs11Version: 'v3.2',
   },
+  {
+    id: 'ckm-sp800-108-feedback-kdf',
+    name: 'CKM_SP800_108_FEEDBACK_KDF',
+    type: 'classical',
+    mechanismCode: '0x000003ad',
+    description:
+      'NIST SP 800-108 Feedback mode KBKDF — K(i) = PRF(Ki, K(i−1) ∥ Label ∥ Context). Optional IV seed for initial K(0).',
+    keySize: 'Variable (1–512 bytes)',
+    pkcs11Version: 'v3.2',
+  },
+  {
+    id: 'ckm-ecdh1-cofactor-derive',
+    name: 'CKM_ECDH1_COFACTOR_DERIVE',
+    type: 'classical',
+    mechanismCode: '0x00001051',
+    description:
+      'Cofactor ECDH key agreement — multiplies shared secret by curve cofactor before KDF. Eliminates small-subgroup attacks on non-prime-order curves.',
+    keySize: 'EC curve order (P-256/384/521)',
+    pkcs11Version: 'v3.2',
+  },
   // PQC — PKCS#11 v3.2 CSD01 mechanisms (OASIS pkcs11t.h)
   {
     id: 'ckm-ml-kem-key-pair-gen',

@@ -1094,6 +1094,7 @@ export const CKM_ECDSA_SHA3_256 = 0x1048
 export const CKM_ECDSA_SHA3_384 = 0x1049
 export const CKM_ECDSA_SHA3_512 = 0x104a
 export const CKM_ECDH1_DERIVE = 0x1050
+export const CKM_ECDH1_COFACTOR_DERIVE = 0x1051 // PKCS#11 v3.2 §2.3.2 — cofactor ECDH
 export const CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x1055
 export const CKM_EDDSA = 0x1057
 
@@ -1703,6 +1704,45 @@ export const hsm_ecdhDerive = (
   }
 }
 
+/**
+ * ECDH1 cofactor key derivation via C_DeriveKey(CKM_ECDH1_COFACTOR_DERIVE) (PKCS#11 v3.2 §2.3.2).
+ * Same parameters as hsm_ecdhDerive() but uses cofactor multiplication.
+ * For NIST P-curves (cofactor = 1) the result is identical to standard ECDH.
+ */
+export const hsm_ecdhCofactorDerive = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  peerPubBytes: Uint8Array,
+  kdf: number = CKD_NULL,
+  sharedData?: Uint8Array,
+  keyLen = 32
+): number => {
+  const dp = buildECDH1DeriveParams(M, peerPubBytes, kdf, sharedData)
+  const mech = buildMech(M, CKM_ECDH1_COFACTOR_DERIVE, dp.ptr, dp.len)
+  const derivedTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_VALUE_LEN, ulongVal: keyLen },
+  ])
+  const derivedHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DeriveKey(hSession, mech, privHandle, derivedTpl.ptr, 6, derivedHPtr),
+      'C_DeriveKey(ECDH1_COFACTOR)'
+    )
+    return readUlong(M, derivedHPtr)
+  } finally {
+    M._free(mech)
+    dp.allocPtrs.forEach((p) => M._free(p))
+    freeTemplate(M, derivedTpl, 6)
+    M._free(derivedHPtr)
+  }
+}
+
 // ── PBKDF2 helpers ────────────────────────────────────────────────────────────
 
 /**
@@ -1927,6 +1967,95 @@ export const hsm_kbkdf = (
     M._free(dataParams)
     M._free(counterFmt)
     if (fixedPtr) M._free(fixedPtr)
+    freeTemplate(M, derivedTpl, 6)
+    M._free(derivedHPtr)
+  }
+}
+
+/**
+ * NIST SP 800-108 Feedback KDF via C_DeriveKey(CKM_SP800_108_FEEDBACK_KDF) (PKCS#11 v3.2 §2.44.2).
+ * prfType: CKM_SHA256_HMAC (default), CKM_SHA384_HMAC, CKM_AES_CMAC, etc.
+ * fixedInput: optional label/context bytes (CK_SP800_108_BYTE_ARRAY data params).
+ * iv: optional feedback seed/IV (maps to CK_SP800_108_FEEDBACK_KDF_PARAMS.pIV).
+ * keyLen: derived key length in bytes (default 32).
+ * Returns derived key as Uint8Array.
+ */
+export const hsm_kbkdfFeedback = (
+  M: SoftHSMModule,
+  hSession: number,
+  baseKeyHandle: number,
+  prfType: number,
+  fixedInput?: Uint8Array,
+  iv?: Uint8Array,
+  keyLen = 32
+): Uint8Array => {
+  // CK_SP800_108_FEEDBACK_KDF_PARAMS layout (28 bytes on 32-bit WASM):
+  //   prfType          CK_ULONG  (4)
+  //   ulNumberOfDataParams CK_ULONG (4)
+  //   pDataParams      CK_VOID_PTR (4)
+  //   ulIVLen          CK_ULONG  (4)
+  //   pIV              CK_BYTE_PTR (4)
+  //   ulAdditionalDerivedKeys CK_ULONG (4)
+  //   pAdditionalDerivedKeys  CK_VOID_PTR (4)
+  // Total: 28 bytes
+
+  // Build data params array (1 BYTE_ARRAY entry if fixedInput provided)
+  const CK_SP800_108_BYTE_ARRAY = 0x00000004
+  let dataParams = 0
+  let numDataParams = 0
+  let fixedPtr = 0
+  if (fixedInput && fixedInput.length > 0) {
+    numDataParams = 1
+    // CK_PRF_DATA_PARAM: type(4) + pValue(4) + ulValueLen(4) = 12 bytes
+    dataParams = M._malloc(12)
+    fixedPtr = M._malloc(fixedInput.length)
+    M.HEAPU8.set(fixedInput, fixedPtr)
+    M.setValue(dataParams + 0, CK_SP800_108_BYTE_ARRAY, 'i32')
+    M.setValue(dataParams + 4, fixedPtr, 'i32')
+    M.setValue(dataParams + 8, fixedInput.length, 'i32')
+  }
+
+  // Write IV if provided
+  let ivPtr = 0
+  const ivLen = iv ? iv.length : 0
+  if (iv && iv.length > 0) {
+    ivPtr = M._malloc(iv.length)
+    M.HEAPU8.set(iv, ivPtr)
+  }
+
+  // Build CK_SP800_108_FEEDBACK_KDF_PARAMS (28 bytes)
+  const kdfParams = M._malloc(28)
+  M.setValue(kdfParams + 0, prfType, 'i32') // prfType
+  M.setValue(kdfParams + 4, numDataParams, 'i32') // ulNumberOfDataParams
+  M.setValue(kdfParams + 8, dataParams, 'i32') // pDataParams
+  M.setValue(kdfParams + 12, ivLen, 'i32') // ulIVLen
+  M.setValue(kdfParams + 16, ivPtr, 'i32') // pIV
+  M.setValue(kdfParams + 20, 0, 'i32') // ulAdditionalDerivedKeys = 0
+  M.setValue(kdfParams + 24, 0, 'i32') // pAdditionalDerivedKeys = NULL
+
+  const mech = buildMech(M, CKM_SP800_108_FEEDBACK_KDF, kdfParams, 28)
+  const derivedTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_VALUE_LEN, ulongVal: keyLen },
+  ])
+  const derivedHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DeriveKey(hSession, mech, baseKeyHandle, derivedTpl.ptr, 6, derivedHPtr),
+      'C_DeriveKey(SP800-108 Feedback KDF)'
+    )
+    const keyHandle = readUlong(M, derivedHPtr)
+    return hsm_extractKeyValue(M, hSession, keyHandle)
+  } finally {
+    M._free(mech)
+    M._free(kdfParams)
+    if (dataParams) M._free(dataParams)
+    if (fixedPtr) M._free(fixedPtr)
+    if (ivPtr) M._free(ivPtr)
     freeTemplate(M, derivedTpl, 6)
     M._free(derivedHPtr)
   }
