@@ -202,10 +202,13 @@ module.exports = Object.freeze({
   CKK_SHA512_256_HMAC: 0x00000044,
   CKK_SHA512_T_HMAC: 0x00000045,
   CKK_HSS: 0x00000046,
-  // PQC key types (PKCS#11 v3.2)
-  CKK_ML_DSA: 0x00000047,
-  CKK_SLH_DSA: 0x00000048,
+  // Stateful hash-based signatures (PKCS#11 v3.2, pkcs11t.h §437-438)
+  CKK_XMSS: 0x00000047,
+  CKK_XMSSMT: 0x00000048,
+  // PQC key types (PKCS#11 v3.2, FIPS 203/204/205, pkcs11t.h §439-441)
   CKK_ML_KEM: 0x00000049,
+  CKK_ML_DSA: 0x0000004a,
+  CKK_SLH_DSA: 0x0000004b,
   CKK_VENDOR_DEFINED: 0x80000000,
 
   // ── Mechanisms (CKM_*) ───────────────────────────────────────────────────

@@ -8824,3 +8824,575 @@ enrichment_method: ollama-qwen3.5:27b
 - **Relevant PQC Today Features**: vpn-ssh-pqc, crypto-agility, tls-basics
 
 ---
+
+## ANSSI PQC Follow-up Paper
+
+- **Reference ID**: ANSSI PQC Follow-up Paper
+- **Title**: ANSSI Views on Post-Quantum Cryptography Transition (2023 Follow-up)
+- **Authors**: ANSSI France
+- **Publication Date**: 2023-12-01
+- **Last Updated**: 2023-12-01
+- **Document Status**: Position Paper
+- **Main Topic**: None detected
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: None detected
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: None detected
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: None detected
+- **Extraction Note**: No source text available
+
+---
+
+## UK-NCSC-PQC-Whitepaper-2024
+
+- **Reference ID**: UK-NCSC-PQC-Whitepaper-2024
+- **Title**: NCSC White Paper — Next Steps in Preparing for Post-Quantum Cryptography
+- **Authors**: NCSC UK; UK National Cyber Security Centre
+- **Publication Date**: 2024-11-01
+- **Last Updated**: 2024-11-01
+- **Document Status**: Published
+- **Main Topic**: None detected
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: None detected
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: None detected
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: None detected
+- **Extraction Note**: No source text available
+
+---
+
+## RFC 4301
+
+- **Reference ID**: RFC 4301
+- **Title**: Security Architecture for the Internet Protocol
+- **Authors**: Stephen Kent; Karen Seo (BBN Technologies)
+- **Publication Date**: 2005-12-01
+- **Last Updated**: 2005-12-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: This document specifies the base architecture and security services for IPsec at the IP layer for both IPv4 and IPv6 environments.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: S. Kent; K. Seo; Charlie Lynn (dedicated for significant contributions to IPsec documents)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IPsec, Authentication Header (AH), Encapsulating Security Payload (ESP), Internet Key Exchange (IKE), IKEv2, IPv4, IPv6, ICMP
+- **Infrastructure Layers**: Key Management; Security Associations; Security Policy Database (SPD); Security Association Database (SAD); Peer Authorization Database (PAD)
+- **Standardization Bodies**: IETF (Internet Engineering Task Force implied by RFC context and Network Working Group); Internet Society
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: IPsec provides security services including access control, integrity, authentication, replay detection, and confidentiality at the IP layer; The architecture is designed to be cryptographic algorithm independent to allow selection of different algorithm sets; Default algorithms for AH/ESP and IKEv2 are specified in separate documents to facilitate updates without changing core protocol specs; Implementations must support manual and automated key management techniques; The document obsoletes RFC 2401 and defines the fundamental components of IPsec security architecture.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; System Administrator; Technically adept users
+- **Implementation Prerequisites**: Familiarity with Internet Protocol (IP); Related networking technology; General information system security terms and concepts
+- **Relevant PQC Today Features**: crypto-agility, vpn-ssh-pqc, tls-basics
+
+---
+
+## RFC 4303
+
+- **Reference ID**: RFC 4303
+- **Title**: IP Encapsulating Security Payload (ESP)
+- **Authors**: Stephen Kent (BBN Technologies)
+- **Publication Date**: 2005-12-01
+- **Last Updated**: 2005-12-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: This document specifies the Encapsulating Security Payload (ESP) protocol for providing confidentiality, data origin authentication, integrity, and anti-replay services in IPv4 and IPv6.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: S. Kent
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IP Encapsulating Security Payload (ESP), IPv4, IPv6, IP Authentication Header (AH)
+- **Infrastructure Layers**: Key Management, Security Associations
+- **Standardization Bodies**: Internet Society, Network Working Group
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Cipher Block Chaining (CBC)
+- **Key Takeaways**: ESP supports three security service combinations: confidentiality-only, integrity-only, and both; Integrity-only ESP must be supported as a negotiable option; Anti-replay service requires the selection of the integrity service; Traffic flow confidentiality is effective primarily in tunnel mode between gateways with sufficient masking traffic; Encryption-only provides defense against passive attackers but may be insecure against active attacks without strong integrity mechanisms.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Padding 0-255 bytes; Extended (64-bit) Sequence Number available
+- **Target Audience**: Security Architect, Developer, Network Engineer
+- **Implementation Prerequisites**: Familiarity with Security Architecture for the Internet Protocol; Support for negotiation of Extended Sequence Number feature in SA management protocols
+- **Relevant PQC Today Features**: vpn-ssh-pqc, crypto-agility, tls-basics
+
+---
+
+## RFC 5280
+
+- **Reference ID**: RFC 5280
+- **Title**: Internet X.509 Public Key Infrastructure Certificate and CRL Profile
+- **Authors**: D. Cooper; S. Santesson; S. Farrell; S. Boeyen; R. Housley; W. Polk
+- **Publication Date**: 2008-05-01
+- **Last Updated**: 2008-05-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: This document profiles the X.509 v3 certificate and X.509 v2 certificate revocation list formats, extensions, and path validation procedures for the Internet PKI.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: D. Cooper; S. Santesson; S. Farrell; S. Boeyen; R. Housley; W. Polk
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: X.509; PEM
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: IETF; ISO/IEC/ITU-T; ANSI
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; DSA
+- **Key Takeaways**: Implementations are not required to use any particular cryptographic algorithms but must follow encoding rules if using specified algorithms; Enhanced support for internationalized names is specified with rules for IDNs, IRIs, and distinguished names; The path validation algorithm no longer tracks the criticality of certificate policies extensions in a chain; Use of the privateKeyUsagePeriod extension is neither deprecated nor recommended for the Internet PKI; Security considerations address risks of circular dependencies in CRL distribution points and authority information access.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: ASN.1 1988 syntax support; Conformance to RFC3279, RFC4055, and RFC4491 for algorithm identification if used; Support for internationalized name encoding rules per RFC3490, RFC3987, and RFC4518
+- **Relevant PQC Today Features**: pki-workshop; tls-basics; crypto-agility; migration-program
+
+---
+
+## RFC 6962
+
+- **Reference ID**: RFC 6962
+- **Title**: Certificate Transparency
+- **Authors**: Ben Laurie; Adam Langley; Emilia Kasper (Google)
+- **Publication Date**: 2013-06-01
+- **Last Updated**: 2013-06-01
+- **Document Status**: Experimental
+- **Main Topic**: An experimental protocol for publicly logging TLS certificates in append-only Merkle trees to enable auditing of certificate authority activity and detection of misissued certificates.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: B. Laurie; A. Langley; E. Kasper
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); Internet Engineering Steering Group (IESG)
+- **Compliance Frameworks Referenced**: BCP 78; Simplified BSD License
+- **Classical Algorithms Referenced**: SHA-256
+- **Key Takeaways**: Certificate Transparency logs provide public auditability to detect misissued TLS certificates; Merkle Hash Trees ensure the append-only property of logs and allow efficient consistency proofs; Clients can require Signed Certificate Timestamps in TLS handshakes to verify certificate inclusion; Monitors can regularly query logs to check for unexpected certificate issuance for specific domains; The protocol is experimental and obsoleted by RFC 9162.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Merkle Tree Hash output is a single 32-byte value
+- **Target Audience**: Security Architect; Developer; Compliance Officer; Researcher
+- **Implementation Prerequisites**: SHA-256 hashing algorithm; TLS extension support for Signed Certificate Timestamps; Merkle Tree implementation
+- **Relevant PQC Today Features**: merkle-tree-certs; tls-basics; pki-workshop; crypto-agility
+
+---
+
+## RFC 8017
+
+- **Reference ID**: RFC 8017
+- **Title**: PKCS #1: RSA Cryptography Specifications Version 2.2
+- **Authors**: K. Moriarty; B. Kaliski; J. Jonsson; A. Rusch
+- **Publication Date**: 2016-11-01
+- **Last Updated**: 2016-11-01
+- **Document Status**: Informational
+- **Main Topic**: This document provides recommendations for implementing public-key cryptography based on the RSA algorithm, including primitives, encryption schemes, signature schemes, and ASN.1 syntax.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: K. Moriarty (Editor); B. Kaliski; J. Jonsson; A. Rusch
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); RSA Laboratories
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; SHA-2; MGF1
+- **Key Takeaways**: The document defines RSAES-OAEP and RSASSA-PSS as modern schemes alongside legacy PKCS#1 v1.5 methods; Multi-prime RSA is supported to lower computational costs via parallel modular exponentiations; Change control for PKCS #1 v2.2 has been transferred from RSA Laboratories to the IETF; The specification includes ASN.1 syntax for representing keys and identifying schemes; Recommendations are intended to be compatible with IEEE 1363, IEEE 1363a, and ANSI X9.44 standards
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Multi-prime RSA offers lower computational cost for decryption and signature primitives; Better performance is achieved on multiprocessor platforms where modular exponentiations can be done in parallel
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: Compatibility with IEEE 1363, IEEE 1363a, and ANSI X9.44 standards; Support for multi-prime RSA modulus factors
+- **Relevant PQC Today Features**: Algorithms; tls-basics; pki-workshop; crypto-agility; migration-program
+
+---
+
+## RFC 8446
+
+- **Reference ID**: RFC 8446
+- **Title**: The Transport Layer Security (TLS) Protocol Version 1.3
+- **Authors**: Eric Rescorla (Mozilla)
+- **Publication Date**: 2018-08-01
+- **Last Updated**: 2018-08-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: This document specifies version 1.3 of the Transport Layer Security (TLS) protocol to provide secure communication channels with simplified handshakes and modern cryptographic requirements.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: E. Rescorla
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.3, TLS 1.2
+- **Infrastructure Layers**: PKI; Key Management
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); Internet Engineering Steering Group (IESG)
+- **Compliance Frameworks Referenced**: BCP 78; Simplified BSD License
+- **Classical Algorithms Referenced**: RSA; ECDSA; EdDSA; Diffie-Hellman; Elliptic Curve Diffie-Hellman; HKDF
+- **Key Takeaways**: TLS 1.3 obsoletes previous versions including RFC 5246 and introduces a simplified handshake protocol; The protocol mandates authentication via asymmetric cryptography or pre-shared keys while ensuring confidentiality and integrity; Implementations must support mandatory cipher suites and extensions defined in the standard; Backward compatibility mechanisms are provided for negotiating with older clients and servers; The record protocol protects traffic using independently protected records with traffic keys.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Backward Compatibility Mode; Negotiating with an Older Server; Negotiating with an Older Client; 0-RTT Backward Compatibility
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: Reliable in-order data stream transport; Support for mandatory-to-implement cipher suites; Support for mandatory-to-implement extensions; Random number generation and seeding capabilities
+- **Relevant PQC Today Features**: tls-basics, crypto-agility, hybrid-crypto, migration-program
+
+---
+
+## RFC 9052
+
+- **Reference ID**: RFC 9052
+- **Title**: CBOR Object Signing and Encryption (COSE): Structures and Process
+- **Authors**: Jim Schaad (August Cellars)
+- **Publication Date**: 2022-08-01
+- **Last Updated**: 2022-08-01
+- **Document Status**: Internet Standard
+- **Main Topic**: Defines the CBOR Object Signing and Encryption (COSE) protocol structures and processes for signatures, MACs, and encryption using CBOR serialization.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: J. Schaad
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: CBOR, JOSE, CoRE, CoAP, CMS
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: IETF, IESG
+- **Compliance Frameworks Referenced**: BCP 78, Revised BSD License
+- **Classical Algorithms Referenced**: ECDSA, ECDH, AES (implied by AEAD/AE context but not explicitly named as algorithm), SHA (implied by digest context but not explicitly named)
+- **Key Takeaways**: COSE provides security services for constrained IoT devices using CBOR serialization; The standard obsoletes RFC 8152 and splits algorithm details into RFC 9053; Countersignature text was removed to be defined in a separate document with corrected security properties; COSE supports store-and-forward or offline protocols but requires online key establishment for online encryption; Binary encodings are used instead of base64url to reduce message size.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Designed for small code size and small message size; CBOR allows direct binary data encoding without base64 conversion.
+- **Target Audience**: Developer, Security Architect, Researcher
+- **Implementation Prerequisites**: RFC 9053 for algorithm details; RFC 8230 for additional algorithm details; BCP 14 terminology interpretation.
+- **Relevant PQC Today Features**: iot-ot-pqc, crypto-agility, tls-basics, api-security-jwt
+
+---
+
+## RFC 9580
+
+- **Reference ID**: RFC 9580
+- **Title**: OpenPGP
+- **Authors**: Paul Wouters; Daniel Huigens; Justus Winter; Niibe Yutaka
+- **Publication Date**: 2024-07-01
+- **Last Updated**: 2024-07-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: This document specifies OpenPGP message formats for encryption, digital signatures, compression, and key management while preparing the ecosystem for PQC signature integration.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: P. Wouters, Ed.; D. Huigens; J. Winter; Y. Niibe
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: OpenPGP
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); Internet Engineering Steering Group (IESG)
+- **Compliance Frameworks Referenced**: BCP 78; Revised BSD License
+- **Classical Algorithms Referenced**: RSA; Elgamal; ECDH; X25519; X448; DSA; ECDSA; EdDSALegacy; Ed25519; Ed448; Camellia; Argon2; AES; SHA-1; CRC24
+- **Key Takeaways**: OpenPGP format obsoletes RFCs 4880, 5581, and 6637 to modernize cryptographic practices; The specification includes algorithm-specific fields for X25519, X448, Ed25519, and Ed448; Implementation must address security flaws related to side channels, traffic analysis, and random number generation; The document defines Version 6 packet formats for public keys and signatures; Ecosystem preparation includes support for PQC signature integration.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: Interoperable applications based on OpenPGP format; Revised BSD License compliance for code components; avoidance of security flaws in implementation
+- **Relevant PQC Today Features**: email-signing, pki-workshop, crypto-agility, algorithms, tls-basics
+
+---
+
+## RFC 9593
+
+- **Reference ID**: RFC 9593
+- **Title**: Announcing Supported Authentication Methods in IKEv2
+- **Authors**: Valery Smyslov
+- **Publication Date**: 2024-07-01
+- **Last Updated**: 2024-07-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: RFC 9593 defines a mechanism for IKEv2 peers to announce supported authentication methods to enable negotiation of PQC signature algorithms and improve interoperability.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: V. Smyslov
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IKEv2, IPsec, IKE_INTERMEDIATE
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: Internet Engineering Task Force (IETF), Internet Engineering Steering Group (IESG)
+- **Compliance Frameworks Referenced**: BCP 78, Revised BSD License
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: IKEv2 lacks native negotiation for authentication methods causing SA establishment failures with multiple credentials; The new SUPPORTED_AUTH_METHODS Notify Message Type allows peers to announce supported methods ordered by preference; Hybrid signature schemes introduce challenges requiring explicit method announcement to avoid selection of unsupported formats; Large notification payloads may trigger IP fragmentation, necessitating the use of IKE_INTERMEDIATE exchange for transmission.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: hybrid schemes, composite signatures
+- **Performance & Size Considerations**: Notify Message Type 16443; variable-size data blob format; risk of IP fragmentation in IKE_SA_INIT response
+- **Target Audience**: Developer, Security Architect, Network Engineer
+- **Implementation Prerequisites**: Support for RFC 7296 (IKEv2); Support for RFC 9242 (IKE_INTERMEDIATE exchange); Support for RFC 7383 (IKE fragmentation)
+- **Relevant PQC Today Features**: hybrid-crypto, crypto-agility, vpn-ssh-pqc, pki-workshop
+
+---
+
+## RFC 9847
+
+- **Reference ID**: RFC 9847
+- **Title**: IANA Registry Updates for TLS and DTLS
+- **Authors**: Joseph A. Salowey; Sean Turner
+- **Publication Date**: 2025-12-01
+- **Last Updated**: 2025-12-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: Updates TLS and DTLS IANA registries by adding a "Discouraged" designation to flag weak or deprecated cryptographic mechanisms while maintaining backward compatibility.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: J. Salowey; S. Turner
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS; DTLS
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); IANA; Internet Engineering Steering Group (IESG)
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: NULL; EXPORT; anon; RC4; DES; IDEA; MD5; SHA-1; SHA-224; SHA-256; SHA-384; SHA-512; KRB5; RC2; PSK; ECDHE_ECDSA; ECDHE_RSA; ECDHE_PSK
+- **Key Takeaways**: IANA registries now include a "D" value to explicitly mark discouraged cryptographic mechanisms; Cipher suites using NULL encryption, EXPORT ciphers, and anon authentication are marked as discouraged due to lack of confidentiality or authentication; Weak algorithms including RC4, DES, IDEA, MD5, and SHA-1 are flagged as not secure for general use; Setting registry values to "Y" or "D" requires IETF Standards Action with Expert Review or IESG Approval; Implementers must consult linked references to determine conditions under which discouraged items should not be used.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: IETF Standards Action with Expert Review or IESG Approval for registry updates; Consultation of linked references for discouraged items
+- **Relevant PQC Today Features**: tls-basics, crypto-agility, algorithms, compliance-strategy
+
+---
+
+## NIST IR 8105
+
+- **Reference ID**: NIST IR 8105
+- **Title**: Report on Post-Quantum Cryptography
+- **Authors**: NIST
+- **Publication Date**: 2016-04-28
+- **Last Updated**: 2016-04-28
+- **Document Status**: Final
+- **Main Topic**: Foundational NIST report examining quantum computing threats to current cryptographic standards and outlining the need for post-quantum cryptography standardization.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Shor's algorithm; Grover's search algorithm; large-scale quantum computers breaking public key cryptosystems
+- **Migration Timeline Info**: Experts predict sufficiently large quantum computers may be built within the next 20 years; migration requires significant effort similar to the 20-year deployment of modern public key cryptography
+- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology (NIST); U.S. Department of Commerce; European Union; Japan
+- **Leaders Contributions Mentioned**: Peter Shor showed quantum computers can efficiently solve integer factorization and discrete log problems; Lily Chen, Stephen Jordan, Yi-Kai Liu, Dustin Moody, Rene Peralta, Ray Perlner, Daniel Smith-Tone are authors of the report
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Public key infrastructure; federal information systems
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST); European Telecommunications Standards Institute (ETSI)
+- **Compliance Frameworks Referenced**: FIPS 186-4; SP800-56A; SP800-56B
+- **Classical Algorithms Referenced**: RSA; Diffie-Hellman key exchange; elliptic curve cryptosystems; ECDSA; ECDH; DSA; AES; SHA-2; SHA-3
+- **Key Takeaways**: Large-scale quantum computers will break current public key cryptosystems based on integer factorization and discrete log problems; symmetric algorithms require larger key sizes to resist Grover's algorithm but remain usable; organizations must focus on crypto agility to facilitate migration to new cryptographic infrastructures; NIST is initiating a standardization process for post-quantum cryptography
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Crypto agility emphasized as a need for agencies to focus on moving to new cryptographic infrastructures
+- **Performance & Size Considerations**: Doubling the key size will be sufficient to preserve security against Grover's algorithm; lattice-based algorithms are described as relatively simple, efficient, and highly parallelizable
+- **Target Audience**: Policy Maker; Security Architect; Researcher; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Threats; Algorithms; Leaders; crypto-agility; migration-program
+
+---
+
+## NIST IR 8309
+
+- **Reference ID**: NIST IR 8309
+- **Title**: Status Report on the Second Round of the NIST Post-Quantum Cryptography Standardization Process
+- **Authors**: NIST
+- **Publication Date**: 2020-07-22
+- **Last Updated**: 2020-07-22
+- **Document Status**: Final
+- **Main Topic**: Status report evaluating 26 second-round candidates and selecting finalists and alternates for the NIST Post-Quantum Cryptography Standardization Process.
+- **PQC Algorithms Covered**: Classic McEliece, CRYSTALS-KYBER, NTRU, SABER, BIKE, FrodoKEM, HQC, NTRU Prime, SIKE, LAC, LEDAcrypt, NewHope, NTS-KEM, ROLLO, Round5, RQC, Three Bears, CRYSTALS-DILITHIUM, FALCON, Rainbow, GeMSS, Picnic, SPHINCS+, LUOV, MQDSS, qTESLA
+- **Quantum Threats Addressed**: Quantum computers threatening public-key cryptosystems based on factoring, discrete logarithms, and elliptic curve cryptography
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology (NIST); U.S. Department of Commerce; federal agencies
+- **Leaders Contributions Mentioned**: Gorjan Alagic; Jacob Alperin-Sheriff; Daniel Apon; David Cooper; Quynh Dang; John Kelsey; Yi-Kai Liu; Carl Miller; Dustin Moody; Rene Peralta; Ray Perlner; Angela Robinson; Daniel Smith-Tone; Larry Bassham; Lily Chen; Thinh Dang; Morris Dworkin; Sara Kerman; Andrew Regenscheid
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
+- **Compliance Frameworks Referenced**: Federal Information Processing Standard (FIPS) 186-4; NIST Special Publication (SP) 800-56A Revision 3; SP 800-56B Revision 2
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: NIST selected 7 finalists and 8 alternates from 26 second-round candidates for the third round of standardization; Finalists include Classic McEliece, CRYSTALS-KYBER, NTRU, SABER for encryption/key-establishment and CRYSTALS-DILITHIUM, FALCON, Rainbow for digital signatures; The process aims to augment existing standards like FIPS 186-4 and SP 800-56A/B with quantum-resistant algorithms; Organizations are encouraged to review draft publications during public comment periods; Federal agencies may use current concepts before companion publications are completed.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Researcher; Policy Maker; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms; Leaders; Timeline; Compliance; Assess
+
+---
+
+## NIST IR 8413
+
+- **Reference ID**: NIST IR 8413
+- **Title**: Status Report on the Third Round of the NIST Post-Quantum Cryptography Standardization Process
+- **Authors**: NIST
+- **Publication Date**: 2022-07-05
+- **Last Updated**: 2022-09-29
+- **Document Status**: Final
+- **Main Topic**: NIST status report on the third round of the Post-Quantum Cryptography Standardization Process detailing algorithm selections and evaluations.
+- **PQC Algorithms Covered**: CRYSTALS-Kyber, CRYSTALS-Dilithium, FALCON, SPHINCS+, BIKE, Classic McEliece, HQC, SIKE, FrodoKEM, NTRU, NTRU Prime, Saber, GeMSS, Picnic, Rainbow
+- **Quantum Threats Addressed**: Risk to public-key cryptosystems based on factoring, discrete logarithms, and elliptic curve cryptography from large-scale quantum computers
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology (NIST); U.S. Department of Commerce; federal agencies
+- **Leaders Contributions Mentioned**: Gorjan Alagic, Daniel Apon, David Cooper, Quynh Dang, Thinh Dang, John Kelsey, Jacob Lichtinger, Yi-Kai Liu, Carl Miller, Dustin Moody, Rene Peralta, Ray Perlner, Angela Robinson, Daniel Smith-Tone, Zuzana Bajcsy, Larry Bassham, Lily Chen, Morris Dworkin, Sara Kerman, Andrew Regenscheid
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
+- **Compliance Frameworks Referenced**: Federal Information Processing Standard (FIPS) 186-4; NIST Special Publication (SP) 800-56A Revision 3; SP 800-56B Revision 2
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: CRYSTALS-Kyber selected as the primary public-key encryption and key-establishment algorithm for standardization; CRYSTALS-Dilithium, FALCON, and SPHINCS+ selected for digital signature standardization with Dilithium recommended as primary; BIKE, Classic McEliece, HQC, and SIKE advanced to a fourth round of evaluation; NIST will issue a new Call for Proposals to diversify the signature portfolio
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Benchmarks provided on x86-64 processors with AVX2 extensions and ARM Cortex-M4 processor; key and ciphertext sizes listed in tables for KEM finalists and alternates; signature sizes listed in tables for signature finalists and alternates
+- **Target Audience**: Security Architect, Researcher, Policy Maker, Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms, Leaders, Timeline, Assess, stateful-signatures
+
+---
+
+## NIST CSWP 39
+
+- **Reference ID**: NIST CSWP 39
+- **Title**: Considerations for Achieving Cryptographic Agility
+- **Authors**: NIST
+- **Publication Date**: 2025-12-19
+- **Last Updated**: 2025-12-19
+- **Document Status**: Final
+- **Main Topic**: Strategies and practices for achieving cryptographic agility to replace and adapt algorithms in protocols, applications, and infrastructure while preserving security during transitions like PQC migration.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: cryptographically relevant quantum computers (CRQCs)
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology (NIST); National Cybersecurity Center of Excellence (NCCoE)
+- **Leaders Contributions Mentioned**: Elaine Barker, Lily Chen, David Cooper, Dustin Moody, Andrew Regenscheid, Murugiah Souppaya, Russ Housley, Sean Turner, William Barker, Bill Newhouse, Karen Kent, Jim Foti, Isabel Van Wyk
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: software; hardware; firmware; infrastructures; application programming interfaces (APIs); software libraries; hardware accelerators
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: DES; Triple DES; AES
+- **Key Takeaways**: Crypto agility is essential for replacing vulnerable algorithms without disrupting operations; The PQC transition requires replacing all public-key algorithms, making it larger in scale than previous transitions; Organizations must adopt a systems approach to enable seamless transitions and limit vulnerable algorithm use; Strategic planning should integrate crypto agility into overall risk management frameworks; Stakeholders including protocol designers, implementers, and executives must coordinate to achieve crypto agility.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid Cryptographic Algorithms; hybrid algorithm to transition to PQC
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Developer; Policy Maker; Researcher; Operations; Compliance Officer
+- **Implementation Prerequisites**: cryptographic inventory; application programming interfaces (APIs) updates; software library updates; hardware replacement for new accelerators
+- **Relevant PQC Today Features**: crypto-agility, hybrid-crypto, pqc-risk-management, migration-program, pqc-governance
+
+---
+
+## NIST NCCoE SP 1800-38A
+
+- **Reference ID**: NIST NCCoE SP 1800-38A
+- **Title**: Migration to Post-Quantum Cryptography: Preparation for Considering the Implementation and Adoption of Quantum Safe Cryptography
+- **Authors**: NIST NCCoE
+- **Publication Date**: 2023-03-01
+- **Last Updated**: 2023-04-01
+- **Document Status**: Preliminary Draft Practice Guide
+- **Main Topic**: Executive summary outlining the NCCoE project scope to prepare organizations for migrating from quantum-vulnerable public-key algorithms to quantum-resistant cryptography through discovery tools and interoperability testing.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum computer-based attacks; future quantum computer-based attacks
+- **Migration Timeline Info**: NIST will standardize the first quantum-resistant algorithms in 2024
+- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology (NIST); U.S. Federal Government
+- **Leaders Contributions Mentioned**: William Newhouse; Murugiah Souppaya; William Barker; Chris Brown
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: QUIC; Transport Layer Security (TLS); Secure Shell (SSH)
+- **Infrastructure Layers**: Hardware Security Modules (HSMs); Software as a Service; continuous integration/continuous delivery development pipeline; end user systems and servers
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Rivest-Shamir-Adleman algorithm (RSA); Elliptic Curve Diffie Hellman (ECDH); Elliptic Curve Digital Signature Algorithm (ECDSA)
+- **Key Takeaways**: Organizations must inventory the breadth and scope of public-key cryptography usage across products, services, and operational environments; New quantum-resistant algorithms are not drop-in replacements due to differences in key size, signature size, and performance characteristics; Discovery tools should be used to detect vulnerable cryptography and inform risk analysis for prioritizing migration actions; Interim hybrid implementations may be necessary to maintain interoperability during the transition from quantum-vulnerable to quantum-resistant algorithms
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: X.509 post-quantum certificate hybrid profiles; interim hybrid implementations
+- **Performance & Size Considerations**: Differences in key size, signature size, error handling, number of execution steps required to perform the algorithm, and key establishment process complexity may affect performance and reliability
+- **Target Audience**: Business decision makers; Chief Information Security Officers; Technology program managers; Security program managers; Privacy program managers; IT professionals
+- **Implementation Prerequisites**: Complete inventory of key partners and cryptography usage locations; identification of application and functional dependencies on public-key cryptography; risk-based playbook for migration involving people, processes, and technology
+- **Relevant PQC Today Features**: pqc-business-case; migration-program; pqc-risk-management; crypto-agility; hsm-pqc
+
+---
+
+## NIST NCCoE SP 1800-38B
+
+- **Reference ID**: NIST NCCoE SP 1800-38B
+- **Title**: Migration to Post-Quantum Cryptography: Quantum Readiness — Cryptographic Discovery
+- **Authors**: NIST NCCoE
+- **Publication Date**: 2023-12-01
+- **Last Updated**: 2023-12-19
+- **Document Status**: Preliminary Draft Practice Guide
+- **Main Topic**: This document provides tools and techniques for cryptographic discovery to identify quantum-vulnerable cryptography as the first step in PQC migration.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology; National Cybersecurity Center of Excellence; State of Maryland; Montgomery County, Maryland
+- **Leaders Contributions Mentioned**: William Newhouse; Murugiah Souppaya; William Barker; Chris Brown; Panos Kampanakis; David McGrew; David Hook; Anne Dames; Raul Garcia; Vladimir Soukharev; Evgeny Gervis; Philip Lafrance; Eunkyung Kim; Changhoon Lee; Anthony Hu; Marc Manzano
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: National Institute of Standards and Technology
+- **Compliance Frameworks Referenced**: NIST Cybersecurity Framework
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations should identify quantum-vulnerable cryptography across their environments as the first step in PQC migration; A multifaceted approach to the discovery process is recommended for most organizations; Functional test plans are available to exercise cryptographic discovery tools and determine baseline capabilities; High-level architectures integrating contributed discovery tools can be re-created by other entities
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Developer, Compliance Officer, Researcher
+- **Implementation Prerequisites**: Access to the repository at https://github.com/usnistgov; Materials lists and configuration files provided in NIST Special Publication 1800 series documents
+- **Relevant PQC Today Features**: Assess, Migrate, crypto-agility, pqc-risk-management, migration-program
+
+---
+
+## NIST CSWP 48
+
+- **Reference ID**: NIST CSWP 48
+- **Title**: Mappings of Migration to PQC Project Capabilities to Risk Framework Documents
+- **Authors**: NIST NCCoE
+- **Publication Date**: 2025-09-18
+- **Last Updated**: 2025-09-18
+- **Document Status**: Initial Public Draft
+- **Main Topic**: This document maps NCCoE Migration to PQC project capabilities to NIST Cybersecurity Framework 2.0 and SP 800-53 security controls to support risk management during migration.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: attacks from a cryptanalytically-relevant quantum computer; quantum computer-based attacks
+- **Migration Timeline Info**: NIST PQC standards published in August 2024
+- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology; U.S. Federal Government
+- **Leaders Contributions Mentioned**: William Newhouse; Murugiah Souppaya; William Barker; Karen Scarfone
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Transport Layer Security (TLS); Secure Shell (SSH); QUIC
+- **Infrastructure Layers**: hardware security modules (HSMs); Certificate Authority Implementations; cryptographic discovery and inventory tools
+- **Standardization Bodies**: National Institute of Standards and Technology; Internet Engineering Task Force (IETF)
+- **Compliance Frameworks Referenced**: NIST Cybersecurity Framework 2.0; Security and Privacy Controls for Information Systems and Organizations (SP 800-53); Special Publication 800-53 Revision 5
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations must use cryptographic discovery and inventory tools to identify where cryptography protects data; Interoperability testing of NIST PQC algorithms is essential for vendors to optimize implementations; Migration planning should leverage risk-based approaches supported by cryptographic inventories; Responsible implementation depends on adherence to security objectives in CSF 2.0 and SP 800-53
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: maximum TLS 1.3 handshake rate for testing profiles
+- **Target Audience**: Security program managers; architects; IT professionals; risk management staff
+- **Implementation Prerequisites**: cryptographic discovery and inventory tools; active and passive cryptographic discovery technologies; working implementations of NIST standardized PQC algorithms
+- **Relevant PQC Today Features**: Assess, Migrate, Compliance, Algorithms, hsm-pqc, tls-basics, vpn-ssh-pqc, pqc-risk-management
+
+---

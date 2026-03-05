@@ -175,12 +175,20 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
           const Icon = meta.icon
 
           return (
-            <button
+            <div
               key={meta.track}
+              role="button"
+              tabIndex={0}
               onClick={() => handleSelectTrack(meta.track)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  handleSelectTrack(meta.track)
+                }
+              }}
               className={`
                 group relative z-10 w-full flex flex-col items-stretch p-4 md:px-6 rounded-xl
-                transition-all duration-300 ease-in-out cursor-pointer text-left
+                transition-all duration-300 ease-in-out cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
                 ${
                   isActive
                     ? meta.activeClass
@@ -362,7 +370,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                   </motion.div>
                 )}
               </AnimatePresence>
-            </button>
+            </div>
           )
         })}
 
@@ -371,11 +379,19 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
           const isActive = activeTrack === '__quiz__'
           const isFaded = activeTrack !== null && !isActive
           return (
-            <button
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => setActiveTrack((prev) => (prev === '__quiz__' ? null : '__quiz__'))}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setActiveTrack((prev) => (prev === '__quiz__' ? null : '__quiz__'))
+                }
+              }}
               className={`
                 group relative z-10 w-full flex flex-col items-stretch p-4 md:px-6 rounded-xl
-                transition-all duration-300 ease-in-out cursor-pointer text-left
+                transition-all duration-300 ease-in-out cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
                 ${
                   isActive
                     ? 'bg-card border border-secondary/60'
@@ -456,7 +472,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                   </motion.div>
                 )}
               </AnimatePresence>
-            </button>
+            </div>
           )
         })()}
       </div>

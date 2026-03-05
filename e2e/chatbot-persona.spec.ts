@@ -42,7 +42,7 @@ test.describe('PQC Assistant — Persona & Context', () => {
     await page.addInitScript(() => {
       window.localStorage.setItem(
         'pqc-version-storage',
-        JSON.stringify({ state: { lastSeenVersion: '2.9.0' }, version: 1 })
+        JSON.stringify({ state: { lastSeenVersion: '2.99.0' }, version: 1 })
       )
     })
 

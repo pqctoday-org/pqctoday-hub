@@ -4,6 +4,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.22.0] - 2026-03-04
+
+### Added
+
+- **Digital Assets — Architecture Overview** (`modules/DigitalAssets/ArchitectureOverview.tsx`): New reference component detailing blockchain cryptographic requirements (Bitcoin secp256k1/ECDSA/SHA256+RIPEMD160, Ethereum Keccak-256/EIP-55, Solana Ed25519/Base58) and an OpenSSL 3.6.0 support matrix covering key generation, signing, address derivation, and HD wallet operations per chain. [view:/learn/digital-assets]
+
+### Fixed
+
+- **PKCS#11 v3.2 CKK\_\* constant alignment** (`vendor/softhsm-wasm/constants.js`): Added missing `CKK_XMSS` (0x47) and `CKK_XMSSMT` (0x48) for stateful hash-based signature key types per PKCS#11 v3.2 §4.37–4.38; corrected `CKK_ML_KEM` → 0x49, `CKK_ML_DSA` → 0x4a, `CKK_SLH_DSA` → 0x4b to match the authoritative `pkcs11t.h` header. Previous values caused wrong key-type tags on PQC keys. [view:/playground]
+
+- **KBKDF Feedback — IV "Random" button size** (`Playground/hsm/HsmKdfPanel.tsx`): IV is now sized to `PRF_SEED_BYTES[prf]` (matching the PRF's hash output length) instead of a hardcoded 16 bytes. Prevents PKCS#11 errors when the selected PRF uses a wider digest (e.g. SHA-256 → 32 bytes, SHA-512 → 64 bytes). [view:/playground]
+
+- **LearnTrackStack keyboard accessibility** (`PKILearning/LearnTrackStack.tsx`): Replaced non-interactive `<button>` wrappers with `<div role="button" tabIndex={0}>` plus `onKeyDown` handlers (Enter/Space) and `focus-visible:ring` styling. Track cards are now fully keyboard-navigable. [view:/learn]
+
+### Data
+
+- **Library** (`library_03042026.csv`): +1 new record — KpqC Competition Final Results (HAETAE, AIMer, SMAUG-T, NTRU+ national standards) and FIPS 140-3 Implementation Guidance for PQC; 256 records total. [view:/library]
+
+- **Migrate catalog** (`quantum_safe_cryptographic_software_reference_03042026.csv`): 331-entry catalog now committed to repository (file was tracked in changelog but untracked in git since v2.20.0). [view:/migrate]
+
+- **Library doc enrichments** (`library_doc_enrichments_03042026.md`): Additional AI-extracted dimension entries appended. [view:/library]
+
+- **SoftHSMv3 WASM binary** (`public/wasm/softhsm.js`): Rebuilt to include XMSS/XMSSMT key type registration and corrected PQC constant values.
+
+- **RAG corpus** (`public/data/rag-corpus.json`): Rebuilt to include updated library and enrichment data.
+
+### Tests
+
+- **E2E — chatbot & chatbot-persona**: Version seed bumped from `2.9.0` → `2.99.0` to reliably suppress the WhatsNew toast across all future releases in the test fixture.
+- **E2E — about**: Updated bio text assertion to match current `AboutView` copy ("community-driven, open-source platform").
+- **E2E — changelog**: Filter label assertion updated (`Enhancements` → `Improvements`); section detection updated to use visible filter button text.
+
 ## [2.21.0] - 2026-03-04
 
 ### Added

@@ -29,7 +29,7 @@ test.describe('Changelog View', () => {
 
     // Check filter buttons are present
     await expect(page.getByRole('button', { name: 'New Features' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Enhancements' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Improvements' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Bug Fixes' })).toBeVisible()
   })
 
@@ -37,7 +37,7 @@ test.describe('Changelog View', () => {
     await page.goto('/changelog')
 
     // Initially all filters should be active (content visible)
-    const addedSection = page.locator('h3:has-text("Added")')
+    const addedSection = page.getByText('New Features', { exact: true })
     await expect(addedSection.first()).toBeVisible()
 
     // Click "New Features" filter to disable it

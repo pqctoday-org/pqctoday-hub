@@ -86,25 +86,27 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">57 new glossary entries</strong> &mdash;
-                    full coverage for the Data Asset Sensitivity module plus 4 previously thin
-                    modules; all 27 modules now have meaningful glossary support
+                    <strong className="text-foreground">
+                      Digital Assets — Architecture Overview
+                    </strong>{' '}
+                    &mdash; blockchain crypto requirements table for Bitcoin, Ethereum &amp; Solana
+                    with OpenSSL 3.6.0 support matrix
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC Assistant — richer context</strong>{' '}
-                    &mdash; app architecture, RAG pipeline, persona system, and community guides
-                    added to the corpus (35 new chunks)
+                    <strong className="text-foreground">PKCS#11 constant fixes</strong> &mdash;
+                    CKK_XMSS/XMSSMT added, ML-KEM/ML-DSA/SLH-DSA values corrected to match
+                    pkcs11t.h; KBKDF IV "Random" button now size-matched to the PRF digest
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Mobile learn improvements</strong> &mdash;
-                    responsive module padding, larger touch targets in LearnStepper, tab scroll fade
-                    indicator
+                    <strong className="text-foreground">Library &amp; Migrate data updates</strong>{' '}
+                    &mdash; 256 library records (KpqC results, FIPS 140-3 IG); 331-entry migrate
+                    catalog now committed; enrichment corpus rebuilt
                   </span>
                 </li>
               </ul>

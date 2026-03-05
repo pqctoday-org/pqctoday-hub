@@ -42,7 +42,7 @@ test.describe('PQC Assistant Chatbot', () => {
     await page.addInitScript(() => {
       window.localStorage.setItem(
         'pqc-version-storage',
-        JSON.stringify({ state: { lastSeenVersion: '2.9.0' }, version: 1 })
+        JSON.stringify({ state: { lastSeenVersion: '2.99.0' }, version: 1 })
       )
     })
 
@@ -88,7 +88,7 @@ test.describe('PQC Assistant Chatbot', () => {
     await page.evaluate(() => {
       window.localStorage.setItem(
         'pqc-version-storage',
-        JSON.stringify({ state: { lastSeenVersion: '2.9.0' }, version: 1 })
+        JSON.stringify({ state: { lastSeenVersion: '2.99.0' }, version: 1 })
       )
     })
     const fab = page.getByRole('button', { name: 'Open PQC Assistant' })

@@ -43,6 +43,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Workshop**: 4-step hands-on certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing) with CSV-based X.509 profiles
     - **Exercises**: 5 guided scenarios (RSA-2048, ECDSA P-256, ML-DSA-44, ML-DSA-87, SLH-DSA) with "Load & Run" presets
   - **Digital Assets Program** (Learn | Workshop | Exercises): Blockchain cryptography deep-dive
+    - **Architecture Overview**: Blockchain cryptographic requirements table (Bitcoin secp256k1/ECDSA, Ethereum Keccak-256, Solana Ed25519) with OpenSSL 3.6.0 support matrix per operation and chain
     - **Learn**: Blockchain crypto introduction covering key generation, address derivation, signing, and PQC threat analysis per chain
     - **Bitcoin (BTC)**: secp256k1, P2PKH/SegWit addresses, ECDSA signing, double SHA256
     - **Ethereum (ETH)**: Keccak-256, EIP-55 checksummed addresses, EIP-1559 transactions, signature recovery

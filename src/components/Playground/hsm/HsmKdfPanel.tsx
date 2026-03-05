@@ -567,7 +567,11 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
                 placeholder="leave blank for no IV"
                 className="flex-1 text-xs font-mono rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
               />
-              <Button variant="outline" size="sm" onClick={() => setIv(randomHex(16))}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIv(randomHex(PRF_SEED_BYTES[prf] ?? 32))}
+              >
                 Random
               </Button>
             </div>
