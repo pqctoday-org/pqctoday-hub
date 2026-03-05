@@ -22,7 +22,7 @@
     "prebuild": "npm run scrape && npm run generate-corpus",
     "build": "cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/ || true) && tsc -b && vite build && cp dist/index.html dist/404.html && node scripts/prerender.mjs",
     "prerender": "node scripts/prerender.mjs",
-    "lint": "eslint src scripts e2e *.ts *.js *.cjs",
+    "lint": "eslint --no-error-on-unmatched-pattern src scripts e2e *.ts *.js *.cjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
