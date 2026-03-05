@@ -4,6 +4,45 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.21.0] - 2026-03-04
+
+### Added
+
+- **Playground HSM mode — full PKCS#11 mechanism coverage** (`InteractivePlayground.tsx`, `hsm/`): Three new tabs available exclusively in HSM mode expose every softhsmv3 mechanism category that was previously inaccessible from the UI. [view:/playground]
+  - **Key Agreement tab** — ECDH key exchange for P-256, P-384, and P-521 using `CKM_ECDH1_DERIVE` (standard) and `CKM_ECDH1_COFACTOR_DERIVE` (cofactor mode). Generates Alice and Bob key pairs in-HSM, extracts peer EC points via `CKA_EC_POINT`, runs `C_DeriveKey` for both sides, and compares shared secrets. KDF selector covers `CKD_NULL` (raw Z) and ANSI X9.63 `CKD_SHA256/384/512_KDF`. Displays `CK_ECDH1_DERIVE_PARAMS` struct layout inline.
+
+  - **KDF tab** — Four SP 800-series and RFC-standard derivation functions: PBKDF2 (`CKM_PKCS5_PBKD2`, `CK_PKCS5_PBKD2_PARAMS2` display), HKDF (`CKM_HKDF_DERIVE`, RFC 5869 `CK_HKDF_PARAMS` display), KBKDF Counter (`CKM_SP800_108_COUNTER_KDF`), and KBKDF Feedback (`CKM_SP800_108_FEEDBACK_KDF` with optional IV). Each sub-panel shows the complete PKCS#11 parameter struct alongside the derived key bytes.
+
+  - **Classical tab** — RSA (2048/3072/4096-bit key gen, PKCS#1 v1.5 and PSS sign/verify, OAEP encrypt/decrypt), ECDSA (P-256/384/521, `CKM_ECDSA_SHA256/384/512`), and EdDSA (`CKM_EDDSA` for Ed25519 and Ed448 — deterministic, pure EdDSA, no pre-hash).
+
+- **AES-CTR and AES-CMAC in Symmetric tab** (`HsmSymmetricPanel.tsx`): AES-CTR (`CKM_AES_CTR`) with `CK_AES_CTR_PARAMS` struct display (counter bits = 128, counter block = 0x00…00). AES-CMAC (`CKM_AES_CMAC`) with 16-byte tag compute and constant-time verify. Both support 128/192/256-bit keys.
+
+- **SHA3 HMAC variants in Symmetric tab**: HMAC-SHA3-256 (`CKM_SHA3_256_HMAC`) and HMAC-SHA3-512 (`CKM_SHA3_512_HMAC`) added to the HMAC algorithm selector alongside the existing SHA-2 variants.
+
+- **`hsm_extractECPoint()` helper** (`wasm/softhsm.ts`): New exported function that reads `CKA_EC_POINT` from an EC public key object — required for ECDH derive params since `CKA_VALUE` is not populated for EC public keys.
+
+## [2.20.0] - 2026-03-04
+
+### Data
+
+- **Migrate Catalog — full audit remediation** (`quantum_safe_cryptographic_software_reference_03042026.csv`): Expanded catalog from 233 to 331 entries (+98 rows) following a comprehensive accuracy, freshness, and completeness audit across all 7 infrastructure layers. [view:/migrate]
+
+  **Accuracy fixes (6 existing rows):** Restored correct `FN-DSA` (FIPS 206 / FALCON) in Thales HSE and Thales Luna T-Series (audit agent had incorrectly flagged this valid NIST standard); replaced pre-FIPS brand names `CRYSTALS-Kyber` → `ML-KEM` in Proton Mail and `CRYSTALS-Dilithium` → `ML-DSA` in Venafi CodeSign Protect; downgraded HashiCorp Vault priority `Critical` → `High` (PQC is experimental, not production-ready); updated SQL Server TDE `release_date` from `2022-11` to `2025-11`.
+
+  **New Hardware entries (13):** AWS CloudHSM, Azure Dedicated HSM (Marvell LiquidSecurity), IBM Cloud HSM (Utimaco), STMicroelectronics ST33G1M2 TPM, Infineon OPTIGA TPM SLB 9672, Intel PTT, Yubico YubiHSM 2, Google OpenTitan, TianoCore EDK2, NXP SE050, ARM TrustZone, Microchip ATECC608B, Qualcomm Snapdragon TEE.
+
+  **New OS entries (14):** Windows BitLocker, Linux LUKS / dm-crypt, Wind River VxWorks, BlackBerry QNX Neutrino RTOS, FreeRTOS, Alpine Linux, FreeBSD, openSUSE Leap, Rocky Linux, CentOS Stream, ChromeOS, NixOS, SUSE Linux Enterprise Server, Arch Linux. New category `CSC-056` (Real-Time Operating Systems) covers VxWorks, QNX, and FreeRTOS.
+
+  **New Network entries (26):** Cisco ASA, Cisco Meraki MX, Juniper SRX, Fortinet FortiGate (FortiOS), Arista EOS, MikroTik RouterOS, OpenWrt, pfSense, OPNsense, NGINX Plus, Traefik, Envoy Proxy, Apache Traffic Server, Kubernetes, Istio, Linkerd, HashiCorp Consul Connect, OpenVPN, WireGuard, Cisco Secure Client (AnyConnect), Palo Alto GlobalProtect, Samsung Networks 5G Core, Mavenir Cloud RAN, NEC 5G Core, Rakuten Symphony, Casa Systems vCPE. New category `CSC-055` (Container Orchestration & Service Mesh) covers Kubernetes, Istio, Linkerd, and Consul.
+
+  **New Security Stack entries (29):** Fortanix DSM, Delinea Secret Server, BeyondTrust, JumpCloud, Teleport, HashiCorp Boundary, Cloudflare Zero Trust, Zscaler ZTE, Splunk Enterprise, Elastic Stack, Suricata, Zeek, Snort, Tenable Nessus, Rapid7 InsightVM, Qualys, Microsoft Entra ID, Google Workspace Identity, AWS IAM, CrowdStrike Falcon, Palo Alto Cortex XDR, Citrix CVAD, VMware Horizon, Apache Guacamole, AnyDesk, PuTTY, Paramiko, AsyncSSH, Microsoft RDS.
+
+  **New Application entries (12):** OQS-OpenSSL Provider (liboqs-provider), Bouncy Castle (general entry alongside existing Java/C# variants), PyCryptodome, Crypto++ (cryptopp), libssh, Apache Tomcat, Eclipse Jetty, WildFly, Payara Server, GitHub Actions, GitLab CI/CD, Jenkins, Azure DevOps, CircleCI, OAuth 2.0 / OIDC, SAML 2.0.
+
+  **New Database entries (4):** PostgreSQL (engine-level), MySQL Community Server (engine-level), Redis, MariaDB Server.
+
+- **RAG corpus** (`public/data/rag-corpus.json`): Rebuilt — migrate source now contributes 331 chunks (up from 233). Product count updated to `330+` across landing page and migrate page guide chunks. Total corpus: 2,566 chunks. [view:/]
+
 ## [2.19.0] - 2026-03-04
 
 ### Improved
