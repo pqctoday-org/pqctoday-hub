@@ -2179,15 +2179,16 @@ export const hsm_generateAESKey = (
     { type: CKA_DECRYPT, boolVal: true },
     { type: CKA_WRAP, boolVal: true },
     { type: CKA_UNWRAP, boolVal: true },
+    { type: CKA_DERIVE, boolVal: true },
     { type: CKA_VALUE_LEN, ulongVal: keyBits / 8 },
   ])
   const hKeyPtr = allocUlong(M)
   try {
-    checkRV(M._C_GenerateKey(hSession, mech, tpl.ptr, 10, hKeyPtr), 'C_GenerateKey(AES)')
+    checkRV(M._C_GenerateKey(hSession, mech, tpl.ptr, 11, hKeyPtr), 'C_GenerateKey(AES)')
     return readUlong(M, hKeyPtr)
   } finally {
     M._free(mech)
-    freeTemplate(M, tpl, 10)
+    freeTemplate(M, tpl, 11)
     M._free(hKeyPtr)
   }
 }
@@ -2640,5 +2641,86 @@ export const hsm_slhdsaVerify = (
     M._free(mech)
     M._free(msgPtr)
     M._free(sigPtr)
+  }
+}
+
+// ── Key attribute inspection ──────────────────────────────────────────────────
+
+/** Safe single-attribute boolean read — returns null if attribute doesn't exist on this key type. */
+const readBoolAttr = (
+  M: SoftHSMModule,
+  hSession: number,
+  handle: number,
+  attrType: number
+): boolean | null => {
+  const bPtr = M._malloc(1)
+  M.HEAPU8[bPtr] = 0
+  const tpl = buildTemplate(M, [{ type: attrType, bytesPtr: bPtr, bytesLen: 1 }])
+  const rv = M._C_GetAttributeValue(hSession, handle, tpl.ptr, 1) >>> 0
+  freeTemplate(M, tpl, 1)
+  const val = rv === 0 ? M.HEAPU8[bPtr] !== 0 : null
+  M._free(bPtr)
+  return val
+}
+
+/** Safe single-attribute ulong read — returns null if attribute doesn't exist. */
+const readUlongAttr = (
+  M: SoftHSMModule,
+  hSession: number,
+  handle: number,
+  attrType: number
+): number | null => {
+  const uPtr = M._malloc(4)
+  const tpl = buildTemplate(M, [{ type: attrType, bytesPtr: uPtr, bytesLen: 4 }])
+  const rv = M._C_GetAttributeValue(hSession, handle, tpl.ptr, 1) >>> 0
+  freeTemplate(M, tpl, 1)
+  const val = rv === 0 ? readUlong(M, uPtr) : null
+  M._free(uPtr)
+  return val
+}
+
+export interface KeyAttributeSet {
+  /** CKA_CLASS: 2=public, 3=private, 4=secret */
+  ckClass: number | null
+  /** CKA_KEY_TYPE: algorithm family (e.g. CKK_AES=0x1f, CKK_RSA=0x00) */
+  ckKeyType: number | null
+  ckToken: boolean | null
+  ckPrivate: boolean | null
+  ckSensitive: boolean | null
+  ckExtractable: boolean | null
+  ckEncrypt: boolean | null
+  ckDecrypt: boolean | null
+  ckSign: boolean | null
+  ckVerify: boolean | null
+  ckWrap: boolean | null
+  ckUnwrap: boolean | null
+  ckDerive: boolean | null
+  /** CKA_VALUE_LEN in bytes; present on secret keys only */
+  ckValueLen: number | null
+}
+
+/** Read common PKCS#11 attributes for any key object in the current session. */
+export const hsm_getKeyAttributes = (
+  M: SoftHSMModule,
+  hSession: number,
+  handle: number
+): KeyAttributeSet => {
+  const b = (t: number) => readBoolAttr(M, hSession, handle, t)
+  const u = (t: number) => readUlongAttr(M, hSession, handle, t)
+  return {
+    ckClass: u(CKA_CLASS),
+    ckKeyType: u(CKA_KEY_TYPE),
+    ckToken: b(CKA_TOKEN),
+    ckPrivate: b(CKA_PRIVATE),
+    ckSensitive: b(CKA_SENSITIVE),
+    ckExtractable: b(CKA_EXTRACTABLE),
+    ckEncrypt: b(CKA_ENCRYPT),
+    ckDecrypt: b(CKA_DECRYPT),
+    ckSign: b(CKA_SIGN),
+    ckVerify: b(CKA_VERIFY),
+    ckWrap: b(CKA_WRAP),
+    ckUnwrap: b(CKA_UNWRAP),
+    ckDerive: b(CKA_DERIVE),
+    ckValueLen: u(CKA_VALUE_LEN),
   }
 }

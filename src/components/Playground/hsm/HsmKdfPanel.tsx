@@ -12,9 +12,6 @@ import {
   CKM_SHA512,
   CKM_SHA3_256,
   CKM_SHA3_512,
-  CKM_SHA256_HMAC,
-  CKM_SHA384_HMAC,
-  CKM_SHA512_HMAC,
   CKM_AES_CMAC,
   hsm_pbkdf2,
   hsm_generateAESKey,
@@ -58,10 +55,13 @@ const HKDF_PRFS = [
   { label: 'SHA3-512', value: CKM_SHA3_512 },
 ]
 
+// prfType for SP 800-108 KDF params is the *hash* mechanism (CKM_SHA256 etc.),
+// not the HMAC mechanism — SoftHSM3's ckmToDigestName() maps SHA→"SHA2-256" etc.
+// and internally constructs HMAC using that hash. AES-CMAC is the exception.
 const KBKDF_PRFS = [
-  { label: 'HMAC-SHA-256', value: CKM_SHA256_HMAC },
-  { label: 'HMAC-SHA-384', value: CKM_SHA384_HMAC },
-  { label: 'HMAC-SHA-512', value: CKM_SHA512_HMAC },
+  { label: 'HMAC-SHA-256', value: CKM_SHA256 },
+  { label: 'HMAC-SHA-384', value: CKM_SHA384 },
+  { label: 'HMAC-SHA-512', value: CKM_SHA512 },
   { label: 'AES-CMAC', value: CKM_AES_CMAC },
 ]
 
@@ -421,7 +421,7 @@ const HkdfPanel = () => {
 
 const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
   const { moduleRef, hSessionRef } = useHsmContext()
-  const [prf, setPrf] = useState(CKM_SHA256_HMAC)
+  const [prf, setPrf] = useState(CKM_SHA256)
   const [label, setLabel] = useState('pqc-key-derivation')
   const [context, setContext] = useState(() => randomHex(8))
   const [iv, setIv] = useState(() => randomHex(16))
