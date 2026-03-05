@@ -1244,6 +1244,14 @@ export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.0 §2.43
 export const CKF_HKDF_SALT_NULL = 0x00000001 // No salt
 export const CKF_HKDF_SALT_DATA = 0x00000002 // Salt as explicit bytes
 
+// NIST SP 800-108 KBKDF (PKCS#11 v3.2 §2.44)
+export const CKM_SP800_108_COUNTER_KDF = 0x000003ac // Counter mode KBKDF
+export const CKM_SP800_108_FEEDBACK_KDF = 0x000003ad // Feedback mode KBKDF
+export const CKM_SP800_108_DOUBLE_PIPELINE_KDF = 0x000003ae // Double-pipeline KBKDF
+// CK_PRF_DATA_TYPE constants (CK_SP800_108_* in PKCS#11 v3.2 §2.44)
+export const CK_SP800_108_ITERATION_VARIABLE = 0x00000001 // Counter/IV position marker
+export const CK_SP800_108_BYTE_ARRAY = 0x00000004 // Arbitrary byte data (label/context)
+
 // DER-encoded NamedCurve OID bytes used as CKA_EC_PARAMS value
 const EC_OID_P256 = new Uint8Array([0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07])
 const EC_OID_P384 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x22])
@@ -1832,6 +1840,93 @@ export const hsm_hkdf = (
     M._free(params)
     if (saltPtr) M._free(saltPtr)
     if (infoPtr) M._free(infoPtr)
+    freeTemplate(M, derivedTpl, 6)
+    M._free(derivedHPtr)
+  }
+}
+
+/**
+ * NIST SP 800-108 Counter KDF via C_DeriveKey(CKM_SP800_108_COUNTER_KDF) (PKCS#11 v3.2 §2.44).
+ *
+ * Builds a minimal CK_SP800_108_KDF_PARAMS with:
+ *   - prfType: HMAC-SHA256 (CKM_SHA256_HMAC) or AES-CMAC (CKM_AES_CMAC)
+ *   - Data params: [ITERATION_VARIABLE(32-bit counter)] + optional [BYTE_ARRAY(fixedInput)]
+ *
+ * @param M             SoftHSM WASM module
+ * @param hSession      Session handle
+ * @param baseKeyHandle Key handle for the base key (Ki)
+ * @param prfType       PRF mechanism (e.g. CKM_SHA256_HMAC or CKM_AES_CMAC)
+ * @param fixedInput    Optional label/context bytes concatenated as fixed input
+ * @param keyLen        Output key length in bytes (must match CKA_VALUE_LEN in template)
+ * @returns             Derived key bytes as Uint8Array
+ */
+export const hsm_kbkdf = (
+  M: SoftHSMModule,
+  hSession: number,
+  baseKeyHandle: number,
+  prfType: number,
+  fixedInput?: Uint8Array,
+  keyLen = 32
+): Uint8Array => {
+  // CK_SP800_108_COUNTER_FORMAT: bLittleEndian(CK_BBOOL=1B) + pad(3B) + ulWidthInBits(CK_ULONG=4B) = 8 bytes
+  const counterFmt = M._malloc(8)
+  M.HEAPU8[counterFmt + 0] = 0 // bLittleEndian = CK_FALSE (big-endian)
+  M.HEAPU8[counterFmt + 1] = 0
+  M.HEAPU8[counterFmt + 2] = 0
+  M.HEAPU8[counterFmt + 3] = 0
+  M.setValue(counterFmt + 4, 32, 'i32') // ulWidthInBits = 32
+
+  // CK_PRF_DATA_PARAM: type(4B) + pValue ptr(4B) + ulValueLen(4B) = 12 bytes each
+  const numParams = fixedInput && fixedInput.length > 0 ? 2 : 1
+  const dataParams = M._malloc(numParams * 12)
+
+  // Param[0]: ITERATION_VARIABLE with counter format
+  M.setValue(dataParams + 0, CK_SP800_108_ITERATION_VARIABLE, 'i32')
+  M.setValue(dataParams + 4, counterFmt, 'i32')
+  M.setValue(dataParams + 8, 8, 'i32')
+
+  let fixedPtr = 0
+  if (fixedInput && fixedInput.length > 0) {
+    fixedPtr = M._malloc(fixedInput.length)
+    M.HEAPU8.set(fixedInput, fixedPtr)
+    // Param[1]: BYTE_ARRAY with fixed input (label/context)
+    M.setValue(dataParams + 12, CK_SP800_108_BYTE_ARRAY, 'i32')
+    M.setValue(dataParams + 16, fixedPtr, 'i32')
+    M.setValue(dataParams + 20, fixedInput.length, 'i32')
+  }
+
+  // CK_SP800_108_KDF_PARAMS: prfType(4B) + ulNumberOfDataParams(4B) + pDataParams ptr(4B)
+  //                        + ulAdditionalDerivedKeys(4B) + pAdditionalDerivedKeys ptr(4B) = 20 bytes
+  const kdfParams = M._malloc(20)
+  M.setValue(kdfParams + 0, prfType, 'i32')
+  M.setValue(kdfParams + 4, numParams, 'i32')
+  M.setValue(kdfParams + 8, dataParams, 'i32')
+  M.setValue(kdfParams + 12, 0, 'i32') // ulAdditionalDerivedKeys = 0
+  M.setValue(kdfParams + 16, 0, 'i32') // pAdditionalDerivedKeys = NULL
+
+  const mech = buildMech(M, CKM_SP800_108_COUNTER_KDF, kdfParams, 20)
+  const derivedTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_VALUE_LEN, ulongVal: keyLen },
+  ])
+  const derivedHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DeriveKey(hSession, mech, baseKeyHandle, derivedTpl.ptr, 6, derivedHPtr),
+      'C_DeriveKey(SP800-108 Counter KDF)'
+    )
+    const keyHandle = readUlong(M, derivedHPtr)
+    return hsm_extractKeyValue(M, hSession, keyHandle)
+  } finally {
+    M._free(mech)
+    M._free(kdfParams)
+    M._free(dataParams)
+    M._free(counterFmt)
+    if (fixedPtr) M._free(fixedPtr)
     freeTemplate(M, derivedTpl, 6)
     M._free(derivedHPtr)
   }

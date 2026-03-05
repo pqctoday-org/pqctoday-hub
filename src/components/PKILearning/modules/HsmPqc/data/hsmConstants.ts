@@ -165,6 +165,16 @@ export const PKCS11_MECHANISMS: PKCS11Mechanism[] = [
     keySize: 'Variable (1–512 bytes)',
     pkcs11Version: 'v3.0+',
   },
+  {
+    id: 'ckm-sp800-108-counter-kdf',
+    name: 'CKM_SP800_108_COUNTER_KDF',
+    type: 'classical',
+    mechanismCode: '0x000003ac',
+    description:
+      'NIST SP 800-108 Counter mode KBKDF — PRF(Ki, [i]_r ∥ Label ∥ Context). Supports HMAC-SHA2/SHA3 and AES-CMAC PRFs.',
+    keySize: 'Variable (1–512 bytes)',
+    pkcs11Version: 'v3.2',
+  },
   // PQC — PKCS#11 v3.2 CSD01 mechanisms (OASIS pkcs11t.h)
   {
     id: 'ckm-ml-kem-key-pair-gen',
