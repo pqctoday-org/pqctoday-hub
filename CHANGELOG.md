@@ -4,6 +4,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.23.0] - 2026-03-05
+
+### Data
+
+- **Leaders** (`leaders_03052026_r1.csv`): Comprehensive accuracy and completeness audit of `leaders_02282026.csv` (101 entries → 103). Fixed 8 issues: merged duplicate Dr. Ludovic Perret entry; corrected Scott Totzke role from CEO to Co-Founder (ISARA); fixed Nadia Heninger website URL (ucsd.edu); cleared Brian LaMacchia duplicate WebsiteUrl; removed unverifiable ResQuant claim for Martin Albrecht (org: King's College London + SandboxAQ); reverted Thomas Coratger prize total to correct $2M ($1M Poseidon Prize + $1M Proximity Prize); normalized 2 government leader avatar colors to `22d3ee`. Added 3 missing Algorithm Inventors: Daniel J. Bernstein (coined "post-quantum cryptography" 2003, co-designed SPHINCS+ FIPS 205, Classic McEliece, NTRU Prime), Prof. Oded Regev (invented LWE 2005, Gödel Prize 2018), Prof. Tanja Lange (NTRU Prime, Classic McEliece, PQCrypto steering chair). Also fixed Claudia Plattner BSI signatory count 17 → 18 EU member states. [view:/leaders]
+
+- **Timeline** (`timeline_03052026.csv`): Accuracy and completeness audit of `timeline_02282026.csv` (196 entries → 198). Fixed 3 issues: corrected Canada row 30 org from CCCS → ISED (Innovation, Science and Economic Development Canada) to match SourceUrl provenance; fixed SandboxAQ SourceUrl slug `dow-cio` → `dod-cio`; updated OMB M-23-02 Status `New` → `Validated` (2022 document). Added 2 missing milestone entries: NCSC UK "Next Steps in Preparing for Post-Quantum Cryptography" whitepaper (November 2023, predating row 107 by 9 months); NIST SP 800-208 LMS/XMSS standardization (October 29, 2020 — now the earliest entry in the dataset, establishes the standardization baseline for CNSA 2.0 mandated algorithms). [view:/timeline]
+
+- **RAG corpus** (`public/data/rag-corpus.json`): Rebuilt — 2,776 chunks (+2 from 2 new timeline rows, +3 new leader entries vs prior build). [view:/about]
+
 ## [2.22.0] - 2026-03-04
 
 ### Added

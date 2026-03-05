@@ -33,13 +33,13 @@ import { useTheme } from '../../hooks/useTheme'
 import { getCurrentVersion } from '../../store/useVersionStore'
 
 const DATA_FOUNDATION = [
-  { dataset: 'Timeline Events', records: 187, sources: '80+ orgs, 50+ countries' },
+  { dataset: 'Timeline Events', records: 198, sources: '80+ orgs, 50+ countries' },
   { dataset: 'Library Resources', records: 236, sources: '30+ standards bodies' },
   { dataset: 'Algorithm Reference', records: 45, sources: 'FIPS 203/204/205/206' },
   { dataset: 'Compliance Frameworks', records: 46, sources: 'NIST, ACVP, CC, ANSSI' },
   { dataset: 'Migrate Products', records: 223, sources: '7 infrastructure layers' },
   { dataset: 'Threat Landscape', records: 79, sources: '8+ industry sectors' },
-  { dataset: 'Industry Leaders', records: 101, sources: 'Public, Private, Academic' },
+  { dataset: 'Industry Leaders', records: 103, sources: 'Public, Private, Academic' },
   { dataset: 'Quiz Questions', records: 530, sources: 'All PQC topic areas' },
   { dataset: 'Authoritative Sources', records: 89, sources: 'Gov, Academic, Industry' },
   { dataset: 'Learning Modules', records: 27, sources: '2,000+ min of content' },
@@ -226,7 +226,7 @@ export function AboutView() {
 
           <div className="mt-4 flex items-center justify-between">
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-gradient">1,550+</span>
+              <span className="text-2xl font-bold text-gradient">1,560+</span>
               <span className="text-sm text-muted-foreground">total curated records</span>
             </div>
             <span className="text-xs text-muted-foreground">Compliance data refreshed weekly</span>
@@ -741,7 +741,7 @@ export function AboutView() {
               The PQC Assistant chatbot uses{' '}
               <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong> to
               deliver grounded, sourced answers about post-quantum cryptography. When you ask a
-              question, it searches a curated corpus of ~2,500 PQC knowledge chunks &mdash; covering
+              question, it searches a curated corpus of ~2,800 PQC knowledge chunks &mdash; covering
               algorithms, standards, threats, compliance certifications, migration products,
               leaders, and learning modules &mdash; retrieves the 10&ndash;20 most relevant passages
               (adaptive per query intent), and injects them as context into a{' '}
@@ -804,7 +804,7 @@ export function AboutView() {
             <h3 className="text-sm font-semibold text-muted-foreground mb-2">Limitations</h3>
             <ul className="space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
               <li>
-                Knowledge is bounded by the curated corpus (~2,500 chunks) &mdash; niche or very
+                Knowledge is bounded by the curated corpus (~2,800 chunks) &mdash; niche or very
                 recent topics may lack coverage
               </li>
               <li>
