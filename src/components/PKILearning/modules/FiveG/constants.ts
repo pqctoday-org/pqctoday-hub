@@ -5,7 +5,7 @@ export const FIVE_G_CONSTANTS = {
       id: 'init_network_key',
       title: '1. Home Network Key Generation (Profile A)',
       description:
-        "The Home Network (UDM) must first establish a long-term asymmetric key pair. For Profile A, 5G mandates the use of Curve25519 (X25519), a state-of-the-art elliptic curve tailored for speed and security. The private key remains effectively locked within the UDM's HSM, while the public key fits into 32 bytes.",
+        'The home network operator provisions a long-term asymmetric key pair. For Profile A, 5G mandates the use of Curve25519 (X25519), a state-of-the-art elliptic curve tailored for speed and security. The private key is securely stored for use by the SIDF (Subscription Identifier De-concealing Function) at the UDM for SUCI deconcealment, while the public key (32 bytes) is distributed to USIMs during SIM personalization.',
       code: `# Generate Curve25519 Private Key
 openssl genpkey -algorithm X25519 -out hn_priv.key
 
@@ -185,7 +185,7 @@ openssl enc -d -aes-128-ctr -in ciphertext.bin ...`,
       id: 'init_network_key',
       title: '1. Home Network Key Generation (Profile B)',
       description:
-        'For Profile B, the Home Network generates a long-term key pair using the NIST P-256 (secp256r1) elliptic curve. This profile is common in legacy-compliant 5G deployments.',
+        'For Profile B, the home network operator provisions a long-term key pair using the NIST P-256 (secp256r1) elliptic curve. The private key is securely stored for use by the SIDF at the UDM for SUCI deconcealment. This profile is common in legacy-compliant 5G deployments.',
       code: `# Generate P-256 Private Key
 openssl genpkey -algorithm EC \\
   -pkeyopt ec_paramgen_curve:P-256 \\
@@ -347,7 +347,7 @@ openssl enc -d -aes-128-ctr ...`,
       id: 'init_network_key',
       title: '1. Home Network Key Generation (Profile C)',
       description:
-        'For Profile C (Post-Quantum), the Home Network generates a key pair using ML-KEM (Kyber), a lattice-based algorithm resistant to quantum attacks.',
+        'For Profile C (Post-Quantum), the home network operator provisions a key pair using ML-KEM (Kyber), a lattice-based algorithm resistant to quantum attacks. The private key is securely stored for use by the SIDF at the UDM for SUCI deconcealment.',
       code: `# Generate ML-KEM Private Key
 openssl genpkey -algorithm ML-KEM-768 -out hn_pqc.key
 
@@ -507,26 +507,27 @@ openssl enc -d -aes-256-ctr ...`,
       id: 'retrieve_creds',
       title: '1. Retrieve Credentials (UDM/HSM)',
       description:
-        'The UDM (Unified Data Management) retrieves the subscriber Key (K), Operator Key (OP), and Sequence Number (SQN) from the ARPF (Authentication credential Repository and Processing Function) inside the HSM. The SEAF (Security Anchor Function) in the serving AMF forwarded the SUPI after SUCI deconcealment. SQN prevents replay attacks — the USIM will reject authentication if SQN is not fresh.',
-      code: `// Inside UDM/HSM (ARPF)
-const subProfile = HSM.getProfile(SUPI);
-const K = subProfile.Ki;  // Never exposes K outside HSM
-const OP = HSM.getOP();   // Operator Key
-const SQN = subProfile.SQN;`,
-      output: `[HSM] Retrieving subscriber credentials...
-[HSM] Ki: [PROTECTED]
-[HSM] OP: [PROTECTED]
-[HSM] Current SQN: 0x00...01`,
+        "The ARPF (Authentication credential Repository and Processing Function) retrieves the subscriber's encrypted K, Operator Key (OP), and Sequence Number (SQN) from the subscriber database and injects them into the HSM for authentication vector computation. The HSM holds K only for the duration of this computation — it is not stored permanently, as operators manage millions of subscribers. The SEAF (Security Anchor Function) in the serving AMF forwarded the SUPI after SUCI deconcealment. SQN prevents replay attacks — the USIM will reject authentication if SQN is not fresh.",
+      code: `// ARPF retrieves credentials from subscriber DB → injects into HSM
+const encRecord = subscriberDB.get(SUPI);
+const K = HSM.decrypt(encRecord.eK);  // K injected for computation only
+const OP = HSM.getOP();               // Operator Key
+const SQN = encRecord.SQN;`,
+      output: `[ARPF] Retrieving subscriber credentials from database...
+[ARPF] Injecting K into HSM for computation...
+[ARPF] K: [PROTECTED — transient in HSM]
+[ARPF] OP: [PROTECTED]
+[ARPF] Current SQN: 0x00...01`,
     },
     {
       id: 'gen_rand',
       title: '2. Generate Random Challenge',
       description:
-        'The HSM generates a cryptographically secure 128-bit random number (RAND) to challenge the USIM. RAND is sent in cleartext to the UE via the SEAF — its secrecy is not required because the authentication relies on K (the shared secret), not RAND confidentiality.',
+        "The ARPF's HSM generates a cryptographically secure 128-bit random number (RAND) to challenge the USIM. RAND is sent in cleartext to the UE via the SEAF — its secrecy is not required because the authentication relies on K (the shared secret), not RAND confidentiality.",
       code: `// Generate 128-bit random challenge
 const RAND = crypto.randomBytes(16);`,
-      output: `[HSM] Assessing TRNG...
-[HSM] Generated RAND: 0x23553CBE... (128 bits)`,
+      output: `[ARPF/HSM] Assessing TRNG...
+[ARPF/HSM] Generated RAND: 0x23553CBE... (128 bits)`,
     },
     {
       id: 'compute_milenage',
@@ -587,34 +588,34 @@ const KAUSF = HMAC_SHA256(CK || IK, FC || SNN || len(SNN) || SQN_xor_AK || 0x000
 
   PROVISIONING_STEPS: [
     {
-      id: 'gen_ki',
-      title: '1. Generate Ki (SIM Manufacturer)',
+      id: 'gen_k',
+      title: '1. Generate K (SIM Manufacturer)',
       description:
-        'In a secure facility, the SIM manufacturer generates a unique subscriber key (Ki) for the new SIM card using a high-quality TRNG inside an HSM.',
+        'In a secure facility, the SIM manufacturer generates a unique subscriber key (K) for the new SIM card using a high-quality TRNG inside an HSM.',
       code: `// Inside Manufacturer HSM
-const Ki = crypto.generateRandom(128); // 128-bit Key`,
+const K = crypto.generateRandom(128); // 128-bit Key`,
       output: `[Factory HSM] Generating Subscriber Key...
-[Factory HSM] Ki Generated: [PROTECTED]
+[Factory HSM] K Generated: [PROTECTED]
 [Factory HSM] ID: IMSI 310260123456789`,
     },
     {
       id: 'compute_opc_sim',
       title: '2. Compute OPc',
       description:
-        "The manufacturer computes the OPc (derived operator key) using the Operator's OP key and the unique Ki. Only OPc is written to the SIM, never the global OP.",
+        "The manufacturer computes the OPc (derived operator key) using the Operator's OP key and the unique K. Only OPc is written to the SIM, never the global OP.",
       code: `// Compute OPc per SIM
-const OPc = AES_Encrypt(Ki, OP) XOR OP;`,
+const OPc = AES_Encrypt(K, OP) XOR OP;`,
       output: `[Factory HSM] Computing OPc...
 [Factory HSM] OPc: 0xCD63CB71...
-[Factory HSM] OPc is unique to this SIM (bound to Ki).`,
+[Factory HSM] OPc is unique to this SIM (bound to K).`,
     },
     {
       id: 'personalize_sim',
       title: '3. Personalize USIM',
       description:
-        "The Ki, OPc, and other data are written into the USIM's secure tamper-resistant memory during the personalization phase.",
+        "K, OPc, and other data are written into the USIM's secure tamper-resistant memory during the personalization phase.",
       code: `// Write to USIM Files
-USIM.write('EF_Ki', Ki);
+USIM.write('EF_K', K);
 USIM.write('EF_OPc', OPc);
 USIM.write('EF_IMSI', '310260123456789');`,
       output: `[Factory] Personalizing USIM...
@@ -625,34 +626,35 @@ USIM.write('EF_IMSI', '310260123456789');`,
       id: 'encrypt_transport',
       title: '4. Encrypt for Transport',
       description:
-        'To send the keys to the Mobile Network Operator (MNO), the Ki is encrypted with a pre-agreed Transport Key (TK). This ensures Ki is never exposed during transit.',
-      code: `// Encrypt Ki for output file
-const eKi = AES_Encrypt(TransportKey, Ki);
+        'To send the keys to the Mobile Network Operator (MNO), K is encrypted with a pre-agreed Transport Key (TK). This ensures K is never exposed during transit.',
+      code: `// Encrypt K for output file
+const eK = AES_Encrypt(TransportKey, K);
 
 // Generate Output Record
 const record = {
   IMSI: '310260123456789',
-  eKi: eKi,
+  eK: eK,
   OPc: OPc
 };`,
       output: `[Factory HSM] Encrypting export batch...
-[Factory HSM] eKi generated.
+[Factory HSM] eK generated.
 [Factory HSM] Output file 'out_batch_2025.enc' created.`,
     },
     {
       id: 'import_udm',
-      title: '5. Import at UDM/HSM',
+      title: '5. Import at Operator',
       description:
-        'The MNO receives the file and decrypts the Ki inside their own HSM using the Transport Key, then stores it securely for future authentication.',
+        "The MNO receives the encrypted key file and decrypts K inside the HSM using the Transport Key. K is then re-encrypted and stored in the subscriber database — not in the HSM itself. Operators manage millions of subscribers, so K is loaded into the ARPF's HSM only when authentication vectors need to be computed.",
       code: `// MNO Import Process
 const record = file.readRecord();
-const Ki = HSM.decrypt(TransportKey, record.eKi);
+const K = HSM.decrypt(TransportKey, record.eK);
 
-HSM.store(record.IMSI, Ki);`,
-      output: `[MNO HSM] Importing key batch...
-[MNO HSM] Decrypting eKi... Success.
-[MNO HSM] Ki stored in secure repository.
-[MNO HSM] Subscriber provisioning complete.`,
+// Re-encrypt K for database storage (K never persists in HSM)
+subscriberDB.store(record.IMSI, HSM.reEncrypt(K));`,
+      output: `[MNO] Importing key batch...
+[MNO HSM] Decrypting eK... Success.
+[MNO] K re-encrypted and stored in subscriber database.
+[MNO] Subscriber provisioning complete.`,
     },
   ],
 }

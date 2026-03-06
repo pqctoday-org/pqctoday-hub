@@ -100,9 +100,9 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
             <div className="text-sm font-bold text-warning mb-1">Provisioning</div>
             <p className="text-xs text-muted-foreground">
-              Secure SIM manufacturing and key distribution. Subscriber keys (Ki) are generated in{' '}
-              <InlineTooltip term="HSM">HSMs</InlineTooltip>, encrypted for transport, and imported
-              at the operator&apos;s UDM.
+              Secure SIM manufacturing and key distribution. Subscriber keys (K) are generated in{' '}
+              <InlineTooltip term="HSM">HSMs</InlineTooltip>, encrypted for transport, and stored in
+              the operator&apos;s encrypted subscriber database.
             </p>
           </div>
         </div>
@@ -233,36 +233,36 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground font-mono text-xs">1.</span>
             <span className="text-foreground/80">
-              <strong className="text-primary">Generate Ki</strong> — 128-bit subscriber key created
+              <strong className="text-primary">Generate K</strong> — 128-bit subscriber key created
               in the factory HSM (TRNG)
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground font-mono text-xs">2.</span>
             <span className="text-foreground/80">
-              <strong className="text-primary">Compute OPc</strong> — Derived operator key (AES(Ki,
+              <strong className="text-primary">Compute OPc</strong> — Derived operator key (AES(K,
               OP) XOR OP), unique per SIM
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground font-mono text-xs">3.</span>
             <span className="text-foreground/80">
-              <strong className="text-warning">Personalize USIM</strong> — Write Ki, OPc, and IMSI
-              to the secure element
+              <strong className="text-warning">Personalize USIM</strong> — Write K, OPc, and IMSI to
+              the secure element
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground font-mono text-xs">4.</span>
             <span className="text-foreground/80">
-              <strong className="text-warning">Encrypt for Transport</strong> — Ki encrypted with a
-              pre-agreed Transport Key (eKi)
+              <strong className="text-warning">Encrypt for Transport</strong> — K encrypted with a
+              pre-agreed Transport Key (eK)
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground font-mono text-xs">5.</span>
             <span className="text-foreground/80">
-              <strong className="text-success">Import at UDM</strong> — Operator HSM decrypts eKi
-              and stores Ki for authentication
+              <strong className="text-success">Import at Operator</strong> — HSM decrypts eK; K
+              stored encrypted in subscriber database for authentication
             </span>
           </div>
         </div>

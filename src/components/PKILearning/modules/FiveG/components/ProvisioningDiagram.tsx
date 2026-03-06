@@ -29,7 +29,7 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
         {/* Connection Line */}
         <div className="absolute top-1/2 left-0 w-full h-1 bg-border -translate-y-1/2"></div>
 
-        {/* Step 0/1: Ki/OPc Gen (Pulse at Factory) */}
+        {/* Step 0/1: K/OPc Gen (Pulse at Factory) */}
 
         {/* Step 2: Personalizing USIM (Animation moving down-right) */}
         {/* Visualized by highlighting USIM node below */}
@@ -54,7 +54,7 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
         {/* Labels */}
         <div className="absolute top-1/3 w-full text-center">
           {step === 0 && (
-            <span className="text-xs text-primary animate-pulse">Generating Ki (TRNG)...</span>
+            <span className="text-xs text-primary animate-pulse">Generating K (TRNG)...</span>
           )}
           {step === 1 && (
             <span className="text-xs text-secondary animate-pulse">Computing OPc...</span>
@@ -63,7 +63,7 @@ export const ProvisioningDiagram: React.FC<ProvisioningDiagramProps> = ({ step }
             <span className="text-xs text-primary font-bold">Personalizing USIM...</span>
           )}
           {step === 3 && (
-            <span className="text-xs text-foreground">Encrypting for Transport (eKi)</span>
+            <span className="text-xs text-foreground">Encrypting for Transport (eK)</span>
           )}
           {step === 4 && (
             <span className="text-xs text-success animate-pulse">Importing to UDM/HSM...</span>

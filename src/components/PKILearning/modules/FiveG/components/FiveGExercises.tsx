@@ -90,11 +90,11 @@ export const FiveGExercises: React.FC<FiveGExercisesProps> = ({
       id: 'sim-provisioning',
       title: '6. SIM Key Provisioning Supply Chain',
       description:
-        'Walk through the factory-to-operator Ki lifecycle: generate Ki in a factory HSM using TRNG, compute OPc (unique per SIM), personalize the USIM secure element, encrypt Ki for transport (eKi), and import it at the operator UDM/HSM.',
+        "Walk through the factory-to-operator K lifecycle: generate K in a factory HSM using TRNG, compute OPc (unique per SIM), personalize the USIM secure element, encrypt K for transport (eK), and import it into the operator's encrypted subscriber database.",
       badge: 'Supply Chain',
       badgeColor: 'bg-muted text-muted-foreground border-border',
       observe:
-        "Notice how Ki never leaves the HSM in plaintext — it is encrypted as eKi before transit. OPc is unique per SIM because it derives from both Ki and the operator key OP, so leaking one SIM's Ki does not expose the operator key or other SIMs.",
+        "Notice how K never exists in plaintext outside the HSM — it is encrypted as eK before transit and stored encrypted in the subscriber database. The ARPF's HSM only holds K transiently when computing authentication vectors. OPc is unique per SIM because it derives from both K and the operator key OP, so leaking one SIM's K does not expose the operator key or other SIMs.",
       config: { part: 2 },
     },
   ]

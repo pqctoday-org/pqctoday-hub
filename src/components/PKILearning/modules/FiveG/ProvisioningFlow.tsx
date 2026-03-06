@@ -14,7 +14,7 @@ interface ProvisioningFlowProps {
 }
 
 export const ProvisioningFlow: React.FC<ProvisioningFlowProps> = ({ onBack }) => {
-  const [keys, setKeys] = useState<{ ki?: string; opc?: string; eKi?: string }>({})
+  const [keys, setKeys] = useState<{ k?: string; opc?: string; eK?: string }>({})
 
   const steps: Step[] = FIVE_G_CONSTANTS.PROVISIONING_STEPS.map((step, index) => ({
     id: step.id,
@@ -29,32 +29,32 @@ export const ProvisioningFlow: React.FC<ProvisioningFlowProps> = ({ onBack }) =>
   const executeStep = async () => {
     const stepId = steps[wizard.currentStep].id
 
-    if (stepId === 'gen_ki') {
-      const ki = await fiveGService.generateSubKey()
-      setKeys((p) => ({ ...p, ki }))
-      return `[Factory] Generated Subscriber Key (Ki):
-${ki}
-(Stored in HSM)`
+    if (stepId === 'gen_k') {
+      const k = await fiveGService.generateSubKey()
+      setKeys((p) => ({ ...p, k }))
+      return `[Factory] Generated Subscriber Key (K):
+${k}
+(Inside factory HSM)`
     } else if (stepId === 'compute_opc_sim') {
-      if (!keys.ki) throw new Error('Ki not generated')
-      const opc = await fiveGService.computeOPc(keys.ki)
+      if (!keys.k) throw new Error('K not generated')
+      const opc = await fiveGService.computeOPc(keys.k)
       setKeys((p) => ({ ...p, opc }))
       return `[Factory] Computed OPc (Operator Key variant):
 ${opc}
-(Bound to Ki and Operator OP)`
+(Bound to K and Operator OP)`
     } else if (stepId === 'personalize_sim') {
-      if (!keys.ki || !keys.opc) throw new Error('Keys missing')
-      return await fiveGService.personalizeUSIM(keys.ki, keys.opc)
+      if (!keys.k || !keys.opc) throw new Error('Keys missing')
+      return await fiveGService.personalizeUSIM(keys.k, keys.opc)
     } else if (stepId === 'encrypt_transport') {
-      if (!keys.ki || !keys.opc) throw new Error('Keys missing')
-      const result = await fiveGService.encryptTransport(keys.ki, keys.opc)
-      // Extract eKi from the result for the import step
-      const eKiMatch = result.match(/Encrypted Output\(Hex\):\n([a-fA-F0-9]+)/)
-      if (eKiMatch) setKeys((p) => ({ ...p, eKi: eKiMatch[1] }))
+      if (!keys.k || !keys.opc) throw new Error('Keys missing')
+      const result = await fiveGService.encryptTransport(keys.k, keys.opc)
+      // Extract eK from the result for the import step
+      const eKMatch = result.match(/Encrypted Output\(Hex\):\n([a-fA-F0-9]+)/)
+      if (eKMatch) setKeys((p) => ({ ...p, eK: eKMatch[1] }))
       return result
     } else if (stepId === 'import_udm') {
       if (!keys.opc) throw new Error('Keys missing')
-      return await fiveGService.importAtUDM(keys.eKi || keys.ki || '', keys.opc)
+      return await fiveGService.importAtUDM(keys.eK || keys.k || '', keys.opc)
     }
 
     // Fallback static (should not reach here)

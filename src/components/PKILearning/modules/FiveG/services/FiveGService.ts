@@ -1383,14 +1383,14 @@ Step 5: SUCI Hex Encoding (${suciBytes.length} bytes)
             CREDENTIAL RETRIEVAL (UDM/HSM)
 ═══════════════════════════════════════════════════════════════
 
-Step 1: Accessing HSM Secure Repository...
+Step 1: Retrieving Encrypted Credentials from Subscriber Database...
   > Subscriber: IMSI 310260123456789
 
-Step 2: Loading Master Keys
-  > Ki (128-bit):  ${bytesToHex(K)}
+Step 2: Injecting Keys into HSM for Computation
+  > K (128-bit):   ${bytesToHex(K)}
   > OP (128-bit):  ${bytesToHex(OP)}
 
-Step 3: Computing OPc = AES(Ki, OP) ⊕ OP
+Step 3: Computing OPc = AES(K, OP) ⊕ OP
   > OPc (128-bit): ${bytesToHex(OPc)}
 
 Step 4: Loading Sequence State
@@ -1730,10 +1730,10 @@ Step 4: Result
 
   async computeOPc(kiHex: string) {
     const OP = new Uint8Array(DEFAULT_OP)
-    // Convert Ki hex to bytes
-    const Ki = new Uint8Array(kiHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)))
+    // Convert K hex to bytes
+    const K = new Uint8Array(kiHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)))
 
-    const opc = await milenage.computeOPc(Ki, OP)
+    const opc = await milenage.computeOPc(K, OP)
     return bytesToHex(opc)
   }
 
@@ -1745,7 +1745,7 @@ Step 4: Result
 ═══════════════════════════════════════════════════════════════
 
 Step 1: Writing Master Key to Secure Element
-  > EF_Ki:   ${kiHex}
+  > EF_K:    ${kiHex}
   > Status:  Written to tamper-resistant memory
 
 Step 2: Writing Derived Operator Key
@@ -1768,25 +1768,25 @@ Step 4: Security Configuration
   }
 
   async importAtUDM(eKiHex: string, opcHex: string): Promise<string> {
-    // Simulate UDM/HSM import — decrypt transport-encrypted Ki
+    // Simulate operator import — decrypt transport-encrypted K
     const imsi = '310260123456789'
 
     return `═══════════════════════════════════════════════════════════════
-            UDM/HSM KEY IMPORT
+            OPERATOR KEY IMPORT
 ═══════════════════════════════════════════════════════════════
 
 Step 1: Receiving Encrypted Key Batch
   > File: out_batch_2026.enc
   > Records: 1
 
-Step 2: Decrypting eKi with Transport Key
-  > eKi (encrypted): ${eKiHex.substring(0, 32)}...
+Step 2: Decrypting eK with Transport Key (inside HSM)
+  > eK (encrypted):  ${eKiHex.substring(0, 32)}...
   > Transport Key:   [PROTECTED — pre-shared]
-  > Decrypted Ki:    [PROTECTED — inside HSM]
+  > Decrypted K:     [PROTECTED — transient in HSM]
 
-Step 3: Storing in HSM Secure Repository
+Step 3: Storing in Encrypted Subscriber Database
   > IMSI: ${imsi}
-  > Ki:   [stored securely]
+  > K:    [re-encrypted and stored in subscriber DB]
   > OPc:  ${opcHex}
 
 Step 4: Verifying Import Integrity
@@ -1800,7 +1800,7 @@ Step 4: Verifying Import Integrity
   async encryptTransport(kiHex: string, opcHex: string) {
     // Use OpenSSL to encrypt the batch to a file
     // Input: CSV or JSON
-    const content = `IMSI: 310123456789000, Ki: ${kiHex}, OPc: ${opcHex} `
+    const content = `IMSI: 310123456789000, K: ${kiHex}, OPc: ${opcHex} `
     const iv = new Uint8Array(16)
     window.crypto.getRandomValues(iv)
     const key = new Uint8Array(16)
