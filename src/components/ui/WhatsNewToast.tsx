@@ -86,27 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">
-                      Digital Assets — Architecture Overview
-                    </strong>{' '}
-                    &mdash; blockchain crypto requirements table for Bitcoin, Ethereum &amp; Solana
-                    with OpenSSL 3.6.0 support matrix
+                    <strong className="text-foreground">Standards Bodies module</strong> &mdash; new
+                    5-step learn module covering NIST, ISO/IEC, ETSI, IETF, BSI, ANSSI &amp; more;
+                    who creates standards, who certifies, who mandates
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PKCS#11 constant fixes</strong> &mdash;
-                    CKK_XMSS/XMSSMT added, ML-KEM/ML-DSA/SLH-DSA values corrected to match
-                    pkcs11t.h; KBKDF IV "Random" button now size-matched to the PRF digest
+                    <strong className="text-foreground">Mechanism Discovery</strong> &mdash; live
+                    PKCS#11 mechanism browser in the SoftHSM Playground; 100+ mechanisms with flag
+                    decoding (PQC, asymmetric, symmetric, hash, KDF)
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Library &amp; Migrate data updates</strong>{' '}
-                    &mdash; 256 library records (KpqC results, FIPS 140-3 IG); 331-entry migrate
-                    catalog now committed; enrichment corpus rebuilt
+                    <strong className="text-foreground">Data Asset &amp; Compliance updates</strong>{' '}
+                    &mdash; ClassificationChallenge &amp; SensitivityConflictResolver workshops;
+                    Compliance body-type grouping, sort &amp; view-toggle
                   </span>
                 </li>
               </ul>
