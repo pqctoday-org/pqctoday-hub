@@ -168,6 +168,33 @@ export const CRYPTO_TOOLTIPS = {
     description:
       'Legacy Bitcoin address format starting with "1". The address is a hash of the public key (SHA-256 then RIPEMD-160), encoded with Base58Check. Most common address type, supported by all wallets.',
   },
+
+  // Custody & Institutional
+  mpc: {
+    title: 'Multi-Party Computation (MPC)',
+    description:
+      'Distributes key generation and signing across multiple independent parties so no single party ever holds the complete private key. Used by institutional custody platforms to eliminate single points of compromise.',
+  },
+  hsm: {
+    title: 'Hardware Security Module (HSM)',
+    description:
+      'Tamper-resistant physical device that generates, stores, and uses cryptographic keys without exposing them. FIPS 140-3 certified. Provides hardware-enforced key isolation for custody platforms.',
+  },
+  shamir: {
+    title: "Shamir's Secret Sharing",
+    description:
+      'Splits a secret into N shares where any K shares can reconstruct it (K-of-N threshold). Used in cold wallet disaster recovery to distribute backup key material across geographically separated custodians.',
+  },
+  coldStorage: {
+    title: 'Cold Storage',
+    description:
+      'Offline key storage with no network connectivity. Keys are generated and used on air-gapped hardware (typically HSMs in secure facilities). Holds the majority of custodied assets.',
+  },
+  keyCeremony: {
+    title: 'Key Ceremony',
+    description:
+      'Formal multi-person procedure for generating and distributing root cryptographic keys under dual-control, physical security (Faraday cage), and complete audit trail. The most security-critical operational process in custody.',
+  },
 }
 
 export type CryptoTooltipKey = keyof typeof CRYPTO_TOOLTIPS

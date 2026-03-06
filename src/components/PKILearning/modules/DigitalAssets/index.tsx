@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { Trash2, Bitcoin, Hexagon, Zap, GitBranch, ShieldAlert } from 'lucide-react'
+import { Trash2, Bitcoin, Hexagon, Zap, GitBranch, ShieldAlert, Landmark } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -13,6 +13,7 @@ import { HDWalletFlow } from './flows/HDWalletFlow'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { PQCMigrationFlow } from './flows/PQCMigrationFlow'
+import { CustodyArchitectureFlow } from './flows/CustodyArchitectureFlow'
 
 const MODULE_ID = 'digital-assets'
 
@@ -53,6 +54,12 @@ const CHAINS: ChainOption[] = [
     label: 'PQC Defense',
     description: 'Migration proposals & initiatives',
     icon: <ShieldAlert size={24} />,
+  },
+  {
+    id: 'custody-architecture',
+    label: 'Custody Architecture',
+    description: 'Wallet tiers / HSM / MPC / PQC threats',
+    icon: <Landmark size={24} />,
   },
 ]
 
@@ -177,7 +184,7 @@ export const DigitalAssetsModule: React.FC = () => {
                     and digital signing using real cryptographic operations.
                   </p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {CHAINS.map((chain) => (
                     <button
                       key={chain.id}
@@ -189,12 +196,18 @@ export const DigitalAssetsModule: React.FC = () => {
                       className={`glass-panel p-6 text-left transition-colors group ${
                         chain.id === 'pqc-migration'
                           ? 'hover:border-destructive/50 border-destructive/20'
-                          : 'hover:border-primary/50'
+                          : chain.id === 'custody-architecture'
+                            ? 'hover:border-accent/50 border-accent/20'
+                            : 'hover:border-primary/50'
                       }`}
                     >
                       <div
                         className={`mb-3 group-hover:scale-110 transition-transform ${
-                          chain.id === 'pqc-migration' ? 'text-destructive' : 'text-primary'
+                          chain.id === 'pqc-migration'
+                            ? 'text-destructive'
+                            : chain.id === 'custody-architecture'
+                              ? 'text-accent'
+                              : 'text-primary'
                         }`}
                       >
                         {chain.icon}
@@ -237,6 +250,12 @@ export const DigitalAssetsModule: React.FC = () => {
                 )}
                 {activeChain === 'pqc-migration' && (
                   <PQCMigrationFlow key={`pqc-${configKey}`} onBack={() => setActiveChain(null)} />
+                )}
+                {activeChain === 'custody-architecture' && (
+                  <CustodyArchitectureFlow
+                    key={`custody-${configKey}`}
+                    onBack={() => setActiveChain(null)}
+                  />
                 )}
               </div>
             )}

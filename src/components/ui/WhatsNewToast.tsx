@@ -86,25 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Migrate catalog +28 products</strong>{' '}
-                    &mdash; blockchain/DLT protocols (Bitcoin, Ethereum, Solana, Cardano&hellip;)
-                    and digital asset custody platforms (Fireblocks, Anchorage, BitGo&hellip;); 354
-                    total
+                    <strong className="text-foreground">Custody Architecture Explorer</strong>{' '}
+                    &mdash; new interactive workshop in Digital Assets: 5-layer corporate custody
+                    platform with HSMs, MPC, wallet tiers, and PQC threat analysis
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Priority matrix refactor</strong> &mdash;
-                    Blockchain category split into Digital Asset Custody (High) and Blockchain &amp;
-                    DLT Protocols (Critical) for finer migration planning
+                    <strong className="text-foreground">Transaction flow walkthrough</strong>{' '}
+                    &mdash; 7-step guided trace of a withdrawal from client request through signing
+                    to broadcast, with crypto operations and PQC considerations at each stage
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">RAG corpus rebuilt</strong> &mdash; 2,869
-                    chunks (+29) indexing all new migrate products and priority categories
+                    <strong className="text-foreground">PQC threat overlay</strong> &mdash; every
+                    custody component shows quantum vulnerability level, affected algorithms, and
+                    migration readiness
                   </span>
                 </li>
               </ul>

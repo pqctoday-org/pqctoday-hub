@@ -93,8 +93,9 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
   'digital-assets': {
     id: 'digital-assets',
     title: 'Digital Assets',
-    description: 'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana using OpenSSL.',
-    duration: '60 min',
+    description:
+      'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana. Explore institutional custody architecture with PQC threat analysis.',
+    duration: '75 min',
     difficulty: 'intermediate',
   },
   '5g-security': {
@@ -422,6 +423,7 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'ethereum', label: 'Ethereum: Keccak-256 & Smart Contracts' },
     { id: 'hd-wallets', label: 'HD Wallets: BIP32/39/44' },
     { id: 'pqc-blockchain', label: 'PQC Migration for Digital Assets' },
+    { id: 'custody', label: 'Custody Architecture & PQC Threats' },
   ],
   '5g-security': [
     { id: 'suci', label: 'SUCI & Subscriber Identity Protection' },
@@ -596,6 +598,7 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'solana', label: 'Solana Flow' },
     { id: 'hd-wallet', label: 'HD Wallet Flow' },
     { id: 'pqc-migration', label: 'PQC Defense' },
+    { id: 'custody-architecture', label: 'Custody Architecture' },
   ],
   '5g-security': [
     { id: 'suci', label: 'SUCI Deconcealment' },

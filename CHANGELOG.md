@@ -4,6 +4,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.27.0] - 2026-03-06
+
+### Added
+
+- **Custody Architecture Explorer** (`src/components/PKILearning/modules/DigitalAssets/flows/CustodyArchitectureFlow.tsx`): New interactive workshop flow in the Digital Assets module. Five-layer architecture explorer covering Client Interfaces, Orchestration, Wallet Tiers (hot/warm/cold), Cryptographic Infrastructure (HSMs, MPC, confidential computing, key ceremonies), and Network & Broadcast. Each layer expands to reveal sub-components with crypto primitives and integrated PQC threat analysis — threat level badges, vulnerable algorithms, countermeasures, and migration readiness indicators. Includes a 7-step Transaction Flow Walkthrough tracing a withdrawal from client request through signing to broadcast, highlighting the active architecture layer at each step. [view:/learn/digital-assets] [persona:architect,developer,executive]
+
+- **Custody data constants** (`src/components/PKILearning/modules/DigitalAssets/data/custodyConstants.ts`): Vendor-neutral reference architecture data — 5 layers, 18 sub-components, 7 transaction flow steps, threat level and migration readiness configs. TypeScript interfaces: `ArchitectureLayer`, `ArchitectureSubComponent`, `TransactionFlowStep`, `PQCThreatOverlay`. [view:/learn/digital-assets]
+
+- **Custody glossary terms** (`src/components/PKILearning/modules/DigitalAssets/utils/cryptoConstants.ts`): Added 5 tooltip entries — MPC, HSM, Shamir's Secret Sharing, Cold Storage, Key Ceremony. [view:/learn/digital-assets]
+
+### Changed
+
+- **Digital Assets module metadata** (`src/components/PKILearning/moduleData.ts`): Updated description to include custody architecture; duration bumped from 60 to 75 min. Added custody entries to `LEARN_SECTIONS` and `WORKSHOP_STEPS`. Chain selector grid changed from `lg:grid-cols-5` to `lg:grid-cols-3` (2×3 layout for 6 flows). [view:/learn/digital-assets]
+
 ## [2.26.1] - 2026-03-06
 
 ### Data
