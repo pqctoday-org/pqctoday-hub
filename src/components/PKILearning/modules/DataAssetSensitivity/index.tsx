@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { Trash2, Database, ListChecks, Scale, SlidersHorizontal, Map } from 'lucide-react'
 import { DataAssetIntroduction } from './components/DataAssetIntroduction'
 import { DataAssetExercises, type WorkshopConfig } from './components/DataAssetExercises'
@@ -75,7 +75,12 @@ export const DataAssetSensitivityModule: React.FC = () => {
   const [crqcYear, setCrqcYear] = useState(ESTIMATED_CRQC_YEAR)
 
   // Derive mandates from assets' compliance flags (replaces ComplianceMatrix selection)
-  const derivedMandates = [...new Set(assets.flatMap((a) => a.complianceFlags))]
+  // Must be memoized — a new array reference every render would cascade into the
+  // SensitivityScoringEngine's useMemo chain and cause a setState-during-render loop.
+  const derivedMandates = useMemo(
+    () => [...new Set(assets.flatMap((a) => a.complianceFlags))],
+    [assets]
+  )
 
   // ── Time tracking ──────────────────────────────────────────────────────────
   useEffect(() => {

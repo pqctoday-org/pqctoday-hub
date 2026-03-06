@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { ChevronDown, ChevronUp, ArrowDownUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -214,12 +214,16 @@ export const SensitivityScoringEngine: React.FC<SensitivityScoringEngineProps> =
 
   const scored = useMemo(() => {
     const results = assetsWithFlags.map((a) => scoreAsset(a, weights, crqcYear))
-    const sorted = [...results].sort((a, b) =>
+    return [...results].sort((a, b) =>
       sortDescending ? b.compositeScore - a.compositeScore : a.compositeScore - b.compositeScore
     )
-    onScoredAssetsChange?.(sorted)
-    return sorted
-  }, [assetsWithFlags, weights, sortDescending, onScoredAssetsChange, crqcYear])
+  }, [assetsWithFlags, weights, sortDescending, crqcYear])
+
+  // Notify parent of scored results — must be in useEffect, not useMemo,
+  // to avoid calling setState during another component's render phase.
+  useEffect(() => {
+    onScoredAssetsChange?.(scored)
+  }, [scored, onScoredAssetsChange])
 
   const weightTotal = Object.values(weights).reduce((sum, v) => sum + v, 0)
   const isBalanced = weightTotal === 100
