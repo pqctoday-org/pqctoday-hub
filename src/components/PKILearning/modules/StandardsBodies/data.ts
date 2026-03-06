@@ -48,7 +48,8 @@ export const ORGANIZATIONS: OrgEntry[] = [
       'FIPS 203 (ML-KEM, August 2024)',
       'FIPS 204 (ML-DSA, August 2024)',
       'FIPS 205 (SLH-DSA, August 2024)',
-      'NIST IR 8547 (Transition to PQC, finalized 2025)',
+      'FIPS 206 (FN-DSA / Falcon, August 2024)',
+      'NIST IR 8547 (Transition to PQC, initial public draft Nov 2024)',
       'NIST SP 800-227 (KEM recommendations)',
       'FIPS 140-3 (cryptographic module standard)',
     ],
@@ -274,7 +275,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     decisionMaking:
       'Issues mandates via CNSSP (Committee on National Security Systems Policy). CNSA 2.0 issued September 2022 with phased deadlines. NSA CSfC (Commercial Solutions for Classified) program certifies commercial products for classified use.',
     keyPqcOutputs: [
-      'CNSA 2.0 (September 2022) – mandates ML-KEM-1024, ML-DSA-87, SLH-DSA-SHA2-256s',
+      'CNSA 2.0 (September 2022) – mandates ML-KEM-1024, ML-DSA-87, LMS and XMSS (software/firmware signing)',
       'NSA CNSA 2.0 FAQ',
       'NSA CSfC PQC Guidance Addendum',
     ],
@@ -324,7 +325,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'nist',
     name: 'NIST',
     acronym: 'National Institute of Standards and Technology',
-    hint: 'US federal agency that ran the 6-year PQC algorithm competition and published FIPS 203/204/205.',
+    hint: 'US federal agency (Dept of Commerce). FIPS = Federal Information Processing Standards — binding only for US federal use. Other countries adopt NIST standards voluntarily; NIST has no mandate authority outside the US.',
     correctType: 'standards-body',
     correctScope: 'regional',
     correctAuthority: 'governmental',
@@ -556,7 +557,7 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         label: 'NIST IR 8547',
         body: 'NIST',
         description:
-          'NIST IR 8547 (finalized 2025) is the Transition to Post-Quantum Cryptography Standards roadmap. It specifies which classical algorithms are deprecated (by 2030) and disallowed (by 2035), and requires services to migrate to FIPS 203/204/205.',
+          'NIST IR 8547 is the Transition to Post-Quantum Cryptography Standards roadmap (initial public draft, November 2024; comment period closed January 2025). When finalized, it will specify which classical algorithms are deprecated (by 2030) and disallowed (by 2035), and require services to migrate to FIPS 203/204/205.',
       },
       {
         id: 'acvp-cert',
@@ -572,7 +573,7 @@ export const CHAIN_SCENARIOS: ChainScenario[] = [
         label: 'FedRAMP PQC Requirement',
         body: 'GSA / CISA',
         description:
-          "FedRAMP (Federal Risk and Authorization Management Program) governs cloud service authorization for US federal agencies. Post-NIST IR 8547 finalization, FedRAMP's updated cryptographic requirements reference FIPS 203/204/205 — requiring ACVP-validated algorithm implementations in cloud services.",
+          "FedRAMP (Federal Risk and Authorization Management Program) governs cloud service authorization for US federal agencies. Once NIST IR 8547 is finalized (currently in initial public draft as of November 2024), FedRAMP's cryptographic requirements will reference FIPS 203/204/205 — requiring ACVP-validated algorithm implementations in cloud services.",
       },
     ],
   },
@@ -878,6 +879,6 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     briefFeedback:
       'NSA authored CNSA 2.0 (regulatory agency). It mandates ML-KEM-1024 from FIPS 203 (NIST standard). CNSA 2.0 is a mandate that references NIST standards — two different bodies, complementary roles.',
     detailedExplanation:
-      'CNSA 2.0 (Commercial National Security Algorithm Suite 2.0) was published by the NSA in September 2022. NSA is a governmental regulatory agency whose mandates are binding for US National Security Systems (NSS) — all government systems that process classified or sensitive national security information. CNSA 2.0 mandates specific parameter sets: ML-KEM-1024 (not 512 or 768) for key establishment, ML-DSA-87 for signatures, and SLH-DSA-SHA2-256s for software/firmware signing. The underlying algorithm definitions come from NIST (a different standards body): FIPS 203 defines ML-KEM, FIPS 204 defines ML-DSA, FIPS 205 defines SLH-DSA. DoD contractors must implement CMVP-validated modules (CMVP is the certification body) that implement these NIST algorithms at the specific parameter levels CNSA 2.0 requires. This chain — NIST standard → CMVP certification → NSA/CNSA mandate — is the full compliance picture.',
+      'CNSA 2.0 (Commercial National Security Algorithm Suite 2.0) was published by the NSA in September 2022. NSA is a governmental regulatory agency whose mandates are binding for US National Security Systems (NSS) — all government systems that process classified or sensitive national security information. CNSA 2.0 mandates specific parameter sets: ML-KEM-1024 (not 512 or 768) for key establishment, ML-DSA-87 for signatures, and XMSS or LMS (stateful hash-based) for software/firmware signing. Note: SLH-DSA is not part of CNSA 2.0 — the NSA chose stateful hash-based schemes (LMS/XMSS) instead. The underlying algorithm definitions come from NIST (a different standards body): FIPS 203 defines ML-KEM, FIPS 204 defines ML-DSA, FIPS 205 defines SLH-DSA. DoD contractors must implement CMVP-validated modules (CMVP is the certification body) that implement these NIST algorithms at the specific parameter levels CNSA 2.0 requires. This chain — NIST standard → CMVP certification → NSA/CNSA mandate — is the full compliance picture.',
   },
 ]
