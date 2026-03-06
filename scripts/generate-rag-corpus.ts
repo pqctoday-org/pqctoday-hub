@@ -1343,37 +1343,44 @@ function processAssessmentGuide(): RAGChunk[] {
         'Data Retention periods directly impact HNDL risk exposure. Data that must remain confidential for 10+ years (e.g., health records, state secrets, financial archives) faces the highest quantum threat since quantum computers could decrypt it within its retention window. Multiple retention levels can be selected.',
     },
     {
+      id: 'credential-lifetime',
+      title: 'Credential Lifetime',
+      step: 8,
+      content:
+        'The Credential Lifetime step assesses how long cryptographic credentials (certificates, keys, tokens) must remain valid in your organization. Long-lived credentials (5+ years) face elevated HNDL/HNFL risk — a certificate valid through 2030 may need to remain trustworthy even after a CRQC arrives. This step drives urgency for PKI migration, code signing transitions, and certificate authority upgrades.',
+    },
+    {
       id: 'scale',
       title: 'Organization Scale',
-      step: 8,
+      step: 9,
       content:
         'Organization Scale affects migration complexity and timeline. Large enterprises with thousands of endpoints, multiple data centers, and complex supply chains require longer migration timelines and more comprehensive crypto-agility frameworks than smaller organizations.',
     },
     {
       id: 'agility',
       title: 'Crypto Agility',
-      step: 9,
+      step: 10,
       content:
         "Crypto Agility measures your organization's ability to quickly swap cryptographic algorithms. Organizations with centralized key management, automated certificate rotation, and modular crypto libraries can migrate faster. Low agility increases migration risk and timeline.",
     },
     {
       id: 'infrastructure',
       title: 'Infrastructure Assessment',
-      step: 10,
+      step: 11,
       content:
         'The Infrastructure step evaluates which systems need PQC upgrades: HSMs, load balancers, firewalls, certificate authorities, databases, cloud services, IoT devices. Hardware-bound systems (HSMs, embedded devices) require longer migration timelines due to firmware/hardware replacement cycles.',
     },
     {
       id: 'vendors',
       title: 'Vendor Dependencies',
-      step: 11,
+      step: 12,
       content:
         'Vendor Dependencies identifies third-party products and services in your cryptographic supply chain. Organizations dependent on vendor timelines for PQC support face additional risk. The Migrate Catalog can help identify PQC-ready alternatives.',
     },
     {
       id: 'timeline',
       title: 'Target Timeline',
-      step: 12,
+      step: 13,
       content:
         "The Target Timeline step sets your organization's PQC migration deadline based on regulatory requirements, risk tolerance, and industry benchmarks. Country-aligned options show relevant national deadlines (e.g., CNSA 2.0 2030/2033 milestones, ANSSI 2025 hybrid requirement).",
     },
@@ -1474,6 +1481,16 @@ function processPlaygroundGuide(): RAGChunk[] {
       category: 'playground',
       metadata: { feature: 'signatures' },
       deepLink: '/playground?algo=ML-DSA',
+    },
+    {
+      id: 'playground-softhsm',
+      source: 'documentation',
+      title: 'Playground — SoftHSM (PKCS#11 v3.2 Emulation)',
+      content:
+        'SoftHSM Tab in the PQC Playground\n\nThe SoftHSM tab emulates a PKCS#11 v3.2 hardware security module in the browser using softhsmv3 (a fork of SoftHSM2 compiled to WebAssembly). It demonstrates real HSM-style key operations with PQC algorithms — all running client-side with no real hardware required.\n\nML-DSA Operations: Generate ML-DSA-44/65/87 keypairs in a PKCS#11 token slot, sign messages, and verify signatures. Pre-hash signing is supported via a dropdown with 10 hash variants (SHA-256, SHA-384, SHA-512, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256) plus Pure (no pre-hash).\n\nSLH-DSA Operations: Generate SLH-DSA keypairs with all 12 FIPS 205 parameter sets (CKP_SLH_DSA_SHA2_128S, CKP_SLH_DSA_SHA2_192S, CKP_SLH_DSA_SHA2_256S, CKP_SLH_DSA_SHAKE_128S, CKP_SLH_DSA_SHAKE_192S, CKP_SLH_DSA_SHAKE_256S, and their -F fast variants). Pre-hash dropdown shared with ML-DSA.\n\nAdditional tabs: Key Agreement (ECDH, ML-KEM), KDF (HKDF, PBKDF2/BIP39), Classical (AES, RSA, ECDSA). All operations use the PKCS#11 C_Sign, C_Verify, C_GenerateKeyPair, C_EncapsulateKey, C_DecapsulateKey interfaces — mirroring what a real PKCS#11 application would do against a hardware HSM.',
+      category: 'playground',
+      metadata: { feature: 'softhsm' },
+      deepLink: '/playground',
     },
   ]
 }
@@ -1857,7 +1874,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Landing Page — Platform Overview & Persona Selection',
       content:
-        'PQC Today Landing Page\n\nThe landing page introduces the PQC adoption lifecycle through a 7-step journey: Learn → Assess → Explore → Test → Deploy → Ramp Up → Stay Agile. Users select a persona (Executive, Developer, Architect, Researcher, or IT Ops/DevOps) to personalize their experience — each persona sees "For you" badges on recommended journey steps and receives tailored recommendations throughout the platform.\n\nKey statistics displayed: 27 interactive learning modules, 530 quiz questions, 40+ algorithms catalogued, 230+ PQC-ready tools tracked, 14-step quantum risk assessment wizard, and compliance deadlines spanning 2024–2036.\n\nThe ScoreCard tracks learning progress using a judo belt grading system (White through Black belt) based on module completions and quiz performance. Three paths are always visible regardless of persona: Learn, Timeline, and Threats.\n\nPQC Today is open source (GPL-3.0) and runs entirely in the browser — all cryptographic operations use WebAssembly (OpenSSL v3.6.0 + liboqs-js v0.15.1), with no backend or data collection.',
+        'PQC Today Landing Page\n\nThe landing page introduces the PQC adoption lifecycle through a 7-step journey: Learn → Assess → Explore → Test → Deploy → Ramp Up → Stay Agile. Users select a persona (Executive, Developer, Architect, Researcher, or IT Ops/DevOps) to personalize their experience — each persona sees "For you" badges on recommended journey steps and receives tailored recommendations throughout the platform.\n\nKey statistics displayed: 27 interactive learning modules (covering PQC 101, Quantum Threats, Hybrid Crypto, TLS, VPN/SSH, PKI, KMS & PQC Key Management, HSM & PQC Operations, Data & Asset Sensitivity, Stateful Signatures, QKD, Digital Assets, 5G Security, Code Signing, API Security, IoT/OT, and more), 530 quiz questions, 40+ algorithms catalogued, 230+ PQC-ready tools tracked, 14-step quantum risk assessment wizard, and compliance deadlines spanning 2024–2036.\n\nThe ScoreCard tracks learning progress using a judo belt grading system (White through Black belt) based on module completions and quiz performance. Three paths are always visible regardless of persona: Learn, Timeline, and Threats.\n\nPQC Today is open source (GPL-3.0) and runs entirely in the browser — all cryptographic operations use WebAssembly (OpenSSL v3.6.0 + liboqs-js v0.15.1), with no backend or data collection.',
       category: 'page-guide',
       metadata: { page: 'landing' },
       deepLink: '/',
@@ -1901,7 +1918,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Threats Page — Industry-Specific Quantum Risk Dashboard',
       content:
-        'Threats Page Overview\n\nThe Threats dashboard shows 50+ industry-specific quantum threat scenarios across 15+ industries: Aerospace, Automotive, Cloud Computing, Cryptocurrency/Blockchain, Cross-Industry, Energy/Critical Infrastructure, Financial Services, Government/Defense, Healthcare, Insurance, IoT, Telecommunications, and more.\n\nThreat severity levels: Critical (immediate action required), High (1–3 year timeline), Medium-High, Medium, and Low.\n\nKey concepts:\n- HNDL (Harvest Now, Decrypt Later): Adversaries intercept and store encrypted data today to decrypt when quantum computers arrive. Primary near-term threat.\n- HNFL (Harvest Now, Forge Later): Adversaries plan to forge digital signatures (code signing, certificates, legal documents) once quantum computers break ECDSA/RSA.\n- CRQC (Cryptographically Relevant Quantum Computer): Global Risk Institute 2024 estimates 19–34% probability within 10 years.\n\nEach threat entry includes: threat ID, industry, detailed description, criticality level, crypto at risk, PQC replacement recommendation, regulation/source, confidence percentage, and related learning modules.\n\nFilter by industry using ?industry= (e.g., /threats?industry=finance) or open specific threats with ?id= (e.g., /threats?id=FIN-001).',
+        'Threats Page Overview\n\nThe Threats dashboard shows 80+ quantum threat scenarios across 20 industries: Aerospace, Automotive, Cloud Computing, Cryptocurrency/Blockchain, Cross-Industry, Energy/Critical Infrastructure, Financial Services, Government/Defense, Healthcare, Insurance, IoT, IT/Software, Legal/eSignature, Media/DRM, Payment Card, Rail/Transit, Retail, Supply Chain, Telecommunications, and Water/Wastewater.\n\nThreat severity levels: Critical (immediate action required), High (1–3 year timeline), Medium-High, Medium, and Low.\n\nKey concepts:\n- HNDL (Harvest Now, Decrypt Later): Adversaries intercept and store encrypted data today to decrypt when quantum computers arrive. Primary near-term threat.\n- HNFL (Harvest Now, Forge Later): Adversaries plan to forge digital signatures (code signing, certificates, legal documents) once quantum computers break ECDSA/RSA.\n- CRQC (Cryptographically Relevant Quantum Computer): Global Risk Institute 2024 estimates 19–34% probability within 10 years.\n\nEach threat entry includes: threat ID, industry, detailed description, criticality level, crypto at risk, PQC replacement recommendation, regulation/source, confidence percentage, and related learning modules.\n\nFilter by industry using ?industry= (e.g., /threats?industry=finance) or open specific threats with ?id= (e.g., /threats?id=FIN-001).',
       category: 'page-guide',
       metadata: { page: 'threats' },
       deepLink: '/threats',
@@ -1945,7 +1962,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Leaders Page — Global PQC Visionaries & Organizations',
       content:
-        'Leaders Page Overview\n\nThe Leaders page profiles 50+ global PQC visionaries and organizations driving post-quantum cryptography adoption and standardization.\n\nLeader categories:\n- Government Leaders: NIST (Dustin Moody, Lily Chen), NCSC UK (Ollie Whitehouse), ANSSI France (Vincent Strubel), BSI Germany (Claudia Plattner), ENISA, CISA\n- Algorithm Inventors: Vadim Lyubashevsky (ML-KEM/ML-DSA at IBM), Léo Ducas (Kyber/Dilithium at CWI/Leiden)\n- Industry Vendors: SandboxAQ (Jack Hidary), PQShield, CryptoNext, QuSecure; HSM vendors (Thales, Entrust, Utimaco); PKI vendors (DigiCert, ISARA)\n- Standards Bodies: IETF (PQUIP, LAMPS), ETSI QSC, PQC Alliance\n- Industry Adopters: Google, AWS (Panos Kampanakis), Cloudflare (Bas Westerbaan — 38%+ HTTPS PQC-protected), Signal, Vodafone, IBM, JPMorgan Chase\n- Academic Researchers: Universities conducting PQC cryptanalysis and lattice cryptography research\n\nFilter by: country (15+ countries), sector (Public/Private/Academic), and text search across name, organization, and bio. Use ?leader= to highlight a specific person, ?country= for country filter, ?sector= for sector filter.',
+        'Leaders Page Overview\n\nThe Leaders page profiles 100+ global PQC leaders — visionaries, algorithm inventors, government officials, and organizations driving post-quantum cryptography adoption and standardization.\n\nLeader categories:\n- Government Leaders: NIST (Dustin Moody, Lily Chen), NCSC UK (Ollie Whitehouse), ANSSI France (Vincent Strubel), BSI Germany (Claudia Plattner), ENISA, CISA\n- Algorithm Inventors: Vadim Lyubashevsky (ML-KEM/ML-DSA at IBM), Léo Ducas (Kyber/Dilithium at CWI/Leiden)\n- Industry Vendors: SandboxAQ (Jack Hidary), PQShield, CryptoNext, QuSecure; HSM vendors (Thales, Entrust, Utimaco); PKI vendors (DigiCert, ISARA)\n- Standards Bodies: IETF (PQUIP, LAMPS), ETSI QSC, PQC Alliance\n- Industry Adopters: Google, AWS (Panos Kampanakis), Cloudflare (Bas Westerbaan — 38%+ HTTPS PQC-protected), Signal, Vodafone, IBM, JPMorgan Chase\n- Academic Researchers: Universities conducting PQC cryptanalysis and lattice cryptography research\n\nFilter by: country (15+ countries), sector (Public/Private/Academic), and text search across name, organization, and bio. Use ?leader= to highlight a specific person, ?country= for country filter, ?sector= for sector filter.',
       category: 'page-guide',
       metadata: { page: 'leaders' },
       deepLink: '/leaders',
@@ -1956,7 +1973,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'About Page — Platform Details, SBOM, Privacy & Licensing',
       content:
-        "About Page Overview\n\nThe About page provides comprehensive platform information:\n\nSoftware Bill of Materials (SBOM): React v19, Tailwind CSS v4, Framer Motion (animations), Lucide React (icons), React Router v7. Crypto stack: OpenSSL WASM v3.6.0 (primary), @oqs/liboqs-js v0.15.1 (PQC algorithms), @noble/curves and @scure/* (blockchain crypto), Web Crypto API (X25519, P-256). State management: Zustand with localStorage persistence. Data: PapaParse (CSV), Recharts (visualization). Testing: Vitest + Playwright + axe-playwright (accessibility). Build: Vite + TypeScript strict mode.\n\nSecurity Audit: 0 production vulnerabilities. Dev-only findings are ESLint toolchain ReDoS (minimatch, ajv) — don't affect deployed app.\n\nData Privacy: Static site with no backend or database. No data collection, no cookies, no tracking, no third-party services. All persistence is localStorage only. All cryptography runs client-side via WASM.\n\nPQC Assistant: RAG (Retrieval-Augmented Generation) with ~2,500 corpus chunks from 25 data sources, powered by Gemini 2.5 Flash. Requires user-provided Google API key (BYOK). Three capabilities: Grounded Answers, Deep Linking, PQC Domain Expertise.\n\nLicense: GPL-3.0 (GNU General Public License v3.0).\n\nCreator & Maintainer: Eric Amador. Eric Amador is the sole developer and maintainer of PQC Today (pqctoday.com). LinkedIn profile: https://www.linkedin.com/in/eric-amador-971850a/. To connect with Eric or learn more about his background, visit the About page (/about) or his LinkedIn profile. AI tools acknowledged: Google Antigravity, ChatGPT, Claude AI, Perplexity, Gemini Pro.",
+        "About Page Overview\n\nThe About page provides comprehensive platform information:\n\nSoftware Bill of Materials (SBOM): React v19, Tailwind CSS v4, Framer Motion (animations), Lucide React (icons), React Router v7. Crypto stack: OpenSSL WASM v3.6.0 (primary), @oqs/liboqs-js v0.15.1 (PQC algorithms), @noble/curves and @scure/* (blockchain crypto), Web Crypto API (X25519, P-256). State management: Zustand with localStorage persistence. Data: PapaParse (CSV), Recharts (visualization). Testing: Vitest + Playwright + axe-playwright (accessibility). Build: Vite + TypeScript strict mode.\n\nSecurity Audit: 0 production vulnerabilities. Dev-only findings are ESLint toolchain ReDoS (minimatch, ajv) — don't affect deployed app.\n\nData Privacy: Static site with no backend or database. No data collection, no cookies, no tracking, no third-party services. All persistence is localStorage only. All cryptography runs client-side via WASM.\n\nPQC Assistant: RAG (Retrieval-Augmented Generation) with 2,800+ corpus chunks from 22 data sources, powered by Gemini 2.5 Flash. Requires user-provided Google API key (BYOK). Three capabilities: Grounded Answers, Deep Linking, PQC Domain Expertise.\n\nLicense: GPL-3.0 (GNU General Public License v3.0).\n\nCreator & Maintainer: Eric Amador. Eric Amador is the sole developer and maintainer of PQC Today (pqctoday.com). LinkedIn profile: https://www.linkedin.com/in/eric-amador-971850a/. To connect with Eric or learn more about his background, visit the About page (/about) or his LinkedIn profile. AI tools acknowledged: Google Antigravity, ChatGPT, Claude AI, Perplexity, Gemini Pro.",
       category: 'page-guide',
       metadata: { page: 'about' },
       deepLink: '/about',
