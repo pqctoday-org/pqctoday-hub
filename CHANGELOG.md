@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ## [2.25.3] - 2026-03-06
 
+### Fixed
+
+- **5G Security — subscriber key terminology** (`src/components/PKILearning/modules/FiveG/`): Corrected `Ki` → `K` and `eKi` → `eK` throughout the module to match 3GPP TS 33.501 terminology (`Ki` is legacy GSM/2G). Updated architecture: K is stored in an encrypted subscriber database, not permanently in the HSM — the ARPF's HSM holds K only transiently during authentication vector computation. Step 5 renamed from "Import at UDM/HSM" to "Import at Operator". Affects provisioning flow, exercises, introduction, diagram, constants, service, and RAG summary. [view:/learn/5g-security]
+
 ### Performance
 
 - **Library page freeze resolved**: Archived 21 old CSV files that were being eagerly loaded via `import.meta.glob({eager: true})`, inflating the JS bundle to 5.3MB of raw data. `quizDataLoader` chunk dropped from 3.1MB to 709KB (-77%), `libraryData` chunk from 1.3MB to 349KB (-73%). Total JavaScript reduction: **3.3MB**. Per CLAUDE.md policy, only the latest 2 versions of each CSV are kept in `src/data/`; older versions moved to `src/data/archive/`. Updated What's New toast to reflect stability fix.
