@@ -4,6 +4,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.25.2] - 2026-03-06
+
+### Fixed
+
+- **Standards Bodies module — persona path visibility** (`src/data/learningPersonas.ts`): `standards-bodies` was missing from all 5 persona `recommendedPath` and `pathItems` arrays, causing the module to be hidden whenever any persona filter was active. Added to Executive (after `compliance-strategy`, in Governance & Compliance checkpoint), Architect (after `data-asset-sensitivity`, in Architecture Strategy checkpoint), Researcher (after `data-asset-sensitivity`, in Strategy checkpoint), and IT Ops/DevOps (after `hsm-pqc`, in Key Infrastructure checkpoint). `quizCategories` updated for Executive, Architect, and IT Ops personas; Researcher uses empty array (all categories). Updated `estimatedMinutes` for IT Ops from 705 → 765 to reflect the added 60-min module. [view:/learn/standards-bodies] [persona:executive,architect,researcher,ops]
+
 ## [2.25.1] - 2026-03-05
 
 ### Fixed
