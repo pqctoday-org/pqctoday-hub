@@ -54,7 +54,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               <p className="text-xs text-muted-foreground">
                 Vendors handling sensitive data in transit are immediate{' '}
                 <InlineTooltip term="HNDL">HNDL</InlineTooltip> targets. Every unpatched vendor
-                extends your exposure window.
+                extends your exposure window. For the full HNDL risk quantification framework, see{' '}
+                <Link to="/learn/pqc-risk-management" className="text-primary hover:underline">
+                  PQC Risk Management
+                </Link>
+                .
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">

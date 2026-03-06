@@ -29,8 +29,9 @@ export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
         const certId =
           certLink?.textContent?.trim() || `nist-${Math.random().toString(36).substr(2, 5)}`
         const relativeLink = certLink?.getAttribute('href') || ''
-        const vendor = cells[1]?.textContent?.trim() || 'Unknown'
-        const moduleName = cells[2]?.textContent?.trim() || 'Unknown Module'
+        // Blank vendor/module = classified government module (CMVP intentionally redacts these)
+        const vendor = cells[1]?.textContent?.trim() || 'Classified'
+        const moduleName = cells[2]?.textContent?.trim() || 'Classified Module'
 
         // Normalize date: Some FIPS records have multiple dates or malformed text
         // Extract first valid date pattern (MM/DD/YYYY or YYYY-MM-DD)

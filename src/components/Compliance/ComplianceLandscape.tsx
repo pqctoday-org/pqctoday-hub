@@ -12,13 +12,15 @@ import {
   BookOpen,
   CalendarClock,
   Building2,
+  Search,
+  ExternalLink,
 } from 'lucide-react'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
-import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
-import { usePersonaStore, type Region } from '@/store/usePersonaStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { CountryFlag } from '@/components/common/CountryFlag'
+import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 
 // ── Deadline helpers ────────────────────────────────────────────────────
 
@@ -49,7 +51,6 @@ function urgencyColor(urgency: ReturnType<typeof deadlineUrgency>) {
     case 'near':
       return 'text-status-success'
     case 'future':
-      return 'text-muted-foreground'
     case 'ongoing':
       return 'text-muted-foreground'
   }
@@ -69,16 +70,9 @@ function urgencyBgColor(urgency: ReturnType<typeof deadlineUrgency>) {
   }
 }
 
-// ── Region helpers ──────────────────────────────────────────────────────
+// ── Country helpers ─────────────────────────────────────────────────────
 
-const REGION_LABELS: Record<string, string> = {
-  americas: 'Americas',
-  eu: 'EU',
-  apac: 'APAC',
-  global: 'Global',
-}
-
-/** Map compliance CSV country names → ISO flag codes (matching public/flags/*.svg) */
+/** Map compliance CSV country names → ISO flag codes */
 const COUNTRY_FLAG_CODE: Record<string, string> = {
   'United States': 'us',
   Canada: 'ca',
@@ -141,6 +135,27 @@ function industryChip(industry: string): string {
   return map[industry] ?? industry
 }
 
+// ── Sort helpers ─────────────────────────────────────────────────────────
+
+type FrameworkSortOption = 'name' | 'deadline'
+
+const FRAMEWORK_SORT_OPTIONS: { id: FrameworkSortOption; label: string }[] = [
+  { id: 'deadline', label: 'Deadline ↑' },
+  { id: 'name', label: 'Name A-Z' },
+]
+
+function sortFrameworks(items: ComplianceFramework[], sort: FrameworkSortOption) {
+  return [...items].sort((a, b) => {
+    if (sort === 'name') return a.label.localeCompare(b.label)
+    // deadline: requiresPQC first, then by year ascending, then alphabetical
+    if (a.requiresPQC !== b.requiresPQC) return a.requiresPQC ? -1 : 1
+    const aYear = extractYear(a.deadline) ?? 9999
+    const bYear = extractYear(b.deadline) ?? 9999
+    if (aYear !== bYear) return aYear - bYear
+    return a.label.localeCompare(b.label)
+  })
+}
+
 // ── Timeline bar ────────────────────────────────────────────────────────
 
 const TIMELINE_START = 2024
@@ -153,7 +168,6 @@ function DeadlineTimeline({ frameworks }: { frameworks: ComplianceFramework[] })
     (_, i) => TIMELINE_START + i
   )
 
-  // Group frameworks by year
   const byYear = new Map<number, ComplianceFramework[]>()
   for (const fw of withDeadlines) {
     const year = extractYear(fw.deadline)!
@@ -166,7 +180,6 @@ function DeadlineTimeline({ frameworks }: { frameworks: ComplianceFramework[] })
       <h3 className="text-sm font-semibold text-foreground">PQC Compliance Deadlines</h3>
       <div className="relative overflow-x-auto">
         <div className="min-w-[600px]">
-          {/* Year markers */}
           <div className="flex justify-between text-xs text-muted-foreground mb-1 px-1">
             {years
               .filter((y) => y % 2 === 0 || y === TIMELINE_END)
@@ -176,10 +189,7 @@ function DeadlineTimeline({ frameworks }: { frameworks: ComplianceFramework[] })
                 </span>
               ))}
           </div>
-
-          {/* Bar */}
           <div className="relative h-2 bg-muted rounded-full mx-1">
-            {/* Today marker */}
             <div
               className="absolute top-0 h-2 w-0.5 bg-foreground/40"
               style={{
@@ -188,8 +198,6 @@ function DeadlineTimeline({ frameworks }: { frameworks: ComplianceFramework[] })
               title="Today (2026)"
             />
           </div>
-
-          {/* Framework markers */}
           <div className="relative h-24 mx-1 mt-1">
             {Array.from(byYear.entries()).map(([year, fws]) => {
               const left = ((year - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100
@@ -220,8 +228,6 @@ function DeadlineTimeline({ frameworks }: { frameworks: ComplianceFramework[] })
               )
             })}
           </div>
-
-          {/* Legend */}
           <div className="flex gap-4 text-xs text-muted-foreground mt-1 px-1">
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-status-error inline-block" /> Overdue
@@ -254,7 +260,6 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
 
   return (
     <div className="glass-panel p-4 space-y-3 flex flex-col">
-      {/* Header */}
       <div className="flex items-start gap-2">
         {fw.requiresPQC ? (
           <ShieldCheck size={18} className="text-status-success shrink-0 mt-0.5" />
@@ -279,7 +284,6 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
         </div>
       </div>
 
-      {/* Deadline */}
       <div className={`flex items-center gap-1.5 text-xs ${urgencyColor(urgency)}`}>
         <Clock size={12} />
         <span className="font-medium">
@@ -287,10 +291,8 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
         </span>
       </div>
 
-      {/* Description */}
       <p className="text-xs text-muted-foreground line-clamp-2">{fw.description}</p>
 
-      {/* Region chips */}
       {fw.countries.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {fw.countries.map((c) => (
@@ -305,7 +307,6 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
         </div>
       )}
 
-      {/* Industry chips */}
       {fw.industries.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {fw.industries.map((ind) => (
@@ -320,9 +321,20 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
         </div>
       )}
 
-      {/* Cross-reference badges */}
-      {(hasRefs || fw.notes) && (
+      {(hasRefs || fw.notes || fw.website) && (
         <div className="flex items-center gap-2 mt-auto pt-1">
+          {fw.website && (
+            <a
+              href={fw.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium hover:bg-muted/80 hover:text-foreground transition-colors"
+              title={`Official site: ${fw.website}`}
+            >
+              <ExternalLink size={8} />
+              Site
+            </a>
+          )}
           {fw.libraryRefs.length > 0 && (
             <Link
               to="/library"
@@ -343,8 +355,6 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
               Timeline
             </Link>
           )}
-
-          {/* Expandable notes toggle */}
           {fw.notes && (
             <button
               onClick={() => setExpanded(!expanded)}
@@ -357,12 +367,9 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
         </div>
       )}
 
-      {/* Expanded details */}
       {expanded && (
         <div className="text-xs text-muted-foreground bg-muted/30 rounded p-2 border border-border space-y-2">
           {fw.notes && <p>{fw.notes}</p>}
-
-          {/* Library references */}
           {fw.libraryRefs.length > 0 && (
             <div className="pt-1 border-t border-border/50">
               <span className="font-medium text-foreground">Related documents:</span>
@@ -380,8 +387,6 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
               </ul>
             </div>
           )}
-
-          {/* Timeline references */}
           {fw.timelineRefs.length > 0 && (
             <div className="pt-1 border-t border-border/50">
               <span className="font-medium text-foreground">Timeline entries:</span>
@@ -405,118 +410,206 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
   )
 }
 
+// ── Framework table row ─────────────────────────────────────────────────
+
+function FrameworkTableRow({ fw }: { fw: ComplianceFramework }) {
+  const urgency = deadlineUrgency(fw.deadline)
+  return (
+    <tr className="border-b border-border hover:bg-muted/20 transition-colors">
+      <td className="py-2.5 px-3">
+        <div className="flex items-center gap-2">
+          {fw.requiresPQC ? (
+            <ShieldCheck size={14} className="text-status-success shrink-0" />
+          ) : (
+            <ShieldAlert size={14} className="text-muted-foreground shrink-0" />
+          )}
+          <span className="text-sm font-medium text-foreground">{fw.label}</span>
+          {fw.website && (
+            <a
+              href={fw.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-primary transition-colors shrink-0"
+              title="Official website"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ExternalLink size={10} />
+            </a>
+          )}
+        </div>
+        <p className="text-xs text-muted-foreground mt-0.5 ml-5 line-clamp-1">{fw.description}</p>
+      </td>
+      <td className="py-2.5 px-3 text-xs text-muted-foreground whitespace-nowrap">
+        {fw.enforcementBody}
+      </td>
+      <td className={`py-2.5 px-3 text-xs font-medium whitespace-nowrap ${urgencyColor(urgency)}`}>
+        {fw.deadline}
+      </td>
+      <td className="py-2.5 px-3">
+        <div className="flex flex-wrap gap-1">
+          {fw.countries.slice(0, 3).map((c) => (
+            <span
+              key={c}
+              className="inline-flex items-center gap-0.5 text-[10px] px-1 py-0.5 rounded bg-muted text-muted-foreground"
+            >
+              {/* eslint-disable-next-line security/detect-object-injection */}
+              {COUNTRY_FLAG_CODE[c] && (
+                <CountryFlag
+                  code={COUNTRY_FLAG_CODE[c]}
+                  width={12}
+                  height={9}
+                  className="rounded-[1px]"
+                />
+              )}
+              {countryChip(c)}
+            </span>
+          ))}
+          {fw.countries.length > 3 && (
+            <span className="text-[10px] text-muted-foreground">+{fw.countries.length - 3}</span>
+          )}
+        </div>
+      </td>
+      <td className="py-2.5 px-3">
+        <div className="flex gap-1.5">
+          {fw.libraryRefs.length > 0 && (
+            <Link
+              to="/library"
+              className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-medium hover:bg-secondary/20 transition-colors"
+            >
+              <BookOpen size={8} />
+              {fw.libraryRefs.length}
+            </Link>
+          )}
+          {fw.timelineRefs.length > 0 && (
+            <Link
+              to="/timeline"
+              className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
+            >
+              <CalendarClock size={8} />
+            </Link>
+          )}
+        </div>
+      </td>
+    </tr>
+  )
+}
+
+function FrameworkTable({ frameworks }: { frameworks: ComplianceFramework[] }) {
+  return (
+    <div className="glass-panel overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-border bg-muted/30">
+            <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
+              Name
+            </th>
+            <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap">
+              Enforcement Body
+            </th>
+            <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
+              Deadline
+            </th>
+            <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
+              Countries
+            </th>
+            <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
+              Refs
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {frameworks.map((fw) => (
+            <FrameworkTableRow key={fw.id} fw={fw} />
+          ))}
+        </tbody>
+      </table>
+      {frameworks.length === 0 && (
+        <div className="p-8 text-center text-muted-foreground text-sm">
+          No entries match the selected filters.
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Main component ──────────────────────────────────────────────────────
 
-export function ComplianceLandscape() {
-  const { selectedIndustries, selectedRegion } = usePersonaStore()
+interface ComplianceLandscapeProps {
+  /** Pre-filtered set of frameworks to display. Defaults to all complianceFrameworks. */
+  frameworks?: ComplianceFramework[]
+  /** Whether to render the deadline timeline bar. Defaults to true. */
+  showDeadlineTimeline?: boolean
+}
 
-  // Filters — initialize from persona if set
-  const [regionFilter, setRegionFilter] = useState<string>(selectedRegion ?? 'All')
-  const [countryFilter, setCountryFilter] = useState<string>('All')
+export function ComplianceLandscape({
+  frameworks: frameworksProp,
+  showDeadlineTimeline = true,
+}: ComplianceLandscapeProps = {}) {
+  const sourceFrameworks = frameworksProp ?? complianceFrameworks
+  const { selectedIndustries } = usePersonaStore()
+
+  // Filter state
+  const [orgFilter, setOrgFilter] = useState<string>('All')
   const [industryFilter, setIndustryFilter] = useState<string>(selectedIndustries[0] ?? 'All')
+  const [searchText, setSearchText] = useState<string>('')
+  const [sortBy, setSortBy] = useState<FrameworkSortOption>('deadline')
+  const [viewMode, setViewMode] = useState<ViewMode>('cards')
 
-  // Changing region resets country selection
-  const handleRegionChange = (region: string) => {
-    setRegionFilter(region)
-    setCountryFilter('All')
-  }
-
-  // Apply filters
-  const filteredFrameworks = useMemo(() => {
-    let result = [...complianceFrameworks]
-
-    if (countryFilter !== 'All') {
-      // Specific country selected — filter to frameworks that include this country (or Global)
-      result = result.filter((fw) =>
-        fw.countries.some((c) => c === countryFilter || c === 'Global')
-      )
-    } else if (regionFilter !== 'All') {
-      // No specific country, but region selected — expand region to countries
-      const regionCountries = REGION_COUNTRIES_MAP[regionFilter as Region] ?? []
-      result = result.filter((fw) =>
-        fw.countries.some(
-          (c) => regionCountries.some((rc) => c.includes(rc) || rc.includes(c)) || c === 'Global'
-        )
-      )
+  // Organization options — derived from enforcementBody field
+  const orgItems = useMemo(() => {
+    const orgs = new Set<string>()
+    for (const fw of sourceFrameworks) {
+      if (fw.enforcementBody) orgs.add(fw.enforcementBody)
     }
-
-    if (industryFilter !== 'All') {
-      result = result.filter((fw) => fw.industries.includes(industryFilter))
-    }
-
-    // Sort: requiresPQC first, then by deadline urgency (imminent first), then alphabetical
-    result.sort((a, b) => {
-      if (a.requiresPQC !== b.requiresPQC) return a.requiresPQC ? -1 : 1
-      const aYear = extractYear(a.deadline) ?? 9999
-      const bYear = extractYear(b.deadline) ?? 9999
-      if (aYear !== bYear) return aYear - bYear
-      return a.label.localeCompare(b.label)
-    })
-
-    return result
-  }, [regionFilter, countryFilter, industryFilter])
-
-  // Stats
-  const totalCount = filteredFrameworks.length
-  const pqcCount = filteredFrameworks.filter((f) => f.requiresPQC).length
-  const deadlineCount = filteredFrameworks.filter((f) => extractYear(f.deadline) !== null).length
-
-  // Region filter items
-  const regionItems = [
-    { id: 'All', label: 'All Regions' },
-    ...Object.entries(REGION_LABELS).map(([id, label]) => ({ id, label })),
-  ]
-
-  // Country filter items — scoped by selected region
-  const countryItems = useMemo(() => {
-    // Collect all unique countries from framework data
-    const allCountries = new Set<string>()
-    for (const fw of complianceFrameworks) {
-      for (const c of fw.countries) allCountries.add(c)
-    }
-
-    // If a region is selected, only show countries in that region
-    let countries: string[]
-    if (regionFilter !== 'All') {
-      const regionCountries = new Set(REGION_COUNTRIES_MAP[regionFilter as Region] ?? [])
-      countries = [...allCountries].filter((c) => regionCountries.has(c))
-    } else {
-      countries = [...allCountries]
-    }
-
-    countries.sort((a, b) => a.localeCompare(b))
-
     return [
-      { id: 'All', label: 'All Countries' },
-      ...countries.map((c) => ({
-        id: c,
-        label: c,
-        // eslint-disable-next-line security/detect-object-injection
-        icon: COUNTRY_FLAG_CODE[c] ? (
-          <CountryFlag
-            code={COUNTRY_FLAG_CODE[c]}
-            width={16}
-            height={12}
-            className="rounded-[1px]"
-          />
-        ) : undefined,
-      })),
+      { id: 'All', label: 'All Organizations' },
+      ...[...orgs].sort().map((o) => ({ id: o, label: o })),
     ]
-  }, [regionFilter])
+  }, [sourceFrameworks])
 
-  // Industry filter items
+  // Industry options
   const industryItems = [
     { id: 'All', label: 'All Industries' },
     ...AVAILABLE_INDUSTRIES.filter((i) => i !== 'Other').map((i) => ({ id: i, label: i })),
   ]
+
+  // Sort options as FilterDropdown items
+  const sortItems = FRAMEWORK_SORT_OPTIONS.map((o) => ({ id: o.id, label: o.label }))
+
+  // Apply filters + sort
+  const displayedFrameworks = useMemo(() => {
+    let result = [...sourceFrameworks]
+
+    if (orgFilter !== 'All') {
+      result = result.filter((fw) => fw.enforcementBody === orgFilter)
+    }
+    if (industryFilter !== 'All') {
+      result = result.filter((fw) => fw.industries.includes(industryFilter))
+    }
+    if (searchText.trim()) {
+      const q = searchText.toLowerCase()
+      result = result.filter(
+        (fw) =>
+          fw.label.toLowerCase().includes(q) ||
+          fw.description.toLowerCase().includes(q) ||
+          fw.enforcementBody.toLowerCase().includes(q)
+      )
+    }
+
+    return sortFrameworks(result, sortBy)
+  }, [sourceFrameworks, orgFilter, industryFilter, searchText, sortBy])
+
+  // Stats
+  const pqcCount = displayedFrameworks.filter((f) => f.requiresPQC).length
+  const deadlineCount = displayedFrameworks.filter((f) => extractYear(f.deadline) !== null).length
 
   return (
     <div className="space-y-4">
       {/* Summary stats */}
       <div className="flex flex-wrap gap-4 text-sm">
         <div className="glass-panel px-4 py-2 flex items-center gap-2">
-          <span className="text-2xl font-bold text-foreground">{totalCount}</span>
-          <span className="text-muted-foreground">Frameworks</span>
+          <span className="text-2xl font-bold text-foreground">{displayedFrameworks.length}</span>
+          <span className="text-muted-foreground">Entries</span>
         </div>
         <div className="glass-panel px-4 py-2 flex items-center gap-2">
           <ShieldCheck size={16} className="text-status-success" />
@@ -530,51 +623,87 @@ export function ComplianceLandscape() {
         </div>
       </div>
 
-      {/* Timeline visualization (desktop only) */}
-      <div className="hidden md:block">
-        <DeadlineTimeline frameworks={filteredFrameworks} />
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3">
-        <FilterDropdown
-          items={regionItems}
-          selectedId={regionFilter}
-          onSelect={handleRegionChange}
-          label="Region"
-          defaultLabel="All Regions"
-          noContainer
-        />
-        <FilterDropdown
-          items={countryItems}
-          selectedId={countryFilter}
-          onSelect={setCountryFilter}
-          label="Country"
-          defaultLabel="All Countries"
-          noContainer
-        />
-        <FilterDropdown
-          items={industryItems}
-          selectedId={industryFilter}
-          onSelect={setIndustryFilter}
-          label="Industry"
-          defaultLabel="All Industries"
-          defaultIcon={<Factory size={16} className="text-primary" />}
-          noContainer
-        />
-      </div>
-
-      {/* Framework grid */}
-      {filteredFrameworks.length === 0 ? (
-        <div className="glass-panel p-8 text-center text-muted-foreground">
-          No frameworks match the selected filters. Try broadening your selection.
+      {/* Timeline visualization (desktop only) — only when showDeadlineTimeline=true */}
+      {showDeadlineTimeline && (
+        <div className="hidden md:block">
+          <DeadlineTimeline frameworks={displayedFrameworks} />
         </div>
+      )}
+
+      {/* Library-style filter band */}
+      <div className="bg-card border border-border rounded-lg shadow-sm p-2 flex items-center gap-2 flex-wrap">
+        {/* Organization dropdown */}
+        <div className="min-w-[140px]">
+          <FilterDropdown
+            items={orgItems}
+            selectedId={orgFilter}
+            onSelect={setOrgFilter}
+            defaultLabel="Organization"
+            noContainer
+            opaque
+          />
+        </div>
+
+        {/* Industry dropdown */}
+        <div className="min-w-[140px]">
+          <FilterDropdown
+            items={industryItems}
+            selectedId={industryFilter}
+            onSelect={setIndustryFilter}
+            defaultLabel="Industry"
+            noContainer
+            opaque
+          />
+        </div>
+
+        {/* Search input */}
+        <div className="relative flex-1 min-w-[160px]">
+          <Search
+            size={14}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <input
+            type="text"
+            placeholder="Search standards..."
+            aria-label="Search compliance entries"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-8 pr-4 py-1.5 text-xs focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+          />
+        </div>
+
+        {/* Sort (cards only) */}
+        {viewMode === 'cards' && (
+          <FilterDropdown
+            items={sortItems}
+            selectedId={sortBy}
+            onSelect={(id) => setSortBy(id as FrameworkSortOption)}
+            defaultLabel="Sort"
+            noContainer
+            opaque
+          />
+        )}
+
+        {/* View toggle */}
+        <ViewToggle mode={viewMode} onChange={setViewMode} />
+      </div>
+
+      {/* Content */}
+      {viewMode === 'cards' ? (
+        displayedFrameworks.length === 0 ? (
+          <div className="glass-panel p-8 text-center text-muted-foreground">
+            No entries match the selected filters. Try broadening your selection.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {displayedFrameworks.map((fw) => (
+              <FrameworkCard key={fw.id} fw={fw} />
+            ))}
+          </div>
+        )
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {filteredFrameworks.map((fw) => (
-            <FrameworkCard key={fw.id} fw={fw} />
-          ))}
-        </div>
+        <FrameworkTable frameworks={displayedFrameworks} />
       )}
     </div>
   )

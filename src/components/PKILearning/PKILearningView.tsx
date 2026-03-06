@@ -120,6 +120,11 @@ const DataAssetSensitivityModule = lazyWithRetry(() =>
     default: module.DataAssetSensitivityModule,
   }))
 )
+const StandardsBodiesModule = lazyWithRetry(() =>
+  import('./modules/StandardsBodies').then((module) => ({
+    default: module.StandardsBodiesModule,
+  }))
+)
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -200,6 +205,7 @@ export const PKILearningView: React.FC = () => {
               <Route path="migration-program" element={<MigrationProgramModule />} />
               <Route path="compliance-strategy" element={<ComplianceStrategyModule />} />
               <Route path="data-asset-sensitivity" element={<DataAssetSensitivityModule />} />
+              <Route path="standards-bodies" element={<StandardsBodiesModule />} />
             </Routes>
           </Suspense>
         </div>

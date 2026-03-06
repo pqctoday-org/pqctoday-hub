@@ -587,9 +587,34 @@ export const glossaryTerms: GlossaryTerm[] = [
   },
   {
     term: 'Common Criteria',
+    acronym: 'CC',
     definition:
       'An international standard (ISO/IEC 15408) for evaluating the security properties of IT products, used globally for government procurement.',
-    relatedModule: '/compliance',
+    technicalNote:
+      'The Common Criteria Recognition Arrangement (CCRA) is a 31-nation mutual recognition agreement: national Certification Bodies (e.g., BSI for Germany, ANSSI for France, NIAP for the US) issue CC certificates that are accepted across all member states. The EUCC is the EU-specific adaptation managed by ENISA.',
+    relatedModule: '/learn/standards-bodies',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'CCRA',
+    acronym: 'CCRA',
+    definition:
+      'Common Criteria Recognition Arrangement — a 31-nation mutual recognition agreement under which national Certification Bodies issue and accept IT product security certificates based on ISO/IEC 15408 (Common Criteria).',
+    technicalNote:
+      'CCRA member nations include the US (NIAP), UK (NCSC), Germany (BSI), France (ANSSI), Japan, South Korea, Australia, and Canada. A CC certificate issued by any national CA is valid across all member states. The EU operates the EUCC as a stricter harmonized adaptation managed by ENISA.',
+    relatedModule: '/learn/standards-bodies',
+    complexity: 'intermediate',
+    category: 'organization',
+  },
+  {
+    term: 'EUCC',
+    acronym: 'EUCC',
+    definition:
+      "EU Cybersecurity Certification Scheme — the European Union's harmonized product security certification scheme based on Common Criteria, managed by ENISA under the EU Cybersecurity Act (2019).",
+    technicalNote:
+      'EUCC certificates are valid across all 27 EU member states, eliminating the need for per-country certification. ENISA maintains the Agreed Cryptographic Mechanisms (ACM) list specifying which PQC algorithms are approved for EUCC-certified products. National Certification Authorities (e.g., BSI, ANSSI) issue EUCC certificates.',
+    relatedModule: '/learn/standards-bodies',
     complexity: 'intermediate',
     category: 'standard',
   },

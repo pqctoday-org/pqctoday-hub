@@ -216,6 +216,14 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     duration: '75 min',
     difficulty: 'intermediate',
   },
+  'standards-bodies': {
+    id: 'standards-bodies',
+    title: 'Standards, Certification & Compliance Bodies',
+    description:
+      'Identify who creates PQC standards, who certifies products, and who mandates compliance — worldwide and by region.',
+    duration: '60 min',
+    difficulty: 'intermediate',
+  },
   quiz: {
     id: 'quiz',
     title: 'PQC Quiz',
@@ -254,6 +262,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'migration-program': 3,
   'compliance-strategy': 3,
   'data-asset-sensitivity': 5,
+  'standards-bodies': 5,
   quiz: 1,
   assess: 1, // Assessment wizard completion
 }
@@ -284,6 +293,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['hybrid-crypto'],
       MODULE_CATALOG['crypto-agility'],
       MODULE_CATALOG['data-asset-sensitivity'],
+      MODULE_CATALOG['standards-bodies'],
       MODULE_CATALOG['qkd'],
     ],
   },
@@ -320,11 +330,11 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
     track: 'Executive',
     modules: [
       MODULE_CATALOG['pqc-risk-management'],
+      MODULE_CATALOG['compliance-strategy'],
       MODULE_CATALOG['pqc-business-case'],
       MODULE_CATALOG['pqc-governance'],
       MODULE_CATALOG['vendor-risk'],
       MODULE_CATALOG['migration-program'],
-      MODULE_CATALOG['compliance-strategy'],
     ],
   },
 ]
@@ -504,6 +514,13 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'scoring', label: 'PQC Sensitivity Scoring' },
     { id: 'priority', label: 'Migration Priority Map' },
   ],
+  'standards-bodies': [
+    { id: 'three-roles', label: 'The Three Roles: Standards, Certification & Compliance' },
+    { id: 'gov-vs-nongov', label: 'Governmental vs Non-Governmental Bodies' },
+    { id: 'global-regional', label: 'Global vs Regional Coverage' },
+    { id: 'app-pages-guide', label: 'Reading the App: Compliance & Migrate Pages' },
+    { id: 'ietf-process', label: 'IETF Working Groups & the RFC Process' },
+  ],
 }
 
 /**
@@ -670,5 +687,12 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'risk-methodology', label: 'Risk Methodology' },
     { id: 'sensitivity-scoring', label: 'Sensitivity Scoring' },
     { id: 'priority-map', label: 'Priority Map' },
+  ],
+  'standards-bodies': [
+    { id: 'body-classifier', label: 'Body Classifier' },
+    { id: 'org-explorer', label: 'Org Explorer' },
+    { id: 'chain-builder', label: 'Chain Builder' },
+    { id: 'coverage-grid', label: 'Coverage Grid' },
+    { id: 'scenario-challenge', label: 'Scenario Challenge' },
   ],
 }

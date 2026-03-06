@@ -36,6 +36,8 @@ export type QuizCategory =
   | 'compliance-strategy'
   | 'migration-program'
   | 'vendor-risk'
+  | 'data-asset-sensitivity'
+  | 'standards-bodies'
 
 export interface QuizOption {
   id: string

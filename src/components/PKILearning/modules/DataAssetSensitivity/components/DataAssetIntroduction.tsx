@@ -406,8 +406,8 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
       >
         <p>
           Four methodologies are available to assess the risk of your data assets from a PQC
-          perspective. Each is applied hands-on in Workshop Step 3 — this section gives you the
-          conceptual foundation.
+          perspective. This section gives you the conceptual foundation; the{' '}
+          <strong>PQC Risk Management</strong> module applies all four hands-on.
         </p>
 
         <div className="overflow-x-auto">
@@ -476,8 +476,8 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
           <strong className="text-foreground">Which to use?</strong> Most organizations use NIST RMF
           if they are US federal contractors, ISO 27005 if they hold ISO 27001 certification, FAIR
           if they need board-level financial justification, and DORA/NIS2 if they are in scope for
-          EU regulation. Step 3 of the Workshop applies all four to the same asset so you can
-          compare their outputs.
+          EU regulation. For a hands-on deep dive applying all four frameworks to your assets, see
+          the <strong>PQC Risk Management</strong> module.
         </p>
       </CollapsibleSection>
 
@@ -501,13 +501,13 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
             },
             {
               step: 2,
-              title: 'Compliance Matrix',
-              desc: 'Select your industry and see applicable compliance frameworks mapped with PQC requirements, deadlines, and urgency levels.',
+              title: 'Classification Challenge',
+              desc: 'Classify 10 real-world data scenarios (EHR records, signing keys, biometrics, JWTs…) using the four-tier model. Get immediate feedback with HNDL windows and applicable frameworks.',
             },
             {
               step: 3,
-              title: 'Risk Methodology Explorer',
-              desc: 'Apply NIST RMF, ISO 27005, FAIR, and DORA/NIS2 to the same asset. Compare outputs side by side.',
+              title: 'Conflict Resolver',
+              desc: 'Resolve multi-framework sensitivity conflicts. When GDPR, HIPAA, CNSA 2.0, and FIPS 140-3 disagree on a tier, apply the four resolution rules to determine the governing classification.',
             },
             {
               step: 4,

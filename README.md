@@ -30,6 +30,11 @@ Test your PQC readiness with this interactive web application visualizing the gl
     role, variant, and timestamp; software Key Store with sortable/resizable columns
   - **PKCS#11 call log**: per-session log of all C\_ function calls with return-value decoding,
     timing, and optional "Show Params" inspect mode
+  - **Mechanism Discovery**: live PKCS#11 mechanism browser in HSM mode — queries `C_GetMechanismList`
+    and `C_GetMechanismInfo` for all slot mechanisms; resolves results against a 100+ entry MECH_TABLE
+    (RSA, ML-KEM, ML-DSA, SLH-DSA, SHA-1/2/3, AES, EC/ECDSA/EdDSA, ECDH, PBKDF2, HKDF, SP 800-108
+    KBKDFs); decodes CKF\_ flag bitmasks to human-readable names; groups by algorithm family
+    (PQC, asymmetric, symmetric, hash, kdf)
   - ACVP Testing against NIST test vectors (software mode)
 - **OpenSSL Studio**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly
   - **13 Operation Types**: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
@@ -67,10 +72,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
   - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attacks
-  - **PQC Quiz**: Interactive knowledge assessment with 530 questions across 33 categories
+  - **PQC Quiz**: Interactive knowledge assessment with 546 questions across 35 categories
     - **3 Modes**: Quick (20 questions, guaranteed category coverage), Full Assessment (80 questions randomly sampled), Custom (by topic)
     - **CSV-Driven**: Questions loaded from date-stamped CSV (`pqcquiz_MMDDYYYY.csv`) via `import.meta.glob`, with smart sampling guaranteeing ≥2 per category (Quick) / ≥10 per category (Full)
-    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, and 24 additional topic categories covering all 27 learning modules
+    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, Standards Bodies, Data Asset Sensitivity, and 24 additional topic categories covering all 28 learning modules
     - **Score Tracking**: Per-category highest scores persisted across sessions
   - **Quantum Threats**:
     - Analyzes security level degradation and algorithm vulnerability matrices
@@ -133,11 +138,20 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - DTLS 1.3 Handshake Visualizer: protocol visualization with PQC impact analysis
     - SCADA Migration Planner: ICS migration strategy across Purdue Model levels with priority scoring
     - Cert Chain Bloat Analyzer: certificate size impact analysis for constrained device environments
+  - **Standards Bodies** (5-step workshop, Strategy track):
+    - Covers who creates PQC standards (NIST, ISO/IEC, ETSI, IETF), who certifies products
+      (CMVP/ACVP, CC/CCRA/EUCC, NCSC CPA), and who mandates compliance (BSI, ANSSI, ENISA, NSA, KISA)
+    - BodyClassifier: drag-and-drop categorisation of 12 organisations into the three-role model
+    - OrganizationExplorer: deep-dive cards for each body with scope, jurisdiction, and PQC output
+    - StandardsCertChain: step-through visualisation of the NIST → CMVP → CC/CCRA certification chain
+    - CoverageGrid: heat-map of regional coverage across standardisation, certification, and compliance
+    - ScenarioChallenge: real-world scenarios (US federal procurement, EU NIS2 audit, etc.) requiring
+      learners to identify the relevant bodies and cite correct regulatory references
   - **Tools & Products Tab**: Every module includes a "Tools & Products" tab surfacing PQC-ready
     products from the Migrate catalog, grouped by infrastructure layer with PQC/FIPS badges,
     license info, and deep-links to the Migrate view
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
-  - **Reference Catalog**: 223 verified PQC-relevant product entries across 7 infrastructure layers
+  - **Reference Catalog**: 330+ verified PQC-relevant product entries across 7 infrastructure layers
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
     Security Stack, Operating System, Hardware & Secure Elements — click any layer to filter the
     catalog. Products can span multiple layers (e.g., AWS KMS in Cloud + Security Stack).
@@ -208,7 +222,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Category filters, A-Z index, full-text search
   - Complexity badges (Beginner, Intermediate, Advanced)
   - Cross-references to learning modules
-  - **Inline tooltips** on key terms throughout all 27 learning modules — portal-rendered with
+  - **Inline tooltips** on key terms throughout all 28 learning modules — portal-rendered with
     `position: fixed` so they always appear above overflow-constrained containers (modals,
     scrollable panels, diagram wrappers)
 - **Personalization System**: 4-step onboarding wizard on the home page that adapts the entire
@@ -262,7 +276,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - SPA-aware navigation: internal links close the chat panel and navigate via React Router
   - Covers: glossary, algorithms, threats, timeline, library, compliance, migrate catalog, leaders,
     quiz content, assessment config, certifications, priority matrix, document enrichments, and
-    all 27 learning modules
+    all 28 learning modules
   - **Precision deep links**: 10 views accept URL params for direct navigation — Library `?ref=`,
     Threats `?id=`, Learn `?tab=`, Algorithms `?highlight=`, Compliance `?cert=`, Assess `?step=`,
     Playground `?algo=`, Leaders `?leader=`/`?sector=`/`?country=`, OpenSSL `?cmd=`,
@@ -285,14 +299,17 @@ Test your PQC readiness with this interactive web application visualizing the gl
   catalog, leaders, timeline, and learning module summaries
 - **Compliance Module**: Real-time compliance tracking and standards monitoring
   - **Compliance Landscape**: Interactive 2024–2036 deadline timeline with urgency color-coding
-    (imminent/near-term/future), region/industry filters, and persona-aware pre-filtering
-  - Framework cards with PQC requirement indicators, enforcement body, and cross-references
-    to Library and Timeline
-  - NIST FIPS document tracking (203, 204, 205)
-  - ANSSI recommendations
-  - Common Criteria certifications
+    (imminent/near-term/future), country filters, sort controls (Deadline / Name), and
+    persona-aware pre-filtering
+  - Framework cards with PQC requirement indicators, enforcement body, website links, and
+    cross-references to Library and Timeline; ViewToggle (grid / list) for layout preference
+  - **Body-type awareness**: 62 records categorised as `standardization_body`, `technical_standard`,
+    `certification_body`, or `compliance_framework` — enabling richer filtering and UI context
+  - NIST FIPS document tracking (203, 204, 205, 206)
+  - ANSSI recommendations, BSI Technical Guidelines, ENISA PQC guidelines
+  - Common Criteria certifications (CC/CCRA/EUCC), CMVP/ACVP validation
   - Automated data scraping and visualization
-- **Standards Library**: Comprehensive PQC standards repository (236 entries)
+- **Standards Library**: Comprehensive PQC standards repository (256 entries)
   - NIST FIPS documents (203, 204, 205)
   - Protocol specifications (TLS, SSH, IKEv2)
   - Government guidance: ANSSI, NATO, NSA CNSA 2.0, UK NCSC, G7, CISA, GSMA, SG MAS, AU ASD, and more

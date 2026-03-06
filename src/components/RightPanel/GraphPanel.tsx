@@ -101,7 +101,9 @@ export const GraphPanel: React.FC = () => {
               />
             )}
             {subTab === 'coverage' && <CoverageView graph={graph} />}
-            {subTab === 'pathways' && <PathwayView graph={graph} />}
+            {subTab === 'pathways' && (
+              <PathwayView graph={graph} searchQuery={query} searchResults={results} />
+            )}
           </React.Suspense>
         </div>
       </div>

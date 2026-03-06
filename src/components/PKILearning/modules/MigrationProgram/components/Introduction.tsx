@@ -215,8 +215,14 @@ const Step2SuccessAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> = 
               <div className="text-sm font-bold text-foreground">Measurable KPIs</div>
             </div>
             <p className="text-xs text-muted-foreground">
-              Track systems inventoried, algorithms migrated, vendor readiness, compliance gaps
-              closed, and budget utilization. What gets measured gets managed.
+              Track operational progress: % systems inventoried, % algorithms migrated, vendor
+              readiness score, compliance gaps closed, budget utilization, and phase completion
+              dates. What gets measured gets managed. For governance-layer KPIs (policy coverage,
+              exception rate, board reporting cadence), see{' '}
+              <Link to="/learn/pqc-governance" className="text-primary hover:underline">
+                PQC Governance &amp; Policy
+              </Link>
+              .
             </p>
           </div>
         </div>

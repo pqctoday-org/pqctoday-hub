@@ -44,6 +44,7 @@ import {
 import { useSettingsContext } from '../contexts/SettingsContext'
 import { useHsmContext } from '../hsm/HsmContext'
 import { HsmSetupPanel } from '../hsm/HsmSetupPanel'
+import { HsmMechanismPanel } from '../hsm/HsmMechanismPanel'
 
 // ── Static size hints ────────────────────────────────────────────────────────
 
@@ -947,6 +948,9 @@ const SoftHsmTabBrowser = () => {
 
         {tokenError && <ErrorAlert message={tokenError} />}
       </div>
+
+      {/* ── Mechanism Discovery ── */}
+      <HsmMechanismPanel />
 
       {/* ── ML-KEM ── */}
       <div className={`glass-panel p-4 space-y-4 ${!sessionOpen ? 'opacity-50' : ''}`}>

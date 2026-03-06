@@ -45,13 +45,14 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
           <blockquote className="text-sm italic text-foreground/90">
-            &ldquo;The United States must prioritize the timely and equitable transition of
-            cryptographic systems to quantum-resistant cryptography, with the goal of mitigating as
-            much of the quantum risk as is feasible by 2035.&rdquo;
+            &ldquo;A quantum computer of sufficient size and sophistication &mdash; also known as a
+            cryptanalytically relevant quantum computer &mdash; will be capable of breaking much of
+            the public-key cryptography used on digital systems across the United States and around
+            the world.&rdquo;
           </blockquote>
           <p className="text-xs text-muted-foreground mt-2">
-            &mdash; NSM-10, Section 3(a), National Security Memorandum on Promoting United States
-            Leadership in Quantum Computing (May 2022)
+            &mdash; Executive Order 14306, Sustaining Select Efforts to Strengthen the Nation&apos;s
+            Cybersecurity (June 6, 2025)
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -119,10 +120,11 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              NIST&apos;s transition guidance for post-quantum cryptography standards (draft
-              November 2024, finalized March 2025). Recommends deprecating RSA, ECC, and other
-              classical public-key algorithms by 2030 and disallowing them entirely after 2035.
-              Emphasizes cryptographic agility and hybrid approaches during the transition period.
+              NIST&apos;s transition guidance for post-quantum cryptography standards (Initial
+              Public Draft published November 2024; comment period closed January 2025; final
+              version pending). Recommends deprecating RSA, ECC, and other classical public-key
+              algorithms by 2030 and disallowing them entirely after 2035. Emphasizes cryptographic
+              agility and hybrid approaches during the transition period.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -137,6 +139,26 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
               ETSI provides interoperability guidance for hybrid key exchanges.
             </p>
           </div>
+        </div>
+        <div className="bg-muted/50 rounded-lg p-4 border border-secondary/30 mt-4">
+          <div className="text-sm font-bold text-foreground mb-2">
+            Hybrid Now, Pure PQC Later: The Two-Phase Transition
+          </div>
+          <p className="text-xs text-muted-foreground mb-2">
+            All major frameworks converge on a two-phase transition arc. In <strong>Phase 1</strong>{' '}
+            (now through roughly 2028), organizations deploy <strong>hybrid mode</strong> &mdash;
+            running a classical algorithm alongside a PQC algorithm in parallel. ANSSI and BSI
+            require this during transition because it preserves security even if PQC implementations
+            have undiscovered flaws. In <strong>Phase 2</strong> (2028 onward, timed to your
+            earliest jurisdiction deadline), organizations move to <strong>pure PQC</strong>: CNSA
+            2.0&apos;s &ldquo;exclusive&rdquo; requirements mean dropping the classical component
+            once FIPS 140-3 validated implementations are widely available and proven.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            <strong>Executive rule of thumb:</strong> Start hybrid deployments now. Plan your
+            transition to pure PQC to meet your earliest jurisdiction deadline &mdash; which you
+            will identify in the Jurisdiction Mapper workshop below.
+          </p>
         </div>
       </div>
     </section>
@@ -205,7 +227,8 @@ const Step2ApproachAndDeadlines: React.FC = () => (
           {[
             {
               year: '2024',
-              event: 'NIST IR 8547 draft published — PQC transition guidance (finalized 2025)',
+              event:
+                'NIST IR 8547 Initial Public Draft published — PQC transition guidance (final version pending)',
               source: 'NIST',
             },
             {
@@ -298,8 +321,10 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
                 <td className="py-2 px-2">ASD</td>
                 <td className="py-2 px-2 font-mono text-primary">2030</td>
                 <td className="py-2 px-2">
-                  Prohibit traditional asymmetric cryptography &mdash; one of the most aggressive
-                  global deadlines, 5 years ahead of US/UK full transition
+                  Cease use of traditional asymmetric cryptography (RSA, DH, ECDH, ECDSA) in
+                  government and critical infrastructure systems; algorithms &ldquo;will not be
+                  approved for use beyond 2030&rdquo; (ASD). Phased: transition plans required by
+                  end of 2026, implementation begins 2028, full completion by 2030.
                 </td>
               </tr>
               <tr className="border-b border-border/50">
@@ -352,6 +377,17 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
                 <td className="py-2 px-2 font-mono text-primary">2027</td>
                 <td className="py-2 px-2">
                   PQC migration target for critical semiconductor and technology sectors
+                </td>
+              </tr>
+              <tr className="border-b border-border/50">
+                <td className="py-2 px-2 font-medium text-foreground">Singapore</td>
+                <td className="py-2 px-2">MAS</td>
+                <td className="py-2 px-2 font-mono text-primary">Guidance</td>
+                <td className="py-2 px-2">
+                  Monetary Authority of Singapore issued PQC readiness guidance (November 2024)
+                  directing financial institutions to begin cryptographic inventory and migration
+                  planning. No hard mandate yet; best-practice alignment with NIST standards
+                  expected. Particularly relevant for financial sector organizations.
                 </td>
               </tr>
               <tr className="border-b border-border/50">
@@ -428,12 +464,15 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-sm font-bold text-foreground mb-1">
-              Executive Order 14306 &amp; CISA Procurement Guidance
+              Executive Order 14306 &amp; CISA PQC Product Guidance
             </div>
             <p className="text-xs text-muted-foreground">
-              EO 14306 (June 2025) sustains PQC migration provisions. CISA subsequently issued
-              federal procurement guidance (January 2026) requiring PQC capabilities in new product
-              and service acquisitions, driving market demand for PQC-capable solutions.
+              EO 14306 (June 6, 2025) &mdash; &ldquo;Sustaining Select Efforts to Strengthen the
+              Nation&apos;s Cybersecurity&rdquo; &mdash; directs CISA, in consultation with NSA, to
+              publish and maintain a list of product categories in which PQC-capable products are
+              widely available (initial list due December 1, 2025). CISA subsequently issued
+              procurement guidance requiring PQC capabilities in new federal product and service
+              acquisitions, driving market demand for PQC-capable solutions.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -452,20 +491,24 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
               <InlineTooltip term="CBOM">CBOM</InlineTooltip> (Cryptographic Bill of Materials)
             </div>
             <p className="text-xs text-muted-foreground">
-              A CBOM is a comprehensive inventory of all cryptographic assets in an
-              organization&apos;s systems &mdash; algorithms, key sizes, protocols, certificates,
-              and their locations. Generating a CBOM is a critical first step for PQC compliance
-              because you cannot migrate what you haven&apos;t inventoried. Studies show 70% of
-              organizations lack a complete cryptographic inventory.
+              A CBOM is your foundational compliance artifact &mdash; you cannot migrate what you
+              haven&apos;t inventoried. Studies show 70% of organizations lack a complete
+              cryptographic inventory. For the full CBOM framework, including CycloneDX format
+              requirements and vendor contract language, see{' '}
+              <Link to="/learn/vendor-risk" className="text-primary hover:underline">
+                Vendor &amp; Supply Chain Risk
+              </Link>
+              .
             </p>
           </div>
         </div>
         <div className="bg-muted/50 rounded-lg p-3 border border-status-warning/20">
           <p className="text-xs text-muted-foreground">
             <AlertTriangle size={12} className="inline text-status-warning mr-1" />
-            <strong className="text-foreground">Europol finding:</strong> 86% of executives are
-            unprepared for quantum threats (February 2025), highlighting a significant gap between
-            the urgency of PQC compliance and organizational readiness.
+            <strong className="text-foreground">Industry finding:</strong> 86% of financial sector
+            organisations report being unprepared for post-quantum cybersecurity (2023 survey of 200
+            financial sector leaders, cited by Europol&apos;s Quantum Safe Financial Forum, February
+            2025).
           </p>
         </div>
       </div>

@@ -23,6 +23,18 @@ interface IntroductionProps {
 export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
+      {/* Quantum Computing Primer */}
+      <section className="glass-panel p-4 border-primary/10">
+        <p className="text-sm text-foreground/80">
+          Quantum computers exploit quantum mechanical properties to solve certain mathematical
+          problems exponentially faster than classical computers. Most critically,{' '}
+          <strong>Shor&apos;s algorithm</strong> &mdash; running on a sufficiently powerful quantum
+          computer &mdash; can factor large integers and solve discrete logarithm problems in
+          polynomial time, which would break RSA, Diffie-Hellman, and elliptic curve cryptography
+          that protect virtually all internet communications today.
+        </p>
+      </section>
+
       {/* Section 1: Why PQC Risk Management? */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">

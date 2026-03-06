@@ -34,15 +34,15 @@ import { getCurrentVersion } from '../../store/useVersionStore'
 
 const DATA_FOUNDATION = [
   { dataset: 'Timeline Events', records: 198, sources: '80+ orgs, 50+ countries' },
-  { dataset: 'Library Resources', records: 236, sources: '30+ standards bodies' },
+  { dataset: 'Library Resources', records: 256, sources: '30+ standards bodies' },
   { dataset: 'Algorithm Reference', records: 45, sources: 'FIPS 203/204/205/206' },
-  { dataset: 'Compliance Frameworks', records: 46, sources: 'NIST, ACVP, CC, ANSSI' },
-  { dataset: 'Migrate Products', records: 223, sources: '7 infrastructure layers' },
+  { dataset: 'Compliance Frameworks', records: 62, sources: 'NIST, ACVP, CC, ANSSI' },
+  { dataset: 'Migrate Products', records: 331, sources: '7 infrastructure layers' },
   { dataset: 'Threat Landscape', records: 79, sources: '8+ industry sectors' },
   { dataset: 'Industry Leaders', records: 103, sources: 'Public, Private, Academic' },
-  { dataset: 'Quiz Questions', records: 530, sources: 'All PQC topic areas' },
+  { dataset: 'Quiz Questions', records: 546, sources: 'All PQC topic areas' },
   { dataset: 'Authoritative Sources', records: 89, sources: 'Gov, Academic, Industry' },
-  { dataset: 'Learning Modules', records: 27, sources: '2,000+ min of content' },
+  { dataset: 'Learning Modules', records: 28, sources: '2,000+ min of content' },
 ]
 
 const DISCUSSIONS_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions/'

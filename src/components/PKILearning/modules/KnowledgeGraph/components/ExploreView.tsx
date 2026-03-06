@@ -21,7 +21,7 @@ import { EntityNode, type EntityNodeData } from './nodes/EntityNode'
 import { RelationshipEdge, type RelationshipEdgeData } from './edges/RelationshipEdge'
 import { getNeighborhood } from '../data/graphBuilder'
 import { SUGGESTED_QUERIES } from '../data/suggestedQueries'
-import type { KnowledgeGraph, GraphNode } from '../data/graphTypes'
+import type { KnowledgeGraph, GraphNode, EntityType } from '../data/graphTypes'
 import type { SearchResult } from '../data/searchIndex'
 
 interface ExploreViewProps {
@@ -99,6 +99,8 @@ export function ExploreView({
 }: ExploreViewProps) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [centeredNodeId, setCenteredNodeId] = useState<string | null>(null)
+  const [rawNodeIds, setRawNodeIds] = useState<Set<string>>(new Set())
+  const [hiddenTypes, setHiddenTypes] = useState<Set<EntityType>>(new Set())
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<EntityNodeData>>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge<RelationshipEdgeData>>([])
 
@@ -108,16 +110,47 @@ export function ExploreView({
     return graph.edges.filter((e) => e.source === selectedNodeId || e.target === selectedNodeId)
   }, [graph.edges, selectedNodeId])
 
+  // Apply layout with type filtering; center node always shown
+  const applyLayout = useCallback(
+    (nodeIds: Set<string>, hidden: Set<EntityType>, centerId: string) => {
+      const filtered = new Set(
+        [...nodeIds].filter((id) => {
+          if (id === centerId) return true
+          const node = graph.nodes.get(id)
+          return node ? !hidden.has(node.entityType) : false
+        })
+      )
+      const layout = buildRadialLayout(graph, centerId, filtered)
+      setNodes(layout.nodes)
+      setEdges(layout.edges)
+    },
+    [graph, setNodes, setEdges]
+  )
+
   const navigateToNode = useCallback(
     (nodeId: string) => {
       const { nodeIds } = getNeighborhood(graph, nodeId, 1, 50)
-      const layout = buildRadialLayout(graph, nodeId, nodeIds)
-      setNodes(layout.nodes)
-      setEdges(layout.edges)
+      setRawNodeIds(nodeIds)
       setCenteredNodeId(nodeId)
       setSelectedNodeId(nodeId)
+      applyLayout(nodeIds, hiddenTypes, nodeId)
     },
-    [graph, setNodes, setEdges]
+    [graph, hiddenTypes, applyLayout]
+  )
+
+  const handleToggleType = useCallback(
+    (type: EntityType) => {
+      setHiddenTypes((prev) => {
+        const next = new Set(prev)
+        if (next.has(type)) next.delete(type)
+        else next.add(type)
+        if (rawNodeIds.size && centeredNodeId) {
+          applyLayout(rawNodeIds, next, centeredNodeId)
+        }
+        return next
+      })
+    },
+    [rawNodeIds, centeredNodeId, applyLayout]
   )
 
   const handleSelectSearchResult = useCallback(
@@ -137,6 +170,17 @@ export function ExploreView({
     },
     [centeredNodeId, navigateToNode]
   )
+
+  // Only show toggles for entity types present in the current neighborhood
+  const presentTypes = useMemo<EntityType[]>(() => {
+    const types = new Set<EntityType>()
+    for (const id of rawNodeIds) {
+      if (id === centeredNodeId) continue
+      const node = graph.nodes.get(id)
+      if (node) types.add(node.entityType)
+    }
+    return [...types]
+  }, [rawNodeIds, centeredNodeId, graph.nodes])
 
   const hasGraph = nodes.length > 0
 
@@ -258,9 +302,13 @@ export function ExploreView({
             </div>
           )}
 
-          {/* Legend */}
+          {/* Interactive type filter legend */}
           <div className="mt-2">
-            <GraphLegend />
+            <GraphLegend
+              visibleTypes={presentTypes}
+              hiddenTypes={hiddenTypes}
+              onToggleType={handleToggleType}
+            />
           </div>
         </div>
       )}

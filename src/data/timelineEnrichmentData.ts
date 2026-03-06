@@ -19,14 +19,17 @@ function loadTimelineEnrichments(): EnrichmentLookup {
   const paths = Object.keys(modules)
   if (paths.length === 0) return {}
 
-  // Sort by embedded MMDDYYYY date, pick latest
+  // Sort by embedded MMDDYYYY date, then by revision descending (latest _rN wins on same date)
   const withDates = paths.map((p) => {
-    const match = p.match(/(\d{2})(\d{2})(\d{4})\.md$/)
-    if (!match) return { path: p, date: 0 }
-    const [, mm, dd, yyyy] = match
-    return { path: p, date: parseInt(yyyy + mm + dd) }
+    const match = p.match(/(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.md$/)
+    if (!match) return { path: p, date: 0, revision: 0 }
+    const [, mm, dd, yyyy, rev] = match
+    return { path: p, date: parseInt(yyyy + mm + dd), revision: rev ? parseInt(rev) : 0 }
   })
-  withDates.sort((a, b) => b.date - a.date)
+  withDates.sort((a, b) => {
+    const dateDiff = b.date - a.date
+    return dateDiff !== 0 ? dateDiff : b.revision - a.revision
+  })
 
   const raw = modules[withDates[0].path]
   if (!raw) return {}

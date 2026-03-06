@@ -306,26 +306,35 @@ const Step2ModelsEscalationKpis: React.FC = () => (
       </div>
       <div className="space-y-4 text-sm text-foreground/80">
         <p>
-          Governance without measurement is aspirational. Effective PQC programs track key
-          performance indicators across technical progress, risk reduction, compliance posture, and
-          organizational readiness.
+          Governance without measurement is aspirational. The governance layer tracks KPIs that
+          reflect <em>how well the program is governed</em> &mdash; policy health, accountability,
+          and organizational readiness. For operational migration progress KPIs (systems migrated %,
+          budget utilization, phase completion dates), see{' '}
+          <Link to="/learn/migration-program" className="text-primary hover:underline">
+            Migration Program Management
+          </Link>
+          .
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
-            <div className="text-xs font-bold text-foreground mb-1">Technical KPIs</div>
+            <div className="text-xs font-bold text-foreground mb-1">
+              Policy &amp; Accountability KPIs
+            </div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>&bull; % of systems inventoried for crypto usage</li>
-              <li>&bull; % of algorithms migrated to PQC/hybrid</li>
-              <li>&bull; Number of quantum-vulnerable endpoints remaining</li>
+              <li>&bull; Policy coverage rate (% of systems under documented PQC policy)</li>
+              <li>&bull; Active exception count (# of open policy exceptions)</li>
+              <li>&bull; Board reporting cadence (on schedule: yes / no)</li>
+              <li>&bull; Training completion rate</li>
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
-            <div className="text-xs font-bold text-foreground mb-1">Governance KPIs</div>
+            <div className="text-xs font-bold text-foreground mb-1">
+              Supply Chain &amp; Compliance KPIs
+            </div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>&bull; Vendor PQC readiness score</li>
+              <li>&bull; Vendor PQC readiness score (weighted across supply chain)</li>
               <li>&bull; Compliance gap closure rate</li>
-              <li>&bull; Training completion rate</li>
-              <li>&bull; Budget utilization vs. plan</li>
+              <li>&bull; % of vendors with signed PQC migration commitments</li>
             </ul>
           </div>
         </div>

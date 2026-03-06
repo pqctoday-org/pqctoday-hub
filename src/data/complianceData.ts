@@ -3,6 +3,12 @@ import type { IndustryComplianceConfig } from './industryAssessConfig'
 
 // ── Types ────────────────────────────────────────────────────────────────
 
+export type BodyType =
+  | 'standardization_body'
+  | 'technical_standard'
+  | 'certification_body'
+  | 'compliance_framework'
+
 export interface ComplianceFramework {
   id: string
   label: string
@@ -15,6 +21,8 @@ export interface ComplianceFramework {
   enforcementBody: string
   libraryRefs: string[]
   timelineRefs: string[]
+  bodyType: BodyType
+  website?: string
 }
 
 // ── CSV loading (versioned filename pattern) ────────────────────────────
@@ -28,23 +36,28 @@ function getLatestComplianceFile(): { content: string; filename: string; date: D
 
   const files = Object.keys(modules)
     .map((path) => {
-      const match = path.match(/compliance_(\d{2})(\d{2})(\d{4})\.csv$/)
+      const match = path.match(/compliance_(\d{2})(\d{2})(\d{4})(_r(\d+))?\.csv$/)
       if (match) {
-        const [, month, day, year] = match
+        const [, month, day, year, , rev] = match
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+        const revision = rev ? parseInt(rev, 10) : 0
         // eslint-disable-next-line security/detect-object-injection
-        return { path, date, content: modules[path] as string }
+        return { path, date, revision, content: modules[path] as string }
       }
       return null
     })
-    .filter((f): f is { path: string; date: Date; content: string } => f !== null)
+    .filter((f): f is { path: string; date: Date; revision: number; content: string } => f !== null)
 
   if (files.length === 0) {
     console.warn('No dated compliance CSV files found.')
     return null
   }
 
-  files.sort((a, b) => b.date.getTime() - a.date.getTime())
+  files.sort((a, b) => {
+    const timeDiff = b.date.getTime() - a.date.getTime()
+    if (timeDiff !== 0) return timeDiff
+    return b.revision - a.revision
+  })
 
   return {
     content: files[0].content,
@@ -105,9 +118,21 @@ function parseComplianceCSV(csvContent: string): ComplianceFramework[] {
           enforcementBody,
           libraryRefsRaw,
           timelineRefsRaw,
+          bodyTypeRaw,
+          website,
         ] = fields
 
         if (!id || !label) return null
+
+        const validBodyTypes: BodyType[] = [
+          'standardization_body',
+          'technical_standard',
+          'certification_body',
+          'compliance_framework',
+        ]
+        const bodyType: BodyType = validBodyTypes.includes(bodyTypeRaw as BodyType)
+          ? (bodyTypeRaw as BodyType)
+          : 'compliance_framework'
 
         return {
           id,
@@ -121,6 +146,8 @@ function parseComplianceCSV(csvContent: string): ComplianceFramework[] {
           enforcementBody: enforcementBody || '',
           libraryRefs: parseSemicolonList(libraryRefsRaw),
           timelineRefs: parseSemicolonList(timelineRefsRaw),
+          bodyType,
+          website: website?.trim() || undefined,
         }
       })
       .filter((row): row is ComplianceFramework => row !== null)

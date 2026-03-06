@@ -32,26 +32,32 @@ function getLatestThreatsFiles(): {
   // Extract filenames and parse dates
   const files = Object.keys(modules)
     .map((path) => {
-      // Path format: ./quantum_threats_hsm_industries_MMDDYYYY.csv or ..._MMDDYYYY_suffix.csv
+      // Path format: ./quantum_threats_hsm_industries_MMDDYYYY.csv or ..._MMDDYYYY_rN.csv
       // eslint-disable-next-line security/detect-unsafe-regex
-      const match = path.match(/quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_.*)?\.csv$/)
+      const match = path.match(
+        /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+      )
       if (match) {
-        const [, month, day, year] = match
+        const [, month, day, year, rev] = match
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+        const revision = rev ? parseInt(rev) : 0
         // eslint-disable-next-line security/detect-object-injection
-        return { path, date, content: modules[path] as string }
+        return { path, date, revision, content: modules[path] as string }
       }
       return null
     })
-    .filter((f): f is { path: string; date: Date; content: string } => f !== null)
+    .filter((f): f is { path: string; date: Date; revision: number; content: string } => f !== null)
 
   if (files.length === 0) {
     console.warn('No dated threats CSV files found.')
     return { current: null, previous: null }
   }
 
-  // Sort by date descending (latest first)
-  files.sort((a, b) => b.date.getTime() - a.date.getTime())
+  // Sort by date descending, then by revision descending (latest revision wins on same date)
+  files.sort((a, b) => {
+    const dateDiff = b.date.getTime() - a.date.getTime()
+    return dateDiff !== 0 ? dateDiff : b.revision - a.revision
+  })
 
   console.log(`Loading latest threats data from: ${files[0].path}`)
   if (files.length > 1) {

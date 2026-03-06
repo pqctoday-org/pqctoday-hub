@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Database, CheckSquare, BarChart3, SlidersHorizontal, Map } from 'lucide-react'
+import { Trash2, Database, ListChecks, Scale, SlidersHorizontal, Map } from 'lucide-react'
 import { DataAssetIntroduction } from './components/DataAssetIntroduction'
 import { DataAssetExercises, type WorkshopConfig } from './components/DataAssetExercises'
 import { AssetInventoryBuilder } from './workshop/AssetInventoryBuilder'
-import { ComplianceMatrix } from './workshop/ComplianceMatrix'
-import { RiskMethodologyExplorer } from './workshop/RiskMethodologyExplorer'
+import { ClassificationChallenge } from './workshop/ClassificationChallenge'
+import { SensitivityConflictResolver } from './workshop/SensitivityConflictResolver'
 import { SensitivityScoringEngine } from './workshop/SensitivityScoringEngine'
 import { PQCMigrationPriorityMap } from './workshop/PQCMigrationPriorityMap'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -16,7 +16,6 @@ import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import {
   DEFAULT_ASSETS,
-  AVAILABLE_INDUSTRIES,
   ESTIMATED_CRQC_YEAR,
   type DataAsset,
   type ScoredAsset,
@@ -33,17 +32,18 @@ const PARTS = [
     icon: Database,
   },
   {
-    id: 'compliance-matrix',
-    title: 'Step 2: Compliance Matrix',
+    id: 'classification-challenge',
+    title: 'Step 2: Classification Challenge',
     description:
-      'Map your industry to applicable compliance frameworks and their PQC requirements.',
-    icon: CheckSquare,
+      'Classify 10 real-world data scenarios using the four-tier model — get immediate feedback with HNDL implications.',
+    icon: ListChecks,
   },
   {
-    id: 'risk-methodology',
-    title: 'Step 3: Risk Methodology',
-    description: 'Compare NIST RMF, ISO 27005, FAIR, and DORA/NIS2 applied to the same asset.',
-    icon: BarChart3,
+    id: 'conflict-resolver',
+    title: 'Step 3: Conflict Resolver',
+    description:
+      'Resolve multi-framework sensitivity conflicts: when GDPR, HIPAA, CNSA 2.0, and FIPS 140-3 disagree, which tier governs?',
+    icon: Scale,
   },
   {
     id: 'sensitivity-scoring',
@@ -71,10 +71,11 @@ export const DataAssetSensitivityModule: React.FC = () => {
 
   // ── Shared state lifted from workshop steps ────────────────────────────────
   const [assets, setAssets] = useState<DataAsset[]>([...DEFAULT_ASSETS])
-  const [selectedIndustry, setSelectedIndustry] = useState(AVAILABLE_INDUSTRIES[0])
-  const [selectedMandates, setSelectedMandates] = useState<string[]>([])
   const [scoredAssets, setScoredAssets] = useState<ScoredAsset[]>([])
   const [crqcYear, setCrqcYear] = useState(ESTIMATED_CRQC_YEAR)
+
+  // Derive mandates from assets' compliance flags (replaces ComplianceMatrix selection)
+  const derivedMandates = [...new Set(assets.flatMap((a) => a.complianceFlags))]
 
   // ── Time tracking ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -129,8 +130,6 @@ export const DataAssetSensitivityModule: React.FC = () => {
   const handleReset = () => {
     if (confirm('Restart Data & Asset Sensitivity Assessment module?')) {
       setAssets([...DEFAULT_ASSETS])
-      setSelectedIndustry(AVAILABLE_INDUSTRIES[0])
-      setSelectedMandates([])
       setScoredAssets([])
       setCrqcYear(ESTIMATED_CRQC_YEAR)
       setCurrentPart(0)
@@ -236,22 +235,16 @@ export const DataAssetSensitivityModule: React.FC = () => {
                 />
               )}
               {currentPart === 1 && (
-                <ComplianceMatrix
-                  key={`compliance-${configKey}`}
-                  selectedIndustry={selectedIndustry}
-                  onIndustryChange={setSelectedIndustry}
-                  selectedMandates={selectedMandates}
-                  onMandatesChange={setSelectedMandates}
-                />
+                <ClassificationChallenge key={`classification-${configKey}`} assets={assets} />
               )}
               {currentPart === 2 && (
-                <RiskMethodologyExplorer key={`risk-${configKey}`} assets={assets} />
+                <SensitivityConflictResolver key={`conflict-${configKey}`} assets={assets} />
               )}
               {currentPart === 3 && (
                 <SensitivityScoringEngine
                   key={`scoring-${configKey}`}
                   assets={assets}
-                  selectedMandates={selectedMandates}
+                  selectedMandates={derivedMandates}
                   onScoredAssetsChange={setScoredAssets}
                   crqcYear={crqcYear}
                 />
@@ -260,7 +253,7 @@ export const DataAssetSensitivityModule: React.FC = () => {
                 <PQCMigrationPriorityMap
                   key={`priority-${configKey}`}
                   assets={assets}
-                  selectedMandates={selectedMandates}
+                  selectedMandates={derivedMandates}
                   scoredAssets={scoredAssets}
                 />
               )}

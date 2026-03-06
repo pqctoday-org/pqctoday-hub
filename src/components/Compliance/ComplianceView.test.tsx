@@ -103,7 +103,7 @@ describe('ComplianceView', () => {
         <ComplianceView />
       </MemoryRouter>
     )
-    expect(screen.getByText('Compliance & Certification')).toBeInTheDocument()
+    expect(screen.getByText('Standardization, Compliance and Certification')).toBeInTheDocument()
   })
 
   it('renders the description text', () => {
@@ -112,43 +112,41 @@ describe('ComplianceView', () => {
         <ComplianceView />
       </MemoryRouter>
     )
-    expect(
-      screen.getByText(/Streamlined access to cryptographic module validations/)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Explore the three pillars of PQC compliance/)).toBeInTheDocument()
   })
 
-  it('renders authoritative source links', () => {
+  it('renders the Sources and Glossary buttons in the header', () => {
     render(
       <MemoryRouter>
         <ComplianceView />
       </MemoryRouter>
     )
-    expect(screen.getByText('NIST CMVP')).toBeInTheDocument()
-    expect(screen.getByText('NIST CAVP')).toBeInTheDocument()
-    expect(screen.getByText('CC Portal')).toBeInTheDocument()
-    expect(screen.getByText('ANSSI (FR)')).toBeInTheDocument()
-    expect(screen.getByText('BSI (DE)')).toBeInTheDocument()
+    // Authoritative sources are accessible via the Sources button (SourcesButton)
+    expect(screen.getByRole('button', { name: /sources/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /glossary/i })).toBeInTheDocument()
   })
 
-  it('renders tab triggers for All, FIPS, ACVP, and CC', () => {
+  it('renders the four top-level tab triggers', () => {
     render(
       <MemoryRouter>
         <ComplianceView />
       </MemoryRouter>
     )
-    expect(screen.getByRole('button', { name: 'All Records' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'FIPS 140-3' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'ACVP' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Common Criteria' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Standardization Bodies/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Certification Schemes/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Compliance Frameworks/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Cert Records/i })).toBeInTheDocument()
   })
 
-  it('shows all data when All Records tab is clicked', () => {
+  it('shows cert record sub-tabs and all records table when Cert Records tab is clicked', () => {
     render(
       <MemoryRouter>
         <ComplianceView />
       </MemoryRouter>
     )
-    // Default tab is "Compliance Landscape" — click "All Records" to show the table
+    // Navigate to the Cert Records top-level tab
+    fireEvent.click(screen.getByRole('button', { name: /Cert Records/i }))
+    // The sub-tabs should now be visible — click "All Records"
     fireEvent.click(screen.getByRole('button', { name: 'All Records' }))
     expect(screen.getByText('Table (3 records)')).toBeInTheDocument()
   })

@@ -340,6 +340,18 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'Vendor PQC scorecards, contract requirements, SBOM/CBOM evaluation, and third-party risk assessment.',
       icon: 'Package',
     },
+    'data-asset-sensitivity': {
+      label: 'Data & Asset Sensitivity',
+      description:
+        'Classifying data assets, mapping compliance obligations, NIST RMF/ISO 27005/FAIR methodologies, and PQC migration priority.',
+      icon: 'Database',
+    },
+    'standards-bodies': {
+      label: 'Standards, Certification & Compliance Bodies',
+      description:
+        'NIST, ISO/IEC, ETSI, IETF, CMVP, ENISA, ANSSI, BSI — who creates standards, who certifies, and who mandates.',
+      icon: 'Building2',
+    },
   }
 
 // Compute question counts dynamically from loaded data

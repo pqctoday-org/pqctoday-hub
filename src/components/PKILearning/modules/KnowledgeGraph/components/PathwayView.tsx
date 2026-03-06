@@ -20,9 +20,12 @@ import { GraphLegend } from './GraphLegend'
 import { MODULE_TRACKS } from '@/components/PKILearning/moduleData'
 import { useModuleStore } from '@/store/useModuleStore'
 import type { KnowledgeGraph, EntityType } from '../data/graphTypes'
+import type { SearchResult } from '../data/searchIndex'
 
 interface PathwayViewProps {
   graph: KnowledgeGraph
+  searchQuery?: string
+  searchResults?: SearchResult[]
 }
 
 const nodeTypes = { entity: EntityNode }
@@ -32,7 +35,8 @@ function buildPathwayLayout(
   graph: KnowledgeGraph,
   moduleIds: string[],
   completedModules: Set<string>,
-  inProgressModules: Set<string>
+  inProgressModules: Set<string>,
+  searchMatchedModuleIds: Set<string>
 ): { nodes: Node<EntityNodeData>[]; edges: Edge<RelationshipEdgeData>[] } {
   const visibleNodeIds = new Set<string>()
   const moduleNodeIds = new Set<string>()
@@ -85,6 +89,7 @@ function buildPathwayLayout(
     const modId = node.id.replace('module:', '')
     const isCompleted = completedModules.has(modId)
     const isInProgress = inProgressModules.has(modId)
+    const isSearchMatch = searchMatchedModuleIds.has(modId)
 
     flowNodes.push({
       id: node.id,
@@ -97,11 +102,16 @@ function buildPathwayLayout(
         connectionCount: node.connectionCount,
         selected: isCompleted,
       },
-      style: isCompleted
-        ? { border: '2px solid hsl(var(--success))' }
-        : isInProgress
-          ? { border: '2px solid hsl(var(--warning))' }
-          : undefined,
+      style: isSearchMatch
+        ? {
+            border: '2px solid hsl(var(--primary))',
+            boxShadow: '0 0 8px hsl(var(--primary) / 0.5)',
+          }
+        : isCompleted
+          ? { border: '2px solid hsl(var(--success))' }
+          : isInProgress
+            ? { border: '2px solid hsl(var(--warning))' }
+            : undefined,
     })
   }
 
@@ -144,7 +154,7 @@ function buildPathwayLayout(
   return { nodes: flowNodes, edges: flowEdges }
 }
 
-export function PathwayView({ graph }: PathwayViewProps) {
+export function PathwayView({ graph, searchQuery, searchResults }: PathwayViewProps) {
   const trackItems = useMemo(
     () =>
       MODULE_TRACKS.map((t) => ({
@@ -156,6 +166,35 @@ export function PathwayView({ graph }: PathwayViewProps) {
   )
 
   const [selectedTrack, setSelectedTrack] = useState(MODULE_TRACKS[0]?.track ?? '')
+
+  // Extract matched module slugs from search results
+  const searchMatchedModuleIds = useMemo<Set<string>>(() => {
+    if (!searchResults?.length) return new Set()
+    const matched = new Set<string>()
+    for (const r of searchResults) {
+      if (r.entityType === 'module') {
+        matched.add(r.id.replace('module:', ''))
+      }
+    }
+    return matched
+  }, [searchResults])
+
+  // When search is active, auto-select the track with the most matched modules
+  const searchDrivenTrack = useMemo<string | null>(() => {
+    if (!searchMatchedModuleIds.size) return null
+    let best: string | null = null
+    let bestCount = 0
+    for (const track of MODULE_TRACKS) {
+      const count = track.modules.filter((m) => searchMatchedModuleIds.has(m.id)).length
+      if (count > bestCount) {
+        bestCount = count
+        best = track.track
+      }
+    }
+    return bestCount > 0 ? best : null
+  }, [searchMatchedModuleIds])
+
+  const activeTrack = searchDrivenTrack ?? selectedTrack
 
   const { modules: moduleProgress } = useModuleStore()
 
@@ -176,13 +215,20 @@ export function PathwayView({ graph }: PathwayViewProps) {
   }, [moduleProgress])
 
   const trackModuleIds = useMemo(() => {
-    const track = MODULE_TRACKS.find((t) => t.track === selectedTrack)
+    const track = MODULE_TRACKS.find((t) => t.track === activeTrack)
     return track?.modules.map((m) => m.id) ?? []
-  }, [selectedTrack])
+  }, [activeTrack])
 
   const layout = useMemo(
-    () => buildPathwayLayout(graph, trackModuleIds, completedModules, inProgressModules),
-    [graph, trackModuleIds, completedModules, inProgressModules]
+    () =>
+      buildPathwayLayout(
+        graph,
+        trackModuleIds,
+        completedModules,
+        inProgressModules,
+        searchMatchedModuleIds
+      ),
+    [graph, trackModuleIds, completedModules, inProgressModules, searchMatchedModuleIds]
   )
 
   const [nodes, , onNodesChange] = useNodesState(layout.nodes)
@@ -192,7 +238,7 @@ export function PathwayView({ graph }: PathwayViewProps) {
     setSelectedTrack(id)
   }, [])
 
-  // Stats for selected track
+  // Stats for active track
   const trackStats = useMemo(() => {
     const total = trackModuleIds.length
     const completed = trackModuleIds.filter((id) => completedModules.has(id)).length
@@ -210,10 +256,15 @@ export function PathwayView({ graph }: PathwayViewProps) {
         </div>
         <FilterDropdown
           items={trackItems}
-          selectedId={selectedTrack}
+          selectedId={activeTrack}
           onSelect={handleTrackChange}
           label="Track"
         />
+        {searchQuery && searchMatchedModuleIds.size > 0 && (
+          <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+            Filtered: {searchQuery}
+          </span>
+        )}
       </div>
 
       {/* Track progress */}

@@ -4,6 +4,58 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.25.0] - 2026-03-05
+
+### Added
+
+- **Standards Bodies module** (`modules/StandardsBodies/`): New 5-step learn module (60 min, intermediate, Strategy track) covering who creates PQC standards, who certifies products, and who mandates compliance. Covers 12 organisations: NIST, ISO/IEC, ETSI, IETF, BSI, ANSSI, ENISA, CC/CCRA, CMVP, NCSC, NSA, and KISA. Five interactive workshops: BodyClassifier, OrganizationExplorer, StandardsCertChain, CoverageGrid, and ScenarioChallenge. [view:/learn/standards-bodies]
+
+- **Mechanism Discovery — live PKCS#11 browser** (`wasm/softhsm.ts`, `Playground/hsm/HsmMechanismPanel.tsx`): Adds `hsm_getMechanismList()`, `hsm_getMechanismInfo()`, and `hsm_getAllMechanisms()` which call `C_GetMechanismList` and `C_GetMechanismInfo` for all mechanisms on the active slot. Results are resolved against a 100+ entry MECH_TABLE covering RSA, ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), SHA-1/2/3, AES (ECB/CBC/CTR/GCM/CMAC/KeyWrap), EC/ECDSA/ECDSA-SHA3/EdDSA, ECDH, PBKDF2, HKDF, and SP 800-108 KBKDFs. CKF\_ flags are decoded to human-readable names (SIGN, VERIFY, ENCAPSULATE, DECAPSULATE, KEY_PAIR_GEN, etc.). Results sorted by family (PQC first, then asymmetric, symmetric, hash, kdf). New `HsmMechanismPanel` component renders the full mechanism list as a searchable, family-grouped table in the SoftHSM tab. [view:/playground]
+
+- **Data Asset Sensitivity — workshop redesign** (`modules/DataAssetSensitivity/workshop/`): Replaced ComplianceMatrix and RiskMethodologyExplorer with two new exercises. ClassificationChallenge presents 10 real-world data scenarios (EHR records, JWT tokens, biometric templates, CA private keys, signed firmware, etc.) asking learners to assign the correct sensitivity tier — each scenario includes HNDL window calculation, applicable frameworks, and a common-mistake callout. SensitivityConflictResolver presents multi-framework classification conflicts (GDPR vs HIPAA vs CNSA 2.0 vs FIPS 140-3) and guides learners through the four resolution rules to determine the governing classification. [view:/learn/data-asset-sensitivity]
+
+### Changed
+
+- **Compliance data model** (`src/data/complianceData.ts`): `ComplianceFramework` now carries a `bodyType` field (`'standardization_body' | 'technical_standard' | 'certification_body' | 'compliance_framework'`) and an optional `website` URL. CSV loader updated to parse both new columns and introduced a `BodyType` export. [view:/compliance]
+
+- **Compliance CSV versioning** (`src/data/complianceData.ts`): CSV file discovery now recognises `_rN` revision suffixes (e.g. `compliance_03052026_r7.csv`); same-day files are sorted by revision number as tiebreaker so `_r7 > _r1 > (none)`. Brings compliance CSVs into parity with the existing library/quiz revision convention.
+
+- **ComplianceLandscape UI** (`src/components/Compliance/ComplianceLandscape.tsx`): Added a sort control (Deadline ↑ / Name A-Z) that defaults to deadline-ascending with `requiresPQC: true` frameworks surfaced first. Added ViewToggle (grid / list) to the filter bar. Framework cards now display a website icon-link when a `website` URL is present. Region grouping replaced by country-based grouping. [view:/compliance]
+
+- **Glossary** (`src/data/glossaryData.ts`): Added CC (Common Criteria, ISO/IEC 15408) entry with EUCC/CCRA technical note, and CCRA (Common Criteria Recognition Arrangement — 31-nation mutual recognition) entry with member-nation list. Both link to `/learn/standards-bodies`. [view:/learn/standards-bodies]
+
+- **Quiz category types** (`modules/Quiz/types.ts`): Added `'data-asset-sensitivity'` and `'standards-bodies'` to the `QuizCategory` union type so quiz filters correctly resolve questions for both new modules.
+
+### Data
+
+- **Compliance** (`compliance_03052026_r7.csv`): 62 records — standardization bodies (NIST, ENISA, ETSI, IETF, BSI, ANSSI, KISA), certification bodies (CMVP/ACVP, CC/CCRA/EUCC, NCSC CPA), and compliance frameworks — each with `body_type` and `website` columns. [view:/compliance]
+
+- **Quiz** (`pqcquiz_03052026.csv`): 546 questions total; +15 new Standards Bodies questions (`sb-001`–`sb-015`, category `standards-bodies`). [view:/learn/quiz]
+
+- **Library** (`library_03052026.csv`): 256 records with updated `moduleIds` cross-references for the new Standards Bodies and Data Asset Sensitivity modules. [view:/library]
+
+- **Algorithm reference** (`pqc_complete_algorithm_reference_03052026.csv`): New comprehensive algorithm transition reference with security-level mapping, key/signature sizes, and NIST status for all standardised and candidate PQC algorithms. [view:/algorithms]
+
+- **SoftHSMv3 WASM** (`public/wasm/softhsm.js`, `public/wasm/softhsm.wasm`): Rebuilt binary shipping `C_GetMechanismList` and `C_GetMechanismInfo` exports required by the new Mechanism Discovery feature.
+
+## [2.24.0] - 2026-03-05
+
+### Added
+
+- **Knowledge Graph panel** (right-panel drawer): New "Graph" tab alongside Assistant and Journey in the right-panel drawer. Three sub-tabs — **Explore** (search-driven radial graph with NodeDetailPanel overlay for algorithm, standard, organisation, and product nodes), **Coverage** (entity type cards + cluster relationship map showing 13 relationship types across 13 data sources), and **Pathways** (track-filtered learning pathway with per-module progress indicators). Algorithm nodes built synchronously via `libraryData.algorithmFamily` mapping 11 canonical PQC families (ML-KEM, ML-DSA, SLH-DSA, Lattice-based, Hash-based, Code-based, etc.). [view:/]
+
+### Fixed
+
+- **PKCS#11 Inspect — classical operation decoders** (`wasm/pkcs11Inspect.ts`): Improved decode accuracy for RSA, ECDSA, and EdDSA sign/verify operations; corrected constant mappings for edge cases in return-value decoding. [view:/playground]
+
+- **Standards Bodies data** (`modules/StandardsBodies/data.ts`): Corrected CNSA 2.0 algorithm list (removed XMSS, aligned with NSA CNSA 2.0 advisory mandatory algorithms); updated NIST IR 8547 status to reflect the published draft timeline; added FIPS 206 (FN-DSA / Falcon) entry. [view:/learn/standards-bodies]
+
+- **Standards Bodies TypeScript errors** (`modules/StandardsBodies/data.ts`): Resolved pre-existing strict-mode TypeScript errors (unterminated string literals, missing type annotations) that blocked the `tsc` build step.
+
+### Data
+
+- **Migrate catalog** (`quantum_safe_cryptographic_software_reference_03052026.csv`): Deduplication pass removing 6 duplicate product rows; corrected FIPS validation status for 12 entries (downgraded unverified `Validated` claims to `Partial`); updated version strings for 8 entries (OpenSSL, Bouncy Castle, wolfSSL, mbedTLS, AWS-LC) to current releases. [view:/migrate]
+
 ## [2.23.0] - 2026-03-05
 
 ### Data

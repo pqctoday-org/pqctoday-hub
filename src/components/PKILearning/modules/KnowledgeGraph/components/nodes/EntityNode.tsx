@@ -106,10 +106,10 @@ function EntityNodeComponent({ data }: NodeProps<EntityNodeType>) {
   return (
     <div
       className={`
-        px-3 py-2 rounded-lg border shadow-sm min-w-[160px] max-w-[220px]
+        px-3 py-2 rounded-lg border shadow-sm min-w-[160px] max-w-[220px] cursor-pointer
         ${config.bg} ${config.border}
-        ${isSelected ? 'ring-2 ring-primary shadow-glow-sm' : ''}
-        transition-shadow duration-200
+        ${isSelected ? 'ring-2 ring-primary shadow-glow-sm' : 'hover:ring-1 hover:ring-primary/40'}
+        transition-all duration-150
       `}
     >
       <Handle type="target" position={Position.Top} className="!bg-primary/50 !w-2 !h-2" />
