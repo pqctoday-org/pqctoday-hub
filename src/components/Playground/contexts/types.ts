@@ -61,6 +61,7 @@ export interface SettingsContextType {
     | 'key_agree'
     | 'key_derive'
     | 'classical_sign'
+    | 'mechanisms'
   setActiveTab: (
     tab:
       | 'data'
@@ -75,6 +76,7 @@ export interface SettingsContextType {
       | 'key_agree'
       | 'key_derive'
       | 'classical_sign'
+      | 'mechanisms'
   ) => void
   loading: boolean
   setLoading: (loading: boolean) => void

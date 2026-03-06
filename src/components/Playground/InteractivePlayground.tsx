@@ -14,6 +14,7 @@ import {
   ArrowLeftRight,
   Filter,
   PenLine,
+  Layers,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { PlaygroundProvider } from './PlaygroundProvider'
@@ -32,6 +33,7 @@ import { HsmHashingPanel } from './hsm/HsmHashingPanel'
 import { HsmKeyAgreementPanel } from './hsm/HsmKeyAgreementPanel'
 import { HsmKdfPanel } from './hsm/HsmKdfPanel'
 import { HsmClassicalSignPanel } from './hsm/HsmClassicalSignPanel'
+import { HsmMechanismPanel } from './hsm/HsmMechanismPanel'
 import { logEvent } from '../../utils/analytics'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
@@ -255,6 +257,19 @@ const PlaygroundContent = () => {
             >
               <PenLine size={16} className="mr-2" /> Classical
             </Button>
+            <Button
+              onClick={() => handleTabChange('mechanisms')}
+              variant="ghost"
+              size="sm"
+              className={clsx(
+                'whitespace-nowrap',
+                activeTab === 'mechanisms'
+                  ? 'bg-primary/20 text-primary shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+              )}
+            >
+              <Layers size={16} className="mr-2" /> Mechanisms
+            </Button>
           </>
         )}
 
@@ -307,6 +322,7 @@ const PlaygroundContent = () => {
         {activeTab === 'key_agree' && hsmMode && <HsmKeyAgreementPanel />}
         {activeTab === 'key_derive' && hsmMode && <HsmKdfPanel />}
         {activeTab === 'classical_sign' && hsmMode && <HsmClassicalSignPanel />}
+        {activeTab === 'mechanisms' && hsmMode && <HsmMechanismPanel />}
         {activeTab === 'keystore' && <KeyStoreTab />}
         {activeTab === 'logs' && <LogsTab />}
         {activeTab === 'acvp' && !hsmMode && (

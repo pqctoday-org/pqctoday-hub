@@ -74,6 +74,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     | 'key_agree'
     | 'key_derive'
     | 'classical_sign'
+    | 'mechanisms'
   >('keystore')
   const [classicalAlgorithm, setClassicalAlgorithm] = useState<ClassicalAlgorithm>('RSA-2048')
   const [hsmMode, setHsmMode] = useState(false)
