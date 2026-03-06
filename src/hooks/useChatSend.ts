@@ -91,6 +91,7 @@ export function useChatSend() {
           moduleId: pageContext.moduleId,
           relevantSources: pageContext.relevantSources,
           conversationContext: recentQueries,
+          persona: pageContext.persona,
         })
 
         // Build conversation for API
@@ -116,10 +117,33 @@ export function useChatSend() {
         )
 
         // Build deduplicated source references for attribution
-        const seenTitles = new Set<string>()
+        // When multiple chunks share a title, keep the deep link from the
+        // highest-priority chunk (most specific — step-level over page-level)
+        const seenTitles = new Map<string, number>()
         for (const c of chunks) {
-          if (seenTitles.has(c.title)) continue
-          seenTitles.add(c.title)
+          const existingIdx = seenTitles.get(c.title)
+          if (existingIdx !== undefined) {
+            const existing = sourceRefs[existingIdx]
+            const existingPriority =
+              chunks.find((ch) => ch.deepLink === existing.deepLink && ch.title === c.title)
+                ?.priority ?? 1
+            const newPriority = c.priority ?? 1
+            if (
+              newPriority > existingPriority ||
+              (c.deepLink?.includes('step=') && !existing.deepLink?.includes('step='))
+            ) {
+              sourceRefs[existingIdx] = {
+                title: c.title,
+                source:
+                  c.source === 'document-enrichment'
+                    ? (c.metadata?.collection ?? 'document')
+                    : c.source,
+                deepLink: c.deepLink,
+              }
+            }
+            continue
+          }
+          seenTitles.set(c.title, sourceRefs.length)
           sourceRefs.push({
             title: c.title,
             source:

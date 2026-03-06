@@ -7,6 +7,7 @@ export interface RAGChunk {
   category: string
   metadata: Record<string, string>
   deepLink?: string
+  priority?: number
 }
 
 export interface ChatSourceRef {

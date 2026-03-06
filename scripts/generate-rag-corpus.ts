@@ -20,6 +20,7 @@ interface RAGChunk {
   category: string
   metadata: Record<string, string>
   deepLink?: string
+  priority?: number
 }
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'data')
@@ -870,6 +871,19 @@ function processModuleContent(): RAGChunk[] {
     const modulePath = path.join(MODULES_DIR, moduleDir.name)
     const moduleName = MODULE_NAME_MAP[moduleDir.name] ?? moduleDir.name
 
+    // Build component→step mapping from module index.tsx for step-level deep links
+    const stepMap = new Map<string, number>()
+    const indexPath = path.join(modulePath, 'index.tsx')
+    if (fs.existsSync(indexPath)) {
+      const indexSource = fs.readFileSync(indexPath, 'utf-8')
+      // Matches: {currentPart === 0 && <Component  OR  {currentStep === 0 && (\n<Component
+      const stepRe = /current(?:Part|Step)\s*===\s*(\d+)\s*&&\s*(?:\(\s*\n\s*)?<(\w+)/g
+      let m
+      while ((m = stepRe.exec(indexSource)) !== null) {
+        stepMap.set(m[2], parseInt(m[1], 10))
+      }
+    }
+
     // Process TSX files (excluding tests)
     const tsxFiles = findFiles(modulePath, '.tsx', /\.test\.tsx$/)
     for (const file of tsxFiles) {
@@ -887,9 +901,10 @@ function processModuleContent(): RAGChunk[] {
           componentName
         )
       const moduleId = MODULE_DIR_TO_ID[moduleDir.name]
+      const stepIndex = stepMap.get(componentName)
       const workshopDeepLink = moduleId
         ? isWorkshop
-          ? `/learn/${moduleId}?tab=workshop`
+          ? `/learn/${moduleId}?tab=workshop${stepIndex !== undefined ? `&step=${stepIndex}` : ''}`
           : `/learn/${moduleId}`
         : undefined
 
@@ -2145,6 +2160,33 @@ async function main() {
   // Cross-domain linking
   const crossRefCount = enrichWithCrossReferences(corpus)
   console.log(`\n  🔗 Cross-references added: ${crossRefCount} links`)
+
+  // Assign static priority per source type
+  const SOURCE_PRIORITY: Record<string, number> = {
+    'module-content': 1.15,
+    modules: 1.1,
+    'module-summaries': 1.1,
+    algorithms: 1.05,
+    glossary: 1.0,
+    assessment: 1.05,
+    threats: 1.0,
+    compliance: 1.0,
+    migrate: 1.0,
+    timeline: 1.0,
+    library: 0.95,
+    leaders: 1.0,
+    'document-enrichment': 0.9,
+    quiz: 0.8,
+    changelog: 0.6,
+  }
+  for (const chunk of corpus) {
+    const basePriority = SOURCE_PRIORITY[chunk.source] ?? 1.0
+    // Workshop step chunks with step-level deep links get a bump
+    const stepBump = chunk.deepLink?.includes('step=') ? 0.1 : 0
+    chunk.priority = +(basePriority + stepBump).toFixed(2)
+  }
+  const prioritized = corpus.filter((c) => c.priority !== undefined && c.priority !== 1.0).length
+  console.log(`\n  ⚡ Priority assigned: ${prioritized} chunks with non-default priority`)
 
   // Ensure output directory exists
   if (!fs.existsSync(OUTPUT_DIR)) {

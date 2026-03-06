@@ -9,7 +9,7 @@ import { IKEv2HandshakeSimulator } from './simulate/IKEv2HandshakeSimulator'
 import { SSHKeyExchangeSimulator } from './simulate/SSHKeyExchangeSimulator'
 import { ProtocolComparisonTable } from './simulate/ProtocolComparisonTable'
 import { useModuleStore } from '@/store/useModuleStore'
-import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
+import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import type { IKEv2Mode } from './data/ikev2Constants'
 import type { SSHKexAlgorithm } from './data/sshConstants'
@@ -46,6 +46,7 @@ export const VPNSSHModule: React.FC = () => {
   })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
   const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
+  useSyncDeepLink(activeTab, currentPart)
   const [initialIKEv2Mode, setInitialIKEv2Mode] = useState<IKEv2Mode | undefined>(undefined)
   const [initialSSHKex, setInitialSSHKex] = useState<SSHKexAlgorithm | undefined>(undefined)
   const [configKey, setConfigKey] = useState(0)

@@ -4,6 +4,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.26.0] - 2026-03-06
+
+### Added
+
+- **Shareable workshop deep links** (`src/hooks/useModuleDeepLink.ts`, 19 module index files): Workshop tab and step state now syncs to the URL via `useSyncDeepLink` hook using `window.history.replaceState`. Navigating to `/learn/pki-workshop` → Workshop → Step 3 updates the URL to `?tab=workshop&step=3`. Sharing or bookmarking the URL restores the exact tab and step. All 19 modules with `getModuleDeepLink` are wired up. [view:/learn]
+
+- **Persona-aware RAG ranking** (`src/services/chat/RetrievalService.ts`): Added `PERSONA_BOOSTS` multiplier table for 5 personas (developer, executive, architect, researcher, ops). Developer persona boosts workshop content 1.5×; executive boosts assessment/threats 1.4–1.5×; researcher boosts library/enrichment 1.4–1.5×. Persona is now passed from `usePageContext` through `useChatSend` to `RetrievalService.search()`. [view:/about]
+
+- **Static chunk priority** (`src/types/ChatTypes.ts`, `scripts/generate-rag-corpus.ts`): Added `priority` field to `RAGChunk`. Corpus generator assigns source-type priorities (module-content: 1.15, modules: 1.1, algorithms: 1.05, library: 0.95, quiz: 0.8, changelog: 0.6). Workshop chunks with step-level deep links (`?step=N`) get +0.1 bump. 1,418 chunks have non-default priority. [view:/about]
+
+- **Step-level RAG deep links** (`scripts/generate-rag-corpus.ts`): Workshop component chunks now include step-specific deep links (e.g., `/learn/pki-workshop?tab=workshop&step=2`) by parsing each module's `index.tsx` for `currentPart === N && <Component>` patterns. 71 of 89 workshop chunks now have step-specific URLs. [view:/about]
+
+### Fixed
+
+- **Quiz deep links suppressed for non-quiz queries** (`src/services/chat/RetrievalService.ts`): Quiz chunks are now blocked from RAG results unless the user explicitly mentions quiz, test, practice questions, or flashcards. Previously, quiz chunks could appear as source references for general topic queries, linking users to quizzes when they wanted explanations. [view:/about]
+
+- **Library deep link guarantee** (`src/services/chat/RetrievalService.ts`): When a query matches library documents but library chunks are crowded out by source diversity caps, the system now injects the highest-scoring library chunk by replacing the lowest-priority result. Ensures `/library?ref=` deep links always appear when a library document is relevant. [view:/library]
+
+- **Source ref deduplication prefers step-level links** (`src/hooks/useChatSend.ts`): When multiple chunks share a title, the source reference now keeps the deep link from the highest-priority chunk. Step-level links (`?step=N`) are preferred over page-level links. [view:/about]
+
+### Data
+
+- **RAG corpus** (`public/data/rag-corpus.json`): Rebuilt — 2,839 chunks with priority field and step-level deep links. [view:/about]
+
 ## [2.25.3] - 2026-03-06
 
 ### Fixed

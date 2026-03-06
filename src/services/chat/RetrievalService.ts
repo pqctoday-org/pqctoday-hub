@@ -21,6 +21,7 @@ export interface PageContext {
   moduleId?: string
   relevantSources: string[]
   conversationContext?: string[]
+  persona?: string | null
 }
 
 /**
@@ -53,6 +54,43 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'document-enrichment': 1.5,
   },
   general: { leaders: 1.5 },
+}
+
+/**
+ * Persona-specific source boosts — applied on top of intent + page context boosts.
+ */
+const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
+  developer: {
+    'module-content': 1.5,
+    modules: 1.3,
+    algorithms: 1.2,
+    migrate: 1.2,
+  },
+  executive: {
+    assessment: 1.5,
+    threats: 1.4,
+    compliance: 1.3,
+    timeline: 1.3,
+    'priority-matrix': 1.3,
+  },
+  architect: {
+    'module-content': 1.3,
+    algorithms: 1.3,
+    migrate: 1.3,
+    transitions: 1.2,
+  },
+  researcher: {
+    library: 1.5,
+    'document-enrichment': 1.4,
+    algorithms: 1.3,
+    'authoritative-sources': 1.3,
+  },
+  ops: {
+    migrate: 1.5,
+    certifications: 1.3,
+    'module-content': 1.2,
+    compliance: 1.2,
+  },
 }
 
 const COUNTRY_KEYS = new Set([
@@ -514,11 +552,14 @@ class RetrievalService {
 
     const selectedIds = new Set<string>()
     const selected: RAGChunk[] = []
+    const quizExplicit = /\b(quiz|quizzes|test me|practice questions?|flashcards?)\b/i.test(query)
 
     const addChunk = (id: string): boolean => {
       if (selectedIds.has(id)) return false
       const chunk = this.corpusById.get(id)
       if (!chunk) return false
+      // Suppress quiz chunks unless the user explicitly asked for a quiz
+      if (chunk.source === 'quiz' && !quizExplicit) return false
       selectedIds.add(id)
       selected.push(chunk)
       return true
@@ -674,6 +715,15 @@ class RetrievalService {
       if (pageContext?.relevantSources.includes(chunk.source)) {
         multiplier *= 1.5
       }
+      // Static priority from corpus (default 1.0)
+      multiplier *= chunk.priority ?? 1.0
+      // Persona boost
+      if (pageContext?.persona) {
+        const pBoost = PERSONA_BOOSTS[pageContext.persona]
+        if (pBoost?.[chunk.source]) {
+          multiplier *= pBoost[chunk.source]
+        }
+      }
       return { ...r, boostedScore: r.score * multiplier }
     })
 
@@ -718,6 +768,34 @@ class RetrievalService {
         if (count >= relaxedMax) continue
         addChunk(r.id)
         sourceCounts.set(chunk.source, count + 1)
+      }
+    }
+
+    // Library guarantee: ensure library-sourced chunks are always included when
+    // they scored in boostedResults but were crowded out by diversity caps.
+    // This guarantees /library?ref= deep links appear for referenced documents.
+    const hasLibrary = selected.some(
+      (c) =>
+        c.source === 'library' ||
+        (c.source === 'document-enrichment' && c.metadata?.collection === 'library')
+    )
+    if (!hasLibrary) {
+      for (const r of boostedResults) {
+        if (selectedIds.has(r.id)) continue
+        const chunk = this.corpusById.get(r.id)
+        if (!chunk) continue
+        if (
+          chunk.source === 'library' ||
+          (chunk.source === 'document-enrichment' && chunk.metadata?.collection === 'library')
+        ) {
+          // Replace last selected chunk to keep within limit
+          if (selected.length >= effectiveLimit) {
+            const removed = selected.pop()!
+            selectedIds.delete(removed.id)
+          }
+          addChunk(r.id)
+          break
+        }
       }
     }
 

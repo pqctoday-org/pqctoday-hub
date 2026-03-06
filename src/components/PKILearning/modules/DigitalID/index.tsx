@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { Trash2, Shield, FileText, PenTool, Building2, CheckSquare } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
-import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
+import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { WalletComponent } from './components/Wallet/WalletComponent'
 import { PIDIssuerComponent } from './components/PIDIssuer/PIDIssuerComponent'
@@ -73,6 +73,7 @@ export const DigitalIDModule: React.FC = () => {
   const deepLink = getModuleDeepLink({ maxStep: WORKSHOP_STEPS.length - 1 })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
   const [currentStep, setCurrentStep] = useState(deepLink.initialStep)
+  useSyncDeepLink(activeTab, currentStep)
   const [wallet, setWallet] = useState<WalletInstance>(INITIAL_WALLET)
   const prevStepRef = useRef<number | null>(null)
   const startTimeRef = useRef(0)

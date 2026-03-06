@@ -10,7 +10,7 @@ import { ESVWalkthroughDemo } from './workshop/ESVWalkthroughDemo'
 import { QRNGDemo } from './workshop/QRNGDemo'
 import { SourceCombiningDemo } from './workshop/SourceCombiningDemo'
 import { useModuleStore } from '@/store/useModuleStore'
-import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
+import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
@@ -54,6 +54,7 @@ export const EntropyModule: React.FC = () => {
   const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
   const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
+  useSyncDeepLink(activeTab, currentPart)
   const [configKey, setConfigKey] = useState(0)
   const [exerciseConfig, setExerciseConfig] = useState<WorkshopConfig | null>(null)
   const startTimeRef = useRef(0)

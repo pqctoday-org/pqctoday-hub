@@ -9,7 +9,7 @@ import { InclusionProofGenerator } from './workshop/InclusionProofGenerator'
 import { ProofVerifier } from './workshop/ProofVerifier'
 import { SizeComparison } from './workshop/SizeComparison'
 import { useModuleStore } from '@/store/useModuleStore'
-import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
+import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
@@ -47,6 +47,7 @@ export const MerkleTreeCertsModule: React.FC = () => {
   const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
   const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
+  useSyncDeepLink(activeTab, currentPart)
   const [configKey, setConfigKey] = useState(0)
   const startTimeRef = useRef(0)
   const { updateModuleProgress, markStepComplete } = useModuleStore()

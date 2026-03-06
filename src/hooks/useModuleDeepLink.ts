@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useEffect } from 'react'
+
 /**
  * Parses ?tab= and ?step= from the current URL for module deep-linking.
  * Called inside useState initializers — runs once per mount.
@@ -26,4 +28,28 @@ export function getModuleDeepLink(
   }
 
   return { initialTab, initialStep }
+}
+
+/**
+ * Keeps URL search params (?tab=, ?step=) in sync with module navigation state.
+ * Uses replaceState to avoid polluting browser history.
+ */
+export function useSyncDeepLink(tab: string, step: number, defaultTab = 'learn') {
+  useEffect(() => {
+    const url = new URL(window.location.href)
+
+    if (tab !== defaultTab) {
+      url.searchParams.set('tab', tab)
+    } else {
+      url.searchParams.delete('tab')
+    }
+
+    if (step > 0) {
+      url.searchParams.set('step', String(step))
+    } else {
+      url.searchParams.delete('step')
+    }
+
+    window.history.replaceState(null, '', url.toString())
+  }, [tab, step, defaultTab])
 }

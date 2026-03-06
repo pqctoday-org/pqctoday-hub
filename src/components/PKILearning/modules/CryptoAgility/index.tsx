@@ -8,7 +8,7 @@ import { AbstractionLayerDemo } from './workshop/AbstractionLayerDemo'
 import { CBOMScanner } from './workshop/CBOMScanner'
 import { MigrationPlanningExercise } from './workshop/MigrationPlanningExercise'
 import { useModuleStore } from '@/store/useModuleStore'
-import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
+import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
@@ -40,6 +40,7 @@ export const CryptoAgilityModule: React.FC = () => {
   const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
   const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
+  useSyncDeepLink(activeTab, currentPart)
   const [workshopConfig, setWorkshopConfig] = useState<WorkshopConfig | null>(null)
   const [configKey, setConfigKey] = useState(0)
   const startTimeRef = useRef(0)
