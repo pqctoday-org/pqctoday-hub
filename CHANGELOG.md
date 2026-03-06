@@ -4,6 +4,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.25.1] - 2026-03-05
+
+### Fixed
+
+- **Compliance — responsive layout** (`src/components/Compliance/ComplianceDetailPopover.tsx`): Metadata and algorithm grids now stack to a single column on narrow viewports (`grid-cols-1 sm:grid-cols-2`); gap tightened from `gap-4` to `gap-3`. [view:/compliance]
+
+- **Compliance — mobile section toggle** (`src/components/Compliance/ComplianceView.tsx`): Mobile view buttons replaced wrapping flex layout with a horizontally-scrollable row (`overflow-x-auto`, `flex-none whitespace-nowrap`) so all section tabs remain accessible on small screens without wrapping onto multiple lines. Header title is now responsive (`text-2xl sm:text-3xl md:text-4xl`) with a shrink-safe icon (`sm:w-8 sm:h-8 shrink-0`). [view:/compliance]
+
+- **Knowledge Graph — touch targets in legend** (`src/components/PKILearning/modules/KnowledgeGraph/components/GraphLegend.tsx`): Added `min-h-[32px]` to each legend item button to meet WCAG 2.1 AA minimum touch-target size on mobile. [view:/]
+
+- **Knowledge Graph — responsive PathwayView canvas** (`src/components/PKILearning/modules/KnowledgeGraph/components/PathwayView.tsx`): Graph canvas height changed from fixed `h-[500px]` to `h-[45vh] min-h-[300px] sm:h-[500px]` so the canvas fills the visible viewport on mobile instead of overflowing. [view:/]
+
+- **Knowledge Graph — tab labels hidden on mobile** (`src/components/RightPanel/GraphPanel.tsx`): Icon-only tab buttons on narrow viewports (`hidden sm:inline` on label text) prevent the tab strip from overflowing on small screens. [view:/]
+
+### Data
+
+- **RAG corpus** (`public/data/rag-corpus.json`): Rebuilt — 2,833 chunks (+34 from v2.25.0 data additions now incorporated). [view:/about]
+
 ## [2.25.0] - 2026-03-05
 
 ### Added

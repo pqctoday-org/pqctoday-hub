@@ -155,13 +155,13 @@ function MobileViewToggle({ data }: { data: import('./types').ComplianceRecord[]
   )
 
   const btnClass = (active: boolean) =>
-    `flex-1 px-2 py-2 rounded-lg text-xs font-medium transition-colors ${
+    `flex-none px-3 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
       active ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
     }`
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
         <button
           className={btnClass(section === 'standards')}
           onClick={() => setSection('standards')}
@@ -260,8 +260,8 @@ export const ComplianceView = () => {
       {/* Header Section */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl md:text-4xl font-bold text-gradient flex items-center gap-3">
-            <ShieldCheck className="w-8 h-8 text-primary" />
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient flex items-center gap-3 flex-wrap">
+            <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-primary shrink-0" />
             Standardization, Compliance and Certification
           </h1>
         </div>

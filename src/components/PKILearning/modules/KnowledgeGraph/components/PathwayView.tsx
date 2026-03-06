@@ -288,7 +288,7 @@ export function PathwayView({ graph, searchQuery, searchResults }: PathwayViewPr
       </div>
 
       {/* Graph canvas */}
-      <div className="h-[500px] rounded-lg border border-border overflow-hidden bg-background">
+      <div className="h-[45vh] min-h-[300px] sm:h-[500px] rounded-lg border border-border overflow-hidden bg-background">
         <ReactFlow
           nodes={nodes}
           edges={edges}

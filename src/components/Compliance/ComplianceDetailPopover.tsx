@@ -142,7 +142,7 @@ export const ComplianceDetailPopover = ({
         {/* Content */}
         <div className="p-4 max-h-[70vh] overflow-y-auto space-y-6">
           {/* Metadata Grid */}
-          <div className="grid grid-cols-2 gap-4 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
             {/* Type */}
             <div className="space-y-1">
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -205,7 +205,7 @@ export const ComplianceDetailPopover = ({
           </div>
 
           {/* Algorithms Grid */}
-          <div className="grid grid-cols-2 gap-4 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
             {/* PQC Section */}
             {record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
               <div className="space-y-1">

@@ -81,7 +81,7 @@ export const GraphPanel: React.FC = () => {
                 role="tab"
               >
                 <Icon size={13} />
-                <span>{tab.label}</span>
+                <span className="hidden sm:inline">{tab.label}</span>
               </button>
             )
           })}

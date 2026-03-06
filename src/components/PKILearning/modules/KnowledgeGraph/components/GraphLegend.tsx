@@ -42,7 +42,7 @@ export function GraphLegend({ visibleTypes, hiddenTypes, onToggleType }: GraphLe
               key={type}
               onClick={() => onToggleType(type)}
               title={isHidden ? `Show ${label}` : `Hide ${label}`}
-              className={`flex items-center gap-1 rounded px-1.5 py-0.5 transition-opacity cursor-pointer hover:bg-muted/50 ${
+              className={`flex items-center gap-1 rounded px-1.5 py-0.5 min-h-[32px] transition-opacity cursor-pointer hover:bg-muted/50 ${
                 isHidden ? 'opacity-35' : 'opacity-100'
               }`}
             >
