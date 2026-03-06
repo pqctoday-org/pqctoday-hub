@@ -25,9 +25,9 @@ export type ViewType =
   | 'Compliance'
   | 'Migrate'
 
-// Helper to parse date from filename (format: pqc_authoritative_sources_reference_MMDDYYYY.csv)
-function getDateFromFilename(path: string): Date | null {
-  const match = path.match(/pqc_authoritative_sources_reference_(\d{8})\.csv/)
+// Helper to parse date and revision from filename (format: ...reference_MMDDYYYY.csv or ...reference_MMDDYYYY_rN.csv)
+function getDateFromFilename(path: string): { date: Date; revision: number } | null {
+  const match = path.match(/pqc_authoritative_sources_reference_(\d{8})(?:_r(\d+))?\.csv/)
   if (!match) return null
 
   const dateStr = match[1]
@@ -35,7 +35,7 @@ function getDateFromFilename(path: string): Date | null {
   const day = parseInt(dateStr.substring(2, 4), 10)
   const year = parseInt(dateStr.substring(4, 8), 10)
 
-  return new Date(year, month - 1, day)
+  return { date: new Date(year, month - 1, day), revision: match[2] ? parseInt(match[2], 10) : 0 }
 }
 
 // Helper to find the latest authoritative sources file
@@ -52,21 +52,26 @@ function getLatestSourcesFile(): {
 
   const files = Object.keys(modules)
     .map((path) => {
-      const date = getDateFromFilename(path)
-      if (!date) return null
+      const parsed = getDateFromFilename(path)
+      if (!parsed) return null
 
       return {
         path,
         content: modules[path] as string,
-        date,
+        date: parsed.date,
+        revision: parsed.revision,
       }
     })
-    .filter((f): f is { path: string; content: string; date: Date } => f !== null)
+    .filter((f): f is { path: string; content: string; date: Date; revision: number } => f !== null)
 
   if (files.length === 0) return null
 
-  // Sort by date descending (newest first)
-  files.sort((a, b) => b.date.getTime() - a.date.getTime())
+  // Sort by date descending, then revision descending (newest first)
+  files.sort((a, b) => {
+    const timeDiff = b.date.getTime() - a.date.getTime()
+    if (timeDiff !== 0) return timeDiff
+    return b.revision - a.revision
+  })
 
   console.log(`Loading latest authoritative sources from: ${files[0].path}`)
 

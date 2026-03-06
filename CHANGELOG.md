@@ -24,6 +24,10 @@ All notable changes to this project will be documented in this file.
 
 - **Source ref deduplication prefers step-level links** (`src/hooks/useChatSend.ts`): When multiple chunks share a title, the source reference now keeps the deep link from the highest-priority chunk. Step-level links (`?step=N`) are preferred over page-level links. [view:/about]
 
+- **CSV loader revision-suffix support** (`src/data/pqcAlgorithmsData.ts`, `algorithmsData.ts`, `migrateData.ts`, `authoritativeSourcesData.ts`, `certificationXrefData.ts`): All 5 data loaders now handle `_rN` revision suffixes in CSV filenames (e.g., `library_03032026_r2.csv`). `getDateFromFilename` regex updated to `_(\d{8})(?:_r\d+)?\.csv$`; new `getRevisionFromFilename` helper. Sort uses date descending then revision descending, so same-day revisions are ordered correctly.
+
+- **CSV maintenance scripts** (`scripts/check-csv-count.sh`, `scripts/archive-csvs.sh`, `package.json`): Added `npm run check:csv-count` to verify only 2 versions per CSV prefix exist in `src/data/`, and `npm run archive:csv` to move older versions to `src/data/archive/`.
+
 ### Data
 
 - **RAG corpus** (`public/data/rag-corpus.json`): Rebuilt — 2,839 chunks with priority field and step-level deep links. [view:/about]

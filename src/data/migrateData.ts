@@ -18,24 +18,29 @@ function getLatestSoftwareFiles(): {
 } {
   const files = Object.keys(modules)
     .map((path) => {
-      // Expected format: ...reference_MMDDYYYY.csv
-      const match = path.match(/reference_(\d{2})(\d{2})(\d{4})\.csv$/)
+      // Expected format: ...reference_MMDDYYYY.csv or ...reference_MMDDYYYY_rN.csv
+      const match = path.match(/reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
       if (match) {
-        const [, month, day, year] = match
+        const [, month, day, year, rev] = match
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-        return { path, date, content: modules[path] as string }
+        const revision = rev ? parseInt(rev, 10) : 0
+        return { path, date, revision, content: modules[path] as string }
       }
       return null
     })
-    .filter((f): f is { path: string; date: Date; content: string } => f !== null)
+    .filter((f): f is { path: string; date: Date; revision: number; content: string } => f !== null)
 
   if (files.length === 0) {
     console.warn('No software reference CSV files found.')
     return { current: null, previous: null }
   }
 
-  // Sort by date descending
-  files.sort((a, b) => b.date.getTime() - a.date.getTime())
+  // Sort by date descending, then revision descending
+  files.sort((a, b) => {
+    const timeDiff = b.date.getTime() - a.date.getTime()
+    if (timeDiff !== 0) return timeDiff
+    return b.revision - a.revision
+  })
 
   return {
     current: {

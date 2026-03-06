@@ -8,7 +8,7 @@ export interface AlgorithmTransition {
   standardizationDate: string
 }
 
-import { getDateFromFilename } from './pqcAlgorithmsData'
+import { getDateFromFilename, getRevisionFromFilename } from './pqcAlgorithmsData'
 
 // Import CSV data dynamically
 const csvModule = import.meta.glob('./algorithms_transitions_*.csv', {
@@ -27,7 +27,7 @@ export async function loadAlgorithmsData(): Promise<AlgorithmTransition[]> {
     throw new Error('Algorithms CSV file not found')
   }
 
-  // Sort paths by date in descending order (newest first)
+  // Sort paths by date descending, then revision descending (newest first)
   const sortedPaths = paths.sort((a, b) => {
     const dateA = getDateFromFilename(a)
     const dateB = getDateFromFilename(b)
@@ -36,7 +36,9 @@ export async function loadAlgorithmsData(): Promise<AlgorithmTransition[]> {
     if (!dateA) return 1
     if (!dateB) return -1
 
-    return dateB.getTime() - dateA.getTime()
+    const timeDiff = dateB.getTime() - dateA.getTime()
+    if (timeDiff !== 0) return timeDiff
+    return getRevisionFromFilename(b) - getRevisionFromFilename(a)
   })
 
   // Pick the most recent file

@@ -33,9 +33,9 @@ const csvModule = import.meta.glob('./pqc_complete_algorithm_reference_*.csv', {
 let cachedData: AlgorithmDetail[] | null = null
 export let loadedFileMetadata: { filename: string; date: Date | null } | null = null
 
-// Helper to extract date from filename (format: MMDDYYYY)
+// Helper to extract date and revision from filename (format: MMDDYYYY or MMDDYYYY_rN)
 export function getDateFromFilename(path: string): Date | null {
-  const match = path.match(/_(\d{8})\.csv$/)
+  const match = path.match(/_(\d{8})(?:_r\d+)?\.csv$/)
   if (!match) return null
 
   const dateStr = match[1]
@@ -52,6 +52,11 @@ export function getDateFromFilename(path: string): Date | null {
   return date
 }
 
+export function getRevisionFromFilename(path: string): number {
+  const match = path.match(/_\d{8}_r(\d+)\.csv$/)
+  return match ? parseInt(match[1], 10) : 0
+}
+
 export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
   if (cachedData) return cachedData
 
@@ -60,7 +65,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
     throw new Error('No PQC Algorithms CSV files found')
   }
 
-  // Sort paths by date in descending order (newest first)
+  // Sort paths by date descending, then revision descending (newest first)
   const sortedPaths = paths.sort((a, b) => {
     const dateA = getDateFromFilename(a)
     const dateB = getDateFromFilename(b)
@@ -69,7 +74,9 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
     if (!dateA) return 1
     if (!dateB) return -1
 
-    return dateB.getTime() - dateA.getTime()
+    const timeDiff = dateB.getTime() - dateA.getTime()
+    if (timeDiff !== 0) return timeDiff
+    return getRevisionFromFilename(b) - getRevisionFromFilename(a)
   })
 
   // Pick the most recent file

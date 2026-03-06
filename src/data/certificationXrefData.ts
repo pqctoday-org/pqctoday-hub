@@ -13,22 +13,27 @@ const modules = import.meta.glob('./migrate_certification_xref_*.csv', {
 function getLatestXrefFile(): { content: string; filename: string; date: Date } | null {
   const files = Object.keys(modules)
     .map((path) => {
-      const match = path.match(/xref_(\d{2})(\d{2})(\d{4})\.csv$/)
+      const match = path.match(/xref_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
       if (match) {
-        const [, month, day, year] = match
+        const [, month, day, year, rev] = match
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-        return { path, date, content: modules[path] as string }
+        const revision = rev ? parseInt(rev, 10) : 0
+        return { path, date, revision, content: modules[path] as string }
       }
       return null
     })
-    .filter((f): f is { path: string; date: Date; content: string } => f !== null)
+    .filter((f): f is { path: string; date: Date; revision: number; content: string } => f !== null)
 
   if (files.length === 0) {
     console.warn('No certification xref CSV files found.')
     return null
   }
 
-  files.sort((a, b) => b.date.getTime() - a.date.getTime())
+  files.sort((a, b) => {
+    const timeDiff = b.date.getTime() - a.date.getTime()
+    if (timeDiff !== 0) return timeDiff
+    return b.revision - a.revision
+  })
 
   return {
     content: files[0].content,
