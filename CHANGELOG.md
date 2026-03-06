@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file.
 
 - **Standards Bodies module — persona path visibility** (`src/data/learningPersonas.ts`): `standards-bodies` was missing from all 5 persona `recommendedPath` and `pathItems` arrays, causing the module to be hidden whenever any persona filter was active. Added to Executive (after `compliance-strategy`, in Governance & Compliance checkpoint), Architect (after `data-asset-sensitivity`, in Architecture Strategy checkpoint), Researcher (after `data-asset-sensitivity`, in Strategy checkpoint), and IT Ops/DevOps (after `hsm-pqc`, in Key Infrastructure checkpoint). `quizCategories` updated for Executive, Architect, and IT Ops personas; Researcher uses empty array (all categories). Updated `estimatedMinutes` for IT Ops from 705 → 765 to reflect the added 60-min module. [view:/learn/standards-bodies] [persona:executive,architect,researcher,ops]
 
+### Performance
+
+- **Bundle size — CSV archive cleanup**: Archived 21 old CSV files that were being eagerly loaded via `import.meta.glob`. `quizDataLoader` chunk dropped from 3.1MB to 709KB (-77%), `libraryData` chunk from 1.3MB to 349KB (-73%). Total JavaScript reduction: **3.3MB**. Per CLAUDE.md policy, only the latest 2 versions of each CSV are kept in `src/data/`; older versions moved to `src/data/archive/`.
+
 ### Data
 
 - **Library** (`library_03062026.csv`): Added `Europol-FS-ISAC-PQC-Financial-2026` — _Prioritising Post-Quantum Cryptography Migration Activities in Financial Services_ (Europol / FS-ISAC / QSFF, 2026). Joint guidance introducing a Quantum Risk Score framework (Shelf Life × Exposure × Severity) and migration complexity assessment for financial institutions. Enriched; 12/18 dimensions filled. [view:/library]
