@@ -1,0 +1,662 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { libraryData } from '@/data/libraryData'
+import { complianceFrameworks } from '@/data/complianceData'
+import { timelineData } from '@/data/timelineData'
+import { threatsData } from '@/data/threatsData'
+import { softwareData } from '@/data/migrateData'
+import { certificationXrefs } from '@/data/certificationXrefData'
+import { leadersData } from '@/data/leadersData'
+import { glossaryTerms } from '@/data/glossaryData'
+import { quizQuestions } from '@/data/quizDataLoader'
+import { authoritativeSources } from '@/data/authoritativeSourcesData'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import type {
+  EntityType,
+  RelationshipType,
+  GraphNode,
+  GraphEdge,
+  GraphStats,
+  KnowledgeGraph,
+} from './graphTypes'
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+function makeNodeId(type: EntityType, id: string): string {
+  return `${type}:${id}`
+}
+
+function makeEdgeId(type: RelationshipType, source: string, target: string): string {
+  return `${type}:${source}→${target}`
+}
+
+function addNode(nodes: Map<string, GraphNode>, node: GraphNode): void {
+  nodes.set(node.id, node)
+}
+
+function addEdge(
+  edges: GraphEdge[],
+  edgeSet: Set<string>,
+  nodes: Map<string, GraphNode>,
+  type: RelationshipType,
+  sourceId: string,
+  targetId: string,
+  label?: string
+): void {
+  if (!nodes.has(sourceId) || !nodes.has(targetId)) return
+  if (sourceId === targetId) return
+
+  const id = makeEdgeId(type, sourceId, targetId)
+  if (edgeSet.has(id)) return
+  edgeSet.add(id)
+
+  edges.push({
+    id,
+    source: sourceId,
+    target: targetId,
+    relationshipType: type,
+    label,
+    weight: 1,
+  })
+}
+
+/** Canonical algorithm family patterns derived from libraryData.algorithmFamily */
+const ALGORITHM_CANONICAL: { pattern: RegExp; canonical: string }[] = [
+  { pattern: /\bml-kem\b/i, canonical: 'ML-KEM' },
+  { pattern: /\bml-dsa\b/i, canonical: 'ML-DSA' },
+  { pattern: /\bslh-dsa\b/i, canonical: 'SLH-DSA' },
+  { pattern: /hash-based\s*\(stateless\)/i, canonical: 'SLH-DSA' },
+  { pattern: /hash-based\s*\(stateful\)/i, canonical: 'LMS/XMSS' },
+  { pattern: /\bfrodokem\b/i, canonical: 'FrodoKEM' },
+  { pattern: /unstructured lattice/i, canonical: 'FrodoKEM' },
+  { pattern: /pq\/t hybrid/i, canonical: 'Hybrid PQC' },
+  { pattern: /hybrid\s+(pqc|kem)/i, canonical: 'Hybrid PQC' },
+  { pattern: /\bqkd\b/i, canonical: 'QKD' },
+  { pattern: /hash-based/i, canonical: 'Hash-based' },
+  { pattern: /lattice[\s-]based/i, canonical: 'Lattice-based' },
+  { pattern: /code[\s-]based/i, canonical: 'Code-based' },
+  { pattern: /\bclassical\b/i, canonical: 'Classical' },
+  { pattern: /\brsa\b/i, canonical: 'Classical' },
+  { pattern: /elliptic curve/i, canonical: 'Classical' },
+]
+
+const ALGORITHM_SKIP = new Set([
+  'n/a',
+  'n/a (certificate framework)',
+  'various',
+  'various pqc families',
+  'all',
+  'all pqc families',
+  '',
+])
+
+function extractAlgorithmFamilies(algorithmFamily: string): string[] {
+  if (!algorithmFamily) return []
+  if (ALGORITHM_SKIP.has(algorithmFamily.toLowerCase().trim())) return []
+  const found = new Set<string>()
+  for (const { pattern, canonical } of ALGORITHM_CANONICAL) {
+    if (pattern.test(algorithmFamily)) {
+      found.add(canonical)
+    }
+  }
+  return Array.from(found)
+}
+
+/** Map quiz categories to module IDs where they don't match directly */
+const QUIZ_CATEGORY_TO_MODULE: Record<string, string> = {
+  'pqc-fundamentals': 'pqc-101',
+  'algorithm-families': 'pqc-101',
+  'nist-standards': 'pqc-101',
+  'migration-planning': 'migration-program',
+  compliance: 'compliance-strategy',
+  'protocol-integration': 'tls-basics',
+  'industry-threats': 'quantum-threats',
+  'crypto-operations': 'pki-workshop',
+  'pki-infrastructure': 'pki-workshop',
+  'key-management': 'kms-pqc',
+}
+
+export function buildKnowledgeGraph(): KnowledgeGraph {
+  const nodes = new Map<string, GraphNode>()
+  const edges: GraphEdge[] = []
+  const edgeSet = new Set<string>()
+
+  // ── 1. Create nodes from each data source ──
+
+  // Library items
+  for (const item of libraryData) {
+    addNode(nodes, {
+      id: makeNodeId('library', item.referenceId),
+      entityType: 'library',
+      label: item.referenceId,
+      description: item.documentTitle,
+      metadata: {
+        title: item.documentTitle,
+        categories: item.categories,
+        status: item.status,
+      },
+      connectionCount: 0,
+    })
+  }
+
+  // Algorithm family nodes (derived synchronously from libraryData.algorithmFamily)
+  const algorithmLibraryCount = new Map<string, number>()
+  for (const item of libraryData) {
+    for (const family of extractAlgorithmFamilies(item.algorithmFamily)) {
+      algorithmLibraryCount.set(family, (algorithmLibraryCount.get(family) ?? 0) + 1)
+    }
+  }
+  for (const [family, count] of algorithmLibraryCount) {
+    addNode(nodes, {
+      id: makeNodeId('algorithm', slugify(family)),
+      entityType: 'algorithm',
+      label: family,
+      description: `Referenced by ${count} library record${count !== 1 ? 's' : ''}`,
+      metadata: { libraryCount: count },
+      connectionCount: 0,
+    })
+  }
+
+  // Compliance frameworks
+  for (const fw of complianceFrameworks) {
+    addNode(nodes, {
+      id: makeNodeId('compliance', fw.id),
+      entityType: 'compliance',
+      label: fw.label,
+      description: fw.description,
+      metadata: {
+        deadline: fw.deadline,
+        requiresPQC: fw.requiresPQC,
+        industries: fw.industries,
+        countries: fw.countries,
+        bodyType: fw.bodyType,
+      },
+      connectionCount: 0,
+    })
+  }
+
+  // Timeline events — derive stable IDs from country+org+title
+  const timelineEventIds = new Map<string, string>()
+  const allTimelineEvents: { countryName: string; orgName: string; title: string }[] = []
+
+  for (const country of timelineData) {
+    // Country nodes
+    const countryId = makeNodeId('country', country.countryName)
+    if (!nodes.has(countryId)) {
+      addNode(nodes, {
+        id: countryId,
+        entityType: 'country',
+        label: country.countryName,
+        metadata: { flagCode: country.flagCode },
+        connectionCount: 0,
+      })
+    }
+
+    for (const body of country.bodies) {
+      for (const event of body.events) {
+        const eventSlug = slugify(`${country.countryName}-${body.name}-${event.title}`)
+        const eventId = makeNodeId('timeline', eventSlug)
+        addNode(nodes, {
+          id: eventId,
+          entityType: 'timeline',
+          label: event.title,
+          description: event.description,
+          metadata: {
+            country: country.countryName,
+            org: body.name,
+            phase: event.phase,
+            startYear: event.startYear,
+            endYear: event.endYear,
+            type: event.type,
+          },
+          connectionCount: 0,
+        })
+
+        // Store for fuzzy matching with compliance.timelineRefs
+        timelineEventIds.set(event.title.toLowerCase(), eventId)
+        allTimelineEvents.push({
+          countryName: country.countryName,
+          orgName: body.name,
+          title: event.title,
+        })
+
+        // timeline → country edge
+        addEdge(edges, edgeSet, nodes, 'timeline-country', eventId, countryId)
+      }
+    }
+  }
+
+  // Threats
+  for (const threat of threatsData) {
+    addNode(nodes, {
+      id: makeNodeId('threat', threat.threatId),
+      entityType: 'threat',
+      label: threat.threatId,
+      description: threat.description,
+      metadata: {
+        industry: threat.industry,
+        criticality: threat.criticality,
+        cryptoAtRisk: threat.cryptoAtRisk,
+        pqcReplacement: threat.pqcReplacement,
+      },
+      connectionCount: 0,
+    })
+  }
+
+  // Software (migrate)
+  for (const sw of softwareData) {
+    addNode(nodes, {
+      id: makeNodeId('software', sw.softwareName),
+      entityType: 'software',
+      label: sw.softwareName,
+      description: sw.pqcCapabilityDescription,
+      metadata: {
+        category: sw.categoryId,
+        layer: sw.infrastructureLayer,
+        pqcSupport: sw.pqcSupport,
+        fipsValidated: sw.fipsValidated,
+      },
+      connectionCount: 0,
+    })
+  }
+
+  // Certifications
+  for (const cert of certificationXrefs) {
+    const certNodeId = makeNodeId(
+      'certification',
+      `${cert.softwareName}-${cert.certType}-${cert.certId}`
+    )
+    addNode(nodes, {
+      id: certNodeId,
+      entityType: 'certification',
+      label: `${cert.certType}: ${cert.certId}`,
+      description: `${cert.certVendor} — ${cert.pqcAlgorithms}`,
+      metadata: {
+        certType: cert.certType,
+        certId: cert.certId,
+        vendor: cert.certVendor,
+        algorithms: cert.pqcAlgorithms,
+        level: cert.certificationLevel,
+      },
+      connectionCount: 0,
+    })
+
+    // software → certification edge
+    const swId = makeNodeId('software', cert.softwareName)
+    addEdge(edges, edgeSet, nodes, 'software-certified', swId, certNodeId, 'certified by')
+  }
+
+  // Leaders
+  for (const leader of leadersData) {
+    addNode(nodes, {
+      id: makeNodeId('leader', leader.id),
+      entityType: 'leader',
+      label: leader.name,
+      description: `${leader.title} — ${leader.organizations.join(', ')}`,
+      metadata: {
+        country: leader.country,
+        type: leader.type,
+        category: leader.category,
+        organizations: leader.organizations,
+      },
+      connectionCount: 0,
+    })
+
+    // leader → country edge
+    const countryId = makeNodeId('country', leader.country)
+    if (nodes.has(countryId)) {
+      addEdge(edges, edgeSet, nodes, 'leader-country', makeNodeId('leader', leader.id), countryId)
+    }
+  }
+
+  // Glossary terms
+  for (const term of glossaryTerms) {
+    addNode(nodes, {
+      id: makeNodeId('glossary', term.term),
+      entityType: 'glossary',
+      label: term.term,
+      description: term.definition,
+      metadata: {
+        category: term.category,
+        complexity: term.complexity,
+        acronym: term.acronym,
+      },
+      connectionCount: 0,
+    })
+  }
+
+  // Learn modules
+  for (const [moduleId, mod] of Object.entries(MODULE_CATALOG)) {
+    addNode(nodes, {
+      id: makeNodeId('module', moduleId),
+      entityType: 'module',
+      label: mod.title,
+      description: mod.description,
+      metadata: {
+        duration: mod.duration,
+        difficulty: mod.difficulty,
+      },
+      connectionCount: 0,
+    })
+  }
+
+  // Quiz questions (group by category rather than individual questions)
+  const quizByCategory = new Map<string, number>()
+  for (const q of quizQuestions) {
+    quizByCategory.set(q.category, (quizByCategory.get(q.category) ?? 0) + 1)
+  }
+  for (const [category, count] of quizByCategory) {
+    addNode(nodes, {
+      id: makeNodeId('quiz', category),
+      entityType: 'quiz',
+      label: `Quiz: ${category}`,
+      description: `${count} questions in ${category}`,
+      metadata: { questionCount: count },
+      connectionCount: 0,
+    })
+  }
+
+  // Authoritative sources
+  for (const source of authoritativeSources) {
+    addNode(nodes, {
+      id: makeNodeId('source', source.sourceName),
+      entityType: 'source',
+      label: source.sourceName,
+      description: source.description,
+      metadata: {
+        type: source.sourceType,
+        region: source.region,
+        url: source.primaryUrl,
+      },
+      connectionCount: 0,
+    })
+  }
+
+  // ── 2. Create edges from relationship fields ──
+
+  // library → library (dependencies)
+  for (const item of libraryData) {
+    if (!item.dependencies) continue
+    const deps = item.dependencies
+      .split(';')
+      .map((d) => d.trim())
+      .filter(Boolean)
+    for (const dep of deps) {
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'library-depends-on',
+        makeNodeId('library', item.referenceId),
+        makeNodeId('library', dep),
+        'depends on'
+      )
+    }
+  }
+
+  // library → module (moduleIds)
+  for (const item of libraryData) {
+    if (!item.moduleIds?.length) continue
+    for (const modId of item.moduleIds) {
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'library-teaches',
+        makeNodeId('library', item.referenceId),
+        makeNodeId('module', modId),
+        'teaches'
+      )
+    }
+  }
+
+  // library → algorithm (algorithmFamily field)
+  for (const item of libraryData) {
+    for (const family of extractAlgorithmFamilies(item.algorithmFamily)) {
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'library-covers-algorithm',
+        makeNodeId('library', item.referenceId),
+        makeNodeId('algorithm', slugify(family)),
+        'covers'
+      )
+    }
+  }
+
+  // compliance → library (libraryRefs)
+  for (const fw of complianceFrameworks) {
+    for (const ref of fw.libraryRefs) {
+      if (!ref) continue
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'compliance-references',
+        makeNodeId('compliance', fw.id),
+        makeNodeId('library', ref),
+        'references'
+      )
+    }
+  }
+
+  // compliance → timeline (timelineRefs — fuzzy match on title)
+  for (const fw of complianceFrameworks) {
+    for (const ref of fw.timelineRefs) {
+      if (!ref) continue
+      const matchedId = timelineEventIds.get(ref.toLowerCase())
+      if (matchedId) {
+        addEdge(
+          edges,
+          edgeSet,
+          nodes,
+          'compliance-timeline',
+          makeNodeId('compliance', fw.id),
+          matchedId,
+          'cites'
+        )
+      }
+    }
+  }
+
+  // threat → module (relatedModules)
+  for (const threat of threatsData) {
+    if (!threat.relatedModules?.length) continue
+    for (const modId of threat.relatedModules) {
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'threat-teaches',
+        makeNodeId('threat', threat.threatId),
+        makeNodeId('module', modId),
+        'informs'
+      )
+    }
+  }
+
+  // glossary → module (relatedModule)
+  for (const term of glossaryTerms) {
+    if (!term.relatedModule) continue
+    const modId = term.relatedModule.replace('/learn/', '')
+    addEdge(
+      edges,
+      edgeSet,
+      nodes,
+      'glossary-teaches',
+      makeNodeId('glossary', term.term),
+      makeNodeId('module', modId)
+    )
+  }
+
+  // quiz (by category) → module
+  for (const category of quizByCategory.keys()) {
+    const moduleId = QUIZ_CATEGORY_TO_MODULE[category] ?? category
+    addEdge(
+      edges,
+      edgeSet,
+      nodes,
+      'quiz-teaches',
+      makeNodeId('quiz', category),
+      makeNodeId('module', moduleId)
+    )
+  }
+
+  // software → module (learningModules)
+  for (const sw of softwareData) {
+    if (!sw.learningModules) continue
+    const mods = sw.learningModules
+      .split(';')
+      .map((m) => m.trim())
+      .filter(Boolean)
+    for (const modId of mods) {
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'software-teaches',
+        makeNodeId('software', sw.softwareName),
+        makeNodeId('module', modId)
+      )
+    }
+  }
+
+  // authoritative sources → entity types (via boolean flags)
+  // Pre-compute first node per entity type to avoid O(n²) scan inside the loop
+  const sourceFieldMap: {
+    field: keyof (typeof authoritativeSources)[0]
+    targetType: EntityType
+  }[] = [
+    { field: 'libraryCsv', targetType: 'library' },
+    { field: 'complianceCsv', targetType: 'compliance' },
+    { field: 'timelineCsv', targetType: 'timeline' },
+    { field: 'threatsCsv', targetType: 'threat' },
+    { field: 'migrateCsv', targetType: 'software' },
+    { field: 'leadersCsv', targetType: 'leader' },
+  ]
+
+  const firstByType = new Map<EntityType, string>()
+  for (const node of nodes.values()) {
+    if (!firstByType.has(node.entityType)) {
+      firstByType.set(node.entityType, node.id)
+    }
+  }
+
+  for (const source of authoritativeSources) {
+    const sourceId = makeNodeId('source', source.sourceName)
+    for (const { field, targetType } of sourceFieldMap) {
+      const targetId = firstByType.get(targetType)
+      if (source[field] && targetId) {
+        addEdge(edges, edgeSet, nodes, 'source-feeds', sourceId, targetId, `feeds ${targetType}`)
+      }
+    }
+  }
+
+  // ── 3. Build adjacency map and compute connection counts ──
+
+  const adjacency = new Map<string, Set<string>>()
+  for (const node of nodes.values()) {
+    adjacency.set(node.id, new Set())
+  }
+
+  for (const edge of edges) {
+    adjacency.get(edge.source)?.add(edge.target)
+    adjacency.get(edge.target)?.add(edge.source)
+  }
+
+  // Update connection counts on nodes
+  for (const [nodeId, neighbors] of adjacency) {
+    const node = nodes.get(nodeId)
+    if (node) {
+      node.connectionCount = neighbors.size
+    }
+  }
+
+  // ── 4. Build nodesByType map ──
+
+  const nodesByType = new Map<EntityType, GraphNode[]>()
+  for (const node of nodes.values()) {
+    const list = nodesByType.get(node.entityType) ?? []
+    list.push(node)
+    nodesByType.set(node.entityType, list)
+  }
+
+  // ── 5. Compute stats ──
+
+  const nodeCountsByType = {} as Record<EntityType, number>
+  for (const [type, list] of nodesByType) {
+    nodeCountsByType[type] = list.length
+  }
+
+  const edgeCountsByType = {} as Record<RelationshipType, number>
+  for (const edge of edges) {
+    edgeCountsByType[edge.relationshipType] = (edgeCountsByType[edge.relationshipType] ?? 0) + 1
+  }
+
+  const orphanedNodes = Array.from(nodes.values()).filter((n) => n.connectionCount === 0).length
+
+  const sortedByConnections = Array.from(nodes.values())
+    .sort((a, b) => b.connectionCount - a.connectionCount)
+    .slice(0, 10)
+    .map((n) => ({ id: n.id, label: n.label, count: n.connectionCount }))
+
+  const totalNodes = nodes.size
+  const totalEdges = edges.length
+
+  const stats: GraphStats = {
+    totalNodes,
+    totalEdges,
+    nodesByType: nodeCountsByType,
+    edgesByType: edgeCountsByType,
+    orphanedNodes,
+    avgConnectionsPerNode:
+      totalNodes > 0 ? Math.round(((totalEdges * 2) / totalNodes) * 10) / 10 : 0,
+    mostConnectedNodes: sortedByConnections,
+  }
+
+  return { nodes, edges, nodesByType, adjacency, stats }
+}
+
+/** Get neighbors of a node up to a given depth via BFS */
+export function getNeighborhood(
+  graph: KnowledgeGraph,
+  nodeId: string,
+  maxDepth: number = 1,
+  maxNodes: number = 50
+): { nodeIds: Set<string>; edgeIds: Set<string> } {
+  const visited = new Set<string>()
+  const edgeIds = new Set<string>()
+  const queue: { id: string; depth: number }[] = [{ id: nodeId, depth: 0 }]
+
+  while (queue.length > 0 && visited.size < maxNodes) {
+    const current = queue.shift()!
+    if (visited.has(current.id)) continue
+    visited.add(current.id)
+
+    if (current.depth < maxDepth) {
+      const neighbors = graph.adjacency.get(current.id)
+      if (neighbors) {
+        for (const neighborId of neighbors) {
+          if (!visited.has(neighborId) && visited.size < maxNodes) {
+            queue.push({ id: neighborId, depth: current.depth + 1 })
+          }
+        }
+      }
+    }
+  }
+
+  // Collect edges between visited nodes
+  for (const edge of graph.edges) {
+    if (visited.has(edge.source) && visited.has(edge.target)) {
+      edgeIds.add(edge.id)
+    }
+  }
+
+  return { nodeIds: visited, edgeIds }
+}

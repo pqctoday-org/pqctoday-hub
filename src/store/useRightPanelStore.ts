@@ -47,7 +47,11 @@ export const useRightPanelStore = create<RightPanelState>()(
       }),
       migrate: (persistedState: unknown) => {
         const state = (persistedState ?? {}) as Record<string, unknown>
-        if (state.activeTab !== 'chat' && state.activeTab !== 'history') {
+        if (
+          state.activeTab !== 'chat' &&
+          state.activeTab !== 'history' &&
+          state.activeTab !== 'graph'
+        ) {
           state.activeTab = 'chat'
         }
         return state

@@ -503,6 +503,30 @@
   }
 }
 
+/* ── React Flow theme overrides ─────────────────────────────────────────── */
+.react-flow__controls {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  box-shadow: none;
+}
+.react-flow__controls button {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+}
+.react-flow__controls button:hover {
+  background: hsl(var(--accent));
+}
+.react-flow__minimap {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+}
+.react-flow__background {
+  background: hsl(var(--background));
+}
+
 /* Unlayered — highest !important cascade priority, beats any @layer rule.
    Belt-and-suspenders: force all animated elements visible in print. */
 @media print {

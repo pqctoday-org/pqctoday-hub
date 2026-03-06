@@ -9,6 +9,8 @@ const HistoryPanel = React.lazy(() =>
   import('./HistoryPanel').then((m) => ({ default: m.HistoryPanel }))
 )
 
+const GraphPanel = React.lazy(() => import('./GraphPanel').then((m) => ({ default: m.GraphPanel })))
+
 export const RightPanel: React.FC = () => {
   const { isOpen, activeTab, setTab, close } = useRightPanelStore()
 
@@ -42,7 +44,13 @@ export const RightPanel: React.FC = () => {
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="fixed right-0 top-0 bottom-0 z-[60] w-full md:w-[60vw] bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden"
             role="dialog"
-            aria-label={activeTab === 'chat' ? 'PQC Assistant' : 'Journey History'}
+            aria-label={
+              activeTab === 'chat'
+                ? 'PQC Assistant'
+                : activeTab === 'history'
+                  ? 'Journey History'
+                  : 'Knowledge Graph'
+            }
             aria-modal="true"
             onClick={(e) => e.stopPropagation()}
           >
@@ -58,6 +66,17 @@ export const RightPanel: React.FC = () => {
                 }
               >
                 <HistoryPanel />
+              </React.Suspense>
+            )}
+            {activeTab === 'graph' && (
+              <React.Suspense
+                fallback={
+                  <div className="flex-1 flex items-center justify-center">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                  </div>
+                }
+              >
+                <GraphPanel />
               </React.Suspense>
             )}
           </motion.div>
