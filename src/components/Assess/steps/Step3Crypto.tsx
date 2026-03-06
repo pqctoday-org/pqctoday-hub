@@ -125,7 +125,8 @@ const Step3Crypto = () => {
   } = useAssessmentStore()
 
   const persona = usePersonaStore((s) => s.selectedPersona)
-  const stepContent = getPersonaStepContent(persona, 'crypto')
+  const experienceLevel = usePersonaStore((s) => s.experienceLevel)
+  const stepContent = getPersonaStepContent(persona, 'crypto', experienceLevel)
 
   const [algosByCategory, setAlgosByCategory] = useState<Record<string, TransitionChip[]>>({})
 

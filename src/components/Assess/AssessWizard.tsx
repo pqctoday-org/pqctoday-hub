@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react'
+import { ChevronRight, ChevronLeft, RotateCcw, Info } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -11,6 +11,7 @@ import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 import type { AssessmentMode } from '../../store/useAssessmentStore'
 
 import { StepIndicator } from './steps/StepIndicator'
+import { StepPersonaInfoModal } from './steps/StepPersonaInfoModal'
 import { Step1Industry } from './steps/Step1Industry'
 import { Step2Country } from './steps/Step2Country'
 import { Step3Crypto } from './steps/Step3Crypto'
@@ -55,6 +56,25 @@ const STEP_TITLES_QUICK = [
 interface AssessWizardProps {
   onComplete: () => void
   mode?: AssessmentMode
+}
+
+/**
+ * Steps that support "I don't know" auto-suggestion, categorized by technical depth.
+ * - 'technical': auto-suggested for 'new' AND 'basics' proficiency
+ * - 'general': auto-suggested only for 'new' proficiency
+ */
+const PROFICIENCY_SUGGEST_MAP: Record<string, 'technical' | 'general'> = {
+  crypto: 'technical',
+  agility: 'technical',
+  infra: 'technical',
+  sensitivity: 'general',
+  compliance: 'general',
+  migration: 'general',
+  'use-cases': 'general',
+  retention: 'general',
+  'credential-lifetime': 'general',
+  vendors: 'general',
+  timeline: 'general',
 }
 
 const ALL_STEPS = [
@@ -147,6 +167,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
   const { currentStep, setStep, markComplete, reset } = store
 
   const [isGenerating, setIsGenerating] = useState(false)
+  const [infoModalStep, setInfoModalStep] = useState<string | null>(null)
 
   // Deep link: ?step=<n> jumps to a specific wizard step (0-based index)
   useEffect(() => {
@@ -181,25 +202,76 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
   )
   const stepTitles = mode === 'quick' ? STEP_TITLES_QUICK : STEP_TITLES_FULL
 
-  // Auto-suggest "I don't know" for executive persona on technical steps
+  // Auto-suggest "I don't know" based on persona role + proficiency level.
+  // Executive persona always suggests on crypto/agility/infra (backward compat).
+  // Proficiency 'new' suggests on ALL steps with unknown support.
+  // Proficiency 'basics' suggests only on technical steps.
+  const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   useEffect(() => {
-    if (selectedPersona !== 'executive') return
     const s = useAssessmentStore.getState()
     // eslint-disable-next-line security/detect-object-injection
     const stepKey = steps[currentStep]?.key
-    if (
-      stepKey === 'crypto' &&
-      s.currentCryptoCategories.length === 0 &&
-      s.currentCrypto.length === 0 &&
-      !s.cryptoUnknown
-    ) {
-      s.setCryptoUnknown(true)
-    } else if (stepKey === 'agility' && !s.cryptoAgility) {
-      s.setCryptoAgility('unknown')
-    } else if (stepKey === 'infra' && s.infrastructure.length === 0 && !s.infrastructureUnknown) {
-      s.setInfrastructureUnknown(true)
+    if (!stepKey) return
+
+    // Executive persona always suggests on the 3 most technical steps
+    const isExecutiveSuggest =
+      selectedPersona === 'executive' &&
+      (stepKey === 'crypto' || stepKey === 'agility' || stepKey === 'infra')
+
+    // Proficiency-based suggestion: 'technical' steps for basics+new, 'general' for new only
+    // eslint-disable-next-line security/detect-object-injection
+    const stepCategory = PROFICIENCY_SUGGEST_MAP[stepKey]
+    const isProficiencySuggest =
+      stepCategory !== undefined &&
+      (experienceLevel === 'new' || (experienceLevel === 'basics' && stepCategory === 'technical'))
+
+    if (!isExecutiveSuggest && !isProficiencySuggest) return
+
+    // Apply auto-suggestion (only when user hasn't already made a selection)
+    switch (stepKey) {
+      case 'crypto':
+        if (
+          s.currentCryptoCategories.length === 0 &&
+          s.currentCrypto.length === 0 &&
+          !s.cryptoUnknown
+        )
+          s.setCryptoUnknown(true)
+        break
+      case 'sensitivity':
+        if (s.dataSensitivity.length === 0 && !s.sensitivityUnknown) s.setSensitivityUnknown(true)
+        break
+      case 'compliance':
+        if (s.complianceRequirements.length === 0 && !s.complianceUnknown)
+          s.setComplianceUnknown(true)
+        break
+      case 'migration':
+        if (!s.migrationStatus) s.setMigrationStatus('unknown')
+        break
+      case 'use-cases':
+        if (s.cryptoUseCases.length === 0 && !s.useCasesUnknown) s.setUseCasesUnknown(true)
+        break
+      case 'retention':
+        if (s.dataRetention.length === 0 && !s.retentionUnknown) s.setRetentionUnknown(true)
+        break
+      case 'credential-lifetime':
+        if (s.credentialLifetime.length === 0 && !s.credentialLifetimeUnknown)
+          s.setCredentialLifetimeUnknown(true)
+        break
+      case 'agility':
+        if (!s.cryptoAgility) s.setCryptoAgility('unknown')
+        break
+      case 'infra':
+        if (s.infrastructure.length === 0 && !s.infrastructureUnknown)
+          s.setInfrastructureUnknown(true)
+        break
+      case 'vendors':
+        if (!s.vendorDependency && !s.vendorUnknown) s.setVendorUnknown(true)
+        break
+      case 'timeline':
+        if (!s.timelinePressure) s.setTimelinePressure('unknown')
+        break
     }
-  }, [currentStep, selectedPersona, steps])
+  }, [currentStep, selectedPersona, experienceLevel, steps])
 
   const canProceed = () => {
     // eslint-disable-next-line security/detect-object-injection
@@ -229,6 +301,20 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
       />
 
       <div className="glass-panel p-6 md:p-8">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs text-muted-foreground">
+            Step {currentStep + 1} of {steps.length}
+          </span>
+          <Button
+            variant="ghost"
+            onClick={() => setInfoModalStep(steps[currentStep]?.key ?? null)}
+            className="p-1.5 h-auto w-auto rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10"
+            aria-label="How this step is personalized"
+            title="How this step is personalized"
+          >
+            <Info size={14} />
+          </Button>
+        </div>
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
@@ -242,6 +328,12 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
           </motion.div>
         </AnimatePresence>
       </div>
+
+      <StepPersonaInfoModal
+        stepKey={infoModalStep}
+        open={!!infoModalStep}
+        onClose={() => setInfoModalStep(null)}
+      />
 
       {/* Navigation */}
       <div className="flex justify-between items-center mt-6">

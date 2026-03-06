@@ -95,6 +95,66 @@ vi.mock('../../data/timelineData', () => ({
   transformToGanttData: () => [],
 }))
 
+// Mock complianceData — Step5Compliance imports complianceFrameworks directly
+vi.mock('../../data/complianceData', () => ({
+  complianceFrameworks: [
+    {
+      id: 'FIPS-140-3',
+      label: 'FIPS 140-3',
+      description: 'NIST cryptographic module validation',
+      industries: ['Government & Defense', 'Finance & Banking', 'Technology'],
+      countries: ['United States', 'Canada'],
+      requiresPQC: true,
+      deadline: '2030 (NIST IR 8547 deprecation target)',
+      notes: 'PQC algorithms in FIPS scope',
+      enforcementBody: 'NIST',
+      libraryRefs: [],
+      timelineRefs: [],
+      bodyType: 'certification_body',
+      website: 'https://csrc.nist.gov',
+    },
+    {
+      id: 'SOC-2',
+      label: 'SOC 2',
+      description: 'Service Organization Control audit framework',
+      industries: ['Technology', 'Finance & Banking', 'Healthcare'],
+      countries: [],
+      requiresPQC: false,
+      deadline: 'Ongoing',
+      notes: 'No explicit PQC timeline',
+      enforcementBody: 'AICPA',
+      libraryRefs: [],
+      timelineRefs: [],
+      bodyType: 'compliance_framework',
+    },
+    {
+      id: 'NIST',
+      label: 'NIST',
+      description: 'National Institute of Standards and Technology',
+      industries: ['Government & Defense', 'Finance & Banking', 'Technology'],
+      countries: ['United States'],
+      requiresPQC: true,
+      deadline: 'Ongoing',
+      notes: 'Primary PQC standardization body',
+      enforcementBody: 'NIST',
+      libraryRefs: [],
+      timelineRefs: [],
+      bodyType: 'standardization_body',
+    },
+  ],
+  complianceAsIndustryConfigs: [],
+  complianceDB: {
+    'FIPS 140-3': {
+      requiresPQC: true,
+      deadline: '2030 (NIST IR 8547 deprecation target)',
+      notes: 'PQC algorithms in FIPS scope',
+    },
+    'SOC 2': { requiresPQC: false, deadline: 'Ongoing', notes: 'No explicit PQC timeline' },
+    NIST: { requiresPQC: true, deadline: 'Ongoing', notes: 'Primary PQC standardization body' },
+  },
+  complianceMetadata: null,
+}))
+
 // Mock industryAssessConfig — default empty (backward-compat); overridden per describe block
 vi.mock('../../data/industryAssessConfig', () => ({
   industryComplianceConfigs: [],
@@ -224,11 +284,16 @@ vi.mock('../../store/useAssessmentStore', () => {
   return { useAssessmentStore: hook }
 })
 
+const personaStoreState: Record<string, unknown> = {
+  selectedIndustry: null,
+  selectedRegion: null,
+  selectedPersona: null,
+  experienceLevel: null,
+}
+
 vi.mock('../../store/usePersonaStore', () => ({
   usePersonaStore: (selector?: (s: Record<string, unknown>) => unknown) =>
-    selector
-      ? selector({ selectedIndustry: null, selectedRegion: null, selectedPersona: null })
-      : { selectedIndustry: null, selectedRegion: null, selectedPersona: null },
+    selector ? selector(personaStoreState) : personaStoreState,
 }))
 
 // jsdom does not implement scrollIntoView
@@ -243,6 +308,7 @@ describe('AssessWizard', () => {
     mockStore.industry = ''
     mockStore.country = ''
     mockStore.currentCrypto = []
+    mockStore.currentCryptoCategories = []
     mockStore.cryptoUnknown = false
     mockStore.dataSensitivity = []
     mockStore.sensitivityUnknown = false
@@ -264,6 +330,11 @@ describe('AssessWizard', () => {
     mockStore.vendorDependency = ''
     mockStore.vendorUnknown = false
     mockStore.timelinePressure = ''
+    // Reset persona store state
+    personaStoreState.selectedPersona = null
+    personaStoreState.selectedIndustry = null
+    personaStoreState.selectedRegion = null
+    personaStoreState.experienceLevel = null
   })
 
   afterEach(() => {
@@ -456,13 +527,12 @@ describe('AssessWizard', () => {
       mockStore.currentStep = 4
     })
 
-    it('renders compliance framework options', () => {
+    it('renders compliance framework options grouped by bodyType', () => {
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByText(/Which compliance frameworks/)).toBeInTheDocument()
-      // With no industry selected the universal group renders
-      expect(
-        screen.getByRole('group', { name: 'Universal compliance frameworks' })
-      ).toBeInTheDocument()
+      // Frameworks grouped by bodyType — certification schemes and compliance frameworks visible
+      expect(screen.getByRole('group', { name: 'Certification Schemes' })).toBeInTheDocument()
+      expect(screen.getByRole('group', { name: 'Compliance Frameworks' })).toBeInTheDocument()
     })
 
     it('calls toggleCompliance when a framework is clicked', () => {
@@ -579,22 +649,29 @@ describe('AssessWizard', () => {
   })
 
   describe('step 5: compliance — industry-aware', () => {
-    it('renders universal frameworks only when no industry config matches', () => {
+    it('renders frameworks grouped by bodyType when industry is Other', () => {
       mockStore.currentStep = 4
       mockStore.industry = 'Other'
       render(<AssessWizard onComplete={onComplete} />)
-      // Universal frameworks should be visible
+      // All frameworks visible (universal) grouped by bodyType
       expect(screen.getByText('FIPS 140-3')).toBeInTheDocument()
-      // No industry banner since no industry-specific frameworks
-      expect(screen.queryByText(/Showing frameworks commonly required/)).not.toBeInTheDocument()
+      expect(screen.getByText('SOC 2')).toBeInTheDocument()
     })
 
-    it('shows only universal section with no industry divider for empty industry', () => {
+    it('shows frameworks for empty industry (all shown)', () => {
       mockStore.currentStep = 4
       mockStore.industry = ''
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByText('FIPS 140-3')).toBeInTheDocument()
-      expect(screen.queryByText('Universal frameworks')).not.toBeInTheDocument()
+      expect(screen.getByText('SOC 2')).toBeInTheDocument()
+    })
+
+    it('filters frameworks by industry', () => {
+      mockStore.currentStep = 4
+      mockStore.industry = 'Healthcare'
+      render(<AssessWizard onComplete={onComplete} />)
+      // SOC 2 includes Healthcare in its 3-industry list → shown as universal
+      expect(screen.getByText('SOC 2')).toBeInTheDocument()
     })
   })
 
@@ -741,6 +818,57 @@ describe('AssessWizard', () => {
       render(<AssessWizard onComplete={onComplete} />)
       fireEvent.click(screen.getByRole('radio', { name: /^Mixed/ }))
       expect(mockStore.setVendorDependency).toHaveBeenCalledWith('mixed')
+    })
+  })
+
+  describe('proficiency-based auto-suggest', () => {
+    it('proficiency "new" auto-suggests unknown on sensitivity step (general)', () => {
+      personaStoreState.experienceLevel = 'new'
+      personaStoreState.selectedPersona = 'developer'
+      mockStore.currentStep = 3 // sensitivity
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(mockStore.setSensitivityUnknown).toHaveBeenCalledWith(true)
+    })
+
+    it('proficiency "basics" auto-suggests unknown on crypto step (technical)', () => {
+      personaStoreState.experienceLevel = 'basics'
+      personaStoreState.selectedPersona = 'developer'
+      mockStore.currentStep = 2 // crypto
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(mockStore.setCryptoUnknown).toHaveBeenCalledWith(true)
+    })
+
+    it('proficiency "basics" does NOT auto-suggest on sensitivity step (general)', () => {
+      personaStoreState.experienceLevel = 'basics'
+      personaStoreState.selectedPersona = 'developer'
+      mockStore.currentStep = 3 // sensitivity
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(mockStore.setSensitivityUnknown).not.toHaveBeenCalled()
+    })
+
+    it('proficiency "expert" does NOT auto-suggest on any step', () => {
+      personaStoreState.experienceLevel = 'expert'
+      personaStoreState.selectedPersona = 'developer'
+      mockStore.currentStep = 2 // crypto
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(mockStore.setCryptoUnknown).not.toHaveBeenCalled()
+    })
+
+    it('executive persona auto-suggests on crypto regardless of proficiency', () => {
+      personaStoreState.selectedPersona = 'executive'
+      personaStoreState.experienceLevel = null
+      mockStore.currentStep = 2 // crypto
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(mockStore.setCryptoUnknown).toHaveBeenCalledWith(true)
+    })
+
+    it('does not auto-suggest when user already selected a value', () => {
+      personaStoreState.experienceLevel = 'new'
+      personaStoreState.selectedPersona = 'developer'
+      mockStore.currentStep = 3 // sensitivity
+      mockStore.dataSensitivity = ['high'] // already selected
+      render(<AssessWizard onComplete={onComplete} />)
+      expect(mockStore.setSensitivityUnknown).not.toHaveBeenCalled()
     })
   })
 

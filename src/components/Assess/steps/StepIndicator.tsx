@@ -14,7 +14,7 @@ function StepIndicator({
   current: number
   total: number
   titles: string[]
-  /** Called when user clicks a completed step to jump back to it. */
+  /** Called when user clicks any step to jump to it. */
   onStepClick?: (step: number) => void
 }) {
   const activeRef = useRef<HTMLDivElement>(null)
@@ -47,7 +47,7 @@ function StepIndicator({
         {Array.from({ length: total }, (_, i) => {
           const isCompleted = i < current
           const isCurrent = i === current
-          const isClickable = isCompleted && onStepClick
+          const isClickable = !!onStepClick && !isCurrent
 
           return (
             <div
@@ -59,20 +59,23 @@ function StepIndicator({
                 <Button
                   variant="ghost"
                   type="button"
-                  disabled={!isClickable}
+                  disabled={isCurrent}
                   onClick={() => isClickable && onStepClick(i)}
                   aria-current={isCurrent ? 'step' : undefined}
                   // eslint-disable-next-line security/detect-object-injection
-                  aria-label={`Step ${i + 1}: ${titles[i] ?? ''}${isCompleted ? ' (completed — click to edit)' : isCurrent ? ' (current)' : ''}`}
+                  aria-label={`Step ${i + 1}: ${titles[i] ?? ''}${isCompleted ? ' (completed)' : isCurrent ? ' (current)' : ''}`}
                   className={clsx(
-                    'w-7 h-7 md:w-8 md:h-8 rounded-full p-0 border-2',
+                    'w-7 h-7 md:w-8 md:h-8 rounded-full p-0 border-2 transition-transform',
                     isCurrent
                       ? 'border-primary text-primary bg-primary/10 hover:bg-primary/10'
                       : isCompleted
                         ? 'border-success text-success bg-success/10 hover:bg-success/10'
                         : 'border-border text-muted-foreground hover:bg-transparent',
+                    isClickable && 'cursor-pointer hover:scale-110',
+                    isClickable && isCompleted && 'hover:bg-success/20 hover:border-success/80',
                     isClickable &&
-                      'cursor-pointer hover:bg-success/20 hover:border-success/80 hover:scale-110 transition-transform'
+                      !isCompleted &&
+                      'hover:border-primary/50 hover:text-primary hover:bg-primary/5'
                   )}
                 >
                   {isCompleted ? '✓' : i + 1}

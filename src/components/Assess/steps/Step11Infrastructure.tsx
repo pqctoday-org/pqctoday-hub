@@ -22,7 +22,8 @@ const Step11Infrastructure = () => {
   } = useAssessmentStore()
 
   const persona = usePersonaStore((s) => s.selectedPersona)
-  const stepContent = getPersonaStepContent(persona, 'infra')
+  const experienceLevel = usePersonaStore((s) => s.experienceLevel)
+  const stepContent = getPersonaStepContent(persona, 'infra', experienceLevel)
 
   // Compute sub-categories per layer from the live catalog
   const subCatsByLayer = useMemo(() => {

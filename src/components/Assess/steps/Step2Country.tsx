@@ -13,6 +13,9 @@ import { usePersonaStore } from '../../../store/usePersonaStore'
 
 import { REGION_COUNTRIES_MAP } from '../../../data/personaConfig'
 
+/** Non-sovereign groupings used in the timeline Gantt but not valid jurisdictions */
+const EXCLUDED_FROM_ASSESS = new Set(['Global', 'G7', 'NATO', 'International'])
+
 const Step2Country = () => {
   const { country, setCountry } = useAssessmentStore()
   const { selectedRegion } = usePersonaStore()
@@ -21,6 +24,7 @@ const Step2Country = () => {
     const seen = new Set<string>()
     const list: Array<{ name: string; flagCode: string }> = []
     timelineData.forEach((c) => {
+      if (EXCLUDED_FROM_ASSESS.has(c.countryName)) return
       if (!seen.has(c.countryName)) {
         seen.add(c.countryName)
         list.push({ name: c.countryName, flagCode: c.flagCode })

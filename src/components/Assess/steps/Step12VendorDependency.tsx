@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Info } from 'lucide-react'
+import { useMemo, useCallback } from 'react'
+import { Info, Import, Package, X } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import clsx from 'clsx'
 
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { usePersonaStore } from '../../../store/usePersonaStore'
+import { useMigrateSelectionStore } from '../../../store/useMigrateSelectionStore'
+import { softwareData } from '../../../data/migrateData'
 
 import { InlineTooltip } from '../../ui/InlineTooltip'
 
 import { Button } from '../../ui/button'
-import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
 import {
@@ -18,9 +22,46 @@ import {
 const Step12VendorDependency = () => {
   const { vendorDependency, setVendorDependency, vendorUnknown, setVendorUnknown } =
     useAssessmentStore()
+  const importProductSelection = useAssessmentStore((s) => s.importProductSelection)
+  const setImportProductSelection = useAssessmentStore((s) => s.setImportProductSelection)
+
   const persona = usePersonaStore((s) => s.selectedPersona)
-  const stepContent = getPersonaStepContent(persona, 'vendors')
+  const experienceLevel = usePersonaStore((s) => s.experienceLevel)
+  const stepContent = getPersonaStepContent(persona, 'vendors', experienceLevel)
   const optionDescs = getPersonaOptionDescriptions(persona, 'vendors')
+
+  const myProducts = useMigrateSelectionStore((s) => s.myProducts)
+  const toggleMyProduct = useMigrateSelectionStore((s) => s.toggleMyProduct)
+
+  // Resolve product keys to display info
+  const productItems = useMemo(() => {
+    if (!importProductSelection || myProducts.length === 0) return []
+    const itemMap = new Map(
+      softwareData.map((item) => [`${item.softwareName}::${item.categoryId}`, item])
+    )
+    return myProducts
+      .map((key) => {
+        const item = itemMap.get(key)
+        if (item)
+          return {
+            key,
+            name: item.softwareName,
+            category: item.categoryName,
+            layer: item.infrastructureLayer,
+          }
+        // Fallback: parse the key directly
+        const [name, category] = key.split('::')
+        return { key, name: name ?? key, category: category ?? '', layer: '' }
+      })
+      .sort((a, b) => a.layer.localeCompare(b.layer) || a.name.localeCompare(b.name))
+  }, [importProductSelection, myProducts])
+
+  const handleRemoveProduct = useCallback(
+    (key: string) => {
+      toggleMyProduct(key)
+    },
+    [toggleMyProduct]
+  )
 
   const options = [
     {
@@ -53,9 +94,30 @@ const Step12VendorDependency = () => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-foreground">
-        {stepContent.title ?? 'How do you manage cryptographic dependencies?'}
-      </h3>
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-xl font-bold text-foreground">
+          {stepContent.title ?? 'How do you manage cryptographic dependencies?'}
+        </h3>
+        <button
+          type="button"
+          onClick={() => setImportProductSelection(!importProductSelection)}
+          className={clsx(
+            'inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap shrink-0',
+            importProductSelection
+              ? 'border-primary bg-primary/10 text-primary'
+              : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+          )}
+          aria-pressed={importProductSelection}
+          title={
+            importProductSelection
+              ? 'Syncing with your migrate page product selections'
+              : 'Product import from migrate page is off'
+          }
+        >
+          <Import size={12} />
+          {importProductSelection ? 'Synced' : 'Import off'}
+        </button>
+      </div>
       <p className="text-sm text-muted-foreground">
         {stepContent.description ?? (
           <>
@@ -66,6 +128,61 @@ const Step12VendorDependency = () => {
       </p>
 
       <PersonaHint stepKey="vendors" />
+
+      {/* Imported products from migrate page */}
+      {importProductSelection && (
+        <div className="space-y-2">
+          {productItems.length > 0 ? (
+            <div className="glass-panel p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Package size={14} className="text-secondary shrink-0" />
+                  <span className="text-xs font-semibold text-foreground">
+                    My Products ({productItems.length})
+                  </span>
+                </div>
+                <Link to="/migrate" className="text-xs text-primary hover:underline">
+                  Manage in Migrate
+                </Link>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {productItems.map((item) => (
+                  <span
+                    key={item.key}
+                    className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg bg-primary/10 text-primary border border-primary/20 font-medium"
+                  >
+                    {item.name}
+                    {item.category && (
+                      <span className="text-primary/60 font-normal">· {item.category}</span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveProduct(item.key)}
+                      className="ml-0.5 hover:text-status-error transition-colors"
+                      aria-label={`Remove ${item.name}`}
+                    >
+                      <X size={10} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="glass-panel p-3 border-l-4 border-l-muted-foreground/30">
+              <div className="flex items-center gap-2">
+                <Import size={14} className="text-muted-foreground shrink-0" />
+                <p className="text-xs text-muted-foreground">
+                  No products selected yet.{' '}
+                  <Link to="/migrate" className="text-primary hover:underline">
+                    Select products on the Migrate page
+                  </Link>{' '}
+                  and they&apos;ll appear here.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* I don't know escape hatch */}
       <Button
