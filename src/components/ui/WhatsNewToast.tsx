@@ -102,9 +102,9 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Data Asset &amp; Compliance updates</strong>{' '}
-                    &mdash; ClassificationChallenge &amp; SensitivityConflictResolver workshops;
-                    Compliance body-type grouping, sort &amp; view-toggle
+                    <strong className="text-foreground">Stability &amp; performance</strong> &mdash;
+                    resolved Library page freeze; archived stale CSV data reducing JS bundle by 3.3
+                    MB (quiz loader &minus;77%, library loader &minus;73%)
                   </span>
                 </li>
               </ul>
