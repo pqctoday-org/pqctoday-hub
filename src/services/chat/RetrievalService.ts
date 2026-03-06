@@ -516,6 +516,14 @@ class RetrievalService {
         this.entityIndex.set(catLower, catExisting)
       }
 
+      // Index metadata referenceId for library chunks (e.g., "NIST IR 8547")
+      if (chunk.metadata?.referenceId) {
+        const refLower = chunk.metadata.referenceId.toLowerCase()
+        const refExisting = this.entityIndex.get(refLower) ?? []
+        refExisting.push(chunk.id)
+        this.entityIndex.set(refLower, refExisting)
+      }
+
       // Index metadata country and org for timeline/threats chunks
       if (chunk.metadata?.country) {
         const countryLower = chunk.metadata.country.toLowerCase()

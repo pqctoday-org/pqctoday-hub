@@ -20,7 +20,7 @@ All notable changes to this project will be documented in this file.
 
 - **Quiz deep links suppressed for non-quiz queries** (`src/services/chat/RetrievalService.ts`): Quiz chunks are now blocked from RAG results unless the user explicitly mentions quiz, test, practice questions, or flashcards. Previously, quiz chunks could appear as source references for general topic queries, linking users to quizzes when they wanted explanations. [view:/about]
 
-- **Library deep link guarantee** (`src/services/chat/RetrievalService.ts`): When a query matches library documents but library chunks are crowded out by source diversity caps, the system now injects the highest-scoring library chunk by replacing the lowest-priority result. Ensures `/library?ref=` deep links always appear when a library document is relevant. [view:/library]
+- **Library deep link guarantee** (`src/services/chat/RetrievalService.ts`): When a query matches library documents but library chunks are crowded out by source diversity caps, the system now injects the highest-scoring library chunk by replacing the lowest-priority result. Library `referenceId` metadata is now indexed for entity matching, so searching "NIST IR 8547" finds the library chunk even when its title differs ("Transition to Post-Quantum Cryptography Standards"). Ensures `/library?ref=` deep links always appear when a library document is relevant. [view:/library]
 
 - **Source ref deduplication prefers step-level links** (`src/hooks/useChatSend.ts`): When multiple chunks share a title, the source reference now keeps the deep link from the highest-priority chunk. Step-level links (`?step=N`) are preferred over page-level links. [view:/about]
 
