@@ -86,25 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Standards Bodies module</strong> &mdash; new
-                    5-step learn module covering NIST, ISO/IEC, ETSI, IETF, BSI, ANSSI &amp; more;
-                    who creates standards, who certifies, who mandates
+                    <strong className="text-foreground">Migrate catalog +28 products</strong>{' '}
+                    &mdash; blockchain/DLT protocols (Bitcoin, Ethereum, Solana, Cardano&hellip;)
+                    and digital asset custody platforms (Fireblocks, Anchorage, BitGo&hellip;); 354
+                    total
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Mechanism Discovery</strong> &mdash; live
-                    PKCS#11 mechanism browser in the SoftHSM Playground; 100+ mechanisms with flag
-                    decoding (PQC, asymmetric, symmetric, hash, KDF)
+                    <strong className="text-foreground">Priority matrix refactor</strong> &mdash;
+                    Blockchain category split into Digital Asset Custody (High) and Blockchain &amp;
+                    DLT Protocols (Critical) for finer migration planning
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Stability &amp; performance</strong> &mdash;
-                    resolved Library page freeze; archived stale CSV data reducing JS bundle by 3.3
-                    MB (quiz loader &minus;77%, library loader &minus;73%)
+                    <strong className="text-foreground">RAG corpus rebuilt</strong> &mdash; 2,869
+                    chunks (+29) indexing all new migrate products and priority categories
                   </span>
                 </li>
               </ul>

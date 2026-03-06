@@ -4,6 +4,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.26.1] - 2026-03-06
+
+### Data
+
+- **Migrate catalog expansion** (`quantum_safe_cryptographic_software_reference_03062026.csv`): Added 28 new products — 15 blockchain/DLT protocols (Bitcoin Core, Ethereum/Geth, Solana, Cardano, Polkadot/Substrate, Cosmos/Tendermint, IOTA, Hyperledger Fabric, Hyperledger Besu, R3 Corda, Aptos, Avalanche, QRL, Sui, BTQ Bitcoin Quantum) and 13 digital asset custody platforms (Anchorage Digital, BitGo, Coinbase Custody, Copper.co, DFNS, Fireblocks, Galileo FT, Hex Trust, Komainu, Ledger Enterprise, Metaco/Ripple, Taurus SA, Zodia Custody). Total catalog now 354 products. [view:/migrate] [persona:architect,executive]
+
+- **Priority matrix refactor** (`pqc_software_category_priority_matrix.csv`): Split CSC-035 (Blockchain and Cryptocurrency Software, Medium priority) into two specialized categories — CSC-057 (Digital Asset Custody, High, 13 products) and CSC-058 (Blockchain & DLT Protocols, Critical, 17 products) — reflecting distinct infrastructure layers with different PQC migration pressures. [view:/migrate]
+
+- **RAG corpus** (`public/data/rag-corpus.json`): Rebuilt — 2,869 chunks (+29 from new migrate products and priority matrix split). [view:/about]
+
+- **SoftHSMv3 WASM** (`public/wasm/softhsm.js`): Minified build artifact (no functional changes; -50% file size).
+
 ## [2.26.0] - 2026-03-06
 
 ### Added
