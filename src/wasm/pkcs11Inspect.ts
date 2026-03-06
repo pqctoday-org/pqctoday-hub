@@ -73,10 +73,19 @@ const CKA_TABLE: Record<number, ConstEntry> = {
   0x00000011: { name: 'CKA_VALUE', description: 'Raw key bytes' },
   0x00000100: { name: 'CKA_KEY_TYPE', description: 'Key type (CKK_*)' },
   0x00000103: { name: 'CKA_SENSITIVE', description: 'Key cannot be extracted in plaintext' },
+  0x00000104: { name: 'CKA_ENCRYPT', description: 'Key can be used for encryption' },
+  0x00000105: { name: 'CKA_DECRYPT', description: 'Key can be used for decryption' },
+  0x00000106: { name: 'CKA_WRAP', description: 'Key can be used to wrap other keys' },
+  0x00000107: { name: 'CKA_UNWRAP', description: 'Key can be used to unwrap other keys' },
   0x00000108: { name: 'CKA_SIGN', description: 'Key can be used to create signatures' },
   0x0000010a: { name: 'CKA_VERIFY', description: 'Key can be used to verify signatures' },
+  0x0000010c: { name: 'CKA_DERIVE', description: 'Key can be used for key derivation' },
+  0x00000121: { name: 'CKA_MODULUS_BITS', description: 'RSA modulus length in bits' },
+  0x00000122: { name: 'CKA_PUBLIC_EXPONENT', description: 'RSA public exponent (usually 65537)' },
   0x00000161: { name: 'CKA_VALUE_LEN', description: 'Key length in bytes' },
   0x00000162: { name: 'CKA_EXTRACTABLE', description: 'Key can be wrapped and extracted' },
+  0x00000180: { name: 'CKA_EC_PARAMS', description: 'DER-encoded EC domain parameters (OID)' },
+  0x00000181: { name: 'CKA_EC_POINT', description: 'DER-encoded EC public key point' },
   0x0000061d: { name: 'CKA_PARAMETER_SET', description: 'PQC parameter set (CKP_*)' },
   0x00000633: {
     name: 'CKA_ENCAPSULATE',
@@ -98,6 +107,22 @@ const CKA_TABLE: Record<number, ConstEntry> = {
 
 // CKM_ mechanism types
 const CKM_TABLE: Record<number, ConstEntry> = {
+  // RSA (§2.1)
+  0x00000000: { name: 'CKM_RSA_PKCS_KEY_PAIR_GEN', description: 'RSA key pair generation' },
+  0x00000009: {
+    name: 'CKM_RSA_PKCS_OAEP',
+    description: 'RSA-OAEP encryption/decryption (PKCS#1 v2.x)',
+  },
+  0x00000040: {
+    name: 'CKM_SHA256_RSA_PKCS',
+    description: 'SHA-256 with RSA PKCS#1 v1.5 signature',
+  },
+  0x00000041: { name: 'CKM_SHA384_RSA_PKCS', description: 'SHA-384 with RSA PKCS#1 v1.5' },
+  0x00000042: { name: 'CKM_SHA512_RSA_PKCS', description: 'SHA-512 with RSA PKCS#1 v1.5' },
+  0x00000043: { name: 'CKM_SHA256_RSA_PKCS_PSS', description: 'SHA-256 with RSA-PSS signature' },
+  0x00000044: { name: 'CKM_SHA384_RSA_PKCS_PSS', description: 'SHA-384 with RSA-PSS' },
+  0x00000045: { name: 'CKM_SHA512_RSA_PKCS_PSS', description: 'SHA-512 with RSA-PSS' },
+  // ML-KEM — FIPS 203
   0x0000000f: {
     name: 'CKM_ML_KEM_KEY_PAIR_GEN',
     description: 'ML-KEM key pair generation (FIPS 203 Algorithm 15/16)',
@@ -106,6 +131,7 @@ const CKM_TABLE: Record<number, ConstEntry> = {
     name: 'CKM_ML_KEM',
     description: 'ML-KEM encapsulation / decapsulation (FIPS 203 Algorithm 17/18)',
   },
+  // ML-DSA — FIPS 204
   0x0000001c: {
     name: 'CKM_ML_DSA_KEY_PAIR_GEN',
     description: 'ML-DSA key pair generation (FIPS 204 Algorithm 6/7)',
@@ -114,19 +140,6 @@ const CKM_TABLE: Record<number, ConstEntry> = {
     name: 'CKM_ML_DSA',
     description: 'ML-DSA pure signing / verification (FIPS 204 Algorithm 2/3)',
   },
-  0x00000024: {
-    name: 'CKM_HASH_ML_DSA_SHA256',
-    description: 'HashML-DSA with SHA-256 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000026: {
-    name: 'CKM_HASH_ML_DSA_SHA512',
-    description: 'HashML-DSA with SHA-512 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000028: {
-    name: 'CKM_HASH_ML_DSA_SHA3_256',
-    description: 'HashML-DSA with SHA3-256 (FIPS 204 Algorithm 4/5)',
-  },
-  // ML-DSA hash variants — FIPS 204 Algorithm 4/5 (missing from initial table)
   0x0000001f: {
     name: 'CKM_HASH_ML_DSA',
     description: 'HashML-DSA generic pre-hash (FIPS 204 Algorithm 4/5)',
@@ -135,13 +148,25 @@ const CKM_TABLE: Record<number, ConstEntry> = {
     name: 'CKM_HASH_ML_DSA_SHA224',
     description: 'HashML-DSA with SHA-224 (FIPS 204 Algorithm 4/5)',
   },
+  0x00000024: {
+    name: 'CKM_HASH_ML_DSA_SHA256',
+    description: 'HashML-DSA with SHA-256 (FIPS 204 Algorithm 4/5)',
+  },
   0x00000025: {
     name: 'CKM_HASH_ML_DSA_SHA384',
     description: 'HashML-DSA with SHA-384 (FIPS 204 Algorithm 4/5)',
   },
+  0x00000026: {
+    name: 'CKM_HASH_ML_DSA_SHA512',
+    description: 'HashML-DSA with SHA-512 (FIPS 204 Algorithm 4/5)',
+  },
   0x00000027: {
     name: 'CKM_HASH_ML_DSA_SHA3_224',
     description: 'HashML-DSA with SHA3-224 (FIPS 204 Algorithm 4/5)',
+  },
+  0x00000028: {
+    name: 'CKM_HASH_ML_DSA_SHA3_256',
+    description: 'HashML-DSA with SHA3-256 (FIPS 204 Algorithm 4/5)',
   },
   0x00000029: {
     name: 'CKM_HASH_ML_DSA_SHA3_384',
@@ -159,7 +184,7 @@ const CKM_TABLE: Record<number, ConstEntry> = {
     name: 'CKM_HASH_ML_DSA_SHAKE256',
     description: 'HashML-DSA with SHAKE256 (FIPS 204 Algorithm 4/5)',
   },
-  // SLH-DSA — FIPS 205 (Stateless Hash-Based Digital Signature Standard)
+  // SLH-DSA — FIPS 205
   0x0000002d: {
     name: 'CKM_SLH_DSA_KEY_PAIR_GEN',
     description: 'SLH-DSA key pair generation (FIPS 205)',
@@ -172,46 +197,74 @@ const CKM_TABLE: Record<number, ConstEntry> = {
     name: 'CKM_HASH_SLH_DSA',
     description: 'HashSLH-DSA generic pre-hash (FIPS 205)',
   },
-  0x00000036: {
-    name: 'CKM_HASH_SLH_DSA_SHA224',
-    description: 'HashSLH-DSA with SHA-224 (FIPS 205)',
+  0x00000036: { name: 'CKM_HASH_SLH_DSA_SHA224', description: 'HashSLH-DSA with SHA-224' },
+  0x00000037: { name: 'CKM_HASH_SLH_DSA_SHA256', description: 'HashSLH-DSA with SHA-256' },
+  0x00000038: { name: 'CKM_HASH_SLH_DSA_SHA384', description: 'HashSLH-DSA with SHA-384' },
+  0x00000039: { name: 'CKM_HASH_SLH_DSA_SHA512', description: 'HashSLH-DSA with SHA-512' },
+  0x0000003a: { name: 'CKM_HASH_SLH_DSA_SHA3_224', description: 'HashSLH-DSA with SHA3-224' },
+  0x0000003b: { name: 'CKM_HASH_SLH_DSA_SHA3_256', description: 'HashSLH-DSA with SHA3-256' },
+  0x0000003c: { name: 'CKM_HASH_SLH_DSA_SHA3_384', description: 'HashSLH-DSA with SHA3-384' },
+  0x0000003d: { name: 'CKM_HASH_SLH_DSA_SHA3_512', description: 'HashSLH-DSA with SHA3-512' },
+  0x0000003e: { name: 'CKM_HASH_SLH_DSA_SHAKE128', description: 'HashSLH-DSA with SHAKE128' },
+  0x0000003f: { name: 'CKM_HASH_SLH_DSA_SHAKE256', description: 'HashSLH-DSA with SHAKE256' },
+  // Hash / Digest (§2.17)
+  0x00000250: { name: 'CKM_SHA256', description: 'SHA-256 digest' },
+  0x00000251: { name: 'CKM_SHA256_HMAC', description: 'HMAC-SHA-256' },
+  0x00000260: { name: 'CKM_SHA384', description: 'SHA-384 digest' },
+  0x00000261: { name: 'CKM_SHA384_HMAC', description: 'HMAC-SHA-384' },
+  0x00000270: { name: 'CKM_SHA512', description: 'SHA-512 digest' },
+  0x00000271: { name: 'CKM_SHA512_HMAC', description: 'HMAC-SHA-512' },
+  0x000002b0: { name: 'CKM_SHA3_256', description: 'SHA3-256 digest' },
+  0x000002b1: { name: 'CKM_SHA3_256_HMAC', description: 'HMAC-SHA3-256' },
+  0x000002d0: { name: 'CKM_SHA3_512', description: 'SHA3-512 digest' },
+  0x000002d1: { name: 'CKM_SHA3_512_HMAC', description: 'HMAC-SHA3-512' },
+  // Symmetric / Key Gen
+  0x00000350: { name: 'CKM_GENERIC_SECRET_KEY_GEN', description: 'Generic secret key generation' },
+  0x000003ac: {
+    name: 'CKM_SP800_108_COUNTER_KDF',
+    description: 'NIST SP 800-108 Counter mode KBKDF (§2.44)',
   },
-  0x00000037: {
-    name: 'CKM_HASH_SLH_DSA_SHA256',
-    description: 'HashSLH-DSA with SHA-256 (FIPS 205)',
+  0x000003ad: {
+    name: 'CKM_SP800_108_FEEDBACK_KDF',
+    description: 'NIST SP 800-108 Feedback mode KBKDF (§2.44)',
   },
-  0x00000038: {
-    name: 'CKM_HASH_SLH_DSA_SHA384',
-    description: 'HashSLH-DSA with SHA-384 (FIPS 205)',
+  0x000003ae: {
+    name: 'CKM_SP800_108_DOUBLE_PIPELINE_KDF',
+    description: 'NIST SP 800-108 Double-Pipeline KBKDF (§2.44)',
   },
-  0x00000039: {
-    name: 'CKM_HASH_SLH_DSA_SHA512',
-    description: 'HashSLH-DSA with SHA-512 (FIPS 205)',
+  0x000003b0: { name: 'CKM_PKCS5_PBKD2', description: 'PBKDF2 key derivation (RFC 8018)' },
+  // EC (§2.3)
+  0x00001040: {
+    name: 'CKM_EC_KEY_PAIR_GEN',
+    description: 'EC key pair generation (P-256/P-384/P-521)',
   },
-  0x0000003a: {
-    name: 'CKM_HASH_SLH_DSA_SHA3_224',
-    description: 'HashSLH-DSA with SHA3-224 (FIPS 205)',
+  0x00001044: { name: 'CKM_ECDSA_SHA256', description: 'ECDSA with SHA-256' },
+  0x00001045: { name: 'CKM_ECDSA_SHA384', description: 'ECDSA with SHA-384' },
+  0x00001046: { name: 'CKM_ECDSA_SHA512', description: 'ECDSA with SHA-512' },
+  0x00001047: { name: 'CKM_ECDSA_SHA3_224', description: 'ECDSA with SHA3-224 (v3.2)' },
+  0x00001048: { name: 'CKM_ECDSA_SHA3_256', description: 'ECDSA with SHA3-256 (v3.2)' },
+  0x00001049: { name: 'CKM_ECDSA_SHA3_384', description: 'ECDSA with SHA3-384 (v3.2)' },
+  0x0000104a: { name: 'CKM_ECDSA_SHA3_512', description: 'ECDSA with SHA3-512 (v3.2)' },
+  0x00001050: { name: 'CKM_ECDH1_DERIVE', description: 'ECDH key agreement (ANSI X9.63)' },
+  0x00001051: {
+    name: 'CKM_ECDH1_COFACTOR_DERIVE',
+    description: 'ECDH cofactor key agreement (§2.3.2)',
   },
-  0x0000003b: {
-    name: 'CKM_HASH_SLH_DSA_SHA3_256',
-    description: 'HashSLH-DSA with SHA3-256 (FIPS 205)',
+  0x00001055: {
+    name: 'CKM_EC_EDWARDS_KEY_PAIR_GEN',
+    description: 'Ed25519/Ed448 key pair generation',
   },
-  0x0000003c: {
-    name: 'CKM_HASH_SLH_DSA_SHA3_384',
-    description: 'HashSLH-DSA with SHA3-384 (FIPS 205)',
-  },
-  0x0000003d: {
-    name: 'CKM_HASH_SLH_DSA_SHA3_512',
-    description: 'HashSLH-DSA with SHA3-512 (FIPS 205)',
-  },
-  0x0000003e: {
-    name: 'CKM_HASH_SLH_DSA_SHAKE128',
-    description: 'HashSLH-DSA with SHAKE128 (FIPS 205)',
-  },
-  0x0000003f: {
-    name: 'CKM_HASH_SLH_DSA_SHAKE256',
-    description: 'HashSLH-DSA with SHAKE256 (FIPS 205)',
-  },
+  0x00001057: { name: 'CKM_EDDSA', description: 'EdDSA signature (Ed25519/Ed448)' },
+  // AES (§2.14)
+  0x00001080: { name: 'CKM_AES_KEY_GEN', description: 'AES key generation' },
+  0x00001081: { name: 'CKM_AES_ECB', description: 'AES-ECB (no padding)' },
+  0x00001085: { name: 'CKM_AES_CBC_PAD', description: 'AES-CBC with PKCS#7 padding' },
+  0x00001086: { name: 'CKM_AES_CTR', description: 'AES-CTR counter mode (§2.14.3)' },
+  0x00001087: { name: 'CKM_AES_GCM', description: 'AES-GCM authenticated encryption' },
+  0x0000108a: { name: 'CKM_AES_CMAC', description: 'AES-CMAC (NIST SP 800-38B)' },
+  0x00002109: { name: 'CKM_AES_KEY_WRAP', description: 'AES Key Wrap (RFC 3394)' },
+  // HKDF (§2.43)
+  0x0000402a: { name: 'CKM_HKDF_DERIVE', description: 'HKDF key derivation (RFC 5869)' },
 }
 
 // CKO_ object classes
@@ -227,6 +280,9 @@ const CKO_TABLE: Record<number, ConstEntry> = {
 const CKK_TABLE: Record<number, ConstEntry> = {
   0x00: { name: 'CKK_RSA' },
   0x03: { name: 'CKK_EC' },
+  0x10: { name: 'CKK_GENERIC_SECRET', description: 'Generic secret key (HMAC, KDF base)' },
+  0x1f: { name: 'CKK_AES', description: 'AES symmetric key' },
+  0x40: { name: 'CKK_EC_EDWARDS', description: 'Edwards-curve key (Ed25519/Ed448)' },
   0x49: { name: 'CKK_ML_KEM', description: 'ML-KEM (FIPS 203)' },
   0x4a: { name: 'CKK_ML_DSA', description: 'ML-DSA (FIPS 204)' },
   0x4b: { name: 'CKK_SLH_DSA', description: 'SLH-DSA (FIPS 205)' },
@@ -255,16 +311,19 @@ const CKU_TABLE: Record<number, ConstEntry> = {
   2: { name: 'CKU_CONTEXT_SPECIFIC', description: 'Context-specific login (two-factor)' },
 }
 
-// CKP_ ML-KEM parameter sets
+// CKP_ ML-KEM parameter sets (FIPS 203 Table 3: ct, ek, dk sizes)
 const CKP_ML_KEM: Record<number, ConstEntry> = {
-  0x1: { name: 'CKP_ML_KEM_512', description: 'NIST Level 1 — 800-byte ciphertext, 1632-byte key' },
+  0x1: {
+    name: 'CKP_ML_KEM_512',
+    description: 'NIST Level 1 — 768-byte ct, 800-byte ek, 1632-byte dk',
+  },
   0x2: {
     name: 'CKP_ML_KEM_768',
-    description: 'NIST Level 3 — 1088-byte ciphertext, 2400-byte key',
+    description: 'NIST Level 3 — 1088-byte ct, 1184-byte ek, 2400-byte dk',
   },
   0x3: {
     name: 'CKP_ML_KEM_1024',
-    description: 'NIST Level 5 — 1568-byte ciphertext, 3168-byte key',
+    description: 'NIST Level 5 — 1568-byte ct, 1568-byte ek, 3168-byte dk',
   },
 }
 
@@ -351,6 +410,13 @@ const algoFromMechType = (mechType: number): AlgoContext => {
 }
 
 /**
+ * Module-level state: tracks the algorithm used by the last C_MessageSignInit /
+ * C_MessageVerifyInit so that subsequent C_SignMessage / C_VerifyMessage decoders
+ * can display the correct FIPS spec reference (204 for ML-DSA, 205 for SLH-DSA).
+ */
+let _lastMessageAlgo: AlgoContext = undefined
+
+/**
  * Decode a ulong attribute value into a symbolic constant where applicable.
  * `algo` provides context for CKA_PARAMETER_SET dispatch.
  */
@@ -384,6 +450,11 @@ const decodeUlongAttr = (attrType: number, v: number, algo: AlgoContext): Decode
   }
   return { kind: 'ulong', display: `${v} (${hex})` }
 }
+
+/** Return true if the mechanism type uses CK_SIGN_ADDITIONAL_CONTEXT as its parameter. */
+const isPqcSignMech = (mechType: number): boolean =>
+  (mechType >= 0x0000001c && mechType <= 0x0000002c) || // ML-DSA range
+  (mechType >= 0x0000002d && mechType <= 0x0000003f) // SLH-DSA range
 
 // ── WASM memory readers ───────────────────────────────────────────────────────
 
@@ -426,6 +497,9 @@ const readSignParam = (M: SoftHSMModule, ptr: number, len: number): DecodedSignP
 /**
  * Read a CK_MECHANISM struct from WASM heap.
  * Layout: mechanism i32 @0, pParameter i32 @4, ulParameterLen i32 @8
+ *
+ * Only decodes CK_SIGN_ADDITIONAL_CONTEXT for PQC signing mechanisms (ML-DSA/SLH-DSA).
+ * Other mechanism parameters (RSA-OAEP, AES-GCM, ECDH, etc.) have different layouts.
  */
 const readMechanism = (M: SoftHSMModule, ptr: number): DecodedMechanism | null => {
   if (!ptr) return null
@@ -443,8 +517,8 @@ const readMechanism = (M: SoftHSMModule, ptr: number): DecodedMechanism | null =
       description: entry?.description,
     }
 
-    // Attempt to read CK_SIGN_ADDITIONAL_CONTEXT from mechanism parameter
-    if (paramPtr && paramLen && paramLen >= 12) {
+    // Only decode CK_SIGN_ADDITIONAL_CONTEXT for PQC signing mechanisms
+    if (paramPtr && paramLen && paramLen >= 12 && isPqcSignMech(mechType)) {
       result.param = readSignParam(M, paramPtr, paramLen) ?? undefined
     }
 
@@ -524,6 +598,18 @@ const readTemplate = (
     // partial read — return what we have
   }
   return result
+}
+
+// ── Spec reference helpers ────────────────────────────────────────────────────
+
+/** Return the appropriate spec string for message-based signing based on algo context. */
+const signSpec = (algo: AlgoContext, isVerify: boolean): string => {
+  const section = isVerify ? '§5.21' : '§5.20'
+  if (algo === 'ml-dsa')
+    return `PKCS#11 v3.2 ${section} · FIPS 204 Algorithm ${isVerify ? '3 (ML-DSA.Verify)' : '2 (ML-DSA.Sign)'}`
+  if (algo === 'slh-dsa')
+    return `PKCS#11 v3.2 ${section} · FIPS 205 (SLH-DSA.${isVerify ? 'Verify' : 'Sign'})`
+  return `PKCS#11 v3.2 ${section}`
 }
 
 // ── Per-function decoders ─────────────────────────────────────────────────────
@@ -640,6 +726,29 @@ const decodeGenerateKeyPair = (M: SoftHSMModule, args: number[], rv: number): Pk
   }
 }
 
+/** C_GenerateKey(hSession, pMechanism, pTemplate, ulCount, phKey) */
+const decodeGenerateKey = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const mechPtr = args[1] ?? 0
+  const mech = readMechanism(M, mechPtr)
+  const tmpl = readTemplate(M, args[2] ?? 0, args[3] ?? 0)
+
+  const inputs: InspectSection[] = []
+  if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  if (tmpl.length) inputs.push({ label: 'Key Template', attributes: tmpl })
+
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if (rv === 0 && args[4]) {
+    const h = safeRead32(M, args[4])
+    if (h !== null) outputs.push({ name: '*phKey', value: String(h) })
+  }
+
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.14 (C_GenerateKey)',
+  }
+}
+
 /**
  * C_EncapsulateKey(hSession, pMechanism, hPublicKey, pTemplate, ulAttrCount,
  *                  pCiphertext, pulCiphertextLen, phKey)
@@ -748,7 +857,7 @@ const decodeGetAttributeValue = (M: SoftHSMModule, args: number[]): Pkcs11LogIns
  * C_MessageVerifyInit(hSession, pMechanism, hKey)
  * The CK_SIGN_ADDITIONAL_CONTEXT (hedge + context) is embedded in pMechanism.pParameter.
  */
-const decodeSignVerifyInit = (
+const decodeMessageSignVerifyInit = (
   M: SoftHSMModule,
   args: number[],
   isVerify: boolean
@@ -762,11 +871,14 @@ const decodeSignVerifyInit = (
     label: 'Parameters',
     primitives: [{ name: isVerify ? 'hVerifyKey' : 'hSignKey', value: String(hKey) }],
   })
+
+  // Track the algorithm for subsequent C_SignMessage/C_VerifyMessage decoders
+  const algo = mech ? algoFromMechType(parseInt(mech.typeHex, 16)) : undefined
+  _lastMessageAlgo = algo
+
   return {
     inputs,
-    spec: isVerify
-      ? 'PKCS#11 v3.2 §5.21 · FIPS 204 Algorithm 3 (ML-DSA.Verify)'
-      : 'PKCS#11 v3.2 §5.20 · FIPS 204 Algorithm 2 (ML-DSA.Sign)',
+    spec: signSpec(algo, isVerify),
   }
 }
 
@@ -805,7 +917,7 @@ const decodeSignMessage = (_M: SoftHSMModule, args: number[], rv: number): Pkcs1
   return {
     inputs,
     outputs: outputs.length ? outputs : undefined,
-    spec: 'PKCS#11 v3.2 §5.20 · FIPS 204 Algorithm 2 (ML-DSA.Sign)',
+    spec: signSpec(_lastMessageAlgo, false),
   }
 }
 
@@ -838,7 +950,7 @@ const decodeVerifyMessage = (_M: SoftHSMModule, args: number[], rv: number): Pkc
               },
             ]
           : undefined,
-    spec: 'PKCS#11 v3.2 §5.21 · FIPS 204 Algorithm 3 (ML-DSA.Verify)',
+    spec: signSpec(_lastMessageAlgo, true),
   }
 }
 
@@ -856,11 +968,11 @@ const decodeSignFinal = (M: SoftHSMModule, args: number[], rv: number): Pkcs11Lo
   return {
     inputs: [{ label: 'Parameters', primitives: [{ name: '(multi-part finalize)', value: '' }] }],
     outputs: outputs.length ? outputs : undefined,
-    spec: 'PKCS#11 v3.2 §5.20',
+    spec: signSpec(_lastMessageAlgo, false),
   }
 }
 
-// ── Session lifecycle decoders (Gap 1 — previously unhandled) ─────────────
+// ── Session lifecycle decoders ────────────────────────────────────────────────
 
 /** C_Initialize(pInitArgs) — §5.1 */
 const decodeInitialize = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
@@ -987,6 +1099,307 @@ const decodeVerifyFinal = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect 
   spec: 'PKCS#11 v3.2 §5.21 (C_MessageVerifyFinal — closes multi-message verify context)',
 })
 
+// ── Classical crypto decoders ─────────────────────────────────────────────────
+
+/** C_SignInit(hSession, pMechanism, hKey) — §5.18 */
+const decodeSignInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const mechPtr = args[1] ?? 0
+  const mech = readMechanism(M, mechPtr)
+  const hKey = args[2] ?? 0
+  const inputs: InspectSection[] = []
+  if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  inputs.push({
+    label: 'Parameters',
+    primitives: [{ name: 'hKey', value: String(hKey) }],
+  })
+  return { inputs, spec: 'PKCS#11 v3.2 §5.18 (C_SignInit)' }
+}
+
+/** C_Sign(hSession, pData, ulDataLen, pSignature, pulSignatureLen) — §5.18 */
+const decodeSign = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const dataLen = args[2] ?? 0
+  const pSignature = args[3] ?? 0
+  const sigLenPtr = args[4] ?? 0
+
+  const inputs: InspectSection[] = [
+    {
+      label: 'Parameters',
+      primitives: [
+        { name: 'ulDataLen', value: `${dataLen} bytes` },
+        {
+          name: 'pSignature',
+          value: pSignature === 0 ? 'NULL (size query)' : `0x${pSignature.toString(16)}`,
+          note:
+            pSignature === 0 ? 'Two-step: call with NULL first to get signature length' : undefined,
+        },
+      ],
+    },
+  ]
+
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if ((rv === 0 || rv === 0x150) && sigLenPtr) {
+    const sigLen = safeRead32(M, sigLenPtr)
+    if (sigLen !== null) outputs.push({ name: '*pulSignatureLen', value: `${sigLen} bytes` })
+  }
+
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.18 (C_Sign)',
+  }
+}
+
+/** C_VerifyInit(hSession, pMechanism, hKey) — §5.19 */
+const decodeVerifyInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const mechPtr = args[1] ?? 0
+  const mech = readMechanism(M, mechPtr)
+  const hKey = args[2] ?? 0
+  const inputs: InspectSection[] = []
+  if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  inputs.push({
+    label: 'Parameters',
+    primitives: [{ name: 'hKey', value: String(hKey) }],
+  })
+  return { inputs, spec: 'PKCS#11 v3.2 §5.19 (C_VerifyInit)' }
+}
+
+/** C_Verify(hSession, pData, ulDataLen, pSignature, ulSignatureLen) — §5.19 */
+const decodeVerify = (_M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const dataLen = args[2] ?? 0
+  const sigLen = args[4] ?? 0
+
+  return {
+    inputs: [
+      {
+        label: 'Parameters',
+        primitives: [
+          { name: 'ulDataLen', value: `${dataLen} bytes` },
+          { name: 'ulSignatureLen', value: `${sigLen} bytes` },
+        ],
+      },
+    ],
+    outputs:
+      rv === 0
+        ? [{ name: 'Verification', value: 'VALID — signature matches', note: 'CKR_OK' }]
+        : rv === 0xc0
+          ? [
+              {
+                name: 'Verification',
+                value: 'INVALID — signature does not match',
+                note: 'CKR_SIGNATURE_INVALID',
+              },
+            ]
+          : undefined,
+    spec: 'PKCS#11 v3.2 §5.19 (C_Verify)',
+  }
+}
+
+/** C_EncryptInit(hSession, pMechanism, hKey) — §5.15 */
+const decodeEncryptInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const mechPtr = args[1] ?? 0
+  const mech = readMechanism(M, mechPtr)
+  const hKey = args[2] ?? 0
+  const inputs: InspectSection[] = []
+  if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  inputs.push({
+    label: 'Parameters',
+    primitives: [{ name: 'hKey', value: String(hKey) }],
+  })
+  return { inputs, spec: 'PKCS#11 v3.2 §5.15 (C_EncryptInit)' }
+}
+
+/** C_Encrypt(hSession, pData, ulDataLen, pEncryptedData, pulEncryptedDataLen) — §5.15 */
+const decodeEncrypt = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const dataLen = args[2] ?? 0
+  const pOut = args[3] ?? 0
+  const outLenPtr = args[4] ?? 0
+
+  const inputs: InspectSection[] = [
+    {
+      label: 'Parameters',
+      primitives: [
+        { name: 'ulDataLen', value: `${dataLen} bytes` },
+        {
+          name: 'pEncryptedData',
+          value: pOut === 0 ? 'NULL (size query)' : `0x${pOut.toString(16)}`,
+          note: pOut === 0 ? 'Two-step: call with NULL first to get output length' : undefined,
+        },
+      ],
+    },
+  ]
+
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if ((rv === 0 || rv === 0x150) && outLenPtr) {
+    const outLen = safeRead32(M, outLenPtr)
+    if (outLen !== null) outputs.push({ name: '*pulEncryptedDataLen', value: `${outLen} bytes` })
+  }
+
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.15 (C_Encrypt)',
+  }
+}
+
+/** C_DecryptInit(hSession, pMechanism, hKey) — §5.16 */
+const decodeDecryptInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const mechPtr = args[1] ?? 0
+  const mech = readMechanism(M, mechPtr)
+  const hKey = args[2] ?? 0
+  const inputs: InspectSection[] = []
+  if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  inputs.push({
+    label: 'Parameters',
+    primitives: [{ name: 'hKey', value: String(hKey) }],
+  })
+  return { inputs, spec: 'PKCS#11 v3.2 §5.16 (C_DecryptInit)' }
+}
+
+/** C_Decrypt(hSession, pEncryptedData, ulEncryptedDataLen, pData, pulDataLen) — §5.16 */
+const decodeDecrypt = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const encDataLen = args[2] ?? 0
+  const pOut = args[3] ?? 0
+  const outLenPtr = args[4] ?? 0
+
+  const inputs: InspectSection[] = [
+    {
+      label: 'Parameters',
+      primitives: [
+        { name: 'ulEncryptedDataLen', value: `${encDataLen} bytes` },
+        {
+          name: 'pData',
+          value: pOut === 0 ? 'NULL (size query)' : `0x${pOut.toString(16)}`,
+          note: pOut === 0 ? 'Two-step: call with NULL first to get plaintext length' : undefined,
+        },
+      ],
+    },
+  ]
+
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if ((rv === 0 || rv === 0x150) && outLenPtr) {
+    const outLen = safeRead32(M, outLenPtr)
+    if (outLen !== null) outputs.push({ name: '*pulDataLen', value: `${outLen} bytes` })
+  }
+
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.16 (C_Decrypt)',
+  }
+}
+
+/** C_DeriveKey(hSession, pMechanism, hBaseKey, pTemplate, ulAttributeCount, phKey) — §5.14 */
+const decodeDeriveKey = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const mechPtr = args[1] ?? 0
+  const mech = readMechanism(M, mechPtr)
+  const hBaseKey = args[2] ?? 0
+  const tmpl = readTemplate(M, args[3] ?? 0, args[4] ?? 0)
+
+  const inputs: InspectSection[] = []
+  if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  inputs.push({
+    label: 'Parameters',
+    primitives: [
+      {
+        name: 'hBaseKey',
+        value: hBaseKey === 0 ? '0 (no base key)' : String(hBaseKey),
+        note: hBaseKey === 0 ? 'PBKDF2 uses password from mechanism params instead' : undefined,
+      },
+    ],
+  })
+  if (tmpl.length) inputs.push({ label: 'Derived Key Template', attributes: tmpl })
+
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if (rv === 0 && args[5]) {
+    const h = safeRead32(M, args[5])
+    if (h !== null) outputs.push({ name: '*phKey', value: String(h), note: 'Derived key handle' })
+  }
+
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.14 (C_DeriveKey)',
+  }
+}
+
+/** C_DigestInit(hSession, pMechanism) — §5.17 */
+const decodeDigestInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const mechPtr = args[1] ?? 0
+  const mech = readMechanism(M, mechPtr)
+  const inputs: InspectSection[] = []
+  if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  return { inputs, spec: 'PKCS#11 v3.2 §5.17 (C_DigestInit)' }
+}
+
+/** C_Digest(hSession, pData, ulDataLen, pDigest, pulDigestLen) — §5.17 */
+const decodeDigest = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const dataLen = args[2] ?? 0
+  const pDigest = args[3] ?? 0
+  const digestLenPtr = args[4] ?? 0
+
+  const inputs: InspectSection[] = [
+    {
+      label: 'Parameters',
+      primitives: [
+        { name: 'ulDataLen', value: `${dataLen} bytes` },
+        {
+          name: 'pDigest',
+          value: pDigest === 0 ? 'NULL (size query)' : `0x${pDigest.toString(16)}`,
+          note: pDigest === 0 ? 'Two-step: call with NULL first to get digest length' : undefined,
+        },
+      ],
+    },
+  ]
+
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if ((rv === 0 || rv === 0x150) && digestLenPtr) {
+    const digestLen = safeRead32(M, digestLenPtr)
+    if (digestLen !== null) outputs.push({ name: '*pulDigestLen', value: `${digestLen} bytes` })
+  }
+
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.17 (C_Digest)',
+  }
+}
+
+/** C_WrapKey(hSession, pMechanism, hWrappingKey, hKey, pWrappedKey, pulWrappedKeyLen) — §5.14 */
+const decodeWrapKey = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const mechPtr = args[1] ?? 0
+  const mech = readMechanism(M, mechPtr)
+  const hWrappingKey = args[2] ?? 0
+  const hKey = args[3] ?? 0
+  const pOut = args[4] ?? 0
+  const outLenPtr = args[5] ?? 0
+
+  const inputs: InspectSection[] = []
+  if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  inputs.push({
+    label: 'Parameters',
+    primitives: [
+      { name: 'hWrappingKey', value: String(hWrappingKey) },
+      { name: 'hKey', value: String(hKey), note: 'Key to be wrapped' },
+      {
+        name: 'pWrappedKey',
+        value: pOut === 0 ? 'NULL (size query)' : `0x${pOut.toString(16)}`,
+      },
+    ],
+  })
+
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if ((rv === 0 || rv === 0x150) && outLenPtr) {
+    const outLen = safeRead32(M, outLenPtr)
+    if (outLen !== null) outputs.push({ name: '*pulWrappedKeyLen', value: `${outLen} bytes` })
+  }
+
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.14 (C_WrapKey)',
+  }
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 /**
@@ -1031,6 +1444,8 @@ export const buildInspect = (
       // Key generation
       case 'C_GenerateKeyPair':
         return decodeGenerateKeyPair(M, args, rv)
+      case 'C_GenerateKey':
+        return decodeGenerateKey(M, args, rv)
       // KEM (FIPS 203)
       case 'C_EncapsulateKey':
         return decodeEncapsulateKey(M, args, rv)
@@ -1041,9 +1456,9 @@ export const buildInspect = (
         return decodeGetAttributeValue(M, args)
       // Message signing / verification (FIPS 204/205)
       case 'C_MessageSignInit':
-        return decodeSignVerifyInit(M, args, false)
+        return decodeMessageSignVerifyInit(M, args, false)
       case 'C_MessageVerifyInit':
-        return decodeSignVerifyInit(M, args, true)
+        return decodeMessageSignVerifyInit(M, args, true)
       case 'C_SignMessage':
         return decodeSignMessage(M, args, rv)
       case 'C_VerifyMessage':
@@ -1052,6 +1467,35 @@ export const buildInspect = (
         return decodeSignFinal(M, args, rv)
       case 'C_MessageVerifyFinal':
         return decodeVerifyFinal(M, args)
+      // Classical sign / verify (RSA, ECDSA, EdDSA, HMAC, CMAC)
+      case 'C_SignInit':
+        return decodeSignInit(M, args)
+      case 'C_Sign':
+        return decodeSign(M, args, rv)
+      case 'C_VerifyInit':
+        return decodeVerifyInit(M, args)
+      case 'C_Verify':
+        return decodeVerify(M, args, rv)
+      // Encrypt / decrypt (RSA-OAEP, AES-GCM/CBC/CTR)
+      case 'C_EncryptInit':
+        return decodeEncryptInit(M, args)
+      case 'C_Encrypt':
+        return decodeEncrypt(M, args, rv)
+      case 'C_DecryptInit':
+        return decodeDecryptInit(M, args)
+      case 'C_Decrypt':
+        return decodeDecrypt(M, args, rv)
+      // Key derivation (ECDH, PBKDF2, HKDF, SP800-108)
+      case 'C_DeriveKey':
+        return decodeDeriveKey(M, args, rv)
+      // Digest (SHA-256/384/512, SHA3)
+      case 'C_DigestInit':
+        return decodeDigestInit(M, args)
+      case 'C_Digest':
+        return decodeDigest(M, args, rv)
+      // Key wrapping
+      case 'C_WrapKey':
+        return decodeWrapKey(M, args, rv)
       default:
         return undefined
     }
