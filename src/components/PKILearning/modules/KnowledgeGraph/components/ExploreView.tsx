@@ -255,7 +255,7 @@ export function ExploreView({
       ) : (
         /* Graph canvas */
         <div className="relative">
-          <div className="h-[500px] rounded-lg border border-border overflow-hidden bg-background">
+          <div className="h-[45vh] min-h-[300px] sm:h-[500px] rounded-lg border border-border overflow-hidden bg-background">
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -289,9 +289,22 @@ export function ExploreView({
             </ReactFlow>
           </div>
 
-          {/* Detail panel overlay */}
+          {/* Detail panel — sm+: overlay inside canvas */}
           {selectedNode && (
-            <div className="absolute top-2 left-2 z-10">
+            <div className="hidden sm:block absolute top-2 left-2 z-10">
+              <NodeDetailPanel
+                node={selectedNode}
+                edges={selectedEdges}
+                allNodes={graph.nodes}
+                onClose={() => setSelectedNodeId(null)}
+                onNavigateToNode={navigateToNode}
+              />
+            </div>
+          )}
+
+          {/* Detail panel — mobile: below canvas */}
+          {selectedNode && (
+            <div className="sm:hidden mt-2">
               <NodeDetailPanel
                 node={selectedNode}
                 edges={selectedEdges}
