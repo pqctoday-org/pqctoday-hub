@@ -1,8 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { ModuleItem } from './ModuleCard'
 
+/** Validates every MODULE_CATALOG entry's id field matches its object key (dev only) */
+function validateCatalog(entries: Record<string, ModuleItem>): Record<string, ModuleItem> {
+  if (import.meta.env.DEV) {
+    for (const [key, val] of Object.entries(entries)) {
+      if (val.id !== key) {
+        console.error(`[moduleData] MODULE_CATALOG key "${key}" doesn't match id "${val.id}"`)
+      }
+    }
+  }
+  return entries
+}
+
 /** All module metadata keyed by module ID */
-export const MODULE_CATALOG: Record<string, ModuleItem> = {
+export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   'pqc-101': {
     id: 'pqc-101',
     title: 'PQC 101',
@@ -344,7 +356,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
       'Test your knowledge across all PQC topics — algorithms, standards, compliance, migration, and more.',
     duration: '15 min',
   },
-}
+})
 
 /** Actual step counts per module for progress calculation.
  * Must match WORKSHOP_STEPS[id].length exactly — keep in sync. */
@@ -391,8 +403,8 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'arch-quantum-impact': 3,
   'ops-quantum-impact': 3,
   'research-quantum-impact': 3,
-  quiz: 1,
-  assess: 1, // Assessment wizard completion
+  quiz: 1, // Special: no LEARN_SECTIONS or WORKSHOP_STEPS — quiz engine tracks its own progress
+  assess: 1, // Special: assessment wizard — only in step counts for overall progress tracking
 }
 
 /** Track badge colors (semantic tokens only) */
@@ -403,7 +415,7 @@ export const TRACK_COLORS: Record<string, string> = {
   Infrastructure: 'bg-status-warning/15 text-status-warning',
   Applications: 'bg-status-success/15 text-status-success',
   Executive: 'bg-status-error/15 text-status-error',
-  Industries: 'bg-amber-500/15 text-amber-600',
+  Industries: 'bg-tertiary/10 text-tertiary',
   'Role Guides': 'bg-accent/10 text-accent',
 }
 
@@ -1052,4 +1064,38 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'what-to-learn', label: 'What to Learn' },
     { id: 'how-to-act', label: 'How to Act' },
   ],
+}
+
+/** IDs exempt from cross-structure completeness checks */
+const SPECIAL_IDS = new Set(['quiz', 'assess'])
+
+/** Dev-time validation: catches missing entries and step-count drift across all structures */
+if (import.meta.env.DEV) {
+  for (const [id, count] of Object.entries(MODULE_STEP_COUNTS)) {
+    if (SPECIAL_IDS.has(id)) continue
+    const steps = WORKSHOP_STEPS[id]
+    if (!steps) {
+      console.error(`[moduleData] "${id}" is in MODULE_STEP_COUNTS but missing from WORKSHOP_STEPS`)
+    } else if (steps.length !== count) {
+      console.error(
+        `[moduleData] Step count mismatch for "${id}": MODULE_STEP_COUNTS=${count}, WORKSHOP_STEPS.length=${steps.length}`
+      )
+    }
+    if (!MODULE_CATALOG[id]) {
+      console.error(`[moduleData] "${id}" is in MODULE_STEP_COUNTS but missing from MODULE_CATALOG`)
+    }
+    if (!LEARN_SECTIONS[id]) {
+      console.error(`[moduleData] "${id}" is in MODULE_STEP_COUNTS but missing from LEARN_SECTIONS`)
+    }
+  }
+  const trackModuleIds = new Set(MODULE_TRACKS.flatMap((t) => t.modules.map((m) => m.id)))
+  for (const id of Object.keys(MODULE_CATALOG)) {
+    if (SPECIAL_IDS.has(id)) continue
+    if (!trackModuleIds.has(id)) {
+      console.error(`[moduleData] "${id}" is in MODULE_CATALOG but missing from MODULE_TRACKS`)
+    }
+    if (!MODULE_STEP_COUNTS[id]) {
+      console.error(`[moduleData] "${id}" is in MODULE_CATALOG but missing from MODULE_STEP_COUNTS`)
+    }
+  }
 }

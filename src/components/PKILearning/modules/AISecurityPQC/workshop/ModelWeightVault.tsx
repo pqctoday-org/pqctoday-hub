@@ -21,7 +21,7 @@ const SIGN_ITEMS = MODEL_SIGNING_OVERHEADS.map((p) => ({
 const DEPLOY_ITEMS = DEPLOYMENT_MODES.map((d) => ({ id: d.id, label: d.name }))
 
 export const ModelWeightVault: React.FC = () => {
-  const [selectedSize, setSelectedSize] = useState(MODEL_SIZE_PROFILES[1].id)
+  const [selectedSize, setSelectedSize] = useState<string>(MODEL_SIZE_PROFILES[1].id)
   const [selectedWrap, setSelectedWrap] = useState('ml-kem-768')
   const [selectedSign, setSelectedSign] = useState('ml-dsa-65')
   const [selectedDeploy, setSelectedDeploy] = useState(DEPLOYMENT_MODES[0].id)

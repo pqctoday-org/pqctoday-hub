@@ -1046,6 +1046,16 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           </p>
 
           <p>
+            The mandatory regulatory backdrop is <strong>UNECE WP.29 R155 / R156</strong>: since
+            July 2024 all new vehicle type approvals in the EU, Japan, and Korea require a certified
+            Cyber Security Management System (CSMS) under R155 and a Software Update Management
+            System (SUMS) under R156. R155 explicitly requires cryptographic controls throughout the
+            supply chain, and national type-approval authorities are beginning to interpret
+            &ldquo;adequate cryptographic protection&rdquo; to include post-quantum readiness for
+            systems with multi-decade operating lives.
+          </p>
+
+          <p>
             <InlineTooltip term="TISAX">TISAX</InlineTooltip> (Trusted Information Security
             Assessment Exchange), managed by the VDA (Verband der Automobilindustrie), is the
             automotive industry&rsquo;s standard information security assessment framework. TISAX

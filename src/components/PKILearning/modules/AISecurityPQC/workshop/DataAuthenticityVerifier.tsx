@@ -15,7 +15,7 @@ const SCENARIO_ITEMS = DATASET_SCENARIOS.map((s) => ({ id: s.id, label: s.name }
 const SIGNING_ITEMS = MANIFEST_SIGNING_PROFILES.map((p) => ({ id: p.id, label: p.algorithm }))
 
 export const DataAuthenticityVerifier: React.FC = () => {
-  const [selectedScenario, setSelectedScenario] = useState(DATASET_SCENARIOS[0].id)
+  const [selectedScenario, setSelectedScenario] = useState<string>(DATASET_SCENARIOS[0].id)
   const [enabledLayers, setEnabledLayers] = useState<Set<string>>(new Set())
   const [selectedSigning, setSelectedSigning] = useState(MANIFEST_SIGNING_PROFILES[0].id)
 

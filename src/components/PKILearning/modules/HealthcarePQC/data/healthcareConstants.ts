@@ -561,7 +561,7 @@ export const MEDICAL_DEVICE_CATALOG: MedicalDeviceProfile[] = [
         algorithm: 'ML-DSA-44',
         feasible: false,
         rationale:
-          'Signature verification requires ~90 KB RAM — exceeds Cortex-M0+ capacity. Key size (1.3 KB public key) strains flash.',
+          'Signature verification exceeds available RAM on Cortex-M0+. Key size (1.3 KB public key) also strains flash.',
       },
       {
         algorithm: 'LMS (H5/W8)',

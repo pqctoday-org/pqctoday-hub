@@ -33,7 +33,7 @@ export const AVIONICS_PROTOCOLS: AvionicsProtocol[] = [
     linkType: 'SATCOM (Inmarsat/Iridium) / VDL Mode 2',
     currentCrypto: 'None (integrity via link layer)',
     bidirectional: true,
-    standardRef: 'RTCA DO-258A / EUROCAE ED-110C',
+    standardRef: 'RTCA DO-258A / ED-100A (FANS 1/A) · DO-280B / ED-110B (ATN B1)',
     pqcOverhead: {
       mlkem768Bytes: 1088,
       mldsa65Bytes: 3309,

@@ -4,6 +4,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.29.1] - 2026-03-07
+
+### Changed
+
+- **moduleData.ts validation infrastructure** (`src/components/PKILearning/moduleData.ts`): Added `validateCatalog()` wrapper (dev-only id/key mismatch check), `SPECIAL_IDS` constant (`quiz`, `assess`), and a dev-time validation block at end of file that cross-checks `MODULE_STEP_COUNTS` ↔ `WORKSHOP_STEPS` ↔ `MODULE_CATALOG` ↔ `LEARN_SECTIONS` ↔ `MODULE_TRACKS` on first page load. Standardised all unquoted object keys to quoted form. Added clarifying comments to `quiz` and `assess` step-count entries. Fixed `Industries` track color to use semantic tokens (`bg-tertiary/10 text-tertiary`).
+
+- **Aerospace module — Space Segment clarification** (`AerospaceSpacePQC/data/aerospaceConstants.ts`): Expanded `constraintDescription` to clarify that the 2027 PQC readiness year refers to ground-segment infrastructure readiness (PQC-secured uplinks, ground key management for newly launched satellites), not a retrofit of existing on-orbit satellite hardware.
+
+- **Aerospace module — ACARS standard reference fix** (`AerospaceSpacePQC/data/aerospaceProtocolData.ts`): Corrected `standardRef` for ACARS from `RTCA DO-258A / EUROCAE ED-110C` to `RTCA DO-258A / ED-100A (FANS 1/A) · DO-280B / ED-110B (ATN B1)`.
+
+- **Automotive module — UNECE WP.29 R155/R156 regulatory context** (`AutomotivePQC/components/AutomotivePQCIntroduction.tsx`): Added paragraph explaining the mandatory regulatory backdrop — since July 2024 all new vehicle type approvals in the EU, Japan, and Korea require certified CSMS (R155) and SUMS (R156), with national authorities beginning to interpret "adequate cryptographic protection" to include PQC readiness for systems with multi-decade operating lives.
+
+- **Healthcare module — ML-DSA-44 rationale simplified** (`HealthcarePQC/data/healthcareConstants.ts`): Simplified wording of infeasibility rationale for ML-DSA-44 on Cortex-M0+ constrained medical devices (removed specific RAM figure that was unverified).
+
+- **TypeScript type annotations** (`AISecurityPQC/workshop/DataAuthenticityVerifier.tsx`, `ModelWeightVault.tsx`): Added explicit `useState<string>` type parameter to silence TypeScript inference warnings.
+
+- **SoftHSM WASM vendor package** (`src/vendor/softhsm-wasm/wasm/softhsm.js`): Added minified JS loader for the SoftHSM WASM module to vendor package (previously only `softhsm.wasm` was tracked). `public/wasm/softhsm.js` updated to minified form.
+
+### Data
+
+- **RAG corpus regenerated** (`public/data/rag-corpus.json`): Rebuilt with updated module content — 3,209 chunks (was 2,946), reflecting new Role Guides, Industries track, and glossary additions from v2.29.0.
+
 ## [2.29.0] - 2026-03-06
 
 ### Added
