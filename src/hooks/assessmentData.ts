@@ -248,6 +248,7 @@ export const INDUSTRY_THREAT: Record<string, number> = {
   Automotive: 15, // V2X, ECU secure boot; 15+ year vehicle lifetime HNFL
   Aerospace: 25, // 40+ year asset lifetime; extreme HNDL/HNFL exposure
   'Retail & E-Commerce': 10, // PCI DSS; shorter data retention, faster migration cycles
+  Education: 12, // FERPA student records, research IP; moderate HNDL from long-lived transcripts
   Other: 10, // Baseline default
 }
 export const ALGORITHM_WEIGHTS: Record<string, number> = {
@@ -459,6 +460,7 @@ export const INDUSTRY_COMPOSITE_WEIGHTS: Record<
   Automotive: { qe: 0.3, mc: 0.25, rp: 0.2, or: 0.25 },
   Aerospace: { qe: 0.3, mc: 0.25, rp: 0.25, or: 0.2 },
   'Retail & E-Commerce': { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 },
+  Education: { qe: 0.3, mc: 0.2, rp: 0.25, or: 0.25 },
   Other: { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 },
 }
 export const DEFAULT_COMPOSITE_WEIGHTS = { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 }
