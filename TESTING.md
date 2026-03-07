@@ -10,7 +10,7 @@ The project uses a comprehensive testing approach with three layers:
 
 **Location**: `src/**/*.test.{ts,tsx}`
 
-**Coverage**: 40+ test files covering:
+**Coverage**: 74+ test files covering:
 
 - React components (Playground, PKI Learning, Compliance, Assessment, Migrate, Timeline, Leaders)
 - Utility functions (crypto, CSV parsing, analytics, input validation)
@@ -45,7 +45,7 @@ npm run coverage
 
 **Location**: `e2e/*.spec.ts`
 
-**Coverage**: 46 E2E test files covering:
+**Coverage**: 53 E2E test files covering:
 
 - Timeline visualization
 - Algorithm comparison
@@ -215,7 +215,7 @@ use: {
 **Solution**: Mock WASM modules in test setup:
 
 ```typescript
-vi.mock('@openforge-sh/liboqs', () => ({
+vi.mock('@oqs/liboqs-js', () => ({
   // Mock implementation
 }))
 ```
