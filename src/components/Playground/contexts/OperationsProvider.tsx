@@ -7,6 +7,7 @@ import { useKemOperations } from '../hooks/useKemOperations'
 import { useDsaOperations } from '../hooks/useDsaOperations'
 import { useSymmetricOperations } from '../hooks/useSymmetricOperations'
 import { useHashingOperations } from '../hooks/useHashingOperations'
+import { useAchievementStore } from '@/store/useAchievementStore'
 
 export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { executionMode, wasmLoaded, keySize, addLog, setLoading, setError } = useSettingsContext()
@@ -118,6 +119,7 @@ export const OperationsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       | 'symDecrypt'
       | 'hash'
   ) => {
+    useAchievementStore.getState().incrementPlaygroundOps()
     if (type === 'encapsulate' || type === 'decapsulate') {
       await runKemOperation(type)
     } else if (type === 'sign' || type === 'verify') {

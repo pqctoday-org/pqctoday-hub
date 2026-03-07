@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
+import { AchievementToast } from '../ui/AchievementToast'
 import { GuidedTour } from '../common/GuidedTour'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
@@ -42,18 +43,34 @@ export const MainLayout = () => {
 
   const navItems = [
     { path: '/', label: 'Home', icon: Home, end: true },
-    { path: '/assess', label: 'Assess', icon: ClipboardCheck },
-    { path: '/report', label: 'Report', icon: FileBarChart },
-    { path: '/learn', label: 'Learn', icon: GraduationCap },
-    { path: '/timeline', label: 'Timeline', icon: Globe },
-    { path: '/threats', label: 'Threats', icon: AlertTriangle },
-    { path: '/algorithms', label: 'Algorithms', icon: Shield },
-    { path: '/library', label: 'Library', icon: BookOpen },
-    { path: '/migrate', label: 'Migrate', icon: ArrowRightLeft },
-    { path: '/playground', label: 'Playground', icon: FlaskConical, hiddenOnMobile: true },
-    { path: '/openssl', label: 'OpenSSL Studio', icon: Activity, hiddenOnMobile: true },
-    { path: '/compliance', label: 'Compliance', icon: ShieldCheck },
-    { path: '/leaders', label: 'Leaders', icon: Users },
+    // — Start the Journey —
+    { path: '/learn', label: 'Learn', icon: GraduationCap, section: 'start' },
+    { path: '/timeline', label: 'Timeline', icon: Globe, section: 'start' },
+    { path: '/algorithms', label: 'Algorithms', icon: Shield, section: 'start' },
+    // — My Journey —
+    { path: '/migrate', label: 'Migrate', icon: ArrowRightLeft, section: 'journey' },
+    { path: '/compliance', label: 'Compliance', icon: ShieldCheck, section: 'journey' },
+    // — Assess & Report —
+    { path: '/assess', label: 'Assess', icon: ClipboardCheck, section: 'assess' },
+    { path: '/report', label: 'Report', icon: FileBarChart, section: 'assess' },
+    {
+      path: '/playground',
+      label: 'Playground',
+      icon: FlaskConical,
+      hiddenOnMobile: true,
+      section: 'assess',
+    },
+    {
+      path: '/openssl',
+      label: 'OpenSSL Studio',
+      icon: Activity,
+      hiddenOnMobile: true,
+      section: 'assess',
+    },
+    // — Keep Up to Date —
+    { path: '/threats', label: 'Threats', icon: AlertTriangle, section: 'current' },
+    { path: '/library', label: 'Library', icon: BookOpen, section: 'current' },
+    { path: '/leaders', label: 'Leaders', icon: Users, section: 'current' },
     { path: '/about', label: 'About', icon: Info },
   ]
 
@@ -98,35 +115,47 @@ export const MainLayout = () => {
             role="navigation"
             aria-label="Main navigation"
           >
-            {visibleNavItems.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.end}
-                className={
-                  item.hiddenOnMobile
-                    ? 'hidden lg:block'
-                    : 'flex-1 lg:flex-none flex justify-center'
-                }
-              >
-                {({ isActive }) => (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    aria-label={`${item.label} view`}
-                    aria-current={isActive ? 'page' : undefined}
+            {visibleNavItems.map((item, idx) => {
+              const prev = visibleNavItems[idx - 1]
+              const showDivider = prev?.section && item.section && prev.section !== item.section
+
+              return (
+                <React.Fragment key={item.path}>
+                  {showDivider && (
+                    <span
+                      className="hidden lg:block w-px h-5 bg-border/40 shrink-0"
+                      aria-hidden="true"
+                    />
+                  )}
+                  <NavLink
+                    to={item.path}
+                    end={item.end}
                     className={
-                      isActive
-                        ? 'bg-primary/10 text-foreground border border-primary/20 px-2 lg:px-4 min-h-[44px] lg:min-h-0'
-                        : 'text-muted-foreground hover:text-foreground px-2 lg:px-4 min-h-[44px] lg:min-h-0'
+                      item.hiddenOnMobile
+                        ? 'hidden lg:block'
+                        : 'flex-1 lg:flex-none flex justify-center'
                     }
                   >
-                    <item.icon size={20} aria-hidden="true" className="lg:mr-2" />
-                    <span className="hidden lg:inline">{item.label}</span>
-                  </Button>
-                )}
-              </NavLink>
-            ))}
+                    {({ isActive }) => (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        aria-label={`${item.label} view`}
+                        aria-current={isActive ? 'page' : undefined}
+                        className={
+                          isActive
+                            ? 'bg-primary/10 text-foreground border border-primary/20 px-2 lg:px-4 min-h-[44px] lg:min-h-0'
+                            : 'text-muted-foreground hover:text-foreground px-2 lg:px-4 min-h-[44px] lg:min-h-0'
+                        }
+                      >
+                        <item.icon size={20} aria-hidden="true" className="lg:mr-2" />
+                        <span className="hidden lg:inline">{item.label}</span>
+                      </Button>
+                    )}
+                  </NavLink>
+                </React.Fragment>
+              )
+            })}
           </nav>
         </div>
       </header>
@@ -169,6 +198,9 @@ export const MainLayout = () => {
 
       {/* What's New Toast Notification */}
       <WhatsNewToast />
+
+      {/* Achievement Toast Notification */}
+      <AchievementToast />
 
       {/* First-visit Guided Tour */}
       <GuidedTour />

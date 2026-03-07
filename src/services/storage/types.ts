@@ -114,6 +114,7 @@ export interface LearningProgress {
     currentStreak: number // consecutive days with at least one visit
     longestStreak: number // all-time best streak
     visitDates: string[] // last 30 YYYY-MM-DD strings (sliding window)
+    lastGapDays?: number // days since previous visit when this session started (v8)
   }
 
   // Cumulative quiz mastery — union of correctly-answered question IDs across all sessions

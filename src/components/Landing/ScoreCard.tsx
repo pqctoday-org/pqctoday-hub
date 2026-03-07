@@ -6,6 +6,7 @@ import { ArrowRight, Flame, GraduationCap, Info } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ScoringModal } from './ScoringModal'
 import { useAwarenessScore, BELT_RANKS, type BeltRank } from '@/hooks/useAwarenessScore'
+import { AchievementBadgeGrid } from './AchievementBadgeGrid'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -250,6 +251,9 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
             <BeltProgressBar score={score} belt={belt} nextBelt={nextBelt} />
           </div>
         </div>
+
+        {/* Achievement badges */}
+        <AchievementBadgeGrid />
 
         {/* Threshold cap hint + CTA */}
         <div className="mt-4 flex items-center justify-between gap-3">

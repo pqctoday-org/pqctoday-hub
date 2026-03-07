@@ -8,6 +8,8 @@ import { MainLayout } from './components/Layout/MainLayout'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { useModuleStore } from './store/useModuleStore'
 import { seedHistoryFromStores } from './services/history/seedHistory'
+import { useAchievementChecker } from './hooks/useAchievementChecker'
+import { AchievementSectionTracker } from './components/AchievementSectionTracker'
 import { lazyWithRetry } from './utils/lazyWithRetry'
 import { PageMeta } from './seo/PageMeta'
 
@@ -89,6 +91,11 @@ function AnalyticsTracker() {
 
 import { ScrollToTop } from './components/Router/ScrollToTop'
 
+function AchievementChecker() {
+  useAchievementChecker()
+  return null
+}
+
 function DailyVisitTracker() {
   const trackDailyVisit = useModuleStore((s) => s.trackDailyVisit)
   useEffect(() => {
@@ -109,6 +116,8 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <AnalyticsTracker />
+      <AchievementChecker />
+      <AchievementSectionTracker />
       <DailyVisitTracker />
       <HistorySeeder />
       <PageMeta />

@@ -1,0 +1,271 @@
+// SPDX-License-Identifier: GPL-3.0-only
+import type { AchievementDefinition, ActivitySnapshot } from '@/types/AchievementTypes'
+
+export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
+  // ═══════════════════════════════════════════════════════════════
+  // CONSISTENCY
+  // ═══════════════════════════════════════════════════════════════
+  {
+    id: 'streak-3',
+    title: 'Getting Started',
+    description: 'Maintained a 3-day learning streak',
+    category: 'consistency',
+    rarity: 'common',
+    icon: 'Flame',
+    condition: (s: ActivitySnapshot) => s.currentStreak >= 3 || s.longestStreak >= 3,
+  },
+  {
+    id: 'streak-7',
+    title: 'Dedicated Learner',
+    description: 'Maintained a 7-day learning streak',
+    category: 'consistency',
+    rarity: 'uncommon',
+    icon: 'Flame',
+    condition: (s) => s.currentStreak >= 7 || s.longestStreak >= 7,
+  },
+  {
+    id: 'streak-14',
+    title: 'Two-Week Warrior',
+    description: 'Maintained a 14-day learning streak',
+    category: 'consistency',
+    rarity: 'rare',
+    icon: 'Flame',
+    condition: (s) => s.currentStreak >= 14 || s.longestStreak >= 14,
+  },
+  {
+    id: 'streak-30',
+    title: 'Monthly Master',
+    description: 'Maintained a 30-day learning streak',
+    category: 'consistency',
+    rarity: 'epic',
+    icon: 'Crown',
+    condition: (s) => s.currentStreak >= 30 || s.longestStreak >= 30,
+  },
+  {
+    id: 'sessions-10',
+    title: 'Regular Visitor',
+    description: 'Visited on 10 separate days',
+    category: 'consistency',
+    rarity: 'common',
+    icon: 'Calendar',
+    condition: (s) => s.totalSessions >= 10,
+  },
+  {
+    id: 'sessions-25',
+    title: 'Loyal User',
+    description: 'Visited on 25 separate days',
+    category: 'consistency',
+    rarity: 'uncommon',
+    icon: 'CalendarCheck',
+    condition: (s) => s.totalSessions >= 25,
+  },
+  {
+    id: 'sessions-50',
+    title: 'Power User',
+    description: 'Visited on 50 separate days',
+    category: 'consistency',
+    rarity: 'rare',
+    icon: 'CalendarCheck',
+    condition: (s) => s.totalSessions >= 50,
+  },
+  {
+    id: 'sessions-100',
+    title: 'Centurion',
+    description: 'Visited on 100 separate days',
+    category: 'consistency',
+    rarity: 'epic',
+    icon: 'Trophy',
+    condition: (s) => s.totalSessions >= 100,
+  },
+  {
+    id: 'comeback',
+    title: 'Welcome Back',
+    description: 'Returned after a 3+ day absence',
+    category: 'consistency',
+    rarity: 'common',
+    icon: 'RotateCcw',
+    secret: true,
+    condition: (s) => s.lastGapDays >= 3 && s.totalSessions > 1,
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // WORKSHOP DEPTH
+  // ═══════════════════════════════════════════════════════════════
+  {
+    id: 'first-step',
+    title: 'First Steps',
+    description: 'Completed your first workshop step',
+    category: 'workshop-depth',
+    rarity: 'common',
+    icon: 'Footprints',
+    condition: (s) => s.totalCompletedSteps >= 1,
+  },
+  {
+    id: 'first-module',
+    title: 'Module Complete',
+    description: 'Completed all steps in a module',
+    category: 'workshop-depth',
+    rarity: 'common',
+    icon: 'CheckCircle',
+    condition: (s) => s.completedModuleIds.length >= 1,
+  },
+  {
+    id: 'track-complete',
+    title: 'Track Specialist',
+    description: 'Completed every module in a learning track',
+    category: 'workshop-depth',
+    rarity: 'rare',
+    icon: 'Route',
+    condition: (s) => s.completedTrackIds.length >= 1,
+  },
+  {
+    id: 'first-key',
+    title: 'Key Maker',
+    description: 'Generated your first cryptographic key',
+    category: 'workshop-depth',
+    rarity: 'common',
+    icon: 'Key',
+    condition: (s) => s.totalArtifactKeys >= 1,
+  },
+  {
+    id: 'five-keys',
+    title: 'Key Collection',
+    description: 'Generated 5 cryptographic keys',
+    category: 'workshop-depth',
+    rarity: 'uncommon',
+    icon: 'KeyRound',
+    condition: (s) => s.totalArtifactKeys >= 5,
+  },
+  {
+    id: 'first-cert',
+    title: 'Certificate Authority',
+    description: 'Generated your first certificate',
+    category: 'workshop-depth',
+    rarity: 'uncommon',
+    icon: 'BadgeCheck',
+    condition: (s) => s.totalArtifactCerts >= 1,
+  },
+  {
+    id: 'first-exec-doc',
+    title: 'Executive Producer',
+    description: 'Created your first executive document',
+    category: 'workshop-depth',
+    rarity: 'uncommon',
+    icon: 'FileText',
+    condition: (s) => s.totalArtifactExecDocs >= 1,
+  },
+  {
+    id: 'deep-diver',
+    title: 'Deep Diver',
+    description: 'Spent 30+ minutes in a single module',
+    category: 'workshop-depth',
+    rarity: 'uncommon',
+    icon: 'Timer',
+    condition: (s) => s.deepDiveModuleIds.length >= 1,
+  },
+  {
+    id: 'completionist',
+    title: 'Completionist',
+    description: 'Checked every learn section in a module',
+    category: 'workshop-depth',
+    rarity: 'uncommon',
+    icon: 'ListChecks',
+    condition: (s) => s.modulesWithAllLearnSections.length >= 1,
+  },
+  {
+    id: 'quiz-first-ten',
+    title: 'Quiz Starter',
+    description: 'Correctly answered 10 quiz questions',
+    category: 'workshop-depth',
+    rarity: 'common',
+    icon: 'HelpCircle',
+    condition: (s) => s.quizQuestionsCorrect >= 10,
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // CROSS-FEATURE EXPLORATION
+  // ═══════════════════════════════════════════════════════════════
+  {
+    id: 'playground-first',
+    title: 'Lab Rat',
+    description: 'Performed your first playground operation',
+    category: 'cross-feature',
+    rarity: 'common',
+    icon: 'FlaskConical',
+    condition: (s) => s.playgroundOperationCount >= 1,
+  },
+  {
+    id: 'chat-engaged',
+    title: 'Conversation Starter',
+    description: 'Sent 10+ messages to the PQC Assistant',
+    category: 'cross-feature',
+    rarity: 'common',
+    icon: 'MessageCircle',
+    condition: (s) => s.chatMessageCount >= 10,
+  },
+  {
+    id: 'assessment-done',
+    title: 'Self-Assessed',
+    description: 'Completed the risk assessment wizard',
+    category: 'cross-feature',
+    rarity: 'uncommon',
+    icon: 'ClipboardCheck',
+    condition: (s) => s.assessmentCompleted,
+  },
+  {
+    id: 'compliance-explorer',
+    title: 'Compliance Explorer',
+    description: 'Selected 3+ compliance frameworks',
+    category: 'cross-feature',
+    rarity: 'uncommon',
+    icon: 'ShieldCheck',
+    condition: (s) => s.complianceFrameworkCount >= 3,
+  },
+  {
+    id: 'migrate-planner',
+    title: 'Migration Planner',
+    description: 'Selected 5+ products in Migrate',
+    category: 'cross-feature',
+    rarity: 'uncommon',
+    icon: 'ArrowRightLeft',
+    condition: (s) => s.migrateProductCount >= 5,
+  },
+  {
+    id: 'section-explorer',
+    title: 'Explorer',
+    description: 'Visited 5+ different app sections',
+    category: 'cross-feature',
+    rarity: 'common',
+    icon: 'Compass',
+    condition: (s) => s.sectionsVisited.length >= 5,
+  },
+  {
+    id: 'full-journey',
+    title: 'Full Journey',
+    description: 'Used Learn, Assess, Migrate, Playground, and Chat',
+    category: 'cross-feature',
+    rarity: 'epic',
+    icon: 'Sparkles',
+    secret: true,
+    condition: (s) => {
+      const required = ['learn', 'assess', 'migrate', 'playground']
+      return required.every((r) => s.sectionsVisited.includes(r)) && s.chatMessageCount >= 1
+    },
+  },
+  {
+    id: 'quiz-fifty',
+    title: 'Quiz Master',
+    description: 'Correctly answered 50 quiz questions',
+    category: 'cross-feature',
+    rarity: 'rare',
+    icon: 'Trophy',
+    condition: (s) => s.quizQuestionsCorrect >= 50,
+  },
+]
+
+/** O(1) lookup map derived from catalog */
+export const ACHIEVEMENT_MAP: Record<string, AchievementDefinition> = Object.fromEntries(
+  ACHIEVEMENT_CATALOG.map((a) => [a.id, a])
+)
+
+export const ACHIEVEMENT_COUNT = ACHIEVEMENT_CATALOG.length

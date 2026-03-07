@@ -11,7 +11,7 @@ import {
 } from '../utils/analytics'
 import { LEARN_SECTIONS } from '../components/PKILearning/moduleData'
 
-const MODULE_STORE_VERSION = 7
+const MODULE_STORE_VERSION = 8
 
 // Ephemeral session tracker — NOT in Zustand state, intentionally non-persisted.
 // Set when a module mounts, cleared when it unmounts or the page unloads.
@@ -344,6 +344,14 @@ export const useModuleStore = create<ModuleState>()(
           // No-op if already tracked today
           if (existing?.lastVisitDate === today) return state
 
+          // Compute gap BEFORE updating lastVisitDate (for comeback achievement)
+          let lastGapDays = 0
+          if (existing?.lastVisitDate) {
+            const lastDate = new Date(existing.lastVisitDate)
+            const todayDate = new Date(today)
+            lastGapDays = Math.round((todayDate.getTime() - lastDate.getTime()) / 86400000)
+          }
+
           const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
           const prevStreak = existing?.currentStreak ?? 0
           const newStreak = existing?.lastVisitDate === yesterday ? prevStreak + 1 : 1
@@ -360,6 +368,7 @@ export const useModuleStore = create<ModuleState>()(
               currentStreak: newStreak,
               longestStreak: newLongest,
               visitDates,
+              lastGapDays,
             },
           }
         }),
@@ -477,6 +486,15 @@ export const useModuleStore = create<ModuleState>()(
             })
           }
           state.version = '7.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 7 → Version 8: Add lastGapDays to sessionTracking
+        if (version <= 7) {
+          if (state.sessionTracking && typeof state.sessionTracking.lastGapDays !== 'number') {
+            state.sessionTracking.lastGapDays = 0
+          }
+          state.version = '8.0.0'
           state.timestamp = Date.now()
         }
 
