@@ -40,13 +40,15 @@ const VALID_INFRA = new Set(AVAILABLE_INFRASTRUCTURE)
 const VALID_COUNTRIES = new Set(Object.values(REGION_COUNTRIES_MAP).flat())
 
 export const ReportView: React.FC = () => {
-  const { assessmentStatus, getInput, setResult } = useAssessmentStore()
+  const { assessmentStatus, getInput, setResult, lastResult } = useAssessmentStore()
   useWorkflowPhaseTracker('assess')
   const input = getInput()
   const result =
     (assessmentStatus === 'complete' || assessmentStatus === 'in-progress') && input
       ? computeAssessment(input)
-      : null
+      : assessmentStatus === 'complete' && lastResult
+        ? lastResult
+        : null
   const persistedRef = useRef(false)
   const [searchParams] = useSearchParams()
   const hydratedRef = useRef(false)
@@ -99,7 +101,11 @@ export const ReportView: React.FC = () => {
 
     const migration = searchParams.get('m')
     if (migration && VALID_MIGRATIONS.has(migration)) {
-      store.setMigrationStatus(migration as AssessmentInput['migrationStatus'])
+      if (migration === 'unknown') {
+        store.setMigrationUnknown(true)
+      } else {
+        store.setMigrationStatus(migration as AssessmentInput['migrationStatus'])
+      }
     }
 
     const useCases = searchParams.get('u')
@@ -134,7 +140,11 @@ export const ReportView: React.FC = () => {
 
     const agility = searchParams.get('a')
     if (agility && VALID_AGILITY.has(agility)) {
-      store.setCryptoAgility(agility as NonNullable<AssessmentInput['cryptoAgility']>)
+      if (agility === 'unknown') {
+        store.setAgilityUnknown(true)
+      } else {
+        store.setCryptoAgility(agility as NonNullable<AssessmentInput['cryptoAgility']>)
+      }
     }
 
     const infra = searchParams.get('n')
@@ -154,7 +164,11 @@ export const ReportView: React.FC = () => {
 
     const pressure = searchParams.get('p')
     if (pressure && VALID_PRESSURE.has(pressure)) {
-      store.setTimelinePressure(pressure as NonNullable<AssessmentInput['timelinePressure']>)
+      if (pressure === 'unknown') {
+        store.setTimelineUnknown(true)
+      } else {
+        store.setTimelinePressure(pressure as NonNullable<AssessmentInput['timelinePressure']>)
+      }
     }
 
     store.setAssessmentMode('comprehensive')
@@ -174,7 +188,7 @@ export const ReportView: React.FC = () => {
       if (assessmentStatus === 'complete' && result.categoryScores) {
         const store = useAssessmentStore.getState()
         store.pushSnapshot({
-          completedAt: result.generatedAt,
+          completedAt: store.completedAt ?? result.generatedAt,
           riskScore: result.riskScore,
           categoryScores: result.categoryScores,
           riskLevel: result.riskLevel,
@@ -192,8 +206,8 @@ export const ReportView: React.FC = () => {
     })
   }, [assessmentStatus])
 
-  // Empty state: no assessment started
-  if (assessmentStatus === 'not-started' || !input) {
+  // Empty state: no assessment started and no persisted result
+  if (!result) {
     return (
       <div className="animate-fade-in">
         <div className="max-w-lg mx-auto text-center py-16">

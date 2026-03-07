@@ -261,6 +261,14 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     duration: '90 min',
     difficulty: 'advanced',
   },
+  'database-encryption-pqc': {
+    id: 'database-encryption-pqc',
+    title: 'Database Encryption & PQC',
+    description:
+      'Migrate database encryption to quantum-safe algorithms: TDE re-keying, BYOK/HYOK key ownership, queryable encryption compatibility, and fleet readiness assessment.',
+    duration: '75 min',
+    difficulty: 'intermediate',
+  },
   'energy-utilities-pqc': {
     id: 'energy-utilities-pqc',
     title: 'Energy & Utilities PQC',
@@ -282,6 +290,14 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'AI Security & PQC',
     description:
       'Quantum threats to AI systems: pipeline data protection, model weight security, synthetic data contamination, agent authentication, agentic commerce, and encryption at scale.',
+    duration: '120 min',
+    difficulty: 'advanced',
+  },
+  'platform-eng-pqc': {
+    id: 'platform-eng-pqc',
+    title: 'Platform Engineering & PQC',
+    description:
+      'Inventory, migrate, and monitor every cryptographic primitive in your software delivery pipeline — CI/CD crypto assets, container image signing, IaC quantum-vulnerable defaults, OPA/Kyverno algorithm enforcement, and crypto posture monitoring.',
     duration: '120 min',
     difficulty: 'advanced',
   },
@@ -349,6 +365,46 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     duration: '30 min',
     difficulty: 'beginner',
   },
+  'secrets-management-pqc': {
+    id: 'secrets-management-pqc',
+    title: 'Secrets Management & PQC',
+    description:
+      'Master PQC migration for secrets managers: classify secrets by HNDL risk, simulate Vault transit with ML-KEM, design rotation policies, and integrate PQC-safe secrets into Kubernetes and CI/CD pipelines.',
+    duration: '90 min',
+    difficulty: 'advanced',
+  },
+  'network-security-pqc': {
+    id: 'network-security-pqc',
+    title: 'Network Security & PQC Migration',
+    description:
+      'Prepare NGFWs, IDS/IPS, and network security appliances for post-quantum cryptography. Covers TLS inspection impacts, DPI with larger PQC certs, vendor migration roadmaps (Cisco, Palo Alto, Fortinet, Juniper), and PQC-aware zero trust network architecture.',
+    duration: '90 min',
+    difficulty: 'advanced',
+  },
+  'iam-pqc': {
+    id: 'iam-pqc',
+    title: 'Identity & Access Management with PQC',
+    description:
+      'Migrate enterprise IAM systems to quantum-safe cryptography. Covers JWT/SAML token signing with ML-DSA, OIDC and OAuth 2.0 PQC migration, Active Directory and LDAP vulnerabilities, vendor roadmaps (Okta, Microsoft Entra, PingFederate, ForgeRock), and PQC-aware zero trust identity architecture.',
+    duration: '90 min',
+    difficulty: 'intermediate',
+  },
+  'secure-boot-pqc': {
+    id: 'secure-boot-pqc',
+    title: 'Secure Boot & Firmware PQC',
+    description:
+      'Migrate UEFI Secure Boot and firmware signing to quantum-safe cryptography. Covers the PK/KEK/db key hierarchy, TPM 2.0 attestation, ML-DSA firmware signing, DICE hardware roots of trust, and firmware vendor PQC roadmaps.',
+    duration: '90 min',
+    difficulty: 'advanced',
+  },
+  'os-pqc': {
+    id: 'os-pqc',
+    title: 'Operating System & Platform Crypto PQC',
+    description:
+      'Migrate OS-level cryptography to quantum-safe algorithms. Covers system TLS policy (OpenSSL, GnuTLS, SChannel), SSH host key migration to ML-DSA, RPM/DEB package signing, and FIPS mode compatibility for PQC-enabled operating systems.',
+    duration: '75 min',
+    difficulty: 'intermediate',
+  },
   quiz: {
     id: 'quiz',
     title: 'PQC Quiz',
@@ -392,9 +448,14 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'data-asset-sensitivity': 5,
   'standards-bodies': 5,
   'confidential-computing': 5,
+  'database-encryption-pqc': 5,
+  'secrets-management-pqc': 5,
+  'network-security-pqc': 5,
+  'iam-pqc': 5,
   'energy-utilities-pqc': 5,
   'emv-payment-pqc': 6,
   'ai-security-pqc': 7,
+  'platform-eng-pqc': 6,
   'healthcare-pqc': 5,
   'aerospace-space-pqc': 6,
   'automotive-pqc': 6,
@@ -403,6 +464,8 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'arch-quantum-impact': 3,
   'ops-quantum-impact': 3,
   'research-quantum-impact': 3,
+  'secure-boot-pqc': 5,
+  'os-pqc': 5,
   quiz: 1, // Special: no LEARN_SECTIONS or WORKSHOP_STEPS — quiz engine tracks its own progress
   assess: 1, // Special: assessment wizard — only in step counts for overall progress tracking
 }
@@ -457,6 +520,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['email-signing'],
       MODULE_CATALOG['api-security-jwt'],
       MODULE_CATALOG['web-gateway-pqc'],
+      MODULE_CATALOG['network-security-pqc'],
     ],
   },
   {
@@ -465,10 +529,14 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['pki-workshop'],
       MODULE_CATALOG['kms-pqc'],
       MODULE_CATALOG['hsm-pqc'],
+      MODULE_CATALOG['secrets-management-pqc'],
       MODULE_CATALOG['stateful-signatures'],
       MODULE_CATALOG['merkle-tree-certs'],
       MODULE_CATALOG['confidential-computing'],
+      MODULE_CATALOG['database-encryption-pqc'],
       MODULE_CATALOG['crypto-dev-apis'],
+      MODULE_CATALOG['secure-boot-pqc'],
+      MODULE_CATALOG['os-pqc'],
     ],
   },
   {
@@ -481,6 +549,8 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['iot-ot-pqc'],
       MODULE_CATALOG['emv-payment-pqc'],
       MODULE_CATALOG['ai-security-pqc'],
+      MODULE_CATALOG['platform-eng-pqc'],
+      MODULE_CATALOG['iam-pqc'],
     ],
   },
   {
@@ -716,6 +786,37 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'tee-hsm', label: 'TEE-HSM Trusted Communication' },
     { id: 'quantum-threats', label: 'Quantum Threats to Confidential Computing' },
   ],
+  'database-encryption-pqc': [
+    { id: 'encryption-layers', label: 'Encryption Layers: TDE, CLE, Field-Level, Queryable' },
+    { id: 'byok-hyok', label: 'BYOK, HYOK, and External PQC Key Managers' },
+    { id: 'online-migration', label: 'Online vs Offline Migration, Performance Overhead' },
+    { id: 'queryable-pqc', label: 'Queryable Encryption Patterns with PQC' },
+    { id: 'compliance', label: 'GDPR, HIPAA, and Regulatory Requirements' },
+  ],
+  'secrets-management-pqc': [
+    { id: 'secrets-vs-keys', label: 'Secrets vs Keys: What Needs PQC Protection' },
+    { id: 'hndl-risk', label: 'HNDL Risk for Secrets in Transit and at Rest' },
+    { id: 'automated-rotation', label: 'Automated Rotation with PQC Keys' },
+    { id: 'provider-roadmaps', label: 'AWS / Azure / GCP / Vault PQC Roadmaps' },
+    { id: 'kubernetes-cicd', label: 'Kubernetes, CI/CD, and Zero-Trust Secrets' },
+  ],
+  'network-security-pqc': [
+    { id: 'pqc-network-impact', label: 'How PQC Changes Network Security Operations' },
+    { id: 'tls-inspection-pqc', label: 'TLS Inspection & Deep Packet Inspection Challenges' },
+    { id: 'ids-ips-migration', label: 'IDS/IPS: Signature Updates & Algorithm Visibility' },
+    { id: 'vendor-roadmaps', label: 'Cisco, Palo Alto, Fortinet, Juniper Migration Timelines' },
+    { id: 'zero-trust-pqc', label: 'Zero Trust Network Access with PQC' },
+  ],
+  'iam-pqc': [
+    { id: 'iam-crypto-foundations', label: 'Crypto in IAM: Tokens, Certificates, MFA' },
+    { id: 'token-migration', label: 'JWT, SAML, and OIDC Token Signing with ML-DSA' },
+    {
+      id: 'directory-services',
+      label: 'Active Directory, LDAP, and Kerberos Under Quantum Threat',
+    },
+    { id: 'vendor-roadmaps', label: 'Okta, Entra, PingFederate, ForgeRock Migration Paths' },
+    { id: 'zero-trust-identity', label: 'PQC-Aware Zero Trust Identity Architecture' },
+  ],
   'energy-utilities-pqc': [
     { id: 'why-energy', label: 'Why Energy & Utilities Is Different' },
     { id: 'nerc-cip', label: 'NERC CIP & IEC 62351 Compliance' },
@@ -740,6 +841,15 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'model-weights', label: 'Model Weight Protection & IP Security' },
     { id: 'agentic-ai', label: 'Agentic AI: Identity, Delegation & Commerce' },
     { id: 'scale', label: 'Protecting Data at Scale: Petabyte-Era Cryptography' },
+  ],
+  'platform-eng-pqc': [
+    { id: 'quantum-threats-platform', label: 'Quantum Threats to Platform Cryptography' },
+    { id: 'crypto-asset-discovery', label: 'Crypto Asset Discovery in CI/CD Pipelines' },
+    { id: 'container-signing', label: 'Container & Artifact Signing: ECDSA → ML-DSA' },
+    { id: 'iac-crypto-config', label: 'IaC Crypto Configuration & Quantum-Vulnerable Defaults' },
+    { id: 'policy-enforcement', label: 'Policy Enforcement for Algorithm Agility' },
+    { id: 'monitoring-posture', label: 'Monitoring Cryptographic Posture' },
+    { id: 'migration-runway', label: 'Migration Runway, Rollback & Cut-Over Planning' },
   ],
   'healthcare-pqc': [
     { id: 'biometric-threat', label: 'Biometric Data: The Irreplaceable Secret' },
@@ -792,6 +902,23 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'why-it-matters', label: 'Why It Matters: Research Quantum Exposure' },
     { id: 'what-to-learn', label: 'What to Learn: Knowledge & Skills Gap' },
     { id: 'how-to-act', label: 'How to Act: Phased Action Plan' },
+  ],
+  'secure-boot-pqc': [
+    {
+      id: 'secure-boot-fundamentals',
+      label: 'UEFI Secure Boot: PK, KEK, db, and dbx Key Hierarchy',
+    },
+    { id: 'tpm-attestation', label: 'TPM 2.0 and Measured Boot Attestation' },
+    { id: 'firmware-signing', label: 'Firmware Signing and PQC Migration' },
+    { id: 'dice-hardware-roots', label: 'DICE and Hardware Roots of Trust' },
+    { id: 'vendor-roadmaps', label: 'UEFI and Firmware Vendor PQC Roadmaps' },
+  ],
+  'os-pqc': [
+    { id: 'os-crypto-landscape', label: 'OS Cryptographic Subsystems: OpenSSL, CNG, GnuPG' },
+    { id: 'ssh-host-keys', label: 'SSH Host Key Migration to ML-DSA' },
+    { id: 'system-tls', label: 'System-Wide TLS Configuration for PQC' },
+    { id: 'package-signing', label: 'Package Signing and Repository Trust with PQC' },
+    { id: 'fips-mode', label: 'FIPS Mode and PQC-Enabled OS Configurations' },
   ],
 }
 
@@ -992,6 +1119,34 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'tee-hsm-channel', label: 'TEE-HSM Trusted Channel' },
     { id: 'quantum-threat-migration', label: 'Quantum Threat Migration' },
   ],
+  'database-encryption-pqc': [
+    { id: 'encryption-layer-mapper', label: 'Encryption Layer Mapper' },
+    { id: 'tde-migration-planner', label: 'TDE Migration Planner' },
+    { id: 'byok-key-designer', label: 'BYOK Architecture Designer' },
+    { id: 'queryable-encryption-lab', label: 'Queryable Encryption Lab' },
+    { id: 'database-readiness', label: 'Migration Readiness Assessment' },
+  ],
+  'secrets-management-pqc': [
+    { id: 'secrets-architecture-mapper', label: 'Architecture Mapper' },
+    { id: 'vault-pqc-simulator', label: 'Vault Transit Simulator' },
+    { id: 'rotation-policy-designer', label: 'Rotation Policy Designer' },
+    { id: 'cloud-secrets-comparator', label: 'Cloud Provider Comparator' },
+    { id: 'pipeline-integration-lab', label: 'Pipeline Integration Lab' },
+  ],
+  'network-security-pqc': [
+    { id: 'ngfw-cipher-analyzer', label: 'NGFW Cipher Policy Analyzer' },
+    { id: 'tls-inspection-lab', label: 'TLS Inspection Lab' },
+    { id: 'ids-signature-updater', label: 'IDS Signature Updater' },
+    { id: 'vendor-migration-matrix', label: 'Vendor Migration Matrix' },
+    { id: 'ztna-pqc-designer', label: 'ZTNA PQC Designer' },
+  ],
+  'iam-pqc': [
+    { id: 'iam-crypto-inventory', label: 'IAM Crypto Inventory' },
+    { id: 'token-migration-lab', label: 'Token Migration Lab' },
+    { id: 'directory-services', label: 'Directory Services Analyzer' },
+    { id: 'vendor-readiness', label: 'Vendor Readiness Scorer' },
+    { id: 'zero-trust-identity', label: 'Zero Trust Identity Architect' },
+  ],
   'energy-utilities-pqc': [
     { id: 'protocol-security-analyzer', label: 'Protocol Analyzer' },
     { id: 'substation-migration-planner', label: 'Substation Planner' },
@@ -1015,6 +1170,14 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'agentic-commerce-simulator', label: 'Agentic Commerce Simulator' },
     { id: 'agent-to-agent-protocol', label: 'Agent-to-Agent Protocol' },
     { id: 'scale-encryption-planner', label: 'Scale Encryption Planner' },
+  ],
+  'platform-eng-pqc': [
+    { id: 'pipeline-crypto-inventory', label: 'Pipeline Crypto Inventory' },
+    { id: 'quantum-threat-timeline', label: 'Quantum Threat Timeline' },
+    { id: 'container-signing-migration', label: 'Container Signing Migration' },
+    { id: 'policy-as-code-enforcer', label: 'Policy-as-Code Enforcer' },
+    { id: 'crypto-posture-monitor', label: 'Crypto Posture Monitor' },
+    { id: 'platform-migration-planner', label: 'Platform Migration Planner' },
   ],
   'healthcare-pqc': [
     { id: 'biometric-vault', label: 'Biometric Vault Assessor' },
@@ -1063,6 +1226,20 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'why-it-matters', label: 'Why It Matters' },
     { id: 'what-to-learn', label: 'What to Learn' },
     { id: 'how-to-act', label: 'How to Act' },
+  ],
+  'secure-boot-pqc': [
+    { id: 'boot-chain-analyzer', label: 'Secure Boot Chain Analyzer' },
+    { id: 'firmware-signing', label: 'Firmware Signing Migrator' },
+    { id: 'tpm-hierarchy', label: 'TPM Key Hierarchy Explorer' },
+    { id: 'vendor-matrix', label: 'Firmware Vendor Matrix' },
+    { id: 'attestation-designer', label: 'Attestation Flow Designer' },
+  ],
+  'os-pqc': [
+    { id: 'crypto-inventory', label: 'OS Crypto Inventory' },
+    { id: 'system-tls', label: 'System TLS Configurator' },
+    { id: 'ssh-keys', label: 'SSH Host Key Migrator' },
+    { id: 'package-signing', label: 'Package Signing Migrator' },
+    { id: 'fips-compat', label: 'FIPS Compatibility Checker' },
   ],
 }
 

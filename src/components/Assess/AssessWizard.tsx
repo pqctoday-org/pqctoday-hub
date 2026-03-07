@@ -24,7 +24,6 @@ import { StepCredentialLifetime } from './steps/StepCredentialLifetime'
 import { Step9OrgScale } from './steps/Step9OrgScale'
 import { Step10CryptoAgility } from './steps/Step10CryptoAgility'
 import { Step11Infrastructure } from './steps/Step11Infrastructure'
-import { Step12VendorDependency } from './steps/Step12VendorDependency'
 import { Step13TimelinePressure } from './steps/Step13TimelinePressure'
 
 const STEP_TITLES_FULL = [
@@ -40,7 +39,6 @@ const STEP_TITLES_FULL = [
   'Scale',
   'Agility',
   'Infra',
-  'Vendors',
   'Timeline',
 ]
 
@@ -73,7 +71,6 @@ const PROFICIENCY_SUGGEST_MAP: Record<string, 'technical' | 'general'> = {
   'use-cases': 'general',
   retention: 'general',
   'credential-lifetime': 'general',
-  vendors: 'general',
   timeline: 'general',
 }
 
@@ -135,12 +132,6 @@ const ALL_STEPS = [
       !!s.cryptoAgility,
   },
   { key: 'infra', component: <Step11Infrastructure />, canProceed: () => true },
-  {
-    key: 'vendors',
-    component: <Step12VendorDependency />,
-    canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      !!s.vendorDependency || s.vendorUnknown,
-  },
   {
     key: 'timeline',
     component: <Step13TimelinePressure />,
@@ -245,7 +236,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
           s.setComplianceUnknown(true)
         break
       case 'migration':
-        if (!s.migrationStatus) s.setMigrationStatus('unknown')
+        if (!s.migrationStatus && !s.migrationUnknown) s.setMigrationUnknown(true)
         break
       case 'use-cases':
         if (s.cryptoUseCases.length === 0 && !s.useCasesUnknown) s.setUseCasesUnknown(true)
@@ -258,17 +249,14 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
           s.setCredentialLifetimeUnknown(true)
         break
       case 'agility':
-        if (!s.cryptoAgility) s.setCryptoAgility('unknown')
+        if (!s.cryptoAgility && !s.agilityUnknown) s.setAgilityUnknown(true)
         break
       case 'infra':
         if (s.infrastructure.length === 0 && !s.infrastructureUnknown)
           s.setInfrastructureUnknown(true)
         break
-      case 'vendors':
-        if (!s.vendorDependency && !s.vendorUnknown) s.setVendorUnknown(true)
-        break
       case 'timeline':
-        if (!s.timelinePressure) s.setTimelinePressure('unknown')
+        if (!s.timelinePressure && !s.timelineUnknown) s.setTimelineUnknown(true)
         break
     }
   }, [currentStep, selectedPersona, experienceLevel, steps])

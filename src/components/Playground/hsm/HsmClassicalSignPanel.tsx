@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
-import { PenLine, CheckCircle, XCircle, Loader2 } from 'lucide-react'
+import { PenLine, CheckCircle, XCircle, Loader2, Plus, X } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import {
@@ -24,6 +24,7 @@ import {
   hsm_generateEdDSAKeyPair,
   hsm_eddsaSign,
   hsm_eddsaVerify,
+  hsm_signMultiPart,
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex } from './shared'
@@ -71,6 +72,10 @@ const RsaPanel = () => {
 
   const [loadingOp, setLoadingOp] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  // Multi-part state
+  const [multiPartSign, setMultiPartSign] = useState(false)
+  const [chunks, setChunks] = useState<string[]>(['Hello from ', 'PKCS#11 RSA!'])
 
   const run = async (label: string, fn: () => void) => {
     setError(null)
@@ -122,8 +127,14 @@ const RsaPanel = () => {
     run('Sign', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const s = hsm_rsaSign(M, hSession, handles!.priv, message, signMech)
-      setSig(s)
+      if (multiPartSign) {
+        const encodedChunks = chunks.map((c) => new TextEncoder().encode(c))
+        const s = hsm_signMultiPart(M, hSession, handles!.priv, encodedChunks, signMech)
+        setSig(s)
+      } else {
+        const s = hsm_rsaSign(M, hSession, handles!.priv, message, signMech)
+        setSig(s)
+      }
       setVerifyResult(null)
     })
 
@@ -131,7 +142,9 @@ const RsaPanel = () => {
     run('Verify', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const valid = hsm_rsaVerify(M, hSession, handles!.pub, message, sig!, signMech)
+      // Verify uses single-part (concatenated message)
+      const fullMsg = multiPartSign ? chunks.join('') : message
+      const valid = hsm_rsaVerify(M, hSession, handles!.pub, fullMsg, sig!, signMech)
       setVerifyResult(valid)
     })
 
@@ -192,7 +205,24 @@ const RsaPanel = () => {
         <>
           {/* Sign / Verify */}
           <div className="space-y-2 rounded-lg border border-border p-3">
-            <p className="text-xs font-medium text-foreground">Sign &amp; Verify</p>
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-foreground">Sign &amp; Verify</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setMultiPartSign((v) => !v)
+                  setSig(null)
+                  setVerifyResult(null)
+                }}
+                className={`text-[10px] rounded-lg px-2 py-0.5 border transition-colors ${
+                  multiPartSign
+                    ? 'bg-primary/20 border-primary text-primary'
+                    : 'bg-muted border-border text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Multi-part
+              </button>
+            </div>
             <select
               value={signMech}
               onChange={(e) => {
@@ -208,17 +238,59 @@ const RsaPanel = () => {
                 </option>
               ))}
             </select>
-            <input
-              type="text"
-              value={message}
-              onChange={(e) => {
-                setMessage(e.target.value)
-                setSig(null)
-                setVerifyResult(null)
-              }}
-              placeholder="Message to sign"
-              className="w-full text-xs rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
-            />
+            {multiPartSign ? (
+              <div className="space-y-1.5">
+                {chunks.map((chunk, idx) => (
+                  <div key={idx} className="flex items-center gap-1.5">
+                    <span className="text-[10px] text-muted-foreground w-4">#{idx + 1}</span>
+                    <input
+                      type="text"
+                      value={chunk}
+                      onChange={(e) => {
+                        setChunks((prev) => prev.map((c, i) => (i === idx ? e.target.value : c)))
+                        setSig(null)
+                        setVerifyResult(null)
+                      }}
+                      placeholder={`Chunk ${idx + 1}…`}
+                      className="flex-1 text-xs rounded-lg px-2 py-1 bg-muted border border-border text-foreground font-mono"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (chunks.length > 1) {
+                          setChunks((prev) => prev.filter((_, i) => i !== idx))
+                          setSig(null)
+                          setVerifyResult(null)
+                        }
+                      }}
+                      disabled={chunks.length <= 1}
+                      className="text-muted-foreground hover:text-status-error disabled:opacity-30"
+                    >
+                      <X size={10} />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setChunks((prev) => [...prev, ''])}
+                  className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+                >
+                  <Plus size={10} /> Add chunk
+                </button>
+              </div>
+            ) : (
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => {
+                  setMessage(e.target.value)
+                  setSig(null)
+                  setVerifyResult(null)
+                }}
+                placeholder="Message to sign"
+                className="w-full text-xs rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
+              />
+            )}
             <div className="flex gap-2">
               <Button
                 variant="gradient"
@@ -226,7 +298,8 @@ const RsaPanel = () => {
                 onClick={handleSign}
                 disabled={loadingOp !== null}
               >
-                {loadingOp === 'Sign' && <Loader2 size={14} className="animate-spin mr-1" />} C_Sign
+                {loadingOp === 'Sign' && <Loader2 size={14} className="animate-spin mr-1" />}
+                {multiPartSign ? 'C_SignUpdate' : 'C_Sign'}
               </Button>
               <Button
                 variant="outline"
@@ -319,6 +392,10 @@ const EcdsaPanel = () => {
   const [loadingOp, setLoadingOp] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  // Multi-part state
+  const [multiPartSign, setMultiPartSign] = useState(false)
+  const [chunks, setChunks] = useState<string[]>(['Hello from ', 'ECDSA!'])
+
   const run = async (label: string, fn: () => void) => {
     setError(null)
     setLoadingOp(label)
@@ -369,8 +446,14 @@ const EcdsaPanel = () => {
     run('Sign', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const s = hsm_ecdsaSign(M, hSession, handles!.priv, message, mech)
-      setSig(s)
+      if (multiPartSign) {
+        const encodedChunks = chunks.map((c) => new TextEncoder().encode(c))
+        const s = hsm_signMultiPart(M, hSession, handles!.priv, encodedChunks, mech)
+        setSig(s)
+      } else {
+        const s = hsm_ecdsaSign(M, hSession, handles!.priv, message, mech)
+        setSig(s)
+      }
       setVerifyResult(null)
     })
 
@@ -378,7 +461,8 @@ const EcdsaPanel = () => {
     run('Verify', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const valid = hsm_ecdsaVerify(M, hSession, handles!.pub, message, sig!, mech)
+      const fullMsg = multiPartSign ? chunks.join('') : message
+      const valid = hsm_ecdsaVerify(M, hSession, handles!.pub, fullMsg, sig!, mech)
       setVerifyResult(valid)
     })
 
@@ -424,6 +508,24 @@ const EcdsaPanel = () => {
 
       {handles && (
         <div className="space-y-2 rounded-lg border border-border p-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Mechanism</span>
+            <button
+              type="button"
+              onClick={() => {
+                setMultiPartSign((v) => !v)
+                setSig(null)
+                setVerifyResult(null)
+              }}
+              className={`text-[10px] rounded-lg px-2 py-0.5 border transition-colors ${
+                multiPartSign
+                  ? 'bg-primary/20 border-primary text-primary'
+                  : 'bg-muted border-border text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Multi-part
+            </button>
+          </div>
           <select
             value={mech}
             onChange={(e) => {
@@ -439,20 +541,63 @@ const EcdsaPanel = () => {
               </option>
             ))}
           </select>
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => {
-              setMessage(e.target.value)
-              setSig(null)
-              setVerifyResult(null)
-            }}
-            placeholder="Message to sign"
-            className="w-full text-xs rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
-          />
+          {multiPartSign ? (
+            <div className="space-y-1.5">
+              {chunks.map((chunk, idx) => (
+                <div key={idx} className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-muted-foreground w-4">#{idx + 1}</span>
+                  <input
+                    type="text"
+                    value={chunk}
+                    onChange={(e) => {
+                      setChunks((prev) => prev.map((c, i) => (i === idx ? e.target.value : c)))
+                      setSig(null)
+                      setVerifyResult(null)
+                    }}
+                    placeholder={`Chunk ${idx + 1}…`}
+                    className="flex-1 text-xs rounded-lg px-2 py-1 bg-muted border border-border text-foreground font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (chunks.length > 1) {
+                        setChunks((prev) => prev.filter((_, i) => i !== idx))
+                        setSig(null)
+                        setVerifyResult(null)
+                      }
+                    }}
+                    disabled={chunks.length <= 1}
+                    className="text-muted-foreground hover:text-status-error disabled:opacity-30"
+                  >
+                    <X size={10} />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setChunks((prev) => [...prev, ''])}
+                className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+              >
+                <Plus size={10} /> Add chunk
+              </button>
+            </div>
+          ) : (
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => {
+                setMessage(e.target.value)
+                setSig(null)
+                setVerifyResult(null)
+              }}
+              placeholder="Message to sign"
+              className="w-full text-xs rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
+            />
+          )}
           <div className="flex gap-2">
             <Button variant="gradient" size="sm" onClick={handleSign} disabled={loadingOp !== null}>
-              {loadingOp === 'Sign' && <Loader2 size={14} className="animate-spin mr-1" />} C_Sign
+              {loadingOp === 'Sign' && <Loader2 size={14} className="animate-spin mr-1" />}
+              {multiPartSign ? 'C_SignUpdate' : 'C_Sign'}
             </Button>
             <Button
               variant="outline"

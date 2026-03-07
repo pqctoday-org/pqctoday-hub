@@ -277,7 +277,6 @@ export interface AlgorithmSizeProfile {
   algorithm: string
   publicKeyBytes: number
   signatureOrCiphertextBytes: number
-  nistLevel: number
   suitableForCard: boolean
   suitableForTerminal: boolean
   notes: string

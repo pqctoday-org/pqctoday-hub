@@ -243,7 +243,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'Remote attestation and secure boot chain-of-trust verification',
     quantumStatus: 'vulnerable',
     recommendation:
-      'TPM 3.0 specification adds ML-DSA support; plan firmware upgrades or hardware replacement for long-lived devices',
+      'Future TPM specifications with PQC support are in development by TCG; plan firmware upgrades or hardware replacement for long-lived devices',
     infrastructureLayer: 'Hardware',
   },
 ]

@@ -11,7 +11,7 @@ import {
 } from '../utils/analytics'
 import { LEARN_SECTIONS } from '../components/PKILearning/moduleData'
 
-const MODULE_STORE_VERSION = 8
+const MODULE_STORE_VERSION = 10
 
 // Ephemeral session tracker — NOT in Zustand state, intentionally non-persisted.
 // Set when a module mounts, cleared when it unmounts or the page unloads.
@@ -35,6 +35,8 @@ interface ModuleState extends LearningProgress {
   addCertificate: (cert: LearningProgress['artifacts']['certificates'][0]) => void
   addCSR: (csr: LearningProgress['artifacts']['csrs'][0]) => void
   addExecutiveDocument: (doc: ExecutiveDocument) => void
+  updateExecutiveDocument: (id: string, updates: Partial<Omit<ExecutiveDocument, 'id'>>) => void
+  deleteExecutiveDocument: (id: string) => void
   mergeCorrectQuestionIds: (ids: string[]) => void
   trackDailyVisit: () => void
 }
@@ -252,10 +254,38 @@ export const useModuleStore = create<ModuleState>()(
 
       addExecutiveDocument: (doc) => {
         logArtifactGenerated('learning', 'executive-document')
+        set((state) => {
+          const existing = state.artifacts.executiveDocuments ?? []
+          // Replace existing doc of same module+type, or append if new
+          const idx = existing.findIndex((d) => d.moduleId === doc.moduleId && d.type === doc.type)
+          const updated =
+            idx >= 0 ? existing.map((d, i) => (i === idx ? doc : d)) : [...existing, doc]
+          return {
+            artifacts: { ...state.artifacts, executiveDocuments: updated },
+            timestamp: Date.now(),
+          }
+        })
+      },
+
+      updateExecutiveDocument: (id, updates) => {
         set((state) => ({
           artifacts: {
             ...state.artifacts,
-            executiveDocuments: [...(state.artifacts.executiveDocuments ?? []), doc],
+            executiveDocuments: (state.artifacts.executiveDocuments ?? []).map((doc) =>
+              doc.id === id ? { ...doc, ...updates, id: doc.id } : doc
+            ),
+          },
+          timestamp: Date.now(),
+        }))
+      },
+
+      deleteExecutiveDocument: (id) => {
+        set((state) => ({
+          artifacts: {
+            ...state.artifacts,
+            executiveDocuments: (state.artifacts.executiveDocuments ?? []).filter(
+              (doc) => doc.id !== id
+            ),
           },
           timestamp: Date.now(),
         }))
@@ -495,6 +525,32 @@ export const useModuleStore = create<ModuleState>()(
             state.sessionTracking.lastGapDays = 0
           }
           state.version = '8.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 8 → Version 9: Deduplicate executiveDocuments (keep latest per moduleId+type)
+        if (version <= 8) {
+          if (Array.isArray(state.artifacts?.executiveDocuments)) {
+            const seen = new Map<string, number>()
+            const deduped: typeof state.artifacts.executiveDocuments = []
+            // Iterate in reverse to keep latest (highest createdAt / last appended)
+            for (let i = state.artifacts.executiveDocuments.length - 1; i >= 0; i--) {
+              const d = state.artifacts.executiveDocuments[i]
+              const key = `${d.moduleId}::${d.type}`
+              if (!seen.has(key)) {
+                seen.set(key, i)
+                deduped.unshift(d)
+              }
+            }
+            state.artifacts.executiveDocuments = deduped
+          }
+          state.version = '9.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 9 → Version 10: Add platform-eng-pqc module (auto-initialises via defaults)
+        if (version <= 9) {
+          state.version = '10.0.0'
           state.timestamp = Date.now()
         }
 

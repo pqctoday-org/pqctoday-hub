@@ -2,6 +2,28 @@
 import React, { useState, useCallback } from 'react'
 import { Loader2, Play, CheckCircle, XCircle, Lock, PenTool } from 'lucide-react'
 import { hybridCryptoService, type HybridKemResult } from '../services/HybridCryptoService'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import {
+  hsm_generateECKeyPair,
+  hsm_generateMLKEMKeyPair,
+  hsm_extractECPoint,
+  hsm_ecdhDerive,
+  hsm_encapsulate,
+  hsm_decapsulate,
+  hsm_hkdf,
+  hsm_extractKeyValue,
+  CKM_SHA256_HMAC,
+} from '@/wasm/softhsm'
+
+const HYBRID_LIVE_OPERATIONS = [
+  'C_GenerateKeyPair',
+  'C_GetAttributeValue',
+  'C_DeriveKey',
+  'C_EncapsulateKey',
+  'C_DecapsulateKey',
+]
 
 interface HybridEncryptionDemoProps {
   initialMode?: 'kem' | 'signature'
@@ -217,6 +239,98 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
 
   const handleRun = mode === 'kem' ? runKemDemo : runSignatureDemo
 
+  // Live HSM hybrid KEM
+  const hsm = useHSM()
+  const [liveLines, setLiveLines] = useState<string[]>([])
+  const [liveRunning, setLiveRunning] = useState(false)
+  const [liveError, setLiveError] = useState<string | null>(null)
+
+  const runLiveHybridKem = useCallback(async () => {
+    if (!hsm.moduleRef.current) return
+    setLiveRunning(true)
+    setLiveLines([])
+    setLiveError(null)
+    hsm.clearLog()
+
+    const addLine = (line: string) => setLiveLines((prev) => [...prev, line])
+
+    try {
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
+
+      // ── ECDH leg (P-256) ───────────────────────────────────────────────
+      // Alice's EC key pair
+      const alice = hsm_generateECKeyPair(M, hSession, 'P-256')
+      const alicePoint = hsm_extractECPoint(M, hSession, alice.pubHandle)
+      addLine(
+        `Alice EC: C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, P-256) → pub=${alicePoint.length} B`
+      )
+
+      // Bob's EC key pair
+      const bob = hsm_generateECKeyPair(M, hSession, 'P-256')
+      const bobPoint = hsm_extractECPoint(M, hSession, bob.pubHandle)
+      addLine(`Bob EC: C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, P-256) → pub=${bobPoint.length} B`)
+
+      // ECDH derivation — both sides must get the same shared secret
+      const aliceECDHHandle = hsm_ecdhDerive(M, hSession, alice.privHandle, bobPoint)
+      const bobECDHHandle = hsm_ecdhDerive(M, hSession, bob.privHandle, alicePoint)
+      const aliceECDH = hsm_extractKeyValue(M, hSession, aliceECDHHandle)
+      const bobECDH = hsm_extractKeyValue(M, hSession, bobECDHHandle)
+      const ecdhMatch =
+        aliceECDH.length === bobECDH.length && aliceECDH.every((b, i) => b === bobECDH[i])
+      addLine(
+        `ECDH: C_DeriveKey(CKM_ECDH1_DERIVE) × 2 → ${aliceECDH.length} B each, match=${ecdhMatch ? '✓' : '✗'}`
+      )
+
+      // ── ML-KEM leg (768) ────────────────────────────────────────────────
+      const kem = hsm_generateMLKEMKeyPair(M, hSession, 768)
+      const kemPubBytes = hsm_extractKeyValue(M, hSession, kem.pubHandle)
+      addLine(
+        `ML-KEM: C_GenerateKeyPair(CKM_ML_KEM_KEY_PAIR_GEN, CKP_ML_KEM_768) → pub=${kemPubBytes.length} B`
+      )
+
+      const { ciphertextBytes, secretHandle } = hsm_encapsulate(M, hSession, kem.pubHandle, 768)
+      const kemSS = hsm_extractKeyValue(M, hSession, secretHandle)
+      addLine(
+        `Encaps: C_EncapsulateKey(CKM_ML_KEM) → ct=${ciphertextBytes.length} B, ss=${kemSS.length} B`
+      )
+
+      const recoveredHandle = hsm_decapsulate(M, hSession, kem.privHandle, ciphertextBytes, 768)
+      const recoveredKemSS = hsm_extractKeyValue(M, hSession, recoveredHandle)
+      const kemMatch =
+        kemSS.length === recoveredKemSS.length && kemSS.every((b, i) => b === recoveredKemSS[i])
+      addLine(
+        `Decaps: C_DecapsulateKey(CKM_ML_KEM) → ${recoveredKemSS.length} B, match=${kemMatch ? '✓' : '✗'}`
+      )
+
+      // ── HKDF combine ─────────────────────────────────────────────────────
+      const info = new TextEncoder().encode('X-Wing-hybrid-KEM-v1')
+      const hybridKey = hsm_hkdf(
+        M,
+        hSession,
+        aliceECDHHandle,
+        CKM_SHA256_HMAC,
+        true,
+        true,
+        kemSS,
+        info,
+        32
+      )
+      addLine(
+        `HKDF: C_DeriveKey(CKM_HKDF_DERIVE, salt=ML-KEM_ss, info="X-Wing-hybrid-KEM-v1") → ${hybridKey.length} B hybrid key`
+      )
+      addLine(
+        `Result: hybrid_key[0..7] = ${Array.from(hybridKey.slice(0, 8))
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('')}…`
+      )
+    } catch (e) {
+      setLiveError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setLiveRunning(false)
+    }
+  }, [hsm])
+
   const truncateHex = (hex: string, max = 64): string => {
     if (hex.length <= max) return hex
     return hex.slice(0, max) + '\u2026'
@@ -233,6 +347,53 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
           operations. Compare pure PQC against hybrid to see performance and correctness.
         </p>
       </div>
+
+      {/* Live HSM Hybrid KEM Demo */}
+      <LiveHSMToggle hsm={hsm} operations={HYBRID_LIVE_OPERATIONS} />
+
+      {hsm.isReady && (
+        <div className="glass-panel p-4 space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-semibold">Run ECDH + ML-KEM Hybrid KEM (X-Wing Style)</p>
+            <button
+              onClick={runLiveHybridKem}
+              disabled={liveRunning}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
+            >
+              {liveRunning ? (
+                <>
+                  <Loader2 size={11} className="animate-spin" /> Running…
+                </>
+              ) : (
+                'Execute (Live WASM)'
+              )}
+            </button>
+          </div>
+
+          {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
+
+          {liveLines.length > 0 && (
+            <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 space-y-1">
+              {liveLines.map((line, i) => (
+                <p key={i} className="text-xs font-mono text-foreground/80 break-all">
+                  {line}
+                </p>
+              ))}
+              <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
+                Real output from SoftHSM3 WASM · PKCS#11 v3.2
+              </p>
+            </div>
+          )}
+
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            defaultOpen={true}
+            title="PKCS#11 Call Log — Hybrid KEM"
+            emptyMessage="Click 'Execute' to run the hybrid KEM flow."
+          />
+        </div>
+      )}
 
       {/* Mode toggle */}
       <div className="flex gap-2">

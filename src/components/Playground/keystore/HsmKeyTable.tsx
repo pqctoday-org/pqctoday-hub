@@ -4,10 +4,15 @@
  * All keys are session objects (non-persistent) — no export/download.
  */
 import { useState } from 'react'
-import { Eye, Key as KeyIcon, Lock, X } from 'lucide-react'
+import { Eye, Key as KeyIcon, Lock, RefreshCw, Trash2, X } from 'lucide-react'
 import { Button } from '../../ui/button'
-import { useHsmContext, type HsmKey } from '../hsm/HsmContext'
-import { hsm_getKeyAttributes, type KeyAttributeSet } from '../../../wasm/softhsm'
+import { useHsmContext, type HsmKey, type HsmFamily, type HsmKeyRole } from '../hsm/HsmContext'
+import {
+  hsm_getKeyAttributes,
+  hsm_destroyObject,
+  hsm_findAllObjects,
+  type KeyAttributeSet,
+} from '../../../wasm/softhsm'
 
 // ── Attribute display helpers ─────────────────────────────────────────────────
 
@@ -28,6 +33,25 @@ const CKK_NAMES: Record<number, string> = {
   0x49: 'CKK_ML_KEM',
   0x4a: 'CKK_ML_DSA',
   0x4b: 'CKK_SLH_DSA',
+}
+
+// ── Auto-detect family/role from PKCS#11 attributes ──────────────────────────
+
+const CKK_TO_FAMILY: Record<number, HsmFamily> = {
+  0x00: 'rsa',
+  0x03: 'ecdsa',
+  0x10: 'hmac',
+  0x1f: 'aes',
+  0x40: 'eddsa',
+  0x49: 'ml-kem',
+  0x4a: 'ml-dsa',
+  0x4b: 'slh-dsa',
+}
+
+const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
+  0x02: 'public',
+  0x03: 'private',
+  0x04: 'secret',
 }
 
 const fmtUlong = (v: number | null, names: Record<number, string>): string => {
@@ -155,9 +179,12 @@ const ROLE_COLORS: Record<string, string> = {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export const HsmKeyTable = () => {
-  const { hsmKeys, moduleRef, hSessionRef } = useHsmContext()
+  const { hsmKeys, moduleRef, hSessionRef, addHsmKey, removeHsmKey } = useHsmContext()
   const [inspectedKey, setInspectedKey] = useState<HsmKey | null>(null)
   const [attrs, setAttrs] = useState<KeyAttributeSet | null>(null)
+  const [confirmHandle, setConfirmHandle] = useState<number | null>(null)
+  const [discoverCount, setDiscoverCount] = useState<number | null>(null)
+  const [discovering, setDiscovering] = useState(false)
 
   const openInspect = (key: HsmKey) => {
     const M = moduleRef.current
@@ -172,12 +199,72 @@ export const HsmKeyTable = () => {
     }
   }
 
+  const destroyKey = (handle: number) => {
+    const M = moduleRef.current
+    const hSession = hSessionRef.current
+    if (!M || !hSession) return
+    try {
+      hsm_destroyObject(M, hSession, handle)
+      removeHsmKey(handle)
+    } catch {
+      // key may already be destroyed
+    }
+    setConfirmHandle(null)
+  }
+
+  const discoverObjects = () => {
+    const M = moduleRef.current
+    const hSession = hSessionRef.current
+    if (!M || !hSession) return
+    setDiscovering(true)
+    try {
+      const handles = hsm_findAllObjects(M, hSession, [])
+      const knownHandles = new Set(hsmKeys.map((k) => k.handle))
+      let added = 0
+      for (const h of handles) {
+        if (knownHandles.has(h)) continue
+        try {
+          const a = hsm_getKeyAttributes(M, hSession, h)
+          const family: HsmFamily =
+            a.ckKeyType !== null ? (CKK_TO_FAMILY[a.ckKeyType] ?? 'aes') : 'aes'
+          const role: HsmKeyRole =
+            a.ckClass !== null ? (CKO_TO_ROLE[a.ckClass] ?? 'secret') : 'secret'
+          const typeName = a.ckKeyType !== null ? (CKK_NAMES[a.ckKeyType] ?? 'Unknown') : 'Unknown'
+          addHsmKey({
+            handle: h,
+            family,
+            role,
+            label: `${typeName} (discovered)`,
+            generatedAt: new Date().toLocaleTimeString(),
+          })
+          added++
+        } catch {
+          // skip objects that can't be queried
+        }
+      }
+      setDiscoverCount(added)
+      setTimeout(() => setDiscoverCount(null), 3000)
+    } finally {
+      setDiscovering(false)
+    }
+  }
+
   if (hsmKeys.length === 0) {
     return (
       <div className="glass-panel p-6 flex flex-col items-center gap-2 text-muted-foreground">
         <Lock size={28} className="opacity-30" />
         <p className="text-sm">No HSM keys generated yet.</p>
         <p className="text-xs">Use the KEM or Sign tabs to generate key pairs.</p>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="mt-2 text-xs"
+          onClick={discoverObjects}
+          disabled={discovering}
+        >
+          <RefreshCw size={12} className={discovering ? 'animate-spin mr-1.5' : 'mr-1.5'} />
+          Discover Objects
+        </Button>
       </div>
     )
   }
@@ -185,10 +272,32 @@ export const HsmKeyTable = () => {
   return (
     <>
       <div className="glass-panel p-4 space-y-3">
-        <h3 className="font-semibold text-sm flex items-center gap-2">
-          <KeyIcon size={14} className="text-primary" /> HSM Key Registry
-          <span className="text-xs text-muted-foreground font-normal">({hsmKeys.length} keys)</span>
-        </h3>
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-sm flex items-center gap-2">
+            <KeyIcon size={14} className="text-primary" /> HSM Key Registry
+            <span className="text-xs text-muted-foreground font-normal">
+              ({hsmKeys.length} keys)
+            </span>
+          </h3>
+          <div className="flex items-center gap-2">
+            {discoverCount !== null && (
+              <span className="text-xs text-status-success animate-fade-in">
+                +{discoverCount} discovered
+              </span>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 text-xs"
+              onClick={discoverObjects}
+              disabled={discovering}
+              aria-label="Discover PKCS#11 objects"
+            >
+              <RefreshCw size={12} className={discovering ? 'animate-spin mr-1.5' : 'mr-1.5'} />
+              Discover
+            </Button>
+          </div>
+        </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-xs border-collapse">
@@ -198,7 +307,8 @@ export const HsmKeyTable = () => {
                 <th className="text-left py-1.5 pr-4 font-medium">Handle</th>
                 <th className="text-left py-1.5 pr-4 font-medium">Label</th>
                 <th className="text-left py-1.5 pr-4 font-medium">Role</th>
-                <th className="text-left py-1.5 font-medium">Generated</th>
+                <th className="text-left py-1.5 pr-4 font-medium">Generated</th>
+                <th className="text-left py-1.5 font-medium w-8" />
               </tr>
             </thead>
             <tbody className="font-mono">
@@ -219,7 +329,37 @@ export const HsmKeyTable = () => {
                   <td className={`py-1.5 pr-4 font-sans ${ROLE_COLORS[k.role] ?? ''}`}>
                     {ROLE_LABELS[k.role] ?? k.role}
                   </td>
-                  <td className="py-1.5 text-muted-foreground">{k.generatedAt}</td>
+                  <td className="py-1.5 pr-4 text-muted-foreground">{k.generatedAt}</td>
+                  <td className="py-1 pl-1">
+                    {confirmHandle === k.handle ? (
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => destroyKey(k.handle)}
+                          className="text-status-error text-[10px] font-sans font-medium hover:underline"
+                          aria-label={`Confirm destroy key ${k.handle}`}
+                        >
+                          destroy?
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmHandle(null)}
+                          className="text-muted-foreground text-[10px] font-sans hover:underline"
+                        >
+                          cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setConfirmHandle(k.handle)}
+                        className="text-muted-foreground hover:text-status-error transition-colors p-0.5 rounded"
+                        aria-label={`Delete key ${k.handle}`}
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

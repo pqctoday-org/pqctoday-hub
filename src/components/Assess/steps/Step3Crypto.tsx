@@ -165,7 +165,8 @@ const Step3Crypto = () => {
     }
   }
 
-  const isDisabled = cryptoUnknown
+  const industry = useAssessmentStore((s) => s.industry)
+  const isDisabled = false // smart defaults keep options interactive
 
   return (
     <div className="space-y-4">
@@ -179,7 +180,7 @@ const Step3Crypto = () => {
 
       <PersonaHint stepKey="crypto" />
 
-      {/* I don't know escape hatch */}
+      {/* Smart defaults escape hatch */}
       <Button
         variant="ghost"
         aria-pressed={cryptoUnknown}
@@ -191,8 +192,14 @@ const Step3Crypto = () => {
             : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
       >
-        <Info size={14} className="shrink-0" />I don&apos;t know / Not sure what algorithms we use
+        <Info size={14} className="shrink-0" />
+        I&apos;m not sure — help me choose
       </Button>
+      {cryptoUnknown && (
+        <p className="text-xs text-muted-foreground italic">
+          Recommended for {industry || 'your industry'}. You can adjust any selection.
+        </p>
+      )}
 
       {/* Category cards — multi-select */}
       <div

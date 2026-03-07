@@ -42,6 +42,13 @@ const EDGE_STYLES: Record<
   'leader-country': { stroke: 'hsl(var(--accent))', strokeWidth: 1 },
   'source-feeds': { stroke: 'hsl(var(--secondary))', strokeDasharray: '5 3', strokeWidth: 1 },
   'software-teaches': { stroke: 'hsl(var(--success))', strokeDasharray: '2 2', strokeWidth: 1.5 },
+  'module-in-track': { stroke: 'hsl(var(--warning))', strokeDasharray: '4 2', strokeWidth: 1.5 },
+  'persona-recommends': { stroke: 'hsl(var(--accent))', strokeDasharray: '6 3', strokeWidth: 1.5 },
+  'threat-targets-algorithm': {
+    stroke: 'hsl(var(--destructive))',
+    strokeDasharray: '3 2',
+    strokeWidth: 2,
+  },
 }
 
 function RelationshipEdgeComponent({

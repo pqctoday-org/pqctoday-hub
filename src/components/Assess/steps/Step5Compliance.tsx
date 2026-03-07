@@ -23,39 +23,9 @@ import {
   type BodyType,
 } from '../../../data/complianceData'
 import { deadlineUrgency, urgencyColor } from '../../../utils/deadlineUrgency'
+import { EU_MEMBER_COUNTRIES } from '../../../utils/euCountries'
 import { Button } from '../../ui/button'
 import { PersonaHint } from './PersonaHint'
-
-// EU member states: frameworks listing "European Union" apply to users in any of these countries
-const EU_MEMBER_COUNTRIES = new Set([
-  'European Union',
-  'France',
-  'Germany',
-  'Italy',
-  'Spain',
-  'Czech Republic',
-  'Netherlands',
-  'Belgium',
-  'Sweden',
-  'Denmark',
-  'Finland',
-  'Ireland',
-  'Portugal',
-  'Austria',
-  'Poland',
-  'Hungary',
-  'Romania',
-  'Bulgaria',
-  'Croatia',
-  'Estonia',
-  'Latvia',
-  'Lithuania',
-  'Luxembourg',
-  'Malta',
-  'Slovakia',
-  'Slovenia',
-  'Cyprus',
-])
 
 const BODY_TYPE_SECTIONS: { bodyType: BodyType; label: string; icon: typeof BookOpen }[] = [
   { bodyType: 'standardization_body', label: 'Standardization Bodies', icon: BookOpen },
@@ -229,10 +199,16 @@ const Step5Compliance = () => {
         )}
       >
         <Info size={14} className="shrink-0" />
-        None apply / I don&apos;t know
+        I&apos;m not sure — help me choose
       </Button>
+      {complianceUnknown && (
+        <p className="text-xs text-muted-foreground italic">
+          Recommended for {industry || 'your industry'}
+          {country && country !== 'Global' ? ` in ${country}` : ''}. You can adjust any selection.
+        </p>
+      )}
 
-      <div className={clsx('space-y-5', complianceUnknown && 'opacity-40 pointer-events-none')}>
+      <div className="space-y-5">
         {industry && (
           <div className="glass-panel p-3 border-l-4 border-l-primary">
             <div className="flex items-center gap-2">

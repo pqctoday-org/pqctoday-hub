@@ -40,9 +40,9 @@ const DATA_FOUNDATION = [
   { dataset: 'Migrate Products', records: 331, sources: '7 infrastructure layers' },
   { dataset: 'Threat Landscape', records: 79, sources: '8+ industry sectors' },
   { dataset: 'Industry Leaders', records: 103, sources: 'Public, Private, Academic' },
-  { dataset: 'Quiz Questions', records: 546, sources: 'All PQC topic areas' },
+  { dataset: 'Quiz Questions', records: 770, sources: 'All PQC topic areas' },
   { dataset: 'Authoritative Sources', records: 89, sources: 'Gov, Academic, Industry' },
-  { dataset: 'Learning Modules', records: 28, sources: '2,000+ min of content' },
+  { dataset: 'Learning Modules', records: 48, sources: '3,000+ min of content' },
 ]
 
 const DISCUSSIONS_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions/'
@@ -121,11 +121,11 @@ export function AboutView() {
               before harvest-now-decrypt-later attacks become viable.
             </p>
             <p className="text-muted-foreground mt-4">
-              Everything here is free, transparent, and built in the open &mdash; 27 learning
-              modules, 530+ quiz questions, hands-on cryptographic labs, a guided migration catalog,
-              global compliance tracking, and a risk assessment wizard, all powered by real
-              implementations running directly in your browser. No accounts, no paywalls, no vendor
-              lock-in.
+              Everything here is free, transparent, and built in the open &mdash; 48 learning
+              modules across 8 tracks, 770+ quiz questions, hands-on cryptographic labs, a guided
+              migration catalog, global compliance tracking, and a risk assessment wizard, all
+              powered by real implementations running directly in your browser. No accounts, no
+              paywalls, no vendor lock-in.
             </p>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4">
               <p className="text-muted-foreground">
@@ -598,8 +598,11 @@ export function AboutView() {
               </li>
               <li>
                 <strong className="text-foreground">No third-party services at runtime</strong>
-                &mdash; no external APIs are called at runtime. The site is served as static files
-                from GitHub Pages.
+                &mdash; the site is served as static files from GitHub Pages and makes no external
+                API calls at runtime &mdash; <em>except</em> when you use the PQC Assistant, which
+                sends your query and retrieved context chunks to{' '}
+                <strong className="text-foreground">Google&apos;s Gemini API</strong>. See the PQC
+                Assistant section below for details.
               </li>
               <li>
                 <strong className="text-foreground">Full transparency</strong> &mdash; the entire
@@ -741,7 +744,7 @@ export function AboutView() {
               The PQC Assistant chatbot uses{' '}
               <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong> to
               deliver grounded, sourced answers about post-quantum cryptography. When you ask a
-              question, it searches a curated corpus of ~2,800 PQC knowledge chunks &mdash; covering
+              question, it searches a curated corpus of ~3,200 PQC knowledge chunks &mdash; covering
               algorithms, standards, threats, compliance certifications, migration products,
               leaders, and learning modules &mdash; retrieves the 10&ndash;20 most relevant passages
               (adaptive per query intent), and injects them as context into a{' '}
@@ -763,6 +766,25 @@ export function AboutView() {
               server other than Google&apos;s Gemini API. You can obtain a free API key from Google
               AI Studio in seconds.
             </p>
+            <div className="mt-4 flex items-start gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
+              <ShieldAlert className="text-amber-500 mt-0.5 shrink-0" size={16} />
+              <p className="text-xs text-muted-foreground">
+                <strong className="text-foreground">Data routing notice:</strong> When you submit a
+                question, your query text and the retrieved context chunks are sent to{' '}
+                <strong className="text-foreground">Google&apos;s servers</strong> for processing by
+                the Gemini 2.5 Flash model. Do not include sensitive, confidential, or personal
+                information in your queries.{' '}
+                <a
+                  href="https://ai.google.dev/gemini-api/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Google AI Studio terms
+                </a>{' '}
+                apply.
+              </p>
+            </div>
           </div>
 
           {/* Capability Cards */}
@@ -804,7 +826,7 @@ export function AboutView() {
             <h3 className="text-sm font-semibold text-muted-foreground mb-2">Limitations</h3>
             <ul className="space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
               <li>
-                Knowledge is bounded by the curated corpus (~2,800 chunks) &mdash; niche or very
+                Knowledge is bounded by the curated corpus (~3,200 chunks) &mdash; niche or very
                 recent topics may lack coverage
               </li>
               <li>

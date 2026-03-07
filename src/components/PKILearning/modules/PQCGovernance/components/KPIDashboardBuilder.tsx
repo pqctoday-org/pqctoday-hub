@@ -95,7 +95,7 @@ export const KPIDashboardBuilder: React.FC = () => {
       }
 
       addExecutiveDocument({
-        id: `kpi-dashboard-${Date.now()}`,
+        id: 'kpi-dashboard-pqc-governance',
         moduleId: 'pqc-governance',
         type: 'kpi-dashboard',
         title: 'PQC Governance KPI Dashboard',

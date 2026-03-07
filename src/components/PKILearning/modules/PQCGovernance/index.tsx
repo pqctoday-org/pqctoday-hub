@@ -8,6 +8,7 @@ import { RACIBuilder } from './components/RACIBuilder'
 import { PolicyTemplateGenerator } from './components/PolicyTemplateGenerator'
 import { KPIDashboardBuilder } from './components/KPIDashboardBuilder'
 import { useModuleStore } from '@/store/useModuleStore'
+import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
@@ -121,11 +122,10 @@ const GovernanceExercises: React.FC = () => {
 }
 
 export const PQCGovernanceModule: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(() => {
-    const tab = new URLSearchParams(window.location.search).get('tab')
-    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
-  })
-  const [currentPart, setCurrentPart] = useState(0)
+  const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
+  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
+  const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
+  useSyncDeepLink(activeTab, currentPart)
   const startTimeRef = useRef(0)
   const { updateModuleProgress, markStepComplete } = useModuleStore()
 

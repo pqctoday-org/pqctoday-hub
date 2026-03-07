@@ -440,7 +440,6 @@ export const CardProvisioningVisualizer: React.FC = () => {
                 <th className="text-left p-3 text-muted-foreground font-medium">Algorithm</th>
                 <th className="text-right p-3 text-muted-foreground font-medium">Public Key</th>
                 <th className="text-right p-3 text-muted-foreground font-medium">Sig / CT</th>
-                <th className="text-center p-3 text-muted-foreground font-medium">NIST Level</th>
                 <th className="text-center p-3 text-muted-foreground font-medium">Card</th>
                 <th className="text-center p-3 text-muted-foreground font-medium">Terminal</th>
               </tr>
@@ -455,7 +454,6 @@ export const CardProvisioningVisualizer: React.FC = () => {
                   <td className="p-3 text-right text-muted-foreground">
                     {formatBytes(alg.signatureOrCiphertextBytes)}
                   </td>
-                  <td className="p-3 text-center text-muted-foreground">{alg.nistLevel || '--'}</td>
                   <td className="p-3 text-center">
                     {alg.suitableForCard ? (
                       <ShieldCheck size={14} className="mx-auto text-status-success" />

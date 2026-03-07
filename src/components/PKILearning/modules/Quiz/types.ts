@@ -47,6 +47,13 @@ export type QuizCategory =
   | 'automotive-pqc'
   | 'crypto-dev-apis'
   | 'confidential-computing'
+  | 'platform-eng-pqc'
+  | 'secrets-management-pqc'
+  | 'network-security-pqc'
+  | 'database-encryption-pqc'
+  | 'iam-pqc'
+  | 'secure-boot-pqc'
+  | 'os-pqc'
 
 export interface QuizOption {
   id: string

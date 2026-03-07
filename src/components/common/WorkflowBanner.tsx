@@ -4,13 +4,16 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { ArrowRight, X, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useMigrationWorkflowStore, WORKFLOW_PHASES } from '@/store/useMigrationWorkflowStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { PERSONA_WORKFLOW_LABELS } from '@/data/personaConfig'
 import { cn } from '@/lib/utils'
 
-const RELEVANT_ROUTES = ['/assess', '/report', '/compliance', '/migrate', '/timeline']
+const RELEVANT_ROUTES = ['/assess', '/report', '/compliance', '/migrate', '/timeline', '/business']
 
 export const WorkflowBanner: React.FC = () => {
   const { workflowActive, currentPhase, completedPhases, completedAt, dismissWorkflow } =
     useMigrationWorkflowStore()
+  const persona = usePersonaStore((s) => s.selectedPersona)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -21,6 +24,16 @@ export const WorkflowBanner: React.FC = () => {
   const currentPhaseConfig = WORKFLOW_PHASES[currentIndex]
   const nextPhase = WORKFLOW_PHASES[currentIndex + 1]
   const isComplete = completedAt !== null
+
+  // Persona-aware phase label (falls back to default)
+  const getPhaseLabel = (phaseId: string) => {
+    if (persona) {
+      const labels = PERSONA_WORKFLOW_LABELS[persona] // eslint-disable-line security/detect-object-injection
+      const label = labels?.[phaseId as keyof typeof labels]
+      if (label) return label
+    }
+    return WORKFLOW_PHASES.find((p) => p.id === phaseId)?.label ?? phaseId
+  }
 
   const handleNext = () => {
     if (nextPhase) {
@@ -52,7 +65,7 @@ export const WorkflowBanner: React.FC = () => {
                     isCurrent && 'bg-primary ring-2 ring-primary/30',
                     !isCompleted && !isCurrent && 'bg-muted'
                   )}
-                  aria-label={`${phase.label} — ${isCompleted ? 'completed' : isCurrent ? 'current' : 'pending'}`}
+                  aria-label={`${getPhaseLabel(phase.id)} — ${isCompleted ? 'completed' : isCurrent ? 'current' : 'pending'}`}
                 />
               )
             })}
@@ -71,7 +84,7 @@ export const WorkflowBanner: React.FC = () => {
                 Step {currentIndex + 1}/{WORKFLOW_PHASES.length}:
               </span>
               <span className="text-sm font-medium text-foreground truncate">
-                {currentPhaseConfig?.label}
+                {currentPhaseConfig ? getPhaseLabel(currentPhaseConfig.id) : ''}
               </span>
             </div>
           )}
@@ -81,7 +94,7 @@ export const WorkflowBanner: React.FC = () => {
         <div className="flex items-center gap-2 flex-shrink-0">
           {!isComplete && nextPhase && (
             <Button variant="outline" size="sm" onClick={handleNext}>
-              <span className="hidden sm:inline">Next: {nextPhase.label}</span>
+              <span className="hidden sm:inline">Next: {getPhaseLabel(nextPhase.id)}</span>
               <span className="sm:hidden">Next</span>
               <ArrowRight size={14} className="ml-1" />
             </Button>

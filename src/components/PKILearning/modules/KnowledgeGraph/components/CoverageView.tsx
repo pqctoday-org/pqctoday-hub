@@ -37,6 +37,8 @@ const TYPE_LABELS: Record<EntityType, string> = {
   country: 'Countries',
   source: 'Sources',
   algorithm: 'Algorithms',
+  track: 'Learning Tracks',
+  persona: 'Learning Personas',
 }
 
 function buildClusterGraph(graph: KnowledgeGraph): {

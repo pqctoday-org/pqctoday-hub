@@ -71,7 +71,7 @@ const featureSlides: Slide[] = [
     icon: GraduationCap,
     title: 'Learning Modules',
     description:
-      '27 modules from \u201CWhat is PQC?\u201D to migration planning \u2014 follow a guided path or explore at your own pace.',
+      '48 modules across 8 tracks \u2014 from \u201CWhat is PQC?\u201D to migration planning. Follow a guided path or explore at your own pace.',
     route: '/learn',
     path: '/learn',
     essential: true,

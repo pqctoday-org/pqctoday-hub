@@ -28,6 +28,7 @@ import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import debounce from 'lodash/debounce'
 import { logLibrarySearch, logEvent } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { PERSONA_LIBRARY_CATEGORIES } from '../../data/personaConfig'
 
 const URGENCY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -200,7 +201,7 @@ function findByRef(
 
 export const LibraryView: React.FC = () => {
   const [searchParams] = useSearchParams()
-  const { selectedIndustry: storeIndustry } = usePersonaStore()
+  const { selectedIndustry: storeIndustry, selectedPersona } = usePersonaStore()
   const [activeCategory, setActiveCategory] = useState<string>('All')
   const [activeOrg, setActiveOrg] = useState<string>('All')
   const [activeIndustry, setActiveIndustry] = useState<string>(storeIndustry ?? 'All')
@@ -339,31 +340,49 @@ export const LibraryView: React.FC = () => {
     })
   }, [activeCategory, activeOrg, activeIndustry, filterText])
 
-  // Sorted items for card view
+  // Persona-preferred categories for secondary sort boost
+  const preferredCategories = useMemo(() => {
+    if (!selectedPersona) return []
+    return PERSONA_LIBRARY_CATEGORIES[selectedPersona] ?? [] // eslint-disable-line security/detect-object-injection
+  }, [selectedPersona])
+
+  // Sorted items for card view — persona-preferred categories float to top
   const sortedItems = useMemo(() => {
     const items = [...filteredItems]
     switch (sortBy) {
       case 'newest':
-        return items.sort(
+        items.sort(
           (a, b) => new Date(b.lastUpdateDate).getTime() - new Date(a.lastUpdateDate).getTime()
         )
+        break
       case 'name':
-        return items.sort((a, b) => a.documentTitle.localeCompare(b.documentTitle))
+        items.sort((a, b) => a.documentTitle.localeCompare(b.documentTitle))
+        break
       case 'referenceId':
-        return items.sort((a, b) =>
+        items.sort((a, b) =>
           a.referenceId.localeCompare(b.referenceId, undefined, { numeric: true })
         )
-      case 'urgency': {
-        return items.sort((a, b) => {
+        break
+      case 'urgency':
+        items.sort((a, b) => {
           const aOrder = URGENCY_ORDER[a.migrationUrgency] ?? 99
           const bOrder = URGENCY_ORDER[b.migrationUrgency] ?? 99
           return aOrder - bOrder
         })
-      }
-      default:
-        return items
+        break
     }
-  }, [filteredItems, sortBy])
+
+    // Secondary: float persona-preferred categories to top (stable sort)
+    if (preferredCategories.length > 0) {
+      items.sort((a, b) => {
+        const aMatch = a.categories?.some((c) => preferredCategories.includes(c)) ? 0 : 1
+        const bMatch = b.categories?.some((c) => preferredCategories.includes(c)) ? 0 : 1
+        return aMatch - bMatch
+      })
+    }
+
+    return items
+  }, [filteredItems, sortBy, preferredCategories])
 
   const handleExportCsv = useCallback(() => {
     const csv = generateCsv(sortedItems, LIBRARY_CSV_COLUMNS)

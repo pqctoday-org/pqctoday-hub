@@ -9,6 +9,18 @@ import { Loader2, FileSignature, UploadCloud, CheckCircle, PenTool, Lock } from 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { hsm_digest, hsm_generateECKeyPair, hsm_ecdsaSign, CKM_ECDSA_SHA384 } from '@/wasm/softhsm'
+
+const QES_LIVE_OPERATIONS = [
+  'C_DigestInit',
+  'C_Digest',
+  'C_GenerateKeyPair',
+  'C_SignInit',
+  'C_Sign',
+]
 
 interface QESProviderComponentProps {
   wallet: WalletInstance
@@ -22,6 +34,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
     useDigitalIDLogs()
   const [docName, setDocName] = useState('Contract.pdf')
   const [docHash, setDocHash] = useState('')
+  const hsm = useHSM()
 
   const pidCredential = wallet.credentials.find((c) => c.type.includes('PersonIdentificationData'))
 
@@ -46,12 +59,25 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
     addLog('Calculating SHA-256 hash of document (simulated content)...')
 
     try {
-      // Mock hash calculation using crypto utils to show OpenSSL log
-      // We simulate content by just hashing the name + timestamp
       const fileContent = `Content of ${docName} - ${Date.now()}`
-      const hash = await sha256Hash(fileContent, addOpenSSLLog)
-      setDocHash(hash)
-      addLog(`Hash calculated: ${hash.substring(0, 16)}...`)
+
+      if (hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current) {
+        // ── Live HSM Mode: PKCS#11 digest ──
+        const M = hsm.moduleRef.current
+        const hSession = hsm.hSessionRef.current
+        const msgBytes = new TextEncoder().encode(fileContent)
+        const hashBytes = hsm_digest(M, hSession, msgBytes)
+        const hash = Array.from(hashBytes)
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('')
+        setDocHash(hash)
+        addLog(`Hash calculated via C_Digest(CKM_SHA256): ${hash.substring(0, 16)}...`)
+      } else {
+        // ── Software Mode: OpenSSL WASM ──
+        const hash = await sha256Hash(fileContent, addOpenSSLLog)
+        setDocHash(hash)
+        addLog(`Hash calculated: ${hash.substring(0, 16)}...`)
+      }
     } catch (e) {
       addLog(`Error hashing document: ${e}`)
     }
@@ -75,13 +101,41 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
 
     await new Promise((r) => setTimeout(r, 800))
 
-    addLog('Remote HSM: Key loaded (ECC P-384).')
-    addLog('Sole Control Assurance: Validated.')
+    if (hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current) {
+      // ── Live HSM Mode: real PKCS#11 signing ──
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
+      addLog('Remote HSM: Generating ECC P-384 signing key via PKCS#11...')
+      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-384')
+      addLog('Sole Control Assurance: Validated.')
 
-    // Simulate signing log from OpenSSL (even though key is remote/mock)
-    // We'll log a "Remote Sign" event to OpenSSL logs to satisfy the user needing logs
-    addOpenSSLLog(`[Remote HSM] Signing hash: ${docHash.substring(0, 32)}...`)
-    addOpenSSLLog(`[Remote HSM] Algorithm: ecdsa-with-SHA384`)
+      const sig = hsm_ecdsaSign(M, hSession, privHandle, docHash, CKM_ECDSA_SHA384)
+      const sigHex = Array.from(sig)
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+      addLog(`Signed via C_Sign(CKM_ECDSA_SHA384): ${sigHex.substring(0, 40)}...`)
+
+      hsm.addKey({
+        handle: pubHandle,
+        label: 'QES Signing Key (P-384)',
+        family: 'ecdsa',
+        role: 'public',
+        generatedAt: new Date().toISOString(),
+      })
+      hsm.addKey({
+        handle: privHandle,
+        label: 'QES Signing Key (P-384)',
+        family: 'ecdsa',
+        role: 'private',
+        generatedAt: new Date().toISOString(),
+      })
+    } else {
+      // ── Software Mode ──
+      addLog('Remote HSM: Key loaded (ECC P-384).')
+      addLog('Sole Control Assurance: Validated.')
+      addOpenSSLLog(`[Remote HSM] Signing hash: ${docHash.substring(0, 32)}...`)
+      addOpenSSLLog(`[Remote HSM] Algorithm: ecdsa-with-SHA384`)
+    }
 
     addLog('Signature returned by QTSP.')
     setLoading(false)
@@ -98,6 +152,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
         <CardDescription>Sign documents legally using Remote HSM and CSC API</CardDescription>
       </CardHeader>
       <CardContent className="p-6">
+        <LiveHSMToggle hsm={hsm} operations={QES_LIVE_OPERATIONS} className="mb-4" />
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="space-y-6 lg:col-span-2">
             {step === 'UPLOAD' && (
@@ -249,6 +304,14 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
             </div>
           </div>
         </div>
+        {hsm.isReady && (
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log — QES Signing"
+            className="mt-4"
+          />
+        )}
       </CardContent>
     </Card>
   )

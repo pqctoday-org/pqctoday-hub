@@ -151,4 +151,170 @@ describe('useAssessmentEngine / computeAssessment', () => {
     expect(result.migrationEffort).toBeDefined()
     expect(result.categoryScores?.migrationComplexity).toBeDefined()
   })
+
+  // ── Gap verification tests ──
+
+  it('Gap 1: infrastructureSubCategories increases migration complexity', () => {
+    const base = {
+      industry: 'Technology',
+      currentCrypto: ['RSA-2048'],
+      dataSensitivity: ['high'],
+      complianceRequirements: [],
+      migrationStatus: 'planning' as const,
+      infrastructure: ['Cloud Storage', 'HSM / Hardware security modules'],
+      systemCount: '11-50' as const,
+      teamSize: '11-50' as const,
+      timelinePressure: 'within-2-3y' as const,
+      cryptoAgility: 'partially-abstracted' as const,
+      vendorDependency: 'mixed' as const,
+    }
+
+    const withoutSubCats = computeAssessment(base)
+    const withSubCats = computeAssessment({
+      ...base,
+      infrastructureSubCategories: {
+        'Cloud Storage': ['AWS KMS', 'Azure Key Vault', 'GCP Cloud KMS'],
+        'HSM / Hardware security modules': ['Thales Luna', 'Entrust nShield'],
+      },
+    })
+
+    expect(withSubCats.categoryScores!.migrationComplexity).toBeGreaterThan(
+      withoutSubCats.categoryScores!.migrationComplexity
+    )
+    // Sub-category recommendations should appear
+    const subCatActions = withSubCats.recommendedActions.filter((a) =>
+      a.action.includes('sub-systems')
+    )
+    expect(subCatActions.length).toBeGreaterThan(0)
+    // Profile should carry sub-categories
+    expect(withSubCats.assessmentProfile?.infrastructureSubCategories).toBeDefined()
+  })
+
+  it('Gap 2: credential lifetime >= 10y produces a key finding', () => {
+    const result = computeAssessment({
+      industry: 'Finance & Banking',
+      currentCrypto: ['RSA-2048', 'ECDSA P-256'],
+      dataSensitivity: ['high'],
+      complianceRequirements: [],
+      migrationStatus: 'planning' as const,
+      credentialLifetime: ['10-25y'],
+      systemCount: '11-50' as const,
+      teamSize: '11-50' as const,
+      timelinePressure: 'within-2-3y' as const,
+      cryptoAgility: 'partially-abstracted' as const,
+      vendorDependency: 'mixed' as const,
+    })
+
+    const credFinding = result.keyFindings?.find(
+      (f) => f.includes('credential') || f.includes('Credential')
+    )
+    expect(credFinding).toBeDefined()
+    // Should also have a credential rotation action
+    const credAction = result.recommendedActions.find(
+      (a) => a.action.includes('credential rotation') || a.action.includes('re-issuance')
+    )
+    expect(credAction).toBeDefined()
+  })
+
+  it('Gap 3: high-risk use cases appear in key findings', () => {
+    const result = computeAssessment({
+      industry: 'Technology',
+      currentCrypto: ['RSA-2048', 'ECDSA P-256'],
+      dataSensitivity: ['high'],
+      complianceRequirements: [],
+      migrationStatus: 'planning' as const,
+      cryptoUseCases: ['Digital signatures / code signing', 'PKI / HSPD-12', 'TLS/HTTPS'],
+      systemCount: '11-50' as const,
+      teamSize: '11-50' as const,
+      timelinePressure: 'within-2-3y' as const,
+      cryptoAgility: 'partially-abstracted' as const,
+      vendorDependency: 'mixed' as const,
+    })
+
+    const useCaseFinding = result.keyFindings?.find((f) => f.includes('high-risk use case'))
+    expect(useCaseFinding).toBeDefined()
+    // Code signing specific action
+    const codeSignAction = result.recommendedActions.find(
+      (a) => a.action.includes('code signing') || a.action.includes('Code Signing')
+    )
+    expect(codeSignAction).toBeDefined()
+  })
+
+  it('Gap 4: all vendor dependency types produce recommendations', () => {
+    const vendorTypes = ['heavy-vendor', 'in-house', 'mixed'] as const
+    for (const vd of vendorTypes) {
+      const result = computeAssessment({
+        industry: 'Technology',
+        currentCrypto: ['RSA-2048'],
+        dataSensitivity: ['medium'],
+        complianceRequirements: [],
+        migrationStatus: 'planning' as const,
+        systemCount: '11-50' as const,
+        teamSize: '11-50' as const,
+        timelinePressure: 'within-2-3y' as const,
+        cryptoAgility: 'partially-abstracted' as const,
+        vendorDependency: vd,
+      })
+
+      const vendorAction = result.recommendedActions.find(
+        (a) =>
+          a.action.includes('vendor') ||
+          a.action.includes('Vendor') ||
+          a.action.includes('in-house') ||
+          a.action.includes('crypto-agility')
+      )
+      expect(vendorAction).toBeDefined()
+    }
+  })
+
+  it('Gap 5: scale context appears in recommendations for small team + many systems', () => {
+    const result = computeAssessment({
+      industry: 'Technology',
+      currentCrypto: ['RSA-2048'],
+      dataSensitivity: ['medium'],
+      complianceRequirements: [],
+      migrationStatus: 'planning' as const,
+      systemCount: '200-plus' as const,
+      teamSize: '1-10' as const,
+      timelinePressure: 'within-2-3y' as const,
+      cryptoAgility: 'partially-abstracted' as const,
+      vendorDependency: 'mixed' as const,
+    })
+
+    const scaleAction = result.recommendedActions.find(
+      (a) => a.action.includes('phased') || a.action.includes('Phased')
+    )
+    expect(scaleAction).toBeDefined()
+    // Scale context in executive summary
+    expect(result.executiveSummary).toContain('200+')
+  })
+
+  it('Gap 6: country with near deadline scores higher regulatory pressure', () => {
+    const baseInput = {
+      currentCrypto: ['RSA-2048'],
+      dataSensitivity: ['medium'],
+      complianceRequirements: [],
+      migrationStatus: 'planning' as const,
+      systemCount: '11-50' as const,
+      teamSize: '11-50' as const,
+      timelinePressure: 'within-2-3y' as const,
+      cryptoAgility: 'partially-abstracted' as const,
+      vendorDependency: 'mixed' as const,
+    }
+
+    const usResult = computeAssessment({
+      ...baseInput,
+      industry: 'Government & Defense',
+      country: 'United States',
+    })
+    const brResult = computeAssessment({
+      ...baseInput,
+      industry: 'Government & Defense',
+      country: 'Brazil',
+    })
+
+    expect(usResult.categoryScores!.regulatoryPressure).toBeGreaterThan(
+      brResult.categoryScores!.regulatoryPressure
+    )
+  })
 })

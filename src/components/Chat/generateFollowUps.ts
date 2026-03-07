@@ -89,6 +89,12 @@ export function generateFollowUps(
           'How does this compare to alternative approaches?'
         )
         break
+      case 'ops':
+        followUps.push(
+          'What are the operational deployment steps?',
+          'How do I configure this in our infrastructure?'
+        )
+        break
       default:
         followUps.push('Tell me more about this topic', 'How does this relate to PQC migration?')
     }

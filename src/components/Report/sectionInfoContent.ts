@@ -430,23 +430,57 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
   roiCalculator: {
     title: 'ROI Calculator',
     summary:
-      'An interactive cost/benefit model for your PQC migration. Initial values are seeded from your assessment results \u2014 override any field to match your organization\u2019s actuals.',
+      'An interactive cost/benefit model for your PQC migration. All four inputs are auto-calculated from your assessment answers \u2014 infrastructure layers, vendor dependency, migration status, crypto agility, and team size all factor in. Override any field to match your organization\u2019s actuals.',
     wizardInputs: [
       {
-        label: 'Algorithm Migrations',
+        label: 'Algorithm Migrations (Step 3)',
         detail:
-          'Number and complexity of algorithm migrations determine base engineering cost estimates.',
+          'Number of quantum-vulnerable algorithms determines the base engineering cost ($30K per algorithm, scaled by system count).',
+      },
+      {
+        label: 'Infrastructure Layers (Step 11)',
+        detail:
+          'Each selected layer (Hardware, Security Stack, OS, Network, Application, Cloud, Database) adds its estimated migration cost. Hardware/HSM is the most expensive; cloud is the least.',
+      },
+      {
+        label: 'Vendor Dependency (Step 11)',
+        detail:
+          'Heavy vendor dependency increases cost (vendor coordination, licensing, upgrade cycles). Open-source and in-house reduce it.',
+      },
+      {
+        label: 'Migration Status (Step 6)',
+        detail:
+          'Already-started migrations reduce remaining cost to 40%. Planning phase applies 70%. Not-started uses the full estimate.',
+      },
+      {
+        label: 'Crypto Agility (Step 10)',
+        detail:
+          'Hardcoded crypto increases cost by 50% (major refactoring). Fully-abstracted reduces cost by 40%.',
+      },
+      {
+        label: 'Team Size (Step 9)',
+        detail:
+          'Small teams (1\u201310) face 30% higher costs due to longer timelines. Large teams (200+) can parallelize for 15% savings.',
+      },
+      {
+        label: 'Compliance Frameworks (Step 5)',
+        detail:
+          'Compliance penalty is auto-populated from framework-specific baselines (e.g., GDPR up to $20M, HIPAA $1.5M, PCI DSS $500K). Uses the highest applicable penalty as the default.',
       },
       {
         label: 'Industry (Step 1)',
         detail:
-          'Industry breach cost baselines (e.g., average breach cost for Finance vs. Healthcare) seed the risk-avoidance benefit.',
+          'Industry breach cost baselines (e.g., Healthcare $9.8M, Finance $6.1M) seed the risk-avoidance benefit calculation.',
       },
-      {
-        label: 'Assessment Profile',
-        detail:
-          'System scale and infrastructure complexity feed into effort and timeline estimates.',
-      },
+    ],
+    scoringPrinciples: [
+      'Migration Cost = (Algorithm Base + Infrastructure Base) \u00d7 Vendor \u00d7 Migration Status \u00d7 Agility \u00d7 Team Size. Floor: $50K.',
+      'Algorithm Base = Vulnerable algorithm count \u00d7 $30K \u00d7 system scale multiplier.',
+      'Infrastructure Base = sum of per-layer costs for selected layers (Hardware $120K, Security Stack $80K, OS $60K, Network $50K, Application $40K, Database $35K, Cloud $30K).',
+      'Avoided Breach Cost = (breach probability %) \u00d7 industry breach baseline \u00d7 planning horizon (years). Breach probability seeded from risk score / 2, capped at 50%.',
+      'Compliance Savings = compliance penalty per incident \u00d7 number of PQC-mandating frameworks. Penalty seeded from the highest framework-specific baseline.',
+      'Net ROI = ((Avoided Breach Cost + Compliance Savings \u2212 Migration Cost) / Migration Cost) \u00d7 100%.',
+      'Payback Period = Migration Cost / (Total Benefit / 12 months).',
     ],
     personaEffects: [
       {
@@ -455,26 +489,46 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
           'Same calculator is available to all personas. Section is collapsed by default for everyone.',
       },
     ],
-    dataSources: ['Industry breach cost baselines from published industry reports.'],
+    dataSources: [
+      'Industry breach cost baselines from IBM Cost of a Data Breach Report 2024.',
+      'Compliance penalty baselines from published regulatory enforcement data (GDPR Art. 83, HIPAA, PCI SSC, NERC, MiCA, etc.).',
+      'Infrastructure layer cost estimates based on industry migration complexity analysis.',
+    ],
   },
 
   kpiTrending: {
     title: 'KPI Trending',
     summary:
-      'Tracks your PQC risk score and category breakdown across multiple assessments over time, showing your migration progress.',
+      'Tracks your PQC risk score and category breakdown across multiple assessments over time, showing your migration progress. Each completed assessment saves a snapshot of your scores. The line chart plots overall risk score history, while the radar chart compares your current category scores against the previous assessment.',
     wizardInputs: [
       {
         label: 'Assessment History',
         detail:
-          'Each time you complete an assessment, a snapshot is saved. This chart plots all historical snapshots to visualize trends.',
+          'Each time you complete an assessment, a snapshot is saved with your risk score, risk level, and all four category scores. Up to 5 snapshots are retained.',
       },
+      {
+        label: 'All wizard inputs (indirectly)',
+        detail:
+          'Each snapshot captures the computed risk score and category scores at completion time. Changing wizard inputs and re-completing the assessment generates a new snapshot with updated scores.',
+      },
+    ],
+    scoringPrinciples: [
+      'Line chart: plots each snapshot\u2019s composite risk score (0\u2013100) over time. Reference lines at 70 (High) and 40 (Medium) show risk level thresholds.',
+      'Radar chart: overlays your current four category scores (Quantum Exposure, Migration Complexity, Regulatory Pressure, Org Readiness) against the previous assessment\u2019s scores.',
+      'Delta badge: the colored pill under the Risk Score gauge shows the point change since your last assessment (\u2212 green = improved, + red = worsened).',
+      'The line chart requires at least 2 completed assessments to appear. The radar chart shows from the first assessment onward.',
+      'History is preserved when you reset and re-take the assessment, so you can track progress over time.',
     ],
     personaEffects: [
       {
         persona: 'All personas',
         effect:
-          'Same chart is shown regardless of persona. Requires at least two completed assessments to show trends.',
+          'Same charts are shown regardless of persona. Requires at least two completed assessments to show the line chart trend.',
       },
+    ],
+    dataSources: [
+      'Assessment snapshots stored in your browser\u2019s local storage (up to 5 most recent).',
+      'Current scores are recomputed live from your latest wizard inputs using the same scoring engine as the Risk Score section.',
     ],
   },
 

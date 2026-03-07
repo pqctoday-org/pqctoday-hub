@@ -406,6 +406,48 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, and quantum threat analysis for confidential computing.',
       icon: 'Cpu',
     },
+    'platform-eng-pqc': {
+      label: 'Platform Engineering & PQC',
+      description:
+        'CI/CD pipeline crypto inventory, container signing migration, IaC quantum-vulnerable defaults, policy enforcement, posture monitoring, and platform migration runway.',
+      icon: 'GitBranch',
+    },
+    'secrets-management-pqc': {
+      label: 'Secrets Management & PQC',
+      description:
+        'Migrate secrets managers (Vault, AWS Secrets Manager, Azure Key Vault) to quantum-safe encryption, automated rotation, and PQC key wrapping.',
+      icon: 'KeyRound',
+    },
+    'network-security-pqc': {
+      label: 'Network Security & PQC',
+      description:
+        'NGFWs, IDS/IPS, TLS inspection, and zero trust network architecture migration to post-quantum cryptography.',
+      icon: 'Network',
+    },
+    'database-encryption-pqc': {
+      label: 'Database Encryption & PQC',
+      description:
+        'TDE, column-level encryption, queryable encryption, and BYOK/HYOK migration for databases with external PQC KMS.',
+      icon: 'Database',
+    },
+    'iam-pqc': {
+      label: 'Identity & Access Management with PQC',
+      description:
+        'JWT/SAML/OIDC token signing with ML-DSA, Active Directory quantum risks, and PQC zero trust identity architecture.',
+      icon: 'UserCheck',
+    },
+    'secure-boot-pqc': {
+      label: 'Secure Boot & Firmware PQC',
+      description:
+        'Migrate UEFI Secure Boot, firmware signing, and TPM attestation to post-quantum cryptography with ML-DSA-65.',
+      icon: 'Shield',
+    },
+    'os-pqc': {
+      label: 'OS & Platform Crypto PQC',
+      description:
+        'System-wide TLS policies, SSH host key migration, package signing, and FIPS mode compatibility for OS-level PQC.',
+      icon: 'Monitor',
+    },
   }
 
 // Compute question counts dynamically from loaded data

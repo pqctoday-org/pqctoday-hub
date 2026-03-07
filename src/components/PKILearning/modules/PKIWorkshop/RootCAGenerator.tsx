@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Shield, Loader2, Info, X, CheckCircle2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -12,6 +12,10 @@ import { useCertProfile } from '@/hooks/useCertProfile'
 import { AttributeTable } from '../../common/AttributeTable'
 import type { X509Attribute } from '../../common/types'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { hsm_generateMLDSAKeyPair, hsm_extractKeyValue, hsm_sign } from '@/wasm/softhsm'
 
 // Import profile documentation
 const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.md', {
@@ -100,6 +104,14 @@ const INITIAL_ATTRIBUTES: X509Attribute[] = [
   },
 ]
 
+const LIVE_OPERATIONS = [
+  'C_GenerateKeyPair',
+  'C_GetAttributeValue',
+  'C_MessageSignInit',
+  'C_SignMessage',
+  'C_MessageSignFinal',
+]
+
 export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) => {
   const [selectedKeyId, setSelectedKeyId] = useState<string>(`new-${ALGORITHMS[0].id}`)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -115,6 +127,10 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
     log: string
     error?: boolean
   } | null>(null)
+
+  // Live HSM mode — parallel PKCS#11 demonstration
+  const hsm = useHSM()
+  const liveKeyRef = useRef<{ pubHandle: number; privHandle: number } | null>(null)
 
   const filterProfileName = React.useCallback((name: string) => name.startsWith('Cert-RootCA'), [])
 
@@ -176,6 +192,7 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
   const handleKeySourceSelect = async (id: string) => {
     setSelectedKeyId(id)
     setGeneratedKeyInfo(null)
+    liveKeyRef.current = null
     if (!id.startsWith('new-')) return
 
     const algoId = id.replace('new-', '')
@@ -225,6 +242,33 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
         algorithm: algo.name,
         log: `$ ${keyCmd}\nRoot CA private key generated and saved.`,
       })
+
+      // HSM demo — parallel PKCS#11 key generation when ML-DSA + live mode active
+      if (algoId === 'mldsa' && hsm.isReady && hsm.moduleRef.current) {
+        try {
+          const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(
+            hsm.moduleRef.current,
+            hsm.hSessionRef.current,
+            87
+          )
+          liveKeyRef.current = { pubHandle, privHandle }
+          const pubKeyBytes = hsm_extractKeyValue(
+            hsm.moduleRef.current,
+            hsm.hSessionRef.current,
+            pubHandle
+          )
+          setOutput(
+            (prev) =>
+              prev +
+              `\n[PKCS#11] ML-DSA-87 key pair generated in SoftHSM3 WASM:\n` +
+              `  C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_87)\n` +
+              `  pubHandle=0x${pubHandle.toString(16).padStart(8, '0')} · ${pubKeyBytes.length} bytes (CKA_VALUE)\n` +
+              `  privHandle=0x${privHandle.toString(16).padStart(8, '0')} · CKA_EXTRACTABLE=FALSE\n`
+          )
+        } catch {
+          // Non-fatal — log captured by createLoggingProxy
+        }
+      }
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Unknown error'
       setOutput((prev) => prev + `Error generating key: ${msg}\n`)
@@ -501,6 +545,32 @@ x509_extensions = v3_ca
         })
 
         setOutput((prev) => prev + 'Root CA certificate generated and saved successfully!\n')
+
+        // HSM demo — certificate signing via PKCS#11 when live mode active
+        if (hsm.isReady && hsm.moduleRef.current && liveKeyRef.current) {
+          try {
+            const cn = attributes.find((a) => a.id === 'CN')?.value || 'Root CA'
+            const tbsPayload = `TBSCertificate(subject=CN=${cn},algorithm=ML-DSA-87)`
+            const sigBytes = hsm_sign(
+              hsm.moduleRef.current,
+              hsm.hSessionRef.current,
+              liveKeyRef.current.privHandle,
+              tbsPayload
+            )
+            setOutput(
+              (prev) =>
+                prev +
+                `\n[PKCS#11] CA certificate signing demonstrated via SoftHSM3:\n` +
+                `  C_MessageSignInit(CKM_ML_DSA)\n` +
+                `  C_SignMessage("${cn}") → ${sigBytes.length} bytes\n` +
+                `  C_MessageSignFinal()\n` +
+                `  (In production: signs the DER-encoded TBSCertificate bytes)\n`
+            )
+          } catch {
+            // Non-fatal — log captured by createLoggingProxy
+          }
+        }
+
         onComplete()
       }
     } catch (error) {
@@ -548,6 +618,8 @@ x509_extensions = v3_ca
                 className="w-full"
               />
             </div>
+
+            <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} className="mt-3" />
 
             {isKeyGenerating && (
               <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
@@ -696,6 +768,16 @@ x509_extensions = v3_ca
               </div>
             )}
           </div>
+
+          {hsm.isReady && (
+            <Pkcs11LogPanel
+              log={hsm.log}
+              onClear={hsm.clearLog}
+              defaultOpen={true}
+              title="PKCS#11 Call Log — CA Key & Signing Operations"
+              emptyMessage="Run key generation or certificate creation to see PKCS#11 calls."
+            />
+          )}
         </div>
       </div>
 

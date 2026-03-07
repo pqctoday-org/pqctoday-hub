@@ -72,10 +72,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
   - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attacks
-  - **PQC Quiz**: Interactive knowledge assessment with 635 questions across 40 categories
+  - **PQC Quiz**: Interactive knowledge assessment with 770 questions across 48 categories
     - **3 Modes**: Quick (20 questions, guaranteed category coverage), Full Assessment (80 questions randomly sampled), Custom (by topic)
     - **CSV-Driven**: Questions loaded from date-stamped CSV (`pqcquiz_MMDDYYYY.csv`) via `import.meta.glob`, with smart sampling guaranteeing ≥2 per category (Quick) / ≥10 per category (Full)
-    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, Standards Bodies, Data Asset Sensitivity, Energy & Utilities, Healthcare, Aerospace & Space, Automotive, Cryptographic APIs, and 24 additional topic categories covering all 41 learning modules
+    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, Standards Bodies, Data Asset Sensitivity, Energy & Utilities, Healthcare, Aerospace & Space, Automotive, Cryptographic APIs, Secrets Management, Network Security, Database Encryption, IAM, Secure Boot, OS Crypto, Platform Engineering, and additional topic categories covering all 48 learning modules
     - **Score Tracking**: Per-category highest scores persisted across sessions
   - **Quantum Threats**:
     - Analyzes security level degradation and algorithm vulnerability matrices
@@ -194,11 +194,53 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - Encryption Mechanisms: TEE-specific encryption and key sealing strategies
     - TEE-HSM Trusted Channel: establishing quantum-safe channels between TEEs and HSMs
     - Quantum Threat Migration: migration roadmap for TEE-dependent workloads
+  - **Secrets Management PQC** (5-step workshop, Infrastructure track):
+    - Secrets Architecture Mapper: Vault, AWS, Azure, GCP secrets topology and quantum risk
+    - Vault PQC Simulator: transit encryption engine migration to ML-KEM/ML-DSA
+    - Rotation Policy Designer: automated rotation schedules with PQC algorithm support
+    - Cloud Secrets Comparator: cross-provider PQC readiness matrix
+    - Pipeline Integration Lab: CI/CD secrets injection with PQC key material
+  - **Network Security PQC** (5-step workshop, Protocols track):
+    - NGFW Cipher Analyzer: next-gen firewall cipher suite quantum vulnerability assessment
+    - TLS Inspection Lab: TLS 1.3 inspection compatibility with PQC cipher suites
+    - IDS Signature Updater: IDS/IPS signature updates for PQC-aware traffic patterns
+    - Vendor Migration Matrix: firewall/IDS vendor PQC support comparison
+    - ZTNA PQC Designer: Zero Trust Network Access architecture with PQC identity verification
+  - **Database Encryption PQC** (5-step workshop, Infrastructure track):
+    - Encryption Layer Mapper: TDE, CLE, and queryable encryption topology analysis
+    - TDE Migration Planner: transparent data encryption key algorithm migration
+    - BYOK Key Designer: bring/hold your own key architecture with PQC key wrapping
+    - Queryable Encryption Lab: encrypted query operations with post-quantum algorithms
+    - Database Migration Readiness: cross-vendor database PQC readiness assessment
+  - **IAM PQC** (5-step workshop, Applications track):
+    - IAM Crypto Inventory: JWT, SAML, OIDC token signing algorithm audit
+    - Token Migration Lab: RS256/ES256 to ML-DSA token signing migration
+    - Directory Services Analyzer: Active Directory/LDAP Kerberos PQC impact analysis
+    - Vendor Readiness Scorer: IdP vendor PQC support scoring (Okta, Entra ID, Ping, ForgeRock)
+    - Zero Trust Identity Architect: ZTNA identity architecture with PQC device attestation
+  - **Secure Boot PQC** (5-step workshop, Infrastructure track):
+    - Secure Boot Chain Analyzer: UEFI PK/KEK/db key hierarchy quantum vulnerability
+    - Firmware Signing Migrator: ML-DSA firmware signing with TPM 2.0 integration
+    - TPM Key Hierarchy Explorer: TPM 2.0 key hierarchy PQC migration planning
+    - Firmware Vendor Matrix: 8 vendor platform PQC readiness (HPE, AMI, Dell, Lenovo, etc.)
+    - Attestation Flow Designer: DICE-based attestation with post-quantum algorithms
+  - **OS PQC** (5-step workshop, Infrastructure track):
+    - OS Crypto Inventory: system-wide cryptographic library and provider audit
+    - System TLS Configurator: OS-level TLS policy configuration for PQC cipher suites
+    - SSH Host Key Migrator: SSH host key migration to ML-DSA across server fleets
+    - Package Signing Migrator: RPM/DEB/APK package signing algorithm migration
+    - FIPS Compatibility Checker: FIPS 140-3 mode compatibility with PQC algorithms
+  - **Platform Engineering PQC** (6-step workshop, Applications track):
+    - CI/CD pipeline crypto inventory and HNDL risk assessment
+    - Container signing migration (cosign/Notation to ML-DSA)
+    - IaC crypto defaults and OPA/Kyverno policy enforcement
+    - Prometheus/SIEM posture monitoring for algorithm drift detection
+    - Platform migration planner with SLSA and SBOM integration
   - **Tools & Products Tab**: Every module includes a "Tools & Products" tab surfacing PQC-ready
     products from the Migrate catalog, grouped by infrastructure layer with PQC/FIPS badges,
     license info, and deep-links to the Migrate view
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
-  - **Reference Catalog**: 330+ verified PQC-relevant product entries across 7 infrastructure layers
+  - **Reference Catalog**: 331 verified PQC-relevant product entries across 7 infrastructure layers
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
     Security Stack, Operating System, Hardware & Secure Elements — click any layer to filter the
     catalog. Products can span multiple layers (e.g., AWS KMS in Cloud + Security Stack).
@@ -265,14 +307,19 @@ Test your PQC readiness with this interactive web application visualizing the gl
   wizard. Accepts URL query parameters to auto-hydrate and auto-complete assessments from a shared
   link. Includes all report sections: Risk Score gauge, Category Breakdown, HNDL/HNFL risk windows,
   Algorithm Migration priorities, Recommended Actions, Migration Roadmap (with MigrationToolkit
-  product suggestions), and Threat Landscape. Google Drive cloud sync enables uploading/downloading
-  full-app progress snapshots to the Drive `appDataFolder` (hidden from the user's file list,
-  access-token stored in-memory only).
-- **PQC Glossary**: Global floating glossary with 100+ PQC terms
+  product suggestions), and Threat Landscape. Contextual info buttons on all 11 report sections
+  explain methodology, data sources, and interpretation guidance. Google Drive cloud sync enables
+  uploading/downloading full-app progress snapshots to the Drive `appDataFolder` (hidden from the
+  user's file list, access-token stored in-memory only).
+- **Business Center** (`/business`): GRC command center integrating assessment results, compliance
+  framework selections, and learning progress into a unified dashboard. Live risk scores, compliance
+  tracking, vendor posture analysis, and prioritized next steps. Artifact management for creating,
+  viewing, and editing executive documents.
+- **PQC Glossary**: Global floating glossary with 200+ PQC terms
   - Category filters, A-Z index, full-text search
   - Complexity badges (Beginner, Intermediate, Advanced)
   - Cross-references to learning modules
-  - **Inline tooltips** on key terms throughout all 28 learning modules — portal-rendered with
+  - **Inline tooltips** on key terms throughout all 48 learning modules — portal-rendered with
     `position: fixed` so they always appear above overflow-constrained containers (modals,
     scrollable panels, diagram wrappers)
 - **Personalization System**: 4-step onboarding wizard on the home page that adapts the entire
@@ -324,7 +371,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   GA4 analytics logging; resets on navigation
 - **PQC Assistant**: AI-powered chatbot for post-quantum cryptography questions
   - Powered by Google Gemini 2.5 Flash with BYOK (Bring Your Own Key)
-  - Client-side RAG retrieval using MiniSearch over 2,500+ content chunks from 25 data sources
+  - Client-side RAG retrieval using MiniSearch over 3,200+ content chunks from 22 data sources
   - Three-phase search: entity matching, query expansion, keyword search with source diversity
   - **Document enrichment**: 230+ archived HTML/PDF documents enriched with 11 structured
     dimensions (algorithms, threats, protocols, infrastructure layers, compliance frameworks,
@@ -337,7 +384,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - SPA-aware navigation: internal links close the chat panel and navigate via React Router
   - Covers: glossary, algorithms, threats, timeline, library, compliance, migrate catalog, leaders,
     quiz content, assessment config, certifications, priority matrix, document enrichments, and
-    all 28 learning modules
+    all 48 learning modules
   - **Precision deep links**: 10 views accept URL params for direct navigation — Library `?ref=`,
     Threats `?id=`, Learn `?tab=`, Algorithms `?highlight=`, Compliance `?cert=`, Assess `?step=`,
     Playground `?algo=`, Leaders `?leader=`/`?sector=`/`?country=`, OpenSSL `?cmd=`,
@@ -505,7 +552,7 @@ The application is structured into several key components:
 - **`src/components/Playground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
 - **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
-- **`src/components/PKILearning`**: Educational platform with 27 modules including hybrid crypto, agility, stateful signatures, code signing, API security, IoT/OT, and more.
+- **`src/components/PKILearning`**: Educational platform with 48 modules across 8 tracks — foundations, strategy, protocols, infrastructure, applications, industries, role guides, and executive.
 - **`src/components/Assess`**: 14-step industry-aware risk assessment wizard with compound scoring engine, consolidated HNDL/HNFL risk analysis, and PDF print support.
 - **`src/components/Migrate`**: Comprehensive PQC migration planning module with verified software database and workflow guidance.
 - **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.
@@ -544,8 +591,9 @@ The application is structured into several key components:
 │   │   ├── Library/         # PQC standards library
 │   │   ├── Migrate/         # PQC migration planning with verified software database
 │   │   ├── OpenSSLStudio/   # OpenSSL v3.6.0 workbench (WASM)
-│   │   ├── PKILearning/     # Learning platform with 27 modules
-│   │   │   ├── modules/
+│   │   ├── BusinessCenter/  # GRC command center dashboard
+│   │   ├── PKILearning/     # Learning platform with 48 modules across 8 tracks
+│   │   │   ├── modules/     # 48 module directories + Quiz
 │   │   │   │   ├── Introduction/         # PQC 101 Introduction module
 │   │   │   │   ├── PKIWorkshop/          # 4-step PKI lifecycle
 │   │   │   │   ├── DigitalAssets/        # Bitcoin, Ethereum, Solana, HD Wallet
@@ -553,10 +601,17 @@ The application is structured into several key components:
 │   │   │   │   ├── DigitalID/            # EUDI Wallet ecosystem
 │   │   │   │   ├── TLSBasics/            # TLS 1.3 handshake simulation
 │   │   │   │   ├── MerkleTreeCerts/      # Merkle Tree Certificates for PQC TLS
-│   │   │   │   ├── QKD/                  # Quantum Key Distribution (BB84, post-processing, deployments)
+│   │   │   │   ├── QKD/                  # Quantum Key Distribution (BB84)
 │   │   │   │   ├── CodeSigning/          # Code & firmware signing with PQC
 │   │   │   │   ├── APISecurityJWT/       # JWT/JWE with PQC algorithms
 │   │   │   │   ├── IoTOT/               # IoT/OT constrained device security
+│   │   │   │   ├── SecretsManagementPQC/ # Vault/AWS/Azure/GCP secrets migration
+│   │   │   │   ├── NetworkSecurityPQC/   # NGFW, IDS/IPS, TLS inspection, ZTNA
+│   │   │   │   ├── DatabaseEncryptionPQC/# TDE, CLE, queryable encryption, BYOK
+│   │   │   │   ├── IAMPQC/              # JWT/SAML/OIDC, AD/LDAP, Zero Trust
+│   │   │   │   ├── SecureBootPQC/       # UEFI, TPM 2.0, DICE attestation
+│   │   │   │   ├── OSPQC/              # OpenSSL providers, SSH, package signing
+│   │   │   │   ├── PlatformEngPQC/      # CI/CD, container signing, IaC, OPA
 │   │   │   │   └── Quiz/                 # PQC knowledge assessment quiz
 │   │   ├── Playground/      # Interactive cryptography playground
 │   │   ├── Router/          # Routing utilities (ScrollToTop)

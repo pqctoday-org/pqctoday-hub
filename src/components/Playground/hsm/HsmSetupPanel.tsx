@@ -11,6 +11,10 @@ import {
   hsm_initToken,
   hsm_openUserSession,
   hsm_finalize,
+  hsm_getSessionInfo,
+  hsm_getTokenInfo,
+  type SessionInfo,
+  type TokenInfo,
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { useSettingsContext } from '../contexts/SettingsContext'
@@ -47,6 +51,8 @@ export const HsmSetupPanel = () => {
   const { setActiveTab } = useSettingsContext()
   const [loadingOp, setLoadingOp] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [sessionInfo, setSessionInfo] = useState<SessionInfo | null>(null)
+  const [tokenInfo, setTokenInfo] = useState<TokenInfo | null>(null)
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
     setLoadingOp(op)
@@ -92,6 +98,13 @@ export const HsmSetupPanel = () => {
         const hSession = hsm_openUserSession(M, slotRef.current, '12345678', 'user1234')
         hSessionRef.current = hSession
         setPhase('session_open')
+        // Fetch session & token info for the info cards
+        try {
+          setSessionInfo(hsm_getSessionInfo(M, hSession))
+          setTokenInfo(hsm_getTokenInfo(M, slotRef.current))
+        } catch {
+          // non-critical — info cards simply won't render
+        }
       } catch (e) {
         setError(String(e))
       }
@@ -113,6 +126,8 @@ export const HsmSetupPanel = () => {
     clearHsmKeys()
     clearHsmLog()
     setError(null)
+    setSessionInfo(null)
+    setTokenInfo(null)
   }
 
   const isLoading = (op: string) => loadingOp === op
@@ -286,6 +301,81 @@ export const HsmSetupPanel = () => {
           </div>
         </div>
       )}
+
+      {/* Token & Session info cards */}
+      {isReady && (tokenInfo || sessionInfo) && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {tokenInfo && (
+            <div className="glass-panel p-4 space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                Token Info (C_GetTokenInfo)
+              </p>
+              <table className="w-full text-xs font-mono border-collapse">
+                <tbody>
+                  <InfoRow label="Label" value={tokenInfo.label} />
+                  <InfoRow label="Manufacturer" value={tokenInfo.manufacturerID} />
+                  <InfoRow label="Model" value={tokenInfo.model} />
+                  <InfoRow label="Serial" value={tokenInfo.serialNumber} />
+                  <InfoRow
+                    label="FW Version"
+                    value={`${tokenInfo.firmwareVersion.major}.${tokenInfo.firmwareVersion.minor}`}
+                  />
+                  <InfoRow
+                    label="HW Version"
+                    value={`${tokenInfo.hardwareVersion.major}.${tokenInfo.hardwareVersion.minor}`}
+                  />
+                  <InfoRow
+                    label="Flags"
+                    value={`0x${tokenInfo.flags.toString(16).padStart(8, '0')}`}
+                  />
+                  <InfoRow
+                    label="PIN length"
+                    value={`${tokenInfo.ulMinPinLen}–${tokenInfo.ulMaxPinLen}`}
+                  />
+                </tbody>
+              </table>
+            </div>
+          )}
+          {sessionInfo && (
+            <div className="glass-panel p-4 space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                Session Info (C_GetSessionInfo)
+              </p>
+              <table className="w-full text-xs font-mono border-collapse">
+                <tbody>
+                  <InfoRow label="Slot ID" value={String(sessionInfo.slotID)} />
+                  <InfoRow
+                    label="State"
+                    value={SESSION_STATE_NAMES[sessionInfo.state] ?? String(sessionInfo.state)}
+                  />
+                  <InfoRow
+                    label="Flags"
+                    value={`0x${sessionInfo.flags.toString(16).padStart(8, '0')}`}
+                  />
+                  <InfoRow label="Device Error" value={String(sessionInfo.ulDeviceError)} />
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
+}
+
+// ── Shared helpers ────────────────────────────────────────────────────────────
+
+const InfoRow = ({ label, value }: { label: string; value: string }) => (
+  <tr className="border-b border-border/40">
+    <td className="py-1 pr-3 text-muted-foreground whitespace-nowrap">{label}</td>
+    <td className="py-1 text-foreground">{value}</td>
+  </tr>
+)
+
+const SESSION_STATE_NAMES: Record<number, string> = {
+  0: 'RO_PUBLIC_SESSION',
+  1: 'RO_USER_FUNCTIONS',
+  2: 'RW_PUBLIC_SESSION',
+  3: 'RW_USER_FUNCTIONS',
+  4: 'RW_SO_FUNCTIONS',
 }

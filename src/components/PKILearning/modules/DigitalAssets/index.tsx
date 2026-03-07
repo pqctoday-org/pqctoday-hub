@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Trash2, Bitcoin, Hexagon, Zap, GitBranch, ShieldAlert, Landmark } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
+import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { BlockchainCryptoIntroduction } from './components/BlockchainCryptoIntroduction'
@@ -64,10 +65,9 @@ const CHAINS: ChainOption[] = [
 ]
 
 export const DigitalAssetsModule: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(() => {
-    const tab = new URLSearchParams(window.location.search).get('tab')
-    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
-  })
+  const deepLink = getModuleDeepLink()
+  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
+  useSyncDeepLink(activeTab, 0)
   const [activeChain, setActiveChain] = useState<string | null>(null)
   const [hasExploredAnyChain, setHasExploredAnyChain] = useState(false)
   const [configKey, setConfigKey] = useState(0)

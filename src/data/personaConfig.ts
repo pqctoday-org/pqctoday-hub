@@ -9,7 +9,7 @@ import type { AssessmentMode } from '../store/useAssessmentStore'
  * null = show all (researcher / no persona)
  */
 export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
-  executive: ['/migrate', '/compliance', '/assess', '/report', '/library', '/leaders'],
+  executive: ['/migrate', '/compliance', '/business', '/assess', '/report', '/library', '/leaders'],
   developer: [
     '/migrate',
     '/assess',
@@ -22,6 +22,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
   architect: [
     '/migrate',
     '/compliance',
+    '/business',
     '/assess',
     '/report',
     '/algorithms',
@@ -30,7 +31,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/leaders',
   ],
   researcher: null,
-  ops: ['/migrate', '/assess', '/report', '/library', '/playground', '/openssl'],
+  ops: ['/migrate', '/business', '/assess', '/report', '/library', '/playground', '/openssl'],
 }
 
 /**
@@ -181,6 +182,44 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
     'Healthcare',
   ],
   'crypto-dev-apis': ['Technology', 'Finance & Banking', 'Government & Defense'],
+  'database-encryption-pqc': [
+    'Finance & Banking',
+    'Healthcare',
+    'Government & Defense',
+    'Technology',
+    'Retail & E-Commerce',
+  ],
+  'secrets-management-pqc': [
+    'Technology',
+    'Finance & Banking',
+    'Healthcare',
+    'Government & Defense',
+  ],
+  'network-security-pqc': [
+    'Technology',
+    'Finance & Banking',
+    'Government & Defense',
+    'Healthcare',
+    'Telecommunications',
+    'Energy & Utilities',
+  ],
+  'iam-pqc': [
+    'Finance & Banking',
+    'Government & Defense',
+    'Healthcare',
+    'Technology',
+    'Retail & E-Commerce',
+  ],
+  'platform-eng-pqc': ['Technology', 'Finance & Banking', 'Government & Defense'],
+  'secure-boot-pqc': [
+    'Government & Defense',
+    'Technology',
+    'Aerospace',
+    'Automotive',
+    'Energy & Utilities',
+  ],
+  'os-pqc': ['Technology', 'Government & Defense', 'Finance & Banking'],
+  'standards-bodies': null,
   'exec-quantum-impact': null,
   'dev-quantum-impact': null,
   'arch-quantum-impact': null,
@@ -404,4 +443,61 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
     { afterPhase: 'ops-cp-3', route: '/assess', label: 'Run Risk Assessment' },
     { afterPhase: 'ops-cp-4', route: '/migrate', label: 'Browse Migration Catalog' },
   ],
+}
+
+// ── Workflow banner: persona-specific phase labels ───────────────────────
+
+type WorkflowPhaseId = 'assess' | 'comply' | 'migrate' | 'timeline'
+
+export const PERSONA_WORKFLOW_LABELS: Record<PersonaId, Record<WorkflowPhaseId, string>> = {
+  executive: {
+    assess: 'Organizational Risk Assessment',
+    comply: 'Audit Compliance Deadlines',
+    migrate: 'Evaluate Migration Vendors',
+    timeline: 'Review Planning Horizon',
+  },
+  developer: {
+    assess: 'Technical Risk Assessment',
+    comply: 'Check Certification Requirements',
+    migrate: 'Select Libraries & Tools',
+    timeline: 'Review Migration Deadlines',
+  },
+  architect: {
+    assess: 'Architecture Risk Assessment',
+    comply: 'Map Compliance Controls',
+    migrate: 'Evaluate Infrastructure Options',
+    timeline: 'Plan Migration Phases',
+  },
+  researcher: {
+    assess: 'Risk Assessment',
+    comply: 'Compliance Review',
+    migrate: 'Product Selection',
+    timeline: 'Timeline Review',
+  },
+  ops: {
+    assess: 'Infrastructure Risk Assessment',
+    comply: 'Map Operational Compliance',
+    migrate: 'Select Deployment Tools',
+    timeline: 'Schedule Rollout Windows',
+  },
+}
+
+// ── Migrate catalog: persona → preferred infrastructure layers ───────────
+
+export const PERSONA_MIGRATE_LAYERS: Record<PersonaId, string[]> = {
+  executive: ['Cloud', 'Application'],
+  developer: ['Application', 'Cloud', 'Database'],
+  architect: ['Cloud', 'Network', 'Application', 'Security Stack'],
+  researcher: [],
+  ops: ['Network', 'Hardware', 'OS', 'Security Stack'],
+}
+
+// ── Library: persona → preferred document categories ─────────────────────
+
+export const PERSONA_LIBRARY_CATEGORIES: Record<PersonaId, string[]> = {
+  executive: ['General Recommendations', 'PKI Certificate Management'],
+  developer: ['Protocols', 'KEM', 'Digital Signature'],
+  architect: ['PKI Certificate Management', 'KEM', 'Protocols', 'General Recommendations'],
+  researcher: [],
+  ops: ['PKI Certificate Management', 'Protocols', 'General Recommendations'],
 }

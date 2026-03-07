@@ -23,6 +23,8 @@ const TYPE_LABELS: Record<EntityType, string> = {
   country: 'Countries',
   source: 'Authoritative Sources',
   algorithm: 'Algorithms',
+  track: 'Learning Tracks',
+  persona: 'Learning Personas',
 }
 
 export function GraphLegend({ visibleTypes, hiddenTypes, onToggleType }: GraphLegendProps) {

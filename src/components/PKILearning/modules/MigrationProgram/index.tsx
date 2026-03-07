@@ -8,6 +8,7 @@ import { StakeholderCommsPlanner } from './components/StakeholderCommsPlanner'
 import { KPITrackerTemplate } from './components/KPITrackerTemplate'
 import { DeploymentPlaybook } from './components/DeploymentPlaybook'
 import { useModuleStore } from '@/store/useModuleStore'
+import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
@@ -85,11 +86,10 @@ function ExercisesTab() {
 }
 
 export const MigrationProgramModule: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(() => {
-    const tab = new URLSearchParams(window.location.search).get('tab')
-    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
-  })
-  const [currentPart, setCurrentPart] = useState(0)
+  const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
+  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
+  const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
+  useSyncDeepLink(activeTab, currentPart)
   const [configKey, setConfigKey] = useState(0)
   const startTimeRef = useRef(0)
   const { updateModuleProgress, markStepComplete } = useModuleStore()

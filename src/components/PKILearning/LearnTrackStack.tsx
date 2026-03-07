@@ -49,6 +49,7 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'api-security-jwt',
     'protocol-integration',
     'web-gateway-pqc',
+    'network-security-pqc',
   ],
   Infrastructure: [
     'pki-infrastructure',
@@ -59,6 +60,10 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'merkle-tree-certs',
     'confidential-computing',
     'crypto-dev-apis',
+    'secrets-management-pqc',
+    'database-encryption-pqc',
+    'secure-boot-pqc',
+    'os-pqc',
   ],
   Applications: [
     'digital-assets',
@@ -68,6 +73,8 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'iot-ot-pqc',
     'emv-payment-pqc',
     'ai-security-pqc',
+    'platform-eng-pqc',
+    'iam-pqc',
     'industry-threats',
   ],
   Executive: [
@@ -126,7 +133,7 @@ const TRACK_META: {
   {
     track: 'Protocols',
     icon: Network,
-    description: 'TLS, VPN/SSH, email signing, API security & JWT, web gateways',
+    description: 'TLS, VPN/SSH, email signing, API security & JWT, web gateways, network security',
     colorClass: 'from-sky-500/20 to-indigo-500/10 border-sky-500/30',
     activeClass: 'bg-card border-sky-500/60',
   },
@@ -134,14 +141,15 @@ const TRACK_META: {
     track: 'Infrastructure',
     icon: Server,
     description:
-      'PKI, KMS, HSM, stateful signatures, Merkle tree certs, confidential computing, crypto APIs',
+      'PKI, KMS, HSM, stateful sigs, Merkle tree certs, confidential computing, crypto APIs, secrets mgmt, database encryption, secure boot, OS PQC',
     colorClass: 'from-amber-500/20 to-orange-400/10 border-amber-500/30',
     activeClass: 'bg-card border-amber-500/60',
   },
   {
     track: 'Applications',
     icon: Layers,
-    description: 'Digital assets, 5G, digital ID, code signing, IoT/OT, EMV payments, AI security',
+    description:
+      'Digital assets, 5G, digital ID, code signing, IoT/OT, EMV payments, AI security, platform engineering, IAM',
     colorClass: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/30',
     activeClass: 'bg-card border-emerald-500/60',
   },

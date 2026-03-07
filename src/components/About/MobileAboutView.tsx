@@ -98,11 +98,10 @@ export const MobileAboutView = () => {
           <h2 className="text-lg font-semibold">Our Mission</h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          PQC Today brings together 27 learning modules &mdash; including an executive track and
-          expanded hybrid crypto labs &mdash; 520+ quiz questions, hands-on cryptographic labs, a
-          risk assessment wizard, migration planning tools, and global compliance tracking &mdash;
-          tuned to your role as a developer, architect, operations professional, executive, or
-          researcher.
+          PQC Today brings together 48 learning modules across 8 tracks &mdash; including role
+          guides, industry verticals, and hands-on crypto labs &mdash; 770+ quiz questions, a risk
+          assessment wizard, migration planning tools, and global compliance tracking &mdash; tuned
+          to your role as a developer, architect, operations professional, executive, or researcher.
         </p>
       </motion.div>
 

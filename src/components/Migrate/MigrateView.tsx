@@ -31,6 +31,8 @@ import { MIGRATE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { useHistoryStore } from '@/store/useHistoryStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { PERSONA_MIGRATE_LAYERS } from '@/data/personaConfig'
 
 const PRIORITY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -39,9 +41,18 @@ const PRIORITY_ORDER: Record<string, number> = {
   Low: 3,
 }
 
+/** Check if a product's infrastructure layers overlap with persona-preferred layers */
+function isPersonaRelevant(item: SoftwareItem, preferredLayers: string[]): boolean {
+  if (preferredLayers.length === 0) return false
+  const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
+  return itemLayers.some((l) => preferredLayers.includes(l))
+}
+
 export const MigrateView: React.FC = () => {
   useWorkflowPhaseTracker('migrate')
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
+  const persona = usePersonaStore((s) => s.selectedPersona)
+  const preferredLayers = persona ? (PERSONA_MIGRATE_LAYERS[persona] ?? []) : [] // eslint-disable-line security/detect-object-injection
   const [searchParams] = useSearchParams()
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
@@ -315,39 +326,47 @@ export const MigrateView: React.FC = () => {
     }
   }, [flatCategories, flatCategoryFilter])
 
-  // Sorted products for Cards mode
+  // Sorted products for Cards mode — persona-relevant items float to top within each sort
   const sortedFlatProducts = useMemo(() => {
+    const items = [...allFilteredProducts]
+
+    // Primary sort by selected option
     if (sortBy === 'name') {
-      return [...allFilteredProducts].sort((a, b) => a.softwareName.localeCompare(b.softwareName))
-    }
-    if (sortBy === 'pqcSupport') {
+      items.sort((a, b) => a.softwareName.localeCompare(b.softwareName))
+    } else if (sortBy === 'pqcSupport') {
       const order: Record<string, number> = { yes: 0, limited: 1, planned: 2, no: 3 }
-      return [...allFilteredProducts].sort((a, b) => {
+      items.sort((a, b) => {
         const aKey = Object.keys(order).find((k) => a.pqcSupport?.toLowerCase().startsWith(k))
         const bKey = Object.keys(order).find((k) => b.pqcSupport?.toLowerCase().startsWith(k))
         return (order[aKey ?? ''] ?? 4) - (order[bKey ?? ''] ?? 4)
       })
-    }
-    if (sortBy === 'pqcMigrationPriority') {
-      return [...allFilteredProducts].sort(
+    } else if (sortBy === 'pqcMigrationPriority') {
+      items.sort(
         (a, b) =>
           (PRIORITY_ORDER[a.pqcMigrationPriority] ?? 4) -
           (PRIORITY_ORDER[b.pqcMigrationPriority] ?? 4)
       )
-    }
-    if (sortBy === 'fipsValidated') {
+    } else if (sortBy === 'fipsValidated') {
       const fipsOrder = (s: string) => {
         const lower = (s || '').toLowerCase()
         if (lower.includes('fips 140') || lower.includes('fips 203')) return 0
         if (lower.startsWith('yes')) return 1
         return 2
       }
-      return [...allFilteredProducts].sort(
-        (a, b) => fipsOrder(a.fipsValidated) - fipsOrder(b.fipsValidated)
-      )
+      items.sort((a, b) => fipsOrder(a.fipsValidated) - fipsOrder(b.fipsValidated))
     }
-    return allFilteredProducts
-  }, [allFilteredProducts, sortBy])
+
+    // Secondary: float persona-relevant items to top (stable sort preserves primary order)
+    if (preferredLayers.length > 0) {
+      items.sort((a, b) => {
+        const aRelevant = isPersonaRelevant(a, preferredLayers) ? 0 : 1
+        const bRelevant = isPersonaRelevant(b, preferredLayers) ? 0 : 1
+        return aRelevant - bRelevant
+      })
+    }
+
+    return items
+  }, [allFilteredProducts, sortBy, preferredLayers])
 
   // Layer filter dropdown items
   const layerFilterItems = useMemo(

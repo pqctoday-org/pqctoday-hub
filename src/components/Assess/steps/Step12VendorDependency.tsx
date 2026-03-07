@@ -20,7 +20,7 @@ import {
 } from '../../../data/personaWizardHints'
 
 const Step12VendorDependency = () => {
-  const { vendorDependency, setVendorDependency, vendorUnknown, setVendorUnknown } =
+  const { vendorDependency, setVendorDependency, vendorUnknown, setVendorUnknown, industry } =
     useAssessmentStore()
   const importProductSelection = useAssessmentStore((s) => s.importProductSelection)
   const setImportProductSelection = useAssessmentStore((s) => s.setImportProductSelection)
@@ -184,7 +184,7 @@ const Step12VendorDependency = () => {
         </div>
       )}
 
-      {/* I don't know escape hatch */}
+      {/* Smart defaults escape hatch */}
       <Button
         variant="ghost"
         aria-pressed={vendorUnknown}
@@ -196,16 +196,16 @@ const Step12VendorDependency = () => {
             : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
       >
-        <Info size={14} className="shrink-0" />I don&apos;t know / Not sure how we manage crypto
-        dependencies
+        <Info size={14} className="shrink-0" />
+        I&apos;m not sure — help me choose
       </Button>
+      {vendorUnknown && (
+        <p className="text-xs text-muted-foreground italic">
+          Recommended for {industry || 'your industry'}. You can adjust any selection.
+        </p>
+      )}
 
-      <div
-        className={clsx('space-y-3', vendorUnknown && 'opacity-40 pointer-events-none')}
-        role="radiogroup"
-        aria-label="Vendor dependency model"
-        aria-disabled={vendorUnknown}
-      >
+      <div className="space-y-3" role="radiogroup" aria-label="Vendor dependency model">
         {options.map((opt) => (
           <Button
             key={opt.value}

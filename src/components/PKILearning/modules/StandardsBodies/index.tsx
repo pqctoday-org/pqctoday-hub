@@ -9,6 +9,7 @@ import { StandardsCertChain } from './components/StandardsCertChain'
 import { CoverageGrid } from './components/CoverageGrid'
 import { ScenarioChallenge } from './components/ScenarioChallenge'
 import { useModuleStore } from '@/store/useModuleStore'
+import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
@@ -104,14 +105,10 @@ function ExercisesTab() {
 }
 
 export const StandardsBodiesModule: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(() => {
-    const tab = new URLSearchParams(window.location.search).get('tab')
-    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
-  })
-  const [currentPart, setCurrentPart] = useState(() => {
-    const step = parseInt(new URLSearchParams(window.location.search).get('step') || '0', 10)
-    return isNaN(step) || step < 0 || step >= PARTS.length ? 0 : step
-  })
+  const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
+  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
+  const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
+  useSyncDeepLink(activeTab, currentPart)
   const [configKey, setConfigKey] = useState(0)
 
   // Lifted state for workshop steps (reset clears all)

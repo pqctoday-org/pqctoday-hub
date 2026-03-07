@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Package, ArrowRight, ChevronDown, EyeOff } from 'lucide-react'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
+import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { softwareData } from '../../data/migrateData'
 import { Button } from '../ui/button'
 import { SectionInfoTip } from './ReportContent'
@@ -49,36 +50,52 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
   const hiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
   const hideProduct = useMigrateSelectionStore((s) => s.hideProduct)
   const restoreAll = useMigrateSelectionStore((s) => s.restoreAll)
+  const myProducts = useMigrateSelectionStore((s) => s.myProducts)
+  const importProductSelection = useAssessmentStore((s) => s.importProductSelection)
+
+  // "Selected" mode: user has explicitly bookmarked products AND the import toggle is ON
+  const useSelectedMode = importProductSelection && myProducts.length > 0
 
   const { selectedProducts, groupedByLayer } = useMemo(() => {
     const hiddenSet = new Set(hiddenProducts)
 
-    // Start with all non-hidden products
-    let selected = softwareData.filter((item) => {
-      const key = `${item.softwareName}::${item.categoryId}`
-      return !hiddenSet.has(key)
-    })
+    let selected: typeof softwareData
 
-    // Filter by selected infrastructure layer IDs (exact match)
-    if (assessmentInfrastructure.length > 0) {
-      selected = selected.filter((item) => {
-        const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
-        return itemLayers.some((l) => assessmentInfrastructure.includes(l))
+    if (useSelectedMode) {
+      // Show only the user's explicitly bookmarked products (minus hidden)
+      const mySet = new Set(myProducts)
+      selected = softwareData.filter((item) => {
+        const key = `${item.softwareName}::${item.categoryId}`
+        return mySet.has(key) && !hiddenSet.has(key)
+      })
+    } else {
+      // Fall back to infrastructure-filtered recommendations
+      selected = softwareData.filter((item) => {
+        const key = `${item.softwareName}::${item.categoryId}`
+        return !hiddenSet.has(key)
       })
 
-      // Further filter by sub-categories (per-layer; empty = all sub-cats in that layer)
-      const hasSubCatFilter = assessmentInfrastructure.some(
-        (l) => (assessmentSubCategories[l] ?? []).length > 0
-      )
-      if (hasSubCatFilter) {
+      // Filter by selected infrastructure layer IDs (exact match)
+      if (assessmentInfrastructure.length > 0) {
         selected = selected.filter((item) => {
           const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
-          return itemLayers.some((layer) => {
-            if (!assessmentInfrastructure.includes(layer)) return false
-            const cats = assessmentSubCategories[layer] ?? []
-            return cats.length === 0 || cats.includes(item.categoryName)
-          })
+          return itemLayers.some((l) => assessmentInfrastructure.includes(l))
         })
+
+        // Further filter by sub-categories (per-layer; empty = all sub-cats in that layer)
+        const hasSubCatFilter = assessmentInfrastructure.some(
+          (l) => (assessmentSubCategories[l] ?? []).length > 0
+        )
+        if (hasSubCatFilter) {
+          selected = selected.filter((item) => {
+            const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
+            return itemLayers.some((layer) => {
+              if (!assessmentInfrastructure.includes(layer)) return false
+              const cats = assessmentSubCategories[layer] ?? []
+              return cats.length === 0 || cats.includes(item.categoryName)
+            })
+          })
+        }
       }
     }
 
@@ -100,7 +117,13 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
     }
 
     return { selectedProducts: selected, groupedByLayer: grouped }
-  }, [hiddenProducts, assessmentInfrastructure, assessmentSubCategories])
+  }, [
+    hiddenProducts,
+    myProducts,
+    useSelectedMode,
+    assessmentInfrastructure,
+    assessmentSubCategories,
+  ])
 
   const titleRow = (
     <div className="flex items-center gap-2 font-semibold text-foreground">
@@ -110,8 +133,25 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
     </div>
   )
 
-  // If no products (no infra selected, or all hidden), show empty state
-  if (selectedProducts.length === 0) {
+  // Selected mode: all bookmarked products are hidden
+  if (useSelectedMode && selectedProducts.length === 0) {
+    return (
+      <div className="glass-panel p-6">
+        {titleRow}
+        <div className="text-center py-6 mt-4">
+          <p className="text-sm text-muted-foreground mb-3">
+            All your selected products are hidden.
+          </p>
+          <Button variant="outline" onClick={restoreAll}>
+            Restore Hidden Products
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // Recommended mode: no infra selected, or no matches
+  if (!useSelectedMode && selectedProducts.length === 0) {
     const noInfraSelected = assessmentInfrastructure.length === 0
     return (
       <div className="glass-panel p-6">
@@ -159,6 +199,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
           )}
           <span className="text-xs text-muted-foreground">
             {selectedProducts.length} product{selectedProducts.length !== 1 ? 's' : ''}
+            {useSelectedMode && <span className="ml-1.5 text-primary/60">· Selected</span>}
           </span>
           <ChevronDown
             size={18}
@@ -181,12 +222,24 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
       </div>
       <div className={clsx('mt-4', !open && 'hidden print:block')}>
         <p className="text-sm text-muted-foreground mb-4">
-          Products from the Migrate catalog matching your infrastructure profile. Manage selections
-          in the{' '}
-          <Link to="/migrate" className="text-primary hover:underline">
-            Migrate view
-          </Link>
-          .
+          {useSelectedMode ? (
+            <>
+              Your bookmarked products from the{' '}
+              <Link to="/migrate" className="text-primary hover:underline">
+                Migrate catalog
+              </Link>
+              . Select or remove products in the Migrate view or in Step 12 of the assessment.
+            </>
+          ) : (
+            <>
+              Products from the Migrate catalog matching your infrastructure profile. Manage
+              selections in the{' '}
+              <Link to="/migrate" className="text-primary hover:underline">
+                Migrate view
+              </Link>
+              .
+            </>
+          )}
         </p>
 
         <div className="overflow-x-auto">
@@ -304,7 +357,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
             to="/migrate"
             className="text-sm text-primary hover:underline flex items-center gap-1"
           >
-            Explore more tools
+            {useSelectedMode ? 'Manage product selections' : 'Explore more tools'}
             <ArrowRight size={14} />
           </Link>
         </div>

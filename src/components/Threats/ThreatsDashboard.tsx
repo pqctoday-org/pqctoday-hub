@@ -57,7 +57,7 @@ import { MobileThreatsList } from './MobileThreatsList'
 
 export const ThreatsDashboard: React.FC = () => {
   const [searchParams] = useSearchParams()
-  const { selectedIndustries: storeIndustries } = usePersonaStore()
+  const { selectedIndustries: storeIndustries, selectedPersona } = usePersonaStore()
 
   const initialIndustries = useMemo(() => {
     const param = searchParams.get('industry')
@@ -211,6 +211,23 @@ export const ThreatsDashboard: React.FC = () => {
     return data
   }, [selectedIndustries, selectedCriticality, searchQuery, sortField, sortDirection])
 
+  // Persona-aware summary statistics
+  const personaSummary = useMemo(() => {
+    if (!selectedPersona || selectedIndustries.length === 0) return null
+    const industryThreats = threatsData.filter((t) => selectedIndustries.includes(t.industry))
+    const criticalHigh = industryThreats.filter(
+      (t) => t.criticality === 'Critical' || t.criticality === 'High'
+    )
+    const PERSONA_FRAMING: Record<string, string> = {
+      executive: `${criticalHigh.length} high-impact threat${criticalHigh.length !== 1 ? 's' : ''} across ${selectedIndustries.length} industr${selectedIndustries.length !== 1 ? 'ies' : 'y'} require board-level attention`,
+      developer: `${criticalHigh.length} critical/high threat${criticalHigh.length !== 1 ? 's' : ''} affect algorithms in your stack — review migration paths`,
+      architect: `${industryThreats.length} threat${industryThreats.length !== 1 ? 's' : ''} across ${selectedIndustries.length} industr${selectedIndustries.length !== 1 ? 'ies' : 'y'} — ${criticalHigh.length} require architectural mitigation`,
+      ops: `${criticalHigh.length} high-priority threat${criticalHigh.length !== 1 ? 's' : ''} require configuration updates across your infrastructure`,
+      researcher: `${industryThreats.length} threat${industryThreats.length !== 1 ? 's' : ''} cataloged — ${criticalHigh.length} critical/high severity with active quantum exposure`,
+    }
+    return PERSONA_FRAMING[selectedPersona] ?? null // eslint-disable-line security/detect-object-injection
+  }, [selectedPersona, selectedIndustries])
+
   return (
     <div>
       <div className="text-center mb-2 md:mb-12">
@@ -234,6 +251,14 @@ export const ThreatsDashboard: React.FC = () => {
           <GlossaryButton />
         </div>
       </div>
+
+      {/* Persona summary card */}
+      {personaSummary && (
+        <div className="glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+          <Info size={14} className="text-primary flex-shrink-0" />
+          <span>{personaSummary}</span>
+        </div>
+      )}
 
       {/* Filters Section */}
       <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-8 flex flex-col md:flex-row items-center gap-4">

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React from 'react'
-import { Outlet, NavLink, useLocation } from 'react-router-dom'
+import React, { useMemo } from 'react'
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Activity,
@@ -17,6 +17,9 @@ import {
   Home,
   ClipboardCheck,
   FileBarChart,
+  LayoutDashboard,
+  ArrowLeft,
+  X,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
@@ -32,6 +35,51 @@ const RightPanel = React.lazy(() =>
 )
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
+
+const RETURN_LABELS: Record<string, string> = {
+  '/business': 'Business Center',
+}
+
+function ReturnBanner() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const returnTo = useMemo(() => {
+    const stored = sessionStorage.getItem('pqc-return-to')
+    return stored && stored !== location.pathname ? stored : null
+  }, [location.pathname])
+
+  if (!returnTo) return null
+
+  const label = RETURN_LABELS[returnTo] ?? 'previous page' // eslint-disable-line security/detect-object-injection
+
+  return (
+    <div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-primary/5 border border-primary/20 text-sm">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => {
+          sessionStorage.removeItem('pqc-return-to')
+          navigate(returnTo)
+        }}
+      >
+        <ArrowLeft size={14} className="mr-1" />
+        Back to {label}
+      </Button>
+      <div className="flex-1" />
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-6 w-6 p-0"
+        onClick={() => {
+          sessionStorage.removeItem('pqc-return-to')
+          setReturnTo(null)
+        }}
+      >
+        <X size={14} />
+      </Button>
+    </div>
+  )
+}
 
 export const MainLayout = () => {
   const location = useLocation()
@@ -53,6 +101,7 @@ export const MainLayout = () => {
     // — Assess & Report —
     { path: '/assess', label: 'Assess', icon: ClipboardCheck, section: 'assess' },
     { path: '/report', label: 'Report', icon: FileBarChart, section: 'assess' },
+    { path: '/business', label: 'Business Center', icon: LayoutDashboard, section: 'assess' },
     {
       path: '/playground',
       label: 'Playground',
@@ -164,6 +213,7 @@ export const MainLayout = () => {
       <main id="main-content" className="flex-grow container py-4 px-2 md:py-8 md:px-8" role="main">
         {/* Migration planning workflow progress banner */}
         <WorkflowBanner />
+        <ReturnBanner />
 
         {/* Removed AnimatePresence to fix blank screen navigation bug */}
         {/* Suspense boundary for route-level code splitting */}

@@ -359,9 +359,6 @@ export const POSCryptoAnalyzer: React.FC = () => {
                   Public Key
                 </th>
                 <th className="text-right p-2 text-muted-foreground font-medium text-xs">Sig/CT</th>
-                <th className="text-center p-2 text-muted-foreground font-medium text-xs">
-                  NIST Level
-                </th>
                 <th className="text-center p-2 text-muted-foreground font-medium text-xs">Card</th>
                 <th className="text-center p-2 text-muted-foreground font-medium text-xs">
                   Terminal
@@ -382,17 +379,6 @@ export const POSCryptoAnalyzer: React.FC = () => {
                   </td>
                   <td className="p-2 text-xs text-right font-mono text-muted-foreground">
                     {alg.signatureOrCiphertextBytes.toLocaleString()} B
-                  </td>
-                  <td className="p-2 text-center">
-                    {alg.nistLevel > 0 ? (
-                      <span className="text-[10px] font-bold rounded px-1.5 py-0.5 bg-status-success/20 text-status-success border border-status-success/50">
-                        L{alg.nistLevel}
-                      </span>
-                    ) : (
-                      <span className="text-[10px] font-bold rounded px-1.5 py-0.5 bg-status-error/20 text-status-error border border-status-error/50">
-                        None
-                      </span>
-                    )}
                   </td>
                   <td className="p-2 text-center">
                     {alg.suitableForCard ? (

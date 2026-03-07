@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
-import type { ROISummary } from './ROICalculatorSection'
+import type { ROISummary } from '../shared/ROICalculatorSection'
 
 interface BoardBriefProps {
   result: AssessmentResult

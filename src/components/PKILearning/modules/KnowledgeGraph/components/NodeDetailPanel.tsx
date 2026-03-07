@@ -31,6 +31,10 @@ function getDeepLink(node: GraphNode): string | null {
       return '/algorithms'
     case 'module':
       return `/learn/${node.id.replace('module:', '')}`
+    case 'track':
+      return '/learn'
+    case 'persona':
+      return '/'
     default:
       return null
   }

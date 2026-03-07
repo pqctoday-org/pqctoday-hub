@@ -17,7 +17,8 @@ import {
 } from '../../../data/personaWizardHints'
 
 const Step6Migration = () => {
-  const { migrationStatus, setMigrationStatus } = useAssessmentStore()
+  const { migrationStatus, setMigrationStatus, migrationUnknown, setMigrationUnknown, industry } =
+    useAssessmentStore()
   const persona = usePersonaStore((s) => s.selectedPersona)
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const stepContent = getPersonaStepContent(persona, 'migration', experienceLevel)
@@ -61,30 +62,27 @@ const Step6Migration = () => {
 
       <PersonaHint stepKey="migration" />
 
-      {/* I don't know escape hatch */}
+      {/* Smart defaults escape hatch */}
       <Button
         variant="ghost"
-        aria-pressed={migrationStatus === 'unknown'}
-        onClick={() => setMigrationStatus('unknown')}
+        aria-pressed={migrationUnknown}
+        onClick={() => setMigrationUnknown(!migrationUnknown)}
         className={clsx(
           'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',
-          migrationStatus === 'unknown'
+          migrationUnknown
             ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
             : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
       >
-        <Info size={14} className="shrink-0" />I don&apos;t know / Not sure about our migration
-        status
+        <Info size={14} className="shrink-0" />
+        I&apos;m not sure — help me choose
       </Button>
-      <div
-        className={clsx(
-          'space-y-3 transition-opacity',
-          migrationStatus === 'unknown' && 'opacity-40 pointer-events-none'
-        )}
-        role="radiogroup"
-        aria-label="Migration status"
-        aria-disabled={migrationStatus === 'unknown'}
-      >
+      {migrationUnknown && (
+        <p className="text-xs text-muted-foreground italic">
+          Recommended for {industry || 'your industry'}. You can adjust any selection.
+        </p>
+      )}
+      <div className="space-y-3 transition-opacity" role="radiogroup" aria-label="Migration status">
         {statuses.map((s) => (
           <Button
             key={s.value}

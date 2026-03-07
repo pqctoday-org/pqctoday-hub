@@ -313,7 +313,7 @@ export function PathwayView({ graph, searchQuery, searchResults }: PathwayViewPr
       </div>
 
       {/* Legend */}
-      <GraphLegend visibleTypes={['module', 'library', 'quiz', 'glossary', 'threat']} />
+      <GraphLegend visibleTypes={['module', 'track', 'library', 'quiz', 'glossary', 'threat']} />
     </div>
   )
 }

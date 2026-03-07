@@ -18,6 +18,7 @@ const StepCredentialLifetime = () => {
     toggleCredentialLifetime,
     credentialLifetimeUnknown,
     setCredentialLifetimeUnknown,
+    industry,
   } = useAssessmentStore()
 
   const options = [
@@ -89,16 +90,16 @@ const StepCredentialLifetime = () => {
             : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
       >
-        <Info size={14} className="shrink-0" />I don&apos;t know / Our credential lifetimes are not
-        defined
+        <Info size={14} className="shrink-0" />
+        I&apos;m not sure — help me choose
       </Button>
+      {credentialLifetimeUnknown && (
+        <p className="text-xs text-muted-foreground italic">
+          Recommended for {industry || 'your industry'}. You can adjust any selection.
+        </p>
+      )}
 
-      <div
-        className={clsx('space-y-3', credentialLifetimeUnknown && 'opacity-40 pointer-events-none')}
-        role="group"
-        aria-label="Credential lifetime selection"
-        aria-disabled={credentialLifetimeUnknown}
-      >
+      <div className="space-y-3" role="group" aria-label="Credential lifetime selection">
         {AVAILABLE_CREDENTIAL_LIFETIME.map((id) => {
           const opt = options.find((o) => o.id === id)
           if (!opt) return null

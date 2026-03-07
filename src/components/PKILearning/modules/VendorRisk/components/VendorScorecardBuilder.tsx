@@ -233,11 +233,11 @@ export const VendorScorecardBuilder: React.FC = () => {
     return md
   }, [weightedTotal, getScore, useSlider, checkedProducts, selectedItems, hasProducts])
 
-  // Save to module store when score is meaningful
+  // Save to module store when score is meaningful (store deduplicates by moduleId+type)
   useEffect(() => {
     if (weightedTotal > 0) {
       addExecutiveDocument({
-        id: `vendor-scorecard-${Date.now()}`,
+        id: `vendor-scorecard-${MODULE_ID}`,
         moduleId: MODULE_ID,
         type: 'vendor-scorecard',
         title: `Vendor PQC Readiness Scorecard (${weightedTotal}/100)`,

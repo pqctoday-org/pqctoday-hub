@@ -14,6 +14,8 @@ export type EntityType =
   | 'country'
   | 'source'
   | 'algorithm'
+  | 'track'
+  | 'persona'
 
 export type RelationshipType =
   | 'library-depends-on'
@@ -29,6 +31,9 @@ export type RelationshipType =
   | 'leader-country'
   | 'source-feeds'
   | 'software-teaches'
+  | 'module-in-track'
+  | 'persona-recommends'
+  | 'threat-targets-algorithm'
 
 export interface GraphNode {
   id: string

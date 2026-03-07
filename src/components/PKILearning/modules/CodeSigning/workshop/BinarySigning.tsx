@@ -1,8 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { Key, PenLine, CheckCircle, Loader2, Copy, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CODE_SIGNING_ALGORITHMS } from '../constants'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import {
+  hsm_generateMLDSAKeyPair,
+  hsm_extractKeyValue,
+  hsm_digest,
+  hsm_sign,
+  hsm_verify,
+  CKM_SHA256,
+} from '@/wasm/softhsm'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 
 type AlgorithmName = 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87'
 
@@ -10,6 +22,7 @@ interface KeyPair {
   publicKey: string
   privateKey: string
   algorithm: AlgorithmName
+  isLive?: boolean
 }
 
 interface SignatureResult {
@@ -17,6 +30,7 @@ interface SignatureResult {
   signature: string
   sigBytes: number
   verified: boolean
+  isLive?: boolean
 }
 
 /** Generate realistic-looking hex string of a given byte length */
@@ -31,7 +45,6 @@ function generateHex(bytes: number): string {
 
 /** Simulate SHA-256 hash (always 32 bytes / 64 hex chars) */
 function simulateSha256(input: string): string {
-  // Deterministic-looking hash based on input length and first chars
   let seed = 0
   for (let i = 0; i < input.length; i++) {
     seed = (seed * 31 + input.charCodeAt(i)) & 0xffffffff
@@ -51,6 +64,19 @@ const ALGORITHM_OPTIONS: { name: AlgorithmName; level: string }[] = [
   { name: 'ML-DSA-87', level: 'NIST Level 5' },
 ]
 
+const LIVE_OPERATIONS = [
+  'C_GenerateKeyPair',
+  'C_GetAttributeValue',
+  'C_DigestInit',
+  'C_Digest',
+  'C_MessageSignInit',
+  'C_SignMessage',
+  'C_MessageSignFinal',
+  'C_MessageVerifyInit',
+  'C_VerifyMessage',
+  'C_MessageVerifyFinal',
+]
+
 export const BinarySigning: React.FC = () => {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<AlgorithmName>('ML-DSA-65')
   const [keyPair, setKeyPair] = useState<KeyPair | null>(null)
@@ -60,24 +86,60 @@ export const BinarySigning: React.FC = () => {
   const [isSigning, setIsSigning] = useState(false)
   const [copiedField, setCopiedField] = useState<string | null>(null)
 
+  // ── Live HSM state ────────────────────────────────────────────────────────────
+  const hsm = useHSM()
+  const liveKeyRef = useRef<{ pubHandle: number; privHandle: number; algorithm: AlgorithmName }>({
+    pubHandle: 0,
+    privHandle: 0,
+    algorithm: 'ML-DSA-65',
+  })
+
   const algInfo = CODE_SIGNING_ALGORITHMS.pqc.find((a) => a.name === selectedAlgorithm)
+
+  const dsaVariant = (name: AlgorithmName): 44 | 65 | 87 =>
+    name === 'ML-DSA-44' ? 44 : name === 'ML-DSA-87' ? 87 : 65
 
   const handleGenerateKeypair = useCallback(async () => {
     setIsGenerating(true)
     setKeyPair(null)
     setSignatureResult(null)
 
-    // Simulate async keygen delay
-    await new Promise((resolve) => setTimeout(resolve, 800))
-
-    const keyBytes = algInfo?.keyBytes ?? 1952
-    setKeyPair({
-      publicKey: generateHex(keyBytes),
-      privateKey: generateHex(keyBytes + 64),
-      algorithm: selectedAlgorithm,
-    })
+    if (hsm.isReady && hsm.moduleRef.current) {
+      // Live mode: real WASM key generation via C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN)
+      try {
+        const M = hsm.moduleRef.current as unknown as SoftHSMModule
+        const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(
+          M,
+          hsm.hSessionRef.current,
+          dsaVariant(selectedAlgorithm)
+        )
+        liveKeyRef.current = { pubHandle, privHandle, algorithm: selectedAlgorithm }
+        // Extract real public key bytes via C_GetAttributeValue(CKA_VALUE)
+        const pubBytes = hsm_extractKeyValue(M, hsm.hSessionRef.current, pubHandle)
+        const pubHex = Array.from(pubBytes)
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('')
+        setKeyPair({
+          publicKey: pubHex,
+          privateKey: `(HSM-protected — handle 0x${privHandle.toString(16).padStart(8, '0')})`,
+          algorithm: selectedAlgorithm,
+          isLive: true,
+        })
+      } catch (err) {
+        console.error('[BinarySigning] live keygen error:', err)
+      }
+    } else {
+      // Simulation mode
+      await new Promise((resolve) => setTimeout(resolve, 800))
+      const keyBytes = algInfo?.keyBytes ?? 1952
+      setKeyPair({
+        publicKey: generateHex(keyBytes),
+        privateKey: generateHex(keyBytes + 64),
+        algorithm: selectedAlgorithm,
+      })
+    }
     setIsGenerating(false)
-  }, [selectedAlgorithm, algInfo])
+  }, [selectedAlgorithm, algInfo, hsm])
 
   const handleSign = useCallback(async () => {
     if (!keyPair || !inputText.trim()) return
@@ -85,26 +147,53 @@ export const BinarySigning: React.FC = () => {
     setIsSigning(true)
     setSignatureResult(null)
 
-    // Simulate signing delay
-    await new Promise((resolve) => setTimeout(resolve, 600))
-
-    const sigBytes = algInfo?.sigBytes ?? 3309
-    const hash = simulateSha256(inputText)
-    const signature = generateHex(sigBytes)
-
-    setSignatureResult({
-      hash,
-      signature,
-      sigBytes,
-      verified: true,
-    })
+    if (hsm.isReady && hsm.moduleRef.current && keyPair.isLive) {
+      // Live mode: real WASM hash + sign + verify
+      try {
+        const M = hsm.moduleRef.current as unknown as SoftHSMModule
+        const hSession = hsm.hSessionRef.current
+        const { pubHandle, privHandle } = liveKeyRef.current
+        // C_DigestInit + C_Digest with CKM_SHA256
+        const msgBytes = new TextEncoder().encode(inputText)
+        const hashBytes = hsm_digest(M, hSession, msgBytes, CKM_SHA256)
+        const hashHex = Array.from(hashBytes)
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('')
+        // C_MessageSignInit + C_SignMessage + C_MessageSignFinal with CKM_ML_DSA
+        const sig = hsm_sign(M, hSession, privHandle, inputText)
+        const sigHex = Array.from(sig)
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('')
+        // C_MessageVerifyInit + C_VerifyMessage + C_MessageVerifyFinal
+        const verified = hsm_verify(M, hSession, pubHandle, inputText, sig)
+        setSignatureResult({
+          hash: hashHex,
+          signature: sigHex,
+          sigBytes: sig.length,
+          verified,
+          isLive: true,
+        })
+      } catch (err) {
+        console.error('[BinarySigning] live sign error:', err)
+      }
+    } else {
+      // Simulation mode
+      await new Promise((resolve) => setTimeout(resolve, 600))
+      const sigBytes = algInfo?.sigBytes ?? 3309
+      const hash = simulateSha256(inputText)
+      const signature = generateHex(sigBytes)
+      setSignatureResult({ hash, signature, sigBytes, verified: true })
+    }
     setIsSigning(false)
-  }, [keyPair, inputText, algInfo])
+  }, [keyPair, inputText, algInfo, hsm])
 
   const handleReset = () => {
     setKeyPair(null)
     setSignatureResult(null)
     setInputText('Hello, Post-Quantum World!')
+    liveKeyRef.current = { pubHandle: 0, privHandle: 0, algorithm: 'ML-DSA-65' }
+    hsm.clearLog()
+    hsm.clearKeys()
   }
 
   const handleCopy = useCallback((text: string, field: string) => {
@@ -128,6 +217,9 @@ export const BinarySigning: React.FC = () => {
           operations are simulated with realistic output sizes.
         </p>
       </div>
+
+      {/* Live HSM Toggle */}
+      <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
 
       {/* Algorithm Selection */}
       <div className="glass-panel p-4">
@@ -178,7 +270,8 @@ export const BinarySigning: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <Key size={14} className="mr-1" /> Generate Keypair
+                  <Key size={14} className="mr-1" />
+                  {hsm.isReady ? 'Generate (Live WASM)' : 'Generate Keypair'}
                 </>
               )}
             </Button>
@@ -192,6 +285,12 @@ export const BinarySigning: React.FC = () => {
 
         {keyPair && (
           <div className="space-y-3 animate-fade-in">
+            {keyPair.isLive && (
+              <p className="text-[11px] text-status-success font-semibold">
+                Real key generated in SoftHSM3 WASM via C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN,
+                CKP_{selectedAlgorithm.replace('-', '_')})
+              </p>
+            )}
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-foreground">
@@ -212,30 +311,36 @@ export const BinarySigning: React.FC = () => {
                 {truncateHex(keyPair.publicKey)}
               </p>
               <p className="text-[10px] text-muted-foreground mt-1">
-                {(keyPair.publicKey.length / 2).toLocaleString()} bytes
+                {keyPair.isLive
+                  ? `${(keyPair.publicKey.length / 2).toLocaleString()} bytes — CKA_VALUE extracted via C_GetAttributeValue`
+                  : `${(keyPair.publicKey.length / 2).toLocaleString()} bytes`}
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-foreground">
-                  Private Key (truncated for display)
+                  Private Key{keyPair.isLive ? '' : ' (truncated for display)'}
                 </span>
-                <button
-                  onClick={() => handleCopy(keyPair.privateKey, 'privkey')}
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {copiedField === 'privkey' ? (
-                    <CheckCircle size={12} className="text-success" />
-                  ) : (
-                    <Copy size={12} />
-                  )}
-                </button>
+                {!keyPair.isLive && (
+                  <button
+                    onClick={() => handleCopy(keyPair.privateKey, 'privkey')}
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {copiedField === 'privkey' ? (
+                      <CheckCircle size={12} className="text-success" />
+                    ) : (
+                      <Copy size={12} />
+                    )}
+                  </button>
+                )}
               </div>
               <p className="font-mono text-[10px] text-muted-foreground break-all leading-relaxed">
-                {truncateHex(keyPair.privateKey)}
+                {keyPair.isLive ? keyPair.privateKey : truncateHex(keyPair.privateKey)}
               </p>
               <p className="text-[10px] text-muted-foreground mt-1">
-                {(keyPair.privateKey.length / 2).toLocaleString()} bytes
+                {keyPair.isLive
+                  ? 'CKA_EXTRACTABLE=FALSE — private key stays inside HSM boundary'
+                  : `${(keyPair.privateKey.length / 2).toLocaleString()} bytes`}
               </p>
             </div>
           </div>
@@ -278,7 +383,8 @@ export const BinarySigning: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <PenLine size={14} className="mr-1" /> Sign
+                  <PenLine size={14} className="mr-1" />
+                  {hsm.isReady && keyPair.isLive ? 'Sign (Live WASM)' : 'Sign'}
                 </>
               )}
             </Button>
@@ -290,9 +396,21 @@ export const BinarySigning: React.FC = () => {
       {signatureResult && (
         <div className="glass-panel p-4 animate-fade-in">
           <h4 className="text-sm font-bold text-foreground mb-3">4. Result</h4>
+          {signatureResult.isLive && (
+            <p className="text-[11px] text-status-success font-semibold mb-3">
+              Real output from SoftHSM3 WASM — PKCS#11 v3.2 · FIPS 204 ML-DSA
+            </p>
+          )}
           <div className="space-y-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
-              <span className="text-xs font-bold text-foreground">SHA-256 Hash</span>
+              <span className="text-xs font-bold text-foreground">
+                SHA-256 Hash
+                {signatureResult.isLive && (
+                  <span className="ml-2 text-[10px] text-status-success font-normal">
+                    (C_DigestInit + C_Digest, CKM_SHA256)
+                  </span>
+                )}
+              </span>
               <p className="font-mono text-[10px] text-muted-foreground break-all mt-1">
                 {signatureResult.hash}
               </p>
@@ -301,6 +419,11 @@ export const BinarySigning: React.FC = () => {
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-foreground">
                   Signature ({selectedAlgorithm})
+                  {signatureResult.isLive && (
+                    <span className="ml-2 text-[10px] text-status-success font-normal">
+                      (C_MessageSignInit + C_SignMessage)
+                    </span>
+                  )}
                 </span>
                 <button
                   onClick={() => handleCopy(signatureResult.signature, 'sig')}
@@ -339,11 +462,23 @@ export const BinarySigning: React.FC = () => {
                 </span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Verification performed using the {selectedAlgorithm} public key against the SHA-256
-                hash of the input data.
+                {signatureResult.isLive
+                  ? `Verified via C_MessageVerifyInit + C_VerifyMessage (CKM_ML_DSA, PKCS#11 v3.2).`
+                  : `Verification performed using the ${selectedAlgorithm} public key against the SHA-256 hash of the input data.`}
               </p>
             </div>
           </div>
+
+          {/* PKCS#11 call log — shown when live mode is active */}
+          {hsm.isReady && (
+            <Pkcs11LogPanel
+              log={hsm.log}
+              onClear={hsm.clearLog}
+              title="PKCS#11 Call Log"
+              defaultOpen={true}
+              className="mt-4"
+            />
+          )}
         </div>
       )}
 
@@ -408,10 +543,10 @@ export const BinarySigning: React.FC = () => {
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>Note:</strong> All cryptographic operations shown here are simulated with
-          realistic output sizes matching the actual FIPS 204 (ML-DSA) specification. In a
-          production environment, signing would use a hardware security module (HSM) or a
-          FIPS-validated software library. Generated keys are for educational purposes only.
+          <strong>Note:</strong> In live mode, all cryptographic operations execute in SoftHSM3 WASM
+          — a reference PKCS#11 v3.2 implementation. Key sizes and signature sizes match the actual
+          FIPS 204 (ML-DSA) specification. In simulation mode, outputs are representative. Generated
+          keys are for educational purposes only.
         </p>
       </div>
     </div>

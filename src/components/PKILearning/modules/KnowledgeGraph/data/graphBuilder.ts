@@ -10,7 +10,8 @@ import { leadersData } from '@/data/leadersData'
 import { glossaryTerms } from '@/data/glossaryData'
 import { quizQuestions } from '@/data/quizDataLoader'
 import { authoritativeSources } from '@/data/authoritativeSourcesData'
-import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { MODULE_CATALOG, MODULE_TRACKS, MODULE_TO_TRACK } from '@/components/PKILearning/moduleData'
+import { PERSONAS } from '@/data/learningPersonas'
 import type {
   EntityType,
   RelationshipType,
@@ -77,6 +78,15 @@ const ALGORITHM_CANONICAL: { pattern: RegExp; canonical: string }[] = [
   { pattern: /pq\/t hybrid/i, canonical: 'Hybrid PQC' },
   { pattern: /hybrid\s+(pqc|kem)/i, canonical: 'Hybrid PQC' },
   { pattern: /\bqkd\b/i, canonical: 'QKD' },
+  { pattern: /\bfn-dsa\b/i, canonical: 'FN-DSA' },
+  { pattern: /\bfalcon\b/i, canonical: 'FN-DSA' },
+  { pattern: /\bhqc\b/i, canonical: 'HQC' },
+  { pattern: /\bclassic[\s-]?mceliece\b/i, canonical: 'Classic McEliece' },
+  { pattern: /\bbike\b/i, canonical: 'BIKE' },
+  { pattern: /\bntru\b/i, canonical: 'NTRU' },
+  { pattern: /\bsphincs\+?\b/i, canonical: 'SLH-DSA' },
+  { pattern: /\becdsa\b/i, canonical: 'Classical' },
+  { pattern: /\baes\b/i, canonical: 'Classical' },
   { pattern: /hash-based/i, canonical: 'Hash-based' },
   { pattern: /lattice[\s-]based/i, canonical: 'Lattice-based' },
   { pattern: /code[\s-]based/i, canonical: 'Code-based' },
@@ -340,6 +350,38 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
       metadata: {
         duration: mod.duration,
         difficulty: mod.difficulty,
+        track: MODULE_TO_TRACK[moduleId] ?? null,
+      },
+      connectionCount: 0,
+    })
+  }
+
+  // Learning tracks
+  for (const trackDef of MODULE_TRACKS) {
+    const trackSlug = slugify(trackDef.track)
+    addNode(nodes, {
+      id: makeNodeId('track', trackSlug),
+      entityType: 'track',
+      label: trackDef.track,
+      description: `${trackDef.modules.length} learning modules`,
+      metadata: {
+        moduleCount: trackDef.modules.length,
+      },
+      connectionCount: 0,
+    })
+  }
+
+  // Learning personas
+  for (const persona of Object.values(PERSONAS)) {
+    const pathModules = persona.recommendedPath.filter((id) => id !== 'quiz')
+    addNode(nodes, {
+      id: makeNodeId('persona', persona.id),
+      entityType: 'persona',
+      label: persona.label,
+      description: persona.description,
+      metadata: {
+        estimatedMinutes: persona.estimatedMinutes,
+        moduleCount: pathModules.length,
       },
       connectionCount: 0,
     })
@@ -555,6 +597,92 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
       if (source[field] && targetId) {
         addEdge(edges, edgeSet, nodes, 'source-feeds', sourceId, targetId, `feeds ${targetType}`)
       }
+    }
+  }
+
+  // module → track edges
+  for (const trackDef of MODULE_TRACKS) {
+    const trackNodeId = makeNodeId('track', slugify(trackDef.track))
+    for (const mod of trackDef.modules) {
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'module-in-track',
+        makeNodeId('module', mod.id),
+        trackNodeId,
+        'in track'
+      )
+    }
+  }
+
+  // persona → module edges (recommended learning paths)
+  for (const persona of Object.values(PERSONAS)) {
+    const personaNodeId = makeNodeId('persona', persona.id)
+    for (const moduleId of persona.recommendedPath) {
+      if (moduleId === 'quiz') continue
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'persona-recommends',
+        personaNodeId,
+        makeNodeId('module', moduleId),
+        'recommends'
+      )
+    }
+  }
+
+  // threat → algorithm edges (cryptoAtRisk and pqcReplacement fields)
+  for (const threat of threatsData) {
+    const threatNodeId = makeNodeId('threat', threat.threatId)
+
+    const atRisk = extractAlgorithmFamilies(threat.cryptoAtRisk)
+    for (const family of atRisk) {
+      const algoNodeId = makeNodeId('algorithm', slugify(family))
+      if (!nodes.has(algoNodeId)) {
+        addNode(nodes, {
+          id: algoNodeId,
+          entityType: 'algorithm',
+          label: family,
+          description: 'Targeted by threats',
+          metadata: { libraryCount: 0 },
+          connectionCount: 0,
+        })
+      }
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'threat-targets-algorithm',
+        threatNodeId,
+        algoNodeId,
+        'targets'
+      )
+    }
+
+    const replacements = extractAlgorithmFamilies(threat.pqcReplacement)
+    for (const family of replacements) {
+      const algoNodeId = makeNodeId('algorithm', slugify(family))
+      if (!nodes.has(algoNodeId)) {
+        addNode(nodes, {
+          id: algoNodeId,
+          entityType: 'algorithm',
+          label: family,
+          description: 'PQC replacement algorithm',
+          metadata: { libraryCount: 0 },
+          connectionCount: 0,
+        })
+      }
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'threat-targets-algorithm',
+        threatNodeId,
+        algoNodeId,
+        'replaced by'
+      )
     }
   }
 

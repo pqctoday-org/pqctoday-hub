@@ -276,8 +276,8 @@ export const ComplianceView = () => {
     downloadCsv(csv, csvFilename('pqc-compliance'))
   }, [data])
 
-  // Default tab: 'records' when a cert record is linked; otherwise 'standards'
-  const defaultTab = certParam ? 'records' : 'standards'
+  // Default tab: 'records' when cert record linked; industry/region hint section; otherwise 'standards'
+  const defaultTab = certParam ? 'records' : (complianceHint?.section ?? 'standards')
 
   return (
     <div className="space-y-6 animate-fade-in">

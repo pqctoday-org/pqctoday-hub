@@ -5,6 +5,32 @@ import { StepWizard } from '../components/StepWizard'
 import { useStepWizard } from '../hooks/useStepWizard'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { DIGITAL_ASSETS_CONSTANTS } from '../constants'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import {
+  hsm_generateECKeyPair,
+  hsm_generateMLDSAKeyPair,
+  hsm_ecdsaSign,
+  hsm_ecdsaVerify,
+  hsm_sign,
+  hsm_verify,
+  hsm_extractKeyValue,
+  hsm_extractECPoint,
+} from '@/wasm/softhsm'
+
+const COMPARISON_LIVE_OPERATIONS = [
+  'C_GenerateKeyPair',
+  'C_GetAttributeValue',
+  'C_SignInit',
+  'C_Sign',
+  'C_VerifyInit',
+  'C_Verify',
+  'C_MessageSignInit',
+  'C_SignMessage',
+  'C_MessageVerifyInit',
+  'C_VerifyMessage',
+]
 
 interface PQCLiveComparisonFlowProps {
   onBack: () => void
@@ -184,6 +210,18 @@ export const PQCLiveComparisonFlow: React.FC<PQCLiveComparisonFlowProps> = ({
     verified: null,
   })
 
+  const hsm = useHSM()
+
+  // HSM key handle refs (persist across steps)
+  const hsmKeysRef = useRef<{
+    ecPub: number
+    ecPriv: number
+    mlPub: number
+    mlPriv: number
+    ecSig: Uint8Array | null
+    mlSig: Uint8Array | null
+  }>({ ecPub: 0, ecPriv: 0, mlPub: 0, mlPriv: 0, ecSig: null, mlSig: null })
+
   // File refs to carry artifacts between steps
   const ecFilesRef = useRef<Array<{ name: string; data: Uint8Array }>>([])
   const mlFilesRef = useRef<Array<{ name: string; data: Uint8Array }>>([])
@@ -282,6 +320,88 @@ ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.VERIFY(filenames.mlPub, filenames.
 
   const executeStep = async () => {
     await wizard.execute(async () => {
+      // ── Live HSM Mode ──
+      if (hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current) {
+        const M = hsm.moduleRef.current
+        const hSession = hsm.hSessionRef.current
+
+        if (wizard.currentStep === 0) {
+          // Step 1: Generate both keypairs via PKCS#11
+          const ec = hsm_generateECKeyPair(M, hSession, 'P-256')
+          const ecPoint = hsm_extractECPoint(M, hSession, ec.pubHandle)
+          const ml = hsm_generateMLDSAKeyPair(M, hSession, 65)
+          const mlPub = hsm_extractKeyValue(M, hSession, ml.pubHandle)
+
+          hsmKeysRef.current = {
+            ecPub: ec.pubHandle,
+            ecPriv: ec.privHandle,
+            mlPub: ml.pubHandle,
+            mlPriv: ml.privHandle,
+            ecSig: null,
+            mlSig: null,
+          }
+
+          setClassical((prev) => ({ ...prev, privBytes: 121, pubBytes: ecPoint.length }))
+          setPqc((prev) => ({ ...prev, privBytes: 4032, pubBytes: mlPub.length }))
+
+          return (
+            `[PKCS#11] secp256k1 EC key pair: C_GenerateKeyPair → pub ${ecPoint.length} B\n` +
+            `[PKCS#11] ML-DSA-65 key pair:   C_GenerateKeyPair → pub ${mlPub.length} B\n` +
+            `\nBoth keypairs generated via SoftHSM3 WASM.`
+          )
+        }
+
+        if (wizard.currentStep === 1) {
+          // Step 2: Sign with both via PKCS#11
+          const ecSig = hsm_ecdsaSign(M, hSession, hsmKeysRef.current.ecPriv, DEMO_MESSAGE)
+          const mlSig = hsm_sign(M, hSession, hsmKeysRef.current.mlPriv, DEMO_MESSAGE)
+
+          hsmKeysRef.current.ecSig = ecSig
+          hsmKeysRef.current.mlSig = mlSig
+
+          setClassical((prev) => ({ ...prev, sigBytes: ecSig.length }))
+          setPqc((prev) => ({ ...prev, sigBytes: mlSig.length }))
+
+          const ratio = Math.round(mlSig.length / ecSig.length)
+          return (
+            `Message: "${DEMO_MESSAGE}"\n\n` +
+            `[PKCS#11] secp256k1 C_Sign(CKM_ECDSA_SHA256): ${ecSig.length} bytes\n` +
+            `[PKCS#11] ML-DSA-65 C_SignMessage:             ${mlSig.length} bytes\n` +
+            `\nSize ratio: ~${ratio}× larger for ML-DSA-65`
+          )
+        }
+
+        if (wizard.currentStep === 2) {
+          // Step 3: Verify both via PKCS#11
+          const ecVerified = hsm_ecdsaVerify(
+            M,
+            hSession,
+            hsmKeysRef.current.ecPub,
+            DEMO_MESSAGE,
+            hsmKeysRef.current.ecSig!
+          )
+          const mlVerified = hsm_verify(
+            M,
+            hSession,
+            hsmKeysRef.current.mlPub,
+            DEMO_MESSAGE,
+            hsmKeysRef.current.mlSig!
+          )
+
+          setClassical((prev) => ({ ...prev, verified: ecVerified }))
+          setPqc((prev) => ({ ...prev, verified: mlVerified }))
+
+          return (
+            `[PKCS#11] secp256k1 C_Verify: ${ecVerified ? 'Verified ✓' : 'FAILED ✗'}\n` +
+            `[PKCS#11] ML-DSA-65 C_VerifyMessage: ${mlVerified ? 'Verified ✓' : 'FAILED ✗'}\n` +
+            `\nBoth signatures verified via SoftHSM3 WASM.`
+          )
+        }
+
+        return 'Step complete.'
+      }
+
+      // ── Software Mode (OpenSSL WASM) ──
       if (wizard.currentStep === 0) {
         // Step 1: Generate both keypairs
         idRef.current = Date.now().toString()
@@ -441,17 +561,28 @@ ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.VERIFY(filenames.mlPub, filenames.
   }
 
   return (
-    <StepWizard
-      steps={steps}
-      currentStepIndex={wizard.currentStep}
-      onNext={wizard.handleNext}
-      onBack={wizard.handleBack}
-      onComplete={onComplete ?? onBack}
-      onExecute={executeStep}
-      isExecuting={wizard.isExecuting}
-      output={wizard.output}
-      error={wizard.error}
-      isStepComplete={wizard.isStepComplete}
-    />
+    <div className="space-y-4">
+      <LiveHSMToggle hsm={hsm} operations={COMPARISON_LIVE_OPERATIONS} />
+      <StepWizard
+        steps={steps}
+        currentStepIndex={wizard.currentStep}
+        onNext={wizard.handleNext}
+        onBack={wizard.handleBack}
+        onComplete={onComplete ?? onBack}
+        onExecute={executeStep}
+        isExecuting={wizard.isExecuting}
+        output={wizard.output}
+        error={wizard.error}
+        isStepComplete={wizard.isStepComplete}
+      />
+      {hsm.isReady && (
+        <Pkcs11LogPanel
+          log={hsm.log}
+          onClear={hsm.clearLog}
+          title="PKCS#11 Call Log — PQC vs Classical"
+          emptyMessage="Click 'Generate Both Keypairs' to see live PKCS#11 operations."
+        />
+      )}
+    </div>
   )
 }

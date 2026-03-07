@@ -9,6 +9,12 @@ import { createMdoc } from '../../utils/mdoc-utils'
 import { Loader2, CheckCircle, Smartphone, Lock, UserCheck, CreditCard } from 'lucide-react'
 import { MARIA_IDENTITY } from '../../constants'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { hsm_generateECKeyPair, hsm_ecdsaSign, hsm_extractECPoint } from '@/wasm/softhsm'
+
+const PID_LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_GetAttributeValue', 'C_SignInit', 'C_Sign']
 
 interface PIDIssuerComponentProps {
   wallet: WalletInstance
@@ -44,6 +50,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
   const [loading, setLoading] = useState(false)
   const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
     useDigitalIDLogs()
+  const hsm = useHSM()
 
   const handleStart = async () => {
     setStep('AUTH')
@@ -66,22 +73,76 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
     setLoading(true)
     addLog('Generating secure key pair in Wallet HSM...')
 
-    // 1. Generate Key in "HSM"
-    const key = await generateKeyPair('ES256', 'P-256', addOpenSSLLog)
-    addLog(`Key Generated: ${key.id} (P-256/ES256)`)
+    let key: CryptoKey
 
-    // 2. Proof of Possession
-    const nonce = 'nonce-' + Math.random().toString(36).substring(2)
-    addLog(`Creating Proof of Possession (PoP) for nonce: ${nonce}`)
+    if (hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current) {
+      // ── Live HSM Mode: real PKCS#11 operations ──
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
+      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256')
+      const pubPoint = hsm_extractECPoint(M, hSession, pubHandle)
+      const pubHex = Array.from(pubPoint)
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+      addLog(`Key Generated via PKCS#11: P-256/ES256 (pub ${pubPoint.length} B)`)
 
-    const popPayload = JSON.stringify({
-      iss: 'wallet-instance',
-      aud: 'https://pid-provider',
-      nonce: nonce,
-      cnonce: 'generated-cnonce',
-    })
-    const popSig = await signData(key, popPayload, addOpenSSLLog)
-    addLog(`PoP Signed: ${popSig.substring(0, 20)}...`)
+      key = {
+        id: `hsm-pid-${Date.now()}`,
+        type: 'P-256',
+        algorithm: 'ES256',
+        curve: 'P-256',
+        publicKey: pubHex,
+        privateKey: `[PKCS#11 handle: ${privHandle}]`,
+        created: new Date().toISOString(),
+        usage: 'SIGN',
+        status: 'ACTIVE',
+      }
+
+      // PoP signature via HSM
+      const nonce = 'nonce-' + Math.random().toString(36).substring(2)
+      addLog(`Creating Proof of Possession (PoP) for nonce: ${nonce}`)
+      const popPayload = JSON.stringify({
+        iss: 'wallet-instance',
+        aud: 'https://pid-provider',
+        nonce: nonce,
+        cnonce: 'generated-cnonce',
+      })
+      const popSig = hsm_ecdsaSign(M, hSession, privHandle, popPayload)
+      const popHex = Array.from(popSig)
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+      addLog(`PoP Signed via C_Sign(CKM_ECDSA_SHA256): ${popHex.substring(0, 20)}...`)
+
+      hsm.addKey({
+        handle: pubHandle,
+        label: 'PID Wallet Key (P-256)',
+        family: 'ecdsa',
+        role: 'public',
+        generatedAt: new Date().toISOString(),
+      })
+      hsm.addKey({
+        handle: privHandle,
+        label: 'PID Wallet Key (P-256)',
+        family: 'ecdsa',
+        role: 'private',
+        generatedAt: new Date().toISOString(),
+      })
+    } else {
+      // ── Software Mode: OpenSSL WASM ──
+      key = await generateKeyPair('ES256', 'P-256', addOpenSSLLog)
+      addLog(`Key Generated: ${key.id} (P-256/ES256)`)
+
+      const nonce = 'nonce-' + Math.random().toString(36).substring(2)
+      addLog(`Creating Proof of Possession (PoP) for nonce: ${nonce}`)
+      const popPayload = JSON.stringify({
+        iss: 'wallet-instance',
+        aud: 'https://pid-provider',
+        nonce: nonce,
+        cnonce: 'generated-cnonce',
+      })
+      const popSig = await signData(key, popPayload, addOpenSSLLog)
+      addLog(`PoP Signed: ${popSig.substring(0, 20)}...`)
+    }
 
     setLoading(false)
     setStep('ISSUANCE')
@@ -158,6 +219,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6">
+        <LiveHSMToggle hsm={hsm} operations={PID_LIVE_OPERATIONS} className="mb-4" />
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* status visualization */}
           <div className="space-y-6 lg:col-span-2">
@@ -261,6 +323,14 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
             </div>
           </div>
         </div>
+        {hsm.isReady && (
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log — PID Issuance"
+            className="mt-4"
+          />
+        )}
       </CardContent>
     </Card>
   )

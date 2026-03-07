@@ -22,10 +22,10 @@ const STEP_LABELS = [
   'Migration',
   'Use Cases',
   'Retention',
+  'Credential',
   'Scale',
   'Agility',
   'Infra',
-  'Vendors',
   'Timeline',
 ]
 

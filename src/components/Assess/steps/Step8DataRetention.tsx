@@ -70,11 +70,16 @@ const Step8DataRetention = () => {
             : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
       >
-        <Info size={14} className="shrink-0" />I don&apos;t know / Our retention policies are
-        undefined
+        <Info size={14} className="shrink-0" />
+        I&apos;m not sure — help me choose
       </Button>
+      {retentionUnknown && (
+        <p className="text-xs text-muted-foreground italic">
+          Recommended for {industry || 'your industry'}. You can adjust any selection.
+        </p>
+      )}
 
-      <div className={clsx('space-y-4', retentionUnknown && 'opacity-40 pointer-events-none')}>
+      <div className="space-y-4">
         {industryRetentionOptions.length > 0 && (
           <>
             <div className="glass-panel p-3 border-l-4 border-l-primary">

@@ -16,6 +16,8 @@ import {
   Globe,
   Database,
   Cpu,
+  Layers,
+  UserCircle,
 } from 'lucide-react'
 import type { EntityType } from '../../data/graphTypes'
 
@@ -96,6 +98,18 @@ const ENTITY_CONFIG: Record<
     text: 'text-secondary',
   },
   algorithm: { icon: Cpu, bg: 'bg-accent/10', border: 'border-accent/30', text: 'text-accent' },
+  track: {
+    icon: Layers,
+    bg: 'bg-status-warning/10',
+    border: 'border-status-warning/30',
+    text: 'text-status-warning',
+  },
+  persona: {
+    icon: UserCircle,
+    bg: 'bg-tertiary/10',
+    border: 'border-tertiary/30',
+    text: 'text-tertiary',
+  },
 }
 
 function EntityNodeComponent({ data }: NodeProps<EntityNodeType>) {

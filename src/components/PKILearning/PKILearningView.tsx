@@ -130,6 +130,16 @@ const ConfidentialComputingModule = lazyWithRetry(() =>
     default: module.ConfidentialComputingModule,
   }))
 )
+const DatabaseEncryptionPQCModule = lazyWithRetry(() =>
+  import('./modules/DatabaseEncryptionPQC').then((module) => ({
+    default: module.DatabaseEncryptionPQCModule,
+  }))
+)
+const SecretsManagementPQCModule = lazyWithRetry(() =>
+  import('./modules/SecretsManagementPQC').then((module) => ({
+    default: module.SecretsManagementPQCModule,
+  }))
+)
 const CryptoDevAPIsModule = lazyWithRetry(() =>
   import('./modules/CryptoDevAPIs').then((module) => ({
     default: module.CryptoDevAPIsModule,
@@ -148,6 +158,11 @@ const EMVPaymentPQCModule = lazyWithRetry(() =>
 const AISecurityPQCModule = lazyWithRetry(() =>
   import('./modules/AISecurityPQC').then((module) => ({
     default: module.AISecurityPQCModule,
+  }))
+)
+const PlatformEngPQCModule = lazyWithRetry(() =>
+  import('./modules/PlatformEngPQC').then((module) => ({
+    default: module.PlatformEngPQCModule,
   }))
 )
 const EnergyUtilitiesModule = lazyWithRetry(() =>
@@ -193,6 +208,26 @@ const OpsQuantumImpactModule = lazyWithRetry(() =>
 const ResearchQuantumImpactModule = lazyWithRetry(() =>
   import('./modules/ResearchQuantumImpact').then((module) => ({
     default: module.ResearchQuantumImpactModule,
+  }))
+)
+const NetworkSecurityPQCModule = lazyWithRetry(() =>
+  import('./modules/NetworkSecurityPQC').then((module) => ({
+    default: module.NetworkSecurityPQCModule,
+  }))
+)
+const IAMPQCModule = lazyWithRetry(() =>
+  import('./modules/IAMPQC').then((module) => ({
+    default: module.IAMPQCModule,
+  }))
+)
+const SecureBootPQCModule = lazyWithRetry(() =>
+  import('./modules/SecureBootPQC').then((module) => ({
+    default: module.SecureBootPQCModule,
+  }))
+)
+const OSPQCModule = lazyWithRetry(() =>
+  import('./modules/OSPQC').then((module) => ({
+    default: module.OSPQCModule,
   }))
 )
 
@@ -277,10 +312,13 @@ export const PKILearningView: React.FC = () => {
               <Route path="data-asset-sensitivity" element={<DataAssetSensitivityModule />} />
               <Route path="standards-bodies" element={<StandardsBodiesModule />} />
               <Route path="confidential-computing" element={<ConfidentialComputingModule />} />
+              <Route path="database-encryption-pqc" element={<DatabaseEncryptionPQCModule />} />
+              <Route path="secrets-management-pqc" element={<SecretsManagementPQCModule />} />
               <Route path="crypto-dev-apis" element={<CryptoDevAPIsModule />} />
               <Route path="web-gateway-pqc" element={<WebGatewayPQCModule />} />
               <Route path="emv-payment-pqc" element={<EMVPaymentPQCModule />} />
               <Route path="ai-security-pqc" element={<AISecurityPQCModule />} />
+              <Route path="platform-eng-pqc" element={<PlatformEngPQCModule />} />
               <Route path="energy-utilities-pqc" element={<EnergyUtilitiesModule />} />
               <Route path="healthcare-pqc" element={<HealthcarePQCModule />} />
               <Route path="aerospace-space-pqc" element={<AerospaceSpacePQCModule />} />
@@ -290,6 +328,10 @@ export const PKILearningView: React.FC = () => {
               <Route path="arch-quantum-impact" element={<ArchQuantumImpactModule />} />
               <Route path="ops-quantum-impact" element={<OpsQuantumImpactModule />} />
               <Route path="research-quantum-impact" element={<ResearchQuantumImpactModule />} />
+              <Route path="network-security-pqc" element={<NetworkSecurityPQCModule />} />
+              <Route path="iam-pqc" element={<IAMPQCModule />} />
+              <Route path="secure-boot-pqc" element={<SecureBootPQCModule />} />
+              <Route path="os-pqc" element={<OSPQCModule />} />
             </Routes>
           </Suspense>
         </div>

@@ -5,6 +5,7 @@ import type { AssessmentInput, CategoryScores } from '../hooks/assessmentTypes'
 import type { AssessmentResult } from '../hooks/assessmentTypes'
 import { usePersonaStore } from './usePersonaStore'
 import { useHistoryStore } from './useHistoryStore'
+import { computeSmartDefaults } from '../components/Assess/smartDefaults'
 
 export type AssessmentMode = 'quick' | 'comprehensive'
 export type AssessmentStatus = 'not-started' | 'in-progress' | 'complete'
@@ -30,6 +31,7 @@ interface AssessmentState {
   complianceRequirements: string[]
   complianceUnknown: boolean
   migrationStatus: AssessmentInput['migrationStatus'] | ''
+  migrationUnknown: boolean
   // Extended fields
   cryptoUseCases: string[]
   useCasesUnknown: boolean
@@ -40,12 +42,14 @@ interface AssessmentState {
   systemCount: NonNullable<AssessmentInput['systemCount']> | ''
   teamSize: NonNullable<AssessmentInput['teamSize']> | ''
   cryptoAgility: NonNullable<AssessmentInput['cryptoAgility']> | ''
+  agilityUnknown: boolean
   infrastructure: string[]
   infrastructureUnknown: boolean
   infrastructureSubCategories: Record<string, string[]>
   vendorDependency: NonNullable<AssessmentInput['vendorDependency']> | ''
   vendorUnknown: boolean
   timelinePressure: NonNullable<AssessmentInput['timelinePressure']> | ''
+  timelineUnknown: boolean
   // Import toggles — sync wizard selections with page stores
   importComplianceSelection: boolean
   importProductSelection: boolean
@@ -73,6 +77,7 @@ interface AssessmentState {
   setComplianceRequirements: (requirements: string[]) => void
   setComplianceUnknown: (val: boolean) => void
   setMigrationStatus: (status: AssessmentInput['migrationStatus']) => void
+  setMigrationUnknown: (val: boolean) => void
   toggleCryptoUseCase: (useCase: string) => void
   setUseCasesUnknown: (val: boolean) => void
   toggleDataRetention: (value: string) => void
@@ -82,12 +87,14 @@ interface AssessmentState {
   setSystemCount: (count: NonNullable<AssessmentInput['systemCount']>) => void
   setTeamSize: (size: NonNullable<AssessmentInput['teamSize']>) => void
   setCryptoAgility: (agility: NonNullable<AssessmentInput['cryptoAgility']>) => void
+  setAgilityUnknown: (val: boolean) => void
   toggleInfrastructure: (item: string) => void
   setInfrastructureUnknown: (val: boolean) => void
   setInfrastructureSubCategory: (layer: string, cats: string[]) => void
   setVendorDependency: (dep: NonNullable<AssessmentInput['vendorDependency']>) => void
   setVendorUnknown: (val: boolean) => void
   setTimelinePressure: (pressure: NonNullable<AssessmentInput['timelinePressure']>) => void
+  setTimelineUnknown: (val: boolean) => void
   setImportComplianceSelection: (val: boolean) => void
   setImportProductSelection: (val: boolean) => void
   hideThreat: (threatId: string) => void
@@ -114,6 +121,7 @@ const INITIAL_STATE = {
   complianceRequirements: [] as string[],
   complianceUnknown: false,
   migrationStatus: '' as AssessmentInput['migrationStatus'] | '',
+  migrationUnknown: false,
   cryptoUseCases: [] as string[],
   useCasesUnknown: false,
   dataRetention: [] as string[],
@@ -123,12 +131,14 @@ const INITIAL_STATE = {
   systemCount: '' as NonNullable<AssessmentInput['systemCount']> | '',
   teamSize: '' as NonNullable<AssessmentInput['teamSize']> | '',
   cryptoAgility: '' as NonNullable<AssessmentInput['cryptoAgility']> | '',
+  agilityUnknown: false,
   infrastructure: [] as string[],
   infrastructureUnknown: false,
   infrastructureSubCategories: {} as Record<string, string[]>,
   vendorDependency: '' as NonNullable<AssessmentInput['vendorDependency']> | '',
   vendorUnknown: false,
   timelinePressure: '' as NonNullable<AssessmentInput['timelinePressure']> | '',
+  timelineUnknown: false,
   importComplianceSelection: true,
   importProductSelection: true,
   hiddenThreats: [] as string[],
@@ -139,6 +149,48 @@ const INITIAL_STATE = {
   lastModifiedAt: null as string | null,
   previousRiskScore: null as number | null,
   assessmentHistory: [] as AssessmentSnapshot[],
+}
+
+/** Check if any step currently has its unknown flag set. */
+function hasAnyUnknown(state: AssessmentState): boolean {
+  return (
+    state.cryptoUnknown ||
+    state.sensitivityUnknown ||
+    state.complianceUnknown ||
+    state.migrationUnknown ||
+    state.useCasesUnknown ||
+    state.retentionUnknown ||
+    state.credentialLifetimeUnknown ||
+    state.agilityUnknown ||
+    state.infrastructureUnknown ||
+    state.vendorUnknown ||
+    state.timelineUnknown
+  )
+}
+
+/** Re-populate smart defaults for any step whose unknown flag is currently true. */
+function applyDefaultsToUnknownSteps(
+  state: AssessmentState,
+  defaults: ReturnType<typeof computeSmartDefaults>,
+  updates: Record<string, unknown>
+) {
+  if (state.cryptoUnknown) {
+    updates.currentCrypto = defaults.currentCrypto
+    updates.currentCryptoCategories = defaults.currentCryptoCategories
+  }
+  if (state.sensitivityUnknown) updates.dataSensitivity = defaults.dataSensitivity
+  if (state.complianceUnknown) updates.complianceRequirements = defaults.complianceRequirements
+  if (state.migrationUnknown) updates.migrationStatus = defaults.migrationStatus
+  if (state.useCasesUnknown) updates.cryptoUseCases = defaults.cryptoUseCases
+  if (state.retentionUnknown) updates.dataRetention = defaults.dataRetention
+  if (state.credentialLifetimeUnknown) updates.credentialLifetime = defaults.credentialLifetime
+  if (state.agilityUnknown) updates.cryptoAgility = defaults.cryptoAgility
+  if (state.infrastructureUnknown) {
+    updates.infrastructure = defaults.infrastructure
+    updates.infrastructureSubCategories = {}
+  }
+  if (state.vendorUnknown) updates.vendorDependency = defaults.vendorDependency
+  if (state.timelineUnknown) updates.timelinePressure = defaults.timelinePressure
 }
 
 export const useAssessmentStore = create<AssessmentState>()(
@@ -166,21 +218,39 @@ export const useAssessmentStore = create<AssessmentState>()(
         }
       },
 
-      setIndustry: (industry) =>
-        set({
+      setIndustry: (industry) => {
+        const state = get()
+        const persona = usePersonaStore.getState().selectedPersona
+        const updates: Record<string, unknown> = {
           industry,
           complianceRequirements: [],
           complianceUnknown: false,
           lastWizardUpdate: new Date().toISOString(),
-        }),
+        }
+        // Re-compute smart defaults for any currently-unknown steps
+        if (hasAnyUnknown(state)) {
+          const defaults = computeSmartDefaults(industry, state.country, persona)
+          applyDefaultsToUnknownSteps(state, defaults, updates)
+        }
+        set(updates)
+      },
 
-      setCountry: (country) =>
-        set({
+      setCountry: (country) => {
+        const state = get()
+        const persona = usePersonaStore.getState().selectedPersona
+        const updates: Record<string, unknown> = {
           country,
           complianceRequirements: [],
           complianceUnknown: false,
           lastWizardUpdate: new Date().toISOString(),
-        }),
+        }
+        // Re-compute smart defaults for any currently-unknown steps
+        if (hasAnyUnknown(state)) {
+          const defaults = computeSmartDefaults(state.industry, country, persona)
+          applyDefaultsToUnknownSteps(state, defaults, updates)
+        }
+        set(updates)
+      },
 
       toggleCrypto: (algo) =>
         set((state) => ({
@@ -202,14 +272,22 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       setCryptoUnknown: (val) => {
         if (val) {
+          const { industry, country } = get()
+          const persona = usePersonaStore.getState().selectedPersona
+          const defaults = computeSmartDefaults(industry, country, persona)
           set({
             cryptoUnknown: true,
+            currentCrypto: defaults.currentCrypto,
+            currentCryptoCategories: defaults.currentCryptoCategories,
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        } else {
+          set({
+            cryptoUnknown: false,
             currentCrypto: [],
             currentCryptoCategories: [],
             lastWizardUpdate: new Date().toISOString(),
           })
-        } else {
-          set({ cryptoUnknown: false, lastWizardUpdate: new Date().toISOString() })
         }
       },
 
@@ -224,13 +302,20 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       setSensitivityUnknown: (val) => {
         if (val) {
+          const { industry, country } = get()
+          const persona = usePersonaStore.getState().selectedPersona
+          const defaults = computeSmartDefaults(industry, country, persona)
           set({
             sensitivityUnknown: true,
-            dataSensitivity: [],
+            dataSensitivity: defaults.dataSensitivity,
             lastWizardUpdate: new Date().toISOString(),
           })
         } else {
-          set({ sensitivityUnknown: false, lastWizardUpdate: new Date().toISOString() })
+          set({
+            sensitivityUnknown: false,
+            dataSensitivity: [],
+            lastWizardUpdate: new Date().toISOString(),
+          })
         }
       },
 
@@ -252,18 +337,48 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       setComplianceUnknown: (val) => {
         if (val) {
+          const { industry, country } = get()
+          const persona = usePersonaStore.getState().selectedPersona
+          const defaults = computeSmartDefaults(industry, country, persona)
           set({
             complianceUnknown: true,
-            complianceRequirements: [],
+            complianceRequirements: defaults.complianceRequirements,
             lastWizardUpdate: new Date().toISOString(),
           })
         } else {
-          set({ complianceUnknown: false, lastWizardUpdate: new Date().toISOString() })
+          set({
+            complianceUnknown: false,
+            complianceRequirements: [],
+            lastWizardUpdate: new Date().toISOString(),
+          })
         }
       },
 
       setMigrationStatus: (status) =>
-        set({ migrationStatus: status, lastWizardUpdate: new Date().toISOString() }),
+        set({
+          migrationStatus: status,
+          migrationUnknown: false,
+          lastWizardUpdate: new Date().toISOString(),
+        }),
+
+      setMigrationUnknown: (val) => {
+        if (val) {
+          const { industry, country } = get()
+          const persona = usePersonaStore.getState().selectedPersona
+          const defaults = computeSmartDefaults(industry, country, persona)
+          set({
+            migrationUnknown: true,
+            migrationStatus: defaults.migrationStatus,
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        } else {
+          set({
+            migrationUnknown: false,
+            migrationStatus: '',
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        }
+      },
 
       toggleCryptoUseCase: (useCase) =>
         set((state) => ({
@@ -276,13 +391,20 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       setUseCasesUnknown: (val) => {
         if (val) {
+          const { industry, country } = get()
+          const persona = usePersonaStore.getState().selectedPersona
+          const defaults = computeSmartDefaults(industry, country, persona)
           set({
             useCasesUnknown: true,
-            cryptoUseCases: [],
+            cryptoUseCases: defaults.cryptoUseCases,
             lastWizardUpdate: new Date().toISOString(),
           })
         } else {
-          set({ useCasesUnknown: false, lastWizardUpdate: new Date().toISOString() })
+          set({
+            useCasesUnknown: false,
+            cryptoUseCases: [],
+            lastWizardUpdate: new Date().toISOString(),
+          })
         }
       },
 
@@ -297,13 +419,20 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       setRetentionUnknown: (val) => {
         if (val) {
+          const { industry, country } = get()
+          const persona = usePersonaStore.getState().selectedPersona
+          const defaults = computeSmartDefaults(industry, country, persona)
           set({
             retentionUnknown: true,
-            dataRetention: [],
+            dataRetention: defaults.dataRetention,
             lastWizardUpdate: new Date().toISOString(),
           })
         } else {
-          set({ retentionUnknown: false, lastWizardUpdate: new Date().toISOString() })
+          set({
+            retentionUnknown: false,
+            dataRetention: [],
+            lastWizardUpdate: new Date().toISOString(),
+          })
         }
       },
 
@@ -318,13 +447,20 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       setCredentialLifetimeUnknown: (val) => {
         if (val) {
+          const { industry, country } = get()
+          const persona = usePersonaStore.getState().selectedPersona
+          const defaults = computeSmartDefaults(industry, country, persona)
           set({
             credentialLifetimeUnknown: true,
-            credentialLifetime: [],
+            credentialLifetime: defaults.credentialLifetime,
             lastWizardUpdate: new Date().toISOString(),
           })
         } else {
-          set({ credentialLifetimeUnknown: false, lastWizardUpdate: new Date().toISOString() })
+          set({
+            credentialLifetimeUnknown: false,
+            credentialLifetime: [],
+            lastWizardUpdate: new Date().toISOString(),
+          })
         }
       },
 
@@ -334,7 +470,30 @@ export const useAssessmentStore = create<AssessmentState>()(
       setTeamSize: (size) => set({ teamSize: size, lastWizardUpdate: new Date().toISOString() }),
 
       setCryptoAgility: (agility) =>
-        set({ cryptoAgility: agility, lastWizardUpdate: new Date().toISOString() }),
+        set({
+          cryptoAgility: agility,
+          agilityUnknown: false,
+          lastWizardUpdate: new Date().toISOString(),
+        }),
+
+      setAgilityUnknown: (val) => {
+        if (val) {
+          const { industry, country } = get()
+          const persona = usePersonaStore.getState().selectedPersona
+          const defaults = computeSmartDefaults(industry, country, persona)
+          set({
+            agilityUnknown: true,
+            cryptoAgility: defaults.cryptoAgility,
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        } else {
+          set({
+            agilityUnknown: false,
+            cryptoAgility: '',
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        }
+      },
 
       toggleInfrastructure: (item) =>
         set((state) => {
@@ -354,14 +513,22 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       setInfrastructureUnknown: (val) => {
         if (val) {
+          const { industry, country } = get()
+          const persona = usePersonaStore.getState().selectedPersona
+          const defaults = computeSmartDefaults(industry, country, persona)
           set({
             infrastructureUnknown: true,
-            infrastructure: [],
+            infrastructure: defaults.infrastructure,
             infrastructureSubCategories: {},
             lastWizardUpdate: new Date().toISOString(),
           })
         } else {
-          set({ infrastructureUnknown: false, lastWizardUpdate: new Date().toISOString() })
+          set({
+            infrastructureUnknown: false,
+            infrastructure: [],
+            infrastructureSubCategories: {},
+            lastWizardUpdate: new Date().toISOString(),
+          })
         }
       },
 
@@ -380,18 +547,48 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       setVendorUnknown: (val) => {
         if (val) {
+          const { industry, country } = get()
+          const persona = usePersonaStore.getState().selectedPersona
+          const defaults = computeSmartDefaults(industry, country, persona)
           set({
             vendorUnknown: true,
-            vendorDependency: '',
+            vendorDependency: defaults.vendorDependency,
             lastWizardUpdate: new Date().toISOString(),
           })
         } else {
-          set({ vendorUnknown: false, lastWizardUpdate: new Date().toISOString() })
+          set({
+            vendorUnknown: false,
+            vendorDependency: '',
+            lastWizardUpdate: new Date().toISOString(),
+          })
         }
       },
 
       setTimelinePressure: (pressure) =>
-        set({ timelinePressure: pressure, lastWizardUpdate: new Date().toISOString() }),
+        set({
+          timelinePressure: pressure,
+          timelineUnknown: false,
+          lastWizardUpdate: new Date().toISOString(),
+        }),
+
+      setTimelineUnknown: (val) => {
+        if (val) {
+          const { industry, country } = get()
+          const persona = usePersonaStore.getState().selectedPersona
+          const defaults = computeSmartDefaults(industry, country, persona)
+          set({
+            timelineUnknown: true,
+            timelinePressure: defaults.timelinePressure,
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        } else {
+          set({
+            timelineUnknown: false,
+            timelinePressure: '',
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        }
+      },
 
       setImportComplianceSelection: (val) =>
         set({ importComplianceSelection: val, lastWizardUpdate: new Date().toISOString() }),
@@ -446,7 +643,12 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       editFromStep: (step) => set({ assessmentStatus: 'in-progress' as const, currentStep: step }),
 
-      reset: () => set(INITIAL_STATE),
+      reset: () =>
+        set((state) => ({
+          ...INITIAL_STATE,
+          assessmentHistory: state.assessmentHistory,
+          previousRiskScore: state.lastResult?.riskScore ?? state.previousRiskScore,
+        })),
 
       getInput: () => {
         const state = get()
@@ -481,15 +683,20 @@ export const useAssessmentStore = create<AssessmentState>()(
           input.cryptoAgility = state.cryptoAgility as NonNullable<AssessmentInput['cryptoAgility']>
         if (state.infrastructure.length > 0) input.infrastructure = state.infrastructure
         if (state.infrastructureUnknown) input.infrastructureUnknown = true
+        if (Object.keys(state.infrastructureSubCategories).length > 0)
+          input.infrastructureSubCategories = state.infrastructureSubCategories
         if (state.vendorDependency)
           input.vendorDependency = state.vendorDependency as NonNullable<
             AssessmentInput['vendorDependency']
           >
         if (state.vendorUnknown) input.vendorUnknown = true
+        if (state.migrationUnknown) input.migrationUnknown = true
         if (state.timelinePressure)
           input.timelinePressure = state.timelinePressure as NonNullable<
             AssessmentInput['timelinePressure']
           >
+        if (state.timelineUnknown) input.timelineUnknown = true
+        if (state.agilityUnknown) input.agilityUnknown = true
         const persona = usePersonaStore.getState().selectedPersona
         if (persona) input.persona = persona
         return input
@@ -498,7 +705,7 @@ export const useAssessmentStore = create<AssessmentState>()(
     {
       name: 'pqc-assessment',
       storage: createJSONStorage(() => localStorage),
-      version: 9,
+      version: 10,
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -622,6 +829,25 @@ export const useAssessmentStore = create<AssessmentState>()(
         state.vendorDependency = state.vendorDependency ?? ''
         state.vendorUnknown = state.vendorUnknown ?? false
         state.timelinePressure = state.timelinePressure ?? ''
+        // v9 → v10: add migrationUnknown, agilityUnknown, timelineUnknown booleans
+        // Convert old string 'unknown' values to boolean flags + smart defaults
+        if (version <= 9) {
+          if (state.migrationStatus === 'unknown') {
+            state.migrationUnknown = true
+            state.migrationStatus = 'not-started'
+          }
+          if (state.cryptoAgility === 'unknown') {
+            state.agilityUnknown = true
+            state.cryptoAgility = 'partially-abstracted'
+          }
+          if (state.timelinePressure === 'unknown') {
+            state.timelineUnknown = true
+            state.timelinePressure = 'no-deadline'
+          }
+        }
+        state.migrationUnknown = state.migrationUnknown ?? false
+        state.agilityUnknown = state.agilityUnknown ?? false
+        state.timelineUnknown = state.timelineUnknown ?? false
         // v8 → v9: add import toggles (default ON)
         state.importComplianceSelection = state.importComplianceSelection ?? true
         state.importProductSelection = state.importProductSelection ?? true
@@ -652,6 +878,7 @@ export const useAssessmentStore = create<AssessmentState>()(
         complianceRequirements: state.complianceRequirements,
         complianceUnknown: state.complianceUnknown,
         migrationStatus: state.migrationStatus,
+        migrationUnknown: state.migrationUnknown,
         cryptoUseCases: state.cryptoUseCases,
         useCasesUnknown: state.useCasesUnknown,
         dataRetention: state.dataRetention,
@@ -661,12 +888,14 @@ export const useAssessmentStore = create<AssessmentState>()(
         systemCount: state.systemCount,
         teamSize: state.teamSize,
         cryptoAgility: state.cryptoAgility,
+        agilityUnknown: state.agilityUnknown,
         infrastructure: state.infrastructure,
         infrastructureUnknown: state.infrastructureUnknown,
         infrastructureSubCategories: state.infrastructureSubCategories,
         vendorDependency: state.vendorDependency,
         vendorUnknown: state.vendorUnknown,
         timelinePressure: state.timelinePressure,
+        timelineUnknown: state.timelineUnknown,
         importComplianceSelection: state.importComplianceSelection,
         importProductSelection: state.importProductSelection,
         hiddenThreats: state.hiddenThreats,

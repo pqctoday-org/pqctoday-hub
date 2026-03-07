@@ -1,12 +1,105 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState } from 'react'
-import { ChevronRight, ChevronLeft, CheckCircle, Circle, Lock, Info } from 'lucide-react'
+import { ChevronRight, ChevronLeft, CheckCircle, Circle, Lock, Info, Loader2 } from 'lucide-react'
 import { ENVELOPE_ENCRYPTION_STEPS } from '../data/kmsConstants'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import {
+  hsm_generateMLKEMKeyPair,
+  hsm_generateAESKey,
+  hsm_encapsulate,
+  hsm_decapsulate,
+  hsm_aesWrapKey,
+  hsm_extractKeyValue,
+} from '@/wasm/softhsm'
+
+const LIVE_OPERATIONS = [
+  'C_GenerateKeyPair',
+  'C_GenerateKey',
+  'C_EncapsulateKey',
+  'C_WrapKey',
+  'C_DecapsulateKey',
+  'C_GetAttributeValue',
+]
 
 export const EnvelopeEncryptionDemo: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
+
+  // Live HSM mode
+  const hsm = useHSM()
+  const [liveLines, setLiveLines] = useState<string[]>([])
+  const [liveRunning, setLiveRunning] = useState(false)
+  const [liveError, setLiveError] = useState<string | null>(null)
+
+  const runLiveDemo = async () => {
+    if (!hsm.moduleRef.current) return
+    setLiveRunning(true)
+    setLiveLines([])
+    setLiveError(null)
+    hsm.clearLog()
+
+    const addLine = (line: string) => setLiveLines((prev) => [...prev, line])
+
+    try {
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
+
+      // Step 1: Generate ML-KEM-768 KEK pair
+      const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSession, 768)
+      const pubKeyBytes = hsm_extractKeyValue(M, hSession, pubHandle)
+      addLine(
+        `KEK: C_GenerateKeyPair(CKM_ML_KEM_KEY_PAIR_GEN, CKP_ML_KEM_768)` +
+          ` → pub=0x${pubHandle.toString(16).padStart(8, '0')} (${pubKeyBytes.length} B), priv=0x${privHandle.toString(16).padStart(8, '0')}`
+      )
+
+      // Step 2: Generate AES-256 DEK
+      const dekHandle = hsm_generateAESKey(M, hSession, 256)
+      const dekBytes = hsm_extractKeyValue(M, hSession, dekHandle)
+      addLine(
+        `DEK: C_GenerateKey(CKM_AES_KEY_GEN, 256-bit)` +
+          ` → handle=0x${dekHandle.toString(16).padStart(8, '0')} (${dekBytes.length} B)`
+      )
+
+      // Step 3: Encapsulate — produces KEM ciphertext + shared secret
+      const { ciphertextBytes, secretHandle } = hsm_encapsulate(M, hSession, pubHandle, 768)
+      const secretBytes = hsm_extractKeyValue(M, hSession, secretHandle)
+      addLine(
+        `Encaps: C_EncapsulateKey(CKM_ML_KEM)` +
+          ` → ciphertext=${ciphertextBytes.length} B, shared_secret=${secretBytes.length} B`
+      )
+
+      // Step 4: Wrap the DEK (wrapping key simulates HKDF(shared_secret) in production)
+      const wrapKeyHandle = hsm_generateAESKey(M, hSession, 256)
+      const wrappedDek = hsm_aesWrapKey(M, hSession, wrapKeyHandle, dekHandle)
+      addLine(
+        `Wrap: C_WrapKey(CKM_AES_KEY_WRAP, wrappingKey, dekHandle)` +
+          ` → ${wrappedDek.length} B wrapped DEK`
+      )
+      addLine(`      (In production: wrapping key = HKDF(shared_secret, "kms-envelope-v1"))`)
+
+      // Step 5: Decapsulate — recover shared secret from KEM ciphertext
+      const recoveredHandle = hsm_decapsulate(M, hSession, privHandle, ciphertextBytes, 768)
+      const recoveredBytes = hsm_extractKeyValue(M, hSession, recoveredHandle)
+      const match =
+        secretBytes.length === recoveredBytes.length &&
+        secretBytes.every((b, i) => b === recoveredBytes[i])
+      addLine(
+        `Decaps: C_DecapsulateKey(CKM_ML_KEM, privHandle, ciphertext)` +
+          ` → ${recoveredBytes.length} B, match=${match ? '✓ YES' : '✗ NO'}`
+      )
+
+      addLine(
+        `Total stored: KEM ciphertext (${ciphertextBytes.length} B) + wrapped DEK (${wrappedDek.length} B) = ${ciphertextBytes.length + wrappedDek.length} B`
+      )
+    } catch (e) {
+      setLiveError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setLiveRunning(false)
+    }
+  }
 
   const step = ENVELOPE_ENCRYPTION_STEPS[currentStep]
 
@@ -31,6 +124,53 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           wrap.
         </p>
       </div>
+
+      {/* Live HSM Mode */}
+      <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
+
+      {hsm.isReady && (
+        <div className="glass-panel p-4 space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-semibold">Run Full ML-KEM Envelope Encryption</p>
+            <button
+              onClick={runLiveDemo}
+              disabled={liveRunning}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
+            >
+              {liveRunning ? (
+                <>
+                  <Loader2 size={11} className="animate-spin" /> Running…
+                </>
+              ) : (
+                'Execute (Live WASM)'
+              )}
+            </button>
+          </div>
+
+          {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
+
+          {liveLines.length > 0 && (
+            <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 space-y-1">
+              {liveLines.map((line, i) => (
+                <p key={i} className="text-xs font-mono text-foreground/80 break-all">
+                  {line}
+                </p>
+              ))}
+              <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
+                Real output from SoftHSM3 WASM · PKCS#11 v3.2
+              </p>
+            </div>
+          )}
+
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            defaultOpen={true}
+            title="PKCS#11 Call Log — Envelope Encryption"
+            emptyMessage="Click 'Execute' to run the live envelope encryption flow."
+          />
+        </div>
+      )}
 
       {/* Step stepper */}
       <div className="overflow-x-auto">

@@ -13,7 +13,8 @@ import clsx from 'clsx'
 import { PersonaHint } from './PersonaHint'
 
 const Step13TimelinePressure = () => {
-  const { country, timelinePressure, setTimelinePressure } = useAssessmentStore()
+  const { country, timelinePressure, setTimelinePressure, timelineUnknown, setTimelineUnknown } =
+    useAssessmentStore()
 
   // Build country-specific deadline options from the timeline
   const countryDeadlines = useMemo(() => {
@@ -50,19 +51,27 @@ const Step13TimelinePressure = () => {
   const hasCountryDeadlines = countryDeadlines.length > 0
 
   const unknownButton = (
-    <Button
-      variant="ghost"
-      aria-pressed={timelinePressure === 'unknown'}
-      onClick={() => setTimelinePressure('unknown')}
-      className={clsx(
-        'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',
-        timelinePressure === 'unknown'
-          ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
-          : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
+    <>
+      <Button
+        variant="ghost"
+        aria-pressed={timelineUnknown}
+        onClick={() => setTimelineUnknown(!timelineUnknown)}
+        className={clsx(
+          'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',
+          timelineUnknown
+            ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
+        )}
+      >
+        <Info size={14} className="shrink-0" />
+        I&apos;m not sure — help me choose
+      </Button>
+      {timelineUnknown && (
+        <p className="text-xs text-muted-foreground italic">
+          Recommended for {country || 'your region'}. You can adjust any selection.
+        </p>
       )}
-    >
-      <Info size={14} className="shrink-0" />I don&apos;t know / Not sure about our deadlines
-    </Button>
+    </>
   )
 
   return (
@@ -87,13 +96,9 @@ const Step13TimelinePressure = () => {
           </div>
 
           <div
-            className={clsx(
-              'space-y-3 transition-opacity',
-              timelinePressure === 'unknown' && 'opacity-40 pointer-events-none'
-            )}
+            className="space-y-3 transition-opacity"
             role="radiogroup"
             aria-label="Migration deadline"
-            aria-disabled={timelinePressure === 'unknown'}
           >
             {countryDeadlines.map((phase) => {
               const derived = deriveTimelinePressure(phase.endYear)
@@ -157,13 +162,9 @@ const Step13TimelinePressure = () => {
         <>
           {unknownButton}
           <div
-            className={clsx(
-              'space-y-3 transition-opacity',
-              timelinePressure === 'unknown' && 'opacity-40 pointer-events-none'
-            )}
+            className="space-y-3 transition-opacity"
             role="radiogroup"
             aria-label="Migration timeline pressure"
-            aria-disabled={timelinePressure === 'unknown'}
           >
             {staticOptions.map((opt) => (
               <Button

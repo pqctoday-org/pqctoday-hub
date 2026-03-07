@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback } from 'react'
-import { Play } from 'lucide-react'
+import React, { useEffect, useCallback, useState } from 'react'
+import { Play, Loader2 } from 'lucide-react'
 import { useTLSStore } from '../../../../store/tls-learning.store'
 import { TLSClientPanel } from './TLSClientPanel'
 import { TLSServerPanel } from './TLSServerPanel'
@@ -7,6 +7,19 @@ import { TLSNegotiationResults } from './components/TLSNegotiationResults'
 import { TLSComparisonTable } from './components/TLSComparisonTable'
 import { openSSLService } from '../../../../services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from './utils/configGenerator'
+
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { hsm_generateMLDSAKeyPair, hsm_extractKeyValue, hsm_sign } from '@/wasm/softhsm'
+
+const TLS_HSM_OPERATIONS = [
+  'C_GenerateKeyPair',
+  'C_GetAttributeValue',
+  'C_MessageSignInit',
+  'C_SignMessage',
+  'C_MessageSignFinal',
+]
 
 import {
   DEFAULT_CLIENT_CERT,
@@ -226,6 +239,58 @@ export const TLSBasicsModule: React.FC = () => {
     }
   }, [commands, triggerSimulation])
 
+  // Live HSM demo — HSM-backed TLS server key operations
+  const hsm = useHSM()
+  const [hsmLines, setHsmLines] = useState<string[]>([])
+  const [hsmRunning, setHsmRunning] = useState(false)
+  const [hsmError, setHsmError] = useState<string | null>(null)
+
+  const runHsmServerDemo = useCallback(async () => {
+    if (!hsm.moduleRef.current) return
+    setHsmRunning(true)
+    setHsmLines([])
+    setHsmError(null)
+    hsm.clearLog()
+
+    const addLine = (line: string) => setHsmLines((prev) => [...prev, line])
+
+    try {
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
+
+      // Step 1: Generate server key pair (ML-DSA-65) in HSM
+      const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
+      const pubKeyBytes = hsm_extractKeyValue(M, hSession, pubHandle)
+      addLine(
+        `[Server] Key: C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_65)` +
+          ` → pub=0x${pubHandle.toString(16).padStart(8, '0')} (${pubKeyBytes.length} B)`
+      )
+
+      // Step 2: Extract SubjectPublicKeyInfo (public key for Certificate)
+      addLine(
+        `[Server] Cert key: C_GetAttributeValue(CKA_VALUE) → ${pubKeyBytes.length} B SubjectPublicKeyInfo`
+      )
+
+      // Step 3: Sign TLS CertificateVerify message
+      const handshakeTranscript =
+        'TLS-1.3-CertificateVerify:ClientHello+ServerHello+...+CertificateVerify'
+      const sigBytes = hsm_sign(M, hSession, privHandle, handshakeTranscript)
+      addLine(
+        `[Server] CertificateVerify: C_MessageSignInit(CKM_ML_DSA) + C_SignMessage(transcript) → ${sigBytes.length} B`
+      )
+      addLine(
+        `[Client] Verify: sig[0..7]=${Array.from(sigBytes.slice(0, 8))
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('')}…`
+      )
+      addLine(`Private key never left HSM — CKA_EXTRACTABLE=FALSE`)
+    } catch (e) {
+      setHsmError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setHsmRunning(false)
+    }
+  }, [hsm])
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -269,6 +334,61 @@ export const TLSBasicsModule: React.FC = () => {
       </div>
 
       <TLSNegotiationResults />
+
+      {/* HSM-Backed Server — Live PKCS#11 Demo */}
+      <div className="space-y-3">
+        <h3 className="text-base font-semibold text-foreground">HSM-Backed TLS Server (PKCS#11)</h3>
+        <p className="text-xs text-muted-foreground">
+          In production, TLS server private keys live in a Hardware Security Module. The HSM signs
+          the TLS CertificateVerify message via PKCS#11. Enable Live HSM Mode to see the real calls.
+        </p>
+
+        <LiveHSMToggle hsm={hsm} operations={TLS_HSM_OPERATIONS} />
+
+        {hsm.isReady && (
+          <div className="glass-panel p-4 space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm font-semibold">Run HSM Server Key Operations</p>
+              <button
+                onClick={runHsmServerDemo}
+                disabled={hsmRunning}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
+              >
+                {hsmRunning ? (
+                  <>
+                    <Loader2 size={11} className="animate-spin" /> Running…
+                  </>
+                ) : (
+                  'Execute (Live WASM)'
+                )}
+              </button>
+            </div>
+
+            {hsmError && <p className="text-xs text-status-error font-mono">{hsmError}</p>}
+
+            {hsmLines.length > 0 && (
+              <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 space-y-1">
+                {hsmLines.map((line, i) => (
+                  <p key={i} className="text-xs font-mono text-foreground/80 break-all">
+                    {line}
+                  </p>
+                ))}
+                <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
+                  Real output from SoftHSM3 WASM · PKCS#11 v3.2
+                </p>
+              </div>
+            )}
+
+            <Pkcs11LogPanel
+              log={hsm.log}
+              onClear={hsm.clearLog}
+              defaultOpen={true}
+              title="PKCS#11 Call Log — TLS Server Operations"
+              emptyMessage="Click 'Execute' to run the HSM-backed TLS server demo."
+            />
+          </div>
+        )}
+      </div>
 
       {/* Comparison Table Section */}
       <div className="mt-6">

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
-import { Hash, Loader2 } from 'lucide-react'
+import { Hash, Loader2, Plus, X, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import {
@@ -10,6 +10,7 @@ import {
   CKM_SHA3_256,
   CKM_SHA3_512,
   hsm_digest,
+  hsm_digestMultiPart,
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
@@ -34,22 +35,57 @@ export const HsmHashingPanel = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Multi-part state
+  const [multiPart, setMultiPart] = useState(false)
+  const [chunks, setChunks] = useState<string[]>(['Hello, ', 'PQC World!'])
+  const [matchResult, setMatchResult] = useState<boolean | null>(null)
+
   const selectedAlgo = HASH_ALGOS.find((a) => a.mech === selectedMech) ?? HASH_ALGOS[0]
 
   const doDigest = async () => {
     setLoading(true)
     setError(null)
     setDigest(null)
+    setMatchResult(null)
     try {
       const M = moduleRef.current!
-      const data = new TextEncoder().encode(input)
-      const result = hsm_digest(M, hSessionRef.current, data, selectedMech)
-      setDigest(result)
+      if (multiPart) {
+        const encodedChunks = chunks.map((c) => new TextEncoder().encode(c))
+        const result = hsm_digestMultiPart(M, hSessionRef.current, encodedChunks, selectedMech)
+        setDigest(result)
+        // Compare with single-part
+        const combined = new TextEncoder().encode(chunks.join(''))
+        const singleResult = hsm_digest(M, hSessionRef.current, combined, selectedMech)
+        setMatchResult(toHex(result) === toHex(singleResult))
+      } else {
+        const data = new TextEncoder().encode(input)
+        const result = hsm_digest(M, hSessionRef.current, data, selectedMech)
+        setDigest(result)
+      }
     } catch (e) {
       setError(String(e))
     } finally {
       setLoading(false)
     }
+  }
+
+  const updateChunk = (idx: number, value: string) => {
+    setChunks((prev) => prev.map((c, i) => (i === idx ? value : c)))
+    setDigest(null)
+    setMatchResult(null)
+  }
+
+  const addChunk = () => {
+    setChunks((prev) => [...prev, ''])
+    setDigest(null)
+    setMatchResult(null)
+  }
+
+  const removeChunk = (idx: number) => {
+    if (chunks.length <= 1) return
+    setChunks((prev) => prev.filter((_, i) => i !== idx))
+    setDigest(null)
+    setMatchResult(null)
   }
 
   return (
@@ -58,14 +94,33 @@ export const HsmHashingPanel = () => {
         {/* Header */}
         <div className="flex items-center gap-2">
           <Hash size={18} className="text-primary" />
-          <h3 className="font-semibold text-base">HSM Hashing — C_DigestInit / C_Digest</h3>
+          <h3 className="font-semibold text-base">
+            HSM Hashing — C_DigestInit / C_Digest{multiPart ? 'Update' : ''}
+          </h3>
         </div>
 
-        {/* Algorithm selector */}
+        {/* Algorithm selector + multi-part toggle */}
         <div className="glass-panel p-4 space-y-3">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-            Algorithm
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+              Algorithm
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setMultiPart((v) => !v)
+                setDigest(null)
+                setMatchResult(null)
+              }}
+              className={`text-xs rounded-lg px-3 py-1 border transition-colors ${
+                multiPart
+                  ? 'bg-primary/20 border-primary text-primary'
+                  : 'bg-muted border-border text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Multi-part
+            </button>
+          </div>
           <div className="flex flex-wrap gap-2">
             {HASH_ALGOS.map((a) => (
               <Button
@@ -75,6 +130,7 @@ export const HsmHashingPanel = () => {
                 onClick={() => {
                   setSelectedMech(a.mech)
                   setDigest(null)
+                  setMatchResult(null)
                 }}
                 className={
                   selectedMech === a.mech
@@ -93,32 +149,72 @@ export const HsmHashingPanel = () => {
           </p>
         </div>
 
-        {/* Input */}
+        {/* Input — single or multi-part */}
         <div className="glass-panel p-4 space-y-3">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Input</p>
-          <textarea
-            className="w-full bg-muted border border-input rounded-lg px-3 py-2 text-sm font-mono resize-none focus:outline-none focus:ring-1 focus:ring-ring"
-            rows={3}
-            value={input}
-            onChange={(e) => {
-              setInput(e.target.value)
-              setDigest(null)
-            }}
-            placeholder="Enter data to hash…"
-          />
-          <p className="text-xs text-muted-foreground">
-            {new TextEncoder().encode(input).length} bytes
+          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+            {multiPart ? 'Chunks' : 'Input'}
           </p>
+          {multiPart ? (
+            <div className="space-y-2">
+              {chunks.map((chunk, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground w-6 shrink-0">#{idx + 1}</span>
+                  <input
+                    type="text"
+                    value={chunk}
+                    onChange={(e) => updateChunk(idx, e.target.value)}
+                    placeholder={`Chunk ${idx + 1}…`}
+                    className="flex-1 text-xs rounded-lg px-3 py-1.5 bg-muted border border-input text-foreground font-mono focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeChunk(idx)}
+                    disabled={chunks.length <= 1}
+                    className="text-muted-foreground hover:text-status-error transition-colors disabled:opacity-30"
+                    aria-label={`Remove chunk ${idx + 1}`}
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ))}
+              <Button variant="ghost" size="sm" onClick={addChunk} className="text-xs h-7">
+                <Plus size={12} className="mr-1" /> Add Chunk
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                {chunks.length} chunks · {chunks.join('').length} chars total
+              </p>
+            </div>
+          ) : (
+            <>
+              <textarea
+                className="w-full bg-muted border border-input rounded-lg px-3 py-2 text-sm font-mono resize-none focus:outline-none focus:ring-1 focus:ring-ring"
+                rows={3}
+                value={input}
+                onChange={(e) => {
+                  setInput(e.target.value)
+                  setDigest(null)
+                }}
+                placeholder="Enter data to hash…"
+              />
+              <p className="text-xs text-muted-foreground">
+                {new TextEncoder().encode(input).length} bytes
+              </p>
+            </>
+          )}
         </div>
 
         {/* Digest button */}
-        <Button onClick={doDigest} disabled={loading || !input.length} className="w-full">
+        <Button
+          onClick={doDigest}
+          disabled={loading || (multiPart ? chunks.every((c) => !c) : !input.length)}
+          className="w-full"
+        >
           {loading ? (
             <Loader2 size={14} className="mr-2 animate-spin" />
           ) : (
             <Hash size={14} className="mr-2" />
           )}
-          Compute {selectedAlgo.label} Digest
+          Compute {selectedAlgo.label} Digest{multiPart ? ' (Multi-part)' : ''}
         </Button>
 
         {error && <ErrorAlert message={error} />}
@@ -136,6 +232,20 @@ export const HsmHashingPanel = () => {
               value={`${digest.length} bytes (${digest.length * 8} bits)`}
               mono={false}
             />
+            {multiPart && matchResult !== null && (
+              <div
+                className={`flex items-center gap-2 rounded px-3 py-2 text-xs font-mono ${
+                  matchResult
+                    ? 'bg-status-success/10 text-status-success'
+                    : 'bg-status-error/10 text-status-error'
+                }`}
+              >
+                {matchResult ? <CheckCircle size={13} /> : <XCircle size={13} />}
+                {matchResult
+                  ? 'Matches single-part digest of concatenated input'
+                  : 'Does not match single-part digest'}
+              </div>
+            )}
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground">Full hex output</p>
               <p className="text-xs font-mono bg-muted rounded px-3 py-2 break-all text-foreground/80 select-all">
@@ -157,17 +267,38 @@ export const HsmHashingPanel = () => {
               {selectedAlgo.label.replace('-', '_')}
               {'}'}) → <span className="text-status-success">CKR_OK</span>
             </div>
-            <div className="text-muted-foreground">
-              <span className="text-foreground">C_Digest</span>
-              (hSession, pData, ulDataLen, NULL, &amp;digestLen) →{' '}
-              <span className="text-status-success">CKR_OK</span>{' '}
-              <span className="text-muted-foreground">[size query]</span>
-            </div>
-            <div className="text-muted-foreground">
-              <span className="text-foreground">C_Digest</span>
-              (hSession, pData, ulDataLen, pDigest, &amp;digestLen) →{' '}
-              <span className="text-status-success">CKR_OK</span> → {selectedAlgo.outBytes} bytes
-            </div>
+            {multiPart ? (
+              <>
+                <div className="text-muted-foreground">
+                  <span className="text-foreground">C_DigestUpdate</span>
+                  (hSession, pPart, ulPartLen) → <span className="text-status-success">
+                    CKR_OK
+                  </span>{' '}
+                  <span className="text-muted-foreground">[× {chunks.length} chunks]</span>
+                </div>
+                <div className="text-muted-foreground">
+                  <span className="text-foreground">C_DigestFinal</span>
+                  (hSession, pDigest, &amp;digestLen) →{' '}
+                  <span className="text-status-success">CKR_OK</span> → {selectedAlgo.outBytes}{' '}
+                  bytes
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="text-muted-foreground">
+                  <span className="text-foreground">C_Digest</span>
+                  (hSession, pData, ulDataLen, NULL, &amp;digestLen) →{' '}
+                  <span className="text-status-success">CKR_OK</span>{' '}
+                  <span className="text-muted-foreground">[size query]</span>
+                </div>
+                <div className="text-muted-foreground">
+                  <span className="text-foreground">C_Digest</span>
+                  (hSession, pData, ulDataLen, pDigest, &amp;digestLen) →{' '}
+                  <span className="text-status-success">CKR_OK</span> → {selectedAlgo.outBytes}{' '}
+                  bytes
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

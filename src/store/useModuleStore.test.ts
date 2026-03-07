@@ -133,7 +133,7 @@ describe('useModuleStore', () => {
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v0State = { timestamp: 123 }
     const migrated = migrate(v0State, 0)
-    expect(migrated.version).toBe('8.0.0')
+    expect(migrated.version).toBe('10.0.0')
     expect(migrated.artifacts).toBeDefined()
     expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.sessionTracking).toBeDefined()
@@ -151,7 +151,7 @@ describe('useModuleStore', () => {
       artifacts: { keys: [], certificates: [], csrs: [] },
     }
     const migrated = migrate(v1State, 1)
-    expect(migrated.version).toBe('8.0.0')
+    expect(migrated.version).toBe('10.0.0')
     expect(migrated.modules['mod-1'].timeSpent).toBe(2)
     expect(migrated.sessionTracking).toBeDefined()
     expect(migrated.quizMastery).toBeDefined()
@@ -163,7 +163,7 @@ describe('useModuleStore', () => {
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v3State = { version: '3.0.0', artifacts: { keys: [], certificates: [], csrs: [] } }
     const migrated = migrate(v3State, 3)
-    expect(migrated.version).toBe('8.0.0')
+    expect(migrated.version).toBe('10.0.0')
     expect(migrated.quizMastery).toEqual({ correctQuestionIds: [] })
     expect(migrated.artifacts.executiveDocuments).toEqual([])
   })
@@ -177,7 +177,7 @@ describe('useModuleStore', () => {
       quizMastery: { correctQuestionIds: ['q1'] },
     }
     const migrated = migrate(v4State, 4)
-    expect(migrated.version).toBe('8.0.0')
+    expect(migrated.version).toBe('10.0.0')
     expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.quizMastery.correctQuestionIds).toEqual(['q1'])
   })
@@ -201,7 +201,7 @@ describe('useModuleStore', () => {
       quizMastery: { correctQuestionIds: ['q1'] },
     }
     const migrated = migrate(v5State, 5)
-    expect(migrated.version).toBe('8.0.0')
+    expect(migrated.version).toBe('10.0.0')
     // key-management should be removed
     expect(migrated.modules['key-management']).toBeUndefined()
     // kms-pqc should inherit status, timeSpent, quizScores but reset completedSteps
@@ -224,6 +224,111 @@ describe('useModuleStore', () => {
     useModuleStore.getState().addExecutiveDocument(doc)
     expect(useModuleStore.getState().artifacts.executiveDocuments).toContain(doc)
     expect(analytics.logArtifactGenerated).toHaveBeenCalledWith('learning', 'executive-document')
+  })
+
+  it('updates an existing executive document', () => {
+    const doc = {
+      id: 'doc1',
+      moduleId: 'pqc-governance',
+      type: 'raci-matrix' as const,
+      title: 'RACI v1',
+      data: '# RACI Matrix',
+      createdAt: 1000,
+    }
+    useModuleStore.getState().addExecutiveDocument(doc)
+    useModuleStore.getState().updateExecutiveDocument('doc1', {
+      title: 'RACI v2',
+      data: '# Updated RACI',
+    })
+    const updated = useModuleStore
+      .getState()
+      .artifacts.executiveDocuments?.find((d) => d.id === 'doc1')
+    expect(updated?.title).toBe('RACI v2')
+    expect(updated?.data).toBe('# Updated RACI')
+    expect(updated?.id).toBe('doc1')
+    expect(updated?.createdAt).toBe(1000)
+  })
+
+  it('update is a no-op for nonexistent document id', () => {
+    const doc = {
+      id: 'doc1',
+      moduleId: 'pqc-governance',
+      type: 'raci-matrix' as const,
+      title: 'RACI v1',
+      data: '# RACI',
+      createdAt: 1000,
+    }
+    useModuleStore.getState().addExecutiveDocument(doc)
+    useModuleStore.getState().updateExecutiveDocument('nonexistent', { title: 'Changed' })
+    const docs = useModuleStore.getState().artifacts.executiveDocuments ?? []
+    expect(docs).toHaveLength(1)
+    expect(docs[0].title).toBe('RACI v1')
+  })
+
+  it('deletes an executive document by id', () => {
+    const doc1 = {
+      id: 'doc1',
+      moduleId: 'pqc-governance',
+      type: 'raci-matrix' as const,
+      title: 'RACI',
+      data: '# RACI',
+      createdAt: 1000,
+    }
+    const doc2 = {
+      id: 'doc2',
+      moduleId: 'vendor-risk',
+      type: 'vendor-scorecard' as const,
+      title: 'Scorecard',
+      data: '# Scorecard',
+      createdAt: 2000,
+    }
+    useModuleStore.getState().addExecutiveDocument(doc1)
+    useModuleStore.getState().addExecutiveDocument(doc2)
+    useModuleStore.getState().deleteExecutiveDocument('doc1')
+    const docs = useModuleStore.getState().artifacts.executiveDocuments ?? []
+    expect(docs).toHaveLength(1)
+    expect(docs[0].id).toBe('doc2')
+  })
+
+  it('delete is a no-op for nonexistent document id', () => {
+    const doc = {
+      id: 'doc1',
+      moduleId: 'pqc-governance',
+      type: 'raci-matrix' as const,
+      title: 'RACI',
+      data: '# RACI',
+      createdAt: 1000,
+    }
+    useModuleStore.getState().addExecutiveDocument(doc)
+    useModuleStore.getState().deleteExecutiveDocument('nonexistent')
+    const docs = useModuleStore.getState().artifacts.executiveDocuments ?? []
+    expect(docs).toHaveLength(1)
+  })
+
+  it('replaces existing document with same moduleId+type instead of appending', () => {
+    const doc1 = {
+      id: 'scorecard-v1',
+      moduleId: 'vendor-risk',
+      type: 'vendor-scorecard' as const,
+      title: 'Scorecard v1',
+      data: '# v1',
+      createdAt: 1000,
+    }
+    const doc2 = {
+      id: 'scorecard-v2',
+      moduleId: 'vendor-risk',
+      type: 'vendor-scorecard' as const,
+      title: 'Scorecard v2',
+      data: '# v2',
+      createdAt: 2000,
+    }
+    useModuleStore.getState().addExecutiveDocument(doc1)
+    useModuleStore.getState().addExecutiveDocument(doc2)
+    const docs = useModuleStore.getState().artifacts.executiveDocuments ?? []
+    // Should replace, not append — only 1 doc with the latest data
+    expect(docs).toHaveLength(1)
+    expect(docs[0].title).toBe('Scorecard v2')
+    expect(docs[0].id).toBe('scorecard-v2')
   })
 
   it('handles beforeunload event to save to localStorage', () => {

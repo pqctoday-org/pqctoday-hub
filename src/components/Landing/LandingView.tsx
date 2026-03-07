@@ -12,6 +12,7 @@ import {
   ArrowRight,
   ClipboardCheck,
   FileBarChart,
+  LayoutDashboard,
   Save,
   Upload,
   Compass,
@@ -220,8 +221,21 @@ function buildJourneySteps(
       resumeLabel: 'Review Report',
     },
     {
-      id: 'test',
+      id: 'business',
       step: 8,
+      label: 'Business Center',
+      icon: LayoutDashboard,
+      color: 'text-primary',
+      section: 'assess' as const,
+      description:
+        'Your GRC command center — live risk scores, compliance tracking, vendor posture, and prioritized next steps',
+      paths: ['/business'],
+      actionLabel: 'Open Dashboard',
+      resumeLabel: 'View Dashboard',
+    },
+    {
+      id: 'test',
+      step: 9,
       label: 'Test & Build',
       icon: FlaskConical,
       color: 'text-secondary',
@@ -235,7 +249,7 @@ function buildJourneySteps(
     // — Keep Up to Date —
     {
       id: 'threats',
-      step: 9,
+      step: 10,
       label: 'Threats',
       icon: AlertTriangle,
       color: 'text-accent',
@@ -248,7 +262,7 @@ function buildJourneySteps(
     },
     {
       id: 'library',
-      step: 10,
+      step: 11,
       label: 'Library',
       icon: Shield,
       color: 'text-primary',
@@ -260,7 +274,7 @@ function buildJourneySteps(
     },
     {
       id: 'leaders',
-      step: 11,
+      step: 12,
       label: 'Leaders',
       icon: Globe,
       color: 'text-secondary',
@@ -337,6 +351,12 @@ export const LandingView = () => {
             ? 'started'
             : 'not-started',
       report: assessmentStatus === 'complete' ? 'engaged' : 'not-started',
+      business:
+        assessmentStatus === 'complete' || myFrameworkCount > 0
+          ? 'engaged'
+          : assessmentStatus === 'in-progress'
+            ? 'started'
+            : 'not-started',
       test: artifactCount > 0 ? 'engaged' : 'not-started',
       threats: 'not-started',
       library: 'not-started',

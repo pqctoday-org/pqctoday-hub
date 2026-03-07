@@ -86,24 +86,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">11 new learning modules</strong> &mdash;
-                    Role Guides (exec / dev / architect / ops / researcher) and an Industries track
-                    (Energy, Healthcare, Aerospace, Automotive) plus Cryptographic APIs
+                    <strong className="text-foreground">48 learning modules</strong> &mdash; 7 new
+                    modules: Secrets Management, Network Security, Database Encryption, IAM, Secure
+                    Boot, OS Crypto, and Platform Engineering
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">My Frameworks</strong> &mdash; bookmark
-                    compliance frameworks from the Compliance page; selections sync into the
-                    Assessment wizard automatically
+                    <strong className="text-foreground">Business Center</strong> &mdash; GRC command
+                    center with live risk scores, compliance tracking, vendor posture, and
+                    prioritized next steps
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Knowledge Graph Mindmap</strong> &mdash; new
-                    visual mindmap of the PQC learning landscape in the right panel
+                    <strong className="text-foreground">770 quiz questions</strong> &mdash; expanded
+                    coverage across all 48 modules with new categories for every added topic
                   </span>
                 </li>
               </ul>

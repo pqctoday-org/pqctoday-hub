@@ -54,7 +54,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
             'OpenSSL WASM Studio',
             'PQC Migration Planning',
             'Compliance Tracker (NIST, ANSSI, Common Criteria)',
-            '27 Hands-on Learning Modules',
+            '48 Hands-on Learning Modules',
             'PQC Risk Assessment Wizard',
             'Migration Software Catalog',
           ],
@@ -163,6 +163,13 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/migrate`,
   },
 
+  '/business': {
+    title: 'Business Center — PQC Readiness Dashboard | PQC Today',
+    description:
+      'Your executive PQC command center. Live risk scores, compliance tracking, migration pipeline, vendor posture, and actionable next steps — all in one dashboard.',
+    canonical: `${BASE_URL}/business`,
+  },
+
   '/assess': {
     title: 'PQC Risk Assessment — Quantum Readiness Score for Your Organization | PQC Today',
     description:
@@ -214,9 +221,9 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   // --- Learning modules ---
 
   '/learn': {
-    title: 'Learn Post-Quantum Cryptography — 27 Interactive Modules | PQC Today',
+    title: 'Learn Post-Quantum Cryptography — 48 Interactive Modules | PQC Today',
     description:
-      'Begin your post-quantum transformation with 27 guided learning modules. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
+      'Begin your post-quantum transformation with 48 guided learning modules across 8 tracks. Build the knowledge to assess your risk, plan your migration, and meet your regulatory requirements — from PQC fundamentals to advanced protocol implementation.',
     canonical: `${BASE_URL}/learn`,
     structuredData: {
       '@context': 'https://schema.org',

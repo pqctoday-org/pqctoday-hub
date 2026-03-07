@@ -18,13 +18,25 @@ import {
   hsm_generateHMACKey,
   hsm_hmac,
   hsm_hmacVerify,
+  hsm_generateRandom,
+  hsm_seedRandom,
+  hsm_aesWrapKey,
+  hsm_unwrapKey,
+  CKO_SECRET_KEY,
+  CKA_CLASS,
+  CKA_KEY_TYPE,
+  CKA_TOKEN,
+  CKA_EXTRACTABLE,
+  CKA_VALUE_LEN,
+  CKK_AES,
+  type AttrDef,
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
 
 // ── Types ───────────────────────────────────────────────────────────────────────
 
-type SymMode = 'aes-gcm' | 'aes-cbc' | 'aes-ctr' | 'aes-cmac' | 'hmac'
+type SymMode = 'aes-gcm' | 'aes-cbc' | 'aes-ctr' | 'aes-cmac' | 'hmac' | 'rng' | 'key-wrap'
 
 const SYM_MODES: { id: SymMode; label: string; desc: string }[] = [
   { id: 'aes-gcm', label: 'AES-GCM', desc: 'Authenticated encryption (CKM_AES_GCM)' },
@@ -40,6 +52,8 @@ const SYM_MODES: { id: SymMode; label: string; desc: string }[] = [
     desc: 'Cipher-based MAC per NIST SP 800-38B (CKM_AES_CMAC)',
   },
   { id: 'hmac', label: 'HMAC', desc: 'Hash-based MAC via C_SignInit/C_VerifyInit' },
+  { id: 'rng', label: 'RNG', desc: 'C_GenerateRandom / C_SeedRandom — hardware RNG' },
+  { id: 'key-wrap', label: 'Key Wrap', desc: 'AES Key Wrap via C_WrapKey / C_UnwrapKey' },
 ]
 
 const HMAC_ALGOS = [
@@ -887,6 +901,337 @@ const AesCmacPanel = () => {
   )
 }
 
+// ── RNG sub-panel ───────────────────────────────────────────────────────────────
+
+const RngPanel = () => {
+  const { moduleRef, hSessionRef } = useHsmContext()
+  const [length, setLength] = useState(32)
+  const [randomBytes, setRandomBytes] = useState<Uint8Array | null>(null)
+  const [seedHex, setSeedHex] = useState('')
+  const [seedResult, setSeedResult] = useState<string | null>(null)
+  const [loadingOp, setLoadingOp] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const anyLoading = loadingOp !== null
+
+  const withLoading = async (op: string, fn: () => Promise<void>) => {
+    setLoadingOp(op)
+    setError(null)
+    try {
+      await fn()
+    } catch (e) {
+      setError(String(e))
+    } finally {
+      setLoadingOp(null)
+    }
+  }
+
+  const doGenerate = () =>
+    withLoading('gen', async () => {
+      const M = moduleRef.current!
+      const bytes = hsm_generateRandom(M, hSessionRef.current, length)
+      setRandomBytes(bytes)
+    })
+
+  const doSeed = () =>
+    withLoading('seed', async () => {
+      const M = moduleRef.current!
+      const bytes = new Uint8Array(seedHex.match(/.{1,2}/g)?.map((b) => parseInt(b, 16)) ?? [])
+      if (bytes.length === 0) throw new Error('Enter hex seed data')
+      hsm_seedRandom(M, hSessionRef.current, bytes)
+      setSeedResult(`Seeded ${bytes.length} bytes`)
+      setTimeout(() => setSeedResult(null), 3000)
+    })
+
+  return (
+    <div className="space-y-4">
+      <div className="glass-panel p-4 space-y-3">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+          Generate Random Bytes
+        </p>
+        <div className="flex items-center gap-2 flex-wrap">
+          {[16, 32, 48, 64, 128].map((n) => (
+            <Button
+              key={n}
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setLength(n)
+                setRandomBytes(null)
+              }}
+              disabled={anyLoading}
+              className={
+                length === n
+                  ? 'bg-primary/20 text-primary text-xs h-7 px-3'
+                  : 'text-muted-foreground text-xs h-7 px-3'
+              }
+            >
+              {n} B
+            </Button>
+          ))}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={doGenerate}
+            disabled={anyLoading}
+            className="ml-auto h-7 text-xs"
+          >
+            {loadingOp === 'gen' && <Loader2 size={12} className="mr-1.5 animate-spin" />}
+            Generate
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground font-mono">
+          C_GenerateRandom(hSession, pRandom, {length}) → {length} bytes
+        </p>
+      </div>
+
+      {randomBytes && (
+        <div className="glass-panel p-4 space-y-3">
+          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+            Result
+          </p>
+          <HsmResultRow label="Length" value={`${randomBytes.length} bytes`} mono={false} />
+          <HsmResultRow label="Hex (snippet)" value={hexSnippet(randomBytes, 32)} />
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">Full hex output</p>
+            <p className="text-xs font-mono bg-muted rounded px-3 py-2 break-all text-foreground/80 select-all">
+              {toHex(randomBytes)}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div className="glass-panel p-4 space-y-3">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+          Seed RNG (optional)
+        </p>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={seedHex}
+            onChange={(e) => setSeedHex(e.target.value.replace(/[^0-9a-fA-F]/g, ''))}
+            placeholder="Hex entropy (e.g. deadbeef01020304)"
+            className="flex-1 text-xs rounded-lg px-3 py-1.5 bg-muted border border-input text-foreground font-mono focus:outline-none focus:ring-1 focus:ring-ring"
+          />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={doSeed}
+            disabled={anyLoading || seedHex.length < 2}
+            className="h-7 text-xs"
+          >
+            {loadingOp === 'seed' && <Loader2 size={12} className="mr-1.5 animate-spin" />}
+            Seed
+          </Button>
+        </div>
+        {seedResult && <p className="text-xs text-status-success animate-fade-in">{seedResult}</p>}
+        <p className="text-xs text-muted-foreground font-mono">
+          C_SeedRandom(hSession, pSeed, seedLen) → CKR_OK
+        </p>
+      </div>
+
+      {error && <ErrorAlert message={error} />}
+    </div>
+  )
+}
+
+// ── Key Wrap sub-panel ──────────────────────────────────────────────────────────
+
+const KeyWrapPanel = () => {
+  const { moduleRef, hSessionRef, keysForFamily, addHsmKey } = useHsmContext()
+  const [wrapKeyHandle, setWrapKeyHandle] = useState<number | null>(null)
+  const [targetKeyHandle, setTargetKeyHandle] = useState<number | null>(null)
+  const [wrappedHex, setWrappedHex] = useState<string | null>(null)
+  const [unwrappedHandle, setUnwrappedHandle] = useState<number | null>(null)
+  const [loadingOp, setLoadingOp] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const aesKeys = keysForFamily('aes', 'secret')
+  const anyLoading = loadingOp !== null
+
+  const withLoading = async (op: string, fn: () => Promise<void>) => {
+    setLoadingOp(op)
+    setError(null)
+    try {
+      await fn()
+    } catch (e) {
+      setError(String(e))
+    } finally {
+      setLoadingOp(null)
+    }
+  }
+
+  const doWrap = () =>
+    withLoading('wrap', async () => {
+      const M = moduleRef.current!
+      const wrapped = hsm_aesWrapKey(M, hSessionRef.current, wrapKeyHandle!, targetKeyHandle!)
+      setWrappedHex(toHex(wrapped))
+      setUnwrappedHandle(null)
+    })
+
+  const doUnwrap = () =>
+    withLoading('unwrap', async () => {
+      if (!wrappedHex) throw new Error('No wrapped key data')
+      const M = moduleRef.current!
+      const wrappedBytes = new Uint8Array(wrappedHex.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
+      const template: AttrDef[] = [
+        { type: CKA_CLASS, value: CKO_SECRET_KEY },
+        { type: CKA_KEY_TYPE, value: CKK_AES },
+        { type: CKA_TOKEN, value: false },
+        { type: CKA_EXTRACTABLE, value: true },
+        { type: CKA_VALUE_LEN, value: 32 },
+      ]
+      const newHandle = hsm_unwrapKey(
+        M,
+        hSessionRef.current,
+        wrapKeyHandle!,
+        wrappedBytes,
+        template
+      )
+      setUnwrappedHandle(newHandle)
+      const ts = new Date().toLocaleTimeString([], {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      })
+      addHsmKey({
+        handle: newHandle,
+        family: 'aes',
+        role: 'secret',
+        label: 'AES-256 (unwrapped)',
+        variant: '256',
+        generatedAt: ts,
+      })
+    })
+
+  return (
+    <div className="space-y-4">
+      <div className="glass-panel p-4 space-y-3">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+          AES Key Wrap (RFC 3394)
+        </p>
+        {aesKeys.length < 2 ? (
+          <p className="text-xs text-muted-foreground">
+            Generate at least 2 AES keys (one wrapping, one target) in AES-GCM/CBC/CTR mode first.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs text-muted-foreground w-24">Wrapping key:</span>
+              <select
+                value={wrapKeyHandle ?? ''}
+                onChange={(e) => {
+                  setWrapKeyHandle(Number(e.target.value) || null)
+                  setWrappedHex(null)
+                  setUnwrappedHandle(null)
+                }}
+                className="text-xs rounded-lg px-2 py-1.5 bg-muted border border-border text-foreground flex-1"
+              >
+                <option value="">Select…</option>
+                {aesKeys.map((k) => (
+                  <option key={k.handle} value={k.handle}>
+                    h={k.handle} — {k.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs text-muted-foreground w-24">Key to wrap:</span>
+              <select
+                value={targetKeyHandle ?? ''}
+                onChange={(e) => {
+                  setTargetKeyHandle(Number(e.target.value) || null)
+                  setWrappedHex(null)
+                  setUnwrappedHandle(null)
+                }}
+                className="text-xs rounded-lg px-2 py-1.5 bg-muted border border-border text-foreground flex-1"
+              >
+                <option value="">Select…</option>
+                {aesKeys
+                  .filter((k) => k.handle !== wrapKeyHandle)
+                  .map((k) => (
+                    <option key={k.handle} value={k.handle}>
+                      h={k.handle} — {k.label}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="flex gap-2">
+        <Button
+          onClick={doWrap}
+          disabled={!wrapKeyHandle || !targetKeyHandle || anyLoading}
+          className="flex-1"
+        >
+          {loadingOp === 'wrap' && <Loader2 size={14} className="mr-2 animate-spin" />}
+          <Lock size={14} className="mr-2" /> Wrap Key
+        </Button>
+        <Button
+          variant="outline"
+          onClick={doUnwrap}
+          disabled={!wrappedHex || !wrapKeyHandle || anyLoading}
+          className="flex-1"
+        >
+          {loadingOp === 'unwrap' && <Loader2 size={14} className="mr-2 animate-spin" />}
+          Unwrap Key
+        </Button>
+      </div>
+
+      {error && <ErrorAlert message={error} />}
+
+      {(wrappedHex || unwrappedHandle !== null) && (
+        <div className="glass-panel p-4 space-y-3">
+          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+            Result
+          </p>
+          {wrappedHex && (
+            <>
+              <HsmResultRow
+                label="Wrapped key"
+                value={hexSnippet(
+                  new Uint8Array(wrappedHex.match(/.{1,2}/g)!.map((b) => parseInt(b, 16))),
+                  24
+                )}
+              />
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground">Full wrapped key (hex)</p>
+                <p className="text-xs font-mono bg-muted rounded px-3 py-2 break-all text-foreground/80 select-all">
+                  {wrappedHex}
+                </p>
+              </div>
+            </>
+          )}
+          {unwrappedHandle !== null && (
+            <HsmResultRow label="Unwrapped handle" value={`h=${unwrappedHandle}`} mono={false} />
+          )}
+        </div>
+      )}
+
+      <div className="glass-panel p-4 space-y-2">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+          PKCS#11 Call Sequence
+        </p>
+        <div className="space-y-1 text-xs font-mono">
+          <div className="text-muted-foreground">
+            <span className="text-foreground">C_WrapKey</span>
+            {`(hSession, CKM_AES_KEY_WRAP_KWP, hWrappingKey, hKey, pWrapped, &wrappedLen) → `}
+            <span className="text-status-success">CKR_OK</span>
+          </div>
+          <div className="text-muted-foreground">
+            <span className="text-foreground">C_UnwrapKey</span>
+            {`(hSession, CKM_AES_KEY_WRAP_KWP, hUnwrapKey, pWrapped, wrappedLen, tpl, tplLen, &hNewKey) → `}
+            <span className="text-status-success">CKR_OK</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ── Main panel ──────────────────────────────────────────────────────────────────
 
 export const HsmSymmetricPanel = () => {
@@ -930,6 +1275,8 @@ export const HsmSymmetricPanel = () => {
         {mode === 'aes-ctr' && <AesCtrPanel />}
         {mode === 'aes-cmac' && <AesCmacPanel />}
         {mode === 'hmac' && <HmacPanel />}
+        {mode === 'rng' && <RngPanel />}
+        {mode === 'key-wrap' && <KeyWrapPanel />}
       </div>
     </HsmReadyGuard>
   )

@@ -9,6 +9,8 @@ export interface AssessmentInput {
   dataSensitivity: string[]
   complianceRequirements: string[]
   migrationStatus: 'started' | 'planning' | 'not-started' | 'unknown'
+  /** When true, user indicated they don't know their migration status. */
+  migrationUnknown?: boolean
   country?: string
   cryptoUseCases?: string[]
   /** One or more retention periods — HNDL risk uses the longest selected. */
@@ -18,11 +20,15 @@ export interface AssessmentInput {
   systemCount?: '1-10' | '11-50' | '51-200' | '200-plus'
   teamSize?: '1-10' | '11-50' | '51-200' | '200-plus'
   cryptoAgility?: 'fully-abstracted' | 'partially-abstracted' | 'hardcoded' | 'unknown'
+  /** When true, user indicated they don't know their crypto agility level. */
+  agilityUnknown?: boolean
   infrastructure?: string[]
   vendorDependency?: 'heavy-vendor' | 'open-source' | 'mixed' | 'in-house'
   /** When true, user indicated they don't know their vendor dependency model. */
   vendorUnknown?: boolean
   timelinePressure?: 'within-1y' | 'within-2-3y' | 'internal-deadline' | 'no-deadline' | 'unknown'
+  /** When true, user indicated they don't know their timeline pressure. */
+  timelineUnknown?: boolean
   /** How long signed artifacts / certificates must remain trusted (multi-select, HNFL uses longest). */
   credentialLifetime?: string[]
   /** When true, user indicated they don't know their credential lifetime. */
@@ -35,6 +41,8 @@ export interface AssessmentInput {
   useCasesUnknown?: boolean
   /** When true, user indicated they don't know their infrastructure. */
   infrastructureUnknown?: boolean
+  /** Sub-categories per infrastructure layer (e.g., { Cloud: ['AWS KMS', 'Azure Key Vault'] }). */
+  infrastructureSubCategories?: Record<string, string[]>
   /** Active persona at assessment time — drives narrative framing and scoring adjustments. */
   persona?: 'executive' | 'developer' | 'architect' | 'researcher' | 'ops'
 }
@@ -120,6 +128,7 @@ export interface AssessmentProfile {
   complianceFrameworks: string[]
   complianceUnknown: boolean
   migrationStatus: string
+  migrationUnknown: boolean
   mode: 'quick' | 'comprehensive'
   useCases?: string[]
   useCasesUnknown: boolean
@@ -129,12 +138,15 @@ export interface AssessmentProfile {
   credentialLifetimeUnknown: boolean
   infrastructure?: string[]
   infrastructureUnknown: boolean
+  infrastructureSubCategories?: Record<string, string[]>
   cryptoAgility?: string
+  agilityUnknown: boolean
   vendorDependency?: string
   vendorUnknown: boolean
   systemScale?: string
   teamSize?: string
   timelinePressure?: string
+  timelineUnknown: boolean
 }
 
 export interface AssessmentResult {

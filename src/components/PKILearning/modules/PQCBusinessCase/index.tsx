@@ -7,6 +7,7 @@ import { ROICalculator } from './components/ROICalculator'
 import { BreachScenarioSimulator } from './components/BreachScenarioSimulator'
 import { BoardPitchBuilder } from './components/BoardPitchBuilder'
 import { useModuleStore } from '@/store/useModuleStore'
+import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
@@ -77,11 +78,10 @@ const EXERCISES: BusinessCaseExercise[] = [
 ]
 
 export const PQCBusinessCaseModule: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(() => {
-    const tab = new URLSearchParams(window.location.search).get('tab')
-    return tab === 'learn' || tab === 'workshop' ? tab : 'learn'
-  })
-  const [currentPart, setCurrentPart] = useState(0)
+  const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
+  const [activeTab, setActiveTab] = useState(deepLink.initialTab)
+  const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
+  useSyncDeepLink(activeTab, currentPart)
   const startTimeRef = useRef(0)
   const { updateModuleProgress, markStepComplete } = useModuleStore()
 

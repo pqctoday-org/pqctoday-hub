@@ -1,9 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { Code2 } from 'lucide-react'
+import { Code2, Loader2 } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { CODE_EXAMPLES, OPERATION_LABELS, type CryptoOperation } from '../data/codeExamplesData'
 import { CRYPTO_APIS } from '../data/apiData'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { hsm_generateMLDSAKeyPair, hsm_extractKeyValue, hsm_getMechanismList } from '@/wasm/softhsm'
+
+const PKCS11_LIVE_OPERATIONS = [
+  'C_Initialize',
+  'C_GetSlotList',
+  'C_OpenSession',
+  'C_Login',
+  'C_GenerateKeyPair',
+  'C_GetMechanismList',
+  'C_GetMechanismInfo',
+]
 
 const OPERATION_ITEMS: { id: string; label: string }[] = [
   { id: 'keygen', label: 'Key Generation' },
@@ -53,6 +67,57 @@ const PROVIDER_PATTERNS: Record<string, { pattern: string; description: string }
 export const ProviderPatternWorkshop: React.FC = () => {
   const [operation, setOperation] = useState<CryptoOperation>('keygen')
   const [apiFilter, setApiFilter] = useState('All')
+
+  // Live HSM mode — PKCS#11 session lifecycle demo
+  const hsm = useHSM()
+  const [liveLines, setLiveLines] = useState<string[]>([])
+  const [liveRunning, setLiveRunning] = useState(false)
+  const [liveError, setLiveError] = useState<string | null>(null)
+
+  const runPkcs11Demo = async () => {
+    if (!hsm.moduleRef.current) return
+    setLiveRunning(true)
+    setLiveLines([])
+    setLiveError(null)
+    hsm.clearLog()
+
+    const addLine = (line: string) => setLiveLines((prev) => [...prev, line])
+
+    try {
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
+      const slotId = hsm.slotRef.current
+
+      // Session already open via useHSM lifecycle — show info
+      addLine(
+        `Session already open: hSession=0x${hSession.toString(16).padStart(8, '0')}, slot=${slotId}`
+      )
+      addLine(`(C_Initialize → C_GetSlotList → C_InitToken → C_OpenSession → C_Login already run)`)
+
+      // Generate ML-DSA-65 key pair
+      const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
+      const pubKeyBytes = hsm_extractKeyValue(M, hSession, pubHandle)
+      addLine(
+        `C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_65)` +
+          ` → pub=0x${pubHandle.toString(16).padStart(8, '0')} (${pubKeyBytes.length} B), priv=0x${privHandle.toString(16).padStart(8, '0')}`
+      )
+
+      // Get mechanism list
+      const mechList = hsm_getMechanismList(M, slotId)
+      addLine(`C_GetMechanismList(slot=${slotId}) → ${mechList.length} mechanisms registered`)
+
+      // Show a few PQC mechanism hex values
+      const PQC_MECHS = [0x0f, 0x17, 0x1c, 0x1d, 0x2d, 0x2e]
+      const pqcFound = mechList.filter((m) => PQC_MECHS.includes(m))
+      addLine(
+        `PQC mechanisms: ${pqcFound.map((m) => `0x${m.toString(16).padStart(4, '0')}`).join(', ')}`
+      )
+    } catch (e) {
+      setLiveError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setLiveRunning(false)
+    }
+  }
 
   const examples = useMemo(() => {
     return CODE_EXAMPLES.filter((ex) => {
@@ -105,6 +170,57 @@ export const ProviderPatternWorkshop: React.FC = () => {
             })}
         </div>
       </div>
+
+      {/* Live HSM Demo — shown when PKCS#11 API is selected */}
+      {(apiFilter === 'All' || apiFilter === 'pkcs11') && (
+        <div className="space-y-3">
+          <LiveHSMToggle hsm={hsm} operations={PKCS11_LIVE_OPERATIONS} />
+
+          {hsm.isReady && (
+            <div className="glass-panel p-4 space-y-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-semibold">Run PKCS#11 Session Lifecycle Demo</p>
+                <button
+                  onClick={runPkcs11Demo}
+                  disabled={liveRunning}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
+                >
+                  {liveRunning ? (
+                    <>
+                      <Loader2 size={11} className="animate-spin" /> Running…
+                    </>
+                  ) : (
+                    'Execute (Live WASM)'
+                  )}
+                </button>
+              </div>
+
+              {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
+
+              {liveLines.length > 0 && (
+                <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 space-y-1">
+                  {liveLines.map((line, i) => (
+                    <p key={i} className="text-xs font-mono text-foreground/80 break-all">
+                      {line}
+                    </p>
+                  ))}
+                  <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
+                    Real output from SoftHSM3 WASM · PKCS#11 v3.2
+                  </p>
+                </div>
+              )}
+
+              <Pkcs11LogPanel
+                log={hsm.log}
+                onClear={hsm.clearLog}
+                defaultOpen={true}
+                title="PKCS#11 Call Log — Full Session Lifecycle"
+                emptyMessage="Click 'Execute' to run the PKCS#11 lifecycle demo."
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Code Examples */}
       <div className="space-y-4">

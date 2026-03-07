@@ -4,6 +4,59 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.30.0] - 2026-03-07
+
+### Added
+
+- **7 new learning modules** — expanding the platform to 48 hands-on modules across 8 tracks:
+  - **Secrets Management PQC** (`src/components/PKILearning/modules/SecretsManagementPQC/`): Vault, AWS Secrets Manager, Azure Key Vault, and GCP Secret Manager PQC migration. 5 workshop steps: Secrets Architecture Mapper, Vault PQC Simulator, Rotation Policy Designer, Cloud Secrets Comparator, Pipeline Integration Lab. 90 min, advanced, Infrastructure track. [view:/learn/secrets-management-pqc] [persona:architect,ops]
+
+  - **Network Security PQC** (`src/components/PKILearning/modules/NetworkSecurityPQC/`): NGFWs, IDS/IPS, TLS inspection, and ZTNA post-quantum migration. 5 workshop steps: NGFW Cipher Analyzer, TLS Inspection Lab, IDS Signature Updater, Vendor Migration Matrix, ZTNA PQC Designer. 90 min, advanced, Protocols track. [view:/learn/network-security-pqc] [persona:architect,ops]
+
+  - **Database Encryption PQC** (`src/components/PKILearning/modules/DatabaseEncryptionPQC/`): TDE, CLE, queryable encryption, and BYOK/HYOK key management. 5 workshop steps: Encryption Layer Mapper, TDE Migration Planner, BYOK Key Designer, Queryable Encryption Lab, Database Migration Readiness. 75 min, intermediate, Infrastructure track. [view:/learn/database-encryption-pqc] [persona:architect,developer]
+
+  - **IAM PQC** (`src/components/PKILearning/modules/IAMPQC/`): JWT/SAML/OIDC migration, Active Directory/LDAP, and Zero Trust identity architecture. 5 workshop steps: IAM Crypto Inventory, Token Migration Lab, Directory Services Analyzer, Vendor Readiness Scorer, Zero Trust Identity Architect. 90 min, intermediate, Applications track. [view:/learn/iam-pqc] [persona:architect,developer]
+
+  - **Secure Boot PQC** (`src/components/PKILearning/modules/SecureBootPQC/`): UEFI PK/KEK/db migration, ML-DSA firmware signing, TPM 2.0, and DICE attestation. 5 workshop steps: Secure Boot Chain Analyzer, Firmware Signing Migrator, TPM Key Hierarchy Explorer, Firmware Vendor Matrix, Attestation Flow Designer. 90 min, advanced, Infrastructure track. [view:/learn/secure-boot-pqc] [persona:architect,ops]
+
+  - **OS PQC** (`src/components/PKILearning/modules/OSPQC/`): OpenSSL Provider architecture, SSH host key migration, GnuTLS/Schannel policy, and package signing. 5 workshop steps: OS Crypto Inventory, System TLS Configurator, SSH Host Key Migrator, Package Signing Migrator, FIPS Compatibility Checker. 75 min, intermediate, Infrastructure track. [view:/learn/os-pqc] [persona:ops,developer]
+
+  - **Platform Engineering PQC** (`src/components/PKILearning/modules/PlatformEngPQC/`): CI/CD pipeline crypto inventory, container signing migration (cosign/Notation to ML-DSA), IaC defaults, OPA/Kyverno policy enforcement, and posture monitoring. 6 workshop steps. 120 min, advanced, Applications track. [view:/learn/platform-eng-pqc] [persona:developer,architect]
+
+- **Business Center** (`src/components/BusinessCenter/`): GRC command center at `/business` — live risk scores, compliance tracking, vendor posture, and prioritized next steps. Integrates assessment results, compliance framework selections, and learning progress. Artifact management for executive documents. Journey step added to the landing page. [view:/business] [persona:executive,architect]
+
+- **Assessment engine refactoring** (`src/hooks/assessment/`): Monolithic assessment logic decomposed into 5 focused modules — `orchestrator.ts` (main computation), `scoring.ts` (category scoring), `riskWindows.ts` (HNDL/HNFL), `generators.ts` (report text), `personas.ts` (persona-aware reframing). Smart defaults system (`src/components/Assess/smartDefaults.ts`) pre-fills wizard steps based on industry and country. [view:/assess]
+
+- **CollapsibleSection UI component** (`src/components/ui/CollapsibleSection.tsx`): Reusable collapsible panel with expand/collapse animation, print-safe rendering (always expanded in print), and optional section info tips. Used across Report and Business Center. [view:/report]
+
+- **EU countries utility** (`src/utils/euCountries.ts`): Authoritative EU/EEA member state list used by assessment compliance filtering. [view:/assess]
+
+### Changed
+
+- **Quiz expanded to 770 questions** (`src/data/pqcquiz_03072026_r2.csv`): 135 new questions covering secrets-management-pqc, network-security-pqc, database-encryption-pqc, iam-pqc, secure-boot-pqc, os-pqc, and platform-eng-pqc. All 48 modules now have quiz coverage. [view:/learn/quiz]
+
+- **Glossary expanded** (`src/data/glossaryData.ts`): 56 new terms covering secrets management (Secret Zero, Dynamic Secrets, Transit Encryption Engine), network security (DPI, NGFW, ZTNA, Micro-Segmentation), database encryption (TDE, CLE, Always Encrypted, HYOK), IAM (IdP, SAML 2.0, OIDC, Kerberos, Federation), secure boot (UEFI, Platform Key, KEK, DICE, TPM PCR, Boot Guard), OS crypto (Crypto Policy, SChannel, SSH Host Key, CNG, OpenSSL Provider), and platform engineering (cosign, Notation, Sigstore, SLSA, OPA, Kyverno). [view:/glossary]
+
+- **Report section info modals** (`src/components/Report/SectionInfoModal.tsx`): Contextual info buttons on all 11 report sections explaining methodology, data sources, and interpretation guidance. [view:/report]
+
+- **About page privacy notice** (`src/components/About/AboutView.tsx`): Added data routing disclosure for PQC Assistant — clarifies that queries and context chunks are sent to Google's Gemini API, with link to Google AI Studio terms. [view:/about]
+
+- **Knowledge Graph enhancements** (`src/components/PKILearning/modules/KnowledgeGraph/`): New entity types and suggested queries for the 7 new modules; updated graph builder with expanded track coverage. [view:/learn]
+
+- **Assessment store expanded** (`src/store/useAssessmentStore.ts`): New fields for smart defaults integration, persona-aware scoring weights, and expanded migration effort estimation. [view:/assess]
+
+- **Module store v10 migration** (`src/store/useModuleStore.ts`): Progress tracking for 7 new modules with backward-compatible migration from v9. [view:/learn]
+
+- **SoftHSM WASM bindings expanded** (`src/wasm/softhsm.ts`): Additional PKCS#11 mechanism constants and type exports for HSM panel enhancements. [view:/playground]
+
+- **Migrate software reference updated** (`src/data/quantum_safe_cryptographic_software_reference_03072026.csv`): Updated product catalog with latest PQC support data. [view:/migrate]
+
+### Removed
+
+- **PersonaPicker component** (`src/components/PKILearning/PersonaPicker.tsx`): Removed standalone picker — persona selection fully integrated into the landing page personalization section.
+
+- **ROICalculatorSection** (`src/components/Report/ROICalculatorSection.tsx`): Replaced by shared component with improved calculations.
+
 ## [2.29.1] - 2026-03-07
 
 ### Changed
