@@ -161,6 +161,13 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
     'Energy & Utilities',
     'Retail & E-Commerce',
   ],
+  'web-gateway-pqc': [
+    'Technology',
+    'Finance & Banking',
+    'Retail & E-Commerce',
+    'Healthcare',
+    'Telecommunications',
+  ],
 }
 
 /** Nav paths that are always shown regardless of persona. */
@@ -336,5 +343,47 @@ export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
     { label: 'Browse migration catalog', path: '/migrate', icon: 'Package' },
     { label: 'Try OpenSSL Studio', path: '/openssl', icon: 'Terminal' },
     { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
+  ],
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * Journey map milestones — page-level actions inserted between learning phases
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+export interface JourneyMilestoneConfig {
+  /** Insert this milestone after the checkpoint with this ID */
+  afterPhase: string
+  route: string
+  label: string
+}
+
+export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
+  executive: [
+    { afterPhase: 'exec-cp-3', route: '/assess', label: 'Run Risk Assessment' },
+    { afterPhase: 'exec-cp-3', route: '/compliance', label: 'Check Compliance Deadlines' },
+    { afterPhase: 'exec-cp-4', route: '/migrate', label: 'Browse Migration Catalog' },
+  ],
+  developer: [
+    { afterPhase: 'dev-cp-3', route: '/playground', label: 'Try the Playground' },
+    { afterPhase: 'dev-cp-3', route: '/openssl', label: 'OpenSSL Studio' },
+    { afterPhase: 'dev-cp-4', route: '/assess', label: 'Run Risk Assessment' },
+  ],
+  architect: [
+    { afterPhase: 'arch-cp-2', route: '/assess', label: 'Run Risk Assessment' },
+    { afterPhase: 'arch-cp-2', route: '/compliance', label: 'Check Compliance Deadlines' },
+    { afterPhase: 'arch-cp-3', route: '/playground', label: 'Try the Playground' },
+    { afterPhase: 'arch-cp-4', route: '/migrate', label: 'Browse Migration Catalog' },
+  ],
+  researcher: [
+    { afterPhase: 'res-cp-2', route: '/playground', label: 'Try the Playground' },
+    { afterPhase: 'res-cp-2', route: '/algorithms', label: 'Compare Algorithms' },
+    { afterPhase: 'res-cp-4', route: '/openssl', label: 'OpenSSL Studio' },
+    { afterPhase: 'res-cp-5', route: '/assess', label: 'Run Risk Assessment' },
+  ],
+  ops: [
+    { afterPhase: 'ops-cp-2', route: '/openssl', label: 'OpenSSL Studio' },
+    { afterPhase: 'ops-cp-3', route: '/playground', label: 'Try the Playground' },
+    { afterPhase: 'ops-cp-3', route: '/assess', label: 'Run Risk Assessment' },
+    { afterPhase: 'ops-cp-4', route: '/migrate', label: 'Browse Migration Catalog' },
   ],
 }
