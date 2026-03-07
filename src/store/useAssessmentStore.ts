@@ -46,6 +46,9 @@ interface AssessmentState {
   vendorDependency: NonNullable<AssessmentInput['vendorDependency']> | ''
   vendorUnknown: boolean
   timelinePressure: NonNullable<AssessmentInput['timelinePressure']> | ''
+  // Import toggles — sync wizard selections with page stores
+  importComplianceSelection: boolean
+  importProductSelection: boolean
   // Report preferences
   hiddenThreats: string[]
   // Control state
@@ -67,6 +70,7 @@ interface AssessmentState {
   toggleDataSensitivity: (level: string) => void
   setSensitivityUnknown: (val: boolean) => void
   toggleCompliance: (framework: string) => void
+  setComplianceRequirements: (requirements: string[]) => void
   setComplianceUnknown: (val: boolean) => void
   setMigrationStatus: (status: AssessmentInput['migrationStatus']) => void
   toggleCryptoUseCase: (useCase: string) => void
@@ -84,6 +88,8 @@ interface AssessmentState {
   setVendorDependency: (dep: NonNullable<AssessmentInput['vendorDependency']>) => void
   setVendorUnknown: (val: boolean) => void
   setTimelinePressure: (pressure: NonNullable<AssessmentInput['timelinePressure']>) => void
+  setImportComplianceSelection: (val: boolean) => void
+  setImportProductSelection: (val: boolean) => void
   hideThreat: (threatId: string) => void
   restoreThreat: (threatId: string) => void
   restoreAllThreats: () => void
@@ -123,6 +129,8 @@ const INITIAL_STATE = {
   vendorDependency: '' as NonNullable<AssessmentInput['vendorDependency']> | '',
   vendorUnknown: false,
   timelinePressure: '' as NonNullable<AssessmentInput['timelinePressure']> | '',
+  importComplianceSelection: true,
+  importProductSelection: true,
   hiddenThreats: [] as string[],
   assessmentStatus: 'not-started' as AssessmentStatus,
   lastResult: null as AssessmentResult | null,
@@ -234,6 +242,13 @@ export const useAssessmentStore = create<AssessmentState>()(
             : [...state.complianceRequirements, framework],
           lastWizardUpdate: new Date().toISOString(),
         })),
+
+      setComplianceRequirements: (requirements) =>
+        set({
+          complianceRequirements: requirements,
+          complianceUnknown: false,
+          lastWizardUpdate: new Date().toISOString(),
+        }),
 
       setComplianceUnknown: (val) => {
         if (val) {
@@ -378,6 +393,12 @@ export const useAssessmentStore = create<AssessmentState>()(
       setTimelinePressure: (pressure) =>
         set({ timelinePressure: pressure, lastWizardUpdate: new Date().toISOString() }),
 
+      setImportComplianceSelection: (val) =>
+        set({ importComplianceSelection: val, lastWizardUpdate: new Date().toISOString() }),
+
+      setImportProductSelection: (val) =>
+        set({ importProductSelection: val, lastWizardUpdate: new Date().toISOString() }),
+
       hideThreat: (threatId) =>
         set((state) => ({
           hiddenThreats: state.hiddenThreats.includes(threatId)
@@ -477,7 +498,7 @@ export const useAssessmentStore = create<AssessmentState>()(
     {
       name: 'pqc-assessment',
       storage: createJSONStorage(() => localStorage),
-      version: 8,
+      version: 9,
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -601,6 +622,9 @@ export const useAssessmentStore = create<AssessmentState>()(
         state.vendorDependency = state.vendorDependency ?? ''
         state.vendorUnknown = state.vendorUnknown ?? false
         state.timelinePressure = state.timelinePressure ?? ''
+        // v8 → v9: add import toggles (default ON)
+        state.importComplianceSelection = state.importComplianceSelection ?? true
+        state.importProductSelection = state.importProductSelection ?? true
         state.hiddenThreats = Array.isArray(state.hiddenThreats) ? state.hiddenThreats : []
         state.assessmentStatus = state.assessmentStatus ?? 'not-started'
         state.lastResult = state.lastResult ?? null
@@ -643,6 +667,8 @@ export const useAssessmentStore = create<AssessmentState>()(
         vendorDependency: state.vendorDependency,
         vendorUnknown: state.vendorUnknown,
         timelinePressure: state.timelinePressure,
+        importComplianceSelection: state.importComplianceSelection,
+        importProductSelection: state.importProductSelection,
         hiddenThreats: state.hiddenThreats,
         assessmentStatus: state.assessmentStatus,
         lastWizardUpdate: state.lastWizardUpdate,

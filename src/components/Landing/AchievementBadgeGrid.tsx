@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
-import { Lock } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Info, Lock } from 'lucide-react'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { ACHIEVEMENT_CATALOG, ACHIEVEMENT_COUNT } from '@/data/achievementCatalog'
 import { achievementIconMap } from '@/data/achievementIcons'
@@ -12,6 +12,15 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
   'cross-feature': 'Exploration',
 }
 
+const CATEGORY_INFO: Record<AchievementCategory, string> = {
+  consistency:
+    'Build learning streaks by visiting on consecutive days, reach visit milestones (10–100 days), and discover a secret comeback badge.',
+  'workshop-depth':
+    'Complete workshop steps and modules, finish a full track, generate keys and certificates, spend 30+ min in a module, and answer quiz questions.',
+  'cross-feature':
+    'Use the Playground, chat with the PQC Assistant, complete an assessment, explore compliance frameworks, plan migrations, and visit 5+ sections.',
+}
+
 const CATEGORY_ORDER: AchievementCategory[] = ['consistency', 'workshop-depth', 'cross-feature']
 
 const RARITY_RING: Record<AchievementRarity, string> = {
@@ -19,6 +28,39 @@ const RARITY_RING: Record<AchievementRarity, string> = {
   uncommon: 'ring-1 ring-primary/30',
   rare: 'ring-1 ring-primary/50',
   epic: 'ring-2 ring-primary',
+}
+
+function CategoryInfoButton({ category }: { category: AchievementCategory }) {
+  const [open, setOpen] = useState(false)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  const show = () => {
+    clearTimeout(timeoutRef.current)
+    setOpen(true)
+  }
+  const hide = () => {
+    timeoutRef.current = setTimeout(() => setOpen(false), 150)
+  }
+
+  return (
+    <div className="relative" onMouseEnter={show} onMouseLeave={hide}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="min-h-[44px] min-w-[44px] flex items-center justify-center -m-4 p-4 text-muted-foreground/50 hover:text-primary transition-colors"
+        aria-label={`How to earn ${CATEGORY_LABELS[category]} badges`}
+      >
+        <Info size={10} />
+      </button>
+      {open && (
+        <div className="absolute left-0 top-full mt-1 z-50 w-52 rounded-md border border-border bg-card p-2 shadow-lg text-[10px] text-muted-foreground leading-relaxed">
+          <p className="font-semibold text-foreground mb-0.5">{CATEGORY_LABELS[category]} badges</p>
+          {/* eslint-disable-next-line security/detect-object-injection */}
+          <p>{CATEGORY_INFO[category]}</p>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export function AchievementBadgeGrid() {
@@ -54,7 +96,8 @@ export function AchievementBadgeGrid() {
 
           return (
             <div key={category} className="flex items-center gap-2">
-              <span className="text-[9px] font-mono text-muted-foreground w-16 shrink-0 truncate">
+              <span className="text-[9px] font-mono text-muted-foreground shrink-0 flex items-center gap-1 w-[72px]">
+                <CategoryInfoButton category={category} />
                 {label}
               </span>
               <div className="flex flex-wrap gap-1">

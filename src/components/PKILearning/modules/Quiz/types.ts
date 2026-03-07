@@ -38,6 +38,15 @@ export type QuizCategory =
   | 'vendor-risk'
   | 'data-asset-sensitivity'
   | 'standards-bodies'
+  | 'web-gateway-pqc'
+  | 'emv-payment-pqc'
+  | 'ai-security-pqc'
+  | 'energy-utilities-pqc'
+  | 'healthcare-pqc'
+  | 'aerospace-space-pqc'
+  | 'automotive-pqc'
+  | 'crypto-dev-apis'
+  | 'confidential-computing'
 
 export interface QuizOption {
   id: string

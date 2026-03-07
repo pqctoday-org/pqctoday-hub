@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Toshiba QKD System",
+    "category": "Quantum Key Distribution Software",
+    "product_name": "Toshiba QKD System",
+    "product_brief": "Quantum Key Distribution hardware systems (Multiplexed and Long-Distance) securing network communications via quantum physics.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document describes Quantum Key Distribution (QKD) based on quantum physics to secure against future computing threats, but does not explicitly mention Post-Quantum Cryptography (PQC) algorithms or software implementations.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Toshiba’s Quantum Key Management System (Q-KMS) enables secure key routing and delivery via ETSI and SKIP APIs; hardware key generation details not specified.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware QKD systems (Multiplexed QKD System, Long-Distance QKD System) operating on optical fiber infrastructure.",
+    "infrastructure_layer": "Hardware, Network",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Optical fiber networks (conventional and dedicated); specific OS or cloud platforms not stated.",
+    "target_industries": "Genome research, telecommunications, nuclear reactor security, enterprise data centers.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://www.toshiba-digital-solutions.com/quantum-key-distribution (inferred from context, but exact URL not explicitly provided in text)"
+  }
+]

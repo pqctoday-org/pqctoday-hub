@@ -136,8 +136,7 @@ function buildJourneySteps(
       icon: GraduationCap,
       color: 'text-secondary',
       section: 'start' as const,
-      description:
-        'Start from zero or go deep — 27 hands-on modules covering the quantum threat, new encryption standards, and what your organization needs to do',
+      description: `Start from zero or go deep — ${MODULE_COUNT} hands-on modules covering the quantum threat, new encryption standards, and what your organization needs to do`,
       paths: ['/learn'],
       actionLabel: 'Start Learning',
       resumeLabel: 'Continue Learning',

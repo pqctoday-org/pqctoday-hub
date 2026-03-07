@@ -130,9 +130,69 @@ const ConfidentialComputingModule = lazyWithRetry(() =>
     default: module.ConfidentialComputingModule,
   }))
 )
+const CryptoDevAPIsModule = lazyWithRetry(() =>
+  import('./modules/CryptoDevAPIs').then((module) => ({
+    default: module.CryptoDevAPIsModule,
+  }))
+)
 const WebGatewayPQCModule = lazyWithRetry(() =>
   import('./modules/WebGatewayPQC').then((module) => ({
     default: module.WebGatewayPQCModule,
+  }))
+)
+const EMVPaymentPQCModule = lazyWithRetry(() =>
+  import('./modules/EMVPaymentPQC').then((module) => ({
+    default: module.EMVPaymentPQCModule,
+  }))
+)
+const AISecurityPQCModule = lazyWithRetry(() =>
+  import('./modules/AISecurityPQC').then((module) => ({
+    default: module.AISecurityPQCModule,
+  }))
+)
+const EnergyUtilitiesModule = lazyWithRetry(() =>
+  import('./modules/EnergyUtilities').then((module) => ({
+    default: module.EnergyUtilitiesModule,
+  }))
+)
+const HealthcarePQCModule = lazyWithRetry(() =>
+  import('./modules/HealthcarePQC').then((module) => ({
+    default: module.HealthcarePQCModule,
+  }))
+)
+const AerospaceSpacePQCModule = lazyWithRetry(() =>
+  import('./modules/AerospaceSpacePQC').then((module) => ({
+    default: module.AerospaceSpacePQCModule,
+  }))
+)
+const AutomotivePQCModule = lazyWithRetry(() =>
+  import('./modules/AutomotivePQC').then((module) => ({
+    default: module.AutomotivePQCModule,
+  }))
+)
+const ExecQuantumImpactModule = lazyWithRetry(() =>
+  import('./modules/ExecQuantumImpact').then((module) => ({
+    default: module.ExecQuantumImpactModule,
+  }))
+)
+const DevQuantumImpactModule = lazyWithRetry(() =>
+  import('./modules/DevQuantumImpact').then((module) => ({
+    default: module.DevQuantumImpactModule,
+  }))
+)
+const ArchQuantumImpactModule = lazyWithRetry(() =>
+  import('./modules/ArchQuantumImpact').then((module) => ({
+    default: module.ArchQuantumImpactModule,
+  }))
+)
+const OpsQuantumImpactModule = lazyWithRetry(() =>
+  import('./modules/OpsQuantumImpact').then((module) => ({
+    default: module.OpsQuantumImpactModule,
+  }))
+)
+const ResearchQuantumImpactModule = lazyWithRetry(() =>
+  import('./modules/ResearchQuantumImpact').then((module) => ({
+    default: module.ResearchQuantumImpactModule,
   }))
 )
 
@@ -217,7 +277,19 @@ export const PKILearningView: React.FC = () => {
               <Route path="data-asset-sensitivity" element={<DataAssetSensitivityModule />} />
               <Route path="standards-bodies" element={<StandardsBodiesModule />} />
               <Route path="confidential-computing" element={<ConfidentialComputingModule />} />
+              <Route path="crypto-dev-apis" element={<CryptoDevAPIsModule />} />
               <Route path="web-gateway-pqc" element={<WebGatewayPQCModule />} />
+              <Route path="emv-payment-pqc" element={<EMVPaymentPQCModule />} />
+              <Route path="ai-security-pqc" element={<AISecurityPQCModule />} />
+              <Route path="energy-utilities-pqc" element={<EnergyUtilitiesModule />} />
+              <Route path="healthcare-pqc" element={<HealthcarePQCModule />} />
+              <Route path="aerospace-space-pqc" element={<AerospaceSpacePQCModule />} />
+              <Route path="automotive-pqc" element={<AutomotivePQCModule />} />
+              <Route path="exec-quantum-impact" element={<ExecQuantumImpactModule />} />
+              <Route path="dev-quantum-impact" element={<DevQuantumImpactModule />} />
+              <Route path="arch-quantum-impact" element={<ArchQuantumImpactModule />} />
+              <Route path="ops-quantum-impact" element={<OpsQuantumImpactModule />} />
+              <Route path="research-quantum-impact" element={<ResearchQuantumImpactModule />} />
             </Routes>
           </Suspense>
         </div>

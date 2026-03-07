@@ -46,6 +46,7 @@ import { threatsData } from '../../data/threatsData'
 import { MigrationRoadmap } from './MigrationRoadmap'
 import { MigrationToolkit } from './MigrationToolkit'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
+import { SectionInfoModal } from './SectionInfoModal'
 import { ROICalculatorSection } from './ROICalculatorSection'
 import type { ROISummary } from './ROICalculatorSection'
 import { KPITrendingSection } from './KPITrendingSection'
@@ -95,7 +96,7 @@ function getLearnLink(replacement: string): { path: string; label: string } | nu
   return null
 }
 
-export function SectionInfoTip({ text }: { text: string }) {
+export function SectionInfoTip({ sectionId }: { sectionId: string }) {
   const [open, setOpen] = useState(false)
   return (
     <span className="relative inline-flex print:hidden">
@@ -103,18 +104,14 @@ export function SectionInfoTip({ text }: { text: string }) {
         variant="ghost"
         onClick={(e) => {
           e.stopPropagation()
-          setOpen((o) => !o)
+          setOpen(true)
         }}
         className="p-1 h-auto w-auto rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground"
         aria-label="Section info"
       >
         <Info size={14} />
       </Button>
-      {open && (
-        <div className="absolute left-0 top-full mt-1 z-50 w-64 max-w-[calc(100vw-2rem)] p-3 rounded-lg bg-card border border-border shadow-lg text-xs text-muted-foreground leading-relaxed">
-          {text}
-        </div>
-      )}
+      <SectionInfoModal isOpen={open} onClose={() => setOpen(false)} sectionId={sectionId} />
     </span>
   )
 }
@@ -148,7 +145,7 @@ export function CollapsibleSection({
         <div className="flex items-center gap-2 font-semibold text-foreground">
           {icon}
           {title}
-          {infoTip && <SectionInfoTip text={infoTip} />}
+          {infoTip && <SectionInfoTip sectionId={infoTip} />}
         </div>
         <div className="flex items-center gap-2">
           {headerExtra}
@@ -323,7 +320,7 @@ const CategoryBreakdown = ({
       icon={<BarChart3 className="text-primary" size={20} />}
       defaultOpen={defaultOpen}
       headerExtra={headerExtra}
-      infoTip="Four risk categories — Quantum Exposure, Migration Complexity, Regulatory Pressure, and Organizational Readiness — each scored from your wizard inputs with industry-tuned weights."
+      infoTip="riskBreakdown"
     >
       <div className="space-y-4">
         {categories.map(({ label, key }) => {
@@ -617,7 +614,7 @@ const AssessmentProfileSummary = ({
       title="Assessment Profile"
       icon={<Briefcase className="text-primary" size={20} />}
       defaultOpen={defaultOpen}
-      infoTip="Direct summary of the selections you made in the assessment wizard."
+      infoTip="assessmentProfile"
     >
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <ProfileField label="Industry" value={profile.industry} />
@@ -807,7 +804,7 @@ const HNDLHNFLSection = ({
       icon={<Clock className="text-primary" size={20} />}
       defaultOpen={defaultOpen}
       headerExtra={headerExtra}
-      infoTip="Risk windows computed from your data sensitivity, retention period, country regulatory deadlines, and signing algorithm selections."
+      infoTip="hndlHnfl"
     >
       {/* Key milestones */}
       <div className="mb-6">
@@ -1177,7 +1174,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                       }
                       icon={<Calendar className="text-primary" size={20} />}
                       defaultOpen={cfg('countryTimeline').state === 'open'}
-                      infoTip="Shows PQC migration phases and regulatory deadlines for your selected country from the Timeline database."
+                      infoTip="countryTimeline"
                     >
                       <ReportTimelineStrip countryName={country} />
                       <Link
@@ -1198,7 +1195,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                     icon={<ShieldAlert className={config.color} size={20} />}
                     defaultOpen={cfg('riskScore').state === 'open'}
                     className={clsx('border-l-4', config.border)}
-                    infoTip="Composite score (0\u2013100) computed from four weighted categories based on your assessment inputs. Industry-specific weights prioritize the most relevant risk factors."
+                    infoTip="riskScore"
                   >
                     <RiskGauge score={result.riskScore} level={result.riskLevel} />
                     {previousRiskScore !== null && previousRiskScore !== result.riskScore && (
@@ -1242,7 +1239,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                         icon={<AlertTriangle className="text-warning" size={20} />}
                         defaultOpen={cfg('keyFindings').state === 'open'}
                         className="border-l-4 border-l-warning"
-                        infoTip="Automatically identified from your assessment: vulnerable algorithms, compliance gaps, and migration blockers."
+                        infoTip="keyFindings"
                       >
                         <ul className="space-y-2">
                           {result.keyFindings.map((finding, i) => (
@@ -1280,7 +1277,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                       icon={<Briefcase className="text-primary" size={20} />}
                       defaultOpen={cfg('executiveSummary').state === 'open'}
                       className="border-l-4 border-l-primary"
-                      infoTip="Persona-tailored narrative summarizing key risks and recommended priorities based on your assessment inputs."
+                      infoTip="executiveSummary"
                     >
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         {result.executiveSummary}
@@ -1359,7 +1356,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                         icon={<ShieldAlert className="text-primary" size={20} />}
                         defaultOpen={cfg('algorithmMigration').state === 'open'}
                         className="print:break-inside-auto"
-                        infoTip="Maps your current algorithms to NIST-recommended PQC replacements with migration effort estimates."
+                        infoTip="algorithmMigration"
                         headerExtra={
                           <AskAssistantButton
                             question={`What are the recommended PQC algorithm migrations for ${industry}?`}
@@ -1531,7 +1528,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                         icon={<CheckCircle className="text-primary" size={20} />}
                         defaultOpen={cfg('complianceImpact').state === 'open'}
                         className="print:break-inside-auto"
-                        infoTip="Shows PQC mandates and deadlines for the compliance frameworks you selected in the assessment."
+                        infoTip="complianceImpact"
                         headerExtra={
                           <AskAssistantButton
                             question={`What PQC compliance requirements apply to ${industry} in ${country}?`}
@@ -1630,7 +1627,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                       icon={<ArrowRight className="text-primary" size={20} />}
                       defaultOpen={cfg('recommendedActions').state === 'open'}
                       className="print:break-inside-auto"
-                      infoTip="Prioritized action items generated from your specific algorithms, infrastructure, compliance, and migration status."
+                      infoTip="recommendedActions"
                       headerExtra={
                         <AskAssistantButton
                           question={`What should I prioritize for PQC migration in ${industry}?`}
@@ -1770,7 +1767,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                         }
                         icon={<ShieldAlert className="text-destructive" size={20} />}
                         defaultOpen={cfg('threatLandscape').state === 'open'}
-                        infoTip="Industry-specific quantum threats matched against your current algorithms from the Threats database."
+                        infoTip="threatLandscape"
                         headerExtra={
                           hiddenForIndustryCount > 0 ? (
                             <Button

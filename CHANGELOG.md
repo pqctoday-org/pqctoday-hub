@@ -4,6 +4,76 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.29.0] - 2026-03-06
+
+### Added
+
+- **Role Guides track** (`src/components/PKILearning/common/roleGuide/`): New "Role Guides" track in the Learn module — 5 persona-specific quick-start modules (30 min, beginner) that explain quantum impact and provide an action plan tailored to each role. Shared three-section structure: Why It Matters → What to Learn → How to Act. Routes: `/learn/exec-quantum-impact`, `/learn/dev-quantum-impact`, `/learn/arch-quantum-impact`, `/learn/ops-quantum-impact`, `/learn/research-quantum-impact`. [view:/learn] [persona:executive,developer,architect,ops,researcher]
+
+- **Executive Quantum Impact** (`src/components/PKILearning/modules/ExecQuantumImpact/`): Why quantum matters to leadership — fiduciary risk, CNSA 2.0 / NIS2 / DORA regulatory deadlines, and a board-level PQC action plan. 30 min, beginner. [view:/learn/exec-quantum-impact] [persona:executive]
+
+- **Developer Quantum Impact** (`src/components/PKILearning/modules/DevQuantumImpact/`): How quantum breaks developer code — library transitions (OpenSSL, BouncyCastle, Java JCA), larger keys and signatures, TLS/JWT/signing impacts, and a hands-on migration readiness plan. 30 min, beginner. [view:/learn/dev-quantum-impact] [persona:developer]
+
+- **Architect Quantum Impact** (`src/components/PKILearning/modules/ArchQuantumImpact/`): Architecture decisions that outlast the quantum transition — KMS, HSM, PKI, hybrid deployment patterns, and crypto-agile design. 30 min, beginner. [view:/learn/arch-quantum-impact] [persona:architect]
+
+- **Ops Quantum Impact** (`src/components/PKILearning/modules/OpsQuantumImpact/`): Operational PQC challenges — certificate scaling, fleet upgrades, VPN/SSH key exchange, monitoring recalibration, and migration playbooks. 30 min, beginner. [view:/learn/ops-quantum-impact] [persona:ops]
+
+- **Research Quantum Impact** (`src/components/PKILearning/modules/ResearchQuantumImpact/`): Research-specific quantum exposure — algorithm evaluation, open problems, standards convergence timelines, and contributing to the PQC ecosystem. 30 min, beginner. [view:/learn/research-quantum-impact] [persona:researcher]
+
+- **Industries track** (`src/components/PKILearning/LearnTrackStack.tsx`): New "Industries" track grouping vertical-market modules — Energy & Utilities, Healthcare, Aerospace & Space, Automotive, and IoT/OT. [view:/learn]
+
+- **Energy & Utilities PQC** (`src/components/PKILearning/modules/EnergyUtilities/`): PQC migration for power grids and utilities. 5 workshop steps: Protocol Security Analyzer (DNP3/Modbus/IEC 61850/IEC 62351), Substation Migration Planner, Smart Meter Key Manager (DUKPT at scale), Safety Risk Scorer (environmental and operational risk scoring), Grid Migration Roadmap. NERC CIP compliance mapping throughout. 90 min, intermediate. [view:/learn/energy-utilities-pqc] [persona:architect,ops]
+
+- **Healthcare PQC** (`src/components/PKILearning/modules/HealthcarePQC/`): Healthcare-specific PQC challenges. 5 workshop steps: Biometric Vault Assessor (biometric data permanence and quantum vulnerability), Pharma IP Calculator (pharmaceutical IP protection timelines), Patient Privacy Mapper (HIPAA/GDPR lifecycle analysis), Device Safety Simulator (FDA-regulated medical device safety-crypto intersection), Hospital Migration Planner (network migration across clinical systems). 90 min, intermediate. [view:/learn/healthcare-pqc] [persona:architect,ops]
+
+- **Aerospace & Space PQC** (`src/components/PKILearning/modules/AerospaceSpacePQC/`): PQC challenges unique to aerospace. 6 workshop steps: Avionics Protocol Analyzer (ARINC 429/629 and DO-326A), Satellite Link Budget (bandwidth constraints for PQC signatures), Certification Impact Analyzer (DO-178C/DO-326A recertification), Fleet Interoperability Matrix (multi-decade fleet crypto interoperability), Export Control Classifier (ITAR/EAR), Mission Lifecycle Planner. 120 min, advanced. [view:/learn/aerospace-space-pqc] [persona:architect,researcher]
+
+- **Automotive PQC** (`src/components/PKILearning/modules/AutomotivePQC/`): Post-quantum cryptography for connected and autonomous vehicles. 6 workshop steps: Vehicle Architecture Mapper (ECU/CAN bus/V2X topology), Sensor Data Integrity (LiDAR/camera signing), Safety-Crypto Analyzer (ISO 26262 ASIL/crypto intersection), OTA Orchestration Planner (15–20 year lifecycle OTA), Car Key Protocol Explorer (digital car keys and in-vehicle payments), Lifecycle Migration Roadmap. 120 min, advanced. [view:/learn/automotive-pqc] [persona:architect,developer]
+
+- **Cryptographic APIs & Developer Languages** (`src/components/PKILearning/modules/CryptoDevAPIs/`): Compare JCA/JCE, OpenSSL EVP, PKCS#11, Windows CNG, and Bouncy Castle across 7 languages. 8 workshop steps: API Architecture Explorer, Language Ecosystem Comparator, Provider Pattern Workshop, Build vs Buy vs Open Source Analyzer, PQC Library Explorer, PQC Support Matrix, Crypto Agility Patterns, Migration Decision Lab. 120 min, intermediate. [view:/learn/crypto-dev-apis] [persona:developer,architect]
+
+- **Compliance "My Frameworks" bookmarking** (`src/store/useComplianceSelectionStore.ts`, `src/components/Compliance/ComplianceLandscape.tsx`, `src/components/Compliance/ComplianceView.tsx`): New `useComplianceSelectionStore` Zustand store (persisted) tracks a `myFrameworks: string[]` set. Compliance Landscape cards and table rows now show a checkbox toggle (☐ / ☑) — clicking adds/removes a framework from "My Frameworks". Selections persist across sessions and sync to the Assessment wizard compliance step via new `importComplianceSelection` toggle in `useAssessmentStore`. [view:/compliance] [view:/assess]
+
+- **Deadline urgency indicators** (`src/utils/deadlineUrgency.ts`): New utility module — `extractYear()`, `deadlineUrgency()` (returns `'past' | 'imminent' | 'near' | 'future' | 'none'`), `urgencyColor()` — used by Compliance Landscape to color-code framework deadline badges. [view:/compliance]
+
+- **Knowledge Graph Mindmap view** (`src/components/RightPanel/MindmapView.tsx`, `mindmapData.ts`, `useMindmapData.ts`, `nodes/`, `edges/`): New "Mindmap" tab in the right panel GraphPanel (icon: Map). Renders a React Flow-based mindmap of the PQC learning landscape — modules grouped by track, with edges showing cross-module relationships. [view:right-panel]
+
+- **Product Extraction Modal** (`src/components/Migrate/ProductExtractionModal.tsx`, `src/data/productExtractionData.ts`): AI-enriched product profiles in the Migrate catalog. Products with enrichment data show a ✨ "Enriched" badge in the expanded row; clicking "View Extraction" opens a modal with detailed AI-analyzed fields (use case, PQC readiness, algorithms, migration notes, certifications). Extraction data loaded from `src/data/productExtractionData.ts`. [view:/migrate]
+
+- **Algorithm Info Modal** (`src/components/Algorithms/AlgorithmInfoModal.tsx`): New ⓘ button in the Algorithms view header. Opens a modal explaining the data sources, methodology, and interpretation guide for the algorithm comparison table. [view:/algorithms]
+
+- **Report Section Info Modals** (`src/components/Report/SectionInfoModal.tsx`, `src/components/Report/sectionInfoContent.ts`): New contextual ⓘ info buttons on each report section in the Assessment Report. Sections covered: Risk Breakdown, Assessment Profile, HNDL/HNFL Windows, Country Timeline, Risk Score, Key Findings, Executive Summary, Algorithm Migration, Compliance Impact, Recommended Actions, Threat Landscape. Each modal explains the section's methodology, data sources, and how to interpret results. [view:/assess]
+
+- **Assessment import toggles** (`src/store/useAssessmentStore.ts`): Two new boolean fields — `importComplianceSelection` (default `true`, syncs "My Frameworks" selections from Compliance page into wizard) and `importProductSelection` (default `true`, syncs Migrate product selections). Both exposed as toggle controls in the wizard. [view:/assess]
+
+- **Persona-driven module routing** (`src/data/learningPersonas.ts`, `src/data/personaConfig.ts`): Role Guide modules wired into persona priority lists. Exec persona surfaces `exec-quantum-impact` first; dev persona surfaces `dev-quantum-impact` and `crypto-dev-apis`; architect surfaces `arch-quantum-impact` and `crypto-dev-apis`; ops surfaces `ops-quantum-impact`; researcher surfaces `research-quantum-impact`. Industries track modules routed to appropriate personas. [view:/learn]
+
+- **RightPanel body scroll lock** (`src/components/RightPanel/RightPanel.tsx`): Panel now sets `document.body.style.overflow = 'hidden'` when open on mobile (drawer mode), preventing background scroll. Restored on close. [view:right-panel]
+
+### Changed
+
+- **Glossary expanded** (`src/data/glossaryData.ts`): 71 new terms added covering Energy & Utilities (NERC CIP, IEC 61850, IEC 62351, DNP3, SCADA, AMI, DUKPT-energy, smart meter domains) and industry-specific PQC migration vocabulary. Cross-references updated: EMV → `/learn/emv-payment-pqc`, V2X → `/learn/automotive-pqc`, ECU → `/learn/automotive-pqc`, DUKPT now includes technical note on quantum vulnerability at Key Injection Facility. [view:/glossary]
+
+- **Quiz coverage extended** (`src/data/pqcquiz_03062026_r5.csv`): 635 questions total; new categories added for `energy-utilities-pqc`, `healthcare-pqc`, `aerospace-space-pqc`, `automotive-pqc`, and `crypto-dev-apis`. `quizDataLoader.ts` updated with category mappings for all 5 new modules. [view:/learn/quiz]
+
+- **Learn tracks updated** (`src/components/PKILearning/LearnTrackStack.tsx`): "Role Guides" track added with Compass icon (accent color palette). "Industries" track added with Factory icon. Track filter now supports all 7 tracks. Module persona routing for new tracks integrated. [view:/learn]
+
+## [2.28.0] - 2026-03-06
+
+### Added
+
+- **Confidential Computing & TEEs module** (`src/components/PKILearning/modules/ConfidentialComputing/`): Comprehensive 5-step module covering Trusted Execution Environments and their PQC implications. 5 workshop steps: TEE Architecture Explorer (7 vendors — Intel SGX, AMD SEV-SNP, ARM CCA, AWS Nitro, Google Cloud CC, Azure Confidential, IBM SE), Attestation Workshop (remote attestation flows, engines, integrations, and quantum threats), Encryption Mechanisms, TEE-HSM Trusted Channel, Quantum Threat Migration. 90 min, advanced, Infrastructure track. 6 new glossary terms: SGX, SEV-SNP, ARM CCA, Enclave, Remote Attestation, Sealing Key. [view:/learn/confidential-computing] [persona:architect,developer]
+
+- **Achievement Badge System** (`src/components/Landing/AchievementBadgeGrid.tsx`): 27 unlockable achievement badges tracking learning milestones across all modules, quiz performance, and cross-page engagement. Badges organized by category (Foundation, Deep Dive, Industry, Strategy, Practice). Persisted via `useModuleStore`. [view:/]
+
+- **Persona-driven Journey Map** (`src/components/RightPanel/JourneyMapPanel.tsx`): New Journey Map panel in the right panel — a visual representation of the user's learning journey, styled per active persona. Shows completed modules, recommended next steps, and progress toward persona-specific goals. [view:right-panel]
+
+### Data
+
+- **Compliance audit** (`src/data/`): 28 new compliance framework records added; 4 new timeline entries. RAG corpus rebuilt with updated coverage. [view:/compliance] [view:/timeline]
+
+- **Landing CTA alignment** (`src/components/Landing/LandingView.tsx`): CTA buttons and journey steps aligned with the updated 4-section user journey model (Learn → Assess → Deploy → Stay Agile). [view:/]
+
 ## [2.27.0] - 2026-03-06
 
 ### Added

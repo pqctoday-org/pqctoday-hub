@@ -97,7 +97,6 @@ describe('MainLayout', () => {
       expect(within(nav).getByText('Playground')).toBeInTheDocument()
       expect(within(nav).getByText('OpenSSL Studio')).toBeInTheDocument()
       expect(within(nav).getByText('Threats')).toBeInTheDocument()
-      expect(within(nav).getByText('Leaders')).toBeInTheDocument()
       expect(within(nav).getByText('About')).toBeInTheDocument()
     })
 

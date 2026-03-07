@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { useState } from 'react'
-import { Network, BarChart3, GitBranch, Loader2 } from 'lucide-react'
+import { Network, BarChart3, GitBranch, Map, Loader2 } from 'lucide-react'
 import { useGraphData } from '../PKILearning/modules/KnowledgeGraph/hooks/useGraphData'
 import { useGraphSearch } from '../PKILearning/modules/KnowledgeGraph/hooks/useGraphSearch'
 
@@ -23,12 +23,19 @@ const PathwayView = React.lazy(() =>
   }))
 )
 
-type GraphSubTab = 'explore' | 'coverage' | 'pathways'
+const MindmapView = React.lazy(() =>
+  import('./MindmapView').then((m) => ({
+    default: m.MindmapView,
+  }))
+)
+
+type GraphSubTab = 'explore' | 'coverage' | 'pathways' | 'mindmap'
 
 const SUB_TABS: { id: GraphSubTab; label: string; icon: React.ElementType }[] = [
   { id: 'explore', label: 'Explore', icon: Network },
   { id: 'coverage', label: 'Coverage', icon: BarChart3 },
   { id: 'pathways', label: 'Pathways', icon: GitBranch },
+  { id: 'mindmap', label: 'Mindmap', icon: Map },
 ]
 
 const LoadingSpinner: React.FC = () => (
@@ -37,29 +44,45 @@ const LoadingSpinner: React.FC = () => (
   </div>
 )
 
+/** Content for graph-dependent tabs (Explore, Coverage, Pathways) */
+function GraphContent({
+  subTab,
+  graph,
+  query,
+  setQuery,
+  results,
+}: {
+  subTab: GraphSubTab
+  graph: ReturnType<typeof useGraphData>['graph']
+  query: string
+  setQuery: (q: string) => void
+  results: ReturnType<typeof useGraphSearch>['results']
+}) {
+  if (!graph) return null
+  return (
+    <>
+      {subTab === 'explore' && (
+        <ExploreView
+          graph={graph}
+          searchQuery={query}
+          onSearchQueryChange={setQuery}
+          searchResults={results}
+        />
+      )}
+      {subTab === 'coverage' && <CoverageView graph={graph} />}
+      {subTab === 'pathways' && (
+        <PathwayView graph={graph} searchQuery={query} searchResults={results} />
+      )}
+    </>
+  )
+}
+
 export const GraphPanel: React.FC = () => {
   const [subTab, setSubTab] = useState<GraphSubTab>('explore')
   const { graph, searchIndex, loading, error } = useGraphData()
   const { query, setQuery, results } = useGraphSearch(searchIndex)
 
-  if (loading) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-3">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">Building knowledge graph…</p>
-      </div>
-    )
-  }
-
-  if (error || !graph) {
-    return (
-      <div className="flex-1 flex items-center justify-center px-6">
-        <p className="text-sm text-status-error text-center">
-          Failed to load knowledge graph. Please reload the panel.
-        </p>
-      </div>
-    )
-  }
+  const needsGraph = subTab !== 'mindmap'
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -92,17 +115,28 @@ export const GraphPanel: React.FC = () => {
       <div className="flex-1 overflow-y-auto px-4 md:px-12 py-4">
         <div className="max-w-4xl mx-auto">
           <React.Suspense fallback={<LoadingSpinner />}>
-            {subTab === 'explore' && (
-              <ExploreView
-                graph={graph}
-                searchQuery={query}
-                onSearchQueryChange={setQuery}
-                searchResults={results}
-              />
+            {subTab === 'mindmap' && <MindmapView />}
+            {needsGraph && loading && (
+              <div className="flex-1 flex flex-col items-center justify-center gap-3 py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">Building knowledge graph…</p>
+              </div>
             )}
-            {subTab === 'coverage' && <CoverageView graph={graph} />}
-            {subTab === 'pathways' && (
-              <PathwayView graph={graph} searchQuery={query} searchResults={results} />
+            {needsGraph && (error || (!loading && !graph)) && (
+              <div className="flex-1 flex items-center justify-center px-6 py-12">
+                <p className="text-sm text-status-error text-center">
+                  Failed to load knowledge graph. Please reload the panel.
+                </p>
+              </div>
+            )}
+            {needsGraph && !loading && !error && (
+              <GraphContent
+                subTab={subTab}
+                graph={graph}
+                query={query}
+                setQuery={setQuery}
+                results={results}
+              />
             )}
           </React.Suspense>
         </div>

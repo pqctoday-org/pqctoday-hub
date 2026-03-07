@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { Map, ChevronDown, Info } from 'lucide-react'
+import { Map, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 import { timelineData, transformToGanttData } from '../../data/timelineData'
 import type { RecommendedAction } from '../../hooks/assessmentTypes'
 import { Button } from '../ui/button'
+import { SectionInfoTip } from './ReportContent'
 
 interface MigrationRoadmapProps {
   actions: RecommendedAction[]
@@ -132,8 +133,6 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
   defaultOpen = true,
 }) => {
   const [open, setOpen] = useState(defaultOpen)
-  const [infoOpen, setInfoOpen] = useState(false)
-
   const deadlineYear = useMemo(
     () => (countryName ? findCountryDeadlineYear(countryName) : null),
     [countryName]
@@ -168,25 +167,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
         <div className="flex items-center gap-2 font-semibold text-foreground">
           <Map className="text-primary" size={20} />
           Migration Roadmap
-          <span className="relative inline-flex print:hidden">
-            <Button
-              variant="ghost"
-              onClick={(e) => {
-                e.stopPropagation()
-                setInfoOpen((o) => !o)
-              }}
-              className="p-1 h-auto w-auto rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground"
-              aria-label="Section info"
-            >
-              <Info size={14} />
-            </Button>
-            {infoOpen && (
-              <div className="absolute left-0 top-full mt-1 z-50 w-64 p-3 rounded-lg bg-card border border-border shadow-lg text-xs text-muted-foreground leading-relaxed">
-                Groups recommended actions into Immediate, Short-term, and Long-term swim lanes
-                aligned with your country&apos;s regulatory deadline.
-              </div>
-            )}
-          </span>
+          <SectionInfoTip sectionId="migrationRoadmap" />
         </div>
         <div className="flex items-center gap-2">
           {deadlineYear && (

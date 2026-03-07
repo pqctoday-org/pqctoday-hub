@@ -14,6 +14,8 @@ import {
   Building2,
   Search,
   ExternalLink,
+  CheckSquare,
+  Square,
 } from 'lucide-react'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
@@ -21,42 +23,18 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { CountryFlag } from '@/components/common/CountryFlag'
 import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
+import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 
 // ── Deadline helpers ────────────────────────────────────────────────────
 
-const CURRENT_YEAR = new Date().getFullYear()
+import {
+  extractYear,
+  deadlineUrgency,
+  urgencyColor,
+  type DeadlineUrgency,
+} from '@/utils/deadlineUrgency'
 
-/** Extract a numeric year from a deadline string, e.g. "2025 (software)" → 2025 */
-function extractYear(deadline: string): number | null {
-  const match = deadline.match(/\b(20\d{2})\b/)
-  return match ? parseInt(match[1], 10) : null
-}
-
-/** Classify urgency relative to the current year */
-function deadlineUrgency(deadline: string): 'overdue' | 'imminent' | 'near' | 'future' | 'ongoing' {
-  const year = extractYear(deadline)
-  if (!year) return 'ongoing'
-  if (year < CURRENT_YEAR) return 'overdue'
-  if (year <= CURRENT_YEAR + 2) return 'imminent'
-  if (year <= CURRENT_YEAR + 4) return 'near'
-  return 'future'
-}
-
-function urgencyColor(urgency: ReturnType<typeof deadlineUrgency>) {
-  switch (urgency) {
-    case 'overdue':
-      return 'text-status-error'
-    case 'imminent':
-      return 'text-status-warning'
-    case 'near':
-      return 'text-status-success'
-    case 'future':
-    case 'ongoing':
-      return 'text-muted-foreground'
-  }
-}
-
-function urgencyBgColor(urgency: ReturnType<typeof deadlineUrgency>) {
+function urgencyBgColor(urgency: DeadlineUrgency) {
   switch (urgency) {
     case 'overdue':
       return 'bg-status-error'
@@ -257,6 +235,8 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
   const [expanded, setExpanded] = useState(false)
   const urgency = deadlineUrgency(fw.deadline)
   const hasRefs = fw.libraryRefs.length > 0 || fw.timelineRefs.length > 0
+  const isSelected = useComplianceSelectionStore((s) => s.myFrameworks.includes(fw.id))
+  const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
 
   return (
     <div className="glass-panel p-4 space-y-3 flex flex-col">
@@ -282,6 +262,21 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
             )}
           </div>
         </div>
+        <button
+          type="button"
+          aria-label={isSelected ? 'Remove from My Frameworks' : 'Add to My Frameworks'}
+          onClick={(e) => {
+            e.stopPropagation()
+            toggleMyFramework(fw.id)
+          }}
+          className={`p-1 rounded transition-colors shrink-0 ${
+            isSelected
+              ? 'text-primary hover:text-primary/80'
+              : 'text-muted-foreground/40 hover:text-primary'
+          }`}
+        >
+          {isSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+        </button>
       </div>
 
       <div className={`flex items-center gap-1.5 text-xs ${urgencyColor(urgency)}`}>
@@ -337,7 +332,7 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
           )}
           {fw.libraryRefs.length > 0 && (
             <Link
-              to="/library"
+              to={`/library?q=${encodeURIComponent(fw.libraryRefs.join(' '))}`}
               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-medium hover:bg-secondary/20 transition-colors"
               title={`Library: ${fw.libraryRefs.join(', ')}`}
             >
@@ -377,7 +372,7 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
                 {fw.libraryRefs.map((ref) => (
                   <li key={ref}>
                     <Link
-                      to="/library"
+                      to={`/library?ref=${encodeURIComponent(ref)}`}
                       className="text-secondary hover:text-secondary/80 underline underline-offset-2"
                     >
                       {ref}
@@ -414,8 +409,27 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
 
 function FrameworkTableRow({ fw }: { fw: ComplianceFramework }) {
   const urgency = deadlineUrgency(fw.deadline)
+  const isSelected = useComplianceSelectionStore((s) => s.myFrameworks.includes(fw.id))
+  const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
   return (
     <tr className="border-b border-border hover:bg-muted/20 transition-colors">
+      <td className="py-2.5 px-2 w-8 text-center">
+        <button
+          type="button"
+          aria-label={isSelected ? 'Remove from My Frameworks' : 'Add to My Frameworks'}
+          onClick={(e) => {
+            e.stopPropagation()
+            toggleMyFramework(fw.id)
+          }}
+          className={`p-1 rounded transition-colors ${
+            isSelected
+              ? 'text-primary hover:text-primary/80'
+              : 'text-muted-foreground/40 hover:text-primary'
+          }`}
+        >
+          {isSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+        </button>
+      </td>
       <td className="py-2.5 px-3">
         <div className="flex items-center gap-2">
           {fw.requiresPQC ? (
@@ -473,7 +487,7 @@ function FrameworkTableRow({ fw }: { fw: ComplianceFramework }) {
         <div className="flex gap-1.5">
           {fw.libraryRefs.length > 0 && (
             <Link
-              to="/library"
+              to={`/library?q=${encodeURIComponent(fw.libraryRefs.join(' '))}`}
               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-medium hover:bg-secondary/20 transition-colors"
             >
               <BookOpen size={8} />
@@ -500,6 +514,9 @@ function FrameworkTable({ frameworks }: { frameworks: ComplianceFramework[] }) {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-border bg-muted/30">
+            <th className="py-2.5 px-2 w-8 text-center text-xs font-semibold text-muted-foreground">
+              My
+            </th>
             <th className="py-2.5 px-3 text-left text-xs font-semibold text-muted-foreground">
               Name
             </th>
@@ -547,6 +564,9 @@ export function ComplianceLandscape({
 }: ComplianceLandscapeProps = {}) {
   const sourceFrameworks = frameworksProp ?? complianceFrameworks
   const { selectedIndustries } = usePersonaStore()
+  const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
+  const showOnlyMine = useComplianceSelectionStore((s) => s.showOnlyMine)
+  const setShowOnlyMine = useComplianceSelectionStore((s) => s.setShowOnlyMine)
 
   // Filter state
   const [orgFilter, setOrgFilter] = useState<string>('All')
@@ -595,9 +615,12 @@ export function ComplianceLandscape({
           fw.enforcementBody.toLowerCase().includes(q)
       )
     }
+    if (showOnlyMine) {
+      result = result.filter((fw) => myFrameworks.includes(fw.id))
+    }
 
     return sortFrameworks(result, sortBy)
-  }, [sourceFrameworks, orgFilter, industryFilter, searchText, sortBy])
+  }, [sourceFrameworks, orgFilter, industryFilter, searchText, sortBy, showOnlyMine, myFrameworks])
 
   // Stats
   const pqcCount = displayedFrameworks.filter((f) => f.requiresPQC).length
@@ -687,6 +710,23 @@ export function ComplianceLandscape({
 
         {/* View toggle */}
         <ViewToggle mode={viewMode} onChange={setViewMode} />
+
+        {/* "Show mine" toggle — visible when user has selections */}
+        {myFrameworks.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setShowOnlyMine(!showOnlyMine)}
+            className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
+              showOnlyMine
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+            }`}
+            aria-pressed={showOnlyMine}
+          >
+            <CheckSquare size={12} />
+            My ({myFrameworks.length})
+          </button>
+        )}
       </div>
 
       {/* Content */}

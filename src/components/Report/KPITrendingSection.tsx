@@ -119,7 +119,7 @@ export const KPITrendingSection: React.FC<KPITrendingSectionProps> = ({
       title="Risk Score Trending"
       icon={<TrendingUp size={18} className="text-primary" />}
       defaultOpen={defaultOpen}
-      infoTip="Tracks your PQC risk score and category breakdown across assessments. Complete additional assessments over time to see your progress."
+      infoTip="kpiTrending"
     >
       {/* Single-snapshot callout */}
       {!hasMultiple && (

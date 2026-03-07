@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
 import { AlgorithmDetailedComparison } from './AlgorithmDetailedComparison'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ArrowRight, BarChart3 } from 'lucide-react'
+import { ArrowRight, BarChart3, Info } from 'lucide-react'
 import {
   loadPQCAlgorithmsData,
   loadedFileMetadata,
@@ -18,6 +18,8 @@ import { GlossaryButton } from '../ui/GlossaryButton'
 import { ExportButton } from '../ui/ExportButton'
 import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
 import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
+import { AlgorithmInfoModal } from './AlgorithmInfoModal'
+import { Button } from '../ui/button'
 
 export function AlgorithmsView() {
   const [searchParams] = useSearchParams()
@@ -38,6 +40,7 @@ export function AlgorithmsView() {
     date: Date | null
   } | null>(null)
   const [algorithmData, setAlgorithmData] = useState<AlgorithmDetail[]>([])
+  const [infoOpen, setInfoOpen] = useState(false)
 
   useEffect(() => {
     loadPQCAlgorithmsData().then((data) => {
@@ -78,6 +81,14 @@ export function AlgorithmsView() {
                 : new Date().toLocaleDateString()}
           </p>
           <SourcesButton viewType="Algorithms" />
+          <Button
+            variant="ghost"
+            onClick={() => setInfoOpen(true)}
+            className="p-1 h-auto w-auto rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground"
+            aria-label="About this data"
+          >
+            <Info size={14} />
+          </Button>
           <ShareButton
             title="PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More"
             text="Compare 42 post-quantum cryptographic algorithms side-by-side — security levels, key sizes, and performance."
@@ -120,6 +131,8 @@ export function AlgorithmsView() {
           </motion.div>
         </TabsContent>
       </Tabs>
+
+      <AlgorithmInfoModal isOpen={infoOpen} onClose={() => setInfoOpen(false)} />
     </div>
   )
 }

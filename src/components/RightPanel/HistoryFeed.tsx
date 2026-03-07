@@ -14,6 +14,7 @@ const MILESTONE_TYPES = new Set<HistoryEventType>([
   'belt_earned',
   'streak_milestone',
   'migrate_product_selection',
+  'compliance_framework_selection',
 ])
 
 export const HistoryFeed: React.FC = () => {

@@ -13,10 +13,13 @@ import {
   Award,
   CheckSquare,
   Square,
+  Sparkles,
 } from 'lucide-react'
 import { LAYERS } from './InfrastructureStack'
 import { certsByProduct } from '../../data/certificationXrefData'
+import { getProductExtraction } from '../../data/productExtractionData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { ProductExtractionModal } from './ProductExtractionModal'
 import { renderFipsStatus, renderPqcSupport } from './migrateHelpers'
 
 interface SoftwareTableProps {
@@ -45,6 +48,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>(
     defaultSort || { key: 'softwareName', direction: 'asc' }
   )
+  const [extractionModal, setExtractionModal] = useState<{ softwareName: string } | null>(null)
 
   const rowKey = (item: SoftwareItem) => `${item.softwareName}::${item.categoryId}`
 
@@ -233,6 +237,15 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 {item.status}
                               </span>
                             )}
+                            {getProductExtraction(item.softwareName) && (
+                              <span
+                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20"
+                                title="AI-analyzed product with enriched extraction data"
+                              >
+                                <Sparkles size={10} aria-hidden="true" />
+                                Enriched
+                              </span>
+                            )}
                           </div>
                           <span className="text-xs text-muted-foreground">
                             {item.latestVersion}
@@ -404,6 +417,18 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 label="Ask about PQC capabilities"
                                 question={`What PQC algorithms does ${item.softwareName} support${item.categoryName ? ` (${item.categoryName})` : ''}?${item.pqcCapabilityDescription ? ` Capabilities: ${item.pqcCapabilityDescription}` : ''}${item.fipsValidated && item.fipsValidated !== 'No' ? ` FIPS status: ${item.fipsValidated}.` : ''}`}
                               />
+                              {getProductExtraction(item.softwareName) && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setExtractionModal({ softwareName: item.softwareName })
+                                  }}
+                                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+                                >
+                                  <Sparkles size={14} /> View Extraction
+                                </button>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -416,6 +441,14 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
           </tbody>
         </table>
       </div>
+      <ProductExtractionModal
+        isOpen={!!extractionModal}
+        onClose={() => setExtractionModal(null)}
+        extraction={
+          extractionModal ? (getProductExtraction(extractionModal.softwareName) ?? null) : null
+        }
+        softwareName={extractionModal?.softwareName ?? ''}
+      />
     </div>
   )
 }

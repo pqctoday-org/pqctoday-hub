@@ -176,6 +176,11 @@ const MODULE_NAMES: Record<string, string> = {
   'migration-program': 'Migration Program Management',
   'compliance-strategy': 'Compliance & Regulatory Strategy',
   'data-asset-sensitivity': 'Data & Asset Sensitivity',
+  'exec-quantum-impact': 'Executive Quantum Impact',
+  'dev-quantum-impact': 'Developer Quantum Impact',
+  'arch-quantum-impact': 'Architect Quantum Impact',
+  'ops-quantum-impact': 'Ops Quantum Impact',
+  'research-quantum-impact': 'Researcher Quantum Impact',
 }
 
 /** Module-specific suggested questions — curated for top modules, others use generic template */
@@ -314,6 +319,31 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'How do I classify data assets for PQC migration priority?',
     'Which compliance frameworks require data sensitivity assessment?',
     'What risk methodologies apply to PQC data classification?',
+  ],
+  'exec-quantum-impact': [
+    'Why should executives care about quantum computing threats?',
+    'What are the regulatory deadlines for PQC migration?',
+    'How do I build a board-level PQC business case?',
+  ],
+  'dev-quantum-impact': [
+    'How do PQC algorithms affect my code and libraries?',
+    'What changes are needed for PQC-safe TLS and JWT?',
+    'How do I set up a PQC test environment?',
+  ],
+  'arch-quantum-impact': [
+    'How should I design crypto-agile architecture for PQC?',
+    'What is the impact of PQC on KMS and HSM design?',
+    'How do hybrid deployment patterns work?',
+  ],
+  'ops-quantum-impact': [
+    'How does PQC affect certificate operations at scale?',
+    'What VPN/SSH upgrades are needed for PQC?',
+    'How do I recalibrate monitoring for PQC?',
+  ],
+  'research-quantum-impact': [
+    'What research data is most vulnerable to quantum threats?',
+    'What are the emerging PQC research frontiers?',
+    'How can researchers contribute to PQC standards?',
   ],
 }
 

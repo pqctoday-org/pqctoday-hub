@@ -108,7 +108,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
   // --- Standards / FIPS ---
   {
     query: 'FIPS 203 standard',
-    expectedIntent: 'general',
+    expectedIntent: 'standard_query',
     mustInclude: ['glossary-'],
     expectedSources: ['glossary', 'library', 'compliance', 'timeline'],
     minTop5Hits: 1,
@@ -189,7 +189,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
   // --- Compliance ---
   {
     query: 'CNSA 2.0 requirements',
-    expectedIntent: 'general',
+    expectedIntent: 'standard_query',
     mustInclude: ['compliance-'],
     expectedSources: ['compliance'],
     minTop5Hits: 1,

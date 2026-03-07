@@ -122,7 +122,7 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
       title="ROI & Financial Case"
       icon={<DollarSign size={18} className="text-primary" />}
       defaultOpen={defaultOpen}
-      infoTip="Adjust the parameters below to model the financial case for your PQC migration. Values are seeded from your assessment results — override any field to match your organization's actuals."
+      infoTip="roiCalculator"
     >
       {/* Print-only summary */}
       <div className="hidden print:block mb-4 text-sm">

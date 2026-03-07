@@ -8,6 +8,7 @@ import { useHistoryStore } from '@/store/useHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { PERSONAS } from '@/data/learningPersonas'
+import { AchievementBadgeGrid } from '@/components/Landing/AchievementBadgeGrid'
 import { JourneyPhaseRow } from './JourneyPhaseRow'
 import { JourneyMilestoneRow } from './JourneyMilestoneRow'
 import { HistoryEventRow } from './HistoryEventRow'
@@ -223,6 +224,7 @@ export const JourneyMapPanel: React.FC = () => {
             />
           </div>
         </div>
+        <AchievementBadgeGrid />
       </div>
 
       {/* Scrollable Journey Map */}

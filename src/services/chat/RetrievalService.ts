@@ -11,6 +11,7 @@ export type QueryIntent =
   | 'catalog_lookup'
   | 'recommendation'
   | 'country_query'
+  | 'standard_query'
   | 'general'
 
 /**
@@ -52,6 +53,12 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     leaders: 1.5,
     library: 1.2,
     'document-enrichment': 1.5,
+  },
+  standard_query: {
+    library: 3,
+    'document-enrichment': 2,
+    compliance: 1.5,
+    glossary: 1.2,
   },
   general: { leaders: 1.5 },
 }
@@ -375,6 +382,15 @@ export function classifyIntent(query: string): QueryIntent {
   if (/\b(what|show|list|which)\b.*\b(validated|certified|certifications?)\b/.test(q))
     return 'catalog_lookup'
 
+  // Standard identifier detection — before country detection because
+  // "bsi" and "etsi" are in COUNTRY_KEYS and would hijack e.g. "BSI TR-02102"
+  if (
+    /\b(nist\s+(ir|sp|fips|cswp)\s+\d+|fips[-\s]*\d+|rfc\s+\d+|iso[\s/]iec\s+\d+|etsi\s+(ts|tr)\s+\d+|bsi\s+tr[-\s]*\d+|sp\s+800[-\s]*\d+|cnsa\s+2\.0)\b/i.test(
+      q
+    )
+  )
+    return 'standard_query'
+
   // Country detection — check before recommendation since country names are more specific
   const tokens = q.split(/\s+/)
   for (const token of tokens) {
@@ -401,6 +417,8 @@ function getLimitForIntent(intent: QueryIntent): number {
       return 15
     case 'catalog_lookup':
       return 20
+    case 'standard_query':
+      return 12
     default:
       return 15
   }

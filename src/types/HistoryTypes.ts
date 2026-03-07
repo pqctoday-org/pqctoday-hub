@@ -16,6 +16,7 @@ export type HistoryEventType =
   | 'belt_earned'
   | 'streak_milestone'
   | 'migrate_product_selection'
+  | 'compliance_framework_selection'
 
 export interface HistoryEvent {
   id: string

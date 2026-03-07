@@ -72,10 +72,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
   - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attacks
-  - **PQC Quiz**: Interactive knowledge assessment with 546 questions across 35 categories
+  - **PQC Quiz**: Interactive knowledge assessment with 635 questions across 40 categories
     - **3 Modes**: Quick (20 questions, guaranteed category coverage), Full Assessment (80 questions randomly sampled), Custom (by topic)
     - **CSV-Driven**: Questions loaded from date-stamped CSV (`pqcquiz_MMDDYYYY.csv`) via `import.meta.glob`, with smart sampling guaranteeing ≥2 per category (Quick) / ≥10 per category (Full)
-    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, Standards Bodies, Data Asset Sensitivity, and 24 additional topic categories covering all 28 learning modules
+    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, Standards Bodies, Data Asset Sensitivity, Energy & Utilities, Healthcare, Aerospace & Space, Automotive, Cryptographic APIs, and 24 additional topic categories covering all 41 learning modules
     - **Score Tracking**: Per-category highest scores persisted across sessions
   - **Quantum Threats**:
     - Analyzes security level degradation and algorithm vulnerability matrices
@@ -147,6 +147,53 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - CoverageGrid: heat-map of regional coverage across standardisation, certification, and compliance
     - ScenarioChallenge: real-world scenarios (US federal procurement, EU NIS2 audit, etc.) requiring
       learners to identify the relevant bodies and cite correct regulatory references
+  - **Cryptographic APIs & Developer Languages** (8-step workshop, Developer track):
+    - API Architecture Explorer: compare JCA/JCE, OpenSSL EVP, PKCS#11, Windows CNG, and Bouncy Castle
+    - Language Ecosystem Comparator: PQC library availability across Java, Python, Go, Rust, C/C++, .NET, JavaScript
+    - Provider Pattern Workshop: pluggable provider design and abstraction strategies
+    - Build vs Buy vs Open Source Analyzer: decision framework for PQC library selection
+    - PQC Library Explorer: liboqs, BouncyCastle, AWS-LC-FIPS, Bouncy Castle, Microsoft's SEAL, and others
+    - PQC Support Matrix: feature/algorithm coverage table across libraries and languages
+    - Crypto Agility Patterns: factory pattern, interface-based swap, feature flags, and adapter layer
+    - Migration Decision Lab: interactive decision tree for library migration planning
+  - **Energy & Utilities PQC** (5-step workshop, Industries track):
+    - Protocol Security Analyzer: quantum vulnerability assessment for DNP3, Modbus, IEC 61850, and IEC 62351
+    - Substation Migration Planner: phased PQC rollout for substations with NERC CIP compliance mapping
+    - Smart Meter Key Manager: DUKPT-based key management at AMI scale
+    - Safety Risk Scorer: environmental and operational risk scoring for grid-connected systems
+    - Grid Migration Roadmap: multi-year roadmap generator for power utility PQC programs
+  - **Healthcare PQC** (5-step workshop, Industries track):
+    - Biometric Vault Assessor: biometric data permanence analysis and quantum vulnerability scoring
+    - Pharma IP Calculator: pharmaceutical intellectual property protection timeline estimator
+    - Patient Privacy Mapper: HIPAA/GDPR lifecycle analysis for long-lived patient records
+    - Device Safety Simulator: FDA-regulated medical device safety-crypto intersection (IEC 62443)
+    - Hospital Migration Planner: network migration across clinical, imaging, and administrative systems
+  - **Aerospace & Space PQC** (6-step workshop, Industries track):
+    - Avionics Protocol Analyzer: ARINC 429/629 and DO-326A airborne cybersecurity assessment
+    - Satellite Link Budget: bandwidth constraint analysis for PQC signatures on satellite links
+    - Certification Impact Analyzer: DO-178C/DO-326A recertification impact assessment
+    - Fleet Interoperability Matrix: multi-decade fleet crypto interoperability planning
+    - Export Control Classifier: ITAR/EAR export control classification for PQC implementations
+    - Mission Lifecycle Planner: end-to-end mission crypto lifecycle (design → launch → deorbit)
+  - **Automotive PQC** (6-step workshop, Industries track):
+    - Vehicle Architecture Mapper: ECU/CAN bus/V2X topology and quantum risk mapping
+    - Sensor Data Integrity: LiDAR/camera data signing with PQC algorithms
+    - Safety-Crypto Analyzer: ISO 26262 ASIL safety levels crossed with crypto requirements
+    - OTA Orchestration Planner: 15–20 year lifecycle OTA key management and rollout
+    - Car Key Protocol Explorer: digital car keys, Ultra-Wideband, and in-vehicle payment PQC
+    - Lifecycle Migration Roadmap: vehicle model-year migration roadmap generator
+  - **Role Guides track** (5 quick-start modules, 30 min each, beginner):
+    - **Executive Quantum Impact**: fiduciary risk, CNSA 2.0/NIS2/DORA deadlines, board-level action plan
+    - **Developer Quantum Impact**: library transitions, key/signature size impacts, JWT/TLS migration
+    - **Architect Quantum Impact**: KMS/HSM/PKI decisions, hybrid deployment patterns, crypto-agile design
+    - **Ops Quantum Impact**: certificate scaling, VPN/SSH key exchange, monitoring recalibration
+    - **Research Quantum Impact**: algorithm evaluation, open problems, standards convergence timelines
+  - **Confidential Computing & TEEs** (5-step workshop, Infrastructure track):
+    - TEE Architecture Explorer: 7 vendor platforms (Intel SGX, AMD SEV-SNP, ARM CCA, AWS Nitro, Google Cloud CC, Azure Confidential, IBM SE)
+    - Attestation Workshop: remote attestation flows, engines, integrations, and quantum threat analysis
+    - Encryption Mechanisms: TEE-specific encryption and key sealing strategies
+    - TEE-HSM Trusted Channel: establishing quantum-safe channels between TEEs and HSMs
+    - Quantum Threat Migration: migration roadmap for TEE-dependent workloads
   - **Tools & Products Tab**: Every module includes a "Tools & Products" tab surfacing PQC-ready
     products from the Migrate catalog, grouped by infrastructure layer with PQC/FIPS badges,
     license info, and deep-links to the Migrate view
@@ -166,6 +213,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
     Criteria certification badges pulled from a certification cross-reference dataset
   - **Three-tier FIPS badge**: `Validated` (green) / `Partial` (amber, covers FedRAMP/WebTrust/FIPS-mode
     claims) / `No` (gray) with icon indicators on every catalog row
+  - **AI Product Extraction**: Products with AI-enriched profiles show a ✨ "Enriched" badge;
+    clicking "View Extraction" opens a modal with detailed use-case analysis, PQC readiness
+    assessment, algorithm support, migration notes, and certification details
   - **Three View Modes**: Stack (infrastructure layers), Cards (responsive grid with sort), and Table
     (sortable columns) with persistent view toggle. Four sort options: Name, PQC Support, Migration
     Priority, FIPS Status
@@ -254,6 +304,17 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Selections persist across sessions via localStorage; "Clear all" fully resets to no selection
   - **PQC Explainer**: Dismissible "Why does this matter?" component with 3 educational cards
     for newcomers; persistent dismissal via localStorage
+- **Achievement Badge System**: 27 unlockable badges tracking learning milestones across all
+  modules, quiz performance, and cross-page engagement; badges organized by category (Foundation,
+  Deep Dive, Industry, Strategy, Practice) and displayed on the landing page
+- **Right Panel** (slide-out, accessible via panel icon in nav):
+  - **Knowledge Graph**: Explore (force-directed graph of all PQC concepts and modules),
+    Coverage (bar chart of quiz/module coverage per category), Pathways (recommended learning
+    sequences per persona), and **Mindmap** (visual overview of the PQC learning landscape,
+    modules grouped by track with cross-module relationship edges)
+  - **Journey Map**: Persona-driven visual representation of the user's learning journey —
+    completed modules, recommended next steps, and progress toward persona-specific goals
+  - Body scroll is locked when the panel is open on mobile (drawer mode)
 - **Guided Tour**: Interactive first-visit onboarding with 3-phase design
   - Phase 1 — Intro (3 slides explaining why PQC matters)
   - Phase 2 — Knowledge Gate: adjusts tour length based on experience level
@@ -303,6 +364,11 @@ Test your PQC readiness with this interactive web application visualizing the gl
     persona-aware pre-filtering
   - Framework cards with PQC requirement indicators, enforcement body, website links, and
     cross-references to Library and Timeline; ViewToggle (grid / list) for layout preference
+  - **My Frameworks bookmarking**: checkbox toggle on every card and table row — add frameworks
+    to a personal list persisted via `useComplianceSelectionStore`; selections auto-import into
+    the Assessment wizard compliance step
+  - **Deadline urgency indicators**: deadline badges color-coded as imminent (red) / near-term
+    (amber) / future (green) using extracted deadline years
   - **Body-type awareness**: 62 records categorised as `standardization_body`, `technical_standard`,
     `certification_body`, or `compliance_framework` — enabling richer filtering and UI context
   - NIST FIPS document tracking (203, 204, 205, 206)

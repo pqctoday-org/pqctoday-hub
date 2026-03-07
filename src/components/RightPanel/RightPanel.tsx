@@ -23,6 +23,18 @@ export const RightPanel: React.FC = () => {
     return () => window.removeEventListener('keydown', handler)
   }, [isOpen, close])
 
+  // Lock body scroll when panel is open (mobile drawer)
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
   return (
     <AnimatePresence>
       {isOpen && (

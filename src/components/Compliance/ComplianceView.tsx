@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable } from './ComplianceTable'
@@ -15,6 +15,7 @@ import {
   Scale,
   ExternalLink,
   FileText,
+  CheckSquare,
 } from 'lucide-react'
 import { logComplianceFilter } from '../../utils/analytics'
 import { ShareButton } from '../ui/ShareButton'
@@ -26,6 +27,8 @@ import { COMPLIANCE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { complianceFrameworks, complianceMetadata } from '@/data/complianceData'
+import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
+import { useHistoryStore } from '@/store/useHistoryStore'
 
 // Maps industry → recommended top-level section + sub-hint
 const INDUSTRY_COMPLIANCE_HINT: Record<
@@ -216,6 +219,27 @@ export const ComplianceView = () => {
   const certParam = searchParams.get('cert') ?? undefined
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
   const { selectedIndustries, selectedRegion } = usePersonaStore()
+  const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
+  const addHistoryEvent = useHistoryStore((s) => s.addEvent)
+
+  // Fire history event on selection change (debounced 1.5s) — mirrors MigrateView pattern
+  const prevCountRef = useRef(myFrameworks.length)
+  useEffect(() => {
+    const count = myFrameworks.length
+    if (count === prevCountRef.current) return
+    prevCountRef.current = count
+    if (count === 0) return
+    const timer = setTimeout(() => {
+      addHistoryEvent({
+        type: 'compliance_framework_selection',
+        timestamp: Date.now(),
+        title: 'Updated compliance selection',
+        detail: `${count} framework${count === 1 ? '' : 's'} selected`,
+        route: '/compliance',
+      })
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [myFrameworks.length, addHistoryEvent])
 
   const primaryIndustry = selectedIndustries[0] ?? null
   // eslint-disable-next-line security/detect-object-injection
@@ -276,6 +300,12 @@ export const ComplianceView = () => {
               Data Source: {complianceMetadata.filename} • Updated:{' '}
               {complianceMetadata.lastUpdate.toLocaleDateString()}
             </p>
+          )}
+          {myFrameworks.length > 0 && (
+            <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-sans">
+              <CheckSquare size={12} />
+              {myFrameworks.length} selected
+            </span>
           )}
           <SourcesButton viewType="Compliance" />
           <ShareButton
@@ -367,7 +397,7 @@ export const ComplianceView = () => {
               title="Certification Schemes"
               description={`${certificationFrameworks.length} validation programs and schemes that certify cryptographic products and algorithm implementations against published standards.`}
               learnLabel="Understand the cert chain"
-              learnTo="/learn/standards-bodies?step=3"
+              learnTo="/learn/standards-bodies?step=2"
             />
             <ComplianceLandscape
               frameworks={certificationFrameworks}
@@ -397,7 +427,7 @@ export const ComplianceView = () => {
               title="Product Certification Records"
               description="Live certification records from NIST CMVP, NIST CAVP, and Common Criteria Portal — searchable product validations for FIPS 140-3, ACVP algorithm testing, and CC evaluations."
               learnLabel="Understand the cert chain"
-              learnTo="/learn/standards-bodies?step=3"
+              learnTo="/learn/standards-bodies?step=2"
             />
             <Tabs defaultValue="all" className="w-full">
               <TabsList className="mb-4 bg-muted/50 border border-border">

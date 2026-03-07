@@ -1,0 +1,511 @@
+// SPDX-License-Identifier: GPL-3.0-only
+
+export interface SectionInfoEntry {
+  title: string
+  summary: string
+  wizardInputs: { label: string; detail: string }[]
+  scoringPrinciples?: string[]
+  personaEffects?: { persona: string; effect: string }[]
+  dataSources?: string[]
+}
+
+export const SECTION_INFO: Record<string, SectionInfoEntry> = {
+  countryTimeline: {
+    title: 'Country PQC Timeline',
+    summary:
+      'Displays the PQC migration phases and regulatory deadlines for the country you selected in the assessment wizard.',
+    wizardInputs: [
+      {
+        label: 'Country (Step 2)',
+        detail:
+          'Determines which country timeline is shown. Each country has its own regulatory milestones, phases, and deadline targets sourced from government publications.',
+      },
+    ],
+    personaEffects: [
+      { persona: 'Executive', effect: 'Section is collapsed by default.' },
+      { persona: 'Developer / Architect / Researcher', effect: 'Section is collapsed by default.' },
+      { persona: 'Ops', effect: 'Section is collapsed by default.' },
+    ],
+    dataSources: [
+      'Timeline database — government PQC milestone documents archived in the Timeline module.',
+    ],
+  },
+
+  riskScore: {
+    title: 'Risk Score',
+    summary:
+      'A composite score from 0 to 100 that quantifies your organization\u2019s quantum risk. Higher scores mean more urgent action is needed.',
+    wizardInputs: [
+      {
+        label: 'All wizard inputs',
+        detail:
+          'The score is a weighted composite of four category scores (Quantum Exposure, Migration Complexity, Regulatory Pressure, Organizational Readiness), each of which draws from multiple wizard steps.',
+      },
+      {
+        label: 'Industry (Step 1)',
+        detail:
+          'Determines category weights. For example, government and finance weight regulatory pressure higher, while telecom and energy weight migration complexity higher.',
+      },
+    ],
+    scoringPrinciples: [
+      'Composite = (QE \u00d7 w1) + (MC \u00d7 w2) + (RP \u00d7 w3) + (OR \u00d7 w4), where weights are industry-specific.',
+      'Situational boosts (up to +20%) apply for compounding risks: critical data with long retention and no migration started (HNDL), signing algorithms with long credential lifetime (HNFL), government with CNSA 2.0 obligations, or hardcoded crypto with legacy infrastructure.',
+      'Risk level thresholds: Low (0\u201329), Medium (30\u201359), High (60\u201379), Critical (80\u2013100).',
+    ],
+    personaEffects: [
+      {
+        persona: 'Executive',
+        effect:
+          'Softer penalties for \u201cI don\u2019t know\u201d on technical questions (crypto agility, infrastructure) because executives delegate these details.',
+      },
+      {
+        persona: 'Developer / Architect / Researcher / Ops',
+        effect: 'Standard scoring \u2014 no adjustments.',
+      },
+    ],
+  },
+
+  keyFindings: {
+    title: 'Key Findings',
+    summary:
+      'The 3\u20135 most critical insights automatically identified from your assessment: vulnerable algorithms, compliance gaps, HNDL/HNFL exposure, and migration blockers.',
+    wizardInputs: [
+      {
+        label: 'Algorithms (Step 3)',
+        detail: 'Identifies which of your algorithms are quantum-vulnerable.',
+      },
+      {
+        label: 'Compliance (Step 5)',
+        detail: 'Flags frameworks with approaching PQC deadlines.',
+      },
+      {
+        label: 'Data Retention (Step 8) / Credential Lifetime (Step 9)',
+        detail: 'Highlights HNDL or HNFL risk windows.',
+      },
+      {
+        label: 'Migration Status (Step 6)',
+        detail: 'Flags if migration has not started.',
+      },
+    ],
+    personaEffects: [
+      {
+        persona: 'All personas',
+        effect: 'Same findings are generated regardless of persona. Visibility is always open.',
+      },
+    ],
+  },
+
+  riskBreakdown: {
+    title: 'Risk Breakdown',
+    summary:
+      'Shows your score across four risk categories, each computed from specific wizard inputs with industry-tuned weights.',
+    wizardInputs: [
+      {
+        label: 'Quantum Exposure',
+        detail:
+          'Algorithms (40%), Use Cases (25%), Data Retention (20%), Data Sensitivity (15%). Measures how exposed your data and operations are to quantum attacks.',
+      },
+      {
+        label: 'Migration Complexity',
+        detail:
+          'Crypto Agility (40%), Infrastructure (30%), System Scale (15%), Vendor Dependency (15%). Measures effort to transition to PQC.',
+      },
+      {
+        label: 'Regulatory Pressure',
+        detail:
+          'Compliance Frameworks (45%), Industry Regulation (30%), Country Urgency + Timeline Pressure (25%). Measures external pressure to migrate.',
+      },
+      {
+        label: 'Organizational Readiness',
+        detail:
+          'Migration Status (40%), Team Capacity (25%), Crypto Agility (20%), Vendor Dependency (15%). Measures your organization\u2019s current ability to execute.',
+      },
+    ],
+    scoringPrinciples: [
+      'Each category is scored 0\u2013100 independently.',
+      'Category weights are industry-specific (e.g., Finance: QE=0.30, MC=0.25, RP=0.25, OR=0.20).',
+      'Category drivers (the text under each bar) explain what specifically is pulling each score up or down.',
+    ],
+    personaEffects: [
+      {
+        persona: 'Executive',
+        effect:
+          'Reduced penalties for unknown crypto agility (\u221215%) and unknown infrastructure (\u22123 pts) in Migration Complexity. Reduced penalty for unknown migration status (\u22125 pts) in Org Readiness.',
+      },
+      {
+        persona: 'Developer / Architect / Researcher / Ops',
+        effect: 'Standard scoring with no adjustments.',
+      },
+    ],
+    dataSources: [
+      'Industry composite weights from assessment configuration.',
+      'Compliance framework deadlines from Compliance database.',
+    ],
+  },
+
+  executiveSummary: {
+    title: 'Executive Summary',
+    summary:
+      'A narrative summary of your key risks and recommended priorities, written in language tailored to your persona.',
+    wizardInputs: [
+      {
+        label: 'All wizard inputs',
+        detail:
+          'The narrative references your specific algorithms, compliance gaps, infrastructure, and migration status.',
+      },
+    ],
+    personaEffects: [
+      {
+        persona: 'Executive',
+        effect:
+          'Business and risk language \u2014 board-level urgency, regulatory penalties, budget framing. No algorithm names.',
+      },
+      {
+        persona: 'Developer',
+        effect:
+          'Technical migration paths with FIPS references, library recommendations, refactoring patterns.',
+      },
+      {
+        persona: 'Architect',
+        effect:
+          'System topology analysis, infrastructure layer breakdown, dependency mapping, crypto-agility architecture guidance.',
+      },
+      {
+        persona: 'Researcher',
+        effect:
+          'Scoring formula details, category weights, HNDL/HNFL risk window math, NIST standard references.',
+      },
+      {
+        persona: 'Ops',
+        effect:
+          'Infrastructure and configuration management focus, automation readiness, operational deployment guidance.',
+      },
+      {
+        persona: 'No persona selected',
+        effect: 'Generic narrative covering key risks without role-specific framing.',
+      },
+    ],
+  },
+
+  assessmentProfile: {
+    title: 'Assessment Profile',
+    summary:
+      'A direct snapshot of all the selections you made in the assessment wizard. No scoring is applied \u2014 this is purely for reference.',
+    wizardInputs: [
+      {
+        label: 'All 14 wizard steps',
+        detail:
+          'Industry, Country, Algorithms, Data Sensitivity, Compliance Frameworks, Migration Status, Use Cases, Data Retention, Credential Lifetime, System Scale, Crypto Agility, Infrastructure, Vendor Dependency, Timeline Pressure.',
+      },
+    ],
+    personaEffects: [
+      {
+        persona: 'Architect / Researcher',
+        effect: 'Section is expanded by default for full visibility.',
+      },
+      {
+        persona: 'Executive / Developer / Ops',
+        effect: 'Section is collapsed by default (click to expand).',
+      },
+    ],
+  },
+
+  hndlHnfl: {
+    title: 'HNDL & HNFL Risk Windows',
+    summary:
+      'Calculates whether adversaries can harvest your encrypted data now and decrypt it later (HNDL), or forge your digital signatures retroactively (HNFL).',
+    wizardInputs: [
+      {
+        label: 'Data Retention (Step 8)',
+        detail:
+          'HNDL: how many years your data must stay confidential. Longer retention = larger risk window.',
+      },
+      {
+        label: 'Credential Lifetime (Step 9)',
+        detail:
+          'HNFL: how many years your signed artifacts must remain trusted. Longer lifetime = larger risk window.',
+      },
+      {
+        label: 'Country (Step 2)',
+        detail:
+          'Determines the estimated quantum threat year. Countries with earlier regulatory deadlines (e.g., US and France target 2030) use an accelerated horizon.',
+      },
+      {
+        label: 'Algorithms (Step 3)',
+        detail: 'HNFL only applies when signing algorithms (RSA, ECDSA, EdDSA) are present.',
+      },
+      {
+        label: 'Use Cases (Step 7)',
+        detail:
+          'Use cases with high HNFL relevance (code signing, PKI, digital identity) are flagged.',
+      },
+    ],
+    scoringPrinciples: [
+      'HNDL: At risk when (current year + retention years) > estimated quantum threat year.',
+      'HNFL: At risk when signing algorithms are present AND (current year + credential lifetime) > estimated quantum threat year.',
+      'Risk window = years of exposure beyond the quantum threat horizon.',
+      '\u201cI don\u2019t know\u201d responses use conservative industry defaults (e.g., 75 years for government retention, 10 years for credential lifetime).',
+    ],
+    personaEffects: [
+      {
+        persona: 'Executive / Ops',
+        effect: 'Section is hidden in summary mode (visible in full report).',
+      },
+      { persona: 'Developer / Architect / Researcher', effect: 'Section is open by default.' },
+    ],
+  },
+
+  algorithmMigration: {
+    title: 'Algorithm Migration Priority',
+    summary:
+      'Maps each classical algorithm you selected to its NIST-recommended post-quantum replacement, with urgency and effort estimates.',
+    wizardInputs: [
+      {
+        label: 'Algorithms (Step 3)',
+        detail:
+          'Each selected algorithm is looked up in the algorithm database to determine quantum vulnerability and recommended PQC replacement (e.g., RSA-2048 \u2192 ML-KEM, ECDSA \u2192 ML-DSA).',
+      },
+      {
+        label: 'Crypto Agility (Step 11)',
+        detail:
+          'Affects effort estimate \u2014 hardcoded crypto means higher migration effort per algorithm.',
+      },
+      {
+        label: 'Infrastructure (Step 12)',
+        detail: 'HSM and legacy systems increase migration complexity and effort scope.',
+      },
+      {
+        label: 'Compliance (Step 5)',
+        detail: 'Frameworks with PQC mandates increase urgency for vulnerable algorithms.',
+      },
+    ],
+    scoringPrinciples: [
+      'Urgency levels: Immediate (quantum-vulnerable + compliance deadline), Near-term (quantum-vulnerable, no immediate deadline), Long-term (not directly vulnerable).',
+      'Effort scope: Quick-win, Moderate, Major project, or Multi-year \u2014 based on crypto agility and infrastructure complexity.',
+    ],
+    personaEffects: [
+      {
+        persona: 'Executive',
+        effect: 'Section is hidden in summary mode (visible in full report).',
+      },
+      {
+        persona: 'Developer / Architect / Researcher / Ops',
+        effect: 'Section is open by default.',
+      },
+    ],
+    dataSources: ['Algorithm database with NIST FIPS 203/204/205 replacement mappings.'],
+  },
+
+  complianceImpact: {
+    title: 'Compliance Impact',
+    summary:
+      'Shows PQC mandates and deadlines for the compliance frameworks you selected, with links to relevant standards and timeline milestones.',
+    wizardInputs: [
+      {
+        label: 'Compliance Frameworks (Step 5)',
+        detail:
+          'Each selected framework is looked up for PQC requirements, deadlines, and notes. Only frameworks matching your selected industry are available.',
+      },
+      {
+        label: 'Industry (Step 1)',
+        detail: 'Filters the available compliance frameworks to those relevant to your industry.',
+      },
+      {
+        label: 'Country (Step 2)',
+        detail: 'Country-specific compliance frameworks (e.g., CNSA 2.0 for US) are highlighted.',
+      },
+    ],
+    personaEffects: [
+      {
+        persona: 'All personas',
+        effect:
+          'Same compliance data is shown regardless of persona. Section is always open by default.',
+      },
+    ],
+    dataSources: [
+      'Compliance database with framework requirements and deadlines.',
+      'Library references linking to NIST standards and specifications.',
+      'Timeline milestones for country-specific regulatory events.',
+    ],
+  },
+
+  recommendedActions: {
+    title: 'Recommended Actions',
+    summary:
+      'Prioritized action items generated from your specific assessment inputs. Each action includes an effort estimate and links to relevant modules for next steps.',
+    wizardInputs: [
+      {
+        label: 'Algorithms (Step 3)',
+        detail: 'Generates migration actions for each quantum-vulnerable algorithm.',
+      },
+      {
+        label: 'Infrastructure (Step 12)',
+        detail: 'Infrastructure-specific actions (e.g., HSM firmware upgrades, PKI re-issuance).',
+      },
+      {
+        label: 'Compliance (Step 5)',
+        detail: 'Actions for meeting compliance framework deadlines.',
+      },
+      {
+        label: 'Migration Status (Step 6)',
+        detail:
+          'Actions are prioritized differently based on whether migration has started, is planned, or has not begun.',
+      },
+      {
+        label: 'Crypto Agility (Step 11)',
+        detail: 'If hardcoded, an action to introduce an abstraction layer is prioritized.',
+      },
+      {
+        label: '\u201cI don\u2019t know\u201d responses',
+        detail:
+          'Each unknown generates a specific awareness-gap action recommending an audit of that area.',
+      },
+    ],
+    scoringPrinciples: [
+      'Actions are categorized as Immediate, Short-term, or Long-term based on urgency.',
+      'Effort levels (Low, Medium, High) are assigned based on scope and infrastructure complexity.',
+      'Actions are numbered by priority, with the most urgent and impactful first.',
+    ],
+    personaEffects: [
+      {
+        persona: 'Executive',
+        effect:
+          'Only the top 5 actions are shown in summary mode. Full list available in full report.',
+      },
+      {
+        persona: 'Developer / Architect / Researcher / Ops',
+        effect: 'All actions are shown by default.',
+      },
+    ],
+  },
+
+  migrationRoadmap: {
+    title: 'Migration Roadmap',
+    summary:
+      'Groups your recommended actions into Immediate, Short-term, and Long-term swim lanes, aligned with your country\u2019s regulatory deadline.',
+    wizardInputs: [
+      {
+        label: 'Recommended Actions',
+        detail:
+          'The roadmap is a visual grouping of the same actions from the Recommended Actions section.',
+      },
+      {
+        label: 'Country (Step 2)',
+        detail:
+          'The country\u2019s regulatory deadline is shown as a target marker on the timeline.',
+      },
+    ],
+    personaEffects: [
+      { persona: 'Executive', effect: 'Section is collapsed by default.' },
+      { persona: 'Ops', effect: 'Section is open by default.' },
+      { persona: 'Developer / Architect / Researcher', effect: 'Section is open by default.' },
+    ],
+  },
+
+  migrationToolkit: {
+    title: 'Migration Toolkit',
+    summary:
+      'Shows products from the Migrate catalog that match your infrastructure and industry, helping you identify tools for your PQC migration.',
+    wizardInputs: [
+      {
+        label: 'Infrastructure (Step 12)',
+        detail:
+          'Products are filtered to match your selected infrastructure layers and sub-categories (e.g., TLS libraries, PKI platforms, HSM vendors).',
+      },
+      {
+        label: 'Industry (Step 1)',
+        detail: 'Products are further filtered by industry relevance.',
+      },
+    ],
+    personaEffects: [
+      { persona: 'Executive', effect: 'Section is collapsed by default.' },
+      { persona: 'Ops', effect: 'Section is open by default.' },
+      { persona: 'Developer / Architect / Researcher', effect: 'Section is open by default.' },
+    ],
+    dataSources: [
+      'Migrate catalog \u2014 PQC-ready software products with FIPS status, algorithm support, and infrastructure layer classification.',
+    ],
+  },
+
+  roiCalculator: {
+    title: 'ROI Calculator',
+    summary:
+      'An interactive cost/benefit model for your PQC migration. Initial values are seeded from your assessment results \u2014 override any field to match your organization\u2019s actuals.',
+    wizardInputs: [
+      {
+        label: 'Algorithm Migrations',
+        detail:
+          'Number and complexity of algorithm migrations determine base engineering cost estimates.',
+      },
+      {
+        label: 'Industry (Step 1)',
+        detail:
+          'Industry breach cost baselines (e.g., average breach cost for Finance vs. Healthcare) seed the risk-avoidance benefit.',
+      },
+      {
+        label: 'Assessment Profile',
+        detail:
+          'System scale and infrastructure complexity feed into effort and timeline estimates.',
+      },
+    ],
+    personaEffects: [
+      {
+        persona: 'All personas',
+        effect:
+          'Same calculator is available to all personas. Section is collapsed by default for everyone.',
+      },
+    ],
+    dataSources: ['Industry breach cost baselines from published industry reports.'],
+  },
+
+  kpiTrending: {
+    title: 'KPI Trending',
+    summary:
+      'Tracks your PQC risk score and category breakdown across multiple assessments over time, showing your migration progress.',
+    wizardInputs: [
+      {
+        label: 'Assessment History',
+        detail:
+          'Each time you complete an assessment, a snapshot is saved. This chart plots all historical snapshots to visualize trends.',
+      },
+    ],
+    personaEffects: [
+      {
+        persona: 'All personas',
+        effect:
+          'Same chart is shown regardless of persona. Requires at least two completed assessments to show trends.',
+      },
+    ],
+  },
+
+  threatLandscape: {
+    title: 'Industry Threat Landscape',
+    summary:
+      'Shows industry-specific quantum threats matched against your current algorithms, sourced from the Threats database.',
+    wizardInputs: [
+      {
+        label: 'Industry (Step 1)',
+        detail:
+          'Filters threats to your industry. Each industry has a specific set of quantum threat scenarios.',
+      },
+      {
+        label: 'Algorithms (Step 3)',
+        detail:
+          'Threats are matched against your selected algorithms to highlight which are relevant to your stack.',
+      },
+    ],
+    personaEffects: [
+      {
+        persona: 'Architect / Researcher',
+        effect: 'Section is expanded by default for deeper analysis.',
+      },
+      {
+        persona: 'Executive / Developer / Ops',
+        effect: 'Section is collapsed by default.',
+      },
+    ],
+    dataSources: [
+      'Threats database \u2014 industry-specific quantum threat scenarios with affected algorithms and mitigation strategies.',
+    ],
+  },
+}

@@ -68,6 +68,28 @@ export function sanitize(s: string | undefined | null): string {
   return (s ?? '').trim()
 }
 
+/** Load all library referenceIds for cross-linking other sources to /library?ref= */
+let _libraryRefIds: Set<string> | null = null
+function getLibraryRefIds(): Set<string> {
+  if (_libraryRefIds) return _libraryRefIds
+  _libraryRefIds = new Set<string>()
+  const file = findLatestCSV('library_')
+  if (file) {
+    const rows = readCSV(file)
+    for (let i = 1; i < rows.length; i++) {
+      const refId = sanitize(rows[i][0])
+      if (refId) _libraryRefIds.add(refId)
+    }
+  }
+  return _libraryRefIds
+}
+
+/** Find a library referenceId mentioned in the given text */
+function findLibraryRef(text: string): string | undefined {
+  const refs = getLibraryRefIds()
+  return [...refs].find((ref) => text.includes(ref))
+}
+
 /** URL-encode a parameter value for deep links */
 export function encodeParam(s: string): string {
   return encodeURIComponent(s.trim())
@@ -111,6 +133,12 @@ const MODULE_DIR_TO_ID: Record<string, string> = {
   DataAssetSensitivity: 'data-asset-sensitivity',
   KmsPqc: 'kms-pqc',
   HsmPqc: 'hsm-pqc',
+  WebGatewayPQC: 'web-gateway-pqc',
+  ExecQuantumImpact: 'exec-quantum-impact',
+  DevQuantumImpact: 'dev-quantum-impact',
+  ArchQuantumImpact: 'arch-quantum-impact',
+  OpsQuantumImpact: 'ops-quantum-impact',
+  ResearchQuantumImpact: 'research-quantum-impact',
 }
 
 // ---------------------------------------------------------------------------
@@ -196,6 +224,13 @@ function processTimeline(): RAGChunk[] {
       `Description: ${sanitize(description)}`,
     ].join('\n')
 
+    // Cross-link: if timeline event title matches a library referenceId,
+    // deep link to /library?ref= instead of generic /timeline?country=
+    const matchedRef = findLibraryRef(sanitize(title))
+    const deepLink = matchedRef
+      ? `/library?ref=${encodeParam(matchedRef)}`
+      : `/timeline?country=${encodeParam(country)}`
+
     chunks.push({
       id: `timeline-${i}`,
       source: 'timeline',
@@ -207,7 +242,7 @@ function processTimeline(): RAGChunk[] {
         org: sanitize(orgName),
         sourceUrl: sanitize(sourceUrl),
       },
-      deepLink: `/timeline?country=${encodeParam(country)}`,
+      deepLink,
     })
   }
 
@@ -810,6 +845,11 @@ const MODULE_NAME_MAP: Record<string, string> = {
   DataAssetSensitivity: 'Data & Asset Sensitivity',
   KmsPqc: 'KMS & PQC Key Management',
   HsmPqc: 'HSM & PQC Operations',
+  ExecQuantumImpact: 'Executive Quantum Impact',
+  DevQuantumImpact: 'Developer Quantum Impact',
+  ArchQuantumImpact: 'Architect Quantum Impact',
+  OpsQuantumImpact: 'Ops Quantum Impact',
+  ResearchQuantumImpact: 'Researcher Quantum Impact',
 }
 
 /**
@@ -1821,6 +1861,13 @@ function processDocumentEnrichments(): RAGChunk[] {
             ? { deepLink: `/threats?id=${encodeParam(refId)}` }
             : collection === 'timeline' && refId
               ? (() => {
+                  // Cross-reference: if enrichment title matches a library referenceId,
+                  // link to /library?ref= instead of generic /timeline?country=
+                  const titleText = fields['Title'] || refId
+                  const matchedLibRef = findLibraryRef(titleText) || findLibraryRef(refId)
+                  if (matchedLibRef) {
+                    return { deepLink: `/library?ref=${encodeParam(matchedLibRef)}` }
+                  }
                   const country = refId.split(':')[0]?.trim() ?? ''
                   return country && country !== 'Global'
                     ? { deepLink: `/timeline?country=${encodeParam(country)}` }
@@ -2173,7 +2220,7 @@ async function main() {
     compliance: 1.0,
     migrate: 1.0,
     timeline: 1.0,
-    library: 0.95,
+    library: 1.0,
     leaders: 1.0,
     'document-enrichment': 0.9,
     quiz: 0.8,

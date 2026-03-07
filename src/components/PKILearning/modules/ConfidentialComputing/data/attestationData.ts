@@ -89,12 +89,12 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
     id: 'arm-cca-attestation',
     name: 'ARM CCA Realm Attestation',
     teeVendor: 'arm-cca',
-    rootOfTrust: 'ARM CCA Platform Token (ECDSA P-256)',
-    signingAlgorithm: 'ECDSA P-256',
-    hashAlgorithm: 'SHA-256',
+    rootOfTrust: 'ARM CCA Platform Token (ECDSA P-384)',
+    signingAlgorithm: 'ECDSA P-384',
+    hashAlgorithm: 'SHA-384',
     pqcMigrationStatus: 'planned',
     pqcMigrationNotes:
-      'ARM has indicated PQC support for CCA attestation tokens on the roadmap. Initial implementations use ECDSA P-256 per PSA Attestation Token specification. Estimated PQC timeline: 2028.',
+      'ARM has indicated PQC support for CCA attestation tokens on the roadmap. Initial implementations use ECDSA P-384 per PSA Attestation Token specification. Estimated PQC timeline (ML-DSA): 2028.',
     steps: [
       {
         id: 'cca-1',
@@ -104,9 +104,9 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
         actor: 'enclave',
         description:
           'The Realm generates a Realm Token containing the Realm Initial Measurement (RIM), Realm Extensible Measurement (REM), and challenge nonce. Signed by the Realm Attestation Key (RAK).',
-        cryptoUsed: ['ECDSA P-256 (RAK signing)', 'SHA-256 (measurements)'],
+        cryptoUsed: ['ECDSA P-384 (RAK signing)', 'SHA-384 (measurements)'],
         quantumVulnerable: true,
-        pqcReplacement: 'ML-DSA-65',
+        pqcReplacement: 'ML-DSA-87',
         dataExchanged: 'CCA Realm Token (COSE_Sign1, ~1-2 KB)',
       },
       {
@@ -117,9 +117,9 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
         actor: 'platform',
         description:
           'The Realm Management Monitor (RMM) generates a Platform Token containing the platform identity, lifecycle state, and implementation ID. Binds to the Realm Token via hash reference.',
-        cryptoUsed: ['ECDSA P-256 (platform signing)', 'SHA-256 (binding hash)'],
+        cryptoUsed: ['ECDSA P-384 (platform signing)', 'SHA-384 (binding hash)'],
         quantumVulnerable: true,
-        pqcReplacement: 'ML-DSA-65',
+        pqcReplacement: 'ML-DSA-87',
         dataExchanged: 'CCA Platform Token (COSE_Sign1, ~1-2 KB)',
       },
       {
@@ -142,9 +142,9 @@ export const ATTESTATION_FLOWS: AttestationFlow[] = [
         actor: 'relying-party',
         description:
           'Relying Party verifies both token signatures independently, checks measurement values against reference values, and validates the platform lifecycle state.',
-        cryptoUsed: ['ECDSA P-256 (dual signature verification)', 'SHA-256'],
+        cryptoUsed: ['ECDSA P-384 (dual signature verification)', 'SHA-384'],
         quantumVulnerable: true,
-        pqcReplacement: 'ML-DSA-65',
+        pqcReplacement: 'ML-DSA-87',
         dataExchanged: 'Verification result + appraisal policy decision',
       },
     ],

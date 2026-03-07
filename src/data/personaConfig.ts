@@ -168,6 +168,24 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
     'Healthcare',
     'Telecommunications',
   ],
+  'ai-security-pqc': ['Technology', 'Finance & Banking', 'Government & Defense', 'Healthcare'],
+  'emv-payment-pqc': ['Finance & Banking', 'Retail & E-Commerce'],
+  'energy-utilities-pqc': ['Energy & Utilities', 'Government & Defense'],
+  'healthcare-pqc': ['Healthcare', 'Government & Defense', 'Finance & Banking'],
+  'aerospace-space-pqc': ['Aerospace', 'Government & Defense'],
+  'automotive-pqc': ['Automotive'],
+  'confidential-computing': [
+    'Technology',
+    'Finance & Banking',
+    'Government & Defense',
+    'Healthcare',
+  ],
+  'crypto-dev-apis': ['Technology', 'Finance & Banking', 'Government & Defense'],
+  'exec-quantum-impact': null,
+  'dev-quantum-impact': null,
+  'arch-quantum-impact': null,
+  'ops-quantum-impact': null,
+  'research-quantum-impact': null,
 }
 
 /** Nav paths that are always shown regardless of persona. */

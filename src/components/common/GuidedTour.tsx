@@ -6,6 +6,7 @@ import {
   ChevronRight,
   ChevronLeft,
   ClipboardCheck,
+  FileBarChart,
   GraduationCap,
   Globe,
   AlertTriangle,
@@ -65,22 +66,14 @@ const introSlides: Slide[] = [
 // ── Phase 2: Feature tour (centered cards, no nav highlighting) ───────────────
 
 const featureSlides: Slide[] = [
+  // — Start the Journey —
   {
     icon: GraduationCap,
     title: 'Learning Modules',
     description:
-      '25 modules from \u201CWhat is PQC?\u201D to migration planning \u2014 follow a guided path or explore at your own pace.',
+      '27 modules from \u201CWhat is PQC?\u201D to migration planning \u2014 follow a guided path or explore at your own pace.',
     route: '/learn',
     path: '/learn',
-    essential: true,
-  },
-  {
-    icon: ClipboardCheck,
-    title: 'Risk Assessment',
-    description:
-      'Answer questions about your organization and get a scored readiness report with prioritized next steps.',
-    route: '/assess',
-    path: '/assess',
     essential: true,
   },
   {
@@ -93,21 +86,6 @@ const featureSlides: Slide[] = [
     essential: true,
   },
   {
-    icon: MessageCircle,
-    title: 'PQC Assistant',
-    description:
-      'Ask any question about quantum risk, algorithms, or migration — and get answers grounded in NIST standards and real-world guidance. Available on every page.',
-    essential: true,
-  },
-  {
-    icon: AlertTriangle,
-    title: 'Threat Landscape',
-    description:
-      'Understand which attacks are real now \u2014 including why data encrypted today is already at risk of future exposure.',
-    route: '/threats',
-    path: '/threats',
-  },
-  {
     icon: Shield,
     title: 'Algorithm Explorer',
     description:
@@ -115,14 +93,7 @@ const featureSlides: Slide[] = [
     route: '/algorithms',
     path: '/algorithms',
   },
-  {
-    icon: BookOpen,
-    title: 'Standards Library',
-    description:
-      'Every NIST, IETF, and ETSI document driving the transition \u2014 searchable, filterable, always up to date.',
-    route: '/library',
-    path: '/library',
-  },
+  // — My Journey —
   {
     icon: ArrowRightLeft,
     title: 'Migrate Catalog',
@@ -130,6 +101,33 @@ const featureSlides: Slide[] = [
       '220+ tools and products verified for PQC support, organized by the infrastructure layer you\u2019re upgrading.',
     route: '/migrate',
     path: '/migrate',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Compliance Tracker',
+    description:
+      'Track deadlines and requirements from FIPS, CNSA 2.0, ETSI, and 10+ frameworks in one filterable view.',
+    route: '/compliance',
+    path: '/compliance',
+  },
+  // — Assess & Report —
+  {
+    icon: ClipboardCheck,
+    title: 'Risk Assessment',
+    description:
+      'Answer questions about your organization and get a personalized readiness score with concrete next steps.',
+    route: '/assess',
+    path: '/assess',
+    essential: true,
+  },
+  {
+    icon: FileBarChart,
+    title: 'Readiness Report',
+    description:
+      'Review your personalized readiness report with risk scores, migration roadmap, and actionable recommendations.',
+    route: '/report',
+    path: '/report',
+    essential: true,
   },
   {
     icon: FlaskConical,
@@ -147,13 +145,22 @@ const featureSlides: Slide[] = [
     route: '/openssl',
     path: '/openssl',
   },
+  // — Keep Up to Date —
   {
-    icon: ShieldCheck,
-    title: 'Compliance Tracker',
+    icon: AlertTriangle,
+    title: 'Threat Landscape',
     description:
-      'Track deadlines and requirements from FIPS, CNSA 2.0, ETSI, and 10+ frameworks in one filterable view.',
-    route: '/compliance',
-    path: '/compliance',
+      'Understand which attacks are real now \u2014 including why data encrypted today is already at risk of future exposure.',
+    route: '/threats',
+    path: '/threats',
+  },
+  {
+    icon: BookOpen,
+    title: 'Standards Library',
+    description:
+      'Every NIST, IETF, and ETSI document driving the transition \u2014 searchable, filterable, always up to date.',
+    route: '/library',
+    path: '/library',
   },
   {
     icon: Users,
@@ -162,6 +169,14 @@ const featureSlides: Slide[] = [
       'See which organizations are already deploying PQC \u2014 and what they\u2019ve shipped.',
     route: '/leaders',
     path: '/leaders',
+  },
+  // — Always available —
+  {
+    icon: MessageCircle,
+    title: 'PQC Assistant',
+    description:
+      'Ask any question about quantum risk, algorithms, or migration — and get answers grounded in NIST standards and real-world guidance. Available on every page.',
+    essential: true,
   },
   {
     icon: Search,

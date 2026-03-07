@@ -417,6 +417,7 @@ export const ComplianceGantt: React.FC<ComplianceGanttProps> = ({
         complianceDeadlines.length > 0) && (
         <div className="flex flex-wrap gap-3 px-1">
           {presentPhases.map((phase) => {
+            // eslint-disable-next-line security/detect-object-injection
             const colors = phaseColors[phase]
             return (
               <div key={phase} className="flex items-center gap-1.5">
@@ -429,6 +430,7 @@ export const ComplianceGantt: React.FC<ComplianceGanttProps> = ({
             )
           })}
           {milestoneCategories.map((cat) => {
+            // eslint-disable-next-line security/detect-object-injection
             const catColors = MILESTONE_CATEGORY_COLORS[cat] || DEFAULT_MILESTONE_COLOR
             return (
               <div key={cat} className="flex items-center gap-1.5">

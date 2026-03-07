@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Package, ArrowRight, ChevronDown, Info, EyeOff } from 'lucide-react'
+import { Package, ArrowRight, ChevronDown, EyeOff } from 'lucide-react'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
 import { softwareData } from '../../data/migrateData'
 import { Button } from '../ui/button'
+import { SectionInfoTip } from './ReportContent'
 import clsx from 'clsx'
 
 const priorityConfig = {
@@ -45,7 +46,6 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
   defaultOpen = true,
 }) => {
   const [open, setOpen] = useState(defaultOpen)
-  const [infoOpen, setInfoOpen] = useState(false)
   const hiddenProducts = useMigrateSelectionStore((s) => s.hiddenProducts)
   const hideProduct = useMigrateSelectionStore((s) => s.hideProduct)
   const restoreAll = useMigrateSelectionStore((s) => s.restoreAll)
@@ -106,25 +106,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
     <div className="flex items-center gap-2 font-semibold text-foreground">
       <Package className="text-primary" size={20} />
       Your Migration Toolkit
-      <span className="relative inline-flex print:hidden">
-        <Button
-          variant="ghost"
-          onClick={(e) => {
-            e.stopPropagation()
-            setInfoOpen((o) => !o)
-          }}
-          className="p-1 h-auto w-auto rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground"
-          aria-label="Section info"
-        >
-          <Info size={14} />
-        </Button>
-        {infoOpen && (
-          <div className="absolute left-0 top-full mt-1 z-50 w-64 p-3 rounded-lg bg-card border border-border shadow-lg text-xs text-muted-foreground leading-relaxed">
-            Products from the Migrate catalog filtered by your assessment infrastructure and
-            industry. Products you&apos;ve hidden in the Migrate view are excluded.
-          </div>
-        )}
-      </span>
+      <SectionInfoTip sectionId="migrationToolkit" />
     </div>
   )
 

@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Auth0 (Okta Customer Identity)",
+    "category": "Customer Identity & Access Management (CIAM)",
+    "product_name": "Auth0 (Okta Customer Identity)",
+    "product_brief": "Customer Identity & Access Management platform providing authentication SDKs and tools.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the provided text. The document contains no mention of Post-Quantum Cryptography, quantum-resistant algorithms, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "PKCE, OAuth2, OIDC, JWT (mentioned in repository descriptions); SSH (mentioned in GitHub Docs context).",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "SaaS (implied by \"Platform\" and cloud-based SDKs), Agentless (SDK-based integration)",
+    "infrastructure_layer": "Security Stack, Application",
+    "license_type": "Open Source/Commercial",
+    "license": "MIT, Apache-2.0 (for specific repositories like auth0-spa-js, Auth0.swift); Commercial (implied for the platform itself).",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Single Page Applications (SPA), Next.js, Apple platforms, Android, React, Python, FastAPI, JavaScript browsers.",
+    "target_industries": "Enterprises, Small and medium teams, Startups, Nonprofits, Healthcare, Financial services, Manufacturing, Government.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (JWT and OAuth2/OIDC flows mentioned, but specific signature algorithms like ECDSA or Ed25519 are not explicitly listed in the text).",
+    "authoritative_source_url": "https://auth0.com"
+  }
+]

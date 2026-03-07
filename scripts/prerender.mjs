@@ -61,6 +61,15 @@ const ROUTES = [
   '/learn/api-security-jwt',
   '/learn/iot-ot-pqc',
   '/learn/data-asset-sensitivity',
+  '/learn/standards-bodies',
+  '/learn/confidential-computing',
+  '/learn/web-gateway-pqc',
+  '/learn/energy-utilities-pqc',
+  '/learn/exec-quantum-impact',
+  '/learn/dev-quantum-impact',
+  '/learn/arch-quantum-impact',
+  '/learn/ops-quantum-impact',
+  '/learn/research-quantum-impact',
   '/learn/quiz',
 ]
 

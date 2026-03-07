@@ -179,6 +179,16 @@ const MOCK_CORPUS: RAGChunk[] = [
     metadata: { assessCategory: 'industry_selection' },
     deepLink: '/assess',
   },
+  {
+    id: 'library-nist-ir-8547',
+    source: 'library',
+    title: 'Transition to Post-Quantum Cryptography Standards',
+    content:
+      'Reference: NIST IR 8547\nTitle: Transition to Post-Quantum Cryptography Standards\nDescription: PQC transition timeline: deprecation by 2030, disallowment by 2035\nType: Internal Report',
+    category: 'Internal Report',
+    metadata: { referenceId: 'NIST IR 8547', algorithmFamily: 'N/A' },
+    deepLink: '/library?ref=NIST%20IR%208547',
+  },
 ]
 
 function createService(): RetrievalService {
@@ -238,6 +248,46 @@ describe('classifyIntent', () => {
 
   it('should classify "United Kingdom PQC deadlines" as country_query', () => {
     expect(classifyIntent('United Kingdom PQC deadlines')).toBe('country_query')
+  })
+
+  it('should classify "NIST IR 8547" as standard_query', () => {
+    expect(classifyIntent('NIST IR 8547')).toBe('standard_query')
+  })
+
+  it('should classify "FIPS 203 standard" as standard_query', () => {
+    expect(classifyIntent('FIPS 203 standard')).toBe('standard_query')
+  })
+
+  it('should classify "RFC 9629 KEM in CMS" as standard_query', () => {
+    expect(classifyIntent('RFC 9629 KEM in CMS')).toBe('standard_query')
+  })
+
+  it('should classify "ETSI TS 103 744" as standard_query (not country_query)', () => {
+    expect(classifyIntent('ETSI TS 103 744')).toBe('standard_query')
+  })
+
+  it('should classify "BSI TR-02102" as standard_query (not country_query)', () => {
+    expect(classifyIntent('BSI TR-02102')).toBe('standard_query')
+  })
+
+  it('should classify "SP 800-208 LMS XMSS" as standard_query', () => {
+    expect(classifyIntent('SP 800-208 LMS XMSS')).toBe('standard_query')
+  })
+
+  it('should classify "CNSA 2.0 deadlines" as standard_query', () => {
+    expect(classifyIntent('CNSA 2.0 deadlines')).toBe('standard_query')
+  })
+
+  it('should classify "ISO/IEC 18033" as standard_query', () => {
+    expect(classifyIntent('ISO/IEC 18033')).toBe('standard_query')
+  })
+
+  it('should classify "What is FIPS 203?" as definition (definition takes precedence)', () => {
+    expect(classifyIntent('What is FIPS 203?')).toBe('definition')
+  })
+
+  it('should NOT classify "DORA regulation" as standard_query', () => {
+    expect(classifyIntent('DORA regulation')).not.toBe('standard_query')
   })
 
   it('should classify generic queries as general', () => {
@@ -380,6 +430,18 @@ describe('RetrievalService', () => {
       })
       const timelineResults = results.filter((r) => r.source === 'timeline')
       expect(timelineResults.length).toBeGreaterThanOrEqual(1)
+    })
+  })
+
+  describe('standard_query boosting', () => {
+    it('should include the library chunk for standard identifier queries', () => {
+      const results = service.search('NIST IR 8547')
+      expect(results.some((r) => r.id === 'library-nist-ir-8547')).toBe(true)
+    })
+
+    it('should boost library for FIPS standard queries', () => {
+      const results = service.search('FIPS 203')
+      expect(results.some((r) => r.source === 'library')).toBe(true)
     })
   })
 

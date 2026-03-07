@@ -142,6 +142,12 @@ export const quizMetadata = file ? { filename: file.filename, lastUpdate: file.d
 
 const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string; icon: string }> =
   {
+    'ai-security-pqc': {
+      label: 'AI & Machine Learning PQC',
+      description:
+        'AI model protection, true data provenance, scale encryption, and securing agentic workflows.',
+      icon: 'Cpu',
+    },
     'pqc-fundamentals': {
       label: 'PQC Fundamentals',
       description: 'Quantum threats, HNDL attacks, and the basics of post-quantum cryptography.',
@@ -351,6 +357,54 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
       description:
         'NIST, ISO/IEC, ETSI, IETF, CMVP, ENISA, ANSSI, BSI — who creates standards, who certifies, and who mandates.',
       icon: 'Building2',
+    },
+    'web-gateway-pqc': {
+      label: 'Web Gateway PQC',
+      description:
+        'PQC deployment at web gateways, CDNs, load balancers, and WAFs: TLS termination, certificate lifecycle, and vendor migration.',
+      icon: 'Globe',
+    },
+    'energy-utilities-pqc': {
+      label: 'Energy & Utilities PQC',
+      description:
+        'NERC CIP compliance, IEC 61850/62351 substation security, DNP3/DLMS/COSEM protocol hardening, smart meter key management, and safety risk scoring.',
+      icon: 'Zap',
+    },
+    'emv-payment-pqc': {
+      label: 'EMV & Payment PQC',
+      description:
+        'EMV chip card authentication, payment network PQC migration, tokenization, POS terminal crypto, and PCI DSS compliance.',
+      icon: 'CreditCard',
+    },
+    'healthcare-pqc': {
+      label: 'Healthcare PQC',
+      description:
+        'HIPAA/HITECH compliance, HL7 FHIR security, medical device cryptography, and healthcare data protection.',
+      icon: 'Heart',
+    },
+    'aerospace-space-pqc': {
+      label: 'Aerospace & Space PQC',
+      description:
+        'Avionics protocol constraints, satellite link budgets, DO-178C certification, export controls, and multi-decade fleet crypto interoperability.',
+      icon: 'Rocket',
+    },
+    'automotive-pqc': {
+      label: 'Automotive PQC',
+      description:
+        'Vehicle E/E architecture, sensor data integrity, ISO 26262 safety-crypto, automotive HSM lifecycle, digital car keys, OTA orchestration, and V2X PKI migration.',
+      icon: 'Car',
+    },
+    'crypto-dev-apis': {
+      label: 'Cryptographic APIs & Languages',
+      description:
+        'JCA/JCE, OpenSSL EVP, PKCS#11, Windows CNG, Bouncy Castle, and Rust/Go/Python/Java crypto ecosystems with PQC library selection, provider patterns, and migration guidance.',
+      icon: 'Code2',
+    },
+    'confidential-computing': {
+      label: 'Confidential Computing & TEEs',
+      description:
+        'TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, and quantum threat analysis for confidential computing.',
+      icon: 'Cpu',
     },
   }
 

@@ -60,6 +60,7 @@ describe('GuidedTour', () => {
 
     const dummyTargets = [
       'a[href="/assess"]',
+      'a[href="/report"]',
       'a[href="/learn"]',
       'a[href="/timeline"]',
       'a[href="/threats"]',
@@ -182,10 +183,10 @@ describe('GuidedTour', () => {
     // Should show Learning Modules (first essential slide)
     expect(screen.queryAllByText('Learning Modules').length).toBeGreaterThan(0)
 
-    // Navigate through essential steps (5: learn, assess, timeline, assistant, glossary)
+    // Navigate through essential steps (6: learn, timeline, assess, report, assistant, glossary)
     const nextBtns1 = screen.getAllByRole('button', { name: /Next/i })
     fireEvent.click(nextBtns1[0])
-    expect(screen.queryAllByText('Risk Assessment').length).toBeGreaterThan(0)
+    expect(screen.queryAllByText('Migration Timeline').length).toBeGreaterThan(0)
   })
 
   it('dismisses tour when "I\'m an expert" is chosen', () => {
@@ -217,8 +218,8 @@ describe('GuidedTour', () => {
     const nextBtns = screen.getAllByRole('button', { name: /Next/i })
     fireEvent.click(nextBtns[0])
 
-    // Step 2: Risk Assessment
-    expect(screen.queryAllByText('Risk Assessment').length).toBeGreaterThan(0)
+    // Step 2: Migration Timeline
+    expect(screen.queryAllByText('Migration Timeline').length).toBeGreaterThan(0)
 
     // Click prev
     const prevBtns = screen.getAllByRole('button', { name: /Previous/i })
@@ -251,13 +252,13 @@ describe('GuidedTour', () => {
 
     advancePastIntro('learning')
 
-    // Navigate to the final step — 13 feature steps, click next 12 times
-    for (let i = 0; i < 12; i++) {
+    // Navigate to the final step — 14 feature steps, click next 13 times
+    for (let i = 0; i < 13; i++) {
       const nextBtns = screen.getAllByRole('button', { name: /Next/i })
       fireEvent.click(nextBtns[0])
     }
 
-    // Step 12: Glossary
+    // Step 14: Glossary
     expect(screen.queryAllByText('Glossary').length).toBeGreaterThan(0)
 
     const doneBtns = screen.getAllByRole('button', { name: /Done|Get Started/i })

@@ -118,7 +118,7 @@ export const ProgressDashboard: React.FC = () => {
             </span>
           ) : (
             <span className="text-muted-foreground">
-              Assessment in progress (step {currentStep + 1}/13)
+              Assessment in progress (step {currentStep + 1}/14)
             </span>
           )}
         </div>

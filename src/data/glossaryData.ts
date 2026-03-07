@@ -474,7 +474,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Europay/Mastercard/Visa, the global standard for chip-based payment card authentication. Uses RSA and ECC signatures that are quantum-vulnerable.',
     technicalNote:
       'Over 14 billion EMV cards are in circulation globally. Offline authentication relies on RSA/ECC signatures vulnerable to quantum forgery.',
-    relatedModule: '/threats',
+    relatedModule: '/learn/emv-payment-pqc',
     complexity: 'intermediate',
     category: 'protocol',
   },
@@ -1103,7 +1103,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     acronym: 'V2X',
     definition:
       'Vehicle-to-Everything communication, enabling cars to exchange safety data with infrastructure and other vehicles. Uses ECDSA P-256 certificates that are quantum-vulnerable.',
-    relatedModule: '/threats',
+    relatedModule: '/learn/automotive-pqc',
     complexity: 'advanced',
     category: 'concept',
   },
@@ -1313,8 +1313,10 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'DUKPT',
     acronym: 'DUKPT',
     definition:
-      'Derived Unique Key Per Transaction, a key management scheme for payment terminals that derives a unique encryption key for each transaction. Currently uses Triple-DES.',
-    relatedModule: '/threats',
+      'Derived Unique Key Per Transaction, a key management scheme for payment terminals that derives a unique symmetric encryption key for each transaction from a Base Derivation Key.',
+    technicalNote:
+      'The symmetric DUKPT derivation chain is quantum-safe. The quantum vulnerability is at the Key Injection Facility where RSA-2048 key transport wraps the BDK. Compromising the BDK exposes all past and future transaction keys.',
+    relatedModule: '/learn/emv-payment-pqc',
     complexity: 'advanced',
     category: 'concept',
   },
@@ -2868,7 +2870,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     acronym: 'ECU',
     definition:
       'An embedded computer in a vehicle that controls one or more electrical systems (engine, brakes, infotainment). Automotive ECUs communicate via CAN bus and face PQC migration challenges for V2X and firmware signing.',
-    relatedModule: '/learn/iot-ot-pqc',
+    relatedModule: '/learn/automotive-pqc',
     complexity: 'intermediate',
     category: 'concept',
   },
@@ -3422,6 +3424,746 @@ export const glossaryTerms: GlossaryTerm[] = [
       'SASE platforms like Zscaler and Palo Alto Prisma Access terminate and inspect TLS at cloud PoPs. PQC migration requires the SASE provider to upgrade their inspection infrastructure to support hybrid handshakes.',
     relatedModule: '/learn/web-gateway-pqc',
     complexity: 'intermediate',
+    category: 'concept',
+  },
+
+  // === Energy & Utilities ===
+  {
+    term: 'NERC CIP',
+    acronym: 'NERC CIP',
+    definition:
+      'North American Electric Reliability Corporation Critical Infrastructure Protection standards. Mandatory cybersecurity requirements for bulk electric system operators.',
+    technicalNote:
+      'CIP-012 mandates encrypted inter-control-center communications (ICCP/TASE.2) — the highest-priority PQC migration target in the energy sector. CIP-013 requires supply chain risk management including vendor PQC readiness.',
+    relatedModule: '/learn/energy-utilities-pqc',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'IEC 61850',
+    definition:
+      'International standard for communication networks and systems in substations. Defines GOOSE, MMS, and Sampled Values protocols for protection and control.',
+    technicalNote:
+      'GOOSE messages have a 4ms delivery requirement for protection relay tripping. HMAC authentication is quantum-safe, but asymmetric key distribution for HMAC seeds requires PQC migration.',
+    relatedModule: '/learn/energy-utilities-pqc',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'IEC 62351',
+    definition:
+      'Power systems management and associated information exchange — security standard. Covers TLS profiles, GOOSE authentication, and key management for power systems.',
+    technicalNote:
+      'Part 3 covers TCP/IP security (TLS for MMS/ICCP), Part 6 covers GOOSE peer-to-peer authentication using HMAC, and Part 9 defines key management architecture for power systems.',
+    relatedModule: '/learn/energy-utilities-pqc',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'GOOSE',
+    acronym: 'GOOSE',
+    definition:
+      'Generic Object Oriented Substation Event. A high-speed multicast protocol in IEC 61850 for protection relay tripping with 4ms delivery requirements.',
+    technicalNote:
+      'GOOSE uses HMAC-SHA256 for per-message authentication (quantum-safe). The quantum vulnerability lies in the RSA-based key distribution channel that seeds the HMAC keys.',
+    relatedModule: '/learn/energy-utilities-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'DNP3-SA',
+    acronym: 'DNP3-SA',
+    definition:
+      'DNP3 Secure Authentication (IEEE 1815.1). Challenge-response authentication for SCADA using HMAC-SHA256 with pre-shared Update Keys.',
+    technicalNote:
+      'Session authentication uses HMAC (quantum-safe). PQC impacts the RSA-based Update Key distribution. ML-KEM-768 ciphertext (1088 bytes) fits within DNP3 2048-byte fragment limit — a clean single-fragment migration.',
+    relatedModule: '/learn/energy-utilities-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'DLMS/COSEM',
+    acronym: 'DLMS/COSEM',
+    definition:
+      'Device Language Message Specification / Companion Specification for Energy Metering. Used globally for smart meter communication with security suites based on AES and ECDSA/ECDH.',
+    technicalNote:
+      'Security Suite 1 uses AES-GCM-128 + ECDSA P-256 + ECDH P-256. PQC key exchange (ML-KEM-768 at 1088 bytes vs ECDH at 33 bytes) creates a 33x bandwidth increase that is significant at scale for millions of meters.',
+    relatedModule: '/learn/energy-utilities-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'IEEE 2030.5',
+    definition:
+      'Smart Energy Profile 2.0 standard for distributed energy resource communication using certificate-based device authentication.',
+    technicalNote:
+      'Each DER (solar inverter, battery, EV charger) has a unique IEEE 2030.5 device certificate signed by the utility CA. Fleet-wide PQC certificate reissuance is required for migration.',
+    relatedModule: '/learn/energy-utilities-pqc',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'BES',
+    acronym: 'BES',
+    definition:
+      'Bulk Electric System. The interconnected electrical generation and transmission resources subject to NERC reliability standards.',
+    relatedModule: '/learn/energy-utilities-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'IED',
+    acronym: 'IED',
+    definition:
+      'Intelligent Electronic Device. Microprocessor-based controllers in substations (protection relays, bay controllers) with 20-25 year lifecycles.',
+    technicalNote:
+      'IEDs deployed in 2026 will operate until 2046-2051. Any cryptographic algorithms selected today must survive CRQC arrival. Firmware updates often require physical site visits.',
+    relatedModule: '/learn/energy-utilities-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'ICCP/TASE.2',
+    acronym: 'ICCP',
+    definition:
+      'Inter-Control Center Communications Protocol. Used for real-time data exchange between utility control centers, secured via TLS.',
+    technicalNote:
+      'ICCP links are internet-facing and carry real-time grid state data — the highest-priority PQC migration target under NERC CIP-012.',
+    relatedModule: '/learn/energy-utilities-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'DER',
+    acronym: 'DER',
+    definition:
+      'Distributed Energy Resource. Solar inverters, battery storage systems, and EV chargers connected to the distribution grid.',
+    technicalNote:
+      'DERs authenticate via IEEE 2030.5 certificates (ECDSA P-256). PQC migration requires fleet-wide certificate reissuance to ML-DSA-65.',
+    relatedModule: '/learn/energy-utilities-pqc',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  // ── Healthcare PQC Module Terms ──────────────────────────────────────────
+  {
+    term: 'Biometric Template',
+    definition:
+      'A mathematical representation of a biometric characteristic (fingerprint minutiae, iris code, facial feature vector) stored for matching. Unlike passwords, biometric templates cannot be revoked or reissued if compromised, making them the highest-priority target for Harvest Now, Decrypt Later attacks.',
+    relatedModule: '/learn/healthcare-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Biometric Permanence',
+    definition:
+      'The property that distinguishes biometric data from all other credentials: once compromised, the underlying biometric characteristic cannot be changed. A quantum-decrypted fingerprint template is permanently exposed, unlike a password or certificate that can be rotated.',
+    relatedModule: '/learn/healthcare-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'GINA',
+    acronym: 'GINA',
+    definition:
+      'Genetic Information Nondiscrimination Act (2008). US federal law prohibiting discrimination based on genetic information in health insurance and employment. Genetic data decrypted via HNDL attacks could enable discrimination that GINA was designed to prevent.',
+    relatedModule: '/learn/healthcare-pqc',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: '42 CFR Part 2',
+    definition:
+      'US federal regulation providing additional privacy protections for substance use disorder patient records beyond HIPAA. Records protected under Part 2 carry heightened stigma risk if quantum-decrypted, as disclosure can lead to criminal prosecution, employment loss, and social ostracism.',
+    relatedModule: '/learn/healthcare-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'IoMT',
+    acronym: 'IoMT',
+    definition:
+      'Internet of Medical Things. Network-connected medical devices including infusion pumps, cardiac monitors, and surgical robots. IoMT devices combine the constrained-resource challenges of IoT with the safety-critical requirements of medical devices, creating unique PQC migration challenges.',
+    relatedModule: '/learn/healthcare-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'DICOM',
+    acronym: 'DICOM',
+    definition:
+      'Digital Imaging and Communications in Medicine. The standard protocol for transmitting, storing, and sharing medical images (X-ray, CT, MRI). DICOM supports TLS for transport security; PQC migration requires updating both the transport layer and any encrypted archives of imaging data.',
+    relatedModule: '/learn/healthcare-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: '21 CFR Part 11',
+    definition:
+      'FDA regulation establishing criteria for electronic records and electronic signatures in the pharmaceutical industry. Requires validated cryptographic controls for data integrity. Any PQC migration in pharma must maintain Part 11 compliance throughout the transition.',
+    relatedModule: '/learn/healthcare-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  // ── EMV Payment PQC Module Terms ──────────────────────────────────────────
+  {
+    term: 'SDA',
+    acronym: 'SDA',
+    definition:
+      'Static Data Authentication. The simplest EMV card authentication method where the issuer pre-signs static card data with RSA. Vulnerable to card cloning since the signature never changes.',
+    technicalNote:
+      'SDA uses a single RSA signature over static data. A terminal verifies this signature against the issuer CA certificate chain. Being deprecated in favor of DDA/CDA.',
+    relatedModule: '/learn/emv-payment-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'DDA',
+    acronym: 'DDA',
+    definition:
+      'Dynamic Data Authentication. An EMV card authentication method where the card generates a unique RSA signature per transaction, preventing cloning attacks.',
+    technicalNote:
+      'DDA requires the card chip to perform RSA signing using its private key. The terminal verifies via the EMVCo CA certificate chain (Root \u2192 Network CA \u2192 Issuer CA \u2192 ICC).',
+    relatedModule: '/learn/emv-payment-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'CDA',
+    acronym: 'CDA',
+    definition:
+      'Combined Data Authentication. The strongest EMV offline authentication method, combining dynamic RSA signature with the application cryptogram in a single operation.',
+    technicalNote:
+      'CDA binds the authentication and transaction authorization into one cryptographic operation, preventing man-in-the-middle attacks between card and terminal. Most modern EMV cards use CDA.',
+    relatedModule: '/learn/emv-payment-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'Token Service Provider',
+    acronym: 'TSP',
+    definition:
+      'A payment network service that replaces primary account numbers with unique tokens for mobile and e-commerce transactions. Major TSPs include Visa VTS, Mastercard MDES, and Amex EST.',
+    technicalNote:
+      'TSPs use TLS for enrollment, ECDSA for device attestation, RSA/AES for key wrapping, and AES-256 for per-transaction cryptogram generation. PQC migration must address the asymmetric crypto touchpoints.',
+    relatedModule: '/learn/emv-payment-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'ARQC',
+    acronym: 'ARQC',
+    definition:
+      'Authorization Request Cryptogram. A symmetric MAC generated by the EMV card chip using a shared secret with the issuer, proving the card is genuine during online authorization.',
+    technicalNote:
+      'ARQC uses 3DES or AES-based MAC computation with issuer-derived session keys. Being a symmetric operation, ARQC generation is inherently quantum-safe.',
+    relatedModule: '/learn/emv-payment-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'ARPC',
+    acronym: 'ARPC',
+    definition:
+      'Authorization Response Cryptogram. A symmetric MAC generated by the issuer in response to an ARQC, proving the issuer authorized the transaction.',
+    technicalNote:
+      'ARPC is the issuer-to-card counterpart of ARQC. Together they form a mutual authentication mechanism. Both use symmetric crypto and are quantum-safe.',
+    relatedModule: '/learn/emv-payment-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'Key Injection Facility',
+    acronym: 'KIF',
+    definition:
+      'A physically secured facility where cryptographic keys are loaded into payment terminals under dual-control, split-knowledge procedures.',
+    technicalNote:
+      'The KIF is the primary quantum-vulnerable point in the DUKPT chain. RSA-2048 key transport wraps the BDK for transfer to injection stations. PQC migration replaces this with ML-KEM-768 key encapsulation.',
+    relatedModule: '/learn/emv-payment-pqc',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Base Derivation Key',
+    acronym: 'BDK',
+    definition:
+      'The master symmetric key in the DUKPT key management scheme, stored in a payment HSM. All per-terminal and per-transaction keys are derived from it.',
+    technicalNote:
+      'The BDK never leaves the HSM in cleartext. Compromising the RSA-wrapped BDK at the Key Injection Facility would allow derivation of all past and future transaction keys for terminals sharing that BDK.',
+    relatedModule: '/learn/emv-payment-pqc',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'PAN',
+    acronym: 'PAN',
+    definition:
+      'Primary Account Number. The 16-19 digit card number on a payment card, used to identify the cardholder account.',
+    technicalNote:
+      'Tokenization replaces the PAN with a non-sensitive token for mobile and e-commerce transactions, reducing the attack surface if intercepted.',
+    relatedModule: '/learn/emv-payment-pqc',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  {
+    term: '3-D Secure',
+    acronym: '3DS',
+    definition:
+      'A payment authentication protocol for card-not-present (e-commerce) transactions. Version 2.0 uses ECDSA challenge signing and risk-based authentication.',
+    technicalNote:
+      '3DS 2.0 challenge signatures use ECDSA P-256, which is quantum-vulnerable. The frictionless flow relies on device fingerprinting and behavioral analysis (quantum-safe). PQC migration targets the challenge signing component.',
+    relatedModule: '/learn/emv-payment-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'SoftPOS',
+    definition:
+      'Software-based point-of-sale that turns a standard smartphone into a contactless payment terminal using NFC, without dedicated payment hardware.',
+    technicalNote:
+      'SoftPOS relies on TEE (TrustZone) and device attestation (ECDSA) for security. With abundant compute resources, it is the easiest terminal type to migrate to PQC via app updates.',
+    relatedModule: '/learn/emv-payment-pqc',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  // === Aerospace & Space PQC ===
+  {
+    term: 'ACARS',
+    acronym: 'ACARS',
+    definition:
+      'Aircraft Communications Addressing and Reporting System. A digital data link for transmitting short messages between aircraft and ground stations via VHF radio or SATCOM.',
+    technicalNote:
+      'ACARS messages are limited to 220-byte blocks. ML-DSA-65 signatures (3,309 bytes) require 15+ blocks, making in-band PQC authentication infeasible without protocol redesign or gateway-mediated signing.',
+    relatedModule: '/learn/aerospace-space-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'ARINC 653',
+    definition:
+      'Avionics Application Standard Software Interface (ARINC 653). An RTOS partitioning standard that isolates safety-critical software functions in separate memory/time partitions on shared hardware.',
+    technicalNote:
+      'Each ARINC 653 partition has a fixed memory budget (typically 1-4 MB) and CPU time window. PQC libraries must fit within these constraints alongside existing avionics functions, limiting algorithm choice.',
+    relatedModule: '/learn/aerospace-space-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'DO-178C',
+    definition:
+      'Software Considerations in Airborne Systems and Equipment Certification. The primary standard for certifying safety-critical avionics software, defining five Design Assurance Levels (DAL A through E).',
+    technicalNote:
+      'Adding a PQC cryptographic library to a DAL-A system (e.g., Flight Management System) requires MC/DC test coverage, traceability, and independent verification. Recertification costs $2-10M and takes 12-24 months.',
+    relatedModule: '/learn/aerospace-space-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'DO-326A',
+    definition:
+      'Airworthiness Security Process Specification. The FAA/EASA standard for addressing cybersecurity threats to airborne systems, requiring threat assessment and security controls for type certification.',
+    technicalNote:
+      'DO-326A mandates that cryptographic protections be evaluated against evolving threats including quantum computing. Aircraft manufacturers must demonstrate PQC readiness as part of the airworthiness security risk assessment.',
+    relatedModule: '/learn/aerospace-space-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'CPDLC',
+    acronym: 'CPDLC',
+    definition:
+      'Controller-Pilot Data Link Communications. A text-based ATC communication system replacing voice with structured data messages between pilots and air traffic controllers.',
+    technicalNote:
+      'CPDLC operates over SATCOM with 600ms RTT and supports up to 1,024-byte messages. PQC signature authentication is feasible (ML-DSA-44 fits in 3 blocks) but adds latency to safety-critical ATC clearances.',
+    relatedModule: '/learn/aerospace-space-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'Single-Event Upset',
+    acronym: 'SEU',
+    definition:
+      'A change of state in a digital circuit caused by a single ionizing particle (cosmic ray or solar proton) striking a sensitive node, flipping one or more bits in memory or registers.',
+    technicalNote:
+      'SEUs can corrupt PQC private key material stored in spacecraft memory. Lattice-based keys (ML-KEM, ML-DSA) are particularly vulnerable due to large key sizes. Hash-based signatures (LMS/XMSS) are more resilient because verification reconstructs from public data.',
+    relatedModule: '/learn/aerospace-space-pqc',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Rad-Hardened Processor',
+    definition:
+      'A microprocessor designed to operate in high-radiation environments (space, nuclear facilities) with protection against single-event effects, total ionizing dose, and latch-up.',
+    technicalNote:
+      'Rad-hard processors (RAD750 at 200 MHz, GR740 at 250 MHz) lag commercial silicon by 2-4 generations. Their limited clock speed, RAM (256 KB to 256 MB), and instruction sets constrain PQC algorithm performance.',
+    relatedModule: '/learn/aerospace-space-pqc',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Line-Replaceable Unit',
+    acronym: 'LRU',
+    definition:
+      'A modular avionics component designed to be quickly swapped on an aircraft during maintenance without extensive disassembly, enabling field-level repairs.',
+    technicalNote:
+      'LRU replacement is the primary mechanism for upgrading aircraft crypto hardware. Legacy LRUs certified under DO-178B may lack the flash/RAM capacity for PQC libraries. New LRUs require full DO-178C recertification.',
+    relatedModule: '/learn/aerospace-space-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'International Traffic in Arms Regulations',
+    acronym: 'ITAR',
+    definition:
+      'US export control regulations (22 CFR 120-130) governing the export and transfer of defense articles and services, including military cryptographic systems listed on the US Munitions List.',
+    technicalNote:
+      'ITAR Category XI covers military cryptographic equipment. PQC implementations for military aircraft or defense satellites require State Department export licenses. No license exceptions exist for embargoed destinations.',
+    relatedModule: '/learn/aerospace-space-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'ADS-B',
+    acronym: 'ADS-B',
+    definition:
+      'Automatic Dependent Surveillance-Broadcast. A surveillance system where aircraft broadcast their GPS-derived position, altitude, and velocity on 1090 MHz, receivable by ground stations and other aircraft.',
+    technicalNote:
+      'ADS-B transmits unauthenticated 112-bit messages (14 bytes payload) with no encryption or signing. The message size is far too small for any PQC signature. Authentication requires out-of-band verification or protocol redesign.',
+    relatedModule: '/learn/aerospace-space-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  // === AI Security & PQC ===
+  {
+    term: 'Training Data Poisoning',
+    definition:
+      "An attack where adversaries inject malicious or manipulated samples into an AI model's training dataset to corrupt its behavior, produce biased outputs, or introduce backdoors.",
+    technicalNote:
+      'PQC relevance: ML-DSA signatures on training data manifests create tamper-evident data pipelines. Without cryptographic provenance, poisoned data is indistinguishable from legitimate data. HNDL attackers could harvest encrypted training data today and reconstruct proprietary datasets once quantum computers arrive.',
+    relatedModule: '/learn/ai-security-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Model Weights',
+    definition:
+      "The learned numerical parameters of a neural network that encode the model's knowledge. For large language models, weights can number in the hundreds of billions and represent millions of dollars in compute investment.",
+    technicalNote:
+      'Model weights are the crown jewels of AI IP. Protection requires encryption at rest (ML-KEM key wrapping), in transit (hybrid TLS), and potentially in use (TEE inference). ML-DSA model signing provides integrity verification analogous to code signing.',
+    relatedModule: '/learn/ai-security-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Model Collapse',
+    definition:
+      'A degenerative process where AI models trained on AI-generated data progressively lose quality, diversity, and accuracy over successive generations, eventually producing incoherent or repetitive outputs.',
+    technicalNote:
+      'Model collapse is a statistical inevitability when synthetic data contaminates training corpora without provenance verification. Cryptographic content credentials (C2PA) and ML-DSA-signed data manifests can distinguish human-created from AI-generated training data, preserving model quality.',
+    relatedModule: '/learn/ai-security-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Content Credentials',
+    acronym: 'C2PA',
+    definition:
+      'A technical standard by the Coalition for Content Provenance and Authenticity that embeds cryptographically signed metadata into digital content to verify its origin, creation method, and edit history.',
+    technicalNote:
+      'C2PA uses X.509 certificates and CMS signatures to create tamper-evident provenance chains. Current implementations use ECDSA/RSA — quantum-vulnerable. Migration to ML-DSA signatures is needed to ensure provenance claims remain trustworthy beyond Q-Day.',
+    relatedModule: '/learn/ai-security-pqc',
+    complexity: 'intermediate',
+    category: 'standard',
+  },
+  {
+    term: 'Agentic AI',
+    definition:
+      'AI systems that can autonomously plan, make decisions, and take actions in the real world — including accessing services, making purchases, and communicating with other AI agents on behalf of users.',
+    technicalNote:
+      'Agentic AI requires machine identity credentials (X.509 certs or JWT tokens) for authentication, delegation tokens for authority chaining, and signed transaction records for non-repudiation. All classical signing schemes are quantum-vulnerable; PQC migration must cover agent credential lifecycles.',
+    relatedModule: '/learn/ai-security-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Delegation Token',
+    definition:
+      'A cryptographically signed credential that grants an AI agent limited authority to act on behalf of a user or another agent, with specified scope, duration, and capability constraints.',
+    technicalNote:
+      'Delegation chains (Human → Agent → Sub-agent → Service) require each link to be signed. Classical ECDSA delegation tokens are quantum-vulnerable for their entire validity period. ML-DSA delegation tokens provide quantum-safe authority chaining with larger but acceptable signature sizes.',
+    relatedModule: '/learn/ai-security-pqc',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Agent-to-Agent Authentication',
+    acronym: 'A2A',
+    definition:
+      'Mutual authentication between autonomous AI agents using cryptographic credentials, enabling secure communication, task delegation, and transaction execution without human intermediation.',
+    technicalNote:
+      'A2A authentication typically uses mTLS with PQC certificates (ML-DSA for signing, ML-KEM for key exchange). Per-message signing adds bandwidth overhead — at 10K messages/second, ML-DSA-65 signatures add significant bandwidth compared to ECDSA, requiring careful protocol design.',
+    relatedModule: '/learn/ai-security-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'Federated Learning',
+    definition:
+      'A machine learning approach where models are trained across multiple decentralized devices or servers holding local data samples, without exchanging raw data — only encrypted model updates are shared.',
+    technicalNote:
+      'Federated learning reduces data exposure but model updates (gradients) can leak information. PQC protections: ML-KEM encryption of gradient updates, ML-DSA signing of aggregation results, and lattice-based homomorphic encryption for secure aggregation.',
+    relatedModule: '/learn/ai-security-pqc',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Homomorphic Encryption',
+    acronym: 'HE',
+    definition:
+      'An encryption scheme that allows computations to be performed directly on encrypted data without decrypting it first, producing encrypted results that match what would be obtained from the plaintext.',
+    technicalNote:
+      'Most practical HE schemes (BGV, CKKS, TFHE) are lattice-based — the same mathematical foundation as ML-KEM and ML-DSA. This makes them inherently quantum-resistant, unlike RSA or ECC-based approaches. HE enables privacy-preserving AI inference on encrypted patient data or financial records.',
+    relatedModule: '/learn/ai-security-pqc',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Secure Multi-Party Computation',
+    acronym: 'MPC',
+    definition:
+      "A cryptographic technique allowing multiple parties to jointly compute a function over their combined inputs while keeping each party's input private from the others.",
+    technicalNote:
+      'MPC enables collaborative AI model training across organizations without revealing proprietary data. Quantum impact varies by protocol: garbled circuits rely on symmetric crypto (Grover-resistant with larger keys), while secret-sharing schemes may need PQC for the communication channels.',
+    relatedModule: '/learn/ai-security-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'Model Provenance',
+    definition:
+      "The complete documented history of an AI model's creation — including training data sources, hyperparameters, training infrastructure, fine-tuning steps, and evaluation results — cryptographically signed to ensure integrity.",
+    technicalNote:
+      'Model provenance chains use hash chains and digital signatures to create tamper-evident audit trails. ECDSA-signed provenance is quantum-vulnerable for the entire model lifetime (potentially decades). ML-DSA provenance signatures ensure long-term verifiability beyond Q-Day.',
+    relatedModule: '/learn/ai-security-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+
+  // === Automotive PQC ===
+  {
+    term: 'ASIL',
+    acronym: 'ASIL',
+    definition:
+      'Automotive Safety Integrity Level, a risk classification defined by ISO 26262 ranging from QM (quality management, no safety requirement) to ASIL-D (most stringent). Higher ASIL levels demand tighter crypto verification latency budgets and redundancy requirements.',
+    technicalNote:
+      'ASIL-D systems (braking, steering) require fail-operational crypto with dual-path verification (PQC primary + classical backup) and hardware watchdog timers. Verification must complete within 10-15ms. ASIL-A/B systems can tolerate fail-safe degradation with relaxed timing.',
+    relatedModule: '/learn/automotive-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'CCC Digital Key',
+    definition:
+      'A specification by the Car Connectivity Consortium (CCC) enabling smartphones to function as vehicle keys via NFC, BLE, or UWB. CCC Digital Key 3.0 uses ECDH P-256 key agreement and ECDSA P-256 certificates, both quantum-vulnerable.',
+    technicalNote:
+      'NFC transport limits APDUs to 256 bytes, making ML-KEM-768 ciphertext (1,088 bytes) require 5 APDUs per key exchange. BLE (512-byte L2CAP frames) and UWB (symmetric ranging, quantum-safe) handle PQC migration more gracefully. Owner-to-friend key sharing adds another quantum-vulnerable certificate chain.',
+    relatedModule: '/learn/automotive-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'TISAX',
+    acronym: 'TISAX',
+    definition:
+      'Trusted Information Security Assessment Exchange, a standard for information security assessments in the automotive supply chain governed by VDA (German Association of the Automotive Industry) and ENX.',
+    technicalNote:
+      'TISAX v7 (expected 2027) is anticipated to add PQC readiness criteria. OEMs requiring TISAX compliance from Tier-1 and Tier-2 suppliers will cascade PQC requirements through the supply chain. Assessment scope will likely cover key management, firmware signing, and cryptographic inventory.',
+    relatedModule: '/learn/automotive-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'AUTOSAR',
+    definition:
+      'AUTomotive Open System ARchitecture, a standardized software architecture for automotive ECUs. AUTOSAR Classic Platform provides the SHE-based Crypto Service Manager (limited to AES/CMAC). AUTOSAR Adaptive Platform offers a flexible Crypto Service Manager that can integrate PQC algorithms.',
+    technicalNote:
+      'AUTOSAR Adaptive Platform is the key enabler for automotive crypto-agility. Its Crypto Service Manager abstracts algorithm selection behind a provider interface, allowing OEMs to swap ECDSA for ML-DSA without modifying application software. Classic Platform ECUs (80%+ of deployed fleet) cannot be upgraded to PQC without hardware replacement.',
+    relatedModule: '/learn/automotive-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'Zonal Architecture',
+    definition:
+      'A vehicle E/E (electrical/electronic) architecture that replaces domain-based ECU organization (powertrain, chassis, body, ADAS) with zone-based controllers that manage all functions within a physical region of the vehicle.',
+    technicalNote:
+      'Zonal architecture reduces total ECU count by 30-40% and consolidates crypto operations in powerful zone controllers. These zone controllers can run PQC algorithms on automotive-grade SoCs (NXP S32G, Infineon AURIX TC4x), whereas legacy domain ECUs often lack the compute and memory for PQC.',
+    relatedModule: '/learn/automotive-pqc',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'ISO 15118',
+    definition:
+      'An international standard for vehicle-to-grid communication enabling Plug & Charge: automatic mutual authentication between electric vehicles and charging stations using X.509 certificates over TLS.',
+    technicalNote:
+      'ISO 15118 uses a PKI hierarchy (OEM Root CA → Vehicle Sub-CA → Vehicle Leaf Cert) with ECDSA P-256. PQC migration requires updating the entire Plug & Charge PKI to hybrid certificates, affecting vehicle OEMs, Charge Point Operators (CPOs), and eMobility Service Providers (eMSPs).',
+    relatedModule: '/learn/automotive-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'Sensor Fusion',
+    definition:
+      'The process of combining data from multiple sensors (LiDAR, radar, cameras, ultrasonic, GPS/IMU) to create a unified, accurate representation of the vehicle environment for autonomous driving decisions.',
+    technicalNote:
+      'Sensor fusion pipelines must authenticate data integrity to prevent adversarial injection. LiDAR generates 300+ MB/s requiring per-frame signing. ML-DSA-44 signing (0.8ms) fits ADAS latency budgets; FN-DSA-512 offers more compact signatures (666 bytes vs 2,420) for bandwidth-constrained CAN FD buses.',
+    relatedModule: '/learn/automotive-pqc',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'A/B Partition',
+    definition:
+      'A firmware update strategy where an ECU maintains two complete firmware images (partition A and partition B). Updates are written to the inactive partition while the active partition continues running, enabling instant rollback on failure.',
+    technicalNote:
+      'A/B partitioning doubles storage requirements but provides atomic updates critical for safety-critical ECUs (ASIL-C/D). Each partition is independently signed — PQC migration requires verifying both classical and PQC signatures during the transition period. Gateway ECUs and ADAS controllers typically use A/B; body ECUs may use cheaper in-place updates.',
+    relatedModule: '/learn/automotive-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'CAN Bus',
+    acronym: 'CAN',
+    definition:
+      'Controller Area Network, the dominant in-vehicle serial bus protocol with an 8-byte (CAN 2.0) or 64-byte (CAN FD) payload per frame. CAN buses connect ECUs for powertrain, chassis, and body functions.',
+    technicalNote:
+      'CAN 2.0 payload (8 bytes) cannot carry any PQC signature in a single frame — even the smallest ML-DSA-44 signature (2,420 bytes) requires 303 CAN frames. CAN FD (64 bytes) is slightly better but still impractical for per-message PQC signing. Automotive Ethernet (1,500-byte MTU) is the PQC-feasible bus for ADAS and infotainment zones.',
+    relatedModule: '/learn/automotive-pqc',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'IEEE 1609.2',
+    definition:
+      'The security standard for Wireless Access in Vehicular Environments (WAVE), defining V2X message signing, certificate formats, and the Security Credential Management System (SCMS) for pseudonym certificate issuance.',
+    technicalNote:
+      'IEEE 1609.2 currently mandates ECDSA P-256 for V2X message signing and ECIES for encryption. A PQC amendment (expected 2025-2026) will add ML-DSA and ML-KEM support. The SCMS uses butterfly key expansion to generate millions of unlinkable pseudonym certificates — this mechanism must be adapted for PQC key sizes.',
+    relatedModule: '/learn/automotive-pqc',
+    complexity: 'advanced',
+    category: 'standard',
+  },
+  {
+    term: 'JCA/JCE',
+    acronym: 'JCA/JCE',
+    definition:
+      'Java Cryptography Architecture / Extension — the standard Java framework for cryptographic operations. JCA provides the provider model and key management; JCE extends it with cipher and key agreement operations.',
+    technicalNote:
+      'JCA uses string-based algorithm selection (e.g., KeyPairGenerator.getInstance("ML-DSA-65", "BC")) with pluggable providers. Bouncy Castle registers as a JCA provider via Security.addProvider(new BouncyCastleProvider()), giving immediate access to all NIST PQC algorithms without waiting for Oracle JDK support.',
+    relatedModule: '/learn/crypto-dev-apis',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Bouncy Castle',
+    definition:
+      'Open-source cryptography library available for Java and .NET. Plays a dual role: as a JCA provider and as a standalone lightweight API. Has the widest PQC algorithm coverage of any open-source library.',
+    technicalNote:
+      'Since BC 1.78 (January 2024), Bouncy Castle supports all NIST PQC algorithms: ML-KEM, ML-DSA, SLH-DSA, FN-DSA. Also supports LMS/XMSS (SP 800-208), HQC, and Classic McEliece. The BC C# port provides equivalent coverage for .NET environments.',
+    relatedModule: '/learn/crypto-dev-apis',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'KSP',
+    acronym: 'KSP',
+    definition:
+      'Key Storage Provider — a Windows CNG component that manages private key isolation and storage. KSPs abstract over software (MS_KEY_STORAGE_PROVIDER), TPM (MS_PLATFORM_KEY_STORAGE_PROVIDER), and HSM-backed storage.',
+    technicalNote:
+      'Applications use NCryptOpenStorageProvider() to select a KSP at initialization time. The key isolation architecture means private key material never leaves the KSP boundary, even in software mode. PQC key support in Microsoft KSPs is planned for Windows Server 2026+.',
+    relatedModule: '/learn/crypto-dev-apis',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'CNG',
+    acronym: 'CNG',
+    definition:
+      "Cryptography Next Generation — Microsoft's modern Windows cryptographic API, introduced in Windows Vista. Separates algorithm providers (BCrypt) from key storage providers (NCrypt) for better security isolation.",
+    technicalNote:
+      'BCryptOpenAlgorithmProvider() opens algorithm providers for hash/symmetric operations. NCryptOpenStorageProvider() opens key storage providers for asymmetric key management. CNG is the foundation of Windows FIPS mode and integrates with the Windows certificate store.',
+    relatedModule: '/learn/crypto-dev-apis',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'JCProv',
+    definition:
+      'A Java PKCS#11 wrapper library from Thales/SafeNet that bridges JCA/JCE and PKCS#11 hardware security modules. Enables standard Java crypto calls to transparently use HSM-backed keys.',
+    technicalNote:
+      'JCProv registers as a JCA provider. Once registered, Signature.getInstance("ML-DSA-65", "JCProv") routes the operation through PKCS#11 to the Luna HSM. Key handles remain opaque — private key material never enters JVM memory.',
+    relatedModule: '/learn/crypto-dev-apis',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'oqsprovider',
+    definition:
+      'An OpenSSL 3.x provider plugin that adds post-quantum cryptography algorithm support via the liboqs library. Enables all NIST PQC algorithms in any OpenSSL 3.x application without code changes.',
+    technicalNote:
+      'Loaded via OSSL_PROVIDER_load(NULL, "oqsprovider"). Requires OpenSSL 3.2+ and liboqs 0.10.0+. Supports ML-KEM, ML-DSA, SLH-DSA, FN-DSA, and hybrid composite algorithms (e.g., "p256_mlkem512"). Version 0.7.0+ is production-ready for non-FIPS environments.',
+    relatedModule: '/learn/crypto-dev-apis',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'RustCrypto',
+    definition:
+      'A community-maintained collection of cryptographic algorithm implementations in Rust, published as modular crates on crates.io. Emphasizes type safety, zero-dependency design, and no_std compatibility.',
+    technicalNote:
+      'Key crates: aes, sha2, p256, x25519-dalek. PQC is emerging: pqcrypto crate wraps PQClean reference implementations. The aws-lc-rs crate provides FIPS-validated crypto via AWS-LC bindings. RustCrypto traits (digest::Digest, signature::Signer) define common interfaces across implementations.',
+    relatedModule: '/learn/crypto-dev-apis',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Crypto Agility Pattern',
+    definition:
+      'A software design pattern that decouples cryptographic algorithm selection from application business logic, enabling algorithms to be swapped without code changes. Essential for PQC migration.',
+    technicalNote:
+      'Five main patterns: (1) Provider Abstraction — use JCA/OpenSSL provider swap. (2) Config-Driven Selection — algorithm name from YAML/env var. (3) Hybrid/Composite — run classical + PQC in parallel. (4) Algorithm Negotiation — TLS-style capability advertisement. (5) Feature Flags — gradual PQC rollout per service.',
+    relatedModule: '/learn/crypto-dev-apis',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'liboqs',
+    definition:
+      'Open Quantum Safe C library — the reference implementation hub for post-quantum cryptographic algorithms. Maintained by the Open Quantum Safe project and serves as the foundation for oqsprovider, oqs-go, liboqs-python, and other language bindings.',
+    technicalNote:
+      'Supports all NIST PQC algorithms plus additional candidates (HQC, FrodoKEM, Classic McEliece, BIKE). Provides both reference (portable C) and optimized (AVX2/NEON) implementations. Version 0.10.0+ uses the FIPS 203/204/205 API naming. Not FIPS-validated itself — use AWS-LC for FIPS requirements.',
+    relatedModule: '/learn/crypto-dev-apis',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'PQClean',
+    definition:
+      'A collection of audited, clean-room post-quantum cryptographic reference implementations in C. Provides the source implementations that feed into liboqs, pqcrypto (Rust), and other libraries.',
+    technicalNote:
+      'PQClean implementations are written for readability and auditability rather than performance. They use no platform-specific code, no dynamic allocation, and have fixed stack bounds. The project is used by NIST and academic auditors as the canonical reference for algorithm correctness.',
+    relatedModule: '/learn/crypto-dev-apis',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'AWS-LC',
+    acronym: 'AWS-LC',
+    definition:
+      "Amazon's FIPS-validated cryptographic library, forked from BoringSSL. Provides FIPS 140-3 validated cryptography for AWS services and is available as open source. The aws-lc-rs Rust crate provides safe bindings.",
+    technicalNote:
+      "AWS-LC's FIPS module (BoringCrypto successor) includes ML-KEM-768 as of 2024. ML-DSA is on the roadmap. The aws-lc-rs crate is a drop-in replacement for the ring crate in many use cases. AWS uses AWS-LC internally for all TLS in its infrastructure.",
+    relatedModule: '/learn/crypto-dev-apis',
+    complexity: 'advanced',
     category: 'concept',
   },
 ]

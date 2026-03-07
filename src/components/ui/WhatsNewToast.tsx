@@ -86,25 +86,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Custody Architecture Explorer</strong>{' '}
-                    &mdash; new interactive workshop in Digital Assets: 5-layer corporate custody
-                    platform with HSMs, MPC, wallet tiers, and PQC threat analysis
+                    <strong className="text-foreground">11 new learning modules</strong> &mdash;
+                    Role Guides (exec / dev / architect / ops / researcher) and an Industries track
+                    (Energy, Healthcare, Aerospace, Automotive) plus Cryptographic APIs
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Transaction flow walkthrough</strong>{' '}
-                    &mdash; 7-step guided trace of a withdrawal from client request through signing
-                    to broadcast, with crypto operations and PQC considerations at each stage
+                    <strong className="text-foreground">My Frameworks</strong> &mdash; bookmark
+                    compliance frameworks from the Compliance page; selections sync into the
+                    Assessment wizard automatically
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PQC threat overlay</strong> &mdash; every
-                    custody component shows quantum vulnerability level, affected algorithms, and
-                    migration readiness
+                    <strong className="text-foreground">Knowledge Graph Mindmap</strong> &mdash; new
+                    visual mindmap of the PQC learning landscape in the right panel
                   </span>
                 </li>
               </ul>

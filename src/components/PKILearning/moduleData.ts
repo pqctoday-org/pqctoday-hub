@@ -153,6 +153,14 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     duration: '90 min',
     difficulty: 'intermediate',
   },
+  'crypto-dev-apis': {
+    id: 'crypto-dev-apis',
+    title: 'Cryptographic APIs & Developer Languages',
+    description:
+      'Compare JCA/JCE, OpenSSL EVP, PKCS#11, Windows CNG, and Bouncy Castle across 7 languages. Provider patterns, PQC library selection, support matrix, crypto agility patterns, and migration decision lab.',
+    duration: '120 min',
+    difficulty: 'intermediate',
+  },
   'web-gateway-pqc': {
     id: 'web-gateway-pqc',
     title: 'Web Gateway PQC',
@@ -241,6 +249,94 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     duration: '90 min',
     difficulty: 'advanced',
   },
+  'energy-utilities-pqc': {
+    id: 'energy-utilities-pqc',
+    title: 'Energy & Utilities PQC',
+    description:
+      'PQC migration for power grids and utilities: NERC CIP compliance, IEC 61850/62351 substation security, DNP3/Modbus protocol hardening, smart meter key management at scale, and environmental/safety risk scoring.',
+    duration: '90 min',
+    difficulty: 'intermediate',
+  },
+  'emv-payment-pqc': {
+    id: 'emv-payment-pqc',
+    title: 'EMV Payment Systems & PQC',
+    description:
+      'Explore the EMV payment ecosystem \u2014 card authentication, tokenization, authorization networks, POS terminals, and e-commerce \u2014 and plan quantum-safe migration across Visa, Mastercard, Amex, UnionPay, and Discover.',
+    duration: '120 min',
+    difficulty: 'advanced',
+  },
+  'ai-security-pqc': {
+    id: 'ai-security-pqc',
+    title: 'AI Security & PQC',
+    description:
+      'Quantum threats to AI systems: pipeline data protection, model weight security, synthetic data contamination, agent authentication, agentic commerce, and encryption at scale.',
+    duration: '120 min',
+    difficulty: 'advanced',
+  },
+  'healthcare-pqc': {
+    id: 'healthcare-pqc',
+    title: 'Healthcare PQC',
+    description:
+      'Healthcare-specific PQC challenges: biometric data permanence, pharmaceutical IP protection, patient privacy lifecycles, medical device safety, and hospital network migration.',
+    duration: '90 min',
+    difficulty: 'intermediate',
+  },
+  'aerospace-space-pqc': {
+    id: 'aerospace-space-pqc',
+    title: 'Aerospace & Space PQC',
+    description:
+      'PQC challenges unique to aerospace and space: rad-hardened avionics, satellite link budgets, DO-326A airborne cybersecurity, ITAR/EAR export controls, and multi-decade fleet crypto interoperability.',
+    duration: '120 min',
+    difficulty: 'advanced',
+  },
+  'automotive-pqc': {
+    id: 'automotive-pqc',
+    title: 'Automotive PQC',
+    description:
+      'Post-quantum cryptography for connected and autonomous vehicles: V2X PKI, sensor data integrity, ISO 26262 safety-crypto intersection, HSM lifecycle management, OTA orchestration, digital car keys, in-vehicle payments, and 15-20 year lifecycle crypto-agility.',
+    duration: '120 min',
+    difficulty: 'advanced',
+  },
+  'exec-quantum-impact': {
+    id: 'exec-quantum-impact',
+    title: 'Executive Quantum Impact',
+    description:
+      'Why quantum matters to leadership: fiduciary risk, regulatory deadlines (CNSA 2.0, NIS2, DORA), and building a board-level PQC action plan.',
+    duration: '30 min',
+    difficulty: 'beginner',
+  },
+  'dev-quantum-impact': {
+    id: 'dev-quantum-impact',
+    title: 'Developer Quantum Impact',
+    description:
+      'How quantum breaks your code: library transitions, larger keys/signatures, TLS/JWT/signing impacts, and a hands-on migration readiness plan.',
+    duration: '30 min',
+    difficulty: 'beginner',
+  },
+  'arch-quantum-impact': {
+    id: 'arch-quantum-impact',
+    title: 'Architect Quantum Impact',
+    description:
+      'Architecture decisions that outlast the quantum transition: KMS, HSM, PKI, hybrid deployment patterns, and crypto-agile design.',
+    duration: '30 min',
+    difficulty: 'beginner',
+  },
+  'ops-quantum-impact': {
+    id: 'ops-quantum-impact',
+    title: 'Ops Quantum Impact',
+    description:
+      'Operational PQC challenges: certificate scaling, fleet upgrades, VPN/SSH key exchange, monitoring recalibration, and migration playbooks.',
+    duration: '30 min',
+    difficulty: 'beginner',
+  },
+  'research-quantum-impact': {
+    id: 'research-quantum-impact',
+    title: 'Researcher Quantum Impact',
+    description:
+      'Quantum threats to research: long-lived data confidentiality, publication integrity, emerging PQC research frontiers, and funding opportunities.',
+    duration: '30 min',
+    difficulty: 'beginner',
+  },
   quiz: {
     id: 'quiz',
     title: 'PQC Quiz',
@@ -250,14 +346,15 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
   },
 }
 
-/** Actual step counts per module for progress calculation */
+/** Actual step counts per module for progress calculation.
+ * Must match WORKSHOP_STEPS[id].length exactly — keep in sync. */
 export const MODULE_STEP_COUNTS: Record<string, number> = {
-  'pqc-101': 5,
-  'pki-workshop': 8,
-  'digital-assets': 3,
+  'pqc-101': 4,
+  'pki-workshop': 6,
+  'digital-assets': 6,
   '5g-security': 3,
-  'digital-id': 6,
-  'tls-basics': 3,
+  'digital-id': 5,
+  'tls-basics': 1,
   'quantum-threats': 5,
   'hybrid-crypto': 5,
   'crypto-agility': 3,
@@ -267,21 +364,33 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'kms-pqc': 5,
   'hsm-pqc': 4,
   'entropy-randomness': 5,
-  'merkle-tree-certs': 6,
-  qkd: 3,
+  'merkle-tree-certs': 4,
+  qkd: 5,
   'code-signing': 5,
   'api-security-jwt': 5,
+  'crypto-dev-apis': 8,
   'web-gateway-pqc': 5,
   'iot-ot-pqc': 5,
   'pqc-risk-management': 3,
   'pqc-business-case': 3,
   'pqc-governance': 3,
-  'vendor-risk': 3,
+  'vendor-risk': 4,
   'migration-program': 3,
   'compliance-strategy': 3,
   'data-asset-sensitivity': 5,
   'standards-bodies': 5,
   'confidential-computing': 5,
+  'energy-utilities-pqc': 5,
+  'emv-payment-pqc': 6,
+  'ai-security-pqc': 7,
+  'healthcare-pqc': 5,
+  'aerospace-space-pqc': 6,
+  'automotive-pqc': 6,
+  'exec-quantum-impact': 3,
+  'dev-quantum-impact': 3,
+  'arch-quantum-impact': 3,
+  'ops-quantum-impact': 3,
+  'research-quantum-impact': 3,
   quiz: 1,
   assess: 1, // Assessment wizard completion
 }
@@ -294,10 +403,22 @@ export const TRACK_COLORS: Record<string, string> = {
   Infrastructure: 'bg-status-warning/15 text-status-warning',
   Applications: 'bg-status-success/15 text-status-success',
   Executive: 'bg-status-error/15 text-status-error',
+  Industries: 'bg-amber-500/15 text-amber-600',
+  'Role Guides': 'bg-accent/10 text-accent',
 }
 
 /** Module tracks for the grid display */
 export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
+  {
+    track: 'Role Guides',
+    modules: [
+      MODULE_CATALOG['exec-quantum-impact'],
+      MODULE_CATALOG['dev-quantum-impact'],
+      MODULE_CATALOG['arch-quantum-impact'],
+      MODULE_CATALOG['ops-quantum-impact'],
+      MODULE_CATALOG['research-quantum-impact'],
+    ],
+  },
   {
     track: 'Foundations',
     modules: [
@@ -335,6 +456,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['stateful-signatures'],
       MODULE_CATALOG['merkle-tree-certs'],
       MODULE_CATALOG['confidential-computing'],
+      MODULE_CATALOG['crypto-dev-apis'],
     ],
   },
   {
@@ -345,6 +467,8 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['digital-id'],
       MODULE_CATALOG['code-signing'],
       MODULE_CATALOG['iot-ot-pqc'],
+      MODULE_CATALOG['emv-payment-pqc'],
+      MODULE_CATALOG['ai-security-pqc'],
     ],
   },
   {
@@ -356,6 +480,15 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['pqc-governance'],
       MODULE_CATALOG['vendor-risk'],
       MODULE_CATALOG['migration-program'],
+    ],
+  },
+  {
+    track: 'Industries',
+    modules: [
+      MODULE_CATALOG['energy-utilities-pqc'],
+      MODULE_CATALOG['healthcare-pqc'],
+      MODULE_CATALOG['aerospace-space-pqc'],
+      MODULE_CATALOG['automotive-pqc'],
     ],
   },
 ]
@@ -491,6 +624,18 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'jwe', label: 'ML-KEM JWE Key Agreement' },
     { id: 'oauth', label: 'OAuth 2.0 PQC Migration' },
   ],
+  'crypto-dev-apis': [
+    { id: 'landscape', label: 'The Crypto API Landscape' },
+    { id: 'principles', label: 'Common Principles Across All APIs' },
+    { id: 'jca-bc', label: 'JCA/JCE & Bouncy Castle' },
+    { id: 'openssl', label: 'OpenSSL & libcrypto' },
+    { id: 'pkcs11', label: 'PKCS#11 — Hardware Abstraction' },
+    { id: 'cng', label: 'KSP & Windows CNG' },
+    { id: 'build-buy', label: 'Build vs Buy vs Open Source' },
+    { id: 'pqc-libs', label: 'Open-Source PQC Libraries' },
+    { id: 'languages', label: 'Language Ecosystem Overview' },
+    { id: 'pqc-roadmap', label: 'PQC Readiness & Roadmap' },
+  ],
   'web-gateway-pqc': [
     { id: 'architecture', label: 'Web Gateway Architecture & TLS Termination Patterns' },
     { id: 'cert-lifecycle', label: 'Certificate Lifecycle at Edge Scale' },
@@ -558,6 +703,83 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'memory-encryption', label: 'Memory Encryption & Data-in-Use Protection' },
     { id: 'tee-hsm', label: 'TEE-HSM Trusted Communication' },
     { id: 'quantum-threats', label: 'Quantum Threats to Confidential Computing' },
+  ],
+  'energy-utilities-pqc': [
+    { id: 'why-energy', label: 'Why Energy & Utilities Is Different' },
+    { id: 'nerc-cip', label: 'NERC CIP & IEC 62351 Compliance' },
+    { id: 'substation-protocols', label: 'Substation Protocols (IEC 61850, DNP3, Modbus)' },
+    { id: 'smart-meters', label: 'Smart Meter Key Management at Scale' },
+    { id: 'safety-environmental', label: 'Safety & Environmental Risk' },
+    { id: 'lifecycle-connectivity', label: 'Extended Lifecycles & Connectivity Challenges' },
+  ],
+  'emv-payment-pqc': [
+    { id: 'emv-ecosystem', label: 'The EMV Payment Ecosystem' },
+    { id: 'card-auth', label: 'Card Authentication: SDA, DDA & CDA' },
+    { id: 'network-architecture', label: 'Payment Network Architecture' },
+    { id: 'tokenization', label: 'Tokenization & Mobile Payments' },
+    { id: 'ecommerce', label: 'E-Commerce & Card-Not-Present' },
+    { id: 'pos-terminals', label: 'POS Terminals & Key Injection' },
+    { id: 'quantum-threats', label: 'Quantum Threats to Payment Systems' },
+    { id: 'migration-landscape', label: 'PQC Migration Landscape' },
+  ],
+  'ai-security-pqc': [
+    { id: 'pipeline-threats', label: 'AI Data Pipeline: The Quantum Threat Surface' },
+    { id: 'synthetic-data', label: 'The Synthetic Data Crisis: Model Collapse & Authenticity' },
+    { id: 'model-weights', label: 'Model Weight Protection & IP Security' },
+    { id: 'agentic-ai', label: 'Agentic AI: Identity, Delegation & Commerce' },
+    { id: 'scale', label: 'Protecting Data at Scale: Petabyte-Era Cryptography' },
+  ],
+  'healthcare-pqc': [
+    { id: 'biometric-threat', label: 'Biometric Data: The Irreplaceable Secret' },
+    { id: 'pharma-ip', label: 'Pharmaceutical IP & Research Data Protection' },
+    { id: 'patient-privacy', label: 'Patient Privacy as a Fundamental Right' },
+    { id: 'device-safety', label: 'Medical Device Safety & PQC' },
+    { id: 'healthcare-migration', label: 'Healthcare PQC Migration: A Sector-Wide Challenge' },
+  ],
+  'aerospace-space-pqc': [
+    { id: 'quantum-threat', label: 'The Quantum Threat to Aerospace & Space' },
+    { id: 'protocol-limits', label: 'PQC Algorithm Sizes vs Aviation Protocol Limits' },
+    { id: 'radiation-integrity', label: 'Radiation & Cryptographic Key Material Integrity' },
+    { id: 'certification-cost', label: 'Certification Cost of PQC Crypto Library Integration' },
+    { id: 'export-constraints', label: 'PQC Algorithm Selection Under Export Constraints' },
+    { id: 'crypto-lifecycle', label: 'Crypto Lifecycle Across Multi-Decade Equipment Life' },
+    { id: 'key-provisioning', label: 'Key Provisioning for Unreachable Platforms' },
+  ],
+  'automotive-pqc': [
+    { id: 'vehicle-crypto-landscape', label: 'The Automotive Crypto Landscape' },
+    { id: 'autonomous-data', label: 'Autonomous Driving Data Integrity' },
+    { id: 'safety-critical', label: 'Safety-Critical Systems & ISO 26262 ASIL' },
+    { id: 'hsm-lifecycle', label: 'HSM Lifecycle: Factory to End-of-Life' },
+    { id: 'lifecycle-agility', label: 'Long Vehicle Lifecycle & Crypto-Agility' },
+    { id: 'privacy-connected', label: 'Connected Car Privacy & GDPR' },
+    { id: 'vehicle-payments', label: 'In-Vehicle Payments & EV Charging' },
+    { id: 'digital-car-key', label: 'Digital Car Key (CCC / NFC / BLE / UWB)' },
+    { id: 'supply-chain', label: 'Supply Chain: TISAX, VDA & AUTOSAR' },
+  ],
+  'exec-quantum-impact': [
+    { id: 'why-it-matters', label: 'Why It Matters: Executive Quantum Exposure' },
+    { id: 'what-to-learn', label: 'What to Learn: Knowledge & Skills Gap' },
+    { id: 'how-to-act', label: 'How to Act: Phased Action Plan' },
+  ],
+  'dev-quantum-impact': [
+    { id: 'why-it-matters', label: 'Why It Matters: Developer Quantum Exposure' },
+    { id: 'what-to-learn', label: 'What to Learn: Knowledge & Skills Gap' },
+    { id: 'how-to-act', label: 'How to Act: Phased Action Plan' },
+  ],
+  'arch-quantum-impact': [
+    { id: 'why-it-matters', label: 'Why It Matters: Architect Quantum Exposure' },
+    { id: 'what-to-learn', label: 'What to Learn: Knowledge & Skills Gap' },
+    { id: 'how-to-act', label: 'How to Act: Phased Action Plan' },
+  ],
+  'ops-quantum-impact': [
+    { id: 'why-it-matters', label: 'Why It Matters: Ops Quantum Exposure' },
+    { id: 'what-to-learn', label: 'What to Learn: Knowledge & Skills Gap' },
+    { id: 'how-to-act', label: 'How to Act: Phased Action Plan' },
+  ],
+  'research-quantum-impact': [
+    { id: 'why-it-matters', label: 'Why It Matters: Research Quantum Exposure' },
+    { id: 'what-to-learn', label: 'What to Learn: Knowledge & Skills Gap' },
+    { id: 'how-to-act', label: 'How to Act: Phased Action Plan' },
   ],
 }
 
@@ -682,6 +904,16 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'jwe-encryption', label: 'JWE Encryption' },
     { id: 'size-analyzer', label: 'Token Size Analyzer' },
   ],
+  'crypto-dev-apis': [
+    { id: 'api-architecture-explorer', label: 'API Architecture Explorer' },
+    { id: 'language-ecosystem', label: 'Language Ecosystem Comparator' },
+    { id: 'provider-patterns', label: 'Provider Pattern Workshop' },
+    { id: 'build-buy-oss', label: 'Build vs Buy vs Open Source' },
+    { id: 'pqc-library-explorer', label: 'PQC Library Explorer' },
+    { id: 'pqc-support-matrix', label: 'PQC Support Matrix' },
+    { id: 'crypto-agility-patterns', label: 'Crypto Agility Patterns' },
+    { id: 'migration-decision-lab', label: 'Migration Decision Lab' },
+  ],
   'web-gateway-pqc': [
     { id: 'topology-builder', label: 'Topology Builder' },
     { id: 'tls-termination', label: 'TLS Termination Patterns' },
@@ -747,5 +979,77 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'encryption-mechanisms', label: 'Encryption Mechanisms' },
     { id: 'tee-hsm-channel', label: 'TEE-HSM Trusted Channel' },
     { id: 'quantum-threat-migration', label: 'Quantum Threat Migration' },
+  ],
+  'energy-utilities-pqc': [
+    { id: 'protocol-security-analyzer', label: 'Protocol Analyzer' },
+    { id: 'substation-migration-planner', label: 'Substation Planner' },
+    { id: 'smart-meter-key-manager', label: 'Meter Key Manager' },
+    { id: 'safety-risk-scorer', label: 'Risk Scorer' },
+    { id: 'grid-migration-roadmap', label: 'Grid Roadmap' },
+  ],
+  'emv-payment-pqc': [
+    { id: 'network-comparator', label: 'Network Comparator' },
+    { id: 'transaction-simulator', label: 'Transaction Simulator' },
+    { id: 'card-provisioning', label: 'Card Provisioning' },
+    { id: 'tokenization-explorer', label: 'Tokenization Explorer' },
+    { id: 'pos-crypto-analyzer', label: 'POS Crypto Analyzer' },
+    { id: 'migration-risk-matrix', label: 'Migration Risk Matrix' },
+  ],
+  'ai-security-pqc': [
+    { id: 'data-protection-analyzer', label: 'Data Protection Analyzer' },
+    { id: 'data-authenticity-verifier', label: 'Data Authenticity Verifier' },
+    { id: 'model-weight-vault', label: 'Model Weight Vault' },
+    { id: 'agent-auth-designer', label: 'Agent Auth Designer' },
+    { id: 'agentic-commerce-simulator', label: 'Agentic Commerce Simulator' },
+    { id: 'agent-to-agent-protocol', label: 'Agent-to-Agent Protocol' },
+    { id: 'scale-encryption-planner', label: 'Scale Encryption Planner' },
+  ],
+  'healthcare-pqc': [
+    { id: 'biometric-vault', label: 'Biometric Vault Assessor' },
+    { id: 'pharma-ip-calculator', label: 'Pharma IP Calculator' },
+    { id: 'patient-privacy-mapper', label: 'Patient Privacy Mapper' },
+    { id: 'device-safety-simulator', label: 'Device Safety Simulator' },
+    { id: 'hospital-migration-planner', label: 'Hospital Migration Planner' },
+  ],
+  'aerospace-space-pqc': [
+    { id: 'avionics-protocol-analyzer', label: 'Avionics Protocol Analyzer' },
+    { id: 'satellite-link-budget', label: 'Satellite Link Budget' },
+    { id: 'certification-impact-analyzer', label: 'Certification Impact' },
+    { id: 'fleet-interoperability-matrix', label: 'Fleet Interoperability' },
+    { id: 'export-control-classifier', label: 'Export Control Classifier' },
+    { id: 'mission-crypto-lifecycle', label: 'Mission Lifecycle Planner' },
+  ],
+  'automotive-pqc': [
+    { id: 'vehicle-architecture-mapper', label: 'Vehicle Architecture Mapper' },
+    { id: 'sensor-data-integrity', label: 'Sensor Data Integrity' },
+    { id: 'safety-crypto-analyzer', label: 'Safety-Crypto Analyzer' },
+    { id: 'ota-orchestration-planner', label: 'OTA Orchestration Planner' },
+    { id: 'car-key-protocol-explorer', label: 'Car Key Protocol Explorer' },
+    { id: 'lifecycle-migration-roadmap', label: 'Lifecycle Migration Roadmap' },
+  ],
+  'exec-quantum-impact': [
+    { id: 'why-it-matters', label: 'Why It Matters' },
+    { id: 'what-to-learn', label: 'What to Learn' },
+    { id: 'how-to-act', label: 'How to Act' },
+  ],
+  'dev-quantum-impact': [
+    { id: 'why-it-matters', label: 'Why It Matters' },
+    { id: 'what-to-learn', label: 'What to Learn' },
+    { id: 'how-to-act', label: 'How to Act' },
+  ],
+  'arch-quantum-impact': [
+    { id: 'why-it-matters', label: 'Why It Matters' },
+    { id: 'what-to-learn', label: 'What to Learn' },
+    { id: 'how-to-act', label: 'How to Act' },
+  ],
+  'ops-quantum-impact': [
+    { id: 'why-it-matters', label: 'Why It Matters' },
+    { id: 'what-to-learn', label: 'What to Learn' },
+    { id: 'how-to-act', label: 'How to Act' },
+  ],
+  'research-quantum-impact': [
+    { id: 'why-it-matters', label: 'Why It Matters' },
+    { id: 'what-to-learn', label: 'What to Learn' },
+    { id: 'how-to-act', label: 'How to Act' },
   ],
 }

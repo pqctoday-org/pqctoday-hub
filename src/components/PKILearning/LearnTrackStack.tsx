@@ -5,6 +5,7 @@ import {
   BookOpen,
   ChevronDown,
   ChevronRight,
+  Compass,
   Lightbulb,
   Network,
   Server,
@@ -12,6 +13,7 @@ import {
   Briefcase,
   Brain,
   ClipboardList,
+  Factory,
 } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Button } from '../ui/button'
@@ -24,6 +26,7 @@ import type { ModuleItem } from './ModuleCard'
 // ---------------------------------------------------------------------------
 
 export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
+  'Role Guides': ['pqc-fundamentals', 'quantum-threats', 'migration-planning'],
   Foundations: [
     'pqc-fundamentals',
     'quantum-threats',
@@ -31,13 +34,21 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'nist-standards',
     'entropy-randomness',
   ],
-  Strategy: ['hybrid-crypto', 'crypto-agility', 'qkd', 'migration-planning'],
+  Strategy: [
+    'hybrid-crypto',
+    'crypto-agility',
+    'qkd',
+    'data-asset-sensitivity',
+    'standards-bodies',
+    'migration-planning',
+  ],
   Protocols: [
     'tls-basics',
     'vpn-ssh-pqc',
     'email-signing',
     'api-security-jwt',
     'protocol-integration',
+    'web-gateway-pqc',
   ],
   Infrastructure: [
     'pki-infrastructure',
@@ -46,6 +57,8 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'key-management',
     'stateful-signatures',
     'merkle-tree-certs',
+    'confidential-computing',
+    'crypto-dev-apis',
   ],
   Applications: [
     'digital-assets',
@@ -53,6 +66,8 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'digital-id',
     'code-signing',
     'iot-ot-pqc',
+    'emv-payment-pqc',
+    'ai-security-pqc',
     'industry-threats',
   ],
   Executive: [
@@ -63,6 +78,14 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'migration-program',
     'compliance-strategy',
     'compliance',
+  ],
+  Industries: [
+    'energy-utilities-pqc',
+    'healthcare-pqc',
+    'aerospace-space-pqc',
+    'automotive-pqc',
+    'iot-ot-pqc',
+    'industry-threats',
   ],
 }
 
@@ -78,6 +101,13 @@ const TRACK_META: {
   activeClass: string
 }[] = [
   {
+    track: 'Role Guides',
+    icon: Compass,
+    description: 'Role-specific quantum impact: why it matters, what to learn, how to act',
+    colorClass: 'from-accent/15 to-accent/5 border-accent/30',
+    activeClass: 'bg-card border-accent/60',
+  },
+  {
     track: 'Foundations',
     icon: BookOpen,
     description: 'Quantum threats, PQC fundamentals, entropy & randomness',
@@ -88,7 +118,7 @@ const TRACK_META: {
   {
     track: 'Strategy',
     icon: Lightbulb,
-    description: 'Hybrid crypto, crypto agility, QKD, data asset sensitivity',
+    description: 'Hybrid crypto, crypto agility, QKD, data sensitivity, standards bodies',
     colorClass: 'from-secondary/15 to-secondary/5 border-secondary/30',
     activeClass:
       'bg-card border-secondary/60 shadow-[0_0_12px_rgba(var(--secondary-rgb,139,92,246),0.3)]',
@@ -96,30 +126,38 @@ const TRACK_META: {
   {
     track: 'Protocols',
     icon: Network,
-    description: 'TLS, VPN/SSH, email signing, API security & JWT',
+    description: 'TLS, VPN/SSH, email signing, API security & JWT, web gateways',
     colorClass: 'from-sky-500/20 to-indigo-500/10 border-sky-500/30',
     activeClass: 'bg-card border-sky-500/60',
   },
   {
     track: 'Infrastructure',
     icon: Server,
-    description: 'PKI, KMS, HSM, stateful signatures, Merkle tree certs',
+    description:
+      'PKI, KMS, HSM, stateful signatures, Merkle tree certs, confidential computing, crypto APIs',
     colorClass: 'from-amber-500/20 to-orange-400/10 border-amber-500/30',
     activeClass: 'bg-card border-amber-500/60',
   },
   {
     track: 'Applications',
     icon: Layers,
-    description: 'Digital assets, 5G, digital ID, code signing, IoT/OT',
+    description: 'Digital assets, 5G, digital ID, code signing, IoT/OT, EMV payments, AI security',
     colorClass: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/30',
     activeClass: 'bg-card border-emerald-500/60',
   },
   {
     track: 'Executive',
     icon: Briefcase,
-    description: 'Risk management, business case, governance, compliance, vendor risk',
+    description: 'Risk management, business case, governance, compliance, vendor risk, migration',
     colorClass: 'from-rose-500/20 to-red-500/10 border-rose-500/30',
     activeClass: 'bg-card border-rose-500/60',
+  },
+  {
+    track: 'Industries',
+    icon: Factory,
+    description: 'Energy, healthcare, aerospace, automotive \u2014 sector-specific PQC migration',
+    colorClass: 'from-orange-500/20 to-amber-400/10 border-orange-500/30',
+    activeClass: 'bg-card border-orange-500/60',
   },
 ]
 
@@ -374,29 +412,24 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
           )
         })}
 
-        {/* 7th row — Knowledge Check (PQC Quiz) */}
+        {/* Knowledge Check (PQC Quiz) — direct navigation, no expand step */}
         {(() => {
-          const isActive = activeTrack === '__quiz__'
-          const isFaded = activeTrack !== null && !isActive
+          const isFaded = activeTrack !== null
           return (
             <div
               role="button"
               tabIndex={0}
-              onClick={() => setActiveTrack((prev) => (prev === '__quiz__' ? null : '__quiz__'))}
+              onClick={() => navigate('quiz')}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
-                  setActiveTrack((prev) => (prev === '__quiz__' ? null : '__quiz__'))
+                  navigate('quiz')
                 }
               }}
               className={`
-                group relative z-10 w-full flex flex-col items-stretch p-4 md:px-6 rounded-xl
+                group relative z-10 w-full flex items-center p-4 md:px-6 rounded-xl
                 transition-all duration-300 ease-in-out cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
-                ${
-                  isActive
-                    ? 'bg-card border border-secondary/60'
-                    : 'bg-gradient-to-r from-secondary/10 to-secondary/5 border border-secondary/25 hover:scale-[1.005] hover:brightness-105'
-                }
+                bg-gradient-to-r from-secondary/10 to-secondary/5 border border-secondary/25 hover:scale-[1.005] hover:brightness-105
                 ${isFaded ? 'opacity-40' : 'opacity-100'}
               `}
             >
@@ -405,11 +438,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                   <div className="p-2.5 rounded-lg bg-background/50 border border-border/30 shrink-0">
                     <Brain
                       size={20}
-                      className={
-                        isActive
-                          ? 'text-secondary'
-                          : 'text-muted-foreground group-hover:text-secondary transition-colors'
-                      }
+                      className="text-muted-foreground group-hover:text-secondary transition-colors"
                       aria-hidden="true"
                     />
                   </div>
@@ -422,56 +451,12 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                     </p>
                   </div>
                 </div>
-                <div className="hidden md:flex items-center gap-2 shrink-0">
-                  <div
-                    className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
-                      isActive
-                        ? 'bg-background/80 text-foreground border-border'
-                        : 'bg-background/40 text-muted-foreground border-transparent group-hover:border-border/50'
-                    }`}
-                  >
-                    {isActive ? 'Expanded' : 'Click to expand'}
-                  </div>
-                </div>
-                {/* Mobile-only expand chevron */}
-                <span className="flex md:hidden text-muted-foreground shrink-0">
-                  {isActive ? (
-                    <ChevronDown size={16} aria-hidden="true" />
-                  ) : (
-                    <ChevronRight size={16} aria-hidden="true" />
-                  )}
-                </span>
+                <ChevronRight
+                  size={16}
+                  className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0"
+                  aria-hidden="true"
+                />
               </div>
-
-              <AnimatePresence>
-                {isActive && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
-                  >
-                    <div
-                      role="presentation"
-                      className="mt-4 pt-4 border-t border-border/30 grid grid-cols-1 md:grid-cols-2 gap-3"
-                      onClick={(e) => e.stopPropagation()}
-                      onKeyDown={(e) => e.stopPropagation()}
-                    >
-                      <ModuleCard
-                        module={{
-                          id: 'quiz',
-                          title: 'PQC Quiz',
-                          description:
-                            'Test your knowledge across all PQC topics — algorithms, standards, compliance, migration, and more.',
-                          duration: '15 min',
-                        }}
-                        onSelectModule={() => navigate('quiz')}
-                      />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
           )
         })()}
