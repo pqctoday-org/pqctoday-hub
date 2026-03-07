@@ -153,6 +153,14 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     duration: '90 min',
     difficulty: 'intermediate',
   },
+  'web-gateway-pqc': {
+    id: 'web-gateway-pqc',
+    title: 'Web Gateway PQC',
+    description:
+      'PQC deployment at the infrastructure edge: TLS termination patterns, certificate lifecycle at scale, CDN/WAF/load balancer vendor migration paths.',
+    duration: '90 min',
+    difficulty: 'intermediate',
+  },
   'iot-ot-pqc': {
     id: 'iot-ot-pqc',
     title: 'IoT & OT Security',
@@ -225,6 +233,14 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = {
     duration: '60 min',
     difficulty: 'intermediate',
   },
+  'confidential-computing': {
+    id: 'confidential-computing',
+    title: 'Confidential Computing & TEEs',
+    description:
+      'Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, and quantum threat analysis.',
+    duration: '90 min',
+    difficulty: 'advanced',
+  },
   quiz: {
     id: 'quiz',
     title: 'PQC Quiz',
@@ -255,6 +271,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   qkd: 3,
   'code-signing': 5,
   'api-security-jwt': 5,
+  'web-gateway-pqc': 5,
   'iot-ot-pqc': 5,
   'pqc-risk-management': 3,
   'pqc-business-case': 3,
@@ -264,6 +281,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'compliance-strategy': 3,
   'data-asset-sensitivity': 5,
   'standards-bodies': 5,
+  'confidential-computing': 5,
   quiz: 1,
   assess: 1, // Assessment wizard completion
 }
@@ -305,6 +323,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['vpn-ssh-pqc'],
       MODULE_CATALOG['email-signing'],
       MODULE_CATALOG['api-security-jwt'],
+      MODULE_CATALOG['web-gateway-pqc'],
     ],
   },
   {
@@ -315,6 +334,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['hsm-pqc'],
       MODULE_CATALOG['stateful-signatures'],
       MODULE_CATALOG['merkle-tree-certs'],
+      MODULE_CATALOG['confidential-computing'],
     ],
   },
   {
@@ -471,6 +491,14 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'jwe', label: 'ML-KEM JWE Key Agreement' },
     { id: 'oauth', label: 'OAuth 2.0 PQC Migration' },
   ],
+  'web-gateway-pqc': [
+    { id: 'architecture', label: 'Web Gateway Architecture & TLS Termination Patterns' },
+    { id: 'cert-lifecycle', label: 'Certificate Lifecycle at Edge Scale' },
+    { id: 'performance', label: 'PQC Handshake Performance & Session Optimization' },
+    { id: 'inspection', label: 'WAF/IDS Inspection Challenges with PQC' },
+    { id: 'cdn-edge', label: 'CDN Edge Deployment & Origin Shielding' },
+    { id: 'vendor-paths', label: 'Vendor-Specific PQC Migration Paths' },
+  ],
   'iot-ot-pqc': [
     { id: 'constrained', label: 'Constrained Devices & Algorithm Selection' },
     { id: 'firmware', label: 'Firmware Signing (LMS/XMSS/ML-DSA)' },
@@ -522,6 +550,14 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'global-regional', label: 'Global vs Regional Coverage' },
     { id: 'app-pages-guide', label: 'Reading the App: Compliance & Migrate Pages' },
     { id: 'ietf-process', label: 'IETF Working Groups & the RFC Process' },
+  ],
+  'confidential-computing': [
+    { id: 'tee-fundamentals', label: 'TEE Fundamentals & Threat Model' },
+    { id: 'vendor-architectures', label: 'Vendor Architectures (SGX, TDX, CCA, SEV-SNP, Nitro)' },
+    { id: 'attestation', label: 'Remote Attestation & Trust Chains' },
+    { id: 'memory-encryption', label: 'Memory Encryption & Data-in-Use Protection' },
+    { id: 'tee-hsm', label: 'TEE-HSM Trusted Communication' },
+    { id: 'quantum-threats', label: 'Quantum Threats to Confidential Computing' },
   ],
 }
 
@@ -646,6 +682,13 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'jwe-encryption', label: 'JWE Encryption' },
     { id: 'size-analyzer', label: 'Token Size Analyzer' },
   ],
+  'web-gateway-pqc': [
+    { id: 'topology-builder', label: 'Topology Builder' },
+    { id: 'tls-termination', label: 'TLS Termination Patterns' },
+    { id: 'handshake-budget', label: 'Handshake Budget Calculator' },
+    { id: 'cert-rotation', label: 'Certificate Rotation Planner' },
+    { id: 'vendor-readiness', label: 'Vendor Readiness Matrix' },
+  ],
   'iot-ot-pqc': [
     { id: 'constrained-algorithm', label: 'Algorithm Explorer' },
     { id: 'firmware-signing', label: 'Firmware Signing' },
@@ -697,5 +740,12 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'chain-builder', label: 'Chain Builder' },
     { id: 'coverage-grid', label: 'Coverage Grid' },
     { id: 'scenario-challenge', label: 'Scenario Challenge' },
+  ],
+  'confidential-computing': [
+    { id: 'tee-architecture-explorer', label: 'TEE Architecture Explorer' },
+    { id: 'attestation-workshop', label: 'Attestation Workshop' },
+    { id: 'encryption-mechanisms', label: 'Encryption Mechanisms' },
+    { id: 'tee-hsm-channel', label: 'TEE-HSM Trusted Channel' },
+    { id: 'quantum-threat-migration', label: 'Quantum Threat Migration' },
   ],
 }

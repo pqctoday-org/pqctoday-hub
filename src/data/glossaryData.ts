@@ -463,7 +463,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     acronym: 'IKEv2',
     definition:
       'Internet Key Exchange version 2, the protocol used to establish security associations in IPsec VPNs. PQC migration adds ML-KEM key exchange.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=IETF RFC 9370',
     complexity: 'intermediate',
     category: 'protocol',
   },
@@ -483,7 +483,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     acronym: 'S/MIME',
     definition:
       'Secure/Multipurpose Internet Mail Extensions, a standard for email encryption and digital signing. PQC integration via ML-KEM and ML-DSA.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=RFC 9882',
     complexity: 'intermediate',
     category: 'protocol',
   },
@@ -494,7 +494,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Cryptographic Message Syntax, a standard for digitally signed, encrypted, or authenticated data. Foundation for S/MIME and code signing.',
     technicalNote:
       'Multiple IETF RFCs define PQC integration: RFC 9629 (KEM in CMS), RFC 9882 (ML-DSA in CMS), RFC 9814 (SLH-DSA in CMS).',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=RFC 9629',
     complexity: 'advanced',
     category: 'protocol',
   },
@@ -502,7 +502,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'OpenPGP',
     definition:
       'An open standard for email encryption and signing based on PGP. PQC integration adds composite ML-KEM+ECC encryption and ML-DSA+ECC signatures.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=RFC 9580',
     complexity: 'intermediate',
     category: 'protocol',
   },
@@ -549,7 +549,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'FIPS 203',
     definition:
       'The NIST standard defining ML-KEM (Module-Lattice-Based Key Encapsulation Mechanism), published August 2024.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=FIPS 203',
     complexity: 'intermediate',
     category: 'standard',
   },
@@ -557,7 +557,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'FIPS 204',
     definition:
       'The NIST standard defining ML-DSA (Module-Lattice-Based Digital Signature Algorithm), published August 2024.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=FIPS 204',
     complexity: 'intermediate',
     category: 'standard',
   },
@@ -565,7 +565,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'FIPS 205',
     definition:
       'The NIST standard defining SLH-DSA (Stateless Hash-Based Digital Signature Algorithm), published August 2024.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=FIPS 205',
     complexity: 'intermediate',
     category: 'standard',
   },
@@ -657,7 +657,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'FIPS 206',
     definition:
       'The NIST standard defining FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm, formerly Falcon), published October 2024.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=FIPS 206',
     complexity: 'intermediate',
     category: 'standard',
   },
@@ -665,7 +665,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'FIPS 186-5',
     definition:
       'The NIST Digital Signature Standard defining RSA, ECDSA, and EdDSA. Being deprecated in favor of PQC signature algorithms per NIST IR 8547.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=FIPS 186-5',
     complexity: 'intermediate',
     category: 'standard',
   },
@@ -675,7 +675,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'NIST Internal Report establishing the PQC transition timeline: deprecation of classical asymmetric crypto by 2030, disallowment by 2035.',
     technicalNote:
       'Covers RSA, ECDSA, ECDH, EdDSA, DH, and DSA. The most authoritative U.S. government PQC migration deadline document.',
-    relatedModule: '/learn/compliance-strategy',
+    relatedModule: '/library?ref=NIST IR 8547',
     complexity: 'intermediate',
     category: 'standard',
   },
@@ -685,7 +685,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'NIST Special Publication providing guidance on transitioning the use of cryptographic algorithms and key lengths. Defines which algorithms are approved, deprecated, or disallowed for federal use.',
     technicalNote:
       'Revision 3 (2019) deprecated SHA-1 and 2TDEA. A future revision is expected to align with NIST IR 8547 timelines, formally disallowing RSA, ECDSA, and DH after 2035.',
-    relatedModule: '/learn/compliance-strategy',
+    relatedModule: '/library?ref=NIST-SP-800-131A-Rev3',
     complexity: 'intermediate',
     category: 'standard',
   },
@@ -693,7 +693,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'NIST SP 800-208',
     definition:
       'NIST recommendation for stateful hash-based signature schemes LMS and XMSS, used for firmware signing and secure boot.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=NIST SP 800-208',
     complexity: 'advanced',
     category: 'standard',
   },
@@ -701,7 +701,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'RFC 9629',
     definition:
       'IETF standard defining how to use Key Encapsulation Mechanisms (KEMs) in the Cryptographic Message Syntax (CMS) for encrypted messaging.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=RFC 9629',
     complexity: 'advanced',
     category: 'standard',
   },
@@ -1305,7 +1305,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     acronym: 'TEE',
     definition:
       'Trusted Execution Environment, an isolated processing environment on a processor that protects code and data. Must be updated for PQC algorithm support.',
-    relatedModule: '/migrate',
+    relatedModule: '/learn/confidential-computing',
     complexity: 'advanced',
     category: 'concept',
   },
@@ -1482,7 +1482,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       "China's national standard elliptic curve public-key algorithm for digital signatures and key exchange, managed by OSCCA. Quantum-vulnerable.",
     technicalNote:
       'Combined with ML-KEM-768 in the curveSM2MLKEM768 hybrid key exchange for Chinese PQC migration.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=China OSCCA GM/T 0108-2021',
     complexity: 'advanced',
     category: 'algorithm',
   },
@@ -1604,7 +1604,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     acronym: 'CMP',
     definition:
       'Certificate Management Protocol (RFC 4210), used for managing X.509 certificates including enrollment, updates, and revocation. PQC support via RFC 9810.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=RFC 9810',
     complexity: 'advanced',
     category: 'protocol',
   },
@@ -1802,7 +1802,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'NIST SP 800-227',
     definition:
       'NIST Special Publication providing recommendations for Key Encapsulation Mechanism (KEM) implementation, including guidance on parameter selection and secure use of ML-KEM.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=NIST SP 800-227',
     complexity: 'advanced',
     category: 'standard',
   },
@@ -1810,7 +1810,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'NIST IR 8545',
     definition:
       'NIST Internal Report documenting the selection of HQC as an additional KEM standard, providing a code-based alternative to lattice-based ML-KEM.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=NIST IR 8545',
     complexity: 'advanced',
     category: 'standard',
   },
@@ -1820,7 +1820,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'IETF standard defining multiple key exchanges in IKEv2, enabling hybrid classical + PQC key exchange for IPsec VPNs.',
     technicalNote:
       'Allows adding ML-KEM alongside classical Diffie-Hellman in a single IKEv2 handshake without breaking backward compatibility.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=IETF RFC 9370',
     complexity: 'advanced',
     category: 'standard',
   },
@@ -1828,7 +1828,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'RFC 9881',
     definition:
       'IETF standard defining how to use ML-DSA digital signatures in X.509 certificates and Certificate Revocation Lists (CRLs).',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=RFC 9881',
     complexity: 'advanced',
     category: 'standard',
   },
@@ -1836,7 +1836,7 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'RFC 9882',
     definition:
       'IETF standard defining the use of ML-DSA signatures in the Cryptographic Message Syntax (CMS), enabling PQC-signed messages and documents.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=RFC 9882',
     complexity: 'advanced',
     category: 'standard',
   },
@@ -1854,7 +1854,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'German Federal Office for Information Security (BSI) Technical Guideline series on cryptographic recommendations, covering TLS, IPsec, SSH, and general algorithms.',
     technicalNote:
       'TR-02102-1 covers general recommendations; TR-02102-2 through TR-02102-4 provide protocol-specific PQC migration guidance.',
-    relatedModule: '/library',
+    relatedModule: '/library?ref=BSI TR-02102-1',
     complexity: 'intermediate',
     category: 'standard',
   },
@@ -3281,6 +3281,146 @@ export const glossaryTerms: GlossaryTerm[] = [
     technicalNote:
       'Reducing the exposure window requires either (a) completing PQC migration before the CRQC arrives, or (b) ensuring data reaches end-of-life before the CRQC arrives. Long-lived assets (health records, intellectual property, identity credentials) have the widest windows.',
     relatedModule: '/learn/pqc-risk-management',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  // === Confidential Computing ===
+  {
+    term: 'SGX',
+    acronym: 'SGX',
+    definition:
+      'Intel Software Guard Extensions, a set of CPU instructions for creating hardware-isolated enclaves within user-space processes. Provides process-level TEE with encrypted memory (EPC).',
+    technicalNote:
+      'SGX uses DCAP attestation with ECDSA P-256, which is quantum-vulnerable. PQC attestation key migration is planned for 2027.',
+    relatedModule: '/learn/confidential-computing',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'SEV-SNP',
+    acronym: 'SEV-SNP',
+    definition:
+      'AMD Secure Encrypted Virtualization with Secure Nested Paging, providing VM-level memory encryption and integrity protection with a Reverse Map Table to prevent hypervisor-based attacks.',
+    technicalNote:
+      'Uses ECDSA P-384 VCEK certificates for attestation (quantum-vulnerable). AES-XTS-128 memory encryption is subject to Grover halving.',
+    relatedModule: '/learn/confidential-computing',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'ARM CCA',
+    acronym: 'CCA',
+    definition:
+      'ARM Confidential Compute Architecture, introducing Realms as isolated VM-like execution environments. Reduces TCB by separating the hypervisor from trusted firmware via a Realm Management Monitor.',
+    relatedModule: '/learn/confidential-computing',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Enclave',
+    definition:
+      'An isolated execution environment within a TEE where code and data are protected from the operating system, hypervisor, and other processes. Memory is encrypted and inaccessible to external entities.',
+    relatedModule: '/learn/confidential-computing',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Remote Attestation',
+    definition:
+      'A cryptographic protocol that proves to a remote verifier that software is running inside a genuine TEE with specific measurements (code identity, configuration). All current implementations use ECDSA, which is quantum-vulnerable.',
+    relatedModule: '/learn/confidential-computing',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Sealing Key',
+    definition:
+      'A TEE-derived encryption key used to persist data outside the enclave boundary. Derived from platform root keys and enclave identity measurements, ensuring only the same enclave on the same platform can unseal the data.',
+    relatedModule: '/learn/confidential-computing',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+
+  // === Web Gateway PQC ===
+  {
+    term: 'TLS Termination',
+    definition:
+      'The process of decrypting TLS-encrypted traffic at a gateway device (load balancer, reverse proxy, WAF, or CDN edge) rather than at the origin server. The gateway handles certificate management, handshake processing, and re-encryption for backend connections.',
+    technicalNote:
+      'PQC migration at the TLS termination point is the highest-impact upgrade path because it protects the most exposed network segment (client-to-edge) without requiring changes to backend infrastructure.',
+    relatedModule: '/learn/web-gateway-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Reverse Proxy',
+    definition:
+      'A server that sits between clients and origin servers, forwarding client requests and returning responses on behalf of the origin. It provides TLS termination, load balancing, caching, and security filtering.',
+    technicalNote:
+      'Common reverse proxies include NGINX, HAProxy, Envoy, and Traefik. PQC readiness varies by product — NGINX Plus R32+ and HAProxy 3.1+ support ML-KEM hybrid TLS via OpenSSL 3.5.',
+    relatedModule: '/learn/web-gateway-pqc',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  {
+    term: 'Edge PoP',
+    acronym: 'PoP',
+    definition:
+      'A Point of Presence — a physical data center location at the network edge where CDN or cloud providers deploy servers to cache content and terminate TLS connections close to end users.',
+    technicalNote:
+      'Major CDNs operate 200-300+ PoPs globally. PQC deployment at edge PoPs requires coordinated key material distribution and certificate rotation across all locations simultaneously.',
+    relatedModule: '/learn/web-gateway-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Origin Shielding',
+    definition:
+      'A CDN architecture pattern where a designated intermediate cache layer sits between edge PoPs and the origin server, reducing direct origin requests and providing a single point for TLS termination upgrades.',
+    technicalNote:
+      'Origin shielding simplifies PQC migration by limiting the number of connections to the origin that need PQC upgrade — only the shield-to-origin link requires immediate attention.',
+    relatedModule: '/learn/web-gateway-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Cipher Proxy',
+    definition:
+      'A network device that transparently translates between different cipher suites on each side of a connection, enabling PQC on the external-facing side while maintaining classical TLS on internal connections.',
+    technicalNote:
+      'Palo Alto PAN-OS 12.1+ implements cipher proxy for PQC, automatically translating ML-KEM hybrid handshakes to classical TLS for backend servers without requiring application changes.',
+    relatedModule: '/learn/web-gateway-pqc',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'Connection Coalescing',
+    definition:
+      'An HTTP/2 and HTTP/3 optimization where a single TLS connection is reused for requests to multiple hostnames sharing the same IP address and TLS certificate, amortizing PQC handshake overhead across domains.',
+    technicalNote:
+      'With PQC hybrid handshakes adding 10-20KB overhead, connection coalescing becomes a critical mitigation — reducing the number of handshakes proportionally reduces total bandwidth impact.',
+    relatedModule: '/learn/web-gateway-pqc',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'TLS Interception',
+    definition:
+      'A security technique where a middlebox (WAF, DLP, IDS) terminates, inspects, and re-establishes TLS connections to examine encrypted traffic for threats. Also called TLS inspection or SSL inspection.',
+    technicalNote:
+      'TLS interception devices must support the same cipher suites as both client and server. PQC hybrid handshakes require all inspection boxes in the path to be upgraded simultaneously.',
+    relatedModule: '/learn/web-gateway-pqc',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'SASE',
+    acronym: 'SASE',
+    definition:
+      'Secure Access Service Edge — a cloud-delivered architecture combining network security functions (SWG, CASB, ZTNA, FWaaS) with WAN capabilities, delivered as a unified service at the network edge.',
+    technicalNote:
+      'SASE platforms like Zscaler and Palo Alto Prisma Access terminate and inspect TLS at cloud PoPs. PQC migration requires the SASE provider to upgrade their inspection infrastructure to support hybrid handshakes.',
+    relatedModule: '/learn/web-gateway-pqc',
     complexity: 'intermediate',
     category: 'concept',
   },

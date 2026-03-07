@@ -125,6 +125,16 @@ const StandardsBodiesModule = lazyWithRetry(() =>
     default: module.StandardsBodiesModule,
   }))
 )
+const ConfidentialComputingModule = lazyWithRetry(() =>
+  import('./modules/ConfidentialComputing').then((module) => ({
+    default: module.ConfidentialComputingModule,
+  }))
+)
+const WebGatewayPQCModule = lazyWithRetry(() =>
+  import('./modules/WebGatewayPQC').then((module) => ({
+    default: module.WebGatewayPQCModule,
+  }))
+)
 
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
@@ -206,6 +216,8 @@ export const PKILearningView: React.FC = () => {
               <Route path="compliance-strategy" element={<ComplianceStrategyModule />} />
               <Route path="data-asset-sensitivity" element={<DataAssetSensitivityModule />} />
               <Route path="standards-bodies" element={<StandardsBodiesModule />} />
+              <Route path="confidential-computing" element={<ConfidentialComputingModule />} />
+              <Route path="web-gateway-pqc" element={<WebGatewayPQCModule />} />
             </Routes>
           </Suspense>
         </div>
