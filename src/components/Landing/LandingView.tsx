@@ -1,19 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Globe,
   FlaskConical,
-  Activity,
   GraduationCap,
+  Shield,
   ShieldCheck,
   ArrowRightLeft,
   ArrowRight,
   ClipboardCheck,
+  FileBarChart,
   Save,
   Upload,
   Compass,
+  AlertTriangle,
+  Check,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
@@ -22,6 +25,8 @@ import { UnifiedStorageService } from '@/services/storage/UnifiedStorageService'
 import { PERSONA_RECOMMENDED_PATHS, PERSONA_NAV_PATHS } from '@/data/personaConfig'
 import { useMigrationWorkflowStore } from '@/store/useMigrationWorkflowStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
+import { useModuleStore } from '@/store/useModuleStore'
+import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { PersonalizationSection } from './PersonalizationSection'
 import { PQCExplainer } from './PQCExplainer'
@@ -43,34 +48,36 @@ const PERSONA_HERO_CTA: Record<
   { primary: { label: string; path: string }; secondary: { label: string; path: string } }
 > = {
   executive: {
-    primary: { label: 'Assess Your Risk', path: '/assess' },
-    secondary: { label: 'View the Timeline', path: '/timeline' },
+    primary: { label: 'Start the Journey', path: '/learn' },
+    secondary: { label: 'Jump to Risk Assessment', path: '/assess' },
   },
   developer: {
-    primary: { label: 'Try the Playground', path: '/playground' },
-    secondary: { label: 'Explore Algorithms', path: '/algorithms' },
+    primary: { label: 'Start the Journey', path: '/learn' },
+    secondary: { label: 'Jump to Playground', path: '/playground' },
   },
   architect: {
-    primary: { label: 'Explore the Timeline', path: '/timeline' },
-    secondary: { label: 'Assess Your Risk', path: '/assess' },
+    primary: { label: 'Start the Journey', path: '/learn' },
+    secondary: { label: 'Jump to Timeline', path: '/timeline' },
   },
   researcher: {
-    primary: { label: 'Explore Algorithms', path: '/algorithms' },
-    secondary: { label: 'Try the Playground', path: '/playground' },
+    primary: { label: 'Start the Journey', path: '/learn' },
+    secondary: { label: 'Jump to Algorithms', path: '/algorithms' },
   },
   ops: {
-    primary: { label: 'Explore Migration Catalog', path: '/migrate' },
-    secondary: { label: 'Try OpenSSL Studio', path: '/openssl' },
+    primary: { label: 'Start the Journey', path: '/learn' },
+    secondary: { label: 'Jump to Migration Catalog', path: '/migrate' },
   },
 }
 
 const DEFAULT_HERO_CTA = {
-  primary: { label: 'Explore the Timeline', path: '/timeline' },
-  secondary: { label: 'Try the Playground', path: '/playground' },
+  primary: { label: 'Start the Journey', path: '/learn' },
+  secondary: { label: 'Explore the Timeline', path: '/timeline' },
 }
 
 // Paths always visible regardless of persona
 const ALWAYS_VISIBLE_PATHS = ['/learn', '/timeline', '/threats']
+
+type StepEngagement = 'not-started' | 'started' | 'engaged'
 
 interface JourneyStep {
   id: string
@@ -80,83 +87,190 @@ interface JourneyStep {
   description: string
   paths: string[]
   color: string
+  section: 'start' | 'journey' | 'assess' | 'current'
+  actionLabel: string
+  resumeLabel: string
 }
+
+const JOURNEY_SECTIONS: { id: string; title: string; subtitle: string; nextHint?: string }[] = [
+  {
+    id: 'start',
+    title: 'Start the Journey',
+    subtitle: 'Build your understanding of the quantum threat and the new cryptographic standards.',
+    nextHint: 'Ready to plan your migration?',
+  },
+  {
+    id: 'journey',
+    title: 'My Journey',
+    subtitle: 'Map your specific requirements — products, compliance frameworks, and deadlines.',
+    nextHint: 'Time to assess your readiness.',
+  },
+  {
+    id: 'assess',
+    title: 'Assess & Report',
+    subtitle: 'Get a personalized risk score, migration roadmap, and hands-on testing.',
+    nextHint: 'Stay informed as the landscape evolves.',
+  },
+  {
+    id: 'current',
+    title: 'Keep Up to Date',
+    subtitle: 'Monitor evolving threats, new standards, and industry leaders.',
+  },
+]
 
 function buildJourneySteps(
   algorithmCount: number | null,
-  migrateCount: number | null
+  migrateCount: number | null,
+  libraryCount: number | null
 ): JourneyStep[] {
   const algoLabel = algorithmCount !== null ? `${algorithmCount}` : '40+'
   const migrateLabel = migrateCount !== null ? `${migrateCount}` : '220+'
+  const libraryLabel = libraryCount !== null ? `${libraryCount}` : '250+'
 
   return [
+    // — Start the Journey —
     {
       id: 'learn',
       step: 1,
       label: 'Learn',
       icon: GraduationCap,
       color: 'text-secondary',
+      section: 'start' as const,
       description:
         'Start from zero or go deep — 27 hands-on modules covering the quantum threat, new encryption standards, and what your organization needs to do',
       paths: ['/learn'],
+      actionLabel: 'Start Learning',
+      resumeLabel: 'Continue Learning',
     },
     {
-      id: 'assess',
+      id: 'timeline',
       step: 2,
-      label: 'Assess',
-      icon: ClipboardCheck,
-      color: 'text-primary',
-      description:
-        'Answer a few questions about your organization and get a personalized readiness score with concrete next steps',
-      paths: ['/assess', '/report'],
-    },
-    {
-      id: 'explore',
-      step: 3,
-      label: 'Explore',
+      label: 'Timeline',
       icon: Globe,
       color: 'text-accent',
-      description: `See when governments require action, compare ${algoLabel} encryption algorithms, and browse the standards driving the transition`,
-      paths: ['/timeline', '/algorithms', '/library'],
-    },
-    {
-      id: 'test',
-      step: 4,
-      label: 'Test',
-      icon: FlaskConical,
-      color: 'text-secondary',
+      section: 'start' as const,
       description:
-        'Generate quantum-resistant keys and test new encryption algorithms right in your browser — no setup required',
-      paths: ['/playground', '/openssl'],
+        'See when governments require action — track every PQC mandate, advisory, and milestone from 2016 to 2036',
+      paths: ['/timeline'],
+      actionLabel: 'Track Deadlines',
+      resumeLabel: 'Review Timeline',
     },
     {
-      id: 'deploy',
-      step: 5,
-      label: 'Deploy',
+      id: 'algorithms',
+      step: 3,
+      label: 'Algorithms',
+      icon: Shield,
+      color: 'text-primary',
+      section: 'start' as const,
+      description: `Compare ${algoLabel} post-quantum encryption algorithms — performance, security levels, key sizes, and standardization status`,
+      paths: ['/algorithms'],
+      actionLabel: 'Compare Algorithms',
+      resumeLabel: 'Explore More',
+    },
+    // — My Journey —
+    {
+      id: 'migrate',
+      step: 4,
+      label: 'Migrate',
       icon: ArrowRightLeft,
       color: 'text-primary',
+      section: 'journey' as const,
       description: `${migrateLabel} tested, production-ready tools for upgrading your infrastructure — from cloud services to hardware`,
       paths: ['/migrate'],
+      actionLabel: 'Browse Catalog',
+      resumeLabel: 'Continue Planning',
     },
     {
-      id: 'ramp',
-      step: 6,
-      label: 'Ramp Up',
+      id: 'compliance',
+      step: 5,
+      label: 'Compliance',
       icon: ShieldCheck,
       color: 'text-accent',
+      section: 'journey' as const,
       description:
         'Track regulatory deadlines from 2024 to 2036 — know exactly when your industry must comply',
       paths: ['/compliance'],
+      actionLabel: 'Check Compliance',
+      resumeLabel: 'Review Frameworks',
+    },
+    // — Assess & Report —
+    {
+      id: 'assess',
+      step: 6,
+      label: 'Assess',
+      icon: ClipboardCheck,
+      color: 'text-primary',
+      section: 'assess' as const,
+      description:
+        'Answer a few questions about your organization and get a personalized readiness score with concrete next steps',
+      paths: ['/assess'],
+      actionLabel: 'Run Assessment',
+      resumeLabel: 'Update Assessment',
     },
     {
-      id: 'maintain',
+      id: 'report',
       step: 7,
-      label: 'Stay Agile',
-      icon: Activity,
-      color: 'text-primary',
+      label: 'Report',
+      icon: FileBarChart,
+      color: 'text-accent',
+      section: 'assess' as const,
       description:
-        'Stay current on evolving threats by industry and see which organizations are leading the transition',
-      paths: ['/threats', '/leaders'],
+        'Review your personalized readiness report with risk scores, migration roadmap, and actionable recommendations',
+      paths: ['/report'],
+      actionLabel: 'View Report',
+      resumeLabel: 'Review Report',
+    },
+    {
+      id: 'test',
+      step: 8,
+      label: 'Test & Build',
+      icon: FlaskConical,
+      color: 'text-secondary',
+      section: 'assess' as const,
+      description:
+        'Generate quantum-resistant keys and test new encryption algorithms right in your browser — no setup required',
+      paths: ['/playground', '/openssl'],
+      actionLabel: 'Try the Playground',
+      resumeLabel: 'Build More',
+    },
+    // — Keep Up to Date —
+    {
+      id: 'threats',
+      step: 9,
+      label: 'Threats',
+      icon: AlertTriangle,
+      color: 'text-accent',
+      section: 'current' as const,
+      description:
+        'Stay current on evolving threats by industry — understand attack vectors, risk timelines, and what to prioritize',
+      paths: ['/threats'],
+      actionLabel: 'Explore Threats',
+      resumeLabel: 'Check Updates',
+    },
+    {
+      id: 'library',
+      step: 10,
+      label: 'Library',
+      icon: Shield,
+      color: 'text-primary',
+      section: 'current' as const,
+      description: `Browse ${libraryLabel} tracked standards, RFCs, and specifications driving the post-quantum transition`,
+      paths: ['/library'],
+      actionLabel: 'Browse Standards',
+      resumeLabel: 'Browse Standards',
+    },
+    {
+      id: 'leaders',
+      step: 11,
+      label: 'Leaders',
+      icon: Globe,
+      color: 'text-secondary',
+      section: 'current' as const,
+      description:
+        'Discover the organizations and individuals driving the post-quantum transition worldwide',
+      paths: ['/leaders'],
+      actionLabel: 'Discover Leaders',
+      resumeLabel: 'Discover Leaders',
     },
   ]
 }
@@ -184,7 +298,7 @@ const SECTION_HEADING: Record<string, { title: string; sub: string }> = {
   },
   default: {
     title: 'The complete platform for your PQC transformation',
-    sub: 'Learn, assess, explore, test, and stay agile — every step of the journey, all in one place.',
+    sub: 'Understand, assess, and stay current — every step of the journey, all in one place.',
   },
 }
 
@@ -192,11 +306,63 @@ export const LandingView = () => {
   const { selectedPersona } = usePersonaStore()
   // eslint-disable-next-line security/detect-object-injection
   const recommendedPaths = selectedPersona ? PERSONA_RECOMMENDED_PATHS[selectedPersona] : []
-  // eslint-disable-next-line security/detect-object-injection
-  const heroCta = (selectedPersona && PERSONA_HERO_CTA[selectedPersona]) || DEFAULT_HERO_CTA
   const { workflowActive, startWorkflow } = useMigrationWorkflowStore()
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
   const showWorkflowCta = assessmentStatus === 'complete' && !workflowActive
+
+  // Engagement tracking — derive from existing stores (no new persistence)
+  const moduleModules = useModuleStore((s) => s.modules)
+  const artifactCount = useModuleStore((s) => {
+    const a = s.artifacts
+    return a.keys.length + a.certificates.length + a.csrs.length
+  })
+  const myFrameworkCount = useComplianceSelectionStore((s) => s.myFrameworks.length)
+  const migrationStarted = useMigrationWorkflowStore((s) => s.startedAt !== null)
+
+  const hasLearningProgress = useMemo(
+    () => Object.values(moduleModules).some((m) => m.status !== 'not-started'),
+    [moduleModules]
+  )
+
+  const stepEngagement = useMemo((): Record<string, StepEngagement> => {
+    return {
+      learn: hasLearningProgress ? 'engaged' : 'not-started',
+      timeline: 'not-started',
+      algorithms: artifactCount > 0 ? 'engaged' : 'not-started',
+      migrate: migrationStarted ? 'engaged' : 'not-started',
+      compliance: myFrameworkCount > 0 ? 'engaged' : 'not-started',
+      assess:
+        assessmentStatus === 'complete'
+          ? 'engaged'
+          : assessmentStatus === 'in-progress'
+            ? 'started'
+            : 'not-started',
+      report: assessmentStatus === 'complete' ? 'engaged' : 'not-started',
+      test: artifactCount > 0 ? 'engaged' : 'not-started',
+      threats: 'not-started',
+      library: 'not-started',
+      leaders: 'not-started',
+    }
+  }, [hasLearningProgress, artifactCount, myFrameworkCount, migrationStarted, assessmentStatus])
+
+  // Context-aware hero CTA — evolves based on user progress
+  const heroCta = useMemo(() => {
+    // eslint-disable-next-line security/detect-object-injection
+    const base = (selectedPersona && PERSONA_HERO_CTA[selectedPersona]) || DEFAULT_HERO_CTA
+    if (assessmentStatus === 'complete') {
+      return {
+        primary: { label: 'View Your Report', path: '/report' },
+        secondary: base.secondary,
+      }
+    }
+    if (hasLearningProgress) {
+      return {
+        primary: { label: 'Continue Your Journey', path: '/learn' },
+        secondary: base.secondary,
+      }
+    }
+    return base
+  }, [selectedPersona, hasLearningProgress, assessmentStatus])
 
   const [algorithmCount, setAlgorithmCount] = useState<number | null>(null)
   const [timelineEventCount, setTimelineEventCount] = useState<number | null>(null)
@@ -217,8 +383,8 @@ export const LandingView = () => {
   }, [])
 
   const journeySteps = useMemo(
-    () => buildJourneySteps(algorithmCount, migrateCount),
-    [algorithmCount, migrateCount]
+    () => buildJourneySteps(algorithmCount, migrateCount, libraryCount),
+    [algorithmCount, migrateCount, libraryCount]
   )
 
   // Set of paths accessible to the current persona
@@ -235,6 +401,13 @@ export const LandingView = () => {
 
   const isRecommendedStep = (step: JourneyStep) =>
     step.paths.some((p) => recommendedPaths.includes(p))
+
+  // First recommended step the user hasn't engaged with yet — gets "Start here" badge
+  const firstRecommendedUnvisited = useMemo(() => {
+    const recommended = journeySteps.filter((s) => isRecommendedStep(s))
+    return recommended.find((s) => stepEngagement[s.id] === 'not-started')?.id ?? null
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [journeySteps, stepEngagement, recommendedPaths])
 
   const heading = SECTION_HEADING[selectedPersona ?? 'default'] ?? SECTION_HEADING.default
 
@@ -401,56 +574,106 @@ export const LandingView = () => {
           </motion.div>
         )}
 
-        {/* Journey Step Cards */}
+        {/* Journey Step Cards — grouped by section */}
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
           initial="hidden"
           animate="visible"
           variants={{ visible: { transition: { delayChildren: 0.5, staggerChildren: 0.07 } } }}
         >
-          {journeySteps.map((step) => {
-            const accessible = isAccessible(step)
-            const recommended = isRecommendedStep(step)
+          {JOURNEY_SECTIONS.map((section) => {
+            const sectionSteps = journeySteps.filter((s) => s.section === section.id)
+            if (sectionSteps.length === 0) return null
             return (
-              <motion.div
-                key={step.id}
-                variants={fadeUp}
-                className={`flex h-full ${accessible ? '' : 'opacity-40'}`}
-              >
-                <Link to={step.paths[0]} className="block w-full group">
-                  <div className="glass-panel p-4 h-full border-border/50 hover:border-primary/30 transition-all duration-300 flex flex-col">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono text-muted-foreground w-4 underline underline-offset-4 decoration-primary/30">
-                          {step.step}
-                        </span>
-                        <step.icon className={step.color} size={18} />
-                      </div>
-                      {recommended && (
-                        <span className="text-[10px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1.5 py-0.5 shrink-0 bg-primary/5">
-                          For you
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="text-sm font-bold mb-1 group-hover:text-primary transition-colors tracking-tight">
-                      {step.label}
+              <React.Fragment key={section.id}>
+                <motion.div variants={fadeUp} className="col-span-full mt-6 first:mt-0">
+                  <div className="flex items-baseline gap-3 mb-1">
+                    <h3 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                      {section.title}
                     </h3>
-                    <p className="text-xs text-muted-foreground leading-snug flex-1">
-                      {step.description}
-                    </p>
-                    <div className="flex flex-wrap gap-1 mt-3">
-                      {step.paths.map((p) => (
-                        <span
-                          key={p}
-                          className="text-[10px] font-mono text-muted-foreground bg-muted rounded px-1.5 py-0.5"
-                        >
-                          {p}
-                        </span>
-                      ))}
-                    </div>
+                    <div className="flex-1 h-px bg-border/50" />
                   </div>
-                </Link>
-              </motion.div>
+                  <p className="text-xs text-muted-foreground/70 mb-3 max-w-lg">
+                    {section.subtitle}
+                  </p>
+                </motion.div>
+                {sectionSteps.map((step) => {
+                  const accessible = isAccessible(step)
+                  const recommended = isRecommendedStep(step)
+                  const engagement = stepEngagement[step.id] ?? 'not-started'
+                  const isStartHere = step.id === firstRecommendedUnvisited
+                  return (
+                    <motion.div
+                      key={step.id}
+                      variants={fadeUp}
+                      className={`flex h-full ${accessible ? '' : 'opacity-40'}`}
+                    >
+                      <Link to={step.paths[0]} className="block w-full group">
+                        <div className="glass-panel p-4 h-full border-border/50 hover:border-primary/30 transition-all duration-300 flex flex-col">
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-mono text-muted-foreground w-4 underline underline-offset-4 decoration-primary/30">
+                                {step.step}
+                              </span>
+                              <step.icon className={step.color} size={18} />
+                            </div>
+                            {isStartHere ? (
+                              <span className="text-[10px] font-mono uppercase tracking-widest text-secondary border border-secondary/30 rounded px-1.5 py-0.5 shrink-0 bg-secondary/5 animate-pulse">
+                                Start here
+                              </span>
+                            ) : engagement === 'engaged' ? (
+                              <span className="text-[10px] font-mono text-status-success flex items-center gap-1">
+                                <Check size={10} /> Explored
+                              </span>
+                            ) : engagement === 'started' ? (
+                              <span className="text-[10px] font-mono text-status-warning flex items-center gap-1">
+                                <ArrowRight size={10} /> In progress
+                              </span>
+                            ) : recommended ? (
+                              <span className="text-[10px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1.5 py-0.5 shrink-0 bg-primary/5">
+                                For you
+                              </span>
+                            ) : null}
+                          </div>
+                          <h3 className="text-sm font-bold mb-1 group-hover:text-primary transition-colors tracking-tight">
+                            {step.label}
+                          </h3>
+                          <p className="text-xs text-muted-foreground leading-snug flex-1">
+                            {step.description}
+                          </p>
+                          <div className="flex items-center justify-between mt-3">
+                            <div className="flex flex-wrap gap-1">
+                              {step.paths.map((p) => (
+                                <span
+                                  key={p}
+                                  className="text-[10px] font-mono text-muted-foreground bg-muted rounded px-1.5 py-0.5"
+                                >
+                                  {p}
+                                </span>
+                              ))}
+                            </div>
+                            <span className="text-xs font-semibold text-primary group-hover:underline underline-offset-2 flex items-center gap-0.5 shrink-0">
+                              {engagement !== 'not-started' ? step.resumeLabel : step.actionLabel}
+                              <ArrowRight size={12} />
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  )
+                })}
+                {section.nextHint && (
+                  <motion.div
+                    variants={fadeUp}
+                    className="col-span-full hidden sm:flex justify-center py-2"
+                  >
+                    <span className="text-xs text-muted-foreground/60 flex items-center gap-1.5">
+                      {section.nextHint}
+                      <ArrowRight size={12} className="text-primary/50" />
+                    </span>
+                  </motion.div>
+                )}
+              </React.Fragment>
             )
           })}
         </motion.div>

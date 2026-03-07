@@ -268,8 +268,8 @@ const ROLE_ADAPTATIONS: {
     icon: Briefcase,
     color: 'text-primary',
     highlights: [
-      'Hero CTA changes to "Assess Your Risk"',
-      'Journey steps Assess, Ramp Up, and Explore are featured',
+      'Hero CTA leads to "Start the Journey" — shortcut to Risk Assessment',
+      'Learn, Assess, Compliance, and Timeline steps are featured',
       'Headings and descriptions focus on governance, risk, and compliance deadlines',
     ],
   },
@@ -278,8 +278,8 @@ const ROLE_ADAPTATIONS: {
     icon: Code,
     color: 'text-secondary',
     highlights: [
-      'Hero CTA changes to "Try the Playground"',
-      'Journey steps Test, Explore, and Deploy are featured',
+      'Hero CTA leads to "Start the Journey" — shortcut to Playground',
+      'Learn, Algorithms, Playground, and OpenSSL steps are featured',
       'Headings and descriptions focus on hands-on crypto operations and APIs',
     ],
   },
@@ -288,8 +288,8 @@ const ROLE_ADAPTATIONS: {
     icon: ShieldCheck,
     color: 'text-accent',
     highlights: [
-      'Hero CTA changes to "Explore the Timeline"',
-      'Journey steps Explore, Deploy, and Assess are featured',
+      'Hero CTA leads to "Start the Journey" — shortcut to Timeline',
+      'Learn, Timeline, Assess, and Compliance steps are featured',
       'Headings and descriptions focus on migration blueprints and system design',
     ],
   },
@@ -298,8 +298,8 @@ const ROLE_ADAPTATIONS: {
     icon: Server,
     color: 'text-secondary',
     highlights: [
-      'Hero CTA changes to "Explore Migration Catalog"',
-      'Journey steps Deploy, Test, and Learn are featured',
+      'Hero CTA leads to "Start the Journey" — shortcut to Migration Catalog',
+      'Learn, Migrate, OpenSSL, and Assess steps are featured',
       'Headings and descriptions focus on infrastructure deployment and operations',
     ],
   },
@@ -308,7 +308,7 @@ const ROLE_ADAPTATIONS: {
     icon: GraduationCap,
     color: 'text-primary',
     highlights: [
-      'Hero CTA changes to "Explore Algorithms"',
+      'Hero CTA leads to "Start the Journey" — shortcut to Algorithms',
       'All sections fully accessible — no dimming applied',
       'Headings and descriptions focus on mathematical foundations and protocol detail',
     ],
