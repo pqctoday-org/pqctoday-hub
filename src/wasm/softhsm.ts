@@ -77,7 +77,7 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
       // the PKCS#11 v3.2 C ABI names directly on the InitOutput object.
       //
       // CKR_MECHANISM_INVALID (0x70) is returned by graceful stubs for
-      // operations not implemented in the Rust binary (RSA, ECDSA, HMAC, etc.).
+      // operations not yet implemented in the Rust binary.
       const CKR_NOT_IMPL = 0x70
 
       return {
@@ -108,13 +108,13 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         // ── Object management ─────────────────────────────────────────────
         _C_CreateObject: wasmExports._C_CreateObject,
         _C_CopyObject: () => CKR_NOT_IMPL,
-        _C_DestroyObject: () => 0,
+        _C_DestroyObject: wasmExports._C_DestroyObject,
         _C_GetObjectSize: () => CKR_NOT_IMPL,
         _C_GetAttributeValue: wasmExports._C_GetAttributeValue,
         _C_SetAttributeValue: () => CKR_NOT_IMPL,
-        _C_FindObjectsInit: () => CKR_NOT_IMPL,
-        _C_FindObjects: () => CKR_NOT_IMPL,
-        _C_FindObjectsFinal: () => 0,
+        _C_FindObjectsInit: wasmExports._C_FindObjectsInit,
+        _C_FindObjects: wasmExports._C_FindObjects,
+        _C_FindObjectsFinal: wasmExports._C_FindObjectsFinal,
 
         // ── Key generation ────────────────────────────────────────────────
         _C_GenerateKey: wasmExports._C_GenerateKey,
@@ -124,7 +124,7 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_EncapsulateKey: wasmExports._C_EncapsulateKey,
         _C_DecapsulateKey: wasmExports._C_DecapsulateKey,
 
-        // ── AES encrypt/decrypt ───────────────────────────────────────────
+        // ── Encrypt/decrypt (AES, RSA OAEP) ──────────────────────────────
         _C_EncryptInit: wasmExports._C_EncryptInit,
         _C_Encrypt: wasmExports._C_Encrypt,
         _C_EncryptUpdate: () => CKR_NOT_IMPL,
@@ -134,7 +134,7 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_DecryptUpdate: () => CKR_NOT_IMPL,
         _C_DecryptFinal: () => CKR_NOT_IMPL,
 
-        // ── ML-DSA sign/verify (classic API) ──────────────────────────────
+        // ── Sign/verify (ML-DSA, SLH-DSA, RSA, ECDSA, EdDSA, HMAC) ─────
         _C_SignInit: wasmExports._C_SignInit,
         _C_Sign: wasmExports._C_Sign,
         _C_SignUpdate: () => CKR_NOT_IMPL,
@@ -172,12 +172,12 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_DecryptMessageNext: () => CKR_NOT_IMPL,
         _C_MessageDecryptFinal: () => 0,
 
-        // ── Digest (stubs) ────────────────────────────────────────────────
-        _C_DigestInit: () => CKR_NOT_IMPL,
-        _C_Digest: () => CKR_NOT_IMPL,
-        _C_DigestUpdate: () => CKR_NOT_IMPL,
+        // ── Digest ───────────────────────────────────────────────────────
+        _C_DigestInit: wasmExports._C_DigestInit,
+        _C_Digest: wasmExports._C_Digest,
+        _C_DigestUpdate: wasmExports._C_DigestUpdate,
         _C_DigestKey: () => CKR_NOT_IMPL,
-        _C_DigestFinal: () => CKR_NOT_IMPL,
+        _C_DigestFinal: wasmExports._C_DigestFinal,
 
         // ── Dual-function (stubs) ─────────────────────────────────────────
         _C_DigestEncryptUpdate: () => CKR_NOT_IMPL,
@@ -185,16 +185,16 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_SignEncryptUpdate: () => CKR_NOT_IMPL,
         _C_DecryptVerifyUpdate: () => CKR_NOT_IMPL,
 
-        // ── Key wrapping/unwrapping (stubs) ───────────────────────────────
-        _C_WrapKey: () => CKR_NOT_IMPL,
-        _C_UnwrapKey: () => CKR_NOT_IMPL,
-        _C_DeriveKey: () => CKR_NOT_IMPL,
+        // ── Key wrapping/unwrapping/derivation ───────────────────────────
+        _C_WrapKey: wasmExports._C_WrapKey,
+        _C_UnwrapKey: wasmExports._C_UnwrapKey,
+        _C_DeriveKey: wasmExports._C_DeriveKey,
         _C_WrapKeyAuthenticated: () => CKR_NOT_IMPL,
         _C_UnwrapKeyAuthenticated: () => CKR_NOT_IMPL,
 
-        // ── Random (stubs) ────────────────────────────────────────────────
+        // ── Random ───────────────────────────────────────────────────────
         _C_SeedRandom: () => 0,
-        _C_GenerateRandom: () => CKR_NOT_IMPL,
+        _C_GenerateRandom: wasmExports._C_GenerateRandom,
 
         // ── Misc (stubs) ──────────────────────────────────────────────────
         _C_GetFunctionStatus: () => CKR_NOT_IMPL,

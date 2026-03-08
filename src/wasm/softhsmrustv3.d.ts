@@ -31,6 +31,31 @@ export function _C_Decrypt(
 
 export function _C_DecryptInit(h_session: number, p_mechanism: number, h_key: number): number
 
+export function _C_DeriveKey(
+  _h_session: number,
+  p_mechanism: number,
+  h_base_key: number,
+  p_template: number,
+  ul_attribute_count: number,
+  ph_key: number
+): number
+
+export function _C_DestroyObject(_h_session: number, h_object: number): number
+
+export function _C_Digest(
+  h_session: number,
+  p_data: number,
+  ul_data_len: number,
+  p_digest: number,
+  pul_digest_len: number
+): number
+
+export function _C_DigestFinal(h_session: number, p_digest: number, pul_digest_len: number): number
+
+export function _C_DigestInit(h_session: number, p_mechanism: number): number
+
+export function _C_DigestUpdate(h_session: number, p_part: number, ul_part_len: number): number
+
 export function _C_EncapsulateKey(
   _h_session: number,
   p_mechanism: number,
@@ -54,9 +79,17 @@ export function _C_EncryptInit(h_session: number, p_mechanism: number, h_key: nu
 
 export function _C_Finalize(_p_reserved: number): number
 
-/**
- * Generate a symmetric key (AES).
- */
+export function _C_FindObjects(
+  h_session: number,
+  ph_object: number,
+  ul_max_object_count: number,
+  pul_object_count: number
+): number
+
+export function _C_FindObjectsFinal(h_session: number): number
+
+export function _C_FindObjectsInit(h_session: number, p_template: number, ul_count: number): number
+
 export function _C_GenerateKey(
   _h_session: number,
   p_mechanism: number,
@@ -74,6 +107,12 @@ export function _C_GenerateKeyPair(
   _ul_private_key_attribute_count: number,
   ph_public_key: number,
   ph_private_key: number
+): number
+
+export function _C_GenerateRandom(
+  _h_session: number,
+  p_random_data: number,
+  ul_random_len: number
 ): number
 
 export function _C_GetAttributeValue(
@@ -163,6 +202,17 @@ export function _C_SignMessage(
   pul_signature_len: number
 ): number
 
+export function _C_UnwrapKey(
+  _h_session: number,
+  p_mechanism: number,
+  h_unwrapping_key: number,
+  p_wrapped_key: number,
+  ul_wrapped_key_len: number,
+  _p_template: number,
+  _ul_attribute_count: number,
+  ph_key: number
+): number
+
 export function _C_Verify(
   h_session: number,
   p_data: number,
@@ -181,6 +231,15 @@ export function _C_VerifyMessage(
   ul_data_len: number,
   p_signature: number,
   ul_signature_len: number
+): number
+
+export function _C_WrapKey(
+  _h_session: number,
+  p_mechanism: number,
+  h_wrapping_key: number,
+  h_key: number,
+  p_wrapped_key: number,
+  pul_wrapped_key_len: number
 ): number
 
 export function _free(ptr: number, size: number): void
@@ -205,6 +264,19 @@ export interface InitOutput {
   ) => number
   readonly _C_Decrypt: (a: number, b: number, c: number, d: number, e: number) => number
   readonly _C_DecryptInit: (a: number, b: number, c: number) => number
+  readonly _C_DeriveKey: (
+    a: number,
+    b: number,
+    c: number,
+    d: number,
+    e: number,
+    f: number
+  ) => number
+  readonly _C_DestroyObject: (a: number, b: number) => number
+  readonly _C_Digest: (a: number, b: number, c: number, d: number, e: number) => number
+  readonly _C_DigestFinal: (a: number, b: number, c: number) => number
+  readonly _C_DigestInit: (a: number, b: number) => number
+  readonly _C_DigestUpdate: (a: number, b: number, c: number) => number
   readonly _C_EncapsulateKey: (
     a: number,
     b: number,
@@ -217,6 +289,9 @@ export interface InitOutput {
   ) => number
   readonly _C_Encrypt: (a: number, b: number, c: number, d: number, e: number) => number
   readonly _C_EncryptInit: (a: number, b: number, c: number) => number
+  readonly _C_FindObjects: (a: number, b: number, c: number, d: number) => number
+  readonly _C_FindObjectsFinal: (a: number) => number
+  readonly _C_FindObjectsInit: (a: number, b: number, c: number) => number
   readonly _C_GenerateKey: (a: number, b: number, c: number, d: number, e: number) => number
   readonly _C_GenerateKeyPair: (
     a: number,
@@ -228,6 +303,7 @@ export interface InitOutput {
     g: number,
     h: number
   ) => number
+  readonly _C_GenerateRandom: (a: number, b: number, c: number) => number
   readonly _C_GetAttributeValue: (a: number, b: number, c: number, d: number) => number
   readonly _C_GetMechanismInfo: (a: number, b: number, c: number) => number
   readonly _C_GetMechanismList: (a: number, b: number, c: number) => number
@@ -252,6 +328,16 @@ export interface InitOutput {
     f: number,
     g: number
   ) => number
+  readonly _C_UnwrapKey: (
+    a: number,
+    b: number,
+    c: number,
+    d: number,
+    e: number,
+    f: number,
+    g: number,
+    h: number
+  ) => number
   readonly _C_Verify: (a: number, b: number, c: number, d: number, e: number) => number
   readonly _C_VerifyInit: (a: number, b: number, c: number) => number
   readonly _C_VerifyMessage: (
@@ -263,6 +349,7 @@ export interface InitOutput {
     f: number,
     g: number
   ) => number
+  readonly _C_WrapKey: (a: number, b: number, c: number, d: number, e: number, f: number) => number
   readonly _free: (a: number, b: number) => void
   readonly _malloc: (a: number) => number
   readonly _C_Login: (a: number, b: number, c: number, d: number) => number

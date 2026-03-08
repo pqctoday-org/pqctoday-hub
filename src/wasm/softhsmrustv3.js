@@ -94,6 +94,89 @@ export function _C_DecryptInit(h_session, p_mechanism, h_key) {
 /**
  * @param {number} _h_session
  * @param {number} p_mechanism
+ * @param {number} h_base_key
+ * @param {number} p_template
+ * @param {number} ul_attribute_count
+ * @param {number} ph_key
+ * @returns {number}
+ */
+export function _C_DeriveKey(
+  _h_session,
+  p_mechanism,
+  h_base_key,
+  p_template,
+  ul_attribute_count,
+  ph_key
+) {
+  const ret = wasm._C_DeriveKey(
+    _h_session,
+    p_mechanism,
+    h_base_key,
+    p_template,
+    ul_attribute_count,
+    ph_key
+  )
+  return ret >>> 0
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} h_object
+ * @returns {number}
+ */
+export function _C_DestroyObject(_h_session, h_object) {
+  const ret = wasm._C_DestroyObject(_h_session, h_object)
+  return ret >>> 0
+}
+
+/**
+ * @param {number} h_session
+ * @param {number} p_data
+ * @param {number} ul_data_len
+ * @param {number} p_digest
+ * @param {number} pul_digest_len
+ * @returns {number}
+ */
+export function _C_Digest(h_session, p_data, ul_data_len, p_digest, pul_digest_len) {
+  const ret = wasm._C_Digest(h_session, p_data, ul_data_len, p_digest, pul_digest_len)
+  return ret >>> 0
+}
+
+/**
+ * @param {number} h_session
+ * @param {number} p_digest
+ * @param {number} pul_digest_len
+ * @returns {number}
+ */
+export function _C_DigestFinal(h_session, p_digest, pul_digest_len) {
+  const ret = wasm._C_DigestFinal(h_session, p_digest, pul_digest_len)
+  return ret >>> 0
+}
+
+/**
+ * @param {number} h_session
+ * @param {number} p_mechanism
+ * @returns {number}
+ */
+export function _C_DigestInit(h_session, p_mechanism) {
+  const ret = wasm._C_DigestInit(h_session, p_mechanism)
+  return ret >>> 0
+}
+
+/**
+ * @param {number} h_session
+ * @param {number} p_part
+ * @param {number} ul_part_len
+ * @returns {number}
+ */
+export function _C_DigestUpdate(h_session, p_part, ul_part_len) {
+  const ret = wasm._C_DigestUpdate(h_session, p_part, ul_part_len)
+  return ret >>> 0
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} p_mechanism
  * @param {number} h_key
  * @param {number} _p_template
  * @param {number} _ul_attribute_count
@@ -171,7 +254,38 @@ export function _C_Finalize(_p_reserved) {
 }
 
 /**
- * Generate a symmetric key (AES).
+ * @param {number} h_session
+ * @param {number} ph_object
+ * @param {number} ul_max_object_count
+ * @param {number} pul_object_count
+ * @returns {number}
+ */
+export function _C_FindObjects(h_session, ph_object, ul_max_object_count, pul_object_count) {
+  const ret = wasm._C_FindObjects(h_session, ph_object, ul_max_object_count, pul_object_count)
+  return ret >>> 0
+}
+
+/**
+ * @param {number} h_session
+ * @returns {number}
+ */
+export function _C_FindObjectsFinal(h_session) {
+  const ret = wasm._C_FindObjectsFinal(h_session)
+  return ret >>> 0
+}
+
+/**
+ * @param {number} h_session
+ * @param {number} p_template
+ * @param {number} ul_count
+ * @returns {number}
+ */
+export function _C_FindObjectsInit(h_session, p_template, ul_count) {
+  const ret = wasm._C_FindObjectsInit(h_session, p_template, ul_count)
+  return ret >>> 0
+}
+
+/**
  * @param {number} _h_session
  * @param {number} p_mechanism
  * @param {number} p_template
@@ -215,6 +329,17 @@ export function _C_GenerateKeyPair(
     ph_public_key,
     ph_private_key
   )
+  return ret >>> 0
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} p_random_data
+ * @param {number} ul_random_len
+ * @returns {number}
+ */
+export function _C_GenerateRandom(_h_session, p_random_data, ul_random_len) {
+  const ret = wasm._C_GenerateRandom(_h_session, p_random_data, ul_random_len)
   return ret >>> 0
 }
 
@@ -461,6 +586,40 @@ export function _C_SignMessage(
 }
 
 /**
+ * @param {number} _h_session
+ * @param {number} p_mechanism
+ * @param {number} h_unwrapping_key
+ * @param {number} p_wrapped_key
+ * @param {number} ul_wrapped_key_len
+ * @param {number} _p_template
+ * @param {number} _ul_attribute_count
+ * @param {number} ph_key
+ * @returns {number}
+ */
+export function _C_UnwrapKey(
+  _h_session,
+  p_mechanism,
+  h_unwrapping_key,
+  p_wrapped_key,
+  ul_wrapped_key_len,
+  _p_template,
+  _ul_attribute_count,
+  ph_key
+) {
+  const ret = wasm._C_UnwrapKey(
+    _h_session,
+    p_mechanism,
+    h_unwrapping_key,
+    p_wrapped_key,
+    ul_wrapped_key_len,
+    _p_template,
+    _ul_attribute_count,
+    ph_key
+  )
+  return ret >>> 0
+}
+
+/**
  * @param {number} h_session
  * @param {number} p_data
  * @param {number} ul_data_len
@@ -511,6 +670,34 @@ export function _C_VerifyMessage(
     ul_data_len,
     p_signature,
     ul_signature_len
+  )
+  return ret >>> 0
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} p_mechanism
+ * @param {number} h_wrapping_key
+ * @param {number} h_key
+ * @param {number} p_wrapped_key
+ * @param {number} pul_wrapped_key_len
+ * @returns {number}
+ */
+export function _C_WrapKey(
+  _h_session,
+  p_mechanism,
+  h_wrapping_key,
+  h_key,
+  p_wrapped_key,
+  pul_wrapped_key_len
+) {
+  const ret = wasm._C_WrapKey(
+    _h_session,
+    p_mechanism,
+    h_wrapping_key,
+    h_key,
+    p_wrapped_key,
+    pul_wrapped_key_len
   )
   return ret >>> 0
 }
