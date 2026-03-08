@@ -4,6 +4,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.32.0] - 2026-03-07
+
+### Added
+
+- **Rust SoftHSMv3 WASM engine** (`src/wasm/softhsm.ts`, `src/wasm/softhsmrustv3.js`, `src/wasm/softhsmrustv3.d.ts`): New `getSoftHSMRustModule()` singleton loader for the Rust wasm-bindgen SoftHSMv3 build — provides a full PKCS#11 v3.2 ABI adapter mapping all session, key generation, ML-KEM, ML-DSA, SLH-DSA, and AES operations into the identical `SoftHSMModule` interface used by the C++ engine. Includes Emscripten-compat memory layer (`_malloc`, `_free`, `HEAPU8`, `setValue`, `getValue`). [view:/playground]
+
+- **Dual-engine parity verification** (`src/components/Playground/tabs/SoftHsmTab.tsx`, `src/components/Playground/hsm/symmetric/AesPanel.tsx`): New "Dual Cross-Check" mode runs both C++ and Rust engines simultaneously — cross-verifies ML-KEM encapsulation (import pubkey → encapsulate on Rust → decapsulate on C++ → compare secrets), ML-DSA signing (verify C++ signature on Rust), SLH-DSA signing (same cross-verify pattern), and AES encryption (decrypt C++ ciphertext on Rust → compare plaintext). Logs parity success or raises a parity failure error. [view:/playground]
+
+- **PKCS#11 key import helpers** (`src/wasm/softhsm.ts`): Four new `hsm_import*` functions — `hsm_importMLKEMPublicKey`, `hsm_importMLDSAPublicKey`, `hsm_importSLHDSAPublicKey`, `hsm_importAESKey` — create key objects via `C_CreateObject` for cross-engine parity testing. [view:/playground]
+
+- **Engine mode UI** (`src/components/Playground/InteractivePlayground.tsx`, `src/components/Playground/tabs/SoftHsmTab.tsx`): Radio-button engine selector in the Playground header (C++ / Rust / Dual Parity) and SoftHSM tab (Software API / C++ / Rust / Dual Cross-Check). Disabled during active operations. Engine badges (color-coded) on every PKCS#11 log entry. [view:/playground]
+
+- **Rust WASM binary** (`public/wasm/rust/softhsmrustv3_bg.wasm`): Pre-built Rust SoftHSMv3 WASM binary (~336 KB) for browser-side PKCS#11 operations. [view:/playground]
+
+- **E2E Playground specs** (`e2e/playground-softhsm.spec.ts`, `e2e/playground-softhsm-rust.spec.ts`): Playwright end-to-end tests for SoftHSM C++ and Rust engine modes — token setup, ML-KEM, ML-DSA, and SLH-DSA operations. [view:/playground]
+
+### Changed
+
+- **HSM context — engine mode state** (`src/components/Playground/hsm/HsmContext.tsx`): Added `EngineMode` type (`'software' | 'cpp' | 'rust' | 'dual'`), `engineMode`/`setEngineMode` state, and `crossCheckModuleRef` for dual-engine parity. Replaced `HsmLogEntry` type with canonical `Pkcs11LogEntry` from `softhsm.ts`. [view:/playground]
+
+- **PKCS#11 log entries tagged with engine name** (`src/wasm/softhsm.ts`, `src/components/Playground/components/PkcsLogPanel.tsx`): `Pkcs11LogEntry` gains `engineName?: string`; `createLoggingProxy()` accepts optional engine name parameter. Log panel renders color-coded engine badges (C++ blue, Rust orange, Dual purple). Copy-all format includes `[ENGINE_NAME]` prefix. [view:/playground]
+
+- **SoftHSM tab — shared log panel** (`src/components/Playground/tabs/SoftHsmTab.tsx`): Removed 75-line inline `LogPanel` component; now uses the shared `PkcsLogPanel` from `components/`. All PKCS#11 calls route through `useHsmContext()` for unified logging. [view:/playground]
+
+- **CollapsibleSection layout** (`src/components/ui/CollapsibleSection.tsx`): Moved `infoTip` and `headerExtra` props outside the collapse `<Button>` click target — prevents info tip clicks from toggling the section. [view:/assess]
+
+- **MigrationRoadmap layout** (`src/components/Report/MigrationRoadmap.tsx`): Same pattern — `SectionInfoTip` moved outside the collapsible button to prevent accidental section toggling. [view:/assess]
+
+- **Renamed `getSoftHSMModule` → `getSoftHSMCppModule`** (`src/wasm/softhsm.ts`, `src/hooks/useHSM.ts`, all consumers): Explicit naming to distinguish C++ Emscripten engine from Rust wasm-bindgen engine. [view:/playground]
+
+### Fixed
+
+- **PKCS#11 function call prefixes** (`src/wasm/softhsm.ts`): Fixed 6 helper functions calling C bindings without the `_` prefix — `C_WrapKey` → `_C_WrapKey` (3 sites), `C_UnwrapKey` → `_C_UnwrapKey`, `C_GenerateRandom` → `_C_GenerateRandom`, `C_SeedRandom` → `_C_SeedRandom`. These calls would have failed at runtime. [view:/playground]
+
+- **`freeTemplate` missing length argument** (`src/wasm/softhsm.ts`): `hsm_unwrapKey` passed only 2 args to `freeTemplate()` instead of 3 — added the missing template length parameter. [view:/playground]
+
+- **WASM memory access for Rust compat** (`src/wasm/softhsm.ts`): Changed `M.wasmMemory.buffer.byteLength` → `M.HEAPU8.buffer.byteLength` in 4 places within `hsm_aesWrapKeyKwp` — `wasmMemory` is undefined on the Rust adapter; `HEAPU8` works for both engines. [view:/playground]
+
 ## [2.31.1] - 2026-03-08
 
 ### Fixed

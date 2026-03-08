@@ -1,22 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import type { Pkcs11LogEntry } from '../../../wasm/softhsm'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
 export type HsmPhase = 'idle' | 'initialized' | 'session_open'
-
-export interface HsmLogEntry {
-  id: string
-  timestamp: string
-  fnSymbol: string
-  args: unknown[]
-  rv: number
-  rvName: string
-  durationMs: number
-  inspect: { hasArgs: boolean }
-}
-
 export type HsmFamily =
   | 'ml-kem'
   | 'ml-dsa'
@@ -29,6 +18,8 @@ export type HsmFamily =
   | 'aes'
   | 'hmac'
   | 'sha'
+
+export type EngineMode = 'software' | 'cpp' | 'rust' | 'dual'
 
 export type HsmKeyRole = 'public' | 'private' | 'secret'
 
@@ -46,9 +37,15 @@ export interface HsmKey {
 
 export interface HsmContextValue {
   // ── WASM handles ──────────────────────────────────────────────────────────
+  /** Primary execution engine */
   moduleRef: React.MutableRefObject<SoftHSMModule | null>
+  /** Secondary execution engine (fallback verification) */
+  crossCheckModuleRef: React.MutableRefObject<SoftHSMModule | null>
   hSessionRef: React.MutableRefObject<number>
   slotRef: React.MutableRefObject<number>
+  /** Execution Configuration */
+  engineMode: EngineMode
+  setEngineMode: React.Dispatch<React.SetStateAction<EngineMode>>
 
   // ── Token lifecycle ───────────────────────────────────────────────────────
   phase: HsmPhase
@@ -79,8 +76,8 @@ export interface HsmContextValue {
   keysForFamily: (family: HsmFamily, role: HsmKeyRole) => HsmKey[]
 
   // ── PKCS#11 call log ─────────────────────────────────────────────────────
-  hsmLog: HsmLogEntry[]
-  addHsmLog: (e: HsmLogEntry) => void
+  hsmLog: Pkcs11LogEntry[]
+  addHsmLog: (e: Pkcs11LogEntry) => void
   clearHsmLog: () => void
 
   // ── Inspect mode ──────────────────────────────────────────────────────────
@@ -103,13 +100,15 @@ export const useHsmContext = (): HsmContextValue => {
 
 export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const moduleRef = useRef<SoftHSMModule | null>(null)
+  const crossCheckModuleRef = useRef<SoftHSMModule | null>(null)
   const hSessionRef = useRef<number>(0)
   const slotRef = useRef<number>(0)
 
+  const [engineMode, setEngineMode] = useState<EngineMode>('software')
   const [phase, setPhase] = useState<HsmPhase>('idle')
   const [tokenCreated, setTokenCreated] = useState(false)
   const [hsmKeys, setHsmKeys] = useState<HsmKey[]>([])
-  const [hsmLog, setHsmLog] = useState<HsmLogEntry[]>([])
+  const [hsmLog, setHsmLog] = useState<Pkcs11LogEntry[]>([])
   const [inspectMode, setInspectMode] = useState(false)
 
   const isReady = phase === 'session_open'
@@ -139,7 +138,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     [hsmKeys]
   )
 
-  const addHsmLog = useCallback((e: HsmLogEntry) => {
+  const addHsmLog = useCallback((e: Pkcs11LogEntry) => {
     setHsmLog((prev) => {
       const next = [e, ...prev]
       return next.length > 500 ? next.slice(0, 500) : next
@@ -155,8 +154,11 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const value = useMemo<HsmContextValue>(
     () => ({
       moduleRef,
+      crossCheckModuleRef,
       hSessionRef,
       slotRef,
+      engineMode,
+      setEngineMode,
       phase,
       setPhase,
       tokenCreated,
@@ -175,6 +177,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       toggleInspect,
     }),
     [
+      engineMode,
       phase,
       tokenCreated,
       isReady,

@@ -8,7 +8,7 @@ import { Shield, CheckCircle, Loader2 } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import {
-  getSoftHSMModule,
+  getSoftHSMCppModule,
   createLoggingProxy,
   hsm_initialize,
   hsm_getFirstSlot,
@@ -63,8 +63,8 @@ export const TokenSetupPanel = () => {
     withLoading('initialize', async () => {
       setTokenError(null)
       try {
-        const M = await getSoftHSMModule()
-        const proxy = createLoggingProxy(M, addHsmLog)
+        const M = await getSoftHSMCppModule()
+        const proxy = createLoggingProxy(M, addHsmLog, 'cpp')
         moduleRef.current = proxy
         hsm_initialize(proxy)
         setPhase('initialized')

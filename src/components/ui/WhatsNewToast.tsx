@@ -86,23 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Report &amp; Business Center fix</strong>{' '}
-                    &mdash; persona narrative crash resolved; Assessment Report and Business Center
-                    now render correctly for all personas
+                    <strong className="text-foreground">Rust SoftHSMv3 engine</strong> &mdash; new
+                    Rust wasm-bindgen PKCS#11 engine alongside the C++ Emscripten build; choose C++,
+                    Rust, or Dual Cross-Check mode in the Playground
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Playground WASM fix</strong> &mdash; 9
-                    missing WASM exports restored; symmetric and key-wrap panels now load correctly
+                    <strong className="text-foreground">Dual-engine parity</strong> &mdash; run both
+                    engines simultaneously and cross-verify ML-KEM, ML-DSA, SLH-DSA, and AES
+                    operations for correctness
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">E2E test reliability</strong> &mdash; all
-                    waitForTimeout antipatterns eliminated; 124 CI tests pass on Chromium
+                    <strong className="text-foreground">PKCS#11 bug fixes</strong> &mdash; 6 missing
+                    underscore prefixes on C bindings and memory access fixes for cross-engine
+                    compatibility
                   </span>
                 </li>
               </ul>

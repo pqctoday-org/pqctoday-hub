@@ -1,10 +1,10 @@
-import { useState, MutableRefObject } from 'react'
+import { useState, type MutableRefObject } from 'react'
 import { Shield, Loader2 } from 'lucide-react'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '../../../ui/button'
 import { ErrorAlert } from '../../../ui/error-alert'
 import {
-  getSoftHSMModule,
+  getSoftHSMCppModule,
   createLoggingProxy,
   hsm_initialize,
   hsm_getFirstSlot,
@@ -12,7 +12,7 @@ import {
   hsm_openUserSession,
   type Pkcs11LogEntry,
 } from '../../../../wasm/softhsm'
-import { Phase, StepBadge } from './SoftHsmUI'
+import { type Phase, StepBadge } from './SoftHsmUI'
 
 interface TokenSetupDemoProps {
   moduleRef: MutableRefObject<SoftHSMModule | null>
@@ -60,8 +60,8 @@ export const TokenSetupDemo = ({
     withLoading('initialize', async () => {
       setTokenError(null)
       try {
-        const M = await getSoftHSMModule()
-        const proxy = createLoggingProxy(M, addLog)
+        const M = await getSoftHSMCppModule()
+        const proxy = createLoggingProxy(M, addLog, 'cpp')
         moduleRef.current = proxy
         hsm_initialize(proxy)
         setPhase('initialized')

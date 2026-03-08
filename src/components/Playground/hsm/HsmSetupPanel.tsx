@@ -4,7 +4,6 @@ import { Shield, CheckCircle, Loader2, RotateCcw } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import {
-  getSoftHSMModule,
   createLoggingProxy,
   hsm_initialize,
   hsm_getFirstSlot,
@@ -37,8 +36,10 @@ const StepBadge = ({ done, label }: { done: boolean; label: string }) => (
 export const HsmSetupPanel = () => {
   const {
     moduleRef,
+    crossCheckModuleRef,
     hSessionRef,
     slotRef,
+    engineMode,
     phase,
     setPhase,
     tokenCreated,
@@ -66,15 +67,40 @@ export const HsmSetupPanel = () => {
 
   const doInitialize = () =>
     withLoading('initialize', async () => {
+      if (engineMode === 'software') return
+
       try {
-        const M = await getSoftHSMModule()
-        const proxy = createLoggingProxy(M, addHsmLog)
+        const { getSoftHSMCppModule, getSoftHSMRustModule } = await import('../../../wasm/softhsm')
+
+        let M = null
+        let checkM = null
+
+        if (engineMode === 'cpp') {
+          M = await getSoftHSMCppModule()
+        } else if (engineMode === 'rust') {
+          M = await getSoftHSMRustModule()
+        } else if (engineMode === 'dual') {
+          M = await getSoftHSMCppModule()
+          checkM = await getSoftHSMRustModule()
+        } else {
+          throw new Error('No cryptographic execution engine selected.')
+        }
+
+        const proxy = createLoggingProxy(M, addHsmLog, engineMode === 'rust' ? 'rust' : 'cpp')
         moduleRef.current = proxy
         hsm_initialize(proxy)
+
+        if (checkM) {
+          const checkProxy = createLoggingProxy(checkM, addHsmLog, 'rust')
+          crossCheckModuleRef.current = checkProxy
+          hsm_initialize(checkProxy)
+        }
+
         setPhase('initialized')
       } catch (e) {
         setError(String(e))
         moduleRef.current = null
+        crossCheckModuleRef.current = null
       }
     })
 

@@ -6,8 +6,9 @@
  * `locateFile` pointing to `/wasm/softhsm.wasm`.
  *
  * Exports:
- *  - getSoftHSMModule()     — singleton loader
- *  - clearSoftHSMCache()    — reset singleton (PlaygroundProvider cleanup)
+ *  - getSoftHSMCppModule()  — singleton loader for Emscripten C++
+ *  - getSoftHSMRustModule() — singleton loader for wasm-bindgen Rust
+ *  - clearSoftHSMCache()    — reset singletons (PlaygroundProvider cleanup)
  *  - createLoggingProxy()   — transparent PKCS#11 call logger
  *  - Pkcs11LogEntry         — log entry type
  *  - hsm_*                  — high-level PKCS#11 helper functions
@@ -24,26 +25,25 @@ export type {
   DecodedValue,
 } from './pkcs11Inspect'
 
-// ── Singleton loader ─────────────────────────────────────────────────────────
-
-let modulePromise: Promise<SoftHSMModule> | null = null
+// ── Singleton loaders ────────────────────────────────────────────────────────
+let cppModulePromise: Promise<SoftHSMModule> | null = null
+let rustModulePromise: Promise<SoftHSMModule> | null = null
 
 /**
- * Returns the SoftHSM WASM module singleton.
+ * Returns the SoftHSMv3 (C++) WASM module singleton.
  * On first call, injects a <script> tag to load /wasm/softhsm.js, then
- * calls window.createSoftHSMModule({ locateFile }) to instantiate the WASM.
+ * calls window.createSoftHSMModule({ locateFile }) to instantiate the Emscripten WASM.
  */
-export const getSoftHSMModule = async (): Promise<SoftHSMModule> => {
-  if (!modulePromise) {
-    modulePromise = (async () => {
-      // Load the Emscripten script if not already present
-      if (!document.querySelector('script[data-softhsm]')) {
+export const getSoftHSMCppModule = async (): Promise<SoftHSMModule> => {
+  if (!cppModulePromise) {
+    cppModulePromise = (async () => {
+      if (!document.querySelector('script[data-softhsm-cpp]')) {
         await new Promise<void>((resolve, reject) => {
           const s = document.createElement('script')
           s.src = '/wasm/softhsm.js'
-          s.dataset.softhsm = '1'
+          s.dataset.softhsmCpp = '1'
           s.onload = () => resolve()
-          s.onerror = () => reject(new Error('Failed to load /wasm/softhsm.js'))
+          s.onerror = () => reject(new Error('Failed to load /wasm/softhsm.js (C++)'))
           document.head.appendChild(s)
         })
       }
@@ -55,16 +55,202 @@ export const getSoftHSMModule = async (): Promise<SoftHSMModule> => {
         locateFile: (path: string) => (path.endsWith('.wasm') ? '/wasm/softhsm.wasm' : path),
       })
     })().catch((e) => {
-      modulePromise = null
+      cppModulePromise = null
       throw e
     })
   }
-  return modulePromise
+  return cppModulePromise
 }
 
-/** Reset singleton — call from PlaygroundProvider cleanup. */
+/**
+ * Returns the SoftHSMv3 (Rust) WASM module singleton.
+ * Dynamically imports the `softhsmrustv3.js` wasm-bindgen shim and wraps its
+ * InitOutput into the identical SoftHSMModule ABI interface.
+ */
+export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
+  if (!rustModulePromise) {
+    rustModulePromise = (async () => {
+      const rustShim = await import('./softhsmrustv3.js')
+      const wasmExports = await rustShim.default('/wasm/rust/softhsmrustv3_bg.wasm')
+
+      // Rust lib.rs uses #[wasm_bindgen(js_name = _C_*)] — exports match
+      // the PKCS#11 v3.2 C ABI names directly on the InitOutput object.
+      //
+      // CKR_MECHANISM_INVALID (0x70) is returned by graceful stubs for
+      // operations not implemented in the Rust binary (RSA, ECDSA, HMAC, etc.).
+      const CKR_NOT_IMPL = 0x70
+
+      return {
+        // ── Session management ────────────────────────────────────────────
+        _C_Initialize: wasmExports._C_Initialize,
+        _C_Finalize: wasmExports._C_Finalize,
+        _C_GetInfo: () => 0,
+        _C_GetFunctionList: () => 0,
+        _C_GetSlotList: wasmExports._C_GetSlotList,
+        _C_GetSlotInfo: () => 0,
+        _C_GetTokenInfo: wasmExports._C_GetTokenInfo,
+        _C_GetMechanismList: wasmExports._C_GetMechanismList,
+        _C_GetMechanismInfo: wasmExports._C_GetMechanismInfo,
+        _C_InitToken: wasmExports._C_InitToken,
+        _C_InitPIN: wasmExports._C_InitPIN,
+        _C_SetPIN: () => 0,
+        _C_OpenSession: wasmExports._C_OpenSession,
+        _C_CloseSession: wasmExports._C_CloseSession,
+        _C_CloseAllSessions: () => 0,
+        _C_GetSessionInfo: wasmExports._C_GetSessionInfo,
+        _C_GetOperationState: () => CKR_NOT_IMPL,
+        _C_SetOperationState: () => CKR_NOT_IMPL,
+        _C_Login: wasmExports._C_Login,
+        _C_Logout: wasmExports._C_Logout,
+        _C_LoginUser: () => 0,
+        _C_SessionCancel: () => 0,
+
+        // ── Object management ─────────────────────────────────────────────
+        _C_CreateObject: wasmExports._C_CreateObject,
+        _C_CopyObject: () => CKR_NOT_IMPL,
+        _C_DestroyObject: () => 0,
+        _C_GetObjectSize: () => CKR_NOT_IMPL,
+        _C_GetAttributeValue: wasmExports._C_GetAttributeValue,
+        _C_SetAttributeValue: () => CKR_NOT_IMPL,
+        _C_FindObjectsInit: () => CKR_NOT_IMPL,
+        _C_FindObjects: () => CKR_NOT_IMPL,
+        _C_FindObjectsFinal: () => 0,
+
+        // ── Key generation ────────────────────────────────────────────────
+        _C_GenerateKey: wasmExports._C_GenerateKey,
+        _C_GenerateKeyPair: wasmExports._C_GenerateKeyPair,
+
+        // ── ML-KEM encapsulate/decapsulate ────────────────────────────────
+        _C_EncapsulateKey: wasmExports._C_EncapsulateKey,
+        _C_DecapsulateKey: wasmExports._C_DecapsulateKey,
+
+        // ── AES encrypt/decrypt ───────────────────────────────────────────
+        _C_EncryptInit: wasmExports._C_EncryptInit,
+        _C_Encrypt: wasmExports._C_Encrypt,
+        _C_EncryptUpdate: () => CKR_NOT_IMPL,
+        _C_EncryptFinal: () => CKR_NOT_IMPL,
+        _C_DecryptInit: wasmExports._C_DecryptInit,
+        _C_Decrypt: wasmExports._C_Decrypt,
+        _C_DecryptUpdate: () => CKR_NOT_IMPL,
+        _C_DecryptFinal: () => CKR_NOT_IMPL,
+
+        // ── ML-DSA sign/verify (classic API) ──────────────────────────────
+        _C_SignInit: wasmExports._C_SignInit,
+        _C_Sign: wasmExports._C_Sign,
+        _C_SignUpdate: () => CKR_NOT_IMPL,
+        _C_SignFinal: () => CKR_NOT_IMPL,
+        _C_SignRecoverInit: () => CKR_NOT_IMPL,
+        _C_SignRecover: () => CKR_NOT_IMPL,
+        _C_VerifyInit: wasmExports._C_VerifyInit,
+        _C_Verify: wasmExports._C_Verify,
+        _C_VerifyUpdate: () => CKR_NOT_IMPL,
+        _C_VerifyFinal: () => CKR_NOT_IMPL,
+        _C_VerifyRecoverInit: () => CKR_NOT_IMPL,
+        _C_VerifyRecover: () => CKR_NOT_IMPL,
+
+        // ── Message-based sign/verify (PKCS#11 v3.2) ─────────────────────
+        _C_MessageSignInit: wasmExports._C_MessageSignInit,
+        _C_SignMessage: wasmExports._C_SignMessage,
+        _C_SignMessageBegin: () => CKR_NOT_IMPL,
+        _C_SignMessageNext: () => CKR_NOT_IMPL,
+        _C_MessageSignFinal: wasmExports._C_MessageSignFinal,
+        _C_MessageVerifyInit: wasmExports._C_MessageVerifyInit,
+        _C_VerifyMessage: wasmExports._C_VerifyMessage,
+        _C_VerifyMessageBegin: () => CKR_NOT_IMPL,
+        _C_VerifyMessageNext: () => CKR_NOT_IMPL,
+        _C_MessageVerifyFinal: wasmExports._C_MessageVerifyFinal,
+
+        // ── Message-based encrypt/decrypt (stubs) ─────────────────────────
+        _C_MessageEncryptInit: () => CKR_NOT_IMPL,
+        _C_EncryptMessage: () => CKR_NOT_IMPL,
+        _C_EncryptMessageBegin: () => CKR_NOT_IMPL,
+        _C_EncryptMessageNext: () => CKR_NOT_IMPL,
+        _C_MessageEncryptFinal: () => 0,
+        _C_MessageDecryptInit: () => CKR_NOT_IMPL,
+        _C_DecryptMessage: () => CKR_NOT_IMPL,
+        _C_DecryptMessageBegin: () => CKR_NOT_IMPL,
+        _C_DecryptMessageNext: () => CKR_NOT_IMPL,
+        _C_MessageDecryptFinal: () => 0,
+
+        // ── Digest (stubs) ────────────────────────────────────────────────
+        _C_DigestInit: () => CKR_NOT_IMPL,
+        _C_Digest: () => CKR_NOT_IMPL,
+        _C_DigestUpdate: () => CKR_NOT_IMPL,
+        _C_DigestKey: () => CKR_NOT_IMPL,
+        _C_DigestFinal: () => CKR_NOT_IMPL,
+
+        // ── Dual-function (stubs) ─────────────────────────────────────────
+        _C_DigestEncryptUpdate: () => CKR_NOT_IMPL,
+        _C_DecryptDigestUpdate: () => CKR_NOT_IMPL,
+        _C_SignEncryptUpdate: () => CKR_NOT_IMPL,
+        _C_DecryptVerifyUpdate: () => CKR_NOT_IMPL,
+
+        // ── Key wrapping/unwrapping (stubs) ───────────────────────────────
+        _C_WrapKey: () => CKR_NOT_IMPL,
+        _C_UnwrapKey: () => CKR_NOT_IMPL,
+        _C_DeriveKey: () => CKR_NOT_IMPL,
+        _C_WrapKeyAuthenticated: () => CKR_NOT_IMPL,
+        _C_UnwrapKeyAuthenticated: () => CKR_NOT_IMPL,
+
+        // ── Random (stubs) ────────────────────────────────────────────────
+        _C_SeedRandom: () => 0,
+        _C_GenerateRandom: () => CKR_NOT_IMPL,
+
+        // ── Misc (stubs) ──────────────────────────────────────────────────
+        _C_GetFunctionStatus: () => CKR_NOT_IMPL,
+        _C_CancelFunction: () => CKR_NOT_IMPL,
+        _C_WaitForSlotEvent: () => CKR_NOT_IMPL,
+        _C_GetInterfaceList: () => CKR_NOT_IMPL,
+        _C_GetInterface: () => CKR_NOT_IMPL,
+        _C_VerifySignatureInit: () => CKR_NOT_IMPL,
+        _C_VerifySignature: () => CKR_NOT_IMPL,
+        _C_VerifySignatureUpdate: () => CKR_NOT_IMPL,
+        _C_VerifySignatureFinal: () => CKR_NOT_IMPL,
+        _C_GetSessionValidationFlags: () => CKR_NOT_IMPL,
+        _C_AsyncComplete: () => CKR_NOT_IMPL,
+        _C_AsyncGetID: () => CKR_NOT_IMPL,
+        _C_AsyncJoin: () => CKR_NOT_IMPL,
+
+        // ── Emscripten-compat memory layer ────────────────────────────────
+        _malloc: wasmExports._malloc,
+        _free: (ptr: number) => wasmExports._free(ptr, 1),
+        wasmMemory: { buffer: wasmExports.memory.buffer },
+        HEAP32: new Int32Array(wasmExports.memory.buffer),
+        FS: {
+          mkdir: () => {},
+          writeFile: () => {},
+          readFile: () => new Uint8Array(0),
+          mount: () => ({}),
+          unmount: () => {},
+        },
+        UTF8ToString: () => '',
+        stringToUTF8: () => 0,
+        lengthBytesUTF8: () => 0,
+        setValue: (ptr: number, val: number, type: string) => {
+          const mem = new DataView(wasmExports.memory.buffer)
+          if (type === 'i32') mem.setUint32(ptr, val, true)
+        },
+        getValue: (ptr: number, type: string) => {
+          const mem = new DataView(wasmExports.memory.buffer)
+          if (type === 'i32') return mem.getUint32(ptr, true)
+          return 0
+        },
+        get HEAPU8() {
+          return new Uint8Array(wasmExports.memory.buffer)
+        },
+      } as unknown as SoftHSMModule
+    })().catch((e) => {
+      rustModulePromise = null
+      throw e
+    })
+  }
+  return rustModulePromise
+}
+
+/** Reset singletons — call from PlaygroundProvider cleanup. */
 export const clearSoftHSMCache = (): void => {
-  modulePromise = null
+  cppModulePromise = null
+  rustModulePromise = null
 }
 
 // ── PKCS#11 call log ─────────────────────────────────────────────────────────
@@ -78,6 +264,7 @@ export interface Pkcs11LogEntry {
   rvName: string
   ms: number
   ok: boolean
+  engineName?: string
   inspect?: import('./pkcs11Inspect').Pkcs11LogInspect
 }
 
@@ -311,7 +498,8 @@ const fmtArgs = (fnName: string, args: unknown[]): string => {
  */
 export const createLoggingProxy = (
   M: SoftHSMModule,
-  onLog: (entry: Pkcs11LogEntry) => void
+  onLog: (entry: Pkcs11LogEntry) => void,
+  engineName?: string
 ): SoftHSMModule => {
   return new Proxy(M, {
     get(target, prop: string | symbol) {
@@ -335,6 +523,7 @@ export const createLoggingProxy = (
             rvName: rvName(rvUnsigned),
             ms,
             ok,
+            engineName,
             inspect,
           })
           return rv
@@ -667,6 +856,41 @@ export const hsm_generateMLKEMKeyPair = (
   }
 }
 
+/** Import an ML-KEM public key. Returns the new pubHandle. */
+export const hsm_importMLKEMPublicKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  variant: 512 | 768 | 1024,
+  pubKeyBytes: Uint8Array
+): number => {
+  const ps = kemParamSet(variant)
+  const pubPtr = M._malloc(pubKeyBytes.length)
+  M.HEAPU8.set(pubKeyBytes, pubPtr)
+
+  const pubTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_ML_KEM },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_VERIFY, boolVal: false },
+    { type: CKA_ENCAPSULATE, boolVal: true },
+    { type: CKA_PARAMETER_SET, ulongVal: ps },
+    { type: CKA_VALUE, bytesPtr: pubPtr, bytesLen: pubKeyBytes.length },
+  ])
+
+  const pubHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_CreateObject(hSession, pubTpl.ptr, 7, pubHPtr),
+      'C_CreateObject(Import ML-KEM PubKey)'
+    )
+    return readUlong(M, pubHPtr)
+  } finally {
+    freeTemplate(M, pubTpl, 7)
+    M._free(pubHPtr)
+    M._free(pubPtr)
+  }
+}
+
 /** C_EncapsulateKey → {ciphertextBytes, secretHandle}
  * variant is used to validate the returned ciphertext length. */
 export const hsm_encapsulate = (
@@ -875,6 +1099,40 @@ export const hsm_generateMLDSAKeyPair = (
     freeTemplate(M, prvTpl, 7)
     M._free(pubHPtr)
     M._free(prvHPtr)
+  }
+}
+
+/** Import an ML-DSA public key. Returns the new pubHandle. */
+export const hsm_importMLDSAPublicKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  variant: 44 | 65 | 87,
+  pubKeyBytes: Uint8Array
+): number => {
+  const ps = dsaParamSet(variant)
+  const pubPtr = M._malloc(pubKeyBytes.length)
+  M.HEAPU8.set(pubKeyBytes, pubPtr)
+
+  const pubTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_ML_DSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_PARAMETER_SET, ulongVal: ps },
+    { type: CKA_VALUE, bytesPtr: pubPtr, bytesLen: pubKeyBytes.length },
+  ])
+
+  const pubHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_CreateObject(hSession, pubTpl.ptr, 6, pubHPtr),
+      'C_CreateObject(Import ML-DSA PubKey)'
+    )
+    return readUlong(M, pubHPtr)
+  } finally {
+    freeTemplate(M, pubTpl, 6)
+    M._free(pubHPtr)
+    M._free(pubPtr)
   }
 }
 
@@ -2347,6 +2605,39 @@ export const hsm_generateAESKey = (
   }
 }
 
+/** Import an AES symmetric key. Returns CKO_SECRET_KEY handle. */
+export const hsm_importAESKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyBytes: Uint8Array
+): number => {
+  const keyPtr = M._malloc(keyBytes.length)
+  M.HEAPU8.set(keyBytes, keyPtr)
+
+  const tpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_ENCRYPT, boolVal: true },
+    { type: CKA_DECRYPT, boolVal: true },
+    { type: CKA_WRAP, boolVal: true },
+    { type: CKA_UNWRAP, boolVal: true },
+    { type: CKA_DERIVE, boolVal: true },
+    { type: CKA_VALUE, bytesPtr: keyPtr, bytesLen: keyBytes.length },
+  ])
+  const hKeyPtr = allocUlong(M)
+  try {
+    checkRV(M._C_CreateObject(hSession, tpl.ptr, 11, hKeyPtr), 'C_CreateObject(Import AES)')
+    return readUlong(M, hKeyPtr)
+  } finally {
+    freeTemplate(M, tpl, 11)
+    M._free(hKeyPtr)
+    M._free(keyPtr)
+  }
+}
+
 /**
  * AES encrypt (GCM or CBC-PAD). A random IV is generated internally.
  * GCM output: ciphertext bytes include the 16-byte auth tag appended by SoftHSM.
@@ -2760,6 +3051,39 @@ export const hsm_generateSLHDSAKeyPair = (
     freeTemplate(M, prvTpl, 7)
     M._free(pubHPtr)
     M._free(prvHPtr)
+  }
+}
+
+/** Import an SLH-DSA public key. Returns the new pubHandle. */
+export const hsm_importSLHDSAPublicKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  paramSet: number,
+  pubKeyBytes: Uint8Array
+): number => {
+  const pubPtr = M._malloc(pubKeyBytes.length)
+  M.HEAPU8.set(pubKeyBytes, pubPtr)
+
+  const pubTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_SLH_DSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_PARAMETER_SET, ulongVal: paramSet },
+    { type: CKA_VALUE, bytesPtr: pubPtr, bytesLen: pubKeyBytes.length },
+  ])
+
+  const pubHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_CreateObject(hSession, pubTpl.ptr, 6, pubHPtr),
+      'C_CreateObject(Import SLH-DSA PubKey)'
+    )
+    return readUlong(M, pubHPtr)
+  } finally {
+    freeTemplate(M, pubTpl, 6)
+    M._free(pubHPtr)
+    M._free(pubPtr)
   }
 }
 
@@ -3487,7 +3811,7 @@ export const hsm_generateRandom = (
   length: number
 ): Uint8Array => {
   const pRandom = M._malloc(length)
-  const rv = M.C_GenerateRandom(hSession, pRandom, length)
+  const rv = M._C_GenerateRandom(hSession, pRandom, length)
   checkRV(rv, 'C_GenerateRandom')
   const result = new Uint8Array(M.HEAPU8.subarray(pRandom, pRandom + length).slice())
   M._free(pRandom)
@@ -3497,7 +3821,7 @@ export const hsm_generateRandom = (
 export const hsm_seedRandom = (M: SoftHSMModule, hSession: number, seed: Uint8Array): void => {
   const pSeed = M._malloc(seed.length)
   M.HEAPU8.set(seed, pSeed)
-  const rv = M.C_SeedRandom(hSession, pSeed, seed.length)
+  const rv = M._C_SeedRandom(hSession, pSeed, seed.length)
   M._free(pSeed)
   checkRV(rv, 'C_SeedRandom')
 }
@@ -3512,29 +3836,22 @@ export const hsm_aesWrapKeyKwp = (
   writeUlong(M, pMechanism, 0x108b) // CKM_AES_KEY_WRAP_KWP
   writeUlong(M, pMechanism + 4, 0)
 
-  let rv = M.C_WrapKey(
-    hSession,
-    pMechanism,
-    hWrappingKey,
-    hKey,
-    0,
-    M.wasmMemory.buffer.byteLength - 8
-  )
+  let rv = M._C_WrapKey(hSession, pMechanism, hWrappingKey, hKey, 0, M.HEAPU8.buffer.byteLength - 8)
   checkRV(rv, 'C_WrapKey size')
-  const wrappedLen = readUlong(M, M.wasmMemory.buffer.byteLength - 8)
+  const wrappedLen = readUlong(M, M.HEAPU8.buffer.byteLength - 8)
 
   const pWrapped = M._malloc(wrappedLen)
-  rv = M.C_WrapKey(
+  rv = M._C_WrapKey(
     hSession,
     pMechanism,
     hWrappingKey,
     hKey,
     pWrapped,
-    M.wasmMemory.buffer.byteLength - 8
+    M.HEAPU8.buffer.byteLength - 8
   )
   checkRV(rv, 'C_WrapKey')
   const result = new Uint8Array(
-    M.HEAPU8.subarray(pWrapped, pWrapped + readUlong(M, M.wasmMemory.buffer.byteLength - 8)).slice()
+    M.HEAPU8.subarray(pWrapped, pWrapped + readUlong(M, M.HEAPU8.buffer.byteLength - 8)).slice()
   )
   M._free(pWrapped)
   M._free(pMechanism)
@@ -3558,7 +3875,7 @@ export const hsm_unwrapKey = (
   const tpl = buildTemplate(M, template)
   const phKey = M._malloc(4)
 
-  const rv = M.C_UnwrapKey(
+  const rv = M._C_UnwrapKey(
     hSession,
     pMechanism,
     hUnwrapKey,
@@ -3572,7 +3889,7 @@ export const hsm_unwrapKey = (
 
   const hKey = readUlong(M, phKey)
   M._free(phKey)
-  freeTemplate(M, tpl)
+  freeTemplate(M, tpl, template.length)
   M._free(pWrapped)
   M._free(pMechanism)
   return hKey

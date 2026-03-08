@@ -2,12 +2,18 @@ import { useState } from 'react'
 import { Lock, Loader2 } from 'lucide-react'
 import { Button } from '../../../../ui/button'
 import { ErrorAlert } from '../../../../ui/error-alert'
-import { hsm_generateAESKey, hsm_aesEncrypt, hsm_aesDecrypt } from '../../../../../wasm/softhsm'
+import {
+  hsm_generateAESKey,
+  hsm_aesEncrypt,
+  hsm_aesDecrypt,
+  hsm_importAESKey,
+  hsm_extractKeyValue,
+} from '../../../../../wasm/softhsm'
 import { useHsmContext } from '../HsmContext'
 import { HsmResultRow, toHex, hexSnippet } from '../shared'
 
 export const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
-  const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, addHsmKey, engineMode, crossCheckModuleRef } = useHsmContext()
   const [keyBits, setKeyBits] = useState<128 | 192 | 256>(256)
   const [keyHandle, setKeyHandle] = useState<number | null>(null)
   const [plaintext, setPlaintext] = useState('Hello, PQC World!')
@@ -71,6 +77,27 @@ export const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
       setCiphertext(result.ciphertext)
       setIv(result.iv)
       setDecrypted(null)
+
+      if (engineMode === 'dual' && crossCheckModuleRef.current) {
+        const checkM = crossCheckModuleRef.current
+        try {
+          const keyBytes = hsm_extractKeyValue(M, hSessionRef.current, keyHandle!)
+          const checkKey = hsm_importAESKey(checkM, hSessionRef.current, keyBytes)
+          const checkPlain = hsm_aesDecrypt(
+            checkM,
+            hSessionRef.current,
+            checkKey,
+            result.ciphertext,
+            result.iv,
+            mode === 'aes-gcm' ? 'gcm' : 'cbc'
+          )
+          if (new TextDecoder().decode(checkPlain) !== plaintext) {
+            setError('Dual-Engine Parity Failure: Rust failed to decrypt C++ AES ciphertext')
+          }
+        } catch (e) {
+          setError('Cross-check failed: ' + String(e))
+        }
+      }
     })
 
   const doDecrypt = () =>
@@ -84,7 +111,29 @@ export const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
         iv!,
         mode === 'aes-gcm' ? 'gcm' : 'cbc'
       )
-      setDecrypted(new TextDecoder().decode(plain))
+      const plainTextStr = new TextDecoder().decode(plain)
+      setDecrypted(plainTextStr)
+
+      if (engineMode === 'dual' && crossCheckModuleRef.current) {
+        const checkM = crossCheckModuleRef.current
+        try {
+          const keyBytes = hsm_extractKeyValue(M, hSessionRef.current, keyHandle!)
+          const checkKey = hsm_importAESKey(checkM, hSessionRef.current, keyBytes)
+          const checkPlain = hsm_aesDecrypt(
+            checkM,
+            hSessionRef.current,
+            checkKey,
+            ciphertext!,
+            iv!,
+            mode === 'aes-gcm' ? 'gcm' : 'cbc'
+          )
+          if (new TextDecoder().decode(checkPlain) !== plainTextStr) {
+            setError('Dual-Engine Parity Failure: Rust decrypted plaintext diverges from C++')
+          }
+        } catch (e) {
+          setError('Cross-check failed: ' + String(e))
+        }
+      }
     })
 
   return (

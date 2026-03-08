@@ -25,30 +25,34 @@ export function CollapsibleSection({
   const contentId = useId()
   return (
     <div className={clsx('glass-panel p-6 print:border print:border-border', className)}>
-      <Button
-        variant="ghost"
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full h-auto items-center justify-between print:hidden"
-        aria-expanded={open}
-        aria-controls={contentId}
-        aria-label={title}
-      >
-        <div className="flex items-center gap-2 font-semibold text-foreground">
-          {icon}
-          {title}
+      <div className="flex items-center justify-between w-full print:hidden gap-2">
+        <Button
+          variant="ghost"
+          onClick={() => setOpen((o) => !o)}
+          className="flex flex-1 h-auto items-center justify-between p-2"
+          aria-expanded={open}
+          aria-controls={contentId}
+          aria-label={title}
+        >
+          <div className="flex items-center gap-2 font-semibold text-foreground">
+            {icon}
+            {title}
+          </div>
+          <div className="flex items-center gap-2">
+            <ChevronDown
+              size={18}
+              className={clsx(
+                'text-muted-foreground transition-transform duration-200',
+                open && 'rotate-180'
+              )}
+            />
+          </div>
+        </Button>
+        <div className="shrink-0 flex items-center gap-2">
+          {headerExtra}
           {infoTip}
         </div>
-        <div className="flex items-center gap-2">
-          {headerExtra}
-          <ChevronDown
-            size={18}
-            className={clsx(
-              'text-muted-foreground transition-transform duration-200',
-              open && 'rotate-180'
-            )}
-          />
-        </div>
-      </Button>
+      </div>
       {/* Print-only static title (no button/chevron) */}
       <div className="hidden print:flex items-center gap-2 font-semibold text-foreground">
         {icon}

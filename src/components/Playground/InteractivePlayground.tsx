@@ -21,6 +21,7 @@ import clsx from 'clsx'
 import { PlaygroundProvider } from './PlaygroundProvider'
 import { useSettingsContext } from './contexts/SettingsContext'
 import { useKeyStoreContext } from './contexts/KeyStoreContext'
+import { useHsmContext } from './hsm/HsmContext'
 import { ACVPTesting } from '../ACVP/ACVPTesting'
 import { DataTab } from './tabs/DataTab'
 import { KemOpsTab } from './tabs/KemOpsTab'
@@ -51,6 +52,7 @@ const PlaygroundContent = () => {
   const { activeTab, setActiveTab, error, lastLogEntry, hsmMode, toggleHsmMode } =
     useSettingsContext()
   const { keyStore, setKeyStore } = useKeyStoreContext()
+  const { engineMode, setEngineMode, phase } = useHsmContext()
   const errorRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (error) errorRef.current?.focus()
@@ -77,6 +79,38 @@ const PlaygroundContent = () => {
 
         {/* HSM mode toggle pill */}
         <div className="flex items-center gap-2">
+          {hsmMode && (
+            <div className="flex items-center gap-4 mr-4 border-r border-border pr-4 bg-muted/50 px-3 py-1.5 rounded-full shadow-inner">
+              <span className="text-xs font-semibold text-muted-foreground mr-1">Engine:</span>
+              {(['cpp', 'rust', 'dual'] as const).map((mode) => (
+                <label
+                  key={mode}
+                  className={`flex items-center gap-1.5 text-xs ${phase === 'idle' ? 'cursor-pointer hover:text-primary' : 'opacity-60 cursor-not-allowed'}`}
+                >
+                  <input
+                    type="radio"
+                    name="engineMode-global"
+                    value={mode}
+                    checked={engineMode === mode}
+                    onChange={() => {
+                      if (phase === 'idle') setEngineMode(mode)
+                    }}
+                    disabled={phase !== 'idle'}
+                    className="accent-primary w-3 h-3"
+                  />
+                  <span
+                    className={
+                      engineMode === mode ? 'text-primary font-bold' : 'text-muted-foreground'
+                    }
+                  >
+                    {mode === 'cpp' && 'C++'}
+                    {mode === 'rust' && 'Rust'}
+                    {mode === 'dual' && 'Dual Parity'}
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
           <span
             className={clsx(
               'text-xs',

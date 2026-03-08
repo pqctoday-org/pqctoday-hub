@@ -17,7 +17,7 @@
  */
 import { useCallback, useRef, useState } from 'react'
 import {
-  getSoftHSMModule,
+  getSoftHSMCppModule,
   createLoggingProxy,
   hsm_getFirstSlot,
   hsm_initToken,
@@ -113,7 +113,7 @@ export function useHSM(): UseHSMResult {
     clearLog()
     clearKeys()
     try {
-      const rawModule = await getSoftHSMModule()
+      const rawModule = await getSoftHSMCppModule()
       const proxy = createLoggingProxy(rawModule, (e) => addLog(e))
       moduleRef.current = proxy as unknown as SoftHSMModule
 

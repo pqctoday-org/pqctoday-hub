@@ -158,32 +158,36 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
 
   return (
     <div className="glass-panel p-6 print:border print:border-gray-300 print:break-inside-auto">
-      <Button
-        variant="ghost"
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full h-auto items-center justify-between print:hidden"
-        aria-expanded={open}
-      >
-        <div className="flex items-center gap-2 font-semibold text-foreground">
-          <Map className="text-primary" size={20} />
-          Migration Roadmap
+      <div className="flex items-center justify-between w-full print:hidden gap-2">
+        <Button
+          variant="ghost"
+          onClick={() => setOpen((o) => !o)}
+          className="flex flex-1 h-auto items-center justify-between p-2"
+          aria-expanded={open}
+        >
+          <div className="flex items-center gap-2 font-semibold text-foreground">
+            <Map className="text-primary" size={20} />
+            Migration Roadmap
+          </div>
+          <div className="flex items-center gap-2">
+            {deadlineYear && (
+              <span className="text-xs font-mono px-2 py-1 rounded border border-destructive/30 bg-destructive/10 text-destructive">
+                {countryName} deadline: {deadlineYear}
+              </span>
+            )}
+            <ChevronDown
+              size={18}
+              className={clsx(
+                'text-muted-foreground transition-transform duration-200',
+                open && 'rotate-180'
+              )}
+            />
+          </div>
+        </Button>
+        <div className="shrink-0 flex items-center">
           <SectionInfoTip sectionId="migrationRoadmap" />
         </div>
-        <div className="flex items-center gap-2">
-          {deadlineYear && (
-            <span className="text-xs font-mono px-2 py-1 rounded border border-destructive/30 bg-destructive/10 text-destructive">
-              {countryName} deadline: {deadlineYear}
-            </span>
-          )}
-          <ChevronDown
-            size={18}
-            className={clsx(
-              'text-muted-foreground transition-transform duration-200',
-              open && 'rotate-180'
-            )}
-          />
-        </div>
-      </Button>
+      </div>
       {/* Print-only static title */}
       <div className="hidden print:flex items-center justify-between">
         <div className="flex items-center gap-2 font-semibold text-foreground">

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef } from 'react'
 import { Shield, CheckCircle, XCircle, Copy, Trash2, Loader2, ChevronRight } from 'lucide-react'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '../../ui/button'
@@ -7,7 +7,6 @@ import { Input } from '../../ui/input'
 import { ErrorAlert } from '../../ui/error-alert'
 import { FilterDropdown } from '../../common/FilterDropdown'
 import {
-  getSoftHSMModule,
   createLoggingProxy,
   hsm_initialize,
   hsm_getFirstSlot,
@@ -17,14 +16,16 @@ import {
   hsm_encapsulate,
   hsm_decapsulate,
   hsm_extractKeyValue,
+  hsm_importMLKEMPublicKey,
   hsm_generateMLDSAKeyPair,
   hsm_sign,
   hsm_verify,
+  hsm_importMLDSAPublicKey,
   hsm_generateSLHDSAKeyPair,
   hsm_slhdsaSign,
   hsm_slhdsaVerify,
+  hsm_importSLHDSAPublicKey,
   hsm_finalize,
-  type Pkcs11LogEntry,
   type MLDSASignOptions,
   type MLDSAPreHash,
   type SLHDSAPreHash,
@@ -45,6 +46,7 @@ import { useSettingsContext } from '../contexts/SettingsContext'
 import { useHsmContext } from '../hsm/HsmContext'
 import { HsmSetupPanel } from '../hsm/HsmSetupPanel'
 import { HsmMechanismPanel } from '../hsm/HsmMechanismPanel'
+import { PkcsLogPanel } from '../components/PkcsLogPanel'
 
 // ── Static size hints ────────────────────────────────────────────────────────
 
@@ -332,81 +334,6 @@ const ResultRow = ({ label, bytes }: ResultRowProps) => {
   )
 }
 
-// ── Log panel ─────────────────────────────────────────────────────────────────
-
-interface LogPanelProps {
-  log: Pkcs11LogEntry[]
-  onClear: () => void
-}
-const LogPanel = ({ log, onClear }: LogPanelProps) => {
-  const [copied, setCopied] = useState(false)
-
-  const copyAll = () => {
-    const text = log
-      .map((e) => `[${e.timestamp}] ${e.fn}(${e.args}) → ${e.rvName} ${e.rvHex} [${e.ms}ms]`)
-      .join('\n')
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
-      })
-      .catch(() => {})
-  }
-
-  return (
-    <div className="glass-panel p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-sm flex items-center gap-2">
-          PKCS#11 Call Log
-          <span className="text-xs text-muted-foreground font-normal">({log.length} calls)</span>
-        </h3>
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 px-2 text-xs"
-            disabled={log.length === 0}
-            onClick={copyAll}
-          >
-            {copied ? (
-              <CheckCircle size={12} className="mr-1 text-status-success" />
-            ) : (
-              <Copy size={12} className="mr-1" />
-            )}
-            {copied ? 'Copied!' : 'Copy'}
-          </Button>
-          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={onClear}>
-            <Trash2 size={12} className="mr-1" /> Clear
-          </Button>
-        </div>
-      </div>
-      {log.length === 0 ? (
-        <p className="text-xs text-muted-foreground italic">
-          No calls yet — click a button above to start.
-        </p>
-      ) : (
-        <div className="max-h-48 overflow-y-auto custom-scrollbar space-y-0.5">
-          {log.map((e) => (
-            <div key={e.id} className="flex items-baseline gap-2 text-xs font-mono">
-              <span className="text-muted-foreground shrink-0 w-16">{e.timestamp}</span>
-              <span className="text-foreground shrink-0">{e.fn}</span>
-              <span className="text-muted-foreground truncate">{e.args && `(${e.args})`}</span>
-              <span className="ml-auto shrink-0">→</span>
-              <span
-                className={e.ok ? 'text-status-success shrink-0' : 'text-status-error shrink-0'}
-              >
-                {e.rvName}
-              </span>
-              <span className="text-muted-foreground shrink-0">[{e.ms}ms]</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
 // ── Step badge ────────────────────────────────────────────────────────────────
 
 interface StepBadgeProps {
@@ -432,7 +359,10 @@ const HsmCallLog = () => {
 
   const copyAll = () => {
     const text = hsmLog
-      .map((e) => `[${e.timestamp}] ${e.fn}(${e.args}) → ${e.rvName} ${e.rvHex} [${e.ms}ms]`)
+      .map(
+        (e) =>
+          `[${e.timestamp}]${e.engineName ? ` [${e.engineName.toUpperCase()}]` : ''} ${e.fn}(${e.args}) → ${e.rvName} ${e.rvHex} [${e.ms}ms]`
+      )
       .join('\n')
     navigator.clipboard
       .writeText(text)
@@ -482,6 +412,16 @@ const HsmCallLog = () => {
           {hsmLog.map((e) => (
             <div key={e.id} className="flex items-baseline gap-2 text-xs font-mono">
               <span className="text-muted-foreground shrink-0 w-16">{e.timestamp}</span>
+              {e.engineName === 'rust' && (
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 shrink-0">
+                  Rust
+                </span>
+              )}
+              {e.engineName === 'cpp' && (
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 shrink-0">
+                  C++
+                </span>
+              )}
               <span className="text-foreground shrink-0">{e.fn}</span>
               <span className="text-muted-foreground truncate">{e.args && `(${e.args})`}</span>
               <span className="ml-auto shrink-0">→</span>
@@ -520,7 +460,7 @@ export const SoftHsmTab = () => {
 // ── Browser mode (original implementation, unchanged) ────────────────────────
 
 const SoftHsmTabBrowser = () => {
-  const [liveMode, setLiveMode] = useState(false)
+  const { engineMode, setEngineMode } = useHsmContext()
   const [phase, setPhase] = useState<Phase>('idle')
   const [loadingOp, setLoadingOp] = useState<string | null>(null)
   const [tokenError, setTokenError] = useState<string | null>(null)
@@ -528,6 +468,7 @@ const SoftHsmTabBrowser = () => {
   const [dsaError, setDsaError] = useState<string | null>(null)
 
   const moduleRef = useRef<SoftHSMModule | null>(null)
+  const crossCheckModuleRef = useRef<SoftHSMModule | null>(null)
   const hSessionRef = useRef<number>(0)
   const slotRef = useRef<number>(0)
 
@@ -562,9 +503,8 @@ const SoftHsmTabBrowser = () => {
   // Token created tracking (ref changes don't re-render, so mirror in state)
   const [tokenCreated, setTokenCreated] = useState(false)
 
-  // Call log
-  const [log, setLog] = useState<Pkcs11LogEntry[]>([])
-  const addLog = useCallback((e: Pkcs11LogEntry) => setLog((l) => [...l, e]), [])
+  // Call log — route through HsmContext so PkcsLogPanel displays them
+  const { addHsmLog, clearHsmLog } = useHsmContext()
 
   const getM = (): SoftHSMModule => {
     if (!moduleRef.current) throw new Error('Module not loaded')
@@ -603,16 +543,42 @@ const SoftHsmTabBrowser = () => {
 
   const doInitialize = () =>
     withLoading('initialize', async () => {
+      if (engineMode === 'software') return
+
       setTokenError(null)
       try {
-        const M = await getSoftHSMModule()
-        const proxy = createLoggingProxy(M, addLog)
+        const { getSoftHSMCppModule, getSoftHSMRustModule } = await import('../../../wasm/softhsm')
+
+        let M: SoftHSMModule | null = null
+        let checkM: SoftHSMModule | null = null
+
+        if (engineMode === 'cpp') {
+          M = await getSoftHSMCppModule()
+        } else if (engineMode === 'rust') {
+          M = await getSoftHSMRustModule()
+        } else if (engineMode === 'dual') {
+          M = await getSoftHSMCppModule()
+          checkM = await getSoftHSMRustModule()
+        } else {
+          throw new Error('No cryptographic execution engine selected.')
+        }
+
+        const proxy = createLoggingProxy(M, addHsmLog, engineMode === 'rust' ? 'rust' : 'cpp')
         moduleRef.current = proxy
         hsm_initialize(proxy)
+
+        // Initialize Cross-Check Engine with logging
+        if (checkM) {
+          const checkProxy = createLoggingProxy(checkM, addHsmLog, 'rust')
+          crossCheckModuleRef.current = checkProxy
+          hsm_initialize(checkProxy)
+        }
+
         setPhase('initialized')
       } catch (e) {
         setTokenError(String(e))
         moduleRef.current = null
+        crossCheckModuleRef.current = null
       }
     })
 
@@ -680,6 +646,66 @@ const SoftHsmTabBrowser = () => {
         const ss1 = hsm_extractKeyValue(M, hSessionRef.current, secretHandle)
         setCiphertext(ciphertextBytes)
         setSecret1(ss1)
+
+        if (engineMode === 'dual' && crossCheckModuleRef.current) {
+          const checkM = crossCheckModuleRef.current
+          try {
+            // 1. Export PubKey from Primary (C++)
+            const pubBytes = hsm_extractKeyValue(M, hSessionRef.current, kemHandles!.pub)
+            // 2. Import PubKey to Secondary (Rust)
+            const checkPub = hsm_importMLKEMPublicKey(
+              checkM,
+              hSessionRef.current,
+              kemVariant,
+              pubBytes
+            )
+            // 3. Encapsulate on Secondary
+            const crossCheckResult = hsm_encapsulate(
+              checkM,
+              hSessionRef.current,
+              checkPub,
+              kemVariant
+            )
+            const rustEncSecret = hsm_extractKeyValue(
+              checkM,
+              hSessionRef.current,
+              crossCheckResult.secretHandle
+            )
+            // 4. Decapsulate on Primary
+            const cppDecapHandle = hsm_decapsulate(
+              M,
+              hSessionRef.current,
+              kemHandles!.priv,
+              crossCheckResult.ciphertextBytes,
+              kemVariant
+            )
+            const cppDecapSecret = hsm_extractKeyValue(M, hSessionRef.current, cppDecapHandle)
+
+            // 5. Cross-Check Verification
+            const hexMatch =
+              Buffer.from(rustEncSecret).toString('hex') ===
+              Buffer.from(cppDecapSecret).toString('hex')
+            if (!hexMatch) {
+              setKemError(
+                'Dual-Engine Parity Failure: C++ decapsulation missed Rust encapsulation secret'
+              )
+            } else {
+              addHsmLog({
+                id: Math.floor(Math.random() * 1000000),
+                timestamp: new Date().toISOString().slice(11, 19),
+                fn: 'Dual-Engine Parity',
+                rvName: 'SUCCESS',
+                rvHex: '0x00000000',
+                ms: 0,
+                ok: true,
+                engineName: 'dual',
+                args: 'Rust Encapsulation === C++ Decapsulation',
+              })
+            }
+          } catch (e) {
+            setKemError('Cross-check failed: ' + String(e))
+          }
+        }
       } catch (e) {
         setKemError(String(e))
       }
@@ -741,6 +767,44 @@ const SoftHsmTabBrowser = () => {
         const M = getM()
         const sig = hsm_sign(M, hSessionRef.current, dsaHandles!.priv, message, buildDsaOpts())
         setSignature(sig)
+
+        if (engineMode === 'dual' && crossCheckModuleRef.current) {
+          const checkM = crossCheckModuleRef.current
+          try {
+            const pubBytes = hsm_extractKeyValue(M, hSessionRef.current, dsaHandles!.pub)
+            const checkPub = hsm_importMLDSAPublicKey(
+              checkM,
+              hSessionRef.current,
+              dsaVariant,
+              pubBytes
+            )
+            const checkOk = hsm_verify(
+              checkM,
+              hSessionRef.current,
+              checkPub,
+              message,
+              sig,
+              buildDsaOpts()
+            )
+            if (!checkOk) {
+              setDsaError('Dual-Engine Parity Failure: Rust failed to verify C++ ML-DSA signature')
+            } else {
+              addHsmLog({
+                id: Math.floor(Math.random() * 1000000),
+                timestamp: new Date().toISOString().slice(11, 19),
+                fn: 'Dual-Engine Parity',
+                rvName: 'SUCCESS',
+                rvHex: '0x00000000',
+                ms: 0,
+                ok: true,
+                engineName: 'dual',
+                args: 'Rust Verify(C++ Signature) === Valid',
+              })
+            }
+          } catch (e) {
+            setDsaError('Cross-check failed: ' + String(e))
+          }
+        }
       } catch (e) {
         setDsaError(String(e))
       }
@@ -805,6 +869,46 @@ const SoftHsmTabBrowser = () => {
         const opts = slhdsaPreHash ? { preHash: slhdsaPreHash } : undefined
         const sig = hsm_slhdsaSign(M, hSessionRef.current, slhdsaHandles!.priv, slhdsaMessage, opts)
         setSlhdsaSignature(sig)
+
+        if (engineMode === 'dual' && crossCheckModuleRef.current) {
+          const checkM = crossCheckModuleRef.current
+          try {
+            const pubBytes = hsm_extractKeyValue(M, hSessionRef.current, slhdsaHandles!.pub)
+            const checkPub = hsm_importSLHDSAPublicKey(
+              checkM,
+              hSessionRef.current,
+              getSlhdsaParamSetCkp(),
+              pubBytes
+            )
+            const checkOk = hsm_slhdsaVerify(
+              checkM,
+              hSessionRef.current,
+              checkPub,
+              slhdsaMessage,
+              sig,
+              opts
+            )
+            if (!checkOk) {
+              setSlhdsaError(
+                'Dual-Engine Parity Failure: Rust failed to verify C++ SLH-DSA signature'
+              )
+            } else {
+              addHsmLog({
+                id: Math.floor(Math.random() * 1000000),
+                timestamp: new Date().toISOString().slice(11, 19),
+                fn: 'Dual-Engine Parity',
+                rvName: 'SUCCESS',
+                rvHex: '0x00000000',
+                ms: 0,
+                ok: true,
+                engineName: 'dual',
+                args: 'Rust Verify(C++ SLH-DSA Signature) === Valid',
+              })
+            }
+          } catch (e) {
+            setSlhdsaError('Cross-check failed: ' + String(e))
+          }
+        }
       } catch (e) {
         setSlhdsaError(String(e))
       }
@@ -834,20 +938,38 @@ const SoftHsmTabBrowser = () => {
   const anyLoading = loadingOp !== null
   const sessionOpen = phase === 'session_open'
 
-  if (!liveMode) {
+  if (engineMode === 'software') {
     return (
       <div className="space-y-6">
         {/* Mode toggle */}
         <div className="flex items-center justify-between glass-panel p-4">
           <div>
-            <p className="font-semibold text-sm">PKCS#11 v3.2 — PQC HSM</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Token lifecycle, ML-KEM, ML-DSA via SoftHSM WASM + OpenSSL 3.6
-            </p>
+            <p className="font-semibold text-sm">Execution Engine</p>
+            <div className="flex gap-4 mt-2">
+              {(['software', 'cpp', 'rust', 'dual'] as const).map((mode) => (
+                <label key={mode} className="flex items-center gap-1.5 text-xs cursor-pointer">
+                  <input
+                    type="radio"
+                    name="engineMode-idle"
+                    value={mode}
+                    checked={engineMode === mode}
+                    onChange={() => setEngineMode(mode)}
+                    className="accent-primary"
+                  />
+                  <span
+                    className={
+                      engineMode === mode ? 'text-primary font-medium' : 'text-muted-foreground'
+                    }
+                  >
+                    {mode === 'software' && 'Software API'}
+                    {mode === 'cpp' && 'C++ SoftHSMv3'}
+                    {mode === 'rust' && 'Rust SoftHSMv3'}
+                    {mode === 'dual' && 'Dual Cross-Check'}
+                  </span>
+                </label>
+              ))}
+            </div>
           </div>
-          <Button variant="outline" size="sm" onClick={() => setLiveMode(true)}>
-            <Shield size={14} className="mr-2" /> Live WASM
-          </Button>
         </div>
         <SimulationView />
       </div>
@@ -863,9 +985,21 @@ const SoftHsmTabBrowser = () => {
             <span className="w-2 h-2 rounded-full bg-status-success inline-block animate-pulse" />
             Live WASM — PKCS#11 v3.2
           </p>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Real in-browser SoftHSM token · OpenSSL 3.6 · FIPS 203 / 204 / 205
-          </p>
+          <div className="flex gap-4 mt-1">
+            <span
+              className={`text-xs ${engineMode === 'cpp' || engineMode === 'dual' ? 'text-primary' : 'text-muted-foreground'}`}
+            >
+              [ {engineMode === 'cpp' || engineMode === 'dual' ? 'x' : ' '} ] C++ Engine
+            </span>
+            <span
+              className={`text-xs ${engineMode === 'rust' || engineMode === 'dual' ? 'text-primary' : 'text-muted-foreground'}`}
+            >
+              [ {engineMode === 'rust' || engineMode === 'dual' ? 'x' : ' '} ] Rust Engine
+            </span>
+            {engineMode === 'dual' && (
+              <span className="text-xs text-orange-400 font-bold">✓ Cross-Check Mode</span>
+            )}
+          </div>
         </div>
         <Button
           variant="ghost"
@@ -894,8 +1028,8 @@ const SoftHsmTabBrowser = () => {
             setSlhdsaSignature(null)
             setSlhdsaVerifyResult(null)
             setSlhdsaError(null)
-            setLog([])
-            setLiveMode(false)
+            clearHsmLog()
+            setEngineMode('software')
           }}
         >
           Simulation
@@ -1302,7 +1436,9 @@ const SoftHsmTabBrowser = () => {
       </div>
 
       {/* ── Call Log ── */}
-      <LogPanel log={log} onClear={() => setLog([])} />
+      <div className="glass-panel p-4">
+        <PkcsLogPanel />
+      </div>
     </div>
   )
 }
