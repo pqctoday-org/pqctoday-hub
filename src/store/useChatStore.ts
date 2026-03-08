@@ -9,6 +9,7 @@ interface ChatState {
   apiKey: string | null
   provider: ChatProvider | null
   localModel: string
+  localContextWindow: number
   conversations: Conversation[]
   activeConversationId: string | null
   model: string
@@ -30,6 +31,7 @@ interface ChatState {
   setApiKey: (key: string | null) => void
   setProvider: (provider: ChatProvider | null) => void
   setLocalModel: (model: string) => void
+  setLocalContextWindow: (size: number) => void
   addMessage: (message: ChatMessage) => void
   setLoading: (loading: boolean) => void
   setStreaming: (streaming: boolean) => void
@@ -76,7 +78,8 @@ export const useChatStore = create<ChatState>()(
     (set, get) => ({
       apiKey: null,
       provider: null,
-      localModel: 'Phi-3.5-mini-instruct-q4f16_1-MLC',
+      localModel: 'Qwen3-1.7B-q4f16_1-MLC',
+      localContextWindow: 4_096,
       conversations: [],
       activeConversationId: null,
       messages: [],
@@ -95,6 +98,7 @@ export const useChatStore = create<ChatState>()(
       setProvider: (provider) => set({ provider, error: null, webllmError: null }),
 
       setLocalModel: (localModel) => set({ localModel }),
+      setLocalContextWindow: (localContextWindow) => set({ localContextWindow }),
 
       addMessage: (message) =>
         set((state) => {
@@ -256,12 +260,13 @@ export const useChatStore = create<ChatState>()(
     }),
     {
       name: 'pqc-chat-storage',
-      version: 5,
+      version: 7,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         apiKey: state.apiKey,
         provider: state.provider,
         localModel: state.localModel,
+        localContextWindow: state.localContextWindow,
         conversations: state.conversations.map((c) => ({
           ...c,
           messages: c.messages.slice(-MAX_MESSAGES_PER_CONVERSATION),
@@ -329,7 +334,13 @@ export const useChatStore = create<ChatState>()(
           } else {
             state.provider = null
           }
-          state.localModel = 'Phi-3.5-mini-instruct-q4f16_1-MLC'
+          state.localModel = 'Qwen3-1.7B-q4f16_1-MLC'
+        }
+
+        // v5 → v6: add localContextWindow field
+        if (version < 6) {
+          state.localContextWindow =
+            typeof state.localContextWindow === 'number' ? state.localContextWindow : 4_096
         }
 
         // Ensure conversations and activeConversationId exist
@@ -341,10 +352,25 @@ export const useChatStore = create<ChatState>()(
         if (state.provider !== 'gemini' && state.provider !== 'local' && state.provider !== null) {
           state.provider = null
         }
+        // Validate localModel against current catalog — reset stale IDs from old versions
+        const VALID_LOCAL_MODELS = new Set([
+          'Qwen3-1.7B-q4f16_1-MLC',
+          'Qwen3-4B-q4f16_1-MLC',
+          'Qwen3-0.6B-q4f16_1-MLC',
+        ])
         state.localModel =
-          typeof state.localModel === 'string'
+          typeof state.localModel === 'string' && VALID_LOCAL_MODELS.has(state.localModel)
             ? state.localModel
-            : 'Phi-3.5-mini-instruct-q4f16_1-MLC'
+            : 'Qwen3-1.7B-q4f16_1-MLC'
+        state.localContextWindow =
+          typeof state.localContextWindow === 'number' ? state.localContextWindow : 4_096
+
+        // v6 → v7: clamp stale context windows to safe browser limits
+        if (version < 7) {
+          if (typeof state.localContextWindow === 'number' && state.localContextWindow > 8_192) {
+            state.localContextWindow = 4_096
+          }
+        }
 
         return state
       },

@@ -18,6 +18,8 @@ import {
   type MLDSASignOptions,
 } from '../../../wasm/softhsm'
 import { FilterDropdown } from '../../common/FilterDropdown'
+import { HsmClassicalSignPanel } from '../hsm/HsmClassicalSignPanel'
+import { HsmReadyGuard } from '../hsm/shared'
 
 // Helper for Hex/ASCII toggle with editing
 const EditableDataDisplay: React.FC<{
@@ -106,10 +108,11 @@ const toHexSnippetDsa = (b: Uint8Array) => {
 }
 
 const HsmSignPanel: React.FC = () => {
-  const { moduleRef, crossCheckModuleRef, hSessionRef, isReady, addHsmKey, engineMode, addHsmLog } =
+  const { moduleRef, crossCheckModuleRef, hSessionRef, addHsmKey, engineMode, addHsmLog } =
     useHsmContext()
 
   const [variant, setVariant] = useState<44 | 65 | 87>(65)
+  const [extractable, setExtractable] = useState(false)
   const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
   const [message, setMessage] = useState('Hello, PQC World!')
   const [signature, setSignature] = useState<Uint8Array | null>(null)
@@ -155,7 +158,12 @@ const HsmSignPanel: React.FC = () => {
       try {
         const M = moduleRef.current
         if (!M) throw new Error('Module not loaded — complete Token Setup first')
-        const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSessionRef.current, variant)
+        const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(
+          M,
+          hSessionRef.current,
+          variant,
+          extractable
+        )
         setHandles({ pub: pubHandle, priv: privHandle })
         const ts = new Date().toLocaleTimeString([], {
           hour12: false,
@@ -175,7 +183,7 @@ const HsmSignPanel: React.FC = () => {
           handle: privHandle,
           family: 'ml-dsa',
           role: 'private',
-          label: `ML-DSA-${variant} Private Key`,
+          label: `ML-DSA-${variant} Private Key${extractable ? ' (extractable)' : ''}`,
           variant: String(variant),
           generatedAt: ts,
         })
@@ -287,13 +295,7 @@ const HsmSignPanel: React.FC = () => {
     })
 
   return (
-    <div className={`space-y-4 ${!isReady ? 'opacity-60 pointer-events-none' : ''}`}>
-      {!isReady && (
-        <div className="glass-panel p-3 text-sm text-muted-foreground">
-          Complete Token Setup in the Key Store tab first.
-        </div>
-      )}
-
+    <div className="space-y-4">
       <div className="glass-panel p-4 space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <h3 className="font-semibold text-sm">ML-DSA Sign &amp; Verify (FIPS 204)</h3>
@@ -383,11 +385,20 @@ const HsmSignPanel: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 items-center">
           <Button variant="outline" size="sm" disabled={anyLoading} onClick={doGenKeyPair}>
             {loadingOp === 'gen' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
             {handles ? '✓ Key Pair' : 'Generate Key Pair'}
           </Button>
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={extractable}
+              onChange={(e) => setExtractable(e.target.checked)}
+              className="accent-primary"
+            />
+            CKA_EXTRACTABLE
+          </label>
           <Button variant="outline" size="sm" disabled={!handles || anyLoading} onClick={doSign}>
             {loadingOp === 'sign' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
             Sign
@@ -438,11 +449,43 @@ const HsmSignPanel: React.FC = () => {
   )
 }
 
+// ── Combined HSM Sign Panel (PQC + Classical) ────────────────────────────────
+
+const HsmSignCombinedPanel: React.FC = () => {
+  const { isReady } = useHsmContext()
+  const [signFamily, setSignFamily] = useState<'pqc' | 'classical'>('pqc')
+  return (
+    <HsmReadyGuard isReady={isReady}>
+      <div className="space-y-4">
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSignFamily('pqc')}
+            className={`text-xs h-7 px-3 ${signFamily === 'pqc' ? 'bg-primary/20 text-primary' : ''}`}
+          >
+            PQC (ML-DSA · SLH-DSA)
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSignFamily('classical')}
+            className={`text-xs h-7 px-3 ${signFamily === 'classical' ? 'bg-primary/20 text-primary' : ''}`}
+          >
+            Classical (RSA · ECDSA · EdDSA)
+          </Button>
+        </div>
+        {signFamily === 'pqc' ? <HsmSignPanel /> : <HsmClassicalSignPanel />}
+      </div>
+    </HsmReadyGuard>
+  )
+}
+
 // ── Software Sign Tab ─────────────────────────────────────────────────────────
 
 export const SignVerifyTab: React.FC = () => {
   const { hsmMode } = useSettingsContext()
-  if (hsmMode) return <HsmSignPanel />
+  if (hsmMode) return <HsmSignCombinedPanel />
   return <SignVerifyTabSoftware />
 }
 

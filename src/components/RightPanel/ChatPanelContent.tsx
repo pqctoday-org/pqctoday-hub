@@ -15,7 +15,7 @@ import { useChatSend } from '@/hooks/useChatSend'
 import { logChatFeedback } from '@/utils/analytics'
 import { conversationToMarkdown, downloadMarkdown } from '@/services/chat/exportConversation'
 import { clearCache } from '@/services/chat/responseCache'
-import { initializeEngine, isEngineReady } from '@/services/chat/WebLLMService'
+import { initializeEngine, isEngineReady, WEBLLM_MODELS } from '@/services/chat/WebLLMService'
 
 export const ChatPanelContent: React.FC = () => {
   const {
@@ -23,6 +23,7 @@ export const ChatPanelContent: React.FC = () => {
     setProvider,
     setApiKey,
     localModel,
+    localContextWindow,
     messages,
     isLoading,
     isStreaming,
@@ -47,6 +48,7 @@ export const ChatPanelContent: React.FC = () => {
   const [input, setInput] = useState('')
   const [showSampleQuestions, setShowSampleQuestions] = useState(false)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
+  const [showSwitchConfirm, setShowSwitchConfirm] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -67,10 +69,14 @@ export const ChatPanelContent: React.FC = () => {
   useEffect(() => {
     if (isOpen && provider === 'local' && webllmStatus === 'idle' && !isEngineReady()) {
       setWebLLMStatus('checking')
-      initializeEngine(localModel, (progress) => {
-        setWebLLMProgress(progress)
-        setWebLLMStatus(progress.status)
-      })
+      initializeEngine(
+        localModel,
+        (progress) => {
+          setWebLLMProgress(progress)
+          setWebLLMStatus(progress.status)
+        },
+        localContextWindow
+      )
         .then(() => setWebLLMStatus('ready'))
         .catch((err) => {
           setWebLLMError(err instanceof Error ? err.message : 'Failed to load model.')
@@ -81,6 +87,7 @@ export const ChatPanelContent: React.FC = () => {
     isOpen,
     provider,
     localModel,
+    localContextWindow,
     webllmStatus,
     setWebLLMStatus,
     setWebLLMProgress,
@@ -137,8 +144,11 @@ export const ChatPanelContent: React.FC = () => {
   }
 
   const handleDisconnect = () => {
+    clearMessages()
+    clearCache()
     setProvider(null)
     setApiKey(null)
+    setShowSwitchConfirm(false)
   }
 
   const handleRetryModelLoad = () => {
@@ -146,8 +156,22 @@ export const ChatPanelContent: React.FC = () => {
     setWebLLMError(null)
   }
 
+  const handleChangeModel = async () => {
+    const { unloadEngine } = await import('@/services/chat/WebLLMService')
+    await unloadEngine()
+    clearMessages()
+    clearCache()
+    setWebLLMStatus('idle')
+    setWebLLMError(null)
+    setProvider(null)
+  }
+
   const ProviderIcon = provider === 'local' ? Shield : Cloud
-  const providerLabel = provider === 'local' ? 'Local' : 'Cloud'
+  const localModelLabel = WEBLLM_MODELS.find((m) => m.id === localModel)?.label?.replace(
+    / \(.*\)$/,
+    ''
+  )
+  const providerLabel = provider === 'local' ? (localModelLabel ?? 'Local') : 'Cloud'
 
   return (
     <>
@@ -158,10 +182,9 @@ export const ChatPanelContent: React.FC = () => {
             <Bot size={18} className="text-primary shrink-0" />
             <span className="text-sm font-medium text-foreground truncate">PQC Assistant</span>
             {provider && (
-              <span className="text-xs text-muted-foreground hidden sm:inline flex items-center gap-1">
-                — {pageContext.page}
-                <ProviderIcon size={10} />
-                <span>{providerLabel}</span>
+              <span className="text-xs text-muted-foreground hidden sm:inline-flex items-center gap-1">
+                <ProviderIcon size={10} className="shrink-0" />
+                <span className="truncate">{providerLabel}</span>
               </span>
             )}
           </div>
@@ -233,16 +256,42 @@ export const ChatPanelContent: React.FC = () => {
                   <Trash2 size={16} />
                 </Button>
               )}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleDisconnect}
-                className="min-h-[44px] min-w-[44px] p-2"
-                aria-label="Switch provider"
-                title="Switch provider"
-              >
-                <Key size={16} />
-              </Button>
+              {showSwitchConfirm ? (
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">
+                    Clears conversation
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleDisconnect}
+                    className="min-h-[44px] px-2 text-status-error hover:text-status-error"
+                    aria-label="Confirm switch provider"
+                  >
+                    Switch
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowSwitchConfirm(false)}
+                    className="min-h-[44px] px-2"
+                    aria-label="Cancel switch provider"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSwitchConfirm(true)}
+                  className="min-h-[44px] min-w-[44px] p-2"
+                  aria-label="Switch provider"
+                  title="Switch provider"
+                >
+                  <Key size={16} />
+                </Button>
+              )}
             </div>
           )}
         </div>
@@ -261,7 +310,9 @@ export const ChatPanelContent: React.FC = () => {
               status={webllmStatus}
               progress={webllmProgress}
               error={webllmError}
+              modelName={localModelLabel}
               onRetry={handleRetryModelLoad}
+              onChangeModel={handleChangeModel}
             />
           )}
 

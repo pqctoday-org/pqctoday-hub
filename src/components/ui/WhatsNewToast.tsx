@@ -86,25 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Cross-engine KEM &amp; Sign</strong> &mdash;
-                    KEM and Sign panels now run dual cross-checks: Rust encapsulates with C++ pubkey
-                    and C++ decapsulates, C++ signs and Rust verifies
+                    <strong className="text-foreground">Local AI assistant</strong> &mdash; Run the
+                    PQC assistant entirely in your browser with Qwen 3 models &mdash; no API key, no
+                    cloud, fully private
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Rust WASM Phase 2</strong> &mdash; RSA,
-                    ECDSA, EdDSA, SLH-DSA, digest, and key wrap/unwrap now available in the Rust
-                    PKCS#11 engine
+                    <strong className="text-foreground">Key Wrap / Unwrap tab</strong> &mdash;
+                    Dedicated HSM tab with AES-KW, AES-KWP, AES-GCM, and RSA-OAEP key wrapping
+                    mechanisms
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Expanded AI assistant</strong> &mdash;
-                    Achievement catalog, Business Center, Right Panel, Guided Tour, and SoftHSMv3
-                    docs added to the RAG knowledge base
+                    <strong className="text-foreground">PKCS#11 attribute controls</strong> &mdash;
+                    Toggle CKA_EXTRACTABLE, CKA_WRAP, CKA_DERIVE and more on every key generation
+                    form
                   </span>
                 </li>
               </ul>

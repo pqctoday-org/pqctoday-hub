@@ -30,6 +30,7 @@ export function useChatSend() {
     setApiKey,
     provider,
     localModel,
+    localContextWindow,
     messages,
     addMessage,
     isLoading,
@@ -103,10 +104,14 @@ export function useChatSend() {
           setWebLLMStatus('downloading')
           setWebLLMError(null)
           try {
-            await initializeEngine(localModel, (progress) => {
-              setWebLLMProgress(progress)
-              setWebLLMStatus(progress.status)
-            })
+            await initializeEngine(
+              localModel,
+              (progress) => {
+                setWebLLMProgress(progress)
+                setWebLLMStatus(progress.status)
+              },
+              localContextWindow
+            )
             setWebLLMStatus('ready')
           } catch (err) {
             const msg = err instanceof Error ? err.message : 'Failed to load local model.'
@@ -194,7 +199,13 @@ export function useChatSend() {
         // Dispatch to the correct provider
         const streamGen =
           provider === 'local'
-            ? localStreamResponse(allMessages, chunks, controller.signal, pageContext)
+            ? localStreamResponse(
+                allMessages,
+                chunks,
+                controller.signal,
+                pageContext,
+                localContextWindow
+              )
             : geminiStreamResponse(
                 apiKey!,
                 allMessages,
@@ -303,6 +314,7 @@ export function useChatSend() {
       apiKey,
       provider,
       localModel,
+      localContextWindow,
       messages,
       isLoading,
       isStreaming,

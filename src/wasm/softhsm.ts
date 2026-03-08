@@ -560,8 +560,8 @@ const CKU_USER = 1
 const CKO_PUBLIC_KEY = 0x02
 export const CKO_PRIVATE_KEY = 0x03
 export const CKO_SECRET_KEY = 0x04
-const CKK_ML_KEM = 0x49 // PKCS#11 v3.2
-const CKK_ML_DSA = 0x4a // PKCS#11 v3.2
+export const CKK_ML_KEM = 0x49 // PKCS#11 v3.2
+export const CKK_ML_DSA = 0x4a // PKCS#11 v3.2
 const CKM_ML_KEM_KEY_PAIR_GEN = 0x0000000f
 const CKM_ML_KEM = 0x00000017
 const CKM_ML_DSA_KEY_PAIR_GEN = 0x0000001c
@@ -579,6 +579,10 @@ export const CKA_VALUE_LEN = 0x00000161
 export const CKA_VALUE = 0x00000011
 export const CKA_KEY_TYPE = 0x00000100
 export const CKA_PARAMETER_SET = 0x0000061d
+export const CKA_LOCAL = 0x00000163
+export const CKA_NEVER_EXTRACTABLE = 0x00000164
+export const CKA_ALWAYS_SENSITIVE = 0x00000165
+export const CKA_KEY_GEN_MECHANISM = 0x00000166
 export const CKA_ENCAPSULATE = 0x00000633
 export const CKA_DECAPSULATE = 0x00000634
 
@@ -812,13 +816,13 @@ export const hsm_openUserSession = (
   return hSession
 }
 
-const kemParamSet = (variant: 512 | 768 | 1024): number => {
+export const kemParamSet = (variant: 512 | 768 | 1024): number => {
   if (variant === 512) return CKP_ML_KEM_512
   if (variant === 1024) return CKP_ML_KEM_1024
   return CKP_ML_KEM_768
 }
 
-const dsaParamSet = (variant: 44 | 65 | 87): number => {
+export const dsaParamSet = (variant: 44 | 65 | 87): number => {
   if (variant === 44) return CKP_ML_DSA_44
   if (variant === 87) return CKP_ML_DSA_87
   return CKP_ML_DSA_65
@@ -828,7 +832,8 @@ const dsaParamSet = (variant: 44 | 65 | 87): number => {
 export const hsm_generateMLKEMKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  variant: 512 | 768 | 1024
+  variant: 512 | 768 | 1024,
+  extractable = false
 ): { pubHandle: number; privHandle: number } => {
   const mech = M._malloc(12)
   M.setValue(mech, CKM_ML_KEM_KEY_PAIR_GEN, 'i32')
@@ -849,8 +854,8 @@ export const hsm_generateMLKEMKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_ML_KEM },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_PRIVATE, boolVal: true },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_DECAPSULATE, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: ps },
   ])
@@ -1074,7 +1079,8 @@ export const hsm_extractECPoint = (
 export const hsm_generateMLDSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  variant: 44 | 65 | 87
+  variant: 44 | 65 | 87,
+  extractable = false
 ): { pubHandle: number; privHandle: number } => {
   const mech = M._malloc(12)
   M.setValue(mech, CKM_ML_DSA_KEY_PAIR_GEN, 'i32')
@@ -1096,8 +1102,8 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_ML_DSA },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_PRIVATE, boolVal: true },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_SIGN, boolVal: true },
   ])
 
@@ -1530,6 +1536,7 @@ export const CKM_AES_CBC_PAD = 0x1085
 export const CKM_AES_GCM = 0x1087
 export const CKM_AES_CMAC = 0x108a
 export const CKM_AES_KEY_WRAP = 0x2109
+export const CKM_AES_KEY_WRAP_KWP = 0x210a // RFC 5649 / NIST SP 800-38F (PKCS#11 v3.2 CKM_AES_KEY_WRAP_PAD)
 export const CKM_SHA256_HMAC = 0x251
 export const CKM_SHA384_HMAC = 0x261
 export const CKM_SHA512_HMAC = 0x271
@@ -1769,7 +1776,8 @@ const buildECDH1DeriveParams = (
 export const hsm_generateRSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  keyBits: 1024 | 2048 | 3072 | 4096
+  keyBits: 1024 | 2048 | 3072 | 4096,
+  extractable = false
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_RSA_PKCS_KEY_PAIR_GEN)
   const exp = new Uint8Array([0x01, 0x00, 0x01]) // e=65537
@@ -1788,8 +1796,8 @@ export const hsm_generateRSAKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_PRIVATE, boolVal: true },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_DECRYPT, boolVal: true },
     { type: CKA_SIGN, boolVal: true },
   ])
@@ -1960,7 +1968,8 @@ const ecCurveOID = (curve: 'P-256' | 'P-384' | 'P-521'): Uint8Array => {
 export const hsm_generateECKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  curve: 'P-256' | 'P-384' | 'P-521'
+  curve: 'P-256' | 'P-384' | 'P-521',
+  extractable = false
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_EC_KEY_PAIR_GEN)
   const oid = ecCurveOID(curve)
@@ -1978,8 +1987,8 @@ export const hsm_generateECKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_PRIVATE, boolVal: true },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_SIGN, boolVal: true },
     { type: CKA_DERIVE, boolVal: true },
   ])
@@ -2461,7 +2470,8 @@ export const hsm_kbkdfFeedback = (
 export const hsm_generateEdDSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  curve: 'Ed25519' | 'Ed448'
+  curve: 'Ed25519' | 'Ed448',
+  extractable = false
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_EC_EDWARDS_KEY_PAIR_GEN)
   const oid = curve === 'Ed448' ? EC_OID_ED448 : EC_OID_ED25519
@@ -2478,8 +2488,8 @@ export const hsm_generateEdDSAKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_EC_EDWARDS },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_PRIVATE, boolVal: true },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_SIGN, boolVal: true },
   ])
   const pubHPtr = allocUlong(M)
@@ -2590,24 +2600,31 @@ export const hsm_signMultiPart = (
 
 // ── AES helpers ───────────────────────────────────────────────────────────────
 
-/** Generate an AES symmetric key (128/192/256 bits). Returns CKO_SECRET_KEY handle. */
+/** Generate an AES symmetric key (128/192/256 bits). Returns CKO_SECRET_KEY handle.
+ *  Boolean params map 1:1 to PKCS#11 v3.2 CKA_* template attributes (Table 14). */
 export const hsm_generateAESKey = (
   M: SoftHSMModule,
   hSession: number,
-  keyBits: 128 | 192 | 256
+  keyBits: 128 | 192 | 256,
+  encrypt = true,
+  decrypt = true,
+  wrap = true,
+  unwrap = true,
+  derive = true,
+  extractable = true
 ): number => {
   const mech = buildMech(M, CKM_AES_KEY_GEN)
   const tpl = buildTemplate(M, [
     { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
     { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: true },
-    { type: CKA_ENCRYPT, boolVal: true },
-    { type: CKA_DECRYPT, boolVal: true },
-    { type: CKA_WRAP, boolVal: true },
-    { type: CKA_UNWRAP, boolVal: true },
-    { type: CKA_DERIVE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_ENCRYPT, boolVal: encrypt },
+    { type: CKA_DECRYPT, boolVal: decrypt },
+    { type: CKA_WRAP, boolVal: wrap },
+    { type: CKA_UNWRAP, boolVal: unwrap },
+    { type: CKA_DERIVE, boolVal: derive },
     { type: CKA_VALUE_LEN, ulongVal: keyBits / 8 },
   ])
   const hKeyPtr = allocUlong(M)
@@ -2618,6 +2635,39 @@ export const hsm_generateAESKey = (
     M._free(mech)
     freeTemplate(M, tpl, 11)
     M._free(hKeyPtr)
+  }
+}
+
+/** Import raw bytes as a CKK_GENERIC_SECRET with CKA_DERIVE=true. For HKDF input or seed wrapping. */
+export const hsm_importGenericSecret = (
+  M: SoftHSMModule,
+  hSession: number,
+  secretBytes: Uint8Array
+): number => {
+  const ptr = M._malloc(secretBytes.length)
+  M.HEAPU8.set(secretBytes, ptr)
+
+  const tpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_DERIVE, boolVal: true },
+    { type: CKA_VALUE, bytesPtr: ptr, bytesLen: secretBytes.length },
+    { type: CKA_VALUE_LEN, ulongVal: secretBytes.length },
+  ])
+  const hKeyPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_CreateObject(hSession, tpl.ptr, 8, hKeyPtr),
+      'C_CreateObject(Import GenericSecret)'
+    )
+    return readUlong(M, hKeyPtr)
+  } finally {
+    freeTemplate(M, tpl, 8)
+    M._free(hKeyPtr)
+    M._free(ptr)
   }
 }
 
@@ -3214,10 +3264,17 @@ export interface KeyAttributeSet {
   ckClass: number | null
   /** CKA_KEY_TYPE: algorithm family (e.g. CKK_AES=0x1f, CKK_RSA=0x00) */
   ckKeyType: number | null
+  /** CKA_PARAMETER_SET: parameter set ID for PQC keys (ML-KEM/ML-DSA/SLH-DSA) */
+  ckParameterSet: number | null
+  /** CKA_KEY_GEN_MECHANISM: CKM_ type that generated this key */
+  ckKeyGenMechanism: number | null
   ckToken: boolean | null
   ckPrivate: boolean | null
   ckSensitive: boolean | null
   ckExtractable: boolean | null
+  ckAlwaysSensitive: boolean | null
+  ckNeverExtractable: boolean | null
+  ckLocal: boolean | null
   ckEncrypt: boolean | null
   ckDecrypt: boolean | null
   ckSign: boolean | null
@@ -3225,6 +3282,8 @@ export interface KeyAttributeSet {
   ckWrap: boolean | null
   ckUnwrap: boolean | null
   ckDerive: boolean | null
+  ckEncapsulate: boolean | null
+  ckDecapsulate: boolean | null
   /** CKA_VALUE_LEN in bytes; present on secret keys only */
   ckValueLen: number | null
 }
@@ -3240,10 +3299,15 @@ export const hsm_getKeyAttributes = (
   return {
     ckClass: u(CKA_CLASS),
     ckKeyType: u(CKA_KEY_TYPE),
+    ckParameterSet: u(CKA_PARAMETER_SET),
+    ckKeyGenMechanism: u(CKA_KEY_GEN_MECHANISM),
     ckToken: b(CKA_TOKEN),
     ckPrivate: b(CKA_PRIVATE),
     ckSensitive: b(CKA_SENSITIVE),
     ckExtractable: b(CKA_EXTRACTABLE),
+    ckAlwaysSensitive: b(CKA_ALWAYS_SENSITIVE),
+    ckNeverExtractable: b(CKA_NEVER_EXTRACTABLE),
+    ckLocal: b(CKA_LOCAL),
     ckEncrypt: b(CKA_ENCRYPT),
     ckDecrypt: b(CKA_DECRYPT),
     ckSign: b(CKA_SIGN),
@@ -3251,6 +3315,8 @@ export const hsm_getKeyAttributes = (
     ckWrap: b(CKA_WRAP),
     ckUnwrap: b(CKA_UNWRAP),
     ckDerive: b(CKA_DERIVE),
+    ckEncapsulate: b(CKA_ENCAPSULATE),
+    ckDecapsulate: b(CKA_DECAPSULATE),
     ckValueLen: u(CKA_VALUE_LEN),
   }
 }
@@ -3849,7 +3915,7 @@ export const hsm_aesWrapKeyKwp = (
   hKey: number
 ): Uint8Array => {
   const pMechanism = M._malloc(8)
-  writeUlong(M, pMechanism, 0x108b) // CKM_AES_KEY_WRAP_KWP
+  writeUlong(M, pMechanism, CKM_AES_KEY_WRAP_KWP)
   writeUlong(M, pMechanism + 4, 0)
 
   let rv = M._C_WrapKey(hSession, pMechanism, hWrappingKey, hKey, 0, M.HEAPU8.buffer.byteLength - 8)
@@ -3882,7 +3948,7 @@ export const hsm_unwrapKey = (
   template: AttrDef[]
 ): number => {
   const pMechanism = M._malloc(8)
-  writeUlong(M, pMechanism, 0x108b) // CKM_AES_KEY_WRAP_KWP
+  writeUlong(M, pMechanism, CKM_AES_KEY_WRAP_KWP)
   writeUlong(M, pMechanism + 4, 0)
 
   const pWrapped = M._malloc(wrappedBytes.length)
@@ -3909,4 +3975,287 @@ export const hsm_unwrapKey = (
   M._free(pWrapped)
   M._free(pMechanism)
   return hKey
+}
+
+// ── Key Wrap/Unwrap extension — FIPS 140-3 L3 approved mechanisms ─────────────
+
+/**
+ * Generate an RSA key pair with CKA_WRAP (public) and CKA_UNWRAP (private) enabled.
+ * Suitable for RSA-OAEP indirect key transport / key wrapping.
+ */
+export const hsm_generateRSAWrapKeyPair = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyBits: 2048 | 3072 | 4096
+): { pubHandle: number; privHandle: number } => {
+  const mech = buildMech(M, CKM_RSA_PKCS_KEY_PAIR_GEN)
+  const exp = new Uint8Array([0x01, 0x00, 0x01]) // e=65537
+  const expPtr = writeBytes(M, exp)
+  const pubTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_MODULUS_BITS, ulongVal: keyBits },
+    { type: CKA_PUBLIC_EXPONENT, bytesPtr: expPtr, bytesLen: 3 },
+    { type: CKA_ENCRYPT, boolVal: true },
+    { type: CKA_WRAP, boolVal: true },
+  ])
+  const prvTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_DECRYPT, boolVal: true },
+    { type: CKA_UNWRAP, boolVal: true },
+  ])
+  const pubHPtr = allocUlong(M)
+  const prvHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 7, prvTpl.ptr, 8, pubHPtr, prvHPtr),
+      'C_GenerateKeyPair(RSA-wrap)'
+    )
+    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
+  } finally {
+    M._free(mech)
+    M._free(expPtr)
+    freeTemplate(M, pubTpl, 7)
+    freeTemplate(M, prvTpl, 8)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/**
+ * Generalized AES key wrap (no extra mechanism parameters).
+ * Supports CKM_AES_KEY_WRAP (0x2109 / RFC 3394) and CKM_AES_KEY_WRAP_KWP (0x210A / RFC 5649).
+ */
+export const hsm_wrapKeyMech = (
+  M: SoftHSMModule,
+  hSession: number,
+  mechType: number,
+  wrappingHandle: number,
+  targetHandle: number
+): Uint8Array => {
+  const mech = buildMech(M, mechType)
+  const wrappedLenPtr = allocUlong(M)
+  let wrappedPtr = 0
+  try {
+    checkRV(
+      M._C_WrapKey(hSession, mech, wrappingHandle, targetHandle, 0, wrappedLenPtr),
+      'C_WrapKey(len)'
+    )
+    const wrappedLen = readUlong(M, wrappedLenPtr)
+    wrappedPtr = M._malloc(wrappedLen)
+    writeUlong(M, wrappedLenPtr, wrappedLen)
+    checkRV(
+      M._C_WrapKey(hSession, mech, wrappingHandle, targetHandle, wrappedPtr, wrappedLenPtr),
+      'C_WrapKey'
+    )
+    return M.HEAPU8.slice(wrappedPtr, wrappedPtr + readUlong(M, wrappedLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(wrappedLenPtr)
+    if (wrappedPtr) M._free(wrappedPtr)
+  }
+}
+
+/**
+ * AES-GCM key wrap via C_WrapKey(CKM_AES_GCM, CK_GCM_PARAMS).
+ * Returns both the wrapped blob and the IV (both required for unwrap).
+ * If iv has length 0 a fresh 12-byte IV is generated automatically.
+ */
+export const hsm_aesGcmWrapKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  wrappingHandle: number,
+  targetHandle: number,
+  iv: Uint8Array
+): { wrapped: Uint8Array; iv: Uint8Array } => {
+  const actualIv = iv.length === 12 ? iv : hsm_generateRandom(M, hSession, 12)
+  const gcmP = buildGCMParams(M, actualIv)
+  const mech = buildMech(M, CKM_AES_GCM, gcmP.ptr, gcmP.len)
+  const wrappedLenPtr = allocUlong(M)
+  let wrappedPtr = 0
+  try {
+    checkRV(
+      M._C_WrapKey(hSession, mech, wrappingHandle, targetHandle, 0, wrappedLenPtr),
+      'C_WrapKey(GCM,len)'
+    )
+    const wrappedLen = readUlong(M, wrappedLenPtr)
+    wrappedPtr = M._malloc(wrappedLen)
+    writeUlong(M, wrappedLenPtr, wrappedLen)
+    checkRV(
+      M._C_WrapKey(hSession, mech, wrappingHandle, targetHandle, wrappedPtr, wrappedLenPtr),
+      'C_WrapKey(GCM)'
+    )
+    return {
+      wrapped: M.HEAPU8.slice(wrappedPtr, wrappedPtr + readUlong(M, wrappedLenPtr)),
+      iv: actualIv,
+    }
+  } finally {
+    gcmP.allocPtrs.forEach((p) => M._free(p))
+    M._free(mech)
+    M._free(wrappedLenPtr)
+    if (wrappedPtr) M._free(wrappedPtr)
+  }
+}
+
+/**
+ * RSA-OAEP key wrap via C_WrapKey(CKM_RSA_PKCS_OAEP).
+ * The RSA public key must have CKA_WRAP=true (use hsm_generateRSAWrapKeyPair).
+ */
+export const hsm_rsaOaepWrapKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  rsaPubHandle: number,
+  targetHandle: number,
+  hashAlgo: 'sha256' | 'sha384' | 'sha512' = 'sha256'
+): Uint8Array => {
+  const oaepParams = buildOAEPParams(M, hashAlgo)
+  const mech = buildMech(M, CKM_RSA_PKCS_OAEP, oaepParams.ptr, oaepParams.len)
+  const wrappedLenPtr = allocUlong(M)
+  let wrappedPtr = 0
+  try {
+    checkRV(
+      M._C_WrapKey(hSession, mech, rsaPubHandle, targetHandle, 0, wrappedLenPtr),
+      'C_WrapKey(RSA-OAEP,len)'
+    )
+    const wrappedLen = readUlong(M, wrappedLenPtr)
+    wrappedPtr = M._malloc(wrappedLen)
+    writeUlong(M, wrappedLenPtr, wrappedLen)
+    checkRV(
+      M._C_WrapKey(hSession, mech, rsaPubHandle, targetHandle, wrappedPtr, wrappedLenPtr),
+      'C_WrapKey(RSA-OAEP)'
+    )
+    return M.HEAPU8.slice(wrappedPtr, wrappedPtr + readUlong(M, wrappedLenPtr))
+  } finally {
+    M._free(oaepParams.ptr)
+    M._free(mech)
+    M._free(wrappedLenPtr)
+    if (wrappedPtr) M._free(wrappedPtr)
+  }
+}
+
+/**
+ * RSA-OAEP key unwrap via C_UnwrapKey(CKM_RSA_PKCS_OAEP).
+ * The RSA private key must have CKA_UNWRAP=true. Returns the new key handle.
+ */
+export const hsm_rsaOaepUnwrapKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  rsaPrivHandle: number,
+  wrappedBytes: Uint8Array,
+  template: AttrDef[],
+  hashAlgo: 'sha256' | 'sha384' | 'sha512' = 'sha256'
+): number => {
+  const oaepParams = buildOAEPParams(M, hashAlgo)
+  const mech = buildMech(M, CKM_RSA_PKCS_OAEP, oaepParams.ptr, oaepParams.len)
+  const pWrapped = writeBytes(M, wrappedBytes)
+  const tpl = buildTemplate(M, template)
+  const phKey = allocUlong(M)
+  try {
+    checkRV(
+      M._C_UnwrapKey(
+        hSession,
+        mech,
+        rsaPrivHandle,
+        pWrapped,
+        wrappedBytes.length,
+        tpl.ptr,
+        template.length,
+        phKey
+      ),
+      'C_UnwrapKey(RSA-OAEP)'
+    )
+    return readUlong(M, phKey)
+  } finally {
+    M._free(oaepParams.ptr)
+    M._free(mech)
+    M._free(pWrapped)
+    freeTemplate(M, tpl, template.length)
+    M._free(phKey)
+  }
+}
+
+/**
+ * Generalized AES key unwrap (no extra mechanism parameters).
+ * Supports CKM_AES_KEY_WRAP and CKM_AES_KEY_WRAP_KWP. Returns new key handle.
+ */
+export const hsm_unwrapKeyMech = (
+  M: SoftHSMModule,
+  hSession: number,
+  mechType: number,
+  hUnwrapKey: number,
+  wrappedBytes: Uint8Array,
+  template: AttrDef[]
+): number => {
+  const mech = buildMech(M, mechType)
+  const pWrapped = writeBytes(M, wrappedBytes)
+  const tpl = buildTemplate(M, template)
+  const phKey = allocUlong(M)
+  try {
+    checkRV(
+      M._C_UnwrapKey(
+        hSession,
+        mech,
+        hUnwrapKey,
+        pWrapped,
+        wrappedBytes.length,
+        tpl.ptr,
+        template.length,
+        phKey
+      ),
+      'C_UnwrapKey'
+    )
+    return readUlong(M, phKey)
+  } finally {
+    M._free(mech)
+    M._free(pWrapped)
+    freeTemplate(M, tpl, template.length)
+    M._free(phKey)
+  }
+}
+
+/**
+ * AES-GCM key unwrap via C_UnwrapKey(CKM_AES_GCM, CK_GCM_PARAMS).
+ * @param iv  The 12-byte IV that was used during wrapping.
+ */
+export const hsm_aesGcmUnwrapKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  hUnwrapKey: number,
+  wrappedBytes: Uint8Array,
+  iv: Uint8Array,
+  template: AttrDef[]
+): number => {
+  const gcmP = buildGCMParams(M, iv)
+  const mech = buildMech(M, CKM_AES_GCM, gcmP.ptr, gcmP.len)
+  const pWrapped = writeBytes(M, wrappedBytes)
+  const tpl = buildTemplate(M, template)
+  const phKey = allocUlong(M)
+  try {
+    checkRV(
+      M._C_UnwrapKey(
+        hSession,
+        mech,
+        hUnwrapKey,
+        pWrapped,
+        wrappedBytes.length,
+        tpl.ptr,
+        template.length,
+        phKey
+      ),
+      'C_UnwrapKey(GCM)'
+    )
+    return readUlong(M, phKey)
+  } finally {
+    gcmP.allocPtrs.forEach((p) => M._free(p))
+    M._free(mech)
+    M._free(pWrapped)
+    freeTemplate(M, tpl, template.length)
+    M._free(phKey)
+  }
 }

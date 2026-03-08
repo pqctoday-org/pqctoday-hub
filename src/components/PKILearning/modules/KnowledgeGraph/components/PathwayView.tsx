@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useMemo, useCallback, useState } from 'react'
+import { useMemo, useCallback, useState, useEffect } from 'react'
 import {
   ReactFlow,
   Controls,
@@ -231,8 +231,13 @@ export function PathwayView({ graph, searchQuery, searchResults }: PathwayViewPr
     [graph, trackModuleIds, completedModules, inProgressModules, searchMatchedModuleIds]
   )
 
-  const [nodes, , onNodesChange] = useNodesState(layout.nodes)
-  const [edges, , onEdgesChange] = useEdgesState(layout.edges)
+  const [nodes, setNodes, onNodesChange] = useNodesState(layout.nodes)
+  const [edges, setEdges, onEdgesChange] = useEdgesState(layout.edges)
+
+  useEffect(() => {
+    setNodes(layout.nodes)
+    setEdges(layout.edges)
+  }, [layout, setNodes, setEdges])
 
   const handleTrackChange = useCallback((id: string) => {
     setSelectedTrack(id)
@@ -313,7 +318,7 @@ export function PathwayView({ graph, searchQuery, searchResults }: PathwayViewPr
       </div>
 
       {/* Legend */}
-      <GraphLegend visibleTypes={['module', 'track', 'library', 'quiz', 'glossary', 'threat']} />
+      <GraphLegend visibleTypes={['module', 'library', 'quiz', 'glossary', 'threat']} />
     </div>
   )
 }

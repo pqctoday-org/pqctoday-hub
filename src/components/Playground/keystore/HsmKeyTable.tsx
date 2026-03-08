@@ -35,6 +35,17 @@ const CKK_NAMES: Record<number, string> = {
   0x4b: 'CKK_SLH_DSA',
 }
 
+const CKM_KEYGEN_NAMES: Record<number, string> = {
+  0x00000000: 'CKM_RSA_PKCS_KEY_PAIR_GEN',
+  0x0000000f: 'CKM_ML_KEM_KEY_PAIR_GEN',
+  0x0000001c: 'CKM_ML_DSA_KEY_PAIR_GEN',
+  0x0000002d: 'CKM_SLH_DSA_KEY_PAIR_GEN',
+  0x00001040: 'CKM_EC_KEY_PAIR_GEN',
+  0x00001055: 'CKM_EC_EDWARDS_KEY_PAIR_GEN',
+  0x00001080: 'CKM_AES_KEY_GEN',
+  0x00000350: 'CKM_GENERIC_SECRET_KEY_GEN',
+}
+
 // ── Auto-detect family/role from PKCS#11 attributes ──────────────────────────
 
 const CKK_TO_FAMILY: Record<number, HsmFamily> = {
@@ -75,8 +86,11 @@ const BoolCell = ({ value }: { value: boolean | null }) => {
 const BOOL_ATTRS: Array<{ label: string; key: keyof KeyAttributeSet }> = [
   { label: 'CKA_TOKEN', key: 'ckToken' },
   { label: 'CKA_PRIVATE', key: 'ckPrivate' },
+  { label: 'CKA_LOCAL', key: 'ckLocal' },
   { label: 'CKA_SENSITIVE', key: 'ckSensitive' },
+  { label: 'CKA_ALWAYS_SENSITIVE', key: 'ckAlwaysSensitive' },
   { label: 'CKA_EXTRACTABLE', key: 'ckExtractable' },
+  { label: 'CKA_NEVER_EXTRACTABLE', key: 'ckNeverExtractable' },
   { label: 'CKA_ENCRYPT', key: 'ckEncrypt' },
   { label: 'CKA_DECRYPT', key: 'ckDecrypt' },
   { label: 'CKA_SIGN', key: 'ckSign' },
@@ -84,6 +98,8 @@ const BOOL_ATTRS: Array<{ label: string; key: keyof KeyAttributeSet }> = [
   { label: 'CKA_WRAP', key: 'ckWrap' },
   { label: 'CKA_UNWRAP', key: 'ckUnwrap' },
   { label: 'CKA_DERIVE', key: 'ckDerive' },
+  { label: 'CKA_ENCAPSULATE', key: 'ckEncapsulate' },
+  { label: 'CKA_DECAPSULATE', key: 'ckDecapsulate' },
 ]
 
 const KeyAttrModal = ({
@@ -128,6 +144,22 @@ const KeyAttrModal = ({
               <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_TYPE</td>
               <td className="py-1.5 text-foreground">{fmtUlong(attrs.ckKeyType, CKK_NAMES)}</td>
             </tr>
+            {attrs.ckKeyGenMechanism !== null && (
+              <tr className="border-b border-border/40">
+                <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_GEN_MECHANISM</td>
+                <td className="py-1.5 text-foreground">
+                  {fmtUlong(attrs.ckKeyGenMechanism, CKM_KEYGEN_NAMES)}
+                </td>
+              </tr>
+            )}
+            {attrs.ckParameterSet !== null && (
+              <tr className="border-b border-border/40">
+                <td className="py-1.5 pr-4 text-muted-foreground">CKA_PARAMETER_SET</td>
+                <td className="py-1.5 text-foreground">
+                  {'0x' + attrs.ckParameterSet.toString(16).padStart(2, '0')}
+                </td>
+              </tr>
+            )}
             {attrs.ckValueLen !== null && (
               <tr className="border-b border-border/40">
                 <td className="py-1.5 pr-4 text-muted-foreground">CKA_VALUE_LEN</td>

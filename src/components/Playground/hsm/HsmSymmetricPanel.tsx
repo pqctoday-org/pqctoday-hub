@@ -2,7 +2,6 @@
 import { useState } from 'react'
 import { Lock, Loader2, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '../../ui/button'
-import { FilterDropdown } from '../../common/FilterDropdown'
 import { ErrorAlert } from '../../ui/error-alert'
 import {
   CKM_SHA256_HMAC,
@@ -21,23 +20,13 @@ import {
   hsm_hmacVerify,
   hsm_generateRandom,
   hsm_seedRandom,
-  hsm_aesWrapKey,
-  hsm_unwrapKey,
-  CKO_SECRET_KEY,
-  CKA_CLASS,
-  CKA_KEY_TYPE,
-  CKA_TOKEN,
-  CKA_EXTRACTABLE,
-  CKA_VALUE_LEN,
-  CKK_AES,
-  type AttrDef,
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
 
 // ── Types ───────────────────────────────────────────────────────────────────────
 
-type SymMode = 'aes-gcm' | 'aes-cbc' | 'aes-ctr' | 'aes-cmac' | 'hmac' | 'rng' | 'key-wrap'
+type SymMode = 'aes-gcm' | 'aes-cbc' | 'aes-ctr' | 'aes-cmac' | 'hmac' | 'rng'
 
 const SYM_MODES: { id: SymMode; label: string; desc: string }[] = [
   { id: 'aes-gcm', label: 'AES-GCM', desc: 'Authenticated encryption (CKM_AES_GCM)' },
@@ -54,7 +43,6 @@ const SYM_MODES: { id: SymMode; label: string; desc: string }[] = [
   },
   { id: 'hmac', label: 'HMAC', desc: 'Hash-based MAC via C_SignInit/C_VerifyInit' },
   { id: 'rng', label: 'RNG', desc: 'C_GenerateRandom / C_SeedRandom — hardware RNG' },
-  { id: 'key-wrap', label: 'Key Wrap', desc: 'AES Key Wrap via C_WrapKey / C_UnwrapKey' },
 ]
 
 const HMAC_ALGOS = [
@@ -78,6 +66,14 @@ const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
   const [loadingOp, setLoadingOp] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  // CKA_* key attributes (PKCS#11 v3.2 Table 14)
+  const [ckaEncrypt, setCkaEncrypt] = useState(true)
+  const [ckaDecrypt, setCkaDecrypt] = useState(true)
+  const [ckaWrap, setCkaWrap] = useState(true)
+  const [ckaUnwrap, setCkaUnwrap] = useState(true)
+  const [ckaDerive, setCkaDerive] = useState(true)
+  const [ckaExtractable, setCkaExtractable] = useState(true)
+
   const anyLoading = loadingOp !== null
   const mechLabel = mode === 'aes-gcm' ? 'AES-GCM' : 'AES-CBC-PAD'
   const mechHex = mode === 'aes-gcm' ? '0x1087' : '0x1085'
@@ -95,7 +91,17 @@ const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
   const doGenKey = () =>
     withLoading('gen', async () => {
       const M = moduleRef.current!
-      const handle = hsm_generateAESKey(M, hSessionRef.current, keyBits)
+      const handle = hsm_generateAESKey(
+        M,
+        hSessionRef.current,
+        keyBits,
+        ckaEncrypt,
+        ckaDecrypt,
+        ckaWrap,
+        ckaUnwrap,
+        ckaDerive,
+        ckaExtractable
+      )
       setKeyHandle(handle)
       setCiphertext(null)
       setIv(null)
@@ -106,11 +112,17 @@ const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
         minute: '2-digit',
         second: '2-digit',
       })
+      const attrs: string[] = []
+      if (ckaExtractable) attrs.push('extractable')
+      if (!ckaEncrypt) attrs.push('no-enc')
+      if (!ckaDecrypt) attrs.push('no-dec')
+      if (!ckaWrap) attrs.push('no-wrap')
+      if (!ckaUnwrap) attrs.push('no-unwrap')
       addHsmKey({
         handle,
         family: 'aes',
         role: 'secret',
-        label: `AES-${keyBits} Key`,
+        label: `AES-${keyBits} Key${attrs.length ? ` (${attrs.join(', ')})` : ''}`,
         variant: String(keyBits),
         generatedAt: ts,
       })
@@ -184,6 +196,31 @@ const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
             {loadingOp === 'gen' && <Loader2 size={12} className="mr-1.5 animate-spin" />}
             {keyHandle !== null ? `✓ h=${keyHandle}` : 'Generate Key'}
           </Button>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          {(
+            [
+              ['CKA_ENCRYPT', ckaEncrypt, setCkaEncrypt],
+              ['CKA_DECRYPT', ckaDecrypt, setCkaDecrypt],
+              ['CKA_WRAP', ckaWrap, setCkaWrap],
+              ['CKA_UNWRAP', ckaUnwrap, setCkaUnwrap],
+              ['CKA_DERIVE', ckaDerive, setCkaDerive],
+              ['CKA_EXTRACTABLE', ckaExtractable, setCkaExtractable],
+            ] as [string, boolean, (v: boolean) => void][]
+          ).map(([name, val, setter]) => (
+            <label
+              key={name}
+              className="flex items-center gap-1 text-[10px] text-muted-foreground cursor-pointer select-none"
+            >
+              <input
+                type="checkbox"
+                checked={val}
+                onChange={(e) => setter(e.target.checked)}
+                className="accent-primary w-3 h-3"
+              />
+              {name}
+            </label>
+          ))}
         </div>
         <p className="text-xs text-muted-foreground font-mono">
           C_GenerateKey(CKM_AES_KEY_GEN, keyBits={keyBits}) → handle
@@ -522,6 +559,14 @@ const AesCtrPanel = () => {
   const [loadingOp, setLoadingOp] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  // CKA_* key attributes
+  const [ckaEncrypt, setCkaEncrypt] = useState(true)
+  const [ckaDecrypt, setCkaDecrypt] = useState(true)
+  const [ckaWrap, setCkaWrap] = useState(true)
+  const [ckaUnwrap, setCkaUnwrap] = useState(true)
+  const [ckaDerive, setCkaDerive] = useState(true)
+  const [ckaExtractable, setCkaExtractable] = useState(true)
+
   const anyLoading = loadingOp !== null
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
@@ -539,7 +584,17 @@ const AesCtrPanel = () => {
   const doGenKey = () =>
     withLoading('gen', async () => {
       const M = moduleRef.current!
-      const handle = hsm_generateAESKey(M, hSessionRef.current, keyBits)
+      const handle = hsm_generateAESKey(
+        M,
+        hSessionRef.current,
+        keyBits,
+        ckaEncrypt,
+        ckaDecrypt,
+        ckaWrap,
+        ckaUnwrap,
+        ckaDerive,
+        ckaExtractable
+      )
       setKeyHandle(handle)
       setCiphertext(null)
       setDecrypted(null)
@@ -549,11 +604,17 @@ const AesCtrPanel = () => {
         minute: '2-digit',
         second: '2-digit',
       })
+      const attrs: string[] = []
+      if (ckaExtractable) attrs.push('extractable')
+      if (!ckaEncrypt) attrs.push('no-enc')
+      if (!ckaDecrypt) attrs.push('no-dec')
+      if (!ckaWrap) attrs.push('no-wrap')
+      if (!ckaUnwrap) attrs.push('no-unwrap')
       addHsmKey({
         handle,
         family: 'aes',
         role: 'secret',
-        label: `AES-${keyBits} Key`,
+        label: `AES-${keyBits} Key${attrs.length ? ` (${attrs.join(', ')})` : ''}`,
         variant: String(keyBits),
         generatedAt: ts,
       })
@@ -625,6 +686,31 @@ const AesCtrPanel = () => {
             {loadingOp === 'gen' && <Loader2 size={12} className="mr-1.5 animate-spin" />}
             {keyHandle !== null ? `✓ h=${keyHandle}` : 'Generate Key'}
           </Button>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          {(
+            [
+              ['CKA_ENCRYPT', ckaEncrypt, setCkaEncrypt],
+              ['CKA_DECRYPT', ckaDecrypt, setCkaDecrypt],
+              ['CKA_WRAP', ckaWrap, setCkaWrap],
+              ['CKA_UNWRAP', ckaUnwrap, setCkaUnwrap],
+              ['CKA_DERIVE', ckaDerive, setCkaDerive],
+              ['CKA_EXTRACTABLE', ckaExtractable, setCkaExtractable],
+            ] as [string, boolean, (v: boolean) => void][]
+          ).map(([name, val, setter]) => (
+            <label
+              key={name}
+              className="flex items-center gap-1 text-[10px] text-muted-foreground cursor-pointer select-none"
+            >
+              <input
+                type="checkbox"
+                checked={val}
+                onChange={(e) => setter(e.target.checked)}
+                className="accent-primary w-3 h-3"
+              />
+              {name}
+            </label>
+          ))}
         </div>
         <p className="text-xs text-muted-foreground font-mono">
           C_GenerateKey(CKM_AES_KEY_GEN, {keyBits}) → handle · IV: 16×0x00, counterBits=128
@@ -735,6 +821,14 @@ const AesCmacPanel = () => {
   const [loadingOp, setLoadingOp] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  // CKA_* attribute toggles
+  const [ckaEncrypt, setCkaEncrypt] = useState(true)
+  const [ckaDecrypt, setCkaDecrypt] = useState(true)
+  const [ckaWrap, setCkaWrap] = useState(true)
+  const [ckaUnwrap, setCkaUnwrap] = useState(true)
+  const [ckaDerive, setCkaDerive] = useState(true)
+  const [ckaExtractable, setCkaExtractable] = useState(true)
+
   const anyLoading = loadingOp !== null
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
@@ -752,7 +846,17 @@ const AesCmacPanel = () => {
   const doGenKey = () =>
     withLoading('gen', async () => {
       const M = moduleRef.current!
-      const handle = hsm_generateAESKey(M, hSessionRef.current, keyBits)
+      const handle = hsm_generateAESKey(
+        M,
+        hSessionRef.current,
+        keyBits,
+        ckaEncrypt,
+        ckaDecrypt,
+        ckaWrap,
+        ckaUnwrap,
+        ckaDerive,
+        ckaExtractable
+      )
       setKeyHandle(handle)
       setMac(null)
       setVerified(null)
@@ -762,11 +866,17 @@ const AesCmacPanel = () => {
         minute: '2-digit',
         second: '2-digit',
       })
+      const attrs: string[] = []
+      if (ckaExtractable) attrs.push('extractable')
+      if (!ckaEncrypt) attrs.push('no-enc')
+      if (!ckaDecrypt) attrs.push('no-dec')
+      if (!ckaWrap) attrs.push('no-wrap')
+      if (!ckaUnwrap) attrs.push('no-unwrap')
       addHsmKey({
         handle,
         family: 'aes',
         role: 'secret',
-        label: `AES-${keyBits} CMAC Key`,
+        label: `AES-${keyBits} CMAC Key${attrs.length ? ` (${attrs.join(', ')})` : ''}`,
         variant: String(keyBits),
         generatedAt: ts,
       })
@@ -825,6 +935,31 @@ const AesCmacPanel = () => {
             {loadingOp === 'gen' && <Loader2 size={12} className="mr-1.5 animate-spin" />}
             {keyHandle !== null ? `✓ h=${keyHandle}` : 'Generate Key'}
           </Button>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          {(
+            [
+              ['CKA_ENCRYPT', ckaEncrypt, setCkaEncrypt],
+              ['CKA_DECRYPT', ckaDecrypt, setCkaDecrypt],
+              ['CKA_WRAP', ckaWrap, setCkaWrap],
+              ['CKA_UNWRAP', ckaUnwrap, setCkaUnwrap],
+              ['CKA_DERIVE', ckaDerive, setCkaDerive],
+              ['CKA_EXTRACTABLE', ckaExtractable, setCkaExtractable],
+            ] as [string, boolean, (v: boolean) => void][]
+          ).map(([name, val, setter]) => (
+            <label
+              key={name}
+              className="flex items-center gap-1 text-[10px] text-muted-foreground cursor-pointer select-none"
+            >
+              <input
+                type="checkbox"
+                checked={val}
+                onChange={(e) => setter(e.target.checked)}
+                className="accent-primary w-3 h-3"
+              />
+              {name}
+            </label>
+          ))}
         </div>
         <p className="text-xs text-muted-foreground font-mono">
           Output: 16 bytes (128 bits) · mechanism: 0x108a
@@ -1049,198 +1184,6 @@ const RngPanel = () => {
   )
 }
 
-// ── Key Wrap sub-panel ──────────────────────────────────────────────────────────
-
-const KeyWrapPanel = () => {
-  const { moduleRef, hSessionRef, keysForFamily, addHsmKey } = useHsmContext()
-  const [wrapKeyHandle, setWrapKeyHandle] = useState<number | null>(null)
-  const [targetKeyHandle, setTargetKeyHandle] = useState<number | null>(null)
-  const [wrappedHex, setWrappedHex] = useState<string | null>(null)
-  const [unwrappedHandle, setUnwrappedHandle] = useState<number | null>(null)
-  const [loadingOp, setLoadingOp] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
-  const aesKeys = keysForFamily('aes', 'secret')
-  const anyLoading = loadingOp !== null
-
-  const withLoading = async (op: string, fn: () => Promise<void>) => {
-    setLoadingOp(op)
-    setError(null)
-    try {
-      await fn()
-    } catch (e) {
-      setError(String(e))
-    } finally {
-      setLoadingOp(null)
-    }
-  }
-
-  const doWrap = () =>
-    withLoading('wrap', async () => {
-      const M = moduleRef.current!
-      const wrapped = hsm_aesWrapKey(M, hSessionRef.current, wrapKeyHandle!, targetKeyHandle!)
-      setWrappedHex(toHex(wrapped))
-      setUnwrappedHandle(null)
-    })
-
-  const doUnwrap = () =>
-    withLoading('unwrap', async () => {
-      if (!wrappedHex) throw new Error('No wrapped key data')
-      const M = moduleRef.current!
-      const wrappedBytes = new Uint8Array(wrappedHex.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
-      const template: AttrDef[] = [
-        { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
-        { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
-        { type: CKA_TOKEN, boolVal: false },
-        { type: CKA_EXTRACTABLE, boolVal: true },
-        { type: CKA_VALUE_LEN, ulongVal: 32 },
-      ]
-      const newHandle = hsm_unwrapKey(
-        M,
-        hSessionRef.current,
-        wrapKeyHandle!,
-        wrappedBytes,
-        template
-      )
-      setUnwrappedHandle(newHandle)
-      const ts = new Date().toLocaleTimeString([], {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
-      addHsmKey({
-        handle: newHandle,
-        family: 'aes',
-        role: 'secret',
-        label: 'AES-256 (unwrapped)',
-        variant: '256',
-        generatedAt: ts,
-      })
-    })
-
-  return (
-    <div className="space-y-4">
-      <div className="glass-panel p-4 space-y-3">
-        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-          AES Key Wrap (RFC 3394)
-        </p>
-        {aesKeys.length < 2 ? (
-          <p className="text-xs text-muted-foreground">
-            Generate at least 2 AES keys (one wrapping, one target) in AES-GCM/CBC/CTR mode first.
-          </p>
-        ) : (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-muted-foreground w-24">Wrapping key:</span>
-              <FilterDropdown
-                selectedId={wrapKeyHandle != null ? String(wrapKeyHandle) : 'All'}
-                onSelect={(id) => {
-                  setWrapKeyHandle(id === 'All' ? null : Number(id))
-                  setWrappedHex(null)
-                  setUnwrappedHandle(null)
-                }}
-                items={[
-                  ...aesKeys.map((k) => ({
-                    id: String(k.handle),
-                    label: `h=${k.handle} — ${k.label}`,
-                  })),
-                ]}
-                defaultLabel="Select…"
-                noContainer
-              />
-            </div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-muted-foreground w-24">Key to wrap:</span>
-              <FilterDropdown
-                selectedId={targetKeyHandle != null ? String(targetKeyHandle) : 'All'}
-                onSelect={(id) => {
-                  setTargetKeyHandle(id === 'All' ? null : Number(id))
-                  setWrappedHex(null)
-                  setUnwrappedHandle(null)
-                }}
-                items={aesKeys
-                  .filter((k) => k.handle !== wrapKeyHandle)
-                  .map((k) => ({ id: String(k.handle), label: `h=${k.handle} — ${k.label}` }))}
-                defaultLabel="Select…"
-                noContainer
-              />
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="flex gap-2">
-        <Button
-          onClick={doWrap}
-          disabled={!wrapKeyHandle || !targetKeyHandle || anyLoading}
-          className="flex-1"
-        >
-          {loadingOp === 'wrap' && <Loader2 size={14} className="mr-2 animate-spin" />}
-          <Lock size={14} className="mr-2" /> Wrap Key
-        </Button>
-        <Button
-          variant="outline"
-          onClick={doUnwrap}
-          disabled={!wrappedHex || !wrapKeyHandle || anyLoading}
-          className="flex-1"
-        >
-          {loadingOp === 'unwrap' && <Loader2 size={14} className="mr-2 animate-spin" />}
-          Unwrap Key
-        </Button>
-      </div>
-
-      {error && <ErrorAlert message={error} />}
-
-      {(wrappedHex || unwrappedHandle !== null) && (
-        <div className="glass-panel p-4 space-y-3">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-            Result
-          </p>
-          {wrappedHex && (
-            <>
-              <HsmResultRow
-                label="Wrapped key"
-                value={hexSnippet(
-                  new Uint8Array(wrappedHex.match(/.{1,2}/g)!.map((b) => parseInt(b, 16))),
-                  24
-                )}
-              />
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground">Full wrapped key (hex)</p>
-                <p className="text-xs font-mono bg-muted rounded px-3 py-2 break-all text-foreground/80 select-all">
-                  {wrappedHex}
-                </p>
-              </div>
-            </>
-          )}
-          {unwrappedHandle !== null && (
-            <HsmResultRow label="Unwrapped handle" value={`h=${unwrappedHandle}`} mono={false} />
-          )}
-        </div>
-      )}
-
-      <div className="glass-panel p-4 space-y-2">
-        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-          PKCS#11 Call Sequence
-        </p>
-        <div className="space-y-1 text-xs font-mono">
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_WrapKey</span>
-            {`(hSession, CKM_AES_KEY_WRAP_KWP, hWrappingKey, hKey, pWrapped, &wrappedLen) → `}
-            <span className="text-status-success">CKR_OK</span>
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_UnwrapKey</span>
-            {`(hSession, CKM_AES_KEY_WRAP_KWP, hUnwrapKey, pWrapped, wrappedLen, tpl, tplLen, &hNewKey) → `}
-            <span className="text-status-success">CKR_OK</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // ── Main panel ──────────────────────────────────────────────────────────────────
 
 export const HsmSymmetricPanel = () => {
@@ -1285,7 +1228,6 @@ export const HsmSymmetricPanel = () => {
         {mode === 'aes-cmac' && <AesCmacPanel />}
         {mode === 'hmac' && <HmacPanel />}
         {mode === 'rng' && <RngPanel />}
-        {mode === 'key-wrap' && <KeyWrapPanel />}
       </div>
     </HsmReadyGuard>
   )

@@ -465,6 +465,102 @@ export function AboutView() {
                 </li>
               </ul>
             </div>
+            <div className="break-inside-avoid">
+              <h3 className="text-lg font-semibold text-primary mb-3">
+                Rust WASM Bindings{' '}
+                <span className="text-xs font-normal text-muted-foreground">(softhsmrustv3)</span>
+              </h3>
+              <ul className="space-y-2">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">wasm-bindgen</span>
+                  <span className="text-xs text-muted-foreground/60">v0.2.92</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">js-sys</span>
+                  <span className="text-xs text-muted-foreground/60">v0.3.69</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">web-sys</span>
+                  <span className="text-xs text-muted-foreground/60">v0.3.69</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">getrandom</span>
+                  <span className="text-xs text-muted-foreground/60">v0.2.17</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">console_error_panic_hook</span>
+                  <span className="text-xs text-muted-foreground/60">v0.1.7</span>
+                </li>
+              </ul>
+            </div>
+            <div className="break-inside-avoid">
+              <h3 className="text-lg font-semibold text-primary mb-3">
+                Rust Crypto Crates{' '}
+                <span className="text-xs font-normal text-muted-foreground">(softhsmrustv3)</span>
+              </h3>
+              <ul className="space-y-2">
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">ml-kem</span>
+                  <span className="text-xs text-muted-foreground/60">v0.2.3</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">ml-dsa</span>
+                  <span className="text-xs text-muted-foreground/60">v0.1.0-rc.7</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">slh-dsa</span>
+                  <span className="text-xs text-muted-foreground/60">v0.2.0-rc.4</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">ed25519-dalek</span>
+                  <span className="text-xs text-muted-foreground/60">v2.1</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">x25519-dalek</span>
+                  <span className="text-xs text-muted-foreground/60">v2.0</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">p256</span>
+                  <span className="text-xs text-muted-foreground/60">v0.13</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">p384</span>
+                  <span className="text-xs text-muted-foreground/60">v0.13</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">rsa</span>
+                  <span className="text-xs text-muted-foreground/60">v0.9</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">aes / aes-gcm / aes-kw</span>
+                  <span className="text-xs text-muted-foreground/60">v0.8 / v0.10 / v0.2</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">cbc / ctr</span>
+                  <span className="text-xs text-muted-foreground/60">v0.1.2 / v0.9.2</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">sha2 / sha3</span>
+                  <span className="text-xs text-muted-foreground/60">v0.10.8</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">hmac / pbkdf2 / hkdf</span>
+                  <span className="text-xs text-muted-foreground/60">v0.12 / v0.12 / v0.12</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">pkcs8 / spki</span>
+                  <span className="text-xs text-muted-foreground/60">v0.11-rc / v0.8-rc</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">signature</span>
+                  <span className="text-xs text-muted-foreground/60">v3.0.0-rc.10</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">rand</span>
+                  <span className="text-xs text-muted-foreground/60">v0.8.5</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </motion.div>
 

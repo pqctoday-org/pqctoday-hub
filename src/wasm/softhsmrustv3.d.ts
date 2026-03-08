@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export function _C_CloseSession(_h_session: number): number;
+export function _C_CloseSession(h_session: number): number;
 
 export function _C_CreateObject(_h_session: number, p_template: number, count: number, ph_object: number): number;
 
@@ -39,7 +39,7 @@ export function _C_FindObjectsInit(h_session: number, p_template: number, ul_cou
 
 export function _C_GenerateKey(_h_session: number, p_mechanism: number, p_template: number, ul_count: number, ph_key: number): number;
 
-export function _C_GenerateKeyPair(_h_session: number, p_mechanism: number, p_public_key_template: number, ul_public_key_attribute_count: number, _p_private_key_template: number, _ul_private_key_attribute_count: number, ph_public_key: number, ph_private_key: number): number;
+export function _C_GenerateKeyPair(_h_session: number, p_mechanism: number, p_public_key_template: number, ul_public_key_attribute_count: number, p_private_key_template: number, ul_private_key_attribute_count: number, ph_public_key: number, ph_private_key: number): number;
 
 export function _C_GenerateRandom(_h_session: number, p_random_data: number, ul_random_len: number): number;
 
@@ -81,7 +81,7 @@ export function _C_SignInit(h_session: number, p_mechanism: number, h_key: numbe
 
 export function _C_SignMessage(h_session: number, _p_param: number, _ul_param_len: number, p_data: number, ul_data_len: number, p_signature: number, pul_signature_len: number): number;
 
-export function _C_UnwrapKey(_h_session: number, p_mechanism: number, h_unwrapping_key: number, p_wrapped_key: number, ul_wrapped_key_len: number, _p_template: number, _ul_attribute_count: number, ph_key: number): number;
+export function _C_UnwrapKey(_h_session: number, p_mechanism: number, h_unwrapping_key: number, p_wrapped_key: number, ul_wrapped_key_len: number, p_template: number, ul_attribute_count: number, ph_key: number): number;
 
 export function _C_Verify(h_session: number, p_data: number, ul_data_len: number, p_signature: number, ul_signature_len: number): number;
 
@@ -115,6 +115,7 @@ export interface InitOutput {
     readonly _C_EncapsulateKey: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => number;
     readonly _C_Encrypt: (a: number, b: number, c: number, d: number, e: number) => number;
     readonly _C_EncryptInit: (a: number, b: number, c: number) => number;
+    readonly _C_Finalize: (a: number) => number;
     readonly _C_FindObjects: (a: number, b: number, c: number, d: number) => number;
     readonly _C_FindObjectsFinal: (a: number) => number;
     readonly _C_FindObjectsInit: (a: number, b: number, c: number) => number;
@@ -129,6 +130,7 @@ export interface InitOutput {
     readonly _C_GetTokenInfo: (a: number, b: number) => number;
     readonly _C_InitPIN: (a: number, b: number, c: number) => number;
     readonly _C_InitToken: (a: number, b: number, c: number, d: number) => number;
+    readonly _C_Initialize: (a: number) => number;
     readonly _C_MessageSignFinal: (a: number, b: number, c: number, d: number, e: number) => number;
     readonly _C_MessageSignInit: (a: number, b: number, c: number) => number;
     readonly _C_MessageVerifyFinal: (a: number) => number;
@@ -146,8 +148,6 @@ export interface InitOutput {
     readonly _malloc: (a: number) => number;
     readonly wasm_start: () => void;
     readonly _C_Login: (a: number, b: number, c: number, d: number) => number;
-    readonly _C_Finalize: (a: number) => number;
-    readonly _C_Initialize: (a: number) => number;
     readonly _C_Logout: (a: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;
     readonly __externref_table_alloc: () => number;

@@ -104,7 +104,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const hSessionRef = useRef<number>(0)
   const slotRef = useRef<number>(0)
 
-  const [engineMode, setEngineMode] = useState<EngineMode>('software')
+  const [engineMode, setEngineMode] = useState<EngineMode>('cpp')
   const [phase, setPhase] = useState<HsmPhase>('idle')
   const [tokenCreated, setTokenCreated] = useState(false)
   const [hsmKeys, setHsmKeys] = useState<HsmKey[]>([])

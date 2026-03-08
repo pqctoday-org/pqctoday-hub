@@ -63,6 +63,7 @@ interface AssessWizardProps {
  */
 const PROFICIENCY_SUGGEST_MAP: Record<string, 'technical' | 'general'> = {
   crypto: 'technical',
+  scale: 'technical',
   agility: 'technical',
   infra: 'technical',
   sensitivity: 'general',
@@ -123,7 +124,7 @@ const ALL_STEPS = [
     key: 'scale',
     component: <Step9OrgScale />,
     canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      !!s.systemCount && !!s.teamSize,
+      (!!s.systemCount && !!s.teamSize) || s.scaleUnknown,
   },
   {
     key: 'agility',
@@ -207,7 +208,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
     // Executive persona always suggests on the 3 most technical steps
     const isExecutiveSuggest =
       selectedPersona === 'executive' &&
-      (stepKey === 'crypto' || stepKey === 'agility' || stepKey === 'infra')
+      (stepKey === 'crypto' || stepKey === 'scale' || stepKey === 'agility' || stepKey === 'infra')
 
     // Proficiency-based suggestion: 'technical' steps for basics+new, 'general' for new only
     // eslint-disable-next-line security/detect-object-injection
@@ -247,6 +248,9 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
       case 'credential-lifetime':
         if (s.credentialLifetime.length === 0 && !s.credentialLifetimeUnknown)
           s.setCredentialLifetimeUnknown(true)
+        break
+      case 'scale':
+        if (!s.systemCount && !s.teamSize && !s.scaleUnknown) s.setScaleUnknown(true)
         break
       case 'agility':
         if (!s.cryptoAgility && !s.agilityUnknown) s.setAgilityUnknown(true)

@@ -73,6 +73,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     | 'softhsm'
     | 'key_agree'
     | 'key_derive'
+    | 'key_wrap'
     | 'classical_sign'
     | 'mechanisms'
   >('keystore')

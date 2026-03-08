@@ -60,6 +60,7 @@ const ECDSA_MECHS = [
 const RsaPanel = () => {
   const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
   const [keyBits, setKeyBits] = useState<2048 | 3072 | 4096>(2048)
+  const [extractable, setExtractable] = useState(false)
   const [signMech, setSignMech] = useState(CKM_SHA256_RSA_PKCS)
   const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
   const [message, setMessage] = useState('Hello from PKCS#11 RSA!')
@@ -102,7 +103,7 @@ const RsaPanel = () => {
     run('KeyGen', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hSession, keyBits)
+      const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hSession, keyBits, extractable)
       addHsmKey({
         handle: pubHandle,
         family: 'rsa',
@@ -114,7 +115,7 @@ const RsaPanel = () => {
         handle: privHandle,
         family: 'rsa',
         role: 'private',
-        label: `RSA-${keyBits} Private Key`,
+        label: `RSA-${keyBits} Private Key${extractable ? ' (extractable)' : ''}`,
         generatedAt: new Date().toISOString(),
       })
       setHandles({ pub: pubHandle, priv: privHandle })
@@ -193,6 +194,15 @@ const RsaPanel = () => {
             {loadingOp === 'KeyGen' && <Loader2 size={14} className="animate-spin mr-1" />}
             {handles ? `Regen RSA-${keyBits}` : 'Generate Key Pair'}
           </Button>
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={extractable}
+              onChange={(e) => setExtractable(e.target.checked)}
+              className="accent-primary"
+            />
+            CKA_EXTRACTABLE
+          </label>
         </div>
         {handles && (
           <div className="grid grid-cols-2 gap-1">
@@ -380,6 +390,7 @@ const EcdsaPanel = () => {
   const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
   type EcCurve = 'P-256' | 'P-384' | 'P-521'
   const [curve, setCurve] = useState<EcCurve>('P-256')
+  const [extractable, setExtractable] = useState(false)
   const [mech, setMech] = useState(CKM_ECDSA_SHA256)
   const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
   const [message, setMessage] = useState('Hello from ECDSA!')
@@ -416,7 +427,7 @@ const EcdsaPanel = () => {
     run('KeyGen', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve)
+      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve, extractable)
       addHsmKey({
         handle: pubHandle,
         family: 'ecdsa',
@@ -429,7 +440,7 @@ const EcdsaPanel = () => {
         handle: privHandle,
         family: 'ecdsa',
         role: 'private',
-        label: `${curve} Private Key`,
+        label: `${curve} Private Key${extractable ? ' (extractable)' : ''}`,
         variant: curve,
         generatedAt: new Date().toISOString(),
       })
@@ -493,6 +504,15 @@ const EcdsaPanel = () => {
             {loadingOp === 'KeyGen' && <Loader2 size={14} className="animate-spin mr-1" />}
             {handles ? `Regen ${curve}` : 'Generate Key Pair'}
           </Button>
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={extractable}
+              onChange={(e) => setExtractable(e.target.checked)}
+              className="accent-primary"
+            />
+            CKA_EXTRACTABLE
+          </label>
         </div>
         {handles && (
           <div className="grid grid-cols-2 gap-1">
@@ -630,6 +650,7 @@ const EddsaPanel = () => {
   const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
   type EdCurve = 'Ed25519' | 'Ed448'
   const [curve, setCurve] = useState<EdCurve>('Ed25519')
+  const [extractable, setExtractable] = useState(false)
   const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
   const [message, setMessage] = useState('Hello from EdDSA!')
   const [sig, setSig] = useState<Uint8Array | null>(null)
@@ -661,7 +682,7 @@ const EddsaPanel = () => {
     run('KeyGen', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateEdDSAKeyPair(M, hSession, curve)
+      const { pubHandle, privHandle } = hsm_generateEdDSAKeyPair(M, hSession, curve, extractable)
       addHsmKey({
         handle: pubHandle,
         family: 'eddsa',
@@ -674,7 +695,7 @@ const EddsaPanel = () => {
         handle: privHandle,
         family: 'eddsa',
         role: 'private',
-        label: `${curve} Private Key`,
+        label: `${curve} Private Key${extractable ? ' (extractable)' : ''}`,
         variant: curve,
         generatedAt: new Date().toISOString(),
       })
@@ -733,6 +754,15 @@ const EddsaPanel = () => {
             {loadingOp === 'KeyGen' && <Loader2 size={14} className="animate-spin mr-1" />}
             {handles ? `Regen ${curve}` : 'Generate Key Pair'}
           </Button>
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={extractable}
+              onChange={(e) => setExtractable(e.target.checked)}
+              className="accent-primary"
+            />
+            CKA_EXTRACTABLE
+          </label>
         </div>
         {handles && (
           <div className="grid grid-cols-2 gap-1">

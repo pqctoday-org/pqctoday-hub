@@ -387,6 +387,7 @@ export function buildAssessmentProfile(
     vendorUnknown: !!input.vendorUnknown,
     systemScale: input.systemCount,
     teamSize: input.teamSize,
+    scaleUnknown: !!input.scaleUnknown,
     timelinePressure: input.timelinePressure,
     migrationUnknown: !!input.migrationUnknown,
     agilityUnknown: !!input.agilityUnknown,

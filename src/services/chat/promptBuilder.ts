@@ -4,12 +4,17 @@ import type { PageContext } from '@/hooks/usePageContext'
 
 /**
  * Approximate character budget for RAG context blocks in the system prompt.
- * Gemini 2.5 Flash supports ~1M tokens; Phi-3.5 Mini supports 128K tokens.
- * We reserve ~80K chars (~20K tokens) for context to leave ample room for
- * system instructions + conversation history.
+ * ~4 chars ≈ 1 token. Budgets sized to leave room for system instructions,
+ * conversation history, and generated response within each model's context.
+ *
+ * Gemini 2.5 Flash: ~1M tokens → 80K chars (~20K tokens) for RAG context
+ * Local models (web-llm): 4K–8K token context → budget scaled dynamically in
+ *   WebLLMService.streamResponse (45% RAG, 20% response, rest for prompt+history).
  */
 const MAX_CONTEXT_CHARS = 80_000
+const LOCAL_MAX_CONTEXT_CHARS = 4_000
 const MAX_INVENTORY_ENTITIES = 50
+const LOCAL_MAX_INVENTORY_ENTITIES = 10
 
 /** Display labels for entity inventory grouping */
 const ENTITY_CATEGORY_LABELS: Record<string, string> = {
@@ -45,7 +50,10 @@ const SKIP_SOURCES = new Set([
  * Extracts a compact entity inventory from retrieved chunks.
  * Groups unique entity names by display category for hallucination prevention.
  */
-export function extractEntityInventory(chunks: RAGChunk[]): string {
+export function extractEntityInventory(
+  chunks: RAGChunk[],
+  maxEntities = MAX_INVENTORY_ENTITIES
+): string {
   const groups = new Map<string, Set<string>>()
 
   for (const c of chunks) {
@@ -84,8 +92,8 @@ export function extractEntityInventory(chunks: RAGChunk[]): string {
   let totalCount = 0
 
   for (const [label, names] of groups) {
-    if (totalCount >= MAX_INVENTORY_ENTITIES) break
-    const remaining = MAX_INVENTORY_ENTITIES - totalCount
+    if (totalCount >= maxEntities) break
+    const remaining = maxEntities - totalCount
     const nameArr = [...names].slice(0, remaining)
     if (nameArr.length === 0) continue
     lines.push(`${label} (${nameArr.length}): ${nameArr.join(', ')}`)
@@ -117,7 +125,7 @@ const REGION_LABELS: Record<string, string> = {
   global: 'Global',
 }
 
-function buildContextBlocks(chunks: RAGChunk[]): string {
+function buildContextBlocks(chunks: RAGChunk[], maxChars = MAX_CONTEXT_CHARS): string {
   const allBlocks: string[] = []
   let totalChars = 0
 
@@ -126,7 +134,7 @@ function buildContextBlocks(chunks: RAGChunk[]): string {
     const deepLinkLine = c.deepLink ? `Deep Link: ${c.deepLink}` : ''
     const block = [header, deepLinkLine, c.content, '---'].filter(Boolean).join('\n')
 
-    if (totalChars + block.length > MAX_CONTEXT_CHARS) break
+    if (totalChars + block.length > maxChars) break
     allBlocks.push(block)
     totalChars += block.length
   }
@@ -134,7 +142,7 @@ function buildContextBlocks(chunks: RAGChunk[]): string {
   return allBlocks.join('\n\n')
 }
 
-function buildSharedSections(chunks: RAGChunk[], pageContext?: PageContext) {
+function buildSharedSections(chunks: RAGChunk[], pageContext?: PageContext, maxEntities?: number) {
   let pageNote = ''
   if (pageContext?.page) {
     const tabInfo =
@@ -175,7 +183,7 @@ function buildSharedSections(chunks: RAGChunk[], pageContext?: PageContext) {
     assessmentSection = `\nUser's PQC Assessment:\n  ${lines.join('\n  ')}\n`
   }
 
-  const inventorySection = extractEntityInventory(chunks)
+  const inventorySection = extractEntityInventory(chunks, maxEntities)
 
   return { pageNote, personaSection, profileSection, assessmentSection, inventorySection }
 }
@@ -237,25 +245,47 @@ ${contextBlocks}`
 /*  Local model system prompt — streamlined for smaller models        */
 /* ------------------------------------------------------------------ */
 
-export function buildLocalSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext): string {
-  const contextBlocks = buildContextBlocks(chunks)
-  const { pageNote, personaSection, profileSection, assessmentSection, inventorySection } =
-    buildSharedSections(chunks, pageContext)
+export function buildLocalSystemPrompt(
+  chunks: RAGChunk[],
+  pageContext?: PageContext,
+  maxContextChars: number = LOCAL_MAX_CONTEXT_CHARS,
+  maxEntities: number = LOCAL_MAX_INVENTORY_ENTITIES
+): string {
+  const contextBlocks = buildContextBlocks(chunks, maxContextChars)
 
-  return `You are PQC Today Assistant, an expert in post-quantum cryptography (PQC). You help users understand PQC concepts, standards, migration strategies, and the quantum threat landscape.
-${pageNote}${personaSection}${profileSection}${assessmentSection}
-Answer based ONLY on the provided context below. You may use general knowledge to explain concepts — never to list specific items.
+  // Compact page/persona context — every token counts at 4K
+  let pageNote = ''
+  if (pageContext?.page) {
+    pageNote = `User is on: ${pageContext.page} page.\n`
+  }
+  let personaNote = ''
+  if (pageContext?.persona) {
+    const depth = PERSONA_DEPTH[pageContext.persona as string]
+    if (depth) personaNote = `Style: ${depth}\n`
+  }
+
+  const inventorySection = extractEntityInventory(chunks, maxEntities)
+
+  return `You are PQC Today Assistant — expert in post-quantum cryptography.
+${pageNote}${personaNote}
+Answer ONLY from context below. Never fabricate names, dates, numbers, or claims.
+If unsure, say "Based on the PQC Today database, I don't have that information."
 ${inventorySection}
-RULES:
-- NEVER fabricate names, numbers, dates, or claims not in the context.
-- If context is insufficient, say "Based on the PQC Today database, I don't have information about [topic]" and share what IS available.
-- When uncertain, say "According to the database..." or "The available data shows..."
-- ONLY list items from the ENTITY INVENTORY above.
-- When a context chunk has a "Deep Link:" field, use it as a markdown link (e.g., [Title](deep-link-url)).
-- Keep answers concise. Use markdown formatting. This is educational — never provide production security advice.
+LINKING (MANDATORY): Every named item (algorithm, product, leader, document, threat) MUST be a markdown link.
+Use "Deep Link:" from context chunks when available. Otherwise use these patterns:
+- /algorithms?highlight=<slug>, /timeline?country=<name>, /library?ref=<id>
+- /migrate?q=<name>, /leaders?leader=<name>, /compliance?cert=<id>
+- /threats?id=<threatId>, /learn/<module-id>, /assess?step=<n>
+Example: [ML-KEM](/algorithms?highlight=ml-kem), [NIST IR 8547](/library?ref=NIST-IR-8547)
 
-After your response, suggest 2–3 follow-up questions, each on its own line starting with "- ".
+BREVITY: Keep answers to 2–4 short paragraphs. Use bullet points for lists. Do not repeat the question. Do not add preamble. Educational only — not production advice.
 
-CONTEXT FROM PQC TODAY DATABASE:
+After your response, append 2–3 follow-up questions in a \`\`\`followups code fence (one per line, no numbering):
+\`\`\`followups
+Example follow-up question 1?
+Example follow-up question 2?
+\`\`\`
+
+CONTEXT:
 ${contextBlocks}`
 }

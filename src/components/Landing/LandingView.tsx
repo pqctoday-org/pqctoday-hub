@@ -125,7 +125,7 @@ function buildJourneySteps(
   libraryCount: number | null
 ): JourneyStep[] {
   const algoLabel = algorithmCount !== null ? `${algorithmCount}` : '40+'
-  const migrateLabel = migrateCount !== null ? `${migrateCount}` : '220+'
+  const migrateLabel = migrateCount !== null ? `${migrateCount}` : '350+'
   const libraryLabel = libraryCount !== null ? `${libraryCount}` : '250+'
 
   return [
@@ -295,7 +295,7 @@ const SECTION_HEADING: Record<string, { title: string; sub: string }> = {
   },
   developer: {
     title: 'Your toolkit for building with PQC today',
-    sub: 'Real cryptographic operations powered by OpenSSL WASM and liboqs — not simulations.',
+    sub: 'Real cryptographic operations powered by OpenSSL WASM, liboqs, and a dual-engine Rust WASM HSM — not simulations.',
   },
   architect: {
     title: 'Your blueprint for PQC-ready systems',

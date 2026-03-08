@@ -28,6 +28,8 @@ export interface SmartDefaults {
   cryptoUseCases: string[]
   dataRetention: string[]
   credentialLifetime: string[]
+  systemCount: NonNullable<AssessmentInput['systemCount']>
+  teamSize: NonNullable<AssessmentInput['teamSize']>
   cryptoAgility: NonNullable<AssessmentInput['cryptoAgility']>
   infrastructure: string[]
   vendorDependency: NonNullable<AssessmentInput['vendorDependency']>
@@ -74,6 +76,26 @@ const INDUSTRY_INFRASTRUCTURE: Record<string, string[]> = {
   Automotive: ['Hardware', 'Application', 'Network'],
   Technology: ['Cloud', 'Application', 'Database', 'Network'],
   'Retail & E-Commerce': ['Cloud', 'Application', 'Network'],
+}
+
+// ── Industry → organizational scale mapping ──────────────────────────────
+
+const INDUSTRY_SCALE: Record<
+  string,
+  {
+    systemCount: NonNullable<AssessmentInput['systemCount']>
+    teamSize: NonNullable<AssessmentInput['teamSize']>
+  }
+> = {
+  'Government & Defense': { systemCount: '51-200', teamSize: '11-50' },
+  Aerospace: { systemCount: '51-200', teamSize: '11-50' },
+  'Finance & Banking': { systemCount: '51-200', teamSize: '51-200' },
+  Healthcare: { systemCount: '51-200', teamSize: '11-50' },
+  'Energy & Utilities': { systemCount: '11-50', teamSize: '11-50' },
+  Telecommunications: { systemCount: '51-200', teamSize: '11-50' },
+  Automotive: { systemCount: '11-50', teamSize: '11-50' },
+  Technology: { systemCount: '11-50', teamSize: '11-50' },
+  'Retail & E-Commerce': { systemCount: '11-50', teamSize: '11-50' },
 }
 
 // ── Persona-specific overrides ───────────────────────────────────────────
@@ -160,6 +182,8 @@ export function computeSmartDefaults(
     cryptoUseCases: getUseCaseDefaults(industry),
     dataRetention: getRetentionDefaults(industry),
     credentialLifetime: getCredentialDefaults(industry),
+    systemCount: getScaleDefaults(industry).systemCount,
+    teamSize: getScaleDefaults(industry).teamSize,
     cryptoAgility: 'partially-abstracted',
     infrastructure: getInfraDefaults(industry),
     vendorDependency: 'mixed',
@@ -247,6 +271,13 @@ function getRetentionDefaults(industry: string): string[] {
 
 function getCredentialDefaults(industry: string): string[] {
   return INDUSTRY_CREDENTIAL_LIFETIME[industry] ?? ['1-3y']
+}
+
+function getScaleDefaults(industry: string): {
+  systemCount: NonNullable<AssessmentInput['systemCount']>
+  teamSize: NonNullable<AssessmentInput['teamSize']>
+} {
+  return INDUSTRY_SCALE[industry] ?? { systemCount: '11-50', teamSize: '11-50' }
 }
 
 function getInfraDefaults(industry: string): string[] {

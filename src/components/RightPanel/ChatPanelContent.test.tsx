@@ -41,6 +41,14 @@ vi.mock('../Chat/ModelDownloadBanner', () => ({
 vi.mock('@/services/chat/WebLLMService', () => ({
   initializeEngine: vi.fn().mockResolvedValue(undefined),
   isEngineReady: vi.fn().mockReturnValue(false),
+  WEBLLM_MODELS: [
+    {
+      id: 'Qwen3-1.7B-q4f16_1-MLC',
+      label: 'Qwen 3 1.7B (1.0 GB)',
+      sizeGB: 1.0,
+      maxContextLength: 8_192,
+    },
+  ],
 }))
 
 // Mock SampleQuestionsModal
@@ -78,8 +86,10 @@ const defaultChatState = {
   setApiKey: vi.fn(),
   provider: 'gemini' as string | null,
   setProvider: vi.fn(),
-  localModel: 'Phi-3.5-mini-instruct-q4f16_1-MLC',
+  localModel: 'Qwen3-1.7B-q4f16_1-MLC',
+  localContextWindow: 4_096,
   setLocalModel: vi.fn(),
+  setLocalContextWindow: vi.fn(),
   messages: [] as Array<{
     id: string
     role: string
@@ -175,9 +185,9 @@ describe('ChatPanelContent', () => {
     expect(screen.getByText('PQC Assistant')).toBeInTheDocument()
   })
 
-  it('shows page context in header', () => {
+  it('shows provider label in header', () => {
     render(<ChatPanelContent />)
-    expect(screen.getByText(/Timeline/)).toBeInTheDocument()
+    expect(screen.getByText('Cloud')).toBeInTheDocument()
   })
 
   it('shows ProviderSetup when provider is null', () => {

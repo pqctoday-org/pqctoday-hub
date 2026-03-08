@@ -4,11 +4,20 @@ import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { Button } from '../../ui/button'
 
 import clsx from 'clsx'
+import { Info } from 'lucide-react'
 
 import { PersonaHint } from './PersonaHint'
 
 const Step9OrgScale = () => {
-  const { systemCount, setSystemCount, teamSize, setTeamSize } = useAssessmentStore()
+  const {
+    systemCount,
+    setSystemCount,
+    teamSize,
+    setTeamSize,
+    scaleUnknown,
+    setScaleUnknown,
+    industry,
+  } = useAssessmentStore()
 
   const systemOptions = [
     { value: '1-10' as const, label: '1-10 systems' },
@@ -32,6 +41,25 @@ const Step9OrgScale = () => {
       </p>
 
       <PersonaHint stepKey="scale" />
+
+      <Button
+        variant="ghost"
+        onClick={() => setScaleUnknown(!scaleUnknown)}
+        className={clsx(
+          'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',
+          scaleUnknown
+            ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
+            : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
+        )}
+      >
+        <Info size={14} className="shrink-0" />
+        I&apos;m not sure — help me choose
+      </Button>
+      {scaleUnknown && (
+        <p className="text-xs text-muted-foreground italic">
+          Recommended for {industry || 'your industry'}. You can adjust any selection.
+        </p>
+      )}
 
       <div className="space-y-2">
         <h4 className="text-sm font-semibold text-foreground">Systems using cryptography</h4>

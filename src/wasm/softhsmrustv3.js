@@ -1,11 +1,11 @@
 /* @ts-self-types="./softhsmrustv3.d.ts" */
 
 /**
- * @param {number} _h_session
+ * @param {number} h_session
  * @returns {number}
  */
-export function _C_CloseSession(_h_session) {
-    const ret = wasm._C_CloseSession(_h_session);
+export function _C_CloseSession(h_session) {
+    const ret = wasm._C_CloseSession(h_session);
     return ret >>> 0;
 }
 
@@ -229,14 +229,14 @@ export function _C_GenerateKey(_h_session, p_mechanism, p_template, ul_count, ph
  * @param {number} p_mechanism
  * @param {number} p_public_key_template
  * @param {number} ul_public_key_attribute_count
- * @param {number} _p_private_key_template
- * @param {number} _ul_private_key_attribute_count
+ * @param {number} p_private_key_template
+ * @param {number} ul_private_key_attribute_count
  * @param {number} ph_public_key
  * @param {number} ph_private_key
  * @returns {number}
  */
-export function _C_GenerateKeyPair(_h_session, p_mechanism, p_public_key_template, ul_public_key_attribute_count, _p_private_key_template, _ul_private_key_attribute_count, ph_public_key, ph_private_key) {
-    const ret = wasm._C_GenerateKeyPair(_h_session, p_mechanism, p_public_key_template, ul_public_key_attribute_count, _p_private_key_template, _ul_private_key_attribute_count, ph_public_key, ph_private_key);
+export function _C_GenerateKeyPair(_h_session, p_mechanism, p_public_key_template, ul_public_key_attribute_count, p_private_key_template, ul_private_key_attribute_count, ph_public_key, ph_private_key) {
+    const ret = wasm._C_GenerateKeyPair(_h_session, p_mechanism, p_public_key_template, ul_public_key_attribute_count, p_private_key_template, ul_private_key_attribute_count, ph_public_key, ph_private_key);
     return ret >>> 0;
 }
 
@@ -471,13 +471,13 @@ export function _C_SignMessage(h_session, _p_param, _ul_param_len, p_data, ul_da
  * @param {number} h_unwrapping_key
  * @param {number} p_wrapped_key
  * @param {number} ul_wrapped_key_len
- * @param {number} _p_template
- * @param {number} _ul_attribute_count
+ * @param {number} p_template
+ * @param {number} ul_attribute_count
  * @param {number} ph_key
  * @returns {number}
  */
-export function _C_UnwrapKey(_h_session, p_mechanism, h_unwrapping_key, p_wrapped_key, ul_wrapped_key_len, _p_template, _ul_attribute_count, ph_key) {
-    const ret = wasm._C_UnwrapKey(_h_session, p_mechanism, h_unwrapping_key, p_wrapped_key, ul_wrapped_key_len, _p_template, _ul_attribute_count, ph_key);
+export function _C_UnwrapKey(_h_session, p_mechanism, h_unwrapping_key, p_wrapped_key, ul_wrapped_key_len, p_template, ul_attribute_count, ph_key) {
+    const ret = wasm._C_UnwrapKey(_h_session, p_mechanism, h_unwrapping_key, p_wrapped_key, ul_wrapped_key_len, p_template, ul_attribute_count, ph_key);
     return ret >>> 0;
 }
 

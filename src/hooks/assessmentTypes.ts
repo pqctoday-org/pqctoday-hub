@@ -19,6 +19,8 @@ export interface AssessmentInput {
   retentionUnknown?: boolean
   systemCount?: '1-10' | '11-50' | '51-200' | '200-plus'
   teamSize?: '1-10' | '11-50' | '51-200' | '200-plus'
+  /** When true, user indicated they don't know their organizational scale. */
+  scaleUnknown?: boolean
   cryptoAgility?: 'fully-abstracted' | 'partially-abstracted' | 'hardcoded' | 'unknown'
   /** When true, user indicated they don't know their crypto agility level. */
   agilityUnknown?: boolean
@@ -145,6 +147,7 @@ export interface AssessmentProfile {
   vendorUnknown: boolean
   systemScale?: string
   teamSize?: string
+  scaleUnknown: boolean
   timelinePressure?: string
   timelineUnknown: boolean
 }

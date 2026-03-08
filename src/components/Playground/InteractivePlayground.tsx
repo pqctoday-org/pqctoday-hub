@@ -14,7 +14,6 @@ import {
   Cpu,
   ArrowLeftRight,
   Filter,
-  PenLine,
   Layers,
 } from 'lucide-react'
 import clsx from 'clsx'
@@ -34,8 +33,8 @@ import { HsmSymmetricPanel } from './hsm/HsmSymmetricPanel'
 import { HsmHashingPanel } from './hsm/HsmHashingPanel'
 import { HsmKeyAgreementPanel } from './hsm/HsmKeyAgreementPanel'
 import { HsmKdfPanel } from './hsm/HsmKdfPanel'
-import { HsmClassicalSignPanel } from './hsm/HsmClassicalSignPanel'
 import { HsmMechanismPanel } from './hsm/HsmMechanismPanel'
+import { KeyWrapPanel } from './hsm/symmetric/KeyWrapPanel'
 import { logEvent } from '../../utils/analytics'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
@@ -262,6 +261,25 @@ const PlaygroundContent = () => {
         >
           <Lock size={16} className="mr-2" aria-hidden="true" /> Sym Encrypt
         </Button>
+        {hsmMode && (
+          <Button
+            role="tab"
+            id="tab-key_wrap"
+            aria-selected={activeTab === 'key_wrap'}
+            aria-controls="playground-tabpanel"
+            onClick={() => handleTabChange('key_wrap')}
+            variant="ghost"
+            size="sm"
+            className={clsx(
+              'whitespace-nowrap',
+              activeTab === 'key_wrap'
+                ? 'bg-primary/20 text-primary shadow-sm'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+            )}
+          >
+            <Layers size={16} className="mr-2" aria-hidden="true" /> Wrap / Unwrap
+          </Button>
+        )}
         <Button
           role="tab"
           id="tab-hashing"
@@ -333,23 +351,6 @@ const PlaygroundContent = () => {
               )}
             >
               <Filter size={16} className="mr-2" aria-hidden="true" /> KDF
-            </Button>
-            <Button
-              role="tab"
-              id="tab-classical_sign"
-              aria-selected={activeTab === 'classical_sign'}
-              aria-controls="playground-tabpanel"
-              onClick={() => handleTabChange('classical_sign')}
-              variant="ghost"
-              size="sm"
-              className={clsx(
-                'whitespace-nowrap',
-                activeTab === 'classical_sign'
-                  ? 'bg-primary/20 text-primary shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-              )}
-            >
-              <PenLine size={16} className="mr-2" aria-hidden="true" /> Classical
             </Button>
             <Button
               role="tab"
@@ -428,11 +429,11 @@ const PlaygroundContent = () => {
         {activeTab === 'data' && <DataTab />}
         {activeTab === 'kem_ops' && <KemOpsTab />}
         {activeTab === 'symmetric' && (hsmMode ? <HsmSymmetricPanel /> : <SymmetricTab />)}
+        {activeTab === 'key_wrap' && hsmMode && <KeyWrapPanel />}
         {activeTab === 'hashing' && (hsmMode ? <HsmHashingPanel /> : <HashingTab />)}
         {activeTab === 'sign_verify' && <SignVerifyTab />}
         {activeTab === 'key_agree' && hsmMode && <HsmKeyAgreementPanel />}
         {activeTab === 'key_derive' && hsmMode && <HsmKdfPanel />}
-        {activeTab === 'classical_sign' && hsmMode && <HsmClassicalSignPanel />}
         {activeTab === 'mechanisms' && hsmMode && <HsmMechanismPanel />}
         {activeTab === 'keystore' && <KeyStoreTab />}
         {activeTab === 'logs' && <LogsTab />}

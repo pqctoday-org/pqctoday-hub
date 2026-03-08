@@ -4,6 +4,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.34.0] - 2026-03-08
+
+### Added
+
+- **Local AI assistant (WebLLM)**: Run the PQC assistant entirely in your browser using local Qwen 3 models — no API key, no cloud, fully private. Choose between cloud (Gemini) and local providers with a single click. Configurable context window presets (4K / 6K / 8K tokens) let you balance answer quality against GPU memory. [persona:developer] [persona:researcher] [view:/]
+- **Key Wrap / Unwrap tab**: Dedicated Playground tab for PKCS#11 key wrapping with four mechanisms — AES-KW (RFC 3394), AES-KWP (RFC 5649), AES-GCM wrap, and RSA-OAEP wrap. Wrap symmetric or asymmetric keys, inspect wrapped blobs, and unwrap them back — all logged to the PKCS#11 call log. [persona:developer] [view:/playground]
+- **PKCS#11 key attribute toggles**: All key generation forms (RSA, ECDSA, EdDSA, ML-KEM, ML-DSA, AES) now expose checkboxes for `CKA_EXTRACTABLE` and other PKCS#11 v3.2 usage attributes (`CKA_ENCRYPT`, `CKA_DECRYPT`, `CKA_WRAP`, `CKA_UNWRAP`, `CKA_DERIVE`), letting you experiment with restrictive key policies. [persona:developer] [view:/playground]
+- **Assessment smart defaults for Org Scale**: The "Org Scale" wizard step auto-populates system count and team size based on your selected industry when you click "I'm not sure" — no more guessing. [persona:executive] [persona:architect] [view:/assess]
+- **About page — Rust crypto dependencies**: Lists all Rust WASM crate versions (ml-kem, ml-dsa, slh-dsa, dalek, p256/p384, aes, sha, hmac, pkcs8, and more) powering the Rust SoftHSMv3 engine. [view:/about]
+
+### Changed
+
+- **Classical signatures merged into Sign tab**: RSA, ECDSA, and EdDSA signing moved from a separate "Classical" tab into the unified Sign & Verify panel with a PQC/Classical toggle — fewer tabs, same capabilities. [view:/playground]
+- **Key Store shows expanded PKCS#11 attributes**: Attribute inspector now displays `CKA_KEY_GEN_MECHANISM`, `CKA_PARAMETER_SET`, `CKA_LOCAL`, `CKA_ALWAYS_SENSITIVE`, `CKA_NEVER_EXTRACTABLE`, `CKA_ENCAPSULATE`, and `CKA_DECAPSULATE`. [view:/playground]
+- **Assessment report shows credential & scale context**: The report profile summary now displays selected credential lifetimes (e.g., "1-3 years, 10-25 years") and organizational scale (e.g., "51-200 systems, 11-50 engineers") instead of just counts. [persona:executive] [view:/assess]
+- **Knowledge Graph navigation**: "View in app" links on graph nodes now use client-side navigation for instant page transitions and correct back-button behavior. [view:/learn]
+- **Landing page updates**: Developer tagline now mentions the dual-engine Rust WASM HSM; Migrate catalog count updated from 220+ to 350+ products. [view:/]
+
+### Fixed
+
+- **Knowledge Graph layout sync**: Switching tracks or searching now properly updates all nodes and edges — previously layout changes weren't reflected until a manual refresh. [view:/learn]
+- **FN-DSA description corrected**: Suggested query description updated from "NIST FIPS 206 (draft)" to "NIST FIPS 206" (standard is finalized). [view:/learn]
+- **Mindmap navigation**: Added missing Changelog link to the right-panel mindmap. [view:/]
+
 ## [2.33.1] - 2026-03-08
 
 ### Added

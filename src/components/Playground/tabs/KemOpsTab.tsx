@@ -44,6 +44,7 @@ const HsmKemPanel: React.FC = () => {
     useHsmContext()
 
   const [variant, setVariant] = useState<512 | 768 | 1024>(768)
+  const [extractable, setExtractable] = useState(false)
   const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
   const [ciphertext, setCiphertext] = useState<Uint8Array | null>(null)
   const [secret1, setSecret1] = useState<Uint8Array | null>(null)
@@ -80,7 +81,12 @@ const HsmKemPanel: React.FC = () => {
       try {
         const M = moduleRef.current
         if (!M) throw new Error('Module not loaded — complete Token Setup first')
-        const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSessionRef.current, variant)
+        const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
+          M,
+          hSessionRef.current,
+          variant,
+          extractable
+        )
         setHandles({ pub: pubHandle, priv: privHandle })
         const ts = new Date().toLocaleTimeString([], {
           hour12: false,
@@ -100,7 +106,7 @@ const HsmKemPanel: React.FC = () => {
           handle: privHandle,
           family: 'ml-kem',
           role: 'private',
-          label: `ML-KEM-${variant} Private Key`,
+          label: `ML-KEM-${variant} Private Key${extractable ? ' (extractable)' : ''}`,
           variant: String(variant),
           generatedAt: ts,
         })
@@ -282,11 +288,20 @@ const HsmKemPanel: React.FC = () => {
           {KEM_SIZES[variant].ss} B
         </p>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 items-center">
           <Button variant="outline" size="sm" disabled={anyLoading} onClick={doGenKeyPair}>
             {loadingOp === 'gen' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
             {handles ? '✓ Key Pair' : 'Generate Key Pair'}
           </Button>
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={extractable}
+              onChange={(e) => setExtractable(e.target.checked)}
+              className="accent-primary"
+            />
+            CKA_EXTRACTABLE
+          </label>
           <Button
             variant="outline"
             size="sm"

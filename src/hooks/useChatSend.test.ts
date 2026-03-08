@@ -19,7 +19,8 @@ const mockSetApiKey = vi.fn()
 const defaultStoreState = {
   apiKey: 'test-api-key',
   provider: 'gemini' as string | null,
-  localModel: 'Phi-3.5-mini-instruct-q4f16_1-MLC',
+  localModel: 'Qwen3-1.7B-q4f16_1-MLC',
+  localContextWindow: 4_096,
   messages: [] as ChatMessage[],
   isLoading: false,
   isStreaming: false,

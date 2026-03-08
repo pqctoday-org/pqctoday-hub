@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { useNavigate } from 'react-router-dom'
 import { X, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ENTITY_CONFIG } from './nodes/EntityNode'
@@ -47,6 +48,7 @@ export function NodeDetailPanel({
   onClose,
   onNavigateToNode,
 }: NodeDetailPanelProps) {
+  const navigate = useNavigate()
   const config = ENTITY_CONFIG[node.entityType]
   const Icon = config.icon
   const deepLink = getDeepLink(node)
@@ -87,13 +89,13 @@ export function NodeDetailPanel({
       {node.description && <p className="text-xs text-muted-foreground mb-3">{node.description}</p>}
 
       {deepLink && (
-        <a
-          href={deepLink}
+        <button
+          onClick={() => navigate(deepLink)}
           className="inline-flex items-center gap-1 text-xs text-primary hover:underline mb-3"
         >
           <ExternalLink className="w-3 h-3" />
           View in app
-        </a>
+        </button>
       )}
 
       <div className="border-t border-border pt-2 space-y-3">

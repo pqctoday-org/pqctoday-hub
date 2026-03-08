@@ -186,6 +186,12 @@ export const MINDMAP_ROOT: MindmapItem = {
       route: '/about',
       icon: Info,
     },
+    {
+      id: 'changelog',
+      label: 'Changelog',
+      route: '/changelog',
+      icon: Activity,
+    },
   ],
 }
 

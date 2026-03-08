@@ -41,6 +41,7 @@ interface AssessmentState {
   credentialLifetimeUnknown: boolean
   systemCount: NonNullable<AssessmentInput['systemCount']> | ''
   teamSize: NonNullable<AssessmentInput['teamSize']> | ''
+  scaleUnknown: boolean
   cryptoAgility: NonNullable<AssessmentInput['cryptoAgility']> | ''
   agilityUnknown: boolean
   infrastructure: string[]
@@ -86,6 +87,7 @@ interface AssessmentState {
   setCredentialLifetimeUnknown: (val: boolean) => void
   setSystemCount: (count: NonNullable<AssessmentInput['systemCount']>) => void
   setTeamSize: (size: NonNullable<AssessmentInput['teamSize']>) => void
+  setScaleUnknown: (val: boolean) => void
   setCryptoAgility: (agility: NonNullable<AssessmentInput['cryptoAgility']>) => void
   setAgilityUnknown: (val: boolean) => void
   toggleInfrastructure: (item: string) => void
@@ -130,6 +132,7 @@ const INITIAL_STATE = {
   credentialLifetimeUnknown: false,
   systemCount: '' as NonNullable<AssessmentInput['systemCount']> | '',
   teamSize: '' as NonNullable<AssessmentInput['teamSize']> | '',
+  scaleUnknown: false,
   cryptoAgility: '' as NonNullable<AssessmentInput['cryptoAgility']> | '',
   agilityUnknown: false,
   infrastructure: [] as string[],
@@ -161,6 +164,7 @@ function hasAnyUnknown(state: AssessmentState): boolean {
     state.useCasesUnknown ||
     state.retentionUnknown ||
     state.credentialLifetimeUnknown ||
+    state.scaleUnknown ||
     state.agilityUnknown ||
     state.infrastructureUnknown ||
     state.vendorUnknown ||
@@ -184,6 +188,10 @@ function applyDefaultsToUnknownSteps(
   if (state.useCasesUnknown) updates.cryptoUseCases = defaults.cryptoUseCases
   if (state.retentionUnknown) updates.dataRetention = defaults.dataRetention
   if (state.credentialLifetimeUnknown) updates.credentialLifetime = defaults.credentialLifetime
+  if (state.scaleUnknown) {
+    updates.systemCount = defaults.systemCount
+    updates.teamSize = defaults.teamSize
+  }
   if (state.agilityUnknown) updates.cryptoAgility = defaults.cryptoAgility
   if (state.infrastructureUnknown) {
     updates.infrastructure = defaults.infrastructure
@@ -465,9 +473,35 @@ export const useAssessmentStore = create<AssessmentState>()(
       },
 
       setSystemCount: (count) =>
-        set({ systemCount: count, lastWizardUpdate: new Date().toISOString() }),
+        set({
+          systemCount: count,
+          scaleUnknown: false,
+          lastWizardUpdate: new Date().toISOString(),
+        }),
 
-      setTeamSize: (size) => set({ teamSize: size, lastWizardUpdate: new Date().toISOString() }),
+      setTeamSize: (size) =>
+        set({ teamSize: size, scaleUnknown: false, lastWizardUpdate: new Date().toISOString() }),
+
+      setScaleUnknown: (val) => {
+        if (val) {
+          const { industry, country } = get()
+          const persona = usePersonaStore.getState().selectedPersona
+          const defaults = computeSmartDefaults(industry, country, persona)
+          set({
+            scaleUnknown: true,
+            systemCount: defaults.systemCount,
+            teamSize: defaults.teamSize,
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        } else {
+          set({
+            scaleUnknown: false,
+            systemCount: '',
+            teamSize: '',
+            lastWizardUpdate: new Date().toISOString(),
+          })
+        }
+      },
 
       setCryptoAgility: (agility) =>
         set({
@@ -679,6 +713,7 @@ export const useAssessmentStore = create<AssessmentState>()(
           input.systemCount = state.systemCount as NonNullable<AssessmentInput['systemCount']>
         if (state.teamSize)
           input.teamSize = state.teamSize as NonNullable<AssessmentInput['teamSize']>
+        if (state.scaleUnknown) input.scaleUnknown = true
         if (state.cryptoAgility)
           input.cryptoAgility = state.cryptoAgility as NonNullable<AssessmentInput['cryptoAgility']>
         if (state.infrastructure.length > 0) input.infrastructure = state.infrastructure
@@ -705,7 +740,7 @@ export const useAssessmentStore = create<AssessmentState>()(
     {
       name: 'pqc-assessment',
       storage: createJSONStorage(() => localStorage),
-      version: 10,
+      version: 11,
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -759,6 +794,7 @@ export const useAssessmentStore = create<AssessmentState>()(
         state.credentialLifetimeUnknown = state.credentialLifetimeUnknown ?? false
         state.systemCount = state.systemCount ?? ''
         state.teamSize = state.teamSize ?? ''
+        state.scaleUnknown = state.scaleUnknown ?? false
         state.cryptoAgility = state.cryptoAgility ?? ''
         state.infrastructure = Array.isArray(state.infrastructure) ? state.infrastructure : []
         state.infrastructureUnknown = state.infrastructureUnknown ?? false
@@ -887,6 +923,7 @@ export const useAssessmentStore = create<AssessmentState>()(
         credentialLifetimeUnknown: state.credentialLifetimeUnknown,
         systemCount: state.systemCount,
         teamSize: state.teamSize,
+        scaleUnknown: state.scaleUnknown,
         cryptoAgility: state.cryptoAgility,
         agilityUnknown: state.agilityUnknown,
         infrastructure: state.infrastructure,

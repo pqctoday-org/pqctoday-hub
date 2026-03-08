@@ -20,7 +20,7 @@ export const SUGGESTED_QUERIES: SuggestedQuery[] = [
   {
     label: 'FN-DSA',
     query: 'FN-DSA',
-    description: 'Falcon signature algorithm — NIST FIPS 206 (draft), EMV payments',
+    description: 'Falcon signature algorithm — NIST FIPS 206, EMV payments',
   },
   {
     label: 'CNSA 2.0',

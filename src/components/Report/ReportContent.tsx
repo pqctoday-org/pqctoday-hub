@@ -352,6 +352,22 @@ const TIMELINE_LABELS: Record<string, string> = {
   unknown: 'Unknown',
 }
 
+const CREDENTIAL_LIFETIME_LABELS: Record<string, string> = {
+  'under-1y': 'Under 1 year',
+  '1-3y': '1-3 years',
+  '3-10y': '3-10 years',
+  '10-25y': '10-25 years',
+  '25-plus': '25+ years',
+  indefinite: 'Indefinite',
+}
+
+const SCALE_LABELS: Record<string, string> = {
+  '1-10': '1-10',
+  '11-50': '11-50',
+  '51-200': '51-200',
+  '200-plus': '200+',
+}
+
 const ProfileField = ({ label, value }: { label: string; value: string | undefined }) => {
   if (!value) return null
   return (
@@ -421,7 +437,7 @@ const AssessmentProfileSummary = ({
                 profile.useCasesUnknown
                   ? 'Unknown'
                   : profile.useCases?.length
-                    ? `${profile.useCases.length} selected`
+                    ? profile.useCases.join(', ')
                     : 'None'
               }
             />
@@ -431,6 +447,28 @@ const AssessmentProfileSummary = ({
                 profile.retentionUnknown
                   ? 'Unknown (industry default)'
                   : profile.retentionPeriods?.join(', ') || 'None'
+              }
+            />
+            <ProfileField
+              label="Credential Lifetime"
+              value={
+                profile.credentialLifetimeUnknown
+                  ? 'Unknown (conservative 10y)'
+                  : profile.credentialLifetimes?.length
+                    ? profile.credentialLifetimes
+                        .map((v) => CREDENTIAL_LIFETIME_LABELS[v] ?? v)
+                        .join(', ')
+                    : 'None'
+              }
+            />
+            <ProfileField
+              label="Org Scale"
+              value={
+                profile.scaleUnknown
+                  ? 'Unknown (industry default)'
+                  : profile.systemScale
+                    ? `${SCALE_LABELS[profile.systemScale] ?? profile.systemScale} systems, ${SCALE_LABELS[profile.teamSize ?? ''] ?? profile.teamSize} engineers`
+                    : undefined
               }
             />
             <ProfileField

@@ -9,6 +9,7 @@ import {
   CheckCircle,
   AlertCircle,
   AlertTriangle,
+  Info,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
@@ -19,6 +20,8 @@ import {
   checkWebGPUSupport,
   WEBLLM_MODELS,
   DEFAULT_LOCAL_MODEL,
+  MIN_CONTEXT_WINDOW,
+  DEFAULT_CONTEXT_WINDOW,
 } from '@/services/chat/WebLLMService'
 
 type ValidationState = 'idle' | 'validating' | 'success' | 'error'
@@ -28,6 +31,7 @@ export const ProviderSetup: React.FC = () => {
   const setApiKey = useChatStore((s) => s.setApiKey)
   const setProvider = useChatStore((s) => s.setProvider)
   const setLocalModel = useChatStore((s) => s.setLocalModel)
+  const setLocalContextWindow = useChatStore((s) => s.setLocalContextWindow)
 
   // Gemini state
   const [keyInput, setKeyInput] = useState('')
@@ -36,7 +40,13 @@ export const ProviderSetup: React.FC = () => {
 
   // Local state
   const [selectedModel, setSelectedModel] = useState(DEFAULT_LOCAL_MODEL)
+  const [contextWindow, setContextWindow] = useState(DEFAULT_CONTEXT_WINDOW)
   const [webgpuCheck, setWebgpuCheck] = useState<WebGPUCheck>('checking')
+  const [showConsent, setShowConsent] = useState(false)
+  const [showInfo, setShowInfo] = useState(false)
+
+  const selectedModelData = WEBLLM_MODELS.find((m) => m.id === selectedModel)
+  const modelMaxContext = selectedModelData?.maxContextLength ?? MIN_CONTEXT_WINDOW
 
   // Check WebGPU support on mount
   useEffect(() => {
@@ -73,14 +83,43 @@ export const ProviderSetup: React.FC = () => {
 
   const handleLocalStart = () => {
     setLocalModel(selectedModel)
+    setLocalContextWindow(contextWindow)
     setProvider('local')
+  }
+
+  const handleModelChange = (id: string) => {
+    setSelectedModel(id)
+    const newMax = WEBLLM_MODELS.find((m) => m.id === id)?.maxContextLength ?? MIN_CONTEXT_WINDOW
+    // Snap to the highest valid preset for the new model
+    if (contextWindow > newMax) setContextWindow(newMax <= 4_096 ? 4_096 : newMax)
   }
 
   const modelItems = WEBLLM_MODELS.map((m) => ({ id: m.id, label: m.label }))
 
+  /** Context window presets with user-facing descriptions */
+  const contextPresets = [
+    { tokens: 4_096, label: '4K', chunks: 9, coverage: '60%', hw: 'Any GPU', note: 'Safe default' },
+    {
+      tokens: 6_144,
+      label: '6K',
+      chunks: 15,
+      coverage: '100%',
+      hw: '4 GB+ GPU',
+      note: 'Full coverage',
+    },
+    {
+      tokens: 8_192,
+      label: '8K',
+      chunks: 21,
+      coverage: '100%',
+      hw: '8 GB GPU / Apple Silicon',
+      note: 'Best quality',
+    },
+  ].filter((p) => p.tokens <= modelMaxContext)
+
   return (
-    <div className="flex-1 flex items-center justify-center p-4 md:p-6">
-      <div className="max-w-2xl w-full space-y-6">
+    <div className="flex-1 overflow-y-auto p-4 md:p-6">
+      <div className="max-w-2xl w-full mx-auto space-y-6">
         {/* Title */}
         <div className="text-center space-y-2">
           <h3 className="text-lg font-semibold text-foreground">Choose Your AI Assistant</h3>
@@ -92,7 +131,7 @@ export const ProviderSetup: React.FC = () => {
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Local (Private) Card */}
-          <div className="glass-panel rounded-xl p-5 space-y-4 border border-border">
+          <div className="glass-panel rounded-xl p-5 space-y-4 border border-border max-h-[80vh] overflow-y-auto">
             <div className="flex items-center gap-2">
               <div className="w-9 h-9 rounded-full bg-status-success/20 flex items-center justify-center">
                 <Shield size={18} className="text-status-success" />
@@ -104,8 +143,8 @@ export const ProviderSetup: React.FC = () => {
             </div>
 
             <p className="text-sm text-muted-foreground">
-              All AI processing happens in your browser. Your questions and data never leave your
-              device. Powered by WebGPU.
+              Everything stays on your device — zero network requests during inference. Answers are
+              shorter and less detailed than cloud, but your data never leaves your browser.
             </p>
 
             {webgpuCheck === 'checking' && (
@@ -135,25 +174,144 @@ export const ProviderSetup: React.FC = () => {
                   <FilterDropdown
                     items={modelItems}
                     selectedId={selectedModel}
-                    onSelect={setSelectedModel}
+                    onSelect={handleModelChange}
                     noContainer
                     label="Model"
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  One-time download (
-                  {WEBLLM_MODELS.find((m) => m.id === selectedModel)?.sizeGB ?? '?'} GB). Cached in
-                  your browser for instant startup.
-                </p>
-                <Button variant="gradient" className="w-full" onClick={handleLocalStart}>
-                  Get Started
-                </Button>
+
+                {/* Context window presets */}
+                <div className="space-y-2">
+                  <span className="text-xs font-medium text-muted-foreground">Context Window</span>
+                  <div className="space-y-1.5">
+                    {contextPresets.map((p) => (
+                      <button
+                        key={p.tokens}
+                        type="button"
+                        onClick={() => setContextWindow(p.tokens)}
+                        className={`w-full text-left rounded-lg border p-2.5 transition-colors ${
+                          contextWindow === p.tokens
+                            ? 'border-primary bg-primary/10'
+                            : 'border-border bg-muted/10 hover:border-muted-foreground/30'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-foreground">
+                            {p.label} tokens
+                          </span>
+                          <span className="text-[10px] text-muted-foreground">{p.note}</span>
+                        </div>
+                        <div className="flex items-center justify-between mt-0.5">
+                          <span className="text-[10px] text-muted-foreground">
+                            {p.chunks} chunks &middot; {p.coverage} coverage
+                          </span>
+                          <span className="text-[10px] text-muted-foreground">{p.hw}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Info panel */}
+                <button
+                  type="button"
+                  onClick={() => setShowInfo(!showInfo)}
+                  className="flex items-center gap-1.5 text-xs text-primary hover:underline"
+                >
+                  <Info size={12} />
+                  How does local AI work?
+                </button>
+                {showInfo && (
+                  <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-2 text-xs text-muted-foreground">
+                    <p>
+                      <strong className="text-foreground">WebLLM</strong> runs AI models directly in
+                      your browser using <strong>WebGPU</strong>, which gives the model access to
+                      your device&apos;s GPU for fast inference.
+                    </p>
+                    <p>
+                      <strong className="text-foreground">GPU Memory</strong> is the main
+                      constraint. Model weights + a <strong>KV cache</strong> (scales with context
+                      window) must fit in your GPU memory. Integrated GPUs share 4–8 GB with system
+                      RAM.
+                    </p>
+                    <p>
+                      <strong className="text-foreground">Context Window</strong> is how much text
+                      the model can process at once (your question + reference data + response). The
+                      default of 4K tokens is recommended — increase only if you have a dedicated
+                      GPU.
+                    </p>
+                    <p>
+                      <strong className="text-foreground">Limitations vs Cloud</strong>: Local
+                      models (1–3B parameters) are much smaller than Gemini (cloud). They may give
+                      shorter answers, miss nuances, and produce fewer deep links to app pages. For
+                      best results, ask specific, focused questions.
+                    </p>
+                  </div>
+                )}
+
+                {!showConsent ? (
+                  <>
+                    <p className="text-xs text-muted-foreground">
+                      One-time download ({selectedModelData?.sizeGB ?? '?'} GB). Cached in your
+                      browser for instant startup.
+                    </p>
+                    <Button
+                      variant="gradient"
+                      className="w-full"
+                      onClick={() => setShowConsent(true)}
+                    >
+                      Get Started
+                    </Button>
+                  </>
+                ) : (
+                  <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-3">
+                    <p className="text-xs text-foreground font-medium">Download Acknowledgement</p>
+                    <p className="text-xs text-muted-foreground">
+                      The model{' '}
+                      <strong>
+                        {WEBLLM_MODELS.find((m) => m.id === selectedModel)?.label ?? selectedModel}
+                      </strong>{' '}
+                      will be downloaded from{' '}
+                      <a
+                        href={`https://huggingface.co/mlc-ai/${selectedModel}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        huggingface.co/mlc-ai
+                      </a>
+                      . This is a one-time download of{' '}
+                      {WEBLLM_MODELS.find((m) => m.id === selectedModel)?.sizeGB ?? '?'} GB that
+                      will be cached in your browser.
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      After download, the model runs entirely on your device — no data is sent to
+                      any server during inference.
+                    </p>
+                    <p className="text-xs text-muted-foreground/70">
+                      Ensure <strong>huggingface.co</strong> is not blocked by your ad blocker,
+                      firewall, or VPN.
+                    </p>
+                    <div className="flex gap-2">
+                      <Button variant="gradient" className="flex-1" onClick={handleLocalStart}>
+                        Agree & Download
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="shrink-0"
+                        onClick={() => setShowConsent(false)}
+                      >
+                        Back
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </div>
 
           {/* Gemini (Cloud) Card */}
-          <div className="glass-panel rounded-xl p-5 space-y-4 border border-border">
+          <div className="glass-panel rounded-xl p-5 space-y-4 border border-border max-h-[80vh] overflow-y-auto">
             <div className="flex items-center gap-2">
               <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center">
                 <Cloud size={18} className="text-primary" />
@@ -165,8 +323,8 @@ export const ProviderSetup: React.FC = () => {
             </div>
 
             <p className="text-sm text-muted-foreground">
-              Uses Google&apos;s Gemini 2.5 Flash model. Free API key required. Queries are sent to
-              Google&apos;s servers.
+              Uses Google&apos;s Gemini 2.5 Flash model. Your API key is stored only in your browser
+              — but your questions and answers are sent to Google&apos;s servers for processing.
             </p>
 
             <a
@@ -232,12 +390,12 @@ export const ProviderSetup: React.FC = () => {
         {/* Privacy note */}
         <div className="text-center space-y-1">
           <p className="text-xs text-muted-foreground">
-            <strong>Local:</strong> Everything stays on your device. No network requests during
-            inference.
+            <strong>Local:</strong> Everything stays on your device — questions, answers, and model.
+            No data is ever sent to any server.
           </p>
           <p className="text-xs text-muted-foreground">
-            <strong>Cloud:</strong> Your API key is stored locally. Queries are sent to
-            Google&apos;s Gemini API.
+            <strong>Cloud:</strong> Your API key is stored only in your browser (never sent to our
+            servers). Your conversations are sent to Google&apos;s Gemini API for processing.
           </p>
         </div>
       </div>

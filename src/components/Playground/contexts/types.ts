@@ -60,6 +60,7 @@ export interface SettingsContextType {
     | 'softhsm'
     | 'key_agree'
     | 'key_derive'
+    | 'key_wrap'
     | 'classical_sign'
     | 'mechanisms'
   setActiveTab: (
@@ -75,6 +76,7 @@ export interface SettingsContextType {
       | 'softhsm'
       | 'key_agree'
       | 'key_derive'
+      | 'key_wrap'
       | 'classical_sign'
       | 'mechanisms'
   ) => void

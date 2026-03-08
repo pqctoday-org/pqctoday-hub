@@ -310,6 +310,7 @@ export const HsmSetupPanel = () => {
                 { tab: 'kem_ops', label: 'KEM & Encrypt' },
                 { tab: 'sign_verify', label: 'Sign & Verify' },
                 { tab: 'symmetric', label: 'Sym Encrypt' },
+                { tab: 'key_wrap', label: 'Wrap / Unwrap' },
                 { tab: 'hashing', label: 'Hashing' },
                 { tab: 'keystore', label: 'Key Store' },
               ] as const
