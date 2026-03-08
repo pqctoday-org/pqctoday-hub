@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { bytesToHex } from '@/services/crypto/FileUtils'
 import type { FiveGService } from '../FiveGService'
+import { DEFAULT_OP, milenage } from '../FiveGService'
 export async function generateSubKey() {
   const ki = new Uint8Array(16)
   window.crypto.getRandomValues(ki)
   return bytesToHex(ki)
 }
 
-export async function computeOPc(ctx: FiveGService, kiHex: string) {
+export async function computeOPc(_ctx: FiveGService, kiHex: string) {
   const OP = new Uint8Array(DEFAULT_OP)
   // Convert K hex to bytes
   const K = new Uint8Array(kiHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)))
@@ -17,7 +18,7 @@ export async function computeOPc(ctx: FiveGService, kiHex: string) {
 }
 
 export async function personalizeUSIM(
-  ctx: FiveGService,
+  _ctx: FiveGService,
   kiHex: string,
   opcHex: string
 ): Promise<string> {
@@ -51,7 +52,7 @@ Step 4: Security Configuration
 }
 
 export async function importAtUDM(
-  ctx: FiveGService,
+  _ctx: FiveGService,
   eKiHex: string,
   opcHex: string
 ): Promise<string> {
@@ -84,7 +85,7 @@ Step 4: Verifying Import Integrity
 [INFO] ${imsi} ready for 5G-AKA authentication.`
 }
 
-export async function encryptTransport(ctx: FiveGService, kiHex: string, opcHex: string) {
+export async function encryptTransport(_ctx: FiveGService, kiHex: string, opcHex: string) {
   // Use OpenSSL to encrypt the batch to a file
   // Input: CSV or JSON
   const content = `IMSI: 310123456789000, K: ${kiHex}, OPc: ${opcHex} `

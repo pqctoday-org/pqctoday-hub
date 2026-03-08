@@ -110,7 +110,7 @@ export class FiveGService {
     await openSSLService.execute('openssl version', [{ name: filename, data: bytes }])
   }
 
-  private async injectKey(filename: string, content: string) {
+  public async injectKey(filename: string, content: string) {
     if (content.trim().startsWith('-----BEGIN')) {
       await this.writeTextToFile(filename, content)
     } else {
@@ -130,7 +130,7 @@ export class FiveGService {
 
   // Helper to read file as hex since xxd isn't in worker
   // Helper to read file as hex using standard OpenSSL command
-  private async readFileHex(filename: string): Promise<string> {
+  public async readFileHex(filename: string): Promise<string> {
     try {
       const res = await openSSLService.execute(`openssl enc -base64 -in ${filename} `)
       if (res.stdout && res.stdout.trim().length > 0) {
@@ -189,12 +189,12 @@ export class FiveGService {
   }
 
   // Helper to parse hex digest from OpenSSL dgst output
-  private parseDigestHex(stdout: string): string {
+  public parseDigestHex(stdout: string): string {
     return UtilsOps.parseDigestHex(this, stdout)
   }
 
   // Build ANSI X9.63 KDF input: Z || Counter || SharedInfo(EphPubKey)
-  private buildKdfInput(z: Uint8Array, counter: number, sharedInfo: Uint8Array): Uint8Array {
+  public buildKdfInput(z: Uint8Array, counter: number, sharedInfo: Uint8Array): Uint8Array {
     return EphemeralOps.buildKdfInput(this, z, counter, sharedInfo)
   }
 
@@ -203,12 +203,12 @@ export class FiveGService {
   }
 
   // BCD encode: pack 2 digits per byte, nibble-swapped per 3GPP TS 23.003
-  private bcdEncode(digits: string): Uint8Array {
+  public bcdEncode(digits: string): Uint8Array {
     return UtilsOps.bcdEncode(this, digits)
   }
 
   // BCD decode: reverse nibble-swapped bytes back to digit string
-  private bcdDecode(bytes: Uint8Array): string {
+  public bcdDecode(bytes: Uint8Array): string {
     return UtilsOps.bcdDecode(this, bytes)
   }
 

@@ -479,7 +479,7 @@ ${sharedSecretHex}
 }
 
 export function buildKdfInput(
-  ctx: FiveGService,
+  _ctx: FiveGService,
   z: Uint8Array,
   counter: number,
   sharedInfo: Uint8Array

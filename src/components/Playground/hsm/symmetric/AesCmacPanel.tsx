@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Loader2, CheckCircle, XCircle } from 'lucide-react'
-import { Button } from '../../../../ui/button'
-import { ErrorAlert } from '../../../../ui/error-alert'
-import { hsm_generateAESKey, hsm_aesCmac } from '../../../../../wasm/softhsm'
+import { Button } from '../../../ui/button'
+import { ErrorAlert } from '../../../ui/error-alert'
+import { hsm_generateAESKey, hsm_aesCmac } from '../../../../wasm/softhsm'
 import { useHsmContext } from '../HsmContext'
 import { HsmResultRow, toHex, hexSnippet } from '../shared'
 

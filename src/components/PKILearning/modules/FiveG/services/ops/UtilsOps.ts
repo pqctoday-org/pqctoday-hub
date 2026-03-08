@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import type { FiveGService } from '../FiveGService'
 
-export function parseDigestHex(ctx: FiveGService, stdout: string): string {
+export function parseDigestHex(_ctx: FiveGService, stdout: string): string {
   if (!stdout) return ''
   const match = stdout.match(/=\s*([a-fA-F0-9]{64})/) || stdout.match(/([a-fA-F0-9]{64})/)
   return match ? match[1].toLowerCase() : ''
 }
 
-export function bcdEncode(ctx: FiveGService, digits: string): Uint8Array {
+export function bcdEncode(_ctx: FiveGService, digits: string): Uint8Array {
   const padded = digits.length % 2 !== 0 ? digits + 'f' : digits
   const bytes = new Uint8Array(padded.length / 2)
   for (let i = 0; i < padded.length; i += 2) {
@@ -18,7 +19,7 @@ export function bcdEncode(ctx: FiveGService, digits: string): Uint8Array {
   return bytes
 }
 
-export function bcdDecode(ctx: FiveGService, bytes: Uint8Array): string {
+export function bcdDecode(_ctx: FiveGService, bytes: Uint8Array): string {
   let digits = ''
   for (const b of bytes) {
     const lo = b & 0x0f

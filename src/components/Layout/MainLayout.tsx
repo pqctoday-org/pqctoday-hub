@@ -77,7 +77,7 @@ function ReturnBanner() {
         className="min-h-[44px] min-w-[44px] p-0"
         onClick={() => {
           sessionStorage.removeItem('pqc-return-to')
-          setReturnTo(null)
+          navigate(location.pathname, { replace: true })
         }}
       >
         <X size={14} aria-hidden="true" />

@@ -387,7 +387,7 @@ Step 3: Writing to EF_SUCI_Calc_Info...
 [SUCCESS] Write Complete.USIM is ready.`
 }
 
-export async function retrieveKey(ctx: FiveGService, pubKeyFile: string, profile: string) {
+export async function retrieveKey(_ctx: FiveGService, pubKeyFile: string, profile: string) {
   return `═══════════════════════════════════════════════════════════════
               USIM KEY RETRIEVAL
 ═══════════════════════════════════════════════════════════════

@@ -1,12 +1,8 @@
 import { useState } from 'react'
 import { Lock, Loader2 } from 'lucide-react'
-import { Button } from '../../../../ui/button'
-import { ErrorAlert } from '../../../../ui/error-alert'
-import {
-  hsm_generateAESKey,
-  hsm_aesCtrEncrypt,
-  hsm_aesCtrDecrypt,
-} from '../../../../../wasm/softhsm'
+import { Button } from '../../../ui/button'
+import { ErrorAlert } from '../../../ui/error-alert'
+import { hsm_generateAESKey, hsm_aesCtrEncrypt, hsm_aesCtrDecrypt } from '../../../../wasm/softhsm'
 import { useHsmContext } from '../HsmContext'
 import { HsmResultRow, toHex, hexSnippet } from '../shared'
 
