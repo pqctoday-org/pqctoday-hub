@@ -4,6 +4,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.34.1] - 2026-03-08
+
+### Changed
+
+- **Local AI model comparison cards**: Each model now shows speed and accuracy ratings (1–5 dots), approximate VRAM requirement, and a short recommendation tip to help you pick the right model for your hardware. [view:/]
+- **Extended context window presets**: Added 12K and 16K token presets for models that support them (Phi 3.5 Mini goes up to 16K), feeding the model up to 40 RAG chunks for deeper, more accurate answers. [view:/]
+- **Gemini vs local comparison panel**: The Gemini provider card now explains exactly why cloud outperforms local — chunk count comparison, multilingual support, instant startup, and richer answers — with a disclosure that PQC Today has no Google affiliation. [view:/]
+- **Context window description improved**: Help text now explains that the context window controls how many reference chunks (not just "text") the model sees, making the quality tradeoff clearer. [view:/]
+
 ## [2.34.0] - 2026-03-08
 
 ### Added

@@ -260,7 +260,7 @@ export const useChatStore = create<ChatState>()(
     }),
     {
       name: 'pqc-chat-storage',
-      version: 7,
+      version: 8,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         apiKey: state.apiKey,
@@ -357,6 +357,8 @@ export const useChatStore = create<ChatState>()(
           'Qwen3-1.7B-q4f16_1-MLC',
           'Qwen3-4B-q4f16_1-MLC',
           'Qwen3-0.6B-q4f16_1-MLC',
+          'Llama-3.2-3B-Instruct-q4f16_1-MLC',
+          'Phi-3.5-mini-instruct-q4f16_1-MLC',
         ])
         state.localModel =
           typeof state.localModel === 'string' && VALID_LOCAL_MODELS.has(state.localModel)
@@ -371,6 +373,9 @@ export const useChatStore = create<ChatState>()(
             state.localContextWindow = 4_096
           }
         }
+
+        // v7 → v8: expanded model catalog (Llama 3.2, Phi 3.5) with context up to 16K.
+        // No data migration needed — VALID_LOCAL_MODELS and presets handle new IDs.
 
         return state
       },

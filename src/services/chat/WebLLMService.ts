@@ -21,6 +21,14 @@ export interface WebLLMModel {
   sizeGB: number
   /** Model's native maximum context window (tokens). Upper bound for the slider. */
   maxContextLength: number
+  /** Approximate GPU VRAM needed (MB). From web-llm registry. */
+  vramMB: number
+  /** 1-5 speed rating (higher = faster). Relative to other models in catalog. */
+  speed: 1 | 2 | 3 | 4 | 5
+  /** 1-5 accuracy rating (higher = more accurate). Relative to other models in catalog. */
+  accuracy: 1 | 2 | 3 | 4 | 5
+  /** Short tip shown below the model selector. */
+  tip: string
 }
 
 /* ------------------------------------------------------------------ */
@@ -39,30 +47,50 @@ export const WEBLLM_MODELS: WebLLMModel[] = [
     label: 'Qwen 3 1.7B (1.0 GB) — Recommended',
     sizeGB: 1.0,
     maxContextLength: 8_192,
+    vramMB: 2037,
+    speed: 4,
+    accuracy: 3,
+    tip: 'Best balance of speed and quality. Works on most GPUs.',
   },
   {
     id: 'Llama-3.2-3B-Instruct-q4f16_1-MLC',
     label: 'Llama 3.2 3B (1.5 GB) — Strong instruction following',
     sizeGB: 1.5,
     maxContextLength: 8_192,
+    vramMB: 2264,
+    speed: 3,
+    accuracy: 4,
+    tip: 'Best at following complex instructions — links, formatting, lists.',
   },
   {
     id: 'Phi-3.5-mini-instruct-q4f16_1-MLC',
     label: 'Phi 3.5 Mini (2.1 GB) — Largest context window',
     sizeGB: 2.1,
     maxContextLength: 16_384,
+    vramMB: 3672,
+    speed: 2,
+    accuracy: 4,
+    tip: 'Up to 16K context — feeds the model 4x more reference data.',
   },
   {
     id: 'Qwen3-4B-q4f16_1-MLC',
     label: 'Qwen 3 4B (2.3 GB) — Best quality',
     sizeGB: 2.3,
     maxContextLength: 8_192,
+    vramMB: 3432,
+    speed: 2,
+    accuracy: 5,
+    tip: 'Highest accuracy. Needs a dedicated or Apple Silicon GPU.',
   },
   {
     id: 'Qwen3-0.6B-q4f16_1-MLC',
     label: 'Qwen 3 0.6B (0.4 GB) — Fastest',
     sizeGB: 0.4,
     maxContextLength: 4_096,
+    vramMB: 604,
+    speed: 5,
+    accuracy: 1,
+    tip: 'Ultra-fast responses but lower accuracy. Good for quick lookups.',
   },
 ]
 

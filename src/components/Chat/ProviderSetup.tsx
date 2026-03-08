@@ -96,7 +96,12 @@ export const ProviderSetup: React.FC = () => {
 
   const modelItems = WEBLLM_MODELS.map((m) => ({ id: m.id, label: m.label }))
 
-  /** Context window presets with user-facing descriptions */
+  /**
+   * Context window presets with user-facing descriptions.
+   * RAG budget scales at ~45% of context × 4 chars/token.
+   * Chunk estimates assume ~400 chars/chunk average.
+   * Filtered to only show presets the selected model supports.
+   */
   const contextPresets = [
     { tokens: 4_096, label: '4K', chunks: 9, coverage: '60%', hw: 'Any GPU', note: 'Safe default' },
     {
@@ -115,7 +120,26 @@ export const ProviderSetup: React.FC = () => {
       hw: '8 GB GPU / Apple Silicon',
       note: 'Best quality',
     },
+    {
+      tokens: 12_288,
+      label: '12K',
+      chunks: 30,
+      coverage: '100%',
+      hw: '8 GB+ GPU / Apple Silicon',
+      note: 'Deep context',
+    },
+    {
+      tokens: 16_384,
+      label: '16K',
+      chunks: 40,
+      coverage: '100%',
+      hw: '12 GB+ GPU',
+      note: 'Maximum context',
+    },
   ].filter((p) => p.tokens <= modelMaxContext)
+
+  // Chunk count for the currently selected local context window, used in Gemini comparison
+  const localChunks = contextPresets.find((p) => p.tokens === contextWindow)?.chunks ?? 9
 
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6">
@@ -178,6 +202,28 @@ export const ProviderSetup: React.FC = () => {
                     noContainer
                     label="Model"
                   />
+                  {selectedModelData && (
+                    <div className="rounded-lg border border-border bg-muted/10 p-2.5 space-y-1.5">
+                      <p className="text-[11px] text-muted-foreground">{selectedModelData.tip}</p>
+                      <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                        <span>
+                          Speed{' '}
+                          <span className="text-foreground font-medium">
+                            {'●'.repeat(selectedModelData.speed)}
+                            {'○'.repeat(5 - selectedModelData.speed)}
+                          </span>
+                        </span>
+                        <span>
+                          Accuracy{' '}
+                          <span className="text-foreground font-medium">
+                            {'●'.repeat(selectedModelData.accuracy)}
+                            {'○'.repeat(5 - selectedModelData.accuracy)}
+                          </span>
+                        </span>
+                        <span>VRAM ~{(selectedModelData.vramMB / 1024).toFixed(1)} GB</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Context window presets */}
@@ -235,14 +281,21 @@ export const ProviderSetup: React.FC = () => {
                       RAM.
                     </p>
                     <p>
-                      <strong className="text-foreground">Context Window</strong> is how much text
-                      the model can process at once (your question + reference data + response). The
-                      default of 4K tokens is recommended — increase only if you have a dedicated
-                      GPU.
+                      <strong className="text-foreground">Context Window</strong> controls how much
+                      reference data (RAG chunks) the model sees alongside your question. A larger
+                      window means more relevant facts are included, improving answer quality. The
+                      4K default works on any GPU — increase if your hardware allows.
+                    </p>
+                    <p>
+                      <strong className="text-foreground">Choosing a model</strong>: Qwen 3 1.7B is
+                      the best all-rounder. Llama 3.2 3B excels at following formatting rules
+                      (links, lists). Phi 3.5 Mini can use up to 16K context for the deepest
+                      answers. Qwen 3 4B gives the highest accuracy but needs more VRAM. Qwen 3 0.6B
+                      is the fastest for quick lookups.
                     </p>
                     <p>
                       <strong className="text-foreground">Limitations vs Cloud</strong>: Local
-                      models (1–3B parameters) are much smaller than Gemini (cloud). They may give
+                      models (0.6–4B parameters) are much smaller than Gemini (cloud). They may give
                       shorter answers, miss nuances, and produce fewer deep links to app pages. For
                       best results, ask specific, focused questions.
                     </p>
@@ -317,15 +370,66 @@ export const ProviderSetup: React.FC = () => {
                 <Cloud size={18} className="text-primary" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-foreground">Gemini (Cloud)</h4>
-                <p className="text-xs text-muted-foreground">Powerful cloud AI</p>
+                <h4 className="text-sm font-semibold text-foreground">Gemini 2.5 Flash (Cloud)</h4>
+                <p className="text-xs text-muted-foreground">1M token context · 40+ languages</p>
               </div>
             </div>
 
             <p className="text-sm text-muted-foreground">
-              Uses Google&apos;s Gemini 2.5 Flash model. Your API key is stored only in your browser
-              — but your questions and answers are sent to Google&apos;s servers for processing.
+              Powered by Google&apos;s Gemini 2.5 Flash — a frontier model orders of magnitude
+              larger than any local option. Your questions are processed on Google&apos;s servers.
             </p>
+
+            {/* Feature comparison */}
+            <div className="rounded-lg border border-border bg-muted/10 p-3 space-y-2">
+              <p className="text-[11px] font-medium text-foreground">
+                Why Gemini outperforms local models
+              </p>
+              <ul className="space-y-1.5 text-[11px] text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="text-status-success mt-0.5 shrink-0">●</span>
+                  <span>
+                    <strong className="text-foreground">
+                      All retrieved chunks per query (~15–20)
+                    </strong>{' '}
+                    — vs ~{localChunks} chunks with your current local setting. More context = more
+                    accurate, detailed answers
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-status-success mt-0.5 shrink-0">●</span>
+                  <span>
+                    <strong className="text-foreground">40+ languages</strong> — ask questions in
+                    French, German, Japanese, Arabic, Chinese, Spanish, and more
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-status-success mt-0.5 shrink-0">●</span>
+                  <span>
+                    <strong className="text-foreground">Instant first token</strong> — no model
+                    download, no GPU warm-up, no memory constraints
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-status-success mt-0.5 shrink-0">●</span>
+                  <span>
+                    <strong className="text-foreground">Richer answers</strong> — more deep links,
+                    better reasoning across multi-step PQC migration questions
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-status-success mt-0.5 shrink-0">●</span>
+                  <span>
+                    <strong className="text-foreground">Free tier</strong> — Google AI Studio
+                    provides a free API key with generous daily limits
+                  </span>
+                </li>
+              </ul>
+              <p className="text-[10px] text-muted-foreground/60 pt-1 border-t border-border">
+                PQC Today has no affiliation with Google and receives no referral fees. We recommend
+                Gemini because it gives users the best experience with this tool.
+              </p>
+            </div>
 
             <a
               href="https://aistudio.google.com/apikey"
