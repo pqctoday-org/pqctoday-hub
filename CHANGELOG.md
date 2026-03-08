@@ -4,6 +4,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.34.2] - 2026-03-08
+
+### Changed
+
+- **VRAM warnings on high-context presets**: The 8K, 12K, and 16K context window presets now show an amber "High VRAM" badge. Selecting a high-VRAM preset reveals an inline warning explaining that an out-of-memory error means you should switch to a lower preset or smaller model. Hardware requirement labels updated (12K → 12 GB+, 16K → 16 GB+). [view:/]
+
 ## [2.34.1] - 2026-03-08
 
 ### Changed

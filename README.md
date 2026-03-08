@@ -24,10 +24,20 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - Separate encapsulation/decapsulation flows with state isolation
     - HKDF-Extract normalization for variable-sized secrets
     - Visual comparison of generated vs recovered secrets
-  - **Sign & Verify**: Classical and PQC in software; ML-DSA-44/65/87 via `C_SignInit + C_Sign` /
-    `C_VerifyInit + C_Verify` in HSM mode — hedging mode, context string, pre-hash options
+  - **Sign & Verify**: Unified PQC/Classical panel — PQC (ML-DSA-44/65/87, SLH-DSA) and classical
+    (RSA, ECDSA, EdDSA) signing share a single tab with a PQC/Classical toggle in software;
+    ML-DSA-44/65/87 via `C_SignInit + C_Sign` / `C_VerifyInit + C_Verify` in HSM mode —
+    hedging mode, context string, pre-hash options
+  - **Key Wrap / Unwrap**: Dedicated PKCS#11 key wrapping tab with four mechanisms — AES-KW
+    (RFC 3394), AES-KWP (RFC 5649), AES-GCM wrap, and RSA-OAEP wrap. Wrap symmetric or
+    asymmetric keys, inspect wrapped blobs, and unwrap them back — all logged to the PKCS#11
+    call log
   - **HSM Key Store**: session-scoped table of all PKCS#11-generated keys with handle, algorithm,
-    role, variant, and timestamp; software Key Store with sortable/resizable columns
+    role, variant, and timestamp; expanded attribute inspector for `CKA_EXTRACTABLE`,
+    `CKA_SENSITIVE`, `CKA_LOCAL`, `CKA_ALWAYS_SENSITIVE`, `CKA_NEVER_EXTRACTABLE`,
+    `CKA_ENCAPSULATE`, `CKA_DECAPSULATE`, `CKA_KEY_GEN_MECHANISM`, `CKA_PARAMETER_SET`;
+    all key generation forms expose `CKA_EXTRACTABLE` and usage attribute toggles
+    (`CKA_ENCRYPT`, `CKA_DECRYPT`, `CKA_WRAP`, `CKA_UNWRAP`, `CKA_DERIVE`)
   - **PKCS#11 call log**: per-session log of all C\_ function calls with return-value decoding,
     timing, and optional "Show Params" inspect mode (powered by `src/wasm/inspect/` — decodes
     mechanism IDs, attribute types, and CKR return codes into human-readable form)
@@ -246,7 +256,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     products from the Migrate catalog, grouped by infrastructure layer with PQC/FIPS badges,
     license info, and deep-links to the Migrate view
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
-  - **Reference Catalog**: 331 verified PQC-relevant product entries across 7 infrastructure layers
+  - **Reference Catalog**: 350+ verified PQC-relevant product entries across 7 infrastructure layers
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
     Security Stack, Operating System, Hardware & Secure Elements — click any layer to filter the
     catalog. Products can span multiple layers (e.g., AWS KMS in Cloud + Security Stack).
@@ -275,6 +285,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Country-aligned Deadlines**: Timeline step surfaces real regulatory deadline phases from the Gantt data
   - **"I don't know" escape hatches**: All steps with uncertainty options use a consistent dashed-border
     escape-hatch button pattern; unknowns are scored as worst-case risk (not low/moderate)
+  - **Smart defaults for Org Scale**: clicking "I'm not sure" on the Org Scale step auto-populates
+    system count and team size based on the selected industry — no guessing required
   - **Awareness-gap remediation actions**: Answering "I don't know" on any step automatically injects targeted
     recommended actions at the top of the report (e.g. "conduct a cryptographic asset inventory") to help close
     knowledge gaps first
@@ -376,8 +388,13 @@ Test your PQC readiness with this interactive web application visualizing the gl
 - **Page Accuracy Feedback**: Fixed bottom-left thumbs-up/down widget on content pages;
   GA4 analytics logging; resets on navigation
 - **PQC Assistant**: AI-powered chatbot for post-quantum cryptography questions
-  - Powered by Google Gemini 2.5 Flash with BYOK (Bring Your Own Key)
-  - Client-side RAG retrieval using MiniSearch over 3,200+ content chunks from 22 data sources
+  - **Cloud mode**: Google Gemini 2.5 Flash with BYOK (Bring Your Own Key) — cloud accuracy,
+    instant startup, configurable context window presets (4K / 6K / 8K / 12K / 16K tokens)
+    feeding up to 40 RAG chunks for deeper answers
+  - **Local mode**: WebLLM browser-native Qwen 3 models — no API key, no cloud, fully private;
+    model cards show speed/accuracy ratings (1–5 dots), VRAM requirements, and recommendation
+    tips to guide model selection
+  - Client-side RAG retrieval using MiniSearch over 3,500+ content chunks from 22 data sources
   - Three-phase search: entity matching, query expansion, keyword search with source diversity
   - **Document enrichment**: 230+ archived HTML/PDF documents enriched with 11 structured
     dimensions (algorithms, threats, protocols, infrastructure layers, compliance frameworks,
@@ -583,7 +600,7 @@ The application is structured into several key components:
 ├── scripts/             # Compliance data scrapers (NIST, ANSSI, Common Criteria)
 ├── src/
 │   ├── components/          # React components
-│   │   ├── About/           # About page and feedback forms
+│   │   ├── About/           # About page, SBOM, CVE details, and Rust WASM crate versions
 │   │   ├── ACVP/            # Automated Cryptographic Validation Protocol testing
 │   │   ├── Algorithms/      # Algorithm comparison table
 │   │   ├── Assess/          # 14-step PQC risk assessment with compound scoring
@@ -643,7 +660,7 @@ The application is structured into several key components:
 
 ## Security
 
-Last audited: March 7, 2026
+Last audited: March 8, 2026
 
 | Severity | Production | Dev-only |
 | -------- | ---------- | -------- |

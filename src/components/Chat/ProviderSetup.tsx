@@ -100,10 +100,20 @@ export const ProviderSetup: React.FC = () => {
    * Context window presets with user-facing descriptions.
    * RAG budget scales at ~45% of context × 4 chars/token.
    * Chunk estimates assume ~400 chars/chunk average.
+   * vramMB = model base VRAM + estimated KV cache for this context length.
+   * KV cache ≈ num_layers × 2 × kv_heads × head_dim × 2 bytes × tokens.
    * Filtered to only show presets the selected model supports.
    */
   const contextPresets = [
-    { tokens: 4_096, label: '4K', chunks: 9, coverage: '60%', hw: 'Any GPU', note: 'Safe default' },
+    {
+      tokens: 4_096,
+      label: '4K',
+      chunks: 9,
+      coverage: '60%',
+      hw: 'Any GPU',
+      note: 'Safe default',
+      highVram: false,
+    },
     {
       tokens: 6_144,
       label: '6K',
@@ -111,6 +121,7 @@ export const ProviderSetup: React.FC = () => {
       coverage: '100%',
       hw: '4 GB+ GPU',
       note: 'Full coverage',
+      highVram: false,
     },
     {
       tokens: 8_192,
@@ -119,22 +130,25 @@ export const ProviderSetup: React.FC = () => {
       coverage: '100%',
       hw: '8 GB GPU / Apple Silicon',
       note: 'Best quality',
+      highVram: (selectedModelData?.vramMB ?? 0) > 3_000,
     },
     {
       tokens: 12_288,
       label: '12K',
       chunks: 30,
       coverage: '100%',
-      hw: '8 GB+ GPU / Apple Silicon',
+      hw: '12 GB+ GPU / Apple Silicon',
       note: 'Deep context',
+      highVram: true,
     },
     {
       tokens: 16_384,
       label: '16K',
       chunks: 40,
       coverage: '100%',
-      hw: '12 GB+ GPU',
+      hw: '16 GB+ GPU',
       note: 'Maximum context',
+      highVram: true,
     },
   ].filter((p) => p.tokens <= modelMaxContext)
 
@@ -245,7 +259,14 @@ export const ProviderSetup: React.FC = () => {
                           <span className="text-xs font-semibold text-foreground">
                             {p.label} tokens
                           </span>
-                          <span className="text-[10px] text-muted-foreground">{p.note}</span>
+                          <div className="flex items-center gap-1.5">
+                            {p.highVram && (
+                              <span className="text-[9px] font-medium px-1 py-0.5 rounded bg-status-warning/15 text-status-warning">
+                                High VRAM
+                              </span>
+                            )}
+                            <span className="text-[10px] text-muted-foreground">{p.note}</span>
+                          </div>
                         </div>
                         <div className="flex items-center justify-between mt-0.5">
                           <span className="text-[10px] text-muted-foreground">
@@ -253,6 +274,12 @@ export const ProviderSetup: React.FC = () => {
                           </span>
                           <span className="text-[10px] text-muted-foreground">{p.hw}</span>
                         </div>
+                        {p.highVram && contextWindow === p.tokens && (
+                          <p className="text-[10px] text-status-warning mt-1">
+                            If loading fails with an out-of-memory error, switch to a lower context
+                            window or a smaller model.
+                          </p>
+                        )}
                       </button>
                     ))}
                   </div>
